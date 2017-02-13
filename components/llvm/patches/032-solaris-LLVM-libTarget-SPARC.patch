@@ -1,11 +1,13 @@
+# 25519458 LLVM getHostCPUName will not work with Fujitsu processor names
+# 24960500 llvm getHostCPUName() comes up with names that its parser doesn't recognize
 # 22777179 implement -mtune= | -march= | -mcpu= in clang SPARC
 # 22778085 LLVM is using %icc when it should be using %xcc
 # 22778089 the SPARCV9 IS implementation is incomplete
 # 22778098 LLVM should emit proc identifiers in SPARC assembler (capabilities)
 # 3.9.X for upstream.
---- lib/Target/Sparc/Sparc.td	2015-03-27 20:03:51.000000000 -0800
-+++ lib/Target/Sparc/Sparc.td	2016-06-30 08:30:11.896274715 -0800
-@@ -35,13 +35,15 @@
+--- lib/Target/Sparc/Sparc.td	2015-03-27 21:03:51.000000000 -0700
++++ lib/Target/Sparc/Sparc.td	2017-02-08 09:22:42.929246156 -0800
+@@ -35,14 +35,16 @@
  def FeatureVIS3
    : SubtargetFeature<"vis3", "IsVIS3", "true",
                       "Enable Visual Instruction Set extensions III">;
@@ -13,9 +15,6 @@
  def FeatureHardQuad
    : SubtargetFeature<"hard-quad-float", "HasHardQuad", "true",
                       "Enable quad-word floating point instructions">;
--
--def UsePopc : SubtargetFeature<"popc", "UsePopc", "true",
--                               "Use the popc (population count) instruction">;
 +def UsePopc
 +  : SubtargetFeature<"popc", "UsePopc", "true",
 +                     "Use the popc (population count) instruction">;
@@ -23,8 +22,12 @@
 +  : SubtargetFeature<"hwcap", "UseHWCap", "true",
 +                      "Use SPARC Hardware Capabiliies">;
  
+-def UsePopc : SubtargetFeature<"popc", "UsePopc", "true",
+-                               "Use the popc (population count) instruction">;
+-
  //===----------------------------------------------------------------------===//
  // Register File, Calling Conv, Instruction Descriptions
+ //===----------------------------------------------------------------------===//
 @@ -74,10 +76,46 @@
  def : Proc<"sparclite86x",    []>;
  def : Proc<"sparclet",        []>;
@@ -74,18 +77,40 @@
  def : Proc<"niagara",         [FeatureV9, FeatureV8Deprecated, FeatureVIS,
                                 FeatureVIS2]>;
  def : Proc<"niagara2",        [FeatureV9, FeatureV8Deprecated, UsePopc,
-@@ -86,7 +124,10 @@
+@@ -86,8 +124,31 @@
                                 FeatureVIS, FeatureVIS2]>;
  def : Proc<"niagara4",        [FeatureV9, FeatureV8Deprecated, UsePopc,
                                 FeatureVIS, FeatureVIS2, FeatureVIS3]>;
--
 +def : Proc<"sparc4",          [FeatureV9, FeatureV8Deprecated, UsePopc,
 +                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
 +def : Proc<"sparc5",          [FeatureV9, FeatureV8Deprecated, UsePopc,
 +                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC-T4",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC-T5",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC-M5",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC-M6",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC-T7",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC-S7",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC-M8",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC64-X",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC64-X+",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"SPARC64-XII",        [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
  
+-
  //===----------------------------------------------------------------------===//
  // Declare the target which we are implementing
+ //===----------------------------------------------------------------------===//
+
 ###
 --- lib/Target/Sparc/SparcRegisterInfo.td	2015-10-04 01:11:22.000000000 -0800
 +++ lib/Target/Sparc/SparcRegisterInfo.td	2016-06-29 17:37:09.214126550 -0800

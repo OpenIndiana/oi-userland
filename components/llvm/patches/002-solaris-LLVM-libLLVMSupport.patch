@@ -4990,7 +4990,7 @@
  #define DEBUG_TYPE "host-detection"
  
  //===----------------------------------------------------------------------===//
-@@ -733,6 +738,42 @@
+@@ -733,6 +738,30 @@
    
    return "generic";
  }
@@ -5010,19 +5010,7 @@
 +      kstat_read(KC, KSP, NULL);
 +      KNP = reinterpret_cast<kstat_named_t*>(kstat_data_lookup(KSP, "brand"));
 +      Value = (const char *) KNP->value.str.addr.ptr;
-+      (void) std::sprintf(Buffer, "%s (", Value);
-+
-+      KNP =
-+        reinterpret_cast<kstat_named_t*>(kstat_data_lookup(KSP, "cpu_type"));
-+      Value = (const char*) KNP->value.c;
-+      (void) std::strcat(Buffer, Value);
-+      (void) std::strcat(Buffer, ") ");
-+
-+      KNP =
-+        reinterpret_cast<kstat_named_t*>(kstat_data_lookup(KSP,
-+                                                           "implementation"));
-+      Value = (const char*) KNP->value.str.addr.ptr;
-+      (void) std::strcat(Buffer, Value);
++      (void) strlcpy(Buffer, Value, sizeof(Buffer));
 +      Init = true;
 +      kstat_close(KC);
 +    }
