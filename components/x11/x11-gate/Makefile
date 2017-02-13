@@ -20,10 +20,15 @@ publish:
 	do \
 		if test -d $(X11_GATE_DIR)/$$d; \
 		then \
-			echo ":$$d"; \
+			echo "Entering: $$d"; \
 			if test ! -f $(X11_GATE_DIR)/$$d/$(X11_GATE_COOKIE); \
 			then \
-			cd $(X11_GATE_DIR)/$$d && gmake clobber && gmake env-prep && gmake publish && touch $(X11_GATE_COOKIE) && cd -; \
+			cd $(X11_GATE_DIR)/$$d && gmake clobber \
+				&& gmake env-prep && gmake publish \
+				&& touch $(X11_GATE_COOKIE); \
+			if test -f $(X11_GATE_COOKIE); \
+			then echo "SUCCESS: $$d"; cd -; \
+			else echo "FAILURE: $$d"; exit 1; fi; \
 			((i=i+1));\
 			fi;\
 		elif [ "$$d"X = "$(X11_GATE_INSTALL_ACTION)X" ]; \

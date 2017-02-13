@@ -19,6 +19,7 @@ COMPONENTS+= dri3proto
 COMPONENTS+= evieext # evieproto in X11 gate
 COMPONENTS+= fixesproto
 COMPONENTS+= fontsproto
+COMPONENTS+= fontcacheproto
 COMPONENTS+= glproto
 COMPONENTS+= inputproto
 COMPONENTS+= kbproto
@@ -32,12 +33,14 @@ COMPONENTS+= scrnsaverproto
 COMPONENTS+= videoproto
 COMPONENTS+= xcmiscproto
 COMPONENTS+= xextproto
+COMPONENTS+= xf86bigfontproto
 COMPONENTS+= xf86dgaproto
 COMPONENTS+= xf86driproto
 COMPONENTS+= xf86miscproto
 COMPONENTS+= xf86vidmodeproto
 COMPONENTS+= xineramaproto
 COMPONENTS+= xcb-proto # xcbproto in X11 gate
+COMPONENTS+= xproxymanagementprotocol
 COMPONENTS+= sun-ext-protos
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
@@ -66,7 +69,7 @@ COMPONENTS+= ../library/fontconfig
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= libpthread-stubs
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-COMPONENTS+= ../openindiana/gfx-drm
+#COMPONENTS+= ../openindiana/gfx-drm
 COMPONENTS+= libfontenc
 COMPONENTS+= libpciaccess
 COMPONENTS+= libxcb
@@ -127,13 +130,15 @@ COMPONENTS+= libXrandr
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= mesa
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-COMPONENTS+= libepoxy
 COMPONENTS+= glu # libglu in X11 gate
+COMPONENTS+= glw # not in X11 gate
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libepoxy
 COMPONENTS+= freeglut
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= ../pixman
 COMPONENTS+= libxkbcommon
-#COMPONENTS+= libvdpau TBD
+COMPONENTS+= ../library/libvdpau
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 # app
@@ -271,6 +276,7 @@ COMPONENTS+= rasterfile
 COMPONENTS+= ogl-select
 COMPONENTS+= workspace-patterns
 COMPONENTS+= xcursor-themes
+COMPONENTS+= xkeyboard-config
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 # font
