@@ -135,3 +135,5 @@ clobber::       clean
 REQUIRED_PACKAGES += developer/build/onbld
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += system/library
+# Build requirements
+REQUIRED_PACKAGES += developer/debug/mdb
