@@ -1,0 +1,34 @@
+Addresses upgrading build error by changing the order of including header files.
+Will not send upstream.
+
+--- IlmImf/Makefile.in	2016-11-18 10:46:05.906674308 +0000
++++ IlmImf/Makefile.in	2016-11-18 10:47:02.887998521 +0000
+@@ -458,9 +458,9 @@
+ 		 ImfOptimizedPixelReading.h
+ 
+ EXTRA_DIST = $(noinst_HEADERS) b44ExpLogTable.cpp b44ExpLogTable.h dwaLookups.cpp dwaLookups.h CMakeLists.txt
+-INCLUDES = @ILMBASE_CXXFLAGS@ \
+-	   -I$(top_builddir)  \
+-	   -I$(top_srcdir)/config
++INCLUDES = -I$(top_builddir)  \
++	   -I$(top_srcdir)/config \
++	   @ILMBASE_CXXFLAGS@
+ 
+ CLEANFILES = b44ExpLogTable b44ExpLogTable.h dwaLookups dwaLookups.h
+ b44ExpLogTable_SOURCES = b44ExpLogTable.cpp
+--- IlmImfUtil/Makefile.in	2016-11-18 10:46:24.851912251 +0000
++++ IlmImfUtil/Makefile.in	2016-11-18 10:47:41.785326043 +0000
+@@ -265,10 +265,10 @@
+ libIlmImfUtil_la_LIBADD = -L$(top_builddir)/IlmImf @ILMBASE_LIBS@ -lIlmImf
+ libIlmImfUtilincludedir = $(includedir)/OpenEXR
+ EXTRA_DIST = CMakeLists.txt
+-INCLUDES = @ILMBASE_CXXFLAGS@ \
+-	   -I$(top_builddir)  \
++INCLUDES = -I$(top_builddir)  \
+ 	   -I$(top_srcdir)/IlmImf  \
+-	   -I$(top_srcdir)/config
++	   -I$(top_srcdir)/config \
++	   @ILMBASE_CXXFLAGS@
+ 
+ all: all-am
+ 

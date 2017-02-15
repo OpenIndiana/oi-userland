@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      1.6.1
+COMPONENT_VERSION=      2.2.0
 COMPONENT_PROJECT_URL=  http://www.openexr.com/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c616906ab958de9c37bb86ca7547cfedbdfbad5e1ca2a4ab98983c9afa6a5950
+    sha256:36a012f6c43213f840ce29a8b182700f6cf6b214bea0d5735594136b44914231
 COMPONENT_ARCHIVE_URL=  http://download.savannah.nongnu.org/releases/openexr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openexr
 COMPONENT_ANITYA_ID=	13289
 
-TPNO=			10771
+TPNO=			33075
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -65,7 +65,9 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/mkdir .libs/d"' \
      '-e "/is up to date/d"' \
      '-e "/creating IlmImfTest/d"' \
-     '-e "/DEPDIR=/d"'
+     '-e "/DEPDIR=/d"' \
+     '-e "/\/var\/tmp/d"' \
+     '-e "/Generating headers and data/d"'
 
 CONFIGURE_ENV += LIBS="$(LIBS)"
 
@@ -76,6 +78,12 @@ CONFIGURE_OPTIONS  +=           --with-pic
 
 PROTOPKGCONFIGDIR.32 = $(PROTOPKGCONFIGDIR)
 PROTOPKGCONFIGDIR.64 = $(PROTOPKGCONFIGDIR64)
+
+# Delete /usr/lib/amd64 in libIlmImfUtil.la before install to prevent it
+# using old library there when relinking.
+COMPONENT_PRE_INSTALL_ACTION = \
+	( cd $(BUILD_DIR_$(BITS))/IlmImfUtil ; \
+	$(GSED) -i "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g" libIlmImfUtil.la )
 
 COMPONENT_POST_INSTALL_ACTION = \
 	( cd $(PROTOPKGCONFIGDIR.$(BITS)) ; \

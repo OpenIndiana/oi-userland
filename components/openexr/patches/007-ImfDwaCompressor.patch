@@ -1,0 +1,23 @@
+Uses std::transform to allow compiler to find transform.
+Will not send upstream.
+
+--- IlmImf/ImfDwaCompressor.cpp	2016-11-17 13:58:52.789434004 +0000
++++ IlmImf/ImfDwaCompressor.cpp	2016-11-17 13:59:23.065747841 +0000
+@@ -255,7 +255,7 @@
+         _caseInsensitive(caseInsensitive)
+     {
+         if (caseInsensitive) 
+-            transform(_suffix.begin(), _suffix.end(), _suffix.begin(), tolower);
++            std::transform(_suffix.begin(), _suffix.end(), _suffix.begin(), tolower);
+     }
+ 
+     Classifier (const char *&ptr, int size)
+@@ -304,7 +304,7 @@
+         if (_caseInsensitive) 
+         {
+             std::string tmp(suffix);
+-            transform(tmp.begin(), tmp.end(), tmp.begin(), tolower);
++            std::transform(tmp.begin(), tmp.end(), tmp.begin(), tolower);
+             return tmp == _suffix;
+         }
+ 

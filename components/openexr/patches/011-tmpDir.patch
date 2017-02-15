@@ -1,0 +1,23 @@
+Includes unistd.h to enable rmdir for IlmImfTest.
+Will not send upstream.
+
+--- IlmImfTest/tmpDir.h	2016-11-28 17:24:41.989291357 +0000
++++ IlmImfTest/tmpDir.h	2016-11-28 17:25:12.526487289 +0000
+@@ -44,6 +44,7 @@
+     #define rmdir _rmdir
+ #else
+     #include <sys/stat.h> // for mkdir
++    #include <unistd.h> // for rmdir
+     #define IMF_TMP_DIR "/var/tmp/"
+     #define IMF_PATH_SEPARATOR "/"
+ #endif
+--- IlmImfUtilTest/tmpDir.h	2016-11-29 10:12:45.139023953 +0000
++++ IlmImfUtilTest/tmpDir.h	2016-11-29 10:13:42.096156672 +0000
+@@ -44,6 +44,7 @@
+     #define rmdir _rmdir
+ #else
+     #include <sys/stat.h> // for mkdir
++    #include <unistd.h> // for rmdir
+     #define IMF_TMP_DIR "/var/tmp/"
+     #define IMF_PATH_SEPARATOR "/"
+ #endif

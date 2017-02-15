@@ -1,12 +1,14 @@
-# Internal patch.
-# Don't print the library path since it's default anyway.
---- OpenEXR.pc.in	2007-03-30 10:14:05.000000000 -0700
-+++ OpenEXR.pc.in	2015-02-01 21:21:29.699453372 -0800
-@@ -7,5 +7,5 @@
- Name: OpenEXR
+Removes -L${libdir} in OpenEXR.pc.in
+Will not send upstream.
+
+--- OpenEXR.pc.in	2016-11-17 11:34:35.415294387 +0000
++++ OpenEXR.pc.in	2016-11-17 11:35:14.147488887 +0000
+@@ -8,7 +8,7 @@
  Description: OpenEXR image library
  Version: @OPENEXR_VERSION@
--Libs: -L${libdir} @ILMBASE_LDFLAGS@ -lIlmImf -lz @ILMBASE_LIBS@
--Cflags: @ILMBASE_CXXFLAGS@ -I${OpenEXR_includedir}
-+Libs: -lIlmImf -lz @ILMBASE_LIBS@
-+Cflags: -I${OpenEXR_includedir}
+ 
+-Libs: -L${libdir} -lIlmImf
++Libs: -lIlmImf
+ Cflags: -I${OpenEXR_includedir}
+ Requires: IlmBase
+ Libs.private: -lz

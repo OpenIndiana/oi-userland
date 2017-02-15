@@ -1,76 +1,24 @@
-*** ltmain.sh	Fri Jun 27 18:23:52 2008
---- ltmain.sh	Fri Jun 27 18:12:07 2008
-***************
-*** 1382,1388 ****
-        # but this is not reliable with gcc because gcc may use -mfoo to
-        # select a different linker, different libraries, etc, while
-        # -Wl,-mfoo simply passes -mfoo to the linker.
-!       -m*)
-  	# Unknown arguments in both finalize_command and compile_command need
-  	# to be aesthetically quoted because they are evaled later.
-  	arg=`$echo "X$arg" | $Xsed -e "$sed_quote_subst"`
---- 1382,1388 ----
-        # but this is not reliable with gcc because gcc may use -mfoo to
-        # select a different linker, different libraries, etc, while
-        # -Wl,-mfoo simply passes -mfoo to the linker.
-!       -m*|-xarch=*)
-  	# Unknown arguments in both finalize_command and compile_command need
-  	# to be aesthetically quoted because they are evaled later.
-  	arg=`$echo "X$arg" | $Xsed -e "$sed_quote_subst"`
-***************
-*** 1393,1401 ****
-  	esac
-          compile_command="$compile_command $arg"
-          finalize_command="$finalize_command $arg"
-!         if test "$with_gcc" = "yes" ; then
-            compiler_flags="$compiler_flags $arg"
-!         fi
-          continue
-          ;;
-  
---- 1393,1402 ----
-  	esac
-          compile_command="$compile_command $arg"
-          finalize_command="$finalize_command $arg"
-!         # comment out this to support 64bit for CC
-!         #if test "$with_gcc" = "yes" ; then
-            compiler_flags="$compiler_flags $arg"
-!         #fi
-          continue
-          ;;
-  
-***************
-*** 3890,3896 ****
-  	save_ifs="$IFS"; IFS='~'
-  	for cmd in $cmds; do
-  	  IFS="$save_ifs"
-! 	  eval cmd=\"$cmd\"
-  	  $show "$cmd"
-  	  $run eval "$cmd" || exit $?
-  	done
---- 3891,3898 ----
-  	save_ifs="$IFS"; IFS='~'
-  	for cmd in $cmds; do
-  	  IFS="$save_ifs"
-! 	  # Append the cmd to remove runpath for CC"
-! 	  eval cmd=\"$cmd -norunpath\"
-  	  $show "$cmd"
-  	  $run eval "$cmd" || exit $?
-  	done
-***************
-*** 4512,4518 ****
-  	$echo "$modename: \`$output' will be relinked during installation" 1>&2
-        else
-  	if test "$fast_install" != no; then
-! 	  link_command="$finalize_var$compile_command$finalize_rpath"
-  	  if test "$fast_install" = yes; then
-  	    relink_command=`$echo "X$compile_var$compile_command$compile_rpath" | $Xsed -e 's%@OUTPUT@%\$progdir/\$file%g'`
-  	  else
---- 4514,4520 ----
-  	$echo "$modename: \`$output' will be relinked during installation" 1>&2
-        else
-  	if test "$fast_install" != no; then
-! 	  link_command="$finalize_var$compile_command -norunpath"
-  	  if test "$fast_install" = yes; then
-  	    relink_command=`$echo "X$compile_var$compile_command$compile_rpath" | $Xsed -e 's%@OUTPUT@%\$progdir/\$file%g'`
-  	  else
+Appends -norunpath to address publish error.
+Will not send upstream.
+
+--- ltmain.sh	2016-11-17 10:54:17.548942670 +0000
++++ ltmain.sh	2016-11-17 10:58:10.937162981 +0000
+@@ -7332,7 +7332,8 @@
+ 	save_ifs="$IFS"; IFS='~'
+ 	for cmd in $cmds; do
+ 	  IFS="$save_ifs"
+-	  eval cmd=\"$cmd\"
++	    # Append the command to remove runpath for CC.
++	  eval cmd=\"$cmd -norunpath\"
+ 	  $opt_silent || {
+ 	    func_quote_for_expand "$cmd"
+ 	    eval "func_echo $func_quote_for_expand_result"
+@@ -7755,7 +7756,7 @@
+ 	func_warning "\`$output' will be relinked during installation"
+       else
+ 	if test "$fast_install" != no; then
+-	  link_command="$finalize_var$compile_command$finalize_rpath"
++	  link_command="$finalize_var$compile_command -norunpath"
+ 	  if test "$fast_install" = yes; then
+ 	    relink_command=`$ECHO "X$compile_var$compile_command$compile_rpath" | $Xsed -e 's%@OUTPUT@%\$progdir/\$file%g'`
+ 	  else

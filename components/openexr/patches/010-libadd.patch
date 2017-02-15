@@ -1,0 +1,45 @@
+Addresses upgrading build error by changing the library path order to search local path first.
+There's already a bug posted here https://github.com/openexr/openexr/issues/200.
+
+--- IlmImf/Makefile.in	2016-11-18 10:47:02.887998521 +0000
++++ IlmImf/Makefile.in	2016-11-21 15:02:49.292844920 +0000
+@@ -112,7 +112,8 @@
+ libIlmImf_la_OBJECTS = $(am_libIlmImf_la_OBJECTS)
+ libIlmImf_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+-	$(CXXFLAGS) $(libIlmImf_la_LDFLAGS) $(LDFLAGS) -o $@
++	$(CXXFLAGS) $(libIlmImf_la_LIBADD) $(libIlmImf_la_LDFLAGS) \
++	$(LDFLAGS) -o $@
+ PROGRAMS = $(noinst_PROGRAMS)
+ am_b44ExpLogTable_OBJECTS = b44ExpLogTable.$(OBJEXT)
+ b44ExpLogTable_OBJECTS = $(am_b44ExpLogTable_OBJECTS)
+@@ -535,7 +536,7 @@
+ 	  rm -f "$${dir}/so_locations"; \
+ 	done
+ libIlmImf.la: $(libIlmImf_la_OBJECTS) $(libIlmImf_la_DEPENDENCIES) 
+-	$(libIlmImf_la_LINK) -rpath $(libdir) $(libIlmImf_la_OBJECTS) $(libIlmImf_la_LIBADD) $(LIBS)
++	$(libIlmImf_la_LINK) -rpath $(libdir) $(libIlmImf_la_OBJECTS) $(LIBS)
+ 
+ clean-noinstPROGRAMS:
+ 	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+--- IlmImfUtil/Makefile.in	2016-11-18 10:53:59.740461589 +0000
++++ IlmImfUtil/Makefile.in	2016-11-21 14:37:33.743463495 +0000
+@@ -80,7 +80,8 @@
+ libIlmImfUtil_la_OBJECTS = $(am_libIlmImfUtil_la_OBJECTS)
+ libIlmImfUtil_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+-	$(CXXFLAGS) $(libIlmImfUtil_la_LDFLAGS) $(LDFLAGS) -o $@
++	$(CXXFLAGS) $(libIlmImfUtil_la_LIBADD) $(libIlmImfUtil_la_LDFLAGS) \
++	$(LDFLAGS) -o $@
+ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/config
+ depcomp = $(SHELL) $(top_srcdir)/depcomp
+ am__depfiles_maybe = depfiles
+@@ -336,7 +337,7 @@
+ 	  rm -f "$${dir}/so_locations"; \
+ 	done
+ libIlmImfUtil.la: $(libIlmImfUtil_la_OBJECTS) $(libIlmImfUtil_la_DEPENDENCIES) 
+-	$(libIlmImfUtil_la_LINK) -rpath $(libdir) $(libIlmImfUtil_la_OBJECTS) $(libIlmImfUtil_la_LIBADD) $(LIBS)
++	$(libIlmImfUtil_la_LINK) -rpath $(libdir) $(libIlmImfUtil_la_OBJECTS) $(LIBS)
+ 
+ mostlyclean-compile:
+ 	-rm -f *.$(OBJEXT)
