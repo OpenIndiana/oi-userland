@@ -1,42 +1,15 @@
-*** ilmbase-1.0.1/ltmain.sh.org	Thu Jun 26 19:20:21 2008
---- ltmain.sh	Thu Jun 26 19:18:49 2008
-***************
-*** 1553,1561 ****
-  	esac
-          compile_command="$compile_command $arg"
-          finalize_command="$finalize_command $arg"
-!         if test "$with_gcc" = "yes" ; then
-            compiler_flags="$compiler_flags $arg"
-!         fi
-          continue
-          ;;
-  
---- 1553,1562 ----
-  	esac
-          compile_command="$compile_command $arg"
-          finalize_command="$finalize_command $arg"
-!         # comment out this to support 64bit for CC
-!         #if test "$with_gcc" = "yes" ; then
-            compiler_flags="$compiler_flags $arg"
-!         #fi
-          continue
-          ;;
-  
-***************
-*** 4015,4021 ****
-  	save_ifs="$IFS"; IFS='~'
-  	for cmd in $cmds; do
-  	  IFS="$save_ifs"
-! 	  eval cmd=\"$cmd\"
-  	  $show "$cmd"
-  	  $run eval "$cmd" || exit $?
-  	done
---- 4016,4023 ----
-  	save_ifs="$IFS"; IFS='~'
-  	for cmd in $cmds; do
-  	  IFS="$save_ifs"
-!           # Append the command to remove runpath for CC.
-! 	  eval cmd=\"$cmd -norunpath\"
-  	  $show "$cmd"
-  	  $run eval "$cmd" || exit $?
-  	done
+Addresses publish error by removing runpath for CC.
+Will not send upstream.
+
+--- ltmain.sh	2016-11-14 13:28:02.161103599 +0000
++++ ltmain.sh	2016-11-14 14:11:06.669510804 +0000
+@@ -7332,7 +7332,8 @@
+ 	save_ifs="$IFS"; IFS='~'
+ 	for cmd in $cmds; do
+ 	  IFS="$save_ifs"
+-	  eval cmd=\"$cmd\"
++	    # Append the command to remove runpath for CC.
++	  eval cmd=\"$cmd -norunpath \"
+ 	  $opt_silent || {
+ 	    func_quote_for_expand "$cmd"
+ 	    eval "func_echo $func_quote_for_expand_result"

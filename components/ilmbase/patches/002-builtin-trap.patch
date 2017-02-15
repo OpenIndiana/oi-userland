@@ -1,0 +1,19 @@
+Solaris studio doesn't seem to define __builtin_trap() function, so raise SIGTRAP as a workaround.
+Will not send upstream.
+
+--- Iex/IexBaseExc.cpp	2016-11-08 15:34:26.104711329 +0000
++++ Iex/IexBaseExc.cpp	2016-11-10 13:30:11.505215478 +0000
+@@ -146,11 +146,12 @@
+         ::DebugBreak();
+ }
+ #else
++#include <signal.h>
+ void
+ iex_debugTrap()
+ {
+     // how to in Linux?
+     if (0 != ::getenv("IEXDEBUGTHROW"))
+-        __builtin_trap();
++        raise(SIGTRAP);
+ }
+ #endif

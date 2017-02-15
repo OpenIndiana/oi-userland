@@ -2,8 +2,6 @@ Making check in Half
 /usr/gnu/bin/make  check-am
 Making check in HalfTest
 /usr/gnu/bin/make  HalfTest
-mkdir .libs
-creating HalfTest
 /usr/gnu/bin/make  check-TESTS
 
 testing type half:
@@ -138,7 +136,7 @@ specific bit patterns
   2.9808284e-08    0 01100110 00000000000011010001110    0 00000 0000000001
   5.9604645e-08    0 01100111 00000000000000000000000
 
-  2.9796363e-08    0 01100101 11111111111001011100101    0 00000 0000000000
+  2.9796361e-08    0 01100101 11111111111001011100100    0 00000 0000000000
               0    0 00000000 00000000000000000000000
 
   6.1035156e-05    0 01110001 00000000000000000000000    0 00001 0000000000
@@ -279,7 +277,7 @@ specific bit patterns
  -2.9808284e-08    1 01100110 00000000000011010001110    1 00000 0000000001
  -5.9604645e-08    1 01100111 00000000000000000000000
 
- -2.9796363e-08    1 01100101 11111111111001011100101    1 00000 0000000000
+ -2.9796361e-08    1 01100101 11111111111001011100100    1 00000 0000000000
              -0    1 00000000 00000000000000000000000
 
  -6.1035156e-05    1 01110001 00000000000000000000000    1 00001 0000000000
@@ -412,14 +410,13 @@ halfFunction<T>
 ok
 
 PASS: HalfTest
-==================
-All 1 tests passed
-==================
+=============
+1 test passed
+=============
 Making check in Iex
+Making check in IexMath
 Making check in IexTest
 /usr/gnu/bin/make  IexTest
-mkdir .libs
-creating IexTest
 /usr/gnu/bin/make  check-TESTS
 See if throw and catch work:
 1
@@ -430,15 +427,16 @@ See if throw and catch work:
 ok
 
 PASS: IexTest
-==================
-All 1 tests passed
-==================
+=============
+1 test passed
+=============
 Making check in Imath
 Making check in ImathTest
 /usr/gnu/bin/make  ImathTest
-mkdir .libs
-creating ImathTest
 /usr/gnu/bin/make  check-TESTS
+Testing some basic vector operations
+ok
+
 Testing functions in ImathColor.h & ImathColorAlgo.h
 rgb2packed -> packed2rgb
 Imath::Color4 * f
@@ -454,10 +452,37 @@ Assignment and comparison
 ok
 
 Testing functions in ImathMatrix.h
-Imath::Matrix33 shear functions
+Imath::M33f shear functions
+M33f constructors and equality operators
+M33d constructors and equality operators
+M44f constructors and equality operators
+M44d constructors and equality operators
+Converting between M33 and M44
+3x3 Matrix minors
+3x3 determinant
+Outer product of two 3D vectors
+4x4 determinants
+4x4 matrix minors
+M44 multiplicaftion test
+ok
+
+Testing misc functions in ImathMatrixAlgo.h
+Testing the building of an orthonormal direct frame from : a position, an x axis direction and a normal to the y axis
+IMATH_INTERNAL_NAMESPACE::computeLocalFrame()
+ok
+
+Add a translate/rotate/scale offset to an input frame and put it in another frame of reference
+IMATH_INTERNAL_NAMESPACE::addOffset()
+ok
+
+Compute Translate/Rotate/Scale matrix from matrix A 
+with the Rotate/Scale of Matrix B
+IMATH_INTERNAL_NAMESPACE::computeRSMatrix()
 ok
 
 Testing functions in ImathRoots.h
+
+solveCubic
 coefficients:   1   6  11   6  solutions: -3 -2 -1
 coefficients:   2   2 -20  16  solutions: -4 1 2
 coefficients:   3  -3   1  -1  solutions: 1
@@ -474,6 +499,18 @@ coefficients:   0   0   5  15  solutions: -3
 coefficients:   0   0   1   0  solutions: -0
 coefficients:   0   0   0   1  solutions: none
 coefficients:   0   0   0   0  solutions: [-inf, inf]
+
+solveQuadratic
+coefficients:   1   3   2  solutions: -2 -1
+coefficients:   1   0  -9  solutions: -3 3
+coefficients:   1  -4   0  solutions: 0 4
+coefficients:   2  -4   2  solutions: 1
+coefficients:   0  -4   8  solutions: 2
+coefficients:   0   7   0  solutions: -0
+coefficients:  10   0   0  solutions: -0
+coefficients:   0   0   0  solutions: [-inf, inf]
+coefficients:   0   0   1  solutions: none
+coefficients:   3  -6  30  solutions: none
 ok
 
 Testing functions in ImathFun.h
@@ -553,13 +590,13 @@ psf -3.40282347e+38
 d 0
 sd 4.94065645841246544e-324
 pd -4.94065645841246544e-324
-spd -9.88131291682493088e-324
+spd -0
 psd 0
 
 d -0
 sd 4.94065645841246544e-324
 pd -4.94065645841246544e-324
-spd -9.88131291682493088e-324
+spd -0
 psd 0
 
 d 1
@@ -569,8 +606,8 @@ spd 1
 psd 1
 
 d -1
-sd -1.00000000000000022
-pd -0.999999999999999889
+sd -0.999999999999999889
+pd -1.00000000000000022
 spd -1
 psd -1
 
@@ -611,10 +648,10 @@ spd 1.79769313486231571e+308
 psd Infinity
 
 d -1.79769313486231571e+308
-sd -Infinity
-pd -1.79769313486231551e+308
-spd -1.79769313486231571e+308
-psd -Infinity
+sd -1.79769313486231551e+308
+pd -Infinity
+spd -Infinity
+psd -1.79769313486231571e+308
 ok
 
 Testing 4x4 and 3x3 matrix inversion:
@@ -689,6 +726,9 @@ Imath::extractSHRT()
     4x4
 ok
 
+Testing basic quaternion operations
+ok
+
 Testing quaternion rotations
   exact 90-degree rotations
   exact zero-degree rotations
@@ -720,6 +760,63 @@ line-triangle intersection
 ok
 
 Testing box algorithms
+  ray-box entry and exit, random rays
+    box = ((-1 -1 -1) (1 1 1))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((10 20 30) (1010 21 31))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((10 20 30) (11 1020 31))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((10 20 30) (11 21 1030))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((-1e+10 -2e+10 -3e+10) (5e+15 6e+15 7e+15))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((1 1 1) (2 1 1))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((1 1 1) (1 2 1))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((1 1 1) (1 1 2))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((1 1 1) (1 2 3))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((1 1 1) (2 3 1))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((1 1 1) (2 1 3))
+    ray starts outside box, intersects
+    ray starts outside box, does not intersect
+    box = ((-1 -2 1) (-1 -2 1))
+    single-point box, ray intersects
+    single-point box, ray does not intersect
+    box = ((1 1 1) (1 1 1))
+    single-point box, ray intersects
+    single-point box, ray does not intersect
+    box = ((0 0 0) (0 0 0))
+    single-point box, ray intersects
+    single-point box, ray does not intersect
+    empty box, no rays intersect
+  ray-box entry and exit, nearly axis-parallel rays
+    dir ~ (1 0 0), result = 1
+    dir ~ (-1 0 0), result = 1
+    dir ~ (1 0 0), result = 0
+    dir ~ (-1 0 0), result = 0
+    dir ~ (0 1 0), result = 1
+    dir ~ (0 -1 0), result = 1
+    dir ~ (0 1 0), result = 0
+    dir ~ (0 -1 0), result = 0
+    dir ~ (0 0 1), result = 1
+    dir ~ (0 0 -1), result = 1
+    dir ~ (0 0 1), result = 0
+    dir ~ (0 0 -1), result = 0
   ray-box intersection, random rays
     box = ((-1 -1 -1) (1 1 1))
     ray starts inside box
@@ -789,11 +886,493 @@ Testing box algorithms
     dir ~ (0 0 1), result = 0
     dir ~ (0 0 -1), result = 0
   transform box by matrix
+  closest points in and on box
+ok
+
+Testing box methods
+    constructors for type V2s
+    constructors for type V2i
+    constructors for type V2f
+    constructors for type V2d
+    constructors for type V3s
+    constructors for type V3i
+    constructors for type V3f
+    constructors for type V3d
+    constructors for type V4s
+    constructors for type V4i
+    constructors for type V4f
+    constructors for type V4d
+    makeEmpty() for type V2s
+    makeEmpty() for type V2i
+    makeEmpty() for type V2f
+    makeEmpty() for type V2d
+    makeEmpty() for type V3s
+    makeEmpty() for type V3i
+    makeEmpty() for type V3f
+    makeEmpty() for type V3d
+    makeEmpty() for type V4s
+    makeEmpty() for type V4i
+    makeEmpty() for type V4f
+    makeEmpty() for type V4d
+    makeInfinite() for type V2s
+    makeInfinite() for type V2i
+    makeInfinite() for type V2f
+    makeInfinite() for type V2d
+    makeInfinite() for type V3s
+    makeInfinite() for type V3i
+    makeInfinite() for type V3f
+    makeInfinite() for type V3d
+    makeInfinite() for type V4s
+    makeInfinite() for type V4i
+    makeInfinite() for type V4f
+    makeInfinite() for type V4d
+    extendBy() point for type V2s
+    extendBy() point for type V2i
+    extendBy() point for type V2f
+    extendBy() point for type V2d
+    extendBy() point for type V3s
+    extendBy() point for type V3i
+    extendBy() point for type V3f
+    extendBy() point for type V3d
+    extendBy() point for type V4s
+    extendBy() point for type V4i
+    extendBy() point for type V4f
+    extendBy() point for type V4d
+    extendBy() box for type V2s
+    extendBy() box for type V2i
+    extendBy() box for type V2f
+    extendBy() box for type V2d
+    extendBy() box for type V3s
+    extendBy() box for type V3i
+    extendBy() box for type V3f
+    extendBy() box for type V3d
+    extendBy() box for type V4s
+    extendBy() box for type V4i
+    extendBy() box for type V4f
+    extendBy() box for type V4d
+    comparators for type V2s
+    comparators for type V2i
+    comparators for type V2f
+    comparators for type V2d
+    comparators for type V3s
+    comparators for type V3i
+    comparators for type V3f
+    comparators for type V3d
+    comparators for type V4s
+    comparators for type V4i
+    comparators for type V4f
+    comparators for type V4d
+    size() for type V2s
+    size() for type V2i
+    size() for type V2f
+    size() for type V2d
+    size() for type V3s
+    size() for type V3i
+    size() for type V3f
+    size() for type V3d
+    size() for type V4s
+    size() for type V4i
+    size() for type V4f
+    size() for type V4d
+    center() for type V2s
+    center() for type V2i
+    center() for type V2f
+    center() for type V2d
+    center() for type V3s
+    center() for type V3i
+    center() for type V3f
+    center() for type V3d
+    center() for type V4s
+    center() for type V4i
+    center() for type V4f
+    center() for type V4d
+    isEmpty() for type V2s
+    isEmpty() for type V2i
+    isEmpty() for type V2f
+    isEmpty() for type V2d
+    isEmpty() for type V3s
+    isEmpty() for type V3i
+    isEmpty() for type V3f
+    isEmpty() for type V3d
+    isEmpty() for type V4s
+    isEmpty() for type V4i
+    isEmpty() for type V4f
+    isEmpty() for type V4d
+    isInfinite() for type V2s
+    isInfinite() for type V2i
+    isInfinite() for type V2f
+    isInfinite() for type V2d
+    isInfinite() for type V3s
+    isInfinite() for type V3i
+    isInfinite() for type V3f
+    isInfinite() for type V3d
+    isInfinite() for type V4s
+    isInfinite() for type V4i
+    isInfinite() for type V4f
+    isInfinite() for type V4d
+    hasVolume() for type V2s
+    hasVolume() for type V2i
+    hasVolume() for type V2f
+    hasVolume() for type V2d
+    hasVolume() for type V3s
+    hasVolume() for type V3i
+    hasVolume() for type V3f
+    hasVolume() for type V3d
+    hasVolume() for type V4s
+    hasVolume() for type V4i
+    hasVolume() for type V4f
+    hasVolume() for type V4d
+    majorAxis() for type V2s
+    majorAxis() for type V2i
+    majorAxis() for type V2f
+    majorAxis() for type V2d
+    majorAxis() for type V3s
+    majorAxis() for type V3i
+    majorAxis() for type V3f
+    majorAxis() for type V3d
+    majorAxis() for type V4s
+    majorAxis() for type V4i
+    majorAxis() for type V4f
+    majorAxis() for type V4d
+ok
+
+Testing Procrustes algorithms in single precision...
+Testing known translate/rotate matrix:
+ (  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   0.000000e+00   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ (  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ (  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   0.000000e+00  -1.224647e-16  -1.000000e+00   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ (  7.071068e-01   8.659561e-17   7.071068e-01   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ ( -5.000000e-01   7.071068e-01  -5.000000e-01  -0.000000e+00
+   5.000000e-01   7.071068e-01   5.000000e-01   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing with known translate/rotate/scale matrix
+(  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   0.000000e+00   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+(  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+(  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   0.000000e+00  -1.224647e-16  -1.000000e+00   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+(  7.071068e-01   8.659561e-17   7.071068e-01   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+( -5.000000e-01   7.071068e-01  -5.000000e-01  -0.000000e+00
+   5.000000e-01   7.071068e-01   5.000000e-01   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+( -1.000000e+00   1.414214e+00  -1.000000e+00  -0.000000e+00
+   1.000000e+00   1.414214e+00   1.000000e+00   0.000000e+00
+   1.414214e+00  -1.731912e-16  -1.414214e+00   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   4.241421e-01   6.098995e+00   9.995858e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   5.582843e-01   5.985858e+00   1.010172e+01   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+(  1.219579e-02   1.573132e-02   1.946348e-03   0.000000e+00
+   5.124720e-03  -1.589186e-03  -1.926686e-02   0.000000e+00
+  -1.500000e-02   1.224745e-02  -5.000000e-03   0.000000e+00
+   6.842304e+00  -5.755414e+00  -7.631837e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+(  1.829368e-02   2.359698e-02   2.919522e-03   0.000000e+00
+   3.279821e-02  -1.017079e-02  -1.233079e-01   0.000000e+00
+  -3.000000e-02   2.449490e-02  -1.000000e-02   0.000000e+00
+   6.842304e+00  -5.755414e+00  -7.631837e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -2.546762e-03  -9.270112e-03   2.841794e-02  -0.000000e+00
+  -7.301607e-02   1.017024e-01   2.663240e-02   0.000000e+00
+   3.267767e-02   2.090770e-02   9.748737e-03   0.000000e+00
+  -1.106096e+01   3.731658e+00   1.384479e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -2.546762e-03  -9.270112e-03   2.841794e-02  -0.000000e+00
+  -7.301607e-05   1.017024e-04   2.663240e-05   0.000000e+00
+   3.267767e-02   2.090770e-02   9.748737e-03   0.000000e+00
+  -1.106096e+01   3.731658e+00   1.384479e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -2.546762e-03  -9.270112e-03   2.841794e-02  -0.000000e+00
+  -7.301607e-05   1.017024e-04   2.663240e-05   0.000000e+00
+   0.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+  -1.106096e+01   3.731658e+00   1.384479e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithms in double precision...
+Testing known translate/rotate matrix:
+ (  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   0.000000e+00   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ (  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ (  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   0.000000e+00  -1.224647e-16  -1.000000e+00   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ (  7.071068e-01   8.659561e-17   7.071068e-01   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing known translate/rotate matrix:
+ ( -5.000000e-01   7.071068e-01  -5.000000e-01  -0.000000e+00
+   5.000000e-01   7.071068e-01   5.000000e-01   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   3.000000e+00   5.000000e+00  -2.000000e-01   1.000000e+00)
+  OK
+Testing with known translate/rotate/scale matrix
+(  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   0.000000e+00   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+(  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00   0.000000e+00   1.000000e+00   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+(  1.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   0.000000e+00  -1.224647e-16  -1.000000e+00   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+(  7.071068e-01   8.659561e-17   7.071068e-01   0.000000e+00
+   0.000000e+00  -1.000000e+00   1.224647e-16   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+( -5.000000e-01   7.071068e-01  -5.000000e-01  -0.000000e+00
+   5.000000e-01   7.071068e-01   5.000000e-01   0.000000e+00
+   7.071068e-01  -8.659561e-17  -7.071068e-01   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+( -1.000000e+00   1.414214e+00  -1.000000e+00  -0.000000e+00
+   1.000000e+00   1.414214e+00   1.000000e+00   0.000000e+00
+   1.414214e+00  -1.731912e-16  -1.414214e+00   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing with known translate/rotate/scale matrix
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+numPoints: 1 2 3 4 5 6 7 8 9   OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   4.000000e-01   6.000000e+00   1.000000e+01   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   4.241421e-01   6.098995e+00   9.995858e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -1.000000e-02   1.414214e-02  -1.000000e-02  -0.000000e+00
+   1.000000e-02   1.414214e-02   1.000000e-02   0.000000e+00
+   1.414214e-02  -1.731912e-18  -1.414214e-02   0.000000e+00
+   5.582843e-01   5.985858e+00   1.010172e+01   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+(  1.219579e-02   1.573132e-02   1.946348e-03   0.000000e+00
+   5.124720e-03  -1.589186e-03  -1.926686e-02   0.000000e+00
+  -1.500000e-02   1.224745e-02  -5.000000e-03   0.000000e+00
+   6.842304e+00  -5.755414e+00  -7.631837e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+(  1.829368e-02   2.359698e-02   2.919522e-03   0.000000e+00
+   3.279821e-02  -1.017079e-02  -1.233079e-01   0.000000e+00
+  -3.000000e-02   2.449490e-02  -1.000000e-02   0.000000e+00
+   6.842304e+00  -5.755414e+00  -7.631837e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -2.546762e-03  -9.270112e-03   2.841794e-02  -0.000000e+00
+  -7.301607e-02   1.017024e-01   2.663239e-02   0.000000e+00
+   3.267767e-02   2.090770e-02   9.748737e-03   0.000000e+00
+  -1.106096e+01   3.731658e+00   1.384479e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -2.546762e-03  -9.270112e-03   2.841794e-02  -0.000000e+00
+  -7.301607e-05   1.017024e-04   2.663239e-05   0.000000e+00
+   3.267767e-02   2.090770e-02   9.748737e-03   0.000000e+00
+  -1.106096e+01   3.731658e+00   1.384479e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing Procrustes algorithm with arbitrary matrix: 
+( -2.546762e-03  -9.270112e-03   2.841794e-02  -0.000000e+00
+  -7.301607e-05   1.017024e-04   2.663239e-05   0.000000e+00
+   0.000000e+00   0.000000e+00   0.000000e+00   0.000000e+00
+  -1.106096e+01   3.731658e+00   1.384479e+00   1.000000e+00)
+   numPoints: 1 2 3 4 5 6 7 8 9 OK
+Testing TinySVD algorithms in single precision...
+Verifying SVD for [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+Verifying SVD for [[1, 0, 0], [0, -1, 0], [0, 0, 1]]
+Verifying SVD for [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+Verifying SVD for [[0, 0, 0], [0, 0, 0], [0, 0, 1]]
+Verifying SVD for [[1, 0, 0], [0, 1, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [1e-10, 0, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [1e-10, 0, 0], [0, 0, 100000]]
+Verifying SVD for [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+Verifying SVD for [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+Verifying SVD for [[10000, 0.001, 0], [0.001, 1e-10, 0], [0, 0, 0]]
+Verifying SVD for [[62720, 73500, 4900], [5120, 6000, 400], [256, 300, 20]]
+Verifying SVD for [[60026, 4902, 248], [4902, 404, 26], [248, 26, 10]]
+Verifying SVD for [[0.00235883, -0.00965581, 0.00109599], [0.00886718, 0.00167718, -0.00430815], [0.00397605, 0.00198805, 0.0089576]]
+Verifying SVD for [[2.35883e-09, -9.65581e-09, 1.09599e-09], [8.86718e-09, 1.67718e-09, -4.30815e-09], [3.97605e-09, 1.98805e-09, 8.9576e-09]]
+Verifying SVD for [[-0.466739, 0.674663, 0.97647], [-0.0324608, 0.0465845, 0.0674312], [-0.0888851, 0.128039, 0.185326]]
+Verifying SVD for [[1e-08, 0, 0], [0, 1e-08, 0], [0, 0, 1e-08]]
+Verifying SVD for [[1, 0, 0], [0, 0.00036, 0], [1e-18, 0, 0.00018]]
+Verifying SVD for [[1.3, 0, 0], [0, 0.0003, 0], [1e-17, 0, 0]]
+Verifying SVD for [[1, 0, 0], [0, 0.01, 0], [0, 0, 0.01]]
+Verifying SVD for [[1, 0, 0], [0, 1, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [0, 0.001, 0], [0, 0, 1e-06]]
+Verifying SVD for [[0.595886, -0.797612, -1], [0.391945, 0.917631, -0.341818], [-0.450561, -0.712591, 0.47125]]
+Verifying SVD for [[4.38805e-09, -2.5319e-09, -4.65679e-09], [-3.23e-10, 1.8637e-10, 3.42781e-10], [-4.61573e-09, 2.66326e-09, 4.8984e-09]]
+Verifying SVD for [[0, -1e-22, 0], [1e-07, 0, 0], [0, 0, 0]]
+Verifying SVD for [[0, -1e-22, 0], [1e-07, 0, 0], [0, 0, 1]]
+Verifying SVD for [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+Verifying SVD for [[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+Verifying SVD for [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0]]
+Verifying SVD for [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
+Verifying SVD for [[0, -1e-22, 0, 0], [1e-07, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+Verifying SVD for [[10000, 0.001, 0, 0], [0.001, 1e-10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[62720, 73500, 4900, 2450], [5120, 6000, 400, 2450], [256, 300, 20, 2450], [128, 150, 10, 5]]
+Verifying SVD for [[62750, 73560, 4990, 2540], [5130, 6020, 430, 2540], [266, 320, 50, 2540], [138, 170, 40, 35]]
+Testing TinySVD algorithms in double precision...
+Verifying SVD for [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+Verifying SVD for [[1, 0, 0], [0, -1, 0], [0, 0, 1]]
+Verifying SVD for [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+Verifying SVD for [[0, 0, 0], [0, 0, 0], [0, 0, 1]]
+Verifying SVD for [[1, 0, 0], [0, 1, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [0, 0, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [1e-10, 0, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [1e-10, 0, 0], [0, 0, 100000]]
+Verifying SVD for [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+Verifying SVD for [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+Verifying SVD for [[10000, 0.001, 0], [0.001, 1e-10, 0], [0, 0, 0]]
+Verifying SVD for [[62720, 73500, 4900], [5120, 6000, 400], [256, 300, 20]]
+Verifying SVD for [[60026, 4902, 248], [4902, 404, 26], [248, 26, 10]]
+Verifying SVD for [[0.00235883, -0.00965581, 0.00109599], [0.00886718, 0.00167718, -0.00430815], [0.00397605, 0.00198805, 0.0089576]]
+Verifying SVD for [[2.35883e-09, -9.65581e-09, 1.09599e-09], [8.86718e-09, 1.67718e-09, -4.30815e-09], [3.97605e-09, 1.98805e-09, 8.9576e-09]]
+Verifying SVD for [[-0.466739, 0.674663, 0.97647], [-0.0324608, 0.0465845, 0.0674312], [-0.0888851, 0.128039, 0.185326]]
+Verifying SVD for [[1e-08, 0, 0], [0, 1e-08, 0], [0, 0, 1e-08]]
+Verifying SVD for [[1, 0, 0], [0, 0.00036, 0], [1e-18, 0, 0.00018]]
+Verifying SVD for [[1.3, 0, 0], [0, 0.0003, 0], [1e-17, 0, 0]]
+Verifying SVD for [[1, 0, 0], [0, 0.01, 0], [0, 0, 0.01]]
+Verifying SVD for [[1, 0, 0], [0, 1, 0], [0, 0, 0]]
+Verifying SVD for [[1, 0, 0], [0, 0.001, 0], [0, 0, 1e-06]]
+Verifying SVD for [[0.595886, -0.797612, -1], [0.391945, 0.917631, -0.341818], [-0.450561, -0.712591, 0.47125]]
+Verifying SVD for [[4.38805e-09, -2.5319e-09, -4.65679e-09], [-3.23e-10, 1.8637e-10, 3.42781e-10], [-4.61573e-09, 2.66326e-09, 4.8984e-09]]
+Verifying SVD for [[0, -1e-22, 0], [1e-07, 0, 0], [0, 0, 0]]
+Verifying SVD for [[0, -1e-22, 0], [1e-07, 0, 0], [0, 0, 1]]
+Verifying SVD for [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+Verifying SVD for [[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+Verifying SVD for [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0]]
+Verifying SVD for [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
+Verifying SVD for [[0, -1e-22, 0, 0], [1e-07, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+Verifying SVD for [[10000, 0.001, 0, 0], [0.001, 1e-10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+Verifying SVD for [[62720, 73500, 4900, 2450], [5120, 6000, 400, 2450], [256, 300, 20, 2450], [128, 150, 10, 5]]
+Verifying SVD for [[62750, 73560, 4990, 2540], [5130, 6020, 430, 2540], [266, 320, 50, 2540], [138, 170, 40, 35]]
+
+************ Testing IMATH_INTERNAL_NAMESPACE::ImathJacobiEigenSolver ************
+Jacobi EigenSolver in single precision...PASS
+Jacobi EigenSolver in double precision...PASS
+Min/Max EigenValue in single precision...PASS
+Min/Max EigenValue in double precision...PASS
+Timing Jacobi EigenSolver in single precision...
+Timing Jacobi EigenSolver in double precision...
+************      ALL PASS          ************
+Testing functions in ImathFrustumTest.h
+isVisible(Vec3) passed Vec3
+passed Box
+passed Sphere
+
 ok
 
 PASS: ImathTest
-==================
-All 1 tests passed
-==================
+=============
+1 test passed
+=============
 Making check in IlmThread
 Making check in config
