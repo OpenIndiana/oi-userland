@@ -22,10 +22,14 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+# HTML documents are obtained directly from source.
+<transform file path=usr/share/doc/bind/html/(.+)$ -> \
+    set action.hash doc/arm/%<1> >
 set name=pkg.fmri \
     value=pkg:/network/dns/bind@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="BIND DNS tools"
-set name=pkg.description value="DNS tools and related libraries."
+set name=pkg.description value="DNS tools, related libraries and documentation."
 set name=pkg.human-version value=$(HUMAN_VERSION)
 
 # This package name has known conflicts with other packages in the WOS
@@ -70,11 +74,88 @@ link path=usr/sbin/host target=../bin/host
 link path=usr/sbin/nslookup target=../bin/nslookup
 link path=usr/sbin/nsupdate target=../bin/nsupdate
 file path=usr/sbin/rndc
+file doc/arm/Bv9ARM.pdf path=usr/share/doc/bind/Bv9ARM.pdf
+file path=usr/share/doc/bind/html/Bv9ARM.ch01.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch02.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch03.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch04.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch05.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch06.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch07.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch08.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch09.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch10.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch11.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch12.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch13.html
+file path=usr/share/doc/bind/html/Bv9ARM.html
+file path=usr/share/doc/bind/html/man.arpaname.html
+file path=usr/share/doc/bind/html/man.ddns-confgen.html
+file path=usr/share/doc/bind/html/man.delv.html
+file path=usr/share/doc/bind/html/man.dig.html
+file path=usr/share/doc/bind/html/man.dnssec-checkds.html
+file path=usr/share/doc/bind/html/man.dnssec-coverage.html
+file path=usr/share/doc/bind/html/man.dnssec-dsfromkey.html
+file path=usr/share/doc/bind/html/man.dnssec-importkey.html
+file path=usr/share/doc/bind/html/man.dnssec-keyfromlabel.html
+file path=usr/share/doc/bind/html/man.dnssec-keygen.html
+file path=usr/share/doc/bind/html/man.dnssec-revoke.html
+file path=usr/share/doc/bind/html/man.dnssec-settime.html
+file path=usr/share/doc/bind/html/man.dnssec-signzone.html
+file path=usr/share/doc/bind/html/man.dnssec-verify.html
+file path=usr/share/doc/bind/html/man.genrandom.html
+file path=usr/share/doc/bind/html/man.host.html
+file path=usr/share/doc/bind/html/man.isc-hmac-fixup.html
+file path=usr/share/doc/bind/html/man.named-checkconf.html
+file path=usr/share/doc/bind/html/man.named-checkzone.html
+file path=usr/share/doc/bind/html/man.named-journalprint.html
+file path=usr/share/doc/bind/html/man.named-rrchecker.html
+file path=usr/share/doc/bind/html/man.named.conf.html
+file path=usr/share/doc/bind/html/man.named.html
+file path=usr/share/doc/bind/html/man.nsec3hash.html
+file path=usr/share/doc/bind/html/man.nsupdate.html
+file path=usr/share/doc/bind/html/man.rndc-confgen.html
+file path=usr/share/doc/bind/html/man.rndc.conf.html
+file path=usr/share/doc/bind/html/man.rndc.html
+file path=usr/share/doc/bind/html/notes.html
+file doc/arm/notes.pdf path=usr/share/doc/bind/notes.pdf
+
+# Standard Documentation
 file path=usr/share/man/man1/arpaname.1
 file path=usr/share/man/man1/delv.1
 file path=usr/share/man/man1/dig.1
 file path=usr/share/man/man1/host.1
+file path=usr/share/man/man1/named-rrchecker.1
 file path=usr/share/man/man1/nslookup.1
 file path=usr/share/man/man1/nsupdate.1
+file path=usr/share/man/man5/named.conf.5
+file path=usr/share/man/man5/rndc.conf.5
+file path=usr/share/man/man8/ddns-confgen.8
+file path=usr/share/man/man8/dnssec-checkds.8
+file path=usr/share/man/man8/dnssec-coverage.8
+file path=usr/share/man/man8/dnssec-dsfromkey.8
+file path=usr/share/man/man8/dnssec-importkey.8
+file path=usr/share/man/man8/dnssec-keyfromlabel.8
+file path=usr/share/man/man8/dnssec-keygen.8
+file path=usr/share/man/man8/dnssec-revoke.8
+file path=usr/share/man/man8/dnssec-settime.8
+file path=usr/share/man/man8/dnssec-signzone.8
+file path=usr/share/man/man8/dnssec-verify.8
+file path=usr/share/man/man8/genrandom.8
+file path=usr/share/man/man8/isc-hmac-fixup.8
+file path=usr/share/man/man8/named-checkconf.8
+link path=usr/share/man/man8/named-checkzone.8 target=named-compilezone.8
+file path=usr/share/man/man8/named-compilezone.8
+file path=usr/share/man/man8/named-journalprint.8
+file path=usr/share/man/man8/named.8
+file path=usr/share/man/man8/nsec3hash.8
+file path=usr/share/man/man8/pkcs11-destroy.8
+file path=usr/share/man/man8/pkcs11-keygen.8
+file path=usr/share/man/man8/pkcs11-list.8
+file path=usr/share/man/man8/pkcs11-tokens.8
+file path=usr/share/man/man8/rndc-confgen.8
 file path=usr/share/man/man8/rndc.8
+link path=usr/share/man/man8/tsig-keygen.8 target=ddns-confgen.8
+file Solaris/dns-server.8s path=usr/share/man/man8s/dns-server.8s \
+    mangler.bypass=true
 license bind.license license="ISC license"

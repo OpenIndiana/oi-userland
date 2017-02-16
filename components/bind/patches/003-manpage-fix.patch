@@ -1,0 +1,68 @@
+This patch is created by Oracle to addresses a couple of issues with
+manual page references.  The ISC have been informed of these issues
+and a future release of BIND should make this patch obsolete.
+
+  1. "ndc" is no longer shipped now that rndc is established.
+  2. "nsupdate" continues to be delivered in section 1, not 8.
+  3. "mmencode" not provided with Solaris, use base64 for encoding secret.
+
+diff -r a04ae9b67db9 bin/rndc/rndc.8
+--- a/bin/rndc/rndc.8   Thu Nov 03 11:17:37 2016 +0000
++++ b/bin/rndc/rndc.8   Thu Nov 03 13:07:38 2016 +0000
+@@ -491,7 +491,6 @@
+ \fBrndc-confgen\fR(8),
+ \fBnamed\fR(8),
+ \fBnamed.conf\fR(5),
+-\fBndc\fR(8),
+ BIND 9 Administrator Reference Manual\&.
+ .SH "AUTHOR"
+ .PP
+diff -r a04ae9b67db9 bin/tools/named-journalprint.8
+--- a/bin/tools/named-journalprint.8    Thu Nov 03 11:17:37 2016 +0000
++++ b/bin/tools/named-journalprint.8    Thu Nov 03 13:07:38 2016 +0000
+@@ -65,7 +65,7 @@
+ .SH "SEE ALSO"
+ .PP
+ \fBnamed\fR(8),
+-\fBnsupdate\fR(8),
++\fBnsupdate\fR(1),
+ BIND 9 Administrator Reference Manual\&.
+ .SH "AUTHOR"
+ .PP
+--- a/bin/rndc/rndc.conf.5	Fri Oct 21 06:10:54 2016
++++ b/bin/rndc/new.rndc.conf.5	Fri Feb 17 11:51:48 2017
+@@ -120,10 +120,9 @@
+ There are two common ways to generate the base\-64 string for the secret\&. The BIND 9 program
+ \fBrndc\-confgen\fR
+ can be used to generate a random key, or the
+-\fBmmencode\fR
+-program, also known as
+-\fBmimencode\fR, can be used to generate a base\-64 string from known input\&.
+-\fBmmencode\fR
++\fBbase64\fR
++program can be used to generate a base\-64 string from known input\&.
++\fBbase64\fR
+ does not ship with BIND 9 but is available on many systems\&. See the EXAMPLE section for sample command lines for each\&.
+ .SH "EXAMPLE"
+ .PP
+@@ -217,9 +216,9 @@
+ are also printed\&.
+ .PP
+ To generate a base\-64 secret with
+-\fBmmencode\fR:
++\fBbase64\fR:
+ .PP
+-\fBecho "known plaintext for a secret" | mmencode\fR
++\fBecho -n "known plaintext for a secret" | base64\fR
+ .SH "NAME SERVER CONFIGURATION"
+ .PP
+ The name server must be configured to accept rndc connections and to recognize the key specified in the
+@@ -232,7 +231,7 @@
+ .PP
+ \fBrndc\fR(8),
+ \fBrndc-confgen\fR(8),
+-\fBmmencode\fR(1),
++\fBbase64\fR(1),
+ BIND 9 Administrator Reference Manual\&.
+ .SH "AUTHOR"
+ .PP
