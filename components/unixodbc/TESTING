@@ -1,0 +1,482 @@
+There isn't a self-test suite provided for this component.
+
+Useful resources for how to test this can be found at:
+
+  https://compscinotes.wordpress.com/2010/04/18/unixodbc-mysql-sample-program/
+  http://www.unixodbc.org/unixODBCsetup.html
+  http://www.easysoft.com/developer/languages/c/odbc_tutorial.html
+
+From the later, a couple of simple commands to run are:
+
+$ odbcinst --version
+
+and
+
+$ odbcinst -q -s
+
+just to make sure you have the correct new version of the package installed.
+
+The Oracle Instant Client is the only package in Solaris known to use
+unixODBC, and this can be used to provide some more testing.
+
+Install all the Instant Client Solaris packages with:
+
+$ sudo pkg install \*instantclient\*
+
+Create a file called .odbc.ini in your home directory containing the
+following:
+
+$ cat ~/.odbc.ini
+
+[plus1]
+Application Attributes = T
+Attributes = W
+BatchAutocommitMode = IfAllSuccessful
+BindAsFLOAT = F
+CloseCursor = F
+DisableDPM = F
+DisableMTS = T
+Driver = /usr/oracle/instantclient/12.1/lib/64/libsqora.so.12.1
+DSN = TestDBDSN
+EXECSchemaOpt =
+EXECSyntax = T
+Failover = T
+FailoverDelay = 10
+FailoverRetryCount = 10
+FetchBufferSize = 64000
+ForceWCHAR = F
+Lobs = T
+Longs = T
+MaxLargeData = 0
+MetadataIdDefault = F
+QueryTimeout = T
+ResultSets = T
+ServerName =
+SQLGetData extensions = F
+Translation DLL =
+Translation Option = 0
+DisableRULEHint = T
+UserID =
+StatementCache=F
+CacheBufferSize=20
+UseOCIDescribeAny=F
+SQLTranslateErrors=F
+MaxTokenSize=8192
+AggregateSQLType=FLOAT
+
+Create a file called tnsnames.ora containing the following:
+
+$ cat tnsnames.ora
+plus1 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+        (ADDRESS =
+          (PROTOCOL = TCP)
+          (HOST = adc2171609.us.oracle.com)
+          (PORT = 1521)
+        )
+    )
+    (CONNECT_DATA =
+      (SID = plus1)
+    )
+  )
+
+Create a file called odbcconnect.c containing the following:
+
+$ cat odbcconnect.c
+/*  Copyright (c) 2004, 2012, Oracle and/or its affiliates.
+ *  All rights reserved.
+ */
+
+/*
+   NAME
+     odbcconnect.c - Simple ODBC Connect demo
+
+   DESCRIPTION
+     Basic ODBC Connect demo
+*/
+
+#include <stdio.h>
+#include <sql.h>
+#include <sqlext.h>
+
+#define STR_LEN 50
+
+int main (int argc, char *argv[])
+{
+  HENV          henv;               /* environment handle */
+  HDBC          hdbc;               /* connection handle */
+  HSTMT         hstmt;              /* statement handle */
+  SDWORD        retcode;            /* return code */
+  UCHAR         info[STR_LEN];      /* info string for SQLGetInfo */
+  SQLSMALLINT   cbInfoValue;
+  SQLCHAR       SqlState[6], Msg[SQL_MAX_MESSAGE_LENGTH];
+  SQLINTEGER    NativeError;
+  SQLSMALLINT   MsgLen;
+
+  retcode = SQLAllocEnv (&henv);
+  retcode = SQLSetEnvAttr (henv, SQL_ATTR_ODBC_VERSION, (void *)
+SQL_OV_ODBC3,
+              SQL_IS_INTEGER);
+  retcode = SQLAllocConnect (henv, &hdbc);
+  retcode = SQLConnect (hdbc, "plus1", SQL_NTS, "scott", SQL_NTS, "tiger",
+              SQL_NTS);
+
+  if (retcode != SQL_SUCCESS)
+  {
+    if ((retcode = SQLGetDiagRec (SQL_HANDLE_DBC, hdbc, 1, SqlState,
+                   &NativeError, Msg, sizeof(Msg), &MsgLen)) != SQL_NO_DATA)
+      printf ("SqlState = %s\n Message = %s\n", SqlState, Msg);
+    goto EXIT;
+  }
+
+  retcode = SQLGetInfo (hdbc, SQL_DBMS_VER, &info, STR_LEN, &cbInfoValue);
+
+  if (retcode != SQL_SUCCESS)
+  {
+    if ((retcode = SQLGetDiagRec (SQL_HANDLE_DBC, hdbc, 1, SqlState,
+                   &NativeError, Msg, sizeof(Msg), &MsgLen)) != SQL_NO_DATA)
+      printf ("SqlState = %s\n Message = %s\n", SqlState, Msg);
+    goto EXIT;
+  }
+
+  printf ("Current DBMS version is %s\n", info);
+
+EXIT:
+  SQLDisconnect (hdbc);
+  SQLFreeConnect (hdbc);
+  SQLFreeEnv (henv);
+  return 0;
+}
+
+Compile this with:
+
+$ gcc -I/usr/include/odbc -m64 -o odbcconnect odbcconnect.c -lodbc
+
+In order to run this, you will need to:
+
+  1/ set LD_LIBRARY_PATH to the directory containing the Instant Client
+driver.
+  2/ Set TNS_ADMIN to the directory containing the tnsnames.ora file.
+  3/ Set TWO_TASK to the name of the database (plus1 in the above example).
+
+Running the odbcconnect program should give you something like:
+
+$ ./do_run.sh
++ ./odbcconnect
++ TNS_ADMIN=/export/home/richb/userland/bugs/23210080/tianfang
++ TWO_TASK=plus1
++ LD_LIBRARY_PATH_32=/usr/oracle/instantclient/12.1/lib
++ LD_LIBRARY_PATH_64=/usr/oracle/instantclient/12.1/lib/64
+Current DBMS version is 12.02.0020
+
+----
+
+Another test using the previous database and setup...
+
+Create a file called odbcselect.c containing the following:
+
+$ cat odbcselect.c
+/* Copyright (c) 2004, 2010, Oracle and/or its affiliates.
+All rights reserved. */
+
+#include <stdio.h>
+#include <sql.h>
+#include <sqlext.h>
+#define  STR_LEN 50
+
+int main (int argc, char *argv[])
+{
+  HENV          henv;          /* environment handle */
+  HDBC          hdbc;          /* connection handle  */
+  SQLHSTMT      hstmt;         /* statement handle   */
+  SDWORD        retcode;       /* return code        */
+  SQLCHAR *     stmt = "select ename, empno from emp where empno orderby
+empno";
+  SQLCHAR       empname[STR_LEN] = "", job[STR_LEN];
+  SQLLEN        enind, jind;
+  SQLUINTEGER   eno = 0;
+  SQLCHAR       SqlState[6], Msg[SQL_MAX_MESSAGE_LENGTH];
+  SQLINTEGER    NativeError;
+  SQLSMALLINT   MsgLen;
+
+  retcode = SQLAllocEnv (&henv);
+  retcode = SQLSetEnvAttr (henv, SQL_ATTR_ODBC_VERSION, (void *)
+SQL_OV_ODBC3,
+              SQL_IS_INTEGER);
+  retcode = SQLAllocConnect (henv, &hdbc);
+  retcode = SQLConnect (hdbc, "plus1", SQL_NTS, "scott", SQL_NTS, "tiger",
+              SQL_NTS);
+  if (retcode != SQL_SUCCESS)
+    {
+      if ((retcode = SQLGetDiagRec (SQL_HANDLE_DBC, hdbc, 1, SqlState,
+                       &NativeError, Msg, sizeof (Msg),
+                       &MsgLen)) != SQL_NO_DATA)
+      printf ("SqlState = %s\n Message = %s\n", SqlState, Msg);
+      goto EXIT;
+    }
+  retcode = SQLAllocHandle (SQL_HANDLE_STMT, hdbc, &hstmt);
+  SQLBindCol (hstmt, 1, SQL_C_CHAR, empname, sizeof (empname), &enind);
+  SQLBindCol (hstmt, 2, SQL_C_ULONG, &eno, 0, &jind);
+
+  SQLExecDirect (hstmt, "select ename, empno from emp", SQL_NTS);
+
+  while ((retcode = SQLFetch (hstmt)) != SQL_NO_DATA)
+    {
+      if (enind == SQL_NULL_DATA)
+        printf ("NULL  \n");
+      else
+        printf ("EMPNAME=%s ", empname);
+
+      if (jind == SQL_NULL_DATA)
+        printf ("NULL  \n");
+      else
+        printf ("EMPNO=%d\n", eno);
+    }
+
+EXIT:
+  SQLFreeStmt (hstmt, SQL_CLOSE);
+  SQLDisconnect (hdbc);
+  SQLFreeConnect (hdbc);
+  SQLFreeEnv (henv);
+  return 0;
+}
+
+Compile this with:
+
+$ gcc -I/usr/include/odbc -m64 -o odbcselect odbcselect.c -lodbc
+
+Set the same environment variables.
+
+Running the odbcselect program should give you something like:
+
+$ ./do_run.sh
++ ./odbcselect
++ TNS_ADMIN=/export/home/richb/userland/bugs/23210080/tianfang
++ TWO_TASK=plus1
++ LD_LIBRARY_PATH_32=/usr/oracle/instantclient/12.1/lib
++ LD_LIBRARY_PATH_64=/usr/oracle/instantclient/12.1/lib/64
+EMPNAME=SMITH EMPNO=7369
+EMPNAME=ALLEN EMPNO=7499
+EMPNAME=WARD EMPNO=7521
+EMPNAME=JONES EMPNO=7566
+EMPNAME=MARTIN EMPNO=7654
+EMPNAME=BLAKE EMPNO=7698
+EMPNAME=CLARK EMPNO=7782
+EMPNAME=SCOTT EMPNO=7788
+EMPNAME=KING EMPNO=7839
+EMPNAME=TURNER EMPNO=7844
+EMPNAME=ADAMS EMPNO=7876
+EMPNAME=JAMES EMPNO=7900
+EMPNAME=FORD EMPNO=7902
+EMPNAME=MILLER EMPNO=7934
+
+----
+
+One more test using the same database and setup...
+
+Create a file called stmt_cache.c containing the following:
+
+$ cat stmt_cache.c
+
+/* Copyright (c) 2005, 2006, Oracle. All rights reserved.  */
+
+/*
+   NAME
+     stmt_cache.c - Statement caching demo
+
+   DESCRIPTION
+     Run this demo in following modes and compare the result
+     1. Statement caching enabled
+        Make sure following options are added in odbc.ini file
+            StatementCache=T
+            CacheBufferSize=20
+     2. Statement caching disabled
+        To disable statement caching adjust 'StatementCache' to false
+              StatementCache=F
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <sql.h>
+#include <sqlext.h>
+
+#define QUERYLEN  500
+#define NUM_STMTS 500
+
+SQLHSTMT hstmt[NUM_STMTS];
+char *sqlquery[NUM_STMTS];
+SQLHENV m_henv;               /* environment handle */
+SQLHDBC m_hdbc = NULL;        /* connection handle */
+int retCode;
+SQLCHAR SqlState[6], Msg[SQL_MAX_MESSAGE_LENGTH];
+SQLINTEGER NativeError;
+SQLSMALLINT MsgLen;
+
+static void call_perf_test();
+static void execute_query();
+static void printSQLError (long , SQLHANDLE );
+
+int
+main()
+{
+    struct timeval tim;
+    double tot_time = 0.0, start_time = 0.0, end_time = 0.0;
+
+    if (!gettimeofday (&tim, NULL)) {
+        start_time = (double)((tim.tv_sec * 1000000 ) + tim.tv_usec);
+    } else {
+        return -1;
+    }
+    call_perf_test();
+    if (!gettimeofday (&tim, NULL)) {
+        end_time = (double) ((tim.tv_sec * 1000000 ) + tim.tv_usec);
+    } else {
+        return -1;
+    }
+  tot_time = (double) (end_time - start_time) / 100000;
+  (void) printf ("\nTotal time taken is = %lf\n", tot_time);
+
+  return 0;
+}
+
+void
+call_perf_test()
+{
+    int count = 0;
+    char *buf1 = (char *) malloc(sizeof(char) * QUERYLEN);
+    char *buf2 = (char *) malloc(sizeof(char) * QUERYLEN);
+    sqlquery[0] =(char *) malloc(sizeof(char) * NUM_STMTS);
+
+    for (count=0; count < NUM_STMTS; count++) {
+        sqlquery[count]=(char *)malloc(sizeof(char)*QUERYLEN);
+    }
+
+    retCode = SQLAllocEnv (&m_henv);
+    retCode = SQLSetEnvAttr (m_henv, SQL_ATTR_ODBC_VERSION,
+                             (void *) SQL_OV_ODBC3, SQL_IS_INTEGER);
+    retCode = SQLAllocConnect (m_henv, &m_hdbc);
+    retCode = SQLConnect (m_hdbc, "plus1", SQL_NTS,
+                          "scott", SQL_NTS, "tiger", SQL_NTS);
+
+    for (count = 0; count < NUM_STMTS-5; count++) {
+        sprintf(buf1, "SELECT empno, ename, job, mgr, hiredate, sal, comm,
+deptno ");
+        sprintf(buf2, " FROM emp");
+        (void) strcat(buf1, buf2);
+        sprintf(sqlquery[count], "%s", buf1);
+    }
+
+    execute_query();
+
+    retCode = SQLDisconnect (m_hdbc);
+    retCode = SQLFreeConnect (m_hdbc);
+    retCode = SQLFreeEnv (m_henv);
+}
+
+void
+execute_query()
+{
+    int count = 0;
+    for (count=0; count < NUM_STMTS - 5; count++) {
+        retCode = SQLAllocHandle (SQL_HANDLE_STMT, m_hdbc,
+                                  (SQLHANDLE) &hstmt[count]);
+        if (retCode != SQL_SUCCESS) {
+            printSQLError(3, hstmt[count]);
+        }
+        retCode = SQLPrepare(hstmt[count], (SQLCHAR *) sqlquery[count],
+SQL_NTS);
+        if (retCode != SQL_SUCCESS) {
+            printSQLError(3, hstmt[count]);
+        }
+        retCode=SQLExecute(hstmt[count]);
+        if (retCode != SQL_SUCCESS) {
+            printSQLError(3, hstmt[count]);
+        }
+        /*
+         * 1. Driver keeps the statement handle back to cache if statement
+         *    caching is enabled
+         * 2. Driver frees the statement handle if statement caching is
+disabled
+         */
+        retCode = SQLFreeStmt (hstmt[count], SQL_DROP);
+        if (retCode != SQL_SUCCESS) {
+            printSQLError(3,hstmt[count]);
+        }
+    }
+}
+
+void printSQLError (long handletype, SQLHANDLE handle)
+{
+    SQLSMALLINT errRecNo = 1;
+    SQLSMALLINT arg_handleType;
+    SQLCHAR errSQLStateBuf[256];
+    SQLINTEGER errCode = 0;
+    SQLCHAR errMsgBuf[256];
+    SQLSMALLINT errMsgBufLen = 256;
+    SQLSMALLINT errInfoSize;
+    long retcode;
+
+    (void) memset (errSQLStateBuf, 0x00, sizeof (errSQLStateBuf));
+    (void) memset (errMsgBuf, 0x00, sizeof (errMsgBuf));
+
+    if (handletype == 1) {
+        arg_handleType = SQL_HANDLE_ENV;
+    } else if (handletype == 2) {
+        arg_handleType = SQL_HANDLE_DBC;
+    } else {
+        arg_handleType = SQL_HANDLE_STMT;
+    }
+    retcode = SQLGetDiagRec (arg_handleType, handle, errRecNo,
+                             errSQLStateBuf, &errCode, errMsgBuf,
+errMsgBufLen,
+                             &errInfoSize);
+
+    if (SQL_NO_DATA_FOUND != retcode)
+        (void) printf ("errCode:%d errSQLStateBuf:%s\n errMsg:%s\n", errCode,
+                        errSQLStateBuf, errMsgBuf);
+    errRecNo++;
+}
+
+
+Compile this with:
+
+$ gcc -I/usr/include/odbc -m64 -o stmt_cache stmt_cache.c -lodbc
+
+There are two test runs.
+
+The first one is with the following line in your ~/.odbc.ini file:
+
+StatementCache=F
+
+Running this gives:
+
+$ ./do_run.sh
++ ./stmt_cache
++ TNS_ADMIN=/export/home/richb/userland/bugs/23210080/tianfang
++ TWO_TASK=plus1
++ LD_LIBRARY_PATH_32=/usr/oracle/instantclient/12.1/lib
++ LD_LIBRARY_PATH_64=/usr/oracle/instantclient/12.1/lib/64
+
+Total time taken is = 390.039130
+
+
+Now change that line in the ~/.odbc.ini file to:
+
+StatementCache=T
+
+
+This test run gives:
+
+$ ./do_run.sh
++ ./stmt_cache
++ TNS_ADMIN=/export/home/richb/userland/bugs/23210080/tianfang
++ TWO_TASK=plus1
++ LD_LIBRARY_PATH_32=/usr/oracle/instantclient/12.1/lib
++ LD_LIBRARY_PATH_64=/usr/oracle/instantclient/12.1/lib/64
+
+Total time taken is = 383.461800
+
+----

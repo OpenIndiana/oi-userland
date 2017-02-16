@@ -18,9 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/library/unixodbc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The UnixODBC Subsystem and SDK"
@@ -32,11 +33,9 @@ set name=info.classification \
     value=org.opensolaris.category.2008:Development/Databases
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2007/684
+set name=org.opensolaris.arc-caseid value=LSARC/2007/684 value=PSARC/2016/644
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
 dir  path=etc/odbc/ODBCDataSources
-#
 file path=etc/odbc/odbc.ini
 file path=etc/odbc/odbcinst.ini
 file path=usr/bin/$(MACH64)/odbc_config
@@ -45,10 +44,13 @@ file usr/bin/$(MACH64)/isql path=usr/bin/isql
 file usr/bin/$(MACH64)/iusql path=usr/bin/iusql
 file path=usr/bin/odbc_config
 file usr/bin/$(MACH64)/odbcinst path=usr/bin/odbcinst
+file usr/bin/$(MACH64)/slencheck path=usr/bin/slencheck
+file path=usr/include/odbc/autotest.h
 file path=usr/include/odbc/odbcinst.h
 file path=usr/include/odbc/odbcinstext.h
 file path=usr/include/odbc/sql.h
 file path=usr/include/odbc/sqlext.h
+file path=usr/include/odbc/sqlspi.h
 file path=usr/include/odbc/sqltypes.h
 file path=usr/include/odbc/sqlucode.h
 file path=usr/include/odbc/unixodbc_conf.h
@@ -116,7 +118,6 @@ link path=usr/lib/$(MACH64)/libtemplate.so.1 target=libtemplate.so.1.0.0
 file path=usr/lib/$(MACH64)/libtemplate.so.1.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/unixODBC.pc
 link path=usr/lib/libesoobS.so target=libesoobS.so.1.0.0
-#
 link path=usr/lib/libesoobS.so.1 target=libesoobS.so.1.0.0
 file path=usr/lib/libesoobS.so.1.0.0
 link path=usr/lib/libmimerS.so target=libmimerS.so.1.0.0
@@ -177,5 +178,12 @@ link path=usr/lib/libtemplate.so target=libtemplate.so.1.0.0
 link path=usr/lib/libtemplate.so.1 target=libtemplate.so.1.0.0
 file path=usr/lib/libtemplate.so.1.0.0
 file path=usr/lib/pkgconfig/unixODBC.pc
-#
+file path=usr/share/man/man1/dltest.1
+file path=usr/share/man/man1/isql.1
+file path=usr/share/man/man1/iusql.1
+file path=usr/share/man/man1/odbc_config.1
+file path=usr/share/man/man1/odbcinst.1
+file path=usr/share/man/man5/odbc.ini.5
+file path=usr/share/man/man5/odbcinst.ini.5
+file path=usr/share/man/man7/unixODBC.7
 license unixodbc.license license="LGPLv2.1, GPLv2"

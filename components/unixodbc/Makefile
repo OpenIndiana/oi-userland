@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # 32-bit is preferred until sufficient testing can be done.
 BUILD_BITS= 32_and_64
@@ -29,14 +29,14 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		unixODBC
-COMPONENT_VERSION=	2.3.1
-COMPONENT_PROJECT_URL=	http://unixodbc.org/
+COMPONENT_VERSION=	2.3.4
+COMPONENT_PROJECT_URL=	http://www.unixodbc.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1f5be3edecff9e31072ef738ea1d8019594c4f0c2e3ab427e6eef153491db6a2
-COMPONENT_ARCHIVE_URL=	http://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
+    sha256:2e1509a96bb18d248bf08ead0d74804957304ff7c6f8b2e5965309c632421e39
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB=	library/unixodbc
 
-TPNO=			9099
+TPNO=			33101
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
