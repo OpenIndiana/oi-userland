@@ -20,19 +20,19 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.7.4
+COMPONENT_VERSION=	4.9.0
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5a321f0fb959b928f26112c9f49f81d754c23c1d8ffb0feb69304fee06b77e0a
+    sha256:eae98121cbb1c9adbedd9a777bf2eae9fa1c1c676424a54740311c8abcee5a5e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 
-TPNO=			22949
+TPNO=			33618
 
 # Enable adiheap and adistack security extensions
 ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
