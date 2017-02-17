@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -53,6 +53,7 @@ CONFIGURE_OPTIONS += --with-gtk=3.0
 CONFIGURE_OPTIONS += --without-openldap
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
 # Assumes GNU xgettext in PATH
 CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)

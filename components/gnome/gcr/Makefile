@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -67,6 +67,8 @@ CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --enable-vala
 # Fix 64-bit builds.
 CONFIGURE_OPTIONS.64 += ac_cv_path_LIBGCRYPT_CONFIG=$(USRBINDIR64)/libgcrypt-config
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
+
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_ARGS =   -k -i

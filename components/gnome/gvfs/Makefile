@@ -20,10 +20,10 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS =            32_and_64
+BUILD_BITS =            64_and_32
 COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
@@ -66,6 +66,7 @@ CONFIGURE_OPTIONS += --enable-http
 CONFIGURE_OPTIONS += --enable-keyring
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gtk3

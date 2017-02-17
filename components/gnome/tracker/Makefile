@@ -91,6 +91,7 @@ CONFIGURE_OPTIONS += --enable-tracker-writeback
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-unicode-support=libicu
 CONFIGURE_OPTIONS += --with-bash-completion-dir=/etc/bash_completion.d
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
 # Required due to patches.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -56,7 +56,7 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --libexecdir="$(USRLIB)"
+CONFIGURE_OPTIONS += --libexecdir="$(USRLIBDIR)"
 
 # Tell g-ir-scanner not to cache results in homedir of user running the build
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""

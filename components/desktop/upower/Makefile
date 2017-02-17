@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -58,7 +58,7 @@ COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 
 # XXX wants gudev for better backend support; alternatively, create solaris
 # native backend as was done for openbsd/freebsd.
-CONFIGURE_OPTIONS += --libexecdir="$(USRLIB)"
+CONFIGURE_OPTIONS += --libexecdir="$(USRLIBDIR)"
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk-doc

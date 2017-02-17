@@ -20,10 +20,10 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 # All components using gobject-introspection must be built with gcc as
 # gobject-introspection does not produce correct results when using Studio.
 COMPILER= gcc
@@ -58,6 +58,7 @@ CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 
 # Because Solaris doesn't use the libexec directory.
 CONFIGURE_OPTIONS += --with-dbus-daemondir=$(USRLIBDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas

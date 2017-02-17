@@ -66,6 +66,7 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-sm
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-x
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
 # Needed due to patch to configure.ac.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
