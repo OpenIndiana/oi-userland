@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2013-2016 Aurelien Larcher.  All rights reserved.
+# Copyright 2013-2017 Aurelien Larcher.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =		openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR = 	1.10
-COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).5
+COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).6
 COMPONENT_FMRI = library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
@@ -27,7 +27,7 @@ COMPONENT_SRC_NAME =		openmpi
 COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:a2aebcced8135d77fdbc6207e4995d21065467b160f959962b47cb762cf166e5
+    sha256:f1db673f8a22fd5cd770f9b89805d03b0354941a4479b69158e1c22c560c703e
 COMPONENT_ARCHIVE_URL =	http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		$(COMPONENT_FMRI)
 
