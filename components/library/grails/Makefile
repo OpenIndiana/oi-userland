@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grails
 COMPONENT_VERSION=	1.0.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://grails.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-src-$(COMPONENT_VERSION).tar.gz
@@ -79,5 +79,6 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/build/ant
 REQUIRED_PACKAGES += runtime/java/openjdk7
+REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
