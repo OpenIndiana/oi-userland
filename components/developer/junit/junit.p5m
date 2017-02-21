@@ -21,24 +21,28 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/share/doc/junit/(.+)$ -> set action.hash %<\1> >
 <transform file path=usr/share/doc/junit/samples/org/junit/samples/(.+)$ -> \
 	set action.hash junit/samples/%<1> >
 <transform file path=usr/share/lib/java/(.+)$ -> set action.hash %<\1> >
 <transform file path=usr/share/lib/java/javadoc/junit/(.+)$ -> set action.hash %<\1> >
-set name=pkg.fmri \
-    value=pkg:/developer/java/junit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description \
-    value="Junit is a unit testing framework for the Java programming language."
-set name=pkg.summary value="Junit - Java unit testing framework"
-set name=com.oracle.info.description value="the Junit unit testing framework"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Java
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2008/633
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
+
+file files/junit.3 path=usr/share/man/man3/junit.3
+link path=usr/share/doc/junit/javadoc target=../../lib/java/javadoc/junit
+link path=usr/share/lib/java/junit.jar target=junit-$(COMPONENT_VERSION).jar
+
 file path=usr/share/doc/junit/BUILDING
 file path=usr/share/doc/junit/README.html
 file path=usr/share/doc/junit/build.xml
@@ -274,16 +278,7 @@ file path=usr/share/lib/java/javadoc/junit/overview-frame.html
 file path=usr/share/lib/java/javadoc/junit/overview-summary.html
 file path=usr/share/lib/java/javadoc/junit/overview-tree.html
 file path=usr/share/lib/java/javadoc/junit/package-list
-file path=usr/share/lib/java/javadoc/junit/resources/background.gif
-file path=usr/share/lib/java/javadoc/junit/resources/tab.gif
-file path=usr/share/lib/java/javadoc/junit/resources/titlebar.gif
-file path=usr/share/lib/java/javadoc/junit/resources/titlebar_end.gif
+file path=usr/share/lib/java/javadoc/junit/script.js
 file path=usr/share/lib/java/javadoc/junit/serialized-form.html
 file path=usr/share/lib/java/javadoc/junit/stylesheet.css
 file path=usr/share/lib/java/junit-$(COMPONENT_VERSION).jar
-file junit.3 path=usr/share/man/man3/junit.3
-license junit.license license="CPLv1.0, BSD"
-link path=usr/share/doc/junit/javadoc target=../../lib/java/javadoc/junit
-link path=usr/share/lib/java/junit.jar target=junit-$(COMPONENT_VERSION).jar
-
-depend fmri=runtime/java/openjdk7 type=require
