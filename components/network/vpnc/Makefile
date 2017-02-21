@@ -16,19 +16,21 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vpnc
 COMPONENT_VERSION=	0.5.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+HUMAN_VERSION = $(COMPONENT_VERSION).r550
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+# COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.unix-ag.uni-kl.de/~massar/vpnc/
-COMPONENT_ARCHIVE_URL=	https://www.unix-ag.uni-kl.de/~massar/vpnc/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:46cea3bd02f207c62c7c6f2f22133382602baeda1dc320747809e94881414884
 COMPONENT_LICENSE=		GPLv2,BSD-2clause
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_SUMMARY=	An IPSec-like VPN client compatible with Cisco EasyVPN
 COMPONENT_DESCRIPTION=	An IPSec-like (over TUN/TAP) VPN client compatible with Cisco 3000 VPN Concentrators and EasyVPN
+
+SVN_REPO = http://svn.unix-ag.uni-kl.de/vpnc/trunk
+SVN_REV = 550
+SVN_HASH = sha256:93c63dd9435abf235ec92034c634333edfcff44ceb116849f7e94ba231f848e3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -50,6 +52,8 @@ COMPONENT_BUILD_ARGS += SBINDIR=$(USRSBINDIR.$(BITS))
 
 CFLAGS += -DHAVE_GETLINE=1
 CFLAGS += -DHAVE_INET_NTOP=1
+CFLAGS += -DCRYPTO_OPENSSL
+CFLAGS += -DOPENSSL_GPL_VIOLATION=yes
 
 # This also covers linking, even though "-m32"/"-m64" harmlessly
 # appears twice in command-line for compilation
