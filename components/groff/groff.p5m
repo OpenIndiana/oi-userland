@@ -20,9 +20,12 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+# Ensure scripts delivered in usr/lib are executable.
+<transform file path=usr/lib/groff/.+\.pl$ -> default mode 0555>
+<transform file path=usr/lib/groff/.+\.sh$ -> default mode 0555>
 # Put the documentation in the correct location.
 <transform file path=usr/share/doc/groff/$(COMPONENT_VERSION)/(.+)$ -> \
     set action.hash usr/share/doc/groff-$(COMPONENT_VERSION)/%<1> >
