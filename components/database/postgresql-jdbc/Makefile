@@ -10,33 +10,42 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 Alexander Pyhalov.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= postgresql-jdbc
-
-COMPONENT_VERSION= 9.2-1003
-COMPONENT_REVISION= 1
-IPS_COMPONENT_VERSION= 9.2.1003
-COMPONENT_SUMMARY=JDBC driver for PostgreSQL
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION).src
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=	postgresql-jdbc
+COMPONENT_VERSION=	42.0.0
+COMPONENT_SUMMARY=	JDBC driver for PostgreSQL
+COMPONENT_SRC=	$(COMPONENT_NAME)-42.0-0.src
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d61449b8a17ce540b26437382c33a59a49a94c578c943fccf91139ee06478968
+  sha256:99eaa62b49c9ef2be6ad6509fbb3ca8d00e7da6da414cfef574763555b77e1e4
 COMPONENT_ARCHIVE_URL= \
   http://jdbc.postgresql.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://jdbc.postgresql.org/
+COMPONENT_PROJECT_URL=	http://jdbc.postgresql.org/
+COMPONENT_FMRI=	database/postgres/connector/jdbc
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ant.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_BUILD_ARGS =
+COMPONENT_BUILD_ENV += JAVA_HOME=$(JAVA_HOME)
+
+COMPONENT_BUILD_ACTION = cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
+				mvn install
+
+COMPONENT_INSTALL_ACTION = $(MKDIR) -p $(PROTO_DIR)/usr/postgres/jdbc && \
+        $(CP) $(BUILD_DIR_32)/pgjdbc/target/postgresql-*.jar $(PROTO_DIR)/usr/postgres/jdbc/postgresql-jdbc4.jar
+
 
 build: $(BUILD_32)
 
-install: $(BUILD_32)
-	$(MKDIR) -p $(PROTO_DIR)/usr/postgres/jdbc && \
-	$(CP) $(BUILD_DIR_32)/jars/postgresql.jar $(PROTO_DIR)/usr/postgres/jdbc/postgresql-jdbc4.jar
+install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += developer/build/maven
+REQUIRED_PACKAGES += developer/java/openjdk8
