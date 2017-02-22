@@ -9,9 +9,6 @@
 . /lib/svc/share/ipf_include.sh
 . /lib/svc/share/smf_include.sh
 
-SSHDIR=/etc/ssh
-PIDFILE=/var/run/sshd.pid
-
 create_ipf_rules()
 {
 	FMRI=$1
@@ -19,11 +16,7 @@ create_ipf_rules()
 	ipf6_file=`fmri_to_file ${FMRI} $IPF6_SUFFIX`
 	policy=`get_policy ${FMRI}`
 
-	#
-	# Get port from /etc/ssh/sshd_config
-	#
-	tports=`grep "^Port" /etc/ssh/sshd_config 2>/dev/null | \
-	    awk '{print $2}'`
+        tports=$(/usr/lib/ssh/sshd -T 2>/dev/null | awk '/^port / { print $2 }')
 
 	echo "# $FMRI" >$ipf_file
 	echo "# $FMRI" >$ipf6_file
@@ -40,7 +33,7 @@ create_ipf_rules()
 # Both, the SMF methods and sysidconfig/sys-unconfig use different
 # arguments..
 
-case $1 in
+case $1 in 
 	# sysidconfig/sys-unconfig arguments (-c and -u)
 '-c')
 	/usr/bin/ssh-keygen -A
@@ -63,16 +56,14 @@ case $1 in
 	# If host keys don't exist when the service is started, create
 	# them; sysidconfig is not run in every situation (such as on
 	# the install media).
-	#
+	# 
 	/usr/bin/ssh-keygen -A
-
 	/usr/lib/ssh/sshd
 	;;
-
 *)
-	echo "Usage: $0 { start | restart }"
+	echo "Usage: $0 start"
 	exit 1
 	;;
-esac
+esac	
 
 exit $?

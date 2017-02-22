@@ -51,6 +51,10 @@ link path=usr/bin/ssh-keygen target=../lib/openssh/bin/ssh-keygen mediator=ssh \
 link path=usr/bin/ssh-keyscan target=../lib/openssh/bin/ssh-keyscan \
     mediator=ssh mediator-implementation=openssh mediator-priority=vendor
 file etc/ssh/moduli path=etc/ssh/moduli.openssh preserve=true
+file files/ssh.xml path=lib/svc/manifest/network/ssh.xml
+file files/ssh_config path=etc/ssh/ssh_config preserve=true
+file files/sshd_config path=etc/ssh/sshd_config preserve=true
+file files/sshd path=lib/svc/method/sshd
 file usr/lib/dtrace/sftp.d path=usr/lib/dtrace/sftp.d mode=0555
 file usr/bin/scp path=usr/lib/openssh/bin/scp mode=0555
 file usr/bin/sftp path=usr/lib/openssh/bin/sftp mode=0555
@@ -140,4 +144,3 @@ license openssh.license license="BSD, BSD-like (gsskex)" \
     com.oracle.info.version=5.7p1
 depend type=conditional fmri=pkg:/x11/session/xauth \
     predicate=pkg:/x11/library/libxau
-depend type=require fmri=service/network/ssh-common
