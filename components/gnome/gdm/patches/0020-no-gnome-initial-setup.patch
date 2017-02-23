@@ -1,0 +1,15 @@
+On some systems, we have seen gdm unable to start because it doesn't find
+the gnome-initial-setup user.  We will never have gnome-initial-setup user
+and shouldn't have gnome-intial-setup start with gdm as the username, so 
+disabling it in the conf file.
+
+--- gdm-3.18.2/data/gdm.conf-custom.in	2017-02-16 13:55:47.788461253 -0800
++++ gdm-3.18.2/data/gdm.conf-custom.in	2017-02-16 13:56:07.933402043 -0800
+@@ -1,6 +1,7 @@
+ # GDM configuration storage
+ 
+ [daemon]
++InitialSetupEnable=False
+ 
+ [security]
+ 
