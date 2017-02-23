@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://www.greenwoodsoftware.com/less/
 COMPONENT_ARCHIVE_HASH= \
     sha256:3fa38f2cf5e9e040bb44fffaa6c76a84506e379e47f5a04686ab78102090dda5	
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1550
 
 TPNO=			25171
 

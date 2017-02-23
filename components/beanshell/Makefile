@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 # beanshell.org if possible.  Note also a fork of beanshell is receiving
 # more attention at the google code repository of late.
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
+COMPONENT_ANITYA_ID=	13278
 
 IPS_COMPONENT_VERSION=	2.0
 

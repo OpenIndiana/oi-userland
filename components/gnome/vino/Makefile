@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Vino
 COMPONENT_ARCHIVE_HASH= \
 	sha256:52be0b036389713eab224abf27f2ca2a067ba5bd1f6b526592703576005e0919
 COMPONENT_BUGDB=        gnome/remote-desktop
+COMPONENT_ANITYA_ID=	5572
 
 TPNO=			24888
 

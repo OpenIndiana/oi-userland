@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:f875d0f8c4e96fa7c698a461a14faa6331694be231e2ddc4f3de0733322fc6d0
 COMPONENT_ARCHIVE_URL=	http://xdebug.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://xdebug.org/
+COMPONENT_ANITYA_ID=	13302
 
 TPNO=			22429
 

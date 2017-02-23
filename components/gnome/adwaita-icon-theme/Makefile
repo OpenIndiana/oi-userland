@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             NO_ARCH
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	https://github.com/GNOME/adwaita-icon-theme
 COMPONENT_ARCHIVE_HASH= \
     sha256:5e9ce726001fdd8ee93c394fdc3cdb9e1603bbed5b7c62df453ccf521ec50e58
 COMPONENT_BUGDB=        gnome/themes
+COMPONENT_ANITYA_ID=	13117
 
 TPNO=			25252
 

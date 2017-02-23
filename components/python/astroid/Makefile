@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:5f064785a7e45ed519285f2eb30b795e58a4932a0736b32030da6fef3394ddb3
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/astroid
+COMPONENT_ANITYA_ID=	12725
 
 TPNO=			31346
 

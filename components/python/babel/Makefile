@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://babel.pocoo.org/
 COMPONENT_BUGDB=	python-mod/babel
+COMPONENT_ANITYA_ID=	11984
 
 TPNO=			29231
 

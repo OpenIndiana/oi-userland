@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:843532672692f98e9b2d6ae6cc8658da562dfde1606c7f33d9d227a344de56c5
 COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/$(COMPONENT_NAME)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/menus
+COMPONENT_ANITYA_ID=	421
 
 TPNO=			24148
 

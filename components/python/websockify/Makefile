@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_PROJECT_URL=	https://github.com/kanaka/websockify
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/websockify
+COMPONENT_ANITYA_ID=	13250
 
 TPNO=			27984
 

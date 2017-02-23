@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=  http://gnuplot.info/
 COMPONENT_ARCHIVE_HASH= \
     sha256:5f6ee35f3f22014058e999911934bfa9db28e02a2722a7001c192cd182b8c715
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ANITYA_ID=	1216
 
 TPNO=			29106
 

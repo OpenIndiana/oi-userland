@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION=	4.1.3
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:e3cf55e91e31ea2845f8338bedd91e40671fc30e4d82ea147d220e687abda625
+COMPONENT_ANITYA_ID=	868
 
 # Adjust references to section 3am to be section 3 in the extensions man pages.
 COMPONENT_POST_CONFIGURE_ACTION = \

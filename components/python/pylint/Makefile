@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH=		\
 	sha256:ef901a34b62ed7a734370ba5b162d890231ba8822abe88c6dda1268e2575f5f1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=  https://bitbucket.org/logilab/pylint
+COMPONENT_ANITYA_ID=	5344
 
 TPNO=			31351
 

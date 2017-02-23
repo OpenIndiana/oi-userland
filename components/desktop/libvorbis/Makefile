@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 		32_and_64
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:6d747efe7ac4ad249bf711527882cef79fb61d9194c45b5ca5498aa60f290762
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
+COMPONENT_ANITYA_ID=	1758
 
 TPNO=			9575
 

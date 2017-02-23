@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 		NO_ARCH
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/intltool/
 COMPONENT_ARCHIVE_HASH= \
     sha256:67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/$(COMPONENT_NAME)/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1385
 
 TPNO=			25211
 

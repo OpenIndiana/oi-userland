@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:d7de6bf3c67009c95525dde3a0212cc110d0a70b92af2af8e3ee800e81b88400
 COMPONENT_ARCHIVE_URL=	ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/openldap
+COMPONENT_ANITYA_ID=	2551
 
 TPNO=			27074
 

@@ -36,6 +36,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e
 COMPONENT_BUGDB=        library/librsvg
+COMPONENT_ANITYA_ID=	5420
 
 TPNO=			32695
 

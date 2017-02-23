@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		NO_ARCH
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Accerciser
 COMPONENT_ARCHIVE_HASH= \
 	sha256:f5a5915d475e9241396414ccd167724c88807e77e69151cf0b40b32bd57d0574
 COMPONENT_BUGDB= 	gnome/accessibility
+COMPONENT_ANITYA_ID=	13116
 
 TPNO=			25184
 

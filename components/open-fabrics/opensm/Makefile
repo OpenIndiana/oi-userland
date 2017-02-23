@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../ofed-component-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:2ff7729d5566e6569a387603aa188580dede20c929c0f22baf8eb6d36d8925b6
 COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
+COMPONENT_ANITYA_ID=	2563
 
 include ../ofed-component.mk
 

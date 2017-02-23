@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -34,6 +34,7 @@ COMPONENT_VERSION=	1.6.4
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:52fc9b35d301737a221bb6c24abafafe23e4bd0a5e2060bba3860b6cac7b32aa
 COMPONENT_BUGDB=        library/clutter
+COMPONENT_ANITYA_ID=	303
 
 TPNO=			24627
 

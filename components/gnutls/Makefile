@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
     sha256:d6f846a7064af3ee2c9aebd65dcee76953b767170cbcd719e990ed6b9688a356
 COMPONENT_BUGDB=	library/gnutls
+COMPONENT_ANITYA_ID=	1221
 
 TPNO=			9291
 

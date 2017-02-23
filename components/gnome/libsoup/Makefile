@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 32_and_64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/libsoup
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6c6c366622a1a9d938e0cea9b557fa536f088784251d31381ccd1b115a466785
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	11483
 
 TPNO=			24900
 

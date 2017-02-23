@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	\
     http://docs.openstack.org/developer/python-neutronclient/
 COMPONENT_BUGDB=	service/neutron
+COMPONENT_ANITYA_ID=	5461
 
 TPNO=			31339
 

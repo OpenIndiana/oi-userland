@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 64
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=	http://www.postfix.org
 COMPONENT_ARCHIVE_HASH=	\
     sha256:88ac3e92755629077d9363319b1fa0db406efb10c2f22cdbb941bd8ab36fd733
 COMPONENT_ARCHIVE_URL=	http://mirrors-usa.go-parts.com/$(COMPONENT_NAME)/source/official/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	3693
 
 TPNO=			27578
 

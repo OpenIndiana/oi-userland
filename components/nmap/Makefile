@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 # Can't use the Studio compilers as they don't support the GNU 
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
     sha256:dfc95db3a8ee4c56650dbaa5a1a1e989b2963de8faea2531c21e6fd6e0bccc2a
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	2096
 
 TPNO=			27577
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # gobject-introspection must be built with gcc as gobject-introspection does
@@ -35,6 +35,7 @@ COMPONENT_VERSION=	1.46.0
 COMPONENT_ARCHIVE_HASH= \
     sha256:6658bd3c2b8813eb3e2511ee153238d09ace9d309e4574af27443d87423e4233
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	1223
 
 TPNO=			25403
 

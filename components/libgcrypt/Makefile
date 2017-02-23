@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 
@@ -43,6 +43,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:ddac6111077d0a1612247587be238c5294dd0ee4d76dc7ba783cc55fb0337071
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgcrypt
+COMPONENT_ANITYA_ID=	1623
 
 TPNO=			31181
 

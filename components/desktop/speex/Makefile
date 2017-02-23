@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64_and_32
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:342f30dc57bd4a6dad41398365baaa690429660b10d866b7d508e8f1179cb7a6
 COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/speex/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
+COMPONENT_ANITYA_ID=	8419
 
 TPNO=			9576
 

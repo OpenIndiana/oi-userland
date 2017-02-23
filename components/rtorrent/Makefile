@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1e69c24f1f26f8f07d58d673480dc392bfc4317818c1115265b08a7813ff5b0e
 COMPONENT_ARCHIVE_URL=	http://rtorrent.net/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4221
 
 TPNO=			24573
 

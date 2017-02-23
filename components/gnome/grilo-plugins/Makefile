@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS=		64
 COMPILER=		gcc
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Grilo
 COMPONENT_ARCHIVE_HASH= \
 	sha256:80b4571f9db6df0d5f0873d30f2ee475204f5831d2974b89c58423d6ffac5203
 COMPONENT_BUGDB=	gnome/multimedia
+COMPONENT_ANITYA_ID=	10929
 
 TPNO=			25380
 

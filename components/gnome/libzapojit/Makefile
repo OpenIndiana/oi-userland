@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Zapojit
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:3d25f99329105abb99d1e9651b0aa1842065456ea54c22970a7330e9f3d1c37e
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	13151
 
 TPNO=			25454
 

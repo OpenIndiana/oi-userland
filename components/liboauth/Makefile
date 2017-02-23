@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:0df60157b052f0e774ade8a8bac59d6e8d4b464058cc55f9208d72e41156811f
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/liboauth
+COMPONENT_ANITYA_ID=	1686
 
 TPNO=			25840
 

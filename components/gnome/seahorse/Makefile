@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Seahorse
 COMPONENT_ARCHIVE_HASH= \
 	sha256:530c889a01c4cad25df4c9ab58ab95d24747875789bc6116bef529d60fc1b667
 COMPONENT_BUGDB=	gnome/security
+COMPONENT_ANITYA_ID=	9548
 
 TPNO=			25850
 

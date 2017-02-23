@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=  https://extensions.gnome.org/extension/889/background-lo
 COMPONENT_ARCHIVE_HASH= \
 	sha256:9a0480fcf82214c6fac54485d5e91be485b2b8517df2fad853bfeba534c00f6b
 COMPONENT_ARCHIVE_URL=	https://git.fedorahosted.org/cgit/$(COMPONENT_NAME).git/snapshot/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	13118
 
 TPNO=			29309
 

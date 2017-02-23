@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 COMPILER= gcc
 BUILD_BITS= 64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:395847e2a18a2c317170f238892751e73a57104565344f8644090c8b091014bb
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	8179
 
 TPNO=			29447
 

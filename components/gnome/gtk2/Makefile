@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # All components using gobject-introspection must be built with gcc as
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:68c1922732c7efc08df4656a5366dcc3afdc8791513400dac276009b40954658
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/gtk+/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/gtk+
+COMPONENT_ANITYA_ID=	4572
 
 TPNO=			32698
 

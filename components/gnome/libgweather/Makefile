@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -33,6 +33,7 @@ COMPONENT_NAME=		libgweather
 COMPONENT_VERSION=	3.18.0
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:8f4fda67f48c776f2bf955d384de4cc842aacb8d9b2ad87b42d83d0dc5a1cb1f
+COMPONENT_ANITYA_ID=	13147
 
 TPNO=			24863
 

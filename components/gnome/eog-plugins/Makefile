@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:2d2198ed026b1c28329ac3d353b3031c2024277d81d60f3c1e626f4701a73bd2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.16/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/applications
+COMPONENT_ANITYA_ID=	13120
 
 TPNO=			26904
 

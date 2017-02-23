@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is suddenly unhappy with us (21638460)
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=	http://www.swig.org/
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:2939aae39dec06095462f1b95ce1c958ac80d07b926e48871046d17c0094f44c
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/swig/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4919
 
 TPNO=			30244	
 

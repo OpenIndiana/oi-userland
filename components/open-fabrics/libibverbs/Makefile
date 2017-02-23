@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:7c766e679e1e6dbcb37bdfc624c64310787e3a380baf7ee1eebde39c6991828f
 COMPONENT_ARCHIVE_URL= https://www.openfabrics.org/downloads/verbs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
+COMPONENT_ANITYA_ID=	12114
 
 INSTALL_TARGET=
 include ../ofed-component.mk

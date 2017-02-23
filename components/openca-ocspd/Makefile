@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 64
@@ -34,6 +34,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openca.org/projects/ocspd/
 COMPONENT_ARCHIVE_SRC=	git
 COMPONENT_BUGDB=	library/smartcard
+COMPONENT_ANITYA_ID=	13308
 
 GIT_REPO= https://github.com/openca/openca-ocspd
 GIT_COMMIT_ID= 0f16341

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:1a74278b8adb383ce4c7619e33c753b1eb7b58dc1e449601c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/pypa/virtualenv
 COMPONENT_BUGDB=	python-mod/virtualenv
+COMPONENT_ANITYA_ID=	6904
 
 TPNO=			29529
 

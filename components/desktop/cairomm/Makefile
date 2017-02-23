@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:ccf677098c1e08e189add0bd146f78498109f202575491a82f1815b6bc28008d
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	7959
 
 TPNO=			24146
 

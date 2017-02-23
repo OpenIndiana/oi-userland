@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
     sha256:86f3387a0d7e7c8be2a3c53af083a5a726e333686208d5ea0dd6bb5ac3f58143
 COMPONENT_ARCHIVE_URL=	http://caml.inria.fr/distrib/ocaml-3.11/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	2518
 
 # Documentation sources
 #

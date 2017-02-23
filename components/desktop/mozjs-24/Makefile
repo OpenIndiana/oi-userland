@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (24796622)
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:e62f3f331ddd90df1e238c09d61a505c516fe9fd8c5c95336611d191d18437d8
 COMPONENT_ARCHIVE_URL=	http://ftp.mozilla.org/pub/mozilla.org/js/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libmozjs
+COMPONENT_ANITYA_ID=	11754
 
 TPNO=			25517
 

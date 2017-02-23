@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_PROJECT_URL=	http://github.com/ActiveState/appdirs
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB=	python-mod/appdirs
+COMPONENT_ANITYA_ID=	6278
 
 TPNO=			27489
 

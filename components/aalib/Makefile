@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Prefer 32-bit over 64-bit as we have to manually shuffle the resulting
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:fbddda9230cf6ee2a4f5706b4b11e2190ae45f5eda1f0409dc4f99b35e0a70ee
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/aa-project/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/aalib
+COMPONENT_ANITYA_ID=	7921
 
 TPNO=			6118
 

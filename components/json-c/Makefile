@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =		gcc
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:000c01b2b3f82dcb4261751eb71f1b084404fb7d6a282f06074d3c17078b9f3f
 COMPONENT_ARCHIVE_URL=	https://s3.amazonaws.com/json-c_releases/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/json-c
+COMPONENT_ANITYA_ID=	1477
 
 TPNO=			21444
 

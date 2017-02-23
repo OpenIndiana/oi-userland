@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://re2c.org/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:48c12564297641cceb5ff05aead57f28118db6277f31e2262437feba89069e84
 COMPONENT_ARCHIVE_URL=	https://github.com/skvadrik/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	7664
 
 TPNO =			27272
 

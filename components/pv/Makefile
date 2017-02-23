@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://www.ivarch.com/programs/pv.shtml
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9dd45391806b0ed215abee4c5ac1597d018c386fe9c1f5afd2f6bc3b07fd82c3
 COMPONENT_ARCHIVE_URL=	http://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	3736
 
 TPNO=			27247
 

@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # TESTING:
@@ -50,6 +50,7 @@ COMPONENT_VERSION=      0.7.4
 # update.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.rkeene.org/projects/info/wiki/161
+COMPONENT_ANITYA_ID=	13291
 
 COMPONENT_ARCHIVE_SRC=	git
 

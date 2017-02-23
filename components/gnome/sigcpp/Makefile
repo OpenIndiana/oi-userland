@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:fdace7134c31de792c17570f9049ca0657909b28c4c70ec4882f91a03de54437
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libsigc++/2.6/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	13161
 
 TPNO=			25828
 

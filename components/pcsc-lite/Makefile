@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS=64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= sha256:b91f97806042315a41f005e69529cb968621f73f2ddfbd138
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://alioth.debian.org/frs/download.php/file/4138/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        library/smartcard
+COMPONENT_ANITYA_ID=	2611
 
 TPNO =                  25484
 

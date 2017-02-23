@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 # we really need to use studio so we don't like that
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:00854223cbd947bf1bd85d9dabd1b2829706d9062e0007d5022082a5e4b7e15e
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/stdcxx/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libstdcxx
+COMPONENT_ANITYA_ID=	13272
 
 TPNO=			9048
 

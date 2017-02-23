@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER= gcc
@@ -31,6 +31,7 @@ COMPONENT_VERSION=	0.60.6.1
 COMPONENT_PROJECT_URL=	http://aspell.net/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f52583a83a63633701c5f71db3dc40aab87b7f76b29723aeb27941eff42df6e1
+COMPONENT_ANITYA_ID=	120
 
 COMPONENT_NAME_1=	aspell6-en
 COMPONENT_VERSION_1=	7.1-0

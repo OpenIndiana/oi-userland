@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -29,6 +29,7 @@ COMPONENT_NAME=		bash
 COMPONENT_VERSION=	4.4
 COMPONENT_ARCHIVE_HASH = \
     sha256:d86b3392c1202e8ff5a423b302e6284db7f8f435ea9f39b5b1b20fd3ac36dfcb
+COMPONENT_ANITYA_ID=	166
 
 TPNO=			32706
 

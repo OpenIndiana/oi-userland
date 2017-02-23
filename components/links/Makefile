@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 # Because the Studio compiler generates thousands of lines of warnings.
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	http://links.twibright.com/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2e3da6193de9d6ee71bc4beab17169ecc58d7cbf2e20192a3f518ed9f7f22e33
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1822
 
 TPNO=			27168
 

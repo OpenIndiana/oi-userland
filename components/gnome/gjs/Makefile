@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Gjs
 COMPONENT_ARCHIVE_HASH= \
 	sha256:82b54dd4590ea1622d19b2e27978bcb9c2c5b46922e1e1780ea79b6a28aa1c4e
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	9532
 
 TPNO=			25284
 

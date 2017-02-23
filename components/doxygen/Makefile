@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:65d08b46e48bd97186aef562dc366681045b119e00f83c5b61d05d37ea154049
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	457
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip

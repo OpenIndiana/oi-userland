@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://savannah.gnu.org/projects/which/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f4a245b94124b377d8b49646bf421f9155d36aa7614b6ebf83705d3ffc76eaad
 COMPONENT_BUGDB=	utility/gnu-which
+COMPONENT_ANITYA_ID=	5127
 
 TPNO=			27233
 

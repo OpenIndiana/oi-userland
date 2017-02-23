@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_VERSION=	1.33
 COMPONENT_ARCHIVE_HASH=	\
     sha256:44a7aab635bb721ceef6beecc4d49dfd19478325e1b47f3196f7d2acc4930e19
 COMPONENT_BUGDB=	library/libidn
+COMPONENT_ANITYA_ID=	1639
 
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \

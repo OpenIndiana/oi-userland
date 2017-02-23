@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             64_and_32
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GnomeKeyring
 COMPONENT_ARCHIVE_HASH= \
 	sha256:3f670dd61789bdda75b9c9e31e289bf7b1d23ba012433474790081ba7dc0ed98
 COMPONENT_BUGDB=	gnome/security
+COMPONENT_ANITYA_ID=	13133
 
 TPNO=			25824
 

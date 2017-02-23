@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:ded4c9f73731cd48fec3b6bdaccce896473b6d8e337e9612e16cf1431bb1169d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-findutils
+COMPONENT_ANITYA_ID=	812
 
 TPNO=			27155
 

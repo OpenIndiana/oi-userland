@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:60d8db69b1d74a64d78566c2317c373a85fef691b8d277737ee5d29f448595bf
 COMPONENT_ARCHIVE_URL=	http://downloads.es.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/iperf
+COMPONENT_ANITYA_ID=	1389
 
 TPNO=			31583
 

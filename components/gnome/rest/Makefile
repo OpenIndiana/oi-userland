@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Librest
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c710644455340a44ddc005c645c466f05c0d779993138ea21a62c6082108b216
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	4194
 
 TPNO=			25457
 

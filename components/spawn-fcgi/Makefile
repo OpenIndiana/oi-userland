@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7507a822995731629149040ee5686279b7582ae46f0296efd64b542ef052a90e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	5388
 
 TPNO=			9041
 

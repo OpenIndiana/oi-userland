@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 64_and_32
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:efbe0d58fda936f2ed99d0b837ed7087d064d6838931f282c4618d2a3f7390c4
 COMPONENT_ARCHIVE_URL=	http://downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libwebp
+COMPONENT_ANITYA_ID=	1761
 
 TPNO=			25769
 

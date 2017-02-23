@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/ML/MLFISHER/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl-pmtools
 TPNO=			31142
+COMPONENT_ANITYA_ID=	13293
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/makemaker.mk

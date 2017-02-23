@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:369737ce51587f92466041a97ab7d2358c6d9e1b6490b3940eb09fb0a9a6ac88
 COMPONENT_BUGDB=	utility/gnu-binutils
+COMPONENT_ANITYA_ID=	7981
 
 TPNO=			32076
 

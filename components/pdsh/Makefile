@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:57f0903bf782afe00874267b59e0f4adefa79da4c48d0257c5ae2bef02f87fcf
 COMPONENT_ARCHIVE_URL=	https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	13274
 
 TPNO=			29495
 

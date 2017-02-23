@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Preferred compiler set to gcc and not Studio as on Sparc architecture
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:86f16792d71fc59b96f65eca65b1b7466dc046efe6d5ac04c6632f1315e83cfa
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1476
 
 TPNO=			10774
 

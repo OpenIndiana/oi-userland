@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:71ff8db2fa3eb53d8f54ffd612c6679b231a9d69c13adb91cf63421425953b10
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        gnome/applications
+COMPONENT_ANITYA_ID=	13137
 
 TPNO=			24894
 

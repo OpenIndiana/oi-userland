@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:25359e0c27183f997b36c9202583b5dc2df390c20e22a92606af4bf7856a55ee
 COMPONENT_ARCHIVE_URL=	ftp://invisible-island.net/diffstat/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/diffstat
+COMPONENT_ANITYA_ID=	434
 
 TPNO=			27077
 

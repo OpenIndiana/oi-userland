@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:c88a5e4af83c5f40dda8455886ac98923a9c33125699742603a88a0253fcc8c5
 COMPONENT_ARCHIVE_URL=	http://www.thrysoee.dk/editline/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libedit
+COMPONENT_ANITYA_ID=	1599
 
 TPNO=			22295
 

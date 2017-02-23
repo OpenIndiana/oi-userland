@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 COMPILER= gcc
 BUILD_BITS= 64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:f75bc1a859226a5ad7cf3012925835a4d70b83dcac57a95d452194601b03191c
 COMPONENT_ARCHIVE_URL=	http://archive.ubuntu.com/ubuntu/pool/universe/p/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pidgin
+COMPONENT_ANITYA_ID=	13281
 
 TPNO=			29496
 

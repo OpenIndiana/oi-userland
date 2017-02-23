@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Nautilus
 COMPONENT_ARCHIVE_HASH= \
 	sha256:68dcf668e2ca93126a899d2e236ef37af2aea93e3fc25eee23ccd7ba911d424a
 COMPONENT_BUGDB=        gnome/nautilus
+COMPONENT_ANITYA_ID=	2050
 
 TPNO=			25412
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2ad98dd3a4805452e546e0f5b682360370ae11692a2157fff8ec6d177c957123
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	50
 
 TPNO=			25967
 

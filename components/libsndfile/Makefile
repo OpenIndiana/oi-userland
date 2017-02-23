@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER= gcc
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:a391952f27f4a92ceb2b4c06493ac107896ed6c76be9a613a4731f076d30fac0
 COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/libsndfile/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libsndfile
+COMPONENT_ANITYA_ID=	13277
 
 TPNO=			30616
 

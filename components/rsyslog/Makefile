@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://www.rsyslog.com/
 COMPONENT_ARCHIVE_HASH=	sha256:9ed6615a8503964290471e98ed363f3975b964a34c2d4610fb815a432aadaf59
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
+COMPONENT_ANITYA_ID=	4218
 
 TPNO=                   28284
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -38,6 +38,7 @@ HUMAN_VERSION=		$(COMPONENT_VERSION)
 #COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/psutils.tar.gz
 # Official ftp sources are currently unavailable, so I'm using mirror I found.
 # I made sure that the tarball is equal to the one present in SFW
+COMPONENT_ANITYA_ID=	12921
 
 TPNO=			9004
 

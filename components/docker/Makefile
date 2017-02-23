@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_ARCH=		i386
 BUILD_BITS=		64
@@ -31,6 +31,7 @@ COMPONENT_VERSION=	1.10.3
 COMPONENT_PROJECT_URL=	http://www.docker.com
 COMPONENT_ARCHIVE_URL=	\
 	https://github.com/docker/docker/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ANITYA_ID=	7513
 
 COMPONENT_BUGDB=	utility/docker-engine
 

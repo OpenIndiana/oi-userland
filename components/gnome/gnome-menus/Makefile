@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -34,6 +34,7 @@ COMPONENT_VERSION=	3.13.3
 COMPONENT_ARCHIVE_HASH= \
 	sha256:7c446eb8ff381df52b8ba04e5886497595e84d1bc46caf7af764d894736c654e
 COMPONENT_BUGDB=        gnome/menus
+COMPONENT_ANITYA_ID=	13134
 
 TPNO=			24752
 

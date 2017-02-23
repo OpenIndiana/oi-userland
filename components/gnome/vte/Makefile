@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/Terminal/VTE
 COMPONENT_ARCHIVE_HASH= \
 	sha256:9e00e2e9e94f4202b979c871f407a8815890bc0f4a8448a08534f76ab0fc9d34
 COMPONENT_BUGDB=        gnome/terminal
+COMPONENT_ANITYA_ID=	10895
 
 TPNO=			25406
 

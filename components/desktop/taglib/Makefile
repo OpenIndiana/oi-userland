@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32_and_64
 # For now, all things built for C++11 require gcc.
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:72d371cd1419a87ae200447a53bff2be219283071e80fd12337928cc967dc71a
 COMPONENT_ARCHIVE_URL=	https://taglib.github.io/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/taglib
+COMPONENT_ANITYA_ID=	1982
 
 TPNO=			27551
 

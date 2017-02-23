@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER= gcc
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37
 COMPONENT_ARCHIVE_URL=	ftp://sources.redhat.com/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libffi
+COMPONENT_ANITYA_ID=	1611
 
 TPNO=		21649
 

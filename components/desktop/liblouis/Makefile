@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 		64
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
 # COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL=	https://distfiles.macports.org/liblouis/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/accessibility
+COMPONENT_ANITYA_ID=	13112
 
 TPNO=			4317
 

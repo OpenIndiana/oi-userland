@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 # There are a large number of macros in the GCB code written
@@ -35,6 +35,7 @@ COMPONENT_NAME=		gdb
 COMPONENT_VERSION=	7.11
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9382f5534aa0754169e1e09b5f1a3b77d1fa8c59c1e57617e06af37cb29c669a
+COMPONENT_ANITYA_ID=	11798
 
 TPNO=			27358
 

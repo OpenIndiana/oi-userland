@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://www.lua.org/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:64304da87976133196f9e4c15250b70f444467b6ed80d7cfd7b3b982b5177be5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1847
 
 LUA_TESTS=		lua-5.2.1-tests
 COMPONENT_ARCHIVE_1=	$(LUA_TESTS).tar.gz

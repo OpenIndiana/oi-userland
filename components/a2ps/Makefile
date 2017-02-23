@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 COMPILER= gcc
 BUILD_BITS= 64
@@ -30,6 +30,7 @@ COMPONENT_NAME=		a2ps
 COMPONENT_VERSION=	4.14
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
+COMPONENT_ANITYA_ID=	5
 
 TPNO=			4517
 

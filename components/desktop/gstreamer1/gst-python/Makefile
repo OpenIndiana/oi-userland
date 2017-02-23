@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =		32_and_64
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:b1e40c29ceb41b03f08d38aca6056054f0341d0706276326dceeec6ac8d53d3e
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
+COMPONENT_ANITYA_ID=	3881
 
 TPNO=			24910
 

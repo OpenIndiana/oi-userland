@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b87c738cb2032bf4920fef8e3864dc5cf8eae9d89d8d523ce0236945c5797dcd
 COMPONENT_ARCHIVE_URL=	\
 	http://cache.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4223
 
 TPNO=			31235
 

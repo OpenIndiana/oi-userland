@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 64
@@ -37,6 +37,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openca.org/projects/libpki/
 COMPONENT_ARCHIVE_SRC=	git
 COMPONENT_BUGDB=	library/smartcard
+COMPONENT_ANITYA_ID=	13309
 
 GIT_REPO= https://github.com/openca/libpki
 GIT_COMMIT_ID= b46aebc

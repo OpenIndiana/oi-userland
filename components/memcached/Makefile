@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:83726c8d68258c56712373072abb25a449c257398075a39ec0867fd8ba69771d
 COMPONENT_ARCHIVE_URL=	http://memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
+COMPONENT_ANITYA_ID=	1965
 
 TPNO=			32788
 

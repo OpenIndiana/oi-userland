@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -29,6 +29,7 @@ COMPONENT_NAME=		enscript
 COMPONENT_VERSION=	1.6.6
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6d56bada6934d055b34b6c90399aa85975e66457ac5bf513427ae7fc77f5c0bb
+COMPONENT_ANITYA_ID=	699
 
 # Ruby enscript support
 COMPONENT_ARCHIVE_1=    ruby-enscript.tar.gz

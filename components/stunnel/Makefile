@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 
@@ -31,6 +31,7 @@ COMPONENT_VERSION=	5.35
 COMPONENT_PROJECT_URL=	http://www.stunnel.org/
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:ffa386ae4c825f35f35157c285e7402a6d58779ad8c3822f74a9d355b54aba1d
+COMPONENT_ANITYA_ID=	4901
 
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/9079f5fafbccaf88b7d92b227d78249a/$(COMPONENT_ARCHIVE)
 

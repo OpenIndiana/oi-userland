@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION=	2.10
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8460a4a3dd4954c3d96d7a4f5dd5bc4d9b76f5754196aa245287553b26d2199a    
 COMPONENT_BUGDB=	library/libsigsegv
+COMPONENT_ANITYA_ID=	1722
 
 TPNO=			29089
 

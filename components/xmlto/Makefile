@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://fedorahosted.org/xmlto/
 COMPONENT_ARCHIVE_HASH= \
     sha256:2f986b7c9a0e9ac6728147668e776d405465284e13c74d4146c9cbc51fd8aad3
 COMPONENT_ARCHIVE_URL=	 https://fedorahosted.org/releases/x/m/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	13307
 
 TPNO=			27193
 

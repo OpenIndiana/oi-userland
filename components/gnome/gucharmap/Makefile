@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/Gucharmap
 COMPONENT_ARCHIVE_HASH= \
 	sha256:b286d09dcd7811e6678e3d5830970d310d5730f7be5657ec400295df0b36fa35
 COMPONENT_BUGDB=        gnome/applications
+COMPONENT_ANITYA_ID=	1276
 
 TPNO=			25270
 

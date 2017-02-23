@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH=\
     sha256:07187ba2870f89cef334cd2ad6cb801aeec5eaf283da0293a9a6be75d6786d11
 COMPONENT_ARCHIVE_URL=	http://php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 TPNO=			32826
+COMPONENT_ANITYA_ID=	12535
 
 include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/php.mk

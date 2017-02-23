@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:c696134e863f99191a301288c12d69ff00b7e648107ee52c8686ae047dde1bee
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_NAME)/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rabbitmq
+COMPONENT_ANITYA_ID=	5585
 
 TPNO=			27775
 

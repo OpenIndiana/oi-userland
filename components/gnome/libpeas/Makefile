@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libpeas
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:b093008ecd65f7d55c80517589509698ff15ad41f664b11a3eb88ff461b1454e
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	6871
 
 TPNO=			25272
 

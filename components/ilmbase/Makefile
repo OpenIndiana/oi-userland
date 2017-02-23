@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:4f14fc7b26a37a391ec5f979697148e6774bc36bc052de26e40ffabe401e397d
 COMPONENT_ARCHIVE_URL=  http://download.savannah.nongnu.org/releases/openexr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openexr
+COMPONENT_ANITYA_ID=	13285
 
 TPNO=			5574
 

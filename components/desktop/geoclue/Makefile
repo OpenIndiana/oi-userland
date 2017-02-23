@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:a490de0d4f97cb65f81e9fd0f687c7e84ef2c41509c214a1438964f541c7d446
 COMPONENT_ARCHIVE_URL=	http://freedesktop.org/software/geoclue/releases/2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	13108
 
 TPNO=			25494
 

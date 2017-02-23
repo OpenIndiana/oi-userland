@@ -29,6 +29,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openssh
 COMPONENT_VERSION=	7.4p1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
+COMPONENT_ANITYA_ID=	2565
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>

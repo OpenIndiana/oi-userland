@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -33,6 +33,7 @@ COMPONENT_VERSION=	3.18.2
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Calculator
 COMPONENT_ARCHIVE_HASH= \
         sha256:c86c5857409ce1d01896904e97ccf0a1a880f3dcf428a524e5c0fec27b274d64
+COMPONENT_ANITYA_ID=	13126
 
 TPNO=			25268
 

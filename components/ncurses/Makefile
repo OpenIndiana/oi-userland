@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION=	5.7
 COMPONENT_ARCHIVE_HASH= \
     sha256:0a9bdea5c7de8ded5c9327ed642915f2cc380753f12d4ad120ef7da3ea3498f4
 COMPONENT_BUGDB=	library/ncurses
+COMPONENT_ANITYA_ID=	2057
 
 TPNO=			5931
 

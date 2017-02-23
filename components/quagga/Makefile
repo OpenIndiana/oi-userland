@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2006, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:bc5052d285af6e7aac42984741e74261637c57c4a02032bf05de7a5ea3a1afe0
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/quagga
+COMPONENT_ANITYA_ID=	4139
 
 TPNO=			9106
 

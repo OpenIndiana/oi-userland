@@ -20,12 +20,13 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_PROJECT_URL= http://www2.research.att.com/sw/download/
+COMPONENT_ANITYA_ID=	1523
 
 # These are required if retrieving packages from the AT&T website.
 ATT_USERNAME= "I accept www.opensource.org/licenses/eclipse"

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =		gcc
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:b73b7f0aec1f4d89fb6a587d4174dede493af8a3c04bb6eb87b0d10a8623bd7f
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libpng/files/libpng14/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libpng
+COMPONENT_ANITYA_ID=	1705
 
 TPNO=		27311
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b4ebe2415761a5137cd1d313c8fc1352f26d8963cc9e9e354e29720aa2089d42
 COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ncftp-client
+COMPONENT_ANITYA_ID=	2054
 
 TPNO=			24893
 

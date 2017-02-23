@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://developer.gnome.org/gssdp/
 COMPONENT_ARCHIVE_HASH= \
 	sha256:7bf5aeaf2119fe0bec5f3632ecf39dae15bc85276c72c2ad8dd4b0e345c6535a
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	1262
 
 TPNO=			25384
 

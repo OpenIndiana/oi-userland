@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		NO_ARCH
@@ -32,6 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0385c905952132ce944c821ea4f57ccffd660db7965ca8a62f28600939e659c1
+COMPONENT_ANITYA_ID=	13227
 
 COMPONENT_ARCHIVE_URL=	\
     https://github.com/openstack/cloudbase-init/archive/$(COMPONENT_ARCHIVE)

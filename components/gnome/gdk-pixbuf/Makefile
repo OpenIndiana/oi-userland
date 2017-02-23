@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # All components using gobject-introspection must be built with gcc as
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GdkPixbuf
 COMPONENT_ARCHIVE_HASH= \
     sha256:85ab52ce9f2c26327141b3dcf21cca3da6a3f8de84b95fa1e727d8871a23245c
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	9533
 
 TPNO=			32697
 

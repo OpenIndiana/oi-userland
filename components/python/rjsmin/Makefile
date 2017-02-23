@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://storage.perlig.de/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://opensource.perlig.de/rjsmin/
 COMPONENT_BUGDB=	python-mod/rjsmin
+COMPONENT_ANITYA_ID=	10049
 
 TPNO=			27708
 

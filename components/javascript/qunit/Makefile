@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:38f0f23e8441e1e2da6d4e90a10b85304eb52002d570e7016015d05718d4a3d5
 COMPONENT_ARCHIVE_URL=	https://github.com/jquery/qunit/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= 	javascript/qunit
+COMPONENT_ANITYA_ID=	9709
 
 TPNO= 	27977
 

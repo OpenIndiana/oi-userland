@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -49,6 +49,7 @@ COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
+COMPONENT_ANITYA_ID=	4758
 
 include $(WS_MAKE_RULES)/prep.mk
 

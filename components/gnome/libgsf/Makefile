@@ -34,6 +34,7 @@ COMPONENT_VERSION=	1.14.34
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:f0fea447e0374a73df45b498fd1701393f8e6acb39746119f8a292fb4a0cb528
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	1980
 
 # Needs gobject-introspection, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)

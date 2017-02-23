@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # gobject-introspection bindings are only built correctly for gtk when building
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
 	sha256:cd1c1ea265bd63ff669e92a2d3c2a88eb26bcd9e5363e0f82c896e649f206912
 COMPONENT_BUGDB=       gnome/libraries
+COMPONENT_ANITYA_ID=	13159
 
 TPNO=			19936
 

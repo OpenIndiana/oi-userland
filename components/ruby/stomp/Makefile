@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 include ../../../make-rules/ruby.mk
@@ -42,6 +42,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://rubygems.org/gems/stomp/
 COMPONENT_BUGDB=	utility/ruby-stomp
+COMPONENT_ANITYA_ID=	4499
 
 TPNO=                   23495
 

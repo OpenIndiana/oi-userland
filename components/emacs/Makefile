@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # As Solaris always has a 64-bit kernel, and 64-bit emacs can handle larger
 # files, we only build and deliver 64-bit binaries. 
@@ -31,6 +31,7 @@ COMPONENT_NAME=		emacs
 COMPONENT_VERSION=	24.5
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2737a6622fb2d9982e9c47fb6f2fb297bda42674e09db40fc9bcc0db4297c3b6
+COMPONENT_ANITYA_ID=	675
 
 TPNO=			23457
 

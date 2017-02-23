@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 COMPILER= gcc
 BUILD_BITS= 64_and_32
@@ -33,6 +33,7 @@ COMPONENT_SRC=		OpenSP-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3f0649840dc3d6ec432e3c8d933b178208f3feccb6db111d22c8995ad07c736b
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/openjade/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	13231
 
 TPNO=			9621
 

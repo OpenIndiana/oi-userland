@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/python-greenlet/greenlet
 COMPONENT_BUGDB=	python-mod/greenlet
+COMPONENT_ANITYA_ID=	6870
 
 TPNO=			26538
 

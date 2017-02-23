@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION = 0.9.37
 COMPONENT_ARCHIVE_HASH = \
     sha256:a78cbcc050fb50f4ef4cf02709a3f8dd498e9230271b445fc3dbec4132b47cdc
 COMPONENT_BUGDB=	library/libmicrohttpd
+COMPONENT_ANITYA_ID=	1658
 
 TPNO = 18422
 

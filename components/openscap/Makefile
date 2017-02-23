@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=  http://www.open-scap.org
 COMPONENT_DOWNLOAD_URL= https://fedorahosted.org/releases/o/p/openscap
 COMPONENT_ARCHIVE_HASH= sha256:20ae67ffabf90865fb2033d5c5e49bfb5fb485ffa6ff37910e8d7084c2236c74
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4619
 
 TPNO =			28398
 

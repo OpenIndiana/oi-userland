@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 COMPILER= gcc
 BUILD_BITS= 64_and_32
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://openjade.sourceforge.net/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1d2d7996cc94f9b87d0c51cf0e028070ac177c4123ecbfd7ac1cb8d0b7d322d1
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/openjade/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	2564
 
 TPNO=			9620
 

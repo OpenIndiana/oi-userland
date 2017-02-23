@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS = 32_and_64
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Vala
 COMPONENT_ARCHIVE_HASH= \
 	sha256:61f0337b000f7ed6ef8c1fea87e0047d9bd7c0f91dd9c5b4eb70fd3fb883dedf
 COMPONENT_BUGDB=        gnome/dev-tools
+COMPONENT_ANITYA_ID=	5065
 
 TPNO=			24623
 

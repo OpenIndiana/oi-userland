@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -29,6 +29,7 @@ COMPONENT_NAME=		gperf
 COMPONENT_VERSION=	3.0.4
 COMPONENT_ARCHIVE_HASH=	\
     sha256:767112a204407e62dbc3106647cf839ed544f3cf5d0f0523aaa2508623aad63e
+COMPONENT_ANITYA_ID=	1237
 
 TPNO=			28116
 

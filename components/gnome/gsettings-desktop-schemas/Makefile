@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/HowDoI/GSettings
 COMPONENT_ARCHIVE_HASH= \
     sha256:258713b2a3dc6b6590971bcfc81f98d78ea9827d60e2f55ffbe40d9cd0f99a1a
 COMPONENT_BUGDB=	gnome/gconf
+COMPONENT_ANITYA_ID=	13139
 
 TPNO=			25277
 

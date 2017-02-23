@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=  https://github.com/pypa/pip
 COMPONENT_BUGDB=	utility/pip
+COMPONENT_ANITYA_ID=	6529
 
 TPNO=			27739
 

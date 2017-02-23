@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Folks
 COMPONENT_ARCHIVE_HASH= \
 	sha256:6740d9074be911959904b40e7264d298bb5622995098ddfa1751dcd2bc4c917d
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	13121
 
 TPNO=			25282
 

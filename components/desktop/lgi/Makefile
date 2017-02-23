@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
         sha256:87c7870f8a1c60b48c4d5587b7fab46863e1cb9e76a68520f47e9ef2764cfe24
 COMPONENT_ARCHIVE_URL=  https://github.com/pavouk/lgi/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	1851
 
 TPNO=                   27458
 

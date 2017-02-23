@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://github.com/GNOME/sushi
 COMPONENT_ARCHIVE_HASH= \
 	sha256:7f4df92be950bf23aff28da49ce108766dd21a88efc14a9d0807e10225608e9c
 COMPONENT_BUGDB=        gnome/nautilus
+COMPONENT_ANITYA_ID=	10897
 
 TPNO=			25458
 

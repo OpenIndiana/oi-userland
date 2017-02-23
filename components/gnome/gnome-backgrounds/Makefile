@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             NO_ARCH
@@ -31,6 +31,7 @@ COMPONENT_VERSION=	3.18.0
 COMPONENT_ARCHIVE_HASH= \
 	sha256:aa560f0e5f12a308dd36aaac2fff32916abd61d42f47b4bc42c8c7011bf2a7b9
 COMPONENT_BUGDB=        gnome/branding
+COMPONENT_ANITYA_ID=	13125
 
 TPNO=			24585
 

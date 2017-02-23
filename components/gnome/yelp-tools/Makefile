@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             NO_ARCH
@@ -31,6 +31,7 @@ COMPONENT_VERSION=	3.18.0
 COMPONENT_ARCHIVE_HASH= \
 	sha256:c6c1d65f802397267cdc47aafd5398c4b60766e0a7ad2190426af6c0d0716932
 COMPONENT_BUGDB=        gnome/docviewer
+COMPONENT_ANITYA_ID=	8420
 
 TPNO=			25486
 

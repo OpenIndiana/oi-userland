@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=	https://developer.gnome.org/pangomm/stable/
 COMPONENT_ARCHIVE_HASH= \
     sha256:a8d96952c708d7726bed260d693cece554f8f00e48b97cccfbf4f5690b6821f0
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	7958
 
 TPNO=			25825
 

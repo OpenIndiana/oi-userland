@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # Prefer 32-bit as only "binary" delivered is a script with embedded paths.
 BUILD_BITS= 32_and_64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f6c2883cebec5608692d8730843d87f237c0964d923bbe7aa89c05f20558ad4f
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
+COMPONENT_ANITYA_ID=	1649
 
 TPNO=			28582
 

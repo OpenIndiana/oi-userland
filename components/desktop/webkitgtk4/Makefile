@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (24796572)
@@ -40,6 +40,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:30bd366bd970d4bac2f9ef5bff0fb935376bf91ea2aaa2a5183fe5fdbec20fbd
 COMPONENT_ARCHIVE_URL=	http://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/webkitgtk
+COMPONENT_ANITYA_ID=	5355
 
 TPNO=			25892
 

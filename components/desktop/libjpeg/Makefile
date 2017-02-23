@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS = 	64_and_32
@@ -39,6 +39,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:75c3ec241e9996504fe02a9ed4d12f16b74ade713972f3db9e65ce95cd27e35d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/libjpeg/6b/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libjpeg
+COMPONENT_ANITYA_ID=	1628
 
 TPNO=			9298
 

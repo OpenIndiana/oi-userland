@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://developer.gnome.org/cogl/
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:689dfb5d14fc1106e9d2ded0f7930dcf7265d0bc84fa846b4f03941633eeaa91
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	315
 
 TPNO=			25267
 

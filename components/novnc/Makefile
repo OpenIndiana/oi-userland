@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=  https://github.com/kanaka/noVNC/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://kanaka.github.io/noVNC
 COMPONENT_BUGDB=	utility/novnc
+COMPONENT_ANITYA_ID=	13226
 
 TPNO=			18799
 

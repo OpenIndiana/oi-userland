@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Mutter
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:4fdee7c9dc2db3a48f18723f47c3122aa5bddaddb8751701ce243e577e2a69a9
 COMPONENT_BUGDB=        gnome/window-manager
+COMPONENT_ANITYA_ID=	13154
 
 TPNO=			27162
 

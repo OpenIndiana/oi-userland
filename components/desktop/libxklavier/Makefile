@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		32_and_64
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:30e572d3bac0f4c8ba0098dd63527a789cb85649bd4c8d5ffd8d1f34306e36d1
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/gswitchit/files/libxklavier/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	1782
 
 TPNO=			3429
 

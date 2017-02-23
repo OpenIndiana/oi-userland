@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_LABEL=	$(COMPONENT_FULL_VERSION)
 # COMPONENT_SRC* is autodefined by the prep-{SCM} Makefile fragment
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_PROJECT_URL=	http://www.vim.org/
+COMPONENT_ANITYA_ID=	5092
 
 GIT_REPO=		git://github.com/vim/vim
 GIT_TAG=		v8.0.0095

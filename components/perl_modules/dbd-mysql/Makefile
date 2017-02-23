@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # This variable has no impact on perl build, it is here merely to satisfy
@@ -40,6 +40,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/MI/MICHIELB/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/perl5-dbi/DBD-mysql
 COMPONENT_BUGDB=	perl-mod/dbd-mysql
+COMPONENT_ANITYA_ID=	2807
 
 TPNO=			32689
 

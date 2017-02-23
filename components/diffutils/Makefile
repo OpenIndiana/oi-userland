@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:dad398ccd5b9faca6b0ab219a036453f62a602a56203ac659b43e889bec35533
 COMPONENT_BUGDB=	utility/gnu-diffutils
+COMPONENT_ANITYA_ID=	436
 
 TPNO=			31287
 

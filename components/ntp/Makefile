@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	 \
     sha256:b724287778e1bac625b447327c9851eedef020517a3545625e9f652a90f30b72
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
+COMPONENT_ANITYA_ID=	9025
 
 # NTP tests log results in separate files. Instead of geting the output
 # of the build and test and deleting the extra lines, it is easier to just

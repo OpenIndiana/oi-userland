@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_URL=	\
     http://www.cpan.org/modules/by-module/Authen/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~nikip/
 COMPONENT_BUGDB=	perl-mod/authen-pam
+COMPONENT_ANITYA_ID=	6628
 
 TPNO=			9303
 

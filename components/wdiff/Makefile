@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -29,6 +29,7 @@ COMPONENT_NAME=		wdiff
 COMPONENT_VERSION=	1.2.2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:34ff698c870c87e6e47a838eeaaae729fa73349139fc8db12211d2a22b78af6b
+COMPONENT_ANITYA_ID=	5112
 
 TPNO=			21556
 

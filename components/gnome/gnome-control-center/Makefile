@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://git.gnome.org/browse/gnome-control-center
 COMPONENT_ARCHIVE_HASH= \
 	sha256:36fe6157247d2b7c8a98dbb3dbcde1c3a6f9e5e8fcc9ccf357e2b2417578f8ad
 COMPONENT_BUGDB=	gnome/preferences
+COMPONENT_ANITYA_ID=	5408
 
 TPNO=			25823
 

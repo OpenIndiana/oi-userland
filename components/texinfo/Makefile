@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 # using gcc makes parfait happy.
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:02582b6d9b0552f1cb1312be6bd7023e9799603c3b2320fa68a36029e4cbafbb
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4958
 
 TPNO_TEXINFO=		27244
 TPNO_TEXI2HTML=		9089

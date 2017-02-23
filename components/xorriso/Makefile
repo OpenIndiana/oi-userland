@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=  http://scdbackup.sourceforge.net/xorriso/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:526f728c7eee6f8c4b69fbf391789e6c80806197c2861cf5922cf7cfe1035784
 COMPONENT_ARCHIVE_URL=  http://scdbackup.sourceforge.net/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	13270
 
 TPNO=			32406
 

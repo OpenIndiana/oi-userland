@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 # Use GCC until Studio supports large enums (23058232)
@@ -32,6 +32,7 @@ COMPONENT_VERSION=	2.2
 COMPONENT_PROJECT_URL=	http://github.com/tmux/tmux
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bc28541b64f99929fe8e3ae7a02291263f3c97730781201824c0f05d7c8e19e4
+COMPONENT_ANITYA_ID=	4980
 
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 

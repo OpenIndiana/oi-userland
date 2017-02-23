@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d3aa7973c578cae4cc26d9d6498c57ed06680cab9a4e940d0357a3c6527afc76
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1249
 
 TPNO=			17707
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 # All components using gobject-introspection must be built with gcc as
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:d54991185d514a0aba54ebeb408d7575b60f5818a772e28fa
 COMPONENT_ARCHIVE_URL=	https://github.com/lathiat/avahi/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.avahi.org/
 COMPONENT_BUGDB=	library/avahi
+COMPONENT_ANITYA_ID=	147
 
 # Depends on a Python module from Desktop that is only available 32-bit in S11.
 ifeq ($(BUILD_TYPE), evaluation)

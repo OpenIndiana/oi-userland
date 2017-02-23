@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:79b4c54cdbaf02c1a9a691d9948fcb1a77a1591a813e904283a8b614b757e850
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.3/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.fetchmail.info/
+COMPONENT_ANITYA_ID=	801
 
 TPNO=			29615
 

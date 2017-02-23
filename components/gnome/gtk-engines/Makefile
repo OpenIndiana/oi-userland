@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=            	32_and_64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	gtk-engines-2.20.2.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:15b680abca6c773ecb85253521fa100dd3b8549befeecc7595b10209d62d66b5
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	13141
 
 TPNO=			8678
 

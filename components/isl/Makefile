@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:f4b3dbee9712850006e44f0db2103441ab3d13b406f77996d1df19ee89d11fb4
 COMPONENT_ARCHIVE_URL=  http://isl.gforge.inria.fr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        utility/gnu-compiler
+COMPONENT_ANITYA_ID=	13286
 
 TPNO=			23799
 

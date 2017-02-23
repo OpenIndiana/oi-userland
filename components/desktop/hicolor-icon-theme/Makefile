@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             NO_ARCH
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:9cc45ac3318c31212ea2d8cb99e64020732393ee7630fa6c1810af5f987033cc
 COMPONENT_ARCHIVE_URL=	http://icon-theme.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        gnome/branding
+COMPONENT_ANITYA_ID=	1316
 
 TPNO=		24162
 

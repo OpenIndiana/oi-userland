@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 		64
 # All components using gobject-introspection must be built with gcc as
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/GDM
 COMPONENT_ARCHIVE_HASH= \
 	sha256:549235247611d74f0d5d5a4aa01ba9350a4d3468e44ac013b40791c6a986f822
 COMPONENT_BUGDB=        gnome/gdm
+COMPONENT_ANITYA_ID=	13122
 
 TPNO=			25845
 

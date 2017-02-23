@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Cairo uses atomic intrinsics not supported in Studio 12.4 (ER 19201298)
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:c919d999ddb1bbbecd4bbe65299ca2abd2079c7e13d224577895afa7005ecceb
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/cairo
+COMPONENT_ANITYA_ID=	247
 
 TPNO=			24139
 

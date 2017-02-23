@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER=gcc
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL= https://launchpad.net/libmemcached/1.0/${COMPONENT_VERSION}/+download/libmemcached-${COMPONENT_VERSION}.tar.gz 
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 COMPONENT_BUGDB=	database/memcached
+COMPONENT_ANITYA_ID=	5412
 
 TPNO=			31699
 

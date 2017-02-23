@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS=64
 # Currently only builds with gcc
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:92d8410d3d981bb881dfff2aed466da55a58d34c7390d50449aa59b32bb5e62a
 COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
+COMPONENT_ANITYA_ID=	306
 
 TPNO=			29071
 

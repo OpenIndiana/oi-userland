@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 
@@ -41,6 +41,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3ab488fe2df01bf54a57acd70e745266e19232edacf77512f77655296748e7a0
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-compiler
+COMPONENT_ANITYA_ID=	6502
 
 TPNO=			17028
 

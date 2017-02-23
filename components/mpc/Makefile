@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER= gcc
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://www.multiprecision.org/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:617decc6ea09889fb08ede330917a00b16809b8db88c29c31bfbb49cbf88ecc3
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1667
 
 TPNO=			29500
 
@@ -47,6 +48,7 @@ COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:fd3efe422f0d454592059e80f2c00d1a2e381bf2beda424c5094abd4deb049ac
 COMPONENT_ARCHIVE_URL_1=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC_1)/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ANITYA_ID_1=	1667
 
 TPNO_1=			4706
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =      	gcc
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b1cee83469ae7d80f17c267c37f090414e93960bd62d2b254a5a96fbc5baacb4
 COMPONENT_BUGDB=	gnome/glib
+COMPONENT_ANITYA_ID=	10024
 
 TPNO=			24986
 

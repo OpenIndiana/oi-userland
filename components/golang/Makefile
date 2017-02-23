@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_ARCH= i386
 BUILD_BITS= 64
@@ -40,6 +40,7 @@ COMPONENT_ARCHIVE_URL=	https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE
 COMPONENT_ARCHIVE_HASH=	 \
 	sha256:be81abec996d5126c05f2d36facc8e58a94d9183a56f026fc9441401d80062db
 COMPONENT_PROJECT_URL=	https://golang.org
+COMPONENT_ANITYA_ID=	1227
 
 ARC_CASE=		PSARC/2015/203
 TPNO=			23679

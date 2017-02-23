@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER= gcc
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:80533415acf11ac55f24b874ab39448e390ffec3c2b93df4b857d15602fc7c4d
 COMPONENT_ARCHIVE_URL=	https://github.com/htacg/tidy-html5/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB=	library/tidy
+COMPONENT_ANITYA_ID=	13267
 
 TPNO=			30761
 

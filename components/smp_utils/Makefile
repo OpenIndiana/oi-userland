@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:0e10d304cfa8789bcf16537e8f72d9afdf8838fca20ae68103c317432d00915b
 COMPONENT_ARCHIVE_URL=	http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/smputils
+COMPONENT_ANITYA_ID=	4840
 
 TPNO=			11065
 

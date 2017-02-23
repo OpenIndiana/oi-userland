@@ -44,6 +44,7 @@ COMPONENT_ARCHIVE_HASH = \
 MOZILLA_FTP = 		        http://ftp.mozilla.org/pub/mozilla.org/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL =		$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		firefox/browser
+COMPONENT_ANITYA_ID=	5506
 
 TPNO=				33404
 

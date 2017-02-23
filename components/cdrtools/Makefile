@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC)$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:facd40dc66f1499dfe936e647b694bee7a12cd63afd901a35bec855d9e3600a5
 COMPONENT_ARCHIVE_URL=  ftp://ftp.berlios.de/pub/cdrecord/alpha/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	9153
 
 TPNO=			6305
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=64_and_32
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:11f738063f322b06f8c81e42bc26c33e0cb1e465539647109e534274d4a8540c
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
+COMPONENT_ANITYA_ID=	4905
 
 TPNO=			30345
 

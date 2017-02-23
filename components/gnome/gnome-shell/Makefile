@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/GnomeShell
 COMPONENT_ARCHIVE_HASH= \
 	sha256:8517baf8606f970ebf38222411eb7563cab2ae5efbfb088954ce23705b67519b
 COMPONENT_BUGDB=        gnome/gnome-shell
+COMPONENT_ANITYA_ID=	5409
 
 TPNO=		25491
 

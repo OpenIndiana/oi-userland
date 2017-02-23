@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://jocr.sourceforge.net/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bc261244f887419cba6d962ec1ad58eefd77176885093c4a43061e7fd565f5b5
 COMPONENT_ARCHIVE_URL=	http://www-e.uni-magdeburg.de/jschulen/ocr/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1225
 
 TPNO=			21551
 

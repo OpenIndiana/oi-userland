@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # gobject-introspection bindings are only built correctly for gtk when building
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/PyGObject
 COMPONENT_ARCHIVE_HASH= \
 	sha256:fb8a1d4f665130a125011659bd347c7339c944232163dbb9a34fd0686577adb8
 COMPONENT_BUGDB=       gnome/libraries
+COMPONENT_ANITYA_ID=	13158
 
 TPNO=			19934
 

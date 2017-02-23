@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://github.com/GNOME/totem-pl-parser
 COMPONENT_ARCHIVE_HASH= \
 	sha256:a746580f61b678029dadaa824a6923445afd944d12c40c5fccb27159799c8137
 COMPONENT_BUGDB=        gnome/multimedia
+COMPONENT_ANITYA_ID=	13163
 
 TPNO=			25833
 

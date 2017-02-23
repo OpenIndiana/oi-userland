@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3ff723f93901f750779a2e67ff15985c357f1a15c892c9504446fbc85c6f77da
 COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
+COMPONENT_ANITYA_ID=	13290
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

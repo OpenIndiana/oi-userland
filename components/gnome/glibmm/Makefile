@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=	https://developer.gnome.org/glibmm/stable/
 COMPONENT_ARCHIVE_HASH= \
     sha256:7221a01a768c1cce2bb994cb6ebfe634246dba4788f910484d04e3b0d903a3c8
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	7960
 
 TPNO=			25778
 

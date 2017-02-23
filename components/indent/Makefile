@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION=	2.2.10
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8a9b41be5bfcab5d8c1be74204b10ae78789fc3deabea0775fdced8677292639
 COMPONENT_BUGDB=	utility/gnu-indent
+COMPONENT_ANITYA_ID=	1378
 
 TPNO=			28115
 

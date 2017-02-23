@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # Built in SFW with gcc and builds cleanly now only with gcc
 BUILD_BITS= 64
@@ -37,6 +37,7 @@ COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3c28820c981b30c50df8ac2a4a238e5813454fa3ed2ad530bc7948a282846474
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	707
 
 # manpages
 COMPONENT_NAME_1=	otp_doc_man

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (24796395)
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:4773c0099dba767d963fd92143263be338c48702172e8754b9bc5103efe1c56c
 COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
+COMPONENT_ANITYA_ID=	817
 
 TPNO=			27270
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # Prefer 32-bit as only "binary" delivered is a script with embedded paths.
 BUILD_BITS= 32_and_64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH = \
     sha256:00c626c0dc18d094ab374dbd9a354915bfe4776433289386ed489c2ec0845cdd
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/neon
+COMPONENT_ANITYA_ID=	7604
 
 TPNO=			21902
 

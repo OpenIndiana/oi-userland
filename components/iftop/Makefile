@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://www.ex-parrot.com/~pdw/iftop/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d032547c708307159ff5fd0df23ebd3cfa7799c31536fa0aea1820318a8e0eac
 COMPONENT_ARCHIVE_URL=	http://www.ex-parrot.com/~pdw/iftop/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1366
 
 TPNO=			9256
 

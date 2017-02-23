@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libsecret
 COMPONENT_ARCHIVE_HASH=	\
     sha256:12fd288b012e1b2b1b54d586cd4c6507885715534644b4534b7ef7d7079ba443
 COMPONENT_BUGDB=        gnome/security
+COMPONENT_ANITYA_ID=	13150
 
 TPNO=			25781
 

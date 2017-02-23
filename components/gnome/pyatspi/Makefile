@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =		32_and_64
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/en/AT-SPI_on_D-Bus
 COMPONENT_ARCHIVE_HASH= \
 	sha256:f86f03ad05d0502cd60fe8b98f746f74ce3bc208e9f3798f6a2130b3c5f4ab46
 COMPONENT_BUGDB=	gnome/a11y-libs-core
+COMPONENT_ANITYA_ID=	13157
 
 TPNO=			30736
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ed32d913af249d4221c2b94450eb4e996747024260c210620e94ac8130bc0fd6
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/pkgbuild/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://pkgbuild.sourceforge.net/
+COMPONENT_ANITYA_ID=	13232
 
 TPNO=			13159
 

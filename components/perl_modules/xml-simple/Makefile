@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Note that the use of this module itself is discouraged in new code.
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_URL=	\
     http://www.cpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
 COMPONENT_BUGDB=	perl-mod/xml-parser
+COMPONENT_ANITYA_ID=	3537
 
 TPNO=			31845
 

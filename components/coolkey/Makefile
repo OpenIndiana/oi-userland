@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # TESTING:
@@ -53,6 +53,7 @@ COMPONENT_DOWNLOAD_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME
 COMPONENT_ARCHIVE_HASH=	sha256:8448e3abb81bffc593c96b577dcfbc05b40e8684188456c31be15fae73d730f7
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/smartcard
+COMPONENT_ANITYA_ID=	13292
 
 TPNO =			25487
 

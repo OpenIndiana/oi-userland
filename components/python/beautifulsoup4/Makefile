@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://www.crummy.com/software/BeautifulSoup/bs4/download/4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/beautifulsoup4
 COMPONENT_BUGDB=	python-mod/beautifulsoup4
+COMPONENT_ANITYA_ID=	3779
 
 TPNO=			14503
 

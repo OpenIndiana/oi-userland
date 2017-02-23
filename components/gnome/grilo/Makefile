@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -34,6 +34,7 @@ COMPONENT_VERSION=	0.2.14
 COMPONENT_ARCHIVE_HASH= \
 	sha256:79c82ea1747ae7430a648aa9660e44d88d48c968bcdaeb3b2c5cb97e1c921ccd
 COMPONENT_BUGDB=        gnome/multimedia
+COMPONENT_ANITYA_ID=	10928
 
 TPNO=			25361
 

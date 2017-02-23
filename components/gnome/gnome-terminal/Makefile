@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/Terminal
 COMPONENT_ARCHIVE_HASH= \
 	sha256:5e35c0fa1395258bab83952cfabe4c1828b8655bcd761f8faed70b452bd89efa
 COMPONENT_BUGDB=        gnome/terminal
+COMPONENT_ANITYA_ID=	10896
 
 TPNO=			25405
 

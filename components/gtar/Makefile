@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 # parfait fails to compile us (21334808)
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:60e4bfe0602fef34cd908d91cf638e17eeb09394d7b98c2487217dc4d3147562
 COMPONENT_BUGDB=	utility/gtar
+COMPONENT_ANITYA_ID=	4939
 
 TPNO=			23088
 

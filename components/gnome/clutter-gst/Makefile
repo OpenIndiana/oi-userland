@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  http://www.clutter-project.org/
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:a944f84186937021aba6329c23954f6015d33bf151ba8994e13c59cefd742039
 COMPONENT_BUGDB=        library/clutter
+COMPONENT_ANITYA_ID=	304
 
 TPNO=			25520
 

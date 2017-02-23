@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -51,6 +51,7 @@ COMPONENT_ARCHIVE_5 =	index.html
 COMPONENT_ARCHIVE_HASH_5 = \
     sha256:fe8e0a7aa7371c4c1369b56485fdbd96699e53f0078d7369162c883bb7dac1ca
 COMPONENT_ARCHIVE_URL_5 = http://www.libpng.org/pub/mng/spec/index.html
+COMPONENT_ANITYA_ID=	1662
 
 COMPONENT_BUGDB=	library/libmng
 

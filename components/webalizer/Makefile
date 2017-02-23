@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 COMPILER= gcc
 BUILD_BITS= 64
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b37524fbd98e97052a80d59f75e69f857468752cf74cc0eb0972e5fab02eb6f7
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mrunix.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	13271
 
 TPNO=			27276
 

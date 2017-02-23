@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:2362169a9ee2f8940c52a76adf2564f59146103ecb895727a1c91aa6f0f5207d
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/fce56d7fc8c4af4e4ee9582c89f48eb8/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/docbook
+COMPONENT_ANITYA_ID=	1406
 
 TPNO=			9314
 

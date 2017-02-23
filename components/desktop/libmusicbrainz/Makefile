@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32_and_64
 # For now, all things built for C++11 require gcc.
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:6749259e89bbb273f3f5ad7acdffb7c47a2cf8fcaeab4c4695484cef5f4c6b46
 COMPONENT_ARCHIVE_URL=	https://github.com/metabrainz/$(COMPONENT_NAME)/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
+COMPONENT_ANITYA_ID=	1669
 
 TPNO=			24461
 

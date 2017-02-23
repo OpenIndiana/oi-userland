@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_MAJMIN_VERS=	1.11
 COMPONENT_VERSION=	1.11.2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c339e3871d6595620760725da61de02cf1c293af8a05b14592d6587ac39ce546
+COMPONENT_ANITYA_ID=	144
 
 TPNO=			7253
 

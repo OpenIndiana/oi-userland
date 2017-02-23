@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # Normally, 64-bit binaries are preferred over 32-bit ones, but we prefer
 # 32-bit for this component to keep the historical defaults used by autogen for
@@ -35,6 +35,7 @@ COMPONENT_VERSION=	5.16.2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:aa51f5adbf49c2cb48a7d6de3dbab15b89e0a04e7152195fe6fb3380e05c4991
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	143
 
 TPNO=			11805
 

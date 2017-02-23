@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # All components using gobject-introspection must be built with gcc as
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ce6c48d77bf951083029d5a396dd552d836fff3c1715d3a7022e917e46d0c92b
 COMPONENT_BUGDB=	gnome/a11y-libs-core
+COMPONENT_ANITYA_ID=	130
 
 TPNO=			24624
 

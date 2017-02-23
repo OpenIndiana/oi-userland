@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ffb911191e509b966deb55de705387f14156e1a56b21824357cdf0053233633c
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxml
+COMPONENT_ANITYA_ID=	1783
 
 # W3C XML Conformance Test Suites
 COMPONENT_ARCHIVE_1= xmlts20080827.tar.gz

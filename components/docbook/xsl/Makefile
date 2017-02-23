@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		NO_ARCH
@@ -40,6 +40,7 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/docbook/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_ARCHIVE_URL:$(COMPONENT_ARCHIVE)=$(COMPONENT_ARCHIVE_1))
 COMPONENT_BUGDB=	utility/docbook
+COMPONENT_ANITYA_ID=	13115
 
 TPNO=			9656
 

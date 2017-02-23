@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:eb2a013905f5f2a0cbf7bcc1d20c85a50065063ee87bd33b496c4e19815e3498 
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnutls
+COMPONENT_ANITYA_ID=	1221
 
 TPNO=			32471
 

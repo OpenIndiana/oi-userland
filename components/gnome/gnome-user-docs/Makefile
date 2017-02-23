@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             NO_ARCH
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/DocumentationProject/
 COMPONENT_ARCHIVE_HASH= \
 	sha256:83e52528de6afe4412679d7fd8c7f8124b07770b4e291592f24e9e50657efae4
 COMPONENT_BUGDB=        gnome/help
+COMPONENT_ANITYA_ID=	13138
 
 TPNO=		25265
 

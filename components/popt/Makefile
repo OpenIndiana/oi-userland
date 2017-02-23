@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:e728ed296fe9f069a0e005003c3d6b2dde3d9cad453422a10d6558616d304cc8
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/$(COMPONENT_NAME)/head/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/popt
+COMPONENT_ANITYA_ID=	3689
 
 TPNO=			27265
 

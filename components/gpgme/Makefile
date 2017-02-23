@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b09de4197ac280b102080e09eaec6211d081efff1963bf7821cf8f4f9916099d
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
+COMPONENT_ANITYA_ID=	1239
 
 TPNO=			27398
 

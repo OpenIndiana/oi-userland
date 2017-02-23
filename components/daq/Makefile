@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # Prefer 32-bit as only "binary" delivered is a script with embedded paths.
 BUILD_BITS= 32_and_64
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b40e1d1273e08aaeaa86e69d4f28d535b7e53bdb3898adf539266b63137be7cb
 COMPONENT_ARCHIVE_URL=	https://www.snort.org/downloads/snort/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/daq
+COMPONENT_ANITYA_ID=	13264
 
 TPNO=			32523
 

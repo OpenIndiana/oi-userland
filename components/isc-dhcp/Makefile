@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_URL=  \
 COMPONENT_ARCHIVE_HASH= \
     sha256:c11e896dffa1bfbc49462965d3f6dec45534e34068603546d9a236f2aa669921
 COMPONENT_BUGDB=	service/dhcp-server
+COMPONENT_ANITYA_ID=	5584
 
 TPNO=			27530
 

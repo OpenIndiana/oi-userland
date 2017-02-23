@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:a5fa6d7f7dc5382b48caca82b147c54bdffda02698611af76db5326ba64995a6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/poppler
+COMPONENT_ANITYA_ID=	3686
 TPNO_POPPLER=		25617
 
 COMPONENT_NAME_1=	poppler-data
@@ -42,6 +43,7 @@ COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:e752b0d88a7aba54574152143e7bf76436a7ef51977c55d6bd9a48dccde3a7de
 COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE_1)
+COMPONENT_ANITYA_ID_1=	3687
 TPNO_POPPLER_DATA=	25618
 
 TEST_TARGET= $(NO_TESTS)

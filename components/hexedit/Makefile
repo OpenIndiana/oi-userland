@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6a126da30a77f5c0b08038aa7a881d910e3b65d13767fb54c58c983963b88dd7
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	13305
 
 TPNO=			18059
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -48,6 +48,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ddd92a930317df92021054c03992392db9ea5cddba43bef8920d392a82114fb8
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/berkeley
+COMPONENT_ANITYA_ID=	1587
 
 # Userland default optimization level is 4, but that causes test failures.
 # Upstream recommends level 2, which allows the tests to run, so we use that.

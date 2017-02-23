@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:89c37e69a7348d638c859ea492958145a790d0d57a057b29f2f5d913541f8ef9
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/espeak/files/$(COMPONENT_NAME)/$(COMPONENT_NAME)-$(basename $(COMPONENT_VERSION))/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/accessibility
+COMPONENT_ANITYA_ID=	759
 
 TPNO=	 		7478
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4a6db33453b6efd15fa7d84ef2a3421262a053f57f1df6e7a2536d02bacdf375
 COMPONENT_BUGDB=        gnome/a11y-libs-core
+COMPONENT_ANITYA_ID=	7840
 
 TPNO=			24866
 

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 		64
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GSound
 COMPONENT_ARCHIVE_HASH= \
 	sha256:bba8ff30eea815037e53bee727bbd5f0b6a2e74d452a7711b819a7c444e78e53
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	9681
 
 TPNO=			25837
 

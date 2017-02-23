@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:1e1362ae7427c91fa53dc9c05aee4ee200e2d7d8970a891c5bd76bee28d28be4
 COMPONENT_ARCHIVE_URL=	\
 	http://cache.ruby-lang.org/pub/ruby/2.1/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4223
 
 TPNO=			22307
 

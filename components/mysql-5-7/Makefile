@@ -41,6 +41,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
+COMPONENT_ANITYA_ID=	334
 
 # Requires new pkgmogrify feature, available in S12 but not 11.3, so do not
 # publish.

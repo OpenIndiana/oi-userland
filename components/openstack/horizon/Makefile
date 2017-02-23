@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -253,6 +253,7 @@ COMPONENT_ARCHIVE_21 =	$(COMPONENT_SRC_21).tar.gz
 COMPONENT_ARCHIVE_HASH_21 = \
     sha256:c0745f433bb2f87d8222cdd65690c9089f5128c736309c3bc8d689aec39fa493
 COMPONENT_ARCHIVE_URL_21 = $(call pypi_url,21)
+COMPONENT_ANITYA_ID_21=	7295
 PKG_MACROS +=		VERSION_ANGULAR_GT=$(basename $(COMPONENT_VERSION_21))
 
 COMPONENT_NAME_22 =	XStatic-bootswatch
@@ -262,6 +263,7 @@ COMPONENT_ARCHIVE_22 =	$(COMPONENT_SRC_22).tar.gz
 COMPONENT_ARCHIVE_HASH_22 = \
     sha256:3c018cb0fdf591a520b2832a4ba8d8face633c765f29f9ccca8275b47be8aa94
 COMPONENT_ARCHIVE_URL_22 = $(call pypi_url,22)
+COMPONENT_ANITYA_ID_22=	7847
 PKG_MACROS +=		VERSION_BOOTSWATCH=$(basename $(COMPONENT_VERSION_22))
 
 COMPONENT_NAME_23 =	XStatic-mdi
@@ -271,6 +273,7 @@ COMPONENT_ARCHIVE_23 =	$(COMPONENT_SRC_23).tar.gz
 COMPONENT_ARCHIVE_HASH_23 = \
     sha256:39f177ca42baa074a13ce256a24191248c353fbf0754c0dcbf429f34ad0fd903
 COMPONENT_ARCHIVE_URL_23 = $(call pypi_url,23)
+COMPONENT_ANITYA_ID_23=	7846
 PKG_MACROS +=		VERSION_MDI=$(COMPONENT_VERSION_23)
 
 COMPONENT_NAME_24 =	XStatic-roboto-fontface

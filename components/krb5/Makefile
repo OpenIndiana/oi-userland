@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_NAME=		Kerberos
 COMPONENT_MAJOR=	1
 COMPONENT_MINOR=	$(COMPONENT_MAJOR).14
 COMPONENT_MICRO=	$(COMPONENT_MINOR).4
+COMPONENT_ANITYA_ID=	13287
 
 COMPONENT_VERSION=		$(COMPONENT_MICRO)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0

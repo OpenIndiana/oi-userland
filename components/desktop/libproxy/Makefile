@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 		32_and_64
 COMPILER= 		gcc
@@ -33,6 +33,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-master
 COMPONENT_ARCHIVE=	master.zip
 COMPONENT_ARCHIVE_URL=	https://github.com/binarycrusader/$(COMPONENT_NAME)/archive/master.zip
 COMPONENT_BUGDB=	library/libproxy
+COMPONENT_ANITYA_ID=	12742
 
 TPNO=			24459
 

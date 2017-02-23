@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:fd00770c9afd39db555c78400e52f55e8bd6568c78be23561abb472a22d09abb
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)2016/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/sqlite3
+COMPONENT_ANITYA_ID=	4877
 
 # Documentation
 DOC_VERSION=		$(TARBALL_VERSION)

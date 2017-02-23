@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =		32_and_64
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libcroco
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ea6e1b858c55219cefd7109756bff5bc1a774ba7a55f7d3ccd734d6b871b8570
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	11787
 
 TPNO=			24633
 

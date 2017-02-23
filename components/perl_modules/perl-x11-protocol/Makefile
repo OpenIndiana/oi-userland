@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:de96dd6c7c1f25f3287aa7af64902bf84acaaa8e0c3bb76aa1676367e04a08b7
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/S/SM/SMCCAM/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	perl-mod/x11-protocol
+COMPONENT_ANITYA_ID=	9804
 
 TPNO=			13258
 

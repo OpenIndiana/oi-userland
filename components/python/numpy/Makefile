@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS = 		32_and_64
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/numpy/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.numpy.org/
 COMPONENT_BUGDB=	python-mod/numpy
+COMPONENT_ANITYA_ID=	2509
 
 TPNO=			19933
 

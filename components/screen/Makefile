@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -29,6 +29,7 @@ COMPONENT_NAME=		screen
 COMPONENT_VERSION=	4.4.0
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ef722a54759a3bf23aad272bbf33c414c1078cad6bcd982fada93c0d7917218b
+COMPONENT_ANITYA_ID=	4772
 
 TPNO=			29565	
 

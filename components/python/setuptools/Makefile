@@ -20,13 +20,14 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		setuptools
 COMPONENT_VERSION=	19.2
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
+COMPONENT_ANITYA_ID=	4021
 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

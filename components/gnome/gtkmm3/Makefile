@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=	https://developer.gnome.org/gtkmm/stable/
 COMPONENT_ARCHIVE_HASH= \
     sha256:9b8d4af5e1bb64e52b53bc8ef471ef43e1b9d11a829f16ef54c3a92985b0dd0c
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	7963
 
 TPNO=			31032
 

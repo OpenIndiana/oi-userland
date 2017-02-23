@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/Gedit
 COMPONENT_ARCHIVE_HASH=	\
     sha256:856e451aec29ee45980011de57cadfe89c3cbc53968f6cc865f8efe0bd0d49b1
 COMPONENT_BUGDB=        gnome/applications
+COMPONENT_ANITYA_ID=	5758
 
 TPNO=			25490
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 64_and_32
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:2f1e82adf0868c9e26a5a7a3115111b6da7e432ddbac268a7ca2fae2a247eef3
 COMPONENT_ARCHIVE_URL=  https://github.com/google/snappy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://google.github.io/snappy/
+COMPONENT_ANITYA_ID=	10618
 
 TPNO = 31969
 

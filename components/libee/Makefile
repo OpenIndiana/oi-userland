@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:c0dac01938593deee06c3d161e4eda4ecc0fd7317e1321bd9
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 TPNO=			20532
+COMPONENT_ANITYA_ID=	13310
 
 # Tests are currently broken
 TEST_TARGET= $(NO_TESTS)

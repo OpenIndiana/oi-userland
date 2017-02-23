@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e5a0471c721281a693025bbde33ebd9d3db43245d83ab8516bbfc23980379434
 COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
+COMPONENT_ANITYA_ID=	4906
 
 TPNO=			32515
 

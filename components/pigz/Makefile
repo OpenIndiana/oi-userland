@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://zlib.net/pigz/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4e8b67b432ce7907575a549f3e1cac4709781ba0f6b48afea9f59369846b509c
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	3642
 
 TPNO=			31875
 

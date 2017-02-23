@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=            	64_and_32
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/$(COMPONENT_NAME)
 COMPONENT_ARCHIVE_HASH= \
 	sha256:488aa97a76ce6868160699cd45d4a0ee0fe6f0ad4631737c6ddd84450f6c9ce7
 COMPONENT_BUGDB=	gnome/remote-desktop
+COMPONENT_ANITYA_ID=	13142
 
 TPNO=			29178	
 

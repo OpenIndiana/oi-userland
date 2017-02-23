@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # All components using gobject-introspection must be built with gcc as
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	http://www.pango.org/
 COMPONENT_ARCHIVE_HASH= \
     sha256:1d4e75974bad853ee9ac5fc5caee5e7ab235abbd945d51d01f3806e04e7c226c
 COMPONENT_BUGDB=	gnome/pango
+COMPONENT_ANITYA_ID=	11783
 
 TPNO=			24871
 

@@ -37,6 +37,7 @@ COMPONENT_PROJECT_URL=	https://github.com/oracle/puppet-solaris_providers
 # archive from github strips leading v from release for vN named release tags
 COMPONENT_SRC=$(COMPONENT_NAME)-$(shell echo $(GIT_BRANCH) | sed -e 's/v//')
 COMPONENT_BUGDB=	utility/puppet
+COMPONENT_ANITYA_ID=	13323
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

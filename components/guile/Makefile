@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 # Built in SFW with gcc and builds cleanly now only with gcc
@@ -31,6 +31,7 @@ COMPONENT_NAME=		guile
 COMPONENT_VERSION=	1.8.8
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c3471fed2e72e5b04ad133bbaaf16369e8360283679bcf19800bc1b381024050
+COMPONENT_ANITYA_ID=	1277
 
 TPNO=			28097
 

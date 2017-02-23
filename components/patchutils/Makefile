@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:48d28d4a6fd9922e15ecfd8a152ba5aef6673842c8303337fcaa6b3bb2d129a2
 COMPONENT_ARCHIVE_URL=	http://cyberelk.net/tim/data/patchutils/stable/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	2599
 
 TPNO=			9269
 

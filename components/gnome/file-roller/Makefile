@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/FileRoller
 COMPONENT_ARCHIVE_HASH= \
 	sha256:d9346bb90d5f3296bf22f93a81f5bcd2e974620a4d81efea882db2b3db3b66c1
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	5392
 
 TPNO=			32830
 

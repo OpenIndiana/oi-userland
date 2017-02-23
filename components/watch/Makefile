@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e9493169a2d2adc0bc045538707310c8e877b385e4e296143b62607d2bb044ed
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/Production/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/watch
+COMPONENT_ANITYA_ID=	3708
 
 TPNO=			27264
 

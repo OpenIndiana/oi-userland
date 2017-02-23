@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f8252c0a0ba162c2cd45f81140c7c17cc40a5fca2b869d1a420835b74acad294
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dnsmasq
+COMPONENT_ANITYA_ID=	444
 
 TPNO=			28028
 

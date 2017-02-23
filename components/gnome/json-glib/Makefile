@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/JsonGlib
 COMPONENT_ARCHIVE_HASH=	\
     sha256:80f3593cb6bd13f1465828e46a9f740e2e9bd3cd2257889442b3e62bd6de05cd
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	13144
 
 TPNO=			25461
 

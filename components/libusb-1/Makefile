@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= sha256:cb057190ba0a961768224e4dc6883104c6f945b2bf2ef90d7
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/libusb/files/libusb-1.0/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://libusb.info/
 COMPONENT_BUGDB=	library/libusb
+COMPONENT_ANITYA_ID=	1749
 
 TPNO=			26906
 

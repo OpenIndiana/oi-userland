@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:80857ba19f8066bfc8d998bfc72b492e241ebd52d49c245aae9fd5b3d233b024
 COMPONENT_ARCHIVE_URL=	http://freedesktop.org/~hadess/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	5524
 
 TPNO=			9300
 

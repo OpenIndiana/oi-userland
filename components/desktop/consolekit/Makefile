@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64_and_32
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:f032adc6146d745034315054c5822a7a09f30e20a40d6e802221fa977354403e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/consolekit
+COMPONENT_ANITYA_ID=	340
 
 TPNO=			7882
 

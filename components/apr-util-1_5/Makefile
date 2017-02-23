@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Prefer 32-bit over 64-bit as apr-util has its own custom package layout.
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:976a12a59bc286d634a21d7be0841cc74289ea9077aa1af46be19d1a6e844c19
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
+COMPONENT_ANITYA_ID=	96
 
 TPNO=			20776
 

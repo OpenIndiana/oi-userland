@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # This variable has no impact on perl build, it is here merely to satisfy
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://backpan.perl.org/authors/id/I/IS/ISHIGAKI/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/DBD-SQLite/DBD-SQLite
 COMPONENT_BUGDB=	perl-mod/dbd-sqlite
+COMPONENT_ANITYA_ID=	2810
 
 TPNO=			26789
 

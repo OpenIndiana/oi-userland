@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://compression.ca/pbzip2/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8fd13eaaa266f7ee91f85c1ea97c86d9c9cc985969db9059cdebcb1e1b7bdbe6
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/pbzip2/1.1/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	2602
 
 TPNO=			27242
 

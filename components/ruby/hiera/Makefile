@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 RUBY_VERSION=2.1
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
 COMPONENT_PROJECT_URL=  https://github.com/puppetlabs/hiera
 COMPONENT_BUGDB=	utility/puppet
+COMPONENT_ANITYA_ID=	1317
 
 TPNO=                   30453
 

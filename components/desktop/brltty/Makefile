@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=          	64
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:5d071bd6be9e7f3f85745088e00471c8dec6ebb77fd5b5c89e8f4cbc2d2c5d4f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/brltty
+COMPONENT_ANITYA_ID=	220
 
 TPNO=			30456
 

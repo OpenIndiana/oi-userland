@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:1dfb9745fb992f1ccd43c920490de8caddf6726a6222e8b803be6098293f924b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/dbus
+COMPONENT_ANITYA_ID=	1052
 
 TPNO=			25522
 

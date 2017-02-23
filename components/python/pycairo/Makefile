@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:9aa4078e7eb5be583aeabbe8d87172797717f95e8c4338f0d4a17b683a7253be
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pycairo
+COMPONENT_ANITYA_ID=	13166
 
 TPNO=			30739
 

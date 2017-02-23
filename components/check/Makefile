@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://libcheck.github.io/check
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f5f50766aa6f8fe5a2df752666ca01a950add45079aa06416b83765b1cf71052
 COMPONENT_ARCHIVE_URL=	https://github.com/libcheck/$(COMPONENT_NAME)/files/71408/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	7593
 
 TPNO=			28147
 

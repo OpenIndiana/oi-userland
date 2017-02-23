@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_ARCH= i386
 BUILD_BITS= 64_and_32
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://yasm.tortall.net/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f
 COMPONENT_ARCHIVE_URL=	http://www.tortall.net/projects/$(COMPONENT_NAME)/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	5286
 
 TPNO=			23620
 

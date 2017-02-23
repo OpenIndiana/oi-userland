@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH= sha256:cd948e89cd2d8825fab4a6fb0323f810948d934af7d92c9ee
 COMPONENT_ARCHIVE_URL=  http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://oss.oetiker.ch/rrdtool/
 TPNO=                   29102 
+COMPONENT_ANITYA_ID=	4214
 
 PYTHON_VERSION=         2.7
 PYTHON_VERSIONS=        2.7

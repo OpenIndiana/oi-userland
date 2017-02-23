@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # For this component, prefer 32-bit over 64-bit for now until sufficient
 # testing has been performed.
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:9d942e542ef35d0e1f990d9ff5bf9df0af84c828ed081add2eb1b4d84f0efbda
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/pam-pkcs11
+COMPONENT_ANITYA_ID=	13275
 
 TPNO=			28155
 

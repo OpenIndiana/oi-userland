@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:909d47954697e7c04218f972915b787bd1244d75e3bd01620bc167d5bbc49c15
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/P/PV/PVANDRY/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	perl-mod/gettext
+COMPONENT_ANITYA_ID=	7523
 
 TPNO=			33099
 

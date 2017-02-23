@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_ARCH= i386
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:d277d7bea0b5d554dacf284d84252a5e995fb4ef54b6de5ec6296c6c2a9a21bd
 COMPONENT_ARCHIVE_URL=  https://github.com/rhinstaller/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB=	boot/shim
+COMPONENT_ANITYA_ID=	10719
 
 TPNO=			25414
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # 32-bit preferred as only *-config and source generation scripts delivered.
 BUILD_BITS= 32_and_64
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.wxwidgets.org/
 COMPONENT_BUGDB=	library/wxwidgets
+COMPONENT_ANITYA_ID=	5150
 
 TPNO=			28307
 

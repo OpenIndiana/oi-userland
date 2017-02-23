@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS=64
 # While the tree currently builds with Studio, we need to make sure it also
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:6fff7ec4be743e5c042647ea9687dd0cdf48d1dd5e8e15098e5018bbd02e5e27
 COMPONENT_ARCHIVE_URL=	https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        gnome/screensaver
+COMPONENT_ANITYA_ID=	5269
 
 TPNO=			26341
 

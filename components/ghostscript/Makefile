@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # parfait seems to spin when looking at the .bc files (13704877), so
 # for now disable it.
@@ -38,6 +38,7 @@ COMPONENT_PROJECT_URL=	http://ghostscript.com/
 COMPONENT_ARCHIVE_HASH= \
     sha256:9e754c315d68d91a65ef208b9a8bda1fb57e45a7be18aa9397acfcc5ff59de16
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	1157
 
 TPNO=			3796
 

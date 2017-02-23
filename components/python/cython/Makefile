@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =		gcc
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=		\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=  http://cython.org/
 COMPONENT_BUGDB=	python-mod/cython
+COMPONENT_ANITYA_ID=	12679
 
 TPNO=			32538
 

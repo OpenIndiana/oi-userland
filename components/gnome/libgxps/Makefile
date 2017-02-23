@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= 64_and_32
@@ -34,6 +34,7 @@ COMPONENT_VERSION=	0.2.2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:39d104739bf0db43905c315de1d8002460f1a098576f4418f69294013a5820be
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	1629
 
 TPNO=			25452
 

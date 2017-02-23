@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
@@ -29,6 +29,7 @@ COMPONENT_NAME=		automake
 COMPONENT_VERSION=	1.10
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d92c77acdc3b132ff6b2de06a1321654a556defa21b7dd3e8d4829434ed64e8e
+COMPONENT_ANITYA_ID=	144
 
 TPNO=			6149
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://www.j3e.de/linux/convmv/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:170cf675be1fca77868ff472e9340ca828b1463865a63d4f4b7b3bf4053db93f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	342
 
 TPNO=			27095
 

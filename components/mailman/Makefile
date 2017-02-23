@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ IPS_COMPONENT_VERSION=	2.1.18.1
 COMPONENT_PROJECT_URL=	http://www.list.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:ce70ed8b58d719cab80758f39a7258c0a28f8e8e859facdaa8c29add620a5c2c
+COMPONENT_ANITYA_ID=	1875
 
 TPNO=			18736
 

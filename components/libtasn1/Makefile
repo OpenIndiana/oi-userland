@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION=	2.8
 COMPONENT_ARCHIVE_HASH= \
     sha256:2b7d74f4b10b18ae2f0291fcafabe30e42c9ededdea41add8c622302132d545a
 COMPONENT_BUGDB=	library/libtasn1
+COMPONENT_ANITYA_ID=	1734
 
 TPNO=			9381
 

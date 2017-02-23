@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE_HASH=	\
     sha256:65b4ed45950263cb4e4ca82a9b469943053eb85656a7568d6e0eb446ab34afe5
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4987
 
 # Tomcat subcomponents
 COMPONENT_ARCHIVE_1= ecjsrc-4.5.1.jar

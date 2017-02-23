@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER= gcc
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:460c6c740acb8cdfbfbb387156b627cf731b3837605f2ec0001d079d89c69734
 COMPONENT_ARCHIVE_URL=	http://www.bastoul.net/cloog/pages/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/cloog
+COMPONENT_ANITYA_ID=	13279
 
 TPNO=			23800
 

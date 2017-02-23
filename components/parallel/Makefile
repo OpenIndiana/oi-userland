@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ IPS_COMPONENT_VERSION=  0.2016.2.22
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8dfbe539036a6ff02f9f542751e8621f42d285b3c9a7d9245042a6cc6ddc55ea
+COMPONENT_ANITYA_ID=	5448
 
 TPNO=			27217
 

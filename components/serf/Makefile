@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e0500be065dbbce490449837bb2ab624e46d64fc0b090474d9acaa87c82b2590
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)svn/src_releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libserf
+COMPONENT_ANITYA_ID=	1720
 
 TPNO=			22208
 

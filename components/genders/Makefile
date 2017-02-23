@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0ff292825a29201106239c4d47d9ce4c6bda3f51c78c0463eb2634ecc337b774
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)-1/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgenders
+COMPONENT_ANITYA_ID=	13282
 
 TPNO=			29494
 

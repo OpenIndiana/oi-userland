@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2005, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2005, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
@@ -31,6 +31,7 @@ COMPONENT_VERSION=    	2016.10
 COMPONENT_SRC=
 HUMAN_VERSION=		2016j
 TPNO=			24870
+COMPONENT_ANITYA_ID=	5021
 
 # Build info part of pkg(5) FMRI dropped ",$(OS_VERSION)" between 11 and 12;
 # needed for evaluation repo where we build the default repo from 12 on 11.

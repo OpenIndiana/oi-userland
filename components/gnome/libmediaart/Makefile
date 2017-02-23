@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 # All components using gobject-introspection must be built with gcc as
@@ -33,6 +33,7 @@ COMPONENT_VERSION=	1.9.0
 COMPONENT_ARCHIVE_HASH= \
 	sha256:94668adb29d4dc3115b0fd105942ebd5ca6f5f9dbb2afa8a191a73a747dd506f
 COMPONENT_BUGDB=	gnome/multimedia
+COMPONENT_ANITYA_ID=	13148
 
 TPNO=			25463
 

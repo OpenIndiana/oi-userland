@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH = \
     sha256:28085f0ae8be10eab582ff186af4fb0be92cc6c62b5cc19cd09b295c7c2899a1
 COMPONENT_ARCHIVE_URL  = https://people.gnome.org/~veillard/gamin/sources/gamin-0.1.10.tar.gz
 COMPONENT_BUGDB        = library/gamin
+COMPONENT_ANITYA_ID=	13249
 
 TPNO                   = 9483
 

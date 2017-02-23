@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	https://en.wikipedia.org/wiki/GNOME_Screenshot
 COMPONENT_ARCHIVE_HASH= \
 	sha256:eba64dbf4acf0ab8222fec549d0a4f2dd7dbd51c255e7978dedf1f5c06a98841
 COMPONENT_BUGDB=        gnome/applications
+COMPONENT_ANITYA_ID=	13135
 
 TPNO=			24603
 

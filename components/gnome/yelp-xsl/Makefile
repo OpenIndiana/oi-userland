@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             NO_ARCH
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/Yelp
 COMPONENT_ARCHIVE_HASH= \
 	sha256:00870fbe59a1bc7797b385fce16386917e2987c404e9b5a7adcf0036f1c1ba62
 COMPONENT_BUGDB=	gnome/docviewer
+COMPONENT_ANITYA_ID=	13164
 
 TPNO=			25488
 

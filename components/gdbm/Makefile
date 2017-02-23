@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION=	1.8.3
 COMPONENT_ARCHIVE_HASH=	\
     sha256:cc340338a2e28b40058ab9eb5354a21d53f88a1582ea21ba0bb185c37a281dc9
 COMPONENT_BUGDB=	library/libgdbm
+COMPONENT_ANITYA_ID=	882
 
 TPNO=			8440
 

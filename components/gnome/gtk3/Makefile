@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:7fb8ae257403317d3852bad28d064d35f67e978b1fed8b71d5997e87204271b9
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/gtk+/3.18/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/gtk+
+COMPONENT_ANITYA_ID=	10018
 
 TPNO=			24779
 

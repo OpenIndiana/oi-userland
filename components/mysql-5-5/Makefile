@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
+COMPONENT_ANITYA_ID=	334
 
 #We use cp(1) instead of cloney because we use TAR to copy files and the TAR 
 #used doesn't handle long links

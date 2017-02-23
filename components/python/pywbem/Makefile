@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/pywbem/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://pywbem.sourceforge.net/
 COMPONENT_BUGDB=	python-mod/pywbem
+COMPONENT_ANITYA_ID=	12059
 
 TPNO=			9053
 

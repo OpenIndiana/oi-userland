@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (24796432)
@@ -41,6 +41,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	http://downloads.webmproject.org/releases/webm/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libvpx
 TPNO=			25516
+COMPONENT_ANITYA_ID=	11083
 
 # Requires newer version of system/linker from ON, available in S12 but not
 # 11.3, so do not publish.

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 COMPILER= gcc
 # Prefer 32-bit as only "binary" delivered is a script with embedded paths.
@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/cppunit/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3f47d246e3346f2ba4d7c9e882db3ad9ebd3fcbd2e8b732f946e0e3eeb9f429f
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	9543
 
 TPNO=			20676
 

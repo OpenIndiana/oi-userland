@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f6fdb29c9ee8ce85c7e574f60ff64fa91cf0f4f018437dfe800227d15595db46
 COMPONENT_BUGDB=	utility/gnu-gettext
+COMPONENT_ANITYA_ID=	898
 
 TPNO=			20141
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 COMPILER= gcc
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:434242e758155aba6e4ddd28460dc9a2565c44bb8861a35ceaf7a6bbcae4aa1e
 COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/openusb/files/libopenusb/libopenusb-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download	
 COMPONENT_BUGDB=	library/libopenusb
+COMPONENT_ANITYA_ID=	13276
 
 TPNO=			32726
 

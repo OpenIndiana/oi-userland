@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0260f26ab771c1c95fadc67544b3400e420bb30b8a77565d2d02ad05498ef52b
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/perl/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
+COMPONENT_ANITYA_ID=	1998
 
 TPNO=			23900
 

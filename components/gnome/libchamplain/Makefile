@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            32_and_64
@@ -35,6 +35,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/libchamplain
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:851e24888d967c10acb8fd878df1292a84b8180eb4c48fc5bfbf1a48896d4aa5
 COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	1576
 
 TPNO=			24895
 

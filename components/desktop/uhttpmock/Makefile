@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS = 		64_and_32
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:26da182a2db2579c5ba4dad9096d52099e0766228c295cfbaed6de4046f7d16e
 COMPONENT_ARCHIVE_URL=	https://tecnocode.co.uk/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/uhttpmock
+COMPONENT_ANITYA_ID=	5036
 
 TPNO=			25615
 

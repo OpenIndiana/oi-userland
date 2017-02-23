@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 export PARFAIT_BUILD=no
 BUILD_BITS= 32
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:1680f92781b92cbdb57d7e4f647c650678c594154cb0d707fd9a994424a9860d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gcc/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        utility/gnu-compiler
+COMPONENT_ANITYA_ID=	6502
 
 TPNO=			31051
 

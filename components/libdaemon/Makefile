@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH = \
 	 sha256:fd23eb5f6f986dcc7e708307355ba3289abe03cc381fc47a80bca4a50aa6b834
 COMPONENT_ARCHIVE_URL  = http://0pointer.de/lennart/projects/libdaemon/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB        = library/daemon
+COMPONENT_ANITYA_ID=	13299
 
 TPNO                   = 9316
 

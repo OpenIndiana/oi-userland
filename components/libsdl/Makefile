@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # Prefer 32-bit as only "binary" delivered is a script with embedded paths.
 BUILD_BITS= 32_and_64
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH = \
     sha256:d6d316a793e5e348155f0dd93b979798933fb98aa1edebcc108829d6474aad00
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/sdl
+COMPONENT_ANITYA_ID=	4779
 
 TPNO = 28045
 

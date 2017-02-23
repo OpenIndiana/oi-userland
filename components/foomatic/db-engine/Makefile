@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
@@ -41,6 +41,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:bb1836bb321298ddecf3a68e5e13db7b3d23c72c219c33c9b
 COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://wiki.linuxfoundation.org/openprinting/database/foomatic
 COMPONENT_BUGDB=	utility/foomatic
+COMPONENT_ANITYA_ID=	828
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

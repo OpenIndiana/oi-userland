@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f5080076346609b4c36394b879f3a86b92ced3b90a37cb54c8e9a14f00e7921c
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libwnck/3.14/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
+COMPONENT_ANITYA_ID=	11006
 
 TPNO=			25831
 

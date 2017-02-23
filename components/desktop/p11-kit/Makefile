@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:ba726ea8303c97467a33fca50ee79b7b35212964be808ecf9b145e9042fdfaf0
 COMPONENT_ARCHIVE_URL=	http://p11-glue.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/security
+COMPONENT_ANITYA_ID=	2582
 
 TPNO=			32885	
 

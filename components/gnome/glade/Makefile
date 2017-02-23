@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64_and_32
@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Glade
 COMPONENT_ARCHIVE_HASH= \
 	sha256:b80773a294d3af07739d9d53bae12e11cf0bbf420bbc8931cc5e20b2647e3626
 COMPONENT_BUGDB=	gnome/libglade
+COMPONENT_ANITYA_ID=	1174
 
 TPNO=			25181
 

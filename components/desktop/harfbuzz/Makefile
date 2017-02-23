@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS=		64_and_32
 # For now, all things built for C++11 require gcc.
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f616a7fbdc78a627043f9029000bf08c0c71df59cde4143fc92a014f6a993b26
 COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/harfbuzz/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/harfbuzz
+COMPONENT_ANITYA_ID=	1299
 
 TPNO=			25623
 

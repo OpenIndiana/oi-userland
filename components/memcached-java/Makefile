@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://img.whalin.com/memcached/jdk5/standard/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://whalin.com/memcached/
 COMPONENT_BUGDB=	database/memcached
+COMPONENT_ANITYA_ID=	13311
 
 TPNO=			5586
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # net-snmp has a "special" build where only 32-bit items are installed into
 # proto area; so prefer 32-bit to preserve existing sourcing.
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:35dd20a2b17849f6d5a0a6109b4f52c1a777a3e1a00c79c4a175c520d23f3497
 COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
+COMPONENT_ANITYA_ID=	2062
 
 TPNO=			13120
 

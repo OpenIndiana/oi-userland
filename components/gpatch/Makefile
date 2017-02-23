@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
@@ -30,6 +30,7 @@ COMPONENT_VERSION=	2.7.5
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7436f5a19f93c3ca83153ce9c5cbe4847e97c5d956e57a220121e741f6e7968f
 COMPONENT_BUGDB=	utility/gpatch
+COMPONENT_ANITYA_ID=	2597
 
 TPNO=			22293
 

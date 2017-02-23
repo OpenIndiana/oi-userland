@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 # When building with Studio, p7zip has many warnings about extra semicolons,
@@ -43,6 +43,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:699db4da3621904113e040703220abb1148dfef477b55305e2f14a4f1f8f25d4
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/p7zip/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	2583
 
 TPNO=			27905
 

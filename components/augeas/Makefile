@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
@@ -32,6 +32,7 @@ COMPONENT_PROJECT_URL=	http://www.augeas.net/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:223bb6e6fe3e9e92277dafd5d34e623733eb969a72a382998d204feab253f73f
 COMPONENT_ARCHIVE_URL=	http://download.augeas.net/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	7017
 
 TPNO=	29439
 
