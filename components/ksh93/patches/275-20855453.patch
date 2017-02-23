@@ -1,0 +1,31 @@
+This patch has been developed inhouse and has been submitted upstream.
+Details can be found at 
+https://github.com/att/ast/issues/30
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/io.c	2017-01-04 14:41:25.199402375 +0000
++++ INIT.2012-08-01/src/cmd/ksh93/sh/io.c	2017-01-04 14:32:20.279449987 +0000
+@@ -64,9 +64,9 @@
+ 
+ #ifndef ERROR_PIPE
+ #ifdef ECONNRESET
+-#define ERROR_PIPE(e)	((e)==EPIPE||(e)==ECONNRESET)
++#define ERROR_PIPE(e)	((e)==EPIPE||(e)==ECONNRESET||(e)==EIO)
+ #else
+-#define ERROR_PIPE(e)	((e)==EPIPE)
++#define ERROR_PIPE(e)	((e)==EPIPE||(e)==EIO)
+ #endif
+ #endif
+ 
+--- INIT.2012-08-01.old/src/lib/libast/include/error.h	2017-02-17 02:39:37.507460057 +0000
++++ INIT.2012-08-01/src/lib/libast/include/error.h	2017-02-17 04:42:38.872435651 +0000
+@@ -85,9 +85,9 @@
+ #define ERROR_SET		0x0080	/* set context			*/
+ 
+ #ifdef ECONNRESET
+-#define ERROR_PIPE(e)		((e)==EPIPE||(e)==ECONNRESET)
++#define ERROR_PIPE(e)		((e)==EPIPE||(e)==ECONNRESET||(e)==EIO)
+ #else
+-#define ERROR_PIPE(e)		((e)==EPIPE)
++#define ERROR_PIPE(e)		((e)==EPIPE||(e)==EIO)
+ #endif
+ 
+ /*
