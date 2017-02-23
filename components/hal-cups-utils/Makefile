@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
@@ -39,9 +39,6 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
-USED_PYTHON=$(PYTHON.2.6.32)
-
-CONFIGURE_ENV += PYTHON=$(USED_PYTHON)
 
 CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)/hal
