@@ -33,6 +33,9 @@ COMPONENT_BUGDB=	service/nova
 IPS_COMPONENT_VERSION=	0.2016.1
 
 include $(WS_MAKE_RULES)/prep.mk
+# OpenStack Mitaka requires OVS and RAD changes not present in 11.3
+BUILD_BITS=NO_ARCH
+include $(WS_MAKE_RULES)/no-evaluation.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
@@ -44,12 +47,16 @@ PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
 build:		FRC
+ifneq ($(BUILD_TYPE), evaluation)
 	@/bin/true
+endif
 
 install:	FRC
+ifneq ($(BUILD_TYPE), evaluation)
 	($(MKDIR) $(PROTO_DIR)$(PYTHON_LIB); \
 	 $(CP) files/openstack_common.py $(PROTO_DIR)$(PYTHON_LIB); \
 	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES))
+endif
 
 download::
 	@echo 'No downloads for this component'

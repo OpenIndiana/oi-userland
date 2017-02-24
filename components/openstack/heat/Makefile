@@ -44,6 +44,9 @@ PKG_VARS +=		COMPONENT_BE_VERSION
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
+# OpenStack Mitaka requires OVS and RAD changes not present in 11.3
+BUILD_BITS=NO_ARCH
+include $(WS_MAKE_RULES)/no-evaluation.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)

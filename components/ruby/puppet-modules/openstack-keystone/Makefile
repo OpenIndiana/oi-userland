@@ -40,6 +40,11 @@ TPNO=			30879
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk
+# The OpenStack Puppet modules are release-specific.  Since the Mitaka
+# OpenStack components are excluded from the FOSS evaluation repo,
+# this module needs to be excluded as well
+BUILD_BITS=NO_ARCH
+include $(WS_MAKE_RULES)/no-evaluation.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 MODULE_NAME =	keystone

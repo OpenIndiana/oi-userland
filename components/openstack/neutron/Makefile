@@ -63,6 +63,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 
 # Depends on openvswitch, available in S12 but not 11.3, so do not publish.
+BUILD_BITS=NO_ARCH
 include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/ips.mk

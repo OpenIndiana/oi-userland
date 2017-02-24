@@ -298,15 +298,9 @@ PKG_VARS +=		COMPONENT_BE_VERSION
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
-
-# Odd django failures on S11; OpenStack is back-ported to 11.3 anyway, so no
-# need to include it in evaluation builds.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_NO_ARCH=
-INSTALL_NO_ARCH=
-PUBLISH_STAMP=
-endif
-
+# OpenStack Mitaka requires OVS and RAD changes not present in 11.3
+BUILD_BITS=NO_ARCH
+include $(WS_MAKE_RULES)/no-evaluation.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
