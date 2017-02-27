@@ -18,32 +18,39 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.7.4
+COMPONENT_VERSION=	4.9.0
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
+COMPONENT_SUMMARY=	A tool for network monitoring and data acquisition
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5a321f0fb959b928f26112c9f49f81d754c23c1d8ffb0feb69304fee06b77e0a
+    sha256:eae98121cbb1c9adbedd9a777bf2eae9fa1c1c676424a54740311c8abcee5a5e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
-COMPONENT_BUGDB=	utility/tcpdump
+COMPONENT_FMRI=	diagnostic/tcpdump
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENSE
 
 # Prevent macro redefinition error 
 CFLAGS += -D _NETINET_IP_H
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
 CONFIGURE_OPTIONS.sparc += ac_cv___attribute__=no
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
+
+# Install binaries to /usr/sbin
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
 
 # lazyloading (indirectly enabled by -Bdirect) seems to cause problems with
 # libpcap device enumeration.
@@ -55,21 +62,15 @@ CONFIGURE_OPTIONS += --without-crypto
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# Master test results are the same for both 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
 # common targets
-build:          $(BUILD_32_and_64)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32_and_64)
+install:        $(INSTALL_64)
 
 COMPONENT_PRE_TEST_ACTION = \
         ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
-
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
