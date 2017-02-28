@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached-java
 COMPONENT_VERSION=	2.0.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	memcached client for the Java platform
 COMPONENT_RELEASE=	release_$(COMPONENT_VERSION)
 COMPONENT_SRC=		java_memcached-$(COMPONENT_RELEASE)
@@ -82,4 +83,4 @@ install:	build
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += developer/build/ant
-REQUIRED_PACKAGES += developer/java/openjdk7
+REQUIRED_PACKAGES += developer/java/openjdk8
