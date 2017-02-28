@@ -1,0 +1,3552 @@
+Upstream patch for https://bugs.launchpad.net/swift/+bug/1521339 which
+changes the default Swift ports from 6000-6002 to 6200-6202 so as not
+to conflict with X or other services.
+
+This patch was merged in Swift 2.8.0 and can be removed once we move
+Swift to that (or a newer) version
+
+
+From cf48e75c259350daa667155e3ffd38b17946bf44 Mon Sep 17 00:00:00 2001
+From: Shashirekha Gundur <shashirekha.j.gundur@intel.com>
+Date: Mon, 1 Feb 2016 18:06:54 +0000
+Subject: [PATCH] change default ports for servers
+
+Changing the recommended ports for Swift services
+from ports 6000-6002 to unused ports 6200-6202;
+so they do not conflict with X-Windows or other services.
+
+Updated SAIO docs.
+
+DocImpact
+Closes-Bug: #1521339
+Change-Id: Ie1c778b159792c8e259e2a54cb86051686ac9d18
+---
+ doc/manpages/account-server.conf.5                 |   2 +-
+ doc/manpages/container-server.conf.5               |   2 +-
+ doc/manpages/object-server.conf.5                  |   2 +-
+ doc/manpages/swift-get-nodes.1                     |  16 +-
+ doc/source/admin_guide.rst                         |   8 +-
+ doc/source/apache_deployment_guide.rst             |  18 +-
+ doc/source/deployment_guide.rst                    |  24 +--
+ doc/source/ops_runbook/diagnose.rst                |   4 +-
+ doc/source/ops_runbook/maintenance.rst             | 114 +++++------
+ doc/source/ops_runbook/procedures.rst              |   8 +-
+ doc/source/ops_runbook/troubleshooting.rst         |  38 ++--
+ etc/account-server.conf-sample                     |   2 +-
+ etc/container-server.conf-sample                   |   2 +-
+ etc/object-server.conf-sample                      |   2 +-
+ swift/account/reaper.py                            |   2 +-
+ swift/account/replicator.py                        |   2 +-
+ swift/cli/recon.py                                 |   2 +-
+ swift/cli/ring_builder_analyzer.py                 |  38 ++--
+ swift/common/middleware/list_endpoints.py          |   6 +-
+ swift/common/middleware/xprofile.py                |   6 +-
+ swift/container/replicator.py                      |   2 +-
+ swift/container/sync.py                            |   2 +-
+ swift/obj/reconstructor.py                         |   2 +-
+ swift/obj/replicator.py                            |   2 +-
+ test/probe/test_container_failures.py              |   2 +-
+ test/probe/test_object_failures.py                 |   2 +-
+ test/probe/test_object_handoff.py                  |   8 +-
+ test/probe/test_reconstructor_revert.py            |   2 +-
+ test/unit/__init__.py                              |   6 +-
+ test/unit/account/test_reaper.py                   |  10 +-
+ test/unit/cli/test_ring_builder_analyzer.py        |   6 +-
+ test/unit/cli/test_ringbuilder.py                  | 218 ++++++++++-----------
+ test/unit/common/middleware/test_list_endpoints.py |  78 ++++----
+ test/unit/common/middleware/test_recon.py          |  44 ++---
+ test/unit/common/ring/test_builder.py              | 177 ++++++++---------
+ test/unit/common/ring/test_ring.py                 |  92 ++++-----
+ test/unit/common/ring/test_utils.py                |  92 ++++-----
+ test/unit/common/test_db_replicator.py             |  39 ++--
+ test/unit/common/test_direct_client.py             |   6 +-
+ test/unit/container/test_reconciler.py             |   2 +-
+ test/unit/obj/test_diskfile.py                     |  14 +-
+ test/unit/obj/test_reconstructor.py                |  64 +++---
+ test/unit/obj/test_replicator.py                   |  62 +++---
+ test/unit/obj/test_server.py                       |  14 +-
+ test/unit/proxy/controllers/test_base.py           |   4 +-
+ 45 files changed, 625 insertions(+), 623 deletions(-)
+
+diff --git a/doc/manpages/account-server.conf.5 b/doc/manpages/account-server.conf.5
+index 4a7e8c5..7de4ff2 100644
+--- a/doc/manpages/account-server.conf.5
++++ b/doc/manpages/account-server.conf.5
+@@ -56,7 +56,7 @@ are acceptable within this section.
+ IP address the account server should bind to. The default is 0.0.0.0 which will make
+ it bind to all available addresses.
+ .IP "\fBbind_port\fR"
+-TCP port the account server should bind to. The default is 6002.
++TCP port the account server should bind to. The default is 6202.
+ .IP "\fBbind_timeout\fR"
+ Timeout to bind socket. The default is 30.
+ .IP \fBbacklog\fR
+diff --git a/doc/manpages/container-server.conf.5 b/doc/manpages/container-server.conf.5
+index 970fa18..7cdb6bc 100644
+--- a/doc/manpages/container-server.conf.5
++++ b/doc/manpages/container-server.conf.5
+@@ -56,7 +56,7 @@ are acceptable within this section.
+ IP address the container server should bind to. The default is 0.0.0.0 which will make
+ it bind to all available addresses.
+ .IP "\fBbind_port\fR"
+-TCP port the container server should bind to. The default is 6001.
++TCP port the container server should bind to. The default is 6201.
+ .IP "\fBbind_timeout\fR"
+ Timeout to bind socket. The default is 30.
+ .IP \fBbacklog\fR
+diff --git a/doc/manpages/object-server.conf.5 b/doc/manpages/object-server.conf.5
+index 2e58de3..df8c0f0 100644
+--- a/doc/manpages/object-server.conf.5
++++ b/doc/manpages/object-server.conf.5
+@@ -56,7 +56,7 @@ are acceptable within this section.
+ IP address the object server should bind to. The default is 0.0.0.0 which will make
+ it bind to all available addresses.
+ .IP "\fBbind_port\fR"
+-TCP port the object server should bind to. The default is 6000.
++TCP port the object server should bind to. The default is 6200.
+ .IP "\fBbind_timeout\fR"
+ Timeout to bind socket. The default is 30.
+ .IP \fBbacklog\fR
+diff --git a/doc/manpages/swift-get-nodes.1 b/doc/manpages/swift-get-nodes.1
+index 608a184..a9fbc65 100644
+--- a/doc/manpages/swift-get-nodes.1
++++ b/doc/manpages/swift-get-nodes.1
+@@ -51,16 +51,16 @@ where the container resides by using the container ring.
+ .IP "Partition 221082"
+ .IP "Hash d7e6ba68cfdce0f0e4ca7890e46cacce"
+ 
+-.IP "Server:Port Device      172.24.24.29:6002 sdd"
+-.IP "Server:Port Device      172.24.24.27:6002 sdr"
+-.IP "Server:Port Device      172.24.24.32:6002 sde"
+-.IP "Server:Port Device      172.24.24.26:6002 sdv    [Handoff]"
++.IP "Server:Port Device      172.24.24.29:6202 sdd"
++.IP "Server:Port Device      172.24.24.27:6202 sdr"
++.IP "Server:Port Device      172.24.24.32:6202 sde"
++.IP "Server:Port Device      172.24.24.26:6202 sdv    [Handoff]"
+ 
+ 
+-.IP "curl -I -XHEAD http://172.24.24.29:6002/sdd/221082/MyAccount-12ac01446be2"
+-.IP "curl -I -XHEAD http://172.24.24.27:6002/sdr/221082/MyAccount-12ac01446be2"
+-.IP "curl -I -XHEAD http://172.24.24.32:6002/sde/221082/MyAccount-12ac01446be2"
+-.IP "curl -I -XHEAD http://172.24.24.26:6002/sdv/221082/MyAccount-12ac01446be2 # [Handoff]"
++.IP "curl -I -XHEAD http://172.24.24.29:6202/sdd/221082/MyAccount-12ac01446be2"
++.IP "curl -I -XHEAD http://172.24.24.27:6202/sdr/221082/MyAccount-12ac01446be2"
++.IP "curl -I -XHEAD http://172.24.24.32:6202/sde/221082/MyAccount-12ac01446be2"
++.IP "curl -I -XHEAD http://172.24.24.26:6202/sdv/221082/MyAccount-12ac01446be2 # [Handoff]"
+ 
+ .IP "ssh 172.24.24.29 ls -lah /srv/node/sdd/accounts/221082/cce/d7e6ba68cfdce0f0e4ca7890e46cacce/ "
+ .IP "ssh 172.24.24.27 ls -lah /srv/node/sdr/accounts/221082/cce/d7e6ba68cfdce0f0e4ca7890e46cacce/"
+diff --git a/doc/source/admin_guide.rst b/doc/source/admin_guide.rst
+index 73243f2..4f87939 100644
+--- a/doc/source/admin_guide.rst
++++ b/doc/source/admin_guide.rst
+@@ -110,15 +110,15 @@ You can create scripts to create the account and container rings and rebalance.
+     cd /etc/swift
+     rm -f account.builder account.ring.gz backups/account.builder backups/account.ring.gz
+     swift-ring-builder account.builder create 18 3 1
+-    swift-ring-builder account.builder add r1z1-<account-server-1>:6002/sdb1 1
+-    swift-ring-builder account.builder add r1z2-<account-server-2>:6002/sdb1 1
++    swift-ring-builder account.builder add r1z1-<account-server-1>:6202/sdb1 1
++    swift-ring-builder account.builder add r1z2-<account-server-2>:6202/sdb1 1
+     swift-ring-builder account.builder rebalance
+ 
+    You need to replace the values of <account-server-1>,
+    <account-server-2>, etc. with the IP addresses of the account
+    servers used in your setup. You can have as many account servers as
+    you need. All account servers are assumed to be listening on port
+-   6002, and have a storage device called "sdb1" (this is a directory
++   6202, and have a storage device called "sdb1" (this is a directory
+    name created under /drives when we setup the account server). The
+    "z1", "z2", etc. designate zones, and you can choose whether you
+    put devices in the same or different zones. The "r1" designates
+@@ -539,7 +539,7 @@ JSON-formatted response::
+     {"async_pending": 0}
+ 
+ 
+-Note that the default port for the object server is 6000, except on a
++Note that the default port for the object server is 6200, except on a
+ Swift All-In-One installation, which uses 6010, 6020, 6030, and 6040.
+ 
+ The following metrics and telemetry are currently exposed:
+diff --git a/doc/source/apache_deployment_guide.rst b/doc/source/apache_deployment_guide.rst
+index 8151eed..1994468 100644
+--- a/doc/source/apache_deployment_guide.rst
++++ b/doc/source/apache_deployment_guide.rst
+@@ -117,9 +117,9 @@ The Swift default value for max_file_size (when not present) is 5368709122.
+ For example an Apache2 serving as a web front end of a storage node::
+ 
+     #Object Service
+-    NameVirtualHost *:6000
+-    Listen 6000
+-    <VirtualHost *:6000>
++    NameVirtualHost *:6200
++    Listen 6200
++    <VirtualHost *:6200>
+         ServerName object-server
+         WSGIDaemonProcess object-server processes=5 threads=1
+         WSGIProcessGroup object-server
+@@ -131,9 +131,9 @@ For example an Apache2 serving as a web front end of a storage node::
+     </VirtualHost>
+ 
+     #Container Service
+-    NameVirtualHost *:6001
+-    Listen 6001
+-    <VirtualHost *:6001>
++    NameVirtualHost *:6201
++    Listen 6201
++    <VirtualHost *:6201>
+         ServerName container-server
+         WSGIDaemonProcess container-server processes=5 threads=1
+         WSGIProcessGroup container-server
+@@ -145,9 +145,9 @@ For example an Apache2 serving as a web front end of a storage node::
+     </VirtualHost>
+ 
+     #Account Service
+-    NameVirtualHost *:6002
+-    Listen 6002
+-    <VirtualHost *:6002>
++    NameVirtualHost *:6202
++    Listen 6202
++    <VirtualHost *:6202>
+         ServerName account-server
+         WSGIDaemonProcess account-server processes=5 threads=1
+         WSGIProcessGroup account-server
+diff --git a/doc/source/deployment_guide.rst b/doc/source/deployment_guide.rst
+index 083a298..4ccf87e 100644
+--- a/doc/source/deployment_guide.rst
++++ b/doc/source/deployment_guide.rst
+@@ -169,18 +169,18 @@ Here's an example (abbreviated) old-style ring (2 node cluster with 2 disks
+ each)::
+ 
+  Devices:    id  region  zone      ip address  port  replication ip  replication port      name
+-              0       1     1       1.1.0.1    6000       1.1.0.1                6000      d1
+-              1       1     1       1.1.0.1    6000       1.1.0.1                6000      d2
+-              2       1     2       1.1.0.2    6000       1.1.0.2                6000      d3
+-              3       1     2       1.1.0.2    6000       1.1.0.2                6000      d4
++              0       1     1       1.1.0.1    6200       1.1.0.1                6200      d1
++              1       1     1       1.1.0.1    6200       1.1.0.1                6200      d2
++              2       1     2       1.1.0.2    6200       1.1.0.2                6200      d3
++              3       1     2       1.1.0.2    6200       1.1.0.2                6200      d4
+ 
+ And here's the same ring set up for `servers_per_port`::
+ 
+  Devices:    id  region  zone      ip address  port  replication ip  replication port      name
+-              0       1     1       1.1.0.1    6000       1.1.0.1                6000      d1
+-              1       1     1       1.1.0.1    6001       1.1.0.1                6001      d2
+-              2       1     2       1.1.0.2    6000       1.1.0.2                6000      d3
+-              3       1     2       1.1.0.2    6001       1.1.0.2                6001      d4
++              0       1     1       1.1.0.1    6200       1.1.0.1                6200      d1
++              1       1     1       1.1.0.1    6201       1.1.0.1                6201      d2
++              2       1     2       1.1.0.2    6200       1.1.0.2                6200      d3
++              3       1     2       1.1.0.2    6201       1.1.0.2                6201      d4
+ 
+ When migrating from normal to `servers_per_port`, perform these steps in order:
+ 
+@@ -195,7 +195,7 @@ When migrating from normal to `servers_per_port`, perform these steps in order:
+ 
+  #. Push out new rings that actually have different ports per disk on each
+     server.  One of the ports in the new ring should be the same as the port
+-    used in the old ring ("6000" in the example above).  This will cover
++    used in the old ring ("6200" in the example above).  This will cover
+     existing proxy-server processes who haven't loaded the new ring yet.  They
+     can still talk to any storage node regardless of whether or not that
+     storage node has loaded the ring and started object-server processes on the
+@@ -422,7 +422,7 @@ mount_check                      true        Whether or not check if the devices
+                                              mounted to prevent accidentally writing
+                                              to the root device
+ bind_ip                          0.0.0.0     IP Address for server to bind to
+-bind_port                        6000        Port for server to bind to
++bind_port                        6200        Port for server to bind to
+ bind_timeout                     30          Seconds to attempt bind before giving up
+ backlog                          4096        Maximum number of allowed pending
+                                              connections
+@@ -765,7 +765,7 @@ mount_check                      true        Whether or not check if the devices
+                                              mounted to prevent accidentally writing
+                                              to the root device
+ bind_ip                          0.0.0.0     IP Address for server to bind to
+-bind_port                        6001        Port for server to bind to
++bind_port                        6201        Port for server to bind to
+ bind_timeout                     30          Seconds to attempt bind before giving up
+ backlog                          4096        Maximum number of allowed pending
+                                              connections
+@@ -976,7 +976,7 @@ mount_check                      true        Whether or not check if the devices
+                                              mounted to prevent accidentally writing
+                                              to the root device
+ bind_ip                          0.0.0.0     IP Address for server to bind to
+-bind_port                        6002        Port for server to bind to
++bind_port                        6202        Port for server to bind to
+ bind_timeout                     30          Seconds to attempt bind before giving up
+ backlog                          4096        Maximum number of allowed pending
+                                              connections
+diff --git a/doc/source/ops_runbook/diagnose.rst b/doc/source/ops_runbook/diagnose.rst
+index c1a2a2e..2de3681 100644
+--- a/doc/source/ops_runbook/diagnose.rst
++++ b/doc/source/ops_runbook/diagnose.rst
+@@ -862,8 +862,8 @@ making progress. Another useful way to check this is with the
+    ===============================================================================
+    [2013-07-17 12:56:19] Checking on replication
+    [replication_time] low: 2, high: 80, avg: 28.8, total: 11037, Failed: 0.0%, no_result: 0, reported: 383
+-   Oldest completion was 2013-06-12 22:46:50 (12 days ago) by 192.168.245.3:6000.
+-   Most recent completion was 2013-07-17 12:56:19 (5 seconds ago) by 192.168.245.5:6000.
++   Oldest completion was 2013-06-12 22:46:50 (12 days ago) by 192.168.245.3:6200.
++   Most recent completion was 2013-07-17 12:56:19 (5 seconds ago) by 192.168.245.5:6200.
+    ===============================================================================
+ 
+ The ``Oldest completion`` line in this example indicates that the
+diff --git a/doc/source/ops_runbook/maintenance.rst b/doc/source/ops_runbook/maintenance.rst
+index f0eaeb2..0e588b5 100644
+--- a/doc/source/ops_runbook/maintenance.rst
++++ b/doc/source/ops_runbook/maintenance.rst
+@@ -54,8 +54,8 @@ system. Rules-of-thumb for 'good' recon output are:
+ 
+    .. code::
+ 
+-      -> [http://<redacted>.29:6000/recon/load:] <urlopen error [Errno 111] ECONNREFUSED>
+-      -> [http://<redacted>.31:6000/recon/load:] <urlopen error timed out>
++      -> [http://<redacted>.29:6200/recon/load:] <urlopen error [Errno 111] ECONNREFUSED>
++      -> [http://<redacted>.31:6200/recon/load:] <urlopen error timed out>
+ 
+ -  That could be okay or could require investigation.
+ 
+@@ -86,51 +86,51 @@ two entire racks of Swift are down:
+ .. code::
+ 
+    [2012-03-10 16:56:33] Checking async pendings on 384 hosts...
+-   -> http://<redacted>.22:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.18:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.16:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.13:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.30:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.6:6000/recon/async: <urlopen error timed out>
++   -> http://<redacted>.22:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.18:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.16:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.13:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.30:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.6:6200/recon/async: <urlopen error timed out>
+    .........
+-   -> http://<redacted>.5:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.15:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.9:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.27:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.4:6000/recon/async: <urlopen error timed out>
+-   -> http://<redacted>.8:6000/recon/async: <urlopen error timed out>
++   -> http://<redacted>.5:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.15:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.9:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.27:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.4:6200/recon/async: <urlopen error timed out>
++   -> http://<redacted>.8:6200/recon/async: <urlopen error timed out>
+    Async stats: low: 243, high: 659, avg: 413, total: 132275
+    ===============================================================================
+    [2012-03-10 16:57:48] Checking replication times on 384 hosts...
+-   -> http://<redacted>.22:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.18:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.16:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.13:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.30:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.6:6000/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.22:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.18:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.16:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.13:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.30:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.6:6200/recon/replication: <urlopen error timed out>
+    ............
+-   -> http://<redacted>.5:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.15:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.9:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.27:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.4:6000/recon/replication: <urlopen error timed out>
+-   -> http://<redacted>.8:6000/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.5:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.15:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.9:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.27:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.4:6200/recon/replication: <urlopen error timed out>
++   -> http://<redacted>.8:6200/recon/replication: <urlopen error timed out>
+    [Replication Times] shortest: 1.38144306739, longest: 112.620954418, avg: 10.285
+    9475361
+    ===============================================================================
+    [2012-03-10 16:59:03] Checking load avg's on 384 hosts...
+-   -> http://<redacted>.22:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.18:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.16:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.13:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.30:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.6:6000/recon/load: <urlopen error timed out>
++   -> http://<redacted>.22:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.18:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.16:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.13:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.30:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.6:6200/recon/load: <urlopen error timed out>
+    ............
+-   -> http://<redacted>.15:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.9:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.27:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.4:6000/recon/load: <urlopen error timed out>
+-   -> http://<redacted>.8:6000/recon/load: <urlopen error timed out>
++   -> http://<redacted>.15:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.9:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.27:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.4:6200/recon/load: <urlopen error timed out>
++   -> http://<redacted>.8:6200/recon/load: <urlopen error timed out>
+    [5m load average] lowest: 1.71, highest: 4.91, avg: 2.486375
+    [15m load average] lowest: 1.79, highest: 5.04, avg: 2.506125
+    [1m load average] lowest: 1.46, highest: 4.55, avg: 2.4929375
+@@ -176,33 +176,33 @@ files on <redacted>.72.61 we see:
+ 
+    souzab@<redacted>:~$ sudo tail -f /var/log/swift/background.log | - grep -i ERROR
+    Mar 14 17:28:06 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6201}
+    Mar 14 17:28:06 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6201}
+    Mar 14 17:28:09 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:11 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:13 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6201}
+    Mar 14 17:28:13 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6201}
+    Mar 14 17:28:15 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:15 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:19 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:19 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:20 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.119', 'id': 5481, 'meta': '', 'device': 'disk6', 'port': 6201}
+    Mar 14 17:28:21 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:21 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+    Mar 14 17:28:22 <redacted> container-replicator ERROR Remote drive not mounted
+-   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6001}
++   {'zone': 5, 'weight': 1952.0, 'ip': '<redacted>.204.20', 'id': 2311, 'meta': '', 'device': 'disk5', 'port': 6201}
+ 
+ That is why this node has a lot of async pendings: a bunch of disks that
+ are not mounted on <redacted> and <redacted>. There may be other issues,
+@@ -242,11 +242,11 @@ Procedure
+       2097152 partitions, 3 replicas, 5 zones, 1320 devices, 0.02 balance
+       The minimum number of hours before a partition can be reassigned is 24
+       Devices:    id  zone     ip address    port     name  weight  partitions balance meta
+-                   0     1     <redacted>.4  6000     disk0 1708.00       4259   -0.00
+-                   1     1     <redacted>.4  6000     disk1 1708.00       4260    0.02
+-                   2     1     <redacted>.4  6000     disk2 1952.00       4868    0.01
+-                   3     1     <redacted>.4  6000     disk3 1952.00       4868    0.01
+-                   4     1     <redacted>.4  6000     disk4 1952.00       4867   -0.01
++                   0     1     <redacted>.4  6200     disk0 1708.00       4259   -0.00
++                   1     1     <redacted>.4  6200     disk1 1708.00       4260    0.02
++                   2     1     <redacted>.4  6200     disk2 1952.00       4868    0.01
++                   3     1     <redacted>.4  6200     disk3 1952.00       4868    0.01
++                   4     1     <redacted>.4  6200     disk4 1952.00       4867   -0.01
+ 
+ #. Here, node <redacted>.4 is in zone 1. If two or more of the three
+    nodes under consideration are in the same Swift zone, they do not
+@@ -327,4 +327,4 @@ Swift startup/shutdown
+ -  Use reload - not stop/start/restart.
+ 
+ -  Try to roll sets of servers (especially proxy) in groups of less
+-   than 20% of your servers.
+\ No newline at end of file
++   than 20% of your servers.
+diff --git a/doc/source/ops_runbook/procedures.rst b/doc/source/ops_runbook/procedures.rst
+index 8a28dc5..067c7b3 100644
+--- a/doc/source/ops_runbook/procedures.rst
++++ b/doc/source/ops_runbook/procedures.rst
+@@ -292,9 +292,9 @@ re-create the account as follows:
+ 
+        $ sudo swift-get-nodes /etc/swift/account.ring.gz AUTH_4ebe3039674d4864a11fe0864ae4d905
+        ...
+-       curl -I -XHEAD "http://192.168.245.5:6002/disk1/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
+-       curl -I -XHEAD "http://192.168.245.3:6002/disk0/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
+-       curl -I -XHEAD "http://192.168.245.4:6002/disk1/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
++       curl -I -XHEAD "http://192.168.245.5:6202/disk1/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
++       curl -I -XHEAD "http://192.168.245.3:6202/disk0/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
++       curl -I -XHEAD "http://192.168.245.4:6202/disk1/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
+        ...
+        Use your own device location of servers:
+        such as "export DEVICE=/srv/node"
+@@ -310,7 +310,7 @@ re-create the account as follows:
+ 
+    .. code::
+ 
+-       $ curl -I -XHEAD "http://192.168.245.5:6002/disk1/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
++       $ curl -I -XHEAD "http://192.168.245.5:6202/disk1/3934/AUTH_4ebe3039674d4864a11fe0864ae4d905"
+        HTTP/1.1 404 Not Found
+        Content-Length: 0
+        Content-Type: text/html; charset=utf-8
+diff --git a/doc/source/ops_runbook/troubleshooting.rst b/doc/source/ops_runbook/troubleshooting.rst
+index 01c5589..0966267 100644
+--- a/doc/source/ops_runbook/troubleshooting.rst
++++ b/doc/source/ops_runbook/troubleshooting.rst
+@@ -89,25 +89,25 @@ user's account data is stored:
+    Partition 198875
+    Hash 1846d99185f8a0edaf65cfbf37439696
+ 
+-   Server:Port Device <redacted>.31:6002 disk6
+-   Server:Port Device <redacted>.204.70:6002 disk6
+-   Server:Port Device <redacted>.72.16:6002 disk9
+-   Server:Port Device <redacted>.204.64:6002 disk11 [Handoff]
+-   Server:Port Device <redacted>.26:6002 disk11 [Handoff]
+-   Server:Port Device <redacted>.72.27:6002 disk11 [Handoff]
+-
+-   curl -I -XHEAD "`http://<redacted>.31:6002/disk6/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
+-   <http://15.185.138.31:6002/disk6/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_
+-   curl -I -XHEAD "`http://<redacted>.204.70:6002/disk6/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
+-   <http://15.185.204.70:6002/disk6/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_
+-   curl -I -XHEAD "`http://<redacted>.72.16:6002/disk9/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
+-   <http://15.185.72.16:6002/disk9/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_
+-   curl -I -XHEAD "`http://<redacted>.204.64:6002/disk11/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
+-   <http://15.185.204.64:6002/disk11/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_ # [Handoff]
+-   curl -I -XHEAD "`http://<redacted>.26:6002/disk11/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
+-   <http://15.185.136.26:6002/disk11/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_ # [Handoff]
+-   curl -I -XHEAD "`http://<redacted>.72.27:6002/disk11/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
+-   <http://15.185.72.27:6002/disk11/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_ # [Handoff]
++   Server:Port Device <redacted>.31:6202 disk6
++   Server:Port Device <redacted>.204.70:6202 disk6
++   Server:Port Device <redacted>.72.16:6202 disk9
++   Server:Port Device <redacted>.204.64:6202 disk11 [Handoff]
++   Server:Port Device <redacted>.26:6202 disk11 [Handoff]
++   Server:Port Device <redacted>.72.27:6202 disk11 [Handoff]
++
++   curl -I -XHEAD "`http://<redacted>.31:6202/disk6/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
++   <http://15.185.138.31:6202/disk6/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_
++   curl -I -XHEAD "`http://<redacted>.204.70:6202/disk6/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
++   <http://15.185.204.70:6202/disk6/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_
++   curl -I -XHEAD "`http://<redacted>.72.16:6202/disk9/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
++   <http://15.185.72.16:6202/disk9/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_
++   curl -I -XHEAD "`http://<redacted>.204.64:6202/disk11/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
++   <http://15.185.204.64:6202/disk11/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_ # [Handoff]
++   curl -I -XHEAD "`http://<redacted>.26:6202/disk11/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
++   <http://15.185.136.26:6202/disk11/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_ # [Handoff]
++   curl -I -XHEAD "`http://<redacted>.72.27:6202/disk11/198875/AUTH_redacted-4962-4692-98fb-52ddda82a5af"
++   <http://15.185.72.27:6202/disk11/198875/AUTH_db0050ad-4962-4692-98fb-52ddda82a5af>`_ # [Handoff]
+ 
+    ssh <redacted>.31 "ls -lah /srv/node/disk6/accounts/198875/696/1846d99185f8a0edaf65cfbf37439696/"
+    ssh <redacted>.204.70 "ls -lah /srv/node/disk6/accounts/198875/696/1846d99185f8a0edaf65cfbf37439696/"
+diff --git a/etc/account-server.conf-sample b/etc/account-server.conf-sample
+index 9fa98c6..a29856c 100644
+--- a/etc/account-server.conf-sample
++++ b/etc/account-server.conf-sample
+@@ -1,6 +1,6 @@
+ [DEFAULT]
+ # bind_ip = 0.0.0.0
+-bind_port = 6002
++bind_port = 6202
+ # bind_timeout = 30
+ # backlog = 4096
+ # user = swift
+diff --git a/etc/container-server.conf-sample b/etc/container-server.conf-sample
+index 5927f5e..30276fb 100644
+--- a/etc/container-server.conf-sample
++++ b/etc/container-server.conf-sample
+@@ -1,6 +1,6 @@
+ [DEFAULT]
+ # bind_ip = 0.0.0.0
+-bind_port = 6001
++bind_port = 6201
+ # bind_timeout = 30
+ # backlog = 4096
+ # user = swift
+diff --git a/etc/object-server.conf-sample b/etc/object-server.conf-sample
+index e01193b..ba42734 100644
+--- a/etc/object-server.conf-sample
++++ b/etc/object-server.conf-sample
+@@ -1,6 +1,6 @@
+ [DEFAULT]
+ # bind_ip = 0.0.0.0
+-bind_port = 6000
++bind_port = 6200
+ # bind_timeout = 30
+ # backlog = 4096
+ # user = swift
+diff --git a/swift/account/reaper.py b/swift/account/reaper.py
+index ea73071..93e1608 100644
+--- a/swift/account/reaper.py
++++ b/swift/account/reaper.py
+@@ -73,7 +73,7 @@ class AccountReaper(Daemon):
+         self.node_timeout = float(conf.get('node_timeout', 10))
+         self.conn_timeout = float(conf.get('conn_timeout', 0.5))
+         self.myips = whataremyips(conf.get('bind_ip', '0.0.0.0'))
+-        self.bind_port = int(conf.get('bind_port', 6002))
++        self.bind_port = int(conf.get('bind_port', 6202))
+         self.concurrency = int(conf.get('concurrency', 25))
+         self.container_concurrency = self.object_concurrency = \
+             sqrt(self.concurrency)
+diff --git a/swift/account/replicator.py b/swift/account/replicator.py
+index ad9ad9f..773a3fb 100644
+--- a/swift/account/replicator.py
++++ b/swift/account/replicator.py
+@@ -21,4 +21,4 @@ class AccountReplicator(db_replicator.Replicator):
+     server_type = 'account'
+     brokerclass = AccountBroker
+     datadir = DATADIR
+-    default_port = 6002
++    default_port = 6202
+diff --git a/swift/cli/recon.py b/swift/cli/recon.py
+index df85f71..2936c30 100644
+--- a/swift/cli/recon.py
++++ b/swift/cli/recon.py
+@@ -72,7 +72,7 @@ class Scout(object):
+         Perform the actual HTTP request to obtain swift recon telemtry.
+ 
+         :param base_url: the base url of the host you wish to check. str of the
+-                        format 'http://127.0.0.1:6000/recon/'
++                        format 'http://127.0.0.1:6200/recon/'
+         :param recon_type: the swift recon check to request.
+         :returns: tuple of (recon url used, response body, and status)
+         """
+diff --git a/swift/cli/ring_builder_analyzer.py b/swift/cli/ring_builder_analyzer.py
+index 85526d8..599af0e 100644
+--- a/swift/cli/ring_builder_analyzer.py
++++ b/swift/cli/ring_builder_analyzer.py
+@@ -37,26 +37,26 @@ addition::
+ 
+         "rounds": [
+             [
+-                ["add", "r1z2-10.20.30.40:6000/sda", 8000],
+-                ["add", "r1z2-10.20.30.40:6000/sdb", 8000],
+-                ["add", "r1z2-10.20.30.40:6000/sdc", 8000],
+-                ["add", "r1z2-10.20.30.40:6000/sdd", 8000],
+-
+-                ["add", "r1z2-10.20.30.41:6000/sda", 8000],
+-                ["add", "r1z2-10.20.30.41:6000/sdb", 8000],
+-                ["add", "r1z2-10.20.30.41:6000/sdc", 8000],
+-                ["add", "r1z2-10.20.30.41:6000/sdd", 8000],
+-
+-                ["add", "r1z2-10.20.30.43:6000/sda", 8000],
+-                ["add", "r1z2-10.20.30.43:6000/sdb", 8000],
+-                ["add", "r1z2-10.20.30.43:6000/sdc", 8000],
+-                ["add", "r1z2-10.20.30.43:6000/sdd", 8000],
+-
+-                ["add", "r1z2-10.20.30.44:6000/sda", 8000],
+-                ["add", "r1z2-10.20.30.44:6000/sdb", 8000],
+-                ["add", "r1z2-10.20.30.44:6000/sdc", 8000]
++                ["add", "r1z2-10.20.30.40:6200/sda", 8000],
++                ["add", "r1z2-10.20.30.40:6200/sdb", 8000],
++                ["add", "r1z2-10.20.30.40:6200/sdc", 8000],
++                ["add", "r1z2-10.20.30.40:6200/sdd", 8000],
++
++                ["add", "r1z2-10.20.30.41:6200/sda", 8000],
++                ["add", "r1z2-10.20.30.41:6200/sdb", 8000],
++                ["add", "r1z2-10.20.30.41:6200/sdc", 8000],
++                ["add", "r1z2-10.20.30.41:6200/sdd", 8000],
++
++                ["add", "r1z2-10.20.30.43:6200/sda", 8000],
++                ["add", "r1z2-10.20.30.43:6200/sdb", 8000],
++                ["add", "r1z2-10.20.30.43:6200/sdc", 8000],
++                ["add", "r1z2-10.20.30.43:6200/sdd", 8000],
++
++                ["add", "r1z2-10.20.30.44:6200/sda", 8000],
++                ["add", "r1z2-10.20.30.44:6200/sdb", 8000],
++                ["add", "r1z2-10.20.30.44:6200/sdc", 8000]
+             ], [
+-                ["add", "r1z2-10.20.30.44:6000/sdd", 1000]
++                ["add", "r1z2-10.20.30.44:6200/sdd", 1000]
+             ], [
+                 ["set_weight", 15, 2000]
+             ], [
+diff --git a/swift/common/middleware/list_endpoints.py b/swift/common/middleware/list_endpoints.py
+index 2e55d45..5342f43 100644
+--- a/swift/common/middleware/list_endpoints.py
++++ b/swift/common/middleware/list_endpoints.py
+@@ -37,9 +37,9 @@ with a JSON-encoded list of endpoints of the form::
+ 
+ correspondingly, e.g.::
+ 
+-    http://10.1.1.1:6000/sda1/2/a/c2/o1
+-    http://10.1.1.1:6000/sda1/2/a/c2
+-    http://10.1.1.1:6000/sda1/2/a
++    http://10.1.1.1:6200/sda1/2/a/c2/o1
++    http://10.1.1.1:6200/sda1/2/a/c2
++    http://10.1.1.1:6200/sda1/2/a
+ 
+ Using the v2 API, answers requests of the form::
+ 
+diff --git a/swift/common/middleware/xprofile.py b/swift/common/middleware/xprofile.py
+index 6db4000..deca857 100644
+--- a/swift/common/middleware/xprofile.py
++++ b/swift/common/middleware/xprofile.py
+@@ -54,9 +54,9 @@ Retrieve metrics from specific function in json format::
+     A list of URL examples:
+ 
+     http://localhost:8080/__profile__    (proxy server)
+-    http://localhost:6000/__profile__/all    (object server)
+-    http://localhost:6001/__profile__/current    (container server)
+-    http://localhost:6002/__profile__/12345?format=json    (account server)
++    http://localhost:6200/__profile__/all    (object server)
++    http://localhost:6201/__profile__/current    (container server)
++    http://localhost:6202/__profile__/12345?format=json    (account server)
+ 
+ The profiling middleware can be configured in paste file for WSGI servers such
+ as proxy, account, container and object servers. Please refer to the sample
+diff --git a/swift/container/replicator.py b/swift/container/replicator.py
+index b428086..716b19e 100644
+--- a/swift/container/replicator.py
++++ b/swift/container/replicator.py
+@@ -38,7 +38,7 @@ class ContainerReplicator(db_replicator.Replicator):
+     server_type = 'container'
+     brokerclass = ContainerBroker
+     datadir = DATADIR
+-    default_port = 6001
++    default_port = 6201
+ 
+     def report_up_to_date(self, full_info):
+         reported_key_map = {
+diff --git a/swift/container/sync.py b/swift/container/sync.py
+index 2ff4bff..8fbfe9d 100644
+--- a/swift/container/sync.py
++++ b/swift/container/sync.py
+@@ -206,7 +206,7 @@ class ContainerSync(Daemon):
+                                                      ring_name='container')
+         bind_ip = conf.get('bind_ip', '0.0.0.0')
+         self._myips = whataremyips(bind_ip)
+-        self._myport = int(conf.get('bind_port', 6001))
++        self._myport = int(conf.get('bind_port', 6201))
+         swift.common.db.DB_PREALLOCATION = \
+             config_true_value(conf.get('db_preallocation', 'f'))
+         self.conn_timeout = float(conf.get('conn_timeout', 5))
+diff --git a/swift/obj/reconstructor.py b/swift/obj/reconstructor.py
+index e41c478..2c9e2b4 100644
+--- a/swift/obj/reconstructor.py
++++ b/swift/obj/reconstructor.py
+@@ -127,7 +127,7 @@ class ObjectReconstructor(Daemon):
+         self.bind_ip = conf.get('bind_ip', '0.0.0.0')
+         self.servers_per_port = int(conf.get('servers_per_port', '0') or 0)
+         self.port = None if self.servers_per_port else \
+-            int(conf.get('bind_port', 6000))
++            int(conf.get('bind_port', 6200))
+         self.concurrency = int(conf.get('concurrency', 1))
+         self.stats_interval = int(conf.get('stats_interval', '300'))
+         self.ring_check_interval = int(conf.get('ring_check_interval', 15))
+diff --git a/swift/obj/replicator.py b/swift/obj/replicator.py
+index d06e2d4..7a8613d 100644
+--- a/swift/obj/replicator.py
++++ b/swift/obj/replicator.py
+@@ -68,7 +68,7 @@ class ObjectReplicator(Daemon):
+         self.bind_ip = conf.get('bind_ip', '0.0.0.0')
+         self.servers_per_port = int(conf.get('servers_per_port', '0') or 0)
+         self.port = None if self.servers_per_port else \
+-            int(conf.get('bind_port', 6000))
++            int(conf.get('bind_port', 6200))
+         self.concurrency = int(conf.get('concurrency', 1))
+         self.stats_interval = int(conf.get('stats_interval', '300'))
+         self.ring_check_interval = int(conf.get('ring_check_interval', 15))
+diff --git a/test/probe/test_container_failures.py b/test/probe/test_container_failures.py
+index d8c132c..3076ba7 100755
+--- a/test/probe/test_container_failures.py
++++ b/test/probe/test_container_failures.py
+@@ -133,7 +133,7 @@ class TestContainerFailures(ReplProbeTest):
+         onode = onodes[0]
+         db_files = []
+         for onode in onodes:
+-            node_id = (onode['port'] - 6000) / 10
++            node_id = (onode['port'] - 6200) / 10
+             device = onode['device']
+             hash_str = hash_path(self.account, container)
+             server_conf = readconf(self.configs['container-server'][node_id])
+diff --git a/test/probe/test_object_failures.py b/test/probe/test_object_failures.py
+index ba53177..b290a4e 100755
+--- a/test/probe/test_object_failures.py
++++ b/test/probe/test_object_failures.py
+@@ -61,7 +61,7 @@ class TestObjectFailures(ReplProbeTest):
+         opart, onodes = self.object_ring.get_nodes(
+             self.account, container, obj)
+         onode = onodes[0]
+-        node_id = (onode['port'] - 6000) / 10
++        node_id = (onode['port'] - 6200) / 10
+         device = onode['device']
+         hash_str = hash_path(self.account, container, obj)
+         obj_server_conf = readconf(self.configs['object-server'][node_id])
+diff --git a/test/probe/test_object_handoff.py b/test/probe/test_object_handoff.py
+index a360021..1b9bd29 100755
+--- a/test/probe/test_object_handoff.py
++++ b/test/probe/test_object_handoff.py
+@@ -117,13 +117,13 @@ class TestObjectHandoff(ReplProbeTest):
+                 port_num = node['replication_port']
+             except KeyError:
+                 port_num = node['port']
+-            node_id = (port_num - 6000) / 10
++            node_id = (port_num - 6200) / 10
+             Manager(['object-replicator']).once(number=node_id)
+         try:
+             another_port_num = another_onode['replication_port']
+         except KeyError:
+             another_port_num = another_onode['port']
+-        another_num = (another_port_num - 6000) / 10
++        another_num = (another_port_num - 6200) / 10
+         Manager(['object-replicator']).once(number=another_num)
+ 
+         # Assert the first container/obj primary server now has container/obj
+@@ -199,9 +199,9 @@ class TestObjectHandoff(ReplProbeTest):
+                 port_num = node['replication_port']
+             except KeyError:
+                 port_num = node['port']
+-            node_id = (port_num - 6000) / 10
++            node_id = (port_num - 6200) / 10
+             Manager(['object-replicator']).once(number=node_id)
+-        another_node_id = (another_port_num - 6000) / 10
++        another_node_id = (another_port_num - 6200) / 10
+         Manager(['object-replicator']).once(number=another_node_id)
+ 
+         # Assert primary node no longer has container/obj
+diff --git a/test/probe/test_reconstructor_revert.py b/test/probe/test_reconstructor_revert.py
+index 0958436..845ff1a 100755
+--- a/test/probe/test_reconstructor_revert.py
++++ b/test/probe/test_reconstructor_revert.py
+@@ -131,7 +131,7 @@ class TestReconstructorRevert(ECProbeTest):
+ 
+         # fire up reconstructor on handoff nodes only
+         for hnode in hnodes:
+-            hnode_id = (hnode['port'] - 6000) / 10
++            hnode_id = (hnode['port'] - 6200) / 10
+             self.reconstructor.once(number=hnode_id)
+ 
+         # first three primaries have data again
+diff --git a/test/unit/__init__.py b/test/unit/__init__.py
+index 377ee2e..c4c833a 100644
+--- a/test/unit/__init__.py
++++ b/test/unit/__init__.py
+@@ -256,9 +256,9 @@ def write_fake_ring(path, *devs):
+     Pretty much just a two node, two replica, 2 part power ring...
+     """
+     dev1 = {'id': 0, 'zone': 0, 'device': 'sda1', 'ip': '127.0.0.1',
+-            'port': 6000}
++            'port': 6200}
+     dev2 = {'id': 0, 'zone': 0, 'device': 'sdb1', 'ip': '127.0.0.1',
+-            'port': 6000}
++            'port': 6200}
+ 
+     dev1_updates, dev2_updates = devs or ({}, {})
+ 
+@@ -278,7 +278,7 @@ class FabricatedRing(Ring):
+     your tests needs.
+     """
+ 
+-    def __init__(self, replicas=6, devices=8, nodes=4, port=6000,
++    def __init__(self, replicas=6, devices=8, nodes=4, port=6200,
+                  part_power=4):
+         self.devices = devices
+         self.nodes = nodes
+diff --git a/test/unit/account/test_reaper.py b/test/unit/account/test_reaper.py
+index 998b099..3c90673 100644
+--- a/test/unit/account/test_reaper.py
++++ b/test/unit/account/test_reaper.py
+@@ -99,15 +99,15 @@ class FakeRing(object):
+     def __init__(self):
+         self.nodes = [{'id': '1',
+                        'ip': '10.10.10.1',
+-                       'port': 6002,
++                       'port': 6202,
+                        'device': None},
+                       {'id': '2',
+                        'ip': '10.10.10.2',
+-                       'port': 6002,
++                       'port': 6202,
+                        'device': None},
+                       {'id': '3',
+                        'ip': '10.10.10.3',
+-                       'port': 6002,
++                       'port': 6202,
+                        'device': None},
+                       ]
+ 
+diff --git a/test/unit/cli/test_ring_builder_analyzer.py b/test/unit/cli/test_ring_builder_analyzer.py
+index db23fec..2de2b16 100644
+--- a/test/unit/cli/test_ring_builder_analyzer.py
++++ b/test/unit/cli/test_ring_builder_analyzer.py
+@@ -179,11 +179,11 @@ class TestParseScenario(unittest.TestCase):
+         self.assertRaises(ValueError, parse_scenario, json.dumps(busted))
+ 
+         # no weight
+-        busted = dict(base, rounds=[[['add', 'r1z2-1.2.3.4:6000/d7']]])
++        busted = dict(base, rounds=[[['add', 'r1z2-1.2.3.4:6200/d7']]])
+         self.assertRaises(ValueError, parse_scenario, json.dumps(busted))
+ 
+         # too many fields
+-        busted = dict(base, rounds=[[['add', 'r1z2-1.2.3.4:6000/d7', 1, 2]]])
++        busted = dict(base, rounds=[[['add', 'r1z2-1.2.3.4:6200/d7', 1, 2]]])
+         self.assertRaises(ValueError, parse_scenario, json.dumps(busted))
+ 
+         # can't parse
+@@ -198,7 +198,7 @@ class TestParseScenario(unittest.TestCase):
+             self.assertEqual(str(err), expected)
+ 
+         # negative weight
+-        busted = dict(base, rounds=[[['add', 'r1z2-1.2.3.4:6000/d7', -1]]])
++        busted = dict(base, rounds=[[['add', 'r1z2-1.2.3.4:6200/d7', -1]]])
+         self.assertRaises(ValueError, parse_scenario, json.dumps(busted))
+ 
+     def test_bad_remove(self):
+diff --git a/test/unit/cli/test_ringbuilder.py b/test/unit/cli/test_ringbuilder.py
+index 55370b6..35b1f64 100644
+--- a/test/unit/cli/test_ringbuilder.py
++++ b/test/unit/cli/test_ringbuilder.py
+@@ -75,8 +75,8 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # These should all match the first device in the sample ring
+         # (see below) but not the second device
+         self.search_values = ["d0", "/sda1", "r0", "z0", "z0-127.0.0.1",
+-                              "127.0.0.1", "z0:6000", ":6000", "R127.0.0.1",
+-                              "127.0.0.1R127.0.0.1", "R:6000",
++                              "127.0.0.1", "z0:6200", ":6200", "R127.0.0.1",
++                              "127.0.0.1R127.0.0.1", "R:6200",
+                               "_some meta data"]
+ 
+     def setUp(self):
+@@ -110,7 +110,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+                       'region': 0,
+                       'zone': 0,
+                       'ip': '127.0.0.1',
+-                      'port': 6000,
++                      'port': 6200,
+                       'device': 'sda1',
+                       'meta': 'some meta data',
+                       })
+@@ -118,21 +118,21 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+                       'region': 1,
+                       'zone': 1,
+                       'ip': '127.0.0.2',
+-                      'port': 6001,
++                      'port': 6201,
+                       'device': 'sda2'
+                       })
+         ring.add_dev({'weight': 100.0,
+                       'region': 2,
+                       'zone': 2,
+                       'ip': '127.0.0.3',
+-                      'port': 6002,
++                      'port': 6202,
+                       'device': 'sdc3'
+                       })
+         ring.add_dev({'weight': 100.0,
+                       'region': 3,
+                       'zone': 3,
+                       'ip': '127.0.0.4',
+-                      'port': 6003,
++                      'port': 6203,
+                       'device': 'sdd4'
+                       })
+         ring.save(self.tmpfile)
+@@ -144,15 +144,15 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+ 
+     def test_parse_search_values_old_format(self):
+         # Test old format
+-        argv = ["d0r0z0-127.0.0.1:6000R127.0.0.1:6000/sda1_some meta data"]
++        argv = ["d0r0z0-127.0.0.1:6200R127.0.0.1:6200/sda1_some meta data"]
+         search_values = ringbuilder._parse_search_values(argv)
+         self.assertEqual(search_values['id'], 0)
+         self.assertEqual(search_values['region'], 0)
+         self.assertEqual(search_values['zone'], 0)
+         self.assertEqual(search_values['ip'], '127.0.0.1')
+-        self.assertEqual(search_values['port'], 6000)
++        self.assertEqual(search_values['port'], 6200)
+         self.assertEqual(search_values['replication_ip'], '127.0.0.1')
+-        self.assertEqual(search_values['replication_port'], 6000)
++        self.assertEqual(search_values['replication_port'], 6200)
+         self.assertEqual(search_values['device'], 'sda1')
+         self.assertEqual(search_values['meta'], 'some meta data')
+ 
+@@ -160,9 +160,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # Test new format
+         argv = ["--id", "0", "--region", "0", "--zone", "0",
+                 "--ip", "127.0.0.1",
+-                "--port", "6000",
++                "--port", "6200",
+                 "--replication-ip", "127.0.0.1",
+-                "--replication-port", "6000",
++                "--replication-port", "6200",
+                 "--device", "sda1", "--meta", "some meta data",
+                 "--weight", "100"]
+         search_values = ringbuilder._parse_search_values(argv)
+@@ -170,9 +170,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(search_values['region'], 0)
+         self.assertEqual(search_values['zone'], 0)
+         self.assertEqual(search_values['ip'], '127.0.0.1')
+-        self.assertEqual(search_values['port'], 6000)
++        self.assertEqual(search_values['port'], 6200)
+         self.assertEqual(search_values['replication_ip'], '127.0.0.1')
+-        self.assertEqual(search_values['replication_port'], 6000)
++        self.assertEqual(search_values['replication_port'], 6200)
+         self.assertEqual(search_values['device'], 'sda1')
+         self.assertEqual(search_values['meta'], 'some meta data')
+         self.assertEqual(search_values['weight'], 100)
+@@ -280,7 +280,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.create_sample_ring()
+         # Test ipv4(old format)
+         argv = ["", self.tmpfile, "add",
+-                "r2z3-127.0.0.1:6000/sda3_some meta data", "3.14159265359"]
++                "r2z3-127.0.0.1:6200/sda3_some meta data", "3.14159265359"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+         # Check that device was created with given data
+@@ -289,19 +289,19 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 2)
+         self.assertEqual(dev['zone'], 3)
+         self.assertEqual(dev['ip'], '127.0.0.1')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda3')
+         self.assertEqual(dev['weight'], 3.14159265359)
+         self.assertEqual(dev['replication_ip'], '127.0.0.1')
+-        self.assertEqual(dev['replication_port'], 6000)
++        self.assertEqual(dev['replication_port'], 6200)
+         self.assertEqual(dev['meta'], 'some meta data')
+ 
+     def test_add_duplicate_devices(self):
+         self.create_sample_ring()
+         # Test adding duplicate devices
+         argv = ["", self.tmpfile, "add",
+-                "r1z1-127.0.0.1:6000/sda9", "3.14159265359",
+-                "r1z1-127.0.0.1:6000/sda9", "2"]
++                "r1z1-127.0.0.1:6200/sda9", "3.14159265359",
++                "r1z1-127.0.0.1:6200/sda9", "2"]
+         self.assertSystemExit(EXIT_ERROR, ringbuilder.main, argv)
+ 
+     def test_add_device_ipv6_old_format(self):
+@@ -309,7 +309,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # Test ipv6(old format)
+         argv = \
+             ["", self.tmpfile, "add",
+-             "r2z3-2001:0000:1234:0000:0000:C1C0:ABCD:0876:6000"
++             "r2z3-2001:0000:1234:0000:0000:C1C0:ABCD:0876:6200"
+              "R2::10:7000/sda3_some meta data",
+              "3.14159265359"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+@@ -320,7 +320,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 2)
+         self.assertEqual(dev['zone'], 3)
+         self.assertEqual(dev['ip'], '2001:0:1234::c1c0:abcd:876')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda3')
+         self.assertEqual(dev['weight'], 3.14159265359)
+         self.assertEqual(dev['replication_ip'], '2::10')
+@@ -337,9 +337,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "127.0.0.2",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.2",
+-             "--replication-port", "6000",
++             "--replication-port", "6200",
+              "--device", "sda3", "--meta", "some meta data",
+              "--weight", "3.14159265359"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+@@ -350,11 +350,11 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 2)
+         self.assertEqual(dev['zone'], 3)
+         self.assertEqual(dev['ip'], '127.0.0.2')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda3')
+         self.assertEqual(dev['weight'], 3.14159265359)
+         self.assertEqual(dev['replication_ip'], '127.0.0.2')
+-        self.assertEqual(dev['replication_port'], 6000)
++        self.assertEqual(dev['replication_port'], 6200)
+         self.assertEqual(dev['meta'], 'some meta data')
+         # Final check, rebalance and check ring is ok
+         ring.rebalance()
+@@ -367,7 +367,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[3001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[3::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -380,7 +380,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 2)
+         self.assertEqual(dev['zone'], 3)
+         self.assertEqual(dev['ip'], '3001:0:1234::c1c0:abcd:876')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda3')
+         self.assertEqual(dev['weight'], 3.14159265359)
+         self.assertEqual(dev['replication_ip'], '3::10')
+@@ -397,7 +397,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -410,7 +410,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 2)
+         self.assertEqual(dev['zone'], 3)
+         self.assertEqual(dev['ip'], 'test.test.com')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda3')
+         self.assertEqual(dev['weight'], 3.14159265359)
+         self.assertEqual(dev['replication_ip'], 'r.test.com')
+@@ -428,14 +428,14 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+     def test_add_device_already_exists(self):
+         # Test Add a device that already exists
+         argv = ["", self.tmpfile, "add",
+-                "r0z0-127.0.0.1:6000/sda1_some meta data", "100"]
++                "r0z0-127.0.0.1:6200/sda1_some meta data", "100"]
+         self.assertSystemExit(EXIT_ERROR, ringbuilder.main, argv)
+ 
+     def test_add_device_old_missing_region(self):
+         self.create_sample_ring()
+         # Test add device without specifying a region
+         argv = ["", self.tmpfile, "add",
+-                "z3-127.0.0.1:6000/sde3_some meta data", "3.14159265359"]
++                "z3-127.0.0.1:6200/sde3_some meta data", "3.14159265359"]
+         exp_results = {'valid_exit_codes': [2]}
+         self.run_srb(*argv, exp_results=exp_results)
+         # Check that ring was created with sane value for region
+@@ -458,11 +458,11 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             self.assertEqual(dev['region'], 0)
+             self.assertEqual(dev['zone'], 0)
+             self.assertEqual(dev['ip'], '127.0.0.1')
+-            self.assertEqual(dev['port'], 6000)
++            self.assertEqual(dev['port'], 6200)
+             self.assertEqual(dev['device'], 'sda1')
+             self.assertEqual(dev['weight'], 0)
+             self.assertEqual(dev['replication_ip'], '127.0.0.1')
+-            self.assertEqual(dev['replication_port'], 6000)
++            self.assertEqual(dev['replication_port'], 6200)
+             self.assertEqual(dev['meta'], 'some meta data')
+ 
+             # Check that second device in ring is not affected
+@@ -478,7 +478,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.create_sample_ring()
+         # Test ipv4(old format)
+         argv = ["", self.tmpfile, "remove",
+-                "d0r0z0-127.0.0.1:6000R127.0.0.1:6000/sda1_some meta data"]
++                "d0r0z0-127.0.0.1:6200R127.0.0.1:6200/sda1_some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+         ring = RingBuilder.load(self.tmpfile)
+ 
+@@ -490,11 +490,11 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 0)
+         self.assertEqual(dev['zone'], 0)
+         self.assertEqual(dev['ip'], '127.0.0.1')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda1')
+         self.assertEqual(dev['weight'], 0)
+         self.assertEqual(dev['replication_ip'], '127.0.0.1')
+-        self.assertEqual(dev['replication_port'], 6000)
++        self.assertEqual(dev['replication_port'], 6200)
+         self.assertEqual(dev['meta'], 'some meta data')
+ 
+         # Check that second device in ring is not affected
+@@ -513,7 +513,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -522,7 +522,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+ 
+         # Test ipv6(old format)
+         argv = ["", self.tmpfile, "remove",
+-                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6000"
++                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6200"
+                 "R[2::10]:7000/sda3_some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+         ring = RingBuilder.load(self.tmpfile)
+@@ -545,7 +545,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 2)
+         self.assertEqual(dev['zone'], 3)
+         self.assertEqual(dev['ip'], '2001:0:1234::c1c0:abcd:876')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda3')
+         self.assertEqual(dev['weight'], 0)
+         self.assertEqual(dev['replication_ip'], '2::10')
+@@ -563,9 +563,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "remove",
+              "--id", "0", "--region", "0", "--zone", "0",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.1",
+-             "--replication-port", "6000",
++             "--replication-port", "6200",
+              "--device", "sda1", "--meta", "some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+         ring = RingBuilder.load(self.tmpfile)
+@@ -578,11 +578,11 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 0)
+         self.assertEqual(dev['zone'], 0)
+         self.assertEqual(dev['ip'], '127.0.0.1')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda1')
+         self.assertEqual(dev['weight'], 0)
+         self.assertEqual(dev['replication_ip'], '127.0.0.1')
+-        self.assertEqual(dev['replication_port'], 6000)
++        self.assertEqual(dev['replication_port'], 6200)
+         self.assertEqual(dev['meta'], 'some meta data')
+ 
+         # Check that second device in ring is not affected
+@@ -655,7 +655,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -667,7 +667,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "remove",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data"]
+@@ -692,7 +692,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.assertEqual(dev['region'], 2)
+         self.assertEqual(dev['zone'], 3)
+         self.assertEqual(dev['ip'], 'test.test.com')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['device'], 'sda3')
+         self.assertEqual(dev['weight'], 0)
+         self.assertEqual(dev['replication_ip'], 'r.test.com')
+@@ -741,7 +741,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.create_sample_ring()
+         # Test ipv4(old format)
+         argv = ["", self.tmpfile, "set_weight",
+-                "d0r0z0-127.0.0.1:6000R127.0.0.1:6000/sda1_some meta data",
++                "d0r0z0-127.0.0.1:6200R127.0.0.1:6200/sda1_some meta data",
+                 "3.14159265359"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+         ring = RingBuilder.load(self.tmpfile)
+@@ -765,7 +765,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -774,7 +774,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+ 
+         # Test ipv6(old format)
+         argv = ["", self.tmpfile, "set_weight",
+-                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6000"
++                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6200"
+                 "R[2::10]:7000/sda3_some meta data", "3.14159265359"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+         ring = RingBuilder.load(self.tmpfile)
+@@ -802,9 +802,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "set_weight",
+              "--id", "0", "--region", "0", "--zone", "0",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.1",
+-             "--replication-port", "6000",
++             "--replication-port", "6200",
+              "--device", "sda1", "--meta", "some meta data", "3.14159265359"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+         ring = RingBuilder.load(self.tmpfile)
+@@ -828,7 +828,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -840,7 +840,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "set_weight",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data", "3.14159265359"]
+@@ -870,7 +870,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -882,7 +882,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "set_weight",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data", "3.14159265359"]
+@@ -937,7 +937,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             # Check that second device in ring is not affected
+             dev = ring.devs[1]
+             self.assertEqual(dev['ip'], '127.0.0.2')
+-            self.assertEqual(dev['port'], 6001)
++            self.assertEqual(dev['port'], 6201)
+             self.assertEqual(dev['device'], 'sda2')
+             self.assertEqual(dev['meta'], '')
+ 
+@@ -949,7 +949,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.create_sample_ring()
+         # Test ipv4(old format)
+         argv = ["", self.tmpfile, "set_info",
+-                "d0r0z0-127.0.0.1:6000R127.0.0.1:6000/sda1_some meta data",
++                "d0r0z0-127.0.0.1:6200R127.0.0.1:6200/sda1_some meta data",
+                 "127.0.1.1:8000R127.0.1.1:8000/sda10_other meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+@@ -966,7 +966,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # Check that second device in ring is not affected
+         dev = ring.devs[1]
+         self.assertEqual(dev['ip'], '127.0.0.2')
+-        self.assertEqual(dev['port'], 6001)
++        self.assertEqual(dev['port'], 6201)
+         self.assertEqual(dev['device'], 'sda2')
+         self.assertEqual(dev['meta'], '')
+ 
+@@ -981,7 +981,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -990,7 +990,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+ 
+         # Test ipv6(old format)
+         argv = ["", self.tmpfile, "set_info",
+-                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6000"
++                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6200"
+                 "R[2::10]:7000/sda3_some meta data",
+                 "[3001:0000:1234:0000:0000:C1C0:ABCD:0876]:8000"
+                 "R[3::10]:8000/sda30_other meta data"]
+@@ -1000,16 +1000,16 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # Check that second device in ring is not affected
+         dev = ring.devs[0]
+         self.assertEqual(dev['ip'], '127.0.0.1')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['replication_ip'], '127.0.0.1')
+-        self.assertEqual(dev['replication_port'], 6000)
++        self.assertEqual(dev['replication_port'], 6200)
+         self.assertEqual(dev['device'], 'sda1')
+         self.assertEqual(dev['meta'], 'some meta data')
+ 
+         # Check that second device in ring is not affected
+         dev = ring.devs[1]
+         self.assertEqual(dev['ip'], '127.0.0.2')
+-        self.assertEqual(dev['port'], 6001)
++        self.assertEqual(dev['port'], 6201)
+         self.assertEqual(dev['device'], 'sda2')
+         self.assertEqual(dev['meta'], '')
+ 
+@@ -1033,9 +1033,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "set_info",
+              "--id", "0", "--region", "0", "--zone", "0",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.1",
+-             "--replication-port", "6000",
++             "--replication-port", "6200",
+              "--device", "sda1", "--meta", "some meta data",
+              "--change-ip", "127.0.2.1",
+              "--change-port", "9000",
+@@ -1057,7 +1057,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # Check that second device in ring is not affected
+         dev = ring.devs[1]
+         self.assertEqual(dev['ip'], '127.0.0.2')
+-        self.assertEqual(dev['port'], 6001)
++        self.assertEqual(dev['port'], 6201)
+         self.assertEqual(dev['device'], 'sda2')
+         self.assertEqual(dev['meta'], '')
+ 
+@@ -1072,7 +1072,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1084,7 +1084,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "set_info",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1099,16 +1099,16 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # Check that second device in ring is not affected
+         dev = ring.devs[0]
+         self.assertEqual(dev['ip'], '127.0.0.1')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['replication_ip'], '127.0.0.1')
+-        self.assertEqual(dev['replication_port'], 6000)
++        self.assertEqual(dev['replication_port'], 6200)
+         self.assertEqual(dev['device'], 'sda1')
+         self.assertEqual(dev['meta'], 'some meta data')
+ 
+         # Check that second device in ring is not affected
+         dev = ring.devs[1]
+         self.assertEqual(dev['ip'], '127.0.0.2')
+-        self.assertEqual(dev['port'], 6001)
++        self.assertEqual(dev['port'], 6201)
+         self.assertEqual(dev['device'], 'sda2')
+         self.assertEqual(dev['meta'], '')
+ 
+@@ -1133,7 +1133,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1145,7 +1145,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "set_info",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1160,16 +1160,16 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # Check that second device in ring is not affected
+         dev = ring.devs[0]
+         self.assertEqual(dev['ip'], '127.0.0.1')
+-        self.assertEqual(dev['port'], 6000)
++        self.assertEqual(dev['port'], 6200)
+         self.assertEqual(dev['replication_ip'], '127.0.0.1')
+-        self.assertEqual(dev['replication_port'], 6000)
++        self.assertEqual(dev['replication_port'], 6200)
+         self.assertEqual(dev['device'], 'sda1')
+         self.assertEqual(dev['meta'], 'some meta data')
+ 
+         # Check that second device in ring is not affected
+         dev = ring.devs[1]
+         self.assertEqual(dev['ip'], '127.0.0.2')
+-        self.assertEqual(dev['port'], 6001)
++        self.assertEqual(dev['port'], 6201)
+         self.assertEqual(dev['device'], 'sda2')
+         self.assertEqual(dev['meta'], '')
+ 
+@@ -1206,14 +1206,14 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "set_info",
+              "--id", "0", "--region", "0", "--zone", "0",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.1",
+-             "--replication-port", "6000",
++             "--replication-port", "6200",
+              "--device", "sda1", "--meta", "some meta data",
+              "--change-ip", "127.0.0.2",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "127.0.0.2",
+-             "--change-replication-port", "6001",
++             "--change-replication-port", "6201",
+              "--change-device", "sda2", "--change-meta", ""]
+         self.assertSystemExit(EXIT_ERROR, ringbuilder.main, argv)
+ 
+@@ -1365,7 +1365,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         self.create_sample_ring()
+         # Test ipv4(old format)
+         argv = ["", self.tmpfile, "search",
+-                "d0r0z0-127.0.0.1:6000R127.0.0.1:6000/sda1_some meta data"]
++                "d0r0z0-127.0.0.1:6200R127.0.0.1:6200/sda1_some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+     def test_search_device_ipv6_old_format(self):
+@@ -1375,7 +1375,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1389,7 +1389,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+ 
+         # Test ipv6(old format)
+         argv = ["", self.tmpfile, "search",
+-                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6000"
++                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6200"
+                 "R[2::10]:7000/sda3_some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+@@ -1400,9 +1400,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "search",
+              "--id", "0", "--region", "0", "--zone", "0",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.1",
+-             "--replication-port", "6000",
++             "--replication-port", "6200",
+              "--device", "sda1", "--meta", "some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+@@ -1413,7 +1413,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1430,7 +1430,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "search",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data"]
+@@ -1443,7 +1443,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1459,7 +1459,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "search",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data"]
+@@ -1485,7 +1485,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         ring.save(self.tmpfile)
+         # Test ipv4(old format)
+         argv = ["", self.tmpfile, "list_parts",
+-                "d0r0z0-127.0.0.1:6000R127.0.0.1:6000/sda1_some meta data"]
++                "d0r0z0-127.0.0.1:6200R127.0.0.1:6200/sda1_some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+     def test_list_parts_ipv6_old_format(self):
+@@ -1495,7 +1495,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1509,7 +1509,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+ 
+         # Test ipv6(old format)
+         argv = ["", self.tmpfile, "list_parts",
+-                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6000"
++                "d4r2z3-[2001:0000:1234:0000:0000:C1C0:ABCD:0876]:6200"
+                 "R[2::10]:7000/sda3_some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+@@ -1523,9 +1523,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "list_parts",
+              "--id", "0", "--region", "0", "--zone", "0",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.1",
+-             "--replication-port", "6000",
++             "--replication-port", "6200",
+              "--device", "sda1", "--meta", "some meta data"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+ 
+@@ -1536,7 +1536,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1553,7 +1553,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "list_parts",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "[2001:0000:1234:0000:0000:C1C0:ABCD:0876]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[2::10]",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data"]
+@@ -1566,7 +1566,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "add",
+              "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data",
+@@ -1583,7 +1583,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             ["", self.tmpfile, "list_parts",
+              "--id", "4", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3", "--meta", "some meta data"]
+@@ -1643,17 +1643,17 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             "Devices:    id  region  zone      ip address  port  " \
+             "replication ip  replication port      name weight " \
+             "partitions balance flags meta\n" \
+-            "             0       0     0       127.0.0.1  6000       " \
+-            "127.0.0.1              6000      sda1 100.00" \
++            "             0       0     0       127.0.0.1  6200       " \
++            "127.0.0.1              6200      sda1 100.00" \
+             "          0 -100.00       some meta data\n" \
+-            "             1       1     1       127.0.0.2  6001       " \
+-            "127.0.0.2              6001      sda2   0.00" \
++            "             1       1     1       127.0.0.2  6201       " \
++            "127.0.0.2              6201      sda2   0.00" \
+             "          0    0.00   DEL \n" \
+-            "             2       2     2       127.0.0.3  6002       " \
+-            "127.0.0.3              6002      sdc3 100.00" \
++            "             2       2     2       127.0.0.3  6202       " \
++            "127.0.0.3              6202      sdc3 100.00" \
+             "          0 -100.00       \n" \
+-            "             3       3     3       127.0.0.4  6003       " \
+-            "127.0.0.4              6003      sdd4   0.00" \
++            "             3       3     3       127.0.0.4  6203       " \
++            "127.0.0.4              6203      sdd4   0.00" \
+             "          0    0.00       \n" % (self.tmpfile, self.tmpfile)
+         self.assertEqual(expected, mock_stdout.getvalue())
+ 
+@@ -1841,9 +1841,9 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+         # and lost the builder file
+         self.create_sample_ring()
+ 
+-        argv = ["", self.tmpfile, "add", "r1z1-127.0.0.1:6000/sdb", "1.0"]
++        argv = ["", self.tmpfile, "add", "r1z1-127.0.0.1:6200/sdb", "1.0"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+-        argv = ["", self.tmpfile, "add", "r1z1-127.0.0.1:6000/sdc", "1.0"]
++        argv = ["", self.tmpfile, "add", "r1z1-127.0.0.1:6200/sdc", "1.0"]
+         self.assertSystemExit(EXIT_SUCCESS, ringbuilder.main, argv)
+         argv = ["", self.tmpfile, "rebalance"]
+         self.assertSystemExit(EXIT_WARNING, ringbuilder.main, argv)
+@@ -1899,7 +1899,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+             argv = ["",
+                     self.tmpfile,
+                     "add",
+-                    "r1z1-127.0.0.1:6000/%s" % device_name,
++                    "r1z1-127.0.0.1:6200/%s" % device_name,
+                     "1"]
+             self.assertSystemExit(EXIT_ERROR, ringbuilder.main, argv)
+ 
+@@ -1909,7 +1909,7 @@ class TestCommands(unittest.TestCase, RunSwiftRingBuilderMixin):
+                     "--region", "1",
+                     "--zone", "1",
+                     "--ip", "127.0.0.1",
+-                    "--port", "6000",
++                    "--port", "6200",
+                     "--device", device_name,
+                     "--weight", "100"]
+             self.assertSystemExit(EXIT_ERROR, ringbuilder.main, argv)
+diff --git a/test/unit/common/middleware/test_list_endpoints.py b/test/unit/common/middleware/test_list_endpoints.py
+index cc78e8f..bd366fb 100644
+--- a/test/unit/common/middleware/test_list_endpoints.py
++++ b/test/unit/common/middleware/test_list_endpoints.py
+@@ -73,17 +73,17 @@ class TestListEndpoints(unittest.TestCase):
+             array.array('H', [1, 0, 1, 0]),
+             array.array('H', [4, 3, 4, 3])]
+         intended_devs = [{'id': 0, 'zone': 0, 'weight': 1.0,
+-                          'ip': '10.1.1.1', 'port': 6000,
++                          'ip': '10.1.1.1', 'port': 6200,
+                           'device': 'sda1'},
+                          {'id': 1, 'zone': 0, 'weight': 1.0,
+-                          'ip': '10.1.1.1', 'port': 6000,
++                          'ip': '10.1.1.1', 'port': 6200,
+                           'device': 'sdb1'},
+                          None,
+                          {'id': 3, 'zone': 2, 'weight': 1.0,
+-                          'ip': '10.1.2.1', 'port': 6000,
++                          'ip': '10.1.2.1', 'port': 6200,
+                           'device': 'sdc1'},
+                          {'id': 4, 'zone': 2, 'weight': 1.0,
+-                          'ip': '10.1.2.2', 'port': 6000,
++                          'ip': '10.1.2.2', 'port': 6200,
+                           'device': 'sdd1'}]
+         intended_part_shift = 30
+         ring.RingData(intended_replica2part2dev_id_a,
+@@ -241,16 +241,16 @@ class TestListEndpoints(unittest.TestCase):
+         self.assertEqual(resp.status_int, 200)
+         self.assertEqual(resp.content_type, 'application/json')
+         self.assertEqual(json.loads(resp.body), [
+-            "http://10.1.1.1:6000/sdb1/1/a/c/o1",
+-            "http://10.1.2.2:6000/sdd1/1/a/c/o1"
++            "http://10.1.1.1:6200/sdb1/1/a/c/o1",
++            "http://10.1.2.2:6200/sdd1/1/a/c/o1"
+         ])
+ 
+         # test policies with no version endpoint name
+         expected = [[
+-                    "http://10.1.1.1:6000/sdb1/1/a/c/o1",
+-                    "http://10.1.2.2:6000/sdd1/1/a/c/o1"], [
+-                    "http://10.1.1.1:6000/sda1/1/a/c/o1",
+-                    "http://10.1.2.1:6000/sdc1/1/a/c/o1"
++                    "http://10.1.1.1:6200/sdb1/1/a/c/o1",
++                    "http://10.1.2.2:6200/sdd1/1/a/c/o1"], [
++                    "http://10.1.1.1:6200/sda1/1/a/c/o1",
++                    "http://10.1.2.1:6200/sdc1/1/a/c/o1"
+                     ]]
+         PATCHGI = 'swift.common.middleware.list_endpoints.get_container_info'
+         for pol in POLICIES:
+@@ -267,25 +267,25 @@ class TestListEndpoints(unittest.TestCase):
+             self.list_endpoints)
+         self.assertEqual(resp.status_int, 200)
+         self.assertEqual(json.loads(resp.body), [
+-            "http://10.1.1.1:6000/sdb1/3/a/c/o1/",
+-            "http://10.1.2.2:6000/sdd1/3/a/c/o1/"
++            "http://10.1.1.1:6200/sdb1/3/a/c/o1/",
++            "http://10.1.2.2:6200/sdd1/3/a/c/o1/"
+         ])
+ 
+         resp = Request.blank('/endpoints/a/c2').get_response(
+             self.list_endpoints)
+         self.assertEqual(resp.status_int, 200)
+         self.assertEqual(json.loads(resp.body), [
+-            "http://10.1.1.1:6000/sda1/2/a/c2",
+-            "http://10.1.2.1:6000/sdc1/2/a/c2"
++            "http://10.1.1.1:6200/sda1/2/a/c2",
++            "http://10.1.2.1:6200/sdc1/2/a/c2"
+         ])
+ 
+         resp = Request.blank('/endpoints/a1').get_response(
+             self.list_endpoints)
+         self.assertEqual(resp.status_int, 200)
+         self.assertEqual(json.loads(resp.body), [
+-            "http://10.1.2.1:6000/sdc1/0/a1",
+-            "http://10.1.1.1:6000/sda1/0/a1",
+-            "http://10.1.1.1:6000/sdb1/0/a1"
++            "http://10.1.2.1:6200/sdc1/0/a1",
++            "http://10.1.1.1:6200/sda1/0/a1",
++            "http://10.1.1.1:6200/sdb1/0/a1"
+         ])
+ 
+         resp = Request.blank('/endpoints/').get_response(
+@@ -296,24 +296,24 @@ class TestListEndpoints(unittest.TestCase):
+             self.list_endpoints)
+         self.assertEqual(resp.status_int, 200)
+         self.assertEqual(json.loads(resp.body), [
+-            "http://10.1.1.1:6000/sdb1/3/a/c%202",
+-            "http://10.1.2.2:6000/sdd1/3/a/c%202"
++            "http://10.1.1.1:6200/sdb1/3/a/c%202",
++            "http://10.1.2.2:6200/sdd1/3/a/c%202"
+         ])
+ 
+         resp = Request.blank('/endpoints/a/c%202').get_response(
+             self.list_endpoints)
+         self.assertEqual(resp.status_int, 200)
+         self.assertEqual(json.loads(resp.body), [
+-            "http://10.1.1.1:6000/sdb1/3/a/c%202",
+-            "http://10.1.2.2:6000/sdd1/3/a/c%202"
++            "http://10.1.1.1:6200/sdb1/3/a/c%202",
++            "http://10.1.2.2:6200/sdd1/3/a/c%202"
+         ])
+ 
+         resp = Request.blank('/endpoints/ac%20count/con%20tainer/ob%20ject') \
+             .get_response(self.list_endpoints)
+         self.assertEqual(resp.status_int, 200)
+         self.assertEqual(json.loads(resp.body), [
+-            "http://10.1.1.1:6000/sdb1/3/ac%20count/con%20tainer/ob%20ject",
+-            "http://10.1.2.2:6000/sdd1/3/ac%20count/con%20tainer/ob%20ject"
++            "http://10.1.1.1:6200/sdb1/3/ac%20count/con%20tainer/ob%20ject",
++            "http://10.1.2.2:6200/sdd1/3/ac%20count/con%20tainer/ob%20ject"
+         ])
+ 
+         resp = Request.blank('/endpoints/a/c/o1', {'REQUEST_METHOD': 'POST'}) \
+@@ -359,16 +359,16 @@ class TestListEndpoints(unittest.TestCase):
+     def test_v1_response(self):
+         req = Request.blank('/endpoints/v1/a/c/o1')
+         resp = req.get_response(self.list_endpoints)
+-        expected = ["http://10.1.1.1:6000/sdb1/1/a/c/o1",
+-                    "http://10.1.2.2:6000/sdd1/1/a/c/o1"]
++        expected = ["http://10.1.1.1:6200/sdb1/1/a/c/o1",
++                    "http://10.1.2.2:6200/sdd1/1/a/c/o1"]
+         self.assertEqual(resp.body, json.dumps(expected))
+ 
+     def test_v2_obj_response(self):
+         req = Request.blank('/endpoints/v2/a/c/o1')
+         resp = req.get_response(self.list_endpoints)
+         expected = {
+-            'endpoints': ["http://10.1.1.1:6000/sdb1/1/a/c/o1",
+-                          "http://10.1.2.2:6000/sdd1/1/a/c/o1"],
++            'endpoints': ["http://10.1.1.1:6200/sdb1/1/a/c/o1",
++                          "http://10.1.2.2:6200/sdd1/1/a/c/o1"],
+             'headers': {'X-Backend-Storage-Policy-Index': "0"},
+         }
+         self.assertEqual(resp.body, json.dumps(expected))
+@@ -394,9 +394,9 @@ class TestListEndpoints(unittest.TestCase):
+         req = Request.blank('/endpoints/v2/a')
+         resp = req.get_response(self.list_endpoints)
+         expected = {
+-            'endpoints': ["http://10.1.2.1:6000/sdc1/0/a",
+-                          "http://10.1.1.1:6000/sda1/0/a",
+-                          "http://10.1.1.1:6000/sdb1/0/a"],
++            'endpoints': ["http://10.1.2.1:6200/sdc1/0/a",
++                          "http://10.1.1.1:6200/sda1/0/a",
++                          "http://10.1.1.1:6200/sdb1/0/a"],
+             'headers': {},
+         }
+         # container
+@@ -404,9 +404,9 @@ class TestListEndpoints(unittest.TestCase):
+         req = Request.blank('/endpoints/v2/a/c')
+         resp = req.get_response(self.list_endpoints)
+         expected = {
+-            'endpoints': ["http://10.1.2.2:6000/sdd1/0/a/c",
+-                          "http://10.1.1.1:6000/sda1/0/a/c",
+-                          "http://10.1.2.1:6000/sdc1/0/a/c"],
++            'endpoints': ["http://10.1.2.2:6200/sdd1/0/a/c",
++                          "http://10.1.1.1:6200/sda1/0/a/c",
++                          "http://10.1.2.1:6200/sdc1/0/a/c"],
+             'headers': {},
+         }
+         self.assertEqual(resp.body, json.dumps(expected))
+@@ -414,9 +414,9 @@ class TestListEndpoints(unittest.TestCase):
+     def test_version_account_response(self):
+         req = Request.blank('/endpoints/a')
+         resp = req.get_response(self.list_endpoints)
+-        expected = ["http://10.1.2.1:6000/sdc1/0/a",
+-                    "http://10.1.1.1:6000/sda1/0/a",
+-                    "http://10.1.1.1:6000/sdb1/0/a"]
++        expected = ["http://10.1.2.1:6200/sdc1/0/a",
++                    "http://10.1.1.1:6200/sda1/0/a",
++                    "http://10.1.1.1:6200/sdb1/0/a"]
+         self.assertEqual(resp.body, json.dumps(expected))
+         req = Request.blank('/endpoints/v1.0/a')
+         resp = req.get_response(self.list_endpoints)
+@@ -425,9 +425,9 @@ class TestListEndpoints(unittest.TestCase):
+         req = Request.blank('/endpoints/v2/a')
+         resp = req.get_response(self.list_endpoints)
+         expected = {
+-            'endpoints': ["http://10.1.2.1:6000/sdc1/0/a",
+-                          "http://10.1.1.1:6000/sda1/0/a",
+-                          "http://10.1.1.1:6000/sdb1/0/a"],
++            'endpoints': ["http://10.1.2.1:6200/sdc1/0/a",
++                          "http://10.1.1.1:6200/sda1/0/a",
++                          "http://10.1.1.1:6200/sdb1/0/a"],
+             'headers': {},
+         }
+         self.assertEqual(resp.body, json.dumps(expected))
+diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middleware/test_recon.py
+index 1dbf4c6..a194378 100644
+--- a/test/unit/common/middleware/test_recon.py
++++ b/test/unit/common/middleware/test_recon.py
+@@ -234,17 +234,17 @@ class TestReconSuccess(TestCase):
+ 
+         self.ring_part_shift = 5
+         self.ring_devs = [{'id': 0, 'zone': 0, 'weight': 1.0,
+-                           'ip': '10.1.1.1', 'port': 6000,
++                           'ip': '10.1.1.1', 'port': 6200,
+                            'device': 'sda1'},
+                           {'id': 1, 'zone': 0, 'weight': 1.0,
+-                           'ip': '10.1.1.1', 'port': 6000,
++                           'ip': '10.1.1.1', 'port': 6200,
+                            'device': 'sdb1'},
+                           None,
+                           {'id': 3, 'zone': 2, 'weight': 1.0,
+-                           'ip': '10.1.2.1', 'port': 6000,
++                           'ip': '10.1.2.1', 'port': 6200,
+                            'device': 'sdc1'},
+                           {'id': 4, 'zone': 2, 'weight': 1.0,
+-                           'ip': '10.1.2.2', 'port': 6000,
++                           'ip': '10.1.2.2', 'port': 6200,
+                            'device': 'sdd1'}]
+         self._create_rings()
+ 
+@@ -314,15 +314,15 @@ class TestReconSuccess(TestCase):
+         # We should only see configured and present rings, so to handle the
+         # "normal" case just patch the policies to match the existing rings.
+         expt_out = {'%s/account.ring.gz' % self.tempdir:
+-                    'd288bdf39610e90d4f0b67fa00eeec4f',
++                    '11e0c98abb209474d40d6a9a8a523803',
+                     '%s/container.ring.gz' % self.tempdir:
+-                    '9a5a05a8a4fbbc61123de792dbe4592d',
++                    '6685496a4045ce0be123068e0165a64d',
+                     '%s/object.ring.gz' % self.tempdir:
+-                    'da02bfbd0bf1e7d56faea15b6fe5ab1e',
++                    '782728be98644fb725e165d4bf5728d4',
+                     '%s/object-1.ring.gz' % self.tempdir:
+-                    '3f1899b27abf5f2efcc67d6fae1e1c64',
++                    '7c3a4bc9f724d4eb69c9b797cdc28b8c',
+                     '%s/object-2.ring.gz' % self.tempdir:
+-                    '8f0e57079b3c245d9b3d5a428e9312ee'}
++                    '324b9c4da20cf7ef097edbd219d296e0'}
+ 
+         # We need to instantiate app after overriding the configured policies.
+         # object-{1,2}.ring.gz should both appear as they are present on disk
+@@ -372,7 +372,7 @@ class TestReconSuccess(TestCase):
+         expt_out = {'%s/account.ring.gz' % self.tempdir: None,
+                     '%s/container.ring.gz' % self.tempdir: None,
+                     '%s/object.ring.gz' % self.tempdir:
+-                    'da02bfbd0bf1e7d56faea15b6fe5ab1e'}
++                    '782728be98644fb725e165d4bf5728d4'}
+         ringmd5 = self.app.get_ring_md5(openr=fake_open_objonly)
+         self.assertEqual(sorted(ringmd5.items()),
+                          sorted(expt_out.items()))
+@@ -387,13 +387,13 @@ class TestReconSuccess(TestCase):
+         # later moved into place, we shouldn't need to restart object-server
+         # for it to appear in recon.
+         expt_out = {'%s/account.ring.gz' % self.tempdir:
+-                    'd288bdf39610e90d4f0b67fa00eeec4f',
++                    '11e0c98abb209474d40d6a9a8a523803',
+                     '%s/container.ring.gz' % self.tempdir:
+-                    '9a5a05a8a4fbbc61123de792dbe4592d',
++                    '6685496a4045ce0be123068e0165a64d',
+                     '%s/object.ring.gz' % self.tempdir:
+-                    'da02bfbd0bf1e7d56faea15b6fe5ab1e',
++                    '782728be98644fb725e165d4bf5728d4',
+                     '%s/object-2.ring.gz' % self.tempdir:
+-                    '8f0e57079b3c245d9b3d5a428e9312ee'}
++                    '324b9c4da20cf7ef097edbd219d296e0'}
+ 
+         # We need to instantiate app after overriding the configured policies.
+         # object-1.ring.gz should not appear as it's present but unconfigured.
+@@ -412,7 +412,7 @@ class TestReconSuccess(TestCase):
+                    array.array('H', [1, 1, 0, 3])]
+         self._create_ring(os.path.join(self.tempdir, ringfn),
+                           ringmap, self.ring_devs, self.ring_part_shift)
+-        expt_out[ringpath] = 'acfa4b85396d2a33f361ebc07d23031d'
++        expt_out[ringpath] = 'a7e591642beea6933f64aebd56f357d9'
+ 
+         # We should now see it in the ringmd5 response, without a restart
+         # (using the same app instance)
+@@ -428,13 +428,13 @@ class TestReconSuccess(TestCase):
+         # Object rings that are configured but missing aren't meant to appear
+         # in the ringmd5 response.
+         expt_out = {'%s/account.ring.gz' % self.tempdir:
+-                    'd288bdf39610e90d4f0b67fa00eeec4f',
++                    '11e0c98abb209474d40d6a9a8a523803',
+                     '%s/container.ring.gz' % self.tempdir:
+-                    '9a5a05a8a4fbbc61123de792dbe4592d',
++                    '6685496a4045ce0be123068e0165a64d',
+                     '%s/object.ring.gz' % self.tempdir:
+-                    'da02bfbd0bf1e7d56faea15b6fe5ab1e',
++                    '782728be98644fb725e165d4bf5728d4',
+                     '%s/object-2.ring.gz' % self.tempdir:
+-                    '8f0e57079b3c245d9b3d5a428e9312ee'}
++                    '324b9c4da20cf7ef097edbd219d296e0'}
+ 
+         # We need to instantiate app after overriding the configured policies.
+         # object-1.ring.gz should not appear as it's present but unconfigured.
+@@ -451,11 +451,11 @@ class TestReconSuccess(TestCase):
+         # Object rings that are present but not configured in swift.conf
+         # aren't meant to appear in the ringmd5 response.
+         expt_out = {'%s/account.ring.gz' % self.tempdir:
+-                    'd288bdf39610e90d4f0b67fa00eeec4f',
++                    '11e0c98abb209474d40d6a9a8a523803',
+                     '%s/container.ring.gz' % self.tempdir:
+-                    '9a5a05a8a4fbbc61123de792dbe4592d',
++                    '6685496a4045ce0be123068e0165a64d',
+                     '%s/object.ring.gz' % self.tempdir:
+-                    'da02bfbd0bf1e7d56faea15b6fe5ab1e'}
++                    '782728be98644fb725e165d4bf5728d4'}
+ 
+         # We need to instantiate app after overriding the configured policies.
+         # object-{1,2}.ring.gz should not appear as they are present on disk
+diff --git a/test/unit/common/ring/test_builder.py b/test/unit/common/ring/test_builder.py
+index c858c51..bdcd96f 100644
+--- a/test/unit/common/ring/test_builder.py
++++ b/test/unit/common/ring/test_builder.py
+@@ -217,12 +217,12 @@ class TestRingBuilder(unittest.TestCase):
+         rb = ring.RingBuilder(8, 3, 1)
+         # test add new dev with no id
+         dev_id = rb.add_dev({'zone': 0, 'region': 1, 'weight': 1,
+-                             'ip': '127.0.0.1', 'port': 6000})
++                             'ip': '127.0.0.1', 'port': 6200})
+         self.assertEqual(rb.devs[0]['id'], 0)
+         self.assertEqual(dev_id, 0)
+         # test add another dev with no id
+         dev_id = rb.add_dev({'zone': 3, 'region': 2, 'weight': 1,
+-                             'ip': '127.0.0.1', 'port': 6000})
++                             'ip': '127.0.0.1', 'port': 6200})
+         self.assertEqual(rb.devs[1]['id'], 1)
+         self.assertEqual(dev_id, 1)
+ 
+@@ -284,17 +284,17 @@ class TestRingBuilder(unittest.TestCase):
+     def test_remove_a_lot(self):
+         rb = ring.RingBuilder(3, 3, 1)
+         rb.add_dev({'id': 0, 'device': 'd0', 'ip': '10.0.0.1',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 1})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 1})
+         rb.add_dev({'id': 1, 'device': 'd1', 'ip': '10.0.0.2',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 2})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 2})
+         rb.add_dev({'id': 2, 'device': 'd2', 'ip': '10.0.0.3',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 3})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 3})
+         rb.add_dev({'id': 3, 'device': 'd3', 'ip': '10.0.0.1',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 1})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 1})
+         rb.add_dev({'id': 4, 'device': 'd4', 'ip': '10.0.0.2',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 2})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 2})
+         rb.add_dev({'id': 5, 'device': 'd5', 'ip': '10.0.0.3',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 3})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 3})
+         rb.rebalance()
+         rb.validate()
+ 
+@@ -314,13 +314,13 @@ class TestRingBuilder(unittest.TestCase):
+     def test_remove_zero_weighted(self):
+         rb = ring.RingBuilder(8, 3, 0)
+         rb.add_dev({'id': 0, 'device': 'd0', 'ip': '10.0.0.1',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 1})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 1})
+         rb.add_dev({'id': 1, 'device': 'd1', 'ip': '10.0.0.2',
+-                    'port': 6002, 'weight': 0.0, 'region': 0, 'zone': 2})
++                    'port': 6202, 'weight': 0.0, 'region': 0, 'zone': 2})
+         rb.add_dev({'id': 2, 'device': 'd2', 'ip': '10.0.0.3',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 3})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 3})
+         rb.add_dev({'id': 3, 'device': 'd3', 'ip': '10.0.0.1',
+-                    'port': 6002, 'weight': 1000.0, 'region': 0, 'zone': 1})
++                    'port': 6202, 'weight': 1000.0, 'region': 0, 'zone': 1})
+         rb.rebalance()
+ 
+         rb.remove_dev(1)
+@@ -1117,14 +1117,14 @@ class TestRingBuilder(unittest.TestCase):
+     def test_multiple_duplicate_device_assignment(self):
+         rb = ring.RingBuilder(4, 4, 1)
+         devs = [
+-            'r1z1-127.0.0.1:33440/d1',
+-            'r1z1-127.0.0.1:33441/d2',
+-            'r1z1-127.0.0.1:33442/d3',
++            'r1z1-127.0.0.1:6200/d1',
++            'r1z1-127.0.0.1:6201/d2',
++            'r1z1-127.0.0.1:6202/d3',
+             'r1z1-127.0.0.1:33443/d4',
+-            'r1z1-127.0.0.2:33440/d5',
+-            'r1z1-127.0.0.2:33441/d6',
+-            'r1z1-127.0.0.2:33442/d7',
+-            'r1z1-127.0.0.2:33442/d8',
++            'r1z1-127.0.0.2:6200/d5',
++            'r1z1-127.0.0.2:6201/d6',
++            'r1z1-127.0.0.2:6202/d7',
++            'r1z1-127.0.0.2:6202/d8',
+         ]
+         for add_value in devs:
+             dev = utils.parse_add_value(add_value)
+@@ -2357,11 +2357,11 @@ class TestRingBuilder(unittest.TestCase):
+     def test_more_devices_than_replicas_validation_when_removed_dev(self):
+         rb = ring.RingBuilder(8, 3, 1)
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'weight': 1.0, 'device': 'sda'})
++                    'port': 6200, 'weight': 1.0, 'device': 'sda'})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'weight': 1.0, 'device': 'sdb'})
++                    'port': 6200, 'weight': 1.0, 'device': 'sdb'})
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'weight': 1.0, 'device': 'sdc'})
++                    'port': 6200, 'weight': 1.0, 'device': 'sdc'})
+         rb.rebalance()
+         rb.remove_dev(2)
+         with self.assertRaises(ValueError) as e:
+@@ -2383,7 +2383,7 @@ class TestRingBuilder(unittest.TestCase):
+             else:
+                 dev_name = 'sda'
+             rb.add_dev({'id': i, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                        'port': 6000, 'weight': 1.0, 'device': dev_name})
++                        'port': 6200, 'weight': 1.0, 'device': dev_name})
+         rb.rebalance()
+         if (n > 0):
+             rb.pretend_min_part_hours_passed()
+@@ -2399,7 +2399,8 @@ class TestRingBuilder(unittest.TestCase):
+         add_dev_count = 6
+         rb = self._add_dev_delete_first_n(add_dev_count, add_dev_count - 3)
+         new_dev_id = rb.add_dev({'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                                 'port': 6000, 'weight': 1.0, 'device': 'sda'})
++                                 'port': 6200, 'weight': 1.0,
++                                 'device': 'sda'})
+         self.assertTrue(new_dev_id < add_dev_count)
+ 
+         # try with non-contiguous holes
+@@ -2407,7 +2408,7 @@ class TestRingBuilder(unittest.TestCase):
+         rb2 = ring.RingBuilder(8, 3, 1)
+         for i in range(6):
+             rb2.add_dev({'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                         'port': 6000, 'weight': 1.0, 'device': 'sda'})
++                         'port': 6200, 'weight': 1.0, 'device': 'sda'})
+         rb2.rebalance()
+         rb2.pretend_min_part_hours_passed()
+         rb2.remove_dev(2)
+@@ -2415,12 +2416,12 @@ class TestRingBuilder(unittest.TestCase):
+         rb2.pretend_min_part_hours_passed()
+         rb2.rebalance()
+         first = rb2.add_dev({'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                             'port': 6000, 'weight': 1.0, 'device': 'sda'})
++                             'port': 6200, 'weight': 1.0, 'device': 'sda'})
+         second = rb2.add_dev({'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                              'port': 6000, 'weight': 1.0, 'device': 'sda'})
++                              'port': 6200, 'weight': 1.0, 'device': 'sda'})
+         # add a new one (without reusing a hole)
+         third = rb2.add_dev({'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                             'port': 6000, 'weight': 1.0, 'device': 'sda'})
++                             'port': 6200, 'weight': 1.0, 'device': 'sda'})
+         self.assertEqual(first, 2)
+         self.assertEqual(second, 5)
+         self.assertEqual(third, 6)
+@@ -2434,7 +2435,7 @@ class TestRingBuilder(unittest.TestCase):
+         try:
+             new_dev_id = rb.add_dev({'id': exp_new_dev_id, 'region': 0,
+                                      'zone': 0, 'ip': '127.0.0.1',
+-                                     'port': 6000, 'weight': 1.0,
++                                     'port': 6200, 'weight': 1.0,
+                                      'device': 'sda'})
+             self.assertEqual(new_dev_id, exp_new_dev_id)
+         except exceptions.DuplicateDeviceError:
+@@ -3073,23 +3074,23 @@ class TestGetRequiredOverload(unittest.TestCase):
+ 
+         # z0
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 1000})
++                    'port': 6200, 'device': 'sda', 'weight': 1000})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sdb', 'weight': 1000})
++                    'port': 6200, 'device': 'sdb', 'weight': 1000})
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sdc', 'weight': 1000})
++                    'port': 6200, 'device': 'sdc', 'weight': 1000})
+ 
+         # z1
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 1, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 1000})
++                    'port': 6200, 'device': 'sda', 'weight': 1000})
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 1, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sdb', 'weight': 1000})
++                    'port': 6200, 'device': 'sdb', 'weight': 1000})
+         rb.add_dev({'id': 5, 'region': 0, 'zone': 1, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sdc', 'weight': 1000})
++                    'port': 6200, 'device': 'sdc', 'weight': 1000})
+ 
+         # z1 - extra small server
+         rb.add_dev({'id': 6, 'region': 0, 'zone': 1, 'ip': '127.0.0.3',
+-                    'port': 6000, 'device': 'sda', 'weight': 50})
++                    'port': 6200, 'device': 'sda', 'weight': 50})
+ 
+         expected = {
+             (0, 0): 2.479338842975207,
+@@ -3122,16 +3123,16 @@ class TestGetRequiredOverload(unittest.TestCase):
+         rb = ring.RingBuilder(8, 5, 0)
+         # z0
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         # z1
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 1, 'ip': '127.0.1.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 1, 'ip': '127.0.1.1',
+-                    'port': 6000, 'device': 'sdb', 'weight': 100})
++                    'port': 6200, 'device': 'sdb', 'weight': 100})
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 1, 'ip': '127.0.1.2',
+-                    'port': 6000, 'device': 'sdc', 'weight': 100})
++                    'port': 6200, 'device': 'sdc', 'weight': 100})
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 1, 'ip': '127.0.1.2',
+-                    'port': 6000, 'device': 'sdd', 'weight': 100})
++                    'port': 6200, 'device': 'sdd', 'weight': 100})
+ 
+         # first things first, make sure we do this right
+         rb.rebalance()
+@@ -3187,19 +3188,19 @@ class TestGetRequiredOverload(unittest.TestCase):
+ 
+         # z0
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         # z1
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 1, 'ip': '127.0.1.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 1, 'ip': '127.0.1.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         # z2
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 2, 'ip': '127.0.2.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         rb.add_dev({'id': 5, 'region': 0, 'zone': 2, 'ip': '127.0.2.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 10000})
++                    'port': 6200, 'device': 'sda', 'weight': 10000})
+ 
+         # obviously d5 gets one whole replica; the other two replicas
+         # are split evenly among the five other devices
+@@ -3306,19 +3307,19 @@ class TestGetRequiredOverload(unittest.TestCase):
+ 
+         # z0
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 10000})
++                    'port': 6200, 'device': 'sda', 'weight': 10000})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 10000})
++                    'port': 6200, 'device': 'sda', 'weight': 10000})
+         # z1
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 1, 'ip': '127.0.1.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 10000})
++                    'port': 6200, 'device': 'sda', 'weight': 10000})
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 1, 'ip': '127.0.1.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 10000})
++                    'port': 6200, 'device': 'sda', 'weight': 10000})
+         # z2
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 2, 'ip': '127.0.2.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 10000})
++                    'port': 6200, 'device': 'sda', 'weight': 10000})
+         rb.add_dev({'id': 5, 'region': 0, 'zone': 2, 'ip': '127.0.2.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+ 
+         # it's almost like 3.0 / 5 ~= 0.6, but that one little guy get's
+         # his fair share
+@@ -3415,21 +3416,21 @@ class TestGetRequiredOverload(unittest.TestCase):
+         rb = ring.RingBuilder(8, 3, 0)
+         # z0
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 60})
++                    'port': 6200, 'device': 'sda', 'weight': 60})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 60})
++                    'port': 6200, 'device': 'sda', 'weight': 60})
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 0, 'ip': '127.0.0.3',
+-                    'port': 6000, 'device': 'sda', 'weight': 60})
++                    'port': 6200, 'device': 'sda', 'weight': 60})
+         # z1
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 1, 'ip': '127.0.1.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 80})
++                    'port': 6200, 'device': 'sda', 'weight': 80})
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 1, 'ip': '127.0.1.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 128})
++                    'port': 6200, 'device': 'sda', 'weight': 128})
+         # z2
+         rb.add_dev({'id': 5, 'region': 0, 'zone': 2, 'ip': '127.0.2.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 80})
++                    'port': 6200, 'device': 'sda', 'weight': 80})
+         rb.add_dev({'id': 6, 'region': 0, 'zone': 2, 'ip': '127.0.2.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 240})
++                    'port': 6200, 'device': 'sda', 'weight': 240})
+ 
+         rb.set_overload(0.1)
+         rb.rebalance()
+@@ -3445,19 +3446,19 @@ class TestGetRequiredOverload(unittest.TestCase):
+     def test_multi_zone_with_failed_device(self):
+         rb = ring.RingBuilder(8, 3, 1)
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+ 
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 1, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 1, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+ 
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 2, 'ip': '127.0.0.3',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 5, 'region': 0, 'zone': 2, 'ip': '127.0.0.3',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+ 
+         # sanity, balanced and dispersed
+         expected = {
+@@ -3561,19 +3562,19 @@ class TestGetRequiredOverload(unittest.TestCase):
+         rb = ring.RingBuilder(8, 3, 1)
+         # zone 0 server 127.0.0.1
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 3000})
++                    'port': 6200, 'device': 'sda', 'weight': 3000})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sdb', 'weight': 3000})
++                    'port': 6200, 'device': 'sdb', 'weight': 3000})
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 3000})
++                    'port': 6200, 'device': 'sda', 'weight': 3000})
+         # zone 1 server 127.0.0.2
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 1, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 4000})
++                    'port': 6200, 'device': 'sda', 'weight': 4000})
+         rb.add_dev({'id': 5, 'region': 0, 'zone': 1, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sdb', 'weight': 4000})
++                    'port': 6200, 'device': 'sdb', 'weight': 4000})
+         # zone 1 (again) server 127.0.0.3
+         rb.add_dev({'id': 6, 'region': 0, 'zone': 1, 'ip': '127.0.0.3',
+-                    'port': 6000, 'device': 'sda', 'weight': 1000})
++                    'port': 6200, 'device': 'sda', 'weight': 1000})
+ 
+         weighted_replicas = rb._build_weighted_replicas_by_tier()
+ 
+@@ -3632,19 +3633,19 @@ class TestGetRequiredOverload(unittest.TestCase):
+         rb = ring.RingBuilder(3, 3, 1)
+         # zone 0 server 127.0.0.1
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+         # zone 0 server 127.0.0.2
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 0, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 0, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+         # zone 0 server 127.0.0.3
+         rb.add_dev({'id': 4, 'region': 0, 'zone': 0, 'ip': '127.0.0.3',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 5, 'region': 0, 'zone': 0, 'ip': '127.0.0.3',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+ 
+         # sanity, balanced and dispersed
+         expected = {
+@@ -3669,19 +3670,19 @@ class TestGetRequiredOverload(unittest.TestCase):
+ 
+         # zone 1 server 127.0.1.1
+         rb.add_dev({'id': 6, 'region': 0, 'zone': 1, 'ip': '127.0.1.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         rb.add_dev({'id': 7, 'region': 0, 'zone': 1, 'ip': '127.0.1.1',
+-                    'port': 6000, 'device': 'sdb', 'weight': 100})
++                    'port': 6200, 'device': 'sdb', 'weight': 100})
+         # zone 1 server 127.0.1.2
+         rb.add_dev({'id': 8, 'region': 0, 'zone': 1, 'ip': '127.0.1.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         rb.add_dev({'id': 9, 'region': 0, 'zone': 1, 'ip': '127.0.1.2',
+-                    'port': 6000, 'device': 'sdb', 'weight': 100})
++                    'port': 6200, 'device': 'sdb', 'weight': 100})
+         # zone 1 server 127.0.1.3
+         rb.add_dev({'id': 10, 'region': 0, 'zone': 1, 'ip': '127.0.1.3',
+-                    'port': 6000, 'device': 'sda', 'weight': 100})
++                    'port': 6200, 'device': 'sda', 'weight': 100})
+         rb.add_dev({'id': 11, 'region': 0, 'zone': 1, 'ip': '127.0.1.3',
+-                    'port': 6000, 'device': 'sdb', 'weight': 100})
++                    'port': 6200, 'device': 'sdb', 'weight': 100})
+ 
+         # this messes things up pretty royally
+         expected = {
+@@ -3739,13 +3740,13 @@ class TestGetRequiredOverload(unittest.TestCase):
+     def test_gradual_replica_count(self):
+         rb = ring.RingBuilder(3, 2.5, 1)
+         rb.add_dev({'id': 0, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 1, 'region': 0, 'zone': 0, 'ip': '127.0.0.1',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+         rb.add_dev({'id': 2, 'region': 0, 'zone': 0, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sda', 'weight': 2000})
++                    'port': 6200, 'device': 'sda', 'weight': 2000})
+         rb.add_dev({'id': 3, 'region': 0, 'zone': 0, 'ip': '127.0.0.2',
+-                    'port': 6000, 'device': 'sdb', 'weight': 2000})
++                    'port': 6200, 'device': 'sdb', 'weight': 2000})
+ 
+         expected = {
+             0: 0.625,
+diff --git a/test/unit/common/ring/test_ring.py b/test/unit/common/ring/test_ring.py
+index 0ce33e8..7adceae 100644
+--- a/test/unit/common/ring/test_ring.py
++++ b/test/unit/common/ring/test_ring.py
+@@ -147,20 +147,20 @@ class TestRing(TestRingBase):
+             array.array('H', [0, 1, 0, 1]),
+             array.array('H', [3, 4, 3, 4])]
+         self.intended_devs = [{'id': 0, 'region': 0, 'zone': 0, 'weight': 1.0,
+-                               'ip': '10.1.1.1', 'port': 6000,
++                               'ip': '10.1.1.1', 'port': 6200,
+                                'replication_ip': '10.1.0.1',
+                                'replication_port': 6066},
+                               {'id': 1, 'region': 0, 'zone': 0, 'weight': 1.0,
+-                               'ip': '10.1.1.1', 'port': 6000,
++                               'ip': '10.1.1.1', 'port': 6200,
+                                'replication_ip': '10.1.0.2',
+                                'replication_port': 6066},
+                               None,
+                               {'id': 3, 'region': 0, 'zone': 2, 'weight': 1.0,
+-                               'ip': '10.1.2.1', 'port': 6000,
++                               'ip': '10.1.2.1', 'port': 6200,
+                                'replication_ip': '10.2.0.1',
+                                'replication_port': 6066},
+                               {'id': 4, 'region': 0, 'zone': 2, 'weight': 1.0,
+-                               'ip': '10.1.2.2', 'port': 6000,
++                               'ip': '10.1.2.2', 'port': 6200,
+                                'replication_ip': '10.2.0.1',
+                                'replication_port': 6066}]
+         self.intended_part_shift = 30
+@@ -243,7 +243,7 @@ class TestRing(TestRingBase):
+         self.assertEqual(len(self.ring.devs), 7)
+         self.intended_devs.append(
+             {'id': 6, 'region': 0, 'zone': 5, 'weight': 1.0,
+-             'ip': '10.6.6.6', 'port': 6000})
++             'ip': '10.6.6.6', 'port': 6200})
+         ring.RingData(
+             self.intended_replica2part2dev_id,
+             self.intended_devs, self.intended_part_shift).save(self.testgz)
+@@ -259,7 +259,7 @@ class TestRing(TestRingBase):
+         self.assertEqual(len(self.ring.devs), 8)
+         self.intended_devs.append(
+             {'id': 5, 'region': 0, 'zone': 4, 'weight': 1.0,
+-             'ip': '10.5.5.5', 'port': 6000})
++             'ip': '10.5.5.5', 'port': 6200})
+         ring.RingData(
+             self.intended_replica2part2dev_id,
+             self.intended_devs, self.intended_part_shift).save(self.testgz)
+@@ -270,34 +270,34 @@ class TestRing(TestRingBase):
+     def test_reload_without_replication(self):
+         replication_less_devs = [{'id': 0, 'region': 0, 'zone': 0,
+                                   'weight': 1.0, 'ip': '10.1.1.1',
+-                                  'port': 6000},
++                                  'port': 6200},
+                                  {'id': 1, 'region': 0, 'zone': 0,
+                                   'weight': 1.0, 'ip': '10.1.1.1',
+-                                  'port': 6000},
++                                  'port': 6200},
+                                  None,
+                                  {'id': 3, 'region': 0, 'zone': 2,
+                                   'weight': 1.0, 'ip': '10.1.2.1',
+-                                  'port': 6000},
++                                  'port': 6200},
+                                  {'id': 4, 'region': 0, 'zone': 2,
+                                   'weight': 1.0, 'ip': '10.1.2.2',
+-                                  'port': 6000}]
++                                  'port': 6200}]
+         intended_devs = [{'id': 0, 'region': 0, 'zone': 0, 'weight': 1.0,
+-                          'ip': '10.1.1.1', 'port': 6000,
++                          'ip': '10.1.1.1', 'port': 6200,
+                           'replication_ip': '10.1.1.1',
+-                          'replication_port': 6000},
++                          'replication_port': 6200},
+                          {'id': 1, 'region': 0, 'zone': 0, 'weight': 1.0,
+-                          'ip': '10.1.1.1', 'port': 6000,
++                          'ip': '10.1.1.1', 'port': 6200,
+                           'replication_ip': '10.1.1.1',
+-                          'replication_port': 6000},
++                          'replication_port': 6200},
+                          None,
+                          {'id': 3, 'region': 0, 'zone': 2, 'weight': 1.0,
+-                          'ip': '10.1.2.1', 'port': 6000,
++                          'ip': '10.1.2.1', 'port': 6200,
+                           'replication_ip': '10.1.2.1',
+-                          'replication_port': 6000},
++                          'replication_port': 6200},
+                          {'id': 4, 'region': 0, 'zone': 2, 'weight': 1.0,
+-                          'ip': '10.1.2.2', 'port': 6000,
++                          'ip': '10.1.2.2', 'port': 6200,
+                           'replication_ip': '10.1.2.2',
+-                          'replication_port': 6000}]
++                          'replication_port': 6200}]
+         testgz = os.path.join(self.testdir, 'without_replication.ring.gz')
+         ring.RingData(
+             self.intended_replica2part2dev_id,
+@@ -311,34 +311,34 @@ class TestRing(TestRingBase):
+     def test_reload_old_style_pickled_ring(self):
+         devs = [{'id': 0, 'zone': 0,
+                  'weight': 1.0, 'ip': '10.1.1.1',
+-                 'port': 6000},
++                 'port': 6200},
+                 {'id': 1, 'zone': 0,
+                  'weight': 1.0, 'ip': '10.1.1.1',
+-                 'port': 6000},
++                 'port': 6200},
+                 None,
+                 {'id': 3, 'zone': 2,
+                  'weight': 1.0, 'ip': '10.1.2.1',
+-                 'port': 6000},
++                 'port': 6200},
+                 {'id': 4, 'zone': 2,
+                  'weight': 1.0, 'ip': '10.1.2.2',
+-                 'port': 6000}]
++                 'port': 6200}]
+         intended_devs = [{'id': 0, 'region': 1, 'zone': 0, 'weight': 1.0,
+-                          'ip': '10.1.1.1', 'port': 6000,
++                          'ip': '10.1.1.1', 'port': 6200,
+                           'replication_ip': '10.1.1.1',
+-                          'replication_port': 6000},
++                          'replication_port': 6200},
+                          {'id': 1, 'region': 1, 'zone': 0, 'weight': 1.0,
+-                          'ip': '10.1.1.1', 'port': 6000,
++                          'ip': '10.1.1.1', 'port': 6200,
+                           'replication_ip': '10.1.1.1',
+-                          'replication_port': 6000},
++                          'replication_port': 6200},
+                          None,
+                          {'id': 3, 'region': 1, 'zone': 2, 'weight': 1.0,
+-                          'ip': '10.1.2.1', 'port': 6000,
++                          'ip': '10.1.2.1', 'port': 6200,
+                           'replication_ip': '10.1.2.1',
+-                          'replication_port': 6000},
++                          'replication_port': 6200},
+                          {'id': 4, 'region': 1, 'zone': 2, 'weight': 1.0,
+-                          'ip': '10.1.2.2', 'port': 6000,
++                          'ip': '10.1.2.2', 'port': 6200,
+                           'replication_ip': '10.1.2.2',
+-                          'replication_port': 6000}]
++                          'replication_port': 6200}]
+ 
+         # simulate an old-style pickled ring
+         testgz = os.path.join(self.testdir,
+@@ -823,22 +823,22 @@ class TestRing(TestRingBase):
+         rb = ring.RingBuilder(8, 3, 1)
+         devs = [
+             ring_utils.parse_add_value(v) for v in [
+-                'r1z1-127.0.0.1:6000/d1',
+-                'r1z1-127.0.0.1:6001/d2',
+-                'r1z1-127.0.0.1:6002/d3',
+-                'r1z1-127.0.0.1:6003/d4',
+-                'r1z2-127.0.0.2:6000/d1',
+-                'r1z2-127.0.0.2:6001/d2',
+-                'r1z2-127.0.0.2:6002/d3',
+-                'r1z2-127.0.0.2:6003/d4',
+-                'r2z1-127.0.1.1:6000/d1',
+-                'r2z1-127.0.1.1:6001/d2',
+-                'r2z1-127.0.1.1:6002/d3',
+-                'r2z1-127.0.1.1:6003/d4',
+-                'r2z2-127.0.1.2:6000/d1',
+-                'r2z2-127.0.1.2:6001/d2',
+-                'r2z2-127.0.1.2:6002/d3',
+-                'r2z2-127.0.1.2:6003/d4',
++                'r1z1-127.0.0.1:6200/d1',
++                'r1z1-127.0.0.1:6201/d2',
++                'r1z1-127.0.0.1:6202/d3',
++                'r1z1-127.0.0.1:6203/d4',
++                'r1z2-127.0.0.2:6200/d1',
++                'r1z2-127.0.0.2:6201/d2',
++                'r1z2-127.0.0.2:6202/d3',
++                'r1z2-127.0.0.2:6203/d4',
++                'r2z1-127.0.1.1:6200/d1',
++                'r2z1-127.0.1.1:6201/d2',
++                'r2z1-127.0.1.1:6202/d3',
++                'r2z1-127.0.1.1:6203/d4',
++                'r2z2-127.0.1.2:6200/d1',
++                'r2z2-127.0.1.2:6201/d2',
++                'r2z2-127.0.1.2:6202/d3',
++                'r2z2-127.0.1.2:6203/d4',
+             ]
+         ]
+         for dev in devs:
+diff --git a/test/unit/common/ring/test_utils.py b/test/unit/common/ring/test_utils.py
+index 705d619..fda4cdf 100644
+--- a/test/unit/common/ring/test_utils.py
++++ b/test/unit/common/ring/test_utils.py
+@@ -34,33 +34,33 @@ class TestUtils(unittest.TestCase):
+ 
+     def setUp(self):
+         self.test_dev = {'region': 1, 'zone': 1, 'ip': '192.168.1.1',
+-                         'port': '6000', 'id': 0}
++                         'port': '6200', 'id': 0}
+ 
+         def get_test_devs():
+             dev0 = {'region': 1, 'zone': 1, 'ip': '192.168.1.1',
+-                    'port': '6000', 'id': 0}
++                    'port': '6200', 'id': 0}
+             dev1 = {'region': 1, 'zone': 1, 'ip': '192.168.1.1',
+-                    'port': '6000', 'id': 1}
++                    'port': '6200', 'id': 1}
+             dev2 = {'region': 1, 'zone': 1, 'ip': '192.168.1.1',
+-                    'port': '6000', 'id': 2}
++                    'port': '6200', 'id': 2}
+             dev3 = {'region': 1, 'zone': 1, 'ip': '192.168.1.2',
+-                    'port': '6000', 'id': 3}
++                    'port': '6200', 'id': 3}
+             dev4 = {'region': 1, 'zone': 1, 'ip': '192.168.1.2',
+-                    'port': '6000', 'id': 4}
++                    'port': '6200', 'id': 4}
+             dev5 = {'region': 1, 'zone': 1, 'ip': '192.168.1.2',
+-                    'port': '6000', 'id': 5}
++                    'port': '6200', 'id': 5}
+             dev6 = {'region': 1, 'zone': 2, 'ip': '192.168.2.1',
+-                    'port': '6000', 'id': 6}
++                    'port': '6200', 'id': 6}
+             dev7 = {'region': 1, 'zone': 2, 'ip': '192.168.2.1',
+-                    'port': '6000', 'id': 7}
++                    'port': '6200', 'id': 7}
+             dev8 = {'region': 1, 'zone': 2, 'ip': '192.168.2.1',
+-                    'port': '6000', 'id': 8}
++                    'port': '6200', 'id': 8}
+             dev9 = {'region': 1, 'zone': 2, 'ip': '192.168.2.2',
+-                    'port': '6000', 'id': 9}
++                    'port': '6200', 'id': 9}
+             dev10 = {'region': 1, 'zone': 2, 'ip': '192.168.2.2',
+-                     'port': '6000', 'id': 10}
++                     'port': '6200', 'id': 10}
+             dev11 = {'region': 1, 'zone': 2, 'ip': '192.168.2.2',
+-                     'port': '6000', 'id': 11}
++                     'port': '6200', 'id': 11}
+             return [dev0, dev1, dev2, dev3, dev4, dev5,
+                     dev6, dev7, dev8, dev9, dev10, dev11]
+ 
+@@ -188,7 +188,7 @@ class TestUtils(unittest.TestCase):
+     def test_is_local_device(self):
+         # localhost shows up in whataremyips() output as "::1" for IPv6
+         my_ips = ["127.0.0.1", "::1"]
+-        my_port = 6000
++        my_port = 6200
+         self.assertTrue(is_local_device(my_ips, my_port,
+                                         "127.0.0.1", my_port))
+         self.assertTrue(is_local_device(my_ips, my_port,
+@@ -281,14 +281,14 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "change.test.test.com",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "change.r.test.com",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+@@ -298,7 +298,7 @@ class TestUtils(unittest.TestCase):
+             'region': 2,
+             'zone': 3,
+             'ip': "test.test.com",
+-            'port': 6000,
++            'port': 6200,
+             'replication_ip': "r.test.com",
+             'replication_port': 7000,
+             'device': "sda3",
+@@ -312,14 +312,14 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.10",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "127.0.0.2",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "127.0.0.20",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+@@ -329,7 +329,7 @@ class TestUtils(unittest.TestCase):
+             'region': 2,
+             'zone': 3,
+             'ip': "127.0.0.1",
+-            'port': 6000,
++            'port': 6200,
+             'replication_ip': "127.0.0.10",
+             'replication_port': 7000,
+             'device': "sda3",
+@@ -343,14 +343,14 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "[127.0.0.1]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[127.0.0.10]",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "[127.0.0.2]",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "[127.0.0.20]",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+@@ -363,21 +363,21 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "change.test.test.com",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "change.r.test.com",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+              "--change-meta", "some meta data for change"]
+         expected = {
+             'ip': "change.test.test.com",
+-            'port': 6001,
++            'port': 6201,
+             'replication_ip': "change.r.test.com",
+             'replication_port': 7001,
+             'device': "sdb3",
+@@ -390,21 +390,21 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "127.0.0.1",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "127.0.0.10",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "127.0.0.2",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "127.0.0.20",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+              "--change-meta", "some meta data for change"]
+         expected = {
+             'ip': "127.0.0.2",
+-            'port': 6001,
++            'port': 6201,
+             'replication_ip': "127.0.0.20",
+             'replication_port': 7001,
+             'device': "sdb3",
+@@ -417,14 +417,14 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "[127.0.0.1]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[127.0.0.10]",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "[127.0.0.2]",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "[127.0.0.20]",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+@@ -437,14 +437,14 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "change.test.test.com",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "change.r.test.com",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+@@ -455,14 +455,14 @@ class TestUtils(unittest.TestCase):
+         self.assertEqual(opts.region, 2)
+         self.assertEqual(opts.zone, 3)
+         self.assertEqual(opts.ip, "test.test.com")
+-        self.assertEqual(opts.port, 6000)
++        self.assertEqual(opts.port, 6200)
+         self.assertEqual(opts.replication_ip, "r.test.com")
+         self.assertEqual(opts.replication_port, 7000)
+         self.assertEqual(opts.device, "sda3")
+         self.assertEqual(opts.meta, "some meta data")
+         self.assertEqual(opts.weight, 3.14159265359)
+         self.assertEqual(opts.change_ip, "change.test.test.com")
+-        self.assertEqual(opts.change_port, 6001)
++        self.assertEqual(opts.change_port, 6201)
+         self.assertEqual(opts.change_replication_ip, "change.r.test.com")
+         self.assertEqual(opts.change_replication_port, 7001)
+         self.assertEqual(opts.change_device, "sdb3")
+@@ -497,7 +497,7 @@ class TestUtils(unittest.TestCase):
+              "--meta", "",
+              "--weight", None,
+              "--change-ip", "change.test.test.com",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "change.r.test.com",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+@@ -526,14 +526,14 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--id", "1", "--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3",
+              "--meta", "some meta data",
+              "--weight", "3.14159265359",
+              "--change-ip", "change.test.test.com",
+-             "--change-port", "6001",
++             "--change-port", "6201",
+              "--change-replication-ip", "change.r.test.com",
+              "--change-replication-port", "7001",
+              "--change-device", "sdb3",
+@@ -544,14 +544,14 @@ class TestUtils(unittest.TestCase):
+         self.assertEqual(opts.region, 2)
+         self.assertEqual(opts.zone, 3)
+         self.assertEqual(opts.ip, "test.test.com")
+-        self.assertEqual(opts.port, 6000)
++        self.assertEqual(opts.port, 6200)
+         self.assertEqual(opts.replication_ip, "r.test.com")
+         self.assertEqual(opts.replication_port, 7000)
+         self.assertEqual(opts.device, "sda3")
+         self.assertEqual(opts.meta, "some meta data")
+         self.assertEqual(opts.weight, 3.14159265359)
+         self.assertEqual(opts.change_ip, "change.test.test.com")
+-        self.assertEqual(opts.change_port, 6001)
++        self.assertEqual(opts.change_port, 6201)
+         self.assertEqual(opts.change_replication_ip, "change.r.test.com")
+         self.assertEqual(opts.change_replication_port, 7001)
+         self.assertEqual(opts.change_device, "sdb3")
+@@ -581,7 +581,7 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--region", "2", "--zone", "3",
+              "--ip", "test.test.com",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "r.test.com",
+              "--replication-port", "7000",
+              "--device", "sda3",
+@@ -591,7 +591,7 @@ class TestUtils(unittest.TestCase):
+             'region': 2,
+             'zone': 3,
+             'ip': "test.test.com",
+-            'port': 6000,
++            'port': 6200,
+             'replication_ip': "r.test.com",
+             'replication_port': 7000,
+             'device': "sda3",
+@@ -605,7 +605,7 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--region", "2", "--zone", "3",
+              "--ip", "[test.test.com]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[r.test.com]",
+              "--replication-port", "7000",
+              "--device", "sda3",
+@@ -617,7 +617,7 @@ class TestUtils(unittest.TestCase):
+         argv = \
+             ["--region", "2", "--zone", "3",
+              "--ip", "[test.test.com]",
+-             "--port", "6000",
++             "--port", "6200",
+              "--replication-ip", "[r.test.com]",
+              "--replication-port", "7000",
+              "--meta", "some meta data",
+@@ -750,11 +750,11 @@ class TestUtils(unittest.TestCase):
+ 
+     def test_parse_address_old_format(self):
+         # Test old format
+-        argv = "127.0.0.1:6000R127.0.0.1:6000/sda1_some meta data"
++        argv = "127.0.0.1:6200R127.0.0.1:6200/sda1_some meta data"
+         ip, port, rest = parse_address(argv)
+         self.assertEqual(ip, '127.0.0.1')
+-        self.assertEqual(port, 6000)
+-        self.assertEqual(rest, 'R127.0.0.1:6000/sda1_some meta data')
++        self.assertEqual(port, 6200)
++        self.assertEqual(rest, 'R127.0.0.1:6200/sda1_some meta data')
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/test/unit/common/test_db_replicator.py b/test/unit/common/test_db_replicator.py
+index 5c5912e..be17d42 100644
+--- a/test/unit/common/test_db_replicator.py
++++ b/test/unit/common/test_db_replicator.py
+@@ -72,8 +72,8 @@ class FakeRing(object):
+ class FakeRingWithSingleNode(object):
+     class Ring(object):
+         devs = [dict(
+-            id=1, weight=10.0, zone=1, ip='1.1.1.1', port=6000, device='sdb',
+-            meta='', replication_ip='1.1.1.1', replication_port=6000
++            id=1, weight=10.0, zone=1, ip='1.1.1.1', port=6200, device='sdb',
++            meta='', replication_ip='1.1.1.1', replication_port=6200
+         )]
+ 
+         def __init__(self, path, reload_time=15, ring_name=None):
+@@ -92,23 +92,23 @@ class FakeRingWithSingleNode(object):
+ class FakeRingWithNodes(object):
+     class Ring(object):
+         devs = [dict(
+-            id=1, weight=10.0, zone=1, ip='1.1.1.1', port=6000, device='sdb',
+-            meta='', replication_ip='1.1.1.1', replication_port=6000, region=1
++            id=1, weight=10.0, zone=1, ip='1.1.1.1', port=6200, device='sdb',
++            meta='', replication_ip='1.1.1.1', replication_port=6200, region=1
+         ), dict(
+-            id=2, weight=10.0, zone=2, ip='1.1.1.2', port=6000, device='sdb',
+-            meta='', replication_ip='1.1.1.2', replication_port=6000, region=2
++            id=2, weight=10.0, zone=2, ip='1.1.1.2', port=6200, device='sdb',
++            meta='', replication_ip='1.1.1.2', replication_port=6200, region=2
+         ), dict(
+-            id=3, weight=10.0, zone=3, ip='1.1.1.3', port=6000, device='sdb',
+-            meta='', replication_ip='1.1.1.3', replication_port=6000, region=1
++            id=3, weight=10.0, zone=3, ip='1.1.1.3', port=6200, device='sdb',
++            meta='', replication_ip='1.1.1.3', replication_port=6200, region=1
+         ), dict(
+-            id=4, weight=10.0, zone=4, ip='1.1.1.4', port=6000, device='sdb',
+-            meta='', replication_ip='1.1.1.4', replication_port=6000, region=2
++            id=4, weight=10.0, zone=4, ip='1.1.1.4', port=6200, device='sdb',
++            meta='', replication_ip='1.1.1.4', replication_port=6200, region=2
+         ), dict(
+-            id=5, weight=10.0, zone=5, ip='1.1.1.5', port=6000, device='sdb',
+-            meta='', replication_ip='1.1.1.5', replication_port=6000, region=1
++            id=5, weight=10.0, zone=5, ip='1.1.1.5', port=6200, device='sdb',
++            meta='', replication_ip='1.1.1.5', replication_port=6200, region=1
+         ), dict(
+-            id=6, weight=10.0, zone=6, ip='1.1.1.6', port=6000, device='sdb',
+-            meta='', replication_ip='1.1.1.6', replication_port=6000, region=2
++            id=6, weight=10.0, zone=6, ip='1.1.1.6', port=6200, device='sdb',
++            meta='', replication_ip='1.1.1.6', replication_port=6200, region=2
+         )]
+ 
+         def __init__(self, path, reload_time=15, ring_name=None):
+@@ -486,7 +486,7 @@ class TestDBReplicator(unittest.TestCase):
+         base = 'swift.common.db_replicator.'
+         with patch(base + 'whataremyips', return_value=['1.1.1.1']), \
+                 patch(base + 'ring', FakeRingWithNodes()):
+-            replicator = TestReplicator({'bind_port': 6000,
++            replicator = TestReplicator({'bind_port': 6200,
+                                          'recon_cache_path': self.recon_cache},
+                                         logger=logger)
+             replicator.run_once()
+@@ -507,10 +507,11 @@ class TestDBReplicator(unittest.TestCase):
+         db_replicator.ring = FakeRingWithSingleNode()
+         # If a bind_ip is specified, it's plumbed into whataremyips() and
+         # returned by itself.
+-        conf = {'mount_check': 'true', 'bind_ip': '1.1.1.1', 'bind_port': 6000}
++        conf = {'mount_check': 'true', 'bind_ip': '1.1.1.1',
++                'bind_port': 6200}
+         replicator = TestReplicator(conf, logger=unit.FakeLogger())
+         self.assertEqual(replicator.mount_check, True)
+-        self.assertEqual(replicator.port, 6000)
++        self.assertEqual(replicator.port, 6200)
+ 
+         def mock_ismount(path):
+             self.assertEqual(path,
+@@ -528,10 +529,10 @@ class TestDBReplicator(unittest.TestCase):
+ 
+     def test_run_once_node_is_mounted(self):
+         db_replicator.ring = FakeRingWithSingleNode()
+-        conf = {'mount_check': 'true', 'bind_port': 6000}
++        conf = {'mount_check': 'true', 'bind_port': 6200}
+         replicator = TestReplicator(conf, logger=unit.FakeLogger())
+         self.assertEqual(replicator.mount_check, True)
+-        self.assertEqual(replicator.port, 6000)
++        self.assertEqual(replicator.port, 6200)
+ 
+         def mock_unlink_older_than(path, mtime):
+             self.assertEqual(path,
+diff --git a/test/unit/common/test_direct_client.py b/test/unit/common/test_direct_client.py
+index 503a941..aae8129 100644
+--- a/test/unit/common/test_direct_client.py
++++ b/test/unit/common/test_direct_client.py
+@@ -97,7 +97,7 @@ def mocked_http_conn(*args, **kwargs):
+ class TestDirectClient(unittest.TestCase):
+
+     def setUp(self):
+-        self.node = {'ip': '1.2.3.4', 'port': '6000', 'device': 'sda'}
++        self.node = {'ip': '1.2.3.4', 'port': '6200', 'device': 'sda'}
+         self.part = '0'
+
+         self.account = u'\u062a account'
+@@ -241,7 +241,7 @@ class TestDirectClient(unittest.TestCase
+         self.assertTrue('GET' in str(err))
+
+     def test_direct_delete_account(self):
+-        node = {'ip': '1.2.3.4', 'port': '6000', 'device': 'sda'}
++        node = {'ip': '1.2.3.4', 'port': '6200', 'device': 'sda'}
+         part = '0'
+         account = 'a'
+
+@@ -258,7 +258,7 @@ class TestDirectClient(unittest.TestCase
+             self.assertTrue('X-Timestamp' in headers)
+
+     def test_direct_delete_account_failure(self):
+-        node = {'ip': '1.2.3.4', 'port': '6000', 'device': 'sda'}
++        node = {'ip': '1.2.3.4', 'port': '6200', 'device': 'sda'}
+         part = '0'
+         account = 'a'
+ 
+diff --git a/test/unit/container/test_reconciler.py b/test/unit/container/test_reconciler.py
+index 0e13462..56ce396 100644
+--- a/test/unit/container/test_reconciler.py
++++ b/test/unit/container/test_reconciler.py
+@@ -587,7 +587,7 @@ class TestReconcilerUtils(unittest.TestCase):
+             socket.error(errno.ECONNREFUSED, os.strerror(errno.ECONNREFUSED)),
+             ClientException(
+                 'Container Server blew up',
+-                '10.0.0.12', 6001, 'sdj', 404, 'Not Found'
++                '10.0.0.12', 6201, 'sdj', 404, 'Not Found'
+             ),
+         ]
+         mock_direct_delete = mock.MagicMock()
+diff --git a/test/unit/obj/test_diskfile.py b/test/unit/obj/test_diskfile.py
+index 818ad15..e57b82d 100644
+--- a/test/unit/obj/test_diskfile.py
++++ b/test/unit/obj/test_diskfile.py
+@@ -91,20 +91,20 @@ def _create_test_ring(path, policy):
+         [2, 3, 0, 1, 6, 4, 5]]
+     intended_devs = [
+         {'id': 0, 'device': 'sda1', 'zone': 0, 'ip': '127.0.0.0',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 1, 'device': 'sda1', 'zone': 1, 'ip': '127.0.0.1',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 2, 'device': 'sda1', 'zone': 2, 'ip': '127.0.0.2',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 3, 'device': 'sda1', 'zone': 4, 'ip': '127.0.0.3',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 4, 'device': 'sda1', 'zone': 5, 'ip': '127.0.0.4',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 5, 'device': 'sda1', 'zone': 6,
+-         'ip': 'fe80::202:b3ff:fe1e:8329', 'port': 6000},
++         'ip': 'fe80::202:b3ff:fe1e:8329', 'port': 6200},
+         {'id': 6, 'device': 'sda1', 'zone': 7,
+          'ip': '2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+-         'port': 6000}]
++         'port': 6200}]
+     intended_part_shift = 30
+     intended_reload_time = 15
+     with closing(GzipFile(testgz, 'wb')) as f:
+diff --git a/test/unit/obj/test_reconstructor.py b/test/unit/obj/test_reconstructor.py
+index 19fc1f8..13d2956 100755
+--- a/test/unit/obj/test_reconstructor.py
++++ b/test/unit/obj/test_reconstructor.py
+@@ -90,13 +90,13 @@ def _create_test_rings(path):
+ 
+     intended_devs = [
+         {'id': 0, 'device': 'sda1', 'zone': 0, 'ip': '127.0.0.0',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 1, 'device': 'sda1', 'zone': 1, 'ip': '127.0.0.1',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 2, 'device': 'sda1', 'zone': 2, 'ip': '127.0.0.2',
+-         'port': 6000},
++         'port': 6200},
+         {'id': 3, 'device': 'sda1', 'zone': 4, 'ip': '127.0.0.3',
+-         'port': 6000}
++         'port': 6200}
+     ]
+     intended_part_shift = 30
+     with closing(GzipFile(testgz, 'wb')) as f:
+@@ -313,11 +313,11 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+             [{
+                 'sync_to': [{
+                     'index': 2,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 2,
+                     'ip': '127.0.0.2',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.2',
+                     'device': 'sda1',
+                     'id': 2,
+@@ -328,13 +328,13 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+                 'frag_index': 2,
+                 'device': 'sda1',
+                 'local_dev': {
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 1,
+                     'ip': '127.0.0.1',
+                     'region': 1,
+                     'id': 1,
+                     'replication_ip': '127.0.0.1',
+-                    'device': 'sda1', 'port': 6000,
++                    'device': 'sda1', 'port': 6200,
+                 },
+                 'hashes': {
+                     '061': {
+@@ -350,20 +350,20 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+             }, {
+                 'sync_to': [{
+                     'index': 0,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 0,
+                     'ip': '127.0.0.0',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.0',
+                     'device': 'sda1', 'id': 0,
+                 }, {
+                     'index': 2,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 2,
+                     'ip': '127.0.0.2',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.2',
+                     'device': 'sda1',
+                     'id': 2,
+@@ -375,14 +375,14 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+                 'frag_index': 1,
+                 'device': 'sda1',
+                 'local_dev': {
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 1,
+                     'ip': '127.0.0.1',
+                     'region': 1,
+                     'id': 1,
+                     'replication_ip': '127.0.0.1',
+                     'device': 'sda1',
+-                    'port': 6000,
++                    'port': 6200,
+                 },
+                 'hashes':
+                 {
+@@ -403,11 +403,11 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+             [{
+                 'sync_to': [{
+                     'index': 1,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 2,
+                     'ip': '127.0.0.2',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.2',
+                     'device': 'sda1',
+                     'id': 2,
+@@ -418,14 +418,14 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+                 'frag_index': 1,
+                 'device': 'sda1',
+                 'local_dev': {
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 1,
+                     'ip': '127.0.0.1',
+                     'region': 1,
+                     'id': 1,
+                     'replication_ip': '127.0.0.1',
+                     'device': 'sda1',
+-                    'port': 6000,
++                    'port': 6200,
+                 },
+                 'hashes':
+                 {
+@@ -442,20 +442,20 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+             }, {
+                 'sync_to': [{
+                     'index': 2,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 4,
+                     'ip': '127.0.0.3',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.3',
+                     'device': 'sda1', 'id': 3,
+                 }, {
+                     'index': 1,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 2,
+                     'ip': '127.0.0.2',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.2',
+                     'device': 'sda1',
+                     'id': 2,
+@@ -467,14 +467,14 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+                 'frag_index': 0,
+                 'device': 'sda1',
+                 'local_dev': {
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 1,
+                     'ip': '127.0.0.1',
+                     'region': 1,
+                     'id': 1,
+                     'replication_ip': '127.0.0.1',
+                     'device': 'sda1',
+-                    'port': 6000,
++                    'port': 6200,
+                 },
+                 'hashes': {
+                     '061': {
+@@ -494,11 +494,11 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+             [{
+                 'sync_to': [{
+                     'index': 0,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 2,
+                     'ip': '127.0.0.2',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.2',
+                     'device': 'sda1', 'id': 2,
+                 }],
+@@ -508,14 +508,14 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+                 'frag_index': 0,
+                 'device': 'sda1',
+                 'local_dev': {
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 1,
+                     'ip': '127.0.0.1',
+                     'region': 1,
+                     'id': 1,
+                     'replication_ip': '127.0.0.1',
+                     'device': 'sda1',
+-                    'port': 6000,
++                    'port': 6200,
+                 },
+                 'hashes': {
+                     '061': {
+@@ -530,11 +530,11 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+             }, {
+                 'sync_to': [{
+                     'index': 2,
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 0,
+                     'ip': '127.0.0.0',
+                     'region': 1,
+-                    'port': 6000,
++                    'port': 6200,
+                     'replication_ip': '127.0.0.0',
+                     'device': 'sda1',
+                     'id': 0,
+@@ -545,14 +545,14 @@ class TestGlobalSetupObjectReconstructor(unittest.TestCase):
+                 'frag_index': 2,
+                 'device': 'sda1',
+                 'local_dev': {
+-                    'replication_port': 6000,
++                    'replication_port': 6200,
+                     'zone': 1,
+                     'ip': '127.0.0.1',
+                     'region': 1,
+                     'id': 1,
+                     'replication_ip': '127.0.0.1',
+                     'device': 'sda1',
+-                    'port': 6000
++                    'port': 6200
+                 },
+                 'hashes': {
+                     '061': {
+diff --git a/test/unit/obj/test_replicator.py b/test/unit/obj/test_replicator.py
+index a322088..38a5f0a 100644
+--- a/test/unit/obj/test_replicator.py
++++ b/test/unit/obj/test_replicator.py
+@@ -140,19 +140,19 @@ def _create_test_rings(path, devs=None):
+     ]
+     intended_devs = devs or [
+         {'id': 0, 'device': 'sda', 'zone': 0,
+-         'region': 1, 'ip': '127.0.0.0', 'port': 6000},
++         'region': 1, 'ip': '127.0.0.0', 'port': 6200},
+         {'id': 1, 'device': 'sda', 'zone': 1,
+-         'region': 2, 'ip': '127.0.0.1', 'port': 6000},
++         'region': 2, 'ip': '127.0.0.1', 'port': 6200},
+         {'id': 2, 'device': 'sda', 'zone': 2,
+-         'region': 3, 'ip': '127.0.0.2', 'port': 6000},
++         'region': 3, 'ip': '127.0.0.2', 'port': 6200},
+         {'id': 3, 'device': 'sda', 'zone': 4,
+-         'region': 2, 'ip': '127.0.0.3', 'port': 6000},
++         'region': 2, 'ip': '127.0.0.3', 'port': 6200},
+         {'id': 4, 'device': 'sda', 'zone': 5,
+-         'region': 1, 'ip': '127.0.0.4', 'port': 6000},
++         'region': 1, 'ip': '127.0.0.4', 'port': 6200},
+         {'id': 5, 'device': 'sda', 'zone': 6,
+-         'region': 3, 'ip': 'fe80::202:b3ff:fe1e:8329', 'port': 6000},
++         'region': 3, 'ip': 'fe80::202:b3ff:fe1e:8329', 'port': 6200},
+         {'id': 6, 'device': 'sda', 'zone': 7, 'region': 1,
+-         'ip': '2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'port': 6000},
++         'ip': '2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'port': 6200},
+     ]
+     intended_part_shift = 30
+     with closing(GzipFile(testgz, 'wb')) as f:
+@@ -195,7 +195,7 @@ class TestObjectReplicator(unittest.TestCase):
+         _create_test_rings(self.testdir)
+         self.logger = debug_logger('test-replicator')
+         self.conf = dict(
+-            bind_ip=_ips()[0], bind_port=6000,
++            bind_ip=_ips()[0], bind_port=6200,
+             swift_dir=self.testdir, devices=self.devices, mount_check='false',
+             timeout='300', stats_interval='1', sync_method='rsync')
+         self._create_replicator()
+@@ -267,9 +267,9 @@ class TestObjectReplicator(unittest.TestCase):
+                                                         logger=self.logger)
+         replicator.run_once()
+         expected = [
+-            "Can't find itself 1.1.1.1 with port 6000 "
++            "Can't find itself 1.1.1.1 with port 6200 "
+             "in ring file, not replicating",
+-            "Can't find itself 1.1.1.1 with port 6000 "
++            "Can't find itself 1.1.1.1 with port 6200 "
+             "in ring file, not replicating",
+         ]
+         self.assertEqual(expected, self.logger.get_lines_for_level('error'))
+@@ -423,17 +423,17 @@ class TestObjectReplicator(unittest.TestCase):
+             # Two disks on same IP/port
+             {'id': 0, 'device': 'sda', 'zone': 0,
+              'region': 1, 'ip': '1.1.1.1', 'port': 1111,
+-             'replication_ip': '127.0.0.0', 'replication_port': 6000},
++             'replication_ip': '127.0.0.0', 'replication_port': 6200},
+             {'id': 1, 'device': 'sdb', 'zone': 1,
+              'region': 1, 'ip': '1.1.1.1', 'port': 1111,
+-             'replication_ip': '127.0.0.0', 'replication_port': 6000},
++             'replication_ip': '127.0.0.0', 'replication_port': 6200},
+             # Two disks on same server, different ports
+             {'id': 2, 'device': 'sdc', 'zone': 2,
+              'region': 2, 'ip': '1.1.1.2', 'port': 1112,
+-             'replication_ip': '127.0.0.1', 'replication_port': 6000},
++             'replication_ip': '127.0.0.1', 'replication_port': 6200},
+             {'id': 3, 'device': 'sdd', 'zone': 4,
+              'region': 2, 'ip': '1.1.1.2', 'port': 1112,
+-             'replication_ip': '127.0.0.1', 'replication_port': 6001},
++             'replication_ip': '127.0.0.1', 'replication_port': 6201},
+         ]
+         objects_sdb, objects_1_sdb, _, _ = self._write_disk_data('sdb')
+         objects_sdc, objects_1_sdc, _, _ = self._write_disk_data('sdc')
+@@ -522,22 +522,22 @@ class TestObjectReplicator(unittest.TestCase):
+     def test_collect_jobs_multi_disk_diff_ports_normal(self, mock_shuffle):
+         # Normally (servers_per_port=0), replication_ip AND replication_port
+         # are used to determine local ring device entries.  Here we show that
+-        # with bind_ip='127.0.0.1', bind_port=6000, only "sdc" is local.
++        # with bind_ip='127.0.0.1', bind_port=6200, only "sdc" is local.
+         devs = [
+             # Two disks on same IP/port
+             {'id': 0, 'device': 'sda', 'zone': 0,
+              'region': 1, 'ip': '1.1.1.1', 'port': 1111,
+-             'replication_ip': '127.0.0.0', 'replication_port': 6000},
++             'replication_ip': '127.0.0.0', 'replication_port': 6200},
+             {'id': 1, 'device': 'sdb', 'zone': 1,
+              'region': 1, 'ip': '1.1.1.1', 'port': 1111,
+-             'replication_ip': '127.0.0.0', 'replication_port': 6000},
++             'replication_ip': '127.0.0.0', 'replication_port': 6200},
+             # Two disks on same server, different ports
+             {'id': 2, 'device': 'sdc', 'zone': 2,
+              'region': 2, 'ip': '1.1.1.2', 'port': 1112,
+-             'replication_ip': '127.0.0.1', 'replication_port': 6000},
++             'replication_ip': '127.0.0.1', 'replication_port': 6200},
+             {'id': 3, 'device': 'sdd', 'zone': 4,
+              'region': 2, 'ip': '1.1.1.2', 'port': 1112,
+-             'replication_ip': '127.0.0.1', 'replication_port': 6001},
++             'replication_ip': '127.0.0.1', 'replication_port': 6201},
+         ]
+         objects_sdb, objects_1_sdb, _, _ = self._write_disk_data('sdb')
+         objects_sdc, objects_1_sdc, _, _ = self._write_disk_data('sdc')
+@@ -601,23 +601,23 @@ class TestObjectReplicator(unittest.TestCase):
+     def test_collect_jobs_multi_disk_servers_per_port(self, mock_shuffle):
+         # Normally (servers_per_port=0), replication_ip AND replication_port
+         # are used to determine local ring device entries.  Here we show that
+-        # with servers_per_port > 0 and bind_ip='127.0.0.1', bind_port=6000,
++        # with servers_per_port > 0 and bind_ip='127.0.0.1', bind_port=6200,
+         # then both "sdc" and "sdd" are local.
+         devs = [
+             # Two disks on same IP/port
+             {'id': 0, 'device': 'sda', 'zone': 0,
+              'region': 1, 'ip': '1.1.1.1', 'port': 1111,
+-             'replication_ip': '127.0.0.0', 'replication_port': 6000},
++             'replication_ip': '127.0.0.0', 'replication_port': 6200},
+             {'id': 1, 'device': 'sdb', 'zone': 1,
+              'region': 1, 'ip': '1.1.1.1', 'port': 1111,
+-             'replication_ip': '127.0.0.0', 'replication_port': 6000},
++             'replication_ip': '127.0.0.0', 'replication_port': 6200},
+             # Two disks on same server, different ports
+             {'id': 2, 'device': 'sdc', 'zone': 2,
+              'region': 2, 'ip': '1.1.1.2', 'port': 1112,
+-             'replication_ip': '127.0.0.1', 'replication_port': 6000},
++             'replication_ip': '127.0.0.1', 'replication_port': 6200},
+             {'id': 3, 'device': 'sdd', 'zone': 4,
+              'region': 2, 'ip': '1.1.1.2', 'port': 1112,
+-             'replication_ip': '127.0.0.1', 'replication_port': 6001},
++             'replication_ip': '127.0.0.1', 'replication_port': 6201},
+         ]
+         objects_sdb, objects_1_sdb, _, _ = self._write_disk_data('sdb')
+         objects_sdc, objects_1_sdc, _, _ = self._write_disk_data('sdc')
+@@ -1012,19 +1012,19 @@ class TestObjectReplicator(unittest.TestCase):
+     def test_delete_partition_ssync_single_region(self):
+         devs = [
+             {'id': 0, 'device': 'sda', 'zone': 0,
+-             'region': 1, 'ip': '127.0.0.0', 'port': 6000},
++             'region': 1, 'ip': '127.0.0.0', 'port': 6200},
+             {'id': 1, 'device': 'sda', 'zone': 1,
+-             'region': 1, 'ip': '127.0.0.1', 'port': 6000},
++             'region': 1, 'ip': '127.0.0.1', 'port': 6200},
+             {'id': 2, 'device': 'sda', 'zone': 2,
+-             'region': 1, 'ip': '127.0.0.2', 'port': 6000},
++             'region': 1, 'ip': '127.0.0.2', 'port': 6200},
+             {'id': 3, 'device': 'sda', 'zone': 4,
+-             'region': 1, 'ip': '127.0.0.3', 'port': 6000},
++             'region': 1, 'ip': '127.0.0.3', 'port': 6200},
+             {'id': 4, 'device': 'sda', 'zone': 5,
+-             'region': 1, 'ip': '127.0.0.4', 'port': 6000},
++             'region': 1, 'ip': '127.0.0.4', 'port': 6200},
+             {'id': 5, 'device': 'sda', 'zone': 6,
+-             'region': 1, 'ip': 'fe80::202:b3ff:fe1e:8329', 'port': 6000},
++             'region': 1, 'ip': 'fe80::202:b3ff:fe1e:8329', 'port': 6200},
+             {'id': 6, 'device': 'sda', 'zone': 7, 'region': 1,
+-             'ip': '2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'port': 6000},
++             'ip': '2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'port': 6200},
+         ]
+         _create_test_rings(self.testdir, devs=devs)
+         self.conf['sync_method'] = 'ssync'
+diff --git a/test/unit/obj/test_server.py b/test/unit/obj/test_server.py
+index 075aeac..c35ea76 100755
+--- a/test/unit/obj/test_server.py
++++ b/test/unit/obj/test_server.py
+@@ -3818,7 +3818,7 @@ class TestObjectController(unittest.TestCase):
+                      'X-Container-Device': 'sdb1',
+                      'X-Delete-At': 9999999999,
+                      'X-Delete-At-Container': '9999999960',
+-                     'X-Delete-At-Host': "10.1.1.1:6001,10.2.2.2:6002",
++                     'X-Delete-At-Host': "10.1.1.1:6201,10.2.2.2:6202",
+                      'X-Delete-At-Partition': '6237',
+                      'X-Delete-At-Device': 'sdp,sdq'})
+ 
+@@ -3853,7 +3853,7 @@ class TestObjectController(unittest.TestCase):
+         self.assertEqual(
+             http_connect_args[1],
+             {'ipaddr': '10.1.1.1',
+-             'port': '6001',
++             'port': '6201',
+              'path': '/exp/9999999960/9999999999-a/c/o',
+              'device': 'sdp',
+              'partition': '6237',
+@@ -3872,7 +3872,7 @@ class TestObjectController(unittest.TestCase):
+         self.assertEqual(
+             http_connect_args[2],
+             {'ipaddr': '10.2.2.2',
+-             'port': '6002',
++             'port': '6202',
+              'path': '/exp/9999999960/9999999999-a/c/o',
+              'device': 'sdq',
+              'partition': '6237',
+@@ -4000,13 +4000,13 @@ class TestObjectController(unittest.TestCase):
+         headers = {
+             'Content-Type': 'text/plain',
+             'X-Timestamp': put_timestamp,
+-            'X-Container-Host': '10.0.0.1:6001',
++            'X-Container-Host': '10.0.0.1:6201',
+             'X-Container-Device': 'sda1',
+             'X-Container-Partition': 'p',
+             'X-Delete-At': delete_at_timestamp,
+             'X-Delete-At-Container': delete_at_container,
+             'X-Delete-At-Partition': 'p',
+-            'X-Delete-At-Host': '10.0.0.2:6002',
++            'X-Delete-At-Host': '10.0.0.2:6202',
+             'X-Delete-At-Device': 'sda1',
+             'X-Backend-Storage-Policy-Index': int(policy)}
+         if policy.policy_type == EC_POLICY:
+@@ -4024,7 +4024,7 @@ class TestObjectController(unittest.TestCase):
+         # delete_at_update
+         ip, port, method, path, headers = delete_at_update
+         self.assertEqual(ip, '10.0.0.2')
+-        self.assertEqual(port, '6002')
++        self.assertEqual(port, '6202')
+         self.assertEqual(method, 'PUT')
+         self.assertEqual(path, '/sda1/p/.expiring_objects/%s/%s-a/c/o' %
+                          (delete_at_container, delete_at_timestamp))
+@@ -4038,7 +4038,7 @@ class TestObjectController(unittest.TestCase):
+         # container_update
+         ip, port, method, path, headers = container_update
+         self.assertEqual(ip, '10.0.0.1')
+-        self.assertEqual(port, '6001')
++        self.assertEqual(port, '6201')
+         self.assertEqual(method, 'PUT')
+         self.assertEqual(path, '/sda1/p/a/c/o')
+         expected = {
+diff --git a/test/unit/proxy/controllers/test_base.py b/test/unit/proxy/controllers/test_base.py
+index 330250e..13c8b89 100644
+--- a/test/unit/proxy/controllers/test_base.py
++++ b/test/unit/proxy/controllers/test_base.py
+@@ -832,7 +832,7 @@ class TestFuncs(unittest.TestCase):
+             def getheaders(self):
+                 return [('content-length', self.getheader('content-length'))]
+ 
+-        node = {'ip': '1.2.3.4', 'port': 6000, 'device': 'sda'}
++        node = {'ip': '1.2.3.4', 'port': 6200, 'device': 'sda'}
+ 
+         source1 = TestSource(['abcd', '1234', 'abc', None])
+         source2 = TestSource(['efgh5678'])
+@@ -872,7 +872,7 @@ class TestFuncs(unittest.TestCase):
+             def getheaders(self):
+                 return self.headers
+ 
+-        node = {'ip': '1.2.3.4', 'port': 6000, 'device': 'sda'}
++        node = {'ip': '1.2.3.4', 'port': 6200, 'device': 'sda'}
+ 
+         source1 = TestChunkedSource(['abcd', '1234', 'abc', None])
+         source2 = TestChunkedSource(['efgh5678'])
+-- 
+1.9.1
+

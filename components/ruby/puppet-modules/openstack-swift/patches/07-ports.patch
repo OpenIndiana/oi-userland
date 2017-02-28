@@ -1,0 +1,235 @@
+Patch based on https://review.openstack.org/#/c/439140/ and modified
+for this version.
+
+From 70cef4ef5b1740b52b4555581066340fa14a96ee Mon Sep 17 00:00:00 2001
+From: Drew Fisher <drew.fisher@oracle.com>
+Date: Tue, 28 Feb 2017 06:24:06 -0700
+Subject: [PATCH] Update default Swift ports
+
+https://bugs.launchpad.net/swift/+bug/1521339 changed the default ports
+from 6000-6002 to 6200-6202 so as not to conflict with X or other
+services.  This patch updates the module to match.
+
+Change-Id: Ib3b2309ec89e6d324f937cc141cb2d0bc3a7cd10
+---
+ README.md                                          | 18 +++++++++---------
+ manifests/storage/all.pp                           | 12 ++++++------
+ manifests/storage/server.pp                        |  2 +-
+ spec/acceptance/basic_swift_spec.rb                | 12 ++++++------
+ spec/classes/swift_ringbuilder_spec.rb             | 18 +++++++++---------
+ spec/classes/swift_storage_all_spec.rb             |  8 ++++----
+ tests/site.pp                                      | 12 ++++++------
+ 8 files changed, 44 insertions(+), 44 deletions(-)
+
+diff --git a/README.md b/README.md
+index 12ee409..f602abc 100644
+--- a/README.md
++++ b/README.md
+@@ -56,31 +56,31 @@ class { 'swift::storage::all':
+   storage_local_net_ip => $ipaddress_eth0
+ }
+
+-@@ring_object_device { "${ipaddress_eth0}:6000/1":
++@@ring_object_device { "${ipaddress_eth0}:6200/1":
+   region => 1, # optional, defaults to 1
+   zone   => 1,
+   weight => 1,
+ }
+-@@ring_container_device { "${ipaddress_eth0}:6001/1":
++@@ring_container_device { "${ipaddress_eth0}:6201/1":
+   zone   => 1,
+   weight => 1,
+ }
+-@@ring_account_device { "${ipaddress_eth0}:6002/1":
++@@ring_account_device { "${ipaddress_eth0}:6202/1":
+   zone   => 1,
+   weight => 1,
+ }
+
+-@@ring_object_device { "${ipaddress_eth0}:6000/2":
++@@ring_object_device { "${ipaddress_eth0}:6200/2":
+   region => 2,
+   zone   => 1,
+   weight => 1,
+ }
+-@@ring_container_device { "${ipaddress_eth0}:6001/2":
++@@ring_container_device { "${ipaddress_eth0}:6201/2":
+   region => 2,
+   zone   => 1,
+   weight => 1,
+ }
+-@@ring_account_device { "${ipaddress_eth0}:6002/2":
++@@ring_account_device { "${ipaddress_eth0}:6202/2":
+   region => 2,
+   zone   => 1,
+   weight => 1,
+
+diff --git a/manifests/storage/all.pp b/manifests/storage/all.pp
+index 1b08136..07a4c6b 100644
+--- a/manifests/storage/all.pp
++++ b/manifests/storage/all.pp
+@@ -10,16 +10,16 @@
+ #    Optional. Defaults to /srv/node/
+ #
+ #  [*object_port*] Port where object storage server should be hosted.
+-#    Optional. Defaults to 6000.
++#    Optional. Defaults to 6200.
+ #
+ #  [*allow_versions*] Boolean to enable the versioning in swift container
+ #    Optional. Default to false.
+ #
+ #  [*container_port*] Port where the container storage server should be hosted.
+-#    Optional. Defaults to 6001.
++#    Optional. Defaults to 6201.
+ #
+ #  [*account_port*] Port where the account storage server should be hosted.
+-#    Optional. Defaults to 6002.
++#    Optional. Defaults to 6202.
+ #
+ #  [*object_pipeline*]
+ #    (optional) Specify the object pipeline
+@@ -74,9 +74,9 @@
+ class swift::storage::all(
+   $storage_local_net_ip,
+   $devices            = '/srv/node',
+-  $object_port        = '6000',
+-  $container_port     = '6001',
+-  $account_port       = '6002',
++  $object_port        = '6200',
++  $container_port     = '6201',
++  $account_port       = '6202',
+   $object_pipeline    = undef,
+   $container_pipeline = undef,
+   $allow_versions     = false,
+
+diff --git a/manifests/storage/server.pp b/manifests/storage/server.pp
+index c032b03..1569317 100644
+--- a/manifests/storage/server.pp
++++ b/manifests/storage/server.pp
+@@ -9,7 +9,7 @@
+ # === Parameters:
+ #
+ # [*title*] The port the server will be exposed to
+-#   Mandatory. Usually 6000, 6001 and 6002 for respectively
++#   Mandatory. Usually 6200, 6201 and 6202 for respectively
+ #   object, container and account.
+ #
+ # [*type*]
+
+diff --git a/spec/classes/swift_ringbuilder_spec.rb b/spec/classes/swift_ringbuilder_spec.rb
+index b455b05..10f6d2e 100644
+--- a/spec/classes/swift_ringbuilder_spec.rb
++++ b/spec/classes/swift_ringbuilder_spec.rb
+@@ -58,17 +58,17 @@ describe 'swift::ringbuilder' do
+       let :pre_condition do
+          'class { memcached: max_memory => 1}
+           class { swift: swift_hash_suffix => string }
+-          ring_object_device { "127.0.0.1:6000/1":
++          ring_object_device { "127.0.0.1:6200/1":
+           zone        => 1,
+           weight      => 1,
+         }
+
+-        ring_container_device { "127.0.0.1:6001/1":
++        ring_container_device { "127.0.0.1:6201/1":
+           zone        => 2,
+           weight      => 1,
+         }
+
+-        ring_account_device { "127.0.0.1:6002/1":
++        ring_account_device { "127.0.0.1:6202/1":
+           zone        => 3,
+           weight      => 1,
+         }'
+@@ -76,21 +76,21 @@ describe 'swift::ringbuilder' do
+
+       it 'should set up all of the correct dependencies' do
+         is_expected.to contain_swift__ringbuilder__create('object').with(
+-          {:before => ['Ring_object_device[127.0.0.1:6000/1]']}
++          {:before => ['Ring_object_device[127.0.0.1:6200/1]']}
+         )
+         is_expected.to contain_swift__ringbuilder__create('container').with(
+-        {:before => ['Ring_container_device[127.0.0.1:6001/1]']}
++        {:before => ['Ring_container_device[127.0.0.1:6201/1]']}
+         )
+         is_expected.to contain_swift__ringbuilder__create('account').with(
+-        {:before => ['Ring_account_device[127.0.0.1:6002/1]']}
++        {:before => ['Ring_account_device[127.0.0.1:6202/1]']}
+         )
+-        is_expected.to contain_ring_object_device('127.0.0.1:6000/1').with(
++        is_expected.to contain_ring_object_device('127.0.0.1:6200/1').with(
+         {:notify => ['Swift::Ringbuilder::Rebalance[object]']}
+         )
+-        is_expected.to contain_ring_container_device('127.0.0.1:6001/1').with(
++        is_expected.to contain_ring_container_device('127.0.0.1:6201/1').with(
+         {:notify => ['Swift::Ringbuilder::Rebalance[container]']}
+         )
+-        is_expected.to contain_ring_account_device('127.0.0.1:6002/1').with(
++        is_expected.to contain_ring_account_device('127.0.0.1:6202/1').with(
+         {:notify => ['Swift::Ringbuilder::Rebalance[account]']}
+         )
+       end
+diff --git a/spec/classes/swift_storage_all_spec.rb b/spec/classes/swift_storage_all_spec.rb
+index 5d8e1ee..47e044d 100644
+--- a/spec/classes/swift_storage_all_spec.rb
++++ b/spec/classes/swift_storage_all_spec.rb
+@@ -17,9 +17,9 @@ describe 'swift::storage::all' do
+   let :default_params do
+     {
+       :devices => '/srv/node',
+-      :object_port => '6000',
+-      :container_port => '6001',
+-      :account_port => '6002',
++      :object_port => '6200',
++      :container_port => '6201',
++      :account_port => '6202',
+       :log_facility => 'LOG_LOCAL2',
+       :incoming_chmod => 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
+       :outgoing_chmod => 'Du=rwx,g=rx,o=rx,Fu=rw,g=r,o=r',
+
+diff --git a/tests/site.pp b/tests/site.pp
+index e1a38af..8e20d5b 100644
+--- a/tests/site.pp
++++ b/tests/site.pp
+@@ -152,32 +152,32 @@ node /swift-storage/ {
+   }
+ 
+   # specify endpoints per device to be added to the ring specification
+-  @@ring_object_device { "${swift_local_net_ip}:6000/1":
++  @@ring_object_device { "${swift_local_net_ip}:6200/1":
+     zone   => $swift_zone,
+     weight => 1,
+   }
+ 
+-  @@ring_object_device { "${swift_local_net_ip}:6000/2":
++  @@ring_object_device { "${swift_local_net_ip}:6200/2":
+     zone   => $swift_zone,
+     weight => 1,
+   }
+ 
+-  @@ring_container_device { "${swift_local_net_ip}:6001/1":
++  @@ring_container_device { "${swift_local_net_ip}:6201/1":
+     zone   => $swift_zone,
+     weight => 1,
+   }
+ 
+-  @@ring_container_device { "${swift_local_net_ip}:6001/2":
++  @@ring_container_device { "${swift_local_net_ip}:6201/2":
+     zone   => $swift_zone,
+     weight => 1,
+   }
+   # TODO should device be changed to volume
+-  @@ring_account_device { "${swift_local_net_ip}:6002/1":
++  @@ring_account_device { "${swift_local_net_ip}:6202/1":
+     zone   => $swift_zone,
+     weight => 1,
+   }
+ 
+-  @@ring_account_device { "${swift_local_net_ip}:6002/2":
++  @@ring_account_device { "${swift_local_net_ip}:6202/2":
+     zone   => $swift_zone,
+     weight => 1,
+   }
+-- 
+1.9.1
+
