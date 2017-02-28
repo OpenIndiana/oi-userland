@@ -48,7 +48,7 @@ diff -ruN mozilla.orig/security/coreconf/AIX.mk mozilla/security/coreconf/AIX.mk
 +# pthreads, and pthreads-user.  The default is pthreads.
 +# In both strategies, we need to use pthread_user.c, instead of
 +# aix.c.  The fact that aix.c is never used is somewhat strange.
-+# 
++#
 +# So we need to do the following:
 +# - Default (PTHREADS_USER not defined in the environment or on
 +#   the command line):
@@ -239,7 +239,7 @@ diff -ruN mozilla.orig/security/coreconf/BeOS.mk mozilla/security/coreconf/BeOS.
 +
 +XP_DEFINE := $(XP_DEFINE:-DXP_UNIX=-DXP_BEOS)
 +
-+USE_PTHREADS = 
++USE_PTHREADS =
 +
 +ifeq ($(USE_PTHREADS),1)
 +	IMPL_STRATEGY = _PTH
@@ -1629,7 +1629,7 @@ diff -ruN mozilla.orig/security/coreconf/IRIX.mk mozilla/security/coreconf/IRIX.
 +	endif
 +endif
 +
-+ODD_CFLAGS	+= -DSVR4 -DIRIX 
++ODD_CFLAGS	+= -DSVR4 -DIRIX
 +
 +CPU_ARCH	= mips
 +
@@ -2134,7 +2134,7 @@ diff -ruN mozilla.orig/security/coreconf/Linux.mk mozilla/security/coreconf/Linu
 +
 +
 +ifeq ($(USE_PTHREADS),1)
-+OS_PTHREAD = -lpthread 
++OS_PTHREAD = -lpthread
 +endif
 +
 +# See bug 537829, in particular comment 23.
@@ -2353,7 +2353,7 @@ diff -ruN mozilla.orig/security/coreconf/Linux2.4.mk mozilla/security/coreconf/L
 +endif
 +PROCESS_MAP_FILE = grep -v ';-' $< | \
 +        sed -e 's,;+,,' -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,;,' > $@
-+        
++
 +DEFINES += -DNO_FORK_CHECK
 diff -ruN mozilla.orig/security/coreconf/Linux2.5.mk mozilla/security/coreconf/Linux2.5.mk
 --- mozilla.orig/security/coreconf/Linux2.5.mk	1970-01-01 01:00:00.000000000 +0100
@@ -2658,7 +2658,7 @@ diff -ruN mozilla.orig/security/coreconf/NCR3.0.mk mozilla/security/coreconf/NCR
 +	CC       = cc
 +	CCC      = ncc
 +	CXX      = ncc
-+#	OS_LIBS += -L/opt/ncc/lib 
++#	OS_LIBS += -L/opt/ncc/lib
 +else
 +#	OS_LIBS	+=
 +endif
@@ -2680,7 +2680,7 @@ diff -ruN mozilla.orig/security/coreconf/NCR3.0.mk mozilla/security/coreconf/NCR
 +NOSUCHFILE  = /solaris-rm-f-sucks
 +
 +# now take care of default GCC (rus@5/5/97)
-+ 
++
 +ifdef NS_USE_GCC
 +	# if gcc-settings are redefined already - don't touch it
 +	#
@@ -2919,7 +2919,7 @@ diff -ruN mozilla.orig/security/coreconf/OS2.mk mozilla/security/coreconf/OS2.mk
 +LINK			= gcc
 +AR                      = emxomfar r $@
 +# Keep AR_FLAGS blank so that we do not have to change rules.mk
-+AR_FLAGS                = 
++AR_FLAGS                =
 +RANLIB 			= @echo OS2 RANLIB
 +BSDECHO 		= @echo OS2 BSDECHO
 +IMPLIB			= emximp -o
@@ -2935,17 +2935,17 @@ diff -ruN mozilla.orig/security/coreconf/OS2.mk mozilla/security/coreconf/OS2.mk
 +endif
 +
 +ifndef NO_SHARED_LIB
-+WRAP_MALLOC_LIB         = 
-+WRAP_MALLOC_CFLAGS      = 
-+DSO_CFLAGS              = 
-+DSO_PIC_CFLAGS          = 
++WRAP_MALLOC_LIB         =
++WRAP_MALLOC_CFLAGS      =
++DSO_CFLAGS              =
++DSO_PIC_CFLAGS          =
 +MKSHLIB                 = $(CXX) $(CXXFLAGS) $(DSO_LDOPTS) -o $@
 +MKCSHLIB                = $(CC) $(CFLAGS) $(DSO_LDOPTS) -o $@
-+MKSHLIB_FORCE_ALL       = 
-+MKSHLIB_UNFORCE_ALL     = 
++MKSHLIB_FORCE_ALL       =
++MKSHLIB_UNFORCE_ALL     =
 +DSO_LDOPTS              = -Zomf -Zdll -Zmap $(HIGHMEM_LDFLAG)
-+SHLIB_LDSTARTFILE	= 
-+SHLIB_LDENDFILE		= 
++SHLIB_LDSTARTFILE	=
++SHLIB_LDENDFILE		=
 +ifdef MAPFILE
 +MKSHLIB += $(MAPFILE)
 +endif
@@ -2975,7 +2975,7 @@ diff -ruN mozilla.orig/security/coreconf/OS2.mk mozilla/security/coreconf/OS2.mk
 +OBJDIR_TAG 		= _OPT
 +else
 +#OPTIMIZER		= -O+ -Oi
-+DEFINES 		+= -DDEBUG -D_DEBUG -DDEBUGPRINTS     #HCT Need += to avoid overidding manifest.mn 
++DEFINES 		+= -DDEBUG -D_DEBUG -DDEBUGPRINTS     #HCT Need += to avoid overidding manifest.mn
 +DLLFLAGS		= -DEBUG -DLL -OUT:$@ -MAP:$(@:.dll=.map) $(HIGHMEM_LDFLAG)
 +EXEFLAGS    		= -DEBUG -PMTYPE:VIO -OUT:$@ -MAP:$(@:.exe=.map) -nologo -NOE $(HIGHMEM_LDFLAG)
 +OBJDIR_TAG 		= _DBG
@@ -3113,7 +3113,7 @@ diff -ruN mozilla.orig/security/coreconf/OSF1.mk mozilla/security/coreconf/OSF1.
 +endif
 +
 +NON_LD_FLAGS += -ieee_with_inexact
-+OS_CFLAGS    += -DOSF1 -D_REENTRANT 
++OS_CFLAGS    += -DOSF1 -D_REENTRANT
 +
 +ifeq ($(USE_PTHREADS),1)
 +	OS_CFLAGS += -pthread
@@ -3592,7 +3592,7 @@ diff -ruN mozilla.orig/security/coreconf/OpenBSD.mk mozilla/security/coreconf/Op
 +
 +OS_CFLAGS		= $(DSO_CFLAGS) $(OS_REL_CFLAGS) -ansi -Wall -Wno-switch -pipe -DOPENBSD
 +
-+OS_LIBS			= 
++OS_LIBS			=
 +
 +ARCH			= openbsd
 +
@@ -4007,26 +4007,26 @@ diff -ruN mozilla.orig/security/coreconf/README mozilla/security/coreconf/README
 +        ===================     =======================================
 +        arch.mk                 source and release <architecture> tags
 +
-+        command.mk              default command macros 
++        command.mk              default command macros
 +				(NOTE: may be overridden in $(OS_CONFIG).mk)
 +
 +        $(OS_CONFIG).mk         <architecture>-specific macros
 +                                (dependent upon <architecture> tags)
 +
-+        tree.mk                 release <tree> tags 
++        tree.mk                 release <tree> tags
 +				(dependent upon <architecture> tags)
 +
-+        module.mk               source and release <component> tags 
-+				(NOTE:  A component is also called a module 
++        module.mk               source and release <component> tags
++				(NOTE:  A component is also called a module
 +				or a subsystem.  This file is dependent upon
 +                                $(MODULE) being defined on the command
 +                                line, as an environment variable, or in
 +                                individual makefiles, or more
 +                                appropriately, manifest.mn)
 +
-+        version.mk              release <version> tags 
-+				(dependent upon $(MODULE) being defined on 
-+				the command line, as an environment variable, 
++        version.mk              release <version> tags
++				(dependent upon $(MODULE) being defined on
++				the command line, as an environment variable,
 +				or in individual makefiles, or more
 +                                appropriately, manifest.mn)
 +
@@ -4038,16 +4038,16 @@ diff -ruN mozilla.orig/security/coreconf/README mozilla/security/coreconf/README
 +                                <source_component>, <version>, and
 +                                <platform> tags)
 +
-+        headers.mk              include switch for support header files 
++        headers.mk              include switch for support header files
 +				(dependent upon <tree>, <component>, <version>,
 +                                and <platform> tags)
 +
 +        prefix.mk               compute program prefixes
 +
-+        suffix.mk               compute program suffixes 
++        suffix.mk               compute program suffixes
 +				(dependent upon <architecture> tags)
 +
-+        jdk.mk                  define JDK 
++        jdk.mk                  define JDK
 +				(dependent upon <architecture>,
 +                                <source>, and <suffix> tags)
 +
@@ -4171,7 +4171,7 @@ diff -ruN mozilla.orig/security/coreconf/README mozilla/security/coreconf/README
 +                                binary releases on various platforms
 +
 +        tests::                 automation tool used to run the
-+                                "regress" and "reporter" tools 
++                                "regress" and "reporter" tools
 +                                on various regression test suites
 +
 +    The second section of "rules.mk" primarily contains several
@@ -4463,7 +4463,7 @@ diff -ruN mozilla.orig/security/coreconf/ReliantUNIX.mk mozilla/security/corecon
 +	CC   = cc
 +	CCC  = /usr/bin/CC
 +	AS   = /usr/bin/cc
-+	ODD_CFLAGS  = 
++	ODD_CFLAGS  =
 +	ifdef BUILD_OPT
 +		OPTIMIZER += -O -F Olimit,4000
 +	endif
@@ -4784,7 +4784,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.10.mk mozilla/security/coreconf/
 +	OS_DEFINES += -DSOLARIS2_10
 +endif
 +
-+OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc 
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
 diff -ruN mozilla.orig/security/coreconf/SunOS5.10_i86pc.mk mozilla/security/coreconf/SunOS5.10_i86pc.mk
 --- mozilla.orig/security/coreconf/SunOS5.10_i86pc.mk	1970-01-01 01:00:00.000000000 +0100
 +++ mozilla/security/coreconf/SunOS5.10_i86pc.mk	2004-10-11 03:15:42.000000000 +0100
@@ -4891,7 +4891,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.11.mk mozilla/security/coreconf/
 +	OS_DEFINES += -DSOLARIS2_11
 +endif
 +
-+OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc 
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
 diff -ruN mozilla.orig/security/coreconf/SunOS5.11_i86pc.mk mozilla/security/coreconf/SunOS5.11_i86pc.mk
 --- mozilla.orig/security/coreconf/SunOS5.11_i86pc.mk	1970-01-01 01:00:00.000000000 +0100
 +++ mozilla/security/coreconf/SunOS5.11_i86pc.mk	2006-01-03 23:02:11.000000000 +0000
@@ -5159,7 +5159,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.5.1.mk mozilla/security/coreconf
 +	OS_DEFINES += -DSOLARIS2_5
 +endif
 +
-+OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc 
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
 diff -ruN mozilla.orig/security/coreconf/SunOS5.5.1_i86pc.mk mozilla/security/coreconf/SunOS5.5.1_i86pc.mk
 --- mozilla.orig/security/coreconf/SunOS5.5.1_i86pc.mk	1970-01-01 01:00:00.000000000 +0100
 +++ mozilla/security/coreconf/SunOS5.5.1_i86pc.mk	2004-04-25 16:02:17.000000000 +0100
@@ -5309,7 +5309,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.6.mk mozilla/security/coreconf/S
 +	OS_DEFINES += -DSOLARIS2_6
 +endif
 +
-+OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc 
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
 diff -ruN mozilla.orig/security/coreconf/SunOS5.6_i86pc.mk mozilla/security/coreconf/SunOS5.6_i86pc.mk
 --- mozilla.orig/security/coreconf/SunOS5.6_i86pc.mk	1970-01-01 01:00:00.000000000 +0100
 +++ mozilla/security/coreconf/SunOS5.6_i86pc.mk	2004-04-25 16:02:17.000000000 +0100
@@ -5411,7 +5411,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.7.mk mozilla/security/coreconf/S
 +	OS_DEFINES += -DSOLARIS2_7
 +endif
 +
-+OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc 
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
 diff -ruN mozilla.orig/security/coreconf/SunOS5.7_i86pc.mk mozilla/security/coreconf/SunOS5.7_i86pc.mk
 --- mozilla.orig/security/coreconf/SunOS5.7_i86pc.mk	1970-01-01 01:00:00.000000000 +0100
 +++ mozilla/security/coreconf/SunOS5.7_i86pc.mk	2004-04-25 16:02:17.000000000 +0100
@@ -5515,7 +5515,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.8.mk mozilla/security/coreconf/S
 +	OS_DEFINES += -DSOLARIS2_8
 +endif
 +
-+OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc 
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
 diff -ruN mozilla.orig/security/coreconf/SunOS5.8_i86pc.mk mozilla/security/coreconf/SunOS5.8_i86pc.mk
 --- mozilla.orig/security/coreconf/SunOS5.8_i86pc.mk	1970-01-01 01:00:00.000000000 +0100
 +++ mozilla/security/coreconf/SunOS5.8_i86pc.mk	2004-04-25 16:02:17.000000000 +0100
@@ -5619,7 +5619,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.9.mk mozilla/security/coreconf/S
 +	OS_DEFINES += -DSOLARIS2_9
 +endif
 +
-+OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc 
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
 diff -ruN mozilla.orig/security/coreconf/SunOS5.9_i86pc.mk mozilla/security/coreconf/SunOS5.9_i86pc.mk
 --- mozilla.orig/security/coreconf/SunOS5.9_i86pc.mk	1970-01-01 01:00:00.000000000 +0100
 +++ mozilla/security/coreconf/SunOS5.9_i86pc.mk	2004-04-25 16:02:17.000000000 +0100
@@ -5727,7 +5727,7 @@ diff -ruN mozilla.orig/security/coreconf/SunOS5.mk mozilla/security/coreconf/Sun
 +endif
 +
 +# Sun's WorkShop defines v8, v8plus and v9 architectures.
-+# gcc on Solaris defines v8 and v9 "cpus".  
++# gcc on Solaris defines v8 and v9 "cpus".
 +# gcc's v9 is equivalent to Workshop's v8plus.
 +# gcc's -m64 is equivalent to Workshop's v9
 +
@@ -6218,10 +6218,10 @@ diff -ruN mozilla.orig/security/coreconf/WIN32.mk mozilla/security/coreconf/WIN3
 +	USERNAME   := $(subst -,_,$(USERNAME))
 +	DEFINES    += -DDEBUG -D_DEBUG -UNDEBUG -DDEBUG_$(USERNAME)
 +	DLLFLAGS   += -DEBUG -OUT:"$@"
-+	LDFLAGS    += -DEBUG 
++	LDFLAGS    += -DEBUG
 +ifeq ($(_MSC_VER),$(_MSC_VER_6))
 +ifndef MOZ_DEBUG_SYMBOLS
-+	LDFLAGS    += -PDB:NONE 
++	LDFLAGS    += -PDB:NONE
 +endif
 +endif
 +	# Purify requires /FIXED:NO when linking EXEs.
@@ -7001,7 +7001,7 @@ diff -ruN mozilla.orig/security/coreconf/arch.mk mozilla/security/coreconf/arch.
 +    ifndef CPU_ARCH
 +    ifeq (WOW64,$(findstring WOW64,$(OS_RELEASE)))
 +        OS_RELEASE := $(patsubst %-WOW64,%,$(OS_RELEASE))
-+    endif    
++    endif
 +	CPU_ARCH := $(shell uname -m)
 +	#
 +	# Cygwin's uname -m returns "i686" on a Pentium Pro machine.
@@ -7156,7 +7156,7 @@ diff -ruN mozilla.orig/security/coreconf/command.mk mozilla/security/coreconf/co
 +#     in a given source code directory (in manifest.mn)
 +# =0: Never optimize the code for size.
 +#
-+# Default value = 0 
++# Default value = 0
 +# Can be overridden from the make command line.
 +ifndef OPT_CODE_SIZE
 +OPT_CODE_SIZE = 0
@@ -7471,13 +7471,13 @@ diff -ruN mozilla.orig/security/coreconf/coreconf.pl mozilla/security/coreconf/c
 +    local(@dirlist);
 +    $fromdir = shift;
 +    $todir = shift;
-+  
++
 +    print STDERR "recursive copy called with $fromdir, $todir\n";
 +
 +#remove any trailing slashes.
 +    $fromdir =~ s/\/$//;
 +    $todir =~ s/\/$//;
-+    
++
 +    opendir(DIR, $fromdir);
 +    @dirlist = readdir DIR;
 +    close DIR;
@@ -7485,7 +7485,7 @@ diff -ruN mozilla.orig/security/coreconf/coreconf.pl mozilla/security/coreconf/c
 +
 +    foreach $file (@dirlist) {
 +	if  (! (($file eq "." ) || ($file eq "..") )) {
-+	    
++
 +	    if (-d "$fromdir/$file") {
 +		print STDERR "handling directory $todir/$file\n";
 +		&rec_mkdir("$todir/$file");
@@ -7511,12 +7511,12 @@ diff -ruN mozilla.orig/security/coreconf/coreconf.pl mozilla/security/coreconf/c
 +	   $q =~ /^([^=]*)=(.*)/;
 +	   $left = $1;
 +	   $right = $2;
-+	
++
 +	   $right =~ s/ *$//;
 +	   $var{$left} = $right;
 +
 +	   $lastassigned = $left;
-+	
++
 +	   }
 +	print STDERR "Assigned $lastassigned = $var{$lastassigned}\n";
 +    }
@@ -7635,7 +7635,7 @@ diff -ruN mozilla.orig/security/coreconf/cpdist.pl mozilla/security/coreconf/cpd
 +#######-- read in variables on command line into %var
 +
 +&parse_argv;
-+ 
++
 +### do the copy
 +
 +print STDERR "RELEASE TREE / MODULE =  $var{RELEASE_TREE} $var{MODULE}\n";
@@ -7650,7 +7650,7 @@ diff -ruN mozilla.orig/security/coreconf/cpdist.pl mozilla/security/coreconf/cpd
 +#    $component = $var{RELEASE};
 +#}
 +#else {  # if a subcomponent/version is given in the RELEASE variable
-+#        $var{RELEASE} =~ m|^([^/]*)/|;  
++#        $var{RELEASE} =~ m|^([^/]*)/|;
 +#	$component = $1;           # everything before the first slash;
 +#    }
 +
@@ -7709,14 +7709,14 @@ diff -ruN mozilla.orig/security/coreconf/cpdist.pl mozilla/security/coreconf/cpd
 +# unlinking and linking always occurs, even if the link is correct
 +    print "unlinking $dir/current\n";
 +    unlink("$dir/current");
-+    
++
 +    print "putting version number $today into 'current' file..";
 +
 +    open(FILE,">$dir/current") || die " couldn't open current\n";
 +    print FILE "$today\n";
 +    close(FILE);
 +    print " ..done\n"
-+    
++
 +}
 +
 +&rec_mkdir("$dir/$version/$var{'RELEASE_MD_DIR'}");
@@ -7727,20 +7727,20 @@ diff -ruN mozilla.orig/security/coreconf/cpdist.pl mozilla/security/coreconf/cpd
 +
 +foreach $jarfile (split(/ /,$var{FILES}) ) {
 +    print STDERR "---------------------------------------------\n";
-+    
++
 +    $jarinfo = $var{$jarfile};
-+ 
++
 +    ($jardir,$jaropts) = split(/\|/,$jarinfo);
-+ 
++
 +    if ($jaropts =~ /f/) {
 +      print STDERR "Copying files $jardir....\n";
 +    }
 +    else {
 +      print STDERR "Copying jar file $jarfile....\n";
 +    }
-+    
++
 +    print "jaropts = $jaropts\n";
-+    
++
 +    if ($jaropts =~ /m/) {
 +      $destdir = $var{"RELEASE_MD_DIR"};
 +      print "found m, using MD dir $destdir\n";
@@ -7752,10 +7752,10 @@ diff -ruN mozilla.orig/security/coreconf/cpdist.pl mozilla/security/coreconf/cpd
 +    else {
 +      die "Error: must specify m or x in jar options in $jarinfo line\n";
 +    }
-+    
-+    
++
++
 +    $distdir = "$dir/$version/$destdir";
-+    
++
 +
 +
 +    if ($jaropts =~ /f/) {
@@ -7782,14 +7782,14 @@ diff -ruN mozilla.orig/security/coreconf/cpdist.pl mozilla/security/coreconf/cpd
 +    }
 +    else {
 +      $srcfile = "$var{SOURCE_RELEASE_PREFIX}/$jardir/$jarfile";
-+      
++
 +      print "copy: from $srcfile\n";
 +      print "      to   $distdir\n";
-+      
++
 +      system("cp $srcfile $distdir");
-+      
++
 +    }
-+    
++
 +  }
 +
 diff -ruN mozilla.orig/security/coreconf/headers.mk mozilla/security/coreconf/headers.mk
@@ -7925,7 +7925,7 @@ diff -ruN mozilla.orig/security/coreconf/import.pl mozilla/security/coreconf/imp
 +    if ($import =~ /\//) {
 +        # $component=everything before the first slash of $import
 +
-+	$import =~ m|^([^/]*)/|; 
++	$import =~ m|^([^/]*)/|;
 +	$component = $1;
 +
 +	$import =~ m|^(.*)/([^/]*)$|;
@@ -7949,7 +7949,7 @@ diff -ruN mozilla.orig/security/coreconf/import.pl mozilla/security/coreconf/imp
 +    $releasejardir = "$var{RELEASE_TREE}/$path";
 +    if ($version eq "current") {
 +	print STDERR "Current version specified. Reading 'current' file ... \n";
-+	
++
 +	open(CURRENT,"$releasejardir/current") || die "NO CURRENT FILE\n";
 +	$version = <CURRENT>;
 +	$version =~ s/(\r?\n)*$//; # remove any trailing [CR/]LF's
@@ -7959,7 +7959,7 @@ diff -ruN mozilla.orig/security/coreconf/import.pl mozilla/security/coreconf/imp
 +	    die "Current version file empty. Stopping\n";
 +	}
 +    }
-+    
++
 +    $releasejardir = "$releasejardir/$version";
 +    if ( ! -d $releasejardir) {
 +	die "$releasejardir doesn't exist (Invalid Version?)\n";
@@ -7988,15 +7988,15 @@ diff -ruN mozilla.orig/security/coreconf/import.pl mozilla/security/coreconf/imp
 +
 +	if (-e "$releasejarpathname/$jarfile") {
 +	    print STDERR "\nWorking on jarfile: $jarfile\n";
-+	    
++
 +	    if ($distpath =~ m|/$|) {
 +		$distpathname = "$distpath$component";
 +	    }
 +	    else {
-+		$distpathname = "$distpath"; 
++		$distpathname = "$distpath";
 +	    }
-+	  
-+	  
++
++
 +#the block below is used to determine whether or not the xp headers have
 +#already been imported for this component
 +
@@ -8015,14 +8015,14 @@ diff -ruN mozilla.orig/security/coreconf/import.pl mozilla/security/coreconf/imp
 +		  }
 +	      }
 +	  }
-+	  
++
 +	  if ($doimport == 1) {
 +	      if (! -d "$distpathname") {
 +		  &rec_mkdir("$distpathname");
 +	      }
 +	      # delete the stuff in there already.
 +	      # (this should really be recursive delete.)
-+	      
++
 +	      if ($options =~ /v/) {
 +		  $remheader = "\nREMOVING files in '$distpathname/' :";
 +		  opendir(DIR,"$distpathname") ||
@@ -8045,10 +8045,10 @@ diff -ruN mozilla.orig/security/coreconf/import.pl mozilla/security/coreconf/imp
 +	      print STDERR "\n\n";
 +
 +	      print STDERR "\nExtracting jarfile '$jarfile' to local directory $distpathname/\n";
-+	      
++
 +	      print STDERR "$var{UNZIP} $releasejarpathname/$jarfile -d $distpathname\n";
 +	      system("$var{UNZIP} $releasejarpathname/$jarfile -d $distpathname");
-+	      
++
 +	      $r = $?;
 +
 +	      if ($options =~ /v/) {
@@ -8445,7 +8445,7 @@ diff -ruN mozilla.orig/security/coreconf/jdk.mk mozilla/security/coreconf/jdk.mk
 +	JAVA_FLAGS += $(JDK_CLASSPATH_OPT)
 +	JAVA_FLAGS += $(JDK_JIT_OPT)
 +	JAVA_FLAGS += $(JDK_USE_64)
-+	JAVA        = $(JAVA_PROG) $(JAVA_FLAGS) 
++	JAVA        = $(JAVA_PROG) $(JAVA_FLAGS)
 +endif
 +
 +#
@@ -8561,7 +8561,7 @@ diff -ruN mozilla.orig/security/coreconf/jdk.mk mozilla/security/coreconf/jdk.mk
 +	JRE_FLAGS  = $(JDK_THREADING_MODEL_OPT)
 +	JRE_FLAGS += $(JDK_CLASSPATH_OPT)
 +	JRE_FLAGS += $(JDK_JIT_OPT)
-+	JRE        = $(JRE_PROG) $(JRE_FLAGS) 
++	JRE        = $(JRE_PROG) $(JRE_FLAGS)
 +endif
 +
 +#
@@ -8573,7 +8573,7 @@ diff -ruN mozilla.orig/security/coreconf/jdk.mk mozilla/security/coreconf/jdk.mk
 +	JREW_FLAGS  = $(JDK_THREADING_MODEL_OPT)
 +	JREW_FLAGS += $(JDK_CLASSPATH_OPT)
 +	JREW_FLAGS += $(JDK_JIT_OPT)
-+	JREW        = $(JREW_PROG) $(JREW_FLAGS) 
++	JREW        = $(JREW_PROG) $(JREW_FLAGS)
 +endif
 +
 +#
@@ -8583,7 +8583,7 @@ diff -ruN mozilla.orig/security/coreconf/jdk.mk mozilla/security/coreconf/jdk.mk
 +ifeq ($(NATIVE2ASCII),)
 +	NATIVE2ASCII_PROG   = $(JAVA_HOME)/bin/native2ascii$(PROG_SUFFIX)
 +	NATIVE2ASCII_FLAGS  = $(JDK_THREADING_MODEL_OPT)
-+	NATIVE2ASCII        = $(NATIVE2ASCII_PROG) $(NATIVE2ASCII_FLAGS) 
++	NATIVE2ASCII        = $(NATIVE2ASCII_PROG) $(NATIVE2ASCII_FLAGS)
 +endif
 +
 +#
@@ -8595,7 +8595,7 @@ diff -ruN mozilla.orig/security/coreconf/jdk.mk mozilla/security/coreconf/jdk.mk
 +	RMIC_FLAGS  = $(JDK_THREADING_MODEL_OPT)
 +	RMIC_FLAGS += $(JDK_OPTIMIZER_OPT)
 +	RMIC_FLAGS += $(JDK_CLASSPATH_OPT)
-+	RMIC        = $(RMIC_PROG) $(RMIC_FLAGS) 
++	RMIC        = $(RMIC_PROG) $(RMIC_FLAGS)
 +endif
 +
 +#
@@ -8605,7 +8605,7 @@ diff -ruN mozilla.orig/security/coreconf/jdk.mk mozilla/security/coreconf/jdk.mk
 +ifeq ($(RMIREGISTRY),)
 +	RMIREGISTRY_PROG   = $(JAVA_HOME)/bin/rmiregistry$(PROG_SUFFIX)
 +	RMIREGISTRY_FLAGS  = $(JDK_THREADING_MODEL_OPT)
-+	RMIREGISTRY        = $(RMIREGISTRY_PROG) $(RMIREGISTRY_FLAGS) 
++	RMIREGISTRY        = $(RMIREGISTRY_PROG) $(RMIREGISTRY_FLAGS)
 +endif
 +
 +#
@@ -8615,7 +8615,7 @@ diff -ruN mozilla.orig/security/coreconf/jdk.mk mozilla/security/coreconf/jdk.mk
 +ifeq ($(SERIALVER),)
 +	SERIALVER_PROG   = $(JAVA_HOME)/bin/serialver$(PROG_SUFFIX)
 +	SERIALVER_FLAGS  = $(JDK_THREADING_MODEL_OPT)
-+	SERIALVER        = $(SERIALVER_PROG) $(SERIALVER_FLAGS) 
++	SERIALVER        = $(SERIALVER_PROG) $(SERIALVER_FLAGS)
 +endif
 diff -ruN mozilla.orig/security/coreconf/jniregen.pl mozilla/security/coreconf/jniregen.pl
 --- mozilla.orig/security/coreconf/jniregen.pl	1970-01-01 01:00:00.000000000 +0100
@@ -9057,8 +9057,8 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/cppsetup.c mozilla/security/co
 +	pend = p;
 +
 +	ptrtab = slotab+COFF;
-+	*--inp = SALT; 
-+	outp=inp; 
++	*--inp = SALT;
++	outp=inp;
 +	value = yyparse();
 +	*p = savec;
 +	return(value);
@@ -9290,7 +9290,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/def.h mozilla/security/corecon
 +extern int	_debugmask;
 +/*
 + * debug levels are:
-+ * 
++ *
 + *     0	show ifn*(def)*,endif
 + *     1	trace defined/!defined
 + *     2	show #include
@@ -9357,7 +9357,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/def.h mozilla/security/corecon
 +struct symtab		**fdefined(char *symbol, struct inclist *file,
 +				   struct inclist **srcfile);
 +struct filepointer	*getfile(char *file);
-+void                    included_by(struct inclist *ip, 
++void                    included_by(struct inclist *ip,
 +				    struct inclist *newfile);
 +struct inclist		*newinclude(char *newfile, char *incstring);
 +void                    inc_clean (void);
@@ -9368,16 +9368,16 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/def.h mozilla/security/corecon
 +void                    define2(char *name, char *val, struct inclist *file);
 +void                    define(char *def, struct inclist *file);
 +void                    undefine(char *symbol, struct inclist *file);
-+int                     find_includes(struct filepointer *filep, 
-+				      struct inclist *file, 
-+				      struct inclist *file_red, 
++int                     find_includes(struct filepointer *filep,
++				      struct inclist *file,
++				      struct inclist *file_red,
 +				      int recursion, boolean failOK);
 +
-+void                    recursive_pr_include(struct inclist *head, 
++void                    recursive_pr_include(struct inclist *head,
 +					     char *file, char *base);
-+void                    add_include(struct filepointer *filep, 
-+				    struct inclist *file, 
-+				    struct inclist *file_red, 
++void                    add_include(struct filepointer *filep,
++				    struct inclist *file,
++				    struct inclist *file_red,
 +				    char *include, int type,
 +				    boolean failOK);
 +
@@ -9398,7 +9398,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.c mozilla/security/co
 + * $Xorg: ifparser.c,v 1.3 2000/08/17 19:41:50 cpqbld Exp $
 + *
 + * Copyright 1992 Network Computing Devices, Inc.
-+ * 
++ *
 + * Permission to use, copy, modify, and distribute this software and its
 + * documentation for any purpose and without fee is hereby granted, provided
 + * that the above copyright notice appear in all copies and that both that
@@ -9408,7 +9408,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.c mozilla/security/co
 + * without specific, written prior permission.  Network Computing Devices makes
 + * no representations about the suitability of this software for any purpose.
 + * It is provided ``as is'' without express or implied warranty.
-+ * 
++ *
 + * NETWORK COMPUTING DEVICES DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
 + * SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
 + * IN NO EVENT SHALL NETWORK COMPUTING DEVICES BE LIABLE FOR ANY SPECIAL,
@@ -9416,19 +9416,19 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.c mozilla/security/co
 + * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
 + * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 + * PERFORMANCE OF THIS SOFTWARE.
-+ * 
++ *
 + * Author:  Jim Fulton
 + *          Network Computing Devices, Inc.
-+ * 
++ *
 + * Simple if statement processor
 + *
 + * This module can be used to evaluate string representations of C language
 + * if constructs.  It accepts the following grammar:
-+ * 
++ *
 + *     EXPRESSION	:=	VALUE
 + * 			 |	VALUE  BINOP	EXPRESSION
 + *			 |	VALUE	'?'	EXPRESSION ':'	EXPRESSION
-+ * 
++ *
 + *     VALUE		:=	'('  EXPRESSION  ')'
 + * 			 |	'!'  VALUE
 + * 			 |	'-'  VALUE
@@ -9439,7 +9439,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.c mozilla/security/co
 + *			 |	# variable '(' variable-list ')'
 + * 			 |	variable
 + * 			 |	number
-+ * 
++ *
 + *     BINOP		:=	'*'	|  '/'	|  '%'
 + * 			 |	'+'	|  '-'
 + * 			 |	'<<'	|  '>>'
@@ -9447,12 +9447,12 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.c mozilla/security/co
 + * 			 |	'=='	|  '!='
 + * 			 |	'&'	|  '^'  |  '|'
 + * 			 |	'&&'	|  '||'
-+ * 
++ *
 + * The normal C order of precedence is supported.
-+ * 
-+ * 
++ *
++ *
 + * External Entry Points:
-+ * 
++ *
 + *     ParseIfExpression		parse a string for #if
 + */
 +/* $XFree86: xc/config/makedepend/ifparser.c,v 3.11 2002/09/23 01:48:08 tsi Exp $ */
@@ -9579,7 +9579,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.c mozilla/security/co
 +      case '(':
 +	DO (cp = ParseIfExpression (g, cp + 1, valp));
 +	SKIPSPACE (cp);
-+	if (*cp != ')') 
++	if (*cp != ')')
 +	    return CALLFUNC(g, handle_error) (g, cp, ")");
 +
 +	return cp + 1;			/* skip the right paren */
@@ -9670,7 +9670,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.c mozilla/security/co
 +	    cp++;
 +	}
 +    }
-+    
++
 +    return cp;
 +}
 +
@@ -9953,7 +9953,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.h mozilla/security/co
 + * $Xorg: ifparser.h,v 1.3 2000/08/17 19:41:51 cpqbld Exp $
 + *
 + * Copyright 1992 Network Computing Devices, Inc.
-+ * 
++ *
 + * Permission to use, copy, modify, and distribute this software and its
 + * documentation for any purpose and without fee is hereby granted, provided
 + * that the above copyright notice appear in all copies and that both that
@@ -9963,7 +9963,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.h mozilla/security/co
 + * without specific, written prior permission.  Network Computing Devices makes
 + * no representations about the suitability of this software for any purpose.
 + * It is provided ``as is'' without express or implied warranty.
-+ * 
++ *
 + * NETWORK COMPUTING DEVICES DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
 + * SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
 + * IN NO EVENT SHALL NETWORK COMPUTING DEVICES BE LIABLE FOR ANY SPECIAL,
@@ -9971,19 +9971,19 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.h mozilla/security/co
 + * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
 + * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 + * PERFORMANCE OF THIS SOFTWARE.
-+ * 
++ *
 + * Author:  Jim Fulton
 + *          Network Computing Devices, Inc.
-+ * 
++ *
 + * Simple if statement processor
 + *
 + * This module can be used to evaluate string representations of C language
 + * if constructs.  It accepts the following grammar:
-+ * 
++ *
 + *     EXPRESSION	:=	VALUE
 + * 			 |	VALUE  BINOP	EXPRESSION
 + *			 |	VALUE	'?'	EXPRESSION ':'	EXPRESSION
-+ * 
++ *
 + *     VALUE		:=	'('  EXPRESSION  ')'
 + * 			 |	'!'  VALUE
 + * 			 |	'-'  VALUE
@@ -9991,7 +9991,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.h mozilla/security/co
 + * 			 |	'defined'  '('  variable  ')'
 + * 			 |	variable
 + * 			 |	number
-+ * 
++ *
 + *     BINOP		:=	'*'	|  '/'	|  '%'
 + * 			 |	'+'	|  '-'
 + * 			 |	'<<'	|  '>>'
@@ -9999,12 +9999,12 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.h mozilla/security/co
 + * 			 |	'=='	|  '!='
 + * 			 |	'&'	|  '^'  |  '|'
 + * 			 |	'&&'	|  '||'
-+ * 
++ *
 + * The normal C order of precedence is supported.
-+ * 
-+ * 
++ *
++ *
 + * External Entry Points:
-+ * 
++ *
 + *     ParseIfExpression		parse a string for #if
 + */
 +
@@ -10027,8 +10027,8 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/ifparser.h mozilla/security/co
 +} IfParser;
 +
 +const char *ParseIfExpression (
-+    IfParser *, 
-+    const char *, 
++    IfParser *,
++    const char *,
 +    long *
 +);
 +
@@ -10067,7 +10067,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/imakemdep.h mozilla/security/c
 +*/
 +
 +
-+/* 
++/*
 + * This file contains machine-dependent constants for the imake utility.
 + * When porting imake, read each of the steps below and add in any necessary
 + * definitions.  In general you should *not* edit ccimake.c or imake.c!
@@ -10126,10 +10126,10 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/imakemdep.h mozilla/security/c
 +#ifdef Mips
 +#  if defined(SYSTYPE_BSD) || defined(BSD) || defined(BSD43)
 +#    define imake_ccflags "-DBSD43"
-+#  else 
++#  else
 +#    define imake_ccflags "-DSYSV"
 +#  endif
-+#endif 
++#endif
 +
 +#ifdef is68k
 +#define imake_ccflags "-Dluna -Duniosb"
@@ -10200,7 +10200,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/imakemdep.h mozilla/security/c
 +#endif
 +
 +/* this is for OS/2 under EMX. This won't work with DOS */
-+#if defined(__EMX__) 
++#if defined(__EMX__)
 +#define imake_ccflags "-DBSD43"
 +#endif
 +
@@ -10290,17 +10290,17 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/imakemdep.h mozilla/security/c
 +/*
 + * Step 5:  cpp_argv
 + *     The following table contains the flags that should be passed
-+ *     whenever a Makefile is being generated.  If your preprocessor 
++ *     whenever a Makefile is being generated.  If your preprocessor
 + *     doesn't predefine any unique symbols, choose one and add it to the
 + *     end of this table.  Then, do the following:
-+ * 
++ *
 + *         a.  Use this symbol in Imake.tmpl when setting MacroFile.
 + *         b.  Put this symbol in the definition of BootstrapCFlags in your
 + *             <platform>.cf file.
-+ *         c.  When doing a make World, always add "BOOTSTRAPCFLAGS=-Dsymbol" 
++ *         c.  When doing a make World, always add "BOOTSTRAPCFLAGS=-Dsymbol"
 + *             to the end of the command line.
-+ * 
-+ *     Note that you may define more than one symbol (useful for platforms 
++ *
++ *     Note that you may define more than one symbol (useful for platforms
 + *     that support multiple operating systems).
 + */
 +
@@ -10384,7 +10384,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/imakemdep.h mozilla/security/c
 +#ifdef MOTOROLA
 +	"-DMOTOROLA",    /* Motorola Delta Systems */
 +# ifdef SYSV
-+	"-DSYSV", 
++	"-DSYSV",
 +# endif
 +# ifdef SVR4
 +	"-DSVR4",
@@ -10962,7 +10962,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/include.c mozilla/security/cor
 +		    char **fp = cp + 2;
 +		    char **tp = cp;
 +
-+		    do 
++		    do
 +			*tp++ = *fp; /* move all the pointers down */
 +		    while (*fp++);
 +		    if (cp != components)
@@ -11507,7 +11507,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/main.c mozilla/security/coreco
 +		case 'm':
 +			warn_multiple = TRUE;
 +			break;
-+			
++
 +		/* Ignore -O, -g so we can just pass ${CFLAGS} to
 +		   makedepend
 +		 */
@@ -11689,7 +11689,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/main.c mozilla/security/coreco
 +/*
 + * eliminate \r chars from file
 + */
-+static int 
++static int
 +elim_cr(char *buf, int sz)
 +{
 +	int i,wp;
@@ -11813,7 +11813,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/main.c mozilla/security/coreco
 +			}
 +			whitespace = TRUE;
 +		}
-+        
++
 +		if (*p == '/' && (p+1) < eof && *(p+1) == '*') {
 +			/* Consume C comments */
 +			*(p++) = ' ';
@@ -11841,7 +11841,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/main.c mozilla/security/coreco
 +					lineno++;
 +				}
 +				else if (*p == '?' && (p+3) < eof &&
-+					 *(p+1) == '?' && 
++					 *(p+1) == '?' &&
 +					 *(p+2) == '/' &&
 +					 *(p+3) == '\n') {
 +					*(p++) = ' ';
@@ -11877,7 +11877,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/main.c mozilla/security/coreco
 +
 +				*(p++) = '\0';
 +				/* punt lines with just # (yacc generated) */
-+				for (cp = bol+1; 
++				for (cp = bol+1;
 +				     *cp && (*cp == ' ' || *cp == '\t'); cp++);
 +				if (*cp) goto done;
 +				--p;
@@ -12039,26 +12039,26 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/mkdepend.man mozilla/security/
 @@ -0,0 +1,382 @@
 +.\" $Xorg: mkdepend.man,v 1.5 2001/02/09 02:03:16 xorgcvs Exp $
 +.\" Copyright (c) 1993, 1994, 1998 The Open Group
-+.\" 
++.\"
 +.\" Permission to use, copy, modify, distribute, and sell this software and its
 +.\" documentation for any purpose is hereby granted without fee, provided that
 +.\" the above copyright notice appear in all copies and that both that
 +.\" copyright notice and this permission notice appear in supporting
 +.\" documentation.
-+.\" 
++.\"
 +.\" The above copyright notice and this permission notice shall be included in
 +.\" all copies or substantial portions of the Software.
-+.\" 
++.\"
 +.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 +.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL 
-+.\" THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-+.\" WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF 
-+.\" OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
++.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++.\" THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++.\" WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
++.\" OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 +.\" SOFTWARE.
-+.\" 
-+.\" Except as contained in this notice, the name of The Open Group shall not 
-+.\" be used in advertising or otherwise to promote the sale, use or other 
++.\"
++.\" Except as contained in this notice, the name of The Open Group shall not
++.\" be used in advertising or otherwise to promote the sale, use or other
 +.\" dealing in this Software without prior written authorization from The
 +.\" Open Group.
 +.\"
@@ -12207,7 +12207,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/mkdepend.man mozilla/security/
 +in
 +.B makedepend's
 +symbol table.
-+Without 
++Without
 +.I =def\|
 +the symbol becomes defined as ``1''.
 +.TP 5
@@ -12233,7 +12233,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/mkdepend.man mozilla/security/
 +to simply prevent searching the standard include directories.
 +.TP 5
 +.B \-a
-+Append the dependencies to the end of the file instead of replacing them. 
++Append the dependencies to the end of the file instead of replacing them.
 +.TP 5
 +.B \-f\fImakefile\fP
 +Filename.
@@ -12284,20 +12284,20 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/mkdepend.man mozilla/security/
 +.TP 5
 +.B \-v
 +Verbose operation.
-+This option causes 
++This option causes
 +.B makedepend
 +to emit the list of files included by each input file.
 +.TP 5
 +.B \-m
 +Warn about multiple inclusion.
-+This option causes 
++This option causes
 +.B makedepend
 +to produce a warning if any input file includes another file more than
-+once.  In previous versions of 
++once.  In previous versions of
 +.B makedepend
 +this was the default behavior; the default has been changed to better
 +match the behavior of the C compiler, which does not consider multiple
-+inclusion to be an error.  This option is provided for backward 
++inclusion to be an error.  This option is provided for backward
 +compatibility, and to aid in debugging problems related to multiple
 +inclusion.
 +.TP 5
@@ -12526,8 +12526,8 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +/*
 + * Decide what type of # directive this line is.
 + */
-+static int 
-+deftype (char *line, struct filepointer *filep, 
++static int
++deftype (char *line, struct filepointer *filep,
 +	     struct inclist *file_red, struct inclist *file, int parse_it)
 +{
 +	register char	*p;
@@ -12637,7 +12637,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +			       (*sym) -> s_name,
 +			       (*sym) -> s_value));
 +			/* mark file as having included a 'soft include' */
-+			file->i_flags |= INCLUDED_SYM; 
++			file->i_flags |= INCLUDED_SYM;
 +		}
 +
 +		/*
@@ -12784,14 +12784,14 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +	    if (s2[-1] == '\0') break;
 +
 +	/* If exact match, set sp and break */
-+	if (*--s1 == *--s2) 
++	if (*--s1 == *--s2)
 +	{
 +	    sp = file->i_defs + middle;
 +	    break;
 +	}
 +
 +	/* If name > i_defs[middle] ... */
-+	if (*s1 > *s2) 
++	if (*s1 > *s2)
 +	{
 +	    below = first;
 +	    first = middle + 1;
@@ -12870,13 +12870,13 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +	        if (s2[-1] == '\0') break;
 +
 +	    /* If exact match, we're done */
-+	    if (*--s1 == *--s2) 
++	    if (*--s1 == *--s2)
 +	    {
 +	        return file->i_defs + middle;
 +	    }
 +
 +	    /* If symbol > i_defs[middle] ... */
-+	    if (*s1 > *s2) 
++	    if (*s1 > *s2)
 +	    {
 +	        first = middle + 1;
 +	    }
@@ -12889,7 +12889,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +	return(NULL);
 +}
 +
-+static int 
++static int
 +merge2defines(struct inclist *file1, struct inclist *file2)
 +{
 +	int i;
@@ -12917,7 +12917,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +			file2->i_file, file1->i_file));
 +
 +                if (deflen>0)
-+                { 
++                {
 +                	/* make sure deflen % SYMTABINC == 0 is still true */
 +                	deflen += (SYMTABINC - deflen % SYMTABINC) % SYMTABINC;
 +                	i_defs=(struct symtab**)
@@ -12952,7 +12952,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +                if (file1->i_defs) free(file1->i_defs);
 +                file1->i_defs=i_defs;
 +                file1->i_ndefs=first;
-+                
++
 +		return 1;
 +  	}
 +}
@@ -12971,7 +12971,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +}
 +
 +int
-+find_includes(struct filepointer *filep, struct inclist *file, 
++find_includes(struct filepointer *filep, struct inclist *file,
 +	      struct inclist *file_red, int recursion, boolean failOK)
 +{
 +	struct inclist	*inclistp;
@@ -13083,7 +13083,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/parse.c mozilla/security/corec
 +			warning1(", line %d: %s\n",
 +				 filep->f_line, line);
 +		    	break;
-+		    
++
 +		case PRAGMA:
 +		case IDENT:
 +		case SCCS:
@@ -13153,7 +13153,7 @@ diff -ruN mozilla.orig/security/coreconf/mkdepend/pr.c mozilla/security/coreconf
 +extern boolean	show_where_not;
 +
 +void
-+add_include(struct filepointer *filep, struct inclist *file, 
++add_include(struct filepointer *filep, struct inclist *file,
 +	    struct inclist *file_red, char *include, int type,
 +	    boolean failOK)
 +{
@@ -13534,8 +13534,8 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/nsinstall.c mozilla/security/
 +    char *      cp;
 +    int         rv;
 +    struct stat sb;
-+    
-+    if (!path || !path[0]) 
++
++    if (!path || !path[0])
 +	fail("Null pointer or empty string passed to mkdirs()");
 +    while (*path == '/' && path[1] == '/')
 +	path++;
@@ -13553,7 +13553,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/nsinstall.c mozilla/security/
 +	if (errno != EEXIST)
 +	    fail("mkdirs cannot make %s", path);
 +	fprintf(stderr, "directory creation race: %s\n", path);
-+	if (!stat(path, &sb) && S_ISDIR(sb.st_mode)) 
++	if (!stat(path, &sb) && S_ISDIR(sb.st_mode))
 +	    rv = 0;
 +    }
 +    return rv;
@@ -13566,7 +13566,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/nsinstall.c mozilla/security/
 +    uid_t uid;
 +    char *cp;
 +
-+    if (!owner || !owner[0]) 
++    if (!owner || !owner[0])
 +	fail("Null pointer or empty string passed to touid()");
 +    pw = getpwnam(owner);
 +    if (pw)
@@ -13584,7 +13584,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/nsinstall.c mozilla/security/
 +    gid_t gid;
 +    char *cp;
 +
-+    if (!group || !group[0]) 
++    if (!group || !group[0])
 +	fail("Null pointer or empty string passed to togid()");
 +    gr = getgrnam(group);
 +    if (gr)
@@ -13720,7 +13720,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/nsinstall.c mozilla/security/
 +	    }
 +	    if (!exists && mkdir(toname, mode) < 0) {
 +	    	/* we probably have two nsinstall programs in a race here. */
-+		if (errno == EEXIST && !stat(toname, &sb) && 
++		if (errno == EEXIST && !stat(toname, &sb) &&
 +		    S_ISDIR(sb.st_mode)) {
 +		    fprintf(stderr, "directory creation race: %s\n", toname);
 +		    goto retry;
@@ -13794,7 +13794,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/nsinstall.c mozilla/security/
 +	    fromfd = open(name, O_RDONLY);
 +	    if (fromfd < 0 || fstat(fromfd, &sb) < 0)
 +		fail("cannot access %s", name);
-+	    if (exists && 
++	    if (exists &&
 +	        (!S_ISREG(tosb.st_mode) || access(toname, W_OK) < 0)) {
 +		int rmrv;
 +		rmrv = (S_ISDIR(tosb.st_mode) ? rmdir : unlink)(toname);
@@ -13938,7 +13938,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/pathsub.c mozilla/security/co
 +	fprintf(stderr, ": %s", strerror(errno));
 +#endif
 +    }
-+ 
++
 +    putc('\n', stderr);
 +    abort();
 +    exit(1);
@@ -14013,7 +14013,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/pathsub.c mozilla/security/co
 +char *
 +xstrdup(char *s)
 +{
-+    if (!s || !s[0]) 
++    if (!s || !s[0])
 +	fail("Null pointer or empty string passed to xstrdup()");
 +    return strcpy((char*)xmalloc(strlen(s) + 1), s);
 +}
@@ -14023,7 +14023,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/pathsub.c mozilla/security/co
 +{
 +    char *cp;
 +
-+    if (!path || !path[0]) 
++    if (!path || !path[0])
 +	fail("Null pointer or empty string passed to xbasename()");
 +    while ((cp = strrchr(path, '/')) && cp[1] == '\0')
 +	*cp = '\0';
@@ -14034,7 +14034,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/pathsub.c mozilla/security/co
 +void
 +xchdir(char *dir)
 +{
-+    if (!dir || !dir[0]) 
++    if (!dir || !dir[0])
 +	fail("Null pointer or empty string passed to xchdir()");
 +    if (chdir(dir) < 0)
 +	fail("cannot change directory to %s", dir);
@@ -14119,7 +14119,7 @@ diff -ruN mozilla.orig/security/coreconf/nsinstall/pathsub.c mozilla/security/co
 +    struct stat sb;
 +    char 	buf[BUFSIZ];
 +
-+    if (!path || !path[0]) 
++    if (!path || !path[0])
 +	fail("Null pointer or empty string passed to mkdirs()");
 +    myPath = strdup(path);
 +    if (!myPath)
@@ -14458,7 +14458,7 @@ diff -ruN mozilla.orig/security/coreconf/outofdate.pl mozilla/security/coreconf/
 +# ***** END LICENSE BLOCK *****
 +
 +#Input: [-d dir] foo1.java foo2.java
-+#Compares with: foo1.class foo2.class (if -d specified, checks in 'dir', 
++#Compares with: foo1.class foo2.class (if -d specified, checks in 'dir',
 +#  otherwise assumes .class files in same directory as .java files)
 +#Returns: list of input arguments which are newer than corresponding class
 +#files (non-existent class files are considered to be real old :-)
@@ -14540,7 +14540,7 @@ diff -ruN mozilla.orig/security/coreconf/prefix.mk mozilla/security/coreconf/pre
 +#
 +
 +ifndef OBJ_PREFIX
-+    OBJ_PREFIX = 
++    OBJ_PREFIX =
 +endif
 +
 +#
@@ -14558,7 +14558,7 @@ diff -ruN mozilla.orig/security/coreconf/prefix.mk mozilla/security/coreconf/pre
 +
 +
 +ifndef IMPORT_LIB_PREFIX
-+    IMPORT_LIB_PREFIX = 
++    IMPORT_LIB_PREFIX =
 +endif
 +
 +#
@@ -14566,7 +14566,7 @@ diff -ruN mozilla.orig/security/coreconf/prefix.mk mozilla/security/coreconf/pre
 +#
 +
 +ifndef PROG_PREFIX
-+    PROG_PREFIX = 
++    PROG_PREFIX =
 +endif
 +
 +MK_PREFIX = included
@@ -14628,7 +14628,7 @@ diff -ruN mozilla.orig/security/coreconf/release.pl mozilla/security/coreconf/re
 +
 +&parse_argv;
 +
-+ 
++
 +######-- Do the packaging of jars.
 +
 +foreach $jarfile (split(/ /,$var{FILES}) ) {
@@ -14656,7 +14656,7 @@ diff -ruN mozilla.orig/security/coreconf/release.pl mozilla/security/coreconf/re
 +    }
 +
 +    $dirdepth --;
-+    
++
 +    print STDERR "jardir = $jardir\n";
 +    system("ls $jardir");
 +
@@ -14666,7 +14666,7 @@ diff -ruN mozilla.orig/security/coreconf/release.pl mozilla/security/coreconf/re
 +# count the number of slashes
 +
 +	$slashes =0;
-+	
++
 +	foreach $i (split(//,$jardir)) {
 +	    if ($i =~ /\//) {
 +		$slashes++;
@@ -14674,7 +14674,7 @@ diff -ruN mozilla.orig/security/coreconf/release.pl mozilla/security/coreconf/re
 +	}
 +
 +	$dotdots =0;
-+	
++
 +	foreach $i (split(m|/|,$jardir)) {
 +	    if ($i eq '..') {
 +		$dotdots ++;
@@ -14702,7 +14702,7 @@ diff -ruN mozilla.orig/security/coreconf/release.pl mozilla/security/coreconf/re
 +		}
 +	    }
 +	}
-+	closedir(DIR);	
++	closedir(DIR);
 +
 +	print STDERR "$ZIP $zipoptions $jarfile $filelist\n";
 +	system("$ZIP $zipoptions $jarfile $filelist");
@@ -14769,7 +14769,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +# Double-Colon rules for utilizing the binary release model.          #
 +#######################################################################
 +
-+all:: export libs 
++all:: export libs
 +
 +ifeq ($(AUTOCLEAN),1)
 +autobuild:: clean export private_export libs program install
@@ -14816,7 +14816,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +	find $(SOURCE_MD_DIR)/lib -name "*.a" -exec $(RANLIB) {} \;
 +endif
 +
-+export:: 
++export::
 +	+$(LOOP_OVER_DIRS)
 +
 +private_export::
@@ -14901,7 +14901,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +
 +
 +# $(SOURCE_RELEASE_xxx_JAR) is a name like yyy.jar
-+# $(SOURCE_RELEASE_xx_DIR)  is a name like 
++# $(SOURCE_RELEASE_xx_DIR)  is a name like
 +
 +release_jars::
 +	@echo "== release.pl =="
@@ -15216,7 +15216,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +
 +%.i: %.c
 +ifeq (,$(filter-out WIN%,$(OS_TARGET)))
-+	$(CC) -C /P $(CFLAGS) $< 
++	$(CC) -C /P $(CFLAGS) $<
 +else
 +	$(CC) -C -E $(CFLAGS) $< > $@
 +endif
@@ -15344,7 +15344,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +endif
 +
 +#
-+# JDK_GEN -- for generating "old style" native methods 
++# JDK_GEN -- for generating "old style" native methods
 +#
 +# Generate JDK Headers and Stubs into the '_gen' and '_stubs' directory
 +#
@@ -15374,7 +15374,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +$(JDK_STUB_CFILES): $(JDK_STUB_CLASSFILES)
 +
 +export::
-+	@echo Generating/Updating JDK headers 
++	@echo Generating/Updating JDK headers
 +	$(JAVAH) -d $(JDK_GEN_DIR) $(JDK_PACKAGE_CLASSES)
 +	@echo Generating/Updating JDK stubs
 +	$(JAVAH) -stubs -d $(JDK_STUB_DIR) $(JDK_PACKAGE_CLASSES)
@@ -15423,7 +15423,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +$(JRI_STUB_CFILES): $(JRI_STUB_CLASSFILES)
 +
 +export::
-+	@echo Generating/Updating JRI headers 
++	@echo Generating/Updating JRI headers
 +	$(JAVAH) -jri -d $(JRI_GEN_DIR) $(JRI_PACKAGE_CLASSES)
 +	@echo Generating/Updating JRI stubs
 +	$(JAVAH) -jri -stubs -d $(JRI_GEN_DIR) $(JRI_PACKAGE_CLASSES)
@@ -15470,7 +15470,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +JMC_EXPORT_FILES	:= $(patsubst %,$(JAVA_DESTPATH)/$(PACKAGE)/%.class,$(JMC_EXPORT_PATHS))
 +
 +#
-+# We're doing NSINSTALL -t here (copy mode) because calling INSTALL will pick up 
++# We're doing NSINSTALL -t here (copy mode) because calling INSTALL will pick up
 +# your NSDISTMODE and make links relative to the current directory. This is a
 +# problem because the source isn't in the current directory:
 +#
@@ -15516,9 +15516,9 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +		$(NSINSTALL) -D $@; \
 +	fi
 +
-+export:: $(PUBLIC_EXPORT_DIR) 
++export:: $(PUBLIC_EXPORT_DIR)
 +
-+export:: $(EXPORTS) 
++export:: $(EXPORTS)
 +	$(INSTALL) -m 444 $^ $(PUBLIC_EXPORT_DIR)
 +
 +export:: $(BUILT_SRCS)
@@ -15537,10 +15537,10 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +
 +private_export:: $(PRIVATE_EXPORT_DIR)
 +
-+private_export:: $(PRIVATE_EXPORTS) 
++private_export:: $(PRIVATE_EXPORTS)
 +	$(INSTALL) -m 444 $^ $(PRIVATE_EXPORT_DIR)
 +else
-+private_export:: 
++private_export::
 +	@echo There are no private exports.;
 +endif
 +
@@ -15558,7 +15558,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +REGDATE = $(subst \ ,, $(shell $(PERL)  $(CORE_DEPTH)/$(MODULE)/scripts/now))
 +endif
 +
-+tests:: $(REGRESSION_SPEC) 
++tests:: $(REGRESSION_SPEC)
 +	cd $(PLATFORM); \
 +	../$(SOURCE_MD_DIR)/bin/regress$(PROG_SUFFIX) specfile=../$(REGRESSION_SPEC) progress $(EXTRA_REGRESS_OPTIONS); \
 +	if test ! -d $(TESTS_DIR); then \
@@ -15572,7 +15572,7 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +	echo "then run 'reporter specfile=$(RESULTS_DIR)/rptspec'"
 +endif
 +else
-+tests:: 
++tests::
 +	@echo Error: you didn't specify REGRESSION_SPEC in your manifest.mn file!;
 +endif
 +
@@ -15644,8 +15644,8 @@ diff -ruN mozilla.orig/security/coreconf/rules.mk mozilla/security/coreconf/rule
 +
 +$(MKDEPENDENCIES)::
 +	@$(MAKE_OBJDIR)
-+	touch $(MKDEPENDENCIES) 
-+	chmod u+w $(MKDEPENDENCIES) 
++	touch $(MKDEPENDENCIES)
++	chmod u+w $(MKDEPENDENCIES)
 +#on NT, the preceding touch command creates a read-only file !?!?!
 +#which is why we have to explicitly chmod it.
 +	$(MKDEPEND) -p$(OBJDIR_NAME)/ -o'$(OBJ_SUFFIX)' -f$(MKDEPENDENCIES) \
@@ -16248,7 +16248,7 @@ diff -ruN mozilla.orig/security/coreconf/suffix.mk mozilla/security/coreconf/suf
 +
 +# WIN% overridese this
 +ifndef IMPORT_LIB_SUFFIX
-+    IMPORT_LIB_SUFFIX = 
++    IMPORT_LIB_SUFFIX =
 +endif
 +
 +
@@ -16319,7 +16319,7 @@ diff -ruN mozilla.orig/security/coreconf/tree.mk mozilla/security/coreconf/tree.
 +# Windows platforms override this.  See WIN32.mk.
 +ifndef RELEASE_TREE
 +    ifdef BUILD_SHIP
-+	ifdef USE_SHIPS 
++	ifdef USE_SHIPS
 +	    RELEASE_TREE = $(BUILD_SHIP)
 +	else
 +	    RELEASE_TREE = /share/builds/components
@@ -16346,7 +16346,7 @@ diff -ruN mozilla.orig/security/coreconf/tree.mk mozilla/security/coreconf/tree.
 +	    RELEASE_XP_DIR = france
 +	    RELEASE_MD_DIR = france/$(PLATFORM)
 +	else
-+	    RELEASE_XP_DIR = 
++	    RELEASE_XP_DIR =
 +	    RELEASE_MD_DIR = $(PLATFORM)
 +	endif
 +    endif
@@ -16355,7 +16355,7 @@ diff -ruN mozilla.orig/security/coreconf/tree.mk mozilla/security/coreconf/tree.
 +
 +REPORTER_TREE = $(subst \,\\,$(RELEASE_TREE))
 +
-+IMPORT_XP_DIR = 
++IMPORT_XP_DIR =
 +IMPORT_MD_DIR = $(PLATFORM)
 +
 +MK_TREE = included
@@ -16441,10 +16441,10 @@ diff -ruN mozilla.orig/security/coreconf/version.mk mozilla/security/coreconf/ve
 +# as an environment variable, by the individual Makefile, or
 +# by the <component>-specific "version.mk" file, automatically
 +# generate the next available version number via a perl script.
-+# 
++#
 +
 +ifndef RELEASE_VERSION
-+    RELEASE_VERSION = 
++    RELEASE_VERSION =
 +endif
 +
 +#
