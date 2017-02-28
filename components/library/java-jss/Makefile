@@ -13,15 +13,22 @@
 # Copyright 2013, Jon Tibble
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jss
 COMPONENT_VERSION=	4.3.1
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	Network Security Services for Java (JSS)
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/JSS
 COMPONENT_SRC=		mozilla
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:8d3e848f018fca1a2e5b75f3231546b17923df10002091f7dfa2e53cf6f7a183
 COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/jss/releases/JSS_4_3_1_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	library/java/jss
+COMPONENT_CLASSIFICATION=	System/Services
+COMPONENT_LICENSE=	MPL 1.1/GPL 2.0/LGPL 2.1
+COMPONENT_LICENSE_FILE=	java-jss.license
+
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
@@ -40,14 +47,14 @@ COMPONENT_BUILD_ENV += NSPR_INCLUDE_DIR=/usr/include/mps
 COMPONENT_BUILD_ENV += NSPR_LIB_DIR=$(MPS.$(BITS))
 COMPONENT_BUILD_ENV += NSS_INCLUDE_DIR=/usr/include/mps
 COMPONENT_BUILD_ENV += NSS_LIB_DIR=$(MPS.$(BITS))
-COMPONENT_BUILD_ENV += JAVA_HOME=/usr/java
+COMPONENT_BUILD_ENV += JAVA_HOME=$(JAVA_HOME)
 
 COMPONENT_BUILD_ENV.64 += USE_64=1
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
@@ -74,3 +81,8 @@ install: build
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps"' $(PROTO_DIR)/usr/lib/mps/libjss4.so
 	/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps/$(MACH64)"' $(PROTO_DIR)/usr/lib/mps/$(MACH64)/libjss4.so
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps/$(MACH64)"' $(PROTO_DIR)/usr/lib/mps/$(MACH64)/libjss4.so
+
+REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/mozilla-nss
