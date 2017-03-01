@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2017 Adam Stevko. All rights reserved.
+# Copyright 2016 - 2017 Adam Stevko. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -24,8 +24,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:7f689174d02e6b7e2631306fda4fb8e6b4483102d1bce82b3cdafba33369ad22
 COMPONENT_PROJECT_URL=	https://github.com/libfuse/sshfs
-COMPONENT_ARCHIVE_URL=	https://github.com/libfuse/sshfs/releases/download/sshfs_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	https://github.com/libfuse/sshfs/releases/download/sshfs_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE).asc
+COMPONENT_ARCHIVE_URL=	https://github.com/libfuse/sshfs/releases/download/$(COMPONENT_NAME)_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	https://github.com/libfuse/sshfs/releases/download/$(COMPONENT_NAME)_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE =	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
