@@ -9,22 +9,23 @@
 #
 
 #
-# Copyright 2016 Adam Stevko. All rights reserved.
+# Copyright 2017 Adam Stevko. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sshfs
-COMPONENT_VERSION=	2.7
+COMPONENT_VERSION=	2.8
 COMPONENT_FMRI=		network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION =	System/Libraries
 COMPONENT_SUMMARY=	A network filesystem client to connect to SSH servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ce5f9d390934fc88c287dd937a39d15c2b40cbea6967ba24ad93ed90e0027128
+	sha256:7f689174d02e6b7e2631306fda4fb8e6b4483102d1bce82b3cdafba33369ad22
 COMPONENT_PROJECT_URL=	https://github.com/libfuse/sshfs
-COMPONENT_ARCHIVE_URL=	https://github.com/libfuse/sshfs/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/libfuse/sshfs/releases/download/sshfs_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	https://github.com/libfuse/sshfs/releases/download/sshfs_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE =	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
