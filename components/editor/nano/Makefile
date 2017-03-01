@@ -12,7 +12,7 @@
 # Copyright (c) 2014 Rouven Wachhaus
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
 COMPONENT_VERSION=	2.4.2
@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/nano
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include ../../../make-rules/prep.mk
+include ../../../make-rules/configure.mk
+include ../../../make-rules/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					autoreconf -f )
@@ -44,7 +44,3 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
