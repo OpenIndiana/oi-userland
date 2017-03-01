@@ -18,39 +18,37 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
 # Copyright 2014 Andrzej Szeszo.  All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libspectre
-COMPONENT_VERSION=	0.2.6
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/libspectre
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/libspectre/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2f637c62322c8040514284c00f63a5c310a28801e7dcfbe2ba2791be4fac0dd3
-COMPONENT_ARCHIVE_URL=	http://libspectre.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_NAME=         libspectre
+COMPONENT_VERSION=      0.2.8
+COMPONENT_FMRI=         library/libspectre
 COMPONENT_SUMMARY=      libspectre - A small library for rendering Postscript documents
-COMPONENT_AUTOGEN_MANIFEST=yes
+COMPONENT_PROJECT_URL=  http://www.freedesktop.org/wiki/Software/libspectre/
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:65256af389823bbc4ee4d25bfd1cc19023ffc29ae9f9677f2d200fa6e98bc7a8
+COMPONENT_ARCHIVE_URL=	\
+  http://libspectre.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += system/library
