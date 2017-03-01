@@ -13,39 +13,55 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= java-atk-wrapper
-COMPONENT_VERSION= 0.30.9
+COMPONENT_VERSION= 0.33.2
 COMPONENT_SUMMARY= A wrapper of ATK Bridge for Java Swing apps
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e67df3b9ec26f2a27a7599b5e031a04d8008d9b27bc5d787a2beaae90d0d0dce
+  sha256:b8f685caed7c424babac8b158f51355c772d1e2a0b8a1ce8ced4980edae223e2
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.30/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.33/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= gnome/accessibility/java-atk-wrapper
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING.LESSER
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(JAVA_HOME)/bin:/usr/gnu/bin:/usr/bin
 
 CPPFLAGS += -I$(JAVA_HOME)/include
 CPPFLAGS += -I$(JAVA_HOME)/include/solaris
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f)
+
+# Component directly uses files from build dir
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CP) -a $(SOURCE_DIR)/* $(@D))
+
+# Otherwise creates files with strange paths
+CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += JAVA_HOME=$(JAVA_HOME)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-atk
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/xprop
