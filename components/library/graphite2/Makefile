@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     graphite2
-COMPONENT_VERSION=  1.3.8
+COMPONENT_VERSION=  1.3.9
 COMPONENT_FMRI=     library/c++/graphite2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=  Graphite2 - Library for rendering non-roman scripts
@@ -24,7 +24,7 @@ COMPONENT_PROJECT_URL= http://sourceforge.net/projects/silgraphite
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9f3f25b3a8495ce0782e77f69075c0dd9b7c054847b9bf9ff130bec38f4c8cc2
+    sha256:ec0185b663059553fd46e8c4a4f0dede60a02f13a7a1fefc2ce70332ea814567
 COMPONENT_ARCHIVE_URL= \
     https://github.com/silnrsi/graphite/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
