@@ -15,28 +15,32 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
-COMPONENT_VERSION=	2.4.2
+COMPONENT_VERSION=	2.7.5
+COMPONENT_FMRI=		editor/nano
+COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
+COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_PROJECT_URL=	http://www.nano-editor.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c8cd7f18fcf5696d9df3364ee2a840e0ab7b6bdbd22abf850bbdc951db7f65b9
+    sha256:226be22f46359007aa76499623739f4a7d5fa294a2899c70b21bc09b8d81d907
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/nano
+COMPONENT_LICENSE=	GPLv3
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					autoreconf -f )
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -fiv )
 
 
 CONFIGURE_OPTIONS  +=		--enable-color
 CONFIGURE_OPTIONS  +=		--enable-multibuffer
-CONFIGURE_OPTIONS  +=		--enable-nanorc
 CONFIGURE_OPTIONS  +=		--enable-utf8
 CONFIGURE_OPTIONS  +=		get_wch=getwch
+
+CPPFLAGS += -I$(USRINCDIR)/ncurses
+CFLAGS += -I$(USRINCDIR)/ncurses
 
 # common targets
 build:		$(BUILD_32)
@@ -44,3 +48,6 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library
