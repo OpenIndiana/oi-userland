@@ -12,25 +12,26 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fftw
-COMPONENT_VERSION=	2.1.5
+COMPONENT_VERSION=	3.3.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.fftw.org/
 COMPONENT_SUMMARY=	FFTW - library for calculating discrete Fourier transforms
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f8057fae1c7df8b99116783ef3e94a6a44518d49c72e2e630c24b689c6022630
+    sha256:8f0cde90929bc05587c3368d2f15cd0530a60b8a9912a8e2979a72dbe5af0982
 COMPONENT_ARCHIVE_URL=	http://www.fftw.org/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/High Performance Computing
-COMPONENT_FMRI=		library/fftw-2
+COMPONENT_FMRI=		library/fftw-3
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 VARIANT_FFTW = $(BUILD_DIR)/fftw
 VARIANT_FFTW_FLOAT = $(BUILD_DIR)/fftw-f
@@ -49,11 +50,7 @@ TEST_64 = $(VARIANTS:%=%/$(MACH64)/.tested)
 $(VARIANT_FFTW)/$(MACH64)/.configured: BITS=64
 $(VARIANT_FFTW_FLOAT)/$(MACH64)/.configured:  BITS=64
 
-$(VARIANT_FFTW_FLOAT)/%/.configured: CONFIGURE_OPTIONS+=--enable-float --enable-type-prefix
-
-# Using wrong configure.h without this
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-CONFIGURE_SCRIPT = $(@D)/configure
+$(VARIANT_FFTW_FLOAT)/%/.configured: CONFIGURE_OPTIONS+=--enable-float
 
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --enable-shared
@@ -70,6 +67,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
