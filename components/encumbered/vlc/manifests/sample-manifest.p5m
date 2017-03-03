@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -21,17 +21,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-<transform file path=usr/lib/vlc/plugins/.+\.so -> default mode 0555>
-<transform file path=usr/lib/vlc/plugins/.+\.luac -> default mode 0555>
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
-<transform file path=usr/share/icons/.* -> default restart_fmri svc:/application/desktop-cache/icon-cache:default>
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-
-<transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
-<transform file -> add pkg.depend.bypass-generate libjpeg\.so\..*>
-
-depend fmri=service/opengl/ogl-select type=require
 
 file path=usr/bin/cvlc
 file path=usr/bin/qvlc
@@ -528,10 +517,10 @@ file path=usr/share/icons/hicolor/32x32/apps/vlc.png
 file path=usr/share/icons/hicolor/32x32/apps/vlc.xpm
 file path=usr/share/icons/hicolor/48x48/apps/vlc-xmas.png
 file path=usr/share/icons/hicolor/48x48/apps/vlc.png
-#file path=usr/share/kde4/apps/solid/actions/vlc-openbd.desktop
-#file path=usr/share/kde4/apps/solid/actions/vlc-opencda.desktop
-#file path=usr/share/kde4/apps/solid/actions/vlc-opendvd.desktop
-#file path=usr/share/kde4/apps/solid/actions/vlc-openvcd.desktop
+file path=usr/share/kde4/apps/solid/actions/vlc-openbd.desktop
+file path=usr/share/kde4/apps/solid/actions/vlc-opencda.desktop
+file path=usr/share/kde4/apps/solid/actions/vlc-opendvd.desktop
+file path=usr/share/kde4/apps/solid/actions/vlc-openvcd.desktop
 file path=usr/share/locale/ach/LC_MESSAGES/vlc.mo
 file path=usr/share/locale/af/LC_MESSAGES/vlc.mo
 file path=usr/share/locale/am/LC_MESSAGES/vlc.mo
