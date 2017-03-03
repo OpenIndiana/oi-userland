@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 2.2.4
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
@@ -31,19 +31,21 @@ COMPONENT_PROJECT_URL = http://www.videolan.org/vlc
 COMPONENT_LICENSE = GPLv2.0,LGPLv2.1
 COMPONENT_LICENSE_FILE = $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Required OpenGL extensions
 CFLAGS+= -DGL_GLEXT_PROTOTYPES
 # Define to ensure consistency
 CFLAGS+= -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CXXFLAGS+= -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-# Use libjpeg-turbo
-LIBJPEG_PREFIX=/usr/lib/libjpeg6-turbo
-CFLAGS+= -I/usr/include/libjpeg6-turbo -Wl,-L$(LIBJPEG_PREFIX)/lib -Wl,-R$(LIBJPEG_PREFIX)/lib
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=    $(JPEG_LDFLAGS)
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -185,13 +187,12 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
-REQUIRED_PACKAGES += image/library/libjpeg6-turbo
+REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/sdl-image
@@ -230,6 +231,7 @@ REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
