@@ -1,0 +1,14 @@
+Pulseaudio and illumos-gate disagree on capitalization in /dev/sndstat
+
+Thanks to alanc for the hint.
+--- pulseaudio-6.0/src/modules/oss/oss-util.c.1	2017-03-03 19:17:29.566023403 +0300
++++ pulseaudio-6.0/src/modules/oss/oss-util.c	2017-03-03 19:17:40.043998460 +0300
+@@ -542,7 +542,7 @@
+         line[strcspn(line, "\r\n")] = 0;
+ 
+         if (!b) {
+-            b = pa_streq(line, "Audio devices:");
++            b = pa_streq(line, "Audio Devices:");
+             continue;
+         }
+ 
