@@ -3,14 +3,14 @@
 #
 # HG changeset patch
 # User Boris.Chiu@Oracle.COM
-# Parent  6f1b3e12e65a05883b7375d196cad71d6e5ce1bc
+# Parent  d4f9e8f6dcc097fe929178f51678e9c07da43b0b
 PSARC 2012/384 Fast IB node death detection
 16037511 Add support SM events to facilitate fast node death detection (userland
 
-diff -r 6f1b3e12e65a examples/asyncwatch.c
---- a/examples/asyncwatch.c	Tue Nov 24 20:12:48 2015 -0800
-+++ b/examples/asyncwatch.c	Tue Nov 24 20:13:37 2015 -0800
-@@ -35,11 +35,72 @@
+diff -r d4f9e8f6dcc0 examples/asyncwatch.c
+--- a/examples/asyncwatch.c	Fri Mar 03 11:07:30 2017 -0800
++++ b/examples/asyncwatch.c	Fri Mar 03 11:23:21 2017 -0800
+@@ -35,6 +35,12 @@
  #endif /* HAVE_CONFIG_H */
  
  #include <stdio.h>
@@ -20,10 +20,10 @@ diff -r 6f1b3e12e65a examples/asyncwatch.c
 +#include <signal.h>
 +#include <string.h>
 +#include <strings.h>
-+#if !(defined(__SVR4) && defined(__sun))
+ 
+ #if !(defined(__SVR4) && defined(__sun))
  #include <endian.h>
- #include <byteswap.h>
-+#endif
+@@ -43,6 +49,59 @@
  
  #include <infiniband/verbs.h>
  
@@ -83,7 +83,7 @@ diff -r 6f1b3e12e65a examples/asyncwatch.c
  static const char *event_name_str(enum ibv_event_type event_type)
  {
  	switch (event_type) {
-@@ -59,7 +120,14 @@
+@@ -62,7 +121,14 @@
  		return "IBV_EVENT_CLIENT_REREGISTER";
  	case IBV_EVENT_GID_CHANGE:
  		return "IBV_EVENT_GID_CHANGE";
@@ -99,7 +99,7 @@ diff -r 6f1b3e12e65a examples/asyncwatch.c
  	case IBV_EVENT_CQ_ERR:
  	case IBV_EVENT_QP_FATAL:
  	case IBV_EVENT_QP_REQ_ERR:
-@@ -76,14 +144,172 @@
+@@ -79,14 +145,172 @@
  	}
  }
  
@@ -278,7 +278,7 @@ diff -r 6f1b3e12e65a examples/asyncwatch.c
  
  	dev_list = ibv_get_device_list(NULL);
  	if (!dev_list) {
-@@ -103,19 +329,111 @@
+@@ -106,19 +330,111 @@
  		return 1;
  	}
  
@@ -395,9 +395,9 @@ diff -r 6f1b3e12e65a examples/asyncwatch.c
 -
  	return 0;
  }
-diff -r 6f1b3e12e65a include/infiniband/kern-abi.h
---- a/include/infiniband/kern-abi.h	Tue Nov 24 20:12:48 2015 -0800
-+++ b/include/infiniband/kern-abi.h	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 include/infiniband/kern-abi.h
+--- a/include/infiniband/kern-abi.h	Fri Mar 03 11:07:30 2017 -0800
++++ b/include/infiniband/kern-abi.h	Fri Mar 03 11:23:21 2017 -0800
 @@ -115,7 +115,10 @@
  	IB_USER_VERBS_CMD_SHARE_PD, /* =47 */
  	IB_USER_VERBS_CMD_REG_MR_RELAXED, /* =48 */
@@ -466,9 +466,9 @@ diff -r 6f1b3e12e65a include/infiniband/kern-abi.h
  };
  
  struct ibv_modify_srq_v3 {
-diff -r 6f1b3e12e65a include/infiniband/verbs.h
---- a/include/infiniband/verbs.h	Tue Nov 24 20:12:48 2015 -0800
-+++ b/include/infiniband/verbs.h	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 include/infiniband/verbs.h
+--- a/include/infiniband/verbs.h	Fri Mar 03 11:07:30 2017 -0800
++++ b/include/infiniband/verbs.h	Fri Mar 03 11:23:21 2017 -0800
 @@ -239,6 +239,10 @@
  	IBV_EVENT_QP_LAST_WQE_REACHED,
  	IBV_EVENT_CLIENT_REREGISTER,
@@ -527,9 +527,9 @@ diff -r 6f1b3e12e65a include/infiniband/verbs.h
   * ibv_alloc_pd - Allocate a protection domain
   */
  struct ibv_pd *ibv_alloc_pd(struct ibv_context *context);
-diff -r 6f1b3e12e65a man/ibv_asyncwatch.1
---- a/man/ibv_asyncwatch.1	Tue Nov 24 20:12:48 2015 -0800
-+++ b/man/ibv_asyncwatch.1	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 man/ibv_asyncwatch.1
+--- a/man/ibv_asyncwatch.1	Fri Mar 03 11:07:30 2017 -0800
++++ b/man/ibv_asyncwatch.1	Fri Mar 03 11:23:21 2017 -0800
 @@ -1,16 +1,78 @@
 -.TH IBV_ASYNCWATCH 1 "August 30, 2005" "libibverbs" "USER COMMANDS"
 +'\" te
@@ -617,9 +617,9 @@ diff -r 6f1b3e12e65a man/ibv_asyncwatch.1
 +.sp
 +ibv_asyncwatch -M -s0xff12:4001:ffff::c:2238
 +.sp
-diff -r 6f1b3e12e65a man/ibv_get_async_event.3
---- a/man/ibv_get_async_event.3	Tue Nov 24 20:12:48 2015 -0800
-+++ b/man/ibv_get_async_event.3	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 man/ibv_get_async_event.3
+--- a/man/ibv_get_async_event.3	Fri Mar 03 11:07:30 2017 -0800
++++ b/man/ibv_get_async_event.3	Fri Mar 03 11:23:21 2017 -0800
 @@ -14,7 +14,7 @@
  .fi
  .SH "DESCRIPTION"
@@ -655,9 +655,9 @@ diff -r 6f1b3e12e65a man/ibv_get_async_event.3
  .B ibv_ack_async_event()
  acknowledge the async event
  .I event\fR.
-diff -r 6f1b3e12e65a src/device.c
---- a/src/device.c	Tue Nov 24 20:12:48 2015 -0800
-+++ b/src/device.c	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 src/device.c
+--- a/src/device.c	Fri Mar 03 11:07:30 2017 -0800
++++ b/src/device.c	Fri Mar 03 11:23:21 2017 -0800
 @@ -287,7 +287,15 @@
  	case IBV_EVENT_SRQ_LIMIT_REACHED:
  		event->element.srq = (void *) (uintptr_t) ev.element;
@@ -675,9 +675,9 @@ diff -r 6f1b3e12e65a src/device.c
  	default:
  		event->element.port_num = ev.element;
  		break;
-diff -r 6f1b3e12e65a src/enum_strs.c
---- a/src/enum_strs.c	Tue Nov 24 20:12:48 2015 -0800
-+++ b/src/enum_strs.c	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 src/enum_strs.c
+--- a/src/enum_strs.c	Fri Mar 03 11:07:30 2017 -0800
++++ b/src/enum_strs.c	Fri Mar 03 11:23:21 2017 -0800
 @@ -87,10 +87,14 @@
  		[IBV_EVENT_SRQ_LIMIT_REACHED]	= "SRQ limit reached",
  		[IBV_EVENT_QP_LAST_WQE_REACHED]	= "last WQE reached",
@@ -695,9 +695,9 @@ diff -r 6f1b3e12e65a src/enum_strs.c
  		return "unknown";
  
  	return event_type_str[event];
-diff -r 6f1b3e12e65a src/libibverbs.map
---- a/src/libibverbs.map	Tue Nov 24 20:12:48 2015 -0800
-+++ b/src/libibverbs.map	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 src/libibverbs.map
+--- a/src/libibverbs.map	Fri Mar 03 11:07:30 2017 -0800
++++ b/src/libibverbs.map	Fri Mar 03 11:23:21 2017 -0800
 @@ -21,6 +21,9 @@
  		ibv_dereg_mr;
  		ibv_dereg_mr_relaxed;
@@ -708,9 +708,9 @@ diff -r 6f1b3e12e65a src/libibverbs.map
  		ibv_create_comp_channel;
  		ibv_destroy_comp_channel;
  		ibv_create_cq;
-diff -r 6f1b3e12e65a src/verbs.c
---- a/src/verbs.c	Tue Nov 24 20:12:48 2015 -0800
-+++ b/src/verbs.c	Tue Nov 24 20:13:37 2015 -0800
+diff -r d4f9e8f6dcc0 src/verbs.c
+--- a/src/verbs.c	Fri Mar 03 11:07:30 2017 -0800
++++ b/src/verbs.c	Fri Mar 03 11:23:21 2017 -0800
 @@ -49,6 +49,16 @@
  
  #include "ibverbs.h"
