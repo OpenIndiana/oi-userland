@@ -1,0 +1,45 @@
+# This patch was developed both in-house and from outside. We plan to submit it
+# upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  910d08bbc3fcd26a51905912b6f444c8b02cbb12
+25253258 SUPERCLUSTER : Unexpected reboot of a CELL server causes session spike
+
+diff -r 910d08bbc3fc src/rpc.c
+--- a/src/rpc.c	Tue Feb 21 22:01:47 2017 -0800
++++ b/src/rpc.c	Tue Feb 21 22:50:21 2017 -0800
+@@ -310,10 +310,31 @@
+ 
+ 	mad = umad_get_mad(rcvbuf);
+ 
++
++	/*
++	 * Non-RMPP SA MADs can result in MAD completions
++	 * with status ERR_NO_RECORDS, as per IB Specifications
++	 * Refer : Table 207 of IB Specifications Release 1.3
++	 *
++	 * Some Oracle applications do not expect errno to be
++	 * set for MAD completions with ERR_NO_RECORDS. In order
++	 * to maintain binary compatability with the applications
++	 * errno is not set just for non RMPP MADs completing
++	 * with status ERR_NO_RECORDS. The long term fix for this
++	 * will be to set errno to ENOENT when ERR_NO_RECORDS
++	 * status is encountered.
++	 */
++#define LIBIBMAD_SA_MAD_STATUS_NO_RECORDS 0x0300U
+ 	if ((status = mad_get_field(mad, 0, IB_MAD_STATUS_F)) != 0) {
+-		ERRS("MAD completed with error status 0x%x; dport (%s)",
+-		     status, portid2str(dport));
+-		errno = EIO;
++		if (!rmpp &&
++		    status == (int)LIBIBMAD_SA_MAD_STATUS_NO_RECORDS) {
++			IBWARN("MAD completed with error status NO_RECORDS - skip setting errno; dport (%s)",
++			     portid2str(dport));
++		} else {
++			ERRS("MAD completed with error status 0x%x; dport (%s)",
++			     status, portid2str(dport));
++			errno = EIO;
++		}
+ 		return NULL;
+ 	}
+ 
