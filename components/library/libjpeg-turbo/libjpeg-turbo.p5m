@@ -23,11 +23,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Require package with default JPEG API
-depend fmri=image/library/libjpeg6-turbo type=require
+depend fmri=image/library/libjpeg8-turbo type=require
 
 # Only shipped by libjpeg-turbo
-file path=usr/share/doc/libjpeg-turbo/README
-file path=usr/share/doc/libjpeg-turbo/README-turbo.txt
+file path=usr/share/doc/libjpeg-turbo/LICENSE.md
+file path=usr/share/doc/libjpeg-turbo/README.ijg
+file path=usr/share/doc/libjpeg-turbo/README.md
 file path=usr/share/doc/libjpeg-turbo/example.c
 file path=usr/share/doc/libjpeg-turbo/libjpeg.txt
 file path=usr/share/doc/libjpeg-turbo/structure.txt
@@ -41,3 +42,12 @@ file path=usr/share/doc/libjpeg-turbo/wizard.txt
 #file path=usr/share/man/man1/rdjpgcom.1
 #file path=usr/share/man/man1/wrjpgcom.1
 
+# Add symlinks to default pkg-config files
+link path=usr/lib/pkgconfig/libjpeg.pc \
+	target=../libjpeg8-turbo/lib/pkgconfig/libjpeg.pc
+link path=usr/lib/pkgconfig/libturbojpeg.pc \
+	target=../libjpeg8-turbo/lib/pkgconfig/libturbojpeg.pc
+link path=usr/lib/$(MACH64)/pkgconfig/libjpeg.pc \
+	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libjpeg.pc
+link path=usr/lib/$(MACH64)/pkgconfig/libturbojpeg.pc \
+	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libturbojpeg.pc
