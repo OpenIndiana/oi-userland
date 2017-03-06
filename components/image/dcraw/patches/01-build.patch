@@ -1,7 +1,7 @@
 We create Makefile as dcraw doesn't ship one and remove install script for gmake install to work
 --- /dev/null	2015-04-01 10:52:59.000000000 +0300
 +++ dcraw/Makefile	2015-04-01 10:55:40.131114779 +0300
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,23 @@
 +LCMS_CFLAGS=$(shell pkg-config --cflags lcms2)
 +LCMS_LIBS=$(shell pkg-config --libs lcms2)
 +dcraw_CFLAGS = $(CFLAGS) $(LCMS_CFLAGS) # -DLOCALEDIR=\"/usr/share/locale/\"
@@ -23,4 +23,5 @@ We create Makefile as dcraw doesn't ship one and remove install script for gmake
 +        	/usr/gnu/bin/msgfmt -o $(DESTDIR)/usr/share/locale/$$lang/LC_MESSAGES/dcraw.mo dcraw_$$lang.po; \
 +	done
 +	$(MKDIR) $(DESTDIR)/usr/share/man/man1
-+	cp dcraw.1 $(DESTDIR)/usr/share/man/man1
++	rm -f $(DESTDIR)/usr/share/man/man1/dcraw.1
++	install -m 644 dcraw.1 $(DESTDIR)/usr/share/man/man1
