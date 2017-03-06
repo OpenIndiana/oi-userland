@@ -23,21 +23,25 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rtorrent
 COMPONENT_VERSION=	0.9.4
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	rtorrent - a BitTorrent client for ncurses
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bc0a2c1ee613b68f37021beaf4e64a9252f91ed06f998c1e897897c354ce7e84
 COMPONENT_ARCHIVE_URL=	http://rtorrent.net/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/rtorrent
+COMPONENT_FMRI=		network/rtorrent
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -49,6 +53,8 @@ LDFLAGS.32 += -L/usr/gnu/lib -R/usr/gnu/lib
 LDFLAGS.64 += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))
 CXXFLAGS +=	-I/usr/include/ncurses
+CPPFLAGS +=	-I/usr/include/ncurses
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS.32 +=		--srcdir=$(BUILD_DIR_32)
 CONFIGURE_OPTIONS.64 +=		--srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS +=		--disable-debug
@@ -62,6 +68,10 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/libtorrent
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
