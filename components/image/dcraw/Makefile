@@ -12,10 +12,11 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dcraw
 COMPONENT_VERSION=        9.26.0
+COMPONENT_REVISION=       1
 COMPONENT_PROJECT_URL=    https://www.cybercom.net/~dcoffin/dcraw/
 COMPONENT_SUMMARY=        dcraw - Decoding RAW digital photos
 COMPONENT_SRC=            $(COMPONENT_NAME)
@@ -28,9 +29,9 @@ COMPONENT_LICENSE_FILE=	dcraw.license
 COMPONENT_FMRI=		image/dcraw
 COMPONENT_CLASSIFICATION=	System/Media
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION=( cd $(@D) && rm -f install )
 
@@ -46,6 +47,9 @@ install:        $(INSTALL_32)
 
 test:                $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += codec/jasper
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
