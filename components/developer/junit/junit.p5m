@@ -1,0 +1,284 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/doc/junit/(.+)$ -> set action.hash %<\1> >
+<transform file path=usr/share/doc/junit/samples/org/junit/samples/(.+)$ -> \
+	set action.hash junit/samples/%<1> >
+<transform file path=usr/share/lib/java/(.+)$ -> set action.hash %<\1> >
+<transform file path=usr/share/lib/java/javadoc/junit/(.+)$ -> set action.hash %<\1> >
+
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
+
+file files/junit.3 path=usr/share/man/man3/junit.3
+link path=usr/share/doc/junit/javadoc target=../../lib/java/javadoc/junit
+link path=usr/share/lib/java/junit.jar target=junit-$(COMPONENT_VERSION).jar
+
+file path=usr/share/doc/junit/BUILDING
+file path=usr/share/doc/junit/README.html
+file path=usr/share/doc/junit/build.xml
+file path=usr/share/doc/junit/cpl-v10.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.4.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.4.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.5.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.6.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.6.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.7.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.7.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.1.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.1.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.2.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.2.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.9.1.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.9.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.9.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.10.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.10.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.11.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.11.txt
+file path=usr/share/doc/junit/doc/building-junit.txt
+file path=usr/share/doc/junit/doc/cookbook/cookbook.htm
+file path=usr/share/doc/junit/doc/cookbook/logo.gif
+file path=usr/share/doc/junit/doc/cookstour/Image1.gif
+file path=usr/share/doc/junit/doc/cookstour/Image2.gif
+file path=usr/share/doc/junit/doc/cookstour/Image3.gif
+file path=usr/share/doc/junit/doc/cookstour/Image4.gif
+file path=usr/share/doc/junit/doc/cookstour/Image5.gif
+file path=usr/share/doc/junit/doc/cookstour/Image6.gif
+file path=usr/share/doc/junit/doc/cookstour/Image7.gif
+file path=usr/share/doc/junit/doc/cookstour/cookstour.htm
+file path=usr/share/doc/junit/doc/faq/faq.htm
+file path=usr/share/doc/junit/doc/homepage.html
+file path=usr/share/doc/junit/doc/index.htm
+file path=usr/share/doc/junit/doc/markdown.sh
+file path=usr/share/doc/junit/doc/testinfected/IMG00001.GIF
+file path=usr/share/doc/junit/doc/testinfected/IMG00002.GIF
+file path=usr/share/doc/junit/doc/testinfected/IMG00003.GIF
+file path=usr/share/doc/junit/doc/testinfected/logo.gif
+file path=usr/share/doc/junit/doc/testinfected/testing.htm
+file path=usr/share/doc/junit/samples/org/junit/samples/AllTests.class
+file path=usr/share/doc/junit/samples/org/junit/samples/AllTests.java
+file path=usr/share/doc/junit/samples/org/junit/samples/ListTest.class
+file path=usr/share/doc/junit/samples/org/junit/samples/ListTest.java
+file path=usr/share/doc/junit/samples/org/junit/samples/SimpleTest.class
+file path=usr/share/doc/junit/samples/org/junit/samples/SimpleTest.java
+file path=usr/share/doc/junit/samples/org/junit/samples/money/IMoney.class
+file path=usr/share/doc/junit/samples/org/junit/samples/money/IMoney.java
+file path=usr/share/doc/junit/samples/org/junit/samples/money/Money.class
+file path=usr/share/doc/junit/samples/org/junit/samples/money/Money.java
+file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyBag.class
+file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyBag.java
+file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyTest.class
+file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyTest.java
+file \
+    path=usr/share/doc/junit/samples/org/junit/samples/money/package-info.class
+file \
+    path=usr/share/doc/junit/samples/org/junit/samples/money/package-info.java
+file path=usr/share/doc/junit/samples/org/junit/samples/package-info.class
+file path=usr/share/doc/junit/samples/org/junit/samples/package-info.java
+file path=usr/share/lib/java/javadoc/junit/allclasses-frame.html
+file path=usr/share/lib/java/javadoc/junit/allclasses-noframe.html
+file path=usr/share/lib/java/javadoc/junit/constant-values.html
+file path=usr/share/lib/java/javadoc/junit/deprecated-list.html
+file path=usr/share/lib/java/javadoc/junit/help-doc.html
+file path=usr/share/lib/java/javadoc/junit/index-all.html
+file path=usr/share/lib/java/javadoc/junit/index.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/BaseDescription.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/BaseMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/Condition.Step.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/Condition.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/CoreMatchers.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/CustomMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/CustomTypeSafeMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/Description.NullDescription.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/Description.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/DiagnosingMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/Factory.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/FeatureMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/Matcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/MatcherAssert.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/SelfDescribing.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/StringDescription.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/TypeSafeDiagnosingMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/TypeSafeMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/AllOf.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/AnyOf.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/CombinableMatcher.CombinableBothMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/CombinableMatcher.CombinableEitherMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/CombinableMatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/DescribedAs.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/Every.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/Is.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/IsAnything.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/IsCollectionContaining.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/IsEqual.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/IsInstanceOf.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/IsNot.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/IsNull.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/IsSame.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/StringContains.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/StringEndsWith.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/StringStartsWith.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/SubstringMatcher.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/package-frame.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/package-summary.html
+file path=usr/share/lib/java/javadoc/junit/org/hamcrest/core/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/After.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/AfterClass.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Assert.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Assume.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Before.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/BeforeClass.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/ClassRule.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/ComparisonFailure.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/FixMethodOrder.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Ignore.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Rule.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Test.None.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Test.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/matchers/JUnitMatchers.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/matchers/package-frame.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/matchers/package-summary.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/matchers/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/package-frame.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/package-summary.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/ErrorCollector.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/ExpectedException.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/ExternalResource.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/MethodRule.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/RuleChain.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/RunRules.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/TemporaryFolder.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/TestName.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/TestRule.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/TestWatcher.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/TestWatchman.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/Timeout.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/Verifier.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/package-frame.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/package-summary.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/rules/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Computer.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Describable.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Description.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/JUnitCore.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Request.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Result.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/RunWith.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Runner.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/Filter.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/Filterable.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/NoTestsRemainException.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/Sortable.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/Sorter.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/package-frame.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/package-summary.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/manipulation/package-tree.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/Failure.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/RunListener.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/RunNotifier.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/RunNotifierTest$1.class
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/RunNotifierTest$CorruptListener.class
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/RunNotifierTest$FailureListener.class
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/RunNotifierTest.class
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/RunNotifierTest.java
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/StoppedByUserException.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/package-frame.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/package-summary.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/notification/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/package-frame.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runner/package-summary.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/AllTests.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runners/BlockJUnit4ClassRunner.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/JUnit4.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/MethodSorters.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/Parameterized.Parameter.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runners/Parameterized.Parameters.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runners/Parameterized.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/ParentRunner.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runners/Suite.SuiteClasses.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/Suite.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/FrameworkField.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/FrameworkMember.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/FrameworkMethod.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/InitializationError.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/MultipleFailureException.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/RunnerBuilder.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/RunnerScheduler.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/Statement.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/TestClass.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/package-frame.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/package-summary.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/model/package-tree.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runners/package-frame.html
+file \
+    path=usr/share/lib/java/javadoc/junit/org/junit/runners/package-summary.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runners/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/overview-frame.html
+file path=usr/share/lib/java/javadoc/junit/overview-summary.html
+file path=usr/share/lib/java/javadoc/junit/overview-tree.html
+file path=usr/share/lib/java/javadoc/junit/package-list
+file path=usr/share/lib/java/javadoc/junit/script.js
+file path=usr/share/lib/java/javadoc/junit/serialized-form.html
+file path=usr/share/lib/java/javadoc/junit/stylesheet.css
+file path=usr/share/lib/java/junit-$(COMPONENT_VERSION).jar

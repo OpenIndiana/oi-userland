@@ -1,0 +1,762 @@
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/AboutDialog.java vnc-4_1-javasrc/java/vncviewer/AboutDialog.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/AboutDialog.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/AboutDialog.java	2007-06-27 18:37:00.333341000 +0800
+@@ -19,8 +19,9 @@
+ package vncviewer;
+
+ import java.awt.*;
++import java.awt.event.*;
+
+-class AboutDialog extends vncviewer.Dialog {
++class AboutDialog extends vncviewer.Dialog implements ActionListener {
+
+   public AboutDialog() {
+     super(false);
+@@ -35,18 +36,20 @@
+
+     Panel p2 = new Panel();
+     okButton = new Button("OK");
++    okButton.addActionListener(this);
++
+     p2.add(okButton);
+     add("South", p2);
+
+     pack();
+   }
+
+-  public boolean action(Event event, Object arg) {
+-    if (event.target == okButton) {
++  public void actionPerformed(ActionEvent e) {
++    Object s = e.getSource();
++    if (s instanceof Button && (Button)s ==okButton) {
+       ok = true;
+       endDialog();
+     }
+-    return true;
+   }
+
+   Button okButton;
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vncviewer/CConn.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/CConn.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/CConn.java	2007-06-28 15:55:51.081496000 +0800
+@@ -31,6 +31,8 @@
+
+ package vncviewer;
+
++import java.awt.*;
++import java.awt.event.*;
+ import java.awt.Component;
+ import java.awt.Dimension;
+ import java.awt.Event;
+@@ -39,12 +41,13 @@
+
+ import rfb.SecTypes;
+
+-class ViewportFrame extends Frame {
++class ViewportFrame extends Frame implements WindowListener {
+   public ViewportFrame(String name, CConn cc_) {
+     super(name);
+     cc = cc_;
+     sp = new ScrollPane();
+     add(sp);
++    addWindowListener(this);
+   }
+
+   public void addChild(Component child) {
+@@ -57,13 +60,20 @@
+     setLocation(x, y);
+   }
+
+-  public boolean handleEvent(Event event) {
+-    if (event.id == Event.WINDOW_DESTROY) {
+-      cc.close();
+-    }
+-    return super.handleEvent(event);
++  //------------------------------------------------------------------
++  //	implemented blank methods
++  public void windowClosed(WindowEvent event){}
++  public void windowDeiconified(WindowEvent event){}
++  public void windowIconified(WindowEvent event){}
++  public void windowActivated(WindowEvent event){}
++  public void windowDeactivated(WindowEvent event){}
++  public void windowOpened(WindowEvent event){}
++
++  // method to check which window was closing
++  public void windowClosing(WindowEvent event) {
++    cc.close();
+   }
+-
++
+   CConn cc;
+   ScrollPane sp;
+ }
+@@ -372,7 +382,8 @@
+	                cp.pf().print(), serverPF.print(),
+		            rfb.Encodings.name(currentEncoding),
+		            rfb.Encodings.name(lastUsedEncoding),
+-		            jis.kbitsPerSecond()+" kbit/s",		            cp.majorVersion+"."+cp.minorVersion,
++		            jis.kbitsPerSecond()+" kbit/s",
++		            cp.majorVersion+"."+cp.minorVersion,
+                     SecTypes.name(getCurrentCSecurity().getType()),
+                     getCurrentCSecurity().description());
+     info.showDialog();
+@@ -456,100 +467,103 @@
+     writer().writeKeyEvent(keysym, down);
+   }
+
+-  synchronized public void writeKeyEvent(Event ev) {
+-    if (ev.id != Event.KEY_PRESS && ev.id != Event.KEY_ACTION)
++  synchronized public void writeKeyEvent(KeyEvent ev) {
++    if (ev.getID() != KeyEvent.KEY_PRESSED && !ev.isActionKey())
+       return;
+
+     int keysym;
+
+-    if (ev.id == Event.KEY_PRESS) {
+-      vlog.debug("key press "+ev.key);
+-      if (ev.key < 32) {
++    if (!ev.isActionKey()) {
++      vlog.debug("key press "+ev.getKeyChar());
++      if (ev.getKeyChar() < 32) {
+         // if the ctrl modifier key is down, send the equivalent ASCII since we
+         // will send the ctrl modifier anyway
+
+-        if ((ev.modifiers & Event.CTRL_MASK) != 0) {
+-          keysym = ev.key + 96;
++        if ((ev.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
++          keysym = ev.getKeyChar() + 96;
+           if (keysym == 127) keysym = 95;
+         } else {
+-          switch (ev.key) {
+-          case Event.BACK_SPACE: keysym = rfb.Keysyms.BackSpace; break;
+-          case Event.TAB:        keysym = rfb.Keysyms.Tab; break;
+-          case Event.ENTER:      keysym = rfb.Keysyms.Return; break;
+-          case Event.ESCAPE:     keysym = rfb.Keysyms.Escape; break;
++          switch (ev.getKeyCode()) {
++          case KeyEvent.VK_BACK_SPACE: keysym = rfb.Keysyms.BackSpace; break;
++          case KeyEvent.VK_TAB:        keysym = rfb.Keysyms.Tab; break;
++          case KeyEvent.VK_ENTER:      keysym = rfb.Keysyms.Return; break;
++          case KeyEvent.VK_ESCAPE:     keysym = rfb.Keysyms.Escape; break;
+           default: return;
+           }
+         }
+
+-      } else if (ev.key == 127) {
++      } else if (ev.getKeyChar() == 127) {
+         keysym = rfb.Keysyms.Delete;
+
+       } else {
+-        keysym = rfb.UnicodeToKeysym.translate(ev.key);
++        keysym = rfb.UnicodeToKeysym.translate(ev.getKeyChar());
+         if (keysym == -1)
+           return;
+       }
+
+     } else {
+       // KEY_ACTION
+-      vlog.debug("key action "+ev.key);
+-      switch (ev.key) {
+-      case Event.HOME:         keysym = rfb.Keysyms.Home; break;
+-      case Event.END:          keysym = rfb.Keysyms.End; break;
+-      case Event.PGUP:         keysym = rfb.Keysyms.Page_Up; break;
+-      case Event.PGDN:         keysym = rfb.Keysyms.Page_Down; break;
+-      case Event.UP:           keysym = rfb.Keysyms.Up; break;
+-      case Event.DOWN:         keysym = rfb.Keysyms.Down; break;
+-      case Event.LEFT:         keysym = rfb.Keysyms.Left; break;
+-      case Event.RIGHT:        keysym = rfb.Keysyms.Right; break;
+-      case Event.F1:           keysym = rfb.Keysyms.F1; break;
+-      case Event.F2:           keysym = rfb.Keysyms.F2; break;
+-      case Event.F3:           keysym = rfb.Keysyms.F3; break;
+-      case Event.F4:           keysym = rfb.Keysyms.F4; break;
+-      case Event.F5:           keysym = rfb.Keysyms.F5; break;
+-      case Event.F6:           keysym = rfb.Keysyms.F6; break;
+-      case Event.F7:           keysym = rfb.Keysyms.F7; break;
+-      case Event.F8:           keysym = rfb.Keysyms.F8; break;
+-      case Event.F9:           keysym = rfb.Keysyms.F9; break;
+-      case Event.F10:          keysym = rfb.Keysyms.F10; break;
+-      case Event.F11:          keysym = rfb.Keysyms.F11; break;
+-      case Event.F12:          keysym = rfb.Keysyms.F12; break;
+-      case Event.PRINT_SCREEN: keysym = rfb.Keysyms.Print; break;
+-      case Event.PAUSE:        keysym = rfb.Keysyms.Pause; break;
+-      case Event.INSERT:       keysym = rfb.Keysyms.Insert; break;
++      vlog.debug("key action "+ev.getKeyChar());
++      switch (ev.getKeyCode()) {
++      case KeyEvent.VK_HOME:         keysym = rfb.Keysyms.Home; break;
++      case KeyEvent.VK_END:          keysym = rfb.Keysyms.End; break;
++      case KeyEvent.VK_PAGE_UP:      keysym = rfb.Keysyms.Page_Up; break;
++      case KeyEvent.VK_PAGE_DOWN:    keysym = rfb.Keysyms.Page_Down; break;
++      case KeyEvent.VK_UP:           keysym = rfb.Keysyms.Up; break;
++      case KeyEvent.VK_DOWN:         keysym = rfb.Keysyms.Down; break;
++      case KeyEvent.VK_LEFT:         keysym = rfb.Keysyms.Left; break;
++      case KeyEvent.VK_RIGHT:        keysym = rfb.Keysyms.Right; break;
++      case KeyEvent.VK_F1:           keysym = rfb.Keysyms.F1; break;
++      case KeyEvent.VK_F2:           keysym = rfb.Keysyms.F2; break;
++      case KeyEvent.VK_F3:           keysym = rfb.Keysyms.F3; break;
++      case KeyEvent.VK_F4:           keysym = rfb.Keysyms.F4; break;
++      case KeyEvent.VK_F5:           keysym = rfb.Keysyms.F5; break;
++      case KeyEvent.VK_F6:           keysym = rfb.Keysyms.F6; break;
++      case KeyEvent.VK_F7:           keysym = rfb.Keysyms.F7; break;
++      case KeyEvent.VK_F8:           keysym = rfb.Keysyms.F8; break;
++      case KeyEvent.VK_F9:           keysym = rfb.Keysyms.F9; break;
++      case KeyEvent.VK_F10:          keysym = rfb.Keysyms.F10; break;
++      case KeyEvent.VK_F11:          keysym = rfb.Keysyms.F11; break;
++      case KeyEvent.VK_F12:          keysym = rfb.Keysyms.F12; break;
++      case KeyEvent.VK_PRINTSCREEN:  keysym = rfb.Keysyms.Print; break;
++      case KeyEvent.VK_PAUSE:        keysym = rfb.Keysyms.Pause; break;
++      case KeyEvent.VK_INSERT:       keysym = rfb.Keysyms.Insert; break;
+       default: return;
+       }
+     }
+
+-    writeModifiers(ev.modifiers);
++    writeModifiers(ev.getModifiers());
+     writeKeyEvent(keysym, true);
+     writeKeyEvent(keysym, false);
+     writeModifiers(0);
+   }
+
+
+-  synchronized public void writePointerEvent(Event ev) {
++  synchronized public void writePointerEvent(MouseEvent ev) {
+     if (state() != RFBSTATE_NORMAL) return;
++    int x, y;
+
+-    switch (ev.id) {
+-    case Event.MOUSE_DOWN:
++    switch (ev.getID()) {
++    case MouseEvent.MOUSE_PRESSED:
+       buttonMask = 1;
+-      if ((ev.modifiers & Event.ALT_MASK) != 0) buttonMask = 2;
+-      if ((ev.modifiers & Event.META_MASK) != 0) buttonMask = 4;
++      if ((ev.getModifiers() & KeyEvent.ALT_MASK) != 0) buttonMask = 2;
++      if ((ev.getModifiers() & KeyEvent.META_MASK) != 0) buttonMask = 4;
+       break;
+-    case Event.MOUSE_UP:
++    case MouseEvent.MOUSE_RELEASED:
+       buttonMask = 0;
+       break;
+     }
+
+-    writeModifiers(ev.modifiers & ~Event.ALT_MASK & ~Event.META_MASK);
++    writeModifiers(ev.getModifiers() & ~KeyEvent.ALT_MASK & ~KeyEvent.META_MASK);
+
+-    if (ev.x < 0) ev.x = 0;
+-    if (ev.x > cp.width-1) ev.x = cp.width-1;
+-    if (ev.y < 0) ev.y = 0;
+-    if (ev.y > cp.height-1) ev.y = cp.height-1;
++    x = ev.getX();
++    y = ev.getY();
++    if (x < 0) x = 0;
++    if (x > cp.width-1) x = cp.width-1;
++    if (y < 0) y = 0;
++    if (y > cp.height-1) y = cp.height-1;
+
+-    writer().writePointerEvent(ev.x, ev.y, buttonMask);
++    writer().writePointerEvent(x, y, buttonMask);
+
+     if (buttonMask == 0) writeModifiers(0);
+   }
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/ClipboardDialog.java vnc-4_1-javasrc/java/vncviewer/ClipboardDialog.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/ClipboardDialog.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/ClipboardDialog.java	2007-06-27 18:38:29.996193000 +0800
+@@ -19,10 +19,11 @@
+ package vncviewer;
+
+ import java.awt.*;
++import java.awt.event.*;
+ import java.awt.datatransfer.Clipboard;
+ import java.awt.datatransfer.StringSelection;
+
+-class ClipboardDialog extends vncviewer.Dialog {
++class ClipboardDialog extends vncviewer.Dialog implements ActionListener {
+
+   public ClipboardDialog(CConn cc_) {
+     super(false);
+@@ -34,10 +35,13 @@
+     Panel pb = new Panel();
+     clearButton = new Button("Clear");
+     pb.add(clearButton);
++    clearButton.addActionListener(this);
+     sendButton = new Button("Send to VNC server");
+     pb.add(sendButton);
++    sendButton.addActionListener(this);
+     cancelButton = new Button("Cancel");
+     pb.add(cancelButton);
++    cancelButton.addActionListener(this);
+     add("South", pb);
+
+     pack();
+@@ -75,20 +79,20 @@
+     sendButton.setEnabled(b);
+   }
+
+-  public boolean action(Event event, Object arg) {
+-    if (event.target == clearButton) {
++  public void actionPerformed(ActionEvent e) {
++    Object s = e.getSource();
++    if (s instanceof Button && (Button)s == clearButton) {
+       current = "";
+       textArea.setText(current);
+-    } else if (event.target == sendButton) {
++    } else if (s instanceof Button && (Button)s == sendButton) {
+       ok = true;
+       current = textArea.getText();
+       cc.writeClientCutText(current);
+       endDialog();
+-    } else if (event.target == cancelButton) {
++    } else if (s instanceof Button && (Button)s == cancelButton) {
+       ok = false;
+       endDialog();
+     }
+-    return true;
+   }
+
+   CConn cc;
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/DesktopWindow.java vnc-4_1-javasrc/java/vncviewer/DesktopWindow.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/DesktopWindow.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/DesktopWindow.java	2007-06-28 16:14:34.925355000 +0800
+@@ -25,10 +25,17 @@
+
+ package vncviewer;
+ import java.awt.*;
++import java.awt.event.*;
+ import java.awt.datatransfer.DataFlavor;
+ import java.awt.datatransfer.Transferable;
+
+-class DesktopWindow extends Canvas implements Runnable {
++class DesktopWindow extends Canvas implements
++                    Runnable,
++                    MouseListener,
++                    MouseMotionListener,
++                    KeyListener,
++                    FocusListener
++{
+
+   ////////////////////////////////////////////////////////////////////
+   // The following methods are all called from the RFB thread
+@@ -40,6 +47,11 @@
+
+     cursor = new rfb.Cursor();
+     cursorBacking = new rfb.ManagedPixelBuffer();
++    addMouseListener(this);
++    addMouseMotionListener(this);
++    addKeyListener(this);
++    this.setFocusTraversalKeysEnabled(false);
++    addFocusListener(this);
+   }
+
+   // initGraphics() is needed because for some reason you can't call
+@@ -235,10 +247,67 @@
+     }
+   }
+
++  /** Mouse-Motion callback function */
++  private void mouseMotionCB(MouseEvent event) {
++    if (!cc.viewer.viewOnly.getValue())
++      cc.writePointerEvent(event);
++    // - If local cursor rendering is enabled then use it
++    synchronized (this) {
++      if (cursorAvailable) {
++        // - Render the cursor!
++        if (event.getX() != cursorPosX || event.getY() != cursorPosY) {
++          hideLocalCursor();
++          if (event.getX() >= 0 && event.getX() < im.width() &&
++              event.getY() >= 0 && event.getY() < im.height()) {
++            cursorPosX = event.getX();
++            cursorPosY = event.getY();
++            showLocalCursor();
++          }
++        }
++      }
++    }
++    lastX = event.getX();
++    lastY = event.getY();
++  }
++  public void mouseDragged(MouseEvent event) { mouseMotionCB(event);}
++  public void mouseMoved(MouseEvent event) { mouseMotionCB(event);}
++
++  /** Mouse callback function */
++  private void mouseCB(MouseEvent event) {
++    if (!cc.viewer.viewOnly.getValue())
++      cc.writePointerEvent(event);
++    lastX = event.getX();
++    lastY = event.getY();
++  }
++  public void mouseReleased(MouseEvent event){ mouseCB(event);}
++  public void mousePressed(MouseEvent event) { mouseCB(event);}
++  public void mouseClicked(MouseEvent event){}
++  public void mouseEntered(MouseEvent event){}
++  public void mouseExited(MouseEvent event){}
++
++  /** Handle the key-typed event. */
++  public void keyTyped(KeyEvent event) {}
++  /** Handle the key-released event. */
++  public void keyReleased(KeyEvent event) {}
++  /** Handle the key-pressed event. */
++  public void keyPressed(KeyEvent event) {
++    if (event.getKeyCode() == KeyEvent.VK_F8) {
++      cc.showMenu(lastX, lastY);
++    }
++    if (!cc.viewer.viewOnly.getValue())
++      cc.writeKeyEvent(event);
++  }
++
++  public void focusGained(FocusEvent event) {
++    checkClipboard();
++  }
++  public void focusLost(FocusEvent event) {}
++
+   // handleEvent().  Called by the GUI thread and calls on to CConn as
+   // appropriate.  CConn is responsible for synchronizing the writing of key
+   // and pointer events with other protocol messages.
+
++/*
+   public boolean handleEvent(Event event) {
+     switch (event.id) {
+     case Event.GOT_FOCUS:
+@@ -296,7 +365,7 @@
+
+     return super.handleEvent(event);
+   }
+-
++*/
+
+   ////////////////////////////////////////////////////////////////////
+   // The following methods are called from both RFB and GUI threads
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/Dialog.java vnc-4_1-javasrc/java/vncviewer/Dialog.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/Dialog.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/Dialog.java	2007-06-27 11:32:16.321858000 +0800
+@@ -27,10 +27,14 @@
+ package vncviewer;
+
+ import java.awt.*;
++import java.awt.event.*;
+
+-class Dialog extends Frame {
++class Dialog extends Frame implements WindowListener {
+
+-  public Dialog(boolean modal_) { modal = modal_; }
++  public Dialog(boolean modal_) {
++    modal = modal_;
++    addWindowListener (this);
++  }
+
+   public boolean showDialog() {
+     ok = false;
+@@ -67,12 +71,21 @@
+   // to make sure that checkboxes have the right state, etc.
+   public void initDialog() {}
+
+-  public boolean handleEvent(Event event) {
+-    if (event.id == Event.WINDOW_DESTROY) {
+-      ok = false;
+-      endDialog();
+-    }
+-    return super.handleEvent(event);
++  //------------------------------------------------------------------
++  //	implemented blank methods
++  public void windowClosed(WindowEvent event){}
++  public void windowDeiconified(WindowEvent event){}
++  public void windowIconified(WindowEvent event){}
++  public void windowActivated(WindowEvent event){}
++  public void windowDeactivated(WindowEvent event){}
++  public void windowOpened(WindowEvent event){}
++
++  //------------------------------------------------------------------
++
++  // method to check which window was closing
++  public void windowClosing(WindowEvent event) {
++    ok = false;
++    endDialog();
+   }
+
+   protected boolean ok, done;
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/InfoDialog.java vnc-4_1-javasrc/java/vncviewer/InfoDialog.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/InfoDialog.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/InfoDialog.java	2007-06-27 18:39:20.187657000 +0800
+@@ -19,8 +19,9 @@
+ package vncviewer;
+
+ import java.awt.*;
++import java.awt.event.*;
+
+-class InfoDialog extends vncviewer.Dialog {
++class InfoDialog extends vncviewer.Dialog implements ActionListener {
+
+   public InfoDialog() {
+     super(false);
+@@ -43,6 +44,7 @@
+     Panel p2 = new Panel();
+     okButton = new Button("OK");
+     p2.add(okButton);
++    okButton.addActionListener(this);
+     add("South", p2);
+
+     pack();
+@@ -81,12 +83,12 @@
+	pack();
+   }
+
+-  public boolean action(Event event, Object arg) {
+-    if (event.target == okButton) {
++  public void actionPerformed(ActionEvent e) {
++    Object s = e.getSource();
++    if (s instanceof Button && (Button)s == okButton) {
+       ok = true;
+       endDialog();
+     }
+-    return true;
+   }
+
+ //  TextArea infoLabel;
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/OptionsDialog.java vnc-4_1-javasrc/java/vncviewer/OptionsDialog.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/OptionsDialog.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/OptionsDialog.java	2007-06-27 19:11:27.028914000 +0800
+@@ -19,8 +19,12 @@
+ package vncviewer;
+
+ import java.awt.*;
++import java.awt.event.*;
+
+-class OptionsDialog extends vncviewer.Dialog {
++class OptionsDialog extends vncviewer.Dialog implements
++                            ActionListener,
++                            ItemListener
++{
+
+   public OptionsDialog(OptionsDialogCallback cb_) {
+     super(false);
+@@ -31,8 +35,11 @@
+
+	Panel tabPanel = new Panel();
+	tabPanel.add(encodingSel=new Button("Encoding"));
++    encodingSel.addActionListener(this);
+	tabPanel.add(inputSel=new Button("Inputs"));
+-	tabPanel.add(miscSel=new Button("Misc"));
++    inputSel.addActionListener(this);
++	tabPanel.add(miscSel=new Button("miscSel"));
++    miscSel.addActionListener(this);
+	add(tabPanel, BorderLayout.NORTH);
+
+	cardPanel = new Panel();
+@@ -78,8 +85,10 @@
+     Panel pb = new Panel();
+     okButton = new Button("OK");
+     pb.add(okButton);
++    okButton.addActionListener(this);
+     cancelButton = new Button("Cancel");
+     pb.add(cancelButton);
++    cancelButton.addActionListener(this);
+     add(pb, BorderLayout.SOUTH);
+
+     pack();
+@@ -113,6 +122,7 @@
+     Checkbox c = new Checkbox(str);
+     panelGB.setConstraints(c, panelGBC);
+     panel.add(c);
++    c.addItemListener(this);
+     return c;
+   }
+
+@@ -120,34 +130,40 @@
+     Checkbox c = new Checkbox(str, group, false);
+     panelGB.setConstraints(c, panelGBC);
+     panel.add(c);
++    c.addItemListener(this);
+     return c;
+   }
+
+-  public boolean action(Event event, Object arg) {
+-    if (event.target == okButton) {
++  public void actionPerformed(ActionEvent e) {
++    Object s = e.getSource();
++    if (s instanceof Button && (Button)s == okButton) {
+       ok = true;
+       if (cb != null) cb.getOptions();
+       endDialog();
+-    } else if (event.target == cancelButton) {
++    } else if (s instanceof Button && (Button)s == cancelButton) {
+       ok = false;
+       endDialog();
+-    } else if (event.target == autoSelect) {
+-      zrle.setEnabled(!autoSelect.getState());
+-      hextile.setEnabled(!autoSelect.getState());
+-      raw.setEnabled(!autoSelect.getState());
+-    } else if (event.target == encodingSel) {
++    } else if (s instanceof Button && (Button)s == encodingSel) {
+	  ((CardLayout)cardPanel.getLayout()).show(cardPanel, "Encoding and Colour Level:");
+	  makeBold(encodingSel);
+-    } else if (event.target == inputSel) {
++    } else if (s instanceof Button && (Button)s == inputSel) {
+       ((CardLayout)cardPanel.getLayout()).show(cardPanel, "Inputs:");
+       makeBold(inputSel);
+-	} else if (event.target == miscSel) {
++	} else if (s instanceof Button && (Button)s == miscSel) {
+       ((CardLayout)cardPanel.getLayout()).show(cardPanel, "Misc:");
+       makeBold(miscSel);
+     }
+-    return true;
+   }
+-
++
++  public void itemStateChanged(ItemEvent e) {
++    Object s = e.getSource();
++    if (s instanceof Checkbox && (Checkbox)s == autoSelect) {
++      zrle.setEnabled(!autoSelect.getState());
++      hextile.setEnabled(!autoSelect.getState());
++      raw.setEnabled(!autoSelect.getState());
++    }
++  }
++
+   private void makeBold ( Button b )
+   {
+     int size = b.getFont().getSize(); // Don't want to rely on getFontSize()
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/PasswdDialog.java vnc-4_1-javasrc/java/vncviewer/PasswdDialog.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/PasswdDialog.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/PasswdDialog.java	2007-06-28 13:14:37.246375000 +0800
+@@ -19,8 +19,9 @@
+ package vncviewer;
+
+ import java.awt.*;
++import java.awt.event.*;
+
+-class PasswdDialog extends vncviewer.Dialog {
++class PasswdDialog extends vncviewer.Dialog implements KeyListener{
+
+   public PasswdDialog(String title, boolean userDisabled, boolean passwdDisabled) {
+     super(true);
+@@ -32,6 +33,7 @@
+     userEntry.setEnabled(!userDisabled);
+     userLabel.setEnabled(!userDisabled);
+     p1.add(userEntry);
++    userEntry.addKeyListener(this);
+     add("Center", p1);
+
+     Panel p2 = new Panel();
+@@ -42,24 +44,34 @@
+     passwdEntry.setEnabled(!passwdDisabled);
+     passwdLabel.setEnabled(!passwdDisabled);
+     p2.add(passwdEntry);
++    passwdEntry.addKeyListener(this);
+     add("South", p2);
+
+     pack();
+   }
+
+-  synchronized public boolean action(Event event, Object arg) {
+-    if (event.target == userEntry) {
++  /** Handle the key-typed event. */
++  public void keyTyped(KeyEvent event) { }
++  /** Handle the key-released event. */
++  public void keyReleased(KeyEvent event) { }
++  /** Handle the key-pressed event. */
++  public void keyPressed(KeyEvent event) {
++    Object s = event.getSource();
++    if (s instanceof TextField && (TextField)s == userEntry) {
+       if (passwdEntry.isEnabled())
+         passwdEntry.requestFocus();
+       else {
+-      	ok = true;
+-      	endDialog();
++      	if (event.getKeyCode() == KeyEvent.VK_ENTER) {
++         ok = true;
++         endDialog();
++        }
+       }
+-    } else if (event.target == passwdEntry) {
+-      ok = true;
+-      endDialog();
++    } else if (s instanceof TextField && (TextField)s == passwdEntry) {
++        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
++         ok = true;
++         endDialog();
++        }
+     }
+-    return true;
+   }
+
+   Label userLabel;
+diff -urN vnc-4_1-javasrc.orig/java/vncviewer/ServerDialog.java vnc-4_1-javasrc/java/vncviewer/ServerDialog.java
+--- vnc-4_1-javasrc.orig/java/vncviewer/ServerDialog.java	2005-03-11 00:55:07.000000000 +0800
++++ vnc-4_1-javasrc/java/vncviewer/ServerDialog.java	2007-06-27 19:54:23.828917000 +0800
+@@ -19,9 +19,12 @@
+ package vncviewer;
+
+ import java.awt.*;
++import java.awt.event.*;
+
+-class ServerDialog extends vncviewer.Dialog {
+-
++class ServerDialog extends vncviewer.Dialog implements
++                           ActionListener,
++                           KeyListener
++{
+   public ServerDialog(OptionsDialog options_,
+                       AboutDialog about_, String defaultServerName) {
+     super(true);
+@@ -35,18 +38,23 @@
+                  0, 0, 1, 1, 0, new Insets(4, 0, 0, 0));
+     addComponent(server=new TextField(15),
+                  1, 0, 2, 1, 0, new Insets(4, 0, 0, 0));
++    server.addKeyListener(this);
+     addComponent(new Label("Encryption:", Label.RIGHT),
+                  0, 1, 1, 1, 0, new Insets(2, 0, 0, 0));
+     addComponent(encryption = new Choice(),
+                  1, 1, 2, 1, 0, new Insets(2, 0, 0, 0));
+     addComponent(optionsButton = new Button("Options..."),
+			 1, 2, 1, 1, 0, new Insets(8, 4, 4, 4));
+-	  addComponent(aboutButton = new Button("About..."),
++    optionsButton.addActionListener(this);
++    addComponent(aboutButton = new Button("About..."),
+	             0, 2, 1, 1, 35, new Insets(8, 4, 4, 4));
++    aboutButton.addActionListener(this);
+     addComponent(okButton = new Button("OK"),
+		 2, 2, 1, 1, 40, new Insets(8, 4, 4, 4));
++    okButton.addActionListener(this);
+     addComponent(cancelButton = new Button("Cancel"),
+                  3, 2, 1, 1, 30, new Insets(8, 4, 4, 4));
++    cancelButton.addActionListener(this);
+     // Set default values
+     if (defaultServerName != null) server.setText(defaultServerName);
+	  encryption.add("Not supported");
+@@ -71,20 +79,34 @@
+       add(comp, gbc);
+   }
+
+-  synchronized public boolean action(Event event, Object arg) {
+-    if (event.target == okButton || event.target == server) {
++  public void actionPerformed(ActionEvent e) {
++    Object s = e.getSource();
++    if (s instanceof Button && (Button)s == okButton) {
+       ok = true;
+       endDialog();
+-    } else if (event.target == cancelButton) {
++    } else if (s instanceof Button && (Button)s == cancelButton) {
+       ok = false;
+       endDialog();
+-    } else if (event.target == optionsButton) {
++    } else if (s instanceof Button && (Button)s == optionsButton) {
+       options.showDialog();
+-    } else if (event.target == aboutButton) {
++    } else if (s instanceof Button && (Button)s == aboutButton) {
+       about.showDialog();
+     }
+-    return true;
+   }
++
++  /** Handle the key-typed event. */
++  public void keyTyped(KeyEvent event) { }
++  /** Handle the key-released event. */
++  public void keyReleased(KeyEvent event) { }
++  /** Handle the key-pressed event. */
++  public void keyPressed(KeyEvent event) {
++    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
++      ok = true;
++      endDialog();
++    }
++  }
++
++
+
+   TextField server;
+   Choice encryption;

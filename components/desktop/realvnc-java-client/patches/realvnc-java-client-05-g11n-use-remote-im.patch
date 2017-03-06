@@ -1,0 +1,67 @@
+--- vnc-4_1-javasrc/java/rfb/Keysyms.java.orig	2008-01-15 15:55:10.561444000 +0900
++++ vnc-4_1-javasrc/java/rfb/Keysyms.java	2008-01-15 15:56:25.564721000 +0900
+@@ -63,6 +63,12 @@ public class Keysyms {
+   public static final int script_switch = 0xFF7E;
+   public static final int Num_Lock = 0xFF7F;
+
++  public static final int KP_Left = 0xFF96;
++  public static final int KP_Up = 0xFF97;
++  public static final int KP_Right = 0xFF98;
++  public static final int KP_Down = 0xFF99;
++  public static final int KP_Begin = 0xFF9d;
++
+   public static final int F1 = 0xFFBE;
+   public static final int F2 = 0xFFBF;
+   public static final int F3 = 0xFFC0;
+@@ -84,4 +90,7 @@ public class Keysyms {
+   public static final int Meta_R = 0xFFE8;
+   public static final int Alt_L = 0xFFE9;
+   public static final int Alt_R = 0xFFEA;
++
++  public static final int Kanji = 0xFF21;
++  public static final int Henkan_Mode = 0xFF23;
+ }
+--- vnc-4_1-javasrc/java/rfb/UnicodeToKeysym.java.orig	2008-01-15 15:12:34.345738000 +0900
++++ vnc-4_1-javasrc/java/rfb/UnicodeToKeysym.java	2008-01-15 17:11:07.898546000 +0900
+@@ -775,6 +775,11 @@ public class UnicodeToKeysym {
+         (unicode >= 0xa0 && unicode <= 0xff))
+       return unicode;
+
++    /* From HALFWIDTH IDEOGRAPHIC FULL STOP (U+FF61)
++     * To   HALFWIDTH KATAKANA SEMI-VOICED SOURND MARK (U+FF9F) */
++    if ((unicode >= 0xff61 && unicode <= 0xff9f))
++      return unicode - 64192;
++
+     int min = 0;
+     int max = table.length - 1;
+     int mid;
+--- vnc-4_1-javasrc/java/vncviewer/CConn.java.orig	2008-01-15 15:55:46.024607000 +0900
++++ vnc-4_1-javasrc/java/vncviewer/CConn.java	2008-01-15 17:24:45.512185000 +0900
+@@ -521,6 +521,16 @@ public class CConn extends rfb.CConnecti
+       case KeyEvent.VK_PRINTSCREEN:  keysym = rfb.Keysyms.Print; break;
+       case KeyEvent.VK_PAUSE:        keysym = rfb.Keysyms.Pause; break;
+       case KeyEvent.VK_INSERT:       keysym = rfb.Keysyms.Insert; break;
++      case KeyEvent.VK_KP_LEFT:      keysym = rfb.Keysyms.KP_Left; break;
++      case KeyEvent.VK_KP_UP:        keysym = rfb.Keysyms.KP_Up; break;
++      case KeyEvent.VK_KP_RIGHT:     keysym = rfb.Keysyms.KP_Right; break;
++      case KeyEvent.VK_KP_DOWN:      keysym = rfb.Keysyms.KP_Down; break;
++      case KeyEvent.VK_BEGIN:        keysym = rfb.Keysyms.KP_Begin; break;
++      case KeyEvent.VK_ACCEPT:       keysym = rfb.Keysyms.Execute; break;
++      case KeyEvent.VK_CONVERT:      keysym = rfb.Keysyms.Kanji; break;
++      case KeyEvent.VK_INPUT_METHOD_ON_OFF:
++                                     keysym = rfb.Keysyms.Henkan_Mode; break;
++      case KeyEvent.VK_KANA_LOCK:    keysym = rfb.Keysyms.Mode_switch; break;
+       default: return;
+       }
+     }
+--- vnc-4_1-javasrc/java/vncviewer/DesktopWindow.java.orig	2008-01-15 15:56:17.533387000 +0900
++++ vnc-4_1-javasrc/java/vncviewer/DesktopWindow.java	2008-01-15 15:56:25.574174000 +0900
+@@ -48,6 +48,8 @@ class DesktopWindow extends Canvas imple
+     cursorBacking = new rfb.ManagedPixelBuffer();
+     addMouseListener(this);
+     addMouseMotionListener(this);
++    // Disable local input methods and use remote input methods.
++    enableInputMethods(false);
+     addKeyListener(this);
+     this.setFocusTraversalKeysEnabled(false);
+     addFocusListener(this);
