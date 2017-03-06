@@ -4,7 +4,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rdr/InStream.java vnc-4_1-javasrc/java/rdr/In
 @@ -116,6 +116,48 @@
                                       int b1 = b[ptr++]; int b2 = b[ptr++];
                                       return b0 << 16 | b1 << 8 | b2; }
-
+ 
 +  public final int readPixel() { return readU32(); }
 +
 +  public final void readPixels(int[] buf, int length) {
@@ -20,7 +20,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rdr/InStream.java vnc-4_1-javasrc/java/rdr/In
 +      n -= ret;
 +    }
 +  }
-+
++  
 +  /* CPIXEL is 3 bytes for true-colour = 1, bpp = 32, depth = 24,
 +   * red-mask = 0xff0000, green-mask = 0xff00 and blue-mask = 0xff
 +   */
@@ -34,7 +34,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rdr/InStream.java vnc-4_1-javasrc/java/rdr/In
 +
 +  public final void readCPixels(int[] buf, int length) {
 +    int n = length;
-+
++    
 +    while (n > 0) {
 +      int offset = length - n;
 +      int ret;
@@ -48,7 +48,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rdr/InStream.java vnc-4_1-javasrc/java/rdr/In
 +
 +
    // pos() returns the position in the stream.
-
+ 
    abstract public int pos();
 diff -urN vnc-4_1-javasrc.sun/java/rfb/CMsgHandler.java vnc-4_1-javasrc/java/rfb/CMsgHandler.java
 --- vnc-4_1-javasrc.sun/java/rfb/CMsgHandler.java	2007-07-21 01:40:13.563246000 +0800
@@ -64,20 +64,20 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/CMsgHandler.java vnc-4_1-javasrc/java/rfb
    }
 @@ -55,7 +55,7 @@
    public void serverCutText(String str) {}
-
+ 
    public void fillRect(int x, int y, int w, int h, int pix) {}
 -  public void imageRect(int x, int y, int w, int h, byte[] pix, int offset) {}
 +  public void imageRect(int x, int y, int w, int h, int[] pix) {}
    public void copyRect(int x, int y, int w, int h, int srcX, int srcY) {}
-
+ 
    public ConnParams cp;
 diff -urN vnc-4_1-javasrc.sun/java/rfb/CMsgReader.java vnc-4_1-javasrc/java/rfb/CMsgReader.java
 --- vnc-4_1-javasrc.sun/java/rfb/CMsgReader.java	2007-07-21 01:40:13.563414000 +0800
 +++ vnc-4_1-javasrc/java/rfb/CMsgReader.java	2007-07-21 03:54:21.011746000 +0800
 @@ -31,20 +31,11 @@
-
+ 
    public rdr.InStream getInStream() { return is; }
-
+ 
 -  public byte[] getImageBuf(int required, int requested) {
 -    int requiredBytes = required * (handler.cp.pf().bpp / 8);
 -    int requestedBytes = requested * (handler.cp.pf().bpp / 8);
@@ -96,10 +96,10 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/CMsgReader.java vnc-4_1-javasrc/java/rfb/
 -
      return imageBuf;
    }
-
+ 
 @@ -135,12 +126,12 @@
    }
-
+ 
    protected void readSetCursor(int hotspotX, int hotspotY, int w, int h) {
 -    int data_len = w * h * (handler.cp.pf().bpp/8);
 +    int data_len = w * h;
@@ -107,11 +107,11 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/CMsgReader.java vnc-4_1-javasrc/java/rfb/
 -    byte[] data = new byte[data_len];
 +    int[] data = new int[data_len];
      byte[] mask = new byte[mask_len];
-
+ 
 -    is.readBytes(data, 0, data_len);
 +    is.readPixels(data, data_len);
      is.readBytes(mask, 0, mask_len);
-
+ 
      handler.setCursor(hotspotX, hotspotY, w, h, data, mask);
 @@ -149,9 +140,8 @@
    CMsgHandler handler;
@@ -121,16 +121,16 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/CMsgReader.java vnc-4_1-javasrc/java/rfb/
 +  int[] imageBuf;
    int imageBufSize;
 -  int imageBufIdealSize;
-
+ 
    static LogWriter vlog = new LogWriter("CMsgReader");
  }
 diff -urN vnc-4_1-javasrc.sun/java/rfb/HextileDecoder.java vnc-4_1-javasrc/java/rfb/HextileDecoder.java
 --- vnc-4_1-javasrc.sun/java/rfb/HextileDecoder.java	2007-07-21 01:40:13.566481000 +0800
 +++ vnc-4_1-javasrc/java/rfb/HextileDecoder.java	2007-07-21 03:57:45.031091000 +0800
 @@ -22,12 +22,9 @@
-
+ 
    public HextileDecoder(CMsgReader reader_) { reader = reader_; }
-
+ 
 -  static final int BPP=8;
 -  static final int readPixel(rdr.InStream is) { return is.readU8(); }
 -
@@ -138,12 +138,12 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/HextileDecoder.java vnc-4_1-javasrc/java/
      rdr.InStream is = reader.getInStream();
 -    byte[] buf = reader.getImageBuf(16 * 16 * 4, 0);
 +    int[] buf = reader.getImageBuf(16 * 16 * 4);
-
+ 
      int bg = 0;
      int fg = 0;
 @@ -43,20 +40,20 @@
          int tileType = is.readU8();
-
+ 
          if ((tileType & Hextile.raw) != 0) {
 -          is.readBytes(buf, 0, tw * th * (BPP/8));
 -          handler.imageRect(tx,ty,tw,th, buf, 0);
@@ -151,29 +151,29 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/HextileDecoder.java vnc-4_1-javasrc/java/
 +          handler.imageRect(tx,ty,tw,th, buf);
            continue;
          }
-
+ 
          if ((tileType & Hextile.bgSpecified) != 0)
 -          bg = readPixel(is);
 +          bg = is.readPixel();
-
+ 
          int len = tw * th;
          int ptr = 0;
 -        while (len-- > 0) buf[ptr++] = (byte)bg;
 +        while (len-- > 0) buf[ptr++] = bg;
-
+ 
          if ((tileType & Hextile.fgSpecified) != 0)
 -          fg = readPixel(is);
 +          fg = is.readPixel();
-
+ 
          if ((tileType & Hextile.anySubrects) != 0) {
            int nSubrects = is.readU8();
 @@ -64,7 +61,7 @@
            for (int i = 0; i < nSubrects; i++) {
-
+ 
              if ((tileType & Hextile.subrectsColoured) != 0)
 -              fg = readPixel(is);
 +              fg = is.readPixel();
-
+ 
              int xy = is.readU8();
              int wh = is.readU8();
 @@ -76,12 +73,12 @@
@@ -197,10 +197,10 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/ManagedPixelBuffer.java vnc-4_1-javasrc/j
 @@ -28,10 +28,10 @@
      checkDataSize();
    }
-
+ 
 -  public int dataLen() { return area() * (getPF().bpp/8); }
 +  public int dataLen() { return area(); }
-
+ 
    final void checkDataSize() {
      if (data == null || data.length < dataLen())
 -      data = new byte[dataLen()];
@@ -218,10 +218,10 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelBuffer.java vnc-4_1-javasrc/java/rfb
 +// PixelBuffer - note that this code is only written for the 32bpp case at the
  // moment.
  //
-
+ 
 @@ -29,8 +29,8 @@
    }
-
+ 
    public void setPF(PixelFormat pf) {
 -    if (pf.bpp != 8)
 -      throw new rfb.Exception("Internal error: bpp must be 8 in PixelBuffer");
@@ -233,7 +233,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelBuffer.java vnc-4_1-javasrc/java/rfb
 @@ -39,28 +39,22 @@
    public final int height() { return height_; }
    public final int area() { return width_ * height_; }
-
+ 
 -  public int getStride() { return width_; }
 -
    public void fillRect(int x, int y, int w, int h, int pix) {
@@ -247,7 +247,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelBuffer.java vnc-4_1-javasrc/java/rfb
 +      for (int rx = x; rx < x + w; rx++)
 +        data[ry * width_ + rx] = pix;
    }
-
+ 
 -  public void imageRect(int x, int y, int w, int h, byte[] pix, int offset) {
 -    int bytesPerPixel = getPF().bpp/8;
 -    int bytesPerDestRow = bytesPerPixel * getStride();
@@ -256,7 +256,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelBuffer.java vnc-4_1-javasrc/java/rfb
 -      System.arraycopy(pix, offset+j*w, data, (y+j) * bytesPerDestRow + x, w);
 +      System.arraycopy(pix, (w * j), data, width_ * (y + j) + x, w);
    }
-
+ 
    public void copyRect(int x, int y, int w, int h, int srcX, int srcY) {
 -    int dest = x + y * getStride();
 -    int src = srcX + srcY * getStride();
@@ -271,12 +271,12 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelBuffer.java vnc-4_1-javasrc/java/rfb
 @@ -75,27 +69,31 @@
      }
    }
-
+ 
 -  public void maskRect(int x, int y, int w, int h, byte[] pix, byte[] mask) {
 +  public void maskRect(int x, int y, int w, int h, int[] pix, byte[] mask) {
      int maskBytesPerRow = (w + 7) / 8;
 -    int stride = getStride();
-+
++    
      for (int j = 0; j < h; j++) {
        int cy = y + j;
 -      if (cy >= 0 && cy < height_) {
@@ -291,7 +291,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelBuffer.java vnc-4_1-javasrc/java/rfb
 -          }
 -        }
 -      }
-+
++      
 +      if (cy < 0 || cy >= height_)
 +        continue;
 +
@@ -306,13 +306,13 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelBuffer.java vnc-4_1-javasrc/java/rfb
 +
 +        if ((mask[byte_] & (1 << bit)) != 0)
 +         data[cy * width_ + cx] = pix[j * w + i];
-+      }
++      }     
      }
    }
-
+ 
 -  public byte[] data;
 +  public int[] data;
-
+ 
    protected PixelFormat format;
    protected int width_, height_;
 diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelFormat.java vnc-4_1-javasrc/java/rfb/PixelFormat.java
@@ -324,16 +324,16 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/PixelFormat.java vnc-4_1-javasrc/java/rfb
    }
 -  public PixelFormat() { this(8,8,false,true,7,7,3,0,3,6); }
 +  public PixelFormat() { this(32, 24, true, true, 0xff, 0xff, 0xff, 16, 8, 0);}
-
+ 
    public boolean equal(PixelFormat x) {
      return (bpp == x.bpp &&
 diff -urN vnc-4_1-javasrc.sun/java/rfb/RREDecoder.java vnc-4_1-javasrc/java/rfb/RREDecoder.java
 --- vnc-4_1-javasrc.sun/java/rfb/RREDecoder.java	2007-07-21 01:40:13.567934000 +0800
 +++ vnc-4_1-javasrc/java/rfb/RREDecoder.java	2007-07-21 04:05:32.633576000 +0800
 @@ -22,17 +22,14 @@
-
+ 
    public RREDecoder(CMsgReader reader_) { reader = reader_; }
-
+ 
 -  static final int BPP=8;
 -  static final int readPixel(rdr.InStream is) { return is.readU8(); }
 -
@@ -343,7 +343,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/RREDecoder.java vnc-4_1-javasrc/java/rfb/
 -    int bg = readPixel(is);
 +    int bg = is.readPixel();
      handler.fillRect(x,y,w,h, bg);
-
+ 
      for (int i = 0; i < nSubrects; i++) {
 -      int pix = readPixel(is);
 +      int pix = is.readPixel();
@@ -355,7 +355,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/RawDecoder.java vnc-4_1-javasrc/java/rfb/
 +++ vnc-4_1-javasrc/java/rfb/RawDecoder.java	2007-07-21 04:06:03.921877000 +0800
 @@ -23,17 +23,10 @@
    public RawDecoder(CMsgReader reader_) { reader = reader_; }
-
+ 
    public void readRect(int x, int y, int w, int h, CMsgHandler handler) {
 -    byte[] imageBuf = reader.getImageBuf(w, w*h);
 -    int nPixels = imageBuf.length / (reader.bpp() / 8);
@@ -373,7 +373,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/RawDecoder.java vnc-4_1-javasrc/java/rfb/
 +    reader.getInStream().readPixels(imageBuf, w * h);
 +    handler.imageRect(x, y, w, h, imageBuf);
    }
-
+ 
    CMsgReader reader;
 diff -urN vnc-4_1-javasrc.sun/java/rfb/ZRLEDecoder.java vnc-4_1-javasrc/java/rfb/ZRLEDecoder.java
 --- vnc-4_1-javasrc.sun/java/rfb/ZRLEDecoder.java	2007-07-21 01:40:13.569746000 +0800
@@ -381,7 +381,7 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/ZRLEDecoder.java vnc-4_1-javasrc/java/rfb
 @@ -25,12 +25,9 @@
      zis = new rdr.ZlibInStream();
    }
-
+ 
 -  static final int BPP=8;
 -  static final int readPixel(rdr.InStream is) { return is.readU8(); }
 -
@@ -389,31 +389,31 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/ZRLEDecoder.java vnc-4_1-javasrc/java/rfb
      rdr.InStream is = reader.getInStream();
 -    byte[] buf = reader.getImageBuf(64 * 64 * 4, 0);
 +    int[] buf = reader.getImageBuf(64 * 64 * 4);
-
+ 
      int length = is.readU32();
      zis.setUnderlying(is, length);
 @@ -48,10 +45,8 @@
          int palSize = mode & 127;
          int[] palette = new int[128];
-
+ 
 -        for (int i = 0; i < palSize; i++) {
 -          palette[i] = readPixel(zis);
 -        }
 -
 +        zis.readCPixels(palette, palSize);
-+
++        
          if (palSize == 1) {
            int pix = palette[0];
            handler.fillRect(tx,ty,tw,th, pix);
 @@ -63,7 +58,7 @@
-
+ 
              // raw
-
+ 
 -            zis.readBytes(buf, 0, tw * th * (BPP / 8));
 +            zis.readCPixels(buf, tw * th);
-
+ 
            } else {
-
+ 
 @@ -85,7 +80,7 @@
                  }
                  nbits -= bppp;
@@ -435,27 +435,27 @@ diff -urN vnc-4_1-javasrc.sun/java/rfb/ZRLEDecoder.java vnc-4_1-javasrc/java/rfb
 @@ -111,7 +106,7 @@
                  throw new Exception("ZRLEDecoder: assertion (len <= end - ptr)"
                                      +" failed");
-
+ 
 -              while (len-- > 0) buf[ptr++] = (byte)pix;
 +              while (len-- > 0) buf[ptr++] = pix;
              }
            } else {
-
+ 
 @@ -138,12 +133,12 @@
-
+ 
                int pix = palette[index];
-
+ 
 -              while (len-- > 0) buf[ptr++] = (byte)pix;
 +              while (len-- > 0) buf[ptr++] = pix;
              }
            }
          }
-
+ 
 -        handler.imageRect(tx,ty,tw,th, buf, 0);
 +        handler.imageRect(tx,ty,tw,th, buf);
        }
      }
-
+ 
 diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vncviewer/CConn.java
 --- vnc-4_1-javasrc.sun/java/vncviewer/CConn.java	2007-07-21 01:40:13.572486000 +0800
 +++ vnc-4_1-javasrc/java/vncviewer/CConn.java	2007-07-21 04:19:26.328456000 +0800
@@ -470,7 +470,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
  // CConn
 @@ -141,9 +141,8 @@
      }
-
+ 
      setServerName(sock.getInetAddress().getHostAddress()+"::"+sock.getPort());
 -    jis = new rdr.JavaInStream(sock.getInputStream());
 -    jos = new rdr.JavaOutStream(sock.getOutputStream());
@@ -490,7 +490,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
      serverPF = cp.pf();
      desktop = new DesktopWindow(serverPF, this);
 @@ -205,11 +206,12 @@
-
+ 
    // setDesktopSize() is called when the desktop size changes (including when
    // it is set initially).
 -  public void setDesktopSize(int w, int h) {
@@ -502,7 +502,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
 +      writer().writeFramebufferUpdateRequest(0, 0, cp.width, cp.height, false);
      }
    }
-
+ 
 @@ -218,19 +220,15 @@
    // computed within beginRect() and endRect() to select the format and
    // encoding appropriately, and then request another incremental update.
@@ -515,7 +515,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
        autoSelectFormatAndEncoding();
      requestNewUpdate();
    }
-
+ 
 -  // The rest of the callbacks are fairly self-explanatory...
 -
 -  public void setColourMapEntries(int firstColour, int nColours, int[] rgbs) {
@@ -523,16 +523,16 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
 -  }
 -
    public void bell() { desktop.getToolkit().beep(); }
-
+ 
    public void serverCutText(String str) {
 @@ -239,13 +237,11 @@
    }
-
+ 
    public void beginRect(int x, int y, int w, int h, int encoding) {
 -    jis.startTiming();
      desktop.beginRect(x, y, w, h, encoding);
    }
-
+ 
    public void endRect(int x, int y, int w, int h, int encoding) {
      desktop.endRect(x, y, w, h, encoding);
 -    jis.stopTiming();
@@ -551,15 +551,15 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
    public void copyRect(int x, int y, int w, int h, int sx, int sy) {
      desktop.copyRect(x, y, w, h, sx, sy);
    }
-
+ 
    public void setCursor(int hotspotX, int hotspotY, int w, int h,
 -                        byte[] data, byte[] mask) {
 +                        int[] data, byte[] mask) {
      desktop.setCursor(hotspotX, hotspotY, w, h, data, mask);
    }
-
+ 
 @@ -272,12 +268,14 @@
-
+ 
    void recreateViewport()
    {
 -    if (viewport != null) viewport.dispose();
@@ -572,10 +572,10 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
 +    desktop.requestFocus();
 +    if (oldViewport != null) oldViewport.dispose();
    }
-
+ 
    void reconfigureViewport()
 @@ -333,7 +331,7 @@
-
+ 
    // requestNewUpdate() requests an update from the server, having set the
    // format and encoding appropriately.
 -  void requestNewUpdate()
@@ -601,9 +601,9 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
 +                                           !formatChange);
      formatChange = false;
    }
-
+ 
 @@ -427,8 +421,8 @@
-
+ 
    public void getOptions() {
      autoSelect = options.autoSelect.getState();
 -//      if (fullColour != options.fullColour.getState())
@@ -619,16 +619,16 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/CConn.java vnc-4_1-javasrc/java/vnc
      }
 -    viewer.fastCopyRect.setParam(options.fastCopyRect.getState());
 -
-+
++    
      checkEncodings();
    }
-
+ 
 diff -urN vnc-4_1-javasrc.sun/java/vncviewer/DesktopWindow.java vnc-4_1-javasrc/java/vncviewer/DesktopWindow.java
 --- vnc-4_1-javasrc.sun/java/vncviewer/DesktopWindow.java	2007-07-21 01:40:13.573008000 +0800
 +++ vnc-4_1-javasrc/java/vncviewer/DesktopWindow.java	2007-07-21 04:23:51.620057000 +0800
 @@ -30,7 +30,6 @@
  import java.awt.datatransfer.Transferable;
-
+ 
  class DesktopWindow extends Canvas implements
 -                    Runnable,
                      MouseListener,
@@ -636,7 +636,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/DesktopWindow.java vnc-4_1-javasrc/
                      KeyListener,
 @@ -67,7 +66,7 @@
    // wherever they access data shared with the GUI thread.
-
+ 
    synchronized public void setCursor(int hotspotX, int hotspotY, int w, int h,
 -                                     byte[] data, byte[] mask) {
 +                                     int[] data, byte[] mask) {
@@ -646,7 +646,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/DesktopWindow.java vnc-4_1-javasrc/
 @@ -93,26 +92,6 @@
      showLocalCursor();
    }
-
+ 
 -  // setColourMapEntries() changes some of the entries in the colourmap.
 -  // Unfortunately these messages are often sent one at a time, so we delay the
 -  // settings taking effect unless the whole colourmap has changed.  This is
@@ -672,7 +672,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/DesktopWindow.java vnc-4_1-javasrc/
      vlog.debug("DesktopWindow.resize() called");
 @@ -171,9 +150,9 @@
    }
-
+ 
    synchronized final public void imageRect(int x, int y, int w, int h,
 -                                           byte[] pix, int offset) {
 +                                           int[] pix) {
@@ -693,8 +693,8 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/DesktopWindow.java vnc-4_1-javasrc/
      }
 @@ -419,26 +398,12 @@
    }
-
-
+ 
+ 
 -  // run() is executed by the setColourMapEntriesTimerThread - it sleeps for
 -  // 100ms before actually updating the colourmap.
 -  public void run() {
@@ -710,12 +710,12 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/DesktopWindow.java vnc-4_1-javasrc/
 -
    // access to cc by different threads is specified in CConn
    CConn cc;
-
+ 
    // access to the following must be synchronized:
    PixelBufferImage im;
    Graphics graphics;
 -  Thread setColourMapEntriesTimerThread;
-
+ 
    rfb.Cursor cursor;
    boolean cursorVisible;     // Is cursor currently rendered?
 diff -urN vnc-4_1-javasrc.sun/java/vncviewer/PixelBufferImage.java vnc-4_1-javasrc/java/vncviewer/PixelBufferImage.java
@@ -727,9 +727,9 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/PixelBufferImage.java vnc-4_1-javas
    public PixelBufferImage(int w, int h, java.awt.Component win) {
 -    setPF(new rfb.PixelFormat(8, 8, false, false, 0, 0, 0, 0, 0, 0));
 +    setPF(new rfb.PixelFormat(32, 24, true, true, 0xff, 0xff, 0xff, 16, 8, 0));
-
+ 
      resize(w, h, win);
-
+ 
 -    reds = new byte[256];
 -    greens = new byte[256];
 -    blues = new byte[256];
@@ -744,11 +744,11 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/PixelBufferImage.java vnc-4_1-javas
 -    cm = new IndexColorModel(8, 256, reds, greens, blues);
 +    cm = new DirectColorModel(24, 0xff << 16, 0xff << 8, 0xff);
    }
-
+ 
    // resize() resizes the image, preserving the image data where possible.
    public void resize(int w, int h, java.awt.Component win) {
      if (w == width() && h == height()) return;
-
+ 
 -    // Clear the ImageConsumer so that we don't attempt to do any drawing until
 -    // the AWT has noticed that the resize has happened.
 -    ic = null;
@@ -760,14 +760,14 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/PixelBufferImage.java vnc-4_1-javas
 +    int copyWidth = w < width() ? w : width();
 +    int oldWidth = width();
 +    int[] oldData = data;
-
+ 
      width_ = w;
      height_ = h;
      image = win.createImage(this);
-
+ 
 -    data = new byte[width() * height() * (format.bpp/8)];
 +    data = new int[width() * height()];
-
+ 
 -    int newStrideBytes = getStride() * (format.bpp/8);
      for (int i = 0; i < rowsToCopy; i++)
 -      System.arraycopy(oldData, oldStrideBytes * i,
@@ -775,7 +775,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/PixelBufferImage.java vnc-4_1-javas
 +      System.arraycopy(oldData, copyWidth * i,
 +                       data, width() * i, copyWidth);
    }
-
+ 
    // put() causes the given rectangle to be drawn using the given graphics
    // context.
    public void put(int x, int y, int w, int h, Graphics g) {
@@ -790,7 +790,7 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/PixelBufferImage.java vnc-4_1-javas
      g.drawImage(image, 0, 0, null);
    }
 @@ -87,33 +72,22 @@
-
+ 
    public void copyRect(int x, int y, int w, int h, int srcX, int srcY) {
      super.copyRect(x, y, w, h, srcX, srcY);
 -    if (ic == null) return;
@@ -814,32 +814,32 @@ diff -urN vnc-4_1-javasrc.sun/java/vncviewer/PixelBufferImage.java vnc-4_1-javas
 +      ic.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
      }
    }
-
+ 
    // ImageProducer methods
-
+ 
 -  public void updateColourMap() {
 -    cm = new IndexColorModel(8, 256, reds, greens, blues);
 -  }
 -
    public void addConsumer(ImageConsumer c) {
 +    if (ic == c) return;
-+
++    
      vlog.debug("adding consumer "+c);
-+
++    
 +    if (ic != null)
 +      vlog.error("Only one ImageConsumer allowed - discarding old one");
-+
++    
      ic = c;
      ic.setDimensions(width(), height());
      ic.setHints(ImageConsumer.RANDOMPIXELORDER);
 @@ -134,13 +108,8 @@
    public void startProduction(ImageConsumer c) { addConsumer(c); }
-
+ 
    Image image;
 -  Graphics graphics;
    ImageConsumer ic;
    ColorModel cm;
-
+ 
 -  byte[] reds;
 -  byte[] greens;
 -  byte[] blues;
