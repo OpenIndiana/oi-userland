@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	realvnc-java-client
 COMPONENT_VERSION= 	4.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= 	RealVNC Java Viewer
 COMPONENT_SRC= 		vnc-4_1-javasrc
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
