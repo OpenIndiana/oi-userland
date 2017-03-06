@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jaxb-ri
 COMPONENT_VERSION=	2.2.11
+COMPONENT_REVISIOM=	1
 COMPONENT_PROJECT_URL=	https://jaxb.java.net/
 COMPONENT_SUMMARY=      jaxb - Java Architecture for XML Binding
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
