@@ -8,16 +8,17 @@
 +        illumos=true
 +        ;;
  esac
-
+ 
  if [ "$1" = "-cp" ] || [ "$1" = "-classpath" ]; then
 @@ -70,6 +73,11 @@
-			export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
-
-	fi
+ 			export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
+ 		
+ 	fi
 +
 +        if $illumos; then
 +                [ -z "$JAVA_HOME" -a -d "/usr/java" ] &&
 +                        export JAVA_HOME="/usr/java"
 +        fi
-
+ 	
  fi
+ 
