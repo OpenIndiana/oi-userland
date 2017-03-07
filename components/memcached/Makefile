@@ -26,15 +26,15 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.33
+COMPONENT_VERSION=	1.4.35
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:83726c8d68258c56712373072abb25a449c257398075a39ec0867fd8ba69771d
+    sha256:f4815ac95aa06c0f360052a0a12010533b2b78c3bfe475b171606c1b61469476
 COMPONENT_ARCHIVE_URL=	http://memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 COMPONENT_ANITYA_ID=	1965
 
-TPNO=			32788
+TPNO=			34035
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,6 +47,11 @@ studio_OPT = -xO5
 
 CFLAGS += -D__ATTRIBUTE_DISABLED
 
+# If we don't define this, configure will try to use umem, which in turn will
+# cause BUILD_CACHE_TRUE to be set which will take us down a path such that
+# do_cache_alloc and do_cache_free are undefined symbols at link time.
+CONFIGURE_ENV +=	"ac_cv_header_umem_h=no"
+
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS.64 +=	--with-libevent=$(USRLIBDIR64)
 # The below works around a bug in configure/configure.ac that sets
@@ -57,8 +62,6 @@ CONFIGURE_OPTIONS.64 +=	--with-libevent=$(USRLIBDIR64)
 CONFIGURE_OPTIONS.64 +=	"ac_cv_libevent_dir=/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS +=	--enable-dtrace --disable-docs --disable-coverage
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
-
-# lru-maintainer.t is inconsistent and usually fails.
 
 COMPONENT_TEST_TARGETS=	test
 
