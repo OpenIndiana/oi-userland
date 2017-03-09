@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= openafs
-COMPONENT_VERSION= 1.6.18.3
+COMPONENT_VERSION= 1.6.20.1
 COMPONENT_SUMMARY= OpenAFS - Distributed file system
 COMPONENT_PROJECT_URL= http://www.openafs.org
 COMPONENT_FMRI= network/openafs 
@@ -25,14 +25,14 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_URL= \
   http://www.openafs.org/dl/openafs/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b9cb45fdfd2aab543363e64da0b56167bfc1a302afdbcd5a076fb704a0c16a70
+  sha256:dc869eecf6c81949d3dd2021eaf87118ef9b90ec5012a35f64836a02a58a8826
 COMPONENT_LICENSE=	IBM Public License Version 1.0
 
 COMPONENT_ARCHIVE_1= $(COMPONENT_SRC)-doc.tar.bz2
 COMPONENT_ARCHIVE_URL_1= \
   http://www.openafs.org/dl/openafs/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= \
-  sha256:96644f5c53827e4e37738899f9b0215c880c180c98501e0c59566d927694e506
+  sha256:2c4bf6f53030e8a9cf3460d9c9292bcdbfea356930ed1d436506e8dc60db0f1c
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
