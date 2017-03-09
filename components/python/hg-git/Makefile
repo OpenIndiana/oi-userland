@@ -27,11 +27,10 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hg-git
 COMPONENT_VERSION=	0.8.5
-HG_REPO=		http://bitbucket.org/durin42/hg-git
-HG_REV=			06d523eb596a
 COMPONENT_PROJECT_URL=	http://hg-git.github.io/
 COMPONENT_BUGDB=	python-mod/hg-git
-COMPONENT_ARCHIVE_URL=	$(HG_REPO)
+COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL=	http://bitbucket.org/durin42/$(COMPONENT_NAME)/get/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_ANITYA_ID=	1314
 
 TPNO=			33779
@@ -42,10 +41,15 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+UNPACK_DIR=		durin42-$(COMPONENT_NAME)-53d514c9c7e6
+COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(UNPACK_DIR) $(COMPONENT_SRC))
+
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)/tests
 COMPONENT_TEST_ARGS=	run-tests.py --with-hg=$(HG)
 COMPONENT_TEST_MASTER=	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_ENV=	PATH=/usr/gnu/bin:/usr/bin
+
+CLEAN_PATHS +=		$(COMPONENT_ARCHIVE)
 
 build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
