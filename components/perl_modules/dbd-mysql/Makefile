@@ -32,11 +32,11 @@ BUILD_BITS = 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		DBD-mysql
-COMPONENT_VERSION=	4.041
-IPS_COMPONENT_VERSION=  4041
+COMPONENT_VERSION=	4.042
+IPS_COMPONENT_VERSION=  4042
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:4777de11c464b515db9da95c08c225900d0594b65ba3256982dc21f9f9379040
+	sha256:dadb6884788dc3fdf40b13b72d8c60d5a83680cc2aeec7515c3e5999e064b455
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/MI/MICHIELB/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/perl5-dbi/DBD-mysql
 COMPONENT_BUGDB=	perl-mod/dbd-mysql
@@ -135,7 +135,7 @@ COMPONENT_PRE_TEST_ACTION = ( \
 	ln -s $(MYSQL_TEST_DATADIR) "$$TEST_LINK"; \
 	\
 	: "alter the tests to use the path we just created"; \
-	$(PERL) -pi -e "s,('testsocket' => ').*?',\$$1/$$TEST_LINK/socket'," t/mysql.mtest ;\
+	$(PERL) -pi -e "s,('testsocket' => ')CHANGEME',\$$1/$$TEST_LINK/socket'," t/mysql.mtest ;\
 	\
 	: "Initialize mysql DB"; \
 	"$(MYSQL_BINDIR)/mysqld" \
