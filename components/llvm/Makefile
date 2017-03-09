@@ -28,8 +28,16 @@ COMPILER=gcc
 
 include ../../make-rules/shared-macros.mk
 
-# We use GCC version 4.9.3, and not another version for now.
-GCC_ROOT=/usr/gcc/4.9
+# This and intel-openmp must use the same version of gcc.  In addition, LLVM's
+# gcc toolchain logic we currently have for Solaris is effectively hard-coded
+# for a specific version of gcc (5.4.0 currently):
+#
+# 25682681 llvm's gcc toolchain usage should be multilib friendly and
+#          version-agnostic
+#
+# Changing to a different version of gcc currently requires an update to
+# patches/012-solaris-clang-libclangDriver.patch.
+GCC_ROOT=/usr/gcc/5
 
 COMPONENT_NAME=		llvm
 COMPONENT_VERSION=	3.8.1
@@ -72,9 +80,12 @@ ifeq ($(BUILD_TYPE), evaluation)
 endif
 
 BUILD_STYLE = cmake
+# Building with debug info results in ~7GB of package data, so while preferred,
+# is not practical.
+CMAKE_BUILD_TYPE = Release
 CLONEY = echo
-GNUCP = /usr/gnu/bin/cp
-
+TEST_TARGET=
+SYSTEM_TEST_TARGET=
 include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL := 0
@@ -84,7 +95,6 @@ HAVE_SPHINX := 0
 export PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/$(PERL_VERSION)/bin
 
 # We're building with CMake
-CMAKE=/usr/bin/cmake
 CMAKE_VERSION := $(shell $(CMAKE) --version 2>&1 | head -n1 \
   | $(GSED) 's/cmake version \{1,\}//g')
 CMAKE_MAJOR_VERSION := $(shell echo $(CMAKE_VERSION) | cut -f1 -d'.')
@@ -99,23 +109,6 @@ ifeq ($(shell expr $(CMAKE_MAJOR_VERSION) \<= 3 \& \
   CMAKE_NEEDS_SOLARIS_HOST = 1
 endif
 
-# All of these shoujld probably be in shared-macros.mk
-CMAKE_INSTALL_BINDIR.32 = bin
-CMAKE_INSTALL_BINDIR.64 = bin/$(MACH64)
-CMAKE_INSTALL_BINDIR = $(CMAKE_INSTALL_BINDIR.$(BITS))
-
-CMAKE_INSTALL_LIBDIR.32 = lib
-CMAKE_INSTALL_LIBDIR.64 = lib/$(MACH64)
-CMAKE_INSTALL_LIBDIR = $(CMAKE_INSTALL_LIBDIR.$(BITS))
-
-CMAKE_INSTALL_LIBEXECDIR.32 = libexec
-CMAKE_INSTALL_LIBEXECDIR.64 = libexec/$(MACH64)
-CMAKE_INSTALL_LIBEXECDIR = $(CMAKE_INSTALL_LIBEXECDIR.$(BITS))
-
-CMAKE_INSTALL_INCLUDEDIR = include
-CMAKE_INSTALL_DATADIR = share
-CMAKE_INSTALL_DATAROOTDIR = share
-
 # We need the specific C++ runtime that clang/llvm was built and
 # linked with, and not some random and incompatible stuff from
 # /usr/lib.
@@ -123,23 +116,17 @@ LLVM_RUNPATH_32 = $(GCC_ROOT)/lib
 LLVM_RUNPATH_64 = $(GCC_ROOT)/lib/$(MACH64)
 LLVM_RUNPATH = $(LLVM_RUNPATH_$(BITS))
 
-# -O0. GCC on SPARC dies with an out-memory error in cc1plus when
-# building with either -O1 or -O2 (32-bit). If it manages to get
-# through with -O1 or -O2 (64-bit), the resulting bits are unusable.
-OFLAG="-O0"
-GFLAG=""
-
 ifeq ($(DEBUG_BUILD), 1)
-  OFLAG="-O0"
-  GFLAG="-g3"
+  CMAKE_BUILD_TYPE = Debug
+  GFLAG=-g3
+else
+  GFLAG=
 endif
 
 # Because LLVM's install target doesn't install everything that
 # needs to be installed.
 EXTRA_INSTALL_BITS=llvm-lto arcmt-test c-arcmt-test c-index-test diagtool
-LLVM_INSTALL_BINDIR.32=$(PROTOUSRBINDIR)
-LLVM_INSTALL_BINDIR.64=$(PROTOUSRBINDIR64)
-LLVM_INSTALL_BINDIR=$(LLVM_INSTALL_BINDIR.$(BITS))
+LLVM_INSTALL_BINDIR=$(PROTOUSRBINDIR)
 LLVM_BINDIR=$(BUILD_DIR_$(BITS))/bin
 
 INSTALL_CXA_FINALIZE := 0
@@ -192,10 +179,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ;
 
 COMPONENT_POST_INSTALL_ACTION += \
-	cd $(COMPONENT_DIR) ; \
-	$(GNUCP) -rpd $(PROTOUSRLIBDIR64)/clang $(PROTOUSRLIBDIR)/ ;
-
-COMPONENT_POST_INSTALL_ACTION += \
 	cd $(PROTOUSRLIBDIR) ; \
 	$(PYTHON) -m compileall . ;
 
@@ -239,35 +222,6 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/Built target/d"' \
     '-e "/Nothing to be done/d"'
 
-# GCC options used:
-# -ftree-vectorize | -fno-tree-vectorize:
-# Enable/disable loop vectorization in optimizations. For details:
-# https://gcc.gnu.org/projects/tree-ssa/vectorization.html
-# Disabled in debug builds, will be enabled in production/optimized
-# builds at some point in the future..
-#
-# -ftree-slp-vectorize | -fno-tree-slp-vectorize:
-# Enable/disable Basic Block tree vectorization.
-# Less aggressive vectorization than -ftree-vectorize, but useful
-# in case -ftree-slp-vectorize misses some vectorization opportunities.
-# Documentation at the same URL as above.
-# Disabled in debug builds, will be enabled in production/optimized
-# builds at some point in the future.
-#
-# -freorder-blocks | -fno-reorder-blocks
-# Enable/disable BasicBlock reordering as an optimization.
-# Disabled in debug builds, will be enabled in production/optimized
-# builds at some point in the future.
-# Documented here:
-# https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-#
-# -ftoplevel-reorder | -fno-toplevel-reorder
-# Another BasiBlock depentent optimization option.
-# Disabled in debug builds, will be enabled in production/optimized
-# builds at some point in the future.
-# Documented here:
-# https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-#
 # -fstack-protector-all:
 # Enable stack smashing (stack corruption) protection and detection.
 # This flag should always be used in conjunction with -Wstack-protector.
@@ -298,9 +252,6 @@ COMPONENT_TEST_TRANSFORMS += \
 # ops are always done in software. But quad-floating-point ops in a
 # compiler are virtually non-existent.
 #
-# -mptr32 | -mptr64:
-#  Tell GCC the size of a pointer on SPARC.
-#
 # -mimpure-text:
 # When used in addition to -shared on SPARC, this tells GCC to not pass
 # -z text to the linker when linking a shared object.
@@ -316,30 +267,36 @@ COMPONENT_TEST_TRANSFORMS += \
 # Building for Opteron - which implies SSE2 - is adequate for
 # performance purposes.
 
-CFLAGS = -m$(BITS) $(GFLAG) $(OFLAG) -pthread -std=c99 -fno-strict-aliasing
-CFLAGS += -fno-tree-slp-vectorize -fno-tree-vectorize
-CFLAGS += -fno-reorder-blocks -fno-toplevel-reorder
+CFLAGS += $(GFLAG) -pthread -std=c99 -fno-strict-aliasing
 CFLAGS += -Wall -Wcast-align -Wno-long-long -Woverflow
 CFLAGS += -Wstack-protector -fdata-sections -fstack-protector-all
 CFLAGS += -fkeep-static-consts -ffunction-sections
+# Never omit frame pointer; not worth the very minor performance gains for the
+# loss of debugging capability.  Additionally, on sparc, omitting the frame
+# pointer also currently causes bad code generation by gcc (4.x, 5.x):
+#
+#	Many sparc testcases FAIL at -O0 with -fomit-frame-pointer
+#	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=79749
+#
+CFLAGS += -fno-omit-frame-pointer
 CFLAGS += -Wl,-z -Wl,relax=common
 CFLAGS += -Wl,-z -Wl,relax=secadj
 CFLAGS += -Wl,-z -Wl,relax=transtls
 CFLAGS += -Wl,-z -Wl,relax=symbound
 CFLAGS += -Wl,-R -Wl,$(LLVM_RUNPATH)
-CFLAGS.i386 += -mtune=opteron -mno-sse3 -mno-ssse3 -fno-common
-ifeq ($(DEBUG_BUILD),1)
-  CFLAGS.i386 += -fno-omit-frame-pointer
-endif
-CFLAGS.sparc += -mtune=ultrasparc -mcpu=ultrasparc -mvis -mhard-float
-CFLAGS.sparc += -mptr$(BITS) -fdata-sections -falign-functions=8
-CFLAGS.sparc += -mno-unaligned-doubles -mimpure-text
-CFLAGS += $(CFLAGS.$(MACH))
+CFLAGS.gcc.i386 += -mtune=opteron -mno-sse3 -mno-ssse3 -fno-common 
 
-CXXFLAGS = -m$(BITS) $(GFLAG) $(OFLAG) -pthread -fno-strict-aliasing
+# At optimization levels above O0, gcc can either crash or generates unusable
+# code on SPARC.  Disabling delay-slot instruction scheduling avoids this
+# problem.
+CFLAGS.gcc.sparc += -fno-delayed-branch
+CFLAGS.gcc.sparc += -mtune=ultrasparc -mcpu=ultrasparc -mvis -mhard-float
+CFLAGS.gcc.sparc += -fdata-sections -falign-functions=8
+CFLAGS.gcc.sparc += -mno-unaligned-doubles -mimpure-text
+
+CXXFLAGS += $(CFLAGS.$(COMPILER).$(MACH))
+CXXFLAGS += $(GFLAG) -pthread -fno-strict-aliasing
 CXXFLAGS += -fexceptions -frtti -fstack-protector-all
-CXXFLAGS += -fno-tree-vectorize -fno-tree-slp-vectorize
-CXXFLAGS += -fno-reorder-blocks -fno-toplevel-reorder
 CXXFLAGS += -Wall -Wcast-align -Wno-long-long -Woverflow
 CXXFLAGS += -Wstack-protector -fkeep-static-consts
 CXXFLAGS += -std=c++11 -fdata-sections -ffunction-sections
@@ -349,10 +306,8 @@ CXXFLAGS += -Wl,-z -Wl,relax=transtls
 CXXFLAGS += -Wl,-z -Wl,relax=symbound
 CXXFLAGS += -Wl,-z -Wl,relax=comdat
 CXXFLAGS += -Wl,-R -Wl,$(LLVM_RUNPATH)
-CXXFLAGS.sparc += -mptr$(BITS)
-CXXFLAGS += $(CFLAGS.$(MACH))
 
-CPPFLAGS = -D_GNU_SOURCE -DLLVM_SOLARIS -I/usr/gnu/include
+CPPFLAGS += -D_GNU_SOURCE -DLLVM_SOLARIS -I/usr/gnu/include
 
 ifeq ($(DEBUG_BUILD),1)
   CPPFLAGS += -D_DEBUG
@@ -366,10 +321,6 @@ CPPFLAGS += -D_GLIBCXX_FULLY_DYNAMIC_STRING=1
 CPPFLAGS.i386 = -DLLVM_INTEL
 CPPFLAGS.sparc = -DLLVM_SPARC
 CPPFLAGS += $(CPPFLAGS.$(MACH))
-
-LLVM_LIBEXECDIR_32 = /usr/libexec
-LLVM_LIBEXECDIR_64 = /usr/libexec/$(MACH64)
-LLVM_LIBEXECDIR = $(LLVM_LIBEXECDIR_$(BITS))
 
 LIBFFI_INCDIR_32 = $(shell pkg-config --cflags-only-I libffi | sed -e s,-I,,)
 LIBFFI_INCDIR_64 = $(shell env PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64) pkg-config --cflags-only-I libffi | sed -e s,-I,,)
@@ -385,29 +336,20 @@ LD_OPTIONS = -M /usr/lib/ld/map.noexstk
 LD_OPTIONS += -M /usr/lib/ld/map.pagealign
 LD_OPTIONS_SO = $(LD_Z_DEFS) $(LD_DEF_LIBS)
 
-CMAKE_OPTIONS = -DCMAKE_C_COMPILER:FILEPATH=$(CC)
-CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER:FILEPATH=$(CXX)
-CMAKE_OPTIONS += -DCMAKE_C_CFLAGS:STRING="$(CPPFLAGS) $(CFLAGS)"
-CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS:STRING="$(CPPFLAGS) $(CXXFLAGS)"
-CMAKE_OPTIONS += -DCMAKE_EXE_LINKER_FLAGS:STRING="$(LDFLAGS)"
-CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX:FILEPATH=$(CMAKE_PREFIX)
-CMAKE_OPTIONS += -DCMAKE_AR:FILEPATH=/usr/bin/ar
-
-CMAKE_OPTIONS += -DCMAKE_INSTALL_BINDIR:STRING="$(CMAKE_INSTALL_BINDIR)"
-CMAKE_OPTIONS += -DCMAKE_INSTALL_LIBDIR:STRING="$(CMAKE_INSTALL_LIBDIR)"
-CMAKE_OPTIONS += -DCMAKE_INSTALL_LIBEXECDIR:STRING="$(CMAKE_INSTALL_LIBEXECDIR)"
-CMAKE_OPTIONS += -DCMAKE_INSTALL_INCLUDEDIR:STRING="$(CMAKE_INSTALL_INCLUDEDIR)"
-CMAKE_OPTIONS += -DCMAKE_INSTALL_DATADIR:STRING="$(CMAKE_INSTALL_DATADIR)"
-CMAKE_OPTIONS += -DCMAKE_INSTALL_DATAROOTDIR:STRING="$(CMAKE_INSTALL_DATAROOTDIR)"
-
+# The default target triple must be set so that the OS release is included by
+# default as LLVM will use this to find the installed gcc internal libraries
+# and headers (e.g.  /usr/gcc/5/lib/gcc/sparcv9-sun-solaris2.11/5.4.0/).  This
+# also means that when specifying a --target to clang, developers must also
+# include the OS release (e.g. --target=sparcv9-sun-solaris2.11).
 ifeq ($(MACH),sparc)
   CMAKE_OPTIONS += -DLLVM_TARGETS_TO_BUILD:STRING="Sparc"
+  CMAKE_OPTIONS += -DLLVM_DEFAULT_TARGET_TRIPLE:STRING="sparcv9-sun-solaris$(SOLARIS_VERSION)"
 endif
 ifeq ($(MACH),i386)
   CMAKE_OPTIONS += -DLLVM_TARGETS_TO_BUILD:STRING="X86"
+  CMAKE_OPTIONS += -DLLVM_DEFAULT_TARGET_TRIPLE:STRING="x86_64-pc-solaris$(SOLARIS_VERSION)"
 endif
 
-CMAKE_OPTIONS += -DCMAKE_MAKE_PROGRAM:STRING="/usr/bin/gmake"
 CMAKE_OPTIONS += -DCMAKE_ASM_COMPILER:STRING="/usr/gnu/bin/as"
 CMAKE_OPTIONS += -DCMAKE_INSTALL_RPATH:STRING="$(LLVM_RUNPATH)"
 CMAKE_OPTIONS += -DLLVM_BUILD_TOOLS:BOOL=ON
@@ -419,30 +361,18 @@ CMAKE_OPTIONS += -DLLVM_BUILD_32_BITS:BOOL=OFF
 
 # CMake tries really hard to be too smart for its own good.
 ifeq ($(DEBUG_BUILD),1)
-  CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE:STRING=Debug
-  CMAKE_OPTIONS += -DCMAKE_C_FLAGS_DEBUG:STRING="$(OFLAG) $(GFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS_DEBUG:STRING="$(OFLAG) $(GFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_ASM_FLAGS_DEBUG:STRING="$(OFLAG) $(GFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_ASM_FLAGS_RELWITHDEBINFO:STRING="$(OFLAG) $(GFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_C_FLAGS_RELWITHDEBINFO:STRING="$(OFLAG) $(GFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING="$(OFLAG) $(GFLAG)"
   CMAKE_OPTIONS += -DLLVM_BUILD_EXAMPLES:BOOL=ON
   CMAKE_OPTIONS += -DLLVM_INCLUDE_EXAMPLES:BOOL=ON
   CMAKE_OPTIONS += -DLLVM_ENABLE_ASSERTIONS:BOOL=ON
   CMAKE_OPTIONS += -DLLVM_ENABLE_EXPENSIVE_CHECKS:BOOL=ON
 else
-  CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE:STRING=Release
-  CMAKE_OPTIONS += -DCMAKE_C_FLAGS_DEBUG:STRING="$(OFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS_DEBUG:STRING="$(OFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_ASM_FLAGS_DEBUG:STRING="$(OFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_ASM_FLAGS_RELWITHDEBINFO:STRING="$(OFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_C_FLAGS_RELWITHDEBINFO:STRING="$(OFLAG)"
-  CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING="$(OFLAG)"
   CMAKE_OPTIONS += -DLLVM_BUILD_EXAMPLES:BOOL=OFF
   CMAKE_OPTIONS += -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF
   CMAKE_OPTIONS += -DLLVM_ENABLE_ASSERTIONS:BOOL=OFF
   CMAKE_OPTIONS += -DLLVM_ENABLE_EXPENSIVE_CHECKS:BOOL=OFF
 endif
+
+CMAKE_OPTIONS += -DCMAKE_ASM_FLAGS:STRING="$(gcc_OPT) $(GFLAG)"
 
 CMAKE_OPTIONS += -DLLVM_ENABLE_EH:BOOL=ON
 CMAKE_OPTIONS += -DLLVM_ENABLE_PIC:BOOL=ON
@@ -487,19 +417,11 @@ COMPONENT_BUILD_ENV += LC_ALL="C"
 COMPONENT_BUILD_ENV += LD_EXEC_OPTIONS="-zaslr=disable"
 
 # Put this here for now until the gpatch problems are resolved.
-COMPONENT_BUILD_ARGS += -j4
+COMPONENT_BUILD_ARGS += -j8
 
 # use bash(1) to run the install recipes otherwise clang header installation
 # fails
 COMPONENT_INSTALL_ARGS += SHELL=/bin/bash
-
-COMPONENT_PRE_BUILD_ACTION += cd $(@D) ;
-COMPONENT_PRE_BUILD_ACTION += echo BITS: $(BITS) ;
-COMPONENT_PRE_BUILD_ACTION += echo Running cmake with $(CMAKE_OPTIONS) ;
-COMPONENT_PRE_BUILD_ACTION += /usr/bin/env - $(COMPONENT_BUILD_ENV) \
-			      $(CMAKE) $(CMAKE_OPTIONS) \
-			      $(COMPONENT_DIR)/$(COMPONENT_SRC) ;
-
 
 # There are no master test results just yet. But there will be
 # very soon.
@@ -508,7 +430,11 @@ test:
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-REQUIRED_PACKAGES += developer/gcc-4/gcc-common-49
+REQUIRED_PACKAGES += developer/build/cmake
+REQUIRED_PACKAGES += developer/build/pkg-config
+REQUIRED_PACKAGES += developer/gcc/gcc-c++-5
+REQUIRED_PACKAGES += developer/gcc/gcc-c-5
+REQUIRED_PACKAGES += developer/gcc/gcc-common-5
 REQUIRED_PACKAGES += developer/gnu-binutils
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libffi
@@ -525,10 +451,8 @@ REQUIRED_PACKAGES += library/perl-5/xml-simple
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/header
-REQUIRED_PACKAGES += system/library/gcc/gcc-runtime-49
-REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime-49
-REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime-49
-REQUIRED_PACKAGES += system/library/gcc/gcc-gobjc-runtime-49
+REQUIRED_PACKAGES += system/library/gcc/gcc-runtime-5
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime-5
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime-5
+REQUIRED_PACKAGES += system/library/gcc/gcc-gobjc-runtime-5
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker
-
