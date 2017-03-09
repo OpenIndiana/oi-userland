@@ -1,17 +1,18 @@
 Home brewed patch.
 Use Solaris specific location of terminfo.
-
---- screen-4.3.1/Makefile.in.orig	Wed Jul 15 02:38:36 2015
-+++ screen-4.3.1/Makefile.in	Wed Jul 15 02:38:56 2015
+Will not be sent upstream.
+ 
+--- screen-4.5.1/Makefile.in.orig	2017-03-08 12:14:04.424391216 -0800
++++ screen-4.5.1/Makefile.in	2017-03-08 12:19:09.486329848 -0800
 @@ -96,9 +96,10 @@
  ###############################################################################
  install: installdirs install_bin
  	cd doc ; $(MAKE) install
--	-if [ -d /usr/lib/terminfo ]; then \
+-	-if [ -d $(DESTDIR)/usr/lib/terminfo ]; then \
 +	-if [ -d $(DESTDIR)/usr/share/lib/terminfo ]; then \
-+		TERMINFO=$(DESTDIR)/usr/share/lib/terminfo \
++	  TERMINFO=$(DESTDIR)/usr/share/lib/terminfo \
  		PATH="$$PATH:/usr/5bin" tic ${srcdir}/terminfo/screeninfo.src; \
--		chmod 644 /usr/lib/terminfo/s/screen*; \
+-		chmod 644 $(DESTDIR)/usr/lib/terminfo/s/screen*; \
 +		chmod 644 $(DESTDIR)/usr/share/lib/terminfo/s/screen*; \
  	fi
  # Better do this by hand. E.g. under RCS...
