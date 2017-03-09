@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xkeyboard-config
 COMPONENT_VERSION=        2.20
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_SUMMARY=        X Keyboard Configuration Database
 COMPONENT_PROJECT_URL=    https://freedesktop.org/wiki/Software/XKeyboardConfig/
 COMPONENT_FMRI=           x11/keyboard/data-xkb
@@ -42,3 +42,4 @@ install:	$(INSTALL_32)
 test:		$(TEST_32)
 
 REQUIRED_PACKAGES += text/intltool
+REQUIRED_PACKAGES += x11/keyboard/xkbcomp
