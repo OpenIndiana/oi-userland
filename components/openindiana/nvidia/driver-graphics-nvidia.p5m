@@ -47,59 +47,6 @@ legacy pkg=NVDAgraphicsr \
     desc="Kernel Drivers for NVIDIA Quadro graphics" \
     name="NVIDIA Graphics System Device Driver" vendor="NVIDIA Corporation"
 
-dir path=dev group=sys
-dir path=kernel variant.opensolaris.zone=global group=sys
-dir path=kernel/drv variant.opensolaris.zone=global group=sys
-dir path=kernel/drv/$(MACH64) variant.opensolaris.zone=global group=sys
-dir path=usr
-dir path=usr/X11
-dir path=usr/X11
-dir path=usr/X11/include
-dir path=usr/X11/include/NVIDIA
-dir path=usr/X11/include/NVIDIA/GL
-dir path=usr/X11/include/NVIDIA/vdpau
-dir path=usr/X11/lib
-dir path=usr/X11/lib/NVIDIA
-dir path=usr/X11/lib/NVIDIA/$(MACH64)
-dir path=usr/X11/lib/X11
-dir path=usr/X11/lib/X11/getconfig
-dir path=usr/X11/lib/modules
-dir path=usr/X11/lib/modules/NVIDIA
-dir path=usr/X11/lib/modules/NVIDIA/$(MACH64)
-dir path=usr/X11/lib/modules/drivers
-dir path=usr/X11/lib/modules/drivers/$(MACH64)
-dir path=usr/X11/lib/modules/extensions
-dir path=usr/X11/lib/modules/extensions/NVIDIA
-dir path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)
-dir path=usr/bin
-dir path=usr/bin/$(MACH64)
-dir path=usr/bin/$(MACH32)
-dir path=usr/dt
-dir path=usr/dt/appconfig
-dir path=usr/dt/appconfig/appmanager
-dir path=usr/dt/appconfig/appmanager/C
-dir path=usr/dt/appconfig/appmanager/C/Desktop_Apps
-dir path=usr/dt/appconfig/icons
-dir path=usr/dt/appconfig/icons/C
-dir path=usr/dt/appconfig/types
-dir path=usr/dt/appconfig/types/C
-dir path=usr/include
-dir path=usr/lib
-dir path=usr/lib/$(MACH64)
-dir path=usr/lib/$(MACH64)/vdpau
-dir path=usr/lib/vdpau
-dir path=usr/share
-dir path=usr/share/applications
-dir path=usr/share/control-center-2.0
-dir path=usr/share/control-center-2.0/capplets
-dir path=usr/share/doc
-dir path=usr/share/doc/NVIDIA
-dir path=usr/share/doc/NVIDIA/html
-dir path=usr/share/icons
-dir path=usr/share/icons/NVIDIA
-dir path=usr/share/man
-dir path=usr/share/man/man1
-dir path=usr/share/nvidia
 file Solaris/gl.h path=usr/X11/include/NVIDIA/GL/gl.h
 file Solaris/glext.h path=usr/X11/include/NVIDIA/GL/glext.h
 file Solaris/glx.h path=usr/X11/include/NVIDIA/GL/glx.h
@@ -243,23 +190,15 @@ link path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so \
 link path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so \
     target=libglx.so.1
 link path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so target=libglx.so.1
-link path=usr/include/vdpau target=../X11/include/NVIDIA/vdpau
 link path=usr/lib/$(MACH64)/libnvidia-glcore.so.1 \
     target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
 link path=usr/lib/$(MACH64)/libnvidia-tls.so target=libnvidia-tls.so.1
 link path=usr/lib/$(MACH64)/libnvidia-tls.so.1 \
     target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
-link path=usr/lib/$(MACH64)/libvdpau.so target=libvdpau.so.1
-link path=usr/lib/$(MACH64)/libvdpau.so.1 \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau.so.1
 link path=usr/lib/$(MACH64)/libvdpau_nvidia.so \
     target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
-link path=usr/lib/$(MACH64)/libvdpau_trace.so \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
 link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
     target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
-link path=usr/lib/$(MACH64)/vdpau/libvdpau_trace.so.1 \
-    target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
 link path=usr/lib/$(MACH64)/libGLESv1_CM.so.1 target=../../X11/lib/NVIDIA/amd64/libGLESv1_CM.so.1
 link path=usr/lib/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1
 link path=usr/lib/$(MACH64)/libGLESv2.so.2 target=../../X11/lib/NVIDIA/amd64/libGLESv2.so.2
@@ -281,18 +220,12 @@ link path=usr/lib/libnvidia-glsi.so.1 \
 link path=usr/lib/libnvidia-tls.so target=libnvidia-tls.so.1
 link path=usr/lib/libnvidia-tls.so.1 \
     target=../X11/lib/NVIDIA/libnvidia-tls.so.1
-link path=usr/lib/libvdpau.so target=libvdpau.so.1
-link path=usr/lib/libvdpau.so.1 target=../X11/lib/NVIDIA/libvdpau.so.1
 link path=usr/lib/libvdpau_nvidia.so \
     target=../X11/lib/NVIDIA/libvdpau_nvidia.so.1
-link path=usr/lib/libvdpau_trace.so \
-    target=../X11/lib/NVIDIA/libvdpau_trace.so.1
 link path=usr/lib/vdpau/libvdpau_nvidia.so.1 \
     target=../../X11/lib/NVIDIA/libvdpau_nvidia.so.1
-link path=usr/lib/vdpau/libvdpau_trace.so.1 \
-    target=../../X11/lib/NVIDIA/libvdpau_trace.so.1
 hardlink path=usr/bin/nvidia-settings target=../lib/isaexec pkg.linted=true
-hardlink path=usr/bin/nvidia-xconfg target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/nvidia-xconfig target=../lib/isaexec pkg.linted=true
 
 driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,191" \

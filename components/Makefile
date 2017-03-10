@@ -98,6 +98,7 @@ $(WS_LOGS):
 $(WS_REPO):
 	$(PKGREPO) create $(PKG_REPO)
 	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER)
+	$(PKGREPO) rebuild -s $(PKG_REPO)
 # Not required for OI
 #	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER_LOCALIZABLE)
 

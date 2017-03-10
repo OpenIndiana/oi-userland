@@ -10,13 +10,14 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pulseaudio
 COMPONENT_VERSION= 6.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Sample Rate Converter for audio
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz

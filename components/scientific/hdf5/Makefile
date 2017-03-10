@@ -13,21 +13,20 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		hdf5
-COMPONENT_VERSION=	1.8.16
-COMPONENT_REVISION=	0
-COMPONENT_FMRI=		library/c++/hdf5
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_PROJECT_URL=	http://www.hdfgroup.org
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=           hdf5
+COMPONENT_VERSION=        1.8.18
+COMPONENT_FMRI=           library/c++/hdf5
+COMPONENT_SUMMARY= \
+	HDF5 - Data model, library, and file format for storing and managing data
+COMPONENT_PROJECT_URL=    http://www.hdfgroup.org
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ed17178abd9928a7237f30370189ba767b9e39e0db45917c2ac4665eb9cb4771
-COMPONENT_ARCHIVE_URL=	http://www.hdfgroup.org/ftp/HDF5/releases/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	$(COMPONENT_FMRI)
-COMPONENT_LICENSE=	NCSA
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=	Data model, library, and file format for storing and managing data
+  sha256:cdb195ad8d9e6782acf24b2488061289f615628c2ccda8457b0a0c3fb7a8a063
+COMPONENT_ARCHIVE_URL= \
+  https://support.hdfgroup.org/ftp/HDF5/current18/src/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        NCSA
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -39,11 +38,13 @@ CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-fortran
 CONFIGURE_OPTIONS  +=		--enable-cxx
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gfortran-4-runtime
+REQUIRED_PACKAGES += system/library/math

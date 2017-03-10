@@ -1,0 +1,693 @@
+diff -ru --ignore-all-space gcc-5.4.0/contrib/compare_tests gcc-5.4.0-il/contrib/compare_tests
+--- gcc-5.4.0/contrib/compare_tests	2013-05-13 19:52:42.000000000 +0200
++++ gcc-5.4.0-il/contrib/compare_tests	2017-01-31 01:16:49.753167301 +0100
+@@ -107,8 +107,15 @@
+ 	usage "Must specify either two directories or two files"
+ fi
+ 
+-sed 's/^XFAIL/FAIL/; s/^XPASS/PASS/' < "$1" | awk '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp1
+-sed 's/^XFAIL/FAIL/; s/^XPASS/PASS/' < "$2" | awk '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp2
++osrev=`uname -sr`
++if [ `expr "$osrev" : "SunOS 5."` -eq "8" ]; then
++   AWK=/usr/bin/nawk
++else
++    AWK=awk
++fi
++
++sed 's/^XFAIL/FAIL/; s/^XPASS/PASS/' < "$1" | $AWK '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp1
++sed 's/^XFAIL/FAIL/; s/^XPASS/PASS/' < "$2" | $AWK '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp2
+ 
+ before=$tmp1
+ now=$tmp2
+diff -ru --ignore-all-space gcc-5.4.0/gcc/common.opt gcc-5.4.0-il/gcc/common.opt
+--- gcc-5.4.0/gcc/common.opt	2016-01-11 10:11:11.000000000 +0100
++++ gcc-5.4.0-il/gcc/common.opt	2017-01-31 01:16:49.754392848 +0100
+@@ -981,6 +981,11 @@
+ Common Var(flag_check_new)
+ Check the return value of new in C++
+ 
++fclone-functions
++Common Report Var(flag_clone_functions) Init(1)
++Allow the compiler to clone functions to facilitate certain optimizations.
++Enabled by default.
++
+ fcombine-stack-adjustments
+ Common Report Var(flag_combine_stack_adjustments) Optimization
+ Looks for opportunities to reduce stack adjustments and stack references.
+@@ -2131,6 +2136,10 @@
+ Common Report Var(flag_strict_aliasing) Optimization
+ Assume strict aliasing rules apply
+ 
++fstrict-calling-conventions
++Common Report Var(flag_strict_calling_conventions) Init(1)
++Use strict ABI calling conventions even for static functions
++
+ fstrict-overflow
+ Common Report Var(flag_strict_overflow) Optimization
+ Treat signed overflow as undefined
+diff -ru --ignore-all-space gcc-5.4.0/gcc/config/i386/i386.c gcc-5.4.0-il/gcc/config/i386/i386.c
+--- gcc-5.4.0/gcc/config/i386/i386.c	2016-05-20 15:24:29.000000000 +0200
++++ gcc-5.4.0-il/gcc/config/i386/i386.c	2017-01-31 01:16:49.765564967 +0100
+@@ -2317,6 +2317,10 @@
+ 
+    saved frame pointer			if frame_pointer_needed
+ 					<- HARD_FRAME_POINTER
++   [-msave-args]			<- arg_save_offset
++
++   [saveargs padding]
++
+    [saved regs]
+ 					<- regs_save_offset
+    [padding0]
+@@ -2334,6 +2338,7 @@
+   */
+ struct ix86_frame
+ {
++  int nmsave_args;
+   int nsseregs;
+   int nregs;
+   int va_arg_size;
+@@ -2345,6 +2350,7 @@
+   HOST_WIDE_INT hard_frame_pointer_offset;
+   HOST_WIDE_INT stack_pointer_offset;
+   HOST_WIDE_INT hfp_save_offset;
++  HOST_WIDE_INT arg_save_offset;
+   HOST_WIDE_INT reg_save_offset;
+   HOST_WIDE_INT sse_reg_save_offset;
+ 
+@@ -2479,6 +2485,8 @@
+ 
+ static enum calling_abi ix86_function_abi (const_tree);
+ 
++static int ix86_nsaved_args (void);
++static void pro_epilogue_adjust_stack (rtx, rtx, rtx, int, bool);
+ 
+ #ifndef SUBTARGET32_DEFAULT_CPU
+ #define SUBTARGET32_DEFAULT_CPU "i386"
+@@ -4020,6 +4028,9 @@
+     opts->x_ix86_isa_flags
+       |= OPTION_MASK_ISA_LZCNT & ~opts->x_ix86_isa_flags_explicit;
+ 
++  if (!TARGET_64BIT_P (opts->x_ix86_isa_flags) && TARGET_SAVE_ARGS)
++    error ("-msave-args makes no sense in the 32-bit mode");
++
+   /* Validate -mpreferred-stack-boundary= value or default it to
+      PREFERRED_STACK_BOUNDARY_DEFAULT.  */
+   ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
+@@ -5863,6 +5874,7 @@
+ 	 and callee not, or vice versa.  Instead look at whether the callee
+ 	 is optimized or not.  */
+       if (target && opt_for_fn (target->decl, optimize)
++	  && !flag_strict_calling_conventions
+ 	  && !(profile_flag && !flag_fentry))
+ 	{
+ 	  cgraph_local_info *i = &target->local;
+@@ -5954,6 +5966,7 @@
+       /* TARGET_SSE_MATH */
+       && (target_opts_for_fn (target->decl)->x_ix86_fpmath & FPMATH_SSE)
+       && opt_for_fn (target->decl, optimize)
++      && !flag_strict_calling_conventions
+       && !(profile_flag && !flag_fentry))
+     {
+       cgraph_local_info *i = &target->local;
+@@ -9666,7 +9679,7 @@
+ 
+   ix86_compute_frame_layout (&frame);
+   return (frame.stack_pointer_offset == UNITS_PER_WORD
+-	  && (frame.nregs + frame.nsseregs) == 0);
++	  && (frame.nmsave_args + frame.nregs + frame.nsseregs) == 0);
+ }
+ 
+ /* Value should be nonzero if functions must have frame pointers.
+@@ -9690,6 +9703,9 @@
+   if (TARGET_32BIT_MS_ABI && cfun->calls_setjmp)
+     return true;
+ 
++  if (TARGET_SAVE_ARGS)
++    return true;
++
+   /* Win64 SEH, very large frames need a frame-pointer as maximum stack
+      allocation is 4GB.  */
+   if (TARGET_64BIT_MS_ABI && get_frame_size () > SEH_MAX_FRAME_SIZE)
+@@ -10123,6 +10139,7 @@
+ 
+   frame->nregs = ix86_nsaved_regs ();
+   frame->nsseregs = ix86_nsaved_sseregs ();
++  frame->nmsave_args = ix86_nsaved_args ();
+ 
+   /* 64-bit MS ABI seem to require stack alignment to be always 16,
+      except for function prologues, leaf functions and when the defult
+@@ -10185,7 +10202,8 @@
+     }
+ 
+   frame->save_regs_using_mov
+-    = (TARGET_PROLOGUE_USING_MOVE && cfun->machine->use_fast_prologue_epilogue
++    = ((TARGET_FORCE_SAVE_REGS_USING_MOV ||
++	(TARGET_PROLOGUE_USING_MOVE && cfun->machine->use_fast_prologue_epilogue))
+        /* If static stack checking is enabled and done with probes,
+ 	  the registers need to be saved before allocating the frame.  */
+        && flag_stack_check != STATIC_BUILTIN_STACK_CHECK);
+@@ -10205,6 +10223,13 @@
+   /* The traditional frame pointer location is at the top of the frame.  */
+   frame->hard_frame_pointer_offset = offset;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      offset += frame->nmsave_args * UNITS_PER_WORD;
++      offset += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++    }
++  frame->arg_save_offset = offset;
++
+   /* Register save area */
+   offset += frame->nregs * UNITS_PER_WORD;
+   frame->reg_save_offset = offset;
+@@ -10282,8 +10307,9 @@
+   /* Size prologue needs to allocate.  */
+   to_allocate = offset - frame->sse_reg_save_offset;
+ 
+-  if ((!to_allocate && frame->nregs <= 1)
+-      || (TARGET_64BIT && to_allocate >= (HOST_WIDE_INT) 0x80000000))
++  if (!TARGET_SAVE_ARGS &&
++      ((!to_allocate && frame->nregs <= 1)
++       || (TARGET_64BIT && to_allocate >= (HOST_WIDE_INT) 0x80000000)))
+     frame->save_regs_using_mov = false;
+ 
+   if (ix86_using_red_zone ()
+@@ -10293,7 +10319,11 @@
+     {
+       frame->red_zone_size = to_allocate;
+       if (frame->save_regs_using_mov)
++	{
+ 	frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
++	  frame->red_zone_size += frame->nmsave_args * UNITS_PER_WORD;
++	  frame->red_zone_size += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++	}
+       if (frame->red_zone_size > RED_ZONE_SIZE - RED_ZONE_RESERVE)
+ 	frame->red_zone_size = RED_ZONE_SIZE - RED_ZONE_RESERVE;
+     }
+@@ -10324,6 +10354,23 @@
+ 	  frame->hard_frame_pointer_offset = frame->stack_pointer_offset - 128;
+ 	}
+     }
++
++
++  if (getenv("DEBUG_FRAME_STUFF") != NULL)
++    {
++      printf("nmsave_args: %d\n", frame->nmsave_args);
++      printf("nsseregs: %d\n", frame->nsseregs);
++      printf("nregs: %d\n", frame->nregs);
++
++      printf("frame_pointer_offset: %llx\n", frame->frame_pointer_offset);
++      printf("hard_frame_pointer_offset: %llx\n", frame->hard_frame_pointer_offset);
++      printf("stack_pointer_offset: %llx\n", frame->stack_pointer_offset);
++      printf("hfp_save_offset: %llx\n", frame->hfp_save_offset);
++      printf("arg_save_offset: %llx\n", frame->arg_save_offset);
++      printf("reg_save_offset: %llx\n", frame->reg_save_offset);
++      printf("sse_reg_save_offset: %llx\n", frame->sse_reg_save_offset);
++
++    }
+ }
+ 
+ /* This is semi-inlined memory_address_length, but simplified
+@@ -10432,6 +10479,24 @@
+   unsigned int regno;
+   rtx insn;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      for (i = start; i < start + nsaved; i++)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  insn = emit_insn (gen_push (gen_rtx_REG (word_mode, regno)));
++	  RTX_FRAME_RELATED_P (insn) = 1;
++	}
++      if (nsaved % 2 != 0)
++	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
++				   GEN_INT (-UNITS_PER_WORD), -1, false);
++    }
++
++
+   for (regno = FIRST_PSEUDO_REGISTER - 1; regno-- > 0; )
+     if (!SSE_REGNO_P (regno) && ix86_save_reg (regno, true))
+       {
+@@ -10521,9 +10586,30 @@
+ /* Emit code to save registers using MOV insns.
+    First register is stored at CFA - CFA_OFFSET.  */
+ static void
+-ix86_emit_save_regs_using_mov (HOST_WIDE_INT cfa_offset)
++ix86_emit_save_regs_using_mov (struct ix86_frame *frame)
+ {
+   unsigned int regno;
++  HOST_WIDE_INT cfa_offset = frame->arg_save_offset;
++
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      /* We deal with this twice? */
++      if (nsaved % 2 != 0)
++	cfa_offset -= UNITS_PER_WORD;
++
++      for (i = start + nsaved - 1; i >= start; i--)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
++	  cfa_offset -= UNITS_PER_WORD;
++	}
++    }
++
++  cfa_offset = frame->reg_save_offset;
+ 
+   for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
+     if (!SSE_REGNO_P (regno) && ix86_save_reg (regno, true))
+@@ -11551,7 +11637,7 @@
+       m->fs.realigned = true;
+     }
+ 
+-  int_registers_saved = (frame.nregs == 0);
++  int_registers_saved = (frame.nregs == 0 && frame.nmsave_args == 0);
+   sse_registers_saved = (frame.nsseregs == 0);
+ 
+   if (frame_pointer_needed && !m->fs.fp_valid)
+@@ -11591,6 +11677,7 @@
+ 	{
+ 	  ix86_emit_save_regs ();
+ 	  int_registers_saved = true;
++
+ 	  gcc_assert (m->fs.sp_offset == frame.reg_save_offset);
+ 	}
+ 
+@@ -11602,7 +11689,7 @@
+ 	       && (! TARGET_STACK_PROBE
+ 		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
+ 	{
+-	  ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++	  ix86_emit_save_regs_using_mov (&frame);
+ 	  int_registers_saved = true;
+ 	}
+     }
+@@ -11845,7 +11932,7 @@
+     }
+ 
+   if (!int_registers_saved)
+-    ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++    ix86_emit_save_regs_using_mov (&frame);
+   if (!sse_registers_saved)
+     ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
+ 
+@@ -11878,6 +11965,7 @@
+      relative to the value of the stack pointer at the end of the function
+      prologue, and moving instructions that access redzone area via frame
+      pointer inside push sequence violates this assumption.  */
++  /* XXX: We may wish to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -12104,6 +12192,7 @@
+ 
+   /* See the comment about red zone and frame
+      pointer usage in ix86_expand_prologue.  */
++  /* XXX: We may want to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -12294,6 +12383,36 @@
+       ix86_emit_restore_regs_using_pop ();
+     }
+ 
++  if (TARGET_SAVE_ARGS) {
++    /*
++     * For each saved argument, emit a restore note, to make sure it happens
++     * correctly within the shrink wrapping (I think).
++     *
++     * Note that 'restore' in this case merely means the rule is the same as
++     * it was on function entry, not that we have actually done a register
++     * restore (which of course, we haven't).
++     *
++     * If we do not do this, the DWARF code will emit sufficient restores to
++     * provide balance on its own initiative, which in the presence of
++     * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
++     * .cfi_offset a register sometimes, but will always .cfi_restore it.
++     * This will trip an assert.)
++     */
++    int start = cfun->returns_struct;
++    int nsaved = ix86_nsaved_args();
++    int i;
++
++    for (i = start + nsaved - 1; i >= start; i--)
++      queued_cfa_restores
++	= alloc_reg_note (REG_CFA_RESTORE,
++			  gen_rtx_REG(Pmode,
++				      x86_64_int_parameter_registers[i]),
++			  queued_cfa_restores);
++
++    gcc_assert(m->fs.fp_valid);
++  }
++
++
+   /* If we used a stack pointer and haven't already got rid of it,
+      then do so now.  */
+   if (m->fs.fp_valid)
+@@ -13225,6 +13344,19 @@
+   return !ix86_legitimate_constant_p (mode, x);
+ }
+ 
++/* Return number of arguments to be saved on the stack with
++   -msave-args.  */
++
++static int
++ix86_nsaved_args (void)
++{
++  if (TARGET_SAVE_ARGS)
++    return crtl->args.info.regno - cfun->returns_struct;
++  else
++    return 0;
++}
++
++
+ /*  Nonzero if the symbol is marked as dllimport, or as stub-variable,
+     otherwise zero.  */
+ 
+diff -ru --ignore-all-space gcc-5.4.0/gcc/config/i386/i386.opt gcc-5.4.0-il/gcc/config/i386/i386.opt
+--- gcc-5.4.0/gcc/config/i386/i386.opt	2015-06-18 12:56:43.000000000 +0200
++++ gcc-5.4.0-il/gcc/config/i386/i386.opt	2017-01-31 01:16:49.765829204 +0100
+@@ -499,6 +499,16 @@
+ Target Report Mask(TLS_DIRECT_SEG_REFS)
+ Use direct references against %gs when accessing tls data
+ 
++msave-args
++Target Report Mask(SAVE_ARGS)
++Save integer arguments on the stack at function entry
++
++mforce-save-regs-using-mov
++Target Report Mask(FORCE_SAVE_REGS_USING_MOV)
++Save registers using push in function prologues.  This is intentionally
++undocumented and used for msave-args testing.
++
++
+ mtune=
+ Target RejectNegative Joined Var(ix86_tune_string)
+ Schedule code for given CPU
+diff -ru --ignore-all-space gcc-5.4.0/gcc/config/sol2.h gcc-5.4.0-il/gcc/config/sol2.h
+--- gcc-5.4.0/gcc/config/sol2.h	2015-10-01 14:01:18.000000000 +0200
++++ gcc-5.4.0-il/gcc/config/sol2.h	2017-01-31 01:16:49.766288687 +0100
+@@ -151,13 +151,20 @@
+ #endif
+ 
+ #undef STARTFILE_ARCH_SPEC
+-#define STARTFILE_ARCH_SPEC "%{ansi:values-Xc.o%s} \
+-			    %{!ansi:values-Xa.o%s}"
++#define STARTFILE_ARCH_SPEC "%{std=c1x|std=gnu1x:values-Xc.o%s values-xpg6.o%s; \
++			       std=c11|std=gnu11:values-Xc.o%s values-xpg6.o%s; \
++			       std=c99|std=gnu99:values-Xc.o%s values-xpg6.o%s; \
++			       std=c9x|std=gnu9x:values-Xc.o%s values-xpg6.o%s; \
++			       std=c++0x|std=gnu++0x:values-Xc.o%s; \
++			       std=c++11|std=gnu++11:values-Xc.o%s; \
++			       std=c++03|std=gnu++03:values-Xc.o%s; \
++			       :values-Xa.o%s}"
++
+ 
+ #if defined(HAVE_LD_PIE) && defined(HAVE_SOLARIS_CRTS)
+ #define STARTFILE_CRTBEGIN_SPEC "%{shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
+ #else
+-#define STARTFILE_CRTBEGIN_SPEC	"crtbegin.o%s"
++#define STARTFILE_CRTBEGIN_SPEC	"%{shared:crtbeginS.o%s;:crtbegin.o%s}"
+ #endif
+ 
+ /* We don't use the standard svr4 STARTFILE_SPEC because it's wrong for us.  */
+@@ -182,7 +189,7 @@
+ #if defined(HAVE_LD_PIE) && defined(HAVE_SOLARIS_CRTS)
+ #define ENDFILE_CRTEND_SPEC "%{shared|pie:crtendS.o%s;:crtend.o%s}"
+ #else
+-#define ENDFILE_CRTEND_SPEC "crtend.o%s"
++#define ENDFILE_CRTEND_SPEC "%{shared:crtendS.o%s;:crtend.o%s}"
+ #endif
+ 
+ #undef  ENDFILE_SPEC
+diff -ru --ignore-all-space gcc-5.4.0/gcc/configure gcc-5.4.0-il/gcc/configure
+--- gcc-5.4.0/gcc/configure	2016-05-21 10:35:25.000000000 +0200
++++ gcc-5.4.0-il/gcc/configure	2017-01-31 01:16:49.770731745 +0100
+@@ -22459,6 +22459,7 @@
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++          ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -27114,6 +27115,8 @@
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+diff -ru --ignore-all-space gcc-5.4.0/gcc/configure.ac gcc-5.4.0-il/gcc/configure.ac
+--- gcc-5.4.0/gcc/configure.ac	2016-05-21 10:35:25.000000000 +0200
++++ gcc-5.4.0-il/gcc/configure.ac	2017-01-31 01:16:49.771860683 +0100
+@@ -2486,6 +2486,7 @@
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++          ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -4673,6 +4674,8 @@
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+diff -ru --ignore-all-space gcc-5.4.0/gcc/doc/invoke.texi gcc-5.4.0-il/gcc/doc/invoke.texi
+--- gcc-5.4.0/gcc/doc/invoke.texi	2016-05-17 20:42:16.000000000 +0200
++++ gcc-5.4.0-il/gcc/doc/invoke.texi	2017-01-31 01:16:49.776380469 +0100
+@@ -382,7 +382,7 @@
+ -fauto-inc-dec -fbranch-probabilities @gol
+ -fbranch-target-load-optimize -fbranch-target-load-optimize2 @gol
+ -fbtr-bb-exclusive -fcaller-saves @gol
+--fcheck-data-deps -fcombine-stack-adjustments -fconserve-stack @gol
++-fcheck-data-deps -fclone-functions -fcombine-stack-adjustments -fconserve-stack @gol
+ -fcompare-elim -fcprop-registers -fcrossjumping @gol
+ -fcse-follow-jumps -fcse-skip-blocks -fcx-fortran-rules @gol
+ -fcx-limited-range @gol
+@@ -9098,6 +9098,12 @@
+ The @option{-fstrict-aliasing} option is enabled at levels
+ @option{-O2}, @option{-O3}, @option{-Os}.
+ 
++@item -fstrict-calling-conventions
++@opindex fstrict-calling-conventions
++Use strict ABI calling conventions even with local functions.
++This disable certain optimizations that may cause GCC to call local
++functions in a manner other than that described by the ABI.
++
+ @item -fstrict-overflow
+ @opindex fstrict-overflow
+ Allow the compiler to assume strict signed overflow rules, depending
+@@ -9532,6 +9538,15 @@
+ The default is @option{-fno-fat-lto-objects} on targets with linker plugin
+ support.
+ 
++@item -fno-clone-functions
++@opindex fno-clone-functions
++Forbid the implicit cloning of functions implicit in certain
++optimizations.  This also effectively will disable any optimization
++which wishes to clone functions, equivalent to each function having
++the ``noclone'' attribute.  This allows the prevention of the
++dissociation of a piece of text from an intelligible and expected
++symbol name, which may hamper debugging and tracing.
++
+ @item -fcompare-elim
+ @opindex fcompare-elim
+ After register allocation and post-register allocation instruction splitting,
+@@ -12300,6 +12315,10 @@
+ addresses and sizes of sections.  Pointers are 64 bits.  Programs can be
+ statically linked only.
+ 
++@item -msave-args
++@opindex msave-args
++Save integer-sized arguments on the stack on function entry.
++
+ @item -mstrict-align
+ @opindex mstrict-align
+ Do not assume that unaligned memory references are handled by the system.
+diff -ru --ignore-all-space gcc-5.4.0/gcc/dwarf2out.c gcc-5.4.0-il/gcc/dwarf2out.c
+--- gcc-5.4.0/gcc/dwarf2out.c	2016-05-20 10:51:06.000000000 +0200
++++ gcc-5.4.0-il/gcc/dwarf2out.c	2017-01-31 01:16:49.780546879 +0100
+@@ -19027,6 +19027,11 @@
+   if (subr_die != old_die)
+     /* Add the calling convention attribute if requested.  */
+     add_calling_convention_attribute (subr_die, decl);
++
++#ifdef TARGET_SAVE_ARGS
++  if (TARGET_SAVE_ARGS)
++    add_AT_flag (subr_die, DW_AT_SUN_amd64_parmdump, 1);
++#endif
+ }
+ 
+ /* Returns a hash value for X (which really is a die_struct).  */
+diff -ru --ignore-all-space gcc-5.4.0/gcc/intl.c gcc-5.4.0-il/gcc/intl.c
+--- gcc-5.4.0/gcc/intl.c	2015-01-05 13:33:28.000000000 +0100
++++ gcc-5.4.0-il/gcc/intl.c	2017-01-31 01:16:49.780704025 +0100
+@@ -74,17 +74,11 @@
+ 
+   if (!strcmp (open_quote, "`") && !strcmp (close_quote, "'"))
+     {
+-      /* Untranslated quotes that it may be possible to replace with
+-	 U+2018 and U+2019; but otherwise use "'" instead of "`" as
+-	 opening quote.  */
++      /*
++       * open_quote is ` purely for ease of translation.  If they aren't
++       * translated, use ' for both
++       */
+       open_quote = "'";
+-#if defined HAVE_LANGINFO_CODESET
+-      if (locale_utf8)
+-	{
+-	  open_quote = "\xe2\x80\x98";
+-	  close_quote = "\xe2\x80\x99";
+-	}
+-#endif
+     }
+ }
+ 
+@@ -145,6 +139,3 @@
+    spaces[len] = '\0';
+    return spaces;
+ }
+-
+-
+-
+diff -ru --ignore-all-space gcc-5.4.0/gcc/symtab.c gcc-5.4.0-il/gcc/symtab.c
+--- gcc-5.4.0/gcc/symtab.c	2015-03-31 10:29:28.000000000 +0200
++++ gcc-5.4.0-il/gcc/symtab.c	2017-01-31 01:16:49.781128404 +0100
+@@ -1574,6 +1574,10 @@
+   tree new_decl;
+   symtab_node *new_node = NULL;
+ 
++  /* Do not allow a clone to be created if function-cloning is disabled */
++  if (!flag_clone_functions)
++	  return NULL;
++
+   /* First try to look up existing alias or base object
+      (if that is already non-overwritable).  */
+   symtab_node *node = ultimate_alias_target ();
+diff -ru --ignore-all-space gcc-5.4.0/gcc/testsuite/gcc.target/i386/local.c gcc-5.4.0-il/gcc/testsuite/gcc.target/i386/local.c
+--- gcc-5.4.0/gcc/testsuite/gcc.target/i386/local.c	2014-10-06 15:29:42.000000000 +0200
++++ gcc-5.4.0-il/gcc/testsuite/gcc.target/i386/local.c	2017-01-31 01:16:49.781639365 +0100
+@@ -1,5 +1,6 @@
+ /* { dg-do compile } */
+-/* { dg-options "-O2 -funit-at-a-time" } */
++/* { dg-options "-O2 -funit-at-a-time -fno-strict-calling-conventions" { target ia32 } } */
++/* { dg-options "-O2 -funit-at-a-time" { target lp64 } } */
+ /* { dg-final { scan-assembler "magic\[^\\n\]*eax" { target ia32 } } } */
+ /* { dg-final { scan-assembler "magic\[^\\n\]*(edi|ecx)" { target { ! { ia32 } } } } } */
+ 
+diff -ru --ignore-all-space gcc-5.4.0/gcc/tree-inline.c gcc-5.4.0-il/gcc/tree-inline.c
+--- gcc-5.4.0/gcc/tree-inline.c	2016-05-18 17:59:00.000000000 +0200
++++ gcc-5.4.0-il/gcc/tree-inline.c	2017-01-31 01:16:49.783288389 +0100
+@@ -5515,7 +5515,8 @@
+ tree_versionable_function_p (tree fndecl)
+ {
+   return (!lookup_attribute ("noclone", DECL_ATTRIBUTES (fndecl))
+-	  && copy_forbidden (DECL_STRUCT_FUNCTION (fndecl), fndecl) == NULL);
++	  && (copy_forbidden (DECL_STRUCT_FUNCTION (fndecl), fndecl) == NULL)
++	  && flag_clone_functions);
+ }
+ 
+ /* Delete all unreachable basic blocks and update callgraph.
+diff -ru --ignore-all-space gcc-5.4.0/include/dwarf2.def gcc-5.4.0-il/include/dwarf2.def
+--- gcc-5.4.0/include/dwarf2.def	2014-12-08 23:32:23.000000000 +0100
++++ gcc-5.4.0-il/include/dwarf2.def	2017-01-31 01:16:49.783592857 +0100
+@@ -406,6 +406,8 @@
+    See http://gcc.gnu.org/wiki/DW_AT_GNAT_descriptive_type .  */
+ DW_AT (DW_AT_use_GNAT_descriptive_type, 0x2301)
+ DW_AT (DW_AT_GNAT_descriptive_type, 0x2302)
++/* Sun extension. */
++DW_AT (DW_AT_SUN_amd64_parmdump, 0x2224)
+ /* UPC extension.  */
+ DW_AT (DW_AT_upc_threads_scaled, 0x3210)
+ /* PGI (STMicroelectronics) extensions.  */
+diff -ru --ignore-all-space gcc-5.4.0/libgcc/config.host gcc-5.4.0-il/libgcc/config.host
+--- gcc-5.4.0/libgcc/config.host	2016-05-17 08:17:53.000000000 +0200
++++ gcc-5.4.0-il/libgcc/config.host	2017-01-31 01:16:49.783982364 +0100
+@@ -265,7 +265,7 @@
+ *-*-solaris2*)
+   # Unless linker support and dl_iterate_phdr are present,
+   # unwind-dw2-fde-dip.c automatically falls back to unwind-dw2-fde.c.
+-  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver"
++  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver t-crtstuff-pic"
+   if test $with_gnu_ld = yes; then
+     tmake_file="$tmake_file t-slibgcc-gld"
+   else
+@@ -285,6 +285,7 @@
+       i?86-*-solaris2.1[0-9]* | x86_64-*-solaris2.1[0-9]*)
+         # Solaris 10+/x86 provides crt1.o, crti.o, crtn.o, and gcrt1.o as
+         # part of the base system.
++        extra_parts="$extra_parts crtbeginS.o crtendS.o"
+         ;;
+       sparc*-*-solaris2.1[0-9]*)
+         # Solaris 10+/SPARC lacks crt1.o and gcrt1.o.
+--- gcc-5.4.0/gcc/config/sol2-c.c.orig	2017-02-08 00:15:45.490099483 +0100
++++ gcc-5.4.0/gcc/config/sol2-c.c	2017-02-08 00:19:43.332617385 +0100
+@@ -53,7 +53,10 @@
+ 
+ static const format_flag_spec cmn_err_flag_specs[] =
+ {
++  { '0',  0, 0, N_("'0' flag"),        N_("the '0' flag"),                     STD_C89 },
++  { '-',  0, 0, N_("'-' flag"),        N_("the '-' flag"),                     STD_C89 },
+   { 'w',  0, 0, N_("field width"),     N_("field width in printf format"),     STD_C89 },
++  { 'p',  0, 0, N_("precision"),       N_("precision in printf format"),       STD_C89 },
+   { 'L',  0, 0, N_("length modifier"), N_("length modifier in printf format"), STD_C89 },
+   { 0, 0, 0, NULL, NULL, STD_C89 }
+ };
+@@ -61,6 +64,7 @@
+ 
+ static const format_flag_pair cmn_err_flag_pairs[] =
+ {
++  { '0', '-', 1, 0 },
+   { 0, 0, 0, 0 }
+ };
+ 
+@@ -70,21 +74,21 @@
+ static const format_char_info cmn_err_char_table[] =
+ {
+   /* C89 conversion specifiers.  */
+-  { "dD",  0, STD_C89, { T89_I,   BADLEN,  BADLEN,  T89_L,   T9L_LL,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "oOxX",0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "u",   0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "c",   0, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "p",   1, STD_C89, { T89_V,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w", "c",  NULL },
+-  { "s",   1, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "cR", NULL },
+-  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",   "",   &bitfield_string_type },
++  { "dD",  0, STD_C89, { T89_I,   BADLEN,  BADLEN,  T89_L,   T9L_LL,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp0", "",   NULL },
++  { "oOxX",0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp0", "",   NULL },
++  { "u",   0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp0", "",   NULL },
++  { "c",   0, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   NULL },
++  { "p",   1, STD_C89, { T89_V,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "c",  NULL },
++  { "s",   1, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp",  "cR", NULL },
++  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   &bitfield_string_type },
+   { NULL,  0, STD_C89, NOLENGTHS, NULL, NULL, NULL }
+ };
+ 
+ EXPORTED_CONST format_kind_info solaris_format_types[] = {
+-  { "cmn_err",  cmn_err_length_specs,  cmn_err_char_table, "", NULL,
++  { "cmn_err",  cmn_err_length_specs,  cmn_err_char_table, "0-", NULL,
+     cmn_err_flag_specs, cmn_err_flag_pairs,
+     FMT_FLAG_ARG_CONVERT|FMT_FLAG_EMPTY_PREC_OK,
+-    'w', 0, 0, 0, 'L', 0,
++    'w', 0, 'p', 0, 'L', 0,
+     &integer_type_node, &integer_type_node
+   }
+ };

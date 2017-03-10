@@ -9,14 +9,14 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher
+# Copyright 2016-2017 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           release
 COMPONENT_VERSION=        0.$(PKG_SOLARIS_VERSION)	
-COMPONENT_REVISION=       2
+COMPONENT_REVISION=       3
 COMPONENT_SUMMARY=        OpenIndiana Release Files 
 COMPONENT_PROJECT_URL=    http://www.openindiana.org/
 COMPONENT_FMRI=           release

@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
 COMPONENT_VERSION=	25.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -174,6 +175,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/doc/man/ctags.1 $(PGSHAREMAN1)/ctags.1 ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/doc/man/etags.1 $(PGSHAREMAN1)/etags.1 ;
+
+# By default, emacs is configured to compress lisp files, manpages, and info
+# files. The option to disable that (--without-compress-install) has no
+# granularity --- it's all or nothing. For Solaris, we want to compress lisp
+# sources, but not the others. It's simplest to let everything be compressed.
+# and then explicitly decompress the manpages and info files.
+COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
+        $(PROTO_DIR)/usr/share/info/*.gz \
+        $(PROTO_DIR)/usr/share/man/man1/*.gz ;
 
 # Throw away usr/share/info/dir. This file is the topmost node of the Info
 # hierarchy. Emacs builds it, as presumably do all GNU packages, but on

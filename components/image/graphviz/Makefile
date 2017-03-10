@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.38.0
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,7 +40,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.6/bin
+PATH_PHP.32 = /usr/php/5.6/bin
+PATH_PHP.64 = /usr/php/5.6/bin/$(MACH64)
+PATH =		/usr/bin:/usr/gnu/bin:$(PATH_PHP.$(BITS))
 
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
@@ -48,7 +50,9 @@ PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.6/bin
 # Java header files (--with-javaincludedir allows for only one directory)
 CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
-CPPFLAGS +=	$(shell /usr/php/5.6/bin/php-config --includes)
+CPPFLAGS_PHP.32 =	$(shell /usr/php/5.6/bin/php-config --includes)
+CPPFLAGS_PHP.64 =	$(shell /usr/php/5.6/bin/$(MACH64)/php-config --includes)
+CPPFLAGS += $(CPPFLAGS_PHP.$(BITS))
 #CXX +=		$(studio_NORUNPATH)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
@@ -69,15 +73,35 @@ CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=no
 CONFIGURE_OPTIONS +=	--enable-python27=yes
+CONFIGURE_ENV +=	PYTHON27=$(PYTHON.2.7.$(BITS))
+# We build only 64-bit java library,
+# but avoid building other 64-bit bindings for now
+CONFIGURE_OPTIONS.32 +=	--enable-java=no
+CONFIGURE_OPTIONS.64 +=	--enable-java=yes
+CONFIGURE_OPTIONS.64 +=	--enable-perl=no
+CONFIGURE_OPTIONS.64 +=	--enable-ruby=no
+CONFIGURE_OPTIONS.64 +=	--enable-tcl=no
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--with-qt=no
 
+CONFIGURE_ENV.32 += ac_cv_path_GDLIB_CONFIG=/usr/bin/gdlib-config
+CONFIGURE_ENV.64 += ac_cv_path_GDLIB_CONFIG=/usr/bin/$(MACH64)/gdlib-config
+
 COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
 
-# common targets
-build:		$(BUILD_32)
+COMPONENT_POST_INSTALL_ACTION += \
+    ( cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
+        $(RM) -r vendor-packages-$(BITS) ; \
+        $(MV) site-packages vendor-packages-$(BITS) )
 
-install:	$(INSTALL_32)
+# common targets
+
+# We don't want to overwrite 32-bit bits
+$(INSTALL_32):	$(INSTALL_64)
+
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python27
 

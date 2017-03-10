@@ -1,0 +1,20 @@
+https://bugzilla.gnome.org/show_bug.cgi?id=706462
+
+--- gstreamer-0.10.36/gst/parse/grammar.y.~1~	2011-12-30 05:14:35.000000000 +0400
++++ gstreamer-0.10.36/gst/parse/grammar.y	2017-03-09 23:12:02.718040332 +0300
+@@ -26,7 +26,6 @@
+  */
+ 
+ #define YYERROR_VERBOSE 1
+-#define YYLEX_PARAM scanner
+ 
+ #define YYENABLE_NLS 0
+ 
+@@ -648,6 +647,7 @@
+ %right '.'
+ %left '!' '='
+ 
++%lex-param { void *scanner }
+ %parse-param { void *scanner }
+ %parse-param { graph_t *graph }
+ %pure-parser

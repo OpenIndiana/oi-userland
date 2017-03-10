@@ -22,23 +22,23 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		xcb-proto
-COMPONENT_VERSION=	1.11
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	x11/header/xcb-protocols
+COMPONENT_NAME=           xcb-proto
+COMPONENT_VERSION=        1.12
+COMPONENT_FMRI=           x11/header/xcb-protocols
 COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:b4aceee6502a0ce45fc39b33c541a2df4715d00b72e660ebe8c5bb444771e32e
-COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      MIT
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Protocol descriptions
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:5922aba4c664ab7899a29d92ea91a87aa4c1fc7eb5ee550325c3216c480a4906
+COMPONENT_ARCHIVE_URL=    http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT
+COMPONENT_LICENSE_FILE=   $(COMPONENT_NAME).license
+COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 

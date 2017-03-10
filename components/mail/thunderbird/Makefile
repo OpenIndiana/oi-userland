@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
-COMPONENT_VERSION= 	45.5.1
+COMPONENT_VERSION= 	45.7.0
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:15088086ab8643275f04775002aca02701e30b4d61f108d5380b6e6b7582a24c
+  sha256:1366cd7fe246bdf1540203586ebfe8fc3fec1f679bd0b61e7e95288f493775fd
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/thunderbird/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/thunderbird/

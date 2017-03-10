@@ -1,0 +1,36 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2011, Andrzej Szeszo
+# Copyright 2013, Jon Tibble
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/lib/mps/$(MACH64)/libjss4.so
+file path=usr/lib/mps/libjss4.so
+file path=usr/share/lib/mps/$(MACH64)/xpclass.jar
+file path=usr/share/lib/mps/xpclass.jar
+link path=usr/lib/mps/64 target=$(MACH64)
+link path=usr/lib/mps/secv1/$(MACH64)/libjss4.so \
+    target=../../$(MACH64)/libjss4.so
+link path=usr/lib/mps/secv1/64 target=$(MACH64)
+link path=usr/lib/mps/secv1/libjss4.so target=../libjss4.so
+link path=usr/share/lib/mps/secv1/$(MACH64)/xpclass.jar \
+    target=../../$(MACH64)/xpclass.jar
+link path=usr/share/lib/mps/secv1/xpclass.jar target=../xpclass.jar

@@ -1,3 +1,4 @@
+
 #
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"), version 1.0.
@@ -272,9 +273,9 @@ link path=usr/lib/dns/libbind9.so target=libbind9.so.140.0.11
 link path=usr/lib/dns/libbind9.so.140 target=libbind9.so.140.0.11
 file path=usr/lib/dns/libbind9.so.140.0.11
 file path=usr/lib/dns/libdns.a
-link path=usr/lib/dns/libdns.so target=libdns.so.165.0.4
-link path=usr/lib/dns/libdns.so.165 target=libdns.so.165.0.4
-file path=usr/lib/dns/libdns.so.165.0.4
+link path=usr/lib/dns/libdns.so target=libdns.so.165.0.5
+link path=usr/lib/dns/libdns.so.165 target=libdns.so.165.0.5
+file path=usr/lib/dns/libdns.so.165.0.5
 file path=usr/lib/dns/libirs.a
 link path=usr/lib/dns/libirs.so target=libirs.so.141.0.4
 link path=usr/lib/dns/libirs.so.141 target=libirs.so.141.0.4
@@ -341,7 +342,7 @@ file path=usr/share/man/man1/named-rrchecker.1
 file path=usr/share/man/man1/nslookup.1
 file path=usr/share/man/man1/nsupdate.1
 file path=usr/share/man/man3/lwres.3
-hardlink path=usr/share/man/man3/lwres_addr_parse.3 target=lwres_string_parse.3
+hardlink path=usr/share/man/man3/lwres_addr_parse.3 target=lwres_resutil.3
 hardlink path=usr/share/man/man3/lwres_buffer.3 target=lwres_buffer_init.3
 hardlink path=usr/share/man/man3/lwres_buffer_add.3 target=lwres_buffer_init.3
 hardlink path=usr/share/man/man3/lwres_buffer_back.3 target=lwres_buffer_init.3
@@ -370,30 +371,33 @@ hardlink path=usr/share/man/man3/lwres_buffer_putuint8.3 \
     target=lwres_buffer_init.3
 hardlink path=usr/share/man/man3/lwres_buffer_subtract.3 \
     target=lwres_buffer_init.3
-hardlink path=usr/share/man/man3/lwres_conf_clear.3 target=lwres_conf_parse.3
-hardlink path=usr/share/man/man3/lwres_conf_get.3 target=lwres_conf_parse.3
-hardlink path=usr/share/man/man3/lwres_conf_init.3 target=lwres_conf_parse.3
-file path=usr/share/man/man3/lwres_conf_parse.3
-hardlink path=usr/share/man/man3/lwres_conf_print.3 target=lwres_conf_parse.3
-hardlink path=usr/share/man/man3/lwres_config.3 target=lwres_conf_parse.3
-hardlink path=usr/share/man/man3/lwres_context.3 target=lwres_context_allocmem.3
-file path=usr/share/man/man3/lwres_context_allocmem.3
+hardlink path=usr/share/man/man3/lwres_conf_clear.3 target=lwres_conf_init.3
+hardlink path=usr/share/man/man3/lwres_conf_get.3 target=lwres_conf_init.3
+file path=usr/share/man/man3/lwres_conf_init.3
+hardlink path=usr/share/man/man3/lwres_conf_parse.3 target=lwres_conf_init.3
+hardlink path=usr/share/man/man3/lwres_conf_print.3 target=lwres_conf_init.3
+hardlink path=usr/share/man/man3/lwres_config.3 target=lwres_conf_init.3
+hardlink path=usr/share/man/man3/lwres_context.3 \
+    target=lwres_context_nextserial.3
+hardlink path=usr/share/man/man3/lwres_context_allocmem.3 \
+    target=lwres_context_nextserial.3
 hardlink path=usr/share/man/man3/lwres_context_create.3 \
-    target=lwres_context_allocmem.3
+    target=lwres_context_nextserial.3
 hardlink path=usr/share/man/man3/lwres_context_destroy.3 \
-    target=lwres_context_allocmem.3
+    target=lwres_context_nextserial.3
 hardlink path=usr/share/man/man3/lwres_context_freemem.3 \
-    target=lwres_context_allocmem.3
+    target=lwres_context_nextserial.3
 hardlink path=usr/share/man/man3/lwres_context_initserial.3 \
-    target=lwres_context_allocmem.3
-hardlink path=usr/share/man/man3/lwres_context_nextserial.3 \
-    target=lwres_context_allocmem.3
+    target=lwres_context_nextserial.3
+file path=usr/share/man/man3/lwres_context_nextserial.3
 hardlink path=usr/share/man/man3/lwres_context_sendrecv.3 \
-    target=lwres_context_allocmem.3
-hardlink path=usr/share/man/man3/lwres_endhostent.3 target=lwres_sethostent.3
-hardlink path=usr/share/man/man3/lwres_endhostent_r.3 target=lwres_sethostent.3
+    target=lwres_context_nextserial.3
+hardlink path=usr/share/man/man3/lwres_endhostent.3 \
+    target=lwres_gethostbyaddr_r.3
+hardlink path=usr/share/man/man3/lwres_endhostent_r.3 \
+    target=lwres_gethostbyaddr_r.3
 hardlink path=usr/share/man/man3/lwres_freeaddrinfo.3 target=lwres_getaddrinfo.3
-file path=usr/share/man/man3/lwres_freehostent.3
+hardlink path=usr/share/man/man3/lwres_freehostent.3 target=lwres_getipnode.3
 file path=usr/share/man/man3/lwres_gabn.3
 hardlink path=usr/share/man/man3/lwres_gabnrequest_free.3 target=lwres_gabn.3
 hardlink path=usr/share/man/man3/lwres_gabnrequest_parse.3 target=lwres_gabn.3
@@ -403,64 +407,67 @@ hardlink path=usr/share/man/man3/lwres_gabnresponse_parse.3 target=lwres_gabn.3
 hardlink path=usr/share/man/man3/lwres_gabnresponse_render.3 target=lwres_gabn.3
 file path=usr/share/man/man3/lwres_gai_strerror.3
 file path=usr/share/man/man3/lwres_getaddrinfo.3
-hardlink path=usr/share/man/man3/lwres_getaddrsbyname.3 \
-    target=lwres_string_parse.3
-hardlink path=usr/share/man/man3/lwres_gethostbyaddr.3 target=lwres_sethostent.3
-hardlink path=usr/share/man/man3/lwres_gethostbyaddr_r.3 \
-    target=lwres_sethostent.3
-hardlink path=usr/share/man/man3/lwres_gethostbyname.3 target=lwres_sethostent.3
+hardlink path=usr/share/man/man3/lwres_getaddrsbyname.3 target=lwres_resutil.3
+hardlink path=usr/share/man/man3/lwres_gethostbyaddr.3 \
+    target=lwres_gethostbyaddr_r.3
+file path=usr/share/man/man3/lwres_gethostbyaddr_r.3
+hardlink path=usr/share/man/man3/lwres_gethostbyname.3 \
+    target=lwres_gethostbyaddr_r.3
 hardlink path=usr/share/man/man3/lwres_gethostbyname2.3 \
-    target=lwres_sethostent.3
+    target=lwres_gethostbyaddr_r.3
 hardlink path=usr/share/man/man3/lwres_gethostbyname_r.3 \
-    target=lwres_sethostent.3
-hardlink path=usr/share/man/man3/lwres_gethostent.3 target=lwres_sethostent.3
-hardlink path=usr/share/man/man3/lwres_gethostent_r.3 target=lwres_sethostent.3
-hardlink path=usr/share/man/man3/lwres_getipnode.3 target=lwres_freehostent.3
+    target=lwres_gethostbyaddr_r.3
+hardlink path=usr/share/man/man3/lwres_gethostent.3 \
+    target=lwres_gethostbyaddr_r.3
+hardlink path=usr/share/man/man3/lwres_gethostent_r.3 \
+    target=lwres_gethostbyaddr_r.3
+file path=usr/share/man/man3/lwres_getipnode.3
 hardlink path=usr/share/man/man3/lwres_getipnodebyaddr.3 \
-    target=lwres_freehostent.3
+    target=lwres_getipnode.3
 hardlink path=usr/share/man/man3/lwres_getipnodebyname.3 \
-    target=lwres_freehostent.3
-hardlink path=usr/share/man/man3/lwres_getnamebyaddr.3 \
-    target=lwres_string_parse.3
+    target=lwres_getipnode.3
+hardlink path=usr/share/man/man3/lwres_getnamebyaddr.3 target=lwres_resutil.3
 file path=usr/share/man/man3/lwres_getnameinfo.3
 file path=usr/share/man/man3/lwres_getrrsetbyname.3
-hardlink path=usr/share/man/man3/lwres_gnba.3 target=lwres_gnbarequest_parse.3
+hardlink path=usr/share/man/man3/lwres_gnba.3 target=lwres_gnbaresponse_free.3
 hardlink path=usr/share/man/man3/lwres_gnbarequest_free.3 \
-    target=lwres_gnbarequest_parse.3
-file path=usr/share/man/man3/lwres_gnbarequest_parse.3
+    target=lwres_gnbaresponse_free.3
+hardlink path=usr/share/man/man3/lwres_gnbarequest_parse.3 \
+    target=lwres_gnbaresponse_free.3
 hardlink path=usr/share/man/man3/lwres_gnbarequest_render.3 \
-    target=lwres_gnbarequest_parse.3
-hardlink path=usr/share/man/man3/lwres_gnbaresponse_free.3 \
-    target=lwres_gnbarequest_parse.3
+    target=lwres_gnbaresponse_free.3
+file path=usr/share/man/man3/lwres_gnbaresponse_free.3
 hardlink path=usr/share/man/man3/lwres_gnbaresponse_parse.3 \
-    target=lwres_gnbarequest_parse.3
+    target=lwres_gnbaresponse_free.3
 hardlink path=usr/share/man/man3/lwres_gnbaresponse_render.3 \
-    target=lwres_gnbarequest_parse.3
+    target=lwres_gnbaresponse_free.3
 hardlink path=usr/share/man/man3/lwres_herror.3 target=lwres_hstrerror.3
 file path=usr/share/man/man3/lwres_hstrerror.3
 hardlink path=usr/share/man/man3/lwres_inetntop.3 target=lwres_net_ntop.3
-file path=usr/share/man/man3/lwres_lwpacket_parseheader.3
-hardlink path=usr/share/man/man3/lwres_lwpacket_renderheader.3 \
-    target=lwres_lwpacket_parseheader.3
+hardlink path=usr/share/man/man3/lwres_lwpacket_parseheader.3 \
+    target=lwres_lwpacket_renderheader.3
+file path=usr/share/man/man3/lwres_lwpacket_renderheader.3
 file path=usr/share/man/man3/lwres_net_ntop.3
-hardlink path=usr/share/man/man3/lwres_noop.3 target=lwres_nooprequest_parse.3
+hardlink path=usr/share/man/man3/lwres_noop.3 target=lwres_noopresponse_free.3
 hardlink path=usr/share/man/man3/lwres_nooprequest_free.3 \
-    target=lwres_nooprequest_parse.3
-file path=usr/share/man/man3/lwres_nooprequest_parse.3
+    target=lwres_noopresponse_free.3
+hardlink path=usr/share/man/man3/lwres_nooprequest_parse.3 \
+    target=lwres_noopresponse_free.3
 hardlink path=usr/share/man/man3/lwres_nooprequest_render.3 \
-    target=lwres_nooprequest_parse.3
-hardlink path=usr/share/man/man3/lwres_noopresponse_free.3 \
-    target=lwres_nooprequest_parse.3
+    target=lwres_noopresponse_free.3
+file path=usr/share/man/man3/lwres_noopresponse_free.3
 hardlink path=usr/share/man/man3/lwres_noopresponse_parse.3 \
-    target=lwres_nooprequest_parse.3
+    target=lwres_noopresponse_free.3
 hardlink path=usr/share/man/man3/lwres_noopresponse_render.3 \
-    target=lwres_nooprequest_parse.3
+    target=lwres_noopresponse_free.3
 hardlink path=usr/share/man/man3/lwres_packet.3 \
-    target=lwres_lwpacket_parseheader.3
-hardlink path=usr/share/man/man3/lwres_resutil.3 target=lwres_string_parse.3
-file path=usr/share/man/man3/lwres_sethostent.3
-hardlink path=usr/share/man/man3/lwres_sethostent_r.3 target=lwres_sethostent.3
-file path=usr/share/man/man3/lwres_string_parse.3
+    target=lwres_lwpacket_renderheader.3
+file path=usr/share/man/man3/lwres_resutil.3
+hardlink path=usr/share/man/man3/lwres_sethostent.3 \
+    target=lwres_gethostbyaddr_r.3
+hardlink path=usr/share/man/man3/lwres_sethostent_r.3 \
+    target=lwres_gethostbyaddr_r.3
+hardlink path=usr/share/man/man3/lwres_string_parse.3 target=lwres_resutil.3
 file path=usr/share/man/man5/named.conf.5
 file path=usr/share/man/man5/rndc.conf.5
 file path=usr/share/man/man8/ddns-confgen.8

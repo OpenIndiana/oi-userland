@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2016 Predrag Zečević.  All rights reserved.
+# Copyright 2016-2017 Predrag Zečević.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany
-COMPONENT_VERSION= 1.28
+COMPONENT_VERSION= 1.29
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany
 COMPONENT_SUMMARY= A fast and lightweight IDE
 COMPONENT_DESCRIPTION= Small and fast IDE, which has only a few dependencies from other package (independent on DE)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:f73a3708f1a26e9bf72da564d5037d6f7fedca2e0d6175db0681c2b672100a5a
+COMPONENT_ARCHIVE_HASH= sha256:394307596bc908419617e4c33e93eae8b5b733dfc8d01161677b8cbd3a4fb20f
 COMPONENT_ARCHIVE_URL= http://download.geany.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.geany.org/Main/HomePage
 COMPONENT_LICENSE= GPLv2

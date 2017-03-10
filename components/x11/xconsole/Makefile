@@ -16,23 +16,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xconsole
-COMPONENT_VERSION=        1.0.6
-COMPONENT_FMRI=           x11/xconsole
+COMPONENT_VERSION=        1.0.7
+COMPONENT_SUMMARY=        xconsole - monitor system console messages with X 
+COMPONENT_PROJECT_URL =   http://www.x.org/
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_SUMMARY=  xconsole - monitor system console messages with X 
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_FMRI=           x11/xconsole
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e561959b6ee8b735a32c1050015cfd8c551ed162cabb6cb72e36ce72966855d1
+  sha256:d1144882df207378381bc83927906559defbf7b83a01d52c50ad44234c5851e0
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xconsole-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  http://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xconsole.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

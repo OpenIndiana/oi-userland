@@ -92,6 +92,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|'; \
 	  echo export PERL_VERSION=\"5.22\"; \
 	  echo export PERL_PKGVERS=\"-522\"; \
+	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
 	  echo export ONLY_LINT_DEFS=-I\$$SPRO_ROOT/sunstudio12.1/prod/include/lint; \
@@ -553,6 +554,10 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend type=require fmri=pkg:/service/network/smtp/sendmail@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend type=require fmri=service/network/smtp/sendmail -> emit depend type=require fmri=pkg:/system/mta>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend type=require fmri=service/network/smtp/sendmail -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	# We want to replace dependency on particular agpart version, but preserve dependency on any version
+	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> emit depend type=require fmri=pkg:/driver/graphics/agpgart>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	# Loader branding
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/loader.conf group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms

@@ -1,0 +1,68 @@
+--- a/src/alp.h	Thu Jul 16 09:58:14 2015
++++ b/src/alp.h	Thu Jul 16 09:58:26 2015
+@@ -3,8 +3,8 @@
+ #ifndef ALP_H
+ #define ALP_H
+ 
+-extern ScrnInfoPtr AlpProbe(int entity);
+-extern const OptionInfoRec *	AlpAvailableOptions(int chipid);
++extern _X_EXPORT ScrnInfoPtr AlpProbe(int entity);
++extern _X_EXPORT const OptionInfoRec *	AlpAvailableOptions(int chipid);
+ 
+ # ifdef _ALP_PRIVATE_
+ /* Saved registers that are not part of the core VGA */
+--- a/src/lg.h	Thu Jul 16 09:57:35 2015
++++ b/src/lg.h	Thu Jul 16 09:57:57 2015
+@@ -14,8 +14,8 @@
+ #define LG_H
+ #define LG_DEBUG
+ 
+-extern ScrnInfoPtr LgProbe(int entity);
+-extern const OptionInfoRec *	LgAvailableOptions(int chipid);
++extern _X_EXPORT ScrnInfoPtr LgProbe(int entity);
++extern _X_EXPORT const OptionInfoRec *	LgAvailableOptions(int chipid);
+ 
+ # ifdef _LG_PRIVATE_
+ 
+--- a/src/cir.h	Thu Jul 16 09:53:49 2015
++++ b/src/cir.h	Thu Jul 16 09:57:12 2015
+@@ -77,27 +77,27 @@
+ } CirRec, *CirPtr;
+ 
+ /* CirrusClk.c */
+-extern Bool
++extern _X_EXPORT Bool
+ CirrusFindClock(int *rfreq, int max_clock, int *num_out, int *den_out);
+ 
+ /* cir_driver.c */
+ extern SymTabRec CIRChipsets[];
+-extern PciChipsets CIRPciChipsets[];
++extern _X_EXPORT PciChipsets CIRPciChipsets[];
+ 
+-extern Bool CirMapMem(CirPtr pCir, int scrnIndex);
+-extern Bool CirUnmapMem(CirPtr pCir, int scrnIndex);
+-extern void cirProbeDDC(ScrnInfoPtr pScrn, int index);
++extern _X_EXPORT Bool CirMapMem(CirPtr pCir, int scrnIndex);
++extern _X_EXPORT Bool CirUnmapMem(CirPtr pCir, int scrnIndex);
++extern _X_EXPORT void cirProbeDDC(ScrnInfoPtr pScrn, int index);
+ 
+ /* cir_dga.c */
+-extern Bool CirDGAInit(ScreenPtr pScreen);
++extern _X_EXPORT Bool CirDGAInit(ScreenPtr pScreen);
+ 
+ /* in cir_shadow.c */
+-void cirPointerMoved(SCRN_ARG_TYPE arg, int x, int y);
+-void cirRefreshArea(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
+-void cirRefreshArea8(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
+-void cirRefreshArea16(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
+-void cirRefreshArea24(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
+-void cirRefreshArea32(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
++void _X_EXPORT cirPointerMoved(SCRN_ARG_TYPE arg, int x, int y);
++void _X_EXPORT cirRefreshArea(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
++void _X_EXPORT cirRefreshArea8(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
++void _X_EXPORT cirRefreshArea16(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
++void _X_EXPORT cirRefreshArea24(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
++void _X_EXPORT cirRefreshArea32(ScrnInfoPtr pScrn, int num, BoxPtr pbox);
+ 
+ /* properties */
+ #define HWCUR64 0x1

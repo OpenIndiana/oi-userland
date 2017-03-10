@@ -1,0 +1,57 @@
+Provide the directory where snort will initially look for DAQ modules.
+
+This patch has not been sent upstream, because the Solaris integration
+of libdaq is different from the way that Linux systems do this.
+
+On Linux systems, DAQ installs two static libraries:
+
+  /usr/lib/libdaq_static.a
+  /usr/lib/libdaq_static_modules.a
+
+When snort is being configured, you see:
+
+...
+checking for daq_load_modules in -ldaq_static... yes
+...
+
+and at link time we see "-ldaq_static ... -ldaq_static_modules ...".
+
+This means that when you start snort running, it knows where to
+look for a set of DAQ modules that it loads. This is done with
+with a call to the DAQ routine daq_load_modules().
+
+On Solaris, we do not provide those two static libraries (or their 64-bit
+equivalents). Therefore, by default, a call to daq_load_modules() using
+the dynamic libraries doesn't know where to look for any DAQ modules.
+
+Now you can override this by starting snort with:
+
+  $ sudo /usr/bin/snort --daq-dir /usr/lib/64/daq
+
+  or
+
+  $ sudo /usr/bin/snort -c /etc/snort.conf
+
+or something similar, but that doesn't allow:
+
+  $ sudo /usr/bin/snort
+
+to work, right out of the box, which is what snort users would expect.
+
+To resolve this, at snort initialization time on Solaris, the code has
+been adjusted to specify a single default DAQ module directory:
+
+  /usr/lib/daq
+
+--- snort-2.9.9.0/src/snort.c.~1~	2016-11-14 14:48:57.000000000 +0300
++++ snort-2.9.9.0/src/snort.c	2017-01-31 17:13:46.276333406 +0300
+@@ -4190,6 +4190,9 @@
+ {
+     SnortConfig *sc = (SnortConfig *)SnortAlloc(sizeof(SnortConfig));
+ 
++    /* Define where to look for DAQ modules. */
++    ConfigDaqDir(sc, "/usr/lib/daq");
++
+     sc->pkt_cnt = 0;
+ #ifdef REG_TEST
+     sc->pkt_skip = 0;

@@ -159,7 +159,7 @@ set name=variant.arch value=$(MACH)
 #
 # Set the default Java for mediated links
 #
-<transform link mediator=java mediator-version=7 -> default mediator-priority vendor>
+<transform link mediator=java mediator-version=8 -> default mediator-priority vendor>
 
 #
 # Add a facet.version-lock.{package} to each 'optional' consolidation
@@ -173,6 +173,9 @@ set name=variant.arch value=$(MACH)
 <transform depend tmp.fmri=.*-> delete tmp.fmri .* >
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+# Avoid mangling compressed man pages
+<transform file path=usr.*/man/.+\.(Z|bzip2|gz|xz)$ -> default mangler.bypass true>
 
 <transform set name=pkg.fmri -> emit set name=userland.info.git-remote \
              value=$(USERLAND_GIT_REMOTE)>

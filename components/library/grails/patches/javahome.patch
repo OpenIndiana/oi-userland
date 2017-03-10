@@ -1,0 +1,24 @@
+--- grails-1.0.3/bin/startGrails.1	2017-02-21 16:51:12.810788365 +0300
++++ grails-1.0.3/bin/startGrails	2017-02-21 16:52:53.972920424 +0300
+@@ -48,6 +48,9 @@
+     Darwin*)
+         darwin=true
+         ;;
++    SunOS*)
++        illumos=true
++        ;;
+ esac
+ 
+ if [ "$1" = "-cp" ] || [ "$1" = "-classpath" ]; then
+@@ -70,6 +73,11 @@
+ 			export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
+ 		
+ 	fi
++
++        if $illumos; then
++                [ -z "$JAVA_HOME" -a -d "/usr/java" ] &&
++                        export JAVA_HOME="/usr/java"
++        fi
+ 	
+ fi
+ 

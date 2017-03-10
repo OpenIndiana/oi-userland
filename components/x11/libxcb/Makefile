@@ -22,22 +22,22 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         libxcb
-COMPONENT_VERSION=      1.11.1
-COMPONENT_FMRI=         x11/library/libxcb
+COMPONENT_NAME=           libxcb
+COMPONENT_VERSION=        1.12
+COMPONENT_FMRI=           x11/library/libxcb
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://xcb.freedesktop.org
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Libraries
+COMPONENT_SRC=		        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b720fd6c7d200e5371affdb3f049cc8f88cff9aed942ff1b824d95eedbf69d30
-COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      MIT
+	sha256:4adfb1b7c67e99bc9c2ccb110b2f175686576d2f792c8a71b9c8b19014057b5b
+COMPONENT_ARCHIVE_URL=	  http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared

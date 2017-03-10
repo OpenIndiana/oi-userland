@@ -1,0 +1,20 @@
+--- vnc-4_1-javasrc.orig/java/makefile	2007-07-09 18:51:21.719429000 +0800
++++ vnc-4_1-javasrc/java/makefile	2007-07-21 00:09:07.286607000 +0800
+@@ -2,7 +2,7 @@
+ # probably won't work for you!
+ #
+ 
+-JAVAC = jikes -classpath .:$$CLASSPATH
++JAVAC = javac -target 1.8 -classpath .:$$CLASSPATH
+ JAR = jar
+ INSTALL_DIR = ../unix/java
+ SRCS = $(shell find . -name '*.java' -print 2>/dev/null)
+@@ -12,7 +12,7 @@
+ vncviewer.jar: $(SRCS)
+ 	$(RM) `find . -name '*.class' -print`
+ 	$(JAVAC) -d . $^
+-	$(JAR) cmf manifest $@ `find . -name '*.class' -print`
++	$(JAR) cmf manifest $@ `find . -name '*.class' -print` README
+ 
+ clean::
+ 	$(RM) `find . -name '*.class' -print`

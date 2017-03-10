@@ -1,0 +1,29 @@
+--- aget-0.4.1/Makefile.Solaris		2016-12-21 22:44:23.411350275 -0200
++++ aget-0.4.1-oi/Makefile.Solaris	2016-12-21 22:49:04.283929368 -0200
+@@ -2,19 +2,21 @@
+ # http://www.enderunix.org/aget/
+ 
+ OBJS = main.o Aget.o Misc.o Head.o Signal.o Download.o Resume.o
+-CFLAGS  = -g -W -DSOLARIS -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+-LDFLAGS = -lpthread -lsocket -lnsl -lresolv
+-CC = gcc
++CFLAGS  += -DSOLARIS -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
++LDFLAGS += -lpthread -lsocket -lnsl -lresolv
+ STRIP=/usr/ccs/bin/strip
+ 
+ all: $(OBJS)
+-	$(CC) -o aget $(OBJS) $(LDFLAGS)
++	$(CC) -m$(BITS) -o aget $(OBJS) $(LDFLAGS)
+ 
+ strip: $(all)
+ 	$(STRIP) aget
+ 	
+ install:
+-	cp -f aget /usr/local/bin/aget
++	mkdir -p $(PREFIX)/bin
++	mkdir -p $(PREFIX)/share/man/man1
++	cp -f aget $(PREFIX)/bin/aget
++	cp -f aget.1.Solaris $(PREFIX)/share/man/man1/aget.1
+ 
+ clean: 
+ 	rm -f aget *.o core.* *~

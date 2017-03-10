@@ -9,13 +9,13 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2017 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
-COMPONENT_VERSION=	0.91
+COMPONENT_VERSION=	0.92.0
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
@@ -23,17 +23,18 @@ COMPONENT_PROJECT_URL=	http://www.inkscape.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4d901f8a9e1924404e797ad23b8b0c495a9d155448816d95a55974314e1f141b
-COMPONENT_ARCHIVE_URL=	http://inkscape.org/en/gallery/item/3860/$(COMPONENT_ARCHIVE)
+    sha256:b8b4c159a00448d465384533e5a70d3f33e5f9c6b74c76ea5d636ddd6dd7ba56
+COMPONENT_ARCHIVE_URL=	http://inkscape.org/en/gallery/item/10552/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=/usr/gnu/bin:/usr/bin:$(dir $(POD2MAN))
 
 COMPONENT_PREP_ACTION =	( cd $(@D)  && \
+				autoreconf --force --install &&\
 				libtoolize --force &&\
 				intltoolize --force --copy --automake &&\
 				aclocal -I. &&\

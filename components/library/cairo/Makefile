@@ -10,19 +10,18 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cairo
-COMPONENT_VERSION= 1.14.6
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.14.8
 COMPONENT_SUMMARY= Vector graphics library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:613cb38447b76a93ff7235e17acd55a78b52ea84a9df128c3f2257f8eaa7b252
+  sha256:d1f2d98ae9a4111564f6de4e013d639cf77155baf2556582295a0f00a9bc5e20
 COMPONENT_ARCHIVE_URL= \
   http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cairographics.org/
@@ -57,8 +56,29 @@ CONFIGURE_OPTIONS += --enable-xlib-xcb
 CONFIGURE_OPTIONS += --enable-xml
 CONFIGURE_OPTIONS += --enable-test-surfaces
 
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += library/lzo
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb

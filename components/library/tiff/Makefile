@@ -10,19 +10,18 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
-COMPONENT_VERSION= 4.0.6
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 4.0.7
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4d57a50907b510e3049a4bba0d7888930fdfc16ce49f1bf693e5b6247370d68c
+  sha256:9f43a2cfb9589e5cecaa66e16bf87f814c945f22df7ba600d63aac4632c4f019
 COMPONENT_ARCHIVE_URL= \
   http://download.osgeo.org/libtiff/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.remotesensing.org/libtiff/
@@ -31,9 +30,9 @@ COMPONENT_LICENSE = BSD-like
 COMPONENT_FMRI = image/library/libtiff
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-cxx
@@ -48,3 +47,10 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
