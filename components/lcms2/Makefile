@@ -40,7 +40,6 @@ COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 
 CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms2

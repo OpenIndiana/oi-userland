@@ -42,7 +42,6 @@ TPNO=			24194
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATH=$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
@@ -200,12 +199,6 @@ install:	$(INSTALL_32_and_64) $(PROTO_DIR)/.openssl-0.9.8
 # which is not enabled by default but it is in our opensslconf.h.
 LFLAGS_32 := -I$(BUILD_DIR_32)/include $(LINT_FLAGS) -lsoftcrypto
 LFLAGS_64 := -I$(BUILD_DIR_64)/include $(LINT_FLAGS) -lsoftcrypto
-
-# Set modified lint flags for our lint library targets.
-$(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_32)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_64)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_64)
-$(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
 
 # There are also separate STC test suites 'openssl' and 'openssl-engine'
 # for regression testing. These internal tests are unit tests only.

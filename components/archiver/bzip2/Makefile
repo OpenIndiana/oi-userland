@@ -39,7 +39,6 @@ COMPONENT_BUGDB=	utility/bzip
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
-#include ../../make-rules/lint-libraries.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -71,7 +70,6 @@ install:	build $(INSTALL_32_and_64)
 	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
 	$(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64)
 	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
-#	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
 
 # build does this always
 test:		$(TEST_32_and_64)

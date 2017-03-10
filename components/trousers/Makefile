@@ -36,7 +36,6 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)0.3.11/$(COMPONENT_ARCHIVE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 LIBS = -lnsl -lsocket -lgen
 CFLAGS += -DSOLARIS -DBI_OPENSSL -D_REENTRANT

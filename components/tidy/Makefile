@@ -38,7 +38,6 @@ COMPONENT_BUGDB=	library/tidy
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 #tree.js, treeview.js, tidyenum_8h.html are installed 
 #from files directory manually as doxygen didn't generate them.

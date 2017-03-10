@@ -35,7 +35,6 @@ COMPONENT_BUGDB=	library/libtecla
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 COMPONENT_BUILD_ARGS=
 

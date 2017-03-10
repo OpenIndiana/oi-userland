@@ -40,7 +40,6 @@ COMPONENT_BUGDB=	utility/python
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/lint-libraries.mk
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older,
 # Python will try to rebuild them.

@@ -39,7 +39,6 @@ COMPONENT_BUGDB=	library/libz
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # Zlib won't build without cloning. We need also to get rid of default
 # Makefile and get our own version of zconf.h to avoid interactions

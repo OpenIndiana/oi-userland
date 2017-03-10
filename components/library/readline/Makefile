@@ -53,7 +53,6 @@ SOURCE_DIR_1 =          $(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
 LINT_FLAGS += -I$(PROTO_DIR)/usr/include
 
