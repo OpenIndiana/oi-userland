@@ -17,12 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
-COMPONENT_VERSION= 12.0.6
+COMPONENT_VERSION= 13.0.5
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7d6da9744c1022a4c2ab6ad01a206984d00443fb691568011d01b3dd97e36448
+  sha256:bfcea7e2c801525a60895c8aff11aa68457ee9aa35d01a4638e1f310a3f5ef87
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
@@ -77,7 +77,7 @@ CONFIGURE_OPTIONS += --enable-texture-float
 CONFIGURE_OPTIONS += --enable-osmesa
 CONFIGURE_OPTIONS += --with-sha1=libcrypto
 CONFIGURE_OPTIONS += --disable-glx-tls
-CONFIGURE_OPTIONS += --enable-shader-cache
+CONFIGURE_OPTIONS += --disable-shader-cache
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV+=PYTHON=$(PYTHON)

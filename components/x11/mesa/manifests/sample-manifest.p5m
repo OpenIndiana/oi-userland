@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -46,6 +46,7 @@ file path=usr/include/GLES2/gl2ext.h
 file path=usr/include/GLES2/gl2platform.h
 file path=usr/include/GLES3/gl3.h
 file path=usr/include/GLES3/gl31.h
+file path=usr/include/GLES3/gl32.h
 file path=usr/include/GLES3/gl3ext.h
 file path=usr/include/GLES3/gl3platform.h
 file path=usr/include/KHR/khrplatform.h
@@ -107,16 +108,16 @@ file path=usr/lib/pkgconfig/glesv1_cm.pc
 file path=usr/lib/pkgconfig/glesv2.pc
 file path=usr/lib/pkgconfig/osmesa.pc
 hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i915_dri.so \
-    target=radeon_dri.so
+    target=swrast_dri.so
 hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i965_dri.so \
-    target=radeon_dri.so
+    target=swrast_dri.so
 hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/r200_dri.so \
-    target=radeon_dri.so
-file path=usr/lib/xorg/modules/dri/$(MACH64)/radeon_dri.so
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so \
-    target=radeon_dri.so
-hardlink path=usr/lib/xorg/modules/dri/i915_dri.so target=i965_dri.so
-file path=usr/lib/xorg/modules/dri/i965_dri.so
-hardlink path=usr/lib/xorg/modules/dri/r200_dri.so target=i965_dri.so
-hardlink path=usr/lib/xorg/modules/dri/radeon_dri.so target=i965_dri.so
-hardlink path=usr/lib/xorg/modules/dri/swrast_dri.so target=i965_dri.so
+    target=swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/radeon_dri.so \
+    target=swrast_dri.so
+file path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/i915_dri.so target=radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/i965_dri.so target=radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/r200_dri.so target=radeon_dri.so
+file path=usr/lib/xorg/modules/dri/radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/swrast_dri.so target=radeon_dri.so
