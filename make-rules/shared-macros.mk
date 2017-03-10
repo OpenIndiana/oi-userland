@@ -1056,18 +1056,8 @@ LD_Z_ASLR =		$(ASLR_MODE)
 # turned off by adding FEATURE_MACRO= to the component Makefile.
 #
 
-# Create a non-executable stack when linking.
-LD_MAP_NOEXSTK.i386 =	-M /usr/lib/ld/map.noexstk
-LD_MAP_NOEXSTK.sparc =	-M /usr/lib/ld/map.noexstk
-
 # Create a non-executable bss segment when linking.
 LD_MAP_NOEXBSS =	-M /usr/lib/ld/map.noexbss
-
-# Create a non-executable data segment when linking.  Due to PLT needs, the
-# data segment must be executable on sparc, but the bss does not.
-# see mapfile comments for more information
-LD_MAP_NOEXDATA.i386 =	-M /usr/lib/ld/map.noexdata
-LD_MAP_NOEXDATA.sparc =	$(LD_MAP_NOEXBSS)
 
 # Page alignment
 LD_MAP_PAGEALIGN =	-M /usr/lib/ld/map.pagealign
@@ -1078,8 +1068,7 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS) $(LD_DEF_LIBS)
 # Default linker options that everyone should get.  Do not add additional
 # libraries to this macro, as it will apply to everything linked during the
 # component build.
-LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
-		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE)
+LD_OPTIONS +=	$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE)
 
 # only used on executables
 LD_EXEC_OPTIONS = $(LD_Z_ASLR)
