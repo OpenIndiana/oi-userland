@@ -20,11 +20,11 @@ COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
 GIT=git
-GIT_REPO=git://github.com/OpenIndiana/pkg5.git
-GIT_BRANCH=oi
+GIT_REPO=git://github.com/lotheac/pkg5.git
+GIT_BRANCH=unleashed
 GIT_CHANGESET=HEAD
 
-MAKE=/usr/bin/make
+MAKE=/usr/bin/dmake
 
 PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/repo
 
