@@ -20,10 +20,11 @@
 #
 # Copyright (c) 2015, Aurelien Larcher 
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
 COMPONENT_VERSION=      2.7
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=         library/lcms2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      The Little Color Management System
@@ -37,11 +38,15 @@ COMPONENT_BUGDB=	      utility/lcms2
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
+# build with the distribution preferred libjpeg implementation
+CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS           +=           $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS            +=           $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms2
 CONFIGURE_OPTIONS  +=           --enable-shared
@@ -56,7 +61,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
