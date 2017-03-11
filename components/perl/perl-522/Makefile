@@ -55,7 +55,6 @@ LD_B_DIRECT=		""
 COMPONENT_BUILD_ARGS =
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
-CONFIGURE_ENV += MAKE=$(GMAKE)
 
 CONFIGURE_OPTIONS = \
 			-de \
@@ -78,6 +77,7 @@ CONFIGURE_OPTIONS = \
 			-Duse64bitint \
 			-Duseshrplib \
 			-Dusedtrace \
+			-Dmake=gmake \
 			-Uuselargefiles 
 
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
@@ -86,7 +86,7 @@ COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 # perl's install path for sparc is based off the value of the
 # "arch" command.  So we must package that way also.
 #
-PKG_MACROS		+=	P_ARCH=$(shell arch)
+PKG_MACROS		+=	P_ARCH=$(shell uname -m)
 
 #
 # Getting 1 different result between sparc and x86.
