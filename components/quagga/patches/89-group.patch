@@ -1,0 +1,24 @@
+This bug has been reported to the Quagga community and this patch may be
+removed for any version of Quagga that has bug 877:
+https://bugzilla.quagga.net/show_bug.cgi?id=877
+fixed.
+
+*** solaris/quagga.init.in
+--- solaris/quagga.init.in
+*************** routeadm_daemon_args () {
+*** 50,56 ****
+  	
+  	# user and group we need for config file upgrade..
+  	SMF_USER=`get_routeadm_property $SMF_FMRI user`
+! 	SMF_GROUP=`get_routeadm_property()$SMF_FMRI group`
+  	if [ "${SMF_USER}" ] ; then
+  		USER="${SMF_USER}"
+  		args="${args} -u ${SMF_USER}"
+--- 50,56 ----
+  	
+  	# user and group we need for config file upgrade..
+  	SMF_USER=`get_routeadm_property $SMF_FMRI user`
+! 	SMF_GROUP=`get_routeadm_property() $SMF_FMRI group`
+  	if [ "${SMF_USER}" ] ; then
+  		USER="${SMF_USER}"
+  		args="${args} -u ${SMF_USER}"
