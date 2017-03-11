@@ -1,0 +1,30 @@
+This has been reported to the Quagga community as quagga bug
+879 https://bugzilla.quagga.net/show_bug.cgi?id=879
+This patch can be removed after upgrading to a version of Quagga 
+with bug 879 fixed.
+
+*** solaris/quagga.init.in
+--- solaris/quagga.init.in
+*************** esac
+*** 149,156 ****
+  DAEMON_ARGS=`routeadm_daemon_args $DAEMON`;
+  routeadm_zebra_enable $DAEMON;
+  
+! if [ ! -f "@sysconfdir@/${DAEMON}.conf" ] ; then
+! 	echo "Could not find config file, @sysconfdir@/${DAEMON}.conf"
+  	exit $SMF_EXIT_ERR_CONFIG
+  fi
+  
+--- 149,160 ----
+  DAEMON_ARGS=`routeadm_daemon_args $DAEMON`;
+  routeadm_zebra_enable $DAEMON;
+  
+! CONF_FILE=`get_routeadm_property $SMF_FMRI config_file`
+! if [ -z "$CONF_FILE" ] ; then
+! 	CONF_FILE="@sysconfdir@/${DAEMON}.conf"
+! fi
+! if [ ! -f "$CONF_FILE" ] ; then
+! 	echo "Could not find config file, $CONF_FILE"
+  	exit $SMF_EXIT_ERR_CONFIG
+  fi
+  
