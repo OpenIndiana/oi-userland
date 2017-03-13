@@ -26,26 +26,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtool
-COMPONENT_VERSION=	2.4.2
+COMPONENT_VERSION=	2.4.6
 COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libtool/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b38de44862a987293cd3d8dfae1c409d514b6c4e794ebc93648febf9afc38918
+    sha256:7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/libtool
-
-# For now, we want to continue to provide the libltdl.so's (and their
-# links) from libtool 1.5.22.
-#
-COMPONENT_VERSION_1 =	1.5.22
-COMPONENT_SRC_1 =	$(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:88e9ffaaade21c1ddaf6297723dd2fb4ca18ccaef0499a28b6e672f02c8ceb5d
-COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
-SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -55,53 +44,15 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-
-COMPONENT_PREP_ACTION = (cd $(@D) ; env AUTOMAKE=/usr/bin/automake  ./bootstrap)
-
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
 COMPONENT_POST_INSTALL_ACTION = \
 	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRBINDIR)/$(MACH64) ; do \
 		cd $$dir; \
-		/usr/gnu/bin/sed -i \
+		/usr/bin/sed -i '' \
 			-e 's|^LTCC="/.*$$|LTCC="gcc"|' \
 			-e 's|^CC="/.*$$|CC="gcc"|' libtool ; \
 	done)
-
-# Macros to configure, build, and install the old version for the time being.
-BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
-BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
-
-$(BUILD_OLD_DIR_32)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
-$(BUILD_OLD_DIR_64)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
-$(BUILD_OLD_DIR_32)/.configured:	BITS=32
-$(BUILD_OLD_DIR_64)/.configured:	BITS=64
-
-BUILD_32 += $(BUILD_OLD_DIR_32)/.built
-BUILD_64 += $(BUILD_OLD_DIR_64)/.built
-
-INSTALL_32 += $(BUILD_OLD_DIR_32)/.installed
-INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
-
-# install the old version first
-$(BUILD_DIR_32)/.installed:	$(BUILD_OLD_DIR_32)/.installed
-$(BUILD_DIR_64)/.installed:	$(BUILD_OLD_DIR_64)/.installed
-
-# we need to prep the old version too (this should be handled in prep.mk)
-$(SOURCE_DIR_1)/.unpacked:        download Makefile $(PATCHES)
-	$(RM) -r $(SOURCE_DIR_1)
-	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
-	$(TOUCH) $@
-
-# prep the old version first
-$(SOURCE_DIR)/.prep:	$(SOURCE_DIR_1)/.prep
-
-$(SOURCE_DIR_1)/.prep:        $(SOURCE_DIR_1)/.unpacked
-	$(TOUCH) $@
-
-prep::	$(SOURCE_DIR_1)/.prep
-
-CLEAN_PATHS += $(SOURCE_DIR_1)
 
 # common targets
 build:		$(BUILD_32_and_64)
