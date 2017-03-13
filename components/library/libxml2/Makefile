@@ -60,31 +60,12 @@ CONFIGURE_OPTIONS += --with-python-install-dir=$(PYTHON_VENDOR_PACKAGES)
 # autoreconf breaking libtool
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
 
-# After we have configured, make a copy of the python bits so we
-# can build and test separate python 3.4 support.
-COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python3.4 ; \
-    $(GSED) -i '' -e 's|-lpython2[.]7|-lpython3.4m|' \
-     -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/python3.4m|' \
-     -e 's|usr/include/python2[.]7|usr/include/python3.4m|' \
-     -e 's/2[.]7/3.4/g' `find python3.4 -name Makefile`)
-
-# After we have built/installed libxml2, build/install the python
-# support for python 3.4
-COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python3.4 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
-
-# It's nice to test also python 3.4 module.
-COMPONENT_POST_TEST_ACTION = \
-    (cd $(@D)/python3.4 ; $(GMAKE) $(COMPONENT_TEST_ARGS) test)
-
 # We have patched our 64 bit python so it will search for modules only in
 # '64/' directories. Now we need to provide one. Otherwise python will
 # end up using libxml2mod.so installed on system.
 $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
   $(MKDIR) $(@D)/python/.libs/64; \
   $(SYMLINK) ../libxml2mod.so $(@D)/python/.libs/64/libxml2mod.so; \
-  $(MKDIR) $(@D)/python/.libs/64 $(@D)/python3.4/.libs/64; \
-  $(SYMLINK) ../libxml2mod.so $(@D)/python3.4/.libs/64/libxml2mod.so);
 
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_1));
@@ -94,6 +75,5 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
-	$(PYTHON.3.4.32) -m compileall $(PROTO_DIR)/usr/lib/python3.4/vendor-packages
 
 test:		$(TEST_32_and_64)
