@@ -259,7 +259,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
  
 --- /dev/null
 +++ Python-2.6.4/Python/phelper.d
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,151 @@
 +
 +/*
 + * Python ustack helper.  This relies on the first argument (PyFrame *) being
@@ -275,6 +275,18 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
 + * and our stat_impl.h has them in ILP32.
 + */
 +#define _SYS_STAT_H
++ /*
++ * DTrace also has a problem with gcc's stdarg.h (since it refers to the type
++ * __gnuc_va_list), so we use this hack to avoid including it and
++ * sys/va_list.h. We'd like to use a typedef here for the va_list and __va_list
++ * types, but it seems like there's a bug in the DTrace interpreter where cpp
++ * linemarkers cause a typedef to not be effective in other included files
++ * denoted by other linemarkers, so we have to resort to #define...
++ */
++#define _STDARG_H
++#define _SYS_VA_LIST_H
++#define __va_list void*
++#define va_list void*
 +
 +#include <stdio.h>
 +#include <sys/types.h>
