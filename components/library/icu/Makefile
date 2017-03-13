@@ -10,15 +10,15 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= icu
 COMPONENT_VERSION= 55.1
 COMPONENT_UVERSION= 55_1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= International Components for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= icu4c-$(COMPONENT_UVERSION)-src.tgz
@@ -28,14 +28,9 @@ COMPONENT_PROJECT_URL = http://icu-project.org
 COMPONENT_ARCHIVE_URL = http://download.icu-project.org/files/icu4c/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-#COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/source/configure  $(@D)/source/runConfigureICU )
-
-# Missing files in build dir for configure without this.
-#COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/source/runConfigureICU
 CONFIGURE_OPTIONS = Solaris/GCC
@@ -54,3 +49,11 @@ COMPONENT_POST_CONFIGURE_ACTION =        (echo 'CPPFLAGS += -DICU_DATA_DIR=\"$(C
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
