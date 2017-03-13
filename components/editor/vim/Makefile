@@ -63,8 +63,6 @@ CFLAGS += -std=c99 -D_XOPEN_SOURCE=600
 
 # Make sure we use a default perl
 CONFIGURE_ENV +=	vi_cv_path_perl=$(PERL)
-# zh_CN.cp936.po has invalid characters which GNU msgfmt seems to be able to ignore.
-CONFIGURE_ENV +=	MSGFMT=gmsgfmt
 CONFIGURE_ENV +=	SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH)
 
 CONFIGURE_OPTIONS +=	--with-features=huge
