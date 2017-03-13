@@ -53,7 +53,8 @@ CONFIGURE_OPTIONS  +=	--with-libpcre
 CONFIGURE_OPTIONS  +=	--without-openssl
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
-CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
+CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
+CONFIGURE_OPTIONS  +=	--without-tcltk
 CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
 
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
