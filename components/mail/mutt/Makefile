@@ -49,7 +49,6 @@ CONFIGURE_OPTIONS  +=		--enable-sidebar
 CONFIGURE_OPTIONS  +=		--enable-debug
 CONFIGURE_OPTIONS  +=		--with-gdbm
 CONFIGURE_OPTIONS  +=		--with-regex
-CONFIGURE_OPTIONS  +=		--with-slang
 CONFIGURE_OPTIONS  +=		--with-ssl
 CONFIGURE_OPTIONS  +=		--with-idn
 CFLAGS +=			-I"$(USRINCDIR)/idn"
