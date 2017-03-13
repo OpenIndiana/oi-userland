@@ -1,0 +1,26 @@
+Since poll.h isn't pulled in by other headers automatically anymore, it needs
+to get included. "primpl.h" includes _solaris.h which sets _PR_POLL_AVAILABLE
+so the order in ptio.c needs to change a bit.
+--- nspr-4.12/nspr/pr/src/pthreads/ptio.c.orig	Tue Mar 14 00:38:17 2017
++++ nspr-4.12/nspr/pr/src/pthreads/ptio.c	Tue Mar 14 00:38:38 2017
+@@ -34,9 +34,6 @@
+ #if defined(SOLARIS) || defined(UNIXWARE)
+ #include <sys/filio.h>  /* to pick up FIONREAD */
+ #endif
+-#ifdef _PR_POLL_AVAILABLE
+-#include <poll.h>
+-#endif
+ #ifdef AIX
+ /* To pick up sysconf() */
+ #include <unistd.h>
+@@ -155,6 +152,10 @@
+ 
+ #include "primpl.h"
+ 
++#ifdef _PR_POLL_AVAILABLE
++#include <poll.h>
++#endif
++
+ #ifdef HAVE_NETINET_TCP_H
+ #include <netinet/tcp.h>  /* TCP_NODELAY, TCP_MAXSEG */
+ #endif
