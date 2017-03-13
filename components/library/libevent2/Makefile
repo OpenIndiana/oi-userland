@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent2
 COMPONENT_VERSION=	2.0.22
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://libevent.org/
 COMPONENT_SUMMARY=	An event notification library for event-driven network servers
 COMPONENT_FMRI=         library/libevent2
