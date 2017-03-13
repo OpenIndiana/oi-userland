@@ -87,8 +87,6 @@ CONFIGURE_OPTIONS += --disable-java
 CONFIGURE_OPTIONS += --enable-sql
 CONFIGURE_OPTIONS += --enable-sql_codegen
 CONFIGURE_OPTIONS += --disable-jdbc
-CONFIGURE_OPTIONS += --enable-tcl
-CONFIGURE_OPTIONS += --with-tcl=/usr/lib
 CONFIGURE_OPTIONS += --enable-dbm
 CONFIGURE_OPTIONS += $(configure_test)
 
