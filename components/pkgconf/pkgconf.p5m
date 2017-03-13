@@ -1,0 +1,60 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved. 
+# Copyright 2013, Adam Stevko. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+set name=pkg.fmri value=pkg:/developer/build/pkgconf@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="package compiler and linker metadata toolkit "
+set name=info.classification value="org.opensolaris.category.2008:Development/System"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license="BSD"
+
+dir  path=usr
+dir  path=usr/bin
+dir  path=usr/bin/$(MACH64)
+file path=usr/bin/$(MACH64)/pkgconf
+link path=usr/bin/$(MACH64)/pkg-config target=pkgconf
+file path=usr/bin/pkgconf
+link path=usr/bin/pkg-config target=pkgconf
+dir  path=usr/include
+dir  path=usr/include/pkgconf
+dir  path=usr/include/pkgconf/libpkgconf
+file path=usr/include/pkgconf/libpkgconf/iter.h
+file path=usr/include/pkgconf/libpkgconf/stdinc.h
+file path=usr/include/pkgconf/libpkgconf/libpkgconf.h
+file path=usr/include/pkgconf/libpkgconf/bsdstubs.h
+dir  path=usr/lib
+link path=usr/lib/libpkgconf.so target=libpkgconf.so.2.0.0
+link path=usr/lib/libpkgconf.so.2 target=libpkgconf.so.2.0.0
+file path=usr/lib/libpkgconf.so.2.0.0
+dir  path=usr/lib/pkgconfig group=other
+file path=usr/lib/pkgconfig/libpkgconf.pc
+link path=usr/lib/$(MACH64)/libpkgconf.so target=libpkgconf.so.2.0.0
+link path=usr/lib/$(MACH64)/libpkgconf.so.2 target=libpkgconf.so.2.0.0
+file path=usr/lib/$(MACH64)/libpkgconf.so.2.0.0
+dir  path=usr/lib/$(MACH64)/pkgconfig group=other
+file path=usr/lib/$(MACH64)/pkgconfig/libpkgconf.pc
+dir  path=usr/share
+dir  path=usr/share/aclocal
+file path=usr/share/aclocal/pkg.m4
+dir  path=usr/share/doc
+dir  path=usr/share/doc/pkgconf
+file path=usr/share/doc/pkgconf/AUTHORS
+file path=usr/share/doc/pkgconf/README.md
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
+file path=usr/share/man/man1/pkgconf.1
