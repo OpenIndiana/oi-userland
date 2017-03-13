@@ -1,0 +1,24 @@
+zlib version check fails
+
+Fix is already committed upstream. See:
+
+https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=17204
+
+--- R-3.3.2/m4/R.m4.orig	2017-03-13 11:20:03.514638624 +0000
++++ R-3.3.2/m4/R.m4	2017-03-13 11:20:49.190468317 +0000
+@@ -3113,10 +3113,11 @@
+ #include <string.h>
+ #include <zlib.h>
+ int main() {
+-#ifdef ZLIB_VERSION
+-/* Work around Debian bug: it uses 1.2.3.4 even though there was no such
+-   version on the master site zlib.net */
+-  exit(strncmp(ZLIB_VERSION, "1.2.5", 5) < 0);
++#ifdef ZLIB_VERNUM
++  if (ZLIB_VERNUM < 0x1250) {
++    exit(1);
++  }
++  exit(0);
+ #else
+   exit(1);
+ #endif
