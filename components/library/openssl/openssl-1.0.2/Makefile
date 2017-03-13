@@ -145,20 +145,6 @@ COMPONENT_PRE_BUILD_ACTION = \
 
 COMPONENT_BUILD_TARGETS= depend all
 
-# Build openssl-0.9.8 if not yet built.
-$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.built \
-$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/.built:
-	$(GMAKE) -C $(COMPONENT_DIR)/../openssl-0.9.8 build
-
-$(PROTO_DIR)/.openssl-0.9.8:	$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.built \
-				$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/.built
-	$(MKDIR) $(PROTO_DIR)/lib/$(MACH64)
-	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/libssl.so.0.9.8 $(PROTO_DIR)/lib
-	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/libcrypto.so.0.9.8 $(PROTO_DIR)/lib
-	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/libssl.so.0.9.8 $(PROTO_DIR)/lib/$(MACH64)
-	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/libcrypto.so.0.9.8 $(PROTO_DIR)/lib/$(MACH64)
-	$(TOUCH) $@
-
 # Enable ASLR for this component
 ASLR_MODE =	$(ASLR_ENABLE)
 
@@ -192,7 +178,7 @@ COMPONENT_INSTALL_ARGS += PATH=$(PATH) MANDIR=/usr/share/man
 # install for 64 bit as well. Note that we must take built binary files from
 # build directories, not from the proto area which contains whatever was
 # installed first.
-install:	$(INSTALL_32_and_64) $(PROTO_DIR)/.openssl-0.9.8
+install:	$(INSTALL_32_and_64)
 
 # We need to modify the default lint flags to include patched opensslconf.h from
 # the build directory. If we do not do that, lint will complain about md2.h
