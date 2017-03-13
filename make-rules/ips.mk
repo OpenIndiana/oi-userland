@@ -45,7 +45,6 @@ PKGLINT =	/usr/bin/pkglint
 else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
-PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
 WS_TRANSFORMS =    $(WS_TOP)/transforms
 
@@ -117,9 +116,7 @@ PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
 					-D COMPONENT_DESCRIPTION="$(strip $(COMPONENT_DESCRIPTION))" \
 					-D COMPONENT_LICENSE="$(strip $(COMPONENT_LICENSE))"
 
-MANGLED_DIR =	$(PROTO_DIR)/mangled
-
-PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC)
+PKG_PROTO_DIRS += $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC)
 
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
@@ -354,17 +351,12 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 endif
 
-# mangle the file contents
-$(BUILD_DIR) $(MANGLED_DIR):
+$(BUILD_DIR):
 	$(MKDIR) $@
-
-PKGMANGLE_OPTIONS = -D $(MANGLED_DIR) $(PKG_PROTO_DIRS:%=-d %)
-$(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
-	$(PKGMANGLE) $(PKGMANGLE_OPTIONS) -m $< >$@
 
 # generate dependencies
 PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
-$(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
+$(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mogrified
 	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
 # These files should contain a list of packages that the component is known to
