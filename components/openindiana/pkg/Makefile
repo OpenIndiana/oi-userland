@@ -97,3 +97,6 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 .NOTPARALLEL:
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
+
+REQUIRED_PACKAGES += developer/opensolaris/pkg5
+REQUIRED_PACKAGES += system/zones/internal
