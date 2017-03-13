@@ -72,7 +72,7 @@ CONFIGURE_OPTIONS  +=		--disable-valgrind-tests
 CONFIGURE_OPTIONS  +=		--enable-tld
 CONFIGURE_OPTIONS  +=		--enable-nls
 CONFIGURE_OPTIONS  +=		--disable-gtk-doc
-CONFIGURE_OPTIONS  +=		--enable-java
+CONFIGURE_OPTIONS  +=		--disable-java
 CONFIGURE_OPTIONS  +=		--with-libiconv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-libintl-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-html-dir=$(CONFIGURE_PREFIX)/share/doc
