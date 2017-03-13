@@ -735,7 +735,7 @@ GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1
 GPATCH_BACKUP =	--backup --version-control=numbered
 GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
-GSED =		/usr/gnu/bin/sed
+GSED =		/usr/bin/sed
 GDIFF =		/usr/gnu/bin/diff
 GSORT =		/usr/gnu/bin/sort
 GUNZIP =	/usr/bin/gunzip

@@ -46,7 +46,7 @@ include $(WS_MAKE_RULES)/ips.mk
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_PRE_BUILD_ACTION = \
 	/usr/bin/find $(SOURCE_DIR) -name *.py \
-		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
+		-exec $(GSED) -i '' -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
 
 # Put the correct pep8 version number on the .TH line in the man page in
 # the proto area.

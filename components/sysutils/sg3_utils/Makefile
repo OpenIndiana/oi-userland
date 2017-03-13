@@ -53,8 +53,8 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 # Don't use rpath!
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(BUILD_DIR_32) ; \
-	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
-	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
+	$(GSED) -i '' 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
+	$(GSED) -i '' 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 

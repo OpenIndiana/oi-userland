@@ -37,7 +37,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_POST_UNPACK_ACTION += ($(GSED) -i -e 's/mozilla-plugin/firefox-plugin/' $(SOURCE_DIR)/acinclude.m4)
+COMPONENT_POST_UNPACK_ACTION += ($(GSED) -i '' -e 's/mozilla-plugin/firefox-plugin/' $(SOURCE_DIR)/acinclude.m4)
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -if)
 
 CONFIGURE_OPTIONS+=        --with-jdk-home=$(JAVA_HOME)

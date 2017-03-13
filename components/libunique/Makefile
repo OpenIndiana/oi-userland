@@ -53,7 +53,7 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
 # Cleanup build env paths from header file
-COMPONENT_POST_INSTALL_ACTION += ( $(GSED) -i -e "s:$(SOURCE_DIR):..:"  \
+COMPONENT_POST_INSTALL_ACTION += ( $(GSED) -i '' -e "s:$(SOURCE_DIR):..:"  \
 	$(PROTO_DIR)/usr/include/unique-1.0/unique/uniqueenumtypes.h )
 
 build: $(BUILD_32_and_64)

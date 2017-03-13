@@ -45,7 +45,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 # Remove trailing carriage returns, if present, in the files.
 COMPONENT_POST_UNPACK_ACTION = \
-    /usr/bin/find $(SOURCE_DIR) -type f -exec $(GSED) -i 's/\r//' '{}' \; ;
+    /usr/bin/find $(SOURCE_DIR) -type f -exec $(GSED) -i '' 's/\r//' '{}' \; ;
 
 CFLAGS.32 =	-L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
 CFLAGS.64 =	-L/usr/mariadb/5.5/lib/$(MACH64) -R/usr/mariadb/5.5/lib/$(MACH64)

@@ -91,7 +91,7 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
         $$file ;\
     done ; \
     for file in $(PROTO_DIR)/usr/lib/firefox/sdk/bin/*.py; do \
-        $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $$file; \
+        $(GSED) -i '' -e 's:/usr/bin/env python:$(PYTHON):' $$file; \
     done )
 
 install: $(INSTALL_32)

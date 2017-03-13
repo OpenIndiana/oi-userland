@@ -50,14 +50,14 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-	 $(GSED) -i -e 's:TEMPLATES=Templates:TEMPLATES=Documents/Templates:' \
+	 $(GSED) -i '' -e 's:TEMPLATES=Templates:TEMPLATES=Documents/Templates:' \
                                                 -e 's:MUSIC=Music:MUSIC=Documents/Music:' \
                                                 -e 's:PICTURES=Pictures:PICTURES=Documents/Pictures:' \
                                                 -e 's:VIDEOS=Videos:VIDEOS=Documents/Videos:' $(PROTO_DIR)/etc/xdg/user-dirs.defaults
 	/usr/bin/grep '^\#' $(PROTO_DIR)/etc/xdg/user-dirs.defaults >  $(PROTO_DIR)/etc/xdg/user-dirs.defaults.tmp
 	/usr/bin/grep -v "^#"  $(PROTO_DIR)/etc/xdg/user-dirs.defaults | $(ENV) LC_ALL=C /usr/bin/sort -r -t = -k 2 >>  $(PROTO_DIR)/etc/xdg/user-dirs.defaults.tmp
 	$(MV)  $(PROTO_DIR)/etc/xdg/user-dirs.defaults.tmp  $(PROTO_DIR)/etc/xdg/user-dirs.defaults
-	$(GSED) -i -e "s/^filename_encoding=UTF-8/filename_encoding=locale/"  $(PROTO_DIR)/etc/xdg/user-dirs.conf
+	$(GSED) -i '' -e "s/^filename_encoding=UTF-8/filename_encoding=locale/"  $(PROTO_DIR)/etc/xdg/user-dirs.conf
 
 test:		$(NO_TESTS)
 

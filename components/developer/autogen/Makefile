@@ -52,11 +52,11 @@ ENV +=	-i
 # Adjust "tr" to "/usr/gnu/bin/tr" in the autoopts vendor.test.
 # These changes now allow the autoopts tests to successfully complete.
 COMPONENT_POST_UNPACK_ACTION = \
-	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
+	$(GSED) -i '' -e 's|echo|/usr/gnu/bin/echo|' \
 		$(SOURCE_DIR)/autoopts/tpl/mdoc2man.sh ; \
-	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
+	$(GSED) -i '' -e 's|echo|/usr/gnu/bin/echo|' \
 		$(SOURCE_DIR)/autoopts/tpl/texi2mdoc.sh ; \
-	$(GSED) -i -e 's| tr | /usr/gnu/bin/tr |' \
+	$(GSED) -i '' -e 's| tr | /usr/gnu/bin/tr |' \
 		$(SOURCE_DIR)/autoopts/test/vendor.test
 
 CONFIGURE_ENV.64 += PATH=/usr/bin/$(MACH64):/usr/bin

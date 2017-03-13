@@ -47,7 +47,7 @@ COMPONENT_TEST_ARGS= ./setup.py test
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(FIND) $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) -name *.py \
-		-exec $(GSED) -i -e 's|env python|python$(PYTHON_VERSION)|' "{}" \; ;
+		-exec $(GSED) -i '' -e 's|env python|python$(PYTHON_VERSION)|' "{}" \; ;
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

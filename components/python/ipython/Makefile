@@ -48,7 +48,7 @@ PYTHON_VERSIONS=2.7 3.4
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_PRE_BUILD_ACTION = \
 	/usr/bin/find $(SOURCE_DIR) -name *.py \
-		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
+		-exec $(GSED) -i '' -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

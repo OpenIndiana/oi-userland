@@ -45,7 +45,7 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/bin/python:\#!/usr/bin/python$(PYTHON_VERSION):' $(PROTO_DIR)/usr/bin/imf-selector)
+COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i '' -e 's:\#!/bin/python:\#!/usr/bin/python$(PYTHON_VERSION):' $(PROTO_DIR)/usr/bin/imf-selector)
 
 clean::
 	$(RM) $(SOURCE_DIR)/.prep

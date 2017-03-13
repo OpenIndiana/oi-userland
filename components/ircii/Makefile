@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS       += $(CONFIGURE_OPTIONS.$(BITS))
 #
 # This action modifies the libexecdir setting in the Makefile to /usr/bin
 COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's|/usr/libexec|/usr/bin|' $(BUILD_DIR_32)/Makefile
+	$(GSED) -i '' -e 's|/usr/libexec|/usr/bin|' $(BUILD_DIR_32)/Makefile
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

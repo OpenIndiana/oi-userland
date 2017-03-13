@@ -63,7 +63,6 @@ MPN64_sparc = sparc64 generic
 MPN_32 = $(MPN32_$(MACH))
 MPN_64 = $(MPN64_$(MACH))
 GM4 = /usr/bin/gm4
-GSED = /usr/bin/gsed
 # libgmpxx.so.4 always gets built with unnecessary paths in RUNPATH/RPATH
 ELFEDIT = /usr/bin/elfedit
 
@@ -81,7 +80,6 @@ CONFIGURE_ENV += CXXCPP="$(CXX) $(CC_BITS) $(CPPFLAGS) $(CXXFLAGS) -E"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 CONFIGURE_ENV += CC_FOR_BUILD="$(CC) $(CPPFLAGS) $(CFLAGS)"
 CONFIGURE_ENV += M4="$(GM4)"
-CONFIGURE_ENV += SED="$(GSED)"
 CONFIGURE_ENV += ABI="$(BITS)"
 CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 

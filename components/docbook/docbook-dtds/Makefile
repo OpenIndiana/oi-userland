@@ -120,7 +120,7 @@ UNPACK_ARGS_12+=-r $(COMPONENT_SRC_12)
 CLEAN_PATHS+=$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 CLEAN_PATHS+=$(BUILD_DIR)
 
-COMPONENT_PREP_ACTION= ( $(GSED) -i -e's,\(NAMELEN\ \ *\)44,\1256,' $(COMPONENT_DIR)/*/docbook.dcl )
+COMPONENT_PREP_ACTION= ( $(GSED) -i '' -e's,\(NAMELEN\ \ *\)44,\1256,' $(COMPONENT_DIR)/*/docbook.dcl )
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk

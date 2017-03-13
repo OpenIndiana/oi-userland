@@ -93,9 +93,9 @@ NUMPY_WRONG_HASHBANG =\
 	distutils/system_info.py\
 	compat/setup.py
 
-COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/amd64/python$(PYTHON_VERSION):\#!/usr/bin/python$(PYTHON_VERSION):' \
+COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i '' -e 's:\#!/usr/bin/amd64/python$(PYTHON_VERSION):\#!/usr/bin/python$(PYTHON_VERSION):' \
 	$(PROTO_DIR)/usr/bin/f2py$(PYTHON_VERSION) && \
-	( for file in $(NUMPY_WRONG_HASHBANG); do $(GSED) -i -e 's:\#!/usr/bin/env python:\#!/usr/bin/python$(PYTHON_VERSION):' \
+	( for file in $(NUMPY_WRONG_HASHBANG); do $(GSED) -i '' -e 's:\#!/usr/bin/env python:\#!/usr/bin/python$(PYTHON_VERSION):' \
 	$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/numpy/$${file}; done; ) );
 
 build: $(BUILD_32_and_64)

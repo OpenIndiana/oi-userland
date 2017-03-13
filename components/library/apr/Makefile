@@ -70,7 +70,7 @@ APRH=include/apr.h
 $(BUILD_DIR_64)/.installed: COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/diff -D __$(MACH64) $(BUILD_DIR_32)/$(APRH) \
 	  $(BUILD_DIR_64)/$(APRH) > $(PROTO_DIR)/$(CONFIGURE_PREFIX)/$(APRH); \
-	$(GSED) -i -e '/^CFLAGS=""/s:CFLAGS="":CFLAGS="-m64":' $(PROTO_DIR)$(CONFIGURE_PREFIX)/bin/$(MACH64)/apr-1-config ;  true
+	$(GSED) -i '' -e '/^CFLAGS=""/s:CFLAGS="":CFLAGS="-m64":' $(PROTO_DIR)$(CONFIGURE_PREFIX)/bin/$(MACH64)/apr-1-config ;  true
 
 # Documentation is generated in and directly packaged from 32 bit build
 # directory using doxygen.

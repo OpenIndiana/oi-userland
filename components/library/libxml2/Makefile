@@ -63,7 +63,7 @@ COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if
 # After we have configured, make a copy of the python bits so we
 # can build and test separate python 3.4 support.
 COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python3.4 ; \
-    $(GSED) -i -e 's|-lpython2[.]7|-lpython3.4m|' \
+    $(GSED) -i '' -e 's|-lpython2[.]7|-lpython3.4m|' \
      -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/python3.4m|' \
      -e 's|usr/include/python2[.]7|usr/include/python3.4m|' \
      -e 's/2[.]7/3.4/g' `find python3.4 -name Makefile`)

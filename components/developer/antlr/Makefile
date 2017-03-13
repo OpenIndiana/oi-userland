@@ -50,7 +50,7 @@ CONFIGURE_OPTIONS +=	--without-examples
 # pkgdepend doesn't like the first line of a Python script to be:
 # '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
 COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's/env python/python2.7/' \
+	$(GSED) -i '' -e 's/env python/python2.7/' \
 		$(BUILD_DIR_32)/scripts/pyantlr.sh
 
 COMPONENT_INSTALL_ARGS += prefix=$(PROTOUSRDIR)

@@ -40,4 +40,4 @@ publish:
 	done;
 
 REQUIRED_PACKAGES:
-	@cat $(X11_GATE_DIR)/*/Makefile| grep 'REQUIRED_PACKAGES +=' | gsort --uniq | gsed '/x11/d'
+	@cat $(X11_GATE_DIR)/*/Makefile| grep 'REQUIRED_PACKAGES +=' | gsort --uniq | sed '/x11/d'

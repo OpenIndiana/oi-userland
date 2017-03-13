@@ -41,7 +41,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 # The grog.sh script needs GNU awk not the Solaris one.
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's?awk?/usr/gnu/bin/awk?' \
+	$(GSED) -i '' -e 's?awk?/usr/gnu/bin/awk?' \
 		$(SOURCE_DIR)/src/roff/grog/grog.sh
 
 CONFIGURE_OPTIONS += \

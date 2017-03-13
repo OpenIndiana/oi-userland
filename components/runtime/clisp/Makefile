@@ -83,7 +83,7 @@ COMPONENT_BUILD_ENV +=		$(CONSTANT_TIME)
 # value generated when building clisp on the Userland SPARC build machine.
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTOUSRSHAREDOCDIR)/clisp/doc ; \
-	$(GSED) -i 's|^/ID.*|/ID [<DEA6B2ECA0DB714B6BEB6209A211AEF0><DEA6B2ECA0DB714B6BEB6209A211AEF0>]|' clisp.pdf)
+	$(GSED) -i '' 's|^/ID.*|/ID [<DEA6B2ECA0DB714B6BEB6209A211AEF0><DEA6B2ECA0DB714B6BEB6209A211AEF0>]|' clisp.pdf)
 
 # One of the tests now needs the GNU tail command.
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"

@@ -77,7 +77,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -e  "s/RUBY_VER/$(RUBY_VER)/" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/rbconfig.sedscript \
 	    > Solaris/rbconfig.sedscript.mod ; \
-	$(GSED) -i -f Solaris/ruby.1.sedscript.mod \
+	$(GSED) -i '' -f Solaris/ruby.1.sedscript.mod \
 	    $(PROTORUBYDIR)/share/man/man1/ruby.1 ; \
 	/usr/bin/sed -f Solaris/rbconfig.sedscript.mod \
 	$(PROTO_RBCONFIG_FILE) > rbconfig.rb.mod ; \

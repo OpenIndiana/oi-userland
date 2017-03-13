@@ -40,7 +40,7 @@ install:	$(INSTALL_NO_ARCH)
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR) ; \
                 $(MV) usr/bin/coherence usr/bin/coherence-$(PYTHON_VERSION); \
-		$(GSED) -i -e "s:/usr/bin/env python:$(PYTHON.$(PYTHON_VERSION).32):" usr/lib/python*/vendor-packages/coherence/extern/youtubedl/youtubedl.py )
+		$(GSED) -i '' -e "s:/usr/bin/env python:$(PYTHON.$(PYTHON_VERSION).32):" usr/lib/python*/vendor-packages/coherence/extern/youtubedl/youtubedl.py )
 
 
 test:           $(NO_TEST)

@@ -151,7 +151,7 @@ $(BUILD_DIR_32)/.installed:	$(BUILD_DIR_32)/.built
 	$(TOUCH) $@
 
 $(BUILD_DIR)/.pc.fixed:	$(INSTALL_32)
-	$(GSED) -i -e '/^Libs/s:-L$${libdir}:-L$${libdir} -R$${libdir}:' $(PROTO_DIR)/usr/lib/libsmbclient/pkgconfig/*.pc
+	$(GSED) -i '' -e '/^Libs/s:-L$${libdir}:-L$${libdir} -R$${libdir}:' $(PROTO_DIR)/usr/lib/libsmbclient/pkgconfig/*.pc
 	$(TOUCH) $@
 
 # common targets

@@ -72,8 +72,8 @@ COMPONENT_TEST_ARGS +=	CFLAGS="$(CFLAGS)"
 COMPONENT_PREP_ACTION = \
 	cd $(@D)/doc ; rm -f man/*.[135] ; env PATH=/usr/gnu/bin:$$PATH $(CONFIG_SHELL) update.sh ; \
 	cd $(@D)/libarchive ; \
-	find . -name "*\.[35]" | xargs /usr/bin/gsed -i 's/\(Xr.*\|Dt.*\)3/\13ARCHIVE/' ; \
-	find . -name "*\.[35]" | xargs /usr/bin/gsed -i \
+	find . -name "*\.[35]" | xargs sed -i '' 's/\(Xr.*\|Dt.*\)3/\13ARCHIVE/' ; \
+	find . -name "*\.[35]" | xargs sed -i '' \
 	-e 's/Xr \(malloc\|getpwuid\|getgrgud\|strerror\|printf\|getpwnam\|getgrnam\) 3ARCHIVE/Xr \13C/' \
 	-e 's/\(Dt.*LIBARCHIVE.*\)3ARCHIVE/\13LIB/' \
 	-e 's/Xr \(libarchive\|archive\) 3ARCHIVE/Xr libarchive 3LIB/';

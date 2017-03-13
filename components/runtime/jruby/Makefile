@@ -45,7 +45,7 @@ COMPONENT_INSTALL_ACTION =  cd $(@D) ;\
 	cp -r $(BUILD_DIR_32)/docs $(PROTO_DIR)/usr/jruby/$(COMPONENT_VERSION);\
 	cp -r $(BUILD_DIR_32)/lib $(PROTO_DIR)/usr/jruby/$(COMPONENT_VERSION) ;\
 	cp -r $(BUILD_DIR_32)/samples $(PROTO_DIR)/usr/jruby/$(COMPONENT_VERSION) ;\
-	$(GSED) -i -e 's:usr/local/bin/ruby:usr/bin/ruby:g' \
+	$(GSED) -i '' -e 's:usr/local/bin/ruby:usr/bin/ruby:g' \
 		$(PROTO_DIR)/usr/jruby/$(COMPONENT_VERSION)/lib/target/rubygems/gems/racc-1.4.14-java/bin/{racc2y,y2racc}
 
 

@@ -38,7 +38,7 @@ echo symlink cloning $srcdir to $destdir
 cd ${srcdir}
 gfind . -type d | \
     grep -v '^.$' | \
-    gsed -e 's,^\./,,' | \
+    sed -e 's,^\./,,' | \
     while read i;
 do
 	mkdir -p "${destdir}/$i"
@@ -48,7 +48,7 @@ done
 # files, too.
 gfind . -type f -o -type l | \
     egrep -v '~[0-9]+~' | \
-    gsed -e 's,^\./,,' | \
+    sed -e 's,^\./,,' | \
     while read i;
 do
 	rm -f "${destdir}/$i"

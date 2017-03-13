@@ -42,11 +42,11 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D)); (cd $(SOURCE_DIR); $(GSED) -i -e 's/u_int64_t/uint64_t/g' *.c *.h configure.in configure)
+	($(CLONEY) $(SOURCE_DIR) $(@D)); (cd $(SOURCE_DIR); $(GSED) -i '' -e 's/u_int64_t/uint64_t/g' *.c *.h configure.in configure)
 
 # Adjust the log file pathname in the sample configuration file.
 COMPONENT_PRE_BUILD_ACTION += \
-	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
+	$(GSED) -i '' -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
 		$(SOURCE_DIR)/sample.conf
 
 CFLAGS += -I/usr/gnu/include

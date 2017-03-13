@@ -63,7 +63,7 @@ COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 # Don't use rpath, or relink!
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(BUILD_DIR_$(BITS)) ; \
-	$(GSED) -i \
+	$(GSED) -i '' \
 	-e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
 	-e 's|need_relink=yes|need_relink=not_on_solaris|' \
 	libtool)

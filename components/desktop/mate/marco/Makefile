@@ -35,12 +35,10 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-GSED=/usr/bin/gsed
-
 COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh;\
-	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/tools/marco-mag.c; \
-	$(GSED) -i '/_POSIX_C_SOURCE/d' $(@D)/src/core/util.c; \
-	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/ui/preview-widget.c
+	$(GSED) -i '' '/_XOPEN_SOURCE/d' $(@D)/src/tools/marco-mag.c; \
+	$(GSED) -i '' '/_POSIX_C_SOURCE/d' $(@D)/src/core/util.c; \
+	$(GSED) -i '' '/_XOPEN_SOURCE/d' $(@D)/src/ui/preview-widget.c
 
 CFLAGS+=-D__EXTENSIONS__
 CFLAGS+=-std=gnu99

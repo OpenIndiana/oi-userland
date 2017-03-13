@@ -45,14 +45,14 @@ COMPONENT_INSTALL_ARGS +=       --force
 
 COMPONENT_POST_BUILD_ACTION = \
 		(cd $(SOURCE_DIR);\
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Conflicts.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Constants.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Pages.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Settings.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Utils.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Widgets.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Window.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/__init__.py; )
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/Conflicts.py; \
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/Constants.py; \
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/Pages.py; \
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/Settings.py; \
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/Utils.py; \
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/Widgets.py; \
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/Window.py; \
+		$(GSED) -i '' -e '1 s/env python/python2.7/' ccm/__init__.py; )
 
 # common targets
 build:		$(BUILD_32)

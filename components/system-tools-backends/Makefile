@@ -38,7 +38,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 COMPONENT_POST_INSTALL_ACTION  = ( \
      for file in $(PROTO_DIR)/usr/share/setup-tool-backends/scripts/* ; do \
-        $(GSED) -i -e "s:\#!/usr/bin/env perl:\#!$(PERL):" $$file ;\
+        $(GSED) -i '' -e "s:\#!/usr/bin/env perl:\#!$(PERL):" $$file ;\
     done ; )
 
 

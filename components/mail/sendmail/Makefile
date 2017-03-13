@@ -70,7 +70,7 @@ CLEAN_PATHS += $(FILE_DIR)/aux/mailq
 # This appends "+Sun" to the version string, which we do for historical
 # reasons.  If we did this via patch, then we would have to revise the patch
 # with every new release, since the version string changes every time.
-COMPONENT_PREP_ACTION =	($(GSED) -i -e 's/\(Version\[\] = "8\.[^"]*\)/\1+Sun/' \
+COMPONENT_PREP_ACTION =	($(GSED) -i '' -e 's/\(Version\[\] = "8\.[^"]*\)/\1+Sun/' \
 	$(COMPONENT_SRC)/sendmail/version.c &&\
 	cp $(COMPONENT_SRC)/devtools/M4/depend/X11.m4 \
 		$(COMPONENT_SRC)/devtools/M4/depend/Solaris.m4)

@@ -39,7 +39,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION = \
         /usr/bin/find $(SOURCE_DIR) -name *.py \
-                -exec $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' "{}" \; ;
+                -exec $(GSED) -i '' -e 's:/usr/bin/env python:$(PYTHON):' "{}" \; ;
 
 COMPONENT_PREP_ACTION += ( cd $(@D)&& \
 					aclocal -I ./m4 &&\

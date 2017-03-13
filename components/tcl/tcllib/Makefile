@@ -48,7 +48,7 @@ APPS = dtplite nns nnsd nnslog page pt tcldocstrip
 
 COMPONENT_POST_INSTALL_ACTION += \
         (for app in $(APPS); do \
-          $(GSED) -i "s:/usr/bin/env tclsh:$(USRBINDIR.$(BITS))/tclsh:" $(PROTO_DIR)$(USRBINDIR.$(BITS))/$$app; \
+          $(GSED) -i '' "s:/usr/bin/env tclsh:$(USRBINDIR.$(BITS))/tclsh:" $(PROTO_DIR)$(USRBINDIR.$(BITS))/$$app; \
         done); \
         $(MV) $(PROTO_DIR)$(USRBINDIR.$(BITS))/{,tcl}page
 
