@@ -20,20 +20,25 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include		../Makefile.com
 include		../../Makefile.com
 
-CFLAGS +=  -m64 -xarch=sparc
+CFLAGS +=  -m64 -xarch=sparc4 -xtarget=T4 -xchip=T4 -xO5
 CPPFLAGS += -D__sparc
 ASFLAGS = -m64 -K PIC -xarch=sparc4
 
 include		../Makefile.targ
 include		../../Makefile.targ
 
+DEFLATE_C=../../../build/$(BUILD_ARCH)/deflate.c
+
+longest_match_t4.s: $(DEFLATE_C)
+	$(CC) $(CFLAGS) -DLONGEST_MATCH_ONLY -DORIG_LONGEST_MATCH_GLOBAL -S -o $@ $(DEFLATE_C)
+
 all build:	$(SYMCAP)
 
 clean:
-	$(RM) *.o
+	$(RM) *.o *.s

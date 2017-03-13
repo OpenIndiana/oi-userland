@@ -109,7 +109,7 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^zlib version/s/0x..$$/0xXX/" '
 
 COMPONENT_SYSTEM_TEST_TARGETS= test SYSTEM_TEST=1
 
-CLEAN_PATHS += $(PROTO_DIR) capabilities/*/*/*.o capabilities/*/$(MACH32)/*.s
+CLEAN_PATHS += $(PROTO_DIR) capabilities/*/*/*.o capabilities/*/*/*.s
 
 system-test: build $(SYSTEM_TEST_32_and_64)
 
