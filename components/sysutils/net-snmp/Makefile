@@ -23,7 +23,6 @@
 include ../../../make-rules/shared-macros.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-DOXYGEN=/usr/bin/doxygen
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.4.4
@@ -78,10 +77,6 @@ MIB_MODULES = host disman/event-mib ucd-snmp/diskio udp-mib tcp-mib if-mib
 MIB_MOBULES += $(MIB_MODULES.$(MACH))
 CONFIGURE_OPTIONS  +=	--with-mib-modules="$(MIB_MODULES)"
 
-# Python bindings support.
-PYTHON_ARGS =		--basedir=/usr/bin
-CONFIGURE_OPTIONS  +=	--with-python-modules="$(PYTHON_ARGS)"
-
 # Only build 32 bit Perl support
 PERL_ARGS =			DESTDIR=$(PROTO_DIR) INSTALLDIRS=vendor
 CONFIGURE_OPTIONS.32  +=	PERLPROG="$(PERL)"
@@ -121,8 +116,6 @@ $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
 $(BUILD_64): COMPONENT_POST_BUILD_ACTION= \
 	(cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
 
-$(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
-
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
 	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
@@ -132,7 +125,7 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	 cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
 
 # common targets
-build:	$(BUILD_32_and_64) $(BUILD_DIR_32)/.docs
+build:	$(BUILD_32_and_64)
 
 $(INSTALL_64): COMPONENT_INSTALL_ARGS += DESTDIR=$(BUILD_DIR)/prototype/$(MACH64)
 
@@ -140,15 +133,8 @@ install:	build $(INSTALL_32_and_64)
 
 test:	$(TEST_32_and_64)
 
-# build the docs
-$(BUILD_DIR_32)/.docs:
-	(cd $(@D) ; $(ENV) srcdir=$(@D) $(DOXYGEN) -u $(@D)/doxygen.conf ; \
-	    $(ENV) srcdir=$(@D) $(DOXYGEN) $(@D)/doxygen.conf)
-	$(TOUCH) $@
-
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
