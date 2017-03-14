@@ -90,6 +90,7 @@ CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
 CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
 CONFIGURE_OPTIONS +=	--with-pkgversion="Illumos $(ILLUMOS_VERSION)"
 CONFIGURE_OPTIONS +=	--with-bugurl="http://github.com/illumos/gcc/issues"
+CONFIGURE_OPTIONS +=	--disable-nls
 
 COMPONENT_BUILD_ENV=		SHELL=$(CONFIG_SHELL) CFLAGS="$(CFLAGS)" STAGE1_CFLAGS="$(CFLAGS)" CFLAGS_FOR_TARGET="$(CFLAGS)"
 COMPONENT_BUILD_GMAKE_ARGS=	-j8
