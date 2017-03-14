@@ -26,16 +26,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flex
-COMPONENT_VERSION=	2.5.35
-COMPONENT_PROJECT_URL=	http://flex.sourceforge.net/
+COMPONENT_VERSION=	2.6.3
+COMPONENT_PROJECT_URL=	https://github.com/westes/flex
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0becbd4b2b36b99c67f8c22ab98f7f80c9860aec70f0350a0018f29a88704e7b
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/flex/files/flex/flex-2.5.35/flex-2.5.35.tar.bz2
+    sha256:68b2742233e747c462f781462a2a1e299dc6207401dac8f0bbb316f48565c2aa
+COMPONENT_ARCHIVE_URL=	https://github.com/westes/flex/releases/download/v2.6.3/flex-2.6.3.tar.gz
 COMPONENT_BUGDB=	utility/flex
 
-SONAME=libfl.so.1
 LDFLAGS = $(CC_BITS)
 
 include ../../make-rules/prep.mk
@@ -43,15 +42,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		M4="/usr/gnu/bin/m4"
-
-COMPONENT_BUILD_ENV +=		SONAME="$(SONAME)"
-COMPONENT_INSTALL_ENV +=	SONAME="$(SONAME)"
 
 COMPONENT_TEST_ENV +=		PATH=/usr/gnu/bin:/usr/bin
-
-COMPONENT_BUILD_TARGETS += $(SONAME)
-COMPONENT_INSTALL_TARGETS += $(SONAME)
 
 include ../../make-rules/shared-targets.mk
 
