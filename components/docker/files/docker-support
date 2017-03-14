@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 import argparse
@@ -39,7 +39,7 @@ def do_api_get(url):
         con = HTTPConnectionSocket(DOCKER_SOCK)
         con.request("GET", url)
         resp = con.getresponse()
-    except httplib.HTTPException as err:
+    except (socket.error, httplib.HTTPException) as err:
         raise RuntimeError("unable to call API: %s" % err)
 
     # expect standard success status
@@ -169,7 +169,7 @@ def get_running_container_ids():
         return [container['Id'] for container in
             do_api_get("http:/containers/json")]
     except RuntimeError as e:
-        print "unable to query api for container list: %s" % e
+        raise SystemExit("unable to query api for container list: %s" % e)
 
 
 def kill_container(cid):
