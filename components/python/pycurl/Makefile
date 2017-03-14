@@ -35,11 +35,16 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/pycurl
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# workaround locale bug where '\xa0' is in python string.whitespace due to
+# isspace() returning true for it in utf-8
+COMPONENT_BUILD_ENV += LC_ALL=C
+COMPONENT_INSTALL_ENV += LC_ALL=C
 
 # to make sure that the docs get installed in the right place.
 PYTHON_DATA = /usr

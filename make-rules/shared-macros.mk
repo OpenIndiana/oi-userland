@@ -729,7 +729,7 @@ TCLSH.8.5.sparc.32 =	/usr/bin/sparcv7/tclsh8.5
 TCLSH.8.5.sparc.64 =	/usr/bin/sparcv9/tclsh8.5
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
 
-CCSMAKE =	/usr/ccs/bin/make
+CCSMAKE =	/usr/bin/dmake
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1

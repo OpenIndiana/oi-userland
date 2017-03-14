@@ -47,8 +47,8 @@ LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
 CONFIGURE_OPTIONS += --without-crypto
+CONFIGURE_OPTIONS += --without-python
 CONFIGURE_OPTIONS += --with-html-dir=/usr/share/lib/xslt/doc
 CONFIGURE_OPTIONS += --with-html-subdir=html
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
@@ -65,13 +65,11 @@ COMPONENT_PREP_ACTION = \
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
