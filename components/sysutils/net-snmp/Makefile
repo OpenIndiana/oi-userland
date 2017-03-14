@@ -60,6 +60,7 @@ CONFIGURE_OPTIONS  +=	--enable-ipv6
 CONFIGURE_OPTIONS  +=	--enable-mfd-rewrites
 CONFIGURE_OPTIONS  +=	--with-pkcs
 CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
+CONFIGURE_OPTIONS  +=	ac_cv_safe_to_define___extensions__=no
 
 # Embedded perl is disabled, because it causes
 # failures during illumos build
