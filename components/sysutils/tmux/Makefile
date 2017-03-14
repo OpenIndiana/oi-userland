@@ -26,6 +26,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:55313e132f0f42de7e020bf6323a1939ee02ab79c48634aa07475db41573852b
 COMPONENT_ARCHIVE_URL=	https://github.com/tmux/tmux/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
+COMPONENT_PREP_ACTION=   (cd $(@D) ; autoconf)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
