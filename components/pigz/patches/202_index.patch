@@ -1,11 +1,11 @@
 Support for parallel decompression.
 Written by Mihael Gerdts <mike.gerdts@oracle.com>
 
-These changes should be sent upstream.
+These changes have been sent upstream.
 
---- pigz-2.3.3/Makefile.orig	2016-09-26 11:06:54.000000000 +0000
-+++ pigz-2.3.3/Makefile	2016-09-26 13:16:05.000000000 +0000
-@@ -70,6 +70,15 @@
+--- pigz-2.3.4/Makefile.orig	2017-03-02 13:32:39.612576924 +0000
++++ pigz-2.3.4/Makefile	2017-03-02 13:32:51.018629392 +0000
+@@ -71,6 +71,15 @@
  	  compress -f < pigz.c | ./unpigz | cmp - pigz.c ;\
  	fi
  	@rm -f pigz.c.gz pigz.c.zz pigz.c.zip
@@ -21,11 +21,11 @@ These changes should be sent upstream.
  
  tests: dev test
  	./pigzn -kf pigz.c ; ./pigz -t pigz.c.gz
---- pigz-2.3.3/pigz.1.orig	2016-09-26 11:07:52.000000000 +0000
-+++ pigz-2.3.3/pigz.1	2016-09-26 11:12:03.000000000 +0000
-@@ -185,6 +185,14 @@
+--- pigz-2.3.4/pigz.1.orig	2017-03-02 13:33:31.420259920 +0000
++++ pigz-2.3.4/pigz.1	2017-03-02 13:33:41.537522623 +0000
+@@ -188,6 +188,14 @@
  .B -V --version
- Show the version of pigz.
+ Show the version of pigz. -vV also shows the zlib version.
  .TP
 +.B -X --index file
 +During compression, create an index that can be used for parallel
@@ -38,9 +38,9 @@ These changes should be sent upstream.
  .B -z --zlib
  Compress to zlib (.zz) instead of gzip format.
  .TP
---- pigz-2.3.3/pigz.c.orig	2016-09-26 11:07:43.000000000 +0000
-+++ pigz-2.3.3/pigz.c	2016-09-27 08:09:45.122201079 +0000
-@@ -218,14 +218,27 @@
+--- pigz-2.3.4/pigz.c.orig	2017-03-02 13:26:45.154085766 +0000
++++ pigz-2.3.4/pigz.c	2017-03-02 13:29:35.979415416 +0000
+@@ -224,14 +224,27 @@
     the --independent or -i option, so that the blocks can be decompressed
     independently for partial error recovery or for random access.
  
@@ -73,7 +73,7 @@ These changes should be sent upstream.
     pigz requires zlib 1.2.1 or later to allow setting the dictionary when doing
     raw deflate.  Since zlib 1.2.3 corrects security vulnerabilities in zlib
     version 1.2.1 and 1.2.2, conditionals check for zlib 1.2.3 or later during
-@@ -260,7 +273,7 @@
+@@ -266,7 +279,7 @@
     jobs until instructed to return.  When a job is pulled, the dictionary, if
     provided, will be loaded into the deflate engine and then that input buffer
     is dropped for reuse.  Then the input data is compressed into an output
@@ -82,7 +82,7 @@ These changes should be sent upstream.
     is then put into the write job list, sorted by the sequence number. The
     compress thread however continues to calculate the check value on the input
     data, either a CRC-32 or Adler-32, possibly in parallel with the write
-@@ -286,13 +299,14 @@
+@@ -292,13 +305,14 @@
     can't get way ahead of the write thread and build up a large backlog of
     unwritten compressed data.  The write thread will write the compressed data,
     drop the output buffer, and then wait for the check value to be unlocked
@@ -104,7 +104,7 @@ These changes should be sent upstream.
  
     The input and output buffers are reused through their collection in pools.
     Each buffer has a use count, which when decremented to zero returns the
-@@ -341,6 +355,9 @@
+@@ -347,6 +361,9 @@
  #if __STDC_VERSION__-0 >= 199901L || __GNUC__-0 >= 3
  #  include <inttypes.h> /* intmax_t */
  #endif
@@ -112,9 +112,9 @@ These changes should be sent upstream.
 +#include <sys/mman.h>   /* mmap() */
 +#include <netinet/in.h> /* htonl() */
  
- #ifdef DEBUG
+ #ifdef PIGZ_DEBUG
  #  if defined(__APPLE__)
-@@ -473,9 +490,11 @@
+@@ -490,9 +507,11 @@
      char *prog;             /* name by which pigz was invoked */
      int ind;                /* input file descriptor */
      int outd;               /* output file descriptor */
@@ -126,16 +126,7 @@ These changes should be sent upstream.
      int verbosity;          /* 0 = quiet, 1 = normal, 2 = verbose, 3 = trace */
      int headis;             /* 1 to store name, 2 to store date, 3 both */
      int pipeout;            /* write output to stdout even if file */
-@@ -620,7 +639,7 @@
- 
- local void yarn_free(void *ptr)
- {
--    return free_track(&mem_track, ptr);
-+    free_track(&mem_track, ptr);
- }
- #endif
- 
-@@ -820,12 +839,15 @@
+@@ -837,12 +856,15 @@
  
  #endif
  
@@ -151,7 +142,7 @@ These changes should be sent upstream.
      if (g.outd != -1 && g.outd != 1) {
          unlink(g.outf);
          RELEASE(g.outf);
-@@ -951,11 +973,23 @@
+@@ -968,11 +990,23 @@
      return dos;
  }
  
@@ -176,7 +167,7 @@ These changes should be sent upstream.
  /* write a gzip, zlib, or zip header using the information in the globals */
  local unsigned long put_header(void)
  {
-@@ -1253,7 +1287,7 @@
+@@ -1272,7 +1306,7 @@
  
  /* get a space from a pool -- the use count is initially set to one, so there
     is no need to call use_space() for the first use */
@@ -185,7 +176,7 @@ These changes should be sent upstream.
  {
      struct space *space;
  
-@@ -1266,6 +1300,15 @@
+@@ -1285,6 +1319,15 @@
      if (pool->head != NULL) {
          space = pool->head;
          possess(space->use);
@@ -201,7 +192,7 @@ These changes should be sent upstream.
          pool->head = space->next;
          twist(pool->have, BY, -1);      /* one less in pool */
          twist(space->use, TO, 1);       /* initially one user */
-@@ -1281,13 +1324,18 @@
+@@ -1300,13 +1343,18 @@
      release(pool->have);
      space = alloc(NULL, sizeof(struct space));
      space->use = new_lock(1);           /* initially one user */
@@ -222,7 +213,7 @@ These changes should be sent upstream.
  /* increase the size of the buffer in space */
  local void grow_space(struct space *space)
  {
-@@ -1354,17 +1402,35 @@
+@@ -1373,17 +1421,35 @@
      return count;
  }
  
@@ -259,7 +250,7 @@ These changes should be sent upstream.
  struct job {
      long seq;                   /* sequence number */
      int more;                   /* true if this is not the last chunk */
-@@ -1411,6 +1477,7 @@
+@@ -1430,6 +1496,7 @@
      new_pool(&out_pool, OUTPOOL(g.block), -1);
      new_pool(&dict_pool, DICT, -1);
      new_pool(&lens_pool, g.block >> (RSYNCBITS - 1), -1);
@@ -267,7 +258,7 @@ These changes should be sent upstream.
  }
  
  /* command the compress threads to all return, then join them all (call from
-@@ -1447,6 +1514,8 @@
+@@ -1466,6 +1533,8 @@
      Trace(("-- freed %d output buffers", caught));
      caught = free_pool(&in_pool);
      Trace(("-- freed %d input buffers", caught));
@@ -276,7 +267,7 @@ These changes should be sent upstream.
      free_lock(write_first);
      free_lock(compress_have);
      compress_have = NULL;
-@@ -1710,18 +1779,483 @@
+@@ -1738,18 +1807,483 @@
      }
  }
  
@@ -762,7 +753,7 @@ These changes should be sent upstream.
      unsigned long check;            /* check value of uncompressed data */
      ball_t err;                     /* error information from throw() */
  
-@@ -1747,23 +2281,27 @@
+@@ -1775,23 +2309,27 @@
              /* update lengths, save uncompressed length for COMB */
              more = job->more;
              len = job->in->len;
@@ -794,7 +785,7 @@ These changes should be sent upstream.
              /* free the job */
              free_lock(job->calc);
              FREE(job);
-@@ -1845,7 +2383,7 @@
+@@ -1873,7 +2411,7 @@
      setup_jobs();
  
      /* start write thread */
@@ -803,7 +794,7 @@ These changes should be sent upstream.
  
      /* read from input and start compress threads (write thread will pick up
         the output of the compress threads) */
-@@ -2303,7 +2841,7 @@
+@@ -2336,7 +2874,7 @@
  #ifndef NOTHREAD
      /* if first time in or procs == 1, read a buffer to have something to
         return, otherwise wait for the previous read job to complete */
@@ -812,7 +803,7 @@ These changes should be sent upstream.
          /* if first time, fire up the read thread, ask for a read */
          if (g.in_which == -1) {
              g.in_which = 1;
-@@ -2404,12 +2942,6 @@
+@@ -2437,12 +2975,6 @@
          g.in_next += togo; \
      } while (0)
  
@@ -825,7 +816,7 @@ These changes should be sent upstream.
  /* convert MS-DOS date and time to a Unix time, assuming current timezone
     (you got a better idea?) */
  local time_t dos2time(unsigned long dos)
-@@ -3033,6 +3565,73 @@
+@@ -3066,6 +3598,73 @@
      return 0;
  }
  
@@ -899,7 +890,7 @@ These changes should be sent upstream.
  /* inflate for decompression or testing -- decompress from ind to outd unless
     decode != 1, in which case just test ind, and then also list if list != 0;
     look for and decode multiple, concatenated gzip and/or zlib streams;
-@@ -3040,10 +3639,8 @@
+@@ -3073,10 +3672,8 @@
  local void infchk(void)
  {
      int ret, cont, was;
@@ -911,7 +902,7 @@ These changes should be sent upstream.
      off_t clen;
  
      cont = 0;
-@@ -3080,72 +3677,7 @@
+@@ -3113,72 +3710,7 @@
          /* compute compressed data length */
          clen = g.in_tot - g.in_left;
  
@@ -985,7 +976,7 @@ These changes should be sent upstream.
  
          /* show file information if requested */
          if (g.list) {
-@@ -3169,6 +3701,231 @@
+@@ -3202,6 +3734,231 @@
          complain("warning: %s: trailing junk was ignored", g.inf);
  }
  
@@ -1217,7 +1208,7 @@ These changes should be sent upstream.
  /* --- decompress Unix compress (LZW) input --- */
  
  /* Type for accumulating bits.  23 bits will be used to accumulate up to 16-bit
-@@ -3576,7 +4333,7 @@
+@@ -3614,7 +4371,7 @@
          if (g.decode == 2) {
              try {
                  if (method == 8)
@@ -1226,7 +1217,7 @@ These changes should be sent upstream.
                  else {
                      unlzw();
                      if (g.list) {
-@@ -3649,19 +4406,8 @@
+@@ -3687,19 +4444,8 @@
  
          /* if exists and not -f, give user a chance to overwrite */
          if (g.outd < 0 && errno == EEXIST && isatty(0) && g.verbosity) {
@@ -1248,7 +1239,7 @@ These changes should be sent upstream.
          }
  
          /* if exists and no overwrite, report and go on to next */
-@@ -3684,10 +4430,11 @@
+@@ -3722,10 +4468,11 @@
      /* process ind to outd */
      if (g.verbosity > 1)
          fprintf(stderr, "%s to %s ", g.inf, g.outf);
@@ -1261,7 +1252,7 @@ These changes should be sent upstream.
              else if (method == 257)
                  unlzw();
              else
-@@ -3708,8 +4455,14 @@
+@@ -3746,8 +4493,14 @@
          }
      }
  #ifndef NOTHREAD
@@ -1277,7 +1268,7 @@ These changes should be sent upstream.
  #endif
      else
          single_compress(0);
-@@ -3718,6 +4471,10 @@
+@@ -3756,6 +4509,10 @@
          fflush(stderr);
      }
  
@@ -1288,7 +1279,7 @@ These changes should be sent upstream.
      /* finish up, copy attributes, set times, delete original */
      if (g.ind != 0)
          close(g.ind);
-@@ -3781,6 +4538,9 @@
+@@ -3819,6 +4576,9 @@
  "  -v, --verbose        Provide more verbose output",
  #endif
  "  -V  --version        Show the version of pigz",
@@ -1298,7 +1289,7 @@ These changes should be sent upstream.
  "  -z, --zlib           Compress to zlib (.zz) instead of gzip format",
  "  --                   All arguments after \"--\" are treated as files"
  };
-@@ -3859,11 +4619,11 @@
+@@ -3897,11 +4657,11 @@
      {"LZW", "Z"}, {"ascii", "a"}, {"best", "9"}, {"bits", "Z"},
      {"blocksize", "b"}, {"decompress", "d"}, {"fast", "1"}, {"first", "F"},
      {"force", "f"}, {"help", "h"}, {"independent", "i"}, {"iterations", "I"},
@@ -1315,7 +1306,7 @@ These changes should be sent upstream.
      {"version", "V"}, {"zip", "K"}, {"zlib", "z"}};
  #define NLOPTS (sizeof(longopts) / (sizeof(char *) << 1))
  
-@@ -3903,7 +4663,7 @@
+@@ -3941,7 +4701,7 @@
  
      /* if no argument or dash option, check status of get */
      if (get && (arg == NULL || *arg == '-')) {
@@ -1324,15 +1315,15 @@ These changes should be sent upstream.
          throw(EINVAL, "missing parameter after %s", bad);
      }
      if (arg == NULL)
-@@ -3972,6 +4732,7 @@
-             case 'S':  get = 3;  break;
-             case 'T':  g.headis &= ~0xa;  break;
-             case 'V':  fputs(VERSION, stderr);  exit(0);
+@@ -4014,6 +4774,7 @@
+                 if (g.verbosity > 1)
+                     fprintf(stderr, "zlib %s\n", zlibVersion());
+                 exit(0);
 +            case 'X':  g.setdict = 0; get = 6;  break;
              case 'Z':
                  throw(EINVAL, "invalid option: LZW output not supported: %s",
                        bad);
-@@ -4001,7 +4762,7 @@
+@@ -4043,7 +4804,7 @@
              return 0;
      }
  
@@ -1341,7 +1332,7 @@ These changes should be sent upstream.
      if (get) {
          size_t n;
  
-@@ -4036,6 +4797,8 @@
+@@ -4078,6 +4839,8 @@
              g.zopts.numiterations = num(arg);   /* optimization iterations */
          else if (get == 5)
              g.zopts.blocksplittingmax = num(arg);   /* max block splits */

@@ -1,20 +1,14 @@
-# HG changeset patch
-# User Michael Gerdts <mike.gerdts@oracle.com>
-# Date 1412623238 25200
-#      Mon Oct 06 12:20:38 2014 -0700
-# Node ID 08d5c81201b3215699b91cdc9b17f60c4bd86e7e
-# Parent  1debb63439545fd0b30153eb68e884623d06c531
-do not link with libpthread - developed by Oracle
+Do not link with libpthread - developed by Oracle
 Not submitted upstream: specific to Solaris but no Solaris Makefile upstream
 
---- pigz-2.3.3/Makefile.orig	2016-09-26 10:42:09.822806707 +0000
-+++ pigz-2.3.3/Makefile	2016-09-26 10:51:57.724668109 +0000
-@@ -5,7 +5,7 @@
+--- pigz-2.3.4/Makefile.orig	2017-03-02 13:22:22.763647319 +0000
++++ pigz-2.3.4/Makefile	2017-03-02 13:23:21.953773653 +0000
+@@ -1,7 +1,7 @@
+ CC=cc
+ CFLAGS=-O3 -Wall -Wextra
+ LDFLAGS=
+-LIBS=-lm -lpthread -lz
++LIBS=-lm -lz
+ ZOPFLI=zopfli/src/zopfli/
  # use gcc and gmake on Solaris
  
- pigz: pigz.o yarn.o try.o ${ZOPFLI}deflate.o ${ZOPFLI}blocksplitter.o ${ZOPFLI}tree.o ${ZOPFLI}lz77.o ${ZOPFLI}cache.o ${ZOPFLI}hash.o ${ZOPFLI}util.o ${ZOPFLI}squeeze.o ${ZOPFLI}katajainen.o
--	$(CC) $(LDFLAGS) -o pigz $^ -lpthread -lm
-+	$(CC) $(LDFLAGS) -o pigz $^ -lm
- 	ln -f pigz unpigz
- 
- pigz.o: pigz.c yarn.h try.h ${ZOPFLI}deflate.h ${ZOPFLI}util.h

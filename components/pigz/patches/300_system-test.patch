@@ -1,15 +1,15 @@
 Developed internally, for system-test; not suitable for upstream.
 
---- pigz-2.3.3/Makefile.orig	2016-09-26 13:21:02.245052682 +0000
-+++ pigz-2.3.3/Makefile	2016-09-26 13:16:33.808207549 +0000
+--- pigz-2.3.4/Makefile.orig	2017-03-02 13:38:09.343094775 +0000
++++ pigz-2.3.4/Makefile	2017-03-02 13:48:28.190657548 +0000
 @@ -1,5 +1,6 @@
  CC=cc
  CFLAGS=-O3 -Wall -Wextra
 +TARGETDIR ?= $(shell pwd)
- LDFLAGS=-lz
+ LDFLAGS=
+ LIBS=-lm -lz
  ZOPFLI=zopfli/src/zopfli/
- # use gcc and gmake on Solaris
-@@ -52,36 +53,36 @@
+@@ -53,36 +54,36 @@
  tryn.o: try.c try.h
  	$(CC) $(CFLAGS) -DDEBUG -DNOTHREAD -g -c -o tryn.o try.c
  
@@ -48,15 +48,17 @@ Developed internally, for system-test; not suitable for upstream.
  	fi
  	@rm -f pigz.c.gz pigz.c.zz pigz.c.zip
  	@rm -rf d/1 d/2
- 	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
+-	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
 -	  cd ..; cp -pr 1 2; ../pigz -rp 4 --index %z 1; \
 -	  ../pigz -drp 4 --index %z 1; diff -r 1 2)
++	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.4.tar.gz; \
 +	  cd ..; cp -pr 1 2; $(TARGETDIR)/pigz -rp 4 --index %z 1; \
 +	  $(TARGETDIR)/pigz -drp 4 --index %z 1; diff -r 1 2)
  	@rm -rf d/1 d/2
- 	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
+-	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
 -	  cd ..; cp -pr 1 2; ../pigz -zrp 4 -X %f.idx 1; \
 -	  ../pigz -dzrp 4 -X %f.idx 1; diff -r 1 2)
++	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.4.tar.gz; \
 +	  cd ..; cp -pr 1 2; $(TARGETDIR)/pigz -zrp 4 -X %f.idx 1; \
 +	  $(TARGETDIR)/pigz -dzrp 4 -X %f.idx 1; diff -r 1 2)
  	@rm -rf d/1 d/2
