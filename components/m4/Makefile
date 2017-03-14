@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		m4
-COMPONENT_VERSION=	1.4.17
+COMPONENT_VERSION=	1.4.18
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f0543c3beb51fa6b3337d8025331591e0e18d8ec2886ed391f1aade43477d508
+    sha256:f2c1e86ca0a404ff281631bdc8377638992744b175afb806e25871a24a934e07
 COMPONENT_BUGDB=	utility/gnu-m4
 COMPONENT_ANITYA_ID=	1871
 
-TPNO=			25279
+TPNO=			33972
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/gnu-component.mk
@@ -53,6 +53,8 @@ COMPONENT_SYSTEM_TEST_TARGETS =	installcheck
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/PATH=/d"' \
 	'-e "/check-them/d"' \
+	'-e "/^m4/d"' \
+	'-e "/^Copyright/d"' \
 	'-e "/echo m4/d"' \
 	'-e "/Leaving directory/d"' \
 	'-e "/Entering directory/d"'
