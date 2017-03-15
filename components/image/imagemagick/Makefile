@@ -29,7 +29,7 @@ COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		6.9.6
 COMPONENT_MAJOR_VERSIOR=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
 COMPONENT_SUBVERSION=		5
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
@@ -102,15 +102,32 @@ build:		$(BUILD_32_and_64)
 # Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
 install:	$(INSTALL_32_and_64)
 
+test:		$(TEST_32_and_64)
+
 PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 PKG_MACROS += PERL_PKG=$(PERL_PKG)
 
-# ImageMagick tests have hard-coded absolute paths inside, so essentially they
-# can be run only after ImageMagick is actually installed and this is not 
-# possible, so the tests are not invoked.
-#
-test:		$(NO_TESTS)
-	@echo "Tests can be run only after ImageMagick is installed."
+
+# Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
+# it is by the Userland Makefiles), then all shell options get exported to
+# child invocations of bash, which results in test failures due to nounset and
+# xtrace being set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+# Tests hang waiting for input unless stdin is redirected.
+COMPONENT_TEST_TARGETS = check < /dev/null
+
+# Master test transforms
+COMPONENT_TEST_TRANSFORMS += \
+       '-n '\
+       '-e "/TOTAL/p" ' \
+       '-e "/SKIP/p" ' \
+       '-e "/PASS/p" ' \
+       '-e "/FAIL/p" ' \
+       '-e "/ERROR/p" ' 
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
@@ -130,6 +147,7 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-4-runtime
