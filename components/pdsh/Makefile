@@ -27,15 +27,16 @@ include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		pdsh
-COMPONENT_VERSION=	2.29
-COMPONENT_PROJECT_URL=	https://code.google.com/archive/p/pdsh
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_VERSION=	2.31
+COMPONENT_PROJECT_URL=	https://github.com/grondo/pdsh
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:57f0903bf782afe00874267b59e0f4adefa79da4c48d0257c5ae2bef02f87fcf
-COMPONENT_ARCHIVE_URL=	https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:0ee066ce395703285cf4f6cf00b54b7097d12457a4b1c146bc6f33d8ba73caa7
+COMPONENT_ARCHIVE_URL=	https://github.com/grondo/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	13274
 
-TPNO=			29495
+TPNO=			33966
 
 # Old version in SFW was not version-locked, so cannot be upgraded to, so
 # do not publish.
@@ -59,21 +60,12 @@ COMPONENT_POST_CONFIGURE_ACTION += \
 	-e 's|need_relink=yes|need_relink=not_on_solaris|g' \
 	libtool)
 
-# Delete this when build servers are installed with genders
-GENDERS_BASE = $(WS_COMPONENTS)/genders/build/prototype/$(MACH)
-GENDERS_INC_DIR += -I$(GENDERS_BASE)/usr/include
-GENDERS_LD_OPTIONS += -L$(GENDERS_BASE)/usr/lib/$(MACH64)
-
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) $(GENDERS_INC_DIR)"
-CONFIGURE_ENV += GENDERS_LD_OPTIONS="$(GENDERS_LD_OPTIONS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS) $(GENDERS_LD_OPTIONS)"
-
 CONFIGURE_OPTIONS +=	--with-genders
 CONFIGURE_OPTIONS +=	--with-readline
 CONFIGURE_OPTIONS +=	--with-ssh
 CONFIGURE_OPTIONS +=	--without-rsh
 
-COMPONENT_TEST_ENV +=   PATH="/usr/gnu/bin:/usr/bin"
+COMPONENT_TEST_ENV =   PATH="/usr/gnu/bin:/usr/bin:$(PATH)"
 COMPONENT_TEST_DIR =	$(@D)/tests
 
 COMPONENT_TEST_TRANSFORMS += \
