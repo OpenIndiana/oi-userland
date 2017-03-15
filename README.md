@@ -23,7 +23,7 @@ As mentioned, the gate is stored in a Mercurial repository.  In order to
 build or develop in the gate, you will need to clone it.  You can do so
 with the following command
 
-  $ git clone https://github.com/oracle/solaris-userland.git /scratch/clone
+    $ git clone https://github.com/oracle/solaris-userland.git /scratch/clone
 
 This will create a replica of the various pieces that are checked into the
 source code management system, but it does not retrieve the community
@@ -31,8 +31,8 @@ source archives associated with the gate content.  To download the
 community source associated with your cloned workspace, you will need to
 execute the following:
 
-  $ cd /scratch/clone/components
-  $ gmake download
+    $ cd /scratch/clone/components
+    $ gmake download
 
 This will use GNU make and the downloading tool in the gate to walk through
 all of the component directories downloading and validating the community
@@ -52,31 +52,37 @@ You can build individual components or the contents of the entire gate.
 If you are only working on a single component, you can just build it using
 following:
 
-  setup the workspace for building components
+Setup the workspace for building components
 
     $ cd (your-workspace)/components ; gmake setup
 
-  build the individual component
+Build the individual component
 
     $ cd (component-dir) ; gmake publish
 
 ### Complete Top Down build
 Complete top down builds are also possible by simply running
 
-  $ cd (your-workspace)/components
-  $ gmake publish
+    $ cd (your-workspace)/components
+    $ gmake publish
 
 The 'publish' target will build each component and publish it to the
 workspace IPS repo.
+
 Tools to help facilitate build zone creation will be integrated
 shortly.  If the zone you create to build your workspace in does not have
 networking enabled, you can pre-download any community source archives into
 your workspace from the global with:
 
-  $ cd (your-workspace)/components
-  $ gmake download
+    $ cd (your-workspace)/components
+    $ gmake download
 
 - You can add parallelism to your builds by adding '-j (jobs)' to your gmake
   command line arguments.
 - The gate should only incrementally build what it needs to based on what has
   changed since you last built it.
+  
+# Copyright
+Copyright (c) 2015-2017, Oracle and/or its affiliates. All rights reserved.
+
+# License
