@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 SUBDIRS = components
@@ -45,5 +45,8 @@ test system-test component-hook: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(MAKE) -C $@ $(TARGET)
+
+README.md:	README
+	markdown_py < $< > $@
 
 FORCE:

@@ -73,7 +73,7 @@ CONFIGURE_ENV +=	SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH)
 
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
-CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <discuss@solaris-userland.java.net>"
+CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland Team"
 CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic

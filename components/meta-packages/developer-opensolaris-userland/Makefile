@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -29,8 +29,8 @@ COMPONENT_NAME=		developer/opensolaris/userland
 COMPONENT_VERSION=
 COMPONENT_SRC=
 COMPONENT_ARCHIVE=
-COMPONENT_PROJECT_URL=	http://solaris-userland.java.net/
-COMPONENT_ARCHIVE_URL=	http://hg.java.net/solaris-userland-gate/
+COMPONENT_PROJECT_URL=	https://github.com/oracle/solaris-userland
+COMPONENT_ARCHIVE_URL=	https://github.com/oracle/solaris-userland.git
 COMPONENT_BUGDB=	gate-stuff/userland
 
 include $(WS_MAKE_RULES)/prep.mk

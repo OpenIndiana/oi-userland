@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
@@ -94,7 +94,6 @@ CONFIGURE_OPTIONS = \
 			    -Duse64bitint \
 			    -Dcc="cc" \
 			    -Doptimize="$(CFLAGS.studio)" \
-			    -Dcf_email="perl@solaris-userland.java.net" \
 			    -Dcf_by="perl-bugs" \
 			    -Dmyhostname="localhost" \
 			    -Dmksymlinks \

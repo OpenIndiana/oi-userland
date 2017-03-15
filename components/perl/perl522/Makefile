@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -79,7 +79,6 @@ CONFIGURE_OPTIONS = \
 			-Ulocincpth= \
                         -Dbin=/usr/perl5/$(PERL_VERSION_LOCAL)/bin \
 			-Dcc="cc" \
-			-Dcf_email="discuss@solaris-userland.java.net" \
 			-Dcf_by="perl-bugs" \
 			-Dlibperl=libperl.so \
 			-Dmyhostname="localhost" \
