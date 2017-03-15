@@ -1,12 +1,12 @@
-<pre><code>    Getting started with the Userland Consolidation
-</code></pre>
-<p>Getting Started</p>
-<pre><code>This README provides a very brief overview of the gate, how to retrieve
+# Getting started with the Userland Consolidation
+
+## Getting Started
+This README provides a very brief overview of the gate, how to retrieve
 a copy, and how to build it.  Detailed documentation about the Userland
 gate can be found in the 'doc' directory.
-</code></pre>
-<p>Overview</p>
-<pre><code>The Userland consolidation maintains a project at
+
+## Overview
+The Userland consolidation maintains a project at
 
      https://github.com/oracle/solaris-userland
 
@@ -17,9 +17,9 @@ that it makes use of hierarchical Makefiles which provide dependency and
 recipe information for building the components.  In order to build the
 contents of the Userland gate, you need to clone it.  Since you are
 reading this, you probably already have.
-</code></pre>
-<p>Getting the Bits</p>
-<pre><code>As mentioned, the gate is stored in a Mercurial repository.  In order to
+
+## Getting the Bits
+As mentioned, the gate is stored in a Mercurial repository.  In order to
 build or develop in the gate, you will need to clone it.  You can do so
 with the following command
 
@@ -44,12 +44,12 @@ to the command line.  Second, if you are only interested in working on a
 particular component, you can change directories to that component's
 directory and use 'gmake download' from that to only get it's source
 archive.
-</code></pre>
-<p>Building the Bits.</p>
-<pre><code>You can build individual components or the contents of the entire gate.
-</code></pre>
-<p>Component build</p>
-<pre><code>If you are only working on a single component, you can just build it using
+
+## Building the Bits.
+You can build individual components or the contents of the entire gate.
+
+### Component build
+If you are only working on a single component, you can just build it using
 following:
 
   setup the workspace for building components
@@ -59,9 +59,9 @@ following:
   build the individual component
 
     $ cd (component-dir) ; gmake publish
-</code></pre>
-<p>Complete Top Down build  </p>
-<pre><code>Complete top down builds are also possible by simply running
+
+### Complete Top Down build
+Complete top down builds are also possible by simply running
 
   $ cd (your-workspace)/components
   $ gmake publish
@@ -75,8 +75,8 @@ your workspace from the global with:
 
   $ cd (your-workspace)/components
   $ gmake download
-</code></pre>
-<p>You can add parallelism to your builds by adding '-j (jobs)' to your gmake
-  command line arguments.</p>
-<p>The gate should only incrementally build what it needs to based on what has
-  changed since you last built it.</p>
+
+- You can add parallelism to your builds by adding '-j (jobs)' to your gmake
+  command line arguments.
+- The gate should only incrementally build what it needs to based on what has
+  changed since you last built it.

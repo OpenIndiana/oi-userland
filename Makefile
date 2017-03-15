@@ -47,6 +47,6 @@ $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(MAKE) -C $@ $(TARGET)
 
 README.md:	README
-	markdown_py < $< > $@
+	/usr/bin/cp -f $< $@
 
 FORCE:
