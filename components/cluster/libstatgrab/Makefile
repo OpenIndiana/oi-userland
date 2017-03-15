@@ -22,7 +22,7 @@ COMPONENT_PROJECT_URL=  http://www.i-scream.org/$(COMPONENT_NAME)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:03e9328e4857c2c9dcc1b0347724ae4cd741a72ee11acc991784e8ef45b7f1ab
-COMPONENT_ARCHIVE_URL=  http://dl.ambiweb.de/mirrors/ftp.i-scream.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  http://ftp.i-scream.org/pub/i-scream/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2	
 COMPONENT_SUMMARY= libstatgrab is a library that provides cross platform access to statistics about the system on which it's run.
 
