@@ -1,0 +1,170 @@
+The following scripts test the various components that make up GNU parallel.
+They are based on examples in the GNU parallel man pages.
+
+Note that the last one for sql has been obstificated to not disclose the
+testers username and password or the name of the database.
+
+There are lots more examples in the GNU parallel man page that can be used
+to provide further testing if needed.
+
+----
+
+$ cat niceload-test.sh
+#!/bin/sh
+PATH=/usr/bin
+echo "Testing niceload"
+echo
+echo "EXAMPLE: See niceload in action"
+echo "     In terminal 1 run: top"
+echo
+echo "     In terminal 2 run:"
+echo
+echo "     niceload perl -e '$|=1;do{$l==$r or print \".\";"
+echo "     $l=$r}until(($r=time-$^T)>50)'"
+echo
+echo "     This will print a '.' every second for 50 seconds and eat a"
+echo "     lot of CPU. When the load rises to 1.0 the process is"
+echo "     suspended."
+echo
+niceload -q perl -e '$|=1;do{$l==$r or print "."; $l=$r}until(($r=time-$^T)>50)'
+
+----
+
+$ cat parallel-test.sh
+#!/bin/sh
+PATH=/usr/bin:/usr/sbin
+echo Testing parallel...
+echo
+echo EXAMPLE: Composed commands
+echo     A job can consist of several commands. This will print the
+echo     number of files in each directory:
+echo
+rm -rf test-dir
+mkdir -p test-dir/a test-dir/b test-dir/c test-dir/d
+(cd test-dir/a; touch 1 2 3 4 5 6 7 8 9 10 11 12)
+(cd test-dir/b; touch 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20)
+(cd test-dir/c; touch 1 2 3 4 5 6 7 8)
+(cd test-dir/d; touch 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
+(cd test-dir; ls | parallel 'echo -n {}" "; ls {}|wc -l')
+echo
+echo "    To put the output in a file called <name>.dir:"
+echo
+(cd test-dir; ls | parallel '(echo -n {}" "; ls {}|wc -l) > {}.dir')
+cat test-dir/a.dir
+cat test-dir/b.dir
+cat test-dir/c.dir
+cat test-dir/d.dir
+echo
+echo EXAMPLE: Group output lines
+echo     When running jobs that output data, you often do not want
+echo     the output of multiple jobs to run together. GNU parallel
+echo     defaults to grouping the output of each job, so the output
+echo     is printed when the job finishes. If you want the output to
+echo     be printed while the job is running you can use -u.
+echo
+echo     Compare the output of:
+echo
+parallel traceroute ::: foss.org.my debian.org freenetproject.org
+echo
+echo     to the output of:
+echo
+parallel -u traceroute ::: foss.org.my debian.org freenetproject.org
+echo
+echo EXAMPLE: Keep order of output same as order of input
+echo      Normally the output of a job will be printed as soon as it
+echo      completes. Sometimes you want the order of the output to
+echo      remain the same as the order of the input. This is often
+echo      important, if the output is used as input for another
+echo      system. -k will make sure the order of output will be in the
+echo      same order as input even if later jobs end before earlier
+echo      jobs.
+echo
+echo      Append a string to every line in a text file:
+echo      If you remove -k some of the lines may come out in the wrong
+echo      order.
+echo
+echo BEFORE:
+echo
+cat textfile
+echo
+echo AFTER:
+echo
+cat textfile | parallel -k echo {} append_string
+
+----
+
+$ cat parcat-test.sh
+#!/bin/sh
+PATH=/usr/bin
+echo "Testing parcat"
+echo
+echo "mkfifo slot-{1..5}-digit-{0..9}"
+echo "parallel -j5 'seq 100000 | grep {} > slot-{%}-digit-{}' ::: {0..9} &"
+echo "parallel parcat slot-{1..5}-digit-{} '>' digit-{} ::: {0..9}"
+echo
+rm -f slot* digit*
+mkfifo slot-{1..5}-digit-{0..9}
+parallel -j5 'seq 100000 | grep {} > slot-{%}-digit-{}' ::: {0..9} &
+parallel parcat slot-{1..5}-digit-{} '>' digit-{} ::: {0..9}
+
+----
+
+$ cat sem-test.sh
+#!/bin/sh
+PATH=/usr/bin:/usr/sbin:/usr/perl5/5.22/bin
+echo Testing sem
+echo
+echo EXAMPLE: Gzipping *.log
+echo      Run one gzip process per CPU core. Block until a CPU core
+echo      becomes available.
+echo
+rm -rf test-dir
+mkdir test-dir
+mkfile -v 150k test-dir/a.log
+mkfile -v 150k test-dir/b.log
+mkfile -v 150k test-dir/c.log
+mkfile -v 150k test-dir/d.log
+mkfile -v 150k test-dir/e.log
+mkfile -v 150k test-dir/f.log
+mkfile -v 150k test-dir/g.log
+mkfile -v 150k test-dir/h.log
+mkfile -v 150k test-dir/i.log
+mkfile -v 150k test-dir/j.log
+mkfile -v 150k test-dir/k.log
+mkfile -v 150k test-dir/l.log
+mkfile -v 150k test-dir/m.log
+mkfile -v 150k test-dir/n.log
+mkfile -v 150k test-dir/o.log
+mkfile -v 150k test-dir/p.log
+mkfile -v 150k test-dir/q.log
+mkfile -v 150k test-dir/r.log
+for i in `ls test-dir/*.log` ; do
+  echo $i
+  sem -j+0 gzip $i ";" echo done
+done
+sem --wait
+echo
+echo "EXAMPLE: Protecting pod2html from itself"
+echo "    pod2html creates two files: pod2htmd.tmp and pod2htmi.tmp"
+echo "    which it does not clean up. It uses these two files for a"
+echo "    short time. But if you run multiple pod2html in parallel"
+echo "    (e.g. in a Makefile with make -j) you need to protect"
+echo "    pod2html from running twice at the same time. sem running as"
+echo "    a mutex will do just that:"
+echo
+#cp .../components/perl512/perl-5.12.4/Porting/pumpkin.pod .
+sem --fg --id pod2html pod2html pumpkin.pod > pumpkin.html
+sem --fg --id pod2html rm -f pod2htmd.tmp pod2htmi.tmp
+
+----
+
+$ cat sql-test.sh
+#!/bin/sh
+PATH=/usr/bin:/usr/sbin:/usr/perl5/5.22/bin
+echo Testing sql
+echo
+echo EXAMPLE: Attaching to the BugDB database.
+echo
+sql oracle://<USERNAME>:<PASSWORD>@<DATABASE NAME>
+
+----
