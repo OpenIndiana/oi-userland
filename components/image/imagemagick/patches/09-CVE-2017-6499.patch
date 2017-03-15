@@ -1,0 +1,40 @@
+From a69d89789fb41b11ff8a0082ac6f1518e836cacb Mon Sep 17 00:00:00 2001
+From: Dirk Lemstra <dirk@git.imagemagick.org>
+Date: Thu, 9 Feb 2017 21:53:23 +0100
+Subject: [PATCH] Fixed memory leak when creating nested exceptions in
+ Magick++.
+
+bug: : https://www.imagemagick.org/discourse-server/viewtopic.php?f=23&p=142634
+bug-debian: https://bugs.debian.org/856880
+origin: https://github.com/ImageMagick/ImageMagick/commit/3358f060fc182551822576b2c0a8850faab5d543
+---
+ Magick++/lib/Exception.cpp | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/Magick++/lib/Exception.cpp b/Magick++/lib/Exception.cpp
+index 92ca62970..8ef34bc0a 100644
+--- a/Magick++/lib/Exception.cpp
++++ b/Magick++/lib/Exception.cpp
+@@ -852,12 +852,18 @@ MagickPPExport void Magick::throwException(ExceptionInfo *exception_,
+             exception_->description) != 0))
+           {
+             if (nestedException == (Exception *) NULL)
+-              nestedException=createException(p);
++              {
++                nestedException=createException(p);
++                q=nestedException;
++              }
+             else
+               {
+-                q=createException(p);
+-                nestedException->nested(q);
+-                nestedException=q;
++                Exception
++                  *r;
++
++                r=createException(p);
++                q->nested(r);
++                q=r;
+               }
+           }
+       }
