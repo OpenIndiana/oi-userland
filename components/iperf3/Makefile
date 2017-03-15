@@ -26,15 +26,15 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iperf
-COMPONENT_VERSION=	3.1.3
-COMPONENT_PROJECT_URL=	https://iperf.fr/
+COMPONENT_VERSION=	3.1.6
+COMPONENT_PROJECT_URL=	http://software.es.net/iperf/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:60d8db69b1d74a64d78566c2317c373a85fef691b8d277737ee5d29f448595bf
+    sha256:70f0c72d9e60c6ecb2c478ed17e4fd81d3b827d57896fee43bcd0c53abccb29d
 COMPONENT_ARCHIVE_URL=	http://downloads.es.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/iperf
 COMPONENT_ANITYA_ID=	1389
 
-TPNO=			31583
+TPNO=			34069
 
 # There is no easy way to do automated testing that produce consistent
 # results independent of what machine there are run on, but the following
