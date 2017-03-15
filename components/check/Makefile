@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		check
-COMPONENT_VERSION=	0.10.0
+COMPONENT_VERSION=	0.11.0
 COMPONENT_PROJECT_URL=	https://libcheck.github.io/check
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f5f50766aa6f8fe5a2df752666ca01a950add45079aa06416b83765b1cf71052
-COMPONENT_ARCHIVE_URL=	https://github.com/libcheck/$(COMPONENT_NAME)/files/71408/$(COMPONENT_ARCHIVE)
+    sha256:24f7a48aae6b74755bcbe964ce8bc7240f6ced2141f8d9cf480bc3b3de0d5616
+COMPONENT_ARCHIVE_URL=	https://github.com/libcheck/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	7593
 
-TPNO=			28147
+TPNO=			33944
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
@@ -50,6 +50,14 @@ PTHREAD_CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 endif
 CONFIGURE_OPTIONS += PTHREAD_CFLAGS="$(PTHREAD_CFLAGS)"
 CONFIGURE_OPTIONS += PTHREAD_LIBS="-lc"
+
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
 
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
