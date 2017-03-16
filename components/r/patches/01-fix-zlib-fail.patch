@@ -1,12 +1,16 @@
 zlib version check fails
 
-Fix is already committed upstream. See:
+The proper fix is already committed upstream. See:
 
 https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=17204
 
---- R-3.3.2/m4/R.m4.orig	2017-03-13 11:20:03.514638624 +0000
-+++ R-3.3.2/m4/R.m4	2017-03-13 11:20:49.190468317 +0000
-@@ -3113,10 +3113,11 @@
+For now we just patch the configure script to solve the problem.
+When R is updated to version 3.3.3 (CR #25681843), then the real fix will
+take affect and this patch can be removed.
+
+--- R-3.3.2/configure.orig	2017-03-16 10:57:21.167034116 +0000
++++ R-3.3.2/configure	2017-03-16 10:58:12.704864360 +0000
+@@ -35507,10 +35507,11 @@
  #include <string.h>
  #include <zlib.h>
  int main() {

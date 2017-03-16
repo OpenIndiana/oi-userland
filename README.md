@@ -83,6 +83,4 @@ your workspace from the global with:
   changed since you last built it.
   
 # Copyright
-Copyright (c) 2015-2017, Oracle and/or its affiliates. All rights reserved.
-
-# License
+Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
