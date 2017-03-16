@@ -23,6 +23,8 @@ COMPONENT_SUMMARY=	      High availaiblity cluster with corosync, pacemaker and 
 
 include $(WS_MAKE_RULES)/ips.mk
 
+download:
+
 build:
 
 install:

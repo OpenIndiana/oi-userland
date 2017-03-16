@@ -36,6 +36,8 @@ COMPONENT_SUMMARY= Collection of OCF agents for HA luster which are adapted to I
 
 include ../../../make-rules/ips.mk
 
+download:
+
 build:
 
 install:

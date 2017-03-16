@@ -21,6 +21,8 @@ include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
+download:
+
 build:
 
 install:

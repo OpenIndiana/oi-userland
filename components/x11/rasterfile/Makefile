@@ -30,6 +30,8 @@ include $(WS_TOP)/make-rules/ips.mk
 rasterfile_INCDIR=$(PROTO_DIR)$(USRINCDIR)/pixrect
 rasterfile_MANDIR=$(PROTO_DIR)$(USRSHAREMAN5DIR)
 
+download:
+
 build:
 
 install:

@@ -59,6 +59,8 @@ PATTERN_FILES = \
 	
 PATTERN_DIR=$(USRSHAREDIR)/patterns
 
+download:
+
 build:
 
 install:
