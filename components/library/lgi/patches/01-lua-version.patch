@@ -1,0 +1,46 @@
+components/runtime/lua is 5.2.1 - not suitable for upstream
+
+--- lgi-0.9.0/lgi/Makefile	2015-03-23 15:48:44.000000000 -0700
++++ lgi-0.9.0/lgi/Makefile	2015-06-25 23:19:24.655402429 -0700
+@@ -15,16 +15,16 @@
+ VERSION_FILE = version.lua
+ 
+ ifneq ($(filter CYGWIN%, $(shell uname -s)),)
+-CORE = corelgilua51.dll
++CORE = corelgilua52.dll
+ LIBFLAG = -shared
+ LIBS += -llua
+ else
+ ifeq ($(shell uname -s),Darwin)
+-CORE = corelgilua51.so
++CORE = corelgilua52.so
+ LIBFLAG = -bundle -undefined dynamic_lookup
+ CCSHARED = -fno-common
+ else
+-CORE = corelgilua51.so
++CORE = corelgilua52.so
+ LIBFLAG = -shared
+ CCSHARED = -fPIC
+ endif
+--- lgi-0.9.0/lgi/core.c	2015-03-23 15:48:44.000000000 -0700
++++ lgi-0.9.0/lgi/core.c	2015-06-25 23:32:45.937122965 -0700
+@@ -655,7 +655,7 @@
+ }
+ 
+ int
+-luaopen_lgi_corelgilua51 (lua_State* L)
++luaopen_lgi_corelgilua52 (lua_State* L)
+ {
+   LgiStateMutex *mutex;
+   gint state_id;
+--- lgi-0.9.0/lgi/core.lua	2015-03-23 15:48:44.000000000 -0700
++++ lgi-0.9.0/lgi/core.lua	2015-06-25 23:32:50.067448193 -0700
+@@ -11,7 +11,7 @@
+ -- This module decides what kind of core routines should be loaded.
+ -- Currently only one implementation exists, standard-Lua C-side
+ -- implementation, LuaJIT-FFI-based one is planned.
+-local core = require 'lgi.corelgilua51'
++local core = require 'lgi.corelgilua52'
+ 
+ -- Helper methods for converting between CamelCase and uscore_delim
+ -- names.
