@@ -10,46 +10,90 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tracker
 
-COMPONENT_VERSION= 0.10.37
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 1.8.1
 COMPONENT_SUMMARY= Desktop search tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:33d9fe0aa58e2249d1907365676a8fba5686e3df0f127b499e18bf2ee170659d
+  sha256:e3ed4cb384486ebc086adfad68b5d25f8b0424eb6eb1aca2252a508b757fbe51
 COMPONENT_ARCHIVE_URL= \
-  http://download.gnome.org/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
+  http://download.gnome.org/sources/$(COMPONENT_NAME)/1.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.tracker-project.org
+COMPONENT_FMRI= library/desktop/search/tracker
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE= GPLv2,LGPLv2.1
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CFLAGS	+= -D__EXTENSIONS__
-CFLAGS	+= -DO_NOATIME=0
-# illumos-gate provides libuuid, but not uuid.pc
-LDFLAGS += -luuid
+# Use default libjpeg
+CPPFLAGS += $(JPEG_CPPFLAGS)
+CFLAGS += $(JPEG_CFLAGS)
+LDFLAGS += $(JPEG_LDFLAGS)
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && \
-                libtoolize --force &&\
-                aclocal -I . &&\
-                autoheader &&\
-                automake -a -c -f &&\
-                autoconf )
+COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/bin
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --libexecdir=/usr/bin
+CONFIGURE_OPTIONS += --disable-libstemmer
+CONFIGURE_OPTIONS += --disable-maemo
+CONFIGURE_OPTIONS += --disable-schemas-compile
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-upower
+CONFIGURE_OPTIONS += --enable-artwork
+CONFIGURE_OPTIONS += --enable-cfg-man-pages
+CONFIGURE_OPTIONS += --enable-dvi
+CONFIGURE_OPTIONS += --enable-generic-media-extractor=gstreamer
+# Evolution miner is broken (crashes on startup)
+CONFIGURE_OPTIONS += --disable-miner-evolution
+# Disabled for now because of errors
+#CONFIGURE_OPTIONS += --enable-gtk-doc
+CONFIGURE_OPTIONS += --enable-hal
+CONFIGURE_OPTIONS += --enable-icon
+CONFIGURE_OPTIONS += --enable-icu-charset-detection
+# Required for other components.
+CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS += --enable-journal
+CONFIGURE_OPTIONS += --enable-libexif
+CONFIGURE_OPTIONS += --enable-libflac
+CONFIGURE_OPTIONS += --enable-libjpeg
+CONFIGURE_OPTIONS += --enable-libpng
+CONFIGURE_OPTIONS += --enable-libtiff
+CONFIGURE_OPTIONS += --enable-libvorbis
+CONFIGURE_OPTIONS += --enable-libxml2
+CONFIGURE_OPTIONS += --enable-miner-apps
+CONFIGURE_OPTIONS += --enable-miner-fs
+CONFIGURE_OPTIONS += --enable-miner-user-guides
+CONFIGURE_OPTIONS += --enable-mp3
+CONFIGURE_OPTIONS += --enable-nautilus-extension
+CONFIGURE_OPTIONS += --enable-playlist
+CONFIGURE_OPTIONS += --enable-poppler
+CONFIGURE_OPTIONS += --enable-ps
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-taglib
+CONFIGURE_OPTIONS += --enable-text
+CONFIGURE_OPTIONS += --enable-tracker-fts
+CONFIGURE_OPTIONS += --enable-tracker-needle
+CONFIGURE_OPTIONS += --enable-tracker-preferences
+CONFIGURE_OPTIONS += --enable-tracker-writeback
+CONFIGURE_OPTIONS += --disable-miner-firefox
+CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --with-unicode-support=libicu
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
+
 
 CONFIGURE_ENV    += PERL=$(PERL)
 
@@ -62,31 +106,30 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
+REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += gnome/file-manager/nautilus
 REQUIRED_PACKAGES += image/library/libexif
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer
-REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
-REQUIRED_PACKAGES += library/desktop/evolution-data-server
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/libgsf
-REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/search/tracker
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libpoppler
+REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/media-player/totem-pl-parser
-REQUIRED_PACKAGES += mail/evolution
 REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += utility/bash-completion

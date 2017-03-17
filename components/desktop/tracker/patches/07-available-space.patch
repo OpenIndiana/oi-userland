@@ -1,0 +1,19 @@
+Fix wrong space rporting
+Block size is always 512
+--- tracker-1.8.1/src/libtracker-common/tracker-file-utils.c.1	2017-03-17 16:45:59.409088723 +0300
++++ tracker-1.8.1/src/libtracker-common/tracker-file-utils.c	2017-03-17 16:47:01.849483090 +0300
+@@ -289,12 +289,13 @@
+ guint64
+ tracker_file_system_get_remaining_space (const gchar *path)
+ {
++#define BSIZE 512
+ 	struct __statvfs st;
+ 	guint64 available;
+ 
+ 	if (statvfs_helper (path, &st)) {
+ 		available = (geteuid () == 0) ? st.f_bfree : st.f_bavail;
+-		return st.f_bsize * available;
++		return BSIZE * available;
+ 	} else {
+ 		return 0;
+ 	}
