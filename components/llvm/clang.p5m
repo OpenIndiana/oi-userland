@@ -39,20 +39,23 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/188
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file usr/bin/$(MACH64)/arcmt-test path=usr/bin/arcmt-test
-file usr/bin/$(MACH64)/c-arcmt-test path=usr/bin/c-arcmt-test
-file usr/bin/$(MACH64)/c-index-test path=usr/bin/c-index-test
+file path=usr/bin/arcmt-test
+file path=usr/bin/c-arcmt-test
+file path=usr/bin/c-index-test
 hardlink path=usr/bin/clang target=clang-3.8
 hardlink path=usr/bin/clang++ target=clang-3.8
-file usr/bin/$(MACH64)/clang-3.8 path=usr/bin/clang-3.8
-file usr/bin/$(MACH64)/clang-format path=usr/bin/clang-format
-file usr/bin/$(MACH64)/diagtool path=usr/bin/diagtool
-file usr/bin/$(MACH64)/git-clang-format path=usr/bin/git-clang-format
-file usr/bin/$(MACH64)/scan-build path=usr/bin/scan-build
-file usr/bin/$(MACH64)/scan-view path=usr/bin/scan-view
+file path=usr/bin/clang-3.8
+file path=usr/bin/clang-check
+# Intentionally elided; msvc target driver.
+# link path=usr/bin/clang-cl target=clang
+file path=usr/bin/clang-format
+file path=usr/bin/diagtool
+file path=usr/bin/git-clang-format
+file path=usr/bin/scan-build
+file path=usr/bin/scan-view
 file path=usr/lib/$(MACH64)/libclang.so
-file usr/libexec/$(MACH64)/c++-analyzer path=usr/lib/c++-analyzer mode=0555
-file usr/libexec/$(MACH64)/ccc-analyzer path=usr/lib/ccc-analyzer mode=0555
+file path=usr/lib/c++-analyzer mode=0555
+file path=usr/lib/ccc-analyzer mode=0555
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/Intrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/__clang_cuda_runtime_wrapper.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/__stddef_max_align_t.h
@@ -140,13 +143,14 @@ file path=usr/lib/python2.7/vendor-packages/clang-format.py
 file path=usr/share/clang/clang-format-bbedit.applescript
 file path=usr/share/clang/clang-format.el
 file path=usr/share/man/man1/clang.1
+file path=usr/share/man/man1/scan-build.1
 file path=usr/share/scan-build/scanview.css
 file path=usr/share/scan-build/sorttable.js
 file path=usr/share/scan-view/FileRadar.scpt
 file path=usr/share/scan-view/GetRadarVersion.scpt
 file path=usr/share/scan-view/bugcatcher.ico
 license llvm.license license="University of Illinois/NCSA"
-depend type=require fmri=pkg:/developer/gcc-4/gcc-c++-49
+depend type=require fmri=pkg:/developer/gcc/gcc-c++-5
 depend type=require fmri=pkg:/developer/gnu-binutils
 # pkgdepend doesn't find the dependency on libiomp5 although
 # it is listed in REQUIRED_PACKAGES. So, we set it as an

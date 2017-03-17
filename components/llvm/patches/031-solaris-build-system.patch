@@ -893,7 +893,7 @@
 +    COMPONENT clang-headers
 +    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 +    DESTINATION
-+    ${CMAKE_INSTALL_LIBDIR}/clang/${CLANG_VERSION}/include)
++    ${CMAKE_INSTALL_LIBDIR}/../clang/${CLANG_VERSION}/include)
 +else()
 +  install(FILES ${files} ${CMAKE_CURRENT_BINARY_DIR}/arm_neon.h
    COMPONENT clang-headers
@@ -1001,7 +1001,7 @@
  # They are not referenced. See set_output_directory().
 +if(CMAKE_HOST_SOLARIS)
 +  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
-+      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINIR})
++      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 +  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
 +      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 +  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
@@ -1030,20 +1030,6 @@
      endif()
    endif(NOT DEFINED CMAKE_INSTALL_RPATH)
  endif()
-@@ -639,6 +670,12 @@
-   llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O2")
- endif()
- 
-+if(CMAKE_HOST_SOLARIS)
-+  llvm_replace_compiler_option(CMAKE_C_FLAGS_RELEASE "-O3" "-O0")
-+  llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O0")
-+  llvm_replace_compiler_option(CMAKE_ASM_FLAGS_RELEASE "-O3" "-O0")
-+endif()
-+
- # Put this before tblgen. Else we have a circular dependence.
- add_subdirectory(lib/Support)
- add_subdirectory(lib/TableGen)
-###
 --- cmake/modules/AddLLVM.cmake	2016-02-12 09:52:29.000000000 -0800
 +++ cmake/modules/AddLLVM.cmake	2016-05-21 11:50:17.129351767 -0700
 @@ -2,6 +2,17 @@

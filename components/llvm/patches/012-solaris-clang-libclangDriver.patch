@@ -199,7 +199,7 @@
    switch (TargetTriple.getArch()) {
    case llvm::Triple::aarch64:
      LibDirs.append(begin(AArch64LibDirs), end(AArch64LibDirs));
-@@ -3302,69 +3321,828 @@
+@@ -3302,69 +3321,822 @@
  }
  
  /// Solaris - Solaris tool chain which can call as(1) and ld(1) directly.
@@ -218,7 +218,7 @@
 +  UseSpecifiedGCCToolChainPath(false),
 +  IsValid(false),
 +  GCCInstallDir("/usr/gcc/"),
-+  GCCMajorMinor(""),
++  GCCMajor(""),
 +  GCCMajorMinorMicro(""),
 +  GCCInternalLibDir(""),
 +  GCCInternalMultiLibDir(""),
@@ -245,7 +245,7 @@
 +        }
 +      }
 +    } else {
-+      findGCCMajorMinor();
++      findGCCMajor();
 +      findGCCMajorMinorMicro(Triple);
 +      findGCCIncludeDirs(Triple, Args);
 +      findGCCInternalLibDir(Triple, Args);
@@ -639,9 +639,8 @@
 +}
 +
 +void
-+Solaris::findGCCMajorMinor() const {
-+  // FIXME: Add 5.X after testing the ABI.
-+  static const char* const GCCMM[] = { "4.8", "4.9" };
++Solaris::findGCCMajor() const {
++  static const char* const GCCMM[] = { "5" };
 +
 +  const char* P;
 +  std::string Path;
@@ -655,7 +654,7 @@
 +      Path.append("/");
 +
 +      if (llvm::sys::fs::exists(Path.c_str())) {
-+        GCCMajorMinor = P;
++        GCCMajor = P;
 +        break;
 +      }
 +    }
@@ -664,8 +663,7 @@
 +
 +void
 +Solaris::findGCCMajorMinorMicro(const llvm::Triple& T) const {
-+  // FIXME: Add 5.X after testing the ABI.
-+  static const char* const GCCMMM[] = { "4.8.2", "4.9.3", "4.9.4" };
++  static const char* const GCCMMM[] = { "5.4.0" };
 +
 +  const char* P;
 +  std::string Path;
@@ -673,22 +671,22 @@
 +  llvm::Triple::ArchType Arch = T.getArch();
 +
 +  // GCC4 on Solaris is multilib 32/64.
-+  // GCC5 (not supported here yet) on Solaris is multilib 64/32.
-+  if (GCCMajorMinor[0] == '4') {
-+    if (TripleString.find("x86_64") != std::string::npos)
-+      TripleString.replace(0U, 6U, std::string("i386"));
-+    else if (TripleString.find("sparcv9") != std::string::npos)
-+      TripleString.replace(0U, 7U, std::string("sparc"));
++  // GCC5+ on Solaris is multilib 64/32.
++  if (GCCMajor[0] == '5') {
++    if (TripleString.find("i386") != std::string::npos)
++      TripleString.replace(0U, 4U, std::string("x86_64"));
++    else if (TripleString.find("sparc-") != std::string::npos)
++      TripleString.replace(0U, 6U, std::string("sparcv9-"));
 +  }
 +
 +  Path.reserve(std::string::size_type(PATH_MAX));
 +
 +  for (int I = (llvm::array_lengthof(GCCMMM) - 1); I >= 0; --I) {
 +    if ((P = GCCMMM[I]) != NULL) {
-+      if ((P[0] == GCCMajorMinor[0]) && (P[2] == GCCMajorMinor[2])) {
++      if (P[0] == GCCMajor[0]) {
 +        Path = GCCInstallDir;
 +        Path.append("/");
-+        Path.append(GCCMajorMinor);
++        Path.append(GCCMajor);
 +        Path.append("/lib/gcc/");
 +        Path.append(TripleString);
 +        Path.append("/");
@@ -699,15 +697,15 @@
 +          // Check if this is a real GCC installation and not just
 +          // an empty directory tree
 +          switch (Arch) {
-+          case llvm::Triple::x86:
-+          case llvm::Triple::sparc:
++          case llvm::Triple::x86_64:
++          case llvm::Triple::sparcv9:
 +            Test = Path + "/crtbegin.o";
 +            break;
-+          case llvm::Triple::x86_64:
-+            Test = Path + "/amd64/crtbegin.o";
++          case llvm::Triple::x86:
++            Test = Path + "/32/crtbegin.o";
 +            break;
-+          case llvm::Triple::sparcv9:
-+            Test = Path + "/sparcv9/crtbegin.o";
++          case llvm::Triple::sparc:
++            Test = Path + "/32/crtbegin.o";
 +            break;
 +          default:
 +            break;
@@ -743,7 +741,7 @@
 +
 +  assert(StartingPath && "Invalid GCC Toolchain starting search path!");
 +
-+  GCCMajorMinor = "";
++  GCCMajor = "";
 +  GCCMajorMinorMicro = "";
 +  UseSpecifiedGCCToolChainPath = false;
 +
@@ -825,7 +823,7 @@
 +                      (std::isdigit(DName[2])) && (DName[3] == '.') &&
 +                      (std::isdigit(DName[4])) && (DName[5] == '\0')) {
 +                    GCCMajorMinorMicro = DName;
-+                    GCCMajorMinor = GCCMajorMinorMicro.substr(0, 3);
++                    GCCMajor = GCCMajorMinorMicro.substr(0, 1);
 +                    UseSpecifiedGCCToolChainPath = true;
 +                    goto done;
 +                  }
@@ -867,7 +865,7 @@
 +  if (UseSpecifiedGCCToolChainPath)
 +    GCCInstallPath = GCCInstallDir;
 +  else
-+    GCCInstallPath = GCCInstallDir + GCCMajorMinor;
++    GCCInstallPath = GCCInstallDir + GCCMajor;
 +
 +  std::string GCCIncludeDir =
 +    GCCInstallPath + "/include/c++/" + GCCMajorMinorMicro;
@@ -877,27 +875,27 @@
 +  GCCIncludeDir += "/";
 +
 +  switch (Arch) {
-+  case llvm::Triple::x86:
-+    GCCIncludeDir += Triple.getTriple();
-+    if (Arg *A = Args.getLastArg(options::OPT_m64))
-+      GCCIncludeDir += "/amd64";
-+    break;
-+  case llvm::Triple::sparc:
-+    GCCIncludeDir += Triple.getTriple();
-+    if (Arg *A = Args.getLastArg(options::OPT_m64))
-+      GCCIncludeDir += "/sparcv9";
-+    break;
 +  case llvm::Triple::x86_64:
-+    GCCIncludeDir += "i386-pc-";
-+    GCCIncludeDir += Triple.getOSName();
-+    if (Arg *A = Args.getLastArg(options::OPT_m64))
-+      GCCIncludeDir += "/amd64";
++    GCCIncludeDir += Triple.getTriple();
++    if (Args.getLastArg(options::OPT_m32))
++      GCCIncludeDir += "/32";
 +    break;
 +  case llvm::Triple::sparcv9:
-+    GCCIncludeDir += "sparc-sun-";
++    GCCIncludeDir += Triple.getTriple();
++    if (Args.getLastArg(options::OPT_m32))
++      GCCIncludeDir += "/32";
++    break;
++  case llvm::Triple::x86:
++    GCCIncludeDir += "x86_64-pc-";
 +    GCCIncludeDir += Triple.getOSName();
-+    if (Arg *A = Args.getLastArg(options::OPT_m64))
-+      GCCIncludeDir += "/sparcv9";
++    if (Args.getLastArg(options::OPT_m32))
++      GCCIncludeDir += "/32";
++    break;
++  case llvm::Triple::sparc:
++    GCCIncludeDir += "sparcv9-sun-";
++    GCCIncludeDir += Triple.getOSName();
++    if (Args.getLastArg(options::OPT_m32))
++      GCCIncludeDir += "/32";
 +    break;
 +  default:
 +    getDriver().Diag(diag::err_target_unsupported_arch)
@@ -920,69 +918,65 @@
 +  if (UseSpecifiedGCCToolChainPath)
 +    GCCInstallPath = GCCInstallDir;
 +  else
-+    GCCInstallPath = GCCInstallDir + GCCMajorMinor;
++    GCCInstallPath = GCCInstallDir + GCCMajor;
 +
 +  GCCInternalLibDir = GCCInstallPath + "/lib/gcc/";
 +
 +  llvm::Triple::ArchType Arch = Triple.getArch();
 +
 +  switch (Arch) {
-+  case llvm::Triple::x86:
++  case llvm::Triple::x86_64:
 +    GCCInternalLibDir += Triple.getTriple();
 +    GCCInternalLibDir += "/";
 +    GCCInternalLibDir += GCCMajorMinorMicro;
-+    if (Arg *A = Args.getLastArg(options::OPT_m64)) {
++    if (Args.getLastArg(options::OPT_m64)) {
++      GCCInternalMultiLibDir = GCCInternalLibDir + "/32";
++    } else if (Args.getLastArg(options::OPT_m32)) {
 +      GCCInternalMultiLibDir = GCCInternalLibDir;
-+      GCCInternalLibDir += "/amd64";
-+    } else if (Arg *A = Args.getLastArg(options::OPT_m32)) {
-+      GCCInternalMultiLibDir = GCCInternalLibDir;
-+      GCCInternalMultiLibDir += "/amd64";
++      GCCInternalLibDir += "/32";
 +    } else {
-+      GCCInternalMultiLibDir = GCCInternalLibDir;
-+      GCCInternalMultiLibDir += "/amd64";
++      GCCInternalMultiLibDir = GCCInternalLibDir + "/32";
 +    }
 +
 +    break;
-+  case llvm::Triple::sparc:
++  case llvm::Triple::sparcv9:
 +    GCCInternalLibDir += Triple.getTriple();
 +    GCCInternalLibDir += "/";
 +    GCCInternalLibDir += GCCMajorMinorMicro;
-+    if (Arg *A = Args.getLastArg(options::OPT_m64)) {
++    if (Args.getLastArg(options::OPT_m64)) {
++      GCCInternalMultiLibDir = GCCInternalLibDir + "/32";
++    } else if (Args.getLastArg(options::OPT_m32)) {
 +      GCCInternalMultiLibDir = GCCInternalLibDir;
-+      GCCInternalLibDir += "/sparcv9";
-+    } else if (Arg *A = Args.getLastArg(options::OPT_m32)) {
-+      GCCInternalMultiLibDir = GCCInternalLibDir;
-+      GCCInternalMultiLibDir += "/sparcv9";
++      GCCInternalLibDir += "/32";
 +    } else {
-+      GCCInternalMultiLibDir = GCCInternalLibDir;
-+      GCCInternalMultiLibDir += "/sparcv9";
++      GCCInternalMultiLibDir = GCCInternalLibDir + "/32";
 +    }
 +    break;
-+  case llvm::Triple::x86_64:
-+    GCCInternalLibDir += "i386-pc-";
++  case llvm::Triple::x86:
++    GCCInternalLibDir += "x86_64-pc-";
 +    GCCInternalLibDir += Triple.getOSName();
 +    GCCInternalLibDir += "/";
 +    GCCInternalLibDir += GCCMajorMinorMicro;
 +    GCCInternalMultiLibDir = GCCInternalLibDir;
-+    if (Arg *A = Args.getLastArg(options::OPT_m64))
-+      GCCInternalLibDir += "/amd64";
-+    else if (Arg *A = Args.getLastArg(options::OPT_m32))
-+      GCCInternalMultiLibDir += "/amd64";
++    if (Args.getLastArg(options::OPT_m64))
++      GCCInternalMultiLibDir += "/32";
++    else if (Args.getLastArg(options::OPT_m32))
++      GCCInternalLibDir += "/32";
 +    else
-+      GCCInternalLibDir += "/amd64";
++      GCCInternalMultiLibDir += "/32";
 +    break;
-+  case llvm::Triple::sparcv9:
-+    GCCInternalLibDir += "sparc-sun-";
++  case llvm::Triple::sparc:
++    GCCInternalLibDir += "sparcv9-sun-";
 +    GCCInternalLibDir += Triple.getOSName();
 +    GCCInternalLibDir += "/";
 +    GCCInternalLibDir += GCCMajorMinorMicro;
 +    GCCInternalMultiLibDir = GCCInternalLibDir;
-+    if (Arg *A = Args.getLastArg(options::OPT_m64))
-+      GCCInternalLibDir += "/sparcv9";
-+    else if (Arg *A = Args.getLastArg(options::OPT_m32))
-+      GCCInternalMultiLibDir += "/sparcv9";
++    if (Args.getLastArg(options::OPT_m64))
++      GCCInternalMultiLibDir += "/32";
++    else if (Args.getLastArg(options::OPT_m32))
++      GCCInternalLibDir += "/32";
 +    else
-+      GCCInternalLibDir += "/sparcv9";
++      GCCInternalMultiLibDir += "/32";
 +    break;
 +  default:
 +    getDriver().Diag(diag::err_target_unsupported_arch)
@@ -1003,7 +997,7 @@
 +  OS << "UseSpecifiedGCCToolChainPath: "
 +    << (UseSpecifiedGCCToolChainPath ? "true" : "false") << "\n";
 +  OS << "GCCInstallDir: " << GCCInstallDir.c_str() << "\n";
-+  OS << "GCCMajorMinor: " << GCCMajorMinor.c_str() << "\n";
++  OS << "GCCMajor: " << GCCMajor.c_str() << "\n";
 +  OS << "GCCMajorMinorMicro: " << GCCMajorMinorMicro.c_str() << "\n";
 +  OS << "GCCInternalLibDir: " << GCCInternalLibDir.c_str() << "\n";
 +  OS << "GCCInternalMultiLibDir: " << GCCInternalMultiLibDir.c_str() << "\n";
@@ -1205,7 +1199,7 @@
 +  void addClangTargetOptions(const llvm::opt::ArgList &DriverArgs,
 +                             llvm::opt::ArgStringList &CC1Args) const override;
 +
-+  void findGCCMajorMinor() const;
++  void findGCCMajor() const;
 +  void findGCCMajorMinorMicro(const llvm::Triple &Triple) const;
 +  void findGCCIncludeDirs(const llvm::Triple &Triple,
 +                          const llvm::opt::ArgList &Args) const;
@@ -1218,7 +1212,7 @@
 +  StringRef getAssembler() const { return Assembler.c_str(); }
 +  StringRef getLinker() const { return Linker.c_str(); }
 +  StringRef getGCCInstallDir() const { return GCCInstallDir.c_str(); }
-+  StringRef getGCCMajorMinor() const { return GCCMajorMinor.c_str(); }
++  StringRef getGCCMajor() const { return GCCMajor.c_str(); }
 +  StringRef getMArch() const { return march.c_str(); }
 +  StringRef getMTune() const { return mtune.c_str(); }
 +  StringRef getMCpu() const { return mcpu.c_str(); }
@@ -1262,7 +1256,7 @@
 +
 +protected:
 +  mutable std::string GCCInstallDir;
-+  mutable std::string GCCMajorMinor;
++  mutable std::string GCCMajor;
 +  mutable std::string GCCMajorMinorMicro;
 +  mutable std::string GCCInternalLibDir;
 +  mutable std::string GCCInternalMultiLibDir;
@@ -1973,7 +1967,7 @@
 +      YPPath = "/lib:/usr/lib";
 +      ClangLibPath = "/usr/lib/clang/";
 +    } else {
-+      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath = TC.getGCCInternalLibDir().str();
 +      GCCLibPath += "/";
 +      LibPath += "amd64/";
 +      ShortLibPath += "amd64/";
@@ -1990,7 +1984,7 @@
 +      YPPath = "/lib:/usr/lib";
 +      ClangLibPath = "/usr/lib/clang/";
 +    } else {
-+      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath = TC.getGCCInternalLibDir().str();
 +      GCCLibPath += "/";
 +      LibPath += "sparcv9/";
 +      ShortLibPath += "sparcv9/";
@@ -2001,7 +1995,7 @@
 +    break;
 +  case llvm::Triple::x86_64:
 +    if (m32) {
-+      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath = TC.getGCCInternalLibDir().str();
 +      GCCLibPath += "/";
 +      moption = "-32";
 +      YPPath = "/lib:/usr/lib";
@@ -2009,7 +2003,7 @@
 +    } else {
 +      GCCLibPath = TC.getGCCInternalLibDir().str();
 +      GCCLibPath += "/";
-+    LibPath += "amd64/";
++      LibPath += "amd64/";
 +      ShortLibPath += "amd64/";
 +      moption = "-64";
 +      YPPath = "/lib/amd64:/usr/lib/amd64";
@@ -2018,7 +2012,7 @@
 +    break;
 +  case llvm::Triple::sparcv9:
 +    if (m32) {
-+      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath = TC.getGCCInternalLibDir().str();
 +      GCCLibPath += "/";
 +      moption = "-32";
 +      YPPath = "/lib:/usr/lib";
