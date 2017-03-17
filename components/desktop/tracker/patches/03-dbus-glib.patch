@@ -1,0 +1,23 @@
+Tracker uses functions from dbus-glib but forgets to link to it; this is
+probably because the HAL backend is basically unmaintained at this point.
+
+Need to file upstream bug
+
+--- tracker-1.4.0/configure.ac  2015-07-08 18:31:00.186791785 -0700
++++ tracker-1.4.0.new/configure.ac      2015-07-08 18:30:17.307448003 -0700
+@@ -197,6 +197,7 @@
+ 
+ # Library required versions
+ DBUS_REQUIRED=1.3.1
++DBUS_GLIB_REQUIRED=0.100
+ GLIB_REQUIRED=2.40.0
+ PANGO_REQUIRED=1.0.0
+ GTK_REQUIRED=3.0.0
+@@ -967,6 +968,7 @@
+ if test "x$have_upower" != "xyes" && test "x$enable_hal" != "xno"; then
+    PKG_CHECK_MODULES(HAL,
+                      [dbus-1      >= $DBUS_REQUIRED
++                      dbus-glib-1 >= $DBUS_GLIB_REQUIRED
+                       hal         >= $HAL_REQUIRED],
+                      [have_hal=yes] ,
+                      [have_hal=no])
