@@ -1,0 +1,15 @@
+--- cinder-8.0.0/cinder/volume/drivers/nfs.py.orig	2017-03-15 04:36:02.909935308 +0000
++++ cinder-8.0.0/cinder/volume/drivers/nfs.py	2017-03-15 04:38:41.033711742 +0000
+@@ -294,9 +294,10 @@
+         total_available = block_size * blocks_avail
+         total_size = block_size * blocks_total
+ 
+-        du, _ = self._execute('du', '-sb', '--apparent-size', '--exclude',
+-                              '*snapshot*', mount_point,
++        du, _ = self._execute('/usr/bin/gdu', '-sb', '--apparent-size',
++                              '--exclude', '*snapshot*', mount_point,
+                               run_as_root=run_as_root)
++
+         total_allocated = float(du.split()[0])
+         return total_size, total_available, total_allocated
+ 
