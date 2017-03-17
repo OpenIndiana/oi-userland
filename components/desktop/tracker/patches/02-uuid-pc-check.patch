@@ -1,0 +1,68 @@
+Solaris libuuid doesn't deliver a pkg-config file yet; see bug 15586738.
+So this manually detects and adds the necessary flags to use Solaris
+libuuid.
+
+Not appropiate for upstream.
+--- tracker-1.4.0/configure.ac	2015-03-24 11:10:45.000000000 -0700
++++ tracker-1.4.0/configure.ac	2015-07-08 18:16:29.123676097 -0700
+@@ -274,15 +274,27 @@
+     ;;
+ esac
+ 
++AC_SEARCH_LIBS([uuid_generate], [uuid], [have_libuuid=yes], [have_libuuid=no])
++if test "x$have_libuuid" = "xyes"; then
++   AC_SEARCH_LIBS([uuid_unparse], [uuid], [have_libuuid=yes], [have_libuuid=no])
++   if test "x$have_libuuid" = "xyes"; then
++      AC_DEFINE(HAVE_LIBUUID, [], [Define if we have libuuid])
++   fi
++fi
++
+ # Check requirements for libtracker-data
+ LIBTRACKER_DATA_REQUIRED="glib-2.0     >= $GLIB_REQUIRED
+                           gio-unix-2.0 >= $GLIB_REQUIRED
+-                          sqlite3      >= $SQLITE_REQUIRED
+-                          uuid"
++                          sqlite3      >= $SQLITE_REQUIRED"
+ PKG_CHECK_MODULES(LIBTRACKER_DATA, [$LIBTRACKER_DATA_REQUIRED])
+ 
+ LIBTRACKER_DATA_LIBS="$LIBTRACKER_DATA_LIBS -lz -lm"
+ 
++if test "x$have_libuuid" = "xyes"; then
++   LIBTRACKER_DATA_CFLAGS="$LIBTRACKER_DATA_CFLAGS -I/usr/include/uuid"
++   LIBTRACKER_DATA_LIBS="$LIBTRACKER_DATA_LIBS -luuid"
++fi
++
+ # Check requirements for libtracker-direct
+ LIBTRACKER_DIRECT_REQUIRED="glib-2.0     >= $GLIB_REQUIRED
+                             gio-unix-2.0 >= $GLIB_REQUIRED"
+@@ -317,18 +327,26 @@
+ 
+ # Check requirements for libtracker-sparql
+ LIBTRACKER_SPARQL_REQUIRED="glib-2.0     >= $GLIB_REQUIRED
+-                            gio-unix-2.0 >= $GLIB_REQUIRED
+-                            uuid"
++                            gio-unix-2.0 >= $GLIB_REQUIRED"
+ 
+ PKG_CHECK_MODULES(LIBTRACKER_SPARQL, [$LIBTRACKER_SPARQL_REQUIRED])
+ 
++if test "x$have_libuuid" = "xyes"; then
++   LIBTRACKER_SPARQL_CFLAGS="$LIBTRACKER_SPARQL_CFLAGS -I/usr/include/uuid"
++   LIBTRACKER_SPARQL_LIBS="$LIBTRACKER_SPARQL_LIBS -luuid"
++fi
++
+ # Check requirements for tracker-control
+ TRACKER_REQUIRED="glib-2.0     >= $GLIB_REQUIRED
+-                  gio-unix-2.0 >= $GLIB_REQUIRED
+-                  uuid"
++                  gio-unix-2.0 >= $GLIB_REQUIRED"
+ 
+ PKG_CHECK_MODULES(TRACKER, [$TRACKER_REQUIRED])
+ 
++if test "x$have_libuuid" = "xyes"; then
++   TRACKER_CFLAGS="$TRACKER_CFLAGS -I/usr/include/uuid"
++   TRACKER_LIBS="$TRACKER_LIBS -luuid"
++fi
++
+ # Check requirements for tracker-resdump
+ TRACKER_RESDUMP_REQUIRED="glib-2.0     >= $GLIB_REQUIRED
+                           gee-0.8      >= $GEE_REQUIRED"

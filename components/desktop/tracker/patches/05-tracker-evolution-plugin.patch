@@ -1,0 +1,24 @@
+--- tracker-1.8.1/configure.ac.1	2017-03-17 15:08:40.736932315 +0300
++++ tracker-1.8.1/configure.ac	2017-03-17 15:09:57.325807850 +0300
+@@ -1502,9 +1502,9 @@
+ if test "x$have_tracker_miner_evolution" = "xyes"; then
+    AC_ARG_WITH([evolution_plugin_dir],
+                AS_HELP_STRING([--with-evolution-plugin-dir],
+-                              [path to Evolution plugin directory])),
++                              [path to Evolution plugin directory]),
+                [tracker_miner_evolution_install_dir=$withval],
+-               [tracker_miner_evolution_install_dir=`$PKG_CONFIG $evolution_plugin_name --variable=plugindir`],
++               [tracker_miner_evolution_install_dir=`$PKG_CONFIG $evolution_plugin_name --variable=plugindir`])
+ 
+    if test -z $tracker_miner_evolution_install_dir; then
+       AC_MSG_ERROR([Could not find evolution plugin dir, consider using --with-evolution-plugin-dir.])
+--- tracker-1.8.1-1/src/plugins/evolution/tracker-evolution-plugin.c	2017-03-17 08:47:03.773578443 +0300
++++ tracker-1.8.1/src/plugins/evolution/tracker-evolution-plugin.c	2017-03-17 09:01:28.355019006 +0300
+@@ -84,6 +84,7 @@
+ #include <libtracker-sparql/tracker-sparql.h>
+ 
+ #include <libtracker-common/tracker-date-time.h>
++#include <libtracker-common/tracker-dbus.h>
+ #include <libtracker-common/tracker-utils.h>
+ #include <libtracker-common/tracker-type-utils.h>
+ 
