@@ -16,8 +16,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tracker
-
 COMPONENT_VERSION= 1.8.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Desktop search tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -79,7 +79,8 @@ CONFIGURE_OPTIONS += --enable-miner-fs
 CONFIGURE_OPTIONS += --enable-miner-user-guides
 CONFIGURE_OPTIONS += --enable-mp3
 CONFIGURE_OPTIONS += --enable-nautilus-extension
-CONFIGURE_OPTIONS += --enable-playlist
+#Requires updated totem-pl-parser
+CONFIGURE_OPTIONS += --disable-playlist
 CONFIGURE_OPTIONS += --enable-poppler
 CONFIGURE_OPTIONS += --enable-ps
 CONFIGURE_OPTIONS += --enable-shared
@@ -126,7 +127,7 @@ REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/media-player/totem-pl-parser
+#REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
