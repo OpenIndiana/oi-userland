@@ -27,21 +27,21 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
-COMPONENT_VERSION=	1.8.11
+COMPONENT_VERSION=	1.8.13
 COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:65d08b46e48bd97186aef562dc366681045b119e00f83c5b61d05d37ea154049
+    sha256:af667887bd7a87dc0dbf9ac8d86c96b552dfb8ca9c790ed1cbffaa6131573f6b
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	457
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
 COMPONENT_ARCHIVE_HASH_1 =	\
-    sha256:e7a6a0c853c715157070514bd29992315a7d14131dca5947110a18b0b3e8e61c
+    sha256:efc4937cf13b2e74f50ad8806d9b900f3c5e3f987ed503d763180053ee677ecd
 COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			27457
+TPNO=			34098
 
 BUILD_STYLE= cmake
 SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
@@ -70,6 +70,10 @@ CONFIGURE_OPTIONS +=	--enable-langs=am,ar,br,ca,cn,cz,de,dk,en,eo,es,fa,fi,fr,gr
 COMPONENT_TEST_ENV =		PATH="$(GNUBIN):$(PROTO_DIR)/usr/bin:$(PATH)"
 COMPONENT_TEST_DIR =		$(BUILD_DIR_64)/testing
 COMPONENT_TEST_TARGETS =	tests
+
+# Results differ between x86 and SPARC.
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).$(MACH).master
 
 # The additional doxygen specific set of transforms to be applied to the
 # test results to try to normalize them.

@@ -26,14 +26,14 @@ BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scons
-COMPONENT_VERSION=	2.5.0
+COMPONENT_VERSION=	2.5.1
 COMPONENT_PROJECT_URL=	http://www.scons.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eb296b47f23c20aec7d87d35cfa386d3508e01d1caa3040ea6f5bbab2292ace9
+    sha256:0b25218ae7b46a967db42f2a53721645b3d42874a65f9552ad16ce26d30f51f2
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_ANITYA_ID=	4770
 
-TPNO=			28026
+TPNO=			34213
 
 # Per Q1.1.4 of the SCons FAQ, SCons is written to work with any Python
 # version >= 2.4 and < 3.0. Versions 3.0 and above are not supported at
