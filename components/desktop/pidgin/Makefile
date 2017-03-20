@@ -26,15 +26,15 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.11.0
+COMPONENT_VERSION=	2.12.0
 COMPONENT_PROJECT_URL=	http://www.pidgin.im
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f72613440586da3bdba6d58e718dce1b2c310adf8946de66d8077823e57b3333
+    sha256:8c3d3536d6d3c971bd433ff9946678af70a0f6aa4e6969cc2a83bb357015b7f8
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	3636
 
-TPNO=			30500
+TPNO=			34232
 
 # Cyrus SASL is S12-only (at least for evaluation builds).
 ifeq ($(BUILD_TYPE), evaluation)
