@@ -32,12 +32,12 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
-COMPONENT_VERSION=	7.11
+COMPONENT_VERSION=	7.12.1
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9382f5534aa0754169e1e09b5f1a3b77d1fa8c59c1e57617e06af37cb29c669a
+    sha256:142057eacecfb929d52b561eb47a1103c7d504cec3f659dd8a5ae7bc378f7e77
 COMPONENT_ANITYA_ID=	11798
 
-TPNO=			27358
+TPNO=			34387
 
 # The traditional output from gmake test omits some
 # test results information that is contained in the 
@@ -164,5 +164,7 @@ REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/texinfo
