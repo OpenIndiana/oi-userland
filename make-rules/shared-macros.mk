@@ -621,7 +621,7 @@ JAVA_HOME = $(JAVA8_HOME)
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.22
 
-PERL_VERSIONS = 5.22 5.24
+PERL_VERSIONS = 5.22
 
 PERL.5.22 =	/usr/perl5/5.22/bin/perl
 PERL.5.24 =	/usr/perl5/5.24/bin/perl
