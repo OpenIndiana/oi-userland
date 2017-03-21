@@ -46,7 +46,4 @@ test system-test component-hook: $(SUBDIRS)
 $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(MAKE) -C $@ $(TARGET)
 
-README.md:	README
-	/usr/bin/cp -f $< $@
-
 FORCE:
