@@ -26,12 +26,12 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
-COMPONENT_VERSION=	4.4.0
+COMPONENT_VERSION=	4.5.1
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ef722a54759a3bf23aad272bbf33c414c1078cad6bcd982fada93c0d7917218b
+    sha256:97db2114dd963b016cd4ded34831955dcbe3251e5eee45ac2606e67e9f097b2d
 COMPONENT_ANITYA_ID=	4772
 
-TPNO=			29565	
+TPNO=			34130	
 
 # Enable adiheap and adistack security extensions
 ADIHEAP_MODE =	$(ADIHEAP_ENABLE)

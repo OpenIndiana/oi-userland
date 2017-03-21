@@ -42,6 +42,8 @@ TPNO=                   31069
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+PATCH_LEVEL = 0
+
 # need /usr/perl5/bin on path to access pod2man perl script, used by 
 # the build to create docs
 COMPONENT_BUILD_ENV +=  PATH=$(USRDIR)/perl5/bin:$(PATH)
