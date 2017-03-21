@@ -51,11 +51,11 @@ COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
 COMPONENT_TEST_TARGETS = test
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_32)
 
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += system/library
