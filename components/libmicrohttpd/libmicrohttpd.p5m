@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -37,14 +37,19 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2014/289
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/include/microhttpd/microhttpd.h
-link path=usr/lib/$(MACH64)/libmicrohttpd.so target=libmicrohttpd.so.10.27.0
-link path=usr/lib/$(MACH64)/libmicrohttpd.so.10 target=libmicrohttpd.so.10.27.0
-file path=usr/lib/$(MACH64)/libmicrohttpd.so.10.27.0
+link path=usr/lib/$(MACH64)/libmicrohttpd.so target=libmicrohttpd.so.12.40.0
+# Compatibility symlink. Upstream bumped the version of the library by mistake;
+# 12.40.0 is still backwards-compatible with 10.*.
+link path=usr/lib/$(MACH64)/libmicrohttpd.so.10 target=libmicrohttpd.so.12.40.0
+link path=usr/lib/$(MACH64)/libmicrohttpd.so.12 target=libmicrohttpd.so.12.40.0
+file path=usr/lib/$(MACH64)/libmicrohttpd.so.12.40.0
 file path=usr/lib/$(MACH64)/llib-lmicrohttpd.ln
 file path=usr/lib/$(MACH64)/pkgconfig/libmicrohttpd.pc
-link path=usr/lib/libmicrohttpd.so target=libmicrohttpd.so.10.27.0
-link path=usr/lib/libmicrohttpd.so.10 target=libmicrohttpd.so.10.27.0
-file path=usr/lib/libmicrohttpd.so.10.27.0
+link path=usr/lib/libmicrohttpd.so target=libmicrohttpd.so.12.40.0
+# Compatibility link. See above.
+link path=usr/lib/libmicrohttpd.so.10 target=libmicrohttpd.so.12.40.0
+link path=usr/lib/libmicrohttpd.so.12 target=libmicrohttpd.so.12.40.0
+file path=usr/lib/libmicrohttpd.so.12.40.0
 file path=usr/lib/llib-lmicrohttpd
 file path=usr/lib/llib-lmicrohttpd.ln
 file path=usr/lib/pkgconfig/libmicrohttpd.pc

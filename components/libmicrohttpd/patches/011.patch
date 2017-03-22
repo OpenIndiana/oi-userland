@@ -1,0 +1,23 @@
+Tomas Heran <tomas.heran@oracle.com>
+Race condition between MHD_cleanup_connections() and "upgrading" a connection.
+Upstream bug: https://gnunet.org/bugs/view.php?id=4889
+
+diff -r d61abfd2e00c -r c333f93356f1 src/microhttpd/response.c
+--- a/src/microhttpd/response.c	Wed Feb 08 12:57:20 2017 +0100
++++ b/src/microhttpd/response.c	Thu Feb 09 09:28:17 2017 -0800
+@@ -675,6 +675,7 @@
+             connection->response = NULL;
+           }
+ 
++        MHD_mutex_lock_chk_ (&daemon->cleanup_connection_mutex);
+         if (MHD_INVALID_SOCKET != connection->socket_fd)
+           {
+             shutdown (connection->socket_fd,
+@@ -682,6 +683,7 @@
+             MHD_socket_close_chk_ (connection->socket_fd);
+             connection->socket_fd = MHD_INVALID_SOCKET;
+           }
++	MHD_mutex_unlock_chk_ (&daemon->cleanup_connection_mutex);
+         return MHD_YES;
+       }
+     /* 'upgraded' resources are not needed anymore - cleanup now */
