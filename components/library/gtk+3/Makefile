@@ -10,21 +10,20 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
-COMPONENT_VERSION= 3.14.15
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 3.18.9
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3ac87659112ced9e5ee5bd55d055faa881aafd040f26ca40b0d8ba0fa6509c83
+  sha256:783d7f8b00f9b4224cc94d7da885a67598e711c2d6d79c9c873c6b203e83acbd
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.14/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
 COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
@@ -39,6 +38,13 @@ PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS += -I/usr/X11/include
 
+# 32-bit gcc build can cause segfaults in gtk3
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=62281
+gcc_OPT.i386.32 = -O2
+
+# Uses isinf, etc. only available in c99 and newer
+CFLAGS.gcc += -std=gnu11
+
 COMPONENT_PREP_ACTION =	(cd $(@D) && libtoolize --force &&\
                                         aclocal -I ./m4 &&\
 					gtkdocize &&\
@@ -52,14 +58,9 @@ CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS += --with-native-locale=yes
-CONFIGURE_OPTIONS += --with-xinput=xfree
-CONFIGURE_OPTIONS += --enable-shm
-CONFIGURE_OPTIONS += --enable-xim
-CONFIGURE_OPTIONS += --enable-fbmanager
-CONFIGURE_OPTIONS += --with-gdktarget=x11
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes
-CONFIGURE_OPTIONS += --without-libjasper
+CONFIGURE_OPTIONS += --enable-cloudprint
+CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --disable-glibtest
 CONFIGURE_OPTIONS += --disable-papi
@@ -71,23 +72,39 @@ CONFIGURE_ENV    += PYTHON=$(PYTHON)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
+# for tests to pass
+unexport SHELLOPTS
+COMPONENT_TEST_ARGS =   -k -i
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+	'-e "s/(pid=.*)//" ' \
+        '-e "/TOTAL/p" ' \
+        '-e "/PASS/p" ' \
+        '-e "/TEST/p" ' \
+        '-e "/FAIL/p" ' \
+        '-e "/ERROR/p" '
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-atk
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/json-glib
+REQUIRED_PACKAGES += library/desktop/librest
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxcursor
