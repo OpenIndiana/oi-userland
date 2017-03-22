@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dcraw
 COMPONENT_VERSION=        9.26.0
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_PROJECT_URL=    https://www.cybercom.net/~dcoffin/dcraw/
 COMPONENT_SUMMARY=        dcraw - Decoding RAW digital photos
 COMPONENT_SRC=            $(COMPONENT_NAME)
@@ -35,9 +35,15 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION=( cd $(@D) && rm -f install )
 
+# build with the distribution preferred libjpeg implementation
+CFLAGS               += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS             += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS              += $(JPEG_LDFLAGS)
+
 COMPONENT_BUILD_ARGS += CC=$(CC)
 COMPONENT_BUILD_ARGS += CXX=$(CXX)
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 
                                         
 # common targets
@@ -48,8 +54,7 @@ install:        $(INSTALL_32)
 test:                $(NO_TESTS)
 
 REQUIRED_PACKAGES += codec/jasper
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
