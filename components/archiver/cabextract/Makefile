@@ -16,19 +16,28 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cabextract
-COMPONENT_VERSION=	1.4
+COMPONENT_VERSION=	1.6
+COMPONENT_SUMMARY=	cabextract - extract Microsoft cabinet files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f7ba8ba2c2d71912846eaaa2bed9200a7722ef0addeec32db7471c350a48e41e
+COMPONENT_ARCHIVE_HASH=	sha256:cee661b56555350d26943c5e127fc75dd290b7f75689d5ebc1f04957c4af55fb
 COMPONENT_PROJECT_URL=	http://www.cabextract.org.uk/
 COMPONENT_ARCHIVE_URL=	http://www.cabextract.org.uk/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	archiver/cabextract
+COMPONENT_CLASSIFICATION=	Applications/Accessories
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-build:		$(BUILD_32)
+CONFIGURE_BINDIR.64=/usr/bin
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
+
+test:		$(NO_TESTSI)
 
 REQUIRED_PACKAGES += system/library
