@@ -74,7 +74,9 @@ endif
 REQUIRED_PACKAGES += database/sqlite-3
 ifeq ($(MACH), i386)
 REQUIRED_PACKAGES += developer/golang
+REQUIRED_PACKAGES += library/golang/sys-15
 endif
+REQUIRED_PACKAGES += network/firewall
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/zones

@@ -1,274 +1,8 @@
-From a3e044c4d94e66259008000a451578849b50b516 Mon Sep 17 00:00:00 2001
-From: Shreya Jain <shreya.jain@oracle.com>
-Date: Fri, 9 Dec 2016 13:30:07 -0800
+From 1bf2c9d74d8e53335f4e36f66cd400f9dd0e8ac1 Mon Sep 17 00:00:00 2001
+From: Edward Pilatowicz <edward.pilatowicz@oracle.com>
+Date: Tue, 21 Mar 2017 22:27:52 -0700
 Subject: [PATCH] Solaris-v1.10.3
 
----
- Dockerfile.solaris                                 |   26 +
- Makefile                                           |   35 +-
- api/client/run.go                                  |    1 +
- api/client/version.go                              |   20 -
- api/server/router/container/container_routes.go    |    7 +
- api/server/server_unix.go                          |    2 +-
- container/container_solaris.go                     |  650 ++++++++++++
- container/monitor.go                               |    9 +
- container/state_solaris.go                         |    9 +
- contrib/docker-device-tool/device_tool.go          |    2 +-
- contrib/httpserver/Dockerfile                      |    2 +-
- contrib/mkimage.sh                                 |   11 +
- contrib/mkimage/solaris                            |  120 +++
- daemon/commit.go                                   |   22 +-
- daemon/config.go                                   |    4 +
- daemon/config_solaris.go                           |   66 ++
- daemon/config_test.go                              |   30 +-
- daemon/container_operations_solaris.go             |  973 ++++++++++++++++++
- daemon/daemon.go                                   |    6 +-
- daemon/daemon_solaris.go                           |  576 +++++++++++
- daemon/daemon_test.go                              |    2 +
- daemon/daemon_unix_test.go                         |    2 +-
- daemon/daemon_unsupported.go                       |    2 +-
- daemon/daemonbuilder/builder_unix.go               |    2 +-
- daemon/debugtrap_unsupported.go                    |    2 +-
- daemon/exec_solaris.go                             |   18 +
- daemon/execdriver/driver_solaris.go                |   76 ++
- daemon/execdriver/driver_unix.go                   |    2 +-
- .../execdriver/execdrivers/execdrivers_solaris.go  |   13 +
- daemon/execdriver/zones/driver.go                  |  799 +++++++++++++++
- daemon/execdriver/zones/driver_unsupported.go      |   12 +
- .../execdriver/zones/driver_unsupported_nocgo.go   |   13 +
- daemon/graphdriver/driver_solaris.go               |    8 +
- daemon/graphdriver/driver_unsupported.go           |    2 +-
- daemon/graphdriver/graphtest/graphtest_unix.go     |    2 +-
- daemon/graphdriver/register/register_zfs.go        |    2 +-
- daemon/graphdriver/zfs/zfs.go                      |   47 +-
- daemon/graphdriver/zfs/zfs_freebsd.go              |   36 +
- daemon/graphdriver/zfs/zfs_linux.go                |   37 +
- daemon/graphdriver/zfs/zfs_solaris.go              |   95 ++
- daemon/graphdriver/zfs/zfs_unsupported.go          |    2 +-
- daemon/info.go                                     |    2 -
- daemon/inspect_solaris.go                          |   30 +
- daemon/inspect_unix.go                             |    2 +-
- daemon/list_unix.go                                |    2 +-
- daemon/network.go                                  |    7 +
- daemon/selinux_unsupported.go                      |    8 +
- daemon/start.go                                    |   16 +
- daemon/stats_collector_solaris.go                  |  537 ++++++++++
- daemon/stats_collector_unix.go                     |    2 +-
- daemon/stats_solaris.go                            |   84 ++
- docker/daemon_solaris.go                           |   58 ++
- docker/daemon_unix.go                              |    2 +-
- hack/.vendor-helpers.sh                            |    8 +-
- hack/make.sh                                       |   14 +-
- hack/make/.detect-daemon-osarch                    |   20 +-
- hack/make/.ensure-httpserver                       |    2 +-
- hack/make/.integration-daemon-setup                |    6 +-
- hack/make/.integration-daemon-start                |    9 +-
- integration-cli/docker_api_build_test.go           |    4 +-
- integration-cli/docker_api_events_test.go          |    4 +-
- integration-cli/docker_api_exec_test.go            |    6 +-
- integration-cli/docker_api_inspect_test.go         |   14 +-
- integration-cli/docker_api_volumes_test.go         |    4 +-
- integration-cli/docker_cli_attach_unix_test.go     |    2 +-
- integration-cli/docker_cli_authz_unix_test.go      |    2 +-
- integration-cli/docker_cli_build_test.go           |    2 +-
- integration-cli/docker_cli_build_unix_test.go      |    2 +-
- integration-cli/docker_cli_create_test.go          |    4 +-
- integration-cli/docker_cli_daemon_test.go          |   14 +
- integration-cli/docker_cli_events_test.go          |    4 +-
- integration-cli/docker_cli_events_unix_test.go     |   54 +-
- integration-cli/docker_cli_exec_unix_test.go       |    2 +-
- integration-cli/docker_cli_images_test.go          |    8 +-
- integration-cli/docker_cli_inspect_test.go         |   24 +-
- integration-cli/docker_cli_links_test.go           |    2 +
- integration-cli/docker_cli_links_unix_test.go      |    2 +-
- integration-cli/docker_cli_network_unix_test.go    |    2 +-
- integration-cli/docker_cli_ps_test.go              |   15 +-
- integration-cli/docker_cli_run_test.go             |  341 +++---
- integration-cli/docker_cli_run_unix_test.go        |   49 +-
- integration-cli/docker_cli_save_load_unix_test.go  |    2 +-
- .../docker_cli_start_volume_driver_unix_test.go    |   16 +-
- .../docker_cli_volume_driver_compat_unix_test.go   |    4 +-
- integration-cli/docker_cli_volume_test.go          |   12 +-
- integration-cli/docker_cli_wait_test.go            |    4 +-
- integration-cli/docker_test_vars.go                |    2 +-
- integration-cli/docker_utils.go                    |    2 +-
- integration-cli/test_vars_unix.go                  |    4 +-
- layer/layer_unix.go                                |    2 +-
- migrate/v1/migratev1_test.go                       |    2 +
- opts/hosts.go                                      |    3 -
- opts/hosts_solaris.go                              |   10 +
- opts/hosts_test.go                                 |    4 +-
- opts/hosts_unix.go                                 |    6 +-
- pkg/archive/archive_test.go                        |   38 +-
- pkg/archive/changes_test.go                        |   12 +-
- pkg/chrootarchive/archive_test.go                  |   54 +-
- pkg/chrootarchive/diff_unix.go                     |    1 -
- pkg/directory/directory_unix.go                    |    2 +-
- pkg/fileutils/fileutils_solaris.go                 |    7 +
- pkg/integration/utils_test.go                      |   11 +-
- pkg/mount/flags_solaris.go                         |   42 +
- pkg/mount/flags_unsupported.go                     |    2 +-
- pkg/mount/mount.go                                 |    3 +-
- pkg/mount/mount_test.go                            |    2 +
- pkg/mount/mounter_solaris.go                       |   33 +
- pkg/mount/mounter_unsupported.go                   |    2 +-
- pkg/mount/mountinfo_solaris.go                     |   35 +
- pkg/mount/mountinfo_unsupported.go                 |    2 +-
- pkg/parsers/kernel/uname_solaris.go                |   14 +
- pkg/parsers/kernel/uname_unsupported.go            |    2 +-
- .../operatingsystem/operatingsystem_solaris.go     |   33 +
- pkg/platform/architecture_solaris.go               |   16 +
- pkg/proxy/network_proxy_test.go                    |   40 +-
- pkg/reexec/command_solaris.go                      |   23 +
- pkg/reexec/command_unsupported.go                  |    2 +-
- pkg/signal/signal_solaris.go                       |   42 +
- pkg/signal/signal_unsupported.go                   |    2 +-
- pkg/sysinfo/sysinfo_solaris.go                     |  117 +++
- pkg/system/meminfo_solaris.go                      |  127 +++
- pkg/system/meminfo_unsupported.go                  |    2 +-
- pkg/system/stat_linux.go                           |   33 -
- pkg/system/stat_solaris.go                         |   20 +-
- pkg/system/stat_unix.go                            |   35 +
- pkg/system/stat_unsupported.go                     |    2 +-
- pkg/term/tc_other.go                               |    1 +
- pkg/term/tc_solaris_cgo.go                         |   60 ++
- pkg/term/term.go                                   |   22 -
- pkg/term/term_solaris.go                           |   39 +
- pkg/term/term_unix.go                              |   27 +
- registry/auth_test.go                              |    2 +
- registry/registry_mock_test.go                     |    2 +
- registry/registry_test.go                          |    2 +
- runconfig/hostconfig_solaris.go                    |   82 ++
- runconfig/hostconfig_unix.go                       |    1 +
- runconfig/opts/parse.go                            |    2 +
- .../github.com/Sirupsen/logrus/terminal_solaris.go |   15 +
- .../docker/engine-api/types/container/config.go    |    4 +
- .../engine-api/types/container/host_config.go      |    1 +
- .../github.com/docker/engine-api/types/types.go    |    2 -
- .../docker/go-connections/sockets/unix_socket.go   |    2 +-
- .../docker/libnetwork/default_gateway_solaris.go   |    7 +
- .../libnetwork/drivers/solaris/bridge/bridge.go    | 1084 ++++++++++++++++++++
- .../drivers/solaris/bridge/bridge_store.go         |  212 ++++
- .../libnetwork/drivers/solaris/bridge/errors.go    |  341 ++++++
- .../drivers/solaris/bridge/port_mapping.go         |  247 +++++
- .../docker/libnetwork/drivers_solaris.go           |   13 +
- .../docker/libnetwork/ipamutils/utils_solaris.go   |   92 ++
- vendor/src/github.com/docker/libnetwork/network.go |    2 -
- .../docker/libnetwork/osl/interface_solaris.go     |    6 +
- .../docker/libnetwork/osl/namespace_solaris.go     |   41 +
- .../docker/libnetwork/osl/namespace_unsupported.go |    2 +-
- .../docker/libnetwork/osl/neigh_solaris.go         |    6 +
- .../docker/libnetwork/osl/sandbox_unsupported.go   |    2 +-
- .../libnetwork/portallocator/portallocator.go      |   22 -
- .../portallocator/portallocator_linux.go           |   28 +
- .../portallocator/portallocator_solaris.go         |    5 +
- .../docker/libnetwork/portmapper/mapper.go         |  228 ----
- .../docker/libnetwork/portmapper/mapper_linux.go   |  228 ++++
- .../docker/libnetwork/portmapper/mapper_solaris.go |  150 +++
- .../docker/libnetwork/portmapper/mock_proxy.go     |   18 -
- .../libnetwork/portmapper/mock_proxy_linux.go      |   18 +
- .../docker/libnetwork/portmapper/proxy.go          |  209 ----
- .../docker/libnetwork/portmapper/proxy_linux.go    |  209 ++++
- vendor/src/github.com/docker/libnetwork/sandbox.go |    7 +-
- .../libnetwork/sandbox_externalkey_solaris.go      |   45 +
- .../docker/libnetwork/sandbox_externalkey_unix.go  |    2 +-
- .../src/github.com/godbus/dbus/transport_unix.go   |    2 +-
- vendor/src/github.com/kr/pty/ioctl.go              |    2 +
- vendor/src/github.com/kr/pty/util.go               |   11 -
- vendor/src/github.com/mistifyio/go-zfs/utils.go    |   82 +-
- .../mistifyio/go-zfs/utils_notsolaris.go           |   82 ++
- .../github.com/mistifyio/go-zfs/utils_solaris.go   |   85 ++
- vendor/src/github.com/mistifyio/go-zfs/zfs.go      |   86 +-
- .../github.com/mistifyio/go-zfs/zfs_notsolaris.go  |   80 ++
- .../src/github.com/mistifyio/go-zfs/zfs_solaris.go |   87 ++
- vendor/src/github.com/mistifyio/go-zfs/zpool.go    |   37 +-
- .../mistifyio/go-zfs/zpool_notsolaris.go           |   33 +
- .../github.com/mistifyio/go-zfs/zpool_solaris.go   |   40 +
- .../runc/libcontainer/configs/cgroup_solaris.go    |    6 +
- .../libcontainer/configs/cgroup_unsupported.go     |    2 +-
- .../runc/libcontainer/configs/device_defaults.go   |    4 +-
- .../runc/libcontainer/console_solaris.go           |   13 +
- .../runc/libcontainer/container_solaris.go         |   22 +
- .../runc/libcontainer/stats_solaris.go             |    8 +
- .../runc/libcontainer/system/sysconfig.go          |    2 +-
- .../runc/libcontainer/zones/stats.go               |   86 ++
- vendor/src/gopkg.in/fsnotify.v1/fen.go             |  188 ++++
- vendor/src/gopkg.in/fsnotify.v1/fen_cgo.go         |   82 ++
- vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
- volume/local/local_unix.go                         |    2 +-
- volume/store/store_unix.go                         |    2 +-
- 193 files changed, 9237 insertions(+), 1241 deletions(-)
- create mode 100644 Dockerfile.solaris
- create mode 100644 container/container_solaris.go
- create mode 100644 container/state_solaris.go
- create mode 100755 contrib/mkimage/solaris
- create mode 100644 daemon/config_solaris.go
- create mode 100644 daemon/container_operations_solaris.go
- create mode 100644 daemon/daemon_solaris.go
- create mode 100644 daemon/exec_solaris.go
- create mode 100644 daemon/execdriver/driver_solaris.go
- create mode 100644 daemon/execdriver/execdrivers/execdrivers_solaris.go
- create mode 100644 daemon/execdriver/zones/driver.go
- create mode 100644 daemon/execdriver/zones/driver_unsupported.go
- create mode 100644 daemon/execdriver/zones/driver_unsupported_nocgo.go
- create mode 100644 daemon/graphdriver/driver_solaris.go
- create mode 100644 daemon/graphdriver/zfs/zfs_solaris.go
- create mode 100644 daemon/inspect_solaris.go
- create mode 100644 daemon/stats_collector_solaris.go
- create mode 100644 daemon/stats_solaris.go
- create mode 100644 docker/daemon_solaris.go
- create mode 100644 opts/hosts_solaris.go
- create mode 100644 pkg/fileutils/fileutils_solaris.go
- create mode 100644 pkg/mount/flags_solaris.go
- create mode 100644 pkg/mount/mounter_solaris.go
- create mode 100644 pkg/mount/mountinfo_solaris.go
- create mode 100644 pkg/parsers/kernel/uname_solaris.go
- create mode 100644 pkg/parsers/operatingsystem/operatingsystem_solaris.go
- create mode 100644 pkg/platform/architecture_solaris.go
- create mode 100644 pkg/reexec/command_solaris.go
- create mode 100644 pkg/signal/signal_solaris.go
- create mode 100644 pkg/sysinfo/sysinfo_solaris.go
- create mode 100644 pkg/system/meminfo_solaris.go
- delete mode 100644 pkg/system/stat_linux.go
- create mode 100644 pkg/system/stat_unix.go
- create mode 100644 pkg/term/tc_solaris_cgo.go
- create mode 100644 pkg/term/term_solaris.go
- create mode 100644 pkg/term/term_unix.go
- create mode 100644 runconfig/hostconfig_solaris.go
- create mode 100644 vendor/src/github.com/Sirupsen/logrus/terminal_solaris.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/default_gateway_solaris.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge_store.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/errors.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/port_mapping.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/drivers_solaris.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/ipamutils/utils_solaris.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/osl/interface_solaris.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/osl/namespace_solaris.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/osl/neigh_solaris.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/portallocator/portallocator_linux.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/portallocator/portallocator_solaris.go
- delete mode 100644 vendor/src/github.com/docker/libnetwork/portmapper/mapper.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/portmapper/mapper_linux.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/portmapper/mapper_solaris.go
- delete mode 100644 vendor/src/github.com/docker/libnetwork/portmapper/mock_proxy.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/portmapper/mock_proxy_linux.go
- delete mode 100644 vendor/src/github.com/docker/libnetwork/portmapper/proxy.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/portmapper/proxy_linux.go
- create mode 100644 vendor/src/github.com/docker/libnetwork/sandbox_externalkey_solaris.go
- create mode 100644 vendor/src/github.com/mistifyio/go-zfs/utils_notsolaris.go
- create mode 100644 vendor/src/github.com/mistifyio/go-zfs/utils_solaris.go
- create mode 100644 vendor/src/github.com/mistifyio/go-zfs/zfs_notsolaris.go
- create mode 100644 vendor/src/github.com/mistifyio/go-zfs/zfs_solaris.go
- create mode 100644 vendor/src/github.com/mistifyio/go-zfs/zpool_notsolaris.go
- create mode 100644 vendor/src/github.com/mistifyio/go-zfs/zpool_solaris.go
- create mode 100644 vendor/src/github.com/opencontainers/runc/libcontainer/configs/cgroup_solaris.go
- create mode 100644 vendor/src/github.com/opencontainers/runc/libcontainer/console_solaris.go
- create mode 100644 vendor/src/github.com/opencontainers/runc/libcontainer/container_solaris.go
- create mode 100644 vendor/src/github.com/opencontainers/runc/libcontainer/stats_solaris.go
- create mode 100644 vendor/src/github.com/opencontainers/runc/libcontainer/zones/stats.go
- create mode 100644 vendor/src/gopkg.in/fsnotify.v1/fen.go
- create mode 100644 vendor/src/gopkg.in/fsnotify.v1/fen_cgo.go
 
 diff --git a/Dockerfile.solaris b/Dockerfile.solaris
 new file mode 100644
@@ -9457,18 +9191,17 @@ index 0000000..104781a
 +}
 diff --git a/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
 new file mode 100644
-index 0000000..23db1d9
+index 0000000..5db0560
 --- /dev/null
 +++ b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
-@@ -0,0 +1,1084 @@
+@@ -0,0 +1,1041 @@
 +package bridge
 +
 +import (
-+	"bufio"
++	"bytes"
 +	"errors"
 +	"fmt"
 +	"net"
-+	"os"
 +	"os/exec"
 +	"strconv"
 +	"strings"
@@ -9511,6 +9244,8 @@ index 0000000..23db1d9
 +
 +	// DefaultGatewayV6AuxKey represents the ipv6 default-gateway configured by the user
 +	DefaultGatewayV6AuxKey = "DefaultGatewayIPv6"
++
++	pfctl = "/usr/sbin/pfctl"
 +)
 +
 +// networkConfiguration for network specific configuration
@@ -9631,95 +9366,51 @@ index 0000000..23db1d9
 +	return i
 +}
 +
-+func fixPFConf() error {
-+	conf := "/etc/firewall/pf.conf"
-+	f, err := os.Open("/etc/firewall/pf.conf")
-+	if err != nil {
-+		return fmt.Errorf("cannot open %s: %v", conf, err)
-+	}
-+	defer f.Close()
++func runCmd(
++    stdin *bytes.Buffer, stdout *bytes.Buffer,
++    name string, arg ...string) error {
++	cmd := exec.Command(name, arg...);
 +
-+	modify := false
-+	lines := []string{}
-+	scanner := bufio.NewScanner(f)
-+	for scanner.Scan() {
-+		l := scanner.Text()
-+		if strings.Contains(l, "REMOVE THIS LINE") {
-+			modify = true
-+			continue
-+		}
-+		lines = append(lines, fmt.Sprintf("%s\n", l))
++	/* Setup Stdin, Stdout, and Stderr */
++	if stdin != nil {
++		cmd.Stdin = stdin
++	} else {
++		cmd.Stdin = nil
 +	}
-+	if err = scanner.Err(); err != nil {
-+		return fmt.Errorf("cannot scan %s: %v", conf, err)
++	if stdout != nil {
++		cmd.Stdout = stdout
++	} else {
++		cmd.Stdout = new(bytes.Buffer)
 +	}
-+	if !modify {
-+		return nil
-+	}
-+	tmpname := "/etc/firewall/pf.conf.tmp." + strconv.Itoa(os.Getpid())
-+	tmp, err := os.OpenFile(tmpname,
-+		os.O_CREATE|os.O_TRUNC|os.O_WRONLY|os.O_APPEND, 0644)
++	stderr := new(bytes.Buffer)
++	cmd.Stderr = stderr
++
++	/*
++	 * Run the command.  If the command fails create a new error
++	 * object to return that includes stderr output.
++	 */
++	err := cmd.Start()
 +	if err != nil {
-+		return fmt.Errorf("cannot open %s: %v", tmpname, err)
++		return err
 +	}
-+	defer tmp.Close()
-+	for _, l := range lines {
-+		_, err = tmp.WriteString(l)
-+		if err != nil {
-+			return fmt.Errorf("cannot write to %s: %v",
-+				tmpname, err)
-+		}
-+	}
-+	if err = tmp.Sync(); err != nil {
-+		return fmt.Errorf("cannot sync %s: %v", tmpname, err)
-+	}
-+	if err = os.Rename(tmpname, conf); err != nil {
-+		return fmt.Errorf("cannot rename %s to %s: %v",
-+			tmpname, conf, err)
++	err = cmd.Wait()
++	if err != nil {
++		return errors.New(fmt.Sprintf("%v: %s", err, stderr.String()))
 +	}
 +	return nil
 +}
 +
 +func (d *driver) initFirewall() error {
-+	out, err := exec.Command("/usr/bin/svcs", "-Ho", "state",
-+		"firewall").Output()
++	pf_anchor := "_auto/docker"
++	pf_rule := "anchor \"*\" all\n"
++
++	/* Create a packet filter anchor for docker packet filter rules.  */
++	stdin := bytes.NewBufferString(pf_rule)
++	err := runCmd(stdin, nil, pfctl, "-a", pf_anchor, "-f", "-")
 +	if err != nil {
-+		return fmt.Errorf("cannot check firewall state: %v", err)
-+	}
-+	state := strings.TrimSpace(string(out))
-+	if state != "online" {
-+		if state != "disabled" {
-+			return fmt.Errorf("firewall service is in %s state. "+
-+				"please enable service manually.", state)
-+		}
-+		if err = fixPFConf(); err != nil {
-+			return err
-+		}
-+		err = exec.Command("/usr/sbin/svcadm", "enable", "-ts",
-+			"firewall").Run()
-+		if err != nil {
-+			return fmt.Errorf("svcadm failed: %v", err)
-+		}
-+	}
-+	out, err = exec.Command("/usr/sbin/pfctl", "-sr").Output()
-+	if err != nil {
-+		return fmt.Errorf("cannot run pfctl: %v", err)
-+	}
-+	if strings.Contains(string(out), "anchor \"_auto/docker/*\" all") {
-+		return nil
-+	}
-+	pfctl_cmd := "(/usr/sbin/pfctl -sr; " +
-+		"/usr/bin/echo \"anchor \\\"_auto/docker/*\\\"\") |" +
-+		"/usr/sbin/pfctl -f -"
-+	err = exec.Command("/usr/bin/bash", "-c", pfctl_cmd).Run()
-+	if err != nil {
-+		return fmt.Errorf("cannot add docker anchor: %v", err)
-+	}
-+	// XXX remove after 23533272 is fixed
-+	workaround_cmd := "echo \"mac_pf_bypass/W 1\" | mdb -kw"
-+	err = exec.Command("/usr/bin/bash", "-c", workaround_cmd).Run()
-+	if err != nil {
-+		return fmt.Errorf("cannot add workaround: %v", err)
++		return fmt.Errorf(
++		    "failed to update packet filter %s ruleset: %v\n",
++		    pf_anchor, err)
 +	}
 +	return nil
 +}
@@ -9840,7 +9531,7 @@ index 0000000..23db1d9
 +
 +	tableName := "bridge_nw_subnets"
 +	pf_anchor := fmt.Sprintf("_auto/docker/%s", tableName)
-+	err = exec.Command("/usr/sbin/pfctl", "-a", pf_anchor, "-t", tableName, "-T", "add", gwIP).Run()
++	err = exec.Command(pfctl, "-a", pf_anchor, "-t", tableName, "-T", "add", gwIP).Run()
 +	if err != nil {
 +		fmt.Printf("cannot add bridge network '%s' to PF table\n", bridgeName)
 +	}
@@ -9871,7 +9562,7 @@ index 0000000..23db1d9
 +	pf_anchor := fmt.Sprintf("_auto/docker/%s", bridgeName)
 +	table_anchor := fmt.Sprintf("_auto/docker/%s", tableName)
 +
-+	err = exec.Command("/usr/sbin/pfctl", "-a", pf_anchor, "-F", "all").Run()
++	err = exec.Command(pfctl, "-a", pf_anchor, "-F", "all").Run()
 +	if err != nil && logErr {
 +		fmt.Println("pfctl flush failed")
 +	}
@@ -9889,7 +9580,7 @@ index 0000000..23db1d9
 +	if err != nil && logErr {
 +		fmt.Println("dladm delete-etherstub failed")
 +	}
-+	err = exec.Command("/usr/sbin/pfctl", "-a", table_anchor, "-t", tableName, "-T", "delete", gwIP).Run()
++	err = exec.Command(pfctl, "-a", table_anchor, "-t", tableName, "-T", "delete", gwIP).Run()
 +	if err != nil && logErr {
 +		fmt.Printf("cannot remove bridge network '%s' from PF table\n", bridgeName)
 +	}
