@@ -1,0 +1,33 @@
+From e7528ab9b8ddbad892d9d5ce323549086897b72a Mon Sep 17 00:00:00 2001
+From: Lars Uebernickel <lars.uebernickel@canonical.com>
+Date: Mon, 16 Nov 2015 17:29:50 +0100
+Subject: [PATCH] gtkwindow: continue calling
+ gtk_style_context_set_background()
+
+Not doing so introduces black flicker when creating a new window on
+compiz, because it lacks support for the frame sync protocol.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=748498
+---
+ gtk/gtkwindow.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/gtk/gtkwindow.c b/gtk/gtkwindow.c
+index 2d9f4b5..0476b6b 100644
+--- a/gtk/gtkwindow.c
++++ b/gtk/gtkwindow.c
+@@ -7122,6 +7122,11 @@ gtk_window_realize (GtkWidget *widget)
+   gtk_widget_register_window (widget, gdk_window);
+   gtk_widget_set_realized (widget, TRUE);
+ 
++  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
++  if (!gtk_widget_get_app_paintable (widget))
++    gtk_style_context_set_background (gtk_widget_get_style_context (widget), gdk_window);
++  G_GNUC_END_IGNORE_DEPRECATIONS
++
+   attributes.x = allocation.x;
+   attributes.y = allocation.y;
+   attributes.width = allocation.width;
+-- 
+2.6.2
+
