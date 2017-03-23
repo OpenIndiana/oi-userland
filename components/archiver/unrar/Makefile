@@ -28,51 +28,43 @@ include ../../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		unrar
-COMPONENT_VERSION=	4.2.4
+COMPONENT_VERSION=	5.4.5
 COMPONENT_SRC=		$(COMPONENT_NAME)
+COMPONENT_SUMMARY=	Rar archives extractor utility
 COMPONENT_PROJECT_URL=	http://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9432bf798e5f7123f3060f37b75b7c07f36f0091305f46473dcae9154f8cd686
+    sha256:e470c584332422893fb52e049f2cbd99e24dc6c6da971008b4e2ae4284f8796c
 COMPONENT_ARCHIVE_URL=	http://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/unrar
+COMPONENT_FMRI=	archiver/unrar
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE= UnRAR
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PKG_PROTO_DIRS = $(MANGLED_DIR)
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
 PKG_PROTO_DIRS += $(COMPONENT_DIR)
-
-PATCH_LEVEL =	0
-
 
 # Needed by .../unrar/os.hpp to correctly define platform endianness.
 CXXFLAGS.i386 = -DLITTLE_ENDIAN
 CXXFLAGS.sparc = -DBIG_ENDIAN
 CXXFLAGS += $(CXXFLAGS.$(MACH))
-CXXFLAGS += "-erroff=wvarhidemem"
 COMPONENT_BUILD_ENV += CXX="$(CXX)"
 COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += DEFINES="$(CPP_LARGEFILES)"
 
-COMPONENT_BUILD_ARGS += -f makefile.unix
 COMPONENT_BUILD_ARGS += STRIP="/bin/true"
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(BUILD_32)
+install:	$(BUILD_64)
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
