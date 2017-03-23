@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nimbus
 COMPONENT_VERSION=	0.1.9
-COMPONENT_REVISION=	8
+COMPONENT_REVISION=	9
 COMPONENT_PROJECT_URL=	https://java.net/projects/solaris-desktop/pages/Home
 COMPONENT_SUMMARY=	Engine for Sun Nimbus GTK2 Theme
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,7 +41,6 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-TAR=/usr/gnu/bin/tar
 
 INSTALL_GTK3_THEME=$(BUILD_DIR)/.gtk3_theme_installed
 
@@ -62,9 +61,9 @@ CONFIGURE_SCRIPT=$(SOURCE_DIR)/autogen.sh
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
-# Use tar to avoid replacing issues
 $(INSTALL_GTK3_THEME):	$(INSTALL_32_and_64)
 	cp -r $(COMPONENT_SRC_1)/*nimbus* $(PROTO_DIR)/usr/share/themes/
+	cp -r $(COMPONENT_DIR)/files/css/* $(PROTO_DIR)/usr/share/themes/nimbus/
 	$(TOUCH) $(INSTALL_GTK3_THEME)
 
 # common targets
