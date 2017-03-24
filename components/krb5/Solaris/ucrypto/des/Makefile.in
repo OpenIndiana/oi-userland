@@ -1,0 +1,23 @@
+mydir=lib$(S)crypto$(S)ucrypto$(S)des
+BUILDTOP=$(REL)..$(S)..$(S)..$(S)..
+CRYPTO_IMPL_CFLAGS=@CRYPTO_IMPL_CFLAGS@
+LOCALINCLUDES = -I$(srcdir)/../../krb -I$(srcdir)/.. $(CRYPTO_IMPL_CFLAGS)
+
+STLIBOBJS= des_keys.o weak_key.o f_parity.o
+
+OBJS= $(OUTPRE)des_keys.$(OBJEXT) \
+      $(OUTPRE)weak_key.$(OBJEXT) \
+      $(OUTPRE)f_parity.$(OBJEXT)
+
+SRCS= $(srcdir)/des_keys.c $(srcdir)/weak_key.c $(srcdir)/f_parity.c
+
+all-unix:: all-libobjs
+
+includes:: depend
+
+depend:: $(SRCS)
+
+clean-unix:: clean-libobjs
+
+@libobj_frag@
+

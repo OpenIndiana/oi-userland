@@ -1,0 +1,22 @@
+#
+# This patch allows krb to be built to use the Solaris libucrypto crypto
+# library to support the enctypes and other users of the krb crypto provider
+# functions.
+#
+# This is Solaris specific behavior that MIT will not take upstream.
+#
+# Patch source: in-house
+#
+
+--- a/src/configure.in
++++ b/src/configure.in
+@@ -250,6 +250,9 @@ nss)
+   ])], [], [AC_MSG_ERROR([NSS version 3.13 or later required.])])
+   CFLAGS=$save_CFLAGS
+   ;;
++ucrypto)
++  CRYPTO_IMPL_LIBS="-lucrypto"
++  ;;
+ *)
+   AC_MSG_ERROR([Unknown crypto implementation $withval])
+   ;;
