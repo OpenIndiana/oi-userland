@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../ofed-component-macros.mk
@@ -35,11 +35,12 @@ COMPONENT_BUGDB=	utility/ofuv_tools
 INSTALL_TARGET=
 include ../ofed-component.mk
 
-MAN1FILES =	ib_clock_test.1 \
-		ib_write_bw.1 \
+MAN1FILES =	ib_write_bw.1 \
 		ib_read_bw.1 \
 		ib_send_bw.1 \
 		rdma_bw.1
+
+MAN8FILES = ib_clock_test.8
 
 include $(WS_MAKE_RULES)/shared-targets.mk
 
@@ -68,5 +69,5 @@ COMPONENT_PREP_ACTION = $(TOUCH) $(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # common targets
-install:	$(INSTALL_64) $(PROTOMAN1FILES)
+install:	$(INSTALL_64) $(PROTOMAN1FILES)	$(PROTOMAN8FILES)
 
