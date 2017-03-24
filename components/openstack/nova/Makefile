@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -114,6 +114,7 @@ REQUIRED_PACKAGES += library/python/oslo.serialization-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-27
 REQUIRED_PACKAGES += library/python/webob-27
+REQUIRED_PACKAGES += media/cdrtools
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/file-system/zfs
 REQUIRED_PACKAGES += system/library/storage/suri

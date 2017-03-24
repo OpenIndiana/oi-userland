@@ -51,6 +51,7 @@ from oslo_utils import strutils
 from oslo_utils import versionutils
 from passlib.hash import sha256_crypt
 
+from nova.api.metadata import base as instance_metadata
 from nova.api.metadata import password
 from nova.compute import arch
 from nova.compute import hv_type
@@ -72,6 +73,7 @@ from nova import objects
 from nova.objects import flavor as flavor_obj
 from nova.objects import migrate_data as migrate_data_obj
 from nova import utils
+from nova.virt import configdrive
 from nova.virt import driver
 from nova.virt import event as virtevent
 from nova.virt import hardware
@@ -1478,6 +1480,46 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                [zonemgr.Property("storage", listvalue=[suri])],
                                ignore_exists=True)
 
+    def _get_configdrive_path(self, instance):
+        cd_name = "config_drive-" + instance['name']
+
+        return os.path.join("/var/share/nova/configdrives", cd_name)
+
+    def _set_configdrive(self, name, instance, sc_dir):
+        """Set the configdrive device"""
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        cd_path = self._get_configdrive_path(instance)
+
+        with ZoneConfig(zone) as zc:
+            storagepath = "file://root:root@" + cd_path
+            zc.addresource("device", [zonemgr.Property("storage", storagepath),
+                                      zonemgr.Property("id", "1")])
+
+        fp = os.path.join(sc_dir, "config_drive.xml")
+        tree = sysconfig.create_config_drive()
+        sysconfig.create_sc_profile(fp, tree)
+
+    def _unset_configdrive(self, name, instance):
+        """ Remove the configdrive device from the zone"""
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        cd_path = self._get_configdrive_path(instance)
+
+        with ZoneConfig(zone) as zc:
+            storagepath = "file://root:root@" + cd_path
+            zc.removeresources("device",
+                               [zonemgr.Property("storage", storagepath)])
+
+        if zone.state == ZONE_STATE_RUNNING:
+            zone.apply()
+
+        os.remove(cd_path)
+
     def _set_num_cpu(self, name, vcpus, brand):
         """Set number of VCPUs in a Solaris Zone configuration."""
         zone = self._get_zone_by_name(name)
@@ -1895,6 +1937,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._set_memory_cap(name, instance['memory_mb'], brand)
             self._set_network(context, name, instance, network_info, brand,
                               sc_dir)
+            if configdrive.required_by(instance):
+                self._set_configdrive(name, instance, sc_dir)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.exception(_("Unable to create configuration for instance '%s' "
@@ -2199,6 +2243,47 @@ class SolarisZonesDriver(driver.ComputeDriver):
                             "via zonemgr(3RAD): %s") % (name, reason))
             raise
 
+    def _waitfor_copydone(self, name):
+        failcount = 0
+        cbi_service = 'svc:/application/cloudbase-init:default'
+        cbi_state = None
+        end_states = ['online', 'degraded', 'maintenance', 'disabled']
+        while cbi_state not in end_states:
+            try:
+                cbi_state, err = utils.execute('/usr/sbin/zlogin', '-S', name,
+                                               '/usr/bin/svcs', '-H', '-o',
+                                               'state', cbi_service)
+                cbi_state = cbi_state.strip()
+            except processutils.ProcessExecutionError:
+                # If it has been two minutes and the zone is still not able to
+                # return any kind of state, and the zlogin is failing, then
+                # simply get out of the process of protecting the config-drive
+                # but leave it attached to the zone.
+                if failcount > 120:
+                    return False
+
+                failcount = failcount + 1
+                greenthread.sleep(1)
+                continue
+
+            if cbi_state == "disabled" and cbi_state in end_states:
+                out, err = utils.execute('/usr/sbin/zlogin', '-S', name,
+                                         '/usr/bin/svcprop', '-p',
+                                         'general/enabled', cbi_service)
+                out = out.strip()
+                if out == "true":
+                    end_states.remove('disabled')
+
+            if cbi_state == "offline*":
+                out, err = utils.execute('/usr/sbin/zlogin', '-S', name,
+                                         '/usr/bin/svcprop', '-C', '-p',
+                                         'configdrive/copydone', cbi_service)
+                out = out.strip()
+                if out == "true":
+                    break
+
+        return True
+
     def spawn(self, context, instance, image_meta, injected_files,
               admin_password, network_info=None, block_device_info=None):
         """Create a new instance/VM/domain on the virtualization platform.
@@ -2270,6 +2355,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                   dir=CONF.state_path)
         os.chmod(sc_dir, 0755)
 
+        # Create the configdrive if required.
+        if configdrive.required_by(instance):
+            instance_md = instance_metadata.InstanceMetadata(
+                              instance,
+                              content=injected_files)
+            with configdrive.ConfigDriveBuilder(instance_md=instance_md) as cd:
+                cd_path = self._get_configdrive_path(instance)
+                try:
+                    cd.make_drive(cd_path)
+                except Exception as e:
+                    LOG.info(_("Failed to create config drive '%s'" % cd_path))
+
         try:
             self._create_config(context, instance, network_info,
                                 connection_info, sc_dir, admin_password)
@@ -2281,6 +2378,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                        instance, entry['mount_device'])
 
             self._power_on(instance, network_info)
+            if configdrive.required_by(instance):
+                unset = self._waitfor_copydone(name)
+                if unset:
+                    self._unset_configdrive(name, instance)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.exception(_("Unable to spawn instance '%s' via zonemgr(3RAD): "
@@ -2439,6 +2540,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 self._uninstall(instance)
             if self._get_state(zone) == power_state.NOSTATE:
                 self._delete_config(instance)
+            if configdrive.required_by(instance):
+                # Make sure that we don't leave any dirt around.
+                cd_path = self._get_configdrive_path(instance)
+                try:
+                    os.remove(cd_path)
+                except OSError:
+                    pass
+
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.warning(_("Unable to destroy instance '%s' via zonemgr(3RAD): "

@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -221,6 +221,41 @@ def create_hostname(name):
                      value=name)
     etree.SubElement(pg, "propval", type="boolean",
                      name="ignore_dhcp_hostname", value="true")
+
+    return svcbundle
+
+
+def create_config_drive():
+    """ return an etree object representing the configdrive options for
+    cloudbase-init
+    """
+    svcbundle = etree.Element("service_bundle", type="profile",
+                              name="cloudbase-init")
+    service = etree.SubElement(svcbundle, "service", version="1",
+                               type="service",
+                               name="application/cloudbase-init")
+    instance = etree.SubElement(service, "instance", name="default",
+                                enabled="true")
+    pg = etree.SubElement(instance, "property_group", type="application",
+                          name="config")
+    etree.SubElement(pg, "propval", type="astring", name="config_drive_types",
+                     value="iso")
+
+    etree.SubElement(pg, "propval", type="boolean", name="config_drive",
+                     value="true")
+
+    etree.SubElement(pg, "propval", type="astring",
+                     name="config_drive_locations", value="cdrom, hdd")
+
+    v = "cloudbaseinit.metadata.services.configdrive.ConfigDriveService"
+    etree.SubElement(pg, "propval", type="astring", name="metadata_services",
+                     value=v)
+
+    mntpg = etree.SubElement(instance, "property_group", type="application",
+                             name="configdrive")
+
+    etree.SubElement(mntpg, "propval", type="boolean", name="copydone",
+                     value="false")
 
     return svcbundle
 

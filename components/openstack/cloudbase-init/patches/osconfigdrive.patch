@@ -1,0 +1,17 @@
+In house patch to add the sunos5 platform to the confidrive portion of
+cloudbase-init.
+
+This patch is suitable for upstream submission.
+
+--- cloudbase-init-0.9.9/cloudbaseinit/metadata/services/osconfigdrive/factory.py.~1~	2016-11-08 10:35:08.131876634 +0000
++++ cloudbase-init-0.9.9/cloudbaseinit/metadata/services/osconfigdrive/factory.py	2016-11-08 10:35:41.632217784 +0000
+@@ -21,6 +21,8 @@ def get_config_drive_manager():
+     class_paths = {
+         'win32': 'cloudbaseinit.metadata.services.osconfigdrive.windows.'
+         'WindowsConfigDriveManager',
++        'sunos5': 'cloudbaseinit.metadata.services.osconfigdrive.solaris.'
++        'SolarisConfigDriveManager',
+     }
+ 
+     class_path = class_paths.get(sys.platform)
+

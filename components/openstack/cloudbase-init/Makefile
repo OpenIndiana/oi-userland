@@ -65,6 +65,12 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 COMPONENT_PRE_BUILD_ACTION = \
     $(CP) $(COMPONENT_DIR)/PKG-INFO $(SOURCE_DIR)
 
+COMPONENT_POST_INSTALL_ACTION += \
+    $(CP) \
+        files/solaris.py \
+        $(PROTO_DIR)$(PYTHON_LIB)/cloudbaseinit/metadata/services/osconfigdrive; \
+    $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 
