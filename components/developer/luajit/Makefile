@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= luajit
 COMPONENT_VERSION= 2.0.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= LuaJIT - Just-In-Time Compiler (JIT) for the Lua programming language 
 COMPONENT_PROJECT_URL= http://luajit.org/
 COMPONENT_FMRI= developer/luajit
@@ -32,6 +33,8 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS+= -fPIC
 
 COMPONENT_BUILD_ARGS+= PREFIX=$(USRDIR) 
 COMPONENT_BUILD_ARGS+= CC=$(CC) 
