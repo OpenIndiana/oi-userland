@@ -1,6 +1,6 @@
---- totem-pl-parser-2.28.2/plparse/totem-disc.c.old	2009-12-14 16:22:43.662388768 +0800
-+++ totem-pl-parser-2.28.2/plparse/totem-disc.c	2009-12-14 16:26:10.975976171 +0800
-@@ -296,7 +296,16 @@
+--- totem-pl-parser-3.10.7/plparse/totem-disc.c.1	2017-03-11 14:53:17.411656838 +0300
++++ totem-pl-parser-3.10.7/plparse/totem-disc.c	2017-03-11 14:54:04.497836072 +0300
+@@ -353,7 +353,16 @@
    gboolean found, self_mounted;
  
    if (dev[0] == '/') {
@@ -13,7 +13,7 @@
 +    }
 +#else    
      local = g_strdup (dev);
-+#endif    
++#endif
      file = g_file_new_for_path (dev);
    } else {
-     file = g_file_new_for_commandline_arg (dev);
+     if (g_str_has_prefix (dev, "archive://")) {
