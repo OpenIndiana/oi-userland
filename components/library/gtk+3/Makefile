@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
 COMPONENT_VERSION= 3.18.9
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -39,9 +39,9 @@ PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS += -I/usr/X11/include
 
-# 32-bit gcc build can cause segfaults in gtk3
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=62281
-gcc_OPT.i386.32 = -O2
+# fixes possible textiter test failure
+gcc_OPT = -O2
+LD_Z_IGNORE=
 
 # Uses isinf, etc. only available in c99 and newer
 CFLAGS.gcc += -std=gnu11
