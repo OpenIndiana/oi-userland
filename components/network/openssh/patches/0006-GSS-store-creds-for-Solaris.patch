@@ -1,7 +1,7 @@
-From 6d8577b5a662b85a13a56aa8d41a589dc1ad0eae Mon Sep 17 00:00:00 2001
+From 8952e72b9cf0f8a14d728feaeb2f5fe85ebbeae0 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
-Subject: [PATCH 07/34] GSS store creds for Solaris
+Subject: [PATCH 06/34] GSS store creds for Solaris
 
 ---
  configure.ac    |  3 +++
@@ -12,10 +12,10 @@ Subject: [PATCH 07/34] GSS store creds for Solaris
  5 files changed, 71 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 7258cc0..5dceabd 100644
+index eb9f45dc..f5deed69 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -942,6 +942,9 @@ mips-sony-bsd|mips-sony-newsos4)
+@@ -949,6 +949,9 @@ mips-sony-bsd|mips-sony-newsos4)
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
@@ -26,7 +26,7 @@ index 7258cc0..5dceabd 100644
  *-*-sunos4*)
  	CPPFLAGS="$CPPFLAGS -DSUNOS4"
 diff --git a/gss-serv-krb5.c b/gss-serv-krb5.c
-index 795992d..6e6cff7 100644
+index 795992d9..6e6cff7b 100644
 --- a/gss-serv-krb5.c
 +++ b/gss-serv-krb5.c
 @@ -110,7 +110,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
@@ -59,7 +59,7 @@ index 795992d..6e6cff7 100644
  
  #endif /* KRB5 */
 diff --git a/gss-serv.c b/gss-serv.c
-index 53993d6..209ffe8 100644
+index 53993d67..209ffe82 100644
 --- a/gss-serv.c
 +++ b/gss-serv.c
 @@ -320,22 +320,66 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
@@ -130,10 +130,10 @@ index 53993d6..209ffe8 100644
  
  /* This allows GSSAPI methods to do things to the childs environment based
 diff --git a/servconf.c b/servconf.c
-index c6f4bdd..1872661 100644
+index 409d4800..e98c6500 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -496,7 +496,11 @@ static struct {
+@@ -484,7 +484,11 @@ static struct {
  	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
  #ifdef GSSAPI
  	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
@@ -146,10 +146,10 @@ index c6f4bdd..1872661 100644
  #else
  	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
 diff --git a/sshd.c b/sshd.c
-index 430569c..68fd1ea 100644
+index 1dc4d182..e39b3024 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -2234,9 +2234,23 @@ main(int ac, char **av)
+@@ -2048,9 +2048,23 @@ main(int ac, char **av)
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {
@@ -174,5 +174,5 @@ index 430569c..68fd1ea 100644
  #endif
  #ifdef USE_PAM
 -- 
-2.5.4 (Apple Git-61)
+2.11.0
 
