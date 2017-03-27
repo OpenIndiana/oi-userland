@@ -16,6 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yelp-tools
 COMPONENT_VERSION=	3.18.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Yelp Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
