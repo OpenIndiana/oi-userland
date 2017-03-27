@@ -1,7 +1,7 @@
-From 1242df0d1cab712ccbb60a0daaacb24e11af120f Mon Sep 17 00:00:00 2001
+From 30642080c5d8b89043ff645010b5bbfc03c81aa5 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 9 Sep 2015 10:36:05 -0700
-Subject: [PATCH 32/34] Temporarily set ssh-keygen and ssh-add to old FP format
+Subject: [PATCH 30/34] Temporarily set ssh-keygen and ssh-add to old FP format
 
 SDC and its users have a lot of scripts that expect ssh-add
 and ssh-keygen to return fingerprints in the old format.
@@ -13,7 +13,7 @@ same output until we have migrated everything over.
  2 files changed, 29 insertions(+), 6 deletions(-)
 
 diff --git a/ssh-add.c b/ssh-add.c
-index fb9a53e..c63488a 100644
+index fb9a53e6..c63488a3 100644
 --- a/ssh-add.c
 +++ b/ssh-add.c
 @@ -52,6 +52,7 @@
@@ -67,7 +67,7 @@ index fb9a53e..c63488a 100644
  				fatal("Invalid hash algorithm \"%s\"", optarg);
  			break;
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index 4785201..25b8049 100644
+index 2a7939bf..6c0355bb 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
 @@ -37,6 +37,7 @@
@@ -134,7 +134,7 @@ index 4785201..25b8049 100644
  	    comment ? comment : "no comment", sshkey_type(public));
  	if (log_level >= SYSLOG_LEVEL_VERBOSE)
  		printf("%s\n", ra);
-@@ -2297,6 +2310,7 @@ main(int argc, char **argv)
+@@ -2303,6 +2316,7 @@ main(int argc, char **argv)
  			break;
  		case 'E':
  			fingerprint_hash = ssh_digest_alg_by_name(optarg);
@@ -143,5 +143,5 @@ index 4785201..25b8049 100644
  				fatal("Invalid hash algorithm \"%s\"", optarg);
  			break;
 -- 
-2.5.4 (Apple Git-61)
+2.11.0
 

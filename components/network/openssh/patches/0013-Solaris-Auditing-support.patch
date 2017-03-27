@@ -1,46 +1,24 @@
-From 785d51f8667359a362893f13e8762d0e814ceeda Mon Sep 17 00:00:00 2001
+From dad178a7fb894660036982a75b4e1c30e71cbd33 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 14/34] Solaris Auditing support
+Subject: [PATCH 13/34] Solaris Auditing support
 
-#
-# Add Solaris Auditing configuration (--with-audit=solaris) to openssh-6.5p1.
-#
-# Add phase 1 Solaris Auditing of sshd login/logout to openssh-6.5p1.
-#
-# Additional Solaris Auditing should include audit of password
-#  change.
-# Presuming it is appropriate, this patch should/will be updated
-#  with additional files and updates to sources/audit-solaris.c
-#
-# Code is developed by the Solaris Audit team.
-# It should/will likely be contributed up stream when done.
-# This patch relies on sources/audit-solaris.c being copied into
-#  the openssh source directory by the Makefile that configures
-#  using --with-audit=solaris.
-#
-# The up stream community has been contacted about the plans.
-#  No reply has yet been received.
-#
-# An additional patch relying on the --with-audit=solaris configuration
-#  should/will be created for sftp Solaris Audit and password change.
-#
 ---
  INSTALL         |  15 +-
  Makefile.in     |   2 +-
  README.platform |   7 +-
- audit-solaris.c | 562 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ audit-solaris.c | 574 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  configure.ac    |   9 +-
  defines.h       |   5 +
  sshd.c          |   6 +
- 7 files changed, 597 insertions(+), 9 deletions(-)
+ 7 files changed, 609 insertions(+), 9 deletions(-)
  create mode 100644 audit-solaris.c
 
 diff --git a/INSTALL b/INSTALL
-index cbbb2df..765d4aa 100644
+index 6bc80b68..03417493 100644
 --- a/INSTALL
 +++ b/INSTALL
-@@ -92,9 +92,13 @@ http://www.gnu.org/software/autoconf/
+@@ -98,9 +98,13 @@ http://www.gnu.org/software/autoconf/
  
  Basic Security Module (BSM):
  
@@ -57,7 +35,7 @@ index cbbb2df..765d4aa 100644
  
  
  2. Building / Installation
-@@ -147,8 +151,9 @@ name).
+@@ -153,8 +157,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -70,20 +48,20 @@ index cbbb2df..765d4aa 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index 61a97de..abc9285 100644
+index 82065077..48d773de 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -100,7 +100,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
  	sshconnect.o sshconnect1.o sshconnect2.o mux.o
  
- SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
 +	audit.o audit-bsm.o audit-linux.o audit-solaris.o platform.o \
  	sshpty.o sshlogin.o servconf.o serverloop.o \
- 	auth.o auth1.o auth2.o auth-options.o session.o \
- 	auth-chall.o auth2-chall.o groupaccess.o \
+ 	auth.o auth2.o auth-options.o session.o \
+ 	auth2-chall.o groupaccess.o \
 diff --git a/README.platform b/README.platform
-index 8d75c16..616200b 100644
+index c7be95fb..ae461550 100644
 --- a/README.platform
 +++ b/README.platform
 @@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
@@ -109,7 +87,7 @@ index 8d75c16..616200b 100644
  -------------------
 diff --git a/audit-solaris.c b/audit-solaris.c
 new file mode 100644
-index 0000000..abf870c
+index 00000000..fc0839f5
 --- /dev/null
 +++ b/audit-solaris.c
 @@ -0,0 +1,574 @@
@@ -294,31 +272,23 @@ index 0000000..abf870c
 +	if (adt_load_termid(peer, &tid) != 0) {
 +		error("adt audit_connection_from: unable to load tid for %d:%s",
 +		    peer, strerror(errno));
-+		return;
++		goto err;
 +	}
 +	if (adt_start_session(&ah, NULL, 0) != 0) {
 +		error("adt audit_connection_from: unable to start session "
 +		    "for %s:%d:%s", host, port, strerror(errno));
-+		free(tid);
-+		tid = NULL;
-+		return;
++		goto err;
 +	}
 +	if (adt_set_user(ah, ADT_NO_AUDIT, ADT_NO_AUDIT, 0,
 +	    ADT_NO_AUDIT, tid, ADT_SETTID) != 0) {
 +		error("adt audit_connection_from: unable to set user "
 +		    "for %s:%d:%s", host, port, strerror(errno));
-+		free(tid);
-+		tid = NULL;
-+		(void) adt_end_session(ah);
-+		return;
++		goto err;
 +	}
 +	if (adt_set_proc(ah) != 0) {
 +		error("adt audit_connection_from: unable to set proc "
 +		    "for %s:%d:%s", host, port, strerror(errno));
-+		free(tid);
-+		tid = NULL;
-+		(void) adt_end_session(ah);
-+		return;
++		goto err;
 +	}
 +	(void) adt_end_session(ah);
 +	debug("adt audit_connection_from(%s, %d): peerfd=%d", host, port,
@@ -327,6 +297,14 @@ index 0000000..abf870c
 +	    "peerfd=%d\n", getpid(), getuid(), geteuid(), host, port,
 +	    (void *)the_authctxt, peer);
 +	__audit_pidinfo();
++	return;
++
++err:
++	free(tid);
++	tid = NULL;
++	if (ah != NULL) {
++		(void) adt_end_session(ah);
++	}
 +}
 +
 +/*
@@ -688,10 +666,10 @@ index 0000000..abf870c
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
 diff --git a/configure.ac b/configure.ac
-index 5dceabd..4192a45 100644
+index f5deed69..7a36eee9 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1551,7 +1551,7 @@ AC_ARG_WITH([libedit],
+@@ -1561,7 +1561,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -700,7 +678,7 @@ index 5dceabd..4192a45 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1588,6 +1588,13 @@ AC_ARG_WITH([audit],
+@@ -1598,6 +1598,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -715,10 +693,10 @@ index 5dceabd..4192a45 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index a438ddd..6196188 100644
+index c89f85a8..a2ec7361 100644
 --- a/defines.h
 +++ b/defines.h
-@@ -635,6 +635,11 @@ struct winsize {
+@@ -645,6 +645,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -731,10 +709,10 @@ index a438ddd..6196188 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd.c b/sshd.c
-index 418e1fd..37cb5fa 100644
+index e39b3024..eee363ab 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -2234,7 +2234,9 @@ main(int ac, char **av)
+@@ -2043,7 +2043,9 @@ main(int ac, char **av)
  	}
  
  #ifdef SSH_AUDIT_EVENTS
@@ -744,7 +722,7 @@ index 418e1fd..37cb5fa 100644
  #endif
  
  #ifdef GSSAPI
-@@ -2264,6 +2266,10 @@ main(int ac, char **av)
+@@ -2073,6 +2075,10 @@ main(int ac, char **av)
  		do_pam_session();
  	}
  #endif
@@ -756,5 +734,5 @@ index 418e1fd..37cb5fa 100644
  	/*
  	 * In privilege separation, we fork another child and prepare
 -- 
-2.5.4 (Apple Git-61)
+2.11.0
 

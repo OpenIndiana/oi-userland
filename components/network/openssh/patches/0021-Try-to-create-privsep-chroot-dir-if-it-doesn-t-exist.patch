@@ -1,7 +1,7 @@
-From d383529c65321d6c0fa10230b3d3f05941fd20eb Mon Sep 17 00:00:00 2001
+From e68e88d2de7449b53c98ad7fc3e1ff169313bef3 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 5 Aug 2015 12:25:15 -0700
-Subject: [PATCH 23/34] Try to create privsep chroot dir if it doesn't exist
+Subject: [PATCH 21/34] Try to create privsep chroot dir if it doesn't exist
  yet
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 23/34] Try to create privsep chroot dir if it doesn't exist
  1 file changed, 22 insertions(+), 3 deletions(-)
 
 diff --git a/sshd.c b/sshd.c
-index f34d804..a912c1c 100644
+index e460c238..67171704 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -1917,11 +1917,30 @@ main(int ac, char **av)
+@@ -1762,11 +1762,30 @@ main(int ac, char **av)
  
  	if (use_privsep) {
  		struct stat st;
@@ -47,5 +47,5 @@ index f34d804..a912c1c 100644
  #ifdef HAVE_CYGWIN
  		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
 -- 
-2.5.4 (Apple Git-61)
+2.11.0
 
