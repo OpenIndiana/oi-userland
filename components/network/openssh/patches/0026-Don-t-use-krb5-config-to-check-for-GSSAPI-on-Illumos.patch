@@ -1,18 +1,18 @@
-From 6df7c448336d7997c27fb13b18154d4cc2aa9f7b Mon Sep 17 00:00:00 2001
+From 1a9462ad1d73af0c20e31258bd501f5320ca01df Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 21 Aug 2015 18:47:46 -0700
-Subject: [PATCH 28/34] Don't use krb5-config to check for GSSAPI on Illumos
+Subject: [PATCH 26/34] Don't use krb5-config to check for GSSAPI on Illumos
 
 ---
  configure.ac | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 1846eb2..580fa5c 100644
+index c7a8e662..5e64db3b 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4081,6 +4081,11 @@ AC_ARG_WITH([kerberos5],
- 		AC_PATH_PROG([KRB5CONF], [krb5-config],
+@@ -4207,6 +4207,11 @@ AC_ARG_WITH([kerberos5],
+ 		AC_PATH_TOOL([KRB5CONF], [krb5-config],
  			     [$KRB5ROOT/bin/krb5-config],
  			     [$KRB5ROOT/bin:$PATH])
 +		# Illumos has GSS but krb5-config doesn't talk about it
@@ -23,15 +23,15 @@ index 1846eb2..580fa5c 100644
  		if test -x $KRB5CONF ; then
  			K5CFLAGS="`$KRB5CONF --cflags`"
  			K5LIBS="`$KRB5CONF --libs`"
-@@ -4122,7 +4127,7 @@ AC_ARG_WITH([kerberos5],
+@@ -4248,7 +4253,7 @@ AC_ARG_WITH([kerberos5],
  					 AC_CHECK_LIB([des], [des_cbc_encrypt],
  					   [K5LIBS="$K5LIBS -ldes"])
  				       ], [ AC_MSG_RESULT([no])
 -					 K5LIBS="-lkrb5 -lk5crypto -lcom_err"
 +					 K5LIBS="-lkrb5"
- 				       
  			])
  			AC_SEARCH_LIBS([dn_expand], [resolv])
+ 
 -- 
-2.5.4 (Apple Git-61)
+2.11.0
 

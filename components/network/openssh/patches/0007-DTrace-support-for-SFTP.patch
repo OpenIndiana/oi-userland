@@ -1,7 +1,7 @@
-From c1905780db9f622c36dae810897d23f66d2faafb Mon Sep 17 00:00:00 2001
+From 4afef59e9cfdc88092899a6abdff720d39b0ddd3 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 08/34] DTrace support for SFTP
+Subject: [PATCH 07/34] DTrace support for SFTP
 
 ---
  Makefile.in          | 24 ++++++++++++++---
@@ -15,7 +15,7 @@ Subject: [PATCH 08/34] DTrace support for SFTP
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 11e01ac..61a97de 100644
+index 6541b3bb..82065077 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -26,6 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
@@ -27,14 +27,14 @@ index 11e01ac..61a97de 100644
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
 @@ -85,6 +86,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
- 	atomicio.o key.o dispatch.o mac.o uidswap.o uuencode.o misc.o \
+ 	atomicio.o key.o dispatch.o mac.o uidswap.o uuencode.o misc.o utf8.o \
  	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-rsa.o dh.o \
  	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
 +	sftp_provider.o \
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -110,7 +112,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+@@ -110,7 +112,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
  	sftp-server.o sftp-common.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
@@ -56,7 +56,7 @@ index 11e01ac..61a97de 100644
  	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
 @@ -225,9 +227,22 @@ umac128.o:	umac.c
  	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
- 	    -Dumac_delete=umac128_delete
+ 	    -Dumac_delete=umac128_delete -Dumac_ctx=umac128_ctx
  
 +# dtrace sftp
 +sftp_provider.h: $(srcdir)/sftp_provider.d
@@ -78,7 +78,7 @@ index 11e01ac..61a97de 100644
  	rm -f regress/unittests/test_helper/*.a
  	rm -f regress/unittests/test_helper/*.o
  	rm -f regress/unittests/sshbuf/*.o
-@@ -336,6 +351,7 @@ install-files:
+@@ -347,6 +362,7 @@ install-files:
  	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
  	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
@@ -87,10 +87,10 @@ index 11e01ac..61a97de 100644
  install-sysconf:
  	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
 diff --git a/sftp-server.c b/sftp-server.c
-index e11a1b8..0e6a15a 100644
+index 3619cdfc..78167f9d 100644
 --- a/sftp-server.c
 +++ b/sftp-server.c
-@@ -54,6 +54,9 @@
+@@ -50,6 +50,9 @@
  
  #include "sftp.h"
  #include "sftp-common.h"
@@ -100,7 +100,7 @@ index e11a1b8..0e6a15a 100644
  
  /* Our verbosity */
  static LogLevel log_level = SYSLOG_LEVEL_ERROR;
-@@ -740,14 +743,17 @@ process_read(u_int32_t id)
+@@ -736,14 +739,17 @@ process_read(u_int32_t id)
  	u_int32_t len;
  	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
  	u_int64_t off;
@@ -119,7 +119,7 @@ index e11a1b8..0e6a15a 100644
  	if (len > sizeof buf) {
  		len = sizeof buf;
  		debug2("read change len %d", len);
-@@ -758,7 +764,13 @@ process_read(u_int32_t id)
+@@ -754,7 +760,13 @@ process_read(u_int32_t id)
  			error("process_read: seek failed");
  			status = errno_to_portable(errno);
  		} else {
@@ -133,7 +133,7 @@ index e11a1b8..0e6a15a 100644
  			if (ret < 0) {
  				status = errno_to_portable(errno);
  			} else if (ret == 0) {
-@@ -781,14 +793,16 @@ process_write(u_int32_t id)
+@@ -777,14 +789,16 @@ process_write(u_int32_t id)
  	size_t len;
  	int r, handle, fd, ret, status;
  	u_char *data;
@@ -151,7 +151,7 @@ index e11a1b8..0e6a15a 100644
  	fd = handle_to_fd(handle);
  
  	if (fd < 0)
-@@ -800,7 +814,14 @@ process_write(u_int32_t id)
+@@ -796,7 +810,14 @@ process_write(u_int32_t id)
  			error("process_write: seek failed");
  		} else {
  /* XXX ATOMICIO ? */
@@ -168,7 +168,7 @@ index e11a1b8..0e6a15a 100644
  				status = errno_to_portable(errno);
 diff --git a/sftp64.d b/sftp64.d
 new file mode 100644
-index 0000000..8305d0a
+index 00000000..8305d0af
 --- /dev/null
 +++ b/sftp64.d
 @@ -0,0 +1,56 @@
@@ -230,7 +230,7 @@ index 0000000..8305d0a
 +};
 diff --git a/sftp_provider.d b/sftp_provider.d
 new file mode 100644
-index 0000000..99e9920
+index 00000000..99e99202
 --- /dev/null
 +++ b/sftp_provider.d
 @@ -0,0 +1,61 @@
@@ -297,7 +297,7 @@ index 0000000..99e9920
 +#pragma D attributes Evolving/Evolving/ISA provider sftp args
 diff --git a/sftp_provider_impl.h b/sftp_provider_impl.h
 new file mode 100644
-index 0000000..4b18e6e
+index 00000000..4b18e6ec
 --- /dev/null
 +++ b/sftp_provider_impl.h
 @@ -0,0 +1,73 @@
@@ -375,5 +375,5 @@ index 0000000..4b18e6e
 +
 +#endif /* _SFTP_PROVIDER_IMPL_H */
 -- 
-2.5.4 (Apple Git-61)
+2.11.0
 

@@ -1,7 +1,7 @@
-From a0027fbda837126e12d04098019a133ea83a9b75 Mon Sep 17 00:00:00 2001
+From cb6c8f4391f75983553dc576014ab58695eee3eb Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Tue, 22 Dec 2015 17:12:50 -0800
-Subject: [PATCH 19/34] Per-session xauthfile
+Subject: [PATCH 18/34] Per-session xauthfile
 
 This patch is to fix a X11 connection failure when a user's home directory
 is read-only.
@@ -16,7 +16,7 @@ will remove this patch when we upgrade to that release.
  2 files changed, 137 insertions(+), 4 deletions(-)
 
 diff --git a/session.c b/session.c
-index 87fddfc..36f8c62 100644
+index a08aa69d..9586901e 100644
 --- a/session.c
 +++ b/session.c
 @@ -63,6 +63,10 @@
@@ -30,7 +30,7 @@ index 87fddfc..36f8c62 100644
  #include "openbsd-compat/sys-queue.h"
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -133,6 +137,11 @@ static void do_authenticated2(Authctxt *);
+@@ -131,6 +135,11 @@ static void do_authenticated2(Authctxt *);
  
  static int session_pty_req(Session *);
  
@@ -42,7 +42,7 @@ index 87fddfc..36f8c62 100644
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1242,6 +1251,11 @@ do_setup_env(Session *s, const char *shell)
+@@ -1056,6 +1065,11 @@ do_setup_env(Session *s, const char *shell)
  	if (getenv("TZ"))
  		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
  
@@ -52,9 +52,9 @@ index 87fddfc..36f8c62 100644
 +#endif
 +
  	/* Set custom environment options from RSA authentication. */
- 	if (!options.use_login) {
- 		while (custom_environment) {
-@@ -2189,6 +2203,11 @@ session_x11_req(Session *s)
+ 	while (custom_environment) {
+ 		struct envstring *ce = custom_environment;
+@@ -1958,6 +1972,11 @@ session_x11_req(Session *s)
  {
  	int success;
  
@@ -66,7 +66,7 @@ index 87fddfc..36f8c62 100644
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -2200,19 +2219,78 @@ session_x11_req(Session *s)
+@@ -1969,19 +1988,78 @@ session_x11_req(Session *s)
  	s->screen = packet_get_int();
  	packet_check_eom();
  
@@ -149,7 +149,7 @@ index 87fddfc..36f8c62 100644
  	return success;
  }
  
-@@ -2403,6 +2481,51 @@ session_pty_cleanup(Session *s)
+@@ -2170,6 +2248,51 @@ session_pty_cleanup(Session *s)
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -201,7 +201,7 @@ index 87fddfc..36f8c62 100644
  static char *
  sig2name(int sig)
  {
-@@ -2542,6 +2665,9 @@ session_close(Session *s)
+@@ -2310,6 +2433,9 @@ session_close(Session *s)
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -211,7 +211,7 @@ index 87fddfc..36f8c62 100644
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2793,6 +2919,10 @@ do_cleanup(Authctxt *authctxt)
+@@ -2556,6 +2682,10 @@ do_cleanup(Authctxt *authctxt)
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  
@@ -223,7 +223,7 @@ index 87fddfc..36f8c62 100644
  	 * Cleanup ptys/utmp only if privsep is disabled,
  	 * or if running in monitor.
 diff --git a/session.h b/session.h
-index 6a2f35e..276cd04 100644
+index 98e1dafe..f211c19c 100644
 --- a/session.h
 +++ b/session.h
 @@ -49,6 +49,9 @@ struct Session {
@@ -235,7 +235,7 @@ index 6a2f35e..276cd04 100644
 +#endif
  	int	single_connection;
  
- 	/* proto 2 */
+ 	int	chanid;
 -- 
-2.5.4 (Apple Git-61)
+2.11.0
 
