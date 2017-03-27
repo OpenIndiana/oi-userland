@@ -1,0 +1,35 @@
+From dcab145718a37cf94787e62a40036f612ebfdee5 Mon Sep 17 00:00:00 2001
+From: Robert Ancell <robert.ancell@canonical.com>
+Date: Tue, 14 Jun 2016 15:09:51 +1200
+Subject: [PATCH] yelp.m4: Use relative symlinks for media files
+
+Previously absolute symlinks would be used which made the installed files not
+relocatable.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=767630
+---
+ tools/yelp.m4 | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/tools/yelp.m4 b/tools/yelp.m4
+index 5db847f..709c48e 100644
+--- a/tools/yelp.m4
++++ b/tools/yelp.m4
+@@ -180,7 +180,13 @@ install-help: $(_HELP_LC_FILES)
+ 	    elif test "x$$lc" != "xC"; then \
+ 	      if test "x$(YELP_LC_MEDIA_LINKS)" != "x"; then \
+ 	        echo "$(LN_S) -f $(HELP_DIR)/C/$(HELP_ID)/$$f $$helpdir$$f"; \
+-	        $(LN_S) -f "$(HELP_DIR)/C/$(HELP_ID)/$$f" "$$helpdir$$f" || exit 1; \
++	        dname="$$f"; \
++	        pars="../"; \
++	        while test "$$dname" != "." -a "$$dname" != "/"; do \
++	          pars="../$$pars"; \
++	          dname=$$(dirname "$$dname"); \
++	        done; \
++	        $(LN_S) -f $$pars"C/$(HELP_ID)/$$f" "$$helpdir$$f" || exit 1; \
+ 	      fi; \
+ 	    fi; \
+ 	  done; \
+-- 
+2.8.1
+
