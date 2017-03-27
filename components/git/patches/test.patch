@@ -1,7 +1,4 @@
-A couple of tests need patching:
-
-  - There's a garbled sed command in the clone tests, which works for GNU
-    sed, but not for Solaris.
+One of the tests need patching:
 
   - Because we're doing the build in a symlink farm, one of the diff tests
     thinks that we're changing the type of the files from symlink to file,
@@ -9,19 +6,8 @@ A couple of tests need patching:
     the working directory vs the repo directory, we just cat the files as
     real files into place.
 
-The first patch is probably fine for upstream; the latter perhaps less so.
+Unclear whether this patch should be sent upstream.
 
---- git-2.4.5/t/t5601-clone.sh	Thu Jun 25 12:15:40 2015
-+++ git-2.4.5/t/t5601-clone.sh	Thu Jul  2 12:35:08 2015
-@@ -445,7 +445,7 @@
- #IPv6
- for tuah in ::1 [::1] [::1]: user@::1 user@[::1] user@[::1]: [user@::1] [user@::1]:
- do
--	ehost=$(echo $tuah | sed -e "s/1]:/1]/ "| tr -d "[]")
-+	ehost=$(echo $tuah | sed -e "s/1]:/1]/" | tr -d "[]")
- 	test_expect_success "clone ssh://$tuah/home/user/repo" "
- 	  test_clone_url ssh://$tuah/home/user/repo $ehost /home/user/repo
- 	"
 --- git-2.4.5/t/t4018-diff-funcname.sh	Thu Jun 25 12:15:40 2015
 +++ git-2.4.5/t/t4018-diff-funcname.sh	Thu Jul  2 14:11:09 2015
 @@ -79,8 +79,11 @@
@@ -69,34 +55,3 @@ specific to running the tests in an external framework.
  	$(MAKE) clean
 
 
-This is a Solaris-specific patch that turns on GnuPG in the tests, which it
-wouldn't otherwise because we don't deliver GnuPG in its usual path.
-
---- git-2.7.4/t/lib-gpg.sh	Thu Mar 17 13:47:59 2016
-+++ git-2.7.4/t/lib-gpg.sh	Tue Mar 22 14:40:59 2016
-@@ -1,5 +1,9 @@
- #!/bin/sh
- 
-+gpg() {
-+	gpg2 "$@"
-+}
-+
- gpg_version=$(gpg --version 2>&1)
- if test $? = 127; then
- 	say "You do not seem to have gpg installed"
-
-
-This allows Apache 2.4 to load on Solaris.
-
---- git-2.7.4/t/lib-httpd/apache.conf	Thu Mar 17 13:47:59 2016
-+++ git-2.7.4/t/lib-httpd/apache.conf	Tue Mar 22 15:15:56 2016
-@@ -64,6 +64,9 @@
- <IfModule !mod_mpm_prefork.c>
- 	LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
- </IfModule>
-+<IfModule !mod_unixd.c>
-+	LoadModule unixd_module modules/mod_unixd.so
-+</IfModule>
- </IfVersion>
- 
- PassEnv GIT_VALGRIND

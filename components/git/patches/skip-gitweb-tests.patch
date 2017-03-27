@@ -1,0 +1,24 @@
+The various git gitweb tests require that the perl Time::HiRes and
+HTML::Entities modules be present in order for the tests to work.
+If they aren't located, then the tests should be skipped.
+
+The check for Time::HiRes is already present in gitweb-lib.sh post 2.12.0,
+but the other check has been sent upstream.
+
+--- git-2.12.0/t/gitweb-lib.sh.orig	2017-03-20 12:16:52.497642511 +0000
++++ git-2.12.0/t/gitweb-lib.sh	2017-03-20 12:15:20.396763506 +0000
+@@ -114,4 +114,14 @@
+ 	test_done
+ }
+ 
++perl -mTime::HiRes -e 0 >/dev/null 2>&1 || {
++	skip_all='skipping gitweb tests, Time::HiRes module not available'
++	test_done
++}
++
++perl -mHTML::Entities -e 0 >/dev/null 2>&1 || {
++        skip_all='skipping gitweb tests, HTML::Entities module not available'
++        test_done
++}
++
+ gitweb_init
