@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -16,6 +16,7 @@
 
 import ConfigParser
 import os
+import subprocess
 import sys
 import urllib2
 
@@ -25,21 +26,22 @@ import smf_include
 def start():
 
     # verify metadata service is reachable
-    try:
-        parser = ConfigParser.ConfigParser()
-        parser.read('/etc/cloudbase-init.conf')
-        if parser.has_option('DEFAULT', 'metadata_base_url'):
-            url = parser.get('DEFAULT', 'metadata_base_url')
-        else:
-            url = 'http://169.254.169.254'
-        open_url = urllib2.urlopen(url, timeout=20)
-    except Exception as err:
-        print >> sys.stderr, 'No response from %s: %s' % (url, err)
-        return smf_include.SMF_EXIT_ERR_FATAL
+    parser = ConfigParser.ConfigParser()
+    parser.read('/etc/cloudbase-init.conf')
+    if not parser.has_option('DEFAULT', 'config_drive'):
+        try:
+            if parser.has_option('DEFAULT', 'metadata_base_url'):
+                url = parser.get('DEFAULT', 'metadata_base_url')
+            else:
+                url = 'http://169.254.169.254'
+            open_url = urllib2.urlopen(url, timeout=20)
+        except Exception as err:
+            print >> sys.stderr, 'No response from %s: %s' % (url, err)
+            return smf_include.SMF_EXIT_ERR_FATAL
 
     # Initiate cloudbase-init service
-    cmd_str = "/usr/bin/cloudbase-init --debug"
-    smf_include.smf_subprocess(cmd_str)
+    cmd_str = "/usr/bin/cloudbase-init"
+    subprocess.call(cmd_str, stdout=sys.stdout, stderr=sys.stderr)
 
 if __name__ == "__main__":
     os.putenv("LC_ALL", "C")

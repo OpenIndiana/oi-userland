@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <!--
- Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License"); you may
  not use this file except in compliance with the License. You may obtain
@@ -30,25 +30,43 @@
       <service_fmri value='svc:/milestone/network:default' />
     </dependency>
 
-    <logfile_attributes permissions='600'/>
-
-    <exec_method timeout_seconds="0" type="method" name="start"
-      exec="/lib/svc/method/cloudbase-init %m">
-    </exec_method>
-    <exec_method timeout_seconds="30" type="method" name="stop"
-      exec=":kill"/>
-
-    <property_group name='startd' type='framework'>
-      <propval name='duration' type='astring' value='transient' />
-    </property_group>
-    
     <instance name='default' enabled='true'>
+      <logfile_attributes permissions='600'/>
+
+      <exec_method timeout_seconds="0" type="method" name="start"
+        exec="/lib/svc/method/cloudbase-init %m">
+      </exec_method>
+
+      <!-- This is a transient service, so nothing to stop -->
+      <exec_method timeout_seconds="0" type="method" name="stop"
+        exec=":true"/>
+
+      <property_group name='startd' type='framework'>
+        <propval name='duration' type='astring' value='transient' />
+      </property_group>
+    
       <!-- to start/stop/refresh the service -->
       <property_group name='general' type='framework'>
         <propval name='action_authorization' type='astring'
                  value='solaris.smf.manage.cloudbase-init' />
         <propval name='value_authorization' type='astring'
                  value='solaris.smf.value.cloudbase-init' />
+      </property_group>
+
+      <property_group name='cloudbase_stencil' type='configfile'>
+        <propval name='path' type='astring'
+	  value='/etc/cloudbase-init.conf' />
+        <propval name='stencil' type='astring'
+	  value='cloudbase-init.stencil' />
+        <propval name='mode' type='astring' value='0444' />
+        <propval name='owner' type='astring' value='root' />
+        <propval name='group' type='astring' value='bin' />
+      </property_group>
+
+      <property_group name='config' type='application' >
+        <propval name='plugins' type='astring'
+          value='cloudbaseinit.plugins.common.userdata.UserDataPlugin' />
+        <propval name='debug' type='boolean' value='false' />
       </property_group>
     </instance>
 
