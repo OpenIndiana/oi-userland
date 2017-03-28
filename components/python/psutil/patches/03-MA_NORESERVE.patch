@@ -1,0 +1,19 @@
+The MA_RESERVED1 macro never had any meaning, and it's gone as of S12 build 121
+as part of PSARC/2017/031.  In conversation with the upstream author, the
+"R" designator can also go away.  The pull request is available at
+
+    https://github.com/giampaolo/psutil/pull/1003
+
+--- psutil-1.2.1/psutil/_psutil_sunos.c	2017-03-28 10:14:25.150344244 -0700
++++ psutil-1.2.1/psutil/_psutil_sunos.c	2017-03-28 11:25:20.578369853 -0700
+@@ -609,9 +609,7 @@
+         sprintf(perms, "%c%c%c%c%c%c", p->pr_mflags & MA_READ ? 'r' : '-',
+                                        p->pr_mflags & MA_WRITE ? 'w' : '-',
+                                        p->pr_mflags & MA_EXEC ? 'x' : '-',
+-                                       p->pr_mflags & MA_SHARED ? 's' : '-',
+-                                       p->pr_mflags & MA_NORESERVE ? 'R' : '-',
+-                                       p->pr_mflags & MA_RESERVED1 ? '*' : ' ');
++                                       p->pr_mflags & MA_SHARED ? 's' : '-');
+ 
+         // name
+         if (strlen(p->pr_mapname) > 0) {
