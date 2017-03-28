@@ -49,8 +49,7 @@ include $(WS_MAKE_RULES)/gnome-component.mk
 # Requires a reconf due to patch to configure.ac.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
-# Requires gtk-doc >= 1.20, enable after that's available on build machines
-# CONFIGURE_OPTIONS += --enable-gtk-doc
+CONFIGURE_OPTIONS += --enable-gtk-doc
 
 # Required for other components.
 CONFIGURE_OPTIONS += --enable-introspection
@@ -106,6 +105,7 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/ERROR/p" '
 
 # Requires >= 2.69 autoconf
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/libtiff
