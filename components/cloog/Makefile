@@ -27,15 +27,15 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cloog
-COMPONENT_VERSION=	0.18.3
+COMPONENT_VERSION=	0.18.4
 COMPONENT_PROJECT_URL=	http://www.cloog.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:460c6c740acb8cdfbfbb387156b627cf731b3837605f2ec0001d079d89c69734
+    sha256:325adf3710ce2229b7eeb9e84d3b539556d093ae860027185e7af8a8b00a750e
 COMPONENT_ARCHIVE_URL=	http://www.bastoul.net/cloog/pages/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/cloog
+COMPONENT_BUGDB=	utility/gnu-compiler
 COMPONENT_ANITYA_ID=	13279
 
-TPNO=			23800
+TPNO=			33342
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -67,7 +67,7 @@ CFLAGS += $(CLOOG_GCC_ARCH)
 CFLAGS += -Wall -Wextra -Wcast-qual -Wcast-align
 
 CXXFLAGS = $(CC_BITS)
-CXXFLAGS += -O2 -std=c++03
+CXXFLAGS += -O2
 CXXFLAGS += $(CPP_XPG5MODE)
 CXXFLAGS += $(CLOOG_GCC_ARCH)
 CXXFLAGS += -Wall -Wextra -Wcast-qual -Wcast-align
@@ -146,5 +146,5 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "s/copied [0-9]\{1,\}\./copied/g"'
 
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/isl
+REQUIRED_PACKAGES += library/mpfr
