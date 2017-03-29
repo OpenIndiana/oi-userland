@@ -1,0 +1,15 @@
+Patch origin: in-house
+Patch status: submitted to community
+
+https://bz.apache.org/bugzilla/show_bug.cgi?id=59615
+
+--- modules/ssl/mod_ssl.c
++++ modules/ssl/mod_ssl.c
+@@ -353,6 +353,7 @@
+     OPENSSL_load_builtin_modules();
+
+     if (OBJ_txt2nid("id-on-dnsSRV") == NID_undef) {
++        ERR_clear_error();
+         (void)OBJ_create("1.3.6.1.5.5.7.8.7", "id-on-dnsSRV",
+                          "SRVName otherName form");
+     }
