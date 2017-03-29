@@ -103,7 +103,7 @@ CONFIGURE_OPTIONS +=	--disable-rpath
 CONFIGURE_OPTIONS +=	--with-system-zlib
 CONFIGURE_OPTIONS +=	--with-build-config=no
 CONFIGURE_OPTIONS +=	--with-gmp-include=$(shell pkg-config --variable=includedir libgmp)
-CONFIGURE_OPTIONS +=	--with-mpfr-include=$(USRINCDIR)/mpfr
+CONFIGURE_OPTIONS +=	--with-mpfr-include=$(shell pkg-config --variable=includedir libmpfr)
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=$(USRBINDIR)/ld
 CONFIGURE_OPTIONS +=	--with-gnu-as --with-as=$(GNUBIN)/as
 

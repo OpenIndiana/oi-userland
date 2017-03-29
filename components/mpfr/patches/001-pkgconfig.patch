@@ -1,0 +1,49 @@
+#
+# Add pkgconfig files for those inclined to use it during a build.
+#
+diff -ruN mpfr-3.1.5.orig/src/libmpfr.in mpfr-3.1.5/src/libmpfr.in
+--- mpfr-3.1.5.orig/src/libmpfr.in	1969-12-31 18:00:00.000000000 +0000
++++ mpfr-3.1.5/src/libmpfr.in	2017-01-06 09:02:02.453145624 +0000
+@@ -0,0 +1,13 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++sharedlibdir=@sharedlibdir@
++includedir=@includedir@
++
++Name: libmpfr
++Description: The GNU Multiple Precision Rounding Floating-Point Library
++Version: @VERSION@
++
++Requires:
++Libs: -L${libdir} -lmpfr
++Cflags: -I${includedir}
+diff -ruN mpfr-3.1.5.orig/src/Makefile.am mpfr-3.1.5/src/Makefile.am
+--- mpfr-3.1.5.orig/src/Makefile.am	2016-09-27 02:58:15.000000000 +0000
++++ mpfr-3.1.5/src/Makefile.am	2017-01-06 08:59:33.926877494 +0000
+@@ -91,3 +91,25 @@
+ # and "make clean" shouldn't remove it, just like it doesn't remove
+ # what has been changed by "patch".
+ #CLEANFILES = get_patches.c
++
++## pkg-config
++pkgconfigdir = $(libdir)/pkgconfig
++pkgconfig_DATA = libmpfr.pc
++EXTRA_DIR = libmpfr.in
++
++pc_verbose = $(pc_verbose_@AM_V@)
++pc_verbose_ = $(pc_verbose_@AM_DEFAULT_V@)
++pc_verbose_0 = @echo "  PC      " $@;
++
++SUFFIXES = .in.pc
++
++.in.pc:
++	$(AM_V_at)rm -f $@
++	$(pc_verbose)sed \
++		-e 's,@prefix[@],$(prefix),g' \
++		-e 's,@exec_prefix[@],$(exec_prefix),g' \
++		-e 's,@libdir[@],$(libdir),g' \
++		-e 's,@includedir[@],$(includedir),g' \
++		-e 's,@VERSION[@],$(VERSION),g' \
++		< $< > $@ || { rm -f $@; exit 1; }
++

@@ -22,60 +22,70 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER=	gcc
 include ../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      2.4.2
+COMPONENT_VERSION=      3.1.5
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:246d7e184048b1fc48d3696dd302c9774e24e921204221540745e5464022b637
+    sha256:f4eb5070883aee3fd8b927751ea63ff95aebe24418cde852439ce74c3dd2513c
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libmpfr
 COMPONENT_ANITYA_ID=	2019
 
-TPNO=			17709
+TPNO=			33316
+TPNO_2.4.2=		17709
+
+COMPONENT_VERSION_1=      2.4.2
+COMPONENT_SRC_1=          $(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
+COMPONENT_ARCHIVE_1=      $(COMPONENT_SRC_1).tar.gz
+COMPONENT_ARCHIVE_HASH_1= \
+    sha256:246d7e184048b1fc48d3696dd302c9774e24e921204221540745e5464022b637
+COMPONENT_ARCHIVE_URL_1=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE_1)
+
 
 include $(WS_MAKE_RULES)/common.mk
 
-CLEAN_PATHS += libmpfr.pc
-PATCH_LEVEL = 0
+# When gmp.h is installed in the default path, this can be removed.
+CFLAGS +=	$(shell pkg-config --cflags libgmp)
+LINT_FLAGS +=	$(shell pkg-config --cflags libgmp)
 
-CFLAGS += -features=extinl,extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
-# -xthreadvar=%all: allow thread-local storage via __thread
-#  qualifier for all types of variables (global, static and dynamic)
-CFLAGS += -xthreadvar=%all -mt $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
-CFLAGS += $(studio_PIC)
-LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
+# Macros to configure, build, and install the old version so we can contiune
+# to deliver runtime support for GCC until a newer build of GCC built against
+# the new GNU MPFR is part of the CBE.  Once the newer GCC packages are 
+# on the build systems, we can stop building and delivering the old version.
+BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
+BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
 
-MPN32_i386 = x86/pentium x86 generic
-MPN64_i386 = x86_64/pentium4 x86_64 generic
-MPN32_sparc = sparc32/v9 sparc32 generic
-MPN64_sparc = sparc64 generic
-MPN32 = $(MPN32_$(MACH))
-MPN64 = $(MPN64_$(MACH))
+$(BUILD_OLD_DIR_32)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
+$(BUILD_OLD_DIR_64)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
+$(BUILD_OLD_DIR_32)/.configured:        BITS=32
+$(BUILD_OLD_DIR_64)/.configured:        BITS=64
+# GNU MP removed their workaround for pre-ANSI C compilers that didn't support
+# 'const' in GMP 5.1 MPFR 2.4.2 still expects to find the workaround.
+$(BUILD_OLD_DIR_32)/.configured:        CFLAGS += -D__gmp_const=const
+$(BUILD_OLD_DIR_64)/.configured:        CFLAGS += -D__gmp_const=const
 
-GMPINCDIR = $(USRINCDIR)/gmp
+CONFIGURE_32 += $(BUILD_OLD_DIR_32)/.configured
+CONFIGURE_64 += $(BUILD_OLD_DIR_64)/.configured
+
+BUILD_32 += $(BUILD_OLD_DIR_32)/.built
+BUILD_64 += $(BUILD_OLD_DIR_64)/.built
+
+INSTALL_32 += $(BUILD_OLD_DIR_32)/.installed
+INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
+
+# install the old version first
+$(BUILD_DIR_32)/.installed:     $(BUILD_OLD_DIR_32)/.installed
+$(BUILD_DIR_64)/.installed:     $(BUILD_OLD_DIR_64)/.installed
+#
+# End old version
+
 MPFRMULHIGH = 2048
 
-COMPONENT_TEST_TRANSFORMS += \
-     '-e "/libtool/d"' \
-     '-e "/-m32/d"' \
-     '-e "/-m64/d"' \
-     '-e "/DEPDIR=/d"' \
-     '-e "s/^make\[[0-9]\{1,\}\]/make/g"'
-
-CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
-CONFIGURE_ENV += INSTALL="$(INSTALL)"
-CONFIGURE_ENV += SED="$(GSED)"
-CONFIGURE_ENV += ABI="$(BITS)"
-CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
-
-CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/mpfr
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
@@ -86,30 +96,24 @@ CONFIGURE_OPTIONS += --with-gmp-include=$(shell pkg-config --variable=includedir
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
 
-LINT_FLAGS += -I$(GMPINCDIR)
+COMPONENT_PREP_ACTION = (cd $(@D) ; $(AUTORECONF) -fiv)
 
-PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDOCDIR)/mpfr/html
+# so lint can find the header
+LINT_FLAGS += -I$(SOURCE_DIR)/src
 
-COMPONENT_POST_INSTALL_ACTION = \
-    ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
-      $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
-      $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
-      $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
-      $(GSED) -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" \
-	$(PROTOUSRINCDIR)/mpfr/mpfr.h > \
-	$(PROTOUSRINCDIR)/mpfr/mpfr.h.sed ; \
-      $(CP) -fp $(PROTOUSRINCDIR)/mpfr/mpfr.h.sed \
-	$(PROTOUSRINCDIR)/mpfr/mpfr.h ; \
-      $(RM) -f $(PROTOUSRINCDIR)/mpfr/mpfr.h.sed ; \
-      $(GSED) -e "s/MACH64/$(MACH64)/g" \
-	$(COMPONENT_DIR)/Solaris/libmpfr-64.pc > $(COMPONENT_DIR)/libmpfr.pc ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
-	$(PROTOUSRSHAREHTMLDIR)/ ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.pc \
-	$(PROTOPKGCONFIGDIR) ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/libmpfr.pc \
-	$(PROTOPKGCONFIGDIR64) ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.3 \
-	$(PROTOUSRSHAREMAN3DIR)/ )
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/^make\[[0-9]\{1,\}\]/make/g"' \
+	'-e "s/.*MPFR tuning.*//g"' \
+	'-n ' \
+	'-e "/make:.*directory/p" ' \
+	'-e "/Testsuite /p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/ERROR/p" ' \
+	'-e "/=====/p" ' \
+	'-e "/TOTAL/p" '
 
 REQUIRED_PACKAGES += library/gmp
