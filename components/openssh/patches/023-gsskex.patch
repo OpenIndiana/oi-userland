@@ -788,27 +788,29 @@ diff -pur old/monitor.c new/monitor.c
  		kex->load_host_public_key=&get_hostkey_public_by_type;
  		kex->load_host_private_key=&get_hostkey_private_by_type;
  		kex->host_key_index=&get_hostkey_index;
-@@ -1745,6 +1767,9 @@ mm_answer_gss_setup_ctx(int sock, Buffer
- 	if (!options.gss_authentication)
- 		fatal("%s: GSSAPI authentication not enabled", __func__);
+@@ -1742,8 +1764,8 @@ mm_answer_gss_setup_ctx(int sock, Buffer
+ 	OM_uint32 major;
+ 	u_int len;
  
+-	if (!options.gss_authentication)
+-		fatal("%s: GSSAPI authentication not enabled", __func__);
 +	if (!options.gss_authentication && !options.gss_keyex)
 +		fatal("In GSSAPI monitor when GSSAPI is disabled");
-+
+ 
  	goid.elements = buffer_get_string(m, &len);
  	goid.length = len;
+@@ -1772,8 +1794,8 @@ mm_answer_gss_accept_ctx(int sock, Buffe
+ 	OM_uint32 flags = 0; /* GSI needs this */
+ 	u_int len;
  
-@@ -1775,6 +1800,9 @@ mm_answer_gss_accept_ctx(int sock, Buffe
- 	if (!options.gss_authentication)
- 		fatal("%s: GSSAPI authentication not enabled", __func__);
- 
+-	if (!options.gss_authentication)
+-		fatal("%s: GSSAPI authentication not enabled", __func__);
 +	if (!options.gss_authentication && !options.gss_keyex)
 +		fatal("In GSSAPI monitor when GSSAPI is disabled");
-+
+ 
  	in.value = buffer_get_string(m, &len);
  	in.length = len;
- 	major = ssh_gssapi_accept_ctx(gsscontext, &in, &out, &flags);
-@@ -1792,6 +1820,7 @@ mm_answer_gss_accept_ctx(int sock, Buffe
+@@ -1792,6 +1814,7 @@ mm_answer_gss_accept_ctx(int sock, Buffe
  		monitor_permit(mon_dispatch, MONITOR_REQ_GSSSTEP, 0);
  		monitor_permit(mon_dispatch, MONITOR_REQ_GSSUSEROK, 1);
  		monitor_permit(mon_dispatch, MONITOR_REQ_GSSCHECKMIC, 1);
@@ -816,27 +818,29 @@ diff -pur old/monitor.c new/monitor.c
  	}
  	return (0);
  }
-@@ -1806,6 +1835,9 @@ mm_answer_gss_checkmic(int sock, Buffer
- 	if (!options.gss_authentication)
- 		fatal("%s: GSSAPI authentication not enabled", __func__);
+@@ -1803,8 +1826,8 @@ mm_answer_gss_checkmic(int sock, Buffer
+ 	OM_uint32 ret;
+ 	u_int len;
  
+-	if (!options.gss_authentication)
+-		fatal("%s: GSSAPI authentication not enabled", __func__);
 +	if (!options.gss_authentication && !options.gss_keyex)
 +		fatal("In GSSAPI monitor when GSSAPI is disabled");
-+
+ 
  	gssbuf.value = buffer_get_string(m, &len);
  	gssbuf.length = len;
- 	mic.value = buffer_get_string(m, &len);
-@@ -1835,6 +1867,9 @@ mm_answer_gss_userok(int sock, Buffer *m
- 	if (!options.gss_authentication)
- 		fatal("%s: GSSAPI authentication not enabled", __func__);
+@@ -1832,8 +1855,8 @@ mm_answer_gss_userok(int sock, Buffer *m
+ {
+ 	int authenticated;
  
+-	if (!options.gss_authentication)
+-		fatal("%s: GSSAPI authentication not enabled", __func__);
 +	if (!options.gss_authentication && !options.gss_keyex)
 +		fatal("In GSSAPI monitor when GSSAPI is disabled");
-+
+ 
  	authenticated = authctxt->valid && ssh_gssapi_userok(authctxt->user);
  
- 	buffer_clear(m);
-@@ -1848,5 +1883,47 @@ mm_answer_gss_userok(int sock, Buffer *m
+@@ -1848,5 +1871,47 @@ mm_answer_gss_userok(int sock, Buffer *m
  	/* Monitor loop will terminate if authenticated */
  	return (authenticated);
  }
