@@ -15,17 +15,25 @@ can go away.
  # else /* SYS_WINNT */
  #  define	CONFIG_FILE	"%windir%\\system32\\drivers\\etc\\ntp.conf"
  #  define	ALT_CONFIG_FILE "%windir%\\ntp.conf"
---- libntp/audio.c.orig	Thu May 14 06:34:41 2009
-+++ libntp/audio.c	Thu May 14 06:15:12 2009
-@@ -53,7 +53,7 @@
- static struct audio_device device; /* audio device ident */
- #endif /* HAVE_SYS_AUDIOIO_H */
- #ifdef PCM_STYLE_SOUND
--# define INIT_FILE "/etc/ntp.audio"
-+# define INIT_FILE "/etc/inet/ntp.audio"
- int agc =	SOUND_MIXER_WRITE_RECLEV; /* or IGAIN or LINE */
- int monitor =	SOUND_MIXER_WRITE_VOLUME; /* or OGAIN */
- int devmask = 0;
+*** libntp/audio.c
+--- libntp/audio.c
+*************** typedef int ioctl_arg_T;
+*** 66,72 ****
+  static struct audio_device device; /* audio device ident */
+  #endif /* HAVE_SYS_AUDIOIO_H */
+  #ifdef PCM_STYLE_SOUND
+! # define INIT_FILE "/etc/ntp.audio"
+  
+  static ioctl_arg_T agc		= SOUND_MIXER_WRITE_RECLEV; /* or IGAIN or LINE */
+  static ioctl_arg_T audiomonitor	= SOUND_MIXER_WRITE_VOLUME; /* or OGAIN */
+--- 66,72 ----
+  static struct audio_device device; /* audio device ident */
+  #endif /* HAVE_SYS_AUDIOIO_H */
+  #ifdef PCM_STYLE_SOUND
+! # define INIT_FILE "/etc/inet/ntp.audio"
+  
+  static ioctl_arg_T agc		= SOUND_MIXER_WRITE_RECLEV; /* or IGAIN or LINE */
+  static ioctl_arg_T audiomonitor	= SOUND_MIXER_WRITE_VOLUME; /* or OGAIN */
 --- ntpdate/ntpdate.c.orig	Thu May 14 06:34:41 2009
 +++ ntpdate/ntpdate.c	Thu May 14 06:15:12 2009
 @@ -179,7 +179,7 @@
