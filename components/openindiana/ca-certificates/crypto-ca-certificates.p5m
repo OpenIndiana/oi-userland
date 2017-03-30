@@ -38,6 +38,9 @@ license nss.license license='MPLv2.0'
 
 <transform file path=etc/certs/CA/.* -> default group sys>
 
+# We want to call svc:/system/ca-certificates everytime we modify /etc/certs/CA somehow
+<transform file path=etc/certs/CA/.* -> add refresh_fmri "svc:/system/ca-certificates:default">
+
 <include openssl-0.9.8-compat-links.inc>
 
 depend type=require fmri=pkg:/system/ca-certificates
