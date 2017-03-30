@@ -18,10 +18,19 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-PATH=/usr/bin:/usr/gnu/bin
+# These symbols should be used in component Makefiles
+# whenever PATH is to be defined there:
+#     PATH = $(PATH.ill)
+#     PATH = $(PATH.gnu)
+PATH.ill=$(USRBINDIR):$(GNUBIN)
+PATH.gnu=$(GNUBIN):$(USRBINDIR)
+
+# Default PATH
+PATH = $(PATH.ill)
 
 # The location of an internal mirror of community source archives that we build
 # in this gate.  This mirror has been seeded to include "custom" source archives
