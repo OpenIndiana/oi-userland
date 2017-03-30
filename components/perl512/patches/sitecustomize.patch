@@ -1,0 +1,108 @@
+Compilation of modified debian patches against perl. Not suitable for sending to upstream.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=5f866b6b20ebe3fd691b16951d24c3d6ff1f0cc2
+
+Debian uses this sitecustomize.pl as a transition mechanism for removing the
+current working directory (".") from @INC by default while leaving the local
+administrator a temporary means of re-adding it back. This mechanism is
+expected to be removed after one Debian stable release.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=2568fbda3ecc0fb3927734f80acb8ca67f8a1b18
+
+This change allows the majority of Perl modules that cannot build/test/install
+without . in INC to be able to do so, while maintaining a safer perl under
+normal use.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=61c30d9b24c0b4e7f5ebccd9852f426beefe39cd
+
+This change allows the majority of Perl modules to build/test/install from the
+cpan client without having to modify them.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=2f664e07a5c050b0afce16e185356162e3cff149
+
+The intention is that sitecustomize.pl can be changed to remove '.' from @INC,
+and this might become the default in future, so ensure that this doesn't cause
+a build failure of perl. (This fixes perl test suite awaiting '.' in @iNC)
+
+--- perl-5.12.5/pod/perlrun.pod	2017-03-16 13:02:06.455341528 +0100
++++ perl-5.12.5/pod/perlrun.pod	2017-03-16 13:01:42.332009730 +0100
+@@ -474,6 +474,11 @@ blocks will be likewise executed very la
+ To determine at runtime if this capability has been compiled in your
+ perl, you can check the value of C<$Config{usesitecustomize}>.
+ 
++Note: on Solaris the system perl currently uses C</etc/perl/sitecustomize.pl>
++rather than C<$Config{sitelib}/sitecustomize.pl>. This may change in the future
++and is only provided as a temporary transition mechanism for removing the
++current working directory from C<@INC>.
++
+ =item B<-F>I<pattern>
+ X<-F>
+ 
+--- perl-5.12.5/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm	2017-03-16 13:02:55.230456796 +0100
++++ perl-5.12.5/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm	2017-03-16 13:02:44.212235386 +0100
+@@ -5,6 +5,11 @@ use strict;
+ 
+ BEGIN {require 5.006;}
+ 
++# Assure anything called from Makefile.PL is allowed to have . in @INC.
++BEGIN {
++    $ENV{PERL_USE_UNSAFE_INC} = 1;
++}
++
+ require Exporter;
+ use ExtUtils::MakeMaker::Config;
+ use Carp ();
+--- perl-5.12.5/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm	2017-03-16 13:03:57.275174925 +0100
++++ perl-5.12.5/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm	2017-03-16 13:03:45.547386666 +0100
+@@ -3426,7 +3426,7 @@ PERL_DL_NONLAZY set for tests.
+ 
+ sub test_via_harness {
+     my($self, $perl, $tests) = @_;
+-    return $self->SUPER::test_via_harness("PERL_DL_NONLAZY=1 $perl", $tests);
++    return $self->SUPER::test_via_harness("PERL_DL_NONLAZY=1 PERL_USE_UNSAFE_INC=1 $perl", $tests);
+ }
+ 
+ =item test_via_script (override)
+@@ -3437,7 +3437,7 @@ Again, the PERL_DL_NONLAZY thing.
+ 
+ sub test_via_script {
+     my($self, $perl, $script) = @_;
+-    return $self->SUPER::test_via_script("PERL_DL_NONLAZY=1 $perl", $script);
++    return $self->SUPER::test_via_script("PERL_DL_NONLAZY=1 PERL_USE_UNSAFE_INC=1 $perl", $script);
+ }
+ 
+ 
+--- perl-5.12.5/cpan/CPAN/scripts/cpan	2017-03-16 13:04:38.401778664 +0100
++++ perl-5.12.5/cpan/CPAN/scripts/cpan	2017-03-16 13:04:22.625978404 +0100
+@@ -2,6 +2,11 @@
+ use strict;
+ use vars qw($VERSION);
+ 
++BEGIN {
++	# make sure we can install any modules from CPAN without patching them
++	$ENV{PERL_USE_UNSAFE_INC} = 1;
++}
++
+ use App::Cpan;
+ $VERSION = '1.57';
+ 
+--- perl-5.12.5/perl.c	2017-03-16 13:09:18.742227128 +0100
++++ perl-5.12.5/perl.c	2017-03-16 13:09:01.197391811 +0100
+@@ -1965,7 +1965,7 @@ S_parse_body(pTHX_ char **env, XSINIT_t 
+ 	const char *const sitelib = SITELIB_EXP;
+ 	(void)Perl_av_create_and_unshift_one(aTHX_ &PL_preambleav,
+ 					     Perl_newSVpvf(aTHX_
+-							   "BEGIN { do {local $!; -f '%s/sitecustomize.pl'} && do '%s/sitecustomize.pl' }", sitelib, sitelib));
++							   "BEGIN { do {local $!; -f '%s/sitecustomize.pl'} && do '%s/sitecustomize.pl' }", "/etc/perl", "/etc/perl"));
+     }
+ #endif
+ 
+@@ -2821,7 +2821,7 @@ S_usage(pTHX_ const char *name)		/* XXX 
+ "-D[number/list]   set debugging flags (argument is a bit mask or alphabets)",
+ "-e program        one line of program (several -e's allowed, omit programfile)",
+ "-E program        like -e, but enables all optional features",
+-"-f                don't do $sitelib/sitecustomize.pl at startup",
++"-f                don't do /etc/perl/sitecustomize.pl at startup",
+ "-F/pattern/       split() pattern for -a switch (//'s are optional)",
+ "-i[extension]     edit <> files in place (makes backup if extension supplied)",
+ "-Idirectory       specify @INC/#include directory (several -I's allowed)",

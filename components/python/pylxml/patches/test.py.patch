@@ -1,0 +1,22 @@
+Ignores syntax error in $(SOURCE_DIR)/src/lxml/lxml.etree.pyx.
+
+We need to see if this patch is still needed with the very latest version
+of pylxml, and if so, send it upstream.
+
+--- lxml-3.6.4/test.py_orig	2017-01-11 14:03:08.523061540 +0000
++++ lxml-3.6.4/test.py	2017-01-11 14:03:27.417867156 +0000
+@@ -606,14 +606,6 @@
+             walker = os.path.walk
+         walker(os.path.abspath(cfg.basedir), add_file, None)
+ 
+-        try:
+-            cov.xml_report(modules, outfile='coverage.xml')
+-            if cfg.coverdir:
+-                cov.html_report(modules, directory=cfg.coverdir)
+-        finally:
+-            # test runs can take a while, so at least try to print something
+-            cov.report()
+-
+     # That's all
+     if success:
+         return 0

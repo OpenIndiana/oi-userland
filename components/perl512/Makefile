@@ -97,6 +97,7 @@ CONFIGURE_OPTIONS = \
 			    -Dcf_by="perl-bugs" \
 			    -Dmyhostname="localhost" \
 			    -Dmksymlinks \
+			    -Dusesitecustomize \
 			    -O \
 			    -de
 

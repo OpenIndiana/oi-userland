@@ -1,0 +1,140 @@
+Compilation of modified debian patches against perl. Not suitable for sending to upstream.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=5f866b6b20ebe3fd691b16951d24c3d6ff1f0cc2
+
+Debian uses this sitecustomize.pl as a transition mechanism for removing the
+current working directory (".") from @INC by default while leaving the local
+administrator a temporary means of re-adding it back. This mechanism is
+expected to be removed after one Debian stable release.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=2568fbda3ecc0fb3927734f80acb8ca67f8a1b18
+
+This change allows the majority of Perl modules that cannot build/test/install
+without . in INC to be able to do so, while maintaining a safer perl under
+normal use.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=61c30d9b24c0b4e7f5ebccd9852f426beefe39cd
+
+This change allows the majority of Perl modules to build/test/install from the
+cpan client without having to modify them.
+
+https://anonscm.debian.org/cgit/perl/perl.git/commit/?id=2f664e07a5c050b0afce16e185356162e3cff149
+
+The intention is that sitecustomize.pl can be changed to remove '.' from @INC,
+and this might become the default in future, so ensure that this doesn't cause
+a build failure of perl. (This fixes perl test suite awaiting '.' in @iNC)
+
+--- perl-5.22.1/perl.c	2017-03-16 11:05:37.268288076 +0100
++++ perl-5.22.1/perl.c	2017-03-16 11:05:04.472864804 +0100
+@@ -2109,7 +2109,8 @@ S_parse_body(pTHX_ char **env, XSINIT_t 
+ 	}
+ #  else
+ 	/* SITELIB_EXP is a function call on Win32.  */
+-	const char *const raw_sitelib = SITELIB_EXP;
++        /* temporary transition mechanism for dropping "." from @INC */
++	const char *const raw_sitelib = "/etc/perl";
+ 	if (raw_sitelib) {
+ 	    /* process .../.. if PERL_RELOCATABLE_INC is defined */
+ 	    SV *sitelib_sv = mayberelocate(raw_sitelib, strlen(raw_sitelib),
+--- perl-5.22.1/pod/perlrun.pod	2017-03-16 11:07:56.237694759 +0100
++++ perl-5.22.1/pod/perlrun.pod	2017-03-16 11:07:30.936961423 +0100
+@@ -491,6 +491,11 @@ blocks will be likewise executed very la
+ To determine at runtime if this capability has been compiled in your
+ perl, you can check the value of C<$Config{usesitecustomize}>.
+ 
++Note: on Solaris the system perl currently uses C</etc/perl/sitecustomize.pl>
++rather than C<$Config{sitelib}/sitecustomize.pl>. This may change in the future
++and is only provided as a temporary transition mechanism for removing the
++current working directory from C<@INC>.
++
+ =item B<-F>I<pattern>
+ X<-F>
+ 
+--- perl-5.22.1/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm	2017-03-16 11:12:18.966578744 +0100
++++ perl-5.22.1/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm	2017-03-16 11:12:01.064073018 +0100
+@@ -5,6 +5,11 @@ use strict;
+ 
+ BEGIN {require 5.006;}
+ 
++# Assure anything called from Makefile.PL is allowed to have . in @INC.
++BEGIN {
++    $ENV{PERL_USE_UNSAFE_INC} = 1;
++}
++
+ require Exporter;
+ use ExtUtils::MakeMaker::Config;
+ use ExtUtils::MakeMaker::version; # ensure we always have our fake version.pm
+--- perl-5.22.1/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm	2017-03-16 11:13:25.721894552 +0100
++++ perl-5.22.1/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm	2017-03-16 11:13:08.607861893 +0100
+@@ -3553,7 +3553,7 @@ PERL_DL_NONLAZY set for tests.
+ 
+ sub test_via_harness {
+     my($self, $perl, $tests) = @_;
+-    return $self->SUPER::test_via_harness("PERL_DL_NONLAZY=1 $perl", $tests);
++    return $self->SUPER::test_via_harness("PERL_DL_NONLAZY=1 PERL_USE_UNSAFE_INC=1 $perl", $tests);
+ }
+ 
+ =item test_via_script (override)
+@@ -3564,7 +3564,7 @@ Again, the PERL_DL_NONLAZY thing.
+ 
+ sub test_via_script {
+     my($self, $perl, $script) = @_;
+-    return $self->SUPER::test_via_script("PERL_DL_NONLAZY=1 $perl", $script);
++    return $self->SUPER::test_via_script("PERL_DL_NONLAZY=1 PERL_USE_UNSAFE_INC=1 $perl", $script);
+ }
+ 
+ 
+--- perl-5.22.1/cpan/CPAN/scripts/cpan	2017-03-16 11:14:50.098675540 +0100
++++ perl-5.22.1/cpan/CPAN/scripts/cpan	2017-03-16 11:14:34.150806982 +0100
+@@ -3,6 +3,11 @@
+ use strict;
+ use vars qw($VERSION);
+ 
++BEGIN {
++	# make sure we can install any modules from CPAN without patching them
++	$ENV{PERL_USE_UNSAFE_INC} = 1;
++}
++
+ use App::Cpan '1.60_02';
+ $VERSION = '1.61';
+ 
+--- perl-5.22.1/t/run/runenv.t	2017-03-16 11:16:49.688662889 +0100
++++ perl-5.22.1/t/run/runenv.t	2017-03-16 11:16:30.967051321 +0100
+@@ -12,7 +12,7 @@ BEGIN {
+     skip_all_without_config('d_fork');
+ }
+ 
+-plan tests => 104;
++plan tests => 103;
+ 
+ my $STDOUT = tempfile();
+ my $STDERR = tempfile();
+@@ -285,8 +285,6 @@ is ($err, '', 'No errors when determinin
+ 
+ my @default_inc = split /\n/, $out;
+ 
+-is ($default_inc[-1], '.', '. is last in @INC');
+-
+ my $sep = $Config{path_sep};
+ foreach (['nothing', ''],
+ 	 ['something', 'zwapp', 'zwapp'],
+--- perl-5.22.1/t/porting/customized.dat	2017-03-16 12:12:50.949655917 +0100
++++ perl-5.22.1/t/porting/customized.dat	2017-03-16 12:12:24.087578329 +0100
+@@ -2,7 +2,7 @@ CPAN cpan/CPAN/lib/CPAN.pm ce62c43d72f10
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/Command/MM.pm 7f4dfd0fe884bd42412bcf04ca80ef97b39c1d54
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/Liblist.pm bef099988b15fb0b2a1f5ac48c01af1f7f36d329
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/Liblist/Kid.pm 8168e18f0e3ce3ece4bb7e7c72d57ec07c67c402
+-ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm 7115e97a53559cb3ec061dd6f7f344e522724c4a
++ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker.pm 6b691ba4edbb9832201ab21570d34ae4304e4613
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/Config.pm f8db8d4245bf0684b8210c811f50d7cfb1a27d78
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/FAQ.pod 757bffb47857521311f8f3bde43ebe165f8d5191
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MakeMaker/Locale.pm 82be06851deb84c6419ad003ce9b6d1957f395f3
+@@ -23,7 +23,7 @@ ExtUtils::MakeMaker cpan/ExtUtils-MakeMa
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_NW5.pm 433135eecb85b4b1d90d3027432f329436c78447
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_OS2.pm 1fbb5605bfb47feee4083feba8aa85e659628f70
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_QNX.pm 5b66d1f485a6034d96fc24ba1665b1bad9e447f1
+-ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm 8cef99a9bd370ecfd07ddb0efbdcbb4101255e45
++ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm fc2509f5d10e1046dd55b0dff0cafd19cb28157b
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_UWIN.pm 939572fde3d59ba77c2e677fe2df2bed4bed5898
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_VMS.pm 09c2049bfd25b735e2a5bcf56a6cff7b4827f9c8
+ ExtUtils::MakeMaker cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_VOS.pm d65d63f8217a55c36f62e249814988974f593c79

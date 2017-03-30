@@ -1,0 +1,57 @@
+gmake[1]: Entering directory '$(SOURCE_DIR)'
+/usr/bin/python3.4 setup.py  build_ext -i  --with-cython --warnings --with-coverage
+Using build configuration of libxslt 1.1.28
+Warning: Extension name 'lxml.etree' does not match fully qualified name 'lxml.lxml.etree' of 'src/lxml/lxml.etree.pyx'
+Warning: Extension name 'lxml.objectify' does not match fully qualified name 'lxml.lxml.objectify' of 'src/lxml/lxml.objectify.pyx'
+running build_ext
+/usr/lib/python3.4/vendor-packages/Cython/Distutils/old_build_ext.py:30: UserWarning: Cython.Distutils.old_build_ext does not properly handle dependencies and is deprecated.
+  "Cython.Distutils.old_build_ext does not properly handle dependencies "
+/usr/bin/python3.4 test.py -p -v   --coverage
+   1/1750 (  0.1%): txt (test_autolink)
+======================================================================
+ERROR: test_xmlschema_parse_fixed_attributes (lxml.tests.test_xmlschema.ETreeXMLSchemaTestCase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.4/unittest/case.py", line 58, in testPartExecutor
+    yield
+  File "/usr/lib/python3.4/unittest/case.py", line 580, in run
+    testMethod()
+  File "$(SOURCE_DIR)/src/lxml/tests/test_xmlschema.py", line 190, in test_xmlschema_parse_fixed_attributes
+    parser=parser)
+  File "$(SOURCE_DIR)/src/lxml/tests/common_imports.py", line 190, in parse
+    return etree.parse(f, parser=parser)
+  File "src/lxml/lxml.etree.pyx", line 3427, in lxml.etree.parse (src/lxml/lxml.etree.c:85852)
+    doc = _parseDocument(source, parser, base_url)
+  File "src/lxml/parser.pxi", line 1810, in lxml.etree._parseDocument (src/lxml/lxml.etree.c:125059)
+    return _parseMemoryDocument(source.getvalue(), url, parser)
+  File "src/lxml/parser.pxi", line 1830, in lxml.etree._parseMemoryDocument (src/lxml/lxml.etree.c:125345)
+    c_doc = _parseDoc(text, url, parser)
+  File "src/lxml/parser.pxi", line 1711, in lxml.etree._parseDoc (src/lxml/lxml.etree.c:123788)
+    return (<_BaseParser>parser)._parseUnicodeDoc(text, c_filename)
+  File "src/lxml/parser.pxi", line 1051, in lxml.etree._BaseParser._parseUnicodeDoc (src/lxml/lxml.etree.c:117444)
+    return context._handleParseResultDoc(self, result, None)
+  File "src/lxml/parser.pxi", line 584, in lxml.etree._ParserContext._handleParseResultDoc (src/lxml/lxml.etree.c:111267)
+    return _handleParseResult(self, self._c_ctxt, result,
+  File "src/lxml/parser.pxi", line 694, in lxml.etree._handleParseResult (src/lxml/lxml.etree.c:113067)
+    _raiseParseError(c_ctxt, filename, context._error_log)
+  File "src/lxml/parser.pxi", line 624, in lxml.etree._raiseParseError (src/lxml/lxml.etree.c:111874)
+    raise error_log._buildParseException(
+  File "<string>", line None
+lxml.etree.XMLSyntaxError: Element 'b', attribute 'hardy': The value '(null)' does not match the fixed value constraint 'hey'.
+
+----------------------------------------------------------------------
+Ran 1750 tests
+
+FAILED (errors=1)
+Skipping tests in lxml.cssselect - external cssselect package is not installed
+Comparing with ElementTree 1.3.0
+
+TESTED VERSION: 3.6.4
+    Python:           sys.version_info(major=3, minor=4, micro=6, releaselevel='final', serial=0)
+    lxml.etree:       (3, 6, 4, 0)
+    libxml used:      (2, 9, 4)
+    libxml compiled:  (2, 9, 4)
+    libxslt used:     (1, 1, 28)
+    libxslt compiled: (1, 1, 28)
+
+gmake[1]: Leaving directory '$(SOURCE_DIR)'
