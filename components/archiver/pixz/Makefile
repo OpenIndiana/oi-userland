@@ -58,6 +58,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies added manually
+REQUIRED_PACKAGES += text/asciidoc
+
+# Build dependencies generated
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += SUNWcs
