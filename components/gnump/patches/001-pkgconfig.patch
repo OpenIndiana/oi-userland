@@ -1,0 +1,72 @@
+#
+# Add pkgconfig files for those inclined to use it during a build.
+#
+diff -ruN gmp-6.1.1.orig/libgmp.in gmp-6.1.1/libgmp.in
+--- gmp-6.1.1.orig/libgmp.in	1969-12-31 18:00:00.000000000 +0000
++++ gmp-6.1.1/libgmp.in	2016-11-21 17:16:23.456171594 +0000
+@@ -0,0 +1,13 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++sharedlibdir=@sharedlibdir@
++includedir=@includedir@
++
++Name: libgmp
++Description: The GNU Multiple Precision Bignum Library
++Version: @VERSION@
++
++Requires:
++Libs: -L${libdir} -lgmp
++Cflags: -I${includedir}
+diff -ruN gmp-6.1.1.orig/libgmpxx.in gmp-6.1.1/libgmpxx.in
+--- gmp-6.1.1.orig/libgmpxx.in	1969-12-31 18:00:00.000000000 +0000
++++ gmp-6.1.1/libgmpxx.in	2016-11-21 17:16:23.456406624 +0000
+@@ -0,0 +1,13 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++sharedlibdir=@sharedlibdir@
++includedir=@includedir@
++
++Name: libgmpxx
++Description: The GNU Multiple Precision Bignum Library
++Version: @VERSION@
++
++Requires:
++Libs: -L${libdir} -lgmp -lgmpxx
++Cflags: -I${includedir}
+diff -ruN gmp-6.1.1.orig/Makefile.am gmp-6.1.1/Makefile.am
+--- gmp-6.1.1.orig/Makefile.am	2016-06-18 15:00:00.000000000 +0000
++++ gmp-6.1.1/Makefile.am	2016-11-21 17:17:01.968327092 +0000
+@@ -297,6 +297,31 @@
+ libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) $(LIBGMPXX_LDFLAGS) \
+   -version-info $(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE)
+ 
++## pkg-config
++pkgconfigdir = $(libdir)/pkgconfig
++pkgconfig_DATA = libgmp.pc
++EXTRA_DIR = libgmp.in
++
++if WANT_CXX
++pkgconfig_DATA += libgmpxx.pc
++EXTRA_DIR += libgmpxx.in
++endif
++
++pc_verbose = $(pc_verbose_@AM_V@)
++pc_verbose_ = $(pc_verbose_@AM_DEFAULT_V@)
++pc_verbose_0 = @echo "  PC      " $@;
++
++SUFFIXES = .in.pc
++
++.in.pc:
++	$(AM_V_at)rm -f $@
++	$(pc_verbose)sed \
++		-e 's,@prefix[@],$(prefix),g' \
++		-e 's,@exec_prefix[@],$(exec_prefix),g' \
++		-e 's,@libdir[@],$(libdir),g' \
++		-e 's,@includedir[@],$(includedir),g' \
++		-e 's,@VERSION[@],$(VERSION),g' \
++		< $< > $@ || { rm -f $@; exit 1; }
+ 
+ 
+ install-data-hook:

@@ -82,8 +82,7 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --enable-thread-safe
 CONFIGURE_OPTIONS += --enable-tests-timeout=0
-CONFIGURE_OPTIONS += --with-gmp-include=$(GMPINCDIR)
-CONFIGURE_OPTIONS += --with-gmp-lib=$(USRLIB.$(BITS))
+CONFIGURE_OPTIONS += --with-gmp-include=$(shell pkg-config --variable=includedir libgmp)
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
 

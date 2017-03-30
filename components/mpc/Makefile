@@ -77,9 +77,9 @@ TEST_TARGET= install $(TEST_32_and_64)
 # Add install dependency when system-test target is implemented.
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS +=		`pkg-config --cflags libmpfr`
-
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  +=	--with-gmp-include=$(shell pkg-config --variable=includedir libgmp)
+CONFIGURE_OPTIONS  +=	--with-mpfr-include=$(shell pkg-config --variable=includedir libmpfr)
 CONFIGURE_OPTIONS  +=	--disable-static
 
 COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests
