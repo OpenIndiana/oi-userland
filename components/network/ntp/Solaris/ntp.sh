@@ -86,17 +86,27 @@ mdns=`svcprop -c -p general/enabled svc:/network/dns/multicast:default`
 
 # We used to support the slewalways keyword, but that was a Sun thing
 # and not in V4. Look for "slewalways yes" and set the new slew option.
-val=`svcprop -c -p config/slew_always $SMF_FMRI`
-if [ ! "$val" = "true" ]; then
-	val=`/usr/bin/nawk '/^[ \t]*#/{next}
+slew_always=`svcprop -c -p config/slew_always $SMF_FMRI`
+if [ ! "$slew_always" = "true" ]; then
+       slew_always=`/usr/bin/nawk '/^[ \t]*#/{next}
 	    /^[ \t]*slewalways[ \t]+yes/ {
         	printf("true", $2)
         	next } ' /etc/inet/ntp.conf`
 fi
-[ "$val" = "true" ] && set -- "$@" --slew
+[ "$slew_always" = "true" ] && set -- "$@" --slew
 
 # Set up debugging.
 deb=`svcprop -c -p config/debuglevel $SMF_FMRI`
+
+# If slew_always is set to true, then the large offset after a reboot
+# might take a very long time to correct the clock. Optionally allow
+# a step once after a reboot if slew_always is set when allow_step_at_boot
+# is also set. 
+val=`svcprop -c -p config/allow_step_at_boot $SMF_FMRI`
+if [ "$val" = "true" ] && [ "$slew_always" = "true" ] && \
+    [ ! -f /var/run/ntp.pid ]; then
+       set -- "$@" --force-step-once
+fi
 
 # Start the daemon. If debugging is requested, put it in the background, 
 # since it won't do it on it's own.
