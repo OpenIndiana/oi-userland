@@ -23,7 +23,7 @@
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
 COMPONENT_VERSION=	4.14
@@ -34,11 +34,10 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/a2ps
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
@@ -71,6 +70,11 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+# Build dependency manually added
+REQUIRED_PACKAGES+= developer/gperf 
 
-include ../../make-rules/depend.mk
+# Auto-generated
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
