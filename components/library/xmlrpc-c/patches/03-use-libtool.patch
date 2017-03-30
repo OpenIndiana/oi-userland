@@ -1,0 +1,48 @@
+diff -ur xmlrpc-c-1.39.12-1/common.mk xmlrpc-c-1.39.12/common.mk
+--- xmlrpc-c-1.39.12-1/common.mk	2017-03-30 15:49:28.976503451 +0300
++++ xmlrpc-c-1.39.12/common.mk	2017-03-30 15:50:24.866857388 +0300
+@@ -611,7 +611,7 @@
+ 	done
+ 
+ 
+-INSTALL_PROGRAM_CMD = $(INSTALL_PROGRAM) $$p $(DESTDIR)$(PROGRAMINST_DIR)/$$p
++INSTALL_PROGRAM_CMD = libtool --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(PROGRAMINST_DIR)/$$p
+ 
+ install-bin: $(PROGRAMS_TO_INSTALL) $(DESTDIR)$(PROGRAMINST_DIR)
+ 	@list='$(PROGRAMS_TO_INSTALL)'; \
+diff -ur xmlrpc-c-1.39.12-1/tools/xml-rpc-api2cpp/Makefile xmlrpc-c-1.39.12/tools/xml-rpc-api2cpp/Makefile
+--- xmlrpc-c-1.39.12-1/tools/xml-rpc-api2cpp/Makefile	2017-03-30 15:49:28.966061796 +0300
++++ xmlrpc-c-1.39.12/tools/xml-rpc-api2cpp/Makefile	2017-03-30 15:53:00.133748995 +0300
+@@ -46,7 +46,7 @@
+   $(LIBXMLRPC) \
+   $(LIBXMLRPC_XML) \
+   $(LIBXMLRPC_UTIL)
+-	$(CXXLD) -o $@ $(LDFLAGS_ALL) $(OBJECTS) $(LDLIBS)
++	libtool --mode=link $(CXXLD) -o $@ $(LDFLAGS_ALL) $(OBJECTS) $(LDLIBS)
+ 
+ %.o:%.cpp
+ 	$(CXX) -c $(CXXFLAGS_ALL) $<
+diff -ur xmlrpc-c-1.39.12-1/tools/xmlrpc/Makefile xmlrpc-c-1.39.12/tools/xmlrpc/Makefile
+--- xmlrpc-c-1.39.12-1/tools/xmlrpc/Makefile	2017-03-30 15:49:28.962532252 +0300
++++ xmlrpc-c-1.39.12/tools/xmlrpc/Makefile	2017-03-30 15:51:55.155025752 +0300
+@@ -41,7 +41,7 @@
+ endif
+ 
+ xmlrpc: $(XMLRPC_OBJS) $(CLIENT_LIBS_DEP) $(UTILS)
+-	$(CCLD) -o $@ $(LDFLAGS_ALL) $(XMLRPC_OBJS) $(UTILS) $(CLIENT_LDLIBS)
++	libtool --mode=link $(CCLD) -o $@ $(LDFLAGS_ALL) $(XMLRPC_OBJS) $(UTILS) $(CLIENT_LDLIBS)
+ 
+ %.o:%.c $(BLDDIR)/include/xmlrpc-c/config.h
+ 	$(CC) -c $(CFLAGS_ALL) $<
+diff -ur xmlrpc-c-1.39.12-1/tools/xmlrpc_transport/Makefile xmlrpc-c-1.39.12/tools/xmlrpc_transport/Makefile
+--- xmlrpc-c-1.39.12-1/tools/xmlrpc_transport/Makefile	2017-03-30 15:49:28.968917050 +0300
++++ xmlrpc-c-1.39.12/tools/xmlrpc_transport/Makefile	2017-03-30 15:52:12.119000918 +0300
+@@ -36,7 +36,7 @@
+ UTILS = $(UTIL_OBJS:%=$(UTIL_DIR)/%)
+ 
+ xmlrpc_transport:%:%.o $(CLIENT_LIBS_DEP) $(UTILS)
+-	$(CCLD) -o $@ $(LDFLAGS_ALL) $< $(CLIENT_LDLIBS) $(UTILS)
++	libtool --mode=link $(CCLD) -o $@ $(LDFLAGS_ALL) $< $(CLIENT_LDLIBS) $(UTILS)
+ 
+ %.o:%.c
+ 	$(CC) -c $(CFLAGS_ALL) $<
