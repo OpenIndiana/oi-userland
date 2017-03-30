@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.5.3
@@ -31,13 +31,12 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:76db34cb508e346e3bf69347c29ed1500bf0b71bcc48d54271ad9d1c25703743
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/apache
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -81,6 +80,15 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+# Build dependencies
+REQUIRED_PACKAGES+= developer/documentation-tool/doxygen
 
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
