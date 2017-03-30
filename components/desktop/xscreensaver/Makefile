@@ -127,6 +127,8 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
     $(MAKE) -o Makefile xscreensaver.pot ; \
     touch stamp-it )
 
+COMPONENT_BUILD_ARGS += -j4
+
 # Recognizing DESTDIR as most autotools packages do would be too easy,
 # so xscreensaver makes us override install_prefix instead for the same effect.
 COMPONENT_INSTALL_ARGS += install_prefix=$(PROTO_DIR)
@@ -152,7 +154,6 @@ REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
