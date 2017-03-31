@@ -1,0 +1,14 @@
+The patch has been taken from community and fixes Integer overflow.
+The details can be found in the following location
+https://bugs.ghostscript.com/show_bug.cgi?id=697179
+
+--- ghostscript-9.20/base/gsdevice.c	2016-09-26 03:41:28.000000000 -0700
++++ ghostscript-9.20/base/gsdevice.c	2016-11-23 21:54:31.426884075 -0800
+@@ -614,6 +614,7 @@
+     dev->memory = mem;
+     dev->retained = !internal;
+     rc_init(dev, mem, (internal ? 0 : 1));
++    rc_increment(dev->icc_struct);
+ }
+ 
+ void

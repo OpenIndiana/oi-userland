@@ -1,11 +1,15 @@
---- ghostscript-9.00/cups/gdevcups.c	Thu Aug 12 23:40:47 2010
-+++ gdevcups.c	Wed Mar  7 13:16:38 2012
-@@ -3459,7 +3459,7 @@
-       sp = ((gx_device_printer *)pdev)->space_params;
+The patch has been taken from community and fixes Integer overflow.
+The details can be found in the following location
+https://bugs.ghostscript.com/show_bug.cgi?id=691733
+
+--- ghostscript-9.20/cups/gdevcups.c	2016-09-26 03:41:28.000000000 -0700
++++ ghostscript-9.20/cups/gdevcups.c	2016-10-13 21:48:22.080156040 -0700
+@@ -3801,7 +3801,7 @@
  
-       if ((code = gdev_prn_maybe_realloc_memory((gx_device_printer *)pdev, &sp, 
+       if ((code = gdev_prn_maybe_realloc_memory((gx_device_printer *)pdev,
+                                                 &sp_old,
 -						width_old, height_old,
 +						width, height,
- 						cups->page_uses_transparency))
+ 						transp_old))
  	  < 0)
- 	return (code);
+         goto done;
