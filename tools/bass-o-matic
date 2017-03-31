@@ -77,24 +77,20 @@ def FindComponentPaths_git(path, debug=None, subdir='/components'):
         print >>debug, "exit: %d, %s" % (proc.returncode, proc.stderr.read())
 
     # Chop away longer pathnames, e.g. sample_manifest.p5m hits
-    for p1 in paths_tmp:
+    # Use sorted set to ensure unique names in order we want to return
+    for p1 in sorted(set(paths_tmp)):
         add = 1
         for p2 in paths_tmp:
             if p1.startswith(p2+"/"):
                 add = 0
                 break
-#        if add == 2:
-#            for p2 in paths:
-#                if p1 == p2:
-#                    add = 0
-#                    break
         if add == 1:
-            paths.append(path + subdir + "/" + p1)
-#            if debug:
-#                print >>debug, "found %s" % p1
+            addpath = path + subdir + "/" + p1
+            paths.append(addpath)
+            if debug:
+                print >>debug, "found %s" % addpath
 
-    return sorted(set(paths))
-#    return sorted(paths)
+    return paths
 
 def FindComponentPaths(path, debug=None, subdir='/components'):
     # if ... pick one of the implems (building a git workspace or generic) e.g.
