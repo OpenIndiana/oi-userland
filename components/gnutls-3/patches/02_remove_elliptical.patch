@@ -14,7 +14,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  #define AUTH_ECDH_COMMON
  
 +#if defined(ENABLE_ECDHE)
- #include <gnutls_auth.h>
+ #include <auth.h>
  
  int
 @@ -48,4 +49,5 @@
@@ -26,13 +26,13 @@ Status: This patch is Solaris specific. This will not be sent upstream.
 --- ORIGINAL/./lib/auth/dhe_psk.c	2015-07-24 15:17:55.194610558 -0700
 +++ gnutls-3.4.1/./lib/auth/dhe_psk.c	2015-07-24 15:19:55.727540829 -0700
 @@ -39,20 +39,28 @@
- #include "gnutls_mpi.h"
- #include <gnutls_state.h>
+ #include "mpi.h"
+ #include <state.h>
  #include <auth/dh_common.h>
 +#if defined(ENABLE_ECDHE)
  #include <auth/ecdhe.h>
 +#endif
- #include <gnutls_datum.h>
+ #include <datum.h>
  #include <auth/psk_passwd.h>
  
 +#if defined(ENABLE_ECDHE)
@@ -124,9 +124,9 @@ Status: This patch is Solaris specific. This will not be sent upstream.
   */
  
 +#if defined(ENABLE_ECDHE)
- #include <gnutls_int.h>
- #include "gnutls_auth.h"
- #include "gnutls_errors.h"
+ #include "gnutls_int.h"
+ #include "auth.h"
+ #include "errors.h"
 @@ -50,7 +51,6 @@
  proc_ecdhe_client_kx(gnutls_session_t session,
  		     uint8_t * data, size_t _data_size);
@@ -135,9 +135,9 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  const mod_auth_st ecdhe_ecdsa_auth_struct = {
  	"ECDHE_ECDSA",
  	_gnutls_gen_cert_server_crt,
---- ORIGINAL/./lib/nettle/pk.c	2015-07-24 15:18:27.631820369 -0700
-+++ gnutls-3.4.1/./lib/nettle/pk.c	2015-07-24 15:19:55.737837073 -0700
-@@ -45,13 +45,17 @@
+--- gnutls-3.5.8/lib/nettle/pk.c	2016-11-09 21:41:06.000000000 -0800
++++ gnutls-3.5.8/lib/nettle/pk.c	2017-02-21 13:15:00.535390600 -0800
+@@ -43,14 +43,18 @@
  #include <nettle/rsa.h>
  #include <gnutls/crypto.h>
  #include <nettle/bignum.h>
@@ -145,17 +145,18 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  #include <nettle/ecc.h>
  #include <nettle/ecdsa.h>
  #include <nettle/ecc-curve.h>
+ #include <nettle/curve25519.h>
 +#endif
  #include <gnettle.h>
  #include <fips.h>
  
 +#if defined(ENABLE_ECDHE)
- static inline const struct ecc_curve *get_supported_curve(int curve);
+ static inline const struct ecc_curve *get_supported_nist_curve(int curve);
 +#endif
  
  static void rnd_func(void *_ctx, size_t length, uint8_t * data)
  {
-@@ -64,6 +68,7 @@
+@@ -63,6 +67,7 @@
  	}
  }
  
@@ -163,23 +164,23 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  static void
  ecc_scalar_zclear (struct ecc_scalar *s)
  {
-@@ -77,6 +82,7 @@
-         zeroize_key(p->p, ecc_size_a(p->ecc)*sizeof(mp_limb_t));
-         ecc_point_clear(p);
+@@ -76,6 +81,7 @@
+ 	zeroize_key(p->p, ecc_size_a(p->ecc)*sizeof(mp_limb_t));
+ 	ecc_point_clear(p);
  }
 +#endif
-   
+  
  static void
  _dsa_params_get(const gnutls_pk_params_st * pk_params,
-@@ -113,6 +119,7 @@
- 	pub->size = nettle_mpz_sizeinbase_256_u(pub->n);
+@@ -118,6 +124,7 @@
+ 	return 0;
  }
  
 +#if defined(ENABLE_ECDHE)
  static int
  _ecc_params_to_privkey(const gnutls_pk_params_st * pk_params,
  		       struct ecc_scalar *priv,
-@@ -161,6 +168,7 @@
+@@ -166,6 +173,7 @@
  
  	return;
  }
@@ -187,7 +188,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  
  #define MAX_DH_BITS DEFAULT_MAX_VERIFY_BITS
  /* This is used when we have no idea on the structure
-@@ -245,6 +253,7 @@
+@@ -244,6 +252,7 @@
  
  		break;
  	}
@@ -195,15 +196,15 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	case GNUTLS_PK_EC:
  		{
  			struct ecc_scalar ecc_priv;
-@@ -290,6 +299,7 @@
- 				goto cleanup;
+@@ -317,6 +326,7 @@
+ 			}
  			break;
  		}
 +#endif
  	default:
  		gnutls_assert();
  		ret = GNUTLS_E_INTERNAL_ERROR;
-@@ -447,6 +457,7 @@
+@@ -481,6 +491,7 @@
  	const mac_entry_st *me;
  
  	switch (algo) {
@@ -211,7 +212,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	case GNUTLS_PK_EC:	/* we do ECDSA */
  		{
  			struct ecc_scalar priv;
-@@ -495,6 +506,7 @@
+@@ -529,6 +540,7 @@
  			}
  			break;
  		}
@@ -219,7 +220,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	case GNUTLS_PK_DSA:
  		{
  			struct dsa_params pub;
-@@ -601,6 +613,7 @@
+@@ -638,6 +650,7 @@
  	bigint_t tmp[2] = { NULL, NULL };
  
  	switch (algo) {
@@ -227,7 +228,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	case GNUTLS_PK_EC:	/* ECDSA */
  		{
  			struct ecc_point pub;
-@@ -647,6 +660,7 @@
+@@ -684,6 +697,7 @@
  			ecc_point_clear(&pub);
  			break;
  		}
@@ -235,15 +236,15 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	case GNUTLS_PK_DSA:
  		{
  			struct dsa_params pub;
-@@ -726,6 +740,7 @@
+@@ -767,6 +781,7 @@
  	return ret;
  }
  
 +#if defined(ENABLE_ECDHE)
- static inline const struct ecc_curve *get_supported_curve(int curve)
+ static inline const struct ecc_curve *get_supported_nist_curve(int curve)
  {
  	switch (curve) {
-@@ -745,10 +760,15 @@
+@@ -786,9 +801,11 @@
  		return NULL;
  	}
  }
@@ -252,26 +253,20 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  static int _wrap_nettle_pk_curve_exists(gnutls_ecc_curve_t curve)
  {
 +#if defined(ENABLE_ECDHE)
- 	return ((get_supported_curve(curve)!=NULL)?1:0);
+ 	switch (curve) {
+ 		case GNUTLS_ECC_CURVE_X25519:
+ 			return 1;
+@@ -795,6 +812,9 @@
+ 		default:
+ 			return ((get_supported_nist_curve(curve)!=NULL)?1:0);
+ 	}
 +#else
 +	return 0;
 +#endif
  }
  
  /* Generates algorithm's parameters. That is:
-@@ -854,9 +874,11 @@
- 			break;
- 		}
- 	case GNUTLS_PK_RSA:
-+#if defined(ENABLE_ECDHE)
- 	case GNUTLS_PK_EC:
-+#endif
- 		ret = 0;
- 		break;
- 	default:
- 		gnutls_assert();
- 		return GNUTLS_E_INVALID_REQUEST;
-@@ -884,6 +906,7 @@
+@@ -942,6 +962,7 @@
  			   const gnutls_datum_t *priv_key, const gnutls_datum_t *pub_key,
  			   const gnutls_datum_t *peer_key, gnutls_datum_t *Z);
  
@@ -279,47 +274,69 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  int _gnutls_ecdh_compute_key(gnutls_ecc_curve_t curve,
  			   const gnutls_datum_t *x, const gnutls_datum_t *y,
  			   const gnutls_datum_t *k,
-@@ -893,6 +916,7 @@
+@@ -951,8 +972,8 @@
  int _gnutls_ecdh_generate_key(gnutls_ecc_curve_t curve,
  			      gnutls_datum_t *x, gnutls_datum_t *y,
  			      gnutls_datum_t *k);
 +#endif
  
- 
+-
  int _gnutls_dh_generate_key(gnutls_dh_params_t dh_params,
-@@ -988,6 +1012,7 @@
-  	return ret;
+ 			    gnutls_datum_t *priv_key, gnutls_datum_t *pub_key)
+ {
+@@ -1048,6 +1069,7 @@
+ 	return ret;
  }
  
 +#if defined(ENABLE_ECDHE)
  int _gnutls_ecdh_generate_key(gnutls_ecc_curve_t curve,
  			      gnutls_datum_t *x, gnutls_datum_t *y,
  			      gnutls_datum_t *k)
-@@ -1116,6 +1141,7 @@
-  	gnutls_pk_params_clear(&priv);
-  	return ret;
+@@ -1176,6 +1198,7 @@
+ 	gnutls_pk_params_clear(&priv);
+ 	return ret;
  }
-+#endif /*ENABLE_ECDHE*/
- #endif
++#endif
  
- 
-@@ -1308,6 +1334,7 @@
+ static int pct_test(gnutls_pk_algorithm_t algo, const gnutls_pk_params_st* params)
+ {
+@@ -1232,7 +1255,9 @@
+ 		/* Here we don't know the purpose of the key. Check both
+ 		 * signing and encryption.
+ 		 */
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC: /* we only do keys for ECDSA */
++#endif
+ 	case GNUTLS_PK_DSA:
+ 		ret = _gnutls_pk_sign(algo, &sig, &ddata, params);
+ 		if (ret < 0) {
+@@ -1248,7 +1273,9 @@
+ 		}
+ 		break;
+ 	case GNUTLS_PK_DH:
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_ECDHX:
++#endif
+ 		ret = 0;
+ 		goto cleanup;
+ 	default:
+@@ -1470,6 +1497,7 @@
  
  			break;
  		}
 +#if defined(ENABLE_ECDHE)
  	case GNUTLS_PK_EC:
- 		{
- 			struct ecc_scalar key;
-@@ -1350,6 +1377,7 @@
- 
+ 		if (params->flags & GNUTLS_PK_FLAG_PROVABLE)
+ 			return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+@@ -1545,6 +1573,7 @@
+ 			curve25519_mul_g(params->raw_pub.data, params->raw_priv.data);
  			break;
  		}
 +#endif
  	default:
  		gnutls_assert();
  		return GNUTLS_E_INVALID_REQUEST;
-@@ -1494,6 +1522,7 @@
+@@ -1702,6 +1731,7 @@
  		}
  
  		break;
@@ -327,7 +344,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	case GNUTLS_PK_EC:
  		{
  			struct ecc_point r, pub;
-@@ -1567,6 +1596,7 @@
+@@ -1775,6 +1805,7 @@
  			mpz_clear(y2);
  		}
  		break;
@@ -335,7 +352,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	default:
  		ret = gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
  	}
-@@ -1584,6 +1614,7 @@
+@@ -1792,6 +1823,7 @@
  	case GNUTLS_PK_RSA:
  	case GNUTLS_PK_DSA:
  		return 0;
@@ -343,7 +360,7 @@ Status: This patch is Solaris specific. This will not be sent upstream.
  	case GNUTLS_PK_EC:
  		{
  			/* just verify that x and y lie on the curve */
-@@ -1624,6 +1655,7 @@
+@@ -1832,6 +1864,7 @@
  			ecc_point_clear(&pub);
  		}
  		break;

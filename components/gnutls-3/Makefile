@@ -26,16 +26,16 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
-COMPONENT_VERSION=	3.4.15
-COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4
+COMPONENT_VERSION=	3.5.10
+COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:eb2a013905f5f2a0cbf7bcc1d20c85a50065063ee87bd33b496c4e19815e3498 
-COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4/$(COMPONENT_ARCHIVE)
+    sha256:af443e86ba538d4d3e37c4732c00101a492fe4b56a55f4112ff0ab39dbe6579d
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnutls
 COMPONENT_ANITYA_ID=	1221
 
-TPNO=			32471
+TPNO=			34108
 
 COMPONENT_BUILD_TARGETS = all info
 
@@ -72,6 +72,8 @@ CFLAGS += -I$(USRINCDIR)/idn
 # Force libtool to pass this flag through using -Wc.
 # https://www.gnu.org/software/libtool/manual/html_node/Stripped-link-flags.html
 CXXFLAGS.studio += -Wc,$(studio_NORUNPATH)
+# C++ library needs to link to libCrun.so
+CXXFLAGS += -library=Crun
 
 MCS = mcs
 STRIP = strip
@@ -196,11 +198,15 @@ CONFIGURE_OPTIONS.wanboot += ac_cv_func_dup2=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_epoll_create=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_fchmod=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_flockfile=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_fmemopen=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_fork=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_fstat=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_ftello=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_funlockfile=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_getdelim=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_getegid=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_geteuid=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_getgid=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_gethostbyname=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_getline=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_getpagesize=no
@@ -209,6 +215,7 @@ CONFIGURE_OPTIONS.wanboot += ac_cv_func_getpid=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_getpwuid_r=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_getrusage=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_getservbyname=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_getuid=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_iconv=no
 CONFIGURE_OPTIONS.wanboot += am_cv_func_iconv=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_inet_ntop=no
@@ -236,6 +243,7 @@ CONFIGURE_OPTIONS.wanboot += ac_cv_func_setdtablesize=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_setenv=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_shutdown=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_socket=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_stat=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_strerror_r=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_strpbrk=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_strsignal=no
@@ -268,6 +276,7 @@ CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)/$(COMPONENT_NAME)-3/
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --disable-guile
 CONFIGURE_OPTIONS += --with-included-libtasn1
+CONFIGURE_OPTIONS += --with-included-unistring
 CONFIGURE_OPTIONS += --without-p11-kit
 CONFIGURE_OPTIONS += --disable-ecdhe
 CONFIGURE_OPTIONS += --disable-openssl-compatibility
