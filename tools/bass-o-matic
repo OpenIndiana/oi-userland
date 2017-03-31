@@ -35,13 +35,13 @@ import subprocess
 # Locate SCM directories containing Userland components by searching from
 # from a supplied top of tree for .p5m files.  Once a .p5m file is located,
 # that directory is added to the list and no children are searched.
-def FindComponentPaths(path, debug=None, subdir='/components'):
+def FindComponentPaths_walk(path, debug=None, subdir='/components'):
     expression = re.compile(".+\.p5m$", re.IGNORECASE)
 
     paths = []
 
     if debug:
-        print >>debug, "searching %s for component directories" % path
+        print >>debug, "searching %s for component directories by walking FS" % path
 
     for dirpath, dirnames, filenames in os.walk(path + subdir):
         found = 0
@@ -55,6 +55,54 @@ def FindComponentPaths(path, debug=None, subdir='/components'):
                 break
 
     return sorted(paths)
+
+def FindComponentPaths_git(path, debug=None, subdir='/components'):
+    paths_tmp = []
+    paths = []
+
+    if debug:
+        print >>debug, "searching %s for component directories using Git" % path
+
+    proc = subprocess.Popen(['git', 'ls-files', '*.p5m'], cwd = path + subdir,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = proc.stdout
+
+    for out in p:
+#        if debug:
+#            print >>debug, "RAW found %s" % out
+        paths_tmp.append(os.path.dirname(out))
+
+    proc.wait()
+    if proc.returncode != 0:
+        print >>debug, "exit: %d, %s" % (proc.returncode, proc.stderr.read())
+
+    # Chop away longer pathnames, e.g. sample_manifest.p5m hits
+    for p1 in paths_tmp:
+        add = 1
+        for p2 in paths_tmp:
+            if p1.startswith(p2+"/"):
+                add = 0
+                break
+#        if add == 2:
+#            for p2 in paths:
+#                if p1 == p2:
+#                    add = 0
+#                    break
+        if add == 1:
+            paths.append(path + subdir + "/" + p1)
+#            if debug:
+#                print >>debug, "found %s" % p1
+
+    return sorted(set(paths))
+#    return sorted(paths)
+
+def FindComponentPaths(path, debug=None, subdir='/components'):
+    # if ... pick one of the implems (building a git workspace or generic) e.g.
+    # * if git cmd is present
+    # * if ./.git dir is present
+    # * if git request for data of current repo succeeeds
+    # * just run the git one, if it returns empty/error - do the walk
+    return FindComponentPaths_git(path, debug, subdir)
 
 class BassComponent:
     def __init__(self, path=None, debug=None):
@@ -161,7 +209,7 @@ def main():
         if template_zone:
             print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
         proc = subprocess.Popen(['gmake'] + args)
-	rc = proc.wait()
+        rc = proc.wait()
         sys.exit(rc)
 
     if components_arg:
