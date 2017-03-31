@@ -1,0 +1,16 @@
+#
+# Add guards for Elf type if libelf is already included.
+# working with upstreadm to resolve this.
+#
+--- a/libdwarf/libdwarf.h.in
++++ b/libdwarf/libdwarf.h.in
+@@ -60,7 +60,9 @@ extern "C" {
+ 
+ */
+ 
++#ifndef _LIBELF_H
+ typedef struct Elf Elf;
++#endif
+ typedef struct Elf* dwarf_elf_handle;
+ 
+ /* To enable printing with printf regardless of the
