@@ -1,0 +1,163 @@
+The patch has been taken from community and fixes Integer overflow.
+The details can be found in the following location
+https://bugs.ghostscript.com/show_bug.cgi?id=697169
+https://bugs.ghostscript.com/show_bug.cgi?id=697178
+
+--- ghostscript-9.20/base/gsicc_manage.c	2016-09-26 03:41:28.000000000 -0700
++++ ghostscript-9.20/base/gsicc_manage.c	2016-10-24 00:36:45.674351452 -0700
+@@ -1124,10 +1124,12 @@
+     }
+ 
+     /* First just try it like it is */
+-    str = sfopen(pname, "r", mem_gc);
+-    if (str != NULL) {
+-        *strp = str;
+-        return 0;
++    if (gs_check_file_permission(mem_gc, pname, namelen, "r") >= 0) {
++        str = sfopen(pname, "r", mem_gc);
++        if (str != NULL) {
++            *strp = str;
++            return 0;
++        }
+     }
+ 
+     /* If that fails, try %rom% */ /* FIXME: Not sure this is needed or correct */
+--- ghostscript-9.20/base/gslibctx.c	2016-09-26 03:41:28.000000000 -0700
++++ ghostscript-9.20/base/gslibctx.c	2016-10-24 01:18:05.789733804 -0700
+@@ -184,6 +184,7 @@
+         return -1;
+     }
+     
++    pio->client_check_file_permission = NULL;
+     gp_get_realtime(pio->real_time_0);
+ 
+     /* Set scanconverter to 1 (default) */
+@@ -335,4 +336,14 @@
+     if (!mem->gs_lib_ctx->stderr_fn)
+         fflush(mem->gs_lib_ctx->fstderr);
+     /* else nothing to flush */
++}
++
++int
++gs_check_file_permission (gs_memory_t *mem, const char *fname, const int len, const char *permission)
++{
++    int code = 0;
++    if (mem->gs_lib_ctx->client_check_file_permission != NULL) {
++        code = mem->gs_lib_ctx->client_check_file_permission(mem, fname, len, permission);
++    }
++    return code;
+ }
+--- ghostscript-9.20/base/gslibctx.h	2016-10-24 01:25:56.499696028 -0700
++++ ghostscript-9.20/base/gslibctx.h	2016-10-24 01:30:29.901389710 -0700
+@@ -32,6 +32,9 @@
+ #  define gs_font_dir_DEFINED
+ typedef struct gs_font_dir_s gs_font_dir;
+ #endif
++
++typedef int (*client_check_file_permission_t) (gs_memory_t *mem, const char *fname, const int len, const char *permission);
++
+ typedef struct gs_lib_ctx_s
+ {
+     gs_memory_t *memory;  /* mem->gs_lib_ctx->memory == mem */
+@@ -61,6 +64,7 @@
+     struct gx_io_device_s **io_device_table;
+     int io_device_table_count;
+     int io_device_table_size;
++    client_check_file_permission_t client_check_file_permission;
+     /* Define the default value of AccurateScreens that affects setscreen
+        and setcolorscreen. */
+     bool screen_accurate_screens;
+@@ -132,6 +136,9 @@
+ gs_lib_ctx_get_default_device_list(const gs_memory_t *mem, char** dev_list_str,
+                         int *list_str_len);
+ 
++int
++gs_check_file_permission (gs_memory_t *mem, const char *fname, const int len, const char *permission);
++
+ #define IS_LIBCTX_STDOUT(mem, f) (f == mem->gs_lib_ctx->fstdout)
+ #define IS_LIBCTX_STDERR(mem, f) (f == mem->gs_lib_ctx->fstderr)
+ 
+--- ghostscript-9.20/psi/imain.c	2016-09-26 03:41:29.000000000 -0700
++++ ghostscript-9.20/psi/imain.c	2016-10-24 01:35:34.401393925 -0700
+@@ -57,6 +57,7 @@
+ #include "ivmspace.h"
+ #include "idisp.h"              /* for setting display device callback */
+ #include "iplugin.h"
++#include "zfile.h"
+ 
+ #ifdef PACIFY_VALGRIND
+ #include "valgrind.h"
+@@ -212,6 +213,7 @@
+                                            "the_gs_name_table");
+             if (code < 0)
+                 return code;
++            mem->gs_lib_ctx->client_check_file_permission = z_check_file_permissions;
+         }
+         code = obj_init(&minst->i_ctx_p, &idmem);  /* requires name_init */
+         if (code < 0)
+--- ghostscript-9.20/psi/int.mak	2016-09-26 03:41:29.000000000 -0700
++++ ghostscript-9.20/psi/int.mak	2016-10-24 01:40:57.724230623 -0700
+@@ -2024,7 +2024,7 @@
+  $(ialloc_h) $(iconf_h) $(idebug_h) $(idict_h) $(idisp_h) $(iinit_h)\
+  $(iname_h) $(interp_h) $(iplugin_h) $(isave_h) $(iscan_h) $(ivmspace_h)\
+  $(iinit_h) $(main_h) $(oper_h) $(ostack_h)\
+- $(sfilter_h) $(store_h) $(stream_h) $(strimpl_h)\
++ $(sfilter_h) $(store_h) $(stream_h) $(strimpl_h) $(zfile_h)\
+  $(INT_MAK) $(MAKEDIRS)
+ 	$(PSCC) $(PSO_)imain.$(OBJ) $(C_) $(PSSRC)imain.c
+ 
+--- ghostscript-9.20/psi/zfile.c	2016-09-26 03:41:29.000000000 -0700
++++ ghostscript-9.20/psi/zfile.c	2016-10-24 02:03:17.926910315 -0700
+@@ -197,6 +197,25 @@
+     return check_file_permissions_reduced(i_ctx_p, fname_reduced, rlen, permitgroup);
+ }
+ 
++/* z_check_file_permissions: see zfile.h for explanation
++*/
++int
++z_check_file_permissions(gs_memory_t *mem, const char *fname, const int len, const char *permission)
++{
++    i_ctx_t *i_ctx_p = get_minst_from_memory(mem)->i_ctx_p;
++    gs_parsed_file_name_t pname;
++    char *permitgroup = permission[0] == 'r' ? "PermitFileReading" : "PermitFileWriting";
++    int code = gs_parse_file_name(&pname, fname, len, imemory);
++    if (code < 0)
++        return code;
++
++    if (pname.iodev && i_ctx_p->LockFilePermissions && strcmp(pname.iodev->dname, "%pipe%") == 0)
++        return gs_error_invalidfileaccess;
++
++    code = check_file_permissions(i_ctx_p, fname, len, permitgroup);
++    return code;
++}
++
+ /* <name_string> <access_string> file <file> */
+ int                             /* exported for zsysvm.c */
+ zfile(i_ctx_t *i_ctx_p)
+--- ghostscript-9.20/psi/zfile.h	2016-09-26 03:41:29.000000000 -0700
++++ ghostscript-9.20/psi/zfile.h	2016-10-24 02:09:06.285022717 -0700
+@@ -22,4 +22,11 @@
+ int zopen_file(i_ctx_t *i_ctx_p, const gs_parsed_file_name_t *pfn,
+            const char *file_access, stream **ps, gs_memory_t *mem);
+ 
++/* z_check_file_permissions: a callback (via mem->gs_lib_ctx->client_check_file_permission)
++ * to allow applying the above permissions checks when opening file(s) from
++ * the graphics library
++ */
++int
++z_check_file_permissions(gs_memory_t *mem, const char *fname,
++                                 const int len, const char *permission);
+ #endif
+
+--- ghostscript-9.20/psi/zfile.c	2016-09-26 03:41:29.000000000 -0700
++++ ghostscript-9.20/psi/zfile.c	2016-11-23 22:09:45.180922117 -0800
+@@ -1081,6 +1081,9 @@
+     gs_main_instance *minst = get_minst_from_memory(mem);
+     int code;
+ 
++    if (i_ctx_p && starting_arg_file)
++        i_ctx_p->starting_arg_file = false;
++
+     /* when starting arg files (@ files) iodev_default is not yet set */
+     if (iodev == 0)
+         iodev = (gx_io_device *)gx_io_device_table[0];

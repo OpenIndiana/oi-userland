@@ -23,27 +23,24 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
-# parfait seems to spin when looking at the .bc files (13704877), so
-# for now disable it.
-export PARFAIT_BUILD=no
-
 # Prefer 32-bit due to ghostcript's hybrid build system.
 BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      9.00
+COMPONENT_VERSION=      9.20
 COMPONENT_PROJECT_URL=	http://ghostscript.com/
+COMPONENT_DOWNLOAD_URL=	https://github.com/ArtifexSoftware/ghostpdl-downloads
 COMPONENT_ARCHIVE_HASH= \
-    sha256:9e754c315d68d91a65ef208b9a8bda1fb57e45a7be18aa9397acfcc5ff59de16
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ANITYA_ID=	1157
+    sha256:949b64b46ecf8906db54a94ecf83ab97534ebf946f770d3c3f283cb469cb6e14
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/releases/download/gs920/$(COMPONENT_ARCHIVE)
 
-TPNO=			3796
+TPNO=			33162
 
 COMMON_TARGETS= no
 include $(WS_MAKE_RULES)/common.mk
+studio_OPT= -xO2 
 
 PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
@@ -107,9 +104,6 @@ $(IJS_VARIANT_64)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_SCRIPT = ./configure
 
-# Adjust '#!/usr/bin/perl'
-PERL_SCRIPTS= $(PROTOUSRBINDIR)/fixmswrd.pl
-
 # ASLR disabled until sufficient testing can be performed.
 ASLR_MODE= $(ASLR_DISABLE)
 
@@ -129,7 +123,9 @@ system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib

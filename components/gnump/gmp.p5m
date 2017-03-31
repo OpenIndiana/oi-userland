@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
@@ -26,43 +26,55 @@ set name=pkg.fmri \
 set name=pkg.summary value="GNU Multiple Precision Bignum Library"
 set name=com.oracle.info.description \
     value="the GNU Multiple Precision Bignum Library"
-set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/High Performance Computing"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/634
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
-#
-file path=usr/include/gmp/gmp.h
-file path=usr/include/gmp/gmpxx.h
-file path=usr/include/gmp/mp.h
-link path=usr/lib/$(MACH64)/libgmp.so target=libgmp.so.3.5.2
-link path=usr/lib/$(MACH64)/libgmp.so.3 target=libgmp.so.3.5.2
-file path=usr/lib/$(MACH64)/libgmp.so.3.5.2
-link path=usr/lib/$(MACH64)/libgmpxx.so target=libgmpxx.so.4.1.2
-link path=usr/lib/$(MACH64)/libgmpxx.so.4 target=libgmpxx.so.4.1.2
-file path=usr/lib/$(MACH64)/libgmpxx.so.4.1.2
+file path=usr/include/gmp-32.h
+file path=usr/include/gmp-64.h
+file Solaris/gmp.h path=usr/include/gmp.h
+file path=usr/include/gmpxx.h
+link path=usr/lib/$(MACH64)/libgmp.so target=libgmp.so.10.3.2
+link path=usr/lib/$(MACH64)/libgmp.so.10 target=libgmp.so.10.3.2
+file path=usr/lib/$(MACH64)/libgmp.so.10.3.2
+file path=usr/lib/$(MACH64)/libgmp.so.3
+link path=usr/lib/$(MACH64)/libgmpxx.so target=libgmpxx.so.4.5.2
+link path=usr/lib/$(MACH64)/libgmpxx.so.4 target=libgmpxx.so.4.5.2
+file path=usr/lib/$(MACH64)/libgmpxx.so.4.5.2
 file path=usr/lib/$(MACH64)/llib-lgmp.ln
 file path=usr/lib/$(MACH64)/pkgconfig/libgmp.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libgmpxx.pc
 file path=usr/lib/grub/wanboot/libgmp.a variant.arch=i386
-link path=usr/lib/libgmp.so target=libgmp.so.3.5.2
-#
-link path=usr/lib/libgmp.so.3 target=libgmp.so.3.5.2
-file path=usr/lib/libgmp.so.3.5.2
-link path=usr/lib/libgmpxx.so target=libgmpxx.so.4.1.2
-link path=usr/lib/libgmpxx.so.4 target=libgmpxx.so.4.1.2
-file path=usr/lib/libgmpxx.so.4.1.2
+link path=usr/lib/libgmp.so target=libgmp.so.10.3.2
+link path=usr/lib/libgmp.so.10 target=libgmp.so.10.3.2
+file path=usr/lib/libgmp.so.10.3.2
+file path=usr/lib/libgmp.so.3
+link path=usr/lib/libgmpxx.so target=libgmpxx.so.4.5.2
+link path=usr/lib/libgmpxx.so.4 target=libgmpxx.so.4.5.2
+file path=usr/lib/libgmpxx.so.4.5.2
 file path=usr/lib/llib-lgmp
 file path=usr/lib/llib-lgmp.ln
 file path=usr/lib/pkgconfig/libgmp.pc
 file path=usr/lib/pkgconfig/libgmpxx.pc
-file path=usr/share/doc/gmp/html/index.html
 file path=usr/share/info/gmp.info
 file path=usr/share/info/gmp.info-1
 file path=usr/share/info/gmp.info-2
-file path=usr/share/man/man3/libgmp.3
-#
-license gmp.license license="LGPLv3, GPLv3, FDLv1.3"
+file Solaris/libgmp.3 path=usr/share/man/man3/libgmp.3
+license FDLv1.3 license=FDLv1.3 \
+    com.oracle.info.description="the GNU Multiple Precision Bignum Library" \
+    com.oracle.info.name=GMP com.oracle.info.tpno=$(TPNO)
+license gmp.license license=GMP \
+    com.oracle.info.description="the GNU Multiple Precision Bignum Library" \
+    com.oracle.info.name=GMP com.oracle.info.tpno=$(TPNO)
+license COPYINGv2 license=GPLv2 \
+    com.oracle.info.description="the GNU Multiple Precision Bignum Library" \
+    com.oracle.info.name=GMP com.oracle.info.tpno=$(TPNO)
+# this is required until the old version is removed see Makefile for details.
+license COPYINGv3 license=GPLv3 \
+    com.oracle.info.description="the GNU Multiple Precision Bignum Library" \
+    com.oracle.info.name=GMP com.oracle.info.tpno=$(TPNO_4.3.2)
+license COPYING.LESSERv3 license=LGPLv3 \
+    com.oracle.info.description="the GNU Multiple Precision Bignum Library" \
+    com.oracle.info.name=GMP com.oracle.info.tpno=$(TPNO)

@@ -1,4 +1,4 @@
-From 65b6bdc8096ef4ac5b3bd41a0f2d38afe12c75ee Mon Sep 17 00:00:00 2001
+From 15cab78d41f50b40c19d3e88ef974f7d4845c705 Mon Sep 17 00:00:00 2001
 From: Alan Coopersmith <alan.coopersmith@oracle.com>
 Date: Sat, 2 Jan 2016 22:23:10 -0800
 Subject: [PATCH] security-policy
@@ -15,20 +15,19 @@ Bug 15779180 SUNBT7154101 Not able to unlock screen after xlock after su to a
 
 - specific to Solaris RBAC
 ---
- driver/demo-Gtk.c                  | 79 ++++++++++++++++++++++++++++++++++----
- driver/prefs.c                     | 32 +++++++++++++++
- driver/subprocs.c                  | 24 ++++++++++++
- driver/types.h                     |  3 ++
- driver/xscreensaver-demo.glade2.in |  2 +-
- driver/xscreensaver.c              | 32 +++++++++++++--
- driver/xscreensaver.h              |  2 +
- 7 files changed, 163 insertions(+), 11 deletions(-)
+ driver/demo-Gtk.c     | 79 ++++++++++++++++++++++++++++++++++++++++++++++-----
+ driver/prefs.c        | 32 +++++++++++++++++++++
+ driver/subprocs.c     | 24 ++++++++++++++++
+ driver/types.h        |  3 ++
+ driver/xscreensaver.c | 32 +++++++++++++++++++--
+ driver/xscreensaver.h |  2 ++
+ 6 files changed, 162 insertions(+), 10 deletions(-)
 
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
-index 3d86087..3a4ab09 100644
+index e78c3ed..c888cf7 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
-@@ -131,6 +131,7 @@
+@@ -130,6 +130,7 @@
  #include <stdio.h>
  #include <string.h>
  #include <ctype.h>
@@ -36,7 +35,7 @@ index 3d86087..3a4ab09 100644
  
  #ifdef HAVE_GTK2
  enum {
-@@ -1701,9 +1702,10 @@ flush_dialog_changes_and_save (state *s)
+@@ -1708,9 +1709,10 @@ flush_dialog_changes_and_save (state *s)
  # undef COPY
  
  # define COPYSTR(FIELD,NAME) \
@@ -49,7 +48,7 @@ index 3d86087..3a4ab09 100644
      { \
        changed = True; \
        if (s->debug_p) \
-@@ -2765,6 +2767,70 @@ update_list_sensitivity (state *s)
+@@ -2760,6 +2762,70 @@ update_list_sensitivity (state *s)
  #endif /* !HAVE_GTK2 */
  }
  
@@ -120,7 +119,7 @@ index 3d86087..3a4ab09 100644
  
  static void
  populate_prefs_page (state *s)
-@@ -2921,10 +2987,6 @@ populate_prefs_page (state *s)
+@@ -2916,10 +2982,6 @@ populate_prefs_page (state *s)
      }
  #endif /* HAVE_DPMS_EXTENSION */
  
@@ -131,7 +130,7 @@ index 3d86087..3a4ab09 100644
      /* Blanking and Locking
       */
      /* bugid 5077081 */
-@@ -2964,10 +3026,13 @@ dpms_supported=1;
+@@ -2959,10 +3021,13 @@ dpms_supported=1;
      SENSITIZE ("fade_spinbutton", (fading_possible &&
                                     (p->fade_p || p->unfade_p)));
  
@@ -245,19 +244,6 @@ index b428f73..adee51f 100644
    Bool unlock_timeout_p;	/* whether to timeout unlock dialog */
                                  /* bugid 5077981 */
  
-diff --git a/driver/xscreensaver-demo.glade2.in b/driver/xscreensaver-demo.glade2.in
-index a7a06a6..85b8069 100644
---- a/driver/xscreensaver-demo.glade2.in
-+++ b/driver/xscreensaver-demo.glade2.in
-@@ -478,7 +478,7 @@
- 			  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
- 			  <property name="snap_to_ticks">True</property>
- 			  <property name="wrap">False</property>
--			  <property name="adjustment">0 0 720 1 15 15</property>
-+			  <property name="adjustment">0 0 720 1 15 0</property>
- 			  <accessibility>
- 			    <atkrelation target="pwd_button" type="controlled-by"/>
- 			    <atkrelation target="pwd_button" type="labelled-by"/>
 diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
 index f357281..e502f01 100644
 --- a/driver/xscreensaver.c
@@ -350,5 +336,5 @@ index a52ba63..e688531 100644
     subprocs diagnostics
     ======================================================================= */
 -- 
-2.6.1
+2.7.4
 

@@ -65,7 +65,9 @@ CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_SYSTEM_TEST_ARGS = AWKPROG=$(USRBINDIR)/gawk
 
+REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libsigsegv
+REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/math

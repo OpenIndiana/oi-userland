@@ -1,4 +1,4 @@
-From 45cdceb023897ee25d4d82434f570d63ccf43df8 Mon Sep 17 00:00:00 2001
+From bebe3185c9f754e6d672e47eb2e330c7cb80aa7f Mon Sep 17 00:00:00 2001
 From: Alan Coopersmith <alan.coopersmith@oracle.com>
 Date: Sat, 2 Jan 2016 19:59:16 -0800
 Subject: [PATCH] Solaris paths
@@ -28,18 +28,18 @@ lines shown for GNOME 2.4/2.6.
 Also, you'll need to fix the package names shown when the hacks are not
 installed to be the older SUNWxscreensaver-* for Solaris 10.
 ---
- driver/Makefile.in                 |  9 ++++---
- driver/XScreenSaver.ad.in          | 14 +++++++---
- driver/demo-Gtk.c                  |  4 +--
- driver/subprocs.c                  | 54 ++++++++++++++++++++++++++++++++++++--
- driver/xscreensaver-demo.glade2.in |  4 +--
- driver/xscreensaver-text           |  6 ++++-
- driver/xscreensaver.man            |  5 ++--
- hacks/glx/Makefile.in              |  4 +--
- 8 files changed, 81 insertions(+), 19 deletions(-)
+ driver/Makefile.in             |  9 ++++---
+ driver/XScreenSaver.ad.in      | 14 +++++++----
+ driver/demo-Gtk.c              |  4 ++--
+ driver/subprocs.c              | 54 ++++++++++++++++++++++++++++++++++++++++--
+ driver/xscreensaver-demo.ui.in |  5 ++--
+ driver/xscreensaver-text       |  6 ++++-
+ driver/xscreensaver.man        |  5 ++--
+ hacks/glx/Makefile.in          |  4 ++--
+ 8 files changed, 82 insertions(+), 19 deletions(-)
 
 diff --git a/driver/Makefile.in b/driver/Makefile.in
-index c132304..a5b94bf 100644
+index b24536e..7c41ac0 100644
 --- a/driver/Makefile.in
 +++ b/driver/Makefile.in
 @@ -27,7 +27,7 @@ INTLTOOL_MERGE	= @INTLTOOL_MERGE@
@@ -99,10 +99,10 @@ index 22d5bcb..3e1ff8a 100644
  !   Gnome 2.2:
  !
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
-index 27d2316..6c449f2 100644
+index 87ae8a5..adb097f 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
-@@ -994,7 +994,7 @@ restart_menu_cb (GtkWidget *widget, gpointer user_data)
+@@ -1004,7 +1004,7 @@ restart_menu_cb (GtkWidget *widget, gpointer user_data)
    flush_dialog_changes_and_save (s);
    xscreensaver_command (GDK_DISPLAY(), XA_EXIT, 0, False, NULL);
    sleep (1);
@@ -111,7 +111,7 @@ index 27d2316..6c449f2 100644
      fprintf (stderr, "%s: fork error\n", blurb());
  
    await_xscreensaver (s);
-@@ -4969,7 +4969,7 @@ main (int argc, char **argv)
+@@ -4965,7 +4965,7 @@ main (int argc, char **argv)
  
        if (init_results == 1)
  	{
@@ -233,21 +233,22 @@ index ecbaeb2..9414df1 100644
    av[ac] = 0;
  
    if (pipe (fds))
-diff --git a/driver/xscreensaver-demo.glade2.in b/driver/xscreensaver-demo.glade2.in
-index ad0095d..40e47f6 100644
---- a/driver/xscreensaver-demo.glade2.in
-+++ b/driver/xscreensaver-demo.glade2.in
-@@ -927,8 +927,8 @@ Installed</property>
- 			      <property name="visible">True</property>
- 			      <property name="label" translatable="yes">Very few (or no) screen savers appear to be available.
+diff --git a/driver/xscreensaver-demo.ui.in b/driver/xscreensaver-demo.ui.in
+index 9c31a9b..c04a331 100644
+--- a/driver/xscreensaver-demo.ui.in
++++ b/driver/xscreensaver-demo.ui.in
+@@ -950,8 +950,9 @@ Installed</property>
+                                 <property name="visible">True</property>
+                                 <property name="label" translatable="yes">Very few (or no) screen savers appear to be available.
  
--This probably means that the &quot;xscreensaver-extras&quot; and
--&quot;xscreensaver-gl-extras&quot; packages are not installed.</property>
+-This probably means that the "xscreensaver-extras" and
+-"xscreensaver-gl-extras" packages are not installed.</property>
 +This probably means that the “desktop/xscreensaver/hacks” and
-+“desktop/xscreensaver/hacks/hacks-gl” packages are not installed.</property>
- 			      <property name="use_underline">False</property>
- 			      <property name="use_markup">False</property>
- 			      <property name="justify">GTK_JUSTIFY_CENTER</property>
++“desktop/xscreensaver/hacks/hacks-gl” packages are not installed.
++                                </property>
+                                 <property name="use_underline">False</property>
+                                 <property name="use_markup">False</property>
+                                 <property name="justify">GTK_JUSTIFY_CENTER</property>
 diff --git a/driver/xscreensaver-text b/driver/xscreensaver-text
 index 8199829..921d5c7 100755
 --- a/driver/xscreensaver-text
@@ -320,5 +321,5 @@ index 211d356..23c68d4 100644
  	   echo rm -f $$idir/$$program ;				\
  		rm -f $$idir/$$program ;				\
 -- 
-2.6.1
+2.7.4
 

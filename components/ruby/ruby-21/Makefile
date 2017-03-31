@@ -197,6 +197,7 @@ COMPONENT_TEST_TRANSFORMS += \
 $(SKIP_TEST_AT_TOP_LEVEL)
 
 REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
