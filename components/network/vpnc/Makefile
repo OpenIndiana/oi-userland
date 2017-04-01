@@ -68,4 +68,3 @@ REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += driver/network/header-tun
-REQUIRED_PACKAGES += driver/network/header-tap
