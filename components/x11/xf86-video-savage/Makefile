@@ -63,3 +63,17 @@ CONFIGURE_OPTIONS += --disable-dri
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/server/xorg
