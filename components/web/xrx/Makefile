@@ -13,24 +13,26 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xrx
-
 COMPONENT_VERSION= 1.0.4
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= RX: X Remote eXecution (aka Xweb or Broadway)
+COMPONENT_PROJECT_URL= http://www.broadwayinfo.com/
+COMPONENT_FMRI= web/browser/firefox/plugin/firefox-xrx
+COMPONENT_CLASSIFICATION= Applications/Plug-ins and Run-times
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:b5eb5ecae105ed4d3b2c91193a1c2ef9fe51b1145190541a59f92645899763a4
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.broadwayinfo.com/
+COMPONENT_LICENSE= MIT
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_LIBDIR.32=/usr/lib/firefox/browser/plugins
 
@@ -41,3 +43,10 @@ CONFIGURE_OPTIONS+= --enable-static=no
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
+REQUIRED_PACKAGES += x11/library/toolkit/libxt
