@@ -42,4 +42,8 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += x11/library/libxcursor
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/xcursorgen
