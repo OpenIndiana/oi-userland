@@ -50,4 +50,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+
 REQUIRED_PACKAGES += system/library

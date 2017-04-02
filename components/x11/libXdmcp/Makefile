@@ -37,4 +37,8 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += 11/header/xproto
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

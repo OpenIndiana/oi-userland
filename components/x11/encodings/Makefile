@@ -47,4 +47,6 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+REQUIRED_PACKAGES += x11/mkfontscale
