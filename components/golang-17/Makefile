@@ -314,11 +314,9 @@ COMPONENT_POST_INSTALL_ACTION += $(PERL_SCRIPTS_PROCESS)
 # Used during the build.
 REQUIRED_PACKAGES += developer/gcc
 REQUIRED_PACKAGES += developer/versioning/git
-ifneq ($(MACH), sparc)
 # Go bootstraps itself using Go, so at least one previous version must already
 # be installed.
 REQUIRED_PACKAGES += developer/golang
-endif
 # Used in this Makefile.
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += text/gnu-sed

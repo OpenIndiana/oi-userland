@@ -46,3 +46,4 @@ CPPFLAGS += -I$(USRINCDIR)/ncurses
 CFLAGS += -I$(USRINCDIR)/ncurses
 
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += text/groff

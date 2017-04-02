@@ -110,6 +110,7 @@ endif
 
 
 REQUIRED_PACKAGES += developer/assembler
+REQUIRED_PACKAGES += developer/gcc-3
 REQUIRED_PACKAGES += developer/gnu-binutils
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
