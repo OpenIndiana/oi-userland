@@ -63,6 +63,14 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += system/library
