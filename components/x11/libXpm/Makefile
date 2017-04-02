@@ -56,7 +56,11 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
