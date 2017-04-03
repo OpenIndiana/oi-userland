@@ -89,6 +89,15 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/dri2proto
+REQUIRED_PACKAGES += x11/header/dri3proto
+REQUIRED_PACKAGES += x11/header/glproto
+REQUIRED_PACKAGES += x11/header/presentproto
+REQUIRED_PACKAGES += x11/library/libpthread-stubs
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
