@@ -1,0 +1,22 @@
+This patch was developed by a customer at New York University, as part of
+the analysis of a bug that was only discovered because the customer was
+building procmail as root, triggering TOGGLE_SGID_OK to be set, which in
+turn triggered CAN_toggle_sgid to be set, which is checked via logical OR
+with accspooldir when deciding about the privileges needed to set[rg]id.
+The patch will be submitted upstream.
+
+--- procmail-3.22/src/foldinfo.c.orig	2001-09-10 21:57:32.000000000 +0000
++++ procmail-3.22/src/foldinfo.c	2017-04-03 09:35:21.186639287 +0000
+@@ -185,9 +185,9 @@
+      *chp='\0';					   /* strip off the filename */
+   if(!stat(buf,&stbuf))
+    { unsigned wwsdir;
+-     accspooldir=(wwsdir=			/* world writable spool dir? */
+-	    ((S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)&stbuf.st_mode)==
+-	     (S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)
++     accspooldir=((wwsdir=			/* world writable spool dir? */
++	    (((S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)&stbuf.st_mode)==
++	     (S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)))
+ 	  <<1|						 /* note it in bit 1 */
+ 	  uid==stbuf.st_uid);	   /* we own the spool dir, note it in bit 0 */
+      if((CAN_toggle_sgid||accspooldir)&&privileged)
