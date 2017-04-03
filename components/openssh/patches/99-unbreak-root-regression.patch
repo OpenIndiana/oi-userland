@@ -1,0 +1,69 @@
+#
+# Temporary patch for 7.4p1 regression, fixed in 7.5
+# Fix from upstream
+# Remove when upgrading 
+#
+# https://github.com/openssh/openssh-portable/commit/51045869fa084cdd016fdd721ea760417c0a3bf3
+# unbreak Unix domain socket forwarding for root
+#
+diff -rupN old/serverloop.c new/serverloop.c
+--- old/serverloop.c	2017-03-30 14:34:07.762152901 -0700
++++ new/serverloop.c	2017-03-30 14:43:20.195633292 -0700
+@@ -469,6 +469,11 @@ server_request_direct_streamlocal(void)
+ 	char *target, *originator;
+ 	u_short originator_port;
+ 
++	struct passwd *pw = the_authctxt->pw;
++
++	if (pw == NULL || !the_authctxt->valid)
++		fatal("server_input_global_request: no/invalid user");
++
+ 	target = packet_get_string(NULL);
+ 	originator = packet_get_string(NULL);
+ 	originator_port = packet_get_int();
+@@ -480,7 +485,7 @@ server_request_direct_streamlocal(void)
+ 	/* XXX fine grained permissions */
+ 	if ((options.allow_streamlocal_forwarding & FORWARD_LOCAL) != 0 &&
+ 	    !no_port_forwarding_flag && !options.disable_forwarding &&
+-	    use_privsep) {
++	    (pw->pw_uid == 0 || use_privsep)) {
+ 		c = channel_connect_to_path(target,
+ 		    "direct-streamlocal@openssh.com", "direct-streamlocal");
+ 	} else {
+@@ -702,6 +707,10 @@ server_input_global_request(int type, u_
+ 	int want_reply;
+ 	int r, success = 0, allocated_listen_port = 0;
+ 	struct sshbuf *resp = NULL;
++	struct passwd *pw = the_authctxt->pw;
++
++	if (pw == NULL || !the_authctxt->valid)
++		fatal("server_input_global_request: no/invalid user");
+ 
+ 	rtype = packet_get_string(NULL);
+ 	want_reply = packet_get_char();
+@@ -709,12 +718,8 @@ server_input_global_request(int type, u_
+ 
+ 	/* -R style forwarding */
+ 	if (strcmp(rtype, "tcpip-forward") == 0) {
+-		struct passwd *pw;
+ 		struct Forward fwd;
+ 
+-		pw = the_authctxt->pw;
+-		if (pw == NULL || !the_authctxt->valid)
+-			fatal("server_input_global_request: no/invalid user");
+ 		memset(&fwd, 0, sizeof(fwd));
+ 		fwd.listen_host = packet_get_string(NULL);
+ 		fwd.listen_port = (u_short)packet_get_int();
+@@ -762,9 +767,10 @@ server_input_global_request(int type, u_
+ 		/* check permissions */
+ 		if ((options.allow_streamlocal_forwarding & FORWARD_REMOTE) == 0
+ 		    || no_port_forwarding_flag || options.disable_forwarding ||
+-		    !use_privsep) {
++		    (pw->pw_uid != 0 && !use_privsep)) {
+ 			success = 0;
+-			packet_send_debug("Server has disabled port forwarding.");
++			packet_send_debug("Server has disabled "
++			    "streamlocal forwarding.");
+ 		} else {
+ 			/* Start listening on the socket */
+ 			success = channel_setup_remote_fwd_listener(

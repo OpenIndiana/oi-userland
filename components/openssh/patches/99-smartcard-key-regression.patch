@@ -1,0 +1,58 @@
+#
+# Temporary patch for 7.4p1 regression, fixed in 7.5
+# Fix from upstream
+# Remove when upgrading
+#
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2682
+# fix regression in 7.4: deletion of PKCS#11-hosted keys
+# would fail unless they were specified by full physical pathname. 
+#
+diff -rupN old/ssh-agent.c new/ssh-agent.c
+--- old/ssh-agent.c	2017-03-30 14:48:53.785202740 -0700
++++ new/ssh-agent.c	2017-03-30 16:19:56.238660913 -0700
+@@ -821,7 +821,7 @@ send:
+ static void
+ process_remove_smartcard_key(SocketEntry *e)
+ {
+-	char *provider = NULL, *pin = NULL;
++	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
+ 	int r, version, success = 0;
+ 	Identity *id, *nxt;
+ 	Idtab *tab;
+@@ -831,6 +831,14 @@ process_remove_smartcard_key(SocketEntry
+ 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
+ 	free(pin);
+ 
++	if (realpath(provider, canonical_provider) == NULL) {
++		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
++		    provider, strerror(errno));
++		goto send;
++	}
++
++	debug("%s: remove %.100s", __func__, canonical_provider);
++
+ 	for (version = 1; version < 3; version++) {
+ 		tab = idtab_lookup(version);
+ 		for (id = TAILQ_FIRST(&tab->idlist); id; id = nxt) {
+@@ -838,18 +846,19 @@ process_remove_smartcard_key(SocketEntry
+ 			/* Skip file--based keys */
+ 			if (id->provider == NULL)
+ 				continue;
+-			if (!strcmp(provider, id->provider)) {
++			if (!strcmp(canonical_provider, id->provider)) {
+ 				TAILQ_REMOVE(&tab->idlist, id, next);
+ 				free_identity(id);
+ 				tab->nentries--;
+ 			}
+ 		}
+ 	}
+-	if (pkcs11_del_provider(provider) == 0)
++	if (pkcs11_del_provider(canonical_provider) == 0)
+ 		success = 1;
+ 	else
+ 		error("process_remove_smartcard_key:"
+ 		    " pkcs11_del_provider failed");
++send:
+ 	free(provider);
+ 	send_status(e, success);
+ }
