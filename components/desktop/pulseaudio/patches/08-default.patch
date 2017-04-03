@@ -1,0 +1,23 @@
+# Bug 25789688 - Pulseaudio needs to use the oss solaris audio driver. 
+# This changes the default configuration that is delivered to solaris
+# users.  The primary need is to allow pulseaudio to use the oss audio 
+# driver, instead of the custom (non oss) driver interface that is supplied
+# as part of the upstream source.  
+#
+# IMHO the library called module_solaris.so is no longer needed and had we
+# been tracking the community more closely, we would have been on the oss
+# interface long ago.  
+#
+# We should be working with the upstream community to phase out the library
+# module_solaris.so as obsolete.
+# 
+--- pulseaudio-9.0/src/daemon/a	2017-03-30 12:17:40.709473123 -0700
++++ pulseaudio-9.0/src/daemon/default.pa.in	2017-03-30 12:19:35.125104134 -0700
+@@ -41,6 +41,7 @@
+ #load-module module-alsa-source device=hw:1,0
+ ])dnl
+ ifelse(@HAVE_OSS_OUTPUT@, 1, [dnl
++load-module module-oss 
+ #load-module module-oss device="/dev/dsp" sink_name=output source_name=input
+ #load-module module-oss-mmap device="/dev/dsp" sink_name=output source_name=input
+ ])dnl

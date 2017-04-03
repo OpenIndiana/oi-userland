@@ -23,7 +23,7 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS = 		32_and_64
+BUILD_BITS = 		64_and_32
 COMPILER = 		gcc
 include ../../../make-rules/shared-macros.mk
 
