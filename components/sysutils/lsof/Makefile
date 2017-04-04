@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Jim Klimov. All rights reserved.
 #
 
@@ -29,6 +30,9 @@ COMPONENT_ARCHIVE_HASH=	\
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# Need GNU version of yes
+PATH = $(PATH.gnu)
 
 # Snatched from espeak component
 BINDIR.32=/usr/bin

@@ -18,11 +18,12 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2012 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH = $(PATH.ill):/usr/sbin
 
 COMPONENT_NAME=		pycups
 COMPONENT_VERSION=	1.9.73

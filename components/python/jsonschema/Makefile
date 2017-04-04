@@ -9,12 +9,13 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH = $(PATH.ill):/usr/sbin
 
 COMPONENT_NAME=		jsonschema
 COMPONENT_VERSION=	2.4.0

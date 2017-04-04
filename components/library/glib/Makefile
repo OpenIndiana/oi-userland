@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
@@ -31,7 +32,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+# Need automake 1.11
+PATH = $(PATH.gnu)
 
 gcc_OPT = -O2
 

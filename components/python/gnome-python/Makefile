@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2013 Gary Mills
 # Copyright (c) 2013 Alexander Pyhalov
 #
 
@@ -43,7 +44,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)

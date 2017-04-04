@@ -11,6 +11,7 @@
 #
 # Copyright 2011 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2016 Adam Stevko
+# Copyright 2017 Gary Mills
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -32,7 +33,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH = $(PATH.ill)
 
 CONFIGURE_OPTIONS +=	--with-perl=yes
 CONFIGURE_OPTIONS +=	--with-socks

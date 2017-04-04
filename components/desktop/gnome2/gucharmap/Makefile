@@ -11,6 +11,7 @@
 #
 # Copyright (c) 2014 Alexander Pyhalov
 # Copyright (c) 2016 Till Wegmueller
+# Copyright 2017 Gary Mills
 #
 
 include ../../../../make-rules/shared-macros.mk
@@ -34,7 +35,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+# Need automake 1.11
+PATH = $(PATH.gnu):/usr/perl5/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \

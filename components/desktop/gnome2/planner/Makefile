@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
@@ -29,7 +30,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH = $(PATH.gnu):/usr/perl5/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					aclocal -I. && \

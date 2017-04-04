@@ -9,12 +9,13 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH = $(PATH.ill):/usr/sbin
 
 COMPONENT_NAME=		netifaces
 COMPONENT_VERSION=	0.10.4
