@@ -86,7 +86,7 @@ zone-build prep build install publish test system-test:	LOG = >$(WS_LOGS)/$(@F).
 
 # turn off pkglint for the individual component builds.
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
-publish:		MAKEFLAGS += PKGLINT=/bin/true
+publish:		MAKEFLAGS += PKGLINTVAR=/bin/true
 endif
 
 # In order to work around an IPS simultaneous publication issue and to improve
@@ -119,7 +119,6 @@ clobber:	$(COMPONENT_DIRS.nosetup) clean
 	$(RM) -r $(WS_REPO) $(WS_HOME) $(WS_LOGS) $(WS_LINT_CACHE) \
 	    $(shell find . -name 'manifest-*.published')
 
-
 setup:	$(WS_MACH) $(WS_LOGS) $(WS_HOME) $(WS_REPO) tools $(WS_LINT_CACHE)
 
 $(WS_MACH) $(WS_LOGS) $(WS_HOME):
@@ -138,7 +137,7 @@ DUMMYPKG += "set info.classification=org.opensolaris.category.2008:System/Core"
 $(WS_LINT_CACHE):	$(WS_LOGS) tools
 ifdef CANONICAL_REPO
 	@echo "Generating pkglint(1) cache from CANONICAL_REPO $(CANONICAL_REPO)..."
-	@(echo $(DUMMYPKG) | $(PKGLINT) \
+	@(echo $(DUMMYPKG) | $(PKGLINTVAR) \
 		-c $(WS_LINT_CACHE) -r $(CANONICAL_REPO) /dev/fd/0 \
 		>$(WS_LOGS)/naughty-canonical-repo-actions 2>&1 || \
 		( echo "pkglint(1) failed, please see $(WS_LOGS)/naughty-canonical-repo-actions"; \
@@ -172,6 +171,16 @@ incorporation:
 	               $${incorporation} ; \
 	done
 
+# Use PKGLINT below instead of PKGLINTVAR because we know we always want the
+# real one for this set of rules.
+pkglint:
+	@echo 'pkglinting all package manifests...'
+	@$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
+			SOLARIS_VERSION=$(SOLARIS_VERSION) \
+			$(PKGLINT) \
+			-c $(WS_LINT_CACHE) -f $(WS_TOOLS)/pkglintrc \
+			$(shell find . -name 'manifest-*.published')
+
 publish:
 	$(PKGREPO) refresh -s $(PKG_REPO)
 # The package below is obsolete in S12/11.4, but cannot yet be removed from
@@ -189,12 +198,7 @@ ifneq ($(BUILD_TYPE), evaluation)
 endif
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
-	@echo 'pkglinting all package manifests...'
-	@$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
-			SOLARIS_VERSION=$(SOLARIS_VERSION) \
-			$(PKGLINT) \
-			-c $(WS_LINT_CACHE) -f $(WS_TOOLS)/pkglintrc \
-			$(shell find . -name 'manifest-*.published')
+	$(MAKE) pkglint
 endif
 
 $(COMPONENT_DIRS.nosetup):	$(WS_LOGS) FORCE

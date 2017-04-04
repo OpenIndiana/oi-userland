@@ -705,10 +705,11 @@ GUNZIP =	/usr/bin/gunzip
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
 PKGMOGRIFY =	/usr/bin/pkgmogrify
-ifeq   ($(strip $(PKGLINT_COMPONENT)),)
 PKGLINT =	/usr/bin/pkglint
+ifeq   ($(strip $(PKGLINT_COMPONENT)),)
+PKGLINTVAR =	$(PKGLINT)
 else
-PKGLINT =	${WS_TOOLS}/pkglint
+PKGLINTVAR =	${WS_TOOLS}/pkglint
 endif
 
 ACLOCAL =	/usr/bin/aclocal-1.10

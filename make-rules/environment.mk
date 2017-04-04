@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 SUDO =		/usr/bin/sudo
 
@@ -88,7 +88,7 @@ component-zone-build:	$(BUILD_DIR)/ai_manifest.xml $(BUILD_DIR)/packages.xml \
 	$(call separator-line,Build in $(ZONENAME))
 	$(SUDO) /usr/sbin/zlogin -l $${USER} $(ZONENAME) \
 		"cd $(COMPONENT_DIR) ; gmake component-be-check install"
-	#	"cd $(COMPONENT_DIR) ; gmake component-be-check publish PKGLINT=/bin/true"
+	#	"cd $(COMPONENT_DIR) ; gmake component-be-check publish PKGLINTVAR=/bin/true"
 	$(call separator-line,Halt $(ZONENAME))
 	$(SUDO) /usr/sbin/zoneadm -z $(ZONENAME) halt
 	$(SUDO) /usr/sbin/zoneadm -z $(ZONENAME) uninstall -F
