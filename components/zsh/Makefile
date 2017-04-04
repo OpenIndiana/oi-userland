@@ -49,9 +49,7 @@ CONFIGURE_OPTIONS += --enable-etcdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-function-subdirs
 # Zsh uses the compiler to link, so we need to pass CC_BITS, not LD_BITS.
 CONFIGURE_OPTIONS += --enable-ldflags="$(CC_BITS) -zignore"
-ifeq ($(OS_VERSION),5.11)
-CONFIGURE_OPTIONS += --enable-libs="-lnsl"
-endif
+CONFIGURE_OPTIONS += --enable-libs="$(LIBNSL)"
 CONFIGURE_OPTIONS += --enable-additional-fpath=/usr/share/zsh/vendor-functions/Completion
 CONFIGURE_OPTIONS += --enable-maildir-support
 CONFIGURE_OPTIONS += --enable-multibyte

@@ -69,10 +69,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	-e 's|need_relink=yes|need_relink=not_on_solaris|' \
 	libtool)
 
-ifeq ($(OS_VERSION),5.11)
-LIBS += -lsocket -lnsl
+LIBS += $(LIBSOCKET) $(LIBNSL)
 CONFIGURE_ENV += LIBS="$(LIBS)"
-endif
 
 # Prevent older versions of libMagick{Core,Wand}-6.Q16.so from the build
 # machine from being found ahead of new versions from the proto area.

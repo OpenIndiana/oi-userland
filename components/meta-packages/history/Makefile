@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -63,7 +63,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 PKG_MACROS =		CONSOLIDATION=$(CONSOLIDATION)
 PKG_MACROS +=		BUILD_VERSION=$(BUILD_VERSION)
-PKG_MACROS +=		OS_VERSION=$(OS_VERSION)
+PKG_MACROS +=		OS_RELEASE=$(OS_RELEASE)
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 

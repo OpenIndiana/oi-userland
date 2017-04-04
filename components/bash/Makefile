@@ -69,19 +69,13 @@ CFLAGS += -I$(USRINCDIR)/ncurses
 # the required libraries for them. We avoid linking with libthread.so.1
 # just because we pass -mt, by explicitly passing -lc.
 LIBS =	-lc -lgen
-ifeq ($(OS_VERSION),5.11)
-LIBS +=	-lsocket
-endif
+LIBS +=	$(LIBSOCKET)
 
 # -z redlocsym -- let's shrink the SHT_SYMTAB as much as we can
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
 # This avoids the need to patch configure or other files for these dependencies.
-ifeq ($(OS_VERSION), 5.11)
-CONFIGURE_ENV += LD_OPTIONS="-lc -lm -lgen -lsocket -lnsl -lresolv $(LD_Z_IGNORE)"
-else
-CONFIGURE_ENV += LD_OPTIONS="-lc -lm -lgen -lresolv $(LD_Z_IGNORE)"
-endif
+CONFIGURE_ENV += LD_OPTIONS="-lc -lm -lgen $(LIBSOCKET) $(LIBNSL) -lresolv $(LD_Z_IGNORE)"
 
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 

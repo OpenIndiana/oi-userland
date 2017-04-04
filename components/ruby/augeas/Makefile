@@ -51,6 +51,15 @@ include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/gem.mk
 include $(WS_MAKE_RULES)/ruby.mk
 
+# Before the 12 -> 11.4 rename, RUBY_DIR_VERS would always be the same as
+# SOLARIS_VERSION (minus the leading "2.").  After the rename, there is a
+# potential mismatch, because the triple $(MACH64)-solaris-$(SOLARIS_VERSION)
+# is embedded in ruby, so we need to handle both the before and after cases.
+# Once the transition is complete and build machines are running 11.4, these
+# lines can be removed and the corresponding .p5m file changes can be reverted.
+RUBY_DIR_VERS=$(shell $(RUBY) --version | $(GSED) -e 's/^.*solaris2.//' -e 's/]//')
+PKG_PROTO_DIRS += $(PROTO_DIR)/usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/extensions/$(MACH64)-solaris-2.$(RUBY_DIR_VERS)/$(RUBY_LIB_VERSION)/ruby-augeas-$(COMPONENT_VERSION)
+
 COMPONENT_TEST_CMD=	/usr/bin/rake
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS+=	test

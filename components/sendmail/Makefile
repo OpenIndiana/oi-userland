@@ -57,7 +57,7 @@ include $(WS_MAKE_RULES)/common.mk
 # which is why the macros just below only have values for 64.  libmilter
 # is dealt with further below.
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
-PKG_PROTO_DIRS += $(BUILD_DIR_64)/obj.SunOS.$(OS_VERSION).$(ARCH)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)/obj.SunOS.$(OS_RELEASE).$(ARCH)
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files/man
 
 # Userland default includes -mt which links with libthread which we don't need.
@@ -71,7 +71,7 @@ ARCH	=	sun4
 endif
 FILE_DIR=$(COMPONENT_DIR)/files
 M4_ARG=-D_NO_MAKEINFO_
-SM_BUILD_SUB_DIR=obj.SunOS.$(OS_VERSION).$(ARCH)
+SM_BUILD_SUB_DIR=obj.SunOS.$(OS_RELEASE).$(ARCH)
 SM_BUILD_DIR=$(@D)/$(SM_BUILD_SUB_DIR)
 
 # libmilter is built 32- and 64-bit, but its Makefile installs into a common
@@ -87,10 +87,18 @@ CLEAN_PATHS += $(FILE_DIR)/aux/mailq
 COMPONENT_PREP_ACTION =	$(GSED) -i -e 's/\(Version\[\] = "8\.[^"]*\)/\1+Sun/' \
     $(COMPONENT_SRC)/sendmail/version.c
 
+# For 5.11, we need to distinguish between different versions, so use OS_VERSION.
+# For other releases, SOLARIS_VERSION, which comes from OS_RELEASE, is sufficient.
+ifeq ($(OS_RELEASE),5.11)
+SOLARIS= 	$(shell echo $(OS_VERSION) | \
+    $(GSED) -e 's/^/2/' -e 's/\.//' -e 's/$$/0/')
+else
+SOLARIS=	$(shell echo $(SOLARIS_VERSION) | \
+    $(GSED) -e 's/\.//' -e 's/$$/00/')
+endif
+SM_DEFS=	-DSOLARIS=$(SOLARIS)
 # libmilter and sendmail must come before include, so appending to the default
 # value of LINT_FLAGS will not work; we must redefine it here.
-SM_DEFS=	-DSOLARIS=$(shell echo $(SOLARIS_VERSION) | \
-    $(GSED) -e 's/\.//' -e 's/$$/00/')
 SM_INCLUDES=	-I$(SM_BUILD_DIR)/libmilter -I$(SOURCE_DIR)/sendmail \
     -I$(SOURCE_DIR)/include -I$(SOURCE_DIR) -I.
 LINT_FLAGS =	-nsvx $(SM_DEFS) $(SM_INCLUDES)
@@ -131,6 +139,7 @@ APPENDDEF(`conf_sendmail_LIBS', `-lssl')
 APPENDDEF(`conf_sendmail_LIBS', `-lcrypto')
 APPENDDEF(`confMAPDEF', `-DLDAPMAP')
 APPENDDEF(`confLIBS', `-lldap_r-2.4 -llber-2.4 -lc')
+define(`confENVDEF', `-DSOLARIS=$(SOLARIS) -DNETINET6')
 define(`confDEPEND_TYPE', `Solaris')
 define(`confINCDIRS', `-I/usr/include/openldap')
 define(`confMKDIR', `/usr/bin/mkdir')
@@ -185,11 +194,15 @@ COMPONENT_TEST_ENV +=	PATH=$(GNUBIN):$(USRBINDIR)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_TEST_TRANSFORMS += \
-    '-e "s|$(SM_BUILD_SUB_DIR)|\\$$(SM_BUILD_SUB_DIR)|g" ' \
-    '-e "s|$(OS_VERSION)|\\$$(OS_VERSION)|g" ' \
-    '-e "s|$(ARCH)|\\$$(ARCH)|g" ' \
+    '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
     '-e "s|^$(CC).*$$|XXX_CC_XXX|g" ' \
-    '-e "/^XXX_CC_XXX\\$$/d" '
+    '-e "/^XXX_CC_XXX\\$$/d" ' \
+    '-e "/^Configuration:.*$$/d" ' \
+    '-e "/^Creating.*$$/d" ' \
+    '-e "/^Including.*$$/d" ' \
+    '-e "/^Making.*in.*$$/d" '
 
 INSTALL_64=
 

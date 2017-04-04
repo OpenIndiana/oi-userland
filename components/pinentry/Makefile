@@ -74,10 +74,8 @@ CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(CC_PIC)
 
 # prevent libtool from removing these
-ifeq ($(OS_VERSION),5.11)
-LDFLAGS += -lsocket -lnsl
-LIBS += -lsocket -lnsl
-endif
+LDFLAGS += $(LIBSOCKET) $(LIBNSL)
+LIBS += $(LIBSOCKET) $(LIBNSL)
 
 LDFLAGS += -lpkcs11
 LIBS += -lpkcs11

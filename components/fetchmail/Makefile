@@ -67,7 +67,5 @@ REQUIRED_PACKAGES += library/python/tkinter-27
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += security/kerberos-5
-ifeq ($(OS_VERSION),5.11)
-REQUIRED_PACKAGES += service/security/kerberos-5
-endif
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93

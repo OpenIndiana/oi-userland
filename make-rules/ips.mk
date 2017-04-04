@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -99,7 +99,7 @@ endif
 # For items defined as variables or that may contain whitespace, add
 # them to a list to be expanded into PKG_OPTIONS later.
 PKG_VARS += ARC_CASE TPNO
-PKG_VARS += BUILD_VERSION OS_VERSION SOLARIS_VERSION PKG_SOLARIS_VERSION
+PKG_VARS += BUILD_VERSION OS_RELEASE SOLARIS_VERSION PKG_SOLARIS_VERSION
 PKG_VARS += CONSOLIDATION CONSOLIDATION_CHANGESET CONSOLIDATION_REPOSITORY_URL
 PKG_VARS += COMPONENT_VERSION IPS_COMPONENT_VERSION HUMAN_VERSION
 PKG_VARS += COMPONENT_ARCHIVE_URL COMPONENT_PROJECT_URL COMPONENT_NAME
@@ -107,7 +107,7 @@ PKG_VARS += HG_REPO HG_REV HG_URL
 PKG_VARS += GIT_COMMIT_ID GIT_REPO GIT_TAG
 PKG_VARS += MACH MACH32 MACH64
 PKG_VARS += PUBLISHER PUBLISHER_LOCALIZABLE
-PKG_VARS += SOLARIS_11_ONLY SOLARIS_12_ONLY
+PKG_VARS += SOLARIS_11_3_ONLY SOLARIS_11_4_ONLY
 
 # Include TPNO_* Makefile variables in PKG_VARS.
 $(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
@@ -245,7 +245,7 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D PYVER=$(1) -D MAYBE_PYVER_SPACE="$(1) " \
 		-D MAYBE_SPACE_PYVER=" $(1)" \
-		-D SOLARIS_11_ONLY="$(SOLARIS_11_ONLY)" \
+		-D SOLARIS_11_3_ONLY="$(SOLARIS_11_3_ONLY)" \
 		-D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
@@ -271,7 +271,7 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_MAKE_RULES)/shared-macros.mk
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D PYV=###PYV### -D MAYBE_PYVER_SPACE= \
-		-D SOLARIS_11_ONLY="$(SOLARIS_11_ONLY)" \
+		-D SOLARIS_11_3_ONLY="$(SOLARIS_11_3_ONLY)" \
 		-D MAYBE_SPACE_PYVER= $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi

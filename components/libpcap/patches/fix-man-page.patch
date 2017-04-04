@@ -6,13 +6,11 @@ Date:   Mon Sep 19 12:42:11 2016 +0200
     
     There are two problems:
     a) usermod and ethers man pages lie in nonstandard path
-    b) Solaris 12 has the man pages sections reordered completely
+    b) Newer Solaris versions have the man pages sections reordered completely
 
-diff --git a/configure.in b/configure.in
-index da2f940..b4943d5 100644
---- a/configure.in
-+++ b/configure.in
-@@ -1191,6 +1191,8 @@ fi
+--- a/configure.in	2015-04-22 13:19:15.000000000 +0000
++++ b/configure.in	2017-03-22 10:07:21.877704267 +0000
+@@ -1077,6 +1077,8 @@
  DYEXT="none"
  MAN_FILE_FORMATS=5
  MAN_MISC_INFO=7
@@ -21,18 +19,16 @@ index da2f940..b4943d5 100644
  case "$host_os" in
  
  aix*)
-@@ -1423,12 +1425,25 @@ sinix*)
+@@ -1309,12 +1311,23 @@
  solaris*)
  	AC_DEFINE(HAVE_SOLARIS,1,[On solaris])
  
-+	case "`uname -r`" in
-+	    5.12)
++	if test -f /usr/share/man/man7/attributes.7 ; then
 +		MAN_USERMOD_SECTION=8
 +		MAN_ETHERS_SECTION=5
 +		MAN_FILE_FORMATS=5
 +		MAN_MISC_INFO=7
-+		;;
-+	    *)
++	else
 +		#
 +		# Use System V conventions for man pages.
 +		#
@@ -41,7 +37,7 @@ index da2f940..b4943d5 100644
 +		MAN_ETHERS_SECTION=4
 +		MAN_FILE_FORMATS=4
 +		MAN_MISC_INFO=5
-+	esac
++	fi
 +
  	DYEXT="so"
 -	#
@@ -52,7 +48,7 @@ index da2f940..b4943d5 100644
  	;;
  esac
  
-@@ -1472,6 +1487,8 @@ AC_SUBST(SSRC)
+@@ -1364,6 +1377,8 @@
  AC_SUBST(DYEXT)
  AC_SUBST(MAN_FILE_FORMATS)
  AC_SUBST(MAN_MISC_INFO)
@@ -61,8 +57,6 @@ index da2f940..b4943d5 100644
  
  AC_ARG_ENABLE([usb],
  [AC_HELP_STRING([--enable-usb],[enable nusb support @<:@default=yes, if support available@:>@])],
-diff --git a/pcap-filter.manmisc.in b/pcap-filter.manmisc.in
-index 9d3f34b..f10560e 100644
 --- a/pcap-filter.manmisc.in
 +++ b/pcap-filter.manmisc.in
 @@ -182,7 +182,7 @@ be checked for a match.
@@ -74,8 +68,6 @@ index 9d3f34b..f10560e 100644
  for numeric format).
  .IP "\fBether src \fIehost\fP"
  True if the Ethernet source address is \fIehost\fP.
-diff --git a/pcap.3pcap.in b/pcap.3pcap.in
-index 93478f1..dd57798 100644
 --- a/pcap.3pcap.in
 +++ b/pcap.3pcap.in
 @@ -244,7 +244,7 @@ that device.  A user can be given that privilege by, for example, adding

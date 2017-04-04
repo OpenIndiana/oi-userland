@@ -61,7 +61,7 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += data/docbook
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += data/docbook
 REQUIRED_PACKAGES += data/docbook/docbook-dtds
 REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
 REQUIRED_PACKAGES += data/docbook/docbook-style-xsl 
@@ -69,7 +69,7 @@ REQUIRED_PACKAGES += data/sgml-common
 REQUIRED_PACKAGES += data/xml-common
 REQUIRED_PACKAGES += developer/documentation-tool/itstool
 REQUIRED_PACKAGES += developer/documentation-tool/openjade
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += developer/gnome/gettext
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 REQUIRED_PACKAGES += developer/intltool
 REQUIRED_PACKAGES += editor/vim

@@ -146,12 +146,12 @@ with Mozilla LDAP instead by using --enable-openldap=no configure option.
 -		library_ldflags=[-L$_prefix/lib]
 -		library_ldadd=[-lldap_r]
 +	dnl A directory path where ldap.h exists.
-+	dnl The deafult is $_prefix/include, but it can be different depending on
-+	dnl operating systems and versions.
++	dnl The default is $_prefix/include, but it can be different depending
++	dnl on operating systems and versions.
 +	ldap_include_dir=$_prefix/include
 +
 +	if [[ "$myarch" = "solaris" ]] ; then
-+		if [[ "$DIST_VERSION" = "5.12" ]] ; then
++		if [[ $EGREP -s "OpenLDAP" "$_prefix/include/ldap.h" ]] ; then
 +			dnl On Solaris 12, we force to build with OpenLDAP.
 +			AC_DEFINE(LDAP_VENDOR_OPENLDAP)
 +			AC_MSG_RESULT([yes])

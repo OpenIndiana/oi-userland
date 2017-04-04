@@ -54,7 +54,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Leaving directory/d"' \
 	'-e "/^make/d"'
 
-ifeq ($(OS_VERSION),5.11)
+ifeq ($(OS_VERSION),11.3)
 OLD_DESKTOP_BUILD=	0.175.2.0.0.21.0
 else
 OLD_DESKTOP_BUILD=	5.12.0.0.0.25.0

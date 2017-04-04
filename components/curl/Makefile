@@ -103,12 +103,10 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
-ifeq ($(OS_VERSION),5.11)
-REQUIRED_PACKAGES += system/library/security/gss
-endif
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network/ldap/openldap

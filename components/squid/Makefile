@@ -52,8 +52,8 @@ LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
 
 CFLAGS += -I$(USRINCDIR)/kerberosv5
 CFLAGS += $(CPP_LARGEFILES)
-# <getopt.h> changed between 11 & 12.
-ifeq ($(OS_VERSION), 5.11)
+# <getopt.h> changed after 11.3.
+ifeq ($(OS_VERSION), 11.3)
 CXXFLAGS +=	-Wno-write-strings
 endif
 
@@ -156,19 +156,15 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/nettle
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += security/kerberos-5
-ifeq ($(OS_VERSION),5.11)
-REQUIRED_PACKAGES += service/security/kerberos-5
-endif
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/crypto
-ifeq ($(OS_VERSION),5.11)
-REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += system/library/security/libsasl
-endif
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += system/library/security/gss
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/library/security/libsasl2
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += system/network/ldap/openldap

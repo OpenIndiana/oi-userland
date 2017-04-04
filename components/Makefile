@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -161,7 +161,7 @@ INCORPORATE_WERROR ?= --Werror
 incorporation:
 	$(WS_TOOLS)/userland-incorporator \
 		--repository $(PKG_REPO) \
-		--version $(OS_VERSION),$(BUILD_VERSION) \
+		--version $(OS_RELEASE),$(BUILD_VERSION) \
 		--publisher $(PUBLISHER) \
 		--consolidation $(CONSOLIDATION) \
 		--destdir $(WS_MACH) \
@@ -174,10 +174,10 @@ incorporation:
 
 publish:
 	$(PKGREPO) refresh -s $(PKG_REPO)
-# The package below is obsolete in S12, but cannot yet be removed from S11
-# because runtime/python-26 has an optional dependency on it.
+# The package below is obsolete in S12/11.4, but cannot yet be removed from
+# S11.3 because runtime/python-26 has an optional dependency on it.
 ifeq ($(BUILD_TYPE),evaluation)
-ifeq ($(OS_VERSION),5.11)
+ifeq ($(OS_VERSION),11.3)
 	-$(PKGREPO) remove -s $(PKG_REPO) \
 	    library/python/tkinter-26
 	$(PKGREPO) refresh -s $(PKG_REPO)

@@ -83,7 +83,7 @@ ADISTACK_MODE = $(ADISTACK_DISABLE)
 
 # Largefile support breaks use of <procfs.h> when build environment is older
 # than s12_84 due to Solaris bug 21833491
-ifeq ($(OS_VERSION), 5.11)
+ifeq ($(OS_VERSION), 11.3)
   CONFIGURE_OPTIONS += --disable-largefile
 endif
 

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -36,11 +36,9 @@ include ../ofed.mk
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-# Almost every component requires these before Solaris 12.  Those that do not
+# Almost every component requires these in Solaris 11.3.  Those that do not
 # can simply override.
-ifeq ($(OS_VERSION),5.11)
-LIBS +=	-lsocket -lnsl
-endif
+LIBS +=	$(LIBSOCKET) $(LIBNSL)
 
 # common targets
 test:		$(NO_TESTS)

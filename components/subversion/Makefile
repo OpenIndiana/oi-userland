@@ -227,6 +227,5 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += system/library/c++-runtime
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += system/library/security/libsasl
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/library/security/libsasl2
-

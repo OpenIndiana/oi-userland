@@ -42,7 +42,7 @@ ADISTACK_MODE =	$(ADISTACK_ENABLE)
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-ifeq ($(OS_VERSION),5.11)
+ifeq ($(OS_VERSION),11.3)
 # Prevent macro redefinition error
 CFLAGS += -D _NETINET_IP_H
 endif

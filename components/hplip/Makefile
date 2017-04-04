@@ -46,7 +46,7 @@ CXXFLAGS.studio += -std=sun03
 
 CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--with-hpppddir=$(USRSHAREDIR)/cups/model/hplip
-ifeq ($(OS_VERSION),5.11)
+ifeq ($(OS_VERSION),11.3)
 CONFIGURE_OPTIONS +=	--enable-libusb01_build
 endif
 CONFIGURE_OPTIONS +=	--enable-fax-build
@@ -62,9 +62,7 @@ CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 # bye, bye SANE backends
 CONFIGURE_OPTIONS +=	--disable-scan-build
 
-ifeq ($(OS_VERSION),5.11)
-LDFLAGS += -lnsl
-endif
+LDFLAGS += $(LIBNSL)
 
 COMPONENT_INSTALL_ARGS += -e
 

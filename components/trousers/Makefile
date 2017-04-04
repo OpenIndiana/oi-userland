@@ -41,9 +41,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
-ifeq ($(OS_VERSION),5.11)
-# These libraries are in libc for S12:
-LIBS=-lnsl -lsocket
+LIBS=$(LIBNSL) $(LIBSOCKET)
+ifeq ($(OS_VERSION),11.3)
 # Use the "new" POSIX thread API (not the "draft" prototype):
 CFLAGS += "-D_POSIX_PTHREAD_SEMANTICS"
 endif

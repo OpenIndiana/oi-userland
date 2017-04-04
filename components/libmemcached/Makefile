@@ -38,8 +38,8 @@ TPNO=			31699
 
 include $(WS_MAKE_RULES)/common.mk
 
-ifeq ($(OS_VERSION),5.11)
-LDFLAGS += -lsocket -lnsl
+LDFLAGS += $(LIBSOCKET) $(LIBNSL)
+ifeq ($(OS_VERSION),11.3)
 CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__fPIE=no
 CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__pie=no
 CONFIGURE_OPTIONS += ax_cv_check_cxxflags__Werror__fPIE=no

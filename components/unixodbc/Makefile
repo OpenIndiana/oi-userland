@@ -62,10 +62,7 @@ CFLAGS.studio += $(studio_PIC)
 X11LIB.32 = $(CONFIGURE_LIBDIR.32)
 X11LIB.64 = $(CONFIGURE_LIBDIR.64)
 
-ifeq ($(OS_VERSION),5.11)
-LD_OPTIONS += -lsocket -lnsl
-endif
-
+LD_OPTIONS += $(LIBSOCKET) $(LIBNSL)
 LD_OPTIONS += -lresolv -lgen
 
 CONFIGURE_OPTIONS  +=	--includedir=$(CONFIGURE_PREFIX)/include/odbc
