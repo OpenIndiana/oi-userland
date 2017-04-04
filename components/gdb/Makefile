@@ -74,7 +74,7 @@ include $(WS_MAKE_RULES)/gnu-component.mk
 
 
 # GDB wants the GNU utilities
-PATH=/usr/gnu/bin:$(GCC_ROOT)/bin:/usr/bin:/usr/perl/$(PERL_VERSION)/bin
+PATH=/usr/gnu/bin:$(GCC_ROOT)/bin:/usr/bin:/usr/perl5/$(PERL_VERSION)/bin
 
 # Specify the C Standard to use when building
 CC += -std=gnu99
