@@ -116,8 +116,7 @@ clean:		$(COMPONENT_DIRS.nosetup)
 
 clobber:	$(COMPONENT_DIRS.nosetup) clean
 	@cd ../tools ; echo "clobbering tools..." ; $(GMAKE) clobber
-	$(RM) -r $(WS_REPO) $(WS_HOME) $(WS_LOGS) $(WS_LINT_CACHE) \
-	    $(shell find . -name 'manifest-*.published')
+	$(RM) -r $(WS_REPO) $(WS_HOME) $(WS_LOGS) $(WS_LINT_CACHE)
 
 setup:	$(WS_MACH) $(WS_LOGS) $(WS_HOME) $(WS_REPO) tools $(WS_LINT_CACHE)
 
@@ -172,14 +171,15 @@ incorporation:
 	done
 
 # Use PKGLINT below instead of PKGLINTVAR because we know we always want the
-# real one for this set of rules.
+# real one for this set of rules.  We use $(wildcard ...) because not all
+# component directories get published (evaluation builds complicate things).
 pkglint:
 	@echo 'pkglinting all package manifests...'
 	@$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
 			SOLARIS_VERSION=$(SOLARIS_VERSION) \
 			$(PKGLINT) \
 			-c $(WS_LINT_CACHE) -f $(WS_TOOLS)/pkglintrc \
-			$(shell find . -name 'manifest-*.published')
+			$(wildcard $(COMPONENT_DIRS:%=%/build/manifest-*.published))
 
 publish:
 	$(PKGREPO) refresh -s $(PKG_REPO)
