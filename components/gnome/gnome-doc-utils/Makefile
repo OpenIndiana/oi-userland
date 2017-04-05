@@ -55,7 +55,7 @@ CONFIGURE_OPTIONS += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 # Assumes GNU xgettext in PATH.
 CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += data/docbook
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += data/docbook
 REQUIRED_PACKAGES += data/docbook/docbook-dtds
 REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
 REQUIRED_PACKAGES += data/docbook/docbook-style-xsl 

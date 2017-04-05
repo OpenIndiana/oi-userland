@@ -130,9 +130,6 @@ LLVM_INSTALL_BINDIR=$(PROTOUSRBINDIR)
 LLVM_BINDIR=$(BUILD_DIR_$(BITS))/bin
 
 INSTALL_CXA_FINALIZE := 0
-ifeq ($(SOLARIS_11_ONLY),)
-  INSTALL_CXA_FINALIZE = 1
-endif
 
 SCAN_VIEW_FILES=Reporter.py ScanView.py
 CLANG_FORMAT_FILES=clang-format-diff.py clang-format-sublime.py \

@@ -47,9 +47,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
-ifeq ($(OS_VERSION),5.11)
-CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
-endif
+CONFIGURE_OPTIONS  +=   LIBS="$(LIBSOCKET) $(LIBNSL)"
 
 # Fix 64-bit linking via compiler.
 LDFLAGS += $(CC_BITS)

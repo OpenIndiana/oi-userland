@@ -41,9 +41,7 @@ BUILD_STYLE= justmake
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-ifeq ($(OS_VERSION),5.11)
-EXTRA_LIBRARIES =	-lsocket -lnsl
-endif
+EXTRA_LIBRARIES =	$(LIBSOCKET) $(LIBNSL)
 EXTRA_LIBRARIES +=	-lncurses -lfftw3 -lssl -lcrypto -lresolv -lm
 
 # The usual Solaris curses.h vs ncurses/curses.h mess.

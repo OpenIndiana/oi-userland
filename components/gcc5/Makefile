@@ -134,8 +134,8 @@ COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
 COMPONENT_PRE_TEST_ENV += TCL_LIBRARY="$(USRLIBDIR)/tcl8.5"
 
-# We don't have DejaGNU in S11.
-ifeq ($(OS_VERSION), 5.12)
+# We don't have DejaGNU in S11.3.
+ifneq ($(OS_VERSION), 11.3)
   COMPONENT_PRE_TEST_ENV += DEJAGNULIBS="$(USRSHAREDIR)/dejagnu"
 endif
 

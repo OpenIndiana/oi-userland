@@ -46,9 +46,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
 
 OPENSSL_LIBS= -lssl -lcrypto
-ifeq ($(OS_VERSION),5.11)
-OPENSSL_LIBS +=	-lsocket -lnsl
-endif
+OPENSSL_LIBS +=	$(LIBSOCKET) $(LIBNSL)
 
 CONFIGURE_BINDIR.32= $(USRLIB.32)/pam_pkcs11
 CONFIGURE_BINDIR.64= $(USRLIB.64)/pam_pkcs11
@@ -64,7 +62,7 @@ CONFIGURE_OPTIONS += OPENSSL_LIBS="$(OPENSSL_LIBS)"
 CONFIGURE_OPTIONS += --with-pcsclite=yes
 CONFIGURE_OPTIONS += PCSC_CFLAGS="-I /usr/include/PCSC"
 
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/pcsc/pcsclite
 REQUIRED_PACKAGES += shell/bash

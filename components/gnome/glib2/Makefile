@@ -116,7 +116,7 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/ERROR/p" '
 
 REQUIRED_PACKAGES += $(PERL_PKG)
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += data/docbook
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += data/docbook
 REQUIRED_PACKAGES += data/docbook/docbook-dtds
 REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
 REQUIRED_PACKAGES += data/docbook/docbook-style-xsl

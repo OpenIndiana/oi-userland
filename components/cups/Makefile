@@ -105,15 +105,11 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += security/kerberos-5
-ifeq ($(OS_VERSION),5.11)
-REQUIRED_PACKAGES += service/security/kerberos-5
-endif
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
-ifeq ($(OS_VERSION),5.11)
-REQUIRED_PACKAGES += system/library/security/gss
-endif
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network/ldap/openldap

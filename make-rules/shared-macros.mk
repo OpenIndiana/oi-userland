@@ -106,20 +106,35 @@ CONSOLIDATION_CHANGESET=$(shell hg identify -i)
 CONSOLIDATION_REPOSITORY_URL=https://github.com/oracle/solaris-userland.git
 
 # Native OS version
-OS_VERSION :=		$(shell uname -r)
-SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
+OS_RELEASE :=		$(shell uname -r)
+SOLARIS_VERSION =	$(OS_RELEASE:5.%=2.%)
+OS_SUB_VERS_1 :=	$(shell uname -v)
+OS_SUB_VERS_2 =		$(OS_SUB_VERS_1:s%=%)
+OS_SUB_VERS_3 =		$(subst _, ,$(OS_SUB_VERS_2))
+OS_VERSION ?=	$(firstword $(OS_SUB_VERS_3))
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.12
 
 # We generally build the default branch on the latest release.  But for
 # the FOSS evaluation repo project, we build on the previous release.
-# Add macros to make that easier.
-ifeq ($(OS_VERSION),5.12)
-SOLARIS_12_ONLY =
-SOLARIS_11_ONLY =\#
+# Add macros to make that easier.  Note: what started out as Solaris 12
+# later became 11.4, which is why SOLARIS_11_4_ONLY is set when OS_RELEASE
+# is "5.12".
+ifeq ($(OS_RELEASE),5.12)
+SOLARIS_11_4_ONLY =
+SOLARIS_11_3_ONLY =\#
 else
-SOLARIS_12_ONLY =\#
-SOLARIS_11_ONLY =
+ifeq ($(OS_VERSION),11.4)
+SOLARIS_11_4_ONLY =
+SOLARIS_11_3_ONLY =\#
+else
+ifeq ($(OS_VERSION),11.3)
+SOLARIS_11_4_ONLY =\#
+SOLARIS_11_3_ONLY =
+else
+$(error Unknown OS version "$(OS_VERSION)"; set OS_VERSION to "11.3" or "11.4")
+endif
+endif
 endif
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
@@ -726,6 +741,10 @@ PKG_CONFIG_DEFAULT = $(PKG_CONFIG_PATH.$(BITS))
 PKG_CONFIG_PATH    = $(subst $(space),:,$(strip \
 			$(PKG_CONFIG_PATHS) $(PKG_CONFIG_DEFAULT)))
 
+LIBNSL=$(shell elfdump -d /usr/lib/libnsl.so.1 | $(NAWK) 'BEGIN {ret="-lnsl"} $$2 == "FILTER" && $$4 == "libc.so.1" {ret=""} END {print ret}')
+LIBSOCKET=$(shell elfdump -d /usr/lib/libsocket.so.1 | $(NAWK) 'BEGIN {ret="-lsocket"} $$2 == "FILTER" && $$4 == "libc.so.1" {ret=""} END {print ret}')
+LIBXNET=$(shell elfdump -d /usr/lib/libxnet.so.1 | $(NAWK) 'BEGIN {ret="-lxnet"} $$2 == "FILTER" && $$4 == "libc.so.1" {ret=""} END {print ret}')
+
 #
 # C preprocessor flag sets to ease feature selection.  Add the required
 # feature to your Makefile with CPPFLAGS += $(FEATURE_MACRO) and add to
@@ -1021,11 +1040,11 @@ LD_Z_PIE_DISABLE =
 LD_Z_PIE_MODE =		$(LD_Z_PIE_DISABLE)
 
 # generic macro names for enabling/disabling security extensions
-# -z<extname> is deprecated, but supported, on S12, in favor of
-# the more flexible -zsx=<extname> format. Security extensions which
+# -z<extname> is deprecated, but supported, on S11.4 and later, in favor
+# of the more flexible -zsx=<extname> format. Security extensions which
 # are not supported on S11 use -zsx=<extname> by default.
 
-ifeq ($(OS_VERSION), 5.11)
+ifeq ($(OS_VERSION), 11.3)
 ASLR_ENABLE = 			-zaslr=enable
 ASLR_DISABLE = 			-zaslr=disable
 ASLR_NOT_APPLICABLE = 		-zaslr=disable
@@ -1092,9 +1111,9 @@ LD_Z_NXHEAP =		$(NXHEAP_MODE)
 # to explicitly enable ADISTACK, set ADISTACK_MODE = $(ADISTACK_ENABLE)
 # to explicitly disable ADISTACK, set ADISTACK_MODE = $(ADISTACK_DISABLE)
 #
-# ADIHEAP and ADISTACK are not supported on Solaris 11.
+# ADIHEAP and ADISTACK are not supported on Solaris 11.3.
 #
-ifneq ($(OS_VERSION), 5.11)
+ifneq ($(OS_VERSION), 11.3)
 LD_Z_ADIHEAP =		$(ADIHEAP_MODE)
 LD_Z_ADISTACK =		$(ADISTACK_MODE)
 endif

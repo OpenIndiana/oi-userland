@@ -33,12 +33,12 @@ HUMAN_VERSION=		2017a
 TPNO=			24870
 COMPONENT_ANITYA_ID=	5021
 
-# Build info part of pkg(5) FMRI dropped ",$(OS_VERSION)" between 11 and 12;
+# Build info part of pkg(5) FMRI dropped ",$(OS_RELEASE)" between 11 and 12;
 # needed for evaluation repo where we build the default repo from 12 on 11.
-ifeq ($(OS_VERSION),5.11)
-OS_META_VERSION=	,$(OS_VERSION)-$(OS_VERSION)
+ifeq ($(OS_VERSION),11.3)
+OS_META_VERSION=	,$(OS_RELEASE)-$(OS_RELEASE)
 else
-OS_META_VERSION=	-$(OS_VERSION)
+OS_META_VERSION=	-$(PKG_SOLARIS_VERSION)
 endif
 
 # "etcetera" must be listed before "backward" because it sets up links that

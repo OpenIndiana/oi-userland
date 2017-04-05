@@ -46,9 +46,7 @@ CONFIGURE_OPTIONS +=	--bindir=/usr/bin
 CONFIGURE_OPTIONS +=	--disable-http
 CONFIGURE_OPTIONS +=	--disable-nls
 CONFIGURE_OPTIONS +=	--enable-default-catalog="CATALOG:/etc/sgml/catalog:/usr/share/sgml/CATALOG"
-ifeq ($(OS_VERSION),5.11)
-EXTRA_LIBRARIES =     -lsocket -lnsl
-endif
+EXTRA_LIBRARIES =	$(LIBSOCKET) $(LIBNSL)
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS) $(EXTRA_LIBRARIES)"
 
 # 21786575 for gmake test failures

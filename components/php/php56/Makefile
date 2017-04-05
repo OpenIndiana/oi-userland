@@ -130,7 +130,7 @@ $(SKIP_TEST_AT_TOP_LEVEL)
 
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/libxml2
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/dtrace
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

@@ -77,7 +77,7 @@ test:		$(TEST_32_and_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/python/pyasn1-27
 REQUIRED_PACKAGES += library/python/pyasn1-modules-27
 REQUIRED_PACKAGES += system/library

@@ -62,8 +62,9 @@ CMAKE_OPTIONS += -DWITH_VALA=ON
 # Always build pacrunner as a module.
 CMAKE_OPTIONS += -DBIPR=ON
 
-ifeq ($(OS_VERSION),5.11)
-LDFLAGS +=       -lsocket -lnsl -lxnet
+LDFLAGS +=       $(LIBSOCKET) $(LIBNSL) $(LIBXNET)
+
+ifeq ($(OS_VERSION),11.3)
 CMAKE_OPTIONS += -DCMAKE_SHARED_LINKER_FLAGS="$(LDFLAGS)"
 CMAKE_OPTIONS += -DPERL_EXECUTABLE="$(PERL)"
 endif
