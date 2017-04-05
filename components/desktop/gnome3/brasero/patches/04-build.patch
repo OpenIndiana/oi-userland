@@ -1,0 +1,55 @@
+--- brasero-3.12.1/libbrasero-media/scsi-mode-sense.c.1	2017-03-27 16:09:03.034185431 +0300
++++ brasero-3.12.1/libbrasero-media/scsi-mode-sense.c	2017-03-27 16:09:28.087216494 +0300
+@@ -33,6 +33,7 @@
+ #endif
+ 
+ #include <glib.h>
++#include <strings.h>
+ 
+ #include "brasero-media-private.h"
+ 
+--- brasero-3.12.1/libbrasero-media/scsi-uscsi.c	2014-03-06 17:59:54.000000000 +0400
++++ scsi-uscsi.c	2017-03-27 16:12:23.958442983 +0300
+@@ -69,6 +69,12 @@
+ #define OPEN_FLAGS			O_RDONLY | O_NONBLOCK
+ 
+ gchar *
++dump_bytes(guchar *buf, gint len);
++
++void
++dump_cdb(guchar *cdb, gint cdblen);
++
++gchar *
+ dump_bytes(guchar *buf, gint len)
+ {
+ 	GString *out;
+--- brasero-3.12.1/libbrasero-burn/brasero-xfer.c.1	2017-03-27 16:13:37.745791749 +0300
++++ brasero-3.12.1/libbrasero-burn/brasero-xfer.c	2017-03-27 16:13:50.620706368 +0300
+@@ -40,6 +40,7 @@
+ #include <glib/gi18n-lib.h>
+ #include <glib/gstdio.h>
+ #include <gio/gio.h>
++#include <strings.h>
+ 
+ #include "brasero-xfer.h"
+ #include "burn-debug.h"
+--- brasero-3.12.1/libbrasero-burn/burn-mkisofs-base.c.1	2017-03-27 16:14:48.697166229 +0300
++++ brasero-3.12.1/libbrasero-burn/burn-mkisofs-base.c	2017-03-27 16:15:00.645276698 +0300
+@@ -38,6 +38,7 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#include <strings.h>
+ #include <unistd.h>
+ 
+ 
+--- brasero-3.12.1/plugins/transcode/burn-transcode.c.1	2017-03-27 16:19:02.902495303 +0300
++++ brasero-3.12.1/plugins/transcode/burn-transcode.c	2017-03-27 16:19:11.999430980 +0300
+@@ -33,6 +33,7 @@
+ #endif
+ 
+ #include <string.h>
++#include <strings.h>
+ #include <math.h>
+ #include <unistd.h>
+ #include <fcntl.h>
