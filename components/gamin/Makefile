@@ -38,7 +38,7 @@ TPNO                   = 9483
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if; bzip2 NEWS; bzip2 ChangeLog; bzip2 COPYING)
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
 
 # The tests can leave a socket behind, which makes the tests fail next time
 COMPONENT_PRE_TEST_ACTION += rm -f /tmp/fam-$$LOGNAME/fam-test
