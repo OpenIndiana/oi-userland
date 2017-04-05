@@ -1,0 +1,117 @@
+From 888b67892cc273bec9461ce7d6251d3840d3cbbf Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Tue, 24 Jan 2017 12:17:12 -0800
+Subject: [PATCH] QDir::mkpath: don't try to mkdir in automount filesystems
+
+Automount filesystems like /home on many operating systems (QNX and
+OpenIndiana, at least) don't like if you try to mkdir in them, even if
+the file path already exists. OpenIndiana even gives you an ENOSYS
+error.
+
+So instead, let's try to mkdir our target, if we fail because of ENOENT,
+we try to create the parent, then try again.
+
+Task-number: QTBUG-58390
+Change-Id: Ibe5b1b60c6ea47e19612fffd149cce81589b0acd
+---
+ src/corelib/io/qfilesystemengine_unix.cpp | 65 +++++++++++++++----------------
+ tests/auto/corelib/io/qdir/tst_qdir.cpp   |  2 +-
+ 2 files changed, 32 insertions(+), 35 deletions(-)
+
+diff --git a/src/corelib/io/qfilesystemengine_unix.cpp b/src/corelib/io/qfilesystemengine_unix.cpp
+index 1b908ea..899bafc 100644
+--- a/qtbase/src/corelib/io/qfilesystemengine_unix.cpp
++++ b/qtbase/src/corelib/io/qfilesystemengine_unix.cpp
+@@ -556,45 +556,42 @@ bool QFileSystemEngine::fillMetaData(const QFileSystemEntry &entry, QFileSystemM
+     return data.hasFlags(what);
+ }
+ 
+-//static
+-bool QFileSystemEngine::createDirectory(const QFileSystemEntry &entry, bool createParents)
++static bool createDirectoryWithParents(QString dirName, bool createParents)
+ {
+-    QString dirName = entry.filePath();
+-    if (createParents) {
+-        dirName = QDir::cleanPath(dirName);
+-        for (int oldslash = -1, slash=0; slash != -1; oldslash = slash) {
+-            slash = dirName.indexOf(QDir::separator(), oldslash+1);
+-            if (slash == -1) {
+-                if (oldslash == dirName.length())
+-                    break;
+-                slash = dirName.length();
+-            }
+-            if (slash) {
+-                const QByteArray chunk = QFile::encodeName(dirName.left(slash));
+-                if (QT_MKDIR(chunk.constData(), 0777) != 0) {
+-                    if (errno == EEXIST
+-#if defined(Q_OS_QNX)
+-                        // On QNX the QNet (VFS paths of other hosts mounted under a directory
+-                        // such as /net) mountpoint returns ENOENT, despite existing. stat()
+-                        // on the QNet mountpoint returns successfully and reports S_IFDIR.
+-                        || errno == ENOENT
+-#endif
+-                    ) {
+-                        QT_STATBUF st;
+-                        if (QT_STAT(chunk.constData(), &st) == 0 && (st.st_mode & S_IFMT) == S_IFDIR)
+-                            continue;
+-                    }
+-                    return false;
+-                }
++    QByteArray nativeName = QFile::encodeName(dirName);
++
++    for (int attempt = 0; attempt < 2; ++attempt) {
++        if (QT_MKDIR(nativeName.constData(), 0777) == 0)
++            return true;
++        if (createParents && errno == EEXIST) {
++            // it may have been created by another thread or process;
++            // check if it is a directory:
++            QT_STATBUF st;
++            return QT_STAT(nativeName.constData(), &st) == 0 && (st.st_mode & S_IFMT) == S_IFDIR;
++        }
++
++        if (createParents && attempt == 0 && errno == ENOENT) {
++            // parent directory doesn't exist, try to create it
++            dirName = QDir::cleanPath(dirName);
++            int slash = dirName.lastIndexOf(QLatin1Char('/'));
++            if (slash > 1) {
++                if (createDirectoryWithParents(dirName.left(slash), createParents))
++                    continue;
+             }
+         }
+-        return true;
++        break;
+     }
+-#if defined(Q_OS_DARWIN)  // Mac X doesn't support trailing /'s
+-    if (dirName.endsWith(QLatin1Char('/')))
++    return false;
++}
++
++//static
++bool QFileSystemEngine::createDirectory(const QFileSystemEntry &entry, bool createParents)
++{
++    QString dirName = entry.filePath();
++    while (dirName.size() > 1 && dirName.endsWith(QLatin1Char('/')))
+         dirName.chop(1);
+-#endif
+-    return (QT_MKDIR(QFile::encodeName(dirName).constData(), 0777) == 0);
++
++    return createDirectoryWithParents(std::move(dirName), createParents);
+ }
+ 
+ //static
+diff --git a/tests/auto/corelib/io/qdir/tst_qdir.cpp b/tests/auto/corelib/io/qdir/tst_qdir.cpp
+index b86c6e4..c377499 100644
+--- a/qtbase/tests/auto/corelib/io/qdir/tst_qdir.cpp
++++ b/qtbase/tests/auto/corelib/io/qdir/tst_qdir.cpp
+@@ -350,7 +350,7 @@ void tst_QDir::mkdir_data()
+          << QDir::currentPath() + "/testdir/two/three";
+     QTest::newRow("data0") << dirs.at(0) << true;
+     QTest::newRow("data1") << dirs.at(1) << false;
+-    QTest::newRow("data2") << dirs.at(2) << false;
++    QTest::newRow("data2") << dirs.at(2) << false; // note: requires data1 to have been run!
+ 
+     // Ensure that none of these directories already exist
+     QDir dir;
+-- 
+2.7.4
+
