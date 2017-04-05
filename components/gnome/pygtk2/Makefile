@@ -59,6 +59,7 @@ include $(WS_MAKE_RULES)/gnome-component.mk
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv -I m4);
 
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --without-glade
 CONFIGURE_OPTIONS += PYTHON=$(PYTHON)
 
 # Ensure Python modules are installed into vendor package directories.
@@ -75,7 +76,6 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/python/numpy-27
