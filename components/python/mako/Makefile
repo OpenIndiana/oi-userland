@@ -20,10 +20,11 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015, PALO Richard.
+# Copyright 2017 Gary Mills
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH = $(PATH.ill):/usr/sbin
 
 COMPONENT_NAME=		Mako
 COMPONENT_VERSION=	1.0.4

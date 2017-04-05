@@ -11,11 +11,12 @@
 #
 # Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2015, PALO Richard.
+# Copyright 2017 Gary Mills
 #
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH = $(PATH.ill):/usr/sbin
 
 COMPONENT_NAME=		Jinja2
 COMPONENT_VERSION=	2.8
