@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
-<!-- 
- Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+<!--
+ Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -68,9 +68,9 @@
                  timeout_seconds='60' >
       <method_context>
         <method_credential user='daemon' group='daemon'
-          privileges='basic,{net_privaddr}:53/udp,{net_privaddr}:53/tcp,{net_privaddr}:67/udp,{net_privaddr}:69/udp,{net_privaddr}:547/udp,net_icmpaccess,sys_ip_config' />
+          privileges='basic,{net_privaddr}:53/udp,{net_privaddr}:53/tcp,{net_privaddr}:67/udp,{net_privaddr}:69/udp,{net_privaddr}:547/udp,net_icmpaccess,sys_ip_config,{zone}:/var/cache/dnsmasq.leases' />
       </method_context>
-    </exec_method> 
+    </exec_method>
 
     <exec_method type='method' name='stop' exec=':kill' timeout_seconds='60' />
 
@@ -82,7 +82,7 @@
         <propval name='value_authorization' type='astring'
                  value='solaris.smf.value.dnsmasq' />
       </property_group>
-     </instance> 
+     </instance>
 
     <template>
       <common_name>
