@@ -128,8 +128,8 @@ component, the build automatically generates a source archive for the
 component by pulling the source from the SCM and creating a tarball from
 the pulled source.  This allows us to automatically store a copy of the
 canonical source that we build from in our source archive cache and not
-continually hammer on the component's SCM repo.  The source archive name
-is automatically generated from the COMPONENT_NAME, COMPONENT_VERSION,
+continually hammer on the SCM repo for that component.  The source archive
+name is automatically generated from the COMPONENT_NAME, COMPONENT_VERSION,
 and {GIT|HG|SVN}_REV values.  Also, the source is archived and unpacked
 in a directory using these values.   You should also define a hash for
 this tarball in your Makefile similar to what you do with downloaded
@@ -346,11 +346,20 @@ publication, the following variables are available:
   also be before the inclusion of ips.mk.  All variables named after the
   pattern TPNO_% are automatically available for use in package manifests
   and pkgmogrify transform files.
+
 * PKGREPO_REMOVE_BEFORE_PUBLISH allows automatic removal of previously
   published components from PKG_REPO (including obsolete and renamed
   versions). When set as PKGREPO_REMOVE_BEFORE_PUBLISH=yes removal
   occurs immediately prior to pkgsend. default: "no"
 
+* PKGLINT points to the pkglint(1) executable.  PKGLINTVAR points to either
+  PKGLINT or /bin/true depending on the invocation: for individual component
+  builds, we run pkglint at the end of the publish phase.  But for top-down
+  builds, running pkglint for each component would cause locking issues, so
+  we skip that step and run pkglint once at the end.  There is also a pkglint:
+  target in components/Makefile that allows for the direction invocation of
+  this end-of-the-build-pkglint-everything-together step, which makes it much
+  easier to "finish off" a build where a small number of components failed.
 
 ---
 

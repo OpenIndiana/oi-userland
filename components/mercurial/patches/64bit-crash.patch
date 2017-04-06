@@ -1,0 +1,31 @@
+A 64-bit build results in a segfault in the parsers module (on both SPARC
+and x86).  Dialing down the optimization to -xO1 eliminates the crash.
+
+In order to only lower the optimization for the one object that needs it
+and only in a 64-bit build, we do some monkeypatching of the distutils
+compiler class, and replace its _compile() method with one that does that
+check and replaces the original optimization level with the lower one.
+
+This patch can be removed when we move to Studio 12.5.
+
+--- a/setup.py	2017-02-01 08:18:58.000000000 -0800
++++ b/setup.py	2017-02-03 18:13:20.479471297 -0800
+@@ -302,7 +302,18 @@
+ 
+         return build_ext.build_extensions(self)
+ 
++    def my_compile(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
++        if src == "mercurial/parsers.c" and "-m64" in self.compiler.compiler_so:
++            for i, arg in enumerate(self.compiler.compiler_so):
++                if arg.startswith("-xO"):
++                    break
++            self.compiler.compiler_so[i] = "-xO1"
++        self.compiler.old_compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
++
+     def build_extension(self, ext):
++        if not hasattr(self.compiler, "old_compile"):
++            self.compiler.old_compile = self.compiler._compile
++            self.compiler._compile = self.my_compile
+         try:
+             build_ext.build_extension(self, ext)
+         except CCompilerError:

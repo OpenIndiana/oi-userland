@@ -22,28 +22,30 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 32
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR)
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	3.8.3
+COMPONENT_VERSION=	4.1
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f84556cdf9a331984261549d9d08143ab9da33d7c03f0aa323b0ee52d0782a4c
+    sha256:7b33c32cdd1d518bc2e2ae223e6ef63c486cf52e9d01a45b99cf8eab7bea5274
 COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/hg
 COMPONENT_ANITYA_ID=	1969
 
-TPNO=			29315
+TPNO=			33715
 
 # Mercurial does not yet support Python 3.
 PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 
 BUILD_STYLE= setup.py
-TEST_TARGET= install $(TEST_32)
+# Build and install 64-bit first, so that the 32-bit hg is what's installed.
+INSTALL_TARGET = $(INSTALL_64) $(INSTALL_32)
+TEST_TARGET= install $(TEST_32_and_64)
 # Add install dependency when system-test target is implemented.
 include $(WS_MAKE_RULES)/common.mk
 

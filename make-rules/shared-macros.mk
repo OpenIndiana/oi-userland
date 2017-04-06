@@ -52,6 +52,7 @@ endif
 
 WS_MACH =	$(WS_TOP)/$(MACH)
 WS_LOGS =	$(WS_MACH)/logs
+WS_HOME =	$(WS_MACH)/home
 WS_REPO =	$(WS_MACH)/repo
 WS_TOOLS =	$(WS_TOP)/tools
 WS_MAKE_RULES =	$(WS_TOP)/make-rules
@@ -78,6 +79,10 @@ MAKEFILE_PREREQ =	Makefile
 # some things don't build properly in non-C locales,
 # so lets stay there
 export LC_ALL=C
+
+# Some things look for files under $HOME, such as git looking for ~/.gitconfig
+# which can have unexpected results.  Use our minimal $HOME instead.
+export HOME=$(WS_HOME)
 
 SHELL=	/bin/bash
 
@@ -700,10 +705,11 @@ GUNZIP =	/usr/bin/gunzip
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
 PKGMOGRIFY =	/usr/bin/pkgmogrify
-ifeq   ($(strip $(PKGLINT_COMPONENT)),)
 PKGLINT =	/usr/bin/pkglint
+ifeq   ($(strip $(PKGLINT_COMPONENT)),)
+PKGLINTVAR =	$(PKGLINT)
 else
-PKGLINT =	${WS_TOOLS}/pkglint
+PKGLINTVAR =	${WS_TOOLS}/pkglint
 endif
 
 ACLOCAL =	/usr/bin/aclocal-1.10

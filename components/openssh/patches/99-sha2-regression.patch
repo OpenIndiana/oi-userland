@@ -1,0 +1,74 @@
+#
+# Temporary patch for 7.4p1 regression fixed in 7.5
+# From upstream
+# Remove when upgrading 
+#
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2680
+# fix regression in 7.4 server-sig-algs,
+# accidentally excluding SHA2 RSA signature methods.
+#
+
+diff -rupN old/kex.c new/kex.c
+--- old/kex.c	2017-03-28 19:08:53.584501767 -0700
++++ new/kex.c	2017-03-28 19:22:26.034204047 -0700
+@@ -388,7 +388,7 @@ kex_send_ext_info(struct ssh *ssh)
+ 	int r;
+ 	char *algs;
+ 
+-	if ((algs = sshkey_alg_list(0, 1, ',')) == NULL)
++	if ((algs = sshkey_alg_list(0, 1, 1, ',')) == NULL)
+ 		return SSH_ERR_ALLOC_FAIL;
+ 	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+ 	    (r = sshpkt_put_u32(ssh, 1)) != 0 ||
+diff -rupN old/ssh.c new/ssh.c
+--- old/ssh.c	2017-03-28 19:08:53.587726975 -0700
++++ new/ssh.c	2017-03-28 19:25:10.561309338 -0700
+@@ -697,11 +697,11 @@ main(int ac, char **av)
+ 			else if (strcmp(optarg, "kex") == 0)
+ 				cp = kex_alg_list('\n');
+ 			else if (strcmp(optarg, "key") == 0)
+-				cp = sshkey_alg_list(0, 0, '\n');
++				cp = sshkey_alg_list(0, 0, 0, '\n');
+ 			else if (strcmp(optarg, "key-cert") == 0)
+-				cp = sshkey_alg_list(1, 0, '\n');
++				cp = sshkey_alg_list(1, 0, 0, '\n');
+ 			else if (strcmp(optarg, "key-plain") == 0)
+-				cp = sshkey_alg_list(0, 1, '\n');
++				cp = sshkey_alg_list(0, 1, 0, '\n');
+ 			else if (strcmp(optarg, "protocol-version") == 0) {
+ #ifdef WITH_SSH1
+ 				cp = xstrdup("1\n2");
+diff -rupN old/sshkey.c new/sshkey.c
+--- old/sshkey.c	2017-03-28 19:08:53.590992687 -0700
++++ new/sshkey.c	2017-03-28 19:32:28.309848396 -0700
+@@ -235,14 +235,16 @@ sshkey_ecdsa_nid_from_name(const char *n
+ }
+ 
+ char *
+-sshkey_alg_list(int certs_only, int plain_only, char sep)
++sshkey_alg_list(int certs_only, int plain_only, int include_sigonly, char sep)
+ {
+ 	char *tmp, *ret = NULL;
+ 	size_t nlen, rlen = 0;
+ 	const struct keytype *kt;
+ 
+ 	for (kt = keytypes; kt->type != -1; kt++) {
+-		if (kt->name == NULL || kt->sigonly)
++		if (kt->name == NULL)
++			continue;
++		if (!include_sigonly && kt->sigonly)
+ 			continue;
+ 		if ((certs_only && !kt->cert) || (plain_only && kt->cert))
+ 			continue;
+diff -rupN old/sshkey.h new/sshkey.h
+--- old/sshkey.h	2017-03-28 19:08:53.594083865 -0700
++++ new/sshkey.h	2017-03-28 19:33:39.322046181 -0700
+@@ -157,7 +157,7 @@ int		 sshkey_ec_validate_private(const E
+ const char	*sshkey_ssh_name(const struct sshkey *);
+ const char	*sshkey_ssh_name_plain(const struct sshkey *);
+ int		 sshkey_names_valid2(const char *, int);
+-char		*sshkey_alg_list(int, int, char);
++char		*sshkey_alg_list(int, int, int, char);
+ 
+ int	 sshkey_from_blob(const u_char *, size_t, struct sshkey **);
+ int	 sshkey_fromb(struct sshbuf *, struct sshkey **);
