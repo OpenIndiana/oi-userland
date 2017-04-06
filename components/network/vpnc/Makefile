@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vpnc
 COMPONENT_VERSION=	0.5.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 HUMAN_VERSION = $(COMPONENT_VERSION).r550
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		network/$(COMPONENT_NAME)
@@ -30,7 +30,7 @@ COMPONENT_DESCRIPTION=	An IPSec-like (over TUN/TAP) VPN client compatible with C
 
 SVN_REPO = http://svn.unix-ag.uni-kl.de/vpnc/trunk
 SVN_REV = 550
-SVN_HASH = sha256:93c63dd9435abf235ec92034c634333edfcff44ceb116849f7e94ba231f848e3
+SVN_HASH = sha256:551041a83028488a45fe3573163a40dce5bea78061bd2f1d2fbfc98585c867a0
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
