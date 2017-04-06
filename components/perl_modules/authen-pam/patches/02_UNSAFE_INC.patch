@@ -1,0 +1,16 @@
+Makefile.PL relied on the fact that current directory is in @INC. Fix is to
+force to read the configuration from current directory instead.
+
+Upstream bug: https://rt.cpan.org/Public/Bug/Display.html?id=120930
+
+--- Authen-PAM-0.16/Makefile.PL	2017-04-05 10:08:12.853541342 +0000
++++ Authen-PAM-0.16/Makefile.PL	2017-04-05 10:07:05.413120561 +0000
+@@ -10,7 +10,7 @@ sub configure {
+ 
+     # returns a reference to anonymous hash which is then interpreted as
+     # additional options to the WriteMakeFile
+-    $options = require "pam.cfg";
++    $options = require "./pam.cfg";
+ 
+     if ( $Config{'osname'} eq 'solaris' && $Config{'osvers'} eq '2.6') {
+       print "Adding a workaround for a bug in the Solaris 2.6 pam library\n";
