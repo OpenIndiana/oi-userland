@@ -1,34 +1,104 @@
-* vpnc : do not use PERMANENT flag when creating tunnels (so they can be closed by system if daemon dies ungracefully)
-Following recommendations from
-http://lists.infradead.org/pipermail/openconnect-devel/2011-November/000449.html
-to not leave unclosed tunnels if the daemon crashes.
-
---- ./sysdep.c.~2~	2016-11-18 00:16:56.000000000 +0100
-+++ ./sysdep.c	2016-11-20 00:29:43.813455500 +0100
-@@ -139,7 +139,7 @@
- 		syslog(LOG_ERR, "Can't set PPA %d", ppa);
+diff --git a/sysdep.c b/sysdep.c
+index be10656..1f44cbd 100644
+--- a/sysdep.c
++++ b/sysdep.c
+@@ -139,7 +139,7 @@ int tun_open(char *dev, enum if_mode_enum mode)
+ 		logmsg(LOG_ERR, "Can't set PPA %d", ppa);
  		return -1;
  	}
 -	if ((muxid = ioctl(ip_fd, I_PLINK, if_fd)) < 0) {
 +	if ((muxid = ioctl(ip_fd, I_LINK, if_fd)) < 0) {
- 		syslog(LOG_ERR, "Can't link TUN device to IP");
+ 		logmsg(LOG_ERR, "Can't link TUN device to IP");
  		return -1;
  	}
-@@ -152,7 +152,7 @@
+@@ -152,7 +152,7 @@ int tun_open(char *dev, enum if_mode_enum mode)
  	ifr.ifr_ip_muxid = muxid;
  
  	if (ioctl(ip_fd, SIOCSIFMUXID, &ifr) < 0) {
 -		ioctl(ip_fd, I_PUNLINK, muxid);
 +		ioctl(ip_fd, I_UNLINK, muxid);
- 		syslog(LOG_ERR, "Can't set multiplexor id");
+ 		logmsg(LOG_ERR, "Can't set multiplexor id");
  		return -1;
  	}
-@@ -497,7 +497,7 @@
+@@ -497,7 +497,7 @@ int tun_close(int fd, char *dev)
  		return 0;
  	}
  
 -	if (ioctl(ip_fd, I_PUNLINK, muxid) < 0) {
 +	if (ioctl(ip_fd, I_UNLINK, muxid) < 0) {
- 		syslog(LOG_ERR, "Can't unlink interface");
+ 		logmsg(LOG_ERR, "Can't unlink interface");
  		return 0;
  	}
+diff --git a/sysdep.c b/sysdep.c
+index 1f44cbd..493a73a 100644
+--- a/sysdep.c
++++ b/sysdep.c
+@@ -110,37 +110,37 @@ int tun_open(char *dev, enum if_mode_enum mode)
+ 	}
+ 
+ 	if ((ip_fd = open("/dev/ip", O_RDWR, 0)) < 0) {
+-		logmsg(LOG_ERR, "Can't open /dev/ip");
++		syslog(LOG_ERR, "Can't open /dev/ip");
+ 		return -1;
+ 	}
+ 
+ 	if ((tun_fd = open(((mode == IF_MODE_TUN) ? "/dev/tun" : "/dev/tap"), O_RDWR, 0)) < 0) {
+-		logmsg(LOG_ERR, "Can't open /dev/tun");
++		syslog(LOG_ERR, "Can't open /dev/tun");
+ 		return -1;
+ 	}
+ 
+ 	/* Assign a new PPA and get its unit number. */
+ 	if ((ppa = ioctl(tun_fd, TUNNEWPPA, ppa)) < 0) {
+-		logmsg(LOG_ERR, "Can't assign new interface");
++		syslog(LOG_ERR, "Can't assign new interface");
+ 		return -1;
+ 	}
+ 
+ 	if ((if_fd = open(((mode == IF_MODE_TUN) ? "/dev/tun" : "/dev/tap"), O_RDWR, 0)) < 0) {
+-		logmsg(LOG_ERR, "Can't open /dev/tun (2)");
++		syslog(LOG_ERR, "Can't open /dev/tun (2)");
+ 		return -1;
+ 	}
+ 	if (ioctl(if_fd, I_PUSH, "ip") < 0) {
+-		logmsg(LOG_ERR, "Can't push IP module");
++		syslog(LOG_ERR, "Can't push IP module");
+ 		return -1;
+ 	}
+ 
+ 	/* Assign ppa according to the unit number returned by tun device */
+ 	if (ioctl(if_fd, IF_UNITSEL, (char *)&ppa) < 0 && errno != EEXIST) {
+-		logmsg(LOG_ERR, "Can't set PPA %d", ppa);
++		syslog(LOG_ERR, "Can't set PPA %d", ppa);
+ 		return -1;
+ 	}
+ 	if ((muxid = ioctl(ip_fd, I_LINK, if_fd)) < 0) {
+-		logmsg(LOG_ERR, "Can't link TUN device to IP");
++		syslog(LOG_ERR, "Can't link TUN device to IP");
+ 		return -1;
+ 	}
+ 	close(if_fd);
+@@ -153,7 +153,7 @@ int tun_open(char *dev, enum if_mode_enum mode)
+ 
+ 	if (ioctl(ip_fd, SIOCSIFMUXID, &ifr) < 0) {
+ 		ioctl(ip_fd, I_UNLINK, muxid);
+-		logmsg(LOG_ERR, "Can't set multiplexor id");
++		syslog(LOG_ERR, "Can't set multiplexor id");
+ 		return -1;
+ 	}
+ 
+@@ -493,12 +493,12 @@ int tun_close(int fd, char *dev)
+ 	memset(&ifr, 0, sizeof(ifr));
+ 	strcpy(ifr.ifr_name, dev);
+ 	if (ioctl(ip_fd, SIOCGIFFLAGS, &ifr) < 0) {
+-		logmsg(LOG_ERR, "Can't get iface flags");
++		syslog(LOG_ERR, "Can't get iface flags");
+ 		return 0;
+ 	}
+ 
+ 	if (ioctl(ip_fd, I_UNLINK, muxid) < 0) {
+-		logmsg(LOG_ERR, "Can't unlink interface");
++		syslog(LOG_ERR, "Can't unlink interface");
+ 		return 0;
+ 	}
+ 
