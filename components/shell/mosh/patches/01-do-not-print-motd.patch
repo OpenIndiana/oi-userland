@@ -1,0 +1,13 @@
+--- mosh-1.3.0/src/frontend/mosh-server.cc.1	2017-04-07 00:01:16.675832905 +0300
++++ mosh-1.3.0/src/frontend/mosh-server.cc	2017-04-07 00:05:49.236738117 +0300
+@@ -554,7 +554,10 @@
+     chdir_homedir();
+ 
+     if ( with_motd && (!motd_hushed()) ) {
++#ifndef __sun
++/* On illumos motd is printed by /etc/profile */
+       print_motd();
++#endif
+       warn_unattached( utmp_entry );
+     }
+ 
