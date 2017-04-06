@@ -51,6 +51,9 @@ endif
 CONFIGURE_OPTIONS += PTHREAD_CFLAGS="$(PTHREAD_CFLAGS)"
 CONFIGURE_OPTIONS += PTHREAD_LIBS="-lc"
 
+# Needed to get all the tests to pass (problems with "inf/nan" vs "Inf/Nan").
+CONFIGURE_OPTIONS += --enable-snprintf-replacement
+
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
 # then all shell options get exported to child invocations of bash,
