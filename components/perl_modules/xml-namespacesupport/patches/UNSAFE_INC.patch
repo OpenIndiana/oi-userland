@@ -1,0 +1,13 @@
+Makefile.PL relied on the fact that current directory is in @INC. Fix is to
+force to read the configuration from current directory instead.
+
+This is workaround till we update to XML::NamespaceSupport version 1.12.
+
+--- XML-NamespaceSupport-1.11/Makefile.PL	2017-04-05 10:47:43.914243383 +0000
++++ XML-NamespaceSupport-1.11/Makefile.PL	2017-04-05 10:47:42.828641419 +0000
+@@ -1,4 +1,5 @@
+ # Load the Module::Install bundled in ./inc/
++use lib '.';
+ use inc::Module::Install;
+
+ # Define metadata

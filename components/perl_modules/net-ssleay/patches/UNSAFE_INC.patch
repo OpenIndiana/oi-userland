@@ -1,0 +1,15 @@
+Makefile.PL relied on the fact that current directory is in @INC. Fix is to
+force to read the configuration from current directory instead.
+
+Upstream fix: https://anonscm.debian.org/viewvc/net-ssleay?view=revision&revision=489
+
+--- Net-SSLeay-1.78/Makefile.PL	2017-04-05 10:42:56.999409375 +0000
++++ Net-SSLeay-1.78/Makefile.PL	2017-04-05 10:40:21.465210478 +0000
+@@ -3,6 +3,7 @@
+ use strict;
+ use warnings;
+ use lib 'ext';
++use lib '.';
+ use inc::Module::Install;
+ use Config;
+ use File::Spec;

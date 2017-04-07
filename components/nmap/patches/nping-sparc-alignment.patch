@@ -1,0 +1,27 @@
+ alignment problems on SPARC. Based on similar fixes found at:
+
+  https://lists.debian.org/debian-sparc/2012/01/msg00012.html
+
+and:
+
+  https://www.winehq.org/pipermail/wine-patches/2011-February/098547.html
+
+This change needs to be sent upstream.
+
+--- nmap-7.11/nping/nping.cc.orig	2017-04-06 11:17:11.026808836 +0000
++++ nmap-7.11/nping/nping.cc	2017-04-06 11:17:36.219605075 +0000
+@@ -164,6 +164,14 @@
+   ProbeMode prob;
+   NpingTarget *t=NULL;
+ 
++/*
++ * 'ta 6' tells the kernel to synthesize any unaligned accesses this process
++ * makes, instead of just signalling an error and terminating the process.
++ */
++#ifdef __sparc
++    __asm("ta 6");
++#endif
++
+   /* Get current time */
+   now = time(NULL);
+   tm = localtime(&now);
