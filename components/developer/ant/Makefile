@@ -20,13 +20,15 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017, Alexander Pyhalov. All rights reserved.
+# Copyright 2017, Wiselabs Software Ltda - http://www.wiselabs.com.br. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
 COMPONENT_VERSION=	1.9.9
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	http://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
@@ -57,6 +59,7 @@ ANT_DIST_DIRS+=-Ddist.javadocs=$(PROTO_DIR)/usr/share/doc/ant/manual/api
 ANT_DIST_DIRS+=-Ddist.lib=$(PROTO_DIR)/usr/share/lib/ant
 
 OPTIONAL_LIBS+=/usr/share/lib/java/junit.jar
+OPTIONAL_LIBS+=/usr/share/lib/java/bsf.jar
 OPTIONAL_LIBS+=/usr/share/antlr-2.7.7/antlr.jar
 
 COMPONENT_PRE_BUILD_ACTION = $(CP) $(OPTIONAL_LIBS) $(@D)/lib/optional
@@ -77,3 +80,7 @@ build:	$(BUILD_32)
 install: $(INSTALL_32)
 
 test:  $(TEST_32)
+
+REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += library/java/commons-bsf
