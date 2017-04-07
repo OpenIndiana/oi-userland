@@ -54,6 +54,12 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
 CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --disable-static
 
+# 32 and 64 bits event-config.h headers need to be merged to the final one.
+EVENTH=include/event2/event-config.h
+$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION += \
+	-diff -D __$(MACH64) $(BUILD_DIR_32)/$(EVENTH) \
+	  $(BUILD_DIR_64)/$(EVENTH) > $(PROTO_DIR)$(CONFIGURE_PREFIX)/$(EVENTH);
+
 # Get correct libevent-2.0.so.5 from the proto area.
 TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
 TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
