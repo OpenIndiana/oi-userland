@@ -20,22 +20,28 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cdrtools
-COMPONENT_VERSION=      3.00
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=      3.02a07
+IPS_COMPONENT_VERSION=	3.0.2
+COMPONENT_SUMMARY=	CD/DVD/BluRay command line recording software
+COMPONENT_DESCRIPTION=	the cdrtools CD/DVD/BluRay recording software
+COMPONENT_SRC=          $(COMPONENT_NAME)-3.02
 COMPONENT_PROJECT_URL= 	http://sourceforge.net/projects/cdrtools/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6326762da8b8281c9a910c66fe698cd4d1bc5f33c37b59e8f1c83343c25f3e98
+    sha256:16fcef1f97f42701dbf84cf8e6d5c90b19bdc1249d606bc06e41bc305e67606b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)/download
-PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-COMPONENT_BUGDB=	utility/cdrtools
+COMPONENT_FMRI=	media/cdrtools
+COMPONENT_CLASSIFICATION=       System/Media
+COMPONENT_LICENSE=      CDDLv1.0, GPLv2, LGPLv2.1, BSD 2 clause
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=	$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
 COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true
@@ -46,6 +52,5 @@ install:        $(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += system/library
