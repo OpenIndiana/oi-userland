@@ -11,30 +11,29 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
-# Copyright 2015 Aurelien Larcher. All rights reserved.
+# Copyright 2015-2017 Aurelien Larcher. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		boost
-COMPONENT_VERSION=	1.58.0
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	1.64.0
+COMPONENT_SRC_VERSION=	1_64_0
 COMPONENT_FMRI=		system/library/boost
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=	boost - free peer-reviewed portable C++ source libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)_1_58_0
+COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_SRC_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fdfc204fc33ec79c99b9a74944c3e54bd78be4f7f15e260c0e2700a36dc7d3e5
+  sha256:7bcc5caace97baa948931d712ea5f37038dbb1c5d89b43ad4def4ed7cb683332
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/boost/files/boost/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL=	http://www.boost.org
-COMPONENT_LICENSE_FILE=	boost.license
 COMPONENT_LICENSE=	Boost Software license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/modules.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/modules.mk
 
 LIBDIR.32= $(USRLIBDIR)
 LIBDIR.64= $(USRLIBDIR64)
@@ -44,6 +43,7 @@ DOCDIR=$(USRSHAREDOCDIR)/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 GTAR=$(GNUBIN)/tar
 BJAM=./bjam --v2 -d+2 -q address-model=$(BITS) \
+	cflags="$(CFLAGS)" cxxflags="$(CXXFLAGS)" \
 	-sBUILD="release <threading>single/multi" \
 	--prefix=$(PROTO_DIR)$(USRDIR) \
 	--libdir=$(PROTO_DIR)$(LIBDIR) \
@@ -53,20 +53,22 @@ BJAM=./bjam --v2 -d+2 -q address-model=$(BITS) \
 COMPONENT_BUILD_ENV += CC="$(CC)" CXX="$(CXX)" LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_PRE_BUILD_ACTION = \
-			$(MODULES_ENV); \
+			$(MODULES_ENV); $(MODULE_PURGE); \
 			$(MODULE_LOAD) mpich/gcc/$(BITS)/latest
+
+BJAM_BUILD_ARGS:= $(filter -j%,$(COMPONENT_BUILD_ARGS))
 
 COMPONENT_BUILD_ACTION = \
 	    		./bootstrap.sh --prefix=$(USRDIR) --libdir=$(LIBDIR) \
 				--with-toolset=gcc --with-icu=$(USRDIR); \
 			echo 'using mpi ;' > ./user-config.jam; \
-			$(BJAM) release stage
+			$(BJAM) $(BJAM_BUILD_ARGS) release stage
 
 COMPONENT_POST_BUILD_ACTION = \
 			$(MODULE_UNLOAD) mpich/gcc/$(BITS)/latest
 
 COMPONENT_PRE_INSTALL_ACTION = \
-			$(MODULES_ENV); \
+			$(MODULES_ENV); $(MODULE_PURGE); \
 			$(MODULE_LOAD) mpich/gcc/$(BITS)/latest
 
 COMPONENT_INSTALL_ACTION = \
@@ -106,3 +108,19 @@ install: $(INSTALL_32_and_64)
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Build dependencies for boost locale
+REQUIRED_PACKAGES += developer/icu
+REQUIRED_PACKAGES += library/icu
+
+# Build dependencies for boost mpi
+REQUIRED_PACKAGES += library/mpich/gcc/modulefiles
+REQUIRED_PACKAGES += library/mpich/gcc
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
