@@ -24,13 +24,13 @@
 
 # These symbols should be used in component Makefiles
 # whenever PATH is to be defined there:
-#     PATH = $(PATH.ill)
+#     PATH = $(PATH.illumos)
 #     PATH = $(PATH.gnu)
-PATH.ill=$(USRBINDIR):$(GNUBIN)
-PATH.gnu=$(GNUBIN):$(USRBINDIR)
+PATH.illumos=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.gnu=$(GNUBIN):$(USRBINDIR):$(USRSBINDIR):$(PERL5BINDIR)
 
 # Default PATH
-PATH = $(PATH.ill)
+PATH = $(PATH.illumos)
 
 # The location of an internal mirror of community source archives that we build
 # in this gate.  This mirror has been seeded to include "custom" source archives
@@ -625,6 +625,9 @@ PYTHON_DATA= $(PYTHON_LIB)
 JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
 JAVA_HOME = $(JAVA8_HOME)
+
+# Location of pod2man, etc
+PERL5BINDIR = 	/usr/perl5/bin
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
