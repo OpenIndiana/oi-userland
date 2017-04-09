@@ -35,6 +35,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution-data-server
 COMPONENT_VERSION=	3.18.2
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/Evolution
 COMPONENT_ARCHIVE_HASH= \
 	sha256:5942fc1cf395acdc15425939d83824d861d01c57225ee3fc8c1d77009468ce9b
 COMPONENT_BUGDB=        gnome/libraries

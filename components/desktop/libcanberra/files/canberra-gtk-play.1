@@ -1,0 +1,69 @@
+.TH canberra-gtk-play 1 "7 Apr 2017" "SunOS 5.11" "User Commands"
+.SH "NAME"
+canberra-gtk-play \- play a sound event
+.SH "SYNOPSIS"
+.PP
+\fBcanberra-gtk-play\fR [\fB\-\-cache-control=\fIpermanent|volatile|never\fR\fR] [\fB\-\-description=\fIdescription\fR\fR] [\fB\-\-display=\fIdisplay\fR\fR] [\fB\-\-file=\fIfile\fR\fR] [\fB\-\-help\fR] [\fB\-\-id=\fIidentifier\fR\fR] [\fB\-\-loop=\fItimes\fR\fR] [\fB\-\-version\fR] [\fB\fIgnome-std-options\fR\fR]
+.SH "DESCRIPTION"
+.PP
+\fBcanberra-gtk-play\fR is an application for playing sound events that
+are specified by the FreeDesktop "XDG Sound Theme and Name Specification"\&.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 4
+\fB\-\-c\fR, \fB\-\-cache-control=\fR\fI[permanent|volatile|never]\fR
+Specify how canberra-gtk-play will manage its cache control\&.  The value of
+"permanent" will cause the sample to be cached in the server
+permanently\&.  This is useful for very frequently used sounds\&.  The value of
+"volatile" may be used for caching sounds in the sound server
+temporarily\&.  They will expire after some time or on cache pressure\&.  The
+value of "never" may be used that should never be cached, because
+they are only generated very seldomly or only once\&.
+.sp
+Not all libcanberra backends support caching, and this option is only
+functional if the backend being used does support this functionality\&.
+.TP 4
+\fB\-d\fR, \fB\-\-description=\fR\fIdescription\fR
+Specify a \fIdescription\fR for the sound event\&.
+.TP 4
+\fB\-\-display=\fR\fIdisplay\fR
+Specify the X display to use\&.
+.TP 4
+\fB\-f\fR, \fB\-\-file=\fR\fIfile\fR
+Specify a \fIfile\fR to play\&.
+.TP 4
+\fB\-?\fR, \fB\-\-help\fR
+Display usage information\&.
+.TP 4
+\fB\-i\fR, \fB\-\-id=\fR\fIidentifier\fR
+Specify the event \fIidentifier\fR to play\&.  These
+\fIidentifier\fR values are specified in the
+"XDG Sound Theme and Name Specification"\&.
+.TP 4
+\fB\-l\fR, \fB\-\-loop=\fR\fItimes\fR
+Specify the number of \fItimes\fR to play the file\&.  The
+default value is 1\&.
+.TP 4
+\fB\-v\fR, \fB\-\-version\fR
+Display canberra-gtk-play version number\&.
+.TP 4
+.I gnome-std-options
+Standard options available for use with most GNOME applications\&.  See
+.BR gnome-std-options (7)
+for more information\&.
+.SH "EXAMPLES"
+.PP
+\fBExample 1: Play the "desktop-login" sound event\fR
+.PP
+.nf
+example% \fBcanberra-gtk-play --id desktop-login --description="GNOME Login"\fR
+.fi
+.SH "SEE ALSO"
+.PP
+.BR libcanberra (3lib),
+.BR attributes (7),
+.BR gnome-std-options (7)
+.SH "NOTES"
+.PP
+Written by Brian Cameron, Sun Microsystems Inc\&., 2009\&.

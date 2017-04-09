@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libproxy
 COMPONENT_VERSION=	0.4.11.1
-COMPONENT_PROJECT_URL=	https://code.google.com/p/libproxy
+COMPONENT_PROJECT_URL=	https://libproxy.github.io/libproxy/
 COMPONENT_SRC=		$(COMPONENT_NAME)-master
 COMPONENT_ARCHIVE=	master.zip
 COMPONENT_ARCHIVE_URL=	https://github.com/binarycrusader/$(COMPONENT_NAME)/archive/master.zip

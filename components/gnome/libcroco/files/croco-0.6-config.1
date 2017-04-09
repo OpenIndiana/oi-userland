@@ -1,0 +1,97 @@
+.TH croco-0\&.6-config 1 "7 Apr 2017" "SunOS 5.11" "User Commands"
+.SH "NAME"
+croco-0\&.6-config \- helper script for building with libcroco
+.SH "SYNOPSIS"
+.PP
+\fBcroco-0\&.6-config\fR [\fB\-\-cflags\fR] [\fB\-\-exec-prefix=\fIdir\fR\fR] [\fB\-\-help\fR] [\fB\-\-libs\fR] [\fB\-\-prefix=\fIdir\fR\fR] [\fB\-\-version\fR]
+.SH "DESCRIPTION"
+.PP
+The \fBcroco-0\&.6-config\fR tool enables you to specify which compiler
+and linker flags should be used to compile and link programs that use the
+.BR libcroco-0\&.6 (3lib)
+library\&.
+.PP
+The \fBcroco-0\&.6-config\fR tool is provided for backwards compatibility,
+but use of it has been deprecated in favor of using the \fBpkg-config\fR(1)
+tool with the operand \fIlibcroco-0.6\fR.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 4
+.B \-\-cflags
+Print the compiler flags that are necessary to compile a program
+using the specified library\&.
+.TP 4
+.B \-\-exec-prefix=\fIdir\fR
+If specified, use \fB\fIdir \fR\fRinstead
+of the installation \fBexec\fR prefix that the library was
+built with, when computing the output for the \fB\-\-cflags\fR and \fB\-\-libs\fR options\&. This option must be specified before any \fB\-\-libs\fR or \fB\-\-cflags\fR options\&.
+.TP 4
+.B \-\-help
+Display usage information\&.
+.TP 4
+.B \-\-libs
+Print the linker flags that are necessary to link with the specified library\&.
+.TP 4
+\fB\-\-prefix=\fIdir\fR\fR
+If specified, use \fB\fIdir\fR\fR
+instead of the installation prefix that the library was built with, when
+computing the output for the \fB\-\-cflags\fR and \fB\-\-libs\fR options\&.
+This option must be specified before any \fB\-\-libs\fR or \fB\-\-cflags\fR
+options\&. This option is also used for the \fBexec\fR prefix, if the
+\fB\-\-exec-prefix\fR option is not specified\&.
+.TP 4
+.B \-\-version
+Print
+the currently installed version of the library on the standard output\&.
+.SH "EXAMPLES"
+.PP
+.B "Example 1: Getting the libcroco version"
+.PP
+.PP
+.nf
+example% \fBcroco-0\&.6-config --version\fR
+
+ \fI-or-\fR
+
+example% \fBpkg-config --modversion libcroco-0.6\fR
+.fi
+.PP
+.B "Example 2: Determining the libraries required to link with libcroco"
+.PP
+.PP
+.nf
+example% \fBcroco-0\&.6-config --libs\fR
+
+ \fI-or-\fR
+
+example% \fBpkg-config --libs libcroco-0.6\fR
+.fi
+.SH "FILES"
+.TP 30
+.B /usr/bin/croco-0\&.6-config
+helper script for 32-bit libcroco
+.TP 30
+.B /usr/bin/64/croco-0\&.6-config
+helper script for 64-bit libcroco
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.TP 9
+.B 0
+Application exited successfully
+.TP 9
+.B >0
+Application
+exited with failure
+.SH "SEE ALSO"
+.PP
+.BR pkg-config (1),
+.BR libcroco-0\&.6 (3lib),
+.BR attributes (7)
+.SH "NOTES"
+.PP
+This man page was originally written by Chris Waters (xtifr@debian\&.org)
+for Debian GNU/Linux\&. Rewritten by Brian Cameron, Sun Microsystems Inc\&.,
+using information from the \fBorbit2-config\fR(1)  man page, by Dick Porter
+(dick@acm\&.org) and Elliot Lee (sopwith@redhat\&.com)

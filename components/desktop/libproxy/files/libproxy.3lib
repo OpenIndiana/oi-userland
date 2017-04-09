@@ -1,0 +1,65 @@
+.TH libproxy 3lib "7 Apr 2017" "SunOS 5.11" "Interface Libraries"
+.SH "NAME"
+libproxy \- automatic proxy configuration management library
+.SH "DESCRIPTION"
+.PP
+\fBlibproxy\fR provides interfaces to get the proxy that will be used
+to access network resources\&. It uses various plugins to get proxy configuration
+via different mechanisms (e\&.g\&. environment variables or desktop settings)\&.
+.PP
+The envvar plugin gets the proxy configuration from the http_proxy and no_proxy
+environment variables\&. The file plugin gets proxy configuration from
+\fB/etc/proxy\&.conf\fR and
+\fB$HOME/\&.proxy\&.conf\fR\&. The Gnome plugin gets the proxy
+configuration via Gsettings.
+.PP
+The order in which each proxy mechanism will be checked is specified by the
+environment PX_CONFIG_ORDER\&.  The default order is
+"USER,SESSION,SYSTEM,envvar"\&. USER, SESSION and SYSTEM are all
+categories of proxy configuration\&.  envvar means the plugin which gets proxy
+setting from the environment variable "http_proxy"\&.
+.PP
+The Gnome plugin belongs to the SESSION category, so the Gnome settings will be
+checked before the environment variable\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+See \fBenviron\fR(7) for descriptions of environment variables\&.
+.TP 16
+.B http_proxy
+URL of HTTP proxy to use\&.
+.TP 16
+.B no_proxy
+A comma delimited list of hosts (or domains) for which proxying is not to be
+used\&.
+.SH "FILES"
+.PP
+The following files are provided by this library:
+.TP 32
+.B /usr/lib/libproxy\&.so
+libproxy 32-bit shared library
+.TP 32
+.B /usr/lib/64/libproxy\&.so
+libproxy 64-bit shared library
+.TP 32
+.B /usr/lib/pkgconfig/libproxy-1.0.pc
+.BR pkg-config (1)
+file for libproxy 32-bit shared library
+.TP 32
+.B /usr/lib/64/pkgconfig/libproxy-1.0.pc
+.BR pkg-config (1)
+file for libproxy 64-bit shared library
+.PP
+The following files are used by this library:
+.TP 32
+.B /usr/lib/libproxy/*
+libproxy plugins
+.TP 32
+\fB/etc/proxy\&.conf\fR, \fI$HOME\fR\fB/\&.proxy\&.conf\fR
+configuration files used by file plugin to look for proxy configuration
+.SH "SEE ALSO"
+.BR attributes (7),
+.BR gnome-interfaces (7),
+.BR environ (7)
+.SH "NOTES"
+.PP
+Written by Ke Wang, Sun Microsystems Inc\&., 2004, 2009\&.

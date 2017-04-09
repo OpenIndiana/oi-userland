@@ -1,0 +1,203 @@
+.TH gnome-terminal 1 "7 Apr 2017" "SunOS 5.11" "User Commands"
+.SH "NAME"
+gnome-terminal \- terminal emulator for GNOME
+.SH "SYNOPSIS"
+.PP
+\fBgnome-terminal\fR [\fB\-\-tab\fR] [\fB\-\-window\fR] [\fB\-\-tab-with-profile=\fIprofilename\fR\fR] [\fB\-\-window-with-profile=\fIprofilename\fR\fR] [\fB\-\-active\fR] [\fB\-\-command=\fIcommand\fR\fR] [\fB\-\-execute=\fIcommand\fR\fR] [\fB\-\-full-screen\fR] [\fB\-\-maximize\fR] [\fB\-\-role=\fIrole\fR\fR] [\fB\-\-show-menubar \fR | \fB\-\-hide-menubar\fR]  [\fB\-\-startup-id=\fIid\fR\fR] [\fB\-\-title=\fItitle\fR\fR] [\fB\-\-use-factory\fR | \fB\-\-disable-factory\fR]  [\fB\-\-working-directory=\fIdirname\fR\fR] [\fB\-\-zoom=\fIzoomfactor\fR\fR] [\fB\fIgnome-std-options\fR\fR]
+.SH "DESCRIPTION"
+.PP
+\fBgnome-terminal\fR is the GNOME terminal emulation program\&.
+It provides access to the UNIX shell on the GNOME environment\&.
+\fBgnome-terminal\fR supports multiple profiles to allow easy switching between
+preferences, and supports tabbing so that multiple terminals can be managed
+from a single window\&.
+By default, all GNOME terminals share a single process, reducing memory usage\&.
+This can be disabled by starting \fBgnome-terminal\fR with the
+\fB\-\-disable-factory\fR option\&.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 4
+.B \-\-active
+Set the last specified tab as the active one in its window\&.
+.TP 4
+\fB\-e\fR, \fB\-\-command \fIcommand\fR\fR
+Executes the command \fB\fIcommand\fR\fR instead of the shell\&.
+This saves some memory if you just plan to run a dedicated
+application on that window\&.
+.TP 4
+.B \-\-disable-factory
+Do not register with the activation name server, and do not reuse an already
+running GNOME terminal process\&.
+.TP 4
+\fB\-x\fR, \fB\-\-execute \fIcommand\fR\fR
+This option is provided for compatibility reasons\&. It is the
+same as the \fB\-\-command\fR option\&.
+.TP 4
+.B \-\-full-screen
+Set the last-specified window into fullscreen mode\&.  Applies to
+only one window\&.  Can be specified one for each wwindow you create from the
+command line\&.
+.TP 4
+.B \-\-maximize
+Set the last-specified window into maximized mode; a pplies to only one window;
+can be specified once for each window you create from the command line\&.
+.TP 4
+.B \-\-hide-menubar
+Hide the menubar\&. This applies only to one window\&. When used with multiple
+\fB\-\-window-with-profile\fR options, it applies to the
+\fB\-\-window-with-profile\fR option immediately to the left\&.
+Can be specified multiple times, once for each
+\fB\-\-window-with-profile\fR option\&.
+.TP 4
+.B \-\-role=\fIrole\fR
+The GNOME session manager follows the ICCCM convention of
+using the window title and the window role to identify specific windows\&. The
+session manager uses this information to put windows back in the same place
+when the user restarts their session\&. If all windows have a unique title,
+there is no need to set the role\&. However, as it is common for multiple GNOME
+terminals to have the same title, the user can also specify the role on the
+command line with the \fB\-\-role\fR option\&. This helps the session
+manager to properly identify and restart each GNOME terminal (in the same
+location, and so on)\&.	When used with multiple \fB\-\-window-with-profile\fR
+options, it applies to the \fB\-\-window-with-profile\fR
+option immediately to the left\&. Can be specified multiple times, once for
+each \fB\-\-window-with-profile\fR option\&.
+.TP 4
+.B \-\-show-menubar
+Show the menubar\&. This applies only to one window\&. When used with multiple
+\fB\-\-window-with-profile\fR options, it applies to the
+\fB\-\-window-with-profile\fR option immediately to the left\&.
+Can be specified multiple times, once for each
+\fB\-\-window-with-profile\fR option\&.
+.TP 4
+.B \-\-startup-id=\fIid\fR
+Set the \fIid\fR for startup notification
+protocol\&.
+.TP 4
+.B \-\-tab
+Open a new tab in the last-opened window with the default profile\&.  More than
+one of these options can be provided\&.
+.TP 4
+.B \-\-tab-with-profile=\fIprofilename\fR
+Creates a tab that uses the specified profile\&. This argument
+may be specified multiple times to create multiple tabs in a terminal\&. If
+this is used with multiple \fB\-\-window-with-profile\fR options,
+the tab is created for the window that corresponds to the
+\fB\-\-window-with-profile\fR option immediately to the left\&.
+.TP 4
+\fB\-t\fR, \fB\-\-title=\fR\fItitle\fR
+Set the title for the GNOME terminal to be \fItitle\fR\&.
+.TP 4
+.B \-\-use-factory
+Register
+with the activation name server, and reuse an already running GNOME terminal
+process\&.
+.TP 4
+.B \-\-window
+Open a new window contianing a tab with the default profile\&.  More than one of
+these options can be provided\&.
+.TP 4
+.B \-\-window-with-profile=\fIprofilename\fR
+Creates a GNOME terminal and
+a tab that uses the specified profile\&. This may be used with the
+\fB\-\-tab-with-profile\fR option to create additional tabs\&. Multiple
+\fB\-\-window-with-profile\fR options can be specified to create multiple
+GNOME terminal windows\&. All options specified after an
+\fB\-\-window-with-profile\fR option apply to that
+\fB\-\-window-with-profile\fR option only\&.
+.TP 4
+.B \-\-working-directory=\fIdirname\fR
+Set the working directory for the GNOME terminal to be \fIdirname\fR\&.
+.TP 4
+.B \-\-zoom=\fIzoomfactor\fR
+Set the terminal\&'s zoom factor (1\&.0 = normal size)\&.
+.TP 4
+.I gnome-std-options
+Standard options available for use with most GNOME applications\&.
+See \fBgnome-std-options\fR(7) for more information\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+\fBgnome-terminal\fR is designed to emulate the \fBxterm\fR program provided
+by the X Consortium\&.  The \fBxterm\fR(1) program in turn
+is an almost-complete emulation of the DEC VT102 terminal\&. \fBgnome-terminal\fR
+supports the same extensions to the VT102 as those provided by the \fBxterm\fR
+program, through special escape sequences\&. The \fBxterm\fR program is an
+evolving program\&. Recent changes to \fBxterm\fR have been been incorporated
+into \fBgnome-terminal\fR\&.
+This includes emulation of the newer DEC VT220 escape sequences\&.
+.SH "EXAMPLES"
+.PP
+.B "Example 1: Running the `minicom\&' terminal emulator on the window"
+.PP
+.PP
+.nf
+example% \fBgnome-terminal --command minicom\fR
+.fi
+.PP
+.B "Example 2: Monitoring the system"
+.PP
+.PP
+.nf
+example% \fBgnome-terminal --command top\fR
+.fi
+.PP
+.B "Example 3: Starting two windows with different profiles"
+.PP
+.PP
+.nf
+example% \fBgnome-terminal --window-with-profile=FirstProfile \\
+	--tab-with-profile=SecondProfile --window-with-profile=SecondProfile\fR
+.fi
+.PP
+In this example, the first window will have two tabs (\fBFirstProfile\fR and
+\fBSecondProfile\fR) and the second window will
+have one tab (\fBSecondProfile\fR)\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+See \fBenviron\fR(7) for descriptions of the following environment
+variables, set by \fBgnome-terminal\fR:
+.TP 24
+.B "TERM"
+This variable is set to \fBxterm\fR by default\&. Some implementations of curses,
+and applications based on curses, may prefer the value to be \fBxterm-color\fR,
+\fBcolor-xterm\fR, or \fBxterm-debian\fR to support color\&.
+Users might need to change this setting to one of these values to enable color
+for such applications\&.
+.TP 24
+.B "COLORTERM"
+This variable is set to \fBxterm\fR\&. Various applications
+use this setting to determine whether the terminal supports color\&.
+.TP 24
+.B "WINDOWID"
+This variable contains
+the X11 Window identifier\&. This is sometimes used by applications to modify
+the contents of this window or provide special effects\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.TP 9
+.B 0
+Application
+exited successfully
+.TP 9
+.B >0
+Application
+exited with failure
+.SH "SEE ALSO"
+.PP
+.BR gnome-session (1),
+.BR xterm (1),
+.BR vte (1),
+.BR libvte (3lib),
+.BR attributes (7),
+.BR environ (7),
+.BR gnome-std-options (7)
+.PP
+Latest version of the \fIGNOME Desktop User Guide\fR
+for your platform\&.
+.SH "NOTES"
+.PP
+Written by Michael Zucchi, Miguel de Icaza, Erik Troan\&.
+.PP
+Updated by Brian Cameron, Sun Microsystems Inc\&., 2003, 2004, 2006\&.

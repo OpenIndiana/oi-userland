@@ -1,0 +1,134 @@
+.TH vte 1 "7 Apr 2017" "SunOS 5.11" "User Commands"
+.SH "NAME"
+vte \- virtual terminal emulator
+.SH "SYNOPSIS"
+.PP
+\fBvte\fR [\fB\-\-antialias\fR] [\fB\-\-audible\fR] [\fB\-\-background=\fIimage\fR\fR] [\fB\-\-blink\fR] [\fB\-\-color-cursor\fR] [\fB\-\-command=\fIcommand\fR\fR] [\fB\-\-console\fR] [\fB\-\-debug\fR] [\fB\-\-dingus\fR] [\fB\-\-display=\fIdisplay\fR\fR] [\fB\-\-double-buffer\fR] [\fB\-\-font=\fIfont\fR\fR] [\fB\-\-geometry=\fIgeometry\fR\fR] [\fB\-\-highlight\fR] [\fB\-\-icon-title\fR] [\fB\-\-keep\fR] [\fB\-\-no-geometry-hints\fR] [\fB\-\-reverse\fR] [\fB\-\-scroll-background\fR] [\fB\-\-scrollback-lines\fR] [\fB\-\-shell\fR] [\fB\-\-termcap=\fIterminal-type\fR\fR] [\fB\-\-transparent\fR] [\fB\-\-working-directory=\fIdirectory\fR\fR]
+.SH "DESCRIPTION"
+.PP
+\fBvte\fR is simply a window wrapped around the vte embeddable
+terminal emulation control, which does most of the work for \fBgnome-terminal\fR\&. \fBvte\fR is used mainly to test the control\&. Most
+users do not need to use vte directly, but use \fBgnome-terminal\fR
+instead\&.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 4
+\fB\-2\fR, \fB\-\-double-buffer\fR
+Toggle double buffering\&. Enabled by default\&.
+.TP 4
+\fB\-A\fR, \fB\-\-antialias\fR
+Toggle antialiasing\&.  The default is that of the current GTK+ default\&.
+.TP 4
+\fB\-a\fR, \fB\-\-audible\fR
+Toggle audible bell on/off\&. If audible bell is enabled,
+visible bell is disabled\&.  If audible bell is disabled, visible bell is
+enabled\&. Audible bell enabled by default\&.
+.TP 4
+\fB\-B\fR, \fB\-\-background=\fIimage\fR\fR
+Use \fIimage\fR as background\&.
+.TP 4
+\fB\-b\fR, \fB\-\-blink\fR
+Toggle cursor blinking\&. Enabled by default\&.
+.TP 4
+\fB\-C\fR, \fB\-\-console\fR
+Open a "console" connection\&.
+.TP 4
+\fB\-c\fR, \fB\-\-command=\fIcommand\fR\fR
+Fork the specified \fIcommand\fR\&.
+.TP 4
+\fB\-D\fR, \fB\-\-dingus\fR
+Use dingus clicking: as the cursor moves over text matching a certain pattern,
+the matched text is highlighted and the cursor changes shape\&.
+Disabled by default\&.
+.TP 4
+\fB\-d\fR, \fB\-\-debug\fR
+Toggle update debugging\&. Disabled by default\&.
+.TP 4
+\fB\-\-display=\fIdisplay\fR\fR
+Specify the X \fIdisplay\fR to use\&.
+.TP 4
+\fB\-f\fR, \fB\-\-font=\fIfont\fR\fR
+Specify the \fIfont\fR to use\&. Default font is "Sans 12"\&.
+.TP 4
+\fB\-G\fR, \fB\-\-no-geometry-hints\fR
+Allow the terminal to be resized to any dimension, not constrained
+to fit to an integer multiple of characters\&.
+.TP 4
+\fB\-g\fR, \fB\-\-geometry=\fIgeometry\fR\fR
+Set the size (in characters) and position\&.
+.TP 4
+\fB\-h\fR, \fB\-\-highlight\fR
+Toggle highlighting\&.  Disabled by default\&.
+.TP 4
+\fB\-i\fR, \fB\-\-icon-title\fR
+Toggle whether to obey attempts to set the icon name, if
+applications running in the terminal request this\&.
+.TP 4
+\fB\-k\fR, \fB\-\-keep\fR
+Toggle whether to keep program running after GTK main loop\&.
+Disabled by default\&.
+.TP 4
+\fB\-n\fR, \fB\-\-scrollback-lines\fR
+Specify the number of scrollback lines\&. Minumum number of
+scrollback lines is 100\&. Default number of scrollback lines is 100\&.
+.TP 4
+\fB\-r\fR, \fB\-\-color-cursor\fR
+Toggle whether to set cursor color to pale red\&. Disabled by default\&.
+.TP 4
+\fB\-\-reverse\fR
+Reverse foreground and background colors\&.
+.TP 4
+\fB\-S\fR, \fB\-\-shell\fR
+Toggle launching a shell\&. Enabled by default\&.
+.TP 4
+\fB\-s\fR, \fB\-\-scroll-background\fR
+Toggle whether to scroll background image along with text\&. This
+option is only useful when combined with the -\fBB\fR option\&.
+Disabled by default\&.
+.TP 4
+\fB\-T\fR, \fB\-\-transparent\fR
+Use transparent background\&. Overrides the -\fBB\fR option\&.
+.TP 4
+\fB\-t\fR, \fB\-\-termcap=\fIterminal-type\fR\fR
+Specify the terminal type to emulate\&.
+.TP 4
+\fB\-w\fR, \fB\-\-working-directory=\fIdirectory\fR\fR
+Specify the initial working directory of the terminal\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+\fBvte\fR is designed to emulate the \fBxterm\fR
+program provided by the X Consortium\&. In turn, \fBxterm\fR is
+an almost complete emulation of the DEC VT102 terminal\&. \fBvte\fR
+supports the same extensions to VT102 as those provided by \fBxterm\fR,
+through special escape sequences\&.
+.PP
+\fBxterm\fR is an evolving program\&. Recent changes to \fBxterm\fR have been
+been incorporated into \fBvte\fR\&.
+This includes emulation of the newer DEC VT220 escape sequences\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+See \fBenviron\fR(7) for descriptions of the following environment
+variables:
+.TP 24
+.B "VTE_PROFILE_MEMORY"
+Virtualize memory allocation for debugging purposes\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.TP 9
+.B 0
+Application exited successfully
+.TP 9
+.B >0
+Application exited with failure
+.SH "SEE ALSO"
+.PP
+.BR gnome-terminal (1),
+.BR xterm (1),
+.BR libvte (3lib),
+.BR attributes (7),
+.BR environ (7)
+.SH "NOTES"
+.PP
+Written by Johan Steyn, updated by Brian Cameron, Sun Microsystems Inc\&., 2004, 2007\&.

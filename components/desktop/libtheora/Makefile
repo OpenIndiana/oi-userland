@@ -27,11 +27,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtheora
 COMPONENT_VERSION=	1.1.1
-COMPONENT_PROJECT_URL=	http://downloads.xiph.org/releases/theora/
+COMPONENT_PROJECT_URL=	http://theora.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
 	sha256:b6ae1ee2fa3d42ac489287d3ec34c5885730b1296f0801ae577a35193d3affbc
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/theora/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
 COMPONENT_ANITYA_ID=	11793
 
