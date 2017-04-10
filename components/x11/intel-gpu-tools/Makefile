@@ -30,9 +30,9 @@ COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -50,7 +50,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += system/header/header-drm
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += SUNWcs
