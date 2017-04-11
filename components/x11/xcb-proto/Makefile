@@ -50,3 +50,5 @@ test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += runtime/python-27
+
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
