@@ -18,45 +18,51 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
 #
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		efl
-COMPONENT_VERSION=	1.12.3
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/e/efl
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://enlightenment.org
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:db2186df0cdfddb067a13654fd057f2147e83f55e0ecd365437a131942f56cf7
-COMPONENT_ARCHIVE_URL=	http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      GPL,LGPL,BSD,SMALL
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      Enlightenment - Core libraries
+COMPONENT_NAME=           efl
+COMPONENT_VERSION=        1.18.5
+COMPONENT_FMRI=           library/e/efl
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=    http://enlightenment.org
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+  sha256:56f02aa6b2c4ca0252fb6547fa8d2fdfff842e245a93ae41adca7a191900bf73
+COMPONENT_ARCHIVE_URL= \
+  http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        GPL,LGPL,BSD,SMALL
+COMPONENT_SUMMARY=        Enlightenment - Core libraries
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS+=	CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
-CONFIGURE_OPTIONS+=	--enable-fribidi
-CONFIGURE_OPTIONS+=	--with-opengl=full
-# OpenGL ES 2.0 headers marked not present if x11/library/mesa not installed
-CONFIGURE_OPTIONS+=	--enable-lua-old
-CONFIGURE_OPTIONS+=	--disable-pulseaudio # Not packaged
-CONFIGURE_OPTIONS+=	--disable-physics # Disable physics since bullet is missing
-CONFIGURE_OPTIONS+=	--enable-gstreamer # Select series 0.10 over 1.0
-CONFIGURE_OPTIONS+=	--disable-gstreamer1 # Select series 0.10 over 1.0
-CONFIGURE_OPTIONS+=	--disable-doc # Broken in 1.8.2
-CONFIGURE_OPTIONS+=     --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba
+CONFIGURE_BINDIR.64=$(USRBINDIR)
+CONFIGURE_SBINDIR.64=$(USRSBINDIR)
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
+CONFIGURE_OPTIONS+= CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
+CONFIGURE_OPTIONS+= --with-opengl=full
+CONFIGURE_OPTIONS+= --enable-debug
+CONFIGURE_OPTIONS+= --enable-fribidi
+CONFIGURE_OPTIONS+= --enable-harfbuzz
+CONFIGURE_OPTIONS+= --enable-lua-old
+CONFIGURE_OPTIONS+= --enable-pulseaudio
+CONFIGURE_OPTIONS+= --disable-cserve
+CONFIGURE_OPTIONS+= --enable-physics
+CONFIGURE_OPTIONS+= --disable-gstreamer
+CONFIGURE_OPTIONS+= --enable-gstreamer1
+CONFIGURE_OPTIONS+= --enable-doc
+CONFIGURE_OPTIONS+= --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
-
-
-# Need to regenerate configure and Makefiles as 1.14 is used.
-# COMPONENT_PRE_CONFIGURE_ACTION= pushd $(SOURCE_DIR); automake && autoconf; popd;
 
 # Need to cleanup the configure since EINA_HAVE_BYTESWAP_H is not set properly
 COMPONENT_POST_CONFIGURE_ACTION=$(RM) $(SOURCE_DIR)/src/lib/eina/eina_config.h;
@@ -64,30 +70,35 @@ COMPONENT_POST_CONFIGURE_ACTION=$(RM) $(SOURCE_DIR)/src/lib/eina/eina_config.h;
 # pkgdepend fails to resolve the python version if env is used
 COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp;
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
-test: $(NO_TESTS)
+test: $(TEST_64)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+# Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libraw
+REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer
-REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsndfile
+REQUIRED_PACKAGES += library/libpoppler
+REQUIRED_PACKAGES += library/libspectre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
@@ -98,7 +109,6 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxinerama
-REQUIRED_PACKAGES += x11/library/libxp
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxscrnsaver
