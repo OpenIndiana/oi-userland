@@ -39,6 +39,8 @@ COMPONENT_ANITYA_ID=	4905
 
 TPNO=			33892
 
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+
 include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL := 0
@@ -199,6 +201,7 @@ COMPONENT_TEST_ENV += LD_LIBRARY_PATH_64="$(LD_TEST_PATH_64)"
 
 PKG_MACROS += PERL_ARCH_22="$(PERL_ARCH_22)"
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
+PKG_MACROS += PYV=$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # Swig overwrites the 32-bit directory with 64-bit objects.
 # So we work around that.
