@@ -1,0 +1,52 @@
+This patch has been taken from upstream.
+Details can be found at
+https://bugzilla.redhat.com/show_bug.cgi?id=1117404
+https://bugzilla.redhat.com/show_bug.cgi?id=1247383
+diff -up ksh-20120801/src/cmd/ksh93/sh/subshell.c.orig ksh-20120801/src/cmd/ksh93/sh/subshell.c
+--- ksh-20120801/src/cmd/ksh93/sh/subshell.c.orig	2014-08-23 20:20:24.676186573 -0300
++++ ksh-20120801/src/cmd/ksh93/sh/subshell.c	2014-08-23 20:29:00.772151283 -0300
+@@ -475,12 +475,12 @@
+ {
+ 	struct subshell sub_data;
+ 	register struct subshell *sp = &sub_data;
+-	int jmpval,nsig=0,duped=0;
+-	int savecurenv = shp->curenv;
++	int jmpval,isig,nsig=0,duped=0;
++	long savecurenv = shp->curenv;
+ 	int savejobpgid = job.curpgid;
+ 	int *saveexitval = job.exitval;
+ 	int16_t subshell;
+-	char *savsig;
++	char **savsig;
+ 	Sfio_t *iop=0;
+ 	struct checkpt buff;
+ 	struct sh_scoped savst;
+@@ -577,10 +577,13 @@
+ 		/* save trap table */
+ 		shp->st.otrapcom = 0;
+ 		shp->st.otrap = savst.trap;
+-		if((nsig=shp->st.trapmax*sizeof(char*))>0 || shp->st.trapcom[0])
++		if((nsig=shp->st.trapmax)>0 || shp->st.trapcom[0])
+ 		{
+-			nsig += sizeof(char*);
+-			memcpy(savsig=malloc(nsig),(char*)&shp->st.trapcom[0],nsig);
++			++nsig;
++			savsig = malloc(nsig * sizeof(char*));
++			/* contents of shp->st.st.trapcom may change */
++			for (isig = 0; isig < nsig; ++isig)
++				savsig[isig] = shp->st.trapcom[isig] ? strdup(shp->st.trapcom[isig]) : NULL;
+ 			/* this nonsense needed for $(trap) */
+ 			shp->st.otrapcom = (char**)savsig;
+ 		}
+@@ -736,7 +739,10 @@
+ 		shp->st.otrap = 0;
+ 		if(nsig)
+ 		{
+-			memcpy((char*)&shp->st.trapcom[0],savsig,nsig);
++			for (isig = 0; isig < nsig; ++isig)
++				if (shp->st.trapcom[isig] && shp->st.trapcom[isig] != Empty)
++					free(shp->st.trapcom[isig]);
++			memcpy((char*)&shp->st.trapcom[0],savsig,nsig*sizeof(char*));
+ 			free((void*)savsig);
+ 		}
+ 		shp->options = sp->options;
