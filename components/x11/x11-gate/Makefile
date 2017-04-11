@@ -4,7 +4,13 @@ X11_GATE_DIR=$(WS_TOP)/components/x11
 X11_GATE_COOKIE=.x11.installed
 X11_GATE_INSTALL_ACTION=!install
 
+FULL_BUILD?=1
+
+ifeq ($(FULL_BUILD), 1)
 include components.mk 
+else
+include xorg.mk 
+endif
 
 clobber:
 	@for d in $(COMPONENTS); \
