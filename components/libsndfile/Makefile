@@ -27,15 +27,15 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
-COMPONENT_VERSION=	1.0.27
+COMPONENT_VERSION=	1.0.28
 COMPONENT_PROJECT_URL=	http://www.mega-nerd.com/libsndfile/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a391952f27f4a92ceb2b4c06493ac107896ed6c76be9a613a4731f076d30fac0
+    sha256:1ff33929f042fa333aed1e8923aa628c3ee9e1eb85512686c55092d1e5a9dfa9
 COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/libsndfile/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libsndfile
 COMPONENT_ANITYA_ID=	13277
 
-TPNO=			30616
+TPNO=			34734
 
 TEST_TARGET= install $(TEST_32_and_64)
 SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
@@ -55,27 +55,22 @@ COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 COMPONENT_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
 COMPONENT_SYSTEM_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# Two tests fail for 32-bit SPARC, so we have 4 master test files.
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS)-$(MACH).master
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^SunOS\).*|\1|" ' \
-	'-e "s|^.* CC .*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.* CXX .*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.* CCLD .*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.* CXXLD .*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*source=.*libtool=no.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*DEPDIR=.deps.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^config.status: .*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*common.h:.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*test_strncpy_crlf.c:.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*In file included.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*psf_strlcpy_crlf (.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*\^.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*argument:.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*prototype:.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*warning:.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "/^XXX_REMOVE_XXX$$/d" '
+	'-e "s|libsndfile-1\.0\...|libsndfile-1\.0\.xx|g" ' \
+	'-e "/FILE_OFFSET_BITS/d"' \
+	'-n ' \
+	'-e "/-------/p" ' \
+	'-e "/=======/p" ' \
+	'-e "/ passed /p" ' \
+	'-e "/ failed /p" ' \
+	'-e "/^Testing/p" ' \
+	'-e "/dev\/full/p" ' \
+	'-e "/^\./p" ' \
+	'-e "/ok$$/p" '
 
 REQUIRED_PACKAGES += codec/flac
 ifeq ($(BUILD_TYPE), evaluation)
