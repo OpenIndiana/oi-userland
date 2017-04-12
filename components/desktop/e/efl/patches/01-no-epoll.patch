@@ -1,0 +1,13 @@
+Using epoll makes enlightenment freeze on startup
+--- efl-1.12.3/src/lib/ecore/ecore_main.c	2017-04-12 16:56:10.711956197 +0300
++++ efl-1.12.3/src/lib/ecore/ecore_main.c	2017-04-12 16:56:57.859734493 +0300
+@@ -61,7 +61,8 @@
+ #include "Ecore.h"
+ #include "ecore_private.h"
+ 
+-#ifdef HAVE_SYS_EPOLL_H
++// We do not want to use epoll on illumos
++#if defined(HAVE_SYS_EPOLL_H) && !defined(__sun)
+ # define HAVE_EPOLL   1
+ # include <sys/epoll.h>
+ #else

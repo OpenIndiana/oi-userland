@@ -24,6 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
 COMPONENT_VERSION=	1.12.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/e/efl
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,8 +39,6 @@ COMPONENT_SUMMARY=      Enlightenment - Core libraries
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL=0
 
 CONFIGURE_OPTIONS+=	CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
 CONFIGURE_OPTIONS+=	--enable-fribidi
