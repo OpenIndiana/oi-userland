@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -31,16 +31,11 @@ COMPONENT_VERSION=	0.5.11
 COMPONENT_BUGDB=	gate-stuff/userland
 COMPONENT_SRC=
 COMPONENT_ARCHIVE=
+COMPONENT_ARCHIVE_SRC=	none
 
 include $(WS_MAKE_RULES)/prep.mk
 
-# Do not clean the sources (set in prep.mk)
-#
-CLEAN_PATHS=
-
 include $(WS_MAKE_RULES)/ips.mk
-
-CLEAN_PATHS+= $(BUILD_DIR)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

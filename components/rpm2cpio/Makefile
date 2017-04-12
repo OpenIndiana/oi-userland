@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
@@ -43,12 +43,6 @@ TPNO=			17824
 BUILD_STYLE= archive
 COMMON_TARGETS= no
 include $(WS_MAKE_RULES)/common.mk
-
-# Do not clean the sources (set in prep.mk)
-#
-CLEAN_PATHS=
-
-CLEAN_PATHS += $(BUILD_DIR)
 
 # Common targets
 #

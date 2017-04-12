@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
@@ -48,8 +48,6 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 LICENSE_TRANSFORMS =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-CLEAN_PATHS +=	$(SOURCE_DIR)/.prep
 
 # test enumerates USB devices plugged into your system
 

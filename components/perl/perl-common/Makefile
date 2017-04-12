@@ -36,6 +36,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		perl-common
 COMPONENT_VERSION=	1
 COMPONENT_SRC=
+COMPONENT_ARCHIVE_SRC=	none
 COMPONENT_PROJECT_URL=	http://www.perl.org/
 COMPONENT_BUGDB=	utility/perl
 

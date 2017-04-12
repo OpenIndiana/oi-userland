@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -48,8 +48,6 @@ $(BUILD_DIR_64)/.installed:     BITS=64
 COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-CLEAN_PATHS +=	$(SOURCE_DIR)/.prep
 
 $(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@

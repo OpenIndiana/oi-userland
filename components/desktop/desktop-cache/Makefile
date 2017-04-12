@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS= NO_ARCH
@@ -30,6 +30,7 @@ COMPONENT_NAME=         desktop-cache
 COMPONENT_VERSION=      0.2.9
 COMPONENT_SRC=          # all files under files/
 COMPONENT_BUGDB=	gnome/install
+COMPONENT_ARCHIVE_SRC=	none
 
 # nothing to download or build; just package
 BUILD_STYLE= pkg
