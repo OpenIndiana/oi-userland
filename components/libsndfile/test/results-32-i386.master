@@ -1,18 +1,7 @@
-Making check in M4
-Making check in man
-Making check in doc
-Making check in Win32
-Making check in src
-/usr/gnu/bin/make  test_main G72x/g72x_test
-
     binheader_writef_check                   :ok
-
-G72x/g72x_test all
-    g723_test    : 
-
-Max error of 585 at postion 3013.
 ok
 ./test_main
+    File offsets are 64 bit                  : ok
     Testing big endian conversions           : ok
     Testing little endian conversions        : ok
     test_endswap_short                       : ok
@@ -24,6 +13,7 @@ ok
     test_float_convert                       : ok
     test_double_convert                      : ok
     Testing psf_log_printf                   : ok
+    Testing binheader_writef                 : ok
     Testing file open                        : ok
     Testing file write                       : ok
     Testing file read                        : ok
@@ -39,13 +29,6 @@ ok
     Testing broadcast_var_set                : ok
     Testing broadcast_var_zero               : ok
     Testing cart_var_set                     : ok
-Making check in examples
-Making check in regtest
-Making check in tests
-/usr/gnu/bin/make  sfversion floating_point_test write_read_test lossy_comp_test error_test ulaw_test alaw_test dwvw_test peak_chunk_test command_test stdin_test stdout_test stdio_test pcm_test headerless_test pipe_test benchmark header_test misc_test raw_test string_test multi_file_test dither_test chunk_test scale_clip_test win32_test fix_this aiff_rw_test virtual_io_test locale_test largefile_test win32_ordinal_test ogg_test compression_size_test checksum_test external_libs_test rdwr_test format_check_test cpp_test channel_test long_read_write_test
-sh test_wrapper.sh
-SunOS
--n     Pedantic header test           : 
 ok
     error_number_test              : ......................... ok
     error_value_test               : error.aiff .............. ok
@@ -176,7 +159,6 @@ ok
     double_scaled_test             : flac_24.flac ............ -138.6dB SNR ... ok
     double_scaled_test             : vorbis.oga ..............  -41.3dB SNR ... ok
     double_scaled_test             : replace_double.raw ...... -500.0dB SNR ... ok
-
     float_short_little_test        : float_short_little.au ... ok
     float_short_big_test           : float_short_big.au ...... ok
     float_int_little_test          : float_int_little.au ..... ok
@@ -236,6 +218,7 @@ ok
     major_format_test              : ......................... ok
     subtype_format_test            : ......................... ok
     simple_format_test             : ......................... ok
+    flac_subset_test               : ......................... ok
     format_error_test              : ......................... ok
     format_combo_test              : ......................... ok
     channel_test                   : chan_1.wav .............. ok
@@ -252,7 +235,7 @@ ok
     ceeplusplus_extra_test         : bad_file_name.wav ....... ok
     ceeplusplus_handle_test        : cpp_test.wav ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed common tests.
+  libsndfile-1.0.xx passed common tests.
 ----------------------------------------------------------------------
     pcm_test_char                  : char_u8.aiff ............ ok
     pcm_test_char                  : char_s8.aiff ............ ok
@@ -307,7 +290,7 @@ ok
     aiff_rw_test                   : rw.aifc ................. ok
     chunk_test                     : chunks_pcm16.aiff ....... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on AIFF files.
+  libsndfile-1.0.xx passed tests on AIFF files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.au ................. ok
     pcm_test_short                 : short.au ................ ok
@@ -329,12 +312,10 @@ ok
     lcomp_test_int                 : alaw.au ................. ok
     lcomp_test_float               : alaw.au ................. ok
     lcomp_test_double              : alaw.au ................. ok
-**** Fix this later : error bound should be 0.06 ****
     lcomp_test_short               : g721.au ................. ok
     lcomp_test_int                 : g721.au ................. ok
     lcomp_test_float               : g721.au ................. ok
     lcomp_test_double              : g721.au ................. ok
-**** Fix this later : error bound should be 0.16 ****
     lcomp_test_short               : g723_24.au .............. ok
     lcomp_test_int                 : g723_24.au .............. ok
     lcomp_test_float               : g723_24.au .............. ok
@@ -353,7 +334,7 @@ ok
     permission_test                : readonly.au ............. ok
     multi_file_test                : multi_au.dat ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on AU files.
+  libsndfile-1.0.xx passed tests on AU files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.caf ................ ok
     pcm_test_short                 : short.caf ............... ok
@@ -392,6 +373,8 @@ ok
     permission_test                : readonly.caf ............ ok
     chunk_test                     : chunks_pcm16.caf ........ ok
     chunk_test                     : chunks_alac.caf ......... ok
+    large_free_test                : large_free.caf .......... ok
+    large_free_test                : large_free.caf .......... ok
     string_start_test              : strings.caf ............. ok
     string_start_end_test          : strings.caf ............. ok
     string_multi_set_test          : multi.caf ............... ok
@@ -400,7 +383,7 @@ ok
     float_lrw_test                 : alac.caf ................ ok
     double_lrw_test                : alac.caf ................ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on CAF files.
+  libsndfile-1.0.xx passed tests on CAF files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.wav ................ ok
     pcm_test_short                 : short.wav ............... ok
@@ -470,7 +453,6 @@ ok
     sdlcomp_test_int               : gsm610.rifx ............. ok
     sdlcomp_test_float             : gsm610.wav .............. ** fix this ** ok
     sdlcomp_test_double            : gsm610.wav .............. ok
-**** Fix this later : error bound should be 0.06 ****
     lcomp_test_short               : g721.wav ................ ok
     lcomp_test_int                 : g721.wav ................ ok
     lcomp_test_short               : g721.rifx ............... ok
@@ -517,8 +499,12 @@ ok
     chunk_test                     : chunks_pcm16.wav ........ ok
     chunk_test                     : chunks_pcm16.rifx ....... ok
     chunk_test                     : chunks_pcm16.wavex ...... ok
+    wav_subchunk_test              : subchunk_0100.wav ....... ok
+    wav_subchunk_test              : subchunk_0400.wav ....... ok
+    wav_subchunk_test              : subchunk_1600.wav ....... ok
+    wav_subchunk_test              : subchunk_6400.wav ....... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on WAV files.
+  libsndfile-1.0.xx passed tests on WAV files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.w64 ................ ok
     pcm_test_short                 : short.w64 ............... ok
@@ -568,7 +554,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.w64 ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on W64 files.
+  libsndfile-1.0.xx passed tests on W64 files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.rf64 ............... ok
     pcm_test_short                 : short.rf64 .............. ok
@@ -595,7 +581,7 @@ ok
     read_write_peak_test           : rw_peak.rf64 ............ ok
     chunk_test                     : chunks_pcm16.rf64 ....... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on RF64 files.
+  libsndfile-1.0.xx passed tests on RF64 files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char_s8.raw ............. ok
     pcm_test_char                  : char_u8.raw ............. ok
@@ -632,7 +618,7 @@ ok
     raw_offset_test                : offset.raw .............. ok
     bad_raw_test                   : bad.raw ................. ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on RAW (header-less) files.
+  libsndfile-1.0.xx passed tests on RAW (header-less) files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char_le.paf ............. ok
     pcm_test_char                  : char_be.paf ............. ok
@@ -646,7 +632,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.paf ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on PAF files.
+  libsndfile-1.0.xx passed tests on PAF files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.svx ................ no stereo : ok
     pcm_test_short                 : short.svx ............... no stereo : ok
@@ -658,7 +644,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.svx ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on SVX files.
+  libsndfile-1.0.xx passed tests on SVX files.
 ----------------------------------------------------------------------
     pcm_test_short                 : short_le.nist ........... ok
     pcm_test_short                 : short_be.nist ........... ok
@@ -681,7 +667,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.nist ........... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on NIST files.
+  libsndfile-1.0.xx passed tests on NIST files.
 ----------------------------------------------------------------------
     pcm_test_short                 : short_be.ircam .......... ok
     pcm_test_short                 : short_le.ircam .......... ok
@@ -703,7 +689,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.ircam .......... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on IRCAM files.
+  libsndfile-1.0.xx passed tests on IRCAM files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.voc ................ ok
     pcm_test_short                 : short.voc ............... ok
@@ -720,7 +706,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.voc ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on VOC files.
+  libsndfile-1.0.xx passed tests on VOC files.
 ----------------------------------------------------------------------
     pcm_test_short                 : short_be.mat4 ........... ok
     pcm_test_short                 : short_le.mat4 ........... ok
@@ -741,7 +727,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.mat4 ........... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on MAT4 files.
+  libsndfile-1.0.xx passed tests on MAT4 files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char_be.mat5 ............ ok
     pcm_test_char                  : char_le.mat5 ............ ok
@@ -765,7 +751,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.mat5 ........... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on MAT5 files.
+  libsndfile-1.0.xx passed tests on MAT5 files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.pvf ................ ok
     pcm_test_short                 : short.pvf ............... ok
@@ -776,7 +762,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.pvf ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on PVF files.
+  libsndfile-1.0.xx passed tests on PVF files.
 ----------------------------------------------------------------------
     lcomp_test_short               : 8bit.xi ................. ok
     lcomp_test_int                 : 8bit.xi ................. ok
@@ -785,7 +771,7 @@ ok
     lcomp_test_float               : 16bit.xi ................ ok
     lcomp_test_double              : 16bit.xi ................ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on XI files.
+  libsndfile-1.0.xx passed tests on XI files.
 ----------------------------------------------------------------------
     pcm_test_short                 : short.htk ............... no stereo : ok
     update_header_test             : header.htk .............. ok
@@ -794,7 +780,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.htk ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on HTK files.
+  libsndfile-1.0.xx passed tests on HTK files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char_u8.avr ............. ok
     pcm_test_char                  : char_s8.avr ............. ok
@@ -805,7 +791,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.avr ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on AVR files.
+  libsndfile-1.0.xx passed tests on AVR files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.sds ................ no stereo : ok
     pcm_test_short                 : short.sds ............... no stereo : ok
@@ -817,21 +803,21 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.sds ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on SDS files.
+  libsndfile-1.0.xx passed tests on SDS files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.sd2 ................ ok
     pcm_test_short                 : short.sd2 ............... ok
     pcm_test_24bit                 : 24bit.sd2 ............... ok
     pcm_test_int                   : 32bit.sd2 ............... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on SD2 files.
+  libsndfile-1.0.xx passed tests on SD2 files.
 ----------------------------------------------------------------------
     lcomp_test_short               : psion.wve ............... ok
     lcomp_test_int                 : psion.wve ............... ok
     lcomp_test_float               : psion.wve ............... ok
     lcomp_test_double              : psion.wve ............... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on WVE files.
+  libsndfile-1.0.xx passed tests on WVE files.
 ----------------------------------------------------------------------
     pcm_test_short                 : short.mpc ............... ok
     update_header_test             : header.mpc .............. ok
@@ -840,7 +826,7 @@ ok
     filesystem_full_test           : /dev/full ............... /dev/full missing
     permission_test                : readonly.mpc ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on MPC 2000 files.
+  libsndfile-1.0.xx passed tests on MPC 2000 files.
 ----------------------------------------------------------------------
     pcm_test_char                  : char.flac ............... ok
     pcm_test_short                 : short.flac .............. ok
@@ -848,7 +834,7 @@ ok
     compression_size_test          : q[36]_pcm16.flac ........ ok
     string_start_test              : strings.flac ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on FLAC files.
+  libsndfile-1.0.xx passed tests on FLAC files.
 ----------------------------------------------------------------------
     ogg_short_test                 : vorbis_short.oga ........ ok
     ogg_seek_test                  : vorbis_short.oga ........ ok
@@ -863,13 +849,11 @@ ok
     compression_size_test          : q[36]_vorbis.oga ........ ok
     sdlcomp_test_short             : vorbis.oga .............. ok
     sdlcomp_test_int               : vorbis.oga .............. ok
-    sdlcomp_test_float             : vorbis.oga .............. Not working for this format.
-    sdlcomp_test_double            : vorbis.oga .............. Not working for this format.
     string_start_test              : vorbis.oga .............. ok
     zero_data_test                 : zerolen.oga ............. ok
     permission_test                : readonly.oga ............ ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed tests on OGG/VORBIS files.
+  libsndfile-1.0.xx passed tests on OGG/VORBIS files.
 ----------------------------------------------------------------------
     stdio_test                     : raw ..................... ok
     stdio_test                     : wav ..................... ok
@@ -911,16 +895,13 @@ ok
     virtual i/o test               : vio_float.au ............ ok
     virtual i/o test               : vio_pcm24.paf ........... ok
 ----------------------------------------------------------------------
-  libsndfile-1.0.27 passed stdio/pipe/vio tests.
+  libsndfile-1.0.xx passed stdio/pipe/vio tests.
 ----------------------------------------------------------------------
-Making check in programs
-
 Testing WAV metadata manipulation:
-    Empty fail test                : ok
-    Copy test                      : ok
-    Auto date test                 : ok
-    Update test                    : ok
-    Post mod test                  : ok
-    Update test                    : ok
-    Rewrite test                   : ok
-
+    Empty fail test                :ok
+    Copy test                      :ok
+    Auto date test                 :ok
+    Update test                    :ok
+    Post mod test                  :ok
+    Update test                    :ok
+    Rewrite test                   :ok
