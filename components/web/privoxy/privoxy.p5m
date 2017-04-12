@@ -23,6 +23,16 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
 # Files delivered to /etc/privoxy will be found in the proto directory
@@ -33,27 +43,18 @@
 <transform file path=(etc/privoxy/.*) -> default original_name SUNWprivoxy:%<1>>
 <transform file path=etc/privoxy/.* -> default preserve renamenew>
 
-set name=pkg.fmri \
-    value=pkg:/web/proxy/privoxy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description value="Privoxy is a non-caching web proxy with advanced filtering capabilities for enhancing privacy, modifying web page data and HTTP headers, controlling access, and removing ads and other obnoxious Internet junk"
-set name=pkg.summary value="Privacy-enhancing, ad-removing web proxy"
-set name=com.oracle.info.description value="the privoxy web proxy"
-set name=com.oracle.info.tpno value=9002
-set name=info.classification value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/433
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license privoxy.copyright license='GPLv2'
-
 dir path=var/log/privoxy group=webservd owner=webservd
+
+file files/http-privoxy path=lib/svc/method/http-privoxy
+file files/http-privoxy.xml path=lib/svc/manifest/network/http-privoxy.xml 
+
+file usr/sbin/privoxy path=usr/lib/privoxy mode=0555
 
 file path=etc/privoxy/config
 file path=etc/privoxy/default.action
 file path=etc/privoxy/default.filter
 file path=etc/privoxy/match-all.action
+file path=etc/privoxy/regression-tests.action
 file path=etc/privoxy/templates/blocked
 file path=etc/privoxy/templates/cgi-error-404
 file path=etc/privoxy/templates/cgi-error-bad-param
@@ -63,6 +64,7 @@ file path=etc/privoxy/templates/cgi-error-file-read-only
 file path=etc/privoxy/templates/cgi-error-modified
 file path=etc/privoxy/templates/cgi-error-parse
 file path=etc/privoxy/templates/cgi-style.css
+file path=etc/privoxy/templates/client-tags
 file path=etc/privoxy/templates/connect-failed
 file path=etc/privoxy/templates/connection-timeout
 file path=etc/privoxy/templates/default
@@ -94,9 +96,6 @@ file path=etc/privoxy/templates/url-info-osd.xml
 file path=etc/privoxy/trust
 file path=etc/privoxy/user.action
 file path=etc/privoxy/user.filter
-
-file files/http-privoxy path=lib/svc/method/http-privoxy
-file files/http-privoxy.xml path=lib/svc/manifest/network/http-privoxy.xml 
 
 file path=usr/share/doc/privoxy/AUTHORS
 file path=usr/share/doc/privoxy/ChangeLog
@@ -141,5 +140,3 @@ file path=usr/share/doc/privoxy/user-manual/startup.html
 file path=usr/share/doc/privoxy/user-manual/templates.html
 file path=usr/share/doc/privoxy/user-manual/whatsnew.html
 file path=usr/share/man/man1/privoxy.1
-
-file usr/sbin/privoxy path=usr/lib/privoxy mode=0555
