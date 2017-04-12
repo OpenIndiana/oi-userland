@@ -28,18 +28,22 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.5.24
+COMPONENT_VERSION=      3.5.25
+COMPONENT_SUMMARY=	Squid Web Proxy Cache
+COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4fe29f582eef357faa541a53835b6885e24e6f28b80a3abcdf3b57f5393bbdb2
+    sha256:28959254c32b8cd87e9599b6beb97352cf0638524e0f5ac3e1754f08462f3585
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/squid
+COMPONENT_FMRI=		web/proxy/squid
+COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) &&\
 					libtoolize --copy --force &&\
@@ -57,7 +61,9 @@ CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
 CONFIGURE_OPTIONS += --sharedstatedir=/var/squid
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
+CONFIGURE_OPTIONS += --with-swapdir=/var/squid/cache
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_PREFIX)/man
+CONFIGURE_OPTIONS += --with-default-user=webservd
 CONFIGURE_OPTIONS += --enable-arp-acl
 CONFIGURE_OPTIONS += --enable-auth
 CONFIGURE_OPTIONS += --enable-auth-basic
@@ -94,10 +100,6 @@ CONFIGURE_OPTIONS += --with-large-files
 CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_ILP32_OFFBIG
 CONFIGURE_OPTIONS += --with-pthreads
 
-COMPONENT_POST_BUILD_ACTION= \
-                (cd $(COMPONENT_DIR) ; \
-                 $(CP) files/squid.conf.default $(@D)/src)
-
 # common targets
 build:		$(BUILD_32) 
 
@@ -117,7 +119,7 @@ install:	$(INSTALL_32)
 # http_access allow my_machine
 #
 # Make sure apache is running.
-#	# svcs apache22
+#	# svcs apache24
 # Start squid:
 #	# svcadm enable squid
 # On your desktop set your web browser to proxy through this squid:
@@ -130,8 +132,23 @@ install:	$(INSTALL_32)
 # Enter <squid server URL>:897 in your web browser and squid should complain.
 # Squid is working properly.
 
-test:		$(NO_TESTS)
+# squid tests use cppunit. Currently this requires a version of cppunit
+# installed that have been built with the GNU compilers.
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/=====/p" ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/Can not open file/d" ' \
+	'-e "/ERROR/p" '
+
+test:	$(TEST_32)
+
+
+REQUIRED_PACKAGES += developer/cppunit
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/nettle
