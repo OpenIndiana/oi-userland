@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -171,6 +171,7 @@ file path=usr/share/doc/ant/manual/Tasks/script.html
 file path=usr/share/doc/ant/manual/Tasks/scriptdef.html
 file path=usr/share/doc/ant/manual/Tasks/sequential.html
 file path=usr/share/doc/ant/manual/Tasks/serverdeploy.html
+file path=usr/share/doc/ant/manual/Tasks/setpermissions.html
 file path=usr/share/doc/ant/manual/Tasks/setproxy.html
 file path=usr/share/doc/ant/manual/Tasks/signjar.html
 file path=usr/share/doc/ant/manual/Tasks/sleep.html
@@ -593,6 +594,8 @@ file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/SQLExec.Tra
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/SQLExec.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/SendEmail.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/Sequential.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/SetPermissions.NonPosixMode.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/SetPermissions.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/SignJar.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/Sleep.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/StreamPumper.html
@@ -1092,6 +1095,11 @@ file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/wi
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/windows/package-frame.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/windows/package-summary.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/windows/package-tree.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/xz/Unxz.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/xz/Xz.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/xz/package-frame.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/xz/package-summary.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/optional/xz/package-tree.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/package-frame.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/package-summary.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/taskdefs/package-tree.html
@@ -1201,6 +1209,10 @@ file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/image
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/package-frame.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/package-summary.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/package-tree.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/xz/XzResource.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/xz/package-frame.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/xz/package-summary.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/optional/xz/package-tree.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/package-frame.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/package-summary.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/package-tree.html
@@ -1302,6 +1314,7 @@ file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/Date
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/DependSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/DepthSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/DifferentSelector.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/ExecutableSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/ExtendFileSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/ExtendSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/FileSelector.html
@@ -1311,6 +1324,7 @@ file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/Mapp
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/NoneSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/NotSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/OrSelector.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/OwnedBySelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/PresentSelector.FilePresence.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/PresentSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/ReadableSelector.html
@@ -1322,6 +1336,7 @@ file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/Sign
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/SizeSelector.ByteUnits.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/SizeSelector.SizeComparisons.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/SizeSelector.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/SymlinkSelector.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/TokenizedPath.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/TokenizedPattern.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/types/selectors/TypeSelector.FileType.html
@@ -1389,6 +1404,8 @@ file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/MergingMapper.h
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/Native2AsciiUtils.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/OutputStreamFunneler.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/PackageNameMapper.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/PermissionUtils.FileType.html
+file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/PermissionUtils.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/ProcessUtil.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/PropertyOutputStream.html
 file path=usr/share/doc/ant/manual/api/org/apache/tools/ant/util/ProxySetup.html
@@ -1617,6 +1634,8 @@ file path=usr/share/lib/ant/ant-swing.jar
 file path=usr/share/lib/ant/ant-swing.pom
 file path=usr/share/lib/ant/ant-testutil.jar
 file path=usr/share/lib/ant/ant-testutil.pom
+file path=usr/share/lib/ant/ant-xz.jar
+file path=usr/share/lib/ant/ant-xz.pom
 file path=usr/share/lib/ant/ant.jar
 file path=usr/share/lib/ant/ant.pom
 file path=usr/share/lib/ant/changelog.xsl
