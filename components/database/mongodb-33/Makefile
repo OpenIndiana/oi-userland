@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mongodb
 COMPONENT_VERSION= 3.3.12
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
 COMPONENT_FMRI=	database/mongodb-33
