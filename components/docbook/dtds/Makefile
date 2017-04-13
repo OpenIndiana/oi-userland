@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		NO_ARCH
@@ -38,7 +38,7 @@ TPNO=			9654
 COMPONENT_ARCHIVE_SRC=	none
 COMPONENT_SRC=		
 SOURCE_DIR=		$(COMPONENT_DIR)
-CLEAN_PATHS +=		$(COMPONENT_DIR)/.prep $(COMPONENT_DIR)/.patched*
+CLEAN_PATHS +=		$(COMPONENT_DIR)/.patched*
 
 BUILD_STYLE=		archive
 BUILD_TARGET +=		prep

@@ -20,22 +20,19 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evaluation
 COMPONENT_VERSION=	1.0
 COMPONENT_SRC=
+COMPONENT_ARCHIVE_SRC=	none
 COMPONENT_BUGDB=	gate-stuff/userland
 
 ifneq ($(BUILD_TYPE), evaluation)
 PUBLISH_STAMP=
 endif
-
-# Override default settings in prep.mk so we don't delete the entire directory.
-CLEAN_PATHS=	$(BUILD_DIR)
-CLOBBER_PATHS=	$(BUILD_DIR)
 
 BUILD_STYLE= pkg
 include $(WS_MAKE_RULES)/common.mk

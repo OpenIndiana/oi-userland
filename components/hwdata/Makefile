@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
@@ -28,6 +28,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=         hwdata
 COMPONENT_VERSION=      0.5.11
 COMPONENT_SRC=
+COMPONENT_ARCHIVE_SRC=	none
 
 TPNO_PCI=	21782
 TPNO_USB=	21783

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 UNPACK =		$(WS_TOOLS)/userland-unpack
@@ -54,6 +54,8 @@ CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 SOURCE_DIR$(1) = $$(COMPONENT_SRC$(1):%=$$(COMPONENT_DIR)/%)
 
 UNPACK_STAMP$(1) =	$$(SOURCE_DIR$(1):%=%/.unpacked)
+else
+CLEAN_PATHS += $$(SOURCE_DIR$(1))/.prep
 endif
 endef
 

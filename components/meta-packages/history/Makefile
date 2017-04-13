@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 # really don't need to do for these static, uninteresting packages.  So we just
 # write a simple set of publication rules to get the packages into the repo.
 COMPONENT_SRC=
+COMPONENT_ARCHIVE_SRC=	none
 include $(WS_MAKE_RULES)/prep.mk
 
 COMPONENT_NAME=		"Package History"
