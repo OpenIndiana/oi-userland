@@ -25,10 +25,14 @@ license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
 depend type=require fmri=database/mongodb-common
 depend type=require fmri=database/mongodb-34@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
+<transform file -> add pkg.depend.bypass-generate 'libssp\.so\.0'>
+<transform file -> add pkg.depend.bypass-generate 'libstdc\+\+\.so\.6'>
+depend type=require fmri=system/library/g++-5-runtime
+
 dir  path=var/mongodb/3.4/data owner=mongodb group=mongodb mode=0755
 dir  path=var/mongodb/3.4/log owner=mongodb group=mongodb mode=0755
 
-file files/mongod.conf path=etc/mongodb/3.4/mongod.conf preserve=true
+file files/mongod.conf path=etc/mongodb/3.4/mongod.conf mode=0644 preserve=true
 file files/mongodb_34.xml \
     path=lib/svc/manifest/application/database/mongodb_34.xml
 
