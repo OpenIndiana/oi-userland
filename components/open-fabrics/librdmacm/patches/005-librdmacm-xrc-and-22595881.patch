@@ -1,0 +1,202 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  217eb28f33861f64f8a7c4b78d8209e7465bbd83
+25759055 OFUV (Userland) support for XRC APIs
+22595881 defer librdmacm allocation of PD on ADDRESS_RESOLVED event
+
+diff -r 217eb28f3386 examples/rdma_xclient.c
+--- a/examples/rdma_xclient.c	Mon Nov 21 11:48:29 2016 -0800
++++ b/examples/rdma_xclient.c	Mon Mar 20 14:24:32 2017 -0700
+@@ -148,7 +148,11 @@
+ 			case 'r':
+ 				break;
+ 			case 'x':
+-				hints.ai_port_space = RDMA_PS_IB;
++#if defined(__SVR4) && defined(__sun)
++                                hints.ai_port_space = RDMA_PS_TCP;
++#else
++                                hints.ai_port_space = RDMA_PS_IB;
++#endif
+ 				hints.ai_qp_type = IBV_QPT_XRC_SEND;
+ 				break;
+ 			default:
+@@ -167,7 +171,7 @@
+ 
+ err:
+ 	printf("usage: %s\n", argv[0]);
+-	printf("\t[-s server]\n");
++	printf("\t[-s server_address]\n");
+ 	printf("\t[-p port_number]\n");
+ 	printf("\t[-c communication type]\n");
+ 	printf("\t    r - RC: reliable-connected (default)\n");
+diff -r 217eb28f3386 examples/rdma_xserver.c
+--- a/examples/rdma_xserver.c	Mon Nov 21 11:48:29 2016 -0800
++++ b/examples/rdma_xserver.c	Mon Mar 20 14:24:32 2017 -0700
+@@ -162,7 +162,11 @@
+ 			case 'r':
+ 				break;
+ 			case 'x':
++#if defined(__SVR4) && defined(__sun)
++				hints.ai_port_space = RDMA_PS_TCP;
++#else
+ 				hints.ai_port_space = RDMA_PS_IB;
++#endif
+ 				hints.ai_qp_type = IBV_QPT_XRC_RECV;
+ 				break;
+ 			default:
+diff -r 217eb28f3386 man/rdma_set_option.3
+--- a/man/rdma_set_option.3	Mon Nov 21 11:48:29 2016 -0800
++++ b/man/rdma_set_option.3	Mon Mar 20 14:24:32 2017 -0700
+@@ -16,9 +16,9 @@
+ .IP "level" 12
+ Protocol level of the option to set.  Currently level RDMA_OPTION_ID is supported.
+ .IP "optname" 12
+-Name of the option, relative to the level, to set.  The only supported option isRDMA_OPTION_ID_REUSEADDR for level RDMA_OPTION_ID.
++Name of the option, relative to the level, to set.  The supported options are RDMA_OPTION_ID_REUSEADDR and RDMA_OPTION_ID_TOS for level RDMA_OPTION_ID.
+ .IP "optval" 12
+-Reference to the option data.  The data is dependent on the level and optname.  For the option RDMA_OPTION_ID_REUSEADDR, an integer is passed.
++Reference to the option data.  The data is dependent on the level and optname.  For the options RDMA_OPTION_ID_REUSEADDR and RDMA_OPTION_ID_TOS, an integer is passed.
+ .IP "optlen" 12
+ The size of the %optval buffer.
+ .SH "DESCRIPTION"
+@@ -33,6 +33,9 @@
+ using rdma_listen(3), is not supported for CMIDs set with
+ this option. This option enables multiple connections to share
+ the same source IP Port on the active side of the connection.
++The RDMA_OPTION_ID_TOS option can be used to set the Terms of Service
++level. A value of 0 disables the option and a non-zero value
++enables the option.
+ .sp
+ .SH "RETURN VALUE"
+ Returns 0 on success, or -1 on error.  If an error occurs, errno will be
+diff -r 217eb28f3386 src/cma.c
+--- a/src/cma.c	Mon Nov 21 11:48:29 2016 -0800
++++ b/src/cma.c	Mon Mar 20 14:24:32 2017 -0700
+@@ -456,17 +456,8 @@
+ 	if ((ret = ucma_init_device(cma_dev)))
+ 		goto out;
+ 
+-	if (!cma_dev->refcnt++) {
+-		cma_dev->pd = ibv_alloc_pd(cma_dev->verbs);
+-		if (!cma_dev->pd) {
+-			cma_dev->refcnt--;
+-			ret = ERR(ENOMEM);
+-			goto out;
+-		}
+-	}
+ 	id_priv->cma_dev = cma_dev;
+ 	id_priv->id.verbs = cma_dev->verbs;
+-	id_priv->id.pd = cma_dev->pd;
+ out:
+ 	pthread_mutex_unlock(&mut);
+ 	return ret;
+@@ -475,11 +466,12 @@
+ static void ucma_put_device(struct cma_device *cma_dev)
+ {
+ 	pthread_mutex_lock(&mut);
+-	if (!--cma_dev->refcnt) {
+-		ibv_dealloc_pd(cma_dev->pd);
+-		if (cma_dev->xrcd)
+-			ibv_close_xrcd(cma_dev->xrcd);
++	if (cma_dev->pd && !--cma_dev->refcnt) {
++	        ibv_dealloc_pd(cma_dev->pd);
++		cma_dev->pd = NULL;
+ 	}
++	if (cma_dev->xrcd)
++		ibv_close_xrcd(cma_dev->xrcd);
+ 	pthread_mutex_unlock(&mut);
+ }
+ 
+@@ -613,7 +605,7 @@
+ 	enum ibv_qp_type qp_type;
+ 
+ 	qp_type = (ps == RDMA_PS_IPOIB || ps == RDMA_PS_UDP) ?
+-		  IBV_QPT_UD : IBV_QPT_RC;
++		IBV_QPT_UD : IBV_QPT_RC;
+ 	return rdma_create_id2(channel, id, context, ps, qp_type);
+ }
+ 
+@@ -1391,9 +1383,26 @@
+ 		return ERR(EINVAL);
+ 
+ 	id_priv = container_of(id, struct cma_id_private, id);
+-	if (!(attr->comp_mask & IBV_QP_INIT_ATTR_PD) || !attr->pd) {
++	if (!attr->pd || !(attr->comp_mask & IBV_QP_INIT_ATTR_PD)) {
++		struct cma_device *cma_dev;
++		pthread_mutex_lock(&id_priv->mut);
++		cma_dev = id_priv->cma_dev;
++		if (!cma_dev->pd && !cma_dev->refcnt++) {
++			pthread_mutex_unlock(&id_priv->mut);
++			cma_dev->pd = ibv_alloc_pd(cma_dev->verbs);
++			if (!cma_dev->pd) {
++				pthread_mutex_lock(&id_priv->mut);
++				cma_dev->refcnt--;
++				pthread_mutex_unlock(&id_priv->mut);
++				return ERR(ENOMEM);
++			}
++			pthread_mutex_lock(&id_priv->mut);
++			id_priv->id.pd = cma_dev->pd;
++		}
++		pthread_mutex_unlock(&id_priv->mut);
++
+ 		attr->comp_mask |= IBV_QP_INIT_ATTR_PD;
+-		attr->pd = id->pd;
++		attr->pd = (id->pd) ? id->pd : cma_dev->pd;
+ 	} else if (id->verbs != attr->pd->context)
+ 		return ERR(EINVAL);
+ 
+@@ -1457,12 +1466,49 @@
+ {
+ 	struct ibv_qp_init_attr_ex attr_ex;
+ 	int ret;
+-
+-	memcpy(&attr_ex, qp_init_attr, sizeof *qp_init_attr);
++	int init_attr_base_size;
++
++	/*
++	 * XRC binary compatibility patches to libibverbs add 'xrc_domain'
++	 * field to the end of "struct ibv_qp_init_attr" in libibverbs,
++	 * so it is not completely isomorphic to initial fields in
++	 * "struct ibv_qp_init_attr_ex".
++	 *
++	 * We should copy below only the shared fields excluding the
++	 * xrc_domain field from "struct inv_qp_init_attr" into the
++	 * "struct ibv_qp_init_attr_ex", otherwise it clobbers the field
++	 * immediately following the isomorphic initial fields.
++	 *
++	 * (The xrc_domain any way has no affect on the sender side, so
++	 * there is no need to copy it anyway!)
++	 */
++	init_attr_base_size = offsetof(struct ibv_qp_init_attr, xrc_domain);
++
++	memset(&attr_ex, 0, sizeof(attr_ex)); /* pre-set all fields to zero */
++	/* copy only common fields */
++	memcpy(&attr_ex, qp_init_attr, init_attr_base_size);
+ 	attr_ex.comp_mask = IBV_QP_INIT_ATTR_PD;
+ 	attr_ex.pd = pd ? pd : id->pd;
++
++	if (qp_init_attr->qp_type == IBV_QPT_XRC) {
++		/*
++		 * another private handshake to indicate
++		 * XRC send or receive side endpoint
++		 */
++		if (qp_init_attr->cap.max_send_wr == 0) {
++			attr_ex.qp_type = IBV_QPT_XRC_RECV;
++			if (qp_init_attr->xrc_domain) {
++				attr_ex.comp_mask |= IBV_QP_INIT_ATTR_XRCD;
++				attr_ex.xrcd = (struct ibv_xrcd *)
++					qp_init_attr->xrc_domain;
++			}
++		} else {
++			attr_ex.qp_type = IBV_QPT_XRC_SEND;
++		}
++	}
+ 	ret = rdma_create_qp_ex(id, &attr_ex);
+-	memcpy(qp_init_attr, &attr_ex, sizeof *qp_init_attr);
++	/* copy only common fields */
++	memcpy(qp_init_attr, &attr_ex, init_attr_base_size);
+ 	return ret;
+ }
+ 

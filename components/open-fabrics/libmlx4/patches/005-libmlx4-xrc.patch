@@ -1,0 +1,423 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  90d898abcac39d3fc4a631a678f0bb7bbe28d877
+25759055 OFUV (Userland) support for XRC APIs
+
+diff -r 90d898abcac3 src/mlx4.c
+--- a/src/mlx4.c	Mon Nov 21 11:48:10 2016 -0800
++++ b/src/mlx4.c	Mon Mar 20 14:22:58 2017 -0700
+@@ -274,6 +274,8 @@
+ 	verbs_set_ctx_op(verbs_ctx, open_qp, mlx4_open_qp);
+ 	verbs_set_ctx_op(verbs_ctx, drv_ibv_create_flow, ibv_cmd_create_flow);
+ 	verbs_set_ctx_op(verbs_ctx, drv_ibv_destroy_flow, ibv_cmd_destroy_flow);
++	verbs_set_ctx_op(verbs_ctx, drv_set_legacy_xrc, mlx4_set_legacy_xrc);
++	verbs_set_ctx_op(verbs_ctx, drv_get_legacy_xrc, mlx4_get_legacy_xrc);
+ 
+ 	return 0;
+ 
+diff -r 90d898abcac3 src/mlx4.h
+--- a/src/mlx4.h	Mon Nov 21 11:48:10 2016 -0800
++++ b/src/mlx4.h	Mon Mar 20 14:22:58 2017 -0700
+@@ -233,6 +233,7 @@
+ 	uint32_t		       *db;
+ 	uint16_t			counter;
+ 	uint8_t				ext_srq;
++        struct ibv_srq_legacy	       *ibv_srq_legacy;
+ };
+ 
+ struct mlx4_wq {
+@@ -464,4 +465,7 @@
+ 		   struct mlx4_ah *ah);
+ void mlx4_free_av(struct mlx4_ah *ah);
+ 
++void *mlx4_get_legacy_xrc(struct ibv_srq *srq);
++void mlx4_set_legacy_xrc(struct ibv_srq *srq, void *legacy_xrc_srq);
++
+ #endif /* MLX4_H */
+diff -r 90d898abcac3 src/qp.c
+--- a/src/qp.c	Mon Nov 21 11:48:10 2016 -0800
++++ b/src/qp.c	Mon Mar 20 14:22:58 2017 -0700
+@@ -247,6 +247,7 @@
+ 
+ 		switch (ibqp->qp_type) {
+ 		case IBV_QPT_XRC_SEND:
++		case IBV_QPT_XRC:
+ 			ctrl->srcrb_flags |= MLX4_REMOTE_SRQN_FLAGS(wr);
+ 			/* fall through */
+ 		case IBV_QPT_RC:
+@@ -559,6 +560,7 @@
+ 		break;
+ 
+ 	case IBV_QPT_XRC_SEND:
++	case IBV_QPT_XRC:
+ 	case IBV_QPT_RC:
+ 		size += sizeof (struct mlx4_wqe_raddr_seg);
+ 		/*
+@@ -596,9 +598,11 @@
+ 	qp->buf.buf      = qpbuf;
+ 	qp->buf.length   = buflen;
+ 
+-	qp->sq.wrid = malloc(qp->sq.wqe_cnt * sizeof (uint64_t));
+-	if (!qp->sq.wrid)
+-		return -1;
++	if (qp->sq.wqe_cnt) {
++		qp->sq.wrid = malloc(qp->sq.wqe_cnt * sizeof (uint64_t));
++		if (!qp->sq.wrid)
++			return -1;
++	}
+ 
+ 	if (qp->rq.wqe_cnt) {
+ 		qp->rq.wrid = malloc(qp->rq.wqe_cnt * sizeof (uint64_t));
+@@ -628,16 +632,20 @@
+ 		qp->sq.offset = 0;
+ 	}
+ 
+-	if ((long int)qp->buf.length < (long int)qp->buf_size) {
+-		fprintf(stderr, PFX "QP kernel buffer size %lu < user buf "
+-		    "size %d\n", (unsigned long)qp->buf.length, qp->buf_size);
+-	}
+-	if ((!rq_off && qp->rq.offset) || (!sq_off && qp->sq.offset)) {
+-		fprintf(stderr, PFX "QP kernel and user out of sync on "
+-		    "buffer order\n");
+-	}
++	if (qp->buf_size) {
++		if ((long int)qp->buf.length < (long int)qp->buf_size) {
++			fprintf(stderr, PFX "QP kernel buffer size %lu < user "
++			    "buf size %d\n", (unsigned long)qp->buf.length,
++			    qp->buf_size);
++		}
++		if ((!rq_off && qp->rq.offset) || (!sq_off && qp->sq.offset)) {
++			fprintf(stderr, PFX "QP kernel and user out of sync on "
++			    "buffer order\n");
++		}
+ 
+-	memset(qp->buf.buf, 0, qp->buf_size);
++		memset(qp->buf.buf, 0, qp->buf_size);
++	} else
++		qp->buf.buf = NULL;
+ 	return 0;
+ }
+ #endif
+@@ -705,6 +713,7 @@
+ 		break;
+ 
+ 	case IBV_QPT_XRC_SEND:
++	case IBV_QPT_XRC:
+ 	case IBV_QPT_UC:
+ 	case IBV_QPT_RC:
+ 		wqe_size -= sizeof (struct mlx4_wqe_raddr_seg);
+diff -r 90d898abcac3 src/srq.c
+--- a/src/srq.c	Mon Nov 21 11:48:10 2016 -0800
++++ b/src/srq.c	Mon Mar 20 14:22:58 2017 -0700
+@@ -66,13 +66,17 @@
+ 		       struct ibv_recv_wr *wr,
+ 		       struct ibv_recv_wr **bad_wr)
+ {
+-	struct mlx4_srq *srq = to_msrq(ibsrq);
++	struct mlx4_srq *srq;
+ 	struct mlx4_wqe_srq_next_seg *next;
+ 	struct mlx4_wqe_data_seg *scat;
+ 	int err = 0;
+ 	int nreq;
+ 	int i;
+ 
++	if (ibsrq->handle == LEGACY_XRC_SRQ_HANDLE)
++	       ibsrq = (struct ibv_srq *)(((struct ibv_srq_legacy *) ibsrq)->ibv_srq);
++ 
++	srq = to_msrq(ibsrq);
+ 	pthread_spin_lock(&srq->lock);
+ 
+ 	for (nreq = 0; wr; ++nreq, wr = wr->next) {
+@@ -290,6 +294,9 @@
+ 	struct mlx4_create_srq_resp resp;
+ 	struct mlx4_srq *srq;
+ 	int ret;
++#if defined(__SVR4) && defined(__sun)
++	void		*srqbuf;
++#endif
+ 
+ 	/* Sanity check SRQ size before proceeding */
+ 	if (attr_ex->attr.max_wr > 1 << 16 || attr_ex->attr.max_sge > 64)
+@@ -342,9 +349,67 @@
+ 				    attr_ex,
+ 				    &cmd.ibv_cmd, sizeof cmd,
+ 				    &resp.ibv_resp, sizeof resp);
++
++#if defined(__SVR4) && defined(__sun)
++	if (ret) {
++		goto err;
++	}
++
++	/*
++	 * The kernel driver passes back mmap information for mapping the
++	 * SRQ work queue memory it allocated and the doorbell for
++	 * for posting.
++	 */
++	if (resp.mdd.msrq_rev < 1) {
++		fprintf(stderr, PFX "libmlx4_create_xrc_srq libmlx4/hermon umap "
++			"rev mismatch (kernel rev=%d)\n", resp.mdd.msrq_rev);
++		goto err_destroy;
++	}
++
++	srqbuf = mmap64((void *)0, resp.mdd.msrq_maplen, (PROT_READ | PROT_WRITE),
++		MAP_SHARED, attr_ex->pd->context->mmap_fd, resp.mdd.msrq_mapoffset);
++
++	if (srqbuf == MAP_FAILED) {
++		goto err_destroy;
++	}
++
++	srq->buf.buf	= srqbuf;
++	srq->buf.length	= resp.mdd.msrq_maplen;
++	srq->max	= resp.ibv_resp.max_wr;
++	srq->max_gs	= resp.ibv_resp.max_sge;
++	srq->verbs_srq.srq_num = srq->srqn = resp.mdd.msrq_srqnum;
++	srq->counter	= 0;
++
++	srq->db = mlx4_alloc_db(to_mctx(attr_ex->pd->context),
++			resp.mdd.msrq_rdbr_mapoffset,
++			resp.mdd.msrq_rdbr_maplen,
++			resp.mdd.msrq_rdbr_offset);
++	if (srq->db == NULL) {
++		goto err_unmap;
++	}
++
++	/*
++	 * The following call only initializes memory and control structures,
++	 * it utilizes the memory allocated by the kernel.
++	 * It also allocates the srq->wrid memory.
++	 */
++	if (mlx4_set_srq_buf(attr_ex->pd, srq, resp.mdd.msrq_wqesz,
++			resp.mdd.msrq_numwqe)) {
++		goto err_db;
++	}
++
++	/*
++	 * The returned max wr will have been rounded up to the nearest
++	 * power of 2, subtracting 1 from that and reporting that value
++	 * as the max will give us the required free WR in the queue, as
++	 * in OFED.
++	 */
++	attr_ex->attr.max_wr -= 1;
++#else
+ 	if (ret)
+ 		goto err_db;
+ 
++#endif
+ 	ret = mlx4_store_xsrq(&to_mctx(context)->xsrq_table,
+ 			      srq->verbs_srq.srq_num, srq);
+ 	if (ret)
+@@ -352,13 +417,35 @@
+ 
+ 	return &srq->verbs_srq.srq;
+ 
+-err_destroy:
+-	ibv_cmd_destroy_srq(&srq->verbs_srq.srq);
+ err_db:
+ 	mlx4_free_db(to_mctx(context), MLX4_DB_TYPE_RQ, srq->db);
++
++#if defined(__SVR4) && defined(__sun)
++	if (srq->wrid)
++		free(srq->wrid);
++err_unmap:
++	mlx4_free_buf(&srq->buf);
++
++err_destroy:
++	/*
++	 * Calling ibv_cmd_destroy_srq() will try and take the ibv_srq
++	 * mutex that is initialised by the ibv_create_srq() entry point
++	 * that called us AFTER we return, so its not initialised yet.
++	 * So initialised it here so the destroy call doesn't hang.
++	 */
++	pthread_mutex_init(&(srq->verbs_srq.srq.mutex), NULL);
++	pthread_cond_init(&(srq->verbs_srq.srq.cond), NULL);
++	srq->verbs_srq.srq.events_completed = 0;
++
++	ibv_cmd_destroy_srq(&srq->verbs_srq.srq);
++#else
++err_destroy:
++        ibv_cmd_destroy_srq(&srq->verbs_srq.srq);
+ err_free:
+ 	free(srq->wrid);
+ 	mlx4_free_buf(&srq->buf);
++#endif
++
+ err:
+ 	free(srq);
+ 	return NULL;
+diff -r 90d898abcac3 src/verbs.c
+--- a/src/verbs.c	Mon Nov 21 11:48:10 2016 -0800
++++ b/src/verbs.c	Mon Mar 20 14:22:58 2017 -0700
+@@ -549,6 +549,21 @@
+ 	return 0;
+ }
+ 
++void *mlx4_get_legacy_xrc(struct ibv_srq *srq)
++{
++       struct mlx4_srq *msrq = to_msrq(srq);
++
++       return msrq->ibv_srq_legacy;
++}
++
++void mlx4_set_legacy_xrc(struct ibv_srq *srq, void *legacy_xrc_srq)
++{
++       struct mlx4_srq *msrq = to_msrq(srq);
++
++       msrq->ibv_srq_legacy = legacy_xrc_srq;
++       return;
++}
++
+ struct ibv_srq *mlx4_create_srq(struct ibv_pd *pd,
+ 				struct ibv_srq_init_attr *attr)
+ {
+@@ -564,7 +579,7 @@
+ 	if (attr->attr.max_wr > 1 << 16 || attr->attr.max_sge > 64)
+ 		return NULL;
+ 
+-	srq = malloc(sizeof *srq);
++	srq = calloc(1, sizeof *srq);
+ 	if (!srq)
+ 		return NULL;
+ 
+@@ -724,6 +739,9 @@
+ {
+ 	struct ibv_modify_srq cmd;
+ 
++	if (srq->handle == LEGACY_XRC_SRQ_HANDLE)
++		srq = (struct ibv_srq *)(((struct ibv_srq_legacy *) srq)->ibv_srq);
++
+ #if !(defined(__SVR4) && defined(__sun))
+ 	return ibv_cmd_modify_srq(srq, attr, attr_mask, &cmd, sizeof cmd);
+ #else
+@@ -741,6 +759,9 @@
+ {
+ 	struct ibv_query_srq cmd;
+ 
++	if (srq->handle == LEGACY_XRC_SRQ_HANDLE)
++		srq = (struct ibv_srq *)(((struct ibv_srq_legacy *) srq)->ibv_srq);
++
+ #if !(defined(__SVR4) && defined(__sun))
+ 	return ibv_cmd_query_srq(srq, attr, &cmd, sizeof cmd);
+ #else
+@@ -757,9 +778,23 @@
+ int mlx4_destroy_srq(struct ibv_srq *srq)
+ {
+ 	int ret;
++	struct ibv_srq *legacy_srq = NULL;
+ 
+-	if (to_msrq(srq)->ext_srq)
+-		return mlx4_destroy_xrc_srq(srq);
++	if (srq->handle == LEGACY_XRC_SRQ_HANDLE) {
++		legacy_srq = srq;
++		srq = (struct ibv_srq *)(((struct ibv_srq_legacy *) srq)->ibv_srq);
++	}
++
++	if (to_msrq(srq)->ext_srq) {
++		ret =  mlx4_destroy_xrc_srq(srq);
++		if (ret)
++			return ret;
++ 
++		if (legacy_srq)
++			free(legacy_srq);
++
++		return 0;
++	}
+ 
+ 	ret = ibv_cmd_destroy_srq(srq);
+ 	if (ret)
+@@ -783,7 +818,7 @@
+ 	struct ibv_create_qp_resp resp;
+ #else
+ 	struct mlx4_create_qp_resp	resp;
+-	void				*qpbuf;
++	void				*qpbuf = NULL;
+ #endif
+ 
+ 	/* Sanity check QP size before proceeding */
+@@ -813,7 +848,8 @@
+ 	}
+ 
+ 	if (attr->srq || attr->qp_type == IBV_QPT_XRC_SEND ||
+-	    attr->qp_type == IBV_QPT_XRC_RECV) {
++	    attr->qp_type == IBV_QPT_XRC_RECV ||
++	    attr->qp_type == IBV_QPT_XRC) {
+ 		attr->cap.max_recv_wr = qp->rq.wqe_cnt = attr->cap.max_recv_sge = 0;
+ 	} else {
+ #if !(defined(__SVR4) && defined(__sun))
+@@ -900,18 +936,22 @@
+ 		    "rev mismatch (kernel rev=%d)\n", resp.mdd.mqp_rev);
+ 		goto err_destroy;
+ 	}
+-	qpbuf = mmap64((void *)0, resp.mdd.mqp_maplen, (PROT_READ | PROT_WRITE),
+-	    MAP_SHARED, context->mmap_fd, resp.mdd.mqp_mapoffset);
+-
+-	if (qpbuf == MAP_FAILED)
+-		goto err_destroy;
+ 
+-	/*
+-	 * Need to set qp->buf here in case alloc_db fails then
+-	 * we'll call mlx4_free_buf() to umap.
+-	 */
+-	qp->buf.buf	= qpbuf;
+-	qp->buf.length	= resp.mdd.mqp_maplen;
++	if (resp.mdd.mqp_maplen != 0) {
++		qpbuf = mmap64((void *)0, resp.mdd.mqp_maplen,
++		    (PROT_READ | PROT_WRITE), MAP_SHARED, context->mmap_fd,
++		    resp.mdd.mqp_mapoffset);
++
++		if (qpbuf == MAP_FAILED)
++			goto err_destroy;
++
++		/*
++		 * Need to set qp->buf here in case alloc_db fails then
++		 * we'll call mlx4_free_buf() to umap.
++		 */
++		qp->buf.buf	= qpbuf;
++		qp->buf.length	= resp.mdd.mqp_maplen;
++	}
+ 
+ 	if (attr->cap.max_recv_sge) {
+ 		qp->db = mlx4_alloc_db(to_mctx(context),
+@@ -934,10 +974,12 @@
+ 	qp->sq_spare_wqes = resp.mdd.mqp_sq_headroomwqes;
+ 	qp->sq.wqe_cnt    = resp.mdd.mqp_sq_numwqe;
+ 
+-	if (attr->srq)
+-		qp->rq.wqe_cnt  = 0;
++	if (attr->srq || attr->qp_type == IBV_QPT_XRC ||
++	    attr->qp_type == IBV_QPT_XRC_SEND ||
++	    attr->qp_type == IBV_QPT_XRC_RECV)
++		qp->rq.wqe_cnt	= 0;
+ 	else
+-		qp->rq.wqe_cnt  = resp.mdd.mqp_rq_numwqe;
++		qp->rq.wqe_cnt	= resp.mdd.mqp_rq_numwqe;
+ 
+ 	if (mlx4_set_qp_buf(attr->pd, qp, qpbuf, resp.mdd.mqp_maplen,
+ 	    resp.mdd.mqp_rq_wqesz, resp.mdd.mqp_rq_off,
+@@ -1020,12 +1062,23 @@
+ 	struct ibv_qp_init_attr_ex attr_ex;
+ 	struct ibv_qp *qp;
+ 
+-	memcpy(&attr_ex, attr, sizeof *attr);
++	/* We should copy below only the shared fields excluding the xrc_domain field.
++	 * Otherwise we may have an ABI issue with applications that were compiled
++	 * without the xrc_domain field. The xrc_domain any way has no affect in
++	 * the sender side, no need to copy in/out.
++	 */
++	int init_attr_base_size = offsetof(struct ibv_qp_init_attr,
++		xrc_domain);
++
++	memset(&attr_ex, 0, sizeof(attr_ex)); /* pre-set all fields to zero */
++	/* copying only shared fields */
++	memcpy(&attr_ex, attr, init_attr_base_size);
+ 	attr_ex.comp_mask = IBV_QP_INIT_ATTR_PD;
+ 	attr_ex.pd = pd;
++
+ 	qp = mlx4_create_qp_ex(pd->context, &attr_ex);
+ 	if (qp)
+-		memcpy(attr, &attr_ex, sizeof *attr);
++		memcpy(attr, &attr_ex, init_attr_base_size);
+ 	return qp;
+ }
+ 
