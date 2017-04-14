@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		totem
 COMPONENT_VERSION=	3.18.1
+COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Totem
 COMPONENT_ARCHIVE_HASH= \
 	sha256:d7816eae9606846c44fd508902eae10bdaed28e6d4f621531990d473184107a2
 COMPONENT_BUGDB=        gnome/multimedia

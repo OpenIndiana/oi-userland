@@ -20,9 +20,11 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
 set name=pkg.fmri \
     value=pkg:/codec/libvorbis@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Vorbis audio codec libraries"
@@ -32,7 +34,8 @@ set name=info.classification \
     value="org.opensolaris.category.2008:System/Multimedia Libraries"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2010/143 value=PSARC/2016/514
+set name=org.opensolaris.arc-caseid value=LSARC/2004/713 value=PSARC/2010/143 \
+    value=PSARC/2016/514
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/include/vorbis/codec.h
 file path=usr/include/vorbis/vorbisenc.h
@@ -205,6 +208,9 @@ file path=usr/share/doc/libvorbis-$(COMPONENT_VERSION)/vorbisfile/vorbisfile_exa
 file path=usr/share/doc/libvorbis-$(COMPONENT_VERSION)/vorbisword2.png
 file path=usr/share/doc/libvorbis-$(COMPONENT_VERSION)/wait.png
 file path=usr/share/doc/libvorbis-$(COMPONENT_VERSION)/white-xifish.png
+file files/libvorbis.3lib path=usr/share/man/man3lib/libvorbis.3lib
+file files/libvorbisenc.3lib path=usr/share/man/man3lib/libvorbisenc.3lib
+file files/libvorbisfile.3lib path=usr/share/man/man3lib/libvorbisfile.3lib
 license COPYING license=BSD-like
 # force the rename with an optional dependency on the old name
 depend type=optional fmri=codec/ogg-vorbis@2.30.0-5.12.0.0.0.108.0

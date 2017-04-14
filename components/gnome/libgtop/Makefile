@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgtop
 COMPONENT_VERSION=	2.30.0
+COMPONENT_PROJECT_URL=	https://developer.gnome.org/libgtop/
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:463bcbe5737b1b93f3345ee34abf601e8eb864f507c49ff1921c2737abafc1e5
 COMPONENT_BUGDB=        gnome/libraries

@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk3
 COMPONENT_VERSION=	3.18.0
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GTK+
+COMPONENT_PROJECT_URL=	http://www.gtk.org/
 COMPONENT_SRC=		gtk+-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\

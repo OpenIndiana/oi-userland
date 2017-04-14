@@ -1,0 +1,147 @@
+.TH file-roller 1 "7 Apr 2017" "SunOS 5.11" "User Commands"
+.SH "NAME"
+file-roller \- create, view, modify, or unpack an archive
+.SH "SYNOPSIS"
+.PP
+\fBfile-roller\fR [\fB\-\-add\fR] [\fB\-\-add-to=\fIarchive\fR\fR] [\fB\-\-default-dir=\fIfolder\fR\fR] [\fB\-\-extract\fR] [\fB\-\-extract-here\fR] [\fB\-\-extract-to=\fIfolder\fR\fR] [\fB\-\-force\fR] [\fB\-\-notify\fR] [\fB\-\-service\fR] [\fB\fIgnome-std-options\fR\fR] [\fIarchive...\fR]
+.SH "DESCRIPTION"
+.PP
+The File Roller application enables you to create, view, modify, or
+unpack an archive\&. An archive is a file that acts as a container for other
+files\&. An archive can contain many files, folders, and subfolders, usually
+in compressed form\&.
+You can extract a series of archives with a single command\&.
+.PP
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 32
+\fB\-d\fR, \fB\-\-add\fR
+Ask for the name of the archive, then add the files, then quit the
+application\&.
+.TP 32
+\fB\-a\fR, \fB\-\-add-to=\fR\fIarchive\fR
+Add files to the specified archive, then quit the application\&.
+.TP 32
+\fB\-\-default-dir=\fR\fIfolder\fR
+Specify the default folder for the \fB\-\-add\fR and
+\fB\-\-extract\fR options\&.
+.TP 32
+\fB\-f\fR, \fB\-\-extract\fR
+Ask for the name of the destination folder, then extract the files, then
+quit the application\&.
+.TP 32
+\fB\-h\fR, \fB\-\-extract-here\fR
+Extract archives using the archive name as destination folder and quit the
+program\&.
+.TP 32
+\fB\-e\fR, \fB\-\-extract-to=\fR\fIfolder\fR
+Extract archives to the specified folder, then quit the
+application\&.
+.TP 32
+\fB\-\-force\fR
+Create the destination folder without asking for confirmation\&.
+.TP 32
+\fB\-\-notify\fR
+Use the notification system to show a dialog that notifies the user that the
+operation has completed successfully and allows to open the destination folder\&.
+.TP 32
+\fB\-\-service\fR
+Start as a service\&.
+.TP 32
+.I gnome-std-options
+Standard options available for use with most GNOME applications\&.  See
+.BR gnome-std-options (7)
+for more information\&.
+.SH "EXAMPLES"
+.PP
+.B "Example 1: Unpacking an Archive"
+.PP
+.nf
+example% \fBfile-roller --extract \fIarchive\fR\fR
+.fi
+.PP
+.B "Example 1: Extract an archive to a specified directory"
+.PP
+.nf
+example% \fBfile-roller --extract-to=/path/to/dir archive.tgz\fR
+.fi
+.PP
+To create the destination folder without asking the user to confirm:
+.nf
+example% \fBfile-roller --force --extract-to=/path/to/dir archive.tgz\fR
+.fi
+.PP
+.B "Example 2: Extract an archive letting the user choose the destination directory"
+.PP
+.nf
+example% \fBfile-roller --extract archive.tgz\fR
+.fi
+.PP
+To set the directory to show in the folder chooser dialog:
+.PP
+.nf
+example% \fBfile-roller --default-dir=/path/to/show --extract archive.tgz\fR
+.fi
+.PP
+.B "Example 3: Extract an archive in its parent folder"
+.PP
+To extract an archive in its parent folder creating a subfolder if the archive
+contains more than one top level object (that is avoiding the tar-bombing):
+.PP
+.nf
+example% \fBfile-roller --extract-here archive.tgz\fR
+.fi
+.PP
+This is the same command used in the Nautilus context menu to extract archives.
+.PP
+.B "Example 4: Compress a series of files specifing the archive name"
+.PP
+.nf
+example% \fBfile-roller --add-to=/path/to/archive.tgz file1 file2 ..\fR
+.fi
+.PP
+The archive is created if it doesn't exist.
+.PP
+.B "Example 5: Compress a series of files letting the user choose the archive name"
+.PP
+.nf
+example% \fBfile-roller --add file1 file2 ..\fR
+.fi
+.PP
+To set the directory to show in the folder chooser dialog:
+.PP
+.nf
+example% \fBfile-roller --default-dir=/path/to/show --add file1 file2 ..\fR
+.fi
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.TP 9
+.B 0
+Application
+exited successfully
+.TP 9
+.B >0
+Application
+exited with failure
+.SH "FILES"
+.PP
+The following files are used by this application:
+.TP 24
+.B /usr/bin/file-roller
+Executable for File Roller application\&.
+.SH "SEE ALSO"
+.PP
+\fIFile Roller Manual\fR
+.PP
+.BR ar (1),
+.BR tar (1),
+.BR unzip (1),
+.BR zip (1),
+.BR libarchive (3lib),
+.BR attributes (7),
+.BR gnome-std-options (7)
+.SH "NOTES"
+.PP
+Written by Laszlo Kovacs, Sun Microsystems Inc\&., 2003, 2004, 2007\&.

@@ -23,6 +23,8 @@
 # Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
 set name=pkg.fmri \
     value=pkg:/desktop/archive-manager/file-roller@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="A tool to create and modify archives"
@@ -32,7 +34,7 @@ set name=info.classification \
     value=org.opensolaris.category.2008:Applications/Accessories
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2016/375
+set name=org.opensolaris.arc-caseid value=LSARC/2001/201 value=PSARC/2016/375
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/bin/file-roller
 file path=usr/lib/$(MACH64)/file-roller/isoinfo.sh mode=0555
@@ -529,6 +531,7 @@ file path=usr/share/locale/zh_CN/LC_MESSAGES/file-roller.mo
 file path=usr/share/locale/zh_HK/LC_MESSAGES/file-roller.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/file-roller.mo
 file path=usr/share/locale/zu/LC_MESSAGES/file-roller.mo
+file files/file-roller.1 path=usr/share/man/man1/file-roller.1
 license COPYING license=GPLv2
 depend type=require fmri=__TBD pkg.debug.depend.reason=src/preferences.h \
     pkg.tmp.gsettings-schema=org.gnome.FileRoller

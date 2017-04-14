@@ -1,0 +1,112 @@
+.TH gdmflexiserver 1 "7 Apr 2017" "SunOS 5.11" "User Commands"
+.SH "NAME"
+gdmflexiserver \- Runs flexible (on demand) X servers
+.SH "SYNOPSIS"
+.PP
+\fBgdmflexiserver\fR [\fB\-\-authenticate\fR] [\fB\-\-command=\fIcommand\fR\fR] [\fB\-\-debug\fR] [\fB\-\-help\fR] [\fB\-\-monte-carlo-pi\fR] [\fB\-\-no-lock\fR] [\fB\-\-version\fR] [\fB\-\-xnest\fR]
+.SH "DESCRIPTION"
+.PP
+\fBgdmflexiserver\fR is primarily used to run flexible (on demand) X
+servers via the virtual terminal interface\&.  \fBgdmflexiserver\fR allows a
+user to log in once and then quits\&.  This is useful if you are logged in as
+user A, and user B wants to log in quickly but user A does not wish to log out\&.
+The X server ensures that the virtual terminal switching works transparently\&.
+.PP
+In GDM 2\&.20 and earlier, \fBgdmflexiserver\fR was the primary interface
+for starting flexible X server sessions\&.  In the current version of GDM, the
+"User Switcher" panel applet is more typically used for this
+purpose when using the GNOME desktop\&.  The \fBgdmflexiserver\fR interface
+is provided for backwards compatibility purposes, and to provide an interface
+for starting flexible X server sessions when not using the GNOME desktop\&.
+.PP
+Many of the \fBgdmflexiserver\fR options are no longer supported in GDM
+and are ignored if used\&.  For example, GDM 2\&.20 and earlier made use of the
+\fB\-\-command\fR option to query information from the GDM daemon and
+to control its behavior\&.  Current versions of GDM use D\-Bus for this purpose
+and gdmflexiserver now only supports the "VERSION" command\&.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 24
+\fB\-a\fR, \fB\-\-authenticate\fR
+Ignored\&.
+.TP 24
+\fB\-c\fR, \fB\-\-command=\fIcommand\fR\fR
+Run the specified command\&.
+.TP 24
+\fB\-d\fR, \fB\-\-debug\fR
+Enable debugging output\&.
+.TP 24
+\fB\-h\fR, \fB\-\-help\fR
+Display detailed usage message\&.
+.TP 24
+\fB\-\-monte-carlo-pi\fR
+Easter egg\&.  Determine the value of pi using a Monte Carlo simulation\&.
+.TP 24
+\fB\-l\fR, \fB\-\-no-lock\fR
+Ignored\&.
+.TP 24
+\fB\-\-version\fR
+Display GDM version number\&.
+.TP 24
+\fB\-n\fR, \fB\-\-xnest\fR
+Ignored\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+\fBgdmflexiserver\fR accepts the following with the
+\fB\-\-command\fR option:
+.sp
+.in +2
+\(bu
+.mk
+.in +3
+.rt
+.B "VERSION"
+.in -3
+.in -2
+.PP
+Each is described in detail in the following section:
+.SS "VERSION"
+.TP 24
+.B "Description:"
+Query GDM version
+.TP 24
+.B "Supported since:"
+2\&.2\&.4\&.0
+.TP 24
+.B "Arguments:"
+None
+.TP 24
+.B "Answers:"
+GDM \fIgdm-version\fR
+.SH "EXAMPLES"
+.PP
+.B "Example 1: To see the GDM version"
+.PP
+.PP
+.nf
+example% \fBgdmflexiserver \fB\-\-command\fR=VERSION\fR
+\f(CWGDM  2\&.28\&.1\fR
+.fi
+.SH "FILES"
+.PP
+The following files are used by this application:
+.TP 32
+.B /usr/bin/gdmflexiserver
+Executable for Run flexible (on demand) X servers\&.
+.SH "SEE ALSO"
+.PP
+Latest version of the \fIGNOME Desktop User Guide\fR
+for your platform\&.
+.PP
+.BR gdm-screenshot (1),
+.BR gdm (1m),
+.BR attributes (7)
+.SH "NOTES"
+.PP
+Original man page written by Martin K\&. Petersen <mkp@mkp\&.net>, George
+Lebl <jirka@5z\&.com>\&. Copyright (c) 1998, 1999 by Martin K\&.  Petersen\&.
+Copyright (c) 2001, 2003, 2004 by George Lebl\&. Copyright (c) 2003 by Red Hat,
+Inc\&.
+.PP
+Updated by Brian Cameron, Sun Microsystems Inc\&., 2004, 2006, 2009\&.

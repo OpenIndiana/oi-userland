@@ -1,0 +1,832 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  f8684a1d3f02b9cc10a686daa8659805384ba51a
+25759055 OFUV (Userland) support for XRC APIs
+
+diff -r f8684a1d3f02 Makefile.am
+--- a/Makefile.am	Mon Nov 21 11:48:20 2016 -0800
++++ b/Makefile.am	Mon Mar 20 14:32:42 2017 -0700
+@@ -45,7 +45,8 @@
+ 
+ libibverbsinclude_HEADERS = include/infiniband/arch.h include/infiniband/driver.h \
+     include/infiniband/kern-abi.h include/infiniband/opcode.h include/infiniband/verbs.h \
+-    include/infiniband/sa-kern-abi.h include/infiniband/sa.h include/infiniband/marshall.h
++    include/infiniband/sa-kern-abi.h include/infiniband/sa.h include/infiniband/marshall.h \
++    include/infiniband/ofa_verbs.h
+ 
+ man_MANS = man/ibv_asyncwatch.1 man/ibv_devices.1 man/ibv_devinfo.1	\
+     man/ibv_shpd_pingpong.1			\
+@@ -64,7 +65,8 @@
+     man/ibv_query_srq.3 man/ibv_rate_to_mult.3 man/ibv_reg_mr.3		\
+     man/ibv_req_notify_cq.3 man/ibv_resize_cq.3 man/ibv_rate_to_mbps.3  \
+     man/ibv_create_qp_ex.3 man/ibv_create_srq_ex.3 man/ibv_open_xrcd.3  \
+-    man/ibv_get_srq_num.3 man/ibv_open_qp.3
++    man/ibv_get_srq_num.3 man/ibv_open_qp.3 man/ibv_create_xsrq.3       \
++    man/ibv_xsrq_pingpong.1
+ 
+ DEBIAN = debian/changelog debian/compat debian/control debian/copyright \
+     debian/ibverbs-utils.install debian/libibverbs1.install \
+diff -r f8684a1d3f02 Makefile.in
+--- a/Makefile.in	Mon Nov 21 11:48:20 2016 -0800
++++ b/Makefile.in	Mon Mar 20 14:32:42 2017 -0700
+@@ -476,7 +476,8 @@
+ libibverbsincludedir = $(includedir)/infiniband
+ libibverbsinclude_HEADERS = include/infiniband/arch.h include/infiniband/driver.h \
+     include/infiniband/kern-abi.h include/infiniband/opcode.h include/infiniband/verbs.h \
+-    include/infiniband/sa-kern-abi.h include/infiniband/sa.h include/infiniband/marshall.h include/infiniband/ofa_solaris.h
++    include/infiniband/sa-kern-abi.h include/infiniband/sa.h include/infiniband/marshall.h \
++    include/infiniband/ofa_solaris.h include/infiniband/ofa_verbs.h
+ 
+ man_MANS = man/ibv_asyncwatch.1 man/ibv_devices.1 man/ibv_devinfo.1	\
+     man/ibv_shpd_pingpong.1			\
+@@ -495,7 +496,8 @@
+     man/ibv_query_srq.3 man/ibv_rate_to_mult.3 man/ibv_reg_mr.3		\
+     man/ibv_req_notify_cq.3 man/ibv_resize_cq.3 man/ibv_rate_to_mbps.3  \
+     man/ibv_create_qp_ex.3 man/ibv_create_srq_ex.3 man/ibv_open_xrcd.3  \
+-    man/ibv_get_srq_num.3 man/ibv_open_qp.3
++    man/ibv_get_srq_num.3 man/ibv_open_qp.3 man/ibv_create_xsrq.3       \
++    man/ibv_xsrq_pingpong.1
+ 
+ DEBIAN = debian/changelog debian/compat debian/control debian/copyright \
+     debian/ibverbs-utils.install debian/libibverbs1.install \
+diff -r f8684a1d3f02 include/infiniband/ofa_verbs.h
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/include/infiniband/ofa_verbs.h	Mon Mar 20 14:32:42 2017 -0700
+@@ -0,0 +1,140 @@
++/*
++ * Copyright (c) 2004, 2005 Topspin Communications.  All rights reserved.
++ * Copyright (c) 2004, 2011-2012 Intel Corporation.  All rights reserved.
++ * Copyright (c) 2005, 2006, 2007 Cisco Systems, Inc.  All rights reserved.
++ * Copyright (c) 2005 PathScale, Inc.  All rights reserved.
++ *
++ * This software is available to you under a choice of one of two
++ * licenses.  You may choose to be licensed under the terms of the GNU
++ * General Public License (GPL) Version 2, available from the file
++ * COPYING in the main directory of this source tree, or the
++ * OpenIB.org BSD license below:
++ *
++ *     Redistribution and use in source and binary forms, with or
++ *     without modification, are permitted provided that the following
++ *     conditions are met:
++ *
++ *	- Redistributions of source code must retain the above
++ *	  copyright notice, this list of conditions and the following
++ *	  disclaimer.
++ *
++ *	- Redistributions in binary form must reproduce the above
++ *	  copyright notice, this list of conditions and the following
++ *	  disclaimer in the documentation and/or other materials
++ *	  provided with the distribution.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
++ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
++ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++ * SOFTWARE.
++ */
++
++#ifndef INFINIBAND_OFA_VERBS_H
++#define INFINIBAND_OFA_VERBS_H
++
++struct ibv_srq_init_attr;
++struct ibv_cq;
++struct ibv_pd;
++struct ibv_qp_init_attr;
++struct ibv_qp_attr;
++
++
++#ifdef __GNUC__
++#define DEPRECATED  __attribute__((deprecated))
++#else
++#define DEPRECATED
++#endif
++
++/* XRC compatability layer */
++#define LEGACY_XRC_SRQ_HANDLE 0xffffffff
++
++struct ibv_xrc_domain {
++	struct ibv_context     *context;
++	uint32_t		handle;
++};
++
++struct ibv_srq_legacy {
++	struct ibv_context     *context;
++	void		       *srq_context;
++	struct ibv_pd	       *pd;
++	uint32_t		handle;
++
++	uint32_t		events_completed;
++
++	uint32_t		xrc_srq_num_bin_compat;
++	struct ibv_xrc_domain  *xrc_domain_bin_compat;
++	struct ibv_cq	       *xrc_cq_bin_compat;
++
++	pthread_mutex_t		mutex;
++	pthread_cond_t		cond;
++
++	void		       *ibv_srq;
++	/*
++	 * Below fields are for legacy source compatibility. They reside
++	 * on the same offset as of those fields in struct ibv_srq.
++	 */
++	uint32_t		xrc_srq_num;
++	struct ibv_xrc_domain  *xrc_domain;
++	struct ibv_cq	       *xrc_cq;
++};
++
++/**
++ * ibv_open_xrc_domain - open an XRC domain
++ * Returns a reference to an XRC domain.
++ *
++ * @context: Device context
++ * @fd: descriptor for inode associated with the domain
++ *     If fd == -1, no inode is associated with the domain; in this ca= se,
++ *     the only legal value for oflag is O_CREAT
++ *
++ * @oflag: oflag values are constructed by OR-ing flags from the following list
++ *
++ * O_CREAT
++ *     If a domain belonging to device named by context is already associated
++ *     with the inode, this flag has no effect, except as noted under O_EXCL
++ *     below. Otherwise, a new XRC domain is created and is associated with
++ *     inode specified by fd.
++ *
++ * O_EXCL
++ *     If O_EXCL and O_CREAT are set, open will fail if a domain associated with
++ *     the inode exists. The check for the existence of the domain and creation
++ *     of the domain if it does not exist is atomic with respect to other
++ *     processes executing open with fd naming the same inode.
++ */
++struct ibv_xrc_domain *ibv_open_xrc_domain(struct ibv_context *context,
++					   int fd, int oflag) DEPRECATED;
++
++/**
++ * ibv_create_xrc_srq - Creates a SRQ associated with the specified protection
++ *   domain and xrc domain.
++ * @pd: The protection domain associated with the SRQ.
++ * @xrc_domain: The XRC domain associated with the SRQ.
++ * @xrc_cq: CQ to report completions for XRC packets on.
++ *
++ * @srq_init_attr: A list of initial attributes required to create the SRQ.
++ *
++ * srq_attr->max_wr and srq_attr->max_sge are read the determine the
++ * requested size of the SRQ, and set to the actual values allocated
++ * on return.  If ibv_create_srq() succeeds, then max_wr and max_sge
++ * will always be at least as large as the requested values.
++ */
++struct ibv_srq *ibv_create_xrc_srq(struct ibv_pd *pd,
++				   struct ibv_xrc_domain *xrc_domain,
++				   struct ibv_cq *xrc_cq,
++				   struct ibv_srq_init_attr *srq_init_attr) DEPRECATED;
++
++/**
++ * ibv_close_xrc_domain - close an XRC domain
++ * If this is the last reference, destroys the domain.
++ *
++ * @d: reference to XRC domain to close
++ *
++ * close is implicitly performed at process exit.
++ */
++int ibv_close_xrc_domain(struct ibv_xrc_domain *d) DEPRECATED;
++
++#endif
+diff -r f8684a1d3f02 include/infiniband/verbs.h
+--- a/include/infiniband/verbs.h	Mon Nov 21 11:48:20 2016 -0800
++++ b/include/infiniband/verbs.h	Mon Mar 20 14:32:42 2017 -0700
+@@ -42,6 +42,7 @@
+ #include <errno.h>
+ #if defined(__SVR4) && defined(__sun)
+ #include <infiniband/ofa_solaris.h>
++#include <infiniband/ofa_verbs.h>
+ #endif
+ 
+ #ifdef __cplusplus
+@@ -252,6 +253,8 @@
+ 		struct ibv_srq *srq;
+ 		int		port_num;
+ 		union ibv_gid	gid;
++		/* For source compatibility with legacy API */
++		uint32_t	xrc_qp_num;
+ 	} element;
+ 	enum ibv_event_type	event_type;
+ };
+@@ -507,6 +510,7 @@
+ 	IBV_QPT_RC = 2,
+ 	IBV_QPT_UC,
+ 	IBV_QPT_UD,
++	IBV_QPT_XRC, /* XRC legacy compatible type */
+ 	IBV_QPT_RAW_PACKET = 8,
+ 	IBV_QPT_XRC_SEND = 9,
+ 	IBV_QPT_XRC_RECV
+@@ -536,6 +540,8 @@
+ 	struct ibv_qp_cap	cap;
+ 	enum ibv_qp_type	qp_type;
+ 	int			sq_sig_all;
++	/* Below is needed for legacy compatibility */
++	struct ibv_xrc_domain  *xrc_domain;
+ };
+ 
+ enum ibv_qp_init_attr_mask {
+@@ -692,10 +698,14 @@
+ 		} ud;
+ 	} wr;
+ 	union {
+-		struct {
+-			uint32_t    remote_srqn;
+-		} xrc;
+-	} qp_type;
++		union {
++		      struct {
++			      uint32_t	  remote_srqn;
++		      } xrc;
++		} qp_type;
++
++		uint32_t		xrc_remote_srq_num;
++	};
+ };
+ 
+ struct ibv_recv_wr {
+@@ -723,6 +733,25 @@
+ 	pthread_mutex_t		mutex;
+ 	pthread_cond_t		cond;
+ 	uint32_t		events_completed;
++
++       /* 
++	* Below is for source compatibility with legacy XRC APIs.
++	* Padding is based on ibv_srq_legacy.
++	*/
++	uint32_t		xrc_srq_num_bin_compat_padding;
++	struct ibv_xrc_domain  *xrc_domain_bin_compat_padding;
++	struct ibv_cq	       *xrc_cq_bin_compat_padding;
++	void		       *ibv_srq_padding;
++
++	/* legacy fields */
++	uint32_t		xrc_srq_num;
++	struct ibv_xrc_domain  *xrc_domain;
++	struct ibv_cq	       *xrc_cq;
++};
++
++/* XRC source compat layer */
++enum ibv_event_flags {
++       IBV_XRC_QP_EVENT_FLAG = 0x80000000,
+ };
+ 
+ struct ibv_qp {
+@@ -996,6 +1025,8 @@
+ 
+ struct verbs_context {
+ 	/*  "grows up" - new fields go here */
++	void * (*drv_get_legacy_xrc) (struct ibv_srq *ibv_srq);
++	void (*drv_set_legacy_xrc) (struct ibv_srq *ibv_srq, void *legacy_xrc);
+ 	int (*drv_ibv_destroy_flow) (struct ibv_flow *flow);
+ 	int (*lib_ibv_destroy_flow) (struct ibv_flow *flow);
+ 	struct ibv_flow * (*drv_ibv_create_flow) (struct ibv_qp *qp,
+diff -r f8684a1d3f02 man/ibv_create_qp_ex.3
+--- a/man/ibv_create_qp_ex.3	Mon Nov 21 11:48:20 2016 -0800
++++ b/man/ibv_create_qp_ex.3	Mon Mar 20 14:32:42 2017 -0700
+@@ -28,7 +28,7 @@
+ struct ibv_cq          *recv_cq;        /* CQ to be associated with the Receive Queue (RQ) */
+ struct ibv_srq         *srq;            /* SRQ handle if QP is to be associated with an SRQ, otherwise NULL */
+ struct ibv_qp_cap       cap;            /* QP capabilities */
+-enum ibv_qp_type        qp_type;        /* QP Transport Service Type: IBV_QPT_RC, IBV_QPT_UC, IBV_QPT_UD or IBV_QPT_RAW_PACKET */
++enum ibv_qp_type        qp_type;        /* QP Transport Service Type: IBV_QPT_RC, IBV_QPT_XRC_SEND, IBV_QPT_XRC_RECV, IBV_QPT_UC, IBV_QPT_UD or IBV_QPT_RAW_PACKET */
+ int                     sq_sig_all;     /* If set, each Work Request (WR) submitted to the SQ generates a completion entry */
+ uint32_t                comp_mask;	/* Identifies valid fields */
+ struct ibv_pd          *pd;		/* PD to be associated with the QP */
+diff -r f8684a1d3f02 man/ibv_create_xsrq.3
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/man/ibv_create_xsrq.3	Mon Mar 20 14:32:42 2017 -0700
+@@ -0,0 +1,87 @@
++.\" -*- nroff -*-
++.\"
++.TH IBV_CREATE_XSRQ 3 2011-06-17 libibverbs "Libibverbs Programmer's Manual"
++.SH "NAME"
++ibv_create_xsrq, ibv_destroy_srq \- create or destroy a shared receive queue (SRQ)
++.SH "SYNOPSIS"
++.nf
++.B #include 
++.sp
++.BI "struct ibv_srq *ibv_create_xsrq(struct ibv_pd " "*pd" ", struct "
++.BI "                                ibv_srq_init_attr " "*srq_init_attr"
++);
++.sp
++.BI "int ibv_destroy_srq(struct ibv_srq " "*srq" );
++.fi
++.SH "DESCRIPTION"
++.B ibv_create_xsrq()
++creates a shared receive queue (SRQ) associated with the protection domain
++.I pd\fR.
++The argument
++.I srq_init_attr
++is an ibv_srq_init_attr struct, as defined in .
++.PP
++.nf
++struct ibv_srq_init_attr {
++.in +8
++void                   *srq_context;    /* Associated context of the SRQ
++*/
++struct ibv_srq_attr     attr;           /* SRQ attributes */
++enum ibv_srq_type       srq_type;       /* Specifies type of SRQ to create
++*/
++union {
++.in +8
++struct {
++.in +8
++struct ibv_xrcd *xrcd;   /* XRC domain associated with an XRC SRQ */
++struct ibv_cq   *cq;     /* completion queue for an XRC SRQ*/
++.in -8
++} xrc;   /* Extended attributes for IBV_SRQT_XRC type SRQs */
++.in -8
++} ext;
++.in -8
++};
++.sp
++.nf
++struct ibv_srq_attr {
++.in +8
++uint32_t                max_wr;         /* Requested max number of
++outstanding work requests (WRs) in the SRQ */
++uint32_t                max_sge;        /* Requested max number of scatter
++elements per WR */
++uint32_t                srq_limit;      /* The limit value of the SRQ
++(ignored for ibv_create_srq) */
++.in -8
++};
++.fi
++.PP
++The function
++.B ibv_create_xsrq()
++will update the
++.I srq_init_attr
++struct with the original values of the SRQ that was created; the
++values of max_wr and max_sge will be greater than or equal to the
++values requested.
++.PP
++.B ibv_destroy_srq()
++destroys the SRQ
++.I srq\fR.
++.SH "RETURN VALUE"
++.B ibv_create_xsrq()
++returns a pointer to the created SRQ, or NULL if the request fails.
++.PP
++.B ibv_destroy_srq()
++returns 0 on success, or the value of errno on failure (which indicates
++the failure reason).
++.SH "NOTES"
++.B ibv_destroy_srq()
++fails if any queue pair is still associated with this SRQ.
++.SH "SEE ALSO"
++.BR ibv_alloc_pd (3),
++.BR ibv_create_cq (3),
++.BR ibv_open_xrcd (3),
++.BR ibv_modify_srq (3),
++.BR ibv_query_srq (3)
++.SH "AUTHORS"
++.TP
++Sean Hefty
+diff -r f8684a1d3f02 man/ibv_xsrq_pingpong.1
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/man/ibv_xsrq_pingpong.1	Mon Mar 20 14:32:42 2017 -0700
+@@ -0,0 +1,71 @@
++.TH IBV_XSRQ_PINGPONG 1 "May 24, 2016" "libibverbs" "USER COMMANDS"
++
++.SH NAME
++ibv_xsrq_pingpong \- simple InfiniBand shared receive queue test
++
++.SH SYNOPSIS
++.B ibv_xsrq_pingpong
++[\-p port] [\-d device] [\-i ib port] [\-s size] [\-m mtu] [\-c clients]
++[\-n num_tests] [\-l sl] [\-e] \fBHOSTNAME\fR
++
++.B ibv_xsrq_pingpong
++[\-p port] [\-d device] [\-i ib port] [\-s size] [\-m mtu] [\-c clients]
++[\-n num_tests] [\-l sl] [\-e]
++
++.SH DESCRIPTION
++.PP
++Run a simple ping-pong test over InfiniBand via the extended reliable
++connected (XRC) transport service, using a shared receive queue (SRQ).
++
++.SH OPTIONS
++
++.PP
++.TP
++\fB\-p\fR, \fB\-\-port\fR=\fIPORT\fR
++use TCP port \fIPORT\fR for initial synchronization (default 18515)
++.TP
++\fB\-d\fR, \fB\-\-ib\-dev\fR=\fIDEVICE\fR
++use IB device \fIDEVICE\fR (default first device found)
++.TP
++\fB\-i\fR, \fB\-\-ib\-port\fR=\fIPORT\fR
++use IB port \fIPORT\fR (default port 1)
++.TP
++\fB\-s\fR, \fB\-\-size\fR=\fISIZE\fR
++ping-pong messages of size \fISIZE\fR (default 4096)
++.TP
++\fB\-m\fR, \fB\-\-mtu\fR=\fIMTU\fR
++use path mtu of size \fIMTU\fR (default 2048)
++.TP
++\fB\-c\fR, \fB\-\-clients\fR=\fICLIENTS\fR
++number of clients \fICLIENTS\fR (on server only, default 1)
++.TP
++\fB\-n\fR, \fB\-\-num\-tests\fR=\fINUM_TESTS\fR
++perform \fINUM_TESTS\fR tests per client (default 5)
++.TP
++\fB\-l\fR, \fB\-\-sl\fR=\fISL\fR
++use \fISL\fR as the service level value (default 0)
++.TP
++\fB\-e\fR, \fB\-\-events\fR
++sleep while waiting for work completion events (default is to poll for
++completions)
++
++.SH SEE ALSO
++.BR ibv_rc_pingpong (1),
++.BR ibv_uc_pingpong (1),
++.BR ibv_ud_pingpong (1)
++.BR ibv_srq_pingpong (1)
++
++.SH AUTHORS
++.TP
++Roland Dreier
++.RI < roland@purestorage.com >
++.TP
++Jarod Wilson
++.RI < jarod@redhat.com >
++
++.SH BUGS
++The network synchronization between client and server instances is
++weak, and does not prevent incompatible options from being used on the
++two instances.  The method used for retrieving work completions is not
++strictly correct, and race conditions may cause failures on some
++systems.
+diff -r f8684a1d3f02 src/cmd.c
+--- a/src/cmd.c	Mon Nov 21 11:48:20 2016 -0800
++++ b/src/cmd.c	Mon Mar 20 14:32:42 2017 -0700
+@@ -815,6 +815,7 @@
+ 	cmd->user_handle     = (uintptr_t) qp;
+ 
+ 	if (attr_ex->comp_mask & IBV_QP_INIT_ATTR_XRCD) {
++	        /* XRC receive side */
+ 		vxrcd = container_of(attr_ex->xrcd, struct verbs_xrcd, xrcd);
+ 		cmd->pd_handle	= vxrcd->handle;
+ 	} else {
+@@ -824,7 +825,9 @@
+ 		cmd->pd_handle	= attr_ex->pd->handle;
+ 		cmd->send_cq_handle = attr_ex->send_cq->handle;
+ 
+-		if (attr_ex->qp_type != IBV_QPT_XRC_SEND) {
++		/* XRC sender doesn't have a receive cq */
++		if (attr_ex->qp_type != IBV_QPT_XRC_SEND &&
++			attr_ex->qp_type != IBV_QPT_XRC) {
+ 			cmd->recv_cq_handle = attr_ex->recv_cq->handle;
+ 			cmd->srq_handle = attr_ex->srq ? attr_ex->srq->handle : 0;
+ 		}
+@@ -847,7 +850,8 @@
+ #else
+ 	cmd->sq_sig_all	     = attr_ex->sq_sig_all;
+ #endif
+-	cmd->qp_type         = attr_ex->qp_type;
++	cmd->qp_type	     = (attr_ex->qp_type == IBV_QPT_XRC) ?
++				IBV_QPT_XRC_SEND : attr_ex->qp_type;
+ 	cmd->is_srq	     = !!attr_ex->srq;
+ 	cmd->reserved	     = 0;
+ 
+@@ -1215,6 +1219,9 @@
+ 			tmp->wr.ud.remote_qpn  = i->wr.ud.remote_qpn;
+ 			tmp->wr.ud.remote_qkey = i->wr.ud.remote_qkey;
+ 		} else {
++			if (ibqp->qp_type == IBV_QPT_XRC_SEND)
++				tmp->qp_type.xrc.remote_srqn =
++					i->qp_type.xrc.remote_srqn;
+ 			switch (i->opcode) {
+ 			case IBV_WR_RDMA_WRITE:
+ 			case IBV_WR_RDMA_WRITE_WITH_IMM:
+diff -r f8684a1d3f02 src/device.c
+--- a/src/device.c	Mon Nov 21 11:48:20 2016 -0800
++++ b/src/device.c	Mon Mar 20 14:32:42 2017 -0700
+@@ -261,6 +261,9 @@
+ 			  struct ibv_async_event *event)
+ {
+ 	struct ibv_kern_async_event ev;
++	struct verbs_context *vctx;
++	struct ibv_srq_legacy *ibv_srq_legacy = NULL;
++	struct ibv_qp *qp;
+ 
+ 	if (read(context->async_fd, &ev, sizeof ev) != sizeof ev)
+ 		return -1;
+@@ -281,11 +284,24 @@
+ 	case IBV_EVENT_PATH_MIG_ERR:
+ 	case IBV_EVENT_QP_LAST_WQE_REACHED:
+ 		event->element.qp = (void *) (uintptr_t) ev.element;
++		qp = ibv_find_xrc_qp(event->element.qp->qp_num);
++		if (qp) {
++			/* This is an XRC receive QP created by the legacy API */
++			event->event_type |= IBV_XRC_QP_EVENT_FLAG;
++			event->element.qp = NULL;
++			event->element.xrc_qp_num = qp->qp_num;
++		}		
+ 		break;
+ 
+ 	case IBV_EVENT_SRQ_ERR:
+ 	case IBV_EVENT_SRQ_LIMIT_REACHED:
+-		event->element.srq = (void *) (uintptr_t) ev.element;
++		vctx = verbs_get_ctx_op(context, drv_get_legacy_xrc);
++		if (vctx)
++			ibv_srq_legacy =
++			  vctx->drv_get_legacy_xrc((void *) (uintptr_t) ev.element);
++
++		event->element.srq = (ibv_srq_legacy) ? (void *)ibv_srq_legacy :
++			(void *) (uintptr_t) ev.element;
+ 		break;
+ 	case IBV_EVENT_GID_AVAIL:
+ 	case IBV_EVENT_GID_UNAVAIL:
+@@ -310,6 +326,12 @@
+ 
+ void __ibv_ack_async_event(struct ibv_async_event *event)
+ {
++	int is_legacy_xrc = 0;
++	if (event->event_type & IBV_XRC_QP_EVENT_FLAG) {
++		event->event_type ^= IBV_XRC_QP_EVENT_FLAG;
++		is_legacy_xrc = 1;
++	}
++
+ 	switch (event->event_type) {
+ 	case IBV_EVENT_CQ_ERR:
+ 	{
+@@ -334,6 +356,16 @@
+ 	{
+ 		struct ibv_qp *qp = event->element.qp;
+ 
++		if (is_legacy_xrc) {
++			qp = ibv_find_xrc_qp(event->element.xrc_qp_num);
++			if (!qp || qp->qp_num != event->element.xrc_qp_num) {
++				fprintf(stderr, PFX "Warning: ibv_ack_async_event, "
++					"XRC qpn=%u wasn't found\n",
++					event->element.xrc_qp_num);
++				return;
++			}
++		}
++
+ 		pthread_mutex_lock(&qp->mutex);
+ 		++qp->events_completed;
+ 		pthread_cond_signal(&qp->cond);
+@@ -347,6 +379,12 @@
+ 	{
+ 		struct ibv_srq *srq = event->element.srq;
+ 
++		if (srq->handle == LEGACY_XRC_SRQ_HANDLE) {
++		       struct ibv_srq_legacy *ibv_srq_legacy =
++				       (struct ibv_srq_legacy *) srq;
++		       srq = ibv_srq_legacy->ibv_srq;
++		}
++
+ 		pthread_mutex_lock(&srq->mutex);
+ 		++srq->events_completed;
+ 		pthread_cond_signal(&srq->cond);
+diff -r f8684a1d3f02 src/ibverbs.h
+--- a/src/ibverbs.h	Mon Nov 21 11:48:20 2016 -0800
++++ b/src/ibverbs.h	Mon Mar 20 14:32:42 2017 -0700
+@@ -85,6 +85,7 @@
+ extern HIDDEN int abi_ver;
+ 
+ HIDDEN int ibverbs_init(struct ibv_device ***list);
++HIDDEN struct ibv_qp *ibv_find_xrc_qp(uint32_t qpn);
+ 
+ #define IBV_INIT_CMD(cmd, size, opcode)					\
+ 	do {								\
+diff -r f8684a1d3f02 src/libibverbs.map
+--- a/src/libibverbs.map	Mon Nov 21 11:48:20 2016 -0800
++++ b/src/libibverbs.map	Mon Mar 20 14:32:42 2017 -0700
+@@ -124,4 +124,7 @@
+ 		ibv_cmd_create_qp_ex;
+ 		ibv_cmd_open_qp;
+ 
++		ibv_open_xrc_domain;
++		ibv_create_xrc_srq;
++		ibv_close_xrc_domain;
+ } IBVERBS_1.0;
+diff -r f8684a1d3f02 src/verbs.c
+--- a/src/verbs.c	Mon Nov 21 11:48:20 2016 -0800
++++ b/src/verbs.c	Mon Mar 20 14:32:42 2017 -0700
+@@ -41,6 +41,7 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#include <search.h>
+ #if defined(__SVR4) && defined(__sun)
+ #include <fcntl.h>
+ #include <sys/stat.h>
+@@ -854,3 +855,208 @@
+ 	return qp->context->ops.detach_mcast(qp, gid, lid);
+ }
+ default_symver(__ibv_detach_mcast, ibv_detach_mcast);
++
++
++/* XRC compatibility layer */
++struct ibv_xrc_domain *ibv_open_xrc_domain(struct ibv_context *context,
++					   int fd, int oflag)
++{
++
++	struct ibv_xrcd *ibv_xrcd;
++	struct ibv_xrcd_init_attr xrcd_init_attr;
++
++	memset(&xrcd_init_attr, 0, sizeof(xrcd_init_attr));
++
++	xrcd_init_attr.fd = fd;
++	xrcd_init_attr.oflags = oflag;
++
++	xrcd_init_attr.comp_mask = IBV_XRCD_INIT_ATTR_FD |
++					IBV_XRCD_INIT_ATTR_OFLAGS;
++
++	ibv_xrcd = ibv_open_xrcd(context, &xrcd_init_attr);
++	if (!ibv_xrcd)
++		return NULL;
++
++	return (struct ibv_xrc_domain *)ibv_xrcd;
++
++}
++
++
++struct ibv_srq *ibv_create_xrc_srq(struct ibv_pd *pd,
++				   struct ibv_xrc_domain *xrc_domain,
++				   struct ibv_cq *xrc_cq,
++				   struct ibv_srq_init_attr *srq_init_attr)
++{
++
++	struct ibv_srq_init_attr_ex ibv_srq_init_attr_ex;
++	struct ibv_srq_legacy *ibv_srq_legacy;
++	struct ibv_srq *ibv_srq;
++	uint32_t		xrc_srq_num;
++	struct verbs_context *vctx;
++
++	vctx = verbs_get_ctx_op(pd->context, drv_set_legacy_xrc);
++	if (!vctx) {
++		errno = ENOSYS;
++		return NULL;
++	}
++	memset(&ibv_srq_init_attr_ex, 0, sizeof ibv_srq_init_attr_ex);
++
++	ibv_srq_init_attr_ex.xrcd = (struct ibv_xrcd *)xrc_domain;
++	ibv_srq_init_attr_ex.comp_mask = IBV_SRQ_INIT_ATTR_XRCD |
++				IBV_SRQ_INIT_ATTR_TYPE |
++				IBV_SRQ_INIT_ATTR_CQ | IBV_SRQ_INIT_ATTR_PD;
++
++	ibv_srq_init_attr_ex.cq = xrc_cq;
++	ibv_srq_init_attr_ex.pd = pd;
++	ibv_srq_init_attr_ex.srq_type = IBV_SRQT_XRC;
++
++	ibv_srq_init_attr_ex.attr.max_sge = srq_init_attr->attr.max_sge;
++	ibv_srq_init_attr_ex.attr.max_wr = srq_init_attr->attr.max_wr;
++	ibv_srq_init_attr_ex.attr.srq_limit = srq_init_attr->attr.srq_limit;
++	ibv_srq_init_attr_ex.srq_context = srq_init_attr->srq_context;
++
++	ibv_srq = ibv_create_srq_ex(pd->context, &ibv_srq_init_attr_ex);
++	if (!ibv_srq)
++		return NULL;
++
++	if (ibv_srq->handle == LEGACY_XRC_SRQ_HANDLE) {
++
++		struct ibv_srq *ibv_srq_tmp = ibv_srq;
++		int ret;
++
++		ibv_srq = ibv_create_srq_ex(pd->context, &ibv_srq_init_attr_ex);
++
++		ret = ibv_destroy_srq(ibv_srq_tmp);
++		if (ret) {
++			fprintf(stderr, PFX "ibv_create_xrc_srq, "
++				"fail to destroy intermediate srq\n");
++			return NULL;
++		}
++
++		if (!ibv_srq)
++			return NULL;
++
++		if (ibv_srq->handle == LEGACY_XRC_SRQ_HANDLE) {
++			ret = ibv_destroy_srq(ibv_srq);
++			if (ret)
++				fprintf(stderr, PFX "ibv_create_xrc_srq, "
++					"fail to destroy intermediate srq\n");
++			errno = EAGAIN;
++			return NULL;
++		}
++	}
++
++	ibv_srq_legacy = calloc(1, sizeof(*ibv_srq_legacy));
++	if (!ibv_srq_legacy) {
++		errno = ENOMEM;
++		goto err;
++	}
++
++	if (ibv_get_srq_num(ibv_srq, &xrc_srq_num))
++		goto err_free;
++
++	ibv_srq_legacy->ibv_srq = ibv_srq;
++	ibv_srq_legacy->xrc_srq_num = xrc_srq_num;
++
++	/* Setting the bin compat fields */
++	ibv_srq_legacy->xrc_srq_num_bin_compat = xrc_srq_num;
++	ibv_srq_legacy->xrc_domain_bin_compat = xrc_domain;
++	ibv_srq_legacy->xrc_cq_bin_compat = xrc_cq;
++	ibv_srq_legacy->context          = pd->context;
++	ibv_srq_legacy->srq_context      = srq_init_attr->srq_context;
++	ibv_srq_legacy->pd		 = pd;
++	/*
++	 * Set an indication that this is a legacy structure. For legacy structures,
++	 * we should use the internal ibv_srq.
++	 */
++	ibv_srq_legacy->handle		 = LEGACY_XRC_SRQ_HANDLE;
++	ibv_srq_legacy->xrc_domain	 = xrc_domain;
++	ibv_srq_legacy->xrc_cq		 = xrc_cq;
++	ibv_srq_legacy->events_completed = 0;
++
++	srq_init_attr->attr.max_wr = ibv_srq_init_attr_ex.attr.max_wr;
++	srq_init_attr->attr.max_sge = ibv_srq_init_attr_ex.attr.max_sge;
++
++	vctx->drv_set_legacy_xrc(ibv_srq, ibv_srq_legacy);
++	return (struct ibv_srq *)(ibv_srq_legacy);
++
++err_free:
++	free(ibv_srq_legacy);
++err:
++	ibv_destroy_srq(ibv_srq);
++	return NULL;
++
++}
++
++static pthread_mutex_t xrc_tree_mutex = PTHREAD_MUTEX_INITIALIZER;
++static void *ibv_xrc_qp_tree;
++
++static int xrc_qp_compare(const void *a, const void *b)
++{
++
++	if ((*(uint32_t *) a) < (*(uint32_t *) b))
++	       return -1;
++	else if ((*(uint32_t *) a) > (*(uint32_t *) b))
++	       return 1;
++	else
++	       return 0;
++
++}
++
++struct ibv_qp *ibv_find_xrc_qp(uint32_t qpn)
++{
++	uint32_t **qpn_ptr;
++	struct ibv_qp *ibv_qp = NULL;
++
++	pthread_mutex_lock(&xrc_tree_mutex);
++	qpn_ptr = tfind(&qpn, &ibv_xrc_qp_tree, xrc_qp_compare);
++	if (!qpn_ptr)
++		goto end;
++
++	ibv_qp = container_of(*qpn_ptr, struct ibv_qp, qp_num);
++
++end:
++	pthread_mutex_unlock(&xrc_tree_mutex);
++	return ibv_qp;
++}
++
++static int ibv_clear_xrc_qp(uint32_t qpn)
++{
++	uint32_t **qpn_ptr;
++	int ret = 0;
++
++	pthread_mutex_lock(&xrc_tree_mutex);
++	qpn_ptr = tdelete(&qpn, &ibv_xrc_qp_tree, xrc_qp_compare);
++	if (!qpn_ptr)
++		ret = EINVAL;
++
++	pthread_mutex_unlock(&xrc_tree_mutex);
++	return ret;
++}
++
++static int ibv_store_xrc_qp(struct ibv_qp *qp)
++{
++	uint32_t **qpn_ptr;
++	int ret = 0;
++
++	if (ibv_find_xrc_qp(qp->qp_num)) {
++		fprintf(stderr, PFX "ibv_store_xrc_qp failed, qpn=%u is already stored\n",
++				qp->qp_num);
++		return EEXIST;
++	}
++
++	pthread_mutex_lock(&xrc_tree_mutex);
++	qpn_ptr = tsearch(&qp->qp_num, &ibv_xrc_qp_tree, xrc_qp_compare);
++	if (!qpn_ptr)
++		ret = EINVAL;
++
++	pthread_mutex_unlock(&xrc_tree_mutex);
++	return ret;
++
++}
++
++int ibv_close_xrc_domain(struct ibv_xrc_domain *d)
++{
++	struct ibv_xrcd *ibv_xrcd = (struct ibv_xrcd *)d;
++	return ibv_close_xrcd(ibv_xrcd);
++}

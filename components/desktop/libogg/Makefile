@@ -27,10 +27,10 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libogg
 COMPONENT_VERSION=	1.2.2
-COMPONENT_PROJECT_URL=	http://downloads.xiph.org/releases/ogg
+COMPONENT_PROJECT_URL=	https://xiph.org/ogg/
 COMPONENT_ARCHIVE_HASH= \
 	sha256:ab000574bc26d5f01284f5b0f50e12dc761d035c429f2e9c70cb2a9487d8cfba
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
 COMPONENT_ANITYA_ID=	1694
 
