@@ -1,0 +1,22 @@
+This bug has been submitted to the NTP community as NTP bug 3406.
+http://bugs.ntp.org/show_bug.cgi?id=3406
+The fix in this patch is specific to the build of the bundled version of NTP
+for Solaris. It patches the config.h.in file. A proper fix would replicate
+the test in the sntp/configure file in the top level configure file. This patch
+may be removed when upgrading to a version of NTP that has a fix for bug 3406
+included.
+
+
+*** config.h.in
+--- config.h.in
+*************** typedef unsigned int	uintptr_t;
+*** 1741,1746 ****
+--- 1741,1748 ----
+  /* Define to rpl_vsnprintf if the replacement function should be used. */
+  #undef vsnprintf
+  
++ #define NO_OPTIONAL_OPT_ARGS 1
++ 
+  
+  #ifndef MPINFOU_PREDECLARED
+  # define MPINFOU_PREDECLARED
