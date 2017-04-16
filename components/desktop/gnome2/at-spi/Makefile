@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2015 Alexander Pyhalov
 #
 
@@ -35,7 +36,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_POST_UNPACK_ACTION = ( cd $(SOURCE_DIR) && cp -r pyatspi pyatspi-26)
 
