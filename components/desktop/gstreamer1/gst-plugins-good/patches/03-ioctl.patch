@@ -78,3 +78,16 @@ Patch for building on Solaris.  Evaluate for sending upstream
  #include "gst/video/gstvideometa.h"
  
  #include "gstv4l2colorbalance.h"
+--- gst-plugins-good-1.10.3/sys/v4l2/gstv4l2videodec.c	2017-02-03 13:28:13.070331319 -0800
++++ gst-plugins-good-1.10.3/sys/v4l2/gstv4l2videodec.c	2017-02-03 13:28:36.038939534 -0800
+@@ -35,6 +35,10 @@
+ #include <string.h>
+ #include <gst/gst-i18n-plugin.h>
+ 
++#ifdef HAVE_FIONREAD_IN_SYS_FILIO
++#include <sys/filio.h>
++#endif
++
+ GST_DEBUG_CATEGORY_STATIC (gst_v4l2_video_dec_debug);
+ #define GST_CAT_DEFAULT gst_v4l2_video_dec_debug
+ 
