@@ -1,14 +1,15 @@
 /usr/gnu/bin/make  testcms
-"testcms2.c", line 1739: warning: statement not reached
-"testcms2.c", line 1755: warning: statement not reached
-"testcms2.c", line 1770: warning: statement not reached
-"testcms2.c", line 1785: warning: statement not reached
-"testcms2.c", line 1800: warning: statement not reached
-"testcms2.c", line 1815: warning: statement not reached
+depbase=`echo testcms2.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+mv -f $depbase.Tpo $depbase.Po
+depbase=`echo testplugin.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+mv -f $depbase.Tpo $depbase.Po
+depbase=`echo zoo_icc.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+mv -f $depbase.Tpo $depbase.Po
 if [ $(SOURCE_DIR) != .. ]; then \
 	cp $(SOURCE_DIR)/testbed/*.ic? ../testbed; \
 fi
 cp: $(SOURCE_DIR)/testbed/bad.icc and ../testbed/bad.icc are identical
+cp: $(SOURCE_DIR)/testbed/crayons.icc and ../testbed/crayons.icc are identical
 cp: $(SOURCE_DIR)/testbed/ibm-t61.icc and ../testbed/ibm-t61.icc are identical
 cp: $(SOURCE_DIR)/testbed/new.icc and ../testbed/new.icc are identical
 cp: $(SOURCE_DIR)/testbed/test1.icc and ../testbed/test1.icc are identical
@@ -17,8 +18,7 @@ cp: $(SOURCE_DIR)/testbed/test3.icc and ../testbed/test3.icc are identical
 cp: $(SOURCE_DIR)/testbed/test4.icc and ../testbed/test4.icc are identical
 cp: $(SOURCE_DIR)/testbed/test5.icc and ../testbed/test5.icc are identical
 cp: $(SOURCE_DIR)/testbed/toosmall.icc and ../testbed/toosmall.icc are identical
-make[1]: [check] Error 2 (ignored)
-./testcms
+LD_LIBRARY_PATH=../src/.libs ./testcms
 
 Installing debug memory plug-in ... done.
 Installing error logger ... done.
@@ -113,6 +113,7 @@ Checking Multilocalized Unicode ...Ok.
 Checking Named color lists ...Ok.
 Checking Profile creation .............................................Ok.
 Checking Header version ...Ok.
+Checking Multilocalized profile ...Ok.
 Checking Error reporting on bad profiles ...Ok.
 Checking Error reporting on bad transforms ...Ok.
 Checking Curves only transforms .........Ok.
@@ -153,6 +154,8 @@ Checking Check MetaTag ...Ok.
 Checking Null transform on floats ...Ok.
 Checking Set free a tag ...Ok.
 Checking Matrix simplification ...Ok.
+Checking Planar 8 optimization ...Ok.
+Checking Transform line stride RGB ...Ok.
 Checking Context memory handling ...Ok.
 Checking Simple context functionality ...Ok.
 Checking Alarm codes context ...Ok.
