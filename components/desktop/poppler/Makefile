@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
-COMPONENT_VERSION=	0.33.0
+COMPONENT_VERSION=	0.52.0
 COMPONENT_PROJECT_URL=	http://poppler.freedesktop.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:a5fa6d7f7dc5382b48caca82b147c54bdffda02698611af76db5326ba64995a6
+    sha256:528b661738839f9a25f6e580fcd2d5db007e0a1948580c6489f0062798ca1992
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/poppler
 COMPONENT_ANITYA_ID=	3686
-TPNO_POPPLER=		25617
+TPNO_POPPLER=		34169
 
 COMPONENT_NAME_1=	poppler-data
 COMPONENT_VERSION_1=	0.4.7
@@ -71,6 +71,12 @@ COMPILER=gcc
 # Uses strcpy_s, etc. c11 functions.
 CFLAGS += -std=c11
 CXXFLAGS += -std=c++11 -D__STDC_WANT_LIB_EXT1__=1
+
+# There isn't a 64-bit version of pkg-config's nss.pc, so set these "manually".
+MPSLIB.32 = -L/usr/lib/mps -R/usr/lib/mps
+MPSLIB.64 = -L/usr/lib/mps/64 -R/usr/lib/mps/64
+NSS3_LIBS = $(MPSLIB.$(BITS)) -lnss3 -lsmime3 -lssl3 -lnssutil3 -lplds4 -lplc4 -lnspr4 -lpthread -ldl -lposix4
+CONFIGURE_OPTIONS +=	NSS3_LIBS="$(NSS3_LIBS)"
 
 # Reduce build time dependencies since we don't ship this and can't run as an
 # automated test.
@@ -118,6 +124,8 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/security/nss
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
