@@ -1,9 +1,8 @@
 cd lib; /usr/gnu/bin/make check
 cd src; /usr/gnu/bin/make check
 cd tests; /usr/gnu/bin/make check
-performing some tests of the perfect hash generator
-gperf -c -l -S1 -I -o $(SOURCE_DIR)/tests/c.gperf > cinset.c
 testing ANSI C reserved words, all items should be found in the set
+gperf -c -l -S1 -I -o $(SOURCE_DIR)/tests/c.gperf > cinset.c
 ./cout -v < $(SOURCE_DIR)/tests/c.gperf | LC_ALL=C tr -d '\r' > c.out
 diff $(SOURCE_DIR)/tests/c.exp c.out
 gperf -k1,4,'$' -I $(SOURCE_DIR)/tests/ada.gperf > adainset.c
@@ -38,38 +37,38 @@ gperf --struct-type --readonly-table --enum --global -K field_name -N header_ent
 ./smtp
 gperf --struct-type --readonly-table --enum --global -K field_name -N header_entry --ignore-case --compare-lengths $(SOURCE_DIR)/tests/smtp.gperf > smtp.c
 ./smtp
-gperf -L C -F ', 0, 0' -j1 -i 1 -g -o -t -G -N is_reserved_word -k1,3,'$' < $(SOURCE_DIR)/tests/c-parse.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > c-parse.out
+gperf -L C -F ', 0, 0' -j1 -i 1 -g -o -t -G -N is_reserved_word -k1,3,'$' < $(SOURCE_DIR)/tests/c-parse.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > c-parse.out
 diff $(SOURCE_DIR)/tests/c-parse.exp c-parse.out
-gperf -j1 -i 1 -g -o -t -N is_reserved_word -k1,3,'$' < $(SOURCE_DIR)/tests/objc.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > objc.out
+gperf -j1 -i 1 -g -o -t -N is_reserved_word -k1,3,'$' < $(SOURCE_DIR)/tests/objc.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > objc.out
 diff $(SOURCE_DIR)/tests/objc.exp objc.out
-gperf -L C -F ', 0, 0, 0' -D -E -S1 -j1 -i 1 -g -o -t -k'*' < $(SOURCE_DIR)/tests/chill.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > chill.out
+gperf -L C -F ', 0, 0, 0' -D -E -S1 -j1 -i 1 -g -o -t -k'*' < $(SOURCE_DIR)/tests/chill.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > chill.out
 diff $(SOURCE_DIR)/tests/chill.exp chill.out
-gperf -L C -F ', 0, 0' -j1 -g -o -t -N is_reserved_word -k1,4,7,'$' < $(SOURCE_DIR)/tests/cplusplus.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > cplusplus.out
+gperf -L C -F ', 0, 0' -j1 -g -o -t -N is_reserved_word -k1,4,7,'$' < $(SOURCE_DIR)/tests/cplusplus.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > cplusplus.out
 diff $(SOURCE_DIR)/tests/cplusplus.exp cplusplus.out
-gperf -L C -F ', 0' -t -j1 -i 1 -g -o -N java_keyword -k1,3,'$' < $(SOURCE_DIR)/tests/java.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > java.out
+gperf -L C -F ', 0' -t -j1 -i 1 -g -o -N java_keyword -k1,3,'$' < $(SOURCE_DIR)/tests/java.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > java.out
 diff $(SOURCE_DIR)/tests/java.exp java.out
-gperf -n -k1-8 -l < $(SOURCE_DIR)/tests/modula2.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > modula2.out
+gperf -n -k1-8 -l < $(SOURCE_DIR)/tests/modula2.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > modula2.out
 diff $(SOURCE_DIR)/tests/modula2.exp modula2.out
-gperf -D -t -k1,'$' < $(SOURCE_DIR)/tests/c-parse.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > test-4.out
+gperf -D -t -k1,'$' < $(SOURCE_DIR)/tests/c-parse.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > test-4.out
 8 input keys have identical hash values, examine output carefully...
 diff $(SOURCE_DIR)/tests/test-4.exp test-4.out
-gperf -g -o -j1 -t -N is_reserved_word < $(SOURCE_DIR)/tests/gpc.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > gpc.out
+gperf -g -o -j1 -t -N is_reserved_word < $(SOURCE_DIR)/tests/gpc.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > gpc.out
 diff $(SOURCE_DIR)/tests/gpc.exp gpc.out
-gperf -m5 < $(SOURCE_DIR)/tests/permut2.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > permut2.out
+gperf -m5 < $(SOURCE_DIR)/tests/permut2.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > permut2.out
 diff $(SOURCE_DIR)/tests/permut2.exp permut2.out
-gperf -m5 < $(SOURCE_DIR)/tests/permut3.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > permut3.out
+gperf -m5 < $(SOURCE_DIR)/tests/permut3.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > permut3.out
 diff $(SOURCE_DIR)/tests/permut3.exp permut3.out
-gperf -m5 --ignore-case < $(SOURCE_DIR)/tests/permutc2.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > permutc2.out
+gperf -m5 --ignore-case < $(SOURCE_DIR)/tests/permutc2.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > permutc2.out
 diff $(SOURCE_DIR)/tests/permutc2.exp permutc2.out
-gperf -C -E -G -I -t < $(SOURCE_DIR)/tests/charsets.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > charsets.out
+gperf -C -E -G -I -t < $(SOURCE_DIR)/tests/charsets.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > charsets.out
 diff $(SOURCE_DIR)/tests/charsets.exp charsets.out
-gperf -C -E -G -I -t < $(SOURCE_DIR)/tests/languages.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > languages.out
+gperf -C -E -G -I -t < $(SOURCE_DIR)/tests/languages.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > languages.out
 diff $(SOURCE_DIR)/tests/languages.exp languages.out
-gperf -t < $(SOURCE_DIR)/tests/incomplete.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > incomplete.out
+gperf -t < $(SOURCE_DIR)/tests/incomplete.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > incomplete.out
 diff $(SOURCE_DIR)/tests/incomplete.exp incomplete.out
-gperf -h | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > test-6.out
+gperf -h | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > test-6.out
 diff $(SOURCE_DIR)/tests/test-6.exp test-6.out
 only if, do, for, case, goto, else, while, and return should be found 
-./aout -v < $(SOURCE_DIR)/tests/c.gperf | LC_ALL=C tr -d '\r' | sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > test-7.out
+./aout -v < $(SOURCE_DIR)/tests/c.gperf | LC_ALL=C tr -d '\r' | LC_ALL=C sed -e 's|[^ ]*[/\\][\\]*src[/\\][\\]*gperf[^ ]*|gperf|' > test-7.out
 diff $(SOURCE_DIR)/tests/test-7.exp test-7.out
 cd doc; /usr/gnu/bin/make check
