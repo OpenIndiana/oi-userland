@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evince
-COMPONENT_VERSION=	3.21.4
+COMPONENT_VERSION=	3.22.1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Evince
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:12f0a411380b476a540a9e0629ca8ca938dad5e787e4ed1ff4f467e0356b1ffd
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.21/$(COMPONENT_ARCHIVE)
+    sha256:f3d439db3b5a5745d26175d615a71dffa1535235b1e3aa0b85d397ea33ab231c
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.22/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/evince
-TPNO=			30508
+TPNO=			34178
 COMPONENT_ANITYA_ID=	8178
 
 TEST_TARGET= $(NO_TESTS)
@@ -83,8 +83,7 @@ CONFIGURE_OPTIONS +=	--enable-dbus
 # Required for other components.
 CONFIGURE_OPTIONS +=	--enable-introspection
 CONFIGURE_OPTIONS +=	--enable-libgnome-desktop
-# Re-enable when all of the new GNOME 3 desktop is integrated.
-CONFIGURE_OPTIONS +=	--disable-nautilus
+CONFIGURE_OPTIONS +=	--enable-nautilus
 CONFIGURE_OPTIONS +=	--enable-pdf
 CONFIGURE_OPTIONS +=	--enable-previewer
 CONFIGURE_OPTIONS +=	--enable-ps
