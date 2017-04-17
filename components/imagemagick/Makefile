@@ -50,6 +50,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+CFLAGS += -U__i386__ -U__x86_64__
+CXXFLAGS += -U__i386__ -U__x86_64__
+endif
+
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)

@@ -25,6 +25,7 @@
 BUILD_BITS=64
 # Currently only builds with gcc
 COMPILER= gcc
+export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake

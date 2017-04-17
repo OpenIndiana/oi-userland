@@ -45,6 +45,10 @@ CXXFLAGS += $(CPP_LARGEFILES)
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
 CXXFLAGS += -std=sun03
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+CXXFLAGS += -U__i386__
+endif
+
 # libtools seems to be forcing -nolibs, so we have to add back libc, libm,
 # libCstd and libCrun. The last two are needed because with Studio 12.2
 # (and beyond), there is a bug in the CC driver that is not correctly using
