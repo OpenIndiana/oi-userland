@@ -27,14 +27,14 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	2.25
+COMPONENT_VERSION=	3.0
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e21e83bac50450e0d0d61a42c154ee0dceaacdbf4f604ef6e79071cb8e596830
+    sha256:e2c81db5056e3e8c5995f0bb5d0d0e1cad1f6f45c3b2fc77b6e81435aed48ab5
 COMPONENT_BUGDB=	utility/ggrep
 COMPONENT_ANITYA_ID=	1251
 
-TPNO=			28105
+TPNO=			34016
 
 SYSTEM_TEST_TARGET= $(SOURCE_DIR)/.system-test-patched configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/gnu-component.mk
