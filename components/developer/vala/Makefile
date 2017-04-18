@@ -19,11 +19,17 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
+# Copyright (c) 2017 Andreas Wacknitz
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vala
 COMPONENT_VERSION=	0.20.1
+COMPONENT_REVISION=	1
+COMPONENT_LICENSE=	LGPL2.1
+COMPONENT_FMRI=		developer/vala
+COMPONENT_SUMMARY=	Vala programming language
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Vala
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -31,9 +37,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:9cb7ecd18a23525e401c204d4d08341c7d911cd5d78078eee10b747ecb45e481
 COMPONENT_ARCHIVE_URL=	http://download.gnome.org/sources/vala/0.20/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
@@ -45,6 +51,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
