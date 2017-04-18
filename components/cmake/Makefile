@@ -29,14 +29,15 @@ export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	3.5.2
+CMAKE_MAJOR_VERSION=	3.7
+COMPONENT_VERSION=	$(CMAKE_MAJOR_VERSION).2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:92d8410d3d981bb881dfff2aed466da55a58d34c7390d50449aa59b32bb5e62a
-COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v3.5/$(COMPONENT_ARCHIVE)
+    sha256:dc1246c4e6d168ea4d6e042cfba577c1acd65feea27e56f5ff37df920c30cae0
+COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v$(CMAKE_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
 COMPONENT_ANITYA_ID=	306
 
-TPNO=			29071
+TPNO=			34102
 
 # configure in cmake does not accept many of the options set in
 # configure.mk (CC=, CXX=, --bindir, --libdir, --sbindir).
@@ -97,6 +98,10 @@ COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_TARGETS =	all
+
+# Pass cmake "major" version number to the publish phase to hopefully reduce
+# the amount of change needed between each update.
+PKG_MACROS+= CMAKE_MAJOR_VERSION=$(CMAKE_MAJOR_VERSION)
 
 # Need C and C++ compiler locations for cmake tests
 COMPONENT_TEST_ENV += CC="$(CC)"
