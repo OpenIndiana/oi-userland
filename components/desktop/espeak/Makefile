@@ -23,6 +23,9 @@
 # Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+# parfait doesn't like sketchy code (25158912)
+export PARFAIT_BUILD=no
+
 BUILD_BITS=		64
 # For now, all things built for C++11 require gcc.
 COMPILER =		gcc

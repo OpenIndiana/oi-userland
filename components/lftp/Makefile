@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lftp
@@ -46,14 +47,12 @@ LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
 
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 
-# Studio 12.4 compiler doesn't grok GNU's __restrict
-COMPONENT_BUILD_ARGS +=	CPPFLAGS=-D__restrict=restrict
-
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math

@@ -29,15 +29,15 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         nmap
-COMPONENT_VERSION=      7.11
+COMPONENT_VERSION=      7.40
 COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:dfc95db3a8ee4c56650dbaa5a1a1e989b2963de8faea2531c21e6fd6e0bccc2a
+    sha256:ac35f64e820071efa768c34c96ed741b7278bbfce9fed776cd3200ca2d904a65
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	2096
 
-TPNO=			27577
+TPNO=			34280
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -63,12 +63,6 @@ CONFIGURE_OPTIONS  +=   --with-libpcre
 CONFIGURE_OPTIONS  +=   --with-liblua 
 CONFIGURE_OPTIONS  +=   --with-ncat 
 CONFIGURE_OPTIONS  +=   --with-ndiff
-
-# pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
-COMPONENT_POST_INSTALL_ACTION += \
-        $(GSED) -i -e "s?env python?python$(PYTHON_VERSION)?" \
-                $(PROTOUSRBINDIR)/uninstall_zenmap
 
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/python/pygobject-27

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr/share/gtk-doc/html/poppler/(.+)$ -> \
@@ -38,13 +38,14 @@ set name=info.classification \
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/051 value=PSARC/2016/025 \
-    value=PSARC/2016/321
+    value=PSARC/2016/321 value=PSARC/2017/043
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/bin/pdfdetach
 file path=usr/bin/pdffonts
 file path=usr/bin/pdfimages
 file path=usr/bin/pdfinfo
 file path=usr/bin/pdfseparate
+file path=usr/bin/pdfsig
 file path=usr/bin/pdftocairo
 file path=usr/bin/pdftohtml
 file path=usr/bin/pdftoppm
@@ -107,6 +108,8 @@ file path=usr/include/poppler/PreScanOutputDev.h
 file path=usr/include/poppler/ProfileData.h
 file path=usr/include/poppler/Rendition.h
 file path=usr/include/poppler/SecurityHandler.h
+file path=usr/include/poppler/SignatureHandler.h
+file path=usr/include/poppler/SignatureInfo.h
 file path=usr/include/poppler/Sound.h
 file path=usr/include/poppler/SplashOutputDev.h
 file path=usr/include/poppler/StdinCachedFile.h
@@ -200,36 +203,36 @@ file path=usr/include/poppler/splash/SplashTypes.h
 file path=usr/include/poppler/splash/SplashXPath.h
 file path=usr/include/poppler/splash/SplashXPathScanner.h
 file path=usr/lib/$(MACH64)/girepository-1.0/Poppler-0.18.typelib
-link path=usr/lib/$(MACH64)/libpoppler-cpp.so target=libpoppler-cpp.so.0.2.1
-link path=usr/lib/$(MACH64)/libpoppler-cpp.so.0 target=libpoppler-cpp.so.0.2.1
-file path=usr/lib/$(MACH64)/libpoppler-cpp.so.0.2.1
-link path=usr/lib/$(MACH64)/libpoppler-glib.so target=libpoppler-glib.so.8.7.0
-# Need to include the old libpoppler-glib.so.5 sym link to allow evince to
+link path=usr/lib/$(MACH64)/libpoppler-cpp.so target=libpoppler-cpp.so.0.3.0
+link path=usr/lib/$(MACH64)/libpoppler-cpp.so.0 target=libpoppler-cpp.so.0.3.0
+file path=usr/lib/$(MACH64)/libpoppler-cpp.so.0.3.0
+link path=usr/lib/$(MACH64)/libpoppler-glib.so target=libpoppler-glib.so.8.8.0
+link path=usr/lib/$(MACH64)/libpoppler-glib.so.8 target=libpoppler-glib.so.8.8.0
+file path=usr/lib/$(MACH64)/libpoppler-glib.so.8.8.0
+link path=usr/lib/$(MACH64)/libpoppler.so target=libpoppler.so.66.0.0
+# Need to include the old libpoppler.so.52 sym link to allow evince to
 # correctly run while we go through this transition period.
-link path=usr/lib/$(MACH64)/libpoppler-glib.so.5 target=libpoppler-glib.so.8
-link path=usr/lib/$(MACH64)/libpoppler-glib.so.8 target=libpoppler-glib.so.8.7.0
-file path=usr/lib/$(MACH64)/libpoppler-glib.so.8.7.0
-link path=usr/lib/$(MACH64)/libpoppler.so target=libpoppler.so.52.0.0
-link path=usr/lib/$(MACH64)/libpoppler.so.52 target=libpoppler.so.52.0.0
-file path=usr/lib/$(MACH64)/libpoppler.so.52.0.0
+link path=usr/lib/$(MACH64)/libpoppler.so.52 target=libpoppler.so.66
+link path=usr/lib/$(MACH64)/libpoppler.so.66 target=libpoppler.so.66.0.0
+file path=usr/lib/$(MACH64)/libpoppler.so.66.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/poppler-cairo.pc
 file path=usr/lib/$(MACH64)/pkgconfig/poppler-cpp.pc
 file path=usr/lib/$(MACH64)/pkgconfig/poppler-glib.pc
 file path=usr/lib/$(MACH64)/pkgconfig/poppler-splash.pc
 file path=usr/lib/$(MACH64)/pkgconfig/poppler.pc
 file path=usr/lib/girepository-1.0/Poppler-0.18.typelib
-link path=usr/lib/libpoppler-cpp.so target=libpoppler-cpp.so.0.2.1
-link path=usr/lib/libpoppler-cpp.so.0 target=libpoppler-cpp.so.0.2.1
-file path=usr/lib/libpoppler-cpp.so.0.2.1
-link path=usr/lib/libpoppler-glib.so target=libpoppler-glib.so.8.7.0
-# Need to include the old libpoppler-glib.so.5 sym link to allow evince to
+link path=usr/lib/libpoppler-cpp.so target=libpoppler-cpp.so.0.3.0
+link path=usr/lib/libpoppler-cpp.so.0 target=libpoppler-cpp.so.0.3.0
+file path=usr/lib/libpoppler-cpp.so.0.3.0
+link path=usr/lib/libpoppler-glib.so target=libpoppler-glib.so.8.8.0
+link path=usr/lib/libpoppler-glib.so.8 target=libpoppler-glib.so.8.8.0
+file path=usr/lib/libpoppler-glib.so.8.8.0
+link path=usr/lib/libpoppler.so target=libpoppler.so.66.0.0
+# Need to include the old libpoppler.so.52 sym link to allow evince to
 # correctly run while we go through this transition period.
-link path=usr/lib/libpoppler-glib.so.5 target=libpoppler-glib.so.8
-link path=usr/lib/libpoppler-glib.so.8 target=libpoppler-glib.so.8.7.0
-file path=usr/lib/libpoppler-glib.so.8.7.0
-link path=usr/lib/libpoppler.so target=libpoppler.so.52.0.0
-link path=usr/lib/libpoppler.so.52 target=libpoppler.so.52.0.0
-file path=usr/lib/libpoppler.so.52.0.0
+link path=usr/lib/libpoppler.so.52 target=libpoppler.so.66
+link path=usr/lib/libpoppler.so.66 target=libpoppler.so.66.0.0
+file path=usr/lib/libpoppler.so.66.0.0
 file path=usr/lib/pkgconfig/poppler-cairo.pc
 file path=usr/lib/pkgconfig/poppler-cpp.pc
 file path=usr/lib/pkgconfig/poppler-glib.pc
@@ -241,6 +244,7 @@ file path=usr/share/man/man1/pdffonts.1
 file path=usr/share/man/man1/pdfimages.1
 file path=usr/share/man/man1/pdfinfo.1
 file path=usr/share/man/man1/pdfseparate.1
+file path=usr/share/man/man1/pdfsig.1
 file path=usr/share/man/man1/pdftocairo.1
 file path=usr/share/man/man1/pdftohtml.1
 file path=usr/share/man/man1/pdftoppm.1

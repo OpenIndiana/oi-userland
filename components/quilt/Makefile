@@ -28,14 +28,14 @@ include ../../make-rules/shared-macros.mk
 PATH = $(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		quilt
-COMPONENT_VERSION=	0.64
+COMPONENT_VERSION=	0.65
 COMPONENT_PROJECT_URL=	http://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c4bfd3282214a288e8d3e921ae4d52e73e24c4fead72b5446752adee99a7affd
+    sha256:f6cbc788e5cbbb381a3c6eab5b9efce67c776a8662a7795c7432fd27aa096819
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	4143
 
-TPNO=			21555
+TPNO=			34013
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/common.mk
@@ -54,6 +54,7 @@ COMPONENT_BUILD_ARGS+=	--no-print-directory
 
 PERLBINDIR= $(USRDIR)/perl5/$(PERL_VERSION)/bin
 
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-column=$(USRBINDIR)/column
 CONFIGURE_OPTIONS += --with-cp=$(GNUBIN)/cp
 CONFIGURE_OPTIONS += --with-date=$(GNUBIN)/date
@@ -74,6 +75,7 @@ COMPONENT_INSTALL_ARGS +=	BUILD_ROOT=$(PROTO_DIR)
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.* -> .*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^Unescaped left brace.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^Generating.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \

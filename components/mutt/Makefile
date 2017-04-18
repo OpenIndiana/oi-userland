@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	1.6.1
+COMPONENT_VERSION=	1.8.0
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:98b26cecc6b1713082fc880344fa345c20bd7ded6459abe18c84429c7cf8ed20
+    sha256:45841eda12804b460260adff8f3f39cc977744e832486a3c49e182eda967adab
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_ANITYA_ID=	2035
 
-TPNO=			29951
+TPNO=			34317
 
 # Enable adiheap and adistack security extensions
 ADIHEAP_MODE =	$(ADIHEAP_ENABLE)

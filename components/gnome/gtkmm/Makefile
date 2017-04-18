@@ -26,6 +26,9 @@
 BUILD_BITS =            32_and_64
 # For now, all things built for C++11 require gcc.
 COMPILER =              gcc
+# parfait spins on sparc
+export PARFAIT_BUILD=no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkmm

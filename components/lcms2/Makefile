@@ -23,18 +23,19 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_VERSION=      2.7
+COMPONENT_VERSION=      2.8
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4524234ae7de185e6b6da5d31d6875085b2198bc63b1211f7dde6e2d197d6a53
+    sha256:66d02b229d2ea9474e62c2b6cd6720fde946155cd1d0d2bffdab829790a0fb22
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lcms
 COMPONENT_ANITYA_ID=	9815
 
-TPNO=			25712
+TPNO=			33986
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -77,6 +78,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^.*DEPDIR=.deps.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*(ignored)*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "/^XXX_REMOVE_XXX$$/d" '

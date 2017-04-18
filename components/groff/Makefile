@@ -46,7 +46,10 @@ CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
 CONFIGURE_OPTIONS += \
     --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
 
+# this option causes errors with parfait
+ifneq   ($(strip $(PARFAIT_BUILD)),yes)
 CXXFLAGS += -std=c++11
+endif
 
 # Don't generate tmac wrappers for the Solaris troff macro packages.
 # Some man pages (such as groff.1) use long macro name definitions
