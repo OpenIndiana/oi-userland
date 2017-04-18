@@ -26,13 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
-COMPONENT_VERSION=	4.2.2
+COMPONENT_VERSION=	4.4
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fea0a94d4b605894f3e2d5572e3f96e4413bcad3a085aae7367c2cf07908b2ff
+    sha256:cbd6ebc5aaf080ed60d0162d7f6aeae58211a1ee9ba9bb25623daa6cd942683b
 COMPONENT_BUGDB=	utility/gnu-sed
 COMPONENT_ANITYA_ID=	4789
 
-TPNO=			12595
+TPNO=			34017
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/gnu-component.mk
@@ -41,14 +42,21 @@ CONFIGURE_BINDIR.64= $(GNUBIN)
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
-COMPONENT_TEST_DIR =		$(@D)/testsuite
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += \
-    '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^/usr/gnu/bin/make.*$$|XXX_CC_XXX|g" ' \
-    '-e "/^XXX_CC_XXX$$/d" '
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 # Modify test results for system-test
 COMPONENT_PRE_SYSTEM_TEST_ACTION += \
