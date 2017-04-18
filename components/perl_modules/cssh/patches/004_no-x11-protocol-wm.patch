@@ -1,0 +1,59 @@
+Patch out the use of X11::Protocol::WM as it isn't currently available in
+Solaris. Fall back to use the defaults that the new version provides if the
+WM call failed.
+
+This patch will not be sent upstream. Hopefully some time in the future
+the Perl X11::Protocol::WM will be added to Userland/Solaris, and then this
+patch can be removed.
+
+--- App-ClusterSSH-4.09/lib/App/ClusterSSH.pm.orig	2017-03-22 11:11:46.121807016 +0000
++++ App-ClusterSSH-4.09/lib/App/ClusterSSH.pm	2017-03-22 11:05:46.342304151 +0000
+@@ -27,7 +27,7 @@
+ require Tk::LabEntry;
+ use X11::Protocol;
+ use X11::Protocol::Constants qw/ Shift Mod5 ShiftMask /;
+-use X11::Protocol::WM;
++#use X11::Protocol::WM;
+ use vars qw/ %keysymtocode %keycodetosym /;
+ use X11::Keysyms '%keysymtocode', 'MISCELLANY', 'XKB_KEYS', '3270', 'LATIN1',
+     'LATIN2', 'LATIN3', 'LATIN4', 'KATAKANA', 'ARABIC', 'CYRILLIC', 'GREEK',
+@@ -1005,23 +1005,23 @@
+    # disable behavior added in https://github.com/duncs/clusterssh/pull/66
+    # unless explicitly enabled with auto_wm_decoration_offsets => yes
+ 
+-        if ( $self->config->{auto_wm_decoration_offsets} =~ /yes/i ) {
++        #if ( $self->config->{auto_wm_decoration_offsets} =~ /yes/i ) {
+ 
+-            # use the first window as exemplary
+-            my ($wid) = $servers{ ( keys(%servers) )[0] }{wid};
+-
+-            if ( defined($wid) ) {
+-
+-                # get the WM decoration sizes
+-                (   $self->config->{internal_terminal_wm_decoration_left},
+-                    $self->config->{internal_terminal_wm_decoration_right},
+-                    $self->config->{internal_terminal_wm_decoration_top},
+-                    $self->config->{internal_terminal_wm_decoration_bottom}
+-                    )
+-                    = X11::Protocol::WM::get_net_frame_extents( $xdisplay,
+-                    $wid );
+-            }
+-        }
++        #    # use the first window as exemplary
++        #    my ($wid) = $servers{ ( keys(%servers) )[0] }{wid};
++        #
++        #    if ( defined($wid) ) {
++        #
++        #        # get the WM decoration sizes
++        #        (   $self->config->{internal_terminal_wm_decoration_left},
++        #            $self->config->{internal_terminal_wm_decoration_right},
++        #            $self->config->{internal_terminal_wm_decoration_top},
++        #            $self->config->{internal_terminal_wm_decoration_bottom}
++        #            )
++        #            = X11::Protocol::WM::get_net_frame_extents( $xdisplay,
++        #            $wid );
++        #    }
++        #}
+ 
+         # in case the WM call failed we set some defaults
+         slash_slash_equal(

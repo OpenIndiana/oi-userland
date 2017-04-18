@@ -3,10 +3,9 @@
 # currently available on Solaris.  Once we add them, this patch can be removed.
 #
 
-diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm
---- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig	Tue Apr 16 03:24:31 2013
-+++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm	Fri Feb  7 14:19:11 2014
-@@ -5,15 +5,6 @@
+--- App-ClusterSSH-4.09/lib/App/ClusterSSH/Base.pm.orig	2017-03-22 10:15:41.590929247 +0000
++++ App-ClusterSSH-4.09/lib/App/ClusterSSH/Base.pm	2017-03-22 10:24:02.509863095 +0000
+@@ -5,17 +5,6 @@
  use Carp;
  use App::ClusterSSH::L10N;
  
@@ -17,12 +16,14 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
 -    },
 -    'App::ClusterSSH::Exception::Cluster',
 -    'App::ClusterSSH::Exception::LoadFile',
+-    'App::ClusterSSH::Exception::Helper',
+-    'App::ClusterSSH::Exception::Getopt',
 -);
 -
- # Dont use SVN revision as it can cause problems
+ # Don't use SVN revision as it can cause problems
  use version;
  our $VERSION = version->new('0.02');
-@@ -96,9 +87,7 @@
+@@ -94,9 +83,7 @@
      my ( $self, $level ) = @_;
      if ( !defined $level ) {
          croak(
@@ -33,7 +34,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
          );
      }
      if ( $level > 9 ) {
-@@ -138,9 +127,7 @@
+@@ -136,9 +123,7 @@
  
      if ( !$app_configuration ) {
          croak(
@@ -44,7 +45,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
          );
      }
  
-@@ -152,17 +139,13 @@
+@@ -150,17 +135,13 @@
  
      if ($app_configuration) {
          croak(
@@ -62,7 +63,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
          );
      }
  
-@@ -178,17 +161,13 @@
+@@ -176,17 +157,13 @@
  
      if ( !$args{filename} ) {
          croak(
@@ -73,16 +74,16 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
          );
      }
  
-     if ( !$args{type} || $args{type} !~ m/cluster|config/ ) {
+     if ( !$args{type} ) {
          croak(
 -            App::ClusterSSH::Exception->throw(
--                error => '"type" arg invalid'
+-                error => '"type" arg not passed'
 -            )
-+                '"type" arg invalid'
++                '"type" arg not passed'
          );
      }
  
-@@ -196,12 +175,10 @@
+@@ -194,12 +171,10 @@
  
      if ( !-e $args{filename} ) {
          croak(
@@ -96,7 +97,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
          );
      }
  
-@@ -209,20 +186,16 @@
+@@ -207,20 +182,16 @@
          = $args{type} eq 'config'  ? qr/\s*(\S+)\s*=\s*(.*)/
          : $args{type} eq 'cluster' ? qr/\s*(\S+)\s+(.*)/
          : croak(
@@ -119,7 +120,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
          );
  
      my %results;
-@@ -259,9 +232,7 @@
+@@ -257,9 +228,7 @@
  
      close($fh)
          or croak(
@@ -130,9 +131,8 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH
          );
  
      return %results;
-diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm
---- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm.orig	Tue Apr 16 03:24:31 2013
-+++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm	Fri Feb  7 14:19:30 2014
+--- App-ClusterSSH-4.09/lib/App/ClusterSSH/Cluster.pm.orig	2017-03-22 10:24:35.452015893 +0000
++++ App-ClusterSSH-4.09/lib/App/ClusterSSH/Cluster.pm	2017-03-22 10:26:02.835966591 +0000
 @@ -7,7 +7,6 @@
  our $VERSION = version->new('0.01');
  
@@ -141,7 +141,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm.orig App-Cluster
  use English qw( -no_match_vars );
  
  use base qw/ App::ClusterSSH::Base /;
-@@ -73,13 +72,11 @@
+@@ -100,13 +99,11 @@
  
      if ( $return_code != 0 ) {
          croak(
@@ -156,9 +156,8 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm.orig App-Cluster
          );
      }
  
-diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm
---- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm.orig	Tue Apr 16 03:24:31 2013
-+++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm	Fri Feb  7 14:22:41 2014
+--- App-ClusterSSH-4.09/lib/App/ClusterSSH/Config.pm.orig	2017-03-22 10:26:22.186034799 +0000
++++ App-ClusterSSH-4.09/lib/App/ClusterSSH/Config.pm	2017-03-22 10:48:16.196491331 +0000
 @@ -7,7 +7,6 @@
  our $VERSION = version->new('0.02');
  
@@ -167,7 +166,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
  
  use FindBin qw($Script);
  use File::Copy;
-@@ -140,32 +139,25 @@
+@@ -159,32 +158,25 @@
  
      if (@unknown_config) {
          croak(
@@ -203,7 +202,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
          );
      }
  
-@@ -186,12 +178,10 @@
+@@ -207,12 +199,10 @@
  
      #    if ( !-e $config_file || !-r $config_file ) {
      #        croak(
@@ -217,7 +216,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
      #        );
      #    }
      #
-@@ -259,10 +249,9 @@
+@@ -280,10 +270,9 @@
      }
  
      # write out default config file if necesasry
@@ -231,7 +230,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
          warn $_, $/;
      };
  
-@@ -288,12 +277,10 @@
+@@ -309,12 +298,10 @@
  
          if ($@) {
              croak(
@@ -245,7 +244,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
              );
          }
          else {
-@@ -311,12 +298,10 @@
+@@ -332,12 +319,10 @@
      if ( !-d "$ENV{HOME}/.clusterssh" ) {
          if ( !mkdir("$ENV{HOME}/.clusterssh") ) {
              croak(
@@ -259,7 +258,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
              );
  
          }
-@@ -336,13 +321,11 @@
+@@ -357,13 +342,11 @@
          }
          else {
              croak(
@@ -274,7 +273,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
              );
          }
      }
-@@ -365,12 +348,10 @@
+@@ -386,12 +369,10 @@
      }
      else {
          croak(
@@ -288,7 +287,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
          );
      }
  
-@@ -384,9 +365,7 @@
+@@ -424,9 +405,7 @@
  
      if ( !$binary ) {
          croak(
@@ -299,7 +298,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
          );
      }
  
-@@ -435,13 +414,11 @@
+@@ -475,13 +454,11 @@
      }
      if ( !$path || !-f $path || !-x $path ) {
          croak(
@@ -314,9 +313,18 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.
          );
      }
  
-diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm
---- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm.orig	Tue Apr 16 03:24:31 2013
-+++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm	Fri Feb  7 14:13:54 2014
+--- App-ClusterSSH-4.09/lib/App/ClusterSSH/Getopt.pm.orig	2017-03-22 10:50:26.768566311 +0000
++++ App-ClusterSSH-4.09/lib/App/ClusterSSH/Getopt.pm	2017-03-22 10:51:02.323515604 +0000
+@@ -7,7 +7,6 @@
+ our $VERSION = version->new('0.01');
+ 
+ use Carp;
+-use Try::Tiny;
+ use Pod::Usage;
+ use Getopt::Long qw(:config no_ignore_case bundling no_auto_abbrev);
+ use FindBin qw($Script);
+--- App-ClusterSSH-4.09/lib/App/ClusterSSH/Helper.pm.orig	2017-03-22 10:33:08.703980475 +0000
++++ App-ClusterSSH-4.09/lib/App/ClusterSSH/Helper.pm	2017-03-22 10:33:20.035706452 +0000
 @@ -7,7 +7,6 @@
  our $VERSION = version->new('0.02');
  
@@ -325,10 +333,9 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm.orig App-ClusterS
  
  use base qw/ App::ClusterSSH::Base /;
  
-diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm
---- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm.orig	Tue Apr 16 03:24:31 2013
-+++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm	Fri Feb  7 14:19:57 2014
-@@ -18,9 +18,7 @@
+--- App-ClusterSSH-4.09/lib/App/ClusterSSH/Host.pm.orig	2017-03-22 10:33:52.690436764 +0000
++++ App-ClusterSSH-4.09/lib/App/ClusterSSH/Host.pm	2017-03-22 10:34:42.232192289 +0000
+@@ -19,9 +19,7 @@
  
      if ( !$args{hostname} ) {
          croak(
@@ -339,7 +346,7 @@ diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm.orig App-ClusterSSH
          );
      }
  
-@@ -265,11 +263,9 @@
+@@ -280,11 +278,9 @@
  
      # if we got this far, we didnt parse the host_string properly
      croak(
