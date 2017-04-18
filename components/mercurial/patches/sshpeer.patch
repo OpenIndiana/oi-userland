@@ -1,0 +1,33 @@
+# HG changeset patch
+# User Augie Fackler <augie@google.com>
+# Date 1492114180 14400
+#      Thu Apr 13 16:09:40 2017 -0400
+# Node ID ec81fd7580f3e31aa92e8834ffbcf2a8e80e72e3
+# Parent  35afb54dbb4df2975dbbf0e1525b98611f18ba85
+sshpeer: try harder to snag stderr when stdout closes unexpectedly
+
+Resolves test failures on FreeBSD, but I'm not happy about the fix.
+
+diff --git a/mercurial/sshpeer.py b/mercurial/sshpeer.py
+--- a/mercurial/sshpeer.py
++++ b/mercurial/sshpeer.py
+@@ -110,9 +110,17 @@ class doublepipe(object):
+             if mainready:
+                 meth = getattr(self._main, methname)
+                 if data is None:
+-                    return meth()
++                    r = meth()
+                 else:
+-                    return meth(data)
++                    r = meth(data)
++                if not r and data != 0:
++                    # We've observed a condition that indicates the
++                    # stdout closed unexpectedly. Check stderr one
++                    # more time and snag anything that's there before
++                    # letting anyone know the main part of the pipe
++                    # closed prematurely.
++                    _forwardoutput(self._ui, self._side)
++                return r
+
+     def close(self):
+         return self._main.close()

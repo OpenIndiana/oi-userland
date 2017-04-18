@@ -28,16 +28,16 @@ include ../../make-rules/shared-macros.mk
 PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR)
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	4.1
+COMPONENT_VERSION=	4.1.3
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7b33c32cdd1d518bc2e2ae223e6ef63c486cf52e9d01a45b99cf8eab7bea5274
+    sha256:103d2ae187d5c94110c0e86ccc3b46f55fcd8e21c78d1c209bac7b59a73e86d8
 COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/hg
 COMPONENT_ANITYA_ID=	1969
 
-TPNO=			33715
+TPNO=			34883
 
 # Mercurial does not yet support Python 3.
 PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
