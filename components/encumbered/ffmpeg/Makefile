@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
-COMPONENT_VERSION= 2.8.10
+COMPONENT_VERSION= 2.8.11
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d1ce1a73503dce6e2b1e208cb93a2a8a7e89f9c64357ddc3e4da3cab33dea9c9
+  sha256:9987e0f6b1f66311390f807a0c18ad9c90652b5097cff17b3dcbeabdd89f8d32
 COMPONENT_ARCHIVE_URL= \
   http://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.ffmpeg.org/
@@ -30,12 +30,10 @@ COMPONENT_LICENSE_FILE = ffmpeg.license
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = video/ffmpeg
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS.32 += -fno-rename-registers
 CFLAGS.32 += -fomit-frame-pointer
