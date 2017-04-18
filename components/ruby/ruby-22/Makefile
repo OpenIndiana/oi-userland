@@ -20,6 +20,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -41,8 +42,6 @@ COMPONENT_BUGDB=	utility/ruby
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/configure.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -128,6 +127,3 @@ install:	$(INSTALL_32)
 # Error: TestReadline#test_input_metachar_multibyte
 test:	$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

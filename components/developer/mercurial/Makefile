@@ -20,12 +20,11 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
 COMPONENT_VERSION=	3.8.4
