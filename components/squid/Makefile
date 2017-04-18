@@ -29,15 +29,15 @@ include ../../make-rules/shared-macros.mk
 PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(USRDIR)/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.5.23
+COMPONENT_VERSION=      3.5.24
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:fa4c0c99f41e92fe1330bed3968d176c6f47ef2e3aea2f83977d5501afa40bdb
+    sha256:4fe29f582eef357faa541a53835b6885e24e6f28b80a3abcdf3b57f5393bbdb2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	4880
 
-TPNO=			33098
+TPNO=			34394
 
 # Enable adiheap and adistack security extensions
 ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
@@ -111,35 +111,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # Adjust '#!/usr/bin/perl'
 PERL_SCRIPTS= $(PROTOUSRDIR)/squid/libexec/helper-mux.pl
-
-# To test manually follow along in the book
-# Squid Proxy Server 3.1 Beginner's Guide Page 34
-#
-# Add this to the top of /etc/squid/squid.conf:
-# cache_dir ufs /var/squid/cache/ 500 16 256
-# acl my_machine src 192.0.2.21 # Replace with your desktop's IP address
-# http_access allow my_machine
-#
-# You will probably need to remove or comment out the following lines or Squid
-# will fail to start:
-#	# acl manager proto cache_object
-#
-# Make sure apache is running.
-#	# svcs apache24
-# Start squid:
-#	# svcadm enable squid
-# On your desktop set your web browser to proxy through this squid:
-# Edit -> Preferences -> Advanced -> Network -> Settings
-#	Check: Manual proxy configuration
-#	HTTP Proxy: <squid servers IP address>    Port: 3128
-#   Save
-# Enter <squid server URL> in your web browser.  You should be accessing squid
-# and seeing files stored in the http server on that machine.
-# Enter <squid server URL>:897 in your web browser and squid should complain.
-# Squid is working properly.
-
-# squid tests use cppunit. Currently this requires a version of cppunit
-# installed that have been built with the GNU version 5.3 compilers.
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
