@@ -28,13 +28,12 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	3.8.4
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.1.3
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4b2e3ef19d34fa1d781cb7425506a05d4b6b1172bab69d6ea78874175fdf3da6
+    sha256:103d2ae187d5c94110c0e86ccc3b46f55fcd8e21c78d1c209bac7b59a73e86d8
 COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
@@ -63,6 +62,12 @@ TEST_BLACKLIST = \
 	test-hghave.t \
 	test-module-imports.t \
 	test-run-tests.t
+
+# https://www.mercurial-scm.org/pipermail/mercurial-devel/2017-March/093876.html
+TEST_BLACKLIST += \
+	test-ssh-bundle1.t \
+	test-bundle2-exchange.t
+
 COMPONENT_PRE_TEST_ACTION = \
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
 	printf "%s\n" $(TEST_BLACKLIST) > blacklist); \
@@ -107,12 +112,15 @@ patches/manpages.patch: $(SOURCE_DIR)/.unpacked \
 		done > $@; \
 	fi || true
 
+# Install 64-bit first, so that the 32-bit hg is what's installed.
+$(INSTALL_32):	$(INSTALL_64)
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		install $(TEST_32)
+test:		install $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
