@@ -39,6 +39,8 @@ TPNO=			34404
 # Deliver 'sbin' binaries to 'bin'.
 CONFIGURE_SBINDIR.64= $(CONFIGURE_BINDIR.64)
 
+CFLAGS +=		$(XPG6MODE)
+
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
