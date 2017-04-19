@@ -1,0 +1,63 @@
+Solaris man pages are now normalized, so no need to do anything special.
+
+These changes should be sent upstream.
+
+--- smartmontools-6.5/Makefile.am.orig	2017-01-12 07:39:27.376645290 +0000
++++ smartmontools-6.5/Makefile.am	2017-01-12 07:43:54.526791076 +0000
+@@ -249,47 +249,6 @@
+ 
+ endif
+ 
+-if OS_SOLARIS
+-# This block is required because Solaris uses manual page section 1m
+-# for administrative command (linux/freebsd use section 8) and Solaris
+-# uses manual page section 4 for file formats (linux/freebsd use
+-# section 5).  Automake can deal cleanly with man page sections 1-8
+-# and n, but NOT with sections of the form 1m.
+-extra_MANS =      smartd.conf.4 \
+-                  smartctl.1m   \
+-                  smartd.1m
+-if ENABLE_UPDATE_SMART_DRIVEDB
+-extra_MANS += update-smart-drivedb.1m
+-endif
+-
+-all-local: $(extra_MANS)
+-install-man: $(extra_MANS)
+-	@$(NORMAL_INSTALL)
+-	$(MKDIR_P) '$(DESTDIR)$(mandir)/man4'
+-	$(MKDIR_P) '$(DESTDIR)$(mandir)/man1m'
+-	for i in $(extra_MANS); do \
+-	  if test -f $(srcdir)/$$i; then file=$(srcdir)/$$i; \
+-	  else file=$$i; fi; \
+-	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+-	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+-	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
+-	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+-	  echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(mandir)/man$$ext/$$inst'"; \
+-	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(mandir)/man$$ext/$$inst"; \
+-	done
+-uninstall-man:
+-	@$(NORMAL_UNINSTALL)
+-	for i in $(extra_MANS); do \
+-	  if test -f $(srcdir)/$$i; then file=$(srcdir)/$$i; \
+-	  else file=$$i; fi; \
+-	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+-	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+-	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
+-	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+-	  echo " rm -f '$(DESTDIR)$(mandir)/man$$ext/$$inst'"; \
+-	  rm -f "$(DESTDIR)$(mandir)/man$$ext/$$inst"; \
+-	done
+-else
+ # For systems that adopts traditional manner
+ 
+ man_MANS =        smartd.conf.5 \
+@@ -300,8 +259,6 @@
+ man_MANS += update-smart-drivedb.8
+ endif
+ 
+-endif
+-
+ docsdir=$(docdir)
+ docs_DATA = \
+         AUTHORS \
