@@ -1,0 +1,43 @@
+Squid comes with a set of tests, so don't forget to run "gmake test"
+and make sure that the output matches the master test results.
+
+These squid tests use cppunit. Currently this requires a version of cppunit
+installed that have been built with the GNU version 5.3 compilers.
+
+
+To test manually follow along in the book
+Squid Proxy Server 3.1 Beginner's Guide Page 34
+
+Add these three lines to the top of /etc/squid/squid.conf:
+
+cache_dir ufs /var/squid/cache/ 500 16 256
+acl my_machine src 192.0.2.21    # Replace this IP address with your IP address
+http_access allow my_machine
+
+You might need to remove or comment out the following lines or Squid
+will fail to start:
+
+  # acl manager proto cache_object
+
+Make sure apache is running.
+
+  $ sudo svcs apache24
+
+Start squid:
+
+  $ sudo svcadm enable squid
+
+On your desktop set your web browser to proxy through this squid:
+
+Edit -> Preferences -> Advanced -> Network -> Settings
+
+      Check: Manual proxy configuration
+      HTTP Proxy: <squid servers IP address>    Port: 3128
+
+  Save
+
+Enter <squid server URL> in your web browser. You should be accessing squid
+and seeing files stored in the http server on that machine.
+
+Enter <squid server URL>:897 in your web browser and squid should complain.
+If those two things happen, then squid is working properly.

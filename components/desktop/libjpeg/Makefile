@@ -30,24 +30,23 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         jpeg
 COMPONENT_VERSION=      6.0.2
-HUMAN_VERSION=          v6b
+HUMAN_VERSION=          v6b2
 COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libjpeg/
-COMPONENT_SRC=          jpeg-6b
+COMPONENT_SRC=          jpeg-6b2
 COMPONENT_SRC_NAME=     jpegsrc.$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC_NAME).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:75c3ec241e9996504fe02a9ed4d12f16b74ade713972f3db9e65ce95cd27e35d
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/libjpeg/6b/$(COMPONENT_ARCHIVE)
+    sha256:6d2be0db82dda2e50c908b72aa22ed8cf42cc5aa5ae5f2b081498be6ef16eabc
+COMPONENT_ARCHIVE_URL=  http://jpegclub.org/support/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libjpeg
 COMPONENT_ANITYA_ID=	1628
 
-TPNO=			9298
+TPNO=			34809
 
 include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS +=		$(CC_BITS)
 
-CONFIGURE_OPTIONS +=	--prefix=$(PROTOUSRDIR)
 CONFIGURE_OPTIONS +=	--enable-shared
 
 CONFIGURE_ENV += INSTALL="$(INSTALL) -D"

@@ -30,16 +30,16 @@ COMPILER =              gcc
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-good
-COMPONENT_VERSION=	1.4.5
+COMPONENT_VERSION=	1.10.3
 COMPONENT_PROJECT_URL=	http://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:79b1b5f3f7bcaa8a615202eb5e176121eeb8336960f70687e536ad78dbc7e641
+	sha256:4e07e93e34d4b93208f1579c21e7d91a236577b36f128a5332ffee85b4465955
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
 COMPONENT_ANITYA_ID=	1263
 
-TPNO=			25637
+TPNO=			33710
 
 # Hook up tests after build servers are installed with dependencies
 TEST_TARGET= $(SKIP_TEST)
@@ -52,6 +52,14 @@ PYTHON_VERSIONS= 2.7
 include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Use the build area of gstreamer and gst-plugins-base
+GST_BASE = $(WS_COMPONENTS)/desktop/gstreamer1/gstreamer/build/prototype/$(MACH)
+GST_PL_BASE = $(WS_COMPONENTS)/desktop/gstreamer1/gst-plugins-base/build/prototype/$(MACH)
+PKG_CONFIG_PATHS += $(GST_BASE)$(USRLIB)/pkgconfig:$(GST_PL_BASE)$(USRLIB)/pkgconfig
+ 
+CPPFLAGS += -I$(GST_BASE)/usr/include/gstreamer-1.0 -I$(GST_PL_BASE)/usr/include/gstreamer-1.0/
+LD_OPTIONS += -L $(GST_BASE)$(USRLIB) -L $(GST_PL_BASE)$(USRLIB)
 
 CXXFLAGS += -std=c++11
 

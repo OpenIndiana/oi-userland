@@ -1,16 +1,16 @@
 # This patch fixes a test failure in gnulib-tests/test-localename
-# __getlocalename_l is an Oracle private interface. 
+# __getlocalename_l is an Oracle private interface.
 # Do not send this patch upstream.
 
---- grep-2.22-orig/gnulib-tests/localename.c	2015-10-24 13:07:13.000000000 -0700
-+++ grep-2.22/gnulib-tests/localename.c	2016-01-19 17:18:20.049731748 -0800
-@@ -2732,6 +2732,9 @@ gl_locale_name_thread_unsafe (int catego
- #  elif defined __sun && HAVE_GETLOCALENAME_L
-         /* Solaris >= 12.  */
-         return getlocalename_l (category, thread_locale);
+--- grep-3.0/gnulib-tests/localename.c.orig	2017-03-01 07:14:51.129981406 +0000
++++ grep-3.0/gnulib-tests/localename.c	2017-03-01 07:15:51.216928103 +0000
+@@ -49,6 +49,9 @@
+ # if defined __sun && HAVE_GETLOCALENAME_L
+ /* Solaris >= 12.  */
+ extern char * getlocalename_l(int, locale_t);
 +#  elif defined(sun) || defined(__sun) || defined(__sun__)
-+        extern char * __getlocalename_l(int, locale_t);
-+        return __getlocalename_l (category, thread_locale);
- #  elif defined __ANDROID__
-         return MB_CUR_MAX == 4 ? "C.UTF-8" : "C";
- #  endif
++	extern char * __getlocalename_l(int, locale_t);
++	return __getlocalename_l (category, thread_locale);
+ # endif
+ #endif
+ 

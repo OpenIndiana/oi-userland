@@ -25,19 +25,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		App-ClusterSSH
-COMPONENT_VERSION=	4.2.1
-HUMAN_VERSION=		4.02_01
+COMPONENT_VERSION=	4.9
+HUMAN_VERSION=		4.09
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4f1c1fc151f4dc38d3f5e5803fb39a2eee15b797650ca94cd6f673a670cdaad5
+    sha256:32b9fd9fbaf0a6b66aae79bdf6ebaa9f53fe438601a9a850c6f035684cd5da39
 # This project is registered on SourceForge and CPAN
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/clusterssh/
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/clusterssh/2.%20ClusterSSH%20Series%204/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/cssh
 COMPONENT_ANITYA_ID=	10596
 
-TPNO=			13257
+TPNO=			34436
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -58,5 +58,6 @@ system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/perl-5/perl-x11-protocol-522
 REQUIRED_PACKAGES += library/perl-5/perl-tk-522
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/core-os

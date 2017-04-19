@@ -30,16 +30,16 @@ COMPILER =		gcc
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.4.0
+COMPONENT_VERSION=	1.10.3
 COMPONENT_PROJECT_URL=	http://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b1e40c29ceb41b03f08d38aca6056054f0341d0706276326dceeec6ac8d53d3e
+	sha256:bdfa2d06dfe0ce68f638b04fed6890db506416c1dcf1279e83458269d719a4e8
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
 COMPONENT_ANITYA_ID=	3881
 
-TPNO=			24910
+TPNO=			33712
 
 # Requires pygobject-3 which is currently only built for Python 2.7
 PYTHON_VERSIONS= 2.7
@@ -52,6 +52,10 @@ PUBLISH_STAMP=
 endif
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Use the build area of gstreamer
+GST_BASE = $(WS_COMPONENTS)/desktop/gstreamer1/gstreamer/build/prototype/$(MACH)
+PKG_CONFIG_PATHS += $(GST_BASE)$(USRLIB)/pkgconfig/
 
 CONFIGURE_OPTIONS += --disable-static
 

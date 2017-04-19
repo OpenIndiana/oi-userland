@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coreutils
-COMPONENT_VERSION=	8.26
+COMPONENT_VERSION=	8.27
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:155e94d748f8e2bc327c66e0cbebdb8d6ab265d2f37c3c928f7bf6c3beba9a8e
+    sha256:8891d349ee87b9ff7870f52b6d9312a9db672d2439d289bc57084771ca21656b
 COMPONENT_BUGDB=	utility/gnu-coreutils
 COMPONENT_ANITYA_ID=	343
 
-TPNO=			32865
+TPNO=			34397
 
 TEST_TARGET= install $(TEST_64)
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
@@ -71,11 +71,6 @@ COMPONENT_TEST_DIR =	$(@D)/tests
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_TEST_ARGS +=	V=1
-
-# Master test results are different between x86 and SPARC (different # of
-# tests run).
-COMPONENT_TEST_MASTER = \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \

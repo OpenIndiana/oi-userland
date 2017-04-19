@@ -33,17 +33,17 @@ include ../../../../make-rules/shared-macros.mk
 # newest version which has no backwards API compatibility and we likely need to
 # ship both, hence the odd name.
 COMPONENT_NAME=		gstreamer
-COMPONENT_VERSION=	1.4.5
+COMPONENT_VERSION=	1.10.3
 COMPONENT_PROJECT_URL=	http://gstreamer.freedesktop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:40801aa7f979024526258a0e94707ba42b8ab6f7d2206e56adbc4433155cb0ae
+	sha256:85b9dc1b2991f224fa90d534ec57014896c479e061dc9fa1bc16ae17cbebb63d
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
 COMPONENT_ANITYA_ID=	1263
 
-TPNO=			25634
+TPNO=			33707
 
 # Needs gobject-introspection, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -67,6 +67,7 @@ CONFIGURE_OPTIONS += --enable-docbook
 # Required for other components.
 CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --with-bash-completion-dir=/etc/bash_completion.d
 
 # The build process modifies the shebang line to use the version of Python
 # automatically found; to avoid using the current system default, one is

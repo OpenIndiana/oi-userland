@@ -1,0 +1,19 @@
+Prevent an
+
+ /usr/gcc/5/lib/gcc/x86_64-pc-solaris2.12/5.4.0/include-fixed/sys/feature_tests.h:399:2: error: #error "Compiler or options invalid for pre-UNIX 03 X/Open applications   and pre-2001 POSIX applications"
+
+error.
+
+This change should be passed upstream.
+
+--- cmake-3.7.2/Utilities/cmlibuv/CMakeLists.txt.orig	2017-03-06 09:09:28.736859634 +0000
++++ cmake-3.7.2/Utilities/cmlibuv/CMakeLists.txt	2017-03-06 09:09:37.572534409 +0000
+@@ -218,7 +218,7 @@
+     )
+   list(APPEND uv_defines
+     __EXTENSIONS__
+-    _XOPEN_SOURCE=500
++    _XOPEN_SOURCE=600
+     )
+   list(APPEND uv_sources
+     src/unix/sunos.c
