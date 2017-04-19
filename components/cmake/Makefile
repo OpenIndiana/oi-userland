@@ -71,6 +71,7 @@ LD_MAP_NOEXBSS.sparc=
 # Reflect the setting above explicitly disabling NXHEAP.
 NXHEAP_MODE = $(NXHEAP_DISABLE)
 
+LDFLAGS +=		$(LIBSOCKET) $(LIBNSL)
 
 # We need these in the environment, although they are already passed
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
