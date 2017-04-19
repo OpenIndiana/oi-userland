@@ -26,15 +26,15 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
-COMPONENT_VERSION=	6.19.00
-IPS_COMPONENT_VERSION=	6.19.0
+COMPONENT_VERSION=	6.20.00
+IPS_COMPONENT_VERSION=	6.20.0
 COMPONENT_PROJECT_URL=	http://www.tcsh.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:12e271e0b89e4259d9d6e8d525322e77340e7244cfbd199a591e5f8146285c49
+    sha256:b89de7064ab54dac454a266cfe5d8bf66940cb5ed048d0c30674ea62e7ecef9d
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	4945
 
-TPNO=			24443
+TPNO=			34278
 
 # the testsuite needs to be configured first
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
@@ -57,12 +57,13 @@ CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(USRBINDIR)
 COMPONENT_SYSTEM_TEST_TARGETS= system-test
 
-# Strip compilation lines from test output
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d" '
+	'-n ' \
+	'-e "/skipped/p" ' \
+	'-e "/ok/p" ' \
+	'-e "/FAILED/p" ' \
+	'-e "/expected failure/p" ' \
+	'-e "/Test results/p" ' \
+	'-e "/successful/p" '
 
 REQUIRED_PACKAGES += text/locale
