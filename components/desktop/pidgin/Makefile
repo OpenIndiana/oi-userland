@@ -23,6 +23,7 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
@@ -37,18 +38,13 @@ COMPONENT_ANITYA_ID=	3636
 TPNO=			34232
 
 # Cyrus SASL is S12-only (at least for evaluation builds).
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_64=
-INSTALL_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Need to pick up the Studio compiler as some Makefiles just use "cc".
 # Need to pick up the GNU version of xgettext.
-PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(GNUBIN):$(USRBINDIR)
+PATH=$(GNUBIN):$(USRBINDIR)
 
 CFLAGS +=		-DG_IMPLEMENT_INLINES -DG_HAVE_ISO_VARARGS
 
@@ -66,7 +62,10 @@ COMPONENT_PREP_ACTION = \
 LIBS += -lresolv
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 
-CONFIGURE_ENV += "ac_cv_path_perlpath=$(PERL)"
+# Use perlgcc to use -fPIC (not -KPIC), -O4/-O3 (not -xO4/-xO3) and gcc
+# (not cc) in the two plugins/perl/common/Makefile's that are created from
+# Makefile.PL "templates".
+CONFIGURE_ENV += "ac_cv_path_perlpath=/usr/perl5/$(PERL_VERSION)/bin/perlgcc"
 
 CONFIGURE_OPTIONS +=	--enable-cyrus-sasl
 CONFIGURE_OPTIONS +=	--enable-nss
