@@ -1,18 +1,3 @@
-{								   \
-  echo '# Signature of the current package.';			   \
-  echo 'm4_define([AT_PACKAGE_NAME],      [tcsh])';	   \
-  echo 'm4_define([AT_PACKAGE_TARNAME],   [tcsh])';   \
-  echo 'm4_define([AT_PACKAGE_VERSION],   [6.19.00])';   \
-  echo 'm4_define([AT_PACKAGE_STRING],    [tcsh 6.19.00])';	   \
-  echo 'm4_define([AT_PACKAGE_BUGREPORT], [http://bugs.gw.com/])'; \
-} >$(SOURCE_DIR)/tests/package.m4
-autom4te --language=autotest -I $(SOURCE_DIR)/tests \
-	$(SOURCE_DIR)/tests/testsuite.at -o $(SOURCE_DIR)/tests/testsuite.tmp
-mv $(SOURCE_DIR)/tests/testsuite.tmp $(SOURCE_DIR)/tests/testsuite
-/bin/sh $(SOURCE_DIR)/tests/testsuite
-## ------------------------ ##
-## tcsh 6.19.00 test suite. ##
-## ------------------------ ##
   1: beepcmd                                         skipped (aliases.at:3)
   2: cwdcmd                                          ok
   3: jobcmd                                          skipped (aliases.at:19)
@@ -121,127 +106,131 @@ mv $(SOURCE_DIR)/tests/testsuite.tmp $(SOURCE_DIR)/tests/testsuite
 106: where                                           ok
 107: which                                           ok
 108: while                                           ok
-109: Arithmetic operators                            ok
-110: Primary expressions                             ok
-111: Word splitting                                  ok
-112: Comments                                        skipped (lexical.at:33)
-113: Escaping special characters                     ok
-114: Preventing substitution                         ok
-115: History basics                                  ok
-116: Event specification                             ok
-117: Word selection                                  ok
-118: History modifiers                               ok
-119: Alias substitution                              ok
-120: Variable substitution                           ok
-121: EUC-JP multibyte test                           ok
-122: UTF-8 multibyte test                            ok
-123: Command substitution                            ok
-124: Filename substitution                           ok
-125: Directory stack substitution                    ok
-126: Command combinations                            ok
-127: Command execution                               ok
-128: $ addsuffix                                     ok
-129: $ afsuser                                       ok
-130: $ ampm                                          ok
-131: $ anyerror                                      ok
-132: $ argv                                          ok
-133: $ autocorrect                                   ok
-134: $ autoexpand                                    ok
-135: $ autolist                                      ok
-136: $ autologout                                    skipped (variables.at:77)
-137: $ backslash_quote                               ok
-138: $ catalog                                       ok
-139: $ cdpath                                        ok
-140: $ color                                         ok
-141: $ colorcat                                      ok
-142: $ command                                       ok
-143: $ complete                                      ok
-144: $ continue                                      ok
-145: $ continue_args                                 ok
-146: $ correct                                       ok
-147: $ csubstnonl                                    ok
-148: $ cwd                                           ok
-149: $ dextract                                      ok
-150: $ dirsfile                                      ok
-151: $ dirstack                                      ok
-152: $ dspmbyte                                      skipped (variables.at:276)
-153: $ dunique                                       ok
-154: $ echo                                          ok
-155: $ echo_style                                    ok
-156: $ edit                                          skipped (variables.at:344)
-157: $ ellipsis                                      ok
-158: $ fignore                                       ok
-159: $ filec                                         ok
-160: $ gid                                           ok
-161: $ group                                         ok
-162: $ histchars                                     ok
-163: $ histdup                                       ok
-164: $ histfile                                      ok
-165: $ histlit                                       ok
-166: $ history                                       ok
-167: $ home                                          ok
-168: $ ignoreeof                                     ok
-169: $ implicitcd                                    ok
-170: $ inputmode                                     ok
-171: $ killdup                                       ok
-172: $ killring                                      ok
-173: $ listflags                                     ok
-174: $ listjobs                                      ok
-175: $ listlinks                                     ok
-176: $ listmax                                       ok
-177: $ listmaxrows                                   ok
-178: $ loginsh                                       ok
-179: $ logout                                        ok
-180: $ mail                                          ok
-181: $ cdtohome                                      ok
-182: $ noimplicithome                                ok
-183: $ matchbeep                                     ok
-184: $ nobeep                                        ok
-185: $ noclobber                                     ok
-186: $ noding                                        ok
-187: $ noglob                                        ok
-188: $ nostat                                        ok
-189: $ notify                                        ok
-190: $ oid                                           skipped (variables.at:725)
-191: $ owd                                           ok
-192: $ path                                          ok
-193: $ printexitvalue                                ok
-194: $ prompt                                        ok
-195: $ prompt2                                       ok
-196: $ prompt3                                       ok
-197: $ promptchars                                   ok
-198: $ pushdtohome                                   ok
-199: $ pushdsilent                                   ok
-200: $ recexact                                      ok
-201: $ recognize_only_executablers                   ok
-202: $ rmstar                                        ok
-203: $ rprompt                                       ok
-204: $ savedirs                                      ok
-205: $ savehist                                      ok
-206: $ sched                                         ok
-207: $ shell                                         ok
-208: $ shlvl                                         ok
-209: $ status                                        ok
-210: $ symlinks                                      ok
-211: $ tcsh                                          ok
-212: $ term                                          ok
-213: $ time                                          ok
-214: $ tperiod                                       ok
-215: $ tty                                           ok
-216: $ uid                                           ok
-217: $ user                                          ok
-218: $ verbose                                       ok
-219: $ version                                       ok
-220: $ visiblebell                                   ok
-221: $ watch                                         ok
-222: $ who                                           ok
-223: $ wordchars                                     ok
-224: -n                                              ok
-225: $<                                              ok
-
-## ------------- ##
+109: jobs output                                     ok
+110: time output                                     ok
+111: Arithmetic operators                            ok
+112: Primary expressions                             ok
+113: Word splitting                                  ok
+114: Comments                                        skipped (lexical.at:33)
+115: Escaping special characters                     ok
+116: Preventing substitution                         ok
+117: History basics                                  ok
+118: Event specification                             ok
+119: Word selection                                  ok
+120: History modifiers                               ok
+121: Alias substitution                              ok
+122: Variable substitution                           ok
+123: Quoting of expansions in `...`                  ok
+124: \echo for git_tcsh_completion                   ok
+125: EUC-JP multibyte test                           ok
+126: UTF-8 multibyte test                            ok
+127: Parenthesis no space                            ok
+128: Parenthesis space                               ok
+129: Parenthesis space escaped                       ok
+130: Parenthesis escaped                             ok
+131: Command substitution                            ok
+132: Filename substitution                           ok
+133: Directory stack substitution                    ok
+134: Command combinations                            ok
+135: Command execution                               ok
+136: $ addsuffix                                     ok
+137: $ afsuser                                       ok
+138: $ ampm                                          ok
+139: $ anyerror                                      ok
+140: $ argv                                          ok
+141: $ autocorrect                                   ok
+142: $ autoexpand                                    ok
+143: $ autolist                                      ok
+144: $ autologout                                    skipped (variables.at:77)
+145: $ backslash_quote                               ok
+146: $ catalog                                       ok
+147: $ cdpath                                        ok
+148: $ color                                         ok
+149: $ colorcat                                      ok
+150: $ command                                       ok
+151: $ complete                                      ok
+152: $ continue                                      ok
+153: $ continue_args                                 ok
+154: $ correct                                       ok
+155: $ csubstnonl                                    ok
+156: $ cwd                                           ok
+157: $ dextract                                      ok
+158: $ dirsfile                                      ok
+159: $ dirstack                                      ok
+160: $ dspmbyte                                      skipped (variables.at:276)
+161: $ dunique                                       ok
+162: $ echo                                          ok
+163: $ echo_style                                    ok
+164: $ edit                                          skipped (variables.at:344)
+165: $ ellipsis                                      ok
+166: $ fignore                                       ok
+167: $ filec                                         ok
+168: $ gid                                           ok
+169: $ group                                         ok
+170: $ histchars                                     ok
+171: $ histdup                                       ok
+172: $ histfile                                      ok
+173: $ histlit                                       ok
+174: $ history                                       ok
+175: $ home                                          ok
+176: $ ignoreeof                                     ok
+177: $ implicitcd                                    ok
+178: $ inputmode                                     ok
+179: $ killdup                                       ok
+180: $ killring                                      ok
+181: $ listflags                                     ok
+182: $ listjobs                                      ok
+183: $ listlinks                                     ok
+184: $ listmax                                       ok
+185: $ listmaxrows                                   ok
+186: $ loginsh                                       ok
+187: $ logout                                        ok
+188: $ mail                                          ok
+189: $ cdtohome                                      ok
+190: $ noimplicithome                                ok
+191: $ matchbeep                                     ok
+192: $ nobeep                                        ok
+193: $ noclobber                                     ok
+194: $ noding                                        ok
+195: $ noglob                                        ok
+196: $ nostat                                        ok
+197: $ notify                                        ok
+198: $ oid                                           skipped (variables.at:725)
+199: $ owd                                           ok
+200: $ path                                          ok
+201: $ printexitvalue                                ok
+202: $ prompt                                        ok
+203: $ prompt2                                       ok
+204: $ prompt3                                       ok
+205: $ promptchars                                   ok
+206: $ pushdtohome                                   ok
+207: $ pushdsilent                                   ok
+208: $ recexact                                      ok
+209: $ recognize_only_executablers                   ok
+210: $ rmstar                                        ok
+211: $ rprompt                                       ok
+212: $ savedirs                                      ok
+213: $ savehist                                      ok
+214: $ sched                                         ok
+215: $ shell                                         ok
+216: $ shlvl                                         ok
+217: $ status                                        ok
+218: $ symlinks                                      ok
+219: $ tcsh                                          ok
+220: $ term                                          ok
+221: $ time                                          ok
+222: $ tperiod                                       ok
+223: $ tty                                           ok
+224: $ uid                                           ok
+225: $ user                                          ok
+226: $ verbose                                       ok
+227: $ version                                       ok
+228: $ visiblebell                                   ok
+229: $ watch                                         ok
+230: $ who                                           ok
+231: $ wordchars                                     ok
+232: -n                                              ok
+233: $<                                              ok
 ## Test results. ##
-## ------------- ##
-
-171 tests were successful.
+179 tests were successful.
 54 tests were skipped.

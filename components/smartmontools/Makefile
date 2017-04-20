@@ -18,31 +18,27 @@
 #
 # CDDL HEADER END
 #
-
-#
-# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
-COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		fping
-COMPONENT_VERSION=	3.16
-COMPONENT_PROJECT_URL=	http://www.fping.org/
+COMPONENT_NAME=		smartmontools
+COMPONENT_VERSION=	6.5
+COMPONENT_PROJECT_URL=	https://www.smartmontools.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2f753094e4df3cdb1d99be1687c0fb7d2f14c0d526ebf03158c8c5519bc78f54
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
-COMPONENT_ANITYA_ID=	834
+    sha256:89e8bb080130bc6ce148573ba5bb91bfe30236b64b1b5bbca26515d4b5c945bc
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ANITYA_ID=	4835
 
-TPNO=			34404
+TPNO=			33534
 
-# Deliver 'sbin' binaries to 'bin'.
-CONFIGURE_SBINDIR.64= $(CONFIGURE_BINDIR.64)
-
-CFLAGS +=		$(XPG6MODE)
-
-TEST_TARGET= $(NO_TESTS)
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =  \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+# Run automake to pickup man page normalization changes.
+COMPONENT_PREP_ACTION = (cd $(@D) ; automake)
+
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+
+REQUIRED_PACKAGES += system/library/c++-runtime

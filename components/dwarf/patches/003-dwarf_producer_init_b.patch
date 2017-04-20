@@ -1,0 +1,53 @@
+#
+# Add back a dwarf_producer_init_b() interface for Studio compilers
+# to work if they get our, newer version of libdwarf before theirs.
+# This is not planned to go back upstream.
+#
+--- a/libdwarf/pro_init.c	2017-04-15 21:58:16.175641130 +0000
++++ b/libdwarf/pro_init.c	2017-04-15 22:10:23.854406909 +0000
+@@ -171,6 +171,45 @@
+     return DW_DLV_OK;
+ }
+ 
++static Dwarf_Callback_Func __dwarf_callback_func_b;
++static int
++__dwarf_callback_func(
++    const char *name,
++    int size,
++    Dwarf_Unsigned type,
++    Dwarf_Unsigned flags,
++    Dwarf_Unsigned link,
++    Dwarf_Unsigned info,
++    Dwarf_Unsigned *idx,
++    void *user_data,
++    int *error)
++{
++    return (__dwarf_callback_func_b(name, size, type, flags, link,
++                                              info, idx, 0, error));
++}
++
++Dwarf_P_Debug
++dwarf_producer_init_b(Dwarf_Unsigned flags,
++    Dwarf_Callback_Func func,
++    Dwarf_Handler errhand,
++    Dwarf_Ptr errarg, Dwarf_Error * error)
++{
++#ifdef __sparc
++    static const char *isa_name = "sparc";
++#else
++    static const char *isa_name = "x86";
++#endif
++    static Dwarf_P_Debug dbg;
++
++    __dwarf_callback_func_b = func;
++
++    (void) dwarf_producer_init(flags, __dwarf_callback_func, errhand, errarg,
++                               0, isa_name, NULL, NULL, &dbg,
++                               error);
++
++    return (dbg);
++}
++
+ int
+ dwarf_pro_set_default_string_form(Dwarf_P_Debug dbg,
+    int form,
