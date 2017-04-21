@@ -22,7 +22,6 @@
 #
 # Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_ARCH=		i386
 BUILD_BITS=		64
 include ../../make-rules/shared-macros.mk
 
@@ -38,11 +37,8 @@ COMPONENT_BUGDB=	utility/docker-engine
 TPNO=			27475
 
 BUILD_STYLE= justmake
-# Remove the conditional when BUILD_ARCH is removed above.
-ifeq ($(strip $(BUILD_ARCH)),$(MACH))
 BUILD_TARGET=
 INSTALL_TARGET=
-endif
 TEST_TARGET= $(NO_TESTS)
 
 # Requires S12-only changes from ON.
@@ -57,8 +53,6 @@ ASLR_MODE= $(ASLR_DISABLE)
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files/man
 
-# Remove the conditional when BUILD_ARCH is removed above.
-ifeq ($(strip $(BUILD_ARCH)),$(MACH))
 ifneq ($(BUILD_TYPE), evaluation)
 # common targets
 build:		$(SOURCE_DIR)/.prep
@@ -69,13 +63,10 @@ build:		$(SOURCE_DIR)/.prep
 install:	FRC
 	$(TOUCH) $(SOURCE_DIR)/.installed
 endif
-endif
 
 REQUIRED_PACKAGES += database/sqlite-3
-ifeq ($(MACH), i386)
 REQUIRED_PACKAGES += developer/golang
-REQUIRED_PACKAGES += library/golang/sys-15
-endif
+REQUIRED_PACKAGES += library/golang/sys-17
 REQUIRED_PACKAGES += network/firewall
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
