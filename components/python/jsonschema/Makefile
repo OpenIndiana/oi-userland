@@ -9,12 +9,11 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		jsonschema
 COMPONENT_VERSION=	2.4.0
@@ -28,9 +27,9 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/j/jsonschema/$(CO
 
 PYTHON_VERSIONS=	2.7 3.4
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR)/usr/bin ; \

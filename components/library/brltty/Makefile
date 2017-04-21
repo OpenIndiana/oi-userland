@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -32,8 +33,6 @@ COMPONENT_PROJECT_URL = http://www.mielke.cc/brltty/
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         autoconf -f )
