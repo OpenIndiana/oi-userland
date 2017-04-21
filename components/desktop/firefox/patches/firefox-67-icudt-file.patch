@@ -1,0 +1,23 @@
+Being discussed upstream
+https://bugzilla.mozilla.org/show_bug.cgi?id=1264836
+
+--- firefox-52.0b8/build/autoconf/icu.m4.orig	2017-03-01 04:31:04.958804345 +0000
++++ firefox-52.0b8/build/autoconf/icu.m4	2017-03-01 04:38:54.277500982 +0000
+@@ -75,10 +75,14 @@
+     fi
+     MOZ_ICU_VERSION="$version"
+ 
+-    # TODO: the l is actually endian-dependent
+-    # We could make this set as 'l' or 'b' for little or big, respectively,
+-    # but we'd need to check in a big-endian version of the file.
+     ICU_DATA_FILE="icudt${version}l.dat"
++    case "$CPU_ARCH" in
++    sparc*)
++      # create big-endian data file (v58 fails with 'confusables' record)
++      icupkg -tb -r confusables.cfu $_topsrcdir/config/external/icu/data/$ICU_DATA_FILE
++      ICU_DATA_FILE="icudt${version}b.dat"
++      ;;
++    esac
+ 
+     dnl We won't build ICU data as a separate file when building
+     dnl JS standalone so that embedders don't have to deal with it.

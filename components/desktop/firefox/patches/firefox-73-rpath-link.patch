@@ -1,0 +1,29 @@
+rpath-link should be avoided on Solaris. Adds -R,$ORIGIN to solve some dependency issues.
+Will not send upstream.
+
+--- firefox-51.0b14/old-configure.in.orig	2017-01-17 04:46:07.497661759 +0000
++++ firefox-51.0b14/old-configure.in	2017-01-17 05:13:25.291980513 +0000
+@@ -587,7 +587,11 @@
+ DIRENT_INO=d_ino
+ MOZ_USER_DIR=".mozilla"
+ 
+-MOZ_FIX_LINK_PATHS="-Wl,-rpath-link,${DIST}/bin -Wl,-rpath-link,${prefix}/lib"
++if test "$OS_TARGET" = SunOS ; then
++  MOZ_FIX_LINK_PATHS="-Wl,-R,'\$\$ORIGIN:\$\$ORIGIN/..'"
++else
++  MOZ_FIX_LINK_PATHS="-Wl,-rpath-link,${DIST}/bin -Wl,-rpath-link,${prefix}/lib"
++fi
+ 
+ MOZ_FS_LAYOUT=unix
+ 
+--- a/js/src/old-configure.in	2017-03-27 10:30:03.549219848 +0000
++++ b/js/src/old-configure.in	2017-03-27 10:31:00.169061425 +0000
+@@ -441,7 +441,7 @@
+ DIRENT_INO=d_ino
+ MOZ_USER_DIR=".mozilla"
+ 
+-MOZ_FIX_LINK_PATHS="-Wl,-rpath-link,${DIST}/bin -Wl,-rpath-link,${prefix}/lib"
++MOZ_FIX_LINK_PATHS="-Wl,-R,'\$\$ORIGIN:\$\$ORIGIN/..'"
+ 
+ dnl Configure platform-specific CPU architecture compiler options.
+ dnl ==============================================================

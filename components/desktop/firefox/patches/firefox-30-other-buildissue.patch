@@ -1,5 +1,40 @@
-Recast for getpid() because it requires an int. 
+Will not send upstream.
+Recast for getpid() because it requires an int.
 
+diff --git a/media/webrtc/trunk/build/common.gypi b/media/webrtc/trunk/build/common.gypi
+--- a/media/webrtc/trunk/build/common.gypi
++++ b/media/webrtc/trunk/build/common.gypi
+@@ -917,11 +917,16 @@
+     'android_app_version_name%': 'Developer Build',
+     'android_app_version_code%': 0,
+ 
+-    'sas_dll_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(sas_dll_path))',
+-    'wix_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(wix_path))',
++    'conditions': [
++      ['OS=="win"', {
++        'sas_dll_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(sas_dll_path))',
++        'wix_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(wix_path))',
++      }],
++    ],
+ 
+     'windows_sdk_default_path': '<(DEPTH)/third_party/platformsdk_win8/files',
+     'directx_sdk_default_path': '<(DEPTH)/third_party/directxsdk/files',
++    'windows_sdk_path%': 'C:/Program Files (x86)/Windows Kits/8.0',
+ 
+     'conditions': [
+       ['"<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(windows_sdk_default_path))"=="True"', {
+diff --git a/memory/volatile/VolatileBufferFallback.cpp b/memory/volatile/VolatileBufferFallback.cpp
+--- a/memory/volatile/VolatileBufferFallback.cpp
++++ b/memory/volatile/VolatileBufferFallback.cpp
+@@ -7,7 +7,7 @@
+ #include "mozilla/mozalloc.h"
+ 
+ #ifdef MOZ_MEMORY
+-int posix_memalign(void** memptr, size_t alignment, size_t size);
++extern "C" int posix_memalign(void** memptr, size_t alignment, size_t size);
+ #endif
+ 
+ namespace mozilla {
 diff --git a/xpcom/base/nsStatusReporterManager.cpp b/xpcom/base/nsStatusReporterManager.cpp
 --- a/xpcom/base/nsStatusReporterManager.cpp
 +++ b/xpcom/base/nsStatusReporterManager.cpp
@@ -12,3 +47,72 @@ diff --git a/xpcom/base/nsStatusReporterManager.cpp b/xpcom/base/nsStatusReporte
    filename.Append('-');
    filename.AppendInt(number++);
    filename.AppendLiteral(".json");
+diff --git a/build/gyp.mozbuild b/build/gyp.mozbuild
+--- a/build/gyp.mozbuild
++++ b/build/gyp.mozbuild
+@@ -46,16 +46,17 @@ gyp_vars = {
+ 
+     'moz_widget_toolkit_gonk': 0,
+     'moz_webrtc_omx': 0,
+     'moz_webrtc_mediacodec': 0,
+ 
+     # Turn off multi monitor screen share
+     'multi_monitor_screenshare%' : 0,
+ 
++    'use_official_google_api_keys': 0,
+     # (for vp8) chromium sets to 0 also
+     'use_temporal_layers': 0,
+ 
+     # Creates AEC internal sample dump files in current directory
+     'aec_debug_dump': 1,
+ 
+     # Enable and force use of hardware AEC
+     'hardware_aec_ns': 1 if CONFIG['MOZ_WEBRTC_HARDWARE_AEC_NS'] else 0,
+diff --git a/media/libsoundtouch/src/FIRFilter.cpp b/media/libsoundtouch/src/FIRFilter.cpp
+--- a/media/libsoundtouch/src/FIRFilter.cpp
++++ b/media/libsoundtouch/src/FIRFilter.cpp
+@@ -41,16 +41,20 @@
+ 
+ #include <memory.h>
+ #include <assert.h>
+ #include <math.h>
+ #include <stdlib.h>
+ #include "FIRFilter.h"
+ #include "cpu_detect.h"
+ 
++#ifdef __sun
++#include <alloca.h>
++#endif
++
+ using namespace soundtouch;
+ 
+ /*****************************************************************************
+  *
+  * Implementation of the class 'FIRFilter'
+  *
+  *****************************************************************************/
+ 
+diff --git a/media/libsoundtouch/src/SoundTouch.cpp b/media/libsoundtouch/src/SoundTouch.cpp
+--- a/media/libsoundtouch/src/SoundTouch.cpp
++++ b/media/libsoundtouch/src/SoundTouch.cpp
+@@ -75,16 +75,20 @@
+ #include <math.h>
+ #include <stdio.h>
+ 
+ #include "SoundTouch.h"
+ #include "TDStretch.h"
+ #include "RateTransposer.h"
+ #include "cpu_detect.h"
+ 
++#ifdef __sun
++#include <alloca.h>
++#endif
++
+ using namespace soundtouch;
+     
+ /// test if two floating point numbers are equal
+ #define TEST_FLOAT_EQUAL(a, b)  (fabs(a - b) < 1e-10)
+ 
+ 
+ /// Print library version string for autoconf
+ extern "C" void soundtouch_ac_test()

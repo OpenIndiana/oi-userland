@@ -1,0 +1,97 @@
+ipc fixes.
+Config part is sent upstream
+https://bugzilla.mozilla.org/show_bug.cgi?id=1354510
+
+--- firefox-51.0b14/ipc/chromium/src/build/build_config.h.orig	2017-01-19 04:06:09.985721003 +0000
++++ firefox-51.0b14/ipc/chromium/src/build/build_config.h	2017-01-19 04:08:21.085541121 +0000
+@@ -32,6 +32,8 @@
+ #define OS_NETBSD 1
+ #elif defined(__OpenBSD__)
+ #define OS_OPENBSD 1
++#elif defined(__sun__) || defined(__sun)
++#define OS_SOLARIS 1
+ #elif defined(_WIN32)
+ #define OS_WIN 1
+ #else
+@@ -47,7 +49,7 @@
+ 
+ // For access to standard POSIX features, use OS_POSIX instead of a more
+ // specific macro.
+-#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+ #define OS_POSIX 1
+ #endif
+ 
+diff --git a/ipc/chromium/src/base/time_posix.cc b/ipc/chromium/src/base/time_posix.cc
+--- a/ipc/chromium/src/base/time_posix.cc
++++ b/ipc/chromium/src/base/time_posix.cc
+@@ -65,11 +65,13 @@
+   timestruct.tm_wday   = exploded.day_of_week;  // mktime/timegm ignore this
+   timestruct.tm_yday   = 0;     // mktime/timegm ignore this
+   timestruct.tm_isdst  = -1;    // attempt to figure it out
++#ifndef OS_SOLARIS
+   timestruct.tm_gmtoff = 0;     // not a POSIX field, so mktime/timegm ignore
+   timestruct.tm_zone   = NULL;  // not a POSIX field, so mktime/timegm ignore
+-
++#endif
++  
+   time_t seconds;
+-#ifdef ANDROID
++#if defined(ANDROID) || defined(OS_SOLARIS)
+     seconds = mktime(&timestruct);
+ #else
+   if (is_local)
+@@ -167,7 +169,7 @@
+   // With numer and denom = 1 (the expected case), the 64-bit absolute time
+   // reported in nanoseconds is enough to last nearly 585 years.
+ 
+-#elif defined(OS_OPENBSD) || defined(OS_POSIX) && \
++#elif defined(OS_OPENBSD) || defined(OS_SOLARIS) || defined(OS_POSIX) && \
+       defined(_POSIX_MONOTONIC_CLOCK) && _POSIX_MONOTONIC_CLOCK >= 0
+ 
+   struct timespec ts;
+--- firefox-51.0b14/ipc/chromium/chromium-config.mozbuild.~1~	2016-09-19 09:19:30.000000000 +0000
++++ firefox-51.0b14/ipc/chromium/chromium-config.mozbuild	2017-01-20 05:38:02.191959949 +0000
+@@ -41,6 +41,9 @@
+     if CONFIG['OS_ARCH'] == 'Darwin':
+         DEFINES['OS_MACOSX'] = 1
+ 
++    elif CONFIG['OS_ARCH'] == 'SunOS':
++        DEFINES['OS_SOLARIS'] = 1
++
+     elif CONFIG['OS_ARCH'] == 'DragonFly':
+         DEFINES.update({
+             'OS_DRAGONFLY': 1,
+diff --git a/ipc/chromium/src/base/process_util.h b/ipc/chromium/src/base/process_util.h
+--- a/ipc/chromium/src/base/process_util.h
++++ b/ipc/chromium/src/base/process_util.h
+@@ -27,6 +27,10 @@
+ #include <mach/mach.h>
+ #endif
+ 
++#if defined(OS_SOLARIS)
++#define NAME_MAX 14
++#endif
++
+ #include <map>
+ #include <string>
+ #include <vector>
+@@ -75,7 +79,8 @@
+   PROCESS_ARCH_PPC = 0x4,
+   PROCESS_ARCH_ARM = 0x8,
+   PROCESS_ARCH_MIPS = 0x10,
+-  PROCESS_ARCH_ARM64 = 0x20
++  PROCESS_ARCH_ARM64 = 0x20,
++  PROCESS_ARCH_SPARC = 0x40
+ };
+ 
+ inline ProcessArchitecture GetCurrentProcessArchitecture()
+@@ -93,6 +98,8 @@
+   currentArchitecture = base::PROCESS_ARCH_MIPS;
+ #elif defined(ARCH_CPU_ARM64)
+   currentArchitecture = base::PROCESS_ARCH_ARM64;
++#elif defined(ARCH_CPU_SPARC)
++  currentArchitecture = base::PROCESS_ARCH_SPARC;
+ #endif
+   return currentArchitecture;
+ }

@@ -4,12 +4,7 @@ Do not plan to send upstream.
 diff --git a/js/src/gc/Memory.cpp b/js/src/gc/Memory.cpp
 --- a/js/src/gc/Memory.cpp
 +++ b/js/src/gc/Memory.cpp
-@@ -12,21 +12,16 @@
- #include "js/HeapAPI.h"
- #include "vm/Runtime.h"
- 
- #if defined(XP_WIN)
- 
+@@ -17,11 +17,6 @@
  #include "jswin.h"
  #include <psapi.h>
  
@@ -21,14 +16,9 @@ diff --git a/js/src/gc/Memory.cpp b/js/src/gc/Memory.cpp
  #elif defined(XP_UNIX)
  
  #include <algorithm>
- #include <errno.h>
- #include <sys/mman.h>
- #include <sys/resource.h>
- #include <sys/stat.h>
- #include <sys/types.h>
-@@ -346,85 +346,6 @@ DeallocateMappedContent(void* p, size_t
-     // TODO: Bug 988813 - Support memory mapped array buffer for Windows platform.
- }
+@@ -408,86 +403,6 @@
+ 
+ #  endif
  
 -#elif defined(SOLARIS)
 -
@@ -47,9 +37,11 @@ diff --git a/js/src/gc/Memory.cpp b/js/src/gc/Memory.cpp
 -MapAlignedPages(size_t size, size_t alignment)
 -{
 -    MOZ_ASSERT(size >= alignment);
+-    MOZ_ASSERT(size >= allocGranularity);
 -    MOZ_ASSERT(size % alignment == 0);
 -    MOZ_ASSERT(size % pageSize == 0);
--    MOZ_ASSERT(alignment % allocGranularity == 0);
+-    MOZ_ASSERT_IF(alignment < allocGranularity, allocGranularity % alignment == 0);
+-    MOZ_ASSERT_IF(alignment > allocGranularity, alignment % allocGranularity == 0);
 -
 -    int prot = PROT_READ | PROT_WRITE;
 -    int flags = MAP_PRIVATE | MAP_ANON | MAP_ALIGN | MAP_NOSYNC;
@@ -83,10 +75,9 @@ diff --git a/js/src/gc/Memory.cpp b/js/src/gc/Memory.cpp
 -MarkPagesInUse(void* p, size_t size)
 -{
 -    if (!DecommitEnabled())
--        return true;
+-        return;
 -
 -    MOZ_ASSERT(OffsetFromAligned(p, pageSize) == 0);
--    return true;
 -}
 -
 -size_t
@@ -112,12 +103,7 @@ diff --git a/js/src/gc/Memory.cpp b/js/src/gc/Memory.cpp
  #elif defined(XP_UNIX)
  
  void
-@@ -599,17 +521,17 @@ UnmapPages(void* p, size_t size)
- 
- bool
- MarkPagesUnused(void* p, size_t size)
- {
-     if (!DecommitEnabled())
+@@ -763,7 +678,7 @@
          return false;
  
      MOZ_ASSERT(OffsetFromAligned(p, pageSize) == 0);
@@ -126,8 +112,3 @@ diff --git a/js/src/gc/Memory.cpp b/js/src/gc/Memory.cpp
      return result != -1;
  }
  
- bool
- MarkPagesInUse(void* p, size_t size)
- {
-     if (!DecommitEnabled())
-         return true;

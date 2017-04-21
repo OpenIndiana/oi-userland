@@ -1,0 +1,56 @@
+ipc fixes.
+Will not send upstream.
+
+diff --git a/ipc/chromium/src/base/platform_thread.h b/ipc/chromium/src/base/platform_thread.h
+--- a/ipc/chromium/src/base/platform_thread.h
++++ b/ipc/chromium/src/base/platform_thread.h
+@@ -22,7 +22,7 @@
+ #elif defined(OS_POSIX)
+ #include <pthread.h>
+ typedef pthread_t PlatformThreadHandle;
+-#if defined(OS_LINUX) || defined(OS_OPENBSD) || defined(__GLIBC__)
++#if defined(OS_LINUX) || defined(OS_OPENBSD) || defined(OS_SOLARIS) || defined(__GLIBC__)
+ #include <unistd.h>
+ typedef pid_t PlatformThreadId;
+ #elif defined(OS_BSD)
+diff --git a/ipc/chromium/src/base/platform_thread_posix.cc b/ipc/chromium/src/base/platform_thread_posix.cc
+--- a/ipc/chromium/src/base/platform_thread_posix.cc
++++ b/ipc/chromium/src/base/platform_thread_posix.cc
+@@ -27,6 +27,12 @@
+ #include <pthread_np.h>
+ #endif
+ 
++#if defined(OS_SOLARIS)
++#include <sys/syscall.h>
++#include <unistd.h>
++#include <thread.h>
++#endif
++
+ #if defined(OS_MACOSX)
+ namespace base {
+ void InitThreading();
+@@ -54,6 +60,8 @@
+ #else
+   return syscall(__NR_gettid);
+ #endif
++#elif defined(OS_SOLARIS)
++  return thr_self();
+ #elif defined(OS_OPENBSD) || defined(__GLIBC__)
+   return (intptr_t) (pthread_self());
+ #elif defined(OS_NETBSD)
+@@ -96,6 +104,7 @@
+ 
+ // static
+ void PlatformThread::SetName(const char* name) {
++#ifndef OS_SOLARIS
+   // On linux we can get the thread names to show up in the debugger by setting
+   // the process name for the LWP.  We don't want to do this for the main
+   // thread because that would rename the process, causing tools like killall
+@@ -116,6 +125,7 @@
+   pthread_set_name_np(pthread_self(), name);
+ #else
+ #endif
++#endif // !OS_SOLARIS
+ }
+ #endif // !OS_MACOSX
+ 

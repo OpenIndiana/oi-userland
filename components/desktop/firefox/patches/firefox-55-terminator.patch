@@ -1,53 +1,14 @@
-https://bugzilla.mozilla.org/show_bug.cgi?id=1232285
-https://bugzilla.mozilla.org/show_bug.cgi?id=1252382
+A fix to https://bugzilla.mozilla.org/show_bug.cgi?id=1232285, which introduced division of crashAfterMS by PR_MillisecondsToInterval(1000). crashAfterMS has to be divided by 1000 to get number of seconds.
+Will not send upstream.
 
-And a fix to 1232285, which introduced division of crashAfterMS
-by PR_MillisecondsToInterval(1000). crashAfterMS has to be divided
-by 1000 to get number of seconds.
-
---- a/toolkit/components/terminator/nsTerminator.cpp
-+++ b/toolkit/components/terminator/nsTerminator.cpp
-@@ -33,6 +33,12 @@
- #include "nsExceptionHandler.h"
- #endif
- 
-+#if defined(XP_WIN)
-+#include <windows.h>
-+#else
-+#include <unistd.h>
-+#endif
-+
- #include "mozilla/ArrayUtils.h"
- #include "mozilla/Attributes.h"
- #include "mozilla/DebugOnly.h"
-@@ -53,9 +59,6 @@
- // forcefully.
- #define ADDITIONAL_WAIT_BEFORE_CRASH_MS 3000
- 
--// One second, in ticks.
--#define TICK_DURATION 1000
--
- namespace mozilla {
- 
- namespace {
-@@ -141,7 +144,11 @@
-     // we have lost at most one second, which is much
-     // more reasonable.
-     //
--    PR_Sleep(TICK_DURATION);
-+#if defined(XP_WIN)
-+        Sleep(1000 /* ms */);
-+#else
-+        usleep(1000000 /* usec */);
-+#endif
- 
-     if (gHeartbeat++ < timeToLive) {
-       continue;
-@@ -378,7 +385,7 @@
+--- a/toolkit/components/terminator/nsTerminator.cpp	2017-03-29 11:41:02.600935223 +0800
++++ b/toolkit/components/terminator/nsTerminator.cpp	2017-03-29 11:41:34.158337115 +0800
+@@ -388,8 +388,7 @@
    }
  
    UniquePtr<Options> options(new Options());
--  options->crashAfterTicks = crashAfterMS / TICK_DURATION;
+-  const PRIntervalTime ticksDuration = PR_MillisecondsToInterval(1000);
+-  options->crashAfterTicks = crashAfterMS / ticksDuration;
 +  options->crashAfterTicks = crashAfterMS / 1000;
  
    DebugOnly<PRThread*> watchdogThread = CreateSystemThread(RunWatchdog,

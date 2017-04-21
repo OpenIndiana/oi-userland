@@ -1,0 +1,281 @@
+Bug 1345893 - Handle Suspend() called on an HTTP channel from http-on-modify-request handler, r=mayhemer
+author	Shane Caraveo <scaraveo@mozilla.com>
+	Fri, 14 Apr 2017 10:00:05 -0700 (6 days ago)
+changeset 353168 	2b66ecba042d
+parent 353167 	219973c90b4a
+child 353169 	0cb37bb22087
+push id	31658
+push user	archaeopteryx@coole-files.de
+push date	2017-04-14 21:53 +0000
+treeherder	mozilla-central@d09143959b1a [default view] [failures only]
+perfherder	[talos] [build metrics] [platform microbench] (compared to previous push)
+reviewers	mayhemer
+bugs	1345893
+milestone	55.0a1
+
+new file mode 100644
+--- /dev/null
++++ b/netwerk/test/unit/test_suspend_channel_on_modified.js
+@@ -0,0 +1,175 @@
++// This file tests async handling of a channel suspended in http-on-modify-request.
++
++var CC = Components.Constructor;
++
++Cu.import("resource://testing-common/httpd.js");
++Cu.import("resource://gre/modules/NetUtil.jsm");
++
++var obs = Cc["@mozilla.org/observer-service;1"]
++            .getService(Ci.nsIObserverService);
++
++var ios = Cc["@mozilla.org/network/io-service;1"]
++            .getService(Components.interfaces.nsIIOService);
++
++// baseUrl is always the initial connection attempt and is handled by
++// failResponseHandler since every test expects that request will either be
++// redirected or cancelled.
++var baseUrl;
++
++function failResponseHandler(metadata, response)
++{
++  var text = "failure response";
++  response.setHeader("Content-Type", "text/plain", false);
++  response.bodyOutputStream.write(text, text.length);
++  do_check_true(false, "Received request when we shouldn't.");
++}
++
++function successResponseHandler(metadata, response)
++{
++  var text = "success response";
++  response.setHeader("Content-Type", "text/plain", false);
++  response.bodyOutputStream.write(text, text.length);
++  do_check_true(true, "Received expected request.");
++}
++
++function onModifyListener(callback) {
++  obs.addObserver({
++    observe: function(subject, topic, data) {
++      var obs = Cc["@mozilla.org/observer-service;1"].getService();
++      obs = obs.QueryInterface(Ci.nsIObserverService);
++      obs.removeObserver(this, "http-on-modify-request");
++      callback(subject.QueryInterface(Ci.nsIHttpChannel));
++    }
++  }, "http-on-modify-request", false);
++}
++
++function startChannelRequest(baseUrl, flags, expectedResponse=null) {
++  var chan = NetUtil.newChannel({
++    uri: baseUrl,
++    loadUsingSystemPrincipal: true
++  });
++  chan.asyncOpen2(new ChannelListener((request, data, context) => {
++    if (expectedResponse) {
++      do_check_eq(data, expectedResponse);
++    } else {
++      do_check_true(!!!data, "no response");
++    }
++    do_execute_soon(run_next_test)
++  }, null, flags));
++}
++
++
++add_test(function testSimpleRedirect() {
++  onModifyListener(chan => {
++    chan.redirectTo(ios.newURI(`${baseUrl}/success`));
++  });
++  startChannelRequest(baseUrl, undefined, "success response");
++});
++
++add_test(function testSimpleCancel() {
++  onModifyListener(chan => {
++    chan.cancel(Cr.NS_BINDING_ABORTED);
++  });
++  startChannelRequest(baseUrl, CL_EXPECT_FAILURE);
++});
++
++add_test(function testSimpleCancelRedirect() {
++  onModifyListener(chan => {
++    chan.redirectTo(ios.newURI(`${baseUrl}/fail`));
++    chan.cancel(Cr.NS_BINDING_ABORTED);
++  });
++  startChannelRequest(baseUrl, CL_EXPECT_FAILURE);
++});
++
++// Test a request that will get redirected asynchronously.  baseUrl should
++// not be requested, we should receive the request for the redirectedUrl.
++add_test(function testAsyncRedirect() {
++  onModifyListener(chan => {
++    // Suspend the channel then yield to make this async.
++    chan.suspend();
++    Promise.resolve().then(() => {
++      chan.redirectTo(ios.newURI(`${baseUrl}/success`));
++      chan.resume();
++    });
++  });
++  startChannelRequest(baseUrl, undefined, "success response");
++});
++
++add_test(function testSyncRedirect() {
++  onModifyListener(chan => {
++    chan.suspend();
++    chan.redirectTo(ios.newURI(`${baseUrl}/success`));
++    Promise.resolve().then(() => {
++      chan.resume();
++    });
++  });
++  startChannelRequest(baseUrl, undefined, "success response");
++});
++
++add_test(function testAsyncCancel() {
++  onModifyListener(chan => {
++    // Suspend the channel then yield to make this async.
++    chan.suspend();
++    Promise.resolve().then(() => {
++      chan.cancel(Cr.NS_BINDING_ABORTED);
++      chan.resume();
++    });
++  });
++  startChannelRequest(baseUrl, CL_EXPECT_FAILURE);
++});
++
++add_test(function testSyncCancel() {
++  onModifyListener(chan => {
++    chan.suspend();
++    chan.cancel(Cr.NS_BINDING_ABORTED);
++    Promise.resolve().then(() => {
++      chan.resume();
++    });
++  });
++  startChannelRequest(baseUrl, CL_EXPECT_FAILURE);
++});
++
++// Test request that will get redirected and cancelled asynchronously,
++// ensure no connection is made.
++add_test(function testAsyncCancelRedirect() {
++  onModifyListener(chan => {
++    // Suspend the channel then yield to make this async.
++    chan.suspend();
++    Promise.resolve().then(() => {
++      chan.cancel(Cr.NS_BINDING_ABORTED);
++      chan.redirectTo(ios.newURI(`${baseUrl}/fail`));
++      chan.resume();
++    });
++  });
++  startChannelRequest(baseUrl, CL_EXPECT_FAILURE);
++});
++
++// Test a request that will get cancelled synchronously, ensure async redirect
++// is not made.
++add_test(function testSyncCancelRedirect() {
++  onModifyListener(chan => {
++    chan.suspend();
++    chan.cancel(Cr.NS_BINDING_ABORTED);
++    Promise.resolve().then(() => {
++      chan.redirectTo(ios.newURI(`${baseUrl}/fail`));
++      chan.resume();
++    });
++  });
++  startChannelRequest(baseUrl, CL_EXPECT_FAILURE);
++});
++
++function run_test() {
++  var httpServer = new HttpServer();
++  httpServer.registerPathHandler("/", failResponseHandler);
++  httpServer.registerPathHandler("/fail", failResponseHandler);
++  httpServer.registerPathHandler("/success", successResponseHandler);
++  httpServer.start(-1);
++
++  baseUrl = `http://localhost:${httpServer.identity.primaryPort}`;
++
++  run_next_test();
++
++  do_register_cleanup(function(){
++    httpServer.stop(() => {});
++  });
++}
+
+--- a/netwerk/test/unit/xpcshell.ini
++++ b/netwerk/test/unit/xpcshell.ini
+@@ -360,16 +360,17 @@ skip-if = os == "android" || (os == "win
+ reason = bug 1190674
+ firefox-appdir = browser
+ [test_tls_server_multiple_clients.js]
+ # The local cert service used by this test is not currently shipped on Android
+ skip-if = os == "android"
+ [test_1073747.js]
+ [test_safeoutputstream_append.js]
+ [test_suspend_channel_before_connect.js]
++[test_suspend_channel_on_modified.js]
+ [test_inhibit_caching.js]
+ [test_dns_disable_ipv4.js]
+ [test_dns_disable_ipv6.js]
+ [test_bug1195415.js]
+ [test_cookie_blacklist.js]
+ [test_getHost.js]
+ [test_bug412457.js]
+ [test_bug464591.js]
+--- a/netwerk/protocol/http/nsHttpChannel.h	2017-04-20 14:38:59.712737110 +0000
++++ b/netwerk/protocol/http/nsHttpChannel.h	2017-04-20 14:41:08.687320841 +0000
+@@ -283,6 +283,8 @@
+ 
+     bool     RequestIsConditional();
+     nsresult BeginConnect();
++    void     HandleBeginConnectContinue();
++    nsresult BeginConnectContinue();
+     nsresult ContinueBeginConnectWithResult();
+     void     ContinueBeginConnect();
+     nsresult Connect();
+--- a/netwerk/protocol/http/nsHttpChannel.cpp	2017-04-20 14:38:29.601432447 +0000
++++ b/netwerk/protocol/http/nsHttpChannel.cpp	2017-04-20 14:44:15.568879412 +0000
+@@ -5974,6 +5974,52 @@
+ 
+     SetLoadGroupUserAgentOverride();
+ 
++    // Check if request was cancelled during on-modify-request or on-useragent.
++    if (mCanceled) {
++        return mStatus;
++    }
++
++    if (mSuspendCount) {
++        LOG(("Waiting until resume BeginConnect [this=%p]\n", this));
++        MOZ_ASSERT(!mCallOnResume);
++        mCallOnResume = &nsHttpChannel::HandleBeginConnectContinue;
++        return NS_OK;
++    }
++
++    return BeginConnectContinue();
++}
++
++void
++nsHttpChannel::HandleBeginConnectContinue()
++{
++    NS_PRECONDITION(!mCallOnResume, "How did that happen?");
++    nsresult rv;
++
++    if (mSuspendCount) {
++        LOG(("Waiting until resume BeginConnect [this=%p]\n", this));
++        mCallOnResume = &nsHttpChannel::HandleBeginConnectContinue;
++        return;
++    }
++
++    LOG(("nsHttpChannel::HandleBeginConnectContinue [this=%p]\n", this));
++    rv = BeginConnectContinue();
++    if (NS_FAILED(rv)) {
++        CloseCacheEntry(false);
++        Unused << AsyncAbort(rv);
++    }
++}
++
++nsresult
++nsHttpChannel::BeginConnectContinue()
++{
++    nsresult rv;
++
++    // Check if request was cancelled during suspend AFTER on-modify-request or
++    // on-useragent.
++    if (mCanceled) {
++        return mStatus;
++    }
++
+     // Check to see if we should redirect this channel elsewhere by
+     // nsIHttpChannel.redirectTo API request
+     if (mAPIRedirectToURI) {

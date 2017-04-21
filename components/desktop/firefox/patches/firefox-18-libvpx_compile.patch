@@ -11,18 +11,6 @@ Can probably send upstream.
 +    ASFLAGS += [
 +        '-DSOLARIS'
 +    ]
-diff --git a/media/libvpx/Makefile.in b/media/libvpx/Makefile.in
---- a/media/libvpx/Makefile.in
-+++ b/media/libvpx/Makefile.in
-@@ -121,7 +125,7 @@
- # Workaround a bug of Sun Studio (CR 6963410)
- ifdef SOLARIS_SUNPRO_CC
- ifeq (86,$(findstring 86,$(OS_TEST)))
--filter.o: filter.c Makefile.in
-+filter.o: vp8/common/filter.c Makefile.in
- 	$(REPORT_BUILD)
- 	@$(MAKE_DEPS_AUTO_CC)
- 	$(CC) -o $@ -c $(patsubst -xO[45],-xO3,$(COMPILE_CFLAGS)) $<
 diff --git a/media/libvpx/vpx_ports/x86_abi_support.asm b/media/libvpx/vpx_ports/x86_abi_support.asm
 --- a/media/libvpx/vpx_ports/x86_abi_support.asm
 +++ b/media/libvpx/vpx_ports/x86_abi_support.asm

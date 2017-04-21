@@ -1,16 +1,16 @@
 For sparc. Our function frame is very big, so on sparc we need more stack size.
-Potentially send upstream. 
+Potentially send upstream.
 
 diff --git a/js/src/jsapi.cpp b/js/src/jsapi.cpp
 --- a/js/src/jsapi.cpp
 +++ b/js/src/jsapi.cpp
-@@ -1550,6 +1550,9 @@
+@@ -1493,6 +1493,9 @@
  static void
- SetNativeStackQuotaAndLimit(JSRuntime* rt, StackKind kind, size_t stackSize)
+ SetNativeStackQuotaAndLimit(JSContext* cx, StackKind kind, size_t stackSize)
  {
 +#ifdef JS_CPU_SPARC
 +    stackSize = stackSize * 8 < 7 * 1024 * 1024 ? stackSize * 8 : 7 * 1024 * 1024;
 +#endif
-     rt->nativeStackQuota[kind] = stackSize;
+     cx->nativeStackQuota[kind] = stackSize;
  
  #if JS_STACK_GROWTH_DIRECTION > 0

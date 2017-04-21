@@ -1,0 +1,75 @@
+ipc fixes.
+Will not send upstream.
+
+diff --git a/ipc/glue/BrowserProcessSubThread.cpp b/ipc/glue/BrowserProcessSubThread.cpp
+--- a/ipc/glue/BrowserProcessSubThread.cpp
++++ b/ipc/glue/BrowserProcessSubThread.cpp
+@@ -25,7 +25,7 @@
+ //  "Chrome_FileThread",  // FILE
+ //  "Chrome_DBThread",  // DB
+ //  "Chrome_HistoryThread",  // HISTORY
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   "Gecko_Background_X11Thread",  // BACKGROUND_X11
+ #endif
+ };
+@@ -36,7 +36,7 @@
+ //  nullptr,  // FILE
+ //  nullptr,  // DB
+ //  nullptr,  // HISTORY
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   nullptr,  // BACKGROUND_X11
+ #endif
+ };
+diff --git a/ipc/glue/BrowserProcessSubThread.h b/ipc/glue/BrowserProcessSubThread.h
+--- a/ipc/glue/BrowserProcessSubThread.h
++++ b/ipc/glue/BrowserProcessSubThread.h
+@@ -28,7 +28,7 @@
+       //FILE,
+       //DB,
+       //HISTORY,
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+       // This thread has a second connection to the X server and is used
+       // to process UI requests when routing the request to the UI
+       // thread would risk deadlock.
+diff --git a/ipc/glue/GeckoChildProcessHost.cpp b/ipc/glue/GeckoChildProcessHost.cpp
+--- a/ipc/glue/GeckoChildProcessHost.cpp
++++ b/ipc/glue/GeckoChildProcessHost.cpp
+@@ -742,7 +742,7 @@
+   // and passing wstrings from one config to the other is unsafe.  So
+   // we split the logic here.
+ 
+-#if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD) || defined(OS_SOLARIS)
+   base::environment_map newEnvVars;
+   ChildPrivileges privs = mPrivileges;
+   if (privs == base::PRIVILEGES_DEFAULT) {
+@@ -881,7 +881,7 @@
+   childArgv.push_back(pidstring);
+ 
+ #if defined(MOZ_CRASHREPORTER)
+-#  if defined(OS_LINUX) || defined(OS_BSD)
++#  if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+   int childCrashFd, childCrashRemapFd;
+   if (!CrashReporter::CreateNotificationPipeForChild(
+         &childCrashFd, &childCrashRemapFd))
+@@ -897,7 +897,7 @@
+   }
+ #  elif defined(MOZ_WIDGET_COCOA)
+   childArgv.push_back(CrashReporter::GetChildNotificationPipe());
+-#  endif  // OS_LINUX
++#  endif  // OS_LINUX || defined(OS_SOLARIS)
+ #endif
+ 
+ #ifdef MOZ_WIDGET_COCOA
+@@ -916,6 +916,8 @@
+   base::LaunchApp(childArgv, mFileMap,
+ #if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD)
+                   newEnvVars, privs,
++#elif defined(OS_SOLARIS)
++                  base::environment_map(), privs,
+ #endif
+                   false, &process, arch);
+ 

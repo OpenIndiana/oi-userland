@@ -1,0 +1,14 @@
+Fixes build error "--enable-jemalloc is not supported on SunOS" when enabling jemalloc.
+Will send upstream.
+
+--- a/build/moz.configure/memory.configure	2017-04-06 14:21:27.248765136 +0000
++++ b/build/moz.configure/memory.configure	2017-04-06 14:22:07.853614205 +0000
+@@ -68,6 +68,8 @@
+             return 'MOZ_MEMORY_DARWIN'
+         if target.kernel in ('kFreeBSD', 'FreeBSD', 'NetBSD'):
+             return 'MOZ_MEMORY_BSD'
++        if target.kernel in ('SunOS'):
++            return 'MOZ_MEMORY_SOLARIS'
+         die('--enable-jemalloc is not supported on %s', target.kernel)
+ 
+ set_define(jemalloc_os_define, '1')

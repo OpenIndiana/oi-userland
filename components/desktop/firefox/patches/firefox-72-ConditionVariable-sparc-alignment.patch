@@ -1,0 +1,18 @@
+xpcshell would fail on sparc when ptcond is no aligned to 8 bytes
+
+--- a/js/src/threading/ConditionVariable.h	2017-03-25 17:38:07.485411000 +0800
++++ b/js/src/threading/ConditionVariable.h	2017-03-25 16:52:03.724876000 +0800
+@@ -107,10 +107,10 @@
+   PlatformData* platformData();
+ 
+ #ifndef XP_WIN
+-  void* platformData_[sizeof(pthread_cond_t) / sizeof(void*)];
++  __attribute__((aligned(8))) void* platformData_[sizeof(pthread_cond_t) / sizeof(void*)];
+   static_assert(sizeof(pthread_cond_t) / sizeof(void*) != 0 &&
+-                sizeof(pthread_cond_t) % sizeof(void*) == 0,
+-                "pthread_cond_t must have pointer alignment");
++                sizeof(pthread_cond_t) % 8 == 0,
++                "pthread_cond_t must have long long alignment");
+ #else
+   void* platformData_[4];
+ #endif

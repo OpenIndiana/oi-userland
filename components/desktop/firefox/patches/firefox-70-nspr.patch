@@ -1,0 +1,43 @@
+nspr support for solaris.
+Sent upstream
+https://bugzilla.mozilla.org/show_bug.cgi?id=1354576
+
+--- firefox-51.0b14/config/external/nspr/prcpucfg.h.orig	2017-01-18 06:35:00.287899088 +0000
++++ firefox-51.0b14/config/external/nspr/prcpucfg.h	2017-01-18 06:38:02.945518852 +0000
+@@ -22,6 +22,8 @@
+ #include "md/_openbsd.cfg"
+ #elif defined(__linux__)
+ #include "md/_linux.cfg"
++#elif defined(__sun__)
++#include "md/_solaris.cfg"
+ #else
+ #error "Unsupported platform!"
+ #endif
+--- firefox-51.0b14/config/external/nspr/pr/moz.build.~1~	2016-09-19 09:19:29.000000000 +0000
++++ firefox-51.0b14/config/external/nspr/pr/moz.build	2017-01-19 03:38:33.945047485 +0000
+@@ -49,6 +49,17 @@
+     ]
+     if not CONFIG['MOZ_IOS']:
+         DEFINES['HAVE_CRT_EXTERNS_H'] = True
++elif CONFIG['OS_TARGET'] == 'SunOS':
++    DEFINES.update(
++        HAVE_FCNTL_FILE_LOCKING=True,
++        HAVE_SOCKLEN_T=True,
++        _PR_HAVE_OFF64_T=True,
++        _PR_INET6=True,
++    )
++    DEFINES['SOLARIS'] = True
++    SOURCES += ['/nsprpub/pr/src/md/unix/solaris.c']
++    if CONFIG['CPU_ARCH'] == 'x86':
++        SOURCES += ['/nsprpub/pr/src/md/unix/os_SunOS_x86.s']
+ elif CONFIG['OS_TARGET'] == 'WINNT':
+     OS_LIBS += [
+         'advapi32',
+@@ -222,6 +233,7 @@
+     '/nsprpub/pr/include/md/_linux.cfg',
+     '/nsprpub/pr/include/md/_netbsd.cfg',
+     '/nsprpub/pr/include/md/_openbsd.cfg',
++    '/nsprpub/pr/include/md/_solaris.cfg',
+     '/nsprpub/pr/include/md/_win95.cfg',
+ ]
+ 
