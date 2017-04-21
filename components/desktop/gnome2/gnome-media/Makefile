@@ -9,11 +9,12 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2014 Alexander Pyhalov
 # Copyright (c) 2014 Ken Mays
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-media
 COMPONENT_VERSION=	2.32.0
@@ -30,11 +31,11 @@ COMPONENT_CLASSIFICATION=Applications/Sound and Video
 COMPONENT_LICENSE= GPLv2, LGPLv2.1, FDL1.1
 COMPONENT_LICENSE_FILE= gnome-media.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
@@ -64,4 +65,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

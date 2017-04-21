@@ -18,11 +18,10 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2012 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		pycups
 COMPONENT_VERSION=	1.9.73
@@ -36,9 +35,9 @@ COMPONENT_BUGDB=	python-mod/pycups
 
 PYTHON_VERSIONS=2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # pycups requires VERSION to be defined. Originally set in the package Makefile
 CFLAGS += -DVERSION=\\\"$(COMPONENT_VERSION)\\\"

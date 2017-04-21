@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -26,9 +27,9 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/pyorbit/2.24/$(COM
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
@@ -44,7 +45,7 @@ $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)

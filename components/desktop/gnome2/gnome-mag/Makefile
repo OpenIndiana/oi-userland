@@ -9,10 +9,11 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-mag
 COMPONENT_VERSION=	0.16.3
@@ -28,11 +29,11 @@ COMPONENT_CLASSIFICATION= Applications/Universal Access
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
@@ -51,3 +52,18 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += developer/gcc/gcc-libgcc
+REQUIRED_PACKAGES += gnome/accessibility/gnome-a11y-libs
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-component
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxrender
