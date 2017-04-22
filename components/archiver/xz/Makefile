@@ -23,12 +23,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
-COMPONENT_VERSION=	5.2.2
+COMPONENT_VERSION=	5.2.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://tukaani.org/xz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:73df4d5d34f0468bd57d09f2d8af363e95ed6cc3a4a86129d2f2c366259902a2   
+    sha256:71928b357d0a09a12a4b4c5fafca8c31c19b0e7d3b8ebb19622e96f26dbf28cb   
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		compress/xz
 COMPONENT_SUMMARY=	'XZ Utils - loss-less file compression application and library.'
@@ -59,15 +59,9 @@ COMPONENT_TEST_TRANSFORMS += \
 # common targets
 build:		$(BUILD_32_and_64)
 
-include $(WS_MAKE_RULES)/shared-targets.mk
-
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
