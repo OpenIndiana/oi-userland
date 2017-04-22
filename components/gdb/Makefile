@@ -117,6 +117,12 @@ COMPONENT_POST_BUILD_ACTION = \
 	( cd $(BUILD_DIR_64)/gdb/doc ; \
 	$(GMAKE) man )
 
+# The test gdb.mi/mi-exec-run.exp hangs up the test run, so skip it.
+COMPONENT_PRE_TEST_ACTION += \
+  ( cd $(SOURCE_DIR)/gdb/testsuite/gdb.mi ; \
+    if test -e mi-exec-run.exp ; then \
+      $(MV) mi-exec-run.exp mi-exec-run.exp-save ; fi )
+
 COMPONENT_POST_INSTALL_ACTION = \
   ( cd  $(PROTOUSRDIR)/share/gdb/python/gdb ; \
       $(PYTHON) -m compileall . ; \
