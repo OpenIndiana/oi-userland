@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
@@ -33,7 +34,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\

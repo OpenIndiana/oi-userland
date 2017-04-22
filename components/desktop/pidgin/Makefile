@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
@@ -32,7 +33,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 # We use libncurses and libpanel from /usr/gnu/lib
 LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib

@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Jim Klimov. All rights reserved.
 #
 
@@ -29,6 +30,9 @@ COMPONENT_ARCHIVE_HASH=	\
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# In oi_151a8, illumos version of yes ignores SIGPIPE, never exits
+PATH = $(PATH.gnu)
 
 # Snatched from espeak component
 BINDIR.32=/usr/bin
@@ -65,8 +69,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
-
-include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

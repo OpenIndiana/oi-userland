@@ -9,12 +9,11 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		netifaces
 COMPONENT_VERSION=	0.10.4
@@ -28,9 +27,9 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netifaces/$(COM
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_32)
