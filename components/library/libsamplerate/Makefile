@@ -18,12 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015 Aurelien Larcher. All rights reserved.
+# Copyright (c) 2015-2017 Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsamplerate
-COMPONENT_VERSION=	0.1.8
+COMPONENT_VERSION=	0.1.9
 COMPONENT_FMRI=	library/libsamplerate
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SUMMARY=	Secret Rabbit Code (aka libsamplerate) - Sample Rate Converter for audio 
@@ -31,26 +31,24 @@ COMPONENT_PROJECT_URL=	http://www.mega-nerd.com/SRC/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:93b54bdf46d5e6d2354b7034395fe329c222a966790de34520702bb9642f1c06
+    sha256:0a7eb168e2f21353fb6d84da152e4512126f7dc48ccb0be80578c565413444c1
 COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/SRC/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2	
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_BUGDB=	library/libsamplerate
+COMPONENT_LICENSE=	BSD	
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libsndfile
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
