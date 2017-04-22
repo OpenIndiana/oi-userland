@@ -12,7 +12,7 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixman
 COMPONENT_VERSION=	0.34.0
@@ -28,11 +28,11 @@ COMPONENT_FMRI=		library/graphics/pixman
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-gtk
 
@@ -43,6 +43,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
