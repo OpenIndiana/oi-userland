@@ -22,10 +22,10 @@
  ifeq ($(OSNAME), Darwin)
  	@$(MAKE) -C exports dyn
  	@-ln -fs $(LIBDYNNAME) $(LIBPREFIX).dylib
---- ./Makefile.install.orig	2015-02-10 03:36:22.281524541 +0000
-+++ ./Makefile.install	2015-02-10 03:37:24.743697309 +0000
-@@ -79,6 +80,11 @@
- 	@cd $(DESTDIR)$(OPENBLAS_LIBRARY_DIR) ; \
+--- xianyi-OpenBLAS-9a7e0ec/Makefile.install.orig	2016-09-01 05:58:42.000000000 +0200
++++ xianyi-OpenBLAS-9a7e0ec/Makefile.install	2017-04-24 00:06:20.207814843 +0200
+@@ -80,6 +80,11 @@
+ 	@cd "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)" ; \
  	ln -fs $(LIBSONAME) $(LIBPREFIX).so
  endif
 +ifeq ($(OSNAME), SunOS)
@@ -34,14 +34,14 @@
 +	ln -fs $(LIBSONAME) $(LIBPREFIX).so
 +endif
  ifeq ($(OSNAME), Darwin)
- 	@-cp $(LIBDYNNAME) $(DESTDIR)$(OPENBLAS_LIBRARY_DIR)
- 	@-install_name_tool -id $(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME) $(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)
-@@ -98,7 +104,7 @@
- 	@echo "SET(OpenBLAS_INCLUDE_DIRS ${OPENBLAS_INCLUDE_DIR})" > $(DESTDIR)$(OPENBLAS_CMAKE_DIR)/$(OPENBLAS_CMAKE_CONFIG)
+ 	@-cp $(LIBDYNNAME) "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)"
+ 	@-install_name_tool -id "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)" "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)"
+@@ -101,7 +106,7 @@
+ 
  ifndef NO_SHARED
  #ifeq logical or
 -ifeq ($(OSNAME), $(filter $(OSNAME),Linux FreeBSD NetBSD))
 +ifeq ($(OSNAME), $(filter $(OSNAME),Linux FreeBSD NetBSD SunOS))
- 	@echo "SET(OpenBLAS_LIBRARIES ${OPENBLAS_LIBRARY_DIR}/$(LIBPREFIX).so)" >> $(DESTDIR)$(OPENBLAS_CMAKE_DIR)/$(OPENBLAS_CMAKE_CONFIG)
+ 	@echo "SET(OpenBLAS_LIBRARIES ${OPENBLAS_LIBRARY_DIR}/$(LIBPREFIX).so)" >> "$(DESTDIR)$(OPENBLAS_CMAKE_DIR)/$(OPENBLAS_CMAKE_CONFIG)"
  endif
  ifeq ($(OSNAME), $(filter $(OSNAME),WINNT CYGWIN_NT))

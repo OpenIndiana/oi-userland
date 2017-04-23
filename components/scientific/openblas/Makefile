@@ -18,32 +18,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2014-2017, Aurelien Larcher. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
-COMPONENT_VERSION=	0.2.15
+COMPONENT_VERSION=	0.2.19
 COMPONENT_VERSION_REV=	0
 COMPONENT_VERSION_TAG=	ga7126c2
-COMPONENT_REVISION_TAG= afedc8e
+COMPONENT_REVISION_TAG= 9a7e0ec
 COMPONENT_FMRI=     	library/math/openblas
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=		xianyi-OpenBLAS-$(COMPONENT_REVISION_TAG)
 COMPONENT_PROJECT_URL=	http://www.openblas.net
 COMPONENT_ARCHIVE=	xianyi-OpenBLAS-v$(COMPONENT_VERSION)-$(COMPONENT_VERSION_REV)-$(COMPONENT_VERSION_TAG).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fe32d7977e9a2dddcd6e9c5350683b5e3cc3d59afdd432e9a5989449e536aecc
+    sha256:878353b52940e0d5be32011cd5ba8440758f5270c3fa0f6f6200c26eabc53f1c
 COMPONENT_ARCHIVE_URL=	http://github.com/xianyi/OpenBLAS/tarball/v$(COMPONENT_VERSION)
 COMPONENT_LICENSE=      BSD 3-Clause
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # In a virtualized environment getarch cannot detect the architecture.
 # It falls back to INTEL_UKNOWN which causes failure of the build.
@@ -53,6 +52,7 @@ COMPONENT_BUILD_GMAKE_ARGS= PREFIX=$(USRDIR) \
                             DYNAMIC_ARCH=1 \
                             TARGET=PRESCOTT \
                             BINARY=$(BITS) \
+                            CROSS_SUFFIX="" \
                             FC=$(FC) CC=$(CC) \
                             COMMON_OPT="$(CFLAGS) -Wa,--divide" \
                             NO_LAPACKE=1 \
@@ -71,7 +71,6 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gfortran-4-runtime
