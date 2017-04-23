@@ -23,19 +23,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	4.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.4
+COMPONENT_FMRI=	shell/bash
+COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
+COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:afc687a28e0e24dc21b988fa159ff9dbcf6b7caa92ade8645cc6d5605cd024d4
+    sha256:d86b3392c1202e8ff5a423b302e6284db7f8f435ea9f39b5b1b20fd3ac36dfcb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/bash
+COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bash* | nawk '{print $$NF}' | sort -n | tail -1)
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
@@ -73,54 +75,59 @@ LIBS =	-lc -lsocket -lgen
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
 # The bash test harness needs the GNU userland utilities
-TEST_PATH = "PATH=$(BUILD_DIR_32):$(GNUBIN):$(USRBINDIR)"
+TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
 
-CONFIGURE_ENV +=	LIBS="$(LIBS)"
+COMPONENT_PREP_ACTION = ( cd $(@D); autoconf -f -i )
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  += 		--enable-alias
-CONFIGURE_OPTIONS  += 		--enable-arith-for-command
-CONFIGURE_OPTIONS  += 		--enable-array-variables
-CONFIGURE_OPTIONS  += 		--enable-bang-history
-CONFIGURE_OPTIONS  += 		--enable-brace-expansion
-CONFIGURE_OPTIONS  += 		--enable-casemod-attributes
-CONFIGURE_OPTIONS  += 		--enable-casemod-expansions
-CONFIGURE_OPTIONS  += 		--enable-command-timing
-CONFIGURE_OPTIONS  += 		--enable-cond-command
-CONFIGURE_OPTIONS  += 		--enable-cond-regexp
-CONFIGURE_OPTIONS  += 		--enable-coprocesses
-CONFIGURE_OPTIONS  += 		--enable-debugger
-CONFIGURE_OPTIONS  += 		--enable-directory-stack
-CONFIGURE_OPTIONS  += 		--enable-disabled-builtins
-CONFIGURE_OPTIONS  += 		--enable-dparen-arithmetic
-CONFIGURE_OPTIONS  += 		--enable-extended-glob
-CONFIGURE_OPTIONS  += 		--enable-help-builtin
-CONFIGURE_OPTIONS  += 		--enable-history
-CONFIGURE_OPTIONS  += 		--enable-job-control
-CONFIGURE_OPTIONS  += 		--enable-multibyte
-CONFIGURE_OPTIONS  += 		--enable-net-redirections
-CONFIGURE_OPTIONS  += 		--enable-process-substitution
-CONFIGURE_OPTIONS  += 		--enable-progcomp
-CONFIGURE_OPTIONS  += 		--enable-prompt-string-decoding
-CONFIGURE_OPTIONS  += 		--enable-readline
-CONFIGURE_OPTIONS  += 		--enable-restricted
-CONFIGURE_OPTIONS  += 		--enable-select
-CONFIGURE_OPTIONS  += 		--enable-separate-helpfiles
-CONFIGURE_OPTIONS  += 		--enable-single-help-strings
-CONFIGURE_OPTIONS  += 		--disable-strict-posix-default
-CONFIGURE_OPTIONS  += 		--enable-usg-echo-default=yes
-CONFIGURE_OPTIONS  += 		--enable-xpg-echo-default=yes
-CONFIGURE_OPTIONS  += 		--enable-mem-scramble
-CONFIGURE_OPTIONS  += 		--disable-profiling
-CONFIGURE_OPTIONS  += 		--enable-static-link
-CONFIGURE_OPTIONS  += 		--enable-largefile
-CONFIGURE_OPTIONS  += 		--enable-nls
-CONFIGURE_OPTIONS  += 		--with-bash-malloc=yes
-CONFIGURE_OPTIONS  += 		--with-curses
-CONFIGURE_OPTIONS  += 		--with-installed-readline=no
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_ENV += LIBS="$(LIBS)"
+CONFIGURE_ENV += LD_OPTIONS="-lc -lm -lgen -lsocket -lnsl -lresolv $(LD_Z_IGNORE)"
 
-COMPONENT_TEST_DIR =		$(BUILD_DIR_32)
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
+CONFIGURE_OPTIONS += --disable-profiling
+CONFIGURE_OPTIONS += --disable-strict-posix-default
+CONFIGURE_OPTIONS += --enable-alias
+CONFIGURE_OPTIONS += --enable-arith-for-command
+CONFIGURE_OPTIONS += --enable-array-variables
+CONFIGURE_OPTIONS += --enable-bang-history
+CONFIGURE_OPTIONS += --enable-brace-expansion
+CONFIGURE_OPTIONS += --enable-casemod-attributes
+CONFIGURE_OPTIONS += --enable-casemod-expansions
+CONFIGURE_OPTIONS += --enable-command-timing
+CONFIGURE_OPTIONS += --enable-cond-command
+CONFIGURE_OPTIONS += --enable-cond-regexp
+CONFIGURE_OPTIONS += --enable-coprocesses
+CONFIGURE_OPTIONS += --enable-debugger
+CONFIGURE_OPTIONS += --enable-directory-stack
+CONFIGURE_OPTIONS += --enable-disabled-builtins
+CONFIGURE_OPTIONS += --enable-dparen-arithmetic
+CONFIGURE_OPTIONS += --enable-extended-glob
+CONFIGURE_OPTIONS += --enable-help-builtin
+CONFIGURE_OPTIONS += --enable-history
+CONFIGURE_OPTIONS += --enable-job-control
+CONFIGURE_OPTIONS += --enable-largefile
+CONFIGURE_OPTIONS += --enable-mem-scramble
+CONFIGURE_OPTIONS += --enable-multibyte
+CONFIGURE_OPTIONS += --enable-net-redirections
+CONFIGURE_OPTIONS += --enable-nls
+CONFIGURE_OPTIONS += --enable-process-substitution
+CONFIGURE_OPTIONS += --enable-progcomp
+CONFIGURE_OPTIONS += --enable-prompt-string-decoding
+CONFIGURE_OPTIONS += --enable-readline
+CONFIGURE_OPTIONS += --enable-restricted
+CONFIGURE_OPTIONS += --enable-select
+CONFIGURE_OPTIONS += --enable-separate-helpfiles
+CONFIGURE_OPTIONS += --enable-single-help-strings
+CONFIGURE_OPTIONS += --enable-static-link
+CONFIGURE_OPTIONS += --enable-usg-echo-default=yes
+CONFIGURE_OPTIONS += --enable-xpg-echo-default=yes
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --with-bash-malloc=yes
+CONFIGURE_OPTIONS += --with-curses
+CONFIGURE_OPTIONS += --with-installed-readline=no
+
+COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)
 
 # The tests use /tmp/xx, and there can only be one user running
@@ -130,15 +137,15 @@ COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
 
 # ASLR_MODE=$(ASLR_ENABLE)
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
 	    cp -Rp "en@boldquot" en ; \
 	    cp -Rp "en@boldquot" en_CA ; \
 	    cp -Rp "en@boldquot" en_GB )
 
-test:	$(TEST_32_and_64)
+test:	$(TEST_64)
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library

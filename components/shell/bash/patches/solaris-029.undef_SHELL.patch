@@ -1,0 +1,23 @@
+# When SHELL is unset the test fails with
+#
+# 150,151c150,151
+# < ./redir11.sub: line 26: echo: write error: Bad file number
+# < ./redir11.sub: line 27: echo: write error: Bad file number
+# ---
+# > ./redir11.sub: line 26: $(a=4 foo): Bad file number
+# > ./redir11.sub: line 27: $(a=4 foo): Bad file number
+#
+# Reported to bug-bash@gnu.org, but they can't reproduce. Needs more work on
+# our side.
+
+--- tests/redir.tests	2016-12-01 11:20:04.910983199 +0000
++++ tests/redir.tests	2016-12-01 11:19:34.114069067 +0000
+@@ -1,7 +1,7 @@
+ : ${TMPDIR:=/tmp}
+ 
+ export LC_ALL=C
+-export LANG=C
++export LANG=C; export SHELL=
+ 
+ # catch-all for remaining untested redirection stuff
+ set +o posix
