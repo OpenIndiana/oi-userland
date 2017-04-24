@@ -444,7 +444,8 @@ $(BUILD_DIR_64)/.tested-and-compared:	BITS=64
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
 
-SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio12.1
+SPRO_VERSION =	12.1
+SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio$(SPRO_VERSION)
 SPRO_VROOT =	$(SPRO_ROOT)
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
@@ -505,7 +506,8 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_ROOT =	/usr/gcc/4.9
+GCC_VERSION =	4.9
+GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
