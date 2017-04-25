@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lzop
 COMPONENT_VERSION=	1.03
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	1.0.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -23,9 +24,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:c1425b8c77d49f5a679d5a126c90ea6ad99585a55e335a613
 COMPONENT_PROJECT_URL=	http://www.lzop.org
 COMPONENT_ARCHIVE_URL=	http://www.lzop.org/download/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)
 
@@ -33,5 +34,6 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += system/library
