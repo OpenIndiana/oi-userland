@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bcc
 COMPONENT_VERSION=	0.16.19
@@ -33,11 +33,10 @@ COMPONENT_ARCHIVE=	Dev86src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:33398b87ca85e2b69e4062cf59f2f7354af46da5edcba036c6f97bae17b8d00e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)archive/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/bcc
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -58,6 +57,5 @@ install build:		$(BUILD_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
