@@ -12,7 +12,7 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stardict
 COMPONENT_VERSION=	3.0.3
@@ -31,7 +31,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/mariadb/5.5/bin:/usr/gnu/bin:/usr/bin
+PATH=/usr/mariadb/5.5/bin:$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         autoreconf  -f -i )
@@ -57,6 +57,22 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/libgnomeui
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libbonobo
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/orbit2
+REQUIRED_PACKAGES += library/speech/espeak
+REQUIRED_PACKAGES += library/spell-checking/enchant
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
