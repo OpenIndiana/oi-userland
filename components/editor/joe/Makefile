@@ -21,28 +21,42 @@
 # Copyright (c) 2013, Louis M. Picciano. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		joe
-COMPONENT_VERSION=	3.7
+COMPONENT_VERSION=	4.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://joe-editor.sourceforge.net/
 COMPONENT_SUMMARY=	Joe's Own Editor
+COMPONENT_DESCRIPTION=	Joe's Own Editor - a full featured terminal-based screen editor
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cae456e1ad5a8c1d3c94920a3416c2347277739b260e3494d3bc0f2b9b73106f
+   sha256:a5704828bbca29acb9e200414fef522c66cdf9ce28150f402d6767da43460979
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/joe-editor/JOE%20sources/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	editor/joe
+COMPONENT_CLASSIFICATION=	System/Text Tools
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-COMPONENT_BUGDB=	editor/joe
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
+
+# Joe uses incorrect relative paths
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS	 +=	--sysconfdir=$(ETCDIR)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
+
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
