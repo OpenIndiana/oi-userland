@@ -512,7 +512,7 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_VERSION =	4.9
+GCC_VERSION =	6
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
