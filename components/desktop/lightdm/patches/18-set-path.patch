@@ -1,0 +1,62 @@
+--- lightdm-1.19.3/src/session-child.c.~7~	2017-04-25 12:24:59.852060367 +0300
++++ lightdm-1.19.3/src/session-child.c	2017-04-25 12:27:23.569942688 +0300
+@@ -8,6 +8,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
++#include <deflt.h>
+ #include <fcntl.h>
+ #include <pwd.h>
+ #include <grp.h>
+@@ -103,6 +104,29 @@
+     return value;
+ }
+ 
++/*
++ * lightdm_read_default
++ *
++ * This function is used to support systems that have the /etc/default/login
++ * interface to control programs that affect security.  This is a Solaris
++ * thing, though some users on other systems may find it useful.
++ */
++static gchar *
++lightdm_read_default (gchar *key)
++{
++    gchar *retval = NULL;
++
++    if (defopen ("/etc/default/login") == 0) {
++       int flags = defcntl (DC_GETFLAGS, 0);
++
++       TURNOFF (flags, DC_CASE);
++       (void) defcntl (DC_SETFLAGS, flags);  /* ignore case */
++       retval = g_strdup (defread (key));
++       (void) defopen ((char *)NULL);
++    }
++    return retval;
++}
++
+ static void 
+ run_linc_cleanup(User *user)
+ {
+@@ -592,8 +616,20 @@
+         }
+         else
+         {
++            char * path_str = NULL;
++
+             /* Set POSIX variables */
+-            pam_putenv (pam_handle, "PATH=/usr/local/bin:/usr/bin:/bin");
++            if (user_get_uid(user) == 0)
++               path_str = lightdm_read_default ("SUPATH=");
++
++            if (path_str == NULL)
++               path_str = lightdm_read_default ("PATH=");
++ 
++            /* Sane fallback */
++            if (path_str == NULL)
++               path_str = "/usr/bin:/usr/sbin:/sbin:/usr/gnu/bin";
++
++            pam_putenv (pam_handle, g_strdup_printf ("PATH=%s", path_str));
+             pam_putenv (pam_handle, g_strdup_printf ("USER=%s", username));
+             pam_putenv (pam_handle, g_strdup_printf ("LOGNAME=%s", username));
+             pam_putenv (pam_handle, g_strdup_printf ("HOME=%s", user_get_home_directory (user)));
