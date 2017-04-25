@@ -1,11 +1,19 @@
---- ospm-1.4.11/applet/ospm-status-dialog.c.1	2016-04-14 01:20:14.360705025 +0300
-+++ ospm-1.4.11/applet/ospm-status-dialog.c	2016-04-14 01:23:51.940803072 +0300
-@@ -139,7 +139,7 @@
+--- ospm-1.4.11/applet/ospm-status-dialog.c-orig	   :: 
++++ ospm-1.4.11/applet/ospm-status-dialog.c	   :: 
+@@ -139,7 +139,15 @@
          if (!notify_init (PACKAGE))
                  exit (1);
  
 -        notify = notify_notification_new_with_status_icon ("ospm-applet", NULL, NULL, icon);
++#ifdef NOTIFY_CHECK_VERSION
++#if NOTIFY_CHECK_VERSION (0, 7, 0)
 +        notify = notify_notification_new ("ospm-applet", NULL, NULL);
++#else
++        notify = notify_notification_new ("ospm-applet", NULL, NULL, NULL);
++#endif
++#else
++        notify = notify_notification_new ("ospm-applet", NULL, NULL, NULL);
++#endif
  
          notify_notification_add_action (notify, "default", "default action", notify_action_cb, icon, NULL);
  
