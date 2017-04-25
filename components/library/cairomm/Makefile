@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cairomm
 
@@ -27,11 +27,11 @@ COMPONENT_ARCHIVE_URL= \
   http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cairographics.org/cairomm/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
@@ -40,3 +40,10 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
