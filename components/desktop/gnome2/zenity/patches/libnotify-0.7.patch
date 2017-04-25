@@ -1,19 +1,5 @@
-https://bugzilla.gnome.org/show_bug.cgi?id=631737
-From 977600de4a7519d1ddf56b6f4feb846e2a9ae71d Mon Sep 17 00:00:00 2001
-From: William Jon McCann <jmccann@redhat.com>
-Date: Sat, 9 Oct 2010 04:59:44 -0400
-Subject: [PATCH] Require libnotify 0.6.1
-
-https://bugzilla.gnome.org/show_bug.cgi?id=631737
----
- configure.in       |   18 +----
- src/notification.c |  198 +++++++++++++++++-----------------------------------
- 2 files changed, 67 insertions(+), 149 deletions(-)
-
-diff --git a/src/notification.c b/src/notification.c
-index 99a2e36..531aed2 100644
---- a/src/notification.c
-+++ b/src/notification.c
+--- zenity-2.32.1/src/notification.c-orig	   :: 
++++ zenity-2.32.1/src/notification.c	   :: 
 @@ -24,75 +24,31 @@
  
  #include <config.h>
@@ -45,9 +31,12 @@ index 99a2e36..531aed2 100644
  {
 -  GdkPixbuf *pixbuf;
 -  GError *error = NULL;
--
++  ZenityData *zen_data;
+ 
 -  pixbuf = gdk_pixbuf_new_from_file_at_scale (icon_file, icon_size, icon_size, TRUE, &error);
--
++  zen_data = (ZenityData *)user_data;
++  notify_notification_close (n, NULL);
+ 
 -  if (error) {
 -    g_warning ("Could not load notification icon '%s': %s",
 -               icon_file, error->message);
@@ -57,7 +46,8 @@ index 99a2e36..531aed2 100644
 -    pixbuf = gdk_pixbuf_new_from_file_at_scale (ZENITY_IMAGE_FULLPATH ("zenity-notification.png"),
 -                                                icon_size, icon_size, TRUE, NULL);
 -  }
--
++  zen_data->exit_code = zenity_util_return_exit_code (ZENITY_OK);
+ 
 -  gtk_status_icon_set_from_pixbuf (status_icon, pixbuf);
 -
 -  if (pixbuf) {
@@ -80,27 +70,23 @@ index 99a2e36..531aed2 100644
 -
 -    return TRUE;
 -  }
-+  ZenityData *zen_data;
- 
+-
 -  return FALSE;
 -}
-+  zen_data = (ZenityData *)user_data;
-+  notify_notification_close (n, NULL);
- 
+-
 -static gboolean
 -zenity_notification_icon_activate_cb (GtkWidget *widget,
 -				      ZenityData *data)
 -{
 -  data->exit_code = zenity_util_return_exit_code (ZENITY_OK);
-+  zen_data->exit_code = zenity_util_return_exit_code (ZENITY_OK);
- 
+-
    gtk_main_quit ();
 -
 -  return TRUE;
  }
  
  static gboolean
-@@ -145,26 +101,14 @@ zenity_notification_handle_stdin (GIOChannel *channel,
+@@ -145,26 +101,14 @@
        while (*value && g_ascii_isspace (*value)) value++;
  
        if (!g_ascii_strcasecmp (command, "icon")) {
@@ -128,7 +114,7 @@ index 99a2e36..531aed2 100644
            gchar **message;
            error = NULL;
  
-@@ -178,46 +122,37 @@ zenity_notification_handle_stdin (GIOChannel *channel,
+@@ -178,46 +122,61 @@
              continue;
            }
  
@@ -137,30 +123,42 @@ index 99a2e36..531aed2 100644
 -          } else if (icon_file) {
 -            icon = freeme = g_filename_to_uri (icon_file, NULL, NULL);
 -          }
--
++#ifdef NOTIFY_CHECK_VERSION
++#if NOTIFY_CHECK_VERSION (0, 7, 0)
++          notif = notify_notification_new (message[0] /* title */,
++                                           message[1] /* summary */,
++                                           icon_file);
++#else
++          notif = notify_notification_new (message[0] /* title */,
++                                           message[1] /* summary */,
++                                           icon_file, NULL);
++#endif
++#else
++          notif = notify_notification_new (message[0] /* title */,
++                                           message[1] /* summary */,
++                                           icon_file, NULL);
++#endif
+ 
 -          notif = notify_notification_new_with_status_icon (
 -                              message[0] /* title */,
 -                              message[1] /* summary */,
 -                              icon, status_icon);
-+          notif = notify_notification_new (message[0] /* title */,
-+                                           message[1] /* summary */,
-+                                           icon_file);
- 
+-
            g_strfreev (message);
 -          g_free (freeme);
  
 -	  notify_notification_show (notif, &error);
--
--	  if (error) {
--	    g_warning ("Error showing notification: %s", error->message);
--	    g_error_free (error);
--	  }
 +          notify_notification_show (notif, &error);
 +          if (error) {
 +            g_warning ("Error showing notification: %s", error->message);
 +            g_error_free (error);
 +          }
  
+-	  if (error) {
+-	    g_warning ("Error showing notification: %s", error->message);
+-	    g_error_free (error);
+-	  }
+-
  	  g_object_unref (notif);
 -	} else {
 -#else
@@ -178,9 +176,21 @@ index 99a2e36..531aed2 100644
 +        } else {
 +          NotifyNotification *notif;
 +
++#ifdef NOTIFY_CHECK_VERSION
++#if NOTIFY_CHECK_VERSION (0, 7, 0)
 +          notif = notify_notification_new (value,
 +                                           NULL,
 +                                           icon_file);
++#else
++          notif = notify_notification_new (value,
++                                           NULL,
++                                           icon_file, NULL);
++#endif
++#else
++          notif = notify_notification_new (value,
++                                           NULL,
++                                           icon_file, NULL);
++#endif
 +          notify_notification_show (notif, &error);
 +          if (error) {
 +            g_warning ("Error showing notification: %s", error->message);
@@ -197,7 +207,7 @@ index 99a2e36..531aed2 100644
        } else {
  	g_warning ("Unknown command '%s'", command);
        }
-@@ -249,55 +184,52 @@ zenity_notification_listen_on_stdin (ZenityData *data)
+@@ -249,55 +208,60 @@
  		  zenity_notification_handle_stdin, data);
  }
  
@@ -246,12 +256,23 @@ index 99a2e36..531aed2 100644
 +    if (notification_data->notification_text == NULL) {
 +      exit (1);
 +    }
-+
+ 
+-  /* Show icon and wait */
+-  gtk_status_icon_set_visible (status_icon, TRUE);
++#ifdef NOTIFY_CHECK_VERSION
++#if NOTIFY_CHECK_VERSION (0, 7, 0)
 +    notification = notify_notification_new (notification_data->notification_text, NULL, data->window_icon);
++#else
++    notification = notify_notification_new (notification_data->notification_text, NULL, data->window_icon, NULL);
++#endif
++#else
++    notification = notify_notification_new (notification_data->notification_text, NULL, data->window_icon, NULL);
++#endif
 +    if (notification == NULL) {
 +      exit (1);
 +    }
-+
+ 
+-  if(data->timeout_delay > 0) {
 +    /* if we aren't listening for changes, then close on default action */
 +    notify_notification_add_action (notification,
 +                                    "default",
@@ -269,12 +290,9 @@ index 99a2e36..531aed2 100644
 +      }
 +      exit (1);
 +    }
- 
--  /* Show icon and wait */
--  gtk_status_icon_set_visible (status_icon, TRUE);
++
 +  }
- 
--  if(data->timeout_delay > 0) {
++
 +  if (data->timeout_delay > 0) {
      g_timeout_add_seconds (data->timeout_delay, (GSourceFunc) zenity_util_timeout_handle, NULL);
    }
@@ -285,5 +303,3 @@ index 99a2e36..531aed2 100644
 -  g_object_unref (status_icon);
 -  g_free (icon_file);
  }
--- 
-1.7.2.3
