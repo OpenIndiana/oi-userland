@@ -69,20 +69,16 @@ clean::
 		cd ext; $(GMAKE) clean; $(RM) Makefile; \
 	fi
 
-$(BUILD_DIR)/puppet.conf:
+$(BUILD_DIR)/puppet.conf: install
 	RUBYLIB=$(PROTO_DIR)/usr/ruby/$(RUBY_VERSION):$(PROTO_DIR)$(VENDOR_RUBY) \
 	  $(PROTO_DIR)/usr/sbin/puppet agent --genconfig > $@
 
-$(BUILD_DIR)/puppet.xml: $(BUILD_DIR)/puppet.conf
+$(PROTOSVCMANIFESTDIR)/application/puppet.xml: $(BUILD_DIR)/puppet.conf
 	-$(RM) $@
+	$(MKDIR) $(PROTOSVCMANIFESTDIR)/application
 	$(PYTHON) tools/update_smf.py -c $(BUILD_DIR)/puppet.conf \
-	  -s files/puppet.xml -o $@
-
-$(BUILD_DIR)/.smf_updated: $(BUILD_DIR)/puppet.xml
-	$(GDIFF) -q $(BUILD_DIR)/puppet.xml files/puppet.xml > /dev/null 2>&1 || \
-		$(CP) $(BUILD_DIR)/puppet.xml files/puppet.xml
-	/usr/sbin/svccfg validate files/puppet.xml
-	$(TOUCH) $@
+	  -s files/puppet.xml.stub -o $@
+	/usr/sbin/svccfg validate $@
 
 # Collect and print puppet module manifests for cherry picking into group
 # dependencies as a helper for the package maintainer
@@ -107,7 +103,7 @@ PKG_OPTIONS +=	-I $(BUILD_DIR)
 build::		$(BUILD_NO_ARCH)
 
 # make sure facter and hiera are installed first
-install:	../facter/build/$(MACH)/.installed ../hiera/build/$(MACH)/.installed $(INSTALL_NO_ARCH) ext/PuppetAudit.so $(BUILD_DIR)/.smf_updated
+install:	../facter/build/$(MACH)/.installed ../hiera/build/$(MACH)/.installed $(INSTALL_NO_ARCH) ext/PuppetAudit.so $(PROTOSVCMANIFESTDIR)/application/puppet.xml
 
 # puppet requires the installation of the following rubygems to run
 # the unittests:  rspec rspec-expectations mocha rack rgen

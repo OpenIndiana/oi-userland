@@ -1,0 +1,118 @@
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+ Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
+
+ NOTE:  This service manifest is not editable; its contents will
+ be overwritten by package or patch operations, including
+ operating system upgrade.  Make customizations in a different
+ file.
+
+-->
+<service_bundle type="manifest" name="puppet">
+  <service name="application/puppet" type="service" version="1">
+    <dependency name="filesystem" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/system/filesystem/minimal"/>
+    </dependency>
+    <dependency name="network" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/milestone/network"/>
+    </dependency>
+    <dependency name="identity" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/system/identity:node"/>
+    </dependency>
+    <dependency name="puppet_self-assembly-complete" grouping="optional_all" restart_on="none" type="service">
+      <service_fmri value="svc:/milestone/self-assembly-complete"/>
+    </dependency>
+    <exec_method type="method" name="start" exec=":true" timeout_seconds="60"/>
+    <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
+    <exec_method type="method" name="refresh" exec=":true" timeout_seconds="0"/>
+    <property_group name="general" type="framework">
+      <!-- to start stop puppet -->
+      <propval name="action_authorization" type="astring" value="solaris.smf.manage.puppet"/>
+      <!-- to change puppet properties -->
+      <propval name="value_authorization" type="astring" value="solaris.smf.value.puppet"/>
+    </property_group>
+    <property_group name="puppet_stencil" type="configfile">
+      <propval name="path" type="astring" value="/etc/puppetlabs/puppet/puppet.conf"/>
+      <propval name="stencil" type="astring" value="puppet.stencil"/>
+      <propval name="mode" type="astring" value="0444"/>
+    </property_group>
+    <instance name="upgrade" enabled="true">
+      <!--
+           The upgrade instance performs migration and cleanup steps if needed
+       -->
+      <exec_method type="method" name="start" exec="/usr/puppetlabs/puppet/bin/upgrade.sh" timeout_seconds="0"/>
+      <exec_method type="method" name="stop" exec=":true" timeout_seconds="0"/>
+      <property_group name="startd" type="framework">
+        <propval name="duration" type="astring" value="transient"/>
+      </property_group>
+      <property_group name="upgrade" type="application">
+        <propval name="4.x" type="boolean" value="false"/>
+      </property_group>
+    </instance>
+    <instance name="main" enabled="false">
+      <!--
+          The main instance exists to hold shared configuration values.
+       -->
+      <exec_method type="method" name="start" exec=":true" timeout_seconds="0"/>
+      <exec_method type="method" name="stop" exec=":true" timeout_seconds="0"/>
+      <property_group name="config" type="application">
+        <propval name="vardir" type="astring" value="/var/cache/puppetlabs"/>
+        <propval name="rundir" type="astring" value="/var/run/puppetlabs"/>
+        <propval name="confdir" type="astring" value="/etc/puppetlabs/puppet"/>
+      </property_group>
+    </instance>
+    <instance name="user" enabled="false">
+      <!--
+          user is used by the Puppet apply command, as well as many of the less
+          common Puppet subcommands.
+       -->
+      <exec_method type="method" name="start" exec=":true" timeout_seconds="0"/>
+      <exec_method type="method" name="stop" exec=":true" timeout_seconds="0"/>
+      <property_group name="config" type="application">
+        <propval name="vardir" type="astring" value="/var/cache/puppetlabs"/>
+        <propval name="rundir" type="astring" value="/var/run/puppetlabs"/>
+        <propval name="confdir" type="astring" value="/etc/puppetlabs/puppet"/>
+      </property_group>
+    </instance>
+    <instance name="master" enabled="false">
+      <exec_method type="method" name="start" exec="/usr/sbin/puppet master --logdest %{config/logdest}" timeout_seconds="600"/>
+      <property_group name="config" type="application">
+        <propval name="logdest" type="astring" value="/var/log/puppetlabs/puppet/puppet-master.log"/>
+      </property_group>
+    </instance>
+    <instance name="agent" enabled="false">
+      <exec_method type="method" name="start" exec="/usr/sbin/puppet agent --logdest %{config/logdest}" timeout_seconds="600"/>
+      <property_group name="config" type="application">
+        <propval name="logdest" type="astring" value="/var/log/puppetlabs/puppet/puppet-agent.log"/>
+      </property_group>
+    </instance>
+    <stability value="Unstable"/>
+    <template>
+      <common_name>
+        <loctext xml:lang="C">Puppet</loctext>
+      </common_name>
+      <documentation>
+        <manpage title="puppet-master" section="8" manpath="/usr/share/man"/>
+      </documentation>
+    </template>
+  </service>
+</service_bundle>
