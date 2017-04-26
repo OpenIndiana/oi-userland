@@ -1,0 +1,64 @@
+This patch comes from upstream: http://bugs.python.org/issue26228
+It has not yet been committed, but seems on track to be, and we need
+it to fix a bug.
+
+--- Python-2.7.13/Lib/pty.py.orig	2016-12-17 12:05:06.000000000 -0800
++++ Python-2.7.13/Lib/pty.py	2017-04-26 13:34:02.125867738 -0700
+@@ -148,7 +148,7 @@
+         if master_fd in rfds:
+             data = master_read(master_fd)
+             if not data:  # Reached EOF.
+-                fds.remove(master_fd)
++                return
+             else:
+                 os.write(STDOUT_FILENO, data)
+         if STDIN_FILENO in rfds:
+@@ -164,7 +164,15 @@
+         argv = (argv,)
+     pid, master_fd = fork()
+     if pid == CHILD:
+-        os.execlp(argv[0], *argv)
++        try:
++            os.execlp(argv[0], *argv)
++        except:
++            # If we wanted to be really clever, we would use
++            # the same method as subprocess() to pass the error
++            # back to the parent.  For now just dump stack trace.
++            traceback.print_exc()
++        finally:
++            os._exit(1)
+     try:
+         mode = tty.tcgetattr(STDIN_FILENO)
+         tty.setraw(STDIN_FILENO)
+@@ -174,6 +182,10 @@
+     try:
+         _copy(master_fd, master_read, stdin_read)
+     except (IOError, OSError):
++        # Some OSes never return an EOF on pty, just raise
++        # an error instead.
++        pass
++    finally:
+         if restore:
+             tty.tcsetattr(STDIN_FILENO, tty.TCSAFLUSH, mode)
+ 
+--- Python-2.7.13/Lib/test/test_pty.py.orig	2016-12-17 12:05:06.000000000 +0000
++++ Python-2.7.13/Lib/test/test_pty.py	2017-04-26 13:39:11.397817862 +0000
+@@ -270,7 +270,7 @@
+         socketpair[1].close()
+         os.close(write_to_stdin_fd)
+ 
+-        # Expect two select calls, the last one will cause IndexError
++        # Expect two select calls, then a normal return on master EOF
+         pty.select = self._mock_select
+         self.select_rfds_lengths.append(2)
+         self.select_rfds_results.append([mock_stdin_fd, masters[0]])
+@@ -278,8 +278,7 @@
+         # both encountered an EOF before the second select call.
+         self.select_rfds_lengths.append(0)
+ 
+-        with self.assertRaises(IndexError):
+-            pty._copy(masters[0])
++        pty._copy(masters[0])
+ 
+ 
+ def test_main(verbose=None):
