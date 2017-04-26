@@ -1,0 +1,47 @@
+In-house
+Proposed to community as: https://bugzilla.samba.org/show_bug.cgi?id=12758
+--- a/source3/smbd/quotas.c	2017-04-26 11:57:07.061357855 +0000
++++ b/source3/smbd/quotas.c	2017-04-26 12:04:40.103690322 +0000
+@@ -67,6 +67,7 @@
+ 
+ #if defined(SUNOS5)
+ 
++#if defined(USE_OBSOLETED_SOLARIS_APIS)
+ /****************************************************************************
+  Allows querying of remote hosts for quotas on NFS mounted shares.
+  Supports normal NFS and AMD mounts.
+@@ -229,6 +230,7 @@
+ 	DEBUG(10,("nfs_quotas: End of nfs_quotas\n" ));
+ 	return ret;
+ }
++#endif /* USE_OBSOLETED_SOLARIS_APIS */
+ #endif
+ 
+ /****************************************************************************
+@@ -277,7 +279,9 @@
+ 		/* quotas are only on vxfs, UFS or NFS */
+ 		if ((sbuf.st_ex_dev == devno) && (
+ 			strcmp( mnt.mnt_fstype, MNTTYPE_UFS ) == 0 ||
++			strcmp( mnt.mnt_fstype, "zfs" ) == 0    ||
+ 			strcmp( mnt.mnt_fstype, "nfs" ) == 0    ||
++			strcmp( mnt.mnt_fstype, "samfs" ) == 0  ||
+ 			strcmp( mnt.mnt_fstype, "vxfs" ) == 0 )) {
+ 				found = true;
+ 				name = talloc_asprintf(talloc_tos(),
+@@ -320,6 +324,7 @@
+ 	become_root();
+ 
+ #if defined(SUNOS5)
++#if defined(USE_OBSOLETED_SOLARIS_APIS)
+ 	if (strcmp(mnt.mnt_fstype, "nfs") == 0) {
+ 		bool retval;
+ 		DEBUG(5,("disk_quotas: looking for mountpath (NFS) \"%s\"\n",
+@@ -329,7 +334,7 @@
+ 		unbecome_root();
+ 		return retval;
+ 	}
+-
++#endif /* USE_OBSOLETED_SOLARIS_APIS */
+ 	DEBUG(5,("disk_quotas: looking for quotas file \"%s\"\n", name));
+ 	if((file=open(name, O_RDONLY,0))<0) {
+ 		unbecome_root();
