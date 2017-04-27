@@ -18,18 +18,17 @@ MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =		openmpi/$(COMPILER)
-OPENMPI_VERSION_MAJOR = 	1.10
-COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).6
-COMPONENT_FMRI = library/openmpi/$(COMPILER)
+OPENMPI_VERSION_MAJOR = 	2.1
+COMPONENT_VERSION = 		$(OPENMPI_VERSION_MAJOR).0
+COMPONENT_FMRI =		library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
 COMPONENT_SRC_NAME =		openmpi
 COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:f1db673f8a22fd5cd770f9b89805d03b0354941a4479b69158e1c22c560c703e
+    sha256:265a9c64a468cce464edd069ed8612e1865c5f112f84f4a7a855fb2a0d15e74b
 COMPONENT_ARCHIVE_URL =	http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB =		$(COMPONENT_FMRI)
 
 COMPONENT_SUMMARY =     	OpenMPI - High Performance Message Passing Library
 COMPONENT_LICENSE_FILE = 	$(COMPONENT_SRC_NAME).license
@@ -39,30 +38,30 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk  
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 ENV+= -i
 
 CONFIGURE_PREFIX   =    $(MPI_PREFIX)
 
-CONFIGURE_OPTIONS+=	--bindir=$(MPI_BINDIR)
-CONFIGURE_OPTIONS+=	--datadir=$(MPI_DATADIR)
-CONFIGURE_OPTIONS+=	--docdir=$(MPI_DOCDIR)
-CONFIGURE_OPTIONS+=	--htmldir=$(MPI_HTMLDIR)
-CONFIGURE_OPTIONS+=	--includedir=$(MPI_INCDIR)
-CONFIGURE_OPTIONS+=	--libdir=$(MPI_LIBDIR)
-CONFIGURE_OPTIONS+=	--mandir=$(MPI_MANDIR)
-CONFIGURE_OPTIONS+=	--sbindir=$(MPI_SBINDIR)
-CONFIGURE_OPTIONS+=	--sysconfdir=$(MPI_ETCDIR)
-CONFIGURE_OPTIONS+=	--enable-ipv6
+CONFIGURE_OPTIONS+= --bindir=$(MPI_BINDIR)
+CONFIGURE_OPTIONS+= --datadir=$(MPI_DATADIR)
+CONFIGURE_OPTIONS+= --docdir=$(MPI_DOCDIR)
+CONFIGURE_OPTIONS+= --htmldir=$(MPI_HTMLDIR)
+CONFIGURE_OPTIONS+= --includedir=$(MPI_INCDIR)
+CONFIGURE_OPTIONS+= --libdir=$(MPI_LIBDIR)
+CONFIGURE_OPTIONS+= --mandir=$(MPI_MANDIR)
+CONFIGURE_OPTIONS+= --sbindir=$(MPI_SBINDIR)
+CONFIGURE_OPTIONS+= --sysconfdir=$(MPI_ETCDIR)
+CONFIGURE_OPTIONS+= --enable-ipv6
 CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
-CONFIGURE_OPTIONS+=	--enable-mpi-profile
-CONFIGURE_OPTIONS+=	--enable-mpi-cxx
-CONFIGURE_OPTIONS+=	--enable-mpi-cxx-seek
-CONFIGURE_OPTIONS+=	--with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+=	--with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+=	--with-wrapper-libs="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+=	--with-wrapper-fcflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --enable-mpi-cxx
+CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
+CONFIGURE_OPTIONS+= --with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --with-wrapper-libs="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --with-wrapper-fcflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --without-slurm
 CONFIGURE_OPTIONS+= ompi_cv_fortran_ignore_tkr_data=0
 
 #COMPONENT_POST_CONFIGURE_ACTION += sed -i -e 's/-export-dynamic//g' $(SOURCE_DIR)/ompi/mpi/cxx/Makefile
