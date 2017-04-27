@@ -25,20 +25,21 @@ diff -ruN percona-server-5.7.14-7.orig/mysys/CMakeLists.txt percona-server-5.7.1
  ADD_TEST(queues_test queues)
  
 diff -ruN percona-server-5.7.14-7.orig/storage/heap/CMakeLists.txt percona-server-5.7.14-7/storage/heap/CMakeLists.txt
---- percona-server-5.7.14-7.orig/storage/heap/CMakeLists.txt	2016-08-18 19:09:52.000000000 +0300
-+++ percona-server-5.7.14-7/storage/heap/CMakeLists.txt	2016-09-12 19:45:16.772622754 +0300
+--- percona-server-5.7.17-13/storage/heap/CMakeLists.txt.~1~	2017-04-27 20:53:32.545708402 +0300
++++ percona-server-5.7.17-13/storage/heap/CMakeLists.txt	2017-04-27 20:55:12.603696265 +0300
 @@ -29,9 +29,11 @@
- IF(WITH_UNIT_TESTS)
+ IF(WITH_UNIT_TESTS AND WITH_EMBEDDED_SERVER)
    ADD_EXECUTABLE(hp_test1 hp_test1.c)
-   TARGET_LINK_LIBRARIES(hp_test1 heap mysys)
+   TARGET_LINK_LIBRARIES(hp_test1 heap_embedded mysys)
 +  TARGET_LINK_LIBRARIES(hp_test1 "-lsocket")
    ADD_TEST(hp_test1 hp_test1)
  
    ADD_EXECUTABLE(hp_test2 hp_test2.c)
-   TARGET_LINK_LIBRARIES(hp_test2 heap mysys)
+   TARGET_LINK_LIBRARIES(hp_test2 heap_embedded mysys)
 +  TARGET_LINK_LIBRARIES(hp_test2 "-lsocket")
    ADD_TEST(hp_test2 hp_test2)
  ENDIF()
+
 diff -ruN percona-server-5.7.14-7.orig/storage/perfschema/unittest/CMakeLists.txt percona-server-5.7.14-7/storage/perfschema/unittest/CMakeLists.txt
 --- percona-server-5.7.14-7.orig/storage/perfschema/unittest/CMakeLists.txt	2016-08-18 19:09:52.000000000 +0300
 +++ percona-server-5.7.14-7/storage/perfschema/unittest/CMakeLists.txt	2016-09-12 19:47:13.218567957 +0300
