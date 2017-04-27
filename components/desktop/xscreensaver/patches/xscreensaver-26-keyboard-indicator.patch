@@ -1,6 +1,6 @@
---- driver/lock-Gtk.c.~5~	2017-04-27 09:15:48.633808280 +0300
-+++ driver/lock-Gtk.c	2017-04-27 09:22:10.784247956 +0300
-@@ -61,6 +61,7 @@
+--- driver/lock-Gtk.c.~5~	2017-04-27 11:26:09.542376046 +0300
++++ driver/lock-Gtk.c	2017-04-27 11:30:09.729234846 +0300
+@@ -61,9 +61,11 @@
  #include <ctype.h>
  #include <X11/Xos.h>
  #include <X11/Xlib.h>
@@ -8,7 +8,11 @@
  #include <X11/Xatom.h>
  #include <X11/Xutil.h>
  #include <X11/Xmu/WinUtil.h>
-@@ -90,6 +91,7 @@
++#include <X11/extensions/XKBrules.h>
+ 
+ #include <gconf/gconf-client.h>
+ #include <libbonobo.h>
+@@ -90,6 +92,7 @@
    GtkWidget *button;
    GtkWidget *msg_label;
    GtkWidget *pam_message_label;
@@ -16,7 +20,7 @@
  } PasswdDialog;
  
  /*Global info */
-@@ -100,6 +102,50 @@
+@@ -100,6 +103,55 @@
  
  #define FD_TO_PARENT  9
  
@@ -28,11 +32,12 @@
 +getGroup()
 +{
 +  XkbStateRec state;
++  XkbRF_VarDefsRec vd;
 +  Display *dpy;
 +  XkbDescRec desc[1];
-+  char *names[XkbNumKbdGroups];
 +  int i;
 +  gchar *s1 = NULL;
++  char* tmp = NULL;
 +
 +  dpy = gdk_x11_get_default_xdisplay();
 +  memset(desc, 0, sizeof(desc));
@@ -40,21 +45,25 @@
 +  if (XkbGetControls(dpy, XkbGroupsWrapMask, desc) == Success) {
 +    if (XkbGetNames(dpy, XkbGroupNamesMask, desc) == Success) {
 +      if (XkbGetState(dpy, XkbUseCoreKbd, &state) == Success) {
-+        XGetAtomNames(dpy, desc->names->groups, desc->ctrls->num_groups, names);
-+        /* debug only
-+        for(i=0; i< desc->ctrls->num_groups; i++){
-+          fprintf(stderr, names[i]);
-+        } */
-+        if (names[state.group]) {
-+          if(strlen(names[state.group]) > 2) {
-+             names[state.group][2]='\0';
-+          }
++        if (XkbRF_GetNamesProp(dpy, &tmp, &vd) && tmp && vd.layout) {
++           char *layout, *t;
++           int j=0;
 +
-+          s1 = g_ascii_strdown (names[state.group], -1);
-+          /* debug only 
-+          fprintf(stderr, "Got group %d %s\n", state.group, s1);
-+          fprintf(stderr, "My uid is %d euid is %d\n", getuid(), geteuid());
-+          fflush(stderr); */
++           layout=strtok_r(vd.layout,",", &t);
++           for(j=0; j<state.group;j++) {
++             layout = strtok_r(NULL, ",", &t);
++             if(layout == NULL)
++               break;
++           }
++           if (layout) {
++            s1 = g_strdup(layout);
++
++            /* debug only 
++            fprintf(stderr, "Got group %d %s\n", state.group, s1);
++            fprintf(stderr, "My uid is %d euid is %d\n", getuid(), geteuid());
++            fflush(stderr); */
++
++           }
 +        }
 +      }
 +      XkbFreeNames(desc, XkbGroupNamesMask, True);
@@ -67,7 +76,7 @@
  /* Send a command to the xscreensaver parent daemon
     Arguments:
      - msg - type of message - "input", "raise_wid", etc.
-@@ -179,7 +225,7 @@
+@@ -179,7 +231,7 @@
    GtkWidget *entry;
    AtkObject *atk_entry;
    GtkWidget *title_label, *msg_label, *prompt_label,
@@ -76,7 +85,7 @@
    AtkObject *atk_title_label, *atk_prompt_label;
    GtkWidget *button;
    GtkWidget *image;
-@@ -368,6 +414,27 @@
+@@ -368,6 +420,27 @@
  
    gtk_box_pack_start (GTK_BOX (vbox2), pam_msg_label, FALSE, FALSE, 0);
  
@@ -104,7 +113,7 @@
    /* date string */
    tm = localtime (&now);
    memset (buf, 0, sizeof (buf));
-@@ -464,6 +531,53 @@
+@@ -464,6 +537,53 @@
  }
  
  static GdkFilterReturn
@@ -158,7 +167,7 @@
  dialog_filter_func (GdkXEvent *xevent, GdkEvent *gevent, gpointer data)
  {
    PasswdDialog *pwd = data;
-@@ -716,6 +830,16 @@
+@@ -716,6 +836,16 @@
      request_atoms (dpy, atom_lists);
    }
  
@@ -175,7 +184,7 @@
    /* bugid 6346056(P1):
       ATOK pallet sometimes appears in screensave/lock-screen mode
    */
-@@ -773,6 +897,7 @@
+@@ -773,6 +903,7 @@
  
    gdk_display_sync (gtk_widget_get_display (pwd->dialog));
  
@@ -183,3 +192,14 @@
    gdk_window_add_filter (GET_WINDOW (pwd->dialog), dialog_filter_func, pwd);
    write_windowid ("dialog_win", GDK_WINDOW_XID (GET_WINDOW (pwd->dialog)));
  
+--- driver/Makefile.in.1	2017-04-27 11:30:28.951331543 +0300
++++ driver/Makefile.in	2017-04-27 11:31:24.174573370 +0300
+@@ -827,7 +827,7 @@
+ 	$(CC) $(LDFLAGS) -o $@ $(GTK_LOCK_OBJS) $(LIBS) $(X_LIBS) \
+ 	$(TRUSTED_OBJS) $(TRUSTED_LIBS) \
+ 	$(GTK_LIBS) $(XML_LIBS) $(X_PRE_LIBS) -lXt -lX11 \
+-	$(XDPMS_LIBS) -lXext \
++	$(XDPMS_LIBS) -lXext -lxkbfile \
+ 	$(X_EXTRA_LIBS)
+ 
+ xscreensaver-demo-Xm: $(DEMO_OBJS) $(MOTIF_OBJS)
