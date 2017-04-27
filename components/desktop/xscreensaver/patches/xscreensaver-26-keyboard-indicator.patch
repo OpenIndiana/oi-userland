@@ -1,5 +1,5 @@
---- driver/lock-Gtk.c.~5~	2017-04-27 08:55:38.976376704 +0300
-+++ driver/lock-Gtk.c	2017-04-27 08:56:20.343726748 +0300
+--- driver/lock-Gtk.c.~5~	2017-04-27 09:15:48.633808280 +0300
++++ driver/lock-Gtk.c	2017-04-27 09:22:10.784247956 +0300
 @@ -61,6 +61,7 @@
  #include <ctype.h>
  #include <X11/Xos.h>
@@ -16,7 +16,7 @@
  } PasswdDialog;
  
  /*Global info */
-@@ -100,6 +102,48 @@
+@@ -100,6 +102,50 @@
  
  #define FD_TO_PARENT  9
  
@@ -41,18 +41,20 @@
 +    if (XkbGetNames(dpy, XkbGroupNamesMask, desc) == Success) {
 +      if (XkbGetState(dpy, XkbUseCoreKbd, &state) == Success) {
 +        XGetAtomNames(dpy, desc->names->groups, desc->ctrls->num_groups, names);
++        /* debug only
 +        for(i=0; i< desc->ctrls->num_groups; i++){
 +          fprintf(stderr, names[i]);
-+        }
++        } */
 +        if (names[state.group]) {
 +          if(strlen(names[state.group]) > 2) {
 +             names[state.group][2]='\0';
 +          }
 +
 +          s1 = g_ascii_strdown (names[state.group], -1);
++          /* debug only 
 +          fprintf(stderr, "Got group %d %s\n", state.group, s1);
 +          fprintf(stderr, "My uid is %d euid is %d\n", getuid(), geteuid());
-+          fflush(stderr);
++          fflush(stderr); */
 +        }
 +      }
 +      XkbFreeNames(desc, XkbGroupNamesMask, True);
@@ -65,7 +67,7 @@
  /* Send a command to the xscreensaver parent daemon
     Arguments:
      - msg - type of message - "input", "raise_wid", etc.
-@@ -179,7 +223,7 @@
+@@ -179,7 +225,7 @@
    GtkWidget *entry;
    AtkObject *atk_entry;
    GtkWidget *title_label, *msg_label, *prompt_label,
@@ -74,7 +76,7 @@
    AtkObject *atk_title_label, *atk_prompt_label;
    GtkWidget *button;
    GtkWidget *image;
-@@ -368,6 +412,27 @@
+@@ -368,6 +414,27 @@
  
    gtk_box_pack_start (GTK_BOX (vbox2), pam_msg_label, FALSE, FALSE, 0);
  
@@ -102,7 +104,7 @@
    /* date string */
    tm = localtime (&now);
    memset (buf, 0, sizeof (buf));
-@@ -464,6 +529,47 @@
+@@ -464,6 +531,53 @@
  }
  
  static GdkFilterReturn
@@ -112,33 +114,39 @@
 +  XEvent *event = xevent;
 +
 +  if (event->xany.type == xkb_event_base + XkbEventCode) {
++
++     /* debug only 
 +     fprintf(stderr, "Got xkb event\n");
-+     fflush(stderr);
++     fflush(stderr); */
++
 +     /* Xkb event. */
 +      XkbEvent * xkbev = (XkbEvent *) event;
 +      if (xkbev->any.xkb_type == XkbStateNotify)
 +      {
 +          gchar *group;
 +
++          /* debug only
 +          fprintf(stderr, "Got XkbStateNotify event\n");
-+          fflush(stderr);
++          fflush(stderr); */
 +          group = getGroup();
++
 +          if (group) {
 +            char * s; 
 +     
 +            s = g_markup_printf_escaped ("<small>Layout: %s</small>", group);
 +            gtk_label_set_markup (GTK_LABEL (pwd->layout_label), s);
 +
++            /* debug only
 +            fprintf(stderr, "Got group %s\n", group);
-+            fflush (stderr);
++            fflush (stderr); */
 +
 +            g_free (s); 
 +
 +            g_free(group);
-+          } else {
++          } /* debug only else {
 +            fprintf(stderr, "Got empty group\n");
 +            fflush(stderr);
-+          }    
++          }  */  
 +      }    
 +  }
 +
@@ -150,33 +158,24 @@
  dialog_filter_func (GdkXEvent *xevent, GdkEvent *gevent, gpointer data)
  {
    PasswdDialog *pwd = data;
-@@ -698,6 +804,7 @@
-     }
- 
-   gtk_init (&argc, &argv);
-+  getGroup();
- 
-   /* Intern the atoms that xscreensaver_command() needs.
-    */
-@@ -716,6 +823,17 @@
+@@ -716,6 +830,16 @@
      request_atoms (dpy, atom_lists);
    }
  
 +  /* Init XKB extension */
 +  { 
-+    Display *dpy = gdk_x11_get_default_xdisplay();
++    Display *dpy = gdk_x11_get_default_xdisplay ();
 +
-+    if(XkbQueryExtension(dpy, &xkb_opcode, &xkb_event_base, &xkb_error_base,
++    if(XkbQueryExtension (dpy, &xkb_opcode, &xkb_event_base, &xkb_error_base,
 +                      NULL, NULL)!=True){
-+         fprintf(stderr, "Couldn't find XKB extension\n");
-+         fflush(stderr);
++         g_warning ("Couldn't find XKB extension\n");
 +    }
 +  }
 +
    /* bugid 6346056(P1):
       ATOK pallet sometimes appears in screensave/lock-screen mode
    */
-@@ -773,6 +891,7 @@
+@@ -773,6 +897,7 @@
  
    gdk_display_sync (gtk_widget_get_display (pwd->dialog));
  
