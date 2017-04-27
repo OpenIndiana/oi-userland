@@ -1,5 +1,5 @@
---- driver/lock-Gtk.c.~5~	2017-04-27 00:59:35.294130605 +0300
-+++ driver/lock-Gtk.c	2017-04-27 01:03:50.651526448 +0300
+--- driver/lock-Gtk.c.~5~	2017-04-27 08:55:38.976376704 +0300
++++ driver/lock-Gtk.c	2017-04-27 08:56:20.343726748 +0300
 @@ -61,6 +61,7 @@
  #include <ctype.h>
  #include <X11/Xos.h>
@@ -176,13 +176,11 @@
    /* bugid 6346056(P1):
       ATOK pallet sometimes appears in screensave/lock-screen mode
    */
-@@ -773,7 +891,8 @@
+@@ -773,6 +891,7 @@
  
    gdk_display_sync (gtk_widget_get_display (pwd->dialog));
  
--  gdk_window_add_filter (GET_WINDOW (pwd->dialog), dialog_filter_func, pwd);
 +  gdk_window_add_filter (NULL, xkb_filter_func, pwd);
-+  gdk_add_client_message_filter (gdk_x11_xatom_to_atom (XA_UNLOCK_RATIO), dialog_filter_func, pwd);
+   gdk_window_add_filter (GET_WINDOW (pwd->dialog), dialog_filter_func, pwd);
    write_windowid ("dialog_win", GDK_WINDOW_XID (GET_WINDOW (pwd->dialog)));
  
-   if (server_list && server_list->_length)
