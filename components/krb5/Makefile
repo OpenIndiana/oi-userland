@@ -96,7 +96,8 @@ CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS.32 += --libexecdir=$(USRLIBDIR)
 CONFIGURE_OPTIONS.64 += --libexecdir=$(USRLIBDIR)/$(MACH64)
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/kerberosv5
-CONFIGURE_OPTIONS += --with-crypto-impl=openssl
+CONFIGURE_OPTIONS += --with-pkinit-crypto-impl=openssl
+CONFIGURE_OPTIONS += --with-crypto-impl=ucrypto
 CONFIGURE_OPTIONS += --with-ldap
 CONFIGURE_OPTIONS += --with-prng-alg=os
 CONFIGURE_OPTIONS += --with-tcl=$(USRDIR)
@@ -142,8 +143,10 @@ COMPONENT_PREP_ACTION= \
 	$(MKDIR) -p $(AUDIT_DIR); $(CP) Solaris/audit/* $(AUDIT_DIR); \
 	$(CP) Solaris/audit/kadmind_audit.* $(SOURCE_DIR)/src/kadmin/server;
 
-# We move xdr_alloc.c and supporting dyn code from libgssrpc directly
-# into libkadm5srv_mit. kadmind is the only consumer anyway.
+# We move xdr_alloc.c and supporting dyn code from libgssrpc directly into
+# libkadm5srv_mit. kadmind is the only consumer anyway.  Also setting up the
+# ucrypto provider directory and creating symlinks needed by the ucrypto crypto
+# provider.
 SRCLIB=$(SOURCE_DIR)/src/lib
 COMPONENT_PREP_ACTION += \
 	$(CP) $(SRCLIB)/rpc/xdr_alloc.c $(SRCLIB)/kadm5/srv/; \
@@ -151,6 +154,13 @@ COMPONENT_PREP_ACTION += \
 	$(CP) $(SRCLIB)/rpc/dyn.h $(SRCLIB)/kadm5/srv/; \
 	$(CP) $(SRCLIB)/rpc/dynP.h $(SRCLIB)/kadm5/srv/; \
 	$(CP) $(SRCLIB)/rpc/dyntest.c $(SRCLIB)/kadm5/srv/; \
+	(cd Solaris && $(TAR) -cf - ucrypto) | (cd $(SRCLIB)/crypto && tar -xf -); \
+	$(LN) -s ../../builtin/des/des_keys.c $(SRCLIB)/crypto/ucrypto/des/; \
+	$(LN) -s ../../builtin/des/f_parity.c $(SRCLIB)/crypto/ucrypto/des/; \
+	$(LN) -s ../../builtin/des/weak_key.c $(SRCLIB)/crypto/ucrypto/des/; \
+	$(LN) -s ../../builtin/des/des_int.h $(SRCLIB)/crypto/ucrypto/des/; \
+	$(LN) -s ../../builtin/hash_provider/hash_crc32.c $(SRCLIB)/crypto/ucrypto/hash_provider/; \
+	$(LN) -s ../builtin/pbkdf2.c $(SRCLIB)/crypto/ucrypto/; \
 
 # Common flags used to create the filter libs below
 FILTLIBFLAGS = -G $(LD_B_DIRECT) $(LD_Z_DEFS) $(LD_Z_TEXT)
@@ -213,6 +223,7 @@ REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/sasl/digestmd5
 REQUIRED_PACKAGES += system/network/ldap/openldap

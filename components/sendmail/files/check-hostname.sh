@@ -20,12 +20,12 @@
 # CDDL HEADER END
 #
 
+#
 # Check hostname configuration as per the sendmail code.
 #
-# See http://www.sendmail.org/sun-specific/migration.html#FQHN for details.
+
 #
-# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
+# Copyright (c) 1998, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/bin:/usr/sbin
@@ -111,7 +111,7 @@ suggest_fix_and_exit() {
 		echo "adding the /etc/hosts entry:\n"
 	fi
 	echo "$myipaddr $myhost $myhost.$suggested_domain $*"
-	exit 0
+	exit 1
 }
 
 # Fall back to the NIS domain, minus the first label.  If it is non-null,

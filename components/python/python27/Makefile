@@ -204,9 +204,14 @@ COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS =	"'/tests OK./ {results = 1}; /Makefile:/ {results = 0} {if (results) print $0 } '"
 
+COMPONENT_SYSTEM_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
+COMPONENT_SYSTEM_TEST_TARGETS = 
+COMPONENT_SYSTEM_TEST_CMD=      $(PYTHON.2.7)
+COMPONENT_SYSTEM_TEST_ARGS=     /usr/lib/python2.7/test/regrtest.py -v -uall,-network
+
 test:				$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
