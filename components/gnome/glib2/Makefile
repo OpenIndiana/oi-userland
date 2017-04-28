@@ -28,14 +28,14 @@ BUILD_BITS =            32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_VERSION=	2.46.0
+COMPONENT_VERSION=	2.52.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b1cee83469ae7d80f17c267c37f090414e93960bd62d2b254a5a96fbc5baacb4
+    sha256:4578e3e077b1b978cafeec8d28b676c680aba0c0475923874c4c993403df311a
 COMPONENT_BUGDB=	gnome/glib
 COMPONENT_ANITYA_ID=	10024
 
-TPNO=			24986
+TPNO=			34480
 
 # No need to build for older versions.
 PYTHON_VERSIONS= 3.4

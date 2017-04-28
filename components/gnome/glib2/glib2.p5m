@@ -36,7 +36,7 @@ set name=info.classification \
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2001/384 value=PSARC/2012/339 \
-    value=PSARC/2016/249
+    value=PSARC/2016/249 value=PSARC/2017/088
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 file files/gio-module-cache.xml \
@@ -53,6 +53,7 @@ file usr/bin/$(MACH64)/gdbus path=usr/bin/gdbus
 # this packages, so this shouldn't be a concern.
 file usr/bin/$(MACH64)/gdbus-codegen path=usr/bin/gdbus-codegen \
     pkg.depend.bypass-generate=.*codegen.*
+file path=usr/bin/gio
 file path=usr/bin/gio-querymodules
 file usr/bin/$(MACH64)/glib-compile-resources \
     path=usr/bin/glib-compile-resources
@@ -99,6 +100,7 @@ file path=usr/include/glib-2.0/gio/gconverter.h
 file path=usr/include/glib-2.0/gio/gconverterinputstream.h
 file path=usr/include/glib-2.0/gio/gconverteroutputstream.h
 file path=usr/include/glib-2.0/gio/gcredentials.h
+file path=usr/include/glib-2.0/gio/gdatagrambased.h
 file path=usr/include/glib-2.0/gio/gdatainputstream.h
 file path=usr/include/glib-2.0/gio/gdataoutputstream.h
 file path=usr/include/glib-2.0/gio/gdbusactiongroup.h
@@ -124,6 +126,9 @@ file path=usr/include/glib-2.0/gio/gdbusproxy.h
 file path=usr/include/glib-2.0/gio/gdbusserver.h
 file path=usr/include/glib-2.0/gio/gdbusutils.h
 file path=usr/include/glib-2.0/gio/gdrive.h
+file path=usr/include/glib-2.0/gio/gdtlsclientconnection.h
+file path=usr/include/glib-2.0/gio/gdtlsconnection.h
+file path=usr/include/glib-2.0/gio/gdtlsserverconnection.h
 file path=usr/include/glib-2.0/gio/gemblem.h
 file path=usr/include/glib-2.0/gio/gemblemedicon.h
 file path=usr/include/glib-2.0/gio/gfile.h
@@ -301,6 +306,7 @@ file path=usr/include/glib-2.0/glib/gtypes.h
 file path=usr/include/glib-2.0/glib/gunicode.h
 file path=usr/include/glib-2.0/glib/gurifuncs.h
 file path=usr/include/glib-2.0/glib/gutils.h
+file path=usr/include/glib-2.0/glib/guuid.h
 file path=usr/include/glib-2.0/glib/gvariant.h
 file path=usr/include/glib-2.0/glib/gvarianttype.h
 file path=usr/include/glib-2.0/glib/gversion.h
@@ -330,24 +336,24 @@ file path=usr/include/glib-2.0/gobject/gvaluetypes.h
 link path=usr/lib/$(MACH64)/charset.alias target=../charset.alias
 file path=usr/lib/$(MACH64)/gio/modules/libgiofam.so
 file path=usr/lib/$(MACH64)/glib-2.0/include/glibconfig.h
-link path=usr/lib/$(MACH64)/libgio-2.0.so target=libgio-2.0.so.0.4600.0
-link path=usr/lib/$(MACH64)/libgio-2.0.so.0 target=libgio-2.0.so.0.4600.0
-file path=usr/lib/$(MACH64)/libgio-2.0.so.0.4600.0
-link path=usr/lib/$(MACH64)/libglib-2.0.so target=libglib-2.0.so.0.4600.0
-link path=usr/lib/$(MACH64)/libglib-2.0.so.0 target=libglib-2.0.so.0.4600.0
-file path=usr/lib/$(MACH64)/libglib-2.0.so.0.4600.0
-link path=usr/lib/$(MACH64)/libgmodule-2.0.so target=libgmodule-2.0.so.0.4600.0
+link path=usr/lib/$(MACH64)/libgio-2.0.so target=libgio-2.0.so.0.5200.0
+link path=usr/lib/$(MACH64)/libgio-2.0.so.0 target=libgio-2.0.so.0.5200.0
+file path=usr/lib/$(MACH64)/libgio-2.0.so.0.5200.0
+link path=usr/lib/$(MACH64)/libglib-2.0.so target=libglib-2.0.so.0.5200.0
+link path=usr/lib/$(MACH64)/libglib-2.0.so.0 target=libglib-2.0.so.0.5200.0
+file path=usr/lib/$(MACH64)/libglib-2.0.so.0.5200.0
+link path=usr/lib/$(MACH64)/libgmodule-2.0.so target=libgmodule-2.0.so.0.5200.0
 link path=usr/lib/$(MACH64)/libgmodule-2.0.so.0 \
-    target=libgmodule-2.0.so.0.4600.0
-file path=usr/lib/$(MACH64)/libgmodule-2.0.so.0.4600.0
-link path=usr/lib/$(MACH64)/libgobject-2.0.so target=libgobject-2.0.so.0.4600.0
+    target=libgmodule-2.0.so.0.5200.0
+file path=usr/lib/$(MACH64)/libgmodule-2.0.so.0.5200.0
+link path=usr/lib/$(MACH64)/libgobject-2.0.so target=libgobject-2.0.so.0.5200.0
 link path=usr/lib/$(MACH64)/libgobject-2.0.so.0 \
-    target=libgobject-2.0.so.0.4600.0
-file path=usr/lib/$(MACH64)/libgobject-2.0.so.0.4600.0
-link path=usr/lib/$(MACH64)/libgthread-2.0.so target=libgthread-2.0.so.0.4600.0
+    target=libgobject-2.0.so.0.5200.0
+file path=usr/lib/$(MACH64)/libgobject-2.0.so.0.5200.0
+link path=usr/lib/$(MACH64)/libgthread-2.0.so target=libgthread-2.0.so.0.5200.0
 link path=usr/lib/$(MACH64)/libgthread-2.0.so.0 \
-    target=libgthread-2.0.so.0.4600.0
-file path=usr/lib/$(MACH64)/libgthread-2.0.so.0.4600.0
+    target=libgthread-2.0.so.0.5200.0
+file path=usr/lib/$(MACH64)/libgthread-2.0.so.0.5200.0
 file path=usr/lib/$(MACH64)/pkgconfig/gio-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gio-unix-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/glib-2.0.pc
@@ -359,21 +365,21 @@ file path=usr/lib/$(MACH64)/pkgconfig/gthread-2.0.pc
 file path=usr/lib/charset.alias
 file path=usr/lib/gio/modules/libgiofam.so
 file path=usr/lib/glib-2.0/include/glibconfig.h
-link path=usr/lib/libgio-2.0.so target=libgio-2.0.so.0.4600.0
-link path=usr/lib/libgio-2.0.so.0 target=libgio-2.0.so.0.4600.0
-file path=usr/lib/libgio-2.0.so.0.4600.0
-link path=usr/lib/libglib-2.0.so target=libglib-2.0.so.0.4600.0
-link path=usr/lib/libglib-2.0.so.0 target=libglib-2.0.so.0.4600.0
-file path=usr/lib/libglib-2.0.so.0.4600.0
-link path=usr/lib/libgmodule-2.0.so target=libgmodule-2.0.so.0.4600.0
-link path=usr/lib/libgmodule-2.0.so.0 target=libgmodule-2.0.so.0.4600.0
-file path=usr/lib/libgmodule-2.0.so.0.4600.0
-link path=usr/lib/libgobject-2.0.so target=libgobject-2.0.so.0.4600.0
-link path=usr/lib/libgobject-2.0.so.0 target=libgobject-2.0.so.0.4600.0
-file path=usr/lib/libgobject-2.0.so.0.4600.0
-link path=usr/lib/libgthread-2.0.so target=libgthread-2.0.so.0.4600.0
-link path=usr/lib/libgthread-2.0.so.0 target=libgthread-2.0.so.0.4600.0
-file path=usr/lib/libgthread-2.0.so.0.4600.0
+link path=usr/lib/libgio-2.0.so target=libgio-2.0.so.0.5200.0
+link path=usr/lib/libgio-2.0.so.0 target=libgio-2.0.so.0.5200.0
+file path=usr/lib/libgio-2.0.so.0.5200.0
+link path=usr/lib/libglib-2.0.so target=libglib-2.0.so.0.5200.0
+link path=usr/lib/libglib-2.0.so.0 target=libglib-2.0.so.0.5200.0
+file path=usr/lib/libglib-2.0.so.0.5200.0
+link path=usr/lib/libgmodule-2.0.so target=libgmodule-2.0.so.0.5200.0
+link path=usr/lib/libgmodule-2.0.so.0 target=libgmodule-2.0.so.0.5200.0
+file path=usr/lib/libgmodule-2.0.so.0.5200.0
+link path=usr/lib/libgobject-2.0.so target=libgobject-2.0.so.0.5200.0
+link path=usr/lib/libgobject-2.0.so.0 target=libgobject-2.0.so.0.5200.0
+file path=usr/lib/libgobject-2.0.so.0.5200.0
+link path=usr/lib/libgthread-2.0.so target=libgthread-2.0.so.0.5200.0
+link path=usr/lib/libgthread-2.0.so.0 target=libgthread-2.0.so.0.5200.0
+file path=usr/lib/libgthread-2.0.so.0.5200.0
 file path=usr/lib/pkgconfig/gio-2.0.pc
 file path=usr/lib/pkgconfig/gio-unix-2.0.pc
 file path=usr/lib/pkgconfig/glib-2.0.pc
@@ -389,10 +395,10 @@ file path=usr/share/bash-completion/completions/gapplication
 file path=usr/share/bash-completion/completions/gdbus
 file path=usr/share/bash-completion/completions/gresource
 file path=usr/share/bash-completion/completions/gsettings
-file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libglib-2.0.so.0.4600.0-gdb.py
-file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libgobject-2.0.so.0.4600.0-gdb.py
-file path=usr/share/gdb/auto-load/usr/lib/libglib-2.0.so.0.4600.0-gdb.py
-file path=usr/share/gdb/auto-load/usr/lib/libgobject-2.0.so.0.4600.0-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libglib-2.0.so.0.5200.0-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libgobject-2.0.so.0.5200.0-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/libglib-2.0.so.0.5200.0-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/libgobject-2.0.so.0.5200.0-gdb.py
 file path=usr/share/glib-2.0/codegen/__init__.py
 file path=usr/share/glib-2.0/codegen/__pycache__/__init__.cpython-34.pyc
 file path=usr/share/glib-2.0/codegen/__pycache__/codegen.cpython-34.pyc
@@ -409,8 +415,8 @@ file path=usr/share/glib-2.0/codegen/config.py
 file path=usr/share/glib-2.0/codegen/dbustypes.py
 file path=usr/share/glib-2.0/codegen/parser.py
 file path=usr/share/glib-2.0/codegen/utils.py
-file path=usr/share/glib-2.0/gdb/glib.py
-file path=usr/share/glib-2.0/gdb/gobject.py
+file path=usr/share/glib-2.0/gdb/glib_gdb.py
+file path=usr/share/glib-2.0/gdb/gobject_gdb.py
 file path=usr/share/glib-2.0/gettext/po/Makefile.in.in
 file path=usr/share/glib-2.0/schemas/gschema.dtd
 file path=usr/share/locale/af/LC_MESSAGES/glib20.mo
@@ -444,7 +450,9 @@ file path=usr/share/locale/eu/LC_MESSAGES/glib20.mo
 file path=usr/share/locale/fa/LC_MESSAGES/glib20.mo
 file path=usr/share/locale/fi/LC_MESSAGES/glib20.mo
 file path=usr/share/locale/fr/LC_MESSAGES/glib20.mo
+file path=usr/share/locale/fur/LC_MESSAGES/glib20.mo
 file path=usr/share/locale/ga/LC_MESSAGES/glib20.mo
+file path=usr/share/locale/gd/LC_MESSAGES/glib20.mo
 file path=usr/share/locale/gl/LC_MESSAGES/glib20.mo
 file path=usr/share/locale/gu/LC_MESSAGES/glib20.mo
 file path=usr/share/locale/he/LC_MESSAGES/glib20.mo
@@ -513,6 +521,7 @@ file path=usr/share/man/man1/gapplication.1
 file path=usr/share/man/man1/gdbus-codegen.1
 file path=usr/share/man/man1/gdbus.1
 file path=usr/share/man/man1/gio-querymodules.1
+file path=usr/share/man/man1/gio.1
 file path=usr/share/man/man1/glib-compile-resources.1
 file path=usr/share/man/man1/glib-compile-schemas.1
 file path=usr/share/man/man1/glib-genmarshal.1
