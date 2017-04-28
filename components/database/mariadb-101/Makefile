@@ -85,7 +85,6 @@ install:	$(INSTALL_32_and_64)
 test:	$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/mariadb-10.1/client
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
