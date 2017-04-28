@@ -17,17 +17,17 @@ include ../../../make-rules/shared-macros.mk
 CMAKE= cmake
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	5.5.54
-IPS_COMPONENT_VERSION=	5.5.54
+COMPONENT_VERSION=	5.5.55
+IPS_COMPONENT_VERSION=	5.5.55
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:54405ad9beff02339819eb73c59b4bf25f58a2c5abffbf17e81c4940a893538c
+COMPONENT_ARCHIVE_HASH=	sha256:cb94e315d0fc90c62db5a6c7829c9966f674285d99b3ba3ffa575fb4a26edc86
 COMPONENT_ARCHIVE_URL=	http://mirrors.coreix.net/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_PREFIX=/usr/mariadb/5.5
