@@ -1,0 +1,17 @@
+--- mariadb-10.1.22/mysys/mysys_priv.h.1	2017-04-28 13:37:47.078318152 +0300
++++ mariadb-10.1.22/mysys/mysys_priv.h	2017-04-28 13:38:48.252135454 +0300
+@@ -108,9 +108,13 @@
+
+ void my_error_unregister_all(void);
+
+-#if !defined(O_PATH) && defined(O_EXEC) /* FreeBSD */
++#if !defined(O_PATH)
++#if defined(O_SEARCH) /* illumos */
++#define O_PATH O_SEARCH
++#elif defined(O_EXEC) /* FreeBSD */
+ #define O_PATH O_EXEC
+ #endif
++#endif
+
+ #ifdef O_PATH
+ #define HAVE_OPEN_PARENT_DIR_NOSYMLINKS
