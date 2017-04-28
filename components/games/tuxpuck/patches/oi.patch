@@ -1,0 +1,156 @@
+--- tuxpuck-0.8.2/intro.c.orig	Fri Nov  8 13:50:29 2002
++++ tuxpuck-0.8.2/intro.c	Wed Aug  3 14:45:54 2016
+@@ -40,7 +40,7 @@
+   font = font_create(monos_fnt, NULL);
+   font_set_color(font, 170, 140, 110);
+   font_set_pen(font, 70, logo_rect.y + sdl_logo->h);
+-  timer = timer_create();
++  timer = tp_timer_create();
+   timer_reset(timer);
+   while (loop) {
+     while (SDL_PollEvent(&event))
+--- tuxpuck-0.8.2/Makefile.orig	Fri Nov  8 13:50:29 2002
++++ tuxpuck-0.8.2/Makefile	Wed Aug  3 16:50:11 2016
+@@ -1,7 +1,7 @@
+ # Makefile for TuxPuck , Copyright Jacob Kroon 2001-2002
+ NAME		= tuxpuck
+ VERSION		= 0.8.2
+-CC		= gcc
++CC		?= gcc
+ CFLAGS		+= -D_VERSION=\"$(VERSION)\" -g -Wall
+ CSOURCES	= tuxpuck.c video.c audio.c menu.c sprite.c font.c timer.c \
+ 		  board.c entity.c glass.c scoreboard.c player.c zoom.c png.c \
+@@ -21,7 +21,7 @@
+ 
+ $(NAME) : $(OBJS)
+ 	cd data; $(MAKE)
+-	$(CC) $(CFLAGS) $(OBJS) data/libdata.a `sdl-config --libs` -lm -lpng \
++	$(CC) $(CFLAGS) $(OBJS) data/libdata.a $(LDFLAGS) -lm -lpng \
+ 	-ljpeg -lz -lvorbisfile -lvorbis -logg -o $(NAME)
+ 
+ w32icon.o : data/icons/tuxpuck.ico
+@@ -52,7 +52,5 @@
+ 	rm -Rf $(NAME)-$(VERSION)
+ 
+ install : $(NAME)
+-	install -d $(DESTDIR)/usr/bin
+-	install -d $(DESTDIR)/usr/man/man6
+-	install -m755 $(NAME) $(DESTDIR)/usr/bin
+-	install -m644 man/$(NAME).6.gz $(DESTDIR)/usr/man/man6
++	ginstall -d $(DESTDIR)/$(BINDIR)
++	ginstall -m755 $(NAME) $(DESTDIR)/$(BINDIR)
+--- tuxpuck-0.8.2/png.c.orig	Fri Nov  8 13:50:29 2002
++++ tuxpuck-0.8.2/png.c	Wed Aug  3 15:00:30 2016
+@@ -74,7 +74,7 @@
+    * the normal method of doing things with libpng).  REQUIRED unless you
+    * set up your own error handlers in png_create_read_struct() earlier.
+    */
+-  if (setjmp(png_ptr->jmpbuf)) {
++  if (setjmp(png_jmpbuf(png_ptr))) {
+     SDL_SetError("Error reading the PNG file.");
+     goto done;
+   }
+@@ -142,9 +142,9 @@
+       Rmask = 0x000000FF;
+       Gmask = 0x0000FF00;
+       Bmask = 0x00FF0000;
+-      Amask = (info_ptr->channels == 4) ? 0xFF000000 : 0;
++      Amask = (png_get_channels(png_ptr, info_ptr) == 4) ? 0xFF000000 : 0;
+     } else {
+-      int s = (info_ptr->channels == 4) ? 0 : 8;
++      int s = (png_get_channels(png_ptr, info_ptr) == 4) ? 0 : 8;
+       Rmask = 0xFF000000 >> s;
+       Gmask = 0x00FF0000 >> s;
+       Bmask = 0x0000FF00 >> s;
+@@ -152,7 +152,7 @@
+     }
+   }
+   surface = SDL_AllocSurface(SDL_SWSURFACE, width, height,
+-			     bit_depth * info_ptr->channels, Rmask, Gmask,
++			     bit_depth * png_get_channels(png_ptr, info_ptr), Rmask, Gmask,
+ 			     Bmask, Amask);
+   if (surface == NULL) {
+     SDL_SetError("Out of memory");
+@@ -188,6 +188,10 @@
+   png_read_end(png_ptr, info_ptr);
+ 
+   /* Load the palette, if any */
++  png_uint_32	pnum_palette;
++  png_colorp	ppalette;
++  png_get_PLTE(png_ptr, info_ptr, &ppalette, &pnum_palette);
++
+   palette = surface->format->palette;
+   if (palette) {
+     if (color_type == PNG_COLOR_TYPE_GRAY) {
+@@ -197,12 +201,12 @@
+ 	palette->colors[i].g = i;
+ 	palette->colors[i].b = i;
+       }
+-    } else if (info_ptr->num_palette > 0) {
+-      palette->ncolors = info_ptr->num_palette;
+-      for (i = 0; i < info_ptr->num_palette; ++i) {
+-	palette->colors[i].b = info_ptr->palette[i].blue;
+-	palette->colors[i].g = info_ptr->palette[i].green;
+-	palette->colors[i].r = info_ptr->palette[i].red;
++    } else if (pnum_palette > 0) {
++      palette->ncolors = pnum_palette;
++      for (i = 0; i < pnum_palette; ++i) {
++	palette->colors[i].b = ppalette[i].blue;
++	palette->colors[i].g = ppalette[i].green;
++	palette->colors[i].r = ppalette[i].red;
+       }
+     }
+   }
+--- tuxpuck-0.8.2/timer.c.orig	Fri Nov  8 13:50:29 2002
++++ tuxpuck-0.8.2/timer.c	Wed Aug  3 14:46:19 2016
+@@ -10,7 +10,7 @@
+ };
+ 
+ /* functions */
+-Timer *timer_create(void)
++Timer *tp_timer_create(void)
+ {
+   Timer *timer = NULL;
+ 
+--- tuxpuck-0.8.2/tuxpuck.c.orig	Wed Aug  3 14:44:48 2016
++++ tuxpuck-0.8.2/tuxpuck.c	Wed Aug  3 14:44:35 2016
+@@ -69,7 +69,7 @@
+   again_menu = menu_create(2);
+   menu_add_field(again_menu, 0, 1, "Play Again");
+   menu_add_field(again_menu, 1, 1, "Main Menu");
+-  timer = timer_create();
++  timer = tp_timer_create();
+   timer_reset(timer);
+   while (loop) {
+     while (SDL_PollEvent(&event))
+--- tuxpuck-0.8.2/tuxpuck.h.orig	Fri Nov  8 13:50:29 2002
++++ tuxpuck-0.8.2/tuxpuck.h	Wed Aug  3 14:44:20 2016
+@@ -146,7 +146,7 @@
+ Uint8 sprite_update(Sprite *, Uint32);
+ void sprite_set_position(Sprite *, Uint32, Uint32);
+ void sprite_set_animation(Sprite *, Uint8);
+-Timer *timer_create(void);
++Timer *tp_timer_create(void);
+ void timer_free(Timer *);
+ void timer_reset(Timer *);
+ void timer_update(Timer *);
+--- tuxpuck-0.8.2/video.c.orig	Fri Nov  8 13:50:29 2002
++++ tuxpuck-0.8.2/video.c	Wed Aug  3 14:45:33 2016
+@@ -157,7 +157,7 @@
+   Sint16 temp_x, temp_y;
+   Timer *timer = NULL;
+ 
+-  timer = timer_create();
++  timer = tp_timer_create();
+   timer_reset(timer);
+   while (loop && elapsed_time < time_limit) {
+     while (SDL_PollEvent(&event))
+@@ -199,7 +199,7 @@
+   Uint32 elapsed_time = 0;
+   Uint8 loop = 1;
+ 
+-  timer = timer_create();
++  timer = tp_timer_create();
+   timer_reset(timer);
+   while (loop) {
+     while (SDL_PollEvent(&event))
