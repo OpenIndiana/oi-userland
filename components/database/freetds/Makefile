@@ -52,7 +52,6 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/unixodbc
