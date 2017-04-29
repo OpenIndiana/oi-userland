@@ -27,14 +27,14 @@ BUILD_BITS= 		NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mm-common
-COMPONENT_VERSION=	0.9.8
+COMPONENT_VERSION=	0.9.10
 COMPONENT_PROJECT_URL=	https://developer.gnome.org/glibmm/stable/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c9ab5fd3872fbe245fbc35347acf4a95063111f81d54c43df3af662dad0a03d5
+    sha256:16c0e2bc196b67fbc145edaecb5dbe5818386504fe5703de27002d77140fa217
 COMPONENT_BUGDB=        gnome/libraries
 COMPONENT_ANITYA_ID=	13152
 
-TPNO=			24639
+TPNO=			34494
 
 TEST_TARGET= $(NO_TESTS)
 
