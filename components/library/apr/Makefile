@@ -35,9 +35,9 @@ COMPONENT_BUGDB=	utility/apache
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -86,6 +86,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
