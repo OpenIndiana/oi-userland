@@ -87,6 +87,7 @@ test:	$(TEST_32_and_64)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/security/cracklib
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
