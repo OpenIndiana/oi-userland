@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgnome
 
@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 				libtoolize --copy --force &&\
@@ -39,7 +39,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 				autoconf )
 gcc_OPT = -O2
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-esd
@@ -51,3 +51,13 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += library/libbonobo
+REQUIRED_PACKAGES += library/orbit2
+REQUIRED_PACKAGES += library/popt
+REQUIRED_PACKAGES += system/library
