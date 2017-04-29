@@ -68,5 +68,9 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/rarian
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += runtime/python-27
