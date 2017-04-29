@@ -50,6 +50,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_PREFIX =	/usr/gnu
 
+# Workaround compilation failure with macro "mouse_trafo"
+CPPFLAGS += -P
+
 # force XPG6 standard
 CXXFLAGS += -D_XPG6
 LDFLAGS += -D_XPG6
