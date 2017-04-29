@@ -34,15 +34,14 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:81aa238d9d4a010afa73a9d2a704fc3221c731e1e06577c2ab3496bdef67859e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/graphviz
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH_PHP.32 = /usr/php/5.6/bin
 PATH_PHP.64 = /usr/php/5.6/bin/$(MACH64)
-PATH =		/usr/bin:/usr/gnu/bin:$(PATH_PHP.$(BITS))
+PATH = /usr/bin:/usr/gnu/bin:$(PATH_PHP.$(BITS))
 
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
@@ -114,9 +113,6 @@ COMPONENT_PRE_TEST_ACTION = \
 # http://graphviz.org/bugs/b2063.html
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
