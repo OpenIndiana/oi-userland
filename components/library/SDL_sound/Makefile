@@ -28,11 +28,11 @@ COMPONENT_LICENSE =	LGPLv2
 COMPONENT_LICENSE_FILE =	COPYING
 COMPONENT_CLASSIFICATION =	System/Multimedia Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -51,3 +51,9 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += system/library
