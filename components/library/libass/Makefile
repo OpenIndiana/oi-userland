@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libass
 COMPONENT_VERSION= 0.12.3
@@ -30,12 +30,20 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = library/video/libass
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-asm
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/fribidi
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/math
