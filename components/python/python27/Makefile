@@ -23,10 +23,9 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	2.7.13
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -36,9 +35,9 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older,
 # Python will try to rebuild them.
@@ -69,6 +68,9 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 
 # build pic
 CFLAGS +=	$(CC_PIC)
+
+# XPG6
+CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
 
 # add /usr/gnu/lib to the library search/run path
 LDFLAGS.32 = -R/usr/gnu/lib -L/usr/gnu/lib
@@ -125,10 +127,7 @@ COMPONENT_TEST_TARGETS = test
 
 test:				$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/database/gdbm
