@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgnomecanvas
 COMPONENT_VERSION= 2.30.3
@@ -30,11 +30,11 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING.LIB
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -47,3 +47,13 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/libart
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
