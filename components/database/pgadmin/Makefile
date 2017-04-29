@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:27ac3e296a6ca3da9da8ee22ed98eabfe1377be507877ffc26048fc2a9c6cbc0
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.postgresql.org/pub/pgadmin3/release/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+  http://ftp.postgresql.org/pub/pgadmin/pgadmin3/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.pgadmin.org
 
 # Don't depend on host default pg_config
@@ -35,9 +35,9 @@ LDFLAGS+=   -lsocket -lnsl
 
 CONFIGURE_OPTIONS += --with-pgsql=$(PG_HOME)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION= (cp -a $(SOURCE_DIR)/* $(@D))
 
