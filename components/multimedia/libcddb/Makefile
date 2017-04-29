@@ -12,7 +12,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcddb
 COMPONENT_VERSION=	1.3.2
@@ -28,11 +28,11 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_FMRI= 	library/audio/libcddb 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--without-cdio
@@ -43,3 +43,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
