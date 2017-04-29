@@ -1,0 +1,29 @@
+--- ptlib-2.10.11/src/ptlib/unix/svcproc.cxx.orig	Sat Apr 29 15:17:25 2017
++++ ptlib-2.10.11/src/ptlib/unix/svcproc.cxx	Sat Apr 29 15:30:09 2017
+@@ -217,7 +217,7 @@
+     pid_t pid;
+ 
+     {
+-      ifstream pidfile(pidfilename);
++      ifstream pidfile((char const *)pidfilename);
+       if (!pidfile.is_open()) {
+         cout << "Could not open pid file: \"" << pidfilename << "\""
+                 " - " << strerror(errno) << endl;
+@@ -384,7 +384,7 @@
+   // Run as a daemon, ie fork
+ 
+   if (!pidfilename) {
+-    ifstream pidfile(pidfilename);
++    ifstream pidfile((char const*)pidfilename);
+     if (pidfile.is_open()) {
+       pid_t pid;
+       pidfile >> pid;
+@@ -412,7 +412,7 @@
+       cout << "Daemon started with pid " << pid << endl;
+       if (!pidfilename) {
+         // Write out the child pid to magic file in /var/run (at least for linux)
+-        ofstream pidfile(pidfilename);
++        ofstream pidfile((char const *)pidfilename);
+         if (pidfile.is_open())
+           pidfile << pid;
+         else
