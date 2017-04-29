@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libbonoboui
 
@@ -27,11 +27,11 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 gcc_OPT = -O2
 
@@ -42,3 +42,20 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(TEST_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += image/library/libart
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libglade
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/libgnomecanvas
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libbonobo
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/orbit2
+REQUIRED_PACKAGES += library/popt
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libx11
