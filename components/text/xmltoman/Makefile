@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	xmltoman
 COMPONENT_VERSION= 	0.4
@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/xmltoman/files/xmltoman/$(COMPONENT_ARCHIVE)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://sourceforge.net/projects/xmltoman
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS += PREFIX=/usr
 COMPONENT_INSTALL_ARGS += PREFIX=/usr
@@ -36,3 +36,6 @@ COMPONENT_INSTALL_ARGS += PREFIX=/usr
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
