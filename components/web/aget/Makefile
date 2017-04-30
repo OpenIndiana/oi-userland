@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aget
 COMPONENT_VERSION=	0.4.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.enderunix.org/aget
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -25,6 +26,8 @@ COMPONENT_ARCHIVE_URL=	http://www.enderunix.org/aget/$(COMPONENT_ARCHIVE)
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS+= -std=c89
 
 COMPONENT_PREP_ACTION = ( $(CP) $(SOURCE_DIR)/Makefile.Solaris $(SOURCE_DIR)/Makefile )
 COMPONENT_INSTALL_ARGS += PREFIX=$(PROTOUSRDIR)
