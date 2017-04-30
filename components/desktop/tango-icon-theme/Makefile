@@ -12,7 +12,7 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tango-icon-theme
 COMPONENT_VERSION=      0.8.90
@@ -28,11 +28,11 @@ COMPONENT_FMRI=	gnome/theme/tango-icon-theme
 COMPONENT_LICENSE=	PublicDomain
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
@@ -42,3 +42,4 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
