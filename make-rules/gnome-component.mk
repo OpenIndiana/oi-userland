@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -38,6 +38,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --libexecdir="$(USRLIB)"
 CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
+
+# Tell autoconf's AC_PATH_X that X includes & libraries are in default paths,
+# instead of letting it check Imake, which reports the 64-bit library paths,
+# causing mismatched RUNPATH entries to be included in 32-bit libraries.
+CONFIGURE_OPTIONS += --x-includes=""
+CONFIGURE_OPTIONS += --x-libraries=""
 
 # Some components require an architecture-specific directory for their
 # configuration, so these are specified per-bits.
