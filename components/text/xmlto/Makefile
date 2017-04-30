@@ -22,13 +22,14 @@ COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:1130df3a7957eb9f6f0d29e4aa1c75732a7dfb6d639be013859b5c7ec5421276
+# Official hosting at Fedora has been retired
 COMPONENT_ARCHIVE_URL= \
-  https://fedorahosted.org/releases/x/m/xmlto/$(COMPONENT_ARCHIVE)
+  http://dlc.openindiana.org/oi-userland/source-archives//$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://fedorahosted.org/xmlto/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV += GETOPT=/usr/gnu/bin/getopt
 
@@ -47,3 +48,15 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(TEST_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += file/gnu-findutils
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/gnu-getopt
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += web/browser/lynx
