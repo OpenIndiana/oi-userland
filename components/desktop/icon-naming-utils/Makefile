@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= icon-naming-utils
 COMPONENT_VERSION= 0.8.90
@@ -26,12 +26,11 @@ COMPONENT_ARCHIVE_URL= \
   http://tango.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://tango.freedesktop.org/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH = /usr/gnu/bin:/usr/bin
-
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
@@ -41,3 +40,9 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += library/perl-5/xml-parser-522
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
