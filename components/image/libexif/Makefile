@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libexif
 COMPONENT_VERSION= 0.6.21
@@ -30,9 +30,9 @@ COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
@@ -44,3 +44,7 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
