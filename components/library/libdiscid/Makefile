@@ -13,7 +13,7 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdiscid
 COMPONENT_VERSION= 0.6.1
@@ -30,11 +30,11 @@ COMPONENT_FMRI = library/musicbrainz/libdiscid
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
@@ -47,3 +47,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
