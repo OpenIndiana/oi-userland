@@ -13,15 +13,15 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblogging
-COMPONENT_VERSION= 1.0.5
+COMPONENT_VERSION= 1.0.6
 COMPONENT_SUMMARY= An easy to use logging library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:310dc1691279b7a669d383581fe4b0babdc7bf75c9b54a24e51e60428624890b
+  sha256:338c6174e5c8652eaa34f956be3451f7491a4416ab489aef63151f802b00bf93
 COMPONENT_ARCHIVE_URL= \
   http://download.rsyslog.com/liblogging/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.liblogging.org/
@@ -30,10 +30,11 @@ COMPONENT_LICENSE = BSD
 COMPONENT_FMRI = library/liblogging
 COMPONENT_CLASSIFICATION = System/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-journal=no
 
@@ -42,3 +43,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
