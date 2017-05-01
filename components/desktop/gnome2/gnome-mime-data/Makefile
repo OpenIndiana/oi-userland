@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-mime-data
 
@@ -25,15 +25,15 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:37196b5b37085bbcd45c338c36e26898fe35dd5975295f69f48028b1e8436fd7
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.18/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_PROJECT_URL = https://www.gnome.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -50,3 +50,6 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(TEST_32)
+
+# Build dependencies
+REQUIRED_PACKAGES += text/gnu-gettext
