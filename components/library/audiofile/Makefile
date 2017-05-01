@@ -22,19 +22,20 @@ COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:a61c4036c2600a645843f16bec4be166093a9df5f15b02c85291213aa9cf15a2
+# Tarballs were moved to Github and repackaged
 COMPONENT_ARCHIVE_URL= \
-  http://www.68k.org/~michael/audiofile/$(COMPONENT_ARCHIVE)
+  http://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.68k.org/~michael/audiofile/
 COMPONENT_FMRI= library/audio/audiofile
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE_FILE= audiofile.license
 COMPONENT_LICENSE= LGPLv2,GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -44,3 +45,8 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
