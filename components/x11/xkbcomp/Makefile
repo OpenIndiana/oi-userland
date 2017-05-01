@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xkbcomp
-COMPONENT_VERSION=        1.3.1
+COMPONENT_VERSION=        1.4.0
 COMPONENT_FMRI=           x11/keyboard/xkbcomp
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xkbcomp - compile XKB keyboard description
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0304dc9e0d4ac10831a9ef5d5419722375ddbc3eac3ff4413094d57bc1f1923d
+  sha256:bc69c8748c03c5ad9afdc8dff9db11994dd871b614c65f8940516da6bf61ce6b
 COMPONENT_ARCHIVE_URL= \
   http://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
@@ -33,7 +33,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CPPFLAGS+= -DNO_ALLOCA 
 
