@@ -12,7 +12,7 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-devel-docs
 COMPONENT_VERSION=	2.32.0
@@ -28,11 +28,11 @@ COMPONENT_CLASSIFICATION=Development/GNOME and GTK+
 COMPONENT_LICENSE=	FDL1.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
@@ -42,3 +42,6 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
