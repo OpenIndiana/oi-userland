@@ -12,7 +12,7 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libjpeg6-ijg
 COMPONENT_VERSION=	6.0.2
@@ -26,18 +26,17 @@ COMPONENT_ARCHIVE_HASH=	\
  sha256:75c3ec241e9996504fe02a9ed4d12f16b74ade713972f3db9e65ce95cd27e35d
 COMPONENT_ARCHIVE_URL=	http://www.ijg.org/files/jpegsrc.v$(LIBJPEG_API_VERSION).tar.gz
 COMPONENT_LICENSE=	IJG,GPLv2.0
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_DEFAULT_DIRS=no
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS+= --includedir=$(CONFIGURE_INCLUDEDIR)/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS.32+= --bindir=$(USRLIBDIR)/$(COMPONENT_NAME)/bin
@@ -51,3 +50,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
