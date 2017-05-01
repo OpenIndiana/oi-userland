@@ -12,7 +12,7 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdg-utils
 COMPONENT_VERSION=	1.0.2
@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL=	http://portland.freedesktop.org/download/$(COMPONENT_ARCH
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -42,3 +42,7 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/bash
