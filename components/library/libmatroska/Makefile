@@ -12,7 +12,7 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libmatroska
 COMPONENT_VERSION=        1.4.2
@@ -28,9 +28,9 @@ COMPONENT_LICENSE_FILE=	LICENSE.LGPL
 COMPONENT_FMRI=		library/video/libmatroska
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
@@ -41,3 +41,11 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += library/libebml
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
