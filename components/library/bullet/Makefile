@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bullet
 COMPONENT_VERSION=	2.83.5
@@ -32,12 +32,11 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:df6d58898d3d3bf117854dd64467dbd09625e048624c797649b46bf1c595b152
 COMPONENT_ARCHIVE_URL=	https://github.com/bulletphysics/bullet3/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=      BSD3c
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=      Bullet Physics Library
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LIB_SUFFIX32=
 LIB_SUFFIX64=$(MACH64)
@@ -58,7 +57,8 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
