@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Some userland consolidation specific lint checks
@@ -457,6 +457,17 @@ class UserlandActionChecker(base.ActionChecker):
 				result = self.__elf_aslr_check(fullpath, engine)
 
 	file_action.pkglint_desc = _("Paths should exist in the proto area.")
+
+	def legacy_action(self, action, manifest, engine, pkglint_id="005"):
+		"""Checks for deprecated legacy actions."""
+
+		if action.name not in ["legacy"]:
+			return
+
+		engine.error(_("legacy actions are deprecated"),
+			msgid="%s%s.0" % (self.name, pkglint_id))
+
+	legacy_action.pkglint_desc = _("legacy actions are deprecated.")
 
 	def link_resolves(self, action, manifest, engine, pkglint_id="002"):
 		"""Checks for link resolution."""
