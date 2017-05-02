@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glib
 COMPONENT_VERSION= 2.46.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME core libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -24,7 +25,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:5031722e37036719c1a09163cc6cf7c326e4c4f1f1e074b433c156862bd733db
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.46/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gtk.org/
+COMPONENT_PROJECT_URL = https://www.gtk.org/
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -39,6 +40,9 @@ COMPONENT_PREP_ACTION =	( cd $(@D) && autoreconf -f )
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
+
+# GCC 6
+CFLAGS += -std=gnu89 -Wno-error=format-nonliteral
 
 CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
