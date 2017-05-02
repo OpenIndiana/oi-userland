@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tor
-COMPONENT_VERSION=	0.2.8.12
+COMPONENT_VERSION=	0.2.9.10
 COMPONENT_PROJECT_URL=	https://www.torproject.org
 COMPONENT_SUMMARY=	Anonymizing overlay network for TCP
 COMPONENT_FMRI=		network/tor
@@ -23,21 +23,25 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b35748f2839cf8ce9910b677ea873463495ac88689244c007ed038f6887f4aaf
+    sha256:d611283e1fb284b5f884f8c07e7d3151016851848304f56cfdf3be2a88bd1341
 COMPONENT_ARCHIVE_URL=	https://www.torproject.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc	
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	BSD, OPEN DATA LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CPPFLAGS += -I/usr/include/libevent2
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-bufferevents
-CONFIGURE_OPTIONS+=	--enable-buf-freelists
 #CONFIGURE_OPTIONS+=	--enable-linker-hardening
 CONFIGURE_OPTIONS+=	--localstatedir=/var
+
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 CFLAGS += -D_FILE_OFFSET_BITS=64
 
@@ -48,11 +52,8 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
-
-REQUIRED_PACKAGES += library/libevent
+REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
