@@ -13,7 +13,7 @@
 # Copyright 2013 Aurelien Larcher.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		environment-modules
 COMPONENT_VERSION=	3.2.10
@@ -62,6 +62,8 @@ install:	$(INSTALL_32)
 test:	$(NO_TESTS)
 
 
-BUILD_PKG_DEPENDENCIES=     $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libx11
