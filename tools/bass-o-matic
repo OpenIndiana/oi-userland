@@ -27,37 +27,117 @@
 #  on dependency related information.
 #
 
+from __future__ import print_function, absolute_import
+
 import os
 import sys
 import re
+import glob
 import subprocess
+import argparse
+import logging
+
+try:
+    from scandir import walk
+except ImportError:
+    from os import walk
+
+logger = logging.getLogger('bass-o-matic')
 
 # Locate SCM directories containing Userland components by searching from
 # from a supplied top of tree for .p5m files.  Once a .p5m file is located,
 # that directory is added to the list and no children are searched.
-def FindComponentPaths(path, debug=None, subdir='/components'):
-    expression = re.compile(".+\.p5m$", re.IGNORECASE)
+def FindComponentPaths(path, debug=False, subdir='components',
+                       incremental=False, begin_commit=None, end_commit=None):
+    expression = re.compile(r'.+\.p5m$', re.IGNORECASE)
 
     paths = []
 
     if debug:
-        print >>debug, "searching %s for component directories" % path
+        logger.debug('searching %s for component directories', path)
 
-    for dirpath, dirnames, filenames in os.walk(path + subdir):
-        found = 0
+    workspace_path = os.path.join(path, subdir)
 
-        for name in filenames:
-            if expression.match(name):
-                if debug:
-                    print >>debug, "found %s" % dirpath
-                paths.append(dirpath)
-                del dirnames[:]
-                break
+    if incremental:
+        cmd = ['git', 'log', '--diff-filter=AMR', '--name-only', '--pretty=format:',
+               '..'.join([begin_commit, end_commit])]
+
+        proc = subprocess.Popen(cmd,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                )
+
+        if debug:
+            proc.wait()
+            if proc.returncode != 0:
+                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
+
+        for line in proc.stdout:
+            line = line.rstrip()
+            # git output might contain empty lines, so we skip them.
+            if not line:
+                continue
+
+            # Every time component is added, modified or moved, Makefile has to be
+            # present. However, this does not yet guarantee that the line is a
+            # real component.
+            filename = os.path.basename(line)
+            dirname = os.path.dirname(line).rsplit(subdir + '/')[-1]
+
+            if filename == 'Makefile':
+                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
+                    paths.append(dirname)
+
+        # Some components are using SCM checkout as a source code download method and
+        # COMPONENT_REVISION is not bumped. With this, we will never rebuild them.
+        # In order to rebuild them, we will look for such components and build them
+        # every run. These components are located in openindiana category and we care
+        # only about that category.
+        cmd = ['git', 'grep', '-l', 'GIT_REPO *=']
+
+        proc = subprocess.Popen(cmd,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                cwd=workspace_path,
+                                )
+
+        if debug:
+            proc.wait()
+            if proc.returncode != 0:
+                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
+
+        for line in proc.stdout:
+            line = line.rstrip()
+
+            # Only 'openindiana' category.
+            category = line.split('/')[0]
+            if category is 'openindiana':
+                continue
+
+            filename = os.path.basename(line)
+            dirname = os.path.dirname(line)
+
+            if filename == 'Makefile':
+                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
+                    paths.append(os.path.dirname(line))
+
+        paths = list(set(paths))
+
+    else:
+        for dirpath, dirnames, filenames in walk(workspace_path):
+            for name in filenames:
+                if expression.match(name):
+                    if debug:
+                        logger.debug('found %s', dirpath)
+                    paths.append(dirpath)
+                    del dirnames[:]
+                    break
 
     return sorted(paths)
 
-class BassComponent:
-    def __init__(self, path=None, debug=None):
+
+class BassComponent(object):
+    def __init__(self, path=None, debug=False):
         self.debug = debug
         self.path = path
         if path:
@@ -82,94 +162,91 @@ class BassComponent:
 
     def run_make(self, path, targets):
 
-        result = list()
+        result = []
 
         if self.debug:
-            print >>self.debug, "Executing 'gmake %s' in %s" % (targets, path)
+            logger.debug('Executing \'gmake %s\' in %s', targets, path)
 
-        proc = subprocess.Popen(['gmake', targets], cwd=path,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        p = proc.stdout
-
-        for out in p:
+        proc = subprocess.Popen(['gmake', targets],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                cwd=path)
+        for out in proc.stdout:
             result.append(out)
 
         if self.debug:
             proc.wait()
             if proc.returncode != 0:
-                print >>self.debug, "exit: %d, %s" % (proc.returncode, proc.stderr.read())
-    
+                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
+
         return result
 
     def __str__(self):
-        result = "Component:\n\tPath: %s\n" % self.path
-        result = result + "\tProvides Package(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_packages)
-        result = result + "\tProvides Path(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_paths)
-        result = result + "\tRequired Path(s):\n\t\t%s\n" % '\t\t'.join(self.required_paths)
+        result = 'Component:\n\tPath: %s\n' % self.path
+        result = result + '\tProvides Package(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_packages)
+        result = result + '\tProvides Path(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_paths)
+        result = result + '\tRequired Path(s):\n\t\t%s\n' % '\t\t'.join(self.required_paths)
 
         return result
 
-def usage():
-    print "Usage: %s [-c|--components=(path|depend)] [-z|--zone (zone)]" % (sys.argv[0].split('/')[-1])
-    sys.exit(1)
 
 def main():
-    import getopt
-    import sys
-
-    # FLUSH STDOUT 
+    # FLUSH STDOUT
     sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
     components = {}
-    debug=None
-    components_arg=None
-    make_arg=None
-    component_arg=None
-    template_zone=None
-    subdir="/components"
-    workspace = os.getenv('WS_TOP')
 
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "w:c:d",
-            [ "debug", "workspace=", "components=",
-              "make", "component=", "template-zone=", "subdir=" ])
-    except getopt.GetoptError, err:
-        print str(err)
-        usage()
+    COMPONENTS_ALLOWED_PATHS = ['path', 'paths', 'dir', 'dirs', 'directories']
+    COMPONENTS_ALLOWED_DEPENDENCIES = ['depend', 'dependencies']
+    COMPONENTS_ALLOWED_KEYWORDS = COMPONENTS_ALLOWED_PATHS + COMPONENTS_ALLOWED_DEPENDENCIES
 
-    for opt, arg in opts:
-        if opt in [ "-w", "--workspace" ]:
-            workspace = arg
-        elif opt in [ "-l", "--components" ]:
-            components_arg = arg
-        elif opt in [ "--make" ]:
-            make_arg = True
-        elif opt in [ "--component" ]:
-            component_arg = arg
-        elif opt in [ "--template-zone" ]:
-            template_zone = arg
-        elif opt in [ "--subdir" ]:
-            subdir = arg
-        elif opt in [ "-d", "--debug" ]:
-            debug = sys.stdout
-        else:
-            assert False, "unknown option"
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-w', '--workspace', default=os.getenv('WS_TOP'), help='Path to workspace')
+    parser.add_argument('-l', '--components', default=None, choices=COMPONENTS_ALLOWED_KEYWORDS)
+    parser.add_argument('--make', help='Makefile target to invoke')
+    parser.add_argument('--subdir', default='components', help='Directory holding components')
+    parser.add_argument('-d', '--debug', action='store_true', default=False)
+    parser.add_argument('--begin-commit', default=os.getenv('GIT_PREVIOUS_SUCCESSFUL_COMMIT', 'HEAD~1'))
+    parser.add_argument('--end-commit', default='HEAD')
 
-    component_paths = FindComponentPaths(workspace, debug, subdir)
+    args = parser.parse_args()
+
+    workspace = args.workspace
+    components_arg = args.components
+    subdir = args.subdir
+    make_arg = args.make
+    begin_commit = args.begin_commit
+    end_commit = args.end_commit
+    debug = args.debug
+    log_level = logging.WARNING
+
+    if debug:
+        log_level = logging.DEBUG
+
+    logging.basicConfig(level=log_level,
+                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',)
+
+    incremental = False
+    if os.getenv('BASS_O_MATIC_MODE') == 'incremental':
+        incremental = True
+
+    if incremental:
+        component_paths = FindComponentPaths(path=workspace, debug=debug, subdir=subdir,
+                                             incremental=incremental, begin_commit=begin_commit, end_commit=end_commit)
+    else:
+        component_paths = FindComponentPaths(path=workspace, debug=debug, subdir=subdir)
 
     if make_arg:
-        if template_zone:
-            print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
-        proc = subprocess.Popen(['gmake'] + args)
-	rc = proc.wait()
+        proc = subprocess.Popen(['gmake'] + [make_arg])
+        rc = proc.wait()
         sys.exit(rc)
 
     if components_arg:
-        if components_arg in [ 'path', 'paths', 'dir', 'dirs', 'directories' ]:
+        if components_arg in COMPONENTS_ALLOWED_PATHS:
             for path in component_paths:
-                print "%s" % path
-            
-        elif components_arg in [ 'depend', 'dependencies' ]:
+                print('{0}'.format(path))
+
+        elif components_arg in COMPONENTS_ALLOWED_DEPENDENCIES:
             for path in component_paths:
                 components[path] = BassComponent(path, debug)
 
@@ -178,12 +255,13 @@ def main():
 
                 for d_path in components.keys():
                     if (c_path != d_path and
-                        component.required(components[d_path])):
-                          print "%s: %s" % (c_path, d_path)
+                            component.required(components[d_path])):
+                        print('{0}: {1}'.format(c_path, d_path))
 
         sys.exit(0)
 
     sys.exit(1)
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     main()

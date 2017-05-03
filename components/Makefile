@@ -49,7 +49,7 @@ $(WS_TOP)/components/$(ENCUMBERED)depends.mk:     $(WS_TOP)/components/$(ENCUMBE
 		| sed -f components.ignore \
 		| sed -e 's;$$;/depend.mk;g') >$@ \
 		2>/dev/null
- 
+
 -include $(WS_TOP)/components/$(ENCUMBERED)depends.mk
 
 
@@ -128,8 +128,7 @@ tools:
 
 $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 	@cd $@ && echo "$(TARGET) $@" && \
-	 $(BASS_O_MATIC) $(TEMPLATE_ZONE:%=--template-zone %) \
-			 $(@:%=--component %) --make $(TARGET) $(LOG)
+	 $(BASS_O_MATIC) --make $(TARGET) $(LOG)
 
 incorporation:
 	$(eval COMPONENT_REVISION := $(shell git rev-list HEAD --count))
@@ -153,7 +152,6 @@ endif
 
 $(COMPONENT_DIRS.nosetup):	$(WS_LOGS) FORCE
 	@cd $(@:%.nosetup=%) && echo "$(TARGET) $(@:%.nosetup=%)" && \
-	 $(BASS_O_MATIC) $(TEMPLATE_ZONE:%=--template-zone %) \
-			 $(@:%.nosetup=--component %) --make $(TARGET) $(LOG)
+	 $(BASS_O_MATIC) --make $(TARGET) $(LOG)
 
 FORCE:
