@@ -46,7 +46,7 @@ include $(WS_MAKE_RULES)/configure.mk
 PATH=$(PATH.gnu)
 
 # Enforce C standard
-CFLAGS   += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS   += -std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
