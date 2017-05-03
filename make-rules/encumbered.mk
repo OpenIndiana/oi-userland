@@ -19,6 +19,6 @@ COMPONENT_PKGLINT_ENV += ENCUMBERED=true
 
 PUBLISHER  = hipster-encumbered
 
-BASS_O_MATIC =  $(WS_TOOLS)/bass-o-matic --subdir=/components/encumbered
+BASS_O_MATIC =  $(WS_TOOLS)/bass-o-matic --subdir=components/encumbered
 
 ENCUMBERED = encumbered/
