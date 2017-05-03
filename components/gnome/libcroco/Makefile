@@ -27,18 +27,18 @@ BUILD_BITS =		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcroco
-COMPONENT_VERSION=	0.6.8
+COMPONENT_VERSION=	0.6.10
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libcroco
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ea6e1b858c55219cefd7109756bff5bc1a774ba7a55f7d3ccd734d6b871b8570
+    sha256:72066611df77f5c4fb28268cfc7306ecc1517212a6182c2ea756c326a154246c
 COMPONENT_BUGDB=	gnome/libraries
 COMPONENT_ANITYA_ID=	11787
 
-TPNO=			24633
+TPNO=			34491
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
-# Needed because of patch to configure.in.
+# Needed because of patch to configure.ac
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
 # Actually, -Bsymbolic-functions; the option is misnamed -- Solaris linker
