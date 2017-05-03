@@ -27,18 +27,21 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	5.2
+COMPONENT_VERSION=	5.3.1
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f17916320ffaa844bbd7ce48ceeb5945fc5f3eff64b149b4229bbfbdf3795a9d
+    sha256:fc886cb2ade032d006da8322c09a7e92b2309177811428b121192d44832920da
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/zsh
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+CONFIGURE_LIBDIR.64= $(CONFIGURE_LIBDIR.32)
 
 CONFIGURE_OPTIONS += -n
 CONFIGURE_OPTIONS += --enable-cppflags="$(CPP_LARGEFILES)"
@@ -72,11 +75,6 @@ $(PROTOETCDIR)/%: % $(PROTOETCDIR)
 $(PROTOETCDIR)/zprofile: $(PROTOETCDIR)
 	$(RM) $@; $(SYMLINK) profile $@
 
-# makepro.awk leaves turds behind when using gawk 3.1.5 and a UTF-8 locale.
-# Upgrading gawk would fix the problem, but for now, all we can do is change
-# the language.
-COMPONENT_BUILD_ENV += LC_ALL=C
-
 # The configure test for NIS tests to make sure that NIS is working, not whether
 # it's available to compile against.  We actually want to go through the switch
 # in all cases, so we force it off, regardless of whether the build environment
@@ -94,16 +92,12 @@ license: $(COMPONENT_SRC)/LICENCE
 CLEAN_PATHS += license
 
 # common targets
-build:		$(BUILD_32) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
+build:		$(BUILD_64) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
 
-install:	build $(INSTALL_32) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
+install:	build $(INSTALL_64) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
 
 # build does this always
-test:		$(TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre
