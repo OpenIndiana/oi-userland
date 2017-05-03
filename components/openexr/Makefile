@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
@@ -43,16 +44,43 @@ PATCH_LEVEL = 0
 # there seems to be no other way to enable large files support
 CXXFLAGS += $(CPP_LARGEFILES)
 
+# All C++ code should be built with -std=c++11 from now on.
+CXXFLAGS += -std=c++11
+
+# Needed to get the tests to work correctly. For more information see:
+# https://github.com/openexr/openexr/issues/67
+#CXXFLAGS += -ffloat-store
+
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
-CXXFLAGS += -template=extdef
-CXXFLAGS += -std=sun03
 
-# libtools seems to be forcing -nolibs, so we have to add back libc, libm,
-# libCstd and libCrun. The last two are needed because with Studio 12.2
-# (and beyond), there is a bug in the CC driver that is not correctly using
-# the '-library=Cstd,Crun' we are passing to it.
-LIBS += -lc -lm -lCstd -lCrun
+# START: remove this section (and the depend.mk file) when build servers are
+# installed with the new ilmbase.
+ILMBASE_PROTO =		$(WS_COMPONENTS)/ilmbase/build/prototype/$(MACH)
+ILMBASE_LIBDIR.32 =	$(ILMBASE_PROTO)$(USRLIBDIR)
+ILMBASE_LIBDIR.64 =	$(ILMBASE_PROTO)$(USRLIBDIR64)
+ILMBASE_LIBDIR =	$(ILMBASE_LIBDIR.$(BITS))
+CONFIGURE_ENV +=	LD_LIBRARY_PATH=$(ILMBASE_LIBDIR)
+CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS) -L$(ILMBASE_LIBDIR)"
+CONFIGURE_OPTIONS +=	--with-ilmbase-prefix=$(ILMBASE_PROTO)$(USRDIR)
+
+# Remove ilmbase .la files to allow openexr libtool usage to work correctly.
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	(cd $(ILMBASE_PROTO) ; \
+        mlist=`/usr/bin/find . -name '*.la'` ; \
+        for f in $$mlist ; do \
+                $(RM) $$f ; \
+        done)
+
+# Needed to successfully run various binaries (such as b44ExpLogTable) during
+# the build process.
+COMPONENT_BUILD_ENV +=	LD_LIBRARY_PATH=$(ILMBASE_LIBDIR)
+
+# Needed to successfully run the various test programs.
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(ILMBASE_LIBDIR)
+
+# END: remove this section (and the depend.mk file) when build servers are
+# installed with the new ilmbase.
 
 COMPONENT_TEST_TRANSFORMS += \
      '-e "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g"' \
@@ -62,14 +90,13 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/Nothing to be done/d"' \
      '-e "/Leaving directory/d"' \
      '-e "/Entering directory/d"' \
+     '-e "/mv -f /d"' \
      '-e "/mkdir .libs/d"' \
      '-e "/is up to date/d"' \
      '-e "/creating IlmImfTest/d"' \
      '-e "/DEPDIR=/d"' \
      '-e "/\/var\/tmp/d"' \
      '-e "/Generating headers and data/d"'
-
-CONFIGURE_ENV += LIBS="$(LIBS)"
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-threading
@@ -91,5 +118,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math

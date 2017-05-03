@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ilmbase
@@ -40,22 +41,20 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
+# All C++ code should be built with -std=c++11 from now on.
+CXXFLAGS += -std=c++11
+
+# To allow the 32-bit version of IexMath/IexMathFpu.cpp to compile as there is
+# only a 64-bit definition of the typedef struct fpu { ... } fpregset_t;
+# definition in /usr/include/sys/regset.h
+CXXFLAGS += -U__i386__
+
+# Needed to get the tests to work correctly. For more information see:
+# https://github.com/openexr/openexr/issues/67
+CXXFLAGS += -ffloat-store
+
 # there seems to be no other way to enable large files support
 CXXFLAGS += $(CPP_LARGEFILES)
-# it seems that --with-pic doesn't get PIC flags to the C++ compiler
-CXXFLAGS += $(CC_PIC)
-CXXFLAGS += -std=sun03
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-CXXFLAGS += -U__i386__
-endif
-
-# libtools seems to be forcing -nolibs, so we have to add back libc, libm,
-# libCstd and libCrun. The last two are needed because with Studio 12.2
-# (and beyond), there is a bug in the CC driver that is not correctly using
-# the '-library=Cstd,Crun' we are passing to it.
-LIBS += -lc -lm -lCstd -lCrun
-
-CONFIGURE_ENV += LIBS="$(LIBS)"
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-threading
@@ -71,6 +70,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^mv -f .*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*matrices took .* clocks.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*speed up.*$$|XXX_CC_XXX|g" ' \
 	'-e "/is up to date/d"' \
@@ -79,5 +79,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Entering directory/d"' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
