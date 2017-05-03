@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= contact-lookup-applet
 COMPONENT_VERSION= 0.17
@@ -30,9 +30,9 @@ COMPONENT_FMRI = gnome/applet/contact-lookup-applet
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -42,3 +42,16 @@ CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += gnome/gnome-panel
+REQUIRED_PACKAGES += library/desktop/evolution-data-server
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libglade
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libbonobo
+REQUIRED_PACKAGES += system/library
