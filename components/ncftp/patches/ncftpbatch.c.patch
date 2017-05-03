@@ -1,0 +1,16 @@
+Fix the parsing of the -L command line option to ncftpbatch (which should
+take an extra arg).
+
+This change has been sent upstream.
+
+--- ncftp-3.2.6/sh_util/ncftpbatch.c.orig	2017-05-03 08:52:48.075701724 +0000
++++ ncftp-3.2.6/sh_util/ncftpbatch.c	2017-05-03 08:53:39.122366119 +0000
+@@ -3083,7 +3083,7 @@
+ 	} else {
+ 		/* User Spooler */
+ 		GetoptReset(&opt);
+-		while ((c = Getopt(&opt, argc, (char **) argv, "|:aXDdlLO::x:S:Z:s:wU:K:")) > 0) switch(c) {
++		while ((c = Getopt(&opt, argc, (char **) argv, "|:aXDdlL:O:x:S:Z:s:wU:K:")) > 0) switch(c) {
+ 			case 'a':
+ 				activeonly++;
+ 				break;
