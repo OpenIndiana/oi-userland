@@ -10,14 +10,16 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= espeak
 COMPONENT_VERSION= 1.48.04
 IPS_COMPONENT_VERSION= 1.48.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= eSpeak - compact open source software speech synthesizer
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-source
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
@@ -31,9 +33,9 @@ COMPONENT_CLASSIFICATION = Applications/Universal Access
 COMPONENT_LICENSE = GPLv3
 COMPONENT_LICENSE_FILE = License.txt
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS += -fpermissive
 
@@ -48,6 +50,7 @@ COMPONENT_COMMON_ARGS += EXTRA_LIBS=-lm
 COMPONENT_COMMON_ARGS += AUDIO=sada
 COMPONENT_COMMON_ARGS += BINDIR=$(BINDIR.$(BITS))
 COMPONENT_COMMON_ARGS += LIBDIR=$(LIBDIR.$(BITS))
+COMPONENT_COMMON_ARGS += INSTALL=$(INSTALL)
 
 COMPONENT_COMMON_ENV += CC=$(CC)
 COMPONENT_COMMON_ENV += CXX=$(CXX)
@@ -64,3 +67,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
