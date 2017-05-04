@@ -1,0 +1,14 @@
+# Stefan Teleman <stefan.teleman@oracle.com>
+# These tests pass. They shouldn't be set to XFAIL.
+# Internal patch. Solaris specific.
+--- gcc-5.3.0.orig/libstdc++-v3/testsuite/26_numerics/headers/cmath/c99_classification_macros_c++0x.cc	Mon Jan  5 04:33:28 2015
++++ gcc-5.3.0/libstdc++-v3/testsuite/26_numerics/headers/cmath/c99_classification_macros_c++0x.cc	Fri Jan 15 09:26:42 2016
+@@ -17,6 +17,8 @@
+ 
+ // { dg-options "-std=gnu++11" }
+ // { dg-do compile { xfail uclibc } }
++// { dg-xfail-if "" { { *-*-solaris2.1[0-9]* } || { uclibc } } { "*" } { "" } 
++// { dg-excess-errors "" { target { { *-*-solaris* } || { uclibc } } } }
+ // { dg-excess-errors "" { target uclibc } }
+ 
+ #include <cmath>

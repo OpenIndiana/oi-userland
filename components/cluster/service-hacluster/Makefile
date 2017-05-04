@@ -35,6 +35,8 @@ COMPONENT_SUMMARY= SMF service for HA cluster, managing corosync and pacemaker
 
 include $(WS_MAKE_RULES)/ips.mk
 
+download:
+
 build:
 
 install:

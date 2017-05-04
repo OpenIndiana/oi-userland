@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-ati
 COMPONENT_VERSION= 6.14.6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-ati - ATI Radeon video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -26,19 +27,21 @@ COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 CONFIGURE_DEFAULT_DIRS = no
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        aclocal -I. && \
-                                        autoheader && \
-                                        libtoolize --automake --copy --force && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = \
+ ( cd $(@D) && \
+    aclocal -I. && \
+    autoheader && \
+    libtoolize --automake --copy --force && \
+    automake -a -f -c && \
+    autoconf && \
+    cp $(COMPONENT_DIR)/srcs/i2c/*.h $(COMPONENT_DIR)/srcs/i2c/*.c src/ )
 
 # Paths to find libraries/modules to link with - libraries themselves listed
 # in src/Makefile.am since ATI has multiple submodules with different needs
@@ -82,3 +85,18 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/server/xorg

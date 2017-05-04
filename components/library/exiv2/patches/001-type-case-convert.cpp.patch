@@ -1,0 +1,14 @@
+# gcc 4.9 sees type error
+diff --git a/src/convert.cpp b/src/convert.cpp
+index 03ff6ac..383271d 100644
+--- a/src/convert.cpp
++++ b/src/convert.cpp
+@@ -1542,7 +1542,7 @@ namespace {
+             char* outptr = outbuf;
+             size_t outbytesleft = sizeof(outbuf);
+             size_t rc = iconv(cd,
+-                              &inptr,
++                              (char**) &inptr,
+                               &inbytesleft,
+                               &outptr,
+                               &outbytesleft);

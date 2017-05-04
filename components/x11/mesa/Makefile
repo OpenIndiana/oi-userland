@@ -17,19 +17,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
-COMPONENT_VERSION= 12.0.5
+COMPONENT_VERSION= 13.0.6
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2b0a972d8282860a11291c09c3ef01ac45171405951eb21a83c45ed2b4321924
+  sha256:29ef104a7fc082d352b1599bd6cb1d040be424ccd22f5e0eb7ee9b0e9acd3597
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -42,11 +42,11 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
-COMPONENT_PREP_ACTION +=  (cd $(SOURCE_DIR) && \
-                                        libtoolize --copy --force &&\
-                                        aclocal -I m4 &&\
-                                        automake -c -f -a &&\
-                                        autoconf)
+COMPONENT_PREP_ACTION += ( cd $(SOURCE_DIR) && \
+                           libtoolize --copy --force && \
+                           aclocal -I m4 && \
+                           automake -c -f -a && \
+                           autoconf)
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -77,7 +77,7 @@ CONFIGURE_OPTIONS += --enable-texture-float
 CONFIGURE_OPTIONS += --enable-osmesa
 CONFIGURE_OPTIONS += --with-sha1=libcrypto
 CONFIGURE_OPTIONS += --disable-glx-tls
-CONFIGURE_OPTIONS += --enable-shader-cache
+CONFIGURE_OPTIONS += --disable-shader-cache
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV+=PYTHON=$(PYTHON)
@@ -89,6 +89,15 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/dri2proto
+REQUIRED_PACKAGES += x11/header/dri3proto
+REQUIRED_PACKAGES += x11/header/glproto
+REQUIRED_PACKAGES += x11/header/presentproto
+REQUIRED_PACKAGES += x11/library/libpthread-stubs
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime

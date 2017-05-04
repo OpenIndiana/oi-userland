@@ -38,6 +38,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
+CFLAGS+= -D__EXTENSIONS__
 # Paths to find libraries/modules to link with 
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
@@ -61,3 +62,16 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/server/xorg

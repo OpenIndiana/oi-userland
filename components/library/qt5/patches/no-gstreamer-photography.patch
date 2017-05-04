@@ -1,0 +1,68 @@
+--- qt-everywhere-opensource-src-5.8.0/qtmultimedia/src/multimedia/configure.json.1	2017-03-23 08:22:07.768560884 +0300
++++ qt-everywhere-opensource-src-5.8.0/qtmultimedia/src/multimedia/configure.json	2017-03-23 08:22:40.123940942 +0300
+@@ -73,24 +73,6 @@
+                 { "type": "pkgConfig", "args": "gstreamer-app-1.0" }
+             ]
+         },
+-        "gstreamer_photography_0_10": {
+-            "label": "GStreamer Photography 0.10",
+-            "export": "gstreamer_photography",
+-            "test": "gstreamer_photography",
+-            "use": "gstreamer_0_10",
+-            "sources": [
+-                { "libs": "-lgstphotography-0.10" }
+-            ]
+-        },
+-        "gstreamer_photography_1_0": {
+-            "label": "GStreamer Photography 1.0",
+-            "export": "gstreamer_photography",
+-            "test": "gstreamer_photography",
+-            "use": "gstreamer_1_0",
+-            "sources": [
+-                { "libs": "-lgstphotography-1.0" }
+-            ]
+-        },
+         "libresourceqt5": {
+             "label": "libresourceqt5",
+             "test": "resourcepolicy",
+@@ -235,12 +217,6 @@
+                           || (features.gstreamer_0_10 && tests.gstreamer_encodingprofiles_0_10)",
+             "output": [ "privateFeature" ]
+         },
+-        "gstreamer_photography": {
+-            "label": "GStreamer Photography",
+-            "condition": "(features.gstreamer_1_0 && libs.gstreamer_photography_1_0)
+-                          || (features.gstreamer_0_10 && libs.gstreamer_photography_0_10)",
+-            "output": [ "privateFeature" ]
+-        },
+         "gpu_vivante": {
+             "label": "Vivante GPU",
+             "condition": "features.opengles2 && tests.gpu_vivante",
+--- qt-everywhere-opensource-src-5.8.0/qtmultimedia/src/plugins/gstreamer/camerabin/camerabin.pro.1	2017-03-23 10:55:23.454436417 +0300
++++ qt-everywhere-opensource-src-5.8.0/qtmultimedia/src/plugins/gstreamer/camerabin/camerabin.pro	2017-03-23 10:55:37.704318826 +0300
+@@ -52,25 +52,6 @@
+     $$PWD/camerabincapturebufferformat.cpp \
+     $$PWD/camerabininfocontrol.cpp
+ 
+-qtConfig(gstreamer_photography) {
+-    DEFINES += HAVE_GST_PHOTOGRAPHY
+-
+-    HEADERS += \
+-        $$PWD/camerabinfocus.h \
+-        $$PWD/camerabinexposure.h \
+-        $$PWD/camerabinflash.h \
+-        $$PWD/camerabinlocks.h
+-
+-    SOURCES += \
+-        $$PWD/camerabinexposure.cpp \
+-        $$PWD/camerabinflash.cpp \
+-        $$PWD/camerabinfocus.cpp \
+-        $$PWD/camerabinlocks.cpp
+-
+-    QMAKE_USE += gstreamer_photography
+-    DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API
+-}
+-
+ qtConfig(gstreamer_encodingprofiles) {
+     DEFINES += HAVE_GST_ENCODING_PROFILES
+ }

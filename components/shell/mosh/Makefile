@@ -23,21 +23,22 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
-COMPONENT_VERSION=	1.2.6
+COMPONENT_VERSION=	1.3.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	service/network/mosh
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://mosh.mit.edu/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7e82b7fbfcc698c70f5843bb960dadb8e7bd7ac1d4d2151c9d979372ea850e85
+COMPONENT_ARCHIVE_HASH=	sha256:320e12f461e55d71566597976bd9440ba6c5265fa68fbf614c6f1c8401f93376
 COMPONENT_ARCHIVE_URL=	https://mosh.mit.edu/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3+
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license 
 COMPONENT_SUMMARY=	Mosh (mobile shell) - Remote terminal application that allows roaming, supports intermittent connectivity, and provides intelligent local echo and line editing of user keystrokes (replacement for SSH).
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-examples
@@ -48,10 +49,6 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += utility/bash-completion 
 REQUIRED_PACKAGES += library/c++/protobuf

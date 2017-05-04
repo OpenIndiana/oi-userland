@@ -1,15 +1,6 @@
---- src/intel/isl/isl.h.old	2016-09-11 20:17:44.426219210 +0300
-+++ src/intel/isl/isl.h	2016-09-11 21:04:39.816552072 +0300
-@@ -1011,7 +1011,7 @@
-                       struct isl_extent2d *e);
- bool
- isl_surf_choose_tiling(const struct isl_device *dev,
--                       const struct isl_surf_init_info *restrict info,
-+                       const struct isl_surf_init_info * __restrict info,
-                        enum isl_tiling *tiling);
- 
- static inline bool
-@@ -1103,7 +1103,7 @@
+--- src/intel/isl/isl.h.orig	2017-01-29 19:22:59.305158170 +0100
++++ src/intel/isl/isl.h	2017-01-29 19:24:00.654755688 +0100
+@@ -1247,7 +1247,7 @@
  bool
  isl_surf_init_s(const struct isl_device *dev,
                  struct isl_surf *surf,
@@ -18,7 +9,7 @@
  
  void
  isl_surf_get_tile_info(const struct isl_device *dev,
-@@ -1116,7 +1116,7 @@
+@@ -1275,7 +1275,7 @@
  
  void
  isl_surf_fill_state_s(const struct isl_device *dev, void *state,
@@ -27,7 +18,7 @@
  
  #define isl_buffer_fill_state(dev, state, ...) \
     isl_buffer_fill_state_s((dev), (state), \
-@@ -1124,7 +1124,7 @@
+@@ -1283,7 +1283,7 @@
  
  void
  isl_buffer_fill_state_s(const struct isl_device *dev, void *state,

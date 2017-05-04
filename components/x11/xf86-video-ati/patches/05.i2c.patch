@@ -1,0 +1,20 @@
+--- a/src/Makefile.am 2016-10-04 04:01:04.154343463 +0200
++++ b/src/Makefile.am	2016-10-04 04:02:07.209495938 +0200
+@@ -57,6 +57,8 @@
+ 	evergreen_exa.c evergreen_accel.c evergreen_shader.c evergreen_textured_videofuncs.c cayman_accel.c cayman_shader.c
+ endif
+ 
++RADEON_I2C_SOURCES = fi1236.c msp3430.c tda9885.c uda1380.c
++
+ AM_CFLAGS = \
+             @LIBDRM_RADEON_CFLAGS@ \
+             @XORG_CFLAGS@ \
+@@ -97,7 +99,7 @@
+ 	radeon_crtc.c radeon_output.c radeon_modes.c radeon_tv.c \
+ 	$(RADEON_ATOMBIOS_SOURCES) radeon_atombios.c radeon_atomwrapper.c \
+ 	$(RADEON_DRI_SRCS) $(RADEON_EXA_SOURCES) atombios_output.c atombios_crtc.c \
+-	$(RADEON_KMS_SRCS)
++	$(RADEON_KMS_SRCS) $(RADEON_I2C_SOURCES)
+ 
+ theatre_detect_drv_la_LTLIBRARIES = theatre_detect_drv.la
+ theatre_detect_drv_la_LDFLAGS = -module -avoid-version

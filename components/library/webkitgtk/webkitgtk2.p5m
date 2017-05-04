@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,14 +23,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
+<transform file -> add pkg.depend.bypass-generate libEGL\.so\.1>
 
-link path=usr/bin/jsc target=jsc-4 mediator=webkitgtk mediator-version=4.0
-file usr/bin/jsc path=usr/bin/jsc-4
+link path=usr/bin/jsc target=../lib/webkit2gtk-4.0/jsc mediator=webkitgtk mediator-version=4.0
+link path=usr/bin/jsc-4 target=../lib/webkit2gtk-4.0/jsc
 
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSBase.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSContextRef.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSObjectRef.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSStringRef.h
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSTypedArray.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSValueRef.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JavaScript.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/WebKitAvailability.h
@@ -116,6 +118,7 @@ file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMComment.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCustom.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCustomUnstable.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMApplicationCache.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMCSSNamespace.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMImplementation.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMMimeType.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMMimeTypeArray.h
@@ -127,7 +130,6 @@ file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMStringList.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMStringMap.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMTokenList.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindow.h
-file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindowCSS.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindowSpeechSynthesis.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindowUnstable.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDatabase.h
@@ -145,6 +147,7 @@ file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMEventTarget.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMEventUnstable.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMFile.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMFileList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMFileUnstable.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMGamepad.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMGamepadList.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMGeolocation.h
@@ -217,6 +220,7 @@ file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLScriptElementUnstable
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLSelectElement.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLSelectElementUnstable.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLStyleElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLStyleElementUnstable.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableCaptionElement.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableCellElement.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableColElement.h
@@ -251,7 +255,6 @@ file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNodeUnstable.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMObject.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformance.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceEntry.h
-file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceEntryList.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceNavigation.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceTiming.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMProcessingInstruction.h
@@ -294,11 +297,11 @@ file path=usr/include/webkitgtk-4.0/webkitdom/webkitdomdefines.h
 link path=usr/lib/libjavascriptcoregtk-4.0.so \
     target=libjavascriptcoregtk-4.0.so.18
 link path=usr/lib/libjavascriptcoregtk-4.0.so.18 \
-    target=libjavascriptcoregtk-4.0.so.18.3.10
-file path=usr/lib/libjavascriptcoregtk-4.0.so.18.3.10
+    target=libjavascriptcoregtk-4.0.so.18.4.12
+file path=usr/lib/libjavascriptcoregtk-4.0.so.18.4.12
 link path=usr/lib/libwebkit2gtk-4.0.so target=libwebkit2gtk-4.0.so.37
-link path=usr/lib/libwebkit2gtk-4.0.so.37 target=libwebkit2gtk-4.0.so.37.13.8
-file path=usr/lib/libwebkit2gtk-4.0.so.37.13.8
+link path=usr/lib/libwebkit2gtk-4.0.so.37 target=libwebkit2gtk-4.0.so.37.14.12
+file path=usr/lib/libwebkit2gtk-4.0.so.37.14.12
 file path=usr/lib/pkgconfig/javascriptcoregtk-4.0.pc
 file path=usr/lib/pkgconfig/webkit2gtk-4.0.pc
 file path=usr/lib/pkgconfig/webkit2gtk-web-extension-4.0.pc
@@ -308,3 +311,4 @@ file path=usr/lib/webkit2gtk-4.0/WebKitPluginProcess mode=0555
 file path=usr/lib/webkit2gtk-4.0/WebKitPluginProcess2 mode=0555
 file path=usr/lib/webkit2gtk-4.0/WebKitWebProcess mode=0555
 file path=usr/lib/webkit2gtk-4.0/injected-bundle/libwebkit2gtkinjectedbundle.so
+file path=usr/lib/webkit2gtk-4.0/jsc mode=0555

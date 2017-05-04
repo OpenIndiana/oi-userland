@@ -42,6 +42,10 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

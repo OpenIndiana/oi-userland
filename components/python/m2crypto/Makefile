@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		M2Crypto
 COMPONENT_VERSION=	0.24.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://chandlerproject.org/Projects/MeTooCrypto/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

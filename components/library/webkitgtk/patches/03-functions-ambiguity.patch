@@ -1,6 +1,6 @@
---- webkitgtk-2.12.2/Source/JavaScriptCore/dfg/DFGOperations.cpp.~1~	2016-04-28 09:21:38.000000000 +0300
-+++ webkitgtk-2.12.2/Source/JavaScriptCore/dfg/DFGOperations.cpp	2016-05-20 14:06:54.613953686 +0300
-@@ -1344,7 +1344,7 @@
+--- webkitgtk-2.14.2/Source/JavaScriptCore/dfg/DFGOperations.cpp.~1~	2016-11-03 10:04:20.000000000 +0300
++++ webkitgtk-2.14.2/Source/JavaScriptCore/dfg/DFGOperations.cpp	2017-01-11 10:24:49.020578445 +0300
+@@ -1598,7 +1598,7 @@
  
  double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)
  {
@@ -42,3 +42,14 @@
      if (!m_marginIntervals)
          m_marginIntervals = m_intervals->computeShapeMarginIntervals(std::min(shapeMarginInt, maxShapeMarginInt));
  
+--- webkitgtk-2.14.2/Source/JavaScriptCore/heap/MarkedSpace.cpp.1	2017-01-11 10:42:36.727011829 +0300
++++ webkitgtk-2.14.2/Source/JavaScriptCore/heap/MarkedSpace.cpp	2017-01-11 10:43:55.233977159 +0300
+@@ -70,7 +70,7 @@
+                 dataLog("    Marked block payload size: ", static_cast<size_t>(MarkedSpace::blockPayload), "\n");
+             
+             for (unsigned i = 0; ; ++i) {
+-                double approximateSize = MarkedSpace::preciseCutoff * pow(Options::sizeClassProgression(), i);
++                double approximateSize = MarkedSpace::preciseCutoff * pow(double(Options::sizeClassProgression()), double(i));
+                 
+                 if (Options::dumpSizeClasses())
+                     dataLog("    Next size class as a double: ", approximateSize, "\n");

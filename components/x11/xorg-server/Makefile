@@ -11,17 +11,18 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2016-2017 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
-COMPONENT_VERSION= 1.14.7
+COMPONENT_VERSION= 1.18.4
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fcf66fa6ad86227613d2d3e8ae13ded297e2a1e947e9060a083eaf80d323451f
+  sha256:278459b2c31d61a15655d95a72fb79930c480a6bb8cf9226e48a07df8b1d31c8
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/wiki/
@@ -29,9 +30,9 @@ COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_LICENSE = MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR))
 
@@ -48,7 +49,23 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 CPPFLAGS += -DSUNSOFT -DTSOL
+CPPFLAGS += -I$(USRINCDIR)/pixman-1
+CPPFLAGS += -I$(USRINCDIR)/X11/dri
 CPP = $(CC) -E -std=gnu99
+
+# Default linker options cause crash in glx due to invalid DRI2Connect
+LD_B_DIRECT=
+LD_Z_IGNORE=
+
+# From X11 S12 module:
+# Pass linker mapfile listing symbols that modules can count on resolving
+# from the Xorg binary itself
+XORG_EXTERNS_FILE = mapfile-Xorg-externs.$(MACH)
+XORG_EXTERNS_FLAG = -Wl,-M,$(COMPONENT_DIR)/$(XORG_EXTERNS_FILE)
+COMPONENT_BUILD_ENV += XORG_EXTERNS_FLAG='$(XORG_EXTERNS_FLAG)'
+COMPONENT_BUILD_ENV += LD_SHARED_OPTIONS='-M $(COMPONENT_DIR)/$(XORG_EXTERNS_FILE)'
+
+LDFLAGS += -L/usr/lib/xorg/$(ARCHLIBSUBDIR) -R/usr/lib/xorg/$(ARCHLIBSUBDIR)
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -61,8 +78,11 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-unit-tests
 CONFIGURE_OPTIONS += --disable-xwin
 CONFIGURE_OPTIONS += --disable-xnest
+CONFIGURE_OPTIONS += --disable-systemd-logind
 CONFIGURE_OPTIONS += --enable-dmx
+CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-dri2
+CONFIGURE_OPTIONS += --enable-dri3
 CONFIGURE_OPTIONS += --enable-glx
 CONFIGURE_OPTIONS += --enable-kdrive
 CONFIGURE_OPTIONS += --enable-shared
@@ -85,6 +105,9 @@ CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += CPP="$(CPP)"
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS) -lm"
+CONFIGURE_ENV += GL_CFLAGS="-I/usr/include/mesa -L/usr/lib/mesa/$(LIBSUBDIR)"
+CONFIGURE_ENV += XSERVERCFLAGS_CFLAGS="-DHAS_FCHOWN -DHAS_STICKY_DIR_BIT -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DXTHREADS -DXUSE_MTSAFE_API"
 
 COMPONENT_BUILD_ENV += SERVERMOD_SUBDIR="$(SERVERMOD_SUBDIR)"
 
@@ -95,3 +118,43 @@ COMPONENT_POST_INSTALL_ACTION += ( $(ENV) $(COMPONENT_BUILD_ENV) $(CONFIGURE_ENV
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/dri2proto
+REQUIRED_PACKAGES += x11/header/dri3proto
+REQUIRED_PACKAGES += x11/header/glproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += x11/font-util
+REQUIRED_PACKAGES += x11/library/libxres
+REQUIRED_PACKAGES += x11/library/xcb-util
+REQUIRED_PACKAGES += x11/library/xcb-util-cursor
+REQUIRED_PACKAGES += x11/library/xcb-util-errors
+REQUIRED_PACKAGES += x11/library/xcb-util-image
+REQUIRED_PACKAGES += x11/library/xcb-util-keysyms
+REQUIRED_PACKAGES += x11/library/xcb-util-renderutil
+REQUIRED_PACKAGES += x11/library/xcb-util-wm
+REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += service/hal
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libdmx
+REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxau
+REQUIRED_PACKAGES += x11/library/libxdmcp
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxmuu
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/libxv
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

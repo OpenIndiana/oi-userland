@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= clang-34
 COMPONENT_VERSION= 3.4.2
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= LLVM tools and Clang compiler
 COMPONENT_PROJECT_URL = http://llvm.org/
 COMPONENT_FMRI= developer/clang-34

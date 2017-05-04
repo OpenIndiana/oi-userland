@@ -19,13 +19,13 @@ COMPONENT_NAME=	liberation-fonts-ttf
 COMPONENT_VERSION= 2.00.1
 IPS_COMPONENT_VERSION= 2.0.1
 COMPONENT_SUMMARY= The Liberation fonts
-COMPONENT_PROJECT_URL= http://fedorahosted.org/liberation-fonts/
+COMPONENT_PROJECT_URL= https://pagure.io/liberation-fonts/
 COMPONENT_FMRI=		system/font/truetype/liberation
 COMPONENT_CLASSIFICATION=	System/Fonts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	\
-	http://fedorahosted.org/releases/l/i/liberation-fonts/$(COMPONENT_ARCHIVE)
+	https://releases.pagure.org/liberation-fonts/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
   sha256:7890278a6cd17873c57d9cd785c2d230d9abdea837e96516019c5885dd271504
 COMPONENT_LICENSE=	SIL Open Font License Version 1.1

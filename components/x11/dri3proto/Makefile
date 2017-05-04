@@ -50,3 +50,5 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros

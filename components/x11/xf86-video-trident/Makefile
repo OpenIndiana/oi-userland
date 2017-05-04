@@ -16,31 +16,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-trident
-COMPONENT_VERSION= 1.3.6
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.3.8
 COMPONENT_SUMMARY= xf86-video-trident - Trident video driver for the Xorg X server
+COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
+COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-trident
+COMPONENT_CLASSIFICATION= Drivers/Display
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6a58e3f3034abd8803af8a5c7dd5a6a4a28ed4fdac742ffb05518caaddc28104
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_CLASSIFICATION= Drivers/Display
+COMPONENT_ARCHIVE_HASH= \
+  sha256:9e5119d974c3e2221994542d35e3a0b3426a441869ddd6dd08a84f324856ac3f
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-trident
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal && \
+                          autoheader && \
+                          automake -a -f -c &&\
+                          autoconf )
 
 # Paths to find libraries/modules to link with 
 
@@ -55,8 +54,20 @@ LD_OPTIONS= \
         -R$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
         -R$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
         -lexa -lfb -lint10 -lpciaccess -lpixman-1 -lshadow -lvbe -lvgahw \
-	-lm
+        -lm
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/fontsproto
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/server/xorg

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk-vnc
 COMPONENT_VERSION= 0.5.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= gtk-vnc - A GTK widget for VNC client
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz

@@ -1,0 +1,38 @@
+From c68ffbb72771d1c8c05f8e92f3d3bf448f2e800d Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:34:41 -0700
+Subject: [PATCH 03/34] lastlogin
+
+*** old/servconf.c Wed Sep 17 02:54:26 2014
+---
+ sshd_config.5 | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/sshd_config.5 b/sshd_config.5
+index 32b29d24..9eea74bd 100644
+--- a/sshd_config.5
++++ b/sshd_config.5
+@@ -1260,8 +1260,8 @@ Specifies whether
+ .Xr sshd 8
+ should print the date and time of the last user login when a user logs
+ in interactively.
+-The default is
+-.Cm yes .
++On Solaris this option is always ignored since pam_unix_session(5)
++reports the last login time.
+ .It Cm PrintMotd
+ Specifies whether
+ .Xr sshd 8
+@@ -1667,7 +1667,8 @@ This file should be writable by root only, but it is recommended
+ .El
+ .Sh SEE ALSO
+ .Xr sftp-server 8 ,
+-.Xr sshd 8
++.Xr sshd 8 ,
++.Xr pam_unix_session 5
+ .Sh AUTHORS
+ .An -nosplit
+ OpenSSH is a derivative of the original and free
+-- 
+2.11.0
+

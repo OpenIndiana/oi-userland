@@ -18,14 +18,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_GIT_DATE= 20170325
+COMPONENT_GIT_HASH= 93942b7de84ad16d34fac4b80bde6aec55786e05
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION)-$(COMPONENT_GIT_DATE).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:00b781eea055582820a123c47b62411bdf6aabf4f03dc0568faec55faf9667c9
+  sha256:8e80e0829a89b9a516dbd5eabf272e8bbc99de04102f78ef52af31529f04e7d3
 COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
+  https://cgit.freedesktop.org/xorg/driver/xf86-video-intel/snapshot/$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -35,16 +37,14 @@ CONFIGURE_DEFAULT_DIRS = no
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATCH_LEVEL=0
-
 LDFLAGS += -lm -lsocket
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal -Im4 && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal -Im4 && \
+                          autoheader && \
+                          automake -a -f -c && \
+                          autoconf )
 
 # Paths to find libraries/modules to link with 
 
@@ -79,17 +79,20 @@ CPPFLAGS += -DXF86DRI
 
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-dri
+CONFIGURE_OPTIONS += --enable-dri2
+CONFIGURE_OPTIONS += --disable-dri3
 CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --enable-kms
 CONFIGURE_OPTIONS += --enable-sna 
 CONFIGURE_OPTIONS += --enable-uxa
+CONFIGURE_OPTIONS += --enable-xaa
+CONFIGURE_OPTIONS += --with-default-accel=uxa
 CONFIGURE_OPTIONS += --enable-rendernode
 CONFIGURE_OPTIONS += --enable-create2
-CONFIGURE_OPTIONS += --with-default-accel=uxa
-CONFIGURE_OPTIONS += --enable-kms
-#CONFIGURE_OPTIONS += --enable-tear-free
-#CONFIGURE_OPTIONS += --enable-async-swap
+CONFIGURE_OPTIONS += --disable-tear-free
+CONFIGURE_OPTIONS += --disable-async-swap
 CONFIGURE_OPTIONS += --enable-backlight
 CONFIGURE_OPTIONS += --enable-backlight-helper
 CONFIGURE_OPTIONS += --disable-selective-werror
@@ -103,3 +106,34 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/dri2proto
+REQUIRED_PACKAGES += x11/header/dri3proto
+REQUIRED_PACKAGES += x11/header/presentproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += x11/library/libpthread-stubs
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/libxshmfence
+REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += x11/library/libxv
+REQUIRED_PACKAGES += x11/library/libxvmc
+REQUIRED_PACKAGES += x11/library/xcb-util
+REQUIRED_PACKAGES += x11/server/xorg

@@ -11,6 +11,7 @@
 #
 # Copyright (c) 2014 Alexander Pyhalov
 # Copyright (c) 2016 Till Wegmueller
+# Copyright 2017 Gary Mills
 #
 
 include ../../../../make-rules/shared-macros.mk
@@ -30,11 +31,11 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \

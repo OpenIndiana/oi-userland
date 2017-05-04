@@ -10,19 +10,19 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 Alexander Pyhalov
 #
 
-set name=pkg.fmri value=pkg:/database/postgres/pgbouncer@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license pgbouncer.license license="BSD"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file files/pgbouncer.ini path=etc/pgbouncer/pgbouncer.ini preserve=true
+file files/pgbouncer.ini path=etc/pgbouncer/pgbouncer.ini group=postgres mode=0640 preserve=true
 file files/pgbouncer.xml path=lib/svc/manifest/application/database/pgbouncer.xml restart_fmri=svc:/system/manifest-import:default
 
 # We need postgres user
@@ -31,7 +31,7 @@ depend type=require fmri=database/postgres-common@8.4.18
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
 dir path=var/postgres/pgbouncer owner=postgres group=postgres
-file path=usr/bin/pgbouncer mode=0555
+file path=usr/bin/pgbouncer
 file path=usr/share/doc/pgbouncer/NEWS.rst
 file path=usr/share/doc/pgbouncer/README.rst
 file path=usr/share/doc/pgbouncer/pgbouncer.ini

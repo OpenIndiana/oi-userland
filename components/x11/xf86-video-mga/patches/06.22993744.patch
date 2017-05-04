@@ -1,0 +1,20 @@
+diff --git a/src/mga_exa.c b/src/mga_exa.c
+index 69ffa16..c9e0038 100644
+--- a/src/mga_exa.c
++++ b/src/mga_exa.c
+@@ -1,4 +1,6 @@
+ /*
++ * Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
++ *
+  * Copyright 2006 Red Hat, Inc.
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+@@ -756,7 +758,7 @@ mgaWaitMarker(ScreenPtr pScreen, int marker)
+ 
+     WAITFIFO(1);
+ 
+-    OUTREG(MGAREG_CACHEFLUSH, 0);
++    OUTREG8(MGAREG_CACHEFLUSH, 0);
+ 
+     /* wait until the "drawing engine busy" bit is unset */
+     while (INREG (MGAREG_Status) & 0x10000);

@@ -1,0 +1,20 @@
+--- xsane-0.998/src/xsane-save.c.org	2012-02-10 12:31:29.768614682 +0100
++++ xsane-0.998/src/xsane-save.c	2012-02-10 12:31:31.511986798 +0100
+@@ -4936,7 +4936,7 @@
+     return -1; /* error */
+   }
+ 
+-  if (setjmp(png_ptr->jmpbuf))
++  if (setjmp(png_jmpbuf(png_ptr)))
+   {
+     snprintf(buf, sizeof(buf), "%s %s", ERR_DURING_SAVE, ERR_LIBPNG);
+     xsane_back_gtk_error(buf, TRUE);
+@@ -5126,7 +5126,7 @@
+     return -1; /* error */
+   }
+ 
+-  if (setjmp(png_ptr->jmpbuf))
++  if (setjmp(png_jmpbuf(png_ptr)))
+   {
+     snprintf(buf, sizeof(buf), "%s %s", ERR_DURING_SAVE, ERR_LIBPNG);
+     xsane_back_gtk_error(buf, TRUE);

@@ -18,10 +18,19 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-PATH=/usr/bin:/usr/gnu/bin
+# These symbols should be used in component Makefiles
+# whenever PATH is to be defined there:
+#     PATH = $(PATH.illumos)
+#     PATH = $(PATH.gnu)
+PATH.illumos=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.gnu=$(GNUBIN):$(USRBINDIR):$(USRSBINDIR):$(PERL5BINDIR)
+
+# Default PATH
+PATH = $(PATH.illumos)
 
 # The location of an internal mirror of community source archives that we build
 # in this gate.  This mirror has been seeded to include "custom" source archives
@@ -435,7 +444,8 @@ $(BUILD_DIR_64)/.tested-and-compared:	BITS=64
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
 
-SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio12.1
+SPRO_VERSION =	12.1
+SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio$(SPRO_VERSION)
 SPRO_VROOT =	$(SPRO_ROOT)
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
@@ -496,7 +506,8 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_ROOT =	/usr/gcc/4.9
+GCC_VERSION =	4.9
+GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
@@ -614,7 +625,11 @@ PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
 JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
-JAVA_HOME = $(JAVA7_HOME)
+JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
+JAVA_HOME = $(JAVA8_HOME)
+
+# Location of pod2man, etc
+PERL5BINDIR = 	/usr/perl5/bin
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl

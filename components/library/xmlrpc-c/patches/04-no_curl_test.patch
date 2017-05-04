@@ -1,0 +1,30 @@
+Description: Avoid testclient. FTBFS
+Author: Herbert Parentes Fortes Neto <hpfn@debian.org>
+LAst-Update: 2016-07-22
+Index: xmlrpc-c-1.33.14/test/cpp/Makefile
+===================================================================
+--- xmlrpc-c-1.33.14.orig/test/cpp/Makefile
++++ xmlrpc-c-1.33.14/test/cpp/Makefile
+@@ -39,14 +39,14 @@ TEST_OBJS = \
+   value.o \
+   xml.o \
+ 
+-ifeq ($(MUST_BUILD_CLIENT),yes)
+-  TEST_OBJS += testclient.o
+-  CLIENT_LIBS = $(LIBXMLRPC_CLIENTPP_A) $(LIBXMLRPC_CLIENT_A)
+-  LIBS += $(shell $(XMLRPC_C_CONFIG) client --ldadd)
+-else
+-  TEST_OBJS += testclient_dummy.o
+-  CLIENT_LIBS =
+-endif
++#ifeq ($(MUST_BUILD_CLIENT),yes)
++#  TEST_OBJS += testclient.o
++#  CLIENT_LIBS = $(LIBXMLRPC_CLIENTPP_A) $(LIBXMLRPC_CLIENT_A)
++#  LIBS += $(shell $(XMLRPC_C_CONFIG) client --ldadd)
++#else
++TEST_OBJS += testclient_dummy.o
++CLIENT_LIBS =
++#endif
+ 
+ 
+ TEST_LIBS = \

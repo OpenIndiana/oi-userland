@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.21
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
 COMPONENT_SRC_NAME=	db
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -83,10 +83,10 @@ CONFIGURE_OPTIONS += --includedir=/usr/include
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-cxx
-CONFIGURE_OPTIONS += --enable-java
+CONFIGURE_OPTIONS += --disable-java
 CONFIGURE_OPTIONS += --enable-sql
 CONFIGURE_OPTIONS += --enable-sql_codegen
-CONFIGURE_OPTIONS += --enable-jdbc
+CONFIGURE_OPTIONS += --disable-jdbc
 CONFIGURE_OPTIONS += --enable-tcl
 CONFIGURE_OPTIONS += --with-tcl=/usr/lib
 CONFIGURE_OPTIONS += --enable-dbm
@@ -112,3 +112,8 @@ test:		$(TEST_32_and_64)
 
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime

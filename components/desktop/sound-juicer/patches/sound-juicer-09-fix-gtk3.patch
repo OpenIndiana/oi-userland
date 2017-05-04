@@ -1,0 +1,41 @@
+--- sound-juicer-2.32.0/src/sj-main.c.1	2017-04-04 20:08:58.775199130 +0300
++++ sound-juicer-2.32.0/src/sj-main.c	2017-04-04 20:09:35.668929190 +0300
+@@ -28,6 +28,7 @@
+ 
+ #include <glib/gi18n.h>
+ #include <gdk/gdkkeysyms.h>
++#include <gdk/gdkkeysyms-compat.h>
+ #include <gio/gio.h>
+ #include <gtk/gtk.h>
+ #include <gconf/gconf-client.h>
+@@ -892,10 +892,10 @@
+ 
+   /* Set watch cursor */
+   if (realized) {
+-    cursor = gdk_cursor_new_for_display (gdk_drawable_get_display (window), GDK_WATCH);
++    cursor = gdk_cursor_new_for_display (gdk_window_get_display (window), GDK_WATCH);
+     gdk_window_set_cursor (window, cursor);
+     gdk_cursor_unref (cursor);
+-    gdk_display_sync (gdk_drawable_get_display (window));
++    gdk_display_sync (gdk_window_get_display (window));
+   }
+ 
+   /* Set statusbar message */
+--- sound-juicer-2.32.0/data/sound-juicer.ui.~2~	2017-04-04 20:33:19.049733936 +0300
++++ sound-juicer-2.32.0/data/sound-juicer.ui	2017-04-04 20:40:55.227408139 +0300
+@@ -615,7 +615,6 @@
+     <property name="border_width">5</property>
+     <property name="title" translatable="yes">Multiple Albums Found</property>
+     <property name="type_hint">dialog</property>
+-    <property name="has_separator">False</property>
+     <child internal-child="vbox">
+       <object class="GtkVBox" id="dialog-vbox2">
+         <property name="visible">True</property>
+@@ -735,7 +734,6 @@
+     <property name="title" translatable="yes">Preferences</property>
+     <property name="resizable">False</property>
+     <property name="type_hint">dialog</property>
+-    <property name="has_separator">False</property>
+     <signal name="delete_event" handler="gtk_widget_hide_on_delete"/>
+     <child internal-child="vbox">
+       <object class="GtkVBox" id="dialog-vbox4">

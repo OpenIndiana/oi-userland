@@ -23,20 +23,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.10.4-P5
-IPS_COMPONENT_VERSION=	9.10.4.5
+COMPONENT_VERSION=	9.10.4-P8
+IPS_COMPONENT_VERSION=	9.10.4.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:89c47b413613feddb1b623ad092f3def2247402e4148c464dbc6c0021e3f0feb
+	sha256:7dd356ab466ead8124d645f83719e620686998c81ce1d4eb0c52daffca7566eb
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # We don't need -m32 for 32-bit builds, especially when it is passed to ld
 LD_BITS=

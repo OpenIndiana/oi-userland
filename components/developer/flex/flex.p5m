@@ -1,0 +1,69 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/developer/lexer/flex@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Flex Lexer"
+set name=com.oracle.info.description value="the flex lexer utility"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Other Languages"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2007/289 value=PSARC/2016/309
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/flex
+link path=usr/bin/flex++ target=flex
+file path=usr/include/FlexLexer.h
+link path=usr/sfw/bin/flex target=../../bin/flex
+file path=usr/share/info/flex.info
+file path=usr/share/info/flex.info-1
+file path=usr/share/info/flex.info-2
+file path=usr/share/locale/ca/LC_MESSAGES/flex.mo
+file path=usr/share/locale/da/LC_MESSAGES/flex.mo
+file path=usr/share/locale/de/LC_MESSAGES/flex.mo
+file path=usr/share/locale/en@boldquot/LC_MESSAGES/flex.mo
+file path=usr/share/locale/en@quot/LC_MESSAGES/flex.mo
+file path=usr/share/locale/eo/LC_MESSAGES/flex.mo
+file path=usr/share/locale/es/LC_MESSAGES/flex.mo
+file path=usr/share/locale/fi/LC_MESSAGES/flex.mo
+file path=usr/share/locale/fr/LC_MESSAGES/flex.mo
+file path=usr/share/locale/ga/LC_MESSAGES/flex.mo
+file path=usr/share/locale/hr/LC_MESSAGES/flex.mo
+file path=usr/share/locale/ko/LC_MESSAGES/flex.mo
+file path=usr/share/locale/nl/LC_MESSAGES/flex.mo
+file path=usr/share/locale/pl/LC_MESSAGES/flex.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/flex.mo
+file path=usr/share/locale/ro/LC_MESSAGES/flex.mo
+file path=usr/share/locale/ru/LC_MESSAGES/flex.mo
+file path=usr/share/locale/sr/LC_MESSAGES/flex.mo
+file path=usr/share/locale/sv/LC_MESSAGES/flex.mo
+file path=usr/share/locale/tr/LC_MESSAGES/flex.mo
+file path=usr/share/locale/vi/LC_MESSAGES/flex.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/flex.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/flex.mo
+file path=usr/share/man/man1/flex.1
+legacy pkg=SUNWflexlex desc="The Flex Lexer - A lex replacement/substitute" \
+    name="Flex Lexer"
+license COPYING license=BSD
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/m4

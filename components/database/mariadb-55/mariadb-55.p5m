@@ -28,6 +28,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=var/mariadb group=mysql mode=0700 owner=mysql
 dir path=var/mariadb/5.5 group=mysql mode=0700 owner=mysql
 dir path=var/mariadb/5.5/data group=mysql mode=0700 owner=mysql
+
+dir path=usr/mariadb/5.5/bin
+dir path=usr/mariadb/5.5/docs
+dir path=usr/mariadb/5.5/man
+dir path=usr/mariadb/5.5/share
+dir path=usr/mariadb/5.5/data
+
 file files/my-medium.cnf path=etc/mariadb/5.5/my.cnf \
     mode=0644 preserve=renamenew
 file files/auth_attr path=etc/security/auth_attr.d/mariadb-55
@@ -49,68 +56,62 @@ link path=var/mysql/data target=../mariadb/5.5/data mediator=mysql mediator-vers
 depend fmri=database/mysql-common type=require
 depend fmri=database/mariadb-55/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
-dir  path=usr/mariadb
-dir  path=usr/mariadb/5.5
-dir  path=usr/mariadb/5.5/bin
-dir  path=usr/mariadb/5.5/bin/$(MACH64)
-file path=usr/mariadb/5.5/bin/$(MACH64)/aria_chk mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/aria_dump_log mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/aria_ftdump mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/aria_pack mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/aria_read_log mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/innochecksum mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/my_print_defaults mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/myisam_ftdump mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/myisamchk mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/myisamlog mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/myisampack mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_fix_extensions mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_install_db mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_plugin mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_secure_installation mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_upgrade mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_zap mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysqlbinlog mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysqlbug mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld_multi mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld_safe mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld_safe_helper mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/mysqlhotcopy mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/perror mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/replace mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/resolve_stack_dump mode=0555
-file path=usr/mariadb/5.5/bin/$(MACH64)/resolveip mode=0555
-file path=usr/mariadb/5.5/bin/aria_chk mode=0555
-file path=usr/mariadb/5.5/bin/aria_dump_log mode=0555
-file path=usr/mariadb/5.5/bin/aria_ftdump mode=0555
-file path=usr/mariadb/5.5/bin/aria_pack mode=0555
-file path=usr/mariadb/5.5/bin/aria_read_log mode=0555
-file path=usr/mariadb/5.5/bin/innochecksum mode=0555
-file path=usr/mariadb/5.5/bin/my_print_defaults mode=0555
-file path=usr/mariadb/5.5/bin/myisam_ftdump mode=0555
-file path=usr/mariadb/5.5/bin/myisamchk mode=0555
-file path=usr/mariadb/5.5/bin/myisamlog mode=0555
-file path=usr/mariadb/5.5/bin/myisampack mode=0555
-file path=usr/mariadb/5.5/bin/mysql_fix_extensions mode=0555
-file path=usr/mariadb/5.5/bin/mysql_install_db mode=0555
-file path=usr/mariadb/5.5/bin/mysql_plugin mode=0555
-file path=usr/mariadb/5.5/bin/mysql_secure_installation mode=0555
-file path=usr/mariadb/5.5/bin/mysql_upgrade mode=0555
-file path=usr/mariadb/5.5/bin/mysql_zap mode=0555
-file path=usr/mariadb/5.5/bin/mysqlbinlog mode=0555
-file path=usr/mariadb/5.5/bin/mysqlbug mode=0555
-file path=usr/mariadb/5.5/bin/mysqld mode=0555
-file path=usr/mariadb/5.5/bin/mysqld_multi mode=0555
-file path=usr/mariadb/5.5/bin/mysqld_safe mode=0555
-file path=usr/mariadb/5.5/bin/mysqld_safe_helper mode=0555
-file path=usr/mariadb/5.5/bin/mysqlhotcopy mode=0555
-file path=usr/mariadb/5.5/bin/perror mode=0555
-file path=usr/mariadb/5.5/bin/replace mode=0555
-file path=usr/mariadb/5.5/bin/resolve_stack_dump mode=0555
-file path=usr/mariadb/5.5/bin/resolveip mode=0555
-dir  path=usr/mariadb/5.5/docs
-dir  path=usr/mariadb/5.5/lib/$(MACH64)/plugin
+file path=usr/mariadb/5.5/bin/$(MACH64)/aria_chk
+file path=usr/mariadb/5.5/bin/$(MACH64)/aria_dump_log
+file path=usr/mariadb/5.5/bin/$(MACH64)/aria_ftdump
+file path=usr/mariadb/5.5/bin/$(MACH64)/aria_pack
+file path=usr/mariadb/5.5/bin/$(MACH64)/aria_read_log
+file path=usr/mariadb/5.5/bin/$(MACH64)/innochecksum
+file path=usr/mariadb/5.5/bin/$(MACH64)/my_print_defaults
+file path=usr/mariadb/5.5/bin/$(MACH64)/myisam_ftdump
+file path=usr/mariadb/5.5/bin/$(MACH64)/myisamchk
+file path=usr/mariadb/5.5/bin/$(MACH64)/myisamlog
+file path=usr/mariadb/5.5/bin/$(MACH64)/myisampack
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_fix_extensions
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_install_db
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_plugin
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_secure_installation
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_upgrade
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysql_zap
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysqlbinlog
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysqlbug
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld_multi
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld_safe
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysqld_safe_helper
+file path=usr/mariadb/5.5/bin/$(MACH64)/mysqlhotcopy
+file path=usr/mariadb/5.5/bin/$(MACH64)/perror
+file path=usr/mariadb/5.5/bin/$(MACH64)/replace
+file path=usr/mariadb/5.5/bin/$(MACH64)/resolve_stack_dump
+file path=usr/mariadb/5.5/bin/$(MACH64)/resolveip
+file path=usr/mariadb/5.5/bin/aria_chk
+file path=usr/mariadb/5.5/bin/aria_dump_log
+file path=usr/mariadb/5.5/bin/aria_ftdump
+file path=usr/mariadb/5.5/bin/aria_pack
+file path=usr/mariadb/5.5/bin/aria_read_log
+file path=usr/mariadb/5.5/bin/innochecksum
+file path=usr/mariadb/5.5/bin/my_print_defaults
+file path=usr/mariadb/5.5/bin/myisam_ftdump
+file path=usr/mariadb/5.5/bin/myisamchk
+file path=usr/mariadb/5.5/bin/myisamlog
+file path=usr/mariadb/5.5/bin/myisampack
+file path=usr/mariadb/5.5/bin/mysql_fix_extensions
+file path=usr/mariadb/5.5/bin/mysql_install_db
+file path=usr/mariadb/5.5/bin/mysql_plugin
+file path=usr/mariadb/5.5/bin/mysql_secure_installation
+file path=usr/mariadb/5.5/bin/mysql_upgrade
+file path=usr/mariadb/5.5/bin/mysql_zap
+file path=usr/mariadb/5.5/bin/mysqlbinlog
+file path=usr/mariadb/5.5/bin/mysqlbug
+file path=usr/mariadb/5.5/bin/mysqld
+file path=usr/mariadb/5.5/bin/mysqld_multi
+file path=usr/mariadb/5.5/bin/mysqld_safe
+file path=usr/mariadb/5.5/bin/mysqld_safe_helper
+file path=usr/mariadb/5.5/bin/mysqlhotcopy
+file path=usr/mariadb/5.5/bin/perror
+file path=usr/mariadb/5.5/bin/replace
+file path=usr/mariadb/5.5/bin/resolve_stack_dump
+file path=usr/mariadb/5.5/bin/resolveip
 file path=usr/mariadb/5.5/lib/$(MACH64)/plugin/adt_null.so
 file path=usr/mariadb/5.5/lib/$(MACH64)/plugin/auth_0x0100.so
 file path=usr/mariadb/5.5/lib/$(MACH64)/plugin/auth_pam.so
@@ -138,7 +139,6 @@ file path=usr/mariadb/5.5/lib/$(MACH64)/plugin/semisync_slave.so
 file path=usr/mariadb/5.5/lib/$(MACH64)/plugin/server_audit.so
 file path=usr/mariadb/5.5/lib/$(MACH64)/plugin/sphinx.so
 file path=usr/mariadb/5.5/lib/$(MACH64)/plugin/sql_errlog.so
-dir  path=usr/mariadb/5.5/lib/plugin
 file path=usr/mariadb/5.5/lib/plugin/adt_null.so
 file path=usr/mariadb/5.5/lib/plugin/auth_0x0100.so
 file path=usr/mariadb/5.5/lib/plugin/auth_pam.so
@@ -194,7 +194,6 @@ file path=usr/mariadb/5.5/man/man1/replace.1
 file path=usr/mariadb/5.5/man/man1/resolve_stack_dump.1
 file path=usr/mariadb/5.5/man/man1/resolveip.1
 file path=usr/mariadb/5.5/man/man8/mysqld.8
-dir  path=usr/mariadb/5.5/share/charsets
 file path=usr/mariadb/5.5/share/charsets/Index.xml
 file path=usr/mariadb/5.5/share/charsets/README
 file path=usr/mariadb/5.5/share/charsets/armscii8.xml
@@ -221,37 +220,23 @@ file path=usr/mariadb/5.5/share/charsets/latin7.xml
 file path=usr/mariadb/5.5/share/charsets/macce.xml
 file path=usr/mariadb/5.5/share/charsets/macroman.xml
 file path=usr/mariadb/5.5/share/charsets/swe7.xml
-dir  path=usr/mariadb/5.5/share/czech
 file path=usr/mariadb/5.5/share/czech/errmsg.sys
-dir  path=usr/mariadb/5.5/share/danish
 file path=usr/mariadb/5.5/share/danish/errmsg.sys
-dir  path=usr/mariadb/5.5/share/dutch
 file path=usr/mariadb/5.5/share/dutch/errmsg.sys
-dir  path=usr/mariadb/5.5/share/english
 file path=usr/mariadb/5.5/share/english/errmsg.sys
 file path=usr/mariadb/5.5/share/errmsg-utf8.txt
-dir  path=usr/mariadb/5.5/share/estonian
 file path=usr/mariadb/5.5/share/estonian/errmsg.sys
 file path=usr/mariadb/5.5/share/fill_help_tables.sql
-dir  path=usr/mariadb/5.5/share/french
 file path=usr/mariadb/5.5/share/french/errmsg.sys
-dir  path=usr/mariadb/5.5/share/german
 file path=usr/mariadb/5.5/share/german/errmsg.sys
-dir  path=usr/mariadb/5.5/share/greek
 file path=usr/mariadb/5.5/share/greek/errmsg.sys
-dir  path=usr/mariadb/5.5/share/hungarian
 file path=usr/mariadb/5.5/share/hungarian/errmsg.sys
-dir  path=usr/mariadb/5.5/share/italian
 file path=usr/mariadb/5.5/share/italian/errmsg.sys
-dir  path=usr/mariadb/5.5/share/japanese
 file path=usr/mariadb/5.5/share/japanese/errmsg.sys
-dir  path=usr/mariadb/5.5/share/korean
 file path=usr/mariadb/5.5/share/korean/errmsg.sys
-dir  path=usr/mariadb/5.5/share/mysql
-dir  path=usr/mariadb/5.5/share/mysql/SELinux
-dir  path=usr/mariadb/5.5/share/mysql/SELinux/RHEL4
-file path=usr/mariadb/5.5/share/mysql/SELinux/RHEL4/mysql.fc
-file path=usr/mariadb/5.5/share/mysql/SELinux/RHEL4/mysql.te
+file path=usr/mariadb/5.5/share/mysql/SELinux/mariadb.te
+file path=usr/mariadb/5.5/share/mysql/SELinux/rhel4-mysql.fc
+file path=usr/mariadb/5.5/share/mysql/SELinux/rhel4-mysql.te
 file path=usr/mariadb/5.5/share/mysql/binary-configure mode=0555
 file path=usr/mariadb/5.5/share/mysql/magic
 file path=usr/mariadb/5.5/share/mysql/my-huge.cnf
@@ -262,31 +247,19 @@ file path=usr/mariadb/5.5/share/mysql/my-small.cnf
 file path=usr/mariadb/5.5/share/mysql/mysql-log-rotate mode=0555
 file path=usr/mariadb/5.5/share/mysql/mysql.server mode=0555
 file path=usr/mariadb/5.5/share/mysql/mysqld_multi.server mode=0555
-dir  path=usr/mariadb/5.5/share/mysql/solaris
 file path=usr/mariadb/5.5/share/mysql/solaris/postinstall-solaris mode=0555
 file path=usr/mariadb/5.5/share/mysql_performance_tables.sql
 file path=usr/mariadb/5.5/share/mysql_system_tables.sql
 file path=usr/mariadb/5.5/share/mysql_system_tables_data.sql
 file path=usr/mariadb/5.5/share/mysql_test_data_timezone.sql
-dir  path=usr/mariadb/5.5/share/norwegian
-dir  path=usr/mariadb/5.5/share/norwegian-ny
 file path=usr/mariadb/5.5/share/norwegian-ny/errmsg.sys
 file path=usr/mariadb/5.5/share/norwegian/errmsg.sys
-dir  path=usr/mariadb/5.5/share/polish
 file path=usr/mariadb/5.5/share/polish/errmsg.sys
-dir  path=usr/mariadb/5.5/share/portuguese
 file path=usr/mariadb/5.5/share/portuguese/errmsg.sys
-dir  path=usr/mariadb/5.5/share/romanian
 file path=usr/mariadb/5.5/share/romanian/errmsg.sys
-dir  path=usr/mariadb/5.5/share/russian
 file path=usr/mariadb/5.5/share/russian/errmsg.sys
-dir  path=usr/mariadb/5.5/share/serbian
 file path=usr/mariadb/5.5/share/serbian/errmsg.sys
-dir  path=usr/mariadb/5.5/share/slovak
 file path=usr/mariadb/5.5/share/slovak/errmsg.sys
-dir  path=usr/mariadb/5.5/share/spanish
 file path=usr/mariadb/5.5/share/spanish/errmsg.sys
-dir  path=usr/mariadb/5.5/share/swedish
 file path=usr/mariadb/5.5/share/swedish/errmsg.sys
-dir  path=usr/mariadb/5.5/share/ukrainian
 file path=usr/mariadb/5.5/share/ukrainian/errmsg.sys

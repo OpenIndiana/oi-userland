@@ -1,29 +1,48 @@
 #
-# This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"), version 1.0.
-# You may only use this file in accordance with the terms of version
-# 1.0 of the CDDL.
+# CDDL HEADER START
 #
-# A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
-# http://www.illumos.org/license/CDDL.
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/library/python/pycairo-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Python bindings for Cairo"
-set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=pkg.fmri \
+    value=pkg:/library/python/pycairo-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Python bindings for the Cairo graphics library"
+set name=com.oracle.info.description \
+    value="Python bindings for Cairo"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/371
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license pycairo.license license="LGPL v2.1"
-
-file usr/lib/python$(PYVER)/vendor-packages/64/cairo/_cairo.so path=usr/lib/python$(PYVER)/vendor-packages/cairo/64/_cairo.so mode=0555
-
-# Generated section:
+file path=usr/lib/python$(PYVER)/vendor-packages/cairo/64/_cairo.so
 file path=usr/lib/python$(PYVER)/vendor-packages/cairo/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cairo/_cairo.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/cairo/_cairo.so
+
+license COPYING license=GPLv3
+license COPYING.LESSER license=LGPLv3
+
+# force a dependency on the unversioned package
+depend type=require \
+    fmri=library/python/pycairo@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

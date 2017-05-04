@@ -1,0 +1,161 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2017 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/doc/jaxb/(.+)$ -> \
+	set action.hash bundles/ri/target/stage/jaxb-ri/docs/%<\1> >
+<transform file path=usr/share/lib/java/(.+)$ -> \
+	set action.hash bundles/ri/target/stage/jaxb-ri/lib/%<\1> >
+
+file bundles/ri/target/stage/jaxb-ri/bin/schemagen.sh path=usr/bin/jaxb-schemagen
+file bundles/ri/target/stage/jaxb-ri/bin/xjc.sh path=usr/bin/jaxb-xjc
+
+file path=usr/share/doc/jaxb/JAXBv2.0.THIRDPARTYLICENSEREADME.txt
+file path=usr/share/doc/jaxb/ThirdPartyLicense.txt
+file path=usr/share/doc/jaxb/ch01.html
+file path=usr/share/doc/jaxb/ch02.html
+file path=usr/share/doc/jaxb/ch03.html
+file path=usr/share/doc/jaxb/ch04.html
+file path=usr/share/doc/jaxb/ch05.html
+file path=usr/share/doc/jaxb/ch06.html
+file path=usr/share/doc/jaxb/ch07.html
+file path=usr/share/doc/jaxb/download/JaxbCDATASample.java
+file path=usr/share/doc/jaxb/figures/classLoaderFAQ.gif
+file path=usr/share/doc/jaxb/icons/annot-close.png
+file path=usr/share/doc/jaxb/icons/annot-open.png
+file path=usr/share/doc/jaxb/icons/blank.png
+file path=usr/share/doc/jaxb/icons/callouts/1.gif
+file path=usr/share/doc/jaxb/icons/callouts/1.png
+file path=usr/share/doc/jaxb/icons/callouts/1.svg
+file path=usr/share/doc/jaxb/icons/callouts/10.gif
+file path=usr/share/doc/jaxb/icons/callouts/10.png
+file path=usr/share/doc/jaxb/icons/callouts/10.svg
+file path=usr/share/doc/jaxb/icons/callouts/11.gif
+file path=usr/share/doc/jaxb/icons/callouts/11.png
+file path=usr/share/doc/jaxb/icons/callouts/11.svg
+file path=usr/share/doc/jaxb/icons/callouts/12.gif
+file path=usr/share/doc/jaxb/icons/callouts/12.png
+file path=usr/share/doc/jaxb/icons/callouts/12.svg
+file path=usr/share/doc/jaxb/icons/callouts/13.gif
+file path=usr/share/doc/jaxb/icons/callouts/13.png
+file path=usr/share/doc/jaxb/icons/callouts/13.svg
+file path=usr/share/doc/jaxb/icons/callouts/14.gif
+file path=usr/share/doc/jaxb/icons/callouts/14.png
+file path=usr/share/doc/jaxb/icons/callouts/14.svg
+file path=usr/share/doc/jaxb/icons/callouts/15.gif
+file path=usr/share/doc/jaxb/icons/callouts/15.png
+file path=usr/share/doc/jaxb/icons/callouts/15.svg
+file path=usr/share/doc/jaxb/icons/callouts/16.svg
+file path=usr/share/doc/jaxb/icons/callouts/17.svg
+file path=usr/share/doc/jaxb/icons/callouts/18.svg
+file path=usr/share/doc/jaxb/icons/callouts/19.svg
+file path=usr/share/doc/jaxb/icons/callouts/2.gif
+file path=usr/share/doc/jaxb/icons/callouts/2.png
+file path=usr/share/doc/jaxb/icons/callouts/2.svg
+file path=usr/share/doc/jaxb/icons/callouts/20.svg
+file path=usr/share/doc/jaxb/icons/callouts/21.svg
+file path=usr/share/doc/jaxb/icons/callouts/22.svg
+file path=usr/share/doc/jaxb/icons/callouts/23.svg
+file path=usr/share/doc/jaxb/icons/callouts/24.svg
+file path=usr/share/doc/jaxb/icons/callouts/25.svg
+file path=usr/share/doc/jaxb/icons/callouts/26.svg
+file path=usr/share/doc/jaxb/icons/callouts/27.svg
+file path=usr/share/doc/jaxb/icons/callouts/28.svg
+file path=usr/share/doc/jaxb/icons/callouts/29.svg
+file path=usr/share/doc/jaxb/icons/callouts/3.gif
+file path=usr/share/doc/jaxb/icons/callouts/3.png
+file path=usr/share/doc/jaxb/icons/callouts/3.svg
+file path=usr/share/doc/jaxb/icons/callouts/30.svg
+file path=usr/share/doc/jaxb/icons/callouts/4.gif
+file path=usr/share/doc/jaxb/icons/callouts/4.png
+file path=usr/share/doc/jaxb/icons/callouts/4.svg
+file path=usr/share/doc/jaxb/icons/callouts/5.gif
+file path=usr/share/doc/jaxb/icons/callouts/5.png
+file path=usr/share/doc/jaxb/icons/callouts/5.svg
+file path=usr/share/doc/jaxb/icons/callouts/6.gif
+file path=usr/share/doc/jaxb/icons/callouts/6.png
+file path=usr/share/doc/jaxb/icons/callouts/6.svg
+file path=usr/share/doc/jaxb/icons/callouts/7.gif
+file path=usr/share/doc/jaxb/icons/callouts/7.png
+file path=usr/share/doc/jaxb/icons/callouts/7.svg
+file path=usr/share/doc/jaxb/icons/callouts/8.gif
+file path=usr/share/doc/jaxb/icons/callouts/8.png
+file path=usr/share/doc/jaxb/icons/callouts/8.svg
+file path=usr/share/doc/jaxb/icons/callouts/9.gif
+file path=usr/share/doc/jaxb/icons/callouts/9.png
+file path=usr/share/doc/jaxb/icons/callouts/9.svg
+file path=usr/share/doc/jaxb/icons/caution.gif
+file path=usr/share/doc/jaxb/icons/caution.png
+file path=usr/share/doc/jaxb/icons/caution.svg
+file path=usr/share/doc/jaxb/icons/caution.tif
+file path=usr/share/doc/jaxb/icons/colorsvg/caution.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/home.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/important.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/next.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/note.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/prev.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/tip.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/up.svg
+file path=usr/share/doc/jaxb/icons/colorsvg/warning.svg
+file path=usr/share/doc/jaxb/icons/draft.png
+file path=usr/share/doc/jaxb/icons/home.gif
+file path=usr/share/doc/jaxb/icons/home.png
+file path=usr/share/doc/jaxb/icons/home.svg
+file path=usr/share/doc/jaxb/icons/important.gif
+file path=usr/share/doc/jaxb/icons/important.png
+file path=usr/share/doc/jaxb/icons/important.svg
+file path=usr/share/doc/jaxb/icons/important.tif
+file path=usr/share/doc/jaxb/icons/next.gif
+file path=usr/share/doc/jaxb/icons/next.png
+file path=usr/share/doc/jaxb/icons/next.svg
+file path=usr/share/doc/jaxb/icons/note.gif
+file path=usr/share/doc/jaxb/icons/note.png
+file path=usr/share/doc/jaxb/icons/note.svg
+file path=usr/share/doc/jaxb/icons/note.tif
+file path=usr/share/doc/jaxb/icons/prev.gif
+file path=usr/share/doc/jaxb/icons/prev.png
+file path=usr/share/doc/jaxb/icons/prev.svg
+file path=usr/share/doc/jaxb/icons/tip.gif
+file path=usr/share/doc/jaxb/icons/tip.png
+file path=usr/share/doc/jaxb/icons/tip.svg
+file path=usr/share/doc/jaxb/icons/tip.tif
+file path=usr/share/doc/jaxb/icons/toc-blank.png
+file path=usr/share/doc/jaxb/icons/toc-minus.png
+file path=usr/share/doc/jaxb/icons/toc-plus.png
+file path=usr/share/doc/jaxb/icons/up.gif
+file path=usr/share/doc/jaxb/icons/up.png
+file path=usr/share/doc/jaxb/icons/up.svg
+file path=usr/share/doc/jaxb/icons/warning.gif
+file path=usr/share/doc/jaxb/icons/warning.png
+file path=usr/share/doc/jaxb/icons/warning.svg
+file path=usr/share/doc/jaxb/icons/warning.tif
+file path=usr/share/doc/jaxb/index.html
+file path=usr/share/doc/jaxb/license.txt
+file path=usr/share/doc/jaxb/release-documentation.html
+file path=usr/share/doc/jaxb/release-documentation.pdf
+file path=usr/share/doc/jaxb/style/documentation.css
+file path=usr/share/lib/java/jaxb-api.jar
+file path=usr/share/lib/java/jaxb-core.jar
+file path=usr/share/lib/java/jaxb-impl.jar
+file path=usr/share/lib/java/jaxb-jxc.jar
+file path=usr/share/lib/java/jaxb-xjc.jar

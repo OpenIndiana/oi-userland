@@ -17,17 +17,17 @@ include ../../../make-rules/shared-macros.mk
 CMAKE= cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.6.33-79.0
-IPS_COMPONENT_VERSION=	5.6.33.79.0
+COMPONENT_VERSION=	5.6.35-81.0
+IPS_COMPONENT_VERSION=	5.6.35.81.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:ed8372340740faca1f58735938823eaf65ffbda64a5c65b18d187b959afbd34e
+COMPONENT_ARCHIVE_HASH=	sha256:c71c3f80662982ade22a0a538c5fd595b1761472c98efc2509124ecc4004d1e7
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_PREFIX=/usr/percona-server/5.6
@@ -64,6 +64,9 @@ CMAKE_OPTIONS+= -DMYSQL_DATADIR=$(DATA_PREFIX)/data
 CMAKE_OPTIONS+= -DSYSCONFDIR=$(CONFDIR)
 CMAKE_OPTIONS+= -DENABLE_DTRACE=on
 CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
+CMAKE_OPTIONS+= -DINSTALL_SECURE_FILE_PRIVDIR=""
+# https://bugs.launchpad.net/percona-server/+bug/1686781
+CMAKE_OPTIONS+= -DFORCE_UNSUPPORTED_COMPILER=1
 
 # gcc invocation in some link.txt file is missing -m$(BITS) parameter
 # and it makes 64-bit build to fail, this is a quick hack to make it build
@@ -84,3 +87,14 @@ $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math

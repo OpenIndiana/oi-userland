@@ -11,18 +11,19 @@
 #
 # Copyright 2011 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2016 Adam Stevko
+# Copyright 2017 Gary Mills
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
-COMPONENT_VERSION=	1.0.0
+COMPONENT_VERSION=	1.0.1
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_FMRI=		network/chat/irssi
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:6a8a3c1fc6a021a2c02a693877b2e19cbceb3eccd78fce49e44f596f4bae4fb8
+COMPONENT_ARCHIVE_HASH=	sha256:9428c51a3f3598ffaef438c351a8d609cf10db34f2435bdcb84456226c383ccf
 COMPONENT_ARCHIVE_URL=	https://github.com/irssi/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://irssi.org/
 COMPONENT_LICENSE=	GPLv2+
@@ -31,8 +32,6 @@ COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 CONFIGURE_OPTIONS +=	--with-perl=yes
 CONFIGURE_OPTIONS +=	--with-socks

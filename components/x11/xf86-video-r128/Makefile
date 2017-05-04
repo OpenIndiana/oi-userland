@@ -16,31 +16,31 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-r128
-COMPONENT_VERSION= 6.10.0
+COMPONENT_VERSION= 6.10.2
 COMPONENT_SUMMARY= xf86-video-r128 - ATI Rage 128 video driver for the Xorg X server
+COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
+COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-r128
+COMPONENT_CLASSIFICATION= Drivers/Display
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:80d531a07168230a408b88809a5440cfd48f9098666d12702d0012148a0d353d
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_CLASSIFICATION= Drivers/Display
+COMPONENT_ARCHIVE_HASH= \
+  sha256:84da21517f3af7617fdf341e84ccb22444d6cdab1647e4808fa631528b9a77de
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-r128
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal && \
+                          autoheader && \
+                          automake -a -f -c && \
+                          autoconf )
 
 # Paths to find libraries/modules to link with 
 
@@ -59,3 +59,16 @@ CONFIGURE_OPTIONS += --disable-dri
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/server/xorg

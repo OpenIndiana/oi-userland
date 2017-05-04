@@ -1,0 +1,50 @@
+# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+
+--- a/os/utils.c
++++ b/os/utils.c
+@@ -558,8 +558,10 @@
+     ErrorF("-ls int                limit stack space to N Kb\n");
+ #endif
+ #ifdef LOCK_SERVER
++#ifndef SUNSOFT /* Not in Sun version as required by PSARC 2004/187 TCR */
+     ErrorF("-nolock                disable the locking mechanism\n");
+ #endif
++#endif
+     ErrorF("-maxclients n          set maximum number of clients (power of two)\n");
+     ErrorF("-nolisten string       don't listen on protocol\n");
+     ErrorF("-listen string         listen on protocol\n");
+@@ -855,6 +857,7 @@
+         }
+ #endif
+ #ifdef LOCK_SERVER
++#ifndef SUNSOFT /* Not in Sun version as required by PSARC 2004/187 TCR */
+         else if (strcmp(argv[i], "-nolock") == 0) {
+ #if !defined(WIN32) && !defined(__CYGWIN__)
+             if (getuid() != 0)
+@@ -865,6 +868,7 @@
+                 nolock = TRUE;
+         }
+ #endif
++#endif
+ 	else if ( strcmp( argv[i], "-maxclients") == 0)
+ 	{
+ 	    if (++i < argc) {

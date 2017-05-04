@@ -20,10 +20,9 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015, PALO Richard.
+# Copyright 2017 Gary Mills
 #
 include ../../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		Mako
 COMPONENT_VERSION=	1.0.4
@@ -37,9 +36,9 @@ COMPONENT_BUGDB=	python-mod/mako
 
 PYTHON_VERSIONS=	2.7 3.4
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
 COMPONENT_TEST_ARGS=	./setup.py test

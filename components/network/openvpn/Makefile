@@ -16,19 +16,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.3.13
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.4.1
+COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:9cde0c8000fd32d5275adb55f8bb1d8ba429ff3de35f60a36e81f3859b7537e0
+COMPONENT_ARCHIVE_HASH=	sha256:fde9e22c6df7a335d2d58c6a4d5967be76df173c766a5c51ece57fd044c76ee5
 COMPONENT_PROJECT_URL=	http://openvpn.net
 COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.org/community/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	network/openvpn
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATCH_LEVEL = 0
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
@@ -37,7 +39,6 @@ CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += GREP=/usr/gnu/bin/grep
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --enable-password-save
 
 build:		$(BUILD_32)
 

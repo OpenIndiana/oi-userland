@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	3.4.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -92,3 +92,10 @@ install:	$(PROTO_DIR)/.sedded
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test: $(TEST_32)
+
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/library/lint
+REQUIRED_PACKAGES += developer/linker
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

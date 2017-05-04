@@ -1,0 +1,246 @@
+We don't export s6_addr16 and don't have 
+suitable uint16_t member in in6_addr
+--- snort-2.9.9.0/src/sfutil/sf_ip.h.~2~	2017-02-01 21:45:38.917735171 +0300
++++ snort-2.9.9.0/src/sfutil/sf_ip.h	2017-02-01 21:48:52.021491697 +0300
+@@ -44,6 +44,7 @@
+ 
+ #include "snort_debug.h" /* for inline definition */
+ #include "sf_types.h"
++#include <inttypes.h>
+ 
+ /* define SFIP_ROBUST to check pointers passed into the sfip libs.
+  * Robustification should not be enabled if the client code is trustworthy.
+@@ -75,13 +76,25 @@
+ 
+ #ifndef WIN32
+ #if !defined(s6_addr8)
+-#define s6_addr8  __u6_addr.__u6_addr8
++#if defined __sun
++#define s6_addr8  _S6_un._S6_u8
++#else
++#define s6_addr8  u6_addr.u6_addr8
++#endif
+ #endif
+ #if !defined(s6_addr16)
+-#define s6_addr16 __u6_addr.__u6_addr16
++#if defined __sun
++/* Unfortunately, we don't have uint16_t[] member here */
++#else
++#define s6_addr16 u6_addr.u6_addr16
++#endif
+ #endif
+ #if !defined(s6_addr32)
+-#define s6_addr32 __u6_addr.__u6_addr32
++#if defined __sun
++#define s6_addr32 _S6_un._S6_u32
++#else
++#define s6_addr32 u6_addr.u6_addr32
++#endif
+ #endif
+ 
+ #ifdef _WIN32
+@@ -93,7 +106,9 @@
+     struct in6_addr ip;
+     uint16_t family;
+ #   define ia8  ip.s6_addr
++#if !defined(__sun)
+ #   define ia16 ip.s6_addr16
++#endif
+ #   define ia32 ip.s6_addr32
+ #ifdef _WIN32
+ };
+@@ -272,16 +287,26 @@
+  *  need to determine if it's safe to not check these pointers */\
+ static inline int sfraw_is_set(const struct in6_addr *addr) {
+ /*    ARG_CHECK1(ip, -1); */
++#ifdef __sun
++    return (addr->s6_addr32[3] || addr->s6_addr32[0] || addr->s6_addr32[1] || ((uint16_t*)(addr->s6_addr32))[4] ||
++            (((uint16_t*)(addr->s6_addr32))[5] && ((uint16_t*)(addr->s6_addr32))[5] != 0xFFFF)) ? 1 : 0;
++#else
+     return (addr->s6_addr32[3] || addr->s6_addr32[0] || addr->s6_addr32[1] || addr->s6_addr16[4] ||
+             (addr->s6_addr16[5] && addr->s6_addr16[5] != 0xFFFF)) ? 1 : 0;
++#endif
+ }
+ 
+ static inline int sfaddr_is_set(const sfaddr_t *addr) {
+ /*    ARG_CHECK1(ip, -1); */
+     return ((addr->family == AF_INET && addr->ia32[3]) ||
+             (addr->family == AF_INET6 &&
++#ifdef __sun
++             (addr->ia32[0] || addr->ia32[1] || addr->ia32[3] || ((uint16_t*)(addr->ia32))[4] ||
++              (((uint16_t *)(addr->ia32))[5] && ((uint16_t*)(addr->ia32))[5] != 0xFFFF)))) ? 1 : 0;
++#else
+              (addr->ia32[0] || addr->ia32[1] || addr->ia32[3] || addr->ia16[4] ||
+               (addr->ia16[5] && addr->ia16[5] != 0xFFFF)))) ? 1 : 0;
++#endif
+ }
+ 
+ static inline int sfip_is_set(const sfcidr_t *ip) {
+@@ -297,8 +322,11 @@
+ /* Returns 1 if the IPv6 address appears mapped. 0 otherwise. */
+ static inline int sfip_ismapped(const sfaddr_t *ip) {
+     ARG_CHECK1(ip, 0);
+-
++#ifdef __sun
++    return (ip->ia32[0] || ip->ia32[1] ||  ((uint16_t*)(ip->ia32))[4] || ( ((uint16_t*)(ip->ia32))[5] != 0xffff &&  ((uint16_t*)(ip->ia32))[5])) ? 0 : 1;
++#else
+     return (ip->ia32[0] || ip->ia32[1] || ip->ia16[4] || (ip->ia16[5] != 0xffff && ip->ia16[5])) ? 0 : 1;
++#endif
+ }
+ 
+ /* Support function for sfip_compare */
+@@ -532,9 +560,15 @@
+ 
+     /* Check the first 80 bits in an IPv6 address, and */
+     /* verify they're zero.  If not, it's not a loopback */
+-    if(ip->ia32[0] || ip->ia32[1] || ip->ia16[4]) return 0;
++#ifdef __sun
++    if(ip->ia32[0] || ip->ia32[1] ||  ((uint16_t *)(ip->ia32))[4]) return 0;
++
++    if ( ((uint16_t *)(ip->ia32))[5] == 0xffff ) {
++#else
++    if(ip->ia32[0] || ip->ia32[1] ||  ip->ia16[4]) return 0;
+ 
+     if ( ip->ia16[5] == 0xffff ) {
++#endif
+         /* ::ffff: IPv4 mapped over IPv6 */
+         /*
+          * 10.0.0.0        -   10.255.255.255  (10/8 prefix)
+@@ -547,7 +581,11 @@
+     }
+ 
+     /* Check if the 3rd 32-bit int is zero */
++#ifdef __sun
++    if ( !((uint16_t *)(ip->ia32))[5] ) {
++#else
+     if ( !ip->ia16[5] ) {
++#endif
+         /* ::ipv4 compatible ipv6 */
+         /* ::1 is the IPv6 loopback */
+         return ( (ip->ia8[12] == 10)
+--- snort-2.9.9.0/src/sfutil/sfrt.h.1	2017-02-01 21:50:21.485565677 +0300
++++ snort-2.9.9.0/src/sfutil/sfrt.h	2017-02-01 21:51:56.601538134 +0300
+@@ -229,7 +229,11 @@
+         rt =  table->rt;
+         subtable = ((dir_table_t *)rt)->sub_table;
+          /* 16 bits*/
++#ifdef __sun
++         index = ntohs (((uint16_t*)(ip->ia8))[6]);
++#else
+         index = ntohs(ip->ia16[6]);
++#endif
+         if( !subtable->entries[index] || subtable->lengths[index] )
+         {
+             return table->data[subtable->entries[index]];
+--- snort-2.9.9.0/src/sfutil/sfrt_flat.h.1	2017-02-01 21:53:43.221557566 +0300
++++ snort-2.9.9.0/src/sfutil/sfrt_flat.h	2017-02-01 21:55:02.016896936 +0300
+@@ -102,7 +102,11 @@
+         rt = (dir_table_flat_t *)(&base[table->rt]);
+         subtable = (dir_sub_table_flat_t *)(&base[rt->sub_table]);
+         /* 16 bits */
++#ifdef __sun
++        index = ntohs(((uint16_t*)(ip->ia8))[6]);
++#else
+         index = ntohs(ip->ia16[6]);
++#endif
+         entries_value = (Entry_Value *)(&base[subtable->entries_value]);
+         entries_length = (Entry_Len *)(&base[subtable->entries_length]);
+         if( !entries_value[index] || entries_length[index] )
+--- snort-2.9.9.0/src/sfutil/sf_ip.c	2016-06-07 10:47:49.000000000 +0300
++++ snort-2.9.9.0/src/sfutil/sf_ip.c	2017-02-01 22:03:00.217171822 +0300
+@@ -386,8 +386,13 @@
+             new_octet = (chr == '.');
+         }
+         addr = (sfaddr_t*)dst;
++#ifdef __sun
++	addr->ia32[0] = addr->ia32[1] = ((uint16_t*)(addr->ia8))[4] = 0;
++        ((uint16_t*)(addr->ia32))[5] = 0xFFFF;
++#else
+         addr->ia32[0] = addr->ia32[1] = addr->ia16[4] = 0;
+         addr->ia16[5] = 0xFFFF;
++#endif
+         dst = &addr->ia32[3];
+     }
+ 
+@@ -419,8 +424,13 @@
+ 
+     dst->family = family;
+     if(family == AF_INET) {
++#ifdef __sun
++	dst->ia32[0] = dst->ia32[1] = ((uint16_t*)(dst->ia32))[4] = 0;
++        ((uint16_t*)(dst->ia32))[5] = 0xFFFF;
++#else
+         dst->ia32[0] = dst->ia32[1] = dst->ia16[4] = 0;
+         dst->ia16[5] = 0xFFFF;
++#endif
+         dst->ia32[3] = *(uint32_t*)src;
+     } else if(family == AF_INET6) {
+         memcpy(sfaddr_get_ip6_ptr(dst), src, 16);
+@@ -612,16 +622,27 @@
+ 
+     /* Check the first 80 bits in an IPv6 address, and */
+     /* verify they're zero.  If not, it's not a loopback */
++#ifdef __sun
++    if(ip->ia32[0] || ip->ia32[1] || ((uint16_t*)(ip->ia8))[4])
++#else
+     if(ip->ia32[0] || ip->ia32[1] || ip->ia16[4])
++#endif
+         return 0;
+ 
++#ifdef __sun
++    if(((uint16_t*)(ip->ia8))[5] == 0xFFFF)
++#else
+     if(ip->ia16[5] == 0xFFFF)
++#endif
+     {
+         /* ::ffff:7f00:0/104 is ipv4 compatible ipv6 */
+         return (ip->ia8[12] == 0x7f);
+     }
+-
++#ifdef __sun
++    if(!((uint16_t*)(ip->ia8))[5])
++#else
+     if(!ip->ia16[5])
++#endif
+     {
+         /* ::7f00:0/104 is ipv4 compatible ipv6 */
+         /* ::1 is the IPv6 loopback */
+--- snort-2.9.9.0/src/decode.c.1	2017-02-01 22:26:01.531260324 +0300
++++ snort-2.9.9.0/src/decode.c	2017-02-01 22:30:34.379039380 +0300
+@@ -3188,9 +3188,17 @@
+ 
+     /* Multicast addresses only specify the first 16 and last 40 bits.
+        Others should be zero. */
++#ifdef __sun
++    if ((((uint16_t*)(ip_dst->s6_addr32))[1] != 0) ||
++#else
+     if ((ip_dst->s6_addr16[1] != 0) ||
++#endif
+         (ip_dst->s6_addr32[1] != 0) ||
++#ifdef __sun
++        (((uint16_t*)(ip_dst->s6_addr32))[4] != 0) ||
++#else
+         (ip_dst->s6_addr16[4] != 0) ||
++#endif
+         (ip_dst->s6_addr[10] != 0))
+     {
+         DecoderEvent(p, DECODE_IPV6_DST_RESERVED_MULTICAST,
+@@ -3201,10 +3209,18 @@
+     if (ip_dst->s6_addr[1] == IP6_MULTICAST_SCOPE_INTERFACE)
+     {
+         // Node-local scope
++#ifdef __sun
++        if ((((uint16_t*)(ip_dst->s6_addr32))[1] != 0) ||
++#else
+         if ((ip_dst->s6_addr16[1] != 0) ||
++#endif
+             (ip_dst->s6_addr32[1] != 0) ||
+             (ip_dst->s6_addr32[2] != 0) ||
++#ifdef __sun
++            (((uint16_t*)(ip_dst->s6_addr32))[6] != 0))
++#else
+             (ip_dst->s6_addr16[6] != 0))
++#endif
+         {
+ 
+             DecoderEvent(p, DECODE_IPV6_DST_RESERVED_MULTICAST,

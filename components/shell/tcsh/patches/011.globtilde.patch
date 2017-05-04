@@ -1,0 +1,12 @@
+--- tcsh-6.20.00/sh.glob.c.orig	2016-08-01 18:21:09.000000000 +0000
++++ tcsh-6.20.00/sh.glob.c	2017-04-05 12:54:37.623870649 +0000
+@@ -78,6 +78,9 @@ globtilde(Char *s)
+ {
+     Char *name, *u, *home, *res;
+ 
++    if (s[1] == '~')
++	return s;
++
+     u = s;
+     for (s++; *s && *s != '/' && *s != ':'; s++)
+ 	continue;

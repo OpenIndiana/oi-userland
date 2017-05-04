@@ -55,36 +55,18 @@ index ff07753..540648f 100644
  	return getmsg(fd, NULL, &sbuf, &f) >= 0 ? sbuf.len : -1;
  }
  #elif defined(__CYGWIN__)
-@@ -680,8 +680,12 @@ int tun_get_hwaddr(int fd, char *dev, uint8_t *hwaddr)
- 	if (ioctl(fd, SIOCGIFHWADDR, &ifr) < 0) {
+@@ -680,7 +680,11 @@ int tun_get_hwaddr(int fd, char *dev, uint8_t *hwaddr)
  		return -1;
  	}
--	
-+
-+#if defined(__sun__)	
+
++#if defined(__sun__)
 +	memcpy(hwaddr, &ifr.ifr_addr.sa_data, ETH_ALEN);
 +#else
  	memcpy(hwaddr, &ifr.ifr_hwaddr.sa_data, ETH_ALEN);
 +#endif
- 	
+
  	return 0;
  #else
-diff --git a/tunip.c b/tunip.c
-index 19db717..4eb663c 100644
---- a/tunip.c
-+++ b/tunip.c
-@@ -1058,7 +1058,11 @@ void vpnc_doit(struct sa_block *s)
- 	} else {
- 		printf("VPNC started in foreground...\n");
- 	}
-+#if defined(__sun__)
-+	openlog("vpnc", LOG_PID, LOG_DAEMON);
-+#else
- 	openlog("vpnc", LOG_PID | LOG_PERROR, LOG_DAEMON);
-+#endif
- 	write_pidfile(pidfile);
- 	
- 	vpnc_main_loop(s);
 diff --git a/vpnc.c b/vpnc.c
 index 38dc17f..421c29b 100644
 --- a/vpnc.c
@@ -100,3 +82,19 @@ index 38dc17f..421c29b 100644
  
  #ifdef OPENSSL_GPL_VIOLATION
  /* OpenSSL */
+diff --git a/tunip.c b/tunip.c
+index d076924..20f1309 100644
+--- a/tunip.c
++++ b/tunip.c
+@@ -1058,7 +1058,11 @@ void vpnc_doit(struct sa_block *s)
+ 			 */
+ 			_exit(0);
+ 		}
++#if defined(__sun__)
++       		openlog("vpnc", LOG_PID, LOG_DAEMON);
++#else
+ 		openlog("vpnc", LOG_PID | LOG_PERROR, LOG_DAEMON);
++#endif
+ 		logmsg = syslog;
+ 	} else {
+ 		printf("VPNC started in foreground...\n");

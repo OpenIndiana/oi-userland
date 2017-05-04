@@ -26,14 +26,22 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		privoxy
-COMPONENT_VERSION=	3.0.23
+COMPONENT_VERSION=	3.0.26
+COMPONENT_SUMMARY=	Privacy-enhancing, ad-removing web proxy
+COMPONENT_DESCRIPTION=	Privoxy is a non-caching web proxy with advanced\
+ filtering capabilities for enhancing privacy, modifying web page data\
+ and HTTP headers, controlling access, and removing ads and other obnoxious\
+ Internet junk
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_PROJECT_URL=	http://www.privoxy.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b75f6b8b8409ed7ac6c3a00dcd608a45180f07bfa46658c836d5c6ffc4dc25c4
+    sha256:57e415b43ee5dfdca74685cc034053eaae962952fdabd086171551a86abf9cd8
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/privoxy
+COMPONENT_FMRI=	web/proxy/privoxy
+COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -72,6 +80,7 @@ install:	$(INSTALL_32)
 
 test: 		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

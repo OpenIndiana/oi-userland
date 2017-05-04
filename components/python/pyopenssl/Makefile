@@ -18,11 +18,10 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/sbin
 
 COMPONENT_NAME=		pyOpenSSL
 COMPONENT_VERSION=	0.13
@@ -37,9 +36,9 @@ COMPONENT_BUGDB=	python-mod/pyopenssl
 
 PYTHON_VERSIONS=	2.7 3.4
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR = $(COMPONENT_SRC)/OpenSSL/test
 # The .so files are under ./OpenSSL/64 not ./64/OpenSSL so the

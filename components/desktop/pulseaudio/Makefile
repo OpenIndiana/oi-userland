@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pulseaudio
-COMPONENT_VERSION= 6.0
+COMPONENT_VERSION= 10.0
 COMPONENT_SUMMARY= Sample Rate Converter for audio
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5a5d2b90e1d755590060f429cad492190d31664bd3987350dfab35347e4bef83
+  sha256:60154d4d2b3d9eabae5b1f26b057be4e6cbe0d0e2753cf210c2dcd38fd712f0b
 COMPONENT_ARCHIVE_URL= \
   http://freedesktop.org/software/pulseaudio/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/PulseAudio/
@@ -39,6 +39,7 @@ PATH=/usr/gnu/bin:/usr/bin
 LDFLAGS += -lnsl -lsocket -lgobject-2.0
 
 CPPFLAGS += -I/usr/include/gc
+CFLAGS += -std=c99
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var

@@ -15,24 +15,24 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		util-macros
-COMPONENT_VERSION=	1.19.0
-COMPONENT_FMRI=		developer/build/autoconf/xorg-macros
+COMPONENT_NAME=           util-macros
+COMPONENT_VERSION=        1.19.1
+COMPONENT_FMRI=           developer/build/autoconf/xorg-macros
+COMPONENT_SUMMARY=        GNU autoconf macros for X.Org software packages
+COMPONENT_PROJECT_URL = https://x.org
 COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SUMMARY=	GNU autoconf macros for X.Org software packages
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0d4df51b29023daf2f63aebf3ebc638ea88efedfd560ab5866741ab3f92acaa1
+  sha256:472ad0e41d1e0abf5ecafd29460bf1b8d47e53d4b7d3abf1f66d02dc576547b8
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/util/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://x.org
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xorg-macros.license
+COMPONENT_LICENSE=        MIT License
+COMPONENT_LICENSE_FILE=   xorg-macros.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -f )
 

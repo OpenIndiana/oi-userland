@@ -17,15 +17,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 
-COMPONENT_VERSION= 3.26
+COMPONENT_VERSION= 3.30
 IPS_COMPONENT_VERSION=	1.0 
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= Common CA certificates
 COMPONENT_SRC= nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:91783a570ab953693eb977ce47c501f04c104cec287fa011c91bcc8970d1c564
+  sha256:a8c0000dae5e992f6563972e26dbfefc50d006dd845c43b8ca24ea50169ff3a9
 COMPONENT_ARCHIVE_URL= \
-  https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_26_RTM/src/$(COMPONENT_ARCHIVE)
+  https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_30_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -68,7 +69,6 @@ $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt: $(SOURCE_DIR)/.prep
 
 $(INSTALL_32):	$(BUILD_32)
 	$(MKDIR) $(PROTO_DIR)/etc/certs/CA $(PROTO_DIR)/etc/openssl/certs
-	$(CP) $(BUILD_DIR_32)/ca-bundle.crt $(PROTO_DIR)/etc/certs/ca-certificates.crt
 	$(CP) $(BUILD_DIR_32)/*.pem $(PROTO_DIR)/etc/certs/CA/
 	cd $(PROTO_DIR)/etc/certs/CA &&\
 	for i in *.pem ; do  \
@@ -84,5 +84,6 @@ install: $(INSTALL_32)
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += library/perl-5/libwww-perl-522  
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep

@@ -37,3 +37,11 @@ include $(WS_TOP)/make-rules/ips.mk
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/inputproto
+REQUIRED_PACKAGES += x11/server/xorg
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library

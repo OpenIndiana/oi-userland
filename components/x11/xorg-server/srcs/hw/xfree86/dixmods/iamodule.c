@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -32,14 +32,16 @@
 #include <X11/extensions/interactive.h>
 #include "interactive_srv.h"
 
+extern void LoadExtensionList();
+
 static MODULESETUPPROTO(IASetup);
 
-static ExtensionModule IAExt =
-{
+static const ExtensionModule IAExt[] =
+{{
     IAExtensionInit,
     IANAME,
     NULL
-};
+}};
 
 static XF86ModuleVersionInfo VersRec =
 {
@@ -57,17 +59,17 @@ static XF86ModuleVersionInfo VersRec =
 
 _X_EXPORT XF86ModuleData iaModuleData = { &VersRec, IASetup, NULL };
 
-static pointer
-IASetup(pointer module, pointer opts, int *errmaj, int *errmin)
+static void *
+IASetup(void *module, void *opts, int *errmaj, int *errmin)
 {
     if (opts) {
-	pointer o = xf86FindOption(opts, "IADebugLevel");
+	void *o = xf86FindOption(opts, "IADebugLevel");
 	if (o) {
 	    IADebugLevel = xf86SetIntOption(opts, "IADebugLevel", 0);
 	}
     }
-    LoadExtension(&IAExt, FALSE);
+    LoadExtensionList(IAExt, ARRAY_SIZE(IAExt), FALSE);
 
     /* Need a non-NULL return */
-    return (pointer)1;
+    return (void *)1;
 }

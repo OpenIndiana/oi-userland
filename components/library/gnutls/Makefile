@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnutls
 COMPONENT_VERSION= 2.12.24
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNU transport layer security library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -47,6 +48,13 @@ CONFIGURE_OPTIONS += --without-p11-kit
 CONFIGURE_OPTIONS += --with-libgcrypt
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset set unexpectedly,
+# and errors such as "libtool_install_magic: unbound variable"
+unexport SHELLOPTS
 
 build: $(BUILD_32_and_64)
 

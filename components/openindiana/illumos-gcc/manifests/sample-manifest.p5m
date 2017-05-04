@@ -5,12 +5,12 @@
 # 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
+# source. A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,19 +24,20 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 hardlink \
     path=opt/gcc/$(COMPONENT_VERSION)/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-c++ \
-    target=i386-pc-solaris2.11-g++
-file path=opt/gcc/$(COMPONENT_VERSION)/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-g++
-file path=opt/gcc/$(COMPONENT_VERSION)/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc
+    target=g++
+hardlink \
+    path=opt/gcc/$(COMPONENT_VERSION)/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-g++ \
+    target=g++
+hardlink \
+    path=opt/gcc/$(COMPONENT_VERSION)/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc \
+    target=gcc
 hardlink \
     path=opt/gcc/$(COMPONENT_VERSION)/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-$(COMPONENT_VERSION) \
-    target=i386-pc-solaris2.11-gcc
-hardlink path=opt/gcc/$(COMPONENT_VERSION)/bin/c++ \
-    target=i386-pc-solaris2.11-g++
+    target=gcc
+hardlink path=opt/gcc/$(COMPONENT_VERSION)/bin/c++ target=g++
 file path=opt/gcc/$(COMPONENT_VERSION)/bin/cpp
-hardlink path=opt/gcc/$(COMPONENT_VERSION)/bin/g++ \
-    target=i386-pc-solaris2.11-g++
-hardlink path=opt/gcc/$(COMPONENT_VERSION)/bin/gcc \
-    target=i386-pc-solaris2.11-gcc
+file path=opt/gcc/$(COMPONENT_VERSION)/bin/g++
+file path=opt/gcc/$(COMPONENT_VERSION)/bin/gcc
 file path=opt/gcc/$(COMPONENT_VERSION)/bin/gccbug
 file path=opt/gcc/$(COMPONENT_VERSION)/bin/gcov
 file path=opt/gcc/$(COMPONENT_VERSION)/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$!(MACH64)/bits/atomic_word.h
@@ -756,55 +757,43 @@ link \
     path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/Xm \
     target=root/usr/dt/include/Xm
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/arpa/nameser_compat.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/boost/predef/os/solaris.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/boost/predef/os/unix.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/curses.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/dat/dat_platform_specific.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/dnet/os.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/firefox/dbm/ncompat.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/firefox/harfbuzz/hb-common.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/firefox/nss/secport.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/firefox/pixman.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/firefox/qcmstypes.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/firefox/secport.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/gc/gc_config_macros.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/iso/math_c99.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/harfbuzz/hb-common.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/libical/icaltz-util.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/libpisock/pi-usb.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/limits.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/math.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/mps/ncompat.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/mps/secport.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/netinet/ip_compat.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/netinet/ip_fil.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/netinet/ip_lookup.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/netinet/ip_nat.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/netinet/ip_pool.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/netinet/ip_proxy.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/netinet/ip_state.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/openssl/fips-140/openssl/opensslconf.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/openafs--libexecdir=/usr/lib--localstatedir=/var--sysconfdir=/etc--enable-namei-fileserver--enable-bitmap-later--with-krb5/afs/remote.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/openafs--libexecdir=/usr/lib--localstatedir=/var--sysconfdir=/etc--enable-namei-fileserver--enable-bitmap-later--with-krb5/des_conf.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/openafs/afs/remote.h
+file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/openafs/des_conf.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/openssl/opensslconf.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/pixman-1/pixman.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/root/usr/dt/include/Xm/XmosP.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/root/usr/dt/include/Xm/Xmos_r.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/scim-1.0/scim_types.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/slang.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/stdcxx4/rw/_config-msvcrt.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/stdcxx4/rw/_config.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/string.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/svn/svn_types.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/sys/feature_tests.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/sys/varargs.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/syslimits.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/thunderbird/dbm/ncompat.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/thunderbird/harfbuzz/hb-common.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/thunderbird/nss/secport.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/thunderbird/pixman.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/thunderbird/qcmstypes.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/tidy/platform.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/wchar.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/wx-2.8/wx/platform.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/xorg/compiler.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/xorg/edid.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/xorg/servermd.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/xorg/xf86Privstr.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/xorg/xf86_OSlib.h
-file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include-fixed/zzip/conf.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/ammintrin.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/avxintrin.h
 file path=opt/gcc/$(COMPONENT_VERSION)/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/bmmintrin.h

@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mrxvt
 COMPONENT_VERSION=	0.5.4
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://materm.sourceforge.net/wiki/pmwiki.php
 COMPONENT_SUMMARY=	Mrxvt - lightweight multi-tabbed terminal emulator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,6 +35,11 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+# build with the system default libjpeg
+CFLAGS            +=	$(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=	$(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=	$(JPEG_LDFLAGS)
+
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-everything
 CONFIGURE_OPTIONS +=	--disable-debug
@@ -44,3 +50,13 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxft
+REQUIRED_PACKAGES += x11/library/libxpm
+REQUIRED_PACKAGES += x11/library/libxrender

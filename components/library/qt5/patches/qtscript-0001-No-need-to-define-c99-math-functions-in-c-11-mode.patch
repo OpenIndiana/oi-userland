@@ -1,0 +1,26 @@
+From 1a76025c9b615a82f697d7297b3b3e519f8ee6cf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
+Date: Tue, 13 Sep 2016 22:20:32 +0200
+Subject: [PATCH] No need to define c99 math functions in c++11 mode
+
+Change-Id: I514ce3c84eb9c24af717b487f97df1f688efdc10
+---
+ src/3rdparty/javascriptcore/JavaScriptCore/wtf/MathExtras.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/3rdparty/javascriptcore/JavaScriptCore/wtf/MathExtras.h b/src/3rdparty/javascriptcore/JavaScriptCore/wtf/MathExtras.h
+index bf3cb53..bea5896 100644
+--- a/qtscript/src/3rdparty/javascriptcore/JavaScriptCore/wtf/MathExtras.h
++++ b/qtscript/src/3rdparty/javascriptcore/JavaScriptCore/wtf/MathExtras.h
+@@ -77,7 +77,7 @@ inline double wtf_ceil(double x) { return copysign(ceil(x), x); }
+ 
+ #endif
+ 
+-#if OS(SOLARIS)
++#if OS(SOLARIS) && __cplusplus < 201103L
+ 
+ namespace std {
+ 
+-- 
+2.9.2
+

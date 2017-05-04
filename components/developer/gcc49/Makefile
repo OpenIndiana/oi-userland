@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.9.4
+COMPONENT_REVISION=1
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.3
 MPC_NAME=mpc

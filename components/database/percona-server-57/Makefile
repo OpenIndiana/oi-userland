@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.7.14-8
-IPS_COMPONENT_VERSION=	5.7.14.8
+COMPONENT_VERSION=	5.7.17-13
+IPS_COMPONENT_VERSION=	5.7.17.13
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:9a842bdbfb052edeee6f85d4ee977b2b4e1a8ac67d88e5d248d83474682d401e
+COMPONENT_ARCHIVE_HASH=	sha256:31abe11f5aa7a85be4a2834e68abdd1fcb42016e73136b5da2b47070d7497a93
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 # We need specific boost version
@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/project/boost/boost/1.59.0/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION = ( $(MKDIR) $(BUILD_DIR)/boost && /usr/gnu/bin/tar -C $(BUILD_DIR)/boost -xzf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
 

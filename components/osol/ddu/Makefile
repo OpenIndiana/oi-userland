@@ -49,6 +49,8 @@ $(INSTALL_32): $(BUILD_32)
 	fi;
 	$(TOUCH) $@
 
+download:
+
 clean::
 	$(RM) $(SOURCE_DIR)/.prep
 

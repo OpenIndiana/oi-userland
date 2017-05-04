@@ -1,0 +1,327 @@
+#
+# Enable cilk support for Sparc
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68945
+#
+--- gcc-5.3.0/libcilkrts/runtime/sysdep-unix.c	2013-10-30 15:51:29.000000000 -0700
++++ gcc-5.3.0/libcilkrts/runtime/sysdep-unix.c	2015-08-05 11:51:37.086142492 -0700
+@@ -81,6 +81,10 @@
+ #include <pthread.h>
+ #include <unistd.h>
+ 
++#if defined(sun) || defined(__sun) || defined(__sun__)
++#include <strings.h>
++#endif
++
+ #if defined HAVE_ALLOCA_H
+ # include <alloca.h>
+ #elif defined __GNUC__
+@@ -110,6 +114,14 @@
+ #   define MAP_ANONYMOUS MAP_ANON
+ #endif
+ 
++#if defined(sun) || defined(__sun) || defined(__sun__)
++#include <sys/resource.h>
++#include <dlfcn.h>
++#ifndef MAP_ANONYMOUS
++#define MAP_ANONYMOUS MAP_ANON
++#endif
++#endif
++
+ #ifdef  __VXWORKS__
+ #   include <vxWorks.h>   
+ #   include <vxCpuLib.h>  
+--- gcc-5.3.0/libcilkrts/configure.tgt	2014-11-13 06:03:17.000000000 -0800
++++ gcc-5.3.0/libcilkrts/configure.tgt	2015-08-03 20:58:07.888515211 -0700
+@@ -37,6 +37,12 @@
+     ;;
+   i?86-*-*)
+     ;;
++  sparc-*-*)
++    ;;
++  sparc*-*-*)
++    ;;
++  __sparc*-*-*)
++    ;;
+   *-*-*)
+     UNSUPPORTED=1
+     ;;
+--- gcc-5.3.0/libcilkrts/runtime/config/generic/cilk-abi-vla.c	2013-10-29 11:37:47.000000000 -0700
++++ gcc-5.3.0/libcilkrts/runtime/config/generic/cilk-abi-vla.c	2015-08-05 18:16:04.959499239 -0700
+@@ -103,5 +103,5 @@
+ 
+     // Just free the allocated memory to the heap since we don't know
+     // how to expand/contract the calling frame
+-    vla_internal_heap_free(t, full_size);
++    vla_internal_heap_free(sf, full_size);
+ }
+--- gcc-5.3.0/libcilkrts/runtime/config/generic/os-unix-sysdep.c	2013-10-29 11:37:47.000000000 -0700
++++ gcc-5.3.0/libcilkrts/runtime/config/generic/os-unix-sysdep.c	2015-08-06 10:27:40.088975924 -0700
+@@ -43,22 +43,55 @@
+ #include "os.h"
+ #include "sysdep.h"
+ 
++#if defined(__sparc) || defined(__sparc__)
++# include <sys/times.h>
++# include <limits.h>
++#endif
++
+ /*
+  * The cycle counter is used for debugging.  This funciton is only called if
+  * CILK_PROFILE is defined when the runtime is built.
+  */
+ COMMON_SYSDEP unsigned long long __cilkrts_getticks(void)
+ {
++#if defined(__sparc) || defined(__sparc__)
++  struct tms t;
++
++  if (times(&t) != (clock_t) -1)
++    return (unsigned long long) (t.tms_utime + t.tms_stime);
++
++  return 0ULL;
++#else
+ #   warning "unimplemented cycle counter"
+     return 0;
++#endif
++}
++
++#if defined(__sparc) || defined(__sparc__)
++#include "os-fence.h"
++/*
++ * SPARC V9 __cilkrts_fence implementation
++ */
++COMMON_SYSDEP void __cilkrts_fence(void)
++{
++  __asm__ __volatile__ ("membar #LoadLoad | #LoadStore | #StoreStore | #StoreLoad" ::: "memory");
+ }
++#endif
+ 
+ /*
+  * A "short pause" - called from the Cilk runtime's spinloops.
+  */
+ COMMON_SYSDEP void __cilkrts_short_pause(void)
+ {
++#if defined(__sparc) || defined(__sparc__)
++  /* spin around for 8 cycles */
++  __asm__ __volatile__("rd %ccr, %g0");
++  __asm__ __volatile__("rd %ccr, %g0");
++  __asm__ __volatile__("rd %ccr, %g0");
++  __asm__ __volatile__("rd %ccr, %g0");
++#else
+ #   warning __cilkrts_short_pause empty
++#endif
+ }
+ 
+ /*
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib.c	2013-11-06 06:55:46.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib.c	2015-08-06 19:09:24.207776401 -0700
+@@ -1,6 +1,6 @@
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-do run { target i?86-*-* x86_64-*-* } } */
+-/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } */
++/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #if HAVE_IO
+ #include <stdio.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/steal_check.c	2014-01-09 05:37:41.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/steal_check.c	2015-08-06 19:09:24.563452389 -0700
+@@ -1,6 +1,6 @@
+-/* { dg-do run  { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run  { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ // #include <cilk/cilk_api.h>
+ extern void __cilkrts_set_param (char *, char *);
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/spawnee_inline.c	2014-01-09 05:37:41.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/spawnee_inline.c	2015-08-06 19:09:24.472161093 -0700
+@@ -1,6 +1,6 @@
+-/* { dg-do run  { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run  { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus -w" } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk_for_grain.c	2014-09-02 05:52:29.000000000 -0700
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk_for_grain.c	2015-08-06 19:09:24.050896837 -0700
+@@ -1,7 +1,7 @@
+-/* { dg-do run { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+ /* { dg-additional-options "-std=gnu99" { target c } } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ 
+ int grain_value = 2;
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/nested_cilk_for.c	2014-09-02 05:52:29.000000000 -0700
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/nested_cilk_for.c	2015-08-06 19:09:24.328343364 -0700
+@@ -1,7 +1,7 @@
+-/* { dg-do run { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+ /* { dg-additional-options "-std=gnu99" { target c } } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #if HAVE_IO
+ #include <stdio.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/spawning_arg.c	2014-01-09 05:37:41.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/spawning_arg.c	2015-08-06 19:09:24.519701327 -0700
+@@ -1,6 +1,6 @@
+-/* { dg-do run  { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run  { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ void f0(volatile int *steal_flag)
+ { 
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib_no_sync.c	2013-11-06 06:55:46.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib_no_sync.c	2015-08-06 19:09:24.279017911 -0700
+@@ -1,6 +1,6 @@
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-do run { target i?86-*-* x86_64-*-* } } */
+-/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } */
++/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #if HAVE_IO
+ #include <stdio.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk_for_ptr_iter.c	2014-09-02 05:52:29.000000000 -0700
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk_for_ptr_iter.c	2015-08-06 19:09:24.101455854 -0700
+@@ -1,7 +1,7 @@
+-/* { dg-do run { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+ /* { dg-additional-options "-std=gnu99" { target c } } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ 
+ 
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib_no_return.c	2013-11-06 06:55:46.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib_no_return.c	2015-08-06 19:09:24.254308740 -0700
+@@ -1,6 +1,6 @@
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-do run { target i?86-*-* x86_64-*-* } } */
+-/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } */
++/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #if HAVE_IO
+ #include <stdio.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/test__cilk.c	2013-10-29 11:36:31.000000000 -0700
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/test__cilk.c	2015-08-06 19:09:24.600718008 -0700
+@@ -1,5 +1,5 @@
+ /* { dg-do compile } */
+-/* { dg-do run  { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run  { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+ 
+ int main (void)
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/varargs_test.c	2014-01-09 05:37:41.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/varargs_test.c	2015-08-06 19:09:24.621315395 -0700
+@@ -1,6 +1,6 @@
+-/* { dg-do run  { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run  { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #include <stdarg.h>
+ #include <stdlib.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/pr63307.c	2015-01-21 13:23:04.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/pr63307.c	2015-08-06 19:09:24.447390446 -0700
+@@ -1,4 +1,4 @@
+ /* { dg-options "-fcilkplus -fcompare-debug" } */
+-/* { dg-do compile { target i?86-*-* x86_64-*-* } } */
++/* { dg-do compile { target i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } */
+ 
+ #include "fib_no_return.c"
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk-for-2.c	2014-09-02 05:52:29.000000000 -0700
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk-for-2.c	2015-08-06 19:09:23.984625444 -0700
+@@ -1,7 +1,7 @@
+-/* { dg-do run { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+ /* { dg-additional-options "-std=gnu99" { target c } } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ int msk;
+ 
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/spawner_inline.c	2014-02-07 02:49:08.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/spawner_inline.c	2015-08-06 19:09:24.494961112 -0700
+@@ -1,6 +1,6 @@
+-/* { dg-do run  { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run  { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #include <stdlib.h>
+ #define DEFAULT_VALUE 30
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib_init_expr_xy.c	2013-11-06 06:55:46.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/fib_init_expr_xy.c	2015-08-06 19:09:24.230686024 -0700
+@@ -1,6 +1,6 @@
+ /* { dg-options "-fcilkplus" } */
+-/* { dg-do run { target i?86-*-* x86_64-*-* } } */
+-/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } */
++/* { dg-options "-fcilkplus -lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #if HAVE_IO
+ #include <stdio.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk-fors.c	2014-09-02 05:52:29.000000000 -0700
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/CK/cilk-fors.c	2015-08-06 19:09:24.126426402 -0700
+@@ -1,7 +1,7 @@
+-/* { dg-do run { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do run { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus" } */
+ /* { dg-additional-options "-std=gnu99" { target c } } */
+-/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-additional-options "-lcilkrts" { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ 
+ #if HAVE_IO
+ #include <stdio.h>
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/SE/ef_error2.c	2013-12-18 11:00:21.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/SE/ef_error2.c	2015-08-06 19:11:44.336403626 -0700
+@@ -1,4 +1,4 @@
+-/* { dg-do compile { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do compile { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus -Wall" } */
+ 
+ __attribute__((vector (vectorlength(32)))) 
+--- gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/SE/ef_error3.c	2014-01-23 07:21:42.000000000 -0800
++++ gcc-5.3.0/gcc/testsuite/c-c++-common/cilk-plus/SE/ef_error3.c	2015-08-06 19:12:08.083690541 -0700
+@@ -1,4 +1,4 @@
+-/* { dg-do compile { target { i?86-*-* x86_64-*-* } } } */
++/* { dg-do compile { target { i?86-*-* x86_64-*-* sparc-*-* sparcv9-*-* __sparc*-*-* } } } */
+ /* { dg-options "-fcilkplus -Wall" } */
+ 
+ __attribute__((vector (linear (x:y)))) /* { dg-message "parameter" "" { target c++ } } */
+
+--- gcc-5.3.0/libcilkrts/Makefile.in      2014-03-26 12:16:35.000000000 -0700
++++ gcc-5.3.0/libcilkrts/Makefile.in      2015-08-05 11:48:37.075834789 -0700
+@@ -215,13 +215,13 @@
+ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+-CFLAGS = @CFLAGS@
++CFLAGS = @CFLAGS@ -D__EXTENSIONS__=1
+ CPP = @CPP@
+-CPPFLAGS = @CPPFLAGS@
++CPPFLAGS = @CPPFLAGS@ -D__EXTENSIONS__=1
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+ CXXDEPMODE = @CXXDEPMODE@
+-CXXFLAGS = @CXXFLAGS@
++CXXFLAGS = @CXXFLAGS@ -D__EXTENSIONS__=1
+ CYGPATH_W = @CYGPATH_W@
+ DEFS = @DEFS@
+ DEPDIR = @DEPDIR@
+

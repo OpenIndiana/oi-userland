@@ -16,32 +16,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-savage
-COMPONENT_VERSION= 2.3.7
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.3.9
 COMPONENT_SUMMARY= xf86-video-savage - S3 Savage video driver for the Xorg X server
+COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
+COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-savage
+COMPONENT_CLASSIFICATION= Drivers/Display
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:041d4205c9222c1780fba6e0e397a559aed393b7a7991b58fa79ba8cccc54a44
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_CLASSIFICATION= Drivers/Display
+COMPONENT_ARCHIVE_HASH= \
+  sha256:2c93c4db1f71e725dda0caee5821253129d4b52d7aa0fd720593e7769bceec86
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-savage
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal && \
+                          autoheader && \
+                          automake -a -f -c && \
+                          autoconf )
 
 # Paths to find libraries/modules to link with 
 
@@ -63,3 +61,17 @@ CONFIGURE_OPTIONS += --disable-dri
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/server/xorg

@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -17,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ipmitool
 COMPONENT_VERSION= 1.8.17
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= IPMI management tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -30,9 +32,9 @@ COMPONENT_LICENSE = BSD
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = system/management/ipmitool
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -D__EXTENSIONS__
 
