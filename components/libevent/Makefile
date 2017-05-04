@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent
@@ -77,6 +78,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/cp test.sh test-script.sh/d" ' \
 	'-e "/Entering directory/d"' \
 	'-e "/Leaving directory/d"' \
+	'-e "/^mv -f/d"' \
 	'-e "/^make/d"' \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
