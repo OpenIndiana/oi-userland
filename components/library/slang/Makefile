@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slang
 COMPONENT_VERSION=	2.3.1
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
@@ -35,9 +36,11 @@ COMPONENT_ARCHIVE_URL=	http://www.jedsoft.org/releases/slang/$(COMPONENT_ARCHIVE
 COMPONENT_PROJECT_URL=	http://www.jedsoft.org/slang/
 COMPONENT_BUGDB=	utility/slang
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS += -std=gnu89
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
@@ -53,6 +56,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
