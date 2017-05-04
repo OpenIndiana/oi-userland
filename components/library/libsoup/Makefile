@@ -61,6 +61,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/glib-networking
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2

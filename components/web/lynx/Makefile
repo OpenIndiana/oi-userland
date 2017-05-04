@@ -42,6 +42,7 @@ include $(WS_MAKE_RULES)/ips.mk
 # Needed to successfully find lynx.pot.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
 CFLAGS +=	-I/usr/include/ncurses
 CFLAGS +=	-I/usr/include/openssl
 
@@ -72,6 +73,8 @@ install:	$(INSTALL_32)
 # lynx should be installed before running tests
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library

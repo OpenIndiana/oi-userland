@@ -9,47 +9,49 @@
 #
 
 #
-# Copyright 2017 Gary Mills
-# Copyright (c) 2014 Alexander Pyhalov. All rights reserved
+# Copyright (c) 2015 Alexander Pyhalov
 #
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		zenity
-COMPONENT_VERSION=	2.32.1
-COMPONENT_REVISION=	2
+COMPONENT_NAME=		libgnome-keyring
+COMPONENT_VERSION=	2.32.0
 COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	GNOME graphical dialog box generator
+COMPONENT_SUMMARY=	GNOME keyring libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8838be041a07364b62a4281c971392e4a09bb01bb3237a836ec0457ec0ea18ac
+    sha256:56388c0d81ddfdb57d30e4963c83ecc1c18498aab99395420e0fff69929a0f0c
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	System/Security
+COMPONENT_FMRI=		library/gnome/gnome-keyring
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH = $(PATH.gnu)
+PATH=$(PATH.gnu)
 
-LDFLAGS += -lX11
+CONFIGURE_OPTIONS.32=	--libexecdir=/usr/lib
+CONFIGURE_OPTIONS.64=	--libexecdir=/usr/lib/$(MACH64)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --disable-scrollkeeper
+CONFIGURE_OPTIONS+=	$(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--disable-static
+
+COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-# Build dependencies
-REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/security/libgcrypt

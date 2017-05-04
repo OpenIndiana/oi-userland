@@ -53,6 +53,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
@@ -84,6 +85,9 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/xmlto
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -9,32 +9,32 @@
 #
 
 #
-# Copyright (c) 2016, 2017, Wiselabs Software Ltda. All rights reserved.
+# Copyright 2011-2013, EveryCity Ltd. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		aget
-COMPONENT_VERSION=	0.4.1
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.enderunix.org/aget
+COMPONENT_NAME=		libffi
+COMPONENT_VERSION=	3.0.13
+COMPONENT_PROJECT_URL=	http://sourceware.org/libffi/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d17393c7f44aab38028ae71f14b572ba1839b6e085fb2092b6ebe68bc931df4d
-COMPONENT_ARCHIVE_URL=	http://www.enderunix.org/aget/$(COMPONENT_ARCHIVE)
+    sha256:1dddde1400c3bcb7749d398071af88c3e4754058d2d4c0b3696c2f82dc5cf11c
+COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CFLAGS+= -std=c89
+CONFIGURE_OPTIONS  +=		--disable-static
+CONFIGURE_OPTIONS  +=		--enable-shared
 
-COMPONENT_PREP_ACTION = ( $(CP) $(SOURCE_DIR)/Makefile.Solaris $(SOURCE_DIR)/Makefile )
-COMPONENT_INSTALL_ARGS += PREFIX=$(PROTOUSRDIR)
-COMPONENT_BUILD_ENV += BITS=$(BITS) CC=$(CC) CFLAGS="$(CFLAGS)"
+build:		$(BUILD_32_and_64)
 
-build:		$(BUILD_64)
+install:	$(INSTALL_32_and_64)
 
-install:	$(INSTALL_64)
+test:           $(NO_TEST)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
