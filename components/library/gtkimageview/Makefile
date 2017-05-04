@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkimageview
 COMPONENT_VERSION=	1.6.4
-COMPONENT_REVISON=	1
+COMPONENT_REVISON=	2
 COMPONENT_PROJECT_URL=	http://trac.bjourne.webfactional.com
 COMPONENT_SUMMARY=	A simple image viewer widget for GTK+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,11 +30,11 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_FMRI= 	library/desktop/gtkimageview
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cp files/* $(@D)/src && cd $(@D)  && \
 					libtoolize --copy --force &&\
@@ -60,6 +60,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
