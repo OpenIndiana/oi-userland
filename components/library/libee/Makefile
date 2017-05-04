@@ -20,25 +20,32 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libee
-COMPONENT_VERSION=	0.3.2
+COMPONENT_VERSION=	0.4.1
+COMPONENT_FMRI=         library/libee  
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SUMMARY=      libee - event expression library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.libee.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4e19bf297fb76f18fef773c651767152ebf65ecd4a1f4b06fe1c5f117fa4f81a
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/rsyslog
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:c0dac01938593deee06c3d161e4eda4ecc0fd7317e1321bd96e301aceb7fb027
+COMPONENT_ARCHIVE_URL=	\
+  $(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      LGPLv2.1 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS=
 
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
+
+CONFIGURE_OPTIONS += --disable-static
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -47,6 +54,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libestr
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
