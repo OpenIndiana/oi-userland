@@ -479,25 +479,25 @@
      else:
          os_linux = 1
          if CONFIG['OS_TARGET'] == 'Android':
---- firefox-44.0/ipc/chromium/src/third_party/libevent/evutil_rand.c.1	2016-01-28 17:14:48.840397660 +0300
-+++ firefox-44.0/ipc/chromium/src/third_party/libevent/evutil_rand.c	2016-01-28 17:19:03.143180676 +0300
+--- firefox-52.1.0esr/ipc/chromium/src/third_party/libevent/evutil_rand.c.~1~	2017-05-04 11:47:01.520447084 +0300
++++ firefox-52.1.0esr/ipc/chromium/src/third_party/libevent/evutil_rand.c	2017-05-04 11:49:28.476972745 +0300
 @@ -139,7 +139,7 @@
  	ev_arc4random_buf(buf, n);
  }
  
--#ifndef __OpenBSD__
-+#if !(defined __OpenBSD__) && !(defined __sun__)
+-#if !defined(__OpenBSD__) && !defined(ANDROID)
++#if !defined(__OpenBSD__) && !defined(ANDROID) && !(defined __sun__)
  void
  evutil_secure_rng_add_bytes(const char *buf, size_t n)
  {
---- firefox-44.0/ipc/chromium/src/third_party/libevent/include/event2/util.h.1	2016-01-28 17:14:41.507067445 +0300
-+++ firefox-44.0/ipc/chromium/src/third_party/libevent/include/event2/util.h	2016-01-28 17:17:21.284284907 +0300
+--- firefox-52.1.0esr/ipc/chromium/src/third_party/libevent/include/event2/util.h.~1~	2017-05-04 11:47:01.521473701 +0300
++++ firefox-52.1.0esr/ipc/chromium/src/third_party/libevent/include/event2/util.h	2017-05-04 11:48:49.354603603 +0300
 @@ -672,7 +672,7 @@
   */
  int evutil_secure_rng_init(void);
  
--#ifndef __OpenBSD__
-+#if !(defined __OpenBSD__) && !(defined __sun__)
+-#if !defined(__OpenBSD__) && !defined(ANDROID)
++#if !defined(__OpenBSD__) && !defined(ANDROID) && !(defined __sun__)
  /** Seed the random number generator with extra random bytes.
  
      You should almost never need to call this function; it should be

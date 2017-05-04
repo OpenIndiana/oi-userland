@@ -17,23 +17,26 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	45.9.0esr
-IPS_COMPONENT_VERSION= 	45.9.0
+COMPONENT_VERSION= 	52.1.0esr
+IPS_COMPONENT_VERSION= 	52.1.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2afb02029e115fae65dbe1d9c562cbfeb761a6807338bbd30dbffba616cb2d20
+  sha256:da2ba9630b8b56c6f5d36d9f3da2d984ef7986dc8b4d804f6947fcea6c24637d
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
 
-LANG_LIST=	ar be bg ca cs da de el es-AR es-CL es-ES et fi fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW
+LANG_LIST=	ar bg ca cs da de el es-AR es-CL es-ES et fi fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW
 LANG_FILES_LOCATION=	http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$(COMPONENT_VERSION)/linux-i686/xpi/
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
+                          cd $(@D)/js/src && autoconf-2.13 )
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR); chmod +x $(BUILD_DIR)/gld-wrapper )
 
@@ -42,18 +45,15 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 CONFIGURE_OPTIONS =	--enable-application=browser
 CONFIGURE_OPTIONS +=	--enable-official-branding
 CONFIGURE_OPTIONS +=	--disable-updater
-CONFIGURE_OPTIONS +=	--enable-debug-symbols=no
+CONFIGURE_OPTIONS +=	--disable-debug-symbols
 CONFIGURE_OPTIONS +=	--enable-update-channel=esr
 CONFIGURE_OPTIONS +=	--disable-tests
 CONFIGURE_OPTIONS +=	--enable-jemalloc
 CONFIGURE_OPTIONS +=	--disable-dtrace
-CONFIGURE_OPTIONS +=    --disable-xinerama
 CONFIGURE_OPTIONS +=	--disable-crashreporter
 CONFIGURE_OPTIONS +=	--enable-pulseaudio
-CONFIGURE_OPTIONS +=	--disable-gstreamer
 CONFIGURE_OPTIONS +=	--with-intl-api
 CONFIGURE_OPTIONS +=	--disable-debug
-CONFIGURE_OPTIONS +=	--enable-ipc
 CONFIGURE_OPTIONS +=	--enable-default-toolkit=cairo-gtk2
 CONFIGURE_OPTIONS +=	--prefix=/usr
 CONFIGURE_OPTIONS +=	--libdir=/usr/lib
@@ -96,6 +96,7 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
 
 install: $(INSTALL_32)
 
+REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/atk

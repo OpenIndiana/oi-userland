@@ -35,57 +35,6 @@ diff -Nurb firefox-43.0b3/config/system-headers firefox-43.0b3/config/system-hea
  sys/sysinfo.h
  sys/sysmp.h
  sys/syssgi.h
-diff -Nurb firefox-43.0b3/dom/canvas/WebGLFormats.cpp firefox-43.0b3/dom/canvas/WebGLFormats.cpp
---- firefox-45.0/dom/canvas/WebGLFormats.cpp.~1~	2016-03-04 00:47:56.000000000 +0300
-+++ firefox-45.0/dom/canvas/WebGLFormats.cpp	2016-03-10 07:30:56.683108597 +0300
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
- /* This Source Code Form is subject to the terms of the Mozilla Public
-  * License, v. 2.0. If a copy of the MPL was not distributed with this
-@@ -156,7 +160,7 @@
-         hasStencil = true;
-         break;
- 
--    case UnsizedFormat::DS:
-+    case UnsizedFormat::XDS:
-         hasDepth = true;
-         hasStencil = true;
-         break;
-@@ -241,8 +245,8 @@
-     AddFormatInfo(FOO(DEPTH_COMPONENT16 ), 2, UnsizedFormat::D , false, ComponentType::NormUInt);
-     AddFormatInfo(FOO(DEPTH_COMPONENT24 ), 3, UnsizedFormat::D , false, ComponentType::NormUInt);
-     AddFormatInfo(FOO(DEPTH_COMPONENT32F), 4, UnsizedFormat::D , false, ComponentType::Float);
--    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::DS, false, ComponentType::Special);
--    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::DS, false, ComponentType::Special);
-+    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::XDS, false, ComponentType::Special);
-+    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::XDS, false, ComponentType::Special);
- 
-     // GLES 3.0.4, p205-206, "Required Renderbuffer Formats"
-     AddFormatInfo(FOO(STENCIL_INDEX8), 1, UnsizedFormat::S, false, ComponentType::UInt);
-diff -Nurb firefox-43.0b3/dom/canvas/WebGLFormats.h firefox-43.0b3/dom/canvas/WebGLFormats.h
---- firefox-43.0b3/dom/canvas/WebGLFormats.h	2015-11-09 23:56:01.000000000 +0100
-+++ firefox-43.0b3/dom/canvas/WebGLFormats.h	2015-11-11 04:44:14.706470478 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
- /* This Source Code Form is subject to the terms of the Mozilla Public
-  * License, v. 2.0. If a copy of the MPL was not distributed with this
-@@ -154,7 +158,7 @@
-     A,
-     D,
-     S,
--    DS,
-+    XDS,
- };
- 
- // GLES 3.0.4 p114 Table 3.4
 diff -Nurb firefox-43.0b3/dom/media/AudioStream.h firefox-43.0b3/dom/media/AudioStream.h
 --- firefox-43.0b3/dom/media/AudioStream.h	2015-11-09 23:56:07.000000000 +0100
 +++ firefox-43.0b3/dom/media/AudioStream.h	2015-11-11 04:43:51.521691999 +0100
@@ -125,59 +74,9 @@ diff -Nurb firefox-43.0b3/dom/plugins/base/npapi.h firefox-43.0b3/dom/plugins/ba
  #define _NP_ABI_MIXIN_FOR_GCC3 NP_ABI_GCC3_MASK
  #else
  #define _NP_ABI_MIXIN_FOR_GCC3 0
-diff -Nurb firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.cpp firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.cpp
---- firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.cpp	2015-11-09 23:56:12.000000000 +0100
-+++ firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.cpp	2015-11-11 04:42:58.979915241 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
- /* vim: set sw=4 ts=4 et : */
- /* This Source Code Form is subject to the terms of the Mozilla Public
-@@ -308,7 +312,7 @@
- 
-     // TODO: use PluginPRLibrary here
- 
--#if defined(OS_LINUX) || defined(OS_BSD)
-+#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
-     mShutdownFunc =
-         (NP_PLUGINSHUTDOWN) PR_FindFunctionSymbol(mLibrary, "NP_Shutdown");
- 
-@@ -339,9 +343,11 @@
- }
- 
- #if defined(MOZ_WIDGET_GTK)
-+extern "C" {
- typedef void (*GObjectDisposeFn)(GObject*);
- typedef gboolean (*GtkWidgetScrollEventFn)(GtkWidget*, GdkEventScroll*);
- typedef void (*GtkPlugEmbeddedFn)(GtkPlug*);
-+}
- 
- static GObjectDisposeFn real_gtk_plug_dispose;
- static GtkPlugEmbeddedFn real_gtk_plug_embedded;
-@@ -1882,7 +1888,7 @@
-     AssertPluginThread();
-     MOZ_ASSERT(mIsChrome);
- 
--#if defined(OS_LINUX) || defined(OS_BSD)
-+#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
-     return true;
- #elif defined(OS_WIN) || defined(OS_MACOSX)
-     *_retval = mGetEntryPointsFunc(&mFunctions);
-@@ -1927,7 +1933,7 @@
- #endif
- 
-     NPError result;
--#if defined(OS_LINUX) || defined(OS_BSD)
-+#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
-     result = mInitializeFunc(&sBrowserFuncs, &mFunctions);
- #elif defined(OS_WIN) || defined(OS_MACOSX)
-     result = mInitializeFunc(&sBrowserFuncs);
 diff -Nurb firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.h firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.h
---- firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.h	2015-11-09 23:56:12.000000000 +0100
-+++ firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.h	2015-11-11 04:42:25.085941460 +0100
+--- firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.h  2015-11-09 23:56:12.000000000 +0100
++++ firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.h  2015-11-11 04:42:25.085941460 +0100
 @@ -1,3 +1,7 @@
 +/*
 + * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
@@ -195,23 +94,73 @@ diff -Nurb firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.h firefox-43.0b3/dom
      NP_PLUGINUNIXINIT mInitializeFunc;
  #elif defined(OS_WIN) || defined(OS_MACOSX)
      NP_PLUGININIT mInitializeFunc;
+diff -Nurb firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.cpp firefox-43.0b3/dom/plugins/ipc/PluginModuleChild.cpp
+--- firefox-52.1.0esr/dom/plugins/ipc/PluginModuleChild.cpp.~1~	2017-04-11 05:13:23.000000000 +0300
++++ firefox-52.1.0esr/dom/plugins/ipc/PluginModuleChild.cpp	2017-05-04 18:16:18.640173611 +0300
+@@ -1,3 +1,7 @@
++/*
++ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
++ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
++ */
+ /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+ /* vim: set sw=4 ts=4 et : */
+ /* This Source Code Form is subject to the terms of the Mozilla Public
+@@ -289,7 +293,7 @@
+ 
+     // TODO: use PluginPRLibrary here
+ 
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     mShutdownFunc =
+         (NP_PLUGINSHUTDOWN) PR_FindFunctionSymbol(mLibrary, "NP_Shutdown");
+ 
+@@ -320,10 +324,11 @@
+ }
+ 
+ #if defined(MOZ_WIDGET_GTK)
+-
++extern "C" {
+ typedef void (*GObjectDisposeFn)(GObject*);
+ typedef gboolean (*GtkWidgetScrollEventFn)(GtkWidget*, GdkEventScroll*);
+ typedef void (*GtkPlugEmbeddedFn)(GtkPlug*);
++}
+ 
+ static GObjectDisposeFn real_gtk_plug_dispose;
+ static GtkPlugEmbeddedFn real_gtk_plug_embedded;
+@@ -1851,7 +1856,7 @@
+     AssertPluginThread();
+     MOZ_ASSERT(mIsChrome);
+ 
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     return true;
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     *_retval = mGetEntryPointsFunc(&mFunctions);
+@@ -1896,7 +1901,7 @@
+ #endif
+ 
+     NPError result;
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     result = mInitializeFunc(&sBrowserFuncs, &mFunctions);
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     result = mInitializeFunc(&sBrowserFuncs);
 diff -Nurb firefox-43.0b3/ipc/app/moz.build firefox-43.0b3/ipc/app/moz.build
---- firefox-44.0/ipc/app/moz.build.~1~	2016-01-24 02:23:38.000000000 +0300
-+++ firefox-44.0/ipc/app/moz.build	2016-01-28 08:47:51.112191188 +0300
+--- firefox-52.1.0esr/ipc/app/moz.build.~1~	2017-05-04 18:32:43.374260575 +0300
++++ firefox-52.1.0esr/ipc/app/moz.build	2017-05-04 18:33:53.277261765 +0300
 @@ -1,3 +1,8 @@
 +#*
 +#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
 +#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
 +#*
 +
- # -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
+ # -*- Mode: python; indent-tabs-mode: nil; tab-width: 40 -*-
  # vim: set filetype=python:
  # This Source Code Form is subject to the terms of the Mozilla Public
-@@ -121,3 +126,14 @@
- 
+@@ -111,4 +116,14 @@
  if CONFIG['GNU_CXX']:
      CXXFLAGS += ['-Wshadow']
-+
+ 
 +OS_LIBS += [
 +         '$(DEPTH)/security/nss/lib/util/libnssutil3.so',
 +         '$(DEPTH)/security/nss/lib/ssl/libssl3.so',
@@ -222,18 +171,10 @@ diff -Nurb firefox-43.0b3/ipc/app/moz.build firefox-43.0b3/ipc/app/moz.build
 +         '-lsendfile'
 +   ]
 +
+ DEFINES['MOZ_PLUGIN_CONTAINER'] = 1;
 diff -Nurb firefox-43.0b3/ipc/chromium/chromium-config.mozbuild firefox-43.0b3/ipc/chromium/chromium-config.mozbuild
 --- firefox-43.0b3/ipc/chromium/chromium-config.mozbuild       2015-11-09 23:55:51.000000000 +0100
-++ firefox-43.0b3/ipc/chromium/chromium-config.mozbuild       2015-11-11 04:47:34.468768986 +0100
-@@ -1,3 +1,8 @@
-+#*
-+#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+#*
-+
- # -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
- # vim: set filetype=python:
- # This Source Code Form is subject to the terms of the Mozilla Public
++++ firefox-43.0b3/ipc/chromium/chromium-config.mozbuild       2015-11-11 04:47:34.468768986 +0100
 @@ -68,5 +73,11 @@
              'OS_BSD': 1,
          })
@@ -249,15 +190,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/chromium-config.mozbuild firefox-43.0b3/i
 diff -Nurb firefox-43.0b3/ipc/chromium/moz.build firefox-43.0b3/ipc/chromium/moz.build
 --- firefox-44.0/ipc/chromium/moz.build.~1~	2016-01-24 02:23:38.000000000 +0300
 +++ firefox-44.0/ipc/chromium/moz.build	2016-01-28 09:05:21.750608424 +0300
-@@ -1,3 +1,8 @@
-+#*
-+#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+#*
-+
- # -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
- # vim: set filetype=python:
- # This Source Code Form is subject to the terms of the Mozilla Public
 @@ -45,6 +50,9 @@
      'src/chrome/common/notification_service.cc',
  ]
@@ -268,14 +200,13 @@ diff -Nurb firefox-43.0b3/ipc/chromium/moz.build firefox-43.0b3/ipc/chromium/moz
  if os_win:
      SOURCES += [
          'src/base/condition_variable_win.cc',
-@@ -161,6 +169,23 @@
+@@ -161,6 +169,22 @@
              'src/base/message_pump_qt.cc',
          ]
  
 +if os_solaris:
 +    SOURCES += [
 +	'src/base/atomicops_internals_x86_gcc.cc',
-+	'src/base/idle_timer_none.cc',
 +	'src/base/process_util_linux.cc',
 +	'src/base/time_posix.cc',
 +    ]
@@ -295,14 +226,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/moz.build firefox-43.0b3/ipc/chromium/moz
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_loop.cc firefox-43.0b3/ipc/chromium/src/base/message_loop.cc
 --- firefox-43.0b3/ipc/chromium/src/base/message_loop.cc	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/message_loop.cc	2015-11-11 04:41:51.712388429 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2009 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -19,7 +23,7 @@
  #if defined(OS_POSIX)
  #include "base/message_pump_libevent.h"
@@ -322,24 +245,25 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_loop.cc firefox-43.0b3/i
  #endif  // OS_LINUX
    } else if (type_ == TYPE_IO) {
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_pump_glib.cc firefox-43.0b3/ipc/chromium/src/base/message_pump_glib.cc
---- firefox-43.0b3/ipc/chromium/src/base/message_pump_glib.cc	2015-11-09 23:55:51.000000000 +0100
-+++ firefox-43.0b3/ipc/chromium/src/base/message_pump_glib.cc	2015-11-11 04:41:28.072188302 +0100
-@@ -1,9 +1,14 @@
+--- firefox-52.1.0esr/ipc/chromium/src/base/message_pump_glib.cc.~1~	2017-04-11 05:13:12.000000000 +0300
++++ firefox-52.1.0esr/ipc/chromium/src/base/message_pump_glib.cc	2017-05-04 18:39:21.261050452 +0300
+@@ -1,3 +1,7 @@
 +/*
 + * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
 + * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
 + */
+ /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+ /* vim: set ts=8 sts=2 et sw=2 tw=80: */
  // Copyright (c) 2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
+@@ -8,6 +12,7 @@
  
- #include "base/message_pump_glib.h"
- 
-+#include <unistd.h>
  #include <fcntl.h>
  #include <math.h>
++#include <unistd.h>
  
-@@ -128,6 +133,12 @@
+ #include <gtk/gtk.h>
+ #include <glib.h>
+@@ -131,6 +136,12 @@
    // Create our wakeup pipe, which is used to flag when work was scheduled.
    int fds[2];
    CHECK(pipe(fds) == 0);
@@ -352,10 +276,10 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_pump_glib.cc firefox-43.
    wakeup_pipe_read_  = fds[0];
    wakeup_pipe_write_ = fds[1];
    wakeup_gpollfd_->fd = wakeup_pipe_read_;
-@@ -234,10 +245,9 @@
-   // are only signaled when the queue went from empty to non-empty.  The glib
-   // poll will tell us whether there was data, so this read shouldn't block.
+@@ -239,10 +250,9 @@
    if (wakeup_gpollfd_->revents & G_IO_IN) {
+     pipe_full_ = false;
+ 
 -    char msg;
 -    if (HANDLE_EINTR(read(wakeup_pipe_read_, &msg, 1)) != 1 || msg != '!') {
 -      NOTREACHED() << "Error reading from the wakeup pipe.";
@@ -366,7 +290,7 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_pump_glib.cc firefox-43.
      // Since we ate the message, we need to record that we have more work,
      // because HandleCheck() may be called without HandleDispatch being called
      // afterwards.
-@@ -301,6 +311,10 @@
+@@ -311,6 +321,10 @@
    // variables as we would then need locks all over.  This ensures that if
    // we are sleeping in a poll that we will wake up.
    char msg = '!';
@@ -380,14 +304,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_pump_glib.cc firefox-43.
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_pump_libevent.cc firefox-43.0b3/ipc/chromium/src/base/message_pump_libevent.cc
 --- firefox-43.0b3/ipc/chromium/src/base/message_pump_libevent.cc	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/message_pump_libevent.cc	2015-11-11 04:41:03.966933389 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -6,6 +10,10 @@
  
  #include <errno.h>
@@ -402,14 +318,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_pump_libevent.cc firefox
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/platform_thread.h firefox-43.0b3/ipc/chromium/src/base/platform_thread.h
 --- firefox-43.0b3/ipc/chromium/src/base/platform_thread.h	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/platform_thread.h	2015-11-11 04:40:34.815215762 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -25,6 +29,9 @@
  #if defined(OS_LINUX) || defined(OS_OPENBSD) || defined(__GLIBC__)
  #include <unistd.h>
@@ -423,14 +331,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/platform_thread.h firefox-43.0b3
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/platform_thread_posix.cc firefox-43.0b3/ipc/chromium/src/base/platform_thread_posix.cc
 --- firefox-43.0b3/ipc/chromium/src/base/platform_thread_posix.cc	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/platform_thread_posix.cc	2015-11-11 04:40:08.527414731 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -10,7 +14,13 @@
  #if defined(OS_MACOSX)
  #include <mach/mach.h>
@@ -480,14 +380,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/platform_thread_posix.cc firefox
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/process_util.h firefox-43.0b3/ipc/chromium/src/base/process_util.h
 --- firefox-43.0b3/ipc/chromium/src/base/process_util.h	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/process_util.h	2015-11-11 04:39:22.965415698 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2009 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -17,7 +21,7 @@
  #ifndef STDOUT_FILENO
  #define STDOUT_FILENO 1
@@ -511,14 +403,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/process_util.h firefox-43.0b3/ip
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/process_util_posix.cc firefox-43.0b3/ipc/chromium/src/base/process_util_posix.cc
 --- firefox-43.0b3/ipc/chromium/src/base/process_util_posix.cc	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/process_util_posix.cc	2015-11-11 04:38:55.326186202 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- //* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
- // Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
 @@ -116,7 +120,7 @@
  #if defined(ANDROID)
    static const rlim_t kSystemDefaultMaxFds = 1024;
@@ -540,14 +424,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/process_util_posix.cc firefox-43
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/sys_info_posix.cc firefox-43.0b3/ipc/chromium/src/base/sys_info_posix.cc
 --- firefox-44.0/ipc/chromium/src/base/sys_info_posix.cc.~1~	2016-01-24 02:23:38.000000000 +0300
 +++ firefox-44.0/ipc/chromium/src/base/sys_info_posix.cc	2016-01-28 09:07:30.519222021 +0300
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -119,7 +123,7 @@
  
  // static
@@ -569,14 +445,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/sys_info_posix.cc firefox-43.0b3
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/time.h firefox-43.0b3/ipc/chromium/src/base/time.h
 --- firefox-43.0b3/ipc/chromium/src/base/time.h	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/time.h	2015-11-11 04:37:56.089579002 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -62,6 +66,10 @@
      return delta_;
    }
@@ -601,14 +469,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/time.h firefox-43.0b3/ipc/chromi
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/time_posix.cc firefox-43.0b3/ipc/chromium/src/base/time_posix.cc
 --- firefox-43.0b3/ipc/chromium/src/base/time_posix.cc	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/base/time_posix.cc	2015-11-11 04:37:32.672493005 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -65,11 +69,13 @@
    timestruct.tm_wday   = exploded.day_of_week;  // mktime/timegm ignore this
    timestruct.tm_yday   = 0;     // mktime/timegm ignore this
@@ -662,14 +522,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/base/time_posix.cc firefox-43.0b3/ipc
 diff -Nurb firefox-43.0b3/ipc/chromium/src/build/build_config.h firefox-43.0b3/ipc/chromium/src/build/build_config.h
 --- firefox-43.0b3/ipc/chromium/src/build/build_config.h	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/build/build_config.h	2015-11-11 04:37:06.456569677 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -30,6 +34,8 @@
  #define OS_NETBSD 1
  #elif defined(__OpenBSD__)
@@ -691,14 +543,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/build/build_config.h firefox-43.0b3/i
 diff -Nurb firefox-43.0b3/ipc/chromium/src/chrome/common/transport_dib.h firefox-43.0b3/ipc/chromium/src/chrome/common/transport_dib.h
 --- firefox-43.0b3/ipc/chromium/src/chrome/common/transport_dib.h	2015-11-09 23:55:51.000000000 +0100
 +++ firefox-43.0b3/ipc/chromium/src/chrome/common/transport_dib.h	2015-11-11 04:36:35.796719710 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- // Copyright (c) 2006-2009 The Chromium Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 @@ -13,7 +17,7 @@
  
  #if defined(OS_WIN)
@@ -819,14 +663,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/src/third_party/libevent/event.c firefox-
 diff -Nurb firefox-43.0b3/ipc/glue/BrowserProcessSubThread.cpp firefox-43.0b3/ipc/glue/BrowserProcessSubThread.cpp
 --- firefox-43.0b3/ipc/glue/BrowserProcessSubThread.cpp	2015-11-09 23:55:52.000000000 +0100
 +++ firefox-43.0b3/ipc/glue/BrowserProcessSubThread.cpp	2015-11-11 04:35:23.287671466 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-  * vim: sw=2 ts=8 et :
-  */
 @@ -25,9 +29,7 @@
  //  "Chrome_FileThread",  // FILE
  //  "Chrome_DBThread",  // DB
@@ -850,14 +686,6 @@ diff -Nurb firefox-43.0b3/ipc/glue/BrowserProcessSubThread.cpp firefox-43.0b3/ip
 diff -Nurb firefox-43.0b3/ipc/glue/BrowserProcessSubThread.h firefox-43.0b3/ipc/glue/BrowserProcessSubThread.h
 --- firefox-43.0b3/ipc/glue/BrowserProcessSubThread.h	2015-11-09 23:55:52.000000000 +0100
 +++ firefox-43.0b3/ipc/glue/BrowserProcessSubThread.h	2015-11-11 04:34:59.567317448 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-  * vim: sw=2 ts=8 et :
-  */
 @@ -28,12 +32,10 @@
        //FILE,
        //DB,
@@ -871,51 +699,32 @@ diff -Nurb firefox-43.0b3/ipc/glue/BrowserProcessSubThread.h firefox-43.0b3/ipc/
  
        // This identifier does not represent a thread.  Instead it counts
        // the number of well-known threads.  Insert new well-known
-diff -Nurb firefox-43.0b3/ipc/glue/CrossProcessMutex_unimplemented.cpp firefox-43.0b3/ipc/glue/CrossProcessMutex_unimplemented.cpp
---- firefox-43.0b3/ipc/glue/CrossProcessMutex_unimplemented.cpp	2015-11-09 23:55:52.000000000 +0100
-+++ firefox-43.0b3/ipc/glue/CrossProcessMutex_unimplemented.cpp	2015-11-11 04:34:35.444993495 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-  * This Source Code Form is subject to the terms of the Mozilla Public
-  * License, v. 2.0. If a copy of the MPL was not distributed with this
-@@ -40,7 +44,6 @@
- CrossProcessMutex::ShareToProcess(base::ProcessId aTargetPid)
- {
-   NS_RUNTIMEABORT("Cross-process mutices not allowed on this platform - woah! We should've aborted by now!");
--  return 0;
- }
- 
- }
 diff -Nurb firefox-43.0b3/ipc/glue/GeckoChildProcessHost.cpp firefox-43.0b3/ipc/glue/GeckoChildProcessHost.cpp
---- firefox-43.0b3/ipc/glue/GeckoChildProcessHost.cpp	2015-11-09 23:55:52.000000000 +0100
-+++ firefox-43.0b3/ipc/glue/GeckoChildProcessHost.cpp	2015-11-11 04:34:11.629875105 +0100
-@@ -1,10 +1,20 @@
+--- firefox-52.1.0esr/ipc/glue/GeckoChildProcessHost.cpp.~1~	2017-04-11 05:13:12.000000000 +0300
++++ firefox-52.1.0esr/ipc/glue/GeckoChildProcessHost.cpp	2017-05-04 18:49:04.151641189 +0300
+@@ -1,10 +1,21 @@
 +/*
 + * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
 + * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
 + */
- /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
-  */
++
+ /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+ /* vim: set ts=8 sts=2 et sw=2 tw=80: */
  /* This Source Code Form is subject to the terms of the Mozilla Public
   * License, v. 2.0. If a copy of the MPL was not distributed with this
   * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
  
--#include "GeckoChildProcessHost.h"
 +#if defined(__sun__) || defined(__sun)
 +_Pragma("GCC visibility push(default)")
 +#endif
-+ #include "GeckoChildProcessHost.h"
+ #include "GeckoChildProcessHost.h"
 +#if defined(__sun__) || defined(__sun)
 +_Pragma("GCC visibility pop")
 +#endif
  
  #include "base/command_line.h"
  #include "base/string_util.h"
-@@ -628,13 +638,16 @@
+@@ -744,8 +755,7 @@
    // and passing wstrings from one config to the other is unsafe.  So
    // we split the logic here.
  
@@ -925,17 +734,16 @@ diff -Nurb firefox-43.0b3/ipc/glue/GeckoChildProcessHost.cpp firefox-43.0b3/ipc/
    ChildPrivileges privs = mPrivileges;
    if (privs == base::PRIVILEGES_DEFAULT) {
      privs = DefaultChildPrivileges();
+@@ -758,6 +768,8 @@
    }
--  // XPCOM may not be initialized in some subprocesses.  We don't want
-+#endif
-+
+ #endif
+ 
 +#if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD)
 +  base::environment_map newEnvVars;
-+// XPCOM may not be initialized in some subprocesses.  We don't want
+   // XPCOM may not be initialized in some subprocesses.  We don't want
    // to initialize XPCOM just for the directory service, especially
    // since LD_LIBRARY_PATH is already set correctly in subprocesses
-   // (meaning that we don't need to set that up in the environment).
-@@ -754,7 +767,7 @@
+@@ -903,7 +915,7 @@
    childArgv.push_back(pidstring);
  
  #if defined(MOZ_CRASHREPORTER)
@@ -944,7 +752,7 @@ diff -Nurb firefox-43.0b3/ipc/glue/GeckoChildProcessHost.cpp firefox-43.0b3/ipc/
    int childCrashFd, childCrashRemapFd;
    if (!CrashReporter::CreateNotificationPipeForChild(
          &childCrashFd, &childCrashRemapFd))
-@@ -770,7 +783,7 @@
+@@ -919,7 +931,7 @@
    }
  #  elif defined(MOZ_WIDGET_COCOA)
    childArgv.push_back(CrashReporter::GetChildNotificationPipe());
@@ -953,7 +761,7 @@ diff -Nurb firefox-43.0b3/ipc/glue/GeckoChildProcessHost.cpp firefox-43.0b3/ipc/
  #endif
  
  #ifdef MOZ_WIDGET_COCOA
-@@ -789,6 +802,8 @@
+@@ -938,6 +950,8 @@
    base::LaunchApp(childArgv, mFileMap,
  #if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD)
                    newEnvVars, privs,
@@ -1031,41 +839,12 @@ diff -Nurb firefox-43.0b3/js/src/gc/Memory.cpp firefox-43.0b3/js/src/gc/Memory.c
      return result != -1;
  }
  
-diff -Nurb firefox-43.0b3/js/src/jsmath.cpp firefox-43.0b3/js/src/jsmath.cpp
---- firefox-43.0b3/js/src/jsmath.cpp	2015-11-09 23:56:00.000000000 +0100
-+++ firefox-43.0b3/js/src/jsmath.cpp	2015-11-11 04:32:33.269260636 +0100
-@@ -1,3 +1,7 @@
-+/*
-+ * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+ * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+ */
- /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
-  * vim: set ts=8 sts=4 et sw=4 tw=99:
-  * This Source Code Form is subject to the terms of the Mozilla Public
-@@ -958,7 +962,7 @@
- {
- #if defined(__GLIBC__)
-     sincos(x, sin, cos);
--#elif defined(HAVE_SINCOS)
-+#elif defined(_HAVE_SINCOS)
-     __sincos(x, sin, cos);
- #else
-     *sin = js::math_sin_uncached(x);
 diff -Nurb firefox-43.0b3/js/xpconnect/shell/moz.build firefox-43.0b3/js/xpconnect/shell/moz.build
---- firefox-44.0/js/xpconnect/shell/moz.build.~1~	2016-01-24 02:23:48.000000000 +0300
-+++ firefox-44.0/js/xpconnect/shell/moz.build	2016-01-28 09:10:54.515360710 +0300
-@@ -1,3 +1,8 @@
-+#*
-+#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+#*
-+
- # -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
- # vim: set filetype=python:
- # This Source Code Form is subject to the terms of the Mozilla Public
-@@ -36,5 +41,17 @@
- CXXFLAGS += CONFIG['TK_CFLAGS']
- OS_LIBS += CONFIG['TK_LIBS']
+--- firefox-52.1.0esr/js/xpconnect/shell/moz.build.~1~	2017-05-04 17:49:11.276627344 +0300
++++ firefox-52.1.0esr/js/xpconnect/shell/moz.build	2017-05-04 18:04:06.492161813 +0300
+@@ -55,6 +55,17 @@
+         'xul.dll',
+     ]
  
 +OS_LIBS += [
 +         '$(DEPTH)/security/nss/lib/util/libnssutil3.so',
@@ -1077,10 +856,10 @@ diff -Nurb firefox-43.0b3/js/xpconnect/shell/moz.build firefox-43.0b3/js/xpconne
 +         '-lsendfile',
 +   ]
 +
- if CONFIG['GNU_CXX']:
-     CXXFLAGS += ['-Wshadow']
 +
-+
+ CFLAGS += CONFIG['TK_CFLAGS']
+ CXXFLAGS += CONFIG['TK_CFLAGS']
+ OS_LIBS += CONFIG['TK_LIBS']
 diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb.c firefox-43.0b3/media/libcubeb/src/cubeb.c
 --- firefox-43.0b3/media/libcubeb/src/cubeb.c	2015-11-09 23:55:56.000000000 +0100
 +++ firefox-43.0b3/media/libcubeb/src/cubeb.c	2015-11-11 04:31:24.689920807 +0100
@@ -1559,15 +1338,6 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/li
 diff -Nurb firefox-43.0b3/media/libcubeb/src/moz.build firefox-43.0b3/media/libcubeb/src/moz.build
 --- firefox-43.0b3/media/libcubeb/src/moz.build	2015-11-09 23:55:56.000000000 +0100
 +++ firefox-43.0b3/media/libcubeb/src/moz.build	2015-11-11 04:30:04.794558372 +0100
-@@ -1,3 +1,8 @@
-+#*
-+#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+#*
-+
- # -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
- # vim: set filetype=python:
- # This Source Code Form is subject to the terms of the Mozilla Public
 @@ -41,6 +46,12 @@
          ]
      DEFINES['USE_AUDIOUNIT'] = True
@@ -2138,43 +1908,6 @@ diff -Nurb firefox-43.0b3/widget/GfxInfoX11.cpp firefox-43.0b3/widget/GfxInfoX11
              mIsOldSwrast = true;
      } else if (strstr(mVendor.get(), "NVIDIA Corporation")) {
          mIsNVIDIA = true;
-diff -Nurb firefox-43.0b3/x05CONFIGURE__NONDEBUG.sh firefox-43.0b3/x05CONFIGURE__NONDEBUG.sh
---- firefox-43.0b3/x05CONFIGURE__NONDEBUG.sh	1970-01-01 01:00:00.000000000 +0100
-+++ firefox-43.0b3/x05CONFIGURE__NONDEBUG.sh	2015-11-11 04:08:18.925661801 +0100
-@@ -0,0 +1,33 @@
-+#!/bin/bash
-+#
-+#*
-+#* CDDL HEADER START
-+#*
-+#* The contents of this file are subject to the terms of the
-+#* Common Development and Distribution License, Version 1.0 only
-+#* (the "License").  You may not use this file except in compliance
-+#* with the License.
-+#*
-+#* You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-+#* or http://www.opensolaris.org/os/licensing.
-+#* See the License for the specific language governing permissions
-+#* and limitations under the License.
-+#*
-+#* When distributing Covered Code, include this CDDL HEADER in each
-+#* file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-+#* If applicable, add the following below this CDDL HEADER, with the
-+#* fields enclosed by brackets "[]" replaced with your own identifying
-+#* information: Portions Copyright [yyyy] [name of copyright owner]
-+#*
-+#* CDDL HEADER END
-+#*
-+#*
-+#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+#*
-+
-+export PATH=/opt/csw/gcc4/bin:/opt/csw/bin:/usr/gnu/bin:/usr/sfw/bin:/usr/bin:/usr/openwin/bin:/usr/ucb
-+/bin/echo "43.0b3" > /tmp/FFvers
-+export FFvers=`/bin/cat /tmp/FFvers`
-+bash ../configure --enable-application=browser --prefix=/usr/lib/firefox`/bin/cat /tmp/FFvers`  --enable-official-branding --disable-updater --enable-debug-symbols=no --enable-update-channel=esr --disable-tests --enable-jemalloc --disable-dtrace --disable-xinerama --disable-crashreporter --disable-pulseaudio --disable-gstreamer --with-intl-api --disable-debug --enable-ipc --enable-default-toolkit=cairo-gtk2
-+
 diff -Nurb firefox-43.0b3/xpcom/base/nsStatusReporterManager.cpp firefox-43.0b3/xpcom/base/nsStatusReporterManager.cpp
 --- firefox-43.0b3/xpcom/base/nsStatusReporterManager.cpp	2015-11-09 23:56:25.000000000 +0100
 +++ firefox-43.0b3/xpcom/base/nsStatusReporterManager.cpp	2015-11-11 04:20:51.670640457 +0100
@@ -2231,15 +1964,6 @@ diff -Nurb firefox-43.0b3/xpcom/reflect/xptcall/md/unix/Makefile.in firefox-43.0
 diff -Nurb firefox-43.0b3/xpcom/reflect/xptcall/md/unix/moz.build firefox-43.0b3/xpcom/reflect/xptcall/md/unix/moz.build
 --- firefox-43.0b3/xpcom/reflect/xptcall/md/unix/moz.build	2015-11-09 23:56:26.000000000 +0100
 +++ firefox-43.0b3/xpcom/reflect/xptcall/md/unix/moz.build	2015-11-11 04:15:49.658504202 +0100
-@@ -1,3 +1,8 @@
-+#*
-+#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-+#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-+#*
-+
- # -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
- # vim: set filetype=python:
- # This Source Code Form is subject to the terms of the Mozilla Public
 @@ -47,9 +52,6 @@
          ]
  
