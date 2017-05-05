@@ -411,7 +411,7 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
 #
 REQUIRED_PACKAGES::     $(RESOLVED)
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
-	@echo "# Auto-generated contents below.  Please manually verify and remove this comment" >>Makefile
+	@echo "# Auto-generated dependencies" >>Makefile
 	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
                $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' | sort -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new content at the end ***"
