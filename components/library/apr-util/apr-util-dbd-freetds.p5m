@@ -1,0 +1,33 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2017 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/library/apr-util/dbd-freetds@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Apache Portable Runtime Utility (APR-util) DBD Driver for FreeTDS"
+set name=com.oracle.info.description \
+    value="the Apache Portable Runtime Utility (APR-util) DBD Driver for FreeTDS"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_freetds-1.so
+link path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_freetds.so \
+    target=apr_dbd_freetds-1.so
+file path=usr/apr-util/lib/apr-util-1/apr_dbd_freetds-1.so
+link path=usr/apr-util/lib/apr-util-1/apr_dbd_freetds.so \
+    target=apr_dbd_freetds-1.so
+
+license apr-util.license license="Apache v2.0"
