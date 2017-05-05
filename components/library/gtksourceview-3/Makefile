@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gtksourceview
 COMPONENT_MAJOR_MINOR=	3.14
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_MINOR).4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Multiline text editing library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -35,7 +36,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(GNUBIN):$(USRBINDIR)
+PATH=$(PATH.gnu)
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -64,6 +65,7 @@ install:	$(INSTALL_32_and_64)
 # Require X11
 test:	$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
