@@ -87,17 +87,27 @@
  #include "md/_linux.cfg"
  #else
 --- firefox-52.1.0esr/config/external/nspr/pr/moz.build.~1~	2017-04-11 05:13:09.000000000 +0300
-+++ firefox-52.1.0esr/config/external/nspr/pr/moz.build	2017-05-04 14:13:20.394137351 +0300
-@@ -29,7 +29,7 @@
++++ firefox-52.1.0esr/config/external/nspr/pr/moz.build	2017-05-05 14:05:10.629150996 +0300
+@@ -29,6 +29,18 @@
          SOURCES += ['/nsprpub/pr/src/md/unix/os_Linux_x86.s']
      elif CONFIG['CPU_ARCH'] == 'ppc':
          SOURCES += ['/nsprpub/pr/src/md/unix/os_Linux_ppc.s']
--elif CONFIG['OS_TARGET'] in ('FreeBSD', 'OpenBSD', 'NetBSD'):
-+elif CONFIG['OS_TARGET'] in ('FreeBSD', 'OpenBSD', 'NetBSD', 'Solaris'):
++elif CONFIG['OS_TARGET'] == 'Solaris':
++    DEFINES.update(
++        HAVE_BSD_FLOCK=True,
++        HAVE_SOCKLEN_T=True,
++    )
++    DEFINES[CONFIG['OS_TARGET'].upper()] = True
++    SOURCES += ['/nsprpub/pr/src/md/unix/%s.c' % CONFIG['OS_TARGET'].lower()]
++    if CONFIG['CPU_ARCH'] == 'x86_64':
++        SOURCES += ['/nsprpub/pr/src/md/unix/os_SunOS_x86_64.s']
++    elif CONFIG['CPU_ARCH'] == 'x86':
++        DEFINES['i386'] = True
++        SOURCES += ['/nsprpub/pr/src/md/unix/os_SunOS_x86.s']
+ elif CONFIG['OS_TARGET'] in ('FreeBSD', 'OpenBSD', 'NetBSD'):
      DEFINES.update(
          HAVE_BSD_FLOCK=True,
-         HAVE_SOCKLEN_T=True,
-@@ -222,6 +222,7 @@
+@@ -222,6 +234,7 @@
      '/nsprpub/pr/include/md/_linux.cfg',
      '/nsprpub/pr/include/md/_netbsd.cfg',
      '/nsprpub/pr/include/md/_openbsd.cfg',
