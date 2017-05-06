@@ -28,11 +28,11 @@ COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=      --disable-static
 
@@ -43,11 +43,12 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/dmxproto
+REQUIRED_PACKAGES += x11/header/xextproto
+REQUIRED_PACKAGES += x11/header/sun-ext-protos
 
-include $(WS_TOP)/make-rules/depend.mk
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
