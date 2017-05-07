@@ -1,0 +1,68 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/irc/xchat@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license='GPLv2'
+
+<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - / filesystem" name="$(COMPONENT_SUMMARY) - / filesystem" pkg=SUNWxchat-root
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY)" name="$(COMPONENT_SUMMARY)" pkg=SUNWxchat
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - l10n files" name="$(COMPONENT_SUMMARY) - l10n files" pkg=SUNWxchat-l10n
+
+file path=etc/gconf/schemas/apps_xchat_url_handler.schemas preserve=renamenew
+file path=usr/bin/xchat
+file path=usr/lib/xchat/plugins/perl.so
+file path=usr/lib/xchat/plugins/python.so
+file path=usr/lib/xchat/plugins/tcl.so
+file path=usr/share/applications/xchat.desktop
+file path=usr/share/dbus-1/services/org.xchat.service.service
+file path=usr/share/locale/be/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/ca/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/cs/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/de/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/el/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/es/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/fi/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/fr/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/gl/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/hu/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/it/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/ja/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/kn/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/ko/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/lt/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/mk/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/nl/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/pa/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/pl/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/pt/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/ru/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/sq/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/sr/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/sv/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/th/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/uk/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/vi/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/xchat.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/xchat.mo
+file path=usr/share/pixmaps/xchat.png

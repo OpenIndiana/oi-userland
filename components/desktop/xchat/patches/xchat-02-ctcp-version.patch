@@ -1,0 +1,90 @@
+--- xchat-2.8.6/src/common/util.c.patch04	2008-02-23 18:59:48.000000000 -0800
++++ xchat-2.8.6/src/common/util.c	2010-01-02 01:48:20.683695850 -0800
+@@ -54,6 +54,10 @@
+ #include <socks.h>
+ #endif
+ 
++#if defined (__SVR4) && defined (__sun)
++#include <kstat.h>  
++#endif 
++
+ #ifndef HAVE_SNPRINTF
+ #define snprintf g_snprintf
+ #endif
+@@ -510,7 +514,7 @@
+ 	return len;
+ }
+ 
+-#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__)
++#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || (defined (__SVR4) && defined (__sun))
+ 
+ static void
+ get_cpu_info (double *mhz, int *cpus)
+@@ -600,6 +604,37 @@
+ 	*mhz = (freq / 1000000);
+ 
+ #endif
++#if defined (__SVR4) && defined (__sun)
++
++	kstat_t       *ksp;  
++	kstat_ctl_t   *kc;  
++	kstat_named_t *knp = NULL;
++	int	      numcpu = 0;
++	kc = kstat_open();
++        if (kc == NULL) {
++                fprintf (stderr, "get speed: kstat error %d\n", errno);
++                return;
++        }
++
++	ksp = kstat_lookup(kc, "cpu_info", -1, NULL);  
++	for (; ksp != NULL; ksp = ksp->ks_next) {
++                if (strcmp(ksp->ks_module, "cpu_info"))
++                        continue;
++	        numcpu++;
++
++	        kstat_read(kc, ksp, NULL);
++
++		if (knp == NULL) {
++		        knp = kstat_data_lookup(ksp, "clock_MHz");   
++		}
++	}
++	
++	*cpus = numcpu;
++	if (knp) {
++		*mhz = knp->value.i32;
++	}
++
++#endif
+ 
+ }
+ #endif
+@@ -656,7 +691,7 @@
+ char *
+ get_cpu_str (void)
+ {
+-#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__)
++#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || (defined (__SVR4) && defined (__sun))
+ 	double mhz;
+ #endif
+ 	int cpus = 1;
+@@ -670,7 +705,7 @@
+ 
+ 	uname (&un);
+ 
+-#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__)
++#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || (defined (__SVR4) && defined (__sun))
+ 	get_cpu_info (&mhz, &cpus);
+ 	if (mhz)
+ 	{
+--- xchat-2.8.6/configure.in.patch04	2010-01-02 01:05:33.430390900 -0800
++++ xchat-2.8.6/configure.in	2010-01-02 01:05:33.449775850 -0800
+@@ -742,6 +742,9 @@
+ 
+ GUI_LIBS="$GUI_LIBS $COMMON_LIBS"
+ 
++dnl solaris needs kstat
++AC_SEARCH_LIBS([kstat_open], [kstat])
++
+ dnl make these visible to all Makefiles
+ AC_SUBST(GUI_LIBS)
+ AC_SUBST(GUI_CFLAGS)

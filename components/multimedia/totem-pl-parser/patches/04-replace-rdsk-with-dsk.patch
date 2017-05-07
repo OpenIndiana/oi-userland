@@ -1,0 +1,19 @@
+--- totem-pl-parser-3.10.7/plparse/totem-disc.c.1	2017-03-11 14:53:17.411656838 +0300
++++ totem-pl-parser-3.10.7/plparse/totem-disc.c	2017-03-11 14:54:04.497836072 +0300
+@@ -353,7 +353,16 @@
+   gboolean found, self_mounted;
+ 
+   if (dev[0] == '/') {
++#ifdef __sun
++    if (strstr(dev, "/dev/rdsk/") != NULL) {
++      local = g_strdup_printf("/dev/dsk/%s", dev+strlen("/dev/rdsk/"));
++    }
++    else {
++      local = g_strdup (dev);
++    }
++#else    
+     local = g_strdup (dev);
++#endif
+     file = g_file_new_for_path (dev);
+   } else {
+     if (g_str_has_prefix (dev, "archive://")) {

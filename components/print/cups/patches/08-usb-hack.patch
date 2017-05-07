@@ -1,0 +1,39 @@
+--- backend/usb-unix.c.~1~	2013-05-29 15:51:34.000000000 +0400
++++ backend/usb-unix.c	2016-09-14 11:56:04.800980384 +0300
+@@ -30,6 +30,10 @@
+ 
+ #include <sys/select.h>
+ 
++#ifdef __sun
++#include <sys/ecppio.h>
++#endif
++
+ 
+ /*
+  * Local functions...
+@@ -456,6 +460,8 @@
+     {
+       for (i = 0, busy = 0; i < 8; i ++)
+       {
++        char *s;
++
+ 	sprintf(device, "/dev/usb/printer%d", i);
+ 
+ 	if ((fd = open(device, O_WRONLY | O_EXCL)) >= 0)
+@@ -475,6 +481,16 @@
+ 	  device_uri[0] = '\0';
+         }
+ 
++        /*
++         * The serial# is often missing from the 1284 devid and retrieval from
++         * the bus is a bit more complicated, so append it to the device_uri
++         * before the check if it was only in the supplied uri.
++         */
++        if (((s = strstr(uri, "?serial=")) != NULL) &&
++            (strstr(device_uri, "?serial=") == NULL)) {
++                strncat(device_uri, s, sizeof (device_uri));
++        }
++
+         if (!strcmp(uri, device_uri))
+ 	{
+ 	 /*

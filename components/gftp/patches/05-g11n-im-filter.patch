@@ -1,0 +1,18 @@
+--- gftp/src/gtk/misc-gtk.c.orig	2008-12-09 16:47:32.828689000 +0900
++++ gftp/src/gtk/misc-gtk.c	2008-12-09 16:50:13.096878000 +0900
+@@ -864,6 +864,15 @@ dialog_response (GtkWidget * widget, gin
+ static gint
+ dialog_keypress (GtkWidget * widget, GdkEventKey * event, gpointer data)
+ {
++  if (GTK_ENTRY (widget)->editable)
++    {
++      if (gtk_im_context_filter_keypress (GTK_ENTRY (widget)->im_context, event))
++        {
++          GTK_ENTRY (widget)->need_im_reset = TRUE;
++          return TRUE;
++        }
++    }
++
+   if (event->type != GDK_KEY_PRESS)
+     return (FALSE);
+ 

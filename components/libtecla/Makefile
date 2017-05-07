@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtecla
-COMPONENT_VERSION=	1.6.1
+COMPONENT_VERSION=	1.6.2
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	http://www.astro.caltech.edu/~mcs/tecla/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:21db2947bd1415070e0462673aa9bed04610946e09169fcd63e02557b0d999a1
+    sha256:8c61db528364f4e88e34e79eb3730adf54e43c594cf12faf712117a6d20eb7b8
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libtecla
 
@@ -36,6 +36,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
+
+COMPONENT_BUILD_ARGS=
 
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =

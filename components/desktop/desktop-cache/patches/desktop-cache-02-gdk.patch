@@ -1,0 +1,36 @@
+--- desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer.~1~	2009-04-29 13:51:47.000000000 +0400
++++ desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer	2014-06-12 22:16:47.425432294 +0400
+@@ -69,7 +69,7 @@
+   if [ -a "/etc/$DIR/gtk-2.0/gdk-pixbuf.loaders" ]; then
+     RESULT=`${FIND_NEWER} -f -c -m --name '*.so' \
+ 	--newer /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders \
+-	/usr/lib/$DIR/gtk-2.0/*/loaders 2>/dev/null`
++	/usr/lib/$DIR/gdk-pixbuf-2.0/*/loaders 2>/dev/null`
+   else
+     RESULT="no loader file"
+   fi
+@@ -77,6 +77,7 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating gdk pixbuf loader file"
+     /usr/bin/$DIR/gdk-pixbuf-query-loaders > /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders
++    /usr/bin/$DIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
+     if [ $? -ne 0 ]; then
+       echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders"
+       exit $SMF_EXIT_ERR_FATAL
+@@ -95,7 +96,7 @@
+       continue
+   }
+   if [ -a "/etc/$DIR/gtk-2.0/gdk-pixbuf.loaders" ]; then
+-    RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-2.0/*/loaders/*.so ! -type d \
++    RESULT=`/usr/bin/find /usr/lib/$DIR/gdk-pixbuf-2.0/*/loaders/*.so ! -type d \
+ 	   -follow -print 2>/dev/null`
+   else
+     RESULT="no loader file"
+@@ -104,6 +105,7 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating gdk pixbuf loader file"
+     /usr/bin/$DIR/gdk-pixbuf-query-loaders > /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders
++    /usr/bin/$DIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
+     if [ $? -ne 0 ]; then
+       echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /etc/$DIR/gtk-2.0/gdk-pixbuf.loaders"
+       exit $SMF_EXIT_ERR_FATAL

@@ -1,0 +1,32 @@
+--- libtorrent-0.13.4/test/data/hash_check_queue_test.cc.~1~	2014-11-27 16:58:13.284956235 +0300
++++ libtorrent-0.13.4/test/data/hash_check_queue_test.cc	2014-11-27 16:58:54.281546346 +0300
+@@ -73,7 +73,7 @@
+ HashCheckQueueTest::setUp() {
+   torrent::Poll::slot_create_poll() = tr1::bind(&create_select_poll);
+ 
+-  signal(SIGUSR1, (sig_t)&do_nothing);
++  signal(SIGUSR1, (SIG_TYP) &do_nothing);
+ }
+ 
+ void
+--- libtorrent-0.13.4/test/data/hash_queue_test.cc.~1~	2014-11-27 16:59:15.206558330 +0300
++++ libtorrent-0.13.4/test/data/hash_queue_test.cc	2014-11-27 17:01:10.732001176 +0300
+@@ -45,7 +45,7 @@
+   CPPUNIT_ASSERT(torrent::taskScheduler.empty());
+ 
+   torrent::Poll::slot_create_poll() = tr1::bind(&create_select_poll);
+-  signal(SIGUSR1, (sig_t)&do_nothing);
++  signal(SIGUSR1, (SIG_TYP)&do_nothing);
+ }
+ 
+ void
+--- libtorrent-0.13.4/test/Makefile.am.~1~	2014-11-27 19:00:04.443631800 +0300
++++ libtorrent-0.13.4/test/Makefile.am	2014-11-27 19:00:33.881679866 +0300
+@@ -76,6 +76,6 @@
+ 	main.cc
+ 
+ LibTorrentTest_CXXFLAGS = $(CPPUNIT_CFLAGS)
+-LibTorrentTest_LDFLAGS = $(CPPUNIT_LIBS)  -ldl
++LibTorrentTest_LDFLAGS = $(CPPUNIT_LIBS)  -ldl -lnsl -lcppunit -lsocket -lz
+ 
+ AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/src

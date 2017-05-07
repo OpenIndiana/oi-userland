@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>README for X11R7.7</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_9276" /><meta name="description" content="X11R7.7 is an Open Source version of the X Window System that supports many UNIX and UNIX-like operating systems (such as Linux, FreeBSD, NetBSD, OpenBSD, and Solaris) on a variety of platforms. This version is compatible with X11R7.6 and other X Window System implementations which support the X11 standard." /><style xmlns="" type="text/css">/*
+ * Copyright (c) 2011 Gaetan Nadon
+ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * Shared stylesheet for X.Org documentation translated to HTML format
+ * http://www.sagehill.net/docbookxsl/UsingCSS.html
+ * http://www.w3schools.com/css/default.asp
+ * https://addons.mozilla.org/en-US/firefox/addon/web-developer/developers
+ * https://addons.mozilla.org/en-US/firefox/addon/font-finder/
+ */
+
+/*
+ * The sans-serif fonts are considered more legible on a computer screen
+ * http://dry.sailingissues.com/linux-equivalents-verdana-arial.html
+ *
+ */
+body {
+  font-family: "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+  /* In support of using "em" font size unit, the w3c recommended method */
+  font-size: 100%;
+}
+
+/*
+ * Selection: all elements requiring mono spaced fonts.
+ *
+ * The family names attempt to match the proportionally spaced font
+ * family names such that the same font name is used for both.
+ * We'd like to use Bitstream, for example, in both proportionally and
+ * mono spaced font text.
+ */
+.command,
+.errorcode,
+.errorname,
+.errortype,
+.filename,
+.funcsynopsis,
+.function,
+.parameter,
+.programlisting,
+.property,
+.screen,
+.structname,
+.symbol,
+.synopsis,
+.type
+{
+  font-family:  "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Courier, "Liberation Mono", Monospace;
+}
+
+/*
+ * Books have a title page, a preface, some chapters and appendices,
+ * a glossary, an index and a bibliography, in that order.
+ *
+ * An Article has no preface and no chapters. It has sections, appendices,
+ * a glossary, an index and a bibliography.
+ */
+
+/*
+ * Selection: book main title and subtitle
+ */
+div.book>div.titlepage h1.title,
+div.book>div.titlepage h2.subtitle {
+  text-align: center;
+}
+
+/*
+ * Selection: article main title and subtitle
+ */
+div.article>div.titlepage h2.title,
+div.article>div.titlepage h3.subtitle,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title {
+  text-align: center;
+}
+
+/*
+ * Selection: various types of authors and collaborators, individuals or corporate
+ *
+ * These authors are not always contained inside an authorgroup.
+ * They can be contained inside a lot of different parent types where they might
+ * not be centered.
+ * Reducing the margin at the bottom makes a visual separation between authors
+ * We specify here the ones on the title page, others may be added based on merit.
+ */
+div.titlepage .authorgroup,
+div.titlepage .author,
+div.titlepage .collab,
+div.titlepage .corpauthor,
+div.titlepage .corpcredit,
+div.titlepage .editor,
+div.titlepage .othercredit {
+  text-align: center;
+  margin-bottom: 0.25em;
+}
+
+/*
+ * Selection: the affiliation of various types of authors and collaborators,
+ * individuals or corporate.
+ */
+div.titlepage .affiliation {
+  text-align: center;
+}
+
+/*
+ * Selection: product release information (X Version 11, Release 7)
+ *
+ * The releaseinfo element can be contained inside a lot of different parent
+ * types where it might not be centered.
+ * We specify here the one on the title page, others may be added based on merit.
+ */
+div.titlepage p.releaseinfo {
+  font-weight: bold;
+  text-align: center;
+}
+
+/*
+ * Selection: publishing date
+ */
+div.titlepage .pubdate {
+  text-align: center;
+}
+
+/*
+ * The legal notices are displayed in smaller sized fonts
+ * Justification is only supported in IE and therefore not requested.
+ *
+ */
+.legalnotice {
+  font-size: small;
+  font-style: italic;
+}
+
+/*
+ * For documentation having multiple licenses, the copyright and legalnotice
+ * elements sequence cannot instantiated multiple times.
+ * The copyright notice and license text are therefore coded inside a legalnotice
+ * element. The role attribute on the paragraph is used to allow styling of the
+ * copyright notice text which should not be italicized.
+ */
+p.multiLicensing {
+  font-style: normal;
+  font-size: medium;
+}
+
+/*
+ * Selection: book or article main ToC title
+ * A paragraph is generated for the title rather than a level 2 heading.
+ * We do not want to select chapters sub table of contents, only the main one
+ */
+div.book>div.toc>p,
+div.article>div.toc>p {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+/*
+ * Selection: major sections of a book or an article
+ *
+ * Unlike books, articles do not have a titlepage element for appendix.
+ * Using the selector "div.titlepage h2.title" would be too general.
+ */
+div.book>div.preface>div.titlepage h2.title,
+div.book>div.chapter>div.titlepage h2.title,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title,
+div.book>div.appendix>div.titlepage h2.title,
+div.article>div.appendix h2.title,
+div.glossary>div.titlepage h2.title,
+div.index>div.titlepage h2.title,
+div.bibliography>div.titlepage h2.title {
+   /* Add a border top over the major parts, just like printed books */
+   /* The Gray color is already used for the ruler over the main ToC. */
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: Gray;
+  /* Put some space between the border and the title */
+  padding-top: 0.2em;
+  text-align: center;
+}
+
+/*
+ * A Screen is a verbatim environment for displaying text that the user might
+ * see on a computer terminal. It is often used to display the results of a command.
+ *
+ * http://www.css3.info/preview/rounded-border/
+ */
+.screen {
+  background: #e0ffff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #B0C4DE;
+  border-radius: 1.0em;
+  /* Browser's vendor properties prior to CSS 3 */
+  -moz-border-radius: 1.0em;
+  -webkit-border-radius: 1.0em;
+  -khtml-border-radius: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 1.0em;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis program listings with a light shade of gray similar to what
+ * DocBook XSL guide does: http://www.sagehill.net/docbookxsl/ProgramListings.html
+ * Found many C API docs on the web using like shades of gray.
+ */
+.programlisting {
+  background: #F4F4F4;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis functions synopsis using a darker shade of gray.
+ * Add a border such that it stands out more.
+ * Set the padding so the text does not touch the border.
+ */
+.funcsynopsis, .synopsis {
+  background: #e6e6fa;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  clear: both;
+  margin: 0.5em;
+  padding: 0.25em;
+}
+
+/*
+ * Selection: paragraphs inside synopsis
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in synopsis
+ */
+.funcsynopsis p,
+.synopsis p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Selection: variable lists, informal tables and tables
+ *
+ * Note the parameter name "variablelist.as.table" in xorg-xhtml.xsl
+ * A table with rows and columns is constructed inside div.variablelist
+ *
+ * Set the left margin so it is indented to the right
+ * Display informal tables with single line borders
+ */
+table {
+  margin-left: 0.5em;
+  border-collapse: collapse;
+}
+
+/*
+ * Selection: paragraphs inside tables
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in tables
+ */
+td p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Add some space between the left and right column.
+ * The vertical alignment helps the reader associate a term
+ * with a multi-line definition.
+ */
+td, th {
+  padding-left: 1.0em;
+  padding-right: 1.0em;
+  vertical-align: top;
+}
+
+.warning {
+  border: 1px solid red;
+  background: #FFFF66;
+  padding-left: 0.5em;
+}
+</style></head><body><div class="article"><div class="titlepage"><div><div><h2 class="title"><a id="README"></a>README for X11R7.7</h2></div><div><h3 class="corpauthor"><a class="ulink" href="http://www.x.org/wiki/XorgFoundation" target="_top">
+The X.Org Foundation
+</a></h3></div><div><p class="pubdate">April 2012</p></div><div><div class="abstract"><p>
+X11R7.7 is an Open Source version of the X Window System that
+supports many <span class="trademark">UNIX</span>® and UNIX-like
+operating systems (such as Linux, FreeBSD, NetBSD, OpenBSD, and Solaris)
+on a variety of platforms.  This version is compatible with
+X11R7.6 and other X Window System implementations which support
+the X11 standard.
+</p></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="sect1"><a href="#What_is_X11R7.7">What is X11R7.7?</a></span></dt><dt><span class="sect1"><a href="#Licensing">Licensing</a></span></dt><dt><span class="sect1"><a href="#Pointers_to_additional_information">Pointers to additional information</a></span></dt><dt><span class="sect1"><a href="#The_Public_Mailing_Lists">The Public Mailing Lists</a></span></dt><dt><span class="sect1"><a href="#Contributing_to_the_X.Org_Foundations_X_efforts.">Contributing to the X.Org Foundation's X efforts.</a></span></dt><dt><span class="sect1"><a href="#How_to_get_the_release">How to get the release</a></span></dt><dd><dl><dt><span class="sect2"><a href="#X11R7.7">X11R7.7</a></span></dt><dt><span class="sect2"><a href="#The_current_development_tree">The current development tree</a></span></dt></dl></dd><dt><span class="sect1"><a href="#Reporting_Bugs">Reporting Bugs</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="What_is_X11R7.7"></a>What is X11R7.7?</h2></div></div></div><p>
+X11R7.7 is the eighth release in the X11R7 series.
+</p><p>
+
+Specific release enhancements can be viewed in the <a href="ReleaseNotes.html#ReleaseNotes" class="olink">Release Notes</a>.
+
+</p><p>
+Most modern PC video hardware is supported in this release, and most PC
+video hardware that isn't supported explicitly can be used with the
+"vesa" driver.  The <a href="ReleaseNotes.html#ReleaseNotes" class="olink">Release Notes</a>
+has a table showing the drivers provided with X11R7.7, and links to
+related documentation.
+</p><p>
+The X.Org Foundation X releases are produced by the X.Org Foundation.
+The X.Org Foundation has been formed as a Delaware corporation organized
+to operate as a scientific charity under IRS code 501(c)(3) chartered
+to develop and execute effective strategies which provide world-wide
+stewardship of the X Window System technology and standards. Membership
+in the X.Org Foundation is free to all participants. Applications for
+Membership are now being accepted, and active participants in the
+further development of the X Window Technology are invited to complete a
+<a class="ulink" href="http://www.x.org/wiki/Membership" target="_top">membership application</a>.  The X11R7.7 release has been
+produced by the many contributors to the X.Org community and members of
+the X.Org Foundation and includes code from the X Consortium, the Open
+Group and the <span class="trademark">XFree86</span>® Project.
+This release is dedicated to the greater X community, developers and
+users alike.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Licensing"></a>Licensing</h2></div></div></div><p>
+X Window System source code is covered by many licenses.  All of these
+licenses have in common the fact that they do not impose significant
+conditions on the modification or redistribution or either source code
+or binaries beyond requiring one or more of the following:
+</p><p>
+
+</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+Copyright and/or license notices are left intact.
+</p></li><li class="listitem"><p>
+Copyright and/or license notices are reproduced verbatim in
+documentation accompanying binary distributions.
+</p></li><li class="listitem"><p>
+Attributions are included with documentation accompanying binaries.
+</p></li></ol></div><p>
+
+</p><p>
+Most of these licenses are based on the MIT, X Consortium, or BSD
+(original and revised) licenses.  All of them are consistent with the
+<a class="ulink" href="http://www.opensource.org/docs/definition.php" target="_top">Open Source Definition</a>, and most are
+consistent with the Free Software Foundation's <a class="ulink" href="http://www.fsf.org/philosophy/free-sw.html" target="_top">Free Software Definition</a>.
+</p><p>
+Copyright and Licensing information for X, including the reproduction
+of copyright and/or license notices and attributions required by some
+of the licenses for binary distributions, can be found in the <a href="License.html#License" class="olink">License Document</a>.
+If you find any omissions in that document, please contact us with details at
+<code class="email">&lt;<a class="email" href="mailto:xorg@lists.x.org">xorg@lists.x.org</a>&gt;</code>.
+While the current licenses are all open source licenses, the
+X.Org Foundation is attempting, with time, to bring as much as
+possible of the code's licenses in the distribution into compliance with the
+<a class="ulink" href="http://www.debian.org/social_contract#guidelines" target="_top">Debian Free Software Guidelines</a>.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Pointers_to_additional_information"></a>Pointers to additional information</h2></div></div></div><p>
+The documentation for this release can be found online at the <a class="ulink" href="http://www.x.org/" target="_top">X.Org web site</a>.
+</p><p>
+The X11 version numbering system (including historical information)
+can be found in the <a href="Versions.html#Versions" class="olink">Versions
+Document</a>.
+</p><p>
+Additional information may be available at the <a class="ulink" href="http://wiki.x.org/" target="_top">X.Org Foundation Wiki</a>.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="The_Public_Mailing_Lists"></a>The Public Mailing Lists</h2></div></div></div><p>
+Current information about the X.Org Foundation public mailing lists is
+available on <a class="ulink" href="http://www.x.org/wiki/XorgMailingLists" target="_top">the X.Org
+mailing list page</a> and related desktop
+technology mailing lists can be found on <a class="ulink" href="http://freedesktop.org/mailman/listinfo" target="_top">Freedesktop.org's mailing list
+page</a>.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Contributing_to_the_X.Org_Foundations_X_efforts."></a>Contributing to the X.Org Foundation's X efforts.</h2></div></div></div><p>
+If you have any new work or enhancements/bug fixes for existing work,
+please send them as git format patches to
+<code class="email">&lt;<a class="email" href="mailto:xorg-devel@lists.freedesktop.org">xorg-devel@lists.freedesktop.org</a>&gt;</code> or to our
+<a class="ulink" href="https://bugs.freedesktop.org/" target="_top">bug tracking system</a>
+using the xorg component.  This will help ensure that they are included
+in future releases.   More details on patch submission and review
+process are available on the
+<a class="ulink" href="http://www.x.org/wiki/Development/Documentation/SubmittingPatches" target="_top">
+SubmittingPatches</a> page of the X.Org wiki.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="How_to_get_the_release"></a>How to get the release</h2></div></div></div><p>
+Information about X11R7.7 can be found from the
+<a class="ulink" href="http://wiki.x.org" target="_top">X.Org Foundation wiki</a>, and at
+mirrors of this server.
+</p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="X11R7.7"></a>X11R7.7</h3></div></div></div><p>
+This is the eighth release of the new modular source code tree.  The
+source code has been split into nine logical modules: app, data, doc,
+driver, font, lib. proto, util and xserver.  Each of these modules
+contain one or more packages that can be configured, built and installed
+separately.  Please see an X11R7.7 release site for a complete
+list of the tarballs.
+</p><p>
+For information on how to build the modular tree packages see the <a class="ulink" href="http://wiki.x.org/wiki/ModularDevelopersGuide" target="_top">Modular Developer's Guide</a>.  This guide also
+contains information for developers who want to help improve the modular
+build system and modular code base.
+</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="The_current_development_tree"></a>The current development tree</h3></div></div></div><p>
+The X source code for this and all releases/snapshots as well as
+development versions can also be accessed via the Freedesktop.org git
+repository.  It's also possible to browse the <a class="ulink" href="http://cgit.freedesktop.org/xorg/" target="_top">freedesktop git repository</a>.
+</p><p>
+To check out the latest development version, don't specify any tag.
+</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Reporting_Bugs"></a>Reporting Bugs</h2></div></div></div><p>
+Bugs should be reported to freedesktop.org's <a class="ulink" href="https://bugs.freedesktop.org/" target="_top">bug tracking system</a>
+using the xorg component.  Before
+reporting bugs, please check the server log file, which can be found at
+<code class="filename">/var/log/Xorg.0.log</code> on most platforms.  If you can't
+resolve the problem yourself, send the entire log file with your bug report but
+not the operating system core dump.  Do not edit the log file as our
+developers use it to reproduce and debug your problem.  Please attach it
+to your bug report.
+</p></div></div></body></html>

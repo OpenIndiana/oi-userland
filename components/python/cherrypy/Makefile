@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_URL=	http://download.cherrypy.org/cherrypy/$(COMPONENT_VERSION
 COMPONENT_BUGDB=	python-mod/cherrypy
 
 PATCH_LEVEL=0
+PYTHON_VERSIONS=2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -51,6 +52,5 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/python-27

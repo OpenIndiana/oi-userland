@@ -1,0 +1,16 @@
+# Internal fix for mishandling of invalid Unicode character sequences.
+# See bug 21021316.  Not for upstream.
+--- lib/sh/strtrans.c	Sat Feb 15 20:18:18 2014
++++ lib/sh/strtrans.c	Fri Nov  6 02:12:33 2015
+@@ -309,8 +309,9 @@
+ 
+   slen = mbstowcs (wcstr, string, 0);
+ 
+-  if (slen == -1)
+-    slen = 0;
++  if (slen == (size_t)-1)
++    return 1;
++
+   wcstr = (wchar_t *)xmalloc (sizeof (wchar_t) * (slen + 1));
+   mbstowcs (wcstr, string, slen + 1);
+ 

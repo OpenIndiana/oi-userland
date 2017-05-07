@@ -1,0 +1,113 @@
+diff -urN -x'*.orig' rarian-0.6.0/config.h.in ../SUNWgnome-libs-2.20.1.hacked/rarian-0.6.0/config.h.in
+--- rarian-0.6.0/config.h.in	2007-09-12 18:03:28.000000000 +0000
++++ ../SUNWgnome-libs-2.20.1.hacked/rarian-0.6.0/config.h.in	2008-02-19 15:48:22.440903000 +0000
+@@ -45,6 +45,10 @@
+ /* Define to 1 if you have the <unistd.h> header file. */
+ #undef HAVE_UNISTD_H
+ 
++/* 
++/* Define to 1 if you have the nawk. */
++#undef HAVE_NAWK
++
+ /* Name of package */
+ #undef PACKAGE
+ 
+diff -urN -x'*.orig' rarian-0.6.0/configure.ac ../SUNWgnome-libs-2.20.1.hacked/rarian-0.6.0/configure.ac
+--- rarian-0.6.0/configure.ac	2007-09-12 18:00:33.000000000 +0000
++++ ../SUNWgnome-libs-2.20.1.hacked/rarian-0.6.0/configure.ac	2008-02-19 15:50:16.504781000 +0000
+@@ -156,6 +156,8 @@
+ 
+ AC_PATH_PROG(have_bash, bash)
+ 
++AC_PATH_PROG(have_nawk, nawk)
++
+ AC_SUBST(BASH, $have_bash)
+ 
+ # Checks for header files.
+diff -urN -x'*.orig' rarian-0.6.0/util/rarian-sk-update.in ../SUNWgnome-libs-2.20.1.hacked/rarian-0.6.0/util/rarian-sk-update.in
+--- rarian-0.6.0/util/rarian-sk-update.in	2007-09-01 17:22:35.000000000 +0000
++++ ../SUNWgnome-libs-2.20.1.hacked/rarian-0.6.0/util/rarian-sk-update.in	2008-02-19 16:13:18.177300000 +0000
+@@ -149,13 +149,13 @@
+ skip_directory ()
+ {
+ 	read line
+-	time=`echo $line | awk -F ":@:" '{print $1}'`
++	time=`echo $line | @AWK@ -F ":@:" '{print $1}'`
+ 	while [[ $time -ne 0 ]]
+ 	do
+ 		echo $line
+ 		echo $line >> $tmpdir/rarian-updates
+ 		read line
+-		time=`echo $line | awk -F ":@:" '{print $1}'`
++		time=`echo $line | @AWK@ -F ":@:" '{print $1}'`
+ 	done
+ }
+ 
+@@ -205,11 +205,11 @@
+ 
+ 	read line
+ 
+-	old_time=`echo $line | awk -F ":@:" '{print $1}'`
++	old_time=`echo $line | @AWK@ -F ":@:" '{print $1}'`
+ 
+ 	while [[ $old_time && $old_time != "0" ]]
+ 	do
+-		name=`echo $line | awk -F ":@:" '{print $2}'`
++		name=`echo $line | @AWK@ -F ":@:" '{print $2}'`
+ 
+ 		dirs_contains $name
+ 
+@@ -224,7 +224,7 @@
+ 				echo $line >> $tmpdir/rarian-updates
+ 			fi
+ 		else
+-			filenames=`echo $line | awk -F ":@:" '{print $3}'`
++			filenames=`echo $line | @AWK@ -F ":@:" '{print $3}'`
+ 			while [[ $filenames ]]
+ 			do
+ 				entry=`echo $filenames | cut -d ';' -f 1`
+@@ -237,7 +237,7 @@
+ 		fi
+ 
+ 		read line
+-		old_time=`echo $line | awk -F ":@:" '{print $1}'`
++		old_time=`echo $line | @AWK@ -F ":@:" '{print $1}'`
+ 	done
+ 
+ 	for i in ${entries[@]}
+@@ -264,9 +264,7 @@
+ # They are inherited from scrollkeeper :(
+ 
+ # We use TEMP as set -- seems to nuke the return value of getopt
+-TEMP=`getopt -u -n$(basename $0) -o "o:r:p:vqnhV" \
+-    	     -- "$@"` \
+-    || print_usage
++TEMP=`getopt "o:r:p:vqnhV"` || print_usage
+ 
+ if [ $? != 0 ] ; then
+ 	print_usage
+@@ -369,7 +369,7 @@
+ exec < $statedir/rarian-update-mtimes
+ 
+ read line
+-fname=`echo $line | awk -F ":@:" '{print $2}'`
++fname=`echo $line | @AWK@ -F ":@:" '{print $2}'`
+ 
+ 
+ while [[ $fname != "" ]]
+@@ -387,7 +387,7 @@
+ 	    else
+ 		skip_directory
+ 	    fi
+-	    fname=`echo $line | awk -F ":@:" '{print $2}'`
++	    fname=`echo $line | @AWK@ -F ":@:" '{print $2}'`
+ 	fi
+ done
+ 
+@@ -416,4 +416,4 @@
+ fi
+ rm -rf $tmpdir
+ 
+-fi # ENABLE_OMF_READ
+\ No newline at end of file
++fi # ENABLE_OMF_READ

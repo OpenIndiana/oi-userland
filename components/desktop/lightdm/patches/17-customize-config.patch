@@ -1,0 +1,108 @@
+We need to customize default configuration:
+1) use Xorg instead X, as X will implicitly add "-nolisten tcp", and lightdm manages this parameter itself;
+2) run Xvnc with "securitytypes=none" option;
+3) set default color depth for Xvnc to 16, otherwise gtk applications will fail to work correctly;
+4) use gdm-autologin as default autologin service, as currently we can't change default pam entries;
+5) hide user list by default.
+
+--- lightdm-1.19.3/src/lightdm.c.~3~	2016-08-12 19:54:56.871477375 +0300
++++ lightdm-1.19.3/src/lightdm.c	2016-08-12 19:54:56.927097430 +0300
+@@ -1454,11 +1454,11 @@
+     if (!config_has_key (config_get_instance (), "Seat:*", "pam-service"))
+         config_set_string (config_get_instance (), "Seat:*", "pam-service", "lightdm");
+     if (!config_has_key (config_get_instance (), "Seat:*", "pam-autologin-service"))
+-        config_set_string (config_get_instance (), "Seat:*", "pam-autologin-service", "lightdm-autologin");
++        config_set_string (config_get_instance (), "Seat:*", "pam-autologin-service", "gdm-autologin");
+     if (!config_has_key (config_get_instance (), "Seat:*", "pam-greeter-service"))
+         config_set_string (config_get_instance (), "Seat:*", "pam-greeter-service", "lightdm-greeter");
+     if (!config_has_key (config_get_instance (), "Seat:*", "xserver-command"))
+-        config_set_string (config_get_instance (), "Seat:*", "xserver-command", "X");
++        config_set_string (config_get_instance (), "Seat:*", "xserver-command", "Xorg");
+     if (!config_has_key (config_get_instance (), "Seat:*", "xmir-command"))
+         config_set_string (config_get_instance (), "Seat:*", "xmir-command", "Xmir");
+     if (!config_has_key (config_get_instance (), "Seat:*", "xserver-share"))
+--- lightdm-1.19.3/data/lightdm.conf.~1~	2016-06-20 03:31:51.000000000 +0300
++++ lightdm-1.19.3/data/lightdm.conf	2016-08-12 19:58:31.887145185 +0300
+@@ -61,7 +61,7 @@
+ # unity-compositor-command = Unity compositor command to run (can also contain arguments e.g. unity-system-compositor -special-option)
+ # unity-compositor-timeout = Number of seconds to wait for compositor to start
+ # greeter-session = Session to load for greeter
+-# greeter-hide-users = True to hide the user list
++# greeter-hide-users = False to show the user list
+ # greeter-allow-guest = True if the greeter should show a guest login option
+ # greeter-show-manual-login = True if the greeter should offer a manual login option
+ # greeter-show-remote-login = True if the greeter should offer a remote login option
+@@ -87,10 +87,10 @@
+ [Seat:*]
+ #type=local
+ #pam-service=lightdm
+-#pam-autologin-service=lightdm-autologin
++#pam-autologin-service=gdm-autologin
+ #pam-greeter-service=lightdm-greeter
+ #xserver-backend=
+-#xserver-command=X
++#xserver-command=Xorg
+ #xmir-command=Xmir
+ #xserver-config=
+ #xserver-layout=
+@@ -108,7 +108,7 @@
+ #greeter-allow-guest=true
+ #greeter-show-manual-login=false
+ #greeter-show-remote-login=true
+-#user-session=default
++#user-session=mate
+ #allow-user-switching=true
+ #allow-guest=true
+ #guest-session=
+@@ -159,9 +159,9 @@
+ #
+ [VNCServer]
+ #enabled=false
+-#command=Xvnc
++#command=Xvnc securitytypes=none
+ #port=5900
+ #listen-address=
+ #width=1024
+ #height=768
+-#depth=8
++#depth=16
+--- lightdm-1.19.3/src/x-server-xvnc.c.1	2016-08-12 19:37:09.393184216 +0300
++++ lightdm-1.19.3/src/x-server-xvnc.c	2016-08-12 19:40:55.925547899 +0300
+@@ -36,7 +36,7 @@
+ {
+     XServerXVNC *server = g_object_new (X_SERVER_XVNC_TYPE, NULL);
+ 
+-    x_server_local_set_command (X_SERVER_LOCAL (server), "Xvnc");
++    x_server_local_set_command (X_SERVER_LOCAL (server), "Xvnc securitytypes=none");
+ 
+     return server;
+ }
+@@ -121,7 +121,7 @@
+     server->priv = G_TYPE_INSTANCE_GET_PRIVATE (server, X_SERVER_XVNC_TYPE, XServerXVNCPrivate);
+     server->priv->width = 1024;
+     server->priv->height = 768;
+-    server->priv->depth = 8;
++    server->priv->depth = 16;
+ }
+ 
+ static void
+--- lightdm-1.19.3/src/seat.c.1	2016-08-13 10:39:56.098357291 +0300
++++ lightdm-1.19.3/src/seat.c	2016-08-13 10:56:21.727142124 +0300
+@@ -545,9 +545,16 @@
+ static void
+ set_greeter_hints (Seat *seat, Greeter *greeter)
+ {
++    gchar *hide;
++
+     greeter_clear_hints (greeter);
+     greeter_set_hint (greeter, "default-session", seat_get_string_property (seat, "user-session"));
+-    greeter_set_hint (greeter, "hide-users", seat_get_boolean_property (seat, "greeter-hide-users") ? "true" : "false");
++
++    hide=seat_get_string_property (seat, "greeter-hide-users");
++    if(hide && (strncmp(hide,"false",5)==0)) 
++      greeter_set_hint (greeter, "hide-users","false");
++    else
++      greeter_set_hint (greeter, "hide-users","true");
+     greeter_set_hint (greeter, "show-manual-login", seat_get_boolean_property (seat, "greeter-show-manual-login") ? "true" : "false");
+     greeter_set_hint (greeter, "show-remote-login", seat_get_boolean_property (seat, "greeter-show-remote-login") ? "true" : "false");
+     greeter_set_hint (greeter, "has-guest-account", seat_get_allow_guest (seat) && seat_get_boolean_property (seat, "greeter-allow-guest") ? "true" : "false");

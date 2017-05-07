@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+ Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+
+ NOTE:  This service manifest is not editable; its contents will
+ be overwritten by package or patch operations, including
+ operating system upgrade.  Make customizations in a different
+ file.
+-->
+
+<service_bundle type='manifest' name='SUNWntpr:ntp'>
+
+<service
+	name='network/ntp'
+	type='service'
+	version='1'>
+	<single_instance />
+	<dependency 
+		name='network'
+		grouping='require_any'
+		restart_on='error'
+		type='service'>
+		<service_fmri value='svc:/network/service' />
+	</dependency>
+
+	<dependency
+		name='filesystem'
+		grouping='require_all'
+		restart_on='error'
+		type='service'>
+		    <service_fmri value='svc:/system/filesystem/minimal' />
+	</dependency>
+
+<!--	<dependent
+	    name='ntp_multi-user'
+	    grouping='optional_all'
+	    restart_on='none'>
+		<service_fmri value='svc:/milestone/multi-user' />
+	</dependent>
+-->
+
+	<exec_method
+	    type='method'
+    	    name='start'
+    	    exec='/lib/svc/method/ntp %m'
+    	    timeout_seconds='600'>
+		<method_context>
+			<method_credential
+			    user='root'
+			    group='root'
+			    privileges='basic,!file_link_any,!proc_info,!proc_session,net_privaddr,proc_lock_memory,sys_time'
+			/>
+		</method_context>
+	</exec_method>
+
+	<exec_method
+	    type='method'
+    	    name='restart'
+    	    exec='/lib/svc/method/ntp %m'
+    	    timeout_seconds='1800'>
+		<method_context>
+			<method_credential
+			    user='root'
+			    group='root'
+			    privileges='basic,!file_link_any,!proc_info,!proc_session,net_privaddr,proc_lock_memory,sys_time'
+			/>
+		</method_context>
+	</exec_method>
+
+	<exec_method
+    	    type='method'
+    	    name='stop'
+    	    exec=':kill'
+    	    timeout_seconds='60' />
+
+	<property_group name='general' type='framework'>
+		<!-- to start stop ntpd -->
+		<propval name='action_authorization' type='astring'
+		value='solaris.smf.manage.ntp' />
+		<propval name='value_authorization' type='astring'
+		value='solaris.smf.value.ntp' />
+	</property_group>
+
+	<instance name="default" enabled="false">
+		<property_group name='config' type='application' >
+			<!-- default property settings for ntpd(1M). -->
+		
+			<propval
+			    name='wait_for_sync'
+			    type='boolean'
+			    value='false' />
+		
+			<propval
+			    name='no_auth_required'
+			    type='boolean'
+			    value='false' />
+		
+			<propval
+			    name='verbose_logging'
+			    type='boolean'
+			    value='false' />
+	
+			<propval
+			    name='slew_always'
+			    type='boolean'
+			    value='false' />
+
+			<propval
+			    name='allow_step_at_boot'
+			    type='boolean'
+			    value='true' />
+	
+			<propval
+			    name='always_allow_large_step'
+			    type='boolean'
+			    value='true' />
+	
+			<propval
+			    name='logfile'
+			    type='astring'
+			    value='/var/ntp/ntp.log' />
+		
+			<propval
+			    name='debuglevel'
+			    type='integer'
+			    value='0' />
+	
+			<propval
+			    name='mdnsregister'
+			    type='boolean'
+			    value='false' />
+	
+			<!-- to change properties -->
+			<propval
+			    name='value_authorization'
+			    type='astring'
+			    value='solaris.smf.value.ntp' />
+		
+		</property_group>
+	</instance>
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+			Network Time Protocol (NTP) Version 4
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='ntpd' section='1M' />
+			<manpage title='ntp.conf' section='4' />
+			<manpage title='ntpq' section='1M' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>

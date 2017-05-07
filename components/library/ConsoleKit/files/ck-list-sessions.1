@@ -1,0 +1,344 @@
+'\" te
+.TH ck-list-sessions 1 "22 Oct 2009" "SunOS 5.11" "User Commands"
+.SH "NAME"
+ck-list-sessions \- Show ConsoleKit Session Information
+.SH "SYNOPSIS"
+.PP
+\fBck-list-sessions\fR [-\fB-all\fR] [-\fB-sid=\fIsid\fR\fR] [-\fB-format=\fIformat\fR\fR] [-\fB-help\fR] [-\fB-version\fR]
+.SH "DESCRIPTION"
+.PP
+\fBck-list-sessions\fR is a utility that displays information from the
+ConsoleKit database\&.  By default, only open sessions are shown\&.  The
+-\fB-all\fR option can be used to display all existing sessions on
+the system\&.  \fBck-list-sessions\fR returns information about each ConsoleKit
+session\&.  Users can specify which properties to display via the
+-\fB-format\fR option\&.
+.PP
+The following properties can be displayed for each session:
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.sp
+.ne 2
+.mk
+\fB-\fBa\fR, -\fB-all\fR\fR
+.in +24n
+.rt
+Show all ConsoleKit sessions\&.  If this option is not provided, only open
+sessions are shown\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB-\fBs\fR, -\fB-sid=\fIsid\fR\fR\fR
+.in +24n
+.rt
+Show one ConsoleKit session with session id \fIsid\fR\&.  
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB-\fBf\fR, -\fB-format=\fIformat\fR\fR\fR
+.in +24n
+.rt
+Display information using the specified \fIformat\fR\&.  The
+\fIformat\fR value is a list of properties to display
+separated by commas\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB-\fBh\fR, -\fB-help\fR\fR
+.in +24n
+.rt
+Display detailed usage message\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB-\fBV\fR, -\fB-version\fR\fR
+.in +24n
+.rt
+Display the version of the \fBck-list-sessions\fR application\&.
+.sp
+.sp 1
+.in -24n
+.SH "EXTENDED DESCRIPTION"
+.SS "ConsoleKit session properties"
+.PP
+For each session, the following session properties are displayed:
+.sp
+.ne 2
+.mk
+\fBunix-user\fR
+.in +24n
+.rt
+The user id value associated with the session\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBrealname\fR
+.in +24n
+.rt
+The name of the user associated with the session\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBseat\fR
+.in +24n
+.rt
+The ID for the ConsoleKit Seat associated with the session\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBsession-type\fR
+.in +24n
+.rt
+The ConsoleKit session type\&.  This value is specified by the "Type"
+key in the ConsoleKit session configuration file associated with this session\&. 
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBdisplay-type\fR
+.in +24n
+.rt
+The ConsoleKit display type\&.  This value is specified by the
+"DisplayTemplate" key in the ConsoleKit session configuration file
+associated with this session\&. 
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBopen\fR
+.in +24n
+.rt
+The value is "TRUE" if the session is open, and "FALSE"
+otherwise\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBactive\fR
+.in +24n
+.rt
+The value is "TRUE" if the session is active on the seat to which it
+is attached, and "FALSE" otherwise\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBx11-display\fR
+.in +24n
+.rt
+The value of the X11 DISPLAY environment variable for this session if one is
+present\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBx11-display-device\fR
+.in +24n
+.rt
+The value of the display device that the X11 display for the session is
+connected to\&.  If there is no x11-display set, then this value is undefined\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBdisplay-device\fR
+.in +24n
+.rt
+The display device associated with the session\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBremote-host\fR
+.in +24n
+.rt
+If the session is not local, the value is the host name associated with the
+session\&.  If the session is local, the value is empty\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBis-local\fR
+.in +24n
+.rt
+The value is "TRUE" if the session is local, and "FALSE"
+if remote\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBon-since\fR
+.in +24n
+.rt
+An ISO 8601 date-time string that corresponds to the time the session started\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBlogin-session-id\fR
+.in +24n
+.rt
+The value of the login session ID that the underlying system uses to enforce
+session boundaries\&. If there is no login session ID set then this value is an
+empty string\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBidle-since-hint\fR
+.in +24n
+.rt
+An ISO 8601 date-time string that corresponds to the time of the last change of
+the idle-hint\&.  This is a hint used to indicate that the session may be idle\&.
+For sessions with a x11-display set (ie\&. graphical sessions), it is up to each
+session to delegate the responsibility for updating this value\&. Typically, the
+screensaver will set this\&.
+.sp
+However, for non-graphical sessions with a display-device set the Session
+object itself will periodically update this value based on the activity
+detected on the display-device itself\&.
+.sp
+This should not be considered authoritative\&. 
+.sp
+.sp 1
+.in -24n
+.SH "EXAMPLES"
+.PP
+\fBExample 1: Show running sessions\&.\fR
+.PP
+.PP
+.nf
+example% \fBck-list-sessions\fR
+.fi
+.PP
+This command would generate output like the following for each session:
+.PP
+.PP
+.nf
+SessionSeat1Local:
+        unix-user = \&'50\&'
+        realname = \&'GDM Reserved UID\&'
+        seat = \&'Seat1\&'
+        session-type = \&'LoginWindow\&'
+        display-type = \&'Local\&'
+        open = \&'TRUE\&'
+        active = \&'TRUE\&'
+        x11-display = \&':0\&'
+        x11-display-device = \&'/dev/console\&'
+        display-device = \&'/dev/console\&'
+        remote-host-name = \&'\&'
+        is-local = \&'TRUE\&'
+        on-since = \&'2009-08-11T06:46:42\&.941134Z\&'
+        login-session-id = \&'\&'
+        idle-since-hint = \&'\&'
+.fi
+.PP
+\fBExample 2: Show only the session-id, unix-user, and display-type properties\&.\fR
+.PP
+.PP
+.nf
+example% \fBck-list-sessions -\fB-format="session-id,unix-user,display-type"\fR\fR
+.fi
+.PP
+This command would generate output like the following for each session:
+.PP
+.PP
+.nf
+SessionSeat1Local       50      Local
+.fi
+.SH "FILES"
+.PP
+The following files are used by this application:
+.sp
+.ne 2
+.mk
+\fB\fB/usr/bin/ck-list-sessions\fR\fR
+.sp .6
+.in +4
+Executable for Show ConsoleKit Session Information\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/etc/ConsoleKit/session\&.d\fR\fR
+.sp .6
+.in +4
+ConsoleKit session configuration files\&.
+.sp
+.sp 1
+.in -4
+.SH "ATTRIBUTES"
+.PP
+See
+\fBattributes\fR(5)
+for descriptions of the following attributes:
+.sp
+.TS
+tab() allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPEATTRIBUTE VALUE
+Availabilitylibrary/xdg/consolekit
+Interface stabilityVolatile
+.TE
+.sp
+.SH "SEE ALSO"
+.PP
+\fBck-history\fR(1),
+\fBck-launch-session\fR(1),
+\fBck-seat-tool\fR(1m),
+\fBconsole-kit-daemon\fR(1m),
+\fBgdm\fR(1m),
+\fBattributes\fR(5)
+.SH "NOTES"
+.PP
+Written by Brian Cameron, Sun Microsystems Inc\&., 2009\&.
+Copyright (c) 2009 by Sun Microsystems, Inc\&.
+...\" created by instant / solbook-to-man, Tue 27 Jan 2015, 17:22
+...\" LSARC 2009/432 ConsoleKit 

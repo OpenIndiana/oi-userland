@@ -1,0 +1,60 @@
+From: =?utf-8?q?C=C3=A9dric_Barboiron?= <ced@winkie.fr>
+Date: Thu, 28 May 2015 14:30:05 +0200
+Subject: (PUP-4633) fix non-ASCII user comment with ruby >= 2.1
+
+Conflicts:
+	spec/unit/type/user_spec.rb
+---
+ lib/puppet/type/user.rb     |  6 ++++--
+ spec/unit/type/user_spec.rb | 21 ++++++++++++++-------
+ 2 files changed, 18 insertions(+), 9 deletions(-)
+
+diff --git a/lib/puppet/type/user.rb b/lib/puppet/type/user.rb
+index 81ad39a..0df5978 100644
+--- a/lib/puppet/type/user.rb
++++ b/lib/puppet/type/user.rb
+@@ -167,8 +167,10 @@ module Puppet
+ 
+     newproperty(:comment) do
+       desc "A description of the user.  Generally the user's full name."
+-      munge do |v|
+-        v.respond_to?(:force_encoding) ? v.force_encoding(Encoding::ASCII_8BIT) : v
++      if RUBY_VERSION < "2.1.0"
++        munge do |v|
++          v.respond_to?(:force_encoding) ? v.force_encoding(Encoding::ASCII_8BIT) : v
++        end
+       end
+     end
+ 
+diff --git a/spec/unit/type/user_spec.rb b/spec/unit/type/user_spec.rb
+index 9740543..933e5fa 100755
+--- a/spec/unit/type/user_spec.rb
++++ b/spec/unit/type/user_spec.rb
+@@ -344,13 +344,20 @@ describe Puppet::Type.type(:user) do
+     end
+   end
+ 
+-  describe "when managing comment on Ruby 1.9", :if => String.method_defined?(:encode) do
+-    it "should force value encoding to ASCII-8BIT" do
+-      value = 'abcd™'
+-      value.encoding.should == Encoding::UTF_8
+-      user = described_class.new(:name => 'foo', :comment => value)
+-      user[:comment].encoding.should == Encoding::ASCII_8BIT
+-      user[:comment].should == value.force_encoding(Encoding::ASCII_8BIT)
++  describe "when managing comment" do
++    before :each do
++      @value = 'abcd™'
++      expect(@value.encoding).to eq(Encoding::UTF_8)
++      @user = described_class.new(:name => 'foo', :comment => @value)
++    end
++
++    it "should be converted to ASCII_8BIT for ruby 1.9 / 2.0", :if => RUBY_VERSION < "2.1.0" && String.method_defined?(:encode) do
++      expect(@user[:comment].encoding).to eq(Encoding::ASCII_8BIT)
++      expect(@user[:comment]).to eq(@value.force_encoding(Encoding::ASCII_8BIT))
++    end
++
++    it "must not be converted for ruby >= 2.1", :if => RUBY_VERSION >= "2.1.0" do
++      expect(@user[:comment].encoding).to eq(Encoding::UTF_8)
+     end
+   end
+ 

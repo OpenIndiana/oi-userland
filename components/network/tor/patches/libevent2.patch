@@ -1,0 +1,22 @@
+--- tor-0.2.9.10/configure.ac.~1~	2017-02-28 18:39:07.000000000 +0300
++++ tor-0.2.9.10/configure.ac	2017-05-02 21:45:09.166360297 +0300
+@@ -498,7 +498,7 @@
+     fi
+ fi
+ 
+-TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent $STATIC_LIBEVENT_FLAGS $TOR_LIB_WS32], [
++TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent-2.0 $STATIC_LIBEVENT_FLAGS $TOR_LIB_WS32], [
+ #ifdef _WIN32
+ #include <winsock2.h>
+ #endif
+@@ -536,8 +536,8 @@
+    fi
+ else
+      if test "x$ac_cv_header_event2_event_h" = "xyes"; then
+-       AC_SEARCH_LIBS(event_new, [event event_core], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for event_new"))
+-       AC_SEARCH_LIBS(evdns_base_new, [event event_extra], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for evdns_base_new"))
++       AC_SEARCH_LIBS(event_new, [event-2.0 event_core-2.0], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for event_new"))
++       AC_SEARCH_LIBS(evdns_base_new, [event-2.0 event_extra-2.0], , AC_MSG_ERROR("libevent2 is installed but linking it failed while searching for evdns_base_new"))
+ 
+        if test "$ac_cv_search_event_new" != "none required"; then
+          TOR_LIBEVENT_LIBS="$ac_cv_search_event_new"

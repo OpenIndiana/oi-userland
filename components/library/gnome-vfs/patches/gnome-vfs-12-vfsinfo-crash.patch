@@ -1,0 +1,51 @@
+--- gnome-vfs-2.21.90/programs/gnomevfs-info.c.orig	2008-02-07 09:30:17.904787000 +0100
++++ gnome-vfs-2.21.90/programs/gnomevfs-info.c	2008-02-07 09:36:38.887962000 +0100
+@@ -79,16 +79,16 @@ show_acl (GnomeVFSACL *acl)
+ 		GnomeVFSACLKind  kind;
+ 		GnomeVFSACE     *ace;
+ 		GnomeVFSACLPerm *perms;
+-		gboolean         negative;
+-		gboolean         inherit;
++		gint             type;
++		gint             inherance;
+ 		char            *id;
+ 		const char      *kind_str;
+ 		
+ 		ace = GNOME_VFS_ACE (iter->data);
+ 		
+ 		kind = GNOME_VFS_ACL_KIND_NULL;
+-		inherit = FALSE;
+-		negative = FALSE;
++		inherance = 0;
++		type = 0;
+ 		id = "";
+ 		perms = NULL;
+ 		
+@@ -96,8 +96,8 @@ show_acl (GnomeVFSACL *acl)
+ 		              "kind", &kind, 
+ 		              "id", &id,
+ 		              "permissions", &perms,
+-		              "negative", &negative,
+-		              "inherit", &inherit,
++			      "type", &type,
++			      "inherance", &inherance,
+ 		              NULL);
+ 	
+ 		kind_str = gnome_vfs_acl_kind_to_string (kind);
+@@ -118,14 +118,8 @@ show_acl (GnomeVFSACL *acl)
+ 			}	
+ 		}
+ 		
+-		if (inherit || negative) {
+-			if (inherit && negative) {
+-				printf (" (negative, inherit)");
+-			} else {
+-				printf (" (%s)", negative ? "negative" : "inherit");	
+-			}
+-		}
+-		
++		printf ("type: %s ", gnome_vfs_acl_type_to_string(type));
++		printf ("inherance: %s", gnome_vfs_acl_inherance_to_string(inherance));
+ 		printf ("\n");
+ 	}
+ 	

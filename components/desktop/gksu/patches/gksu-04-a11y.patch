@@ -1,0 +1,68 @@
+--- gksu-2.0.2/gksu/gksu.c-orig	2011-01-05 16:53:59.322662397 -0600
++++ gksu-2.0.2/gksu/gksu.c	2011-01-05 16:54:01.300784043 -0600
+@@ -27,7 +27,7 @@
+ 
+ /* GLOBALS */
+ gboolean print_pass = FALSE;
+-gboolean force_grab = FALSE;
++gboolean force_grab = TRUE;
+ gboolean prompt = FALSE;
+ gboolean elevated_privilege = TRUE;
+ gboolean elevated_role = TRUE;
+@@ -540,6 +540,11 @@ main (int argc, char **argv)
+ 
+   int c = 0;
+ 
++  char **gconf_argv;
++  char *gconf_cmd;
++  char *std_output;
++  char *std_error;
++
+   setlocale (LC_ALL, "");
+   bindtextdomain(PACKAGE_NAME, LOCALEDIR);
+   bind_textdomain_codeset (PACKAGE_NAME, "UTF-8");
+@@ -676,8 +681,42 @@ main (int argc, char **argv)
+     g_free (myname);
+   }
+ 
+-  if (force_grab)
+-    gksu_context_set_grab (context, TRUE);
++  /*
++   * Disable the grab if accessibility is on, since it causes issues
++   * for GOK, dasher and other AT programs where the user may need to interact
++   * with other GUI programs.  Note that we call gconftool-2 instead of using
++   * GConf interfaces since it seems using GConf in gksu causes problems for
++   * a11y if you run a program with gksu that has a GUI.  The launched program
++   * will not work with a11y if gksu uses GConf, but calling gconftool-2 works.
++   */
++  gconf_cmd = g_strdup ("/usr/bin/gconftool-2 --get /desktop/gnome/interface/accessibility");
++  error = NULL;
++  std_output = NULL;
++  std_error = NULL;
++
++  g_shell_parse_argv (gconf_cmd, NULL, &gconf_argv, &error);
++
++  error = NULL;
++
++  g_spawn_sync (NULL,
++                gconf_argv,
++                NULL,
++                0,
++                NULL,
++                NULL,
++                &std_output,
++                &std_error,
++                NULL,
++                &error);
++
++  g_strchomp (std_output);
++
++  if (std_output != NULL && strcmp (std_output, "true") == 0)
++    {
++      force_grab = FALSE;
++    }
++
++  gksu_context_set_grab (context, force_grab);
+ 
+   if (prompt)
+     {

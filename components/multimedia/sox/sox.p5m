@@ -1,0 +1,63 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/audio/sox@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="SoX is a cross-platform command line utility that can convert various formats of computer audio files into other formats."
+set name=pkg.summary \
+    value="Sound eXchange, the Swiss Army knife of audio manipulation."
+set name=com.oracle.info.description value="the sox audio conversion utility"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/Sound and Video"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid \
+    value=LSARC/2009/445
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/$(MACH64)/sox
+file path=usr/bin/sox
+file path=usr/include/sox.h
+file path=usr/lib/$(MACH64)/libsox.so.2.0.1
+file path=usr/lib/$(MACH64)/pkgconfig/sox.pc
+file path=usr/lib/libsox.so.2.0.1
+file path=usr/lib/pkgconfig/sox.pc
+file path=usr/share/man/man1/sox.1
+file path=usr/share/man/man1/soxi.1
+file path=usr/share/man/man3/libsox.3
+file soxformat.7 path=usr/share/man/man4/soxformat.4
+license sox.license license="GPLv2, LGPLv2.1"
+link path=usr/bin/$(MACH64)/play target=sox
+link path=usr/bin/$(MACH64)/rec target=sox
+link path=usr/bin/$(MACH64)/soxi target=sox
+link path=usr/bin/play target=sox
+link path=usr/bin/rec target=sox
+link path=usr/bin/soxi target=sox
+link path=usr/lib/$(MACH64)/libsox.so target=libsox.so.2.0.1
+link path=usr/lib/$(MACH64)/libsox.so.2 target=libsox.so.2.0.1
+link path=usr/lib/libsox.so target=libsox.so.2.0.1
+link path=usr/lib/libsox.so.2 target=libsox.so.2.0.1
+link path=usr/share/man/man1/play.1 target=sox.1
+link path=usr/share/man/man1/rec.1 target=sox.1
+link path=usr/share/man/man5/soxeffect.5 target=../man1/sox.1

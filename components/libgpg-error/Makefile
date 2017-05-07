@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2013 Colin Ellis. All rights reserved.
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
-COMPONENT_VERSION=	1.11
+COMPONENT_VERSION=	1.19
 COMPONENT_PROJECT_URL=	http://www.gnupg.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:ae3376480a073b120c7add08f1e6cfcc08500648ccf22461cd42db6224a218c0
+    sha256:53120e1333d5c5d28d87ff2854e9e98719c8e214152f17ad5291704d25c4978b
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -37,7 +38,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           CFLAGS="$(CFLAGS)"
 
 build:		$(BUILD_32_and_64)
 

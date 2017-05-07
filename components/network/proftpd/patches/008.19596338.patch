@@ -1,0 +1,157 @@
+diff --git a/include/glibc-glob.h b/include/glibc-glob.h
+index 422089a..a55899a 100644
+--- a/include/glibc-glob.h
++++ b/include/glibc-glob.h
+@@ -85,6 +85,7 @@ extern "C" {
+ #define	GLOB_ABORTED	2	/* Read error.  */
+ #define	GLOB_NOMATCH	3	/* No matches found.  */
+ #define GLOB_NOSYS	4	/* Not implemented.  */
++#define GLOB_LIMIT	5       /* MAX_RESULTS limit reached */
+ #ifdef _GNU_SOURCE
+ /* Previous versions of this file defined GLOB_ABEND instead of
+    GLOB_ABORTED.  Provide a compatibility definition here.  */
+diff --git a/lib/glibc-glob.c b/lib/glibc-glob.c
+index 43b02bc..92c2b94 100644
+--- a/lib/glibc-glob.c
++++ b/lib/glibc-glob.c
+@@ -40,6 +40,15 @@ char *alloca ();
+ #define MAX_RECURSION 	PR_TUNABLE_GLOBBING_MAX_RECURSION
+ #define MAX_RESULTS	PR_TUNABLE_GLOBBING_MAX_MATCHES
+ 
++unsigned long GlobMaxResults = 0;
++
++static unsigned long get_globmaxresults(void)
++{
++  if (GlobMaxResults > 0)
++    return GlobMaxResults;
++  return MAX_RESULTS;
++}
++
+ /* Enable GNU extensions in glob.h.  */
+ #ifndef _GNU_SOURCE
+ # define _GNU_SOURCE	1
+@@ -239,8 +248,6 @@ extern void bcopy ();
+ # define mempcpy(Dest, Src, Len) __mempcpy (Dest, Src, Len)
+ #endif
+ 
+-static unsigned long nbresults;
+-
+ #ifndef	__GNU_LIBRARY__
+ # ifdef	__GNUC__
+ __inline
+@@ -1157,7 +1164,6 @@ int
+ glob (const char *pattern, int flags, int (*errfunc) __P((const char *, int)),
+     glob_t *pglob)
+ {
+-	nbresults = 0UL;
+ 	return glob_limited(0U, pattern, flags, errfunc, pglob);
+ }
+ 
+@@ -1318,6 +1324,7 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
+   size_t nfound;
+   int meta;
+   int save;
++  int ret_glob_limit = 0;
+ 
+   meta = __glob_pattern_p (pattern, !(flags & GLOB_NOESCAPE));
+   if (meta == 0 && (flags & (GLOB_NOCHECK|GLOB_NOMAGIC)))
+@@ -1428,10 +1435,6 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
+ #endif
+ 		  if (d == NULL)
+ 		    break;
+-		  if (nbresults > MAX_RESULTS) {	
+-			  break;
+-		  }
+-		  nbresults++;	
+ 		  if (! REAL_DIR_ENTRY (d))
+ 		    continue;
+ 
+@@ -1463,6 +1466,14 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
+ 		      new->next = names;
+ 		      names = new;
+ 		      ++nfound;
++
++		      if (nfound > get_globmaxresults()) {
++                        for (; names != NULL; names = names->next)
++                          free(names->name);
++                        nfound = 0;
++		        ret_glob_limit = 1;
++		        break;
++		      }
+ 		    }
+ 		}
+ 	    }
+@@ -1516,6 +1527,9 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
+     }
+   __set_errno (save);
+ 
++  if (ret_glob_limit)
++    return GLOB_LIMIT;
++
+   return nfound == 0 ? GLOB_NOMATCH : 0;
+ 
+  memory_error:
+diff --git a/modules/mod_core.c b/modules/mod_core.c
+index e33ee11..1f6da19 100644
+--- a/modules/mod_core.c
++++ b/modules/mod_core.c
+@@ -973,6 +973,26 @@ MODRET set_maxconnrate(cmd_rec *cmd) {
+   return PR_HANDLED(cmd);
+ }
+ 
++extern unsigned long GlobMaxResults;
++
++MODRET set_globmaxresults(cmd_rec *cmd) {
++  unsigned long max;
++  char *endp;
++
++  CHECK_ARGS(cmd,1);
++  CHECK_CONF(cmd,CONF_ROOT);
++
++  max = strtoul(cmd->argv[1], &endp, 10);
++
++  if ((endp && *endp) || max == 0)
++    CONF_ERROR(cmd, "argument must be greater than 0");
++
++  pr_log_debug(DEBUG1, "setting GlobMaxResults to %lu", max);
++
++  GlobMaxResults = max;
++  return PR_HANDLED(cmd);
++}
++
+ MODRET set_timeoutidle(cmd_rec *cmd) {
+   int timeout = -1;
+   config_rec *c = NULL;
+@@ -6108,6 +6128,7 @@ static conftable core_conftab[] = {
+   { "DisplayConnect",		set_displayconnect,		NULL },
+   { "DisplayQuit",		set_displayquit,		NULL },
+   { "From",			add_from,			NULL },
++  { "GlobMaxResults",		set_globmaxresults,	        NULL },
+   { "Group",			set_group, 			NULL },
+   { "GroupOwner",		add_groupowner,			NULL },
+   { "HideFiles",		set_hidefiles,			NULL },
+diff --git a/modules/mod_ls.c b/modules/mod_ls.c
+index 5b95d2b..e8bbb74 100644
+--- a/modules/mod_ls.c
++++ b/modules/mod_ls.c
+@@ -2015,6 +2015,8 @@ static int dolist(cmd_rec *cmd, const char *opt, int clearflags) {
+         pr_response_add(R_226, _("Read error during globbing of %s"),
+           pr_fs_encode_path(cmd->tmp_pool, arg));
+ 
++      } else if (a == GLOB_LIMIT) {
++        pr_response_add(R_226, _("Too many files"));
+       } else if (a != GLOB_NOMATCH) {
+         pr_response_add(R_226, _("Unknown error during globbing of %s"),
+           pr_fs_encode_path(cmd->tmp_pool, arg));
+@@ -2837,7 +2839,10 @@ MODRET ls_nlst(cmd_rec *cmd) {
+           return PR_HANDLED(cmd);
+         }
+ 
+-        pr_response_add_err(R_450, _("No files found"));
++        if (res == GLOB_LIMIT)
++          pr_response_add_err(R_451, _("Too many files"));
++        else
++          pr_response_add_err(R_450, _("No files found"));
+         return PR_ERROR(cmd);
+       }
+     }

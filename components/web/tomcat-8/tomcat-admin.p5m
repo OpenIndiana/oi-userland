@@ -1,0 +1,83 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr/tomcat8/(.+)$ -> \
+    set action.hash %<1> >
+<transform file path=usr/tomcat8/docs/(.+)$ -> \
+    set action.hash webapps/docs/%<1> >
+<transform file path=var/tomcat8/(.+)$ -> \
+    set action.hash %<1> >
+<transform file path=var/tomcat8/webapps/ROOT/index.jsp -> \
+    set action.hash Solaris/index.jsp >
+set name=pkg.fmri \
+    value=pkg:/web/java-servlet/tomcat-8/tomcat-admin@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Tomcat Servlet/JSP Container - admin applications"
+set name=com.oracle.info.description value="the Tomcat admin applications"
+set name=com.oracle.info.tpno value=9075
+set name=info.classification \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2008/711
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=var/tomcat8/webapps/host-manager/META-INF/context.xml
+file path=var/tomcat8/webapps/host-manager/WEB-INF/jsp/401.jsp
+file path=var/tomcat8/webapps/host-manager/WEB-INF/jsp/403.jsp
+file path=var/tomcat8/webapps/host-manager/WEB-INF/jsp/404.jsp
+file path=var/tomcat8/webapps/host-manager/WEB-INF/web.xml
+file path=var/tomcat8/webapps/host-manager/images/add.gif
+file path=var/tomcat8/webapps/host-manager/images/asf-logo.svg
+file path=var/tomcat8/webapps/host-manager/images/code.gif
+file path=var/tomcat8/webapps/host-manager/images/design.gif
+file path=var/tomcat8/webapps/host-manager/images/docs.gif
+file path=var/tomcat8/webapps/host-manager/images/fix.gif
+file path=var/tomcat8/webapps/host-manager/images/tomcat.gif
+file path=var/tomcat8/webapps/host-manager/images/update.gif
+file path=var/tomcat8/webapps/host-manager/images/void.gif
+file path=var/tomcat8/webapps/host-manager/index.jsp
+file path=var/tomcat8/webapps/host-manager/manager.xml
+file path=var/tomcat8/webapps/manager/META-INF/context.xml
+file path=var/tomcat8/webapps/manager/WEB-INF/jsp/401.jsp
+file path=var/tomcat8/webapps/manager/WEB-INF/jsp/403.jsp
+file path=var/tomcat8/webapps/manager/WEB-INF/jsp/404.jsp
+file path=var/tomcat8/webapps/manager/WEB-INF/jsp/connectorCiphers.jsp
+file path=var/tomcat8/webapps/manager/WEB-INF/jsp/sessionDetail.jsp
+file path=var/tomcat8/webapps/manager/WEB-INF/jsp/sessionsList.jsp
+file path=var/tomcat8/webapps/manager/WEB-INF/web.xml
+file path=var/tomcat8/webapps/manager/images/add.gif
+file path=var/tomcat8/webapps/manager/images/asf-logo.svg
+file path=var/tomcat8/webapps/manager/images/code.gif
+file path=var/tomcat8/webapps/manager/images/design.gif
+file path=var/tomcat8/webapps/manager/images/docs.gif
+file path=var/tomcat8/webapps/manager/images/fix.gif
+file path=var/tomcat8/webapps/manager/images/tomcat.gif
+file path=var/tomcat8/webapps/manager/images/update.gif
+file path=var/tomcat8/webapps/manager/images/void.gif
+file path=var/tomcat8/webapps/manager/index.jsp
+file path=var/tomcat8/webapps/manager/status.xsd
+file path=var/tomcat8/webapps/manager/xform.xsl
+license tomcat.license license="Apache v2.0"
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/tomcat8/bin/bootstrap.jar

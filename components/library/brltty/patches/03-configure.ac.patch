@@ -1,0 +1,39 @@
+--- brltty-4.5/configure.ac.~1~	2013-03-28 02:54:58.000000000 +0400
++++ brltty-4.5/configure.ac	2014-12-03 13:14:53.824790107 +0300
+@@ -389,7 +389,7 @@
+ esac
+ if test "${GCC}" = "yes"
+ then
+-   brltty_cv_prog_mkmod="\$(CC) ${brltty_mkmod_gcc_make=-shared} BRLTTY_OPTIONS_LD2CC([${brltty_mkmod_ld_options}]) -o"
++   brltty_cv_prog_mkmod="\$(CC) \$(LDFLAGS) ${brltty_mkmod_gcc_make=-shared} BRLTTY_OPTIONS_LD2CC([${brltty_mkmod_ld_options}]) -o"
+ else
+    brltty_cv_prog_mkmod="\$(LD) ${brltty_mkmod_ld_make} ${brltty_mkmod_ld_options} -o"
+ fi])
+@@ -434,7 +434,7 @@
+ esac
+ if test "${GCC}" = "yes"
+ then
+-   brltty_cv_prog_mklib="\$(CC) ${brltty_mklib_gcc_make=-shared} BRLTTY_OPTIONS_LD2CC([${brltty_mklib_ld_options+${brltty_mklib_ld_options} <name>}]) -o"
++   brltty_cv_prog_mklib="\$(CC) \$(LDFLAGS) ${brltty_mklib_gcc_make=-shared} BRLTTY_OPTIONS_LD2CC([${brltty_mklib_ld_options+${brltty_mklib_ld_options} <name>}]) -o"
+ else
+    brltty_cv_prog_mklib="\$(LD) ${brltty_mklib_ld_make} ${brltty_mklib_ld_options+${brltty_mklib_ld_options} <name>} -o"
+ fi])
+@@ -554,7 +554,8 @@
+ 
+       BRLTTY_BINDINGS([Java])
+       BRLTTY_BINDINGS([Lisp])
+-      BRLTTY_BINDINGS([OCaml])
++# OCaml bindings can't be compiled for 64-bit, disabling
++#      BRLTTY_BINDINGS([OCaml])
+       BRLTTY_BINDINGS([Python])
+       BRLTTY_BINDINGS([Tcl])
+ 
+@@ -822,7 +823,7 @@
+       brltty_cv_prog_cc_sysflags="-D_POSIX_C_SOURCE=2 -D_BSD_SOURCE -D_XOPEN_SOURCE=500 -D_XOPEN_SOURCE_EXTENDED -D_GNU_SOURCE"
+       ;;
+    solaris*)
+-      brltty_cv_prog_cc_sysflags="-D_XOPEN_SOURCE=500 -D__EXTENSIONS__"
++      brltty_cv_prog_cc_sysflags=""
+       ;;
+    hpux*)
+       brltty_cv_prog_cc_sysflags="-D_XOPEN_SOURCE_EXTENDED -D_HPUX_SOURCE"

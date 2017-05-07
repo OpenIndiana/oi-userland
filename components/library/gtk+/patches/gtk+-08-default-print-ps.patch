@@ -1,0 +1,30 @@
+diff -urN gtk+-2.14.5/gtk/gtkprintoperation-unix.c ../../SUNWgnome-base-libs-2.24.2.hacked/i386/gtk+-2.14.5/gtk/gtkprintoperation-unix.c
+--- gtk+-2.14.5/gtk/gtkprintoperation-unix.c	2008-11-24 06:35:36.000000000 +0000
++++ ../../SUNWgnome-base-libs-2.24.2.hacked/i386/gtk+-2.14.5/gtk/gtkprintoperation-unix.c	2009-04-22 16:16:15.025967000 +0100
+@@ -665,7 +665,7 @@
+   cairo_surface_t *surface;
+   static cairo_user_data_key_t key;
+   
+-  filename = g_build_filename (g_get_tmp_dir (), "previewXXXXXX.pdf", NULL);
++  filename = g_build_filename (g_get_tmp_dir (), "previewXXXXXX.ps", NULL);
+   fd = g_mkstemp (filename);
+ 
+   if (fd < 0)
+@@ -681,7 +681,7 @@
+   h = gtk_paper_size_get_height (paper_size, GTK_UNIT_POINTS);
+     
+   *dpi_x = *dpi_y = 72;
+-  surface = cairo_pdf_surface_create_for_stream (write_preview, GINT_TO_POINTER (fd), w, h);
++  surface = cairo_ps_surface_create_for_stream (write_preview, GINT_TO_POINTER (fd), w, h);
+  
+   cairo_surface_set_user_data (surface, &key, GINT_TO_POINTER (fd), close_preview);
+ 
+@@ -714,7 +714,7 @@
+   paper_size = gtk_page_setup_get_paper_size (page_setup);
+   w = gtk_paper_size_get_width (paper_size, GTK_UNIT_POINTS);
+   h = gtk_paper_size_get_height (paper_size, GTK_UNIT_POINTS);
+-  cairo_pdf_surface_set_size (surface, w, h);
++  cairo_ps_surface_set_size (surface, w, h);
+ }
+ 
+ 

@@ -44,16 +44,19 @@ LDFLAGS += -D__EXTENSIONS__ -D_XPG5 -lsocket -lnsl
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
-
 CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
 
 CONFIGURE_OPTIONS +=    --disable-static
 CONFIGURE_OPTIONS +=    --without-mysql
 CONFIGURE_OPTIONS +=    --without-gearmand
 CONFIGURE_OPTIONS +=    --without-memcached
+
+COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+					aclocal -I./m4 && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
+					automake -a -f -c &&\
+					autoconf )
 
 # need some files in $(SOURCE_DIR)/docs during build
 COMPONENT_PRE_CONFIGURE_ACTION = \

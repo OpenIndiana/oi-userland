@@ -1,0 +1,12 @@
+--- libproxy-0.3.1/configure.ac.ori	2012-05-21 10:55:10.129344576 +0800
++++ libproxy-0.3.1/configure.ac	2012-05-21 10:53:12.372957587 +0800
+@@ -25,6 +25,9 @@
+ 
+ AC_CHECK_LIB([kdecore], [main], have_kdecore=yes, have_kdecore=no)
+ 
++### checks for nsl libraries
++AC_CHECK_FUNC(gethostbyname,,[AC_CHECK_LIB(nsl,gethostbyname)])
++
+ ### Checks for module dependencies.
+ AC_PATH_PROG(GCONFTOOLBIN, gconftool-2)
+ PKG_CHECK_MODULES(x11, x11, have_x11=yes, have_x11=no)

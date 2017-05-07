@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Adam Stevko. All rights reserved.
+#
+
+ulimit -n 65536
+
+. /lib/svc/share/smf_include.sh
+
+HAPROXY="/usr/sbin/haproxy"
+CONF_FILE="/etc/haproxy/haproxy.cfg"
+PID_FILE="/var/run/haproxy.pid"
+
+haproxy_verify_config() {
+
+    echo "Verifying HAProxy configuration: \c"
+    if ! ${HAPROXY} -c -f ${CONF_FILE} >/dev/null 2>&1; then
+        echo "FAILED"
+        exit ${SMF_EXIT_ERR_CONFIG}
+    else
+        echo "OK"
+    fi
+}
+
+
+
+[ ! -f ${CONF_FILE} ] && exit ${SMF_EXIT_ERR_CONFIG}
+
+case "$1" in
+    start)
+        haproxy_verify_config
+
+        exec ${HAPROXY} -D -f ${CONF_FILE} -p ${PID_FILE} -sf "$(<${PID_FILE})"
+    ;;
+
+    refresh)
+        haproxy_verify_config
+
+        exec ${HAPROXY} -D -f ${CONF_FILE} -p ${PID_FILE} -sf "$(<${PID_FILE})"
+    ;;
+
+    stop)
+        exec ${HAPROXY} -D -f ${CONF_FILE} -p ${PID_FILE} -st "$(<${PID_FILE})"
+    ;;
+
+    *)
+        echo "Usage: $0 {start|stop|refresh}"
+        exit 1
+    ;;
+
+esac

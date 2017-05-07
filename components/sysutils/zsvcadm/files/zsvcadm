@@ -1,0 +1,87 @@
+#!/bin/ksh
+#
+# Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# ident	"%Z%%M%	%I%	%E% SMI"
+#
+# Initial version taken "as is" from a blog post by Darren Moffat (C) 2004 :
+#   https://blogs.oracle.com/darren/resource/zsvcadm.txt
+#   https://blogs.oracle.com/darren/entry/i_recently_saw_a_libcurses
+#
+# See also his blog about delegating a user account rights to manage services :
+#   https://blogs.oracle.com/darren/entry/zenity_tools_gui_interfaces_to
+#   (e.g. run `usermod -P "Service Operator" $YOURUSERNAME` as root)
+#
+# Port to OpenIndiana and modernization of the script Copyright 2016 Jim Klimov
+
+PATH=/usr/bin:/usr/sbin
+
+do_action()
+{
+	for service in $@ ; do
+		current_state=$(svcs -H -o state $service)
+
+		case "$current_state" in
+		'disabled') allowed_actions="start enable refresh ViewDetails";;
+		'online') allowed_actions="restart stop disable refresh ViewDetails";;
+		'maintenance') allowed_actions="stop disable clear refresh ViewDetails";;
+		*) allowed_actions="ShowDetails";;
+		esac
+
+		case "$allowed_actions" in
+			*" "*)
+				action=$(zenity --list --title="$service" --column "New State"\
+					--height=240 $allowed_actions) ;;
+			*)	action="$allowed_actions" ;;
+		esac
+
+		case "$action" in
+			"") break ;;
+			"start") action="enable -t" ;;
+			"stop") action="disable -t" ;;
+			"ViewDetails"|"ShowDetails")
+				# For a multiple-choice, if user explicitly wanted to view
+				# details - show them all and break below
+				[ "$action" = "ViewDetails" ] && inspected_services="$*" || inspected_services="$service"
+				( echo "=== Current processes as of `LANG=C TZ=UTC date`:"; svcs -p $inspected_services ;\
+				  echo "=== Current service status and details :"; svcs -x -v $inspected_services ; \
+				  echo "=== Selected service(s) depend on :"; svcs -d $inspected_services;\
+				  echo "=== Who depends on selected service(s) :"; svcs -D $inspected_services\
+				) 2>&1 > /tmp/svcs-x-zenity-$$
+				zenity --width=500 --height=300 --text-info \
+				    --title="Details for $inspected_services" \
+				    --filename=/tmp/svcs-x-zenity-$$
+				rm /tmp/svcs-x-zenity-$$
+				[ "$action" = "ViewDetails" ] && return 0
+				continue
+				;;
+		esac
+
+		pfexec svcadm $action $@ && \
+			echo "svcadm $action $@ - OK" >&2 || \
+			( RES=$?; echo "svcadm $action $@ - FAILED, consider first running 'usermod -P \"Service Operator\" $USER' as root" >&2; return $RES )
+	done
+}
+
+
+if [ "$1" = "-h" ]; then
+	echo "Usage: `basename $0` [-a] [FMRI | pattern]..."
+	echo "       -a\tlist all services"
+	exit 0
+fi
+
+while true ; do
+	services=$(svcs -H -o fmri,stime,state,nstate -s fmri -s state \
+		-S nstate $@ |sed s/-$/X/g)
+	err=$?
+	[ $err != 0 ] && exit $err
+
+	service=$(zenity --list --multiple --separator=' ' --title="Services" \
+		--width=760 --height=500 \
+		--column=FMRI --column=STIME --column=STATE --column NSTATE\
+		$services)
+	[ ! $? -eq 0 ] && break;
+
+	do_action $service
+done

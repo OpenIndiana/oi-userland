@@ -1,0 +1,64 @@
+--- samba-4.4.3/source3/wscript.~1~	2016-05-02 10:29:51.000000000 +0300
++++ samba-4.4.3/source3/wscript	2016-06-06 09:31:23.409106135 +0300
+@@ -74,6 +74,15 @@
+                   help=("enable support for VxFS (default=no)"),
+                   action="store_true", dest='enable_vxfs', default=False)
+ 
++    opt.add_option('--with-libldap',
++                   help=("Name of the libldap for -l<libname> format."),
++                   action="store", dest='libldap_name', default='ldap')
++
++    # mozldap has lber-calls part of the libldap so it should be also set on ldap60 to avoid link of lber from OpenLDAP
++    opt.add_option('--with-liblber',
++                   help=("Name of the liblber for -l<libname> format."),
++                   action="store", dest='liblber_name', default='lber')
++
+     opt.SAMBA3_ADD_OPTION('spotlight', with_name="enable", without_name="disable", default=False)
+ 
+ def configure(conf):
+@@ -667,7 +676,7 @@
+     if Options.options.with_ldap:
+         conf.CHECK_HEADERS('ldap.h lber.h ldap_pvt.h')
+         conf.CHECK_TYPE('ber_tag_t', 'unsigned int', headers='ldap.h lber.h')
+-        conf.CHECK_FUNCS_IN('ber_scanf ber_sockbuf_add_io', 'lber')
++        conf.CHECK_FUNCS_IN('ber_scanf ber_sockbuf_add_io', Options.options.liblber_name )
+         conf.CHECK_VARIABLE('LDAP_OPT_SOCKBUF', headers='ldap.h')
+ 
+         # if we LBER_OPT_LOG_PRINT_FN we can intercept ldap logging and print it out
+@@ -675,8 +684,8 @@
+         conf.CHECK_VARIABLE('LBER_OPT_LOG_PRINT_FN',
+                             define='HAVE_LBER_LOG_PRINT_FN', headers='lber.h')
+ 
+-        conf.CHECK_FUNCS_IN('ldap_init ldap_init_fd ldap_initialize ldap_set_rebind_proc', 'ldap')
+-        conf.CHECK_FUNCS_IN('ldap_add_result_entry', 'ldap')
++        conf.CHECK_FUNCS_IN('ldap_init ldap_init_fd ldap_initialize ldap_set_rebind_proc', Options.options.libldap_name )
++        conf.CHECK_FUNCS_IN('ldap_add_result_entry', Options.options.libldap_name )
+ 
+         # Check if ldap_set_rebind_proc() takes three arguments
+         if conf.CHECK_CODE('ldap_set_rebind_proc(0, 0, 0)',
+@@ -706,6 +715,25 @@
+                        "LDAP idmap backends and ADS. "
+                        "ADS support improves communication with "
+                        "Active Directory domain controllers.")
++        # fix the conf.TARGET_TYPE and conf.LIB_... items
++        if 'ldap' != Options.options.libldap_name:
++            conf.SET_TARGET_TYPE('ldap', 'SYSLIB')
++            #conf.SET_TARGET_TYPE(Options.options.libldap_name, 'EMPTY')
++            conf.define('HAVE_LIBLDAP', 1)
++            conf.undefine('HAVE_LIB%s' % Options.options.libldap_name.upper().replace('-','_'))
++            conf.define('LIB_LDAP', Options.options.libldap_name)
++            conf.undefine('LIB_%s' % Options.options.libldap_name.upper().replace('-','_'))
++            #conf.define('LIB_ldap', [ Options.options.libldap_name ] )
++            #conf.undefine('LIB_%s' % Options.options.libldap_name.replace('-','_'))
++        if 'lber' != Options.options.liblber_name:
++            conf.SET_TARGET_TYPE('lber', 'SYSLIB')
++            #conf.SET_TARGET_TYPE(Options.options.liblber_name, 'EMPTY')
++            conf.define('HAVE_LIBLBER', 1)
++            conf.undefine('HAVE_LIB%s' % Options.options.liblber_name.upper().replace('-','_'))
++            conf.define('LIB_LBER', Options.options.liblber_name)
++            conf.undefine('LIB_%s' % Options.options.liblber_name.upper().replace('-','_'))
++            #conf.define('LIB_lber', [ Options.options.liblber_name ] )
++            #conf.undefine('LIB_%s' % Options.options.liblber_name.replace('-','_'))
+     else:
+         conf.SET_TARGET_TYPE('ldap', 'EMPTY')
+         conf.SET_TARGET_TYPE('lber', 'EMPTY')

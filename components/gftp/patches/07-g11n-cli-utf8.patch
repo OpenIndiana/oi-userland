@@ -1,0 +1,27 @@
+--- gftp-2.0.19/src/text/gftp-text.c.orig	2007-03-13 10:56:43.000000000 +0900
++++ gftp-2.0.19/src/text/gftp-text.c	2008-12-09 14:38:09.675539069 +0900
+@@ -58,13 +58,16 @@ gftp_text_write_string (gftp_request * r
+       savechar = *endpos;
+       *endpos = '\0';
+ 
++#if 0
+       if (strlen (stpos) <= sw)
+         {
++#endif
+           printf ("%s%c", stpos, savechar);
+           *endpos = savechar;
+           if (savechar == '\0')
+             break;
+           stpos = endpos + 1;
++#if 0
+         }
+       else
+         {
+@@ -79,6 +82,7 @@ gftp_text_write_string (gftp_request * r
+           printf ("%s\n", stpos);
+           stpos = endpos + 1;
+         }
++#endif
+ 
+       sw = sw;
+     }

@@ -1,0 +1,15 @@
+--- support/apachectl.in.~1~	2014-02-25 11:44:59.574755606 +0400
++++ support/apachectl.in	2014-02-25 11:45:20.741191115 +0400
+@@ -76,6 +76,12 @@
+     ARGV="-h"
+ fi
+ 
++if [ ! -d "@exp_runtimedir@" ]; then
++    mkdir -p @exp_runtimedir@
++    chown -R webservd @exp_runtimedir@
++    chgrp -R webservd @exp_runtimedir@
++fi
++
+ case $ACMD in
+ start|stop|restart|graceful|graceful-stop)
+     $HTTPD -k $ARGV

@@ -1,0 +1,28 @@
+--- docs/conf/extra/httpd-dav.conf.in.orig	Fri Nov 28 13:53:24 2008
++++ docs/conf/extra/httpd-dav.conf.in	Fri Nov 28 14:02:50 2008
+@@ -12,11 +12,11 @@
+ # on the directory where the DavLockDB is placed and on any directory where
+ # "Dav On" is specified.
+ 
+-DavLockDB "@@ServerRoot@@/var/DavLock"
++DavLockDB "@@RuntimeDir@@/DavLock"
+ 
+-Alias /uploads "@@ServerRoot@@/uploads"
++Alias /uploads "@@DataDir@@/uploads"
+ 
+-<Directory "@@ServerRoot@@/uploads">
++<Directory "@@DataDir@@/uploads">
+     Dav On
+ 
+     Order Allow,Deny
+@@ -26,8 +26,8 @@
+     AuthName DAV-upload
+ 
+     # You can use the htdigest program to create the password database:
+-    #   htdigest -c "@@ServerRoot@@/user.passwd" DAV-upload admin
+-    AuthUserFile "@@ServerRoot@@/user.passwd"
++    #   htdigest -c "@@SysconfDir@@/user.passwd" DAV-upload admin
++    AuthUserFile "@@SysconfDir@@/user.passwd"
+     AuthDigestProvider file
+ 
+     # Allow universal read-access, but writes are restricted

@@ -1,0 +1,13 @@
+--- ./lft_types.h.orig	2014-09-10 22:30:25.969593954 +0000
++++ ..//lft_types.h	2014-09-10 22:32:41.267230561 +0000
+@@ -110,6 +110,10 @@
+ #ifdef sun
+ #include <limits.h>
+ #include <strings.h>
++#ifdef __GNUC__
++#undef alloca
++#define alloca(x) __builtin_alloca(x)
++#endif
+ #endif
+ 
+ #endif

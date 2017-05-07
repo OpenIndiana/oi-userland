@@ -1,0 +1,16 @@
+# Solaris-specific. The famous access(2) bug that will return
+# X_OK even if the execute bit isn't set.
+# So, we want to use stat(2) instead, which returns the actual
+# permission bits.
+--- lib/sh/eaccess.c	2015-04-02 10:24:43.401129429 -0700
++++ lib/sh/eaccess.c	2015-04-02 10:28:57.704781076 -0700
+@@ -211,7 +211,8 @@
+   if (path_is_devfd (path))
+     return (sh_stataccess (path, mode));
+ 
+-#if (defined (HAVE_FACCESSAT) && defined (AT_EACCESS)) || defined (HAVE_EACCESS)
++#if ((defined (HAVE_FACCESSAT) && defined (AT_EACCESS)) || \
++    defined (HAVE_EACCESS)) && !defined(SOLARIS)
+ #  if defined (HAVE_FACCESSAT) && defined (AT_EACCESS)
+   ret = faccessat (AT_FDCWD, path, mode, AT_EACCESS);
+ #  else		/* HAVE_EACCESS */	/* FreeBSD */

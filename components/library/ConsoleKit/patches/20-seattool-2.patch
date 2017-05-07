@@ -1,0 +1,120 @@
+diff --git a/tools/ck-seat-tool.c.old b/tools/ck-seat-tool.c
+index 773afb7..8a0bdd5 100644
+--- a/tools/ck-seat-tool.c.old
++++ b/tools/ck-seat-tool.c
+@@ -66,7 +66,7 @@ static const GOptionEntry options [] = {
+         { NULL }
+ };
+ 
+-static void
++static gboolean
+ add_session (DBusGConnection  *connection)
+ {
+         DBusGProxy *mgr_proxy = NULL;
+@@ -92,7 +92,7 @@ add_session (DBusGConnection  *connection)
+                                                CK_MANAGER_PATH,
+                                                CK_MANAGER_INTERFACE);
+         if (mgr_proxy == NULL) {
+-                return;
++                return FALSE;
+         }
+ 
+         if (! IS_STR_SET(seat_id)) {
+@@ -110,7 +110,7 @@ add_session (DBusGConnection  *connection)
+                         g_warning ("Unable to add seat: %s", error->message);
+                         g_error_free (error);
+                         g_object_unref (mgr_proxy);
+-                        return;
++                        return FALSE;
+                 }
+ 
+         } else {
+@@ -133,7 +133,7 @@ add_session (DBusGConnection  *connection)
+                         g_warning ("Unable to get seat list: %s", error->message);
+                         g_error_free (error);
+                         g_object_unref (mgr_proxy);
+-                        return;
++                        return FALSE;
+                 }
+ 
+                 found = FALSE;
+@@ -163,7 +163,7 @@ add_session (DBusGConnection  *connection)
+                                 g_warning ("Unable to add seat: %s", error->message);
+                                 g_error_free (error);
+                                 g_object_unref (mgr_proxy);
+-                                return;
++                                return FALSE;
+                         }
+                 }
+         }
+@@ -176,7 +176,7 @@ add_session (DBusGConnection  *connection)
+         if (seat_proxy == NULL) {
+                 g_warning ("Failed to talk to seat '%s'", sid);
+                 g_object_unref (mgr_proxy);
+-                return;
++                return FALSE;
+         }
+ 
+         variables = g_hash_table_new_full (g_str_hash, g_str_equal,
+@@ -218,11 +218,15 @@ add_session (DBusGConnection  *connection)
+                                             "Manage",
+                                             G_TYPE_INVALID,
+                                             G_TYPE_INVALID);
+-                g_print ("Seat %s with session %s has been added\n", sid, ssid);
++		 /* If a session is successfully added, print sessionid to stdout. 
++		    dsession uses the output of "ck-seat-tool -a" to obtain session ID */
++		 g_print ("%s\n", g_basename (ssid)); 
+         }
+ 
+         g_object_unref (seat_proxy);
+         g_object_unref (mgr_proxy);
++
++	return res;
+ }
+ 
+ static gboolean
+@@ -329,7 +332,7 @@ find_seat_id_from_session_id (DBusGConnection *connection,
+         return sid;
+ }
+ 
+-static void
++static gboolean
+ delete_session (DBusGConnection *connection)
+ {
+         DBusGProxy *proxy;
+@@ -348,7 +351,7 @@ delete_session (DBusGConnection *connection)
+                                            CK_MANAGER_PATH,
+                                            CK_MANAGER_INTERFACE);
+         if (proxy == NULL) {
+-                return;
++                return FALSE;
+         }
+ 
+         sid = find_seat_id_from_session_id (connection, proxy, ssid, &is_last_session);
+@@ -374,6 +377,8 @@ delete_session (DBusGConnection *connection)
+         }
+ 
+         g_object_unref (proxy);
++
++	return TRUE;
+ }
+ 
+ int
+@@ -437,9 +442,15 @@ main (int argc, char *argv[])
+ 
+ 
+         if (add) {
+-                add_session (connection);
++                if (add_session (connection))
++			return 0;
++		else
++			exit (1);
+         } else if (delete) {
+-                delete_session (connection);
++                if (delete_session (connection))
++			return 0;
++		else
++			exit (1);
+         } else {
+                 g_warning ("Invaild parameters!");
+                 exit (1);

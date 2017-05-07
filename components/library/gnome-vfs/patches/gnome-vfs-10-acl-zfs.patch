@@ -1,0 +1,1700 @@
+--- gnome-vfs-2.17.2-orig/configure.in	2007-04-10 01:50:02.575026000 +0200
++++ gnome-vfs-2.17.2-alo/configure.in	2007-04-03 12:35:51.151289000 +0200
+@@ -1048,7 +1018,7 @@
+ dnl End of IPv6 checks
+ dnl ==============================================================================
+ 
+-PKG_CHECK_MODULES(LIBGNOMEVFS, glib-2.0 >= $GLIB_REQUIRED gmodule-no-export-2.0 >= $GLIB_REQUIRED gthread-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gconf-2.0 >= $GCONF_REQUIRED libxml-2.0 >= $XML_REQUIRED gnome-mime-data-2.0 $dbus_requirement)
++PKG_CHECK_MODULES(LIBGNOMEVFS, glib-2.0 >= $GLIB_REQUIRED gmodule-no-export-2.0 >= $GLIB_REQUIRED gthread-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED gconf-2.0 >= $GCONF_REQUIRED libxml-2.0 >= $XML_REQUIRED gnome-mime-data-2.0 dbus-glib-1 >= 0.60)
+ LIBGNOMEVFS_CFLAGS="$LIBGNOMEVFS_CFLAGS $OPENSSL_CFLAGS $LIBGNUTLS_CFLAGS $HOWL_CFLAGS $AVAHI_CFLAGS"
+ LIBGNOMEVFS_LIBS="$LIBGNOMEVFS_LIBS $OPENSSL_LIBS $LIBGNUTLS_LIBS $HOWL_LIBS $AVAHI_LIBS $RESOLVER_LIBS"
+ AC_SUBST(LIBGNOMEVFS_CFLAGS)
+@@ -1122,52 +1092,10 @@
+     AC_CHECK_FUNCS(acl_extended_file)
+     
+     AC_CHECK_HEADERS([pwd.h])
+-    if test "$ac_cv_header_pwd_h" = "yes"; then
+-	 	AC_CACHE_CHECK([for posix getpwuid_r],
+-			ac_cv_func_posix_getpwuid_r,
+-			[AC_TRY_RUN([
+-#include <errno.h>
+-#include <pwd.h>
+-int main () { 
+-    char buffer[10000];
+-    struct passwd pwd, *pwptr = &pwd;
+-    int error;
+-    errno = 0;
+-    error = getpwuid_r (0, &pwd, buffer, 
+-                        sizeof (buffer), &pwptr);
+-   return (error < 0 && errno == ENOSYS) 
+-	   || error == ENOSYS; 
+-}                               ],
+-				[ac_cv_func_posix_getpwuid_r=yes],
+-				[ac_cv_func_posix_getpwuid_r=no])])
+-		dnl GLIB_ASSERT_SET(ac_cv_func_posix_getpwuid_r)
+-		if test "$ac_cv_func_posix_getpwuid_r" = yes; then
+-			AC_DEFINE(HAVE_POSIX_GETPWUID_R,1,
+-				[Have POSIX function getpwuid_r])
+-		else
+-	 		AC_CACHE_CHECK([for nonposix getpwuid_r],
+-				ac_cv_func_nonposix_getpwuid_r,
+-				[AC_TRY_LINK([#include <pwd.h>],
+-                                	[char buffer[10000];
+-                                	struct passwd pwd;
+-                                	getpwuid_r (0, &pwd, buffer, 
+-                                        		sizeof (buffer));],
+-					[ac_cv_func_nonposix_getpwuid_r=yes],
+-					[ac_cv_func_nonposix_getpwuid_r=no])])
+-			dnl GLIB_ASSERT_SET(ac_cv_func_nonposix_getpwuid_r)
+-			if test "$ac_cv_func_nonposix_getpwuid_r" = yes; then
+-				AC_DEFINE(HAVE_NONPOSIX_GETPWUID_R,1,
+-					[Have non-POSIX function getpwuid_r])
+-			fi
+-		fi
+-	fi 
+-
+-	AC_CHECK_HEADERS([grp.h])
++    FW_CHECK_PWD
+ 
+-	AC_CHECK_FUNCS(getgrgid_r)
+-	AC_CHECK_FUNCS(getgrnam_r)
+-	AC_CHECK_FUNCS(getpwnam_r)
+-	
++    AC_CHECK_HEADERS([grp.h])
++    FW_CHECK_GRP	
+ fi
+ 
+ AC_SUBST(ACL_LIBS)
+--- gnome-vfs-2.17.2-orig/acinclude.m4	2007-04-10 01:50:02.574820000 +0200
++++ gnome-vfs-2.17.2-alo/acinclude.m4	2007-04-03 12:35:48.071873000 +0200
+@@ -554,5 +554,85 @@
+ 
+ ])
+ 
+-
+ dnl end of neon macros
++
++
++dnl
++dnl checks for password entry functions and header files
++dnl
++AC_DEFUN([FW_CHECK_PWD],
++[
++
++HAVE_GETPWNAM_R=""
++
++AC_MSG_CHECKING(for getpwnam_r with 5 parameters)
++AC_TRY_COMPILE([#include <pwd.h>
++#include <stdlib.h>],
++getpwnam_r(NULL,NULL,NULL,0,NULL);,AC_DEFINE(HAVE_GETPWNAM_R_5,1,Some systems have getpwnam_r) AC_DEFINE(HAVE_GETPWNAM_R,1,Some systems have getpwnam_r) AC_MSG_RESULT(yes); HAVE_GETPWNAM_R="yes", AC_MSG_RESULT(no))
++
++if ( test -z "$HAVE_GETPWNAM_R" )
++then
++	AC_MSG_CHECKING(for getpwnam_r with 4 parameters)
++	AC_TRY_COMPILE([#include <pwd.h>
++#include <stdlib.h>],
++getpwnam_r(NULL,NULL,NULL,0);,AC_DEFINE(HAVE_GETPWNAM_R_4,1,Some systems have getpwnam_r) AC_DEFINE(HAVE_GETPWNAM_R,1,Some systems have getpwnam_r) AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
++fi
++
++HAVE_GETPWUID_R=""
++
++AC_MSG_CHECKING(for getpwuid_r with 5 parameters)
++AC_TRY_COMPILE([#include <pwd.h>
++#include <stdlib.h>],
++getpwuid_r(0,NULL,NULL,0,NULL);,AC_DEFINE(HAVE_GETPWUID_R_5,1,Some systems have getpwuid_r) AC_DEFINE(HAVE_GETPWUID_R,1,Some systems have getpwuid_r) AC_MSG_RESULT(yes); HAVE_GETPWUID_R="yes", AC_MSG_RESULT(no))
++
++if ( test -z "$HAVE_GETPWUID_R" )
++then
++	AC_MSG_CHECKING(for getpwuid_r with 4 parameters)
++	AC_TRY_COMPILE([#include <pwd.h>
++#include <stdlib.h>],
++getpwuid_r(0,NULL,NULL,0);,AC_DEFINE(HAVE_GETPWUID_R_4,1,Some systems have getpwuid_r) AC_DEFINE(HAVE_GETPWUID_R,1,Some systems have getpwuid_r) AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
++fi
++
++])
++
++
++dnl
++dnl checks for group entry functions and header files
++dnl
++AC_DEFUN([FW_CHECK_GRP],
++[
++
++HAVE_GETGRNAM_R=""
++
++AC_MSG_CHECKING(for getgrnam_r with 5 parameters)
++AC_TRY_COMPILE([#include <grp.h>
++#include <stdlib.h>],
++getgrnam_r(NULL,NULL,NULL,0,NULL);,AC_DEFINE(HAVE_GETGRNAM_R_5,1,Some systems have getgrnam_r) AC_DEFINE(HAVE_GETGRNAM_R,1,Some systems have getgrnam_r) AC_MSG_RESULT(yes); HAVE_GETGRNAM_R="yes", AC_MSG_RESULT(no))
++
++if ( test -z "$HAVE_GETGRNAM_R" )
++then
++	AC_MSG_CHECKING(for getgrnam_r with 4 parameters)
++	AC_TRY_COMPILE([#include <grp.h>
++#include <stdlib.h>],
++getgrnam_r(NULL,NULL,NULL,0);,AC_DEFINE(HAVE_GETGRNAM_R_4,1,Some systems have getgrnam_r) AC_DEFINE(HAVE_GETGRNAM_R,1,Some systems have getgrnam_r) AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
++fi
++
++HAVE_GETGRGID_R=""
++
++AC_MSG_CHECKING(for getgrgid_r with 5 parameters)
++AC_TRY_COMPILE([#include <grp.h>
++#include <stdlib.h>],
++getgrgid_r(0,NULL,NULL,0,NULL);,AC_DEFINE(HAVE_GETGRGID_R_5,1,Some systems have getgrgid_r) AC_DEFINE(HAVE_GETGRGID_R,1,Some systems have getgrgid_r) AC_MSG_RESULT(yes); HAVE_GETGRGID_R="yes", AC_MSG_RESULT(no))
++
++if ( test -z "$HAVE_GETGRGID_R" )
++then
++	AC_MSG_CHECKING(for getgrgid_r with 4 parameters)
++	AC_TRY_COMPILE([#include <grp.h>
++#include <stdlib.h>],
++getgrgid_r(0,NULL,NULL,0);,AC_DEFINE(HAVE_GETGRGID_R_4,1,Some systems have getgrgid_r) AC_DEFINE(HAVE_GETGRGID_R,1,Some systems have getgrgid_r) AC_MSG_RESULT(yes), AC_MSG_RESULT(no))
++fi
++
++])
++
++
++
+--- gnome-vfs-2.17.2-orig/libgnomevfs/gnome-vfs-ace.c	2007-04-10 01:50:02.414610000 +0200
++++ gnome-vfs-2.17.2-alo/libgnomevfs/gnome-vfs-ace.c	2007-04-03 12:35:45.753157000 +0200
+@@ -41,14 +41,15 @@
+ 
+ struct _GnomeVFSACEPrivate {
+ 	
+-	GnomeVFSACLKind   kind;
+-	char             *id;
++	GnomeVFSACLKind      kind;
++	GnomeVFSACLType      type;
++	GnomeVFSACLInherance inherance;
+ 
+-	PermSet           perm_set;
+-	
+-	gboolean          negative;
+-	gboolean          inherit;
++	char                *id;
++	PermSet              perm_set;
+ 	
++//	gboolean          negative;
++//	gboolean          inherit;	
+ };
+ 
+ #define GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GNOME_VFS_TYPE_ACE, GnomeVFSACEPrivate))
+@@ -82,8 +83,8 @@
+ 	PROP_KIND,
+ 	PROP_ID,
+ 	PROP_PERMS,
+-	PROP_NEGATIVE,
+-	PROP_INHERIT
++	PROP_TYPE,
++	PROP_INHERANCE
+ };
+ 
+ 
+@@ -161,26 +162,31 @@
+ 					 pspec);
+ 
+ 
+-
+-	pspec = g_param_spec_boolean ("negative",
+-				      "fixme",
+-				      "fixme",
+-				      FALSE,
+-				      G_PARAM_READWRITE);
++	pspec = g_param_spec_uint ("type",
++				   "fixme",
++				   "fixme",
++				   GNOME_VFS_ACL_TYPE_NULL,
++				   G_MAXUINT32,
++				   GNOME_VFS_ACL_TYPE_NULL,
++				   G_PARAM_READWRITE |
++				   G_PARAM_CONSTRUCT);
+ 
+ 	g_object_class_install_property (gobject_class,
+-					 PROP_NEGATIVE,
++					 PROP_TYPE,
+ 					 pspec);
+ 
+ 
+-	pspec = g_param_spec_boolean ("inherit",
+-				      "fixme",
+-				      "fixme",
+-				      FALSE,
+-				      G_PARAM_READWRITE);
++	pspec = g_param_spec_uint ("inherance",
++				   "fixme",
++				   "fixme",
++				   GNOME_VFS_ACL_INHERANCE_NULL,
++				   G_MAXUINT32,
++				   GNOME_VFS_ACL_INHERANCE_NULL,
++				   G_PARAM_READWRITE |
++				   G_PARAM_CONSTRUCT);
+ 
+ 	g_object_class_install_property (gobject_class,
+-					 PROP_INHERIT,
++					 PROP_INHERANCE,
+ 					 pspec);
+ 	
+ }
+@@ -226,14 +232,14 @@
+ 		permset_set (&priv->perm_set, pset);
+ 		break;
+ 		
+-	case PROP_INHERIT:
+-		priv->inherit = g_value_get_boolean (value);
++	case PROP_TYPE:
++		priv->type = g_value_get_uint (value);
+ 		break;
+-		
+-	case PROP_NEGATIVE:
+-		priv->negative = g_value_get_boolean (value);
++
++	case PROP_INHERANCE:
++		priv->inherance = g_value_get_uint (value);
+ 		break;
+-		
++				
+ 	default:
+ 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+ 	}
+@@ -263,12 +269,12 @@
+ 		g_value_set_pointer (value, priv->perm_set.perms);
+ 		break;
+ 		
+-	case PROP_INHERIT:
+-		g_value_set_boolean (value, priv->inherit);
++	case PROP_TYPE:
++		g_value_set_uint (value, priv->type);
+ 		break;
+-		
+-	case PROP_NEGATIVE:
+-		g_value_set_boolean (value, priv->negative);
++
++	case PROP_INHERANCE:
++		g_value_set_uint (value, priv->inherance);
+ 		break;
+ 		
+ 	default:
+@@ -382,9 +388,11 @@
+ /* Public Interface */
+ 
+ GnomeVFSACE *
+-gnome_vfs_ace_new (GnomeVFSACLKind  kind,
+-                   const char      *id,
+-                   GnomeVFSACLPerm *perms)
++gnome_vfs_ace_new (GnomeVFSACLKind      kind,
++                   const char          *id,
++                   GnomeVFSACLPerm     *perms,
++		   GnomeVFSACLType      type,
++		   GnomeVFSACLInherance inherance)
+ {
+ 	GnomeVFSACE *entry;
+ 
+@@ -392,6 +400,8 @@
+ 			      "kind", kind,
+ 			      "id", id,
+ 			      "permissions", perms,
++			      "type", type,
++			      "inherance", inherance,
+ 			      NULL);
+ 	return entry;
+ }
+@@ -426,40 +436,38 @@
+ 	priv->id = g_strdup (id);
+ }
+ 
+-void 
+-gnome_vfs_ace_set_inherit (GnomeVFSACE *entry,
+-			   gboolean     inherit)
++GnomeVFSACLType
++gnome_vfs_ace_get_ace_type (GnomeVFSACE *entry)
+ {
+-	g_object_set (G_OBJECT(entry), "inherit", inherit, NULL);
++	return entry->priv->type;
+ }
+ 
+-gboolean
+-gnome_vfs_ace_get_inherit (GnomeVFSACE *entry)
+-{
+-	gboolean inherit;
+ 
+-	g_object_get (G_OBJECT(entry), "inherit", &inherit, NULL);
+-	return inherit;
++void
++gnome_vfs_ace_set_ace_type   (GnomeVFSACE      *entry,
++			      GnomeVFSACLType   type)
++{
++	entry->priv->type = type;
+ }
+ 
+ 
+-void 
+-gnome_vfs_ace_set_negative (GnomeVFSACE *entry,
+-			    gboolean     negative)
++GnomeVFSACLInherance
++gnome_vfs_ace_get_inherance (GnomeVFSACE *entry)
+ {
+-	g_object_set (G_OBJECT(entry), "negative", negative, NULL);
++	return entry->priv->inherance;
+ }
+ 
+-gboolean
+-gnome_vfs_ace_get_negative (GnomeVFSACE *entry)
+-{
+-	gboolean negative;
+ 
+-	g_object_get (G_OBJECT(entry), "negative", &negative, NULL);
+-	return negative;
++void
++gnome_vfs_ace_set_inherance (GnomeVFSACE         *entry,
++			     GnomeVFSACLInherance inherance)
++{
++	entry->priv->inherance = inherance;
+ }
+ 
+ 
++
++
+ const GnomeVFSACLPerm  *
+ gnome_vfs_ace_get_perms (GnomeVFSACE *entry)
+ {
+@@ -576,9 +584,9 @@
+ 	priv_a = entry_a->priv;
+ 	priv_b = entry_b->priv;
+ 
+-
+ 	return (priv_a->kind == priv_b->kind &&
+ 	        g_str_equal_safe (priv_a->id, priv_b->id) &&
+-	        priv_a->inherit == priv_b->inherit &&
+-	        priv_a->negative == priv_b->negative);
++	        priv_a->inherance == priv_b->inherance &&
++	        priv_a->type == priv_b->type);
+ }
++
+--- gnome-vfs-2.17.2-orig/libgnomevfs/gnome-vfs-ace.h	2007-04-10 01:50:02.395768000 +0200
++++ gnome-vfs-2.17.2-alo/libgnomevfs/gnome-vfs-ace.h	2007-04-03 12:35:45.001762000 +0200
+@@ -61,13 +61,18 @@
+ 
+ typedef guint32 GnomeVFSACLKind;
+ typedef guint32 GnomeVFSACLPerm;
++typedef guint32 GnomeVFSACLType;
++typedef guint32 GnomeVFSACLInherance;
++typedef guint32 GnomeVFSACLScheme;
+ 
+ 
+ GType                   gnome_vfs_ace_get_type       (void) G_GNUC_CONST;
+ 
+ GnomeVFSACE *           gnome_vfs_ace_new            (GnomeVFSACLKind  kind,
+                                                       const char      *id,
+-                                                      GnomeVFSACLPerm *perms);
++                                                      GnomeVFSACLPerm *perms,
++						      GnomeVFSACLType  type,
++						      GnomeVFSACLInherance inherance);
+ 
+ GnomeVFSACLKind         gnome_vfs_ace_get_kind       (GnomeVFSACE      *entry);
+ void                    gnome_vfs_ace_set_kind       (GnomeVFSACE      *entry,
+@@ -76,18 +81,22 @@
+ const char *            gnome_vfs_ace_get_id         (GnomeVFSACE      *entry);
+ void                    gnome_vfs_ace_set_id         (GnomeVFSACE      *entry,
+                                                       const char       *id);
+-
+-gboolean                gnome_vfs_ace_get_inherit    (GnomeVFSACE *entry);
+-void                    gnome_vfs_ace_set_inherit    (GnomeVFSACE *entry,
+-						      gboolean     inherit);
+-
+-gboolean                gnome_vfs_ace_get_negative   (GnomeVFSACE *entry);
+-void                    gnome_vfs_ace_set_negative   (GnomeVFSACE *entry,
+-						      gboolean     negative);
+-
+ const GnomeVFSACLPerm * gnome_vfs_ace_get_perms      (GnomeVFSACE      *entry);
+ void                    gnome_vfs_ace_set_perms      (GnomeVFSACE      *entry,
+                                                       GnomeVFSACLPerm  *perms);
++
++GnomeVFSACLType         gnome_vfs_ace_get_ace_type   (GnomeVFSACE      *entry);
++void                    gnome_vfs_ace_set_ace_type   (GnomeVFSACE      *entry,
++						      GnomeVFSACLType   type);
++
++GnomeVFSACLInherance    gnome_vfs_ace_get_inherance  (GnomeVFSACE         *entry);
++void                    gnome_vfs_ace_set_inherance  (GnomeVFSACE         *entry,
++						      GnomeVFSACLInherance inherit);
++
++gboolean                gnome_vfs_ace_equal          (GnomeVFSACE  *entry_a,
++                                                      GnomeVFSACE  *entry_b);
++
++/* Permission related */
+ void                    gnome_vfs_ace_add_perm       (GnomeVFSACE      *entry,
+                                                       GnomeVFSACLPerm   perm);
+ void                    gnome_vfs_ace_del_perm       (GnomeVFSACE      *entry,
+@@ -97,8 +106,10 @@
+ void                    gnome_vfs_ace_copy_perms     (GnomeVFSACE      *source,
+                                                       GnomeVFSACE      *dest);
+ 
+-gboolean                gnome_vfs_ace_equal          (GnomeVFSACE  *entry_a,
+-                                                      GnomeVFSACE  *entry_b);
++/* Deprecated functions */
++gboolean                gnome_vfs_ace_get_negative   (GnomeVFSACE *entry);
++void                    gnome_vfs_ace_set_negative   (GnomeVFSACE *entry,
++						      gboolean     negative);
+ 
+ G_END_DECLS
+ 
+--- gnome-vfs-2.17.2-orig/libgnomevfs/gnome-vfs-acl.c	2007-04-10 01:50:02.414684000 +0200
++++ gnome-vfs-2.17.2-alo/libgnomevfs/gnome-vfs-acl.c	2007-04-03 12:35:46.112022000 +0200
+@@ -37,6 +37,7 @@
+ struct _GnomeVFSACLPrivate {
+ 	GList    *entries;
+ 	gboolean  modified;
++	GnomeVFSACLScheme scheme;
+ };
+ 
+ static void
+@@ -236,7 +237,6 @@
+ 	GList              *list;
+ 	
+ 	priv = acl->priv;
+-	
+ 	list = g_list_copy (priv->entries);
+ 	
+ 	g_list_foreach (list, (GFunc) g_object_ref, NULL);
+@@ -282,7 +282,23 @@
+ 		case GNOME_VFS_ACL_OTHER:
+ 			value = "other";
+ 			break;
+-			
++
++		case GNOME_VFS_ACL_MASK:
++			value = "mask";
++			break;
++
++		case GNOME_VFS_ACL_EVERYONE:
++			value = "everyone";
++			break;
++
++		case GNOME_VFS_ACL_OWNER_USER:
++			value = "owner user";
++			break;
++
++		case GNOME_VFS_ACL_OWNER_GROUP:
++			value = "owner group";
++			break;
++
+ 		default:
+ 			value = "unknown";
+ 			break;
+@@ -314,6 +330,64 @@
+ 		case GNOME_VFS_ACL_EXECUTE:
+ 			value = "execute";
+ 			break;
++
++		/* NFSv4, ZFS extended permissions 
++		 */
++		case GNOME_VFS_ACL_LIST_DIRECTORY:
++			value = "list directory";
++			break;
++
++		GNOME_VFS_ACL_ADD_FILE:
++			value = "add file";
++			break;
++
++		GNOME_VFS_ACL_APPEND_DATA:
++			value = "append data";
++			break;
++
++		GNOME_VFS_ACL_ADD_SUBDIRECTORY:
++			value = "add subdirectory";
++			break;
++
++		GNOME_VFS_ACL_READ_NAMED_ATTRS:
++			value = "read named attributes";
++			break;
++
++		GNOME_VFS_ACL_WRITE_NAMED_ATTRS:
++			value = "write named attributes";
++			break;
++
++		GNOME_VFS_ACL_DELETE_CHILD:
++			value = "delete child";
++			break;
++
++		GNOME_VFS_ACL_READ_ATTRIBUTES:
++			value = "read attributes";
++			break;
++
++		GNOME_VFS_ACL_WRITE_ATTRIBUTES:
++			value = "write attributes";
++			break;
++
++		GNOME_VFS_ACL_DELETE:
++			value = "delete";
++			break;
++
++		GNOME_VFS_ACL_READ_ACL:
++			value = "read acl";
++			break;
++
++		GNOME_VFS_ACL_WRITE_ACL:
++			value = "write acl";
++			break;
++
++		GNOME_VFS_ACL_WRITE_OWNER:
++			value = "write owner";
++			break;
++
++		GNOME_VFS_ACL_SYNCHRONIZE:
++			value = "synchronize";
++			break;
+ 				
+ 		default:
+ 			value = "unknown";
+@@ -326,3 +400,88 @@
+ 	return value;
+ }
+ 
++
++const char *
++gnome_vfs_acl_type_to_string (GnomeVFSACLType type)
++{
++	const char *value;
++	
++	if (type < GNOME_VFS_ACL_TYPE_SYS_LAST) {
++
++		switch (type) {
++		case GNOME_VFS_ACL_ALLOW:
++			value = "allow";
++			break;
++
++		case GNOME_VFS_ACL_DENY:
++			value = "deny";
++			break;
++
++		case GNOME_VFS_ACL_AUDIT:
++			value = "audit";
++			break;
++
++		case GNOME_VFS_ACL_ALARM:
++			value = "alarm";
++			break;
++			
++		default:
++			value = "unknown";
++			break;
++		}
++		
++	} else {
++		value = "unknown";
++	}
++	return value;
++}
++
++
++const char *
++gnome_vfs_acl_inherance_to_string (GnomeVFSACLInherance inheritance)
++{
++	const char *value;
++	
++	if (inheritance < GNOME_VFS_ACL_TYPE_SYS_LAST) {
++
++		switch (inheritance) {
++		case GNOME_VFS_ACL_FILE_INHERIT:
++			value = "File inherit";
++			break;
++
++		case GNOME_VFS_ACL_DIR_INHERIT:
++			value = "Directory inherit";
++			break;
++
++		case GNOME_VFS_ACL_INHERIT_ONLY:
++			value = "Inherit only";
++			break;
++
++		case GNOME_VFS_ACL_NO_PROPAGATE:
++			value = "No propagate";
++			break;
++
++		default:
++			value = "unknown";
++			break;
++		}
++	} else {
++		value = "unknown";
++	}
++	return value;
++}
++
++
++void
++gnome_vfs_acl_set_scheme (GnomeVFSACL *acl,
++			  GnomeVFSACLScheme scheme)
++{
++	acl->priv->scheme = scheme;
++}
++
++
++GnomeVFSACLScheme
++gnome_vfs_acl_get_scheme (GnomeVFSACL *acl)
++{
++	return acl->priv->scheme;
++}
+--- gnome-vfs-2.17.2-orig/libgnomevfs/gnome-vfs-acl.h	2007-04-10 01:50:02.395830000 +0200
++++ gnome-vfs-2.17.2-alo/libgnomevfs/gnome-vfs-acl.h	2007-04-10 00:59:28.459819000 +0200
+@@ -35,16 +35,39 @@
+ 
+ /* ************************************************************************** */
+ 
++/* ACL Audience  */
++
++const char *  gnome_vfs_acl_inherance_to_string   (GnomeVFSACLInherance inherance);
++
++enum {
++	GNOME_VFS_ACL_INHERANCE_NULL = 0,
++	GNOME_VFS_ACL_FILE_INHERIT,
++	GNOME_VFS_ACL_DIR_INHERIT,
++	GNOME_VFS_ACL_INHERIT_ONLY,
++	GNOME_VFS_ACL_NO_PROPAGATE,
++	GNOME_VFS_ACL_INHERANCE_SYS_LAST
++};
++
++
+ /* ACL Kinds */
+ 
+ const char *  gnome_vfs_acl_kind_to_string   (GnomeVFSACLKind kind);
+ 
+ enum {
+ 	GNOME_VFS_ACL_KIND_NULL = 0,
++
++	/* Basic kinds */
+ 	GNOME_VFS_ACL_USER,
+ 	GNOME_VFS_ACL_GROUP,
+ 	GNOME_VFS_ACL_OTHER,
+ 	GNOME_VFS_ACL_MASK,
++
++
++	/* NFSv4, ZFS extended kinds */
++	GNOME_VFS_ACL_EVERYONE,
++	GNOME_VFS_ACL_OWNER_USER,
++	GNOME_VFS_ACL_OWNER_GROUP,
++
+ 	GNOME_VFS_ACL_KIND_SYS_LAST
+ };
+ 
+@@ -54,13 +77,52 @@
+ 
+ enum {
+ 	GNOME_VFS_ACL_PERM_NULL = 0,
++
++	/* Basic permissions */
+ 	GNOME_VFS_ACL_READ      = 1,
+ 	GNOME_VFS_ACL_WRITE,
+-	GNOME_VFS_ACL_EXECUTE, 
++	GNOME_VFS_ACL_EXECUTE,
++
++	/* NFSv4, ZFS extended permissions */
++	GNOME_VFS_ACL_LIST_DIRECTORY,
++	GNOME_VFS_ACL_ADD_FILE,
++	GNOME_VFS_ACL_APPEND_DATA,
++	GNOME_VFS_ACL_ADD_SUBDIRECTORY,
++	GNOME_VFS_ACL_READ_NAMED_ATTRS,
++	GNOME_VFS_ACL_WRITE_NAMED_ATTRS,
++	GNOME_VFS_ACL_DELETE_CHILD,
++	GNOME_VFS_ACL_READ_ATTRIBUTES,
++	GNOME_VFS_ACL_WRITE_ATTRIBUTES,
++	GNOME_VFS_ACL_DELETE,
++	GNOME_VFS_ACL_READ_ACL,
++	GNOME_VFS_ACL_WRITE_ACL,
++	GNOME_VFS_ACL_WRITE_OWNER,
++	GNOME_VFS_ACL_SYNCHRONIZE,
++
+ 	GNOME_VFS_ACL_PERM_SYS_LAST
+ };
+ 
+ 
++/* ACL types */
++
++const char *  gnome_vfs_acl_type_to_string   (GnomeVFSACLType type);
++
++enum {
++	GNOME_VFS_ACL_TYPE_NULL = 0,
++	GNOME_VFS_ACL_ALLOW,
++	GNOME_VFS_ACL_DENY,
++	GNOME_VFS_ACL_AUDIT,
++	GNOME_VFS_ACL_ALARM,
++	GNOME_VFS_ACL_TYPE_SYS_LAST	
++};
++
++/* ACL scheme */
++enum {
++	GNOME_VFS_ACL_SCHEME_NULL,
++	GNOME_VFS_ACL_SCHEME_CLASSIC,
++	GNOME_VFS_ACL_SCHEME_NFS4
++};
++
+ /* ************************************************************************** */
+ 
+ #define GNOME_VFS_TYPE_ACL             (gnome_vfs_acl_get_type ())
+@@ -97,6 +159,11 @@
+ GList *       gnome_vfs_acl_get_ace_list      (GnomeVFSACL *acl);
+ void          gnome_vfs_acl_free_ace_list     (GList       *ace_list);      
+ 
++void          gnome_vfs_acl_set_scheme        (GnomeVFSACL *acl,
++					       GnomeVFSACLScheme scheme);
++GnomeVFSACLScheme
++              gnome_vfs_acl_get_scheme        (GnomeVFSACL *acl);
++
+ G_END_DECLS
+ 
+ 
+--- gnome-vfs-2.17.2-orig/modules/file-method-acl.c	2007-04-10 01:50:02.776935000 +0200
++++ gnome-vfs-2.17.2-alo/modules/file-method-acl.c	2007-04-10 01:17:48.169875000 +0200
+@@ -34,9 +34,7 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <sys/types.h>
+-#ifdef HAVE_SYS_RESOURCE_H
+ #include <sys/resource.h>
+-#endif
+ 
+ #ifdef HAVE_PWD_H
+ # include <pwd.h>
+@@ -74,8 +72,7 @@
+ 	struct passwd *pw = NULL;
+ 	gpointer buffer = NULL;
+ 	gint error;
+-
+-#if defined (HAVE_POSIX_GETPWUID_R) || defined (HAVE_NONPOSIX_GETPWUID_R)	
++// #if defined (HAVE_POSIX_GETPWUID_R) || defined (HAVE_NONPOSIX_GETPWUID_R)	
+ 	struct passwd pwd;
+ 	glong  bufsize;
+ 	
+@@ -84,7 +81,6 @@
+ #else
+ 	bufsize = 64;
+ #endif /* _SC_GETPW_R_SIZE_MAX */
+-
+ 	
+ 	do {
+ 		g_free (buffer);
+@@ -94,7 +90,7 @@
+ 		errno = 0;
+ 		
+ #ifdef HAVE_POSIX_GETPWUID_R
+-	    error = getpwuid_r (uid, &pwd, buffer, bufsize, &pw);
++	error = getpwuid_r (uid, &pwd, buffer, bufsize, &pw);
+         error = error < 0 ? errno : error;
+ #else /* HAVE_NONPOSIX_GETPWUID_R */
+        /* HPUX 11 falls into the HAVE_POSIX_GETPWUID_R case */
+@@ -102,11 +98,10 @@
+ 	    error = getpwuid_r (uid, &pwd, buffer, bufsize);
+ 	    pw = error == 0 ? &pwd : NULL;
+ #else /* !_AIX */
+-        pw = getpwuid_r (uid, &pwd, buffer, bufsize);
++        pw = getpwuid_r (uid, &pwd, buffer, bufsize, &pw);
+         error = pw ? 0 : errno;
+ #endif /* !_AIX */            
+ #endif /* HAVE_NONPOSIX_GETPWUID_R */
+-		
+ 	    if (pw == NULL) {
+ 		    if (error == 0 || error == ENOENT) {
+ 				break;
+@@ -120,7 +115,7 @@
+ 	    bufsize *= 2;
+ 	    
+ 	} while (pw == NULL);
+-#endif /* HAVE_POSIX_GETPWUID_R || HAVE_NONPOSIX_GETPWUID_R */
++// #endif /* HAVE_POSIX_GETPWUID_R || HAVE_NONPOSIX_GETPWUID_R */
+ 
+ 	if (pw == NULL) {
+ 		setpwent ();
+@@ -133,7 +128,6 @@
+ 	}
+ 
+ #endif /* HAVE_PWD_H */
+-	
+ 	if (uid_string == NULL) {
+ 		uid_string = g_strdup_printf ("%d", uid);
+ 	}
+@@ -399,7 +393,7 @@
+ 		}
+ 		
+ 		permset_to_perms (e_ps, pset);
+-		ace = gnome_vfs_ace_new (kind, id, pset);
++		ace = gnome_vfs_ace_new (kind, id, pset, GNOME_VFS_ACL_ALLOW);
+ 
+ 		g_free (id);
+ 
+@@ -427,7 +421,8 @@
+ /* SOLARIS ACL */
+ 
+ #ifdef HAVE_SOLARIS_ACL
+-#define SOLARIS_N_TAGS 3
++//#define SOLARIS_N_TAGS 3
++#define SOLARIS_N_TAGS  GNOME_VFS_ACL_PERM_SYS_LAST
+ 
+ static gboolean
+ fixup_acl (GnomeVFSACL *acl, GSList *acls)
+@@ -448,7 +443,9 @@
+ 		GnomeVFSACLKind   kind;
+ 		GnomeVFSACE      *ace = GNOME_VFS_ACE(i->data);
+ 	
+-		if (!gnome_vfs_ace_get_inherit(ace)) 
++//		if (!gnome_vfs_ace_get_inherit(ace)) 
++//			continue;
++		if (gnome_vfs_ace_get_inherance(ace) == GNOME_VFS_ACL_INHERANCE_NULL)
+ 			continue;
+ 
+ 		defaults = TRUE;
+@@ -492,8 +489,8 @@
+ 					   GNOME_VFS_ACL_WRITE,
+ 					   GNOME_VFS_ACL_EXECUTE, 0};
+ 
+-		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_USER, NULL, perms);
+-		gnome_vfs_ace_set_inherit (ace, TRUE);
++		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_USER, NULL, perms, GNOME_VFS_ACL_ALLOW, GNOME_VFS_ACL_FILE_INHERIT);
++//		gnome_vfs_ace_set_inherit (ace, TRUE);
+ 		gnome_vfs_acl_set (acl, ace);
+ 		g_slist_append(acls, ace);
+ 
+@@ -504,8 +501,8 @@
+ 		GnomeVFSACE     *ace;
+ 		GnomeVFSACLPerm  perms[] = {0};
+ 
+-		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_GROUP, NULL, perms);
+-		gnome_vfs_ace_set_inherit (ace, TRUE);
++		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_GROUP, NULL, perms, GNOME_VFS_ACL_ALLOW, GNOME_VFS_ACL_FILE_INHERIT);
++//		gnome_vfs_ace_set_inherit (ace, TRUE);
+ 		gnome_vfs_acl_set (acl, ace);
+ 
+ 		changed = TRUE;
+@@ -515,8 +512,8 @@
+ 		GnomeVFSACE     *ace;
+ 		GnomeVFSACLPerm  perms[] = {0};
+ 
+-		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_OTHER, NULL, perms);
+-		gnome_vfs_ace_set_inherit (ace, TRUE);
++		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_OTHER, NULL, perms, GNOME_VFS_ACL_ALLOW, GNOME_VFS_ACL_FILE_INHERIT);
++//		gnome_vfs_ace_set_inherit (ace, TRUE);
+ 		gnome_vfs_acl_set (acl, ace);
+ 
+ 		changed = TRUE;
+@@ -528,8 +525,8 @@
+ 					    GNOME_VFS_ACL_WRITE,
+ 					    GNOME_VFS_ACL_EXECUTE, 0};
+ 
+-		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_MASK, NULL, perms);
+-		gnome_vfs_ace_set_inherit (ace, TRUE);
++		ace = gnome_vfs_ace_new (GNOME_VFS_ACL_MASK, NULL, perms, GNOME_VFS_ACL_ALLOW, GNOME_VFS_ACL_FILE_INHERIT);
++//		gnome_vfs_ace_set_inherit (ace, TRUE);
+ 		gnome_vfs_acl_set (acl, ace);
+ 
+ 		changed = TRUE;
+@@ -564,6 +561,76 @@
+ 	return i;
+ }
+ 
++
++static int
++nfs4_access_mask_to_perms (int access_mask, GnomeVFSACLPerm *tags)
++{
++	int i;
++	
++	memset (tags, 0, sizeof (GnomeVFSACLPerm) * (SOLARIS_N_TAGS + 1));
++	i = 0;
++
++	/* Basic permissions
++	 */
++	if (access_mask & ACE_READ_DATA)
++		tags[i++] = GNOME_VFS_ACL_READ;
++
++	if (access_mask & ACE_WRITE_DATA)
++		tags[i++] = GNOME_VFS_ACL_WRITE;
++
++	if (access_mask & ACE_EXECUTE)
++		tags[i++] = GNOME_VFS_ACL_EXECUTE;
++
++	/* NFS4 permissions
++	 */
++	if (access_mask & ACE_LIST_DIRECTORY) 
++		tags[i++] = GNOME_VFS_ACL_LIST_DIRECTORY;
++
++	if (access_mask & ACE_ADD_FILE)
++		tags[i++] = GNOME_VFS_ACL_ADD_FILE;
++
++	if (access_mask & ACE_APPEND_DATA) 
++		tags[i++] = GNOME_VFS_ACL_APPEND_DATA;
++
++	if (access_mask & ACE_ADD_SUBDIRECTORY) 
++		tags[i++] = GNOME_VFS_ACL_ADD_SUBDIRECTORY;
++
++	if (access_mask & ACE_READ_NAMED_ATTRS)
++		tags[i++] = GNOME_VFS_ACL_READ_NAMED_ATTRS;
++
++	if (access_mask & ACE_WRITE_NAMED_ATTRS) 
++		tags[i++] = GNOME_VFS_ACL_WRITE_NAMED_ATTRS;
++
++	if (access_mask & ACE_DELETE_CHILD)
++		tags[i++] = GNOME_VFS_ACL_DELETE_CHILD;
++
++	if (access_mask & ACE_READ_ATTRIBUTES)
++		tags[i++] = GNOME_VFS_ACL_READ_ATTRIBUTES;
++
++	if (access_mask & ACE_WRITE_ATTRIBUTES)
++		tags[i++] = GNOME_VFS_ACL_WRITE_ATTRIBUTES;
++
++	if (access_mask & ACE_DELETE)
++		tags[i++] = GNOME_VFS_ACL_DELETE;
++
++	if (access_mask & ACE_READ_ACL)
++		tags[i++] = GNOME_VFS_ACL_READ_ACL;
++
++	if (access_mask & ACE_WRITE_ACL) 
++		tags[i++] = GNOME_VFS_ACL_WRITE_ACL;
++
++	if (access_mask & ACE_WRITE_OWNER)
++		tags[i++] = GNOME_VFS_ACL_WRITE_OWNER;
++
++	if (access_mask & ACE_SYNCHRONIZE)
++		tags[i++] = GNOME_VFS_ACL_SYNCHRONIZE;
++
++	return i;
++}
++
++
++
++
+ static int
+ solaris_acl_read (GnomeVFSACL *acl,
+ 		  aclent_t    *aclp,
+@@ -574,10 +641,11 @@
+ 	aclent_t *tp;
+ 
+ 	for (tp = aclp, i=0; i < aclcnt; tp++, i++) {
+-		GnomeVFSACE     *ace;
+-		GnomeVFSACLKind  kind;
+-		GnomeVFSACLPerm  pset[SOLARIS_N_TAGS+1];
+-		char            *id;
++		GnomeVFSACE         *ace;
++		GnomeVFSACLKind      kind;
++		GnomeVFSACLInherance inherance;
++		GnomeVFSACLPerm      pset[SOLARIS_N_TAGS+1];
++		char                *id;
+ 
+ 		id   = NULL;
+ 		kind = GNOME_VFS_ACL_KIND_NULL;
+@@ -613,11 +681,13 @@
+ 			g_warning ("Unhandled Solaris ACE: %d\n", tp->a_type);
+ 		}
+ 
+-		permset_to_perms (tp->a_perm, pset);
+-		ace = gnome_vfs_ace_new (kind, id, pset);
++//		if (tp->a_type & ACL_DEFAULT)
++//			gnome_vfs_ace_set_inherit (ace, TRUE);
++
++		inherance = (tp->a_type & ACL_DEFAULT) ? GNOME_VFS_ACL_FILE_INHERIT : GNOME_VFS_ACL_INHERANCE_NULL;
+ 
+-		if (tp->a_type & ACL_DEFAULT)
+-			gnome_vfs_ace_set_inherit (ace, TRUE);
++		permset_to_perms (tp->a_perm, pset);
++		ace = gnome_vfs_ace_new (kind, id, pset, GNOME_VFS_ACL_ALLOW, inherance);
+ 
+ 		gnome_vfs_acl_set (acl, ace);
+ 		g_object_unref (ace);
+@@ -626,6 +696,88 @@
+ 	return 0;
+ }
+ 
++static int
++solaris_acl_nfs4_read (GnomeVFSACL *acl,
++		       ace_t       *aclp,
++		       int          aclcnt,
++		       gboolean     def)
++{
++	int    i;
++	ace_t *tp;
++
++	for (tp = aclp, i=0; i < aclcnt; tp++, i++) {
++		GnomeVFSACE     *ace;
++		GnomeVFSACLKind  kind;
++		GnomeVFSACLInherance inherance;
++		GnomeVFSACLPerm  pset[SOLARIS_N_TAGS+1];
++		char            *id;
++		int              owner_type;
++		int              type;
++
++		id         = NULL;
++		type       = GNOME_VFS_ACL_TYPE_NULL;
++		kind       = GNOME_VFS_ACL_KIND_NULL;
++		inherance  = GNOME_VFS_ACL_INHERANCE_NULL;
++		owner_type = tp->a_flags & ACE_TYPE_FLAGS;
++
++		/* Type: allow, deny, ..
++		 */
++		switch (tp->a_type) {
++		case ACE_ACCESS_ALLOWED_ACE_TYPE:
++			type = GNOME_VFS_ACL_ALLOW;
++			break;
++		case ACE_ACCESS_DENIED_ACE_TYPE:
++			type = GNOME_VFS_ACL_DENY;
++			break;
++		default:
++			type = GNOME_VFS_ACL_TYPE_NULL;
++		}
++
++		/* Kind: user, group, everyone, ..
++		 */
++		if (owner_type == ACE_OWNER) {
++			kind = GNOME_VFS_ACL_OWNER_USER;
++
++		} else if (owner_type == (ACE_GROUP|ACE_IDENTIFIER_GROUP)) {
++			kind = GNOME_VFS_ACL_OWNER_GROUP;
++
++		} else if (owner_type == ACE_GROUP) {
++			if (tp->a_who >= 0)
++				id = gid_to_string (tp->a_who);
++			kind = GNOME_VFS_ACL_GROUP;
++
++		} else if (owner_type == ACE_EVERYONE) {
++			kind = GNOME_VFS_ACL_EVERYONE;
++
++		} else {
++			if (tp->a_who >= 0)
++				id = uid_to_string (tp->a_who);
++			kind = GNOME_VFS_ACL_USER;
++		} 		
++
++		/* Inherance
++		 */
++		if (tp->a_flags & ACE_FILE_INHERIT_ACE) {
++			inherance = GNOME_VFS_ACL_FILE_INHERIT;
++		} else if (tp->a_flags & ACE_DIRECTORY_INHERIT_ACE) {
++			inherance = GNOME_VFS_ACL_DIR_INHERIT;
++		} else if (tp->a_flags & ACE_NO_PROPAGATE_INHERIT_ACE) {
++			inherance = GNOME_VFS_ACL_NO_PROPAGATE;
++		} else if (tp->a_flags & ACE_INHERIT_ONLY_ACE) {
++			inherance = GNOME_VFS_ACL_INHERIT_ONLY;
++		} 
++
++		/* Permissions
++		 */
++		nfs4_access_mask_to_perms (tp->a_access_mask, pset);
++
++		ace = gnome_vfs_ace_new (kind, id, pset, type, inherance);
++		gnome_vfs_acl_set (acl, ace);
++
++		g_object_unref (ace);
++	}
++}
++
+ static GnomeVFSResult
+ translate_ace_into_aclent (GnomeVFSACE *ace, aclent_t *aclp)
+ {
+@@ -637,7 +789,7 @@
+ 	
+ 	id_str     = gnome_vfs_ace_get_id (ace);
+ 	kind       = gnome_vfs_ace_get_kind (ace);
+-	is_default = gnome_vfs_ace_get_inherit (ace);
++	is_default = (gnome_vfs_ace_get_inherance(ace) != GNOME_VFS_ACL_INHERANCE_NULL);
+ 
+ 	aclp->a_perm = 0;
+ 	aclp->a_id   = 0;
+@@ -725,22 +877,18 @@
+ 
+ #endif /* HAVE_ACL */
+ 
+-GnomeVFSResult file_get_acl (const char       *path,
+-                             GnomeVFSFileInfo *info,
+-                             struct stat      *statbuf,
+-                             GnomeVFSContext  *context)
+-{
++
+ #ifdef HAVE_SOLARIS_ACL	
++GnomeVFSResult 
++file_get_acl_classic (const char       *path,
++		      GnomeVFSFileInfo *info,
++		      struct stat      *statbuf,
++		      GnomeVFSContext  *context)
++{
+ 	int       re;
+ 	int       aclcnt;
+ 	aclent_t *aclp;
+ 
+-	if (info->acl != NULL) {
+-		gnome_vfs_acl_clear (info->acl);
+-	} else {
+-		info->acl = gnome_vfs_acl_new ();
+-	}
+-	
+ 	aclcnt = acl (path, GETACLCNT, 0, NULL);
+ 	if (aclcnt < 0) {
+ 		return aclerrno_to_vfserror (errno);
+@@ -768,9 +916,84 @@
+ 
+ 	info->valid_fields |= GNOME_VFS_FILE_INFO_FIELDS_ACL;
+ 	
+-	free (aclp);
+-	
++	free (aclp);	
+ 	return GNOME_VFS_OK;
++}
++
++
++GnomeVFSResult 
++file_get_acl_nfs4 (const char       *path,
++		   GnomeVFSFileInfo *info,
++		   struct stat      *statbuf,
++		   GnomeVFSContext  *context)
++{
++	int    re;
++	int    aclcnt;
++	ace_t *aclp;
++
++	aclcnt = acl (path, ACE_GETACLCNT, 0, NULL);
++	if (aclcnt < 0) {
++		return aclerrno_to_vfserror (errno);
++	}
++
++	if (aclcnt < MIN_ACL_ENTRIES) {
++		return GNOME_VFS_ERROR_INTERNAL;
++	}
++
++	aclp = (ace_t *)malloc(sizeof (ace_t) * aclcnt);
++	if (aclp == NULL) {
++		return GNOME_VFS_ERROR_NO_MEMORY;		
++	}
++
++	errno = 0;
++	re = acl (path, ACE_GETACL, aclcnt, aclp);
++	if (re < 0) {
++		return aclerrno_to_vfserror (errno);		
++	}
++
++	re = solaris_acl_nfs4_read (info->acl, aclp, aclcnt, FALSE);
++	if (re < 0) {
++		return GNOME_VFS_ERROR_INTERNAL;
++	}
++
++	info->valid_fields |= GNOME_VFS_FILE_INFO_FIELDS_ACL;
++	
++	free (aclp);	
++	return GNOME_VFS_OK;	
++}
++#endif
++
++
++GnomeVFSResult file_get_acl (const char       *path,
++                             GnomeVFSFileInfo *info,
++                             struct stat      *statbuf,
++                             GnomeVFSContext  *context)
++{
++#ifdef HAVE_SOLARIS_ACL	
++	long acl_type;
++
++	if (info->acl != NULL) {
++		gnome_vfs_acl_clear (info->acl);
++	} else {
++		info->acl = gnome_vfs_acl_new ();
++	}
++
++	/* Check the ACL type
++	 */
++	acl_type = pathconf (path, _PC_ACL_ENABLED);
++
++	/* Call the sub-handler
++	 */
++	if (acl_type == _ACL_ACLENT_ENABLED) {
++		gnome_vfs_acl_set_scheme (info->acl, GNOME_VFS_ACL_SCHEME_CLASSIC);
++		return file_get_acl_classic (path, info, statbuf, context);
++	} 
++	else if (acl_type == _ACL_ACE_ENABLED) {
++		gnome_vfs_acl_set_scheme (info->acl, GNOME_VFS_ACL_SCHEME_NFS4);
++		return file_get_acl_nfs4 (path, info, statbuf, context);
++	}
++
++	return GNOME_VFS_ERROR_GENERIC;
+ 
+ #elif defined(HAVE_POSIX_ACL)
+ 	acl_t p_acl;
+@@ -813,10 +1036,11 @@
+ }
+ 
+ 
++
+ GnomeVFSResult 
+-file_set_acl (const char             *path,
+-	      const GnomeVFSFileInfo *info,
+-              GnomeVFSContext        *context)
++file_set_acl_classic (const char             *path,
++		      const GnomeVFSFileInfo *info,
++		      GnomeVFSContext        *context)
+ {
+ #ifdef HAVE_SOLARIS_ACL
+ 	GList           *acls;
+@@ -828,8 +1052,6 @@
+ 	guint            aclp_i;
+ 	gboolean         changed;
+ 
+-	if (info->acl == NULL) 
+-		return GNOME_VFS_ERROR_BAD_PARAMETERS;
+ 
+ 	acls = gnome_vfs_acl_get_ace_list (info->acl);
+ 	if (acls == NULL) return GNOME_VFS_OK;
+@@ -880,6 +1102,8 @@
+ 	}
+ 
+ 	g_free (new_aclp);
++	gnome_vfs_acl_free_ace_list (acls);
++
+ 	return GNOME_VFS_OK;
+ 	
+ #elif defined(HAVE_POSIX_ACL)
+@@ -1014,4 +1238,414 @@
+ #endif
+ }
+ 
++static GnomeVFSResult 
++translate_ace_into_nfs4_ace (GnomeVFSACE *ace,
++			     ace_t       *system_ace)
++{
++	const char            *id;
++	GnomeVFSACLKind        kind; 
++	GnomeVFSACLType        type;
++	GnomeVFSACLInherance   inherance;
++
++	g_assert (GNOME_VFS_IS_ACE(ace));
++
++	id        = gnome_vfs_ace_get_id (ace);
++	kind      = gnome_vfs_ace_get_kind (ace);
++	type      = gnome_vfs_ace_get_ace_type (ace);
++	inherance = gnome_vfs_ace_get_inherance (ace);
++
++	/* Set the ID
++	 */
++	system_ace->a_who = -1;
++	if (id) {
++		gint num;
++		num = string_to_uid(id);
++		if (num >= 0) {
++			system_ace->a_who = num;
++		}
++	}
++
++	/* Set the type
++	 */
++	if (type == GNOME_VFS_ACL_DENY)
++		system_ace->a_type = ACE_ACCESS_DENIED_ACE_TYPE;
++	else 
++		system_ace->a_type = ACE_ACCESS_ALLOWED_ACE_TYPE;
++
++	/* Set the kind
++	 */
++	switch (kind) {
++	case GNOME_VFS_ACL_USER:
++		system_ace->a_flags = 0;
++		break;
++	case GNOME_VFS_ACL_GROUP:
++		system_ace->a_flags |= ACE_IDENTIFIER_GROUP;
++		break;
++
++	case GNOME_VFS_ACL_OWNER_USER:
++		system_ace->a_flags |= ACE_OWNER;
++		break;
++	case GNOME_VFS_ACL_OWNER_GROUP:
++		system_ace->a_flags |=  (ACE_GROUP | ACE_IDENTIFIER_GROUP);
++		break;
++
++	case GNOME_VFS_ACL_EVERYONE:
++		system_ace->a_flags |= ACE_EVERYONE;
++		break;
++	}
++
++	/* Permissions
++	 */
++#define set_perm(gnome,system)                        \
++    do {                                              \
++	if (gnome_vfs_ace_check_perm (ace, gnome))    \
++		system_ace->a_access_mask |= system;  \
++    	else                                          \
++		system_ace->a_access_mask &= ~system; \
++    } while(0)
++
++	set_perm (GNOME_VFS_ACL_READ, ACE_READ_DATA);
++	set_perm (GNOME_VFS_ACL_WRITE, ACE_WRITE_DATA);
++	set_perm (GNOME_VFS_ACL_EXECUTE, ACE_EXECUTE);
++
++	set_perm (GNOME_VFS_ACL_LIST_DIRECTORY, ACE_LIST_DIRECTORY);
++	set_perm (GNOME_VFS_ACL_ADD_FILE, ACE_ADD_FILE);
++	set_perm (GNOME_VFS_ACL_APPEND_DATA, ACE_APPEND_DATA);
++	set_perm (GNOME_VFS_ACL_ADD_SUBDIRECTORY, ACE_ADD_SUBDIRECTORY);
++	set_perm (GNOME_VFS_ACL_READ_NAMED_ATTRS, ACE_READ_NAMED_ATTRS);
++	set_perm (GNOME_VFS_ACL_WRITE_NAMED_ATTRS, ACE_WRITE_NAMED_ATTRS);
++	set_perm (GNOME_VFS_ACL_DELETE_CHILD, ACE_DELETE_CHILD);
++	set_perm (GNOME_VFS_ACL_READ_ATTRIBUTES, ACE_READ_ATTRIBUTES);
++	set_perm (GNOME_VFS_ACL_WRITE_ATTRIBUTES, ACE_WRITE_ATTRIBUTES);
++	set_perm (GNOME_VFS_ACL_DELETE, ACE_DELETE);
++	set_perm (GNOME_VFS_ACL_READ_ACL, ACE_READ_ACL);
++	set_perm (GNOME_VFS_ACL_WRITE_ACL, ACE_WRITE_ACL);
++	set_perm (GNOME_VFS_ACL_WRITE_OWNER, ACE_WRITE_OWNER);
++	set_perm (GNOME_VFS_ACL_SYNCHRONIZE, ACE_SYNCHRONIZE);
++#undef  set_perm
++
++	/* Inherance
++	 */
++	switch (inherance) {
++	case GNOME_VFS_ACL_FILE_INHERIT:
++		system_ace->a_flags &= ACE_FILE_INHERIT_ACE;
++		break;
++	case GNOME_VFS_ACL_DIR_INHERIT:
++		system_ace->a_flags &= ACE_DIRECTORY_INHERIT_ACE;
++		break;
++	case GNOME_VFS_ACL_NO_PROPAGATE:
++		system_ace->a_flags &= ACE_NO_PROPAGATE_INHERIT_ACE;
++		break;
++	case GNOME_VFS_ACL_INHERIT_ONLY:
++		system_ace->a_flags &= ACE_INHERIT_ONLY_ACE;
++		break;
++	}
++	
++	return GNOME_VFS_OK;
++}
++
++
++GnomeVFSResult 
++file_set_acl_nfs4 (const char             *path,
++		   const GnomeVFSFileInfo *info,
++		   GnomeVFSContext        *context)
++{
++	GList           *acls;
++	guint            len;
++	GList           *entry;
++	ace_t           *new_aclp;
++	ace_t           *taclp;
++	guint            aclp_i;
++	guint            re;
++
++	acls = gnome_vfs_acl_get_ace_list (info->acl);
++	if (acls == NULL) return GNOME_VFS_OK;
++
++	// fix acls??
++
++	len = g_list_length (acls);
++	if (len <= 0) return GNOME_VFS_OK;
++
++	acls = g_list_reverse (acls);
++
++	new_aclp = (ace_t *) malloc (len * sizeof(ace_t));
++	if (new_aclp == NULL) return GNOME_VFS_ERROR_NO_MEMORY;
++	memset (new_aclp, 0, len * sizeof(ace_t));
++	
++	/* Convert GNOME-VFS aces to system ace_t's
++	 */
++	aclp_i = 0;
++	taclp  = new_aclp;
++	for (entry=acls; entry != NULL; entry = entry->next) {
++		GnomeVFSACE *ace = GNOME_VFS_ACE(entry->data);
++
++		re = translate_ace_into_nfs4_ace (ace, taclp);
++		if (re != GNOME_VFS_OK) continue;
++
++		aclp_i++;
++		taclp++;
++	}	
++
++	/* Commit it to the file system
++	 */
++	re = acl (path, ACE_SETACL, aclp_i, (ace_t *)new_aclp); 
++ 	if (re < 0) {
++		int err = errno;
++
++		g_free (new_aclp);
++		return aclerrno_to_vfserror(err);
++	}
++
++	g_free (new_aclp);
++	gnome_vfs_acl_free_ace_list (acls);
++
++	return GNOME_VFS_OK;
++}
++
++GnomeVFSResult 
++file_set_acl (const char             *path,
++	      const GnomeVFSFileInfo *info,
++              GnomeVFSContext        *context)
++{
++	GnomeVFSACLScheme scheme;
++
++	if (info->acl == NULL) 
++		return GNOME_VFS_ERROR_BAD_PARAMETERS;
++
++	scheme = gnome_vfs_acl_get_scheme(info->acl);
++	if (scheme == GNOME_VFS_ACL_SCHEME_CLASSIC)
++		return file_set_acl_classic (path, info, context);
++
++	return file_set_acl_nfs4 (path, info, context);
++}
++
++
++
++
++
++#ifndef HAVE_GETPWNAM_R
++G_LOCK_DEFINE (getpwnam_lock);
++#endif
++
++static int
++secure_getpwnam (const char *name, struct passwd *pwbuf, char *buf, size_t buflen)
++{
++#ifndef HAVE_GETPWNAM_R
++	size_t         pw_name_len   = 0;
++	size_t         pw_passwd_len = 0;
++	size_t         pw_gecos_len  = 0;
++	size_t         pw_dir_len    = 0;
++	size_t         pw_shell_len  = 0;
++	char          *ptr;
++	struct passwd *tmp;
++
++	G_LOCK(getpwnam_lock);
++
++	tmp = getpwnam (name);
++	if (tmp == NULL) 
++		return errno;
++
++	if (tmp->pw_name)   pw_name_len   = strlen(tmp->pw_name);
++	if (tmp->pw_passwd) pw_passwd_len = strlen(tmp->pw_passwd);
++	if (tmp->pw_gecos)  pw_gecos_len  = strlen(tmp->pw_gecos);
++	if (tmp->pw_dir)    pw_dir_len    = strlen(tmp->pw_dir);
++	if (tmp->pw_shell)  pw_shell_len  = strlen(tmp->pw_shell);
++
++	if ((pw_name_len + pw_passwd_len + 
++	     pw_gecos_len + pw_dir_len + pw_shell_len) > buflen)
++		return ERANGE;
++
++	memset (buf, 0, buflen);
++	ptr = buf;
++
++	
++
++	if (tmp->pw_name) {
++		memcpy (ptr, tmp->pw_name, pw_name_len);
++		pwbuf->pw_name = ptr;
++		ptr += pw_name_len + 1;
++	}
++
++	if (tmp->pw_passwd) {
++		memcpy (ptr, tmp->pw_passwd, pw_passwd_len);
++		pwbuf->pw_passwd = ptr;
++		ptr += pw_passwd_len + 1;
++	}
++
++	if (tmp->pw_gecos) {
++		memcpy (ptr, tmp->pw_gecos, pw_gecos_len);
++		pwbuf->pw_gecos = ptr;
++		ptr += pw_gecos_len + 1;
++	}
++
++	if (tmp->pw_dir) {
++		memcpy (ptr, tmp->pw_dir, pw_dir_len);
++		pwbuf->pw_dir = ptr;
++		ptr += pw_dir_len + 1;
++	}
++
++	if (tmp->pw_shell) {
++		memcpy (ptr, tmp->pw_shell, pw_shell_len);
++		pwbuf->pw_shell = ptr;
++		ptr += pw_shell_len + 1;
++	}
++
++	G_UNLOCK(getpwnam_lock);
++	return 0;
++
++#elif HAVE_GETPWNAM_R_5
++	struct passwd *tmp;
++
++	return getpwnam_r (name, pwbuf, buf, buflen, &tmp);
++
++#elif HAVE_GETPWNAM_R_4
++
++	return getpwnam_r (name, pwbuf, buf, buflen);
++#endif
++
++	return 0;
++}
++
++
++
++
++#ifndef HAVE_GETGRNAM_R
++G_LOCK_DEFINE (getgrnam_lock);
++#endif
++
++static int
++secure_getgrnam (const char *name, struct group *grbuf, char *buf, size_t buflen)
++{
++#ifndef HAVE_GETGRNAM_R
++	size_t        gr_name_len   = 0;
++	size_t        gr_passwd_len = 0;
++	char         *ptr;
++	struct group *tmp;
++
++	G_LOCK(getgrnam_lock);
++
++	tmp = getgrnam (name);
++	if (tmp == NULL) 
++		return errno;
++
++	if (tmp->gr_name)   gr_name_len   = strlen(tmp->gr_name);
++	if (tmp->gr_passwd) gr_passwd_len = strlen(tmp->gr_passwd);
++
++	if ((gr_name_len + gr_passwd_len) > buflen)
++		return ERANGE;
++
++	memset (buf, 0, buflen);
++	ptr = buf;
++
++	grbuf->gr_gid = tmp->gr_gid;
++
++	if (tmp->gr_name) {
++		memcpy (ptr, tmp->gr_name, gr_name_len);
++		grbuf->gr_name = ptr;
++		ptr += gr_name_len + 1;
++	}
++
++	if (tmp->gr_passwd) {
++		memcpy (ptr, tmp->gr_passwd, gr_passwd_len);
++		grbuf->gr_passwd = ptr;
++		ptr += gr_passwd_len + 1;
++	}
++
++	// TODO: Duplicate char **tmp->gr_mem
++
++	G_UNLOCK(getgrnam_lock);
++	return 0;
++
++#elif HAVE_GETGRNAM_R_5
++	struct group *tmp;
++
++	return getgrnam_r (name, grbuf, buf, buflen, &tmp);
++
++#elif HAVE_GETGRNAM_R_4
++
++	return getgrnam_r (name, grbuf, buf, buflen);
++#endif
++
++	return 0;
++}
++
++void
++get_access_info_acl (GnomeVFSFileInfo *file_info,
++                     const gchar      *full_name)
++{
++	  GList *acls, *iter;
++	  GnomeVFSACL *acl;
++
++	  acls = gnome_vfs_acl_get_ace_list (file_info->acl);
++
++   	  for (iter = acls; iter; iter = iter->next) {
++		int            i, re;
++		const char    *id;
++		uid_t          uid;
++		gid_t          gid;
++		struct group  *group;
++		GnomeVFSACE   *ace;
++		int            sup_groups_num;
++		gid_t          sup_groups[NGROUPS_MAX];
++		struct passwd *passwd;
++		struct passwd  pwd;
++		struct group   grp;
++		char           buf[1024];
++
++		ace = iter->data;
++		
++		id = gnome_vfs_ace_get_id (ace);
++		if (id == NULL) continue;
++
++		/* User */
++		re = secure_getpwnam (id, &pwd, buf, 1024);
++		if (re == 0) {
++			uid = passwd->pw_uid;
++		} else {
++			errno = 0;
++			uid = atoi (id);
++			if (errno != 0) 
++				continue;
++		} 
++
++		/* Group */
++		group = secure_getgrnam (id, &grp, buf, 1024);
++		if (group != NULL) {
++			gid = group->gr_gid;
++		} else {
++			errno = 0;
++			gid = atoi (id);
++			if (errno != 0) 
++				continue;
++		}
++
++                /* Suplementary groups */
++                sup_groups_num = getgroups(NGROUPS_MAX, sup_groups);
++
++		if ((file_info->uid == uid) ||
++                    (file_info->gid == gid)) 
++                {
++			if (gnome_vfs_ace_check_perm (ace,GNOME_VFS_ACL_READ))
++				file_info->permissions |= GNOME_VFS_PERM_ACCESS_READABLE;
++			if (gnome_vfs_ace_check_perm (ace,GNOME_VFS_ACL_WRITE))
++				file_info->permissions |= GNOME_VFS_PERM_ACCESS_WRITABLE;
++			if (gnome_vfs_ace_check_perm (ace,GNOME_VFS_ACL_EXECUTE))
++				file_info->permissions |= GNOME_VFS_PERM_ACCESS_EXECUTABLE;
++		} 
++		
++
++		for (i = 0; i < sup_groups_num; i++) {
++			if (gid == sup_groups[i]) {
++				if (gnome_vfs_ace_check_perm (ace,GNOME_VFS_ACL_READ))
++					file_info->permissions |= GNOME_VFS_PERM_ACCESS_READABLE;
++				if (gnome_vfs_ace_check_perm (ace,GNOME_VFS_ACL_WRITE))
++					file_info->permissions |= GNOME_VFS_PERM_ACCESS_WRITABLE;
++				if (gnome_vfs_ace_check_perm (ace,GNOME_VFS_ACL_EXECUTE))
++					file_info->permissions |= GNOME_VFS_PERM_ACCESS_EXECUTABLE;
++			}
++		}
++	}
++
++	gnome_vfs_acl_free_ace_list (acls);	
++}
+ 
+--- gnome-vfs-2.17.2-orig/modules/file-method-acl.h	2007-04-10 01:50:02.776836000 +0200
++++ gnome-vfs-2.17.2-alo/modules/file-method-acl.h	2007-04-03 12:35:34.720317000 +0200
+@@ -43,6 +43,11 @@
+ 			     const GnomeVFSFileInfo *info,
+                              GnomeVFSContext         *context);
+ 
++void           get_access_info_acl (GnomeVFSFileInfo *info,
++		                    const gchar      *path);
++
++GnomeVFSACLScheme get_acl_scheme (GnomeVFSFileInfo *info);
++
+ G_END_DECLS
+ 
+ 
+--- gnome-vfs-2.17.2-orig/modules/file-method.c	2007-04-10 01:50:02.776629000 +0200
++++ gnome-vfs-2.17.2-alo/modules/file-method.c	2007-04-03 12:35:34.605073000 +0200
+@@ -863,6 +860,10 @@
+ 	}
+ #endif
+ 
++     if (file_info->acl) {
++  	  get_access_info_acl (file_info, full_name);
++     }
++
+      file_info->valid_fields |= GNOME_VFS_FILE_INFO_FIELDS_ACCESS;
+ }
+ 
+--- gnome-vfs-2.17.2-orig/test/test-acl.c	2007-04-10 01:50:02.503796000 +0200
++++ gnome-vfs-2.17.2-alo/test/test-acl.c	2007-04-03 12:35:22.152136000 +0200
+@@ -94,8 +94,8 @@
+ 	
+ 	g_print ("Testing ACE Object\n");
+ 	
+-	a = gnome_vfs_ace_new (GNOME_VFS_ACL_USER, "a", pset_a);
+-	b = gnome_vfs_ace_new (GNOME_VFS_ACL_USER, "a", NULL);
++	a = gnome_vfs_ace_new (GNOME_VFS_ACL_USER, "a", pset_a, GNOME_VFS_ACL_TYPE_NULL, GNOME_VFS_ACL_SCHEME_CLASSIC);
++	b = gnome_vfs_ace_new (GNOME_VFS_ACL_USER, "a", NULL, GNOME_VFS_ACL_TYPE_NULL, GNOME_VFS_ACL_SCHEME_CLASSIC);
+ 	
+ 	TEST_ASSERT (a != NULL);
+ 	TEST_ASSERT (b != NULL);

@@ -1,0 +1,26 @@
+https://github.com/rsyslog/rsyslog/issues/1009
+
+Fixed in 8.19
+--- rsyslog-7.4.10/configure.ac.~1~	2014-02-12 15:08:14.000000000 +0400
++++ rsyslog-7.4.10/configure.ac	2016-12-14 20:49:44.933250028 +0300
+@@ -243,12 +244,18 @@
+          esac],
+ 	[enable_gssapi_krb5=no]
+ )
++
++case "${os_type}" in
++solaris) GSSLIB=gss ;;
++*)       GSSLIB=gssapi_krb5 ;;
++esac
++  
+ if test $enable_gssapi_krb5 = yes; then
+-	AC_CHECK_LIB(gssapi_krb5, gss_acquire_cred, [
++	AC_CHECK_LIB($GSSLIB, gss_acquire_cred, [
+ 		AC_CHECK_HEADER(gssapi/gssapi.h, [
+ 			AC_DEFINE(USE_GSSAPI,,
+ 				  Define if you want to use GSSAPI)
+-			GSS_LIBS="-lgssapi_krb5"
++			GSS_LIBS="-l$GSSLIB"
+ 			AC_SUBST(GSS_LIBS)
+ 		])
+ 	])

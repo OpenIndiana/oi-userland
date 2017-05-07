@@ -1,0 +1,16 @@
+The history of this patch is unknown: it existed when ImageMagick was
+migrated to Userland.
+
+--- ImageMagick-6.8.3/coders/png.c.~1~	2013-02-15 04:48:48.000000000 -0800
++++ ImageMagick-6.8.3/coders/png.c	2015-02-10 20:39:14.131500401 -0800
+@@ -100,6 +100,10 @@
+ 
+ #include "png.h"
+ #include "zlib.h"
++#if PNG_LIBPNG_VER >= 10400
++#define trans_values trans_color
++#define trans trans_alpha
++#endif
+ 
+ /* ImageMagick differences */
+ #define first_scene scene

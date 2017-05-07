@@ -28,12 +28,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
-COMPONENT_VERSION=	2.4.35
+COMPONENT_VERSION=	2.4.42
 COMPONENT_PROJECT_URL=	http://www.openldap.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:16100374c147df0d82a5c52ca60da5eca1a5ea8b5a187467d40a78e3691e9eeb
+    sha256:eeb7b0e2c5852bfd2650e83909bb6152835c0b862fab10b63954dc1bcbba8e63
 COMPONENT_ARCHIVE_URL=	ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/openldap
 
@@ -55,16 +55,16 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 COMPONENT_PRE_BUILD_ACTION = \
-	 (cd $(BUILD_DIR_32); \
-	 gzip -dc ../../$(SDFVER).tar.gz | tar xopf -; \
+	 ( $(CP) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) $(BUILD_DIR_32); \
+	 cd $(BUILD_DIR_32); \
+	 gzip -dc $(COMPONENT_ARCHIVE_1) | tar xopf -; \
+	 rm $(COMPONENT_ARCHIVE_1); \
 	  cd $(SDFVER); $(PERL) Makefile.PL; \
 		$(GMAKE))
 
-# we need to enable large file support
-CFLAGS += $(CPP_LARGEFILES)
+# we need to enable large file support and build PIC for our shared libraries
+CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 CONFIGURE_ENV += "ac_cv_lib_net_main=no"
 CONFIGURE_ENV += "ac_cv_lib_net_socket==no"
 CONFIGURE_ENV += "ac_cv_lib_inet_socket==no"
@@ -83,6 +83,7 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-bdb
 CONFIGURE_OPTIONS += --enable-hdb
 CONFIGURE_OPTIONS += --enable-null
+CONFIGURE_OPTIONS += --enable-ldap
 CONFIGURE_OPTIONS += --enable-passwd	 
 CONFIGURE_OPTIONS += --enable-shell
 CONFIGURE_OPTIONS += --with-cyrus-sasl

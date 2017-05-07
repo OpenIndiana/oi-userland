@@ -1,0 +1,403 @@
+'\" te
+.\" Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+.TH apache2 1M "May 2011" "SunOS 5.11" "System Administration Commands"
+.SH NAME
+apache24 \- Apache HTTP Server Version 2.4 overview
+.SH SYNOPSIS
+.LP
+.nf
+\fBapache24\fR
+.fi
+
+.SH DESCRIPTION
+.sp
+.LP
+Apache HTTP Server Version 2 (Apache 2) consists of a main  server daemon,
+loadable server modules,  some additional  support utilities, configuration
+files, and documentation.
+.sp
+.LP
+Both 32-bit and 64-bit versions of the servers are installed. It also
+includes two of the most popular MPMs - Prefork and Worker.
+.SH FILES
+.sp
+.LP
+The following files specify the installation locations for Apache 2:
+.LP
+Note : 
+.RS +4
+.TP
+.ie t \(bu
+.el o
+The string \fB[version]\fR should be expanded
+to \fB"MAJOR.MINOR"\fR. For example, \fB/usr/apache2/2.4/*\fR.
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fB[isainfo]\fR represents the output of \fBisainfo
+-n\fR on 64-bit platform.
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+To find the current version of Apache 2 installed on your
+machine, type the following command:
+.sp
+.in +2
+.nf
+$ /usr/apache2/[version]/bin/apachectl -v
+.fi
+.in -2
+.sp
+
+.RE
+.RE
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/apache2/[version]/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains server configuration files. A newly-installed server
+contains a default \fBhttpd.conf\fR file. This is the main configuration file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/apache2/[version]/conf.d/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains additional server configuration files.
+.sp
+By default, server will load all the \fB\&.conf\fR files
+placed under this directory. It also has 2 additional \fB\&.load\fR configuration
+files-\fBmodules-32.load\fR and \fBmodules-64.load\fR which
+contain \fBLoadModule\fR directives for loading the 32 and 64-bit
+bundled Apache 2 modules respectively.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/apache2/[version]/envvars\fR\fR
+.ad
+.sp .6
+.RS 4n
+File for specifying the environment settings which the server uses at
+startup. This is the user-editable version of the 
+/usr/apache2/[version]/bin/envvars file. 
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/apache2/[version]/magic\fR\fR
+.ad
+.sp .6
+.RS 4n
+Magic data for \fBmod_mime_magic\fR Apache module as documented in the 
+.nf
+\fB/usr/apache2/2.4/manual/mod/mod_mime_magic.html\fR file.
+.fi
+.nf
+Editing this file is not recommended.
+.fi
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/apache2/[version]/mime.types\fR\fR
+.ad
+.sp .6
+.RS 4n
+Default MIME types file. This file sets the default list of
+mappings from filename extensions to content types, changing this file is
+not recommended. Use the \fBAddType\fR directive instead.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/apache2/[version]/original/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contents under this directory are delivered as-is from the
+apache distribution and these files are not meant to be read by the server.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/apache2/[version]/sample-conf.d/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains sample \fB\&.conf\fR files. These are
+not included in the main configuration file. To use the sample file, copy
+the file to \fBconf.d\fR directory and modify as per the need.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/bin/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the 32-bit httpd (Prefork MPM) and httpd.worker (Worker
+MPM) executable as well as other utility programs.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/bin/[isainfo]/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the 64-bit httpd (Prefork MPM) and httpd.worker (Worker
+MPM) executables as well as other utility programs.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/bin/envvars\fR\fR
+\fB\fB/usr/apache2/[version]/bin/[isainfo]/envvars\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the default environment settings that the server uses at startup.
+.nf
+Editing this file is not recommended. 
+.fi
+Instead, user should use /etc/apache2/[version]/envvars file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/manual/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the Apache 2 manual in HTML format.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/include/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the Apache 2 header files, which are needed for building
+various optional server extensions with \fBapxs(8)\fR.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/libexec/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains 32-bit loadable modules (DSOs) supplied with the
+server.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/libexec/[isainfo]/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains 64-bit loadable modules (DSOs) supplied with the
+server.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/man/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains man pages for the server, utility programs, and \fBmod_perl\fR.
+.sp
+Add this directory to your MANPATH to read the Apache 2 man pages. See
+Notes.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/lib/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the 32-bit Apache 2 core libraries.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/lib/[isainfo]/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the 64-bit Apache 2 core libraries.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/apache2/[version]/lib/perl/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the 32-bit modules and library files used by the \fBmod_perl\fR extension to Apache 2.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/apache2/[version]/cgi-bin/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Default location for the CGI scripts.
+.sp
+This can be changed by altering the \fBhttpd.conf\fR file
+and restarting the server.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/apache2/[version]/htdocs/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Default document root.
+.sp
+This can be changed by altering the \fBhttpd.conf\fR file
+and restarting the server.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/apache2/[version]/icons/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Icons used by the server.
+.sp
+This should not be changed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/apache2/[version]/libexec/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Place holder for 32-bit user Apache 2 modules.
+.sp
+Any 32-bit modules which are added using \fBapxs(8)\fR are
+copied into this directory.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/apache2/[version]/libexec/[isainfo]/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Place holder for 64-bit user Apache 2 modules.
+.sp
+Any 64-bit modules which are added using \fBapxs(8)\fR are
+copied into this directory.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/apache2/[version]/logs/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains server log files.
+.sp
+The formats, names, and locations of the files in this directory can
+be altered by various configuration directives in the \fBhttpd.conf\fR file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/apache2/[version]/proxy/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Directory used to cache pages if  the caching feature of \fBmod_proxy\fR is enabled in the \fBhttpd.conf\fR file.
+.sp
+The location of the cache can also be changed by changing the proxy
+configuration in the \fBhttpd.conf\fR file.
+.RE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBattributes(5)\fR, \fBhttpd(8)\fR, apachectl(8)
+.sp
+.LP
+http://www.apache.org
+.SH NOTES
+.sp
+.LP
+In addition to the documentation and man pages included with Solaris,
+more information is available at http://www.apache.org\&.
+.sp
+.LP
+The Apache 2 man pages are provided with the programming modules. To
+view the manual pages for the Apache 2 modules with the man command, add \fB/usr/apache2/[version]/man\fR to the MANPATH environment variable.
+See \fBman(1)\fR for more information. Running \fBcatman(1M)\fR on
+the Apache 2 manual pages is not supported.

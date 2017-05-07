@@ -1,0 +1,35 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/library/python/backports.ssl_match_hostname-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The ssl.match_hostname() function from Python 3.5"
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='PSF-2'
+
+# force a dependency on the Python runtime
+depend fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+       pkg.debug.depend.path=usr/bin type=require
+
+# force a dependency on the package
+depend fmri=library/python/backports.ssl_match_hostname@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    type=require
+
+file path=usr/lib/python$(PYVER)/vendor-packages/backports.ssl_match_hostname-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/backports/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/backports/ssl_match_hostname/__init__.py

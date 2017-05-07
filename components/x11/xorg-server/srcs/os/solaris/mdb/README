@@ -1,0 +1,212 @@
+We have created an mdb module and some simple shell script wrappers
+that can be used to retrieve various information from a running X server
+or a X server core dump.
+
+Currently available information includes:
+
+ - a list of the clients connected to an X server, including for each one:
+	- the sequence number of the last request it sent
+	- in the case of most local clients, their process id
+
+ - a list of the input devices connected to an X server and if any
+	active grabs are applied to them, which client has done so.
+
+ - if a server grab has been done, the id of the client that has the grab.
+
+Scripts
+-------
+
+The simple shell script wrappers are all delivered in /usr/demo/Xserver/mdb
+All of these scripts can be run on either a running process or a core file.
+
+To use these scripts on a running Xserver, specify the process id with the
+-p flag, such as "list_Xserver_clients -p 32999".   To use on a core file,
+simply provide the core file as an argument.   (The command line arguments
+are passed through to mdb, see the mdb(1) man page for more details.)
+
+To use on a running Xorg server, you will need to run as root, due to the
+restrictions
+
+- list_Xserver_clients
+
+This can be useful for trying to figure out which client is
+responsible for the reads and writes you see to a certain file
+descriptor in a truss and similar debugging activities. The sequence
+number will basically be a count of the number of requests an X client
+has sent during its lifetime.
+
+You will get output like this:
+
+max_clients = 1024
+CLIENT SEQUENCE #  FD  PIDS
+    0           0  -1 9719
+    1           8  15  ??? - NULL OsCommPtr->process
+    2           9  16 9721
+    4           8  18  ??? - NULL OsCommPtr->process
+    5          17 ??? - NULL ClientPtr->osPrivate
+    6          14  19 9763
+    7          71  20 9814
+    8          13  21 9819
+    9          17  22 9836
+   10      501747  23 9837
+   11         147  24 9837
+   12          11  25 9837
+   13        9676  26 9843
+   14       38347  27 9843
+   15          11  28 9843
+   16       13251  29 9846 9857 9861 9871
+   18        5299  31 9847 9891 9894 9900 9904 9922
+   19        2397  32 9879
+   21          11  34 9879
+   23    34389507  36 9885
+
+1342  /usr/dt/bin/dtlogin -daemon
+  9719  /usr/X11/bin/Xorg :0 -depth 24 -nobanner -auth /var/dt/A:0-epayvc
+  9721  /usr/openwin/bin/fbconsole -d :0
+  9720  /usr/dt/bin/dtlogin -daemon
+    9741  /bin/ksh /usr/dt/bin/Xsession
+      9819  /usr/dt/bin/sdt_shell -c unsetenv _ PWD;             unsetenv DT;
+        9821  -csh -c unsetenv _ PWD;             unsetenv DT;      setenv DISP
+          9837  /usr/dt/bin/dtsession
+            9843  dtwm
+            9846  /usr/dt/bin/dtterm -session dtb2aitb -C -ls
+              9857  -csh
+              9861  -csh
+              9871  -csh
+            9847  /usr/dt/bin/dtterm -session dtP2aqtb -C -ls
+              9891  -csh
+              9894  -csh
+              9900  -csh
+              9904  -csh
+              9922  -csh
+            9879  dtfile -session dtqRaOFb
+              9949  dtfile -session dtqRaOFb
+            9885  sdtperfmeter -f -H -t cpu -t disk -s 1 -name fpperfmeter
+9836  /usr/dt/bin/ttsession
+
+The output at the end comes from ptree. From this example we can see
+the busiest client in this CDE session has been sdtperfmeter since it
+has sent 34389507 X requests in order to update the performance meter
+once a second. (This session was running for 6 days before this output
+was taken.)
+
+- list_Xserver_devicegrab_client
+
+This lists all the input devices known to the Xserver and if they have
+been grabbed by any clients, which client holds an active grab.
+
+For instance, on a machine where the xterm "Secure Keyboard" menu item
+was chosen to grab the keyboard:
+
+ # list_Xserver_devicegrab_client -p 6072
+  Device "Virtual core pointer" id 2:
+    -- no active grab on device
+
+  Device "Virtual core keyboard" id 3:
+    -- active grab 5e00000 by client 47
+
+  Device "Virtual core XTEST pointer" id 4:
+    -- no active grab on device
+
+  Device "Virtual core XTEST keyboard" id 5:
+    -- no active grab on device
+
+  Device "mouse" id 6:
+    -- no active grab on device
+
+  Device "hotkey" id 7:
+    -- no active grab on device
+
+  Device "keyboard" id 8:
+    -- no active grab on device
+
+You can then use list_Xserver_clients to find out what client 47 is:
+
+  CLIENT SEQUENCE #  FD  PIDS
+   [...]
+     47        3378  78 8936
+   [...]
+      8936  xterm
+
+
+- list_Xserver_servergrab_client
+
+This script checks a variable in the X server to determine if a server
+grab has been done, and if so which client has done it.
+
+Debugging with mdb
+------------------
+
+The mdb module can also be used directly in an mdb debugging session
+on either a live server or a core file.  The module is delivered in
+/usr/lib/mdb/proc as Xorg.so, Xvfb.so, Xephyr.so and Xvnc.so so that
+it should be automatically loaded when mdb attaches to a process or
+core of any of those programs.
+
+Two sets of dcmds are provided, each with a "walker" which simply
+iterates over the entries in the X server internal tables, and a
+command that prints the information for each entry.
+
+The commands currently provided are:
+
+	::client_pids - prints information about a ClientRec entry
+	   in the X server's array of currently connected X clients.
+	   Switches: 
+	     -w    Print arguments with process name when available.
+
+	::inputdev_grabs - prints information about a DeviceIntRec entry
+	   in the X server's list of currently connected input devices.
+
+The walkers to iterate over the lists of these structures in the X server are:
+
+	::client_walk - walks the array of ClientRec entries stored in the
+		global array "clients", from 0 to the value of the global
+		variable "currentMaxClients"
+
+	::inputdev_walk - walks the linked list of DeviceIntRec entries
+		starting at the entry stored in the global variable "InputInfo"
+
+You can run them like this:
+
+# mdb -p 9719
+Loading modules: [ Xorg ld.so.1 libc.so.1 libproc.so.1 libnvpair.so.1 libuutil.so.1 libavl.so.1 libsysevent.so.1 ]
+> ::walk client_walk
+max_clients = 1024
+1b7db8
+1b7dbc
+1b7dc0
+[...]
+> 1b7dc0  ::client_pids
+CLIENT SEQUENCE #   FD  PROCESS
+    2          20   21   1285 /usr/bin/dbus-launch
+
+If you run one of the commands (such as ::client_pids) without an address in
+front, it will automatically call the associated walker to list the
+information for all the entries in the list.
+
+For more information about using mdb, see the Solaris Modular Debugger Guide
+on http://docs.oracle.com and the mdb OpenSolaris Community website at
+http://hub.opensolaris.org/bin/view/Community+Group+mdb/
+
+=============================================================================
+
+Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice (including the next
+paragraph) shall be included in all copies or substantial portions of the
+Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.

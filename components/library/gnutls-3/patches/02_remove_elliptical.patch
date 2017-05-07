@@ -1,0 +1,353 @@
+Source:
+Internal
+
+Info:
+This patch makes the changes necessary to remove all usage of elliptical curve 
+code in this library.
+
+Status: This patch is Solaris specific. This will not be sent upstream.
+
+--- ORIGINAL/./lib/auth/ecdhe.h	2015-07-24 15:17:22.747625209 -0700
++++ gnutls-3.4.1/./lib/auth/ecdhe.h	2015-07-24 15:19:55.707550982 -0700
+@@ -23,6 +23,7 @@
+ #ifndef AUTH_ECDH_COMMON
+ #define AUTH_ECDH_COMMON
+ 
++#if defined(ENABLE_ECDHE)
+ #include <gnutls_auth.h>
+ 
+ int
+@@ -48,4 +49,5 @@
+ 
+ 
+ 
++#endif /*ENABLE_ECDHE*/
+ #endif
+--- ORIGINAL/./lib/auth/dhe_psk.c	2015-07-24 15:17:55.194610558 -0700
++++ gnutls-3.4.1/./lib/auth/dhe_psk.c	2015-07-24 15:19:55.727540829 -0700
+@@ -39,20 +39,28 @@
+ #include "gnutls_mpi.h"
+ #include <gnutls_state.h>
+ #include <auth/dh_common.h>
++#if defined(ENABLE_ECDHE)
+ #include <auth/ecdhe.h>
++#endif
+ #include <gnutls_datum.h>
+ #include <auth/psk_passwd.h>
+ 
++#if defined(ENABLE_ECDHE)
+ static int
+ proc_ecdhe_psk_server_kx(gnutls_session_t session, uint8_t * data,
+ 			 size_t _data_size);
++#endif
+ static int gen_dhe_psk_server_kx(gnutls_session_t, gnutls_buffer_st *);
+ static int gen_dhe_psk_client_kx(gnutls_session_t, gnutls_buffer_st *);
++#if defined(ENABLE_ECDHE)
+ static int gen_ecdhe_psk_client_kx(gnutls_session_t, gnutls_buffer_st *);
+ static int proc_ecdhe_psk_client_kx(gnutls_session_t, uint8_t *, size_t);
++#endif
+ static int proc_dhe_psk_server_kx(gnutls_session_t, uint8_t *, size_t);
++#if defined(ENABLE_ECDHE)
+ static int gen_ecdhe_psk_server_kx(gnutls_session_t session,
+ 				   gnutls_buffer_st * data);
++#endif
+ static int proc_dhe_psk_client_kx(gnutls_session_t session, uint8_t * data,
+ 				  size_t _data_size);
+ #ifdef ENABLE_DHE
+@@ -93,6 +101,7 @@
+ };
+ #endif
+ 
++#if defined(ENABLE_ECDHE)
+ static int
+ gen_ecdhe_psk_client_kx(gnutls_session_t session, gnutls_buffer_st * data)
+ {
+@@ -136,6 +145,7 @@
+ 
+ 	return ret;
+ }
++#endif
+ 
+ static int
+ gen_dhe_psk_client_kx(gnutls_session_t session, gnutls_buffer_st * data)
+@@ -234,6 +244,7 @@
+ 	return ret;
+ }
+ 
++#if defined(ENABLE_ECDHE)
+ static int
+ gen_ecdhe_psk_server_kx(gnutls_session_t session, gnutls_buffer_st * data)
+ {
+@@ -258,6 +269,7 @@
+ 
+ 	return ret;
+ }
++#endif
+ 
+ 
+ static int
+@@ -341,6 +353,7 @@
+ 
+ }
+ 
++#if defined(ENABLE_ECDHE)
+ static int
+ proc_ecdhe_psk_client_kx(gnutls_session_t session, uint8_t * data,
+ 			 size_t _data_size)
+@@ -409,6 +422,7 @@
+ 
+ 	return ret;
+ }
++#endif
+ 
+ static int copy_hint(gnutls_session_t session, gnutls_datum_t *hint)
+ {
+@@ -440,6 +454,7 @@
+ 	return 0;
+ }
+ 
++#if defined(ENABLE_ECDHE)
+ static int
+ proc_ecdhe_psk_server_kx(gnutls_session_t session, uint8_t * data,
+ 			 size_t _data_size)
+@@ -469,5 +484,6 @@
+ 
+ 	return 0;
+ }
++#endif /*ENABLE_ECDHE*/
+ 
+ #endif				/* ENABLE_PSK */
+--- ORIGINAL/./lib/auth/ecdhe.c	2015-07-24 15:17:30.508450604 -0700
++++ gnutls-3.4.1/./lib/auth/ecdhe.c	2015-07-24 15:19:55.717659786 -0700
+@@ -25,6 +25,7 @@
+  * procedure of the certificate and anoymous authentication.
+  */
+ 
++#if defined(ENABLE_ECDHE)
+ #include <gnutls_int.h>
+ #include "gnutls_auth.h"
+ #include "gnutls_errors.h"
+@@ -50,7 +51,6 @@
+ proc_ecdhe_client_kx(gnutls_session_t session,
+ 		     uint8_t * data, size_t _data_size);
+ 
+-#if defined(ENABLE_ECDHE)
+ const mod_auth_st ecdhe_ecdsa_auth_struct = {
+ 	"ECDHE_ECDSA",
+ 	_gnutls_gen_cert_server_crt,
+--- ORIGINAL/./lib/nettle/pk.c	2015-07-24 15:18:27.631820369 -0700
++++ gnutls-3.4.1/./lib/nettle/pk.c	2015-07-24 15:19:55.737837073 -0700
+--- gnutls-3.4.16/lib/nettle/pk.c.~1~	2016-08-27 18:03:46.000000000 +0300
++++ gnutls-3.4.16/lib/nettle/pk.c	2016-11-25 13:49:20.464206964 +0300
+@@ -45,13 +45,17 @@
+ #include <nettle/rsa.h>
+ #include <gnutls/crypto.h>
+ #include <nettle/bignum.h>
++#if defined(ENABLE_ECDHE)
+ #include <nettle/ecc.h>
+ #include <nettle/ecdsa.h>
+ #include <nettle/ecc-curve.h>
++#endif
+ #include <gnettle.h>
+ #include <fips.h>
+ 
++#if defined(ENABLE_ECDHE)
+ static inline const struct ecc_curve *get_supported_curve(int curve);
++#endif
+ 
+ static void rnd_func(void *_ctx, size_t length, uint8_t * data)
+ {
+@@ -64,6 +68,7 @@
+ 	}
+ }
+ 
++#if defined(ENABLE_ECDHE)
+ static void
+ ecc_scalar_zclear (struct ecc_scalar *s)
+ {
+@@ -77,6 +82,7 @@
+         zeroize_key(p->p, ecc_size_a(p->ecc)*sizeof(mp_limb_t));
+         ecc_point_clear(p);
+ }
++#endif
+   
+ static void
+ _dsa_params_get(const gnutls_pk_params_st * pk_params,
+@@ -119,6 +125,7 @@
+ 	return 0;
+ }
+ 
++#if defined(ENABLE_ECDHE)
+ static int
+ _ecc_params_to_privkey(const gnutls_pk_params_st * pk_params,
+ 		       struct ecc_scalar *priv,
+@@ -167,6 +174,7 @@
+ 
+ 	return;
+ }
++#endif
+ 
+ #define MAX_DH_BITS DEFAULT_MAX_VERIFY_BITS
+ /* This is used when we have no idea on the structure
+@@ -245,6 +253,7 @@
+ 
+ 		break;
+ 	}
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC:
+ 		{
+ 			struct ecc_scalar ecc_priv;
+@@ -290,6 +299,7 @@
+ 				goto cleanup;
+ 			break;
+ 		}
++#endif
+ 	default:
+ 		gnutls_assert();
+ 		ret = GNUTLS_E_INTERNAL_ERROR;
+@@ -458,6 +468,7 @@
+ 	const mac_entry_st *me;
+ 
+ 	switch (algo) {
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC:	/* we do ECDSA */
+ 		{
+ 			struct ecc_scalar priv;
+@@ -506,6 +517,7 @@
+ 			}
+ 			break;
+ 		}
++#endif
+ 	case GNUTLS_PK_DSA:
+ 		{
+ 			struct dsa_params pub;
+@@ -616,6 +628,7 @@
+ 	bigint_t tmp[2] = { NULL, NULL };
+ 
+ 	switch (algo) {
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC:	/* ECDSA */
+ 		{
+ 			struct ecc_point pub;
+@@ -662,6 +675,7 @@
+ 			ecc_point_clear(&pub);
+ 			break;
+ 		}
++#endif
+ 	case GNUTLS_PK_DSA:
+ 		{
+ 			struct dsa_params pub;
+@@ -745,6 +759,7 @@
+ 	return ret;
+ }
+ 
++#if defined(ENABLE_ECDHE)
+ static inline const struct ecc_curve *get_supported_curve(int curve)
+ {
+ 	switch (curve) {
+@@ -764,10 +779,15 @@
+ 		return NULL;
+ 	}
+ }
++#endif
+ 
+ static int _wrap_nettle_pk_curve_exists(gnutls_ecc_curve_t curve)
+ {
++#if defined(ENABLE_ECDHE)
+ 	return ((get_supported_curve(curve)!=NULL)?1:0);
++#else
++	return 0;
++#endif
+ }
+ 
+ /* Generates algorithm's parameters. That is:
+@@ -873,7 +893,9 @@
+ 			break;
+ 		}
+ 	case GNUTLS_PK_RSA:
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC:
++#endif
+ 		ret = 0;
+ 		break;
+ 	default:
+@@ -903,6 +925,7 @@
+ 			   const gnutls_datum_t *priv_key, const gnutls_datum_t *pub_key,
+ 			   const gnutls_datum_t *peer_key, gnutls_datum_t *Z);
+ 
++#if defined(ENABLE_ECDHE)
+ int _gnutls_ecdh_compute_key(gnutls_ecc_curve_t curve,
+ 			   const gnutls_datum_t *x, const gnutls_datum_t *y,
+ 			   const gnutls_datum_t *k,
+@@ -912,6 +935,7 @@
+ int _gnutls_ecdh_generate_key(gnutls_ecc_curve_t curve,
+ 			      gnutls_datum_t *x, gnutls_datum_t *y,
+ 			      gnutls_datum_t *k);
++#endif
+ 
+ 
+ int _gnutls_dh_generate_key(gnutls_dh_params_t dh_params,
+@@ -1007,6 +1031,7 @@
+  	return ret;
+ }
+ 
++#if defined(ENABLE_ECDHE)
+ int _gnutls_ecdh_generate_key(gnutls_ecc_curve_t curve,
+ 			      gnutls_datum_t *x, gnutls_datum_t *y,
+ 			      gnutls_datum_t *k)
+@@ -1135,6 +1160,7 @@
+  	gnutls_pk_params_clear(&priv);
+  	return ret;
+ }
++#endif /*ENABLE_ECDHE*/
+ #endif
+ 
+ 
+@@ -1327,6 +1353,7 @@
+ 
+ 			break;
+ 		}
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC:
+ 		{
+ 			struct ecc_scalar key;
+@@ -1369,6 +1396,7 @@
+ 
+ 			break;
+ 		}
++#endif
+ 	default:
+ 		gnutls_assert();
+ 		return GNUTLS_E_INVALID_REQUEST;
+@@ -1513,6 +1541,7 @@
+ 		}
+ 
+ 		break;
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC:
+ 		{
+ 			struct ecc_point r, pub;
+@@ -1586,6 +1615,7 @@
+ 			mpz_clear(y2);
+ 		}
+ 		break;
++#endif
+ 	default:
+ 		ret = gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+ 	}
+@@ -1603,6 +1633,7 @@
+ 	case GNUTLS_PK_RSA:
+ 	case GNUTLS_PK_DSA:
+ 		return 0;
++#if defined(ENABLE_ECDHE)
+ 	case GNUTLS_PK_EC:
+ 		{
+ 			/* just verify that x and y lie on the curve */
+@@ -1643,6 +1674,7 @@
+ 			ecc_point_clear(&pub);
+ 		}
+ 		break;
++#endif
+ 	default:
+ 		ret = gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
+ 	}

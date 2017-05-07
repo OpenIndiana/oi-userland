@@ -1,0 +1,24 @@
+--- trousers-0.3.11.2/dist/Makefile.am.~1~	2013-08-16 22:17:17.000000000 +0400
++++ trousers-0.3.11.2/dist/Makefile.am	2014-12-01 18:17:15.923457729 +0300
+@@ -2,15 +2,15 @@
+        fedora/fedora.initrd.tcsd
+ install: install-exec-hook
+ 	if test ! -e ${DESTDIR}/@sysconfdir@/tcsd.conf; then mkdir -p ${DESTDIR}/@sysconfdir@ && cp tcsd.conf ${DESTDIR}/@sysconfdir@; fi
+-	/bin/chown tss:tss ${DESTDIR}/@sysconfdir@/tcsd.conf || true
+-	/bin/chmod 0600 ${DESTDIR}/@sysconfdir@/tcsd.conf
++#	/bin/chown tss:tss ${DESTDIR}/@sysconfdir@/tcsd.conf || true
++#	/bin/chmod 0600 ${DESTDIR}/@sysconfdir@/tcsd.conf
+ 
+ install-exec-hook:
+-	/usr/sbin/groupadd tss || true
+-	/usr/sbin/useradd -r tss -g tss || true
++#	/usr/sbin/groupadd tss || true
++#	/usr/sbin/useradd -r tss -g tss || true
+ 	/bin/sh -c 'if [ ! -e ${DESTDIR}/@localstatedir@/lib/tpm ];then mkdir -p ${DESTDIR}/@localstatedir@/lib/tpm; fi'
+-	/bin/chown tss:tss ${DESTDIR}/@localstatedir@/lib/tpm || true
+-	/bin/chmod 0700 ${DESTDIR}/@localstatedir@/lib/tpm
++#	/bin/chown tss:tss ${DESTDIR}/@localstatedir@/lib/tpm || true
++#	/bin/chmod 0700 ${DESTDIR}/@localstatedir@/lib/tpm
+ 
+ uninstall-hook:
+ 	/usr/sbin/userdel tss || true

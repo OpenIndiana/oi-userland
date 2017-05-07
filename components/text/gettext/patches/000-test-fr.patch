@@ -1,0 +1,101 @@
+#
+# Add links for ISO8859-1 and UTF-8 fr support so that a few tests can find
+# their messages.
+#
+
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-bash gettext-0.19.3/gettext-tools/tests/lang-bash
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-bash	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-bash	2014-11-25 23:00:57.884865296 -0800
+@@ -76,6 +76,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 ||ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 ||ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-c gettext-0.19.3/gettext-tools/tests/lang-c
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-c	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-c	2014-11-25 23:02:01.777147693 -0800
+@@ -106,6 +106,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 || ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 || ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-clisp gettext-0.19.3/gettext-tools/tests/lang-clisp
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-clisp	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-clisp	2014-11-25 23:03:21.560722863 -0800
+@@ -71,6 +71,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 || ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 || ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-gawk gettext-0.19.3/gettext-tools/tests/lang-gawk
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-gawk	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-gawk	2014-11-25 23:03:35.044994188 -0800
+@@ -75,6 +75,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 || ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 || ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-guile gettext-0.19.3/gettext-tools/tests/lang-guile
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-guile	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-guile	2014-11-25 23:03:52.408332029 -0800
+@@ -74,6 +74,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 || ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 || ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-php gettext-0.19.3/gettext-tools/tests/lang-php
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-php	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-php	2014-11-25 23:03:58.618857631 -0800
+@@ -55,6 +55,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 || ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 || ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-sh gettext-0.19.3/gettext-tools/tests/lang-sh
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-sh	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-sh	2014-11-25 23:04:11.200187548 -0800
+@@ -69,6 +69,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 || ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 || ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po
+diff -ru gettext-0.19.3.orig/gettext-tools/tests/lang-vala gettext-0.19.3/gettext-tools/tests/lang-vala
+--- gettext-0.19.3.orig/gettext-tools/tests/lang-vala	2014-10-01 00:29:54.000000000 -0700
++++ gettext-0.19.3/gettext-tools/tests/lang-vala	2014-11-25 23:04:19.168704034 -0800
+@@ -63,6 +63,8 @@
+ 
+ test -d fr || mkdir fr
+ test -d fr/LC_MESSAGES || mkdir fr/LC_MESSAGES
++test -L fr_FR.ISO8859-1 || ln -s fr fr_FR.ISO8859-1
++test -L fr_FR.UTF-8 || ln -s fr fr_FR.UTF-8
+ 
+ : ${MSGFMT=msgfmt}
+ ${MSGFMT} -o fr/LC_MESSAGES/prog.mo fr.po

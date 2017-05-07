@@ -1,0 +1,219 @@
+Description:  Backport upstream fix to fix a random crash in the scheduler when not using systemd
+Bug-Debian: https://bugs.debian.org/760476
+Bug: https://cups.org/str.php?L4484
+Last-Update: 2014-11-23
+--- scheduler/main.c
++++ scheduler/main.c
+@@ -100,6 +100,8 @@
+   int			i;		/* Looping var */
+   char			*opt;		/* Option character */
+   int			fg;		/* Run in the foreground */
++  int			close_all = 1,	/* Close all file descriptors? */
++			disconnect = 1;	/* Disconnect from controlling terminal? */
+   int			fds;		/* Number of ready descriptors */
+   cupsd_client_t	*con;		/* Current client */
+   cupsd_job_t		*job;		/* Current job */
+@@ -152,6 +154,8 @@
+   {
+     Launchd = 1;
+     fg      = 1;
++    close_all  = 0;
++    disconnect = 0;
+   }
+ #endif /* HAVE_LAUNCHD */
+ 
+@@ -163,6 +167,7 @@
+ 	  case 'C' : /* Run as child with config file */
+               run_as_child = 1;
+ 	      fg           = -1;
++	      close_all    = 0;
+ 
+ 	  case 'c' : /* Configuration file */
+ 	      i ++;
+@@ -218,10 +223,13 @@
+ 
+           case 'f' : /* Run in foreground... */
+ 	      fg = 1;
++	      disconnect = 0;
++	      close_all  = 0;
+ 	      break;
+ 
+           case 'F' : /* Run in foreground, but disconnect from terminal... */
+ 	      fg = -1;
++	      close_all = 0;
+ 	      break;
+ 
+           case 'h' : /* Show usage/help */
+@@ -232,10 +240,14 @@
+ #ifdef HAVE_LAUNCHD
+ 	      Launchd = 1;
+ 	      fg      = 1;
++              close_all  = 0;
++              disconnect = 0;
+ #else
+ 	      _cupsLangPuts(stderr, _("cupsd: launchd(8) support not compiled "
+ 	                              "in, running in normal mode."));
+               fg = 0;
++              disconnect = 1;
++              close_all  = 1;
+ #endif /* HAVE_LAUNCHD */
+ 	      break;
+ 
+@@ -244,6 +256,8 @@
+                     "use only!\n", stderr);
+ 	      stop_scheduler = 1;
+ 	      fg             = 1;
++	      disconnect     = 0;
++	      close_all      = 0;
+ 	      break;
+ 
+           case 'P' : /* Disable security profiles */
+@@ -286,6 +300,8 @@
+           case 't' : /* Test the cupsd.conf file... */
+ 	      TestConfigFile = 1;
+ 	      fg             = 1;
++	      disconnect     = 0;
++	      close_all      = 0;
+ 	      break;
+ 
+ 	  default : /* Unknown option */
+@@ -333,8 +349,57 @@
+     free(filename);
+   }
+ 
++  if (disconnect)
++  {
++   /*
++    * Make sure we aren't tying up any filesystems...
++    */
++
++    chdir("/");
++
++   /*
++    * Disconnect from the controlling terminal...
++    */
++
++    setsid();
++  }
++
++  if (close_all)
++  {
++   /*
++    * Close all open files...
++    */
++
++    getrlimit(RLIMIT_NOFILE, &limit);
++
++    for (i = 0; i < (int)limit.rlim_cur && i < 1024; i ++)
++      close(i);
++
++   /*
++    * Redirect stdin/out/err to /dev/null...
++    */
++
++    if ((i = open("/dev/null", O_RDONLY)) != 0)
++    {
++      dup2(i, 0);
++      close(i);
++    }
++
++    if ((i = open("/dev/null", O_WRONLY)) != 1)
++    {
++      dup2(i, 1);
++      close(i);
++    }
++
++    if ((i = open("/dev/null", O_WRONLY)) != 2)
++    {
++      dup2(i, 2);
++      close(i);
++    }
++  }
++
+  /*
+-  * If the user hasn't specified "-f", run in the background...
++  * Run in the background as needed...
+   */
+ 
+   if (!fg)
+@@ -409,74 +474,17 @@
+ #endif /* __OpenBSD__ && OpenBSD < 201211 */
+ 
+    /*
+-    * Since CoreFoundation and DBUS both create fork-unsafe data on execution of
+-    * a program, and since this kind of really unfriendly behavior seems to be
+-    * more common these days in system libraries, we need to re-execute the
+-    * background cupsd with the "-C" option to avoid problems.  Unfortunately,
+-    * we also have to assume that argv[0] contains the name of the cupsd
+-    * executable - there is no portable way to get the real pathname...
++    * Since many system libraries create fork-unsafe data on execution of a
++    * program, we need to re-execute the background cupsd with the "-C" and "-s"
++    * options to avoid problems.  Unfortunately, we also have to assume that
++    * argv[0] contains the name of the cupsd executable - there is no portable
++    * way to get the real pathname...
+     */
+ 
+-    execlp(argv[0], argv[0], "-C", ConfigurationFile, (char *)0);
++    execlp(argv[0], argv[0], "-C", ConfigurationFile, "-s", CupsFilesFile, (char *)0);
+     exit(errno);
+   }
+ 
+-  if (fg < 1)
+-  {
+-   /*
+-    * Make sure we aren't tying up any filesystems...
+-    */
+-
+-    chdir("/");
+-
+-#ifndef DEBUG
+-   /*
+-    * Disable core dumps...
+-    */
+-
+-    getrlimit(RLIMIT_CORE, &limit);
+-    limit.rlim_cur = 0;
+-    setrlimit(RLIMIT_CORE, &limit);
+-
+-   /*
+-    * Disconnect from the controlling terminal...
+-    */
+-
+-    setsid();
+-
+-   /*
+-    * Close all open files...
+-    */
+-
+-    getrlimit(RLIMIT_NOFILE, &limit);
+-
+-    for (i = 0; i < limit.rlim_cur && i < 1024; i ++)
+-      close(i);
+-
+-   /*
+-    * Redirect stdin/out/err to /dev/null...
+-    */
+-
+-    if ((i = open("/dev/null", O_RDONLY)) != 0)
+-    {
+-      dup2(i, 0);
+-      close(i);
+-    }
+-
+-    if ((i = open("/dev/null", O_WRONLY)) != 1)
+-    {
+-      dup2(i, 1);
+-      close(i);
+-    }
+-
+-    if ((i = open("/dev/null", O_WRONLY)) != 2)
+-    {
+-      dup2(i, 2);
+-      close(i);
+-    }
+-#endif /* DEBUG */
+-  }
+-
+  /*
+   * Set the timezone info...
+   */

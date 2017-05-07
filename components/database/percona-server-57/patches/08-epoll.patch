@@ -1,0 +1,17 @@
+Disable epoll on illumos
+
+--- percona-server-5.7.13-6/libevent/CMakeLists.txt.1	2016-07-27 17:10:11.779239036 +0300
++++ percona-server-5.7.13-6/libevent/CMakeLists.txt	2016-07-27 17:10:24.248147888 +0300
+@@ -61,9 +61,9 @@
+   SET(LIBEVENT_POLL_SOURCES poll.c)
+ ENDIF()
+ 
+-IF(HAVE_SYS_EPOLL_H)
+-  SET(LIBEVENT_EPOLL_SOURCES epoll.c epoll_sub.c)
+-ENDIF()
++#IF(HAVE_SYS_EPOLL_H)
++#  SET(LIBEVENT_EPOLL_SOURCES epoll.c epoll_sub.c)
++#ENDIF()
+ 
+ IF(HAVE_SYS_DEVPOLL_H)
+   SET(LIBEVENT_DEVPOLL_SOURCES devpoll.c)

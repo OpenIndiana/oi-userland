@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/python2.7
 #
 # CDDL HEADER START
 #
@@ -19,78 +19,158 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # incorporator - an utility to incorporate packages in a repo
 #
 
-use Getopt::Long;
+import subprocess
+import json
+import sys
+import getopt
+import re
+import os.path
+from pkg.version import Version
 
-sub enumerate_packages {
-	local ($repository, $publisher, @fmris) = @_;
-        my @packages = ();
+Werror = False	# set to true to exit with any warning
 
-	#printf "/usr/bin/pkg list -ng $repository @fmris\n";
-	open($fp, "-|", "/usr/bin/pkgrepo", "list", "-H", "-s", $repository,
-		  "-p", $publisher, @fmris) ||
-                  die "pkg: $!";
-	while (<$fp>) {
+def warning(msg):
+    if Werror == True:
+        print >>sys.stderr, "ERROR: %s" % msg
+        sys.exit(1)
+    else:
+        print >>sys.stderr, "WARNING: %s" % msg
 
-		# lines should be in the form:
-		#   publisher   package   [r|o] version,branch:timestamp
-		if (/^(\S+)\s+(\S+)\s+\S?\s+([\d.]+),[\d.]+-([\d.]+):.+$/) {
-			my ($package) = ();
+class Incorporation(object):
+    name = None
+    version = '5.11'
+    packages = {}
 
-			$package->{publisher} = $1;
-			$package->{name} = $2;
-			$package->{version} = $3;
-			$package->{branch} = $4;
+    def __init__(self, name, version):
+        self.name = name
+        self.version = version
+        self.packages = {}
 
-			push(@packages, $package);
-		} else {
-			printf STDERR "SKIP: %s", $_;
-		}
-	}
+    def __package_to_str(self, name, version):
+        # strip the :timestamp from the version string
+        version = version.split(':', 1)[0]
+        # strip the ,{build-release} from the version string
+        version = re.sub(",[\d\.]+", "", version) 
 
-	#printf "returning %s\n", $_->{name} for (@packages);
+        return "depend fmri=%s@%s facet.version-lock.%s=true type=incorporate" % (name, version, name)
 
-	return @packages;
-}
+    def add_package(self, name, version):
+        self.packages[name] = version
 
-sub print_incorporate {
-	local (%package) = @_;
-	my $facet = "facet.version-lock.$package->{name}";
+    def __str__(self):
+        result = """
+set name=pkg.fmri value=pkg:/%s@%s
+set name=info.classification value="org.opensolaris.category.2008:Meta Packages/Incorporations"
+set name=org.opensolaris.consolidation value=userland
+set name=pkg.depend.install-hold value=core-os.userland
+set name=pkg.summary value="userland consolidation incorporation (%s)"
+set name=pkg.description value="This incorporation constrains packages from the userland consolidation"
+""" % (self.name, self.version, self.name)
 
-	printf "depend fmri=%s@%s-%s %s=true type=incorporate\n",
-		$package->{name}, $package->{version}, $package->{branch},
-		$facet;
-}
+        names = self.packages.keys()
+        names.sort()
+        for name in names:
+            result += (self.__package_to_str(name, self.packages[name]) + '\n')
 
-my ($repository, $fmri, $summary, $description, $consolidation) = ();
-
-$consolidation = 'userland';
-
-GetOptions("R|repository=s" => \$repository, "v|version=s" => \$version,
-	   "s|summary=s" => \$summary, "d|description=s" => \$description,
-	   "p|package=s" => \$fmri, "f|fmri=s" => \@fmris,
-	   "c|consolidation=s" => \$consolidation);
+        return result
 
 #
-# print the incorporation
+# This should probably use the pkg APIs at some point, but this appears to be
+# a stable and less complicated interface to gathering information from the
+# manifests in the package repo.
 #
-printf "set name=pkg.fmri value=%s\n", $fmri;
-printf "set name=pkg.summary value='%s'\n", $summary;
-printf "set name=pkg.description value='%s'\n", $description;
-printf "set name=org.opensolaris.consolidation value=%s\n",
-		$consolidation;
-printf "set name=pkg.depend.install-hold value=core-os.%s\n",
-		$consolidation;
-printf "set name=info.classification value='org.opensolaris.category.2008:Meta Packages/Incorporations'\n";
+def get_incorporations(repository, publisher, inc_version='5.11'):
+    tmp = subprocess.Popen(["/usr/bin/pkgrepo", "list", "-F", "json",
+                                                        "-s", repository,
+                                                        "-p", publisher],
+                           stdout=subprocess.PIPE)
+    incorporations = {}
+    packages = json.load(tmp.stdout)
+    inc_name='consolidation/userland/userland-incorporation'
 
-@packages = enumerate_packages($repository, $consolidation, @fmris);
-for (@packages) {
-	printf "depend fmri=pkg:/%s@%s-%s %s=true type=incorporate\n",
-		%$_->{name}, %$_->{version}, %$_->{branch},
-		"facet.version-lock.".%$_->{name};
-}
+    # Check for multiple versions of packages in the repo, but keep track of
+    # the latest one.
+    versions = {}
+    for package in packages:
+        pkg_name = package['name']
+        pkg_version = package['version']
+
+        if pkg_name in versions:
+            warning("%s is in the repo at multiple versions (%s, %s)" % (pkg_name, pkg_version, versions[pkg_name]))
+            if(Version(package['version']) < Version(versions[pkg_name])):
+               pkg_version = versions[pkg_name]
+        versions[pkg_name] = pkg_version
+
+    for package in packages:
+        pkg_name = package['name']
+        pkg_version = package['version']
+
+        # skip older packages and those that explicitly don't want to be incorporated
+	# also skip the incorporation itself
+	if 'pkg.tmp.noincorporate' in package or pkg_version != versions[pkg_name] or pkg_name == inc_name:
+            continue
+
+	# We don't want to support multiple incorporations for now
+        # a dict inside a list inside a dict
+        # incorporate = package['pkg.tmp.incorporate'][0]['value']
+        
+        # for inc_name in incorporate:
+            # if we haven't started to build this incorporation, create one.
+        if inc_name not in incorporations:
+           incorporations[inc_name] = Incorporation(inc_name, inc_version)
+        # find the incorporation and add the package
+        tmp = incorporations[inc_name]
+        tmp.add_package(pkg_name, pkg_version)
+    return incorporations
+
+def main_func():
+    global Werror
+
+    try: 
+        opts, pargs = getopt.getopt(sys.argv[1:], "c:s:p:v:d:w",
+                                    ["repository=", "publisher=", "version=",
+                                     "consolidation=", "destdir=", "Werror"])
+    except getopt.GetoptError, e:
+        usage(_("illegal option: %s") % e.opt)
+
+    repository = None
+    publisher = None
+    version = None
+    destdir = None
+    consolidation = None
+
+    for opt, arg in opts:
+        if opt in ("-s", "--repository"):
+            repository = arg
+        elif opt in ("-p", "--publisher"):
+            publisher = arg
+        elif opt in ("-v", "--version"):
+            version = arg
+        elif opt in ("-d", "--destdir"):
+            destdir = arg
+        elif opt in ("-c", "--consolidation"):
+            consolidation = arg
+        elif opt in ("-w", "--Werror"):
+            Werror = True
+
+    incorporations = get_incorporations(repository, publisher, version)
+
+    for incorporation_name in incorporations.keys():
+        filename = ''
+        if destdir != None:
+            filename = destdir + '/'
+        filename += os.path.basename(incorporation_name) + '.p5m'
+
+        print("Writing %s manifest to %s" % (incorporation_name, filename))
+        fd = open(filename, "w+")
+        fd.write(str(incorporations[incorporation_name]))
+        fd.close()
+
+if __name__ == "__main__":
+    main_func()

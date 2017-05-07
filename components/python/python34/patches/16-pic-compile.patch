@@ -1,0 +1,27 @@
+This patch is a Solaris-specific hack; it will not be submitted upstream.
+
+--- Python-3.4.2/Lib/distutils/sysconfig.py.~2~	2014-09-22 14:20:53.466326587 -0700
++++ Python-3.4.2/Lib/distutils/sysconfig.py	2014-09-22 14:20:53.494063421 -0700
+@@ -219,6 +219,22 @@
+         else:
+             archiver = ar + ' ' + ar_flags
+ 
++        # Force PIC compilation. Determine if GNU compiler or otherwise
++        # and set the PIC flag(s) accordingly. Defaults to Studio compiler.
++        if re.search('-.PIC', cflags) == None:
++            try:
++                out = os.popen(cc + ' --version 2>/dev/null', 'r')
++                out_string = out.read()
++                out.close()
++                result = re.search(' (\d+\.\d+(\.\d+)*)', out_string)
++                kpic_flags = "-fPIC -DPIC" if result else "-KPIC -DPIC"
++            except ImportError:
++                # The only time the above should fail is during boot-strapping
++                # when time (os imports subprocess which imports time) is not
++                # yet available.  Assume Studio compiler for that case.
++                kpic_flags = "-KPIC -DPIC"
++            cflags += ' ' + kpic_flags
++
+         cc_cmd = cc + ' ' + cflags
+         compiler.set_executables(
+             preprocessor=cpp,

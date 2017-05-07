@@ -1,0 +1,161 @@
+--- dvd+rw-tools-7.1.orig/dvd+rw-booktype.1
++++ dvd+rw-tools-7.1/dvd+rw-booktype.1
+@@ -0,0 +1,35 @@
++.TH dvd+rw-booktype 1 "September 2004, version 4.10"
++.SH NAME
++dvd+rw-booktype \- format DVD+-RW/-RAM disk with a logical format
++
++.SH SYNOPSIS
++.B dvd+rw\-booktype
++[\fB\-dvd\-rom\-spec | \-dvd+rw\-spec | \-dvd+r\-spec | \-inq\fP]
++[\fB\ \-media | \-unit| \-unit+rw | \-unit+r\fP]
++.I /dev/dvd
++
++.SH DESCRIPTION
++The
++.B dvd+rw\-booktype
++command formats dvd disk in the specified dvd
++drive (e.g. \fI/dev/dvd\fR) with a specified logical format.
++You can't expect this utility to work with all recorders.
++
++.SH OPTIONS
++.TP
++.BI \-dvd-rom
++This is useful for addressing
++.B DVD\-ROM compatibility,
++or playability in legacy units.
++
++.SH SEE ALSO
++Most up-to-date information on dvd+rw\-tools is available at
++http://fy.chalmers.se/~appro/linux/DVD+RW/.
++.PP
++The manpage for \fBgrowisofs\fP(1), \fBdvd-ram-control\fP(1),
++\fBdvd+rw\-mediainfo\fP(1), \fBdvd+rw\-format\fP(1).
++
++.SH AUTHOR
++\fBdvd+rw\-booktype\fR was written by Andy Polyakov <appro@fy.chalmers.se>.
++This manual page was written by Osamu Aoki <osamu@debian.org>
++for the Debian project.
+--- dvd+rw-tools-7.1.orig/dvd+rw-format.1
++++ dvd+rw-tools-7.1/dvd+rw-format.1
+@@ -0,0 +1,43 @@
++.TH dvd+rw-format 1 "September 2004"
++.SH NAME
++dvd+rw-format \- format DVD+-RW/-RAM disk
++
++.SH SYNOPSIS
++.B dvd+rw\-format
++[\fB\-force[=full]\fP]
++[\fB\-lead\-out | \-blank[=full]\fP]
++[\fB\-ssa[=none | default | max]\fP]
++.I /dev/dvd
++
++.SH DESCRIPTION
++The
++.B dvd+rw\-format
++command formats dvd disk in the specified dvd
++drive (e.g. \fI/dev/dvd\fR).
++
++.SH OPTIONS
++.TP
++.BI \-force[=full]
++This forces to format dvd as new while wiping any existing data.
++.TP
++.BI \-blank[=full]
++This blanks dvd while changing to sequential mode.
++.TP
++.BI \-lead\-out
++This relocates the lead\-out next to outermost written sector as well
++as makes sure there is no virgin surface before it. Previously written
++data is not affected by this operation. Useful for addressing
++.B DVD\-ROM compatibility,
++or playability of already recorded media in legacy units.
++
++.SH SEE ALSO
++Most up-to-date information on dvd+rw\-tools is available at
++http://fy.chalmers.se/~appro/linux/DVD+RW/.
++.PP
++The manpage for \fBgrowisofs\fP(1), \fBdvd-ram-control\fP(1),
++\fBdvd+rw\-mediainfo\fP(1), \fBdvd+rw\-booktype\fP(1).
++
++.SH AUTHOR
++\fBdvd+rw\-format\fR was written by Andy Polyakov <appro@fy.chalmers.se>.
++This manual page was written by Osamu Aoki <osamu@debian.org>
++for the Debian project.
+--- dvd+rw-tools-7.1.orig/dvd+rw-mediainfo.1
++++ dvd+rw-tools-7.1/dvd+rw-mediainfo.1
+@@ -0,0 +1,31 @@
++.TH dvd+rw-mediainfo 1 "April 2004"
++.SH NAME
++dvd+rw-mediainfo \- display information about dvd drive and disk
++
++.SH SYNOPSIS
++.B dvd+rw\-mediainfo
++.I /dev/dvd
++
++.SH DESCRIPTION
++The
++.B dvd+rw\-mediainfo
++command displays information about the drive and disk in the specified dvd
++drive (e.g. \fI/dev/dvd\fR). This is especially useful for debugging
++purposed and it is requested to include it's output when reporting bugs
++found in the \fBdvd+rw\-tools\fI package.
++
++.SH OPTIONS
++.TP
++This program does not accept any command line options.
++
++.SH SEE ALSO
++Most up-to-date information on dvd+rw\-tools is available at
++http://fy.chalmers.se/~appro/linux/DVD+RW/.
++.PP
++The manpage for \fBgrowisofs\fP(1), \fBdvd-ram-control\fP(1),
++\fBdvd+rw\-format\fP(1), \fBdvd+rw\-booktype\fP(1).
++
++.SH AUTHOR
++\fBdvd+rw\-mediainfo\fR was written by Andy Polyakov <appro@fy.chalmers.se>.
++This manual page was written by Thomas Viehmann <tv@beamnet.de>
++for the Debian project.
+--- dvd+rw-tools-7.1.orig/dvd-ram-control.1
++++ dvd+rw-tools-7.1/dvd-ram-control.1
+@@ -0,0 +1,40 @@
++.TH dvd-ram-control 1 "May 2010, version 7.1"
++.SH NAME
++dvd-ram-control \- Control DVD-RAM disk modes and protection
++
++.SH SYNOPSIS
++.B dvd-rw\-control
++[\fB\-arre\fP] [\fB\-awre\fP] [\fB\-rdonly|-rdwr\fP] /dev/dvd
++
++.SH DESCRIPTION
++The
++.B dvd-ram-control
++command controls DVD-RAM disk modes of block reallocations and write
++protections. This utility will work only with DVD-RAM recorders.
++
++.SH OPTIONS
++.TP
++.BI \-arre
++Sets automatic read reallocation enabled (ARRE) bit so that automatic
++reallocation of defective data blocks is used during read operation.
++.TP
++.BI \-awre
++Sets automatic write reallocation enabled (AWRE) bit so that automatic
++reallocation of defective data blocks is used during write operations.
++.TP
++.BI \-rdonly
++Makes disc to be write protected.
++.TP
++.BI \-rdwr
++Makes disc to be unprotected.
++
++
++.SH SEE ALSO
++Most up-to-date information on dvd+rw\-tools is available at
++http://fy.chalmers.se/~appro/linux/DVD+RW/.
++.PP
++The manpage for \fBgrowisofs\fP(1), \fBdvd+rw\-booktype\fP(1),
++\fBdvd+rw\-mediainfo\fP(1), \fBdvd+rw\-format\fP(1).
++
++.SH AUTHOR
++\fBdvd+rw\-booktype\fR was written by Andy Polyakov <appro@fy.chalmers.se>.

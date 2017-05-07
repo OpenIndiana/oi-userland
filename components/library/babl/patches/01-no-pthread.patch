@@ -1,0 +1,23 @@
+--- babl-0.1.18/tests/Makefile.am.~1~	2016-06-13 00:25:43.000000000 +0300
++++ babl-0.1.18/tests/Makefile.am	2017-01-17 15:06:50.148609683 +0300
+@@ -31,7 +31,6 @@
+ 
+ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
+ if OS_UNIX
+-AM_LDFLAGS  = -pthread
+ endif
+ 
+ LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
+--- babl-0.1.18/configure.ac.~1~	2016-06-13 00:34:53.000000000 +0300
++++ babl-0.1.18/configure.ac	2017-01-17 15:06:50.149283925 +0300
+@@ -119,9 +119,7 @@
+ AC_PROG_CC
+ AC_PROG_CC_C99
+ 
+-# Initialize libtool
+-LT_PREREQ([2.2])
+-LT_INIT([disable-static win32-dll])
++AC_PROG_LIBTOOL
+ 
+ BABL_VARIADIC_MACROS
+ 

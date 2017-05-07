@@ -1,0 +1,45 @@
+--- libtorrent-0.13.4/configure.ac.~1~	2014-05-14 18:18:48.000000000 +0400
++++ libtorrent-0.13.4/configure.ac	2014-11-26 22:15:22.559263925 +0300
+@@ -19,7 +19,6 @@
+ 
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_HEADERS(config.h)
+-AM_PATH_CPPUNIT(1.9.6)
+ 
+ AC_PROG_CXX
+ 
+@@ -53,8 +52,6 @@
+ TORRENT_WITHOUT_STATVFS
+ TORRENT_WITHOUT_STATFS
+ 
+-CC_ATTRIBUTE_VISIBILITY
+-
+ AX_PTHREAD([], AC_MSG_ERROR([requires pthread]))
+ 
+ CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+@@ -65,7 +62,7 @@
+   [  --disable-openssl       Don't use OpenSSL's SHA1 implementation.],
+   [
+     if test "$enableval" = "yes"; then
+-      PKG_CHECK_MODULES(OPENSSL, libcrypto,
++      PKG_CHECK_MODULES(OPENSSL, openssl,
+         CXXFLAGS="$CXXFLAGS $OPENSSL_CFLAGS";
+         LIBS="$LIBS $OPENSSL_LIBS")
+ 
+@@ -75,7 +72,7 @@
+       AC_DEFINE(USE_NSS_SHA, 1, Using Mozilla's SHA1 implementation.)
+     fi
+   ],[
+-    PKG_CHECK_MODULES(OPENSSL, libcrypto,
++    PKG_CHECK_MODULES(OPENSSL, openssl,
+       CXXFLAGS="$CXXFLAGS $OPENSSL_CFLAGS";
+       LIBS="$LIBS $OPENSSL_LIBS")
+ 
+@@ -95,7 +92,6 @@
+ 
+ AC_CHECK_FUNCS(posix_memalign)
+ 
+-TORRENT_CHECK_MADVISE()
+ TORRENT_CHECK_CACHELINE()
+ TORRENT_CHECK_POPCOUNT()
+ TORRENT_CHECK_EXECINFO()

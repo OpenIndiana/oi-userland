@@ -1,0 +1,16 @@
+--- ./driver/others/memory.c.orig	2015-12-14 15:05:53.946786609 +0100
++++ ./driver/others/memory.c	2015-12-14 15:04:38.025444860 +0100
+@@ -259,6 +259,13 @@
+ */
+ #endif
+ 
++#if defined(OS_SUNOS)
++int get_num_procs(void) {
++  static int nums = 0;
++  if (!nums) nums = sysconf(_SC_NPROCESSORS_ONLN);
++  return nums;
++}
++#endif
+ 
+ /*
+ OpenBLAS uses the numbers of CPU cores in multithreading.

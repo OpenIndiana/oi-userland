@@ -1,0 +1,19 @@
+https://jira.mariadb.org/browse/MDEV-12618
+
+--- mariadb-5.5.55/mysys/mysys_priv.h.1	2017-04-28 12:51:57.510333548 +0300
++++ mariadb-5.5.55/mysys/mysys_priv.h	2017-04-28 12:53:42.133441838 +0300
+@@ -89,9 +89,13 @@
+
+ void my_error_unregister_all(void);
+
+-#if !defined(O_PATH) && defined(O_EXEC) /* FreeBSD */
++#if !defined(O_PATH)
++#if defined(O_SEARCH)  /* illumos */
++#define O_PATH O_SEARCH
++#elif defined(O_EXEC) /* FreeBSD */
+ #define O_PATH O_EXEC
+ #endif
++#endif
+
+ #ifdef O_PATH
+ #define HAVE_OPEN_PARENT_DIR_NOSYMLINKS

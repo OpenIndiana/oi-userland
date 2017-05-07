@@ -1,0 +1,13 @@
+--- a/src/Makefile.am.~1~	2015-02-16 12:16:08.613309401 +0300
++++ b/src/Makefile.am	2015-02-16 12:17:50.260433367 +0300
+@@ -42,6 +42,9 @@
+ intel_drv_la_LDFLAGS = -module -avoid-version
+ intel_drv_ladir = $(moduledir)/drivers
+ intel_drv_la_LIBADD = legacy/liblegacy.la $(PCIACCESS_LIBS) $(XORG_LIBS)
++intel_drv_la_LDFLAGS += -R $(moduledir) -R $(moduledir)/extensions
++intel_drv_la_LIBADD += -lfb -lshadowfb -lXfont -lm \
++	-lvbe -lvgahw -lexa $(XORG_LIBS)
+
+ 
+ if SNA
+ SUBDIRS += sna

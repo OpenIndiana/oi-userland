@@ -1,0 +1,197 @@
+diff -Nura a/ChangeLog b/ChangeLog
+--- a/ChangeLog	2016-11-01 06:46:41.625014510 +0100
++++ b/ChangeLog	2016-11-01 06:46:41.758468741 +0100
+@@ -504,7 +504,7 @@
+   specially
+ - jboss: add the java_opts parameter for java options
+ - ldirectord: precedence error with perl v5.8.8 in IPv6 code
+-- LVM: drop vgck(8) from monitor
++- LVM: drop vgck(1m) from monitor
+ - LVM: force dmevent monitoring for clones
+ - LVM: use ls instead of vgdisplay in status
+ - lxc: fix LXC_status to work with lxc-0.7.5 or later
+@@ -550,7 +550,7 @@
+ - iscsi: fix regression in 3.9.1 for open-iscsi version 2.0-872 (lf#2562)
+ - pgsql: fix regression in 3.9.1 in directories on probes
+ - VirtualDomain: if there's no config exit on stop with success
+-- doc: add sfex_init(8) man page
++- doc: add sfex_init(1m) man page
+ * Wed Jun 15 2011 Dejan Muhamedagic <dejan@suse.de> and others
+ - stable release 3.9.1
+ - ocf-tester: tolerate OCF_ERR_INSTALLED on probes and missing binaries
+diff -Nura a/heartbeat/Raid1 b/heartbeat/Raid1
+--- a/heartbeat/Raid1	2016-11-01 06:46:41.612839620 +0100
++++ b/heartbeat/Raid1	2016-11-01 06:46:41.729147262 +0100
+@@ -56,7 +56,7 @@
+ 
+ <longdesc lang="en">
+ This resource agent manages Linux software RAID (MD) devices on
+-a shared storage medium. It uses mdadm(8) to start, stop, and
++a shared storage medium. It uses mdadm(1m) to start, stop, and
+ monitor the MD devices. Raidtools are supported, but deprecated.
+ See https://raid.wiki.kernel.org/index.php/Linux_Raid for more
+ information.
+@@ -98,7 +98,7 @@
+ If processes or kernel threads are using the array, it cannot be
+ stopped. We will try to stop processes, first by sending TERM and
+ then, if that doesn't help in $PROC_CLEANUP_TIME seconds, using KILL.
+-The lsof(8) program is required to get the list of array users.
++The lsof(1m) program is required to get the list of array users.
+ Of course, the kernel threads cannot be stopped this way.
+ If the processes are critical for data integrity, then set this
+ parameter to false. Note that in that case the stop operation
+@@ -322,7 +322,7 @@
+ 				*) stop_arrays;;
+ 				esac
+ 			else
+-				ocf_log warn "install lsof(8) to list users holding the disk"
++				ocf_log warn "install lsof(1m) to list users holding the disk"
+ 				false
+ 			fi
+ 		else
+@@ -495,7 +495,7 @@
+ fi
+ 
+ if ocf_is_true $FORCESTOP && ! have_binary lsof; then
+-	ocf_log warn "Please install lsof(8), we may need it when stopping Raid device! Now continuing anyway ..."
++	ocf_log warn "Please install lsof(1m), we may need it when stopping Raid device! Now continuing anyway ..."
+ fi
+ 
+ HAVE_RAIDTOOLS=false
+diff -Nura a/heartbeat/apache b/heartbeat/apache
+--- a/heartbeat/apache	2016-11-01 06:46:41.610826368 +0100
++++ b/heartbeat/apache	2016-11-01 06:46:41.726305418 +0100
+@@ -540,7 +540,7 @@
+ 
+ <parameter name="options">
+ <longdesc lang="en">
+-Extra options to apply when starting apache. See man httpd(8).
++Extra options to apply when starting apache. See man httpd(1m).
+ </longdesc>
+ <shortdesc lang="en">command line options</shortdesc>
+ <content type="string" />
+diff -Nura a/heartbeat/iSCSILogicalUnit b/heartbeat/iSCSILogicalUnit
+--- a/heartbeat/iSCSILogicalUnit	2016-11-01 06:46:41.614807516 +0100
++++ b/heartbeat/iSCSILogicalUnit	2016-11-01 06:46:41.732482466 +0100
+@@ -164,7 +164,7 @@
+ <longdesc lang="en">
+ TGT specific backing store type. If you want to use aio,
+ make sure your tgtadm is built against libaio.
+-See tgtadm(8).
++See tgtadm(1m).
+ </longdesc>
+ <shortdesc lang="en">TGT backing store type</shortdesc>
+ <content type="string" />
+@@ -173,7 +173,7 @@
+ <parameter name="tgt_bsoflags" required="0" unique="0">
+ <longdesc lang="en">
+ TGT specific backing store open flags (direct|sync).
+-See tgtadm(8).
++See tgtadm(1m).
+ </longdesc>
+ <shortdesc lang="en">TGT backing store open flags</shortdesc>
+ <content type="string" />
+@@ -182,7 +182,7 @@
+ <parameter name="tgt_device_type" required="0" unique="0">
+ <longdesc lang="en">
+ TGT specific device type.
+-See tgtadm(8).
++See tgtadm(1m).
+ </longdesc>
+ <shortdesc lang="en">TGT device type</shortdesc>
+ <content type="string" />
+diff -Nura a/ldirectord/ldirectord.cf b/ldirectord/ldirectord.cf
+--- a/ldirectord/ldirectord.cf	2016-11-01 06:46:41.620867103 +0100
++++ b/ldirectord/ldirectord.cf	2016-11-01 06:46:41.754480720 +0100
+@@ -39,7 +39,7 @@
+ 	virtualhost=www.x.y.z
+ 
+ # Sample configuration for a fwmark based service For an explanation of
+-# fwmark see the ipvsadm(8) man page
++# fwmark see the ipvsadm(1m) man page
+ #virtual=1
+ #	real=192.168.6.2 gate
+ #	real=192.168.6.3 gate
+diff -Nura a/ldirectord/ldirectord.in b/ldirectord/ldirectord.in
+--- a/ldirectord/ldirectord.in	2016-11-01 06:46:41.622928682 +0100
++++ b/ldirectord/ldirectord.in	2016-11-01 06:46:41.752329804 +0100
+@@ -107,7 +107,7 @@
+ Defines a virtual service by IP-address (or hostname) and port (or
+ servicename) or firewall-mark.  A firewall-mark is an integer greater than
+ zero. The configuration of marking packets is controlled using the C<-m>
+-option to B<ipchains>(8).  All real services and flags for a virtual
++option to B<ipchains>(1m).  All real services and flags for a virtual
+ service must follow this line immediately and be indented.
+ 
+ B<checktimeout = >I<n>
+@@ -662,7 +662,7 @@
+ 
+ Scheduler to be used by LVS for loadbalancing.
+ For an information on the available sehedulers please see
+-the ipvsadm(8) man page.
++the ipvsadm(1m) man page.
+ 
+ Default: "wrr"
+ 
+diff -Nura a/rgmanager/src/resources/clusterfs.sh b/rgmanager/src/resources/clusterfs.sh
+--- a/rgmanager/src/resources/clusterfs.sh	2016-11-01 06:46:41.616845055 +0100
++++ b/rgmanager/src/resources/clusterfs.sh	2016-11-01 06:46:41.714696963 +0100
+@@ -71,7 +71,7 @@
+ 
+         <parameter name="fstype">
+ 	    <longdesc lang="en">
+-	        File system type.  If not specified, mount(8) will attempt to
++	        File system type.  If not specified, mount(1m) will attempt to
+ 		determine the file system type.
+ 	    </longdesc>
+             <shortdesc lang="en">
+@@ -145,8 +145,8 @@
+         <parameter name="options">
+             <longdesc lang="en">
+                 Options used when the file system is mounted.  These
+-                are often file-system specific.  See mount(8) and/or
+-                mount.gfs2(8) for supported mount options.
++                are often file-system specific.  See mount(1m) and/or
++                mount.gfs2(1m) for supported mount options.
+             </longdesc>
+             <shortdesc lang="en">
+                 Mount Options
+@@ -222,7 +222,7 @@
+ 	declare -i ret=$OCF_SUCCESS
+ 
+ 	#
+-	# From mount(8)
++	# From mount(1m)
+ 	#
+ 	for o in `echo $OCF_RESKEY_options | sed -e s/,/\ /g`; do
+ 		case $o in
+diff -Nura a/rgmanager/src/resources/fs.sh.in b/rgmanager/src/resources/fs.sh.in
+--- a/rgmanager/src/resources/fs.sh.in	2016-11-01 06:46:41.618854299 +0100
++++ b/rgmanager/src/resources/fs.sh.in	2016-11-01 06:46:41.712522910 +0100
+@@ -73,7 +73,7 @@
+ 
+         <parameter name="fstype">
+ 	    <longdesc lang="en">
+-	        File system type.  If not specified, mount(8) will attempt to
++	        File system type.  If not specified, mount(1m) will attempt to
+ 		determine the file system type.
+ 	    </longdesc>
+             <shortdesc lang="en">
+@@ -176,7 +176,7 @@
+         <parameter name="options">
+             <longdesc lang="en">
+ 	    	Options used when the file system is mounted.  These
+-		are often file-system specific.  See mount(8) for supported
++		are often file-system specific.  See mount(1m) for supported
+ 		mount options.
+             </longdesc>
+             <shortdesc lang="en">
+@@ -257,7 +257,7 @@
+ 	declare o
+ 
+ 	#
+-	# From mount(8)
++	# From mount(1m)
+ 	#
+ 	for o in `echo $OCF_RESKEY_options | sed -e s/,/\ /g`; do
+ 		case $o in

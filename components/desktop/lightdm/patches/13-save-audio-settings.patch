@@ -1,0 +1,112 @@
+--- lightdm-1.19.3/src/session-child.c.~6~	2016-08-12 20:29:20.896781907 +0300
++++ lightdm-1.19.3/src/session-child.c	2016-08-12 20:34:18.800499967 +0300
+@@ -17,6 +17,7 @@
+ #include <utmp.h>
+ #include <utmpx.h>
+ #include <sys/mman.h>
++#include <sys/soundcard.h>
+ 
+ #if HAVE_LIBAUDIT
+ #include <libaudit.h>
+@@ -32,6 +33,8 @@
+ #include "x-authority.h"
+ #include "configuration.h"
+ 
++#define MAX_HOSTNAME 256
++
+ /* Child process being run */
+ static GPid child_pid = 0;
+ 
+@@ -119,6 +122,82 @@
+      privileges_reclaim ();
+ }
+ 
++/* 
++   /usr/bin/audioctl save-controls -d $AUDIOCTL_SAVE_DEVICE  \
++         -f $AUDIOCTL_SAVE_DIR/audioctl-$AUDIOCTL_SAVE_HOSTNAME-$AUDIOCTL_SAVE_DEVICE
++*/
++#define AUDIO_SETTINGS_SAVE "/usr/bin/audioctl save-controls -d %s -f \"%s/audioctl-%s-%s\""
++
++static void
++save_audio_settings(User *user)
++{
++    char hostname[MAX_HOSTNAME];
++    char *user_name,*save_dir;
++    struct passwd *pwd;
++    struct stat st,st_sd;
++
++    if(gethostname(hostname,MAX_HOSTNAME)) 
++       return;
++   
++    user_name=user_get_name(user);
++    pwd=getpwnam(user_name);
++    if(pwd == NULL || pwd->pw_dir == NULL)
++       return;
++
++    if(stat("/dev/audio", &st))
++      return;
++   
++    if(st.st_uid == user_get_uid(user)) {
++       gboolean drop_privileges;
++       int fd=-1, i;
++       oss_sysinfo si;
++
++       drop_privileges = geteuid () == 0;
++       if (drop_privileges)
++          privileges_drop (user_get_uid (user), user_get_gid (user));
++
++       save_dir=g_strdup_printf("%s/.audioctl", pwd->pw_dir);
++       if (!save_dir) 
++          return;
++    
++       if(stat(save_dir, &st_sd)) {
++          if(mkdir(save_dir, S_IRWXU)){
++            g_free(save_dir);
++            return;
++          }
++       }
++   
++       if ((fd = open("/dev/mixer", O_RDWR)) < 0){ 
++          g_free(save_dir);
++          return;
++       }
++       
++       if (ioctl(fd, SNDCTL_SYSINFO, &si) < 0) {
++          g_free(save_dir);
++          return;
++       }
++          
++       for (i = 0; i < si.nummixers; i++) {
++          struct stat sbuf;
++          oss_mixerinfo   mixer;
++          char *command;
++
++          mixer.dev = i;
++          if (ioctl(fd, SNDCTL_MIXERINFO, &mixer) != 0)
++             continue;
++          
++          command=g_strdup_printf(AUDIO_SETTINGS_SAVE, mixer.name, save_dir, hostname, mixer.name);
++          system(command);
++          g_free(command);
++       }
++       
++       if (drop_privileges)
++          privileges_reclaim ();
++
++    }
++    g_free(save_dir);
++}
++
+ static gchar *
+ read_string (void)
+ {
+@@ -861,6 +940,9 @@
+ 
+         run_linc_cleanup(user);
+ 
++        if (g_strcmp0 (pam_getenv (pam_handle, "XDG_SESSION_CLASS"), "greeter") != 0)
++            save_audio_settings(user);
++
+         if (!remote_host_name && !g_strcmp0(xdisplay,":0") && (g_str_has_prefix (tty, "/dev/vt/") || !g_strcmp0(tty,"/dev/console"))){
+             di_devperm_logout (tty);
+         }

@@ -1,0 +1,23 @@
+diff -ur terminus-font-4.40/configure x/configure
+--- terminus-font-4.40/configure	2015-07-29 13:55:18.000000000 -0400
++++ x/configure	2016-04-27 17:23:34.326982346 -0400
+@@ -36,15 +36,15 @@
+ 	for i do
+ 		if test "$i" != "`echo "$i" | sed -e 1q`" ; then
+ 			echo "$0: `echo "$i" | sed -e "s/$r/^M/" -e 1q`^J...: contains line feed" 1>&2
+-		elif echo "$i" | grep "$r" > /dev/null ; then
++		elif echo "$i" | ggrep "$r" > /dev/null ; then
+ 			echo "$0: `echo "$i" | sed -e "s/$r.*//"`^M...: contains carriage return" 1>&2
+ 		elif test -n "$i" ; then
+-			if echo "$i" | grep -E "^--$l=|^[A-Z][A-Z0-9_]*[^_]=" > /dev/null ; then
++			if echo "$i" | ggrep -E "^--$l=|^[A-Z][A-Z0-9_]*[^_]=" > /dev/null ; then
+ 				n=`echo "$i" | sed -e "s$r^-*$r$r" -e "s$r=.*$r$r" | sed -e "s/-/_/g"`
+-				if grep -E "^$n$w:?=" Makefile > /dev/null ; then
++				if ggrep -E "^$n$w:?=" Makefile > /dev/null ; then
+ 					cp -f Makefile Makefile.$$
+ 					sed -e "s$r^\($n$w:*=$w\).*$r\1`echo "$i" | sed -e "s$r^[^=]*=$r$r"`$r" Makefile.$$ > Makefile
+-					grep -E "^$n$w:?=" Makefile /dev/null
++					ggrep -E "^$n$w:?=" Makefile /dev/null
+ 				else
+ 					echo "$0: $n: not found in Makefile" 1>&2
+ 				fi

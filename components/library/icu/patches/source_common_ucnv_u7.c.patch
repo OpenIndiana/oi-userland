@@ -1,0 +1,30 @@
+--- icu/source/common/ucnv_u7.c.orig	2009-04-30 18:24:05.797713156 +0800
++++ icu/source/common/ucnv_u7.c	2009-04-30 18:26:13.500926547 +0800
+@@ -742,7 +742,13 @@
+     "UTF-7",
+     0, /* TODO CCSID for UTF-7 */
+     UCNV_IBM, UCNV_UTF7,
++    /*
++     * Sun modification:
++     * Since UTF-7 (and Modified Base64) encoding requires max 5 octets,
++     * we change the maxBytesPerChar for the UTF-7 to 5.
+     1, 4,
++     */
++    1, 5,
+     { 0x3f, 0, 0, 0 }, 1, /* the subchar is not used */
+     FALSE, FALSE,
+     0,
+@@ -1442,7 +1448,13 @@
+     "IMAP-mailbox-name",
+     0, /* TODO CCSID for IMAP-mailbox-name */
+     UCNV_IBM, UCNV_IMAP_MAILBOX,
++    /*
++     * Sun modification:
++     * Since IMAP-mailbox-name encoding requires max 8 octets,
++     * we change the maxBytesPerChar for the encoding to 8.
+     1, 4,
++     */
++    1, 8,
+     { 0x3f, 0, 0, 0 }, 1, /* the subchar is not used */
+     FALSE, FALSE,
+     0,

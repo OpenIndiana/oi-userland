@@ -1,0 +1,82 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+
+if [ "x$LC_ALL" = x -a "x$LANG" = x -o "x$LANG" = xC ]; then
+  :
+else
+# Uncomment if you need 6757628
+# European locales have LC_MESSAGES=C in /etc/default/init
+#  LC_MESSAGES=$LANG; export LC_MESSAGES
+  :
+fi
+
+# To determine the character set used for filenames with
+# glib's g_filename_to/from_utf8() functions, we set the
+# environment variables G_FILENAME_ENCODING and G_BROKEN_FILENAMES.
+#
+# G_BROKEN_FILENAMES, when set, lets the functions take the
+# character set for the current locale for filename's encoding.
+#
+# G_FILENAME_ENCODING, which is introduced to glib 2.3.x and later, may be
+# set to a comma-separated list of character set names.
+# The special token "@locale" is taken to mean the character set
+# for the current locale. The first character set from the list is taken
+# as the filename encoding.
+#
+# If G_FILENAME_ENCODING is not set, but G_BROKEN_FILENAMES is, the
+# character set of the current locale is taken as the filename encoding.
+
+G_BROKEN_FILENAMES=yes
+export G_BROKEN_FILENAMES
+G_FILENAME_ENCODING=@locale,UTF-8
+export G_FILENAME_ENCODING
+
+# Fixes 6583891
+case $LANG in
+ja*) VTE_CJK_WIDTH=1; export VTE_CJK_WIDTH;;
+ko*) VTE_CJK_WIDTH=1; export VTE_CJK_WIDTH;;
+zh*) VTE_CJK_WIDTH=1; export VTE_CJK_WIDTH;;
+*) ;;
+esac
+
+# Fixes 6555226
+if [ "x$LANG" = "xzh" ] ; then
+  LANGUAGE=zh:zh_CN.EUC
+  export LANGUAGE
+fi
+
+# Locale specific .desktop files
+if [ -d /usr/share/locale/$LANG/xdg ] ; then
+  XDG_DATA_DIRS=${XDG_DATA_DIRS:-"/usr/share"}
+  XDG_DATA_DIRS=${XDG_DATA_DIRS}:/usr/share/locale/$LANG/xdg
+  export XDG_DATA_DIRS
+fi
+
+if [ -x /usr/bin/xdg-user-dirs-update ]; then
+    /usr/bin/xdg-user-dirs-update
+fi

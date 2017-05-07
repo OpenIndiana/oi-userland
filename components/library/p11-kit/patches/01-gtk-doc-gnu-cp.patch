@@ -1,0 +1,18 @@
+Assumes GNU cp is in path; a bug should be filed upstream to not use
+GNU-specific flags or configure should detect GNU cp and require it.
+
+Patch itself is not appropriate for upstream.
+
+XXX file upstream bug
+
+--- p11-kit-0.23.1/build/gtk-doc.make	2014-11-12 02:58:50.000000000 -0800
++++ p11-kit-0.23.1/build/gtk-doc.make	2015-05-27 14:23:15.544773257 -0700
+@@ -82,7 +82,7 @@
+ 	    if test "x$$files" != "x" ; then \
+ 	        for file in $$files ; do \
+ 	            test -f $(abs_srcdir)/$$file && \
+-	                cp -pu $(abs_srcdir)/$$file $(abs_builddir)/ || true; \
++	                gcp -pu $(abs_srcdir)/$$file $(abs_builddir)/ || true; \
+ 	        done; \
+ 	    fi; \
+ 	fi

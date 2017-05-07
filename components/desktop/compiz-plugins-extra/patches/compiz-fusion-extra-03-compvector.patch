@@ -1,0 +1,99 @@
+--- compiz-fusion-plugins-extra-0.7.8/src/3d/3d.c.ori	2009-03-11 09:14:31.897600451 +0000
++++ compiz-fusion-plugins-extra-0.7.8/src/3d/3d.c	2009-03-11 09:22:19.614922690 +0000
+@@ -191,25 +191,25 @@
+ #define DOBEVEL(corner) (tdGetBevel##corner (s) ? bevel : 0)
+ 
+ #define ADDQUAD(x1,y1,x2,y2)                                      \
+-	point.x = x1; point.y = y1;                               \
++	point.a.x = x1; point.a.y = y1;                               \
+ 	matrixMultiplyVector (&tPoint, &point, transform);        \
+ 	glVertex4fv (tPoint.v);                                   \
+-	point.x = x2; point.y = y2;                               \
++	point.a.x = x2; point.a.y = y2;                               \
+ 	matrixMultiplyVector (&tPoint, &point, transform);        \
+ 	glVertex4fv (tPoint.v);                                   \
+ 	matrixMultiplyVector (&tPoint, &point, &tds->bTransform); \
+ 	glVertex4fv (tPoint.v);                                   \
+-	point.x = x1; point.y = y1;                               \
++	point.a.x = x1; point.a.y = y1;                               \
+ 	matrixMultiplyVector (&tPoint, &point, &tds->bTransform); \
+ 	glVertex4fv (tPoint.v);                                   \
+ 
+ #define ADDBEVELQUAD(x1,y1,x2,y2,m1,m2)             \
+-	point.x = x1; point.y = y1;                 \
++	point.a.x = x1; point.a.y = y1;                 \
+ 	matrixMultiplyVector (&tPoint, &point, m1); \
+ 	glVertex4fv (tPoint.v);                     \
+ 	matrixMultiplyVector (&tPoint, &point, m2); \
+ 	glVertex4fv (tPoint.v);                     \
+-	point.x = x2; point.y = y2;                 \
++	point.a.x = x2; point.a.y = y2;                 \
+ 	matrixMultiplyVector (&tPoint, &point, m2); \
+ 	glVertex4fv (tPoint.v);                     \
+ 	matrixMultiplyVector (&tPoint, &point, m1); \
+@@ -270,8 +270,8 @@
+ 	temp /= 0xffff;
+ 	glColor4us (c[0], c[1], c[2], temp);
+ 
+-	point.z = 0.0f;
+-	point.w = 1.0f;
++	point.a.z = 0.0f;
++	point.a.w = 1.0f;
+ 
+ 	glBegin (GL_QUADS);
+ 
+--- compiz-fusion-plugins-extra-0.7.8/src/cubeaddon/cubeaddon.c.ori	2009-03-11 09:46:07.307645141 +0000
++++ compiz-fusion-plugins-extra-0.7.8/src/cubeaddon/cubeaddon.c	2009-03-11 09:47:59.532391633 +0000
+@@ -1490,7 +1490,7 @@
+ 		}
+ 		else
+ 		{
+-		    rYTrans = point.y * 2.0;
++		    rYTrans = point.a.y * 2.0;
+ 		}
+ 
+ 		break;
+@@ -1514,8 +1514,8 @@
+ 		}
+ 		else
+ 		{
+-		    cas->yTrans = -point.y - 0.5;
+-		    rYTrans     =  point.y - 0.5;
++		    cas->yTrans = -point.a.y - 0.5;
++		    rYTrans     =  point.a.y - 0.5;
+ 		}
+ 		break;
+ 	    }
+@@ -1527,7 +1527,7 @@
+ 		cas->zTrans = 0.0;
+ 	    }
+ 	    else
+-		cas->zTrans = -point2.z + cs->distance;
++		cas->zTrans = -point2.a.z + cs->distance;
+ 
+ 	    if (cubeaddonGetMode (s) == ModeAbove)
+ 		cas->zTrans = 0.0;
+@@ -1559,17 +1559,17 @@
+ 
+ 		matrixGetIdentity (&pTransform);
+ 		applyScreenTransform (s, sAttrib, output, &pTransform);
+-		point.x = point.y = 0.0;
+-		point.z = -cs->distance;
+-		point.z += deform;
+-		point.w = 1.0;
++		point.a.x = point.a.y = 0.0;
++		point.a.z = -cs->distance;
++		point.a.z += deform;
++		point.a.w = 1.0;
+ 		matrixMultiplyVector (&point, &point, &pTransform);
+ 		
+-		matrixTranslate (&rTransform, 0.0, 0.0, point.z);
++		matrixTranslate (&rTransform, 0.0, 0.0, point.a.z);
+ 		matrixRotate (&rTransform, cas->vRot, 1.0, 0.0, 0.0);
+ 		matrixScale (&rTransform, 1.0, -1.0, 1.0);
+ 		matrixTranslate (&rTransform, 0.0, -rYTrans,
+-				 -point.z + cas->zTrans);
++				 -point.a.z + cas->zTrans);
+ 	    }
+ 	    else
+ 	    {

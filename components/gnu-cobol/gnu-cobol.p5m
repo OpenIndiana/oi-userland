@@ -1,0 +1,57 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2014, David Hoeppner. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri value=pkg:/developer/gnu-cobol@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(COMPONENT_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license gnu-cobol.license license='GPLv2, GFDLv1.2, LGPLv2.1'
+
+file path=usr/bin/cob-config
+file path=usr/bin/cobcrun
+file path=usr/bin/cobc
+file path=usr/share/locale/ja/LC_MESSAGES/gnu-cobol.mo
+file path=usr/share/info/gnu-cobol.info
+file path=usr/share/gnu-cobol/copy/screenio.cpy
+file path=usr/share/gnu-cobol/config/default.conf
+file path=usr/share/gnu-cobol/config/cobol2002.conf
+file path=usr/share/gnu-cobol/config/ibm.conf
+file path=usr/share/gnu-cobol/config/bs2000.conf
+file path=usr/share/gnu-cobol/config/mvs.conf
+file path=usr/share/gnu-cobol/config/mf.conf
+file path=usr/share/gnu-cobol/config/cobol85.conf
+file path=usr/lib/libcob.so.1.0.0
+file path=usr/lib/gnu-cobol/CBL_OC_DUMP.so
+file path=usr/include/libcob.h
+file path=usr/include/libcob/codegen.h
+file path=usr/include/libcob/system.def
+file path=usr/include/libcob/common.h
+file path=usr/include/libcob/exception.def
+
+link path=usr/lib/libcob.so target=./libcob.so.1.0.0
+link path=usr/lib/libcob.so.1 target=./libcob.so.1.0.0

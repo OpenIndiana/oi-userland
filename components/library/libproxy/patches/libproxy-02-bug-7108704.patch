@@ -1,0 +1,104 @@
+diff -urN libproxy-0.3.1/src/lib/pac.c libproxy-0.3.1.new/src/lib/pac.c
+--- libproxy-0.3.1/src/lib/pac.c	2009-09-30 03:52:50.000000000 +0800
++++ libproxy-0.3.1.new/src/lib/pac.c	2011-12-12 23:06:30.810478060 +0800
+@@ -22,6 +22,7 @@
+ #include <time.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <stdio.h>
+ 
+ #ifdef _WIN32
+ #include <winsock2.h>
+@@ -35,6 +36,10 @@
+ 
+ #define PAC_MIME_TYPE "application/x-ns-proxy-autoconfig"
+ 
++// This is the maximum pac size (to avoid memory attacks)
++#define PAC_MAX_SIZE 102400
++
++
+ /**
+  * ProxyAutoConfig object.  All fields are private.
+  */
+@@ -143,6 +148,7 @@
+ 		if (!strchr(line, ' ') || atoi(strchr(line, ' ') + 1) != 200) goto error; /* Check status code */
+ 
+ 		/* Check for correct mime type and content length */
++		bool chunked = false;
+ 		while (strcmp(line, "\r")) {
+ 			/* Check for content type */
+ 			if (strstr(line, "Content-Type: ") == line && strstr(line, PAC_MIME_TYPE))
+@@ -152,6 +158,10 @@
+ 			else if (strstr(line, "Content-Length: ") == line)
+ 				content_length = atoi(line + strlen("Content-Length: "));
+ 
++                        /* Check for chunked encoding */
++		        else if (strstr(line, "Content-Transfer-Encoding: chunked") == line || strstr(line, "Transfer-Encoding: chunked") == line)
++				chunked = true;
++                       
+ 			/* Get new line */
+ 			px_free(line);
+ 			line = px_readline(sock, NULL, 0);
+@@ -159,12 +169,47 @@
+ 		}
+ 
+ 		/* Get content */
+-		if (!content_length || !correct_mime_type) goto error;
++		if ((!content_length && !chunked) || !correct_mime_type) goto error;
+ 		px_free(line); line = NULL;
+ 		px_free(self->cache);
+-		self->cache = px_malloc0(content_length+1);
+-		for (int recvd=0 ; recvd != content_length ; )
+-			recvd += recv(sock, self->cache + recvd, content_length - recvd, 0);
++
++		unsigned int recvd = 0;
++		self->cache = px_malloc0(PAC_MAX_SIZE);
++		*(self->cache) = '\0';
++
++                do {
++                        unsigned int chunk_length;
++
++                        if (chunked) {
++                                // Discard the empty line if we received a previous chunk
++                                if (recvd > 0) {
++				    line = px_readline(sock, NULL, 0);
++				    px_free(line);
++				}
++
++                                // Get the chunk-length line as an integer
++			        line = px_readline(sock, NULL, 0);
++                                if (sscanf(line, "%x", &chunk_length) != 1 || chunk_length == 0) {
++				    px_free(line);
++				    break;
++				}
++				px_free(line);
++
++                                // Add this chunk to our content length,
++                                // ensuring that we aren't over our max size
++                                content_length += chunk_length;
++                                if (content_length >= PAC_MAX_SIZE) break;
++                        }
++
++                        while (recvd != content_length) {
++                                int r = recv(sock, self->cache + recvd, content_length - recvd, 0);
++                                if (r < 0) break;
++                                recvd += r;
++                        }
++                        *(self->cache + content_length) = '\0';
++                } while (chunked);
++
++                if (strlen(self->cache) != content_length) goto error1;
+ 	}
+ 	else
+ 	{ /* file:// url */
+@@ -186,8 +231,9 @@
+ 	return true;
+ 
+ 	error:
++		px_free(line);
++	error1:
+ 		px_free(self->cache); self->cache = NULL;
+ 		if (sock >= 0) close(sock);
+-		px_free(line);
+ 		return false;
+ }

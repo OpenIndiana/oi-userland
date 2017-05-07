@@ -1,0 +1,333 @@
+.\" Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XSolarisOvlSelectPartner __libmansuffix__ __xorgversion__ "X FUNCTIONS"
+.IX "XSolarisOvlSelectPartner" "" "\f3XSolarisOvlSelectPartner\f1(3) \(em returns the overlay/underlay visual that best meets the criteria
+.SH NAME
+XSolarisOvlSelectPartner \- returns the overlay/underlay visual that best meets the criteria
+.SH SYNOPSIS
+.LP
+\&#include <X11/extensions/transovl.h>
+
+.IP \f3XSolarisOvlSelectStatus\f1
+.B XSolarisOvlSelectPartner
+.B (Display
+.I *display,
+.B int
+.I screen,
+.B VisualID
+.I vid,
+.B XSolarisOvlSelectType
+.I seltype,
+.B int
+.I numCriteria,
+.B XSolarisOvlVisualCriteria
+.I *pCriteria,
+.B XVisualInfo
+.I *visinfoReturn,
+.B unsigned long
+.I *unmetCriteriaReturn)
+.SH Arguments
+.TP
+.I display
+Specifies the connection to the X server.
+.TP
+.I screen
+An integer specifying the screen for the visual
+.I vid.
+.TP
+.I vid
+The XID of the visual to find a partner for.
+.TP
+.I seltype
+The type of selection that is to be done.
+.TP
+.I numCriteria
+The number of
+.B XSolarisOvlVisualCriteria
+structures in the
+.I pCriteria array.
+.TP
+.I pCriteria
+An array of criteria structures in priority order from high to low
+specifying the criteria to be used in selecting the visual.
+.TP
+.I visinfoReturn
+A pointer to a caller provided
+.B XVisualInfo
+structure.  On successful return, this structure contains a description
+of the chosen visual.
+.TP
+.I unmetCriteriaReturn
+A pointer to a bitmask that describes the criteria that were not satisfied.
+This return argument is only meaningful when the routine returns a value of
+.B XSolarisOvlQualifiedSuccess,
+or
+.B XSolarisOvlCriteriaFailure.
+.SH Argument Types
+.LP
+See the
+.B XSolarisOvlSelectPartner
+Description section for a full description of how these types should be used.
+.LP
+.B XSolarisOvlSelectType
+.LP
+An enumeration defining two types of selections that can be done in
+.B XSolarisOvlSelectPartner.
+.sp .5
+.nf
+.nf
+typedef enum {
+.br
+	XSolarisOvlSelectBestOverlay,
+	XSolarisOvlSelectBestUnderlay,
+.br
+} XSolarisOvlSelectType;
+.fi
+.LP
+.B XSolarisOvlVisualCriteria
+.LP
+A structure defining various criteria to be used during visual selection, along
+with indications of the stringency of the criteria.
+.sp .5
+.nf
+typedef struct {
+.br
+	unsigned long	hardCriteriaMask;
+	unsigned long	softCriteriaMask
+	int		c_class;
+	unsigned int	depth;
+	unsigned int	minColors;
+	unsigned int	minRed;
+	unsigned int	minGreen;
+	unsigned int	minBlue;
+	unsigned int	minBitsPerRGB;
+	unsigned int	minBuffers;
+.br
+} XSolarisOvlVisualCriteria;
+.fi
+.LP
+.I hardCriteriaMask
+and
+.I softCriteriaMask
+are bitmasks whose values can be the logical OR of any of the following
+bitmasks:
+.LP
+.nf
+#define XSolarisOvlVisualClass		(1L<<0)
+#define XSolarisOvlDepth		(1L<<1)
+#define XSolarisOvlMinColors		(1L<<2)
+#define XSolarisOvlMinRed		(1L<<3)
+#define XSolarisOvlMinGreen		(1L<<4)
+#define XSolarisOvlMinBlue		(1L<<5)
+#define XSolarisOvlMinBitsPerRGB	(1L<<6)
+#define XSolarisOvlMinBuffers		(1L<<7)
+#define XSolarisOvlUnsharedPixels	(1L<<8)
+#define XSolarisOvlUnsharedColors	(1L<<9)
+#define XSolarisOvlPreferredPartner	(1L<<10)
+.fi
+.LP
+These are described in the
+.B XSolarisOvlSelectPartner
+Description documentation that follows.
+.SH Return Types
+.LP
+.B XSolarisOvlSelectStatus
+.LP
+A value that indicates whether the routine succeeded in finding a visual and,
+if it failed, the reason for the failure.  The return value can be one of:
+.sp .5
+.nf
+typedef enum {
+.br
+	XSolarisOvlSuccess,
+	XSolarisOvlQualifiedSuccess,
+	XSolarisOvlCriteriaFailure,
+	XSolarisOvlFailure,
+.br
+} XSolarisOvlSelectStatus;
+.fi
+.LP
+.B XSolarisOvlSuccess
+is returned if the search is completely successful in finding a visual that
+meets all hard and soft criteria of one of the
+.B XSolarisOvlVisualCriteria
+structure.
+.LP
+.B XSolarisOvlQualifiedSuccess
+is returned if the chosen visual satisfies all hard criteria of one of the
+.B XSolarisOvlVisualCriteria
+structure, but doesn't meet all soft criteria. In this case,
+.I unmetCriteriaReturn
+contains the logical OR of the soft criteria that were not met.
+.LP
+.B XSolarisOvlCriteriaFailure
+indicates that no visual could be found that meets all the hard criteria of any
+of the
+.B XSolarisOvlVisualCriteria
+structures.  In this case,
+.I unmetCriteriaReturn
+contains the logical OR of the hard criteria that were not met for the
+.B XSolarisOvlVisualCriteria
+structure with the fewest hard criteria not met.
+.LP
+.B XSolarisOvlFailure
+is returned if some other error is encountered besides criteria match failure.
+.SH DESCRIPTION
+.LP
+Portable applications using overlays may wish to search for an appropriate
+overlay visual to use for a given underlay visual, or vice-versa.
+Each X screen supporting the overlay extension defines a set of overlay
+visuals whose windows are best for use as children of underlay windows.
+For each underlay visual, there is a set of
+.I optimal
+overlay visuals.
+Together, all combinations of underlay visuals and their optimal overlay
+visuals form the set of optimal overlay/underlay pairs for that screen.
+The overlay and underlay visuals of an optimal pair are said to be
+.I partners
+of each other.
+.LP
+.B XSolarisOvlSelectPartner
+allows the client to select, given an underlay visual, an
+.I optimal
+overlay that meets certain criteria.  Inversely, it also allows the client to
+select an optimal underlay visual given an overlay visual.
+.LP
+The client is assured that, short of X errors not related to overlays, it can
+successfully create a window with the returned visual.
+.LP
+This routine searches through the optimal partners of the given visual,
+applying the criteria specified in
+.I pCriteria.
+It returns a success or failure status depending on whether it finds a visual
+that meets the criteria.
+.LP
+A criterion can be one of two types:
+.IP 1. 3n
+Hard Criterion
+.sp .5
+A criterion that must be satisfied.  Only visuals that meet hard criteria
+are candidates for successful matches.
+.IP 2. 3n
+Soft Criterion
+.sp .5
+A desirable criterion, but one which is not required.  The visual that matches
+all hard criteria and the most soft criteria is chosen.  Its attributes are
+returned in
+.I visinfoReturn.
+If two or more visuals are found that meet all of the hard criteria and the
+same number of soft criteria, one of them will be chosen and returned.
+It is implementation dependent which one is chosen.
+.LP
+.B XSolarisOvlSelectPartner
+supports a degradation sequence of criteria sets.  This means that multiple
+criteria sets can be specified in a single call.  First, an attempt is made
+to find a visual matching the first criteria set. If a visual is found which
+meets all of the hard criteria of the first set, this visual is chosen.
+If no visual met all hard criteria of the first set, a search is performed
+using the second criteria set.  This process continues until either a visual
+is found that meets the hard criteria of some criteria set, or all sets have
+been used to search.  This degradation sequence allows clients to specify the
+criteria for the most preferred visual as the first criteria set.  Visuals
+that are acceptable but which are less desirable can be specified in criteria
+sets following the first.  This allows the search to proceed through a
+progressive relaxation in the client's requirements for the visual with a
+single subroutine call.
+.LP
+Any of the possible criteria can be specified either as a hard or soft
+criteria for a particular criteria set.  For a given set,
+.I hardCriteriaMask
+is the logical OR of the criteria bitmasks that are to be applied as hard
+criteria during the search. Likewise,
+.I softCriteriaMask
+is the logical OR of the soft criteria bitmasks.
+.LP
+Some criteria have values associated with them.  These values are provided by
+other data members in the
+.B XSolarisOvlVisualCriteria
+structure.  In the criteria descriptions which follow, these data members are
+mentioned where applicable.
+.LP
+.B XSolarisOvlVisualClass
+specifies that the client desires the selected visual to have a specific visual
+class.  The required class is specified in
+.I c_class.
+.LP
+The following criteria interact within one another:
+.B XSolarisOvlDepth,
+.B XSolarisOvlMinColors,
+.B XSolarisOvlMinRed,
+.B XSolarisOvlMinGreen,
+and
+.B XSolarisOvlMinBlue.
+Typically, only some subset of these should be specified.
+.B XSolarisOvlDepth
+specifies that the depth of the selected visual is to be equal to depth.
+.B XSolarisOvlMinColors
+specifies that the selected visual is to have at least minColors number of
+total displayable colors.
+.B XSolarisOvlMinRed,
+.B XSolarisOvlMinGreen,
+and
+.B XSolarisOvlMinBlue
+can be used to indicate more specific color requirements for
+.I DirectColor
+or
+.I TrueColor
+visuals.  Their corresponding values are specified in
+.I minRed, minGreen,
+and
+.I minBlue,
+respectively.  These indicate that the selected visual must have at least the
+specified number of reds, greens, and/or blues.
+.LP
+.B XSolarisOvlMinBitsPerRGB
+specifies that the selected visual is to have at least
+.I minBitsPerRGB
+of color channel output from colormaps created on that visual.
+.LP
+.B XSolarisOvlMinBuffers
+specifies that the client desires the selected visual to be able to be
+assigned at least
+.I minBuffers
+number of accelerated MBX image buffers.
+.LP
+.B XSolarisOvlUnsharedPixels
+selects partner visuals whose window pixels don't lie in the same drawing
+plane groups as the window pixels of the argument visual
+.I vid.
+If a visual uses the same drawing plane group as the argument visual it is
+not matched by this criterion.
+.LP
+.B XSolarisOvlUnsharedColors
+selects partner visuals whose window pixel colors can be displayed simultaneously
+when the overlay/underlay window pair has the colormap focus.  If a visual
+shares the same color LUT pool and that pool has only one color LUT in it as
+the argument visual it is not matched by this criterion.
+.LP
+If either
+.I hardCriteriaMask
+of a criteria set is to 0, any visual will match that criteria set with a hard
+match.  Likewise, setting the
+.I softCriteriaMask
+of a criteria set to 0, is sufficient to guarantee at least a soft match for
+that criteria set.

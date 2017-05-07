@@ -24,7 +24,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/python-zope-interface-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/python-zope-interface-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
     value="Zope interfaces package for Python"
 set name=com.oracle.info.description value="the Zope interfaces package for Python"
@@ -91,16 +91,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/unitfixtur
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/verify.py
 license zope-interface.license license=ZPL
 
-# python-zope-interface was previously in the 'desktop' consolidation. This
-# optional dependency is here to facilitate the safe transfer of the package
-# to the 'userland' consolidation.
-depend type=optional \
-    fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
-
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on the python-zope-interface package
 depend type=require \
-    fmri=library/python-2/python-zope-interface@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/python-zope-interface@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

@@ -1,0 +1,24 @@
+The various curl NTLM tests try to LD_PRELOAD a test library
+called .../tests/libtest/.libs/libhostname.so that's been
+created as a pre-requisite to running the numerous Perl tests.
+
+This patch adjusts LD_PRELOAD to be LD_PRELOAD_32 or LD_PRELOAD_64
+depending upong whether we are running the 32 or 64 bit tests.
+
+As this is Solaris specific, this patch will not be pushed upstream.
+
+--- tests/runtests.pl.orig	2014-09-10 12:26:52.624143266 -0700
++++ tests/runtests.pl	2014-09-10 16:51:13.663390869 -0700
+@@ -3060,6 +3060,12 @@
+                             # print "Skipping LD_PRELOAD due to no release shared build\n";
+                             next;
+                         }
++                        # make this LD_PRELOAD_{bits}
++                        open(FP, "/bin/file $content |");
++                        my $bits = <FP>;
++                        if ($bits =~ /^.+ELF\s(\d\d)-bit.+$/) {
++                            $var .= '_'.$1;
++                        }
+                     }
+                     $ENV{$var} = "$content";
+                 }

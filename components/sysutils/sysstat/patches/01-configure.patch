@@ -1,0 +1,64 @@
+--- a/configure	2015-10-12 21:30:47.000000000 +0200
++++ b/configure	2016-10-30 14:46:56.143484807 +0100
+@@ -47,6 +47,12 @@
+ -n             : to prevent overwriting of an existing mkrules file
+ --cc <cc>      :
+ -c <cc>        : to set the C compiler
++--BITS <BITS>  :
++-m <BITS>      : to set the built binaries bitness
++--PROC <PROC>  :
++-P <PROC>      : to set the processor name for userland
++--KPROC <KPROC>:
++-K <KPROC>     : to set the processor name for kernelland
+ "
+ env ksh -c builtin 1>&- 2>&-
+ ksh93=$?
+@@ -57,20 +63,26 @@
+ 	[d:debug?enable debugging]
+ 	[p:prefix?set prefix for installation]:[prefix]
+ 	[c:cc:?set C compiler]:[cc]
++	[m:BITS:?set custom bitness]:[BITS]
++	[P:PROC:?set custom PROC name]:[PROC]
++	[K:KPROC:?set custom KPROC name]:[KERNEL]
+ 	'
+ else
+ 	getopts_out=`getopts "h(help)" xx "--help" 2>&1`
+ 	if [ "$getopts_out" == "" ]; then
+-		USAGE=$':c:dp:(prefix)h(help)n'
++		USAGE=$':c:m:P:K:dp:(prefix)h(help)n'
+ 	else
+-		USAGE=$':c:dp:hn'
+-		help="Usage: ./configure [-p <prefix-dir>] [-c <cc>] [-d] [-n] [lib]
++		USAGE=$':c:m:P:K:dp:hn'
++		help="Usage: ./configure [-p <prefix-dir>] [-c <cc>] [-m <BITS>] [-d] [-n] [lib]
+ <lib>    : 'curses' for Sun's libcurses (fallback)
+            'ncurses' for libncurses (default)
+ -p <dir> : to set the installation directory to <dir>
+ -d       : to enable debugging
+ -n       : to prevent overwriting of an existing mkrules file
+ -c <cc>  : to set the C compiler
++-m <BITS>: to set the built binaries bitness
++-P <PROC>      : to set the processor name for userland
++-K <KPROC>     : to set the processor name for kernelland
+ "
+ 	fi
+ fi
+@@ -80,6 +92,9 @@
+ 	x=$(( $OPTIND - 2))
+ 	case $opt in
+ 		c) CC="$OPTARG";;
++		m) BITS="$OPTARG";;
++		P) PROC="$OPTARG";;
++		K) KERNEL="$OPTARG";;
+ 		d) debug=1 ;;
+ 		p) prefix="$OPTARG";;
+ 		n) nooverwrite=1;;
+@@ -251,7 +266,7 @@
+ CC		= $CC
+ DEFS		= $defs -DSOLARIS=$solaris
+ INCDIRS		= $incdirs
+-C_CFLAGS	= $cflags \$(DEFS) \$(INCDIRS) $LFS_CFLAGS
++C_CFLAGS	= $cflags -m$BITS \$(DEFS) \$(INCDIRS) $LFS_CFLAGS
+ D_CFLAGS	= $cflags $d_cflags \$(DEFS) $LFS_CFLAGS
+ PROC		= $PROC
+ KPROC		= $KERNEL

@@ -1,0 +1,57 @@
+Got from http://patches.osdyson.org/patch/series/view/dvd+rw-tools/7.1-10+dyson1/dyson-like-linux.patch
+
+Index: dvd+rw-tools/Makefile.m4
+===================================================================
+--- dvd+rw-tools-7.1/Makefile.m4.~1~	2008-03-02 20:17:09.000000000 +0300
++++ dvd+rw-tools-7.1/Makefile.m4	2015-02-23 05:05:23.932351908 +0300
+@@ -76,33 +76,27 @@
+ #
+ .SUFFIXES: .c .cpp .o
+ 
+-# check for WorkShop C++
+-syscmd([(CC -flags) > /dev/null 2>&1])
+-ifelse(sysval,0,[
+-CC	=cc
+-CFLAGS	=-O -xstrconst -w -D_REENTRANT -D__`uname -s`=`uname -r | tr -d .`
+-CXX	=CC
+-CXXFLAGS=-O -features=no%except,conststrings -w -D_REENTRANT
+-LDFLAGS	=-staticlib=%all
+-],[
+-CC	=gcc
+-CFLAGS	=$(WARN) -O2 -D_REENTRANT -D__`uname -s`=`uname -r | tr -d .`
+-CXX	=g++
+-CXXFLAGS=$(WARN) -O2 -fno-exceptions -D_REENTRANT
+-])
++CC	?=gcc
++CFLAGS	+=$(WARN) -O2 -D_REENTRANT
++CXX	?=g++
++CXXFLAGS+=$(WARN) -O2 -fno-exceptions -D_REENTRANT
++LINK.o	=$(LINK.cc)
++
++LDLIBS=-lvolmgt
+ 
+-LDLIBS=-lvolmgt -lrt -lpthread -ldl
++prefix?=/usr
++manprefix?=$(shell case $(prefix) in (*/usr/?*) echo $(prefix)/man ;; (*) echo $(prefix)/share/man ;; esac)
+ 
+-.c.o:
+-	$(CC) $(CFLAGS) -c -o $@ $<
+-.cpp.o:
+-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+-%:	%.o
+-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
++bin_mode?=0755	# yes, default is *no* set-uid
++minus_o:=$(shell [[ `id -u` == 0 ]] && echo "-o root")
+ 
+ install:	dvd+rw-tools
+-	/usr/ucb/install -o root -m 04755 $(CHAIN) /usr/local/bin
+-	/usr/ucb/install -o root -m 0644 growisofs.1 /usr/local/man/man1
++	[[ -d $(DESTDIR)/$(prefix)/bin ]] || mkdir -p $(DESTDIR)/$(prefix)/bin
++	install $(minus_o) -m $(bin_mode) $(CHAIN) $(DESTDIR)/$(prefix)/bin
++	[[ -d $(DESTDIR)/$(manprefix)/man1 ]] || mkdir -p $(DESTDIR)/$(manprefix)/man1
++	install $(minus_o) -m 0644 growisofs.1 $(DESTDIR)/$(manprefix)/man1
++	-[[ -f rpl8 ]] && install $(minus_o) -m $(bin_mode) rpl8 $(DESTDIR)/$(prefix)/bin; :
++	-[[ -f btcflash ]] && install $(minus_o) -m $(bin_mode) btcflash $(DESTDIR)/$(prefix)/bin; :
+ ])
+ 
+ ifelse(OS,HP-UX,[

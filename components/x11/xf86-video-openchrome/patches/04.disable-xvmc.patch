@@ -1,0 +1,17 @@
+diff --git a/configure.ac b/configure.ac
+index 6fb5476..f2cad6c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -133,6 +133,12 @@ else
+         XVMC="no"
+ fi
+ 
++dnl No support for openchrome DRI on Solaris
++case $host_os in
++    *solaris*)
++	XVMC="no" ;;
++esac
++
+ if test "x$XVMC" = xyes; then
+ 	AC_CHECK_HEADERS(pthread.h sys/ioctl.h sys/time.h time.h,,[XVMC="no"; break],)
+ 	PKG_CHECK_MODULES(XVMC, [x11 xext xvmc])

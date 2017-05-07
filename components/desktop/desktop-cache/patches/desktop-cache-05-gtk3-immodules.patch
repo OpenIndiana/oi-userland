@@ -1,0 +1,74 @@
+--- desktop-cache-smf-services-0.2.2/input-method/input-method-cache.1	2015-12-04 01:42:44.289888109 +0300
++++ desktop-cache-smf-services-0.2.2/input-method/input-method-cache	2015-12-04 08:13:10.170511853 +0300
+@@ -117,6 +117,64 @@
+ done
+ }
+ 
++start_input_method_cache_3 ()
++{
++for DIR in "" $ARCH64; do
++  test -x /usr/bin/$DIR/gtk-query-immodules-3.0 || {
++      echo "gtk-query-immodules-3.0 not installed"
++      continue
++  }
++  if [ -a "/usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache" ]; then
++    RESULT=`${FIND_NEWER} -c -f -m --name '*.so' \
++	--newer /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache \
++	/usr/lib/$DIR/gtk-3.0/*/immodules 2>/dev/null`
++  else
++    RESULT="no cache file"
++  fi
++
++  if [ -n "$RESULT" ]; then 
++    echo "updating/creating im modules cache file"
++    /usr/bin/$DIR/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
++	> /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache
++    if [ $? -ne 0 ]; then
++      echo "gtk-query-immodules-3.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++      exit $SMF_EXIT_ERR_FATAL
++    else
++      echo "input method cache installed in /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++    fi
++  fi
++done
++}
++
++refresh_input_method_cache_3 ()
++{
++for DIR in "" $ARCH64; do
++  test -x /usr/bin/$DIR/gtk-query-immodules-3.0 || {
++      echo "gtk-query-immodules-3.0 not installed"
++      continue
++  }
++  if [ -a "/usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache" ]; then
++    RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-3.0/*/immodules/*.so ! -type d \
++	    -follow 2>/dev/null`
++  else
++    RESULT="no cache file"
++  fi
++
++  if [ -n "$RESULT" ]; then 
++    echo "updating/creating im modules cache file"
++    /usr/bin/$DIR/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
++	> /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache
++    if [ $? -ne 0 ]; then
++      echo "gtk-query-immodules-3.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++      exit $SMF_EXIT_ERR_FATAL
++    else
++      echo "input method cache installed in /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++    fi
++  fi
++done
++}
++
++
+ METHOD=$1
+ 
+ case "$METHOD" in
+@@ -137,5 +195,6 @@
+ esac
+ 
+ ${METHOD}_input_method_cache
++${METHOD}_input_method_cache_3
+ 
+ exit $SMF_EXIT_OK

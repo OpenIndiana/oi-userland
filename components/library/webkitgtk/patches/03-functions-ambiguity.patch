@@ -1,0 +1,55 @@
+--- webkitgtk-2.14.2/Source/JavaScriptCore/dfg/DFGOperations.cpp.~1~	2016-11-03 10:04:20.000000000 +0300
++++ webkitgtk-2.14.2/Source/JavaScriptCore/dfg/DFGOperations.cpp	2017-01-11 10:24:49.020578445 +0300
+@@ -1598,7 +1598,7 @@
+ 
+ double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)
+ {
+-    return fmod(a, b);
++    return fmod((double)a,(double)b);
+ }
+ 
+ #if USE(JSVALUE32_64)
+--- webkitgtk-2.12.2/Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.cpp.~1~	2016-05-20 14:05:08.344983882 +0300
++++ webkitgtk-2.12.2/Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.cpp	2016-05-20 14:07:28.510409113 +0300
+@@ -53,7 +53,7 @@
+             if (!block)
+                 continue;
+ 
+-            block->executionCount = pow(10, m_graph.m_naturalLoops->loopDepth(block));
++            block->executionCount = powf(10, m_graph.m_naturalLoops->loopDepth(block));
+         }
+         
+         // Estimate branch weights based on execution counts. This isn't quite correct. It'll
+--- webkitgtk-2.12.2/Source/WebCore/rendering/shapes/BoxShape.cpp.~1~	2016-05-20 14:05:08.345770283 +0300
++++ webkitgtk-2.12.2/Source/WebCore/rendering/shapes/BoxShape.cpp	2016-05-20 14:08:06.266346542 +0300
+@@ -43,7 +43,7 @@
+ 
+     LayoutUnit ratio = radius / margin;
+     if (ratio < 1)
+-        return radius + (margin * (1 + pow(ratio - 1, 3.0)));
++        return radius + (margin * (1 + pow(double(ratio) - 1, 3.0)));
+ 
+     return radius + margin;
+ }
+--- webkitgtk-2.12.2/Source/WebCore/rendering/shapes/RasterShape.cpp.~1~	2016-04-11 09:18:44.000000000 +0300
++++ webkitgtk-2.12.2/Source/WebCore/rendering/shapes/RasterShape.cpp	2016-05-20 14:05:08.346287625 +0300
+@@ -142,7 +142,7 @@
+         return *m_intervals;
+ 
+     int shapeMarginInt = clampToPositiveInteger(ceil(shapeMargin()));
+-    int maxShapeMarginInt = std::max(m_marginRectSize.width(), m_marginRectSize.height()) * sqrt(2);
++    int maxShapeMarginInt = std::max(m_marginRectSize.width(), m_marginRectSize.height()) * sqrt((double)2);
+     if (!m_marginIntervals)
+         m_marginIntervals = m_intervals->computeShapeMarginIntervals(std::min(shapeMarginInt, maxShapeMarginInt));
+ 
+--- webkitgtk-2.14.2/Source/JavaScriptCore/heap/MarkedSpace.cpp.1	2017-01-11 10:42:36.727011829 +0300
++++ webkitgtk-2.14.2/Source/JavaScriptCore/heap/MarkedSpace.cpp	2017-01-11 10:43:55.233977159 +0300
+@@ -70,7 +70,7 @@
+                 dataLog("    Marked block payload size: ", static_cast<size_t>(MarkedSpace::blockPayload), "\n");
+             
+             for (unsigned i = 0; ; ++i) {
+-                double approximateSize = MarkedSpace::preciseCutoff * pow(Options::sizeClassProgression(), i);
++                double approximateSize = MarkedSpace::preciseCutoff * pow(double(Options::sizeClassProgression()), double(i));
+                 
+                 if (Options::dumpSizeClasses())
+                     dataLog("    Next size class as a double: ", approximateSize, "\n");

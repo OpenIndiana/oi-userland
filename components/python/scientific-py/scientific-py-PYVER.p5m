@@ -1,0 +1,199 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python modules for scientific computing"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license=CeCILL-C
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the unversioned package
+depend type=require \
+    fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+link path=usr/bin/bsp_virtual \
+    target=bsp_virtual$(PYVER) \
+    mediator=python mediator-version=$(PYVER)
+
+link path=usr/bin/task_manager \
+    target=task_manager$(PYVER) \
+    mediator=python mediator-version=$(PYVER)
+
+file path=usr/bin/bsp_virtual$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/bin/task_manager$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/include/python$(PYVER)/Scientific/PyBSP_API.h
+file path=usr/include/python$(PYVER)/Scientific/PyMPI_API.h
+file path=usr/include/python$(PYVER)/Scientific/arrayobject.h
+file path=usr/include/python$(PYVER)/Scientific/bspmodule.h
+file path=usr/include/python$(PYVER)/Scientific/mpimodule.h
+file path=usr/include/python$(PYVER)/Scientific/netcdfmodule.h
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/Console.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/Console.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/IO.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/IO.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/RemoteObjects.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/RemoteObjects.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/BSP/core.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Clustering/AffinityPropagation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Clustering/AffinityPropagation.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Clustering/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Clustering/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DictWithDefault.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DictWithDefault.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DistributedComputing/MasterSlave.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DistributedComputing/MasterSlave.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DistributedComputing/TaskManager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DistributedComputing/TaskManager.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DistributedComputing/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/DistributedComputing/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/FFT.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/FFT.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Derivatives.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Derivatives.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/FindRoot.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/FindRoot.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/FirstDerivatives.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/FirstDerivatives.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Interpolation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Interpolation.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/LeastSquares.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/LeastSquares.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Polynomial.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Polynomial.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Rational.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Rational.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Romberg.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/Romberg.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Functions/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/Objects3D.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/Objects3D.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/Quaternion.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/Quaternion.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/TensorAnalysis.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/TensorAnalysis.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/TensorModule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/TensorModule.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/Transformation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/Transformation.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/VectorModule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/VectorModule.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Geometry/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/ArrayIO.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/ArrayIO.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/FortranFormat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/FortranFormat.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/NetCDF.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/NetCDF.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/PDB.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/PDB.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/PDBExportFilters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/PDBExportFilters.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/PDBSpaceGroups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/PDBSpaceGroups.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/TextFile.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/TextFile.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/IO/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/LA.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/LA.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/MPI/IO.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/MPI/IO.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/MPI/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/MPI/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/MPI/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/MPI/core.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Mathematica.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Mathematica.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/N.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/N.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/NRNG.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/NRNG.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/NumberDict.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/NumberDict.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Physics/PhysicalQuantities.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Physics/PhysicalQuantities.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Physics/Potential.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Physics/Potential.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Physics/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Physics/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/QtPlotCanvas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/QtPlotCanvas.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/QtVisualizationCanvas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/QtVisualizationCanvas.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/qt_fake.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/QtWidgets/qt_fake.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Signals/Models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Signals/Models.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Signals/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Signals/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Statistics/Histogram.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Statistics/Histogram.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Statistics/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Statistics/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Threading/TaskManager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Threading/TaskManager.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Threading/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Threading/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/TkPlotCanvas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/TkPlotCanvas.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/TkVisualizationCanvas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/TkVisualizationCanvas.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/Utility.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/Utility.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/TkWidgets/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/Color.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/Color.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/PyMOL.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/PyMOL.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VMD.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VMD.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VPython.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VPython.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VRML.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VRML.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VRML2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/VRML2.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/Visualization/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/__pkginfo__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/__pkginfo__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/indexing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/indexing.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/Scientific_affinitypropagation.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/Scientific_interpolation.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/Scientific_numerics_package_id.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/Scientific_vector.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/64/Scientific_affinitypropagation.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/64/Scientific_interpolation.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/64/Scientific_numerics_package_id.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Scientific/sunos5/64/Scientific_vector.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/ScientificPython-$(COMPONENT_VERSION)-py$(PYVER).egg-info

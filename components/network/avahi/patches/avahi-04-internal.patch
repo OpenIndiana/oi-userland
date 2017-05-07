@@ -1,0 +1,57 @@
+--- /usr/tmp/clean/avahi-0.6.28/avahi-core/internal.h	2010-08-26 01:51:38.988153000 +0100
++++ avahi-0.6.28/avahi-core/internal.h	2011-01-20 12:06:07.798532060 +0000
+@@ -22,6 +22,10 @@
+ 
+ /** A locally registered DNS resource record */
+ typedef struct AvahiEntry AvahiEntry;
++#ifdef HAVE_BONJOUR
++typedef struct AvahiService AvahiService;
++#include <dns_sd.h>
++#endif
+ 
+ #include <avahi-common/llist.h>
+ #include <avahi-common/watch.h>
+@@ -72,6 +76,10 @@
+     AvahiIfIndex interface;
+     AvahiProtocol protocol;
+ 
++#ifdef HAVE_BONJOUR
++    DNSRecordRef recordref;
++#endif
++
+     AVAHI_LLIST_FIELDS(AvahiEntry, entries);
+     AVAHI_LLIST_FIELDS(AvahiEntry, by_key);
+     AVAHI_LLIST_FIELDS(AvahiEntry, by_group);
+@@ -97,6 +105,11 @@
+ 
+     AVAHI_LLIST_FIELDS(AvahiSEntryGroup, groups);
+     AVAHI_LLIST_HEAD(AvahiEntry, entries);
++#ifdef HAVE_BONJOUR
++    AVAHI_LLIST_HEAD(AvahiService, services);
++
++    DNSServiceRef record_connection;
++#endif
+ };
+ 
+ struct AvahiServer {
+@@ -106,6 +119,10 @@
+     AvahiServerConfig config;
+ 
+     AVAHI_LLIST_HEAD(AvahiEntry, entries);
++#ifdef HAVE_BONJOUR
++    AVAHI_LLIST_HEAD(AvahiService, services);
++#endif
++
+     AvahiHashmap *entries_by_key;
+ 
+     AVAHI_LLIST_HEAD(AvahiSEntryGroup, groups);
+@@ -121,6 +138,9 @@
+     AVAHI_LLIST_HEAD(AvahiSDNSServerBrowser, dns_server_browsers);
+ 
+     int need_entry_cleanup, need_group_cleanup, need_browser_cleanup;
++#ifdef HAVE_BONJOUR
++    int need_service_cleanup;
++#endif
+ 
+     /* Used for scheduling RR cleanup */
+     AvahiTimeEvent *cleanup_time_event;

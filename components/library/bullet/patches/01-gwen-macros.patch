@@ -1,0 +1,17 @@
+--- ./examples/ThirdPartyLibs/Gwen/Macros.h.orig	2015-07-14 23:01:44.212253817 +0000
++++ ./examples/ThirdPartyLibs/Gwen/Macros.h	2015-07-14 23:07:57.459317960 +0000
+@@ -46,6 +46,14 @@
+ 	#define GwenUtil_OutputDebugWideString( lpOutputString ) //wprintf( lpOutputString  )
+ 	#define GwenUtil_WideStringToFloat( _Str ) wcstof(_Str, NULL)
+ 
++#elif defined(__sun__)
++
++	#define GwenUtil_VSNPrintFSafe( _DstBuf, _DstSize, _MaxCount, _Format, _ArgList ) vsnprintf( _DstBuf, _DstSize, _Format, _ArgList )
++	#define GwenUtil_VSWPrintFSafe( _DstBuf, _SizeInWords, _Format, _ArgList ) vswprintf( _DstBuf, _SizeInWords, _Format, _ArgList )
++	#define GwenUtil_OutputDebugCharString( lpOutputString ) //printf( lpOutputString )
++	#define GwenUtil_OutputDebugWideString( lpOutputString ) //wprintf( lpOutputString  )
++	#define GwenUtil_WideStringToFloat( _Str ) wcstof(_Str, NULL)
++
+ #else
+ 
+ 	#error MUST_IMPLEMENT_PLATFORM

@@ -1,0 +1,40 @@
+--- Makefile.in	Tue Nov 25 12:24:49 2008
++++ Makefile.in	Tue Feb 28 07:08:05 2012
+@@ -49,6 +49,9 @@
+ 	    				-e 's#@@Port@@#$(PORT)#g' \
+ 	    				-e 's#@@SSLPort@@#$(SSLPORT)#g' \
+ 	    				-e '/@@LoadModule@@/d' \
++	    				-e 's#@@SysconfDir@@#$(sysconfdir)#g' \
++	    				-e 's#@@RuntimeDir@@#$(runtimedir)#g' \
++	    				-e 's#@@DataDir@@#$(datadir)#g' \
+ 	    				< $$i; \
+ 	    		else \
+ 	    			sed -n -e '/@@LoadModule@@/q' \
+@@ -87,6 +90,19 @@
+ 	        cp -p envvars-std $(DESTDIR)$(sbindir)/envvars ; \
+ 	    fi ; \
+ 	fi
++	@if ! grep "{APACHE_USER_ENVVARS}" $(DESTDIR)$(sbindir)/envvars > /dev/null; then \
++	    echo '# If you run apachectl with APACHE_USER_ENVVARS in its environment'\
++		>> $(DESTDIR)$(sbindir)/envvars ; \
++	    echo '# the specified file will be sourced here. The standard path is'\
++		>> $(DESTDIR)$(sbindir)/envvars ; \
++	    echo '# /etc/apache2/2.4/envvars.' >> $(DESTDIR)$(sbindir)/envvars ; \
++	    echo '' >> $(DESTDIR)$(sbindir)/envvars ; \
++	    echo 'if [ "x$${APACHE_USER_ENVVARS}" != "x" -a -f "$${APACHE_USER_ENVVARS}" ]; then'\
++		>> $(DESTDIR)$(sbindir)/envvars ; \
++	    echo '. "$${APACHE_USER_ENVVARS}"' >> $(DESTDIR)$(sbindir)/envvars ; \
++	    echo 'fi' >> $(DESTDIR)$(sbindir)/envvars ; \
++	fi
++	@grep "^#" $(top_builddir)/support/envvars-std > $(DESTDIR)$(sysconfdir)/envvars
+ 
+ # Create a sanitized config_vars.mk
+ build/config_vars.out: build/config_vars.mk
+@@ -165,7 +181,6 @@
+ 
+ install-other:
+ 	@test -d $(DESTDIR)$(logfiledir) || $(MKINSTALLDIRS) $(DESTDIR)$(logfiledir)
+-	@test -d $(DESTDIR)$(runtimedir) || $(MKINSTALLDIRS) $(DESTDIR)$(runtimedir)
+ 	@for ext in dll x; do \
+ 		file=apachecore.$$ext; \
+ 		if test -f $$file; then \

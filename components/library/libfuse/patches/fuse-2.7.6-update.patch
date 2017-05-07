@@ -1,0 +1,258 @@
+diff -ruN libfuse.orig/Makefile.com libfuse/Makefile.com
+--- libfuse.orig/Makefile.com	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/Makefile.com	2016-04-15 14:39:42.909235396 +0200
+@@ -65,6 +65,7 @@
+         fuse_kernel.h \
+         fuse_lowlevel.h \
+         fuse_lowlevel_compat.h \
++        ulockmgr.h \
+         fuse_opt.h
+ 
+ INCHDRS = $(HDRS:%=../include/%)
+@@ -105,6 +106,6 @@
+ 	$(INSTALL) -f $(ROOT)/usr/include/fuse ../include/fuse_lowlevel.h
+ 	$(INSTALL) -f $(ROOT)/usr/include/fuse ../include/fuse_lowlevel_compat.h
+ 	$(INSTALL) -f $(ROOT)/usr/include/fuse ../include/fuse_opt.h
+-
++	$(INSTALL) -f $(ROOT)/usr/include/fuse ../include/ulockmgr.h
+ clean:
+ 	rm -f $(OBJS) $(FUSERMOUNT_OBJS) $(FUSERMOUNT) $(FUSE_LIB) $(MOUNT_FUSE) $(MOUNT_FUSE_OBJS)
+diff -ruN libfuse.orig/fuse.c libfuse/fuse.c
+--- libfuse.orig/fuse.c	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/fuse.c	2016-04-15 14:39:42.910493752 +0200
+@@ -1306,8 +1306,11 @@
+ {
+     if (!err) {
+         struct fuse *f = req_fuse(req);
+-        if (fuse_reply_entry(req, e) == -ENOENT)
++               if (fuse_reply_entry(req, e) == -ENOENT) {
++                       /* Skip forget for negative result */
++                       if  (e->ino != 0)
+             forget_node(f, e->ino, 1);
++               }
+     } else
+         reply_err(req, err);
+ }
+@@ -2071,6 +2074,7 @@
+         }
+     } else {
+         reply_err(req, err);
++               pthread_mutex_destroy(&dh->lock);
+         free(dh);
+     }
+     free(path);
+@@ -2884,7 +2888,7 @@
+ "    -o readdir_ino         try to fill in d_ino in readdir\n"
+ "    -o direct_io           use direct I/O\n"
+ "    -o kernel_cache        cache files in kernel\n"
+-"    -o [no]auto_cache      enable caching based on modification times\n"
++"    -o [no]auto_cache      enable caching based on modification times (off)\n"
+ "    -o umask=M             set file permissions (octal)\n"
+ "    -o uid=N               set file owner\n"
+ "    -o gid=N               set file group\n"
+diff -ruN libfuse.orig/fuse.pc libfuse/fuse.pc
+--- libfuse.orig/fuse.pc	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/fuse.pc	2016-04-15 14:39:42.911589874 +0200
+@@ -5,6 +5,6 @@
+ 
+ Name: fuse
+ Description: Filesystem in Userspace
+-Version: 2.7.1
++Version: 2.7.6
+ Libs: -L${libdir} -lfuse -lxnet
+ Cflags: -I${includedir}/fuse -D_FILE_OFFSET_BITS=64
+diff -ruN libfuse.orig/fuse_loop_mt.c libfuse/fuse_loop_mt.c
+--- libfuse.orig/fuse_loop_mt.c	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/fuse_loop_mt.c	2016-04-15 14:39:42.912251810 +0200
+@@ -2,7 +2,7 @@
+     FUSE: Filesystem in Userspace
+     Copyright (C) 2001-2007  Miklos Szeredi <miklos@szeredi.hu>
+ 
+-    This program can be distributed under the terms of the GNU LGPL.
++  This program can be distributed under the terms of the GNU LGPLv2.
+     See the file COPYING.LIB.
+ */
+ 
+@@ -19,6 +19,9 @@
+ #include <errno.h>
+ #include <sys/time.h>
+ 
++/* Environment var controlling the thread stack size */
++#define ENVNAME_THREAD_STACK "FUSE_THREAD_STACK"
++
+ struct fuse_worker {
+     struct fuse_worker *prev;
+     struct fuse_worker *next;
+@@ -67,7 +70,11 @@
+     while (!fuse_session_exited(mt->se)) {
+         int isforget = 0;
+         struct fuse_chan *ch = mt->prevch;
+-        int res = fuse_chan_recv(&ch, w->buf, w->bufsize);
++		int res;
++
++		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
++		res = fuse_chan_recv(&ch, w->buf, w->bufsize);
++		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
+         if (res == -EINTR)
+             continue;
+         if (res <= 0) {
+@@ -121,6 +128,7 @@
+     }
+ 
+     sem_post(&mt->finish);
++	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+     pause();
+ 
+     return NULL;
+@@ -131,6 +139,8 @@
+     sigset_t oldset;
+     sigset_t newset;
+     int res;
++	pthread_attr_t attr;
++	char *stack_size;
+     struct fuse_worker *w = malloc(sizeof(struct fuse_worker));
+     if (!w) {
+         fprintf(stderr, "fuse: failed to allocate worker structure\n");
+@@ -146,6 +156,12 @@
+         return -1;
+     }
+ 
++	/* Override default stack size */
++	pthread_attr_init(&attr);
++	stack_size = getenv(ENVNAME_THREAD_STACK);
++	if (stack_size && pthread_attr_setstacksize(&attr, atoi(stack_size)))
++		fprintf(stderr, "fuse: invalid stack size: %s\n", stack_size);
++
+     /* Disallow signal reception in worker threads */
+     sigemptyset(&newset);
+     sigaddset(&newset, SIGTERM);
+@@ -153,10 +169,12 @@
+     sigaddset(&newset, SIGHUP);
+     sigaddset(&newset, SIGQUIT);
+     pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+-    res = pthread_create(&w->thread_id, NULL, fuse_do_work, w);
++	res = pthread_create(&w->thread_id, &attr, fuse_do_work, w);
+     pthread_sigmask(SIG_SETMASK, &oldset, NULL);
++	pthread_attr_destroy(&attr);
+     if (res != 0) {
+-        fprintf(stderr, "fuse: error creating thread: %s\n", strerror(res));
++		fprintf(stderr, "fuse: error creating thread: %s\n",
++			strerror(res));
+         free(w->buf);
+         free(w);
+         return -1;
+diff -ruN libfuse.orig/include/ulockmgr.h libfuse/include/ulockmgr.h
+--- libfuse.orig/include/ulockmgr.h	1970-01-01 01:00:00.000000000 +0100
++++ libfuse/include/ulockmgr.h	2016-04-15 14:39:42.911864821 +0200
+@@ -0,0 +1,24 @@
++/*
++  libulockmgr: Userspace Lock Manager Library
++  Copyright (C) 2006  Miklos Szeredi <miklos@szeredi.hu>
++
++  This program can be distributed under the terms of the GNU LGPLv2.
++  See the file COPYING.LIB.
++*/
++
++#include <stdint.h>
++#include <fcntl.h>
++#include <sys/types.h>
++
++/**
++ * Perform POSIX locking operation
++ *
++ * @param fd the file descriptor
++ * @param cmd the locking command (F_GETFL, F_SETLK or F_SETLKW)
++ * @param lock the lock parameters
++ * @param owner the lock owner ID cookie
++ * @param owner_len length of the lock owner ID cookie
++ * @return 0 on success -errno on error
++ */
++int ulockmgr_op(int fd, int cmd, struct flock *lock, const void *owner,
++		size_t owner_len);
+diff -ruN libfuse.orig/mount.c libfuse/mount.c
+--- libfuse.orig/mount.c	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/mount.c	2016-04-15 14:39:42.910893432 +0200
+@@ -333,10 +333,14 @@
+            then the filesystem is already unmounted */
+         if (res == 1 && (pfd.revents & POLLERR))
+             return;
++
++               /* Need to close file descriptor, otherwise synchronous umount
++                  would recurse into filesystem, and deadlock */
++               close(fd);
+     }
+ 
+     if (geteuid() == 0) {
+-        fuse_mnt_umount("fuse", mountpoint, 1);
++               fuse_mnt_umount("fuse", mountpoint,  1);
+         return;
+     }
+ 
+diff -ruN libfuse.orig/mount_bsd.c libfuse/mount_bsd.c
+--- libfuse.orig/mount_bsd.c	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/mount_bsd.c	2016-04-15 14:39:42.911333820 +0200
+@@ -215,7 +215,7 @@
+     dev = getenv("FUSE_DEV_NAME");
+ 
+     if (! dev)
+-	dev = FUSE_DEV_TRUNK;
++	dev = (char *)FUSE_DEV_TRUNK;
+ 
+     if ((fd = open(dev, O_RDWR)) < 0) {
+         perror("fuse: failed to open fuse device");
+@@ -227,6 +227,7 @@
+         goto out;
+ 
+     pid = fork();
++       cpid = pid;
+ 
+     if (pid == -1) {
+         perror("fuse: fork() failed");
+@@ -235,6 +236,13 @@
+     }
+ 
+     if (pid == 0) {
++               if (! init_backgrounded()) {
++                       /*
++                        * If init is not backgrounded, we have to
++                        * call the mount util backgrounded, to avoid
++                        * deadlock.
++                        */
++
+         pid = fork();
+ 
+         if (pid == -1) {
+@@ -242,14 +250,17 @@
+             close(fd);
+             exit(1);
+         }
++               }
+ 
+         if (pid == 0) {
+             const char *argv[32];
+             int a = 0;
+ 
+-            if (! fdnam)
+-                asprintf(&fdnam, "%d", fd);
+-
++                       if (! fdnam && asprintf(&fdnam, "%d", fd) == -1) {
++                               perror("fuse: failed to assemble mount arguments
++");
++                               exit(1);
++                       }
+             argv[a++] = mountprog;
+             if (opts) {
+                 argv[a++] = "-o";
+@@ -266,7 +277,11 @@
+         exit(0);
+     }
+ 
+-    waitpid(pid, NULL, 0);
++       if (waitpid(cpid, &status, 0) == -1 || WEXITSTATUS(status) != 0) {
++               perror("fuse: failed to mount file system");
++               close(fd);
++               return -1;
++       }
+ 
+ out:
+     return fd;

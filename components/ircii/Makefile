@@ -27,13 +27,14 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ircii
 COMPONENT_VERSION=	20111115
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=  0.2011.11.15
 COMPONENT_PROJECT_URL=	http://www.eterna.com.au/ircii/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:629a0a335c790aa5fa9f327532d1d45fd37d2fcd1902e8b0ee28b51994dcf604
-COMPONENT_ARCHIVE_URL=	ftp://ircii.warped.com/pub/ircII/$(COMPONENT_ARCHIVE)
+    sha256:5c6b4390b8ed04cf3b08a3ba72f41eba9b125d0fc09c637f7c7f81eb6bdd91e6
+COMPONENT_ARCHIVE_URL=	http://ircii.warped.com/old/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ircii
 
 include ../../make-rules/prep.mk
@@ -43,9 +44,6 @@ include ../../make-rules/ips.mk
 # Needed to correctly include <curses.h> and <term.h> when compiling the
 # various C source files.
 CFLAGS += -DINCLUDE_CURSES_H
-
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 CC += $(CC_BITS)
 COMPONENT_BUILD_ARGS += CC="$(CC)"
@@ -65,15 +63,15 @@ CONFIGURE_OPTIONS       += $(CONFIGURE_OPTIONS.$(BITS))
 #
 # This action modifies the libexecdir setting in the Makefile to /usr/bin
 COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's|/usr/libexec|/usr/bin|' $(BUILD_DIR_64)/Makefile
+	$(GSED) -i -e 's|/usr/libexec|/usr/bin|' $(BUILD_DIR_32)/Makefile
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:           $(NO_TESTS)
 

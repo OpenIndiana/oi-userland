@@ -1,0 +1,40 @@
+--- libfuse/mount_util.c.ref	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/mount_util.c	2016-05-03 21:36:52.782854200 +0200
+@@ -58,6 +58,7 @@
+         return -1;
+     }
+     if (res == 0) {
++        char *env = NULL;
+         char templ[] = "/tmp/fusermountXXXXXX";
+         char *tmp;
+
+@@ -79,8 +80,8 @@
+             exit(1);
+         }
+         rmdir(tmp);
+-        execl("/bin/mount", "/bin/mount", "-i", "-f", "-t", type, "-o", opts,
+-              fsname, mnt, NULL);
++        execle("/bin/mount", "/bin/mount", "-i", "-f", "-t", type, "-o", opts,
++              fsname, mnt, NULL, &env);
+         fprintf(stderr, "%s: failed to execute /bin/mount: %s\n", progname,
+                 strerror(errno));
+         exit(1);
+@@ -112,9 +113,16 @@
+         return -1;
+     }
+     if (res == 0) {
++        char *env = NULL;
++
+         setuid(geteuid());
+-        execl("/bin/umount", "/bin/umount", "-i", mnt, lazy ? "-l" : NULL,
+-              NULL);
++        if (lazy) {
++            execle("/bin/umount", "/bin/umount", "-i", mnt, "-l",
++                   NULL, &env);
++        } else {
++            execle("/bin/umount", "/bin/umount", "-i", mnt,
++                   NULL, &env);
++        }
+         fprintf(stderr, "%s: failed to execute /bin/umount: %s\n", progname,
+                 strerror(errno));
+         exit(1);

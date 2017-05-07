@@ -1,0 +1,21 @@
+diff -ruN libfuse.orig/Makefile.com libfuse/Makefile.com
+--- libfuse.orig/Makefile.com	2016-04-16 17:39:08.345415483 +0200
++++ libfuse/Makefile.com	2016-04-16 17:39:35.969848608 +0200
+@@ -25,7 +25,7 @@
+ 
+ INSTALL= /usr/sbin/install
+ CC = cc
+-CCFLAGS = $(CFLAGS) -g -xc99 \
++CCFLAGS = $(CFLAGS) -fPIC -DPIC -g -std=c99 \
+         -I../include \
+         -D__SOLARIS__ \
+         -D_XOPEN_SOURCE=600 \
+@@ -34,7 +34,7 @@
+         -DFUSE_USE_VERSION=26 \
+         -DFUSERMOUNT_DIR=\"usr\"
+ 
+-LDFLAGS = $(CCFLAGS) -G -lc -lxnet  -Wl,-zdefs -Wl,-zcombreloc
++LDFLAGS = $(CCFLAGS) -shared -lc -lxnet  -Wl,-zdefs -Wl,-zcombreloc
+ LDFLAGS_PROGS = $(CCFLAGS) -lxnet
+ 
+ OBJS =  fuse.o \

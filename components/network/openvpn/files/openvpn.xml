@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!-- See the non-trivial-setup notes and recommendations for the OpenVPN SMF
+     service integration in /usr/share/doc/openvpn/README.openindiana -->
+<service_bundle type="manifest" name="openvpn">
+    <service name="network/openvpn" type="service" version="1">
+        <dependency name="network" grouping="require_all" restart_on="error" type="service">
+            <service_fmri value="svc:/milestone/network:default"/>
+        </dependency>
+
+        <dependency name="filesystem" grouping="require_all" restart_on="error" type="service">
+            <service_fmri value="svc:/system/filesystem/local"/>
+        </dependency>
+
+        <method_context working_directory='/etc/openvpn'>
+            <!-- Some setups might need extra permissions for their OpenVPN
+                 service, especially if reduced to run as a non-root -->
+            <method_credential group='root' limit_privileges=':default'
+                privileges='basic,sys_iptun_config,sys_net_config,sys_devices,net_privaddr,net_rawaccess,net_icmpaccess,file_chown,file_owner,file_dac_write,proc_setid,proc_chroot'
+                supp_groups=':default' user='root'/>
+            <method_environment>
+                <envvar name="PATH" value="/usr/bin:/usr/sbin"/>
+            </method_environment>
+        </method_context>
+
+        <exec_method type="method" name="start"
+            exec="/usr/sbin/openvpn --log-append '/var/log/openvpn/%i.log' --daemon openvpn:%i --config '/etc/openvpn/%i.conf'"
+            timeout_seconds="60"/>
+
+        <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
+
+        <property_group name='general' type='framework'>
+            <propval name='action_authorization' type='astring' value='solaris.smf.manage.openvpn'/>
+            <propval name='value_authorization' type='astring' value='solaris.smf.value.openvpn'/>
+        </property_group>
+
+        <property_group name="startd" type="framework">
+            <propval name="duration" type="astring" value="contract"/>
+            <propval name="ignore_error" type="astring" value="core,signal"/>
+        </property_group>
+
+        <instance name='default' enabled='false'>
+            <!-- Support legacy (upgraded) setups of single :default instance
+                 just the way they were delivered earlier -->
+            <exec_method type="method" name="start"
+                exec="/usr/sbin/openvpn --daemon openvpn --config '%{config/config_file}'"
+                timeout_seconds="60"/>
+
+            <property_group name='config' type='application'>
+                <!-- Full path to config file is required -->
+                <propval name="config_file" type='astring' value='/etc/openvpn/openvpn.conf'/>
+                <propval name='value_authorization' type='astring' value='solaris.smf.value.openvpn'/>
+            </property_group>
+        </instance>
+
+        <stability value="Evolving"/>
+
+        <template>
+            <common_name>
+                <loctext xml:lang="C">OpenVPN</loctext>
+            </common_name>
+            <documentation>
+                <manpage title="openvpn" section="8" manpath="/usr/share/man"/>
+                <doc_link name="openvpn.net" uri="http://openvpn.net/index.php/manuals"/>
+            </documentation>
+        </template>
+    </service>
+</service_bundle>

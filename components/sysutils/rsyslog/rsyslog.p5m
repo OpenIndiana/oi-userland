@@ -1,0 +1,77 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability Uncommitted>
+<transform file path=usr/lib/rsyslog/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
+set name=pkg.fmri \
+    value=pkg:/system/rsyslog@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="reliable and extended syslogd"
+set name=pkg.description \
+    value="Rsyslog is a reliable and extended syslog daemon implementation with a modular design, supporting many features (e.g., filtering, TCP, encryption, high-precision time-stamps, output control)."
+set name=com.oracle.info.description \
+    value="rsyslog, a reliable and extended syslogd"
+set name=com.oracle.info.tpno value=7585
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="Rainer Gerhards"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2012/197
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+dir  path=var/spool/rsyslog
+
+file rsyslog.conf-solaris path=etc/rsyslog.conf group=sys mode=0644 \
+    overlay=allow preserve=true
+file rsyslog.xml path=lib/svc/manifest/system/rsyslog.xml
+file rsyslog path=lib/svc/method/rsyslog
+file path=usr/lib/rsyslog/imgssapi.so
+file path=usr/lib/rsyslog/immark.so
+file path=usr/lib/rsyslog/imsolaris.so
+file path=usr/lib/rsyslog/imtcp.so
+file path=usr/lib/rsyslog/imudp.so
+file path=usr/lib/rsyslog/imuxsock.so
+file path=usr/lib/rsyslog/lmcry_gcry.so
+file path=usr/lib/rsyslog/lmgssutil.so
+file path=usr/lib/rsyslog/lmnet.so
+file path=usr/lib/rsyslog/lmnetstrms.so
+file path=usr/lib/rsyslog/lmnsd_gtls.so
+file path=usr/lib/rsyslog/lmnsd_ptcp.so
+file path=usr/lib/rsyslog/lmregexp.so
+file path=usr/lib/rsyslog/lmstrmsrv.so
+file path=usr/lib/rsyslog/lmtcpclt.so
+file path=usr/lib/rsyslog/lmtcpsrv.so
+file path=usr/lib/rsyslog/lmzlibw.so
+file path=usr/lib/rsyslog/omgssapi.so
+file path=usr/lib/rsyslog/ommail.so
+file path=usr/lib/rsyslog/omruleset.so
+file path=usr/lib/rsyslog/omtesting.so
+file path=usr/lib/rsyslog/rsyslogd mode=0555
+file usr/share/man/man8/rsyslogd.8 path=usr/share/man/man1m/rsyslogd.1m \
+    mangler.bypass=true
+file usr/share/man/man5/rsyslog.conf.5 path=usr/share/man/man4/rsyslog.conf.4
+license rsyslog.license license=GPLv3
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/stat

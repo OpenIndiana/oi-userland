@@ -1,0 +1,37 @@
+--- pkgbuild-1.3.104/pkgbuild.pl.in	Wed Aug 31 15:31:15 2011
++++ pkgbuild-1.3.104/pkgbuild.pl.in	Sun Feb 17 14:21:32 2013
+@@ -1243,6 +1243,11 @@
+ 	    system ("/usr/bin/bzip2 -9 './$basedir/$docdir/$fname'");
+ 	    $comp_retval = $?;
+ 	    $fname .= ".bz2";
++	} elsif ($compression eq 'xz') {
++	    system ("rm -f './$basedir/$docdir/${fname}.xz'");
++	    system ("/usr/bin/xz -9 './$basedir/$docdir/$fname'");
++	    $comp_retval = $?;
++	    $fname .= ".xz";
+ 	}
+ 	if ($comp_retval != 0) {
+ 	    fatal ("ERROR: failed to $compression documentation file $mydir/$basedir/$docdir/$fname");
+--- pkgbuild-1.3.105/rpm_spec.pm.in	Fri Nov  2 13:25:43 2012
++++ pkgbuild-1.3.105/rpm_spec.pm.in	Sat Aug 17 21:48:43 2013
+@@ -2332,6 +2332,8 @@
+ 	    my $uncompress;
+ 	    if ($val =~ /\.bz2$/) {
+ 		$uncompress = "bzip2 -d < %{_sourcedir}/$val";
++	    } elsif ($val =~ /\.xz$/) {
++		$uncompress = "xz -d < %{_sourcedir}/$val";
+ 	    } elsif ($val =~ /\.(gz|zip)$/) {
+ 		$uncompress = "gzip -d < %{_sourcedir}/$val";
+ 	    }
+@@ -2623,9 +2625,9 @@
+ 	    $eline =~ s/^\s*%doc\s*//;
+ 	    # automatic compression: a pkgbuild extension
+ 	    my $compression;
+-	    if ($eline =~ /^\((compress|gzip|bzip2)\)/) {
++	    if ($eline =~ /^\((compress|gzip|bzip2|xz)\)/) {
+ 		$compression = $1;
+-		$eline =~ s/^\((compress|gzip|bzip2)\)\s*//;
++		$eline =~ s/^\((compress|gzip|bzip2|xz)\)\s*//;
+ 	    }
+ 	    # no special processing needed if it's a file with a full path name
+ 	    next if $eline =~ /^\//;

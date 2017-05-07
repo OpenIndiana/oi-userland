@@ -1,0 +1,174 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+# Read the section 1m from section 8.
+<transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man8/%<1>.8 >
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+set name=pkg.description \
+    value='Collection of utilities for devices that use the SCSI command set. Includes utilities to copy data based on "dd" syntax and semantics (called sg_dd, sgp_dd and sgm_dd); check INQUIRY data and VPD pages (sg_inq); check mode and log pages (sginfo, sg_modes and sg_logs); spin up and down disks (sg_start); do self tests (sg_senddiag); and various other functions. Warning: Some of these tools access the internals of your system and the incorrect usage of them may render your system inoperable.'
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file sg3_utils-exec_attr path=etc/security/exec_attr.d/system:storage:sg3_utils
+file sg3_utils-prof_attr path=etc/security/prof_attr.d/system:storage:sg3_utils
+file path=usr/bin/scsi_logging_level
+file path=usr/bin/scsi_mandat
+file path=usr/bin/scsi_readcap
+file path=usr/bin/scsi_ready
+file path=usr/bin/scsi_satl
+file path=usr/bin/scsi_start
+file path=usr/bin/scsi_stop
+file path=usr/bin/scsi_temperature
+file path=usr/bin/sg_compare_and_write
+file path=usr/bin/sg_decode_sense
+file path=usr/bin/sg_format
+file path=usr/bin/sg_get_config
+file path=usr/bin/sg_get_lba_status
+file path=usr/bin/sg_ident
+file path=usr/bin/sg_inq
+file path=usr/bin/sg_logs
+file path=usr/bin/sg_luns
+file path=usr/bin/sg_modes
+file path=usr/bin/sg_opcodes
+file path=usr/bin/sg_persist
+file path=usr/bin/sg_prevent
+file path=usr/bin/sg_raw
+file path=usr/bin/sg_rdac
+file path=usr/bin/sg_read_attr
+file path=usr/bin/sg_read_block_limits
+file path=usr/bin/sg_read_buffer
+file path=usr/bin/sg_read_long
+file path=usr/bin/sg_readcap
+file path=usr/bin/sg_reassign
+file path=usr/bin/sg_referrals
+file path=usr/bin/sg_rep_zones
+file path=usr/bin/sg_requests
+file path=usr/bin/sg_reset_wp
+file path=usr/bin/sg_rmsn
+file path=usr/bin/sg_rtpg
+file path=usr/bin/sg_safte
+file path=usr/bin/sg_sanitize
+file path=usr/bin/sg_sat_identify
+file path=usr/bin/sg_sat_phy_event
+file path=usr/bin/sg_sat_read_gplog
+file path=usr/bin/sg_sat_set_features
+file path=usr/bin/sg_senddiag
+file path=usr/bin/sg_ses
+file path=usr/bin/sg_ses_microcode
+file path=usr/bin/sg_start
+file path=usr/bin/sg_stpg
+file path=usr/bin/sg_sync
+file path=usr/bin/sg_timestamp
+file path=usr/bin/sg_turs
+file path=usr/bin/sg_unmap
+file path=usr/bin/sg_verify
+file path=usr/bin/sg_vpd
+file path=usr/bin/sg_wr_mode
+file path=usr/bin/sg_write_buffer
+file path=usr/bin/sg_write_long
+file path=usr/bin/sg_write_same
+file path=usr/bin/sg_write_verify
+file path=usr/bin/sg_zone
+file path=usr/include/scsi/sg_cmds.h
+file path=usr/include/scsi/sg_cmds_basic.h
+file path=usr/include/scsi/sg_cmds_extra.h
+file path=usr/include/scsi/sg_cmds_mmc.h
+file path=usr/include/scsi/sg_lib.h
+file path=usr/include/scsi/sg_lib_data.h
+file path=usr/include/scsi/sg_pt.h
+link path=usr/lib/libsgutils2.so target=libsgutils2.so.2.0.0
+link path=usr/lib/libsgutils2.so.2 target=libsgutils2.so.2.0.0
+file path=usr/lib/libsgutils2.so.2.0.0
+file path=usr/share/man/man1m/scsi_mandat.1m
+file path=usr/share/man/man1m/scsi_readcap.1m
+file path=usr/share/man/man1m/scsi_ready.1m
+file path=usr/share/man/man1m/scsi_satl.1m
+file path=usr/share/man/man1m/scsi_start.1m
+file path=usr/share/man/man1m/scsi_stop.1m
+file path=usr/share/man/man1m/scsi_temperature.1m
+file path=usr/share/man/man1m/sg3_utils.1m
+file path=usr/share/man/man1m/sg_compare_and_write.1m
+file path=usr/share/man/man1m/sg_decode_sense.1m
+file path=usr/share/man/man1m/sg_format.1m
+file path=usr/share/man/man1m/sg_get_config.1m
+file path=usr/share/man/man1m/sg_get_lba_status.1m
+file path=usr/share/man/man1m/sg_ident.1m
+file path=usr/share/man/man1m/sg_inq.1m
+file path=usr/share/man/man1m/sg_logs.1m
+file path=usr/share/man/man1m/sg_luns.1m
+file path=usr/share/man/man1m/sg_modes.1m
+file path=usr/share/man/man1m/sg_opcodes.1m
+file path=usr/share/man/man1m/sg_persist.1m
+file path=usr/share/man/man1m/sg_prevent.1m
+file path=usr/share/man/man1m/sg_raw.1m
+file path=usr/share/man/man1m/sg_rdac.1m
+file path=usr/share/man/man1m/sg_read_attr.1m
+file path=usr/share/man/man1m/sg_read_block_limits.1m
+file path=usr/share/man/man1m/sg_read_buffer.1m
+file path=usr/share/man/man1m/sg_read_long.1m
+file path=usr/share/man/man1m/sg_readcap.1m
+file path=usr/share/man/man1m/sg_reassign.1m
+file path=usr/share/man/man1m/sg_referrals.1m
+file path=usr/share/man/man1m/sg_rep_zones.1m
+file path=usr/share/man/man1m/sg_requests.1m
+file path=usr/share/man/man1m/sg_reset_wp.1m
+file path=usr/share/man/man1m/sg_rmsn.1m
+file path=usr/share/man/man1m/sg_rtpg.1m
+file path=usr/share/man/man1m/sg_safte.1m
+file path=usr/share/man/man1m/sg_sanitize.1m
+file path=usr/share/man/man1m/sg_sat_identify.1m
+file path=usr/share/man/man1m/sg_sat_phy_event.1m
+file path=usr/share/man/man1m/sg_sat_read_gplog.1m
+file path=usr/share/man/man1m/sg_sat_set_features.1m
+file path=usr/share/man/man1m/sg_senddiag.1m
+file path=usr/share/man/man1m/sg_ses.1m
+file path=usr/share/man/man1m/sg_ses_microcode.1m
+file path=usr/share/man/man1m/sg_start.1m
+file path=usr/share/man/man1m/sg_stpg.1m
+file path=usr/share/man/man1m/sg_sync.1m
+file path=usr/share/man/man1m/sg_timestamp.1m
+file path=usr/share/man/man1m/sg_turs.1m
+file path=usr/share/man/man1m/sg_unmap.1m
+file path=usr/share/man/man1m/sg_verify.1m
+file path=usr/share/man/man1m/sg_vpd.1m
+file path=usr/share/man/man1m/sg_wr_mode.1m
+file path=usr/share/man/man1m/sg_write_buffer.1m
+file path=usr/share/man/man1m/sg_write_long.1m
+file path=usr/share/man/man1m/sg_write_same.1m
+file path=usr/share/man/man1m/sg_write_verify.1m
+file path=usr/share/man/man1m/sg_zone.1m
+legacy pkg=SUNWsg3utilsr \
+    desc="sg3 - package of utilities for sending SCSI commands 1.26 (root)" \
+    name="sg3_utils - a package of utilities for sending SCSI commands (root)"
+legacy pkg=SUNWsg3utilsu \
+    desc="sg3 - package of utilities for sending SCSI commands 1.26 (usr)" \
+    name="sg3_utils - a package of utilities for sending SCSI commands (usr)"

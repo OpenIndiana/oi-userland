@@ -1,0 +1,24 @@
+This patch came from in-house.  A patch to make -I imply -S was submitted
+upstream, but rejected, so this is the next simplest way to work around
+issues with when the site module is imported.
+
+--- Python-3.4.3/Lib/test/test_site.py.~1~	2015-02-25 03:27:45.000000000 -0800
++++ Python-3.4.3/Lib/test/test_site.py	2015-04-29 14:49:38.712481718 -0700
+@@ -436,7 +436,7 @@
+     def test_startup_imports(self):
+         # This tests checks which modules are loaded by Python when it
+         # initially starts upon startup.
+-        popen = subprocess.Popen([sys.executable, '-I', '-v', '-c',
++        popen = subprocess.Popen([sys.executable, '-I', '-S', '-v', '-c',
+                                   'import sys; print(set(sys.modules))'],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+@@ -445,8 +445,6 @@
+         stderr = stderr.decode('utf-8')
+         modules = eval(stdout)
+ 
+-        self.assertIn('site', modules)
+-
+         # http://bugs.python.org/issue19205
+         re_mods = {'re', '_sre', 'sre_compile', 'sre_constants', 'sre_parse'}
+         # _osx_support uses the re module in many placs

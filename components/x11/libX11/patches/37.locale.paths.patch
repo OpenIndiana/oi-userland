@@ -1,0 +1,26 @@
+Allow passing multi-directory paths to configure search for locale files
+
+diff --git a/configure.ac b/configure.ac
+index 95ab955..203a8eb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -423,11 +423,16 @@ AC_ARG_WITH(locale-lib-dir,	AS_HELP_STRING([--with-locale-lib-dir=DIR],
+  [Directory where locale libraries files are installed (default: $libdir/X11/locale)]),
+ 				[ X11_LOCALELIBDIR="$withval" ],
+ 				[ X11_LOCALELIBDIR="${X11_LIBDIR}/locale" ])
+-AX_DEFINE_DIR(XLOCALELIBDIR, X11_LOCALELIBDIR, [Location of libX11 locale libraries])
++if test "x$XLOCALELIBDIR" = "x" ; then
++	XLOCALELIBDIR="${X11_LOCALELIBDIR}"
++fi
++AX_DEFINE_DIR(XLOCALELIBDIR, XLOCALELIBDIR, [Location of libX11 locale libraries])
+ AC_SUBST(X11_LOCALELIBDIR)
+ 
+-X11_LOCALEDIR="${X11_LOCALEDATADIR}"
+-AX_DEFINE_DIR(XLOCALEDIR, X11_LOCALEDIR, [Location of libX11 locale data])
++if test "x$XLOCALEDIR" = "x" ; then
++	XLOCALEDIR="${X11_LOCALEDATADIR}"
++fi
++AX_DEFINE_DIR(XLOCALEDIR, XLOCALEDIR, [Location of libX11 locale data])
+ AC_SUBST(X11_LOCALEDIR)
+ 
+ locales="\

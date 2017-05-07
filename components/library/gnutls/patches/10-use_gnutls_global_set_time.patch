@@ -1,0 +1,31 @@
+Description: Make use of gnutls_global_set_time_function()
+ 2.12.x has gnutls_global_set_time_function(), but does not use
+ it in chainverify test. Add the missing piece from GIT mater branch
+ 6a125fea8d4ddb545a6c88dbab04b6ac26c183ab.
+ .
+ This caused a testsuite failure on amd64 (but not on i386).
+Origin: upstream
+Bug-Debian: http://bugs.debian.org/746018
+Forwarded: http://lists.gnutls.org/pipermail/gnutls-devel/2014-April/006925.html
+Last-Update: 2014-04-27
+
+--- gnutls26-2.12.23.orig/tests/chainverify.c
++++ gnutls26-2.12.23/tests/chainverify.c
+@@ -38,8 +38,7 @@
+    verifying certificates.  To avoid a time bomb, we hard code the
+    current time.  This should work fine on systems where the library
+    call to time is resolved at run-time.  */
+-time_t
+-time (time_t * t)
++static time_t mytime (time_t * t)
+ {
+   time_t then = 1256803113;
+ 
+@@ -775,6 +774,7 @@ doit (void)
+       exit (EXIT_FAILURE);
+     }
+ 
++  gnutls_global_set_time_function (mytime);
+   gnutls_global_set_log_function (tls_log_func);
+   if (debug)
+     gnutls_global_set_log_level (4711);

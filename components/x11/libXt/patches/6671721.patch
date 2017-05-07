@@ -1,0 +1,903 @@
+diff --git a/configure.ac b/configure.ac
+index d15b326..28185fe 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -72,6 +72,7 @@ AC_SUBST(LDFLAGS_FOR_BUILD)
+ 
+ # Map function checks to old Imake #defines
+ case $host_os in
++	solaris*) ;; # our changes to NextEvent.c break if poll() is used
+ 	# darwin through Snow Leopard has poll() but can't be used to poll character devices.
+ 	darwin@<:@789@:>@*|darwin10*) ;;
+ 	darwin*)
+diff --git a/include/X11/Intrinsic.h b/include/X11/Intrinsic.h
+index d09acad..d30e01f 100644
+--- a/include/X11/Intrinsic.h
++++ b/include/X11/Intrinsic.h
+@@ -125,6 +125,7 @@ typedef int		XtCacheType;
+ #define			XtCacheAll	  0x002
+ #define			XtCacheByDisplay  0x003
+ #define			XtCacheRefCount	  0x100
++#define			XtCacheXmRefCount 0x200
+ 
+ /****************************************************************
+  *
+@@ -253,6 +254,8 @@ typedef void (*XtDestructor)(
+     Cardinal*		/* num_args */
+ );
+ 
++typedef XtPointer (*XtReplicator)(XtPointer);
++
+ typedef Opaque XtCacheRef;
+ 
+ typedef Opaque XtActionHookId;
+@@ -656,6 +659,17 @@ extern void XtSetTypeConverter(
+     XtDestructor 	/* destructor */
+ );
+ 
++extern void _XtSetTypeConverter(
++    _Xconst _XtString   /* from_type */,
++    _Xconst _XtString   /* to_type */,
++    XtTypeConverter     /* converter */,
++    XtConvertArgList    /* convert_args */,
++    Cardinal            /* num_args */,
++    XtCacheType         /* cache_type */,
++    XtDestructor        /* destructor */,
++    XtReplicator        /* replicator */
++);
++
+ extern void XtAppSetTypeConverter(
+     XtAppContext 	/* app_context */,
+     _Xconst _XtString 	/* from_type */,
+diff --git a/src/Convert.c b/src/Convert.c
+index cea8fd3..265b162 100644
+--- a/src/Convert.c
++++ b/src/Convert.c
+@@ -87,6 +87,7 @@ typedef struct _ConverterRec {
+     XrmRepresentation	from, to;
+     XtTypeConverter	converter;
+     XtDestructor	destructor;
++    XtReplicator	replicator;
+     unsigned short	num_args;
+     unsigned int	do_ref_count:1;
+     unsigned int	new_style:1;
+@@ -94,6 +95,20 @@ typedef struct _ConverterRec {
+ /* used for old-style type converter cache only */
+ static Heap globalHeap = {NULL, NULL, 0};
+ 
++static
++void TableAddConverter(
++    ConverterTable      table,
++    XrmRepresentation   from_type,
++    XrmRepresentation   to_type,
++    XtTypeConverter     converter,
++    XtConvertArgList    convert_args,
++    Cardinal            num_args,
++    _XtBoolean          new_style,
++    XtCacheType         cache_type,
++    XtDestructor        destructor,
++    XtReplicator        replicator,
++    _XtBoolean          global);
++
+ void _XtSetDefaultConverterTable(
+ 	ConverterTable *table)
+ {
+@@ -117,13 +132,11 @@ void _XtSetDefaultConverterTable(
+ 	XtCacheType cache_type;
+ 	for (i = CONVERTHASHSIZE; --i >= 0; ) {
+ 	    for (rec = *globalConverterTable++; rec; rec = rec->next) {
+-		cache_type = rec->cache_type;
+-		if (rec->do_ref_count)
+-		    cache_type |= XtCacheRefCount;
+-	       _XtTableAddConverter(*table, rec->from, rec->to, rec->converter,
++		cache_type = rec->cache_type | (rec->do_ref_count & 0xff00);
++	        TableAddConverter(*table, rec->from, rec->to, rec->converter,
+ 				    ConvertArgs(rec), rec->num_args,
+ 				    rec->new_style, cache_type,
+-				    rec->destructor, True);
++				    rec->destructor, rec->replicator, True);
+ 	    }
+   	}
+     }
+@@ -155,10 +168,14 @@ typedef struct _CacheRec {
+     XtPointer	tag;
+     int		hash;
+     XtTypeConverter converter;
++    XtDestructor destructor;
++    XtReplicator replicator;
++    XtPointer closure;
+     unsigned short num_args;
+     unsigned int conversion_succeeded:1;
+     unsigned int has_ext:1;
+     unsigned int is_refcounted:1;
++    unsigned int ref_count;
+     unsigned int must_be_freed:1;
+     unsigned int from_is_value:1;
+     unsigned int to_is_value:1;
+@@ -166,15 +183,7 @@ typedef struct _CacheRec {
+     XrmValue	to;
+ } CacheRec;
+ 
+-typedef struct _CacheRecExt {
+-    CachePtr	*prev;
+-    XtDestructor destructor;
+-    XtPointer	 closure;
+-    long	 ref_count;
+-} CacheRecExt;
+-
+-#define CEXT(p) ((CacheRecExt *)((p)+1))
+-#define CARGS(p) ((p)->has_ext ? (XrmValue *)(CEXT(p)+1) : (XrmValue *)((p)+1))
++#define CARGS(p) (XrmValue *)((p)+(ptrdiff_t)1)
+ 
+ #define CACHEHASHSIZE	256
+ #define CACHEHASHMASK	255
+@@ -183,6 +192,28 @@ typedef CachePtr CacheHashTable[CACHEHASHSIZE];
+ static CacheHashTable	cacheHashTable;
+ 
+ void _XtTableAddConverter(
++    ConverterTable      table,
++    XrmRepresentation   from_type,
++    XrmRepresentation   to_type,
++    XtTypeConverter     converter,
++    XtConvertArgList    convert_args,
++    Cardinal            num_args,
++    _XtBoolean          new_style,
++    XtCacheType         cache_type,
++    XtDestructor        destructor,
++    _XtBoolean          global)
++{
++
++    unsigned short	cache_flags;
++
++    cache_flags = cache_type & (XtCacheNone | XtCacheAll |
++				XtCacheByDisplay | XtCacheRefCount);
++
++    TableAddConverter(table, from_type, to_type, converter, convert_args, num_args,
++			new_style, cache_type, destructor, 0, global);
++}
++
++void TableAddConverter(
+     ConverterTable	table,
+     XrmRepresentation   from_type,
+     XrmRepresentation   to_type,
+@@ -192,6 +223,7 @@ void _XtTableAddConverter(
+     _XtBoolean		new_style,
+     XtCacheType		cache_type,
+     XtDestructor	destructor,
++    XtReplicator        replicator,
+     _XtBoolean		global)
+ {
+     register ConverterPtr	*pp;
+@@ -215,6 +247,7 @@ void _XtTableAddConverter(
+     p->to	    = to_type;
+     p->converter    = converter;
+     p->destructor   = destructor;
++    p->replicator   = replicator;
+     p->num_args     = num_args;
+     p->global       = global;
+     args = ConvertArgs(p);
+@@ -224,21 +257,21 @@ void _XtTableAddConverter(
+     p->do_ref_count = False;
+     if (destructor || (cache_type & 0xff)) {
+ 	p->cache_type = cache_type & 0xff;
+-	if (cache_type & XtCacheRefCount)
+-	    p->do_ref_count = True;
++        p->do_ref_count = cache_type & 0xff00;
+     } else {
+ 	p->cache_type = XtCacheNone;
+     }
+ }
+ 
+-void XtSetTypeConverter(
++void _XtSetTypeConverter(
+     register _Xconst char* from_type,
+     register _Xconst char* to_type,
+-    XtTypeConverter	converter,
++    XtTypeConverter     converter,
+     XtConvertArgList    convert_args,
+-    Cardinal		num_args,
+-    XtCacheType		cache_type,
+-    XtDestructor	destructor
++    Cardinal            num_args,
++    XtCacheType         cache_type,
++    XtDestructor        destructor,
++    XtReplicator	replicator
+     )
+ {
+     ProcessContext process;
+@@ -253,21 +286,41 @@ void XtSetTypeConverter(
+     to = XrmStringToRepresentation(to_type);
+ 
+     if (!process->globalConverterTable) {
+-	process->globalConverterTable = (ConverterTable)
+-	    __XtCalloc(CONVERTHASHSIZE, (unsigned)sizeof(ConverterPtr));
++        process->globalConverterTable = (ConverterTable)
++            __XtCalloc(CONVERTHASHSIZE, (unsigned)sizeof(ConverterPtr));
+     }
+-    _XtTableAddConverter(process->globalConverterTable, from, to,
+-			 converter, convert_args,
+-			 num_args, True, cache_type, destructor, True);
++
++    TableAddConverter(process->globalConverterTable, from, to, converter,
++		      	convert_args, num_args, True, cache_type, destructor,
++			replicator, True);	
+     while (app) {
+-	_XtTableAddConverter(app->converterTable, from, to,
+-			     converter, convert_args,
+-			     num_args, True, cache_type, destructor, True);
++	TableAddConverter(app->converterTable, from, to, converter, 
++			  convert_args, num_args, True, cache_type,
++			  destructor, replicator, True);
+ 	app = app->next;
+     }
+     UNLOCK_PROCESS;
+ }
+ 
++void XtSetTypeConverter(
++    register _Xconst char* from_type,
++    register _Xconst char* to_type,
++    XtTypeConverter	converter,
++    XtConvertArgList    convert_args,
++    Cardinal		num_args,
++    XtCacheType		cache_type,
++    XtDestructor	destructor
++    )
++{
++    unsigned short	cache_flags;
++  
++    cache_flags = cache_type & (XtCacheNone | XtCacheAll |
++				XtCacheByDisplay | XtCacheRefCount);
++
++    _XtSetTypeConverter(from_type, to_type, converter, convert_args, num_args,
++			cache_flags, destructor, 0);
++}
++
+ void XtAppSetTypeConverter(
+     XtAppContext	app,
+     register _Xconst char* from_type,
+@@ -357,6 +410,7 @@ CacheEnter(
+     Boolean		    do_ref,
+     Boolean		    do_free,
+     XtDestructor	    destructor,
++    XtReplicator	    replicator,
+     XtPointer		    closure)
+ {
+     register	CachePtr *pHashEntry;
+@@ -366,34 +420,22 @@ CacheEnter(
+     LOCK_PROCESS;
+     pHashEntry = &cacheHashTable[hash & CACHEHASHMASK];
+ 
+-    if ((succeeded && destructor) || do_ref) {
+-	p = (CachePtr) _XtHeapAlloc(heap, (sizeof(CacheRec) +
+-					   sizeof(CacheRecExt) +
+-					   num_args * sizeof(XrmValue)));
+-	CEXT(p)->prev = pHashEntry;
+-	CEXT(p)->destructor = succeeded ? destructor : NULL;
+-	CEXT(p)->closure = closure;
+-	CEXT(p)->ref_count = 1;
+-	p->has_ext = True;
+-    }
+-    else {
+-	p = (CachePtr)_XtHeapAlloc(heap, (sizeof(CacheRec) +
+-					  num_args * sizeof(XrmValue)));
+-	p->has_ext = False;
+-    }
++    p = (CachePtr)_XtHeapAlloc(heap, 
++			(sizeof(CacheRec) + num_args * sizeof(XrmValue)));
++
+     if (!to->addr)
+ 	succeeded = False;
+     p->conversion_succeeded = succeeded;
+     p->is_refcounted = do_ref;
+     p->must_be_freed = do_free;
+     p->next	    = *pHashEntry;
+-    if (p->next && p->next->has_ext)
+-	CEXT(p->next)->prev = &p->next;
+-
+     *pHashEntry     = p;
+     p->tag	    = (XtPointer)heap;
+     p->hash	    = hash;
+     p->converter    = converter;
++    p->destructor = destructor;
++    p->replicator = replicator;
++    p->closure = closure;
+     p->from.size    = from->size;
+     if (from->size <= sizeof(p->from.addr)) {
+ 	p->from_is_value = True;
+@@ -416,14 +458,31 @@ CacheEnter(
+     if (!succeeded) {
+ 	p->to_is_value = False;
+ 	p->to.addr = NULL;
+-    } else if (to->size <= sizeof(p->to.addr)) {
+-	p->to_is_value = True;
+-	XtMemmove(&p->to.addr, to->addr, to->size);
+     } else {
+-	p->to_is_value = False;
+-	p->to.addr = (XPointer)_XtHeapAlloc(heap, to->size);
+-	(void) memmove((char *)p->to.addr, (char *)to->addr, to->size);
++        XPointer src_ptr, dest_ptr, gptr;
++
++        if ((size_t)to->size <= sizeof(p->to.addr)) {
++        	p->to_is_value = True;
++                dest_ptr = (XPointer)&p->to.addr;
++        } else {
++                p->to_is_value = False;
++                dest_ptr = p->to.addr = (XPointer)_XtHeapAlloc(heap, to->size);
++        }
++
++        if (do_ref & XtCacheXmRefCount) {
++                gptr = (*(p->replicator))(*(XtPointer *)(to->addr));
++                src_ptr = (XtPointer)&gptr;
++        } else {
++                src_ptr = to->addr;
++        }
++
++        memmove(dest_ptr, src_ptr, to->size);
++    }
++
++    if ((succeeded && destructor) || do_ref) {
++	p->ref_count = 1;
+     }
++
+     UNLOCK_PROCESS;
+     return p;
+ }
+@@ -431,32 +490,39 @@ CacheEnter(
+ static void FreeCacheRec(
+     XtAppContext app,
+     CachePtr p,
+-    CachePtr *prev)
++    Boolean clean_table)
+ {
+     LOCK_PROCESS;
+-    if (p->has_ext) {
+-	if (CEXT(p)->destructor) {
+-	    Cardinal num_args = p->num_args;
+-	    XrmValue *args = NULL;
+-	    XrmValue toc;
+-	    if (num_args)
+-		args = CARGS(p);
+-	    toc.size = p->to.size;
+-	    if (p->to_is_value)
+-		toc.addr = (XPointer)&p->to.addr;
+-	    else
+-		toc.addr = p->to.addr;
+-	    (*CEXT(p)->destructor) (app, &toc, CEXT(p)->closure, args,
+-				    &num_args);
+-	}
+-	*(CEXT(p)->prev) = p->next;
+-	if (p->next && p->next->has_ext)
+-	    CEXT(p->next)->prev = CEXT(p)->prev;
+-    } else {
+-	*prev = p->next;
+-	if (p->next && p->next->has_ext)
+-	    CEXT(p->next)->prev = prev;
++    if (clean_table) {
++    	CachePtr cachep, *cachepp;
++
++        cachepp = &cacheHashTable[p->hash & CACHEHASHMASK];
++        while (cachep = *cachepp) {
++            if (p == cachep) {
++            	*cachepp = cachep->next;
++                break;
++            }
++           cachepp = &cachep->next;
++        }      
++    }
++
++    if (p->destructor) {
++        Cardinal num_args=p->num_args;
++        XrmValue *args=NULL;
++        XrmValue toc;
++
++        if (num_args) {
++        	args = CARGS(p);
++        }
++        toc.size = p->to.size;
++        if (p->to_is_value) {
++                toc.addr = (XPointer)&p->to.addr;
++        } else {
++                toc.addr = p->to.addr;
++        }
++        (*p->destructor)(app, &toc, p->closure, args, &num_args);
+     }
++
+     if (p->must_be_freed) {
+ 	register int i;
+ 	if (!p->from_is_value)
+@@ -480,18 +546,18 @@ void _XtCacheFlushTag(
+     XtPointer	tag)
+ {
+     int i;
+-    register CachePtr *prev;
+     register CachePtr rec;
++    register CachePtr *next_link;
+ 
+     LOCK_PROCESS;
+     for (i = CACHEHASHSIZE; --i >= 0;) {
+-	prev = &cacheHashTable[i];
+-	while ((rec = *prev)) {
++	next_link = &cacheHashTable[i];
++	while ((rec = *next_link)) {
++	    next_link = &rec->next;
+ 	    if (rec->tag == tag)
+-		FreeCacheRec(app, rec, prev);
+-	    else
+-		prev = &rec->next;
++		FreeCacheRec(app, rec, False);
+ 	}
++	cacheHashTable[i] = 0;
+     }
+     UNLOCK_PROCESS;
+ }
+@@ -641,7 +707,12 @@ void XtDirectConvert(
+     LOCK_PROCESS;
+     /* Try to find cache entry for conversion */
+     hash = ((long) converter >> 2) + from->size + *((char *) from->addr);
+-    if (from->size > 1) hash += ((char *) from->addr)[1];
++    if (from->size > 1) {
++	if (sizeof(long) == 4)
++            hash += ((char *) from->addr)[1];
++        else
++            hash += ((char *) from->addr)[6];
++    }
+ 
+     for (p = cacheHashTable[hash & CACHEHASHMASK]; p; p = p->next) {
+ 	if ((p->hash == hash)
+@@ -685,7 +756,7 @@ void XtDirectConvert(
+     {
+ 	CacheEnter(&globalHeap, (XtTypeConverter)converter, args, num_args,
+ 		   from, to, (to->addr != NULL), hash, False, False,
+-		   (XtDestructor)NULL, NULL);
++		   (XtDestructor)NULL, NULL, 0);
+     }
+     UNLOCK_PROCESS;
+ }
+@@ -726,6 +797,7 @@ CallConverter(
+     int	hash;
+     Cardinal i;
+     Boolean retval;
++    XPointer from_addr, gptr;
+ 
+     if (!cP || ((cP->cache_type == XtCacheNone) && !cP->destructor)) {
+ 	XtPointer closure;
+@@ -738,7 +810,12 @@ CallConverter(
+     LOCK_PROCESS;
+     /* Try to find cache entry for conversion */
+     hash = ((long)(converter) >> 2) + from->size + *((char *) from->addr);
+-    if (from->size > 1) hash += ((char *) from->addr)[1];
++    if (from->size > 1) {
++	if (sizeof(long) == 4)
++	    hash += ((char *) from->addr)[1];
++	else
++	    hash += ((char *) from->addr)[6];
++    }
+ 
+     if (cP->cache_type != XtCacheNone) {
+ 	for (p = cacheHashTable[hash & CACHEHASHMASK]; p; p = p->next){
+@@ -770,14 +847,18 @@ CallConverter(
+ 				UNLOCK_PROCESS;
+ 				return False;
+ 			    }
+-			    to->size = p->to.size;
+-			    if (p->to_is_value) {
+-				XtMemmove(to->addr, &p->to.addr,
+-					  to->size);
++			    if (cP->do_ref_count & XtCacheXmRefCount) {
++				gptr = (*(p->replicator))(p->to.addr);
++				from_addr = (XPointer)&gptr; 
++			    } else if (p->to_is_value) {
++				from_addr = (XPointer)&p->to.addr;
+ 			    } else {
+-				(void) memmove((char *)to->addr,
+-					       (char *)p->to.addr, to->size);
++				from_addr = p->to.addr;
+ 			    }
++				
++			    to->size = p->to.size;
++			    memmove((char *)to->addr, from_addr,
++					  to->size);
+ 			} else {	/* old-style call */
+ 			    to->size = p->to.size;
+ 			    if (p->to_is_value)
+@@ -787,7 +868,7 @@ CallConverter(
+ 			}
+ 		    }
+ 		    if (p->is_refcounted) {
+-			CEXT(p)->ref_count++;
++			p->ref_count++;
+ 			if (cache_ref_return)
+ 			    *cache_ref_return = (XtCacheRef)p;
+ 			else
+@@ -810,7 +891,7 @@ CallConverter(
+ 	Heap *heap;
+ 	XtPointer closure = NULL;
+ 	unsigned int supplied_size = to->size;
+-	Boolean do_ref = cP->do_ref_count && cache_ref_return;
++	unsigned short do_ref;
+ 	Boolean do_free = False;
+ 	Boolean retval =
+ 	    (*(XtTypeConverter)converter)(dpy, args, &num_args, from, to, &closure);
+@@ -823,6 +904,8 @@ CallConverter(
+ 	    return False;
+ 	}
+ 
++	do_ref = cache_ref_return ? cP->do_ref_count : 0;
++
+ 	if ((cP->cache_type == XtCacheNone) || do_ref) {
+ 	    heap = NULL;
+ 	    do_free = True;
+@@ -834,8 +917,12 @@ CallConverter(
+ 	else
+ 	    heap = &XtDisplayToApplicationContext(dpy)->heap;
+ 
+-	p = CacheEnter(heap, converter, args, num_args, from, to, retval,
+-		       hash, do_ref, do_free, cP->destructor, closure);
++        if (do_ref || !(cP->do_ref_count & XtCacheXmRefCount)) {
++		p = CacheEnter(heap, converter, args, num_args, from, to, retval,
++		       hash, do_ref, do_free, cP->destructor, 
++		       cP->replicator, closure);
++	}
++
+ 	if (do_ref)
+ 	    *cache_ref_return = (XtCacheRef)p;
+ 	else if (cache_ref_return)
+@@ -1061,8 +1148,8 @@ void XtAppReleaseCacheRefs(
+     LOCK_APP(app);
+     LOCK_PROCESS;
+     for (r = (CachePtr*)refs; (p = *r); r++) {
+-	if (p->is_refcounted && --(CEXT(p)->ref_count) == 0) {
+-	    FreeCacheRec(app, p, NULL);
++	if (p->is_refcounted && (--p->ref_count) == 0) {
++	    FreeCacheRec(app, p, True);
+ 	}
+     }
+     UNLOCK_PROCESS;
+@@ -1078,7 +1165,6 @@ void XtCallbackReleaseCacheRefList(
+ {
+     XtAppReleaseCacheRefs( XtWidgetToApplicationContext(widget),
+ 			   (XtCacheRef*)closure );
+-    XtFree(closure);
+ }
+ 
+ 
+diff --git a/src/Create.c b/src/Create.c
+index da00192..b756223 100644
+--- a/src/Create.c
++++ b/src/Create.c
+@@ -405,8 +405,7 @@ xtCreate(
+     CompileCallbacks(widget);
+ 
+     if (cache_refs != NULL) {
+-	XtAddCallback(widget, XtNdestroyCallback,
+-		XtCallbackReleaseCacheRefList, (XtPointer)cache_refs );
++	XtFree(cache_refs);
+     }
+ 
+     wsize = widget_class->core_class.widget_size;
+diff --git a/src/Display.c b/src/Display.c
+index 4ccf079..72ed668 100644
+--- a/src/Display.c
++++ b/src/Display.c
+@@ -323,12 +323,15 @@ _XtAppInit(
+  * Save away argv and argc so we can set the properties later
+  */
+ 
+-    saved_argv = (String *)
+-	__XtMalloc( (Cardinal)((*argc_in_out + 1) * sizeof(String)) );
+-
+-    for (i = 0 ; i < *argc_in_out ; i++) saved_argv[i] = (*argv_in_out)[i];
+-    saved_argv[i] = NULL;	/* NULL terminate that sucker. */
+-
++    if(*argv_in_out != NULL) {
++    	saved_argv = (String *)
++		__XtMalloc( (Cardinal)((*argc_in_out + 1) * sizeof(String)) );
++
++    	for (i = 0 ; i < *argc_in_out ; i++) saved_argv[i] = (*argv_in_out)[i];
++    	saved_argv[i] = NULL;	/* NULL terminate that sucker. */
++    } else {
++	saved_argv = NULL;
++    }
+ 
+     *app_context_return = XtCreateApplicationContext();
+ 
+diff --git a/src/Event.c b/src/Event.c
+index 11823d6..7c15e83 100644
+--- a/src/Event.c
++++ b/src/Event.c
+@@ -563,6 +563,14 @@ void XtRegisterDrawable(
+     UNLOCK_APP(app);
+ }
+ 
++/* need this for backward compatability */
++void _XtRegisterWindow(
++    Window window,
++    Widget widget)
++{
++    XtRegisterDrawable(XtDisplay(widget), (Drawable)window, widget);
++}
++
+ void XtUnregisterDrawable(
+     Display* display,
+     Drawable drawable)
+@@ -613,6 +621,14 @@ void XtUnregisterDrawable(
+     UNLOCK_APP(app);
+ }
+ 
++/* need this for backward compatability */
++void _XtUnregisterWindow(
++    register Window window,
++    register Widget widget)
++{
++    XtUnregisterDrawable(XtDisplay(widget), (Drawable)window);
++}
++
+ static void ExpandWWTable(
+     register WWTable tab)
+ {
+diff --git a/src/Geometry.c b/src/Geometry.c
+index d64c8e2..c8ddbd6 100644
+--- a/src/Geometry.c
++++ b/src/Geometry.c
+@@ -330,6 +330,12 @@ _XtMakeGeometryRequest (
+ 	} else {
+ 	    returnCode = (*manager)(widget, request, reply);
+ 	}
++
++	/* leob fix for bug 4153816 */
++        if (returnCode == XtGeometryDone && XtIsRealized(widget) &&
++            (widget->core.width != request->width ||
++             widget->core.height != request->height) )
++            return XtGeometryYes;
+     }
+ 
+     /*
+diff --git a/src/Initialize.c b/src/Initialize.c
+index 9783deb..2a5a8a8 100644
+--- a/src/Initialize.c
++++ b/src/Initialize.c
+@@ -473,7 +473,7 @@ static String _XtDefaultLanguageProc(
+     if (! XSetLocaleModifiers(""))
+ 	XtWarning("X locale modifiers not supported, using default");
+ 
+-    return setlocale(LC_ALL, NULL); /* re-query in case overwritten */
++    return setlocale(LC_CTYPE, NULL); /* re-query in case overwritten */
+ }
+ 
+ XtLanguageProc XtSetLanguageProc(
+@@ -994,8 +994,13 @@ Widget XtOpenApplication(XtAppContext *app_context_return,
+ 
+     LOCK_APP(app_con);
+     XtSetArg(args[num], XtNscreen, DefaultScreenOfDisplay(dpy)); num++;
+-    XtSetArg(args[num], XtNargc, saved_argc);	                 num++;
+-    XtSetArg(args[num], XtNargv, argv_in_out);	                 num++;
++    /* only set argc and argv if argv_in_out[0] is not NULL */
++    if (argv_in_out && argv_in_out[0]) {
++    	XtSetArg(args[num], XtNargc, saved_argc);	                
++	num++;
++	XtSetArg(args[num], XtNargv, argv_in_out);
++	num++;
++    }
+ 
+     merged_args = XtMergeArgLists(args_in, num_args_in, args, num);
+     num += num_args_in;
+diff --git a/src/Makefile.am b/src/Makefile.am
+index cf54a5c..a786d94 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -74,7 +74,8 @@ DISTCLEANFILES = StringDefs.c
+ 
+ libXt_la_LIBADD = @XT_LIBS@
+ 
+-libXt_la_LDFLAGS = -version-number 6:0:0 -no-undefined
++libXt_la_LDFLAGS = -version-number 4:0:0 -no-undefined \
++	-Wl,-M$(top_srcdir)/../mapfile-vers -lc
+ 
+ #
+ # The util directory contains a program that builds some of the sources.
+diff --git a/src/NextEvent.c b/src/NextEvent.c
+index b1f7bc7..c9b53db 100644
+--- a/src/NextEvent.c
++++ b/src/NextEvent.c
+@@ -347,6 +347,51 @@ static void AdjustTimes (
+ #endif
+ }
+ 
++static void CheckAndTrimTimes(XtAppContext app, wait_times_ptr_t wt)
++{
++   struct timeval tv;
++   String         pptrs[8];
++   Cardinal       nbr_parms;
++
++   pptrs[0] = (String)zero_time.tv_sec;
++   pptrs[1] = (String)zero_time.tv_usec;
++   pptrs[2] = (String)wt->wait_time.tv_sec;
++   pptrs[3] = (String)wt->wait_time.tv_usec;
++   pptrs[4] = (String)wt->max_wait_time.tv_sec;
++   pptrs[5] = (String)wt->max_wait_time.tv_usec;
++   pptrs[6] = (String)wt->cur_time.tv_sec;
++   pptrs[7] = (String)wt->cur_time.tv_usec;
++   nbr_parms = 8;
++   XtAppErrorMsg(app, "communicationError", "select",
++                 XtCXtToolkitError, "Resetting timer values: zero_time=%lu:%lu, "
++                 "wait_time=%lu:%lu, max_wait_time=%lu:%lu, cur_time=%lu:%lu",
++                 pptrs, &nbr_parms);
++
++   memset(&zero_time, 0, sizeof(zero_time)); /* Ensure the integrity of       */
++                                             /* zero_time.                    */
++   if (wt->max_wait_time.tv_sec > 99999999)  /* Bring max_wait_time back into */
++    {                                        /* acceptable range if nec.      */
++      wt->max_wait_time.tv_sec &= 0xFFFFF;
++      wt->max_wait_time.tv_usec = 0;         /* (Fractions of a sec are in-   */
++                                             /*  significant at this level.)  */
++    }
++   if (app->timerQueue != NULL)              /* Do the same for the head of   */
++    {                                        /* the timer queue if necessary. */
++      TIMEDELTA(tv, app->timerQueue->te_timer_value, wt->cur_time);
++      if (tv.tv_sec > 99999999)
++       {
++         pptrs[0] = (String)app->timerQueue->te_timer_value.tv_sec;
++         pptrs[1] = (String)app->timerQueue->te_timer_value.tv_usec;
++         nbr_parms = 2;
++         XtAppErrorMsg(app, "selectError", "timerQueue",
++                       XtCXtToolkitError, "timerQueue value %lu:%lu is invalid",
++                       pptrs, &nbr_parms);
++         tv.tv_sec &= 0xFFFFF;
++         tv.tv_usec = 0;
++         ADD_TIME(app->timerQueue->te_timer_value, wt->cur_time, tv);
++       }
++    }
++}
+ 
+ static int IoWait (
+     wait_times_ptr_t wt,
+@@ -629,20 +674,56 @@ WaitLoop:
+ 	    /*
+ 	     *  interrupt occured recalculate time value and wait again.
+ 	     */
+-	    if (errno == EINTR || errno == EAGAIN) {
+-		if (errno == EAGAIN) {
+-		    errno = 0;  /* errno is not self reseting */
+-		    continue;
+-		}
+-	        errno = 0;  /* errno is not self reseting */
+-
+-		/* was it interrupted by a signal that we care about? */
+-		if (!ignoreSignals && app->signalQueue != NULL) {
+-		    SignalEventRec *se_ptr = app->signalQueue;
+-		    while (se_ptr != NULL) {
+-			if (se_ptr->se_notice) {
+-			    if (block && howlong != NULL)
+-				AdjustHowLong (howlong, &wt.start_time);
++            if (errno == EAGAIN) {
++                errno = 0;  /* errno is not self reseting */
++                continue;
++            } else if (errno == EBADF) {
++                /* Bug 4482749 - If we have a bad FD stop monitoring it */
++                int i;
++                struct timeval tv={0};
++                for (i = 0; i < wf.nfds; i++) {
++                    if (FD_ISSET(i, &wf.rmask) || FD_ISSET(i, &wf.wmask) ||
++                          FD_ISSET(i, &wf.emask)) {
++                        if (select(i + 1, &wf.rmask, &wf.wmask, &wf.emask, &tv)
++                              == -1) {
++                            char     bad_fd[55];
++                            String   param = bad_fd;
++                            Cardinal param_count = 1;
++
++                            /*
++                             * Get rid of any input procedures on the bad FD
++                             * and regenerate the list of FDs we listen to.
++                             */
++                            while (app->input_list[i] != NULL) {
++                              XtRemoveInput((XtInputId)app->input_list[i]);
++                            }
++                            InitFds (app, ignoreEvents, ignoreInputs, &wf);
++
++                            sprintf(bad_fd, "%d", errno);
++                            XtAppWarningMsg(app, "communicationError", "select",
++                                            XtCXtToolkitError,
++                                            "Select failed; error code %s",
++                                            &param, &param_count);
++
++                            sprintf(bad_fd, "EBADF error in select() call for file descriptor %d", i);
++                            XtAppWarning(app, param);
++
++                          }
++                      }
++                  }
++
++                return -1;
++
++            } else if (errno == EINTR) {
++                errno = 0;
++
++                /* was it interrupted by a signal that we care about? */
++                if (!ignoreSignals && app->signalQueue != NULL) {
++                    SignalEventRec *se_ptr = app->signalQueue;
++                    while (se_ptr != NULL) {
++                        if (se_ptr->se_notice) {
++                            if (block && howlong != NULL)
++                                AdjustHowLong (howlong, &wt.start_time);
+ #ifdef USE_POLL
+ 			    XtStackFree ((XtPointer) wf.fdlist, fdlist);
+ #endif
+@@ -687,17 +768,33 @@ WaitLoop:
+ #endif
+ 			nfds = 0;
+ 		}
+-	    } else {
+-		char Errno[12];
+-		String param = Errno;
+-		Cardinal param_count = 1;
+-
+-		sprintf( Errno, "%d", errno);
+-		XtAppWarningMsg(app, "communicationError","select",
+-			XtCXtToolkitError,"Select failed; error code %s",
+-			&param, &param_count);
+-		continue;
+-	    }
++            } else if (errno == EINVAL) {       /* (Can be recovered from if    */
++                struct timeval  tv={0};
++
++                nfds = Select(wf.nfds, &wf.rmask, &wf.wmask, &wf.emask, &tv);
++                                                /* Do a non-blocking select to  */
++                                                /* eliminate any timeout errors.*/
++                if (nfds == -1) {               /* Now try to sort out the good */
++                    if (errno == EINVAL) {      /* and the bad from the ugly.   */
++                        char    Errno[12];      /* (This is ugly).              */
++                        String  param = Errno;
++                        Cardinal param_count = 1;
++
++                        sprintf(Errno, "%d", errno);
++                        XtAppErrorMsg(app, "communicationError", "select",
++                                      XtCXtToolkitError, "Select failed; error code %s",
++                                      &param, &param_count);
++                        XtAppError(app, "EINVAL error in select() call");
++                    } else {                    /* If the new error is not about */
++                                                /* an invalid select() parameter,*/
++                        continue;               /* then simply try again.        */
++                    }
++                } else {                        /* (Else the error appears to be */
++                                                /* in the timeout parameter.)    */
++                    CheckAndTrimTimes(app, &wt);
++                    continue;
++                }
++            }
+ 	} /* timed out or input available */
+ 	break;
+     }
+@@ -750,6 +847,33 @@ WaitLoop:
+ #define SeCallProc(ptr) \
+     (*ptr->se_proc) (ptr->se_closure, (XtSignalId*)&ptr);
+ 
++#ifdef sun /*SUNSOFT */
++int _XtwaitForSomething(
++    _XtBoolean ignoreTimers,
++    _XtBoolean ignoreInputs,
++    _XtBoolean ignoreEvents,
++    _XtBoolean block,
++    unsigned long *howlong,
++    XtAppContext app)
++{
++#ifdef XTHREADS
++/* fix for bug 4185875 leob */
++return _XtWaitForSomething(app,
++            ignoreEvents, ignoreTimers, ignoreInputs, TRUE,
++            block,
++            TRUE,
++            howlong);
++#else
++/* fix for bug 4185875 leob */
++return _XtWaitForSomething(app,
++            ignoreEvents, ignoreTimers, ignoreInputs, TRUE,
++            block,
++            howlong);
++#endif
++
++}
++#endif /* SUNSOFT */
++
+ /*
+  * Public Routines
+  */

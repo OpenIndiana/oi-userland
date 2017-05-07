@@ -1,0 +1,186 @@
+###############################################################################
+# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/modules/om/generic/omGeneric.c b/modules/om/generic/omGeneric.c
+index 64ef7b7..7b40cb1 100644
+--- a/modules/om/generic/omGeneric.c
++++ b/modules/om/generic/omGeneric.c
+@@ -175,6 +175,11 @@ init_fontset(
+ 	if((font_set->substitute = init_fontdata(data->substitute,
+ 				   data->substitute_num)) == NULL)
+ 	    goto err;
++
++	/* Add for load_option */
++	font_set->delay_loading = data->delay_loading;
++	font_set->no_checking = data->no_checking;
++
+ 	font_set->substitute_num = data->substitute_num;
+ 	if((font_set->vmap = init_fontdata(data->vmap,
+ 			     data->vmap_num)) == NULL)
+@@ -283,6 +288,10 @@ load_font(
+ 	if (font_set->font_name == NULL)
+ 	    continue;
+ 
++	/* no font structure is requeried here. don't load font now. */
++	if ((font_set->font != NULL) || (font_set->delay_loading))
++	    continue;
++
+         if (load_fontset_data (oc, font_set) != True)
+ 	    return False;
+ #ifndef TESTVERSION
+@@ -332,12 +341,24 @@ load_font_info(
+ 	    continue;
+ 
+ 	if (font_set->info == NULL) {
++	     /* Handle for delay loading. */
++            if (font_set->delay_loading)
++		continue;
+ 	    fn_list = XListFontsWithInfo(dpy, font_set->font_name, 1, &fn_num,
+ 					 &font_set->info);
+ 	    if (font_set->info == NULL)
+ 		return False;
+ 
++#ifdef SUNSOFT
++            if (fn_num > 0) {
++                font_set->info->fid = XLoadFont(dpy, font_set->font_name);
++            }
++            if (fn_list) {
++                XFreeFontNames(fn_list);
++            }
++#else
+ 	    XFreeFontNames(fn_list);
++#endif
+ 	}
+     }
+ 
+@@ -453,7 +474,7 @@ init_core_part(
+     count = length = 0;
+ 
+     for ( ; font_set_num-- > 0; font_set++) {
+-	if (font_set->font_name == NULL)
++	if (font_set->font_name == NULL || font_set->delay_loading) /* if delay_loading, continue */
+ 	    continue;
+ 
+ 	length += strlen(font_set->font_name) + 1;
+@@ -483,7 +504,7 @@ init_core_part(
+     font_set_num = gen->font_set_num;
+ 
+     for (count = 0; font_set_num-- > 0; font_set++) {
+-	if (font_set->font_name == NULL)
++	if (font_set->font_name == NULL || font_set->delay_loading) /* if delay_loading, continue */
+ 	    continue;
+ 
+ 	font_set->id = count;
+@@ -1261,7 +1282,7 @@ set_missing_list(
+     count = length = 0;
+ 
+     for ( ; font_set_num-- > 0; font_set++) {
+-	if (font_set->info || font_set->font) {
++	if (font_set->info || font_set->font || font_set->no_checking) {
+ 	    continue;
+ 	}
+ 
+@@ -1308,7 +1329,7 @@ set_missing_list(
+     font_set_num = gen->font_set_num;
+ 
+     for ( ; font_set_num-- > 0; font_set++) {
+-	if (font_set->info || font_set->font) {
++	if (font_set->info || font_set->font || font_set->no_checking) {
+ 	    continue;
+ 	}
+ 
+@@ -2092,6 +2113,20 @@ init_om(
+ 	}
+         read_vw(lcd,data,num);
+ 	length += strlen(data->font_data->name) + 1;
++
++	/* For load_option */
++	data->delay_loading = False;
++	data->no_checking = False;
++	snprintf(buf, BUFSIZ, "fs%d.font.load_option", num);
++	_XlcGetResource(lcd, "XLC_FONTSET", buf, &value, &count);
++	if (count > 0) {
++	    if (!strcmp(*value, "delay_check")) {
++	        data->delay_loading = True;
++	    } else if (!strcmp(*value, "delay_nocheck")) {
++	        data->delay_loading = True;
++	        data->no_checking = True;
++	    }
++	}
+     }
+ 
+     /* required charset list */
+diff --git a/modules/om/generic/omXChar.c b/modules/om/generic/omXChar.c
+index c9bbb8e..4f80ce0 100644
+--- a/modules/om/generic/omXChar.c
++++ b/modules/om/generic/omXChar.c
+@@ -285,6 +285,12 @@ load_font(
+     XOC oc,
+     FontSet font_set)
+ {
++    /* Give up displaying any characters of this missing charset. */
++    if (font_set->delay_loading == False && font_set->font != NULL) {
++        return False;
++    }
++
++    /* In case of delay loading, load font here. */
+     font_set->font = XLoadQueryFont(oc->core.om->core.display,
+ 			oc->core.font_info.font_name_list[font_set->id]);
+     if (font_set->font == NULL)
+@@ -330,8 +336,10 @@ _XomConvert(
+     if (font_set == NULL)
+ 	return -1;
+ 
+-    if (font_set->font == NULL && load_font(oc, font_set) == False)
+-	return -1;
++    if (font_set->font == NULL || font_set->delay_loading) {
++        if (load_font(oc, font_set) == False)
++            return -1;
++    }
+ 
+     length = *to_left - cs_left;
+ 
+diff --git a/src/XomGeneric.h b/src/XomGeneric.h
+index d6f182d..d8eaf89 100644
+--- a/src/XomGeneric.h
++++ b/src/XomGeneric.h
+@@ -81,6 +81,9 @@ typedef struct _OMDataRec {
+     XlcCharSet 	*charset_list;
+     int 	font_data_count;
+     FontData 	font_data;
++    /* For load_option */
++    Bool delay_loading;
++    Bool no_checking;
+     /* For VW/UDC */
+     int substitute_num;
+     FontData substitute;
+@@ -120,6 +123,9 @@ typedef struct _FontSetRec {
+     XFontStruct 	*font;
+     XlcSide 		side;
+     Bool 		is_xchar2b;
++    /* For load_option */
++    Bool delay_loading;
++    Bool no_checking;
+     /* For VW/UDC */
+     int 		substitute_num;
+     FontData 		substitute;

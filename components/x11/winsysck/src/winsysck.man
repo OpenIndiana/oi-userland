@@ -1,0 +1,168 @@
+.\" Copyright (c) 1990, 2014, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.TH winsysck 1 "2 May 2014"
+.IX "winsysck" "" "\f3winsysck\f1(1) \(em check window protocols" ""
+.IX "window" "check" "window" "check system protocols \(em \f3winsysck\f1(1)" ""
+.SH NAME
+winsysck \- check which window system protocols are available
+.SH SYNOPSIS
+.B winsysck
+[
+.B \-va
+] [
+.BI \-display " displaystring"
+] [
+.BI \-timeout " seconds"
+]
+.I protocol
+[.\|.\|.]
+.SH DESCRIPTION
+The
+.B winsysck
+command determines if the specified window system \fIprotocol\fP
+is available to the user.  By default, the
+.B winsysck
+command exits as soon as the first available
+.I protocol
+is found, although this behaviour can be modified by the
+.B -a
+option (see below).
+.SH OPTIONS
+The following options can be used to modify the behaviour of the
+.B winsysck
+command.
+.TP
+.B \-a
+Continue to check the availability of the specified
+.IR protocol s
+even after determining that one or more previously specified
+.IR protocol s
+are available.  This is not particularly useful without the
+.B \-v
+option (see below).
+.TP
+.B \-v
+Print the name of the first available
+.I protocol
+on the standard output.  When combined with the
+.B \-a
+option (see above), print the name of all available
+.IR protocol s
+on the standard output, separated by newlines.
+.TP
+.BI \-display " displaystring"
+Use the display
+.I displaystring
+when trying to determine if the
+.B x11
+.I protocol
+is available.
+.TP
+.BI \-timeout \ seconds
+The
+.I timeout
+option sets the number of
+.I seconds
+before the winsysck will time out.
+.SH "KNOWN PROTOCOLS"
+The following are known values for
+.IR protocol .
+.TP
+.B x11
+Determines if a connection can be made using the X11 Window
+System protocol.
+.TP
+.B news
+Determines if a connection can be made using the
+Network-extensible Window System protocol.
+.TP
+.B x11news
+Determines if connections can be made to an X11/NeWS server.
+In addition to being able to establish connections using both
+the X11 Window System and Network-extensible Window System protocols,
+this requires that these two connections actually interact with
+the same window server.
+.TP
+.B sunview
+Determines if connections can be made using the SunView Window
+System protocol.
+.SH EXAMPLES
+.LP
+Determine if an X11 Window System connection can be made:
+.LP
+.RS
+.nf
+.ft B
+example% if winsysck x11 ; then ...
+.ft P
+.fi
+.RE
+.LP
+Determine if an X11 Window System connection can be made to the
+display \*(lqdisplayhost:0.0\*(rq:
+.LP
+.RS
+.nf
+.ft B
+example% if winsysck -display displayhost:0.0 x11 ; then ...
+.ft P
+.fi
+.RE
+.LP
+Print the known protocols which are available:
+.LP
+.RS
+.nf
+.ft B
+example% winsysck -v -a x11 news x11news sunview
+.ft P
+.fi
+.RE
+.LP
+Print which window system should be used, given the preference
+for NeWS over SunView, and X11/NeWS over NeWS:
+.LP
+.RS
+.nf
+.ft B
+example% winsysck -v x11news news sunview
+.ft P
+.fi
+.RE
+.SH "SEE ALSO"
+.BR Xserver (1)
+.SH LIMITATIONS
+.LP
+There is no way to determine whether a SunView connection is
+actually connected to an X11/NeWS server with SunView
+compatibility enabled or to a SunView server.
+.LP
+winsysck assumes that no system running this version of __distroname__
+could be running SunView, NeWS, or X11/NeWS, so doesn't bother checking
+for anything but X11.
+.SH BUGS
+.LP
+None known.
+.SH DIAGNOSTICS
+Exit status is 0 if any 
+.IR protocol s
+are available,
+1 if none are available, 2 for usage errors.

@@ -1,0 +1,40 @@
+Description: Fix cupsRasterReadPixels buffer overflow with invalid page header
+ and compressed raster data
+Author: Michael Sweet <msweet@apple.com>
+Bug-Debian: https://bugs.debian.org/778387
+Bug-Upstream: https://www.cups.org/str.php?L4551
+Bug-CVE: CVE-2014-2679
+Last-Update: 2015-02-16
+--- filter/raster.c
++++ filter/raster.c
+@@ -281,7 +281,10 @@
+   */
+ 
+   if (!cups_raster_read_header(r))
++  {
++    memset(h, 0, sizeof(cups_page_header_t));
+     return (0);
++  }
+ 
+  /*
+   * Copy the header to the user-supplied buffer...
+@@ -310,7 +313,10 @@
+   */
+ 
+   if (!cups_raster_read_header(r))
++  {
++    memset(h, 0, sizeof(cups_page_header2_t));
+     return (0);
++  }
+ 
+  /*
+   * Copy the header to the user-supplied buffer...
+@@ -988,7 +994,7 @@
+ 
+   cups_raster_update(r);
+ 
+-  return (r->header.cupsBytesPerLine != 0 && r->header.cupsHeight != 0);
++  return (r->header.cupsBytesPerLine != 0 && r->header.cupsHeight != 0 && (r->header.cupsBytesPerLine % r->bpp) == 0);
+ }
+ 
+ 

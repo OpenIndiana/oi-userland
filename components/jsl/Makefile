@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -32,35 +32,35 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/jsl
 
+TPNO=			10774
+
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-# Preferred compiler set to gcc and not Studio as on Sparc architecture
-# some assembler code is required for locking which fails to compile on
-# solaris, when using gcc this is inlined (see jslock.c)
-COMPILER=	gcc
-
-COMPONENT_BUILD_ARGS += -f src/Makefile
+COMPONENT_BUILD_ARGS = -f src/Makefile
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += COPTFLAGS="$(gcc_OPT)"
 COMPONENT_BUILD_TARGETS += all
 
 COMPONENT_INSTALL_ARGS += -f src/Makefile
-COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR64)
+COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += USRSHAREDIR=$(PROTOUSRSHAREDIR)
 COMPONENT_INSTALL_ARGS += INSTALL="$(INSTALL)"
 COMPONENT_INSTALL_ARGS += MKDIR="$(MKDIR)"
 
+COMPONENT_TEST_DIR =		$(COMPONENT_SRC)/tests
+COMPONENT_TEST_CMD =            $(PERL) ./run_tests.pl
+COMPONENT_TEST_TARGETS =        $(PROTOUSRBINDIR)/jsl
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
-test:
-	cd $(COMPONENT_SRC)/tests; $(PERL) ./run_tests.pl $(PROTOUSRBINDIR64)/jsl
+test:		install $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

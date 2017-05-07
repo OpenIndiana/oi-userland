@@ -1,0 +1,11 @@
+--- sox-14.4.1/src/formats.c.~1~	2014-07-19 03:54:01.859967043 +0400
++++ sox-14.4.1/src/formats.c	2014-07-19 03:56:35.176903443 +0400
+@@ -411,6 +411,8 @@
+   fp->_r += PIPE_AUTO_DETECT_SIZE;
+ #elif defined __GLIBC__
+   fp->_IO_read_ptr = fp->_IO_read_base;
++#elif defined sun
++  #define NO_REWIND_PIPE
+ #elif defined _MSC_VER || defined _WIN32 || defined _WIN64 || defined _ISO_STDIO_ISO_H
+   fp->_ptr = fp->_base;
+ #else

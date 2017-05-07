@@ -1,0 +1,57 @@
+#!/sbin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+CATALINA_HOME=/usr/tomcat8
+# We allow CATALINA_BASE setting from environment so that we can support
+# multiple Tomcat instances.
+CATALINA_BASE=${CATALINA_BASE:-/var/tomcat8}
+JAVA_HOME=/usr/jdk/instances/openjdk1.8.0
+export CATALINA_HOME CATALINA_BASE JAVA_HOME
+
+case "$1" in
+start)
+	cmd="start";
+	;;
+
+stop)
+	cmd="stop";
+	;;
+*)
+	echo "Usage: $0 {start|stop}"
+	exit $SMF_EXIT_ERR_CONFIG
+	;;
+esac
+
+$CATALINA_HOME/bin/catalina.sh $cmd 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "Tomcat failed to start. Check the log (defaults to $CATALINA_BASE/logs/catalina.out) for more information, if any."
+    exit $SMF_EXIT_ERR_FATAL
+fi
+
+exit $SMF_EXIT_OK

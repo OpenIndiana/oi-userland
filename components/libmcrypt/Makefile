@@ -40,7 +40,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 LDFLAGS += -lsocket -lnsl
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
 # Need the GNU sed in our path because of assumptions 

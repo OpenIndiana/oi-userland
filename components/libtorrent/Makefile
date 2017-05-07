@@ -23,59 +23,39 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-# we really need to use studio, mostly because that's what
-# sigc++ uses, so we don't like that parfait is g++ in disguise
-PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent
-COMPONENT_VERSION=	0.12.2
+COMPONENT_VERSION=	0.13.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://libtorrent.rakshasa.no/
+COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cf9d2cd667fd6939a3e0bd27e48d0c7f35d9ab2f7affbb3214da03fd2c1360a8
-COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
+    sha256:704e097119dc89e2ee4630396b25de1cd64b0549841347ea75b9ef9217084955
+COMPONENT_ARCHIVE_URL=	http://rtorrent.net/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rtorrent
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
-
 COMPONENT_PREP_ACTION = \
-        (cd $(@D) ; \
-	    aclocal -I./scripts -I. ; \
-	    autoheader; \
-	    libtoolize --automake --copy --force; \
-	    automake; \
-	    autoconf )
+        (cd $(@D) && \
+	    autoreconf -f -I./scripts -I. )
 
-# Although -norunpath is set for CXXFLAGS, we need to put -norunpath 
-# here, otherwise -norunpath doesn't get set when creating the shared 
-# libraries (CC -G).
-CXX+=   $(studio_NORUNPATH)
+COMPONENT_PRE_CONFIGURE_ACTION = \
+        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # this is needed or we can't compile the rak headers
 CC=$(CXX)
 
-CXXFLAGS +=	$(studio_OPT)
-CXXFLAGS +=	-i
-CXXFLAGS +=	-xspace
-CXXFLAGS +=	$(studio_XREGS)
-
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-debug
 CONFIGURE_OPTIONS  +=	--disable-static
-CONFIGURE_OPTIONS  +=	--with-ports
+#CONFIGURE_OPTIONS  +=	--with-ports
 CONFIGURE_OPTIONS  +=	--disable-libtool-lock
 CONFIGURE_OPTIONS.32 +=	--srcdir=$(BUILD_DIR_32)
 CONFIGURE_OPTIONS.64 +=	--srcdir=$(BUILD_DIR_64)
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 
 
 # common targets
@@ -83,7 +63,8 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+COMPONENT_TEST_ENV +=	"LDFLAGS=-lnsl -lcppunit -lsocket -lz"
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

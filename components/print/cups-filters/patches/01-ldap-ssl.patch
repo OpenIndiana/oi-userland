@@ -1,0 +1,11 @@
+--- cups-filters-1.11.2/utils/cups-browsed.c.1	2016-09-14 18:09:41.172660129 +0300
++++ cups-filters-1.11.2/utils/cups-browsed.c	2016-09-14 18:12:14.794507139 +0300
+@@ -1289,7 +1289,7 @@
+ #  if defined(HAVE_LDAP_SSL) && defined (HAVE_MOZILLA_LDAP)
+     if (ldap_ssl && (rc == LDAP_SERVER_DOWN || rc == LDAP_CONNECT_ERROR))
+     {
+-      ssl_err = PORT_GetError();
++      ssl_err = rc;
+       if (ssl_err != 0)
+         debug_printf("LDAP SSL error %d: %s\n", ssl_err,
+ 		     ldapssl_err2string(ssl_err));

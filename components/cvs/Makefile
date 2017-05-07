@@ -38,8 +38,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CFLAGS += -D__ATTRIBUTE_DISABLED
+
 CONFIGURE_OPTIONS  +=	--with-external-zlib
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

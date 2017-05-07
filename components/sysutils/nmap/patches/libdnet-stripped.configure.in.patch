@@ -1,0 +1,21 @@
+--- nmap-6.25/libdnet-stripped/configure.in.~1~	2011-09-28 10:55:47.000000000 +0400
++++ nmap-6.25/libdnet-stripped/configure.in	2014-01-09 00:06:33.309997679 +0400
+@@ -168,13 +168,17 @@
+ 	    sys/sysctl.h sys/time.h)
+ 	AC_CHECK_HEADERS(net/bpf.h net/if.h net/if_var.h \
+ 	    net/if_arp.h net/if_dl.h net/pfilt.h \
+-	    net/pfvar.h net/radix.h net/raw.h net/route.h netinet/in_var.h \
++	    net/pfvar.h net/radix.h net/raw.h netinet/in.h netinet/in_var.h \
+ 	    netinet/in6_var.h \
+ 	    net/if_tun.h linux/if_tun.h netinet/ip_fw.h linux/ip_fw.h \
+ 	    linux/ip_fwchains.h linux/netfilter_ipv4/ipchains_core.h)
+ 	AC_CHECK_HEADERS(ip_fil_compat.h netinet/ip_fil_compat.h ip_compat.h \
+ 	    netinet/ip_compat.h ip_fil.h netinet/ip_fil.h)
+ 	AC_CHECK_HEADERS(hpsecurity.h stropts.h)
++	AC_CHECK_HEADER([net/route.h],[],[], 
++[#ifdef HAVE_NETINET_IN_H
++#include <netinet/in.h>
++#endif])
+ fi
+ 
+ dnl Checks for typedefs, structures, and compiler characteristics.

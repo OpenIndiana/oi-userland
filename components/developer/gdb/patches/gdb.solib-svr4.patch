@@ -1,0 +1,13 @@
+--- gdb-7.6/gdb/solib-svr4.c	2013-01-31 05:52:52.000000000 -0800
++++ gdb-7.6/gdb/solib-svr4.c	2013-07-10 23:32:20.908310500 -0700
+@@ -125,6 +125,10 @@
+       && strcmp (inferior_so_name, "/lib/ld.so.1") == 0)
+     return 1;
+ 
++  if (strcmp (gdb_so_name, "/usr/lib/amd64/ld.so.1") == 0
++      && strcmp (inferior_so_name, "/lib/amd64/ld.so.1") == 0)
++    return 1;
++
+   /* Similarly, we observed the same issue with sparc64, but with
+      different locations.  */
+   if (strcmp (gdb_so_name, "/usr/lib/sparcv9/ld.so.1") == 0

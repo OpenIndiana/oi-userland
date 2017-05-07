@@ -1,0 +1,62 @@
+--- ./Makefile.in.~1~	2014-04-07 16:12:08.000000000 +0200
++++ ./Makefile.in	2016-11-19 23:20:28.106965778 +0100
+@@ -45,11 +45,16 @@
+ LD = ld
+ RM = /bin/rm
+ CAT = /bin/cat
++MKDIR = /bin/mkdir
++MKDIR_P = $(MKDIR) -p
+ REM_DRV = /usr/sbin/rem_drv 
+ ADD_DRV = /usr/sbin/add_drv 
+ MODLOAD = /usr/sbin/modload
+ MODUNLOAD = /usr/sbin/modunload
+ 
++SRCDIR = @srcdir@
++DESTDIR = @prefix@
++
+ INSTALL = @INSTALL@
+ 
+ CONFIGURE_FILES = Makefile config.status config.cache config.h config.log
+@@ -62,31 +67,32 @@
+ clean:
+ 	$(RM) -f *.o brdg brdgadm
+ 
+-brdg.o: brdg.c
++brdg.o: $(SRCDIR)/brdg.c
+ 	$(CC) -c $(KCFLAGS) $< -o $@
+ 
+ brdg: brdg.o
+ 	$(LD) $(LD_FLAGS) -dn -r $^ -o $@
+ 
+-brdgadm.o: brdgadm.c
++brdgadm.o: $(SRCDIR)/brdgadm.c
+ 	$(CC) -c $(CFLAGS) $< -o $@
+ 
+-dlpiutil.o: dlpiutil.c dlpiutil.h
++dlpiutil.o: $(SRCDIR)/dlpiutil.c $(SRCDIR)/dlpiutil.h
+ 	$(CC) -c $(CFLAGS) $< -o $@
+ 
+ brdgadm: brdgadm.o dlpiutil.o 
+ 	$(CC) $(CFLAGS) -lsocket -lnsl $^ -o $@
+ 
+ install: all
+-	-$(INSTALL) -m 0755 -o root -g sys brdg $(MOD_PATH)
+-	$(INSTALL) -d -m 0755 -o root -g bin $(BINDIR)
+-	-$(INSTALL) -m 0755 -o root -g bin brdgadm $(BINDIR)
+-	$(MODLOAD) brdg 
++	$(INSTALL) -d -m 0755 $(DESTDIR)$(MOD_PATH) || $(MKDIR_P) $(DESTDIR)$(MOD_PATH)
++	-$(INSTALL) -m 0755 brdg $(DESTDIR)$(MOD_PATH)
++	$(INSTALL) -d -m 0755 $(DESTDIR)$(BINDIR) || $(MKDIR_P) $(DESTDIR)$(BINDIR)
++	-$(INSTALL) -m 0755 brdgadm $(DESTDIR)$(BINDIR)
++	-[ -z "$(DESTDIR)" ] && $(MODLOAD) brdg
+ 
+ uninstall:
+-	-$(MODUNLOAD)  -i `modinfo | awk '/brdg/{ print $1 }'` 
+-	-$(RM) $(MOD_PATH)/brdg
+-	-$(RM) $(BINDIR)/brdgadm
++	-[ -z "$(DESTDIR)" ] && -$(MODUNLOAD)  -i `modinfo | awk '/brdg/{ print $1 }'` 
++	-[ -z "$(DESTDIR)" ] && $(RM) $(MOD_PATH)/brdg
++	-[ -z "$(DESTDIR)" ] && $(RM) $(BINDIR)/brdgadm
+ 
+ distclean:
+ 	rm -f $(CONFIGURE_FILES)

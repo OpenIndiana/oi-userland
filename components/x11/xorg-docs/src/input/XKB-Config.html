@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>The XKB Configuration Guide</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_9276" /><meta name="description" content="This document describes how to configure Xorg XKB from a user's point of view. It covers basic configuration syntax and gives also a few examples. This version covers Xorg server versions 1.8 and later, used with the data files from the xkeyboard-config project." /><style xmlns="" type="text/css">/*
+ * Copyright (c) 2011 Gaetan Nadon
+ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * Shared stylesheet for X.Org documentation translated to HTML format
+ * http://www.sagehill.net/docbookxsl/UsingCSS.html
+ * http://www.w3schools.com/css/default.asp
+ * https://addons.mozilla.org/en-US/firefox/addon/web-developer/developers
+ * https://addons.mozilla.org/en-US/firefox/addon/font-finder/
+ */
+
+/*
+ * The sans-serif fonts are considered more legible on a computer screen
+ * http://dry.sailingissues.com/linux-equivalents-verdana-arial.html
+ *
+ */
+body {
+  font-family: "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+  /* In support of using "em" font size unit, the w3c recommended method */
+  font-size: 100%;
+}
+
+/*
+ * Selection: all elements requiring mono spaced fonts.
+ *
+ * The family names attempt to match the proportionally spaced font
+ * family names such that the same font name is used for both.
+ * We'd like to use Bitstream, for example, in both proportionally and
+ * mono spaced font text.
+ */
+.command,
+.errorcode,
+.errorname,
+.errortype,
+.filename,
+.funcsynopsis,
+.function,
+.parameter,
+.programlisting,
+.property,
+.screen,
+.structname,
+.symbol,
+.synopsis,
+.type
+{
+  font-family:  "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Courier, "Liberation Mono", Monospace;
+}
+
+/*
+ * Books have a title page, a preface, some chapters and appendices,
+ * a glossary, an index and a bibliography, in that order.
+ *
+ * An Article has no preface and no chapters. It has sections, appendices,
+ * a glossary, an index and a bibliography.
+ */
+
+/*
+ * Selection: book main title and subtitle
+ */
+div.book>div.titlepage h1.title,
+div.book>div.titlepage h2.subtitle {
+  text-align: center;
+}
+
+/*
+ * Selection: article main title and subtitle
+ */
+div.article>div.titlepage h2.title,
+div.article>div.titlepage h3.subtitle,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title {
+  text-align: center;
+}
+
+/*
+ * Selection: various types of authors and collaborators, individuals or corporate
+ *
+ * These authors are not always contained inside an authorgroup.
+ * They can be contained inside a lot of different parent types where they might
+ * not be centered.
+ * Reducing the margin at the bottom makes a visual separation between authors
+ * We specify here the ones on the title page, others may be added based on merit.
+ */
+div.titlepage .authorgroup,
+div.titlepage .author,
+div.titlepage .collab,
+div.titlepage .corpauthor,
+div.titlepage .corpcredit,
+div.titlepage .editor,
+div.titlepage .othercredit {
+  text-align: center;
+  margin-bottom: 0.25em;
+}
+
+/*
+ * Selection: the affiliation of various types of authors and collaborators,
+ * individuals or corporate.
+ */
+div.titlepage .affiliation {
+  text-align: center;
+}
+
+/*
+ * Selection: product release information (X Version 11, Release 7)
+ *
+ * The releaseinfo element can be contained inside a lot of different parent
+ * types where it might not be centered.
+ * We specify here the one on the title page, others may be added based on merit.
+ */
+div.titlepage p.releaseinfo {
+  font-weight: bold;
+  text-align: center;
+}
+
+/*
+ * Selection: publishing date
+ */
+div.titlepage .pubdate {
+  text-align: center;
+}
+
+/*
+ * The legal notices are displayed in smaller sized fonts
+ * Justification is only supported in IE and therefore not requested.
+ *
+ */
+.legalnotice {
+  font-size: small;
+  font-style: italic;
+}
+
+/*
+ * For documentation having multiple licenses, the copyright and legalnotice
+ * elements sequence cannot instantiated multiple times.
+ * The copyright notice and license text are therefore coded inside a legalnotice
+ * element. The role attribute on the paragraph is used to allow styling of the
+ * copyright notice text which should not be italicized.
+ */
+p.multiLicensing {
+  font-style: normal;
+  font-size: medium;
+}
+
+/*
+ * Selection: book or article main ToC title
+ * A paragraph is generated for the title rather than a level 2 heading.
+ * We do not want to select chapters sub table of contents, only the main one
+ */
+div.book>div.toc>p,
+div.article>div.toc>p {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+/*
+ * Selection: major sections of a book or an article
+ *
+ * Unlike books, articles do not have a titlepage element for appendix.
+ * Using the selector "div.titlepage h2.title" would be too general.
+ */
+div.book>div.preface>div.titlepage h2.title,
+div.book>div.chapter>div.titlepage h2.title,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title,
+div.book>div.appendix>div.titlepage h2.title,
+div.article>div.appendix h2.title,
+div.glossary>div.titlepage h2.title,
+div.index>div.titlepage h2.title,
+div.bibliography>div.titlepage h2.title {
+   /* Add a border top over the major parts, just like printed books */
+   /* The Gray color is already used for the ruler over the main ToC. */
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: Gray;
+  /* Put some space between the border and the title */
+  padding-top: 0.2em;
+  text-align: center;
+}
+
+/*
+ * A Screen is a verbatim environment for displaying text that the user might
+ * see on a computer terminal. It is often used to display the results of a command.
+ *
+ * http://www.css3.info/preview/rounded-border/
+ */
+.screen {
+  background: #e0ffff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #B0C4DE;
+  border-radius: 1.0em;
+  /* Browser's vendor properties prior to CSS 3 */
+  -moz-border-radius: 1.0em;
+  -webkit-border-radius: 1.0em;
+  -khtml-border-radius: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 1.0em;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis program listings with a light shade of gray similar to what
+ * DocBook XSL guide does: http://www.sagehill.net/docbookxsl/ProgramListings.html
+ * Found many C API docs on the web using like shades of gray.
+ */
+.programlisting {
+  background: #F4F4F4;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis functions synopsis using a darker shade of gray.
+ * Add a border such that it stands out more.
+ * Set the padding so the text does not touch the border.
+ */
+.funcsynopsis, .synopsis {
+  background: #e6e6fa;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  clear: both;
+  margin: 0.5em;
+  padding: 0.25em;
+}
+
+/*
+ * Selection: paragraphs inside synopsis
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in synopsis
+ */
+.funcsynopsis p,
+.synopsis p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Selection: variable lists, informal tables and tables
+ *
+ * Note the parameter name "variablelist.as.table" in xorg-xhtml.xsl
+ * A table with rows and columns is constructed inside div.variablelist
+ *
+ * Set the left margin so it is indented to the right
+ * Display informal tables with single line borders
+ */
+table {
+  margin-left: 0.5em;
+  border-collapse: collapse;
+}
+
+/*
+ * Selection: paragraphs inside tables
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in tables
+ */
+td p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Add some space between the left and right column.
+ * The vertical alignment helps the reader associate a term
+ * with a multi-line definition.
+ */
+td, th {
+  padding-left: 1.0em;
+  padding-right: 1.0em;
+  vertical-align: top;
+}
+
+.warning {
+  border: 1px solid red;
+  background: #FFFF66;
+  padding-left: 0.5em;
+}
+</style></head><body><div class="article"><div class="titlepage"><div><div><h2 class="title"><a id="XKB-Config"></a>The XKB Configuration Guide</h2></div><div><div class="authorgroup"><div class="author"><h3 class="author"><span class="firstname">Kamil</span> <span class="surname">Toman</span></h3></div><div class="author"><h3 class="author"><span class="firstname">Ivan</span> <span class="othername">U.</span> <span class="surname">Pascal</span></h3></div></div></div><div><p class="releaseinfo">X Version 11, Release 7.7</p></div><div><p class="pubdate">November 2010</p></div><div><div class="abstract"><p>
+This document describes how to configure Xorg XKB from a user's point
+of view. It covers basic configuration syntax and gives also a few examples.
+      </p><p>
+This version covers Xorg server versions 1.8 and later, used with the
+data files from the <a class="ulink" href="http://www.freedesktop.org/wiki/Software/XKeyboardConfig" target="_top">xkeyboard-config</a> project.
+      </p></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="sect1"><a href="#Overview">Overview</a></span></dt><dt><span class="sect1"><a href="#Selecting_XKB_Configuration">Selecting XKB Configuration</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Basic_Configuration">Basic Configuration</a></span></dt><dt><span class="sect2"><a href="#Advanced_Configuration">Advanced Configuration</a></span></dt><dt><span class="sect2"><a href="#Even_More_Advanced_Configuration">Even More Advanced Configuration</a></span></dt><dt><span class="sect2"><a href="#Basic_Global_Options">Basic Global Options</a></span></dt></dl></dd><dt><span class="sect1"><a href="#Keymap_XKB_Configuration">Keymap XKB Configuration</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Overview"></a>Overview</h2></div></div></div><p>
+The XKB configuration is decomposed into a number of components. Selecting
+proper parts and combining them back you can achieve most of the configurations
+you might need. Unless you have a completely atypical keyboard you really don't
+need to touch any of the xkb configuration files.
+    </p><p>
+Some desktop environments now provide integrated graphical configuration
+tools for setting XKB configuration as part of your desktop session.  The
+instructions in this document are provided for those without such support,
+those who need to configure XKB before the session startup (such as at the
+login screen), or those who need to perform more advanced configuration
+than those tools provide.
+    </p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Selecting_XKB_Configuration"></a>Selecting XKB Configuration</h2></div></div></div><p>
+The easiest and the most natural way to specify a keyboard mapping is to use
+the <code class="literal">rules</code> component. As its name suggests it describes a number of
+general rules to combine all bits and pieces into a valid and useful keyboard
+mapping. All you need to do is to select a suitable rules file and then to
+feed it with a few parameters that will adjust the keyboard behaviour to
+fulfill your needs.
+    </p><p>
+      The parameters are:
+
+      </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col align="left" valign="top" /></colgroup><tbody><tr><td><p><span class="term"><code class="option">XkbRules</code></span></p></td><td><p>
+files of rules to be used for keyboard mapping composition
+	  </p></td></tr><tr><td><p><span class="term"><code class="option">XkbModel</code></span></p></td><td><p>
+ name of the model of your keyboard type
+	  </p></td></tr><tr><td><p><span class="term"><code class="option">XkbLayout</code></span></p></td><td><p>
+ layout(s) you intend to use
+	  </p></td></tr><tr><td><p><span class="term"><code class="option">XkbVariant</code></span></p></td><td><p>
+ variant(s) of the layout you intend to use
+	  </p></td></tr><tr><td><p><span class="term"><code class="option">XkbOptions</code></span></p></td><td><p>
+ extra xkb configuration options
+	  </p></td></tr></tbody></table></div><p>
+
+    </p><p>
+The rules file used depends on your system.  The rules files commonly
+used with Xorg are provided by the <a class="ulink" href="http://www.freedesktop.org/wiki/Software/XKeyboardConfig" target="_top">xkeyboard-config</a> project.
+On Linux systems, the <code class="filename">evdev</code> rules are most
+commonly used, on other systems the <code class="filename">base</code> rules
+are used.  Some additional rules files exist for historical reasons,
+but are no longer widely used.  In general, it's best to simply not
+specify the rules file, in order to use the default rules selected
+automatically by the X server.
+    </p><p>
+For each rules file there is a description file named
+<code class="filename">&lt;<em class="replaceable"><code>vendor-rules</code></em>&gt;.lst</code>,
+for instance <code class="filename">base.lst</code> which is located in
+the xkb configuration subdirectory <code class="filename">rules</code>
+(for example <code class="filename">/usr/share/X11/xkb/rules</code>).
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Basic_Configuration"></a>Basic Configuration</h3></div></div></div><p>
+Let's say you want to configure a PC-style American keyboard with 104
+keys as described in <code class="filename">base.lst</code>.  This can be done
+by simply writing several lines from below to a new configuration file
+in <code class="filename">/etc/X11/xorg.conf.d</code>, such
+as <code class="filename">/etc/X11/xorg.conf.d/90-custom-kbd.conf</code>.
+
+
+	</p><pre class="screen">
+Section "InputClass"
+    Identifier "keyboard defaults"
+    MatchIsKeyboard "on"
+
+    Option "XkbModel" "pc104"
+    Option "XkbLayout" "us"
+    Option "XKbOptions" ""
+EndSection
+	</pre><p>
+
+The values of <code class="option">XkbModel</code> and <code class="option">XkbLayout</code> are
+really not surprising. The <code class="option">XkbOptions</code>
+has been explicitly set to the empty set of parameters.
+The <code class="option">XkbVariant</code> option has been left out.
+That means the default variant named <code class="literal">basic</code>
+is loaded.
+      </p><p>
+Of course, this can be also done at runtime using the utility
+<span class="command"><strong>setxkbmap</strong></span>.
+The shell command loading the same keyboard mapping would look like:
+
+	</p><pre class="screen">
+setxkbmap -model pc104 -layout us -option ""
+	</pre><p>
+
+The configuration and the shell command would be very analogous
+for most other layouts (internationalized mappings).
+      </p><p><a id="zap"></a>
+If you wanted to enable the <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>Backspace</strong></span> sequence to kill
+the X server by default, you could create a configuration snippet
+<code class="filename">/etc/X11/xorg.conf.d/90-zap.conf</code> containing:
+
+	</p><pre class="screen">
+Section "InputClass"
+    Identifier "keyboard defaults"
+    MatchIsKeyboard "on"
+
+    Option "XKbOptions" "terminate:ctrl_alt_bksp"
+EndSection
+	</pre><p>
+
+This would be equivalent to running the shell command:
+
+	</p><pre class="screen">
+setxkbmap -option "terminate:ctrl_alt_bksp"
+	</pre><p>
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Advanced_Configuration"></a>Advanced Configuration</h3></div></div></div><p>
+You can use multi-layouts xkb configuration.
+What does it mean? Basically it allows to load up to four different
+keyboard layouts at a time. Each such layout would reside in its
+own group. The groups (unlike complete keyboard remapping) can be
+switched very fast from one to another by a combination of keys.
+      </p><p>
+Let's say you want to configure your new Logitech cordless desktop
+keyboard, you intend to use three different layouts at the same
+time - us, czech and german (in this order), and that you are used to
+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>Shift</strong></span>
+combination for switching among them.
+      </p><p>
+Then the configuration snippet could look like this:
+
+	</p><pre class="screen">
+Section "InputClass"
+    Identifier "Logitech Cordless"
+    MatchIsKeyboard   "on"
+
+    Option "XkbModel" "logicordless"
+    Option "XkbLayout" "us,cz,de"
+    Option "XKbOptions" "grp:alt_shift_toggle"
+EndSection
+	</pre><p>
+
+Of course, this can be also done at runtime using the utility
+<span class="command"><strong>setxkbmap</strong></span>.
+The shell command loading the same keyboard mapping would look like:
+
+	</p><pre class="screen">
+setxkbmap -model logicordless -layout "us,cz,de" \
+         -option "grp:alt_shift_toggle"
+	</pre><p>
+
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Even_More_Advanced_Configuration"></a>Even More Advanced Configuration</h3></div></div></div><p>
+Okay, let's say you are more demanding. You do like the example
+above but you want it to change a bit. Let's imagine you want
+the czech keyboard mapping to use another variant but basic.
+The configuration snippet then changes into:
+
+	</p><pre class="screen">
+Section "InputClass"
+    Identifier "Logitech Cordless"
+    MatchIsKeyboard   "on"
+
+    Option "XkbModel" "logicordless"
+    Option "XkbLayout" "us,cz,de"
+    Option "XkbVariant" ",bksl,"
+    Option "XKbOptions" "grp:alt_shift_toggle"
+EndSection
+	</pre><p>
+
+That seems tricky but it is not. The logic for settings of variants
+is the same as for layouts, that means the first and the third variant
+settings are left out (set to <code class="literal">basic</code>),
+the second is set to <code class="literal">bksl</code> (a special
+variant with an enhanced definition of the backslash key).
+      </p><p>
+Analogously, the loading runtime will change to:
+
+	</p><pre class="screen">
+setxkbmap -model logicordless -layout "us,cz,de" \
+         -variant ",bksl," -option "grp:alt_shift_toggle"
+	</pre><p>
+
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Basic_Global_Options"></a>Basic Global Options</h3></div></div></div><p>
+For a list of available options, with a short decription of what they do,
+see the section starting with <span class="quote">“<span class="quote"><code class="literal">! option</code></span>”</span> in the
+<code class="filename">rules/*.lst</code> files.
+      </p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Keymap_XKB_Configuration"></a>Keymap XKB Configuration</h2></div></div></div><p>
+Keymap configuration is the way formerly used to configure xkb. The
+user included a special keymap file which specified the direct xkb
+configuration. This method has been obsoleted by previously described
+rules files which are far more flexible and allow simpler and more
+intuitive syntax. It is preserved merely for compatibility reasons and
+should be avoided if possible.
+    </p></div></div></body></html>

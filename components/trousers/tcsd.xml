@@ -21,7 +21,7 @@
 
  CDDL HEADER END
 
- Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
 
         NOTE:  This service manifest is not editable; its contents will
         be overwritten by package or patch operations, including
@@ -38,15 +38,14 @@
 
 	<create_default_instance enabled='false' />
 	<single_instance/>
-
-	<!-- Wait for network interfaces to be initialized. -->
-	<dependency
-		name='network'
-		grouping='require_all'
-		restart_on='none'
-		type='service'>
-		<service_fmri value='svc:/milestone/network:default' />
-	</dependency>
+			<!-- Wait for network interfaces to be initialized. -->
+        <dependency
+                name='network'
+                grouping='require_all'
+                restart_on='none'
+                type='service'>
+                <service_fmri value='svc:/milestone/network:default' />
+        </dependency> 
 
 	<!-- Need / & /usr filesystems mounted, /var mounted read/write -->
 	<dependency
@@ -59,8 +58,8 @@
 
         <exec_method
                 type='method'
-                name='start'
-                exec='/lib/svc/method/tcsd.sh start'
+                name='stop'
+                exec='/lib/svc/method/tcsd.sh stop'
                 timeout_seconds='60'>
 		<method_context>
 			<method_credential user='root' group='sys' />
@@ -69,8 +68,8 @@
 
         <exec_method
                 type='method'
-                name='stop'
-                exec=':kill'
+                name='start'
+                exec='/lib/svc/method/tcsd.sh start'
                 timeout_seconds='60'>
 		<method_context>
 			<method_credential user='root' group='sys' />
@@ -82,9 +81,10 @@
 			value='solaris.smf.manage.tcsd' />
 		<propval name='value_authorization' type='astring'
 			value='solaris.smf.manage.tcsd' />
-	</property_group>
+        </property_group>
 
-	<property_group name='config' type='application'>
+
+<property_group name='config' type='application'>
 		<propval
 			name='local_only'
 			type='boolean'
@@ -95,17 +95,17 @@
 			value='solaris.smf.value.tcsd' />
 	</property_group>
 
-	<stability value='Unstable' />
+        <stability value='Unstable' />
 
-	<template>
-		<common_name>
-			<loctext xml:lang='C'>
-				Trusted Computing Services Daemon
-			</loctext>
-		</common_name>
-		<documentation>
-			<manpage title='tcsd' section='8' />
-		</documentation>
-	</template>
+        <template>
+                <common_name>
+                        <loctext xml:lang='C'>
+                                TCS Daemon
+                        </loctext>
+                </common_name>
+                <documentation>
+                        <manpage title='tcsd' section='8' />
+                </documentation>
+        </template>
 </service>
 </service_bundle>

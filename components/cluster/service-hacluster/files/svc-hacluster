@@ -1,0 +1,88 @@
+#!/usr/bin/bash
+# Start/stop HACluster service
+#
+. /lib/svc/share/smf_include.sh
+
+## Tracing with ebug version
+# PCMK_trace_files=1
+# PCMK_trace_functions=1
+# PCMK_trace_formats=1
+# PCMK_trace_tags=1
+
+export PCMK_ipc_type=socket
+export PCMK_logfile=/var/log/hacluster/pacemaker.log
+
+export CLUSTER_USER=hacluster
+export CLUSTER_GROUP=haclient
+export PATH=/usr/gnu/bin:${PATH}
+MYNAME=hacluster
+APPPATH=/usr/sbin/
+COROSYNC=corosync
+PACEMAKERD=pacemakerd
+PACEMAKER_PROCESSES=pacemaker
+SLEEPINTERVALL=5
+
+
+# all processes should log to the common folder /var/log/${MYNAME
+[ ! -d /var/log/${MYNAME} ] && mkdir -p /var/log/${MYNAME}
+
+# dumps of crashs, check the folder for problems
+[ ! -d /var/lib/pacemaker/cores ] && mkdir -p /var/lib/pacemaker/cores
+
+# runtime folder for sockets etc.
+[ ! -d /var/lib/corosync ] && mkdir -p /var/lib/corosync
+
+
+touch /var/log/${MYNAME}/${MYNAME}.log
+chown ${CLUSTER_USER}:${CLUSTER_GROUP} /var/log/${MYNAME}/${MYNAME}.log
+[ ! -d /var/run/${MYNAME} ] && mkdir -p /var/run/${MYNAME}
+chown -R ${CLUSTER_USER}:${CLUSTER_GROUP} /var/run/${MYNAME}
+
+killapp() {
+	pid=`pgrep -f $1`
+	if [ "x${pid}" != "x" ]; then
+		kill -9 ${pid}
+	fi
+	return 0
+}
+
+start() {
+	stop
+	${APPPATH}${COROSYNC}
+	sleep ${SLEEPINTERVALL}
+	${APPPATH}${PACEMAKERD} &
+	return 0
+}
+
+stop() {
+# first try, graceful shutdown
+	pid=`pgrep -f ${PACEMAKERD}`
+	if [ "x${pid}" != "x" ]; then
+		${APPPATH}${PACEMAKERD} --shutdown
+		sleep ${SLEEPINTERVALL}
+	fi
+# second try, kill the rest
+	killapp ${APPPATH}${COROSYNC}
+	sleep 1
+	killapp ${PACEMAKER_PROCESSES}
+	return 0
+}
+
+case "$1" in
+	'start')
+		start
+		;;
+	'restart')
+		stop
+		start
+		;;
+	'stop')
+		stop
+	;;
+	*)
+		echo "Usage: -bash { start | stop | restart}"
+		exit 1
+		;;
+esac
+exit 0
+

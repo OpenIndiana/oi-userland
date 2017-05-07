@@ -1,0 +1,136 @@
+--- libcanberra-0.25/src/Makefile.am-orig	2010-09-13 23:46:23.884713926 -0500
++++ libcanberra-0.25/src/Makefile.am	2010-09-13 23:46:45.949907623 -0500
+@@ -60,8 +60,10 @@ libcanberra_la_SOURCES = \
+ 	fork-detect.c fork-detect.h
+ libcanberra_la_CFLAGS = \
+ 	$(AM_CFLAGS) \
++	$(GCONF_CFLAGS) \
+ 	$(VORBIS_CFLAGS)
+ libcanberra_la_LIBADD = \
++	$(GCONF_LIBS) \
+ 	$(VORBIS_LIBS)
+ libcanberra_la_LDFLAGS = \
+ 	-export-dynamic \
+--- libcanberra-0.25/src/common.c-orig	2010-09-13 19:17:02.032029728 -0500
++++ libcanberra-0.25/src/common.c	2010-09-14 00:06:00.628638823 -0500
+@@ -26,6 +26,8 @@
+ 
+ #include <stdarg.h>
+ 
++#include <gconf/gconf-client.h>
++
+ #include "canberra.h"
+ #include "common.h"
+ #include "malloc.h"
+@@ -34,6 +36,8 @@
+ #include "macro.h"
+ #include "fork-detect.h"
+ 
++#define GNOME_VOLUME_CONTROL_KEY_ACTIVE_ELEMENT "/apps/gnome-volume-control/active-element"
++
+ /**
+  * SECTION:canberra
+  * @short_description: General libcanberra API
+@@ -129,6 +133,7 @@ int ca_context_create(ca_context **_c) {
+         ca_context *c;
+         int ret;
+         const char *d;
++        const char *device = NULL;
+ 
+         ca_return_val_if_fail(!ca_detect_fork(), CA_ERROR_FORKED);
+         ca_return_val_if_fail(_c, CA_ERROR_INVALID);
+@@ -153,13 +158,79 @@ int ca_context_create(ca_context **_c) {
+                 }
+         }
+ 
+-        if ((d = getenv("CANBERRA_DEVICE"))) {
+-                if ((ret = ca_context_change_device(c, d)) < 0) {
++        /*
++         * If the user sets CANBERRA_DEVICE, use that.  Then fallback to the
++         * gnome-volume-control setting.  If neither is set, then do not set
++         * the device and just let OSS use its default.
++         */
++        if ((device = getenv("CANBERRA_DEVICE"))) {
++                if ((ret = ca_context_change_device(c, device)) < 0) {
+                         ca_context_destroy(c);
+                         return ret;
+                 }
+         }
+ 
++        /*
++         * Note that the following code only works with OSSv4.  Also note that
++         * gnome-volume-control saves the device via GConf in this format:
++         *
++         * foo#0 (OSS v4 Audio Mixer)
++         *
++         * Where the actual device is "/dev/sound/"; followed by the first word
++         * in the GConf value with the "#" changed to a ":"; and "dsp" appended
++         * to the end.  So "foo#0" becomes /dev/sound/foo:0dsp.  The "dsp" is
++         * needed since canberra uses OSS ioctls.
++         */
++        if (device == NULL) {
++                GConfClient *gconf_client;
++                char *gvc_active;
++
++                gconf_client = gconf_client_get_default ();
++                
++                gvc_active = gconf_client_get_string (gconf_client,
++                        GNOME_VOLUME_CONTROL_KEY_ACTIVE_ELEMENT, NULL);
++
++                /*
++                 * Only use the gnome-volume-control setting if the value
++                 * is associated with an OSS device.  Check for "OSS" string
++                 * in the value since it will be "foo#0 (OSS v4 Audio Mixer)"
++                 * if using OSS.
++                 */
++                if (gvc_active != NULL && strstr (gvc_active, "OSS") != NULL) {
++                       char ** element_arr;
++                       element_arr = g_strsplit (gvc_active, " ", 2);
++
++                        if (element_arr != NULL &&
++                            element_arr[0] != NULL) {
++                                char **device_arr = g_strsplit (element_arr[0],
++                                                                "#", 2);
++                                if (device_arr != NULL &&
++                                    device_arr[0] != NULL &&
++                                    device_arr[1] != NULL) {
++                                        /*
++                                         * Need to prepend "/dev/sound/" and
++                                         * append "dsp" to the device name
++                                         * returned by gnome-volume-control.
++                                         * The "dsp" is needed since canberra
++                                         * uses OSS ioctls.
++                                         */
++                                        char * device_name = g_strdup_printf
++                                                ("/dev/sound/%s:%sdsp",
++                                                device_arr[0], device_arr[1]);
++                                        if ((ret = ca_context_change_device(c,
++                                             device_name)) < 0) {
++                                                ca_context_destroy(c);
++                                                return ret;
++                                        }
++                                        g_free (device_name);
++                                }
++                                g_strfreev (device_arr);
++                        }
++                        g_strfreev (element_arr);
++                }
++                g_free (gvc_active);
++        }
++
+         *_c = c;
+         return CA_SUCCESS;
+ }
+--- libcanberra-0.25/configure.ac-orig	2010-09-13 23:43:25.620576446 -0500
++++ libcanberra-0.25/configure.ac	2010-09-13 23:46:13.839034621 -0500
+@@ -490,6 +490,10 @@ AM_CONDITIONAL([USE_LYNX], [test "x$have
+ 
+ PKG_CHECK_MODULES(VORBIS, [ vorbisfile ])
+ 
++### GConf (mandatory) ###
++
++PKG_CHECK_MODULES(GCONF, [ gconf-2.0 ])
++
+ ### Chose builtin driver ###
+ 
+ AC_ARG_WITH([builtin],

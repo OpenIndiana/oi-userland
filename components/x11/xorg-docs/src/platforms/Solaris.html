@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>X Window System on Solaris™</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_9276" /><style xmlns="" type="text/css">/*
+ * Copyright (c) 2011 Gaetan Nadon
+ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * Shared stylesheet for X.Org documentation translated to HTML format
+ * http://www.sagehill.net/docbookxsl/UsingCSS.html
+ * http://www.w3schools.com/css/default.asp
+ * https://addons.mozilla.org/en-US/firefox/addon/web-developer/developers
+ * https://addons.mozilla.org/en-US/firefox/addon/font-finder/
+ */
+
+/*
+ * The sans-serif fonts are considered more legible on a computer screen
+ * http://dry.sailingissues.com/linux-equivalents-verdana-arial.html
+ *
+ */
+body {
+  font-family: "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+  /* In support of using "em" font size unit, the w3c recommended method */
+  font-size: 100%;
+}
+
+/*
+ * Selection: all elements requiring mono spaced fonts.
+ *
+ * The family names attempt to match the proportionally spaced font
+ * family names such that the same font name is used for both.
+ * We'd like to use Bitstream, for example, in both proportionally and
+ * mono spaced font text.
+ */
+.command,
+.errorcode,
+.errorname,
+.errortype,
+.filename,
+.funcsynopsis,
+.function,
+.parameter,
+.programlisting,
+.property,
+.screen,
+.structname,
+.symbol,
+.synopsis,
+.type
+{
+  font-family:  "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Courier, "Liberation Mono", Monospace;
+}
+
+/*
+ * Books have a title page, a preface, some chapters and appendices,
+ * a glossary, an index and a bibliography, in that order.
+ *
+ * An Article has no preface and no chapters. It has sections, appendices,
+ * a glossary, an index and a bibliography.
+ */
+
+/*
+ * Selection: book main title and subtitle
+ */
+div.book>div.titlepage h1.title,
+div.book>div.titlepage h2.subtitle {
+  text-align: center;
+}
+
+/*
+ * Selection: article main title and subtitle
+ */
+div.article>div.titlepage h2.title,
+div.article>div.titlepage h3.subtitle,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title {
+  text-align: center;
+}
+
+/*
+ * Selection: various types of authors and collaborators, individuals or corporate
+ *
+ * These authors are not always contained inside an authorgroup.
+ * They can be contained inside a lot of different parent types where they might
+ * not be centered.
+ * Reducing the margin at the bottom makes a visual separation between authors
+ * We specify here the ones on the title page, others may be added based on merit.
+ */
+div.titlepage .authorgroup,
+div.titlepage .author,
+div.titlepage .collab,
+div.titlepage .corpauthor,
+div.titlepage .corpcredit,
+div.titlepage .editor,
+div.titlepage .othercredit {
+  text-align: center;
+  margin-bottom: 0.25em;
+}
+
+/*
+ * Selection: the affiliation of various types of authors and collaborators,
+ * individuals or corporate.
+ */
+div.titlepage .affiliation {
+  text-align: center;
+}
+
+/*
+ * Selection: product release information (X Version 11, Release 7)
+ *
+ * The releaseinfo element can be contained inside a lot of different parent
+ * types where it might not be centered.
+ * We specify here the one on the title page, others may be added based on merit.
+ */
+div.titlepage p.releaseinfo {
+  font-weight: bold;
+  text-align: center;
+}
+
+/*
+ * Selection: publishing date
+ */
+div.titlepage .pubdate {
+  text-align: center;
+}
+
+/*
+ * The legal notices are displayed in smaller sized fonts
+ * Justification is only supported in IE and therefore not requested.
+ *
+ */
+.legalnotice {
+  font-size: small;
+  font-style: italic;
+}
+
+/*
+ * For documentation having multiple licenses, the copyright and legalnotice
+ * elements sequence cannot instantiated multiple times.
+ * The copyright notice and license text are therefore coded inside a legalnotice
+ * element. The role attribute on the paragraph is used to allow styling of the
+ * copyright notice text which should not be italicized.
+ */
+p.multiLicensing {
+  font-style: normal;
+  font-size: medium;
+}
+
+/*
+ * Selection: book or article main ToC title
+ * A paragraph is generated for the title rather than a level 2 heading.
+ * We do not want to select chapters sub table of contents, only the main one
+ */
+div.book>div.toc>p,
+div.article>div.toc>p {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+/*
+ * Selection: major sections of a book or an article
+ *
+ * Unlike books, articles do not have a titlepage element for appendix.
+ * Using the selector "div.titlepage h2.title" would be too general.
+ */
+div.book>div.preface>div.titlepage h2.title,
+div.book>div.chapter>div.titlepage h2.title,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title,
+div.book>div.appendix>div.titlepage h2.title,
+div.article>div.appendix h2.title,
+div.glossary>div.titlepage h2.title,
+div.index>div.titlepage h2.title,
+div.bibliography>div.titlepage h2.title {
+   /* Add a border top over the major parts, just like printed books */
+   /* The Gray color is already used for the ruler over the main ToC. */
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: Gray;
+  /* Put some space between the border and the title */
+  padding-top: 0.2em;
+  text-align: center;
+}
+
+/*
+ * A Screen is a verbatim environment for displaying text that the user might
+ * see on a computer terminal. It is often used to display the results of a command.
+ *
+ * http://www.css3.info/preview/rounded-border/
+ */
+.screen {
+  background: #e0ffff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #B0C4DE;
+  border-radius: 1.0em;
+  /* Browser's vendor properties prior to CSS 3 */
+  -moz-border-radius: 1.0em;
+  -webkit-border-radius: 1.0em;
+  -khtml-border-radius: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 1.0em;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis program listings with a light shade of gray similar to what
+ * DocBook XSL guide does: http://www.sagehill.net/docbookxsl/ProgramListings.html
+ * Found many C API docs on the web using like shades of gray.
+ */
+.programlisting {
+  background: #F4F4F4;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis functions synopsis using a darker shade of gray.
+ * Add a border such that it stands out more.
+ * Set the padding so the text does not touch the border.
+ */
+.funcsynopsis, .synopsis {
+  background: #e6e6fa;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  clear: both;
+  margin: 0.5em;
+  padding: 0.25em;
+}
+
+/*
+ * Selection: paragraphs inside synopsis
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in synopsis
+ */
+.funcsynopsis p,
+.synopsis p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Selection: variable lists, informal tables and tables
+ *
+ * Note the parameter name "variablelist.as.table" in xorg-xhtml.xsl
+ * A table with rows and columns is constructed inside div.variablelist
+ *
+ * Set the left margin so it is indented to the right
+ * Display informal tables with single line borders
+ */
+table {
+  margin-left: 0.5em;
+  border-collapse: collapse;
+}
+
+/*
+ * Selection: paragraphs inside tables
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in tables
+ */
+td p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Add some space between the left and right column.
+ * The vertical alignment helps the reader associate a term
+ * with a multi-line definition.
+ */
+td, th {
+  padding-left: 1.0em;
+  padding-right: 1.0em;
+  vertical-align: top;
+}
+
+.warning {
+  border: 1px solid red;
+  background: #FFFF66;
+  padding-left: 0.5em;
+}
+</style></head><body><div class="article"><div class="titlepage"><div><div><h2 class="title"><a id="Solaris"></a>X Window System on <span class="trademark">Solaris</span>™</h2></div><div><div class="authorgroup"><div class="author"><h3 class="author"><span class="firstname">David</span> <span class="surname">Holland</span></h3><div class="affiliation"><span class="orgname"><a class="ulink" href="http://www.xfree86.org/" target="_top">XFree86
+	      Project</a><br /></span></div></div><div class="author"><h3 class="author"><span class="firstname">Marc</span> <span class="surname">Aurele La France</span></h3><div class="affiliation"><span class="orgname"><a class="ulink" href="http://www.xfree86.org/" target="_top">XFree86
+	      Project</a><br /></span></div></div><div class="author"><h3 class="author"><span class="firstname">Alan</span> <span class="surname">Coopersmith</span></h3><div class="affiliation"><span class="orgname"><a class="ulink" href="http://www.oracle.com/" target="_top">Oracle
+	      Corp.</a><br /></span></div></div></div></div><div><p class="releaseinfo">X Version 11, Release 7.7</p></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="sect1"><a href="#The_VT-switching_sub-system_in_Solaris">The VT-switching sub-system in Solaris</a></span></dt><dt><span class="sect1"><a href="#Notes_for_building_X11R7.7_on_Solaris">Notes for building X11R7.7 on Solaris</a></span></dt><dt><span class="sect1"><a href="#Notes_for_running_Xorg_on_Solaris">Notes for running Xorg on Solaris</a></span></dt><dt><span class="sect1"><a href="#Bug_Notification">Bug Notification</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="The_VT-switching_sub-system_in_Solaris"></a>The VT-switching sub-system in Solaris</h2></div></div></div><p>
+The original virtual terminal sub-system is a undocumented, and
+unsupported feature of Solaris x86 releases 2.1 through 7.  It was removed
+in Solaris 8 and later releases, and was never present on Solaris SPARC.
+Support for this version of virtual terminals is only present in Xorg 1.6.x
+and earlier releases of Xorg, and has been removed in Xorg 1.7 and later.
+If you use this form of virtual terminals, you do so at
+<span class="emphasis"><em>YOUR OWN RISK</em></span>.
+</p><p>
+A new virtual terminal sub-system has been introduced in Solaris 11,
+and is also available in systems based on the OpenSolaris or illumos sources.
+This version is supported on both SPARC and x86 platforms, though SPARC
+support is limited to devices with "Coherent Console" support in the kernel
+frame buffer driver.  Support for it is found only in Xorg 1.7 and later
+server releases.
+</p><p>
+When available, the virtual terminals of Solaris work basically the same way as
+most other VT sub-systems.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Notes_for_building_X11R7.7_on_Solaris"></a>Notes for building X11R7.7 on Solaris</h2></div></div></div><p>
+
+</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+Both GCC, and the Sun Studio compilers are supported by X11R7.7.
+The minimum recommended GCC release is 3.4.
+Some earlier GCC's are known to not work and should be avoided.
+</p><p>
+You should also make certain your version of GCC predefines `sun'.
+If needed edit <code class="filename">/usr/local/lib/gcc-lib/*/*/specs</code>, and modify the
+<code class="literal">*predefines:</code> line.
+</p></li><li class="listitem"><p>
+To build X11R7.7 with GCC you need gcc and (optionally) c++filt from GNU
+binutils.
+Don't install gas or ld from GNU binutils, use the one provided by Sun.
+</p></li><li class="listitem"><p>
+If you are using Sun compilers to compile the X11R7.7 distribution, you need to
+modify your PATH appropriately so the Sun compiler tools are available.
+Normally, they should be in
+<code class="filename">/opt/SUNWspro/bin</code>
+</p></li><li class="listitem"><p>
+You <span class="emphasis"><em>MUST</em></span> put
+<code class="filename">/usr/ccs/bin</code>
+at the front of your PATH.  There are known problems with some GNU
+replacements for the utilities found there,
+so the <code class="filename">/usr/ccs/bin</code> versions of
+these programs must be found before any possible GNU versions.
+(Most notably GNU '<span class="command"><strong>ar</strong></span>' does not work during the build).
+</p></li></ol></div><p>
+
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Notes_for_running_Xorg_on_Solaris"></a>Notes for running Xorg on Solaris</h2></div></div></div><p>
+
+</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+Depending on the release or architecture of Solaris you are running, you might
+need to install an OS driver for an aperture device.
+</p><p>
+Under Solaris x86 2.5 and later, there's a system driver
+(<code class="filename">/dev/xsvc</code>)
+that provides this functionality.
+It will be detected automatically by the server, so you don't need to install
+the aperture driver.
+</p><p>
+For older Solaris x86 and for Solaris SPARC releases, the source for this
+driver is included in
+<code class="filename">hw/xfree86/os-support/solaris/apSolaris.shar</code>
+in the xserver source distribution.
+Building, and installing the driver is relatively straight forward. Please read
+its accompanying README file.
+</p></li><li class="listitem"><p>
+Xqueue is <span class="emphasis"><em>NOT</em></span> supported under Solaris.
+</p></li></ol></div><p>
+
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Bug_Notification"></a>Bug Notification</h2></div></div></div><p>
+Bug reports should be reported at
+<a class="ulink" href="http://bugs.freedesktop.org/" target="_top">http://bugs.freedesktop.org/</a> using the
+xorg product or sent to <code class="email">&lt;<a class="email" href="mailto:xorg@lists.freedesktop.org">xorg@lists.freedesktop.org</a>&gt;</code>.
+</p></div></div></body></html>

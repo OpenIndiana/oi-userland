@@ -1,0 +1,24 @@
+diff -rup illumos-fusefs-Version-1.3.orig/kernel/Makefile.com illumos-fusefs-Version-1.3/kernel/Makefile.com
+--- illumos-fusefs-Version-1.3.orig/kernel/Makefile.com	2016-01-29 08:27:03.000000000 +0100
++++ illumos-fusefs-Version-1.3/kernel/Makefile.com	2016-04-15 01:17:36.968277445 +0200
+@@ -24,7 +24,7 @@
+ # Use is subject to license terms.
+ 
+ INSTALL= /usr/sbin/install
+-CC = cc
++CC = /opt/gcc/4.4.4/bin/gcc 
+ CTFMERGE = ctfmerge
+ CTFCONVERT = ctfconvert
+ LINT = lint
+diff -rup illumos-fusefs-Version-1.3.orig/kernel/amd64/Makefile illumos-fusefs-Version-1.3/kernel/amd64/Makefile
+--- illumos-fusefs-Version-1.3.orig/kernel/amd64/Makefile	2016-01-29 08:27:03.000000000 +0100
++++ illumos-fusefs-Version-1.3/kernel/amd64/Makefile	2016-04-15 01:17:49.005364646 +0200
+@@ -23,7 +23,7 @@
+ # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
+ # Use is subject to license terms.
+ 
+-CFLAGS=-xmodel=kernel -m64
++CFLAGS= -ffreestanding -mcmodel=kernel -mno-red-zone -m64
+ LINTFLAGS = -m64
+ include ../Makefile.com
+ 

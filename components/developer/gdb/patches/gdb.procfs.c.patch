@@ -1,0 +1,619 @@
+--- gdb-7.10.1/gdb/procfs.c.~1~	Sat Dec  5 07:16:45 2015
++++ gdb-7.10.1/gdb/procfs.c	Wed Jul 20 00:29:25 2016
+@@ -31,6 +31,7 @@
+ #include "regcache.h"
+ #include "inf-child.h"
+ #include "filestuff.h"
++#include "hashtab.h"
+ 
+ #if defined (NEW_PROC_API)
+ #define _STRUCTURED_PROC 1	/* Should be done by configure script.  */
+@@ -158,21 +159,34 @@
+ 		   gdb_byte *endptr, CORE_ADDR *typep, CORE_ADDR *valp)
+ {
+   enum bfd_endian byte_order = gdbarch_byte_order (target_gdbarch ());
++  const int sizeof_auxv_field = sizeof (void *);
+   gdb_byte *ptr = *readptr;
+ 
+   if (endptr == ptr)
+     return 0;
+ 
+-  if (endptr - ptr < 8 * 2)
++  if (endptr - ptr < sizeof_auxv_field * 2)
+     return -1;
+ 
+-  *typep = extract_unsigned_integer (ptr, 4, byte_order);
+-  ptr += 8;
++  /*
++   * On 64 bit Solaris SPARC, i.e. big endian, the type will be in
++   * the left 4 bytes for 32 bit processes and the right 4 bytes
++   * for 64 bit processes.  The padding is 0.
++   */
++  if ((sizeof_auxv_field == 8) && (byte_order == BFD_ENDIAN_BIG)) {
++    if (*typep == 0)
++      *typep = extract_unsigned_integer (ptr + 4, 4, byte_order);
++  } else
++    *typep = extract_unsigned_integer (ptr, sizeof_auxv_field , byte_order);
++
++  ptr += sizeof_auxv_field;
++
+   /* The size of data is always 64-bit.  If the application is 32-bit,
+      it will be zero extended, as expected.  */
+-  *valp = extract_unsigned_integer (ptr, 8, byte_order);
+-  ptr += 8;
+ 
++  *valp = extract_unsigned_integer (ptr, sizeof_auxv_field, byte_order);
++  ptr += sizeof_auxv_field;
++
+   *readptr = ptr;
+   return 1;
+ }
+@@ -341,7 +355,7 @@
+ #  define AS_PROC_NAME_FMT     "/proc/%d/as"
+ #  define MAP_PROC_NAME_FMT    "/proc/%d/map"
+ #  define STATUS_PROC_NAME_FMT "/proc/%d/status"
+-#  define MAX_PROC_NAME_SIZE sizeof("/proc/99999/lwp/8096/lstatus")
++#  define MAX_PROC_NAME_SIZE sizeof("/proc/012345679/lwp/0123456789/lstatus")
+ # endif
+ /* the name of the proc status struct depends on the implementation */
+ typedef pstatus_t   gdb_prstatus_t;
+@@ -349,11 +363,11 @@
+ #else /* ! NEW_PROC_API */
+ /* format strings for /proc paths */
+ # ifndef CTL_PROC_NAME_FMT
+-#  define MAIN_PROC_NAME_FMT   "/proc/%05d"
+-#  define CTL_PROC_NAME_FMT    "/proc/%05d"
+-#  define AS_PROC_NAME_FMT     "/proc/%05d"
+-#  define MAP_PROC_NAME_FMT    "/proc/%05d"
+-#  define STATUS_PROC_NAME_FMT "/proc/%05d"
++#  define MAIN_PROC_NAME_FMT   "/proc/%06d"
++#  define CTL_PROC_NAME_FMT    "/proc/%06d"
++#  define AS_PROC_NAME_FMT     "/proc/%06d"
++#  define MAP_PROC_NAME_FMT    "/proc/%06d"
++#  define STATUS_PROC_NAME_FMT "/proc/%06d"
+ #  define MAX_PROC_NAME_SIZE sizeof("/proc/ttttppppp")
+ # endif
+ /* The name of the proc status struct depends on the implementation.  */
+@@ -404,7 +418,7 @@
+   char **syscall_names;		/* Syscall number to name map */
+ #endif
+ 
+-  struct procinfo *thread_list;
++  htab_t thread_tab;
+ 
+   int status_valid : 1;
+   int gregs_valid  : 1;
+@@ -412,6 +426,14 @@
+   int threads_valid: 1;
+ } procinfo;
+ 
++/*
++ * A single hashtable entry.
++ */
++struct hentry {
++  int id;
++  procinfo *pi;
++};
++
+ static char errmsg[128];	/* shared error msg buffer */
+ 
+ /* Function prototypes for procinfo module: */
+@@ -426,6 +448,8 @@
+ static void close_procinfo_files (procinfo * p);
+ static int sysset_t_size (procinfo *p);
+ static sysset_t *sysset_t_alloc (procinfo * pi);
++static void destroy_one_procinfo (procinfo *pi);
++
+ #ifdef DYNAMIC_SYSCALLS
+ static void load_syscalls (procinfo *pi);
+ static void free_syscalls (procinfo *pi);
+@@ -438,7 +462,7 @@
+ 		void *data));
+ 
+ /* The head of the procinfo list: */
+-static procinfo * procinfo_list;
++static htab_t procinfo_tab = NULL;
+ 
+ /* Search the procinfo list.  Return a pointer to procinfo, or NULL if
+    not found.  */
+@@ -446,15 +470,23 @@
+ static procinfo *
+ find_procinfo (int pid, int tid)
+ {
+-  procinfo *pi;
++  procinfo *pi = NULL;
++  struct hentry *he;
+ 
+-  for (pi = procinfo_list; pi; pi = pi->next)
+-    if (pi->pid == pid)
+-      break;
++  if (pid > 40000)
++    abort();
++  if (procinfo_tab == NULL)
++    return (NULL);
+ 
++  he = (struct hentry *)htab_find(procinfo_tab, &pid);
++  if (he)
++    pi = he->pi;
++
+   if (pi)
+     if (tid)
+       {
++        htab_t thread_tab = pi->thread_tab;
++
+ 	/* Don't check threads_valid.  If we're updating the
+ 	   thread_list, we want to find whatever threads are already
+ 	   here.  This means that in general it is the caller's
+@@ -462,9 +494,13 @@
+ 	   calling find_procinfo, if the caller wants to find a new
+ 	   thread.  */
+ 
+-	for (pi = pi->thread_list; pi; pi = pi->next)
+-	  if (pi->tid == tid)
+-	    break;
++        /* Asked to find thread procinfo so reset pi. */
++        pi = NULL;
++        if (thread_tab != NULL) {
++          he = (struct hentry *)htab_find(thread_tab, &tid);
++          if (he)
++            pi = he->pi;
++        }
+       }
+ 
+   return pi;
+@@ -489,6 +525,30 @@
+   return pi;
+ }
+ 
++static hashval_t
++id_hash(const void *id)
++{
++  return (iterative_hash (id, sizeof (int), 0));
++}
++
++static int
++id_eq(const void *id1, const void *id2)
++{
++  struct hentry *he1 = (struct hentry *)id1;
++  struct hentry *he2 = (struct hentry *)id2;
++
++  return he1->id == he2->id;
++}
++
++static void
++id_del(void *dat)
++{
++  struct hentry *he = (struct hentry *)dat;
++
++  destroy_one_procinfo (he->pi);
++  xfree (he);
++}
++
+ /* Wrapper for `open'.  The appropriate open call is attempted; if
+    unsuccessful, it will be retried as many times as needed for the
+    EAGAIN and EINTR conditions.
+@@ -680,21 +740,33 @@
+ create_procinfo (int pid, int tid)
+ {
+   procinfo *pi, *parent = NULL;
++  struct hentry **slot;
++  struct hentry *he;
+ 
+-  if ((pi = find_procinfo (pid, tid)))
++  if ((pi = find_procinfo (pid, tid)) != NULL)
+     return pi;			/* Already exists, nothing to do.  */
+ 
+   /* Find parent before doing malloc, to save having to cleanup.  */
+-  if (tid != 0)
++  if (tid != 0) {
+     parent = find_procinfo_or_die (pid, 0);	/* FIXME: should I
+ 						   create it if it
+ 						   doesn't exist yet?  */
+ 
+-  pi = (procinfo *) xmalloc (sizeof (procinfo));
+-  memset (pi, 0, sizeof (procinfo));
++    if (parent->thread_tab == NULL) {
++      parent->thread_tab = htab_create_alloc (32, id_hash, id_eq,
++                                               id_del, xcalloc, xfree);
++    }
++  } else if (procinfo_tab == NULL) {
++    procinfo_tab = htab_create_alloc (16, id_hash, id_eq,
++                                       id_del, xcalloc, xfree);
++  }
++  pi = (procinfo *) xcalloc (1, sizeof (procinfo));
+   pi->pid = pid;
+   pi->tid = tid;
+ 
++  he = (struct hentry *) xcalloc (1, sizeof (struct hentry));
++  he->pi = pi;
++
+ #ifdef DYNAMIC_SYSCALLS
+   load_syscalls (pi);
+ #endif
+@@ -705,9 +777,11 @@
+   /* Chain into list.  */
+   if (tid == 0)
+     {
++      he->id = pid;
+       sprintf (pi->pathname, MAIN_PROC_NAME_FMT, pid);
+-      pi->next = procinfo_list;
+-      procinfo_list = pi;
++      slot = (struct hentry **)htab_find_slot (procinfo_tab, &pid,
++                                          INSERT);
++      *slot = he;
+     }
+   else
+     {
+@@ -716,14 +790,14 @@
+ #else
+       sprintf (pi->pathname, MAIN_PROC_NAME_FMT, pid);
+ #endif
+-      pi->next = parent->thread_list;
+-      parent->thread_list = pi;
++      he->id = tid;
++      slot = (struct hentry **)htab_find_slot (parent->thread_tab, &tid,
++                                          INSERT);
++      *slot = he;
+     }
+   return pi;
+ }
+ 
+-/* Close all file descriptors associated with the procinfo.  */
+-
+ static void
+ close_procinfo_files (procinfo *pi)
+ {
+@@ -739,27 +813,16 @@
+ }
+ 
+ /* Destructor function.  Close, unlink and deallocate the object.  */
++/* This is called from id_del() function via htab_remove_elt() */
+ 
+ static void
+-destroy_one_procinfo (procinfo **list, procinfo *pi)
++destroy_one_procinfo (procinfo *pi)
+ {
+-  procinfo *ptr;
+ 
+-  /* Step one: unlink the procinfo from its list.  */
+-  if (pi == *list)
+-    *list = pi->next;
+-  else
+-    for (ptr = *list; ptr; ptr = ptr->next)
+-      if (ptr->next == pi)
+-	{
+-	  ptr->next =  pi->next;
+-	  break;
+-	}
+-
+-  /* Step two: close any open file descriptors.  */
++  /* close any open file descriptors.  */
+   close_procinfo_files (pi);
+ 
+-  /* Step three: free the memory.  */
++  /* free the memory.  */
+ #ifdef DYNAMIC_SYSCALLS
+   free_syscalls (pi);
+ #endif
+@@ -769,6 +832,12 @@
+ }
+ 
+ static void
++delete_one_procinfo (procinfo *parent, procinfo *pi)
++{
++  htab_remove_elt (parent->thread_tab, &pi->tid);
++}
++
++static void
+ destroy_procinfo (procinfo *pi)
+ {
+   procinfo *tmp;
+@@ -776,15 +845,19 @@
+   if (pi->tid != 0)	/* Destroy a thread procinfo.  */
+     {
+       tmp = find_procinfo (pi->pid, 0);	/* Find the parent process.  */
+-      destroy_one_procinfo (&tmp->thread_list, pi);
++      if (tmp != NULL)
++        htab_remove_elt (tmp->thread_tab, &pi->tid);
+     }
+   else			/* Destroy a process procinfo and all its threads.  */
+     {
+-      /* First destroy the children, if any; */
+-      while (pi->thread_list != NULL)
+-	destroy_one_procinfo (&pi->thread_list, pi->thread_list);
++      /* First destroy the child thread table, if any; */
++      if (pi->thread_tab != NULL) {
++        htab_delete (pi->thread_tab);
++        pi->thread_tab = NULL;
++      }
+       /* Then destroy the parent.  Genocide!!!  */
+-      destroy_one_procinfo (&procinfo_list, pi);
++      if (procinfo_tab != NULL)
++        htab_remove_elt (procinfo_tab, &pi->pid);
+     }
+ }
+ 
+@@ -1103,7 +1176,11 @@
+ #endif
+ #endif
+ 
+-  if (pi->status_valid)
++  /*
++   * Checking procfs tracing enabled here avoids unnecessary calls for the
++   * arguments.
++   */
++  if (pi->status_valid && procfs_get_trace())
+     {
+       PROC_PRETTYFPRINT_STATUS (proc_flags (pi),
+ 				proc_why (pi),
+@@ -1456,10 +1533,16 @@
+       if (win)
+ 	{
+ 	  pi->status_valid = 1;
+-	  PROC_PRETTYFPRINT_STATUS (proc_flags (pi),
+-				    proc_why (pi),
+-				    proc_what (pi),
+-				    proc_get_current_thread (pi));
++          /*
++           * Checking procfs tracing enabled here avoids unnecessary calls for
++           * the arguments.
++           */
++          if (procfs_get_trace()) {
++	    PROC_PRETTYFPRINT_STATUS (proc_flags (pi),
++				      proc_why (pi),
++				      proc_what (pi),
++				      proc_get_current_thread (pi));
++          }
+ 	}
+ #endif
+     }
+@@ -1497,10 +1580,12 @@
+   if (win)
+     {
+       pi->status_valid = 1;
+-      PROC_PRETTYFPRINT_STATUS (proc_flags (pi),
+-				proc_why (pi),
+-				proc_what (pi),
+-				proc_get_current_thread (pi));
++      if (procfs_get_trace()) {
++        PROC_PRETTYFPRINT_STATUS (proc_flags (pi),
++				  proc_why (pi),
++				  proc_what (pi),
++				  proc_get_current_thread (pi));
++      }
+     }
+ #endif
+ 
+@@ -2703,7 +2788,7 @@
+     {
+       thread->status_valid = 0;
+       if (!proc_get_status (thread))
+-	destroy_one_procinfo (&parent->thread_list, thread);
++	delete_one_procinfo (parent, thread);
+     }
+   return 0;	/* keep iterating */
+ }
+@@ -2763,6 +2848,7 @@
+ proc_update_threads (procinfo *pi)
+ {
+   char pathname[MAX_PROC_NAME_SIZE + 16];
++  char lwentry[MAX_PROC_NAME_SIZE + 16];
+   struct dirent *direntry;
+   struct cleanup *old_chain = NULL;
+   procinfo *thread;
+@@ -2794,7 +2880,15 @@
+   while ((direntry = readdir (dirp)) != NULL)
+     if (direntry->d_name[0] != '.')		/* skip '.' and '..' */
+       {
++        struct stat sbuf;
+ 	lwpid = atoi (&direntry->d_name[0]);
++        /*
++         * Skip zombies. Zombies do not have lwpsinfo.
++         */
++        snprintf (lwentry, sizeof (lwentry), "%s/%s/lwpsinfo",
++                  pathname, direntry->d_name);
++        if (stat(lwentry, &sbuf) == -1)
++          continue;
+ 	if ((thread = create_procinfo (pi->pid, lwpid)) == NULL)
+ 	  proc_error (pi, "update_threads, create_procinfo", __LINE__);
+       }
+@@ -2863,13 +2957,32 @@
+    function.  PTR is an opaque parameter for function.  Returns the
+    first non-zero return value from the callee, or zero.  */
+ 
++struct cb_data {
++  int (*func) (procinfo *, procinfo *, void *);
++  procinfo *parent;
++  void *ptr;
++  int cb_ret;
++};
++
+ static int
++htab_traverse_callback (void **slot, void *arg)
++{
++  struct cb_data *cdat = (struct cb_data *)arg;
++  struct hentry *he = (struct hentry *)*slot;
++
++  cdat->cb_ret = (*(cdat->func)) (cdat->parent, he->pi, cdat->ptr);
++  if (cdat->cb_ret != 0) {
++    return 0;
++  }
++  return 1;
++}
++
++static int
+ proc_iterate_over_threads (procinfo *pi,
+ 			   int (*func) (procinfo *, procinfo *, void *),
+ 			   void *ptr)
+ {
+-  procinfo *thread, *next;
+-  int retval = 0;
++  struct cb_data cdat;
+ 
+   /* We should never have to apply this operation to any procinfo
+      except the one for the main process.  If that ever changes for
+@@ -2879,14 +2992,14 @@
+   if (pi->tid != 0)
+     pi = find_procinfo_or_die (pi->pid, 0);
+ 
+-  for (thread = pi->thread_list; thread != NULL; thread = next)
+-    {
+-      next = thread->next;	/* In case thread is destroyed.  */
+-      if ((retval = (*func) (pi, thread, ptr)) != 0)
+-	break;
+-    }
++  cdat.func = func;
++  cdat.parent = pi;
++  cdat.ptr = ptr;
++  cdat.cb_ret = 0;
++  if (pi->thread_tab != NULL)
++    htab_traverse_noresize (pi->thread_tab, htab_traverse_callback, &cdat);
+ 
+-  return retval;
++  return cdat.cb_ret;
+ }
+ 
+ /* =================== END, Thread "MODULE" =================== */
+@@ -3219,15 +3332,28 @@
+   int tid = ptid_get_lwp (inferior_ptid);
+   struct gdbarch *gdbarch = get_regcache_arch (regcache);
+ 
+-  pi = find_procinfo_or_die (pid, tid);
++  pi = find_procinfo (pid, tid);
+ 
+-  if (pi == NULL)
+-    error (_("procfs: fetch_registers failed to find procinfo for %s"),
+-	   target_pid_to_str (inferior_ptid));
++  /*
++   * If procinfo is not found, thread exited behind our back and was
++   * removed. Delete the gdb thread and return.
++   */
++  if (pi == NULL) {
++    delete_thread (inferior_ptid);
++    return;
++  }
+ 
+   gregs = proc_get_gregs (pi);
+-  if (gregs == NULL)
+-    proc_error (pi, "fetch_registers, get_gregs", __LINE__);
++  if (gregs == NULL) {
++    /*
++     * Same case for get_gregs. If we can't find the LWP on the system
++     * it exited behind our backs.
++     */
++    delete_thread (inferior_ptid);
++    destroy_procinfo (pi);
++    return;
++  }
++  //  proc_error (pi, "fetch_registers, get_gregs", __LINE__);
+ 
+   supply_gregset (regcache, (const gdb_gregset_t *) gregs);
+ 
+@@ -3634,11 +3760,24 @@
+ 	      case PR_SYSENTRY:
+ 		if (syscall_is_lwp_exit (pi, what))
+ 		  {
++                    procinfo *lwpi;
++
+ 		    if (print_thread_events)
+ 		      printf_unfiltered (_("[%s exited]\n"),
+ 					 target_pid_to_str (retval));
+ 		    delete_thread (retval);
+-		    status->kind = TARGET_WAITKIND_SPURIOUS;
++                    if (ptid_get_lwp (retval) != 0 && ptid_equal (inferior_ptid, retval)) {
++                      status->kind = TARGET_WAITKIND_SPURIOUS;
++                      return retval;
++                    }
++
++                    if ((lwpi = find_procinfo (ptid_get_pid (retval),
++                                               ptid_get_lwp (retval))) != NULL) {
++                      destroy_procinfo (lwpi);
++                    }
++                    proc_run_process (pi, 0, 0);
++                    status->kind = TARGET_WAITKIND_IGNORE;
++
+ 		    return retval;
+ 		  }
+ 		else if (syscall_is_exit (pi, what))
+@@ -3772,11 +3911,24 @@
+ 		  }
+ 		else if (syscall_is_lwp_exit (pi, what))
+ 		  {
++                    procinfo *lwpi;
++
+ 		    if (print_thread_events)
+ 		      printf_unfiltered (_("[%s exited]\n"),
+ 					 target_pid_to_str (retval));
+ 		    delete_thread (retval);
+-		    status->kind = TARGET_WAITKIND_SPURIOUS;
++                    if (ptid_get_lwp (retval) != 0 && ptid_equal (inferior_ptid, retval)) {
++                      status->kind = TARGET_WAITKIND_SPURIOUS;
++                      return retval;
++                    }
++
++                    if ((lwpi = find_procinfo (ptid_get_pid (retval),
++                                               ptid_get_lwp (retval))) != NULL) {
++                      destroy_procinfo (lwpi);
++                    }
++                    proc_run_process (pi, 0, 0);
++                    status->kind = TARGET_WAITKIND_IGNORE;
++
+ 		    return retval;
+ 		  }
+ 		else if (0)
+@@ -4035,6 +4187,11 @@
+ 		     __LINE__);
+ #endif
+ 
++  /*
++   * Do not close for modern Solaris. There are enough resources to
++   * hold hundreds of fds open.
++   */
++#ifndef NEW_PROC_API
+   if (parent != NULL)
+     {
+       /* The presence of a parent indicates that this is an LWP.
+@@ -4043,6 +4200,7 @@
+ 
+       close_procinfo_files (pi);
+     }
++#endif
+   pi->gregs_valid   = 0;
+   pi->fpregs_valid  = 0;
+ #if 0
+@@ -5294,10 +5452,34 @@
+ /* Return a pid for which we guarantee we will be able to find a
+    'live' procinfo.  */
+ 
++struct cb_first {
++  int pid;
++  int tid;
++};
++
++static int
++traverse_first_cb (void **slot, void *arg)
++{
++  struct cb_first *cb = (struct cb_first *)arg;
++  struct hentry *he = (struct hentry *)*slot;
++
++  cb->pid = he->pi->pid;
++  cb->tid = he->pi->tid;
++  return 0;
++}
++
+ ptid_t
+ procfs_first_available (void)
+ {
+-  return pid_to_ptid (procinfo_list ? procinfo_list->pid : -1);
++  struct cb_first cdat;
++
++  if (procinfo_tab == NULL)
++    return pid_to_ptid (-1);
++
++  cdat.pid = 0;
++  cdat.tid = 0;
++  htab_traverse_noresize (procinfo_tab, traverse_first_cb, &cdat);
++  return pid_to_ptid (cdat.pid);
+ }
+ 
+ /* ===================  GCORE .NOTE "MODULE" =================== */

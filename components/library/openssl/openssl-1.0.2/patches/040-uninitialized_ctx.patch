@@ -1,0 +1,14 @@
+#
+# This was developed in house.  Upstreadm notified (PR#277).
+#
+diff -ru  openssl-1.0.1m/crypto/evp/evp_enc.c openssl-1.0.1m/crypto/evp/evp_enc.c.new
+--- openssl-1.0.1m/crypto/evp/evp_enc.c Thu May  7 09:46:32 2015
++++ openssl-1.0.1m/crypto/evp/evp_enc.c.new     Thu May  7 09:46:23 2015
+@@ -185,6 +185,7 @@
+                 EVPerr(EVP_F_EVP_CIPHERINIT_EX, ERR_R_MALLOC_FAILURE);
+                 return 0;
+             }
++            (void) memset(ctx->cipher_data, 0, ctx->cipher->ctx_size);
+         } else {
+             ctx->cipher_data = NULL;
+         }

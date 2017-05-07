@@ -24,7 +24,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/python-twisted-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/python-twisted-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Event-based framework for internet applications"
 set name=com.oracle.info.description value="the Twisted event-based Python framework"
 set name=info.classification \
@@ -910,17 +910,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/twisted/words/xish/xpathparser.
 file path=usr/lib/python$(PYVER)/vendor-packages/twisted/words/xmpproutertap.py
 license twisted.license license=MIT
 
-# twisted was previously in the 'desktop' consolidation. This optional
-# dependency is here to facilitate the safe transfer of the package
-# to the 'userland' consolidation.
-depend type=optional \
-    fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
-
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on the python-twisted package
 depend type=require \
-    fmri=library/python-2/python-twisted@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-depend type=require fmri=library/python-2/python-zope-interface-$(PYV)
+    fmri=library/python/python-twisted@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+depend type=require fmri=library/python/python-zope-interface-$(PYV)

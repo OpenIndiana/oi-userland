@@ -1,0 +1,205 @@
+diff -ru M2Crypto-0.24.0-orig/M2Crypto/X509.py M2Crypto-0.24.0/M2Crypto/X509.py
+--- M2Crypto-0.24.0-orig/M2Crypto/X509.py	Mon Mar 21 13:43:39 2016
++++ M2Crypto-0.24.0/M2Crypto/X509.py	Thu Mar 31 17:01:53 2016
+@@ -470,9 +470,9 @@
+                 ''')
+         return out
+ 
+-    def get_pubkey(self):
++    def get_pubkey(self, md="sha1"):
+         assert m2.x509_type_check(self.x509), "'x509' type error"
+-        return EVP.PKey(m2.x509_get_pubkey(self.x509), _pyfree=1)
++        return EVP.PKey(m2.x509_get_pubkey(self.x509), _pyfree=1, md=md)
+ 
+     def set_pubkey(self, pkey):
+         """
+@@ -1115,6 +1115,7 @@
+         else:
+             self.crl = m2.x509_crl_new()
+             self._pyfree = 1
++        self.revocations = None
+ 
+     def __del__(self):
+         if getattr(self, '_pyfree', 0):
+@@ -1132,7 +1133,45 @@
+         return buf.read_all()
+ 
+ 
+-def load_crl(file):
++    def get_last_update(self):
++        assert m2.x509_CRL_type_check(self.crl), "'x509_CRL' type error"
++        return ASN1.ASN1_UTCTIME(m2.x509_CRL_get_last_update(self.crl))
++
++    def get_next_update(self):
++        assert m2.x509_CRL_type_check(self.crl), "'x509_CRL' type error"
++        return ASN1.ASN1_UTCTIME(m2.x509_CRL_get_next_update(self.crl))
++
++    def verify(self, pkey):
++        assert m2.x509_CRL_type_check(self.crl), "'x509_CRL' type error"
++        return m2.x509_CRL_verify(self.crl, pkey.pkey)
++
++    def get_issuer(self):
++        assert m2.x509_CRL_type_check(self.crl), "'x509_CRL' type error"
++        return X509_Name(m2.x509_CRL_get_issuer(self.crl))
++
++    def is_revoked(self, cert):
++        if self.revocations is None:
++            self.revocations = {}
++            revo_stk_ptr = m2.x509_CRL_get_revoked(self.crl)
++            for i in range(m2.sk_x509_REVOKED_num(revo_stk_ptr)):
++                revo_ptr = m2.sk_x509_REVOKED_get(revo_stk_ptr, i)
++                revo_sn = m2.asn1_integer_get(
++                    m2.x509_REVOKED_get_serial_number(revo_ptr))
++                cnt = m2.x509_REVOKED_get_ext_count(revo_ptr)
++                reason = None
++                for i in range(m2.x509_REVOKED_get_ext_count(revo_ptr)):
++                    ext_ptr = m2.x509_REVOKED_get_ext(revo_ptr, i)
++                    name = m2.x509_extension_get_name(ext_ptr)
++                    if name == "CRLReason":
++                        ext = X509_Extension(ext_ptr, _pyfree=0)
++                        reason = ext.get_value()
++                self.revocations[revo_sn] = (True, reason)
++        return self.revocations.get(cert.get_serial_number(), None)
++
++
++
++
++def load_crl(file, format=FORMAT_PEM):
+     """
+     Load CRL from file.
+ 
+@@ -1139,12 +1178,25 @@
+     @type file: string
+     @param file: Name of file containing CRL in PEM format.
+ 
++    @type format: int, either FORMAT_PEM or FORMAT_DER
++    @param format: Describes the format of the file to be loaded, either PEM or DER.
++
+     @rtype: M2Crypto.X509.CRL
+     @return: M2Crypto.X509.CRL object.
+     """
+     f = BIO.openfile(file)
+-    cptr = m2.x509_crl_read_pem(f.bio_ptr())
+-    f.close()
+-    if cptr is None:
+-        raise X509Error(Err.get_error())
+-    return CRL(cptr, 1)
++    if format == FORMAT_PEM:
++        cptr=m2.x509_crl_read_pem(f.bio_ptr())
++        f.close()
++        if cptr is None:
++            raise X509Error(Err.get_error())
++        return CRL(cptr, 1)
++    elif format == FORMAT_DER:
++        cptr=m2.d2i_x509_crl(f._ptr())
++        f.close()
++        if cptr is None:
++            raise X509Error(Err.get_error())
++        return CRL(cptr, 1)
++    else:
++        raise ValueError("Unknown format. Must be either FORMAT_DER or FORMAT_PEM")
++
+diff -ru M2Crypto-0.24.0-orig/SWIG/_x509.i M2Crypto-0.24.0/SWIG/_x509.i
+--- M2Crypto-0.24.0-orig/SWIG/_x509.i	Mon Mar  7 12:30:31 2016
++++ M2Crypto-0.24.0/SWIG/_x509.i	Thu Mar 31 16:44:28 2016
+@@ -64,6 +64,9 @@
+ %rename(x509_cmp_current_time) X509_cmp_current_time;
+ extern int X509_cmp_current_time(ASN1_UTCTIME *);
+ 
++%rename(x509_CRL_get_issuer) X509_CRL_get_issuer;
++extern X509_NAME *X509_CRL_get_issuer(X509_CRL *);
++
+                             
+ /* From x509.h */
+ /* standard trust ids */
+@@ -111,6 +114,9 @@
+ %rename(x509_get_verify_error) X509_verify_cert_error_string;
+ extern const char *X509_verify_cert_error_string(long);
+ 
++%rename(x509_CRL_verify) X509_CRL_verify;
++extern int X509_CRL_verify(X509_CRL *a, EVP_PKEY *r);
++
+ %constant long X509V3_EXT_UNKNOWN_MASK         = (0xfL << 16);
+ %constant long X509V3_EXT_DEFAULT              = 0;
+ %constant long X509V3_EXT_ERROR_UNKNOWN        = (1L << 16);
+@@ -127,6 +133,13 @@
+ %threadallow X509V3_EXT_print;
+ extern int X509V3_EXT_print(BIO *, X509_EXTENSION *, unsigned long, int);
+ 
++%rename(x509_REVOKED_get_ext_count) X509_REVOKED_get_ext_count;
++extern int X509_REVOKED_get_ext_count(X509_REVOKED *);
++%rename(x509_REVOKED_get_ext) X509_REVOKED_get_ext;
++extern X509_EXTENSION *X509_REVOKED_get_ext(X509_REVOKED *, int);
++%rename(x509_REVOKED_get_ext_by_NID) X509_REVOKED_get_ext_by_NID;
++extern X509_EXTENSION *X509_REVOKED_get_ext_by_NID(X509_REVOKED *, int, int);
++
+ %rename(x509_name_new) X509_NAME_new;
+ extern X509_NAME *X509_NAME_new( void );
+ %rename(x509_name_free) X509_NAME_free;
+@@ -335,6 +348,7 @@
+ }
+ %}
+ 
++
+ %threadallow d2i_x509;
+ %inline %{
+ X509 *d2i_x509(BIO *bio) {
+@@ -342,6 +356,13 @@
+ }
+ %}
+ 
++%threadallow d2i_x509_crl;
++%inline %{
++X509_CRL *d2i_x509_crl(BIO *bio) {
++    return d2i_X509_CRL_bio(bio, NULL);
++}
++%}
++
+ %threadallow d2i_x509_req;
+ %inline %{
+ X509_REQ *d2i_x509_req(BIO *bio) {
+@@ -415,6 +436,33 @@
+     return X509_get_notAfter(x);
+ }
+ 
++/* X509_CRL_get_lastUpdate() is a macro. */
++ASN1_UTCTIME *x509_CRL_get_last_update(X509_CRL *x) {
++    return X509_CRL_get_lastUpdate(x);
++}
++
++/* X509_CRL_get_nextUpdate() is a macro. */
++ASN1_UTCTIME *x509_CRL_get_next_update(X509_CRL *x) {
++    return X509_CRL_get_nextUpdate(x);
++}
++
++/* X509_CRL_get_REVOKED() is a macro. */
++STACK_OF(X509_REVOKED) *x509_CRL_get_revoked(X509_CRL *x) {
++    return X509_CRL_get_REVOKED(x);
++}
++
++int sk_x509_REVOKED_num(STACK_OF(X509_REVOKED) *stack) {
++    return sk_X509_REVOKED_num(stack);
++}
++
++X509_REVOKED *sk_x509_REVOKED_get(STACK_OF(X509_REVOKED) *stack, int x) {
++    return sk_X509_REVOKED_value(stack, x);
++}
++
++ASN1_INTEGER *x509_REVOKED_get_serial_number(X509_REVOKED *x) {
++    return x->serialNumber;
++}
++
+ int x509_sign(X509 *x, EVP_PKEY *pkey, EVP_MD *md) {
+     return X509_sign(x, pkey, md);
+ }
+@@ -486,6 +534,10 @@
+ int x509_type_check(X509 *x509) {
+     return 1;
+ }
++
++int x509_CRL_type_check(X509_CRL *x509_CRL) {
++    return 1;
++}
+ 
+ int x509_name_type_check(X509_NAME *name) {
+     return 1;

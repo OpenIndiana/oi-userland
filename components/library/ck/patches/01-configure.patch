@@ -1,0 +1,53 @@
+--- ck-0.5.2/configure.orig	2017-01-19 20:18:43.836138156 +0100
++++ ck-0.5.2/configure	2017-01-19 20:28:55.730816846 +0100
+@@ -195,6 +195,7 @@
+ 		echo "  --memory-model=N         Specify memory model (currently tso, pso or rmo)"
+ 		echo "  --vma-bits=N             Specify valid number of VMA bits"
+ 		echo "  --platform=N             Force the platform type, instead of relying on autodetection"
++		echo "  --bits=N                 Set 32-bit or 64-bit build on Solaris/illumos"
+ 		echo "  --use-cc-builtins        Use the compiler atomic bultin functions, instead of the CK implementation"
+ 		echo
+ 		echo "The following options affect regression testing."
+@@ -235,6 +236,9 @@
+ 	--enable-rtm)
+ 		RTM_ENABLE_SET="CK_MD_RTM_ENABLE"
+ 		;;
++	--environment=*)
++		ENVIRONMENT=$value
++		;;
+ 	--cores=*)
+ 		CORES=$value
+ 		;;
+@@ -421,16 +425,26 @@
+ 	"i86pc")
+ 		RTM_ENABLE="CK_MD_RTM_DISABLE"
+ 		MM="${MM:-"CK_MD_TSO"}"
+-		if test -z "$ISA"; then ISA=`isainfo -n 2> /dev/null || echo i386` ; fi
+-		case "$ISA" in
+-			"amd64")
++		if test "x$ENVIRONMENT" = "x"; then
++			if test -z "$ISA"; then ISA=`isainfo -n 2> /dev/null || echo i386` ; fi
++			case "$ISA" in
++				"amd64")
++					ENVIRONMENT=64
++					;;
++				*)
++					ENVIRONMENT=32
++					;;
++			esac
++		fi
++		case "$ENVIRONMENT" in
++			"64")
+ 				RTM_ENABLE=${RTM_ENABLE_SET:-"CK_MD_RTM_DISABLE"}
+ 				PLATFORM=x86_64
+-				ENVIRONMENT=64
+ 				;;
+-			*)
++			"32")
+ 				PLATFORM=x86
+-				ENVIRONMENT=32
++				;;
++			*)
+ 				assert "$PLATFORM $ENVIRONMENT" "$PLATFORM $ENVIRONMENT" "unsupported"
+ 				;;
+ 		esac

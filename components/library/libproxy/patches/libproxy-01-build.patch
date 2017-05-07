@@ -1,0 +1,60 @@
+diff -ur libproxy-0.3.0-old/configure.ac libproxy-0.3.0/configure.ac
+--- libproxy-0.3.0-old/configure.ac	2009-08-15 03:00:35.000000000 +0800
++++ libproxy-0.3.0/configure.ac	2009-09-11 14:34:09.777530473 +0800
+@@ -238,7 +238,7 @@
+      AC_CHECK_LIB(ws2_32, main)
+ esac
+ 
+-CFLAGS="-g -Wall -pedantic $CFLAGS"
++CFLAGS="$CFLAGS"
+ AC_CONFIG_FILES([libproxy-1.0.pc Makefile libproxy.spec src/Makefile src/lib/Makefile
+                  src/modules/Makefile src/bin/Makefile src/bindings/Makefile
+                  src/bindings/python/Makefile src/bindings/java/Makefile
+diff -ur libproxy-0.3.0-old/src/lib/Makefile.am libproxy-0.3.0/src/lib/Makefile.am
+--- libproxy-0.3.0-old/src/lib/Makefile.am	2009-08-15 03:00:32.000000000 +0800
++++ libproxy-0.3.0/src/lib/Makefile.am	2009-09-11 14:30:31.555886406 +0800
+@@ -10,7 +10,7 @@
+ 						strdict.c strdict.h \
+ 						url.c url.h
+ 
+-libproxy_la_CFLAGS  = -DMODULEDIR=\"@MODULEDIR@@DIR_SEPARATOR@\" -DSYSCONFDIR=\"@SYSCONFDIR@@DIR_SEPARATOR@\" -std=c99 -D_POSIX_C_SOURCE=200112L
++libproxy_la_CFLAGS  = -DMODULEDIR=\"@MODULEDIR@@DIR_SEPARATOR@\" -DSYSCONFDIR=\"@SYSCONFDIR@@DIR_SEPARATOR@\" -std=c99
+ libproxy_la_LDFLAGS = -lpthread -lm -no-undefined
+ 
+ include_HEADERS     = proxy.h
+diff -ur libproxy-0.3.0-old/src/modules/Makefile.am libproxy-0.3.0/src/modules/Makefile.am
+--- libproxy-0.3.0-old/src/modules/Makefile.am	2009-08-15 03:06:30.000000000 +0800
++++ libproxy-0.3.0/src/modules/Makefile.am	2009-09-11 14:31:44.165886101 +0800
+@@ -50,7 +49,7 @@
+ 
+ # GConf/GNOME Config Module
+ config_gnome_la_SOURCES            = config_gnome.c xhasclient.c
+-config_gnome_la_CPPFLAGS           = -I$(top_srcdir)/src/lib -D_POSIX_C_SOURCE=200112L -DGCONFTOOLBIN='"@GCONFTOOLBIN@"' @GNOME_CFLAGS@
++config_gnome_la_CPPFLAGS           = -I$(top_srcdir)/src/lib -DGCONFTOOLBIN='"@GCONFTOOLBIN@"' @GNOME_CFLAGS@
+ config_gnome_la_LIBADD             = ../lib/libproxy.la
+ config_gnome_la_LDFLAGS            = $(AM_LDFLAGS) @GNOME_LIBS@
+ 
+@@ -77,12 +76,12 @@
+ 
+ # IP Ignore Module
+ ignore_ip_la_SOURCES               = ignore_ip.c
+-ignore_ip_la_CPPFLAGS              = -I$(top_srcdir)/src/lib -D_POSIX_C_SOURCE=200112L
++ignore_ip_la_CPPFLAGS              = -I$(top_srcdir)/src/lib
+ ignore_ip_la_LIBADD                = ../lib/libproxy.la
+ 
+ # WebKit (JavaScriptCore) based PAC runner
+ pacrunner_webkit_la_SOURCES        = pacrunner_webkit.c
+-pacrunner_webkit_la_CPPFLAGS       = -I$(top_srcdir)/src/lib @WEBKIT_CFLAGS@ -D_POSIX_C_SOURCE=200112L
++pacrunner_webkit_la_CPPFLAGS       = -I$(top_srcdir)/src/lib @WEBKIT_CFLAGS@
+ pacrunner_webkit_la_LIBADD         = ../lib/libproxy.la
+ if MINGW32
+ pacrunner_webkit_la_LIBADD	  += ../platform/win32/libwinutils.la
+@@ -92,7 +91,7 @@
+ 
+ # Mozilla (Spidermonkey) based PAC runner
+ pacrunner_mozjs_la_SOURCES         = pacrunner_mozjs.c
+-pacrunner_mozjs_la_CPPFLAGS        = -I$(top_srcdir)/src/lib @MOZJS_CFLAGS@ -D_POSIX_C_SOURCE=200112L
++pacrunner_mozjs_la_CPPFLAGS        = -I$(top_srcdir)/src/lib @MOZJS_CFLAGS@
+ pacrunner_mozjs_la_LIBADD          = ../lib/libproxy.la
+ pacrunner_mozjs_la_LDFLAGS         = $(AM_LDFLAGS) @MOZJS_LIBS@
+ nodist_pacrunner_mozjs_la_SOURCES  = pacutils.h

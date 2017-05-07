@@ -1,0 +1,51 @@
+--- libgksu-2.0.12/libgksu/Makefile.am-orig	2010-11-30 14:50:47.128845989 -0600
++++ libgksu-2.0.12/libgksu/Makefile.am	2010-11-30 14:52:12.969559029 -0600
+@@ -1,4 +1,4 @@
+-AM_CFLAGS = -g -O2 -Wall
++AM_CFLAGS = -O2
+ INCLUDES = ${LIBGKSU_CFLAGS}
+ AM_CPPFLAGS = -DLOCALEDIR=\"$(datadir)/locale\" -DDATA_DIR=\"$(datadir)\" -DPREFIX=\"$(prefix)\"
+ 
+@@ -9,7 +9,7 @@ libgksu2_la_SOURCES = libgksu.c libgksu.
+ # minor -> keeps compatibility (additions to the API)
+ # micro -> no change to the API/ABI
+ libgksu2_la_LIBADD = ../libgksuui/libgksuui1.0.la
+-libgksu2_la_LDFLAGS = -version-info 0:2:0 -Wl,-O1 -lutil ${LIBGKSU_LIBS}
++libgksu2_la_LDFLAGS = -version-info 0:2:0 ${LIBGKSU_LIBS}
+ if USE_VERSION_SCRIPT
+ libgksu2_la_LDFLAGS += -Wl,--version-script=libgksu.ver
+ endif
+--- libgksu-2.0.12/libgksuui/Makefile.am-orig	2010-11-30 14:52:21.142568714 -0600
++++ libgksu-2.0.12/libgksuui/Makefile.am	2010-11-30 14:52:34.152519582 -0600
+@@ -1,10 +1,10 @@
+-AM_CFLAGS = -g -O2 -Wall
++AM_CFLAGS = -O2
+ INCLUDES = `pkg-config --cflags gtk+-2.0 gconf-2.0`
+ AM_CPPFLAGS = -DLOCALEDIR=\"$(datadir)/locale\" -DDATA_DIR=\"$(datadir)\" -DPREFIX=\"$(prefix)\"
+ 
+ noinst_LTLIBRARIES = libgksuui1.0.la
+ libgksuui1_0_la_SOURCES = gksuui-dialog.c
+-libgksuui1_0_la_LDFLAGS = -Wl,-O1 `pkg-config --libs gtk+-2.0 gconf-2.0`
++libgksuui1_0_la_LDFLAGS = `pkg-config --libs gtk+-2.0 gconf-2.0`
+ 
+ noinst_HEADERS = defines.h gksuui.h gksuui-dialog.h
+ includedir = ${prefix}/include/$(PACKAGE)
+--- libgksu-2.0.12/gksu-properties/Makefile.am-orig	2010-11-30 15:03:21.404974100 -0600
++++ libgksu-2.0.12/gksu-properties/Makefile.am	2010-11-30 15:03:31.477782033 -0600
+@@ -1,4 +1,4 @@
+-AM_CFLAGS = -g -O2 -Wall -Wl,--export-dynamic
++AM_CFLAGS = -O2
+ INCLUDES = ${GKSU_PROPERTIES_CFLAGS}
+ AM_CPPFLAGS = -DLOCALEDIR=\"$(datadir)/locale\" -DDATA_DIR=\"$(datadir)\" -DPREFIX=\"$(prefix)\"
+ 
+--- libgksu-2.0.12/Makefile.am-orig	2012-04-11 11:55:20.309207407 -0500
++++ libgksu-2.0.12/Makefile.am	2012-04-11 11:55:26.745385460 -0500
+@@ -17,7 +17,7 @@ EXTRA_DIST = config.rpath mkinstalldirs 
+ 
+ if GCONF_SCHEMAS_INSTALL
+ install-data-local:
+-        if test -z "$(DESTDIR)" ; then \
++	if test -z "$(DESTDIR)" ; then \
+           for p in $(schemas_DATA) ; do \
+             GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(srcdir)/$$p ; \
+           done \

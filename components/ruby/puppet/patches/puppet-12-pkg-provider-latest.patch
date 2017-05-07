@@ -1,0 +1,240 @@
+In-house patch to fix Solaris specific bug; not suitible for upstream
+Fixing issue with package ensure=>latest by refreshing the pkg cache first with pkg update
+Using --parsable=0 option to obsolete pkg list -Hn
+Fixing problem with ambiguous package names
+Wildcards support
+install_options/uninstall_options features support
+
+--- puppet-3.8.6/lib/puppet/provider/package/pkg.rb.orig	2016-04-19 15:09:14.789792650 -0700
++++ puppet-3.8.6/lib/puppet/provider/package/pkg.rb	2016-04-19 15:09:44.646514474 -0700
+@@ -5,7 +5,7 @@
+ require 'puppet/provider/package'
+ 
+ Puppet::Type.type(:package).provide :pkg, :parent => Puppet::Provider::Package do
+-  desc "OpenSolaris image packaging system. See pkg(5) for more information"
++  desc "Solaris image packaging system. See pkg(5) for more information"
+   # http://docs.oracle.com/cd/E19963-01/html/820-6572/managepkgs.html
+   # A few notes before we start :
+   # Opensolaris pkg has two slightly different formats (as of now.)
+@@ -18,10 +18,10 @@
+   # TODO: We still have to allow packages to specify a preferred publisher.
+ 
+   has_feature :versionable
+-
+   has_feature :upgradable
+-
+   has_feature :holdable
++  has_feature :install_options
++  has_feature :uninstall_options
+ 
+   commands :pkg => "/usr/bin/pkg"
+ 
+@@ -30,7 +30,7 @@
+   defaultfor :osfamily => :solaris, :kernelrelease => ['5.11', '5.12']
+ 
+   def self.instances
+-    pkg(:list, '-H').split("\n").map{|l| new(parse_line(l))}
++    pkg(:list, '-Hv').split("\n").map{|l| new(parse_line(l))}
+   end
+ 
+   # The IFO flag field is just what it names, the first field can have ether
+@@ -73,6 +73,10 @@
+     {}
+   end
+ 
++  def self.ufxi_flag(flags)
++    {}
++  end
++
+   # pkg state was present in the older version of pkg (with UFOXI) but is
+   # no longer available with the IFO field version. When it was present,
+   # it was used to indicate that a particular version was present (installed)
+@@ -94,29 +98,73 @@
+   # formats of output for different pkg versions.
+   def self.parse_line(line)
+     (case line.chomp
+-    # NAME (PUBLISHER)            VERSION           IFO  (new:630e1ffc7a19)
+-    # system/core-os              0.5.11-0.169      i--
+-    when /^(\S+) +(\S+) +(...)$/
+-      {:name => $1, :ensure => $2}.merge ifo_flag($3)
+-
+-    # x11/wm/fvwm (fvwm.org)      2.6.1-3           i--
+-    when /^(\S+) \((.+)\) +(\S+) +(...)$/
+-      {:name => $1, :publisher => $2, :ensure => $3}.merge ifo_flag($4)
+-
+-    # NAME (PUBLISHER)                  VERSION          STATE      UFOXI (dvd:052adf36c3f4)
+-    # SUNWcs                            0.5.11-0.126     installed  -----
+-    when /^(\S+) +(\S+) +(\S+) +(.....)$/
+-      {:name => $1, :ensure => $2}.merge pkg_state($3).merge(ufoxi_flag($4))
+-
+-    # web/firefox/plugin/flash (extra)  10.0.32.18-0.111 installed  -----
+-    when /^(\S+) \((.+)\) +(\S+) +(\S+) +(.....)$/
+-      {:name => $1, :publisher => $2, :ensure => $3}.merge pkg_state($4).merge(ufoxi_flag($5))
+-
++    #pkg list -vH output format since build 165
++    #FMRI                                                                         IFO
++    #pkg://solaris/system/core-os@5.12-5.12.0.0.0.87.1:20151116T010109Z           i--
++    when /^(\S+) +(...)$/
++      full_fmri = $1.split('@')
++      {:name => full_fmri[0], :ensure => full_fmri[1]}.merge(ifo_flag($2))
++
++    #Solaris11 Express 10/11, OpenSolaris
++    #FMRI                                                               STATE       UFOXI
++    #pkg://solaris/editor/vim@7.2.308,5.11-0.151.0.1:20101105T0540492   installed   -----
++    when /^(\S+) +(\S+) +(.....)$/
++      full_fmri = $1.split('@')
++      {:name => full_fmri[0], :ensure => full_fmri[1]}.merge pkg_state($2).merge(ufoxi_flag($3))
++
++    #OpenSolaris
++    #FMRI                                               STATE       UFXI
++    #pkg:/SUNWvim@7.1.145,5.11-0.86:20080426T180612Z    installed   ----
++    when /^(\S+) +(\S+) +(....)$/
++      full_fmri = $1.split('@')
++      {:name => full_fmri[0], :ensure => full_fmri[1]}.merge pkg_state($2).merge(ufxi_flag($3))
+     else
+       raise ArgumentError, 'Unknown line format %s: %s' % [self.name, line]
+     end).merge({:provider => self.name})
+   end
+ 
++  def parse_latest_query(exit_code, pkg_fmri_list)
++    # Get the current status of the package
++    name = @property_hash[:name]
++    provider = @property_hash[:provider]
++
++    # The package is up-to-date
++    if pkg_fmri_list.empty? && exit_code == 4
++      status = 'installed'
++      version = @property_hash[:ensure]
++    # Latest version is available
++    elsif !pkg_fmri_list.empty? && exit_code == 0
++      if wildcard?
++        version = ''
++        status = 'known'
++      else
++        # Search for the correct pkg FMRI (to ignore dependencies)
++        # search string format will be, i.e.,
++        # pkg://test/testing/testpkg@
++        # and retrieve the matched index.
++        search_pkg_name = name + '@'
++        index = pkg_fmri_list.index{|l| l[0].include?(search_pkg_name)}
++        raise Puppet::Error, "Cannot retrieve pkg name" if index.nil?
++
++        # Parse the fmri of the latest available pkg, i.e.,
++        # from: pkg://test/testing/testpkg@1.0.13,5.11:20151112T015434Z
++        # to: 1.0.13,5.11:20151112T015434Z
++        version = pkg_fmri_list[index][1].split('@')[1]
++        status = 'known'
++      end
++    else
++      raise Puppet::Error, "Cannot retrieve pkg version"
++    end
++
++    # Store as a desirable query
++    return {
++      :name=>name,
++      :ensure=>version,
++      :status=>status,
++      :provider=>provider
++    }
++  end
++
+   def hold
+     pkg(:freeze, @resource[:name])
+   end
+@@ -126,31 +174,22 @@
+     raise Puppet::Error, "Unable to unfreeze #{r[:out]}" unless [0,4].include? r[:exit]
+   end
+ 
+-  # Return the version of the package. Note that the bug
+-  # http://defect.opensolaris.org/bz/show_bug.cgi?id=19159%
+-  # notes that we can't use -Ha for the same even though the manual page reads that way.
++  # Return the version of the package.
+   def latest
+-    lines = pkg(:list, "-Hn", @resource[:name]).split("\n")
+-
+-    # remove certificate expiration warnings from the output, but report them
+-    # Note: we'd like to use select! here to modify the lines array and avoid
+-    #       the second select further down. But Solaris 11 comes with ruby 1.8.7
+-    #       which doesn't support select!, so do this as two selects.
+-    cert_warnings = lines.select { |line| line =~ /^Certificate/ }
+-    if cert_warnings
+-      Puppet.warning("pkg warning: #{cert_warnings}")
+-    end
+-
+-    lst = lines.select { |line| line !~ /^Certificate/ }.map { |line| self.class.parse_line(line) }
+-
+-    # Now we know there is a newer version. But is that installable? (i.e are there any constraints?)
+-    # return the first known we find. The only way that is currently available is to do a dry run of
+-    # pkg update and see if could get installed (`pkg update -n res`).
+-    known = lst.find {|p| p[:status] == 'known' }
+-    return known[:ensure] if known and exec_cmd(command(:pkg), 'update', '-n', @resource[:name])[:exit].zero?
+-
+-    # If not, then return the installed, else nil
+-    (lst.find {|p| p[:status] == 'installed' } || {})[:ensure]
++    # Dry-run package update to check the availability of the latest version
++    # -- return code --
++    # 0: latest version available
++    # 1: error
++    # 4: already up-to-date
++    r = exec_cmd(command(:pkg), 'update', '-n', '--parsable=0', @resource[:name])
++    raise Puppet::Error, "Cannot update to the latest package: #{r[:out]}\n" \
++      unless [0, 4].include? r[:exit]
++
++    package_versions = JSON.parse(r[:out])['change-packages']
++
++    lst =  parse_latest_query(r[:exit], package_versions)
++    Puppet.debug "Desirable query status = #{lst}"
++    return lst[:ensure]
+   end
+ 
+   # install the package and accept all licenses.
+@@ -166,19 +205,22 @@
+         self.uninstall if Puppet::Util::Package.versioncmp(should, is[:ensure]) < 0
+       end
+     end
+-    r = exec_cmd(command(:pkg), 'install', '--accept', name)
++
++    cmd = ['--accept']
++    cmd << join_options(@resource[:install_options]) if @resource[:install_options]
++    r = exec_cmd(command(:pkg), 'install', cmd, name)
+     return r if nofail
+     raise Puppet::Error, "Unable to update #{r[:out]}" if r[:exit] != 0
+   end
+ 
+-  # uninstall the package. The complication comes from the -r_ecursive flag which is no longer
+-  # present in newer package version.
++  # uninstall the package.
+   def uninstall
+     cmd = [:uninstall]
+     case (pkg :version).chomp
+     when /052adf36c3f4/
+       cmd << '-r'
+     end
++    cmd << join_options(@resource[:uninstall_options]) if @resource[:uninstall_options]
+     cmd << @resource[:name]
+     pkg cmd
+   end
+@@ -191,10 +233,22 @@
+     raise Puppet::Error, "Unable to update #{r[:out]}"
+   end
+ 
++  def wildcard?
++    @resource[:name].include?("*") || @resource[:name].include?("?")
++  end
++
+   # list a specific package
+   def query
+-    r = exec_cmd(command(:pkg), 'list', '-H', @resource[:name])
++    r = exec_cmd(command(:pkg), 'list', '-Hv', @resource[:name])
+     return {:ensure => :absent, :name => @resource[:name]} if r[:exit] != 0
++
++    # Does input contain wildcard? just pass it down and let pkg decide
++    return {:ensure => :installed, :name => @resource[:name], :provider => self.class.name} if wildcard?
++    # If there are more than one results? this will fail due to the ambiguity.
++    if r[:out].split("\n").length > 1
++      raise Puppet::Error, "'#{@resource[:name]}' matches multiple packages. \n#{r[:out]}"
++    end
++    # Pass the parsed result back to @property_hash
+     self.class.parse_line(r[:out])
+   end
+ 

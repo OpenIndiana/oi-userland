@@ -1,0 +1,17 @@
+alpine: Default to 16bpp
+
+24bpp support is going away, so since we can't do 32bpp and these cards
+have basically no VRAM to begin with, drop to 16bpp.
+
+Based on: https://cgit.freedesktop.org/xorg/driver/xf86-video-cirrus/patch/?id=c6f5096252923b1a344291e8045a15045e98dd27
+--- a/src/alp_driver.c	2015-05-06 22:46:42.000000000 +0200
+--- b/src/alp_driver.c	2015-05-06 22:46:42.000000000 +0200
+@@ -555,7 +555,7 @@ AlpPreInit(ScrnInfoPtr pScrn, int flags)
+ 	 * The first thing we should figure out is the depth, bpp, etc.
+ 	 * We support both 24bpp and 32bpp layouts, so indicate that.
+ 	 */
+-	if (!xf86SetDepthBpp(pScrn, 0, 0, 24, depth_flags)) {
++	if (!xf86SetDepthBpp(pScrn, 0, 0, 16, depth_flags)) {
+ 		return FALSE;
+ 	} else {
+ 		/* Check that the returned depth is one we support */

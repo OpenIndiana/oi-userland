@@ -1,0 +1,12 @@
+--- Python-3.4.5/Lib/test/test_gdb.py.orig	2016-07-18 23:25:29.032391547 +0300
++++ Python-3.4.5/Lib/test/test_gdb.py	2016-07-18 23:25:35.780074223 +0300
+@@ -50,6 +50,9 @@
+                             % (gdb_major_version, gdb_minor_version,
+                                gdb_version))
+ 
++if sys.platform.startswith("sunos"):
++    raise unittest.SkipTest("test doesn't work very well on Solaris")
++
+ if not sysconfig.is_python_build():
+     raise unittest.SkipTest("test_gdb only works on source builds at the moment.")
+ 

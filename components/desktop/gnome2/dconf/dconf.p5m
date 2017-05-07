@@ -1,0 +1,66 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir path=etc/dconf/db
+
+file files/99-local path=etc/dconf/db/local.d/99-local preserve=true
+file files/user path=etc/dconf/profile/user preserve=true
+
+file files/dconf-update.xml path=lib/svc/manifest/application/desktop-cache/dconf-update.xml
+
+file path=usr/bin/$(MACH64)/dconf
+file path=usr/bin/dconf
+file path=usr/include/dconf-dbus-1/dconf-dbus-1.h
+file path=usr/include/dconf/client/dconf-client.h
+file path=usr/include/dconf/common/dconf-changeset.h
+file path=usr/include/dconf/common/dconf-error.h
+file path=usr/include/dconf/common/dconf-paths.h
+file path=usr/include/dconf/dconf.h
+file path=usr/lib/$(MACH64)/dconf-service mode=0555
+file path=usr/lib/$(MACH64)/gio/modules/libdconfsettings.so
+link path=usr/lib/$(MACH64)/libdconf-dbus-1.so target=libdconf-dbus-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libdconf-dbus-1.so.0 target=libdconf-dbus-1.so.0.0.0
+file path=usr/lib/$(MACH64)/libdconf-dbus-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libdconf.so target=libdconf.so.1.0.0
+link path=usr/lib/$(MACH64)/libdconf.so.1 target=libdconf.so.1.0.0
+file path=usr/lib/$(MACH64)/libdconf.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/dconf-dbus-1.pc
+file path=usr/lib/$(MACH64)/pkgconfig/dconf.pc
+file path=usr/lib/dconf-service mode=0555
+file path=usr/lib/gio/modules/libdconfsettings.so
+link path=usr/lib/libdconf-dbus-1.so target=libdconf-dbus-1.so.0.0.0
+link path=usr/lib/libdconf-dbus-1.so.0 target=libdconf-dbus-1.so.0.0.0
+file path=usr/lib/libdconf-dbus-1.so.0.0.0
+link path=usr/lib/libdconf.so target=libdconf.so.1.0.0
+link path=usr/lib/libdconf.so.1 target=libdconf.so.1.0.0
+file path=usr/lib/libdconf.so.1.0.0
+file path=usr/lib/pkgconfig/dconf-dbus-1.pc
+file path=usr/lib/pkgconfig/dconf.pc
+file path=usr/share/bash-completion/completions/dconf
+file path=usr/share/dbus-1/services/ca.desrt.dconf.service
+file path=usr/share/man/man1/dconf-service.1
+file path=usr/share/man/man1/dconf.1
+file path=usr/share/man/man7/dconf.7
+file path=usr/share/vala/vapi/dconf.deps
+file path=usr/share/vala/vapi/dconf.vapi

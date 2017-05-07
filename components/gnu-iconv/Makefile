@@ -37,7 +37,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/elfedit -e "dyn:runpath ''" $(PROTOUSRBINDIR)/iconv

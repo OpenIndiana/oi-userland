@@ -1,0 +1,22 @@
+From 5ae01a892905025ac692774fbbdb452b0abc5d49 Mon Sep 17 00:00:00 2001
+From: Piotr Jasiukajtis <estibi@me.com>
+Date: Mon, 6 Oct 2014 21:30:24 +0200
+Subject: [PATCH] fix execsnoop on illumos
+
+---
+ execsnoop | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/execsnoop b/execsnoop
+index 13928f7..7c20e28 100755
+--- a/execsnoop
++++ b/execsnoop
+@@ -143,7 +143,7 @@ fi
+  /*
+   * Print exec event
+   */
+- syscall::exec:return, syscall::exece:return
++ syscall::exece:return, syscall::exece:return
+  /(FILTER == 0) || (OPT_cmd == 1 && COMMAND == execname)/ 
+  {
+ 	/* print optional fields */

@@ -1,0 +1,120 @@
+#!/bin/bash
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+PATH=/usr/bin
+
+TEXINFO_DATA_DIR="/var/info"
+
+function readlink() {
+	while getopts f name; do
+		case $name in
+			f) follow=1 ;;
+		esac
+	done
+	shift $((OPTIND - 1))
+
+	if (( follow )); then
+		/usr/bin/python2.7 -ESc "import os; print os.path.realpath('$1')"
+	else    
+		/usr/bin/python2.7 -ESc "import os; print os.readlink('$1')"
+        fi
+}
+
+function populate_texinfo_directory() {
+	directory=$(dirname $1)
+	dir_file=$(readlink -f $1)
+
+	[[ ${dir_file} -ot ${directory} ]] || return
+
+	case "${dir_file}" in
+	/var/info/*)	# Only process if the link resolves inside /var/info.
+		echo "populating ${dir_file} from ${directory}"
+		rm -f ${dir_file}.new
+		for info_file in $(find ${directory} -type f | \
+				   egrep -v -e '-[0-9]+$') ; do
+			install-info --dir-file=${dir_file}.new \
+				--info-file=${info_file}
+		done
+		owner_group='root:bin'	# default owner/group
+		if [[ -f ${dir_file} ]] ; then
+			# get owner/group from original file
+			group_bin=$(ls -l ${dir_file} | \
+				    awk '{print $3":"$4}')
+		fi
+		if [[ -f ${dir_file}.new ]] ; then
+			# new dir file created, replace the original one
+			mv -f ${dir_file}.new ${dir_file}
+			chmod -f 0644 ${dir_file}
+			chown -f ${owner_group} ${dir_file}
+			ln -s ${1} ${dir_file}.backlink 2>/dev/null
+		else
+			# no dir file created (no input files installed)
+			rm -f ${dir_file} ${dir_file}.backlink
+		fi
+		;;
+	esac
+}
+
+### Begin Here ###
+
+case "$1" in
+'start'|'refresh')
+	if [[ "$1" = 'start' ]]; then
+		if [[ ! -f "/.SELF-ASSEMBLY-REQUIRED" ]]; then
+			exit $SMF_EXIT_OK
+		fi
+	fi
+
+	# refresh texinfo directories
+	for dir_link in $(pkg search -H -l -o path ':link:path:*/info/dir' | \
+			  sort -u) ; do
+		# test the directory is writable
+		if [[ ! -w /${dir_link} ]]; then 
+			echo $SMF_EXIT_OK
+		else
+			populate_texinfo_directory /${dir_link}
+
+		fi
+	done
+	# remove any unreferenced directories
+	for link in $(find ${TEXINFO_DATA_DIR} -type l -name '*.backlink') ; do
+		path=$(readlink ${link})
+		if [[ ! -L ${path} ]] ; then
+			file=${link%.backlink}
+			echo -n "removing unreferenced texinfo directory: "
+			echo "${file} ${link}"
+			rm -f ${file} ${link}
+		fi
+	done
+	;;
+*)
+	echo "Usage: $0 (start|refresh)"
+	exit 1
+	;;
+esac
+exit $SMF_EXIT_OK

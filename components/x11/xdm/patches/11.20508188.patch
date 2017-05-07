@@ -1,0 +1,23 @@
+--- a/greeter/greet.c	Fri Feb 13 12:22:48 2015
++++ b/greeter/greet.c	Fri Feb 13 12:23:57 2015
+@@ -347,6 +347,8 @@
+ 	XSetAccessControl (dpy, DisableAccess);
+     }
+     XtDestroyWidget (toplevel);
++    toplevel = NULL;
++    login = NULL; 
+     ClearCloseOnFork (XConnectionNumber (dpy));
+     XCloseDisplay (dpy);
+     Debug ("Greet connection closed\n");
+@@ -736,6 +738,11 @@
+     m = (struct pam_message *)*msg;
+     r = *response;
+ 
++    if (login == NULL) {
++        status = PAM_CONV_ERR;
++        goto pam_error;
++    }
++
+     for (i = 0; i < num_msg; i++ , m++ , r++) {
+ 	char *username;
+ 	int promptId = 0;

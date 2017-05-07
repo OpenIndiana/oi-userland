@@ -1,0 +1,11 @@
+--- memcached-1.4.15/configure.ac	2012-09-03 11:35:54.000000000 +0400
++++ memcached-1.4.15/configure.ac.new	2013-11-12 09:59:01.943079840 +0400
+@@ -115,7 +115,7 @@
+     build_dtrace=yes
+     # DTrace on MacOSX does not use -G option
+     $DTRACE -G -o conftest.$$ -s memcached_dtrace.d 2>/dev/zero
+-    if test $? -eq 0
++    if [ test $? -eq 0 -o "`uname -s`" = "SunOS" ]
+     then
+         dtrace_instrument_obj=yes
+         rm conftest.$$

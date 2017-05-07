@@ -1,0 +1,16 @@
+use the system malloc so we can easily
+switch to others, like libumem. I'm not
+entirely sure this should be changed upstream
+yet.
+
+--- tcsh-6.20.00/config_f.h.~1~	2016-12-15 20:57:26.973551670 +0300
++++ tcsh-6.20.00/config_f.h	2016-12-15 20:58:17.896714149 +0300
+@@ -139,7 +139,7 @@
+  *		This can be much slower and no memory statistics will be
+  *		provided.
+  */
+-#if defined(__MACHTEN__) || defined(PURIFY) || defined(MALLOC_TRACE) || defined(_OSD_POSIX) || defined(__MVS__) || defined (__CYGWIN__) || defined(__GLIBC__) || defined(__OpenBSD__) || defined(__APPLE__) || defined (__ANDROID__)
++#if defined(__MACHTEN__) || defined(PURIFY) || defined(MALLOC_TRACE) || defined(_OSD_POSIX) || defined(__MVS__) || defined (__CYGWIN__) || defined(__GLIBC__) || defined(__OpenBSD__) || defined(__APPLE__) || defined (__ANDROID__) || defined(SOLARIS2)
+ # define SYSMALLOC
+ #else
+ # undef SYSMALLOC

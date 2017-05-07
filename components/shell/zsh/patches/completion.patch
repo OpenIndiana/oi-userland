@@ -1,0 +1,246 @@
+--- zsh-5.3.1/Completion/Solaris/Command/_flowadm.~1~	2016-08-27 22:54:44.000000000 +0300
++++ zsh-5.3.1/Completion/Solaris/Command/_flowadm	2017-05-03 13:38:46.625666240 +0300
+@@ -12,7 +12,7 @@
+   reset-flowprop show-flowprop
+ )
+ tr=( tcp udp sctp icmp icmpv6 )
+-props=( maxbw )
++props=( maxbw priority )
+ 
+ if [[ $service == "flowadm" ]]; then
+ 	_arguments -C -A "-*" \
+@@ -33,7 +33,7 @@
+ 
+ 	("show-flow")
+ 	_arguments -A "-*" \
+-		'-o[specify field to display]:field:(flow link ipaddr proto port dsfield)' \
++		'-o[specify field to display]:field:(flow link ipaddr proto lport rport dsfield)' \
+ 		'-p[parsable output]' \
+ 		'-P[persistent flow property information]' \
+ 		- set1 \
+--- zsh-5.0.5/Completion/Solaris/Command/_ipadm	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_ipadm	Fri Mar 28 16:02:55 2014
+@@ -1,5 +1,5 @@
+ #compdef ipadm
+-# Synced with the S11U1 build 19 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _ipadm_ifs() {
+ 	local -a extra
+@@ -122,11 +122,13 @@
+ 
+ 	addrobj_properties=(
+ 		"addrobj" "type" "state" "current" "persistent" "addr"
+-		"cid-type" "cid-value" "begin" "expire" "renew"
++		"cid-type" "cid-value" "begin" "expire" "renew" "vrrp-router"
+ 	)
+ 
+-	proto_ipv4_properties=( "hostmodel" "ttl" "forwarding" )
+-	proto_ipv6_properties=( "hostmodel" "hoplimit" "forwarding" )
++	proto_ipv4_properties=( "arp_publish_count" "arp_publish_interval" "hostmodel"
++		"ttl" "forwarding" "ndp_unsolicit_count" "ndp_unsolicit_interval" "send_redirects" )
++	proto_ipv6_properties=( "arp_publish_count" "arp_publish_interval" "hostmodel"
++		"hoplimit" "forwarding" "ndp_unsolicit_count" "ndp_unsolicit_interval" "send_redirects" )
+ 	proto_tcp_properties=( "cong_default" "cong_enabled" "ecn" "extra_priv_ports" "max_buf" "recv_buf"
+ 		"send_buf" "sack" "smallest_anon_port" "largest_anon_port" "smallest_nonpriv_port" )
+ 	proto_udp_properties=( "extra_priv_ports" "max_buf" "recv_buf" "send_buf" "smallest_anon_port"
+@@ -265,7 +267,7 @@
+ 			case ${opt_args[-T]#-T:} in
+ 			("static:"*)
+ 				local -a addrthingsv4
+-				addrthingsv4=( "local:address: " "remote:address: ")
++				addrthingsv4=( "local:address: " "remote:address: " )
+ 				_arguments -A "-*" \
+ 				'(-d --down)'{-d,--down}'[Address should be marked down]' \
+ 				'(-a --address)'{-a,--address}'[Address specification]:address:_values -s , "address" $addrthingsv4' \
+@@ -281,7 +283,7 @@
+ 
+ 			("addrconf:"*)
+ 				local -a addrthingsv6 statefulness
+-				addrthingsv6=( "local:interface id: " "remote:interface id: ")
++				addrthingsv6=( "local:interface id: " "remote:interface id: " )
+ 				statefulness=( "stateful:statefulness:(yes no)" "stateless:statelessness:(yes no)" )
+ 				_arguments -A "-*" \
+ 				'(-i --interface-id)'{-i,--interface-id}'[Interface ID]:address:_values -s , "interface id" $addrthingsv6' \
+@@ -288,6 +290,16 @@
+ 				'(-p --prop)'{-p,--prop}'[Statefulness configuration]:statefulness configuration:_values -s , "statefulness" $statefulness' \
+ 				':address object name:_ipadm_addrobjs_or_ifs'
+ 				;;
++
++			("vrrp:"*)
++				local -a addrthingsvrrp
++				addrthingsvrrp=( "local:address: " )
++				_arguments -A "-*" \
++				'(-a --address)'{-a,--address}'[Address specification]:address:_values -s , "address" $addrthingsvrrp' \
++				'-n[VRRP router name]:router name: ' \
++				':address object name:_ipadm_addrobjs_or_ifs'
++				;;
++
+ 			(*)
+ 				_wanted commands expl "address type" compadd static dhcp addrconf
+ 				;;
+--- zsh-5.0.5/Completion/Solaris/Command/_netstat	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_netstat	Fri Mar 28 10:12:57 2014
+@@ -1,4 +1,5 @@
+ #compdef netstat
++# Synced with the S11U2 build 34 man page
+ 
+ _netstat() {
+ 	local -a f_rules
+@@ -18,6 +19,7 @@
+ 		'-v[verbose]' \
+ 		'-f[specify address family]:address family:(inet inet6 unix)' \
+ 		'-P[specify protocol]:protocol:(ip ipv6 icmp icmpv6 igmp udp tcp rawip)' \
++		'-u[show user, pid, and program owning the network endpoint]' \
+ 		- set2 \
+ 		'-r[show routing table]' \
+ 		'-f[filter routing table]:rule:(($f_rules))' \
+--- zsh-5.0.5/Completion/Solaris/Command/_svcadm	Thu Jan  2 14:23:56 2014
++++ zsh-5.0.5/Completion/Solaris/Command/_svcadm	Tue Jan  7 16:11:20 2014
+@@ -23,8 +23,8 @@
+ 	(enable)
+ 		_arguments -A "-*" \
+ 			'-r[Recursively enable dependencies]' \
+-			'-s[Wait for service to come online]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for service to come online]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+@@ -31,8 +31,8 @@
+ 
+ 	(disable)
+ 		_arguments -A "-*" \
+-			'-s[Wait for service to become disabled]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for service to become disabled]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+@@ -40,8 +40,8 @@
+ 	(mark)
+ 		_arguments -A "-*" \
+ 			'-I[Change state immediately]' \
+-			"-s[Wait for service to reach the new state]" \
+-			'-T[Timeout for -s]:seconds:' \
++			"-s[Synchronous mode: wait for service to reach the new state]" \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			':state:(degraded maintenance)' \
+ 			':instance FMRI:_svcs_fmri -i'
+@@ -49,15 +49,15 @@
+ 
+ 	(restart|refresh|clear)
+ 		_arguments \
+-			"-s[Wait for service to $service]" \
+-			'-T[Timeout for -s]:seconds:' \
++			"-s[Synchronous mode: wait for service to $service]" \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+ 
+ 	(delegate)
+ 		_arguments -A "-*" \
+-			'-s[Wait for instances to come online]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for instances to come online]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			':restarter FMRI:_svcs_fmri -r' \
+ 			'*:FMRI:_svcs_fmri -i'
+ 		;;
+@@ -65,8 +65,8 @@
+ 	(milestone)
+ 		_arguments -A "-*" \
+ 			'-d[Make milestone the default]' \
+-			'-s[Wait for the transition to the new milestone]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for the transition to the new milestone]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'*:milestone FMRI:_svcs_fmri -m'
+ 		;;
+ 
+--- a/Completion/Solaris/Command/_svcs
++++ b/Completion/Solaris/Command/_svcs
+@@ -1,4 +1,5 @@
+ #compdef svcs
++# Synced with the S11U2 build 34 man page
+ 
+ local -a cols
+ 
+@@ -12,17 +13,18 @@ cols=(
+ )
+ 
+ _arguments -s \
+-  '(-l -x -d -D)-a[list all instances]' \
+-  '(-l -x -D -a -R)-d[list dependencies]' \
+-  '(-l -x -d -a -R)-D[list dependents]' \
+-  '(-l -x)-H[suppress header line]' \
++  '(-l -L -x -d -D)-a[list all instances]' \
++  '(-l -L -x -D -a -R)-d[list dependencies]' \
++  '(-l -L -x -d -a -R)-D[list dependents]' \
++  '(-l -L -x)-H[suppress header line]' \
+   '(-x -d -D -a -R -s)-l[print detailed status about services and instances]' \
+-  '(-l -x)-o[display specific columns]:column:_values -s , "column" ${^cols/\:/[}\]' \
+-  '(-l -x)-p[list processes]' \
+-  '(-l -x -d -D)-R[list services with the given restarter]:instance FMRI:_svcs_fmri -i' \
+-  '(-l -x)-s[sort by a column]:column:(($cols))' \
+-  '(-l -x)-S[reverse sort by a column]:column:(($cols))' \
++  '(-a -d -D -H -l -o -p -R -s -S)-L[print path to service logfile]' \
++  '(-l -L -x)-o[display specific columns]:column:_values -s , "column" ${^cols/\:/[}\]' \
++  '(-l -L -x)-p[list processes]' \
++  '(-l -L -x -d -D)-R[list services with the given restarter]:instance FMRI:_svcs_fmri -i' \
++  '(-l -L -x)-s[sort by a column]:column:(($cols))' \
++  '(-l -L -x)-S[reverse sort by a column]:column:(($cols))' \
+   '-v[verbose columns]' \
+   '(-l)-x[display explanation for service states]' \
+-  '(-l -x)-\?[print help]' \
++  '(-l -L -x)-\?[print help]' \
+   '*:FMRI or pattern:_svcs_fmri -i'
+--- zsh-5.3.1/Completion/Unix/Command/_zfs.~1~	2016-07-24 22:44:43.000000000 +0300
++++ zsh-5.3.1/Completion/Unix/Command/_zfs	2017-05-03 13:40:48.069952121 +0300
+@@ -1,5 +1,5 @@
+ #compdef zfs
+-# Synced with the S11U1 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _zfs() {
+ 	local context state line expl implementation
+@@ -125,7 +125,7 @@
+ 
+ 	share_rw_properties=(
+ 		"share.desc:description:"
+-		"share.noauto:value:(on off)"
++		"share.auto:value:(on off)"
+ 		"share.path:path:"
+ 		$share_nfs_rw_properties
+ 		$share_smb_rw_properties
+@@ -310,8 +310,8 @@
+ 			'-d[Depth]:value:' \
+ 			'-H[Scripting mode]' \
+ 			'-p[Display numbers exactly]' \
+-			'-s[Specify sources]:source:_values -s , "source" local default inherited temporary none' \
+-			'-o[Specify fields]:field:_values -s , "field" name property value source' \
++			'-s[Specify sources]:source:_values -s , "source" local default inherited received temporary none' \
++			'-o[Specify fields]:field:_values -s , "field" name property received value source' \
+ 			':property:_values -s , "property" $ro_properties $rw_propnames all' \
+ 			'*:filesystem/volume/snapshot:_zfs_dataset'
+ 		;;
+@@ -385,11 +385,13 @@
+ 
+ 	("send")
+ 		_arguments -A "-*" \
+-			'-b' \
++			'-b[Send only received property values]' \
+ 			'-i[Generate an incremental stream]:snapshot:_zfs_dataset -t snap' \
+ 			'-D[Perform dedup processing]' \
++			"-n[Don't send the stream]" \
+ 			'-p[Send properties]' \
+-			'-v[Verbose]' \
++			'(-v)-s[Specifies information to be sent to stderr]:token:(streamsize)' \
++			'(-s)-v[Verbose]' \
+ 			- set1 \
+ 			'-I[Generate an incremental stream with intermediary snapshots]:snapshot:_zfs_dataset -t snap' \
+ 			'-R[Generate a replication stream package]' \
+ 

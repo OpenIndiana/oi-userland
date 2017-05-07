@@ -1,0 +1,44 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='clamav'>
+  <service name='antivirus/clamav' type='service' version='0'>
+    <single_instance/>
+    <dependency name='fs' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='network' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/milestone/multi-user-server'/>
+    </dependency>
+    <instance name='default' enabled='false'>
+      <exec_method type='method'
+                   name='start'
+                   exec='/usr/sbin/clamd'
+                   timeout_seconds='240'>
+        <method_context>
+<!-- NOTE: Running "clamdscan" seems to require that "clamd" has access to all
+     files ("clamdscan" client does not pass contents, by default at least -->
+<!--
+          <method_credential user='clamav' group='other' />
+-->
+          <method_credential user='root' group='clamav' />
+        </method_context>
+      </exec_method>
+      <exec_method type='method'
+                   name='stop'
+                   exec=':kill'
+                   timeout_seconds='60'>
+        <method_context>
+<!--
+          <method_credential user='clamav' group='other' />
+-->
+          <method_credential user='root' group='clamav' />
+        </method_context>
+      </exec_method>
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>ClamAV - Unix anti-virus scanner</loctext>
+        </common_name>
+      </template>
+    </instance>
+  </service>
+</service_bundle>

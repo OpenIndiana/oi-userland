@@ -1,0 +1,32 @@
+# This patch is Solaris-specific and thus has not been contributed upstream.
+
+--- sendmail-8.14.9/cf/m4/proto.m4.~1~	2014-05-16 13:40:15.000000000 -0700
++++ sendmail-8.14.9/cf/m4/proto.m4	2014-12-04 12:35:10.676548742 -0800
+@@ -6,6 +6,9 @@
+ # Copyright (c) 1988, 1993
+ #	The Regents of the University of California.  All rights reserved.
+ #
++# Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
++# Use is subject to license terms.
++#
+ # By using this file, you agree to the terms and conditions set
+ # forth in the LICENSE file which can be found at the top level of
+ # the sendmail distribution.
+@@ -16,7 +19,7 @@
+ VERSIONID(`$Id: proto.m4,v 8.762 2013-11-22 20:51:13 ca Exp $')
+ 
+ # level CF_LEVEL config file format
+-V`'CF_LEVEL`'ifdef(`NO_VENDOR',`', `/ifdef(`VENDOR_NAME', `VENDOR_NAME', `Berkeley')')
++V`'CF_LEVEL`'ifdef(`NO_VENDOR',`', `/ifdef(`VENDOR_NAME', `VENDOR_NAME', `Sun')')
+ divert(-1)
+ 
+ dnl if MAILER(`local') not defined: do it ourself; be nice
+@@ -603,7 +606,7 @@
+ _OPTION(ControlSocketName, `confCONTROL_SOCKET_NAME', `/var/spool/mqueue/.control')
+ 
+ # Maximum MIME header length to protect MUAs
+-_OPTION(MaxMimeHeaderLength, `confMAX_MIME_HEADER_LENGTH', `0/0')
++_OPTION(MaxMimeHeaderLength, `confMAX_MIME_HEADER_LENGTH', `2048/1024')
+ 
+ # Maximum length of the sum of all headers
+ _OPTION(MaxHeadersLength, `confMAX_HEADERS_LENGTH', `32768')

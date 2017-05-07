@@ -1,0 +1,33 @@
+# This patch is to build libmilter.  The sendmail distribution does not do
+# this because some OSs need libpthread which is often broken.  This is not
+# a problem on Solaris, but this patch is therefore not applicable upstream.
+# Also, a check: target is added to allow 'gmake test' to work.
+
+--- sendmail-8.14.9/Makefile~	2014-03-06 09:31:28.000000000 -0800
++++ sendmail-8.14.9/Makefile	2014-12-04 14:08:42.959889238 -0800
+@@ -1,9 +1,9 @@
+ #       $Id: Makefile.dist,v 8.15 2001-08-23 20:44:39 ca Exp $
+ 
+ SHELL= /bin/sh
+-SUBDIRS= libsm libsmutil libsmdb sendmail editmap mail.local \
++SUBDIRS= libsm libsmutil libsmdb libmilter sendmail editmap mail.local \
+ 	 mailstats makemap praliases rmail smrsh vacation
+-# libmilter: requires pthread
++CHECKSUBDIRS= libsm libmilter sendmail test
+ BUILD=   ./Build
+ OPTIONS= $(CONFIG) $(FLAGS)
+ 
+@@ -40,6 +40,13 @@
+ 	do \
+ 		(cd $$x; echo Making $@ in:; pwd; \
+ 		$(SHELL) $(BUILD) $(OPTIONS) -c); \
++	done
++
++check: FRC
++	@for x in $(CHECKSUBDIRS); \
++	do \
++		(cd $$x; echo Making $@ in:; pwd; \
++		$(SHELL) $(BUILD) $(OPTIONS) $@); \
+ 	done
+ 
+ $(SUBDIRS): FRC

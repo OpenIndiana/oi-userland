@@ -1,0 +1,28 @@
+Prior to 2.7.4, the bsddb module was a no-op, as it did not get built.
+Starting with 2.7.4, the behavior is different, and it causes tests to
+dump core.  So skip it.  The module is removed in Python 3, so this patch
+is not being submitted upstream.
+
+--- Python-2.7.13/Makefile.pre.in.~3~	2016-12-19 19:49:29.882892296 +0300
++++ Python-2.7.13/Makefile.pre.in	2016-12-19 19:49:29.987869375 +0300
+@@ -1073,7 +1073,7 @@
+ 		ensurepip ensurepip/_bundled \
+ 		json json/tests \
+ 		sqlite3 sqlite3/test \
+-		logging bsddb bsddb/test csv importlib wsgiref \
++		logging csv importlib wsgiref \
+ 		lib2to3 lib2to3/fixes lib2to3/pgen2 lib2to3/tests \
+ 		lib2to3/tests/data lib2to3/tests/data/fixers lib2to3/tests/data/fixers/myfixes \
+ 		ctypes ctypes/test ctypes/macholib \
+--- Python-2.7.6/setup.py.~6~	2014-05-14 17:15:45.315760008 -0700
++++ Python-2.7.6/setup.py	2014-05-14 17:16:27.440642039 -0700
+@@ -1065,7 +1065,8 @@
+                                     db_dirs_to_check + lib_dirs, dblib )
+                     if dblib_file:
+                         dblib_dir = [ os.path.abspath(os.path.dirname(dblib_file)) ]
+-                        raise db_found
++                        # Doesn't work; skip.
++                        # raise db_found
+                     else:
+                         if db_setup_debug: print "db lib: ", dblib, "not found"
+ 

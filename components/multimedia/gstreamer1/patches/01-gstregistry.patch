@@ -1,0 +1,14 @@
+--- gstreamer-1.10.3/gst/gstregistry.c.orig	2017-02-08 03:50:43.207821258 +0100
++++ gstreamer-1.10.3/gst/gstregistry.c	2017-02-08 03:54:44.855563027 +0100
+@@ -1731,7 +1732,11 @@
+     registry_file = g_strdup (g_getenv ("GST_REGISTRY"));
+   if (registry_file == NULL) {
+     registry_file = g_build_filename (g_get_user_cache_dir (),
++#if defined (__amd64)
++        "gstreamer-" GST_API_VERSION, "registry." "amd64" ".bin", NULL);
++#else
+         "gstreamer-" GST_API_VERSION, "registry." TARGET_CPU ".bin", NULL);
++#endif
+   }
+ 
+   if (!_gst_disable_registry_cache) {

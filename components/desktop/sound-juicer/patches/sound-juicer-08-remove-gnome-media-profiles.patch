@@ -1,0 +1,1227 @@
+From 862e7756ca714ad873afcab9b603e5ca8e59b862 Mon Sep 17 00:00:00 2001
+From: Christophe Fergeau <cfergeau@redhat.com>
+Date: Sat, 6 Aug 2011 22:13:12 +0200
+Subject: [PATCH] Replace GnomeMediaProfile with GstEncodingProfile
+
+---
+ configure.in                   |   7 +-
+ data/Makefile.am               |   3 +
+ data/rhythmbox.gep             |  46 ++++++
+ data/sound-juicer.schemas.in   |  21 ++-
+ data/sound-juicer.ui           |   1 +
+ libjuicer/Makefile.am          |   5 +-
+ libjuicer/rb-gst-media-types.c | 336 +++++++++++++++++++++++++++++++++++++++++
+ libjuicer/rb-gst-media-types.h |  76 ++++++++++
+ libjuicer/sj-extractor.c       |  88 ++++-------
+ libjuicer/sj-extractor.h       |   4 +-
+ src/Makefile.am                |   3 -
+ src/sj-extracting.c            |  10 +-
+ src/sj-main.c                  |  21 +--
+ src/sj-prefs.c                 | 117 ++++++++++----
+ src/sound-juicer.h             |   1 +
+ tests/Makefile.am              |   1 -
+ 16 files changed, 629 insertions(+), 111 deletions(-)
+ create mode 100644 data/rhythmbox.gep
+ create mode 100644 libjuicer/rb-gst-media-types.c
+ create mode 100644 libjuicer/rb-gst-media-types.h
+
+diff --git a/configure.in b/configure.in
+index 37a85df..f84d346 100644
+--- a/configure.in
++++ b/configure.in
+@@ -49,13 +49,11 @@
+        GTK_REQUIRED=2.20.0
+        LIBBRASERO_MEDIA_PC="libbrasero-media >= 2.26"
+        LIBCANBERRA_GTK_PC=libcanberra-gtk
+-       GNOME_MEDIA_PROFILES_PC="gnome-media-profiles >= 2.11.91"
+        ;;
+   3.0) GTK_API_VERSION=3.0
+        GTK_REQUIRED=2.90.0
+        LIBBRASERO_MEDIA_PC=libbrasero-media3
+        LIBCANBERRA_GTK_PC=libcanberra-gtk3
+-       GNOME_MEDIA_PROFILES_PC=gnome-media-profiles-3.0
+        ;;
+ esac
+ 
+@@ -85,7 +83,7 @@
+ AC_SUBST(UI_CFLAGS)
+ AC_SUBST(UI_LIBS)
+ 
+-PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= 0.10.15 gstreamer-plugins-base-0.10)
++PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= 0.10.32 gstreamer-plugins-base-0.10 gstreamer-pbutils-0.10)
+ AC_SUBST(GSTREAMER_CFLAGS)
+ AC_SUBST(GSTREAMER_LIBS)
+ 
+@@ -95,11 +93,6 @@
+ AM_GST_ELEMENT_CHECK(wavenc,,AC_MSG_WARN([The 'wavenc' element was not found. This will cause encoding to Wave to fail.]))
+ AM_GST_ELEMENT_CHECK(giosink,,AC_MSG_WARN([The 'giosink' element was not found. This will cause Sound Juicer to fail at runtime.]))
+ 
+-# Find GNOME Media Profiles
+-PKG_CHECK_MODULES(MEDIA_PROFILES, $GNOME_MEDIA_PROFILES_PC)
+-AC_SUBST(MEDIA_PROFILES_CFLAGS)
+-AC_SUBST(MEDIA_PROFILES_LIBS)
+-
+ # Find optional MusicBrainz3 and required Musicbrainz2
+ PKG_CHECK_MODULES(MUSICBRAINZ3, libmusicbrainz3 >= 3.0.2, [have_mb3=yes], [have_mb3=no])
+ AC_SUBST(MUSICBRAINZ3_CFLAGS)
+--- a/data/Makefile.am
++++ b/data/Makefile.am
+@@ -11,6 +11,9 @@ schema_in_files = sound-juicer.schemas.in
+ schema_DATA = $(schema_in_files:.schemas.in=.schemas)
+ @INTLTOOL_SCHEMAS_RULE@
+ 
++profilesdir = $(datadir)/sound-juicer
++profiles_DATA = rhythmbox.gep
++
+ man1_MANS = sound-juicer.1
+ 
+ gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
+diff --git a/data/rhythmbox.gep b/data/rhythmbox.gep
+new file mode 100644
+index 0000000..6383d96
+--- /dev/null
++++ b/data/rhythmbox.gep
+@@ -0,0 +1,46 @@
++[GStreamer Encoding Target]
++name = rhythmbox
++category = muh
++description = Common encoding profiles for Rhythmbox
++
++[profile-mp3]
++name = mp3
++description = MPEG Layer 3 Audio
++format = application/x-id3
++type = container
++
++[streamprofile-mp3-1]
++parent = mp3
++type = audio
++format = audio/mpeg, mpegversion=1, layer=3
++presence = 1
++
++[profile-oggvorbis]
++name = oggvorbis
++description = Ogg Vorbis
++format = application/ogg
++type = container
++
++[streamprofile-oggvorbis-1]
++parent = oggvorbis
++type = audio
++format = audio/x-vorbis
++presence = 1
++
++[profile-flac]
++name = flac
++description = FLAC
++format = audio/x-flac
++type = audio
++
++[profile-m4a]
++name = m4a
++description = MPEG 4 Audio
++format = video/quicktime, variant=iso
++type = container
++
++[streamprofile-m4a-1]
++parent = m4a
++type = audio
++format = audio/mpeg, mpegversion=4, stream-format=raw
++presence = 1
+diff --git a/data/sound-juicer.schemas.in b/data/sound-juicer.schemas.in
+index 145bbb2..ed502e6 100644
+--- a/data/sound-juicer.schemas.in
++++ b/data/sound-juicer.schemas.in
+@@ -165,14 +165,31 @@
+       <owner>sound-juicer</owner>
+       <default>cdlossy</default>
+       <locale name="C">
+-        <short>Audio Profile with which to encode</short>
++        <short>(obsolete) Audio Profile with which to encode</short>
+         <long>
+-          The GNOME Audio Profile with which to encode.
++          This key used to store the GNOME Audio Profile with which to encode.
++          This has been superseded by GStreamer encoding profiles, which are
++          configured using the audio_profile_media_type key.
+         </long>
+       </locale>
+     </schema>
+ 
+     <schema>
++      <key>/schemas/apps/sound-juicer/audio_profile_media_type</key>
++      <applyto>/apps/sound-juicer/audio_profile_media_type</applyto>
++      <type>string</type>
++      <owner>sound-juicer</owner>
++      <default>audio/x-vorbis</default>
++      <locale name="C">
++        <short>Media type to encode to</short>
++        <long>
++          The GStreamer media type to encode to.
++        </long>
++      </locale>
++    </schema>
++
++
++    <schema>
+       <key>/schemas/apps/sound-juicer/volume</key>
+       <applyto>/apps/sound-juicer/volume</applyto>
+       <type>float</type>
+diff --git a/data/sound-juicer.ui b/data/sound-juicer.ui
+index 2625f97..d2ddf28 100644
+--- a/data/sound-juicer.ui
++++ b/data/sound-juicer.ui
+@@ -1125,6 +1125,7 @@ audio-volume-medium</property>
+                             </child>
+                             <child>
+                               <object class="GtkButton" id="prefs_edit_profile">
++                                <property name="sensitive">False</property>
+                                 <property name="can_focus">True</property>
+                                 <property name="receives_default">False</property>
+                                 <signal name="clicked" handler="prefs_edit_profile_clicked"/>
+diff --git a/libjuicer/Makefile.am b/libjuicer/Makefile.am
+index 9844ad6..d87e755 100644
+--- a/libjuicer/Makefile.am
++++ b/libjuicer/Makefile.am
+@@ -2,6 +2,8 @@ noinst_LTLIBRARIES = libjuicer.la
+ 
+ libjuicer_la_SOURCES = \
+ 	$(MARSHALFILES) \
++	rb-gst-media-types.h \
++	rb-gst-media-types.c \
+ 	sj-structures.h \
+ 	sj-structures.c \
+ 	sj-error.h sj-error.c \
+@@ -16,6 +18,7 @@ libjuicer_la_SOURCES = \
+ 	sj-util.h sj-util.c
+ 
+ libjuicer_la_CPPFLAGS = \
++	-DDATADIR=\""$(datadir)"\" \
+ 	$(DISABLE_DEPRECATED_CFLAGS) \
+ 	$(AM_CPPFLAGS)
+ 
+@@ -23,7 +26,6 @@ libjuicer_la_CFLAGS = \
+ 	$(WARN_CFLAGS)	\
+ 	$(MUSICBRAINZ3_CFLAGS) \
+ 	$(GSTREAMER_CFLAGS) \
+-	$(MEDIA_PROFILES_CFLAGS) \
+ 	$(BURN_CFLAGS) \
+ 	$(UI_CFLAGS) \
+ 	$(CDIO_CFLAGS) \
+@@ -31,7 +33,6 @@ libjuicer_la_CFLAGS = \
+ 
+ libjuicer_la_LIBADD = \
+ 	$(MUSICBRAINZ3_LIBS) \
+-	$(MEDIA_PROFILES_LIBS) \
+ 	$(GSTREAMER_LIBS) \
+ 	$(BURN_LIBS) \
+ 	$(UI_LIBS) \
+diff --git a/libjuicer/rb-gst-media-types.c b/libjuicer/rb-gst-media-types.c
+new file mode 100644
+index 0000000..e87b013
+--- /dev/null
++++ b/libjuicer/rb-gst-media-types.c
+@@ -0,0 +1,336 @@
++/*
++ *  Copyright (C) 2010  Jonathan Matthew  <jonathan@d14n.org>
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  The Rhythmbox authors hereby grant permission for non-GPL compatible
++ *  GStreamer plugins to be used and distributed together with GStreamer
++ *  and Rhythmbox. This permission is above and beyond the permissions granted
++ *  by the GPL license by which Rhythmbox is covered. If you modify this code
++ *  you may extend this exception to your version of the code, but you are not
++ *  obligated to do so. If you do not wish to do so, delete this exception
++ *  statement from your version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA.
++ *
++ */
++
++#include "config.h"
++
++#include <memory.h>
++
++#include <gst/pbutils/encoding-target.h>
++#include <gst/pbutils/missing-plugins.h>
++
++#include "rb-gst-media-types.h"
++
++#define SOURCE_ENCODING_TARGET_FILE "../data/rhythmbox.gep"
++#define INSTALLED_ENCODING_TARGET_FILE DATADIR"/sound-juicer/rhythmbox.gep"
++static GstEncodingTarget *default_target = NULL;
++
++char *
++rb_gst_caps_to_media_type (const GstCaps *caps)
++{
++	GstStructure *s;
++	const char *media_type;
++
++	/* the aim here is to reduce the caps to a single mimetype-like
++	 * string, describing the audio encoding (for audio files) or the
++	 * file type (for everything else).  raw media types are ignored.
++	 *
++	 * there are only a couple of special cases.
++	 */
++
++	if (gst_caps_get_size (caps) == 0)
++		return NULL;
++
++	s = gst_caps_get_structure (caps, 0);
++	media_type = gst_structure_get_name (s);
++	if (media_type == NULL) {
++		return NULL;
++	} else if (g_str_has_prefix (media_type, "audio/x-raw-") ||
++	    g_str_has_prefix (media_type, "video/x-raw-")) {
++		/* ignore raw types */
++		return NULL;
++	} else if (g_str_equal (media_type, "audio/mpeg")) {
++		/* need to distinguish between mpeg 1 layer 3 and
++		 * mpeg 2 or 4 here.
++		 */
++		int mpegversion = 0;
++		gst_structure_get_int (s, "mpegversion", &mpegversion);
++		switch (mpegversion) {
++		case 2:
++		case 4:
++			return g_strdup ("audio/x-aac");		/* hmm. */
++
++		case 1:
++		default:
++			return g_strdup ("audio/mpeg");
++		}
++	} else {
++		/* everything else is fine as-is */
++		return g_strdup (media_type);
++	}
++}
++
++GstCaps *
++rb_gst_media_type_to_caps (const char *media_type)
++{
++	/* special cases: */
++	if (strcmp (media_type, "audio/mpeg") == 0) {
++		return gst_caps_from_string ("audio/mpeg, mpegversion=(int)1");
++	} else if (strcmp (media_type, "audio/x-aac") == 0) {
++		return gst_caps_from_string ("audio/mpeg, mpegversion=(int){ 2, 4 }");
++	} else {
++		/* otherwise, the media type is enough */
++		return gst_caps_from_string (media_type);
++	}
++}
++
++const char *
++rb_gst_media_type_to_extension (const char *media_type)
++{
++	if (media_type == NULL) {
++		return NULL;
++	} else if (!strcmp (media_type, "audio/mpeg")) {
++		return "mp3";
++	} else if (!strcmp (media_type, "audio/x-vorbis") || !strcmp (media_type, "application/ogg")) {
++		return "ogg";
++	} else if (!strcmp (media_type, "audio/x-flac") || !strcmp (media_type, "audio/flac")) {
++		return "flac";
++	} else if (!strcmp (media_type, "audio/x-aac") || !strcmp (media_type, "audio/aac") || !strcmp (media_type, "audio/x-alac")) {
++		return "m4a";
++	} else if (!strcmp (media_type, "audio/x-wavpack")) {
++		return "wv";
++	} else {
++		return NULL;
++	}
++}
++
++const char *
++rb_gst_mime_type_to_media_type (const char *mime_type)
++{
++	if (!strcmp (mime_type, "application/x-id3") || !strcmp (mime_type, "audio/mpeg")) {
++		return "audio/mpeg";
++	} else if (!strcmp (mime_type, "application/ogg") || !strcmp (mime_type, "audio/x-vorbis")) {
++		return "audio/x-vorbis";
++	} else if (!strcmp (mime_type, "audio/flac")) {
++		return "audio/x-flac";
++	} else if (!strcmp (mime_type, "audio/aac") || !strcmp (mime_type, "audio/mp4") || !strcmp (mime_type, "audio/m4a")) {
++		return "audio/x-aac";
++	}
++	return mime_type;
++}
++
++const char *
++rb_gst_media_type_to_mime_type (const char *media_type)
++{
++	if (!strcmp (media_type, "audio/x-vorbis")) {
++		return "application/ogg";
++	} else if (!strcmp (media_type, "audio/x-flac")) {
++		return "audio/flac";
++	} else if (!strcmp (media_type, "audio/x-aac")) {
++		return "audio/mp4";	/* probably */
++	} else {
++		return media_type;
++	}
++}
++
++gboolean
++rb_gst_media_type_matches_profile (GstEncodingProfile *profile, const char *media_type)
++{
++	const GstCaps *pcaps;
++	const GList *cl;
++	GstCaps *caps;
++	gboolean matches = FALSE;
++
++	caps = rb_gst_media_type_to_caps (media_type);
++	if (caps == NULL) {
++		return FALSE;
++	}
++
++	pcaps = gst_encoding_profile_get_format (profile);
++	if (gst_caps_can_intersect (caps, pcaps)) {
++		matches = TRUE;
++	}
++
++	if (matches == FALSE && GST_IS_ENCODING_CONTAINER_PROFILE (profile)) {
++		for (cl = gst_encoding_container_profile_get_profiles (GST_ENCODING_CONTAINER_PROFILE (profile)); cl != NULL; cl = cl->next) {
++			GstEncodingProfile *cp = cl->data;
++			pcaps = gst_encoding_profile_get_format (cp);
++			if (gst_caps_can_intersect (caps, pcaps)) {
++				matches = TRUE;
++				break;
++			}
++		}
++	}
++	return matches;
++}
++
++char *
++rb_gst_encoding_profile_get_media_type (GstEncodingProfile *profile)
++{
++	if (GST_IS_ENCODING_CONTAINER_PROFILE (profile)) {
++		const GList *cl = gst_encoding_container_profile_get_profiles (GST_ENCODING_CONTAINER_PROFILE (profile));
++		for (; cl != NULL; cl = cl->next) {
++			GstEncodingProfile *p = cl->data;
++			if (GST_IS_ENCODING_AUDIO_PROFILE (p)) {
++				return rb_gst_caps_to_media_type (gst_encoding_profile_get_format (p));
++			}
++
++		}
++
++		/* now what? */
++		return NULL;
++	} else {
++		return rb_gst_caps_to_media_type (gst_encoding_profile_get_format (profile));
++	}
++}
++
++GstEncodingTarget *
++rb_gst_get_default_encoding_target ()
++{
++	if (default_target == NULL) {
++		char *target_file;
++		GError *error = NULL;
++
++		if (g_file_test (SOURCE_ENCODING_TARGET_FILE,
++			         G_FILE_TEST_EXISTS) != FALSE) {
++			target_file = SOURCE_ENCODING_TARGET_FILE;
++		} else {
++			target_file = INSTALLED_ENCODING_TARGET_FILE;
++		}
++
++		default_target = gst_encoding_target_load_from_file (target_file, &error);
++		if (default_target == NULL) {
++			g_warning ("Unable to load encoding profiles from %s: %s", target_file, error ? error->message : "no error");
++			g_clear_error (&error);
++			return NULL;
++		}
++	}
++
++	return default_target;
++}
++
++GstEncodingProfile *
++rb_gst_get_encoding_profile (const char *media_type)
++{
++	const GList *l;
++	GstEncodingTarget *target;
++	target = rb_gst_get_default_encoding_target ();
++
++	for (l = gst_encoding_target_get_profiles (target); l != NULL; l = l->next) {
++		GstEncodingProfile *profile = l->data;
++		if (rb_gst_media_type_matches_profile (profile, media_type)) {
++			gst_encoding_profile_ref (profile);
++			return profile;
++		}
++	}
++
++	return NULL;
++}
++
++gboolean
++rb_gst_media_type_is_lossless (const char *media_type)
++{
++	int i;
++	const char *lossless_types[] = {
++		"audio/x-flac",
++		"audio/x-alac",
++		"audio/x-shorten",
++		"audio/x-wavpack"	/* not completely sure */
++	};
++
++	for (i = 0; i < G_N_ELEMENTS (lossless_types); i++) {
++		if (strcmp (media_type, lossless_types[i]) == 0) {
++			return TRUE;
++		}
++	}
++	return FALSE;
++}
++
++gboolean
++rb_gst_check_missing_plugins (GstEncodingProfile *profile,
++			      char ***details,
++			      char ***descriptions)
++{
++	GstElement *encodebin;
++	GstBus *bus;
++	GstPad *pad;
++	gboolean ret;
++
++	ret = FALSE;
++
++	encodebin = gst_element_factory_make ("encodebin", NULL);
++	if (encodebin == NULL) {
++		g_warning ("Unable to create encodebin");
++		return TRUE;
++	}
++
++	bus = gst_bus_new ();
++	gst_element_set_bus (encodebin, bus);
++	gst_bus_set_flushing (bus, FALSE);		/* necessary? */
++
++	g_object_set (encodebin, "profile", profile, NULL);
++	pad = gst_element_get_static_pad (encodebin, "audio_0");
++	if (pad == NULL) {
++		GstMessage *message;
++		GList *messages = NULL;
++		GList *m;
++		int i;
++
++		message = gst_bus_pop (bus);
++		while (message != NULL) {
++			if (gst_is_missing_plugin_message (message)) {
++				messages = g_list_append (messages, message);
++			} else {
++				gst_message_unref (message);
++			}
++			message = gst_bus_pop (bus);
++		}
++
++		if (messages != NULL) {
++			if (details != NULL) {
++				*details = g_new0(char *, g_list_length (messages)+1);
++			}
++			if (descriptions != NULL) {
++				*descriptions = g_new0(char *, g_list_length (messages)+1);
++			}
++			i = 0;
++			for (m = messages; m != NULL; m = m->next) {
++				char *str;
++				if (details != NULL) {
++					str = gst_missing_plugin_message_get_installer_detail (m->data);
++					(*details)[i] = str;
++				}
++				if (descriptions != NULL) {
++					str = gst_missing_plugin_message_get_description (m->data);
++					(*descriptions)[i] = str;
++				}
++				i++;
++			}
++
++			ret = TRUE;
++			g_list_foreach (messages, (GFunc)gst_message_unref, NULL);
++			g_list_free (messages);
++		}
++
++	} else {
++		gst_element_release_request_pad (encodebin, pad);
++		gst_object_unref (pad);
++	}
++
++	gst_object_unref (encodebin);
++	gst_object_unref (bus);
++	return ret;
++}
+diff --git a/libjuicer/rb-gst-media-types.h b/libjuicer/rb-gst-media-types.h
+new file mode 100644
+index 0000000..9211361
+--- /dev/null
++++ b/libjuicer/rb-gst-media-types.h
+@@ -0,0 +1,76 @@
++/*
++ *  Copyright (C) 2010  Jonathan Matthew <jonathan@d14n.org>
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  The Rhythmbox authors hereby grant permission for non-GPL compatible
++ *  GStreamer plugins to be used and distributed together with GStreamer
++ *  and Rhythmbox. This permission is above and beyond the permissions granted
++ *  by the GPL license by which Rhythmbox is covered. If you modify this code
++ *  you may extend this exception to your version of the code, but you are not
++ *  obligated to do so. If you do not wish to do so, delete this exception
++ *  statement from your version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA.
++ *
++ */
++
++#ifndef __RB_GST_MEDIA_TYPES_H
++#define __RB_GST_MEDIA_TYPES_H
++
++#include <gst/gst.h>
++#include <gst/pbutils/encoding-target.h>
++#include <gst/pbutils/encoding-profile.h>
++
++G_BEGIN_DECLS
++
++/* some common media types */
++#define RB_GST_MEDIA_TYPE_MP3		"audio/mpeg"
++#define RB_GST_MEDIA_TYPE_OGG_VORBIS 	"audio/x-vorbis"
++#define RB_GST_MEDIA_TYPE_FLAC 		"audio/x-flac"
++#define RB_GST_MEDIA_TYPE_AAC 		"audio/x-aac"
++
++/* media type categories */
++typedef enum {
++	MEDIA_TYPE_NONE = 0,
++	MEDIA_TYPE_CONTAINER,
++	MEDIA_TYPE_AUDIO,
++	MEDIA_TYPE_VIDEO,
++	MEDIA_TYPE_OTHER
++} RBGstMediaType;
++
++char *		rb_gst_caps_to_media_type (const GstCaps *caps);
++GstCaps *	rb_gst_media_type_to_caps (const char *media_type);
++
++const char *	rb_gst_media_type_to_extension (const char *media_type);
++
++const char *	rb_gst_mime_type_to_media_type (const char *mime_type);
++
++const char *	rb_gst_media_type_to_mime_type (const char *media_type);
++
++GstEncodingTarget *rb_gst_get_default_encoding_target (void);
++
++GstEncodingProfile *rb_gst_get_encoding_profile (const char *media_type);
++
++gboolean	rb_gst_media_type_matches_profile (GstEncodingProfile *profile, const char *media_type);
++
++char *		rb_gst_encoding_profile_get_media_type (GstEncodingProfile *profile);
++
++gboolean	rb_gst_media_type_is_lossless (const char *media_type);
++gboolean	rb_gst_check_missing_plugins (GstEncodingProfile *profile,
++					      char ***details,
++					      char ***descriptions);
++
++G_END_DECLS
++
++#endif /* __RB_GST_MEDIA_TYPES_H */
+diff --git a/libjuicer/sj-extractor.c b/libjuicer/sj-extractor.c
+index 52f80d2..10523d4 100644
+--- a/libjuicer/sj-extractor.c
++++ b/libjuicer/sj-extractor.c
+--- sound-juicer-2.32.0/libjuicer/sj-extractor.c.~1~	2010-02-09 16:33:28.000000000 +0300
++++ sound-juicer-2.32.0/libjuicer/sj-extractor.c	2017-04-04 19:47:01.533926108 +0300
+@@ -30,7 +30,6 @@
+ #include <glib-object.h>
+ #include <gst/gst.h>
+ #include <gst/tag/tag.h>
+-#include <profiles/gnome-media-profiles.h>
+ #include "sj-extractor.h"
+ #include "sj-structures.h"
+ #include "sj-error.h"
+@@ -56,18 +55,18 @@
+ static guint signals[LAST_SIGNAL] = { 0 };
+ 
+ /* Default profile name */
+-#define DEFAULT_AUDIO_PROFILE_NAME "cdlossy"
++#define DEFAULT_MEDIA_TYPE "audio/x-vorbis"
+ 
+ /* Element names */
+ #define FILE_SINK "giosink"
+ 
+ struct SjExtractorPrivate {
+   /** The current audio profile */
+-  GMAudioProfile *profile;
++  GstEncodingProfile *profile;
+   /** If the pipeline needs to be re-created */
+   gboolean rebuild_pipeline;
+   /* The gstreamer pipeline elements */
+-  GstElement *pipeline, *cdsrc, *queue, *thread, *encoder, *filesink;
++  GstElement *pipeline, *cdsrc, *encodebin, *filesink;
+   GstFormat track_format;
+   char *device_path;
+   int paranoia_mode;
+@@ -89,12 +88,14 @@
+ sj_extractor_set_property (GObject *object, guint property_id,
+                                        const GValue *value, GParamSpec *pspec)
+ {
++  GstEncodingProfile *profile;
+   SjExtractorPrivate *priv = SJ_EXTRACTOR (object)->priv;
+   switch (property_id) {
+   case PROP_PROFILE:
+     if (priv->profile)
+-      g_object_unref (priv->profile);
+-    priv->profile = GM_AUDIO_PROFILE (g_value_dup_object (value));
++      gst_encoding_profile_unref (priv->profile);
++    profile = GST_ENCODING_PROFILE (g_value_get_pointer (value));
++    priv->profile = GST_ENCODING_PROFILE(gst_encoding_profile_ref (profile));
+     priv->rebuild_pipeline = TRUE;
+     g_object_notify (object, "profile");
+     break;
+@@ -126,7 +127,7 @@
+   SjExtractorPrivate *priv = SJ_EXTRACTOR (object)->priv;
+   switch (property_id) {
+   case PROP_PROFILE:
+-    g_value_set_object (value, priv->profile);
++    g_value_set_pointer (value, gst_encoding_profile_ref (priv->profile));
+     break;
+   case PROP_DEVICE:
+     g_value_set_string (value, priv->device_path);
+@@ -142,7 +143,7 @@
+   SjExtractorPrivate *priv = SJ_EXTRACTOR (object)->priv;
+ 
+   if (priv->profile) {
+-    g_object_unref (priv->profile);
++    gst_encoding_profile_unref (priv->profile);
+     priv->profile = NULL;
+   }
+ 
+@@ -188,11 +189,10 @@
+   /* Properties */
+   /* TODO: make these constructors */
+   g_object_class_install_property (object_class, PROP_PROFILE,
+-                                   g_param_spec_object ("profile",
+-                                                        _("Audio Profile"),
+-                                                        _("The GNOME Audio Profile used for encoding audio"),
+-                                                        GM_AUDIO_TYPE_PROFILE,
+-                                                        G_PARAM_READWRITE));
++                                   g_param_spec_pointer ("profile",
++                                                         _("Audio Profile"),
++                                                         _("The GStreamer Encoding Profile used for encoding audio"),
++                                                         G_PARAM_READWRITE));
+ 
+   g_object_class_install_property (object_class, PROP_PARANOIA,
+                                    g_param_spec_int ("paranoia",
+@@ -239,8 +239,7 @@
+ sj_extractor_init (SjExtractor *extractor)
+ {
+   extractor->priv = EXTRACTOR_PRIVATE (extractor);
+-  extractor->priv->profile =
+-    g_object_ref (gm_audio_profile_lookup (DEFAULT_AUDIO_PROFILE_NAME));
++  extractor->priv->profile = rb_gst_get_encoding_profile (DEFAULT_MEDIA_TYPE);
+   extractor->priv->rebuild_pipeline = TRUE;
+   extractor->priv->paranoia_mode = 8; /* TODO: replace with construct params */
+ }
+@@ -272,18 +271,20 @@
+ build_encoder (SjExtractor *extractor)
+ {
+   SjExtractorPrivate *priv;
+-  GstElement *element = NULL;
+-  char *pipeline;
++  GstElement *encodebin;
+ 
+   g_return_val_if_fail (SJ_IS_EXTRACTOR (extractor), NULL);
+   priv = (SjExtractorPrivate*)extractor->priv;
+   g_return_val_if_fail (priv->profile != NULL, NULL);
+- 
+-  pipeline = g_strdup_printf ("audioresample ! audioconvert ! %s",
+-                              gm_audio_profile_get_pipeline (priv->profile));
+-  element = gst_parse_bin_from_description (pipeline, TRUE, NULL); /* TODO: return error */
+-  g_free(pipeline);
+-  return element;
++
++  encodebin = gst_element_factory_make ("encodebin", NULL);
++  if (encodebin == NULL)
++    return NULL;
++  g_object_set (encodebin, "profile", priv->profile, NULL);
++  /* Nice big buffers... */
++  g_object_set (encodebin, "queue-time-max", 120 * GST_SECOND, NULL);
++
++  return encodebin;
+ }
+ 
+ static void
+@@ -357,16 +358,13 @@
+   priv->track_format = gst_format_get_by_nick ("track");
+   g_assert (priv->track_format != 0);
+ 
+-  priv->queue = gst_element_factory_make ("queue", "queue");
+-  /* Nice big buffers... */
+-  g_object_set (priv->queue, "max-size-time", 120 * GST_SECOND, NULL);
+-  
+   /* Encode */
+-  priv->encoder = build_encoder (extractor);
+-  if (priv->encoder == NULL) {
++  priv->encodebin = build_encoder (extractor);
++  if (priv->encodebin == NULL) {
+     g_set_error (&priv->construct_error,
+                  SJ_ERROR, SJ_ERROR_INTERNAL_ERROR,
+-                 _("Could not create GStreamer encoders for %s"), gm_audio_profile_get_name (priv->profile));
++                 _("Could not create GStreamer encoders for %s"),
++                 gst_encoding_profile_get_name (priv->profile));
+     return;
+   }
+   /* Connect to the eos so we know when its finished */
+@@ -385,10 +383,10 @@
+ #endif
+ 
+   /* Add the elements to the pipeline */
+-  gst_bin_add_many (GST_BIN (priv->pipeline), priv->cdsrc, priv->queue, priv->encoder, priv->filesink, NULL);
++  gst_bin_add_many (GST_BIN (priv->pipeline), priv->cdsrc, priv->encodebin, priv->filesink, NULL);
+ 
+   /* Link it all together */
+-  if (!gst_element_link_many (priv->cdsrc, priv->queue, priv->encoder, priv->filesink, NULL)) {
++  if (!gst_element_link_many (priv->cdsrc, priv->encodebin, priv->filesink, NULL)) {
+     g_set_error (&priv->construct_error,
+                  SJ_ERROR, SJ_ERROR_INTERNAL_ERROR,
+                  _("Could not link pipeline"));
+@@ -669,30 +667,8 @@
+ }
+ 
+ gboolean
+-sj_extractor_supports_profile (GMAudioProfile *profile)
++sj_extractor_supports_profile (GstEncodingProfile *profile)
+ {
+   /* TODO: take a GError to return a message if the profile isn't supported */
+-  GstElement *element;
+-  GError *error = NULL;
+-  char *pipeline;
+-
+-  pipeline = g_strdup_printf ("fakesrc ! %s", gm_audio_profile_get_pipeline (profile));
+-  element = gst_parse_launch (pipeline, &error);
+-  g_free(pipeline);
+-
+-  /* It is possible for both element and error to be non NULL, so check both */
+-  if (element) {
+-    gst_object_unref (GST_OBJECT (element));
+-    if (error) {
+-      g_warning ("Profile warning: %s", error->message);
+-      g_error_free (error);
+-    }
+-    return TRUE;
+-  } else {
+-    if (error) {
+-      g_warning ("Profile error: %s", error->message);
+-      g_error_free (error);
+-    }
+-    return FALSE;
+-  }
++  return !rb_gst_check_missing_plugins(profile, NULL, NULL);
+ }
+diff --git a/libjuicer/sj-extractor.h b/libjuicer/sj-extractor.h
+index bbe23fc..7e71803 100644
+--- a/libjuicer/sj-extractor.h
++++ b/libjuicer/sj-extractor.h
+@@ -26,7 +26,7 @@
+ #include <glib.h>
+ #include <glib-object.h>
+ #include <gio/gio.h>
+-#include <profiles/audio-profile.h>
++#include "rb-gst-media-types.h"
+ #include "sj-structures.h"
+ 
+ G_BEGIN_DECLS
+@@ -71,7 +71,7 @@ void sj_extractor_extract_track (SjExtractor *extractor, const TrackDetails *tra
+ 
+ void sj_extractor_cancel_extract (SjExtractor *extractor);
+ 
+-gboolean sj_extractor_supports_profile (GMAudioProfile *profile);
++gboolean sj_extractor_supports_profile (GstEncodingProfile *profile);
+ 
+ gboolean sj_extractor_supports_encoding (GError **error);
+ 
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 716ac6c..c1996eb 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -36,7 +36,6 @@ sound_juicer_CPPFLAGS = \
+ 
+ sound_juicer_CFLAGS = \
+ 	$(GSTREAMER_CFLAGS) \
+-	$(MEDIA_PROFILES_CFLAGS) \
+ 	$(BURN_CFLAGS) \
+ 	$(UI_CFLAGS) \
+ 	$(WARN_CFLAGS) \
+@@ -44,7 +43,6 @@ sound_juicer_CFLAGS = \
+ 
+ sound_juicer_CFLAGS = \
+ 	$(GSTREAMER_CFLAGS) \
+-	$(MEDIA_PROFILES_CFLAGS) \
+ 	$(BURN_CFLAGS) \
+ 	$(UI_CFLAGS) \
+ 	$(WARN_CFLAGS) \
+@@ -52,7 +50,6 @@ sound_juicer_CFLAGS = \
+ 
+ sound_juicer_LDADD = \
+ 	$(top_builddir)/libjuicer/libjuicer.la \
+-	$(MEDIA_PROFILES_LIBS) \
+ 	$(GSTREAMER_LIBS) \
+ 	$(BURN_LIBS) \
+ 	$(UI_LIBS)
+diff --git a/src/sj-extracting.c b/src/sj-extracting.c
+index dab3dbd..0622a0e 100644
+--- a/src/sj-extracting.c
++++ b/src/sj-extracting.c
+@@ -134,12 +134,12 @@ static guint cookie;
+ static GFile *
+ build_filename (const TrackDetails *track, gboolean temp_filename, GError **error)
+ {
+-  GFile *uri, *new; 
++  GFile *uri, *new;
+   gchar *realfile, *realpath, *filename, *scheme;
+   const gchar *extension;
+   size_t len_extension;
+   int max_realfile = INT_MAX;
+-  GMAudioProfile *profile;
++  GstEncodingProfile *profile;
+ 
+   g_object_get (extractor, "profile", &profile, NULL);
+ 
+@@ -152,7 +152,11 @@ build_filename (const TrackDetails *track, gboolean temp_filename, GError **erro
+     g_set_error (error, 0, 0, _("Failed to get output format"));
+     return NULL;
+   } else {
+-      extension = gm_audio_profile_get_extension (profile);
++      gchar *media_type;
++      media_type = rb_gst_encoding_profile_get_media_type (profile);
++      extension = rb_gst_media_type_to_extension (media_type);
++      g_free (media_type);
++      gst_encoding_profile_unref (profile);
+   }
+ 
+   len_extension = 1 + strlen (extension);
+diff --git a/src/sj-main.c b/src/sj-main.c
+index 0133c77..ded7300 100644
+--- a/src/sj-main.c
++++ b/src/sj-main.c
+@@ -37,11 +37,12 @@
+ #include <gconf/gconf-client.h>
+ #include <brasero-medium-selection.h>
+ #include <brasero-volume.h>
+-#include <profiles/gnome-media-profiles.h>
+ #include <gst/gst.h>
++#include <gst/pbutils/encoding-profile.h>
+ 
+ #include "bacon-message-connection.h"
+ #include "gconf-bridge.h"
++#include "rb-gst-media-types.h"
+ #include "sj-about.h"
+ #include "sj-metadata-getter.h"
+ #include "sj-extractor.h"
+@@ -1132,11 +1133,13 @@ static void device_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *e
+ 
+ static void profile_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry, gpointer user_data)
+ {
+-  GMAudioProfile *profile;
++  GstEncodingProfile *profile;
++  const char *media_type;
+ 
+-  g_assert (strcmp (entry->key, GCONF_AUDIO_PROFILE) == 0);
++  g_assert (strcmp (entry->key, GCONF_AUDIO_PROFILE_MEDIA_TYPE) == 0);
+   if (!entry->value) return;
+-  profile = gm_audio_profile_lookup (gconf_value_get_string (entry->value));
++  media_type = gconf_value_get_string (entry->value);
++  profile = rb_gst_get_encoding_profile (media_type);
+   if (profile != NULL)
+     g_object_set (extractor, "profile", profile, NULL);
+ 
+@@ -1160,6 +1163,9 @@ static void profile_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *
+       exit(0);
+     }
+   }
++
++  if (profile != NULL)
++    gst_encoding_profile_unref (profile);
+ }
+ 
+ /**
+@@ -1684,7 +1690,7 @@ int main (int argc, char **argv)
+   gconf_client_notify_add (gconf_client, GCONF_OPEN, open_changed_cb, NULL, NULL, NULL);
+   gconf_client_notify_add (gconf_client, GCONF_BASEURI, baseuri_changed_cb, NULL, NULL, NULL);
+   gconf_client_notify_add (gconf_client, GCONF_STRIP, strip_changed_cb, NULL, NULL, NULL);
+-  gconf_client_notify_add (gconf_client, GCONF_AUDIO_PROFILE, profile_changed_cb, NULL, NULL, NULL);
++  gconf_client_notify_add (gconf_client, GCONF_AUDIO_PROFILE_MEDIA_TYPE, profile_changed_cb, NULL, NULL, NULL);
+   gconf_client_notify_add (gconf_client, GCONF_PARANOIA, paranoia_changed_cb, NULL, NULL, NULL);
+   gconf_client_notify_add (gconf_client, GCONF_PATH_PATTERN, path_pattern_changed_cb, NULL, NULL, NULL);
+   gconf_client_notify_add (gconf_client, GCONF_FILE_PATTERN, file_pattern_changed_cb, NULL, NULL, NULL);
+@@ -1694,9 +1700,6 @@ int main (int argc, char **argv)
+   gconf_client_notify_add (gconf_client, GCONF_HTTP_PROXY, http_proxy_changed_cb, NULL, NULL, NULL);
+   gconf_client_notify_add (gconf_client, GCONF_HTTP_PROXY_PORT, http_proxy_port_changed_cb, NULL, NULL, NULL);
+ 
+-  /* init gnome-media-profiles */
+-  gnome_media_profiles_init (gconf_client);
+-
+   builder = gtk_builder_new ();
+   if (g_file_test (SOURCE_BUILDER, G_FILE_TEST_EXISTS) != FALSE) {
+     gtk_builder_add_from_file (builder, SOURCE_BUILDER, &error);
+@@ -1834,7 +1837,7 @@ int main (int argc, char **argv)
+   baseuri_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_BASEURI, NULL, TRUE, NULL), NULL);
+   path_pattern_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_PATH_PATTERN, NULL, TRUE, NULL), NULL);
+   file_pattern_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_FILE_PATTERN, NULL, TRUE, NULL), NULL);
+-  profile_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_AUDIO_PROFILE, NULL, TRUE, NULL), NULL);
++  profile_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_AUDIO_PROFILE_MEDIA_TYPE, NULL, TRUE, NULL), NULL);
+   paranoia_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_PARANOIA, NULL, TRUE, NULL), NULL);
+   strip_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_STRIP, NULL, TRUE, NULL), NULL);
+   eject_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_EJECT, NULL, TRUE, NULL), NULL);
+diff --git a/src/sj-prefs.c b/src/sj-prefs.c
+index 10dd220..f698d16 100644
+--- a/src/sj-prefs.c
++++ b/src/sj-prefs.c
+@@ -27,11 +27,12 @@
+ #include "sound-juicer.h"
+ 
+ #include <string.h>
++#include <gst/pbutils/encoding-profile.h>
+ #include <gtk/gtk.h>
+ #include <gconf/gconf-client.h>
+-#include <profiles/gnome-media-profiles.h>
+ #include <brasero-drive-selection.h>
+ 
++#include "rb-gst-media-types.h"
+ #include "sj-util.h"
+ #include "gconf-bridge.h"
+ #include "sj-extracting.h"
+@@ -44,8 +45,6 @@ static GtkWidget *audio_profile;
+ static GtkWidget *cd_option, *path_option, *file_option, *basepath_fcb, *check_strip, *check_eject, *check_open;
+ static GtkWidget *path_example_label;
+ 
+-#define DEFAULT_AUDIO_PROFILE_NAME "cdlossy"
+-
+ typedef struct {
+   char* name;
+   char* pattern;
+@@ -79,12 +78,18 @@ static const FilePattern file_patterns[] = {
+ 
+ void prefs_profile_changed (GtkWidget *widget, gpointer user_data)
+ {
+-  GMAudioProfile *profile;
++  GtkTreeIter iter;
++  GtkTreeModel *model;
++
++  model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
+   /* Handle the change being to unselect a profile */
+-  if (gtk_combo_box_get_active (GTK_COMBO_BOX (widget)) != -1) {
+-    profile = gm_audio_profile_choose_get_active (widget);
+-    gconf_client_set_string (gconf_client, GCONF_AUDIO_PROFILE,  
+-                             gm_audio_profile_get_id (profile), NULL);
++  if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (widget), &iter)) {
++    char *media_type;
++    gtk_tree_model_get (GTK_TREE_MODEL (model), &iter,
++                        0, &media_type, -1);
++    gconf_client_set_string (gconf_client, GCONF_AUDIO_PROFILE_MEDIA_TYPE,
++                             media_type, NULL);
++    g_free (media_type);
+   }
+ }
+ 
+@@ -165,25 +170,44 @@ G_MODULE_EXPORT void prefs_file_option_changed (GtkComboBox *combo, gpointer use
+  */
+ G_MODULE_EXPORT void prefs_edit_profile_clicked (GtkButton *button, gpointer user_data)
+ {
+-  GtkWidget *dialog;
+-  dialog = gm_audio_profiles_edit_new (gconf_client, GTK_WINDOW (main_window));
+-  gtk_widget_show_all (dialog);
+-  gtk_dialog_run (GTK_DIALOG (dialog));
++    /* Not implemented */
++}
++
++static void
++sj_audio_profile_chooser_set_active (GtkWidget *chooser, const char *profile)
++{
++  GtkTreeIter iter;
++  GtkTreeModel *model;
++  gboolean done;
++
++  done = FALSE;
++  model = gtk_combo_box_get_model(GTK_COMBO_BOX(chooser));
++  if (gtk_tree_model_get_iter_first (model, &iter)) {
++    do {
++      char *media_type;
++
++      gtk_tree_model_get (model, &iter, 0, &media_type, -1);
++      if (g_strcmp0 (media_type, profile) == 0) {
++        gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser), &iter);
++        done = TRUE;
++      }
++      g_free (media_type);
++    } while (done == FALSE && gtk_tree_model_iter_next (model, &iter));
++  }
++
++  if (done == FALSE) {
++    gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser), NULL);
++  }
+ }
+ 
+ static void audio_profile_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry, gpointer user_data)
+ {
+   const char *value;
+-  g_return_if_fail (strcmp (entry->key, GCONF_AUDIO_PROFILE) == 0);
++  g_return_if_fail (strcmp (entry->key, GCONF_AUDIO_PROFILE_MEDIA_TYPE) == 0);
+   if (!entry->value) return;
+   value = gconf_value_get_string (entry->value);
+-  
+-  /* If the value is empty, unset the combo. Otherwise try and set it. */
+-  if (strcmp (value, "") == 0) {
+-    gtk_combo_box_set_active (GTK_COMBO_BOX (audio_profile), -1);
+-  } else {
+-    gm_audio_profile_choose_set_active (audio_profile, value);
+-  }
++
++  sj_audio_profile_chooser_set_active (audio_profile, value);
+ }
+ 
+ static void baseuri_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry, gpointer user_data)
+@@ -224,7 +248,8 @@ static void pattern_label_update (void)
+ {
+   char *file_pattern, *path_pattern;
+   char *file_value, *path_value, *example, *format;
+-  GMAudioProfile *profile;
++  char *media_type;
++  GstEncodingProfile *profile;
+ 
+   static const AlbumDetails sample_album = {
+     "Help!", /* title */
+@@ -254,6 +279,8 @@ static void pattern_label_update (void)
+   if (!profile) {
+     return;
+   }
++  media_type = rb_gst_encoding_profile_get_media_type (profile);
++  gst_encoding_profile_unref (profile);
+ 
+   /* TODO: sucky. Replace with get-gconf-key-with-default mojo */
+   file_pattern = gconf_client_get_string (gconf_client, GCONF_FILE_PATTERN, NULL);
+@@ -279,9 +306,10 @@ static void pattern_label_update (void)
+                         ":</b> ",
+                         example,
+                         ".",
+-                        gm_audio_profile_get_extension (profile),
++                        rb_gst_media_type_to_extension (media_type),
+                         "</i></small>", NULL);
+   g_free (example);
++  g_free (media_type);
+   
+   gtk_label_set_markup (GTK_LABEL (path_example_label), format);
+   g_free (format);
+@@ -403,6 +431,41 @@ on_response (GtkDialog *dialog, gint response, gpointer user_data)
+   }
+ }
+ 
++static GtkWidget *sj_audio_profile_chooser_new(void)
++{
++  GstEncodingTarget *target;
++  const GList *p;
++  GtkWidget *combo_box;
++  GtkCellRenderer *renderer;
++  GtkTreeModel *model;
++
++  model = GTK_TREE_MODEL (gtk_tree_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER));
++
++  target = rb_gst_get_default_encoding_target ();
++  for (p = gst_encoding_target_get_profiles (target); p != NULL; p = p->next) {
++    GstEncodingProfile *profile = GST_ENCODING_PROFILE (p->data);
++    char *media_type;
++
++    media_type = rb_gst_encoding_profile_get_media_type (profile);
++    if (media_type == NULL) {
++      continue;
++    }
++    gtk_tree_store_insert_with_values (GTK_TREE_STORE (model),
++                                       NULL, NULL, -1,
++                                       0, media_type,
++                                       1, gst_encoding_profile_get_description (profile),
++                                       2, profile, -1);
++    g_free (media_type);
++  }
++
++  combo_box = gtk_combo_box_new_with_model (model);
++  renderer = gtk_cell_renderer_text_new ();
++  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
++  gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer, "text", 1, NULL);
++
++  return GTK_WIDGET (combo_box);
++}
++
+ /**
+  * Clicked on Preferences in the UI
+  */
+@@ -449,11 +512,11 @@ G_MODULE_EXPORT void on_edit_preferences_cb (GtkMenuItem *item, gpointer user_da
+      * 	      using GtkBuilder. */
+     audio_profile      = GET_WIDGET ("audio_profile");
+ #else
+-    audio_profile = gm_audio_profile_choose_new();
++    audio_profile = sj_audio_profile_chooser_new();
+     g_signal_connect (G_OBJECT (audio_profile), "changed",
+                       G_CALLBACK (prefs_profile_changed), NULL);
+-	gtk_box_pack_start (GTK_BOX (box), audio_profile, TRUE, TRUE, 0);
+-	gtk_widget_show (audio_profile);
++    gtk_box_pack_start (GTK_BOX (box), audio_profile, TRUE, TRUE, 0);
++    gtk_widget_show (audio_profile);
+ #endif
+     check_strip        = GET_WIDGET ("check_strip");
+     check_eject        = GET_WIDGET ("check_eject");
+@@ -474,7 +537,7 @@ G_MODULE_EXPORT void on_edit_preferences_cb (GtkMenuItem *item, gpointer user_da
+     gconf_bridge_bind_property (bridge, GCONF_STRIP, G_OBJECT (check_strip), "active");
+     gconf_client_notify_add (gconf_client, GCONF_DEVICE, device_changed_cb, NULL, NULL, NULL);
+     gconf_client_notify_add (gconf_client, GCONF_BASEURI, baseuri_changed_cb, NULL, NULL, NULL);
+-    gconf_client_notify_add (gconf_client, GCONF_AUDIO_PROFILE, audio_profile_changed_cb, NULL, NULL, NULL);
++    gconf_client_notify_add (gconf_client, GCONF_AUDIO_PROFILE_MEDIA_TYPE, audio_profile_changed_cb, NULL, NULL, NULL);
+     gconf_client_notify_add (gconf_client, GCONF_PATH_PATTERN, path_pattern_changed_cb, NULL, NULL, NULL);
+     gconf_client_notify_add (gconf_client, GCONF_FILE_PATTERN, file_pattern_changed_cb, NULL, NULL, NULL);
+     gconf_client_notify_add (gconf_client, GCONF_STRIP, strip_changed_cb, NULL, NULL, NULL);
+@@ -482,7 +545,7 @@ G_MODULE_EXPORT void on_edit_preferences_cb (GtkMenuItem *item, gpointer user_da
+     g_signal_connect (extractor, "notify::profile", pattern_label_update, NULL);
+ 
+     baseuri_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_BASEURI, NULL, TRUE, NULL), NULL);
+-    audio_profile_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_AUDIO_PROFILE, NULL, TRUE, NULL), NULL);
++    audio_profile_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_AUDIO_PROFILE_MEDIA_TYPE, NULL, TRUE, NULL), NULL);
+     file_pattern_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_FILE_PATTERN, NULL, TRUE, NULL), NULL);
+     path_pattern_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_PATH_PATTERN, NULL, TRUE, NULL), NULL);
+     device_changed_cb (gconf_client, -1, gconf_client_get_entry (gconf_client, GCONF_DEVICE, NULL, TRUE, NULL), NULL);
+diff --git a/src/sound-juicer.h b/src/sound-juicer.h
+index 2200fd0..3568de7 100644
+--- a/src/sound-juicer.h
++++ b/src/sound-juicer.h
+@@ -151,6 +151,7 @@ void sj_debug (SjDebugDomain domain, const gchar* format, ...);
+ #define GCONF_FILE_PATTERN GCONF_ROOT "/file_pattern"
+ #define GCONF_PATH_PATTERN GCONF_ROOT "/path_pattern"
+ #define GCONF_AUDIO_PROFILE GCONF_ROOT "/audio_profile"
++#define GCONF_AUDIO_PROFILE_MEDIA_TYPE GCONF_ROOT "/audio_profile_media_type"
+ #define GCONF_PARANOIA GCONF_ROOT "/paranoia"
+ #define GCONF_STRIP GCONF_ROOT "/strip-special"
+ #define GCONF_WINDOW GCONF_ROOT "/window"
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index 27906b2..0321975 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -13,7 +13,6 @@ mb_test_CPPFLAGS = \
+ mb_test_CFLAGS = \
+ 	$(WARN_CFLAGS) \
+ 	$(GSTREAMER_CFLAGS) \
+-	$(MEDIA_PROFILES_CFLAGS) \
+ 	$(BURN_CFLAGS) \
+ 	$(UI_CFLAGS) \
+ 	$(DBUS_CFLAGS) \

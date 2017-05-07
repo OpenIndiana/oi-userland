@@ -1,0 +1,14 @@
+Solaris specific patch to allow both test and system-test to work.
+Has been offered upstream.
+
+--- gawk-4.1.3/test/Makefile.in 2015-12-08 10:50:43.203348353 -0800
++++ gawk-4.1.3/test/Makefile.in 2015-12-08 10:51:00.745983630 -0800
+@@ -1695,7 +1695,7 @@ lc_num1:
+ # so this can still fail
+ poundbang::
+ 	@echo $@
+-	@sed "s;/tmp/gawk;`pwd`/$(AWKPROG);" < "$(srcdir)"/poundbang.awk > ./_pbd.awk
++	@sed "s;/tmp/gawk;$(AWKPROG);" < "$(srcdir)"/poundbang.awk > ./_pbd.awk
+ 	@chmod +x ./_pbd.awk
+ 	@if ./_pbd.awk "$(srcdir)"/poundbang.awk > _`basename $@` ; \
+ 	then : ; \

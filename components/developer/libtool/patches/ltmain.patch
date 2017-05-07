@@ -1,0 +1,13 @@
+--- libtool-2.4.2/libltdl/config/ltmain.m4sh.~1~	2014-11-27 17:35:04.445640388 +0300
++++ libtool-2.4.2/libltdl/config/ltmain.m4sh	2014-11-27 17:36:13.820312826 +0300
+@@ -398,7 +398,9 @@
+   test "$opt_debug" = : || func_append preserve_args " --debug"
+ 
+   case $host in
+-    *cygwin* | *mingw* | *pw32* | *cegcc*)
++    # Solaris2 added to fix http://debbugs.gnu.org/cgi/bugreport.cgi?bug=16452
++    # see also: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59788
++    *cygwin* | *mingw* | *pw32* | *cegcc* | *solaris2*)
+       # don't eliminate duplications in $postdeps and $predeps
+       opt_duplicate_compiler_generated_deps=:
+       ;;

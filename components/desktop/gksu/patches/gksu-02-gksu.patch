@@ -1,0 +1,366 @@
+--- gksu-2.0.2/gksu/gksu.c-orig	2010-12-16 03:43:51.275486079 -0600
++++ gksu-2.0.2/gksu/gksu.c	2010-12-16 03:46:11.151315385 -0600
+@@ -9,6 +9,8 @@
+ #include <string.h>
+ #include <getopt.h>
+ #include <locale.h>
++#include <dlfcn.h>
++#include <link.h>
+ 
+ #include <glib.h>
+ #include <glib/gstdio.h>
+@@ -27,6 +29,9 @@
+ gboolean print_pass = FALSE;
+ gboolean force_grab = FALSE;
+ gboolean prompt = FALSE;
++gboolean elevated_privilege = TRUE;
++gboolean elevated_role = TRUE;
++
+ enum
+   {
+     SUDO_MODE,
+@@ -40,10 +45,14 @@ struct option long_opts[] = {
+      */
+     {"help", no_argument, NULL, 'h'},
+     {"login", no_argument, NULL, 'l'},
++#ifndef __sun
+     {"preserv-env", no_argument, NULL, 'k'},
+     {"preserve-env", no_argument, NULL, 'k'},
++#endif
+     {"user", required_argument, NULL, 'u'},
++#ifndef __sun
+     {"print-pass", no_argument, NULL, 'p'},
++#endif
+     {"message", required_argument, NULL, 'm'},
+     {"title", required_argument, NULL, 't'},
+     {"icon", required_argument, NULL, 'i'},
+@@ -55,6 +64,8 @@ struct option long_opts[] = {
+     {"prompt", optional_argument, NULL, 'P'},
+     {"desktop", required_argument, NULL, 'D'},
+     {"description", required_argument, NULL, 'D'},
++    {"elevated-privilege", no_argument, NULL, 'p'},
++    {"elevated-role", no_argument, NULL, 'r'},
+     {0, 0, 0, 0}
+ };
+ 
+@@ -106,12 +117,14 @@ help (gchar *cmdname)
+        "    Replace the standard message shown to ask for\n"
+        "    password for the argument passed to the option.\n"
+        "    Only use this if --description does not suffice.\n"),
++#ifndef __sun
+     N_("\n"),
+     N_("  --print-pass, -p\n"
+        "    Ask gksu to print the password to stdout, just\n"
+        "    like ssh-askpass. Useful to use in scripts with\n"
+        "    programs that accept receiving the password on\n"
+        "    stdin.\n"),
++#endif
+     N_("\n"),
+     N_("  --sudo-mode, -S\n"
+        "    Make GKSu use sudo instead of su, as if it had been\n"
+@@ -119,6 +132,13 @@ help (gchar *cmdname)
+     N_("  --su-mode, -w\n"
+        "    Make GKSu use su, instead of using libgksu's\n"
+        "    default.\n"),
++#ifdef __sun
++    N_("\n"),
++    N_("  --elevated-privilege, -p\n"
++       "    attempt to elevate user's privilege\n"),
++    N_("  --elevated-role, -r\n"
++       "    attempt to elevate user's role\n"),
++#endif
+   };
+ 
+   help_trans = g_strconcat(_(help_text[0]), _(help_text[1]),
+@@ -157,6 +177,14 @@ gk_dialog (GtkMessageType type, gchar *f
+   gtk_window_set_resizable (GTK_WINDOW(diag_win), FALSE);
+ 
+   gtk_widget_show_all (diag_win);
++
++  // we "raise" the window because there is a race here for
++  // focus-follow-mouse and auto-raise WMs that may put the window
++  // in the background and confuse users
++  gtk_window_set_keep_above(GTK_WINDOW (diag_win), TRUE);
++  // reset cursor
++  gdk_window_set_cursor(diag_win->window, gdk_cursor_new(GDK_LEFT_PTR));
++
+   gtk_dialog_run (GTK_DIALOG(diag_win));
+ 
+   g_free (msg);
+@@ -271,10 +299,12 @@ show_hide_advanced (GtkWidget *button, g
+   else
+     gksu_context_set_login_shell (context, FALSE);
+ 
++#ifndef __sun
+   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(check_presenv)))
+     gksu_context_set_keep_env (context, TRUE);
+   else
+     gksu_context_set_keep_env (context, FALSE);
++#endif
+ 
+   gtk_widget_destroy (dialog);
+ }
+@@ -334,8 +364,15 @@ fill_with_user_list(GtkWidget *combobox)
+   endpwent();
+ }
+ 
++static gboolean
++focus_out_cb (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
++{
++  gtk_window_present (GTK_WINDOW(widget));
++  return TRUE;
++}
++
+ void
+-request_command_and_user (GksuContext *context)
++request_command_and_user (GksuContext *context, gchar *command)
+ {
+   GtkWidget *dialog;
+   GtkWidget *hbox;
+@@ -347,7 +384,12 @@ request_command_and_user (GksuContext *c
+   GtkWidget *entry_cmd;
+ 
+   GtkWidget *label_user;
+-  GtkWidget *combo_user;
++  GtkWidget *entry_user;
++
++  AtkObject *atk_user_label;
++  AtkObject *atk_user_entry;
++  AtkObject *atk_command_label;
++  AtkObject *atk_command_entry;
+ 
+   /* advanced stuff */
+   GtkWidget *advanced_button;
+@@ -362,6 +404,11 @@ request_command_and_user (GksuContext *c
+ 					GTK_STOCK_OK,
+ 					GTK_RESPONSE_OK,
+ 					NULL);
++
++  /* make sure that our window will always have the focus */
++  g_signal_connect (G_OBJECT(dialog), "focus-out-event",
++                    G_CALLBACK(focus_out_cb), NULL);
++
+   gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
+ 
+   /* horizontal box */
+@@ -385,14 +432,44 @@ request_command_and_user (GksuContext *c
+ 		      dialog);
+   gtk_box_pack_start (GTK_BOX(lvbox), entry_cmd, TRUE, TRUE, 0);
+ 
++  if (command)
++    {
++      gtk_entry_set_text (GTK_ENTRY (entry_cmd), command);
++      gtk_editable_set_editable (GTK_EDITABLE (entry_cmd), FALSE);
++      gtk_widget_set_sensitive (entry_cmd, FALSE);
++    }
++
++  atk_command_label = gtk_widget_get_accessible (label_cmd);
++  atk_command_entry = gtk_widget_get_accessible (entry_cmd);
++  atk_object_add_relationship (atk_command_label, ATK_RELATION_LABEL_FOR,
++    atk_command_entry);
++  atk_object_add_relationship (atk_command_entry, ATK_RELATION_LABELLED_BY,
++    atk_command_label);
++
+   /* user name */
+-  label_user = gtk_label_new (_("As user:"));
++  /* SUN_BRANDING label */
++  label_user = gtk_label_new (_("As user or role:"));
+   gtk_label_set_justify (GTK_LABEL(label_user), GTK_JUSTIFY_LEFT);
+   gtk_box_pack_start (GTK_BOX(lvbox), label_user, TRUE, TRUE, 0);
+-  combo_user = gtk_combo_box_new_text ();
+-  fill_with_user_list (combo_user);
+ 
+-  gtk_box_pack_start (GTK_BOX(lvbox), combo_user, TRUE, TRUE, 0);
++  entry_user = gtk_entry_new ();
++  gtk_signal_connect (GTK_OBJECT(entry_user), "activate",
++		      GTK_SIGNAL_FUNC(response_ok_cb),
++		      dialog);
++
++  if (context->user)
++    {
++      gtk_entry_set_text (GTK_ENTRY (entry_user), context->user);
++    }
++  
++  atk_user_label = gtk_widget_get_accessible (label_user);
++  atk_user_entry = gtk_widget_get_accessible (entry_user);
++  atk_object_add_relationship (atk_user_label, ATK_RELATION_LABEL_FOR,
++    atk_user_entry);
++  atk_object_add_relationship (atk_user_entry, ATK_RELATION_LABELLED_BY,
++    atk_user_label);
++
++  gtk_box_pack_start (GTK_BOX(lvbox), entry_user, TRUE, TRUE, 0);
+ 
+   /* right vertical box */
+   rvbox = gtk_vbox_new (FALSE, 2);
+@@ -430,18 +507,14 @@ request_command_and_user (GksuContext *c
+ 	  g_free (tmp);
+ 	}
+ 
+-      tmp = gtk_combo_box_get_active_text (GTK_COMBO_BOX(combo_user));
++      tmp = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry_user)));
+       if (tmp)
+ 	{
+ 	  gksu_context_set_user (context, tmp);
+ 	  g_free (tmp);
+ 	}
+ 
+-      if (!strcmp (gksu_context_get_user (context), ""))
+-	{
+-	  gk_dialog (GTK_MESSAGE_ERROR, _("Missing command to run."));
+-	}
+-      else
++      if (strcmp (gksu_context_get_user (context), ""))
+ 	{
+ 	  gtk_widget_destroy (dialog);
+ 	  break;
+@@ -502,7 +575,13 @@ main (int argc, char **argv)
+   gtk_init (&newargc, &newargv);
+ 
+   context = gksu_context_new ();
+-  while ((c = getopt_long(newargc, newargv, "?hu:lpm:kt:i:gdsSwP::aD:", long_opts, NULL))
++  /*
++   * First character is + since we want gksu to accept all arguments after the
++   * first operand as part of the operand.  So you can run
++   * "gksu -u root command -x".  Without the "+", getopt_long incorrectly
++   * treats the "-x" as a gksu argument rather than a command argument.
++   */
++  while ((c = getopt_long(newargc, newargv, "+?hu:lpm:kt:i:gdsSwP::aD:", long_opts, NULL))
+ 	 != EOF)
+     {
+       switch (c)
+@@ -525,14 +604,20 @@ main (int argc, char **argv)
+ 	  gksu_context_set_login_shell (context, TRUE);
+ 	  break;
+ 	case 'p':
++#ifndef __sun
+ 	  print_pass = TRUE;
++#else
++	  gksu_context_set_elevated_privilege (context, FALSE);
++#endif
+ 	  break;
+ 	case 'm':
+ 	  gksu_context_set_message (context, optarg);
+ 	  break;
++#ifndef __sun
+ 	case 'k':
+ 	  gksu_context_set_keep_env (context, TRUE);
+ 	  break;
++#endif
+ 	case 'g':
+ 	  gksu_context_set_grab (context, FALSE);
+ 
+@@ -565,6 +650,9 @@ main (int argc, char **argv)
+ 	case 'w':
+ 	  run_mode = SU_MODE;
+ 	  break;
++        case 'r':
++          gksu_context_set_elevated_role (context, FALSE);
++	  break;
+ 	case 'P':
+ 	  prompt = TRUE;
+ 
+@@ -646,9 +734,14 @@ main (int argc, char **argv)
+       return 0;
+     }
+ 
++  if (gksu_context_get_pfexec_mode (context))
++    {
++      gksu_context_set_need_pipe (context, FALSE);
++    }
++
+   /* now we can begin to care about a command */
+   if (newargc <= optind)
+-    request_command_and_user (context); /* previously known as gksuexec */
++    request_command_and_user (context, NULL); /* previously known as gksuexec */
+   else
+     {
+       gchar *command = g_strdup (newargv[optind]);
+@@ -693,7 +786,27 @@ main (int argc, char **argv)
+ 	  g_free (command);
+ 	  command = tmp;
+ 	}
+-      gksu_context_set_command (context, command);
++
++      context->command = g_strdup (command);
++
++      if (strcmp (g_get_user_name (), "root") == 0)
++        {
++          /* If root, just use pfexec */
++          context->pfexec_mode = TRUE;
++          context->user = g_strdup ("root");
++        }
++      else if (run_mode != SUDO_MODE)
++        {
++          if (gksu_context_try_need_password (context))
++            {
++              request_command_and_user (context, command);
++            }
++        }
++      else
++        {
++          request_command_and_user (context, command);
++        }
++
+       g_free (command);
+     }
+ 
+@@ -714,7 +827,8 @@ main (int argc, char **argv)
+ 	return 1;
+       }
+ 
+-    if (pwentry->pw_uid == geteuid ())
++    /* If in pfexec mode, process in gksu_sudo_fuller */
++    if (!gksu_context_get_pfexec_mode (context) && pwentry->pw_uid == geteuid ())
+       {
+ 	gint retval = g_spawn_command_line_sync (gksu_context_get_command (context),
+ 						 NULL, NULL, NULL, NULL);
+@@ -722,18 +836,6 @@ main (int argc, char **argv)
+       }
+   }
+ 
+-  {
+-    gint count = 0;
+-
+-    for (count = 0; count < 3; count++)
+-      {
+-	if (error) /* wrong password was given */
+-	  {
+-	    gksu_context_set_alert (context, _("<b>Incorrect password... try again.</b>"));
+-	    g_error_free (error);
+-	    error = NULL;
+-	  }
+-
+ 	if (run_mode == SUDO_MODE)
+ 	  gksu_sudo_fuller (context,
+ 			    NULL, NULL,
+@@ -753,18 +855,25 @@ main (int argc, char **argv)
+ 			   NULL, NULL,
+ 			   &exit_status,
+ 			   &error);
+-	if ((error == NULL) || (error->code != GKSU_ERROR_WRONGPASS))
+-	  break;
+-      }
+-  }
+ 
+   if (error && (error->code != GKSU_ERROR_CANCELED))
+     {
++      char *msg;
++
++      if (context->alert != NULL)
++        {
++          msg = context->alert;
++        }
++      else 
++        {
++          msg = error->message;
++        }
++        
+       gk_dialog (GTK_MESSAGE_ERROR,
+ 		 _("<b>Failed to run %s as user %s.</b>\n\n%s"),
+ 		 gksu_context_get_command (context),
+ 		 gksu_context_get_user (context),
+-		 error->message);
++		 msg);
+       return 3;
+     }
+ 

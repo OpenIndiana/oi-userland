@@ -1,0 +1,19 @@
+--- gegl-0.2.0/gegl/property-types/gegl-path.c.~1~	2012-03-24 18:51:30.000000000 +0400
++++ gegl-0.2.0/gegl/property-types/gegl-path.c	2015-01-04 11:04:41.531653311 +0300
+@@ -681,6 +681,8 @@
+   GeglPathList *prev = NULL;
+   InstructionInfo *info = lookup_instruction_info (knot->type);
+ 
++  if (info != NULL)
++    {
+   gint count=0;
+   for (iter = priv->path; iter; iter=iter->next)
+     {
+@@ -715,6 +717,7 @@
+   priv->flat_path_clean = FALSE;
+   priv->length_clean = FALSE;
+   gegl_path_emit_changed (vector, NULL);
++    }
+ }
+ 
+ void

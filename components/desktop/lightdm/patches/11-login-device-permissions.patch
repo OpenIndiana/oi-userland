@@ -1,0 +1,43 @@
+--- lightdm-1.19.3/src/Makefile.am.1	2016-08-09 23:03:16.837534078 +0300
++++ lightdm-1.19.3/src/Makefile.am	2016-08-09 23:03:52.546669617 +0300
+@@ -95,7 +95,8 @@
+ 	$(LIGHTDM_LIBS) \
+ 	$(top_builddir)/common/libcommon.la \
+ 	-lgcrypt \
+-	-lpam
++	-lpam \
++	-ldevinfo
+ 
+ dm_tool_SOURCES = \
+ 	dm-tool.c
+--- lightdm-1.19.3/src/session-child.c.~5~      2016-08-09 22:57:20.465089040 +0300
++++ lightdm-1.19.3/src/session-child.c  2016-08-09 22:59:09.543411443 +0300
+@@ -13,6 +13,7 @@
+ #include <grp.h>
+ #include <glib.h>
+ #include <security/pam_appl.h>
++#include <libdevinfo.h>
+ #include <utmp.h>
+ #include <utmpx.h>
+ #include <sys/mman.h>
+@@ -628,6 +636,10 @@
+         return EXIT_FAILURE;
+     }
+ 
++    if (!remote_host_name && !g_strcmp0(xdisplay,":0") && (g_str_has_prefix (tty, "/dev/vt/") || !g_strcmp0(tty,"/dev/console"))){
++       di_devperm_login (tty,user_get_uid (user),user_get_gid (user), NULL);
++    }
++
+     /* Check what logind session we are, or fallback to ConsoleKit */
+     login1_session_id = pam_getenv (pam_handle, "XDG_SESSION_ID");
+     if (login1_session_id)
+@@ -834,6 +847,9 @@
+             audit_event (AUDIT_USER_LOGOUT, username, uid, remote_host_name, tty, TRUE);
+ #endif
+         }
++        if (!remote_host_name && !g_strcmp0(xdisplay,":0") && (g_str_has_prefix (tty, "/dev/vt/") || !g_strcmp0(tty,"/dev/console"))){
++            di_devperm_logout (tty);
++        }
+     }
+ 
+     /* Remove X authority */

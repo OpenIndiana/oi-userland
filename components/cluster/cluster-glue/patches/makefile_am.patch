@@ -1,0 +1,31 @@
+diff -Nura a/Makefile.am b/Makefile.am
+--- a/Makefile.am	2016-10-30 07:53:52.349871012 +0100
++++ b/Makefile.am	2016-10-30 08:25:31.310836903 +0100
+@@ -26,11 +26,11 @@
+ 			  hb_report doc config
+ 
+ install-exec-local:
+-	$(INSTALL) -d $(DESTDIR)/$(HA_COREDIR)
+-	-$(INSTALL) -d -m 700 -o root $(DESTDIR)/$(HA_COREDIR)/root
+-	-$(INSTALL) -d -m 700 -o nobody $(DESTDIR)/$(HA_COREDIR)/nobody
+-	$(INSTALL) -d -m 700 $(DESTDIR)/$(HA_COREDIR)/$(GLUE_DAEMON_USER)
+-	-chown $(GLUE_DAEMON_USER) $(DESTDIR)/$(HA_COREDIR)/$(GLUE_DAEMON_USER)
++	$(INSTALL) -d $(DESTDIR)$(HA_COREDIR)
++	-$(INSTALL) -d -m 700 -o root $(DESTDIR)$(HA_COREDIR)/root
++	-$(INSTALL) -d -m 700 -o nobody $(DESTDIR)$(HA_COREDIR)/nobody
++#	$(INSTALL) -d -m 700 $(DESTDIR)$(HA_COREDIR)/$(GLUE_DAEMON_USER)
++#	-chown $(GLUE_DAEMON_USER) $(DESTDIR)$(HA_COREDIR)/$(GLUE_DAEMON_USER)
+ # Use chown because $(GLUE_DAEMON_USER) may not exist yet
+ 
+ dist-clean-local:
+diff -Nura a/lib/lrm/Makefile.am b/lib/lrm/Makefile.am
+--- a/lib/lrm/Makefile.am	2016-10-30 08:41:29.952861784 +0100
++++ b/lib/lrm/Makefile.am	2016-10-30 08:41:04.100480035 +0100
+@@ -32,5 +32,5 @@
+ 
+ install-exec-local:
+ 	$(mkinstalldirs) $(DESTDIR)$(lrmdir)
+-	-chgrp $(GLUE_DAEMON_GROUP) $(DESTDIR)/$(lrmdir)
+-	chmod 770 $(DESTDIR)/$(lrmdir)
++#	-chgrp $(GLUE_DAEMON_GROUP) $(DESTDIR)/$(lrmdir)
++#	chmod 770 $(DESTDIR)/$(lrmdir)

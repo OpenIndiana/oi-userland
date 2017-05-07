@@ -1,0 +1,28 @@
+This patch modifies the setup script to support Solaris.
+As it is Solaris-specific, it is not suitable for upstream.
+
+--- Python-3.4.2/setup.py.~2~	2014-09-22 12:58:20.756337175 -0700
++++ Python-3.4.2/setup.py	2014-09-22 12:58:20.806201115 -0700
+@@ -736,6 +736,13 @@
+                                                      ['/usr/lib/termcap'],
+                                                      'termcap'):
+                 readline_libs.append('termcap')
++
++            if host_platform == 'sunos5':
++                # insert '-zrecord' before the readline libraries that we
++                # want to link with to avoid rl_insert() elimination
++                readline_extra_link_args = ('-Wl,-zrecord','-lreadline','-lncurses')
++                readline_libs = ()
++
+             exts.append( Extension('readline', ['readline.c'],
+                                    library_dirs=['/usr/lib/termcap'],
+                                    extra_link_args=readline_extra_link_args,
+@@ -1918,7 +1925,7 @@
+             # this option. If you want to compile ctypes with the Sun
+             # compiler, please research a proper solution, instead of
+             # finding some -z option for the Sun compiler.
+-            extra_link_args.append('-mimpure-text')
++            pass
+ 
+         elif host_platform.startswith('hp-ux'):
+             extra_link_args.append('-fPIC')

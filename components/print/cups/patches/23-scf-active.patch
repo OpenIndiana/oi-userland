@@ -1,0 +1,60 @@
+--- cups/http.c.orig	Wed Jul  1 08:23:28 2009
++++ cups/http.c	Mon Aug 31 23:17:04 2009
+@@ -381,7 +381,35 @@
+   return (httpConnectEncrypt(host, port, HTTP_ENCRYPT_IF_REQUESTED));
+ }
+ 
++/*
++ * Test to see if CUPS is the "active" print service on Solaris by looking for
++ * a special "general/active" boolean property in the CUPS service instance
++ * svc:/application/cups/scheduler:default.  If it exists and is true, CUPS
++ * is the active print service.
++ */
++#include <libscf.h>
+ 
++static int
++cups_is_active()
++{
++  int active = 0;
++
++  scf_simple_prop_t *prop = scf_simple_prop_get(NULL, 
++                                   "svc:/application/cups/scheduler:default",
++                                   "general", "active");
++
++  if ((prop != NULL) && (scf_simple_prop_numvalues(prop) > 0)) {
++      uint8_t *value = scf_simple_prop_next_boolean(prop);
++
++      if (value != NULL)
++      active = *value;
++    }
++
++  scf_simple_prop_free(prop);
++
++  return (active);
++}
++
+ /*
+  * 'httpConnectEncrypt()' - Connect to a HTTP server using encryption.
+  */
+@@ -445,6 +473,10 @@
+   if (!host)
+     return (NULL);
+ 
++  /* Check to see if CUPS is the "active" print service on Solaris */
++  if (cups_is_active() == 0)
++    return (NULL);
++
+   httpInitialize();
+ 
+  /*
+--- Makedefs.in.~1~	2014-04-22 15:44:53.886853693 +0400
++++ Makedefs.in	2014-04-22 15:45:43.188499388 +0400
+@@ -129,7 +129,7 @@
+ BACKLIBS	=	@BACKLIBS@
+ BUILDDIRS	=	@BUILDDIRS@
+ CFLAGS		=	@CPPFLAGS@ @CFLAGS@
+-COMMONLIBS	=	@LIBS@
++COMMONLIBS	=	@LIBS@ -lscf
+ CXXFLAGS	=	@CPPFLAGS@ @CXXFLAGS@
+ CXXLIBS		=	@CXXLIBS@
+ DBUS_NOTIFIER	=	@DBUS_NOTIFIER@

@@ -1,0 +1,38 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Adam Stevko
+#
+
+<transform file dir path=.*kernel.* -> default group sys>
+<transform file path=.*kernel/drv/.+\.conf -> default mode 0644>
+<transform file path=.*kernel/.+(?<!\.conf)$ -> default reboot-needed true>
+
+<transform file dir link hardlink path=.*kernel/.* -> set variant.opensolaris.zone global>
+<transform dir path=kernel$ -> set variant.opensolaris.zone global>
+<transform dir path=.*/kernel$ -> set variant.opensolaris.zone global>
+
+set name=pkg.fmri value=pkg:/driver/fuse@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="illumos Filesystem in Userspace driver"
+set name=info.classification value="org.opensolaris.category.2008:Drivers/Storage"
+set name=info.upstream-url value=https://github.com/jurim/illumos-fusefs
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license CDDL.license license='CDDL'
+
+set name=variant.opensolaris.zone value="global"
+
+driver devlink=type=ddi_pseudo;name=fuse\t\D name=fuse
+file path=usr/kernel/drv/$(MACH64)/fuse
+file path=usr/kernel/drv/fuse
+file path=usr/kernel/drv/fuse.conf preserve=true

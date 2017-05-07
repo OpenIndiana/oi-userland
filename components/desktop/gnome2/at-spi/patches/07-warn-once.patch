@@ -1,0 +1,51 @@
+--- at-spi-1.30.1/atk-bridge/bridge.c	2011-11-08 11:47:43.268908925 +0800
++++ at-spi-1.30.1/atk-bridge/bridge.c.mod	2011-11-08 11:53:20.932340393 +0800
+@@ -288,12 +288,17 @@
+ spi_atk_bridge_do_registration (void)
+ {
+   CORBA_Environment ev;
++  static gboolean warned_no_registryd = FALSE;
+ 
+   CORBA_exception_init(&ev);
+ 
+   if (spi_atk_bridge_get_registry () == CORBA_OBJECT_NIL)
+     {
+-      g_warning ("Could not locate registry");
++      if (!warned_no_registryd)
++        {
++          warned_no_registryd = TRUE;
++          g_warning ("Could not locate registry");
++        }
+       return FALSE;
+     }
+ 
+@@ -403,6 +408,7 @@
+      unsigned char *data = NULL;  
+      unsigned long nitems;
+      unsigned long leftover;
++     static gboolean warned_no_registryd = FALSE;
+      if (!bridge_display) 
+        bridge_display = XOpenDisplay (spi_display_name ());
+ 
+@@ -413,8 +419,11 @@
+ 			(long)BUFSIZ, False, 
+ 			(Atom) 31, &actual_type, &actual_format,
+ 			&nitems, &leftover, &data);
+-     if (data == NULL)
+-	  g_warning (_("AT_SPI_REGISTRY was not started at session startup."));
++     if ((data == NULL) && !warned_no_registryd)
++       {
++         warned_no_registryd = TRUE;
++         g_warning (_("AT_SPI_REGISTRY was not started at session startup."));
++       }
+      
+      return (gchar *) data;
+      
+@@ -449,7 +458,6 @@
+         }
+       else
+         {
+-          g_warning ("IOR not set.");  
+           registry = CORBA_OBJECT_NIL;
+         }
+ 	  

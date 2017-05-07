@@ -1,0 +1,47 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/man/man3xres/(.+)$ \
+	-> set action.hash usr/share/man/man3/%<\1> >
+
+link path=usr/X11/lib/$(MACH64)/libXRes.so target=../../../lib/$(MACH64)/libXRes.so
+link path=usr/X11/lib/$(MACH64)/libXRes.so.1 target=../../../lib/$(MACH64)/libXRes.so.1
+link path=usr/X11/lib/libXRes.so target=../../lib/libXRes.so
+link path=usr/X11/lib/libXRes.so.1 target=../../lib/libXRes.so.1
+
+file path=usr/include/X11/extensions/XRes.h
+link path=usr/lib/$(MACH64)/libXRes.so target=libXRes.so.1.0.0
+link path=usr/lib/$(MACH64)/libXRes.so.1 target=libXRes.so.1.0.0
+file path=usr/lib/$(MACH64)/libXRes.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/xres.pc
+link path=usr/lib/libXRes.so target=libXRes.so.1.0.0
+link path=usr/lib/libXRes.so.1 target=libXRes.so.1.0.0
+file path=usr/lib/libXRes.so.1.0.0
+file path=usr/lib/pkgconfig/xres.pc
+file path=usr/share/man/man3xres/XRes.3
+file path=usr/share/man/man3xres/XResQueryClientPixmapBytes.3
+file path=usr/share/man/man3xres/XResQueryClientResources.3
+file path=usr/share/man/man3xres/XResQueryClients.3
+file path=usr/share/man/man3xres/XResQueryExtension.3
+file path=usr/share/man/man3xres/XResQueryVersion.3

@@ -1,0 +1,91 @@
+diff -urN hexchat-2.12.0.orig/src/common/util.c hexchat-2.12.0/src/common/util.c
+--- hexchat-2.12.0.orig/src/common/util.c	2016-03-07 00:25:32.000000000 +0100
++++ hexchat-2.12.0/src/common/util.c	2016-04-10 15:49:12.891503656 +0200
+@@ -61,6 +61,10 @@
+ #endif
+ #endif
+ 
++#if defined (__SVR4) && defined (__sun)
++#include <kstat.h>
++#endif
++
+ char *
+ file_part (char *file)
+ {
+@@ -360,7 +364,7 @@
+ 	return len;
+ }
+ 
+-#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+ 
+ static void
+ get_cpu_info (double *mhz, int *cpus)
+@@ -450,6 +454,37 @@
+ 	*mhz = (freq / 1000000);
+ 
+ #endif
++#if defined (__SVR4) && defined (__sun)
++
++	kstat_t       *ksp;
++	kstat_ctl_t   *kc;
++	kstat_named_t *knp = NULL;
++	int	      numcpu = 0;
++	kc = kstat_open();
++	if (kc == NULL) {
++		fprintf (stderr, "get speed: kstat error %d\n", errno);
++		return;
++	}
++
++	ksp = kstat_lookup(kc, "cpu_info", -1, NULL);
++	for (; ksp != NULL; ksp = ksp->ks_next) {
++                if (strcmp(ksp->ks_module, "cpu_info"))
++                        continue;
++	        numcpu++;
++
++	        kstat_read(kc, ksp, NULL);
++
++		if (knp == NULL) {
++		        knp = kstat_data_lookup(ksp, "clock_MHz");
++		}
++	}
++
++	*cpus = numcpu;
++	if (knp) {
++		*mhz = knp->value.i32;
++	}
++
++#endif
+ 
+ }
+ #endif
+@@ -495,7 +530,7 @@
+ char *
+ get_sys_str (int with_cpu)
+ {
+-#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+ 	double mhz;
+ #endif
+ 	int cpus = 1;
+@@ -507,7 +542,7 @@
+ 
+ 	uname (&un);
+ 
+-#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+ 	get_cpu_info (&mhz, &cpus);
+ 	if (mhz && with_cpu)
+ 	{
+diff -urN hexchat-2.12.0.orig/src/fe-gtk/Makefile.in hexchat-2.12.0/src/fe-gtk/Makefile.in
+--- hexchat-2.12.0.orig/src/fe-gtk/Makefile.in	2016-03-12 09:05:22.000000000 +0100
++++ hexchat-2.12.0/src/fe-gtk/Makefile.in	2016-04-10 15:50:09.384508708 +0200
+@@ -577,7 +577,7 @@
+ 
+ hexchat$(EXEEXT): $(hexchat_OBJECTS) $(hexchat_DEPENDENCIES) $(EXTRA_hexchat_DEPENDENCIES) 
+ 	@rm -f hexchat$(EXEEXT)
+-	$(AM_V_OBJCLD)$(hexchat_LINK) $(hexchat_OBJECTS) $(hexchat_LDADD) $(LIBS)
++	$(AM_V_OBJCLD)$(hexchat_LINK) $(hexchat_OBJECTS) $(hexchat_LDADD) $(LIBS) -lkstat
+ 
+ mostlyclean-compile:
+ 	-rm -f *.$(OBJEXT)

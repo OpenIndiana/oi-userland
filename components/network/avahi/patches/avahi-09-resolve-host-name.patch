@@ -1,0 +1,267 @@
+--- /usr/tmp/clean/avahi-0.6.28/avahi-core/resolve-host-name.c	2010-08-26 01:51:38.991153000 +0100
++++ avahi-0.6.28/avahi-core/resolve-host-name.c	2011-01-20 15:06:17.971781264 +0000
+@@ -22,6 +22,7 @@
+ #endif
+ 
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #include <avahi-common/domain.h>
+ #include <avahi-common/timeval.h>
+@@ -50,6 +51,15 @@
+ 
+     AvahiTimeEvent *time_event;
+ 
++#ifdef HAVE_BONJOUR
++    AvahiTimeEvent *defer_time_event;
++    AvahiWatch *watch_a;
++    AvahiWatch *watch_a6;
++    AvahiLookupFlags lookup_flags;
++    DNSServiceRef client_a;
++    DNSServiceRef client_a6;
++#endif
++
+     AVAHI_LLIST_FIELDS(AvahiSHostNameResolver, resolver);
+ };
+ 
+@@ -86,7 +96,7 @@
+             break;
+ 
+         }
+-
++  
+         case AVAHI_RESOLVER_FAILURE:
+ 
+             r->callback(r, r->interface, r->protocol, event, r->host_name, NULL, r->flags, r->userdata);
+@@ -94,6 +104,168 @@
+     }
+ }
+ 
++#ifdef HAVE_BONJOUR
++static void resolve_socket_event(AvahiWatch *w, int fd, AvahiWatchEvent events,
++void *userdata) {
++    AvahiSHostNameResolver *r = userdata;
++    DNSServiceErrorType ret;
++    DNSServiceRef client;
++
++    assert(w);
++    assert(fd >= 0);
++    assert(events & AVAHI_WATCH_IN);
++
++    if (fd == DNSServiceRefSockFD(r->client_a))
++        client = r->client_a;
++    else if (fd == DNSServiceRefSockFD(r->client_a6))
++        client = r->client_a6;
++    else
++        assert (0);
++
++    ret = DNSServiceProcessResult(client);
++    if (ret != kDNSServiceErr_NoError) {
++        if (client == r->client_a) {
++            if (r->watch_a) {
++                r->server->poll_api->watch_free(r->watch_a);
++                r->watch_a = NULL;
++            }
++            DNSServiceRefDeallocate(r->client_a);
++            r->client_a = NULL;
++        } else if (client == r->client_a6) {
++            if (r->watch_a6) {
++                r->server->poll_api->watch_free(r->watch_a6);
++                r->watch_a6 = NULL;
++            }
++            DNSServiceRefDeallocate(r->client_a6);
++            r->client_a6 = NULL;
++        }
++        avahi_server_set_errno(r->server, AVAHI_ERR_DISCONNECTED);
++        finish(r, AVAHI_RESOLVER_FAILURE);
++    }
++}
++
++static void resolve_reply(DNSServiceRef client, DNSServiceFlags flags, uint32_t IfIndex, DNSServiceErrorType errorCode, const char *fullname, uint16_t rrtype, uint16_t rrclass, uint16_t rdlen, const void* rdata, uint32_t ttl, void *context) {
++    AvahiSHostNameResolver *r = context;
++    const unsigned char *rd = rdata;
++    AvahiAddress a;
++
++    assert(rrtype == kDNSServiceType_A || rrtype == kDNSServiceType_A6);
++    if (!flags & kDNSServiceFlagsAdd)
++        /* this is a remove event  so ignore*/
++        return;
++
++    if (r->interface > 0  && IfIndex != r->interface)
++        return;
++    if (r->interface <= 0)
++       r->interface = IfIndex;
++
++    /*
++     * Using Bonjour we cannot determine whether result was obtained from
++     * multicast ot unicast query
++     */
++    r->flags = 0;
++
++    switch (rrtype) {
++        case kDNSServiceType_A:
++            if (r->protocol == AVAHI_PROTO_UNSPEC)
++                r->protocol = AVAHI_PROTO_INET;
++            else if (r->protocol != AVAHI_PROTO_INET)
++                return;
++
++            if (!r->address_record) {
++                if (!(r->address_record = avahi_record_new_full(r->host_name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_A, ttl))) {
++                    avahi_server_set_errno(r->server, AVAHI_ERR_NO_MEMORY);
++                    finish(r, AVAHI_RESOLVER_FAILURE);
++                    return;
++                }
++                if (avahi_rdata_parse(r->address_record, rdata, rdlen) != 0) {
++                    avahi_server_set_errno(r->server, AVAHI_ERR_INVALID_PACKET);
++                    finish(r, AVAHI_RESOLVER_FAILURE);
++                }
++            }
++            break;
++        case kDNSServiceType_A6:
++            if (r->protocol == AVAHI_PROTO_UNSPEC)
++                r->protocol = AVAHI_PROTO_INET6;
++            else if (r->protocol != AVAHI_PROTO_INET6)
++                return;
++            if (!r->address_record) {
++                if (!(r->address_record = avahi_record_new_full(r->host_name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_AAAA, ttl))) {
++                    avahi_server_set_errno(r->server, AVAHI_ERR_NO_MEMORY);
++                    finish(r, AVAHI_RESOLVER_FAILURE);
++                    return;
++                }
++                if (avahi_rdata_parse(r->address_record, rdata, rdlen) != 0) {
++                    avahi_server_set_errno(r->server, AVAHI_ERR_INVALID_PACKET);
++                    finish(r, AVAHI_RESOLVER_FAILURE);
++                    return;
++                }
++            }
++            break;
++        default:
++            abort();
++    }
++    finish(r, AVAHI_RESOLVER_FOUND);
++}
++
++static void resolve_error_callback(AvahiTimeEvent *e, void *userdata) {
++    AvahiSHostNameResolver *r = userdata;
++
++    if (r->defer_time_event) {
++        avahi_time_event_free(r->defer_time_event);
++        r->defer_time_event = NULL;
++    }
++    avahi_server_set_errno(r->server, AVAHI_ERR_FAILURE);
++    finish(r, AVAHI_RESOLVER_FAILURE);
++}
++
++static void avahi_resolve_host_name_start(AvahiSHostNameResolver *r, AvahiProtocol aprotocol)
++{
++    DNSServiceErrorType ret;
++    DNSServiceFlags flags;
++
++    if (r->flags == AVAHI_LOOKUP_USE_MULTICAST)
++        flags = kDNSServiceFlagsForceMulticast;
++
++    if (aprotocol == AVAHI_PROTO_INET || aprotocol == AVAHI_PROTO_UNSPEC) {
++        ret = DNSServiceQueryRecord(&r->client_a,
++                                    flags,
++                                    r->interface == AVAHI_IF_UNSPEC ?
++                                        kDNSServiceInterfaceIndexAny :
++                                        r->interface,
++                                    r->host_name,
++                                    kDNSServiceType_A,
++                                    kDNSServiceClass_IN,
++                                    resolve_reply,
++                                    r);
++        if (ret != kDNSServiceErr_NoError || !r->client_a) {
++            r->defer_time_event = avahi_time_event_new(r->server->time_event_queue, NULL, resolve_error_callback, r);
++           return;
++        } else {
++            r->watch_a = r->server->poll_api->watch_new(r->server->poll_api, DNSServiceRefSockFD(r->client_a), AVAHI_WATCH_IN, resolve_socket_event, r);
++        }
++    }
++    if (aprotocol == AVAHI_PROTO_INET6 || aprotocol == AVAHI_PROTO_UNSPEC) {
++        ret = DNSServiceQueryRecord(&r->client_a6,
++                                    flags,
++                                    r->interface == AVAHI_IF_UNSPEC ?
++                                        kDNSServiceInterfaceIndexAny :
++                                        r->interface,
++                                    r->host_name,
++                                    kDNSServiceType_AAAA,
++                                    kDNSServiceClass_IN,
++                                    resolve_reply,
++                                    r);
++        if (ret != kDNSServiceErr_NoError || !r->client_a6) {
++            r->defer_time_event = avahi_time_event_new(r->server->time_event_queue, NULL, resolve_error_callback, r);
++           return;
++        } else {
++            r->watch_a6 = r->server->poll_api->watch_new(r->server->poll_api, DNSServiceRefSockFD(r->client_a6), AVAHI_WATCH_IN, resolve_socket_event, r);
++        }
++    }
++}
++#endif
++
+ static void time_event_callback(AvahiTimeEvent *e, void *userdata) {
+     AvahiSHostNameResolver *r = userdata;
+ 
+@@ -116,6 +288,7 @@
+     r->time_event = avahi_time_event_new(r->server->time_event_queue, &tv, time_event_callback, r);
+ }
+ 
++#ifndef HAVE_BONJOUR
+ static void record_browser_callback(
+     AvahiSRecordBrowser*rr,
+     AvahiIfIndex interface,
+@@ -200,6 +373,7 @@
+             break;
+     }
+ }
++#endif
+ 
+ AvahiSHostNameResolver *avahi_s_host_name_resolver_new(
+     AvahiServer *server,
+@@ -246,6 +420,15 @@
+ 
+     r->record_browser_aaaa = r->record_browser_a = NULL;
+ 
++#ifdef HAVE_BONJOUR
++    r->defer_time_event = NULL;
++    r->watch_a = NULL;
++    r->watch_a6 = NULL;
++    r->client_a = NULL;
++    r->client_a6 = NULL;
++    r->lookup_flags = flags;
++    avahi_resolve_host_name_start (r, aprotocol);
++#else
+     if (aprotocol == AVAHI_PROTO_INET || aprotocol == AVAHI_PROTO_UNSPEC) {
+         k = avahi_key_new(host_name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_A);
+         r->record_browser_a = avahi_s_record_browser_new(server, interface, protocol, k, flags, record_browser_callback, r);
+@@ -265,6 +448,7 @@
+     }
+ 
+     assert(r->record_browser_aaaa || r->record_browser_a);
++#endif
+ 
+     start_timeout(r);
+ 
+@@ -291,6 +475,22 @@
+ 
+     if (r->address_record)
+         avahi_record_unref(r->address_record);
++#ifdef HAVE_BONJOUR
++    if (r->defer_time_event) {
++        avahi_time_event_free(r->defer_time_event);
++        r->defer_time_event = NULL;
++    }
++
++    if (r->watch_a)
++       r->server->poll_api->watch_free(r->watch_a);
++    if (r->watch_a6)
++       r->server->poll_api->watch_free(r->watch_a6);
++
++    if (r->client_a)
++        DNSServiceRefDeallocate(r->client_a);
++    if (r->client_a6)
++        DNSServiceRefDeallocate(r->client_a6);
++#endif
+ 
+     avahi_free(r->host_name);
+     avahi_free(r);

@@ -1,0 +1,24 @@
+--- dbus-1.1.2/bus/system.conf.in-orig	2007-09-06 14:35:26.459830000 -0500
++++ dbus-1.1.2/bus/system.conf.in	2007-09-06 14:42:35.059231000 -0500
+@@ -21,10 +21,21 @@
+   <fork/>
+ 
+   <!-- We use system service launching using a helper -->
++  <!-- Disabling D-Bus system services.
++       To support this feature as it is on, it would be necessary to create a
++       messagebus user and configure the D-Bus module to specify the
++       with-dbus-user=messagebus option.  This causes the D-Bus system daemon
++       to run as this user and use dbus-daemon-launch-helper when privilege is
++       required.  Solaris does not include anything that uses system services,
++       so this would only be needed if you wish to wished to use an application
++       that required it.
+   <standard_system_servicedirs/>
++  -->
+ 
+   <!-- This is a setuid helper that is used to launch system services -->
++  <!-- Disabling D-Bus system services.
+   <servicehelper>@DBUS_LIBEXECDIR@/dbus-daemon-launch-helper</servicehelper>
++  -->
+ 
+   <!-- Write a pid file -->
+   <pidfile>@DBUS_SYSTEM_PID_FILE@</pidfile>

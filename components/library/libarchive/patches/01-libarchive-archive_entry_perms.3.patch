@@ -1,0 +1,24 @@
+This patch is needed to remove references to functions that don't exist on 
+Solaris. It has not been fed back to the upstream community. It may need to be 
+tweaked slightly for future releases.  
+
+--- libarchive/libarchive/archive_entry_perms.3.orig	Mon Mar 26 19:49:00 2012
++++ libarchive/libarchive/archive_entry_perms.3	Fri Nov  9 12:37:14 2012
+@@ -170,9 +170,6 @@
+ In unusual circumstances, you can force a fully-specified set
+ of file flags by setting the bitmap of flags to clear to the complement
+ of the bitmap of flags to set.
+-(This differs from
+-.Xr fflagstostr 3 ,
+-which only includes names for set bits.)
+ Converting a bitmap to a textual string is a platform-specific
+ operation; bits that are not meaningful on the current platform
+ will be ignored.
+@@ -190,7 +187,4 @@
+ Note that every name \(em including names that follow an unrecognized
+ name \(em will be evaluated, and the bitmaps will be set to reflect
+ every name that is recognized.
+-(In particular, this differs from
+-.Xr strtofflags 3 ,
+-which stops parsing at the first unrecognized name.)
+ .Sh SEE ALSO

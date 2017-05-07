@@ -1,0 +1,14 @@
+# Append $(CFLAGS_FOR_BUILD) to $(CCFLAGS_FOR_BUILD),
+# so that we get everything we want.
+# Solaris-specific. Not for upstream.
+--- builtins/Makefile.in	2010-12-21 05:37:18.000000000 -0800
++++ builtins/Makefile.in	2013-03-19 10:25:27.019593825 -0700
+@@ -92,7 +92,7 @@
+ 
+ CCFLAGS = $(BASE_CCFLAGS) $(CPPFLAGS) $(CFLAGS)
+ 
+-CCFLAGS_FOR_BUILD = $(BASE_CCFLAGS) $(CPPFLAGS_FOR_BUILD) $(CFLAGS_FOR_BUILD)
++CCFLAGS_FOR_BUILD = $(CFLAGS) $(BASE_CCFLAGS) $(CPPFLAGS_FOR_BUILD) $(CFLAGS_FOR_BUILD)
+ 
+ GCC_LINT_FLAGS = -Wall -Wshadow -Wpointer-arith -Wcast-qual \
+ 		 -Wcast-align -Wstrict-prototypes -Wconversion \

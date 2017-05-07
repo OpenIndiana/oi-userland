@@ -1,0 +1,52 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Adam Stevko. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=variant.opensolaris.zone value="global" value="nonglobal"
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/auth_openvpn path=etc/security/auth_attr.d/openvpn
+file files/prof_openvpn path=etc/security/prof_attr.d/openvpn
+file files/openvpn.xml path=lib/svc/manifest/network/openvpn.xml restart_fmri=svc:/system/manifest-import:default
+file files/README.openindiana path=usr/share/doc/openvpn/README.openindiana
+
+file usr/share/man/man8/openvpn.8 path=usr/share/man/man1m/openvpn.1m
+
+dir path=etc/openvpn
+dir path=var/log/openvpn
+
+depend type=require fmri=driver/network/tun variant.opensolaris.zone=global
+depend type=require fmri=driver/network/tap variant.opensolaris.zone=global
+depend type=require fmri=network/openvpn/easy-rsa
+
+file path=usr/include/openvpn-msg.h
+file path=usr/include/openvpn-plugin.h
+file path=usr/lib/openvpn/plugins/openvpn-plugin-auth-pam.so
+file path=usr/lib/openvpn/plugins/openvpn-plugin-down-root.so
+file path=usr/sbin/openvpn
+file path=usr/share/doc/openvpn/COPYING
+file path=usr/share/doc/openvpn/COPYRIGHT.GPL
+file path=usr/share/doc/openvpn/Changes.rst
+file path=usr/share/doc/openvpn/README
+file path=usr/share/doc/openvpn/README.IPv6
+file path=usr/share/doc/openvpn/README.auth-pam
+file path=usr/share/doc/openvpn/README.down-root
+file path=usr/share/doc/openvpn/README.polarssl
+file path=usr/share/doc/openvpn/management-notes.txt

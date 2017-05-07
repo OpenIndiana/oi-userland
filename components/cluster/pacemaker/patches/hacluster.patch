@@ -1,0 +1,21 @@
+diff -Nura a/crm_report.in b/crm_report.in
+--- a/tools/crm_report.in	2016-10-26 17:50:41.022394732 +0200
++++ b/tools/crm_report.in	2016-10-26 17:51:21.667968776 +0200
+@@ -128,7 +128,7 @@
+ 	-u|--user)      ssh_user="$2"; shift; shift;;
+         -D|--max-depth)     maxdepth="$2"; shift; shift;;
+ 	-M) search_logs=0; shift;;
+-        --sos-mode) search_logs=0; extra_logs="/var/log/pacemaker.log /var/log/cluster/corosync.log"; nodes="$host"; shift;;
++        --sos-mode) search_logs=0; extra_logs="/var/log/pacemaker.log /var/log/cluster/corosync.log /var/log/hacluster/corosync.log"; nodes="$host"; shift;;
+ 	--dest) DESTDIR=$2; shift; shift;;
+ 	--) if [ ! -z $2 ]; then DESTDIR=$2; fi; break;;
+ 	-h|--help) usage; exit 0;;
+diff -Nura a/pacemaker.in b/pacemaker.in
+--- a/extra/logrotate/pacemaker.in	2016-10-26 15:48:47.208313957 +0200
++++ b/extra/logrotate/pacemaker.in	2016-10-26 15:49:10.299179007 +0200
+@@ -1,4 +1,4 @@
+-@localstatedir@/log/pacemaker.log {
++@localstatedir@/log/hacluster/pacemaker.log {
+     compress
+     dateext
+     weekly

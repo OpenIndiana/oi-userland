@@ -1,0 +1,19 @@
+Comment out the set -u (nounset) shell option in test-driver,
+which errors out when encountering unset variables.
+During "gmake test" the pcregrep binary is never called because it
+causes a problem in the pcregrep libtool wrapper for
+an unset variable $libtool_install_magic.
+Problem is not seen when running "gmake check" directly from
+command line.  Solaris-specific patch not appropriate for upstream.
+
+--- pcre-8.37-orig/test-driver	2015-04-28 04:17:22.000000000 -0700
++++ pcre-8.37/test-driver	2015-06-19 11:43:59.905679371 -0700
+@@ -29,7 +29,7 @@ scriptversion=2013-07-13.22; # UTC
+ 
+ # Make unconditional expansion of undefined variables an error.  This
+ # helps a lot in preventing typo-related bugs.
+-set -u
++# set -u
+ 
+ usage_error ()
+ {

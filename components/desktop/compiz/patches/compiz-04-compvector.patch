@@ -1,0 +1,61 @@
+--- compiz-0.8.0/include/compiz-core.h.ori	2009-03-11 06:25:36.447215855 +0000
++++ compiz-0.8.0/include/compiz-core.h	2009-02-20 12:09:30.000000000 +0000
+@@ -1284,7 +1284,7 @@
+ 	float y;
+ 	float z;
+ 	float w;
+-    };
++    } a;
+ } CompVector;
+ 
+ /* XXX: ScreenPaintAttrib will be removed */
+--- compiz-0.8.0/plugins/cube.c.ori	2009-03-11 06:27:35.305354777 +0000
++++ compiz-0.8.0/plugins/cube.c	2009-03-11 06:33:48.835066791 +0000
+@@ -885,33 +885,33 @@
+ 
+     matrixMultiplyVector (&pntA, &points[0], &mvp);
+ 
+-    if (pntA.w < 0.0f)
++    if (pntA.a.w < 0.0f)
+ 	rv = !rv;
+ 
+     matrixVectorDiv (&pntA);
+ 
+     matrixMultiplyVector (&pntB, &points[1], &mvp);
+ 
+-    if (pntB.w < 0.0f)
++    if (pntB.a.w < 0.0f)
+ 	rv = !rv;
+ 
+     matrixVectorDiv (&pntB);
+     matrixMultiplyVector (&pntC, &points[2], &mvp);
+     matrixVectorDiv (&pntC);
+ 
+-    vecA.x = pntC.x - pntA.x;
+-    vecA.y = pntC.y - pntA.y;
+-    vecA.z = pntC.z - pntA.z;
+-
+-    vecB.x = pntC.x - pntB.x;
+-    vecB.y = pntC.y - pntB.y;
+-    vecB.z = pntC.z - pntB.z;
+-
+-    ortho.x = vecA.y * vecB.z - vecA.z * vecB.y;
+-    ortho.y = vecA.z * vecB.x - vecA.x * vecB.z;
+-    ortho.z = vecA.x * vecB.y - vecA.y * vecB.x;
++    vecA.a.x = pntC.a.x - pntA.a.x;
++    vecA.a.y = pntC.a.y - pntA.a.y;
++    vecA.a.z = pntC.a.z - pntA.a.z;
++
++    vecB.a.x = pntC.a.x - pntB.a.x;
++    vecB.a.y = pntC.a.y - pntB.a.y;
++    vecB.a.z = pntC.a.z - pntB.a.z;
++
++    ortho.a.x = vecA.a.y * vecB.a.z - vecA.a.z * vecB.a.y;
++    ortho.a.y = vecA.a.z * vecB.a.x - vecA.a.x * vecB.a.z;
++    ortho.a.z = vecA.a.x * vecB.a.y - vecA.a.y * vecB.a.x;
+ 
+-    if (ortho.z > 0.0f)
++    if (ortho.a.z > 0.0f)
+ 	rv = !rv;
+ 
+     return rv;

@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2007, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+# 
+#
+#
+
+Solaris already has the old XPanoramiX* API in libXext, so we don't export
+it from libXinerama to avoid symbol clashes.
+
+diff --git a/src/Xinerama.c b/src/Xinerama.c
+index 67a35b5..e0e5c5d 100644
+--- a/src/Xinerama.c
++++ b/src/Xinerama.c
+@@ -89,6 +89,9 @@ static XEXT_GENERATE_CLOSE_DISPLAY (close_display, panoramiX_ext_info)
+  *                                                                          *
+  ****************************************************************************/
+ 
++#ifdef SUNSOFT
++static inline
++#endif /* SUNSOFT */
+ Bool XPanoramiXQueryExtension (
+     Display *dpy,
+     int *event_base_return,
+@@ -107,6 +110,9 @@ Bool XPanoramiXQueryExtension (
+ }
+ 
+ 
++#ifdef SUNSOFT
++static inline
++#endif /* SUNSOFT */
+ Status XPanoramiXQueryVersion(
+     Display *dpy,
+     int     *major_version_return,
+@@ -137,6 +143,7 @@ Status XPanoramiXQueryVersion(
+     return 1;
+ }
+ 
++#ifndef SUNSOFT
+ XPanoramiXInfo *XPanoramiXAllocInfo(void)
+ {
+ 	return (XPanoramiXInfo *) Xmalloc (sizeof (XPanoramiXInfo));
+@@ -232,6 +239,7 @@ Status XPanoramiXGetScreenSize (
+     panoramiX_info->height = rep.height;
+     return 1;
+ }
++#endif /* SUNSOFT */
+ 
+ /*******************************************************************\
+   Alternate interface to make up for shortcomings in the original,

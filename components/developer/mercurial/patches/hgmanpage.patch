@@ -1,0 +1,103 @@
+rst2man does a poor job of creating man pages that can be read on Solaris.
+Some of the changes in this patch make the Solaris *roff tools do the right
+thing:
+
+  - Getting rid of the rst2man header before the SYNOPSIS
+
+  - Changing "\(aq" to "'", and making sure that single quotes don't start
+    a line (at least in a couple of places where it's not safe)
+
+  - Changing ".ft C" and ".ft P" to simply ".ft"
+
+  - Removing "\%" and "\:"
+
+Groff also seems to have as much trouble with the .INDENT/.UNINDENT macros
+as Solaris *roff, de-indenting paragraphs that shouldn't be, so we use
+.RS/.RE instead.  It's not as fancy, but seems to do the job.
+
+Applying this patch has no effect in the normal userland build (it can't
+run automatically until docutils is delivered), but it enables a "gmake
+patches/manpage.patch" to regenerate the manpages with the updated text
+(found in rst.patch) with the patched hgmanpage.py, and updates the
+manpage.patch file.
+
+--- mercurial.hg/doc/hgmanpage.py	2016-10-09 20:00:17.207404849 -0700
++++ mercurial.hg/doc/hgmanpage.py	2016-10-10 10:04:03.695820057 -0700
+@@ -202,6 +202,7 @@
+         self._in_docinfo = None
+         self._active_table = None
+         self._in_literal = False
++        self._in_literal_inline = False
+         self.header_written = 0
+         self._line_block = 0
+         self.authors = []
+@@ -217,15 +218,15 @@
+         # ``B`` bold, ``I`` italic, ``R`` roman should be available.
+         # Hopefully ``C`` courier too.
+         self.defs = {
+-                'indent' : ('.INDENT %.1f\n', '.UNINDENT\n'),
++                'indent' : ('.RS %d\n', '.RE\n'),
+                 'definition_list_item' : ('.TP', ''),
+                 'field_name' : ('.TP\n.B ', '\n'),
+                 'literal' : ('\\fB', '\\fP'),
+-                'literal_block' : ('.sp\n.nf\n.ft C\n', '\n.ft P\n.fi\n'),
++                'literal_block' : ('.sp\n.nf\n.ft\n', '\n.ft\n.fi\n'),
+ 
+                 'option_list_item' : ('.TP\n', ''),
+ 
+-                'reference' : (r'\%', r'\:'),
++                'reference' : (r'', r''),
+                 'emphasis': ('\\fI', '\\fP'),
+                 'strong' : ('\\fB', '\\fP'),
+                 'term' : ('\n.B ', '\n'),
+@@ -272,6 +273,7 @@
+                     self.body[i - 2][:4] == '.TP\n'):
+                     self.body[i] = '.\n'
+                 elif (self.body[i - 1] == '\n' and
++                    self.body[i - 2] and
+                     self.body[i - 2][0] != '.' and
+                     (self.body[i - 3][:7] == '.TP\n.B '
+                         or self.body[i - 3][:4] == '\n.B ')
+@@ -289,7 +291,6 @@
+         text = text.replace('\\','\\e')
+         replace_pairs = [
+             (u'-', u'\\-'),
+-            (u"'", u'\\(aq'),
+             (u'´', u"\\'"),
+             (u'`', u'\\(ga'),
+             ]
+@@ -302,6 +303,15 @@
+             if text[0] == '.':
+                 text = '\\&' + text
+             text = text.replace('\n.', '\n\\&.')
++        # We need to do the same thing for the inline literals, too
++        if self._in_literal_inline and text[0] == '.':
++            if self.body[-2].endswith('\n') and \
++              self.body[-1] == self.defs['literal'][0]:
++                  self.body.append('\\&')
++        # Single quotes starting a line are harmful, too.
++        if text[0] == "'":
++                text = '\\&' + text
++        text = text.replace("\n'", "\n\\&'")
+         self.body.append(text)
+ 
+     def depart_Text(self, node):
+@@ -386,7 +396,6 @@
+         if self.header_written:
+             return
+         self.body.append(self.header())
+-        self.body.append(MACRO_DEF)
+         self.header_written = 1
+ 
+     def visit_address(self, node):
+@@ -800,8 +809,10 @@
+ 
+     def visit_literal(self, node):
+         self.body.append(self.defs['literal'][0])
++        self._in_literal_inline = True
+ 
+     def depart_literal(self, node):
++        self._in_literal_inline = False
+         self.body.append(self.defs['literal'][1])
+ 
+     def visit_literal_block(self, node):

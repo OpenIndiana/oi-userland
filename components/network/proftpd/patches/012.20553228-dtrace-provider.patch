@@ -1,0 +1,66 @@
+http://bugs.proftpd.org/show_bug.cgi?id=4162
+
+--- a/modules/mod_xfer.c	2015-02-03 20:54:22.857151750 -0800
++++ b/modules/mod_xfer.c	2015-02-03 21:10:36.020000070 -0800
+@@ -31,6 +31,9 @@
+ 
+ #include "conf.h"
+ #include "privs.h"
++#ifdef _SOLARIS_DTRACE
++#include "ftp_provider_impl.h"
++#endif
+ 
+ #ifdef HAVE_SYS_SENDFILE_H
+ # include <sys/sendfile.h>
+@@ -1784,7 +1787,24 @@
+      * be doing short writes, and we ideally should be more resilient/graceful
+      * in the face of such things.
+      */
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_start_enabled()) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, stor_fh, 0);
++      ftp_transfer_start(&proto);
++    }
++#endif
++
+     res = pr_fsio_write(stor_fh, lbuf, len);
++
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_done_enabled() && res == len) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, stor_fh, res);
++      ftp_transfer_done(&proto);
++    }
++#endif
++
+     if (res != len) {
+       int xerrno = EIO;
+       cmd->error_code = errno;
+@@ -2203,7 +2223,24 @@
+     if (XFER_ABORTED)
+       break;
+ 
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_start_enabled()) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, retr_fh, 0);
++      ftp_transfer_start(&proto);
++    }
++#endif
++
+     len = transmit_data(nbytes_sent, &curr_pos, lbuf, bufsz);
++
++#ifdef _SOLARIS_DTRACE
++    if (ftp_transfer_done_enabled() && len > 0) {
++      ftpproto_t proto;
++      FTP_TRANSFER_PROTO(&proto, retr_fh, len);
++      ftp_transfer_done(&proto);
++    }
++#endif
++
+     if (len == 0)
+       break;
+ 
+ 
+

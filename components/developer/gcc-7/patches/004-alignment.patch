@@ -1,0 +1,111 @@
+#
+# Make a few alignment adjustments for sparc.  This has not been
+# submitted upstream yet.
+#
+--- gcc-5.3.0/libgomp/config/posix/omp-lock.h	2008-06-06 09:01:54.000000000 -0400
++++ gcc-5.3.0/libgomp/config/posix/omp-lock.h	2014-11-19 08:34:08.522303786 -0500
+@@ -11,13 +11,28 @@
+ #include <semaphore.h>
+ 
+ typedef pthread_mutex_t omp_lock_25_t;
+-typedef struct { pthread_mutex_t lock; int count; } omp_nest_lock_25_t;
++
++typedef struct {
++  pthread_mutex_t lock;
++  int count;
++} omp_nest_lock_25_t __attribute__((__aligned__(8)));
++
+ #ifdef HAVE_BROKEN_POSIX_SEMAPHORES
+ /* If we don't have working semaphores, we'll make all explicit tasks
+    tied to the creating thread.  */
+ typedef pthread_mutex_t omp_lock_t;
+-typedef struct { pthread_mutex_t lock; int count; void *owner; } omp_nest_lock_t;
++
++typedef struct {
++  pthread_mutex_t lock;
++  int count;
++  void *owner;
++} omp_nest_lock_t __attribute__((__aligned__(8)));
+ #else
+ typedef sem_t omp_lock_t;
+-typedef struct { sem_t lock; int count; void *owner; } omp_nest_lock_t;
++typedef struct {
++  sem_t lock;
++  int count;
++  void *owner;
++} omp_nest_lock_t __attribute__((__aligned__(8)));
+ #endif
++
+--- gcc-5.3.0/libgomp/omp.h.in	2014-01-02 17:25:54.000000000 -0500
++++ gcc-5.3.0/libgomp/omp.h.in	2014-11-19 08:31:53.354302270 -0500
+@@ -32,16 +32,24 @@
+    reflect the shape of the two types.  Their internals are private
+    to the library.  */
+ 
++#if defined(__x86_64__) || defined(__amd64) || defined(__sparc)
++#define OMP_LOCK_ALIGN 8
++#define OMP_NEST_LOCK_ALIGN 8
++#else
++#define OMP_LOCK_ALIGN 4
++#define OMP_NEST_LOCK_ALIGN 4
++#endif
++
+ typedef struct
+ {
+   unsigned char _x[@OMP_LOCK_SIZE@] 
+-    __attribute__((__aligned__(@OMP_LOCK_ALIGN@)));
++    __attribute__((__aligned__(OMP_LOCK_ALIGN)));
+ } omp_lock_t;
+ 
+ typedef struct
+ {
+   unsigned char _x[@OMP_NEST_LOCK_SIZE@] 
+-    __attribute__((__aligned__(@OMP_NEST_LOCK_ALIGN@)));
++    __attribute__((__aligned__(OMP_NEST_LOCK_ALIGN)));
+ } omp_nest_lock_t;
+ #endif
+ 
+--- gcc-5.3.0/libgomp/config/posix/ptrlock.h	2014-01-02 17:25:54.000000000 -0500
++++ gcc-5.3.0/libgomp/config/posix/ptrlock.h	2014-11-19 08:35:00.554310487 -0500
+@@ -29,7 +29,10 @@
+ #ifndef GOMP_PTRLOCK_H
+ #define GOMP_PTRLOCK_H 1
+ 
+-typedef struct { void *ptr; gomp_mutex_t lock; } gomp_ptrlock_t;
++typedef struct {
++  void *ptr;
++  gomp_mutex_t lock;
++} gomp_ptrlock_t __attribute__((__aligned__(8)));
+ 
+ static inline void gomp_ptrlock_init (gomp_ptrlock_t *ptrlock, void *ptr)
+ {
+--- gcc-5.3.0/libgomp/config/posix/sem.h	2014-01-02 17:25:54.000000000 -0500
++++ gcc-5.3.0/libgomp/config/posix/sem.h	2014-11-19 08:35:29.670306230 -0500
+@@ -49,8 +49,8 @@
+ 
+ struct gomp_sem
+ {
+-  pthread_mutex_t	mutex;
+-  pthread_cond_t	cond;
++  pthread_mutex_t	mutex __attribute__((__aligned__(8)));
++  pthread_cond_t	cond __attribute__((__aligned__(8)));
+   int			value;
+ };
+ 
+#--- gcc-5.3.0/libgomp/config/posix/lock.c       2015-01-10 11:10:37.000000000 -0800
+#+++ gcc-5.3.0/libgomp/config/posix/lock.c       2015-08-02 20:30:05.513685199 -0700
+#@@ -33,7 +33,14 @@
+#
+# /* We need UNIX98/XPG5 extensions to get recursive locks.  Request XPG6 since
+#    Solaris requires this for C99 and later.  */
+#+#ifndef _XOPEN_SOURCE
+# #define _XOPEN_SOURCE 600
+#+#endif
+#+
+#+#if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE < 600)
+#+#undef _XOPEN_SOURCE
+#+#define _XOPEN_SOURCE 600
+#+#endif
+#
+# #include "libgomp.h"
+#

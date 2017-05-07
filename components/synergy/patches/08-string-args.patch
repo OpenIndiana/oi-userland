@@ -1,0 +1,22 @@
+--- synergy-1.7.6-stable/src/lib/ipc/IpcClientProxy.cpp.orig	2016-08-23 23:42:29.557617453 +0200
++++ synergy-1.7.6-stable/src/lib/ipc/IpcClientProxy.cpp	2016-08-23 23:42:43.231749189 +0200
+@@ -147,7 +147,7 @@
+ 	case kIpcLogLine: {
+ 		const IpcLogLineMessage& llm = static_cast<const IpcLogLineMessage&>(message);
+ 		String logLine = llm.logLine();
+-		ProtocolUtil::writef(&m_stream, kIpcMsgLogLine, logLine);
++		ProtocolUtil::writef(&m_stream, kIpcMsgLogLine, logLine.c_str());
+ 		break;
+ 	}
+ 			
+--- synergy-1.7.6-stable/src/lib/ipc/IpcServerProxy.cpp.orig	2016-08-23 23:41:19.138744816 +0200
++++ synergy-1.7.6-stable/src/lib/ipc/IpcServerProxy.cpp	2016-08-23 23:41:55.467508151 +0200
+@@ -95,7 +95,7 @@
+ 	case kIpcCommand: {
+ 		const IpcCommandMessage& cm = static_cast<const IpcCommandMessage&>(message);
+ 		String command = cm.command();
+-		ProtocolUtil::writef(&m_stream, kIpcMsgCommand, command);
++		ProtocolUtil::writef(&m_stream, kIpcMsgCommand, command.c_str());
+ 		break;
+ 	}
+ 

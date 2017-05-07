@@ -1,0 +1,102 @@
+--- glib-2.43.4/gio/gdesktopappinfo.c.~1~	2015-02-07 13:35:55.000000000 +0300
++++ glib-2.43.4/gio/gdesktopappinfo.c	2016-10-29 12:48:46.694082010 +0300
+@@ -25,6 +25,7 @@
+ #include "config.h"
+ 
+ #include <errno.h>
++#include <limits.h>
+ #include <string.h>
+ #include <unistd.h>
+ 
+@@ -2449,6 +2450,7 @@
+   int term_argc = 0;
+   char *check;
+   char **the_argv;
++  char buf[SYMLINK_MAX+1];
+ 
+   g_return_val_if_fail (argc != NULL, FALSE);
+   g_return_val_if_fail (argv != NULL, FALSE);
+@@ -2470,35 +2472,58 @@
+   term_argc = 2;
+   term_argv = g_new0 (char *, 3);
+ 
+-  check = g_find_program_in_path ("gnome-terminal");
+-  if (check != NULL)
++  check = g_find_program_in_path ("x-terminal-emulator");
++  if (check != NULL) 
+     {
+-      term_argv[0] = check;
+-      /* Note that gnome-terminal takes -x and
+-       * as -e in gnome-terminal is broken we use that. */
+-      term_argv[1] = g_strdup ("-x");
+-    }
+-  else
+-    {
+-      if (check == NULL)
+-        check = g_find_program_in_path ("nxterm");
+-      if (check == NULL)
+-        check = g_find_program_in_path ("color-xterm");
+-      if (check == NULL)
+-        check = g_find_program_in_path ("rxvt");
+-      if (check == NULL)
+-        check = g_find_program_in_path ("xterm");
+-      if (check == NULL)
+-        check = g_find_program_in_path ("dtterm");
+-      if (check == NULL)
++       memset(buf,0, SYMLINK_MAX+1);
++       if(readlink(check,buf,SYMLINK_MAX)){
++           g_debug("Found %s pointing to %s\n", check, buf);
++           if(!strcmp(buf,"gnome-terminal"))
++             {
++                 term_argv[1] = g_strdup ("-x");
++             }
++           else
++             {
++                 term_argv[1] = g_strdup("-e");
++             }
++           term_argv[0] = check;
++       } else {
++           g_warning ("Could not read x-terminal-emulator link, refusing to use it");
++           g_free(check);
++           check = NULL;
++       }
++    }
++  if (check == NULL)
++    {
++      check = g_find_program_in_path ("gnome-terminal");
++      if (check != NULL)
++        {
++          term_argv[0] = check;
++          /* Note that gnome-terminal takes -x and
++           * as -e in gnome-terminal is broken we use that. */
++          term_argv[1] = g_strdup ("-x");
++        }
++      else
+         {
+-          check = g_strdup ("xterm");
+-          g_warning ("couldn't find a terminal, falling back to xterm");
++          if (check == NULL)
++            check = g_find_program_in_path ("nxterm");
++          if (check == NULL)
++            check = g_find_program_in_path ("color-xterm");
++          if (check == NULL)
++            check = g_find_program_in_path ("rxvt");
++          if (check == NULL)
++            check = g_find_program_in_path ("xterm");
++          if (check == NULL)
++            check = g_find_program_in_path ("dtterm");
++          if (check == NULL)
++            {
++              check = g_strdup ("xterm");
++              g_warning ("couldn't find a terminal, falling back to xterm");
++            }
++          term_argv[0] = check;
++          term_argv[1] = g_strdup ("-e");
+         }
+-      term_argv[0] = check;
+-      term_argv[1] = g_strdup ("-e");
+     }
+-
+   real_argc = term_argc + *argc;
+   real_argv = g_new (char *, real_argc + 1);
+ 

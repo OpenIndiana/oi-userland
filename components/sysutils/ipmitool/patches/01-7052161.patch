@@ -1,0 +1,31 @@
+Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved
+
+--- ipmitool-1.8.12.old/lib/ipmi_fru.c	Wed Oct 31 19:56:47 2012
++++ ipmitool-1.8.12/lib/ipmi_fru.c	Wed Oct 31 20:00:06 2012
+@@ -1319,12 +1319,20 @@
+ 			printf ("  Peak capacity holdup       : %d s\n",
+ 				peak_hold_up_time);
+ 			if (ps->combined_capacity == 0)
+-				printf ("  Combined capacity          : not specified\n");
+-			else
+-				printf ("  Combined capacity          : %d W (%s and %s)\n",
+-					ps->combined_capacity,
+-					combined_voltage_desc [ps->combined_voltage1],
+-					combined_voltage_desc [ps->combined_voltage2]);
++				printf ("  Combined capacity	  : not specified\n");
++			else {
++				if ((ps->combined_voltage1 < 
++					sizeof(combined_voltage_desc)/sizeof(char *)) && 
++					(ps->combined_voltage2 < 
++					sizeof(combined_voltage_desc)/sizeof(char *)))
++					printf ("  Combined capacity	  : %d W (%s and %s)\n",
++						ps->combined_capacity,
++						combined_voltage_desc [ps->combined_voltage1],
++						combined_voltage_desc [ps->combined_voltage2]);
++				else
++					printf ("  Combined capacity	  : %d W (voltages not specified correctly)\n",
++					ps->combined_capacity);
++			}
+ 			if (ps->predictive_fail)
+ 				printf ("  Fan lower threshold        : %d RPS\n",
+ 					ps->rps_threshold);

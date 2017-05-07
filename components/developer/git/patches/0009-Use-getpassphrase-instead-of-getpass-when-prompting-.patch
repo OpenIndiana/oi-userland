@@ -1,0 +1,28 @@
+From fe054b8cbe161d01a66637976c1cabad0ce1c973 Mon Sep 17 00:00:00 2001
+From: Ben Walton <bwalton@opencsw.org>
+Date: Mon, 30 Jul 2012 18:13:23 +0200
+Subject: [PATCH] Use getpassphrase instead of getpass when prompting for
+ passwords
+
+The legacy getpass function returns at most 9 characters, including
+null termination which means an 8-character password.  Instead, use
+getpassphrase which allows up to 257 characters.
+
+Mantis ID 4943
+
+Signed-off-by: Ben Walton <bwalton@opencsw.org>
+---
+ compat/terminal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- git-1.9.4/compat/terminal.c.~1~	2014-05-31 01:38:10.000000000 +0400
++++ git-1.9.4/compat/terminal.c	2015-04-18 01:05:23.720230178 +0300
+@@ -141,7 +141,7 @@
+ 
+ char *git_terminal_prompt(const char *prompt, int echo)
+ {
+-	return getpass(prompt);
++	return getpassphrase(prompt);
+ }
+ 
+ #endif

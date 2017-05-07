@@ -1,0 +1,22 @@
+--- a/src/mga_dacG.c	Mon Feb 11 14:59:08 2013
++++ b/src/mga_dacG.c	Mon Feb 11 15:00:39 2013
+@@ -1051,6 +1051,19 @@
+ 
+ 		if (pMga->HasSDRAM)
+ 		    pReg->Option = 0x40049120;
++		else {
++		    /* 
++		     * Do not reset biosen bit of option reg, as this will set 
++		     * ROM base register to 0
++		     */
++		    CARD32 option = 0;
++#ifdef XSERVER_LIBPCIACCESS
++		    pci_device_cfg_read_u32(pMga->PciInfo, & option, PCI_OPTION_REG);
++#else
++		    option = pciReadLong(pMga->PciTag, PCI_OPTION_REG);
++#endif
++		    pReg->Option = (pReg->Option & 0xFBFFFFFF) | (option & 0x40000000);
++		}
+ 	        pReg->Option2 = 0x00008000;
+ 		break;
+ 

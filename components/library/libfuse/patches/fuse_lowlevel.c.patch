@@ -1,0 +1,50 @@
+--- libfuse/fuse_lowlevel.c.ref	2010-06-15 16:46:54.000000000 +0200
++++ libfuse/fuse_lowlevel.c	2016-05-03 21:26:02.185307700 +0200
+@@ -21,6 +21,7 @@
+ #include <unistd.h>
+ #include <limits.h>
+ #include <errno.h>
++#include <sys/mkdev.h>
+
+ #define PARAM(inarg) (((char *)(inarg)) + sizeof(*(inarg)))
+ #define OFFSET_MAX 0x7fffffffffffffffLL
+@@ -69,7 +70,17 @@
+     attr->nlink     = stbuf->st_nlink;
+     attr->uid       = stbuf->st_uid;
+     attr->gid       = stbuf->st_gid;
++#ifdef _LP64
++        /*
++         * Must pack the device the old way as attr->rdev is limited to
++         * 32 bits and the kernel module does not know whether it is
++         * talking to a 32-bit or a 64-bit library.
++         */
++    attr->rdev      = ((major(stbuf->st_rdev) & 0x3fff) << 18)
++                     | (minor(stbuf->st_rdev) & 0x3ffff);
++#else
+     attr->rdev      = stbuf->st_rdev;
++#endif
+     attr->size      = stbuf->st_size;
+     attr->blocks    = stbuf->st_blocks;
+     attr->atime     = stbuf->st_atime;
+@@ -510,9 +521,19 @@
+ {
+     struct fuse_mknod_in *arg = (struct fuse_mknod_in *) inarg;
+
+-    if (req->f->op.mknod)
++    if (req->f->op.mknod) {
++#ifdef _LP64
++       /*
++        * Must unpack the device, as arg->rdev is limited to 32 bits,
++        * and must have the same format in 32-bit and 64-bit builds.
++        */
++        req->f->op.mknod(req, nodeid, PARAM(arg), arg->mode,
++                makedev((arg->rdev >> 18) & 0x3fff,
++                        arg->rdev & 0x3ffff));
++#else
+         req->f->op.mknod(req, nodeid, PARAM(arg), arg->mode, arg->rdev);
+-    else
++#endif
++    } else
+         fuse_reply_err(req, ENOSYS);
+ }
+

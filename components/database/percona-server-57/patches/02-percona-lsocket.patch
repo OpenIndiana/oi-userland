@@ -1,0 +1,53 @@
+diff -ruN percona-server-5.7.14-7.orig/extra/CMakeLists.txt percona-server-5.7.14-7/extra/CMakeLists.txt
+--- percona-server-5.7.14-7.orig/extra/CMakeLists.txt	2016-08-18 19:09:52.000000000 +0300
++++ percona-server-5.7.14-7/extra/CMakeLists.txt	2016-09-12 19:43:15.910906962 +0300
+@@ -95,6 +95,7 @@
+ 
+ MYSQL_ADD_EXECUTABLE(replace replace.c)
+ TARGET_LINK_LIBRARIES(replace mysys)
++TARGET_LINK_LIBRARIES(replace "-lsocket")
+ 
+ MYSQL_ADD_EXECUTABLE(lz4_decompress lz4_decompress.cc)
+ TARGET_LINK_LIBRARIES(lz4_decompress ${LZ4_LIBRARY})
+diff -ruN percona-server-5.7.14-7.orig/mysys/CMakeLists.txt percona-server-5.7.14-7/mysys/CMakeLists.txt
+--- percona-server-5.7.14-7.orig/mysys/CMakeLists.txt	2016-08-18 19:09:52.000000000 +0300
++++ percona-server-5.7.14-7/mysys/CMakeLists.txt	2016-09-12 19:45:31.155554435 +0300
+@@ -76,9 +76,11 @@
+ 
+ ADD_EXECUTABLE(thr_lock thr_lock.c)
+ TARGET_LINK_LIBRARIES(thr_lock mysys)
++TARGET_LINK_LIBRARIES(thr_lock "-lsocket")
+ SET_TARGET_PROPERTIES(thr_lock PROPERTIES COMPILE_FLAGS "-DMAIN")
+ ADD_EXECUTABLE(queues queues.c)
+ TARGET_LINK_LIBRARIES(queues mysys)
++TARGET_LINK_LIBRARIES(queues "-lsocket")
+ SET_TARGET_PROPERTIES(queues PROPERTIES COMPILE_FLAGS "-DMAIN")
+ ADD_TEST(queues_test queues)
+ 
+diff -ruN percona-server-5.7.14-7.orig/storage/heap/CMakeLists.txt percona-server-5.7.14-7/storage/heap/CMakeLists.txt
+--- percona-server-5.7.17-13/storage/heap/CMakeLists.txt.~1~	2017-04-27 20:53:32.545708402 +0300
++++ percona-server-5.7.17-13/storage/heap/CMakeLists.txt	2017-04-27 20:55:12.603696265 +0300
+@@ -29,9 +29,11 @@
+ IF(WITH_UNIT_TESTS AND WITH_EMBEDDED_SERVER)
+   ADD_EXECUTABLE(hp_test1 hp_test1.c)
+   TARGET_LINK_LIBRARIES(hp_test1 heap_embedded mysys)
++  TARGET_LINK_LIBRARIES(hp_test1 "-lsocket")
+   ADD_TEST(hp_test1 hp_test1)
+ 
+   ADD_EXECUTABLE(hp_test2 hp_test2.c)
+   TARGET_LINK_LIBRARIES(hp_test2 heap_embedded mysys)
++  TARGET_LINK_LIBRARIES(hp_test2 "-lsocket")
+   ADD_TEST(hp_test2 hp_test2)
+ ENDIF()
+
+diff -ruN percona-server-5.7.14-7.orig/storage/perfschema/unittest/CMakeLists.txt percona-server-5.7.14-7/storage/perfschema/unittest/CMakeLists.txt
+--- percona-server-5.7.14-7.orig/storage/perfschema/unittest/CMakeLists.txt	2016-08-18 19:09:52.000000000 +0300
++++ percona-server-5.7.14-7/storage/perfschema/unittest/CMakeLists.txt	2016-09-12 19:47:13.218567957 +0300
+@@ -30,6 +30,7 @@
+ MACRO (PFS_ADD_TEST name)
+   ADD_EXECUTABLE(${name}-t ${name}-t.cc)
+   TARGET_LINK_LIBRARIES(${name}-t mytap perfschema mysys pfs_server_stubs)
++  TARGET_LINK_LIBRARIES(${name}-t "-lsocket")
+   ADD_TEST(${name} ${name}-t)
+ ENDMACRO()
+ 

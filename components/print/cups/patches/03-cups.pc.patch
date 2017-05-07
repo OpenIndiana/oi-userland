@@ -1,0 +1,54 @@
+Index: Makefile
+===================================================================
+--- Makefile.~1~	2016-09-14 11:51:26.531319155 +0300
++++ Makefile	2016-09-14 11:52:57.348185766 +0300
+@@ -192,6 +192,8 @@
+ 	echo Installing cups-config script...
+ 	$(INSTALL_DIR) -m 755 $(BINDIR)
+ 	$(INSTALL_SCRIPT) cups-config $(BINDIR)/cups-config
++	$(INSTALL_DIR) $(BUILDROOT)$(libdir)/pkgconfig
++	$(INSTALL_DATA) cups.pc $(BUILDROOT)$(libdir)/pkgconfig/cups.pc
+ 
+ 
+ #
+Index: cups.pc.in
+===================================================================
+--- cups.pc.in	(revision 0)
++++ cups.pc.in	(revision 0)
+@@ -0,0 +1,18 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++bindir=@bindir@
++includedir=@includedir@
++libdir=@libdir@
++imagelibdir=@libdir@
++datarootdir=@datadir@
++datadir=@datadir@
++sysconfdir=@sysconfdir@
++cups_datadir=@CUPS_DATADIR@
++cups_serverbin=@CUPS_SERVERBIN@
++cups_serverroot=@CUPS_SERVERROOT@
++
++Name: cups
++Description: Common Unix Printing System
++Version: @CUPS_VERSION@
++Cflags: -I${includedir}
++Libs: -L${libdir} -lcupsimage -lcups
+
+Property changes on: cups.pc.in
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Index: configure.in
+===================================================================
+--- configure.in.orig	Tue Jun 22 14:42:44 2010
++++ configure.in	Mon Dec  6 03:26:15 2010
+@@ -86,6 +86,7 @@
+ 	  scheduler/cups.xml
+ 	  scheduler/org.cups.cups-lpd.plist
+  	  templates/header.tmpl
++	  cups.pc
+           packaging/cups.list
+ 	  $LANGFILES)
+ 

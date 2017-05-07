@@ -1,0 +1,58 @@
+#!/usr/bin/bash
+# Start/stop PCSD WebGUI daemon
+#
+. /lib/svc/share/smf_include.sh
+
+export CLUSTER_USER=hacluster
+export CLUSTER_GROUP=haclient
+
+binpath=/usr/lib/pcsd
+config=/var/lib/pcsd
+pidfile=/var/run/pcsd.pid
+params=" -C${config} -I${binpath} -- ${binpath}/ssl.rb"
+
+export PATH=/usr/ruby/2.3/bin:${binpath}:/usr/gnu/bin:/usr/bin:/usr/sbin:${PATH}
+
+# runtime folder for sockets etc.
+[ ! -d ${config} ] && mkdir -p ${config}
+
+[ -e /usr/lib/pcsd/env ] && . /usr/lib/pcsd/env
+
+start() {
+	if [ -f ${pidfile} ]; then
+		stop
+	fi
+	BUNDLE_GEMFILE=${binpath}/Gemfile bundle exec ruby ${params} &
+	echo $! > ${pidfile}
+	return 0
+}
+
+stop() {
+	if [ -f ${pidfile} ]; then
+		pid=`cat ${pidfile}`
+		if kill -0 ${pid}; then
+		  kill -9 ${pid}
+		fi
+		rm ${pidfile}
+	fi
+	return 0
+}
+
+case "$1" in
+	'start')
+		start
+		;;
+	'restart')
+		stop
+		start
+		;;
+	'stop')
+		stop
+		;;
+	*)
+		echo "Usage: -bash { start | stop | restart}"
+		exit 1
+		;;
+esac
+exit 0
+

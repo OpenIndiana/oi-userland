@@ -1,0 +1,16 @@
+diff -up ctags-5.8/css.c.me ctags-5.8/css.c
+--- ctags-5.8/css.c.me	2012-10-18 22:03:20.126163700 +0200
++++ ctags-5.8/css.c	2012-10-18 22:04:03.237107358 +0200
+@@ -73,10 +73,11 @@ static CssParserState parseCssDeclaratio
+   {
+     if( (int) *cp == '\0' )
+     { 
++      /* assign position to the end of line. */
++      *position = cp;
+       cp = fileReadLine ();
+       if( cp == NULL ){
+         makeCssSimpleTag(name, kind, TRUE);
+-        *position = cp;
+         return P_STATE_AT_END;
+       }
+     }

@@ -1,0 +1,15 @@
+Again, gcc warns about mismatched types for format specifier.
+
+XXX file upstream bug
+
+--- pulseaudio-6.0/src/daemon/main.c	2015-02-12 06:10:35.000000000 -0800
++++ pulseaudio-6.0/src/daemon/main.c	2015-06-05 15:48:08.600674316 -0700
+@@ -604,7 +604,7 @@
+             if (pa_pid_file_check_running(&pid, "pulseaudio") < 0)
+                 pa_log_info("Daemon not running");
+             else {
+-                pa_log_info("Daemon running as PID %u", pid);
++                pa_log_info("Daemon running as PID %u", (unsigned int) pid);
+                 retval = 0;
+             }
+ 

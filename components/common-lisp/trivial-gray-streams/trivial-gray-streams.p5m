@@ -1,0 +1,44 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir  path=usr
+dir  path=usr/share
+dir  path=usr/share/common-lisp
+dir  path=usr/share/common-lisp/source
+dir  path=usr/share/common-lisp/source/trivial-gray-streams
+file path=usr/share/common-lisp/source/trivial-gray-streams/COPYING
+file path=usr/share/common-lisp/source/trivial-gray-streams/Makefile
+file path=usr/share/common-lisp/source/trivial-gray-streams/README
+file path=usr/share/common-lisp/source/trivial-gray-streams/build.xcvb
+file path=usr/share/common-lisp/source/trivial-gray-streams/package.lisp
+file path=usr/share/common-lisp/source/trivial-gray-streams/streams.lisp
+dir  path=usr/share/common-lisp/source/trivial-gray-streams/test
+file path=usr/share/common-lisp/source/trivial-gray-streams/test/package.lisp
+file path=usr/share/common-lisp/source/trivial-gray-streams/test/run-on-many-lisps.lisp
+file path=usr/share/common-lisp/source/trivial-gray-streams/test/test-framework.lisp
+file path=usr/share/common-lisp/source/trivial-gray-streams/test/test.lisp
+file path=usr/share/common-lisp/source/trivial-gray-streams/trivial-gray-streams-test.asd
+file path=usr/share/common-lisp/source/trivial-gray-streams/trivial-gray-streams.asd
+dir  path=usr/share/common-lisp/systems
+link path=usr/share/common-lisp/systems/trivial-gray-streams.asd \
+    target=../source/trivial-gray-streams/trivial-gray-streams.asd

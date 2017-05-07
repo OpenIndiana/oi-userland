@@ -1,0 +1,22 @@
+--- scheduler/cups.xml.in.orig	2012-06-04 00:33:19.967159134 -0700
++++ scheduler/cups.xml.in	2012-06-04 00:34:58.000000000 -0700
+@@ -71,8 +71,8 @@
+         <exec_method
+             type='method'
+             name='start'
+-            exec='@sbindir@/cupsd'
+-            timeout_seconds='60' >
++            exec='/lib/svc/method/svc-cupsd'
++            timeout_seconds='300' >
+             <method_context>
+                 <method_credential user='root' group='@CUPS_GROUP@' />
+             </method_context>
+@@ -87,6 +87,8 @@
+                 value='solaris.smf.manage.cups' />
+         </property_group>
+ 
++        <property_group name='startup' type='application' />
++
+         <template>
+             <common_name>
+                 <loctext xml:lang='C'>

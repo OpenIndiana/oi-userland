@@ -1,0 +1,100 @@
+'\" t
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" ident	"@(#)sysbench.1.sunman	1.2	10/03/16 SMI"
+.\" "Copyright 2010 Sun Microsystems, Inc.  All rights reserved."
+.\" "Use is subject to license terms."
+'\" te
+.TH sysbench 1 sysbench\-0.4.12
+.SH NAME
+\fBsysbench\fP
+\- A system-level benchmarking tool
+.SH SYNOPSIS
+.br
+\fB/usr/benchmarks/sysbench/bin/sysbench\fP
+[general-options]... [\fB\--test=<test-name>\fP] [test-options]... command
+.SH DESCRIPTION
+
+The
+\fBsysbench\fP
+program is a a modular, cross-platform and multi-threaded benchmark tool for evaluating OS parameters that are important for a system running a database under intensive load.
+
+The idea of this benchmark suite is to quickly get an impression about system performance without setting up complex database benchmarks or even without installing a database at all.
+
+Current features allow testing of the following system parameters:
+
+    * file I/O performance
+    * scheduler performance
+    * memory allocation and transfer speed
+    * POSIX threads implementation performance
+    * database server performance (OLTP benchmark)
+
+Full documentation can be found at the project home page: http://sysbench.sourceforge.net/
+
+.SH OPTIONS
+
+The following general options are supported:
+  --num-threads=N            number of threads to use [1]
+  --max-requests=N           limit for total number of requests [10000]
+  --max-time=N               limit for total execution time in seconds [0]
+  --thread-stack-size=SIZE   size of stack per thread [32K]
+  --init-rng=[on|off]        initialize random number generator [off]
+  --test=STRING              test to run
+  --debug=[on|off]           print more debugging info [off]
+  --validate=[on|off]        perform validation checks where possible [off]
+  --help=[on|off]            print help and exit
+  --version=[on|off]         print version and exit
+
+The compiled-in tests are:
+  fileio - File I/O test
+  cpu - CPU performance test
+  memory - Memory functions speed test
+  threads - Threads subsystem performance test
+  mutex - Mutex performance test
+  oltp - OLTP test
+
+
+.\" Begin Sun update
+.SH "ATTRIBUTES"
+.PP
+See \fBattributes\fR(5)
+for descriptions of the following attributes:
+.sp
+.TS
+tab() allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPEATTRIBUTE VALUE
+Availabilitybenchmark/sysbench
+Interface stabilityUncommitted
+.TE
+.sp
+.\" End Sun update
+
+.SH SEE ALSO
+
+\fBfilebench\fP(1),
+.SH AUTHORS
+ Terminator <jimmyzhou@users.sourceforge.net>
+ Gautam Iyer <gi1242@users.sourceforge.net>
+ Marc Schoechlin" <mschoechlin@users.sourceforge.net>
+.SH NOTES
+Source for Sysbench is available on http://sourceforge.net/projects/sysbench/

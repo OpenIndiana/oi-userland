@@ -1,0 +1,53 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Require package with default JPEG API
+depend fmri=image/library/libjpeg8-turbo type=require
+
+# Only shipped by libjpeg-turbo
+file path=usr/share/doc/libjpeg-turbo/LICENSE.md
+file path=usr/share/doc/libjpeg-turbo/README.ijg
+file path=usr/share/doc/libjpeg-turbo/README.md
+file path=usr/share/doc/libjpeg-turbo/example.c
+file path=usr/share/doc/libjpeg-turbo/libjpeg.txt
+file path=usr/share/doc/libjpeg-turbo/structure.txt
+file path=usr/share/doc/libjpeg-turbo/usage.txt
+file path=usr/share/doc/libjpeg-turbo/wizard.txt
+
+# Already shipped by libjpeg6-ijg
+#file path=usr/share/man/man1/cjpeg.1
+#file path=usr/share/man/man1/djpeg.1
+#file path=usr/share/man/man1/jpegtran.1
+#file path=usr/share/man/man1/rdjpgcom.1
+#file path=usr/share/man/man1/wrjpgcom.1
+
+# Add symlinks to default pkg-config files
+link path=usr/lib/pkgconfig/libjpeg.pc \
+	target=../libjpeg8-turbo/lib/pkgconfig/libjpeg.pc
+link path=usr/lib/pkgconfig/libturbojpeg.pc \
+	target=../libjpeg8-turbo/lib/pkgconfig/libturbojpeg.pc
+link path=usr/lib/$(MACH64)/pkgconfig/libjpeg.pc \
+	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libjpeg.pc
+link path=usr/lib/$(MACH64)/pkgconfig/libturbojpeg.pc \
+	target=../../libjpeg8-turbo/lib/$(MACH64)/pkgconfig/libturbojpeg.pc

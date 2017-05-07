@@ -1,0 +1,27 @@
+--- gnome-mag-0.16.1/magnifier/magnifier.c	2010-04-01 00:53:08.000000000 +0800
++++ gnome-mag-0.16.1-mod/magnifier/magnifier.c	2010-09-15 12:34:39.764947137 +0800
+@@ -2248,14 +2248,22 @@
+ static void
+ magnifier_init (Magnifier *magnifier)
+ {
++
++	const gchar *display_env;
+ 	magnifier->priv = g_new0 (MagnifierPrivate, 1);
+ 	magnifier_properties_init (magnifier);
+ 	magnifier->zoom_regions = NULL;
+ 	magnifier->zoom_regions_dbus = NULL;
+ 	magnifier->source_screen_num = 0;
+ 	magnifier->target_screen_num = 0;
+-	magnifier->source_display_name = g_strdup (":0.0");
+-	magnifier->target_display_name = g_strdup (":0.0");
++
++	if (display_env = g_getenv ("DISPLAY")) {
++		magnifier->source_display_name = g_strdup (display_env);
++		magnifier->target_display_name = g_strdup (display_env);
++	} else {
++		magnifier->source_display_name = g_strdup (":0.0");
++		magnifier->target_display_name = g_strdup (":0.0");
++	}
+ 	magnifier->cursor_size_x = 0;
+ 	magnifier->cursor_size_y = 0;
+ 	magnifier->cursor_scale_factor = 1.0F;

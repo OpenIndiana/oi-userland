@@ -1,0 +1,174 @@
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+--- ./CMakeLists.txt	Tue Mar 15 12:03:49 2016
++++ ./CMakeLists.txt.new	Thu Jun 30 15:23:52 2016
+@@ -77,7 +77,7 @@
+ 
+ 	# warnings as errors:
+ 	# we have a problem with people checking in code with warnings.
+-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-unused-local-typedef")
++	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-unused-local-typedef")
+ 
+ 	if (NOT APPLE)
+ 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+--- ./src/lib/synergy/ArgsBase.cpp	Tue Mar 15 12:03:49 2016
++++ ./src/lib/synergy/ArgsBase.cpp.new	Wed Jun 15 18:18:32 2016
+@@ -27,9 +27,6 @@
+ #else
+ m_daemon(true), // backward compatibility for unix (daemon by default)
+ #endif
+-#if WINAPI_XWINDOWS
+-m_disableXInitThreads(false),
+-#endif
+ m_backend(false),
+ m_restartable(true),
+ m_noHooks(false),
+@@ -40,6 +37,9 @@
+ m_disableTray(false),
+ m_enableIpc(false),
+ m_enableDragDrop(false),
++#if WINAPI_XWINDOWS
++m_disableXInitThreads(false),
++#endif
+ m_shouldExit(false),
+ m_synergyAddress(),
+ m_enableCrypto(false),
+--- ./src/lib/plugin/ns/SecureSocket.cpp	Tue Mar 15 12:03:49 2016
++++ ./src/lib/plugin/ns/SecureSocket.cpp.new	Wed Jun 15 18:18:32 2016
+@@ -529,7 +529,8 @@
+ SecureSocket::verifyCertFingerprint()
+ {
+ 	// calculate received certificate fingerprint
+-	X509 *cert = cert = SSL_get_peer_certificate(m_ssl->m_ssl);
++	// SKK  WAS  X509 *cert = cert = SSL_get_peer_certificate(m_ssl->m_ssl);
++	X509 *cert = SSL_get_peer_certificate(m_ssl->m_ssl);
+ 	EVP_MD* tempDigest;
+ 	unsigned char tempFingerprint[EVP_MAX_MD_SIZE];
+ 	unsigned int tempFingerprintLen;
+--- ./src/lib/platform/XWindowsEventQueueBuffer.cpp	Tue Mar 15 12:03:49 2016
++++ ./src/lib/platform/XWindowsEventQueueBuffer.cpp.new	Thu Jun 30 16:52:10 2016
+@@ -54,10 +54,10 @@
+ 
+ XWindowsEventQueueBuffer::XWindowsEventQueueBuffer(
+ 		Display* display, Window window, IEventQueue* events) :
+-	m_events(events),
+ 	m_display(display),
+ 	m_window(window),
+-	m_waiting(false)
++	m_waiting(false),
++	m_events(events)
+ {
+ 	assert(m_display != NULL);
+ 	assert(m_window  != None);
+--- ./src/lib/platform/XWindowsScreen.cpp	Tue Mar 15 12:03:49 2016
++++ ./src/lib/platform/XWindowsScreen.cpp.new	Wed Jun 15 18:18:32 2016
+@@ -96,6 +96,7 @@
+ 		bool disableXInitThreads,
+ 		int mouseScrollDelta,
+ 		IEventQueue* events) :
++	PlatformScreen(events),
+ 	m_isPrimary(isPrimary),
+ 	m_mouseScrollDelta(mouseScrollDelta),
+ 	m_display(NULL),
+@@ -120,8 +121,7 @@
+ 	m_xkb(false),
+ 	m_xi2detected(false),
+ 	m_xrandr(false),
+-	m_events(events),
+-	PlatformScreen(events)
++	m_events(events)
+ {
+ 	assert(s_screen == NULL);
+ 
+--- ./src/lib/arch/unix/ArchNetworkBSD.cpp	Tue Mar 15 12:03:49 2016
++++ ./src/lib/arch/unix/ArchNetworkBSD.cpp.new	Wed Jun 15 18:18:32 2016
+@@ -328,6 +328,7 @@
+ 		// the unblock event was signalled.  flush the pipe.
+ 		char dummy[100];
+ 		int ignore;
++		(void)ignore;
+ 
+ 		do {
+ 			ignore = read(unblockPipe[0], dummy, sizeof(dummy));
+@@ -370,6 +371,7 @@
+ 	return n;
+ }
+ 
++
+ #else
+ 
+ int
+@@ -503,6 +505,7 @@
+ 	if (unblockPipe != NULL) {
+ 		char dummy = 0;
+ 		int ignore;
++		(void)ignore;
+ 
+ 		ignore = write(unblockPipe[1], &dummy, 1);
+ 	}
+--- ./src/lib/arch/unix/ArchMultithreadPosix.cpp	Tue Mar 15 12:03:49 2016
++++ ./src/lib/arch/unix/ArchMultithreadPosix.cpp.new	Wed Jun 15 18:18:32 2016
+@@ -277,6 +277,7 @@
+ {
+ 	pthread_mutexattr_t attr;
+ 	int status = pthread_mutexattr_init(&attr);
++	(void)status;
+ 	assert(status == 0);
+ 	ArchMutexImpl* mutex = new ArchMutexImpl;
+ 	status = pthread_mutex_init(&mutex->m_mutex, &attr);
+--- ./src/test/CMakeLists.txt	Tue Mar 15 12:03:49 2016
++++ ./src/test/CMakeLists.txt.new	Wed Jun 15 18:18:32 2016
+@@ -14,6 +14,7 @@
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
++if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+ include_directories(
+ 	../../ext/gtest-1.6.0
+ 	../../ext/gtest-1.6.0/include
+@@ -31,3 +32,5 @@
+ 
+ add_subdirectory(integtests)
+ add_subdirectory(unittests)
++
++endif()
+--- ./src/micro/uSynergy.h	Tue Mar 15 12:03:49 2016
++++ ./src/micro/uSynergy.h.new	Wed Jun 15 18:18:32 2016
+@@ -26,6 +26,17 @@
+ */
+ #include <stdint.h>
+ 
++#ifdef __sun
++#include <sys/isa_defs.h>
++#if defined(_LITTLE_ENDIAN)
++#define __LITTLE_ENDIAN__
++#define USYNERGY_LITTLE_ENDIAN
++#else
++#define __BIG_ENDIAN__
++#define USYNERGY_BIG_ENDIAN
++#endif
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif

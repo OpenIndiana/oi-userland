@@ -1,0 +1,99 @@
+diff -ruN lua-5.3.2.orig/src/lauxlib.h lua-5.3.2/src/lauxlib.h
+--- lua-5.3.2.orig/src/lauxlib.h	2015-11-23 12:29:43.000000000 +0100
++++ lua-5.3.2/src/lauxlib.h	2016-04-26 02:24:14.904089932 +0200
+@@ -8,6 +8,9 @@
+ #ifndef lauxlib_h
+ #define lauxlib_h
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
+ 
+ #include <stddef.h>
+ #include <stdio.h>
+@@ -250,6 +253,9 @@
+ /* }============================================================ */
+ 
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
+ 
+ #endif
+ 
+diff -ruN lua-5.3.2.orig/src/lua.h lua-5.3.2/src/lua.h
+--- lua-5.3.2.orig/src/lua.h	2015-11-13 18:18:42.000000000 +0100
++++ lua-5.3.2/src/lua.h	2016-04-26 02:22:48.355488690 +0200
+@@ -9,6 +9,10 @@
+ #ifndef lua_h
+ #define lua_h
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #include <stdarg.h>
+ #include <stddef.h>
+ 
+@@ -483,4 +487,8 @@
+ ******************************************************************************/
+ 
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff -ruN lua-5.3.2.orig/src/luaconf.h lua-5.3.2/src/luaconf.h
+--- lua-5.3.2.orig/src/luaconf.h	2015-10-21 20:17:40.000000000 +0200
++++ lua-5.3.2/src/luaconf.h	2016-04-26 02:25:40.468686522 +0200
+@@ -188,7 +188,7 @@
+ 
+ #else			/* }{ */
+ 
+-#define LUA_ROOT	"/usr/local/"
++#define LUA_ROOT	"/usr/"
+ #define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR "/"
+ #define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
+ #define LUA_PATH_DEFAULT  \
+@@ -265,7 +265,7 @@
+ */
+ #if defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
+     defined(__ELF__)		/* { */
+-#define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
++#define LUAI_FUNC	extern
+ #else				/* }{ */
+ #define LUAI_FUNC	extern
+ #endif				/* } */
+@@ -606,7 +606,7 @@
+ 
+ 
+ /*
+-@@ lua_number2strx converts a float to an hexadecimal numeric string. 
++@@ lua_number2strx converts a float to an hexadecimal numeric string.
+ ** In C99, 'sprintf' (with format specifiers '%a'/'%A') does that.
+ ** Otherwise, you can leave 'lua_number2strx' undefined and Lua will
+ ** provide its own implementation.
+diff -ruN lua-5.3.2.orig/src/lualib.h lua-5.3.2/src/lualib.h
+--- lua-5.3.2.orig/src/lualib.h	2014-02-06 18:32:33.000000000 +0100
++++ lua-5.3.2/src/lualib.h	2016-04-26 02:23:16.977614755 +0200
+@@ -8,6 +8,10 @@
+ #ifndef lualib_h
+ #define lualib_h
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #include "lua.h"
+ 
+ 
+@@ -55,4 +59,8 @@
+ #endif
+ 
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif

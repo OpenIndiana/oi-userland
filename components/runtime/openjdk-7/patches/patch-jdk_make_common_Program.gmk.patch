@@ -1,0 +1,24 @@
+--- jdk/make/common/Program.gmk.~1~	2014-01-01 09:53:33.000000000 +0400
++++ jdk/make/common/Program.gmk	2014-01-07 16:24:02.115499513 +0400
+@@ -65,7 +65,10 @@
+ ifndef CROSS_COMPILE_ARCH
+   # reuse the mapfiles in the launcher's directory, the same should
+   # be applicable to the tool launchers as well.
+-  FILES_m = $(BUILDDIR)/java/main/java/mapfile-$(ARCH)
++  # Except when the makefile requests a specific mapfile.
++  ifndef FILES_m
++    FILES_m = $(BUILDDIR)/java/main/java/mapfile-$(ARCH)
++  endif # ! FILES_m
+   include $(BUILDDIR)/common/Mapfile-vers.gmk
+ endif
+ 
+@@ -121,6 +125,9 @@
+     LDFLAGS += -Wl,--allow-shlib-undefined
+     LDFLAGS += -Wl,-rpath -Wl,\$$ORIGIN/../lib/$(LIBARCH)/jli
+   endif # PLATFORM LINUX
++  ifeq ($(SYSTEM_ZLIB),true)
++    OTHER_LDLIBS += $(ZLIB_LIBS)
++  endif # SYSTEM_ZLIB
+ endif # PLATFORM linux solaris
+ 
+ ifeq ($(PLATFORM), windows)

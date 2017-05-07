@@ -29,8 +29,10 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9b79763141a855079b0589717696a4ccb5c56c0b807b6e584bfe12333399e0b7
 COMPONENT_PROJECT_URL=  http://github.com/drkjam/netaddr/
-COMPONENT_ARCHIVE_URL=	http://github.com/downloads/drkjam/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netaddr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/netaddr
+
+PYTHON_VERSIONS=2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -53,6 +55,5 @@ COMPONENT_PRE_TEST_ACTION= \
 
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/python/ipython-27
+REQUIRED_PACKAGES += runtime/python-27

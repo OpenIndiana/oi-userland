@@ -1,0 +1,142 @@
+Description: Restore access to cupsd.conf and logfiles, fix regression
+ introduced by STR: #4455
+Author: Michael Sweet <msweet@apple.com>
+Bug-Upstream: https://www.cups.org/str.php?L4461
+Bug-Debian: https://bugs.debian.org/757964
+Last-Update: 2014-10-22
+--- notifier/rss.c
++++ notifier/rss.c
+@@ -29,6 +29,7 @@
+  */
+ 
+ #include <cups/cups.h>
++#include <sys/stat.h>
+ #include <cups/language.h>
+ #include <cups/string-private.h>
+ #include <cups/array.h>
+@@ -629,6 +630,8 @@
+     return (0);
+   }
+ 
++  fchmod(fileno(fp), 0644);
++
+   fputs("<?xml version=\"1.0\"?>\n", fp);
+   fputs("<rss version=\"2.0\">\n", fp);
+   fputs("  <channel>\n", fp);
+--- scheduler/client.c
++++ scheduler/client.c
+@@ -3263,6 +3263,7 @@
+   char		*ptr;			/* Pointer info filename */
+   int		plen;			/* Remaining length after pointer */
+   char		language[7];		/* Language subdirectory, if any */
++  int		perm_check = 1;		/* Do permissions check? */
+ 
+ 
+  /*
+@@ -3272,17 +3273,27 @@
+   language[0] = '\0';
+ 
+   if (!strncmp(con->uri, "/ppd/", 5) && !strchr(con->uri + 5, '/'))
++  {
+     snprintf(filename, len, "%s%s", ServerRoot, con->uri);
++
++    perm_check = 0;
++  }
+   else if (!strncmp(con->uri, "/icons/", 7) && !strchr(con->uri + 7, '/'))
+   {
+     snprintf(filename, len, "%s/%s", CacheDir, con->uri + 7);
+     if (access(filename, F_OK) < 0)
+       snprintf(filename, len, "%s/images/generic.png", DocumentRoot);
++
++    perm_check = 0;
+   }
+   else if (!strncmp(con->uri, "/rss/", 5) && !strchr(con->uri + 5, '/'))
+     snprintf(filename, len, "%s/rss/%s", CacheDir, con->uri + 5);
+-  else if (!strncmp(con->uri, "/admin/conf/", 12))
+-    snprintf(filename, len, "%s%s", ServerRoot, con->uri + 11);
++  else if (!strcmp(con->uri, "/admin/conf/cupsd.conf"))
++  {
++    strlcpy(filename, ConfigurationFile, len);
++
++    perm_check = 0;
++  }
+   else if (!strncmp(con->uri, "/admin/log/", 11))
+   {
+     if (!strncmp(con->uri + 11, "access_log", 10) && AccessLog[0] == '/')
+@@ -3293,6 +3304,8 @@
+       strlcpy(filename, PageLog, len);
+     else
+       return (NULL);
++
++    perm_check = 0;
+   }
+   else if (con->language)
+   {
+@@ -3358,7 +3371,7 @@
+   * not allow access...
+   */
+ 
+-  if (!status && !(filestats->st_mode & S_IROTH))
++  if (!status && perm_check && !(filestats->st_mode & S_IROTH))
+   {
+     cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
+     return (NULL);
+@@ -3466,7 +3479,7 @@
+     * not allow access...
+     */
+ 
+-    if (!status && !(filestats->st_mode & S_IROTH))
++    if (!status && perm_check && !(filestats->st_mode & S_IROTH))
+     {
+       cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
+       return (NULL);
+--- scheduler/conf.c
++++ scheduler/conf.c
+@@ -1089,7 +1089,7 @@
+ 
+   if ((cupsdCheckPermissions(RequestRoot, NULL, 0710, RunUser,
+ 			     Group, 1, 1) < 0 ||
+-       cupsdCheckPermissions(CacheDir, NULL, 0775, RunUser,
++       cupsdCheckPermissions(CacheDir, NULL, 0770, RunUser,
+ 			     Group, 1, 1) < 0 ||
+        cupsdCheckPermissions(temp, NULL, 0775, RunUser,
+ 			     Group, 1, 1) < 0 ||
+--- scheduler/ipp.c
++++ scheduler/ipp.c
+@@ -2734,7 +2734,6 @@
+ 
+       cupsdLogMessage(CUPSD_LOG_DEBUG,
+ 		      "Copied PPD file successfully");
+-      chmod(dstfile, 0644);
+     }
+   }
+ 
+@@ -4641,7 +4640,7 @@
+   * Open the destination file for a copy...
+   */
+ 
+-  if ((dst = cupsFileOpen(to, "wb")) == NULL)
++  if ((dst = cupsdCreateConfFile(to, ConfigFilePerm)) == NULL)
+   {
+     cupsFreeOptions(num_defaults, defaults);
+     cupsFileClose(src);
+@@ -4696,7 +4695,7 @@
+ 
+   unlink(tempfile);
+ 
+-  return (cupsFileClose(dst));
++  return (cupsdCloseCreatedConfFile(dst, to));
+ }
+ 
+ 
+--- scheduler/Makefile
++++ scheduler/Makefile
+@@ -172,7 +172,7 @@
+ 	echo Creating $(REQUESTS)/tmp...
+ 	$(INSTALL_DIR) -m 1770 -g $(CUPS_GROUP) $(REQUESTS)/tmp
+ 	echo Creating $(CACHEDIR)...
+-	$(INSTALL_DIR) -m 775 -g $(CUPS_GROUP) $(CACHEDIR)
++	$(INSTALL_DIR) -m 770 -g $(CUPS_GROUP) $(CACHEDIR)
+ 	if test "x$(INITDIR)" != x; then \
+ 		echo Installing init scripts...; \
+ 		$(INSTALL_DIR) -m 755 $(BUILDROOT)$(INITDIR)/init.d; \

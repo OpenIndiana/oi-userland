@@ -1,0 +1,107 @@
+--- a/src/ex_cmds.c	2016-09-21 15:16:13.032570431 -0700
++++ b/src/ex_cmds.c	2016-09-21 15:16:13.055466074 -0700
+@@ -6276,6 +6276,8 @@
+ #ifdef FEAT_FOLDING
+     int		old_KeyTyped = KeyTyped;
+ #endif
++    int		nohelp = FALSE, nominhelp = FALSE;
++    char_u	*mhf = NULL;
+ 
+     if (eap != NULL)
+     {
+@@ -6327,6 +6329,23 @@
+     n = find_help_tags(arg, &num_matches, &matches,
+ 						 eap != NULL && eap->forceit);
+ 
++    /*
++     * If we didn't find the help topic, check to see whether 'helpfile'
++     * (typically $VIMRUNTIME/doc/help.txt) exists.  If not, then we'll send the
++     * user to the minimized help file delivered with the core vim package which
++     * explains why there's no help and how to get it.
++     */
++    if (num_matches == 0 && mch_access((char *)p_hf, F_OK) < 0) {
++	nohelp = TRUE;
++	mhf = alloc(MAXPATHL);
++	STRNCPY(mhf, p_hf, MAXPATHL - 1);
++	mhf[STRLEN(mhf) - 8] = '\0';
++	STRNCAT(mhf, "help_minimized.txt", MAXPATHL - STRLEN(mhf) - 1);
++
++	if (mch_access((char *)mhf, F_OK) < 0)
++	    nominhelp = TRUE;
++    }
++
+     i = 0;
+ #ifdef FEAT_MULTI_LANG
+     if (n != FAIL && lang != NULL)
+@@ -6339,7 +6358,7 @@
+ 		break;
+ 	}
+ #endif
+-    if (i >= num_matches || n == FAIL)
++    if (!nohelp && i >= num_matches || n == FAIL)
+     {
+ #ifdef FEAT_MULTI_LANG
+ 	if (lang != NULL)
+@@ -6352,9 +6371,11 @@
+ 	return;
+     }
+ 
+-    /* The first match (in the requested language) is the best match. */
+-    tag = vim_strsave(matches[i]);
+-    FreeWild(num_matches, matches);
++    if (!nohelp) {
++	/* The first match (in the requested language) is the best match. */
++	tag = vim_strsave(matches[i]);
++	FreeWild(num_matches, matches);
++    }
+ 
+ #ifdef FEAT_GUI
+     need_mouse_correct = TRUE;
+@@ -6386,12 +6407,14 @@
+ 	     * There is no help window yet.
+ 	     * Try to open the file specified by the "helpfile" option.
+ 	     */
+-	    if ((helpfd = mch_fopen((char *)p_hf, READBIN)) == NULL)
+-	    {
+-		smsg((char_u *)_("Sorry, help file \"%s\" not found"), p_hf);
+-		goto erret;
++	    if (!nohelp || nominhelp) {
++		if ((helpfd = mch_fopen((char *)p_hf, READBIN)) == NULL)
++		{
++		    smsg((char_u *)_("Sorry, help file \"%s\" not found"), p_hf);
++		    goto erret;
++		}
++		fclose(helpfd);
+ 	    }
+-	    fclose(helpfd);
+ 
+ #ifdef FEAT_WINDOWS
+ 	    /* Split off help window; put it at far top if no position
+@@ -6420,7 +6443,7 @@
+ 	     * Set the alternate file to the previously edited file.
+ 	     */
+ 	    alt_fnum = curbuf->b_fnum;
+-	    (void)do_ecmd(0, NULL, NULL, NULL, ECMD_LASTL,
++	    (void)do_ecmd(0, mhf, NULL, NULL, ECMD_LASTL,
+ 			  ECMD_HIDE + ECMD_SET_HELP,
+ #ifdef FEAT_WINDOWS
+ 			  NULL  /* buffer is still open, don't store info */
+@@ -6443,7 +6466,7 @@
+     KeyTyped = old_KeyTyped;
+ #endif
+ 
+-    if (tag != NULL)
++    if (!nohelp && tag != NULL)
+ 	do_tag(tag, DT_HELP, 1, FALSE, TRUE);
+ 
+     /* Delete the empty buffer if we're not using it.  Careful: autocommands
+@@ -6461,7 +6484,8 @@
+ 	curwin->w_alt_fnum = alt_fnum;
+ 
+ erret:
+-    vim_free(tag);
++    if (!nohelp)
++	vim_free(tag);
+ }
+ 
+ /*

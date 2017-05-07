@@ -1,0 +1,75 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/library/libevent@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(COMPONENT_VERSION)
+set name=pkg.summary \
+    value="Libevent - an event notification library"
+set name=com.oracle.info.description value="the libevent event notification library"
+set name=com.oracle.info.tpno value=5581
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid \
+    value=PSARC/2007/580
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+file files/event-config.h path=usr/include/event-config.h
+
+file path=usr/include/evutil.h
+file path=usr/include/evdns.h
+file path=usr/include/event-config-32.h
+file path=usr/include/event-config-64.h
+file path=usr/include/evrpc.h
+file path=usr/include/evhttp.h
+file path=usr/include/event.h
+file path=usr/lib/$(MACH64)/libevent_core-1.4.so.2.2.0
+file path=usr/lib/$(MACH64)/libevent_extra-1.4.so.2.2.0
+file path=usr/lib/$(MACH64)/libevent-1.4.so.2.2.0
+file path=usr/lib/libevent_core-1.4.so.2.2.0
+file path=usr/lib/libevent_extra-1.4.so.2.2.0
+file path=usr/lib/libevent-1.4.so.2.2.0
+file path=usr/share/man/man3/event.3
+file path=usr/share/man/man3/evdns.3
+file libevent.3 path=usr/share/man/man3/libevent.3
+link path=usr/lib/$(MACH64)/libevent.so target=libevent-1.4.so.2.2.0
+link path=usr/lib/$(MACH64)/libevent.so.1 target=libevent-1.4.so.2.2.0
+link path=usr/lib/$(MACH64)/libevent-1.4.so.2 target=libevent-1.4.so.2.2.0
+link path=usr/lib/$(MACH64)/libevent_extra.so target=libevent_extra-1.4.so.2.2.0
+link path=usr/lib/$(MACH64)/libevent_extra-1.4.so.2 target=libevent_extra-1.4.so.2.2.0
+link path=usr/lib/$(MACH64)/libevent_core.so target=libevent_core-1.4.so.2.2.0
+link path=usr/lib/$(MACH64)/libevent_core-1.4.so.2 target=libevent_core-1.4.so.2.2.0
+link path=usr/lib/libevent.so target=libevent-1.4.so.2.2.0
+link path=usr/lib/libevent.so.1 target=libevent-1.4.so.2.2.0
+link path=usr/lib/libevent-1.4.so.2 target=libevent-1.4.so.2.2.0
+link path=usr/lib/libevent_extra.so target=libevent_extra-1.4.so.2.2.0
+link path=usr/lib/libevent_extra-1.4.so.2 target=libevent_extra-1.4.so.2.2.0
+link path=usr/lib/libevent_core.so target=libevent_core-1.4.so.2.2.0
+link path=usr/lib/libevent_core-1.4.so.2 target=libevent_core-1.4.so.2.2.0
+
+license libevent.license license=BSD

@@ -1,0 +1,80 @@
+'\" te
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+.\" Use is subject to license terms.
+.\"
+.\" ident	"@(#)mrtg-traffic-sum.1	1.2	10/03/16 SMI"
+.\"
+.\" Copyright (c) 1996-2001 Tobias Oetiker and all the Contributers to MRTG.  All rights reserved.
+.\"
+.TH mrtg-traffic-sum 1 "9 Jan 2009" "SunOS 5.11" "User Commands"
+.SH NAME
+mrtg-traffic-sum \- Builds monthly traffic summary
+.SH SYNOPSIS
+\fBmrtg-traffic-sum [options...] config-file\fR 
+.sp
+-h, --help      display this help and exit
+.br
+--version       output version information and exit
+.br
+--catch=regexp  filter out things that match this in PageTop
+.br
+--email=address email the result
+.br
+--min=gigabytes minimal number of gigabites required
+.SH DESCRIPTION
+.sp
+The mrtg-traffic-sum goes through the mrtg logs for the targets in the the config file specified and builds the traffic total for the last month in Giga Bytes. (Note in communications Giga is 10^9).
+.sp
+The result of this analysis can be sent via email to an address of your choice using the --email option.
+.sp
+With the --catch option you can specify a regular expression which will be matched against the contents of the PageTop settings. The regular expression should return a value into $1 and possibly into $2. This will then be used as description for the appropriate traffic sum. By default the catch is set to:
+.sp
+(?:description|port name):</td>\s*<td>\s*([^< ]*?[^<]*?)\s*</td
+.sp
+By default only traffic which is over 500 gigabytes gets reported. Use the --min switch to change this number.
+.SH AUTHOR
+.sp
+Tobias Oetiker <tobi@oetiker.ch>
+.SH ATTRIBUTES
+.sp
+See \fBattributes\fR(5) for descriptions of the following attributes:
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilitydiagnostic/mrtg
+_
+Interface StabilityUncommitted
+_
+StandardSee \fBstandards\fR(5).
+.TE
+
+.SH SEE ALSO
+.sp
+\fBmrtg\fR(1), \fBmrtg-reference\fR(1), \fBmrtg-logfile\fR(1), \fBcfgmaker\fR(1), \fBindexmaker\fR(1), \fBrateup\fR(1)
+.SH NOTES
+Source for mrtg-traffic-sum is available on http://opensolaris.org.

@@ -1,0 +1,20 @@
+--- configure.ac.orig	Thu Apr  2 11:13:45 2009
++++ configure.ac	Thu Apr  2 11:12:14 2009
+@@ -27,6 +27,8 @@
+ fi
+ 
+ # Checks for libraries.
++AC_SEARCH_LIBS([gethostbyname], [nsl])
++AC_SEARCH_LIBS([socket, connect], [socket])
+ AC_SEARCH_LIBS([tgetent], [termcap curses ncurses])
+ AC_SEARCH_LIBS([basename], [gen])
+ if test "x$with_pcre" != "xno"; then
+@@ -36,6 +38,8 @@
+ fi
+ 
+ # Checks for header files.
++AC_CHECK_HEADERS([netdb.h])
++AC_CHECK_HEADERS([sys/socket.h])
+ AC_CHECK_HEADERS([libgen.h paths.h termcap.h curses.h term.h sys/loadavg.h])
+ if test "x$with_pcre" != "xno"; then
+    AC_CHECK_HEADERS([pcre.h])

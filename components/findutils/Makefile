@@ -41,8 +41,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_PREFIX =	/usr/gnu
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
 # Disable the leaf optimisation feature, because the st_nlinks directory
 # field is incorrect on ZFS file systems.
 CONFIGURE_OPTIONS +=	--disable-leaf-optimisation

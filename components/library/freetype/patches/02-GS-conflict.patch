@@ -1,0 +1,26 @@
+diff --git a/src/truetype/ttinterp.h b/src/truetype/ttinterp.h
+index 333decc..3027ed0 100644
+--- a/src/truetype/ttinterp.h
++++ b/src/truetype/ttinterp.h
+@@ -185,6 +185,8 @@ FT_BEGIN_HEADER
+     FT_Size_Metrics    metrics;
+     TT_Size_Metrics    tt_metrics; /* size metrics */
+ 
++#undef GS /* avoid conflict with <sys/regset.h> on Solaris x86 systems */
++#define GS FT_GS
+     TT_GraphicsState   GS;         /* current graphics state */
+ 
+     FT_Int             curRange;  /* current code range number   */
+diff --git a/src/truetype/ttobjs.h b/src/truetype/ttobjs.h
+index 859164f..2670d3a 100644
+--- a/src/truetype/ttobjs.h
++++ b/src/truetype/ttobjs.h
+@@ -314,6 +314,8 @@ FT_BEGIN_HEADER
+ 
+     TT_CodeRangeTable  codeRangeTable;
+ 
++#undef GS /* avoid conflict with <sys/regset.h> on Solaris x86 systems */
++#define GS FT_GS
+     TT_GraphicsState   GS;
+ 
+     FT_ULong           cvt_size;      /* the scaled control value table */

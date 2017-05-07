@@ -1,0 +1,44 @@
+From 69de4c23996fe320e8345f273e2e35e529f0fdf3 Mon Sep 17 00:00:00 2001
+From: Stefan Birkner <mail@stefan-birkner.de>
+Date: Thu, 3 Apr 2014 21:49:48 +0200
+Subject: [PATCH] Don't consider bridge and synthetic methods.
+
+---
+ src/main/java/org/junit/internal/MethodSorter.java | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/org/junit/internal/MethodSorter.java b/src/main/java/org/junit/internal/MethodSorter.java
+index d8e661a..d110afa 100644
+--- a/src/main/java/org/junit/internal/MethodSorter.java
++++ b/src/main/java/org/junit/internal/MethodSorter.java
+@@ -1,8 +1,10 @@
+ package org.junit.internal;
+
+ import java.lang.reflect.Method;
+-import java.util.Arrays;
++import java.util.ArrayList;
++import java.util.Collections;
+ import java.util.Comparator;
++import java.util.List;
+
+ import org.junit.FixMethodOrder;
+
+@@ -52,11 +54,16 @@ public int compare(Method m1, Method m2) {
+         Comparator<Method> comparator = getSorter(clazz.getAnnotation(FixMethodOrder.class));
+
+         Method[] methods = clazz.getDeclaredMethods();
++        List<Method> x = new ArrayList<Method>();
++        for (Method method : methods)
++            if (!method.isBridge() && !method.isSynthetic())
++                x.add(method);
++
+         if (comparator != null) {
+-            Arrays.sort(methods, comparator);
++            Collections.sort(x, comparator);
+         }
+
+-        return methods;
++        return x.toArray(new Method[x.size()]);
+     }
+
+     private MethodSorter() {

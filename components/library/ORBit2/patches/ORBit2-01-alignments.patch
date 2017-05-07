@@ -1,0 +1,31 @@
+diff -urN ORBit2-2.14.17/include/orbit/orbit-config.h.in ../../SUNWgnome-component-2.26.1.hacked/i386/ORBit2-2.14.17/include/orbit/orbit-config.h.in
+--- ORBit2-2.14.17/include/orbit/orbit-config.h.in	2008-08-31 15:04:42.000000000 +0100
++++ ../../SUNWgnome-component-2.26.1.hacked/i386/ORBit2-2.14.17/include/orbit/orbit-config.h.in	2009-07-22 08:45:37.248848000 +0100
+@@ -14,6 +14,20 @@
+  * Alignment of CORBA types mapped to C.
+  * These have *nothing* to do with CDR alignment.
+  */
++#if defined (__amd64) || defined(__sparcv9)
++#define ORBIT_ALIGNOF_CORBA_OCTET        1
++#define ORBIT_ALIGNOF_CORBA_BOOLEAN      1
++#define ORBIT_ALIGNOF_CORBA_CHAR         1
++#define ORBIT_ALIGNOF_CORBA_WCHAR        2
++#define ORBIT_ALIGNOF_CORBA_SHORT        2
++#define ORBIT_ALIGNOF_CORBA_LONG         4
++#define ORBIT_ALIGNOF_CORBA_LONG_LONG    8
++#define ORBIT_ALIGNOF_CORBA_FLOAT        4
++#define ORBIT_ALIGNOF_CORBA_DOUBLE       8
++#define ORBIT_ALIGNOF_CORBA_LONG_DOUBLE  8
++#define ORBIT_ALIGNOF_CORBA_STRUCT       1
++#define ORBIT_ALIGNOF_CORBA_POINTER      8
++#else
+ #define ORBIT_ALIGNOF_CORBA_OCTET        @ORBIT_ALIGNOF_CORBA_OCTET@
+ #define ORBIT_ALIGNOF_CORBA_BOOLEAN      @ORBIT_ALIGNOF_CORBA_BOOLEAN@
+ #define ORBIT_ALIGNOF_CORBA_CHAR         @ORBIT_ALIGNOF_CORBA_CHAR@
+@@ -26,5 +40,6 @@
+ #define ORBIT_ALIGNOF_CORBA_LONG_DOUBLE  @ORBIT_ALIGNOF_CORBA_LONG_DOUBLE@
+ #define ORBIT_ALIGNOF_CORBA_STRUCT       @ORBIT_ALIGNOF_CORBA_STRUCT@
+ #define ORBIT_ALIGNOF_CORBA_POINTER      @ORBIT_ALIGNOF_CORBA_POINTER@
++#endif
+ 
+ #endif

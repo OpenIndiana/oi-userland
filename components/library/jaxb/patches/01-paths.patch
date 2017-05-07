@@ -1,0 +1,121 @@
+--- jaxb-ri-2.2.11/bundles/ri/src/main/resources/bin/xjc.sh.1	2017-02-11 11:21:01.295994888 +0300
++++ jaxb-ri-2.2.11/bundles/ri/src/main/resources/bin/xjc.sh	2017-02-11 11:23:09.715644043 +0300
+@@ -44,38 +44,9 @@
+ #
+ if [ -z "$JAXB_HOME" ]
+ then
+-    # search the installation directory
+-    
+-    PRG=$0
+-    progname=`basename $0`
+-    saveddir=`pwd`
+-    
+-    cd "`dirname $PRG`"
+-    
+-    while [ -h "$PRG" ] ; do
+-        ls=`ls -ld "$PRG"`
+-        link=`expr "$ls" : '.*-> \(.*\)$'`
+-        if expr "$link" : '.*/.*' > /dev/null; then
+-            PRG="$link"
+-        else
+-            PRG="`dirname $PRG`/$link"
+-        fi
+-    done
+-
+-    JAXB_HOME=`dirname "$PRG"`/..
+-    
+-    # make it fully qualified
+-    cd "$saveddir"
+-    JAXB_HOME=`cd "$JAXB_HOME" && pwd`
+-    
+-    cd "$saveddir"
++    JAXB_HOME=/usr/share/lib/java
+ fi
+ 
+-[ `expr \`uname\` : 'CYGWIN'` -eq 6 ] &&
+-{
+-    JAXB_HOME=`cygpath -w "$JAXB_HOME"`
+-}
+-
+ if [ -n "$JAVA_HOME" ]
+ then
+     JAVA="$JAVA_HOME/bin/java"
+@@ -83,4 +54,4 @@
+     JAVA=java
+ fi
+ 
+-exec "$JAVA" $XJC_OPTS -jar "$JAXB_HOME/lib/jaxb-xjc.jar" "$@"
++exec "$JAVA" $XJC_OPTS -jar "$JAXB_HOME/jaxb-xjc.jar" "$@"
+--- jaxb-ri-2.2.11/bundles/ri/src/main/resources/bin/schemagen.sh.1	2017-02-11 11:21:15.798391334 +0300
++++ jaxb-ri-2.2.11/bundles/ri/src/main/resources/bin/schemagen.sh	2017-02-11 11:29:30.749818099 +0300
+@@ -44,31 +44,7 @@
+ #
+ if [ -z "$JAXB_HOME" ]
+ then
+-    # search the installation directory
+-    
+-    PRG=$0
+-    progname=`basename $0`
+-    saveddir=`pwd`
+-    
+-    cd `dirname $PRG`
+-    
+-    while [ -h "$PRG" ] ; do
+-        ls=`ls -ld "$PRG"`
+-        link=`expr "$ls" : '.*-> \(.*\)$'`
+-        if expr "$link" : '.*/.*' > /dev/null; then
+-            PRG="$link"
+-        else
+-            PRG="`dirname $PRG`/$link"
+-        fi
+-    done
+-    
+-    JAXB_HOME=`dirname "$PRG"`/..
+-    
+-    # make it fully qualified
+-    cd "$saveddir"
+-    JAXB_HOME=`cd "$JAXB_HOME" && pwd`
+-    
+-    cd $saveddir
++    JAXB_HOME=/usr/share/lib/java
+ fi
+ 
+ if [ -n "$CLASSPATH" ] ; then
+@@ -77,31 +53,18 @@
+ 
+ # add the api jar file
+ if [ -z "$LOCALCLASSPATH" ] ; then
+-    LOCALCLASSPATH="$JAXB_HOME"/lib/jaxb-api.jar:"$JAXB_HOME"/lib/jaxb-core.jar:"$JAXB_HOME"/lib/jaxb-xjc.jar:"$JAXB_HOME"/lib/jaxb-jxc.jar:"$JAXB_HOME"/lib/jaxb-impl.jar
++    LOCALCLASSPATH="$JAXB_HOME"/jaxb-api.jar:"$JAXB_HOME"/jaxb-core.jar:"$JAXB_HOME"/jaxb-xjc.jar:"$JAXB_HOME"/jaxb-jxc.jar:"$JAXB_HOME"/jaxb-impl.jar
+ else
+-    LOCALCLASSPATH="$JAXB_HOME"/lib/jaxb-api.jar:"$JAXB_HOME"/lib/jaxb-core.jar:"$JAXB_HOME"/lib/jaxb-xjc.jar:"$JAXB_HOME"/lib/jaxb-jxc.jar:"$JAXB_HOME"/lib/jaxb-impl.jar:"$LOCALCLASSPATH"
++    LOCALCLASSPATH="$JAXB_HOME"/jaxb-api.jar:"$JAXB_HOME"/jaxb-core.jar:"$JAXB_HOME"/jaxb-xjc.jar:"$JAXB_HOME"/jaxb-jxc.jar:"$JAXB_HOME"/jaxb-impl.jar:"$LOCALCLASSPATH"
+ fi
+ 
++if [ -z "$JAVA_HOME" ]; then
++    JAVA_HOME="/usr/java"
++fi
+ 
+-if [ -n "$JAVA_HOME" ]
+-then
++if [ -n "$JAVA_HOME" ]; then
+     JAVA="$JAVA_HOME"/bin/java
+     LOCALCLASSPATH="$JAVA_HOME"/lib/tools.jar:"$LOCALCLASSPATH"
+-else
+-    JAVA=java
+-    JAVACMD=`which $JAVA`
+-    BINDIR=`dirname $JAVACMD`
+-    LOCALCLASSPATH="$BINDIR"/../lib/tools.jar:"$LOCALCLASSPATH"
+ fi
+-[ `expr \`uname\` : 'CYGWIN'` -eq 6 ] &&
+-{
+-    LOCALCLASSPATH=`cygpath -w -p ${LOCALCLASSPATH}`
+-}
+-
+-if [ `expr \`uname\` : 'CYGWIN'` -eq 6 ]
+-then
+-    JAXB_HOME="`cygpath -w "$JAXB_HOME"`"
+-fi
+-
+ 
+ exec "$JAVA" $SCHEMAGEN_OPTS -cp "$LOCALCLASSPATH" com.sun.tools.jxc.SchemaGeneratorFacade "$@"

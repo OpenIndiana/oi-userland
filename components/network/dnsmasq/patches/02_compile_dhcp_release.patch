@@ -1,0 +1,221 @@
+Add hooks to compile contrib/wrt/dhcp_release.c. This utility is used to
+send a DHCPRELEASE message to tell the local DHCP server to delete a
+particular lease.
+
+Solaris doesn't support AF_NETLINK, so use getifaddrs() to determine the
+IP address of an interface on which Dnsmasq process is listening.
+
+This patch was developed in-house. Since it is Solaris-specific it is not
+suitable for upstream.
+
+--- dnsmasq-2.68/Makefile	2013-12-08 07:58:29.000000000 -0800
++++ NEW/Makefile	2014-07-06 20:06:34.886232993 -0700
+@@ -19,6 +19,7 @@
+ # Variables you may well want to override.
+ 
+ PREFIX        = /usr/local
++LIBDIR        = $(PREFIX)/lib/inet
+ BINDIR        = $(PREFIX)/sbin
+ MANDIR        = $(PREFIX)/share/man
+ LOCALEDIR     = $(PREFIX)/share/locale
+@@ -43,6 +44,7 @@
+ SRC = src
+ PO  = po
+ MAN = man
++WRT = contrib/wrt
+ 
+ #################################################################
+ 
+@@ -67,6 +69,8 @@
+        helper.o tftp.o log.o conntrack.o dhcp6.o rfc3315.o \
+        dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o domain.o
+ 
++dhcp_release_objs = dhcp_release.o
++
+ hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
+        dns-protocol.h radv-protocol.h
+ 
+@@ -75,11 +79,12 @@
+  top="$(top)" \
+  build_cflags="$(version) $(dbus_cflags) $(idn_cflags) $(ct_cflags) $(lua_cflags)" \
+  build_libs="$(dbus_libs) $(idn_libs) $(ct_libs) $(lua_libs) $(sunos_libs)" \
+- -f $(top)/Makefile dnsmasq 
++ -f $(top)/Makefile dnsmasq dhcp_release
+ 
+ mostly_clean :
+ 	rm -f $(BUILDDIR)/*.mo $(BUILDDIR)/*.pot 
+-	rm -f $(BUILDDIR)/.configured $(BUILDDIR)/*.o $(BUILDDIR)/dnsmasq.a $(BUILDDIR)/dnsmasq 
++	rm -f $(BUILDDIR)/.configured $(BUILDDIR)/*.o $(BUILDDIR)/dnsmasq.a \
++		$(BUILDDIR)/dnsmasq $(BUILDDIR)/dhcp_release
+ 
+ clean : mostly_clean
+ 	rm -f $(BUILDDIR)/dnsmasq_baseline
+@@ -89,9 +94,11 @@
+ install : all install-common
+ 
+ install-common :
+-	$(INSTALL) -d $(DESTDIR)$(BINDIR) -d $(DESTDIR)$(MANDIR)/man8
++	$(INSTALL) -d $(DESTDIR)$(BINDIR) -d $(DESTDIR)$(MANDIR)/man8 \
++		-d $(DESTDIR)/$(LIBDIR)
+ 	$(INSTALL) -m 644 $(MAN)/dnsmasq.8 $(DESTDIR)$(MANDIR)/man8 
+ 	$(INSTALL) -m 755 $(BUILDDIR)/dnsmasq $(DESTDIR)$(BINDIR)
++	$(INSTALL) -m 755 $(BUILDDIR)/dhcp_release $(DESTDIR)$(LIBDIR)
+ 
+ all-i18n : $(BUILDDIR)
+ 	@cd $(BUILDDIR) && $(MAKE) \
+@@ -99,7 +106,7 @@
+  i18n=-DLOCALEDIR=\'\"$(LOCALEDIR)\"\' \
+  build_cflags="$(version) $(dbus_cflags) $(ct_cflags) $(lua_cflags) `$(PKG_CONFIG) --cflags libidn`" \
+  build_libs="$(dbus_libs) $(ct_libs) $(lua_libs) $(sunos_libs) `$(PKG_CONFIG) --libs libidn`"  \
+- -f $(top)/Makefile dnsmasq
++ -f $(top)/Makefile dnsmasq dhcp_release
+ 	for f in `cd $(PO); echo *.po`; do \
+ 		cd $(top) && cd $(BUILDDIR) && $(MAKE) top="$(top)" -f $(top)/Makefile $${f%.po}.mo; \
+ 	done
+@@ -142,12 +149,18 @@
+ $(objs:.o=.c) $(hdrs):
+ 	ln -s $(top)/$(SRC)/$@ .
+ 
++$(dhcp_release_objs:.o=.c):
++	ln -s $(top)/$(WRT)/$@ .
++
+ .c.o:
+ 	$(CC) $(CFLAGS) $(COPTS) $(i18n) $(build_cflags) $(RPM_OPT_FLAGS) -c $<	
+ 
+ dnsmasq : .configured $(hdrs) $(objs)
+ 	$(CC) $(LDFLAGS) -o $@ $(objs) $(build_libs) $(LIBS) 
+ 
++dhcp_release : .configured $(hdrs) $(dhcp_release_objs)
++	$(CC) $(LDFLAGS) -o $@ $(dhcp_release_objs) $(build_libs) $(LIBS) 
++
+ dnsmasq.pot : $(objs:.o=.c) $(hdrs)
+ 	$(XGETTEXT) -d dnsmasq --foreign-user --omit-header --keyword=_ -o $@ -i $(objs:.o=.c)
+ 
+--- dnsmasq-2.68/contrib/wrt/dhcp_release.c	2013-12-08 07:58:29.000000000 -0800
++++ NEW/contrib/wrt/dhcp_release.c	2014-07-04 14:57:37.992103839 -0700
+@@ -33,6 +33,10 @@
+    The client-id is optional. If it is "*" then it treated as being missing.
+ */
+ 
++#if defined(__sun) || defined(__sun__)
++#define HAVE_SOLARIS_NETWORK
++#endif
++
+ #include <sys/types.h> 
+ #include <netinet/in.h>
+ #include <net/if.h>
+@@ -44,9 +48,13 @@
+ #include <stdlib.h>
+ #include <net/if_arp.h>
+ #include <sys/ioctl.h>
++#ifdef HAVE_SOLARIS_NETWORK
++#include <ifaddrs.h>
++#else
+ #include <linux/types.h>
+ #include <linux/netlink.h>
+ #include <linux/rtnetlink.h>
++#endif
+ #include <errno.h>
+ 
+ #define DHCP_CHADDR_MAX          16
+@@ -73,6 +81,7 @@
+   unsigned char options[308];
+ };
+ 
++#if !defined(HAVE_SOLARIS_NETWORK)
+ static struct iovec iov;
+ 
+ static int expand_buf(struct iovec *iov, size_t size)
+@@ -139,6 +148,8 @@
+   return rc;
+ }
+ 
++#endif
++
+ static int parse_hex(char *in, unsigned char *out, int maxlen, int *mac_type)
+ {
+   int i = 0;
+@@ -178,6 +189,7 @@
+   return (a.s_addr & mask.s_addr) == (b.s_addr & mask.s_addr);
+ }
+ 
++#if !defined(HAVE_SOLARIS_NETWORK)
+ static struct in_addr find_interface(struct in_addr client, int fd, unsigned int index)
+ {
+   struct sockaddr_nl addr;
+@@ -244,6 +256,7 @@
+  
+   exit(0);
+ }
++#endif
+ 
+ int main(int argc, char **argv)
+ { 
+@@ -254,7 +267,11 @@
+   struct sockaddr_in dest;
+   struct ifreq ifr;
+   int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
++#ifdef HAVE_SOLARIS_NETWORK
++  int nl = 0;
++#else
+   int nl = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
++#endif
+ 
+   if (argc < 4 || argc > 5)
+     { 
+@@ -267,7 +284,8 @@
+       perror("cannot create socket");
+       exit(1);
+     }
+-  
++
++#if !defined(HAVE_SOLARIS_NETWORK)
+   /* This voodoo fakes up a packet coming from the correct interface, which really matters for 
+      a DHCP server */
+   strcpy(ifr.ifr_name, argv[1]);
+@@ -276,11 +294,43 @@
+       perror("cannot setup interface");
+       exit(1);
+     }
+-  
++#endif
+   
+   lease.s_addr = inet_addr(argv[2]);
++#ifdef HAVE_SOLARIS_NETWORK
++  struct ifaddrs *ifp_head, *ifp;
++
++  if (getifaddrs(&ifp_head) < 0)
++    {
++      perror("could not retrieve IP addresses");
++      exit(1);
++    }
++  for (ifp = ifp_head; ifp != NULL; ifp = ifp->ifa_next) { 
++    if (ifp->ifa_addr->sa_family != AF_INET)
++      continue;
++    if (strcmp(ifp->ifa_name, argv[1]) == 0 &&
++        is_same_net(lease, ((struct sockaddr_in *)ifp->ifa_addr)->sin_addr,
++	((struct sockaddr_in *)ifp->ifa_netmask)->sin_addr))
++      break;
++    }
++  if (ifp == NULL) {
++    freeifaddrs(ifp_head);
++    exit(0);
++  }
++  memcpy(&server, &((struct sockaddr_in *)ifp->ifa_addr)->sin_addr,
++	sizeof(server));
++  /* bind to the socket */
++  if (bind(fd, ifp->ifa_addr, sizeof(struct sockaddr_in)) == -1)
++    {
++      freeifaddrs(ifp_head);
++      perror("cannot bind to socket");
++      exit(1);
++    }
++  freeifaddrs(ifp_head);
++#else
+   server = find_interface(lease, nl, if_nametoindex(argv[1]));
+-  
++#endif
++
+   memset(&packet, 0, sizeof(packet));
+  
+   packet.hlen = parse_hex(argv[3], packet.chaddr, DHCP_CHADDR_MAX, &mac_type);

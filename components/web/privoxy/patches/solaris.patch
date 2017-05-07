@@ -1,0 +1,53 @@
+In some circumstances config file is installed as config.new...
+
+--- privoxy-3.0.23-stable/GNUmakefile.in.~1~	2015-01-24 19:40:07.000000000 +0300
++++ privoxy-3.0.23-stable/GNUmakefile.in	2015-08-06 20:52:25.595669015 +0300
+@@ -241,7 +241,7 @@
+ # Add your flags here
+ OTHER_CFLAGS =
+ 
+-CFLAGS = @CFLAGS@ @CPPFLAGS@ $(OTHER_CFLAGS) $(SPECIAL_CFLAGS) -Wall \
++CFLAGS = @CFLAGS@ @CPPFLAGS@ $(OTHER_CFLAGS) $(SPECIAL_CFLAGS) \
+          @STATIC_PCRE_ONLY@ -Ipcre
+ 
+ LDFLAGS = @LDFLAGS@ $(DEBUG_CFLAGS) $(SPECIAL_CFLAGS)
+@@ -918,7 +918,7 @@
+ 	fi ;\
+ 	$(ECHO) Installing configuration files to $(DESTDIR)$(CONF_DEST);\
+ 	for i in $(CONFIGS); do \
+-		if [ "$$i" = "default.action" ] || [ "$$i" = "default.filter" ] ; then \
++		if [ "$$i" = "default.action" ] || [ "$$i" = "default.filter" ] || [ "$$i" = "config" ]; then \
+ 			$(RM) $(DESTDIR)$(CONF_DEST)/$$i ;\
+ 			$(ECHO) Installing fresh $$i;\
+ 			$(INSTALL) $$INSTALL_CONF $$i $(DESTDIR)$(CONF_DEST) || exit 1;\
+
+diff -ru privoxy-3.0.8-stable-orig/config privoxy-3.0.8-stable/config
+--- privoxy-3.0.23-stable/config.~1~	2015-01-24 19:44:20.000000000 +0300
++++ privoxy-3.0.23-stable/config	2015-08-06 20:53:29.180676722 +0300
+@@ -260,7 +260,7 @@
+ #
+ #      No trailing "/", please.
+ #
+-confdir .
++confdir /etc/privoxy
+ #
+ #  2.2. templdir
+ #  ==============
+@@ -345,7 +345,7 @@
+ #
+ #      No trailing "/", please.
+ #
+-logdir .
++logdir /var/log/privoxy
+ #
+ #  2.5. actionsfile
+ #  =================
+@@ -478,7 +478,7 @@
+ #      require additional software to do it. For details, please
+ #      refer to the documentation for your operating system.
+ #
+-logfile logfile
++logfile privoxy.log
+ #
+ #  2.8. trustfile
+ #  ===============

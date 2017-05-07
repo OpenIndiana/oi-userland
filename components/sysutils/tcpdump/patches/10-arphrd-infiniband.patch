@@ -1,0 +1,188 @@
+InfiniBand support for tcpdump.
+This is an in-house patch. Sent upstream for potential inclusion in future
+versions of tcpdump.
+
+--- tcpdump-4.9.0/Makefile.in.orig	2017-01-29 12:23:58.596267167 +0000
++++ tcpdump-4.9.0/Makefile.in	2017-01-29 12:49:27.808281048 +0000
+@@ -147,6 +147,7 @@
+ 	print-ipcomp.c \
+ 	print-ipfc.c \
+ 	print-ipnet.c \
++	print-ipoib.c \
+ 	print-ipx.c \
+ 	print-isakmp.c \
+ 	print-isoclns.c \
+--- tcpdump-4.9.0/netdissect.h.orig	2017-01-29 12:25:29.886259423 +0000
++++ tcpdump-4.9.0/netdissect.h	2017-01-29 12:27:00.348907240 +0000
+@@ -410,6 +410,7 @@
+ extern u_int ieee802_11_radio_if_print IF_PRINTER_ARGS;
+ extern u_int ieee802_15_4_if_print IF_PRINTER_ARGS;
+ extern u_int ipfc_if_print IF_PRINTER_ARGS;
++extern u_int ipoib_if_print IF_PRINTER_ARGS;
+ extern u_int ipnet_if_print IF_PRINTER_ARGS;
+ extern u_int juniper_atm1_print IF_PRINTER_ARGS;
+ extern u_int juniper_atm2_print IF_PRINTER_ARGS;
+--- tcpdump-4.9.0/print-arp.c.orig	2017-01-29 12:27:35.797281364 +0000
++++ tcpdump-4.9.0/print-arp.c	2017-01-29 12:28:48.668009704 +0000
+@@ -56,6 +56,7 @@
+ #define ARPHRD_ATM2225  19      /* ATM (RFC 2225) */
+ #define ARPHRD_STRIP    23      /* Ricochet Starmode Radio hardware format */
+ #define ARPHRD_IEEE1394 24      /* IEEE 1394 (FireWire) hardware format */
++#define ARPHRD_INFINIBAND 32    /* InfiniBand RFC 4391 */
+         u_short ar_pro;         /* format of protocol address */
+         u_char  ar_hln;         /* length of hardware address */
+         u_char  ar_pln;         /* length of protocol address */
+@@ -116,6 +117,7 @@
+     { ARPHRD_STRIP, "Strip" },
+     { ARPHRD_IEEE1394, "IEEE 1394" },
+     { ARPHRD_ATM2225, "ATM" },
++    { ARPHRD_INFINIBAND, "InfiniBand" },
+     { 0, NULL }
+ };
+ 
+--- tcpdump-4.9.0/print-ipoib.c.orig	2017-01-29 12:30:15.468355816 +0000
++++ tcpdump-4.9.0/print-ipoib.c	2017-01-29 13:24:49.576498883 +0000
+@@ -0,0 +1,131 @@
++/*
++ * Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 
++ *	1997, 2000, 2011, 2012
++ *	The Regents of the University of California.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that: (1) source code distributions
++ * retain the above copyright notice and this paragraph in its entirety, (2)
++ * distributions including binary code include the above copyright notice and
++ * this paragraph in its entirety in the documentation or other materials
++ * provided with the distribution, and (3) all advertising materials mentioning
++ * features or use of this software display the following acknowledgement:
++ * ``This product includes software developed by the University of California,
++ * Lawrence Berkeley Laboratory and its contributors.'' Neither the name of
++ * the University nor the names of its contributors may be used to endorse
++ * or promote products derived from this software without specific prior
++ * written permission.
++ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
++ * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
++ */
++/*
++ * Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
++ */
++#ifndef lint
++static const char rcsid[] _U_ =
++    "@(#) $Header$";
++#endif
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <netdissect-stdinc.h>
++
++#include <stdio.h>
++#include <pcap.h>
++
++#include "netdissect.h"
++#include "extract.h"
++#include "addrtoname.h"
++
++
++extern const struct tok ethertype_values[];
++
++#define	IPOIB_HDRLEN	44
++
++static inline void
++ipoib_hdr_print(netdissect_options *ndo, const u_char *bp, u_int length)
++{
++	u_int16_t ether_type;
++	char abuf[40];
++
++	ether_type = EXTRACT_16BITS(&bp[40]);
++	if (!ndo->ndo_qflag) {
++		(void)printf(", ethertype %s (0x%04x)",
++			     tok2str(ethertype_values,"Unknown", ether_type),
++			     ether_type);
++	} else {
++		(void)printf(", ethertype %s",
++			     tok2str(ethertype_values,"Unknown", ether_type));
++	}
++
++	(void)printf(", length %u: ", length);
++}
++
++/*
++ * Print an InfiniBand frame.
++ * This might be encapsulated within another frame; we might be passed
++ * a pointer to a function that can print header information for that
++ * frame's protocol, and an argument to pass to that function.
++ */
++static void
++ipoib_print(netdissect_options *ndo, const u_char *p, u_int length, u_int caplen,
++    void (*print_encap_header)(const u_char *), const u_char *encap_header_arg)
++{
++	const u_char *orig_hdr = p;
++	u_int orig_length;
++	u_short ether_type;
++	u_short extracted_ether_type;
++
++	if (caplen < IPOIB_HDRLEN || length < IPOIB_HDRLEN) {
++		printf("[|ipoib]");
++		return;
++	}
++
++	if (ndo->ndo_eflag) {
++		if (print_encap_header != NULL)
++			(*print_encap_header)(encap_header_arg);
++		ipoib_hdr_print(ndo, p, length);
++	}
++	orig_length = length;
++
++	length -= IPOIB_HDRLEN;
++	caplen -= IPOIB_HDRLEN;
++	ether_type = EXTRACT_16BITS(&p[40]);
++	p += IPOIB_HDRLEN;
++
++	if (ethertype_print(ndo, ether_type, p, length, caplen, NULL, NULL) == 0) {
++		/* ether_type not known, print raw packet */
++		if (!ndo->ndo_eflag) {
++			if (print_encap_header != NULL)
++				(*print_encap_header)(encap_header_arg);
++			ipoib_hdr_print(ndo, orig_hdr , orig_length);
++		}
++
++		if (!ndo->ndo_suppress_default_print)
++			ND_DEFAULTPRINT(p, caplen);
++	}
++}
++
++/*
++ * This is the top level routine of the printer.  'p' points
++ * to the ether header of the packet, 'h->ts' is the timestamp,
++ * 'h->len' is the length of the packet off the wire, and 'h->caplen'
++ * is the number of bytes actually captured.
++ */
++u_int
++ipoib_if_print(netdissect_options *ndo, const struct pcap_pkthdr *h, const u_char *p)
++{
++	ipoib_print(ndo, p, h->len, h->caplen, NULL, NULL);
++
++	return (IPOIB_HDRLEN);
++}
++
++/*
++ * Local Variables:
++ * c-style: whitesmith
++ * c-basic-offset: 8
++ * End:
++ */
+--- tcpdump-4.9.0/print.c.orig	2017-01-29 12:32:40.142061378 +0000
++++ tcpdump-4.9.0/print.c	2017-01-29 12:38:05.641526344 +0000
+@@ -99,6 +99,9 @@
+ #ifdef DLT_IPV6
+ 	{ raw_if_print,		DLT_IPV6 },
+ #endif
++#ifdef DLT_IPOIB
++	{ ipoib_if_print,       DLT_IPOIB },
++#endif
+ #ifdef HAVE_PCAP_USB_H
+ #ifdef DLT_USB_LINUX
+ 	{ usb_linux_48_byte_print, DLT_USB_LINUX},

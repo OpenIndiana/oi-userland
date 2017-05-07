@@ -1,0 +1,105 @@
+Found in the wild at:
+
+http://www.oss4aix.org/download/patches/webalizer-2.01-10-groupvisit.patch
+
+https://gitlab.7f.dk/Kralian/oi-userland/blob/ef967b086bc86c4e4af7237f974cb574547bde30/components/webalizer/patches/webalizer-2.01-10-groupvisit.patch
+
+--- webalizer-2.23-08/hashtab.c.orig	2016-03-08 14:40:57.594469202 -0800
++++ webalizer-2.23-08/hashtab.c	2016-03-08 14:46:27.371481210 -0800
+@@ -88,6 +88,8 @@
+ DNODEPTR host_table[MAXHASH];                 /* DNS hash table           */
+ #endif  /* USE_DNS */
+ 
++u_long   pre_tstamp = 0;                      /* prev. real record tstamp */
++
+ /*********************************************/
+ /* DEL_HTABS - clear out our hash tables     */
+ /*********************************************/
+@@ -179,6 +181,7 @@
+             nptr->visit=(visit-1);
+             nptr->lasturl=find_url(lasturl);
+             nptr->tstamp=tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+@@ -188,6 +191,7 @@
+                if (htab==sm_htab) update_entry(log_rec.url);
+                nptr->lasturl=find_url(log_rec.url);
+                nptr->tstamp=tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+                nptr->visit=1;
+             }
+          }
+@@ -208,7 +212,8 @@
+ 
+                if (ispage(log_rec.url))
+                {
+-                  if ((tstamp-cptr->tstamp)>=visit_timeout)
++                  if ((type!=OBJ_GRP)&&(cptr->flag!=OBJ_GRP)) pre_tstamp=cptr->tstamp;
++                  if ((tstamp-pre_tstamp)>=visit_timeout)
+                   {
+                      cptr->visit++;
+                      if (htab==sm_htab)
+@@ -241,6 +246,7 @@
+             nptr->visit = (visit-1);
+             nptr->lasturl=find_url(lasturl);
+             nptr->tstamp= tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+@@ -250,6 +256,7 @@
+                if (htab==sm_htab) update_entry(log_rec.url);
+                nptr->lasturl=find_url(log_rec.url);
+                nptr->tstamp= tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+                nptr->visit=1;
+             }
+          }
+@@ -845,11 +852,16 @@
+          {
+             nptr->visit=(visit-1);
+             nptr->tstamp=tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+          {
+-            if (ispage(log_rec.url)) nptr->tstamp=tstamp;
++            if (ispage(log_rec.url))
++            {
++               nptr->tstamp=tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
++            }
+          }
+       }
+    }
+@@ -869,7 +881,8 @@
+ 
+                if (ispage(log_rec.url))
+                {
+-                  if ((tstamp-cptr->tstamp)>=visit_timeout)
++                  if ((type!=OBJ_GRP)&&(cptr->flag!=OBJ_GRP)) pre_tstamp=cptr->tstamp;
++                  if ((tstamp-pre_tstamp)>=visit_timeout)
+                      cptr->visit++;
+                   cptr->tstamp=tstamp;
+                }
+@@ -893,11 +906,16 @@
+          {
+             nptr->visit = (visit-1);
+             nptr->tstamp= tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+          {
+-            if (ispage(log_rec.url)) nptr->tstamp= tstamp;
++            if (ispage(log_rec.url))
++            {
++               nptr->tstamp= tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
++            }
+          }
+       }
+    }

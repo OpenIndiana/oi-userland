@@ -1,0 +1,89 @@
+--- libdiscid-0.6.1/src/disc_solaris.c	2013-10-03 22:01:15.000000000 +0400
++++ disc_solaris.c	2016-02-01 12:27:13.037093987 +0300
+@@ -33,16 +33,66 @@
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+ #include <sys/cdio.h>
++#include <dirent.h>
++#include <errno.h>
++#include <limits.h>
++#include <sys/dkio.h>
+ 
+ 
+ #include "discid/discid.h"
+ #include "discid/discid_private.h"
+ #include "unix.h"
+ 
+-#define NUM_CANDIDATES 2
++#define MAX_CANDIDATES 255
++#define REMOVABLE_MEDIA_DIR "/dev/removable-media/rdsk"
+ 
+-static char *device_candidates[NUM_CANDIDATES] = {"/vol/dev/aliases/cdrom0",
+-					         "/volumes/dev/aliases/cdrom0"};
++char *device_candidates[MAX_CANDIDATES] = {};
++
++int get_candidates_devices() {
++       int devnum=0;
++	DIR *devdir;
++
++        devdir = opendir(REMOVABLE_MEDIA_DIR);
++	
++	if (devdir) {
++          struct dirent *entry;
++	  
++          while(entry = readdir(devdir)){
++             int len;
++	     
++             len=strlen(entry->d_name);
++            
++             /* We are looking for /dev/removable-media/rdsk/*p0 devices */
++	     if (len>2 && entry->d_name[len-1] == '0' && entry->d_name[len-2] == 'p') {
++	       char dev[PATH_MAX+1];
++               int fl;
++    		
++               snprintf(dev, PATH_MAX+1, "%s/%s", REMOVABLE_MEDIA_DIR, entry->d_name);
++               fl=open(dev,O_RDONLY);
++               if (fl != -1) {
++                  struct dk_cinfo dkci;
++
++                  if(ioctl(fl, DKIOCINFO, &dkci) != -1){
++                     if (dkci.dki_ctype & DKC_CDROM == DKC_CDROM) {
++                       if (devnum < MAX_CANDIDATES){
++                         devnum++;
++                         device_candidates[devnum-1]=strdup(dev);
++                       }
++	             }
++                  }
++               }
++             }
++	  }
++        }
++
++        /* If no devices were found, revert to old behavior */
++        if (devnum==0) {
++           device_candidates[0]=strdup("/vol/dev/aliases/cdrom0");
++           device_candidates[1]=strdup("/volumes/dev/aliases/cdrom0");
++           devnum=2;
++        }
++	return devnum;
++}
+ 
+ int mb_disc_unix_read_toc_header(int fd, mb_disc_toc *toc) {
+ 	struct cdrom_tochdr th;
+@@ -88,7 +138,15 @@
+ }
+ 
+ char *mb_disc_get_default_device_unportable(void) {
+-	return mb_disc_unix_find_device(device_candidates, NUM_CANDIDATES);
++        int i,nc;
++        char *ret;
++
++        nc=get_candidates_devices();
++        ret=mb_disc_unix_find_device(device_candidates, nc);
++        for(i=0;i<nc;i++){
++           free(device_candidates[i]);
++        }
++	return ret;
+ }
+ 
+ int mb_disc_has_feature_unportable(enum discid_feature feature) {

@@ -1,0 +1,48 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 phorcys@126.com.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+
+file path=usr/bin/$(MACH64)/bd_info
+file path=usr/bin/bd_info
+
+file path=usr/lib/pkgconfig/libbluray.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libbluray.pc
+
+file path=usr/lib/$(MACH64)/libbluray.so.1.9.2
+link path=usr/lib/$(MACH64)/libbluray.so target=libbluray.so.1.9.2
+link path=usr/lib/$(MACH64)/libbluray.so.1 target=libbluray.so.1.9.2
+file path=usr/lib/libbluray.so.1.9.2
+link path=usr/lib/libbluray.so target=libbluray.so.1.9.2
+link path=usr/lib/libbluray.so.1 target=libbluray.so.1.9.2
+file path=usr/share/lib/java/libbluray-j2se-0.9.2.jar
+file path=usr/include/libbluray/bluray.h
+file path=usr/include/libbluray/filesystem.h
+file path=usr/include/libbluray/clpi_data.h
+file path=usr/include/libbluray/bluray-version.h
+file path=usr/include/libbluray/overlay.h
+file path=usr/include/libbluray/keys.h
+file path=usr/include/libbluray/log_control.h
+file path=usr/include/libbluray/meta_data.h
+file path=usr/include/libbluray/player_settings.h
+

@@ -1,0 +1,49 @@
+--- qt-everywhere-opensource-src-4.7.3/src/network/kernel/qnetworkinterface_unix.cpp.orig	2011-11-25 10:22:57.823404159 +0000
++++ qt-everywhere-opensource-src-4.7.3/src/network/kernel/qnetworkinterface_unix.cpp	2011-11-25 10:22:20.560476075 +0000
+@@ -70,6 +70,11 @@
+ 
+ #include <qplatformdefs.h>
+ 
++// if_freenameindex() patch
++#include <pthread.h>
++#include <errno.h>
++
++
+ QT_BEGIN_NAMESPACE
+ 
+ static QHostAddress addressFromSockaddr(sockaddr *sa)
+@@ -151,12 +156,32 @@
+ #else
+     Q_UNUSED(socket);
+ 
++    /* As if_freenameindex() crashes when libumem is enabled on Solaris 10
++      (tested patch level: 144489-17), we only query the list once and never
++      free it. /RX'2011 */
++    static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
++    static struct if_nameindex *interfaceListStatic = NULL;
++    int code;
++    code = pthread_mutex_lock(&lock);
++    if (code != 0) {
++      errno = code;
++      perror("pthread_mutex_lock failed");
++    }
++    if (interfaceListStatic == NULL) {
++      interfaceListStatic = ::if_nameindex();
++    }
++    code = pthread_mutex_unlock(&lock);
++    if (code != 0) {
++      errno = code;
++      perror("pthread_mutex_unlock failed");
++    }
++
++
+     // use if_nameindex
+-    struct if_nameindex *interfaceList = ::if_nameindex();
++    struct if_nameindex *interfaceList = interfaceListStatic;
+     for (struct if_nameindex *ptr = interfaceList; ptr && ptr->if_name; ++ptr)
+         result << ptr->if_name;
+ 
+-    if_freenameindex(interfaceList);
+     return result;
+ #endif
+ }

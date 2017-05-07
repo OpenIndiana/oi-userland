@@ -1,0 +1,29 @@
+--- src/intel/isl/isl.h.orig	2017-01-29 19:22:59.305158170 +0100
++++ src/intel/isl/isl.h	2017-01-29 19:24:00.654755688 +0100
+@@ -1247,7 +1247,7 @@
+ bool
+ isl_surf_init_s(const struct isl_device *dev,
+                 struct isl_surf *surf,
+-                const struct isl_surf_init_info *restrict info);
++                const struct isl_surf_init_info * __restrict info);
+ 
+ void
+ isl_surf_get_tile_info(const struct isl_device *dev,
+@@ -1275,7 +1275,7 @@
+ 
+ void
+ isl_surf_fill_state_s(const struct isl_device *dev, void *state,
+-                      const struct isl_surf_fill_state_info *restrict info);
++                      const struct isl_surf_fill_state_info * __restrict info);
+ 
+ #define isl_buffer_fill_state(dev, state, ...) \
+    isl_buffer_fill_state_s((dev), (state), \
+@@ -1283,7 +1283,7 @@
+ 
+ void
+ isl_buffer_fill_state_s(const struct isl_device *dev, void *state,
+-                        const struct isl_buffer_fill_state_info *restrict info);
++                        const struct isl_buffer_fill_state_info * __restrict info);
+ 
+ void
+ isl_surf_fill_image_param(const struct isl_device *dev,

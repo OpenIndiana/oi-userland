@@ -1,0 +1,20 @@
+--- webkitgtk-2.14.2/Source/bmalloc/bmalloc/VMAllocate.h.~1~	2016-09-16 12:56:48.000000000 +0300
++++ webkitgtk-2.14.2/Source/bmalloc/bmalloc/VMAllocate.h	2017-01-11 10:21:58.826907523 +0300
+@@ -186,6 +186,8 @@
+     vmValidatePhysical(p, vmSize);
+ #if BOS(DARWIN)
+     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSABLE));
++#elif defined(__sun)
++    SYSCALL(posix_madvise(p, vmSize, POSIX_MADV_DONTNEED));
+ #else
+     SYSCALL(madvise(p, vmSize, MADV_DONTNEED));
+ #endif
+@@ -196,6 +198,8 @@
+     vmValidatePhysical(p, vmSize);
+ #if BOS(DARWIN)
+     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSE));
++#elif defined(__sun)
++    SYSCALL(posix_madvise(p, vmSize, POSIX_MADV_NORMAL));
+ #else
+     SYSCALL(madvise(p, vmSize, MADV_NORMAL));
+ #endif

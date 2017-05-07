@@ -1,0 +1,15 @@
+#
+# This was developed in house to fix the wrong platform detection for Solaris.
+# Reported to the upstream.
+#
+--- openssl-1.0.2d/crypto/perlasm/x86gas.pl	Thu Jul  9 04:57:15 2015
++++ openssl-1.0.2d/crypto/perlasm/x86gas.pl.new	Thu Jul 30 15:17:14 2015
+@@ -196,8 +196,6 @@
+ 	    &::mov($dst,&::DWP("$indirect-$reflabel",$base));
+ 	    $non_lazy_ptr{"$nmdecor$sym"}=$indirect;
+ 	}
+-	elsif ($sym eq "OPENSSL_ia32cap_P" && $::elf>0)
+-	{   &::lea($dst,&::DWP("$sym-$reflabel",$base));   }
+ 	else
+ 	{   &::lea($dst,&::DWP("_GLOBAL_OFFSET_TABLE_+[.-$reflabel]",
+ 			    $base));

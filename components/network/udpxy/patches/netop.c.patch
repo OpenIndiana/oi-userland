@@ -1,0 +1,18 @@
+--- udpxy-1.0.23-9.orig/netop.c 2013-05-18 09:02:55.000000000 -0700
++++ udpxy-1.0.23-9/netop.c      2016-11-06 09:14:39.574023907 -0800
+@@ -92,16 +92,6 @@
+         rc = set_nblock (lsock, NONBLOCK);
+         if (0 != rc) break;
+ 
+-        TRACE( (void)tmfprintf (g_flog, "Setting low watermark for "
+-            "server socket [%d] to [%d]\n", lsock, wmark) );
+-        rc = setsockopt (lsock, SOL_SOCKET, SO_RCVLOWAT,
+-                (char*)&wmark, sizeof(wmark));
+-        if (rc) {
+-            mperror (g_flog, errno, "%s: setsockopt SO_RCVLOWAT",
+-                __func__);
+-            break;
+-        }
+-
+         rc = bind( lsock, (struct sockaddr*)&servaddr, sizeof(servaddr) );
+         if( 0 != rc ) break;

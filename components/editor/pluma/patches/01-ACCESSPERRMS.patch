@@ -1,0 +1,14 @@
+--- pluma-1.14.0/tests/document-saver.c.1	2016-07-19 18:50:56.054192769 +0300
++++ pluma-1.14.0/tests/document-saver.c	2016-07-19 18:51:26.175730062 +0300
+@@ -29,6 +29,11 @@
+ #include <string.h>
+ #include <sys/stat.h>
+ 
++/* linux/bsd has it. others such as Solaris, do not */
++#ifndef ACCESSPERMS
++#define ACCESSPERMS (S_IRWXU|S_IRWXG|S_IRWXO) 
++#endif
++
+ #define DEFAULT_LOCAL_URI "/tmp/pluma-document-saver-test.txt"
+ #define DEFAULT_REMOTE_URI "sftp://localhost/tmp/pluma-document-saver-test.txt"
+ #define DEFAULT_CONTENT "hello world!"

@@ -1,0 +1,44 @@
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining  a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+--- ./src/lib/ipc/IpcServerProxy.cpp	2016-07-22 12:36:51.027072880 -0700
++++ ./src/lib/ipc/IpcServerProxy.cpp.new	2016-07-22 12:22:02.654151110 -0700
+@@ -95,7 +95,7 @@
+ 	case kIpcCommand: {
+ 		const IpcCommandMessage& cm = static_cast<const IpcCommandMessage&>(message);
+ 		String command = cm.command();
+-		ProtocolUtil::writef(&m_stream, kIpcMsgCommand, &command);
++		ProtocolUtil::writef(&m_stream, kIpcMsgCommand, command);
+ 		break;
+ 	}
+ 
+--- ./src/lib/ipc/IpcClientProxy.cpp	2016-07-22 12:43:40.238963610 -0700
++++ ./src/lib/ipc/IpcClientProxy.cpp.new	2016-07-22 12:44:12.211321330 -0700
+@@ -147,7 +147,7 @@
+ 	case kIpcLogLine: {
+ 		const IpcLogLineMessage& llm = static_cast<const IpcLogLineMessage&>(message);
+ 		String logLine = llm.logLine();
+-		ProtocolUtil::writef(&m_stream, kIpcMsgLogLine, &logLine);
++		ProtocolUtil::writef(&m_stream, kIpcMsgLogLine, logLine);
+ 		break;
+ 	}
+ 			

@@ -1,0 +1,262 @@
+'\" te
+.\" Copyright (c) 2004, 2016, Oracle and/or its affiliates. All rights reserved.
+.TH mailstats 1 "8 Mar 2016" "SunOS 5.12" "User Commands"
+.SH NAME
+mailstats \- print statistics collected by sendmail
+.SH SYNOPSIS
+.LP
+.nf
+\fBmailstats\fR [\fB-o\fR] [\fB-c\fR ] [\fB-C\fR \fIconfigfile\fR] [\fB-f\fR \fIstatisticsfile\fR] 
+     [\fB-p\fR] [\fB-P\fR]
+.fi
+
+.SH DESCRIPTION
+.sp
+.LP
+The \fBmailstats\fR utility prints out the statistics collected by the \fBsendmail\fR(8) program on mailer usage. These statistics are collected if the file indicated by the \fBStatusFile\fR configuration option of \fBsendmail\fR (defined in \fB/etc/mail/sendmail.cf\fR) exists. The default statistics file is \fB/etc/mail/statistics\fR.
+.sp
+.LP
+To enable \fBmailstats\fR, you must, as root, touch \fB/etc/mail/statistics\fR. See the \fBStatusFile\fR processing option in \fBsendmail\fR(8).
+.sp
+.LP
+\fBmailstats\fR first prints the time that the statistics file was created and the last time it was modified. Then, the statistics for each mailer are displayed on a single line, each with the following whitespace-separated fields:
+.sp
+.ne 2
+.mk
+.na
+\fBM\fR
+.ad
+.RS 14n
+.rt  
+The mailer number.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBmsgsfr\fR
+.ad
+.RS 14n
+.rt  
+Number of messages from the mailer.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBbytes_from\fR
+.ad
+.RS 14n
+.rt  
+Kbytes from the mailer.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBmsgsto\fR
+.ad
+.RS 14n
+.rt  
+Number of messages to the mailer.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBbytes_to\fR
+.ad
+.RS 14n
+.rt  
+Kbytes to the mailer.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBmsgsrej\fR
+.ad
+.RS 14n
+.rt  
+Number of messages rejected by the mailer.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBmsgsdis\fR
+.ad
+.RS 14n
+.rt  
+Number of messages discarded by the mailer.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBmsgsqur\fR
+.ad
+.RS 14n
+.rt  
+Number of messages quarantined by the mailer.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBMailer\fR
+.ad
+.RS 14n
+.rt  
+The name of the mailer.
+.RE
+
+.sp
+.LP
+The display of statistics described above is followed by a separation line containing only equal sign (\fB=\fR) characters. After the separation line, a line preceded with a "\fBT\fR" and totaling the values for all of the mailers is displayed. This is followed by another line preceded with a "\fBC\fR" that lists the number of TCP connections.
+.sp
+.LP
+To reinitialize the statistics file once a night, add an entry to root's \fBcrontab\fR(1):
+.sp
+.in +2
+.nf
+mailstats -p > /dev/null
+.fi
+.in -2
+.sp
+
+.SH OPTIONS
+.sp
+.LP
+The following options are supported:
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-c\fR \fR
+.ad
+.RS 21n
+.rt  
+Try to use \fBsubmit.cf\fR instead of the default \fBsendmail\fR configuration file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-C\fR \fIconfigfile\fR\fR
+.ad
+.RS 21n
+.rt  
+Specify a \fBsendmail\fR configuration file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-f\fR \fIstatisticsfile\fR\fR
+.ad
+.RS 21n
+.rt  
+Specify a \fBsendmail\fR statistics file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-o\fR\fR
+.ad
+.RS 21n
+.rt  
+Do not display the name of the mailer in the output.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-p\fR\fR
+.ad
+.RS 21n
+.rt  
+Output information in program-readable mode and clear statistics.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-P\fR\fR
+.ad
+.RS 21n
+.rt  
+Output information in program-readable mode without clearing statistics.
+.RE
+
+.SH FILES
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/dev/null\fR\fR
+.ad
+.RS 25n
+.rt  
+Zero-lined file
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/mail/statistics\fR\fR
+.ad
+.RS 25n
+.rt  
+Default \fBsendmail\fR statistics file
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/mail/sendmail.cf\fR\fR
+.ad
+.RS 25n
+.rt  
+Default \fBsendmail\fR configuration file
+.RE
+
+.SH ATTRIBUTES
+.sp
+.LP
+See \fBattributes\fR(7) for descriptions of the following attributes:
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilityservice/network/smtp/sendmail
+_
+Interface StabilityThe output is uncommitted.
+.TE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBcrontab\fR(1), \fBattributes\fR(7), \fBcron\fR(8), \fBsendmail\fR(8)

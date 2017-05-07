@@ -1,0 +1,85 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.illumos.org/license/CDDL.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+#
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=           libxcb
+COMPONENT_VERSION=        1.12
+COMPONENT_FMRI=           x11/library/libxcb
+COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Libraries
+COMPONENT_SRC=		        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH=	\
+	sha256:4adfb1b7c67e99bc9c2ccb110b2f175686576d2f792c8a71b9c8b19014057b5b
+COMPONENT_ARCHIVE_URL=	  http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_OPTIONS+= --disable-static
+CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= --disable-libtool-lock 
+CONFIGURE_OPTIONS+= --enable-devel-docs=no 
+CONFIGURE_OPTIONS+= --enable-composite 
+CONFIGURE_OPTIONS+= --enable-damage 
+CONFIGURE_OPTIONS+= --enable-dpms 
+CONFIGURE_OPTIONS+= --enable-dri2 
+CONFIGURE_OPTIONS+= --enable-glx 
+CONFIGURE_OPTIONS+= --enable-randr 
+CONFIGURE_OPTIONS+= --enable-record 
+CONFIGURE_OPTIONS+= --enable-render 
+CONFIGURE_OPTIONS+= --enable-resource 
+CONFIGURE_OPTIONS+= --enable-screensaver 
+CONFIGURE_OPTIONS+= --enable-shape 
+CONFIGURE_OPTIONS+= --enable-shm 
+CONFIGURE_OPTIONS+= --enable-sync 
+CONFIGURE_OPTIONS+= --enable-xevie 
+CONFIGURE_OPTIONS+= --enable-xfixes 
+CONFIGURE_OPTIONS+= --enable-xfree86-dri 
+CONFIGURE_OPTIONS+= --enable-xinerama 
+CONFIGURE_OPTIONS+= --enable-xinput 
+CONFIGURE_OPTIONS+= --enable-xprint 
+CONFIGURE_OPTIONS+= --disable-selinux 
+CONFIGURE_OPTIONS+= --enable-xtest 
+CONFIGURE_OPTIONS+= --enable-xv 
+CONFIGURE_OPTIONS+= --enable-xvmc 
+CONFIGURE_OPTIONS+= --with-queue-size=32768 
+CONFIGURE_OPTIONS+= --with-pic
+
+build: $(BUILD_32_and_64)
+
+install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/check
+REQUIRED_PACKAGES += x11/header/xcb-protocols
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libxau
+REQUIRED_PACKAGES += x11/library/libxdmcp

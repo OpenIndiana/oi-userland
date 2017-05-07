@@ -1,0 +1,49 @@
+From 3d182d824ed1f288830a7e42b6a4a45d5564691a Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:35:12 -0700
+Subject: [PATCH 05/34] Deprecated SunSSH options
+
+#
+# To make the transition from SunSSH to OpenSSH as smooth as possible, we
+# added SunSSH-only options as deprecated options in OpenSSH. Note that this
+# is an interim enhancement to OpenSSH to make the transition smoother. If a
+# deprecated SunSSH-only option is migrated to OpenSSH later, then it will be
+# changed from deprecated to supported. Since this is for Solaris only, we will
+# not contribute back this change to the upstream community.
+#
+---
+ readconf.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/readconf.c b/readconf.c
+index fa3fab8f..e11a928d 100644
+--- a/readconf.c
++++ b/readconf.c
+@@ -297,6 +297,24 @@ static struct {
+ 	{ "ignoreunknown", oIgnoreUnknown },
+ 	{ "proxyjump", oProxyJump },
+ 
++#ifdef DEPRECATE_SUNSSH_OPT
++        /*
++         * On Solaris, to make the transition from SunSSH to OpenSSH as smooth
++         * as possible, we will deprecate SunSSH-only options in OpenSSH.
++         * Therefore, on a system that is running OpenSSH with a deprecated
++         * option from the user's config file (~/.ssh/config), the ssh
++         * connection will proceed without the deprecated option. Note that
++         * this is an interim enhancement to OpenSSH to make the transition
++         * smoother.  If a deprecated SunSSH-only option is migrated to OpenSSH
++         * later, then it will be changed from deprecated to supported.
++         */
++        { "kmfpolicydatabase", oDeprecated },
++        { "kmfpolicyname", oDeprecated },
++        { "trustedanchorkeystore", oDeprecated },
++        { "usefips140", oDeprecated },
++        { "useopensslengine", oDeprecated },
++#endif
++
+ 	{ NULL, oBadOption }
+ };
+ 
+-- 
+2.11.0
+

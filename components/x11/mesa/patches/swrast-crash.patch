@@ -1,0 +1,21 @@
+http://cgit.freedesktop.org/mesa/mesa/commit/src/mesa/drivers/dri/swrast?id=a43b49dfb13dc7e6d2d6d7ceee892077038d7102
+https://bugs.freedesktop.org/show_bug.cgi?id=64791
+
+--- src/mesa/drivers/dri/swrast/swrast.c.~1~	2013-02-21 13:25:29.000000000 +0400
++++ src/mesa/drivers/dri/swrast/swrast.c	2015-02-05 14:33:40.602716446 +0300
+@@ -91,9 +92,15 @@
+     else
+ 	texFormat = MESA_FORMAT_ARGB8888;
+ 
++    /* Free old texture image */
++    dri_ctx->Base.Driver.FreeTextureImageBuffer(&dri_ctx->Base, texImage);
++
+     _mesa_init_teximage_fields(&dri_ctx->Base, texImage,
+ 			       w, h, 1, 0, internalFormat, texFormat);
+ 
++    /* Allocate texture memory (no pixel data yet) */
++    dri_ctx->Base.Driver.AllocTextureImageBuffer(&dri_ctx->Base, texImage);
++
+     sPriv->swrast_loader->getImage(dPriv, x, y, w, h, (char *)swImage->Buffer,
+ 				   dPriv->loaderPrivate);
+ 

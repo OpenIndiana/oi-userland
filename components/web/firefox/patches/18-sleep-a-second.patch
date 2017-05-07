@@ -1,0 +1,25 @@
+--- firefox-45.2.0esr/toolkit/components/terminator/nsTerminator.cpp.orig	Thu May 12 20:10:04 2016
++++ firefox-45.2.0esr/toolkit/components/terminator/nsTerminator.cpp	Fri Jul 29 14:47:07 2016
+@@ -128,6 +128,13 @@
+   UniquePtr<Options> options((Options*)arg);
+   uint32_t crashAfterTicks = options->crashAfterTicks;
+   options = nullptr;
++  PRUint32 second =
++#ifdef  __sun
++        PR_TicksPerSecond()
++#else   /* not __sun */
++        TICK_DURATION
++#endif  /* __sun */
++		;
+ 
+   const uint32_t timeToLive = crashAfterTicks;
+   while (true) {
+@@ -141,7 +148,7 @@
+     // we have lost at most one second, which is much
+     // more reasonable.
+     //
+-    PR_Sleep(TICK_DURATION);
++    PR_Sleep(second);
+ 
+     if (gHeartbeat++ < timeToLive) {
+       continue;

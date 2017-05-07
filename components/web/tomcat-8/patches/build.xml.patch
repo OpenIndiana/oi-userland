@@ -1,0 +1,50 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Download/use only archives we really need.
+Don't install unnecessary stuff.
+
+--- build.xml
++++ build.xml
+@@ -988,13 +988,6 @@
+   <target name="deploy" depends="package,build-docs,build-tomcat-jdbc,compile-webapp-examples"
+           description="Default. Builds a working Tomcat instance">
+ 
+-    <copy tofile="${tomcat.build}/bin/tomcat-native.tar.gz"
+-            file="${tomcat-native.tar.gz}" />
+-    <copy tofile="${tomcat.build}/bin/commons-daemon-native.tar.gz"
+-            file="${commons-daemon.native.src.tgz}" />
+-
+-    <copy tofile="${tomcat.build}/bin/commons-daemon.jar" file="${commons-daemon.jar}" />
+-
+     <!-- Copy scripts -->
+     <copy todir="${tomcat.build}/bin">
+       <fileset dir="bin">
+@@ -2755,27 +2748,6 @@
+   <target name="download-compile"
+           description="Download (and build) components necessary to compile" >
+ 
+-    <antcall target="downloadfile-2">
+-      <param name="sourcefile.1" value="${tomcat-native.loc.1}"/>
+-      <param name="sourcefile.2" value="${tomcat-native.loc.2}"/>
+-      <param name="destfile" value="${tomcat-native.tar.gz}"/>
+-      <param name="destdir" value="${tomcat-native.home}"/>
+-    </antcall>
+-
+-    <!-- Download Commons Daemon -->
+-    <antcall target="downloadgz-2">
+-      <param name="sourcefile.1" value="${commons-daemon.bin.loc.1}"/>
+-      <param name="sourcefile.2" value="${commons-daemon.bin.loc.2}"/>
+-      <param name="destfile" value="${commons-daemon.jar}"/>
+-    </antcall>
+-
+-    <antcall target="downloadfile-2">
+-      <param name="sourcefile.1" value="${commons-daemon.native.src.loc.1}"/>
+-      <param name="sourcefile.2" value="${commons-daemon.native.src.loc.2}"/>
+-      <param name="destfile" value="${commons-daemon.native.src.tgz}"/>
+-      <param name="destdir" value="${commons-daemon.home}"/>
+-    </antcall>
+-
+     <!-- Download JDT (Eclipse compiler) -->
+     <antcall target="downloadfile-2">
+       <param name="sourcefile.1" value="${jdt.loc.1}"/>

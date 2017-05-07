@@ -1,0 +1,19 @@
+diff -urN rarian-0.8.0/util/rarian-sk-migrate.cpp ../SUNWgnome-libs-2.23.6.hacked/rarian-0.8.0/util/rarian-sk-migrate.cpp
+--- rarian-0.8.0/util/rarian-sk-migrate.cpp	2008-03-09 18:46:23.000000000 +0000
++++ ../SUNWgnome-libs-2.23.6.hacked/rarian-0.8.0/util/rarian-sk-migrate.cpp	2008-09-03 16:12:37.416091000 +0100
+@@ -279,8 +279,14 @@
+     struct stat buf;
+     char *path = NULL;
+ 
+-    if (argc != 3 || access (argv[1], R_OK)) {
++    if (argc == 3) {
++      if (access (argv[1], R_OK) < 0)
+         fprintf (stderr, "ERROR: Cannot access directory %s\n", argv[1]);
++	exit (1);
++    }
++    else {
++        fprintf (stderr, "Usage: %s <Input Dir> <Program>\n", argv[0]);
++	exit (1);
+     }
+ 	reg = rrn_reg_new_full ();
+ 

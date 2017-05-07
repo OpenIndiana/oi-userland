@@ -28,7 +28,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-0.1.gb81434e.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:304b89d1b006c959cad3b132346a6d061526fe626953ef99c764df396e43f959
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/qperf/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://pkgs.fedoraproject.org/repo/pkgs/qperf/$(COMPONENT_ARCHIVE)/46d427f3c5e853ce0d260cc85c4785f8/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

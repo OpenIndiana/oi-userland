@@ -1,0 +1,131 @@
+diff -ruN ../a/openssl-0.9.8o/Configure openssl-0.9.8o/Configure
+--- ../a/openssl-0.9.8o/Configure	2010-05-20 10:36:23.000000000 -0700
++++ openssl-0.9.8o/Configure	2010-09-22 18:32:18.922795700 -0700
+@@ -12,7 +12,7 @@
+ 
+ # see INSTALL for instructions.
+ 
+-my $usage="Usage: Configure [no-<cipher> ...] [enable-<cipher> ...] [experimental-<cipher> ...] [-Dxxx] [-lxxx] [-Lxxx] [-fxxx] [-Kxxx] [no-hw-xxx|no-hw] [[no-]threads] [[no-]shared] [[no-]zlib|zlib-dynamic] [enable-montasm] [no-asm] [no-dso] [no-krb5] [386] [--prefix=DIR] [--openssldir=OPENSSLDIR] [--with-xxx[=vvv]] [--test-sanity] os/compiler[:flags]\n";
++my $usage="Usage: Configure --pk11-libname=PK11_LIB_LOCATION [no-<cipher> ...] [enable-<cipher> ...] [experimental-<cipher> ...] [-Dxxx] [-lxxx] [-Lxxx] [-fxxx] [-Kxxx] [no-hw-xxx|no-hw] [[no-]threads] [[no-]shared] [[no-]zlib|zlib-dynamic] [enable-montasm] [no-asm] [no-dso] [no-krb5] [386] [--prefix=DIR] [--openssldir=OPENSSLDIR] [--with-xxx[=vvv]] [--test-sanity] os/compiler[:flags]\n";
+ 
+ # Options:
+ #
+@@ -21,6 +21,9 @@
+ # --prefix      prefix for the OpenSSL include, lib and bin directories
+ #               (Default: the OPENSSLDIR directory)
+ #
++# --pk11-libname  PKCS#11 library name.
++#               (Default: none)
++#
+ # --install_prefix  Additional prefix for package builders (empty by
+ #               default).  This needn't be set in advance, you can
+ #               just as well use "make INSTALL_PREFIX=/whatever install".
+@@ -587,6 +590,9 @@
+ my $idx_ranlib = $idx++;
+ my $idx_arflags = $idx++;
+ 
++# PKCS#11 engine patch
++my $pk11_libname="";
++
+ my $prefix="";
+ my $libdir="";
+ my $openssldir="";
+@@ -825,6 +831,10 @@
+ 				{
+ 				$flags.=$_." ";
+ 				}
++                        elsif (/^--pk11-libname=(.*)$/)
++                                {
++                                $pk11_libname=$1;
++                                }
+ 			elsif (/^--prefix=(.*)$/)
+ 				{
+ 				$prefix=$1;
+@@ -960,6 +970,13 @@
+ 	exit 0;
+ }
+ 
++if (! $pk11_libname)
++        {
++        print STDERR "You must set --pk11-libname for PKCS#11 library.\n";
++        print STDERR "See README.pkcs11 for more information.\n";
++        exit 1;
++        }
++
+ if ($target =~ m/^CygWin32(-.*)$/) {
+ 	$target = "Cygwin".$1;
+ }
+@@ -1126,6 +1143,8 @@
+ if ($flags ne "")	{ $cflags="$flags$cflags"; }
+ else			{ $no_user_cflags=1;       }
+ 
++$cflags="-DPK11_LIB_LOCATION=\"$pk11_libname\" $cflags";
++
+ # Kerberos settings.  The flavor must be provided from outside, either through
+ # the script "config" or manually.
+ if (!$no_krb5)
+@@ -1489,6 +1508,7 @@
+ 	s/^VERSION=.*/VERSION=$version/;
+ 	s/^MAJOR=.*/MAJOR=$major/;
+ 	s/^MINOR=.*/MINOR=$minor/;
++	s/^PK11_LIB_LOCATION=.*/PK11_LIB_LOCATION=$pk11_libname/;
+ 	s/^SHLIB_VERSION_NUMBER=.*/SHLIB_VERSION_NUMBER=$shlib_version_number/;
+ 	s/^SHLIB_VERSION_HISTORY=.*/SHLIB_VERSION_HISTORY=$shlib_version_history/;
+ 	s/^SHLIB_MAJOR=.*/SHLIB_MAJOR=$shlib_major/;
+diff -ruN ../a/openssl-0.9.8o/Makefile.org openssl-0.9.8o/Makefile.org
+--- ../a/openssl-0.9.8o/Makefile.org	2010-01-27 08:06:36.000000000 -0800
++++ openssl-0.9.8o/Makefile.org	2010-09-22 18:32:19.152576100 -0700
+@@ -26,6 +26,9 @@
+ INSTALL_PREFIX=
+ INSTALLTOP=/usr/local/ssl
+ 
++# You must set this through --pk11-libname configure option.
++PK11_LIB_LOCATION=
++
+ # Do not edit this manually. Use Configure --openssldir=DIR do change this!
+ OPENSSLDIR=/usr/local/ssl
+ 
+diff -ruN ../a/openssl-0.9.8o/crypto/engine/Makefile openssl-0.9.8o/crypto/engine/Makefile
+--- ../a/openssl-0.9.8o/crypto/engine/Makefile	2009-09-27 07:04:32.000000000 -0700
++++ openssl-0.9.8o/crypto/engine/Makefile	2010-09-22 18:32:19.109972600 -0700
+@@ -21,12 +21,14 @@
+ 	eng_table.c eng_pkey.c eng_fat.c eng_all.c \
+ 	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
+ 	tb_cipher.c tb_digest.c \
+-	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c eng_padlock.c
++	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c eng_padlock.c \
++	hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
+ LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
+ 	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
+ 	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
+ 	tb_cipher.o tb_digest.o \
+-	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o eng_padlock.o
++	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o eng_padlock.o \
++	hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
+ 
+ SRC= $(LIBSRC)
+ 
+diff -ruN ../a/openssl-0.9.8o/crypto/engine/eng_all.c openssl-0.9.8o/crypto/engine/eng_all.c
+--- ../a/openssl-0.9.8o/crypto/engine/eng_all.c	2010-02-28 16:30:11.000000000 -0800
++++ openssl-0.9.8o/crypto/engine/eng_all.c	2010-09-22 18:33:15.326949000 -0700
+@@ -75,6 +75,9 @@
+     ENGINE_load_padlock();
+ #endif
+     ENGINE_load_dynamic();
++#ifndef OPENSSL_NO_HW_PKCS11
++    ENGINE_load_pk11();
++#endif
+ #ifndef OPENSSL_NO_STATIC_ENGINE
+ # ifndef OPENSSL_NO_HW
+ #  ifndef OPENSSL_NO_HW_4758_CCA
+diff -ruN ../a/openssl-0.9.8o/crypto/engine/engine.h openssl-0.9.8o/crypto/engine/engine.h
+--- ../a/openssl-0.9.8o/crypto/engine/engine.h	2010-02-09 06:18:15.000000000 -0800
++++ openssl-0.9.8o/crypto/engine/engine.h	2010-09-22 18:32:19.063758100 -0700
+@@ -337,6 +337,7 @@
+ void ENGINE_load_ubsec(void);
+ #endif
+ void ENGINE_load_cryptodev(void);
++void ENGINE_load_pk11(void);
+ void ENGINE_load_padlock(void);
+ void ENGINE_load_builtin_engines(void);
+ #ifdef OPENSSL_SYS_WIN32

@@ -1,0 +1,12 @@
+--- percona-server-5.6.16-64.1/mysys_ssl/CMakeLists.txt.~1~	2014-03-25 15:22:59.014764799 +0400
++++ percona-server-5.6.16-64.1/mysys_ssl/CMakeLists.txt	2014-03-25 15:24:05.856924780 +0400
+@@ -49,7 +49,8 @@
+ ADD_CONVENIENCE_LIBRARY(mysys_ssl ${MYSYS_SSL_SOURCES})
+ TARGET_LINK_LIBRARIES(mysys_ssl dbug strings ${SSL_LIBRARIES} ${ZLIB_LIBRARY})
+ 
+-DTRACE_INSTRUMENT(mysys_ssl)
++# Percona doesn't provide dtrace probes in mysys_ssl
++# DTRACE_INSTRUMENT(mysys_ssl)
+ 
+ INSTALL_DEBUG_SYMBOLS(mysys_ssl)
+ IF(MSVC)

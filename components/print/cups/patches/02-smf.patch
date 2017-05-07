@@ -1,0 +1,73 @@
+--- scheduler/cups.xml.in	Thu Jul  8 22:54:14 2010
++++ scheduler/cups.xml.in	Tue Aug 16 14:51:37 2011
+@@ -52,14 +52,6 @@
+         <service_fmri value='svc:/milestone/network' />
+     </dependency>
+ 
+-    <dependency
+-        name='lpsched'
+-        grouping='exclude_all'
+-        restart_on='none'
+-        type='service'>
+-        <service_fmri value='svc:/application/print/server' />
+-    </dependency>
+-
+     <exec_method
+         type='method'
+         name='stop'
+@@ -66,7 +58,7 @@
+         exec=':kill'
+         timeout_seconds='60' />
+ 
+-    <instance name='default' enabled='false' >
++    <instance name='default' enabled='true' >
+ 
+         <dependency
+             name='config_data'
+@@ -87,10 +79,12 @@
+         </exec_method>
+ 
+         <property_group name='general' type='framework'>
++            <propval name='active' type='boolean'
++                value='true' />
+             <propval name='action_authorization' type='astring'
+                 value='solaris.smf.manage.cups' />
+             <propval name='value_authorization' type='astring'
+-                value='solaris.smf.value.cups' />
++                value='solaris.smf.manage.cups' />
+         </property_group>
+ 
+         <template>
+@@ -144,14 +138,6 @@
+         <service_fmri value='svc:/milestone/network' />
+     </dependency>
+ 
+-    <dependency
+-        name='in-lpd'
+-        grouping='exclude_all'
+-        restart_on='none'
+-        type='service'>
+-        <service_fmri value='svc:/application/print/rfc1179' />
+-    </dependency>
+-
+     <exec_method
+         type='method'
+         name='stop'
+@@ -158,7 +144,7 @@
+         exec=':kill'
+         timeout_seconds='60' />
+ 
+-    <instance name='default' enabled='false' >
++    <instance name='default' enabled='true' >
+         <dependency
+             name='cupsd'
+             grouping='require_all'
+@@ -190,7 +176,7 @@
+             <propval name='action_authorization' type='astring'
+                 value='solaris.smf.manage.cups' />
+             <propval name='value_authorization' type='astring'
+-                value='solaris.smf.value.cups' />
++                value='solaris.smf.manage.cups' />
+         </property_group>
+ 
+         <template>

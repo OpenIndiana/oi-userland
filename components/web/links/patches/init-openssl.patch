@@ -1,0 +1,14 @@
+Disable SSLv2 and SSLv3 in links to "mitigate POODLE vulnerability".
+
+This change will be passed upstream.
+
+--- a/https.c.orig	2015-01-13 06:51:50.062449801 -0800
++++ b/https.c	2015-01-13 06:52:03.963799972 -0800
+@@ -63,6 +63,7 @@
+ 		context = SSL_CTX_new((void *)m);
+ 		if (!context) return NULL;
+ 		SSL_CTX_set_options(context, SSL_OP_ALL);
++		SSL_CTX_set_options(context, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+ 		SSL_CTX_set_default_verify_paths(context);
+ 
+ 	}

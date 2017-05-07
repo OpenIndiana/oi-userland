@@ -20,29 +20,34 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		simplejson
-COMPONENT_VERSION=	2.1.2
+COMPONENT_VERSION=	3.8.2
+COMPONRNT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://undefined.org/python/#simplejson
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:d196d78af44acdf47078e320124bfe4cd2cb3bd7b9be7f5587b2e149124cb49c
+COMPONENT_ARCHIVE_HASH= sha256:d58439c548433adcda98e695be53e526ba940a4b9c44fb9a05d92cd495cdd47f
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/s/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/simplejson
+
+PYTHON_VERSIONS=	2.7 3.4
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
+
+CFLAGS+= -std=c99
+
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./setup.py test
 
-ASLR_MODE = $(ASLR_ENABLE)
+#ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:          $(BUILD_32_and_64)
@@ -51,6 +56,6 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += system/library

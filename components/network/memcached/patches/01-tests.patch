@@ -1,0 +1,15 @@
+--- memcached-1.4.24/Makefile.am.~1~	2015-05-19 10:39:07.957213418 +0300
++++ memcached-1.4.24/Makefile.am	2015-05-19 10:39:41.877246916 +0300
+@@ -76,9 +76,9 @@
+ MOSTLYCLEANFILES = *.gcov *.gcno *.gcda *.tcov
+ 
+ test:	memcached-debug sizes testapp
+-	$(srcdir)/sizes
+-	$(srcdir)/testapp
+-	prove $(srcdir)/t
++	$(builddir)/sizes
++	$(builddir)/testapp
++	prove $(builddir)/t
+ 	@if test `basename $(PROFILER)` = "gcov"; then \
+ 	  for file in memcached_debug-*.gc??; do \
+ 	    mv -f $$file `echo $$file | sed 's/memcached_debug-//'`; \

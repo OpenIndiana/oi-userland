@@ -1,0 +1,150 @@
+--- /dev/null	2013-10-06 14:14:47.000000000 -0700
++++ gdb-7.6/gdb/sol2-core-regset.c	2013-10-06 13:55:51.348498600 -0700
+@@ -0,0 +1,147 @@
++/* Machine dependent GDB support for core files on Solaris using "regsets".
++
++   Copyright (C) 2013 Free Software Foundation, Inc.
++
++   This file is part of GDB.
++
++   This program is free software; you can redistribute it and/or modify
++   it under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 3 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
++
++/* This file is used by Solaris core dumps. The Solaris /proc filesystem
++ * will yield different sizes for prgregset_t prfpregset_t depending
++ * on sizeof(void*). We handle these differences in this Solaris-specific
++ * core-regset.c file, as opposed to imposing all these Solaris particulars
++ * on everyone else.
++ */
++
++#include "defs.h"
++#include "command.h"
++#include "gdbcore.h"
++#include "gdbarch.h"
++#include "inferior.h"
++#include "target.h"
++#include "regcache.h"
++#include "elf-bfd.h"
++
++#include <fcntl.h>
++#include <errno.h>
++#include <string.h>
++#include <time.h>
++#ifdef HAVE_SYS_PROCFS_H
++#include <sys/procfs.h>
++#endif
++
++/* Prototypes for supply_gregset etc.  */
++#include "gregset.h"
++
++/* Provide registers to GDB from a core file.
++
++   CORE_REG_SECT points to an array of bytes, which are the contents
++   of a `note' from a core file which BFD thinks might contain
++   register contents.  CORE_REG_SIZE is its size.
++
++   WHICH says which register set corelow suspects this is:
++     0 --- the general-purpose register set, in gregset_t format
++     2 --- the floating-point register set, in fpregset_t format
++
++   REG_ADDR is ignored.  */
++
++static void
++fetch_core_registers (struct regcache *regcache,
++		      char *core_reg_sect,
++		      unsigned core_reg_size,
++		      int which,
++		      CORE_ADDR reg_addr)
++{
++  gdb_gregset_t gregset;
++  gdb_fpregset_t fpregset;
++  gdb_gregset_t *gregset_p = &gregset;
++  gdb_fpregset_t *fpregset_p = &fpregset;
++  /* use default sizes on 64-bit Solaris */
++  size_t gregset_size = sizeof (gregset);
++  size_t fpregset_size = sizeof (fpregset);
++  int pointer_size;
++  struct gdbarch *gdbarch = get_regcache_arch (regcache);
++  enum bfd_endian byte_order;
++
++  if (gdbarch_osabi (gdbarch) == GDB_OSABI_SOLARIS)
++  {
++    set_regcache_from_corefile (regcache);
++    byte_order = gdbarch_byte_order (gdbarch);
++    pointer_size = gdbarch_ptr_bit (gdbarch);
++
++    if ((byte_order == BFD_ENDIAN_BIG) && (pointer_size == 32))
++    {
++      gregset_size = 152;
++      fpregset_size = 144;
++    }
++    else if ((byte_order == BFD_ENDIAN_LITTLE) && (pointer_size == 32))
++    {
++      gregset_size = 76;
++      fpregset_size = 380;
++    }
++  }
++
++  switch (which)
++    {
++    case 0:
++      if (core_reg_size != gregset_size)
++	warning (_("Wrong size gregset in core file."));
++      else
++	{
++	  memcpy (&gregset, core_reg_sect, gregset_size);
++	  supply_gregset (regcache, (const gdb_gregset_t *) gregset_p);
++	}
++      break;
++
++    case 2:
++      if (core_reg_size != fpregset_size)
++	warning (_("Wrong size fpregset in core file."));
++      else
++	{
++	  memcpy (&fpregset, core_reg_sect, fpregset_size);
++	  if (gdbarch_fp0_regnum (get_regcache_arch (regcache)) >= 0)
++	    supply_fpregset (regcache,
++			     (const gdb_fpregset_t *) fpregset_p);
++	}
++      break;
++
++    default:
++      /* We've covered all the kinds of registers we know about here,
++         so this must be something we wouldn't know what to do with
++         anyway.  Just ignore it.  */
++      break;
++    }
++}
++
++
++/* Register that we are able to handle ELF core file formats using
++   standard procfs "regset" structures.  */
++
++static struct core_fns regset_core_fns =
++{
++  bfd_target_elf_flavour,		/* core_flavour */
++  default_check_format,			/* check_format */
++  default_core_sniffer,			/* core_sniffer */
++  fetch_core_registers,			/* core_read_registers */
++  NULL					/* next */
++};
++
++/* Provide a prototype to silence -Wmissing-prototypes.  */
++extern void _initialize_core_regset (void);
++
++void
++_initialize_core_regset (void)
++{
++  deprecated_add_core_fns (&regset_core_fns);
++}

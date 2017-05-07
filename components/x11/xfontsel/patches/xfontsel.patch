@@ -1,0 +1,129 @@
+diff --git a/xfontsel.c b/xfontsel.c
+index 9ab33d1..861a6ce 100644
+--- a/xfontsel.c
++++ b/xfontsel.c
+@@ -52,6 +52,9 @@ Modified: Mark Leisher <mleisher@crl.nmsu.edu> to deal with UCS sample text.
+ #include <X11/Xfuncs.h>
+ #include "ULabel.h"
+ 
++#include <libintl.h>
++#include <X11/Xlocale.h>
++
+ #define MIN_APP_DEFAULTS_VERSION 1
+ #define FIELD_COUNT 14
+ #define DELIM '-'
+@@ -151,6 +154,7 @@ static XrmOptionDescRec options[] = {
+ static void Syntax(const char *call)
+ {
+     fprintf (stderr, "usage:  %s [-options ...] -fn font\n\n%s\n", call,
++       gettext(
+ 	"where options include:\n"
+ 	"    -display dpy           X server to contact\n"
+ 	"    -geometry geom         size and location of window\n"
+@@ -159,7 +163,7 @@ static void Syntax(const char *call)
+ 	"    -sample string         sample text to use for 1-byte fonts\n"
+ 	"    -sample16 string       sample text to use for 2-byte fonts\n"
+ 	"    -sampleUCS string      sample text to use for ISO10646 fonts\n"
+-	"    -scaled                use scaled instances of fonts\n");
++	"    -scaled                use scaled instances of fonts\n"));
+     exit (1);
+ }
+ 
+@@ -252,10 +256,28 @@ main(int argc, char **argv)
+ {
+     Widget topLevel, pane;
+ 
++    /*
++     * Set up internationalize message for bug: 4363521   Jhobson 8/23/00
++     */
++    char *domaindir;
++
+     XtSetLanguageProc(NULL, (XtLanguageProc) NULL, NULL);
+ 
+     topLevel = XtAppInitialize(&appCtx, "XFontSel", options, XtNumber(options),
+ 			       &argc, argv, NULL, NULL, 0);
++    /*
++     * Set up internationalize message for bug: 4363521    Jhobson 8/23/00
++     *
++     * Do this after the AppInitialize since setlocale is setup
++     * by XtSetLanguageProc, but does not occur until XtAppInitialize
++     * happens. (Goofy X server)
++     */
++    textdomain("xfontsel");
++
++    if((domaindir = getenv("TEXTDOMAINDIR")) == NULL){
++        domaindir = getenv("XLOCALEDIR");
++    }
++    bindtextdomain("xfontsel", domaindir);
+ 
+     if (argc != 1) Syntax(argv[0]);
+ 
+@@ -266,12 +288,15 @@ main(int argc, char **argv)
+     XtGetApplicationResources( topLevel, (XtPointer)&AppRes,
+ 			       resources, XtNumber(resources), NZ );
+     if (AppRes.app_defaults_version < MIN_APP_DEFAULTS_VERSION) {
++        char message[200];
++        char full_message[300];
+ 	XrmDatabase rdb = XtDatabase(XtDisplay(topLevel));
+-	XtWarning( "app-defaults file not properly installed." );
+-	XrmPutLineResource( &rdb,
+-"*sampleText*UCSLabel:XFontSel app-defaults file not properly installed;\\n\
+-see 'xfontsel' manual page."
+-			  );
++        sprintf( message, gettext("app-defaults file not properly installed.") );
++        sprintf( full_message, gettext("%s %s;\\nsee '%s' manual page."),
++                "*sampleText*UCSLabel:XFontSel", message, "xfontsel" );
++
++        XtWarning( message );
++	XrmPutLineResource( &rdb, full_message);
+     }
+ 
+     ScheduleWork(GetFontNames, (XtPointer)XtDisplay(topLevel), 0);
+@@ -507,7 +532,7 @@ void GetFontNames(XtPointer closure)
+ 	    }
+ 	    else
+ 		XtAppWarning( appCtx,
+-		    "internal error; pattern didn't match first font" );
++		    gettext("internal error; pattern didn't match first font" ));
+ 	}
+ 	else {
+ 	    SetNoFonts();
+@@ -1005,11 +1030,11 @@ static void SetCurrentFontCount(void)
+     char label[80];
+     Arg args[1];
+     if (matchingFontCount == 1)
+-	strcpy( label, "1 name matches" );
++	strcpy( label, gettext("1 name matches") );
+     else if (matchingFontCount)
+-	snprintf( label, sizeof(label), "%d names match", matchingFontCount );
++	snprintf( label, sizeof(label), gettext("%d names match"), matchingFontCount);
+     else
+-	strcpy( label, "no names match" );
++	strcpy( label, gettext("no names match") );
+     XtSetArg( args[0], XtNlabel, label );
+     XtSetValues( countLabel, args, ONE );
+ }
+@@ -1020,9 +1045,9 @@ static void SetParsingFontCount(int count)
+     char label[80];
+     Arg args[1];
+     if (count == 1)
+-	strcpy( label, "1 name to parse" );
++	strcpy( label, gettext("1 name to parse") );
+     else
+-	snprintf( label, sizeof(label), "%d names to parse", count );
++	snprintf( label, sizeof(label), gettext("%d names to parse"), count );
+     XtSetArg( args[0], XtNlabel, label );
+     XtSetValues( countLabel, args, ONE );
+     FlushXqueue(XtDisplay(countLabel));
+@@ -1228,9 +1253,9 @@ void SelectField(Widget w, XtPointer closure, XtPointer callData)
+     int field = (long)closure;
+     FieldValue *values = fieldValues[field]->value;
+     int count = fieldValues[field]->count;
+-    printf( "field %d:\n", field );
++    printf(gettext("field %d:\n"), field );
+     while (count--) {
+-	printf( " %s: %d fonts\n", values->string, values->count );
++	printf( gettext(" %s: %d fonts\n"), values->string, values->count );
+ 	values++;
+     }
+     printf( "\n" );

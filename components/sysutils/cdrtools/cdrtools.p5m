@@ -1,0 +1,98 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+file files/cdrtools path=etc/security/exec_attr.d/cdrtools
+
+file path=usr/bin/cdda2wav
+file path=usr/bin/cdrecord
+file path=usr/bin/mkisofs
+file path=usr/bin/readcd
+file path=usr/share/man/man1/cdda2wav.1
+file path=usr/share/man/man1/cdrecord.1
+file path=usr/share/man/man1/readcd.1
+file path=usr/share/man/man8/mkisofs.8
+
+file path=usr/lib/siconv/cp10000
+file path=usr/lib/siconv/cp10006
+file path=usr/lib/siconv/cp10007
+file path=usr/lib/siconv/cp10029
+file path=usr/lib/siconv/cp10079
+file path=usr/lib/siconv/cp10081
+file path=usr/lib/siconv/cp1250
+file path=usr/lib/siconv/cp1251
+file path=usr/lib/siconv/cp1252
+file path=usr/lib/siconv/cp1253
+file path=usr/lib/siconv/cp1254
+file path=usr/lib/siconv/cp1255
+file path=usr/lib/siconv/cp1256
+file path=usr/lib/siconv/cp1257
+file path=usr/lib/siconv/cp1258
+file path=usr/lib/siconv/cp437
+file path=usr/lib/siconv/cp737
+file path=usr/lib/siconv/cp775
+file path=usr/lib/siconv/cp850
+file path=usr/lib/siconv/cp852
+file path=usr/lib/siconv/cp855
+file path=usr/lib/siconv/cp857
+file path=usr/lib/siconv/cp860
+file path=usr/lib/siconv/cp861
+file path=usr/lib/siconv/cp862
+file path=usr/lib/siconv/cp863
+file path=usr/lib/siconv/cp864
+file path=usr/lib/siconv/cp865
+file path=usr/lib/siconv/cp866
+file path=usr/lib/siconv/cp869
+file path=usr/lib/siconv/cp874
+file path=usr/lib/siconv/iso8859-1
+file path=usr/lib/siconv/iso8859-10
+file path=usr/lib/siconv/iso8859-11
+file path=usr/lib/siconv/iso8859-13
+file path=usr/lib/siconv/iso8859-14
+file path=usr/lib/siconv/iso8859-15
+file path=usr/lib/siconv/iso8859-16
+file path=usr/lib/siconv/iso8859-2
+file path=usr/lib/siconv/iso8859-3
+file path=usr/lib/siconv/iso8859-4
+file path=usr/lib/siconv/iso8859-5
+file path=usr/lib/siconv/iso8859-6
+file path=usr/lib/siconv/iso8859-7
+file path=usr/lib/siconv/iso8859-8
+file path=usr/lib/siconv/iso8859-9
+file path=usr/lib/siconv/koi8-r
+file path=usr/lib/siconv/koi8-u
+
+legacy pkg=SUNWmkcd \
+    name="CD creation utilities" \
+    desc="CD creation utilities"

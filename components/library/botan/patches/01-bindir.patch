@@ -1,0 +1,57 @@
+--- Botan-1.10.9/src/build-data/makefile/unix.in.1	2016-04-06 13:05:31.362872359 +0300
++++ Botan-1.10.9/src/build-data/makefile/unix.in	2016-04-06 13:05:52.097751654 +0300
+@@ -14,7 +14,7 @@
+ # Installation Settings
+ DESTDIR       = %{prefix}
+ 
+-BINDIR        = $(DESTDIR)/bin
++BINDIR        = $(DESTDIR)/%{bindir}
+ LIBDIR        = $(DESTDIR)/%{libdir}
+ HEADERDIR     = $(DESTDIR)/%{includedir}/botan-$(SERIES)/botan
+ DOCDIR        = $(DESTDIR)/%{docdir}/botan-$(VERSION)
+--- Botan-1.10.9/src/build-data/makefile/unix_shr.in.1	2016-04-06 13:31:55.599026005 +0300
++++ Botan-1.10.9/src/build-data/makefile/unix_shr.in	2016-04-06 13:32:10.260323004 +0300
+@@ -16,7 +16,7 @@
+ # Installation Settings
+ DESTDIR       = %{prefix}
+ 
+-BINDIR        = $(DESTDIR)/bin
++BINDIR        = $(DESTDIR)/%{bindir}
+ LIBDIR        = $(DESTDIR)/%{libdir}
+ HEADERDIR     = $(DESTDIR)/%{includedir}/botan-$(SERIES)/botan
+ DOCDIR        = $(DESTDIR)/%{docdir}/botan-$(VERSION)
+--- Botan-1.10.9/configure.py.~1~	2014-12-13 18:25:32.000000000 +0300
++++ Botan-1.10.9/configure.py	2016-04-06 13:27:42.672580503 +0300
+@@ -371,6 +371,8 @@
+                              help='set the base install directory')
+     install_group.add_option('--docdir', metavar='DIR',
+                              help='set the documentation install directory')
++    install_group.add_option('--bindir', metavar='DIR',
++                             help='set the bin install directory')
+     install_group.add_option('--libdir', metavar='DIR',
+                              help='set the library install directory')
+     install_group.add_option('--includedir', metavar='DIR',
+@@ -384,7 +386,6 @@
+ 
+     # These exist only for autoconf compatability (requested by zw for mtn)
+     compat_with_autoconf_options = [
+-        'bindir',
+         'datadir',
+         'datarootdir',
+         'dvidir',
+@@ -915,6 +916,7 @@
+                         'ar_needs_ranlib': False,
+                         'install_root': '/usr/local',
+                         'header_dir': 'include',
++                        'bin_dir': 'bin',
+                         'lib_dir': 'lib',
+                         'doc_dir': 'share/doc',
+                         'build_shared': 'yes',
+@@ -1118,6 +1120,7 @@
+         'makefile_path': prefix_with_build_dir('Makefile'),
+ 
+         'prefix': options.prefix or osinfo.install_root,
++        'bindir': options.bindir or osinfo.bin_dir,
+         'libdir': options.libdir or osinfo.lib_dir,
+         'includedir': options.includedir or osinfo.header_dir,
+         'docdir': options.docdir or osinfo.doc_dir,

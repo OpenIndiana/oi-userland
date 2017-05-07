@@ -1,0 +1,42 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+link path=usr/X11/lib/$(MACH64)/libSM.so target=../../../lib/$(MACH64)/libSM.so
+link path=usr/X11/lib/$(MACH64)/libSM.so.6 target=../../../lib/$(MACH64)/libSM.so.6
+link path=usr/X11/lib/libSM.so target=../../lib/libSM.so
+link path=usr/X11/lib/libSM.so.6 target=../../lib/libSM.so.6
+
+file path=usr/include/X11/SM/SM.h
+file path=usr/include/X11/SM/SMlib.h
+file path=usr/include/X11/SM/SMproto.h
+link path=usr/lib/$(MACH64)/libSM.so target=libSM.so.6.0.1
+link path=usr/lib/$(MACH64)/libSM.so.6 target=libSM.so.6.0.1
+file path=usr/lib/$(MACH64)/libSM.so.6.0.1
+file path=usr/lib/$(MACH64)/pkgconfig/sm.pc
+link path=usr/lib/libSM.so target=libSM.so.6.0.1
+link path=usr/lib/libSM.so.6 target=libSM.so.6.0.1
+file path=usr/lib/libSM.so.6.0.1
+file path=usr/lib/pkgconfig/sm.pc
+file path=usr/share/doc/libSM/SMlib.xml
+file path=usr/share/doc/libSM/xsmp.xml

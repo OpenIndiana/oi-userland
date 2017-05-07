@@ -1,0 +1,23 @@
+--- openjade-1.3.2.orig/config/configure.in	Mon Jan  5 18:00:49 2004
++++ openjade-1.3.2/config/configure.in	Mon Jan  5 18:03:02 2004
+@@ -130,6 +130,9 @@
+               [define this to compile explicit template instantiations])
+             CXXFLAGS="$CXXFLAGS -fno-implicit-templates"
+         fi
++    else
++        AC_DEFINE(SP_DEFINE_TEMPLATES,1,
++          [define this to include template definitions in the headers])
+     fi
+     ;;
+ esac
+--- openjade-1.3.2/style/primitive.cxx.orig	Tue Jan  6 05:45:14 2004
++++ openjade-1.3.2/style/primitive.cxx	Tue Jan  6 05:45:39 2004
+@@ -5047,7 +5047,7 @@
+     if (!argv[1]->exactIntegerValue(n2))
+       return argError(interp, loc,
+   		      InterpreterMessages::notAnExactInteger, 1, argv[1]);
+-    return new (interp) QuantityObj(pow(d1,n2), dim1*n2);
++    return new (interp) QuantityObj(pow(d1,(int)n2), dim1*n2);
+   }
+   else {
+     if ((q2 == ELObj::noQuantity) || (dim2 != 0))

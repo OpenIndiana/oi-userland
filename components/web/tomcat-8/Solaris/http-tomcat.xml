@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+CDDL HEADER START
+
+The contents of this file are subject to the terms of the
+Common Development and Distribution License (the "License").
+You may not use this file except in compliance with the License.
+
+You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+or http://www.opensolaris.org/os/licensing.
+See the License for the specific language governing permissions
+and limitations under the License.
+
+When distributing Covered Code, include this CDDL HEADER in each
+file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+If applicable, add the following below this CDDL HEADER, with the
+fields enclosed by brackets "[]" replaced with your own identifying
+information: Portions Copyright [yyyy] [name of copyright owner]
+
+CDDL HEADER END
+-->
+
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+    Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+-->
+
+<service_bundle type='manifest' name='SUNWtcatr:tomcat'>
+
+<service
+	name='network/http'
+	type='service'
+	version='1'>
+
+	<!--
+	  Because we may have multiple instances of network/http
+	  provided by different implementations, we keep dependencies
+	  and methods within the instance.
+	-->
+
+	<instance name='tomcat8' enabled='false'>
+		<!--
+		  Wait for network interfaces to be initialized.
+		-->
+		<dependency name='network'
+		    grouping='require_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri value='svc:/milestone/network:default'/>
+		</dependency>
+
+		<!--
+		  Wait for all local filesystems to be mounted.
+		-->
+		<dependency name='filesystem-local'
+		    grouping='require_all'
+		    restart_on='none'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/local:default'/>
+		</dependency>
+
+		<!--
+		  Wait for automounting to be available, as we may be
+		  serving data from home directories or other remote
+		  filesystems.
+		-->
+		<dependency name='autofs'
+		    grouping='optional_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/autofs:default'/>
+		</dependency>
+
+		<exec_method
+			type='method'
+			name='start'
+			exec='/lib/svc/method/http-tomcat8 start'
+			timeout_seconds='60'>
+			<method_context>
+			<method_credential
+			  user='webservd' group='webservd'
+			  privileges='basic,net_privaddr'/>
+			</method_context>
+		</exec_method>
+
+		<exec_method
+			type='method'
+			name='stop'
+			exec='/lib/svc/method/http-tomcat8 stop'
+			timeout_seconds='60' />
+
+		<template>
+			<common_name>
+				<loctext xml:lang='C'>
+					Apache Tomcat 8
+				</loctext>
+			</common_name>
+
+			<documentation>
+				<manpage title='tomcat8' section='1M'
+					manpath='/usr/share/man' />
+				<doc_link name='apache.org'
+					uri='http://tomcat.apache.org' />
+			</documentation>
+		</template>
+
+	</instance>
+
+	<stability value='Evolving' />
+
+</service>
+
+</service_bundle>

@@ -18,25 +18,26 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2012 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=		pycups
-COMPONENT_VERSION=	1.9.46
+COMPONENT_VERSION=	1.9.73
 COMPONENT_PROJECT_URL=	http://cyberelk.net/tim/software/pycups/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:74abd1d6b1a5b8a22d2ccf3730000848fcef0b63c6105b178f73ff76e72bc8fe
+    sha256:c381be011889ca6f728598578c89c8ac9f7ab1e95b614474df9f2fa831ae5335
 COMPONENT_ARCHIVE_URL=	http://cyberelk.net/tim/data/pycups/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pycups
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+PYTHON_VERSIONS=2.7
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # pycups requires VERSION to be defined. Originally set in the package Makefile
 CFLAGS += -DVERSION=\\\"$(COMPONENT_VERSION)\\\"
@@ -48,6 +49,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library

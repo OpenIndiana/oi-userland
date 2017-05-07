@@ -1,0 +1,603 @@
+# This patch is Solaris-specific and thus has not been contributed upstream.
+
+--- sendmail-8.15.1.30/cf/README.~1~	2015-05-22 06:42:27.000000000 -0700
++++ sendmail-8.15.1.30/cf/README	2015-05-23 15:44:42.381819318 -0700
+@@ -4,12 +4,10 @@
+ This document describes the sendmail configuration files.  It
+ explains how to create a sendmail.cf file for use with sendmail.
+ It also describes how to set options for sendmail which are explained
+-in the Sendmail Installation and Operation guide (doc/op/op.me).
+-
+-To get started, you may want to look at tcpproto.mc (for TCP-only
+-sites) and clientproto.mc (for clusters of clients using a single
+-mail host), or the generic-*.mc files as operating system-specific
+-examples.
++in the Sendmail Installation and Operation guide, which can be found
++on-line at http://www.sendmail.org/%7Eca/email/doc8.12/op.html .
++Recall this URL throughout this document when references to
++doc/op/op.* are made.
+ 
+ Table of Content:
+ 
+@@ -30,7 +28,6 @@
+ ANTI-SPAM CONFIGURATION CONTROL
+ CONNECTION CONTROL
+ STARTTLS
+-SMTP AUTHENTICATION
+ ADDING NEW MAILERS OR RULESETS
+ ADDING NEW MAIL FILTERS
+ QUEUE GROUP DEFINITIONS
+@@ -61,7 +58,7 @@
+ Alternatively, you can simply:
+ 
+ 	cd ${CFDIR}/cf
+-	./Build config.cf
++	/usr/bin/make config.cf
+ 
+ where ${CFDIR} is the root of the cf directory and config.mc is the
+ name of your configuration file.  If you are running a version of M4
+@@ -149,14 +146,6 @@
+ a define(`PROCMAIL_MAILER_PATH', ...) should be done before
+ FEATURE(`local_procmail').
+ 
+-*******************************************************************
+-***  BE SURE YOU CUSTOMIZE THESE FILES!  They have some		***
+-***  Berkeley-specific assumptions built in, such as the name	***
+-***  of their UUCP-relay.  You'll want to create your own	***
+-***  domain description, and use that in place of		***
+-***  domain/Berkeley.EDU.m4.					***
+-*******************************************************************
+-
+ 
+ Note:
+ Some rulesets, features, and options are only useful if the sendmail
+@@ -217,20 +206,6 @@
+ messages; in the worst case it might be ok to change the value
+ directly in the generated .cf file, which however is not advised.
+ 
+-
+-Notice:
+--------
+-
+-This package requires a post-V7 version of m4; if you are running the
+-4.2bsd, SysV.2, or 7th Edition version.  SunOS's /usr/5bin/m4 or
+-BSD-Net/2's m4 both work.  GNU m4 version 1.1 or later also works.
+-Unfortunately, the M4 on BSDI 1.0 doesn't work -- you'll have to use a
+-Net/2 or GNU version.  GNU m4 is available from
+-ftp://ftp.gnu.org/pub/gnu/m4/m4-1.4.tar.gz (check for the latest version).
+-EXCEPTIONS: DEC's m4 on Digital UNIX 4.x is broken (3.x is fine).  Use GNU
+-m4 on this platform.
+-
+-
+ +----------------+
+ | FILE LOCATIONS |
+ +----------------+
+@@ -339,8 +314,7 @@
+ 			corresponding queue file types as explained in
+ 			doc/op/op.me.  See also QUEUE GROUP DEFINITIONS.
+ MSP_QUEUE_DIR		[/var/spool/clientmqueue] The directory containing
+-			queue files for the MSP (Mail Submission Program,
+-			see sendmail/SECURITY).
++			queue files for the MSP (Mail Submission Program).
+ STATUS_FILE		[/etc/mail/statistics] The file containing status
+ 			information.
+ LOCAL_MAILER_PATH	[/bin/mail] The program used to deliver local mail.
+@@ -370,17 +344,6 @@
+ LOCAL_SHELL_DIR		[$z:/] The directory search path in which the
+ 			shell should run.
+ LOCAL_MAILER_QGRP	[undefined] The queue group for the local mailer.
+-USENET_MAILER_PATH	[/usr/lib/news/inews] The name of the program
+-			used to submit news.
+-USENET_MAILER_FLAGS	[rsDFMmn] The mailer flags for the usenet mailer.
+-USENET_MAILER_ARGS	[-m -h -n] The command line arguments for the
+-			usenet mailer.  NOTE: Some versions of inews
+-			(such as those shipped with newer versions of INN)
+-			use different flags.  Double check the defaults
+-			against the inews man page.
+-USENET_MAILER_MAX	[undefined] The maximum size of messages that will
+-			be accepted by the usenet mailer.
+-USENET_MAILER_QGRP	[undefined] The queue group for the usenet mailer.
+ SMTP_MAILER_FLAGS	[undefined] Flags added to SMTP mailer.  Default
+ 			flags are `mDFMuX' for all SMTP-based mailers; the
+ 			"esmtp" mailer adds `a'; "smtp8" adds `8'; and
+@@ -437,17 +400,6 @@
+ 			the UUCP mailers and which are converted to MIME will
+ 			be labeled with this character set.
+ UUCP_MAILER_QGRP	[undefined] The queue group for the UUCP mailers.
+-FAX_MAILER_PATH		[/usr/local/lib/fax/mailfax] The program used to
+-			submit FAX messages.
+-FAX_MAILER_ARGS		[mailfax $u $h $f] The arguments passed to the FAX
+-			mailer.
+-FAX_MAILER_MAX		[100000] The maximum size message accepted for
+-			transmission by FAX.
+-POP_MAILER_PATH		[/usr/lib/mh/spop] The pathname of the POP mailer.
+-POP_MAILER_FLAGS	[Penu] Flags added to POP mailer.  Flags lsDFMq
+-			are always added.
+-POP_MAILER_ARGS		[pop $u] The arguments passed to the POP mailer.
+-POP_MAILER_QGRP		[undefined] The queue group for the pop mailer.
+ PROCMAIL_MAILER_PATH	[/usr/local/bin/procmail] The path to the procmail
+ 			program.  This is also used by
+ 			FEATURE(`local_procmail').
+@@ -462,60 +414,9 @@
+ PROCMAIL_MAILER_MAX	[undefined] If set, the maximum size message that
+ 			will be accepted by the procmail mailer.
+ PROCMAIL_MAILER_QGRP	[undefined] The queue group for the procmail mailer.
+-MAIL11_MAILER_PATH	[/usr/etc/mail11] The path to the mail11 mailer.
+-MAIL11_MAILER_FLAGS	[nsFx] Flags for the mail11 mailer.
+-MAIL11_MAILER_ARGS	[mail11 $g $x $h $u] Arguments passed to the mail11
+-			mailer.
+-MAIL11_MAILER_QGRP	[undefined] The queue group for the mail11 mailer.
+-PH_MAILER_PATH		[/usr/local/etc/phquery] The path to the phquery
+-			program.
+-PH_MAILER_FLAGS		[ehmu] Flags for the phquery mailer.  Flags nrDFM
+-			are always set.
+-PH_MAILER_ARGS		[phquery -- $u] -- arguments to the phquery mailer.
+-PH_MAILER_QGRP		[undefined] The queue group for the ph mailer.
+-CYRUS_MAILER_FLAGS	[Ah5@/:|] The flags used by the cyrus mailer.  The
+-			flags lsDFMnPq are always included.
+-CYRUS_MAILER_PATH	[/usr/cyrus/bin/deliver] The program used to deliver
+-			cyrus mail.
+-CYRUS_MAILER_ARGS	[deliver -e -m $h -- $u] The arguments passed
+-			to deliver cyrus mail.
+-CYRUS_MAILER_MAX	[undefined] If set, the maximum size message that
+-			will be accepted by the cyrus mailer.
+-CYRUS_MAILER_USER	[cyrus:mail] The user and group to become when
+-			running the cyrus mailer.
+-CYRUS_MAILER_QGRP	[undefined] The queue group for the cyrus mailer.
+-CYRUS_BB_MAILER_FLAGS	[u] The flags used by the cyrusbb mailer.
+-			The flags lsDFMnP are always included.
+-CYRUS_BB_MAILER_ARGS	[deliver -e -m $u] The arguments passed
+-			to deliver cyrusbb mail.
+-CYRUSV2_MAILER_FLAGS	[A@/:|m] The flags used by the cyrusv2 mailer.  The
+-			flags lsDFMnqXz are always included.
+-CYRUSV2_MAILER_MAXMSGS	[undefined] If defined, the maximum number of
+-			messages to deliver in a single connection for the
+-			cyrusv2 mailer.
+-CYRUSV2_MAILER_MAXRCPTS	[undefined] If defined, the maximum number of
+-			recipients to deliver in a single connection for the
+-			cyrusv2 mailer.
+-CYRUSV2_MAILER_ARGS	[FILE /var/imap/socket/lmtp] The arguments passed
+-			to the cyrusv2 mailer.  This can be used to
+-			change the name of the Unix domain socket, or
+-			to switch to delivery via TCP (e.g., `TCP $h lmtp')
+-CYRUSV2_MAILER_QGRP	[undefined] The queue group for the cyrusv2 mailer.
+-CYRUSV2_MAILER_CHARSET	[undefined] If defined, messages containing 8-bit data
+-			that ARRIVE from an address that resolves to one the
+-			Cyrus mailer and which are converted to MIME will
+-			be labeled with this character set.
+ confEBINDIR		[/usr/libexec] The directory for executables.
+ 			Currently used for FEATURE(`local_lmtp') and
+ 			FEATURE(`smrsh').
+-QPAGE_MAILER_FLAGS	[mDFMs] The flags used by the qpage mailer.
+-QPAGE_MAILER_PATH	[/usr/local/bin/qpage] The program used to deliver
+-			qpage mail.
+-QPAGE_MAILER_ARGS	[qpage -l0 -m -P$u] The arguments passed
+-			to deliver qpage mail.
+-QPAGE_MAILER_MAX	[4096] If set, the maximum size message that
+-			will be accepted by the qpage mailer.
+-QPAGE_MAILER_QGRP	[undefined] The queue group for the qpage mailer.
+ LOCAL_PROG_QGRP		[undefined] The queue group for the prog mailer.
+ 
+ Note: to tweak Name_MAILER_FLAGS use the macro MODIFY_MAILER_FLAGS:
+@@ -633,18 +534,6 @@
+ 		See the section below describing UUCP mailers in more
+ 		detail.
+ 
+-usenet		Usenet (network news) delivery.  If this is specified,
+-		an extra rule is added to ruleset 0 that forwards all
+-		local email for users named ``group.usenet'' to the
+-		``inews'' program.  Note that this works for all groups,
+-		and may be considered a security problem.
+-
+-fax		Facsimile transmission.  This is experimental and based
+-		on Sam Leffler's HylaFAX software.  For more information,
+-		see http://www.hylafax.org/.
+-
+-pop		Post Office Protocol.
+-
+ procmail	An interface to procmail (does not come with sendmail).
+ 		This is designed to be used in mailertables.  For example,
+ 		a common question is "how do I forward all mail for a given
+@@ -667,37 +556,6 @@
+ 		Of course there are other ways to solve this particular
+ 		problem, e.g., a catch-all entry in a virtusertable.
+ 
+-mail11		The DECnet mail11 mailer, useful only if you have the mail11
+-		program from gatekeeper.dec.com:/pub/DEC/gwtools (and
+-		DECnet, of course).  This is for Phase IV DECnet support;
+-		if you have Phase V at your site you may have additional
+-		problems.
+-
+-phquery		The phquery program.  This is somewhat counterintuitively
+-		referenced as the "ph" mailer internally.  It can be used
+-		to do CCSO name server lookups.  The phquery program, which
+-		this mailer uses, is distributed with the ph client.
+-
+-cyrus		The cyrus and cyrusbb mailers.  The cyrus mailer delivers to
+-		a local cyrus user.  this mailer can make use of the
+-		"user+detail@local.host" syntax (see
+-		FEATURE(`preserve_local_plus_detail')); it will deliver the
+-		mail to the user's "detail" mailbox if the mailbox's ACL
+-		permits.  The cyrusbb mailer delivers to a system-wide
+-		cyrus mailbox if the mailbox's ACL permits.  The cyrus
+-		mailer must be defined after the local mailer.
+-
+-cyrusv2		The mailer for Cyrus v2.x.  The cyrusv2 mailer delivers to
+-		local cyrus users via LMTP.  This mailer can make use of the
+-		"user+detail@local.host" syntax (see
+-		FEATURE(`preserve_local_plus_detail')); it will deliver the
+-		mail to the user's "detail" mailbox if the mailbox's ACL
+-		permits.  The cyrusv2 mailer must be defined after the
+-		local mailer.
+-
+-qpage		A mailer for QuickPage, a pager interface.  See
+-		http://www.qpage.org/ for further information.
+-
+ The local mailer accepts addresses of the form "user+detail", where
+ the "+detail" is not used for mailbox matching but is available
+ to certain local mail programs (in particular, see
+@@ -1413,12 +1271,6 @@
+ 		user@site for relaying.  This feature changes that
+ 		behavior.  It should not be needed for most installations.
+ 
+-authinfo	Provide a separate map for client side authentication
+-		information.  See SMTP AUTHENTICATION for details.
+-		By default, the authinfo database specification is:
+-
+-			hash /etc/mail/authinfo
+-
+ preserve_luser_host
+ 		Preserve the name of the recipient host if LUSER_RELAY is
+ 		used.  Without this option, the domain part of the
+@@ -1455,7 +1307,7 @@
+ 		FEATURE and introduce new settings via DAEMON_OPTIONS().
+ 
+ msp		Defines config file for Message Submission Program.
+-		See sendmail/SECURITY for details and cf/cf/submit.mc how
++		See cf/submit.mc for how
+ 		to use it.  An optional argument can be used to override
+ 		the default of `[localhost]' to use as host to send all
+ 		e-mails to.  Note that MX records will be used if the
+@@ -1603,78 +1455,6 @@
+ 		has been compiled with the options MAP_REGEX and
+ 		DNSMAP.
+ 
+-+-------+
+-| HACKS |
+-+-------+
+-
+-Some things just can't be called features.  To make this clear,
+-they go in the hack subdirectory and are referenced using the HACK
+-macro.  These will tend to be site-dependent.  The release
+-includes the Berkeley-dependent "cssubdomain" hack (that makes
+-sendmail accept local names in either Berkeley.EDU or CS.Berkeley.EDU;
+-this is intended as a short-term aid while moving hosts into
+-subdomains.
+-
+-
+-+--------------------+
+-| SITE CONFIGURATION |
+-+--------------------+
+-
+-    *****************************************************
+-    * This section is really obsolete, and is preserved	*
+-    * only for back compatibility.  You should plan on	*
+-    * using mailertables for new installations.  In	*
+-    * particular, it doesn't work for the newer forms	*
+-    * of UUCP mailers, such as uucp-uudom.		*
+-    *****************************************************
+-
+-Complex sites will need more local configuration information, such as
+-lists of UUCP hosts they speak with directly.  This can get a bit more
+-tricky.  For an example of a "complex" site, see cf/ucbvax.mc.
+-
+-The SITECONFIG macro allows you to indirectly reference site-dependent
+-configuration information stored in the siteconfig subdirectory.  For
+-example, the line
+-
+-	SITECONFIG(`uucp.ucbvax', `ucbvax', `U')
+-
+-reads the file uucp.ucbvax for local connection information.  The
+-second parameter is the local name (in this case just "ucbvax" since
+-it is locally connected, and hence a UUCP hostname).  The third
+-parameter is the name of both a macro to store the local name (in
+-this case, {U}) and the name of the class (e.g., {U}) in which to store
+-the host information read from the file.  Another SITECONFIG line reads
+-
+-	SITECONFIG(`uucp.ucbarpa', `ucbarpa.Berkeley.EDU', `W')
+-
+-This says that the file uucp.ucbarpa contains the list of UUCP sites
+-connected to ucbarpa.Berkeley.EDU.  Class {W} will be used to
+-store this list, and $W is defined to be ucbarpa.Berkeley.EDU, that
+-is, the name of the relay to which the hosts listed in uucp.ucbarpa
+-are connected.  [The machine ucbarpa is gone now, but this
+-out-of-date configuration file has been left around to demonstrate
+-how you might do this.]
+-
+-Note that the case of SITECONFIG with a third parameter of ``U'' is
+-special; the second parameter is assumed to be the UUCP name of the
+-local site, rather than the name of a remote site, and the UUCP name
+-is entered into class {w} (the list of local hostnames) as $U.UUCP.
+-
+-The siteconfig file (e.g., siteconfig/uucp.ucbvax.m4) contains nothing
+-more than a sequence of SITE macros describing connectivity.  For
+-example:
+-
+-	SITE(`cnmat')
+-	SITE(`sgi olympus')
+-
+-The second example demonstrates that you can use two names on the
+-same line; these are usually aliases for the same host (or are at
+-least in the same company).
+-
+-The macro LOCAL_UUCP can be used to add rules into the generated
+-cf file at the place where MAILER(`uucp') inserts its rules.  This
+-should only be used if really necessary.
+-
+ +--------------------+
+ | USING UUCP MAILERS |
+ +--------------------+
+@@ -2462,7 +2242,7 @@
+ map entries.  This feature allows spammers to abuse your mail server
+ by specifying a return address that you enabled in your access file.
+ This may be harder to figure out for spammers, but it should not
+-be used unless necessary.  Instead use SMTP AUTH or STARTTLS to
++be used unless necessary.  Instead use STARTTLS to
+ allow relaying for roaming users.
+ 
+ 
+@@ -2930,8 +2710,7 @@
+ tokenization.  It might be simpler to use a regex map and apply it
+ to $&{currHeader}.
+ 2. There are no default rulesets coming with this distribution of
+-sendmail.  You can write your own, can search the WWW for examples,
+-or take a look at cf/cf/knecht.mc.
++sendmail.  You can write your own or search the WWW for examples.
+ 3. When using a default ruleset for headers, the name of the header
+ currently being checked can be found in the $&{hdr_name} macro.
+ 
+@@ -3264,101 +3043,6 @@
+ (version=${tls_version} cipher=${cipher} bits=${cipher_bits} verify=${verify})
+ 
+ 
+-+---------------------+
+-| SMTP AUTHENTICATION |
+-+---------------------+
+-
+-The macros ${auth_authen}, ${auth_author}, and ${auth_type} can be
+-used in anti-relay rulesets to allow relaying for those users that
+-authenticated themselves.  A very simple example is:
+-
+-SLocal_check_rcpt
+-R$*		$: $&{auth_type}
+-R$+		$# OK
+-
+-which checks whether a user has successfully authenticated using
+-any available mechanism.  Depending on the setup of the Cyrus SASL
+-library, more sophisticated rulesets might be required, e.g.,
+-
+-SLocal_check_rcpt
+-R$*		$: $&{auth_type} $| $&{auth_authen}
+-RDIGEST-MD5 $| $+@$=w	$# OK
+-
+-to allow relaying for users that authenticated using DIGEST-MD5
+-and have an identity in the local domains.
+-
+-The ruleset trust_auth is used to determine whether a given AUTH=
+-parameter (that is passed to this ruleset) should be trusted.  This
+-ruleset may make use of the other ${auth_*} macros.  Only if the
+-ruleset resolves to the error mailer, the AUTH= parameter is not
+-trusted.  A user supplied ruleset Local_trust_auth can be written
+-to modify the default behavior, which only trust the AUTH=
+-parameter if it is identical to the authenticated user.
+-
+-Per default, relaying is allowed for any user who authenticated
+-via a "trusted" mechanism, i.e., one that is defined via
+-TRUST_AUTH_MECH(`list of mechanisms')
+-For example:
+-TRUST_AUTH_MECH(`KERBEROS_V4 DIGEST-MD5')
+-
+-If the selected mechanism provides a security layer the number of
+-bits used for the key of the symmetric cipher is stored in the
+-macro ${auth_ssf}.
+-
+-Providing SMTP AUTH Data when sendmail acts as Client
+------------------------------------------------------
+-
+-If sendmail acts as client, it needs some information how to
+-authenticate against another MTA.  This information can be provided
+-by the ruleset authinfo or by the option DefaultAuthInfo.  The
+-authinfo ruleset looks up {server_name} using the tag AuthInfo: in
+-the access map.  If no entry is found, {server_addr} is looked up
+-in the same way and finally just the tag AuthInfo: to provide
+-default values.  Note: searches for domain parts or IP nets are
+-only performed if the access map is used; if the authinfo feature
+-is used then only up to three lookups are performed (two exact
+-matches, one default).
+-
+-Note: If your daemon does client authentication when sending, and
+-if it uses either PLAIN or LOGIN authentication, then you *must*
+-prevent ordinary users from seeing verbose output.  Do NOT install
+-sendmail set-user-ID.  Use PrivacyOptions to turn off verbose output
+-("goaway" works for this).
+-
+-Notice: the default configuration file causes the option DefaultAuthInfo
+-to fail since the ruleset authinfo is in the .cf file. If you really
+-want to use DefaultAuthInfo (it is deprecated) then you have to
+-remove the ruleset.
+-
+-The RHS for an AuthInfo: entry in the access map should consists of a
+-list of tokens, each of which has the form: "TDstring" (including
+-the quotes).  T is a tag which describes the item, D is a delimiter,
+-either ':' for simple text or '=' for a base64 encoded string.
+-Valid values for the tag are:
+-
+-	U	user (authorization) id
+-	I	authentication id
+-	P	password
+-	R	realm
+-	M	list of mechanisms delimited by spaces
+-
+-Example entries are:
+-
+-AuthInfo:other.dom "U:user" "I:user" "P:secret" "R:other.dom" "M:DIGEST-MD5"
+-AuthInfo:host.more.dom "U:user" "P=c2VjcmV0"
+-
+-User id or authentication id must exist as well as the password.  All
+-other entries have default values.  If one of user or authentication
+-id is missing, the existing value is used for the missing item.
+-If "R:" is not specified, realm defaults to $j.  The list of mechanisms
+-defaults to those specified by AuthMechanisms.
+-
+-Since this map contains sensitive information, either the access
+-map must be unreadable by everyone but root (or the trusted user)
+-or FEATURE(`authinfo') must be used which provides a separate map.
+-Notice: It is not checked whether the map is actually
+-group/world-unreadable, this is left to the user.
+-
+ +--------------------------------+
+ | ADDING NEW MAILERS OR RULESETS |
+ +--------------------------------+
+@@ -3684,8 +3368,6 @@
+ This list is shown in four columns:  the name you define, the default
+ value for that definition, the option or macro that is affected
+ (either Ox for an option or Dx for a macro), and a brief description.
+-Greater detail of the semantics can be found in the Installation
+-and Operations Guide.
+ 
+ Some options are likely to be deprecated in future versions -- that is,
+ the option is only included to provide back-compatibility.  These are
+@@ -3915,8 +3597,6 @@
+ 					(e.g., :include: file) to be opened.
+ confTO_LHLO		Timeout.lhlo	[2m] The timeout waiting for a response
+ 					to an LMTP LHLO command.
+-confTO_AUTH		Timeout.auth	[10m] The timeout waiting for a
+-					response in an AUTH dialogue.
+ confTO_STARTTLS		Timeout.starttls
+ 					[1h] The timeout waiting for a
+ 					response to an SMTP STARTTLS command.
+@@ -4282,46 +3962,6 @@
+ 					memory-buffered transcript (xf)
+ 					file before a disk-based file is
+ 					used.
+-confAUTH_MECHANISMS	AuthMechanisms	[GSSAPI KERBEROS_V4 DIGEST-MD5
+-					CRAM-MD5] List of authentication
+-					mechanisms for AUTH (separated by
+-					spaces).  The advertised list of
+-					authentication mechanisms will be the
+-					intersection of this list and the list
+-					of available mechanisms as determined
+-					by the Cyrus SASL library.
+-confAUTH_REALM		AuthRealm	[undefined] The authentication realm
+-					that is passed to the Cyrus SASL
+-					library.  If no realm is specified,
+-					$j is used.  See KNOWNBUGS.
+-confDEF_AUTH_INFO	DefaultAuthInfo	[undefined] Name of file that contains
+-					authentication information for
+-					outgoing connections.  This file must
+-					contain the user id, the authorization
+-					id, the password (plain text), the
+-					realm to use, and the list of
+-					mechanisms to try, each on a separate
+-					line and must be readable by root (or
+-					the trusted user) only.  If no realm
+-					is specified, $j is used.  If no
+-					mechanisms are given in the file,
+-					AuthMechanisms is used.  Notice: this
+-					option is deprecated and will be
+-					removed in future versions; it doesn't
+-					work for the MSP since it can't read
+-					the file.  Use the authinfo ruleset
+-					instead.  See also the section SMTP
+-					AUTHENTICATION.
+-confAUTH_OPTIONS	AuthOptions	[undefined] If this option is 'A'
+-					then the AUTH= parameter for the
+-					MAIL FROM command is only issued
+-					when authentication succeeded.
+-					See doc/op/op.me for more options
+-					and details.
+-confAUTH_MAX_BITS	AuthMaxBits	[INT_MAX] Limit the maximum encryption
+-					strength for the security layer in
+-					SMTP AUTH (SASL).  Default is
+-					essentially unlimited.
+ confTLS_SRV_OPTIONS	TLSSrvOptions	If this option is 'V' no client
+ 					verification is performed, i.e.,
+ 					the server doesn't ask for a
+@@ -4386,7 +4026,7 @@
+ 					[undefined] Defines {daemon_flags}
+ 					for direct submissions.
+ confUSE_MSP		UseMSP		[undefined] Use as mail submission
+-					program, see sendmail/SECURITY.
++					program.
+ confDELIVER_BY_MIN	DeliverByMin	[0] Minimum time for Deliver By
+ 					SMTP Service Extension (RFC 2852).
+ confREQUIRES_DIR_FSYNC	RequiresDirfsync	[true] RequiresDirfsync can
+@@ -4532,8 +4172,7 @@
+ | MESSAGE SUBMISSION PROGRAM |
+ +----------------------------+
+ 
+-The purpose of the message submission program (MSP) is explained
+-in sendmail/SECURITY.  This section contains a list of caveats and
++This section contains a list of caveats and
+ a few hints how for those who want to tweak the default configuration
+ for it (which is installed as submit.cf).
+ 
+@@ -4548,13 +4187,10 @@
+   of the default background mode.
+ - FEATURE(stickyhost) and LOCAL_RELAY to send unqualified addresses
+   to the LOCAL_RELAY instead of the default relay.
+-- confRAND_FILE if you use STARTTLS and sendmail is not compiled with
+-  the flag HASURANDOM.
+ 
+-The MSP performs hostname canonicalization by default.  As also
+-explained in sendmail/SECURITY, mail may end up for various DNS
+-related reasons in the MSP queue. This problem can be minimized by
+-using
++The MSP performs hostname canonicalization by default.  Mail may end
++up for various DNS related reasons in the MSP queue.  This problem
++can be minimized by using
+ 
+ 	FEATURE(`nocanonify', `canonify_hosts')
+ 	define(`confDIRECT_SUBMISSION_MODIFIERS', `C')
+@@ -4570,39 +4206,10 @@
+ can cause security problems.
+ 
+ Other things don't work well with the MSP and require tweaking or
+-workarounds.  For example, to allow for client authentication it
+-is not just sufficient to provide a client certificate and the
+-corresponding key, but it is also necessary to make the key group
+-(smmsp) readable and tell sendmail not to complain about that, i.e.,
+-
+-	define(`confDONT_BLAME_SENDMAIL', `GroupReadableKeyFile')
+-
+-If the MSP should actually use AUTH then the necessary data
+-should be placed in a map as explained in SMTP AUTHENTICATION:
+-
+-FEATURE(`authinfo', `DATABASE_MAP_TYPE /etc/mail/msp-authinfo')
+-
+-/etc/mail/msp-authinfo should contain an entry like:
+-
+-	AuthInfo:127.0.0.1	"U:smmsp" "P:secret" "M:DIGEST-MD5"
++workarounds.
+ 
+ The file and the map created by makemap should be owned by smmsp,
+-its group should be smmsp, and it should have mode 640.  The database
+-used by the MTA for AUTH must have a corresponding entry.
+-Additionally the MTA must trust this authentication data so the AUTH=
+-part will be relayed on to the next hop.  This can be achieved by
+-adding the following to your sendmail.mc file:
+-
+-	LOCAL_RULESETS
+-	SLocal_trust_auth
+-	R$*	$: $&{auth_authen}
+-	Rsmmsp	$# OK
+-
+-Note: the authentication data can leak to local users who invoke
+-the MSP with debug options or even with -v.  For that reason either
+-an authentication mechanism that does not show the password in the
+-AUTH dialogue (e.g., DIGEST-MD5) or a different authentication
+-method like STARTTLS should be used.
++its group should be smmsp, and it should have mode 640.
+ 
+ feature/msp.m4 defines almost all settings for the MSP.  Most of
+ those should not be changed at all.  Some of the features and options

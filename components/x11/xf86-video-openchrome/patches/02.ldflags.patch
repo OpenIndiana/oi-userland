@@ -1,0 +1,15 @@
+Allow our Makefile to pass through added flags to be applied just to
+the driver module and not the XvMC libraries.
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 9bac9e9..7f8b13e 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -32,6 +32,7 @@ CONFIG_CLEAN_FILES= version.h
+ AM_CFLAGS = @XORG_CFLAGS@ @LIBUDEV_CFLAGS@ @DRI_CFLAGS@
+ openchrome_drv_la_LTLIBRARIES = openchrome_drv.la
+ openchrome_drv_la_LDFLAGS = -module -avoid-version @LIBUDEV_LIBS@
++openchrome_drv_la_LDFLAGS += $(openchrome_drv_la_LDFLAGS_add)
+ openchrome_drv_ladir = @moduledir@/drivers
+ 
+ openchrome_drv_la_SOURCES = \

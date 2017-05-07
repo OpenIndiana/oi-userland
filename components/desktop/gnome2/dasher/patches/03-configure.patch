@@ -1,0 +1,15 @@
+--- dasher-4.11/configure.ac-orig	2010-03-15 16:40:24.661517717 -0500
++++ dasher-4.11/configure.ac	2010-03-15 16:40:54.308231479 -0500
+@@ -219,12 +219,6 @@ fi
+ DAM_GCONF_SOURCE_2
+ if test x$BUILDGTK2 = xtrue
+ then
+-# GtkBuilder's autoconnect feature requires dasher to be linked with
+-# the --export-dynamic flag. pkg-config does not provide it, and libtool
+-# knows what to do with -export-dynamic.
+-# (We need this e.g., for <object class="DasherEditor">)
+-	GTK2_LIBS="$GTK2_LIBS -export-dynamic"
+-
+ 	PKG_CHECK_MODULES(GCONF, gconf-2.0,
+ 		[AC_DEFINE([WITH_GCONF], 1, [Use GConf])],
+ 		[AC_MSG_WARN([GConf was not detected - user preferences will not be stored.])])

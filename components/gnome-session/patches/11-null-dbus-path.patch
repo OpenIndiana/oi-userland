@@ -1,0 +1,19 @@
+diff -urN gnome-session-2.25.90/gnome-session/gsm-dbus-client.c ../SUNWgnome-session-2.25.2.hacked/gnome-session-2.25.90/gnome-session/gsm-dbus-client.c
+--- gnome-session-2.25.90/gnome-session/gsm-dbus-client.c	2009-02-03 13:32:47.000000000 +0000
++++ ../SUNWgnome-session-2.25.2.hacked/gnome-session-2.25.90/gnome-session/gsm-dbus-client.c	2009-02-12 14:26:43.874980000 +0000
+@@ -212,10 +212,11 @@
+ 
+         path = dbus_message_get_path (message);
+ 
+-        g_debug ("GsmDBusClient: obj_path=%s interface=%s method=%s",
+-                 dbus_message_get_path (message),
+-                 dbus_message_get_interface (message),
+-                 dbus_message_get_member (message));
++	if (path != NULL)
++        	g_debug ("GsmDBusClient: obj_path=%s interface=%s method=%s",
++                 	 dbus_message_get_path (message),
++                 	 dbus_message_get_interface (message),
++                 	 dbus_message_get_member (message));
+ 
+         if (dbus_message_is_method_call (message, SM_DBUS_CLIENT_PRIVATE_INTERFACE, "EndSessionResponse")) {
+                 g_assert (gsm_client_peek_id (GSM_CLIENT (client)) != NULL);

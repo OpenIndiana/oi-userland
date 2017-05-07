@@ -1,0 +1,18 @@
+Look in the right place for ruby headers, and silence the warnings about
+the use of the Config module.
+
+This is an in-house patch, and has not been submitted upstream, since the
+Config->RbConfig change has already been made in a newer version, and the
+remainder of the changes are Solaris-specific.
+
+--- graphviz-2.38.0/config/config_ruby.rb.~1~	2016-05-09 19:04:10.761066135 +0300
++++ graphviz-2.38.0/config/config_ruby.rb	2016-05-09 19:06:35.321688578 +0300
+@@ -5,7 +5,7 @@
+ 
+ case ARGV[0]
+ when "archdir"
+-    puts RbConfig::expand(CONFIG["archdir"])
++    puts "#{RbConfig::expand(CONFIG['rubyhdrdir'])} -I#{RbConfig::expand(CONFIG['rubyhdrdir'])}/#{RbConfig::expand(CONFIG['arch'])}"
+ when "lib"
+     puts RbConfig::expand(CONFIG["libdir"])
+ when "vendorarchdir"

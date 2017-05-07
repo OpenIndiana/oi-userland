@@ -1,0 +1,43 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Support for setenv.sh in $CATALINA_BASE/conf.
+
+--- bin/catalina.sh
++++ bin/catalina.sh
+@@ -145,7 +146,13 @@
+ # but allow them to be specified in setenv.sh, in rare case when it is needed.
+ CLASSPATH=
+ 
+-if [ -r "$CATALINA_BASE/bin/setenv.sh" ]; then
++# On Solaris we install Tomcat into two different locations
++# (CATALINA_HOME, CATALINA_BASE). CATALINA_HOME can be on read only
++# location and CATALINA_BASE doesn't contain bin directory. Therefore we
++# will look for setenv.sh file in CATALINA_BASE/conf directory first.
++if [ -r "$CATALINA_BASE/conf/setenv.sh" ]; then
++  . "$CATALINA_BASE/conf/setenv.sh"
++elif [ -r "$CATALINA_BASE/bin/setenv.sh" ]; then
+   . "$CATALINA_BASE/bin/setenv.sh"
+ elif [ -r "$CATALINA_HOME/bin/setenv.sh" ]; then
+   . "$CATALINA_HOME/bin/setenv.sh"
+--- bin/tool-wrapper.sh
++++ bin/tool-wrapper.sh
+@@ -73,8 +75,16 @@
+ # but allow them to be specified in setenv.sh, in rare case when it is needed.
+ CLASSPATH=
+ 
+-if [ -r "$CATALINA_HOME/bin/setenv.sh" ]; then
+-  . "$CATALINA_HOME/bin/setenv.sh"
++# On Solaris we install Tomcat into two different locations
++# (CATALINA_HOME, CATALINA_BASE). CATALINA_HOME can be on read only
++# location and CATALINA_BASE doesn't contain bin directory. Therefore we
++# will look for setenv.sh file in CATALINA_BASE/conf directory first.
++if [ -r "$CATALINA_BASE/conf/setenv.sh" ]; then
++  . "$CATALINA_BASE/conf/setenv.sh"
++elif [ -r "$CATALINA_BASE/bin/setenv.sh" ]; then
++  . "$CATALINA_BASE/bin/setenv.sh"
++elif [ -r "$CATALINA_HOME/bin/setenv.sh" ]; then
++  . "$CATALINA_HOME/bin/setenv.sh"
+ fi
+ 
+ # For Cygwin, ensure paths are in UNIX format before anything is touched

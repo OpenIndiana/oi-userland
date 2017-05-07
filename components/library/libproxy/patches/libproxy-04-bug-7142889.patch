@@ -1,0 +1,12 @@
+diff -urN libproxy-0.3.1/src/modules/pacrunner_mozjs.c libproxy-0.3.1.new/src/modules/pacrunner_mozjs.c
+--- libproxy-0.3.1/src/modules/pacrunner_mozjs.c	2012-02-01 21:07:52.211205592 +0800
++++ libproxy-0.3.1.new/src/modules/pacrunner_mozjs.c	2012-02-01 21:09:41.965257429 +0800
+@@ -99,7 +99,7 @@
+ 	if(!gethostname(hostname, 1023)) {
+ 		JSString *myhost = JS_NewStringCopyN(cx, hostname, strlen(hostname));
+ 		jsval arg = STRING_TO_JSVAL(myhost);
+-		return dnsResolve_(cx, 1, &arg);
++		return dnsResolve_(cx, arg, vp);
+ 	}
+ 	JS_free(cx, hostname);
+ 	JS_SET_RVAL(cx, vp, JSVAL_NULL);

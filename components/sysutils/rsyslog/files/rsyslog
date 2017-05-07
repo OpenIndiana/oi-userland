@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2005, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+SVC_FMRI=svc:/system/system-log
+DEFAULT_FMRI=${SVC_FMRI}:default
+OLD_METHOD1="kill -HUP \`cat /var/run/syslog.pid\`"
+OLD_METHOD2="kill -HUP \`cat /system/volatile/syslog.pid\`"
+NEW_METHOD="/usr/sbin/svccfg -s $SVC_FMRI refresh"
+LOGADM_CONF=/etc/logadm.conf
+
+if [ ! -f /etc/rsyslog.conf ]; then
+	echo "/etc/rsyslog.conf not found. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+if [ ! -f /usr/lib/rsyslog/rsyslogd ]; then
+	echo "/usr/lib/rsyslog/rsyslogd not found. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+if [ ! -x /usr/lib/rsyslog/rsyslogd ]; then
+	echo "/usr/lib/rsyslog/rsyslogd not executable. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+default=$(/usr/bin/svcprop -c -p general/enabled $DEFAULT_FMRI)
+if [ $default = true ]; then
+	echo "$DEFAULT_FMRI conflicts with this instance and must be disabled first. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+if smf_is_globalzone; then
+	#
+	# Before [r]syslogd starts, save any messages from
+	# previous crash dumps so that messages appear
+	# in chronological order.
+	#
+	/usr/bin/savecore -m
+	if [ -r /etc/dumpadm.conf ]; then
+		. /etc/dumpadm.conf
+		[ -n "$DUMPADM_DEVICE" -a \
+		"$DUMPADM_DEVICE" != swap ] && \
+		/usr/bin/savecore -m -f $DUMPADM_DEVICE
+	fi
+fi
+if [ ! -f /var/adm/messages ]; then
+	/usr/bin/cp /dev/null /var/adm/messages
+	/usr/bin/chmod 0644 /var/adm/messages
+fi
+
+# Convert the old PID-file based post-command for logadm to an SMF-based one.
+TMP_CONF=$(/usr/bin/mktemp /tmp/logadm.conf.XXXXXX)
+/usr/bin/sed -e "s|$OLD_METHOD1|$NEW_METHOD|" \
+    -e "s|$OLD_METHOD2|$NEW_METHOD|" $LOGADM_CONF > $TMP_CONF
+/usr/bin/cmp -s $LOGADM_CONF $TMP_CONF
+if [ $? -eq 0 ]; then
+	/usr/bin/rm $TMP_CONF
+else
+	# In case the umask or group is odd.
+	mode=$(/usr/bin/stat -c %a $LOGADM_CONF)
+	owner_group=$(/usr/bin/stat -c %U:%G $LOGADM_CONF)
+	/usr/bin/mv $TMP_CONF $LOGADM_CONF
+	/usr/bin/chmod $mode $LOGADM_CONF
+	/usr/bin/chown $owner_group $LOGADM_CONF
+fi
+
+# The -c4 argument is needed to silence a compatibility warning.
+/usr/lib/rsyslog/rsyslogd -c4 >/dev/msglog 2>&1 &

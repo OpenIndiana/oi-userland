@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<!--
+    CDDL HEADER START
+
+    The contents of this file are subject to the terms of the
+    Common Development and Distribution License (the "License").
+    You may not use this file except in compliance with the License.
+
+    You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+    or http://www.opensolaris.org/os/licensing.
+    See the License for the specific language governing permissions
+    and limitations under the License.
+
+    When distributing Covered Code, include this CDDL HEADER in each
+    file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+    If applicable, add the following below this CDDL HEADER, with the
+    fields enclosed by brackets "[]" replaced with your own identifying
+    information: Portions Copyright [yyyy] [name of copyright owner]
+
+    CDDL HEADER END
+-->
+
+<!--
+    Copyright (c) 2014 by Delphix.
+    All rights reserved.
+-->
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type="manifest" name="system/virtualization/open-vm-tools">
+    <service version="1" type="service" name="system/virtualization/open-vm-tools">
+        <create_default_instance enabled="true" />
+
+        <dependency restart_on="none" type="service" name="multi_user_dependency" grouping="require_all">
+            <service_fmri value="svc:/milestone/multi-user"/>
+        </dependency>
+
+        <exec_method timeout_seconds="60" type="method" name="start"
+            exec="/usr/bin/vmtoolsd &amp;"
+            />
+        <exec_method timeout_seconds="60" type="method" name="stop"
+            exec=":kill"/>
+        <exec_method timeout_seconds="60" type="method" name="refresh"
+            exec=":kill -1"/> <!-- SIGHUP -->
+        <template>
+            <common_name>
+                <loctext xml:lang="C">
+                    Open Virtual Machine Tools
+                </loctext>
+            </common_name>
+            <description>
+                <loctext xml:lang="C">
+                    The Open Virtual Machine Tools project aims to provide a suite of open source virtualization utilities and drivers to improve the functionality and user experience of virtualization. The project currently runs in guest operating systems under VMware hypervisor.
+                </loctext>
+            </description>
+        </template>
+    </service>
+</service_bundle>

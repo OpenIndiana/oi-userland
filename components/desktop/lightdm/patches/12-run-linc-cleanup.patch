@@ -1,0 +1,39 @@
+--- lightdm-1.19.3/src/session-child.c.~5~	2016-08-10 12:30:06.656713943 +0300
++++ lightdm-1.19.3/src/session-child.c	2016-08-10 12:39:47.696045830 +0300
+@@ -100,6 +102,25 @@
+     return value;
+ }
+ 
++static void 
++run_linc_cleanup(User *user)
++{
++   gboolean drop_privileges;
++   int result;
++
++   drop_privileges = geteuid () == 0;
++   if (drop_privileges)
++        privileges_drop (user_get_uid (user), user_get_gid (user));
++   result=system("/usr/bin/linc-cleanup-sockets");
++
++   if(result){
++     g_printerr ("Error running linc-cleanup-sockets\n");
++   }
++
++   if (drop_privileges)
++     privileges_reclaim ();
++}
++
+ static gchar *
+ read_string (void)
+ {
+@@ -839,6 +866,9 @@
+             audit_event (AUDIT_USER_LOGOUT, username, uid, remote_host_name, tty, TRUE);
+ #endif
+         }
++
++        run_linc_cleanup(user);
++
+         if (!remote_host_name && !g_strcmp0(xdisplay,":0") && (g_str_has_prefix (tty, "/dev/vt/") || !g_strcmp0(tty,"/dev/console"))){
+             di_devperm_logout (tty);
+         }
+

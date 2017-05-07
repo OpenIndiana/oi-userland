@@ -1,0 +1,43 @@
+From 7a56e23d4dafe6a51096d2334c45f0857ef745dd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Zanelli?= <aurelien.zanelli@darkosphere.fr>
+Date: Sat, 1 Nov 2014 12:18:02 +0100
+Subject: vpx: remove compatibility defines
+
+We are guaranteed to have VPX_IMG_FMT_I420, VPX_PLANE_Y, VPX_PLANE_U and
+VPX_PLANE_V as we require libvpx > 1.1.0.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=739476
+---
+ ext/vpx/gstvp8utils.h | 17 -----------------
+ 1 file changed, 17 deletions(-)
+
+diff --git a/ext/vpx/gstvp8utils.h b/ext/vpx/gstvp8utils.h
+index df4e77e..ea45df1 100644
+--- a/ext/vp8/gstvp8utils.h
++++ b/ext/vp8/gstvp8utils.h
+@@ -25,23 +25,6 @@
+ 
+ G_BEGIN_DECLS
+ 
+-/* Some compatibility defines for older libvpx versions */
+-#ifndef VPX_IMG_FMT_I420
+-#define VPX_IMG_FMT_I420 IMG_FMT_I420
+-#endif
+-
+-#ifndef VPX_PLANE_Y
+-#define VPX_PLANE_Y PLANE_Y
+-#endif
+-
+-#ifndef VPX_PLANE_U
+-#define VPX_PLANE_U PLANE_U
+-#endif
+-
+-#ifndef VPX_PLANE_V
+-#define VPX_PLANE_V PLANE_V
+-#endif
+-
+ const char * gst_vpx_error_name (vpx_codec_err_t status);
+ 
+ G_END_DECLS
+-- 
+2.1.2

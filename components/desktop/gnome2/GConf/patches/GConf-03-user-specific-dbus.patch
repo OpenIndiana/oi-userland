@@ -1,0 +1,48 @@
+--- GConf-2.32.4/gconf/gconf-internals.c	2010-10-21 22:19:11.000000000 +0200
++++ GConf-2.32.4/gconf/gconf-internals.c	2013-08-20 21:56:54.069423375 +0200
+@@ -2428,11 +2428,12 @@
+         GVariant *value;
+         char *ior;
+         GError *error = NULL;
++        const char *dbus_address = NULL;
+ 
+         /* if the bus isn't running and we don't want to start gconfd then
+          * we don't want to autolaunch the bus either, so bail early.
+          */
+-        if (g_getenv ("DBUS_SESSION_BUS_ADDRESS") == NULL &&
++        if ( (dbus_address = g_getenv ("DBUS_SESSION_BUS_ADDRESS")) == NULL &&
+            (!start_if_not_found || g_getenv ("DISPLAY") == NULL)) {
+                 if (failure_log)
+                     g_string_append_printf (failure_log,
+@@ -2440,6 +2441,31 @@
+                 return NULL;
+         }
+ 
++	if ( dbus_address != NULL ) {
++            if (strncmp(dbus_address, "unix:path=", sizeof ("unix:path="))) {
++                const char *start_addr = dbus_address + sizeof ("unix:path=") - 1;
++                const char *end_addr;
++                if ((end_addr = strchr(dbus_address, ',')) != NULL ) {
++                    char *path;
++                    if ((path = g_strdup(start_addr)) != NULL) {
++                        struct stat s;
++                        path[end_addr - start_addr] = '\0';
++                        if ( path != NULL && stat( path, &s ) == 0 &&
++                            s.st_uid != geteuid() ) {
++                            /* The session bus isn't the same as the effective
++                             * uid so it's highly likely to fail to connect to
++                             * the server so don't use it, unset the
++                             * environment variable.
++                             */
++
++                            g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
++                        }
++                        g_free(path);
++                    }
++                }
++            }
++        }
++
+         g_type_init ();
+ 
+         connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);

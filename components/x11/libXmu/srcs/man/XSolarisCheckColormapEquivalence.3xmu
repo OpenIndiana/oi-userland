@@ -1,0 +1,98 @@
+.\"
+.\" Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XSolarisCheckColormapEquivalence 3Xmu "29 Aug 2011" "X Version 11" "XLIB FUNCTIONS"
+.SH NAME
+XSolarisCheckColormapEquivalence \- determines if two visuals are colormap
+equivalent
+.SH SYNOPSIS
+.LP
+#include <X11/Xmu/XmuSolaris.h>
+.LP
+Bool XSolarisCheckColormapEquivalence\^(
+.br
+      Display *\fIdisplay\f1\^,
+.br
+      int \fIscreen\f1\^,
+.br
+      Visual *\fIvisual1\f1\^,
+.br
+      Visual *\fIvisual2\f1\^);
+.LP
+.SH ARGUMENTS
+.IP \fIdisplay\f1 1i
+Specifies the connection to the X server. 
+.IP \fIscreen\f1 1i
+An integer specifying the screen on which the visuals are to be searched. 
+.IP \fIvisual1\f1 1i
+Specifies the first visual type supported on the screen.
+If the visual type is not one supported by the screen, 
+a
+.B BadMatch
+error results. 
+.IP \fIvisual2\f1 1i
+Specifies the second visual type supported on the screen.
+If the visual type is not one supported by the screen, 
+a
+.B BadMatch
+error results. 
+.SH DESCRIPTION
+This function returns True if the two Visuals are Colormap Equivalent,
+otherwise it returns False.
+.LP
+Colormap Equivalence is a minor relaxation of the X protocol supported by the
+.BR Xsun (1)
+X server on Solaris 10 and earlier releases.
+Two Visuals are Colormap Equivalent if it is possible
+to use a Colormap created with one of the Visuals as the Colormap of a Window 
+in the other Visual. This is useful on a system that supports Visuals that
+differ only in their OpenGL (GLX) Attributes.
+.LP
+For example, to avoid colormap flashing, when creating a window with
+a Visual that is in the same depth as the RootWindow, use the Default Colormap.
+In standard X, this is only possible if the Visual is the DefaultVisual. 
+With Colormap Equivalence the requirement is relaxed.
+.LP
+To use this function, an application should link with libXmu.
+.SH EXAMPLES
+.nh
+You may be able to avoid creating a new colormap by using the following code:
+.LP
+.RS
+.ft B
+.nf
+        if (!XSolarisCheckColormapEquivalence(dpy, screen, 
+	                      vi->visual, DefaultVisual(dpy, screen)) {
+            attributes.colormap = XCreateColormap(dpy, root,
+                                vi->visual, AllocNone);
+            valuemask = CWColormap;
+        }
+        window = XCreateWindow(dpy, root, 0, 0, 500, 500, 0,
+                        vi->depth, CopyFromParent, vi->visual,
+                        valuemask, &attributes);
+.fi
+.ft
+.RE
+.SH SEE ALSO
+.BR XCreateWindow (3X11),
+.BR glXGetConfig (3gl).
+

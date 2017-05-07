@@ -1,0 +1,382 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
+<transform dir path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=library/gnome/yelp-tools
+depend type=require fmri=library/gnome/yelp-xsl
+
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/cut type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/grep type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/groff type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/man type=require
+
+link path=usr/bin/gnome-help target=yelp
+file path=usr/bin/yelp
+file path=usr/include/libyelp/yelp-bookmarks.h
+file path=usr/include/libyelp/yelp-docbook-document.h
+file path=usr/include/libyelp/yelp-document.h
+file path=usr/include/libyelp/yelp-help-list.h
+file path=usr/include/libyelp/yelp-info-document.h
+file path=usr/include/libyelp/yelp-mallard-document.h
+file path=usr/include/libyelp/yelp-man-document.h
+file path=usr/include/libyelp/yelp-search-entry.h
+file path=usr/include/libyelp/yelp-settings.h
+file path=usr/include/libyelp/yelp-simple-document.h
+file path=usr/include/libyelp/yelp-sqlite-storage.h
+file path=usr/include/libyelp/yelp-storage.h
+file path=usr/include/libyelp/yelp-transform.h
+file path=usr/include/libyelp/yelp-types.h
+file path=usr/include/libyelp/yelp-uri-builder.h
+file path=usr/include/libyelp/yelp-uri.h
+file path=usr/include/libyelp/yelp-view.h
+link path=usr/lib/libyelp.so target=libyelp.so.0.0.0
+link path=usr/lib/libyelp.so.0 target=libyelp.so.0.0.0
+file path=usr/lib/libyelp.so.0.0.0
+file path=usr/lib/yelp-groff mode=0555
+file path=usr/lib/yelp-manpath mode=0555
+file path=usr/lib/yelp/web-extensions/libyelpwebextension.so
+file path=usr/share/applications/yelp.desktop
+file path=usr/share/glib-2.0/schemas/org.gnome.yelp.gschema.xml
+file path=usr/share/locale/af/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/am/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/an/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ar/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/as/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ast/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/az/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/be/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/be@latin/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/bg/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/bn/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/br/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/bs/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ca/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/crh/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/cs/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/cy/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/da/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/de/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/dz/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/el/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/eo/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/es/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/et/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/eu/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/fa/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/fi/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/fr/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/fur/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ga/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/gd/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/gl/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/gu/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/he/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/hi/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/hr/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/hu/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/id/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/is/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/it/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ja/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ka/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/kk/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/km/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/kn/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ko/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ks/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ku/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ky/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/la/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/li/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/lt/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/lv/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/mai/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/mg/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/mk/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ml/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/mn/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/mr/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ms/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/nb/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/nds/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ne/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/nl/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/nn/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/nso/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/oc/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/or/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/pa/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/pl/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ps/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/pt/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ro/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ru/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/rw/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/si/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/sk/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/sl/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/sq/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/sr/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/sv/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ta/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/te/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/tg/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/th/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/tr/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/ug/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/uk/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/uz/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/uz@cyrillic/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/vi/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/wa/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/xh/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/yelp.mo
+file path=usr/share/locale/zu/LC_MESSAGES/yelp.mo
+file path=usr/share/yelp-xsl/xslt/common/domains/yelp.xml
+file path=usr/share/yelp/dtd/catalog
+file path=usr/share/yelp/dtd/docbookx.dtd
+file path=usr/share/yelp/dtd/isoamsa.ent
+file path=usr/share/yelp/dtd/isoamsb.ent
+file path=usr/share/yelp/dtd/isoamsc.ent
+file path=usr/share/yelp/dtd/isoamsn.ent
+file path=usr/share/yelp/dtd/isoamso.ent
+file path=usr/share/yelp/dtd/isoamsr.ent
+file path=usr/share/yelp/dtd/isobox.ent
+file path=usr/share/yelp/dtd/isocyr1.ent
+file path=usr/share/yelp/dtd/isocyr2.ent
+file path=usr/share/yelp/dtd/isodia.ent
+file path=usr/share/yelp/dtd/isogrk1.ent
+file path=usr/share/yelp/dtd/isogrk2.ent
+file path=usr/share/yelp/dtd/isogrk3.ent
+file path=usr/share/yelp/dtd/isogrk4.ent
+file path=usr/share/yelp/dtd/isolat1.ent
+file path=usr/share/yelp/dtd/isolat2.ent
+file path=usr/share/yelp/dtd/isonum.ent
+file path=usr/share/yelp/dtd/isopub.ent
+file path=usr/share/yelp/dtd/isotech.ent
+file path=usr/share/yelp/icons/hicolor/16x16/status/bookmark.png
+file path=usr/share/yelp/icons/hicolor/16x16/status/yelp-page-task.png
+file path=usr/share/yelp/icons/hicolor/16x16/status/yelp-page-tip.png
+file path=usr/share/yelp/icons/hicolor/16x16/status/yelp-page-ui.png
+file path=usr/share/yelp/icons/hicolor/16x16/status/yelp-page-video.png
+file path=usr/share/yelp/icons/hicolor/scalable/status/yelp-page-problem-symbolic.svg
+file path=usr/share/yelp/icons/hicolor/scalable/status/yelp-page-search-symbolic.svg
+file path=usr/share/yelp/icons/hicolor/scalable/status/yelp-page-symbolic.svg
+file path=usr/share/yelp/icons/hicolor/scalable/status/yelp-page-task-symbolic.svg
+file path=usr/share/yelp/icons/hicolor/scalable/status/yelp-page-tip-symbolic.svg
+file path=usr/share/yelp/icons/hicolor/scalable/status/yelp-page-ui-symbolic.svg
+file path=usr/share/yelp/icons/hicolor/scalable/status/yelp-page-video-symbolic.svg
+file path=usr/share/yelp/mathjax/MathJax.js
+file path=usr/share/yelp/mathjax/config/MMLorHTML.js
+file path=usr/share/yelp/mathjax/config/yelp.js
+file path=usr/share/yelp/mathjax/extensions/HTML-CSS/handle-floats.js
+file path=usr/share/yelp/mathjax/extensions/MathEvents.js
+file path=usr/share/yelp/mathjax/extensions/MathMenu.js
+file path=usr/share/yelp/mathjax/extensions/MathZoom.js
+file path=usr/share/yelp/mathjax/extensions/mml2jax.js
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_AMS-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Bold.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Bold.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Math-BoldItalic.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Math-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Bold.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Italic.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Script-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff
+file path=usr/share/yelp/mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Typewriter-Regular.woff
+file path=usr/share/yelp/mathjax/jax/element/mml/jax.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/Arrows.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/CombDiactForSymbols.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/Dingbats.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/GeneralPunctuation.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/GeometricShapes.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/GreekAndCoptic.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/Latin1Supplement.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/LetterlikeSymbols.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/MathOperators.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/MiscMathSymbolsA.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/MiscMathSymbolsB.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/MiscSymbolsAndArrows.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/MiscTechnical.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/SpacingModLetters.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/SuppMathOperators.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/SupplementalArrowsA.js
+file path=usr/share/yelp/mathjax/jax/element/mml/optable/SupplementalArrowsB.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/config.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/a.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/b.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/c.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/d.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/e.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/f.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/fr.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/g.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/h.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/i.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/j.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/k.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/l.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/m.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/n.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/o.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/opf.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/p.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/q.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/r.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/s.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/scr.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/t.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/u.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/v.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/w.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/x.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/y.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/entities/z.js
+file path=usr/share/yelp/mathjax/jax/input/MathML/jax.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/annotation-xml.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/maction.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/menclose.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/mglyph.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/mmultiscripts.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/ms.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/mtable.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/autoload/multiline.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/config.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/Arrows.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/BBBold.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/BoxDrawing.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/Dingbats.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/EnclosedAlphanum.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/GeneralPunctuation.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/GeometricShapes.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/GreekAndCoptic.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/Latin1Supplement.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/LatinExtendedA.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/LetterlikeSymbols.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/MathOperators.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/MiscMathSymbolsB.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/MiscSymbols.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/MiscTechnical.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/PUA.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/SpacingModLetters.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/AMS/Regular/SuppMathOperators.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Caligraphic/Bold/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Caligraphic/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Bold/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Bold/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Bold/Other.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Bold/PUA.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Regular/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Regular/Other.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Fraktur/Regular/PUA.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Greek/Bold/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Greek/BoldItalic/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Greek/Italic/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Greek/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/Arrows.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/CombDiactForSymbols.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/GeneralPunctuation.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/GeometricShapes.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/Latin1Supplement.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/LatinExtendedA.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/LatinExtendedB.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/LetterlikeSymbols.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/MathOperators.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/MiscMathSymbolsA.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/MiscSymbols.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/MiscTechnical.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/SpacingModLetters.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/SuppMathOperators.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Bold/SupplementalArrowsA.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Italic/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Italic/GeneralPunctuation.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Italic/Latin1Supplement.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Italic/LetterlikeSymbols.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Italic/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Regular/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Regular/GeometricShapes.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Regular/MiscSymbols.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Main/Regular/SpacingModLetters.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Math/BoldItalic/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Math/Italic/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Bold/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Bold/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Bold/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Bold/Other.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Italic/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Italic/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Italic/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Italic/Other.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Regular/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Regular/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/SansSerif/Regular/Other.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Script/Regular/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Script/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Script/Regular/Other.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Size1/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Size2/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Size3/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Size4/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Typewriter/Regular/BasicLatin.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Typewriter/Regular/CombDiacritMarks.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Typewriter/Regular/Main.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/Typewriter/Regular/Other.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/fontdata-extra.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/fonts/TeX/fontdata.js
+file path=usr/share/yelp/mathjax/jax/output/HTML-CSS/jax.js
+file path=usr/share/yelp/mathjax/jax/output/NativeMML/config.js
+file path=usr/share/yelp/mathjax/jax/output/NativeMML/jax.js
+file path=usr/share/yelp/xslt/db2html.xsl
+file path=usr/share/yelp/xslt/info2html.xsl
+file path=usr/share/yelp/xslt/mal2html.xsl
+file path=usr/share/yelp/xslt/man2html.xsl
+file path=usr/share/yelp/xslt/yelp-common.xsl

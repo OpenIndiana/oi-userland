@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -28,7 +28,6 @@ set name=pkg.summary \
     value="TrouSerS TCG software to access a TPM device"
 set name=pkg.description \
     value="The TrouSerS library provides a software stack from the Trusted Computer Group (TCG) that accesses a Trusted Platform Module (TPM) hardware device."
-set name=com.oracle.info.description value="the TrouSerS library"
 set name=info.classification \
     value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -36,6 +35,11 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2008/725
+
+dir path=etc
+dir path=etc/security
+dir path=var
+dir path=var/tpm
 dir path=var/tpm/pkcs11 group=sys mode=1777 owner=root
 dir path=var/tpm/system group=sys mode=0700 owner=root
 dir path=var/tpm/userps group=sys mode=1777 owner=root
@@ -69,12 +73,21 @@ file path=usr/include/tss/tss_error.h
 file path=usr/include/tss/tss_error_basics.h
 file path=usr/include/tss/tss_structs.h
 file path=usr/include/tss/tss_typedef.h
-file path=usr/lib/$(MACH64)/libtspi.so.1.1.3
+
+file path=usr/lib/$(MACH64)/libtddl.a
+link path=usr/lib/$(MACH64)/libtspi.so target=libtspi.so.1.2.0 facet.devel=true
+link path=usr/lib/$(MACH64)/libtspi.so.1 target=libtspi.so.1.2.0
+file path=usr/lib/$(MACH64)/libtspi.so.1.2.0
+file path=usr/lib/tcsd mode=0555 owner=root
+file path=usr/lib/libtddl.a
+link path=usr/lib/libtspi.so target=libtspi.so.1.2.0 facet.devel=true
+link path=usr/lib/libtspi.so.1 target=libtspi.so.1.2.0
+file path=usr/lib/libtspi.so.1.2.0
+
 file path=usr/lib/$(MACH64)/llib-ltspi.ln
-file path=usr/lib/libtspi.so.1.1.3
 file path=usr/lib/llib-ltspi
 file path=usr/lib/llib-ltspi.ln
-file path=usr/lib/tcsd mode=555 owner=root
+
 file path=usr/share/man/man3/Tspi_ChangeAuth.3
 file path=usr/share/man/man3/Tspi_ChangeAuthAsym.3
 file path=usr/share/man/man3/Tspi_Context_Close.3
@@ -94,12 +107,6 @@ file path=usr/share/man/man3/Tspi_Context_LoadKeyByBlob.3
 file path=usr/share/man/man3/Tspi_Context_LoadKeyByUUID.3
 file path=usr/share/man/man3/Tspi_Context_RegisterKey.3
 file path=usr/share/man/man3/Tspi_Context_UnregisterKey.3
-file path=usr/share/man/man3/Tspi_DAA_IssueCredential.3
-file path=usr/share/man/man3/Tspi_DAA_IssueInit.3
-file path=usr/share/man/man3/Tspi_DAA_IssueSetup.3
-file path=usr/share/man/man3/Tspi_DAA_IssuerKeyVerification.3
-file path=usr/share/man/man3/Tspi_DAA_VerifyInit.3
-file path=usr/share/man/man3/Tspi_DAA_VerifySignature.3
 file path=usr/share/man/man3/Tspi_Data_Bind.3
 file path=usr/share/man/man3/Tspi_Data_Seal.3
 file path=usr/share/man/man3/Tspi_Data_Unbind.3
@@ -138,10 +145,6 @@ file path=usr/share/man/man3/Tspi_TPM_ClearOwner.3
 file path=usr/share/man/man3/Tspi_TPM_CollateIdentityRequest.3
 file path=usr/share/man/man3/Tspi_TPM_CreateEndorsementKey.3
 file path=usr/share/man/man3/Tspi_TPM_CreateMaintenanceArchive.3
-file path=usr/share/man/man3/Tspi_TPM_DAA_JoinCreateDaaPubKey.3
-file path=usr/share/man/man3/Tspi_TPM_DAA_JoinInit.3
-file path=usr/share/man/man3/Tspi_TPM_DAA_JoinStoreCredential.3
-file path=usr/share/man/man3/Tspi_TPM_DAA_Sign.3
 file path=usr/share/man/man3/Tspi_TPM_DirRead.3
 file path=usr/share/man/man3/Tspi_TPM_DirWrite.3
 file path=usr/share/man/man3/Tspi_TPM_GetAuditDigest.3
@@ -159,23 +162,20 @@ file path=usr/share/man/man3/Tspi_TPM_OwnerGetSRKPubKey.3
 file path=usr/share/man/man3/Tspi_TPM_PcrExtend.3
 file path=usr/share/man/man3/Tspi_TPM_PcrRead.3
 file path=usr/share/man/man3/Tspi_TPM_Quote.3
+file path=usr/share/man/man3/Tspi_TPM_Quote2.3
 file path=usr/share/man/man3/Tspi_TPM_SelfTestFull.3
 file path=usr/share/man/man3/Tspi_TPM_SetStatus.3
 file path=usr/share/man/man3/Tspi_TPM_StirRandom.3
 file path=usr/share/man/man3/Tspi_TPM_TakeOwnership.3
 file path=usr/share/man/man5/tcsd.conf.5
 file path=usr/share/man/man8/tcsd.8
+
 file dist/system.data.auth path=var/tpm/system/system.data.auth mode=0400 owner=root group=sys
 file dist/system.data.noauth path=var/tpm/system/system.data.noauth mode=0400 owner=root group=sys
 license trousers.license license=CPL
 link path=var/tpm/system/system.data target=system.data.auth
-link path=usr/lib/$(MACH64)/libtspi.so target=libtspi.so.1.1.3
-link path=usr/lib/$(MACH64)/libtspi.so.1 target=libtspi.so.1.1.3
-link path=usr/lib/libtspi.so target=libtspi.so.1.1.3
-link path=usr/lib/libtspi.so.1 target=libtspi.so.1.1.3
 #
-# libtspi requires 646%UTF-16LE.so and UTF-16LE%646.so, which are in
-# package utf-8. This is for function Trspi_Native_To_UNICODE() which calls
-# iconv_open() to dynamically load these libraries
+# libtspi requires 646%UTF-8.so in package utf-8. This is for function
+# Trspi_Native_To_UNICODE() which calls iconv_open() to open this library.
 #
-depend fmri=pkg:/system/library/iconv/utf-8 type=require
+#depend fmri=pkg:/system/library/iconv/utf-8 type=require

@@ -1,0 +1,13 @@
+https://github.com/dtao/safe_yaml/issues/76
+
+--- puppet-3.8.6/lib/puppet/vendor/safe_yaml/lib/safe_yaml.rbb	2016-02-03 22:26:18.000000000 +0300
++++ puppet-3.8.6/lib/puppet/vendor/safe_yaml/lib/safe_yaml.rb	2016-11-30 20:12:16.434497050 +0300
+@@ -3,7 +3,7 @@
+ # This needs to be defined up front in case any internal classes need to base
+ # their behavior off of this.
+ module SafeYAML
+-  YAML_ENGINE = defined?(YAML::ENGINE) ? YAML::ENGINE.yamler : "syck"
++  YAML_ENGINE = defined?(YAML::ENGINE) ? YAML::ENGINE.yamler : (defined?(Psych) && YAML == Psych ? "psych" : "syck")
+ end
+ 
+ require "set"

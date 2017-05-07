@@ -1,0 +1,73 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/man/man3xcursor/(.+)$ \
+	-> set action.hash usr/share/man/man3/%<\1> >
+
+link path=usr/X11/lib/$(MACH64)/libXcursor.so target=../../../lib/$(MACH64)/libXcursor.so
+link path=usr/X11/lib/$(MACH64)/libXcursor.so.1 target=../../../lib/$(MACH64)/libXcursor.so.1
+link path=usr/X11/lib/libXcursor.so target=../../lib/libXcursor.so
+link path=usr/X11/lib/libXcursor.so.1 target=../../lib/libXcursor.so.1
+
+file path=usr/include/X11/Xcursor/Xcursor.h
+link path=usr/lib/$(MACH64)/libXcursor.so target=libXcursor.so.1.0.2
+link path=usr/lib/$(MACH64)/libXcursor.so.1 target=libXcursor.so.1.0.2
+file path=usr/lib/$(MACH64)/libXcursor.so.1.0.2
+file path=usr/lib/$(MACH64)/pkgconfig/xcursor.pc
+link path=usr/lib/libXcursor.so target=libXcursor.so.1.0.2
+link path=usr/lib/libXcursor.so.1 target=libXcursor.so.1.0.2
+file path=usr/lib/libXcursor.so.1.0.2
+file path=usr/lib/pkgconfig/xcursor.pc
+file path=usr/share/man/man3xcursor/Xcursor.3
+file path=usr/share/man/man3xcursor/XcursorCursorsCreate.3
+file path=usr/share/man/man3xcursor/XcursorCursorsDestroy.3
+file path=usr/share/man/man3xcursor/XcursorFilenameLoad.3
+file path=usr/share/man/man3xcursor/XcursorFilenameLoadAllImages.3
+file path=usr/share/man/man3xcursor/XcursorFilenameLoadCursor.3
+file path=usr/share/man/man3xcursor/XcursorFilenameLoadImage.3
+file path=usr/share/man/man3xcursor/XcursorFilenameLoadImages.3
+file path=usr/share/man/man3xcursor/XcursorFilenameSave.3
+file path=usr/share/man/man3xcursor/XcursorFilenameSaveImages.3
+file path=usr/share/man/man3xcursor/XcursorGetDefaultSize.3
+file path=usr/share/man/man3xcursor/XcursorGetTheme.3
+file path=usr/share/man/man3xcursor/XcursorImageCreate.3
+file path=usr/share/man/man3xcursor/XcursorImageDestroy.3
+file path=usr/share/man/man3xcursor/XcursorImagesCreate.3
+file path=usr/share/man/man3xcursor/XcursorImagesDestroy.3
+file path=usr/share/man/man3xcursor/XcursorLibraryLoadCursor.3
+file path=usr/share/man/man3xcursor/XcursorLibraryLoadCursors.3
+file path=usr/share/man/man3xcursor/XcursorLibraryLoadImage.3
+file path=usr/share/man/man3xcursor/XcursorLibraryLoadImages.3
+file path=usr/share/man/man3xcursor/XcursorSetDefaultSize.3
+file path=usr/share/man/man3xcursor/XcursorSetTheme.3
+file path=usr/share/man/man3xcursor/XcursorShapeLoadCursor.3
+file path=usr/share/man/man3xcursor/XcursorShapeLoadCursors.3
+file path=usr/share/man/man3xcursor/XcursorShapeLoadImage.3
+file path=usr/share/man/man3xcursor/XcursorShapeLoadImages.3
+file path=usr/share/man/man3xcursor/XcursorSupportsARGB.3
+file path=usr/share/man/man3xcursor/XcursorXcFileLoad.3
+file path=usr/share/man/man3xcursor/XcursorXcFileLoadAllImages.3
+file path=usr/share/man/man3xcursor/XcursorXcFileLoadImage.3
+file path=usr/share/man/man3xcursor/XcursorXcFileLoadImages.3
+file path=usr/share/man/man3xcursor/XcursorXcFileSave.3

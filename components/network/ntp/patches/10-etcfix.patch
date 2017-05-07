@@ -1,0 +1,50 @@
+This patch does the customization for the Solaris way
+of installing things. There is a method for doing this
+with the configure scripts, but these last few file
+paths have not been converted. When they are, this patch
+can go away.
+
+--- include/ntp_config.h.orig	Thu May 14 06:34:41 2009
++++ include/ntp_config.h	Thu May 14 06:15:12 2009
+@@ -10,7 +10,7 @@
+  */
+ #ifndef CONFIG_FILE
+ # ifndef SYS_WINNT
+-#  define	CONFIG_FILE "/etc/ntp.conf"
++#  define	CONFIG_FILE "/etc/inet/ntp.conf"
+ # else /* SYS_WINNT */
+ #  define	CONFIG_FILE	"%windir%\\system32\\drivers\\etc\\ntp.conf"
+ #  define	ALT_CONFIG_FILE "%windir%\\ntp.conf"
+--- libntp/audio.c.1	2017-03-30 21:01:55.909538993 +0300
++++ libntp/audio.c	2017-03-30 21:02:15.469819762 +0300
+@@ -66,7 +66,7 @@
+ static struct audio_device device; /* audio device ident */
+ #endif /* HAVE_SYS_AUDIOIO_H */
+ #ifdef PCM_STYLE_SOUND
+-# define INIT_FILE "/etc/ntp.audio"
++# define INIT_FILE "/etc/inet/ntp.audio"
+ 
+ static ioctl_arg_T agc		= SOUND_MIXER_WRITE_RECLEV; /* or IGAIN or LINE */
+ static ioctl_arg_T audiomonitor	= SOUND_MIXER_WRITE_VOLUME; /* or OGAIN */
+--- ntpdate/ntpdate.c.orig	Thu May 14 06:34:41 2009
++++ ntpdate/ntpdate.c	Thu May 14 06:15:12 2009
+@@ -179,7 +179,7 @@
+ 
+ #ifndef KEYFILE
+ # ifndef SYS_WINNT
+-#define KEYFILE 	"/etc/ntp.keys"
++#define KEYFILE 	"/etc/inet/ntp.keys"
+ # else
+ #define KEYFILE 	"%windir%\\ntp.keys"
+ # endif /* SYS_WINNT */
+--- ntpd/refclock_oncore.c.~1~	2015-02-09 22:15:27.894514480 +0300
++++ ntpd/refclock_oncore.c	2015-02-09 22:17:29.112903586 +0300
+@@ -1211,7 +1211,7 @@
+ 
+ 	FILE	*fd;
+ 	char	*cc, *ca, line[100], units[2], device[64];
+-	const char	*dirs[] = { "/etc/ntp", "/etc", 0 };
++	const char	*dirs[] = { "/etc/inet", "/etc", 0 };
+ 	const char *cp, **cpp;
+ 	int	i, sign, lat_flg, long_flg, ht_flg, mode, mask;
+ 	double	f1, f2, f3;

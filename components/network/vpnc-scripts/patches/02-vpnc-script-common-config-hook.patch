@@ -1,0 +1,39 @@
+Add ability to source common configuration hook file(s).
+
+--- ./vpnc-script.orig	2016-08-28 08:27:51.000000000 +0200
++++ ./vpnc-script	2016-11-20 00:44:51.495636440 +0100
+@@ -77,6 +77,9 @@
+ 
+ OS="`uname -s`"
+ 
++# You can create sourcable scriptlets under "${HOOKS_DIR}/${HOOK}.d/"
++# where $HOOK is either one of the $reason's above, or "common-config"
++# which is sourced before other hooks when processing a valid reason.
+ HOOKS_DIR=/etc/vpnc
+ DEFAULT_ROUTE_FILE=/var/run/vpnc/defaultroute
+ RESOLV_CONF_BACKUP=/var/run/vpnc/resolv.conf-backup
+@@ -796,20 +799,24 @@
+ 
+ case "$reason" in
+ 	pre-init)
++		run_hooks common-config
+ 		run_hooks pre-init
+ 		do_pre_init
+ 		;;
+ 	connect)
++		run_hooks common-config
+ 		run_hooks connect
+ 		do_connect
+ 		run_hooks post-connect
+ 		;;
+ 	disconnect)
++		run_hooks common-config
+ 		run_hooks disconnect
+ 		do_disconnect
+ 		run_hooks post-disconnect
+ 		;;
+ 	reconnect)
++		run_hooks common-config
+ 		run_hooks reconnect
+ 		;;
+ 	*)

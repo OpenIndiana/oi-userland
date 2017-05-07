@@ -1,0 +1,621 @@
+#
+# This was developed in house.  Not applicable to the upstream.
+#
+--- openssl-1.0.1/ssl/s2_meth.c      Fri May  8 09:38:33 2015
++++ openssl-1.0.1/ssl/s2_meth.c.new       Fri May  8 09:51:53 2015
+@@ -74,6 +74,13 @@
+                          ssl2_accept, ssl2_connect, ssl2_get_method)
+ #else                           /* !OPENSSL_NO_SSL2 */
+
++/* stub function */
++const SSL_METHOD *
++SSLv2_method(void)
++{
++       return (NULL);
++}
++
+ # if PEDANTIC
+ static void *dummy = &dummy;
+ # endif
+--- openssl-1.0.1/ssl/s2_clnt.c      Fri May  8 09:37:51 2015
++++ openssl-1.0.1/ssl/s2_clnt.c.new       Fri May  8 09:53:12 2015
+@@ -1087,6 +1087,13 @@
+ }
+ #else                           /* !OPENSSL_NO_SSL2 */
+
++/* stub function */
++const SSL_METHOD *
++SSLv2_client_method(void)
++{
++       return (NULL);
++}
++
+ # if PEDANTIC
+ static void *dummy = &dummy;
+ # endif
+--- openssl-1.0.1/ssl/s2_srvr.c      Fri May  8 09:38:02 2015
++++ openssl-1.0.1/ssl/s2_srvr.c.new       Fri May  8 09:53:43 2015
+@@ -1148,6 +1148,13 @@
+ }
+ #else                           /* !OPENSSL_NO_SSL2 */
+
++/* stub function */
++const SSL_METHOD *
++SSLv2_server_method(void)
++{
++        return (NULL);
++}
++
+ # if PEDANTIC
+ static void *dummy = &dummy;
+ # endif
+--- openssl-1.0.1/ssl/ssl.h	Tue May 26 11:13:15 2015
++++ openssl-1.0.1/ssl/ssl.h.new	Tue May 26 11:32:09 2015
+@@ -2345,10 +2345,23 @@
+ /* This sets the 'default' SSL version that SSL_new() will create */
+ int SSL_CTX_set_ssl_version(SSL_CTX *ctx, const SSL_METHOD *meth);
+ 
++#ifndef __has_attribute
++# define __has_attribute(x) 0
++#endif
++
++/* Mark SSLv2_* functions deprecated */
++#if __has_attribute(deprecated) \
++    || (defined(__GNUC__) && ((__GNUC__ * 100 + __GNUC_MINOR__) >= 301)) \
++    || (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x5130))
++# define DEPRECATED __attribute__((deprecated))
++#else
++# define DEPRECATED
++#endif
++
+ # ifndef OPENSSL_NO_SSL2_METHOD
+-const SSL_METHOD *SSLv2_method(void); /* SSLv2 */
+-const SSL_METHOD *SSLv2_server_method(void); /* SSLv2 */
+-const SSL_METHOD *SSLv2_client_method(void); /* SSLv2 */
++DEPRECATED const SSL_METHOD *SSLv2_method(void); /* SSLv2 */
++DEPRECATED const SSL_METHOD *SSLv2_server_method(void); /* SSLv2 */
++DEPRECATED const SSL_METHOD *SSLv2_client_method(void); /* SSLv2 */
+ # endif
+ 
+ # ifndef OPENSSL_NO_SSL3_METHOD
+--- openssl/ssl/s3_meth.c.orig	Fri Sep 11 12:19:54 2015
++++ openssl/ssl/s3_meth.c	Fri Sep 11 12:22:24 2015
+@@ -71,4 +71,13 @@
+ 
+ IMPLEMENT_ssl3_meth_func(SSLv3_method,
+                          ssl3_accept, ssl3_connect, ssl3_get_method)
++#else	/* !OPENSSL_NO_SSL3_METHOD */
++
++/* stub function */
++const SSL_METHOD *
++SSLv3_method(void)
++{
++	return (NULL);
++}
++
+ #endif
+--- openssl/ssl/s3_clnt.c.orig	Fri Sep 11 12:21:09 2015
++++ openssl/ssl/s3_clnt.c	Fri Sep 11 12:24:31 2015
+@@ -184,6 +184,15 @@
+ IMPLEMENT_ssl3_meth_func(SSLv3_client_method,
+                          ssl_undefined_function,
+                          ssl3_connect, ssl3_get_client_method)
++#else	/* !OPENSSL_NO_SSL3_METHOD */
++
++/* stub function */
++const SSL_METHOD *
++SSLv3_client_method(void)
++{
++	return (NULL);
++}
++
+ #endif
+ int ssl3_connect(SSL *s)
+ {
+--- openssl/ssl/s3_srvr.c.orig	Fri Sep 11 12:21:18 2015
++++ openssl/ssl/s3_srvr.c	Fri Sep 11 12:24:15 2015
+@@ -184,6 +184,15 @@
+ IMPLEMENT_ssl3_meth_func(SSLv3_server_method,
+                          ssl3_accept,
+                          ssl_undefined_function, ssl3_get_server_method)
++#else	/* !OPENSSL_NO_SSL3_METHOD */
++
++/* stub function */
++const SSL_METHOD *
++SSLv3_server_method(void)
++{
++	return (NULL);
++}
++
+ #endif
+ #ifndef OPENSSL_NO_SRP
+ static int ssl_check_srp_ext_ClientHello(SSL *s, int *al)
+--- openssl-1.0.1/doc/ssl/SSL_CIPHER_get_name.pod	Tue May 26 11:13:15 2015
++++ openssl-1.0.1/doc/ssl/SSL_CIPHER_get_name.pod.new	Tue May 26 11:32:09 2015
+@@ -25,7 +25,7 @@
+ 
+ SSL_CIPHER_get_version() returns string which indicates the SSL/TLS protocol
+ version that first defined the cipher.
+-This is currently B<SSLv2> or B<TLSv1/SSLv3>.
++This is currently B<TLSv1/SSLv3>.
+ In some cases it should possibly return "TLSv1.2" but does not;
+ use SSL_CIPHER_description() instead.
+ If B<cipher> is NULL, "(NONE)" is returned.
+@@ -56,7 +56,7 @@
+ 
+ =item <protocol version>
+ 
+-Protocol version: B<SSLv2>, B<SSLv3>, B<TLSv1.2>. The TLSv1.0 ciphers are
++Protocol version: B<SSLv3>, B<TLSv1.2>. The TLSv1.0 ciphers are
+ flagged with SSLv3. No new ciphers were added by TLSv1.1.
+ 
+ =item Kx=<key exchange>
+--- openssl-1.x/doc/ssl/SSL_CTX_new.pod	Tue Jan 20 04:33:36 2015
++++ openssl-1.x/doc/ssl/SSL_CTX_new.pod.new	Tue May 26 11:37:24 2015
+@@ -8,7 +8,6 @@
+ TLSv1_1_method, TLSv1_1_server_method, TLSv1_1_client_method,
+ TLSv1_method, TLSv1_server_method, TLSv1_client_method,
+ SSLv3_method, SSLv3_server_method, SSLv3_client_method,
+-SSLv2_method, SSLv2_server_method, SSLv2_client_method,
+ DTLS_method, DTLS_server_method, DTLS_client_method,
+ DTLSv1_2_method, DTLSv1_2_server_method, DTLSv1_2_client_method,
+ DTLSv1_method, DTLSv1_server_method, DTLSv1_client_method -
+@@ -70,7 +69,7 @@
+ These are the general-purpose I<version-flexible> SSL/TLS methods.
+ The actual protocol version used will be negotiated to the highest version
+ mutually supported by the client and the server.
+-The supported protocols are SSLv2, SSLv3, TLSv1, TLSv1.1 and TLSv1.2.
++The supported protocols are TLSv1, TLSv1.1 and TLSv1.2.
+ Most applications should use these method, and avoid the version specific
+ methods described below.
+ 
+@@ -116,20 +115,11 @@
+ =item SSLv3_method(), SSLv3_server_method(), SSLv3_client_method()
+ 
+ A TLS/SSL connection established with these methods will only understand the
+-SSLv3 protocol.  A client will send out SSLv3 client hello messages and will
+-indicate that it only understands SSLv3.  A server will only understand SSLv3
+-client hello messages.  The SSLv3 protocol is deprecated and should not be
+-used.
++SSLv3 protocol. However, SSLv3 is not supported by this relese of OpenSSL.
+ 
+ =item SSLv2_method(), SSLv2_server_method(), SSLv2_client_method()
+ 
+-A TLS/SSL connection established with these methods will only understand the
+-SSLv2 protocol.  A client will send out SSLv2 client hello messages and will
+-also indicate that it only understand SSLv2.  A server will only understand
+-SSLv2 client hello messages.  The SSLv2 protocol offers little to no security
+-and should not be used.
+-As of OpenSSL 1.0.2g, EXPORT ciphers and 56-bit DES are no longer available
+-with SSLv2.
++These functions are deprecated.
+ 
+ =item DTLS_method(), DTLS_server_method(), DTLS_client_method()
+ 
+--- openssl-1.0.1/doc/ssl/SSL_CTX_set_cipher_list.pod	Thu Mar 19 06:37:10 2015
++++ openssl-1.0.1/doc/ssl/SSL_CTX_set_cipher_list.pod.new	Tue May 26 11:38:09 2015
+@@ -54,10 +54,6 @@
+ keys), the "no shared cipher" (SSL_R_NO_SHARED_CIPHER) error is generated
+ and the handshake will fail.
+ 
+-If the cipher list does not contain any SSLv2 cipher suites (this is the
+-default) then SSLv2 is effectively disabled and neither clients nor servers
+-will attempt to use SSLv2.
+-
+ =head1 RETURN VALUES
+ 
+ SSL_CTX_set_cipher_list() and SSL_set_cipher_list() return 1 if any cipher
+--- openssl-1.0.1/doc/ssl/SSL_CTX_set_generate_session_id.pod	Thu Jan 15 06:43:49 2015
++++ openssl-1.0.1/doc/ssl/SSL_CTX_set_generate_session_id.pod.new	Tue May 26 11:40:47 2015
+@@ -32,9 +32,8 @@
+ 
+ When a new session is established between client and server, the server
+ generates a session id. The session id is an arbitrary sequence of bytes.
+-The length of the session id is 16 bytes for SSLv2 sessions and between
+-1 and 32 bytes for SSLv3/TLSv1. The session id is not security critical
+-but must be unique for the server. Additionally, the session id is
++The length of the session id is between 1 and 32 bytes for TLSv1. The session id is not
++security critical but must be unique for the server. Additionally, the session id is
+ transmitted in the clear when reusing the session so it must not contain
+ sensitive information.
+ 
+@@ -51,12 +50,6 @@
+ the callback B<must never> increase B<id_len> or write to the location
+ B<id> exceeding the given limit.
+ 
+-If a SSLv2 session id is generated and B<id_len> is reduced, it will be
+-restored after the callback has finished and the session id will be padded
+-with 0x00. It is not recommended to change the B<id_len> for SSLv2 sessions.
+-The callback can use the L<SSL_get_version(3)|SSL_get_version(3)> function
+-to check, whether the session is of type SSLv2.
+-
+ The location B<id> is filled with 0x00 before the callback is called, so the
+ callback may only fill part of the possible length and leave B<id_len>
+ untouched while maintaining reproducibility.
+@@ -63,9 +56,8 @@
+ 
+ Since the sessions must be distinguished, session ids must be unique.
+ Without the callback a random number is used, so that the probability
+-of generating the same session id is extremely small (2^128 possible ids
+-for an SSLv2 session, 2^256 for SSLv3/TLSv1). In order to assure the
+-uniqueness of the generated session id, the callback must call
++of generating the same session id is extremely small (2^256 for TLSv1).
++In order to assure the uniqueness of the generated session id, the callback must call
+ SSL_has_matching_session_id() and generate another id if a conflict occurs.
+ If an id conflict is not resolved, the handshake will fail.
+ If the application codes e.g. a unique host id, a unique process number, and
+@@ -85,10 +77,6 @@
+ the external cache is not tested with SSL_has_matching_session_id()
+ and the same race condition applies.
+ 
+-When calling SSL_has_matching_session_id() for an SSLv2 session with
+-reduced B<id_len>, the match operation will be performed using the
+-fixed length required and with a 0x00 padded id.
+-
+ The callback must return 0 if it cannot generate a session id for whatever
+ reason and return 1 on success.
+ 
+@@ -104,12 +92,7 @@
+                               unsigned int *id_len)
+       {
+       unsigned int count = 0;
+-      const char *version;
+ 
+-      version = SSL_get_version(ssl);
+-      if (!strcmp(version, "SSLv2"))
+-	  /* we must not change id_len */;
+-
+       do      {
+               RAND_pseudo_bytes(id, *id_len);
+               /* Prefix the session_id with the required prefix. NB: If our
+--- openssl-1.0.1/doc/ssl/SSL_CTX_set_options.pod	Tue Jan 20 04:33:36 2015
++++ openssl-1.0.1/doc/ssl/SSL_CTX_set_options.pod.new	Tue May 26 11:41:47 2015
+@@ -63,18 +63,11 @@
+ 
+ =item SSL_OP_MICROSOFT_SESS_ID_BUG
+ 
+-www.microsoft.com - when talking SSLv2, if session-id reuse is
+-performed, the session-id passed back in the server-finished message
+-is different from the one decided upon.
++As of OpenSSL 1.0.0 this option has no effect.
+ 
+ =item SSL_OP_NETSCAPE_CHALLENGE_BUG
+ 
+-Netscape-Commerce/1.12, when talking SSLv2, accepts a 32 byte
+-challenge but then appears to only use 16 bytes when generating the
+-encryption keys.  Using 16 bytes is ok but it should be ok to use 32.
+-According to the SSLv3 spec, one should use 32 bytes for the challenge
+-when operating in SSLv2/v3 compatibility mode, but as mentioned above,
+-this breaks this server so 16 bytes is the way to go.
++As of OpenSSL 1.0.0 this option has no effect.
+ 
+ =item SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG
+ 
+--- openssl-1.0.1/doc/ssl/SSL_get_default_timeout.pod	Thu Jan 15 06:43:49 2015
++++ openssl-1.0.1/doc/ssl/SSL_get_default_timeout.pod.new	Tue May 26 11:42:15 2015
+@@ -24,7 +24,7 @@
+ timeout for the protocol will be used.
+ 
+ SSL_get_default_timeout() return this hardcoded value, which is 300 seconds
+-for all currently supported protocols (SSLv2, SSLv3, and TLSv1).
++for all currently supported protocols.
+ 
+ =head1 RETURN VALUES
+ 
+--- openssl-1.0.1/doc/ssl/SSL_get_version.pod	Thu Jan 15 06:43:49 2015
++++ openssl-1.0.1/doc/ssl/SSL_get_version.pod.new	Tue May 26 11:42:45 2015
+@@ -21,14 +21,6 @@
+ 
+ =over 4
+ 
+-=item SSLv2
+-
+-The connection uses the SSLv2 protocol.
+-
+-=item SSLv3
+-
+-The connection uses the SSLv3 protocol.
+-
+ =item TLSv1
+ 
+ The connection uses the TLSv1.0 protocol.
+--- openssl-1.0.1/doc/ssl/SSL_new.pod	Thu Jan 15 06:43:49 2015
++++ openssl-1.0.1/doc/ssl/SSL_new.pod.new	Tue May 26 11:43:12 2015
+@@ -14,7 +14,7 @@
+ 
+ SSL_new() creates a new B<SSL> structure which is needed to hold the
+ data for a TLS/SSL connection. The new structure inherits the settings
+-of the underlying context B<ctx>: connection method (SSLv2/v3/TLSv1),
++of the underlying context B<ctx>: connection method,
+ options, verification settings, timeout settings.
+ 
+ =head1 RETURN VALUES
+--- openssl-1.0.1/doc/ssl/SSL_shutdown.pod	Thu Mar 19 06:37:10 2015
++++ openssl-1.0.1/doc/ssl/SSL_shutdown.pod.new	Tue May 26 11:43:56 2015
+@@ -60,9 +60,7 @@
+ 
+ It is therefore recommended, to check the return value of SSL_shutdown()
+ and call SSL_shutdown() again, if the bidirectional shutdown is not yet
+-complete (return value of the first call is 0). As the shutdown is not
+-specially handled in the SSLv2 protocol, SSL_shutdown() will succeed on
+-the first call.
++complete (return value of the first call is 0).
+ 
+ The behaviour of SSL_shutdown() additionally depends on the underlying BIO. 
+ 
+--- openssl-1.0.1/doc/ssl/ssl.pod	Thu Mar 19 06:37:10 2015
++++ openssl-1.0.1/doc/ssl/ssl.pod.new	Tue May 26 11:47:38 2015
+@@ -9,9 +9,8 @@
+ 
+ =head1 DESCRIPTION
+ 
+-The OpenSSL B<ssl> library implements the Secure Sockets Layer (SSL v2/v3) and
+-Transport Layer Security (TLS v1) protocols. It provides a rich API which is
+-documented here.
++The OpenSSL B<ssl> library implements the Transport Layer Security (TLS v1)
++protocols. It provides a rich API which is documented here.
+ 
+ At first the library must be initialized; see
+ L<SSL_library_init(3)|SSL_library_init(3)>.
+@@ -45,8 +44,8 @@
+ =item B<SSL_METHOD> (SSL Method)
+ 
+ That's a dispatch structure describing the internal B<ssl> library
+-methods/functions which implement the various protocol versions (SSLv1, SSLv2
+-and TLSv1). It's needed to create an B<SSL_CTX>.
++methods/functions which implement the various protocol versions (TLSv1, ...).
++It's needed to create an B<SSL_CTX>.
+ 
+ =item B<SSL_CIPHER> (SSL Cipher)
+ 
+@@ -105,8 +104,8 @@
+ 
+ =item B<ssl23.h>
+ 
+-That's the sub header file dealing with the combined use of the SSLv2 and
+-SSLv3 protocols.
++That's the sub header file dealing with the combined use of different
++protocol version.
+ I<Usually you don't have to include it explicitly because
+ it's already included by ssl.h>.
+ 
+@@ -201,15 +200,15 @@
+ =item const SSL_METHOD *B<SSLv2_method>(void);
+ 
+ Constructor for the SSLv2 SSL_METHOD structure for clients, servers
+-or both.
++or both. (deprecated)
+ 
+ =item const SSL_METHOD *B<SSLv2_client_method>(void);
+ 
+-Constructor for the SSLv2 SSL_METHOD structure for clients.
++Constructor for the SSLv2 SSL_METHOD structure for clients. (deprecated)
+ 
+ =item const SSL_METHOD *B<SSLv2_server_method>(void);
+ 
+-Constructor for the SSLv2 SSL_METHOD structure for servers.
++Constructor for the SSLv2 SSL_METHOD structure for servers. (deprecated)
+ 
+ =back
+ 
+@@ -234,12 +233,12 @@
+ =item const char *B<SSL_CIPHER_get_name>(SSL_CIPHER *cipher);
+ 
+ Return the internal name of I<cipher> as a string. These are the various
+-strings defined by the I<SSL2_TXT_xxx>, I<SSL3_TXT_xxx> and I<TLS1_TXT_xxx>
++strings defined by the I<SSL3_TXT_xxx> and I<TLS1_TXT_xxx>
+ definitions in the header files.
+ 
+ =item char *B<SSL_CIPHER_get_version>(SSL_CIPHER *cipher);
+ 
+-Returns a string like "C<TLSv1/SSLv3>" or "C<SSLv2>" which indicates the
++Returns a string like "C<TLSv1/SSLv3>" which indicates the
+ SSL/TLS protocol version to which I<cipher> belongs (i.e. where it was defined
+ in the specification the first time).
+ 
+--- openssl-1.0.1/doc/apps/ciphers.pod	Thu Mar 19 06:37:10 2015
++++ openssl-1.0.1/doc/apps/ciphers.pod.new	Tue May 26 12:07:35 2015
+@@ -26,26 +24,18 @@
+ 
+ =item B<-v>
+ 
+-Verbose option. List ciphers with a complete description of
+-protocol version (SSLv2 or SSLv3; the latter includes TLS), key exchange,
+-authentication, encryption and mac algorithms used along with any key size
+-restrictions and whether the algorithm is classed as an "export" cipher.
+-Note that without the B<-v> option, ciphers may seem to appear twice
+-in a cipher list; this is when similar ciphers are available for
+-SSL v2 and for SSL v3/TLS v1.
++Verbose option. List ciphers with a complete description of protocol version,
++key exchange, authentication, encryption and mac algorithms used along with any
++key size restrictions and whether the algorithm is classed as an "export" cipher.
+ 
+ =item B<-V>
+ 
+ Like B<-v>, but include cipher suite codes in output (hex format).
+ 
+-=item B<-ssl3>, B<-tls1>
++=item B<-tls1>
+ 
+-This lists ciphers compatible with any of SSLv3, TLSv1, TLSv1.1 or TLSv1.2.
++This lists ciphers compatible with any of TLSv1, TLSv1.1 or TLSv1.2.
+ 
+-=item B<-ssl2>
+-
+-Only include SSLv2 ciphers.
+-
+ =item B<-h>, B<-?>
+ 
+ Print a brief usage message.
+@@ -588,16 +580,6 @@
+  TLS_PSK_WITH_AES_128_CBC_SHA              PSK-AES128-CBC-SHA
+  TLS_PSK_WITH_AES_256_CBC_SHA              PSK-AES256-CBC-SHA
+ 
+-=head2 Deprecated SSL v2.0 cipher suites.
+-
+- SSL_CK_RC4_128_WITH_MD5                 RC4-MD5
+- SSL_CK_RC4_128_EXPORT40_WITH_MD5        Not implemented.
+- SSL_CK_RC2_128_CBC_WITH_MD5             RC2-CBC-MD5
+- SSL_CK_RC2_128_CBC_EXPORT40_WITH_MD5    Not implemented.
+- SSL_CK_IDEA_128_CBC_WITH_MD5            IDEA-CBC-MD5
+- SSL_CK_DES_64_CBC_WITH_MD5              Not implemented.
+- SSL_CK_DES_192_EDE3_CBC_WITH_MD5        DES-CBC3-MD5
+-
+ =head1 NOTES
+ 
+ Some compiled versions of OpenSSL may not include all the ciphers
+--- openssl-1.0.1/doc/apps/s_client.pod	Thu Mar 19 06:37:10 2015
++++ openssl-1.0.1/doc/apps/s_client.pod.new	Tue May 26 12:15:40 2015
+@@ -32,11 +32,9 @@
+ [B<-ign_eof>]
+ [B<-no_ign_eof>]
+ [B<-quiet>]
+-[B<-ssl2>]
+-[B<-ssl3>]
+ [B<-tls1>]
++[B<-tls1_1>]
++[B<-tls1_2>]
+-[B<-no_ssl2>]
+-[B<-no_ssl3>]
+ [B<-no_tls1>]
+ [B<-no_tls1_1>]
+ [B<-no_tls1_2>]
+@@ -201,9 +199,9 @@
+ given as a hexadecimal number without leading 0x, for example -psk
+ 1a2b3c4d.
+ 
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
++=item B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
+ 
+-These options require or disable the use of the specified SSL or TLS protocols.
++These options require or disable the use of the specified TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will
+ negotiate the highest mutually supported protocol version.
+ 
+@@ -227,10 +225,6 @@
+ supported cipher in the list sent by the client. See the B<ciphers>
+ command for more information.
+ 
+-=item B<-serverpref>
+-
+-use the server's cipher preferences; only used for SSLV2.
+-
+ =item B<-starttls protocol>
+ 
+ send the protocol-specific message(s) to switch to TLS for communication.
+@@ -314,8 +308,8 @@
+ then an HTTP command can be given such as "GET /" to retrieve a web page.
+ 
+ If the handshake fails then there are several possible causes, if it is
+-nothing obvious like no client certificate then the B<-bugs>, B<-ssl2>,
+-B<-ssl3>, B<-tls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1> options can be tried
++nothing obvious like no client certificate then the B<-bugs>, B<-tls1>, B<-tls1_1>,
++B<-tls1_2>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2> options can be tried
+ in case it is a buggy server. In particular you should play with these
+ options B<before> submitting a bug report to an OpenSSL mailing list.
+ 
+@@ -337,10 +331,6 @@
+ If there are problems verifying a server certificate then the
+ B<-showcerts> option can be used to show the whole chain.
+ 
+-Since the SSLv23 client hello cannot include compression methods or extensions
+-these will only be supported if its use is disabled, for example by using the
+-B<-no_sslv2> option.
+-
+ The B<s_client> utility is a test tool and is designed to continue the
+ handshake after any certificate verification errors. As a result it will
+ accept any certificate chain (trusted or not) sent by the peer. None test
+--- openssl-1.0.1/doc/apps/s_server.pod Thu Mar 19 06:37:10 2015
++++ openssl-1.0.1/doc/apps/s_server.pod.new     Tue May 26 12:15:02 2015
+@@ -39,12 +39,12 @@
+ [B<-serverpref>]
+ [B<-quiet>]
+ [B<-no_tmp_rsa>]
+-[B<-ssl2>]
+-[B<-ssl3>]
+ [B<-tls1>]
+-[B<-no_ssl2>]
+-[B<-no_ssl3>]
++[B<-tls1_1>]
++[B<-tls1_2>]
+ [B<-no_tls1>]
++[B<-no_tls1_1>]
++[B<-no_tls1_2>]
+ [B<-no_dhe>]
+ [B<-bugs>]
+ [B<-hack>]
+@@ -217,9 +217,9 @@
+ given as a hexadecimal number without leading 0x, for example -psk
+ 1a2b3c4d.
+ 
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
++=item B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
+ 
+-These options require or disable the use of the specified SSL or TLS protocols.
++These options require or disable the use of the specified TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will
+ negotiate the highest mutually supported protocol version.
+ 
+--- openssl-1.0.1/doc/apps/s_time.pod	Thu Jan 15 06:43:49 2015
++++ openssl-1.0.1/doc/apps/s_time.pod.new	Tue May 26 12:20:09 2015
+@@ -19,8 +19,6 @@
+ [B<-verify depth>]
+ [B<-nbio>]
+ [B<-time seconds>]
+-[B<-ssl2>]
+-[B<-ssl3>]
+ [B<-bugs>]
+ [B<-cipher cipherlist>]
+ 
+@@ -92,19 +90,6 @@
+ 
+ turns on non-blocking I/O.
+ 
+-=item B<-ssl2>, B<-ssl3>
+-
+-these options disable the use of certain SSL or TLS protocols. By default
+-the initial handshake uses a method which should be compatible with all
+-servers and permit them to use SSL v3, SSL v2 or TLS as appropriate.
+-The timing program is not as rich in options to turn protocols on and off as
+-the L<s_client(1)|s_client(1)> program and may not connect to all servers.
+-
+-Unfortunately there are a lot of ancient and broken servers in use which
+-cannot handle this technique and will fail to connect. Some servers only
+-work if TLS is turned off with the B<-ssl3> option; others
+-will only support SSL v2 and may need the B<-ssl2> option.
+-
+ =item B<-bugs>
+ 
+ there are several known bug in SSL and TLS implementations. Adding this
+@@ -137,8 +122,7 @@
+ for details.
+ 
+ If the handshake fails then there are several possible causes, if it is
+-nothing obvious like no client certificate then the B<-bugs>, B<-ssl2>,
+-B<-ssl3> options can be tried
++nothing obvious like no client certificate then the B<-bugs> option can be tried
+ in case it is a buggy server. In particular you should play with these
+ options B<before> submitting a bug report to an OpenSSL mailing list.
+ 
+--- openssl-1.0.1/doc/apps/sess_id.pod	Thu Jan 15 06:43:49 2015
++++ openssl-1.0.1/doc/apps/sess_id.pod.new	Tue May 26 12:21:07 2015
+@@ -91,7 +91,7 @@
+ 
+ =item B<Protocol>
+ 
+-this is the protocol in use TLSv1, SSLv3 or SSLv2.
++this is the protocol in use.
+ 
+ =item B<Cipher>
+ 
+@@ -110,10 +110,6 @@
+ 
+ this is the SSL session master key.
+ 
+-=item B<Key-Arg>
+-
+-the key argument, this is only used in SSL v2.
+-
+ =item B<Start Time>
+ 
+ this is the session start time represented as an integer in standard Unix format.

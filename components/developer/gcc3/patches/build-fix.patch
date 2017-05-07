@@ -1,0 +1,20 @@
+Avoid ld.so.1: gcc: fatal: libgcc_s.so.1: version 'GCC_4.2.0' not found (required by file /usr/gcc/4.9/bin/gcc)
+--- gcc-3.4.3/gcc/f/Make-lang.in.~1~	2004-02-24 19:05:14.000000000 +0300
++++ gcc-3.4.3/gcc/f/Make-lang.in	2016-04-12 13:36:42.625865556 +0300
+@@ -214,14 +214,14 @@
+ 
+ f/intdoc$(build_exeext): $(INTDOC_DEPS) f/intdoc.h0 bconfig.h \
+   $(SYSTEM_H) coretypes.h $(TM_H) $(BUILD_LIBDEPS)
+-	$(CC_FOR_BUILD) $(BUILD_CFLAGS) $(BUILD_LDFLAGS) $(INCLUDES) $< \
++	/usr/bin/env -i $(CC_FOR_BUILD) $(BUILD_CFLAGS) $(BUILD_LDFLAGS) $(INCLUDES) $< \
+ 	  $(BUILD_LIBS) -o $@
+ 
+ f/intdoc.h0: f/intdoc.in f/ansify$(build_exeext)
+ 	f/ansify$(build_exeext) $< < $< > $@
+ 
+ f/ansify$(build_exeext): f/ansify.c bconfig.h $(SYSTEM_H) coretypes.h $(TM_H)
+-	  $(CC_FOR_BUILD) $(BUILD_CFLAGS) $(BUILD_LDFLAGS) $(INCLUDES) $< \
++	  /usr/bin/env -i $(CC_FOR_BUILD) $(BUILD_CFLAGS) $(BUILD_LDFLAGS) $(INCLUDES) $< \
+ 	  -o $@
+ 
+ f/BUGS: f/bugs0.texi f/bugs.texi f/root.texi

@@ -1,0 +1,132 @@
+#! /bin/sh
+#
+# Copyright (c) 1992, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+#
+
+# xmakemap -- make a keyboard mapping to be used as input to xmodmap
+#
+# Usage: xmakemap > $HOME/.xmodmaprc
+#
+# Notes:
+#    An X server must be running to use xmakemap.
+#    Run xmakemap and edit $HOME/.xmodmaprc to customize it as desired
+#    (read "Notes" in $HOME/.xmodmaprc).
+#
+
+PATH=/usr/bin ; export PATH
+
+echo '! File:
+!    .xmodmaprc
+!
+! Goal:
+!    Customize keyboard mappings
+!
+! Location (where to put this file):
+!    $HOME/.xmodmaprc
+!
+! Usage:
+!    xmodmap $HOME/.xmodmaprc
+!
+! Notes:
+!  - If you would like your keytable to be customized each time X
+!    is run, you should place the appropriate command in $HOME/.xinitrc.
+!    For example:
+!
+!    if [ -f $HOME/.xmodmaprc ]; then
+!        xmodmap $HOME/.xmodmaprc
+!    fi
+!
+!  - This file should be customized as desired, commenting out each
+!    unneeded entry with '!'.  Note that all clients will be notified
+!    when the keytable changes and the keytable will be distributed to
+!    all clients upon their request.  Since distribution takes time for
+!    each client, users should place the command *first* in .xinitrc
+!    (before most clients are running) and should *not* place the
+!    command in the background.
+!
+!  - Refer to man page for xmodmap(1) for more information.
+!
+
+!
+! clear modifier groups
+!
+
+clear shift
+clear lock
+clear control
+clear mod1
+clear mod2
+clear mod3
+clear mod4
+clear mod5
+
+!
+! set up keys
+!
+!       Key   Unshifted       Shifted         AltGraph        AltGraph-Shifted
+!       ---   --------------- --------------- --------------- ----------------
+'
+xmodmap -pk | awk ' { \
+    { \
+	x = $1; \
+        if (x >= 7 && x <= 132 && NF > 1) { \
+	    $3 = substr($3, 2, length($3)-2); \
+	    $5 = substr($5, 2, length($5)-2); \
+	    $7 = substr($7, 2, length($7)-2); \
+	    $9 = substr($9, 2, length($9)-2); \
+	    printf("keycode %3s = %-15s %-15s %-15s %-15s\n",$1,$3,$5,$7,$9); \
+	} \
+    } \
+} '
+
+echo '
+!
+! set modifier groups
+!
+'
+xmodmap | awk ' { \
+    if ($1 == "shift") { \
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+    if ($1 == "lock") {
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+    if ($1 == "control") {
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+    if ($1 == "mod1") {
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+    if ($1 == "mod2") {
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+    if ($1 == "mod3") {
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+    if ($1 == "mod4") {
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+    if ($1 == "mod5") {
+	printf "add %-7s = %s %s %s %s\n", $1, $2, $4, $6, $8 \
+    } \
+} ' 

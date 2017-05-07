@@ -1,0 +1,28 @@
+#
+# This patch addresses problems with the configure script.
+# As it is Solaris-specific, it is not suitable for upstream.
+#
+--- Python-3.4.2/configure.ac.~2~	2014-09-22 12:56:55.683506632 -0700
++++ Python-3.4.2/configure.ac	2014-09-22 12:56:55.695790952 -0700
+@@ -5,7 +5,7 @@
+ # Set VERSION so we only need to edit in one place (i.e., here)
+ m4_define(PYTHON_VERSION, 3.4)
+ 
+-AC_PREREQ(2.65)
++AC_PREREQ(2.68)
+ 
+ AC_INIT(python, PYTHON_VERSION, http://bugs.python.org/)
+ 
+@@ -2114,12 +2114,6 @@
+ if test -z "$CCSHARED"
+ then
+ 	case $ac_sys_system/$ac_sys_release in
+-	SunOS*) if test "$GCC" = yes;
+-		then CCSHARED="-fPIC";
+-		elif test `uname -p` = sparc;
+-		then CCSHARED="-xcode=pic32";
+-		else CCSHARED="-Kpic";
+-		fi;;
+ 	hp*|HP*) if test "$GCC" = yes;
+ 		 then CCSHARED="-fPIC";
+ 		 else CCSHARED="+z";

@@ -1,0 +1,12 @@
+=== This is added to fix the MKDEP value for Sun Studio compiler
+--- build/apr_common.m4.orig	Sat Dec  6 07:17:56 2008
++++ build/apr_common.m4	Mon Jan  5 02:28:50 2009
+@@ -948,7 +948,7 @@
+   int main() { return 0; }
+ EOF
+   MKDEP="true"
+-  for i in "$CC -MM" "$CC -M" "$CPP -MM" "$CPP -M" "cpp -M"; do
++  for i in "$CC -MM" "$CC -M" "$CC -xM" "$CPP -MM" "$CPP -M" "$CPP -xM" "cpp -M"; do
+     AC_MSG_CHECKING([if $i can create proper make dependencies])
+     if $i conftest.c 2>/dev/null | grep 'conftest.o: conftest.c' >/dev/null; then
+       MKDEP=$i

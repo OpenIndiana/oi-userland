@@ -1,0 +1,49 @@
+# -*-makefile-*-
+# Configuration for Solaris on x86 with cc, dynamic libs, dri
+
+include $(TOP)/configs/default
+
+CONFIG_NAME = solaris-x86-cc-dri
+
+# Compiler and flags
+CC = cc
+CXX = CC
+
+PIC_FLAGS = -KPIC
+
+X11_INCLUDES = -I /usr/X11/include
+
+DEFINES = -DUSE_XSHM -DPTHREADS -DUSE_EXTERNAL_DXTN_LIB=1 -DIN_DRI_DRIVER \
+        -DGLX_DIRECT_RENDERING -DNO_FAST_MATH -DDEFAULT_X86_FPU=0x037f -DSVR4
+
+CFLAGS = $(PASSED_CFLAGS) $(X11_INCLUDES) \
+        $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES) $(ASM_FLAGS)
+
+CXXFLAGS = $(PASSED_CFLAGS) $(X11_INCLUDES) \
+	-Wall $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES)
+
+
+EXTRA_LIB_PATH = -L/usr/X11/lib -R/usr/X11/lib
+
+# Directories
+SRC_DIRS = glx/x11 mesa glu glut/glx glw
+DRIVER_DIRS = x11 osmesa dri
+PROGRAM_DIRS =
+WINDOW_SYSTEM = dri
+
+DRM_SOURCE_PATH=$(TOP)/../drm
+
+DRI_DIRS = i915 r200 r300 radeon
+
+#ASM_FLAGS = -DUSE_X86_ASM -DUSE_MMX_ASM  -DUSE_SSE_ASM -DUSE_3DNOW_ASM 
+#ASM_SOURCES = $(X86_SOURCES)
+#ASM_API = $(X86_API)
+
+EXPAT_LIB= -L/usr/sfw/lib -R/usr/sfw/lib -lexpat
+
+GL_LIB_DEPS += -lXxf86vm $(LIBDRM_LIB) -lc -Wl,-M,mapfile.scope
+DRI_LIB_DEPS = $(LIBDRM_LIB) $(EXPAT_LIB) -l$(GL_LIB) -lm -lc 
+APP_LIB_DEPS = $(LDFLAGS) $(EXTRA_LIB_PATH) -lGLU -lGL -lX11 -lm
+
+INSTALL = /usr/bin/ginstall
+COPY_LIBS = cp -f

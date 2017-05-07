@@ -1,0 +1,12 @@
+--- xf86-video-vmware-13.1.0/src/Makefile.am.~1~	2015-02-13 17:01:55.449219246 +0300
++++ xf86-video-vmware-13.1.0/src/Makefile.am	2015-02-13 17:03:17.410296400 +0300
+@@ -27,7 +27,8 @@
+ vmware_drv_la_LTLIBRARIES = vmware_drv.la
+ vmware_drv_la_LDFLAGS = -module -avoid-version
+ vmware_drv_la_CFLAGS = $(CWARNFLAGS) @XORG_CFLAGS@
+-vmware_drv_ladir = @moduledir@/drivers
++tmp = @moduledir@/drivers
++vmware_drv_ladir = $(tmp:amd64/xorg/modules/drivers=xorg/modules/drivers/amd64)
+ 
+ if BUILD_VMWGFX
+ vmware_drv_la_LIBADD = $(top_builddir)/vmwgfx/libvmwgfx.la

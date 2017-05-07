@@ -1,0 +1,109 @@
+From a13b0914bc7ff54ee5c9c77493b5ccff971b00d0 Mon Sep 17 00:00:00 2001
+From: Alexander Pyhalov <apyhalov@gmail.com>
+Date: Thu, 8 Dec 2016 08:36:52 +0300
+Subject: [PATCH] 7648 useradd/mod commands operate on /home special filesystem
+
+
+diff --git a/usr/src/cmd/passwd/passwd.c b/usr/src/cmd/passwd/passwd.c
+index 7d993f6..fcd7eb2 100644
+--- a/usr/src/cmd/passwd/passwd.c
++++ b/usr/src/cmd/passwd/passwd.c
+@@ -53,7 +53,6 @@
+ #include <rpcsvc/nis.h>
+ #undef GROUP
+ #include <syslog.h>
+-#include <userdefs.h>
+ #include <passwdutil.h>
+ 
+ #include <nss_dbdefs.h>
+@@ -65,6 +64,12 @@
+ #include <bsm/adt_event.h>
+ 
+ /*
++ * This actually has just informational meaning and should match
++ * SHELL defined in usr/src/cmd/login/login.c
++ */
++#define	SHELL	"/usr/bin/sh"
++
++/*
+  * flags indicate password attributes to be modified
+  */
+ 
+@@ -550,10 +555,10 @@ userinput(char *name, pwu_repository_t *rep, attrtype type)
+ 	oldval = oldattr.data.val_s;
+ 
+ 	if (type == ATTR_SHELL) {
+-		/* No current shell: set DEFSHL as default choice */
++		/* No current shell: set SHELL as default choice */
+ 		if (*oldval == '\0') {
+ 			free(oldval);
+-			oldval = strdup(DEFSHL);
++			oldval = strdup(SHELL);
+ 		}
+ 
+ 		if (ckuid() != SUCCESS) {
+diff --git a/usr/src/head/userdefs.h b/usr/src/head/userdefs.h
+index 7c6407c..c6f2efc 100644
+--- a/usr/src/head/userdefs.h
++++ b/usr/src/head/userdefs.h
+@@ -51,10 +51,10 @@ extern "C" {
+ #define	DEFPROJNAME	"default"
+ #define	DEFGROUP	1
+ #define	DEFGNAME	"other"
+-#define	DEFPARENT	"/home"
++#define	DEFPARENT	"/export/home"
+ #define	DEFSKL		"/etc/skel"
+-#define	DEFSHL		"/bin/sh"
+-#define	DEFROLESHL	"/bin/pfsh"
++#define	DEFSHL		"/usr/bin/bash"
++#define	DEFROLESHL	"/usr/bin/pfbash"
+ #define	DEFINACT	0
+ #define	DEFEXPIRE	""
+ #define	DEFAUTH		""
+diff --git a/usr/src/man/man1m/roleadd.1m b/usr/src/man/man1m/roleadd.1m
+index 6777f95..54f9b03 100644
+--- a/usr/src/man/man1m/roleadd.1m
++++ b/usr/src/man/man1m/roleadd.1m
+@@ -136,7 +136,7 @@ are:
+ .ad
+ .sp .6
+ .RS 4n
+-\fB/home\fR
++\fB/export/home\fR
+ .RE
+ 
+ .sp
+@@ -156,7 +156,7 @@ are:
+ .ad
+ .sp .6
+ .RS 4n
+-\fB/bin/pfsh\fR
++\fB/usr/bin/pfbash\fR
+ .RE
+ 
+ .sp
+diff --git a/usr/src/man/man1m/useradd.1m b/usr/src/man/man1m/useradd.1m
+index f87c545..8fb1581 100644
+--- a/usr/src/man/man1m/useradd.1m
++++ b/usr/src/man/man1m/useradd.1m
+@@ -145,7 +145,7 @@ values are:
+ .ad
+ .sp .6
+ .RS 4n
+-\fB/home\fR
++\fB/export/home\fR
+ .RE
+ 
+ .sp
+@@ -165,7 +165,7 @@ values are:
+ .ad
+ .sp .6
+ .RS 4n
+-\fB/bin/sh\fR
++\fB/usr/bin/bash\fR
+ .RE
+ 
+ .sp
+-- 
+2.9.2
+

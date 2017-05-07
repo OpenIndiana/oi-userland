@@ -43,9 +43,8 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS)"
 
+COMPONENT_BUILD_ARGS=
 # common targets
 build:     $(BUILD_32_and_64)
 

@@ -1,0 +1,104 @@
+--- libbonobo-2.24.1/activation-server/object-directory-corba.c.ori	2009-03-16 05:39:49.839582342 +0000
++++ libbonobo-2.24.1/activation-server/object-directory-corba.c	2009-03-16 05:50:28.624389842 +0000
+@@ -590,6 +590,16 @@
+ 	finished_internal_registration = TRUE;
+ }
+ 
++static gboolean
++check_quit_timeout (gpointer user_data)
++{
++#ifdef BONOBO_ACTIVATION_DEBUG
++	fprintf(stderr, "Called check_quit_timeout\n");
++#endif
++	check_quit ();
++	return FALSE;
++}
++
+ void
+ check_quit (void)
+ {
+@@ -600,10 +610,21 @@
+                 g_source_remove (od->no_servers_timeout);
+         od->no_servers_timeout = 0;
+ 
+-        if (od->n_active_servers <= RESIDUAL_SERVERS &&
+-            activation_clients_is_empty_scan ())
+-                od->no_servers_timeout = g_timeout_add_seconds (
++        if (od->n_active_servers <= RESIDUAL_SERVERS) {
++               if (activation_clients_is_empty_scan ()) {
++                       od->no_servers_timeout = g_timeout_add_seconds (
+                         SERVER_IDLE_QUIT_TIMEOUT, quit_server_timeout, NULL);
++               } else {
++               /*
++                * We expect that activation_clients_is_empty_scan will
++                * return FALSE. If it does now we try again in a second
++                * in case clients have died in the meantime.
++                */
++
++                       od->no_servers_timeout = g_timeout_add_seconds (
++                        SERVER_IDLE_QUIT_TIMEOUT, check_quit_timeout, NULL);
++               }
++        }
+ 
+ 	od->time_active_changed = time (NULL);
+ }
+@@ -671,8 +692,9 @@
+ 		dead = (status == ORBIT_CONNECTION_DISCONNECTED);
+ 
+ #ifdef BONOBO_ACTIVATION_DEBUG
+-		fprintf (stderr, "IID '%20s' (%p), %s \n",
++		fprintf (stderr, "IID '%20s' (%p %p), %s \n",
+ 			 (char *) key, servers->servers [i].server,
++			ORBit_small_get_connection(servers->servers[i].server),
+ 			 dead ? "dead" : "alive");
+ #endif
+ 		if (dead) {
+@@ -692,6 +714,7 @@
+         ObjectDirectory *od;
+         static gboolean in_rescan = FALSE;
+         static guint idle_id = 0;
++        guint n_active_servers;
+ 
+         server_lock ();
+ 
+@@ -709,15 +732,30 @@
+                         idle_id = g_timeout_add (100, as_rescan, GUINT_TO_POINTER (1));
+                 server_unlock ();
+                 return FALSE;
++        } else {
++                idle_id = 0;
+         }
+         in_rescan = TRUE;
+ 
++        n_active_servers = od->n_active_servers;
+         g_hash_table_foreach_remove (od->active_server_lists,
+                                      prune_dead_servers, od);
+ #ifdef BONOBO_ACTIVATION_DEBUG
+         g_warning ("After prune: %d live servers",
+                    od->n_active_servers - RESIDUAL_SERVERS);
+ #endif
++        /*
++         * If we still have have live servers and the pruning did not reduce
++         * the number of active servers try again in a second in case the
++         * servers are slow to go away.
++         */
++        if (n_active_servers == od->n_active_servers &&
++            (od->n_active_servers - RESIDUAL_SERVERS) > 0) {
++                 if (!idle_id) {
++                        idle_id = g_timeout_add_seconds (SERVER_IDLE_QUIT_TIMEOUT,
++                                        as_rescan, NULL);
++                }
++        }
+ 
+         check_quit ();
+ 
+@@ -732,6 +770,9 @@
+                           gpointer         dummy)
+ 
+ {
++#ifdef BONOBO_ACTIVATION_DEBUG
++	fprintf(stderr, "active_server_cnx_broken for %p\n", cnx);
++#endif
+         as_rescan (NULL);
+ }
+ 

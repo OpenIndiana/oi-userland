@@ -26,14 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
-COMPONENT_VERSION=	3.2.3
+COMPONENT_VERSION=	3.2.5
 COMPONENT_PROJECT_URL=	http://www.ncftp.com/ncftp/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:46f4f2fbde40187a164bdd0fe3d37d2d85d36445e56f2bf08fc814ee8dcba510
-# though 3.2.3 is mysteriously missing from the upstream site, it would be here.
-COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/older_versions/$(COMPONENT_ARCHIVE)
+    sha256:b4ebe2415761a5137cd1d313c8fc1352f26d8963cc9e9e354e29720aa2089d42
+COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ncftp-client
 
 include ../../make-rules/prep.mk
@@ -43,21 +42,17 @@ include ../../make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CXX="$(CXX)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_64) 
+CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_32) 
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 include ../../make-rules/shared-targets.mk
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

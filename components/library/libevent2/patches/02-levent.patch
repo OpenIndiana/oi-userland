@@ -1,0 +1,38 @@
+We don't deliver libevent*.so => libevent*-2.0.so.* symlinks as they belong to library/libevent.
+Instead we use libevent-2.0.so => libevent*-2.0.so.* symlinks.
+
+diff -ur libevent-2.0.22-stable/libevent_openssl.pc.in libevent-2.0.22-stable-pc/libevent_openssl.pc.in
+--- libevent-2.0.22-stable/libevent_openssl.pc.in	2012-02-11 02:17:14.000000000 +0400
++++ libevent-2.0.22-stable-pc/libevent_openssl.pc.in	2015-03-16 14:07:27.850655006 +0300
+@@ -10,7 +10,7 @@
+ Version: @VERSION@
+ Requires: libevent
+ Conflicts:
+-Libs: -L${libdir} -levent_openssl
++Libs: -L${libdir} -levent_openssl-2.0
+ Libs.private: @LIBS@ -lssl -lcrypto
+ Cflags: -I${includedir}
+
+diff -ur libevent-2.0.22-stable/libevent_pthreads.pc.in libevent-2.0.22-stable-pc/libevent_pthreads.pc.in
+--- libevent-2.0.22-stable/libevent_pthreads.pc.in	2012-02-11 02:17:14.000000000 +0400
++++ libevent-2.0.22-stable-pc/libevent_pthreads.pc.in	2015-03-16 14:07:38.329876764 +0300
+@@ -10,7 +10,7 @@
+ Version: @VERSION@
+ Requires: libevent
+ Conflicts:
+-Libs: -L${libdir} -levent_pthreads
++Libs: -L${libdir} -levent_pthreads-2.0
+ Libs.private: @LIBS@ @PTHREAD_LIBS@
+ Cflags: -I${includedir} @PTHREAD_CFLAGS@
+
+diff -ur libevent-2.0.22-stable/libevent.pc.in libevent-2.0.22-stable-pc/libevent.pc.in
+--- libevent-2.0.22-stable/libevent.pc.in	2015-03-16 14:07:01.460344466 +0300
++++ libevent-2.0.22-stable-pc/libevent.pc.in	2015-03-16 13:59:24.746146325 +0300
+@@ -10,7 +10,7 @@
+ Version: @VERSION@
+ Requires:
+ Conflicts:
+-Libs: -L${libdir} -levent
++Libs: -L${libdir} -levent-2.0
+ Libs.private: @LIBS@
+ Cflags: -I${includedir}

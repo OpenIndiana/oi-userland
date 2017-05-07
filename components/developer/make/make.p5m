@@ -1,0 +1,84 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/developer/build/gnu-make@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description value="GNU Make is an utility which controls the generation of executables and other target files."
+set name=pkg.summary value="A utility for directing compilation."
+set name=info.classification value=org.opensolaris.category.2008:Development/GNU
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2000/488
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+license make.license license="GPLv3, FDLv1.3"
+
+file usr/bin/gmake path=usr/gnu/bin/make
+file usr/bin/$(MACH64)/gmake path=usr/gnu/bin/$(MACH64)/make
+
+file usr/share/man/man1/gmake.1 path=usr/gnu/share/man/man1/make.1
+link path=usr/bin/gmake target=../gnu/bin/make facet.compat.gnulinks=true
+link path=usr/bin/$(MACH64)/gmake \
+    target=../../gnu/bin/$(MACH64)/make facet.compat.gnulinks=true
+link path=usr/share/man/man1/gmake.1 \
+    target=../../../gnu/share/man/man1/make.1 facet.compat.gnulinks=all
+link path=usr/sfw/bin/gmake target=../../gnu/bin/make
+link path=usr/sfw/share/man/man1/gmake.1 \
+    target=../../../../gnu/share/man/man1/make.1
+
+legacy pkg=SUNWgmake \
+    desc="GNU make - A utility used to build software (gmake)" \
+    name="gmake - GNU make"
+
+file path=usr/include/gnumake.h
+file path=usr/share/info/make.info
+file path=usr/share/info/make.info-1
+file path=usr/share/info/make.info-2
+file path=usr/share/locale/be/LC_MESSAGES/make.mo
+file path=usr/share/locale/cs/LC_MESSAGES/make.mo
+file path=usr/share/locale/da/LC_MESSAGES/make.mo
+file path=usr/share/locale/de/LC_MESSAGES/make.mo
+file path=usr/share/locale/es/LC_MESSAGES/make.mo
+file path=usr/share/locale/fi/LC_MESSAGES/make.mo
+file path=usr/share/locale/fr/LC_MESSAGES/make.mo
+file path=usr/share/locale/ga/LC_MESSAGES/make.mo
+file path=usr/share/locale/gl/LC_MESSAGES/make.mo
+file path=usr/share/locale/he/LC_MESSAGES/make.mo
+file path=usr/share/locale/hr/LC_MESSAGES/make.mo
+file path=usr/share/locale/id/LC_MESSAGES/make.mo
+file path=usr/share/locale/it/LC_MESSAGES/make.mo
+file path=usr/share/locale/ja/LC_MESSAGES/make.mo
+file path=usr/share/locale/ko/LC_MESSAGES/make.mo
+file path=usr/share/locale/lt/LC_MESSAGES/make.mo
+file path=usr/share/locale/nl/LC_MESSAGES/make.mo
+file path=usr/share/locale/pl/LC_MESSAGES/make.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/make.mo
+file path=usr/share/locale/ru/LC_MESSAGES/make.mo
+file path=usr/share/locale/sv/LC_MESSAGES/make.mo
+file path=usr/share/locale/tr/LC_MESSAGES/make.mo
+file path=usr/share/locale/uk/LC_MESSAGES/make.mo
+file path=usr/share/locale/vi/LC_MESSAGES/make.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/make.mo

@@ -1,0 +1,75 @@
+--- brasero-2.32.1/plugins/cdrtools/burn-cdrecord.c.1	2016-03-12 00:58:29.631084390 +0300
++++ brasero-2.32.1/plugins/cdrtools/burn-cdrecord.c	2016-03-12 00:59:25.020019591 +0300
+@@ -1064,6 +1064,7 @@
+ 	if (action == BRASERO_JOB_ACTION_SIZE)
+ 		return BRASERO_BURN_NOT_SUPPORTED;
+ 
++	g_ptr_array_add (argv, g_strdup ("pfexec"));
+ 	g_ptr_array_add (argv, g_strdup ("cdrecord"));
+ 	g_ptr_array_add (argv, g_strdup ("-v"));
+ 
+--- brasero-3.12.1/plugins/growisofs/burn-dvd-rw-format.c.1	2017-03-31 13:12:00.067494624 +0300
++++ brasero-3.12.1/plugins/growisofs/burn-dvd-rw-format.c	2017-03-31 13:12:25.150865464 +0300
+@@ -110,6 +110,7 @@
+ 	BraseroBurnFlag flags;
+ 	gchar *device;
+ 
++	g_ptr_array_add (argv, g_strdup ("pfexec"));
+ 	g_ptr_array_add (argv, g_strdup ("dvd+rw-format"));
+ 
+ 	/* undocumented option to show progress */
+--- brasero-3.12.1/plugins/growisofs/burn-growisofs.c.1	2017-03-27 15:19:48.249664568 +0300
++++ brasero-3.12.1/plugins/growisofs/burn-growisofs.c	2017-03-27 15:20:28.980823471 +0300
+@@ -428,6 +428,7 @@
+ 	guint speed;
+ 
+ 	/* This seems to help to eject tray after burning (at least with mine) */
++	g_ptr_array_add (argv, g_strdup ("pfexec"));
+ 	g_ptr_array_add (argv, g_strdup ("growisofs"));
+ 	g_ptr_array_add (argv, g_strdup ("-use-the-force-luke=notray"));
+ 
+@@ -581,6 +582,7 @@
+ 	gchar *device;
+ 	guint speed;
+ 
++	g_ptr_array_add (argv, g_strdup ("pfexec"));
+ 	g_ptr_array_add (argv, g_strdup ("growisofs"));
+ 	brasero_job_get_flags (BRASERO_JOB (growisofs), &flags);
+ 	if (!(flags & BRASERO_BURN_FLAG_FAST_BLANK))
+--- brasero-3.12.1/data/brasero.desktop.in.in.~1~	2014-09-10 17:41:19.000000000 +0400
++++ brasero-3.12.1/data/brasero.desktop.in.in	2017-03-28 00:46:49.152818971 +0300
+@@ -5,7 +5,7 @@
+ _Keywords=disc;cdrom;dvd;burn;audio;video;
+ Categories=GTK;GNOME;AudioVideo;Audio;Video;DiscBurning;
+ MimeType=application/x-cd-image;application/x-cdrdao-toc;application/x-cue;application/x-toc;audio/x-scpls;audio/x-ms-asx;audio/x-mp3-playlist;audio/x-mpegurl;application/x-brasero;x-content/audio-cdda;x-content/video-dvd;x-content/video-vcd;x-content/video-svcd;x-content/image-picturecd;
+-Exec=brasero %U
++Exec=pfexec brasero %U
+ Icon=brasero
+ StartupNotify=true
+ Terminal=false
+@@ -20,20 +20,20 @@
+ 
+ [Desktop Action Window]
+ _Name=Open a New Window
+-Exec=brasero --no-existing-session
++Exec=pfexec brasero --no-existing-session
+ 
+ [Desktop Action Image]
+ _Name=Burn an Image File
+-Exec=brasero --image
++Exec=pfexec brasero --image
+ 
+ [Desktop Action Disc]
+ Name=Copy a Disc
+-Exec=brasero --copy
++Exec=pfexec brasero --copy
+ 
+ [Desktop Action Audio]
+ _Name=Create an Audio Project
+-Exec=brasero --audio
++Exec=pfexec brasero --audio
+ 
+ [Desktop Action Video]
+ _Name=Create a Video Project
+-Exec=brasero --video
++Exec=pfexec brasero --video

@@ -1,0 +1,49 @@
+--- xmlrpc-c-1.39.12/common.mk.~1~	2015-12-30 07:22:14.000000000 +0300
++++ xmlrpc-c-1.39.12/common.mk	2017-03-30 15:24:12.733133305 +0300
+@@ -17,7 +17,7 @@
+ # fully made.
+ .DELETE_ON_ERROR:
+ 
+-GCC_WARNINGS = -Wall -W -Wno-uninitialized -Wundef -Wimplicit \
++GCC_WARNINGS = -Wall -W -Wno-uninitialized -Wundef \
+   -Wno-unknown-pragmas
+   # We need -Wwrite-strings after we fix all the missing consts
+   #
+@@ -48,6 +48,10 @@
+ CFLAGS_COMMON = -DNDEBUG
+ CXXFLAGS_COMMON = -DNDEBUG
+ 
++CFLAGS_COMMON += $(CFLAGS)
++CPPFLAGS_COMMON += $(CPPFLAGS)
++CXXFLAGS_COMMON += $(CXXFLAGS)
++
+ ifeq ($(C_COMPILER_GNU),yes)
+   CFLAGS_COMMON += $(GCC_C_WARNINGS) -fno-common -g -O3
+ endif
+@@ -323,10 +327,10 @@
+ endif
+ 
+ CFLAGS_ALL = $(CFLAGS_COMMON) $(CFLAGS_LOCAL) \
+-  $(INCLUDES) $(CFLAGS_PERSONAL) $(CFLAGS)
++  $(INCLUDES) $(CFLAGS_PERSONAL) $(CFLAGS) $(CPPFLAGS_COMMON)
+ 
+ CXXFLAGS_ALL = $(CXXFLAGS_COMMON) $(CFLAGS_LOCAL) \
+-  $(INCLUDES) $(CFLAGS_PERSONAL) $(CXXFLAGS)
++  $(INCLUDES) $(CFLAGS_PERSONAL) $(CXXFLAGS) $(CPPFLAGS_COMMON)
+ 
+ 
+ $(TARGET_MODS:%=%.o):%.o:%.c
+--- xmlrpc-c-1.39.12/config.mk.in.~1~	2015-12-30 07:22:14.000000000 +0300
++++ xmlrpc-c-1.39.12/config.mk.in	2017-03-30 15:39:55.555377528 +0300
+@@ -195,9 +195,8 @@
+ 
+   # Solaris compiler (Sun C 5.5) can't take multiple ld options as
+   # -Wl,-a,-b .  Ld sees -a,-b in that case.
+-  LDFLAGS_SHLIB = -Wl,-Bdynamic -Wl,-G -Wl,-h -Wl,$(SONAME)
+-  CFLAGS_SHLIB = -Kpic
+-  NEED_RPATH=yes
++  LDFLAGS_SHLIB = -shared -Wl,-h -Wl,$(SONAME)
++  CFLAGS_SHLIB = -fPIC
+ endif
+ 
+ ifeq ($(patsubst aix%,aix,$(HOST_OS)),aix)

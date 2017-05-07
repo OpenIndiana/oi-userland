@@ -1,0 +1,21 @@
+--- src/gallium/auxiliary/util/u_math.h.~1~	2015-10-02 10:59:27.644107017 +0300
++++ src/gallium/auxiliary/util/u_math.h	2015-10-02 11:00:32.283171463 +0300
+@@ -710,15 +710,15 @@
+ }
+ 
+ static inline void*
+-util_memcpy_cpu_to_le32(void * restrict dest, const void * restrict src, size_t n)
++util_memcpy_cpu_to_le32(void * _RESTRICT_KYWD dest, const void * _RESTRICT_KYWD src, size_t n)
+ {
+ #ifdef PIPE_ARCH_BIG_ENDIAN
+    size_t i, e;
+    assert(n % 4 == 0);
+ 
+    for (i = 0, e = n / 4; i < e; i++) {
+-      uint32_t * restrict d = (uint32_t* restrict)dest;
+-      const uint32_t * restrict s = (const uint32_t* restrict)src;
++      uint32_t * _RESTRICT_KYWD d = (uint32_t* _RESTRICT_KYWD)dest;
++      const uint32_t * _RESTRICT_KYWD s = (const uint32_t* _RESTRICT_KYWD)src;
+       d[i] = util_bswap32(s[i]);
+    }
+    return dest;

@@ -1,0 +1,103 @@
+The fix was developed in-house and submitted upstream. The upstream bug
+is:
+
+http://bugs.proftpd.org/show_bug.cgi?id=4157
+
+diff --git a/modules/mod_core.c b/modules/mod_core.c
+--- a/modules/mod_core.c
++++ b/modules/mod_core.c
+@@ -40,6 +40,7 @@
+ /* From src/main.c */
+ extern unsigned long max_connects;
+ extern unsigned int max_connect_interval;
++extern unsigned char tracing_enabled;
+ 
+ /* From modules/mod_site.c */
+ extern modret_t *site_dispatch(cmd_rec*);
+@@ -1381,6 +1382,8 @@
+   int per_session = FALSE;
+   unsigned int idx = 1;
+ 
++  tracing_enabled = TRUE;
++
+   if (cmd->argc-1 < 1)
+     CONF_ERROR(cmd, "wrong number of parameters");
+   CHECK_CONF(cmd, CONF_ROOT);
+diff --git a/modules/mod_ls.c b/modules/mod_ls.c
+--- a/modules/mod_ls.c
++++ b/modules/mod_ls.c
+@@ -307,10 +307,12 @@
+ 
+ static int sendline(int flags, char *fmt, ...) {
+   va_list msg;
+-  char buf[PR_TUNABLE_BUFFER_SIZE+1] = {'\0'};
++  char buf[PR_TUNABLE_BUFFER_SIZE+1];
+   int res = 0;
+   size_t buflen, listbuflen;
+ 
++  (void) memset(buf, '\0', sizeof(buf));
++
+   if (listbuf == NULL) {
+     listbufsz = pr_config_get_server_xfer_bufsz(PR_NETIO_IO_WR);
+     listbuf = listbuf_ptr = pcalloc(session.pool, listbufsz);
+diff --git a/src/fsio.c b/src/fsio.c
+--- a/src/fsio.c
++++ b/src/fsio.c
+@@ -556,10 +556,12 @@
+ static int cache_stat(pr_fs_t *fs, const char *path, struct stat *sbuf,
+     unsigned int op) {
+   int res = -1;
+-  char pathbuf[PR_TUNABLE_PATH_MAX + 1] = {'\0'};
++  char pathbuf[PR_TUNABLE_PATH_MAX + 1];
+   int (*mystat)(pr_fs_t *, const char *, struct stat *) = NULL;
+   size_t pathlen;
+ 
++  (void) memset(pathbuf, '\0', sizeof(pathbuf));
++
+   /* Sanity checks */
+   if (fs == NULL) {
+     errno = EINVAL;
+@@ -641,8 +643,8 @@
+  * during the hit.
+  */
+ static pr_fs_t *lookup_dir_fs(const char *path, int op) {
+-  char buf[PR_TUNABLE_PATH_MAX + 1] = {'\0'};
+-  char tmp_path[PR_TUNABLE_PATH_MAX + 1] = {'\0'};
++  char buf[PR_TUNABLE_PATH_MAX + 1];
++  char tmp_path[PR_TUNABLE_PATH_MAX + 1];
+   pr_fs_t *fs = NULL;
+   int exact = FALSE;
+   size_t tmp_pathlen = 0;
+@@ -651,6 +653,9 @@
+   pr_fs_match_t *fsm = NULL;
+ #endif /* PR_FS_MATCH */
+ 
++  (void) memset(buf, '\0', sizeof(buf));
++  (void) memset(tmp_path, '\0', sizeof(tmp_path));
++
+   sstrncpy(buf, path, sizeof(buf));
+ 
+   /* Check if the given path is an absolute path.  Since there may be
+diff --git a/src/trace.c b/src/trace.c
+--- a/src/trace.c
++++ b/src/trace.c
+@@ -32,6 +32,8 @@
+ 
+ #ifdef PR_USE_TRACE
+ 
++unsigned char tracing_enabled = FALSE;
++
+ static int trace_logfd = -1;
+ static unsigned long trace_opts = PR_TRACE_OPT_DEFAULT;
+ static pool *trace_pool = NULL;
+@@ -473,6 +475,10 @@
+   int res;
+   va_list msg;
+ 
++  /* Optimization: do not run tracing code unless explicitly enabled. */
++  if (tracing_enabled == FALSE)
++    return 0;
++
+   va_start(msg, fmt);
+   res = pr_trace_vmsg(channel, level, fmt, msg);
+   va_end(msg);

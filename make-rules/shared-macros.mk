@@ -18,10 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017 Gary Mills
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-PATH=/usr/bin:/usr/gnu/bin
+# These symbols should be used in component Makefiles
+# whenever PATH is to be defined there:
+#     PATH = $(PATH.illumos)
+#     PATH = $(PATH.gnu)
+PATH.illumos=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.gnu=$(GNUBIN):$(USRBINDIR):$(USRSBINDIR):$(PERL5BINDIR)
+
+# Default PATH
+PATH = $(PATH.illumos)
 
 # The location of an internal mirror of community source archives that we build
 # in this gate.  This mirror has been seeded to include "custom" source archives
@@ -37,8 +46,8 @@ PATH=/usr/bin:/usr/gnu/bin
 
 # Default to looking for source archives on the internal mirror and the external
 # mirror before we hammer on the community source archive repositories.
-export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
-export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
+#export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
+#export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 
 # The workspace starts at the mercurial root
 ifeq ($(origin WS_TOP), undefined)
@@ -46,13 +55,16 @@ export WS_TOP := \
 	$(shell hg root 2>/dev/null || git rev-parse --show-toplevel)
 endif
 
-WS_LOGS =	$(WS_TOP)/$(MACH)/logs
-WS_REPO =	$(WS_TOP)/$(MACH)/repo
-WS_TOOLS =	$(WS_TOP)/tools
-WS_MAKE_RULES =	$(WS_TOP)/make-rules
-WS_COMPONENTS =	$(WS_TOP)/components
-WS_INCORPORATIONS =	$(WS_TOP)/incorporations
-WS_LINT_CACHE =	$(WS_TOP)/$(MACH)/pkglint-cache
+USERLAND_ARCHIVES ?=	$(WS_TOP)/archives/
+WS_MACH =       $(WS_TOP)/$(MACH)
+WS_LOGS =       $(WS_MACH)/logs
+WS_REPO =       $(WS_MACH)/repo
+WS_TOOLS =      $(WS_TOP)/tools
+WS_MAKE_RULES = $(WS_TOP)/make-rules
+WS_COMPONENTS = $(WS_TOP)/components
+WS_LICENSES =   $(WS_TOP)/licenses
+WS_INCORPORATIONS =     $(WS_TOP)/incorporations
+WS_LINT_CACHE = $(WS_MACH)/pkglint-cache
 
 # we want our pkg piplines to fail if there is an error
 # (like if pkgdepend fails in the middle of a pipe), but
@@ -68,9 +80,18 @@ publish:	SHELLOPTS=pipefail
 
 SHELL=	/bin/bash
 
+# This can be overridden to avoid rebuilding when you touch a Makefile
+MAKEFILE_PREREQ =	Makefile
+
 CONSOLIDATION =	userland
 PUBLISHER ?=	$(CONSOLIDATION)
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
+
+# Defines $(space) as a single blank space, so we can use it to convert
+# space-separated paths to colon-separated paths in variables with
+# $(subst $(space),:,$(strip $(SPATHS)))
+empty :=
+space := $(empty) $(empty)
 
 ROOT =			/
 
@@ -83,9 +104,10 @@ PKG_SOLARIS_VERSION ?= 5.11
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER =		gcc
+LINKER =		gcc
 BITS =			32
-PYTHON_VERSION =	2.6
-PYTHON_VERSIONS =	2.6
+PYTHON_VERSION =	2.7
+PYTHON_VERSIONS =	2.7
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -97,22 +119,37 @@ PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)
 
+COMPONENT_LICENSE_FILE ?= $(COMPONENT_NAME).license
+
 COMPONENT_DIR :=	$(shell pwd)
 SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
+
+ARCHLIBSUBDIR32	=
+ARCHLIBSUBDIR64	= $(MACH64)
+ARCHLIBSUBDIR	= $(ARCHLIBSUBDIR$(BITS))
 
 ETCDIR =	/etc
 USRDIR =	/usr
 BINDIR =	/bin
 SBINDIR =	/sbin
 LIBDIR =	/lib
-USRBINDIR =	$(USRDIR)/bin
+VARDIR =	/var
+KERNELDRVDIR =	/kernel/drv
+KERNELDRVDIR32 =/kernel/drv
+KERNELDRVDIR64 =/kernel/drv/$(MACH64)
+USRBINDIR = 	$(USRDIR)/bin
+USRBINDIR32 =	$(USRDIR)/bin/$(MACH32)
 USRBINDIR64 =	$(USRDIR)/bin/$(MACH64)
-USRSBINDIR =	$(USRDIR)/sbin
-USRLIBDIR =	$(USRDIR)/lib
+USRSBINDIR = 	$(USRDIR)/sbin
+USRSBINDIR32 =	$(USRDIR)/sbin/$(MACH32)
+USRSBINDIR64 =	$(USRDIR)/sbin/$(MACH64)
+USRLIBDIR = 	$(USRDIR)/lib
+USRLIBDIR32 =	$(USRDIR)/lib
+USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
 USRSHAREDIR =	$(USRDIR)/share
-USRINCDIR =	$(USRDIR)/include
+USRINCDIR = 	$(USRDIR)/include
 USRSHARELOCALEDIR =	$(USRSHAREDIR)/locale
 USRSHAREMANDIR =	$(USRSHAREDIR)/man
 USRSHAREDOCDIR =	$(USRSHAREDIR)/doc
@@ -122,16 +159,38 @@ USRSHAREMAN1MDIR =	$(USRSHAREMANDIR)/man1m
 USRSHAREMAN3DIR =	$(USRSHAREMANDIR)/man3
 USRSHAREMAN4DIR =	$(USRSHAREMANDIR)/man4
 USRSHAREMAN5DIR =	$(USRSHAREMANDIR)/man5
-USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
-PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
+USRSHAREMAN8DIR =	$(USRSHAREMANDIR)/man8
+USRKERNELDRVDIR =	$(USRDIR)/kernel/drv
+USRKERNELDRVDIR32 =	$(USRDIR)/kernel/drv
+USRKERNELDRVDIR64 =	$(USRDIR)/kernel/drv/$(MACH64)
+
+# The *.$(BITS) variables are different from those above (better suited for
+# isaexec wrapper), and allow for default 32-bit vs. nondefault 64-bit setups
+USRBINDIR.32 = 	$(USRBINDIR)
+USRBINDIR.64 = 	$(USRBINDIR64)
+USRSBINDIR.32 =	$(USRSBINDIR)
+USRSBINDIR.64 =	$(USRSBINDIR64)
+USRLIBDIR.32 = 	$(USRLIBDIR)
+USRLIBDIR.64 = 	$(USRLIBDIR64)
+
 PROTOETCDIR =	$(PROTO_DIR)/$(ETCDIR)
 PROTOETCSECDIR = $(PROTO_DIR)/$(ETCDIR)/security
 PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
+PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
+PROTOSBINDIR =	$(PROTO_DIR)/$(SBINDIR)
 PROTOLIBDIR =	$(PROTO_DIR)/$(LIBDIR)
+PROTOVARDIR =	$(PROTO_DIR)/$(VARDIR)
+PROTOKERNELDRVDIR =  	$(PROTO_DIR)/$(KERNELDRVDIR)
+PROTOKERNELDRVDIR32 =	$(PROTO_DIR)/$(KERNELDRVDIR32)
+PROTOKERNELDRVDIR64 =	$(PROTO_DIR)/$(KERNELDRVDIR64)
 PROTOUSRBINDIR =	$(PROTO_DIR)/$(USRBINDIR)
+PROTOUSRBINDIR32 =	$(PROTO_DIR)/$(USRBINDIR32)
 PROTOUSRBINDIR64 =	$(PROTO_DIR)/$(USRBINDIR64)
 PROTOUSRSBINDIR =	$(PROTO_DIR)/$(USRSBINDIR)
+PROTOUSRSBINDIR32 =	$(PROTO_DIR)/$(USRSBINDIR32)
+PROTOUSRSBINDIR64 =	$(PROTO_DIR)/$(USRSBINDIR64)
 PROTOUSRLIBDIR =	$(PROTO_DIR)/$(USRLIBDIR)
+PROTOUSRLIBDIR32 =	$(PROTO_DIR)/$(USRLIBDIR32)
 PROTOUSRLIBDIR64 =	$(PROTO_DIR)/$(USRLIBDIR64)
 PROTOUSRINCDIR =	$(PROTO_DIR)/$(USRINCDIR)
 PROTOUSRSHAREDIR =	$(PROTO_DIR)/$(USRSHAREDIR)
@@ -143,34 +202,105 @@ PROTOUSRSHAREMAN1MDIR =	$(PROTO_DIR)/$(USRSHAREMAN1MDIR)
 PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)/$(USRSHAREMAN3DIR)
 PROTOUSRSHAREMAN4DIR =	$(PROTO_DIR)/$(USRSHAREMAN4DIR)
 PROTOUSRSHAREMAN5DIR =	$(PROTO_DIR)/$(USRSHAREMAN5DIR)
+PROTOUSRSHAREMAN8DIR =	$(PROTO_DIR)/$(USRSHAREMAN8DIR)
 PROTOUSRSHARELOCALEDIR =	$(PROTO_DIR)/$(USRSHARELOCALEDIR)
+PROTOUSRKERNELDRVDIR =  	$(PROTO_DIR)/$(USRKERNELDRVDIR)
+PROTOUSRKERNELDRVDIR32 =	$(PROTO_DIR)/$(USRKERNELDRVDIR32)
+PROTOUSRKERNELDRVDIR64 =	$(PROTO_DIR)/$(USRKERNELDRVDIR64)
 
+PROTOUSRBINDIR.32 = 	$(PROTOUSRBINDIR)
+PROTOUSRBINDIR.64 = 	$(PROTOUSRBINDIR64)
+PROTOUSRSBINDIR.32 =	$(PROTOUSRSBINDIR)
+PROTOUSRSBINDIR.64 =	$(PROTOUSRSBINDIR64)
+PROTOUSRLIBDIR.32 = 	$(PROTOUSRLIBDIR)
+PROTOUSRLIBDIR.64 = 	$(PROTOUSRLIBDIR64)
 
+# NOTE: We do not build SFW contents
+# /usr/sfw/bin is just a historic artefact, containing symlinks
 SFWBIN =	/usr/sfw/bin
+SFWBIN32 =	$(SFWBIN)
+SFWBIN64 =	$(SFWBIN)/$(MACH64)
+SFWSBIN =	/usr/sfw/sbin
+SFWSBIN32 =	$(SFWSBIN)
+SFWSBIN64 =	$(SFWSBIN)/$(MACH64)
 SFWINCLUDE =	/usr/sfw/include
 SFWLIB =	/usr/sfw/lib
-SFWLIB64 =	/usr/sfw/lib/$(MACH64)
+SFWLIB32 =	$(SFWLIB)
+SFWLIB64 =	$(SFWLIB)/$(MACH64)
 SFWSHARE =	/usr/sfw/share
-SFWSHAREMAN =	/usr/sfw/share/man
-SFWSHAREMAN1 =	/usr/sfw/share/man/man1
-PROTOSFWBIN =	$(PROTO_DIR)/$(SFWBIN)
+SFWSHAREMAN =	$(SFWSHARE)/man
+SFWSHAREMAN1 =	$(SFWSHAREMAN)/man1
+PROTOSFWBIN =   	$(PROTO_DIR)/$(SFWBIN)
+PROTOSFWBIN32 = 	$(PROTO_DIR)/$(SFWBIN32)
+PROTOSFWBIN64 = 	$(PROTO_DIR)/$(SFWBIN64)
+PROTOSFWSBIN =  	$(PROTO_DIR)/$(SFWSBIN)
+PROTOSFWSBIN32 =	$(PROTO_DIR)/$(SFWSBIN32)
+PROTOSFWSBIN64 =	$(PROTO_DIR)/$(SFWSBIN64)
 PROTOSFWLIB =	$(PROTO_DIR)/$(SFWLIB)
+PROTOSFWLIB32 =	$(PROTO_DIR)/$(SFWLIB32)
 PROTOSFWLIB64 =	$(PROTO_DIR)/$(SFWLIB64)
 PROTOSFWSHARE =	$(PROTO_DIR)/$(SFWSHARE)
 PROTOSFWSHAREMAN =	$(PROTO_DIR)/$(SFWSHAREMAN)
 PROTOSFWSHAREMAN1 =	$(PROTO_DIR)/$(SFWSHAREMAN1)
 PROTOSFWINCLUDE =	$(PROTO_DIR)/$(SFWINCLUDE)
 
+# The *.$(BITS) variables are different from those above (better suited for
+# isaexec wrapper), and allow for default 32-bit vs. nondefault 64-bit setups
+SFWBIN.32 = 	$(SFWBIN)
+SFWBIN.64 = 	$(SFWBIN64)
+SFWSBIN.32 =	$(SFWSBIN)
+SFWSBIN.64 =	$(SFWSBIN64)
+SFWLIB.32 = 	$(SFWLIB)
+SFWLIB.64 = 	$(SFWLIB64)
+PROTOSFWBIN.32 =	$(PROTOSFWBIN)
+PROTOSFWBIN.64 =	$(PROTOSFWBIN64)
+PROTOSFWSBIN.32 =	$(PROTOSFWSBIN)
+PROTOSFWSBIN.64 =	$(PROTOSFWSBIN64)
+PROTOSFWLIB.32 =	$(PROTOSFWLIB)
+PROTOSFWLIB.64 =	$(PROTOSFWLIB64)
+
+CLDIR =	/usr/share/common-lisp
+PROTOCLDIR =	$(PROTO_DIR)/$(CLDIR)
+
 GNUBIN =	/usr/gnu/bin
+GNUBIN32 =	$(GNUBIN)/$(MACH32)
+GNUBIN64 =	$(GNUBIN)/$(MACH64)
+GNUSBIN =	/usr/gnu/sbin
+GNUSBIN32 =	$(GNUSBIN)/$(MACH32)
+GNUSBIN64 =	$(GNUSBIN)/$(MACH64)
 GNULIB =	/usr/gnu/lib
-GNULIB64 =	/usr/gnu/lib/$(MACH64)
+GNULIB32 =	$(GNULIB)
+GNULIB64 =	$(GNULIB)/$(MACH64)
 GNUSHARE =	/usr/gnu/share
-GNUSHAREMAN =	/usr/gnu/share/man
-GNUSHAREMAN1 =	/usr/gnu/share/man/man1
-PROTOGNUBIN =	$(PROTO_DIR)/$(GNUBIN)
-PROTOGNUSHARE =	$(PROTO_DIR)/$(GNUSHARE)
+GNUSHAREMAN =	$(GNUSHARE)/man
+GNUSHAREMAN1 =	$(GNUSHAREMAN)/man1
+PROTOGNUBIN =   	$(PROTO_DIR)/$(GNUBIN)
+PROTOGNUBIN32 = 	$(PROTO_DIR)/$(GNUBIN32)
+PROTOGNUBIN64 = 	$(PROTO_DIR)/$(GNUBIN64)
+PROTOGNUSBIN =  	$(PROTO_DIR)/$(GNUSBIN)
+PROTOGNUSBIN32 =	$(PROTO_DIR)/$(GNUSBIN32)
+PROTOGNUSBIN64 =	$(PROTO_DIR)/$(GNUSBIN64)
+PROTOGNULIB =   	$(PROTO_DIR)/$(GNULIB)
+PROTOGNULIB32 = 	$(PROTO_DIR)/$(GNULIB32)
+PROTOGNULIB64 = 	$(PROTO_DIR)/$(GNULIB64)
+PROTOGNUSHARE = 	$(PROTO_DIR)/$(GNUSHARE)
 PROTOGNUSHAREMAN =	$(PROTO_DIR)/$(GNUSHAREMAN)
 PROTOGNUSHAREMAN1 =	$(PROTO_DIR)/$(GNUSHAREMAN1)
+
+# The *.$(BITS) variables are different from those above (better suited for
+# isaexec wrapper), and allow for default 32-bit vs. nondefault 64-bit setups
+GNUBIN.32 = 	$(GNUBIN)
+GNUBIN.64 = 	$(GNUBIN64)
+GNUSBIN.32 =	$(GNUSBIN)
+GNUSBIN.64 =	$(GNUSBIN64)
+GNULIB.32 = 	$(GNULIB)
+GNULIB.64 = 	$(GNULIB64)
+PROTOGNUBIN.32 =	$(PROTOGNUBIN)
+PROTOGNUBIN.64 =	$(PROTOGNUBIN64)
+PROTOGNUSBIN.32 =	$(PROTOGNUSBIN)
+PROTOGNUSBIN.64 =	$(PROTOGNUSBIN64)
+PROTOGNULIB.32 =	$(PROTOGNULIB)
+PROTOGNULIB.64 =	$(PROTOGNULIB64)
 
 # work around _TIME, _DATE, embedded date chatter in component builds
 # to use, set TIME_CONSTANT in the component Makefile and add $(CONSTANT_TIME)
@@ -211,19 +341,111 @@ $(BUILD_DIR_64)/.installed:       BITS=64
 # set the default target for installation of the component
 COMPONENT_INSTALL_TARGETS =	install
 
-TEST_32 =		$(BUILD_DIR_32)/.tested
-TEST_64 =		$(BUILD_DIR_64)/.tested
-TEST_32_and_64 =	$(TEST_32) $(TEST_64)
-$(BUILD_DIR_32)/.tested:       BITS=32
-$(BUILD_DIR_64)/.tested:       BITS=64
+# set the default build test results directory
+COMPONENT_TEST_BUILD_DIR =	$(BUILD_DIR)/test/$(MACH$(BITS))
+
+# set the default master test results directory
+COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
+
+# set the default master test results file
+COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+
+# set the default test results output file
+COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-results
+
+# set the default test results comparison diffs file
+COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-diffs
+
+# set the default test snapshot file
+COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_BUILD_DIR)/results-$(BITS).snapshot
+
+# Normally $(GSED) is simplest, but some results files need more power.
+COMPONENT_TEST_TRANSFORMER =	$(GSED)
+
+# The set of default transforms to be applied to the test results to try
+# to normalize them.
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "s|$(@D)|\\$$(@D)|g" ' \
+	'-e "s|$(PERL)|\\$$(PERL)|g" ' \
+	'-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
+
+# set the default commands used to generate the file containing the set
+# of transforms to be applied to the test results to try to normalize them.
+COMPONENT_TEST_CREATE_TRANSFORMS = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '$(COMPONENT_TEST_TRANSFORMER) ' \
+			$(COMPONENT_TEST_TRANSFORMS) \
+                	' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '$(COMPONENT_TEST_OUTPUT) \\' \
+                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '> $(COMPONENT_TEST_SNAPSHOT)' \
+                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+	fi
+
+# set the default command for performing any test result munging
+COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_BUILD_DIR)/transform-$(BITS)-results
+
+# set the default operation to run to perform test result normalization
+COMPONENT_TEST_PERFORM_TRANSFORM = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
+	fi
+
+# set the default command used to compare the master results with the snapshot
+COMPONENT_TEST_COMPARE_CMD =	$(GDIFF) -uN
+
+# set the default way that master and snapshot test results are compared
+COMPONENT_TEST_COMPARE = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		$(COMPONENT_TEST_COMPARE_CMD) \
+			$(COMPONENT_TEST_MASTER) $(COMPONENT_TEST_SNAPSHOT) \
+			> $(COMPONENT_TEST_DIFFS); \
+		print "Test results in $(COMPONENT_TEST_OUTPUT)"; \
+		if [ -s $(COMPONENT_TEST_DIFFS) ]; \
+		then \
+			print "Differences found."; \
+			$(CAT) $(COMPONENT_TEST_DIFFS); \
+			exit 2; \
+		else \
+			print "No differences found."; \
+		fi \
+	fi
+
+# set the default env command to use for test of the component
+COMPONENT_TEST_ENV_CMD =	$(ENV)
+
+# set the default command to use for test of the component
+COMPONENT_TEST_CMD =	$(GMAKE)
 
 # set the default target for test of the component
 COMPONENT_TEST_TARGETS =	check
 
+# set the default directory for test of the component
+COMPONENT_TEST_DIR =	$(@D)
+
+# determine the type of tests we want to run.
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_32 =		$(BUILD_DIR_32)/.tested
+TEST_64 =		$(BUILD_DIR_64)/.tested
+else
+TEST_32 =		$(BUILD_DIR_32)/.tested-and-compared
+TEST_64 =		$(BUILD_DIR_64)/.tested-and-compared
+endif
+TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+$(BUILD_DIR_32)/.tested:		BITS=32
+$(BUILD_DIR_64)/.tested:		BITS=64
+$(BUILD_DIR_32)/.tested-and-compared:	BITS=32
+$(BUILD_DIR_64)/.tested-and-compared:	BITS=64
+
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
 
-SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio12.1
+SPRO_VERSION =	12.1
+SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio$(SPRO_VERSION)
 SPRO_VROOT =	$(SPRO_ROOT)
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
@@ -233,21 +455,101 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
-GCC_ROOT =	/usr/gcc/4.7
+#
+# The CCACHE makefile variable should evaluate to empty string or a pathname
+# like /usr/bin/ccache depending on your PATH value and "which" implementation.
+# The assignment via ":=" is important, to only do this once in a Makefile,
+# and not on every reference to the value as "=" assignment would result in.
+# Review `man ccache` for optional configuration tuning, like cache size etc.
+#
+# For production builds or suspected errors you can disable this feature by
+# setting ENABLE_CCACHE=false (as makefile or environment variable, which
+# is currently the default) to not even define the usage of wrapper in the
+# userland-building makefile system.
+# If you want to speed up your re-builds, you must set ENABLE_CCACHE=true.
+# For legacy reasons, the CCACHE_DISABLE and CCACHE_NODISABLE variables (from
+# configuration of the "ccache" program itself) are also supported, but direct
+# use is discouraged, since their syntax and usage are counter-intuitive.
+#
+# Still, absence of ccache in PATH is not considered a fatal error since the
+# build would just proceed well with original compiler.
+# Note: In code below we fast-track if the makefile CCACHE variable is defined
+# but fall back to shell executability tests if just envvar CCACHE is passed.
+#
+export CCACHE := $(shell \
+    if test -n "$(CCACHE)" ; then \
+        echo "$(CCACHE)"; \
+    else \
+        if test x"$${CCACHE_DISABLE-}" != x -o x"$(CCACHE_DISABLE)" != x \
+             -o x"$${ENABLE_CCACHE-}" = xfalse -o x"$(ENABLE_CCACHE)" = xfalse \
+        ; then \
+                echo "NOT USING CCACHE FOR OI-USERLAND because explicitly disabled" >&2 ; \
+        else \
+            if test x"$${CCACHE_NODISABLE-}" != x -o x"$(CCACHE_NODISABLE)" != x \
+                 -o x"$${ENABLE_CCACHE-}" = xtrue -o x"$(ENABLE_CCACHE)" = xtrue \
+            ; then \
+                for F in \
+                    "$$CCACHE" \
+                    `which ccache 2>/dev/null | egrep '^/'` \
+                    /usr/bin/ccache \
+                ; do if test -n "$$F" && test -x "$$F" ; then \
+                        echo "$$F" ; \
+                        echo "USING CCACHE FOR OI-USERLAND: $$F" >&2 ; \
+                        if test x"$${CCACHE_DISABLE-}" != x ; then \
+                            echo "WARNING: envvar CCACHE_DISABLE is set, so effectively ccache will not act!" >&2 ; \
+                        fi; \
+                        exit 0; \
+                    fi; \
+                done; \
+                echo "NOT USING CCACHE FOR OI-USERLAND because not found" >&2 ; \
+            fi; \
+        fi; \
+    fi)
+
+GCC_VERSION =	4.9
+GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
-
+F77.studio.32 = $(SPRO_VROOT)/bin/f77
+FC.studio.32 =  $(SPRO_VROOT)/bin/f90
 
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
+F77.studio.64 = $(SPRO_VROOT)/bin/f77
+FC.studio.64 =  $(SPRO_VROOT)/bin/f90
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
+F77.gcc.32 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.32 =	$(GCC_ROOT)/bin/gfortran
 
 CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
+F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
+ifneq ($(strip $(CCACHE)),)
+
+CCACHE_WRAP_ROOT   =	$(WS_TOOLS)/ccache-wrap
+export CC_gcc_32  :=	$(CC.gcc.32)
+export CC_gcc_64  :=	$(CC.gcc.64)
+export CXX_gcc_32 :=	$(CXX.gcc.32)
+export CXX_gcc_64 :=	$(CXX.gcc.64)
+CC.gcc.32  :=	$(CCACHE_WRAP_ROOT)/CC.gcc.32
+CC.gcc.64  :=	$(CCACHE_WRAP_ROOT)/CC.gcc.64
+CXX.gcc.32 :=	$(CCACHE_WRAP_ROOT)/CXX.gcc.32
+CXX.gcc.64 :=	$(CCACHE_WRAP_ROOT)/CXX.gcc.64
+
+ifneq ($(strip $(CCACHE_DIR)),)
+export CCACHE_DIR :=	$(CCACHE_DIR)
+endif
+
+ifneq ($(strip $(CCACHE_LOGFILE)),)
+export CCACHE_LOGFILE :=	$(CCACHE_LOGFILE)
+endif
+
+endif
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
 lint.64 =	$(SPRO_VROOT)/bin/lint -m64
@@ -256,13 +558,13 @@ LINT =		$(lint.$(BITS))
 
 LD =		/usr/bin/ld
 
-PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
-PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64
-PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
-
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.3.4.VENDOR_PACKAGES.32 = /usr/lib/python3.4/vendor-packages
+PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
+PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(WS_TOOLS)/parfait/cc
@@ -278,20 +580,39 @@ endif
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
+F77 =		$(F77.$(COMPILER).$(BITS))
+FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =	1.8
-RUBY.1.8 =	/usr/bin/ruby18
-VENDOR_RUBY =	/usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_VERSION)
+RUBY_VERSION =  2.3
+RUBY_LIB_VERSION.2.2 = 2.2.0	
+RUBY_LIB_VERSION.2.3 = 2.3.0
+RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
+RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
+RUBY =          $(RUBY.$(RUBY_VERSION))
+RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
+
+# Transform Ruby scripts to call the supported
+# version-specific ruby; used in multiple *.mk files
+RUBY_SCRIPT_FIX_FUNC = \
+    $(GNU_GREP) -Rl '^\#! */usr/bin/env ruby' | \
+        /usr/bin/xargs -I\{\} $(GSED) -i -e \
+        '1s%^\#! */usr/bin/env ruby%\#!/usr/ruby/$(RUBY_VERSION)/bin/ruby%' \
+        \{\}
+
+# Use the ruby lib versions to represent the RUBY_VERSIONS that
+# need to get built.  This is done because during package transformations
+# both the ruby version and the ruby library version are needed.
+RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
-PYTHON.2.6.32 =	/usr/bin/python2.6
-PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
-
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
+
+PYTHON.3.4.32 =	/usr/bin/python3.4
+PYTHON.3.4.64 =	/usr/bin/$(MACH64)/python3.4
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
@@ -303,23 +624,27 @@ PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
-JAVA7_HOME =	/usr/jdk/instances/jdk1.7.0
-JAVA6_HOME =	/usr/jdk/instances/jdk1.6.0
-JAVA_HOME = $(JAVA7_HOME)
+JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
+JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
+JAVA_HOME = $(JAVA8_HOME)
+
+# Location of pod2man, etc
+PERL5BINDIR = 	/usr/perl5/bin
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
-#PERL_VERSION =  5.10.0
-PERL_VERSION =  5.16
+PERL_VERSION =  5.22
 
-#PERL_VERSIONS = 5.10.0 5.12 5.16
-PERL_VERSIONS = 5.10.0 5.16
+PERL_VERSIONS = 5.22 5.24
 
-PERL.5.10.0 =     /usr/perl5/5.10.0/bin/perl
-PERL.5.12 =     /usr/perl5/5.12/bin/perl
-PERL.5.16 =	/usr/perl5/5.16/bin/perl
+PERL.5.22 =	/usr/perl5/5.22/bin/perl
+PERL.5.24 =	/usr/perl5/5.24/bin/perl
 
-PERL =          $(PERL.$(PERL_VERSION))
+POD2MAN.5.22 =	/usr/perl5/5.22/bin/pod2man
+POD2MAN.5.24 =	/usr/perl5/5.24/bin/pod2man
+
+PERL =		$(PERL.$(PERL_VERSION))
+POD2MAN =	$(POD2MAN.$(PERL_VERSION))
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
@@ -331,6 +656,83 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
+
+# Config magic for Postgres/EnterpriseDB/...
+# Default DB version is the oldest one, for hopefully best built complatibility
+PG_VERSION ?=   9.3
+PG_IMPLEM ?=    postgres
+PG_VERNUM =     $(subst .,,$(PG_VERSION))
+# For dependencies, including REQUIRED_PACKAGES if needed
+PG_BASEPKG =    database/$(PG_IMPLEM)-$(PG_VERNUM)
+
+PG_HOME =       $(USRDIR)/$(PG_IMPLEM)/$(PG_VERSION)
+PG_BINDIR.32 =  $(PG_HOME)/bin
+PG_BINDIR.64 =  $(PG_HOME)/bin/$(MACH64)
+PG_BINDIR =     $(PG_BINDIR.$(BITS))
+PG_INCDIR =     $(PG_HOME)/include
+PG_MANDIR =     $(PG_HOME)/man
+PG_SHAREDIR =   $(PG_HOME)/share
+PG_DOCDIR =     $(PG_HOME)/doc
+PG_LIBDIR.32 =  $(PG_HOME)/lib
+PG_LIBDIR.64 =  $(PG_HOME)/lib/$(MACH64)
+PG_LIBDIR =     $(PG_LIBDIR.$(BITS))
+PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
+PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
+PG_CONFIG =     $(PG_CONFIG.$(BITS))
+
+PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
+PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
+PKG_MACROS +=   PG_BASEPKG=$(PG_BASEPKG)
+
+# Config magic for MySQL/MariaDB/Percona/...
+# Default DB version is the oldest one, for hopefully best built compatibility
+# NOTE: At this time the gate does not provide a recipe for actual "mysql"
+# The "/usr/mysql/*" trees are mediated to preferred MariaDB or Percona variant
+MYSQL_VERSION ?=   5.5
+MYSQL_IMPLEM ?=    mariadb
+MYSQL_VERNUM =     $(subst .,,$(MYSQL_VERSION))
+# For dependencies, including REQUIRED_PACKAGES if needed
+MYSQL_BASEPKG =    database/$(MYSQL_IMPLEM)-$(MYSQL_VERNUM)
+
+MYSQL_HOME =       $(USRDIR)/$(MYSQL_IMPLEM)/$(MYSQL_VERSION)
+MYSQL_BINDIR.32 =  $(MYSQL_HOME)/bin
+MYSQL_BINDIR.64 =  $(MYSQL_HOME)/bin/$(MACH64)
+MYSQL_BINDIR =     $(MYSQL_BINDIR.$(BITS))
+MYSQL_INCDIR =     $(MYSQL_HOME)/include
+MYSQL_MANDIR =     $(MYSQL_HOME)/man
+MYSQL_SHAREDIR =   $(MYSQL_HOME)/share
+MYSQL_DOCDIR =     $(MYSQL_HOME)/doc
+MYSQL_LIBDIR.32 =  $(MYSQL_HOME)/lib
+MYSQL_LIBDIR.64 =  $(MYSQL_HOME)/lib/$(MACH64)
+MYSQL_LIBDIR =     $(MYSQL_LIBDIR.$(BITS))
+MYSQL_CONFIG.32 =  $(MYSQL_BINDIR.32)/mysql_config
+MYSQL_CONFIG.64 =  $(MYSQL_BINDIR.64)/mysql_config
+MYSQL_CONFIG =     $(MYSQL_CONFIG.$(BITS))
+
+PKG_MACROS +=   MYSQL_VERSION=$(MYSQL_VERSION)
+PKG_MACROS +=   MYSQL_VERNUM=$(MYSQL_VERNUM)
+PKG_MACROS +=   MYSQL_BASEPKG=$(MYSQL_BASEPKG)
+
+# Default libjpeg implementation layout
+JPEG_IMPLEM ?=     libjpeg8-turbo
+JPEG_HOME =        $(USRLIBDIR)/$(JPEG_IMPLEM)
+JPEG_BINDIR.32 =   $(JPEG_HOME)/bin
+JPEG_BINDIR.64 =   $(JPEG_HOME)/bin/$(MACH64)
+JPEG_BINDIR =      $(JPEG_BINDIR.$(BITS))
+JPEG_INCDIR =      $(USRINCDIR)/$(JPEG_IMPLEM)
+JPEG_LIBDIR.32 =   $(JPEG_HOME)/lib
+JPEG_LIBDIR.64 =   $(JPEG_HOME)/lib/$(MACH64)
+JPEG_LIBDIR =      $(JPEG_LIBDIR.$(BITS))
+JPEG_CPPFLAGS =    -I$(JPEG_INCDIR)
+JPEG_CFLAGS.32 =   -Wl,-L$(JPEG_LIBDIR.32) -Wl,-R$(JPEG_LIBDIR.32)
+JPEG_CFLAGS.64 =   -Wl,-L$(JPEG_LIBDIR.64) -Wl,-R$(JPEG_LIBDIR.64)
+JPEG_CFLAGS =      $(JPEG_CFLAGS.$(BITS))
+JPEG_CXXFLAGS.32 = -Wl,-L$(JPEG_LIBDIR.32) -Wl,-R$(JPEG_LIBDIR.32)
+JPEG_CXXFLAGS.64 = -Wl,-L$(JPEG_LIBDIR.64) -Wl,-R$(JPEG_LIBDIR.64)
+JPEG_CXXFLAGS =    $(JPEG_CXXFLAGS.$(BITS))
+JPEG_LDFLAGS.32 =  -L$(JPEG_LIBDIR.32) -R$(JPEG_LIBDIR.32)
+JPEG_LDFLAGS.64 =  -L$(JPEG_LIBDIR.64) -R$(JPEG_LIBDIR.64)
+JPEG_LDFLAGS =     $(JPEG_LDFLAGS.$(BITS))
 
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
@@ -348,6 +750,9 @@ PATCH_LEVEL =	1
 GPATCH_BACKUP =	--backup --version-control=numbered
 GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
 GSED =		/usr/gnu/bin/sed
+GDIFF =		/usr/gnu/bin/diff
+GSORT =		/usr/gnu/bin/sort
+GUNZIP =	/usr/bin/gunzip
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
@@ -368,12 +773,18 @@ RM =		/bin/rm -f
 CP =		/bin/cp -f
 MV =		/bin/mv -f
 LN =		/bin/ln
+CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
+FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
+GNU_GREP =	/usr/gnu/bin/grep
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
+GAS =		/usr/gnu/bin/as
+GTAR =		/usr/gnu/bin/tar
+STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 
 INS.dir=        $(INSTALL) -d $@
@@ -383,6 +794,13 @@ PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
 PKG_CONFIG_PATH = $(PKG_CONFIG_PATH.$(BITS))
 
+# Set default path for environment modules
+MODULE_VERSION =	3.2.10
+MODULE_PATH =		/usr/share/Modules/modulefiles
+MODULE_VERSIONS_PATH =	/usr/share/Modules/versions
+
+# Path to bash completions
+BASH_COMPLETIONS_PATH =	/usr/share/bash-completion/completions
 
 #
 # C preprocessor flag sets to ease feature selection.  Add the required
@@ -429,7 +847,7 @@ CC_BITS =	-m$(BITS)
 # Code generation instruction set and optimization 'hints'.  Use studio_XBITS
 # and not the .arch.bits variety directly.
 studio_XBITS.sparc.32 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
-studio_XBITS.sparc.64 =	
+studio_XBITS.sparc.64 =
 ifneq   ($(strip $(PARFAIT_BUILD)),yes)
 studio_XBITS.sparc.64 += -xtarget=ultra2
 endif
@@ -461,7 +879,7 @@ studio_cplusplus_C99_ENABLE = 	-xlang=c99
 studio_cplusplus_C99_DISABLE =
 
 # And this is the macro you should actually use
-studio_cplusplus_C99MODE = 
+studio_cplusplus_C99MODE =
 
 # Turn on C99 for gcc
 gcc_C99_ENABLE =	-std=c99
@@ -595,6 +1013,11 @@ CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
 
+# Build 32 or 64 bit objects in FORTRAN as well.
+F77FLAGS +=	$(CC_BITS)
+FCFLAGS +=	$(CC_BITS)
+
+
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
 # feature to your Makefile with LDFLAGS += $(FEATURE_MACRO) and add to the
@@ -602,7 +1025,11 @@ CXXFLAGS +=	$(CC_BITS)
 #
 
 # set the bittedness that we want to link
-LD_BITS =	-$(BITS)
+ccs.ld.64 = -64
+gcc.ld.32 = -m32
+gcc.ld.64 = -m64
+LD_BITS =      $($(LINKER).ld.$(BITS))
+LDFLAGS =      $(LD_BITS)
 
 # Reduce the symbol table size, effectively conflicting with -g.  We should
 # get linker guidance here.
@@ -689,6 +1116,46 @@ PERL_OPTIMIZE =$(gcc_OPT)
 # We need this to overwrite options of perl used to compile illumos-gate
 PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_PIC)" ld="$(CC)" ccname="$(shell basename $(CC))" optimize="$(gcc_OPT)"
 
+# Allow user to override default maximum number of archives
+NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
+
+# Rewrite absolute source-code paths into relative for ccache, so that any
+# workspace with a shared CCACHE_DIR can benefit when compiling a component
+ifneq ($(strip $(CCACHE)),)
+export CCACHE_BASEDIR = $(BUILD_DIR_$(BITS))
+COMPONENT_BUILD_ENV += CCACHE="$(CCACHE)"
+COMPONENT_INSTALL_ENV += CCACHE="$(CCACHE)"
+COMPONENT_TEST_ENV += CCACHE="$(CCACHE)"
+COMPONENT_BUILD_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_BUILD_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_BUILD_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_BUILD_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_INSTALL_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_INSTALL_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_INSTALL_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_INSTALL_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_TEST_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_TEST_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_TEST_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_TEST_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_BUILD_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+COMPONENT_INSTALL_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+COMPONENT_TEST_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+
+ifneq ($(strip $(CCACHE_DIR)),)
+COMPONENT_BUILD_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+COMPONENT_INSTALL_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+COMPONENT_TEST_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+endif
+
+ifneq ($(strip $(CCACHE_LOGFILE)),)
+COMPONENT_BUILD_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+COMPONENT_INSTALL_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+COMPONENT_TEST_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+endif
+
+endif
+
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
@@ -711,3 +1178,21 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
+#
+# Packages with tools that are required to build Userland components
+#
+REQUIRED_PACKAGES += metapackages/build-essential
+
+# Only a default dependency if component being built produces binaries.
+ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
+REQUIRED_PACKAGES += system/library
+endif
+
+include $(WS_MAKE_RULES)/environment.mk
+
+# A simple rule to print the value of any macro.  Ex:
+#    $ gmake print-REQUIRED_PACKAGES
+# Note that some macros are set on a per target basis, so what you see
+# is not always what you get.
+print-%:
+	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'

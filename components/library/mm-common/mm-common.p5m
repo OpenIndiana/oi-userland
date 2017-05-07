@@ -1,0 +1,49 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/mm-common-prepare
+file path=usr/share/aclocal/mm-ax_cxx_compile_stdcxx.m4
+file path=usr/share/aclocal/mm-ax_cxx_compile_stdcxx_11.m4
+file path=usr/share/aclocal/mm-common.m4
+file path=usr/share/aclocal/mm-dietlib.m4
+file path=usr/share/aclocal/mm-doc.m4
+file path=usr/share/aclocal/mm-module.m4
+file path=usr/share/aclocal/mm-pkg.m4
+file path=usr/share/aclocal/mm-warnings.m4
+file path=usr/share/doc/mm-common/README
+file path=usr/share/doc/mm-common/skeletonmm.tar.gz
+file path=usr/share/man/man1/mm-common-prepare.1
+file path=usr/share/mm-common/build/compile-binding.am
+file path=usr/share/mm-common/build/dist-changelog.am
+file path=usr/share/mm-common/build/doc-reference.am
+file path=usr/share/mm-common/build/generate-binding.am
+file path=usr/share/mm-common/doctags/libstdc++.tag
+file path=usr/share/mm-common/doctool/doc-install.pl
+file path=usr/share/mm-common/doctool/doc-postprocess.pl
+file path=usr/share/mm-common/doctool/doxygen-extra.css
+file path=usr/share/mm-common/doctool/doxygen.css
+file path=usr/share/mm-common/doctool/tagfile-to-devhelp2.xsl
+file path=usr/share/pkgconfig/mm-common-libstdc++.pc
+file path=usr/share/pkgconfig/mm-common-util.pc
+
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/sed type=require

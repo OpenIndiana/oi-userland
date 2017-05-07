@@ -1,0 +1,136 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+### Tools and daemons
+file path=usr/bin/$(MACH64)/powerman
+file path=usr/bin/powerman
+file path=usr/share/man/man1/powerman.1
+
+### Note: "pm" and "powerman" binaries and manpages are identical - I would
+### guess for legacy purposes; instead of delivering both, we'll do symlinks.
+#file path=usr/bin/$(MACH64)/pm
+#file path=usr/bin/pm
+#file path=usr/share/man/man1/pm.1
+hardlink path=usr/bin/$(MACH64)/pm target=powerman
+hardlink path=usr/bin/pm target=powerman
+hardlink path=usr/share/man/man1/pm.1 target=powerman.1
+
+# For the first push, original init suffices; SMF may come later
+# (As of initial purposes, we only really need the library)
+# This is quite a linuxish script anyway...
+file etc/init.d/powerman path=etc/powerman/powerman-init.sh
+
+file path=usr/sbin/$(MACH64)/httppower
+file path=usr/sbin/$(MACH64)/plmpower
+file path=usr/sbin/$(MACH64)/powermand
+file path=usr/sbin/$(MACH64)/snmppower
+file path=usr/sbin/$(MACH64)/vpcd
+file path=usr/sbin/httppower
+file path=usr/sbin/plmpower
+file path=usr/sbin/powermand
+file path=usr/sbin/snmppower
+file path=usr/sbin/vpcd
+
+file path=usr/share/man/man5/powerman.conf.5
+file path=usr/share/man/man5/powerman.dev.5
+file path=usr/share/man/man8/httppower.8
+file path=usr/share/man/man8/plmpower.8
+file path=usr/share/man/man8/powermand.8
+file path=usr/share/man/man8/vpcd.8
+
+# Perhaps this should be optional to go with STONITH package we don't have yet
+file path=usr/lib/$(MACH64)/stonith/plugins/external/powerman
+file path=usr/lib/stonith/plugins/external/powerman
+
+
+### Libraries, headers and device definitions
+
+file path=usr/include/libpowerman.h
+
+file path=usr/lib/$(MACH64)/libpowerman.so.0.0.0
+link path=usr/lib/$(MACH64)/libpowerman.so target=libpowerman.so.0.0.0
+link path=usr/lib/$(MACH64)/libpowerman.so.0 target=libpowerman.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libpowerman.pc
+
+file path=usr/lib/libpowerman.so.0.0.0
+link path=usr/lib/libpowerman.so target=libpowerman.so.0.0.0
+link path=usr/lib/libpowerman.so.0 target=libpowerman.so.0.0.0
+file path=usr/lib/pkgconfig/libpowerman.pc
+
+file path=usr/share/man/man3/libpowerman.3
+
+file path=etc/powerman/apc-snmp.dev
+file path=etc/powerman/apc.dev
+file path=etc/powerman/apc7900.dev
+file path=etc/powerman/apc7900v3.dev
+file path=etc/powerman/apc7920.dev
+file path=etc/powerman/apc8941.dev
+file path=etc/powerman/apcnew.dev
+file path=etc/powerman/apcold.dev
+file path=etc/powerman/apcpdu.dev
+file path=etc/powerman/apcpdu3.dev
+file path=etc/powerman/appro-gb2.dev
+file path=etc/powerman/appro-greenblade.dev
+file path=etc/powerman/bashfun.dev
+file path=etc/powerman/baytech-rpc18d-nc.dev
+file path=etc/powerman/baytech-rpc22.dev
+file path=etc/powerman/baytech-rpc28-nc.dev
+file path=etc/powerman/baytech-rpc3-nc.dev
+file path=etc/powerman/baytech-snmp.dev
+file path=etc/powerman/baytech.dev
+file path=etc/powerman/cb-7050.dev
+file path=etc/powerman/cyclades-pm10.dev
+file path=etc/powerman/cyclades-pm20.dev
+file path=etc/powerman/cyclades-pm42.dev
+file path=etc/powerman/cyclades-pm8.dev
+file path=etc/powerman/dli.dev
+file path=etc/powerman/dli4.dev
+file path=etc/powerman/eaton-epdu-blue-switched.dev
+file path=etc/powerman/eaton-revelation-snmp.dev
+file path=etc/powerman/hp3488.dev
+file path=etc/powerman/hpilo.dev
+file path=etc/powerman/hpmp.dev
+file path=etc/powerman/hpmpblade.dev
+file path=etc/powerman/hpmpcell.dev
+file path=etc/powerman/hpmpdome.dev
+file path=etc/powerman/ibmbladecenter.dev
+file path=etc/powerman/icebox.dev
+file path=etc/powerman/icebox3.dev
+file path=etc/powerman/ics8064.dev
+file path=etc/powerman/ilom.dev
+file path=etc/powerman/ipmi.dev
+file path=etc/powerman/ipmipower-serial.dev
+file path=etc/powerman/ipmipower.dev
+file path=etc/powerman/lom.dev
+file path=etc/powerman/phantom.dev
+file path=etc/powerman/plmpower.dev
+file path=etc/powerman/powerman.conf.example
+file path=etc/powerman/powerman.dev
+file path=etc/powerman/raritan-px4316.dev
+file path=etc/powerman/raritan-px5523.dev
+file path=etc/powerman/sentry_cdu.dev
+file path=etc/powerman/swpdu.dev
+file path=etc/powerman/vpc.dev
+file path=etc/powerman/wti-rps10.dev
+file path=etc/powerman/wti.dev

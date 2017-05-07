@@ -1,0 +1,39 @@
+diff --git a/man/Makefile.am b/man/Makefile.am
+index fef283f..c2b8482 100644
+--- a/man/Makefile.am
++++ b/man/Makefile.am
+@@ -1,6 +1,16 @@
+ libmandir = $(LIB_MAN_DIR)
+ 
+ libman_PRE =					\
++	XReadScreen.man \
++	XSolarisOvlCopyAreaAndPaintType.man \
++	XSolarisOvlCopyPaintType.man \
++	XSolarisOvlCreateWindow.man \
++	XSolarisOvlGetPaintType.man \
++	XSolarisOvlIsOverlayWindow.man \
++	XSolarisOvlSelectPair.man \
++	XSolarisOvlSelectPartner.man \
++	XSolarisOvlSetPaintType.man \
++	XSolarisOvlSetWindowTransparent.man \
+ 	$(all_shadows:=.man)			\
+ 	DBE.man					\
+ 	DPMSCapable.man				\
+diff --git a/src/Makefile.am b/src/Makefile.am
+index b828547..fc57d28 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -64,3 +64,13 @@ lintlib_DATA = $(LINTLIB)
+ $(LINTLIB): $(libXext_la_SOURCES)
+ 	$(LINT) -y -oXext -x $(ALL_LINT_FLAGS) $(libXext_la_SOURCES)
+ endif MAKE_LINT_LIB
++
++# Solaris specific additions:
++libXext_la_SOURCES += \
++	AllPlanes.c \
++	FBPM.c \
++	TransOvl.c \
++	XGrabWin.c \
++	XPanoramiX.c
++
++libXextinclude_HEADERS += $(top_srcdir)/include/X11/extensions/xinerama.h

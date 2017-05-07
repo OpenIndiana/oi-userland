@@ -1,0 +1,52 @@
+diff -ruN ../a/openssl-0.9.8o/engines/Makefile openssl-0.9.8o/engines/Makefile
+--- ../a/openssl-0.9.8o/engines/Makefile	2009-11-09 17:53:02.000000000 -0800
++++ openssl-0.9.8o/engines/Makefile	2010-07-23 17:36:14.456537100 -0700
+@@ -20,7 +20,8 @@
+ APPS=
+ 
+ LIB=$(TOP)/libcrypto.a
+-LIBNAMES= 4758cca aep atalla cswift gmp chil nuron sureware ubsec capi
++LIBNAMES= 4758cca aep atalla cswift gmp chil nuron sureware ubsec capi \
++	devcrypto
+ 
+ LIBSRC=	e_4758cca.c \
+ 	e_aep.c \
+@@ -31,7 +32,8 @@
+ 	e_nuron.c \
+ 	e_sureware.c \
+ 	e_ubsec.c \
+-	e_capi.c
++	e_capi.c \
++	e_devcrypto.c 
+ LIBOBJ= e_4758cca.o \
+ 	e_aep.o \
+ 	e_atalla.o \
+@@ -41,7 +43,8 @@
+ 	e_nuron.o \
+ 	e_sureware.o \
+ 	e_ubsec.o \
+-	e_capi.o
++	e_capi.o \
++	e_devcrypto.o
+ 
+ SRC= $(LIBSRC)
+ 
+@@ -55,7 +58,8 @@
+ 	e_nuron_err.c e_nuron_err.h \
+ 	e_sureware_err.c e_sureware_err.h \
+ 	e_ubsec_err.c e_ubsec_err.h \
+-	e_capi_err.c e_capi_err.h
++	e_capi_err.c e_capi_err.h \
++	e_devcrypto_err.c e_devcrypto_err.h
+ 
+ ALL=    $(GENERAL) $(SRC) $(HEADER)
+ 
+@@ -70,7 +74,7 @@
+ 		for l in $(LIBNAMES); do \
+ 			$(MAKE) -f ../Makefile.shared -e \
+ 				LIBNAME=$$l LIBEXTRAS=e_$$l.o \
+-				LIBDEPS='-L.. -lcrypto $(EX_LIBS)' \
++				LIBDEPS='-L.. -lcrypto -lcryptoutil $(EX_LIBS)' \
+ 				link_o.$(SHLIB_TARGET); \
+ 		done; \
+ 	else \

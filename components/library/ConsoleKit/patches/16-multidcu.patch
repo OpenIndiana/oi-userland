@@ -1,0 +1,117 @@
+diff -urpN ConsoleKit-0.4.1.orig/data/displays.d/Makefile.am ConsoleKit-0.4.1/data/displays.d/Makefile.am
+--- ConsoleKit-0.4.1.orig/data/displays.d/Makefile.am	2013-10-21 11:07:48.648121103 +0530
++++ ConsoleKit-0.4.1/data/displays.d/Makefile.am	2013-10-21 12:27:57.668891849 +0530
+@@ -6,7 +6,9 @@ display_in_files = \
+ 	RemoteMachine.display.in \
+ 	LocalVNC.display.in \
+ 	Sunray.display.in \
+-	Headless.display.in
++	Headless.display.in \
++	MultiDCU.display.in \
++	HotPlug.display.in 
+ 
+ display_DATA = $(display_in_files:.display.in=.display)
+ 
+@@ -20,6 +21,10 @@ Sunray.display: Sunray.display.in Makefi
+ 	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
+ Headless.display: Headless.display.in Makefile
+ 	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
++MultiDCU.display: MultiDCU.display.in Makefile
++	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
++HotPlug.display: HotPlug.display.in Makefile
++	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
+ 
+ EXTRA_DIST =						\
+ 	$(display_in_files)				\
+diff -urpN ConsoleKit-0.4.1.orig/data/displays.d/MultiDCU.display.in ConsoleKit-0.4.1/data/displays.d/MultiDCU.display.in
+--- ConsoleKit-0.4.1.orig/data/displays.d/MultiDCU.display.in	1970-01-01 05:30:00.000000000 +0530
++++ ConsoleKit-0.4.1/data/displays.d/MultiDCU.display.in	2013-10-21 11:49:46.380264327 +0530
+@@ -0,0 +1,6 @@
++[Display]
++Type=X11
++
++[X11]
++Exec=@X11_DIR@/Xserver $display -layout $xsession -br -novtswitch -auth $auth
++
+diff -urpN ConsoleKit-0.4.1.orig/data/displays.d/HotPlug.display.in ConsoleKit-0.4.1/data/displays.d/HotPlug.display.in
+--- ConsoleKit-0.4.1.orig/data/displays.d/HotPlug.display.in	1970-01-01 05:30:00.000000000 +0530
++++ ConsoleKit-0.4.1/data/displays.d/HotPlug.display.in	2013-10-21 11:49:46.380264327 +0530
+@@ -0,0 +1,6 @@
++[Display]
++Type=X11
++
++[X11]
++Exec=@X11_DIR@/Xserver $display -isolateDevice $busid -br -novtswitch -auth $auth
++
+diff -urpN ConsoleKit-0.4.1.orig/data/sessions.d/Makefile.am ConsoleKit-0.4.1/data/sessions.d/Makefile.am
+--- ConsoleKit-0.4.1.orig/data/sessions.d/Makefile.am	2013-10-21 11:07:48.647060294 +0530
++++ ConsoleKit-0.4.1/data/sessions.d/Makefile.am	2013-10-21 11:10:46.711157036 +0530
+@@ -5,7 +5,11 @@ session_DATA = \
+ 	Headless.session		\
+ 	Local.session			\
+ 	LocalVNC.session		\
+-	Remote.session
++	Remote.session			\
++	MultiDCU0.session		\
++	MultiDCU1.session		\
++	MultiDCU2.session		\
++	MultiDCU3.session
+ 
+ EXTRA_DIST =				\
+ 	$(session_DATA)			\
+diff -urpN ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU0.session ConsoleKit-0.4.1/data/sessions.d/MultiDCU0.session
+--- ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU0.session	1970-01-01 05:30:00.000000000 +0530
++++ ConsoleKit-0.4.1/data/sessions.d/MultiDCU0.session	2013-10-21 11:08:15.415087346 +0530
+@@ -0,0 +1,10 @@
++[Session Entry]
++Name=MultiDCU0
++Type=LoginWindow
++Description=Multi-DCU Session Login Screen
++DisplayTemplate=MultiDCU
++
++[MultiDCU]
++display=:0
++xsession=Xsession0
++
+diff -urpN ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU1.session ConsoleKit-0.4.1/data/sessions.d/MultiDCU1.session
+--- ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU1.session	1970-01-01 05:30:00.000000000 +0530
++++ ConsoleKit-0.4.1/data/sessions.d/MultiDCU1.session	2013-10-21 11:08:15.415350056 +0530
+@@ -0,0 +1,10 @@
++[Session Entry]
++Name=MultiDCU1
++Type=LoginWindow
++Description=Multi-DCU Session Login Screen
++DisplayTemplate=MultiDCU
++
++[MultiDCU]
++display=:1
++xsession=Xsession1
++
+diff -urpN ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU2.session ConsoleKit-0.4.1/data/sessions.d/MultiDCU2.session
+--- ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU2.session	1970-01-01 05:30:00.000000000 +0530
++++ ConsoleKit-0.4.1/data/sessions.d/MultiDCU2.session	2013-10-21 11:08:15.415560561 +0530
+@@ -0,0 +1,10 @@
++[Session Entry]
++Name=MultiDCU2
++Type=LoginWindow
++Description=Multi-DCU Session Login Screen
++DisplayTemplate=MultiDCU
++
++[MultiDCU]
++display=:2
++xsession=Xsession2
++
+diff -urpN ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU3.session ConsoleKit-0.4.1/data/sessions.d/MultiDCU3.session
+--- ConsoleKit-0.4.1.orig/data/sessions.d/MultiDCU3.session	1970-01-01 05:30:00.000000000 +0530
++++ ConsoleKit-0.4.1/data/sessions.d/MultiDCU3.session	2013-10-21 11:08:15.415749387 +0530
+@@ -0,0 +1,10 @@
++[Session Entry]
++Name=MultiDCU3
++Type=LoginWindow
++Description=Multi-DCU Session Login Screen
++DisplayTemplate=MultiDCU
++
++[MultiDCU]
++display=:3
++xsession=Xsession3
++

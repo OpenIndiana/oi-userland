@@ -1,0 +1,102 @@
+diff -Naur vobcopy-1.2.0/dvd.c vobcopy-osol/dvd.c
+--- vobcopy-1.2.0/dvd.c	2009-06-08 23:15:34.000000000 +0300
++++ vobcopy-osol/dvd.c	2016-08-07 01:15:43.392524655 +0300
+@@ -25,10 +25,55 @@
+ {
+ 
+ #if defined( __sun )
+-  /* title is actually in the device name */
+-  char *new_title;
+-  new_title = strstr( device, "d0/" ) + strlen( "d0/" );
+-  strncpy( title, new_title, sizeof(title)-1 );
++#include <sys/utsname.h>
++  struct utsname name;
++  uname(&name);
++  if ( strcmp(name.release,"5.11")  == 0 ) {
++    FILE  *mnttab_fp;
++    int mntcheck;
++    struct mnttab mount_entry;
++    char mnt_mountp[255];
++    char *mnt_special;
++    
++    if ( ( mnttab_fp = fopen( "/etc/mnttab", "r" ) ) == NULL )
++      {
++	fprintf( stderr, _(" [Error] Could not open mnttab for searching!\n") );
++	fprintf( stderr, _(" [Error] error: %s\n"), strerror( errno ) );
++	return -1;
++      }
++    mnt_special = malloc( strlen( device ) );
++    strcpy(mnt_special, device); 
++    strcpy( strstr( mnt_special, "/rdsk/" ), "" );
++    strcat( mnt_special, "/dsk/" );
++    strcat( mnt_special, strstr( device, "/rdsk/" ) + strlen( "/rdsk/" ) );
++
++    while ( ( mntcheck = getmntent( mnttab_fp, &mount_entry ) ) == 0 )
++      {
++	/* check to see if our path is this entry */
++	if ( strcmp( mnt_special, mount_entry.mnt_special ) == 0 )
++	  {
++	    strcpy(title, ( mount_entry.mnt_mountp ) + 7);
++	    break;
++	  }
++      }
++    if ( mntcheck > 0 )
++      {
++         fprintf( stderr, _("[Error] Encountered error in reading mnttab file\n") );
++         fprintf( stderr, _("[Error] error: %s\n"), strerror( errno ) );
++         return -1;
++      }
++    else if ( mntcheck == -1 )
++      {
++         fprintf( stderr, _("[Error] Did not find mounted device %s in mnttab!\n"), device );
++         return -1;
++      }
++  }
++  else { 
++    /* title is actually in the device name */
++    char *new_title;
++    new_title = strstr( device, "d0/" ) + strlen( "d0/" );
++    strncpy( title, new_title, strlen(new_title) );
++  }
+ #else
+   int  filehandle = 0;
+   int  i = 0, last = 0;
+@@ -89,7 +134,7 @@
+       title[ last + 1 ] = '\0';
+ 
+ #endif
+-
++  int i;
+   for( i=0; i< strlen(title);i++ )
+     {
+       if( title[i] == ' ')
+@@ -222,7 +267,7 @@
+ 	    strcat( new_device, "/rdsk/" );
+ 	    strcat( new_device,
+ 		    strstr( mnt_special, "/dsk/" ) + strlen( "/dsk/" ) );
+-	    strncpy( device, new_device, sizeof(device)-1 );
++	    strncpy( device, new_device, strlen(new_device)+1 );
+ 	    free( mnt_special );
+ 	    free( new_device );
+ 	    mounted = TRUE;
+diff -Naur vobcopy-1.2.0/vobcopy.c vobcopy-osol/vobcopy.c
+--- vobcopy-1.2.0/vobcopy.c	2009-06-08 23:15:34.000000000 +0300
++++ vobcopy-osol/vobcopy.c	2016-08-07 01:15:43.347404608 +0300
+@@ -736,7 +736,7 @@
+    */
+   if ( provided_dvd_name_flag )
+     safestrncpy( dvd_name, provided_dvd_name, sizeof(dvd_name)-1 );
+-  else
++  else 
+     get_dvd_name_return = get_dvd_name( dvd_path, dvd_name );
+   fprintf( stderr, _("[Info] Name of the dvd: %s\n"), dvd_name );
+ 
+@@ -773,7 +773,7 @@
+ 
+   if( longest_title_flag ) /*no title specified (-n ) */
+     {
+-      titleid = get_longest_title( &dvd );
++      titleid = get_longest_title( dvd );
+       fprintf( stderr, _("[Info] longest title %d.\n"), titleid );
+     }
+ 

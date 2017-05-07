@@ -1,0 +1,88 @@
+diff -ur ORBit2-2.14.18-old/include/orbit/GIOP/giop.h ORBit2-2.14.18-new/include/orbit/GIOP/giop.h
+--- ORBit2-2.14.18-old/include/orbit/GIOP/giop.h	2009-04-18 20:20:54.000000000 +0800
++++ ORBit2-2.14.18-new/include/orbit/GIOP/giop.h	2010-05-28 14:35:56.012926304 +0800
+@@ -14,6 +14,7 @@
+ 
+ #ifdef ORBIT2_INTERNAL_API
+ 
++void        giop_set_main_context  (GMainContext *context);
+ void        giop_init              (gboolean thread_safe,
+ 				    gboolean blank_wire_data);
+ void        giop_main_run          (void);
+diff -ur ORBit2-2.14.18-old/include/orbit/orb-core/corba-orb.h ORBit2-2.14.18-new/include/orbit/orb-core/corba-orb.h
+--- ORBit2-2.14.18-old/include/orbit/orb-core/corba-orb.h	2009-04-18 20:20:54.000000000 +0800
++++ ORBit2-2.14.18-new/include/orbit/orb-core/corba-orb.h	2010-05-28 14:36:31.612946110 +0800
+@@ -32,6 +32,8 @@
+  */
+ glong ORBit_get_giop_recv_limit (void);
+ 
++void ORBit_set_giop_main_context (GMainContext *context);
++
+ #ifdef ORBIT2_INTERNAL_API
+ 
+ void      ORBit_ORB_forw_bind (CORBA_ORB                   orb,
+diff -ur ORBit2-2.14.18-old/src/orb/GIOP/giop.c ORBit2-2.14.18-new/src/orb/GIOP/giop.c
+--- ORBit2-2.14.18-old/src/orb/GIOP/giop.c	2009-04-18 20:20:54.000000000 +0800
++++ ORBit2-2.14.18-new/src/orb/GIOP/giop.c	2010-05-28 14:34:39.517566265 +0800
+@@ -21,6 +21,7 @@
+ static int      corba_wakeup_fds[2];
+ #define WAKEUP_POLL  corba_wakeup_fds [0]
+ #define WAKEUP_WRITE corba_wakeup_fds [1]
++static GMainContext *giop_main_context = NULL;
+ static GSource *giop_main_source = NULL;
+ static GIOPThread *giop_main_thread = NULL;
+ 
+@@ -530,19 +531,26 @@
+ }
+ 
+ void
++giop_set_main_context (GMainContext *context)
++{
++	giop_main_context = context;
++}
++
++void
+ giop_init (gboolean thread_safe, gboolean blank_wire_data)
+ {
+ 	link_init (thread_safe);
+ 
+ 	if (giop_thread_safe ()) {
+ 		GIOPThread *tdata;
++		if (!giop_main_context)
++			giop_main_context = g_main_context_default();
+ 
+ 		/* We need a destructor to clean up if giopthreads are used
+ 		 * outside of ORBit controlled threads */
+ 		giop_tdata_private = g_private_new ((GDestroyNotify)giop_thread_free);
+ 
+-		giop_main_thread = tdata = giop_thread_new (
+-			g_main_context_default ()); /* main thread */
++		giop_main_thread = tdata = giop_thread_new (giop_main_context); /* main thread */
+ 
+ 		if (link_pipe (corba_wakeup_fds) < 0) /* cf. g_main_context_init_pipe */
+ 			g_error ("Can't create CORBA main-thread wakeup pipe");
+@@ -556,7 +564,7 @@
+ 		fcntl (WAKEUP_WRITE, F_SETFL, O_NONBLOCK);
+ #endif
+ 		giop_main_source = link_source_create_watch (
+-			g_main_context_default (), WAKEUP_POLL,
++			giop_main_context, WAKEUP_POLL,
+ 			NULL, (G_IO_IN | G_IO_PRI),
+ 			giop_mainloop_handle_input, NULL);
+ 		
+diff -ur ORBit2-2.14.18-old/src/orb/orb-core/corba-orb.c ORBit2-2.14.18-new/src/orb/orb-core/corba-orb.c
+--- ORBit2-2.14.18-old/src/orb/orb-core/corba-orb.c	2009-04-18 20:20:54.000000000 +0800
++++ ORBit2-2.14.18-new/src/orb/orb-core/corba-orb.c	2010-05-28 14:35:25.821387536 +0800
+@@ -1442,6 +1442,12 @@
+ 	return giop_recv_get_limit ();
+ }
+ 
++void
++ORBit_set_giop_main_context (GMainContext *context)
++{
++	giop_set_main_context (context);
++}
++
+ const ORBit_option orbit_supported_options[] = {
+ 	{ "ORBid",              ORBIT_OPTION_STRING,  NULL }, /* FIXME: unimplemented */
+ 	{ "ORBImplRepoIOR",     ORBIT_OPTION_STRING,  NULL }, /* FIXME: unimplemented */

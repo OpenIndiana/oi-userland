@@ -1,0 +1,35 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/library/java/swt@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Standard Widget Toolkit"
+set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license swt.license license='EPLv1.0, LGPLv2.1, MPL1.1'
+
+depend fmri=service/opengl/ogl-select type=require
+
+file path=usr/lib/swt/libswt-atk-gtk-3836.so
+file path=usr/lib/swt/libswt-awt-gtk-3836.so
+file path=usr/lib/swt/libswt-cairo-gtk-3836.so
+file path=usr/lib/swt/libswt-glx-gtk-3836.so pkg.depend.bypass-generate=libGL\.so\.1
+file path=usr/lib/swt/libswt-gnome-gtk-3836.so
+file path=usr/lib/swt/libswt-gtk-3836.so
+file path=usr/lib/swt/libswt-pi-gtk-3836.so
+file path=usr/share/lib/java/swt-debug.jar
+file path=usr/share/lib/java/swt.jar

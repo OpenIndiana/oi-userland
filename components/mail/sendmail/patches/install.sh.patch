@@ -1,0 +1,38 @@
+# All of the changes in this patch are specific to a Solaris build, and thus
+# not applicable upstream.
+--- sendmail-8.14.7/devtools/bin/install.sh	2001-03-16 15:37:31.000000000 -0800
++++ sendmail-8.14.7/devtools/bin/install.sh	2013-06-19 12:14:10.497500058 -0700
+@@ -45,7 +45,7 @@
+ 		shift; shift
+ 		;;
+ 
+-	  -c)	program=cp
++	  -c)	program="cp -f"
+ 		shift
+ 		;;
+ 
+@@ -62,6 +62,10 @@
+ 	esac
+ done
+ 
++# IPS makes owner and group moot for Solaris internal builds.
++owner=""
++group=""
++
+ # Check source file
+ if [ -z "$1" ]
+ then
+@@ -88,6 +92,13 @@
+ 	dst=$2
+ fi
+ 
++# Make sure destination dir exists
++dstdir=`dirname $dst`
++if [ ! -d $dstdir ]
++then
++	mkdir -p $dstdir
++fi
++
+ # Do install operation
+ $program $src $dst
+ if [ $? != 0 ]

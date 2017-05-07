@@ -1,0 +1,20 @@
+--- libcanberra-0.26/src/canberra-gtk-module.c.1	2015-12-03 12:21:13.367625512 +0300
++++ libcanberra-0.26/src/canberra-gtk-module.c	2015-12-03 12:21:42.131165391 +0300
+@@ -932,7 +932,7 @@
+         connected = TRUE;
+ }
+ 
+-static gboolean quit_handler(gpointer data) {
++static gboolean quit_handler(void) {
+         dispatch_queue();
+         return FALSE;
+ }
+@@ -964,7 +964,7 @@
+         install_hook(GTK_TYPE_WIDGET, "drag-failed", &signal_id_widget_drag_failed);
+         install_hook(GTK_TYPE_EXPANDER, "activate", &signal_id_expander_activate);
+ 
+-        gtk_quit_add(1, quit_handler, NULL);
++        g_atexit(quit_handler);
+ }
+ 
+ G_MODULE_EXPORT gchar* g_module_check_init(GModule *module);

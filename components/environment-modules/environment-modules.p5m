@@ -1,0 +1,54 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Packaging
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+
+
+file path=etc/profile.d/modules.sh mode=0644 preserve=true
+link path=usr/lib/Modules/latest target=$(COMPONENT_VERSION)
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/bin/add.modules
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/bin/mkroot
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/bin/modulecmd
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/.modulespath
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/bash
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/bash_completion
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/cmake
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/csh
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/ksh
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/perl.pm
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/python.py
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/ruby.rb
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/sh
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/tcsh
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/init/zsh
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/modulefiles/dot
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/modulefiles/module-git
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/modulefiles/module-info
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/modulefiles/modules
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/modulefiles/null
+file path=usr/lib/Modules/$(COMPONENT_VERSION)/modulefiles/use.own
+file path=usr/share/bash-completion/completions/modules
+file path=usr/share/Modules/versions/$(COMPONENT_VERSION)
+file path=usr/share/man/man1/module.1
+file path=usr/share/man/man4/modulefile.4

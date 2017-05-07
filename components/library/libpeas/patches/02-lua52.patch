@@ -1,0 +1,19 @@
+patch to use Lua 5.2 instead of Lua 5.1.
+
+Need testing before contribution to upstream.
+
+XXX file upstream bug
+
+--- libpeas-1.14.0/loaders/lua5.2/resources/peas-lua-compile.lua	2015-06-25 23:41:37.616161175 -0700
++++ libpeas-1.14.0/loaders/lua5.2/resources/peas-lua-compile.lua	2015-06-25 23:41:18.975741723 -0700
+@@ -38,8 +38,8 @@
+         check(err, 'Failed to open file "%s"', filename)
+ 
+          -- Error includes the filename
+-        local compiled, err = loadstring(input_file:read('*a'),
+-                                         '@' .. filename)
++        local compiled, err = load(input_file:read('*a'),
++                                   '@' .. filename)
+         check(err, 'Invalid Lua file')
+ 
+         local f, err = io.open(output, 'wb')

@@ -1,0 +1,119 @@
+--- src/mesa/drivers/dri/i915/intel_context.h.~1~	2015-02-28 02:29:19.000000000 +0300
++++ src/mesa/drivers/dri/i915/intel_context.h	2015-03-04 21:24:22.841808220 +0300
+@@ -284,8 +284,12 @@
+    driOptionCache optionCache;
+ };
+ 
++#if defined(__sun)
++#include <stdlib.h>
++#define __progname getexecname()
++#else
+ extern char *__progname;
+-
++#endif
+ 
+ #define SUBPIXEL_X 0.125
+ #define SUBPIXEL_Y 0.125
+--- src/mesa/drivers/dri/common/dri_util.h	Thu Sep  6 08:33:58 2012
++++ src/mesa/drivers/dri/common/dri_util.h	Thu Sep  6 08:37:46 2012
+@@ -58,6 +58,11 @@
+ #include "main/mtypes.h"
+ #include "xmlconfig.h"
+ 
++#define u_int64_t uint64_t
++#define u_int32_t uint32_t
++#define u_int8_t uint8_t
++
++
+ /**
+  * Extensions.
+  /
+--- src/mesa/drivers/dri/i965/brw_draw_upload.c	Thu Sep  6 08:39:01 2012
++++ src/mesa/drivers/dri/i965/brw_draw_upload.c	Thu Sep  6 08:39:32 2012
+@@ -221,6 +221,24 @@
+    BRW_SURFACEFORMAT_R8G8B8A8_SSCALED
+ };
+ 
++#if defined (sun)
++/* Solaris does not have ffsll in libc */
++#define        NBITS_INT       (CHAR_BIT * sizeof (int))
++static int ffsll(long long i)
++{
++       int i1;
++       int ret;
++
++       i1 = i & UINT_MAX;
++       ret = ffs(i1);
++       if (ret == 0) {
++               i1 = (i & 0xffffffff00000000) >> NBITS_INT;
++               ret = ffs(i1) + NBITS_INT;
++       }
++       return ret;
++}
++#endif
++
+ static GLuint
+ double_types(struct brw_context *brw,
+              int size,
+--- src/mesa/drivers/dri/i915/intel_tris.c	Thu Sep  6 08:39:52 2012
++++ src/mesa/drivers/dri/i915/intel_tris.c	Thu Sep  6 08:40:10 2012
+@@ -345,7 +345,7 @@
+  *                    Emit primitives as inline vertices               *
+  ***********************************************************************/
+ 
+-#ifdef __i386__
++#if (defined(i386) || defined(__i386__)) && !(defined(__SOLARIS__) || defined(sun))
+ #define COPY_DWORDS( j, vb, vertsize, v )			\
+ do {								\
+    int __tmp;							\
+--- configure.ac	Thu Sep  6 08:47:48 2012
++++ configure.ac	Thu Sep  6 08:48:26 2012
+@@ -294,7 +294,7 @@
+     # Enable -fvisibility=hidden if using a gcc that supports it
+     save_CFLAGS="$CFLAGS"
+     AC_MSG_CHECKING([whether $CC supports -fvisibility=hidden])
+-    VISIBILITY_CFLAGS="-fvisibility=hidden"
++    VISIBILITY_CFLAGS=""
+     CFLAGS="$CFLAGS $VISIBILITY_CFLAGS"
+     AC_LINK_IFELSE([AC_LANG_PROGRAM()], AC_MSG_RESULT([yes]),
+ 		   [VISIBILITY_CFLAGS=""; AC_MSG_RESULT([no])]);
+@@ -338,7 +338,7 @@
+     # Enable -fvisibility=hidden if using a gcc that supports it
+     save_CXXFLAGS="$CXXFLAGS"
+     AC_MSG_CHECKING([whether $CXX supports -fvisibility=hidden])
+-    VISIBILITY_CXXFLAGS="-fvisibility=hidden"
++    VISIBILITY_CXXFLAGS=""
+     CXXFLAGS="$CXXFLAGS $VISIBILITY_CXXFLAGS"
+     AC_LANG_PUSH([C++])
+     AC_LINK_IFELSE([AC_LANG_PROGRAM()], AC_MSG_RESULT([yes]),
+@@ -1521,9 +1521,6 @@
+     case "$host_os" in
+     linux*)
+         DEFINES="$DEFINES -DHAVE_ALIAS"
+-        if test "x$enable_dri3" = xyes; then
+-            DEFINES="$DEFINES -DHAVE_DRI3"
+-        fi
+ 
+         if test "x$have_pci_id" != xyes; then
+             AC_MSG_ERROR([libudev-dev or sysfs required for building DRI])
+@@ -1575,6 +1572,10 @@
+     DRI_LIB_DEPS="$DRI_LIB_DEPS $SELINUX_LIBS $LIBDRM_LIBS $EXPAT_LIBS -lm $PTHREAD_LIBS $DLOPEN_LIBS"
+ fi
+ 
++if test "x$enable_dri3" = xyes; then
++    DEFINES="$DEFINES -DHAVE_DRI3"
++fi
++
+ AC_SUBST([DRI_LIB_DEPS])
+ 
+ DRI_DIRS=''
+--- src/mesa/drivers/dri/i915/intel_batchbuffer.c.~1~	2015-02-19 13:51:13.665829618 +0300
++++ src/mesa/drivers/dri/i915/intel_batchbuffer.c	2015-02-19 13:51:34.230820294 +0300
+@@ -56,7 +56,7 @@
+    intel->batch.bo = drm_intel_bo_alloc(intel->bufmgr, "batchbuffer",
+ 					intel->maxBatchSize, 4096);
+ 
+-   intel->batch.reserved_space = BATCH_RESERVED;
++   intel->batch.reserved_space = 4096;
+    intel->batch.used = 0;
+ }

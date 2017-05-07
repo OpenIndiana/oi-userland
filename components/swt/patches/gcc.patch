@@ -1,0 +1,63 @@
+--- swt-3.8.2-gtk-solaris-x86/make_solaris_x86.mak.~1~	2013-01-31 10:12:34.000000000 +0400
++++ swt-3.8.2-gtk-solaris-x86/make_solaris_x86.mak	2015-02-01 12:54:28.037774850 +0300
+@@ -50,7 +50,7 @@
+ 
+ CDE_LIBS = -L$(CDE_HOME)/lib -R$(CDE_HOME)/lib -lXt -lX11 -lDtSvc
+ 
+-AWT_LFLAGS = -G
++AWT_LFLAGS = -shared
+ AWT_LIBS = -L$(AWT_LIB_PATH) -ljawt 
+ 
+ ATKCFLAGS = `pkg-config --cflags atk gtk+-2.0`
+@@ -68,13 +68,15 @@
+ 	-DSWT_VERSION=$(SWT_VERSION) \
+ 	$(NATIVE_STATS) \
+ 	-DMOZILLA_STRICT_API=1 \
+-	-KPIC \
+-	+w \
++	-fPIC \
++	-fno-rtti \
++	-fno-exceptions \
++	-Wall \
+ 	-I. \
+ 	-I$(JAVA_HOME)/include \
+-	-I$(JAVA_HOME)/include/linux \
++	-I$(JAVA_HOME)/include/solaris \
+ 	${SWT_PTR_CFLAGS}
+-MOZILLALFLAGS =  -G
++MOZILLALFLAGS =  -shared
+ MOZILLAEXCLUDES = -DNO__1XPCOMGlueShutdown \
+ 	-DNO__1XPCOMGlueStartup \
+ 	-DNO__1XPCOMGlueLoadXULFunctions \
+@@ -98,15 +100,15 @@
+ XPCOMINIT_OBJECTS = swt.o xpcominit.o xpcominit_structs.o xpcominit_stats.o
+ GLX_OBJECTS = swt.o glx.o glx_structs.o glx_stats.o
+ 
+-CFLAGS = -O  +w \
++CFLAGS = -O  -Wall \
+ 		-DSWT_VERSION=$(SWT_VERSION) \
+ 		$(NATIVE_STATS) \
+ 		-DLINUX -DGTK \
+ 		-I$(JAVA_HOME)/include \
+-		-I$(JAVA_HOME)/include/linux \
+-		-KPIC \
++		-I$(JAVA_HOME)/include/solaris \
++		-fPIC \
+ 		${SWT_PTR_CFLAGS}
+-LFLAGS = -G -KPIC 
++LFLAGS = -shared -fPIC
+ 
+ ifndef NO_STRIP
+ 	AWT_LFLAGS := $(AWT_LFLAGS) -s
+@@ -285,7 +287,10 @@
+ # Install
+ #
+ install: all
+-	cp *.so $(OUTPUT_DIR)
++	install -d $(DESTDIR)/usr/lib/swt
++	cp *.so $(DESTDIR)/usr/lib/swt
++	install -d $(DESTDIR)/usr/share/lib/java
++	cp *.jar $(DESTDIR)/usr/share/lib/java
+ 
+ #
+ # Clean

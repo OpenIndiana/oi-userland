@@ -18,38 +18,50 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2015, PALO Richard.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylxml
-COMPONENT_VERSION=	2.3.3
+COMPONENT_VERSION=	3.5.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://lxml.de/
 COMPONENT_SRC_NAME=	lxml
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2a3ca34f63b062ee8e059ca2460ac18040ec9622f0a31e143383f0db944ceb36
+    sha256:349f93e3a4b09cc59418854ab8013d027d246757c51744bf20069bc89016f578
+
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/lxml
 
-# disable optimization to prevent the Studio compilers from spinning
-studio_OPT.i386.32 =
-studio_OPT.i386.64 =
+PYTHON_VERSIONS=	2.7 3.4
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_TEST_ARGS=	test
+COMPONENT_TEST_CMD=	$(MAKE)
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_TEST_ENV+=	PYTHON=$(PYTHON)
+COMPONENT_TEST_ENV+=	LC_ALL=en_US.UTF-8
 
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(BUILD_32_and_64)
-		cd $(SOURCE_DIR) && $(PYTHON) selftest.py
-		cd $(SOURCE_DIR) && $(PYTHON) selftest2.py
+# Tests fail with
+# ERROR: test_xmlschema_parse_fixed_attributes (lxml.tests.test_xmlschema.ETreeXMLSchemaTestCase)
+# lxml.etree.XMLSyntaxError: Element 'b', attribute 'hardy': The value '(null)' does not match the fixed value constraint 'hey'.
+# https://bugs.launchpad.net/lxml/+bug/1608479
+test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library

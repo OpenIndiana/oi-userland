@@ -1,0 +1,53 @@
+diff -ru libvisual-0.4.0.orig/libvisual/lv_types.h libvisual-0.4.0/libvisual/lv_types.h
+--- libvisual-0.4.0.orig/libvisual/lv_types.h	Tue Feb 14 04:54:08 2006
++++ libvisual-0.4.0/libvisual/lv_types.h	Tue Nov 25 14:15:26 2008
+@@ -30,6 +30,11 @@
+ #include <stdint.h>
+ #else
+ #include <sys/types.h>
++
++#if defined(__sun__) || defined(__sun)
++#include <inttypes.h>
++#endif
++
+ #endif /* !VISUAL_OS_WIN32 */
+ 
+ VISUAL_BEGIN_DECLS
+@@ -38,7 +43,7 @@
+ 
+ #define VISUAL_TABLESIZE(table)			(sizeof (table) / sizeof (table[0]))
+ 
+-#if !defined(VISUAL_OS_WIN32)
++#if !defined(VISUAL_OS_WIN32) && !defined(__sun__) && !defined(__sun)
+ #ifndef uint8_t
+ #define uint8_t		u_int8_t
+ #endif
+@@ -50,7 +55,7 @@
+ #ifndef uint32_t
+ #define uint32_t	u_int32_t
+ #endif
+-#endif /* !VISUAL_OS_WIN32 */
++#endif /* !VISUAL_OS_WIN32 && !__sun__ && !__sun */
+ 
+ VISUAL_END_DECLS
+ 
+diff -ruN libvisual-0.4.0.orig/configure.ac libvisual-0.4.0/configure.ac
+--- libvisual-0.4.0.orig/configure.ac  2010-04-22 14:25:31.689386300 +0100
++++ libvisual-0.4.0/configure.ac       2010-04-22 14:27:22.487439900 +0100
+@@ -24,6 +24,8 @@
+ 
+ AC_CANONICAL_HOST
+ 
++AC_PROG_CC
++
+ lv_mips=no
+ lv_alpha=no
+ lv_sparc=no
+@@ -104,7 +106,6 @@
+ 
+ # Checks for programs.
+ AC_PROG_CXX
+-AC_PROG_CC
+ AC_PROG_CPP
+ AC_PROG_INSTALL
+ AC_PROG_LN_S

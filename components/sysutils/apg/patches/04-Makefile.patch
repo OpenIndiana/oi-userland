@@ -1,0 +1,134 @@
+--- apg-2.3.0b/Makefile.~1~	2003-08-07 19:40:39.000000000 +0400
++++ apg-2.3.0b/Makefile	2015-11-27 00:34:18.925484276 +0300
+@@ -1,19 +1,21 @@
+ ##################################################################
+ # Directories
+ # Install dirs
+-INSTALL_PREFIX = /usr/local
++INSTALL_PREFIX = $(DESTDIR)/usr
+ 
+-# Full default path is /usr/local/bin
++# Full default path is /usr/bin
+ APG_BIN_DIR = /bin
+ 
+ # Full default path is /usr/local/man/man1
+-APG_MAN_DIR = /man/man1
++APG_MAN_DIR = /share/man/man1
+ 
+ # Full default path is /usr/local/sbin
+ APGD_BIN_DIR = /sbin
+ 
+ # Full default path is /usr/local/man/man8
+-APGD_MAN_DIR = /man/man8
++APGD_MAN_DIR = /share/man/man8
++
++INSTALL=/usr/gnu/bin/install
+ 
+ # You should not edit 2 lines below
+ APGBFM_CLIBS = -lm
+@@ -44,10 +46,10 @@
+ # If you want to use cracklib for password quality check then you
+ # must uncomment the folowing 4 lines (you must not do this for WIN32)
+ #
+-#CRACKLIB_DICTPATH = "/usr/local/lib/pw_dict"
+-#STANDALONE_OPTIONS += -DAPG_USE_CRACKLIB '-DCRACKLIB_DICTPATH=${CRACKLIB_DICTPATH}' -I/usr/local/include -L/usr/local/lib
+-#CLISERV_OPTIONS += -DAPG_USE_CRACKLIB '-DCRACKLIB_DICTPATH=${CRACKLIB_DICTPATH}' -I/usr/local/include -L/usr/local/lib
+-#APG_CLIBS += -lcrack
++CRACKLIB_DICTPATH = /usr/share/cracklib/pw_dict
++STANDALONE_OPTIONS += -DAPG_USE_CRACKLIB -DCRACKLIB_DICTPATH="\"$(CRACKLIB_DICTPATH)"\"
++CLISERV_OPTIONS += -DAPG_USE_CRACKLIB '-DCRACKLIB_DICTPATH=$(CRACKLIB_DICTPATH)'
++APG_CLIBS += -lcrack
+ 
+ ##################################################################
+ # Support for ANSI X9.17/SHA1 PRNG
+@@ -60,12 +62,12 @@
+ ##################################################################
+ # You can modify CC variable if you have compiler other than GCC
+ # But the code was designed and tested with GCC
+-CC = gcc
++CC ?= gcc
+ 
+ ##################################################################
+ # Compilation flags
+ # You should comment the line below for AIX+native cc
+-CFLAGS = -Wall
++CFLAGS ?= -Wall
+ 
+ ####################################################################
+ # If you plan to install APG daemon you should look at lines below #
+@@ -107,9 +109,6 @@
+ 
+ APG_CS_CLIBS += ${APG_CLIBS}
+ 
+-# Find group ID for user root
+-FIND_GROUP = `grep '^root:' /etc/passwd | awk -F: '{ print $$4 }'`
+-
+ PROGNAME = apg
+ CS_PROGNAME = apgd
+ BFM_PROGNAME = apgbfm
+@@ -135,7 +134,7 @@
+ 	${CC} ${CFLAGS} -DCLISERV ${CLISERV_OPTIONS} -o ${CS_PROGNAME} ${SOURCES} ${APG_CS_CLIBS}
+ 
+ apgbfm:
+-	${CC} ${FLAGS} -DAPGBFM -o ${BFM_PROGNAME} ${BFM_SOURCES} ${APGBFM_CLIBS}
++	${CC} ${CFLAGS} -DAPGBFM -o ${BFM_PROGNAME} ${BFM_SOURCES} ${APGBFM_CLIBS}
+ 
+ strip:
+ 	strip ${PROGNAME}
+@@ -144,36 +143,36 @@
+ 
+ install:
+ 	if test -x ./apg; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+-./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apg ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apg.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -c -m 0555 ./apg ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -c -m 0444 ./doc/man/apg.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+ fi
+ 	if test -x ./apgd; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APGD_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APGD_MAN_DIR}; \
+-./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apgd ${INSTALL_PREFIX}${APGD_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apgd.8 ${INSTALL_PREFIX}${APGD_MAN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APGD_BIN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APGD_MAN_DIR}; \
++$(INSTALL) -c -m 0555 ./apgd ${INSTALL_PREFIX}${APGD_BIN_DIR}; \
++$(INSTALL) -c -m 0444 ./doc/man/apgd.8 ${INSTALL_PREFIX}${APGD_MAN_DIR}; \
+ fi
+ 	if test -x ./apgbfm; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+-./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apgbfm ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apgbfm.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -c -m 0555 ./apgbfm ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -c -m 0444 ./doc/man/apgbfm.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+ fi
+ 
+ install-cygwin:
+ 	if test -x ./apg.exe; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+-./install-sh -c -m 0755 ./apg.exe ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apg.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -c -m 0755 ./apg.exe ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -c -m 0444 ./doc/man/apg.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+ fi
+ 	if test -x ./apgbfm.exe; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+-./install-sh -c -m 0755 ./apgbfm.exe ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apgbfm.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -d ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++$(INSTALL) -c -m 0755 ./apgbfm.exe ${INSTALL_PREFIX}${APG_BIN_DIR}; \
++$(INSTALL) -c -m 0444 ./doc/man/apgbfm.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+ fi
+ 
+ clean:

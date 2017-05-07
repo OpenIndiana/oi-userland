@@ -1,0 +1,142 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+# Files delivered to /etc/privoxy will be found in the proto directory
+# under /etc.
+<transform file path=etc/privoxy/(.*) -> set action.hash etc/%<1>>
+<transform file path=etc/privoxy/.* -> default group bin>
+<transform file path=etc/privoxy/.* -> default mode 0644>
+<transform file path=(etc/privoxy/.*) -> default original_name SUNWprivoxy:%<1>>
+<transform file path=etc/privoxy/.* -> default preserve renamenew>
+
+dir path=var/log/privoxy group=webservd owner=webservd
+
+file files/http-privoxy path=lib/svc/method/http-privoxy
+file files/http-privoxy.xml path=lib/svc/manifest/network/http-privoxy.xml 
+
+file usr/sbin/privoxy path=usr/lib/privoxy mode=0555
+
+file path=etc/privoxy/config
+file path=etc/privoxy/default.action
+file path=etc/privoxy/default.filter
+file path=etc/privoxy/match-all.action
+file path=etc/privoxy/regression-tests.action
+file path=etc/privoxy/templates/blocked
+file path=etc/privoxy/templates/cgi-error-404
+file path=etc/privoxy/templates/cgi-error-bad-param
+file path=etc/privoxy/templates/cgi-error-disabled
+file path=etc/privoxy/templates/cgi-error-file
+file path=etc/privoxy/templates/cgi-error-file-read-only
+file path=etc/privoxy/templates/cgi-error-modified
+file path=etc/privoxy/templates/cgi-error-parse
+file path=etc/privoxy/templates/cgi-style.css
+file path=etc/privoxy/templates/client-tags
+file path=etc/privoxy/templates/connect-failed
+file path=etc/privoxy/templates/connection-timeout
+file path=etc/privoxy/templates/default
+file path=etc/privoxy/templates/edit-actions-add-url-form
+file path=etc/privoxy/templates/edit-actions-for-url
+file path=etc/privoxy/templates/edit-actions-for-url-filter
+file path=etc/privoxy/templates/edit-actions-list
+file path=etc/privoxy/templates/edit-actions-list-button
+file path=etc/privoxy/templates/edit-actions-list-section
+file path=etc/privoxy/templates/edit-actions-list-url
+file path=etc/privoxy/templates/edit-actions-remove-url-form
+file path=etc/privoxy/templates/edit-actions-url-form
+file path=etc/privoxy/templates/forwarding-failed
+file path=etc/privoxy/templates/mod-local-help
+file path=etc/privoxy/templates/mod-support-and-service
+file path=etc/privoxy/templates/mod-title
+file path=etc/privoxy/templates/mod-unstable-warning
+file path=etc/privoxy/templates/no-such-domain
+file path=etc/privoxy/templates/no-server-data
+file path=etc/privoxy/templates/show-request
+file path=etc/privoxy/templates/show-status
+file path=etc/privoxy/templates/show-status-file
+file path=etc/privoxy/templates/show-url-info
+file path=etc/privoxy/templates/show-version
+file path=etc/privoxy/templates/toggle
+file path=etc/privoxy/templates/toggle-mini
+file path=etc/privoxy/templates/untrusted
+file path=etc/privoxy/templates/url-info-osd.xml
+file path=etc/privoxy/trust
+file path=etc/privoxy/user.action
+file path=etc/privoxy/user.filter
+
+file path=usr/share/doc/privoxy/AUTHORS
+file path=usr/share/doc/privoxy/ChangeLog
+file path=usr/share/doc/privoxy/developer-manual/coding.html
+file path=usr/share/doc/privoxy/developer-manual/cvs.html
+file path=usr/share/doc/privoxy/developer-manual/documentation.html
+file path=usr/share/doc/privoxy/developer-manual/index.html
+file path=usr/share/doc/privoxy/developer-manual/introduction.html
+file path=usr/share/doc/privoxy/developer-manual/newrelease.html
+file path=usr/share/doc/privoxy/developer-manual/testing.html
+file path=usr/share/doc/privoxy/developer-manual/webserver-update.html
+file path=usr/share/doc/privoxy/faq/configuration.html
+file path=usr/share/doc/privoxy/faq/contact.html
+file path=usr/share/doc/privoxy/faq/copyright.html
+file path=usr/share/doc/privoxy/faq/general.html
+file path=usr/share/doc/privoxy/faq/index.html
+file path=usr/share/doc/privoxy/faq/installation.html
+file path=usr/share/doc/privoxy/faq/misc.html
+file path=usr/share/doc/privoxy/faq/trouble.html
+file path=usr/share/doc/privoxy/index.html
+file path=usr/share/doc/privoxy/p_doc.css
+file path=usr/share/doc/privoxy/LICENSE
+file path=usr/share/doc/privoxy/README
+file path=usr/share/doc/privoxy/man-page/privoxy-man-page.html
+file path=usr/share/doc/privoxy/user-manual/actions-file.html
+file path=usr/share/doc/privoxy/user-manual/appendix.html
+file path=usr/share/doc/privoxy/user-manual/config.html
+file path=usr/share/doc/privoxy/user-manual/configuration.html
+file path=usr/share/doc/privoxy/user-manual/contact.html
+file path=usr/share/doc/privoxy/user-manual/copyright.html
+file path=usr/share/doc/privoxy/user-manual/files-in-use.jpg
+file path=usr/share/doc/privoxy/user-manual/filter-file.html
+file path=usr/share/doc/privoxy/user-manual/index.html
+file path=usr/share/doc/privoxy/user-manual/installation.html
+file path=usr/share/doc/privoxy/user-manual/introduction.html
+file path=usr/share/doc/privoxy/user-manual/p_doc.css
+file path=usr/share/doc/privoxy/user-manual/proxy_setup.jpg
+file path=usr/share/doc/privoxy/user-manual/proxy2.jpg
+file path=usr/share/doc/privoxy/user-manual/quickstart.html
+file path=usr/share/doc/privoxy/user-manual/seealso.html
+file path=usr/share/doc/privoxy/user-manual/startup.html
+file path=usr/share/doc/privoxy/user-manual/templates.html
+file path=usr/share/doc/privoxy/user-manual/whatsnew.html
+file path=usr/share/man/man1/privoxy.1

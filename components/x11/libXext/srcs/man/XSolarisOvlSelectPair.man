@@ -1,0 +1,205 @@
+.\" Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XSolarisOvlSelectPair __libmansuffix__ __xorgversion__ "X FUNCTIONS"
+.IX "XSolarisOvlSelectPair" "" "\f3XSolarisOvlSelectPair\f1(3) \(em selects an optimal overlay/underlay visual pair that best meets the criteria.
+.SH NAME
+XSolarisOvlSelectPair \- selects an optimal overlay/underlay visual pair that best meets the criteria
+.SH SYNOPSIS
+.LP
+\&#include <X11/extensions/transovl.h>
+
+.IP \f3XSolarisOvlSelectStatus\f1
+.B XSolarisOvlSelectPair
+.B (Display
+.I *display,
+.B int
+.I screen,
+.B int
+.I numCriteria,
+.B XSolarisOvlPairCriteria
+.I *pCriteria,
+.B XVisualInfo
+.I *ovVisinfoReturn,
+.B XVisualInfo
+.I *unVisinfoReturn,
+.B unsigned long
+.I *unmetOvCriteriaReturn,
+.B unsigned long
+.I *unmetUnCriteriaReturn)
+.SH Arguments
+.TP
+.I display
+Specifies the connection to the X server.
+.TP
+.I screen
+An integer specifying the screen on which the visuals are to be searched.
+.TP
+.I numCriteria
+The number of
+.B XSolarisOvlPairCriteria
+structures in the
+.I pCriteria
+array.
+.TP
+.I pCriteria
+An array of pair criteria structures in priority order from high to low
+specifying the criteria to be used in selecting the pair.
+.TP
+.I ovVisinfoReturn
+A pointer to a caller provided
+.I XVisualInfo
+structure.  On successful return, this structure contains a description of
+the chosen overlay visual.
+.TP
+.I unVisinfoReturn
+A pointer to a caller provided
+.I XVisualInfo
+structure.  On successful return, this structure contains a description of
+the chosen underlay visual.
+.TP
+.I unmetOvCriteriaReturn
+A pointer to a bitmask that describes the criteria that were not satisfied
+for the overlay visual.  This return argument is only meaningful when the
+routine returns a value of
+.B XSolarisOvlQualifiedSuccess,
+or
+.B XSolarisOvlCriteriaFailure.
+.TP
+.I unmetUnCriteriaReturn
+A pointer to a bitmask that describes the criteria that were not satisfied
+for the underlay visual.  This return argument is only meaningful when the
+routine returns a value of
+.B XSolarisOvlQualifiedSuccess,
+or
+.B XSolarisOvlCriteriaFailure.
+.SH Argument Types
+.LP
+See the Description section for a full description of how these types
+should be used.
+.TP
+.B XSolarisOvlPairCriteria
+A structure defining various criteria to be used during visual selection,
+along with indications of the stringency of the criteria.
+.LP
+.nf
+typedef struct {
+.br
+	XSolarisOvlVisualCriteriaoverlayCriteria;
+	XSolarisOvlVisualCriteriaunderlayCriteria;
+.br
+} XSolarisOvlPairCriteria;
+.fi
+.LP
+.B XSolarisOvlVisualCriteria
+is defined in the specification of
+.BR XSolarisOvlSelectPartner (3) .
+.SH Return Types
+.TP
+.B XSolarisOvlSelectStatus
+Refer to the specification of
+.BR XSolarisOvlSelectPartner (3)
+for the definition of this type.
+.LP
+.B XSolarisOvlSuccess
+is returned if the search is completely successful in finding a pair that
+meets all hard and soft criteria of one of the
+.B XSolarisOvlPairCriteria
+structures.
+.LP
+.B XSolarisOvlQualifiedSuccess
+is returned if the chosen pair satisfies all hard criteria of one of the
+.B XSolarisOvlPairCriteria
+structures, but doesn't meet all soft criteria.  In this case,
+.I unmetOvCriteriaReturn
+and
+.I unmetUnCriteriaReturn
+contains the logical OR of the soft criteria that were not met for the overlay
+and underlay, respectively.
+.LP
+.B XSolarisOvlCriteriaFailure
+indicates that no pair could be found that meets all the hard criteria of any
+of the
+.B XSolarisOvlPairCriteria
+structures.  In this case,
+.I unmetOvCriteriaReturn
+and
+.I unmetUnCriteriaReturn
+contains the logical OR of the hard criteria that were not met by the
+.B XSolarisOvlPairCriteria
+structure with the fewest hard failures, for the overlay and underlay,
+respectively.
+.LP
+.B XSolarisOvlFailure
+is returned if some other error is encountered besides criteria match failure.
+.SH DESCRIPTION
+.LP
+This routine is similar to
+.BR XSolarisOvlSelectPartner (3) .
+However, instead of selecting a partner visual given another visual, this
+routine simultaneously selects both the overlay and underlay visual from the
+set of all visual pairs for the given screen.  The pair selected will be the
+one that best matches the given criteria.
+.LP
+The client is assured that, short of X errors not related to overlays,
+it can successfully create windows with the returned visuals.
+.LP
+This routine searches through all optimal visual pairs for a given screen,
+and then through all pairs of visuals (optimal and non-optimal), applying the
+specified criteria.  These criteria are specified in
+.I pCriteria.
+Each element of
+.I pCriteria
+specifies criteria for both the overlay and underlay.  It returns a success or
+failure status depending on whether it finds a pair that meets all the given
+criteria.
+.LP
+The selected pair will have an overlay that satisfies all the hard criteria
+specified for the overlay.  The pair will have an underlay visual that
+satisfies all the hard criteria for the underlay.  The attributes of the
+overlay visual are returned in
+.I ovVisinfoReturn.
+Likewise, the attributes of the underlay visual are specified in
+.I unVisinfoReturn.
+If two or more pairs are found that meet all of the hard criteria (both
+overlay and underlay) and the same number of soft criteria (either overlay or
+underlay), one of them will be chosen and returned.  It is implementation
+dependent which one is chosen.
+.LP
+Like
+.BR XSolarisOvlSelectPartner (3) ,
+.B XSolarisOvlSelectPair
+supports a degradation sequence of criteria sets.  This means that multiple
+criteria sets can be specified in a single call.  First, an attempt is made
+to find a pair matching the first criteria set for both the overlay and the
+underlay.  If a pair is found which meets all of the hard criteria of the first
+set, this pair is chosen.  If no pair meets all hard criteria of the first set,
+a search is performed using the second criteria set.  This process continues
+until either a pair is found that meets the all of the hard criteria of some
+criteria set, or all sets have been used to search.  This degradation sequence
+allows clients to specify the criteria for the most preferred pair as the
+first criteria set.  Pairs that are acceptable but which are less desirable can
+be specified in criteria sets following the first.  This allows the search to
+proceed through a progressive relaxation in the client's requirements for the
+pair with a single subroutine call.
+.LP
+The criteria masks that can be specified are described in the specification of
+.BR XSolarisOvlSelectPartner (3) .

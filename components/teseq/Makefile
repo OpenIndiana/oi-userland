@@ -37,8 +37,6 @@ include ../../make-rules/ips.mk
 
 CFLAGS	+= -std=c99
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
 # common targets
 build:		$(BUILD_32_and_64)
 

@@ -1,0 +1,64 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2014 Nexenta Systems, Inc.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license='$(COMPONENT_LICENSE)'
+
+dir path=var/lib/smartmontools
+
+file smartmontools.xml   path=lib/svc/manifest/system/smartmontools.xml
+file smartmontools-exec_attr path=etc/security/exec_attr.d/system:storage:smartmontools
+file smartmontools-prof_attr path=etc/security/prof_attr.d/system:storage:smartmontools
+
+file path=etc/smartd.conf preserve=true
+file path=usr/sbin/smartctl
+file path=usr/sbin/smartd
+file path=usr/sbin/smartd_warning.sh
+file path=usr/sbin/update-smart-drivedb
+file path=usr/share/doc/smartmontools/AUTHORS
+file path=usr/share/doc/smartmontools/COPYING
+file path=usr/share/doc/smartmontools/ChangeLog
+file path=usr/share/doc/smartmontools/ChangeLog-5.0-6.0
+file path=usr/share/doc/smartmontools/INSTALL
+file path=usr/share/doc/smartmontools/NEWS
+file path=usr/share/doc/smartmontools/README
+file path=usr/share/doc/smartmontools/TODO
+file path=usr/share/doc/smartmontools/examplescripts/Example1
+file path=usr/share/doc/smartmontools/examplescripts/Example2
+file path=usr/share/doc/smartmontools/examplescripts/Example3
+file path=usr/share/doc/smartmontools/examplescripts/Example4
+file path=usr/share/doc/smartmontools/examplescripts/Example5
+file path=usr/share/doc/smartmontools/examplescripts/Example6
+file path=usr/share/doc/smartmontools/examplescripts/README
+file path=usr/share/doc/smartmontools/smartd.conf
+file path=usr/share/man/man1m/smartctl.1m
+file path=usr/share/man/man1m/smartd.1m
+file path=usr/share/man/man1m/update-smart-drivedb.1m
+file path=usr/share/man/man4/smartd.conf.4
+file path=usr/share/smartmontools/drivedb.h

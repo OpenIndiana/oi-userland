@@ -1,0 +1,355 @@
+###############################################################################
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/nls/ja.SJIS/XI18N_OBJS b/nls/ja.SJIS/XI18N_OBJS
+index 29dffff..c07e623 100644
+--- a/nls/ja.SJIS/XI18N_OBJS
++++ b/nls/ja.SJIS/XI18N_OBJS
+@@ -4,7 +4,7 @@
+ #
+ XLC	ja_JP.PCK/xlibi18n_PCK	_XlcGenericLoader	# XLC_open
+ XLC	common/xlibi18n	_XlcGenericLoader	# XLC_open
+-XIM	common/ximp40	_Ximp_OpenIM		# XIM_open
+-XIM	common/ximlocal	_XimpLocalOpenIM	# XIM_open
+ XIM	common/ximcp	_XimOpenIM _XimRegisterIMInstantiateCallback  _XimUnRegisterIMInstantiateCallback # XIM_open	XIM_regiser XIM_unregister
++XIM	common/ximlocal	_XimpLocalOpenIM	# XIM_open
++XIM	common/ximp40	_Ximp_OpenIM		# XIM_open
+ XOM	common/xomGeneric	_XomGenericOpenOM # XOM_open
+diff --git a/nls/ja.SJIS/XLC_LOCALE.pre b/nls/ja.SJIS/XLC_LOCALE.pre
+index 671a985..38448db 100644
+--- a/nls/ja.SJIS/XLC_LOCALE.pre
++++ b/nls/ja.SJIS/XLC_LOCALE.pre
+@@ -29,9 +29,20 @@ fs1	{
+ 		substitute      JISX0208.1990-0:GL
+ 	}
+ }
+-XCOMM 	fs2 class (Half Kana)
++
++XCOMM 	fs2 class (IBM extension/IBM extension NEC selected)
+ fs2	{
+ 	charset	{
++		name		JISX0212.1990-0:GL
++	}
++	font	{
++		primary		JISX0212.1990-0:GL
++	}
++}
++
++XCOMM 	fs3 class (Half Kana)
++fs3	{
++	charset	{
+ 		name		JISX0201.1976-0:GR
+ 	}
+ 	font	{
+@@ -40,15 +51,7 @@ fs2	{
+ 		vertical_rotate	all
+ 	}
+ }
+-XCOMM 	fs3 class (Supplementary Kanji)
+-XCOMM fs3	{
+-XCOMM	charset	{
+-XCOMM		name		JISX0212.1990-0:GL
+-XCOMM	}
+-XCOMM	font	{
+-XCOMM		primary		JISX0212.1990-0:GL
+-XCOMM	}
+-XCOMM }
++
+ END XLC_FONTSET
+ 
+ XCOMM 
+@@ -143,8 +146,273 @@ cs1	{
+     [\xef40,\xef7e]->\x7d21,[\xef80,\xef9e]->\x7d60,[\xef9f,\xeffc]->\x7e21
+ }
+ 
+-XCOMM 	cs2 class
++XCOMM 	cs2 class (IBM extension/IBM extension NEC selected)
+ cs2	{
++	side		none
++	length		2
++	byte1		\xed,\xef;\xfa,\xfc
++	byte2		\x40,\x7e;\x80,\xfc
++	wc_encoding	\x20000000
++	ct_encoding	JISX0212.1990-0:GL; JISX0212.1990-0:GR
++	mb_conversion	\
++    [\xfa40,\xfa40]->\xf3f3,[\xfa41,\xfa41]->\xf3f4,[\xfa42,\xfa42]->\xf3f5,\
++    [\xfa43,\xfa43]->\xf3f6,[\xfa44,\xfa44]->\xf3f7,[\xfa45,\xfa45]->\xf3f8,\
++    [\xfa46,\xfa46]->\xf3f9,[\xfa47,\xfa47]->\xf3fa,[\xfa48,\xfa48]->\xf3fb,\
++    [\xfa49,\xfa49]->\xf3fc,[\xfa4a,\xfa4a]->\xf3fd,[\xfa4b,\xfa4b]->\xf3fe,\
++    [\xfa4c,\xfa4c]->\xf4a1,[\xfa4d,\xfa4d]->\xf4a2,[\xfa4e,\xfa4e]->\xf4a3,\
++    [\xfa4f,\xfa4f]->\xf4a4,[\xfa50,\xfa50]->\xf4a5,[\xfa51,\xfa51]->\xf4a6,\
++    [\xfa52,\xfa52]->\xf4a7,[\xfa53,\xfa53]->\xf4a8,[\xfa55,\xfa55]->\xa2c3,\
++    [\xfa56,\xfa56]->\xf4a9,[\xfa57,\xfa57]->\xf4aa,[\xfa58,\xfa58]->\xf4ab,\
++    [\xfa59,\xfa59]->\xf4ac,[\xfa5a,\xfa5a]->\xf4ad,[\xfa5c,\xfa5c]->\xd4e3,\
++    [\xfa5d,\xfa5d]->\xdcdf,[\xfa5e,\xfa5e]->\xe4e9,[\xfa5f,\xfa5f]->\xe3f8,\
++    [\xfa60,\xfa60]->\xd9a1,[\xfa61,\xfa61]->\xb1bb,[\xfa62,\xfa62]->\xf4ae,\
++    [\xfa63,\xfa63]->\xc2ad,[\xfa64,\xfa64]->\xc3fc,[\xfa65,\xfa65]->\xe4d0,\
++    [\xfa66,\xfa66]->\xc2bf,[\xfa67,\xfa67]->\xbcf4,[\xfa68,\xfa68]->\xb0a9,\
++    [\xfa69,\xfa69]->\xb0c8,[\xfa6a,\xfa6a]->\xf4af,[\xfa6b,\xfa6b]->\xb0d2,\
++    [\xfa6c,\xfa6c]->\xb0d4,[\xfa6d,\xfa6d]->\xb0e3,[\xfa6e,\xfa6e]->\xb0ee,\
++    [\xfa6f,\xfa6f]->\xb1a7,[\xfa70,\xfa70]->\xb1a3,[\xfa71,\xfa71]->\xb1ac,\
++    [\xfa72,\xfa72]->\xb1a9,[\xfa73,\xfa73]->\xb1be,[\xfa74,\xfa74]->\xb1df,\
++    [\xfa75,\xfa75]->\xb1d8,[\xfa76,\xfa76]->\xb1c8,[\xfa77,\xfa77]->\xb1d7,\
++    [\xfa78,\xfa78]->\xb1e3,[\xfa79,\xfa79]->\xb1f4,[\xfa7a,\xfa7a]->\xb1e1,\
++    [\xfa7b,\xfa7b]->\xb2a3,[\xfa7c,\xfa7c]->\xf4b0,[\xfa7d,\xfa7d]->\xb2bb,\
++    [\xfa7e,\xfa7e]->\xb2e6,[\xfa80,\xfa80]->\xb2ed,[\xfa81,\xfa81]->\xb2f5,\
++    [\xfa82,\xfa82]->\xb2fc,[\xfa83,\xfa83]->\xf4b1,[\xfa84,\xfa84]->\xb3b5,\
++    [\xfa85,\xfa85]->\xb3d8,[\xfa86,\xfa86]->\xb3db,[\xfa87,\xfa87]->\xb3e5,\
++    [\xfa88,\xfa88]->\xb3ee,[\xfa89,\xfa89]->\xb3fb,[\xfa8a,\xfa8a]->\xf4b2,\
++    [\xfa8b,\xfa8b]->\xf4b3,[\xfa8c,\xfa8c]->\xb4c0,[\xfa8d,\xfa8d]->\xb4c7,\
++    [\xfa8e,\xfa8e]->\xb4d0,[\xfa8f,\xfa8f]->\xb4de,[\xfa90,\xfa90]->\xf4b4,\
++    [\xfa91,\xfa91]->\xb5aa,[\xfa92,\xfa92]->\xf4b5,[\xfa93,\xfa93]->\xb5af,\
++    [\xfa94,\xfa94]->\xb5c4,[\xfa95,\xfa95]->\xb5e8,[\xfa96,\xfa96]->\xf4b6,\
++    [\xfa97,\xfa97]->\xb7c2,[\xfa98,\xfa98]->\xb7e4,[\xfa99,\xfa99]->\xb7e8,\
++    [\xfa9a,\xfa9a]->\xb7e7,[\xfa9b,\xfa9b]->\xf4b7,[\xfa9c,\xfa9c]->\xf4b8,\
++    [\xfa9d,\xfa9d]->\xf4b9,[\xfa9e,\xfa9e]->\xb8ce,[\xfa9f,\xfa9f]->\xb8e1,\
++    [\xfaa0,\xfaa0]->\xb8f5,[\xfaa1,\xfaa1]->\xb8f7,[\xfaa2,\xfaa2]->\xb8f8,\
++    [\xfaa3,\xfaa3]->\xb8fc,[\xfaa4,\xfaa4]->\xb9af,[\xfaa5,\xfaa5]->\xb9b7,\
++    [\xfaa6,\xfaa6]->\xbabe,[\xfaa7,\xfaa7]->\xbadb,[\xfaa8,\xfaa8]->\xcdaa,\
++    [\xfaa9,\xfaa9]->\xbae1,[\xfaaa,\xfaaa]->\xf4ba,[\xfaab,\xfaab]->\xbaeb,\
++    [\xfaac,\xfaac]->\xbbb3,[\xfaad,\xfaad]->\xbbb8,[\xfaae,\xfaae]->\xf4bb,\
++    [\xfaaf,\xfaaf]->\xbbca,[\xfab0,\xfab0]->\xf4bc,[\xfab1,\xfab1]->\xf4bd,\
++    [\xfab2,\xfab2]->\xbbd0,[\xfab3,\xfab3]->\xbbde,[\xfab4,\xfab4]->\xbbf4,\
++    [\xfab5,\xfab5]->\xbbf5,[\xfab6,\xfab6]->\xbbf9,[\xfab7,\xfab7]->\xbce4,\
++    [\xfab8,\xfab8]->\xbced,[\xfab9,\xfab9]->\xbcfe,[\xfaba,\xfaba]->\xf4be,\
++    [\xfabb,\xfabb]->\xbdc2,[\xfabc,\xfabc]->\xbde7,[\xfabd,\xfabd]->\xf4bf,\
++    [\xfabe,\xfabe]->\xbdf0,[\xfabf,\xfabf]->\xbeb0,[\xfac0,\xfac0]->\xbeac,\
++    [\xfac1,\xfac1]->\xf4c0,[\xfac2,\xfac2]->\xbeb3,[\xfac3,\xfac3]->\xbebd,\
++    [\xfac4,\xfac4]->\xbecd,[\xfac5,\xfac5]->\xbec9,[\xfac6,\xfac6]->\xbee4,\
++    [\xfac7,\xfac7]->\xbfa8,[\xfac8,\xfac8]->\xbfc9,[\xfac9,\xfac9]->\xc0c4,\
++    [\xfaca,\xfaca]->\xc0e4,[\xfacb,\xfacb]->\xc0f4,[\xfacc,\xfacc]->\xc1a6,\
++    [\xfacd,\xfacd]->\xf4c1,[\xface,\xface]->\xc1f5,[\xfacf,\xfacf]->\xc1fc,\
++    [\xfad0,\xfad0]->\xf4c2,[\xfad1,\xfad1]->\xc1f8,[\xfad2,\xfad2]->\xc2ab,\
++    [\xfad3,\xfad3]->\xc2a1,[\xfad4,\xfad4]->\xc2a5,[\xfad5,\xfad5]->\xf4c3,\
++    [\xfad6,\xfad6]->\xc2b8,[\xfad7,\xfad7]->\xc2ba,[\xfad8,\xfad8]->\xf4c4,\
++    [\xfad9,\xfad9]->\xc2c4,[\xfada,\xfada]->\xc2d2,[\xfadb,\xfadb]->\xc2d7,\
++    [\xfadc,\xfadc]->\xc2db,[\xfadd,\xfadd]->\xc2de,[\xfade,\xfade]->\xc2ed,\
++    [\xfadf,\xfadf]->\xc2f0,[\xfae0,\xfae0]->\xf4c5,[\xfae1,\xfae1]->\xc3a1,\
++    [\xfae2,\xfae2]->\xc3b5,[\xfae3,\xfae3]->\xc3c9,[\xfae4,\xfae4]->\xc3b9,\
++    [\xfae5,\xfae5]->\xf4c6,[\xfae6,\xfae6]->\xc3d8,[\xfae7,\xfae7]->\xc3fe,\
++    [\xfae8,\xfae8]->\xf4c7,[\xfae9,\xfae9]->\xc4cc,[\xfaea,\xfaea]->\xf4c8,\
++    [\xfaeb,\xfaeb]->\xc4d9,[\xfaec,\xfaec]->\xc4ea,[\xfaed,\xfaed]->\xc4fd,\
++    [\xfaee,\xfaee]->\xf4c9,[\xfaef,\xfaef]->\xc5a7,[\xfaf0,\xfaf0]->\xc5b5,\
++    [\xfaf1,\xfaf1]->\xc5b6,[\xfaf2,\xfaf2]->\xf4ca,[\xfaf3,\xfaf3]->\xc5d5,\
++    [\xfaf4,\xfaf4]->\xc6b8,[\xfaf5,\xfaf5]->\xc6d7,[\xfaf6,\xfaf6]->\xc6e0,\
++    [\xfaf7,\xfaf7]->\xc6ea,[\xfaf8,\xfaf8]->\xc6e3,[\xfaf9,\xfaf9]->\xc7a1,\
++    [\xfafa,\xfafa]->\xc7ab,[\xfafb,\xfafb]->\xc7c7,[\xfafc,\xfafc]->\xc7c3,\
++    [\xfb40,\xfb40]->\xc7cb,[\xfb41,\xfb41]->\xc7cf,[\xfb42,\xfb42]->\xc7d9,\
++    [\xfb43,\xfb43]->\xf4cb,[\xfb44,\xfb44]->\xf4cc,[\xfb45,\xfb45]->\xc7e6,\
++    [\xfb46,\xfb46]->\xc7ee,[\xfb47,\xfb47]->\xc7fc,[\xfb48,\xfb48]->\xc7eb,\
++    [\xfb49,\xfb49]->\xc7f0,[\xfb4a,\xfb4a]->\xc8b1,[\xfb4b,\xfb4b]->\xc8e5,\
++    [\xfb4c,\xfb4c]->\xc8f8,[\xfb4d,\xfb4d]->\xc9a6,[\xfb4e,\xfb4e]->\xc9ab,\
++    [\xfb4f,\xfb4f]->\xc9ad,[\xfb50,\xfb50]->\xf4cd,[\xfb51,\xfb51]->\xc9ca,\
++    [\xfb52,\xfb52]->\xc9d3,[\xfb53,\xfb53]->\xc9e9,[\xfb54,\xfb54]->\xc9e3,\
++    [\xfb55,\xfb55]->\xc9fc,[\xfb56,\xfb56]->\xc9f4,[\xfb57,\xfb57]->\xc9f5,\
++    [\xfb58,\xfb58]->\xf4ce,[\xfb59,\xfb59]->\xcab3,[\xfb5a,\xfb5a]->\xcabd,\
++    [\xfb5b,\xfb5b]->\xcaef,[\xfb5c,\xfb5c]->\xcaf1,[\xfb5d,\xfb5d]->\xcbae,\
++    [\xfb5e,\xfb5e]->\xf4cf,[\xfb5f,\xfb5f]->\xcbca,[\xfb60,\xfb60]->\xcbe6,\
++    [\xfb61,\xfb61]->\xcbea,[\xfb62,\xfb62]->\xcbf0,[\xfb63,\xfb63]->\xcbf4,\
++    [\xfb64,\xfb64]->\xcbee,[\xfb65,\xfb65]->\xcca5,[\xfb66,\xfb66]->\xcbf9,\
++    [\xfb67,\xfb67]->\xccab,[\xfb68,\xfb68]->\xccae,[\xfb69,\xfb69]->\xccad,\
++    [\xfb6a,\xfb6a]->\xccb2,[\xfb6b,\xfb6b]->\xccc2,[\xfb6c,\xfb6c]->\xccd0,\
++    [\xfb6d,\xfb6d]->\xccd9,[\xfb6e,\xfb6e]->\xf4d0,[\xfb6f,\xfb6f]->\xcdbb,\
++    [\xfb70,\xfb70]->\xf4d1,[\xfb71,\xfb71]->\xcebb,[\xfb72,\xfb72]->\xf4d2,\
++    [\xfb73,\xfb73]->\xceba,[\xfb74,\xfb74]->\xcec3,[\xfb75,\xfb75]->\xf4d3,\
++    [\xfb76,\xfb76]->\xcef2,[\xfb77,\xfb77]->\xb3dd,[\xfb78,\xfb78]->\xcfd5,\
++    [\xfb79,\xfb79]->\xcfe2,[\xfb7a,\xfb7a]->\xcfe9,[\xfb7b,\xfb7b]->\xcfed,\
++    [\xfb7c,\xfb7c]->\xf4d4,[\xfb7d,\xfb7d]->\xf4d5,[\xfb7e,\xfb7e]->\xf4d6,\
++    [\xfb80,\xfb80]->\xf4d7,[\xfb81,\xfb81]->\xd0e5,[\xfb82,\xfb82]->\xf4d8,\
++    [\xfb83,\xfb83]->\xd0e9,[\xfb84,\xfb84]->\xd1e8,[\xfb85,\xfb85]->\xf4d9,\
++    [\xfb86,\xfb86]->\xf4da,[\xfb87,\xfb87]->\xd1ec,[\xfb88,\xfb88]->\xd2bb,\
++    [\xfb89,\xfb89]->\xf4db,[\xfb8a,\xfb8a]->\xd3e1,[\xfb8b,\xfb8b]->\xd3e8,\
++    [\xfb8c,\xfb8c]->\xd4a7,[\xfb8d,\xfb8d]->\xf4dc,[\xfb8e,\xfb8e]->\xf4dd,\
++    [\xfb8f,\xfb8f]->\xd4d4,[\xfb90,\xfb90]->\xd4f2,[\xfb91,\xfb91]->\xd5ae,\
++    [\xfb92,\xfb92]->\xf4de,[\xfb93,\xfb93]->\xd7de,[\xfb94,\xfb94]->\xf4df,\
++    [\xfb95,\xfb95]->\xd8a2,[\xfb96,\xfb96]->\xd8b7,[\xfb97,\xfb97]->\xd8c1,\
++    [\xfb98,\xfb98]->\xd8d1,[\xfb99,\xfb99]->\xd8f4,[\xfb9a,\xfb9a]->\xd9c6,\
++    [\xfb9b,\xfb9b]->\xd9c8,[\xfb9c,\xfb9c]->\xd9d1,[\xfb9d,\xfb9d]->\xf4e0,\
++    [\xfb9e,\xfb9e]->\xf4e1,[\xfb9f,\xfb9f]->\xf4e2,[\xfba0,\xfba0]->\xf4e3,\
++    [\xfba1,\xfba1]->\xf4e4,[\xfba2,\xfba2]->\xdcd3,[\xfba3,\xfba3]->\xddc8,\
++    [\xfba4,\xfba4]->\xddd4,[\xfba5,\xfba5]->\xddea,[\xfba6,\xfba6]->\xddfa,\
++    [\xfba7,\xfba7]->\xdea4,[\xfba8,\xfba8]->\xdeb0,[\xfba9,\xfba9]->\xf4e5,\
++    [\xfbaa,\xfbaa]->\xdeb5,[\xfbab,\xfbab]->\xdecb,[\xfbac,\xfbac]->\xf4e6,\
++    [\xfbad,\xfbad]->\xdfb9,[\xfbae,\xfbae]->\xf4e7,[\xfbaf,\xfbaf]->\xdfc3,\
++    [\xfbb0,\xfbb0]->\xf4e8,[\xfbb1,\xfbb1]->\xf4e9,[\xfbb2,\xfbb2]->\xe0d9,\
++    [\xfbb3,\xfbb3]->\xf4ea,[\xfbb4,\xfbb4]->\xf4eb,[\xfbb5,\xfbb5]->\xe1e2,\
++    [\xfbb6,\xfbb6]->\xf4ec,[\xfbb7,\xfbb7]->\xf4ed,[\xfbb8,\xfbb8]->\xf4ee,\
++    [\xfbb9,\xfbb9]->\xe2c7,[\xfbba,\xfbba]->\xe3a8,[\xfbbb,\xfbbb]->\xe3a6,\
++    [\xfbbc,\xfbbc]->\xe3a9,[\xfbbd,\xfbbd]->\xe3af,[\xfbbe,\xfbbe]->\xe3b0,\
++    [\xfbbf,\xfbbf]->\xe3aa,[\xfbc0,\xfbc0]->\xe3ab,[\xfbc1,\xfbc1]->\xe3bc,\
++    [\xfbc2,\xfbc2]->\xe3c1,[\xfbc3,\xfbc3]->\xe3bf,[\xfbc4,\xfbc4]->\xe3d5,\
++    [\xfbc5,\xfbc5]->\xe3d8,[\xfbc6,\xfbc6]->\xe3d6,[\xfbc7,\xfbc7]->\xe3df,\
++    [\xfbc8,\xfbc8]->\xe3e3,[\xfbc9,\xfbc9]->\xe3e1,[\xfbca,\xfbca]->\xe3d4,\
++    [\xfbcb,\xfbcb]->\xe3e9,[\xfbcc,\xfbcc]->\xe4a6,[\xfbcd,\xfbcd]->\xe3f1,\
++    [\xfbce,\xfbce]->\xe3f2,[\xfbcf,\xfbcf]->\xe4cb,[\xfbd0,\xfbd0]->\xe4c1,\
++    [\xfbd1,\xfbd1]->\xe4c3,[\xfbd2,\xfbd2]->\xe4be,[\xfbd3,\xfbd3]->\xf4ef,\
++    [\xfbd4,\xfbd4]->\xe4c0,[\xfbd5,\xfbd5]->\xe4c7,[\xfbd6,\xfbd6]->\xe4bf,\
++    [\xfbd7,\xfbd7]->\xe4e0,[\xfbd8,\xfbd8]->\xe4de,[\xfbd9,\xfbd9]->\xe4d1,\
++    [\xfbda,\xfbda]->\xf4f0,[\xfbdb,\xfbdb]->\xe4dc,[\xfbdc,\xfbdc]->\xe4d2,\
++    [\xfbdd,\xfbdd]->\xe4db,[\xfbde,\xfbde]->\xe4d4,[\xfbdf,\xfbdf]->\xe4fa,\
++    [\xfbe0,\xfbe0]->\xe4ef,[\xfbe1,\xfbe1]->\xe5b3,[\xfbe2,\xfbe2]->\xe5bf,\
++    [\xfbe3,\xfbe3]->\xe5c9,[\xfbe4,\xfbe4]->\xe5d0,[\xfbe5,\xfbe5]->\xe5e2,\
++    [\xfbe6,\xfbe6]->\xe5ea,[\xfbe7,\xfbe7]->\xe5eb,[\xfbe8,\xfbe8]->\xf4f1,\
++    [\xfbe9,\xfbe9]->\xf4f2,[\xfbea,\xfbea]->\xf4f3,[\xfbeb,\xfbeb]->\xe6e8,\
++    [\xfbec,\xfbec]->\xe6ef,[\xfbed,\xfbed]->\xe7ac,[\xfbee,\xfbee]->\xf4f4,\
++    [\xfbef,\xfbef]->\xe7ae,[\xfbf0,\xfbf0]->\xf4f5,[\xfbf1,\xfbf1]->\xe7b1,\
++    [\xfbf2,\xfbf2]->\xf4f6,[\xfbf3,\xfbf3]->\xe7b2,[\xfbf4,\xfbf4]->\xe8b1,\
++    [\xfbf5,\xfbf5]->\xe8b6,[\xfbf6,\xfbf6]->\xf4f7,[\xfbf7,\xfbf7]->\xf4f8,\
++    [\xfbf8,\xfbf8]->\xe8dd,[\xfbf9,\xfbf9]->\xf4f9,[\xfbfa,\xfbfa]->\xf4fa,\
++    [\xfbfb,\xfbfb]->\xe9d1,[\xfbfc,\xfbfc]->\xf4fb,[\xfc40,\xfc40]->\xe9ed,\
++    [\xfc41,\xfc41]->\xeacd,[\xfc42,\xfc42]->\xf4fc,[\xfc43,\xfc43]->\xeadb,\
++    [\xfc44,\xfc44]->\xeae6,[\xfc45,\xfc45]->\xeaea,[\xfc46,\xfc46]->\xeba5,\
++    [\xfc47,\xfc47]->\xebfb,[\xfc48,\xfc48]->\xebfa,[\xfc49,\xfc49]->\xf4fd,\
++    [\xfc4a,\xfc4a]->\xecd6,[\xfc4b,\xfc4b]->\xf4fe,\
++    [\xed40,\xed40]->\xd4e3,[\xed41,\xed41]->\xdcdf,[\xed42,\xed42]->\xe4e9,\
++    [\xed43,\xed43]->\xe3f8,[\xed44,\xed44]->\xd9a1,[\xed45,\xed45]->\xb1bb,\
++    [\xed46,\xed46]->\xf4ae,[\xed47,\xed47]->\xc2ad,[\xed48,\xed48]->\xc3fc,\
++    [\xed49,\xed49]->\xe4d0,[\xed4a,\xed4a]->\xc2bf,[\xed4b,\xed4b]->\xbcf4,\
++    [\xed4c,\xed4c]->\xb0a9,[\xed4d,\xed4d]->\xb0c8,[\xed4e,\xed4e]->\xf4af,\
++    [\xed4f,\xed4f]->\xb0d2,[\xed50,\xed50]->\xb0d4,[\xed51,\xed51]->\xb0e3,\
++    [\xed52,\xed52]->\xb0ee,[\xed53,\xed53]->\xb1a7,[\xed54,\xed54]->\xb1a3,\
++    [\xed55,\xed55]->\xb1ac,[\xed56,\xed56]->\xb1a9,[\xed57,\xed57]->\xb1be,\
++    [\xed58,\xed58]->\xb1df,[\xed59,\xed59]->\xb1d8,[\xed5a,\xed5a]->\xb1c8,\
++    [\xed5b,\xed5b]->\xb1d7,[\xed5c,\xed5c]->\xb1e3,[\xed5d,\xed5d]->\xb1f4,\
++    [\xed5e,\xed5e]->\xb1e1,[\xed5f,\xed5f]->\xb2a3,[\xed60,\xed60]->\xf4b0,\
++    [\xed61,\xed61]->\xb2bb,[\xed62,\xed62]->\xb2e6,[\xed63,\xed63]->\xb2ed,\
++    [\xed64,\xed64]->\xb2f5,[\xed65,\xed65]->\xb2fc,[\xed66,\xed66]->\xf4b1,\
++    [\xed67,\xed67]->\xb3b5,[\xed68,\xed68]->\xb3d8,[\xed69,\xed69]->\xb3db,\
++    [\xed6a,\xed6a]->\xb3e5,[\xed6b,\xed6b]->\xb3ee,[\xed6c,\xed6c]->\xb3fb,\
++    [\xed6d,\xed6d]->\xf4b2,[\xed6e,\xed6e]->\xf4b3,[\xed6f,\xed6f]->\xb4c0,\
++    [\xed70,\xed70]->\xb4c7,[\xed71,\xed71]->\xb4d0,[\xed72,\xed72]->\xb4de,\
++    [\xed73,\xed73]->\xf4b4,[\xed74,\xed74]->\xb5aa,[\xed75,\xed75]->\xf4b5,\
++    [\xed76,\xed76]->\xb5af,[\xed77,\xed77]->\xb5c4,[\xed78,\xed78]->\xb5e8,\
++    [\xed79,\xed79]->\xf4b6,[\xed7a,\xed7a]->\xb7c2,[\xed7b,\xed7b]->\xb7e4,\
++    [\xed7c,\xed7c]->\xb7e8,[\xed7d,\xed7d]->\xb7e7,[\xed7e,\xed7e]->\xf4b7,\
++    [\xed80,\xed80]->\xf4b8,[\xed81,\xed81]->\xf4b9,[\xed82,\xed82]->\xb8ce,\
++    [\xed83,\xed83]->\xb8e1,[\xed84,\xed84]->\xb8f5,[\xed85,\xed85]->\xb8f7,\
++    [\xed86,\xed86]->\xb8f8,[\xed87,\xed87]->\xb8fc,[\xed88,\xed88]->\xb9af,\
++    [\xed89,\xed89]->\xb9b7,[\xed8a,\xed8a]->\xbabe,[\xed8b,\xed8b]->\xbadb,\
++    [\xed8c,\xed8c]->\xcdaa,[\xed8d,\xed8d]->\xbae1,[\xed8e,\xed8e]->\xf4ba,\
++    [\xed8f,\xed8f]->\xbaeb,[\xed90,\xed90]->\xbbb3,[\xed91,\xed91]->\xbbb8,\
++    [\xed92,\xed92]->\xf4bb,[\xed93,\xed93]->\xbbca,[\xed94,\xed94]->\xf4bc,\
++    [\xed95,\xed95]->\xf4bd,[\xed96,\xed96]->\xbbd0,[\xed97,\xed97]->\xbbde,\
++    [\xed98,\xed98]->\xbbf4,[\xed99,\xed99]->\xbbf5,[\xed9a,\xed9a]->\xbbf9,\
++    [\xed9b,\xed9b]->\xbce4,[\xed9c,\xed9c]->\xbced,[\xed9d,\xed9d]->\xbcfe,\
++    [\xed9e,\xed9e]->\xf4be,[\xed9f,\xed9f]->\xbdc2,[\xeda0,\xeda0]->\xbde7,\
++    [\xeda1,\xeda1]->\xf4bf,[\xeda2,\xeda2]->\xbdf0,[\xeda3,\xeda3]->\xbeb0,\
++    [\xeda4,\xeda4]->\xbeac,[\xeda5,\xeda5]->\xf4c0,[\xeda6,\xeda6]->\xbeb3,\
++    [\xeda7,\xeda7]->\xbebd,[\xeda8,\xeda8]->\xbecd,[\xeda9,\xeda9]->\xbec9,\
++    [\xedaa,\xedaa]->\xbee4,[\xedab,\xedab]->\xbfa8,[\xedac,\xedac]->\xbfc9,\
++    [\xedad,\xedad]->\xc0c4,[\xedae,\xedae]->\xc0e4,[\xedaf,\xedaf]->\xc0f4,\
++    [\xedb0,\xedb0]->\xc1a6,[\xedb1,\xedb1]->\xf4c1,[\xedb2,\xedb2]->\xc1f5,\
++    [\xedb3,\xedb3]->\xc1fc,[\xedb4,\xedb4]->\xf4c2,[\xedb5,\xedb5]->\xc1f8,\
++    [\xedb6,\xedb6]->\xc2ab,[\xedb7,\xedb7]->\xc2a1,[\xedb8,\xedb8]->\xc2a5,\
++    [\xedb9,\xedb9]->\xf4c3,[\xedba,\xedba]->\xc2b8,[\xedbb,\xedbb]->\xc2ba,\
++    [\xedbc,\xedbc]->\xf4c4,[\xedbd,\xedbd]->\xc2c4,[\xedbe,\xedbe]->\xc2d2,\
++    [\xedbf,\xedbf]->\xc2d7,[\xedc0,\xedc0]->\xc2db,[\xedc1,\xedc1]->\xc2de,\
++    [\xedc2,\xedc2]->\xc2ed,[\xedc3,\xedc3]->\xc2f0,[\xedc4,\xedc4]->\xf4c5,\
++    [\xedc5,\xedc5]->\xc3a1,[\xedc6,\xedc6]->\xc3b5,[\xedc7,\xedc7]->\xc3c9,\
++    [\xedc8,\xedc8]->\xc3b9,[\xedc9,\xedc9]->\xf4c6,[\xedca,\xedca]->\xc3d8,\
++    [\xedcb,\xedcb]->\xc3fe,[\xedcc,\xedcc]->\xf4c7,[\xedcd,\xedcd]->\xc4cc,\
++    [\xedce,\xedce]->\xf4c8,[\xedcf,\xedcf]->\xc4d9,[\xedd0,\xedd0]->\xc4ea,\
++    [\xedd1,\xedd1]->\xc4fd,[\xedd2,\xedd2]->\xf4c9,[\xedd3,\xedd3]->\xc5a7,\
++    [\xedd4,\xedd4]->\xc5b5,[\xedd5,\xedd5]->\xc5b6,[\xedd6,\xedd6]->\xf4ca,\
++    [\xedd7,\xedd7]->\xc5d5,[\xedd8,\xedd8]->\xc6b8,[\xedd9,\xedd9]->\xc6d7,\
++    [\xedda,\xedda]->\xc6e0,[\xeddb,\xeddb]->\xc6ea,[\xeddc,\xeddc]->\xc6e3,\
++    [\xeddd,\xeddd]->\xc7a1,[\xedde,\xedde]->\xc7ab,[\xeddf,\xeddf]->\xc7c7,\
++    [\xede0,\xede0]->\xc7c3,[\xede1,\xede1]->\xc7cb,[\xede2,\xede2]->\xc7cf,\
++    [\xede3,\xede3]->\xc7d9,[\xede4,\xede4]->\xf4cb,[\xede5,\xede5]->\xf4cc,\
++    [\xede6,\xede6]->\xc7e6,[\xede7,\xede7]->\xc7ee,[\xede8,\xede8]->\xc7fc,\
++    [\xede9,\xede9]->\xc7eb,[\xedea,\xedea]->\xc7f0,[\xedeb,\xedeb]->\xc8b1,\
++    [\xedec,\xedec]->\xc8e5,[\xeded,\xeded]->\xc8f8,[\xedee,\xedee]->\xc9a6,\
++    [\xedef,\xedef]->\xc9ab,[\xedf0,\xedf0]->\xc9ad,[\xedf1,\xedf1]->\xf4cd,\
++    [\xedf2,\xedf2]->\xc9ca,[\xedf3,\xedf3]->\xc9d3,[\xedf4,\xedf4]->\xc9e9,\
++    [\xedf5,\xedf5]->\xc9e3,[\xedf6,\xedf6]->\xc9fc,[\xedf7,\xedf7]->\xc9f4,\
++    [\xedf8,\xedf8]->\xc9f5,[\xedf9,\xedf9]->\xf4ce,[\xedfa,\xedfa]->\xcab3,\
++    [\xedfb,\xedfb]->\xcabd,[\xedfc,\xedfc]->\xcaef,[\xee40,\xee40]->\xcaf1,\
++    [\xee41,\xee41]->\xcbae,[\xee42,\xee42]->\xf4cf,[\xee43,\xee43]->\xcbca,\
++    [\xee44,\xee44]->\xcbe6,[\xee45,\xee45]->\xcbea,[\xee46,\xee46]->\xcbf0,\
++    [\xee47,\xee47]->\xcbf4,[\xee48,\xee48]->\xcbee,[\xee49,\xee49]->\xcca5,\
++    [\xee4a,\xee4a]->\xcbf9,[\xee4b,\xee4b]->\xccab,[\xee4c,\xee4c]->\xccae,\
++    [\xee4d,\xee4d]->\xccad,[\xee4e,\xee4e]->\xccb2,[\xee4f,\xee4f]->\xccc2,\
++    [\xee50,\xee50]->\xccd0,[\xee51,\xee51]->\xccd9,[\xee52,\xee52]->\xf4d0,\
++    [\xee53,\xee53]->\xcdbb,[\xee54,\xee54]->\xf4d1,[\xee55,\xee55]->\xcebb,\
++    [\xee56,\xee56]->\xf4d2,[\xee57,\xee57]->\xceba,[\xee58,\xee58]->\xcec3,\
++    [\xee59,\xee59]->\xf4d3,[\xee5a,\xee5a]->\xcef2,[\xee5b,\xee5b]->\xb3dd,\
++    [\xee5c,\xee5c]->\xcfd5,[\xee5d,\xee5d]->\xcfe2,[\xee5e,\xee5e]->\xcfe9,\
++    [\xee5f,\xee5f]->\xcfed,[\xee60,\xee60]->\xf4d4,[\xee61,\xee61]->\xf4d5,\
++    [\xee62,\xee62]->\xf4d6,[\xee63,\xee63]->\xf4d7,[\xee64,\xee64]->\xd0e5,\
++    [\xee65,\xee65]->\xf4d8,[\xee66,\xee66]->\xd0e9,[\xee67,\xee67]->\xd1e8,\
++    [\xee68,\xee68]->\xf4d9,[\xee69,\xee69]->\xf4da,[\xee6a,\xee6a]->\xd1ec,\
++    [\xee6b,\xee6b]->\xd2bb,[\xee6c,\xee6c]->\xf4db,[\xee6d,\xee6d]->\xd3e1,\
++    [\xee6e,\xee6e]->\xd3e8,[\xee6f,\xee6f]->\xd4a7,[\xee70,\xee70]->\xf4dc,\
++    [\xee71,\xee71]->\xf4dd,[\xee72,\xee72]->\xd4d4,[\xee73,\xee73]->\xd4f2,\
++    [\xee74,\xee74]->\xd5ae,[\xee75,\xee75]->\xf4de,[\xee76,\xee76]->\xd7de,\
++    [\xee77,\xee77]->\xf4df,[\xee78,\xee78]->\xd8a2,[\xee79,\xee79]->\xd8b7,\
++    [\xee7a,\xee7a]->\xd8c1,[\xee7b,\xee7b]->\xd8d1,[\xee7c,\xee7c]->\xd8f4,\
++    [\xee7d,\xee7d]->\xd9c6,[\xee7e,\xee7e]->\xd9c8,[\xee80,\xee80]->\xd9d1,\
++    [\xee81,\xee81]->\xf4e0,[\xee82,\xee82]->\xf4e1,[\xee83,\xee83]->\xf4e2,\
++    [\xee84,\xee84]->\xf4e3,[\xee85,\xee85]->\xf4e4,[\xee86,\xee86]->\xdcd3,\
++    [\xee87,\xee87]->\xddc8,[\xee88,\xee88]->\xddd4,[\xee89,\xee89]->\xddea,\
++    [\xee8a,\xee8a]->\xddfa,[\xee8b,\xee8b]->\xdea4,[\xee8c,\xee8c]->\xdeb0,\
++    [\xee8d,\xee8d]->\xf4e5,[\xee8e,\xee8e]->\xdeb5,[\xee8f,\xee8f]->\xdecb,\
++    [\xee90,\xee90]->\xf4e6,[\xee91,\xee91]->\xdfb9,[\xee92,\xee92]->\xf4e7,\
++    [\xee93,\xee93]->\xdfc3,[\xee94,\xee94]->\xf4e8,[\xee95,\xee95]->\xf4e9,\
++    [\xee96,\xee96]->\xe0d9,[\xee97,\xee97]->\xf4ea,[\xee98,\xee98]->\xf4eb,\
++    [\xee99,\xee99]->\xe1e2,[\xee9a,\xee9a]->\xf4ec,[\xee9b,\xee9b]->\xf4ed,\
++    [\xee9c,\xee9c]->\xf4ee,[\xee9d,\xee9d]->\xe2c7,[\xee9e,\xee9e]->\xe3a8,\
++    [\xee9f,\xee9f]->\xe3a6,[\xeea0,\xeea0]->\xe3a9,[\xeea1,\xeea1]->\xe3af,\
++    [\xeea2,\xeea2]->\xe3b0,[\xeea3,\xeea3]->\xe3aa,[\xeea4,\xeea4]->\xe3ab,\
++    [\xeea5,\xeea5]->\xe3bc,[\xeea6,\xeea6]->\xe3c1,[\xeea7,\xeea7]->\xe3bf,\
++    [\xeea8,\xeea8]->\xe3d5,[\xeea9,\xeea9]->\xe3d8,[\xeeaa,\xeeaa]->\xe3d6,\
++    [\xeeab,\xeeab]->\xe3df,[\xeeac,\xeeac]->\xe3e3,[\xeead,\xeead]->\xe3e1,\
++    [\xeeae,\xeeae]->\xe3d4,[\xeeaf,\xeeaf]->\xe3e9,[\xeeb0,\xeeb0]->\xe4a6,\
++    [\xeeb1,\xeeb1]->\xe3f1,[\xeeb2,\xeeb2]->\xe3f2,[\xeeb3,\xeeb3]->\xe4cb,\
++    [\xeeb4,\xeeb4]->\xe4c1,[\xeeb5,\xeeb5]->\xe4c3,[\xeeb6,\xeeb6]->\xe4be,\
++    [\xeeb7,\xeeb7]->\xf4ef,[\xeeb8,\xeeb8]->\xe4c0,[\xeeb9,\xeeb9]->\xe4c7,\
++    [\xeeba,\xeeba]->\xe4bf,[\xeebb,\xeebb]->\xe4e0,[\xeebc,\xeebc]->\xe4de,\
++    [\xeebd,\xeebd]->\xe4d1,[\xeebe,\xeebe]->\xf4f0,[\xeebf,\xeebf]->\xe4dc,\
++    [\xeec0,\xeec0]->\xe4d2,[\xeec1,\xeec1]->\xe4db,[\xeec2,\xeec2]->\xe4d4,\
++    [\xeec3,\xeec3]->\xe4fa,[\xeec4,\xeec4]->\xe4ef,[\xeec5,\xeec5]->\xe5b3,\
++    [\xeec6,\xeec6]->\xe5bf,[\xeec7,\xeec7]->\xe5c9,[\xeec8,\xeec8]->\xe5d0,\
++    [\xeec9,\xeec9]->\xe5e2,[\xeeca,\xeeca]->\xe5ea,[\xeecb,\xeecb]->\xe5eb,\
++    [\xeecc,\xeecc]->\xf4f1,[\xeecd,\xeecd]->\xf4f2,[\xeece,\xeece]->\xf4f3,\
++    [\xeecf,\xeecf]->\xe6e8,[\xeed0,\xeed0]->\xe6ef,[\xeed1,\xeed1]->\xe7ac,\
++    [\xeed2,\xeed2]->\xf4f4,[\xeed3,\xeed3]->\xe7ae,[\xeed4,\xeed4]->\xf4f5,\
++    [\xeed5,\xeed5]->\xe7b1,[\xeed6,\xeed6]->\xf4f6,[\xeed7,\xeed7]->\xe7b2,\
++    [\xeed8,\xeed8]->\xe8b1,[\xeed9,\xeed9]->\xe8b6,[\xeeda,\xeeda]->\xf4f7,\
++    [\xeedb,\xeedb]->\xf4f8,[\xeedc,\xeedc]->\xe8dd,[\xeedd,\xeedd]->\xf4f9,\
++    [\xeede,\xeede]->\xf4fa,[\xeedf,\xeedf]->\xe9d1,[\xeee0,\xeee0]->\xf4fb,\
++    [\xeee1,\xeee1]->\xe9ed,[\xeee2,\xeee2]->\xeacd,[\xeee3,\xeee3]->\xf4fc,\
++    [\xeee4,\xeee4]->\xeadb,[\xeee5,\xeee5]->\xeae6,[\xeee6,\xeee6]->\xeaea,\
++    [\xeee7,\xeee7]->\xeba5,[\xeee8,\xeee8]->\xebfb,[\xeee9,\xeee9]->\xebfa,\
++    [\xeeea,\xeeea]->\xf4fd,[\xeeeb,\xeeeb]->\xecd6,[\xeeec,\xeeec]->\xf4fe,\
++    [\xeeef,\xeeef]->\xf3f3,[\xeef0,\xeef0]->\xf3f4,[\xeef1,\xeef1]->\xf3f5,\
++    [\xeef2,\xeef2]->\xf3f6,[\xeef3,\xeef3]->\xf3f7,[\xeef4,\xeef4]->\xf3f8,\
++    [\xeef5,\xeef5]->\xf3f9,[\xeef6,\xeef6]->\xf3fa,[\xeef7,\xeef7]->\xf3fb,\
++    [\xeef8,\xeef8]->\xf3fc,[\xeefa,\xeefa]->\xa2c3,[\xeefb,\xeefb]->\xf4a9,\
++    [\xeefc,\xeefc]->\xf4aa,
++}
++
++XCOMM 	cs3 class
++cs3	{
+ 	side		GR
+ 	length		1
+ #if WCHAR32

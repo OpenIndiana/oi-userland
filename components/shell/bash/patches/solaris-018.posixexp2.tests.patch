@@ -1,0 +1,16 @@
+# Unset xpg_echo when running the posix2 regexp tests.
+# Solaris-specific. Not for upstream.
+--- tests/posixexp2.tests	2010-11-11 17:50:47.000000000 -0800
++++ tests/posixexp2.tests	2012-07-12 13:15:14.818468328 -0700
+@@ -2,6 +2,11 @@
+ 
+ set -o posix
+ 
++xpg=`shopt | grep xpg_echo | awk '{ print $2 }'`
++if [ ${xpg} = "on" ] ; then
++    shopt -u xpg_echo
++fi
++
+ (echo 1 ${IFS+'}'z}) 2>&- || echo failed in 1
+ (echo 2 "${IFS+'}'z}") 2>&- || echo failed in 2
+ (echo 3 "foo ${IFS+'bar} baz") 2>&- || echo failed in 3

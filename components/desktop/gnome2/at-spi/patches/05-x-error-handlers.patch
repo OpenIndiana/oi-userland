@@ -1,0 +1,40 @@
+--- at-spi-1.30.0.orig/atk-bridge/bridge.c	2010-04-23 11:38:39.000000000 +0100
++++ at-spi-1.30.0.orig/atk-bridge/bridge.c	2010-04-23 11:40:16.000000000 +0100
+@@ -608,6 +608,18 @@ 
+   registry = bonobo_object_release_unref (local_registry, &ev);
+ }
+ 
++static int
++ignoreXIOErrorHdl(Display *display )
++{
++    return 0;
++}
++
++static int
++ignoreXErrorHdl(Display *display, XErrorEvent *errorevent )
++{
++    return 0;
++}
++
+ static void
+ spi_atk_bridge_exit_func (void)
+ {
+@@ -653,7 +665,16 @@ 
+       g_assert (!bonobo_debug_shutdown ());
+     }
+   if (bridge_display)
+-    XCloseDisplay (bridge_display);
++    {
++      XIOErrorHandler oldIOXErrorHdl;
++      XErrorHandler oldXErrorHdl;
++
++      oldIOXErrorHdl = XSetIOErrorHandler(ignoreXIOErrorHdl);
++      oldXErrorHdl = XSetErrorHandler(ignoreXErrorHdl);
++      XCloseDisplay (bridge_display);
++      XSetErrorHandler(oldXErrorHdl);
++      XSetIOErrorHandler(oldIOXErrorHdl);
++    }
+ }
+ 
+ void
+

@@ -1,0 +1,31 @@
+--- mate-control-center-1.14.0/capplets/keybindings/eggcellrendererkeys.c.~1~	2016-07-28 10:50:37.732200618 +0300
++++ mate-control-center-1.14.0/capplets/keybindings/eggcellrendererkeys.c	2016-07-28 10:52:13.168958635 +0300
+@@ -422,7 +422,8 @@
+ 		GDK_BUTTON2_MASK |
+ 		GDK_BUTTON3_MASK |
+ 		GDK_BUTTON4_MASK |
+-		GDK_BUTTON5_MASK;
++		GDK_BUTTON5_MASK |
++		GDK_LOCK_MASK;
+ 
+ 	/* filter consumed/ignored modifiers */
+ 	if (keys->accel_mode == EGG_CELL_RENDERER_KEYS_MODE_GTK)
+--- mate-control-center-1.14.0/capplets/keybindings/mate-keybinding-properties.c	2016-01-30 21:03:48.000000000 +0300
++++ mate-control-center-1.14.0/capplets/keybindings/mate-keybinding-properties.c	2016-07-28 10:55:28.885460086 +0300
+@@ -26,6 +26,7 @@
+ #define MAX_CUSTOM_SHORTCUTS 1000
+ #define RESPONSE_ADD 0
+ #define RESPONSE_REMOVE 1
++#define ignore_modifiers ( GDK_LOCK_MASK )
+ 
+ typedef struct {
+   /* The untranslated name, combine with ->package to translate */
+@@ -1092,6 +1093,8 @@
+         KEYENTRY_COLUMN, &element,
+         -1);
+ 
++    new_key->mask = new_key->mask & ~(ignore_modifiers);
++
+     /* no conflict for : blanks, different modifiers, or ourselves */
+     if (element == NULL || new_key->mask != element->mask)
+     {

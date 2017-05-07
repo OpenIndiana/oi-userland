@@ -1,0 +1,35 @@
+Upstream bugID: #3278
+Synopsis: Info panel should follow symlinks
+Bug record: https://www.midnight-commander.org/ticket/3278
+
+--- mc-4.8.17.orig/src/filemanager/mountlist.c	2016-05-09 10:42:34.560205317 +0300
++++ mc-4.8.17/src/filemanager/mountlist.c	2016-05-09 10:42:13.095772709 +0300
+@@ -1702,11 +1702,16 @@
+ my_statfs (struct my_statfs *myfs_stats, const char *path)
+ {
+ #ifdef HAVE_INFOMOUNT_LIST
++    const char *rpath;
+     size_t len = 0;
+     struct mount_entry *entry = NULL;
+     GSList *temp;
+     struct fs_usage fs_use;
+
++    rpath = realpath(path, NULL);
++    if (rpath != NULL && path != rpath)
++        path = rpath;
++
+     for (temp = mc_mount_list; temp != NULL; temp = g_slist_next (temp))
+     {
+         struct mount_entry *me;
+@@ -1779,6 +1784,11 @@
+         myfs_stats->nfree = 0;
+         myfs_stats->nodes = 0;
+     }
++
++#ifdef HAVE_INFOMOUNT_LIST
++    if (rpath != path)
++        free((void *) rpath);
++#endif /* HAVE_INFOMOUNT_LIST */
+ }
+
+ /* --------------------------------------------------------------------------------------------- */

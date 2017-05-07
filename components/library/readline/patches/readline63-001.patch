@@ -1,0 +1,32 @@
+# DP: readline63-001 upstream patch
+
+			   READLINE PATCH REPORT
+			   =====================
+
+Readline-Release: 6.3
+Patch-ID: readline63-001
+
+Bug-Reported-by:	Daan van Rossum <daan@flash.uchicago.edu>
+Bug-Reference-ID:	<20140307072523.GA14250@flash.uchicago.edu>
+Bug-Reference-URL:	
+
+Bug-Description:
+
+The `.' command in vi mode cannot undo multi-key commands beginning with
+`c', `d', and `y' (command plus motion specifier).
+
+Patch (apply with `patch -p0'):
+
+Index: b/readline.c
+===================================================================
+--- a/readline.c
++++ b/readline.c
+@@ -964,7 +964,7 @@ _rl_dispatch_subseq (key, map, got_subse
+ #if defined (VI_MODE)
+   if (rl_editing_mode == vi_mode && _rl_keymap == vi_movement_keymap &&
+       key != ANYOTHERKEY &&
+-      rl_key_sequence_length == 1 &&	/* XXX */
++      _rl_dispatching_keymap == vi_movement_keymap &&
+       _rl_vi_textmod_command (key))
+     _rl_vi_set_last (key, rl_numeric_arg, rl_arg_sign);
+ #endif

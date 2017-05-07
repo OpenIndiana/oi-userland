@@ -1,0 +1,41 @@
+--- a/exe/odbc-config.c	2009-12-11 08:54:07.000000000 -0800
++++ b/exe/odbc-config.c	2011-05-16 11:46:12.131107392 -0700
+@@ -50,6 +50,7 @@
+ 
+ static void cInc( void )
+ {
++    printf( "#ifndef UODBC__conf_h\n#define UODBC__conf_h 1\n\n");
+ #ifdef HAVE_UNISTD_H
+     printf( "#ifndef HAVE_UNISTD_H\n #define HAVE_UNISTD_H\n#endif\n" );
+ #endif
+@@ -83,11 +84,11 @@
+ #endif
+ 
+ #ifdef ODBCINT64_TYPE
+-    printf( "#ifndef ODBCINT64\n #define ODBCINT64 %s\n#endif\n", ODBCINT64_TYPE );
++    printf( "#ifndef ODBCINT64\n#if defined(__amd64) || defined(__sparcv9)\n #define ODBCINT64 long\n#else\n #define ODBCINT64 long long\n#endif\n#endif\n" );
+ #endif
+ 
+ #ifdef UODBCINT64_TYPE
+-    printf( "#ifndef UODBCINT64\n #define UODBCINT64 %s\n#endif\n", UODBCINT64_TYPE );
++    printf( "#ifndef UODBCINT64\n#if defined(__amd64) || defined(__sparcv9)\n #define ODBCINT64 unsigned long\n#else\n #define UODBCINT64 unsigned long long \n#endif\n#endif\n" );
+ #endif
+ 
+ #ifdef DISABLE_INI_CACHING
+@@ -95,7 +96,7 @@
+ #endif
+ 
+ #ifdef SIZEOF_LONG_INT
+-    printf( "#ifndef SIZEOF_LONG_INT\n #define SIZEOF_LONG_INT %d\n#endif\n", SIZEOF_LONG_INT );
++    printf( "#ifndef SIZEOF_LONG_INT\n#if defined(__amd64) || defined(__sparcv9)\n #define SIZEOF_LONG_INT 8\n#else\n #define SIZEOF_LONG_INT 4\n#endif\n#endif\n" );
+ #endif
+ 
+ #ifdef ALLREADY_HAVE_WINDOWS_TYPE
+@@ -109,6 +110,7 @@
+ #ifdef DO_YOU_KNOW_WHAT_YOUR_ARE_DOING
+     printf( "#ifndef DO_YOU_KNOW_WHAT_YOUR_ARE_DOING\n #define DO_YOU_KNOW_WHAT_YOUR_ARE_DOING\n#endif\n" );
+ #endif
++    printf ("\n#endif /* UODBC__conf_h */\n");
+ }
+ 
+ static void cflags( void )

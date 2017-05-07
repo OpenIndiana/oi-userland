@@ -1,0 +1,352 @@
+diff -ru /home/ml40262/gparted/gparted-0.4.5/compose/ucompose.hpp ./compose/ucompose.hpp
+--- /home/ml40262/gparted/gparted-0.4.5/compose/ucompose.hpp	2009-04-18 13:38:05.000000000 -0700
++++ ./compose/ucompose.hpp	2009-10-16 15:33:54.265337000 -0700
+@@ -127,7 +127,11 @@
+    
+     return Glib::convert(std::string(reinterpret_cast<const char *>(str.data()),
+ 				     str.size() * sizeof(wchar_t)),
++#ifdef __sun
++			 "UTF-8", "UCS-4LE");
++#else
+ 			 "UTF-8", "WCHAR_T");
++#endif
+   }
+ 
+   // specialisations for the common string types
+diff -ru /home/ml40262/gparted/gparted-0.4.5/configure ./configure
+--- /home/ml40262/gparted/gparted-0.4.5/configure	2009-05-08 09:05:43.000000000 -0700
++++ ./configure	2009-10-16 15:33:54.304150000 -0700
+@@ -22031,6 +22031,10 @@
+ #include <stdio.h>
+ #include <parted/parted.h>
+ 
++#ifdef __sun
++char *program_name = "test";
++#endif
++
+ int main ()
+ {
+ 	int min_major ;
+diff -ru /home/ml40262/gparted/gparted-0.4.5/configure.in ./configure.in
+--- /home/ml40262/gparted/gparted-0.4.5/configure.in	2009-05-08 08:50:41.000000000 -0700
++++ ./configure.in	2009-10-16 15:33:54.313587000 -0700
+@@ -49,6 +49,10 @@
+ #include <stdio.h>
+ #include <parted/parted.h>
+ 
++#ifdef __sun
++char *program_name = "test";
++#endif
++
+ int main ()
+ {
+ 	int min_major ;
+diff -ru /home/ml40262/gparted/gparted-0.4.5/include/Utils.h ./include/Utils.h
+--- /home/ml40262/gparted/gparted-0.4.5/include/Utils.h	2009-04-19 11:05:13.000000000 -0700
++++ ./include/Utils.h	2009-10-21 13:40:34.747259000 -0700
+@@ -71,7 +71,8 @@
+ 
+ 	FS_BTRFS	= 20,  /* FIXME: Move this higher up list when full support added */
+ 	FS_LVM2		= 21,
+-	FS_LUKS		= 22
++	FS_LUKS		= 22,
++	FS_SOLARIS	= 23
+ } ;
+ 
+ enum SIZE_UNIT
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/GParted_Core.cc ./src/GParted_Core.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/GParted_Core.cc	2009-05-02 09:59:49.000000000 -0700
++++ ./src/GParted_Core.cc	2009-10-21 15:10:07.784757000 -0700
+@@ -847,7 +847,11 @@
+ 	strncpy(magic, buf+0, 6) ;  magic[6] = '\0' ; //set and terminate string
+ 	ped_device_close( lp_device );
+ 
++#ifdef __sun
++	if (strncmp("LUKS\xBA\xBE", magic, 6) == 0)
++#else
+ 	if ( Glib::ustring( magic ) == "LUKS\xBA\xBE" )
++#endif
+ 	{
+ 		temp = _( "Linux Unified Key Setup encryption is not yet supported." ) ;
+ 		temp += "\n" ;
+@@ -900,6 +904,8 @@
+ 			return GParted::FS_HFSPLUS ;
+ 		else if ( Glib::ustring( lp_partition ->fs_type ->name ) == "ufs" )
+ 			return GParted::FS_UFS ;
++		else if ( Glib::ustring( lp_partition ->fs_type ->name ) == "solaris" )
++			return GParted::FS_SOLARIS ;
+ 	}
+ 	
+ 	
+@@ -911,7 +917,16 @@
+ 	ped_geometry_read( & lp_partition ->geom, buf, 128, 1 ) ;
+ 	ped_device_close( lp_device );
+ 	
++#ifdef __sun
++	/*
++	 * On Solaris, the Glib::ustring causes this message:
++	 * GLib-CRITICAL **: file gconvert.c:
++	 *    line 734: assertion `str != NULL' failed
++	 */
++	if (strncmp("ReIsEr4", buf, 7) == 0)
++#else
+ 	if ( Glib::ustring( buf ) == "ReIsEr4" )
++#endif
+ 		return GParted::FS_REISER4 ;
+ 
+ 	//lvm2
+@@ -925,8 +940,13 @@
+ 	strncpy(magic2, buf+24, 4) ; magic2[4] = '\0' ; //set and terminate string
+ 	ped_device_close( lp_device );
+ 
++#ifdef __sun
++	if (strncmp("LABELONE", magic1, 8) == 0
++	    && strncmp("LVM2", magic2, 4) == 0)
++#else
+ 	if (    Glib::ustring( magic1 ) == "LABELONE"
+ 		 && Glib::ustring( magic2 ) == "LVM2" )
++#endif
+ 	{
+ 		temp = _( "Logical Volume Management is not yet supported." ) ;
+ 		temp += "\n" ;
+@@ -949,7 +969,11 @@
+ 	strncpy(magic, buf_btrfs+64, BTRFS_SIGNATURE .size()) ;  magic[BTRFS_SIGNATURE .size()] = '\0' ; //set and terminate string
+ 	ped_device_close( lp_device ) ;
+ 
++#ifdef __sun
++	if (strncmp("_BHRfS_M", magic, 8) == 0)
++#else
+ 	if ( magic == BTRFS_SIGNATURE )
++#endif
+ 	{
+ 		temp = _( "BTRFS is not yet supported." ) ;
+ 		temp += "\n" ;
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/Utils.cc ./src/Utils.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/Utils.cc	2009-04-19 11:05:13.000000000 -0700
++++ ./src/Utils.cc	2009-10-21 14:20:52.259713000 -0700
+@@ -19,6 +19,7 @@
+ 
+ #include <sstream>
+ #include <iomanip>
++#include <unistd.h>
+ #include <regex.h>
+ #include <locale.h>
+ 
+@@ -87,6 +88,7 @@
+ 		case FS_HFS			: return "#E0B6AF" ;	//red hilight
+ 		case FS_HFSPLUS		: return "#C0A39E" ;	// ~ serene red
+ 		case FS_UFS			: return "#D1940C" ;	//accent yellow dark
++		case FS_SOLARIS			: return "#9933FF" ;	//sun purple
+ 		case FS_USED		: return "#F8F8BA" ;	// ~ light tan yellow
+ 		case FS_UNUSED		: return "#FFFFFF" ;	//white
+ 		case FS_LVM2		: return "#CC9966" ;	// ~ medium brown
+@@ -135,6 +137,7 @@
+ 		case FS_HFS		: return "hfs" ;
+ 		case FS_HFSPLUS		: return "hfs+" ;
+ 		case FS_UFS		: return "ufs" ;
++		case FS_SOLARIS		: return "solaris" ;
+ 		case FS_USED		: return _("used") ;
+ 		case FS_UNUSED		: return _("unused") ;
+ 		case FS_LVM2		: return "lvm2" ;
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/ext2.cc ./src/ext2.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/ext2.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/ext2.cc	2009-10-16 15:33:54.360072000 -0700
+@@ -62,12 +62,12 @@
+ 	{
+ 		index = output .find( "Free blocks:" ) ;
+ 		if ( index >= output .length() ||
+-		     sscanf( output.substr( index ) .c_str(), "Free blocks: %Ld", &N ) != 1 )   
++		     sscanf( output.substr( index ) .c_str(), "Free blocks: %lld", &N ) != 1 )   
+ 			N = -1 ;
+ 	
+ 		index = output .find( "Block size:" ) ;
+ 		if ( index >= output.length() || 
+-		     sscanf( output.substr( index ) .c_str(), "Block size: %Ld", &S ) != 1 )  
++		     sscanf( output.substr( index ) .c_str(), "Block size: %lld", &S ) != 1 )  
+ 			S = -1 ;
+ 
+ 		if ( N > -1 && S > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/ext3.cc ./src/ext3.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/ext3.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/ext3.cc	2009-10-16 15:33:54.368076000 -0700
+@@ -63,12 +63,12 @@
+ 	{
+ 		index = output .find( "Free blocks:" ) ;
+ 		if ( index >= output .length() ||
+-		     sscanf( output.substr( index ) .c_str(), "Free blocks: %Ld", &N ) != 1 )   
++		     sscanf( output.substr( index ) .c_str(), "Free blocks: %lld", &N ) != 1 )   
+ 			N = -1 ;
+ 	
+ 		index = output .find( "Block size:" ) ;
+ 		if ( index >= output.length() || 
+-		     sscanf( output.substr( index ) .c_str(), "Block size: %Ld", &S ) != 1 )  
++		     sscanf( output.substr( index ) .c_str(), "Block size: %lld", &S ) != 1 )  
+ 			S = -1 ;
+ 
+ 		if ( N > -1 && S > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/ext4.cc ./src/ext4.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/ext4.cc	2009-04-19 11:05:13.000000000 -0700
++++ ./src/ext4.cc	2009-10-16 15:33:54.375586000 -0700
+@@ -67,12 +67,12 @@
+ 	{
+ 		index = output .find( "Free blocks:" ) ;
+ 		if ( index >= output .length() ||
+-		     sscanf( output.substr( index ) .c_str(), "Free blocks: %Ld", &N ) != 1 )   
++		     sscanf( output.substr( index ) .c_str(), "Free blocks: %lld", &N ) != 1 )   
+ 			N = -1 ;
+ 	
+ 		index = output .find( "Block size:" ) ;
+ 		if ( index >= output.length() || 
+-		     sscanf( output.substr( index ) .c_str(), "Block size: %Ld", &S ) != 1 )  
++		     sscanf( output.substr( index ) .c_str(), "Block size: %lld", &S ) != 1 )  
+ 			S = -1 ;
+ 
+ 		if ( N > -1 && S > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/fat16.cc ./src/fat16.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/fat16.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/fat16.cc	2009-10-16 15:33:54.382437000 -0700
+@@ -68,14 +68,14 @@
+ 	{
+ 		//free clusters
+ 		index = output .find( ",", output .find( partition .get_path() ) + partition .get_path() .length() ) +1 ;
+-		if ( index < output .length() && sscanf( output .substr( index ) .c_str(), "%Ld/%Ld", &S, &N ) == 2 ) 
++		if ( index < output .length() && sscanf( output .substr( index ) .c_str(), "%lld/%lld", &S, &N ) == 2 ) 
+ 			N -= S ;
+ 		else
+ 			N = -1 ;
+ 
+ 		//bytes per cluster
+ 		index = output .rfind( "\n", output .find( "bytes per cluster" ) ) +1 ;
+-		if ( index >= output .length() || sscanf( output .substr( index ) .c_str(), "%Ld", &S ) != 1 )
++		if ( index >= output .length() || sscanf( output .substr( index ) .c_str(), "%lld", &S ) != 1 )
+ 			S = -1 ;
+ 	
+ 		if ( N > -1 && S > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/fat32.cc ./src/fat32.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/fat32.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/fat32.cc	2009-10-16 15:33:54.389232000 -0700
+@@ -68,14 +68,14 @@
+ 	{
+ 		//free clusters
+ 		index = output .find( ",", output .find( partition .get_path() ) + partition .get_path() .length() ) +1 ;
+-		if ( index < output .length() && sscanf( output .substr( index ) .c_str(), "%Ld/%Ld", &S, &N ) == 2 ) 
++		if ( index < output .length() && sscanf( output .substr( index ) .c_str(), "%lld/%lld", &S, &N ) == 2 ) 
+ 			N -= S ;
+ 		else
+ 			N = -1 ;
+ 
+ 		//bytes per cluster
+ 		index = output .rfind( "\n", output .find( "bytes per cluster" ) ) +1 ;
+-		if ( index >= output .length() || sscanf( output .substr( index ) .c_str(), "%Ld", &S ) != 1 )
++		if ( index >= output .length() || sscanf( output .substr( index ) .c_str(), "%lld", &S ) != 1 )
+ 			S = -1 ;
+ 	
+ 		if ( N > -1 && S > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/jfs.cc ./src/jfs.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/jfs.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/jfs.cc	2009-10-16 15:33:54.396315000 -0700
+@@ -82,13 +82,13 @@
+ 		//blocksize
+ 		index = output .find( "Block Size:" ) ;
+ 		if ( index >= output .length() || 
+-		     sscanf( output .substr( index ) .c_str(), "Block Size: %Ld", &S ) != 1 ) 
++		     sscanf( output .substr( index ) .c_str(), "Block Size: %lld", &S ) != 1 ) 
+ 			S = -1 ;
+ 		
+ 		//free blocks
+ 		index = output .find( "dn_nfree:" ) ;
+ 		if ( index >= output .length() || 
+-		     sscanf( output .substr( index ) .c_str(), "dn_nfree: %Lx", &N ) != 1 ) 
++		     sscanf( output .substr( index ) .c_str(), "dn_nfree: %llx", &N ) != 1 ) 
+ 			N = -1 ;
+ 
+ 		if ( S > -1 && N > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/main.cc ./src/main.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/main.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/main.cc	2009-10-16 15:33:54.403171000 -0700
+@@ -20,8 +20,16 @@
+ #include <gtkmm/messagedialog.h>
+ #include <gtkmm/main.h>
+ 
++#ifdef __sun
++char *program_name;
++#endif
++
+ int main( int argc, char *argv[] )
+ {
++#ifdef __sun
++	program_name = argv[0];
++#endif
++
+ 	//initialize thread system
+ 	Glib::thread_init() ;
+ 	
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/ntfs.cc ./src/ntfs.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/ntfs.cc	2009-04-19 11:05:13.000000000 -0700
++++ ./src/ntfs.cc	2009-10-16 15:33:54.410077000 -0700
+@@ -66,9 +66,8 @@
+ 	{
+ 		index = output .find( "resize at" ) ;
+ 		if ( index >= output .length() ||
+-		     sscanf( output .substr( index ) .c_str(), "resize at %Ld", &N ) != 1 )
++		     sscanf( output .substr( index ) .c_str(), "resize at %lld", &N ) != 1 )
+ 			N = -1 ;
+-
+ 		if ( N > -1 )
+ 			partition .set_used( Utils::round( N / 512.0 ) ) ; 
+ 	}
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/reiser4.cc ./src/reiser4.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/reiser4.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/reiser4.cc	2009-10-16 15:33:54.416591000 -0700
+@@ -59,12 +59,12 @@
+ 	{
+ 		index = output .find( "free blocks" ) ;
+ 		if ( index >= output .length() ||
+-		     sscanf( output.substr( index ) .c_str(), "free blocks: %Ld", &N ) != 1 )   
++		     sscanf( output.substr( index ) .c_str(), "free blocks: %lld", &N ) != 1 )   
+ 			N = -1 ;
+ 	
+ 		index = output .find( "blksize" ) ;
+ 		if ( index >= output.length() ||
+-		     sscanf( output.substr( index ) .c_str(), "blksize: %Ld", &S ) != 1 )  
++		     sscanf( output.substr( index ) .c_str(), "blksize: %lld", &S ) != 1 )  
+ 			S = -1 ;
+ 
+ 		if ( N > -1 && S > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/reiserfs.cc ./src/reiserfs.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/reiserfs.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/reiserfs.cc	2009-10-16 15:33:54.423380000 -0700
+@@ -67,12 +67,12 @@
+ 	{
+ 		index = output .find( "Blocksize" ) ;
+ 		if ( index >= output .length() || 
+-		     sscanf( output .substr( index ) .c_str(), "Blocksize: %Ld", &S ) != 1 )
++		     sscanf( output .substr( index ) .c_str(), "Blocksize: %lld", &S ) != 1 )
+ 			S = -1 ;
+ 
+ 		index = output .find( ":", output .find( "Free blocks" ) ) +1 ;
+ 		if ( index >= output .length() ||
+-		     sscanf( output .substr( index ) .c_str(), "%Ld", &N ) != 1 )
++		     sscanf( output .substr( index ) .c_str(), "%lld", &N ) != 1 )
+ 			N = -1 ;
+ 
+ 		if ( N > -1 && S > -1 )
+diff -ru /home/ml40262/gparted/gparted-0.4.5/src/xfs.cc ./src/xfs.cc
+--- /home/ml40262/gparted/gparted-0.4.5/src/xfs.cc	2009-04-18 13:38:05.000000000 -0700
++++ ./src/xfs.cc	2009-10-16 15:33:54.431044000 -0700
+@@ -85,13 +85,13 @@
+ 			true ) )
+ 	{
+ 		//blocksize
+-		if ( sscanf( output .c_str(), "blocksize = %Ld", &S ) != 1 )
++		if ( sscanf( output .c_str(), "blocksize = %lld", &S ) != 1 )
+ 			S = -1 ;
+ 
+ 		//free blocks
+ 		index = output .find( "fdblocks" ) ;
+ 		if ( index > output .length() ||
+-		     sscanf( output .substr( index ) .c_str(), "fdblocks = %Ld", &N ) != 1 )
++		     sscanf( output .substr( index ) .c_str(), "fdblocks = %lld", &N ) != 1 )
+ 			N = -1 ;
+ 
+ 		if ( N > -1 && S > -1 )

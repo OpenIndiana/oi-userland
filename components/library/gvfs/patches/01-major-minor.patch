@@ -1,0 +1,43 @@
+From 3be9a4eb3a024f7adf605fe57da1491f7549c3a2 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sun, 20 Dec 2015 19:33:37 -0800
+Subject: [PATCH] metadata: need to include <sys/mkdev.h> on Solaris for
+ major() & minor()
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ configure.ac        | 2 +-
+ metadata/metatree.c | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index bb358c6..3672b00 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -772,7 +772,7 @@ AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
+ dnl ==========================================================================
+ dnl Look for various fs info getters
+ 
+-AC_CHECK_HEADERS([sys/statfs.h sys/statvfs.h sys/vfs.h sys/mount.h sys/param.h])
++AC_CHECK_HEADERS([sys/statfs.h sys/statvfs.h sys/vfs.h sys/mount.h sys/param.h sys/mkdev.h])
+ AC_CHECK_FUNCS(statvfs statfs)
+ AC_CHECK_MEMBERS([struct statfs.f_fstypename, struct statfs.f_bavail],,, [#include <sys/types.h>
+ #include <sys/stat.h>
+diff --git a/metadata/metatree.c b/metadata/metatree.c
+index 89942cb..b5eeb36 100644
+--- a/metadata/metatree.c
++++ b/metadata/metatree.c
+@@ -9,6 +9,10 @@
+ #include <stdlib.h>
+ #include <time.h>
+ 
++#if HAVE_SYS_MKDEV_H
++#include <sys/mkdev.h> /* needed for major() & minor() on Solaris */
++#endif
++
+ #include "metatree.h"
+ #include "metabuilder.h"
+ #include <glib.h>
+-- 
+2.6.1
+

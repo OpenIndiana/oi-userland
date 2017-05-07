@@ -1,0 +1,363 @@
+diff --git a/configure.ac b/configure.ac
+index 7614ea8..b36d45a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -884,27 +884,18 @@ AC_CHECK_HEADER(sys/sysinfo.h,
+                 AC_DEFINE(HAVE_SYS_SYSINFO_H, 1,
+                           [Define to 1 if sys/sysinfo.h is available]))
+ 
+-AC_MSG_CHECKING(for mediaLib 2.3)
+-use_mlib25=no
+-# Check for a mediaLib 2.3 function since that is what the GTK+ mediaLib
++# Check for a mediaLib 2.5 function since that is what the GTK+ mediaLib
+ # patch requires.
+-AC_CHECK_LIB(mlib, mlib_ImageSetStruct, use_mlib=yes, use_mlib=no)
++AC_MSG_CHECKING(for mediaLib 2.5)
++use_mlib=no
++# Check for a mediaLib 2.5 function since that is what is needed for
++# gdk_rgb_convert integration.
++AC_CHECK_LIB(mlib, mlib_VideoColorRGBint_to_BGRAint, use_mlib=yes, use_mlib=no)
+ if test $use_mlib = yes; then
+     AC_DEFINE(USE_MEDIALIB, 1,
+-              [Define to 1 if medialib is available and should be used])
+-    MEDIA_LIB=-lmlib
+-
+-    AC_MSG_CHECKING(for mediaLib 2.5)
+-    # Check for a mediaLib 2.5 function since that is what is needed for
+-    # gdk_rgb_convert integration.
+-    AC_CHECK_LIB(mlib, mlib_VideoColorRGBint_to_BGRAint, use_mlib25=yes, use_mlib25=no)
+-    if test $use_mlib25 = yes; then
+-        AC_DEFINE(USE_MEDIALIB25, 1,
+-                  [Define to 1 if medialib 2.5 is available])
+-    fi
++              [Define to 1 if medialib 2.5 is available])
+ fi
+ AM_CONDITIONAL(USE_MEDIALIB, test $use_mlib = yes)
+-AM_CONDITIONAL(USE_MEDIALIB25, test $use_mlib25 = yes)
+ 
+ dnl Look for a host system's gdk-pixbuf-csource if we are cross-compiling
+ 
+diff --git a/gdk/gdkdraw.c b/gdk/gdkdraw.c
+index 81e6e08..d659480 100644
+--- a/gdk/gdkdraw.c
++++ b/gdk/gdkdraw.c
+@@ -1385,26 +1385,26 @@ composite_0888_medialib (guchar      *src_buf,
+ 
+   mlib_image img_src, img_dst;
+ 
+-  mlib_ImageSetStruct (&img_dst,
+-                       MLIB_BYTE,
+-                       4,
+-                       width,
+-                       height,
+-                       dest_rowstride,
+-                       dest_buf);
+-
+-  mlib_ImageSetStruct (&img_src,
+-                       MLIB_BYTE,
+-                       4,
+-                       width,
+-                       height,
+-                       src_rowstride,
+-                       src_buf);
++  medialib_ImageSetStruct (&img_dst,
++                           MLIB_BYTE,
++                           4,
++                           width,
++                           height,
++                          dest_rowstride,
++                          dest_buf);
++
++  medialib_ImageSetStruct (&img_src,
++                           MLIB_BYTE,
++                           4,
++                           width,
++                           height,
++                           src_rowstride,
++                           src_buf);
+ 
+   if (dest_byte_order == GDK_LSB_FIRST)
+-      mlib_ImageBlendRGBA2BGRA (&img_dst, &img_src);
++      medialib_BlendRGBA2BGRA (&img_dst, &img_src);
+   else
+-      mlib_ImageBlendRGBA2ARGB (&img_dst, &img_src);
++      medialib_BlendRGBA2ARGB (&img_dst, &img_src);
+ }
+ #endif
+ 
+diff --git a/gdk/gdkmedialib.c b/gdk/gdkmedialib.c
+index effb89d..ae01bfb 100644
+--- a/gdk/gdkmedialib.c
++++ b/gdk/gdkmedialib.c
+@@ -46,29 +46,56 @@
+ 
+ #include "gdkmedialib.h"
+ 
+-typedef char *      (*ml_version)         (void);
++ml_ImageSetStruct medialib_ImageSetStruct = NULL;
++ml_BlendRGBA2BGRA medialib_BlendRGBA2BGRA = NULL;
++ml_BlendRGBA2ARGB medialib_BlendRGBA2ARGB = NULL;
++ml_ColorRGBint_to_BGRAint medialib_ColorRGBint_to_BGRAint = NULL;
+ 
+-static ml_version                 medialib_version = mlib_version;
++static void *
++dlopen_mlib (void)
++{
++  void *handle = NULL;
+ 
+-gboolean 
+-_gdk_use_medialib (void)
++  if ((handle = dlopen ("libmlib.so.2", RTLD_LAZY)) != NULL)
++    return handle;
++  if ((handle = dlopen ("/usr/lib/libmlib.so.2", RTLD_LAZY)) != NULL)
++    return handle;
++
++  return NULL;
++}
++
++static gboolean
++initialize_mediaLib (void *handle)
++{
++  medialib_ImageSetStruct = (ml_ImageSetStruct)dlsym (handle,
++                             "mlib_ImageSetStruct");
++  medialib_BlendRGBA2BGRA = (ml_BlendRGBA2BGRA)dlsym (handle,
++                             "mlib_ImageBlendRGBA2BGRA");
++  medialib_BlendRGBA2ARGB = (ml_BlendRGBA2ARGB)dlsym (handle,
++                             "mlib_ImageBlendRGBA2ARGB");
++  medialib_ColorRGBint_to_BGRAint = (ml_ColorRGBint_to_BGRAint)dlsym (
++                                     handle,
++                                    "mlib_VideoColorRGBint_to_BGRAint");
++  if (medialib_ImageSetStruct == NULL || medialib_BlendRGBA2BGRA == NULL ||
++       medialib_BlendRGBA2ARGB == NULL || medialib_ColorRGBint_to_BGRAint == NULL)
++    return FALSE;
++
++  return TRUE;
++}
++
++static gboolean
++mlib_x86_checks (void *handle)
+ {
++  typedef char * (*ml_version) (void);
++  ml_version medialib_version;
+   char *mlib_version_string;
+-  char sys_info[257];
+-  long count;
++  char *mlib_target_isa;
+ 
+-  /*
+-   * Sun mediaLib(tm) support.
+-   *
+-   *   http://www.sun.com/processors/vis/mlib.html
+-   *
+-   */
+-  if (getenv ("GDK_DISABLE_MEDIALIB"))
++  medialib_version = (ml_version)dlsym (handle, "mlib_version");
++  if (medialib_version == NULL)
+     return FALSE;
+ 
+   /*
+-   * The imaging functions we want to use were added in mediaLib version 2.
+-   * So turn off mediaLib support if the user has an older version.
+    * mlib_version returns a string in this format:
+    *
+    * mediaLib:0210:20011101:v8plusa
+@@ -78,43 +105,83 @@ _gdk_use_medialib (void)
+    *
+    * The first 2 digits of the version are the major version.  The 3rd digit
+    * is the minor version, and the 4th digit is the micro version. So the
+-   * above string corresponds to version 2.1.0.In the following test we only
+-   * care about the major version.
++   * above string corresponds to version 2.1.0.
++   */
++  mlib_version_string = medialib_version ();
++  mlib_target_isa = &mlib_version_string[23];
++
++  /*
++   * For x86 processors mediaLib generic C implementation
++   * does not give any performance advantage so disable it.
++   */
++  if (strncmp (mlib_target_isa, "sse", 3) != 0)
++    return FALSE;
++
++  /*
++   * For x86 processors use of libumem conflicts with
++   * mediaLib, so avoid using it.
+    */
+-   mlib_version_string = medialib_version ();
++  if (dlsym (RTLD_PROBE,   "umem_alloc") != NULL)
++    return FALSE;
++
++  return TRUE;
++}
+ 
+-   count = sysinfo (SI_ARCHITECTURE, &sys_info[0], 257);
++/*
++ * Sun mediaLib(tm) support.
++ *
++ *   http://www.sun.com/processors/vis/mlib.html
++ *
++ */
++gboolean
++_gdk_use_medialib (void)
++{
++  static gboolean medialib_initialized = FALSE;
++  static gboolean use_medialib = TRUE;
++  void *medialib_handle = NULL;
++  char sys_info[257];
++  long count;
++
++  if (medialib_initialized == TRUE)
++    return TRUE;
++
++  if (use_medialib == FALSE)
++    return FALSE;
++
++  if (getenv ("GDK_DISABLE_MEDIALIB"))
++    {
++      use_medialib = FALSE;
++      return FALSE;
++    }
++
++  medialib_handle = dlopen_mlib ();
++  if (medialib_handle == NULL)
++    goto fail;
++
++  count = sysinfo (SI_ARCHITECTURE, &sys_info[0], 257);
+              
+-   if (count != -1)
+-     {
+-       if (strcmp (sys_info, "i386") == 0)
+-         {
+-           char *mlib_target_isa = &mlib_version_string[23];
+-  
+-           /*
+-            * For x86 processors mediaLib generic C implementation
+-            * does not give any performance advantage so disable it.
+-            */
+-           if (strncmp (mlib_target_isa, "sse", 3) != 0)
+-             {
+-               return FALSE;
+-             }
+-
+-           /*
+-            * For x86 processors use of libumem conflicts with
+-            * mediaLib, so avoid using it.
+-            */
+-           if (dlsym (RTLD_PROBE,   "umem_alloc") != NULL)
+-             {
+-               return FALSE;
+-             }
+-         }
+-     }
+-   else
+-     {
+-       /* Failed to get system architecture, disable mediaLib */
+-       return FALSE;
+-     }
++  if (count != -1)
++    {
++      if (strcmp (sys_info, "i386") == 0)
++        {
++          if (mlib_x86_checks (medialib_handle) == FALSE)
++            goto fail;
++        }
++    }
++  else
++    {
++      /* Failed to get system architecture, disable mediaLib */
++      goto fail;
++    }
+ 
++  if (initialize_mediaLib (medialib_handle) == FALSE)
++    goto fail;
++
++  medialib_initialized = TRUE;
+   return TRUE;
++
++fail:
++  dlclose (medialib_handle);
++  use_medialib = FALSE;
++  return FALSE;
+ }
+diff --git a/gdk/gdkmedialib.h b/gdk/gdkmedialib.h
+index 1912e9d..1306277 100644
+--- a/gdk/gdkmedialib.h
++++ b/gdk/gdkmedialib.h
+@@ -36,6 +36,32 @@
+ 
+ G_BEGIN_DECLS
+ 
++typedef mlib_image*     (*ml_ImageSetStruct)   (mlib_image *image,
++                                               mlib_type type,
++                                               mlib_s32 channels,
++                                               mlib_s32 width,
++                                               mlib_s32 height,
++                                               mlib_s32 stride,
++                                               const void *data);
++typedef mlib_status (*ml_BlendRGBA2BGRA)       (mlib_image *dst,
++                                                const mlib_image *src);
++typedef mlib_status (*ml_BlendRGBA2ARGB)       (mlib_image *dst,
++                                                const mlib_image *src);
++typedef void (*ml_ColorRGBint_to_BGRAint)      (mlib_u8 *bgra,
++                                                const mlib_u8 *rgb,
++                                                const mlib_u8 *a_array,
++                                                mlib_u8 a_const,
++                                                mlib_s32 w,
++                                                mlib_s32 h,
++                                                mlib_s32 dlb,
++                                                mlib_s32 slb,
++                                                mlib_s32 alb);
++
++extern ml_ColorRGBint_to_BGRAint medialib_ColorRGBint_to_BGRAint;
++extern ml_ImageSetStruct medialib_ImageSetStruct;
++extern ml_BlendRGBA2BGRA medialib_BlendRGBA2BGRA;
++extern ml_BlendRGBA2ARGB medialib_BlendRGBA2ARGB;
++
+ gboolean _gdk_use_medialib (void);
+ 
+ G_END_DECLS
+diff --git a/gdk/gdkrgb.c b/gdk/gdkrgb.c
+index 347ff59..9f34366 100644
+--- a/gdk/gdkrgb.c
++++ b/gdk/gdkrgb.c
+@@ -2154,7 +2154,7 @@ gdk_rgb_convert_0888 (GdkRgbInfo *image_info, GdkImage *image,
+     }
+ }
+ 
+-#ifdef USE_MEDIALIB25
++#ifdef USE_MEDIALIB
+ /* convert 24-bit packed to 32-bit unpacked */
+ static void
+ gdk_rgb_convert_0888_medialib (GdkRgbInfo *image_info, GdkImage *image,
+@@ -2171,9 +2171,9 @@ gdk_rgb_convert_0888_medialib (GdkRgbInfo *image_info, GdkImage *image,
+   bpl = image->bpl;
+   obuf = ((guchar *)image->mem) + y0 * bpl + x0 * 4;
+ 
+-  mlib_VideoColorRGBint_to_BGRAint (obuf, bptr, NULL, 0xff,
+-                                    width, height, bpl, 
+-                                    rowstride, 0);
++  medialib_ColorRGBint_to_BGRAint (obuf, bptr, NULL, 0xff,
++                                   width, height, bpl, 
++                                   rowstride, 0);
+ }
+ #endif
+ 
+@@ -3157,7 +3157,7 @@ gdk_rgb_select_conv (GdkRgbInfo *image_info)
+ 	   vtype == GDK_VISUAL_TRUE_COLOR &&
+ 	   (mask_rgb && byte_order == GDK_LSB_FIRST))
+     {
+-#ifdef USE_MEDIALIB25
++#ifdef USE_MEDIALIB
+       if (_gdk_use_medialib ())
+         conv = gdk_rgb_convert_0888_medialib;
+       else
+@@ -3184,7 +3184,7 @@ gdk_rgb_select_conv (GdkRgbInfo *image_info)
+   else if (bpp == 32 && depth == 32 && vtype == GDK_VISUAL_TRUE_COLOR &&
+ 	   (mask_rgb && byte_order == GDK_LSB_FIRST))
+     {
+-#ifdef USE_MEDIALIB25
++#ifdef USE_MEDIALIB
+       if (_gdk_use_medialib ())
+         conv = gdk_rgb_convert_0888_medialib;
+       else
+

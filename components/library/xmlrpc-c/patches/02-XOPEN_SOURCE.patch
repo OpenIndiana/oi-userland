@@ -1,0 +1,310 @@
+### grep -r XOPEN_SOURC xmlrpc-c-1.39.12 |cut -d : -f 1 | xargs sed -e '/#define _XOPEN_SOURCE/d' 
+
+diff -ur xmlrpc-c-1.39.12-1/examples/interrupted_client.c xmlrpc-c-1.39.12/examples/interrupted_client.c
+--- xmlrpc-c-1.39.12-1/examples/interrupted_client.c	2017-03-30 15:34:05.386262288 +0300
++++ xmlrpc-c-1.39.12/examples/interrupted_client.c	2017-03-30 15:35:11.818933417 +0300
+@@ -2,7 +2,6 @@
+    both by timeout and by control-C.
+ */
+ 
+-#define _XOPEN_SOURCE 600
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <stdio.h>
+diff -ur xmlrpc-c-1.39.12-1/examples/interrupted_server.c xmlrpc-c-1.39.12/examples/interrupted_server.c
+--- xmlrpc-c-1.39.12-1/examples/interrupted_server.c	2017-03-30 15:34:05.383853645 +0300
++++ xmlrpc-c-1.39.12/examples/interrupted_server.c	2017-03-30 15:35:11.820271600 +0300
+@@ -7,7 +7,6 @@
+    simpler code, but it is not interruptible with SIGTERM.
+ */
+ 
+-#define _XOPEN_SOURCE 600
+ #define WIN32_LEAN_AND_MEAN  /* required by xmlrpc-c/server_abyss.h */
+ 
+ #include <stdlib.h>
+diff -ur xmlrpc-c-1.39.12-1/examples/xmlrpc_inetd_server.c xmlrpc-c-1.39.12/examples/xmlrpc_inetd_server.c
+--- xmlrpc-c-1.39.12-1/examples/xmlrpc_inetd_server.c	2017-03-30 15:34:05.383785544 +0300
++++ xmlrpc-c-1.39.12/examples/xmlrpc_inetd_server.c	2017-03-30 15:35:11.822753859 +0300
+@@ -21,7 +21,6 @@
+    respond to the client, then exit.
+ */
+ 
+-#define _XOPEN_SOURCE 600
+ #define WIN32_LEAN_AND_MEAN  /* required by xmlrpc-c/server_abyss.h */
+ 
+ #include <stdlib.h>
+diff -ur xmlrpc-c-1.39.12-1/examples/xmlrpc_loop_server.c xmlrpc-c-1.39.12/examples/xmlrpc_loop_server.c
+--- xmlrpc-c-1.39.12-1/examples/xmlrpc_loop_server.c	2017-03-30 15:34:05.383928915 +0300
++++ xmlrpc-c-1.39.12/examples/xmlrpc_loop_server.c	2017-03-30 15:35:11.821712472 +0300
+@@ -8,7 +8,6 @@
+    less control over how the requests are served.
+ */
+ 
+-#define _XOPEN_SOURCE 600
+ #define WIN32_LEAN_AND_MEAN  /* required by xmlrpc-c/server_abyss.h */
+ 
+ #include <stdlib.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/abyss/src/conf.c xmlrpc-c-1.39.12/lib/abyss/src/conf.c
+--- xmlrpc-c-1.39.12-1/lib/abyss/src/conf.c	2017-03-30 15:34:05.361489599 +0300
++++ xmlrpc-c-1.39.12/lib/abyss/src/conf.c	2017-03-30 15:35:11.852098322 +0300
+@@ -32,7 +32,6 @@
+ **
+ ******************************************************************************/
+ 
+-#define _XOPEN_SOURCE 600   /* For strdup() */
+ #define _BSD_SOURCE  /* For xmlrpc_strcaseeq */
+ 
+ #include <stdlib.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/abyss/src/data.c xmlrpc-c-1.39.12/lib/abyss/src/data.c
+--- xmlrpc-c-1.39.12-1/lib/abyss/src/data.c	2017-03-30 15:34:05.361573927 +0300
++++ xmlrpc-c-1.39.12/lib/abyss/src/data.c	2017-03-30 15:35:11.879958379 +0300
+@@ -32,7 +32,6 @@
+ **
+ *******************************************************************************/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <assert.h>
+ #include <stdlib.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/abyss/src/file.c xmlrpc-c-1.39.12/lib/abyss/src/file.c
+--- xmlrpc-c-1.39.12-1/lib/abyss/src/file.c	2017-03-30 15:34:05.360650065 +0300
++++ xmlrpc-c-1.39.12/lib/abyss/src/file.c	2017-03-30 15:35:11.837839193 +0300
+@@ -38,7 +38,6 @@
+    twice.  We tried _POSIX_SOURCE and that made the lseek problem go away but
+    caused <sys/socket.h> not to define struct sockaddr!   AIX 5.3 13.09.16.
+ */
+-#define _XOPEN_SOURCE 600
+ 
+ #include "xmlrpc_config.h"
+ #include "mallocvar.h"
+diff -ur xmlrpc-c-1.39.12-1/lib/abyss/src/handler.c xmlrpc-c-1.39.12/lib/abyss/src/handler.c
+--- xmlrpc-c-1.39.12-1/lib/abyss/src/handler.c	2017-03-30 15:34:05.362376646 +0300
++++ xmlrpc-c-1.39.12/lib/abyss/src/handler.c	2017-03-30 15:35:11.875223177 +0300
+@@ -6,7 +6,6 @@
+    Copyright information is at end of file
+ =============================================================================*/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <assert.h>
+ #include <stdio.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/abyss/src/http.c xmlrpc-c-1.39.12/lib/abyss/src/http.c
+--- xmlrpc-c-1.39.12-1/lib/abyss/src/http.c	2017-03-30 15:34:05.360030033 +0300
++++ xmlrpc-c-1.39.12/lib/abyss/src/http.c	2017-03-30 15:35:11.849187975 +0300
+@@ -1,6 +1,5 @@
+ /* Copyright information is at the end of the file */
+ 
+-#define _XOPEN_SOURCE 600   /* For strdup() */
+ #define _BSD_SOURCE   /* For xmlrpc_strcaseeq() */
+ 
+ #include <ctype.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/abyss/src/response.c xmlrpc-c-1.39.12/lib/abyss/src/response.c
+--- xmlrpc-c-1.39.12-1/lib/abyss/src/response.c	2017-03-30 15:34:05.360322568 +0300
++++ xmlrpc-c-1.39.12/lib/abyss/src/response.c	2017-03-30 15:35:11.857780211 +0300
+@@ -6,7 +6,6 @@
+   Copyright information is at the end of the file
+ =============================================================================*/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <ctype.h>
+ #include <assert.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/abyss/src/server.c xmlrpc-c-1.39.12/lib/abyss/src/server.c
+--- xmlrpc-c-1.39.12-1/lib/abyss/src/server.c	2017-03-30 15:34:05.361235628 +0300
++++ xmlrpc-c-1.39.12/lib/abyss/src/server.c	2017-03-30 15:35:11.869759194 +0300
+@@ -1,6 +1,5 @@
+ /* Copyright information is at end of file */
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ #define _BSD_SOURCE  /* Make sure setgroups()is in <grp.h> */
+ 
+ #include <assert.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/curl_transport/curlmulti.c xmlrpc-c-1.39.12/lib/curl_transport/curlmulti.c
+--- xmlrpc-c-1.39.12-1/lib/curl_transport/curlmulti.c	2017-03-30 15:34:05.353844019 +0300
++++ xmlrpc-c-1.39.12/lib/curl_transport/curlmulti.c	2017-03-30 15:35:11.893269486 +0300
+@@ -9,7 +9,6 @@
+       requires the user to maintain them separately.
+ =============================================================================*/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include "xmlrpc_config.h"
+ 
+diff -ur xmlrpc-c-1.39.12-1/lib/curl_transport/curltransaction.c xmlrpc-c-1.39.12/lib/curl_transport/curltransaction.c
+--- xmlrpc-c-1.39.12-1/lib/curl_transport/curltransaction.c	2017-03-30 15:34:05.354202893 +0300
++++ xmlrpc-c-1.39.12/lib/curl_transport/curltransaction.c	2017-03-30 15:35:11.891017343 +0300
+@@ -2,7 +2,6 @@
+     curlTransaction
+ =============================================================================*/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <assert.h>
+ #include <string.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/curl_transport/xmlrpc_curl_transport.c xmlrpc-c-1.39.12/lib/curl_transport/xmlrpc_curl_transport.c
+--- xmlrpc-c-1.39.12-1/lib/curl_transport/xmlrpc_curl_transport.c	2017-03-30 15:34:05.354020744 +0300
++++ xmlrpc-c-1.39.12/lib/curl_transport/xmlrpc_curl_transport.c	2017-03-30 15:35:11.904832397 +0300
+@@ -52,7 +52,6 @@
+    such subordinate libraries as OpenSSL and Winsock.
+ -----------------------------------------------------------------------------*/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include "xmlrpc_config.h"
+ 
+diff -ur xmlrpc-c-1.39.12-1/lib/libutil/asprintf.c xmlrpc-c-1.39.12/lib/libutil/asprintf.c
+--- xmlrpc-c-1.39.12-1/lib/libutil/asprintf.c	2017-03-30 15:34:05.364308716 +0300
++++ xmlrpc-c-1.39.12/lib/libutil/asprintf.c	2017-03-30 15:35:11.882415078 +0300
+@@ -1,4 +1,3 @@
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ #define _GNU_SOURCE  /* But only when HAVE_ASPRINTF */
+ #include <stdarg.h>
+ #include <stdio.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/libutil/error.c xmlrpc-c-1.39.12/lib/libutil/error.c
+--- xmlrpc-c-1.39.12-1/lib/libutil/error.c	2017-03-30 15:34:05.363590235 +0300
++++ xmlrpc-c-1.39.12/lib/libutil/error.c	2017-03-30 15:35:11.884446505 +0300
+@@ -1,6 +1,5 @@
+ /* Copyright information is at end of file */
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include "xmlrpc_config.h"
+ 
+diff -ur xmlrpc-c-1.39.12-1/lib/libutil/make_printable.c xmlrpc-c-1.39.12/lib/libutil/make_printable.c
+--- xmlrpc-c-1.39.12-1/lib/libutil/make_printable.c	2017-03-30 15:34:05.363961851 +0300
++++ xmlrpc-c-1.39.12/lib/libutil/make_printable.c	2017-03-30 15:35:11.880921842 +0300
+@@ -1,4 +1,3 @@
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <stdarg.h>
+ #include <string.h>
+diff -ur xmlrpc-c-1.39.12-1/lib/libutil/select.c xmlrpc-c-1.39.12/lib/libutil/select.c
+--- xmlrpc-c-1.39.12-1/lib/libutil/select.c	2017-03-30 15:34:05.364457117 +0300
++++ xmlrpc-c-1.39.12/lib/libutil/select.c	2017-03-30 15:35:11.883138043 +0300
+@@ -1,4 +1,3 @@
+-#define _XOPEN_SOURCE 600  /* Get pselect() in <sys/select.h> */
+ 
+ #include "xmlrpc_config.h"
+ 
+diff -ur xmlrpc-c-1.39.12-1/lib/util/cmdline_parser.c xmlrpc-c-1.39.12/lib/util/cmdline_parser.c
+--- xmlrpc-c-1.39.12-1/lib/util/cmdline_parser.c	2017-03-30 15:34:05.351426268 +0300
++++ xmlrpc-c-1.39.12/lib/util/cmdline_parser.c	2017-03-30 15:35:11.908971753 +0300
+@@ -1,4 +1,3 @@
+-#define _XOPEN_SOURCE 600 /* Make sure <string.h> has strdup() */
+ 
+ #include "xmlrpc_config.h"  /* prereq for mallocvar.h -- defines __inline__ */
+ 
+diff -ur xmlrpc-c-1.39.12-1/src/abyss_handler.c xmlrpc-c-1.39.12/src/abyss_handler.c
+--- xmlrpc-c-1.39.12-1/src/abyss_handler.c	2017-03-30 15:34:05.373951133 +0300
++++ xmlrpc-c-1.39.12/src/abyss_handler.c	2017-03-30 15:35:11.947687042 +0300
+@@ -1,6 +1,5 @@
+ #include "xmlrpc_config.h"
+ 
+-#define _XOPEN_SOURCE 600  /* For strdup(), sigaction */
+ #define WIN32_LEAN_AND_MEAN  /* required by xmlrpc-c/abyss.h */
+ 
+ #include <assert.h>
+diff -ur xmlrpc-c-1.39.12-1/src/method.c xmlrpc-c-1.39.12/src/method.c
+--- xmlrpc-c-1.39.12-1/src/method.c	2017-03-30 15:34:05.370858431 +0300
++++ xmlrpc-c-1.39.12/src/method.c	2017-03-30 15:35:11.934914290 +0300
+@@ -10,7 +10,6 @@
+   Contributed to the public domain by its author.
+ =========================================================================*/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include "xmlrpc_config.h"
+ 
+diff -ur xmlrpc-c-1.39.12-1/src/xmlrpc_client.c xmlrpc-c-1.39.12/src/xmlrpc_client.c
+--- xmlrpc-c-1.39.12-1/src/xmlrpc_client.c	2017-03-30 15:34:05.373872873 +0300
++++ xmlrpc-c-1.39.12/src/xmlrpc_client.c	2017-03-30 15:35:11.943181812 +0300
+@@ -1,6 +1,5 @@
+ /* Copyright information is at end of file */
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include "xmlrpc_config.h"
+ 
+diff -ur xmlrpc-c-1.39.12-1/src/xmlrpc_datetime.c xmlrpc-c-1.39.12/src/xmlrpc_datetime.c
+--- xmlrpc-c-1.39.12-1/src/xmlrpc_datetime.c	2017-03-30 15:34:05.371411792 +0300
++++ xmlrpc-c-1.39.12/src/xmlrpc_datetime.c	2017-03-30 15:35:11.915040218 +0300
+@@ -1,6 +1,5 @@
+ #include "xmlrpc_config.h"
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <time.h>
+ #include <stdlib.h>
+diff -ur xmlrpc-c-1.39.12-1/src/xmlrpc_parse.c xmlrpc-c-1.39.12/src/xmlrpc_parse.c
+--- xmlrpc-c-1.39.12-1/src/xmlrpc_parse.c	2017-03-30 15:34:05.374299468 +0300
++++ xmlrpc-c-1.39.12/src/xmlrpc_parse.c	2017-03-30 15:35:11.919926628 +0300
+@@ -1,6 +1,5 @@
+ /* Copyright information is at end of file. */
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include "xmlrpc_config.h"
+ 
+diff -ur xmlrpc-c-1.39.12-1/src/xmlrpc_server_abyss.c xmlrpc-c-1.39.12/src/xmlrpc_server_abyss.c
+--- xmlrpc-c-1.39.12-1/src/xmlrpc_server_abyss.c	2017-03-30 15:34:05.370304009 +0300
++++ xmlrpc-c-1.39.12/src/xmlrpc_server_abyss.c	2017-03-30 15:35:11.931681177 +0300
+@@ -2,7 +2,6 @@
+ 
+ #include "xmlrpc_config.h"
+ 
+-#define _XOPEN_SOURCE 600  /* For strdup(), sigaction */
+ #define WIN32_LEAN_AND_MEAN  /* required by xmlrpc-c/abyss.h */
+ 
+ #include <assert.h>
+diff -ur xmlrpc-c-1.39.12-1/src/xmlrpc_server_info.c xmlrpc-c-1.39.12/src/xmlrpc_server_info.c
+--- xmlrpc-c-1.39.12-1/src/xmlrpc_server_info.c	2017-03-30 15:34:05.371841379 +0300
++++ xmlrpc-c-1.39.12/src/xmlrpc_server_info.c	2017-03-30 15:35:11.922410579 +0300
+@@ -16,7 +16,6 @@
+   transports.
+ =============================================================================*/
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <string.h>
+ 
+diff -ur xmlrpc-c-1.39.12-1/test/value_datetime.c xmlrpc-c-1.39.12/test/value_datetime.c
+--- xmlrpc-c-1.39.12-1/test/value_datetime.c	2017-03-30 15:34:05.365609212 +0300
++++ xmlrpc-c-1.39.12/test/value_datetime.c	2017-03-30 15:35:11.950761180 +0300
+@@ -1,4 +1,3 @@
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+diff -ur xmlrpc-c-1.39.12-1/tools/lib/dumpvalue.c xmlrpc-c-1.39.12/tools/lib/dumpvalue.c
+--- xmlrpc-c-1.39.12-1/tools/lib/dumpvalue.c	2017-03-30 15:34:05.378044150 +0300
++++ xmlrpc-c-1.39.12/tools/lib/dumpvalue.c	2017-03-30 15:35:11.834911694 +0300
+@@ -5,7 +5,6 @@
+    used for debugging purposes in other places.
+ */
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+diff -ur xmlrpc-c-1.39.12-1/tools/xmlrpc/xmlrpc.c xmlrpc-c-1.39.12/tools/xmlrpc/xmlrpc.c
+--- xmlrpc-c-1.39.12-1/tools/xmlrpc/xmlrpc.c	2017-03-30 15:34:05.376816762 +0300
++++ xmlrpc-c-1.39.12/tools/xmlrpc/xmlrpc.c	2017-03-30 15:35:11.831347629 +0300
+@@ -15,7 +15,6 @@
+        Integer: 8
+ */
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+diff -ur xmlrpc-c-1.39.12-1/tools/xmlrpc_transport/xmlrpc_transport.c xmlrpc-c-1.39.12/tools/xmlrpc_transport/xmlrpc_transport.c
+--- xmlrpc-c-1.39.12-1/tools/xmlrpc_transport/xmlrpc_transport.c	2017-03-30 15:34:05.383448502 +0300
++++ xmlrpc-c-1.39.12/tools/xmlrpc_transport/xmlrpc_transport.c	2017-03-30 15:35:11.824953938 +0300
+@@ -2,7 +2,6 @@
+    an XML-RPC call.
+ */
+ 
+-#define _XOPEN_SOURCE 600  /* Make sure strdup() is in <string.h> */
+ 
+ #include <stdlib.h>
+ #include <stdio.h>

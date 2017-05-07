@@ -1,0 +1,41 @@
+--- golang-1.6.3/src/syscall/zsyscall_solaris_amd64.go.1	2016-09-09 17:36:48.176495144 +0300
++++ golang-1.6.3/src/syscall/zsyscall_solaris_amd64.go	2016-09-09 17:41:06.974986783 +0300
+@@ -21,6 +21,7 @@
+ //go:cgo_import_dynamic libc_Chroot chroot "libc.so"
+ //go:cgo_import_dynamic libc_Close close "libc.so"
+ //go:cgo_import_dynamic libc_Dup dup "libc.so"
++//go:cgo_import_dynamic libc_Dup2 dup2 "libc.so"
+ //go:cgo_import_dynamic libc_Exit exit "libc.so"
+ //go:cgo_import_dynamic libc_Fchdir fchdir "libc.so"
+ //go:cgo_import_dynamic libc_Fchmod fchmod "libc.so"
+@@ -104,6 +105,7 @@
+ //go:linkname libc_Chroot libc_Chroot
+ //go:linkname libc_Close libc_Close
+ //go:linkname libc_Dup libc_Dup
++//go:linkname libc_Dup2 libc_Dup2
+ //go:linkname libc_Exit libc_Exit
+ //go:linkname libc_Fchdir libc_Fchdir
+ //go:linkname libc_Fchmod libc_Fchmod
+@@ -190,6 +192,7 @@
+ 	libc_Chroot,
+ 	libc_Close,
+ 	libc_Dup,
++	libc_Dup2,
+ 	libc_Exit,
+ 	libc_Fchdir,
+ 	libc_Fchmod,
+@@ -412,6 +415,14 @@
+ 	return
+ }
+ 
++func Dup2(oldfd int, newfd int) (err error) {
++        _, _, e1 := sysvicall6(uintptr(unsafe.Pointer(&libc_Dup2)), 2, uintptr(oldfd), uintptr(newfd), 0, 0, 0, 0)
++        if e1 != 0 {
++                err = errnoErr(e1)
++        }
++        return
++}
++
+ func Exit(code int) {
+ 	sysvicall6(uintptr(unsafe.Pointer(&libc_Exit)), 1, uintptr(code), 0, 0, 0, 0, 0)
+ 	return

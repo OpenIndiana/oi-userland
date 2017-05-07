@@ -1,0 +1,59 @@
+--- mate-desktop-1.12.1/libmate-desktop/mate-rr.c.~1~	2015-11-30 10:10:03.000000000 +0300
++++ mate-desktop-1.12.1/libmate-desktop/mate-rr.c	2015-12-05 17:39:12.583263260 +0300
+@@ -515,10 +515,35 @@
+ static ScreenInfo *
+ screen_info_new (MateRRScreen *screen, gboolean needs_reprobe, GError **error)
+ {
++    GTimeVal   cur_time_val;
++    gint64     cur, prev;
++
++    g_assert (screen != NULL);
++
++    if ( screen->priv->info != NULL ) {
++        g_get_current_time(&cur_time_val);
++        cur = (gint64) cur_time_val.tv_sec * G_USEC_PER_SEC + cur_time_val.tv_usec;
++        prev =(gint64) screen->priv->last_update_time.tv_sec * G_USEC_PER_SEC + screen->priv->last_update_time.tv_usec;
++
++        /* Only referesh the info after 2 seconds have elapsed since last
++         * update, otherwise it will cause a lot of extra probing on the X
++         * server.
++         */
++        if (((cur - prev) < 0) || ((cur - prev) > 2000000)) {
++            screen->priv->last_update_time = cur_time_val;
++        }
++        else {
++            /* Don't return any update, which should result in caller using
++             * existing data
++             */
++            g_warning("Call to screen_info_new is too frequent, skipping...");
++            return( NULL );
++        }
++    }
++
+     ScreenInfo *info = g_new0 (ScreenInfo, 1);
+     MateRRScreenPrivate *priv;
+ 
+-    g_assert (screen != NULL);
+ 
+     priv = screen->priv;
+ 
+@@ -688,6 +713,9 @@
+ 
+         priv->info = screen_info_new (self, TRUE, error);
+ 
++	/* Initialize the last udpate time */
++	g_get_current_time (&(priv->last_update_time));
++
+         if (!priv->info) {
+ 	    return FALSE;
+ 	}
+--- mate-desktop-1.12.1/libmate-desktop/mate-rr-private.h.1	2015-12-05 17:41:16.197272548 +0300
++++ mate-desktop-1.12.1/libmate-desktop/mate-rr-private.h	2015-12-05 17:41:49.098508369 +0300
+@@ -46,6 +46,7 @@
+     int				rr_major_version;
+     int				rr_minor_version;
+     
++    GTimeVal			last_update_time;
+     Atom                        connector_type_atom;
+ };
+ 

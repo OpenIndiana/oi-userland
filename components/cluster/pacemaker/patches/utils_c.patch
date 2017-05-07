@@ -1,0 +1,18 @@
+commit 345487a6c78c4a2fd77298710fa96e87e35fc176
+Author: Andreas Grueninger <andreas.grueninger@nomail.com>
+Date:   Sat Oct 22 17:34:34 2016 +0200
+
+    Fix: utils : Dump eventually already existing error
+
+diff --git a/lib/common/utils.c b/lib/common/utils.c
+index 676e0a9..e152c13 100644
+--- a/lib/common/utils.c
++++ b/lib/common/utils.c
+@@ -2315,6 +2315,7 @@ find_library_function(void **handle, const char *lib, const char *fn, gboolean f
+         return NULL;
+     }
+ 
++    error = dlerror();
+     a_function = dlsym(*handle, fn);
+     if (a_function == NULL) {
+         error = dlerror();

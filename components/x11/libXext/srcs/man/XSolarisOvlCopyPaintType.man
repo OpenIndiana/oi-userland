@@ -1,0 +1,203 @@
+'\" t
+.\" Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XSolarisOvlCopyPaintType __libmansuffix__ __xorgversion__ "X FUNCTIONS"
+.IX "XSolarisOvlCopyPaintType" "" "\f3XSolarisOvlCopyPaintType\f1(3) \(em renders opaque and transparent paint
+.SH NAME
+XSolarisOvlCreateWindow \- renders opaque and transparent paint into the
+destination drawable based on the paint type attributes of the pixels in
+the source drawable
+.SH SYNOPSIS
+.LP
+\&#include <X11/extensions/transovl.h>
+
+.IP \f3void\f1 5n
+.B XSolarisOvlCopyPaintType
+.B (Display
+.I *display,
+.B Drawable
+.I src,
+.B Drawable
+.I dst,
+.B GC
+.I gc,
+.B int
+.I src_x,
+.B int
+.I src_y,
+.B unsigned
+.I int width,
+.B unsigned
+.I int height,
+.B int
+.I dest_x,
+.B int
+.I dest_y,
+.B unsigned long
+.I action,
+.B unsigned long
+.I plane)
+.SH Arguments
+.TP
+.I display
+Specifies the connection to the X server.
+.TP
+.I src
+Specifies the source drawable from which to obtain the paint type information.
+.TP
+.I dst
+Specifies the destination drawable.
+.TP
+.I gc
+Specifies the GC.
+.TP
+.I src_x, src_y
+Specify the
+.I x
+and
+.I y
+coordinates of the upper-left corner of the source rectangle relative to
+the origin of the source drawable.
+.TP
+.I width, height
+Specify the width and height of both the source and destination rectangles.
+.TP
+.I dest_x, dest_y
+Specify the
+.I x
+and
+.I y
+coordinates of the upper-left corner of the destination rectangle relative
+to the origin of the destination drawable.
+.TP
+.I action
+Specifies which paint type data is to be copied.  This can be one of
+.B XSolarisOvlCopyOpaque,
+.B XSolarisOvlCopyTransparent,
+or
+.B XSolarisOvlCopyAll.
+.TP
+.I plane
+Specifies the bit-plane of the
+.I src
+drawable to be used as paint type information when the source is not
+an overlay.
+.SH DESCRIPTION
+This routine uses the paint type information of the specified rectangle of
+.I src
+to control a fill operation in the specified rectangle of
+.I dst.
+.I src
+and
+.I dst
+can be any type of drawable.  If
+.I src is an overlay, the paint type attribute of its pixels is used as the
+source of the copy, and the color information is ignored.  If
+.I src
+is any other type of drawable, the bit-plane specified in
+.I plane
+is treated as if it were paint type data and it is used for the copy.
+.I plane
+must have only one bit set in this case.  The following table summarizes
+the possible combinations of
+.I src
+and
+.I dst
+and their actions.  The left side of the table shows the possible
+.I src
+combinations.  The top of the table shows the possible
+.I dst
+combinations.  The actions, A1-A4, are explained below the table.
+.LP
+.TS
+center, box;
+lfB | lfB lfB
+l | l l .
+Source/Destination	Overlay	Drawable
+_
+overlay	A1	A2
+drawable	A3	A4
+.TE
+.LP
+.HP
+A1\(emOpaque pixels in the source overlay cause the corresponding pixels in the
+destination to be filled with opaque color as specified by the fill
+attributes of the GC.  Transparent pixels in the source cause the
+corresponding pixels in the destination to be filled with transparent paint.
+.HP
+A2\(emOpaque pixels in the source overlay cause the corresponding pixels in the
+destination to be filled according to the fill attributes of the GC.
+Transparent pixels in the source overlay cause the corresponding pixels in the
+destination to be filled according to the same fill attributes of the GC,
+but with the foreground and background pixels swapped.
+.HP
+A3\(emThe pixels in the destination overlay are filled with opaque paint or made
+transparent as in A1 above depending on the bit values of the source drawable's
+plane.  Bit values of 1 in the source are treated as if they were opaque
+pixels and bit values of 0 are treated as if they were transparent.
+.HP
+A4\(emThe pixels in the destination drawable are filled with paint as in A2 above
+depending on the bit values of the source drawable's plane.  Bit values of 1
+in the source bit plane are treated as if they were opaque pixels and bit
+values of 0 are treated as if they were transparent.
+.LP
+The
+.I action
+argument specifies whether opaque paint
+(\f3XSolarisOvlCopyOpaque\f1), transparent paint
+(\f3XSolarisOvlCopyTransparent\f1), or both
+(\f3XSolarisOvlCopyAll\f1) should be operated upon.  This allows a client
+to accumulate opaque or transparent paint.
+.LP
+.I src
+and
+.I dst
+must have the same screen, or a
+.SB BadMatch
+error results.
+.LP
+If portions of the source rectangle are obscured or are outside the
+boundaries of the source drawable, the server generates exposure events,
+using the same semantics as
+.B XCopyArea.
+.LP
+This routine uses these GC components: function, plane-mask, fill-style,
+subwindow-mode, graphics-exposures, clip-x-origin, clip-y-origin, and clip-mask.
+It might use these GC mode-dependent components: foreground, background, tile,
+stipple, tile-stipple-x-origin, tile-stipple-y-origin.
+.LP
+.B XSolarisOvlCopyPaintType
+can generate
+.SB BadDrawable,
+.SB BadGC,
+.SB BadMatch,
+and
+.SB BadValue
+errors.
+.SH ERRORS
+.LP
+.nf
+.SB BadDrawable
+.SB BadGC
+.SB BadMatch
+.SB BadValue
+.fi

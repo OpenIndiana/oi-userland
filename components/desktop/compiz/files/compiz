@@ -1,0 +1,177 @@
+#!/bin/bash
+#
+# Copyright (c) 2008, by Sun Microsystems, Inc.
+# Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved. 
+#
+# Checks if compiz can run with the current Xserver 
+# display settings. If this is not the case 
+# metacity is started instead.
+#
+METACITY="/usr/bin/metacity --replace --sm-client-id=default0"
+GREP="/usr/xpg4/bin/grep"
+XDPYINFO="/usr/openwin/bin/xdpyinfo"
+GLXINFO="/usr/bin/glxinfo"
+XPROP="/usr/openwin/bin/xprop"
+SED="/usr/bin/sed"
+GCONFTOOL="/usr/bin/gconftool-2"
+
+COMPIZ_BIN="/usr/bin/compiz-bin"
+COMPIZ_OPTIONS="--indirect-rendering --fast-filter --replace"
+COMPIZ_PLUGINS="ccp"
+GCONF_A11Y_KEY="/desktop/gnome/interface/accessibility"
+
+DECORATOR="/usr/bin/gtk-window-decorator"
+DECORATOR_OPTIONS="--replace"
+
+if [ "x$COMPIZ_VERBOSE" != "x" ]; then
+    VERBOSE="yes"
+else
+    VERBOSE="no"
+fi
+
+verbose()
+{
+  if [ "x$VERBOSE" = "xyes" ]; then
+    echo "$*"
+  fi
+}
+
+abort_with_metacity()
+{
+  verbose "Cannot run compiz starting metacity instead\n"
+  exec $METACITY 
+}
+
+# Check wether the composite extension is present
+check_composite()
+{
+  verbose "Checking for Composite extension: "
+  if $XDPYINFO -queryExtensions | $GREP -q Composite ; then
+    verbose "present. \n"
+    return 0
+  else
+    verbose "not present. \n"
+    return 1
+  fi
+}
+
+# Check wether we are in a sunray session 
+check_sunray_session()
+{
+  verbose "Checking for Sunray session: "
+  if $XPROP -root | $GREP -q _SUN_SUNRAY_HOME ; then
+    verbose "present. \n"
+    return 1
+  else
+    verbose "not present. \n"
+    return 0
+  fi
+}
+
+# Check wether the Xserver trusted extension is enabled
+check_trusted_session()
+{
+  verbose "Checking for Trusted session: "
+  if $XDPYINFO -queryExtensions | $GREP -q SUN_TSOL ; then
+    verbose "present. \n"
+    return 1
+  else
+    verbose "not present.\n"
+    return 0
+  fi
+}
+
+# Check whether we're running under vnc
+check_vnc()
+{
+  verbose "Checking for VNC"
+  HAZ_VNC=$(LC_ALL=C $GLXINFO | $GREP "Software Rasterizer")
+  if [ -n "$HAZ_VNC" ] ; then
+    verbose "Running under vnc"
+    return 1
+  else
+    verbose "Running without vnc"
+    return 0
+  fi
+}
+
+# Check whether accessibility is turn on or not
+check_accessibility()
+{
+  verbose "Checking for Acessibility: "
+  a11y_value=`$GCONFTOOL --get $GCONF_A11Y_KEY`
+  if [ "x$a11y_value" = "xtrue" ]; then
+    verbose "Enabled. \n"
+    return 1
+  else
+    verbose "       Disabled. \n"
+    return 0
+  fi
+}
+
+# Check which card is present and add the right 
+# environment variables
+set_env_variables ()
+{
+  verbose "env. variables used : "
+  
+  LIBGL_ALWAYS_INDIRECT=TRUE
+  export LIBGL_ALWAYS_INDIRECT
+  verbose "LIBGL_ALWAYS_INDIRECT=TRUE\n"
+  
+  if [ -x /usr/X/bin/constype -a "`/usr/X/bin/constype`" = "NVDAnvda" ]; then
+    __GL_SYNC_TO_VBLANK=1
+    export __GL_SYNC_TO_VBLANK
+    verbose "__GL_SYNC_TO_VBLANK=1\n"
+    __GL_YIELD=NOTHING
+    export __GL_YIELD
+    verbose "__GL_YIELD=1\n"
+  else # either intel or ati
+    INTEL_BATCH=1
+    export INTEL_BATCH
+    verbose "INTEL_BATCH=1\n"
+  fi
+  
+  verbose "\n"
+}
+
+#
+# Main routine of the script
+#
+check_accessibility
+if [  $? -eq 1 ] ; then
+  abort_with_metacity 
+fi
+
+check_trusted_session
+if [  $? -eq 1 ] ; then
+  abort_with_metacity 
+fi
+
+check_sunray_session
+if [  $? -eq 1 ] ; then
+  abort_with_metacity 
+fi
+
+check_composite
+if [  $? -eq 1 ] ; then
+  abort_with_metacity 
+fi
+
+check_vnc
+if [ $? -eq 1 ] ; then
+  abort_with_metacity
+fi
+
+set_env_variables
+
+# get number of screens 
+NUM_SCREEN=`$XDPYINFO | $GREP "number of screens" | sed "s/number of screens:    //"`
+# start one gtk-window-decorator per screen
+NUM_SCREEN="$NUM_SCREEN-1"
+for ((  i = 0 ;  i <= $NUM_SCREEN;  i++  ))
+do
+  $DECORATOR $DECORATOR_OPTIONS --display=:0.$i &
+done
+exec $COMPIZ_BIN "$@" $COMPIZ_OPTIONS $COMPIZ_PLUGINS $COMPIZ_INDIRECT || abort_with_metacity
+

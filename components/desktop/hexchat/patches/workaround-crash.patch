@@ -1,0 +1,26 @@
+workaround for crash in g_type_check_instance_is_fundamentally_a when one
+right-clicks icon tray multiple times
+--- hexchat-2.10.2/src/fe-gtk/plugin-tray.c.~1~	2014-11-25 20:42:31.000000000 +0300
++++ hexchat-2.10.2/src/fe-gtk/plugin-tray.c	2016-04-16 13:09:52.722359586 +0300
+@@ -607,7 +607,7 @@
+ static void
+ tray_menu_cb (GtkWidget *widget, guint button, guint time, gpointer userdata)
+ {
+-	static GtkWidget *menu;
++	GtkWidget *menu;
+ 	GtkWidget *submenu;
+ 	GtkWidget *item;
+ 	int away_status;
+@@ -615,12 +615,6 @@
+ 	/* ph may have an invalid context now */
+ 	hexchat_set_context (ph, hexchat_find_context (ph, NULL, NULL));
+ 
+-	/* close any old menu */
+-	if (G_IS_OBJECT (menu))
+-	{
+-		tray_menu_destroy (menu, NULL);
+-	}
+-
+ 	menu = gtk_menu_new ();
+ 	/*gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (widget));*/
+ 

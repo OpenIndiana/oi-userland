@@ -1,0 +1,182 @@
+--- /usr/tmp/clean/avahi-0.6.28/avahi-core/resolve-address.c	2010-08-26 01:51:38.991153000 +0100
++++ avahi-0.6.28/avahi-core/resolve-address.c	2011-01-20 15:17:11.922176647 +0000
+@@ -22,6 +22,7 @@
+ #endif
+ 
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #include <avahi-common/timeval.h>
+ #include <avahi-common/malloc.h>
+@@ -51,6 +52,13 @@
+ 
+     AvahiTimeEvent *time_event;
+ 
++#ifdef HAVE_BONJOUR
++    AvahiTimeEvent *defer_time_event;
++    AvahiLookupFlags lookup_flags;
++    AvahiWatch *watch;
++    DNSServiceRef client;
++#endif
++    
+     AVAHI_LLIST_FIELDS(AvahiSAddressResolver, resolver);
+ };
+ 
+@@ -74,6 +82,100 @@
+     }
+ }
+ 
++#ifdef HAVE_BONJOUR
++static void resolve_socket_event(AvahiWatch *w, int fd, AvahiWatchEvent events,
++void *userdata) {
++    AvahiSAddressResolver *r = userdata;
++    DNSServiceErrorType ret;
++
++    assert(w);
++    assert(fd >= 0);
++    assert(events & AVAHI_WATCH_IN);
++
++    assert (fd == DNSServiceRefSockFD(r->client));
++
++    ret = DNSServiceProcessResult(r->client);
++    if (ret != kDNSServiceErr_NoError) {
++        if (r->watch) {
++            r->server->poll_api->watch_free(r->watch);
++            r->watch = NULL;
++        }
++        DNSServiceRefDeallocate(r->client);
++        r->client = NULL;
++        avahi_server_set_errno(r->server, AVAHI_ERR_DISCONNECTED);
++        finish(r, AVAHI_RESOLVER_FAILURE);
++    }
++}
++
++static void resolve_reply(DNSServiceRef client, DNSServiceFlags flags, uint32_t
++IfIndex, DNSServiceErrorType errorCode, const char *fullname, uint16_t rrtype, uint16_t rrclass, uint16_t rdlen, const void* rdata, uint32_t ttl, void *context) {
++    AvahiSAddressResolver *r = context;
++
++    assert(rrtype == kDNSServiceType_PTR);
++    if (r->interface > 0  && IfIndex != r->interface)
++        return;
++    if (r->interface <= 0)
++       r->interface = IfIndex;
++
++    /*
++     * Using Bonjour we cannot determine whether result was obtained from
++     * multicast ot unicast query
++     */
++    r->flags = 0;
++
++    if (!(r->ptr_record = avahi_record_new(r->key, ttl))) {
++        avahi_server_set_errno(r->server, AVAHI_ERR_NO_MEMORY);
++        finish(r, AVAHI_RESOLVER_FAILURE);
++        return;
++    }
++    if (avahi_rdata_parse(r->ptr_record, rdata, rdlen) != 0) {
++        avahi_server_set_errno(r->server, AVAHI_ERR_INVALID_PACKET);
++        finish(r, AVAHI_RESOLVER_FAILURE);
++        return;
++    }
++    finish(r, AVAHI_RESOLVER_FOUND);
++}
++
++static void resolve_error_callback(AvahiTimeEvent *e, void *userdata) {
++    AvahiSAddressResolver *r = userdata;
++
++    if (r->defer_time_event) {
++        avahi_time_event_free(r->defer_time_event);
++        r->defer_time_event = NULL;
++    }
++    avahi_server_set_errno(r->server, AVAHI_ERR_FAILURE);
++    finish(r, AVAHI_RESOLVER_FAILURE);
++}
++
++static void avahi_resolve_address_start(AvahiSAddressResolver *r)
++{
++    DNSServiceErrorType ret;
++    DNSServiceFlags flags;
++
++    if (r->flags != AVAHI_LOOKUP_USE_WIDE_AREA)
++        flags = kDNSServiceFlagsForceMulticast;
++    else
++        flags = 0;
++
++    ret = DNSServiceQueryRecord(&r->client,
++                                flags,
++                                r->interface == AVAHI_IF_UNSPEC ?
++                                    kDNSServiceInterfaceIndexAny :
++                                    r->interface,
++                                r->key->name,
++                                kDNSServiceType_PTR,
++                                kDNSServiceClass_IN,
++                                resolve_reply,
++                                r);
++    if (ret != kDNSServiceErr_NoError || !r->client) {
++        r->defer_time_event = avahi_time_event_new(r->server->time_event_queue, NULL, resolve_error_callback, r);
++    } else {
++        r->watch = r->server->poll_api->watch_new(r->server->poll_api, DNSServiceRefSockFD(r->client), AVAHI_WATCH_IN, resolve_socket_event, r);
++    }
++}
++#endif
++
++
+ static void time_event_callback(AvahiTimeEvent *e, void *userdata) {
+     AvahiSAddressResolver *r = userdata;
+ 
+@@ -95,6 +197,7 @@
+     r->time_event = avahi_time_event_new(r->server->time_event_queue, &tv, time_event_callback, r);
+ }
+ 
++#ifndef HAVE_BONJOUR
+ static void record_browser_callback(
+     AvahiSRecordBrowser*rr,
+     AvahiIfIndex interface,
+@@ -173,6 +276,7 @@
+             break;
+     }
+ }
++#endif
+ 
+ AvahiSAddressResolver *avahi_s_address_resolver_new(
+     AvahiServer *server,
+@@ -225,6 +329,13 @@
+ 
+     r->time_event = NULL;
+ 
++#ifdef HAVE_BONJOUR
++    r->defer_time_event = NULL;
++    r->watch = NULL;
++    r->client = NULL;
++    r->lookup_flags = flags;
++    avahi_resolve_address_start(r);
++#else
+     if (!(flags & (AVAHI_LOOKUP_USE_MULTICAST|AVAHI_LOOKUP_USE_WIDE_AREA))) {
+ 
+         if (!server->wide_area_lookup_engine || !avahi_wide_area_has_servers(server->wide_area_lookup_engine))
+@@ -241,6 +352,7 @@
+         avahi_s_address_resolver_free(r);
+         return NULL;
+     }
++#endif
+ 
+     start_timeout(r);
+ 
+@@ -264,5 +376,18 @@
+     if (r->key)
+         avahi_key_unref(r->key);
+ 
++#ifdef HAVE_BONJOUR
++    if (r->defer_time_event) {
++        avahi_time_event_free(r->defer_time_event);
++        r->defer_time_event = NULL;
++    }
++
++    if (r->watch)
++        r->server->poll_api->watch_free(r->watch);
++
++    if (r->client)
++        DNSServiceRefDeallocate(r->client);
++#endif
++
+     avahi_free(r);
+ }

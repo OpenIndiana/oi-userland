@@ -1,0 +1,31 @@
+--- tcsh-6.19.00/sh.c.orig	Tue May 26 11:09:46 2015
++++ tcsh-6.19.00/sh.c	Tue May 26 11:10:09 2015
+@@ -176,17 +176,10 @@
+     size_t len;
+     int add_LOC = 1;
+     int add_lang = 1;
+-    char trypath[MAXPATHLEN];
+-    struct stat st;
+ 
+     if (path == NULL)
+         return;
+ 
+-    (void) xsnprintf(trypath, sizeof(trypath), "%s/en/LC_MESSAGES/tcsh.cat",
+-	path);
+-    if (stat(trypath, &st) == -1)
+-	return;
+-
+     if ((old = getenv("NLSPATH")) != NULL)
+         len = strlen(old) + 1;	/* don't forget the colon. */
+     else
+--- tcsh-6.19.00/sh.func.c.orig	Tue May 26 11:10:46 2015
++++ tcsh-6.19.00/sh.func.c	Tue May 26 11:11:47 2015
+@@ -2657,6 +2657,8 @@
+ 
+     if (adrof(STRcatalog) != NULL)
+ 	catalog = xasprintf("tcsh.%s", short2str(varval(STRcatalog)));
++/* for compatibility */
++#undef NL_CAT_LOCALE
+ #ifdef NL_CAT_LOCALE /* POSIX-compliant. */
+     /*
+      * Check if LC_MESSAGES is set in the environment and use it, if so.

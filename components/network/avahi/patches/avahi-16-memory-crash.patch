@@ -1,0 +1,23 @@
+--- avahi-0.6.30/avahi-utils/stdb.c.orig	2011-06-08 10:28:42.651208301 +0100
++++ avahi-0.6.30/avahi-utils/stdb.c	2011-06-08 10:32:25.750739026 +0100
+@@ -136,8 +136,9 @@
+ 
+     avahi_free(buffer);
+     buffer = avahi_strndup(data.dptr, data.dsize);
++#ifdef HAVE_GDBM
+     free(data.dptr);
+-
++#endif
+     return buffer;
+ 
+ fail:
+@@ -199,7 +200,9 @@
+             return NULL;
+ 
+         enum_key = avahi_strndup(key.dptr, key.dsize);
++#ifdef HAVE_GDBM
+         free(key.dptr);
++#endif
+ 
+         if (!strchr(enum_key, '['))
+             return enum_key;

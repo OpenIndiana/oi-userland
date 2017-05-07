@@ -1,0 +1,278 @@
+--- hdf5-1.8.18/c++/examples/run-c++-ex.sh.in.orig	2017-02-03 21:32:25.458297030 +0100
++++ hdf5-1.8.18/c++/examples/run-c++-ex.sh.in	2017-02-03 21:32:25.461594611 +0100
+@@ -20,7 +20,7 @@
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ #                                                                               #
+ # This script will compile and run the c++ examples from source files           #
+-# installed in .../share/hdf5_examples/c++ using h5c++.  The                    #
++# installed in .../share/hdf5/examples/c++ using h5c++.  The                    #
+ # order for running programs with RunTest in the MAIN section below is taken    #
+ # from the Makefile.  The order is important since some of the test programs    #
+ # use data files created by earlier test programs.  Any future additions should #
+--- hdf5-1.8.18/c++/examples/Makefile.in.orig	2017-02-03 21:32:25.466532910 +0100
++++ hdf5-1.8.18/c++/examples/Makefile.in	2017-02-03 21:32:25.477114267 +0100
+@@ -637,8 +637,8 @@
+ 
+ # Where to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/c++
+-EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples
++EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/c++
++EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples
+ 
+ # Assume that all tests in this directory are examples, and tell
+ # conclude.am when to build them.
+--- hdf5-1.8.18/c++/examples/Makefile.am.orig	2017-02-03 21:32:25.482048931 +0100
++++ hdf5-1.8.18/c++/examples/Makefile.am	2017-02-03 21:32:25.484824575 +0100
+@@ -51,8 +51,8 @@
+ 
+ # Where to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/c++
+-EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples
++EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/c++
++EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples
+ 
+ # How to build programs using h5c++
+ $(EXTRA_PROG): $(H5CPP)
+--- hdf5-1.8.18/fortran/examples/Makefile.am.orig	2017-02-03 21:32:25.489568494 +0100
++++ hdf5-1.8.18/fortran/examples/Makefile.am	2017-02-03 21:32:25.492463566 +0100
+@@ -78,8 +78,8 @@
+ 
+ # Tell automake how to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/fortran
+-EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples
++EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/fortran
++EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples
+ 
+ # List dependencies for each example.  Normally, automake would take
+ # care of this for us, but if we tell automake about the programs it
+--- hdf5-1.8.18/fortran/examples/Makefile.in.orig	2017-02-03 21:32:25.497123360 +0100
++++ hdf5-1.8.18/fortran/examples/Makefile.in	2017-02-03 21:32:25.508036386 +0100
+@@ -649,8 +649,8 @@
+ 
+ # Tell automake how to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/fortran
+-EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples
++EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/fortran
++EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples
+ 
+ # Assume that all tests in this directory are examples, and tell
+ # conclude.am when to build them.
+--- hdf5-1.8.18/fortran/examples/run-fortran-ex.sh.in.orig	2017-02-03 21:32:25.512897079 +0100
++++ hdf5-1.8.18/fortran/examples/run-fortran-ex.sh.in	2017-02-03 21:32:25.515883855 +0100
+@@ -20,7 +20,7 @@
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ #                                                                               #
+ # This script will compile and run the fortran examples from source files       #
+-# installed in .../share/hdf5_examples/fortran using h5fc or h5pfc.  The        #
++# installed in .../share/hdf5/examples/fortran using h5fc or h5pfc.  The        #
+ # order for running programs with RunTest in the MAIN section below is taken    #
+ # from the Makefile.  The order is important since some of the test programs    #
+ # use data files created by earlier test programs.  Any future additions should #
+--- hdf5-1.8.18/hl/examples/Makefile.am.orig	2017-02-03 21:32:25.520658120 +0100
++++ hdf5-1.8.18/hl/examples/Makefile.am	2017-02-03 21:32:25.523596932 +0100
+@@ -27,8 +27,8 @@
+ 
+ # Example directory
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl/c
+-EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl
++EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl/c
++EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl
+ INSTALL_SCRIPT_FILES = run-hlc-ex.sh
+ INSTALL_TOP_SCRIPT_FILES = run-hl-ex.sh
+ 
+--- hdf5-1.8.18/hl/examples/Makefile.in.orig	2017-02-03 21:32:25.528653613 +0100
++++ hdf5-1.8.18/hl/examples/Makefile.in	2017-02-03 21:32:25.539360504 +0100
+@@ -616,8 +616,8 @@
+ 
+ # Example directory
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl/c
+-EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl
++EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl/c
++EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl
+ INSTALL_SCRIPT_FILES = run-hlc-ex.sh
+ INSTALL_TOP_SCRIPT_FILES = run-hl-ex.sh
+ 
+--- hdf5-1.8.18/hl/examples/run-hlc-ex.sh.in.orig	2017-02-03 21:32:25.544401165 +0100
++++ hdf5-1.8.18/hl/examples/run-hlc-ex.sh.in	2017-02-03 21:32:25.547322755 +0100
+@@ -20,7 +20,7 @@
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ #                                                                               #
+ # This script will compile and run the c examples from source files installed   #
+-# in .../share/hdf5_examples/hl/c using h5cc or h5pc.  The order for running    #
++# in .../share/hdf5/examples/hl/c using h5cc or h5pc.  The order for running    #
+ # programs with RunTest in the MAIN section below is taken from the Makefile.   #
+ # The order is important since some of the test programs use data files created #
+ # by earlier test programs.  Any future additions should be placed accordingly. #
+--- hdf5-1.8.18/hl/fortran/examples/run-hlfortran-ex.sh.in.orig	2017-02-03 21:32:25.552179052 +0100
++++ hdf5-1.8.18/hl/fortran/examples/run-hlfortran-ex.sh.in	2017-02-03 21:32:25.554938110 +0100
+@@ -20,7 +20,7 @@
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ #                                                                               #
+ # This script will compile and run the fortran examples from source files       #
+-# installed in .../share/hdf5_examples/hl/fortran using h5fc or h5pfc.  The     #
++# installed in .../share/hdf5/examples/hl/fortran using h5fc or h5pfc.  The     #
+ # order for running programs with RunTest in the MAIN section below is taken    #
+ # from the Makefile.  The order is important since some of the test programs    #
+ # use data files created by earlier test programs.  Any future additions should #
+--- hdf5-1.8.18/hl/fortran/examples/Makefile.in.orig	2017-02-03 21:32:25.559508951 +0100
++++ hdf5-1.8.18/hl/fortran/examples/Makefile.in	2017-02-03 21:32:25.569905054 +0100
+@@ -635,8 +635,8 @@
+ 
+ # Tell automake how to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl/fortran
+-EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl
++EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl/fortran
++EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl
+ 
+ # Assume that all tests in this directory are examples, and tell
+ # conclude.am when to build them.
+--- hdf5-1.8.18/hl/fortran/examples/Makefile.am.orig	2017-02-03 21:32:25.574741346 +0100
++++ hdf5-1.8.18/hl/fortran/examples/Makefile.am	2017-02-03 21:32:25.577365521 +0100
+@@ -53,8 +53,8 @@
+ 
+ # Tell automake how to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl/fortran
+-EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl
++EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl/fortran
++EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl
+ 
+ # List dependencies for each example.  Normally, automake would take
+ # care of this for us, but if we tell automake about the programs it
+--- hdf5-1.8.18/hl/c++/examples/run-hlc++-ex.sh.in.orig	2017-02-03 21:32:25.582137610 +0100
++++ hdf5-1.8.18/hl/c++/examples/run-hlc++-ex.sh.in	2017-02-03 21:32:25.584966244 +0100
+@@ -20,7 +20,7 @@
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ #                                                                               #
+ # This script will compile and run the c++ examples from source files           #
+-# installed in .../share/hdf5_examples/hl/c++ using h5c++.  The                 #
++# installed in .../share/hdf5/examples/hl/c++ using h5c++.  The                 #
+ # order for running programs with RunTest in the MAIN section below is taken    #
+ # from the Makefile.  The order is important since some of the test programs    #
+ # use data files created by earlier test programs.  Any future additions should #
+--- hdf5-1.8.18/hl/c++/examples/Makefile.in.orig	2017-02-03 21:32:25.589901827 +0100
++++ hdf5-1.8.18/hl/c++/examples/Makefile.in	2017-02-03 21:32:25.600405483 +0100
+@@ -627,8 +627,8 @@
+ 
+ # Where to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl/c++
+-EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl
++EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl/c++
++EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl
+ 
+ # Assume that all tests in this directory are examples, and tell
+ # conclude.am when to build them.
+--- hdf5-1.8.18/hl/c++/examples/Makefile.am.orig	2017-02-03 21:32:25.605359014 +0100
++++ hdf5-1.8.18/hl/c++/examples/Makefile.am	2017-02-03 21:32:25.607939888 +0100
+@@ -35,8 +35,8 @@
+ 
+ # Where to install examples
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl/c++
+-EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/hl
++EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl/c++
++EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/hl
+ 
+ # How to build programs using h5c++
+ $(EXTRA_PROG): $(H5CPP)
+--- hdf5-1.8.18/release_docs/HISTORY-1_8.txt.orig	2017-02-03 21:32:25.613310508 +0100
++++ hdf5-1.8.18/release_docs/HISTORY-1_8.txt	2017-02-03 21:32:25.694883605 +0100
+@@ -3360,7 +3360,7 @@
+ 
+       An export of LD_LIBRARY_PATH=<szip library location> was
+       removed from configure; make installcheck was revised to run
+-      scripts installed in share/hdf5_examples to use the installed h5cc, etc. 
++      scripts installed in share/hdf5/examples to use the installed h5cc, etc. 
+       to compile and run example source files also installed there. 
+ 
+       Make installcheck will now fail when a shared szip or other external lib 
+@@ -9024,7 +9024,7 @@
+   (11.0) avoids the issue. MAM - 2010/06/01
+   
+ * On solaris systems, when running the examples with the scripts installed in
+-  .../share/hdf5_examples, two of the c tests, h5_extlink and h5_elink_unix2win 
++  .../share/hdf5/examples, two of the c tests, h5_extlink and h5_elink_unix2win 
+   may fail or generate HDF5 errors because the script commands in c/run-c-ex.sh 
+   fail to create test directories red, blue, and u2w.  Moving the '!' in lines 
+   67, 70, 73 of run-c-ex.sh will fix the problem.  For example the script command 
+--- hdf5-1.8.18/bin/pkgscrpts/hdf5-1.8.16-1-x86_64-szip.spec.orig	2017-02-03 21:32:25.704058857 +0100
++++ hdf5-1.8.18/bin/pkgscrpts/hdf5-1.8.16-1-x86_64-szip.spec	2017-02-03 21:32:25.709584196 +0100
+@@ -436,20 +436,20 @@
+ %{_includedir}/szip_adpt.h
+ %{_includedir}/szlib.h
+ %defattr(0755,root,root)
+-%dir %{_datadir}/hdf5_examples
+-%{_datadir}/hdf5_examples/*.sh
+-%{_datadir}/hdf5_examples/*/*.sh
+-%{_datadir}/hdf5_examples/*/*/*.sh
++%dir %{_datadir}/hdf5/examples
++%{_datadir}/hdf5/examples/*.sh
++%{_datadir}/hdf5/examples/*/*.sh
++%{_datadir}/hdf5/examples/*/*/*.sh
+ %defattr(0644,root,root)
+-%{_datadir}/hdf5_examples/README
+-%{_datadir}/hdf5_examples/*/*.c
+-%{_datadir}/hdf5_examples/*/*.f90
+-%{_datadir}/hdf5_examples/*/*.cpp
+-%{_datadir}/hdf5_examples/*/*/*.c
+-%{_datadir}/hdf5_examples/*/*/*.h
+-%{_datadir}/hdf5_examples/*/*/*.txt
+-%{_datadir}/hdf5_examples/*/*/*.f90
+-%{_datadir}/hdf5_examples/*/*/*.cpp
++%{_datadir}/hdf5/examples/README
++%{_datadir}/hdf5/examples/*/*.c
++%{_datadir}/hdf5/examples/*/*.f90
++%{_datadir}/hdf5/examples/*/*.cpp
++%{_datadir}/hdf5/examples/*/*/*.c
++%{_datadir}/hdf5/examples/*/*/*.h
++%{_datadir}/hdf5/examples/*/*/*.txt
++%{_datadir}/hdf5/examples/*/*/*.f90
++%{_datadir}/hdf5/examples/*/*/*.cpp
+ 
+ %files static
+ 
+--- hdf5-1.8.18/examples/Makefile.am.orig	2017-02-03 21:32:25.714517030 +0100
++++ hdf5-1.8.18/examples/Makefile.am	2017-02-03 21:32:25.717558211 +0100
+@@ -82,8 +82,8 @@
+ 
+ # Example directory
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples/c
+-EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5_examples
++EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples/c
++EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf5/examples
+ 
+ # List dependencies for each program.  Normally, automake would take
+ # care of this for us, but if we tell automake about the programs it
+--- hdf5-1.8.18/examples/Makefile.in.orig	2017-02-03 21:32:25.723140036 +0100
++++ hdf5-1.8.18/examples/Makefile.in	2017-02-03 21:32:25.733963614 +0100
+@@ -647,8 +647,8 @@
+ 
+ # Example directory
+ # Note: no '/' after DESTDIR.  Explanation in commence.am
+-EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples/c
+-EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5_examples
++EXAMPLEDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples/c
++EXAMPLETOPDIR = ${DESTDIR}$(exec_prefix)/share/hdf5/examples
+ @BUILD_SHARED_SZIP_CONDITIONAL_TRUE@LD_LIBRARY_PATH = $(LL_PATH)
+ 
+ # Assume that all tests in this directory are examples, and tell
+--- hdf5-1.8.18/examples/run-c-ex.sh.in.orig	2017-02-03 21:32:25.739755355 +0100
++++ hdf5-1.8.18/examples/run-c-ex.sh.in	2017-02-03 21:32:25.743136359 +0100
+@@ -20,7 +20,7 @@
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ #                                                                               #
+ # This script will compile and run the c examples from source files installed   #
+-# in .../share/hdf5_examples/c using h5cc or h5pc.  The order for running       #
++# in .../share/hdf5/examples/c using h5cc or h5pc.  The order for running       #
+ # programs with RunTest in the MAIN section below is taken from the Makefile.   #
+ # The order is important since some of the test programs use data files created #
+ # by earlier test programs.  Any future additions should be placed accordingly. #

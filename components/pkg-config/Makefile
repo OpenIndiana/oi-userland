@@ -26,11 +26,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg-config
-COMPONENT_VERSION=	0.23
+COMPONENT_VERSION=	0.28
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/pkg-config
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:08a0e072d6a05419a58124db864f0685e6ac96e71b2875bf15ac12714e983b53
+COMPONENT_ARCHIVE_HASH= sha256:6b6eb31c6ec4421174578652c7e141fdaae2dabad1021f420d8713206ac1f845
 COMPONENT_ARCHIVE_URL=	http://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -40,7 +40,6 @@ include ../../make-rules/ips.mk
 # otherwise our default PKG_CONFIG_PATH will change to the 64-bit libdir
 #CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" 
 COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
 ASLR_MODE = $(ASLR_ENABLE)
 

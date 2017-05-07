@@ -1,0 +1,37 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 EveryCity Ltd. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/web/php-70/extension/php-iconv@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="PHP Server 7.0 (iconv extension)"
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=http://www.php.net
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file files/iconv.ini path=etc/php/7.0/conf.d/iconv.ini preserve=true
+file path=usr/php/7.0/extensions/$(MACH64)/iconv.so
+file path=usr/php/7.0/extensions/iconv.so
+file path=usr/php/7.0/include/php/ext/iconv/php_have_bsd_iconv.h
+file path=usr/php/7.0/include/php/ext/iconv/php_have_glibc_iconv.h
+file path=usr/php/7.0/include/php/ext/iconv/php_have_ibm_iconv.h
+file path=usr/php/7.0/include/php/ext/iconv/php_have_iconv.h
+file path=usr/php/7.0/include/php/ext/iconv/php_have_libiconv.h
+file path=usr/php/7.0/include/php/ext/iconv/php_iconv.h
+file path=usr/php/7.0/include/php/ext/iconv/php_iconv_aliased_libiconv.h
+file path=usr/php/7.0/include/php/ext/iconv/php_iconv_broken_ignore.h
+file path=usr/php/7.0/include/php/ext/iconv/php_iconv_supports_errno.h
+file path=usr/php/7.0/include/php/ext/iconv/php_php_iconv_h_path.h
+file path=usr/php/7.0/include/php/ext/iconv/php_php_iconv_impl.h
+license php70.license license="PHP70 License"
+depend type=require fmri=pkg:/web/php-70/php-common

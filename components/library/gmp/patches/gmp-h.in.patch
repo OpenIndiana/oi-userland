@@ -1,0 +1,27 @@
+--- gmp-h.in	2013-08-10 12:04:01.027313447 +0400
++++ gmp-h.in	2013-08-10 12:23:41.933456077 +0400
+@@ -31,8 +31,12 @@
+ #if ! defined (__GMP_WITHIN_CONFIGURE)
+ #define __GMP_HAVE_HOST_CPU_FAMILY_power   @HAVE_HOST_CPU_FAMILY_power@
+ #define __GMP_HAVE_HOST_CPU_FAMILY_powerpc @HAVE_HOST_CPU_FAMILY_powerpc@
+-#define GMP_LIMB_BITS                      @GMP_LIMB_BITS@
+ #define GMP_NAIL_BITS                      @GMP_NAIL_BITS@
++#if defined(__amd64) || defined(__sparcv9)
++#define GMP_LIMB_BITS 64
++#else
++#define GMP_LIMB_BITS 32
++#endif
+ #endif
+ #define GMP_NUMB_BITS     (GMP_LIMB_BITS - GMP_NAIL_BITS)
+ #define GMP_NUMB_MASK     ((~ __GMP_CAST (mp_limb_t, 0)) >> GMP_NAIL_BITS)
+@@ -426,6 +430,10 @@
+ #define __GMP_EXTERN_INLINE      extern __inline__
+ #endif
+ #define __GMP_INLINE_PROTOTYPES  1
++#else
++#ifdef __SUNPRO_C
++#define __GMP_EXTERN_INLINE     static inline
++#endif
+ #endif
+ 
+ /* DEC C (eg. version 5.9) supports "static __inline foo()", even in -std1

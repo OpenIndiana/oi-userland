@@ -1,0 +1,360 @@
+#!/usr/bin/python2.7
+# Erwann Chenede - <erwann.chenede@sun.com>
+# Copyright Sun Microsystems 2008
+
+import os,sys
+try:
+ 	import pygtk
+  	pygtk.require("2.0")
+except:
+  	pass
+try:
+	import gtk
+  	import gtk.glade
+except:
+	sys.exit (1)
+
+GETTEXT_PACKAGE = "gnome-compiz-preferences"
+
+try:
+	import gettext
+	gettext.bindtextdomain (GETTEXT_PACKAGE)
+	gettext.textdomain (GETTEXT_PACKAGE)
+	_ = gettext.gettext
+except:
+	def _(self, msgid):
+	  return msgid
+
+gtk.glade.bindtextdomain (GETTEXT_PACKAGE, "/usr/share/locale")
+gtk.glade.textdomain (GETTEXT_PACKAGE)
+
+class Check:
+
+    def __init__(self, Name):
+      self.passed = False
+      self.error = None
+      self.name = Name
+      self.warning_only = None
+      self.check ()
+
+    def __repr__(self):
+      ret = "Check : %s,  Passed : %d, Error :%s\n" \
+      % (self.name, self.passed, self.error)
+      return ret
+
+    def check(self):
+      return
+
+# Check for architecture either sparc or i86pc
+
+class ArchCheck (Check):
+
+    def __init__(self):
+      Check.__init__(self,"Architecture Check")
+
+    def check (self):
+      fin,fout = os.popen4("/usr/bin/uname -i")
+      result = fout.read().rstrip ()
+      self.architecture = result
+      if result == "i86pc" :
+	self.passed = True
+      else:
+	self.error = "sparc architecture detected : Compiz does not\
+	work on this architecture due to a lack of appropriate graphics drivers"
+
+
+# Check for supported video cards 
+
+class CardCheck (Check):
+    # list of supported intel video card supported from SUNWdrmr/postinstall 
+    intel_cards = ["pci8086,2562", "pci8086,2572","pci8086,2582","pci8086,2592","pci8086,2772","pci8086,27a2","pci8086,2972","pci8086,2982","pci8086,2992","pci8086,29a2","pci8086,2a02","pci8086,2a12"]
+    # list of supported ATI video card supported minskey install.sh script in the radeon tarball 
+    ati_cards = ["pci1002,4136","pci1002,4137","pci1002,4144","pci1002,4145","pci1002,4146","pci1002,4147","pci1002,4150","pci1002,4151","pci1002,4152","pci1002,4153","pci1002,4154","pci1002,4156","pci1002,4237","pci1002,4242","pci1002,4243","pci1002,4336","pci1002,4337","pci1002,4437","pci1002,4966","pci1002,4967","pci1002,4a49","pci1002,4a4b","pci1002,4c57","pci1002,4c58","pci1002,4c59","pci1002,4c5a","pci1002,4c64","pci1002,4c65","pci1002,4c66","pci1002,4c67","pci1002,4e44","pci1002,4e45","pci1002,4e46","pci1002,4e47","pci1002,4e48","pci1002,4e49","pci1002,4e4a","pci1002,4e4b","pci1002,4e50","pci1002,4e51","pci1002,4e54","pci1002,4e56","pci1002,5144","pci1002,5145","pci1002,5146","pci1002,5147","pci1002,5148","pci1002,5149","pci1002,514a","pci1002,514b","pci1002,514c","pci1002,514d","pci1002,514e","pci1002,514f","pci1002,5157","pci1002,5158","pci1002,5159","pci1002,515a","pci1002,515e","pci1002,5168","pci1002,5169","pci1002,516a","pci1002,516b","pci1002,516c","pci1002,5460","pci1002,554f","pci1002,5653","pci1002,5834","pci1002,5835","pci1002,5836","pci1002,5837","pci1002,5960","pci1002,5961","pci1002,5962","pci1002,5963","pci1002,5964","pci1002,5969","pci1002,596a","pci1002,596b","pci1002,5b60","pci1002,5c61","pci1002,5c62","pci1002,5c63","pci1002,5c64","pci1002,5d4d"]
+
+    def __init__(self):
+      self.card_type = "unsupported"
+      Check.__init__(self,"Video Card Check")
+
+    def check (self):
+      fin,fout = os.popen4("/usr/sbin/prtconf -v")
+      result = fout.read().rstrip ()
+      for line in result.split ("\n"):
+	# check for nvidia cards 
+	if line.find ("nvidia") != -1:
+	  self.passed = True
+	  self.card_type = "nvidia"
+	  return
+	# check for intel cards 
+	for card in CardCheck.intel_cards:
+	  if line.find (card) != -1:
+	    self.passed = True
+	    self.card_type = "i915"
+	    return
+	# check for ati cards 
+	for card in CardCheck.ati_cards:
+	  if line.find (card) != -1:
+	    self.passed = True
+	    self.card_type = "radeon"
+	    return      
+      self.error = "no supported card detected : Compiz will not run on this system"
+
+class DriverCheck (Check):
+    
+    def __init__(self,card_type):
+      self.card_type = card_type
+      Check.__init__(self,"3D Video Card Drivers Check")
+
+    def check (self):
+      fin,fout = os.popen4("/usr/sbin/modinfo")
+      result = fout.read().rstrip ()
+      for line in result.split ("\n"):
+	if line.find (self.card_type) != -1:
+	  self.passed = True
+	  self.label = _("support 3D acceleration")
+	  return
+      self.error = _("no supported driver for card of type (%s) : Compiz will not run on this system") % (self.card_type)
+      self.label = _("no 3D acceleration")
+
+# Check if we're running in a Trusted, Sunray session
+
+class SessionCheck (Check):
+
+  def __init__(self):
+    Check.__init__(self,"Session Type Check")
+
+  def check (self):
+    # Trusted solaris check 
+    fin,fout = os.popen4("/usr/X11/bin/xdpyinfo -queryExtensions")
+    result = fout.read().rstrip ()
+    for line in result.split ("\n"):
+      if line.find ("SUN_TSOL") != -1:
+	self.error = _("Trusted Session detected : Compiz will not run in this configuration")
+	self.label = _("Trusted Session")
+	return
+
+    if os.path.exists ("/usr/openwin/bin/xprop") != True:
+      fin,fout = os.popen4("/usr/X11/bin/xprop -root")
+    else:
+      fin,fout = os.popen4("/usr/openwin/bin/xprop -root")
+    result = fout.read().rstrip ()
+    for line in result.split ("\n"):
+      if line.find ("_SUN_SUNRAY_HOME") != -1:
+	self.error = _("Sunray Session detected : Compiz will not run in this configuration")
+	self.label = _("Sunray Session")
+	return
+    self.label = _("Regular Session")
+    self.passed = True
+
+# Check for properly configured 
+
+class XorgConfigCheck (Check):
+
+    def __init__(self, card_type):
+      self.card_type = card_type
+      Check.__init__(self,"Checks for Xorg configuration for card of type %s" % card_type)
+
+
+    def is_set (self, line):
+      lower = line.lower ()
+      if lower.find ("\"true\"") != -1 or lower.find ("\"on\"") != -1 or lower.find ("\"1\"") != -1: 
+	return True
+      return False
+
+    def check (self):
+      if os.path.exists ("/etc/X11/xorg.conf") != True:
+	self.error = "no xorg configuration file present"
+	self.label = "no xorg configuration file present"
+	self.warning_only = True
+	return
+      fin,fout = os.popen4("/usr/bin/nvidia-xconfig -t")
+      result = fout.read().rstrip ()
+
+      if self.card_type == "nvidia" or self.card_type == "i915":
+	self.RenderAccel = False
+	self.AllowGLXWithComposite = False
+	self.AddARGBGLXVisuals = False
+	self.Composite = False
+
+	for line in result.split ("\n"):
+	  if line.find ("RenderAccel") != -1 and line.find ("True") != -1:
+	    self.RenderAccel = True
+	  if line.find ("AllowGLXWithComposite") != -1 and line.find ("True") != -1:
+	    self.AllowGLXWithComposite = True
+	  if line.find ("AddARGBGLXVisuals") != -1 and line.find ("True") != -1:
+	    self.AddARGBGLXVisuals = True
+	  if line.find ("Composite") != -1 and line.find ("Enable") != -1:
+	    self.Composite = True
+	
+	if self.RenderAccel and self.AllowGLXWithComposite and	self.AddARGBGLXVisuals and self.Composite:
+	  self.passed = True
+	  self.label = _("configured")
+	else:
+	  self.error = _("Xorg configuration file is not configured to run the visual effects")
+	  self.label = _("not configured")
+	  self.warning_only = True
+	return
+
+      if self.card_type == "radeon":
+	  self.GARTSize = False
+	  self.AGPFastWrite = False
+	  self.EnablePageFlip = False
+	  self.AGPMode = False
+	  self.DynamicClocks = False
+	  self.EnableDepthMoves = False
+	  self.ColorTiling = False
+	  self.DMAForXv = False
+	  self.AccelDFS = False
+	  self.AccelMethod = False
+	  self.XAANoOffscreenPixmaps = False
+	  self.driver = False
+
+	  for line in result.split ("\n"):
+	    if line.find ("GARTSize") != -1 and line.find ("64") != -1:  
+		self.GARTSize = True
+	    if line.find ("AGPFastWrite") != -1 and self.is_set (line):  
+	      self.AGPFastWrite = True
+	    if line.find ("EnablePageFlip") != -1 and self.is_set (line):  
+	      self.EnablePageFlip = True
+	    if line.find ("AGPMode") != -1 and line.find ("4") != -1:  
+	      self.AGPMode = True
+	    if line.find ("AccelMethod") != -1 and line.find ("XAA") != -1:  
+	      self.AccelMethod = True
+	    if line.find ("DynamicClocks") != -1 and self.is_set (line):  
+	      self.DynamicClocks = True
+	    if line.find ("EnableDepthMoves") != -1 and self.is_set (line):  
+	      self.EnableDepthMoves = True
+	    if line.find ("ColorTiling") != -1 and self.is_set (line):  
+	      self.ColorTiling = True
+	    if line.find ("DMAForXv") != -1 and self.is_set (line):  
+	      self.DMAForXv = True
+	    if line.find ("AccelDFS") != -1 and self.is_set (line):  
+	      self.AccelDFS = True
+	    if line.find ("XAANoOffscreenPixmaps") != -1 and self.is_set (line):  
+	      self.XAANoOffscreenPixmaps = True
+	    if line.find ("Driver") != -1 and line.find ("ati") != -1:
+	      self.driver = True
+
+	  #print "\nself.GARTSize %d,\nself.AGPFastWrite %d,\nself.EnablePageFlip %d,\nself.AGPMode %d,\nself.DynamicClocks %d,\nself.EnableDepthMoves %d,\nself.ColorTiling %d,\nself.DMAForXv %d,\nself.AccelDFS %d,\nself.AccelMethod %d,\nself.XAANoOffscreenPixmaps %d,\nself.driver %d,\n" % (self.GARTSize,self.AGPFastWrite,self.EnablePageFlip,self.AGPMode,self.DynamicClocks,self.EnableDepthMoves,self.ColorTiling,self.DMAForXv,self.AccelDFS,self.AccelMethod,self.XAANoOffscreenPixmaps,self.driver)
+
+	  if self.GARTSize and self.AGPFastWrite and self.EnablePageFlip and self.AGPMode and self.DynamicClocks and self.EnableDepthMoves and self.ColorTiling and self.DMAForXv and self.AccelDFS and self.AccelMethod and self.XAANoOffscreenPixmaps and self.driver:
+	    self.passed = True
+	    self.label = _("configured")
+	  else:
+	    self.error = _("Xorg configuration file is not configured to run the visual effects")
+	    self.label = _("not configured")
+	    self.warning_only = True
+	
+class View:
+
+    def error_callback (self, button, check):
+      if check.warning_only == True:
+	dialog = gtk.MessageDialog(self.xml.get_widget ("dialog"),
+		 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+		 gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
+		 "Warning")
+	dialog.set_title ("Warning")
+      else:
+	dialog = gtk.MessageDialog(self.xml.get_widget ("dialog"),
+		 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+		 gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+		 "Error")
+	dialog.set_title ("Error")
+
+      dialog.format_secondary_text (check.error)
+      dialog.run()
+      dialog.destroy()
+
+    def modify_conf (self, button):
+      fin,fout = os.popen4("/usr/bin/gksu -m \"To run the modification program you need to enter the root passord\" \"/usr/lib/compiz/modify-xorg-conf --with-experimental-ati-support\"")
+      result = fout.read().rstrip ()
+      error = gtk.MESSAGE_INFO
+
+      message = "Xserver configuration file modified.\nPlease logout to run the visual effects."
+      details = "Output of the modification program :\n%s" % result
+      title = "Information"
+      
+      for line in result.split ("\n"):
+	if line.find ("ERROR") != -1 :
+	  error = gtk.MESSAGE_ERROR
+	  message = "Failed to modify the configuration."
+	  details = "The error was :\n%s" % result
+	  title = "Error"
+	  break
+	if line.find ("embedded_su") != -1:
+	  error = gtk.MESSAGE_ERROR
+	  message = "Wrong password"
+	  details = "The error was :\n%s" % result
+	  title = "Error"
+	  break
+
+      dialog = gtk.MessageDialog(self.xml.get_widget ("dialog"),
+	       gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+	       error, gtk.BUTTONS_CLOSE,
+	       message)
+      dialog.format_secondary_text (details);
+      dialog.set_title (title)
+      dialog.run()
+      dialog.destroy()
+      gtk.main_quit ()
+     
+    def setup_check_widgets (self, check, glade_name, label_name):
+
+      self.xml.get_widget (glade_name + "Label").set_text (label_name)
+      icon = gtk.Image ()
+      if check.passed == True:
+	icon.set_from_stock (gtk.STOCK_OK, gtk.ICON_SIZE_BUTTON)
+	icon.show ()
+	self.xml.get_widget (glade_name + "Align").remove (self.xml.get_widget (glade_name + "Align").get_child ())
+	self.xml.get_widget (glade_name + "Align").add (icon)
+      else:
+	button = gtk.Button ()
+	if check.warning_only == True:
+	  icon.set_from_stock (gtk.STOCK_DIALOG_WARNING, gtk.ICON_SIZE_BUTTON)
+	else:
+	  icon.set_from_stock (gtk.STOCK_DIALOG_ERROR, gtk.ICON_SIZE_BUTTON)
+	icon.show ()
+	button.set_image (icon)
+	button.show ()
+	self.xml.get_widget (glade_name + "Align").remove (self.xml.get_widget (glade_name + "Align").get_child ())
+	self.xml.get_widget (glade_name + "Align").add (button)
+	button.connect ('clicked',self.error_callback,check)
+
+    
+    def __init__(self):
+      self.xml = gtk.glade.XML ("/usr/share/compiz/compiz-config.glade")
+      #signal dictionary
+      dic = { "on_close_clicked" : gtk.main_quit,
+	      "on_dialog_delete_event" : gtk.main_quit,
+	      "on_ModifyButton_clicked" : self.modify_conf}
+      self.xml.signal_autoconnect(dic)	      
+
+      archCheck = ArchCheck ()
+      self.setup_check_widgets (archCheck, "Arch", archCheck.architecture)
+      cardCheck = CardCheck ()
+      self.setup_check_widgets (cardCheck, "Card", cardCheck.card_type)
+      driverCheck = DriverCheck (cardCheck.card_type)
+      self.setup_check_widgets (cardCheck, "Driver", driverCheck.label)
+      xorgConfigCheck = XorgConfigCheck (cardCheck.card_type)
+      self.setup_check_widgets (xorgConfigCheck, "Xorg", xorgConfigCheck.label)
+      sessionCheck = SessionCheck ()
+      self.setup_check_widgets (sessionCheck, "Session", sessionCheck.label)
+
+      if archCheck.passed and cardCheck.passed and driverCheck.passed and xorgConfigCheck.passed and sessionCheck.passed:
+	self.xml.get_widget ("ModifyButton").hide ()
+	self.xml.get_widget ("StatusLabel").set_text (_("This system can run the visual effects"))
+      elif archCheck.passed and cardCheck.passed and driverCheck.passed and sessionCheck.passed:
+	self.xml.get_widget ("StatusLabel").set_text (_("This system can run the visual effects but is not configured to do so. Click on the modify button to configure it."))
+      elif archCheck.passed and cardCheck.passed and driverCheck.passed:
+	self.xml.get_widget ("ModifyButton").hide ()
+	self.xml.get_widget ("StatusLabel").set_text (_("This system cannot run the visual effects as it is not running a regular session"))
+      elif archCheck.passed and cardCheck.passed:
+	self.xml.get_widget ("ModifyButton").hide ()
+	if cardCheck.card_type == "radeon":
+	  self.xml.get_widget ("StatusLabel").set_text (_("This system can run the visual effects but the current graphics driver does not support 3D acceleration. Refer to http://opensolaris.org/os/project/dri/ for more information about the supported cards"))
+      elif archCheck.passed == False:
+	self.xml.get_widget ("ModifyButton").hide ()
+	self.xml.get_widget ("StatusLabel").set_text (_("This system cannot run the visual effects due to the lack of supported 3D Video Card Driver"))
+
+if __name__ == "__main__":
+   cc = View ()
+   gtk.main ()

@@ -1,0 +1,37 @@
+--- bind-9.10.3-P3/bin/dig/nslookup.c.~1~	2016-01-06 06:48:13.000000000 +0300
++++ bind-9.10.3-P3/bin/dig/nslookup.c	2016-01-20 09:10:24.946407219 +0300
+@@ -63,7 +63,6 @@
+ static char defclass[MXRD] = "IN";
+ static char deftype[MXRD] = "A";
+ static isc_event_t *global_event = NULL;
+-static int query_error = 1, print_error = 0;
+ 
+ static char domainopt[DNS_NAME_MAXTEXT];
+ 
+@@ -413,9 +412,6 @@
+ printmessage(dig_query_t *query, dns_message_t *msg, isc_boolean_t headers) {
+ 	char servtext[ISC_SOCKADDR_FORMATSIZE];
+ 
+-	/* I've we've gotten this far, we've reached a server. */
+-	query_error = 0;
+-
+ 	debug("printmessage()");
+ 
+ 	isc_sockaddr_format(&query->sockaddr, servtext, sizeof(servtext));
+@@ -441,9 +437,6 @@
+ 		printf("** server can't find %s: %s\n",
+ 		       nametext, rcode_totext(msg->rcode));
+ 		debug("returning with rcode == 0");
+-
+-		/* the lookup failed */
+-		print_error |= 1;
+ 		return (ISC_R_SUCCESS);
+ 	}
+ 
+@@ -931,5 +924,5 @@
+ 	destroy_libs();
+ 	isc_app_finish();
+ 
+-	return (query_error | print_error);
++	return (0);
+ }

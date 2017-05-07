@@ -1,0 +1,41 @@
+--- tests/df/no-mtab-status.sh.~1~	2016-01-16 21:18:13.000000000 +0300
++++ tests/df/no-mtab-status.sh	2016-02-29 12:09:47.436673520 +0300
+@@ -35,9 +35,13 @@
+ #define _GNU_SOURCE
+ #include <stdio.h>
+ #include <errno.h>
+-#include <mntent.h>
+ #include <string.h>
+ #include <dlfcn.h>
++#ifdef __sun
++#include <sys/mnttab.h>
++#else
++#include <mntent.h>
++#endif
+ 
+ #define STREQ(a, b) (strcmp (a, b) == 0)
+ 
+@@ -69,7 +73,11 @@
+     return fopen_func(path, mode);
+ }
+ 
++#ifdef __sun
++int getmntent (FILE *fp, struct mnttab *mp)
++#else
+ struct mntent *getmntent (FILE *fp)
++#end
+ {
+   /* Prove that LD_PRELOAD works. */
+   static int done = 0;
+@@ -80,7 +88,11 @@
+     }
+   /* Now simulate the failure. */
+   errno = ENOENT;
++#ifdef __sun
++  return -1;
++#else
+   return NULL;
++#endif
+ }
+ EOF
+ 

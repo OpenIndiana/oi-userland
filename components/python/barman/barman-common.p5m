@@ -1,0 +1,35 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/database/postgres/barman-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - common server and client components"
+set name=info.classification value="org.opensolaris.category.2008:System/Databases"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license barman.license license="GPLv3"
+
+group groupname=barman gid=91
+user ftpuser=false gcos-field="Barman User" group=barman login-shell=/usr/bin/pfksh password=NP \
+	username=barman uid=91 gid=91 home-dir="/var/barman"
+
+file files/exec_attr path=etc/security/exec_attr.d/barman
+file files/prof_attr path=etc/security/prof_attr.d/barman
+file files/user_attr path=etc/user_attr.d/barman
+
+dir owner=barman group=barman path=var/barman
+
+depend fmri=network/rsync type=require

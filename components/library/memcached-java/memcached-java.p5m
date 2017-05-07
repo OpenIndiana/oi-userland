@@ -1,0 +1,86 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
+
+<transform dir file path=usr/share/lib/java/javadoc* -> default group other>
+
+# all files in usr/share/lib/java/javadoc/memcached-java/api
+# come from the javadocs directory under the build directory
+<transform file path=usr/share/lib/java/javadoc/memcached-java/api/(.*) -> \
+	set action.hash javadocs/%<1>>
+
+file java_memcached-release_2.0.1.jar path=usr/share/lib/java/java_memcached-release_2.0.1.jar group=sys
+
+file path=usr/share/lib/java/javadoc/memcached-java/api/allclasses-frame.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/allclasses-noframe.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/ByteBufArrayInputStream.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/ContextObjectInputStream.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/ErrorHandler.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/LineInputStream.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/Logger.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/MCBean.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/MemCachedClient.NIOLoader.Connection.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/MemCachedClient.NIOLoader.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/MemCachedClient.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/NativeHandler.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/NestedIOException.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/SockIOPool.MaintThread.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/SockIOPool.SockIO.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/SockIOPool.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/ByteBufArrayInputStream.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/ContextObjectInputStream.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/ErrorHandler.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/LineInputStream.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/Logger.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/MCBean.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/MemCachedClient.NIOLoader.Connection.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/MemCachedClient.NIOLoader.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/MemCachedClient.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/NativeHandler.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/NestedIOException.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/SockIOPool.MaintThread.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/SockIOPool.SockIO.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/class-use/SockIOPool.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/package-frame.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/package-summary.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/package-tree.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/com/danga/MemCached/package-use.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/constant-values.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/deprecated-list.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/help-doc.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/index-all.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/index.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/overview-tree.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/package-list
+file path=usr/share/lib/java/javadoc/memcached-java/api/script.js
+file path=usr/share/lib/java/javadoc/memcached-java/api/serialized-form.html
+file path=usr/share/lib/java/javadoc/memcached-java/api/stylesheet.css

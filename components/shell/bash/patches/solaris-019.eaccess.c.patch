@@ -1,0 +1,40 @@
+# Fix for CVE-2012-3410.
+# Solaris-specific. There are no threads in bash, therefore
+# no concurrency issues on accessing a static buffer.
+# Not for upstream, their fix is too Linux-specific
+--- lib/sh/eaccess.c	2012-10-09 12:45:17.924274300 -0700
++++ lib/sh/eaccess.c	2012-10-09 12:44:21.930979200 -0700
+@@ -40,6 +40,10 @@
+ #if !defined (_POSIX_VERSION) && defined (HAVE_SYS_FILE_H)
+ #  include <sys/file.h>
+ #endif /* !_POSIX_VERSION */
++
++#include <string.h> /* memset(3C) */
++#include <limits.h> /* _XOPEN_PATH_MAX */
++
+ #include "posixstat.h"
+ #include "filecntl.h"
+ 
+@@ -82,7 +86,7 @@
+      const char *path;
+      struct stat *finfo;
+ {
+-  static char *pbuf = 0;
++  static char pbuf[_XOPEN_PATH_MAX + 1];
+ 
+   if (*path == '\0')
+     {
+@@ -108,9 +112,11 @@
+      trailing slash.  Make sure /dev/fd/xx really uses DEV_FD_PREFIX/xx.
+      On most systems, with the notable exception of linux, this is
+      effectively a no-op. */
+-      pbuf = xrealloc (pbuf, sizeof (DEV_FD_PREFIX) + strlen (path + 8));
++  /* The way CVE-2012-3410 was fixed is wrong */
++      (void) memset (pbuf, '\0', sizeof(pbuf));
+       strcpy (pbuf, DEV_FD_PREFIX);
+-      strcat (pbuf, path + 8);
++      strncat (pbuf, path + 8,
++          (size_t) (sizeof(pbuf) - sizeof(DEV_FD_PREFIX)));
+       return (stat (pbuf, finfo));
+ #endif /* !HAVE_DEV_FD */
+     }

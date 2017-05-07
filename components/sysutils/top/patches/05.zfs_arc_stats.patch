@@ -1,0 +1,343 @@
+$OpenIndiana: Feature https://www.illumos.org/issues/7305 - Franklin Ronald <franklin@wiselabs.com.br>$
+--- top-3.8beta1/machine/m_sunos5.c.1	2016-09-09 15:23:31.208161429 -0300
++++ top-3.8beta1/machine/m_sunos5.c	2016-09-08 22:30:10.912171581 -0300
+@@ -294,6 +294,10 @@
+ #define MEMORY_TOTALSWAP 2
+ #define MEMORY_FREESWAP  3
+ 
++/* these are for detailing the ZFS ARC statistics */
++char *arcnames[] =
++{"K Total, ", "K MRU, ", "K MFU, ", "K Anon, ", "K Header, ", "K Other", NULL};
++
+ /* these are for detailing kernel statistics */
+ int kernel_stats[8];
+ char *kernelnames[] =
+@@ -845,6 +849,7 @@
+ }
+ 
+ static kstat_t *ks_system_misc = NULL;
++static kstat_t *ks_arcstats = NULL;
+ 
+ #endif /* USE_KSTAT */
+ 
+@@ -888,6 +893,66 @@
+ }
+ 
+ int
++get_arcstats(long arcstats[NUM_ZFS_ARC])
++{
++    #ifdef USE_KSTAT
++    int status;
++    kstat_named_t *kn;
++    memset(arcstats, 0, sizeof(long) * NUM_ZFS_ARC);
++
++    dprintf("get_arcstats(%08x)\n", arcstats);
++
++    if ((status = kstat_safe_retrieve(&ks_arcstats,
++				      "zfs", 0, "arcstats", NULL)) == 0)
++    {
++        if ((kn = kstat_data_lookup(ks_arcstats, "size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                arcstats[0] = (long) kn->value.ui64 / 1024;
++            }
++	}
++	if ((kn = kstat_data_lookup(ks_arcstats, "mru_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                arcstats[1] = (long) kn->value.ui64 / 1024;
++            }
++	}
++	if ((kn = kstat_data_lookup(ks_arcstats, "mfu_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                arcstats[2] = (long) kn->value.ui64 / 1024;
++            }
++	}
++	if ((kn = kstat_data_lookup(ks_arcstats, "anon_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                arcstats[3] = (long) kn->value.ui64 / 1024;
++            }
++	}
++	if ((kn = kstat_data_lookup(ks_arcstats, "hdr_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                arcstats[4] = (long) kn->value.ui64 / 1024;
++            }
++	}
++	if ((kn = kstat_data_lookup(ks_arcstats, "other_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                arcstats[5] = (long) kn->value.ui64 / 1024;
++            }
++	}
++    }
++    dprintf("get_arcstats returns %d\n", status);
++    return (status);
++
++#else /* !USE_KSTAT */
++
++    return 0;
++
++#endif /* USE_KSTAT */
++}
++
++int
+ get_ncpus()
+ 
+ {
+@@ -1236,12 +1301,13 @@
+     statics->procstate_names = procstatenames;
+     statics->cpustate_names = cpustatenames;
+     statics->memory_names = memorynames;
++    statics->arc_names = arcnames;
+     statics->kernel_names = kernelnames;
+     statics->order_names = ordernames;
+     statics->flags.fullcmds = 1;
+     statics->flags.warmup = 1;
+     statics->flags.threads = 1;
+-
++    
+     /* get boot time */
+     ut.ut_type = BOOT_TIME;
+     if ((up = getutxid(&ut)) != NULL)
+@@ -1398,6 +1464,7 @@
+ get_system_info (struct system_info *si)
+ {
+     int avenrun[3];
++    long arcstats[NUM_ZFS_ARC];
+ 
+     static long cp_time[CPUSTATES];
+     static long cp_old[CPUSTATES];
+@@ -1414,6 +1481,10 @@
+ 
+     /* get important information */
+     get_avenrun(avenrun);
++    
++    /* get ARC information */
++    get_arcstats(arcstats);
++    memcpy(si->arc, arcstats, sizeof(arcstats));
+ 
+     /* get the cpu statistics arrays */
+     cpustats = get_cpustats(&cpus, cpustats);
+--- top-3.8beta1/display.c.1	2008-05-07 00:41:39.000000000 -0300
++++ top-3.8beta1/display.c	2016-09-09 13:50:10.209517852 -0300
+@@ -101,6 +101,8 @@
+ static int y_kernel = Y_KERNEL;
+ static int x_mem = X_MEM;
+ static int y_mem = Y_MEM;
++static int x_arc = X_ARC;
++static int y_arc = Y_ARC;
+ static int x_swap = X_SWAP;
+ static int y_swap = Y_SWAP;
+ static int y_message = Y_MESSAGE;
+@@ -132,12 +134,14 @@
+ static char **procstate_names;
+ static char **cpustate_names;
+ static char **memory_names;
++static char **arc_names;
+ static char **swap_names;
+ static char **kernel_names;
+ 
+ static int num_procstates;
+ static int num_cpustates;
+ static int num_memory;
++static int num_arc;
+ static int num_swap;
+ static int num_kernel;
+ 
+@@ -171,10 +175,12 @@
+ static int header_cidx;
+ static int *cpustate_cidx;
+ static int *memory_cidx;
++static int *arc_cidx;
+ static int *swap_cidx;
+ static int *kernel_cidx;
+ #else
+ #define memory_cidx NULL
++#define arc_cidx NULL
+ #define swap_cidx NULL
+ #define kernel_cidx NULL
+ #endif
+@@ -526,10 +532,10 @@
+ }
+ 
+ static void
+-summary_format(int x, int y, int *numbers, char **names, int *cidx)
++summary_format(int x, int y, long *numbers, char **names, int *cidx)
+ 
+ {
+-    register int num;
++    register long num;
+     register char *thisname;
+     register char *lastname = NULL;
+     register int color;
+@@ -762,18 +768,29 @@
+     kernel_names = statics->kernel_names;
+     if ((num_kernel = string_count(kernel_names)) > 0)
+     {
++        /* adjust screen placements */
++        y_mem++;
++        y_swap++;
++        y_message++;
++        y_header++;
++        y_idlecursor++;
++        y_procs++;
++    }
++
++    /* a swap line shifts parts of the display down one */
++    swap_names = statics->swap_names;
++    if ((num_swap = string_count(swap_names)) > 0)
++    {
+ 	/* adjust screen placements */
+-	y_mem++;
+-	y_swap++;
+ 	y_message++;
+ 	y_header++;
+ 	y_idlecursor++;
+ 	y_procs++;
+     }
+-
+-    /* a swap line shifts parts of the display down one */
+-    swap_names = statics->swap_names;
+-    if ((num_swap = string_count(swap_names)) > 0)
++    
++    /* arc names */
++    arc_names = statics->arc_names;
++    if ((num_arc = string_count(arc_names)) > 0)
+     {
+ 	/* adjust screen placements */
+ 	y_message++;
+@@ -799,6 +816,8 @@
+ 	cpustate_columns = (int *)calloc(num_cpustates, sizeof(int));
+ 	memory_names = statics->memory_names;
+ 	num_memory = string_count(memory_names);
++        
++        arc_names = statics->arc_names;
+ 
+ 	/* calculate starting columns where needed */
+ 	cpustate_total_length = 0;
+@@ -856,6 +875,16 @@
+ 	memory_cidx[i++] = color_tag(scratchbuf);
+     }
+ 
++    /* color tags for memory */
++    arc_cidx = (int *)malloc(num_arc * sizeof(int));
++    i = 0;
++    p = strcpyend(scratchbuf, "arc.");
++    while (i < num_arc)
++    {
++        strcpy(p, homogenize(arc_names[i]+1));
++        arc_cidx[i++] = color_tag(scratchbuf);
++    }
++
+     /* color tags for swap */
+     if (num_swap > 0)
+     {
+@@ -1316,6 +1345,28 @@
+ }
+ 
+ /*
++ *  *_arc(stats) - print "ARC: " followed by the ARC summary string
++ */
++void
++i_arc(long *stats)
++
++{
++    /* print the tag */
++    display_write(0, y_arc, 0, 0, "ARC: ");
++
++    /* format and print the swap summary */
++    summary_format_memory(x_arc, y_arc, stats, arc_names, arc_cidx);
++}
++
++void
++u_arc(long *stats)
++
++{
++    /* format and print the swap summary */
++    summary_format_memory(x_arc, y_arc, stats, arc_names, arc_cidx);
++}
++
++/*
+  *  *_swap(stats) - print "Swap: " followed by the swap summary string
+  *
+  *  Assumptions:  cursor is on "lastline", the previous line
+@@ -1333,7 +1384,7 @@
+ 	display_write(0, y_swap, 0, 0, "Swap: ");
+ 
+ 	/* format and print the swap summary */
+-	summary_format_memory(x_swap, y_swap, stats, swap_names, swap_cidx);
++	summary_format(x_swap, y_swap, stats, swap_names, swap_cidx);
+     }
+ }
+ 
+--- top-3.8beta1/display.h.1	2008-05-07 00:41:39.000000000 -0300
++++ top-3.8beta1/display.h	2016-09-06 21:31:36.000000000 -0300
+@@ -58,6 +58,8 @@
+ void u_kernel(int *stats);
+ void i_memory(long *stats);
+ void u_memory(long *stats);
++void i_arc(long *stats);
++void u_arc(long *stats);
+ void i_swap(long *stats);
+ void u_swap(long *stats);
+ void i_message(struct timeval *now);
+--- top-3.8beta1/layout.h.1	2008-05-07 00:41:39.000000000 -0300
++++ top-3.8beta1/layout.h	2016-09-06 21:01:18.000000000 -0300
+@@ -58,6 +58,8 @@
+ #define  Y_KERNEL       3
+ #define  X_MEM		8
+ #define  Y_MEM		3
++#define  X_ARC          8
++#define  Y_ARC          5
+ #define  X_SWAP		6
+ #define  Y_SWAP		4
+ #define  Y_MESSAGE	4
+--- top-3.8beta1/machine.h.1	2008-05-07 00:41:39.000000000 -0300
++++ top-3.8beta1/machine.h	2016-09-06 22:28:37.000000000 -0300
+@@ -50,6 +50,7 @@
+     char **procstate_names;
+     char **cpustate_names;
+     char **memory_names;
++    char **arc_names;
+     char **swap_names;		/* optional */
+     char **order_names;		/* optional */
+     char **top_color_names;	/* optional */
+@@ -84,6 +85,7 @@
+     int    *cpustates;
+     int    *kernel;
+     long   *memory;
++    long   arc[NUM_ZFS_ARC];
+     long   *swap;
+ };
+ 
+--- top-3.8beta1/top.c.1	2008-05-07 00:41:39.000000000 -0300
++++ top-3.8beta1/top.c		2016-09-06 22:24:56.000000000 -0300
+@@ -547,6 +547,7 @@
+ 	}
+ 	i_kernel(system_info.kernel);
+ 	i_memory(system_info.memory);
++        i_arc(system_info.arc);
+ 	i_swap(system_info.swap);
+ 	i_message(&(gstate->now));
+ 	i_header(hdr);
+@@ -569,6 +570,7 @@
+ 	u_cpustates(system_info.cpustates);
+ 	u_kernel(system_info.kernel);
+ 	u_memory(system_info.memory);
++        u_arc(system_info.arc);
+ 	u_swap(system_info.swap);
+ 	u_message(&(gstate->now));
+ 	u_header(hdr);
+--- top-3.8beta1/top.1	2008-05-07 00:41:39.000000000 -0300
++++ top-3.8beta1/top.h	2016-09-06 22:28:10.000000000 -0300
+@@ -59,6 +59,7 @@
+  */
+ 
+ #define NUM_AVERAGES    3
++#define NUM_ZFS_ARC     7
+ 
+ struct ext_decl {
+     int (*f_minibar)(char *, int);

@@ -1,0 +1,56 @@
+--- pygtksourceview-2.8.0/configure.ac-orig	2009-09-23 13:08:51.142485973 -0500
++++ pygtksourceview-2.8.0/configure.ac	2009-09-23 13:09:19.026688500 -0500
+@@ -74,6 +74,9 @@ AC_SUBST(PYGOBJECT_INCLUDEDIR)
+ PYGOBJECT_DATADIR=`$PKG_CONFIG --variable=datadir pygobject-2.0`
+ AC_SUBST(PYGOBJECT_DATADIR)
+ 
++PYGOBJECT_XSLFILES=`$PKG_CONFIG --variable=xslfiles pygobject-2.0`
++AC_SUBST(PYGOBJECT_XSLFILES)
++
+ PYGOBJECT_FIXXREF="$PYTHON `$PKG_CONFIG --variable=fixxref pygobject-2.0`"
+ AC_SUBST(PYGOBJECT_FIXXREF)
+ 
+@@ -113,10 +116,13 @@ PYGTK_DATADIR=`$PKG_CONFIG --variable=da
+ 
+ AC_SUBST(PYGTK_DATADIR)
+ 
++PYGTK_DEFSDIR=`$PKG_CONFIG --variable=defsdir pygtk-2.0`
++AC_SUBST(PYGTK_DEFSDIR)
++
+ 
+ dnl codegen
+ AC_MSG_CHECKING(for pygtk codegen)
+-CODEGENDIR=`$PKG_CONFIG --variable=codegendir pygtk-2.0`
++CODEGENDIR=`$PKG_CONFIG --variable=codegendir pygobject-2.0`
+ echo $CODEGENDIR
+ if test -f $CODEGENDIR/codegen.py; then
+ 	CODEGEN=$CODEGENDIR/codegen.py
+--- pygtksourceview-2.7.0.orig/Makefile.am	2009-08-27 21:14:06.455302476 +0100
++++ pygtksourceview-2.7.0/Makefile.am	2009-08-27 21:15:58.280856152 +0100
+@@ -44,9 +44,9 @@
+ 	(cd $(srcdir)\
+ 	&& $(PYTHON) $(CODEGEN)							\
+ 		--override $*.override						\
+-		--register @PYGTK_DATADIR@/pygtk/2.0/defs/gdk-types.defs	\
+-		--register @PYGTK_DATADIR@/pygtk/2.0/defs/pango-types.defs	\
+-		--register @PYGTK_DATADIR@/pygtk/2.0/defs/gtk-types.defs	\
++		--register @PYGTK_DEFSDIR@/gdk-types.defs \
++		--register @PYGTK_DEFSDIR@/pango-types.defs \
++		--register @PYGTK_DEFSDIR@/gtk-types.defs \
+ 		--prefix py$* $*.defs) > gen-$*.c				\
+ 		&& cp gen-$*.c $*.c						\
+ 		&& rm -f gen-$*.c
+diff -ruN pygtksourceview-2.7.0.orig/docs/Makefile.am pygtksourceview-2.7.0/docs/Makefile.am
+--- pygtksourceview-2.7.0.orig/docs/Makefile.am	2009-08-27 21:14:06.453578602 +0100
++++ pygtksourceview-2.7.0/docs/Makefile.am	2009-08-27 21:16:31.949134185 +0100
+@@ -3,8 +3,8 @@
+ REF_VERSION = $(PYGTKSOURCEVIEW_MAJOR_VERSION).$(PYGTKSOURCEVIEW_MINOR_VERSION)
+ FULL_VERSION = $(REF_VERSION).$(PYGTKSOURCEVIEW_MICRO_VERSION)
+ 
+-HTML_STYLE = $(PYGOBJECT_DATADIR)/pygobject/xsl/ref-html-style.xsl
+-PDF_STYLE = $(PYGOBJECT_DATADIR)/pygobject/xsl/pdf-style.xsl
++HTML_STYLE = $(PYGOBJECT_XSLFILES)/ref-html-style.xsl
++PDF_STYLE = $(PYGOBJECT_XSLFILES)/pdf-style.xsl
+ 
+ XMLFILES = 							\
+ 	reference/gtksourceview2-ref.xml			\

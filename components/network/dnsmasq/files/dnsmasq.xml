@@ -1,0 +1,104 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!-- 
+ Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+ NOTE:  This service manifest is not editable; its contents will
+ be overwritten by package or patch operations, including
+ operating system upgrade.  Make customizations in a different
+ file.
+-->
+
+<service_bundle type='manifest' name='dnsmasq'>
+
+  <service name='network/dnsmasq' type='service' version='1'>
+
+    <dependency name='multi-user'
+                grouping='require_all'
+                restart_on='refresh'
+                type='service'>
+      <service_fmri value='svc:/milestone/multi-user'/>
+    </dependency>
+
+    <!-- dnsmasq is incompatible with running BIND, ISC DHCP, and TFTP -->
+    <dependency name='exclude-bind'
+                grouping='exclude_all'
+                restart_on='none'
+                type='service'>
+      <service_fmri value='svc:/network/dns/server'/>
+    </dependency>
+
+    <dependency name='exclude-dhcp-relay'
+                grouping='exclude_all'
+                restart_on='none'
+                type='service'>
+      <service_fmri value='svc:/network/dhcp/relay'/>
+    </dependency>
+
+    <dependency name='exclude-dhcp-server'
+                grouping='exclude_all'
+                restart_on='none'
+                type='service'>
+      <service_fmri value='svc:/network/dhcp/server'/>
+    </dependency>
+
+    <dependency name='exclude-tftp'
+                grouping='exclude_all'
+                restart_on='none'
+                type='service'>
+      <service_fmri value='svc:/network/tftp/udp6'/>
+    </dependency>
+
+    <exec_method type='method' name='start'
+                 exec='/usr/lib/inet/dnsmasq'
+                 timeout_seconds='60' >
+      <method_context>
+        <method_credential user='daemon' group='daemon'
+          privileges='basic,{net_privaddr}:53/udp,{net_privaddr}:53/tcp,{net_privaddr}:67/udp,{net_privaddr}:69/udp,{net_privaddr}:547/udp,net_icmpaccess' />
+      </method_context>
+    </exec_method> 
+
+    <exec_method type='method' name='stop' exec=':kill' timeout_seconds='60' />
+
+    <instance name='default' enabled='false'>
+      <!-- to start/stop/refresh the service -->
+      <property_group name='general' type='framework'>
+        <propval name='action_authorization' type='astring'
+                 value='solaris.smf.manage.dnsmasq' />
+        <propval name='value_authorization' type='astring'
+                 value='solaris.smf.value.dnsmasq' />
+      </property_group>
+     </instance> 
+
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>dnsmasq server</loctext>
+      </common_name>
+      <description>
+        <loctext xml:lang='C'>
+          dnsmasq(8) is a lightweight DNS, TFTP, PXE, router advertisement and
+          DHCP server. It is intended to provide coupled DNS and DHCP service
+          to a LAN.
+        </loctext>
+      </description>
+      <documentation>
+        <manpage title='dnsmasq' section='8' manpath='/usr/share/man'/>
+      </documentation>
+    </template>
+
+  </service>
+</service_bundle>

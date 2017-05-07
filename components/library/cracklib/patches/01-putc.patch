@@ -1,0 +1,24 @@
+--- cracklib-2.9.6/lib/packlib.c.~1~	2015-08-18 21:41:16.000000000 +0300
++++ cracklib-2.9.6/lib/packlib.c	2015-11-26 23:00:33.571438215 +0300
+@@ -408,7 +408,7 @@
+ 	fwrite((char *) &datum, sizeof(datum), 1, pwp->ifp);
+ 
+ 	fputs(pwp->data_put[0], pwp->dfp);
+-	putc(0, pwp->dfp);
++	putc(0, (FILE*) pwp->dfp);
+ 
+ 	ostr = pwp->data_put[0];
+ 
+@@ -421,10 +423,10 @@
+ 	    if (nstr[0])
+ 	    {
+ 		for (j = 0; ostr[j] && nstr[j] && (ostr[j] == nstr[j]); j++);
+-		putc(j & 0xff, pwp->dfp);
++		putc(j & 0xff, (FILE*) pwp->dfp);
+ 		fputs(nstr + j, pwp->dfp);
+ 	    }
+-	    putc(0, pwp->dfp);
++	    putc(0, (FILE*) pwp->dfp);
+ 
+ 	    ostr = nstr;
+ 	}

@@ -1,0 +1,1334 @@
+/usr/ccs/ patch is outdated and should be used only for compatibility
+
+diff -ur sccs-5.07-orig/patch/patch_sym.mk sccs-5.07/patch/patch_sym.mk
+--- sccs-5.07-orig/patch/patch_sym.mk	2011-09-06 02:07:37.000000000 +0400
++++ sccs-5.07/patch/patch_sym.mk	2015-06-04 10:49:23.993718432 +0300
+@@ -6,7 +6,7 @@
+ ###########################################################################
+ _EXEEXT=	$(EXEEXT)
+ 
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		sccspatch
+ ORIG=		spatch
+ PSYMLINKS=	$(DEST_DIR)$(INS_BASE)/$(INSDIR)/$(TARGET)$(_EXEEXT)
+@@ -15,4 +15,4 @@
+ 
+ $(PSYMLINKS):	$(DEST_DIR)$(INS_BASE)/bin/$(ORIG)$(_EXEEXT)
+ 	$(MKDIR) -p $(DEST_DIR)$(INS_BASE)/$(INSDIR)
+-	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) ../../bin/$(ORIG)$(_EXEEXT) $@
++	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) $(ORIG)$(_EXEEXT) $@
+diff -ur sccs-5.07-orig/sccs/man/sccs-admin.1 sccs-5.07/sccs/man/sccs-admin.1
+--- sccs-5.07-orig/sccs/man/sccs-admin.1	2015-01-20 01:59:56.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-admin.1	2015-06-04 10:51:51.601304021 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .LP
+-.B /usr/ccs/bin/admin
++.B /usr/bin/admin
+ .RB [ -bhnoz ]
+ .RB [ -a\c
+ .IR " username " | " groupid" ]...
+diff -ur sccs-5.07-orig/sccs/man/sccs-cdc.1 sccs-5.07/sccs/man/sccs-cdc.1
+--- sccs-5.07-orig/sccs/man/sccs-cdc.1	2015-01-20 01:59:56.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-cdc.1	2015-06-04 10:51:51.610454820 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/cdc \c
++.B "/usr/bin/cdc \c
+ .BI -r "sid \c"
+ .RB [ -m\c
+ .IR mr-list "] \c
+diff -ur sccs-5.07-orig/sccs/man/sccs-comb.1 sccs-5.07/sccs/man/sccs-comb.1
+--- sccs-5.07-orig/sccs/man/sccs-comb.1	2015-01-20 01:59:56.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-comb.1	2015-06-04 10:51:51.618327103 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/comb \c
++.B "/usr/bin/comb \c
+ .RB [ -os "] \c
+ .RB [ -c\c
+ .IR sid-list "] \c
+diff -ur sccs-5.07-orig/sccs/man/sccs-delta.1 sccs-5.07/sccs/man/sccs-delta.1
+--- sccs-5.07-orig/sccs/man/sccs-delta.1	2015-01-21 00:25:25.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-delta.1	2015-06-04 10:51:51.636565077 +0300
+@@ -36,7 +36,7 @@
+ sccs-delta, delta \- make a delta to an SCCS file
+ .SH SYNOPSIS
+ .LP
+-.B /usr/ccs/bin/delta
++.B /usr/bin/delta
+ .RB [ -dfhnopsz ]
+ .RB [ -g
+ .I sid-list
+@@ -504,7 +504,7 @@
+ for descriptions of the following attributes:
+ .sp
+ 
+-.SS /usr/ccs/bin/delta
++.SS /usr/bin/delta
+ 
+ .LP
+ 
+diff -ur sccs-5.07-orig/sccs/man/sccs-get.1 sccs-5.07/sccs/man/sccs-get.1
+--- sccs-5.07-orig/sccs/man/sccs-get.1	2015-01-21 00:38:20.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-get.1	2015-06-04 10:51:51.651565313 +0300
+@@ -37,7 +37,7 @@
+ sccs-get, get \- retrieve a version of an SCCS file
+ .SH SYNOPSIS
+ .LP
+-.B /usr/ccs/bin/get
++.B /usr/bin/get
+ .RB [ -beFgkmnopst ]
+ .RB [ -l
+ [p]]
+@@ -515,7 +515,7 @@
+ .B get
+ version number string and exists.
+ 
+-.SS /usr/ccs/bin/get
++.SS /usr/bin/get
+ 
+ .br
+ .ne 3
+@@ -620,7 +620,7 @@
+ .TP
+ .BI -r sid
+ Same as for
+-.B /usr/ccs/bin/get
++.B /usr/bin/get
+ except that
+ .B SID
+ is mandatory.
+@@ -632,18 +632,18 @@
+ .TP
+ .BI -x sid-list
+ Same as for
+-.B /usr/ccs/bin/get
++.B /usr/bin/get
+ except that
+ .B sid-list
+ is mandatory.
+ 
+ .SH OUTPUT
+ 
+-.SS /usr/ccs/bin/get
++.SS /usr/bin/get
+ 
+ .LP
+ The output format for
+-.B /usr/ccs/bin/get
++.B /usr/bin/get
+ is as follows:
+ 
+ .LP
+@@ -1088,7 +1088,7 @@
+ for descriptions of the following attributes:
+ .sp
+ 
+-.SS /usr/ccs/bin/get
++.SS /usr/bin/get
+ 
+ .LP
+ 
+diff -ur sccs-5.07-orig/sccs/man/sccs-help.1 sccs-5.07/sccs/man/sccs-help.1
+--- sccs-5.07-orig/sccs/man/sccs-help.1	2015-01-21 00:40:01.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-help.1	2015-06-04 10:51:51.658809682 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B /usr/ccs/bin/help \c
++.B /usr/bin/help \c
+ .RI [ argument ]...
+ .fi
+ 
+@@ -68,7 +68,7 @@
+ 
+ .LP
+ When all else fails, try
+-.RB ` "/usr/ccs/bin/help  stuck" '.
++.RB ` "/usr/bin/help  stuck" '.
+ 
+ .SH ENVIRONMENT VARIABLES
+ .sp
+diff -ur sccs-5.07-orig/sccs/man/sccs-prs.1 sccs-5.07/sccs/man/sccs-prs.1
+--- sccs-5.07-orig/sccs/man/sccs-prs.1	2015-01-21 22:52:34.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-prs.1	2015-06-04 10:51:51.675337929 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/prs \c
++.B "/usr/bin/prs \c
+ .RB [ -ael "] \c
+ .RB [ -c\c
+ .IR date-time "] \c
+@@ -358,7 +358,7 @@
+ .nf
+ example% \c
+ .B
+-/usr/ccs/bin/prs -e -d":I:\et:P:" program.c
++/usr/bin/prs -e -d":I:\et:P:" program.c
+ .fi
+ .in -2
+ 
+diff -ur sccs-5.07-orig/sccs/man/sccs-prt.1 sccs-5.07/sccs/man/sccs-prt.1
+--- sccs-5.07-orig/sccs/man/sccs-prt.1	2015-01-21 00:49:27.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-prt.1	2015-06-04 10:51:51.685484552 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/prt \c
++.B "/usr/bin/prt \c
+ .RB [ -abdefistu "] \c
+ .RB [ -c\c
+ .IR date-time "] \c
+@@ -409,7 +409,7 @@
+ The following command:
+ 
+ .LP
+-.B "example% /usr/ccs/bin/prt -y program.c
++.B "example% /usr/bin/prt -y program.c
+ 
+ .LP
+ produces a one-line display of the delta table entry for the
+diff -ur sccs-5.07-orig/sccs/man/sccs-rcs2sccs.1 sccs-5.07/sccs/man/sccs-rcs2sccs.1
+--- sccs-5.07-orig/sccs/man/sccs-rcs2sccs.1	2015-01-21 22:52:34.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-rcs2sccs.1	2015-06-04 10:51:51.693183872 +0300
+@@ -31,7 +31,7 @@
+ sccs-rcs2sccs, rcs2sccs \- convert RCS files into SCCS files
+ .SH SYNOPSIS
+ .LP
+-.B /usr/ccs/bin/rcs2sccs
++.B /usr/bin/rcs2sccs
+ .RB [ \-rm ]
+ .RB [ \-V6 ]
+ .RI [ file... ]
+diff -ur sccs-5.07-orig/sccs/man/sccs-rmdel.1 sccs-5.07/sccs/man/sccs-rmdel.1
+--- sccs-5.07-orig/sccs/man/sccs-rmdel.1	2015-01-21 00:52:55.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-rmdel.1	2015-06-04 10:51:51.701240632 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/rmdel \c
++.B "/usr/bin/rmdel \c
+ .RB [ -d "] \c
+ .BI -r "sid \c
+ .RB [ -q\c
+diff -ur sccs-5.07-orig/sccs/man/sccs-sact.1 sccs-5.07/sccs/man/sccs-sact.1
+--- sccs-5.07-orig/sccs/man/sccs-sact.1	2015-01-21 00:55:18.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-sact.1	2015-06-04 10:51:51.708727781 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/sact \c
++.B "/usr/bin/sact \c
+ .RB [ \-s "] \c
+ .IR s.filename...
+ .fi
+diff -ur sccs-5.07-orig/sccs/man/sccs-sccsdiff.1 sccs-5.07/sccs/man/sccs-sccsdiff.1
+--- sccs-5.07-orig/sccs/man/sccs-sccsdiff.1	2015-01-21 00:57:14.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-sccsdiff.1	2015-06-04 10:51:51.716198191 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/sccsdiff \c
++.B "/usr/bin/sccsdiff \c
+ .RB [ -p "] \c
+ .BI -r "sid \c
+ .BI -r "sid \c
+diff -ur sccs-5.07-orig/sccs/man/sccs-unget.1 sccs-5.07/sccs/man/sccs-unget.1
+--- sccs-5.07-orig/sccs/man/sccs-unget.1	2015-01-21 00:59:48.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-unget.1	2015-06-04 10:51:51.724156524 +0300
+@@ -37,7 +37,7 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.B "/usr/ccs/bin/unget \c
++.B "/usr/bin/unget \c
+ .RB [ -ns "] \c
+ .RB [ -q\c
+ .RI [ nsedelim "]] \c
+diff -ur sccs-5.07-orig/sccs/man/sccs-val.1 sccs-5.07/sccs/man/sccs-val.1
+--- sccs-5.07-orig/sccs/man/sccs-val.1	2015-01-21 22:52:34.000000000 +0300
++++ sccs-5.07/sccs/man/sccs-val.1	2015-06-04 10:51:51.732190449 +0300
+@@ -37,11 +37,11 @@
+ .SH SYNOPSIS
+ .LP
+ .nf
+-.BR /usr/ccs/bin/val " -
++.BR /usr/bin/val " -
+ .fi
+ .LP
+ .nf
+-.B /usr/ccs/bin/val \c
++.B /usr/bin/val \c
+ .RB [ -T "] [" -s\c
+ .RB "] [" "-m \c
+ .I name\c
+diff -ur sccs-5.07-orig/sccs/man/sccs.1 sccs-5.07/sccs/man/sccs.1
+--- sccs-5.07-orig/sccs/man/sccs.1	2015-01-21 00:04:45.000000000 +0300
++++ sccs-5.07/sccs/man/sccs.1	2015-06-04 10:51:51.756295273 +0300
+@@ -602,7 +602,7 @@
+ Many of the following
+ .B sccs
+ subcommands invoke programs that reside in
+-.BR /usr/ccs/bin .
++.BR /usr/bin .
+ Many of these subcommands accept additional arguments that are
+ documented in the reference page for the utility program the
+ subcommand invokes.
+@@ -1884,7 +1884,7 @@
+ 
+ .in +2
+ .nf
+-.B "/usr/ccs/bin/get   /usr/src/include/SCCS/s.stdio.h
++.B "/usr/bin/get   /usr/src/include/SCCS/s.stdio.h
+ .fi
+ .in -2
+ 
+@@ -1904,7 +1904,7 @@
+ 
+ .in +2
+ .nf
+-.B "/usr/ccs/bin/get   include/private/s.stdio.h
++.B "/usr/bin/get   include/private/s.stdio.h
+ .fi
+ .in -2
+ 
+@@ -2234,7 +2234,7 @@
+ .br
+ .ne 3
+ .TP
+-.B /usr/ccs/bin/*
++.B /usr/bin/*
+ .B SCCS
+ utility programs
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/admin.c sccs-5.07/sccs/sccs/cmd/src/admin.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/admin.c	2014-09-04 13:52:20.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/admin.c	2015-06-04 10:54:28.134947484 +0300
+@@ -113,7 +113,7 @@
+ static char	*z;			/* for validation program name */
+ static char	had_flag[NFLAGS], rm_flag[NFLAGS];
+ #if	defined(PROTOTYPES) && defined(INS_BASE)
+-static char	Valpgmp[]	=	NOGETTEXT(INS_BASE "/ccs/bin/" "val");
++static char	Valpgmp[]	=	NOGETTEXT(INS_BASE "/bin/" "val");
+ #endif
+ static char	Valpgm[]	=	NOGETTEXT("val");
+ static int	fexists, num_files;
+@@ -178,10 +178,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/admin.mk sccs-5.07/sccs/sccs/cmd/src/admin.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/admin.mk	2014-08-14 00:07:38.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/admin.mk	2015-06-04 10:54:28.137990252 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		admin
+ CPPOPTS +=	-DSUN5_0
+ CPPOPTS +=	-DUSE_LARGEFILES
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.c sccs-5.07/sccs/sccs/cmd/src/bdiff.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.c	2011-08-07 18:18:38.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/bdiff.c	2015-06-04 10:54:28.145761892 +0300
+@@ -89,7 +89,7 @@
+ static int seglim;	/* limit of size of file segment to be generated */
+ 
+ #if	defined(PROTOTYPES) && defined(INS_BASE)
+-static char diffp[]  =  INS_BASE "/ccs/bin/" "diff";
++static char diffp[]  =  INS_BASE "/bin/" "diff";
+ #endif
+ static char diff[]  =  "/usr/bin/diff";
+ static char tempskel[] = "/tmp/bdXXXXXX"; /* used to generate temp file names */
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.mk sccs-5.07/sccs/sccs/cmd/src/bdiff.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.mk	2008-01-02 20:01:58.000000000 +0300
++++ sccs-5.07/sccs/sccs/cmd/src/bdiff.mk	2015-06-04 10:54:28.148862361 +0300
+@@ -5,7 +5,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		bdiff
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/comb.c sccs-5.07/sccs/sccs/cmd/src/comb.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/comb.c	2014-08-09 19:25:25.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/comb.c	2015-06-04 10:54:28.155007390 +0300
+@@ -90,10 +90,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+@@ -292,7 +292,7 @@
+ 	rdp = gpkt.p_idel;
+ 	Do_prs = 0;
+ #if defined(INS_BASE)
+-	fprintf(iop,"PATH=%s/ccs/bin:$PATH\n", INS_BASE);
++	fprintf(iop,"PATH=%s/bin:$PATH\n", INS_BASE);
+ 	fprintf(iop,"export PATH\n");
+ #endif
+ 	fprintf(iop,"trap \"rm -f COMB$$ comb$$ s.COMB$$; exit 2\" 1 2 3 15\n");
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/comb.mk sccs-5.07/sccs/sccs/cmd/src/comb.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/comb.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/comb.mk	2015-06-04 10:54:28.157919736 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		comb
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/delta.c sccs-5.07/sccs/sccs/cmd/src/delta.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/delta.c	2014-08-09 19:25:25.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/delta.c	2015-06-04 10:54:28.171934980 +0300
+@@ -67,17 +67,17 @@
+ static off_t	size_of_file;
+ static off_t	Szqfile;
+ #ifdef	PROTOTYPES
+-static char	BDiffpgm[]  =   NOGETTEXT(INS_BASE "/ccs/bin/" "bdiff");
++static char	BDiffpgm[]  =   NOGETTEXT(INS_BASE "/bin/" "bdiff");
+ #else
+ /*
+  * XXX If you are using a K&R compiler and like to install to a path
+- * XXX different from "/usr/ccs/bin/", you need to edit this string.
++ * XXX different from "/usr/bin/", you need to edit this string.
+  */
+-static char	BDiffpgm[]  =   NOGETTEXT("/usr/ccs/bin/bdiff");
++static char	BDiffpgm[]  =   NOGETTEXT("/usr/bin/bdiff");
+ #endif
+ static char	BDiffpgm2[]  =   NOGETTEXT("bdiff");
+ #if	defined(PROTOTYPES) && defined(INS_BASE)
+-static char	Diffpgmp[]  =   NOGETTEXT(INS_BASE "/ccs/bin/" "diff");
++static char	Diffpgmp[]  =   NOGETTEXT(INS_BASE "/bin/" "diff");
+ #endif
+ static char	Diffpgm[]   =   NOGETTEXT("/usr/bin/diff");
+ static char	Diffpgm2[]   =   NOGETTEXT("/bin/diff");
+@@ -140,10 +140,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/delta.mk sccs-5.07/sccs/sccs/cmd/src/delta.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/delta.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/delta.mk	2015-06-04 10:54:28.174943856 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		delta
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diff.h sccs-5.07/sccs/sccs/cmd/src/diff.h
+--- sccs-5.07-orig/sccs/sccs/cmd/src/diff.h	2011-04-22 01:04:52.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/diff.h	2015-06-04 10:54:28.202225462 +0300
+@@ -188,11 +188,11 @@
+ 
+ #if	defined(INS_BASE)
+ #ifdef __STDC__
+-char diff[] = INS_BASE "/ccs/bin/diff";
+-char diffh[] = INS_BASE "/ccs/lib/diffh";
++char diff[] = INS_BASE "/bin/diff";
++char diffh[] = INS_BASE "/lib/diffh";
+ #else
+-char diff[] = "/usr/ccs//bin/diff";
+-char diffh[] = "/usr/ccs/lib/diffh";
++char diff[] = "/usr//bin/diff";
++char diffh[] = "/usr/lib/diffh";
+ #endif
+ #else
+ char diff[] = "/usr/bin/diff";
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diff.mk sccs-5.07/sccs/sccs/cmd/src/diff.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/diff.mk	2009-04-12 23:44:33.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/diff.mk	2015-06-04 10:54:28.205283891 +0300
+@@ -5,7 +5,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		diff
+ #SYMLINKS=	../../bin/sccs
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diffh.mk sccs-5.07/sccs/sccs/cmd/src/diffh.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/diffh.mk	2008-01-02 20:01:58.000000000 +0300
++++ sccs-5.07/sccs/sccs/cmd/src/diffh.mk	2015-06-04 10:54:28.214090404 +0300
+@@ -5,7 +5,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib
++INSDIR=		lib
+ TARGET=		diffh
+ #SYMLINKS=	../../bin/sccs
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/get.c sccs-5.07/sccs/sccs/cmd/src/get.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/get.c	2015-01-25 16:23:58.000000000 +0300
++++ sccs-5.07/sccs/sccs/cmd/src/get.c	2015-06-04 10:54:28.228336457 +0300
+@@ -55,13 +55,13 @@
+ #define	DATELEN	12
+ 
+ #if defined(__STDC__) || defined(PROTOTYPES)
+-#define INCPATH		INS_BASE "/ccs/include"	/* place to find binaries */
++#define INCPATH		INS_BASE "/include"	/* place to find binaries */
+ #else
+ /*
+  * XXX With a K&R compiler, you need to edit the following string in case
+  * XXX you like to change the install path.
+  */
+-#define INCPATH		"/usr/ccs/include"	/* place to find binaries */
++#define INCPATH		"/usr/include"	/* place to find binaries */
+ #endif
+ 
+ 
+@@ -144,10 +144,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/get.mk sccs-5.07/sccs/sccs/cmd/src/get.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/get.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/get.mk	2015-06-04 10:54:28.233855743 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		get
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help.c sccs-5.07/sccs/sccs/cmd/src/help.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/help.c	2011-11-02 02:53:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/help.c	2015-06-04 10:54:28.247891519 +0300
+@@ -45,9 +45,9 @@
+ #include	<i18n.h>
+ 
+ #ifdef	PROTOTYPES
+-static unsigned char Ohelpcmd[] = NOGETTEXT(INS_BASE "/ccs/lib/help/lib/help2");
++static unsigned char Ohelpcmd[] = NOGETTEXT(INS_BASE "/lib/help/lib/help2");
+ #else
+-static unsigned char Ohelpcmd[] = NOGETTEXT("/usr/ccs/lib/help/lib/help2");
++static unsigned char Ohelpcmd[] = NOGETTEXT("/usr/lib/help/lib/help2");
+ #endif
+ 
+ int main __PR((int argc, char **argv));
+@@ -70,10 +70,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help.mk sccs-5.07/sccs/sccs/cmd/src/help.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/help.mk	2008-01-02 20:01:58.000000000 +0300
++++ sccs-5.07/sccs/sccs/cmd/src/help.mk	2015-06-04 10:54:28.253174663 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		help
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help2.c sccs-5.07/sccs/sccs/cmd/src/help2.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/help2.c	2014-08-10 17:46:39.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/help2.c	2015-06-04 10:54:28.259203881 +0300
+@@ -60,21 +60,21 @@
+  *
+  *	The file to be searched is determined from the argument. If the
+  *	argument does not contain numerics, the search
+- *	will be attempted on '/usr/ccs/lib/help/cmds', with the search key
++ *	will be attempted on '/usr/lib/help/cmds', with the search key
+  *	being the whole argument. This is used for SCCS command help.
+  *
+  *	If the argument begins with non-numerics but contains
+- *	numerics (e.g, zz32) the file /usr/ccs/lib/help/helploc
++ *	numerics (e.g, zz32) the file /usr/lib/help/helploc
+  *	will be checked for a file corresponding to the non numeric prefix,
+  *	That file will then be seached for the mesage. If
+- *	/usr/ccs/lib/help/helploc
++ *	/usr/lib/help/helploc
+  *	does not exist or the prefix is not found there the search will
+- *	be attempted on '/usr/ccs/lib/help/<non-numeric prefix>',
+- *	(e.g., /usr/ccs/lib/help/zz), with the search key
++ *	be attempted on '/usr/lib/help/<non-numeric prefix>',
++ *	(e.g., /usr/lib/help/zz), with the search key
+  *	being <remainder of arg>, (e.g., 32).
+  *	If the argument is all numeric, or if the file as
+  *	determined above does not exist, the search will be attempted on
+- *	'/usr/ccs/lib/help/default' with the search key being
++ *	'/usr/lib/help/default' with the search key being
+  *	the entire argument.
+  *	In no case will more than one search per argument be performed.
+  *
+@@ -115,7 +115,7 @@
+ #else
+ 	char *default_locale = NOGETTEXT("C"); /* Default English. */
+ #endif
+-	char *helpdir = NOGETTEXT("/usr/ccs/lib/help/locale/");
++	char *helpdir = NOGETTEXT("/usr/lib/help/locale/");
+ 	char help_dir[200]; /* Directory to search for help text. */
+ 	char *locale = NULL; /* User's locale. */
+ 
+@@ -146,10 +146,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	    NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	    NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	    NOGETTEXT("/usr/ccs/lib/locale/"));
++	    NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help2.mk sccs-5.07/sccs/sccs/cmd/src/help2.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/help2.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/help2.mk	2015-06-04 10:54:28.262275079 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/lib/help/lib
++INSDIR=		lib/help/lib
+ TARGET=		help2
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prs.c sccs-5.07/sccs/sccs/cmd/src/prs.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/prs.c	2014-08-14 00:40:09.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/prs.c	2015-06-04 10:54:28.280393645 +0300
+@@ -76,7 +76,7 @@
+ # include	<schily/sysexits.h>
+ 
+ #if	defined(PROTOTYPES) && defined(INS_BASE)
+-static char	Getpgmp[]   =   NOGETTEXT(INS_BASE "/ccs/bin/" "get");
++static char	Getpgmp[]   =   NOGETTEXT(INS_BASE "/bin/" "get");
+ #endif
+ static char	Getpgm[]   =   NOGETTEXT("get");
+ static char defline[] = NOGETTEXT(":Dt:\t:DL:\nMRs:\n:MR:COMMENTS:\n:C:");
+@@ -167,10 +167,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prs.mk sccs-5.07/sccs/sccs/cmd/src/prs.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/prs.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/prs.mk	2015-06-04 10:54:28.283419515 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		prs
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prt.c sccs-5.07/sccs/sccs/cmd/src/prt.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/prt.c	2014-08-09 19:25:25.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/prt.c	2015-06-04 10:54:28.291451026 +0300
+@@ -148,10 +148,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prt.mk sccs-5.07/sccs/sccs/cmd/src/prt.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/prt.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/prt.mk	2015-06-04 10:54:28.294366941 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		prt
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.mk sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.mk	2011-09-30 20:19:41.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.mk	2015-06-04 10:54:28.297373669 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ INSMODE=	0755
+ TARGET=		rcs2sccs
+ SCRFILE=	rcs2sccs.sh
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.sh sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.sh
+--- sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.sh	2011-10-03 16:41:47.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.sh	2015-06-04 10:54:28.302436465 +0300
+@@ -5,7 +5,7 @@
+ # Id: rcs2sccs,v 1.12 90/10/04 20:52:23 kenc Exp Locker: kenc
+ 
+ ############################################################
+-PATH=INS_BASE/ccs/bin:$PATH:/usr/ccs/bin
++PATH=INS_BASE/bin:$PATH:/usr/bin
+ ############################################################
+ ex_code=0
+ do_v6=""
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.c sccs-5.07/sccs/sccs/cmd/src/rmchg.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.c	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/rmchg.c	2015-06-04 10:54:28.312760789 +0300
+@@ -131,10 +131,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.mk sccs-5.07/sccs/sccs/cmd/src/rmchg.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/rmchg.mk	2015-06-04 10:54:28.316785709 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		rmchg
+ HARDLINKS=	rmdel cdc
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs_sym.mk sccs-5.07/sccs/sccs/cmd/src/sccs_sym.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccs_sym.mk	2009-07-29 01:43:01.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/sccs_sym.mk	2015-06-04 10:54:28.320350863 +0300
+@@ -12,6 +12,6 @@
+ 
+ install: $(PSYMLINKS)
+ 
+-$(PSYMLINKS):	$(DEST_DIR)$(INS_BASE)/ccs/bin/$(TARGET)$(_EXEEXT)
++$(PSYMLINKS):	$(DEST_DIR)$(INS_BASE)/bin/$(TARGET)$(_EXEEXT)
+ 	$(MKDIR) -p $(DEST_DIR)$(INS_BASE)/$(INSDIR)
+-	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) ../ccs/bin/$(TARGET)$(_EXEEXT) $@
++	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) ../bin/$(TARGET)$(_EXEEXT) $@
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs.c sccs-5.07/sccs/sccs/cmd/src/sccs.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccs.c	2015-01-25 15:01:19.000000000 +0300
++++ sccs-5.07/sccs/sccs/cmd/src/sccs.c	2015-06-04 10:54:28.352148223 +0300
+@@ -187,9 +187,9 @@
+ # endif
+ # else
+ # if defined(__STDC__) || defined(PROTOTYPES)
+-# define PROGPATH(name)	"/usr/ccs/bin/"	#name /* place to find binaries */
++# define PROGPATH(name)	"/usr/bin/"	#name /* place to find binaries */
+ # else
+-# define PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
++# define PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
+ # endif
+ # endif /* V6 */
+ # else
+@@ -201,9 +201,9 @@
+ # endif
+ # else
+ # if defined(__STDC__) || defined(PROTOTYPES)
+-# define PROGPATH(name)	"/usr/ccs/bin/"	#name /* place to find binaries */
++# define PROGPATH(name)	"/usr/bin/"	#name /* place to find binaries */
+ # else
+-# define PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
++# define PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
+ # endif
+ # endif /* XPG4 */
+ # endif /* DESTDIR */
+@@ -212,13 +212,13 @@
+ #undef	PROGPATH
+ 
+ # if defined(__STDC__) || defined(PROTOTYPES)
+-#define PROGPATH(name)	INS_BASE "/ccs/bin/" #name /* place to find binaries */
++#define PROGPATH(name)	INS_BASE "/bin/" #name /* place to find binaries */
+ #else
+ /*
+  * XXX With a K&R compiler, you need to edit the following string in case
+  * XXX you like to change the install path.
+  */
+-#define PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
++#define PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
+ #endif
+ #endif	/* defined(INS_BASE) && !defined(XPG4) */
+ 
+@@ -403,15 +403,15 @@
+ # endif /* V6 */
+ 
+ #ifdef XPG4
+-/*static char path[] = NOGETTEXT("PATH=/usr/xpg4/bin:/usr/ccs/bin:/usr/bin");*/
++/*static char path[] = NOGETTEXT("PATH=/usr/xpg4/bin:/usr/bin:/usr/bin");*/
+ #ifdef	PROTOTYPES
+-static char path[] = NOGETTEXT("PATH=" INS_BASE "/xpg4/bin:" INS_BASE "/ccs/bin:/usr/bin");
++static char path[] = NOGETTEXT("PATH=" INS_BASE "/xpg4/bin:" INS_BASE "/bin:/usr/bin");
+ #else
+ /*
+  * XXX With a K&R compiler, you need to edit the following string in case
+  * XXX you like to change the install path.
+  */
+-static char path[] = NOGETTEXT("PATH=/usr/xpg4/bin:/usr/ccs/bin:/usr/bin");
++static char path[] = NOGETTEXT("PATH=/usr/xpg4/bin:/usr/bin:/usr/bin");
+ #endif
+ #endif
+ 
+@@ -473,10 +473,10 @@
+  	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+  	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+- 	   NOGETTEXT("/usr/ccs/lib/locale/"));
++ 	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+  	
+  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs.mk sccs-5.07/sccs/sccs/cmd/src/sccs.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccs.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/sccs.mk	2015-06-04 10:54:28.355690449 +0300
+@@ -5,7 +5,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		sccs
+ #SYMLINKS=	../../bin/sccs
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.c sccs-5.07/sccs/sccs/cmd/src/sccscvt.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.c	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/sccscvt.c	2015-06-04 10:54:28.363436914 +0300
+@@ -88,10 +88,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	    NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	    NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	    NOGETTEXT("/usr/ccs/lib/locale/"));
++	    NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.mk sccs-5.07/sccs/sccs/cmd/src/sccscvt.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/sccscvt.mk	2015-06-04 10:54:28.366397469 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		sccscvt
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.mk sccs-5.07/sccs/sccs/cmd/src/sccsdiff.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.mk	2011-05-18 22:54:29.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/sccsdiff.mk	2015-06-04 10:54:28.369307597 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ INSMODE=	0755
+ TARGET=		sccsdiff
+ SCRFILE=	sccsdiff.sh
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.sh sccs-5.07/sccs/sccs/cmd/src/sccsdiff.sh
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.sh	2015-01-21 22:25:37.000000000 +0300
++++ sccs-5.07/sccs/sccs/cmd/src/sccsdiff.sh	2015-06-04 10:54:28.373545628 +0300
+@@ -35,7 +35,7 @@
+ # if running under control of the NSE (-q option given), will look for
+ # get in the directtory from which it was run (if -q, $0 will be full pathname)
+ #
+-PATH=INS_BASE/ccs/bin:$PATH:/usr/ccs/bin
++PATH=INS_BASE/bin:$PATH:/usr/bin
+ 
+ trap "rm -f /tmp/get[abc]$$;exit 1" 1 2 3 15
+ umask 077
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.c sccs-5.07/sccs/sccs/cmd/src/sccslog.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.c	2011-10-07 21:56:54.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/sccslog.c	2015-06-04 10:54:28.380292595 +0300
+@@ -137,7 +137,7 @@
+ 
+ 		if (home == NULL)
+ 			home = ".";
+-		js_snprintf(nbuf, sizeof (nbuf), "%s/.sccs/usermap", home);
++		js_snprintf(nbuf, sizeof (nbuf), "%s/.susermap", home);
+ 		f = fopen(nbuf, "r");
+ 		if (f == NULL) {
+ 			cannot = 1;
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.mk sccs-5.07/sccs/sccs/cmd/src/sccslog.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.mk	2009-12-23 01:06:03.000000000 +0300
++++ sccs-5.07/sccs/sccs/cmd/src/sccslog.mk	2015-06-04 10:54:28.383264338 +0300
+@@ -5,7 +5,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		sccslog
+ CPPOPTS +=	-DUSE_LARGEFILES
+ CPPOPTS +=	-DSCHILY_PRINT
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/unget.c sccs-5.07/sccs/sccs/cmd/src/unget.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/unget.c	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/unget.c	2015-06-04 10:54:28.389138723 +0300
+@@ -108,10 +108,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/unget.mk sccs-5.07/sccs/sccs/cmd/src/unget.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/unget.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/unget.mk	2015-06-04 10:54:28.392028853 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		unget
+ HARDLINKS=	sact
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/val.c sccs-5.07/sccs/sccs/cmd/src/val.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/val.c	2014-08-17 14:20:03.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/val.c	2015-06-04 10:54:28.404801446 +0300
+@@ -144,10 +144,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/val.mk sccs-5.07/sccs/sccs/cmd/src/val.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/val.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/val.mk	2015-06-04 10:54:28.407833438 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		val
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/vc.mk sccs-5.07/sccs/sccs/cmd/src/vc.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/vc.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/vc.mk	2015-06-04 10:54:28.419837126 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		vc
+ 
+ CPPOPTS +=	-DSUN5_0
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/what.c sccs-5.07/sccs/sccs/cmd/src/what.c
+--- sccs-5.07-orig/sccs/sccs/cmd/src/what.c	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/what.c	2015-06-04 10:54:28.424059378 +0300
+@@ -82,10 +82,10 @@
+ 	 */
+ #ifdef	PROTOTYPES
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
++	   NOGETTEXT(INS_BASE "/lib/locale/"));
+ #else
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
+ #endif
+ 	
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/what.mk sccs-5.07/sccs/sccs/cmd/src/what.mk
+--- sccs-5.07-orig/sccs/sccs/cmd/src/what.mk	2014-08-09 19:25:26.000000000 +0400
++++ sccs-5.07/sccs/sccs/cmd/src/what.mk	2015-06-04 10:54:28.426967750 +0300
+@@ -8,7 +8,7 @@
+ ###########################################################################
+ 
+ #INSDIR=	sccs
+-INSDIR=		ccs/bin
++INSDIR=		bin
+ TARGET=		what
+ #SYMLINKS=	../bin/what
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/ad.mk sccs-5.07/sccs/sccs/help.d/ad.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/ad.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/ad.mk	2015-06-04 10:55:16.061985017 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		ad
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/bd.mk sccs-5.07/sccs/sccs/help.d/bd.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/bd.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/bd.mk	2015-06-04 10:55:16.068158462 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		bd
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/cb.mk sccs-5.07/sccs/sccs/help.d/cb.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/cb.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/cb.mk	2015-06-04 10:55:16.074167563 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		cb
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/cm.mk sccs-5.07/sccs/sccs/help.d/cm.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/cm.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/cm.mk	2015-06-04 10:55:16.080807399 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		cm
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/cmds.mk sccs-5.07/sccs/sccs/help.d/cmds.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/cmds.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/cmds.mk	2015-06-04 10:55:16.091907501 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		cmds
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/co.mk sccs-5.07/sccs/sccs/help.d/co.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/co.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/co.mk	2015-06-04 10:55:16.098795491 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		co
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/de.mk sccs-5.07/sccs/sccs/help.d/de.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/de.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/de.mk	2015-06-04 10:55:16.105715563 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		de
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/default.mk sccs-5.07/sccs/sccs/help.d/default.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/default.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/default.mk	2015-06-04 10:55:16.111627810 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		default
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/ge.mk sccs-5.07/sccs/sccs/help.d/ge.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/ge.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/ge.mk	2015-06-04 10:55:16.117970929 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		ge
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/he.mk sccs-5.07/sccs/sccs/help.d/he.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/he.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/he.mk	2015-06-04 10:55:16.123801398 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		he
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/pr.mk sccs-5.07/sccs/sccs/help.d/pr.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/pr.mk	2011-04-30 02:48:39.000000000 +0400
++++ sccs-5.07/sccs/sccs/help.d/pr.mk	2015-06-04 10:55:16.132648179 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		pr
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/prs.mk sccs-5.07/sccs/sccs/help.d/prs.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/prs.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/prs.mk	2015-06-04 10:55:16.138900668 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		prs
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/rc.mk sccs-5.07/sccs/sccs/help.d/rc.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/rc.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/rc.mk	2015-06-04 10:55:16.145133831 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		rc
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/un.mk sccs-5.07/sccs/sccs/help.d/un.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/un.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/un.mk	2015-06-04 10:55:16.150917853 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		un
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/ut.mk sccs-5.07/sccs/sccs/help.d/ut.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/ut.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/ut.mk	2015-06-04 10:55:16.157201057 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		ut
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/va.mk sccs-5.07/sccs/sccs/help.d/va.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/va.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/va.mk	2015-06-04 10:55:16.162966004 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		va
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/help.d/vc.mk sccs-5.07/sccs/sccs/help.d/vc.mk
+--- sccs-5.07-orig/sccs/sccs/help.d/vc.mk	2007-12-02 22:51:51.000000000 +0300
++++ sccs-5.07/sccs/sccs/help.d/vc.mk	2015-06-04 10:55:16.169511079 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib/help/locale/C
++INSDIR=		lib/help/locale/C
+ TARGET=		vc
+ #XMK_FILE=	Makefile.man
+ 
+diff -ur sccs-5.07-orig/sccs/sccs/lib/cassi/src/Makefile sccs-5.07/sccs/sccs/lib/cassi/src/Makefile
+--- sccs-5.07-orig/sccs/sccs/lib/cassi/src/Makefile	2007-01-07 21:38:39.000000000 +0300
++++ sccs-5.07/sccs/sccs/lib/cassi/src/Makefile	2015-06-04 10:55:35.506813147 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib
++INSDIR=		lib
+ TARGETLIB=	cassi
+ CPPOPTS +=	-DSUN5_0
+ CPPOPTS +=	-DUSE_LARGEFILES
+diff -ur sccs-5.07-orig/sccs/sccs/lib/comobj/src/help.c sccs-5.07/sccs/sccs/lib/comobj/src/help.c
+--- sccs-5.07-orig/sccs/sccs/lib/comobj/src/help.c	2014-08-10 17:42:06.000000000 +0400
++++ sccs-5.07/sccs/sccs/lib/comobj/src/help.c	2015-06-04 10:54:58.277361440 +0300
+@@ -56,21 +56,21 @@
+  *
+  *	The file to be searched is determined from the argument. If the
+  *	argument does not contain numerics, the search
+- *	will be attempted on '/usr/ccs/lib/help/cmds', with the search key
++ *	will be attempted on '/usr/lib/help/cmds', with the search key
+  *	being the whole argument. This is used for SCCS command help.
+  *
+  *	If the argument begins with non-numerics but contains
+- *	numerics (e.g, zz32) the file /usr/ccs/lib/help/helploc
++ *	numerics (e.g, zz32) the file /usr/lib/help/helploc
+  *	will be checked for a file corresponding to the non numeric prefix,
+  *	That file will then be seached for the mesage. If
+- *	/usr/ccs/lib/help/helploc
++ *	/usr/lib/help/helploc
+  *	does not exist or the prefix is not found there the search will
+- *	be attempted on '/usr/ccs/lib/help/<non-numeric prefix>',
+- *	(e.g., /usr/ccs/lib/help/zz), with the search key
++ *	be attempted on '/usr/lib/help/<non-numeric prefix>',
++ *	(e.g., /usr/lib/help/zz), with the search key
+  *	being <remainder of arg>, (e.g., 32).
+  *	If the argument is all numeric, or if the file as
+  *	determined above does not exist, the search will be attempted on
+- *	'/usr/ccs/lib/help/default' with the search key being
++ *	'/usr/lib/help/default' with the search key being
+  *	the entire argument.
+  *	In no case will more than one search per argument be performed.
+  *
+@@ -92,7 +92,7 @@
+  *	Comments are ignored.
+  */
+ 
+-#define	HELPLOC		"/ccs/lib/help/helploc"
++#define	HELPLOC		"/lib/help/helploc"
+ #define	DEFAULT_LOCALE	"C"			/* Default English. */
+ 
+ static int	findprt __PR((FILE *f, char *p, char *locale));
+@@ -179,7 +179,7 @@
+ 	char	hfile[max(8192, PATH_MAX+1)];
+ 	FILE	*iop;
+ 	char	*dftfile = NOGETTEXT("/default");
+-	char	*helpdir = NOGETTEXT("/ccs/lib/help/locale/");
++	char	*helpdir = NOGETTEXT("/lib/help/locale/");
+ 	char	help_dir[max(8192, PATH_MAX+1)]; /* Directory to search for. */
+ 
+ 	if ((int) size(p) > 50)
+diff -ur sccs-5.07-orig/sccs/sccs/lib/comobj/src/Makefile sccs-5.07/sccs/sccs/lib/comobj/src/Makefile
+--- sccs-5.07-orig/sccs/sccs/lib/comobj/src/Makefile	2007-01-07 21:38:44.000000000 +0300
++++ sccs-5.07/sccs/sccs/lib/comobj/src/Makefile	2015-06-04 10:54:58.283615063 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib
++INSDIR=		lib
+ TARGETLIB=	comobj
+ CPPOPTS +=	-DSUN5_0
+ CPPOPTS +=	-DUSE_LARGEFILES
+diff -ur sccs-5.07-orig/sccs/sccs/lib/mpwlib/src/Makefile sccs-5.07/sccs/sccs/lib/mpwlib/src/Makefile
+--- sccs-5.07-orig/sccs/sccs/lib/mpwlib/src/Makefile	2007-01-07 21:38:48.000000000 +0300
++++ sccs-5.07/sccs/sccs/lib/mpwlib/src/Makefile	2015-06-04 10:55:46.171088878 +0300
+@@ -7,7 +7,7 @@
+ include		$(SRCROOT)/$(RULESDIR)/rules.top
+ ###########################################################################
+ 
+-INSDIR=		ccs/lib
++INSDIR=		lib
+ TARGETLIB=	mpw
+ CPPOPTS +=	-DSUN5_0
+ CPPOPTS +=	-DUSE_LARGEFILES

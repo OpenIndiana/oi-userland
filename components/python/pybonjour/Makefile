@@ -26,6 +26,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		pybonjour
 COMPONENT_VERSION=	1.1.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://code.google.com/p/pybonjour/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -34,17 +35,26 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pybonjour.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pybonjour
 
+PYTHON_VERSIONS=	2.7 3.4
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)
+COMPONENT_TEST_ARGS =	test_pybonjour.py
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Use nawk to extract just the sections that summarizes the test results.
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/^Ran .+ / { sub(\" tests in .+s\", \" tests in\"); print }; /!NF/ { print }; /^OK/ { print };'"
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34

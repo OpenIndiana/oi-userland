@@ -1,0 +1,251 @@
+diff -up ctags-5.8/ocaml.c.me ctags-5.8/ocaml.c
+--- ctags-5.8/ocaml.c.me	2012-08-02 12:42:21.652211192 +0200
++++ ctags-5.8/ocaml.c	2012-08-02 13:06:59.751283639 +0200
+@@ -72,6 +72,7 @@ typedef enum {
+ 	OcaKEYWORD_if,
+ 	OcaKEYWORD_in,
+ 	OcaKEYWORD_let,
++	OcaKEYWORD_value,
+ 	OcaKEYWORD_match,
+ 	OcaKEYWORD_method,
+ 	OcaKEYWORD_module,
+@@ -145,7 +146,7 @@ static const ocaKeywordDesc OcamlKeyword
+ 	{ "try"       , OcaKEYWORD_try       }, 
+ 	{ "type"      , OcaKEYWORD_type      }, 
+ 	{ "val"       , OcaKEYWORD_val       }, 
+-	{ "value"     , OcaKEYWORD_let       }, /* just to handle revised syntax */
++	{ "value"     , OcaKEYWORD_value     }, /* just to handle revised syntax */
+ 	{ "virtual"   , OcaKEYWORD_virtual   }, 
+ 	{ "while"     , OcaKEYWORD_while     }, 
+ 	{ "with"      , OcaKEYWORD_with      }, 
+@@ -297,7 +298,6 @@ static void eatComment (lexingState * st
+ 			if (st->cp == NULL)
+ 				return;
+ 			c = st->cp;
+-			continue;
+ 		}
+ 		/* we've reached the end of the comment */
+ 		else if (*c == ')' && lastIsStar)
+@@ -308,13 +308,33 @@ static void eatComment (lexingState * st
+ 		{
+ 			st->cp = c;
+ 			eatComment (st);
++
+ 			c = st->cp;
++			if (c == NULL)
++			    return;
++
+ 			lastIsStar = FALSE;
++            c++;
+ 		}
++		/* OCaml has a rule which says :
++		 *
++		 *   "Comments do not occur inside string or character literals.
++		 *    Nested comments are handled correctly."
++		 *
++		 * So if we encounter a string beginning, we must parse it to
++		 * get a good comment nesting (bug ID: 3117537)
++		 */
++        else if (*c == '"')
++        {
++            st->cp = c;
++            eatString (st);
++            c = st->cp;
++        }
+ 		else
++        {
+ 			lastIsStar = '*' == *c;
+-
+-		c++;
++            c++;
++        }
+ 	}
+ 
+ 	st->cp = c;
+@@ -554,8 +574,7 @@ static int getLastNamedIndex ( void )
+ 
+ 	for (i = stackIndex - 1; i >= 0; --i)
+ 	{
+-		if (stack[i].contextName->buffer &&
+-			strlen (stack[i].contextName->buffer) > 0)
++        if (vStringLength (stack[i].contextName) > 0)
+ 		{
+ 			return i;
+ 		}
+@@ -866,6 +885,11 @@ static void prepareTag (tagEntryInfo * t
+ 	tag->kindName = OcamlKinds[kind].name;
+ 	tag->kind = OcamlKinds[kind].letter;
+ 
++	if (kind == K_MODULE)
++	{
++		tag->lineNumberEntry = TRUE;
++		tag->lineNumber = 1;
++	}
+ 	parentIndex = getLastNamedIndex ();
+ 	if (parentIndex >= 0)
+ 	{
+@@ -880,9 +904,12 @@ static void prepareTag (tagEntryInfo * t
+  * more information to it in the future */
+ static void addTag (vString * const ident, int kind)
+ {
+-	tagEntryInfo toCreate;
+-	prepareTag (&toCreate, ident, kind);
+-	makeTagEntry (&toCreate);
++	if (OcamlKinds [kind].enabled  &&  ident != NULL  &&  vStringLength (ident) > 0)
++	{
++		tagEntryInfo toCreate;
++		prepareTag (&toCreate, ident, kind);
++		makeTagEntry (&toCreate);
++	}
+ }
+ 
+ boolean needStrongPoping = FALSE;
+@@ -942,15 +969,17 @@ static void typeRecord (vString * const
+ }
+ 
+ /* handle :
+- * exception ExceptionName ... */
++ * exception ExceptionName of ... */
+ static void exceptionDecl (vString * const ident, ocaToken what)
+ {
+ 	if (what == OcaIDENTIFIER)
+ 	{
+ 		addTag (ident, K_EXCEPTION);
+ 	}
+-	/* don't know what to do on else... */
+-
++    else /* probably ill-formed, give back to global scope */
++    { 
++        globalScope (ident, what);
++    }
+ 	toDoNext = &globalScope;
+ }
+ 
+@@ -1006,7 +1035,6 @@ static void constructorValidation (vStri
+  */
+ static void typeDecl (vString * const ident, ocaToken what)
+ {
+-
+ 	switch (what)
+ 	{
+ 		/* parameterized */
+@@ -1046,7 +1074,6 @@ static void typeDecl (vString * const id
+  * let typeRecord handle it. */
+ static void typeSpecification (vString * const ident, ocaToken what)
+ {
+-
+ 	switch (what)
+ 	{
+ 	case OcaIDENTIFIER:
+@@ -1243,8 +1270,14 @@ static void localLet (vString * const id
+  * than the let definitions.
+  * Used after a match ... with, or a function ... or fun ...
+  * because their syntax is similar.  */
+-static void matchPattern (vString * const UNUSED (ident), ocaToken what)
++static void matchPattern (vString * const ident, ocaToken what)
+ {
++    /* keep track of [], as it
++     * can be used in patterns and can
++     * mean the end of match expression in
++     * revised syntax */
++    static int braceCount = 0;
++
+ 	switch (what)
+ 	{
+ 	case Tok_To:
+@@ -1252,6 +1285,14 @@ static void matchPattern (vString * cons
+ 		toDoNext = &mayRedeclare;
+ 		break;
+ 
++    case Tok_BRL:
++        braceCount++;
++        break;
++
++    case OcaKEYWORD_value:
++		popLastNamed ();
++        globalScope (ident, what);
++        break;
+ 
+ 	case OcaKEYWORD_in:
+ 		popLastNamed ();
+@@ -1269,6 +1310,11 @@ static void mayRedeclare (vString * cons
+ {
+ 	switch (what)
+ 	{
++    case OcaKEYWORD_value:
++        /* let globalScope handle it */
++        globalScope (ident, what);
++        break;
++
+ 	case OcaKEYWORD_let:
+ 	case OcaKEYWORD_val:
+ 		toDoNext = localLet;
+@@ -1388,6 +1434,7 @@ static void classSpecif (vString * const
+  * nearly a copy/paste of globalLet. */
+ static void methodDecl (vString * const ident, ocaToken what)
+ {
++
+ 	switch (what)
+ 	{
+ 	case Tok_PARL:
+@@ -1435,6 +1482,7 @@ vString *lastModule;
+  */
+ static void moduleSpecif (vString * const ident, ocaToken what)
+ {
++
+ 	switch (what)
+ 	{
+ 	case OcaKEYWORD_functor:
+@@ -1566,7 +1614,7 @@ static void globalScope (vString * const
+ {
+ 	/* Do not touch, this is used only by the global scope
+ 	 * to handle an 'and' */
+-	static parseNext previousParser = NULL;
++	static parseNext previousParser = &globalScope;
+ 
+ 	switch (what)
+ 	{
+@@ -1608,6 +1656,7 @@ static void globalScope (vString * const
+ 		/* val is mixed with let as global
+ 		 * to be able to handle mli & new syntax */
+ 	case OcaKEYWORD_val:
++	case OcaKEYWORD_value:
+ 	case OcaKEYWORD_let:
+ 		cleanupPreviousParser ();
+ 		toDoNext = &globalLet;
+@@ -1617,7 +1666,7 @@ static void globalScope (vString * const
+ 	case OcaKEYWORD_exception:
+ 		cleanupPreviousParser ();
+ 		toDoNext = &exceptionDecl;
+-		previousParser = NULL;
++		previousParser = &globalScope;
+ 		break;
+ 
+ 		/* must be a #line directive, discard the
+@@ -1769,7 +1818,7 @@ static void computeModuleName ( void )
+ 	if (isLowerAlpha (moduleName->buffer[0]))
+ 		moduleName->buffer[0] += ('A' - 'a');
+ 
+-	makeSimpleTag (moduleName, OcamlKinds, K_MODULE);
++	addTag (moduleName, K_MODULE);
+ 	vStringDelete (moduleName);
+ }
+ 
+@@ -1779,6 +1828,7 @@ static void initStack ( void )
+ 	int i;
+ 	for (i = 0; i < OCAML_MAX_STACK_SIZE; ++i)
+ 		stack[i].contextName = vStringNew ();
++    stackIndex = 0;
+ }
+ 
+ static void clearStack ( void )
+@@ -1794,8 +1844,8 @@ static void findOcamlTags (void)
+ 	lexingState st;
+ 	ocaToken tok;
+ 
+-	computeModuleName ();
+ 	initStack ();
++	computeModuleName ();
+ 	tempIdent = vStringNew ();
+ 	lastModule = vStringNew ();
+ 	lastClass = vStringNew ();

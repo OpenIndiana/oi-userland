@@ -1,0 +1,62 @@
+--- gdb-7.10.1/gdb/regcache.c.~1~	Sat Dec  5 07:16:45 2015
++++ gdb-7.10.1/gdb/regcache.c	Sat Feb 27 07:50:04 2016
+@@ -35,6 +35,8 @@
+  * Here is the actual register cache.
+  */
+ 
++extern int is_alive (ptid_t ptid);
++
+ /* Per-architecture object describing the layout of a register cache.
+    Computed once when the architecture is created.  */
+ 
+@@ -204,6 +206,8 @@
+   /* If this is a read-write cache, which thread's registers is
+      it connected to?  */
+   ptid_t ptid;
++  /* Is this a corefile regcache or a live process */
++  int from_corefile;
+ };
+ 
+ static struct regcache *
+@@ -218,6 +222,7 @@
+   regcache = XNEW (struct regcache);
+   regcache->descr = descr;
+   regcache->readonly_p = readonly_p;
++  regcache->from_corefile = 0;
+   if (readonly_p)
+     {
+       regcache->registers
+@@ -1177,6 +1182,13 @@
+ 
+   CORE_ADDR pc_val;
+ 
++  /*
++   * If we are looking at a live process and thread is not alive
++   * return a default core addr.
++   */
++  if (!regcache->from_corefile && !is_alive (regcache->ptid))
++    return ~(CORE_ADDR) 0;
++
+   if (gdbarch_read_pc_p (gdbarch))
+     pc_val = gdbarch_read_pc (gdbarch, regcache);
+   /* Else use per-frame method on get_current_frame.  */
+@@ -1546,3 +1558,19 @@
+ 	   &maintenanceprintlist);
+ 
+ }
++
++int
++set_regcache_from_corefile (struct regcache *regcache)
++{
++  gdb_assert (regcache != NULL);
++  regcache->from_corefile = 1;
++  return 0;
++}
++
++int
++regcache_from_corefile (const struct regcache *regcache)
++{
++  gdb_assert (regcache != NULL);
++  return regcache->from_corefile;
++}
++

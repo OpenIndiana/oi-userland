@@ -1,0 +1,12 @@
+--- mc-4.8.17.orig/lib/tty/tty.c	2016-05-07 18:42:52.000000000 +0300
++++ mc-4.8.17/lib/tty/tty.c	2016-05-10 00:09:54.855127669 +0300
+@@ -39,6 +39,9 @@
+ #ifdef HAVE_SYS_IOCTL_H
+ #include <sys/ioctl.h>
+ #endif
++#ifdef __sun
++#include <termios.h>            /* TIOCSWINSZ */
++#endif
+ 
+ #include "lib/global.h"
+ #include "lib/strutil.h"

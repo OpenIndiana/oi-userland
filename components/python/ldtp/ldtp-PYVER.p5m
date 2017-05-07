@@ -1,0 +1,74 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/desktop/ldtp-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Linux Desktop Testing Project"
+set name=pkg.description \
+    value="LDTP is a test automation framework that can be used to test and improve desktops and desktop applications."
+set name=com.oracle.info.description \
+    value="ldtp, the Linux Desktop Testing Project for Python"
+set name=com.oracle.info.tpno value=10015
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Distribution Tools"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2011/261
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+link path=usr/bin/ldtp target=ldtp$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+file path=usr/bin/ldtp$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtp-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtp/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtp/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtp/client_exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtp/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtp/state.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/combo_box.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/generic.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/keypress_actions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/menu.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/mouse.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/page_tab_list.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/sequence_step.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/server_exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/text.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/value.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/waiters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtpd/xmlrpc_daemon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ldtputils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ooldtp/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ooldtp/_context.py
+#
+license COPYING license=LGPLv2.1
+
+# force a dependency on the ldtp package
+depend type=require \
+    fmri=system/desktop/ldtp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

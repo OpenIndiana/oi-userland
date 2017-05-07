@@ -1,0 +1,12 @@
+# This makefile snippet allows to compile GLEW for "oi-userland" repository
+# Generally this is like "solaris-gcc" (hence the include to be future-proof)
+
+include config/Makefile.solaris-gcc
+LDFLAGS.GL = -lm -lX11
+
+# Allow additions from the builder
+LDFLAGS.EXTRA+=	$(CUSTOM.LDFLAGS.EXTRA)
+ARFLAGS.EXTRA+=	$(CUSTOM.ARFLAGS.EXTRA)
+CFLAGS.EXTRA+=	$(CUSTOM.CFLAGS.EXTRA)
+LDFLAGS.SO+=	$(CUSTOM.LDFLAGS.SO)
+LDFLAGS.GL+=	$(CUSTOM.LDFLAGS.GL)

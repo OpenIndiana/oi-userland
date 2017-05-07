@@ -1,0 +1,29 @@
+#%Module1.0#####################################################################
+
+proc ModulesHelp { } {
+        global version
+
+        puts stderr "\tpkg:/%%COMPONENT_FMRI%% version %%COMPONENT_VERSION%%"
+}
+
+module-whatis	"%%COMPONENT_FMRI%%/%%BITS%%"
+
+conflict	%%MODULE_CONFLICTS%%
+
+# for Tcl script use only
+set     version      "3.2.10"
+
+set     modroot      %%MODULE_PREFIX%%
+
+prepend-path    PATH            $modroot/bin
+prepend-path    MANPATH         $modroot/man
+prepend-path    LD_LIBRARY_PATH $modroot/lib
+
+## compiler paths
+prepend-path    C_INCLUDE_PATH          %%MODULE_INCDIR%%
+prepend-path    CPP_INCLUDE_PATH        %%MODULE_INCDIR%%
+prepend-path    LIBRARY_PATH            $modroot/lib
+
+## pkgconfig
+prepend-path    PKG_CONFIG_PATH 	$modroot/lib/pkgconfig
+

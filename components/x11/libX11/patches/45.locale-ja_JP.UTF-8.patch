@@ -1,0 +1,167 @@
+###############################################################################
+# Copyright (c) 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/nls/ja_JP.UTF-8/XI18N_OBJS b/nls/ja_JP.UTF-8/XI18N_OBJS
+index 9159b67..13f8980 100644
+--- a/nls/ja_JP.UTF-8/XI18N_OBJS
++++ b/nls/ja_JP.UTF-8/XI18N_OBJS
+@@ -4,5 +4,8 @@
+ #
+ #
+ XLC	common/xlcUTF8Load	_XlcUtf8Loader	# XLC_open
+-XIM	common/ximcp	_XimOpenIM _XimRegisterIMInstantiateCallback  _XimUnRegisterIMInstantiateCallback # XIM_open	XIM_register XIM_unregister
++XIM	common/xiiimp	_SwitchOpenIM		# XIM_open
++XIM	common/ximcp	_XimOpenIM _XimRegisterIMInstantiateCallback  _XimUnRegisterIMInstantiateCallback # XIM_open	XIM_regiser XIM_unregister
++XIM	common/ximlocal	_XimpLocalOpenIM	# XIM_open
++XIM	common/ximp40	_Ximp_OpenIM		# XIM_open
+ XOM	common/xomGeneric 	_XomGenericOpenOM	# XOM_open
+diff --git a/nls/ja_JP.UTF-8/XLC_LOCALE.pre b/nls/ja_JP.UTF-8/XLC_LOCALE.pre
+index 0f5ebe2..1294bdf 100644
+--- a/nls/ja_JP.UTF-8/XLC_LOCALE.pre
++++ b/nls/ja_JP.UTF-8/XLC_LOCALE.pre
+@@ -17,7 +17,7 @@ fs0 {
+     name  ISO8859-1:GL
+   }
+   font  {
+-    primary   ISO8859-1:GL
++    primary  JISX0201.1976-0:GL;ISO8859-1:GL
+     vertical_rotate all
+   }
+ }
+@@ -41,18 +41,29 @@ fs2	{
+ 	}
+ }
+ 
+-XCOMM   fs3 class (Korean Character)
++XCOMM	fs3 class (Supplementary Kanji)
+ fs3	{
++        charset {
++                name            JISX0212.1990-0:GL
++                udc_area        \x7521,\x7e7e
++        }
++        font    {
++                primary         JISX0212.1990-0:GL
++        }
++}
++
++XCOMM   fs4 class (Korean Character)
++fs4	{
+ 	charset	{
+-		name	KSC5601.1987-0:GL
++		name	KSC5601.1992-3:GLGR
+ 	}
+ 	font	{
+-		primary	KSC5601.1987-0:GL
++		primary	KSC5601.1992-3:GLGR
+ 	}
+ }
+ 
+-XCOMM   fs4 class (Chinese Han Character)
+-fs4	{
++XCOMM   fs5 class (Chinese Han Character)
++fs5	{
+ 	charset	{
+ 		name	GB2312.1980-0:GL
+ 	}
+@@ -60,8 +71,8 @@ fs4	{
+ 		primary	GB2312.1980-0:GL
+ 	}
+ }
+-XCOMM	fs5 class (Half Kana)
+-fs5	{
++XCOMM	fs6 class (Half Kana)
++fs6	{
+ 	charset	{
+ 		name	JISX0201.1976-0:GR
+ 	}
+@@ -75,12 +86,13 @@ XCOMM other fonts are picked up before iso10646-1 fonts.
+ XCOMM Moreover, some iso10646-1 fonts don't have any glyph at all
+ XCOMM in ISO8859-X ranges.
+ 
+-XCOMM fs6 class
+-fs6 {
++XCOMM fs7 class
++fs7 {
+   charset {
+     name  ISO10646-1
+   }
+   font  {
++    load_option     delay_nocheck
+     primary ISO10646-1
+   }
+ }
+@@ -100,7 +112,7 @@ XCOMM	cs0 class
+ cs0	{
+ 	side		GL:Default
+ 	length		1
+-	ct_encoding	ISO8859-1:GL
++	ct_encoding	ISO8859-1:GL;JISX0201.1976-0:GL
+ }
+ 
+ XCOMM	cs1 class
+@@ -119,29 +131,36 @@ cs2	{
+ }
+ 
+ XCOMM	cs3 class
+-cs3     {
+-        side            GL
++cs3	{
++	side		GL
++	length		2
++	ct_encoding	JISX0212.1990-0:GL; JISX0212.1990-0:GR
++}
++
++XCOMM	cs4 class
++cs4     {
++        side            GR:Default
+         length          2
+-        ct_encoding     KSC5601.1987-0:GL; KSC5601.1987-0:GR;                        KSC5601.1987-1:GL; KSC5601.1987-1:GR
++        ct_encoding     KSC5601.1992-3:GLGR
+ 
+ }
+  
+-XCOMM	cs4 class
+-cs4     {
++XCOMM	cs5 class
++cs5     {
+         side            GR
+         length          2
+         ct_encoding     GB2312.1980-0:GL; GB2312.1980-0:GR
+ }
+  
+-XCOMM	cs5 class
+-cs5	{
++XCOMM	cs6 class
++cs6	{
+ 	side		GR
+ 	length		1
+ 	ct_encoding	JISX0201.1976-0:GR
+ }
+ 
+-XCOMM	cs6 class
+-cs6	{
++XCOMM	cs7 class
++cs7	{
+ 	side		none
+ 	ct_encoding	ISO10646-1
+ }

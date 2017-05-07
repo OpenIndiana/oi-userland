@@ -32,13 +32,13 @@ MAPFILES =	libusbugen.mapfile
 CFLAGS +=	$(CC_PIC)
 CFLAGS +=	-I.
 CFLAGS +=	-D_REENTRANT -D_TS_ERRNO
-LDFLAGS +=	$(MAPFILES:%=-M %)
+LDFLAGS +=	$(MAPFILES:%=-Wl,-M%)
 LIBS +=		-ldl -lc
 
 all:	$(LIBNAME)
 
 $(LIBNAME):	$(OBJS)
-	$(LD) $(LDFLAGS) -G -h $@ -o $@ $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -shared -Wl,-h$@ -o $@ $(OBJS) $(LIBS)
 
 install:	$(LIBNAME)
 

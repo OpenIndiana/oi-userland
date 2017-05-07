@@ -1,0 +1,1925 @@
+!************************************************************************
+!*									*
+!*		Copyright 1987, 1988, 1989, 1990, 1991, 1992, 1993	*
+!*		by Digital Equipment Corp., Maynard, MA			*
+!*									*
+!*	Permission to use, copy, modify, and distribute this software	*
+!*	and its documentation for any purpose and without fee is hereby	*
+!*	granted, provided that the above copyright notice appear in all	*
+!*	copies and that both that copyright notice and this permission 	*
+!*	notice appear in supporting documentation, and that the name of	*
+!*	Digital not be used in advertising or publicity pertaining to	*
+!*	distribution of the software without specific, written prior 	*
+!*	permission.  							*
+!*									*
+!*	DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,	*
+!*	INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND 	*
+!*	FITNESS, IN NO EVENT SHALL DIGITAL BE LIABLE FOR ANY SPECIAL,	*
+!*	INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER 	*
+!*	RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN 	*
+!*	ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, 	*
+!*	ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 	*
+!*	OF THIS SOFTWARE.						*
+!*									*
+!************************************************************************
+
+!****************************************************************************
+!* AccessX.uil
+!*
+!* Copyright (c) 1993, Oracle and/or its affiliates. All rights reserved.
+!*
+!* Permission is hereby granted, free of charge, to any person obtaining a
+!* copy of this software and associated documentation files (the "Software"),
+!* to deal in the Software without restriction, including without limitation
+!* the rights to use, copy, modify, merge, publish, distribute, sublicense,
+!* and/or sell copies of the Software, and to permit persons to whom the
+!* Software is furnished to do so, subject to the following conditions:
+!*
+!* The above copyright notice and this permission notice (including the next
+!* paragraph) shall be included in all copies or substantial portions of the
+!* Software.
+!*
+!* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+!* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+!* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+!* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+!* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+!* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+!* DEALINGS IN THE SOFTWARE.
+!*
+!****************************************************************************
+
+!************************************************************************
+!*									*
+!* AccessX	   						        *
+!* 									*
+!* 	This module is intended to provide access features for people	*
+!*	with physical disabilities.  This is a Motif client that	*
+!*	communicates with the AccessX server extension and allows us to	*
+!*	get visual feedback regarding the state of the AccessX features.*
+!*									*
+!* Revision History:							*
+!*									*
+!*	11-Jun-1993	WDW & MEN					*
+!*			Develop sample implementation.			*
+!*									*
+!*      09-Aug-1993	JMS & WEJ					*
+!*			Rework the user interface			*
+!************************************************************************
+module AccessX
+    names = case_sensitive
+
+include file "accessxstrings.uil";
+
+procedure
+    CreateProc;
+    ActivateProc;
+    ChangeControlProc;
+
+value
+    MarginSize: 12;
+    MainMarginSize: 5;
+    StatusMarginSize: 10;
+    MouseStatusLeftOffset: 10;
+    ScaleOffset: 10;
+!*************** TOGGLE WIDGETS ***********************!
+ENABLE_ACCESSX_TGL	:	1;
+ONOFF_SOUND_TGL		:	2;
+TIME_OUT_TGL		:	3;
+
+STICKY_KEYS_TGL		:	4;
+MOUSE_KEYS_TGL		:	5;
+TOGGLE_KEYS_TGL		:	6;
+REPEAT_KEYS_TGL		:	7;
+SLOW_KEYS_TGL		:	8;
+BOUNCE_KEYS_TGL		:	9;
+
+STICKY_MOD_SOUND_TGL	:	10;
+STICKY_TWO_KEYS_TGL	:	11;
+
+KRG_PRESS_SOUND_TGL	:	12;
+KRG_ACCEPT_SOUND_TGL	:	13;
+
+!************** SCALE WIDGETS *************************!
+
+TIME_OUT_SCL		:	14;
+
+MOUSE_MAX_SPEED_SCL	:	15;
+MOUSE_TIME_TO_MAX_SCL	:	16;
+MOUSE_DELAY_SCL		:	17;
+
+KRG_REPEAT_DELAY_SCL	:	18;
+KRG_REPEAT_RATE_SCL	:	19;
+KRG_SLOW_DELAY_SCL	:	20;
+KRG_DEBOUNCE_SCL	:	21;
+
+!************** MAIN MENU ITEMS ***********************!
+LOAD_BTN		:	22;
+SAVE_BTN		:	23;
+EXIT_BTN		:	24;
+STICKY_STATUS_BTN	:	25;
+MOUSE_STATUS_BTN	:	26;
+SETTINGS_BTN		:	27;
+
+GENERAL_HELP_BTN	:	28;
+STICKY_HELP_BTN		:	29;
+MOUSE_HELP_BTN		:	30;
+TOGGLE_HELP_BTN		:	31;
+REPEAT_HELP_BTN		:	32;
+SLOW_HELP_BTN		:	33;
+BOUNCE_HELP_BTN		:	34;
+
+!*************** HELP WIDGETS *************************!
+HELP_TEXT		:	35;
+CLOSE_HELP_BTN		:	36;
+
+!*************** SETTINGS WINDOW **********************!
+SETTINGS_OK_BTN		:	37;
+SETTINGS_RESET_BTN	:	38;
+SETTINGS_DEFAULTS_BTN	:	39;
+SETTINGS_CANCEL_BTN	:	40;
+SETTINGS_HELP_BTN	:	41;
+
+!*************** STICKY STATUS ************************!
+SHIFT_LATCHED_LBL	:	42;
+SHIFT_LOCKED_LBL	:	43;
+CONTROL_LATCHED_LBL	:	44;
+CONTROL_LOCKED_LBL	:	45;
+MOD1_LATCHED_LBL	:	46;
+MOD1_LOCKED_LBL		:	47;
+MOD2_LATCHED_LBL	:	48;
+MOD2_LOCKED_LBL		:	49;
+MOD3_LATCHED_LBL	:	50;
+MOD3_LOCKED_LBL		:	51;
+MOD4_LATCHED_LBL	:	52;
+MOD4_LOCKED_LBL		:	53;
+MOD5_LATCHED_LBL	:	54;
+MOD5_LOCKED_LBL		:	55;
+STICKY_CLOSE_BTN	:	56;
+
+!*************** MOUSE STATUS *************************!
+CURRENT_BUTTON_LBL	:	57;
+MB1_PRESSED_LBL		:	58;
+MB1_RELEASED_LBL	:	59;
+MB2_PRESSED_LBL		:	60;
+MB2_RELEASED_LBL	:	61;
+MB3_PRESSED_LBL		:	62;
+MB3_RELEASED_LBL	:	63;
+MB4_PRESSED_LBL		:	64;
+MB4_RELEASED_LBL	:	65;
+MB5_PRESSED_LBL		:	66;
+MB5_RELEASED_LBL	:	67;
+MOUSE_CLOSE_BTN		:	68;
+
+!*************** LOAD-SAVE WIDGETS *******************!
+SAVE_DONE_CANCEL_BTN	:	69;
+SAVE_DONE_OK_BTN	:	70;
+SAVE_DONE_HELP_BTN	:	71;
+
+SAVE_ERR_CANCEL_BTN	:	72;
+SAVE_ERR_OK_BTN		:	73;
+SAVE_ERR_HELP_BTN	:	74;
+
+LOAD_DONE_CANCEL_BTN	:	75;
+LOAD_DONE_OK_BTN	:	76;
+LOAD_DONE_HELP_BTN	:	77;
+
+LOAD_ERR_CANCEL_BTN	:	78;
+LOAD_ERR_OK_BTN		:	79;
+LOAD_ERR_HELP_BTN	:	80;
+
+HELP_ERR_CANCEL_BTN	:	81;
+HELP_ERR_OK_BTN		:	82;
+HELP_ERR_HELP_BTN	:	83;
+
+!************************************************************************
+!*									*
+!* The Main Window							*
+!*									*
+!************************************************************************
+object  AccessXMainWindow: XmMainWindow {
+        controls {
+	    XmMenuBar {
+		arguments {
+		    XmNmenuHelpWidget = XmCascadeButtonGadget HelpCascade;
+		};
+		controls {
+		    XmCascadeButtonGadget FileCascade;
+		    XmCascadeButtonGadget StatusCascade;
+		    XmCascadeButtonGadget HelpCascade;
+		};
+	    };
+	    XmForm AccessXMainForm;
+	};
+};
+
+object	FileCascade: XmCascadeButton {
+        arguments {
+	    XmNlabelString = FileString;
+	    XmNmnemonic    = FileMnemonic;
+	};
+	controls {
+	    XmPulldownMenu {
+		arguments {
+	        XmNtearOffModel = XmTEAR_OFF_ENABLED;
+	    	};
+		controls {
+		    XmPushButtonGadget LoadSettingsButton;
+		    XmPushButtonGadget SaveSettingsButton;
+		    XmSeparatorGadget 	MenuSeparator;
+		    XmPushButtonGadget ExitButton;
+		};
+	    };
+	};
+};
+
+object	StatusCascade: XmCascadeButton {
+        arguments {
+	    XmNlabelString = StatusString;
+	    XmNmnemonic    = StatusMnemonic;
+	};
+	controls {
+	    XmPulldownMenu {
+		arguments {
+	        XmNtearOffModel = XmTEAR_OFF_ENABLED;
+	        };
+		controls {
+		    XmPushButtonGadget StickyKeysStatusButton;
+		    XmPushButtonGadget MouseKeysStatusButton;
+!		    XmSeparatorGadget 	MenuSeparator;
+!		    XmPushButtonGadget 	ExitButton;
+		};
+	    };
+	};
+};
+
+object	LoadSettingsButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = LoadSettingsString;
+	    XmNmnemonic    = LoadMnemonic;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(LOAD_BTN);
+	    XmNactivateCallback = procedure ActivateProc(LOAD_BTN);
+	};
+};
+
+object	SaveSettingsButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = SaveSettingsString;
+	    XmNmnemonic    = SaveMnemonic;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(SAVE_BTN);
+	    XmNactivateCallback = procedure ActivateProc(SAVE_BTN);
+	};
+};
+
+object	StickyKeysStatusButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = StickyKeysString & ElipsesString;
+	    XmNmnemonic    = StickyStatusMnemonic;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(STICKY_STATUS_BTN);
+	    XmNactivateCallback = procedure ActivateProc(STICKY_STATUS_BTN);
+	};
+};
+
+object  MouseKeysStatusButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = MouseKeysString & ElipsesString;
+	    XmNmnemonic    = MouseStatusMnemonic;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(MOUSE_STATUS_BTN);
+	    XmNactivateCallback = procedure ActivateProc(MOUSE_STATUS_BTN);
+	};
+};
+
+object	MenuSeparator: XmSeparatorGadget {
+        arguments {
+	    XmNorientation = XmHORIZONTAL;
+	};
+};
+
+object	ExitButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = ExitString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(EXIT_BTN);
+	    XmNactivateCallback = procedure ActivateProc(EXIT_BTN);
+	};
+};
+
+object	HelpCascade: XmCascadeButton {
+        arguments {
+	    XmNlabelString = HelpString;
+	    XmNmnemonic    = HelpMnemonic;
+	};
+	controls {
+	    XmPulldownMenu {
+		arguments {
+	        XmNtearOffModel = XmTEAR_OFF_ENABLED;
+	        };
+		controls {
+		    XmPushButtonGadget GeneralHelpButton;
+		    XmPushButtonGadget StickyKeysHelpButton;
+		    XmPushButtonGadget MouseKeysHelpButton;
+		    XmPushButtonGadget ToggleKeysHelpButton; 
+		    XmPushButtonGadget RepeatKeysHelpButton;
+		    XmPushButtonGadget SlowKeysHelpButton;
+		    XmPushButtonGadget BounceKeysHelpButton;
+		};
+	    };
+	};
+};
+
+object	GeneralHelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = GeneralString & ElipsesString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(GENERAL_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(GENERAL_HELP_BTN);
+	};
+};
+
+object	StickyKeysHelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = StickyKeysString & ElipsesString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(STICKY_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(STICKY_HELP_BTN);
+	};
+    };
+
+object	MouseKeysHelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = MouseKeysString & ElipsesString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(MOUSE_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(MOUSE_HELP_BTN);
+	};
+};
+
+object	ToggleKeysHelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = ToggleKeysString & ElipsesString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(TOGGLE_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(TOGGLE_HELP_BTN);
+	};
+};
+
+object	RepeatKeysHelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = RepeatKeysString & ElipsesString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(REPEAT_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(REPEAT_HELP_BTN);
+	};
+};
+
+object	SlowKeysHelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = SlowKeysString & ElipsesString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(SLOW_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(SLOW_HELP_BTN);
+	};
+};
+
+object  BounceKeysHelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString = BounceKeysString & ElipsesString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(BOUNCE_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(BOUNCE_HELP_BTN);
+	};
+};
+
+object	AccessXMainForm: XmForm {
+        arguments {
+	    XmNmarginWidth  = MainMarginSize;
+	    XmNmarginHeight = MainMarginSize;
+	};
+	controls {
+	    XmForm		CustomizeGeneralForm;
+	    XmFrame 		TurnOnOffFeatures;
+	    XmForm	    	OptionsSettingsForm;
+	};
+};
+
+object 	CustomizeGeneralForm: XmForm {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNrightAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_FORM;
+	    XmNmarginWidth 	= MainMarginSize;
+	    XmNmarginHeight 	= MainMarginSize;
+	};
+	controls {
+	    XmToggleButtonGadget EnableAccessXToggle;
+	    XmToggleButtonGadget SoundOnOffToggle;
+	};
+};
+
+object	EnableAccessXToggle: XmToggleButtonGadget {
+	arguments {
+	    XmNleftAttachment = XmATTACH_FORM;
+	    XmNtopAttachment  = XmATTACH_FORM;
+	    XmNlabelString    = EnableString & SpaceString & AccessXString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(ENABLE_ACCESSX_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(ENABLE_ACCESSX_TGL);
+	};
+};
+
+object	SoundOnOffToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNleftAttachment = XmATTACH_FORM;
+	    XmNtopAttachment  = XmATTACH_WIDGET;
+	    XmNtopWidget      = XmToggleButtonGadget EnableAccessXToggle;
+	    XmNlabelString    = SoundOnOffString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(ONOFF_SOUND_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(ONOFF_SOUND_TGL);
+	};
+};
+
+object  TurnOnOffFeatures: XmFrame {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNrightAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmForm CustomizeGeneralForm;
+	    XmNtopOffset 	= MarginSize;
+	};
+	controls {
+	    XmLabelGadget EnableLabel;
+            XmForm        FeaturesManagerForm;
+	};
+};
+
+object FeaturesManagerForm: XmForm {
+  controls {
+    XmRowColumn  TurnOnOffForm;
+    XmForm  TimeOutForm;
+  };
+};
+
+object  TurnOnOffForm: XmRowColumn {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNorientation  = XmVERTICAL;
+	    XmNpacking      = XmPACK_COLUMN;
+	    XmNnumColumns   = 3;
+            XmNtopAttachment = XmATTACH_FORM;
+            XmNleftAttachment = XmATTACH_FORM;
+            XmNrightAttachment = XmATTACH_FORM;
+	};
+	controls {
+	    XmToggleButtonGadget StickyKeysToggle;
+	    XmToggleButtonGadget MouseKeysToggle;
+	    XmToggleButtonGadget ToggleKeysToggle;
+	    XmToggleButtonGadget RepeatKeysToggle;
+	    XmToggleButtonGadget SlowKeysToggle;
+	    XmToggleButtonGadget BounceKeysToggle;
+	};
+};
+
+
+object TimeOutForm: XmForm {
+  arguments {
+    XmNmarginWidth = MarginSize;
+    XmNmarginHeight = MarginSize;
+    XmNleftAttachment = XmATTACH_FORM;
+    XmNrightAttachment = XmATTACH_FORM;
+    XmNbottomAttachment = XmATTACH_FORM;
+    XmNtopAttachment = XmATTACH_WIDGET;
+    XmNtopWidget = XmRowColumn TurnOnOffForm;
+  };
+  controls {
+    XmToggleButtonGadget TimeOutToggle;
+    XmScale              TimeOutScale;
+  };
+};
+
+object  EnableLabel: XmLabelGadget {
+        arguments {
+	    XmNlabelString = TurnOnString;
+	    XmNchildType   = XmFRAME_TITLE_CHILD;
+	};
+};
+
+object  StickyKeysToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNlabelString = StickyKeysString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(STICKY_KEYS_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(STICKY_KEYS_TGL);
+	};
+};
+
+object  MouseKeysToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNlabelString = MouseKeysString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(MOUSE_KEYS_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(MOUSE_KEYS_TGL);
+            };
+};
+
+object  ToggleKeysToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNlabelString = ToggleKeysString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(TOGGLE_KEYS_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(TOGGLE_KEYS_TGL);
+	};
+};
+
+object  RepeatKeysToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNlabelString = RepeatKeysString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(REPEAT_KEYS_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(REPEAT_KEYS_TGL);
+	};
+};
+
+object  SlowKeysToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNindicatorType = XmONE_OF_MANY;
+	    XmNlabelString   = SlowKeysString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(SLOW_KEYS_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(SLOW_KEYS_TGL);
+	};
+};
+
+object  BounceKeysToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNindicatorType = XmONE_OF_MANY;
+	    XmNlabelString   = BounceKeysString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(BOUNCE_KEYS_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(BOUNCE_KEYS_TGL);
+	};
+};
+
+object  TimeOutToggle: XmToggleButtonGadget {
+        arguments {
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNlabelString      = TimeString;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(TIME_OUT_TGL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(TIME_OUT_TGL);
+        };
+};
+
+object  TimeOutScale: XmScale {
+        arguments {
+            XmNleftAttachment   = XmATTACH_WIDGET;
+            XmNleftWidget       = XmToggleButtonGadget TimeOutToggle;
+            XmNrightAttachment  = XmATTACH_FORM;
+            XmNtopAttachment    = XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNshowValue        = true;
+            XmNorientation      = XmHORIZONTAL;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(TIME_OUT_SCL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(TIME_OUT_SCL);
+        };
+};
+
+
+object	OptionsSettingsForm: XmForm {
+        arguments {
+	    XmNresizable	= false;
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNrightAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmFrame TurnOnOffFeatures;
+	    XmNtopOffset 	= MarginSize;
+	    XmNbottomAttachment = XmATTACH_FORM;
+	};
+	controls {
+	    XmPushButtonGadget OptionsSettingsButton;
+	};
+};
+
+object	OptionsSettingsButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString 	= SettingsString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(SETTINGS_BTN);
+	    XmNactivateCallback = procedure ActivateProc(SETTINGS_BTN);
+	};
+};
+
+!************************************************************************
+!*    									*
+!* Edit Settings Dialog							*
+!*									*
+!************************************************************************
+object  SettingsDialog: XmFormDialog {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = SettingsTitle;
+!	    XmNdialogTitle  = AccessXString & SpaceString & HyphenString &
+!		              SpaceString & SettingsString; 
+	    XmNdefaultButton= XmPushButtonGadget OKButton;
+	};
+	controls {
+	    XmFrame CustomizeStickyKeysFrame;
+	    XmFrame CustomizeMouseKeysFrame;
+	    XmFrame CustomizeRepeatKeysFrame;
+	    XmFrame CustomizeSlowKeysFrame;
+	    XmFrame CustomizeBounceKeysFrame;
+	    XmFrame CustomizeFeaturesTestFrame;
+	    XmForm  SettingsOKForm;
+	};
+};
+
+object  CustomizeStickyKeysFrame: XmFrame {
+        arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_FORM;
+	};
+	controls {
+	    XmLabelGadget CustomizeStickyKeysLabel;
+	    XmForm 	  CustomizeStickyKeysForm;
+	};
+};
+
+object  CustomizeStickyKeysForm: XmForm {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	};
+	controls {
+	    XmToggleButtonGadget StickyModSoundToggle;
+	    XmToggleButtonGadget StickyTwoKeysToggle;
+	};
+};
+
+object  CustomizeStickyKeysLabel: XmLabelGadget {
+        arguments {
+	    XmNlabelString = StickyKeysString;
+	    XmNchildType   = XmFRAME_TITLE_CHILD;
+	};
+};
+
+object  StickyModSoundToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNtopAttachment  = XmATTACH_FORM;
+	    XmNleftAttachment = XmATTACH_FORM;
+	    XmNlabelString    = SoundOnModString;
+	    XmNmarginTop =      ScaleOffset;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(STICKY_MOD_SOUND_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(STICKY_MOD_SOUND_TGL);
+	};
+};
+
+object  StickyTwoKeysToggle: XmToggleButtonGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmToggleButtonGadget StickyModSoundToggle;
+	    XmNbottomAttachment = XmATTACH_FORM;
+	    XmNlabelString 	= TwoKeysString;
+	};
+	callbacks {
+	    MrmNcreateCallback      = procedure CreateProc(STICKY_TWO_KEYS_TGL);
+	    XmNvalueChangedCallback = procedure ChangeControlProc(STICKY_TWO_KEYS_TGL);
+	};
+};
+
+object  CustomizeMouseKeysFrame: XmFrame {
+        arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_WIDGET;
+	    XmNtopWidget       = XmFrame CustomizeStickyKeysFrame;
+	    XmNtopOffset       = MarginSize;
+	};
+	controls {
+	    XmLabelGadget CustomizeMouseKeysLabel;
+	    XmForm        CustomizeMouseKeysForm;
+	};
+};     
+        
+object  CustomizeMouseKeysForm: XmForm {
+        arguments {
+	    XmNmarginHeight = MarginSize;
+	    XmNmarginWidth = MarginSize;
+	};
+	controls {
+	    XmLabelGadget MouseMaxSpeedLabel;
+	    XmScale	  MouseMaxSpeedScale;
+	    XmLabelGadget MouseTimeToMaxLabel;
+	    XmScale	  MouseTimeToMaxScale;
+	    XmLabelGadget MouseDelayLabel;
+	    XmScale	  MouseDelayScale;
+	};
+};     
+ 
+object  CustomizeMouseKeysLabel: XmLabelGadget {
+        arguments {
+           XmNchildType = XmFRAME_TITLE_CHILD;
+           XmNlabelString = MouseKeysString;
+        };
+};
+
+object  MouseMaxSpeedLabel: XmLabelGadget {
+	arguments {	
+            XmNleftAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_WIDGET;
+	    XmNbottomWidget 	= XmScale MouseTimeToMaxScale;
+            XmNlabelString 	= MaxSpeedString;
+	};
+};
+
+object  MouseMaxSpeedScale: XmScale {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget MouseMaxSpeedLabel;
+            XmNrightAttachment 	= XmATTACH_FORM;
+            XmNtopAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_WIDGET;
+	    XmNbottomWidget 	= XmScale MouseTimeToMaxScale;
+            XmNorientation 	= XmHORIZONTAL;
+            XmNshowValue 	= true;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(MOUSE_MAX_SPEED_SCL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(MOUSE_MAX_SPEED_SCL);
+        };
+};
+
+object MouseTimeToMaxLabel: XmLabelGadget {
+	arguments {	
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_WIDGET;
+	    XmNbottomWidget	= XmScale MouseDelayScale;
+            XmNlabelString      = TimeToMaxSpeedString;
+	};
+};
+
+object  MouseTimeToMaxScale: XmScale {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+            XmNleftWidget      	= XmLabelGadget MouseTimeToMaxLabel;
+            XmNrightAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_WIDGET;
+	    XmNbottomWidget	= XmScale MouseDelayScale;
+            XmNorientation 	= XmHORIZONTAL;
+            XmNshowValue 	= true;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(MOUSE_TIME_TO_MAX_SCL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(MOUSE_TIME_TO_MAX_SCL);
+        };
+};
+
+object  MouseDelayLabel: XmLabelGadget {
+	arguments {	
+            XmNleftAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNlabelString 	= MouseDelayString;
+	};
+};
+
+object  MouseDelayScale: XmScale {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget MouseDelayLabel;
+            XmNrightAttachment 	= XmATTACH_FORM;
+            !XmNtopAttachment 	= XmATTACH_WIDGET;
+	    !XmNtopWidget	= XmScale MouseTimeToMaxScale;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNorientation 	= XmHORIZONTAL;
+            XmNshowValue 	= true;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(MOUSE_DELAY_SCL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(MOUSE_DELAY_SCL);
+        };
+};
+
+object  CustomizeRepeatKeysFrame: XmFrame {
+        arguments {
+            XmNleftAttachment  = XmATTACH_FORM;
+            XmNrightAttachment = XmATTACH_FORM;
+            XmNtopAttachment   = XmATTACH_WIDGET;
+            XmNtopWidget       = XmFrame CustomizeMouseKeysFrame;
+	    XmNtopOffset       = MarginSize;
+        };
+        controls {
+            XmLabelGadget CustomizeRepeatKeysLabel;
+            XmForm 	  CustomizeRepeatKeysForm;
+        };
+};
+
+object  CustomizeRepeatKeysLabel: XmLabelGadget {
+        arguments {
+            XmNchildType   = XmFRAME_TITLE_CHILD;
+            XmNlabelString = RepeatKeysString;
+        };
+};
+
+object  CustomizeRepeatKeysForm: XmForm {
+        arguments {
+            XmNmarginWidth  = MarginSize;
+            XmNmarginHeight = MarginSize;
+        };
+        controls {
+	    XmLabelGadget KRGRepeatRateLabel;
+	    XmScale	  KRGRepeatRateScale;
+	    XmLabelGadget KRGRepeatDelayLabel;
+	    XmScale 	  KRGRepeatDelayScale;
+
+        };
+};
+
+object	KRGRepeatRateLabel: XmLabelGadget {
+	arguments {
+            XmNleftAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNlabelString 	= RepeatRateString;
+	};
+};
+
+object  KRGRepeatRateScale: XmScale {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget KRGRepeatRateLabel;
+            XmNrightAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNshowValue 	= true;
+            XmNorientation 	= XmHORIZONTAL;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(KRG_REPEAT_RATE_SCL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(KRG_REPEAT_RATE_SCL);
+        };
+};
+
+object	KRGRepeatDelayLabel: XmLabelGadget {
+	arguments {
+            XmNleftAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_WIDGET;
+	    XmNbottomWidget 	= XmScale KRGRepeatRateScale;
+            XmNlabelString 	= RepeatDelayString;
+	};
+};
+
+object  KRGRepeatDelayScale: XmScale {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget KRGRepeatDelayLabel;
+            XmNrightAttachment 	= XmATTACH_FORM;
+            XmNtopAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_WIDGET;
+	    XmNbottomWidget 	= XmScale KRGRepeatRateScale;
+            XmNshowValue 	= true;
+            XmNorientation 	= XmHORIZONTAL;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(KRG_REPEAT_DELAY_SCL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(KRG_REPEAT_DELAY_SCL);
+        };
+};
+
+object  CustomizeSlowKeysFrame: XmFrame {
+	arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_WIDGET;
+            XmNtopWidget       = XmFrame CustomizeRepeatKeysFrame;
+	    XmNtopOffset       = MarginSize;
+        };
+        controls {
+            XmLabelGadget CustomizeSlowKeysLabel;
+            XmForm 	  CustomizeSlowForm;
+        };
+};
+
+object  CustomizeSlowKeysLabel: XmLabelGadget {
+        arguments {
+	    XmNchildType   = XmFRAME_TITLE_CHILD;
+            XmNlabelString = SlowKeysString;
+        };
+};
+
+object  CustomizeSlowForm: XmForm {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+        };
+        controls {
+	    XmLabelGadget 	 SlowKeysSoundLabel;
+            XmToggleButtonGadget SlowKeysOnPressToggle;
+	    XmToggleButtonGadget SlowKeysOnAcceptToggle;
+	    XmLabelGadget 	 KRGSlowKeysDelayLabel;
+	    XmScale 		 KRGSlowKeysDelayScale;
+	};
+};
+
+object  SlowKeysSoundLabel: XmLabelGadget {
+        arguments {
+            XmNtopAttachment  = XmATTACH_FORM;
+            XmNleftAttachment = XmATTACH_FORM;
+            XmNlabelString    = SoundWhenString;
+	    XmNmarginTop =      ScaleOffset;
+        };
+};
+
+object  SlowKeysOnPressToggle: XmToggleButtonGadget {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget SlowKeysSoundLabel;
+            XmNtopAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget SlowKeysSoundLabel;
+            XmNbottomAttachment = XmATTACH_OPPOSITE_WIDGET;
+	    XmNbottomWidget 	= XmLabelGadget SlowKeysSoundLabel;
+            XmNlabelString 	= SoundOnPressString;
+	    XmNmarginTop =      ScaleOffset;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(KRG_PRESS_SOUND_TGL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(KRG_PRESS_SOUND_TGL);
+        };
+};
+
+object  SlowKeysOnAcceptToggle: XmToggleButtonGadget {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmToggleButtonGadget SlowKeysOnPressToggle;
+            XmNtopAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+            XmNtopWidget 	= XmLabelGadget SlowKeysSoundLabel;
+            XmNbottomAttachment = XmATTACH_OPPOSITE_WIDGET;
+            XmNbottomWidget 	= XmLabelGadget SlowKeysSoundLabel;
+            XmNlabelString 	= SoundOnAcceptString;
+	    XmNmarginTop =      ScaleOffset;
+        };
+            callbacks {
+                MrmNcreateCallback      = procedure CreateProc(KRG_ACCEPT_SOUND_TGL);
+                XmNvalueChangedCallback = procedure ChangeControlProc(KRG_ACCEPT_SOUND_TGL);
+            };
+};
+
+object  KRGSlowKeysDelayLabel: XmLabelGadget {
+	arguments {
+            XmNleftAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNlabelString 	= SlowKeysDelayString;
+	};
+};
+
+object  KRGSlowKeysDelayScale: XmScale {
+        arguments {
+            XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget KRGSlowKeysDelayLabel;
+            XmNrightAttachment 	= XmATTACH_FORM;
+            XmNtopAttachment 	= XmATTACH_WIDGET;
+            XmNtopWidget 	= XmLabelGadget SlowKeysSoundLabel;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNorientation 	= XmHORIZONTAL;
+            XmNshowValue 	= true;
+        };
+        callbacks {
+            MrmNcreateCallback      = procedure CreateProc(KRG_SLOW_DELAY_SCL);
+            XmNvalueChangedCallback = procedure ChangeControlProc(KRG_SLOW_DELAY_SCL);
+        };
+};
+ 
+object  CustomizeBounceKeysFrame: XmFrame {
+	arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_WIDGET;
+	    XmNtopWidget       = XmFrame CustomizeSlowKeysFrame;
+	    XmNtopOffset       = MarginSize;
+	};
+	controls {
+	    XmLabelGadget CustomizeBounceKeysLabel;
+	    XmForm 	  CustomizeBounceKeysForm;
+	};
+};
+
+object  CustomizeBounceKeysLabel: XmLabelGadget {
+        arguments {
+	    XmNchildType   = XmFRAME_TITLE_CHILD;
+            XmNlabelString = BounceKeysString;
+        };
+};
+
+object  CustomizeBounceKeysForm: XmForm {
+        arguments {
+            XmNmarginWidth  = MarginSize;
+            XmNmarginHeight = MarginSize;
+        };
+        controls {
+	    XmLabelGadget	KRGDebounceLabel;
+            XmScale 		KRGDebounceScale;
+        };
+};
+ 
+object	KRGDebounceLabel: XmLabelGadget {
+	arguments {
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNlabelString      = DebounceString;
+	};
+};
+	
+object  KRGDebounceScale: XmScale {
+        arguments {
+            XmNleftAttachment  	= XmATTACH_WIDGET;
+	    XmNleftWidget   	= XmLabelGadget KRGDebounceLabel;
+            XmNrightAttachment 	= XmATTACH_FORM;
+            XmNtopAttachment 	= XmATTACH_FORM;
+            XmNbottomAttachment = XmATTACH_FORM;
+            XmNorientation 	= XmHORIZONTAL;
+            XmNshowValue 	= true;
+        };
+            callbacks {
+                MrmNcreateCallback      = procedure CreateProc(KRG_DEBOUNCE_SCL);
+                XmNvalueChangedCallback = procedure ChangeControlProc(KRG_DEBOUNCE_SCL);
+            };
+};
+
+object  CustomizeFeaturesTestFrame: XmFrame {
+	arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_WIDGET;
+	    XmNtopWidget       = XmFrame CustomizeBounceKeysFrame;
+	    XmNtopOffset       = MarginSize;
+	};
+	controls {
+	    XmLabelGadget FeaturesTestLabel;
+	    XmForm 	  FeaturesTestForm;
+	};
+};
+	
+object  FeaturesTestLabel: XmLabelGadget {
+        arguments {
+	    XmNchildType   = XmFRAME_TITLE_CHILD;
+            XmNlabelString = TestString;
+        };
+};
+
+object  FeaturesTestForm: XmForm {
+        arguments {
+            XmNmarginWidth  = MarginSize;
+            XmNmarginHeight = MarginSize;
+        };
+        controls {
+            XmText FeaturesTestText;
+        };
+};
+
+object  FeaturesTestText: XmText {
+        arguments {
+            XmNleftAttachment   = XmATTACH_FORM;
+            XmNrightAttachment  = XmATTACH_FORM;
+	    XmNbottomAttachment = XmATTACH_FORM;
+        };
+};   
+
+object  SettingsOKForm: XmForm {
+        arguments {
+            XmNmarginWidth 	= MarginSize;
+            XmNmarginHeight 	= MarginSize;
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNrightAttachment 	= XmATTACH_FORM;
+	    XmNbottomAttachment = XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+            XmNtopWidget 	= XmFrame CustomizeFeaturesTestFrame;
+	    XmNtopOffset 	= MarginSize;
+        };
+	controls {
+            XmPushButtonGadget OKButton;
+            XmPushButtonGadget ResetButton;
+            XmPushButtonGadget DefaultsButton;
+            XmPushButtonGadget CancelButton;
+            XmPushButtonGadget HelpButton;
+	};
+};
+
+object  OKButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString 	= OKString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(SETTINGS_OK_BTN);
+	    XmNactivateCallback = procedure ActivateProc(SETTINGS_OK_BTN);
+	};
+};
+
+object  ResetButton: XmPushButtonGadget {
+        arguments {
+            XmNlabelString      = ResetString;
+        };
+        callbacks {
+            MrmNcreateCallback  = procedure CreateProc(SETTINGS_RESET_BTN);
+            XmNactivateCallback = procedure ActivateProc(SETTINGS_RESET_BTN);
+        };
+};
+
+object  DefaultsButton: XmPushButtonGadget {
+        arguments {
+            XmNlabelString      = DefaultsString;
+        };
+        callbacks {
+            MrmNcreateCallback  = procedure CreateProc(SETTINGS_DEFAULTS_BTN);
+            XmNactivateCallback = procedure ActivateProc(SETTINGS_DEFAULTS_BTN);
+        };
+};
+
+object  CancelButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString 	= CancelString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(SETTINGS_CANCEL_BTN);
+	    XmNactivateCallback = procedure ActivateProc(SETTINGS_CANCEL_BTN);
+	};
+};
+
+object  HelpButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString 	= HelpString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(SETTINGS_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(SETTINGS_HELP_BTN);
+	};
+};
+
+!*****************************************************************
+!*								 *
+!* MouseKeys Status Dialog Box                                   *
+!*                                                               *
+!*****************************************************************
+
+object  MouseKeysStatusDialog: XmForm {
+        arguments {
+	    XmNnoResize     = true;
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+!	    XmNdialogTitle  = MouseKeysString & SpaceString & StatusString;
+	    XmNdialogTitle  = MouseKeysTitle;
+	};
+	controls {
+	    XmLabelGadget	MouseCurrentLabel;
+	    XmLabelGadget 	MouseButtonLabel;
+	    XmFrame 		MouseButtonsFrame;
+	    XmForm	 	MouseKeysCloseForm;
+	};
+};
+
+object	MouseCurrentLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment = XmATTACH_FORM;
+	    XmNtopAttachment  = XmATTACH_FORM;
+	    XmNlabelString    = CurrentButtonString;
+	};
+};
+
+object	MouseButtonLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment = XmATTACH_WIDGET;
+	    XmNleftWidget     = XmLabelGadget MouseCurrentLabel;
+	    XmNtopAttachment  = XmATTACH_FORM;
+	    XmNlabelString    = MB1String;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(CURRENT_BUTTON_LBL);
+	};
+};
+
+object  MouseButtonsFrame: XmFrame {
+        arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_WIDGET;
+	    XmNtopWidget       = XmLabelGadget MouseCurrentLabel;
+	};
+	controls {
+	    XmForm MouseButtonsForm;
+	};
+};
+
+object	MouseButtonsForm: XmForm {
+        arguments {
+	    XmNmarginWidth  = StatusMarginSize;
+	    XmNmarginHeight = StatusMarginSize;
+	};
+	controls {  
+	    XmLabelGadget 	MouseReleasedLabel;
+	    XmLabelGadget 	MousePressedLabel;
+	    XmSeparatorGadget	MouseSeparator;
+	    XmLabelGadget 	MouseReleasedMB1Label;
+	    XmLabelGadget 	MousePressedMB1Label;
+	    XmLabelGadget 	MouseReleasedMB2Label;
+	    XmLabelGadget 	MousePressedMB2Label;
+	    XmLabelGadget 	MouseReleasedMB3Label;
+	    XmLabelGadget 	MousePressedMB3Label;
+!	    XmLabelGadget 	MouseReleasedMB4Label;
+!	    XmLabelGadget 	MousePressedMB4Label;
+!	    XmLabelGadget 	MouseReleasedMB5Label;
+!	    XmLabelGadget 	MousePressedMB5Label;
+	};
+};
+
+object  MouseReleasedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment = XmATTACH_FORM;
+	    XmNtopAttachment  = XmATTACH_FORM;
+	    XmNlabelString    = ReleasedString;
+	};
+};
+
+object  MousePressedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment  = XmATTACH_WIDGET;
+	    XmNleftWidget      = XmLabelGadget MouseReleasedLabel;
+	    XmNleftOffset      = MouseStatusLeftOffset;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_FORM;
+	    XmNlabelString     = PressedString;
+	};
+};
+
+object 	MouseSeparator: XmSeparator {
+        arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM; 
+	    XmNtopAttachment   = XmATTACH_WIDGET;
+	    XmNtopWidget       = XmLabelGadget MouseReleasedLabel;
+	};
+};
+
+object  MouseReleasedMB1Label: XmLabelGadget {
+   	arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget MouseReleasedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmSeparator MouseSeparator;
+	    XmNlabelString 	= MB1String;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MB1_RELEASED_LBL);
+	};
+};
+
+object  MousePressedMB1Label: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment   = XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget MousePressedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmSeparator MouseSeparator;
+	    XmNlabelString 	= MB1EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MB1_PRESSED_LBL);
+	};
+};
+
+object	MouseReleasedMB2Label: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget MouseReleasedMB1Label;
+	    XmNlabelString 	= MB2String;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MB2_RELEASED_LBL);
+	};
+};
+
+object	MousePressedMB2Label: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget MousePressedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget MousePressedMB1Label;
+	    XmNlabelString 	= MB2EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MB2_PRESSED_LBL);
+	};
+};
+
+object	MouseReleasedMB3Label: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget MouseReleasedMB2Label;
+	    XmNlabelString 	= MB3String;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MB3_RELEASED_LBL);
+	};
+};
+
+object	MousePressedMB3Label: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget MousePressedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget MousePressedMB2Label;
+	    XmNlabelString 	= MB3EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MB3_PRESSED_LBL);
+	};
+};
+
+!object	MouseReleasedMB4Label: XmLabelGadget {
+!        arguments {
+!	    XmNleftAttachment 	= XmATTACH_FORM;
+!	    XmNtopAttachment 	= XmATTACH_WIDGET;
+!	    XmNtopWidget 	= XmLabelGadget MouseReleasedMB3Label;
+!	    XmNlabelString 	= MB4String;
+!	};
+!	callbacks {
+!	    MrmNcreateCallback = procedure CreateProc(MB4_RELEASED_LBL);
+!	};
+!};
+!
+!object	MousePressedMB4Label: XmLabelGadget {
+!        arguments {
+!	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+!	    XmNleftWidget 	= XmLabelGadget MousePressedLabel;
+!	    XmNtopAttachment 	= XmATTACH_WIDGET;
+!	    XmNtopWidget 	= XmLabelGadget MousePressedMB3Label;
+!	    XmNlabelString 	= MB4EmptyString;
+!	};
+!	callbacks {
+!	    MrmNcreateCallback = procedure CreateProc(MB4_PRESSED_LBL);
+!	};
+!};
+!
+!object	MouseReleasedMB5Label: XmLabelGadget {
+!        arguments {
+!	    XmNleftAttachment 	= XmATTACH_FORM;
+!	    XmNtopAttachment 	= XmATTACH_WIDGET;
+!	    XmNtopWidget 	= XmLabelGadget MouseReleasedMB4Label;
+!	    XmNlabelString 	= MB5String;
+!	};
+!	callbacks {
+!	    MrmNcreateCallback = procedure CreateProc(MB5_RELEASED_LBL);
+!	};
+!};
+!
+!object	MousePressedMB5Label: XmLabelGadget {
+!        arguments {
+!	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+!	    XmNleftWidget 	= XmLabelGadget MousePressedLabel;
+!	    XmNtopAttachment 	= XmATTACH_WIDGET;
+!	    XmNtopWidget 	= XmLabelGadget MousePressedMB4Label;
+!	    XmNlabelString 	= MB5EmptyString;
+!	};
+!	callbacks {
+!	    MrmNcreateCallback = procedure CreateProc(MB5_PRESSED_LBL);
+!	};
+!};
+
+object	MouseKeysCloseForm: XmForm {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNrightAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmFrame MouseButtonsFrame;
+	    XmNtopOffset 	= MarginSize;
+	    XmNbottomAttachment = XmATTACH_FORM;
+	};
+	controls {
+	    XmPushButtonGadget MouseKeysCloseButton;
+	};
+};
+
+object	MouseKeysCloseButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString 	= CloseString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(MOUSE_CLOSE_BTN);
+	    XmNactivateCallback = procedure ActivateProc(MOUSE_CLOSE_BTN);
+   };
+};
+
+!**********************************************************************
+!*                                                                    *
+!* Sticky Keys Status Dialog                                          *
+!*                                                                    *
+!**********************************************************************
+
+object	StickyKeysStatusDialog: XmForm {
+        arguments {
+	    XmNnoResize     = true;
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = StickyKeysTitle;
+!	    XmNdialogTitle  = StickyKeysString & SpaceString & StatusString;
+	};
+	controls {
+	    XmFrame 		StickyKeysModsFrame;
+	    XmForm 		StickyCloseForm;
+	};
+};
+
+object	StickyKeysModsFrame: XmFrame {
+        arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_FORM;
+	};
+	controls {
+	    XmForm StickyKeysModsForm;
+	};
+};
+
+object	StickyKeysModsForm: XmForm {
+        arguments {
+	    XmNmarginWidth  = StatusMarginSize;
+	    XmNmarginHeight = StatusMarginSize;
+	};
+	controls {
+	    XmLabelGadget 	StickyLatchedLabel;
+	    XmLabelGadget 	StickyLockedLabel;
+	    XmSeparatorGadget 	StickySeparator;
+	    XmLabelGadget 	ShiftLatchedLabel;
+	    XmLabelGadget 	ShiftLockedLabel;
+	    XmLabelGadget 	ControlLatchedLabel;
+	    XmLabelGadget 	ControlLockedLabel;
+	    XmLabelGadget 	Mod1LatchedLabel;
+	    XmLabelGadget 	Mod1LockedLabel;
+	    XmLabelGadget 	Mod2LatchedLabel;
+	    XmLabelGadget 	Mod2LockedLabel;
+	    XmLabelGadget 	Mod3LatchedLabel;
+	    XmLabelGadget 	Mod3LockedLabel;
+	    XmLabelGadget 	Mod4LatchedLabel;
+	    XmLabelGadget 	Mod4LockedLabel;
+	    XmLabelGadget 	Mod5LatchedLabel;
+	    XmLabelGadget 	Mod5LockedLabel;
+	};
+};
+
+object	StickyLatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment = XmATTACH_FORM;
+	    XmNtopAttachment  = XmATTACH_FORM;
+	    XmNlabelString    = LatchedString;
+	};
+};
+
+object	StickyLockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNleftOffset 	= 15;
+	    XmNrightAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment 	= XmATTACH_FORM;
+	    XmNlabelString 	= LockedString;
+	};
+};
+
+object	StickySeparator: XmSeparator {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNrightAttachment 	= XmATTACH_FORM; 
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget StickyLatchedLabel;
+	};
+};
+
+object	ShiftLatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmSeparator StickySeparator;
+	    XmNlabelString 	= ShiftEmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(SHIFT_LATCHED_LBL);
+	};
+};
+
+object	ShiftLockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLockedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmSeparator StickySeparator;
+	    XmNlabelString 	= ShiftEmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(SHIFT_LOCKED_LBL);
+	};
+};
+
+object	ControlLatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget ShiftLatchedLabel;
+	    XmNlabelString 	= ControlEmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(CONTROL_LATCHED_LBL);
+	};
+};
+
+object	ControlLockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLockedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget ShiftLockedLabel;
+	    XmNlabelString 	= ControlEmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(CONTROL_LOCKED_LBL);
+	};
+};
+
+object	Mod1LatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget ControlLatchedLabel;
+	    XmNlabelString 	= Mod1EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD1_LATCHED_LBL);
+	};
+};
+
+object	Mod1LockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLockedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget ControlLockedLabel;
+	    XmNlabelString 	= Mod1EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD1_LOCKED_LBL);
+	};
+};
+
+object	Mod2LatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod1LatchedLabel;
+	    XmNlabelString 	= Mod2EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD2_LATCHED_LBL);
+	};
+};
+
+object	Mod2LockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLockedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod1LockedLabel;
+	    XmNlabelString 	= Mod2EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD2_LOCKED_LBL);
+	};
+};
+
+object	Mod3LatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod2LatchedLabel;
+	    XmNlabelString 	= Mod3EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD3_LATCHED_LBL);
+	};
+};
+
+object	Mod3LockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLockedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod2LockedLabel;
+	    XmNlabelString 	= Mod3EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD3_LOCKED_LBL);
+	};
+};
+
+object	Mod4LatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod3LatchedLabel;
+	    XmNlabelString 	= Mod4EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD4_LATCHED_LBL);
+	};
+};
+
+object	Mod4LockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLockedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod3LockedLabel;
+	    XmNlabelString 	= Mod4EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD4_LOCKED_LBL);
+	};
+};
+
+object	Mod5LatchedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLatchedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod4LatchedLabel;
+	    XmNlabelString 	= Mod5EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD5_LATCHED_LBL);
+	};
+};
+
+object	Mod5LockedLabel: XmLabelGadget {
+        arguments {
+	    XmNleftAttachment 	= XmATTACH_OPPOSITE_WIDGET;
+	    XmNleftWidget 	= XmLabelGadget StickyLockedLabel;
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmLabelGadget Mod4LockedLabel;
+	    XmNlabelString 	= Mod5EmptyString;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(MOD5_LOCKED_LBL);
+	};
+};
+
+object  StickyCloseForm: XmForm {
+        arguments {
+	    XmNleftAttachment	= XmATTACH_FORM;	    
+	    XmNrightAttachment	= XmATTACH_FORM;	    
+	    XmNtopAttachment 	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmFrame StickyKeysModsFrame;
+	    XmNtopOffset 	= MarginSize;
+	    XmNbottomAttachment = XmATTACH_FORM;
+	};
+	controls {
+	    XmPushButtonGadget StickyCloseButton;
+	};
+};
+
+object  StickyCloseButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString 	= CloseString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(STICKY_CLOSE_BTN);
+	    XmNactivateCallback = procedure ActivateProc(STICKY_CLOSE_BTN);
+	};
+};
+
+!**********************************************************************
+!*                                                                    *
+!* File Dialogs                                                       *
+!*                                                                    *
+!**********************************************************************
+
+object	SaveDoneDialog: XmFormDialog {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = SaveInfoString;
+	};
+	controls {
+	    XmMessageBox SaveDoneBox;
+	};
+};
+
+object	SaveDoneBox: XmMessageBox {
+        arguments {
+	    XmNdialogType    = XmDIALOG_INFORMATION;
+	    XmNmessageString = SaveDoneString;
+	};
+	callbacks {
+	    XmNcancelCallback = procedure ActivateProc(SAVE_DONE_CANCEL_BTN);
+	    XmNokCallback     = procedure ActivateProc(SAVE_DONE_OK_BTN);
+	};
+};
+
+object	SaveErrorDialog: XmFormDialog {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = SaveErrorDialogString;
+	};
+	controls {
+	    XmMessageBox SaveErrorBox;
+	};
+};
+
+object	SaveErrorBox: XmMessageBox {
+        arguments {
+	    XmNdialogType    = XmDIALOG_ERROR;
+	    XmNmessageString = SaveErrorString;
+	};
+	callbacks {
+	    XmNcancelCallback = procedure ActivateProc(SAVE_ERR_CANCEL_BTN);
+	    XmNokCallback     = procedure ActivateProc(SAVE_ERR_OK_BTN);
+	};
+};
+
+object	LoadDoneDialog: XmFormDialog {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = LoadInfoString;
+	};
+	controls {
+	    XmMessageBox LoadDoneBox;
+	};
+};
+
+object	LoadDoneBox: XmMessageBox {
+        arguments {
+	    XmNdialogType    = XmDIALOG_INFORMATION;
+	    XmNmessageString = LoadDoneString;
+	};
+	callbacks {
+	    XmNcancelCallback = procedure ActivateProc(LOAD_DONE_CANCEL_BTN);
+	    XmNokCallback     = procedure ActivateProc(LOAD_DONE_OK_BTN);
+	};
+};
+
+object	LoadErrorDialog: XmFormDialog {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = LoadErrorDialogString;
+	};
+	controls {
+	    XmMessageBox LoadErrorBox;
+	};
+};
+
+object	LoadErrorBox: XmMessageBox {
+        arguments {
+	    XmNdialogType    = XmDIALOG_ERROR;
+	    XmNmessageString = LoadErrorString;
+	};
+	callbacks {
+	    XmNcancelCallback = procedure ActivateProc(LOAD_ERR_CANCEL_BTN);
+	    XmNokCallback     = procedure ActivateProc(LOAD_ERR_OK_BTN);
+	};
+};
+
+!****************************************************************
+!*								*
+!* Help Text Widget						*
+!*								*
+!****************************************************************
+
+object	HelpDialog: XmFormDialog {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = HelpWindowString;
+	};
+	controls {
+	    XmFrame 	HelpFrame;
+	    XmForm 	HelpCloseForm;
+	};
+};
+
+object	HelpFrame: XmFrame {
+        arguments {
+	    XmNleftAttachment  = XmATTACH_FORM;
+	    XmNrightAttachment = XmATTACH_FORM;
+	    XmNtopAttachment   = XmATTACH_FORM;
+	};
+	controls {
+	    XmScrolledWindow HelpWindow;
+	};
+};
+
+object	HelpWindow: XmScrolledWindow {
+        arguments {
+	    XmNworkWindow = XmText HelpText;
+	};
+	controls {
+	    XmText HelpText;
+	};
+};
+
+object	HelpText: XmText {
+        arguments {
+	    XmNeditable = false;
+	    XmNeditMode = XmMULTI_LINE_EDIT;
+	    XmNrows     = 20;
+	    XmNcolumns  = 80;
+	    XmNwordWrap = true;
+	};
+	callbacks {
+	    MrmNcreateCallback = procedure CreateProc(HELP_TEXT);
+	};
+};
+
+object	HelpCloseForm: XmForm {
+        arguments {
+	    XmNresizable	= false;
+	    XmNleftAttachment 	= XmATTACH_FORM;
+	    XmNrightAttachment 	= XmATTACH_FORM;
+	    XmNtopAttachment	= XmATTACH_WIDGET;
+	    XmNtopWidget 	= XmFrame HelpFrame;
+	    XmNtopOffset 	= MarginSize;
+	    XmNbottomAttachment = XmATTACH_FORM;
+	};
+	controls {
+	    XmPushButtonGadget HelpCloseButton;
+	};
+};
+
+object	HelpCloseButton: XmPushButtonGadget {
+        arguments {
+	    XmNlabelString 	= CloseString;
+	};
+	callbacks {
+	    MrmNcreateCallback  = procedure CreateProc(CLOSE_HELP_BTN);
+	    XmNactivateCallback = procedure ActivateProc(CLOSE_HELP_BTN);
+	};
+};
+
+object  HelpErrorDialog: XmFormDialog {
+        arguments {
+	    XmNmarginWidth  = MarginSize;
+	    XmNmarginHeight = MarginSize;
+	    XmNdialogTitle  = HelpErrorDialogString;
+	};
+	controls {
+	    XmMessageBox HelpErrorBox;
+	};
+};
+
+object  HelpErrorBox: XmMessageBox {
+        arguments {
+	    XmNdialogType    = XmDIALOG_ERROR;
+	    XmNmessageString = HelpErrorString;
+	};
+	callbacks {
+	    XmNcancelCallback = procedure ActivateProc(HELP_ERR_CANCEL_BTN);
+	    XmNokCallback     = procedure ActivateProc(HELP_ERR_OK_BTN);
+	};
+};
+
+end module;

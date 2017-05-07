@@ -1,0 +1,66 @@
+--- pidgin-2.7.0/pidgin/pidginstock.c.orig	2010-05-13 15:32:57.823406906 +0800
++++ pidgin-2.7.0/pidgin/pidginstock.c	2010-05-13 15:37:22.643337918 +0800
+@@ -277,6 +277,9 @@
+ 	guchar *pixels;
+ 	guchar a;
+ 
++        if (!pixbuf)
++          return;
++
+ 	if (!gdk_pixbuf_get_has_alpha(pixbuf))
+ 		return;
+ 
+@@ -340,6 +343,10 @@
+ 	filename = find_icon_file(theme, size, sized_icon, FALSE);
+ 	g_return_if_fail(filename != NULL);
+ 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
++
++        if (!pixbuf)
++          return;
++
+ 	if (translucent)
+ 		do_alphashift(pixbuf);
+ 
+@@ -370,6 +377,10 @@
+ 		filename = find_icon_file(theme, size, sized_icon, TRUE);
+ 		g_return_if_fail(filename != NULL);
+ 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
++
++                if (!pixbuf)
++                  return;
++
+ 		if (translucent)
+ 			do_alphashift(pixbuf);
+ 
+--- pidgin-2.7.0/pidgin/gtkblist.c.orig	2010-05-13 15:30:04.787201508 +0800
++++ pidgin-2.7.0/pidgin/gtkblist.c	2010-05-13 15:32:20.466553418 +0800
+@@ -5547,11 +5547,14 @@
+ 	g_object_ref_sink (tooltips);
+ 
+ 	gtk_tooltips_force_window (tooltips);
++        if (tooltips->tip_window)
++        {
+ #if GTK_CHECK_VERSION(2, 12, 0)
+-	gtk_widget_set_name (tooltips->tip_window, "gtk-tooltips");
++	  gtk_widget_set_name (tooltips->tip_window, "gtk-tooltips");
+ #endif
+-	gtk_widget_ensure_style (tooltips->tip_window);
+-	style = gtk_widget_get_style (tooltips->tip_window);
++	  gtk_widget_ensure_style (tooltips->tip_window);
++	  style = gtk_widget_get_style (tooltips->tip_window);
++        }
+ 
+ 	gtkblist->changing_style = TRUE;
+ 	gtk_widget_set_style (gtkblist->headline_hbox, style);
+--- pidgin-2.7.0/libpurple/account.c.orig	2010-05-13 15:37:40.694159408 +0800
++++ pidgin-2.7.0/libpurple/account.c	2010-05-13 15:38:29.948112474 +0800
+@@ -683,6 +683,9 @@
+ 	xmlnode *child;
+ 	char *data;
+ 
++        if (!node)
++          return;
++
+ 	proxy_info = purple_proxy_info_new();
+ 
+ 	/* Use the global proxy settings, by default */

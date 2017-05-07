@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
+ Copyright 2013 Alexander Pyhalov.  All rights reserved.
+ Use is subject to license terms.
+
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+ ident	"@(#)pgpool.xml	1.1	08/04/28 SMI"
+
+        NOTE:  This service manifest is not editable; its contents will
+        be overwritten by package or patch operations, including
+        operating system upgrade.  Make customizations in a different
+        file.
+-->
+
+<service_bundle type='manifest' name='pgpool'>
+
+<service
+        name='application/database/pgpool'
+        type='service'
+        version='1'>
+
+        <!--   Wait for network interfaces to be initialized. -->         
+        <dependency
+                name='network'
+                grouping='require_all'
+                restart_on='none'
+                type='service'>
+                <service_fmri value='svc:/milestone/network:default' />
+        </dependency>
+
+        <!--  Wait for all local filesystems to be mounted. -->
+        <dependency
+                name='filesystem-local'
+                grouping='require_all'
+                restart_on='none'
+                type='service'>
+                <service_fmri value='svc:/system/filesystem/local:default' />
+        </dependency>
+
+
+      <exec_method
+          type='method'
+          name='start'
+          exec='/usr/bin/pgpool -f %{pgpool/config}'
+          timeout_seconds='10' />
+
+      <exec_method
+          type='method'
+          name='stop'
+          exec='/usr/bin/pgpool -f %{pgpool/config} -m fast stop'
+          timeout_seconds='5' />
+
+        <exec_method
+                type='method'
+                name='refresh'
+                exec='/usr/bin/pgpool -f %{pgpool/config} reload'
+                timeout_seconds='60' />
+
+
+
+      <instance name='default' enabled='false'>
+	<method_context>
+		<method_credential user='postgres' group='postgres' />
+	</method_context>
+	<property_group  name='pgpool' type='application'>
+               <propval name='config' type='astring' value='/etc/pgpool-II/pgpool.conf' />
+        </property_group>
+      </instance>
+
+      <stability value='Unstable' />
+
+      <template>
+              <common_name>
+                      <loctext xml:lang='C'>
+                              PostgreSQL middle ware for connection pooling and load balancing.
+                      </loctext>
+              </common_name>
+              <documentation>
+                      <manpage title='pgpool' section='8'
+                              manpath='/usr/share/man' />
+              </documentation>
+      </template>
+</service>
+
+</service_bundle>

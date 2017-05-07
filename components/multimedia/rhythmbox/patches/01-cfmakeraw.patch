@@ -1,0 +1,18 @@
+--- rhythmbox-3.4.1/remote/dbus/rb-client.c.1	2017-03-11 16:05:53.607851910 +0300
++++ rhythmbox-3.4.1/remote/dbus/rb-client.c	2017-03-11 16:07:05.533851028 +0300
+@@ -928,7 +928,15 @@
+ 
+ 	tcgetattr(0, &orig_tt);
+ 	tt = orig_tt;
++#ifdef __sun
++	tt.c_iflag &= ~(IMAXBEL|IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
++	tt.c_oflag &= ~OPOST;
++	tt.c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
++	tt.c_cflag &= ~(CSIZE|PARENB);
++	tt.c_cflag |= CS8;
++#else
+ 	cfmakeraw(&tt);
++#endif
+ 	tt.c_lflag &= ~ECHO;
+ 	tcsetattr(0, TCSAFLUSH, &tt);
+ 

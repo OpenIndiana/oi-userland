@@ -1,0 +1,24 @@
+--- openssl-0.9.8zh/crypto/rand/randfile.c.1	2016-05-13 12:37:18.123779205 +0300
++++ openssl-0.9.8zh/crypto/rand/randfile.c	2016-05-13 12:37:49.456702970 +0300
+@@ -57,7 +57,9 @@
+  */
+ 
+ /* We need to define this to get macros like S_IFBLK and S_IFCHR */
++#if !defined(__sun__)
+ #define _XOPEN_SOURCE 500
++#endif
+ 
+ #include <errno.h>
+ #include <stdio.h>
+--- openssl-0.9.8zh/crypto/ui/ui_openssl.c.1	2016-05-13 12:40:27.664573519 +0300
++++ openssl-0.9.8zh/crypto/ui/ui_openssl.c	2016-05-13 12:41:05.738480901 +0300
+@@ -124,7 +124,9 @@
+  * sigaction and fileno included. -pedantic would be more appropriate for the
+  * intended purposes, but we can't prevent users from adding -ansi.
+  */
++#if !defined(__sun__)
+ #define _POSIX_C_SOURCE 1
++#endif
+ #include <signal.h>
+ #include <stdio.h>
+ #include <string.h>

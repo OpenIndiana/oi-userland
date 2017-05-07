@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Compound Text Encoding</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_9276" /><style xmlns="" type="text/css">/*
+ * Copyright (c) 2011 Gaetan Nadon
+ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * Shared stylesheet for X.Org documentation translated to HTML format
+ * http://www.sagehill.net/docbookxsl/UsingCSS.html
+ * http://www.w3schools.com/css/default.asp
+ * https://addons.mozilla.org/en-US/firefox/addon/web-developer/developers
+ * https://addons.mozilla.org/en-US/firefox/addon/font-finder/
+ */
+
+/*
+ * The sans-serif fonts are considered more legible on a computer screen
+ * http://dry.sailingissues.com/linux-equivalents-verdana-arial.html
+ *
+ */
+body {
+  font-family: "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+  /* In support of using "em" font size unit, the w3c recommended method */
+  font-size: 100%;
+}
+
+/*
+ * Selection: all elements requiring mono spaced fonts.
+ *
+ * The family names attempt to match the proportionally spaced font
+ * family names such that the same font name is used for both.
+ * We'd like to use Bitstream, for example, in both proportionally and
+ * mono spaced font text.
+ */
+.command,
+.errorcode,
+.errorname,
+.errortype,
+.filename,
+.funcsynopsis,
+.function,
+.parameter,
+.programlisting,
+.property,
+.screen,
+.structname,
+.symbol,
+.synopsis,
+.type
+{
+  font-family:  "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Courier, "Liberation Mono", Monospace;
+}
+
+/*
+ * Books have a title page, a preface, some chapters and appendices,
+ * a glossary, an index and a bibliography, in that order.
+ *
+ * An Article has no preface and no chapters. It has sections, appendices,
+ * a glossary, an index and a bibliography.
+ */
+
+/*
+ * Selection: book main title and subtitle
+ */
+div.book>div.titlepage h1.title,
+div.book>div.titlepage h2.subtitle {
+  text-align: center;
+}
+
+/*
+ * Selection: article main title and subtitle
+ */
+div.article>div.titlepage h2.title,
+div.article>div.titlepage h3.subtitle,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title {
+  text-align: center;
+}
+
+/*
+ * Selection: various types of authors and collaborators, individuals or corporate
+ *
+ * These authors are not always contained inside an authorgroup.
+ * They can be contained inside a lot of different parent types where they might
+ * not be centered.
+ * Reducing the margin at the bottom makes a visual separation between authors
+ * We specify here the ones on the title page, others may be added based on merit.
+ */
+div.titlepage .authorgroup,
+div.titlepage .author,
+div.titlepage .collab,
+div.titlepage .corpauthor,
+div.titlepage .corpcredit,
+div.titlepage .editor,
+div.titlepage .othercredit {
+  text-align: center;
+  margin-bottom: 0.25em;
+}
+
+/*
+ * Selection: the affiliation of various types of authors and collaborators,
+ * individuals or corporate.
+ */
+div.titlepage .affiliation {
+  text-align: center;
+}
+
+/*
+ * Selection: product release information (X Version 11, Release 7)
+ *
+ * The releaseinfo element can be contained inside a lot of different parent
+ * types where it might not be centered.
+ * We specify here the one on the title page, others may be added based on merit.
+ */
+div.titlepage p.releaseinfo {
+  font-weight: bold;
+  text-align: center;
+}
+
+/*
+ * Selection: publishing date
+ */
+div.titlepage .pubdate {
+  text-align: center;
+}
+
+/*
+ * The legal notices are displayed in smaller sized fonts
+ * Justification is only supported in IE and therefore not requested.
+ *
+ */
+.legalnotice {
+  font-size: small;
+  font-style: italic;
+}
+
+/*
+ * For documentation having multiple licenses, the copyright and legalnotice
+ * elements sequence cannot instantiated multiple times.
+ * The copyright notice and license text are therefore coded inside a legalnotice
+ * element. The role attribute on the paragraph is used to allow styling of the
+ * copyright notice text which should not be italicized.
+ */
+p.multiLicensing {
+  font-style: normal;
+  font-size: medium;
+}
+
+/*
+ * Selection: book or article main ToC title
+ * A paragraph is generated for the title rather than a level 2 heading.
+ * We do not want to select chapters sub table of contents, only the main one
+ */
+div.book>div.toc>p,
+div.article>div.toc>p {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+/*
+ * Selection: major sections of a book or an article
+ *
+ * Unlike books, articles do not have a titlepage element for appendix.
+ * Using the selector "div.titlepage h2.title" would be too general.
+ */
+div.book>div.preface>div.titlepage h2.title,
+div.book>div.chapter>div.titlepage h2.title,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title,
+div.book>div.appendix>div.titlepage h2.title,
+div.article>div.appendix h2.title,
+div.glossary>div.titlepage h2.title,
+div.index>div.titlepage h2.title,
+div.bibliography>div.titlepage h2.title {
+   /* Add a border top over the major parts, just like printed books */
+   /* The Gray color is already used for the ruler over the main ToC. */
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: Gray;
+  /* Put some space between the border and the title */
+  padding-top: 0.2em;
+  text-align: center;
+}
+
+/*
+ * A Screen is a verbatim environment for displaying text that the user might
+ * see on a computer terminal. It is often used to display the results of a command.
+ *
+ * http://www.css3.info/preview/rounded-border/
+ */
+.screen {
+  background: #e0ffff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #B0C4DE;
+  border-radius: 1.0em;
+  /* Browser's vendor properties prior to CSS 3 */
+  -moz-border-radius: 1.0em;
+  -webkit-border-radius: 1.0em;
+  -khtml-border-radius: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 1.0em;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis program listings with a light shade of gray similar to what
+ * DocBook XSL guide does: http://www.sagehill.net/docbookxsl/ProgramListings.html
+ * Found many C API docs on the web using like shades of gray.
+ */
+.programlisting {
+  background: #F4F4F4;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis functions synopsis using a darker shade of gray.
+ * Add a border such that it stands out more.
+ * Set the padding so the text does not touch the border.
+ */
+.funcsynopsis, .synopsis {
+  background: #e6e6fa;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  clear: both;
+  margin: 0.5em;
+  padding: 0.25em;
+}
+
+/*
+ * Selection: paragraphs inside synopsis
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in synopsis
+ */
+.funcsynopsis p,
+.synopsis p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Selection: variable lists, informal tables and tables
+ *
+ * Note the parameter name "variablelist.as.table" in xorg-xhtml.xsl
+ * A table with rows and columns is constructed inside div.variablelist
+ *
+ * Set the left margin so it is indented to the right
+ * Display informal tables with single line borders
+ */
+table {
+  margin-left: 0.5em;
+  border-collapse: collapse;
+}
+
+/*
+ * Selection: paragraphs inside tables
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in tables
+ */
+td p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Add some space between the left and right column.
+ * The vertical alignment helps the reader associate a term
+ * with a multi-line definition.
+ */
+td, th {
+  padding-left: 1.0em;
+  padding-right: 1.0em;
+  vertical-align: top;
+}
+
+.warning {
+  border: 1px solid red;
+  background: #FFFF66;
+  padding-left: 0.5em;
+}
+</style></head><body><div class="article"><div class="titlepage"><div><div><h2 class="title"><a id="ctext"></a>Compound Text Encoding</h2></div><div><h3 class="subtitle"><em>X Consortium Standard</em></h3></div><div><div class="authorgroup"><div class="author"><h3 class="author"><span class="firstname">Robert</span> <span class="othername">W.</span> <span class="surname">Scheifler</span></h3><div class="affiliation"><span class="orgname">X Consortium<br /></span></div></div></div></div><div><p class="releaseinfo">X Version 11, Release 7.7</p></div><div><p class="releaseinfo">Version 1.1</p></div><div><p class="copyright">Copyright © 1989 X Consortium</p></div><div><div class="legalnotice"><a id="id2525274"></a><p>
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+</p><p>
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+</p><p>
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</p><p>
+Except as contained in this notice, the name of the X Consortium shall not be
+used in advertising or otherwise to promote the sale, use or other dealings
+in this Software without prior written authorization from the X Consortium.
+</p><p>X Window System is a trademark of The Open Group.</p></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="sect1"><a href="#Overview">Overview</a></span></dt><dt><span class="sect1"><a href="#Values">Values</a></span></dt><dt><span class="sect1"><a href="#Control_Characters">Control Characters</a></span></dt><dt><span class="sect1"><a href="#Standard_Character_Set_Encodings">Standard Character Set Encodings</a></span></dt><dt><span class="sect1"><a href="#Approved_Standard_Encodings">Approved Standard Encodings</a></span></dt><dt><span class="sect1"><a href="#Non_Standard_Character_Set_Encodings">Non-Standard Character Set Encodings</a></span></dt><dt><span class="sect1"><a href="#Directionality">Directionality</a></span></dt><dt><span class="sect1"><a href="#Resources">Resources</a></span></dt><dt><span class="sect1"><a href="#Font_Names">Font Names</a></span></dt><dt><span class="sect1"><a href="#Extensions">Extensions</a></span></dt><dt><span class="sect1"><a href="#Errors">Errors</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Overview"></a>Overview</h2></div></div></div><p>
+Compound Text is a format for multiple character set data, such as
+multi-lingual text.  The format is based on ISO
+standards for encoding and combining character sets.  Compound Text is intended
+to be used in three main contexts: inter-client communication using selections,
+as defined in the
+<span class="emphasis"><em>Inter-Client Communication Conventions Manual</em></span>
+(ICCCM); 
+window properties (e.g., window manager hints as defined in the ICCCM);
+and resources (e.g., as defined in Xlib and the Xt Intrinsics).
+</p><p>
+Compound Text is intended as an external representation, or interchange format,
+not as an internal representation.  It is expected (but not required) that
+clients will convert Compound Text to some internal representation for
+processing and rendering, and convert from that internal representation to
+Compound Text when providing textual data to another client.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Values"></a>Values</h2></div></div></div><p>
+
+The name of this encoding is "COMPOUND_TEXT".  When text values are used in
+the ICCCM-compliant selection mechanism or are stored as window properties in
+the server, the type used should be the atom for "COMPOUND_TEXT".
+</p><p>
+
+Octet values are represented in this document as two decimal numbers in the
+form col/row.  This means the value (col * 16) + row.  For example, 02/01 means
+the value 33.
+</p><p>
+For our purposes, the octet encoding space is divided into four ranges:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /></colgroup><tbody><tr><td align="left">C0</td><td align="left">octets from 00/00 to 01/15</td></tr><tr><td align="left">GL</td><td align="left">octets from 02/00 to 07/15</td></tr><tr><td align="left">C1</td><td align="left">octets from 08/00 to 09/15</td></tr><tr><td align="left">GR</td><td align="left">octets from 10/00 to 15/15</td></tr></tbody></table></div><p>
+
+C0 and C1 are "control character" sets, while GL and GR are "graphic
+character" sets.  Only a subset of C0 and C1 octets are used in the encoding,
+and depending on the character set encoding defined as GL or GR, a subset of
+GL and GR octets may be used; see below for details.  All octets (00/00 to
+15/15) may appear inside the text of extended segments (defined below).
+</p><p>
+
+[For those familiar with ISO 2022, we will use only an 8-bit environment, and
+we will always use G0 for GL and G1 for GR.]
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Control_Characters"></a>Control Characters</h2></div></div></div><p>
+In C0, only the following values will be used:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /><col align="left" class="c3" /></colgroup><tbody><tr><td align="left">00/09</td><td align="left">HT</td><td align="left">HORIZONTAL TABULATION</td></tr><tr><td align="left">00/10</td><td align="left">NL</td><td align="left">NEW LINE</td></tr><tr><td align="left">01/11</td><td align="left">ESC</td><td align="left">(ESCAPE)</td></tr></tbody></table></div><p>
+In C1, only the following value will be used:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /><col align="left" class="c3" /></colgroup><tbody><tr><td align="left">09/11</td><td align="left">CSI</td><td align="left">CONTROL SEQUENCE INTRODUCER</td></tr></tbody></table></div><p>
+
+[The alternate 7-bit CSI encoding 01/11 05/11 is not used in Compound Text.]
+</p><p>
+
+No control sequences are defined in Compound Text for changing the C0 and C1
+sets.
+</p><p>
+
+A horizontal tab can be represented with the octet 00/09.  Specification of
+tabulation width settings is not part of Compound Text and must be obtained
+from context (in an unspecified manner).
+</p><p>
+
+[Inclusion of horizontal tab is for consistency with the STRING type currently
+defined in the ICCCM.]
+</p><p>
+
+A newline (line separator/terminator) can be represented with the octet 00/10.
+</p><p>
+
+[Note that 00/10 is normally LINEFEED, but is being interpreted as NEWLINE.
+This can be thought of as using the (deprecated) NEW LINE mode, E.1.3, in ISO
+6429.  Use of this value instead of 08/05 (NEL, NEXT LINE) is for consistency
+with the STRING type currently defined in the ICCCM.]
+</p><p>
+
+The remaining C0 and C1 values (01/11 and 09/11) are only used in the control
+sequences defined below.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Standard_Character_Set_Encodings"></a>Standard Character Set Encodings</h2></div></div></div><p>
+
+The default GL and GR sets in Compound Text correspond to the left and right
+halves of ISO 8859-1 (Latin 1).  As such, any legal instance of a STRING type
+(as defined in the ICCCM) is also a legal instance of type COMPOUND_TEXT.
+</p><p>
+[The implied initial state in ISO 2022 is defined with the sequence:
+ 01/11 02/00 04/03  GO and G1 in an 8-bit environment only.  Designation also invokes.
+ 01/11 02/00 04/07  In an 8-bit environment, C1 represented as 8-bits.
+ 01/11 02/00 04/09  Graphic character sets can be 94 or 96.
+ 01/11 02/00 04/11  8-bit code is used.
+ 01/11 02/08 04/02  Designate ASCII into G0.
+ 01/11 02/13 04/01  Designate right-hand part of ISO Latin-1 into G1.
+]
+</p><p>
+To define one of the approved standard character set encodings to be
+the GL set, one of the following control sequences is used:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /><col align="left" class="c3" /><col align="left" class="c4" /></colgroup><tbody><tr><td align="left">01/11</td><td align="left">02/08</td><td align="left">{I} F</td><td align="left">94 character set</td></tr><tr><td align="left">01/11</td><td align="left">02/04</td><td align="left">02/08{I} F</td><td align="left">94<sup>N</sup> character set</td></tr></tbody></table></div><p>
+
+To define one of the approved standard character set encodings to be
+the GR set, one of the following control sequences is used:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /><col align="left" class="c3" /><col align="left" class="c4" /></colgroup><tbody><tr><td align="left">01/11</td><td align="left">02/09</td><td align="left">{I} F</td><td align="left">94 character set</td></tr><tr><td align="left">01/11</td><td align="left">02/13</td><td align="left">{I} F</td><td align="left">96 character set</td></tr><tr><td align="left">01/11</td><td align="left">02/04</td><td align="left">02/09 {I} F</td><td align="left">94<sup>N</sup> character set</td></tr></tbody></table></div><p>
+
+The "F"in the control sequences above stands for "Final character", which
+is always in the range 04/00 to 07/14.  The "{I}" stands for zero or more
+"intermediate characters", which are always in the range 02/00 to 02/15, with
+the first intermediate character always in the range 02/01 to 02/03.  The
+registration authority has defined an "{I} F" sequence for each registered
+character set encoding.
+</p><p>
+
+[Final characters for private encodings (in the range 03/00 to 03/15) are not
+permitted here in Compound Text.]
+</p><p>
+
+For GL, octet 02/00 is always defined as SPACE, and octet 07/15 (normally
+DELETE) is never used.  For a 94-character set defined as GR, octets 10/00 and
+15/15 are never used.
+</p><p>
+
+[This is consistent with ISO 2022.]
+</p><p>
+
+A 94<sup>N</sup> character set uses N octets (N &gt; 1) for each character.
+The value of N is derived from the column value for F:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /></colgroup><tbody><tr><td align="left">column 04 or 05</td><td align="left">2 octets</td></tr><tr><td align="left">column 06</td><td align="left">3 octets</td></tr><tr><td align="left">column 07</td><td align="left">4 or more octets</td></tr></tbody></table></div><p>
+
+In a 94<sup>N</sup> encoding, the octet values 02/00 and 07/15 (in GL) and
+10/00 and 15/15 (in GR) are never used.
+</p><p>
+
+[The column definitions come from ISO 2022.]
+</p><p>
+
+Once a GL or GR set has been defined, all further octets in that range (except
+within control sequences and extended segments) are interpreted with respect to
+that character set encoding, until the GL or GR set is redefined.  GL and GR
+sets can be defined independently, they do not have to be defined in pairs.
+</p><p>
+
+Note that when actually using a character set encoding as the GR set, you must
+force the most significant bit (08/00) of each octet to be a one, so that it
+falls in the range 10/00 to 15/15.
+</p><p>
+
+[Control sequences to specify character set encoding revisions (as in section
+6.3.13 of ISO 2022) are not used in Compound Text.  Revision indicators do not
+appear to provide useful information in the context of Compound Text.  The most
+recent revision can always be assumed, since revisions are upward compatible.]
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Approved_Standard_Encodings"></a>Approved Standard Encodings</h2></div></div></div><p>
+The following are the approved standard encodings to be used with Compound
+Text.  Note that none have Intermediate characters; however, a good parser will
+still deal with Intermediate characters in the event that additional encodings
+are later added to this list.
+</p><div class="informaltable"><table border="1"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /><col align="left" class="c3" /></colgroup><thead><tr><th align="left">{I} F</th><th align="left">94/96</th><th align="left">Description</th></tr></thead><tbody><tr><td align="left">4/02</td><td align="left">94</td><td align="left">
+7-bit ASCII graphics (ANSI X3.4-1968), Left half of ISO 8859 sets
+      </td></tr><tr><td align="left">04/09</td><td align="left">94</td><td align="left">
+Right half of JIS X0201-1976 (reaffirmed 1984),
+8-Bit Alphanumeric-Katakana Code
+      </td></tr><tr><td align="left">04/10</td><td align="left">94</td><td align="left">
+Left half of JIS X0201-1976 (reaffirmed 1984),
+8-Bit Alphanumeric-Katakana Code
+      </td></tr><tr><td align="left">04/01</td><td align="left">96</td><td align="left">Right half of ISO 8859-1, Latin alphabet No. 1</td></tr><tr><td align="left">04/02</td><td align="left">96</td><td align="left">Right half of ISO 8859-2, Latin alphabet No. 2</td></tr><tr><td align="left">04/03</td><td align="left">96</td><td align="left">Right half of ISO 8859-3, Latin alphabet No. 3</td></tr><tr><td align="left">04/04</td><td align="left">96</td><td align="left">Right half of ISO 8859-4, Latin alphabet No. 4</td></tr><tr><td align="left">04/06</td><td align="left">96</td><td align="left">Right half of ISO 8859-7, Latin/Greek alphabet</td></tr><tr><td align="left">04/07</td><td align="left">96</td><td align="left">Right half of ISO 8859-6, Latin/Arabic alphabet</td></tr><tr><td align="left">04/08</td><td align="left">96</td><td align="left">Right half of ISO 8859-8, Latin/Hebrew alphabet</td></tr><tr><td align="left">04/12</td><td align="left">96</td><td align="left">Right half of ISO 8859-5, Latin/Cyrillic alphabet</td></tr><tr><td align="left">04/13</td><td align="left">96</td><td align="left">Right half of ISO 8859-9, Latin alphabet No. 5</td></tr><tr><td align="left">04/01</td><td align="left">942</td><td align="left">GB2312-1980, China (PRC) Hanzi</td></tr><tr><td align="left">04/02</td><td align="left">942</td><td align="left">JIS X0208-1983, Japanese Graphic Character Set</td></tr><tr><td align="left">04/03</td><td align="left">942</td><td align="left">KS C5601-1987, Korean Graphic Character Set</td></tr></tbody></table></div><p>
+
+The sets listed as "Left half of ..." should always be defined as GL.  The
+sets listed as "Right half of ..." should always be defined as GR.  Other
+sets can be defined either as GL or GR.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Non_Standard_Character_Set_Encodings"></a>Non-Standard Character Set Encodings</h2></div></div></div><p>
+Character set encodings that are not in the list of approved standard
+encodings can be included
+using "extended segments".  An extended segment begins with one of the
+following sequences:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /></colgroup><tbody><tr><td align="left">01/11 2/05 02/15 03/00 M L</td><td align="left">variable number of octets per character</td></tr><tr><td align="left">01/11 2/05 02/15 03/01 M L</td><td align="left">1 octet per character</td></tr><tr><td align="left">01/11 2/05 02/15 03/02 M L</td><td align="left">2 octet per character</td></tr><tr><td align="left">01/11 2/05 02/15 03/03 M L</td><td align="left">3 octet per character</td></tr><tr><td align="left">01/11 2/05 02/15 03/04 M L</td><td align="left">4 octet per character</td></tr></tbody></table></div><p>
+[This uses the "other coding system" of ISO 2022, using private Final
+characters.]
+</p><p>
+
+The "M" and "L" octets represent a 14-bit unsigned value giving the number
+of octets that appear in the remainder of the segment.  The number is computed
+as ((M - 128) * 128) + (L - 128).  The most significant bit M and L are always
+set to one.  The remainder of the segment consists of two parts, the name of
+the character set encoding and the actual text.  The name of the encoding comes
+first and is separated from the text by the octet 00/02 (STX, START OF TEXT).
+Note that the length defined by M and L includes the encoding name and
+separator.
+</p><p>
+
+[The encoding of the length is chosen to avoid having zero octets in Compound
+Text when possible, because embedded NUL values are problematic in many C
+language routines.  The use of zero octets cannot be ruled out entirely
+however, since some octets in the actual text of the extended segment may have
+to be zero.]
+</p><p>
+
+The name of the encoding should be registered with the X Consortium to avoid
+conflicts and should when appropriate match the CharSet Registry and Encoding
+registration used in the X Logical Font Description.  The name itself should be
+encoded using ISO 8859-1 (Latin 1), should not use question mark (03/15) or
+asterisk (02/10), and should use hyphen (02/13) only in accordance with the X
+Logical Font Description.
+</p><p>
+
+Extended segments are not to be used for any character set encoding that can
+be constructed from a GL/GR pair of approved standard encodings. For
+example, it is incorrect to use an extended segment for any of the ISO 8859
+family of encodings.
+</p><p>
+
+It should be noted that the contents of an extended segment are arbitrary;
+for example,
+they may contain octets in the C0 and C1 ranges, including 00/00, and
+octets comprising a given character may differ in their most significant bit.
+</p><p>
+
+[ISO-registered "other coding systems" are not used in Compound Text;
+extended segments are the only mechanism for non-2022 encodings.]
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Directionality"></a>Directionality</h2></div></div></div><p>
+
+If desired, horizontal text direction can be indicated using the following
+control sequences:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /></colgroup><tbody><tr><td align="left">09/11 03/01 05/13</td><td align="left">begin left-to-right text</td></tr><tr><td align="left">09/11 03/02 05/13</td><td align="left">begin right-to-left text</td></tr><tr><td align="left">09/11 05/13</td><td align="left">end of string</td></tr></tbody></table></div><p>
+
+[This is a subset of the SDS (START DIRECTED STRING) control in the Draft
+Bidirectional Addendum to ISO 6429.]
+</p><p>
+
+Directionality can be nested.  Logically, a stack of directions is maintained.
+Each of the first two control sequences pushes a new direction on the stack,
+and the third sequence (revert) pops a direction from the stack.  The stack
+starts out empty at the beginning of a Compound Text string.  When the stack is
+empty, the directionality of the text is unspecified.
+</p><p>
+
+Directionality applies to all subsequent text, whether in GL, GR, or an
+extended segment.  If the desired directionality of GL, GR, or extended
+segments differs, then directionality control sequences must be inserted when
+switching between them.
+</p><p>
+
+Note that definition of GL and GR sets is independent of directionality;
+defining a new GL or GR set does not change the current directionality, and
+pushing or popping a directionality does not change the current GL and GR
+definitions.
+</p><p>
+
+Specification of directionality is entirely optional; text direction should be
+clear from context in most cases.  However, it must be the case that either
+all characters in a Compound Text string have explicitly specified direction
+or that all characters have unspecified direction.  That is, if directionality
+control sequences are used, the first such control sequence must precede the
+first graphic character in a Compound Text string, and graphic characters are
+not permitted whenever the directionality stack is empty.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Resources"></a>Resources</h2></div></div></div><p>
+
+To use Compound Text in a resource, you can simply treat all octets as if they
+were ASCII/Latin-1 and just replace all "\" octets (05/12) with the two
+octets "\\", all newline octets (00/10) with the two octets "\n", and
+all zero octets with the four octets "\000".
+It is up to the client making use of the resource to interpret the data as
+Compound Text; the policy by which this is ascertained is not constrained by
+the Compound Text specification.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Font_Names"></a>Font Names</h2></div></div></div><p>
+The following CharSet names for the standard character set encodings are
+registered for use in font names under the X Logical Font Description:
+</p><div class="informaltable"><table border="1"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /><col align="left" class="c3" /></colgroup><thead><tr><th align="left">Name</th><th align="left">Encoding Standard</th><th align="left">Description</th></tr></thead><tbody><tr><td align="left">ISO8859-1</td><td align="left">ISO8859-1</td><td align="left">Latinalphabet No. 1</td></tr><tr><td align="left">ISO8859-2</td><td align="left">ISO8859-2</td><td align="left">Latinalphabet No. 2</td></tr><tr><td align="left">ISO8859-3</td><td align="left">ISO8859-3</td><td align="left">Latinalphabet No. 3</td></tr><tr><td align="left">ISO8859-4</td><td align="left">ISO8859-4</td><td align="left">Latinalphabet No. 4</td></tr><tr><td align="left">ISO8859-5</td><td align="left">ISO 8859-5</td><td align="left">Latin/Cyrillic alphabet</td></tr><tr><td align="left">ISO8859-6</td><td align="left">ISO 8859-6</td><td align="left">Latin/Arabic alphabet</td></tr><tr><td align="left">ISO8859-7</td><td align="left">ISO8859-7</td><td align="left">Latin/Greekalphabet</td></tr><tr><td align="left">ISO8859-8</td><td align="left">ISO8859-8</td><td align="left">Latin/Hebrew alphabet</td></tr><tr><td align="left">ISO8859-9</td><td align="left">ISO8859-9</td><td align="left">Latinalphabet No. 5</td></tr><tr><td align="left">JISX0201.1976-0</td><td align="left">JIS X0201-1976 (reaffirmed 1984)</td><td align="left">8-bit Alphanumeric-Katakana Code</td></tr><tr><td align="left">GB2312.1980-0</td><td align="left">GB2312-1980, GL encoding</td><td align="left">China (PRC) Hanzi</td></tr><tr><td align="left">JISX0208.1983-0</td><td align="left">JIS X0208-1983, GL encoding</td><td align="left">Japanese Graphic Character Set</td></tr><tr><td align="left">KSC5601.1987-0</td><td align="left">KS C5601-1987, GL encoding</td><td align="left">Korean Graphic Character Set</td></tr></tbody></table></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Extensions"></a>Extensions</h2></div></div></div><p>
+
+There is no absolute requirement for a parser to deal with anything but the
+particular encoding syntax defined in this specification.  However, it is
+possible that Compound Text may be extended in the future, and as such it may
+be desirable to construct the parser to handle 2022/6429 syntax more generally.
+</p><p>
+
+There are two general formats covering all control sequences that are expected
+to appear in extensions:
+</p><p>
+01/11 {I} F
+</p><p>
+For this format, I is always in the range 02/00 to 02/15, and F is always
+in the range 03/00 to 07/14.
+</p><p>
+09/11 {P} {I} F
+</p><p>
+For this format, P is always in the range 03/00 to 03/15, I is always in
+the range 02/00 to 02/15, and F is always in the range 04/00 to 07/14.
+</p><p>
+
+In addition, new (singleton) control characters (in the C0 and C1 ranges) might
+be defined in the future.
+</p><p>
+
+Finally, new kinds of "segments" might be defined in the future using syntax
+similar to extended segments:
+</p><p>
+01/11 02/05 02/15 F M L
+</p><p>
+For this format, F is in the range 03/05 to 3/15.  M and L are as defined
+in extended segments.  Such a segment will always be followed by the number
+of octets defined by M and L.  These octets can have arbitrary values and
+need not follow the internal structure defined for current extended
+segments.
+</p><p>
+
+If extensions to this specification are defined in the future, then any string
+incorporating instances of such extensions must start with one of the following
+control sequences:
+</p><div class="informaltable"><table border="0"><colgroup><col align="left" class="c1" /><col align="left" class="c2" /></colgroup><tbody><tr><td align="left">01/11 02/03 V 03/00</td><td align="left">ignoring extensions is OK</td></tr><tr><td align="left">01/11 02/03 V 03/01</td><td align="left">ignoring extensions is not OK</td></tr></tbody></table></div><p>
+
+In either case, V is in the range 02/00 to 02/15 and indicates the major
+version
+minus one of the specification being used.  These version control sequences are
+for use by clients that implement earlier versions, but have implemented a
+general parser.  The first control sequence indicates that it is acceptable to
+ignore all extension control sequences; no mandatory information will be lost
+in the process.  The second control sequence indicates that it is unacceptable
+to ignore any extension control sequences; mandatory information would be lost
+in the process.  In general, it will be up to the client generating the
+Compound Text to decide which control sequence to use.
+</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Errors"></a>Errors</h2></div></div></div><p>
+
+If a Compound Text string does not match the specification here (e.g., uses
+undefined control characters, or undefined control sequences, or incorrectly
+formatted extended segments), it is best to treat the entire string as invalid,
+except as indicated by a version control sequence.
+</p></div></div></body></html>

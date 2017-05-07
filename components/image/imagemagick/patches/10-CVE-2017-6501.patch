@@ -1,0 +1,31 @@
+From 4e2a12626b681f8fbfab79bf3632cf5dbaf1ca41 Mon Sep 17 00:00:00 2001
+From: Cristy <urban-warrior@imagemagick.org>
+Date: Thu, 9 Feb 2017 18:13:47 -0500
+Subject: [PATCH] Check for image list before we destroy the last image in XCF
+ coder
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+patch sent privately by Андрей Черный
+
+bug-debian: https://bugs.debian.org/856881
+origin: https://github.com/ImageMagick/ImageMagick/commit/d31fec57e9dfb0516deead2053a856e3c71e9751
+---
+ coders/xcf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/coders/xcf.c b/coders/xcf.c
+index 083f217ca..2feef82ff 100644
+--- a/coders/xcf.c
++++ b/coders/xcf.c
+@@ -1445,7 +1445,8 @@ static Image *ReadXCFImage(const ImageInfo *image_info,ExceptionInfo *exception)
+   }
+ 
+   (void) CloseBlob(image);
+-  DestroyImage(RemoveFirstImageFromList(&image));
++  if (GetNextImageInList(image) != (Image *) NULL)
++    DestroyImage(RemoveFirstImageFromList(&image));
+   if (image_type == GIMP_GRAY)
+     image->type=GrayscaleType;
+   return(GetFirstImageInList(image));

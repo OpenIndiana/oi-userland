@@ -1,0 +1,340 @@
+--- /dev/null	2007-06-13 17:00:01.000000000 +0100
++++ avahi-0.6.19/man/avahi-daemon-bridge-dsd.1	2007-06-13 17:07:14.447743000 +0100
+@@ -0,0 +1,61 @@
++.TH avahi-daemon-bridge-dsd 1 User Manuals
++.SH NAME
++avahi-daemon-bridge-dsd \- The Avahi daemon bridge to dsd
++.SH SYNOPSIS
++\fBavahi-daemon-bridge-dsd [\fIoptions\fB]
++
++avahi-daemon-bridge-dsd --kill\fB
++
++avahi-daemon-bridge-dsd --check\fB
++\f1
++.SH DESCRIPTION
++The daemon implements a DBUS interface which provides a rich object oriented interface to DBUS enabled applications which browse for or register for services.
++
++Instead of implementing Apple's ZeroConf architecture (also known as "Rendezvous" or "Bonjour") it makes calls to the DNS Service Discovery API provided by Bonjour and so functions as a Bonjour client.
++.SH OPTIONS
++.TP
++\fB-D | --daemonize\f1
++Daemonize after startup. Implies \fB--syslog\f1
++.TP
++\fB-s | --syslog\f1
++Log to syslog instead of STDERR. Implied by \fB--daemonize\f1
++.TP
++\fB--debug\f1
++Increase verbosity to debug level
++.TP
++\fB--no-drop-root\f1
++Don't drop root priviliges after startup and don't require daemon to be started as root. We recommend not to use this option.
++.TP
++\fB--no-chroot\f1
++Don't \fBchroot(2)\f1 the daemon. This option is only available when compiled with chroot() support.
++.TP
++\fB--no-proctitle\f1
++Don't change the process name while running. Unless this option is specified avahi will reflect it's current state and selected host name in the process title.
++.TP
++\fB-k | --kill\f1
++Kill an already running avahi-daemon-bridge-dsd. (equivalent to sending a SIGTERM)
++.TP
++\fB-r | --reload\f1
++Tell an already running avahi-daemon-bridge-dsd to reread the files from \fI/etc/avahi/services/\f1. (equivalent to sending a SIGHUP)
++.TP
++\fB-c | --check\f1
++Return 0 as return code when avahi-daemon-bridge-dsd is already running.
++.TP
++\fB-h | --help\f1
++Show help
++.TP
++\fB-v | --version\f1
++Show version information 
++.SH FILES
++\fI/etc/avahi/hosts\f1: additional static hostname mappings to publish in mDNS,
++see \fBavahi.hosts(5)\f1 for more information.
++
++\fI/etc/avahi/services/*.service\f1: static service definitions, see \fBavahi.service(5)\f1 for more information.
++.SH SIGNALS
++\fISIGINT, SIGTERM, SIGQUIT\f1: avahi-daemon will shutdown. This is issued by passing --kill to avahi-daemon.
++
++\fISIGHUP\f1: avahi-daemon-bridge-dsd will reload and static service definitions from \fI/etc/avahi/services/\f1.
++
++.SH SEE ALSO
++.SH COMMENTS
++This man page was written using \fBxml2man(1)\f1 by Padraig O'Briain.
+--- /dev/null	2007-06-13 17:00:01.000000000 +0100
++++ avahi-0.6.19/man/avahi-daemon-bridge-dsd.1.xml.in	2007-06-13 17:07:33.097758000 +0100
+@@ -0,0 +1,117 @@
++<?xml version="1.0"?><!--*-nxml-*-->
++<!DOCTYPE manpage SYSTEM "xmltoman.dtd">
++<?xml-stylesheet type="text/xsl" href="xmltoman.xsl" ?>
++
++<!-- $Id: avahi-daemon.1.xml.in 1138 2006-02-14 22:13:30Z lennart $ -->
++
++<!-- 
++  This file is part of avahi.
++ 
++  avahi is free software; you can redistribute it and/or modify it
++  under the terms of the GNU Lesser General Public License as
++  published by the Free Software Foundation; either version 2.1 of the
++  License, or (at your option) any later version.
++ 
++  avahi is distributed in the hope that it will be useful, but WITHOUT
++  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
++  Public License for more details.
++ 
++  You should have received a copy of the GNU Lesser General Public
++  License along with avahi; if not, write to the Free Software
++  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
++  USA.
++-->
++
++  <manpage name="avahi-daemon-bridge-dsd" section="1" desc="The Avahi daemon">
++
++	<synopsis>
++      <cmd>avahi-daemon [<arg>options</arg>]</cmd>
++      <cmd>avahi-daemon <opt>--kill</opt></cmd>
++      <cmd>avahi-daemon <opt>--check</opt></cmd>
++	</synopsis>
++
++     <description>
++      <p>The daemon implements a DBUS interface which provides a 
++      rich object oriented interface to DBUS enabled applications which
++      browse for or register for services.</p>
++
++      <p>Instead of implementing Apple's ZeroConf architecture (also known as 
++      "Rendezvous" or "Bonjour") it makes calls to the DNS Service Discovery
++      API provided by Bonjour and so functions as a Bonjour client.</p>
++    </description>
++      
++	<options>
++
++	  <option>
++		<p><opt>-D | --daemonize</opt></p>
++		<optdesc><p>Daemonize after startup. Implies <opt>--syslog</opt></p></optdesc>
++	  </option>
++
++      <option>
++        <p><opt>-s | --syslog</opt></p>
++        <optdesc><p>Log to syslog instead of STDERR. Implied by <opt>--daemonize</opt></p></optdesc>
++      </option>
++
++      <option>
++        <p><opt>--debug</opt></p>
++        <optdesc><p>Increase verbosity to debug level</p></optdesc>
++      </option>
++
++      <option>
++        <p><opt>--no-drop-root</opt></p>
++        <optdesc><p>Don't drop root priviliges after startup and don't require daemon to be started as root. We recommend not to use this option.</p></optdesc>
++      </option>
++
++      <option>
++        <p><opt>--no-chroot</opt></p>
++        <optdesc><p>Don't <manref section="2" name="chroot"/> the daemon. This option is only available when compiled with chroot() support.</p></optdesc>
++      </option>
++
++      <option>
++        <p><opt>--no-proctitle</opt></p>
++        <optdesc><p>Don't change the process name while
++        running. Unless this option is specified avahi will reflect
++        it's current state and selected host name in the process
++        title.</p></optdesc>
++      </option>
++
++	  <option>
++		<p><opt>-k | --kill</opt></p>
++		<optdesc><p>Kill an already running avahi-daemon-bridge-dsd. (equivalent to sending a SIGTERM)</p></optdesc>
++	  </option>
++
++	  <option>
++		<p><opt>-c | --check</opt></p>
++		<optdesc><p>Return 0 as return code when avahi-daemon-bridge-dsd is already running.</p></optdesc>
++	  </option>
++
++	  <option>
++		<p><opt>-h | --help</opt></p>
++		<optdesc><p>Show help</p></optdesc>
++	  </option>
++
++	  <option>
++		<p><opt>-v | --version</opt></p>
++		<optdesc><p>Show version information </p></optdesc>
++	  </option>
++
++	</options>
++
++    <section name="Files">
++      
++    </section>
++
++    <section name="Signals">
++      <p><arg>SIGINT, SIGTERM, SIGQUIT</arg>: avahi-daemon-bridge-dsd will shutdown. This is issued by passing --kill to avahi-daemon-bridge-dsd.</p>
++    </section>
++
++	<section name="See also">
++	</section>
++	
++	<section name="Comments">
++	  <p>This man page was written using <manref name="xml2man" section="1"
++		  href="http://masqmail.cx/xml2man/"/> by Padraig O'Briain.</p>
++	</section>
++	
++  </manpage>
+--- /usr/tmp/clean/avahi-0.6.19/man/avahi-browse.1	Wed May  9 15:45:42 2007
++++ avahi-0.6.19/man/avahi-browse.1	Wed Jun 13 16:08:06 2007
+@@ -13,7 +13,7 @@
+ avahi-browse-domains [\fIoptions\fB]
+ \f1
+ .SH DESCRIPTION
+-Browse for mDNS/DNS-SD network services and browsing domains using the Avahi daemon.
++Browse for mDNS/DNS-SD network services and browsing domains using the Avahi daemon. The daemon is not the standard Avahi daemon but a proxy to a Bonjour daemon.
+ .SH OPTIONS
+ Specify a DNS-SD service type (e.g. _http._tcp) to browse for on the command line, or \fB-a\f1 to browse for all available service types. Items that appear on the network are prefixed with "+", items that disappear are prefixed with "-". If \fB--resolve\f1 is passed items that are resolved are prefixed with "=".
+ .TP
+@@ -55,9 +55,7 @@
+ .TP
+ \fB-V | --version\f1
+ Show version information.
+-.SH AUTHORS
+-The Avahi Developers <avahi (at) lists (dot) freedesktop (dot) org>; Avahi is available from \fBhttp://avahi.org/\f1
+ .SH SEE ALSO
+-\fBavahi-publish(1)\f1, \fBavahi-resolve(1)\f1, \fBavahi-daemon(8)\f1
++\fBavahi-publish(1)\f1, \fBavahi-resolve(1)\f1
+ .SH COMMENTS
+ This man page was written using \fBxml2man(1)\f1 by Oliver Kurth.
+--- /usr/tmp/clean/avahi-0.6.19/man/avahi-discover.1	Wed May  9 15:45:43 2007
++++ avahi-0.6.19/man/avahi-discover.1	Wed Jun 13 15:42:13 2007
+@@ -5,12 +5,10 @@
+ \fBavahi-discover
+ \f1
+ .SH DESCRIPTION
+-Show a real-time graphical browse list for mDNS/DNS-SD network services running on the local LAN using the Avahi daemon.
++Show a real-time graphical browse list for mDNS/DNS-SD network services running on the local LAN using the Avahi daemon. The daemon is not the standard Avahi daemon but a proxy to a Bonjour daemon.
+ .SH OPTIONS
+ avahi-discover takes no command line arguments at the moment.
+-.SH AUTHORS
+-The Avahi Developers <avahi (at) lists (dot) freedesktop (dot) org>; Avahi is available from \fBhttp://avahi.org/\f1
+ .SH SEE ALSO
+-\fBavahi-daemon(8)\f1, \fBavahi-browse(1)\f1
++\fBavahi-browse(1)\f1
+ .SH COMMENTS
+ This man page was written using \fBxml2man(1)\f1 by Oliver Kurth.
+--- /usr/tmp/clean/avahi-0.6.19/man/avahi-publish.1	Wed May  9 15:45:43 2007
++++ avahi-0.6.19/man/avahi-publish.1	Wed Jun 13 15:44:27 2007
+@@ -11,7 +11,7 @@
+ avahi-publish-address [\fIoptions\fB] \fIhost name\fB \fIaddress\fB
+ \f1
+ .SH DESCRIPTION
+-Register an mDNS/DNS-SD service or host name/address mapping using the Avahi daemon.
++Register an mDNS/DNS-SD service or host name/address mapping using the Avahi daemon. The daemon is not the standard Avahi daemon but a proxy to a Bonjour daemon.
+ .SH OPTIONS
+ When calling in service registration mode, specify a DNS-SD service name (e.g. "Lennart's Files"), a service type (e.g. _http._tcp) and an IP port number for the service, optionally followed by any number of TXT record strings on the command line. When calling in address/host name registration mode specify a fully qualified host name and an address (IPv4 or IPv6).
+ .TP
+@@ -41,9 +41,7 @@
+ .TP
+ \fB-V | --version\f1
+ Show version information.
+-.SH AUTHORS
+-The Avahi Developers <avahi (at) lists (dot) freedesktop (dot) org>; Avahi is available from \fBhttp://avahi.org/\f1
+ .SH SEE ALSO
+-\fBavahi-resolve(1)\f1, \fBavahi-browse(1)\f1, \fBavahi-daemon(8)\f1
++\fBavahi-resolve(1)\f1, \fBavahi-browse(1)\f1
+ .SH COMMENTS
+ This man page was written using \fBxml2man(1)\f1 by Oliver Kurth.
+--- /usr/tmp/clean/avahi-0.6.22/man/avahi-resolve.1	Mon Dec 17 15:40:46 2007
++++ avahi-0.6.22/man/avahi-resolve.1	Tue Dec 18 08:38:39 2007
+@@ -11,7 +11,7 @@
+ avahi-resolve-address \fIaddress ...\fB
+ \f1
+ .SH DESCRIPTION
+-Resolve one or more mDNS/DNS host name(s) to IP address(es) (and vice versa) using the Avahi daemon.
++Resolve one or more mDNS/DNS host name(s) to IP address(es) (and vice versa) using the Avahi daemon. The daemon is not the standard Avahi daemon but a proxy to a Bonjour daemon.
+ .SH OPTIONS
+ When passing -n, specify one or more fully qualified mDNS/DNS host name(s) (e.g. "foo.local") to resolve into IP addresses on the command line. When passing -a, specify one or more IP address to resolve into host names.
+ 
+@@ -39,9 +39,7 @@
+ .TP
+ \fB-V | --version\f1
+ Show version information.
+-.SH AUTHORS
+-The Avahi Developers <avahi (at) lists (dot) freedesktop (dot) org>; Avahi is available from \fBhttp://avahi.org/\f1
+ .SH SEE ALSO
+-\fBavahi-publish-address(1)\f1, \fBavahi-daemon(8)\f1
++\fBavahi-publish-address(1)\f1
+ .SH COMMENTS
+ This man page was written using \fBxml2man(1)\f1 by Oliver Kurth.
+--- /usr/tmp/clean/avahi-0.6.22/man/avahi-set-host-name.1	Mon Dec 17 15:40:46 2007
++++ avahi-0.6.22/man/avahi-set-host-name.1	Tue Dec 18 08:39:22 2007
+@@ -5,7 +5,7 @@
+ \fBavahi-set-host-name \fIhost-name\fB
+ \f1
+ .SH DESCRIPTION
+-Set the mDNS host name of a currently running Avahi daemon. The effect of this operation is not persistent across daemon restarts. This operation is usually privileged.
++Set the mDNS host name of a currently running Avahi daemon. The effect of this operation is not persistent across daemon restarts. This operation is usually privileged. The daemon is not the standard Avahi daemon but a proxy to a Bonjour daemon.
+ .SH OPTIONS
+ .TP
+ \fB-v | --verbose\f1
+@@ -16,9 +16,5 @@
+ .TP
+ \fB-V | --version\f1
+ Show version information.
+-.SH AUTHORS
+-The Avahi Developers <avahi (at) lists (dot) freedesktop (dot) org>; Avahi is available from \fBhttp://avahi.org/\f1
+-.SH SEE ALSO
+-\fBavahi-daemon(8)\f1
+ .SH COMMENTS
+ This man page was written using \fBxml2man(1)\f1 by Oliver Kurth.
+--- /usr/tmp/clean/avahi-0.6.23/man/bssh.1	2008-06-24 00:29:07.000000000 +0100
++++ avahi-0.6.23/man/bssh.1	2008-06-25 13:56:28.037867000 +0100
+@@ -28,8 +28,6 @@
+ .TP
+ \fB-h | --help\f1
+ Show help.
+-.SH AUTHORS
+-The Avahi Developers <avahi (at) lists (dot) freedesktop (dot) org>; Avahi is available from \fBhttp://avahi.org/\f1
+ .SH SEE ALSO
+ \fBavahi-browse(1)\f1, \fBssh(1)\f1, \fBvncviewer(1)\f1
+ .SH COMMENTS
+--- /usr/tmp/clean/avahi-0.6.28/man/Makefile.am	2010-08-26 01:51:39.039153001 +0100
++++ avahi-0.6.28/man/Makefile.am	2011-01-20 14:48:39.364580063 +0000
+@@ -45,6 +45,11 @@
+ 	avahi-autoipd.action.8.xml \
+ 	bssh.1.xml
+ 
++if HAVE_BONJOUR
++noinst_DATA += \
++       avahi-daemon-bridge-dsd.1.xml
++endif
++
+ CLEANFILES = \
+ 	$(noinst_DATA)
+ 
+@@ -81,6 +86,15 @@
+ endif
+ endif
+ 
++if HAVE_BONJOUR
++man_MANS += \
++	avahi-daemon-bridge-dsd.1
++
++avahi-daemon-bridge-dsd.1.xml: avahi-daemon-bridge-dsd.1.xml.in Makefile
++	sed -e 's,@PACKAGE_BUGREPORT\@,$(PACKAGE_BUGREPORT),g' \
++	-e 's,@PACKAGE_URL\@,$(PACKAGE_URL),g' $< > $@
++endif
++
+ %.xml: %.xml.in Makefile
+ 	$(AM_V_GEN) sed -e 's,@pkgsysconfdir\@,$(pkgsysconfdir),g' \
+ 		-e 's,@servicedir\@,$(servicedir),g' \
+@@ -130,6 +144,10 @@
+ 	xmltoman.xsl \
+ 	xmltoman.dtd
+ 
++if HAVE_BONJOUR
++EXTRA_DIST += \
++	avahi-daemon-bridge-dsd.1.xml.in
++endif
+ 
+ if HAVE_DBUS
+ 

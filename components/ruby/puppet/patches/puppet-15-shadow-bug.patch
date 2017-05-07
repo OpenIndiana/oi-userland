@@ -1,0 +1,14 @@
+Fixes a bug introduced by PUP-229.
+Modification notice injected by puppet-09-role-shell.patch.
+This fix has already been integrated into the Puppet master branch.
+
+--- puppet-3.8.6/lib/puppet/provider/user/user_role_add.rb.orig	2016-10-07 10:04:30.993459833 +0000
++++ puppet-3.8.6/lib/puppet/provider/user/user_role_add.rb	2016-10-07 10:05:07.479333101 +0000
+@@ -191,6 +191,7 @@
+   end
+ 
+   def password_min_age
++    return :absent unless shadow_entry
+     shadow_entry[3].empty? ? -1 : shadow_entry[3]
+   end
+ 

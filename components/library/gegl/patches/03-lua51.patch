@@ -1,0 +1,44 @@
+From a5b601502d3293966994911cfcab6a0eb0d68e41 Mon Sep 17 00:00:00 2001
+From: Vincent Untz <vuntz@gnome.org>
+Date: Wed, 11 Jan 2012 09:52:25 +0100
+Subject: [PATCH] Fix build with lua 5.2 by not using API deprecated in 5.1
+ already
+
+https://bugzilla.gnome.org/show_bug.cgi?id=667675
+---
+ operations/workshop/external/gluas.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/operations/workshop/external/gluas.c b/operations/workshop/external/gluas.c
+index 536f1d9..dbcc362 100644
+--- a/operations/workshop/external/gluas.c
++++ b/operations/workshop/external/gluas.c
+@@ -97,7 +97,7 @@ static int l_progress  (lua_State * lua);
+ static int l_flush     (lua_State * lua);
+ static int l_print     (lua_State * lua);
+ 
+-static const luaL_reg gluas_functions[] =
++static const luaL_Reg gluas_functions[] =
+ {
+     {"set_rgba",    l_set_rgba},
+     {"get_rgba",    l_get_rgba},
+@@ -122,7 +122,7 @@ static const luaL_reg gluas_functions[] =
+ };
+ static void
+ register_functions (lua_State      *L,
+-                    const luaL_reg *l)
++                    const luaL_Reg *l)
+ {
+   for (;l->name; l++)
+     lua_register (L, l->name, l->func);
+@@ -146,7 +146,7 @@ drawable_lua_process (GeglOperation       *op,
+     lua_State *L;
+     Priv p;
+ 
+-    L = lua_open ();
++    L = luaL_newstate ();
+     luaL_openlibs (L);
+ 
+     register_functions (L, gluas_functions);
+-- 
+1.7.8

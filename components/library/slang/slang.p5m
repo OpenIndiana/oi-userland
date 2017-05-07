@@ -1,0 +1,223 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform path=usr/bin/$(MACH64) -> drop>
+<transform file path=etc/slsh/slsh.rc$ -> default mode 0644>
+<transform file path=etc/slsh/slsh.rc$ -> default preserve renamenew>
+<transform file path=usr/share/slsh/scripts/.+ -> default mode 0555>
+
+set name=pkg.fmri value=pkg:/library/slang@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Library designed to allow a developer to create robust multi-platform software"
+set name=pkg.description value="S-Lang is a multi-platform programmer's library designed to allow a developer to create robust multi-platform software."
+set name=com.oracle.info.description value="the S-Lang library"
+set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=org.opensolaris.arc-caseid \
+    value=PSARC/2008/135
+
+license slang.license license=GPLv2
+
+file path=etc/slsh/slsh.rc
+file path=usr/bin/$(MACH64)/slsh
+file path=usr/bin/slsh
+file path=usr/include/slang.h
+file path=usr/include/slcurses.h
+link path=usr/lib/$(MACH64)/libslang.so target=libslang.so.2
+file path=usr/lib/$(MACH64)/libslang.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libslang.so.2 \
+    target=libslang.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/pkgconfig/slang.pc
+file path=usr/lib/$(MACH64)/slang/v2/modules/base64-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/chksum-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/csv-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/fcntl-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/fork-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/histogram-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/iconv-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/json-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/pcre-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/png-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/rand-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/select-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/slsmg-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/socket-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/stats-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/sysconf-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/termios-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/varray-module.so
+file path=usr/lib/$(MACH64)/slang/v2/modules/zlib-module.so
+link path=usr/lib/libslang.so target=libslang.so.2
+file path=usr/lib/libslang.so.$(COMPONENT_VERSION)
+link path=usr/lib/libslang.so.2 target=libslang.so.$(COMPONENT_VERSION)
+file path=usr/lib/pkgconfig/slang.pc
+file path=usr/lib/slang/v2/modules/base64-module.so
+file path=usr/lib/slang/v2/modules/chksum-module.so
+file path=usr/lib/slang/v2/modules/csv-module.so
+file path=usr/lib/slang/v2/modules/fcntl-module.so
+file path=usr/lib/slang/v2/modules/fork-module.so
+file path=usr/lib/slang/v2/modules/histogram-module.so
+file path=usr/lib/slang/v2/modules/iconv-module.so
+file path=usr/lib/slang/v2/modules/json-module.so
+file path=usr/lib/slang/v2/modules/pcre-module.so
+file path=usr/lib/slang/v2/modules/png-module.so
+file path=usr/lib/slang/v2/modules/rand-module.so
+file path=usr/lib/slang/v2/modules/select-module.so
+file path=usr/lib/slang/v2/modules/slsmg-module.so
+file path=usr/lib/slang/v2/modules/socket-module.so
+file path=usr/lib/slang/v2/modules/stats-module.so
+file path=usr/lib/slang/v2/modules/sysconf-module.so
+file path=usr/lib/slang/v2/modules/termios-module.so
+file path=usr/lib/slang/v2/modules/varray-module.so
+file path=usr/lib/slang/v2/modules/zlib-module.so
+file path=usr/share/doc/slang/v2/COPYING
+file path=usr/share/doc/slang/v2/changes.txt
+file path=usr/share/doc/slang/v2/cref.txt
+file path=usr/share/doc/slang/v2/cslang.txt
+file path=usr/share/doc/slang/v2/slang.txt
+file path=usr/share/doc/slang/v2/slangdoc.html
+file path=usr/share/doc/slang/v2/slangfun.txt
+file path=usr/share/doc/slsh/html/slshfun-1.html
+file path=usr/share/doc/slsh/html/slshfun-10.html
+file path=usr/share/doc/slsh/html/slshfun-11.html
+file path=usr/share/doc/slsh/html/slshfun-12.html
+file path=usr/share/doc/slsh/html/slshfun-13.html
+file path=usr/share/doc/slsh/html/slshfun-2.html
+file path=usr/share/doc/slsh/html/slshfun-3.html
+file path=usr/share/doc/slsh/html/slshfun-4.html
+file path=usr/share/doc/slsh/html/slshfun-5.html
+file path=usr/share/doc/slsh/html/slshfun-6.html
+file path=usr/share/doc/slsh/html/slshfun-7.html
+file path=usr/share/doc/slsh/html/slshfun-8.html
+file path=usr/share/doc/slsh/html/slshfun-9.html
+file path=usr/share/doc/slsh/html/slshfun.html
+file path=usr/share/man/man1/slsh.1
+file path=usr/share/slsh/arrayfuns.sl
+file path=usr/share/slsh/autoload.sl
+file path=usr/share/slsh/base64.sl
+file path=usr/share/slsh/chksum.sl
+file path=usr/share/slsh/cmaps/cool.map
+file path=usr/share/slsh/cmaps/coolwarm.map
+file path=usr/share/slsh/cmaps/copper.map
+file path=usr/share/slsh/cmaps/cubicl.map
+file path=usr/share/slsh/cmaps/cubicyf.map
+file path=usr/share/slsh/cmaps/drywet.map
+file path=usr/share/slsh/cmaps/ds9b.map
+file path=usr/share/slsh/cmaps/ds9sls.map
+file path=usr/share/slsh/cmaps/edge.map
+file path=usr/share/slsh/cmaps/gebco.map
+file path=usr/share/slsh/cmaps/globe.map
+file path=usr/share/slsh/cmaps/gray.map
+file path=usr/share/slsh/cmaps/haxby.map
+file path=usr/share/slsh/cmaps/hot.map
+file path=usr/share/slsh/cmaps/jet.map
+file path=usr/share/slsh/cmaps/no_green.map
+file path=usr/share/slsh/cmaps/ocean.map
+file path=usr/share/slsh/cmaps/polar.map
+file path=usr/share/slsh/cmaps/rainbow.map
+file path=usr/share/slsh/cmaps/red2green.map
+file path=usr/share/slsh/cmaps/relief.map
+file path=usr/share/slsh/cmaps/sealand.map
+file path=usr/share/slsh/cmaps/seis.map
+file path=usr/share/slsh/cmaps/split.map
+file path=usr/share/slsh/cmaps/topo.map
+file path=usr/share/slsh/cmaps/wysiwyg.map
+file path=usr/share/slsh/cmdopt.sl
+file path=usr/share/slsh/csv.sl
+file path=usr/share/slsh/fcntl.sl
+file path=usr/share/slsh/fork.sl
+file path=usr/share/slsh/fswalk.sl
+file path=usr/share/slsh/glob.sl
+file path=usr/share/slsh/help/arrayfuns.hlp
+file path=usr/share/slsh/help/base64funs.hlp
+file path=usr/share/slsh/help/chksumfuns.hlp
+file path=usr/share/slsh/help/cmdopt.hlp
+file path=usr/share/slsh/help/csvfuns.hlp
+file path=usr/share/slsh/help/forkfuns.hlp
+file path=usr/share/slsh/help/fswalk.hlp
+file path=usr/share/slsh/help/glob.hlp
+file path=usr/share/slsh/help/histfuns.hlp
+file path=usr/share/slsh/help/jsonfuns.hlp
+file path=usr/share/slsh/help/listfuns.hlp
+file path=usr/share/slsh/help/onigfuns.hlp
+file path=usr/share/slsh/help/pcrefuns.hlp
+file path=usr/share/slsh/help/pngfuns.hlp
+file path=usr/share/slsh/help/print.hlp
+file path=usr/share/slsh/help/process.hlp
+file path=usr/share/slsh/help/profile.hlp
+file path=usr/share/slsh/help/randfuns.hlp
+file path=usr/share/slsh/help/readascii.hlp
+file path=usr/share/slsh/help/require.hlp
+file path=usr/share/slsh/help/setfuns.hlp
+file path=usr/share/slsh/help/slsmg.hlp
+file path=usr/share/slsh/help/sockfuns.hlp
+file path=usr/share/slsh/help/statsfuns.hlp
+file path=usr/share/slsh/help/structfuns.hlp
+file path=usr/share/slsh/histogram.sl
+file path=usr/share/slsh/iconv.sl
+file path=usr/share/slsh/json.sl
+file path=usr/share/slsh/listfuns.sl
+file path=usr/share/slsh/onig.sl
+file path=usr/share/slsh/pcre.sl
+file path=usr/share/slsh/png.sl
+file path=usr/share/slsh/print.sl
+file path=usr/share/slsh/process.sl
+file path=usr/share/slsh/profile.sl
+file path=usr/share/slsh/rand.sl
+file path=usr/share/slsh/readascii.sl
+file path=usr/share/slsh/require.sl
+file path=usr/share/slsh/rline/complete.sl
+file path=usr/share/slsh/rline/editfuns.sl
+file path=usr/share/slsh/rline/editor.sl
+file path=usr/share/slsh/rline/emacskeys.sl
+file path=usr/share/slsh/rline/history.sl
+file path=usr/share/slsh/rline/histsrch.sl
+file path=usr/share/slsh/rline/slrline.rc
+file path=usr/share/slsh/rline/vikeys.sl
+file path=usr/share/slsh/scripts/jpegsize
+file path=usr/share/slsh/scripts/lsrpm
+file path=usr/share/slsh/scripts/sldb
+file path=usr/share/slsh/scripts/slprof
+file path=usr/share/slsh/scripts/slstkchk
+file path=usr/share/slsh/scripts/svnsh
+file path=usr/share/slsh/select.sl
+file path=usr/share/slsh/setfuns.sl
+file path=usr/share/slsh/sldb.sl
+file path=usr/share/slsh/sldbcore.sl
+file path=usr/share/slsh/sldbsock.sl
+file path=usr/share/slsh/slshhelp.sl
+file path=usr/share/slsh/slshrl.sl
+file path=usr/share/slsh/slsmg.sl
+file path=usr/share/slsh/socket.sl
+file path=usr/share/slsh/stats.sl
+file path=usr/share/slsh/statslib/ad_test.sl
+file path=usr/share/slsh/statslib/ks_test.sl
+file path=usr/share/slsh/statslib/kuiper.sl
+file path=usr/share/slsh/stkcheck.sl
+file path=usr/share/slsh/structfuns.sl
+file path=usr/share/slsh/sysconf.sl
+file path=usr/share/slsh/termios.sl
+file path=usr/share/slsh/varray.sl
+file path=usr/share/slsh/zlib.sl

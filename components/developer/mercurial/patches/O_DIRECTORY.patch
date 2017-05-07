@@ -1,0 +1,12 @@
+illumos doesn't have O_DIRECTORY and python doesn't expose it
+--- mercurial-4.1.3/mercurial/posix.py.1	2017-04-19 00:07:56.250753153 +0300
++++ mercurial-4.1.3/mercurial/posix.py	2017-04-19 00:10:21.064125742 +0300
+@@ -651,7 +651,7 @@
+     dirname, basename = os.path.split(path)
+     bakwdfd = None
+     if dirname:
+-        bakwdfd = os.open('.', os.O_DIRECTORY)
++        bakwdfd = os.open('.', os.O_RDONLY)
+         os.chdir(dirname)
+     sock.bind(basename)
+     if bakwdfd:

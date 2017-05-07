@@ -1,0 +1,153 @@
+--- dbus-1.10.12/dbus/dbus-sysdeps-unix.c.~3~	2016-11-02 12:12:29.663221575 +0300
++++ dbus-1.10.12/dbus/dbus-sysdeps-unix.c	2016-11-02 12:12:29.718107932 +0300
+@@ -3753,12 +3753,6 @@
+   DBusString uuid;
+   dbus_bool_t retval;
+ 
+-  if (_dbus_check_setuid ())
+-    {
+-      dbus_set_error_const (error, DBUS_ERROR_NOT_SUPPORTED,
+-                            "Unable to autolaunch when setuid");
+-      return FALSE;
+-    }
+ 
+   _DBUS_ASSERT_ERROR_IS_CLEAR (error);
+   retval = FALSE;
+@@ -3912,12 +3906,6 @@
+ 
+   _DBUS_ASSERT_ERROR_IS_CLEAR (error);
+ 
+-  if (_dbus_check_setuid ())
+-    {
+-      dbus_set_error_const (error, DBUS_ERROR_NOT_SUPPORTED,
+-                            "Unable to find launchd socket when setuid");
+-      return FALSE;
+-    }
+ 
+   i = 0;
+   argv[i] = "launchctl";
+@@ -3959,12 +3947,6 @@
+   dbus_bool_t valid_socket;
+   DBusString socket_path;
+ 
+-  if (_dbus_check_setuid ())
+-    {
+-      dbus_set_error_const (error, DBUS_ERROR_NOT_SUPPORTED,
+-                            "Unable to find launchd socket when setuid");
+-      return FALSE;
+-    }
+ 
+   if (!_dbus_string_init (&socket_path))
+     {
+@@ -4371,61 +4353,6 @@
+ }
+ 
+ /**
+- * **NOTE**: If you modify this function, please also consider making
+- * the corresponding change in GLib.  See
+- * glib/gutils.c:g_check_setuid().
+- *
+- * Returns TRUE if the current process was executed as setuid (or an
+- * equivalent __libc_enable_secure is available).  See:
+- * http://osdir.com/ml/linux.lfs.hardened/2007-04/msg00032.html
+- */
+-dbus_bool_t
+-_dbus_check_setuid (void)
+-{
+-  /* TODO: get __libc_enable_secure exported from glibc.
+-   * See http://www.openwall.com/lists/owl-dev/2012/08/14/1
+-   */
+-#if 0 && defined(HAVE_LIBC_ENABLE_SECURE)
+-  {
+-    /* See glibc/include/unistd.h */
+-    extern int __libc_enable_secure;
+-    return __libc_enable_secure;
+-  }
+-#elif defined(HAVE_ISSETUGID)
+-  /* BSD: http://www.freebsd.org/cgi/man.cgi?query=issetugid&sektion=2 */
+-  return issetugid ();
+-#else
+-  uid_t ruid, euid, suid; /* Real, effective and saved user ID's */
+-  gid_t rgid, egid, sgid; /* Real, effective and saved group ID's */
+-
+-  /* We call into this function from _dbus_threads_init_platform_specific()
+-   * to make sure these are initialized before we start threading. */
+-  static dbus_bool_t check_setuid_initialised;
+-  static dbus_bool_t is_setuid;
+-
+-  if (_DBUS_UNLIKELY (!check_setuid_initialised))
+-    {
+-#ifdef HAVE_GETRESUID
+-      if (getresuid (&ruid, &euid, &suid) != 0 ||
+-          getresgid (&rgid, &egid, &sgid) != 0)
+-#endif /* HAVE_GETRESUID */
+-        {
+-          suid = ruid = getuid ();
+-          sgid = rgid = getgid ();
+-          euid = geteuid ();
+-          egid = getegid ();
+-        }
+-
+-      check_setuid_initialised = TRUE;
+-      is_setuid = (ruid != euid || ruid != suid ||
+-                   rgid != egid || rgid != sgid);
+-
+-    }
+-  return is_setuid;
+-#endif
+-}
+-
+-/**
+  * Read the address from the socket and append it to the string
+  *
+  * @param fd the socket
+--- dbus-1.7.10/dbus/dbus-sysdeps-pthread.c.orig	2013-10-08 19:40:40.000000000 +0200
++++ dbus-1.7.10/dbus/dbus-sysdeps-pthread.c	2014-04-12 07:58:43.561272285 +0200
+@@ -282,7 +282,6 @@
+    * so initialize them before any threads are allowed to enter.
+    */
+   check_monotonic_clock ();
+-  (void) _dbus_check_setuid ();
+ 
+   return TRUE;
+ }
+--- dbus-1.7.10/dbus/dbus-sysdeps.c.orig	2013-10-08 19:40:40.000000000 +0200
++++ dbus-1.7.10/dbus/dbus-sysdeps.c	2014-04-12 07:56:22.684966712 +0200
+@@ -184,11 +184,6 @@
+ const char*
+ _dbus_getenv (const char *varname)
+ {  
+-  /* Don't respect any environment variables if the current process is
+-   * setuid.  This is the equivalent of glibc's __secure_getenv().
+-   */
+-  if (_dbus_check_setuid ())
+-    return NULL;
+   return getenv (varname);
+ }
+ 
+--- dbus-1.10.8/dbus/dbus-sysdeps.h.~1~	2016-03-11 00:28:53.528206776 +0300
++++ dbus-1.10.8/dbus/dbus-sysdeps.h	2016-03-11 00:30:52.009252410 +0300
+@@ -94,7 +94,6 @@
+ 
+ void _dbus_abort (void) _DBUS_GNUC_NORETURN;
+ 
+-dbus_bool_t _dbus_check_setuid (void);
+ DBUS_PRIVATE_EXPORT
+ const char* _dbus_getenv (const char *varname);
+ DBUS_PRIVATE_EXPORT
+--- dbus-1.8.0/dbus/dbus-keyring.c	2013-10-08 19:40:39.000000000 +0200
++++ dbus-1.8.0/dbus/dbus-keyring.c	2014-04-12 08:07:28.729170059 +0200
+@@ -718,13 +718,6 @@
+   
+   _DBUS_ASSERT_ERROR_IS_CLEAR (error);
+ 
+-  if (_dbus_check_setuid ())
+-    {
+-      dbus_set_error_const (error, DBUS_ERROR_NOT_SUPPORTED,
+-                            "Unable to create DBus keyring when setuid");
+-      return NULL;
+-    }
+-  
+   keyring = NULL;
+   error_set = FALSE;
+   our_credentials = NULL;

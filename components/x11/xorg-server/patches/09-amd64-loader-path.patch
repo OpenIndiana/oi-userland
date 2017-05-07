@@ -1,0 +1,87 @@
+# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+
+--- a/hw/xfree86/loader/loadmod.c	Wed Sep 12 10:49:02 2012
++++ b/hw/xfree86/loader/loadmod.c	Wed Sep 12 10:52:48 2012
+@@ -166,6 +166,12 @@
+                 list[n][len - 1] = '/';
+                 list[n][len] = '\0';
+             }
++
++#ifdef SUNSOFT /* strip amd64/ off loader path if it's there */
++            if (strcmp(list[n] + (len - 6), "amd64/") == 0) {
++                    list[n][len - 6] = '\0';
++            }
++#endif
+             n++;
+         }
+         elem = strtok(NULL, ",");
+@@ -397,6 +403,24 @@
+     char *ret = NULL, tmpBuf[PATH_MAX];
+     struct stat stat_buf;
+ 
++#if defined(SUNSOFT) && defined(__x86)
++    Bool in_64_dir = FALSE;
++
++    if (strstr(dirpath, "/amd64") != NULL) {
++# if !(defined(__amd64) || defined(__amd64__))
++       return NULL;
++# else
++       in_64_dir = TRUE;
++# endif
++    }
++    /* After the 32-bit EOF, all modules under /usr/lib/xorg are 64-bit,
++       but legacy modules under /usr/X11/lib are still split into 32-bit
++       and 64-bit versions. Not in OpenIndiana */
++    //if (strncmp(dirpath, "/usr/X11/lib/modules/", 21) != 0) {
++    //    in_64_dir = TRUE;
++    //}
++#endif
++
+     dir = opendir(dirpath);
+     if (!dir)
+         return NULL;
+@@ -404,6 +428,12 @@
+     while ((direntry = readdir(dir))) {
+         if (direntry->d_name[0] == '.')
+             continue;
++
++#if defined(SUNSOFT) && (defined(__i386) || defined(__i386__))
++        /* skip 64-bit subdirectories when running 32-bit server */
++        if (strcmp(direntry->d_name, "amd64") == 0)
++            continue;
++#endif
+         snprintf(tmpBuf, PATH_MAX, "%s%s/", dirpath, direntry->d_name);
+         /* the stat with the appended / fails for normal files,
+            and works for sub dirs fine, looks a bit strange in strace
+@@ -414,6 +444,12 @@
+             continue;
+         }
+ 
++#if defined(SUNSOFT) && (defined(__amd64) || defined(__amd64__))
++        /* Don't match files in non-amd64 directories */
++        if (!in_64_dir)
++            continue;
++#endif
++
+ #ifdef __CYGWIN__
+         snprintf(tmpBuf, PATH_MAX, "cyg%s.dll", module);
+ #else

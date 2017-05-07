@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slrn
 COMPONENT_VERSION=	1.0.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://slrn.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -51,7 +52,6 @@ CONFIGURE_OPTIONS +=	--with-server-file=/etc/nntpserver
 CONFIGURE_OPTIONS +=	--with-slrnpull=/var/spool/slrnpull
 CONFIGURE_OPTIONS +=	--enable-spool
 CONFIGURE_OPTIONS +=	--with-ssl
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Needed to successfully link the 64-bit programs.
 CC +=			$(CC_BITS)

@@ -1,0 +1,58 @@
+--- dbus-1.4.14/Makefile.am-orig	2011-09-13 16:36:40.967786680 -0500
++++ dbus-1.4.14/Makefile.am	2011-09-13 16:36:45.644929457 -0500
+@@ -1,4 +1,4 @@
+-SUBDIRS=dbus bus tools test doc
++SUBDIRS=dbus bus tools doc
+ 
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = dbus-1.pc
+--- dbus-1.4.14/dbus/dbus-sysdeps-unix.c-orig	2011-09-13 16:41:50.420584386 -0500
++++ dbus-1.4.14/dbus/dbus-sysdeps-unix.c	2011-09-13 16:42:18.502907891 -0500
+@@ -56,6 +56,7 @@
+ #include <netdb.h>
+ #include <grp.h>
+ #include <arpa/inet.h>
++#include <alloca.h>
+ 
+ #ifdef HAVE_ERRNO_H
+ #include <errno.h>
+--- dbus-1.7.0/bus/Makefile.am.orig	Mon Apr 22 10:57:39 2013
++++ dbus-1.7.0/bus/Makefile.am	Mon Apr 22 11:13:30 2013
+@@ -7,6 +7,7 @@
+ 	$(THREAD_LIBS) \
+ 	$(ADT_LIBS) \
+ 	$(NETWORK_libs) \
++	$(X_EXTRA_LIBS) \
+ 	$(NULL)
+ 
+ DBUS_LAUNCHER_LIBS = \
+@@ -13,6 +14,7 @@
+ 	$(XML_LIBS) \
+ 	$(THREAD_LIBS) \
+ 	$(NETWORK_libs) \
++	$(X_EXTRA_LIBS) \
+ 	$(NULL)
+ 
+ AM_CPPFLAGS = \
+--- dbus-1.10.0/dbus/dbus-sysdeps-util-unix.c.orig	Fri Jan 30 18:16:24 2015
++++ dbus-1.10.0/dbus/dbus-sysdeps-util-unix.c	Mon Oct 26 14:18:30 2015
+@@ -522,7 +522,7 @@
+ #ifdef HAVE_SYSLOG_H
+   int logopts = LOG_PID;
+ 
+-#if HAVE_DECL_LOG_PERROR
++#if LOG_PERROR
+ #ifdef HAVE_SYSTEMD
+   if (!is_daemon || sd_booted () <= 0)
+ #endif
+--- dbus-1.10.0/dbus/Makefile.am.orig	Mon Oct 26 14:29:01 2015
++++ dbus-1.10.0/dbus/Makefile.am	Mon Oct 26 14:33:56 2015
+@@ -291,7 +291,7 @@
+ SYMBOL_EXPORT_LDFLAGS=
+ endif
+ 
+-libdbus_1_la_LIBADD= $(LIBDBUS_LIBS)
++libdbus_1_la_LIBADD= $(LIBDBUS_LIBS) $(X_EXTRA_LIBS)
+ libdbus_1_la_LDFLAGS = \
+ 	$(AM_LDFLAGS) \
+ 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \

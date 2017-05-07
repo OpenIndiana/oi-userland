@@ -45,7 +45,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 # -I argument needed to find the generated config.h file.
 # CC_BITS needed to ensure -m64 is used for 64-bit compile
-CONFIGURE_ENV += "CC=$(CC) -I. $(CC_BITS)"
+#CONFIGURE_ENV += "CC=$(CC) -I. $(CC_BITS)"
+CC += -I.
 
 # If the configure options are not explicitly set, then configure fails with:
 # configure: warning: CC=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/cc: invalid host type
@@ -59,9 +60,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_INSTALL_ARGS +=	prefix=$(PROTOUSRDIR)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 

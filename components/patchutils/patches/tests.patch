@@ -1,0 +1,398 @@
+diff -aru tests/U3/run-test tests-new/U3/run-test
+--- tests/U3/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/U3/run-test	2009-02-17 11:51:23.380758000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ #
+ # This is an interdiff(1) test case.
+ # Test: -U3 works correctly.
+diff -aru tests/broken1/run-test tests-new/broken1/run-test
+--- tests/broken1/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/broken1/run-test	2009-02-17 11:51:23.464365000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ . ${top_srcdir-.}/tests/common.sh
+ 
+diff -aru tests/combine1/run-test tests-new/combine1/run-test
+--- tests/combine1/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/combine1/run-test	2009-02-17 11:51:23.468772000 +0800
+@@ -96,6 +96,6 @@
+ [ -s errors ] && exit 1
+ 
+ # There should be no fuzz.
+-patch file.a-z < patches >fuzz || exit 1
+-[ -s errors ] && exit 1
++${PATCH} file.a-z < patches >fuzz || exit 1
++
+ exit 0
+diff -aru tests/common.sh tests-new/common.sh
+--- tests/common.sh	2008-06-11 18:01:28.000000000 +0800
++++ tests-new/common.sh	2009-02-17 11:51:23.492545000 +0800
+@@ -1,17 +1,17 @@
+ [ -n "$VERBOSE" ] && set -x
+-rm -rf ${ARENA:=test-arena}
++rm -rf ${ARENA:='test-arena'}
+ mkdir -p $ARENA
+ top_builddir=`cd ${top_builddir-.}; pwd`
+ INTERDIFF=${top_builddir}/src/interdiff
+ REDIFF=${top_builddir}/src/rediff
+-COMBINEDIFF=${top_builddir}/src/combinediff
+-FLIPDIFF=${top_builddir}/src/flipdiff
+-LSDIFF=${top_builddir}/src/lsdiff
+-GREPDIFF=${top_builddir}/src/grepdiff
+-FILTERDIFF=${top_builddir}/src/filterdiff
++COMBINEDIFF="${top_builddir}/src/interdiff --combine"
++FLIPDIFF="${top_builddir}/src/interdiff --flip"
++LSDIFF="${top_builddir}/src/filterdiff --list"
++GREPDIFF="${top_builddir}/src/filterdiff --grep"
++FILTERDIFF="${top_builddir}/src/filterdiff --filter"
+ SELECTDIFF=${top_builddir}/src/selectdiff
+ RECOUNTDIFF=${top_builddir}/recountdiff
+ UNWRAPDIFF=${top_builddir}/unwrapdiff
+-: ${DIFF:=diff}
+-: ${PATCH:=patch -s}
++: ${DIFF:='gdiff'}
++: ${PATCH:='gpatch -s'}
+ cd $ARENA
+diff -aru tests/flip1/run-test tests-new/flip1/run-test
+--- tests/flip1/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip1/run-test	2009-02-17 11:51:23.406380000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ # Test: Patch2 reduces to nothing after flip.
+@@ -29,7 +29,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip10/run-test tests-new/flip10/run-test
+--- tests/flip10/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip10/run-test	2009-02-17 11:51:23.419345000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -27,7 +27,7 @@
+ EOF
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip11/run-test tests-new/flip11/run-test
+--- tests/flip11/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip11/run-test	2009-02-17 11:51:23.526152000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -27,7 +27,7 @@
+ EOF
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip12/run-test tests-new/flip12/run-test
+--- tests/flip12/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip12/run-test	2009-02-17 11:51:23.382030000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -79,7 +79,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip13/run-test tests-new/flip13/run-test
+--- tests/flip13/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip13/run-test	2009-02-17 11:51:23.441401000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -87,7 +87,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip14/run-test tests-new/flip14/run-test
+--- tests/flip14/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip14/run-test	2009-02-17 11:51:23.411751000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -32,7 +32,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip15/run-test tests-new/flip15/run-test
+--- tests/flip15/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip15/run-test	2009-02-17 11:51:23.369179000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -27,7 +27,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip16/run-test tests-new/flip16/run-test
+--- tests/flip16/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip16/run-test	2009-02-17 11:51:23.372344000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -469,7 +469,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip17/run-test tests-new/flip17/run-test
+--- tests/flip17/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip17/run-test	2009-02-17 11:51:23.414974000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+diff -aru tests/flip18/run-test tests-new/flip18/run-test
+--- tests/flip18/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip18/run-test	2009-02-17 11:51:23.523959000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+diff -aru tests/flip19/run-test tests-new/flip19/run-test
+--- tests/flip19/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip19/run-test	2009-02-17 11:51:23.435931000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ # We must give an error in this case, or else complete it successfully.
+diff -aru tests/flip2/run-test tests-new/flip2/run-test
+--- tests/flip2/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip2/run-test	2009-02-17 11:51:23.498070000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -29,7 +29,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip3/run-test tests-new/flip3/run-test
+--- tests/flip3/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip3/run-test	2009-02-17 11:51:23.485440000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -29,7 +29,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip4/run-test tests-new/flip4/run-test
+--- tests/flip4/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip4/run-test	2009-02-17 11:51:23.492022000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -53,7 +53,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip5/run-test tests-new/flip5/run-test
+--- tests/flip5/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip5/run-test	2009-02-17 11:51:23.405337000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -59,7 +59,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip6/run-test tests-new/flip6/run-test
+--- tests/flip6/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip6/run-test	2009-02-17 11:51:23.402107000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -63,7 +63,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip7/run-test tests-new/flip7/run-test
+--- tests/flip7/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip7/run-test	2009-02-17 11:51:23.487673000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -63,7 +63,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip8/run-test tests-new/flip8/run-test
+--- tests/flip8/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip8/run-test	2009-02-17 11:51:23.423832000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -109,7 +109,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+diff -aru tests/flip9/run-test tests-new/flip9/run-test
+--- tests/flip9/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/flip9/run-test	2009-02-17 11:51:23.462205000 +0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -25,7 +25,7 @@
+ ${DIFF} -u file2.orig file2 > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file2.orig
+ +++ file2
+diff -aru tests/nodate/run-test tests-new/nodate/run-test
+--- tests/nodate/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/nodate/run-test	2009-02-17 11:51:23.454529000 +0800
+@@ -20,7 +20,7 @@
+ ${INTERDIFF} -U0 patch1 patch2 2>errors > patch1-2 || exit 1
+ [ -s errors ] && exit 1
+ cat << EOF | cmp - patch1-2 || exit 1
+-diff -U0 file file
++${DIFF} -U0 file file
+ --- file
+ +++ file	Nov 27 2001
+ @@ -36 +36 @@
+diff -aru tests/unline1/run-test tests-new/unline1/run-test
+--- tests/unline1/run-test	2008-07-02 19:11:08.000000000 +0800
++++ tests-new/unline1/run-test	2009-02-17 11:51:23.408558000 +0800
+@@ -25,7 +25,7 @@
+ [ -s errors ] && exit 1
+ 
+ cmp - patch1-2 << EOF || exit 1
+-diff -u file file
++${DIFF} -u file file
+ --- file
+ +++ file
+ @@ -1 +1 @@

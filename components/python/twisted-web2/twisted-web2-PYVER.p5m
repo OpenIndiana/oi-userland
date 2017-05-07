@@ -24,7 +24,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/python-twisted-web2-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/python-twisted-web2-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="A HTTP/1.1 Server Framework"
 set name=com.oracle.info.description value="the Twisted Web2 Python HTTP/1.1 Server Framework"
 set name=info.classification \
@@ -100,17 +100,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/twisted/web2/wsgi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/twisted/web2/xmlrpc.py
 license twisted-web2.license license=MIT
 
-# twisted-web2 was previously in the 'desktop' consolidation. This optional
-# dependency is here to facilitate the safe transfer of the package
-# to the 'userland' consolidation.
-depend type=optional \
-    fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
-
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
-depend type=require fmri=library/python-2/python-twisted-$(PYV)
+depend type=require fmri=library/python/python-twisted-$(PYV)
 
 # force a dependency on the python-twisted-web2 package
 depend type=require \
-    fmri=library/python-2/python-twisted@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/python-twisted@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

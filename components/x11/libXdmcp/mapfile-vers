@@ -1,0 +1,82 @@
+#
+# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+# Original ABI from when versioning was first added in Solaris 8
+SUNW_1.1 {
+    global:
+	XdmcpARRAY8Equal;
+	XdmcpAllocARRAY16;
+	XdmcpAllocARRAY32;
+	XdmcpAllocARRAY8;
+	XdmcpAllocARRAYofARRAY8;
+	XdmcpCompareKeys;
+	XdmcpCopyARRAY8;
+	XdmcpDecrementKey;
+	XdmcpDisposeARRAY16;
+	XdmcpDisposeARRAY32;
+	XdmcpDisposeARRAY8;
+	XdmcpDisposeARRAYofARRAY8;
+	XdmcpFill;
+	XdmcpFlush;
+	XdmcpGenerateKey;
+	XdmcpIncrementKey;
+	XdmcpReadARRAY16;
+	XdmcpReadARRAY32;
+	XdmcpReadARRAY8;
+	XdmcpReadARRAYofARRAY8;
+	XdmcpReadCARD16;
+	XdmcpReadCARD32;
+	XdmcpReadCARD8;
+	XdmcpReadHeader;
+	XdmcpReadRemaining;
+	XdmcpReallocARRAY16;
+	XdmcpReallocARRAY32;
+	XdmcpReallocARRAY8;
+	XdmcpReallocARRAYofARRAY8;
+	XdmcpWriteARRAY16;
+	XdmcpWriteARRAY32;
+	XdmcpWriteARRAY8;
+	XdmcpWriteARRAYofARRAY8;
+	XdmcpWriteCARD16;
+	XdmcpWriteCARD32;
+	XdmcpWriteCARD8;
+	XdmcpWriteHeader;
+    local:
+	*;
+};
+
+# New functions added when XDM-AUTH-1 was enabled in snv_120 (CR 6859883)
+SUNW_1.2 {
+    global:
+	XdmcpWrap;
+	XdmcpUnwrap;
+} SUNW_1.1;
+
+# Private functions from Wrap.h needed by xdm
+SUNWprivate {
+    global:
+	_XdmcpAuthSetup;
+	_XdmcpAuthDoIt;
+	_XdmcpWrapperToOddParity;
+};
+

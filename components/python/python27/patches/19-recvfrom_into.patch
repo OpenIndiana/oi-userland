@@ -1,0 +1,18 @@
+# Fix from upstream: http://bugs.python.org/issue20246
+
+--- Python-2.7.6/Modules/socketmodule.c.~1~	2013-11-09 23:36:41.000000000 -0800
++++ Python-2.7.6/Modules/socketmodule.c	2014-05-14 13:48:12.538122707 -0700
+@@ -2744,6 +2744,13 @@
+         recvlen = buflen;
+     }
+ 
++    /* Check if the buffer is large enough */
++    if (buflen < recvlen) {
++        PyErr_SetString(PyExc_ValueError,
++                        "buffer too small for requested bytes");
++        goto error;
++    }
++
+     readlen = sock_recvfrom_guts(s, buf.buf, recvlen, flags, &addr);
+     if (readlen < 0) {
+         /* Return an error */

@@ -1,0 +1,19 @@
+--- dbus-glib-0.88/dbus/dbus-gobject.c-orig	2011-07-22 18:43:55.286789655 -0500
++++ dbus-glib-0.88/dbus/dbus-gobject.c	2011-07-22 18:48:14.153767255 -0500
+@@ -716,6 +716,8 @@ write_interface (gpointer key, gpointer 
+       s = lookup_property_name (data->object, name, propname);
+ 
+       spec = g_object_class_find_property (g_type_class_peek (data->gtype), s);
++      if (spec != NULL) {
++
+       g_assert (spec != NULL);
+       g_free (s);
+       
+@@ -747,6 +749,7 @@ write_interface (gpointer key, gpointer 
+           
+ 	  g_string_append (xml, "\"/>\n");
+ 	}
++        }
+       
+       g_free (dbus_type);
+     }

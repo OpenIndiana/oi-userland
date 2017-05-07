@@ -1,0 +1,158 @@
+--- gdb-7.6/bfd/elf32-sparc.c	2013-02-20 19:02:29.000000000 -0800
++++ gdb-7.6/bfd/elf32-sparc.c	2013-10-06 14:13:09.059973200 -0700
+@@ -30,34 +30,135 @@
+ #include "elfxx-sparc.h"
+ #include "elf-vxworks.h"
+ 
+-/* Support for core dump NOTE sections.  */
++#include <stddef.h>
++#include <sys/elf.h>
++#include <sys/procfs.h>
++#include <sys/regset.h>
++#include <sys/auxv.h>
+ 
++/* Support for Solaris core dump NOTE sections.  */
+ static bfd_boolean
+-elf32_sparc_grok_psinfo (bfd *abfd, Elf_Internal_Note *note)
+-{
+-  switch (note->descsz)
++solaris_elf32_sparc_grok_info (bfd *abfd, Elf_Internal_Note *note)
+     {
+-    default:
+-      return FALSE;
++  asection *sect;
++  /* 32-bit regset sizes */
++  size_t gregset_size = 152;
++  size_t fpregset_size = 144;
++  char reg2_section_name[16];
++  auxv_t* p_auxv = NULL;
++
++  switch (note->type)
++  {
++    case SOLARIS_NT_PRSTATUS:
++      if (note->descsz == 508) /* sizeof(prstatus_t) */
++      {
++        elf_tdata (abfd)->core->signal =
++          bfd_get_16 (abfd, note->descdata + 136);
++        elf_tdata (abfd)->core->pid =
++          bfd_get_32 (abfd, note->descdata + 216);
++        elf_tdata (abfd)->core->lwpid =
++          bfd_get_32 (abfd, note->descdata + 308);
+ 
+-    case 260:			/* Solaris prpsinfo_t.  */
++        sect = bfd_get_section_by_name (abfd, ".reg");
++
++        if (sect != NULL)
++          sect->size = sizeof(prgregset_t);
++
++         return _bfd_elfcore_make_pseudosection (abfd, ".reg", gregset_size,
++             note->descpos + 356);
++      }
++      return TRUE;
++      break;
++    case SOLARIS_NT_PRFPREG:
++      return TRUE;
++      break;
++    case SOLARIS_NT_PRPSINFO:
++      if (note->descsz == 260) /* sizeof(prpsinfo_t) */
++      {
+       elf_tdata (abfd)->core->program
+ 	= _bfd_elfcore_strndup (abfd, note->descdata + 84, 16);
+       elf_tdata (abfd)->core->command
+ 	= _bfd_elfcore_strndup (abfd, note->descdata + 100, 80);
++      }
++      return TRUE;
+       break;
+-
+-    case 336:			/* Solaris psinfo_t.  */
++    case SOLARIS_NT_PRXREG:
++      return TRUE;
++      break;
++    case SOLARIS_NT_PLATFORM:
++      return TRUE;
++      break;
++    case SOLARIS_NT_AUXV:
++      return TRUE;
++    case SOLARIS_NT_PSTATUS:
++      return TRUE;
++      break;
++    case SOLARIS_NT_PSINFO:
++      if (note->descsz == 336) /* sizeof(psinfo_t) */
++      {
+       elf_tdata (abfd)->core->program
+ 	= _bfd_elfcore_strndup (abfd, note->descdata + 88, 16);
+       elf_tdata (abfd)->core->command
+ 	= _bfd_elfcore_strndup (abfd, note->descdata + 104, 80);
++      }
++      return TRUE;
++      break;
++    case SOLARIS_NT_PRCRED:
++      return TRUE;
++      break;
++    case SOLARIS_NT_UTSNAME:
++      return TRUE;
++      break;
++    case SOLARIS_NT_LWPSTATUS:
++      if (note->descsz == 896) /* sizeof(lwpstatus_t) */
++      {
++        (void) snprintf (reg2_section_name, 16, "%s/%i", ".reg2", 1);
++        sect = bfd_get_section_by_name (abfd, reg2_section_name);
++        if (sect != NULL)
++        {
++          sect->size = fpregset_size;
++          sect->filepos = note->descpos + 496;
++          sect->alignment_power = 2;
++          return TRUE;
++        }
++        else
++          return _bfd_elfcore_make_pseudosection (abfd, reg2_section_name,
++              fpregset_size, note->descpos + 496);
++      }
++      return TRUE;
++      break;
++    case SOLARIS_NT_LWPSINFO:
++      return TRUE;
++      break;
++    case SOLARIS_NT_PRCPUXREG:
++      return TRUE;
++      break;
++    default:
++      return TRUE;
+       break;
+     }
+-
+   return TRUE;
+ }
+ 
++static bfd_boolean
++elf32_sparc_grok_psinfo (bfd *abfd, Elf_Internal_Note *note)
++{
++  return solaris_elf32_sparc_grok_info (abfd, note);
++}
++
++
++static bfd_boolean
++elf32_sparc_grok_prstatus (bfd *abfd, Elf_Internal_Note *note)
++{
++  return solaris_elf32_sparc_grok_info (abfd, note);
++}
++
++static bfd_boolean
++elf32_sparc_grok_lwpstatus (bfd *abfd, Elf_Internal_Note *note)
++{
++  return solaris_elf32_sparc_grok_info (abfd, note);
++}
++
+ /* Functions for dealing with the e_flags field.
+ 
+    We don't define set_private_flags or copy_private_bfd_data because
+@@ -201,6 +302,9 @@
+ #define elf_backend_final_write_processing \
+ 					elf32_sparc_final_write_processing
+ #define elf_backend_grok_psinfo		elf32_sparc_grok_psinfo
++#define elf_backend_grok_prstatus       elf32_sparc_grok_prstatus
++#define elf_backend_grok_lwpstatus      elf32_sparc_grok_lwpstatus
++#define elf_backend_grok_lwpinfo        elf32_sparc_grok_lwpinfo
+ #define elf_backend_reloc_type_class	elf32_sparc_reloc_type_class
+ 
+ #define elf_info_to_howto		_bfd_sparc_elf_info_to_howto

@@ -1,0 +1,72 @@
+https://www.illumos.org/issues/7266
+
+--- /dev/null	2016-08-03 14:12:59.000000000 +0300
++++ yelp-3.20.1/libyelp/yelp-manpath	2016-08-03 14:50:29.744370528 +0300
+@@ -0,0 +1,37 @@
++#!/usr/bin/sh
++
++PATH=/usr/bin
++
++function usage {
++   printf "Usage:\n";
++   printf "$0 -w [section] name\n"
++}
++
++if [ "$1" != "-w" -o $# -gt 3 -o $# -lt 2 ] ; then 
++  usage
++  exit
++fi
++
++if [ $# -eq 3 ] ; then
++  section=$2
++  name=$3
++else 
++  section=
++  name=$2
++fi
++
++# If section is set, we need man page from this section.
++# if it is not set, show first one
++man -l "$name" | \
++while read str ; do
++  manpath="`echo $str |cut -d \   -f 3`"
++  mansection="`echo $str |cut -d \(  -f 2 | cut -d \) -f 1`"
++  fullpath="$manpath/man$mansection/$name.$mansection"
++  if [ -z "$section" ]; then 
++     echo "$fullpath"
++     break
++  elif [ "$section" = "$mansection" ]; then
++     echo "$fullpath"
++     break
++  fi
++done 
+--- yelp-3.20.1/libyelp/yelp-uri.c.1	2016-08-03 14:56:29.750970010 +0300
++++ yelp-3.20.1/libyelp/yelp-uri.c	2016-08-03 14:56:51.596359970 +0300
+@@ -950,7 +950,7 @@
+ static gchar*
+ find_man_path (gchar* name, gchar* section)
+ {
+-    const gchar* argv[] = { "man", "-w", NULL, NULL, NULL };
++    const gchar* argv[] = { LIBEXECDIR "/yelp-manpath" , "-w", NULL, NULL, NULL };
+     gchar **my_argv;
+     gchar *ystdout = NULL;
+     gint status;
+--- yelp-3.20.1/Makefile.am.~2~	2016-08-03 14:57:43.920745007 +0300
++++ yelp-3.20.1/Makefile.am	2016-08-03 15:01:16.782785286 +0300
+@@ -7,7 +7,7 @@
+ 
+ lib_LTLIBRARIES = libyelp/libyelp.la
+ 
+-libexec_SCRIPTS = libyelp/yelp-groff
++libexec_SCRIPTS = libyelp/yelp-groff libyelp/yelp-manpath
+ 
+ libyelp_libyelp_la_SOURCES = \
+ 	libyelp/yelp-bookmarks.c \
+@@ -147,6 +147,7 @@
+ 	$(YELP_EXTENSION_CFLAGS)
+ 
+ libyelp_web_extension_libyelpwebextension_la_CPPFLAGS = \
++	-DLIBEXECDIR=\"$(libexecdir)\" \
+ 	-DDATADIR=\""$(datadir)"\" \
+ 	-DYELP_ICON_PATH=\"$(YELP_ICON_PATH)\" \
+ 	-I$(top_srcdir)/libyelp

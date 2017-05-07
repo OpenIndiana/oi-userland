@@ -1,0 +1,210 @@
+#!/bin/ksh93
+#
+#
+# Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+USAGE="Usage: $0 [-c <class>] :<display> [<X server arguments>]"
+
+PATH=/usr/bin:/usr/sbin
+
+progname=$0
+function fatal_error
+{
+    print -u2 "${progname}: $*"
+    exit 1
+}
+
+#########
+#
+# Default values
+# 
+# Users must not modify this script to change them - change via SMF properties
+#
+
+DISPLAY="0"
+DEFDEPTH=""
+CLASSES=""
+TCP_LISTEN=""
+SERVERARGS=""
+XSERVER="/usr/bin/Xorg"
+CONSOLE=""
+
+
+while getopts :c: opt; do
+    case $opt in
+	c)	CLASSES+=" :${OPTARG}" ;;
+	?)	print -u2 $USAGE ; exit 2;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if (( $# > 1 )) ; then
+    case $1 in
+	:*)
+	    # Strip leading ":" from $1 to get display number
+	    DISPLAY="${1#:}"
+	    shift
+	    ;;
+    esac
+fi
+
+REMOTE="false"
+for a in $SERVERARGS "$*" ; do
+    case $a in 
+	-query|-broadcast|-multicast|-indirect)
+	    REMOTE="true"
+	    ;;
+	*)
+	    # Do nothing
+	    ;;
+    esac
+done
+
+if [[ "${REMOTE}" == "true" ]] ; then
+    CLASSES+=" :remote"
+else
+    CLASSES+=" :local"
+fi
+
+# Arguments:
+#	1) name of SMF property to find in one of the service instances
+#	2) name of variable to store the value of the property in, if found
+# Also sets variable with name of $2_INSTANCE to the service instance the 
+# property was found in, for use in later messages.
+function getprop {
+    # Make ${propval} be a reference to the variable named as the second arg
+    nameref propval=$2
+    nameref propinst="${2}_INSTANCE"
+
+    # The "" instance is to get the properties from the base service without
+    # any instance specifier
+    for instance in ":display${DISPLAY}" ${CLASSES} "" ; do
+	propinst="svc:/application/x11/x11-server${instance}"
+	if svcprop -q -p $1 "${propinst}" ; then
+	    propval="$(svcprop -p $1 "${propinst}")"
+	    if [[ "${propval}" == "\"\"" ]] ; then
+		propval=""
+	    fi
+	    return 0
+	fi
+    done
+    return 1
+}
+
+getprop options/default_depth DEFDEPTH
+getprop options/server XSERVER
+getprop options/server_args SERVERARGS
+getprop options/tcp_listen TCP_LISTEN
+getprop options/display_0_on_console CONSOLE
+
+ORIGINAL_XSERVER="${XSERVER}"
+
+if [[ -f ${XSERVER} ]] ; then
+    # Canonicalize path, so that we don't break people who specified path
+    # via the /usr/X -> openwin or X11 link
+    builtin -f libcmd.so.1 readlink && \
+    XSERVER=$(readlink -f ${XSERVER})
+else
+    # Automatically select replacements for removed X servers
+    case ${XSERVER} in
+	*/Xsun)	
+	    newserver="/usr/bin/Xorg" 
+	    ;;
+	*/Xvfb)	
+	    newserver="/usr/bin/Xvfb" 
+	    ;;
+	*)
+	    fatal_error "${XSERVER} is not an executable"
+	    ;;
+    esac
+    cat 1>&2 <<#EOF 
+	Specified server ${XSERVER} not found, using ${newserver} instead.
+	To correct this warning, change the server property with
+	  /usr/sbin/svccfg -s ${XSERVER_INSTANCE} \\
+		setprop options/server == ${newserver}
+	EOF
+    XSERVER="${newserver}"
+fi
+
+
+# Make sure ${XSERVER} is a known X server binary
+function is_known_xserver {
+    case "$1" in
+	/usr/bin/Xorg)			return 0 ;;
+	/usr/bin/amd64/Xorg)		return 0 ;;
+	/usr/bin/i86/Xorg)		return 0 ;;
+	/usr/bin/Xvfb)			return 0 ;;
+	/usr/bin/amd64/Xvfb)		return 0 ;;
+	/usr/bin/i86/Xvfb)		return 0 ;;
+	/usr/bin/Xvnc)			return 0 ;;
+	/usr/openwin/bin/Xsun)		return 0 ;;
+	/usr/openwin/bin/Xvfb)		return 0 ;;
+	/opt/SUNWut/lib/Xnewt)		return 0 ;;
+    esac
+    return 1
+}
+
+if ! is_known_xserver "${ORIGINAL_XSERVER}" ; then
+    if ! is_known_xserver "${XSERVER}" ; then
+	fatal_error "${XSERVER} is not a valid X server"
+    fi
+fi
+
+case ${XSERVER} in
+    # Xsun based
+    /usr/openwin/bin/*)
+	DEPTHARG="-defdepth ${DEFDEPTH:-24}"
+	;;
+    # Xorg based
+    /usr/bin/*)
+	if [[ "${DEFDEPTH}" != "" ]] ; then
+	    DEPTHARG="-depth ${DEFDEPTH}"
+	fi
+	;;
+esac
+
+# Should not happen, but just in case
+if [[ "${TCP_LISTEN}" == "" ]] ; then
+    if [[ "${REMOTE}" == "true" ]] ; then
+	TCP_LISTEN="true"
+    else
+	TCP_LISTEN="false"
+    fi
+fi
+
+if [[ "${TCP_LISTEN}" == "false" ]] ; then
+    LISTENARG="-nolisten tcp"
+else
+    LISTENARG=""
+fi
+
+if [[ ("${CONSOLE}" == "true") && ("${DISPLAY}" == "0") ]] ; then
+    CONSOLE="-C"
+else
+    CONSOLE=""
+fi
+
+ALLARGS="${DEPTHARG} ${LISTENARG} ${SERVERARGS} ${CONSOLE} $*"
+
+exec ${XSERVER} :${DISPLAY} ${ALLARGS}

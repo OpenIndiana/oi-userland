@@ -1,0 +1,69 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
+# Use is subject to license terms.
+#
+
+# These are the SMF start/stop/restart methods for ipmievd.
+
+# smf(5)
+. /lib/svc/share/smf_include.sh
+
+SMF_FMRI="svc:/network/ipmievd:default"
+
+if [ $# -eq 0 ]; then
+    # No arguments provided - report current status (use "-c" option to
+    # svcprop to get the current properties, otherwise false will result)
+    if [ "`/usr/bin/svcprop -c -p general/enabled $SMF_FMRI`" = "true" ]
+    then
+        echo "svc-ipmievd: ipmievd is enabled"
+    else
+        echo "svc-ipmievd: ipmievd is disabled"
+    fi
+else
+    case "$1" in
+	'start')
+		props=`/usr/sbin/svccfg -s svc:/network/ipmievd listprop config/options | \
+		/usr/bin/nawk '{  for (i = 3; i <= NF; i++) printf $i" " }'`
+		props=`echo $props |sed 's/.\(.*\)/\1/'|sed 's/\(.*\)./\1/'`
+		
+		if [ -z "$props" ]; then
+			printf "ipmievd needs to be configured. Set options as ";
+			printf "svccfg -s svc:/network/ipmievd setprop config/options ";
+			printf "'\"-I lanplus -H <IP> -U <USERNAME> -f /etc/ipmievd.passwd\"'\n";
+			exit $SMF_EXIT_ERR_CONFIG
+		fi
+
+		/usr/lib/ipmievd $props sel
+		[ $? -ne 0 ] && exit 1
+		;;
+
+	*)
+		echo "Usage: $0 start"
+		exit 1
+		;;
+    esac
+fi
+
+exit $SMF_EXIT_OK

@@ -38,7 +38,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ENV +=	INSTALL_ROOT="$(PROTO_DIR)"
 

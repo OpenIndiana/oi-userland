@@ -1,0 +1,151 @@
+# Copyright (c) 1994, 2007, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+# Originally submitted as PSARC/1994/377
+
+The purpose of this document is to fast track the implementation of a
+shared memory based transport mechanism for the OpenWindows server
+and clients. This document briefly describes some of the design
+and implementation features of this mechanism. Section 3, entitled
+"User Interface for SUN_SME", describes the user visible interface. 
+We are requesting that the interface in Section 3 be declared a Public
+interface.  The components that have been affected by SUN_SME are Xsun 
+and libX11. 
+
+It should be noted that SUN_SME is targeted at improving benchmark 
+performance. The current implementation uses SYSV shared memory and 
+thus has a limit of 6 shared memory connections.  Once the limit is 
+exceeded the implementation silently falls back to a pipe connection.
+The plan is to eventually remove this limitation by using SunOS native
+shared memory mechanisms.
+
+1. What is 'SHARED_MEMORY_EXTENSION'(SUN_SME) ?
+
+	SUN_SME is an extension to the OpenWindows server with the purpose 
+	allowing clients to send requests to the server via shared memory.
+	SUN_SME is intended to be another form of local transport mechanism
+	like Unix sockets and the pipes mechanisms. The SUN_SME extension
+	will be versioned so that changes can be made in a compatible manner
+	if they become necessary. 
+
+2. How and where 'SUN_SME' gets used ?
+
+    	In order for a client to communicate via shared memory with the
+	server it should have its display environment variable set to 
+ 	:x.y (where x is the display number and y is the screen 
+ 	number) and the environment variable XSUNTRANSPORT set to
+ 	"shmem" before it is started. If the display variable is set
+ 	to :x.y and XSUNTRANSPORT set to "shmem", local clients query 
+ 	the X server for the SUN_SME Extension and if it is supported 
+ 	the connection is set up.
+
+	It should be noted that shared memory will be used for sending
+	requests from client to server only. Replies/events and all
+	other communication initiated by the X server will use the
+	default IPC mechanism which is pipes in OW 3.4. Also, one shared
+	memory segment will be set up per display connection. 
+
+3. User Interface for SUN_SME
+
+	The user interface for SUN_SME will be documented in the man 
+        pages and other appropriate documentation.  Following, are the 
+        visible changes that have been introduced by SUN_SME :
+	
+ 		- If the value of DISPLAY has any form other than 
+ 		  :x[.y], the transport is determined directly from 
+ 		  its value (using the standard, pre-existent X rules).  
+ 		  Otherwise, the value of XSUNTRANSPORT becomes relevant.  
+ 		  If unset, a suitable (but otherwise unspecified) local 
+ 		  transport is used; otherwise, the transport named by 
+ 		  its value is used, if available.  In the case of shared 
+ 		  memory, XSUNTRANSPORT must be set to "shmem".
+
+		- The size of the shared memory segment between the
+		  client and server will be user configurable by setting
+		  the environment variable XSUNSMESIZE. The default value
+		  for XSUNSMESIZE will be 64K.
+
+		- The xdpyinfo client will return SUN_SME in the list
+		  of supported extensions.  Similarly the XQueryExtension()
+		  and XListExtensions() routines in Xlib and the corresponding
+		  QueryExtension and ListExtensions X protocol requests will
+		  indicate the existence of the SUN_SME extension.  However,
+		  this information is not particularly useful to users or
+		  application developers, since the extension interfaces
+		  are intended to be Consolidation Private.
+
+4. Implementation Features
+
+This section is for information purposes only, since the extension
+interfaces are Consolidation Private.  The affected components are
+libX11 and Xsun.
+
+Currently clients communicate with the server via pipes and sockets
+(TCP and UDP). Our goal is to provide a shared memory communication
+mechanism between the client and the server. Communicating via 
+shared memory has been measured to be more efficient than sockets/pipes.
+The current SUN_SME implementation uses SYSV shared memory.  The
+final implementation will use SunOS shared memory.
+
+Some characteristics of this mechanism are :
+
+	- Shared memory will be only be used for client requests. 
+	Replies from the server will be sent via pipes.
+
+	- The size of the shared memory segment will be set to 64K by
+	default. This size will be use configurable via the XSUNSMESIZE
+ 	environment variable.
+
+	- Variable size buffers are allocated out of the shared memory 
+	segment in a ring-like fashion. The buffers in the shared memory 
+	segment are indexed with the index containing the address 
+	and size of the buffers. The client updates the head pointer 
+	every time a request buffer is inserted and the server 
+	updates the tail pointer every time a request buffer is processed. 
+
+	- Requests sent by the client are packetized and sent in a 
+	buffer instead of sending one request per buffer using the
+	same algorithm used by pipe and socket connections. The client 
+	sends a byte through the pipe to the server indicating
+	that a request buffer has been sent. This way the server 
+	has something to poll on and the traditional select mechanism
+	can be retained.
+
+ 	- Suitable locking mechanisms will be used to insure consistency
+ 	of shared memory between client and server under the PSO memory
+ 	model when/if it becomes possible for user processes to run under
+ 	PSO.
+
+	- If the client runs out of request buffers it gets blocked and 
+	waits for a special reply denoted by SMEREPLY. 
+
+	- Large requests (for e.g. XPutImage) are split into multiple
+	requests. 
+
+	- In the event that the maximum allowable shared memory has
+	been allocated and a client attempts to initiate a shared
+	memory connection, the transport mechanism will default
+	to pipes. 
+
+
+
+
+

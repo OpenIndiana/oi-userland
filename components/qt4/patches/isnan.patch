@@ -1,0 +1,11 @@
+--- qt-everywhere-opensource-src-4.8.1/src/3rdparty/webkit/Source/JavaScriptCore/wtf/MathExtras.h	2012-03-14 07:01:26.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.1-patched/src/3rdparty/webkit/Source/JavaScriptCore/wtf/MathExtras.h	2012-12-02 02:12:46.391070428 -0800
+@@ -252,7 +252,7 @@
+     return static_cast<int>(std::min(value, static_cast<unsigned>(std::numeric_limits<int>::max())));
+ }
+ 
+-#if !COMPILER(MSVC) && !(COMPILER(RVCT) && PLATFORM(BREWMP)) && !OS(SOLARIS) && !OS(SYMBIAN)
++#if (!COMPILER(MSVC) && !(COMPILER(RVCT) && PLATFORM(BREWMP)) && !OS(SOLARIS) && !OS(SYMBIAN)) || ( GCC_VERSION >= 40600 )
+ using std::isfinite;
+ using std::isinf;
+ using std::isnan;

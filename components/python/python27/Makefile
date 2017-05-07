@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 
 #
 include ../../../make-rules/shared-macros.mk
@@ -26,22 +26,22 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	2.7.3
+COMPONENT_VERSION=	2.7.13
 COMPONENT_PROJECT_URL=	http://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:726457e11cb153adc3f428aaf1901fc561a374c30e5e7da6742c0742a338663c
+    sha256:35d543986882f78261f97787fd3e06274bfa6df29fac9b4a94f73930ff98f731
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/lint-libraries.mk
 
-# Need to preserve timestamp for Grammar files.  If the pickle files are older, 
-# Python will try to rebuild them.  
+# Need to preserve timestamp for Grammar files.  If the pickle files are older,
+# Python will try to rebuild them.
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.txt
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 
@@ -70,18 +70,6 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS +=	$(CC_PIC)
 
-# The python build is profile-guided for studio; to see the benefits of that,
-# Python must be compiled with -xO5 and a different build target must be used.
-# Use of xprofile requires that the same options be used during compilation and
-# linking.  The targets chosen are based on Solaris 11 minimum supported system
-# requirements.
-COMPONENT_BUILD_TARGETS = profile-opt
-XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
-PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
-PYFLAGS.sparc =
-CFLAGS += -xO5 $(PYFLAGS.$(MACH))
-LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
-
 # add /usr/gnu/lib to the library search/run path
 LDFLAGS.32 = -R/usr/gnu/lib -L/usr/gnu/lib
 LDFLAGS.64 = -R/usr/gnu/lib/$(MACH64) -L/usr/gnu/lib/$(MACH64)
@@ -100,10 +88,8 @@ CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
-CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
-COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python2.7/lib-dynload
@@ -117,8 +103,6 @@ COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
              $(MV) include/python2.7/pyconfig.h include/python2.7/pyconfig-$(BITS).h ; \
              $(TOUCH) lib/python2.7/lib2to3/*.pickle)
-
-ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 $(INSTALL_32):  $(INSTALL_64)
@@ -144,3 +128,22 @@ test:				$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/python-2/pip-27
+REQUIRED_PACKAGES += library/python-2/tkinter-27
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-27/tests
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

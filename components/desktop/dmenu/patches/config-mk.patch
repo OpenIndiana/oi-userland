@@ -1,0 +1,30 @@
+--- dmenu-4.6.orig/config.mk	2015-11-09 01:42:21.000000000 +0300
++++ dmenu-4.6/config.mk	2016-06-22 12:10:31.709254373 +0300
+@@ -2,7 +2,7 @@
+ VERSION = 4.6
+
+ # paths
+-PREFIX = /usr/local
++PREFIX = /usr
+ MANPREFIX = ${PREFIX}/share/man
+
+ X11INC = /usr/X11R6/include
+@@ -16,7 +16,7 @@
+ FREETYPELIBS = -lfontconfig -lXft
+ FREETYPEINC = /usr/include/freetype2
+ # OpenBSD (uncomment)
+-FREETYPEINC = ${X11INC}/freetype2
++# FREETYPEINC = ${X11INC}/freetype2
+
+ # includes and libs
+ INCS = -I${X11INC} -I${FREETYPEINC}
+@@ -24,7 +24,7 @@
+
+ # flags
+ CPPFLAGS = -D_BSD_SOURCE -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
+-CFLAGS   = -std=c99 -pedantic -Wall -Os ${INCS} ${CPPFLAGS}
+-LDFLAGS  = -s ${LIBS}
++CFLAGS   = ${CC_BITS} -std=c99 -pedantic -Wall -Os ${INCS} ${CPPFLAGS}
++LDFLAGS  = ${LD_BITS} -s ${LIBS}
+
+ # compiler and linker

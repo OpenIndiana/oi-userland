@@ -1,0 +1,48 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2011-2013, EveryCity Ltd. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/library/libffi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Foreign Function Interface Library"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license libffi.license license="BSD"
+
+file path=usr/lib/$(MACH64)/libffi-$(COMPONENT_VERSION)/include/ffi.h
+file \
+    path=usr/lib/$(MACH64)/libffi-$(COMPONENT_VERSION)/include/ffitarget.h
+file path=usr/lib/$(MACH64)/libffi.so.6.0.1
+file path=usr/lib/$(MACH64)/pkgconfig/libffi.pc
+file path=usr/lib/libffi-$(COMPONENT_VERSION)/include/ffi.h
+file path=usr/lib/libffi-$(COMPONENT_VERSION)/include/ffitarget.h
+file path=usr/lib/libffi.so.6.0.1
+file path=usr/lib/pkgconfig/libffi.pc
+file path=usr/share/info/libffi.info
+file path=usr/share/man/man3/ffi.3
+file path=usr/share/man/man3/ffi_call.3
+file path=usr/share/man/man3/ffi_prep_cif.3
+file path=usr/share/man/man3/ffi_prep_cif_var.3
+link path=usr/lib/$(MACH64)/libffi.so target=libffi.so.6.0.1
+link path=usr/lib/$(MACH64)/libffi.so.6 target=libffi.so.6.0.1
+link path=usr/lib/libffi.so target=libffi.so.6.0.1
+link path=usr/lib/libffi.so.6 target=libffi.so.6.0.1
+
+# Workaround (should be removed)
+link path=usr/lib/$(MACH64)/libffi.so.5 target=libffi.so.6.0.1
+link path=usr/lib/libffi.so.5 target=libffi.so.6.0.1

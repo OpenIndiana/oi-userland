@@ -1,0 +1,82 @@
+diff --git a/luit.c b/luit.c
+index 0ece7b6..a0b62cb 100644
+--- a/luit.c
++++ b/luit.c
+@@ -25,6 +25,7 @@ THE SOFTWARE.
+ #endif
+ 
+ #include <stdio.h>
++#include <X11/Xosdefs.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <locale.h>
+@@ -36,6 +37,7 @@ THE SOFTWARE.
+ #include <stdarg.h>
+ #include <sys/ioctl.h>
+ #include <signal.h>
++#include <termios.h>
+ 
+ #include "luit.h"
+ #include "sys.h"
+@@ -483,9 +485,11 @@ setup_io(int pty)
+ #endif
+     installHandler(SIGCHLD, sigchldHandler);
+ 
++#ifndef sun
+     rc = copyTermios(0, pty);
+     if (rc < 0)
+ 	FatalError("Couldn't copy terminal settings\n");
++#endif
+ 
+     rc = setRawTermios();
+     if (rc < 0)
+@@ -627,6 +631,10 @@ child(char *line, char *path, char *const argv[])
+ 	write_waitpipe(c2p_waitpipe);
+     }
+ 
++#ifdef sun    
++    restoreTermios_1(tty, TCSAFLUSH);
++#endif
++
+     if (tty != 0)
+ 	dup2(tty, 0);
+     if (tty != 1)
+diff --git a/sys.c b/sys.c
+index 8463b05..adda4b5 100644
+--- a/sys.c
++++ b/sys.c
+@@ -24,6 +24,7 @@ THE SOFTWARE.
+ # include "config.h"
+ #endif
+ 
++#include <X11/Xosdefs.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
+@@ -246,6 +247,14 @@ restoreTermios(void)
+ }
+ 
+ int
++restoreTermios_1(int fd, int opt)
++{
++    if(!saved_tio_valid)
++        return -1;
++    return tcsetattr(fd, opt, &saved_tio);
++}
++
++int
+ setRawTermios(void)
+ {
+     struct termios tio;
+diff --git a/sys.h b/sys.h
+index 5bfe0d2..3d95f20 100644
+--- a/sys.h
++++ b/sys.h
+@@ -38,6 +38,7 @@ int installHandler(int signum, void (*handler) (int));
+ int copyTermios(int sfd, int dfd);
+ int saveTermios(void);
+ int restoreTermios(void);
++int restoreTermios_1(int fd, int opt);
+ int setRawTermios(void);
+ char *my_basename(char *path);
+ int allocatePty(int *pty_return, char **line_return);

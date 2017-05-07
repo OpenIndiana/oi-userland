@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zope.interface
 COMPONENT_VERSION=	3.3.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://zope.org/Wikis/Interfaces/FrontPage
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -34,6 +35,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:c049ef6f0748a2db26c7d01de1566e52f048e5fa6fbbb8da90c43e55597a5075
 COMPONENT_ARCHIVE_URL=	http://www.zope.org/Products/ZopeInterface/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/zope
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -46,6 +49,5 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library

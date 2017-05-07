@@ -1,0 +1,87 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/libfftw.3.sunman path=usr/share/man/man3/libfftw.3
+
+# We build fftw float versions separately and don't 
+# install them, so we have to pick up produced files 
+# manually from build dirs and create necessary links
+
+file build/fftw-f/$(MACH32)/fftw/.libs/libsfftw.so.2.0.7 path=usr/lib/libsfftw.so.2.0.7
+file build/fftw-f/$(MACH64)/fftw/.libs/libsfftw.so.2.0.7 path=usr/lib/$(MACH64)/libsfftw.so.2.0.7
+link path=usr/lib/libsfftw.so target=libsfftw.so.2.0.7
+link path=usr/lib/libsfftw.so.2 target=libsfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/libsfftw.so target=libsfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/libsfftw.so.2 target=libsfftw.so.2.0.7
+
+file build/fftw-f/$(MACH32)/rfftw/.libs/libsrfftw.so.2.0.7 path=usr/lib/libsrfftw.so.2.0.7
+file build/fftw-f/$(MACH64)/rfftw/.libs/libsrfftw.so.2.0.7 path=usr/lib/$(MACH64)/libsrfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/libsrfftw.so target=libsrfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/libsrfftw.so.2 target=libsrfftw.so.2.0.7
+link path=usr/lib/libsrfftw.so target=libsrfftw.so.2.0.7
+link path=usr/lib/libsrfftw.so.2 target=libsrfftw.so.2.0.7
+
+file build/fftw-f/$(MACH32)/threads/.libs/libsfftw_threads.so.2.0.7 path=usr/lib/libsfftw_threads.so.2.0.7
+file build/fftw-f/$(MACH64)/threads/.libs/libsfftw_threads.so.2.0.7 path=usr/lib/$(MACH64)/libsfftw_threads.so.2.0.7
+link path=usr/lib/libsfftw_threads.so target=libsfftw_threads.so.2.0.7
+link path=usr/lib/libsfftw_threads.so.2 target=libsfftw_threads.so.2.0.7
+link path=usr/lib/$(MACH64)/libsfftw_threads.so target=libsfftw_threads.so.2.0.7
+link path=usr/lib/$(MACH64)/libsfftw_threads.so.2 target=libsfftw_threads.so.2.0.7
+
+file build/fftw-f/$(MACH32)/threads/.libs/libsrfftw_threads.so.2.0.7 path=usr/lib/libsrfftw_threads.so.2.0.7
+file build/fftw-f/$(MACH64)/threads/.libs/libsrfftw_threads.so.2.0.7 path=usr/lib/$(MACH64)/libsrfftw_threads.so.2.0.7
+link path=usr/lib/$(MACH64)/libsrfftw_threads.so target=libsrfftw_threads.so.2.0.7
+link path=usr/lib/$(MACH64)/libsrfftw_threads.so.2 target=libsrfftw_threads.so.2.0.7
+link path=usr/lib/libsrfftw_threads.so target=libsrfftw_threads.so.2.0.7
+link path=usr/lib/libsrfftw_threads.so.2 target=libsrfftw_threads.so.2.0.7
+
+file path=usr/include/fftw.h
+file path=usr/include/fftw_threads.h
+file path=usr/include/rfftw.h
+file path=usr/include/rfftw_threads.h
+link path=usr/lib/$(MACH64)/libfftw.so target=libfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/libfftw.so.2 target=libfftw.so.2.0.7
+file path=usr/lib/$(MACH64)/libfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/libfftw_threads.so target=libfftw_threads.so.2.0.7
+link path=usr/lib/$(MACH64)/libfftw_threads.so.2 target=libfftw_threads.so.2.0.7
+file path=usr/lib/$(MACH64)/libfftw_threads.so.2.0.7
+link path=usr/lib/$(MACH64)/librfftw.so target=librfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/librfftw.so.2 target=librfftw.so.2.0.7
+file path=usr/lib/$(MACH64)/librfftw.so.2.0.7
+link path=usr/lib/$(MACH64)/librfftw_threads.so target=librfftw_threads.so.2.0.7
+link path=usr/lib/$(MACH64)/librfftw_threads.so.2 \
+    target=librfftw_threads.so.2.0.7
+file path=usr/lib/$(MACH64)/librfftw_threads.so.2.0.7
+link path=usr/lib/libfftw.so target=libfftw.so.2.0.7
+link path=usr/lib/libfftw.so.2 target=libfftw.so.2.0.7
+file path=usr/lib/libfftw.so.2.0.7
+link path=usr/lib/libfftw_threads.so target=libfftw_threads.so.2.0.7
+link path=usr/lib/libfftw_threads.so.2 target=libfftw_threads.so.2.0.7
+file path=usr/lib/libfftw_threads.so.2.0.7
+link path=usr/lib/librfftw.so target=librfftw.so.2.0.7
+link path=usr/lib/librfftw.so.2 target=librfftw.so.2.0.7
+file path=usr/lib/librfftw.so.2.0.7
+link path=usr/lib/librfftw_threads.so target=librfftw_threads.so.2.0.7
+link path=usr/lib/librfftw_threads.so.2 target=librfftw_threads.so.2.0.7
+file path=usr/lib/librfftw_threads.so.2.0.7

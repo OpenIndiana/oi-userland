@@ -1,0 +1,91 @@
+--- rsyslog-8.4.2/tools/rsyslog.conf.5.~1~	2014-10-01 11:58:41.000000000 +0400
++++ rsyslog-8.4.2/tools/rsyslog.conf.5	2014-12-04 15:08:33.445318902 +0300
+@@ -17,27 +17,22 @@
+ .\" along with this program; if not, write to the Free Software
+ .\" Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA.
+ .\"
+-.TH RSYSLOG.CONF 5 "22 October 2012" "Version 7.2.0" "Linux System Administration"
++.TH RSYSLOG.CONF 4 "22 October 2012" "Version 8.4.2" "File Formats"
+ .SH NAME
+-rsyslog.conf \- rsyslogd(8) configuration file
++rsyslog.conf \- rsyslogd(1M) configuration file
+ .SH DESCRIPTION
+ The
+ .I rsyslog.conf
+ file is the main configuration file for the
+-.BR rsyslogd (8)
++.BR rsyslogd (1M)
+ which logs system messages on *nix systems.  This file specifies rules
+ for logging.  For special features see the
+-.BR rsyslogd (8)
+-manpage. Rsyslog.conf is backward-compatible with sysklogd's syslog.conf file. So if you migrate
+-from sysklogd you can rename it and it should work.
+-
+-.B Note that this version of rsyslog ships with extensive documentation in html format.
+-This is provided in the ./doc subdirectory and probably
+-in a separate package if you installed rsyslog via a packaging system.
++.BR rsyslogd (1M)
++
+ To use rsyslog's advanced features, you
+ .B need
+-to look at the html documentation, because the man pages only cover
+-basic aspects of operation.
++to look at the online documentation at http://www.rsyslog.com/doc, 
++because the man pages only cover basic aspects of operation.
+ 
+ 
+ .SH MODULES
+@@ -184,7 +179,7 @@
+ priority and higher are logged according to the given action. Rsyslogd behaves
+ the same, but has some extensions.
+ 
+-In addition to the above mentioned names the rsyslogd(8) understands the
++In addition to the above mentioned names the rsyslogd(1M) understands the
+ following extensions: An asterisk ('*') stands for all facilities or all
+ priorities, depending on where it is used (before or after the period). The
+ keyword none stands for no priority of the given facility.
+@@ -231,10 +226,10 @@
+ .RE
+ 
+ .SS Named pipes
+-This version of rsyslogd(8) has support for logging output to named pipes (fifos). A fifo or 
++This version of rsyslogd(1M) has support for logging output to named pipes (fifos). A fifo or 
+ named pipe can be used as a destination for log messages by prepending a pipe symbol ('|') 
+ to the name of the file. This is handy for debugging. Note that the fifo must be created with 
+-the mkfifo(1) command before rsyslogd(8) is started.
++the mkfifo(1) command before rsyslogd(1M) is started.
+ 
+ .SS Terminal and console
+ If the file you specified is a tty, special tty-handling is done, same with /dev/console.
+@@ -419,7 +414,8 @@
+ 
+ Properties can be accessed by the property replacer (see there for details).
+ 
+-.B Please note that templates can also by used to generate selector lines with dynamic file names.
++.B Please note
++that templates can also be used to generate selector lines with dynamic file names.
+ For example, if you would like to split syslog messages from different hosts 
+ to different files (one per host), you can define the following template:
+ 
+@@ -465,7 +461,8 @@
+ that several vendors have violated the sql standard and introduced their own 
+ escape methods, it is impossible to have a single option doing all the work.  
+ So you yourself must make sure you are using the right format.
+-.B If you choose the wrong one, you are still vulnerable to sql injection.
++.B If you choose the wrong one,
++you are still vulnerable to sql injection.
+ 
+ Please note that the database writer *checks* that the sql option is present 
+ in the template. If it is not present, the write database action is disabled. 
+@@ -751,9 +748,9 @@
+ .B rsyslogd
+ 
+ .SH SEE ALSO
+-.BR rsyslogd (8),
++.BR rsyslogd (1M),
+ .BR logger (1),
+-.BR syslog (3)
++.BR syslog (3C)
+ 
+ The complete documentation can be found in the doc folder of the rsyslog distribution or online at
+ 

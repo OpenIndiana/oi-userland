@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wdiff
-COMPONENT_VERSION=	1.1.2
+COMPONENT_VERSION=	1.2.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wdiff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:12cd30af53ad3ebfe4ec5e094c2b855a186f15bf8b46fce3d655cacd55f1e860
+COMPONENT_ARCHIVE_HASH= \
+    sha256:34ff698c870c87e6e47a838eeaaae729fa73349139fc8db12211d2a22b78af6b
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wdiff/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wdiff
 
@@ -39,9 +39,9 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--enable-experimental
 
-CFLAGS +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
+CFLAGS_BUILD +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
 
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) $(CFLAGS_BUILD)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 

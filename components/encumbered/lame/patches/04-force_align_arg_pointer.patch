@@ -1,0 +1,52 @@
+Author: Fabian Greffrath <fabian@debian.org>
+Subject: Enable functions with SSE instructions to maintain their own properly aligned stack
+ Operands in SSE instructions must be aligned on 16-byte boundaries. In the
+ init_xrpow_core_sse() function these operands are variables on the stack.
+ However, when the code is called from the ocaml bindings, the stack is
+ allocated by ocaml which does not adhere to the 16-byte boundary rule and thus
+ causes the code to crash with a general protection error.
+ What is needed is a means enable functions calling SSE instructions to
+ maintain their own properly aligned stack. The "force_align_arg_pointer"
+ attribute does exactly this, see
+ <https://gcc.gnu.org/onlinedocs/gcc/x86-Function-Attributes.html>.
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=786438
+Forwarded: https://sourceforge.net/p/lame/bugs/449/
+Last-Update: 2015-06-10
+
+--- a/libmp3lame/vector/xmm_quantize_sub.c
++++ b/libmp3lame/vector/xmm_quantize_sub.c
+@@ -51,8 +51,14 @@ static const FLOAT costab[TRI_SIZE * 2]
+ };
+ 
+ 
++/* make sure functions with SSE instructions maintain their own properly aligned stack */
++#if defined (__GNUC__) && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2)))
++#define SSE_FUNCTION __attribute__((force_align_arg_pointer))
++#else
++#define SSE_FUNCTION
++#endif
+ 
+-void
++SSE_FUNCTION void
+ init_xrpow_core_sse(gr_info * const cod_info, FLOAT xrpow[576], int upper, FLOAT * sum)
+ {
+     int     i;
+@@ -113,7 +119,8 @@ init_xrpow_core_sse(gr_info * const cod_
+ }
+ 
+ 
+-static void store4(__m128 v, float* f0, float* f1, float* f2, float* f3)
++SSE_FUNCTION static void
++store4(__m128 v, float* f0, float* f1, float* f2, float* f3)
+ {
+     vecfloat_union r;
+     r._m128 = v;
+@@ -124,7 +131,7 @@ static void store4(__m128 v, float* f0,
+ }
+ 
+ 
+-void
++SSE_FUNCTION void
+ fht_SSE2(FLOAT * fz, int n)
+ {
+     const FLOAT *tri = costab;

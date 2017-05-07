@@ -1,0 +1,55 @@
+--- desktop-cache-smf-services-0.2.2/input-method/input-method-cache.~1~	2015-03-21 10:53:13.385144411 +0300
++++ desktop-cache-smf-services-0.2.2/input-method/input-method-cache	2015-03-21 10:57:14.070078314 +0300
+@@ -67,9 +67,9 @@
+       echo "gtk-query-immodules-2.0 not installed"
+       continue
+   }
+-  if [ -a "/etc/$DIR/gtk-2.0/gtk.immodules" ]; then
++  if [ -a "/usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache" ]; then
+     RESULT=`${FIND_NEWER} -c -f -m --name '*.so' \
+-	--newer /etc/$DIR/gtk-2.0/gtk.immodules \
++	--newer /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache \
+ 	/usr/lib/$DIR/gtk-2.0/*/immodules 2>/dev/null`
+   else
+     RESULT="no cache file"
+@@ -78,12 +78,12 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+     /usr/bin/$DIR/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
+-	> /etc/$DIR/gtk-2.0/gtk.immodules
++	> /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache
+     if [ $? -ne 0 ]; then
+-      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /etc/$DIR/gtk-2.0/gtk.immodules"
++      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "input method cache installed in /etc/$DIR/gtk-2.0/gtk.immodules"
++      echo "input method cache installed in /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+     fi
+   fi
+ done
+@@ -96,7 +96,7 @@
+       echo "gtk-query-immodules-2.0 not installed"
+       continue
+   }
+-  if [ -a "/etc/$DIR/gtk-2.0/gtk.immodules" ]; then
++  if [ -a "/usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache" ]; then
+     RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-2.0/*/immodules/*.so ! -type d \
+ 	    -follow 2>/dev/null`
+   else
+@@ -106,12 +106,12 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+     /usr/bin/$DIR/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
+-	> /etc/$DIR/gtk-2.0/gtk.immodules
++	> /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache
+     if [ $? -ne 0 ]; then
+-      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /etc/$DIR/gtk-2.0/gtk.immodules"
++      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "input method cache installed in /etc/$DIR/gtk-2.0/gtk.immodules"
++      echo "input method cache installed in /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
+     fi
+   fi
+ done

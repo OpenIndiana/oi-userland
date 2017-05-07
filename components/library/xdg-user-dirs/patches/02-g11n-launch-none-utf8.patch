@@ -1,0 +1,11 @@
+--- xdg-user-dirs-0.10-bak/xdg-user-dirs-update.c.orig	2008-03-26 12:32:44.000000000 +0900
++++ xdg-user-dirs-0.10-bak/xdg-user-dirs-update.c	2008-08-21 00:00:14.198461000 +0900
+@@ -718,7 +718,7 @@ save_locale (void)
+   locale = strdup (setlocale (LC_MESSAGES, NULL));
+   /* Skip encoding part */
+   dot = strchr (locale, '.');
+-  if (dot)
++  if (dot && (filename_encoding == NULL))
+     *dot = 0;
+   fprintf (file, "%s", locale);
+   free (locale);

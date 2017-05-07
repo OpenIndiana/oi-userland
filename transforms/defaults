@@ -21,22 +21,42 @@
 
 #
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
 <transform dir path=etc$ -> default group sys>
 <transform dir path=etc/inet$ -> default group sys>
 <transform dir path=var$ -> default group sys>
 
+<transform dir path=etc/profile.d$ -> default group sys>
+<transform dir path=etc/profile.d/.* -> default group sys>
 <transform dir path=etc/skel$ -> default group sys>
 <transform dir path=usr$ -> default group sys>
 <transform dir path=usr/lib/pkgconfig$ -> default group other>
 <transform dir path=usr/lib/.*/pkgconfig$ -> default group other>
 <transform dir path=usr/share$ -> default group sys>
+<transform dir path=usr/share/application-registry$ -> default group other>
 <transform dir path=usr/share/aclocal$ -> default group other>
 <transform dir path=usr/share/doc$ -> default group other>
+<transform dir path=usr/share/gnome$ -> default group other>
 <transform dir path=usr/share/lib$ -> default group sys>
 <transform dir path=usr/share/lib/java$ -> default group sys>
 <transform dir path=usr/share/lib/java/javadoc$ -> default group other>
+
+# 
+# C++ libraries compiled with GCC have incompatible ABI with Studio-compiled,
+# so they go to separate directory if we need several library versions.
+# Here we set default directories permissions which should be compatible
+# with SFE directory permissions.
+#
+<transform dir path=usr/g\+\+/lib/pkgconfig$ -> default group other>
+<transform dir path=usr/g\+\+/lib/.*/pkgconfig$ -> default group other>
+<transform dir path=usr/g\+\+/share$ -> default group sys>
+<transform dir path=usr/g\+\+/share/aclocal$ -> default group other>
+<transform dir path=usr/g\+\+/share/doc$ -> default group other>
+<transform dir path=usr/g\+\+/share/lib$ -> default group sys>
+<transform dir path=usr/g\+\+/share/lib/java$ -> default group sys>
+<transform dir path=usr/g\+\+/lib/java/javadoc$ -> default group other>
 
 #
 # Changes to zoneinfo files on live systems need to trigger a refresh of
@@ -101,7 +121,7 @@ set name=variant.arch value=$(MACH)
 #
 # Defaults for legacy metadata for SVR4 package information
 #
-<transform legacy -> default vendor "Oracle Corporation">
+<transform legacy -> default vendor "Project OpenIndiana">
 <transform legacy -> default hotline \
 	"Please contact your local service provider">
 <transform legacy -> default arch $(MACH)>
@@ -109,10 +129,37 @@ set name=variant.arch value=$(MACH)
 # This is set to the final version number delivered as SVR4 format
 <transform legacy -> default version "11.11.0,REV=2010.05.25.01.00">
 
+
+#
+# Set the default GCC for mediated links
+#
+<transform link mediator=gcc mediator-version=4.9 -> default mediator-priority vendor>
+
 #
 # Set the default Python for mediated links
 #
-<transform link mediator=python mediator-version=2.6 -> default mediator-priority vendor>
+<transform link mediator=python mediator-version=2.7 -> default mediator-priority vendor>
+
+#
+# Set the default Perl for mediated links
+#
+<transform link mediator=perl mediator-version=5.22 -> default mediator-priority vendor>
+<transform link mediator=system-perl mediator-version=5.22 -> default mediator-priority vendor>
+
+#
+# Set the default Apache for mediated links
+#
+<transform link mediator=apache mediator-version=2.2 -> default mediator-priority vendor>
+
+#
+# Set the default Ruby for mediated links
+#
+<transform link mediator=ruby mediator-version=2.3 -> default mediator-priority vendor>
+
+#
+# Set the default Java for mediated links
+#
+<transform link mediator=java mediator-version=8 -> default mediator-priority vendor>
 
 #
 # Add a facet.version-lock.{package} to each 'optional' consolidation
@@ -125,3 +172,14 @@ set name=variant.arch value=$(MACH)
     default facet.version-lock.%<1> true >
 <transform depend tmp.fmri=.*-> delete tmp.fmri .* >
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+# Avoid mangling compressed man pages
+<transform file path=usr.*/man/.+\.(Z|bzip2|gz|xz)$ -> default mangler.bypass true>
+
+<transform set name=pkg.fmri -> emit set name=userland.info.git-remote \
+             value=$(USERLAND_GIT_REMOTE)>
+<transform set name=pkg.fmri -> emit set name=userland.info.git-branch \
+             value=$(USERLAND_GIT_BRANCH)>
+<transform set name=pkg.fmri -> emit set name=userland.info.git-rev \
+             value=$(USERLAND_GIT_REV)>

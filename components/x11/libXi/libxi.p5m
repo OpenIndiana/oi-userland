@@ -1,0 +1,118 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/man/man3xi/(.+)$ \
+	-> set action.hash usr/share/man/man3/%<\1> >
+
+link path=usr/X11/lib/$(MACH64)/libXi.so target=../../../lib/$(MACH64)/libXi.so
+link path=usr/X11/lib/$(MACH64)/libXi.so.5 target=../../../lib/$(MACH64)/libXi.so.5
+link path=usr/X11/lib/libXi.so target=../../lib/libXi.so
+link path=usr/X11/lib/libXi.so.5 target=../../lib/libXi.so.5
+
+file path=usr/include/X11/extensions/XInput.h
+file path=usr/include/X11/extensions/XInput2.h
+link path=usr/lib/$(MACH64)/libXi.so target=libXi.so.5.0.0
+link path=usr/lib/$(MACH64)/libXi.so.5 target=libXi.so.5.0.0
+file path=usr/lib/$(MACH64)/libXi.so.5.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/xi.pc
+link path=usr/lib/libXi.so target=libXi.so.5.0.0
+link path=usr/lib/libXi.so.5 target=libXi.so.5.0.0
+file path=usr/lib/libXi.so.5.0.0
+file path=usr/lib/pkgconfig/xi.pc
+file path=usr/share/doc/libXi/encoding.xml
+file path=usr/share/doc/libXi/inputlib.xml
+file path=usr/share/doc/libXi/library.xml
+file path=usr/share/man/man3xi/XAllowDeviceEvents.3
+file path=usr/share/man/man3xi/XChangeDeviceControl.3
+file path=usr/share/man/man3xi/XChangeDeviceDontPropagateList.3
+file path=usr/share/man/man3xi/XChangeDeviceKeyMapping.3
+file path=usr/share/man/man3xi/XChangeDeviceProperty.3
+file path=usr/share/man/man3xi/XChangeFeedbackControl.3
+file path=usr/share/man/man3xi/XChangeKeyboardDevice.3
+file path=usr/share/man/man3xi/XChangePointerDevice.3
+file path=usr/share/man/man3xi/XCloseDevice.3
+file path=usr/share/man/man3xi/XDeleteDeviceProperty.3
+file path=usr/share/man/man3xi/XDeviceBell.3
+file path=usr/share/man/man3xi/XDeviceTimeCoord.3
+file path=usr/share/man/man3xi/XFreeDeviceList.3
+file path=usr/share/man/man3xi/XGetDeviceButtonMapping.3
+file path=usr/share/man/man3xi/XGetDeviceControl.3
+file path=usr/share/man/man3xi/XGetDeviceDontPropagateList.3
+file path=usr/share/man/man3xi/XGetDeviceFocus.3
+file path=usr/share/man/man3xi/XGetDeviceKeyMapping.3
+file path=usr/share/man/man3xi/XGetDeviceModifierMapping.3
+file path=usr/share/man/man3xi/XGetDeviceMotionEvents.3
+file path=usr/share/man/man3xi/XGetDeviceProperty.3
+file path=usr/share/man/man3xi/XGetExtensionVersion.3
+file path=usr/share/man/man3xi/XGetFeedbackControl.3
+file path=usr/share/man/man3xi/XGetSelectedExtensionEvents.3
+file path=usr/share/man/man3xi/XGrabDevice.3
+file path=usr/share/man/man3xi/XGrabDeviceButton.3
+file path=usr/share/man/man3xi/XGrabDeviceKey.3
+file path=usr/share/man/man3xi/XIBarrierReleasePointer.3
+file path=usr/share/man/man3xi/XIBarrierReleasePointers.3
+file path=usr/share/man/man3xi/XIChangeHierarchy.3
+file path=usr/share/man/man3xi/XIChangeProperty.3
+file path=usr/share/man/man3xi/XIDefineCursor.3
+file path=usr/share/man/man3xi/XIDeleteProperty.3
+file path=usr/share/man/man3xi/XIFreeDeviceInfo.3
+file path=usr/share/man/man3xi/XIGetClientPointer.3
+file path=usr/share/man/man3xi/XIGetFocus.3
+file path=usr/share/man/man3xi/XIGetProperty.3
+file path=usr/share/man/man3xi/XIGetSelectedEvents.3
+file path=usr/share/man/man3xi/XIGrabButton.3
+file path=usr/share/man/man3xi/XIGrabDevice.3
+file path=usr/share/man/man3xi/XIGrabEnter.3
+file path=usr/share/man/man3xi/XIGrabFocusIn.3
+file path=usr/share/man/man3xi/XIGrabKeycode.3
+file path=usr/share/man/man3xi/XIGrabTouchBegin.3
+file path=usr/share/man/man3xi/XIListProperties.3
+file path=usr/share/man/man3xi/XIQueryDevice.3
+file path=usr/share/man/man3xi/XIQueryPointer.3
+file path=usr/share/man/man3xi/XIQueryVersion.3
+file path=usr/share/man/man3xi/XISelectEvents.3
+file path=usr/share/man/man3xi/XISetClientPointer.3
+file path=usr/share/man/man3xi/XISetFocus.3
+file path=usr/share/man/man3xi/XIUndefineCursor.3
+file path=usr/share/man/man3xi/XIUngrabButton.3
+file path=usr/share/man/man3xi/XIUngrabDevice.3
+file path=usr/share/man/man3xi/XIUngrabEnter.3
+file path=usr/share/man/man3xi/XIUngrabFocusIn.3
+file path=usr/share/man/man3xi/XIUngrabKeycode.3
+file path=usr/share/man/man3xi/XIUngrabTouchBegin.3
+file path=usr/share/man/man3xi/XIWarpPointer.3
+file path=usr/share/man/man3xi/XListDeviceProperties.3
+file path=usr/share/man/man3xi/XListInputDevices.3
+file path=usr/share/man/man3xi/XOpenDevice.3
+file path=usr/share/man/man3xi/XQueryDeviceState.3
+file path=usr/share/man/man3xi/XSelectExtensionEvent.3
+file path=usr/share/man/man3xi/XSendExtensionEvent.3
+file path=usr/share/man/man3xi/XSetDeviceButtonMapping.3
+file path=usr/share/man/man3xi/XSetDeviceFocus.3
+file path=usr/share/man/man3xi/XSetDeviceMode.3
+file path=usr/share/man/man3xi/XSetDeviceModifierMapping.3
+file path=usr/share/man/man3xi/XSetDeviceValuators.3
+file path=usr/share/man/man3xi/XUngrabDevice.3
+file path=usr/share/man/man3xi/XUngrabDeviceButton.3
+file path=usr/share/man/man3xi/XUngrabDeviceKey.3

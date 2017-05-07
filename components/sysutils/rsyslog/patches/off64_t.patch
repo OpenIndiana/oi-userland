@@ -1,0 +1,61 @@
+From a6b6bf306da575f89a291102a365817cf02b8202 Mon Sep 17 00:00:00 2001
+From: Rainer Gerhards <rgerhards@adiscon.com>
+Date: Tue, 8 Apr 2014 12:11:57 +0200
+Subject: [PATCH] fix build problems on solaris
+
+---
+ configure.ac       | 1 +
+ grammar/grammar.y  | 3 ++-
+ grammar/lexer.l    | 6 +++++-
+ runtime/typedefs.h | 6 ++++--
+ 4 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 689537a..f9fad4d 100644
+--- rsyslog-7.4.4/configure.ac.~1~	2014-12-04 16:37:45.981552570 +0300
++++ rsyslog-7.4.4/configure.ac	2014-12-04 16:38:35.300437915 +0300
+@@ -38,6 +38,7 @@
+ # if int64 is supported, use it
+ AC_CHECK_LIB(json-c, json_object_new_object,,)
+ AC_CHECK_FUNCS(json_object_new_int64,,)
++AC_CHECK_TYPES([off64_t])
+ 
+ # look for newer API
+ AC_CHECK_FUNCS(json_tokener_error_desc,,)
+diff --git a/grammar/grammar.y b/grammar/grammar.y
+index c5bad68..a198db0 100644
+--- a/grammar/grammar.y
++++ b/grammar/grammar.y
+@@ -27,6 +27,7 @@
+  * limitations under the License.
+  */
+ %{
++#include "config.h"
+ #include <stdio.h>
+ #include <libestr.h>
+ #include "rainerscript.h"
+diff --git a/runtime/typedefs.h b/runtime/typedefs.h
+index 8d206f6..d604538 100644
+--- a/runtime/typedefs.h
++++ b/runtime/typedefs.h
+@@ -158,7 +158,9 @@ typedef enum {
+ } fiop_t;
+ 
+ #ifndef HAVE_LSEEK64
+-	typedef off_t off64_t;
++#	ifndef	HAVE_OFF64_T
++		typedef off_t off64_t;
++#	endif
+ #endif
+ 
+ 
+--- rsyslog-7.4.4/plugins/imsolaris/sun_cddl.c.~1~	2014-12-04 16:48:04.760671227 +0300
++++ rsyslog-7.4.4/plugins/imsolaris/sun_cddl.c	2014-12-04 16:48:23.617593009 +0300
+@@ -39,6 +39,7 @@
+  * software developed by the University of California, Berkeley, and its
+  * contributors.
+  */
++#include "config.h"
+ #include <unistd.h>
+ #include <errno.h>
+ #include <sys/types.h>

@@ -1,0 +1,19 @@
+Description: cupsGetPPD* would return a symlink to the PPD in /etc/cups/ppd even if it was not readable by the user
+Bug-Upstream: https://cups.org/str.php?L4500
+Author: Michael Sweet <msweet@apple.com>
+Last-Updated: 2014-10-20
+--- cups/util.c
++++ cups/util.c
+@@ -955,10 +955,10 @@
+ 
+     snprintf(ppdname, sizeof(ppdname), "%s/ppd/%s.ppd", cg->cups_serverroot,
+              name);
+-    if (!stat(ppdname, &ppdinfo))
++    if (!stat(ppdname, &ppdinfo) && !access(ppdname, R_OK))
+     {
+      /*
+-      * OK, the file exists, use it!
++      * OK, the file exists and is readable, use it!
+       */
+ 
+       if (buffer[0])

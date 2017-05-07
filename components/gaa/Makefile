@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -28,7 +28,6 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--with-pic
-CONFIGURE_OPTIONS+= 	CFLAGS="$(CFLAGS)"
 
 build:		$(BUILD_32_and_64)
 

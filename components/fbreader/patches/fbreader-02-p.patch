@@ -1,0 +1,42 @@
+--- fbreader-0.12.10/fbreader/src/formats/fb2/FB2Reader.h	Thu Apr  1 15:14:24 2010
++++ fbreader-0.12.10-patch/fbreader/src/formats/fb2/FB2Reader.h	Sun Jul 11 21:16:36 2010
+@@ -48,7 +48,7 @@
+ 
+ public:
+ 	enum TagCode {
+-		_P,
++		_XP,
+ 		_SUBTITLE,
+ 		_CITE,
+ 		_TEXT_AUTHOR,
+--- fbreader-0.12.10/fbreader/src/formats/fb2/FB2Reader.cpp	Thu Apr  1 15:14:24 2010
++++ fbreader-0.12.10-patch/fbreader/src/formats/fb2/FB2Reader.cpp	Sun Jul 11 21:17:06 2010
+@@ -34,7 +34,7 @@
+ }
+ 
+ static const FB2Reader::Tag TAGS[] = {
+-	{"p", FB2Reader::_P},
++	{"p", FB2Reader::_XP},
+ 	{"subtitle", FB2Reader::_SUBTITLE},
+ 	{"cite", FB2Reader::_CITE},
+ 	{"text-author", FB2Reader::_TEXT_AUTHOR},
+--- fbreader-0.12.10/fbreader/src/formats/fb2/FB2BookReader.cpp	Sun Jul 11 21:17:47 2010
++++ fbreader-0.12.10-patch/fbreader/src/formats/fb2/FB2BookReader.cpp	Sun Jul 11 21:17:31 2010
+@@ -66,7 +66,7 @@
+ 		myModelReader.addHyperlinkLabel(id);
+ 	}
+ 	switch (tag) {
+-		case _P:
++		case _XP:
+ 			if (mySectionStarted) {
+ 				mySectionStarted = false;
+ 			} else if (myInsideTitle) {
+@@ -228,7 +228,7 @@
+ 
+ void FB2BookReader::endElementHandler(int tag) {
+ 	switch (tag) {
+-		case _P:
++		case _XP:
+ 			myModelReader.endParagraph();
+ 			break;
+ 		case _V:

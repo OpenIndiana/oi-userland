@@ -1,0 +1,128 @@
+--- libcdio-0.93/lib/driver/solaris.c.~1~	2014-06-21 06:10:56.000000000 +0400
++++ libcdio-0.93/lib/driver/solaris.c	2015-09-11 07:29:46.035552587 +0300
+@@ -47,6 +47,7 @@
+ #include <errno.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <hal/libhal.h>
+ 
+ #ifdef HAVE_SYS_CDIO_H
+ # include <sys/cdio.h> /* CDIOCALLOW etc... */
+@@ -624,6 +625,42 @@
+   return size;
+ }
+ 
++static char *
++find_cdroms (LibHalContext *hal_ctx)
++{
++  int i;
++  int num_udis;
++  char **udis;
++  char *bdev, *rdev;
++  DBusError error;
++
++  dbus_error_init (&error);
++
++  udis = libhal_find_device_by_capability (hal_ctx, "storage.cdrom",
++      &num_udis, &error);
++
++  if (dbus_error_is_set (&error)) {
++          fprintf (stderr, "error: %s: %s\n", error.name, error.message);
++          goto out;
++  }
++
++  /* Return first device found */
++  for (i = 0; i < num_udis; i++) {
++          bdev = libhal_device_get_property_string (hal_ctx,
++              udis[i], "block.device", &error);
++          rdev = libhal_device_get_property_string (hal_ctx,
++              udis[i], "block.solaris.raw_device", &error);
++
++          if (rdev != NULL)
++             return rdev;
++  }
++
++out:
++  libhal_free_string_array (udis);
++  dbus_error_free (&error);
++  return (NULL);
++}
++
+ /*!
+   Set the arg "key" with "value" in the source device.
+   Currently "source" and "access-mode" are valid keys.
+@@ -822,6 +859,33 @@
+   char *volume_action;
+   char *device;
+   struct stat stb;
++  char *default_device = NULL;
++  DBusError error;
++  LibHalContext *hal_ctx;
++  int ret = 1;
++
++  dbus_error_init (&error);
++  if ((hal_ctx = libhal_ctx_new ()) == NULL) {
++          fprintf (stderr, "libhal_ctx_new failed\n");
++          goto halerr;
++  }
++  if (!libhal_ctx_set_dbus_connection (hal_ctx,
++      dbus_bus_get(DBUS_BUS_SYSTEM, &error))) {
++          fprintf (stderr, "libhal_ctx_set_dbus_connection: %s %s\n",
++              error.name, error.message);
++          goto halerr;
++  }
++  if (!libhal_ctx_init (hal_ctx, &error)) {
++          fprintf (stderr, "libhal_ctx_init: %s: %s\n",
++              error.name, error.message);
++          goto halerr;
++  }
++
++  default_device = find_cdroms(hal_ctx);
++
++halerr:
++  libhal_ctx_shutdown(hal_ctx, &error);
++  libhal_ctx_free(hal_ctx);
+ 
+   /* vold and its directory /vol have been replaced by "Tamarack" which
+      is based on hald. This happened in 2006.
+@@ -837,23 +901,32 @@
+       strcmp(volume_action, "insert") == 0) {
+     uint len = strlen(volume_device) + strlen(volume_name) + 2;
+     device = calloc(1, len);
+-    if (device == NULL)
+-      return strdup(DEFAULT_CDIO_DEVICE);
++    if (device == NULL) {
++      if (default_device != NULL)
++        return strdup (default_device);
++      else
++        return strdup (DEFAULT_CDIO_DEVICE);
++    }
+     snprintf(device, len, "%s/%s", volume_device, volume_name);
+     if (stat(device, &stb) != 0 || !S_ISCHR(stb.st_mode)) {
+       free(device);
+-      return strdup(DEFAULT_CDIO_DEVICE);
++      if (default_device != NULL)
++         return strdup (default_device);
++      else
++         return strdup (DEFAULT_CDIO_DEVICE);
+     }
+     return device;
+   }
+   /* Check if it could be a Solaris media*/
+-  if((stat(DEFAULT_CDIO_DEVICE, &stb) == 0) && S_ISDIR(stb.st_mode)) {
+-    uint len = strlen(DEFAULT_CDIO_DEVICE + 4);
+-    device = calloc(1, len);
+-    snprintf(device, len, "%s/s0", DEFAULT_CDIO_DEVICE);
++  if(default_device != NULL && (stat(default_device, &stb) == 0) && S_ISDIR(stb.st_mode)) {
++    device = calloc(1, strlen(default_device) + 4);
++    sprintf(device, "%s/s0", default_device);
+     return device;
+   }
+-  return strdup(DEFAULT_CDIO_DEVICE);
++  if (default_device != NULL)
++     return strdup (default_device);
++  else
++     return strdup (DEFAULT_CDIO_DEVICE);
+ }
+ 
+ /*! 

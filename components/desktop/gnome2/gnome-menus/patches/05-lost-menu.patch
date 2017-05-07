@@ -1,0 +1,25 @@
+--- gnome-menus-2.28.0.1.old/libmenu/entry-directories.c	2008-04-21 20:49:29.000000000 +0100
++++ gnome-menus-2.28.0.1/libmenu/entry-directories.c	2008-05-29 13:33:17.427979000 +0100
+@@ -400,13 +400,18 @@ handle_cached_dir_changed (MenuMonitor  
+                 event == MENU_MONITOR_EVENT_CREATED ? ("created") :
+                 event == MENU_MONITOR_EVENT_DELETED ? ("deleted") : ("changed"));
+ 
+-  dirname  = g_path_get_dirname  (path);
+-  basename = g_path_get_basename (path);
++  if (g_file_test (path, G_FILE_TEST_IS_DIR)) {
++    dirname = g_strdup (path);
++    basename = NULL;
++  } else {
++    dirname  = g_path_get_dirname  (path);
++    basename = g_path_get_basename (path);
++  }
+ 
+   dir = cached_dir_lookup (dirname);
+ 
+-  if (g_str_has_suffix (basename, ".desktop") ||
+-      g_str_has_suffix (basename, ".directory"))
++  if (basename != NULL && (g_str_has_suffix (basename, ".desktop") ||
++      g_str_has_suffix (basename, ".directory")))
+     {
+       switch (event)
+         {

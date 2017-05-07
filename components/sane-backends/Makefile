@@ -29,7 +29,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:13271a7eb4dc4aa6072162abbd78848e4faad32c468b9b44e7f95cde96a4e17e
-COMPONENT_ARCHIVE_URL=	ftp://ftp2.sane-project.org/pub/sane/old-versions/sane-backends-1.0.19/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	ftp://ftp2.sane-project.org/pub/sane/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libsane
 
 include ../../make-rules/prep.mk

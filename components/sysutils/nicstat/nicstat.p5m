@@ -1,0 +1,36 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+# 
+# Copyright 2013, Adam Stevko. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform dir path=usr$ -> default group sys>
+<transform dir path=usr/share$ -> default group sys>
+
+set name=pkg.fmri value=pkg:/diagnostic/nicstat@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="nicstat - print network traffic statistics"
+set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_NAME).license license='$(COMPONENT_LICENSE)'
+
+dir  path=usr
+dir  path=usr/bin
+dir  path=usr/bin/$(MACH64)
+file path=usr/bin/$(MACH64)/nicstat
+file path=usr/bin/nicstat
+dir  path=usr/share
+dir  path=usr/share/man
+dir  path=usr/share/man/man1m
+file path=usr/share/man/man1m/nicstat.1m

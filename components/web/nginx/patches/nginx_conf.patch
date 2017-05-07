@@ -1,0 +1,75 @@
+--- nginx-1.11.6/conf/nginx.conf.~1~	2016-11-15 18:11:46.000000000 +0300
++++ nginx-1.11.6/conf/nginx.conf	2016-12-08 21:06:07.786872721 +0300
+@@ -1,10 +1,10 @@
+ 
+-#user  nobody;
++#user  webservd;
+ worker_processes  1;
+ 
+-#error_log  logs/error.log;
+-#error_log  logs/error.log  notice;
+-#error_log  logs/error.log  info;
++#error_log  /var/nginx/logs/error.log;
++#error_log  /var/nginx/logs/error.log  notice;
++#error_log  /var/nginx/logs/error.log  info;
+ 
+ #pid        logs/nginx.pid;
+ 
+@@ -22,7 +22,7 @@
+     #                  '$status $body_bytes_sent "$http_referer" '
+     #                  '"$http_user_agent" "$http_x_forwarded_for"';
+ 
+-    #access_log  logs/access.log  main;
++    #access_log  /var/nginx/logs/access.log  main;
+ 
+     sendfile        on;
+     #tcp_nopush     on;
+@@ -38,10 +38,10 @@
+ 
+         #charset koi8-r;
+ 
+-        #access_log  logs/host.access.log  main;
++        #access_log  /var/nginx/logs/host.access.log  main;
+ 
+         location / {
+-            root   html;
++            root   /usr/share/nginx/html;
+             index  index.html index.htm;
+         }
+ 
+@@ -51,7 +51,7 @@
+         #
+         error_page   500 502 503 504  /50x.html;
+         location = /50x.html {
+-            root   html;
++            root   /usr/share/nginx/html;
+         }
+ 
+         # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+@@ -63,7 +63,7 @@
+         # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+         #
+         #location ~ \.php$ {
+-        #    root           html;
++        #    root           /usr/share/nginx/html;
+         #    fastcgi_pass   127.0.0.1:9000;
+         #    fastcgi_index  index.php;
+         #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+@@ -87,7 +87,7 @@
+     #    server_name  somename  alias  another.alias;
+ 
+     #    location / {
+-    #        root   html;
++    #        root   /usr/share/nginx/html;
+     #        index  index.html index.htm;
+     #    }
+     #}
+@@ -109,7 +109,7 @@
+     #    ssl_prefer_server_ciphers  on;
+ 
+     #    location / {
+-    #        root   html;
++    #        root   /usr/share/nginx/html;
+     #        index  index.html index.htm;
+     #    }
+     #}

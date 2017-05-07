@@ -1,0 +1,122 @@
+Instructions on testing the negotiateauth
+mozilla extension with Apache.
+
+Introduction
+-----------------
+mod_auth_gss (originally from http://modauthkerb.sourceforge.net/) is an 
+Apache module designed to provide GSSAPI authentication to the Apache 
+web server. Using the "Negotiate" Auth mechanism, which performs full 
+Kerberos authentication based on ticket exchanges and does not require 
+users to insert their passwords to the browser.  In order to use the
+Negotiate method you need a browser supporting it (currently standard IE6.0 or
+Mozilla with the negotiateauth extension). 
+
+The Negotiate mechanism can be only used with Kerberos v5. The module supports 
+both 1.x and 2.x versions of Apache.
+
+The use of SSL encryption is also recommended (but not required) if you are 
+using the Negotiate method.
+
+Installing mod_auth_gss
+------------------------
+
+Prerequisites
+* Apache server installed.
+  Both 1.x and 2.x series of Apache are supported (make sure the apache
+  installation contains the apxs command)
+  In Solaris - the necessary Apache 2.X libraries and headers are 
+  usually found in /usr/apache2.
+* Working C compiler.
+* GSSAPI library (Solaris - /usr/lib/libgss.so.1)
+
+1. Building the Apache module is simple.
+   Find the directory with the source code and Makefile for
+   mod_auth_gss.so.
+   $ make
+
+2. Installing the Apache module requires 'root' privilege.
+   # cp mod_auth_gss.so /usr/apache2/libexec
+
+3. Configure apache to use the new module.
+   Add following line to /etc/apache2/httpd.conf:
+   LoadModule	auth_gss_module	libexec/mod_auth_gss.so
+
+4. Set permissions on the newly created keytab file so that only the
+   apache owner can read the file.  For example, if the apache server
+   is configured to run as user "nobody":
+
+   $ chown nobody /var/apache2/http.keytab
+   $ chmod 400 /var/apache2/http.keytab
+
+5. Create a directory in the apache 'htdocs' tree that will be used
+   to test the GSSAPI/KerberosV5 authentication.
+   $ mkdir /var/apache2/htdocs/krb5
+
+6. Create a ".htaccess" file for the Kerberos directory (step 4),
+   it should contain the following entries:
+	AuthType GSSAPI
+	AuthGSSServiceName HTTP
+        AuthGSSKeytabFile /var/apache2/http.keytab
+        AuthGssDebug 1
+
+   * AuthGssDebug is only needed for testing purposes, it causes extra
+     DEBUG level messages to be displayed in the Apache error_log file
+     (/var/apache2/logs/error_log).
+
+7. Put some content in the Kerberos web directory so the tester can
+   verify that they accessed the page correctly.
+
+8. Set the "AllowOverride" parameter in /etc/apache2/httpd.conf
+   to "All" for the Kerberos directory created in step 5.
+Ex:
+<Location "/var/apache2/htdocs/krb5">
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Require valid-user
+</Location>
+
+Configurating Kerberos
+-----------------------
+
+1. Set up Kerberos Server (if you don't already have one).
+   Follow basic instructions given at docs.sun.com.  Search for
+   "Configuring Kerberos" in the 
+   "Solaris Administration Guide: Security Services" book.
+
+   - The KDC should be a protected, standalone system.  But for 
+     internal testing purposes it may be hosted on the same system 
+     as the Apache web server.
+
+2. Create a Kerberos service key for the Apache server to use for
+   authenticating the clients.  Also create a user principal testing
+   the browser later.
+   The "Negotiate" method used by IIS and IE is "HTTP/<hostname>@REALM".
+   To create this principal for use with the Apache module do the following:
+   [ As 'root', on the Apache server ]
+   a.  /usr/sbin/kadmin
+      - this assumes the KDC setup procedure was followed (step 1).
+   b. kadmin: addprinc -randkey HTTP/<fully_qualified_host_name>
+   c. kadmin: ktadd -k /var/apache2/http.keytab HTTP/<fully_qualified_host_name>
+   d. kadmin: addprinc tester
+   e. kadmin: quit
+
+Testing the 'Negotiate' plugin with mozilla:
+--------------------------------------------
+
+1.  The client system must be configured to use Kerberos.
+    Setup /etc/krb5/krb5.conf to use the KDC created earlier
+
+2.  'kinit'  to get a TGT as the "tester" principal created
+    above in step 2d.
+    $ kinit tester
+         ( enter password )
+
+3.  Use mozilla (with 'negotiateauth' extension installed)
+    to access the Kerberos protected page (created above 
+    in steps 4-6).
+
+    If the pages do not show up, its probably due to
+    a misconfigured Kerberos configuration on the client
+    or the server (or both).  There is very little that
+    needs to be done for Mozilla or apache.
+
