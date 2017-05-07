@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmspub
 COMPONENT_VERSION=	0.1.2
@@ -33,11 +33,10 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:b0baabf82d20c08ad000e80fa02154ce2f2ffde1ee60240d6e3a917c3b35560f
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/libmspub/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
@@ -48,7 +47,14 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
+# Build dependencies
+REQUIRED_PACKAGES += system/library/boost
 
-include $(WS_TOP)/make-rules/depend.mk
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/c++/librevenge
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
