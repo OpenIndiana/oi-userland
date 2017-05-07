@@ -20,20 +20,21 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libodfgen
-COMPONENT_VERSION=	0.1.4
+COMPONENT_VERSION=	0.1.6
 COMPONENT_FMRI=     	library/c++/libodfgen
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/p/libwpd/wiki/libodfgen/
 COMPONENT_SUMMARY=      libodfgen - ODF export library using librevenge
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:249b5ed8e1acc0fee32b4381b31b4ad9453b674d4f13886bda5e9dd2b4a5f1e1
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libwpd/files/libodfgen/libodfgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:03b210ab44f05e38091508cdca6ba0ff73de3ea8a168f849b8f1c5059c20b9e9
+COMPONENT_ARCHIVE_URL=	\
+  http://sourceforge.net/projects/libwpd/files/libodfgen/libodfgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -48,7 +49,12 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
+# Build dependencies
+REQUIRED_PACKAGES += system/library/boost
 
-include $(WS_TOP)/make-rules/depend.mk
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/c++/librevenge
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
