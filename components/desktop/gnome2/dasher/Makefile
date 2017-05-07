@@ -17,8 +17,8 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dasher
 COMPONENT_VERSION=	4.11
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_REVISION=	2
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	Predictive text entry system
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -48,6 +48,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
+
+CXXFLAGS += -std=c++98
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
