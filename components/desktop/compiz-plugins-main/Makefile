@@ -56,6 +56,9 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += desktop/compiz/bcop
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/desktop/cairo
