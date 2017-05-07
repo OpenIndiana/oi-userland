@@ -957,8 +957,12 @@ CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
 # component build with CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.
 #
 
-# GCC Compiler optimization flag
-gcc_OPT =	-O3
+# Control the GCC optimization level.
+gcc_OPT.sparc.32 =	-O3
+gcc_OPT.sparc.64 =	-O3
+gcc_OPT.i386.32 =	-O3
+gcc_OPT.i386.64 =	-O3
+gcc_OPT =		$(gcc_OPT.$(MACH).$(BITS))
 
 # GCC PIC code generation.  Use CC_PIC instead to select PIC code generation.
 gcc_PIC =	-fPIC -DPIC
