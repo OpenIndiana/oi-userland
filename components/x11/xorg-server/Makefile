@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:278459b2c31d61a15655d95a72fb79930c480a6bb8cf9226e48a07df8b1d31c8
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_LICENSE = MIT
@@ -135,6 +135,7 @@ REQUIRED_PACKAGES += x11/library/xcb-util-renderutil
 REQUIRED_PACKAGES += x11/library/xcb-util-wm
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/header/header-drm
+REQUIRED_PACKAGES += developer/debug/mdb
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += diagnostic/scanpci
