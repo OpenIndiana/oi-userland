@@ -51,6 +51,10 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += desktop/compiz/bcop
+REQUIRED_PACKAGES += desktop/compiz/plugin/compiz-fusion-main
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/glib2
