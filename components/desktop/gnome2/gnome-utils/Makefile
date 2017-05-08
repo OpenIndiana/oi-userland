@@ -17,8 +17,8 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-utils
 COMPONENT_VERSION=	2.32.0
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_REVISION=	2
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	Basic GNOME utils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -34,6 +34,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH = $(PATH.gnu)
+
+CFLAGS += -std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
