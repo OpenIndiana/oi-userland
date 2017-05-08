@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gthumb
 # Later versions use symbolic icons
 COMPONENT_VERSION=	3.2.9.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SUMMARY=	GNOME image organizer (gthumb)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,6 +38,7 @@ PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
+CFLAGS   += -std=gnu89 -D_XOPEN_SOURCE=500
 CPPFLAGS += -I/usr/include/lcms2
 
 # Use default libjpeg
