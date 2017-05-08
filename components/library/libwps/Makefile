@@ -40,7 +40,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CXXFLAGS += -Wno-error=implicit-fallthrough
+#CXXFLAGS += -Wno-error=implicit-fallthrough
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
