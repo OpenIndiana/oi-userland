@@ -23,24 +23,27 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
-COMPONENT_VERSION=	1.8.7
+COMPONENT_VERSION=	1.8.13
+COMPONENT_FMRI=		developer/documentation-tool/doxygen		
+COMPONENT_SUMMARY=	Doxygen - Source Code Documentation Tool 
+COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c6eac6b6e82148ae15ec5aecee4631547359f284af1ce94474d046ebca6ee3d9
+    sha256:af667887bd7a87dc0dbf9ac8d86c96b552dfb8ca9c790ed1cbffaa6131573f6b
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/doxygen
+COMPONENT_LICENSE=	GPLv2
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
 COMPONENT_ARCHIVE_HASH_1 =	\
-    sha256:6796de1e77f723dcb52f36395161fdfbeaeebf769a297eb78b73e19b9542aa59
+    sha256:efc4937cf13b2e74f50ad8806d9b900f3c5e3f987ed503d763180053ee677ecd
 COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Necessary to find gcc during build
 PATH=$(GCC_ROOT)/bin:/usr/bin
@@ -48,11 +51,8 @@ PATH=$(GCC_ROOT)/bin:/usr/bin
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# Need to override default options since configure doesn't
-# understand CC, CXX, etc.
-CONFIGURE_OPTIONS =	--platform solaris-g++
-CONFIGURE_OPTIONS +=	--prefix /usr
-CONFIGURE_OPTIONS +=	--enable-langs am,ar,br,ca,cn,cz,de,dk,en,eo,es,fa,fi,fr,gr,hr,hu,id,it,je,jp,ke,kr,lt,lv,mk,nl,no,pl,pt,ro,ru,sc,si,sk,sr,sv,tr,tw,ua,vi,za
+CMAKE_OPTIONS+= -G "Unix Makefiles"
+CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
 
 ASLR_MODE = $(ASLR_ENABLE)
 # Test 12 is a known failure (we don't have bibtex in Solaris).
@@ -67,9 +67,16 @@ install:	$(INSTALL_32)
 	$(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) 
 	[ -f $(PROTO_DIR)/doxygen_manual-$(IPS_COMPONENT_VERSION).pdf ] || \
 	  $(MV) doxygen_manual-$(IPS_COMPONENT_VERSION).pdf $(PROTO_DIR)
+	$(INSTALL) -d $(PROTOUSRSHAREMAN1DIR)
+	$(INSTALL) -vm644 $(SOURCE_DIR)/doc/*.1 $(PROTOUSRSHAREMAN1DIR)
 
 test:	$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+# Build dependencies
+REQUIRED_PACKAGES+= developer/lexer/flex
 
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated contents below.  Please manually verify and remove this comment
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
