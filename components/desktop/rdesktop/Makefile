@@ -51,7 +51,7 @@ CONFIGURE_OPTIONS += --x-libraries=""
 
 # configure automatically adds -R <openssl-path>/lib to LDFLAGS even though
 # that's a 32-bit path and we're doing a 64-bit build, so we override it
-COMPONENT_BUILD_ARGS += LDFLAGS="-lcrypto"
+COMPONENT_BUILD_ARGS += LDFLAGS="-lcrypto $(LIBSOCKET)"
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += x11/library/libx11
