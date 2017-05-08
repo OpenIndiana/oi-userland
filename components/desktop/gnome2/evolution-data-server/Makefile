@@ -12,7 +12,7 @@
 # Copyright (c) 2013 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution-data-server
 COMPONENT_VERSION=	2.32.3
@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:744026a745b711b3e393b61fed21c4926d1b10a3aa7da64f4b33a3e3bf5b085c
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -35,7 +35,7 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 gcc_OPT		= -O2
 
 LDFLAGS+=	-L/usr/lib/mps -R/usr/lib/mps
-CFLAGS+=	-D__EXTENSIONS__
+CFLAGS+=	-std=gnu89 -D__EXTENSIONS__
 
 CONFIGURE_ENV+=		INTLTOOL_PERL=$(PERL)
 
@@ -57,6 +57,24 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libgdata
+REQUIRED_PACKAGES += library/desktop/libgweather
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libical
+REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/mozilla-nss
+REQUIRED_PACKAGES += system/library/security/gss
