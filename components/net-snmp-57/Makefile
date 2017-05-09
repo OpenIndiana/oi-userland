@@ -61,13 +61,8 @@ CONFIGURE_OPTIONS  +=	--enable-agentx-dom-sock-only
 CONFIGURE_OPTIONS  +=	--enable-ucd-snmp-compatibility
 CONFIGURE_OPTIONS  +=	--enable-ipv6
 CONFIGURE_OPTIONS  +=	--enable-mfd-rewrites
-CONFIGURE_OPTIONS  +=   --disable-md5
-CONFIGURE_OPTIONS  +=   --disable-des
-CONFIGURE_OPTIONS  +=   --disable-snmpv1 
-CONFIGURE_OPTIONS  +=   --disable-snmpv2c
 CONFIGURE_OPTIONS  +=	--with-openssl=/lib/openssl
-CONFIGURE_OPTIONS  +=   --with-security-modules=tsm
-CONFIGURE_OPTIONS  +=   --with-transports="UDP TCP UDPIPv6 TCPIPv6 DTLSUDP TLSTCP"
+CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
 CONFIGURE_OPTIONS  +=   --sysconfdir=$(ETCDIR)/net-snmp
 
 # Which MIB modules do we want to build
