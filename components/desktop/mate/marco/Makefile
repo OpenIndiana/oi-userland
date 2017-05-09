@@ -61,6 +61,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += gnome/zenity
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
