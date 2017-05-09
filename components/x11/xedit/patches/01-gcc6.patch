@@ -1,0 +1,19 @@
+--- xedit-1.2.2/lisp/re/re.c.orig	Tue May  9 16:49:12 2017
++++ xedit-1.2.2/lisp/re/re.c	Tue May  9 16:51:25 2017
+@@ -2323,6 +2323,8 @@
+ 	inf->cod[inf->sr[i] + 3] = distance & 0xff;
+ 	inf->cod[inf->sr[i] + 4] = (distance & 0xff00) >> 8;
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Warray-bounds"
+ 	/*  Generate jumps to the previous special repetition */
+ 	for (++i; i <= bas; i++) {
+ 	    if (inf->sp[i]) {
+@@ -2331,6 +2333,7 @@
+ 		inf->cod[inf->sr[i] + 4] = (distance & 0xff00) >> 8;
+ 	    }
+ 	}
++#pragma GCC diagnostic pop
+     }
+ 
+     return (inf->ecode);

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xedit
 COMPONENT_VERSION=        1.2.2
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           editor/xedit
 COMPONENT_CLASSIFICATION= Development/Editors
 COMPONENT_SUMMARY=  xedit - simple Xaw toolkit text editor for X
@@ -30,11 +31,11 @@ COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xedit.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 
