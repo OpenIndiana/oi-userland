@@ -47,6 +47,10 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/desktop/desktop-file-utils
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco
 REQUIRED_PACKAGES += desktop/mate/mate-settings-daemon
 REQUIRED_PACKAGES += gnome/config/dconf
