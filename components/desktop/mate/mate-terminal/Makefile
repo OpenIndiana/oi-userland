@@ -10,19 +10,20 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Ken Mays
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-terminal
-COMPONENT_VERSION=      1.16.1
+COMPONENT_VERSION=      1.16.3
 COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE terminal emulator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c032a11a6a4f5ccb84c3453cedba6c0b7100858cf1a2fa5d7f97173d4c33bccc
+    sha256:fac9b0008ff4b64985f0e205186e5c0494f653fd2525208fc8c7c52eb9e77e2d 
 COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING

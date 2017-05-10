@@ -10,18 +10,19 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Ken Mays
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-utils
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.16.1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Basic MATE utils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:05aad0bc57647e2d084f6588dd43692c8bd2a4284c9917d17033ca016b47c842
+    sha256:555a69fa21e92a71d3ade780344e16717519c03ce5da5b76c5d5767f7d6ecddb 
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3

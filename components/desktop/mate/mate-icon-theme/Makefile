@@ -16,13 +16,13 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-icon-theme
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.16.2
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Collection of icons for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:edec67867b26974ef286cd85e968efee3ee5ea4d232b86b48ee6c47085e08dfe
+    sha256:6bce8e8fa73ddd41738586811464408f0dc8e8d805cdd1ffedd31acfed0d7ad4 
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
