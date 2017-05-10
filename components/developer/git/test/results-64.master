@@ -1188,8 +1188,9 @@ ok 2 - branch -d @{-12} when there is not enough switches yet
 ok 3 - merge @{-1}
 ok 4 - merge @{-1}~1
 ok 5 - merge @{-100} before checking out that many branches yet
-# passed all 5 test(s)
-1..5
+ok 6 - log -g @{-1}
+# passed all 6 test(s)
+1..6
 *** t0101-at-syntax.sh ***
 ok 1 - setup
 ok 2 - @{0} shows current
@@ -1259,8 +1260,8 @@ ok 2 - Git::I18N is located at $(@D)/t/../perl/blib/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
 ok 5 - sanity: N__ has a $ prototype
-ok 6 - sanity: __n has a $$$ prototype
-ok 7 - sanity: __ has a $ prototype
+ok 6 - sanity: __ has a $ prototype
+ok 7 - sanity: __n has a $$$ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -4576,6 +4577,22 @@ ok 21 - local-branch symrefs shortened properly
 ok 22 - sort branches, ignore case
 # passed all 22 test(s)
 1..22
+*** t3204-branch-name-interpretation.sh ***
+ok 1 - set up repo
+ok 2 - update branch via @{-1}
+ok 3 - update branch via local @{upstream}
+ok 4 - disallow updating branch via remote @{upstream}
+ok 5 - create branch with pseudo-qualified name
+ok 6 - delete branch via @{-1}
+ok 7 - delete branch via local @{upstream}
+ok 8 - delete branch via remote @{upstream}
+ok 9 - delete @{upstream} expansion matches -r option
+ok 10 - disallow deleting remote branch via @{-1}
+ok 11 - create branch named "@"
+ok 12 - delete branch named "@"
+ok 13 - checkout does not treat remote @{upstream} as a branch
+# passed all 13 test(s)
+1..13
 *** t3210-pack-refs.sh ***
 ok 1 - enable reflogs
 ok 2 - prepare a trivial repository
@@ -5809,7 +5826,7 @@ ok 60 - rm recursively removes work tree of unmodified submodules
 ok 61 - rm of a populated nested submodule with different nested HEAD fails unless forced
 ok 62 - rm of a populated nested submodule with nested modifications fails unless forced
 ok 63 - rm of a populated nested submodule with nested untracked files fails unless forced
-ok 64 - rm of a populated nested submodule with a nested .git directory fails even when forced
+ok 64 - rm absorbs submodule's nested .git directory
 ok 65 - checking out a commit after submodule removal needs manual updates
 ok 66 - rm of d/f when d has become a non-directory
 ok 67 - rm of d/f when d has become a dangling symlink
@@ -7672,8 +7689,9 @@ not ok 2 - -G matches
 #		git diff --name-only -G "^0{4096}$" HEAD^ >out &&
 #		test 4096-zeroes.txt = "$(cat out)"
 #	
-# failed 1 among 2 test(s)
-1..2
+ok 3 - -S --pickaxe-regex
+# failed 1 among 3 test(s)
+1..3
 *** t4100-apply-stat.sh ***
 ok 1 - rename
 ok 2 - rename with recount
@@ -9259,6 +9277,12 @@ ok 8 - pack-objects with -c pack.compression=0
 ok 9 - pack-objects with -c pack.compression=9
 # passed all 9 test(s)
 1..9
+*** t5316-pack-delta-depth.sh ***
+ok 1 - create series of packs
+ok 2 - packing produces a long delta
+ok 3 - --depth limits depth
+# passed all 3 test(s)
+1..3
 *** t5400-send-pack.sh ***
 ok 1 - setup
 ok 2 - pack the source repository
@@ -12774,18 +12798,21 @@ ok 26 - Tag name filtering retains tag message
 ok 27 - Tag name filtering strips gpg signature
 ok 28 # skip Filtering retains message of gpg signed commit (missing GPG)
 ok 29 - Tag name filtering allows slashes in tag names
-ok 30 - Prune empty commits
-ok 31 - prune empty collapsed merges
-ok 32 - prune empty works even without index/tree filters
-ok 33 - --remap-to-ancestor with filename filters
-ok 34 - automatic remapping to ancestor with filename filters
-ok 35 - setup submodule
-ok 36 - rewrite submodule with another content
-ok 37 - replace submodule revision
-ok 38 - filter commit message without trailing newline
-ok 39 - tree-filter deals with object name vs pathname ambiguity
-# passed all 39 test(s)
-1..39
+ok 30 - setup --prune-empty comparisons
+ok 31 - Prune empty commits
+ok 32 - prune empty collapsed merges
+ok 33 - prune empty works even without index/tree filters
+ok 34 - --prune-empty is able to prune root commit
+ok 35 - --prune-empty is able to prune entire branch
+ok 36 - --remap-to-ancestor with filename filters
+ok 37 - automatic remapping to ancestor with filename filters
+ok 38 - setup submodule
+ok 39 - rewrite submodule with another content
+ok 40 - replace submodule revision
+ok 41 - filter commit message without trailing newline
+ok 42 - tree-filter deals with object name vs pathname ambiguity
+# passed all 42 test(s)
+1..42
 *** t7004-tag.sh ***
 ok 1 - listing all tags in an empty tree should succeed
 ok 2 - listing all tags in an empty tree should output nothing
@@ -12873,8 +12900,8 @@ ok 83 # skip verifying a signed tag should succeed (missing GPG)
 ok 84 # skip verifying two signed tags in one command should succeed (missing GPG)
 ok 85 # skip verifying many signed and non-signed tags should fail (missing GPG)
 ok 86 # skip verifying a forged tag should fail (missing GPG)
-ok 87 - verifying a proper tag with --format pass and format accordingly
-ok 88 - verifying a forged tag with --format fail and format accordingly
+ok 87 # skip verifying a proper tag with --format pass and format accordingly (missing GPG)
+ok 88 # skip verifying a forged tag with --format should fail silently (missing GPG)
 ok 89 # skip creating a signed tag with an empty -m message should succeed (missing GPG)
 ok 90 # skip creating a signed tag with an empty -F messagefile should succeed (missing GPG)
 ok 91 # skip extra blanks in the message for a signed tag should be removed (missing GPG)
@@ -13167,8 +13194,8 @@ ok 2 # skip verify and show signatures (missing GPG)
 ok 3 # skip detect fudged signature (missing GPG)
 ok 4 # skip verify signatures with --raw (missing GPG)
 ok 5 # skip verify multiple tags (missing GPG)
-ok 6 - verifying tag with --format
-ok 7 - verifying a forged tag with --format fail and format accordingly
+ok 6 # skip verifying tag with --format (missing GPG)
+ok 7 # skip verifying a forged tag with --format should fail silently (missing GPG)
 # passed all 7 test(s)
 1..7
 *** t7060-wtstatus.sh ***
@@ -14524,6 +14551,12 @@ ok 12 - fast-forward rebase does not care about ident (preserve)
 ok 13 - non-fast-forward rebase refuses to write commits (preserve)
 # passed all 13 test(s)
 1..13
+*** t7518-ident-corner-cases.sh ***
+ok 1 - empty name and missing email
+ok 2 - commit rejects all-crud name
+ok 3 - empty configured name does not auto-detect
+# passed all 3 test(s)
+1..3
 *** t7600-merge.sh ***
 ok 1 - setup
 ok 2 - test option parsing
@@ -16782,11 +16815,11 @@ ok 37 - cvs commit [cvswork3]
 # passed all 37 test(s)
 1..37
 *** t9500-gitweb-standalone-no-errors.sh ***
-1..0 # SKIP skipping gitweb tests, CGI module unusable
+1..0 # SKIP skipping gitweb tests, CGI & CGI::Util & CGI::Carp modules not available
 *** t9501-gitweb-standalone-http-status.sh ***
-1..0 # SKIP skipping gitweb tests, CGI module unusable
+1..0 # SKIP skipping gitweb tests, CGI & CGI::Util & CGI::Carp modules not available
 *** t9502-gitweb-standalone-parse-output.sh ***
-1..0 # SKIP skipping gitweb tests, CGI module unusable
+1..0 # SKIP skipping gitweb tests, CGI & CGI::Util & CGI::Carp modules not available
 *** t9600-cvsimport.sh ***
 1..0 # SKIP skipping cvsimport tests, cvsps not found
 *** t9601-cvsimport-vendor-branch.sh ***
@@ -17041,7 +17074,7 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir (stderr)
 failed test(s): t0204 t1450 t4062
 
 fixed   1
-success 14211
+success 14231
 failed  3
 broken  183
-total   14634
+total   14658
