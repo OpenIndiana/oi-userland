@@ -12,12 +12,13 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-utils
 COMPONENT_VERSION=	2.24.1
 # Version was bumped in JDS
 IPS_COMPONENT_VERSION=	2.30.0
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME log viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,11 +31,11 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
@@ -44,6 +45,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					automake -c -f -a &&\
 					autoconf )
 
+CFLAGS += -std=c99 $(CPP_XPG6MODE)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
@@ -60,6 +62,12 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/libgnomeui
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += system/library
