@@ -55,8 +55,6 @@ include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Required for other components.
 CONFIGURE_OPTIONS += --enable-introspection
-# Avoid collision with original libwnck.
-CONFIGURE_OPTIONS += --program-suffix=3
 CONFIGURE_OPTIONS += --with-x
 
 # Assumes GNU xgettext in PATH
