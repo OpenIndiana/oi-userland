@@ -17,13 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	52.1.0esr
-IPS_COMPONENT_VERSION= 	52.1.0
+COMPONENT_VERSION= 	52.1.1esr
+IPS_COMPONENT_VERSION= 	52.1.1
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:da2ba9630b8b56c6f5d36d9f3da2d984ef7986dc8b4d804f6947fcea6c24637d
+  sha256:a7298f6a04a1330e39e560337c4560ec9b71567a0f758982dfa18d5a2a798a7c
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -62,6 +62,8 @@ ENV +=	CC=$(CC)
 ENV +=	GLD_WRAPPER=$(BUILD_DIR)/gld-wrapper
 ENV +=	CXX=$(CXX)
 ENV +=	MOZILLA_OFFICIAL=1
+ENV +=	MOZ_TELEMETRY_REPORTING=1
+ENV +=	MOZ_PACKAGE_JSSHELL=1
 ENV +=	MOZ_PKG_FORMAT=XZ
 ENV +=	PKG_SKIP_STRIP=1
 ENV +=	MOZILLA_PKG_NAME=firefox
@@ -84,9 +86,10 @@ download prep:: $(LANG_FILES)
 build: $(BUILD_32)
 
 COMPONENT_POST_INSTALL_ACTION  = ( \
-    for file in $(PROTO_DIR)/usr/lib/firefox/browser/components/libbrowsercomps.so \
-          $(PROTO_DIR)/usr/lib/firefox/sdk/lib/libxul.so \
-          $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell ; do \
+    for file in $(PROTO_DIR)/usr/lib/firefox/sdk/lib/*.so \
+          $(PROTO_DIR)/usr/lib/firefox/*.so \
+          $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell \
+          $(PROTO_DIR)/usr/lib/firefox/plugin-container; do \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
         $$file ;\
     done ; \

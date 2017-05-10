@@ -188,10 +188,10 @@ diff -Nurb firefox-43.0b3/ipc/chromium/chromium-config.mozbuild firefox-43.0b3/i
      else:
          DEFINES['OS_LINUX'] = 1
 diff -Nurb firefox-43.0b3/ipc/chromium/moz.build firefox-43.0b3/ipc/chromium/moz.build
---- firefox-44.0/ipc/chromium/moz.build.~1~	2016-01-24 02:23:38.000000000 +0300
-+++ firefox-44.0/ipc/chromium/moz.build	2016-01-28 09:05:21.750608424 +0300
-@@ -45,6 +50,9 @@
-     'src/chrome/common/notification_service.cc',
+--- firefox-52.1.0esr/ipc/chromium/moz.build.~1~	2017-04-11 05:13:12.000000000 +0300
++++ firefox-52.1.0esr/ipc/chromium/moz.build	2017-05-05 17:44:55.396555699 +0300
+@@ -33,6 +33,9 @@
+     'src/chrome/common/ipc_message.cc',
  ]
  
 +if CONFIG['OS_ARCH'] == 'SunOS':
@@ -200,8 +200,15 @@ diff -Nurb firefox-43.0b3/ipc/chromium/moz.build firefox-43.0b3/ipc/chromium/moz
  if os_win:
      SOURCES += [
          'src/base/condition_variable_win.cc',
-@@ -161,6 +169,22 @@
-             'src/base/message_pump_qt.cc',
+@@ -134,12 +137,24 @@
+         if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'gonk':
+             DEFINES['HAVE_ANDROID_OS'] = True
+ 
+-if os_bsd or os_linux:
++if os_bsd or os_linux or os_solaris:
+     if 'gtk' in CONFIG['MOZ_WIDGET_TOOLKIT']:
+         SOURCES += [
+             'src/base/message_pump_glib.cc',
          ]
  
 +if os_solaris:
@@ -210,10 +217,6 @@ diff -Nurb firefox-43.0b3/ipc/chromium/moz.build firefox-43.0b3/ipc/chromium/moz
 +	'src/base/process_util_linux.cc',
 +	'src/base/time_posix.cc',
 +    ]
-+    if CONFIG['MOZ_WIDGET_GTK']:
-+	SOURCES += [
-+            'src/base/message_pump_glib.cc',
-+	]
 +    if not CONFIG['MOZ_NATIVE_LIBEVENT']:
 +	SOURCES += [
 +            'src/third_party/libevent/devpoll.c',
@@ -221,7 +224,7 @@ diff -Nurb firefox-43.0b3/ipc/chromium/moz.build firefox-43.0b3/ipc/chromium/moz
 +    LOCAL_INCLUDES += ['src/third_party/libevent/linux']
 +
  ost = CONFIG['OS_TEST']
- if '86' not in ost and 'arm' not in ost and 'mips' not in ost:
+ if '86' not in ost and 'arm' not in ost and 'aarch64' != ost and 'mips' not in ost:
      SOURCES += [
 diff -Nurb firefox-43.0b3/ipc/chromium/src/base/message_loop.cc firefox-43.0b3/ipc/chromium/src/base/message_loop.cc
 --- firefox-43.0b3/ipc/chromium/src/base/message_loop.cc	2015-11-09 23:55:51.000000000 +0100
