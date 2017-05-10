@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution
 COMPONENT_VERSION=	2.32.3
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/evolution/
 COMPONENT_SUMMARY=	Evolution Email and Calendar
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,11 +25,11 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:33ab38780e9abb71506230e331e9c3534444b5ed3f17046f0b6371a00df686fb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
@@ -44,6 +44,8 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 gcc_OPT		= -O2
+
+CFLAGS+= -std=gnu89
 
 LDFLAGS+=       -L/usr/lib/mps -R/usr/lib/mps
 LDFLAGS+=	-lgmodule-2.0 -lgthread-2.0
@@ -68,6 +70,30 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/evolution-data-server
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gnome-desktop
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtkhtml
+REQUIRED_PACKAGES += library/desktop/libgdata
+REQUIRED_PACKAGES += library/desktop/libgweather
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libical
+REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += library/libunique
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/mozilla-nss
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
