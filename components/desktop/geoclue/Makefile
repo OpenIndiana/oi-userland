@@ -28,17 +28,17 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geoclue
-COMPONENT_VERSION=	2.2.0
+COMPONENT_VERSION=	2.4.5
 COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/GeoClue/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:a490de0d4f97cb65f81e9fd0f687c7e84ef2c41509c214a1438964f541c7d446
-COMPONENT_ARCHIVE_URL=	http://freedesktop.org/software/geoclue/releases/2.2/$(COMPONENT_ARCHIVE)
+	sha256:78162d33a2d42477ec241db7fc082439b0e0f9a791eb3a41e5a2aa1eae9145a1
+COMPONENT_ARCHIVE_URL=	http://freedesktop.org/software/geoclue/releases/2.4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
 COMPONENT_ANITYA_ID=	13108
 
-TPNO=			25494
+TPNO=			34568
 
 TEST_TARGET = $(NO_TESTS)
 
@@ -53,6 +53,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Assumes GNU xgettext in PATH
 CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
+COMPONENT_INSTALL_ENV += PATH=$(GNUBIN):$(PATH)
 
 CONFIGURE_OPTIONS += --disable-static
 # gtk-doc portion of build has various failures.
@@ -69,3 +70,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/json-glib
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/network/avahi
