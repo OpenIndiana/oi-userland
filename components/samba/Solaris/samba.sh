@@ -22,7 +22,7 @@
 #
 
 #
-# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -59,7 +59,7 @@ case "$1" in
 
 		# Command to execute is found in second and further script arguments
 		shift
-		eval "$@"
+		eval "$@  --option=logging=file"
 		check_running
 		;;
 	stop)
