@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= exiv2
 COMPONENT_VERSION= 0.25
+COMPONENT_REVISION = 1
 COMPONENT_SUMMARY= Image metadata library and tools
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
