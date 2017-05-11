@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
@@ -32,15 +33,18 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-coreutils
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 # We need the GNU grep command to configure/build.
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 PATCH_LEVEL=		0
+
+# Prevent gcc register spill error on 32-bit SPARC
+gcc_OPT.sparc.32 =	-O1
 
 CONFIGURE_PREFIX	 =	/usr/gnu
 CONFIGURE_OPTIONS	+=	--libdir=/usr/lib
@@ -74,6 +78,5 @@ COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
 #   printf-quote.sh
 test:		install $(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += system/library
