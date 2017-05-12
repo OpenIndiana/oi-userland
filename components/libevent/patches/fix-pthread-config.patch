@@ -1,0 +1,17 @@
+Prevent "-pthread" from being included on the Cflags: line in the
+libevent_pthreads.pc pkgconfig files, so that components like ntp
+(that are built with Studio), will still work.
+
+This change will not be sent upstream.
+
+--- libevent-2.0.22/libevent_pthreads.pc.in.orig	2017-05-08 10:34:04.767307203 +0000
++++ libevent-2.0.22/libevent_pthreads.pc.in	2017-05-11 15:58:21.827177917 +0000
+@@ -11,6 +11,6 @@
+ Requires: libevent
+ Conflicts:
+ Libs: -L${libdir} -levent_pthreads
+-Libs.private: @LIBS@ @PTHREAD_LIBS@
+-Cflags: -I${includedir} @PTHREAD_CFLAGS@
++Libs.private: @LIBS@
++Cflags: -I${includedir} -D_REENTRANT
+ 
