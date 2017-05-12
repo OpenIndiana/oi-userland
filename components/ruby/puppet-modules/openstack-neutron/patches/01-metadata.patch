@@ -2,9 +2,14 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-neutron-8.2.0/metadata.json.orig   2016-08-07 11:27:20.747150102 -0700
-+++ openstack-neutron-8.2.0/metadata.json       2016-08-07 11:27:41.098304971 -0700
-@@ -29,6 +29,13 @@
+Removal of duritong/sysctl removes a warning from puppet module list and
+is not appropriate for upstream.
+
+diff --git a/metadata.json b/metadata.json
+index 0d2958e..fa97bb2 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -29,6 +29,14 @@
        "operatingsystemrelease": [
          "14.04"
        ]
@@ -13,9 +18,17 @@ CI testing.
 +      "operatingsystem": "Solaris",
 +      "operatingsystemrelease": [
 +        "12.0",
++        "11.4",
 +        "11.3"
 +      ]
      }
    ],
    "description": "Installs and configures OpenStack Neutron (Networking).",
-
+@@ -38,7 +46,6 @@
+     {"name":"openstack/nova","version_requirement":">=8.2.0 <9.0.0"},
+     {"name":"puppetlabs/stdlib","version_requirement":">=4.9.0 <5.0.0"},
+     {"name":"openstack/vswitch","version_requirement":">=4.2.0 <5.0.0"},
+-    {"name":"duritong/sysctl","version_requirement":">=0.0.1 <1.0.0"},
+     {"name":"openstack/openstacklib","version_requirement":">=8.2.0 <9.0.0"}
+   ]
+ }

@@ -25,18 +25,18 @@
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		nanliu-staging
-COMPONENT_VERSION=	1.0.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e93af4bb515e91416a39ec18f85b33925e8908c95efa4f2a02129a103878f857
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.openstack.org/
-COMPONENT_BUGDB=	utility/puppet
-COMPONENT_ANITYA_ID=	13321
+GIT_REPO= https://github.com/voxpupuli/puppet-staging
+GIT_BRANCH= v1.0.7
+GIT_COMMIT_ID= dbea7c1
+GIT_HASH=sha256:69cbb4acb6d378f3eb6139da14083ca2959f4df00fffe2d1279845b92fbc3a90
 
-TPNO=			24262
+COMPONENT_NAME=		puppet-staging
+COMPONENT_VERSION=	1.0.7
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_BUGDB=	utility/puppet
+COMPONENT_ANITYA_ID=	14518
+
+TPNO=			34823
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk
@@ -52,3 +52,10 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
+
+	# This is a convenience method for the package maintainer
+new-files: install
+	$(PKGSEND) generate $(PROTO_DIR)/usr/puppetlabs/puppet/modules/ | \
+		$(GSED)  -e 's/\(file\).*path=/\1 path=/' | \
+		$(CAT) *.p5m - | $(GNU_GREP) -h '^file' | sort | uniq -c | \
+		$(GSED) -e '/ 2 /d' -e 's/   1 //'

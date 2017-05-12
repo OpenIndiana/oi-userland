@@ -1,7 +1,7 @@
-From dcd2568b4bcb30962da54a4a12c3d75b3f5da2b5 Mon Sep 17 00:00:00 2001
+From 7624c6e20709736d1469e05a7d0c636ca56da478 Mon Sep 17 00:00:00 2001
 From: Shawn Ferry <sferry@gmail.com>
-Date: Fri, 9 Dec 2016 15:01:26 -0500
-Subject: [PATCH] Puppet4 paths
+Date: Fri, 14 Apr 2017 13:18:47 -0400
+Subject: [PATCH 4/4] (no-upstream) install path changes
 
 Patches not suitable for upstream
 25232171 puppet hard codes new path locations
@@ -10,7 +10,7 @@ Patches not suitable for upstream
  install.rb                                    |  4 ++--
  lib/puppet/defaults.rb                        |  2 +-
  lib/puppet/face/config.rb                     |  2 +-
- lib/puppet/face/module/install.rb             | 12 ++++++------
+ lib/puppet/face/module/install.rb             | 17 +++++++++--------
  lib/puppet/face/module/list.rb                | 10 +++++-----
  lib/puppet/face/module/uninstall.rb           |  4 ++--
  lib/puppet/provider/package/puppet_gem.rb     |  2 +-
@@ -21,13 +21,13 @@ Patches not suitable for upstream
  man/man8/puppet-module.8                      | 14 +++++++-------
  spec/unit/provider/package/puppet_gem_spec.rb |  2 +-
  spec/unit/util/run_mode_spec.rb               |  4 ++--
- 14 files changed, 33 insertions(+), 33 deletions(-)
+ 14 files changed, 36 insertions(+), 35 deletions(-)
 
 diff --git a/install.rb b/install.rb
-index bed64d0..dccf787 100755
+index cad3ad8dc..8e5220fc1 100755
 --- a/install.rb
 +++ b/install.rb
-@@ -178,7 +178,7 @@ def prepare_installation
+@@ -193,7 +193,7 @@ def prepare_installation
      opts.on('--codedir[=OPTIONAL]', 'Installation directory for code files', 'Default /etc/puppetlabs/code') do |codedir|
        InstallOptions.codedir = codedir
      end
@@ -36,7 +36,7 @@ index bed64d0..dccf787 100755
        InstallOptions.vardir = vardir
      end
      opts.on('--rundir[=OPTIONAL]', 'Installation directory for state files', 'Default /var/run/puppetlabs') do |rundir|
-@@ -269,7 +269,7 @@ def prepare_installation
+@@ -291,7 +291,7 @@ def prepare_installation
    elsif $operatingsystem == "windows"
      vardir = File.join(Dir::COMMON_APPDATA, "PuppetLabs", "puppet", "cache")
    else
@@ -46,10 +46,10 @@ index bed64d0..dccf787 100755
  
    if not InstallOptions.rundir.nil?
 diff --git a/lib/puppet/defaults.rb b/lib/puppet/defaults.rb
-index fa1aeaa..ff4f210 100644
+index 4aff56f5b..f6d30f4c3 100644
 --- a/lib/puppet/defaults.rb
 +++ b/lib/puppet/defaults.rb
-@@ -1207,7 +1207,7 @@ EOT
+@@ -1234,7 +1234,7 @@ EOT
        :desc       => "File that provides mapping between custom SSL oids and user-friendly names"
      },
      :basemodulepath => {
@@ -59,7 +59,7 @@ index fa1aeaa..ff4f210 100644
        :desc => "The search path for **global** modules. Should be specified as a
          list of directories separated by the system path separator character. (The
 diff --git a/lib/puppet/face/config.rb b/lib/puppet/face/config.rb
-index cd8e746..82a9463 100644
+index 65e73186b..c954a8af0 100644
 --- a/lib/puppet/face/config.rb
 +++ b/lib/puppet/face/config.rb
 @@ -102,7 +102,7 @@ Puppet::Face.define(:config, '0.0.1') do
@@ -72,18 +72,20 @@ index cd8e746..82a9463 100644
  
      when_invoked do |name, value, options|
 diff --git a/lib/puppet/face/module/install.rb b/lib/puppet/face/module/install.rb
-index d0ab01e..d533547 100644
+index 1091df730..d67c621b5 100644
 --- a/lib/puppet/face/module/install.rb
 +++ b/lib/puppet/face/module/install.rb
-@@ -46,20 +46,20 @@ Puppet::Face.define(:module, '1.0.0') do
+@@ -46,20 +46,21 @@ Puppet::Face.define(:module, '1.0.0') do
  
        Install a module into a specific directory:
  
 -      $ puppet module install puppetlabs-vcsrepo --target-dir=/opt/puppetlabs/puppet/modules
 -      Preparing to install into /opt/puppetlabs/puppet/modules ...
+-      Downloading from https://forgeapi.puppet.com ...
++
 +      $ puppet module install puppetlabs-vcsrepo --target-dir=/usr/puppetlabs/puppet/modules
 +      Preparing to install into /usr/puppetlabs/puppet/modules ...
-       Downloading from https://forgeapi.puppetlabs.com ...
++      Downloading from https://forgeapi.puppetlabs.com ...
        Installing -- do not interrupt ...
 -      /opt/puppetlabs/puppet/modules
 +      /usr/puppetlabs/puppet/modules
@@ -93,9 +95,10 @@ index d0ab01e..d533547 100644
  
 -      $ puppet module install puppetlabs-vcsrepo --target-dir=/opt/puppetlabs/puppet/modules --modulepath /etc/puppetlabs/code/modules
 -      Preparing to install into /opt/puppetlabs/puppet/modules ...
+-      Downloading from https://forgeapi.puppet.com ...
 +      $ puppet module install puppetlabs-vcsrepo --target-dir=/usr/puppetlabs/puppet/modules --modulepath /etc/puppetlabs/code/modules
 +      Preparing to install into /usr/puppetlabs/puppet/modules ...
-       Downloading from https://forgeapi.puppetlabs.com ...
++      Downloading from https://forgeapi.puppetlabs.com ...
        Installing -- do not interrupt ...
 -      /opt/puppetlabs/puppet/modules
 +      /usr/puppetlabs/puppet/modules
@@ -103,7 +106,7 @@ index d0ab01e..d533547 100644
  
        Install a module from a release archive:
 diff --git a/lib/puppet/face/module/list.rb b/lib/puppet/face/module/list.rb
-index cecaf5b..df51df6 100644
+index cecaf5b20..df51df626 100644
 --- a/lib/puppet/face/module/list.rb
 +++ b/lib/puppet/face/module/list.rb
 @@ -27,7 +27,7 @@ Puppet::Face.define(:module, '1.0.0') do
@@ -141,7 +144,7 @@ index cecaf5b..df51df6 100644
  
      when_invoked do |options|
 diff --git a/lib/puppet/face/module/uninstall.rb b/lib/puppet/face/module/uninstall.rb
-index e3c74c5..90c6ed4 100644
+index e3c74c53c..90c6ed4db 100644
 --- a/lib/puppet/face/module/uninstall.rb
 +++ b/lib/puppet/face/module/uninstall.rb
 @@ -16,8 +16,8 @@ Puppet::Face.define(:module, '1.0.0') do
@@ -156,7 +159,7 @@ index e3c74c5..90c6ed4 100644
        Uninstall a module from a specific environment:
  
 diff --git a/lib/puppet/provider/package/puppet_gem.rb b/lib/puppet/provider/package/puppet_gem.rb
-index 8d876a0..86752b7 100644
+index 8d876a06a..86752b74a 100644
 --- a/lib/puppet/provider/package/puppet_gem.rb
 +++ b/lib/puppet/provider/package/puppet_gem.rb
 @@ -12,6 +12,6 @@ Puppet::Type.type(:package).provide :puppet_gem, :parent => :gem do
@@ -168,7 +171,7 @@ index 8d876a0..86752b7 100644
    end
  end
 diff --git a/lib/puppet/reference/configuration.rb b/lib/puppet/reference/configuration.rb
-index ac00cab..384077a 100644
+index ac00cab73..384077ab9 100644
 --- a/lib/puppet/reference/configuration.rb
 +++ b/lib/puppet/reference/configuration.rb
 @@ -23,7 +23,7 @@ config = Puppet::Util::Reference.newreference(:configuration, :depth => 1, :doc
@@ -181,7 +184,7 @@ index ac00cab..384077a 100644
        val = 'Unix/Linux: /etc/puppetlabs/puppet -- Windows: C:\ProgramData\PuppetLabs\puppet\etc -- Non-root user: ~/.puppetlabs/etc/puppet'
      elsif name.to_s == 'codedir'
 diff --git a/lib/puppet/util/run_mode.rb b/lib/puppet/util/run_mode.rb
-index cf6c461..21968ce 100644
+index cf6c4613a..21968cea8 100644
 --- a/lib/puppet/util/run_mode.rb
 +++ b/lib/puppet/util/run_mode.rb
 @@ -67,7 +67,7 @@ module Puppet
@@ -194,7 +197,7 @@ index cf6c461..21968ce 100644
  
        def run_dir
 diff --git a/man/man5/puppet.conf.5 b/man/man5/puppet.conf.5
-index ff23f71..414cfc8 100644
+index 3c2d97cfa..710f750ea 100644
 --- a/man/man5/puppet.conf.5
 +++ b/man/man5/puppet.conf.5
 @@ -121,7 +121,7 @@ The search path for \fBglobal\fR modules\. Should be specified as a list of dire
@@ -216,7 +219,7 @@ index ff23f71..414cfc8 100644
  .IP "" 0
  .
 diff --git a/man/man8/puppet-config.8 b/man/man8/puppet-config.8
-index 35310d0..5df37e4 100644
+index 35310d0c4..5df37e4da 100644
 --- a/man/man8/puppet-config.8
 +++ b/man/man8/puppet-config.8
 @@ -111,7 +111,7 @@ $ puppet config set rundir /var/run/puppetlabs
@@ -229,7 +232,7 @@ index 35310d0..5df37e4 100644
  .SH "COPYRIGHT AND LICENSE"
  Copyright 2011 by Puppet Labs Apache 2 license; see COPYING
 diff --git a/man/man8/puppet-module.8 b/man/man8/puppet-module.8
-index 62591fe..b5b05a5 100644
+index 62591fe87..b5b05a572 100644
 --- a/man/man8/puppet-module.8
 +++ b/man/man8/puppet-module.8
 @@ -340,13 +340,13 @@ $ puppet module install puppetlabs\-vcsrepo \-v 0\.0\.4 Preparing to install int
@@ -288,7 +291,7 @@ index 62591fe..b5b05a5 100644
  .P
  Uninstall a module from a specific environment:
 diff --git a/spec/unit/provider/package/puppet_gem_spec.rb b/spec/unit/provider/package/puppet_gem_spec.rb
-index 017e0c4..2817701 100644
+index 017e0c408..2817701dd 100644
 --- a/spec/unit/provider/package/puppet_gem_spec.rb
 +++ b/spec/unit/provider/package/puppet_gem_spec.rb
 @@ -20,7 +20,7 @@ describe provider_class do
@@ -301,7 +304,7 @@ index 017e0c4..2817701 100644
  
    before :each do
 diff --git a/spec/unit/util/run_mode_spec.rb b/spec/unit/util/run_mode_spec.rb
-index bd7759a..657d40c 100644
+index bd7759a4e..657d40c80 100644
 --- a/spec/unit/util/run_mode_spec.rb
 +++ b/spec/unit/util/run_mode_spec.rb
 @@ -67,8 +67,8 @@ describe Puppet::Util::RunMode do
@@ -316,6 +319,5 @@ index bd7759a..657d40c 100644
  
        it "has vardir ~/.puppetlabs/opt/puppet/cache when run as non-root" do
 -- 
-2.9.3 (Apple Git-75)
-
+2.11.0 (Apple Git-81)
 

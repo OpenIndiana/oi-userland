@@ -1,0 +1,97 @@
+From f597c5cf8a5b07022214277b114f0672dcd0217e Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Tue, 31 Jan 2017 13:26:32 -0500
+Subject: [PATCH 1/4] (no-upstream) Solaris auditing support
+
+Patch is not upstream
+(maint) Add Solaris auditing support to agent execution
+---
+ lib/puppet/agent.rb             | 15 ++++++++++++++-
+ lib/puppet/application/apply.rb | 14 ++++++++++++++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/lib/puppet/agent.rb b/lib/puppet/agent.rb
+index debeb9ff2..c4ce32c1a 100644
+--- a/lib/puppet/agent.rb
++++ b/lib/puppet/agent.rb
+@@ -1,5 +1,8 @@
+ require 'puppet/application'
+ require 'puppet/error'
++if Facter.value(:osfamily) == "Solaris"
++  require 'PuppetAudit'
++end
+ 
+ # A general class for triggering a run of another
+ # class.
+@@ -30,11 +33,15 @@ class Puppet::Agent
+ 
+   # Perform a run with our client.
+   def run(client_options = {})
++    # Always start an audit record
++    if Facter.value(:osfamily) == "Solaris"
++        audit_handle = PuppetAudit.new
++        audit_handle.audit_start
++    end
+     if disabled?
+       Puppet.notice "Skipping run of #{client_class}; administratively disabled (Reason: '#{disable_message}');\nUse 'puppet agent --enable' to re-enable."
+       return
+     end
+-
+     result = nil
+     block_run = Puppet::Application.controlled_run do
+       splay client_options.fetch :splay, Puppet[:splay]
+@@ -55,6 +62,12 @@ class Puppet::Agent
+     end
+     Puppet.notice "Shutdown/restart in progress (#{Puppet::Application.run_status.inspect}); skipping run" unless block_run
+     result
++  ensure
++    # Always stop an audit record
++    if Facter.value(:osfamily) == "Solaris"
++        audit_handle.audit_stop
++        audit_handle.audit_teardown
++    end
+   end
+ 
+   def stopping?
+diff --git a/lib/puppet/application/apply.rb b/lib/puppet/application/apply.rb
+index 2816f654c..ad4239845 100644
+--- a/lib/puppet/application/apply.rb
++++ b/lib/puppet/application/apply.rb
+@@ -1,6 +1,9 @@
+ require 'puppet/application'
+ require 'puppet/configurer'
+ require 'puppet/util/profiler/aggregate'
++if Facter.value(:osfamily) == "Solaris"
++  require 'PuppetAudit'
++end
+ 
+ class Puppet::Application::Apply < Puppet::Application
+   require 'puppet/util/splayer'
+@@ -182,6 +185,12 @@ Copyright (c) 2011 Puppet Labs, LLC Licensed under the Apache 2.0 License
+   end
+ 
+   def main
++    # configure auditing on Solaris
++    if Facter.value(:osfamily) == "Solaris"
++        audit_handle = PuppetAudit.new
++        audit_handle.audit_start
++    end
++
+     # Set our code or file to use.
+     if options[:code] or command_line.args.length == 0
+       Puppet[:code] = options[:code] || STDIN.read
+@@ -287,6 +296,11 @@ Copyright (c) 2011 Puppet Labs, LLC Licensed under the Apache 2.0 License
+     end
+ 
+   ensure
++    # clean up auditing records on Solaris
++    if Facter.value(:osfamily) == "Solaris"
++      audit_handle.audit_stop
++      audit_handle.audit_teardown
++    end
+     if @profiler
+       Puppet::Util::Profiler.remove_profiler(@profiler)
+       @profiler.shutdown
+-- 
+2.11.0 (Apple Git-81)
+

@@ -1,0 +1,34 @@
+From 6455c0d99a43c2e456d33150c07dd9425be34c87 Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Tue, 31 Jan 2017 13:29:01 -0500
+Subject: [PATCH 2/4] (PUP-2641) puppet describe --list reqs trailing .
+
+https://tickets.puppetlabs.com/browse/PUP-2641
+(PUP-2641) puppet describe --list requires the description to include a period
+Patch has been submitted upstream but not yet accepted.
+---
+ lib/puppet/application/describe.rb | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/lib/puppet/application/describe.rb b/lib/puppet/application/describe.rb
+index 9d8cf35d6..9df9afe06 100644
+--- a/lib/puppet/application/describe.rb
++++ b/lib/puppet/application/describe.rb
+@@ -70,13 +70,8 @@ class TypeDoc
+     }.each do |name|
+       type = @types[name]
+       s = type.doc.gsub(/\s+/, " ")
+-      n = s.index(". ")
+-      if n.nil?
+-        s = ".. no documentation .."
+-      elsif n > 45
++      if s.length > 45
+         s = s[0, 45] + " ..."
+-      else
+-        s = s[0, n]
+       end
+       printf "%-15s - %s\n", name, s
+     end
+-- 
+2.11.0 (Apple Git-81)
+
