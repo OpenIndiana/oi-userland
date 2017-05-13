@@ -17,7 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-terminal
 COMPONENT_VERSION=      1.16.3
-COMPONENT_REVISION=	1
+
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE terminal emulator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
