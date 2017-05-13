@@ -30,14 +30,14 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gom
-COMPONENT_VERSION=	0.3.1
+COMPONENT_VERSION=	0.3.2
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Gom
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:7951eb46ee784cbdbee6e3f2da084ffbf776c11ca1c904404b05feafe37e38f5
+	sha256:bce8f0f94af6ff7847b853580ba6baebbab8ae531cedb0c78a5c473f39c758fd
 COMPONENT_BUGDB=        gnome/libraries
 COMPONENT_ANITYA_ID=	13230
 
-TPNO=			25360
+TPNO=			34507
 
 # Needs updated glib2 and gobject-introspection, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
