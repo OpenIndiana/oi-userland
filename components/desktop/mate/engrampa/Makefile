@@ -10,19 +10,20 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Ken Mays
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		engrampa
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE archive manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dd7f11d60693cb77691a589551bcaf4050d4921d996fbbbe3a61ed7fc4072efc
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:be7218078f13d715e35580d231c0b5090fac1210b9de83f93311079f39b8aabc 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	desktop/archive-manager/engrampa
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_LICENSE= GPLv3
