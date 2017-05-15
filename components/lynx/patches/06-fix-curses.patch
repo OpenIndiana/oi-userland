@@ -1,0 +1,69 @@
+The new /usr/include/ncurses/term.h does not expose the members of the
+"typedef struct term TERMINAL" and there was code that was using those
+members.
+
+Fix taken from upstream latest lynx development release.
+
+--- lynx2-8-8/src/LYStrings.c.orig	2017-05-09 09:07:19.054827238 +0000
++++ lynx2-8-8/src/LYStrings.c	2017-05-09 09:08:10.915872015 +0000
+@@ -1004,12 +1004,13 @@
+ {
+     char name[BUFSIZ];
+     int code;
++    TERMTYPE *tp = (TERMTYPE *) (cur_term);
+ 
+     LYStrNCpy(name, first, len);
+     if ((code = lookup_tiname(name, strnames)) >= 0
+ 	|| (code = lookup_tiname(name, strfnames)) >= 0) {
+-	if (cur_term->type.Strings[code] != 0) {
+-	    LYStrNCpy(*result, cur_term->type.Strings[code], (final - *result));
++	if (tp->Strings[code] != 0) {
++	    LYStrNCpy(*result, tp->Strings[code], (final - *result));
+ 	    (*result) += strlen(*result);
+ 	}
+     }
+--- lynx2-8-8/src/LYCurses.c.orig	2017-05-09 09:31:38.310397301 +0000
++++ lynx2-8-8/src/LYCurses.c	2017-05-09 09:35:44.309535720 +0000
+@@ -1695,7 +1695,7 @@
+ void lynx_nl2crlf(int normal GCC_UNUSED)
+ {
+ #if defined(NCURSES_VERSION_PATCH) && defined(SET_TTY) && defined(TERMIOS) && defined(ONLCR)
+-    static TTY saved_tty;
++    static struct termios saved_tty;
+     static int did_save = FALSE;
+     static int waiting = FALSE;
+     static int can_fix = TRUE;
+@@ -1704,8 +1704,10 @@
+ 	if (cur_term == 0) {
+ 	    can_fix = FALSE;
+ 	} else {
+-	    saved_tty = cur_term->Nttyb;
++	    tcgetattr(fileno(stdout), &saved_tty);
+ 	    did_save = TRUE;
++	    if ((saved_tty.c_oflag & ONLCR))
++		can_fix = FALSE;
+ #if NCURSES_VERSION_PATCH < 20010529
+ 	    /* workaround for optimizer bug with nonl() */
+ 	    if ((tigetstr("cud1") != 0 && *tigetstr("cud1") == '\n')
+@@ -1717,14 +1719,18 @@
+     if (can_fix) {
+ 	if (normal) {
+ 	    if (!waiting) {
+-		cur_term->Nttyb.c_oflag |= ONLCR;
++		struct termios alter_tty = saved_tty;
++
++		alter_tty.c_oflag |= ONLCR;
++		tcsetattr(fileno(stdout), TCSAFLUSH, &alter_tty);
++		def_prog_mode();
+ 		waiting = TRUE;
+ 		nonl();
+ 	    }
+ 	} else {
+ 	    if (waiting) {
+-		cur_term->Nttyb = saved_tty;
+-		SET_TTY(fileno(stdout), &saved_tty);
++		tcsetattr(fileno(stdout), TCSAFLUSH, &saved_tty);
++		def_prog_mode();
+ 		waiting = FALSE;
+ 		nl();
+ 		LYrefresh();
