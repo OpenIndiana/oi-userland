@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xsane
 COMPONENT_VERSION=	0.999
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.xsane.org
 COMPONENT_SUMMARY=	Graphical scanning frontend for the SANE scanner interface
 COMPONENT_FMRI=		image/scanner/xsane
@@ -36,7 +36,15 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
+CFLAGS+= -std=gnu89
+LDFLAGS+=-lnsl -lsocket
 
 COMPONENT_PREP_ACTION =        (chmod -R u+rw  $(SOURCE_DIR))
 
@@ -56,9 +64,9 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/editor/gimp
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
