@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2016 Alexander Pyhalov
 #
 
@@ -28,11 +29,11 @@ COMPONENT_LICENSE_FILE=	COPYING.LGPL
 COMPONENT_FMRI= text/hunspell
 COMPONENT_CLASSIFICATION = System/Text Tools
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH = $(PATH.gnu)
 
 CPPFLAGS += -I/usr/include/ncurses
 # We need to check headers with C++ compiler, but configure uses $(CC).
@@ -40,6 +41,13 @@ CPPFLAGS += -I/usr/include/ncurses
 # So we make $(CC) behave more like $(CXX) during configure.
 CFLAGS += -D_XOPEN_SOURCE=600
 CFLAGS += -std=c99
+
+CPPFLAGS +=	-I/usr/include/ncurses
+
+# Check location of ncurses libraries
+ifeq ($(shell test -f /usr/gnu/lib/libncurses.so && echo y),y)
+LDFLAGS +=	-L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
+endif
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         autoreconf -f )
@@ -51,6 +59,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 
 CONFIGURE_OPTIONS+=        --with-ui
 CONFIGURE_OPTIONS+=        --with-readline
@@ -64,3 +73,8 @@ install:	$(INSTALL_32_and_64)
 
 # Failed tests: rep.test, checksharps.test, 1463589.test
 test:		$(TEST_32)
+
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

@@ -9,10 +9,11 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tack
 COMPONENT_VERSION=	1.07
@@ -29,16 +30,21 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_PREFIX = /usr/gnu
+
+# Check location of ncurses libraries
+ifeq ($(shell test -f /usr/gnu/lib/libncurses.so && echo y),y)
+LDFLAGS+= -L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
+endif
 
 CFLAGS += -I/usr/include/ncurses
 
@@ -50,3 +56,6 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library
