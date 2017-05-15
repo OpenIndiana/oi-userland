@@ -20,26 +20,20 @@
 #
 
 #
-# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
 #
+$mapfile_version 2
 
-BUILD_BITS= 		NO_ARCH
-include ../../../make-rules/shared-macros.mk
-
-COMPONENT_NAME=		mm-common
-COMPONENT_VERSION=	0.9.10
-COMPONENT_PROJECT_URL=	https://developer.gnome.org/glibmm/stable/
-COMPONENT_ARCHIVE_HASH= \
-    sha256:16c0e2bc196b67fbc145edaecb5dbe5818386504fe5703de27002d77140fa217
-COMPONENT_BUGDB=        gnome/libraries
-COMPONENT_ANITYA_ID=	13152
-
-TPNO=			34494
-
-TEST_TARGET= $(NO_TESTS)
-
-include $(WS_MAKE_RULES)/gnome-component.mk
-
-CONFIGURE_OPTIONS += --disable-network
-
-REQUIRED_PACKAGES += shell/ksh93
+SYMBOL_SCOPE {
+    global:
+        arc4random_addrandom {
+                FILTER { FILTEE = libc.so.1; TYPE = WEAK };
+                TYPE=function;
+                FLAGS=nodirect;
+        };
+        arc4random_buf {
+                FILTER { FILTEE = libc.so.1; TYPE = WEAK };
+                TYPE=function;
+                FLAGS=nodirect;
+        };
+};

@@ -48,13 +48,8 @@ endif
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/$(COMPONENT_NAME)-4/
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/$(COMPONENT_NAME)-4/
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/$(MACH64)/$(COMPONENT_NAME)-4/
-
 CONFIGURE_OPTIONS += --disable-static
 # Required for other components.
-CONFIGURE_OPTIONS += --program-suffix=-4
 CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --disable-docbook-docs
 CONFIGURE_OPTIONS += --enable-shared
