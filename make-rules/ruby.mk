@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # This is only useful for a single ruby version substtution NOT using
@@ -41,3 +41,5 @@ VENDOR_RUBY_ARCH = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VER
 COMPONENT_POST_INSTALL_ACTION += \
     cd $(PROTO_DIR)/usr/ruby/$(RUBY_VERSION); \
     $(RUBY_SCRIPT_FIX_FUNC);
+
+REQUIRED_PACKAGES += library/gmp
