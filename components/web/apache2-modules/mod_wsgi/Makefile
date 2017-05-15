@@ -27,6 +27,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
 COMPONENT_VERSION=	4.5.17
+COMPONENT_REVISION=     1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:591779c49deeec1852e99ffe43ca1f3b09de19645de656e9b05320383ca8c251
@@ -48,6 +49,8 @@ COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 
 # The following four paragraphs are copied from setup.py.mk
 # but since mod_wsgi doesn't use setup.py, we can't just include
