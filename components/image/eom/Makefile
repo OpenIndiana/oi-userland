@@ -10,19 +10,20 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Ken Mays
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		eom
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.2
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE image viewer
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:974356c10bf96b974b777614d5d6f88f982a6c9ab3735d9397b4a33a6812c4fe
-COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:0755a43f48fe1a09b826cdd6ed239631f5e4f9163ccb481362534d8fcf3bda02 
+COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION = Applications/Graphics and Imaging
