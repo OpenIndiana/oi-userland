@@ -1,0 +1,13 @@
+php-cgi on sparc core dumps doing almost anything.
+This patch lowers the compiler optimization to 1 for only the main.c
+source file for php-cgi only.
+Will report this to upstream.
+
+
+--- php-7.1.4/sapi/cgi/Makefile.frag_orig	2017-05-03 15:42:36.475387016 +0000
++++ php-7.1.4/sapi/cgi/Makefile.frag	2017-05-03 15:44:50.179556303 +0000
+@@ -1,3 +1,4 @@
++sapi/cgi/cgi_main.lo: EXTRA_CFLAGS += -O1
+ cgi: $(SAPI_CGI_PATH)
+ 
+ $(SAPI_CGI_PATH): $(PHP_GLOBAL_OBJS) $(PHP_BINARY_OBJS) $(PHP_FASTCGI_OBJS) $(PHP_CGI_OBJS)

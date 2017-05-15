@@ -20,10 +20,9 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # The UL_ prefix safeguards against confusion with upstream variables.
 UL_PHP_VERSION = 5.6.28
 UL_PHP_MINOR_VERSION = 5.6
-UL_PHP_SHORT_VERSION = 56

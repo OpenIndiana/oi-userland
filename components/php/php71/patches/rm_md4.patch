@@ -1,0 +1,38 @@
+# Developed in house to disable MD4
+# Internal only, will not be submitted upstream.
+
+
+--- php-7.1.2/ext/openssl/openssl.c-orig	2017-02-14 10:35:46.000000000 +0000
++++ php-7.1.2/ext/openssl/openssl.c	2017-02-17 13:43:56.744758401 +0000
+@@ -69,7 +69,9 @@
+ 
+ #define OPENSSL_ALGO_SHA1 	1
+ #define OPENSSL_ALGO_MD5	2
++#ifdef HAVE_OPENSSL_MD4_H
+ #define OPENSSL_ALGO_MD4	3
++#endif
+ #ifdef HAVE_OPENSSL_MD2_H
+ #define OPENSSL_ALGO_MD2	4
+ #endif
+@@ -1297,9 +1299,11 @@
+ 		case OPENSSL_ALGO_MD5:
+ 			mdtype = (EVP_MD *) EVP_md5();
+ 			break;
++#ifdef HAVE_OPENSSL_MD4_H
+ 		case OPENSSL_ALGO_MD4:
+ 			mdtype = (EVP_MD *) EVP_md4();
+ 			break;
++#endif
+ #ifdef HAVE_OPENSSL_MD2_H
+ 		case OPENSSL_ALGO_MD2:
+ 			mdtype = (EVP_MD *) EVP_md2();
+@@ -1427,7 +1431,9 @@
+ 	/* signature algorithm constants */
+ 	REGISTER_LONG_CONSTANT("OPENSSL_ALGO_SHA1", OPENSSL_ALGO_SHA1, CONST_CS|CONST_PERSISTENT);
+ 	REGISTER_LONG_CONSTANT("OPENSSL_ALGO_MD5", OPENSSL_ALGO_MD5, CONST_CS|CONST_PERSISTENT);
++#ifdef HAVE_OPENSSL_MD4_H
+ 	REGISTER_LONG_CONSTANT("OPENSSL_ALGO_MD4", OPENSSL_ALGO_MD4, CONST_CS|CONST_PERSISTENT);
++#endif
+ #ifdef HAVE_OPENSSL_MD2_H
+ 	REGISTER_LONG_CONSTANT("OPENSSL_ALGO_MD2", OPENSSL_ALGO_MD2, CONST_CS|CONST_PERSISTENT);
+ #endif

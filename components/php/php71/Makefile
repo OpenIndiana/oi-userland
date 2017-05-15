@@ -24,23 +24,31 @@
 #
 BUILD_BITS= 64
 # Must use gcc because of 21090206
-# Otherwise studio was working fine for php 5.6
 COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
-include $(WS_COMPONENTS)/php/php56/php56-metadata.mk
+include $(WS_COMPONENTS)/php/php71/php71-metadata.mk
 
 COMPONENT_NAME=		php
 COMPONENT_VERSION=	$(UL_PHP_VERSION)
 COMPONENT_PROJECT_URL=	http://php.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=\
-    sha256:07187ba2870f89cef334cd2ad6cb801aeec5eaf283da0293a9a6be75d6786d11
+    sha256:71514386adf3e963df087c2044a0b3747900b8b1fc8da3a99f0a0ae9180d300b
 COMPONENT_ARCHIVE_URL=	http://php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
-TPNO=			32826
 COMPONENT_ANITYA_ID=	12535
+
+TPNO=			34399
 
 include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/php.mk
+
+# NOTES: See http://php.net/manual/en/install.unix.apache2.php
+# The contents of files/php7.1.conf would normally go into Apache's httpd.conf
+# but we put it in a separate file for our convenience.
+# See http://php.net/manual/en/configuration.file.php
+# The contents of files/extensions.ini would normally go into php.ini file
+# but is in a separate file for our convenience.
+# Both of these files are hand crafted.
 
 # need GCC_ROOT/bin for configure, usr/sbin for dtrace 
 export PATH=$(GCC_ROOT)/bin:$(USRBINDIR):$(USRSBINDIR):$(GNUBIN)
@@ -69,10 +77,17 @@ CONFIGURE_OPTIONS +=	--with-config-file-path=$(ETCPHPDIR)
 CONFIGURE_OPTIONS +=	--with-config-file-scan-dir=$(ETCPHPDIR)/conf.d
 # Nor does PEAR (default: $PREFIX/lib/php)
 CONFIGURE_OPTIONS +=	--with-pear=$(VARPHPDIR)/pear
+# No debug php's.  They won't build anyways.
+CONFIGURE_OPTIONS +=	--disable-phpdbg
+CONFIGURE_OPTIONS +=	--disable-phpdbg-webhelper
+CONFIGURE_OPTIONS +=	--disable-phpdbg-debug
+# if debug is desired do this
+# https://bugs.php.net/bugs-generating-backtrace.php
+# CONFIGURE_OPTIONS +=    --enable-debug
 
 # icu's switch to g++
 # 21090206 icu should build C++ to C++11
-# Causes this in php forcing php to switch also
+# causes this in php forcing php to switch also
 # 23003672 PHP fails all or most tests
 CXXFLAGS += -std=c++11
 CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
@@ -89,10 +104,11 @@ CFLAGS += -DOPENSSL_NO_SSL2
 CFLAGS += -DOPENSSL_NO_SSL3
 
 PROTOUSRPHPVERDIR = $(PROTO_DIR)/$(CONFIGURE_PREFIX)
+
 # Adapted from PHP 5.3 Makefile.
 # Creates alternate versions of the scripts needed for building extensions
-# separately, since the generated versions of these scripts hardcode configuring
-# for a PHP that is installed on the system.
+# separately, since the generated versions of these scripts hardcode
+# configuration for a PHP that is installed on the system.
 COMPONENT_POST_INSTALL_ACTION += \
 	( set -e; \
 	mkdir -p proto-scripts; \
@@ -125,7 +141,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 CLEAN_PATHS += proto-scripts
 
-# The test results are unstable between runs
+# test results are unstable between runs but still useful for humans.
 $(SKIP_TEST_AT_TOP_LEVEL)
 
 REQUIRED_PACKAGES += developer/icu
@@ -134,6 +150,7 @@ $(SOLARIS_11_3_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/dtrace
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += system/network/ldap/openldap
