@@ -13,18 +13,19 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           eigen
-COMPONENT_VERSION=        3.3.3
-COMPONENT_FMRI=           library/eigen3
-COMPONENT_SUMMARY=	 A C++ template library for linear algebra.
+COMPONENT_NAME=          eigen
+COMPONENT_VERSION=       3.3.3
+COMPONENT_REVISION=      1
+COMPONENT_FMRI=          library/eigen3
+COMPONENT_SUMMARY=       A C++ template library for linear algebra.
 COMPONENT_PROJECT_URL=   http://eigen.tuxfamily.org/index.php 
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_NAME)-67e894c6cd8f
-COMPONENT_ARCHIVE=        $(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:94878cbfa27b0d0fbc64c00d4aafa137f678d5315ae62ba4aecddbd4269ae75f
-COMPONENT_ARCHIVE_URL= http://bitbucket.org/$(COMPONENT_NAME)/$(COMPONENT_NAME)/get/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=  MPL2
-COMPONENT_LICENSE_FILE= COPYING.MPL2
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_NAME)-67e894c6cd8f
+COMPONENT_ARCHIVE=       $(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=  sha256:94878cbfa27b0d0fbc64c00d4aafa137f678d5315ae62ba4aecddbd4269ae75f
+COMPONENT_ARCHIVE_URL=   http://bitbucket.org/$(COMPONENT_NAME)/$(COMPONENT_NAME)/get/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=       MPL2
+COMPONENT_LICENSE_FILE=  COPYING.MPL2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
