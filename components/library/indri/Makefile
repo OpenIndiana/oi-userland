@@ -23,21 +23,25 @@
 # Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME		= indri
-COMPONENT_VERSION	= 5.4
+COMPONENT_VERSION	= 5.11
+COMPONENT_FMRI		= library/indri
+COMPONENT_SUMMARY	= indri - Text search engine
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL	= http://lemurproject.org/indri.php
 COMPONENT_SRC		= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE 	= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:b1d27f6da4cb15776cee0121c9511ed0e998d47564d785a2bb41a44c654e3e3f
-COMPONENT_ARCHIVE_URL	= http://sourceforge.net/projects/lemur/files/lemur/$(COMPONENT_SRC)/$(COMPONENT_SRC).tar.gz/download
-COMPONENT_BUGDB		= library/indri
+  sha256:ee975cc4dc83738009fa42889bc1a921706562bed4afbea3b10e8a7a0ed13d1c
+COMPONENT_ARCHIVE_URL	= \
+  http://sourceforge.net/projects/lemur/files/lemur/$(COMPONENT_SRC)/$(COMPONENT_SRC).tar.gz/download
+COMPONENT_LICENSE	= Indri license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION	 = $(CLONEY) $(SOURCE_DIR) $(@D)
 COMPONENT_INSTALL_ARGS		 = "includedir=$(PROTOUSRINCDIR)"
@@ -63,6 +67,9 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
