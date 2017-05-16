@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vte
 COMPONENT_VERSION=	0.28.2
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
 COMPONENT_FMRI=		library/desktop/vte
@@ -33,13 +33,15 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --force &&\
-					gtkdocize &&\
-					aclocal -I . &&\
-					autoconf &&\
-					autoheader &&\
-					automake -c -f -a )
+CFLAGS+= -std=c99 $(CPP_XPG6MODE)
+
+COMPONENT_PREP_ACTION = ( cd $(@D)  &&\
+                          libtoolize --force &&\
+                          gtkdocize &&\
+                          aclocal -I . &&\
+                          autoconf &&\
+                          autoheader &&\
+                          automake -c -f -a )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
