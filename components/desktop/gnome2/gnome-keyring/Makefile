@@ -29,11 +29,11 @@ COMPONENT_FMRI=		gnome/gnome-keyring
 COMPONENT_LICENSE=	GPLv2,LGPLv2
 COMPONENT_LICENSE_FILE= gnome-keyring.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
@@ -55,6 +55,13 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += editor/gedit
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += desktop/character-map/gucharmap
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
