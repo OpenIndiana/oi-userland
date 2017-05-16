@@ -1,11 +1,20 @@
---- firefox-43.0b6/js/src/gc/Memory.cpp.1	2015-11-25 14:55:21.820042761 +0300
-+++ firefox-43.0b6/js/src/gc/Memory.cpp	2015-11-25 14:55:39.979800965 +0300
-@@ -90,7 +90,7 @@
- void*
- TestMapAlignedPagesLastDitch(size_t size, size_t alignment)
- {
--    ; //return MapAlignedPagesLastDitch(size, alignment);
-+    return MapAlignedPagesLastDitch(size, alignment);
+--- firefox-52.1.0esr/js/src/gc/Memory.cpp.~1~	2017-04-11 05:13:13.000000000 +0300
++++ firefox-52.1.0esr/js/src/gc/Memory.cpp	2017-05-05 16:40:53.148978723 +0300
+@@ -459,7 +463,7 @@
+     return true;
  }
  
+-bool
++void
+ MarkPagesInUse(void* p, size_t size)
+ {
+     if (!DecommitEnabled())
+@@ -763,7 +767,7 @@
+         return false;
+ 
+     MOZ_ASSERT(OffsetFromAligned(p, pageSize) == 0);
+-    int result = madvise(p, size, MADV_DONTNEED);
++    int result = posix_madvise(p, size, MADV_DONTNEED);
+     return result != -1;
+ }
  
