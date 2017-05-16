@@ -24,15 +24,15 @@
 #
 
 include ../../../../make-rules/shared-macros.mk
+GIT_REPO= https://github.com/puppetlabs/puppetlabs-mysql
+GIT_BRANCH= 3.10.0
+GIT_COMMIT_ID=    11afc2b
+GIT_HASH=sha256:b534a50202d083cf721a59c8862d07c8284f90a0f9ce6bac9d371bc8cc418cfa
 
 COMPONENT_NAME=		puppetlabs-mysql
-COMPONENT_VERSION=	3.6.2
+COMPONENT_VERSION=	$(GIT_BRANCH)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:783a6a62d2c5fb37b618ba292a49e073f053aeb2b89a9f1e23909831e7166536
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	utility/puppet
 COMPONENT_ANITYA_ID=	13317
 
@@ -52,3 +52,10 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
+
+# This is a convenience method for the package maintainer
+new-files: install
+	$(PKGSEND) generate $(PROTO_DIR)/usr/puppetlabs/puppet/modules/ | \
+		$(GSED)  -e 's/\(file\).*path=/\1 path=/' | \
+		$(CAT) *.p5m - | $(GNU_GREP) -h '^file' | sort | uniq -c | \
+		$(GSED) -e '/ 2 /d' -e 's/   1 //'

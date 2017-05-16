@@ -25,14 +25,16 @@
 
 include ../../../../make-rules/shared-macros.mk
 
+GIT_REPO= https://github.com/puppetlabs/puppetlabs-rsync
+GIT_BRANCH= 0.4.0
+GIT_COMMIT_ID= 8fe65d0
+GIT_HASH=sha256:da2b8b8d204dd0501b2af33c7a0ed14e37c9e47e7f24f00b9d6b99a4fdf08cfb
+
+
 COMPONENT_NAME=		puppetlabs-rsync
-COMPONENT_VERSION=	0.4.0
+COMPONENT_VERSION=	$(GIT_BRANCH)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:da2b8b8d204dd0501b2af33c7a0ed14e37c9e47e7f24f00b9d6b99a4fdf08cfb
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	utility/puppet
 COMPONENT_ANITYA_ID=	13319
 

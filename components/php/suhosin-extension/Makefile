@@ -22,24 +22,33 @@
 #
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
+
+
 BUILD_BITS= 64
+# Because the php's are using gcc, well...
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
-include $(WS_COMPONENTS)/php/php-metadata.mk
 
 COMPONENT_NAME=		suhosin
-COMPONENT_VERSION=	0.9.37.1
+COMPONENT_VERSION=	0.9.38
 COMPONENT_ARCHIVE_HASH= \
-    sha256:322ba104a17196bae63d39404da103fd011b09fde0f02484dc44366511c586ba
+    sha256:c02d76c4e7ce777910a37c18181cb67fd9e90efe0107feab3de3131b5f89bcea
 COMPONENT_ARCHIVE_URL=	http://download.suhosin.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.suhosin.org/
 COMPONENT_ANITYA_ID=	10769
 
-TPNO=			22432
+TPNO=			34999
 
-include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/phpize.mk
+# For PHP 5.6 ONLY.  This version not ready for PHP 7.1.
+PHP_VERSIONS = 5.6
+include $(WS_MAKE_RULES)/common.mk
+include $(PHP_TOP_DIR)/php.mk
 
 CONFIGURE_OPTIONS += --enable-suhosin
 
 # Run MySQL tests - requires MySQL (and maybe configuration!)
 #COMPONENT_TEST_ENV += TEST_SUHOSIN_MYSQL=1
+
+REQUIRED_PACKAGES += web/php-56
+REQUIRED_PACKAGES += web/php-71

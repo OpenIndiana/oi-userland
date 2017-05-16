@@ -1,0 +1,29 @@
+Patches are generated from a pre-patched GIT repository. Using a pre-patched
+repository eases patch migration; pre-exiting commits are more likely to
+rebase cleanly across version changes.
+
+General method:
+git clone <patched repository>
+git pull --rebase <upstream repository> <branch> $(GIT_BRANCH)
+git format-patch `git rev-list -n 1 $(GIT_BRANCH)`
+
+Assumptions:
+Upstream is a remote defined as
+git remote add upstream	https://github.com/puppetlabs/puppet.git
+
+Pre-patched repo has branches named solaris/<release>
+
+Example:
+The following example is used to move from 4.7.0 to 4.10.0
+
+# From the component directory ruby/puppet
+git clone https://github.com/shawnferry/puppet.git -b solaris/4.7.0
+git checkout -b solaris/4.10.0
+git pull --rebase upstream master 4.10.0
+
+# Resolve any conflicts on merge
+
+# Cleanup and replace old patches
+rm ../patches/0*.patch
+git format-patch `git rev-list -n 1 4.10.0`
+mv 0*.patch ../patches

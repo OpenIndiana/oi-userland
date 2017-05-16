@@ -1,0 +1,108 @@
+From f2a8a0ff10ec6fc00c08af33131bd02bc8682bb3 Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Tue, 31 Jan 2017 13:31:03 -0500
+Subject: [PATCH 3/4] (no-upstream) 24680838 puppet failure visibility
+
+24680838 puppet agent failures should be visible to administrator via
+    SMF interfaces
+
+Patch could be submitted but is unlikely to be accepted by upstream.
+The default behavior is as expected by Puppet.
+---
+ lib/puppet/defaults.rb             |  6 ++++++
+ lib/puppet/util/log.rb             | 22 ++++++++++++++++++++++
+ spec/unit/confine/variable_spec.rb |  1 +
+ spec/unit/util/logging_spec.rb     |  1 +
+ 4 files changed, 30 insertions(+)
+
+diff --git a/lib/puppet/defaults.rb b/lib/puppet/defaults.rb
+index 0a7b4373f..4aff56f5b 100644
+--- a/lib/puppet/defaults.rb
++++ b/lib/puppet/defaults.rb
+@@ -123,6 +123,12 @@ module Puppet
+         end
+       end
+     },
++    :degrade_smf_on_error => {
++        :default  => true,
++        :type     => :boolean,
++        :desc     => "Whether the SMF service for puppet should be degraded when an error
++          is logged.",
++    },
+     :strict => {
+       :default    => :warning,
+       :type       => :symbolic_enum,
+diff --git a/lib/puppet/util/log.rb b/lib/puppet/util/log.rb
+index 25fd4b548..5858f97bd 100644
+--- a/lib/puppet/util/log.rb
++++ b/lib/puppet/util/log.rb
+@@ -16,6 +16,7 @@ class Puppet::Util::Log
+ 
+   @levels = [:debug,:info,:notice,:warning,:err,:alert,:emerg,:crit]
+   @loglevel = 2
++  @degraded = false
+ 
+   @desttypes = {}
+ 
+@@ -52,6 +53,16 @@ class Puppet::Util::Log
+   # Reset log to basics.  Basically just flushes and closes files and
+   # undefs other objects.
+   def Log.close(destination)
++    if Puppet[:degrade_smf_on_error]
++      if !@degraded
++        if Puppet.run_mode.agent?
++          system 'svcadm clear puppet:agent'
++        elsif Puppet.run_mode.master?
++          system 'svcadm clear puppet:master'
++        end
++      end
++    end
++
+     if @destinations.include?(destination)
+       @destinations[destination].flush if @destinations[destination].respond_to?(:flush)
+       @destinations[destination].close if @destinations[destination].respond_to?(:close)
+@@ -168,6 +179,17 @@ class Puppet::Util::Log
+   # a potential for a loop here, if the machine somehow gets the destination set as
+   # itself.
+   def Log.newmessage(msg)
++    if Puppet[:degrade_smf_on_error]
++      if [:err,:alert,:emerg,:crit].include? msg.level and !@degraded
++        @degraded = true
++        if Puppet.run_mode.agent?
++          system 'svcadm mark -s degraded puppet:agent'
++        elsif Puppet.run_mode.master?
++          system 'svcadm mark -s degraded puppet:master'
++        end
++      end
++    end
++
+     return if @levels.index(msg.level) < @loglevel
+ 
+     queuemessage(msg) if @destinations.length == 0
+diff --git a/spec/unit/confine/variable_spec.rb b/spec/unit/confine/variable_spec.rb
+index db01f1d12..888f49ca4 100644
+--- a/spec/unit/confine/variable_spec.rb
++++ b/spec/unit/confine/variable_spec.rb
+@@ -27,6 +27,7 @@ describe Puppet::Confine::Variable do
+     end
+ 
+     it "should use settings if the variable name is a valid setting" do
++      Puppet.settings.expects(:value).with(:degrade_smf_on_error).returns nil
+       Puppet.settings.expects(:valid?).with(:myvar).returns true
+       Puppet.settings.expects(:value).with(:myvar).returns "foo"
+       @confine.valid?
+diff --git a/spec/unit/util/logging_spec.rb b/spec/unit/util/logging_spec.rb
+index f5a3e019c..733303c25 100644
+--- a/spec/unit/util/logging_spec.rb
++++ b/spec/unit/util/logging_spec.rb
+@@ -94,6 +94,7 @@ describe Puppet::Util::Logging do
+ 
+   describe "when sending a deprecation warning" do
+     it "does not log a message when deprecation warnings are disabled" do
++      Puppet.expects(:[]).with(:degrade_smf_on_error).returns nil
+       Puppet.expects(:[]).with(:disable_warnings).returns %w[deprecations]
+       @logger.expects(:warning).never
+       @logger.deprecation_warning 'foo'
+-- 
+2.11.0 (Apple Git-81)
+

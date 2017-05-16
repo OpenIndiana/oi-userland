@@ -1,0 +1,207 @@
+Not yet submitted upstream
+
+From ac7a8aaea91fbb25bf7adb0ee24e08b9a5497867 Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Thu, 13 Apr 2017 17:27:16 -0400
+Subject: [PATCH] Solaris support
+
+---
+ manifests/default_mods.pp |  4 +++
+ manifests/mod/prefork.pp  |  2 +-
+ manifests/mod/ssl.pp      | 20 ++++++++++++++-
+ manifests/mpm.pp          |  2 +-
+ manifests/params.pp       | 64 +++++++++++++++++++++++++++++++++++++++++++++++
+ manifests/version.pp      |  3 +++
+ metadata.json             |  8 ++++++
+ 8 files changed, 100 insertions(+), 3 deletions(-)
+
+diff --git a/manifests/default_mods.pp b/manifests/default_mods.pp
+index 879df59..cb8b873 100644
+--- a/manifests/default_mods.pp
++++ b/manifests/default_mods.pp
+@@ -28,6 +28,10 @@ class apache::default_mods (
+     'Suse': {
+       ::apache::mod { 'log_config': }
+     }
++    'solaris': {
++      ::apache::mod { 'log_config': }
++      ::apache::mod { 'unixd': }
++    }
+     default: {}
+   }
+   case $::osfamily {
+diff --git a/manifests/mod/prefork.pp b/manifests/mod/prefork.pp
+index f35551c..1080ce9 100644
+--- a/manifests/mod/prefork.pp
++++ b/manifests/mod/prefork.pp
+@@ -62,7 +62,7 @@ class apache::mod::prefork (
+         }
+       }
+     }
+-    'debian', 'freebsd': {
++    'debian', 'freebsd', 'solaris': {
+       ::apache::mpm{ 'prefork':
+         apache_version => $_apache_version,
+       }
+diff --git a/manifests/mod/ssl.pp b/manifests/mod/ssl.pp
+index 92c4563..52c7b14 100644
+--- a/manifests/mod/ssl.pp
++++ b/manifests/mod/ssl.pp
+@@ -40,6 +40,15 @@ class apache::mod::ssl (
+       'gentoo': {
+         $_ssl_mutex = 'default'
+       }
++      'solaris': {
++        if versioncmp($apache_version, '2.4') == 0 {
++          $ssl_mutex = 'default'
++        } elsif versioncmp($apache_version, '2.2') == 0 {
++          $ssl_mutex = 'file:/var/run/apache2/2.2/ssl_mutex'
++        } else {
++          $ssl_mutex = "file:/var/run/ssl_mutex"
++        }
++      }
+       'Suse': {
+         $_ssl_mutex = 'default'
+       }
+@@ -66,7 +75,16 @@ class apache::mod::ssl (
+     'redhat'  => '/var/cache/mod_ssl/scache(512000)',
+     'freebsd' => '/var/run/ssl_scache(512000)',
+     'gentoo'  => '/var/run/ssl_scache(512000)',
+-    'Suse'    => '/var/lib/apache2/ssl_scache(512000)'
++    'Suse'    => '/var/lib/apache2/ssl_scache(512000)',
++    'solaris': {
++      if versioncmp($apache_version, '2.4') == 0 {
++        $session_cache = '/var/run/apache2/2.4/ssl_scache(512000)'
++      } elsif versioncmp($apache_version, '2.2') == 0 {
++        $session_cache = '/var/run/apache2/2.2/ssl_scache(512000)'
++      } else {
++        $session_cache = '/var/run/ssl_scache(512000)'
++      }
++     }
+   }
+ 
+   validate_bool($ssl_stapling)
+diff --git a/manifests/mpm.pp b/manifests/mpm.pp
+index 119fedf..efa39e7 100644
+--- a/manifests/mpm.pp
++++ b/manifests/mpm.pp
+@@ -108,7 +108,7 @@ define apache::mpm (
+     'gentoo': {
+       # so we don't fail
+     }
+-    'redhat': {
++    'redhat', 'solaris': {
+       # so we don't fail
+     }
+     'Suse': {
+diff --git a/manifests/params.pp b/manifests/params.pp
+index e1ca7b3..5cd0877 100644
+--- a/manifests/params.pp
++++ b/manifests/params.pp
+@@ -196,6 +196,70 @@ class apache::params inherits ::apache::version {
+     $error_log           = 'error_log'
+     $scriptalias         = '/var/www/cgi-bin'
+     $access_log_file     = 'access_log'
++  } elsif $::osfamily == 'Solaris' {
++    $user                = 'webservd'
++    $group               = 'webservd'
++    $root_group          = 'root'
++    $apache_name         = 'web/server/apache-24'
++    $service_name        = 'network/http:apache24'
++    $httpd_dir           = '/etc/apache2/2.4'
++    $server_root         = '/usr/apache2/2.4'
++    $scriptalias         = '/var/apache2/2.4/cgi-bin/'
++    $error_log           = 'error_log'
++    $access_log_file     = 'access_log'
++    $conf_dir            = $httpd_dir
++    $confd_dir           = "${httpd_dir}/conf.d"
++    $mod_dir             = "${httpd_dir}/conf.d"
++    $mod_enable_dir      = undef
++    $vhost_dir           = "${httpd_dir}/conf.d"
++    $vhost_enable_dir    = undef
++    $conf_file           = 'httpd.conf'
++    $ports_file          = "${conf_dir}/ports.conf"
++    $logroot             = '/var/apache2/2.4/logs'
++    $logroot_mode        = undef
++    $lib_path            = '/usr/apache2/2.4/libexec'
++    $mpm_module          = 'prefork'
++    $default_ssl_cert    = undef
++    $default_ssl_key     = undef
++    $ssl_certs_dir       = '/etc/certs'
++    $suphp_addhandler    = undef
++    $suphp_engine        = off
++    $suphp_configpath    = undef
++    $mod_packages        = {
++      'dbd'           => 'web/server/apache-24/module/apache-dbd',
++      'dtrace'        => 'web/server/apache-24/module/apache-dtrace',
++      'fcgid'         => 'web/server/apache-24/module/apache-fcgid',
++      'gss'           => 'web/server/apache-24/module/apache-gss',
++      'jk'            => 'web/server/apache-24/module/apache-jk',
++      'ldap'          => 'web/server/apache-24/module/apache-ldap',
++      'lua'           => 'web/server/apache-24/module/apache-lua',
++      'security'      => 'web/server/apache-24/module/apache-security',
++      'ssl-fips-140'  => 'web/server/apache-24/module/apache-ssl-fips-140',
++      'ssl'           => 'web/server/apache-24/module/apache-ssl',
++      'wsgi-26'       => 'web/server/apache-24/module/apache-wsgi-26',
++      'wsgi-27'       => 'web/server/apache-24/module/apache-wsgi-27',
++      'wsgi-34'       => 'web/server/apache-24/module/apache-wsgi-34',
++    }
++    $mod_libs             = {
++      'php5' => 'libphp5.so',
++    }
++    $conf_template          = 'apache/httpd.conf.erb'
++    $keepalive              = 'Off'
++    $keepalive_timeout      = 15
++    $max_keepalive_requests = 100
++    $fastcgi_lib_path       = '/var/apache2/2.4/htdocs/fcgid'
++    $mime_support_package   = 'system/core-os'
++    $mime_types_config      = '/etc/mime.types'
++    $docroot                = '/var/apache2/2.4/htdocs'
++    $cas_cookie_path        = undef
++    $modsec_crs_package     = undef
++    $modsec_crs_path        = undef
++    $modsec_dir             = undef
++    $modsec_default_rules   = undef
++    $error_documents_path   = '/var/apache2/2.4/error'
++    $wsgi_socket_prefix     = undef
++    $alias_icons_path       = '/var/apache2/2.4/icons'
++    $pidfile                = '/system/volatile/apache2/2.4/httpd.pid'
+   } elsif $::osfamily == 'Debian' {
+     $user                = 'www-data'
+     $group               = 'www-data'
+diff --git a/manifests/version.pp b/manifests/version.pp
+index 2d33a5f..87bc8fc 100644
+--- a/manifests/version.pp
++++ b/manifests/version.pp
+@@ -42,6 +42,9 @@ class apache::version {
+         $default = '2.2'
+       }
+     }
++    'Solaris': {
++      $default = '2.4'
++    }
+     default: {
+       fail("Class['apache::version']: Unsupported osfamily: ${::osfamily}")
+     }
+diff --git a/metadata.json b/metadata.json
+index 7bb2f12..ed0fd31 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -67,6 +67,14 @@
+         "14.04",
+         "16.04"
+       ]
++    },
++    {
++      "operatingsystem": "Solaris",
++      "operatingsystemrelease": [
++        "11.3",
++        "11.4",
++        "12.0"
++      ]
+     }
+   ],
+   "requirements": [
+-- 
+2.11.0 (Apple Git-81)
+

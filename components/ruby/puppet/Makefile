@@ -27,18 +27,20 @@ RUBY_VERSION=2.1
 RUBY_LIB_VERSION=2.1.0
 RUBY_VERSIONS=2.1.0
 
+GIT_REPO= https://github.com/puppetlabs/puppet
+GIT_BRANCH= 4.10.0
+GIT_COMMIT_ID= 8afedd0
+GIT_HASH=sha256:adcd30070597967a5e946d0666d1a65c875187038dd2462642f0351f151178d1
+
 COMPONENT_NAME=		puppet
-COMPONENT_VERSION=	4.7.0
+COMPONENT_VERSION=	$(GIT_BRANCH)
 COMPONENT_PROJECT_URL=	http://puppetlabs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-		sha256:f7eec9099c04a9ad65ee41b6c525b612c487e9a277d4d9ecaea587bb93c130bc
-COMPONENT_ARCHIVE_URL=	http://downloads.puppetlabs.com/puppet/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/puppet
 COMPONENT_ANITYA_ID=	7018
 
-TPNO=			32470
+TPNO=			34821
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/install.rb.mk
@@ -93,7 +95,8 @@ INSTALL_RB_BINDIR_OPTION =	--bindir=$(USRSBINDIR)
 # --sbindir option not supported by Puppet install.rb
 INSTALL_RB_SBINDIR_OPTION =
 
-INSTALL_RB_OPTIONS += --vardir=/var/cache/puppetlabs
+INSTALL_RB_OPTIONS += --vardir=/var/cache/puppetlabs \
+	                  --localedir=/usr/puppetlabs/puppet/share/locale
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -121,3 +124,14 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network
+
+# This is a convenience method for the package maintainer
+new-files: install
+	    $(PKGSEND) generate $(PROTO_DIR) | \
+		$(GSED) -e 's|group=.*||' -e s'|^file |file path=|' | \
+		$(CAT) *.p5m - | $(PKGFMT) -u |\
+		$(GSED) \
+		  -e '/~[0-9]\+~$$/d' \
+		  -e 's|usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)|__ruby__|' | \
+		sort | uniq -c | \
+		$(GSED) -e '/ 2 /d' -e 's/   1 //' -e '/^file/!d'

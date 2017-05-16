@@ -23,15 +23,15 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+# Must use gcc because of 21090206
+# Otherwise studio was working fine for php 5.6
 COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
-
-include $(WS_COMPONENTS)/php/php-metadata.mk
+include $(WS_COMPONENTS)/php/php56/php56-metadata.mk
 
 COMPONENT_NAME=		php
 COMPONENT_VERSION=	$(UL_PHP_VERSION)
 COMPONENT_PROJECT_URL=	http://php.net/
-COMPONENT_SRC=		$(PHP_COMPONENT_SRC)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=\
     sha256:07187ba2870f89cef334cd2ad6cb801aeec5eaf283da0293a9a6be75d6786d11
@@ -53,7 +53,7 @@ include enable-extensions.mk
 
 CONFIGURE_OPTIONS += --enable-dtrace
 
-# Without this, the the build seems to interrogate GCC for potential library
+# Without this, the build seems to interrogate GCC for potential library
 # search path information and then embed it into the RUNPATH of selected ELF
 # files it creates.  This includes GCC private directories
 CONFIGURE_OPTIONS += --disable-rpath

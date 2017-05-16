@@ -184,11 +184,29 @@ else
 NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
 endif
 
+# Look for manifests which need to be duplicated for each version of PHP.
+# NORUBY_MANIFESTS represents the manifests that are not Python or
+# Perl or Ruby manifests.  Extract the PHP Manifests from NORUBY_MANIFESTS.
+# Any remaining manifests are stored in NOPHP_MANIFESTS
+ifeq ($(findstring -PHPVER,$(NORUBY_MANIFESTS)),-PHPVER)
+NOPHP_MANIFESTS = $(filter-out %GENFRAG.p5m,\
+		  $(filter-out %-PHPVER.p5m,$(NORUBY_MANIFESTS)))
+PHP_MANIFESTS = $(filter %-PHPVER.p5m,$(NORUBY_MANIFESTS))
+PHPV_MANIFESTS = $(foreach v,$(shell echo $(PHP_VERSIONS)),\
+                      $(shell echo $(PHP_MANIFESTS) |\
+                      sed -e 's/-PHPVER.p5m/-$(shell echo $(v) |\
+                      cut -d. -f1,2 | tr -d .).p5m/g'))
+PHPNV_MANIFESTS = $(shell echo $(PHP_MANIFESTS) | sed -e 's/-PHPVER//')
+else
+NOPHP_MANIFESTS = $(NORUBY_MANIFESTS)
+endif
+
 VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
 	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
 	$(RUBYV_MANIFESTS) $(RUBYNV_MANIFESTS) \
-	$(NORUBY_MANIFESTS) $(HISTORICAL_MANIFESTS)
+	$(PHPV_MANIFESTS)  $(PHPNV_MANIFESTS) \
+	$(NOPHP_MANIFESTS) $(HISTORICAL_MANIFESTS)
 
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
@@ -349,6 +367,42 @@ $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D RUBYV=###PYV### -D MAYBE_RUBY_VERSION_SPACE= \
 		-D MAYBE_SPACE_RUBY_VERSION= $(BUILD_DIR)/mkgeneric-ruby \
+		$(WS_TOP)/transforms/mkgeneric $< > $@
+	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+
+# When revving the php interpreters you may wish to use those build versions
+# for building extensions then use the function below.
+# You'll also need to adjust phpize.mk
+#PHP_EXTENSION_DIR_FUNC= $(shell $(PHP_TOP_DIR)/php$(subst .,,$(1))/build/prototype/$(MACH)/usr/php/$(1)/bin/php-config --extension-dir | cut -c2- )
+PHP_EXTENSION_DIR_FUNC= $(shell $(shell dirname $(PHP.$(1)))/php-config --extension-dir | cut -c2- )
+# Define and execute a macro that generates a rule to create a manifest for a
+# PHP module specific to a particular version of the PHP runtime.
+define php-manifest-rule
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PHPVER.p5m
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $$<
+	$(PKGMOGRIFY) -D PHPVER=$(1) -D MAYBE_PHPVER_SPACE="$(1) " \
+		-D MAYBE_SPACE_PHPVER=" $(1)" \
+		-D PHV=$(shell echo $(1) | tr -d .) \
+		-D PHP_EXT_DIR=$(call PHP_EXTENSION_DIR_FUNC,$(1)) $$< > $$@
+endef
+$(foreach ver,$(PHP_VERSIONS),$(eval $(call php-manifest-rule,$(ver))))
+
+# A rule to create a helper transform package for PHP, that will insert the
+# appropriate conditional dependencies into a PHP extensions's
+# runtime-version-generic package to pull in the version-specific bits when the
+# corresponding version of PHP is on the system.
+$(BUILD_DIR)/mkgeneric-php: $(WS_MAKE_RULES)/shared-macros.mk
+	$(RM) $@
+	$(foreach ver,$(shell echo $(PHP_VERSIONS) | tr -d .), \
+		$(call mkgeneric,runtime/php,$(ver)))
+
+# Build PHP version-wrapping manifests from the generic version.
+# See the block comment above about why "###PYV###" is used here even
+# though this is for PHP rather than Python.
+$(MANIFEST_BASE)-%.p5m: %-PHPVER.p5m $(BUILD_DIR)/mkgeneric-php
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
+	$(PKGMOGRIFY) -D PHV=###PYV### -D MAYBE_PHPVER_SPACE= \
+		-D MAYBE_SPACE_PHPVER= $(BUILD_DIR)/mkgeneric-php \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 

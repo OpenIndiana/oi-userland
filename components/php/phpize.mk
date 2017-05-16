@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # This is a collection of Makefile lines needed for building PHP extensions
@@ -29,28 +29,89 @@
 # This file should handle everything necessary for an extension whose upstream
 # expects the user to run "phpize" in order to create ./configure.
 
-# It relies on the Userland makefile for PHP creating modified versions of
-# phpize and php-config for use during Userland builds, and placing them under
-# $(PHP_BUNDLE_DIR)/proto-scripts. Therefore, it depends on gmake install of PHP
+# Extension builds rely on installed versions of the PHP interpreters to
+# access phpize and php-config.
+# If the interpreters are being revved then look for commented out lines
+# below to switch the extension builds to use interpreters in the build tree.
 
-# Usage:
-# include ../../../make-rules/shared-macros.mk [appropriate path]
-# include $(WS_COMPONENTS)/php/php-metadata.mk
-# [COMPONENT_* lines]
-# include $(WS_MAKE_RULES)/prep.mk
-# include $(WS_MAKE_RULES)/configure.mk
-# include $(PHP_TOP_DIR)/phpize.mk
+# xdebug is a good example of building an extension.
 
-# Depends on having a built and intalled (prototype) version of PHP available
-$(BUILD_DIR_64)/.configured: $(PHP_BUILD_DIR_64)/.installed
-$(PHP_BUILD_DIR_64)/.installed:
-	cd $(PHP_BUNDLE_DIR) ; $(GMAKE) install ;
+$(BUILD_DIR)/$(MACH64)-5.6/.configured: UL_PHP_MINOR_VERSION=5.6
+$(BUILD_DIR)/$(MACH64)-5.6/.configured: BITS=64
+$(BUILD_DIR)/$(MACH64)-7.1/.configured: UL_PHP_MINOR_VERSION=7.1
+$(BUILD_DIR)/$(MACH64)-7.1/.configured: BITS=64
 
-include $(PHP_TOP_DIR)/php.mk
+$(BUILD_DIR)/$(MACH64)-5.6/.built:      UL_PHP_MINOR_VERSION=5.6
+$(BUILD_DIR)/$(MACH64)-5.6/.built:      BITS=64
+$(BUILD_DIR)/$(MACH64)-7.1/.built:      UL_PHP_MINOR_VERSION=7.1
+$(BUILD_DIR)/$(MACH64)-7.1/.built:      BITS=64
 
+$(BUILD_DIR)/$(MACH64)-5.6/.installed:  UL_PHP_MINOR_VERSION=5.6
+$(BUILD_DIR)/$(MACH64)-5.6/.installed:  BITS=64
+$(BUILD_DIR)/$(MACH64)-7.1/.installed:  UL_PHP_MINOR_VERSION=7.1
+$(BUILD_DIR)/$(MACH64)-7.1/.installed:  BITS=64
+
+$(BUILD_DIR)/$(MACH64)-5.6/.tested:	UL_PHP_MINOR_VERSION=5.6
+$(BUILD_DIR)/$(MACH64)-5.6/.tested:	BITS=64
+$(BUILD_DIR)/$(MACH64)-7.1/.tested:	UL_PHP_MINOR_VERSION=7.1
+$(BUILD_DIR)/$(MACH64)-7.1/.tested:	BITS=64
+
+$(BUILD_DIR)/$(MACH64)-5.6/.tested-and-compared: UL_PHP_MINOR_VERSION=5.6
+$(BUILD_DIR)/$(MACH64)-5.6/.tested-and-compared: BITS=64
+$(BUILD_DIR)/$(MACH64)-7.1/.tested-and-compared: UL_PHP_MINOR_VERSION=7.1
+$(BUILD_DIR)/$(MACH64)-7.1/.tested-and-compared: BITS=64
+
+$(BUILD_DIR)/$(MACH64)-5.6/.system-tested: UL_PHP_MINOR_VERSION=5.6
+$(BUILD_DIR)/$(MACH64)-5.6/.system-tested: BITS=64
+$(BUILD_DIR)/$(MACH64)-7.1/.system-tested: UL_PHP_MINOR_VERSION=7.1
+$(BUILD_DIR)/$(MACH64)-7.1/.system-tested: BITS=64
+
+$(BUILD_DIR)/$(MACH64)-5.6/.system-tested-and-compared: UL_PHP_MINOR_VERSION=5.6
+$(BUILD_DIR)/$(MACH64)-5.6/.system-tested-and-compared: BITS=64
+$(BUILD_DIR)/$(MACH64)-7.1/.system-tested-and-compared: UL_PHP_MINOR_VERSION=7.1
+$(BUILD_DIR)/$(MACH64)-7.1/.system-tested-and-compared: BITS=64
+
+CONFIGURE_64 = $(PHP_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.configured)
+BUILD_64     = $(PHP_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
+INSTALL_64   = $(PHP_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
+
+# determine the type of tests we want to run.
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_64      = $(PHP_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested)
+else
+TEST_64      = $(PHP_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared)
+endif
+
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+SYSTEM_TEST_64 = $(PHP_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.system-tested)
+else
+SYSTEM_TEST_64 = $(PHP_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.system-tested-and-compared)
+endif
+
+PHP_VERSION_NODOT = $(subst .,,$(UL_PHP_MINOR_VERSION))
+PHP_HOME = $(PHP_TOP_DIR)/php$(PHP_VERSION_NODOT)
+
+# Building extensions with interpreters from the build tree
+# is time consuming.
+# If revving the php interpreters then temporarily switch to building
+# extensions against those.
+#PHP_INSTALLED = $(PHP_HOME)/build/$(MACH64)/.installed
+#$(CONFIGURE_64): $(PHP_INSTALLED)
+#$(BUILD_DIR)/$(MACH64)-5.6/.configured: \
+#	$(PHP_TOP_DIR)/php56/build/$(MACH64)/.installed
+#
+#$(BUILD_DIR)/$(MACH64)-7.1/.configured: \
+#	$(PHP_TOP_DIR)/php71/build/$(MACH64)/.installed
+#
+#$(PHP_TOP_DIR)/php56/build/$(MACH64)/.installed \
+#$(PHP_TOP_DIR)/php71/build/$(MACH64)/.installed:
+#	cd $(PHP_HOME) ; $(GMAKE) install ;
+
+# If revving php interpreters use those instead for building extensions.
+#		< $(PHP_HOME)/proto-scripts/phpize-proto
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	$(GSED) -e "s|^builddir=.*|builddir=$(@D)|" \
-		< $(PHP_BUNDLE_DIR)/proto-scripts/phpize-proto \
+		< /usr/php/$(UL_PHP_MINOR_VERSION)/bin/phpize \
 		> $(@D)/phpize-proto; \
 	chmod +x $(@D)/phpize-proto;
 
@@ -66,13 +127,15 @@ COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D) ;
 CONFIGURE_SCRIPT = $(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION += cd $(@D) ; $(@D)/phpize-proto;
 
+# If revving php interpreters use those instead for building extensions.
 # Change PHP_EXECUTABLE so that tests can run.
-PROTOUSRPHPVERDIR = $(PHP_PROTO_DIR)/$(CONFIGURE_PREFIX)
-COMPONENT_PRE_CONFIGURE_ACTION += \
-	$(GSED) -i -e "s@^PHP_EXECUTABLE=.*@PHP_EXECUTABLE=$(PROTOUSRPHPVERDIR)/bin/php@" \
-		$(CONFIGURE_SCRIPT) ;
+#PROTOUSRPHPVERDIR = $(PHP_HOME)/build/prototype/$(MACH)/$(CONFIGURE_PREFIX)
+#COMPONENT_PRE_CONFIGURE_ACTION += \
+#	$(GSED) -i -e "s@^PHP_EXECUTABLE=.*@PHP_EXECUTABLE=$(PROTOUSRPHPVERDIR)/bin/php@" \
+#		$(CONFIGURE_SCRIPT) ;
 
+# If revving php interpreters use those instead for building extensions.
+#		cp $(PHP_HOME)/proto-scripts/php-config-proto $(@D) ;
 COMPONENT_PRE_CONFIGURE_ACTION += \
-		cp $(PHP_BUNDLE_DIR)/proto-scripts/php-config-proto $(@D) ;
+    cp /usr/php/$(UL_PHP_MINOR_VERSION)/bin/php-config $(@D)/php-config-proto ;
 CONFIGURE_OPTIONS += --with-php-config=$(@D)/php-config-proto
-

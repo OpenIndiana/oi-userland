@@ -680,6 +680,15 @@ PERL_SCRIPTS_PROCESS= \
 # and re-add $(PERL_SCRIPTS_PROCESS)
 COMPONENT_POST_INSTALL_ACTION += $(PERL_SCRIPTS_PROCESS)
 
+# PHP stuff
+PHP_TOP_DIR = $(WS_COMPONENTS)/php
+
+# All versions of PHP for building extension packages.
+PHP_VERSIONS = 5.6 7.1
+
+PHP.5.6 = /usr/php/5.6/bin/php
+PHP.7.1 = /usr/php/7.1/bin/php
+
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
 TCL_VERSION =  8.5

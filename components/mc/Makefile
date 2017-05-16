@@ -46,7 +46,7 @@ CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --without-ext2undel
 CONFIGURE_OPTIONS += --with-screen=ncurses
-CONFIGURE_OPTIONS += --with-ncurses-includes=$(USRINCDIR)
+CONFIGURE_OPTIONS += --with-ncurses-includes=$(USRINCDIR)/ncurses
 CONFIGURE_OPTIONS += --with-ncurses-libs=$(USRLIBDIR64)
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 

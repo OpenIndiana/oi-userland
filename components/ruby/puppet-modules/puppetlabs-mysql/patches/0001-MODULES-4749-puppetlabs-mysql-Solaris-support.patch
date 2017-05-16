@@ -1,0 +1,387 @@
+Patch Submitted upstream
+
+From 72b850e0651c4cda65f005261a977fa82606a3df Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Fri, 21 Apr 2017 14:18:28 -0400
+Subject: [PATCH] (MODULES-4749) puppetlabs-mysql : Solaris support
+
+  This patch adds Solaris support as currently shipped by Oracle. Mysql
+  version is extracted from `pkg mediator mysql` and used to set path
+  values.
+
+  This patch also adds the structured fact mysql_solaris which holds
+  values for consumption in params.pp
+---
+ lib/facter/mysql_solaris.rb                        | 16 ++++++
+ lib/facter/mysqld_version.rb                       |  2 +-
+ manifests/params.pp                                | 19 +++----
+ metadata.json                                      |  7 +++
+ spec/classes/mycnf_template_spec.rb                |  6 +--
+ spec/classes/mysql_bindings_spec.rb                |  6 +--
+ spec/classes/mysql_client_spec.rb                  |  6 +--
+ spec/classes/mysql_server_account_security_spec.rb |  1 -
+ spec/classes/mysql_server_backup_spec.rb           |  6 +--
+ spec/classes/mysql_server_monitor_spec.rb          |  6 +--
+ spec/classes/mysql_server_mysqltuner_spec.rb       |  1 -
+ spec/classes/mysql_server_spec.rb                  |  6 +--
+ spec/spec_helper_local.rb                          |  8 +++
+ spec/unit/facter/mysql_server_id_spec.rb           |  4 +-
+ spec/unit/facter/mysql_solaris_spec.rb             | 59 ++++++++++++++++++++++
+ spec/unit/facter/mysqld_version_spec.rb            | 22 +++-----
+ 16 files changed, 117 insertions(+), 58 deletions(-)
+ create mode 100644 lib/facter/mysql_solaris.rb
+ create mode 100644 spec/unit/facter/mysql_solaris_spec.rb
+
+diff --git a/lib/facter/mysql_solaris.rb b/lib/facter/mysql_solaris.rb
+new file mode 100644
+index 0000000..ebd06a1
+--- /dev/null
++++ b/lib/facter/mysql_solaris.rb
+@@ -0,0 +1,16 @@
++Facter.add('mysql_solaris') do
++  begin
++    # Get the mediated version of mysql and update PATH
++    # Fallback to the previously hard coded version (5.5) if there is no mediator
++    ver = Facter::Util::Resolution.exec('pkg mediator -H mysql').split[2]
++  rescue
++    ver ||= '5.5'
++  end
++  setcode do
++    {
++      'basedir'          => "/usr/mysql/#{ver}",
++      'major_dot_minor'  => ver,
++      'major_minor'      => ver.tr('.', '')
++    }
++  end
++end
+diff --git a/lib/facter/mysqld_version.rb b/lib/facter/mysqld_version.rb
+index c3711cc..61e2acf 100644
+--- a/lib/facter/mysqld_version.rb
++++ b/lib/facter/mysqld_version.rb
+@@ -1,4 +1,4 @@
+-Facter.add("mysqld_version") do
++Facter.add('mysqld_version') do
+   setcode do
+     Facter::Util::Resolution.exec('mysqld -V 2>/dev/null')
+   end
+diff --git a/manifests/params.pp b/manifests/params.pp
+index 8f65b8f..7415948 100644
+--- a/manifests/params.pp
++++ b/manifests/params.pp
+@@ -32,7 +32,6 @@ class mysql::params {
+   $daemon_dev_package_provider = undef
+   $xtrabackup_package_name     = 'percona-xtrabackup'
+ 
+-
+   case $::osfamily {
+     'RedHat': {
+       case $::operatingsystem {
+@@ -307,15 +306,17 @@ class mysql::params {
+     }
+ 
+     'Solaris': {
+-      $client_package_name = 'database/mysql-55/client'
+-      $server_package_name = 'database/mysql-55'
+-      $basedir             = undef
+-      $config_file         = '/etc/mysql/5.5/my.cnf'
+-      $datadir             = '/var/mysql/5.5/data'
+-      $log_error           = "/var/mysql/5.5/data/${::hostname}.err"
+-      $pidfile             = "/var/mysql/5.5/data/${::hostname}.pid"
++      $server_service_name = "application/database/mysql:version_${::mysql_solaris[major_minor]}"
++      $config_file         = "/etc/mysql/${::mysql_solaris[major_dot_minor]}/my.cnf"
++      $datadir             = "/var/mysql/${::mysql_solaris[major_dot_minor]}/data"
++      $log_error           = "/var/mysql/${::mysql_solaris[major_dot_minor]}/data/${::hostname}.err"
++      $pidfile             = "/var/mysql/${::mysql_solaris[major_dot_minor]}/data/${::hostname}.pid"
++      $client_package_name = "database/mysql-${::mysql_solaris[major_minor]}/client"
++      $server_package_name = "database/mysql-${::mysql_solaris[major_minor]}"
++      $basedir             = $::mysql_solaris['base_dir']
++      $includedir          = undef
+       $root_group          = 'bin'
+-      $server_service_name = 'application/database/mysql:version_55'
++      $mysql_group         = 'mysql'
+       $socket              = '/tmp/mysql.sock'
+       $ssl_ca              = undef
+       $ssl_cert            = undef
+diff --git a/metadata.json b/metadata.json
+index 86bd5d4..99df569 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -52,6 +52,13 @@
+       ]
+     },
+     {
++      "operatingsystem": "Solaris",
++      "operatingsystemrelease": [
++        "11",
++        "12"
++      ]
++    },
++    {
+       "operatingsystem": "Debian",
+       "operatingsystemrelease": [
+         "6",
+diff --git a/spec/classes/mycnf_template_spec.rb b/spec/classes/mycnf_template_spec.rb
+index 9c0c433..95cecc7 100644
+--- a/spec/classes/mycnf_template_spec.rb
++++ b/spec/classes/mycnf_template_spec.rb
+@@ -4,11 +4,7 @@ describe 'mysql::server' do
+   context 'my.cnf template' do
+     on_supported_os.each do |os, facts|
+       context "on #{os}" do
+-        let(:facts) {
+-          facts.merge({
+-            :root_home => '/root',
+-          })
+-        }
++        let(:facts) { facts }
+ 
+         context 'normal entry' do
+           let(:params) {{ :override_options => { 'mysqld' => { 'socket' => '/var/lib/mysql/mysql.sock' } } }}
+diff --git a/spec/classes/mysql_bindings_spec.rb b/spec/classes/mysql_bindings_spec.rb
+index 066e876..bf5ecd7 100644
+--- a/spec/classes/mysql_bindings_spec.rb
++++ b/spec/classes/mysql_bindings_spec.rb
+@@ -3,11 +3,7 @@ require 'spec_helper'
+ describe 'mysql::bindings' do
+   on_supported_os.each do |os, facts|
+     context "on #{os}" do
+-      let(:facts) {
+-        facts.merge({
+-          :root_home => '/root',
+-        })
+-      }
++      let(:facts) { facts }
+ 
+       let(:params) {{
+         'java_enable'             => true,
+diff --git a/spec/classes/mysql_client_spec.rb b/spec/classes/mysql_client_spec.rb
+index fdbcc19..1cb8137 100644
+--- a/spec/classes/mysql_client_spec.rb
++++ b/spec/classes/mysql_client_spec.rb
+@@ -3,11 +3,7 @@ require 'spec_helper'
+ describe 'mysql::client' do
+   on_supported_os.each do |os, facts|
+     context "on #{os}" do
+-      let(:facts) {
+-        facts.merge({
+-          :root_home => '/root',
+-        })
+-      }
++      let(:facts) { facts }
+ 
+       context 'with defaults' do
+         it { is_expected.not_to contain_class('mysql::bindings') }
+diff --git a/spec/classes/mysql_server_account_security_spec.rb b/spec/classes/mysql_server_account_security_spec.rb
+index d45c46e..bc6a374 100644
+--- a/spec/classes/mysql_server_account_security_spec.rb
++++ b/spec/classes/mysql_server_account_security_spec.rb
+@@ -6,7 +6,6 @@ describe 'mysql::server::account_security' do
+       context "with fqdn==myhost.mydomain" do
+         let(:facts) {
+           facts.merge({
+-            :root_home => '/root',
+             :fqdn => 'myhost.mydomain',
+             :hostname => 'myhost',
+           })
+diff --git a/spec/classes/mysql_server_backup_spec.rb b/spec/classes/mysql_server_backup_spec.rb
+index 96cfdf4..5ac6f38 100644
+--- a/spec/classes/mysql_server_backup_spec.rb
++++ b/spec/classes/mysql_server_backup_spec.rb
+@@ -3,11 +3,7 @@ require 'spec_helper'
+ describe 'mysql::server::backup' do
+   on_supported_os.each do |os, facts|
+     context "on #{os}" do
+-      let(:facts) {
+-        facts.merge({
+-          :root_home => '/root',
+-        })
+-      }
++      let(:facts) { facts }
+ 
+       let(:default_params) {
+         { 'backupuser'         => 'testuser',
+diff --git a/spec/classes/mysql_server_monitor_spec.rb b/spec/classes/mysql_server_monitor_spec.rb
+index 27fab17..870a34d 100644
+--- a/spec/classes/mysql_server_monitor_spec.rb
++++ b/spec/classes/mysql_server_monitor_spec.rb
+@@ -2,11 +2,7 @@ require 'spec_helper'
+ describe 'mysql::server::monitor' do
+   on_supported_os.each do |os, facts|
+     context "on #{os}" do
+-      let(:facts) {
+-        facts.merge({
+-          :root_home => '/root',
+-        })
+-      }
++      let(:facts) { facts }
+ 
+       let :pre_condition do
+         "include 'mysql::server'"
+diff --git a/spec/classes/mysql_server_mysqltuner_spec.rb b/spec/classes/mysql_server_mysqltuner_spec.rb
+index 4fef3d5..cb3b9cd 100644
+--- a/spec/classes/mysql_server_mysqltuner_spec.rb
++++ b/spec/classes/mysql_server_mysqltuner_spec.rb
+@@ -6,7 +6,6 @@ describe 'mysql::server::mysqltuner' do
+       let(:facts) {
+         facts.merge({
+           :staging_http_get => 'curl',
+-          :root_home        => '/root',
+         })
+       }
+ 
+diff --git a/spec/classes/mysql_server_spec.rb b/spec/classes/mysql_server_spec.rb
+index 2a1ca62..b1a2ad3 100644
+--- a/spec/classes/mysql_server_spec.rb
++++ b/spec/classes/mysql_server_spec.rb
+@@ -3,11 +3,7 @@ require 'spec_helper'
+ describe 'mysql::server' do
+   on_supported_os.each do |os, facts|
+     context "on #{os}" do
+-      let(:facts) {
+-        facts.merge({
+-          :root_home => '/root',
+-        })
+-      }
++      let(:facts) { facts }
+ 
+       context 'with defaults' do
+         it { is_expected.to contain_class('mysql::server::install') }
+diff --git a/spec/spec_helper_local.rb b/spec/spec_helper_local.rb
+index 9a86ccd..050ff13 100644
+--- a/spec/spec_helper_local.rb
++++ b/spec/spec_helper_local.rb
+@@ -1,3 +1,11 @@
++require 'pry'
+ require 'rspec-puppet-facts'
+ include RspecPuppetFacts
+ 
++add_custom_fact :root_home, '/root'
++add_custom_fact :mysql_solaris,
++  {
++    'major_dot_minor' => '5.7',
++    'major_minor' => '57',
++    'basedir' => '/usr/mysql/5.7'
++  }
+diff --git a/spec/unit/facter/mysql_server_id_spec.rb b/spec/unit/facter/mysql_server_id_spec.rb
+index a2e9fdf..e690246 100644
+--- a/spec/unit/facter/mysql_server_id_spec.rb
++++ b/spec/unit/facter/mysql_server_id_spec.rb
+@@ -11,7 +11,7 @@ describe Facter::Util::Fact do
+         Facter.fact(:macaddress).stubs(:value).returns('3c:97:0e:69:fb:e1')
+       end
+       it do
+-        Facter.fact(:mysql_server_id).value.to_s.should == '4116385'
++        expect(Facter.fact(:mysql_server_id).value.to_s).to eq('4116385')
+       end
+     end
+ 
+@@ -20,7 +20,7 @@ describe Facter::Util::Fact do
+         Facter.fact(:macaddress).stubs(:value).returns('00:00:00:00:00:00')
+       end
+       it do
+-        Facter.fact(:mysql_server_id).value.to_s.should == '0'
++        expect(Facter.fact(:mysql_server_id).value.to_s).to eq('0')
+       end
+     end
+   end
+diff --git a/spec/unit/facter/mysql_solaris_spec.rb b/spec/unit/facter/mysql_solaris_spec.rb
+new file mode 100644
+index 0000000..6a45586
+--- /dev/null
++++ b/spec/unit/facter/mysql_solaris_spec.rb
+@@ -0,0 +1,59 @@
++require 'spec_helper'
++
++describe Facter::Util::Fact do
++  before do
++    Facter.clear
++    Facter.stubs(:value).with('os').returns(
++       {"name"=>"Solaris", "family"=>"Solaris", "release"=>{"major"=>"12",
++       "minor"=>"0", "full"=>"12.0"}}
++      )
++    # Stubbed osfamily fails without stubbed 'os'
++    Facter.stubs(:value).with(:osfamily).returns('Solaris')
++  end
++  context 'solaris' do
++    before do
++      Facter::Util::Resolution.stubs(:exec).
++        with('pkg mediator -H mysql').
++        returns('mysql        local     5.7     system')
++    end
++    context 'with mediator' do
++      context 'major_dot_minor' do
++        it {
++          expect(Facter.fact(:mysql_solaris).value['major_dot_minor']).to eq('5.7')
++        }
++      end
++      context 'basedir' do
++        it {
++          expect(Facter.fact(:mysql_solaris).value['basedir']).to eq('/usr/mysql/5.7')
++        }
++      end
++      context 'major_minor' do
++        it {
++          expect(Facter.fact(:mysql_solaris).value['major_minor']).to eq('57')
++        }
++      end
++    end
++    context 'without mediator' do
++      before do
++        Facter::Util::Resolution.stubs(:exec).
++          with('pkg mediator -H mysql').
++          returns(nil)
++      end
++      context 'major_dot_minor' do
++        it {
++          expect(Facter.fact(:mysql_solaris).value['major_dot_minor']).to eq('5.5')
++        }
++      end
++      context 'basedir' do
++        it {
++          expect(Facter.fact(:mysql_solaris).value['basedir']).to eq('/usr/mysql/5.5')
++        }
++      end
++      context 'major_minor' do
++        it {
++          expect(Facter.fact(:mysql_solaris).value['major_minor']).to eq('55')
++        }
++      end
++    end
++  end
++end
+diff --git a/spec/unit/facter/mysqld_version_spec.rb b/spec/unit/facter/mysqld_version_spec.rb
+index f0b606f..3d986d7 100644
+--- a/spec/unit/facter/mysqld_version_spec.rb
++++ b/spec/unit/facter/mysqld_version_spec.rb
+@@ -1,20 +1,14 @@
+-require "spec_helper"
++require 'spec_helper'
+ 
+ describe Facter::Util::Fact do
+-  before {
+-    Facter.clear
+-  }
++  before { Facter.clear }
+ 
+-  describe "mysqld_version" do
+-    context 'with value' do
+-      before :each do
+-        Facter::Util::Resolution.stubs(:exec).with('mysqld -V 2>/dev/null').returns('mysqld  Ver 5.5.49-37.9 for Linux on x86_64 (Percona Server (GPL), Release 37.9, Revision efa0073)')
+-      end
+-      it {
+-        expect(Facter.fact(:mysqld_version).value).to eq('mysqld  Ver 5.5.49-37.9 for Linux on x86_64 (Percona Server (GPL), Release 37.9, Revision efa0073)')
+-      }
++  context 'mysqld_version' do
++    before do
+     end
+-
++    it {
++      Facter::Util::Resolution.stubs(:exec).with('mysqld -V 2>/dev/null').returns('mysqld  Ver 5.5.49-37.9 for Linux on x86_64 (Percona Server (GPL), Release 37.9, Revision efa0073)')
++      expect(Facter.fact(:mysqld_version).value).to eq('mysqld  Ver 5.5.49-37.9 for Linux on x86_64 (Percona Server (GPL), Release 37.9, Revision efa0073)')
++    }
+   end
+-
+ end
+-- 
+2.11.0 (Apple Git-81)
+

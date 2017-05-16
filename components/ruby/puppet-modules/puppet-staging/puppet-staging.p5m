@@ -1,0 +1,101 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file -> edit path ^ usr/puppetlabs/puppet/modules/>
+#
+set name=pkg.fmri \
+    value=pkg:/system/management/puppet/puppet-staging@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Staging Puppet Module"
+set name=pkg.description \
+    value="The staging module manages a staging directory, along with download/extraction of compressed files."
+set name=com.oracle.info.description value="Staging Puppet Module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.source-url value=$(GIT_REPO)
+set name=info.upstream \
+    value="puppetlabs - https://forge.puppetlabs.com/puppetlabs"
+set name=info.upstream-url value=$(GIT_REPO)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/368 value=PSARC/2016/016 \
+    value=PSARC/2016/607 value=PSARC/2017/092
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=staging/CHANGELOG.md
+file path=staging/CONTRIBUTING.md
+file path=staging/Gemfile
+file path=staging/LICENSE
+file path=staging/README.md
+file path=staging/Rakefile
+file path=staging/Vagrantfile
+file path=staging/docs/deploy.html
+file path=staging/docs/extract.html
+file path=staging/docs/file.html
+file path=staging/docs/init.html
+file path=staging/files/sample
+file path=staging/files/sample.tar.bz2
+file path=staging/files/sample.tar.gz
+file path=staging/lib/facter/staging_http_get.rb
+file path=staging/lib/facter/staging_windir.rb
+file path=staging/lib/puppet/parser/functions/scope_defaults.rb
+file path=staging/lib/puppet/parser/functions/staging_parse.rb
+file path=staging/manifests/deploy.pp
+file path=staging/manifests/extract.pp
+file path=staging/manifests/file.pp
+file path=staging/manifests/init.pp
+file path=staging/manifests/params.pp
+file path=staging/metadata.json
+file path=staging/spec/acceptance/nodesets/centos-511-x64.yml
+file path=staging/spec/acceptance/nodesets/centos-66-x64-pe.yml
+file path=staging/spec/acceptance/nodesets/centos-66-x64.yml
+file path=staging/spec/acceptance/nodesets/centos-72-x64.yml
+file path=staging/spec/acceptance/nodesets/debian-78-x64.yml
+file path=staging/spec/acceptance/nodesets/debian-82-x64.yml
+file path=staging/spec/acceptance/nodesets/ubuntu-server-1204-x64.yml
+file path=staging/spec/acceptance/nodesets/ubuntu-server-12042-x64.yml
+file path=staging/spec/acceptance/nodesets/ubuntu-server-1404-x64.yml
+file path=staging/spec/classes/coverage_spec.rb
+file path=staging/spec/defines/staging_deploy_spec.rb
+file path=staging/spec/defines/staging_extract_spec.rb
+file path=staging/spec/defines/staging_file_spec.rb
+file path=staging/spec/fixtures/hiera.yaml
+file path=staging/spec/spec.opts
+file path=staging/spec/spec_helper.rb
+file path=staging/spec/unit/puppet/parser/functions/scope_defaults_spec.rb
+file path=staging/spec/unit/puppet/parser/functions/staging_parse_spec.rb
+file path=staging/tests/deploy.pp
+file path=staging/tests/extract.pp
+file path=staging/tests/file.pp
+file path=staging/tests/init.pp
+file path=staging/tests/scope_defaults.pp
+file path=staging/tests/staging_parse.pp
+#
+license puppet-staging.license license="Apache v2.0"
+depend type=optional \
+    fmri=system/management/puppet/nanliu-staging@1.0.3-5.12.0.0.0.125.0
+# Renamed Package
+depend type=optional \
+    fmri=system/management/puppet/puppet-staging@1.0.3-5.12.0.0.0.93.0
+# Require Puppet 4.x for module path changes
+depend type=require fmri=system/management/puppet@4
+

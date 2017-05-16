@@ -25,18 +25,19 @@
 
 include ../../../../make-rules/shared-macros.mk
 
+GIT_REPO= https://github.com/puppetlabs/puppetlabs-stdlib
+GIT_BRANCH= 4.16.0
+GIT_COMMIT_ID=  1ae06c5
+GIT_HASH=sha256:a907a6db5f0053948f8d1fb4a88a14d3166e049e74e6f20919ffdc1fd633c565
+
 COMPONENT_NAME=		puppetlabs-stdlib
-COMPONENT_VERSION=	4.11.0
+COMPONENT_VERSION=	$(GIT_BRANCH)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:560dc25fdf8c5fa9ed9448e916de6fcb9d79cece76c8ebcfe2befd232ead0990
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	utility/puppet
 COMPONENT_ANITYA_ID=	13320
 
-TPNO=			27493
+TPNO=			34815
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk
@@ -52,3 +53,10 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
+
+# This is a convenience method for the package maintainer
+new-files: install
+	$(PKGSEND) generate $(PROTO_DIR)/usr/puppetlabs/puppet/modules/ | \
+		$(GSED)  -e 's/\(file\).*path=/\1 path=/' | \
+		$(CAT) *.p5m - | $(GNU_GREP) -h '^file' | sort | uniq -c | \
+		$(GSED) -e '/ 2 /d' -e 's/   1 //'

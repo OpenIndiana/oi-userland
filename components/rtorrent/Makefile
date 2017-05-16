@@ -57,7 +57,12 @@ CXXFLAGS += -std=c++11
 LDFLAGS += -L$(GNULIB64) -R$(GNULIB64)
 LDFLAGS += $(LIBNSL) $(LIBSOCKET)
 
+# Needed during configuration to correctly find ncurses.h
+CFLAGS +=		-I$(USRINCDIR)/ncurses
+
+# Needed during the build stage.
 CXXFLAGS +=		-I$(USRINCDIR)/ncurses
+
 CONFIGURE_OPTIONS.64 +=	--srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--disable-static

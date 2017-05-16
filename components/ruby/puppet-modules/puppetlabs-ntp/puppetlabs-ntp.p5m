@@ -20,9 +20,11 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file -> edit path ^ usr/puppetlabs/puppet/modules/>
+#
 set name=pkg.fmri \
     value=pkg:/system/management/puppet/puppetlabs-ntp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="NTP Puppet Module"
@@ -32,58 +34,78 @@ set name=com.oracle.info.description value="NTP Puppet Module"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Administration and Configuration"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.source-url value=$(GIT_REPO)
 set name=info.upstream \
     value="puppetlabs - https://forge.puppetlabs.com/puppetlabs"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.upstream-url value=$(GIT_REPO)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/368 value=PSARC/2016/016 \
-    value=PSARC/2016/607
+    value=PSARC/2016/607 value=PSARC/2017/092
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-file path=usr/puppetlabs/puppet/modules/ntp/CHANGELOG.md
-file path=usr/puppetlabs/puppet/modules/ntp/CONTRIBUTING.md
-file path=usr/puppetlabs/puppet/modules/ntp/Gemfile
-file path=usr/puppetlabs/puppet/modules/ntp/LICENSE
-file path=usr/puppetlabs/puppet/modules/ntp/README.markdown
-file path=usr/puppetlabs/puppet/modules/ntp/Rakefile
-file path=usr/puppetlabs/puppet/modules/ntp/checksums.json
-file path=usr/puppetlabs/puppet/modules/ntp/lib/puppet/parser/functions/ntp_dirname.rb
-file path=usr/puppetlabs/puppet/modules/ntp/manifests/config.pp
-file path=usr/puppetlabs/puppet/modules/ntp/manifests/init.pp
-file path=usr/puppetlabs/puppet/modules/ntp/manifests/install.pp
-file path=usr/puppetlabs/puppet/modules/ntp/manifests/params.pp
-file path=usr/puppetlabs/puppet/modules/ntp/manifests/service.pp
-file path=usr/puppetlabs/puppet/modules/ntp/metadata.json
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/class_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/disable_monitoring_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/centos-59-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/centos-64-x64-pe.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/centos-64-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/centos-65-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/default.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/fedora-18-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/fedora-21-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/sles-11-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/sles-12-64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/ubuntu-server-10044-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/ubuntu-server-12042-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/ubuntu-server-1404-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/nodesets/ubuntu-server-14042-x64.yml
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/ntp_config_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/ntp_install_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/ntp_parameters_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/ntp_service_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/preferred_servers_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/restrict_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/acceptance/unsupported_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/classes/ntp_spec.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/spec.opts
-file path=usr/puppetlabs/puppet/modules/ntp/spec/spec_helper.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/spec_helper_acceptance.rb
-file path=usr/puppetlabs/puppet/modules/ntp/spec/unit/puppet/provider/README.markdown
-file path=usr/puppetlabs/puppet/modules/ntp/spec/unit/puppet/type/README.markdown
-file path=usr/puppetlabs/puppet/modules/ntp/templates/ntp.conf.erb
-file path=usr/puppetlabs/puppet/modules/ntp/tests/init.pp
+file path=ntp/CHANGELOG.md
+file path=ntp/CONTRIBUTING.md
+file path=ntp/Gemfile
+file path=ntp/LICENSE
+file path=ntp/MAINTAINERS.md
+file path=ntp/NOTICE
+file path=ntp/README.markdown
+file path=ntp/Rakefile
+file path=ntp/data/AIX.yaml
+file path=ntp/data/Amazon.yaml
+file path=ntp/data/Archlinux.yaml
+file path=ntp/data/Debian.yaml
+file path=ntp/data/Fedora.yaml
+file path=ntp/data/FreeBSD.yaml
+file path=ntp/data/Gentoo.yaml
+file path=ntp/data/OpenSuSE-13.2.yaml
+file path=ntp/data/RedHat.yaml
+file path=ntp/data/SLES-10.yaml
+file path=ntp/data/SLES-12.yaml
+file path=ntp/data/Solaris-10.yaml
+file path=ntp/data/Solaris-11.yaml
+file path=ntp/data/Suse.yaml
+file path=ntp/data/common.yaml
+file path=ntp/examples/init.pp
+file path=ntp/hiera.yaml
+file path=ntp/locales/config.yaml
+file path=ntp/locales/ja/puppetlabs-ntp.po
+file path=ntp/locales/puppetlabs-ntp.pot
+file path=ntp/manifests/config.pp
+file path=ntp/manifests/init.pp
+file path=ntp/manifests/install.pp
+file path=ntp/manifests/service.pp
+file path=ntp/metadata.json
+file path=ntp/readmes/README_ja_JP.md
+file path=ntp/spec/acceptance/class_spec.rb
+file path=ntp/spec/acceptance/disable_monitoring_spec.rb
+file path=ntp/spec/acceptance/nodesets/centos-7-x64.yml
+file path=ntp/spec/acceptance/nodesets/debian-8-x64.yml
+file path=ntp/spec/acceptance/nodesets/default.yml
+file path=ntp/spec/acceptance/nodesets/docker/centos-7.yml
+file path=ntp/spec/acceptance/nodesets/docker/debian-8.yml
+file path=ntp/spec/acceptance/nodesets/docker/ubuntu-14.04.yml
+file path=ntp/spec/acceptance/noselect_servers_spec.rb
+file path=ntp/spec/acceptance/ntp_config_spec.rb
+file path=ntp/spec/acceptance/ntp_install_spec.rb
+file path=ntp/spec/acceptance/ntp_parameters_spec.rb
+file path=ntp/spec/acceptance/ntp_service_spec.rb
+file path=ntp/spec/acceptance/preferred_servers_spec.rb
+file path=ntp/spec/acceptance/restrict_spec.rb
+file path=ntp/spec/acceptance/statistics_spec.rb
+file path=ntp/spec/acceptance/unsupported_spec.rb
+file path=ntp/spec/classes/contains_spec.rb
+file path=ntp/spec/classes/ntp_spec.rb
+file path=ntp/spec/fixtures/my_ntp/templates/ntp.conf.epp
+file path=ntp/spec/fixtures/my_ntp/templates/ntp.conf.erb
+file path=ntp/spec/spec_helper.rb
+file path=ntp/spec/spec_helper_acceptance.rb
+file path=ntp/spec/spec_helper_local.rb
+file path=ntp/templates/keys.epp
+file path=ntp/templates/ntp.conf.epp
+file path=ntp/templates/step-tickers.epp
+file path=ntp/types/key_id.pp
+file path=ntp/types/poll_interval.pp
+
 #
 license puppetlabs-ntp.license license="Apache v2.0"
 # Renamed Package
