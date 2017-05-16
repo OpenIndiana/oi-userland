@@ -21,31 +21,20 @@
 # Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri \
-    value=pkg:/library/indri@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Text search engine"
-set name=pkg.description \
-    value="Indri is a search engine that provides state-of-the-art text search and a rich structured query language for text collections of up to 50 million documents (single machine) or 500 million documents (distributed search). Available for Linux, Solaris, Windows and Mac OSX."
-set name=com.oracle.info.description value="the Indri search engine"
-set name=com.oracle.info.tpno value=13668
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Libraries
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2013/232
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # usr/lib/indri directory does not get applied usr/bin defaults, so we have to
 # name them here
 file usr/bin/$(MACH64)/IndriBuildIndex path=usr/lib/indri/IndriBuildIndex group=bin owner=root mode=0555
 file usr/bin/$(MACH64)/IndriRunQuery path=usr/lib/indri/IndriRunQuery group=bin owner=root mode=0555
 
-# Clashes with userland antlr
-# dir  path=usr/include/antlr
-# ...
-
-# usr/include
-dir  path=usr/include/indri
 file path=usr/include/indri/AnchorTextAnnotator.hpp
 file path=usr/include/indri/AnchorTextHarvester.hpp
 file path=usr/include/indri/AnchorTextWriter.hpp
@@ -300,7 +289,7 @@ file path=usr/include/indri/indri-platform.h
 file path=usr/include/indri/ref_ptr.hpp
 file path=usr/include/indri/uint64comp.hpp
 
-# usr/lib
+# Libraries
 link path=usr/lib/$(MACH64)/libindri.so target=libindri.so.1
 file usr/lib/$(MACH64)/libindri.so.1 path=usr/lib/$(MACH64)/libindri.so.1
 link path=usr/lib/$(MACH64)/libpia_wrapper.so target=libpia_wrapper.so.1
@@ -310,13 +299,3 @@ link path=usr/lib/libindri.so target=libindri.so.1
 file usr/lib/libindri.so.1 path=usr/lib/libindri.so.1
 link path=usr/lib/libpia_wrapper.so target=libpia_wrapper.so.1
 file usr/lib/libpia_wrapper.so.1 path=usr/lib/libpia_wrapper.so.1
-
-# LICENSE.txt is taken from indri sources
-license LICENSE.txt license="Indri license"
-
-# not relevant for our usage as it is obsoleted
-# http://lemurproject.org/lemur.php
-# dir  path=usr/include/lemur
-
-# not relevant for our usage
-# dir  path=usr/share/indri
