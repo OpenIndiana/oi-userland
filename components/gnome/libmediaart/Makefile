@@ -29,13 +29,13 @@ COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmediaart
-COMPONENT_VERSION=	1.9.0
+COMPONENT_VERSION=	1.9.1
 COMPONENT_ARCHIVE_HASH= \
-	sha256:94668adb29d4dc3115b0fd105942ebd5ca6f5f9dbb2afa8a191a73a747dd506f
+	sha256:5b14aa4e0cc84eaec57b6cb28f39092d503fdaecf36d5d165fac37583b7fe949
 COMPONENT_BUGDB=	gnome/multimedia
 COMPONENT_ANITYA_ID=	13148
 
-TPNO=			25463
+TPNO=			34502
 
 # Needs updated glib2, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
