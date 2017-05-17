@@ -1325,16 +1325,14 @@ file files/puppet.logadm.conf path=etc/logadm.d/puppet.logadm.conf group=sys \
     restart_fmri=svc:/system/logadm-upgrade:default
 file files/puppet.logadm.conf path=etc/logadm.d/puppet.logadm.conf group=sys \
     restart_fmri=svc:/system/logadm-upgrade:default
-# salvaging all of puppet carries over more than we need but the
-# extra bits are ignored by puppet should have been cleaned up as part
-# of pre-migration
+dir  path=etc/puppetlabs/code/environments owner=puppet group=puppet mode=0755
+# salvaging all of puppet carries over more than we need. The extra bits
+# are ignored by puppet and should be cleaned up as part of pre-migration
 dir  path=etc/puppetlabs/puppet owner=puppet group=puppet mode=0755 \
     revert-tag=system:clone=* salvage-from=etc/puppet
 file path=etc/puppetlabs/puppet/auth.conf owner=puppet group=bin mode=0444 \
     original_name=system/management/puppet:etc/puppet/auth.conf overlay=allow \
     preserve=true
-dir  path=etc/puppetlabs/puppet/code/environments owner=puppet group=puppet \
-    mode=0755
 file path=etc/puppetlabs/puppet/puppet.conf owner=puppet group=bin mode=0444 \
     original_name=system/management/puppet:etc/puppet/puppet.conf \
     overlay=allow preserve=true
@@ -1346,8 +1344,6 @@ file path=lib/svc/manifest/application/puppet.xml \
     restart_fmri=svc:/system/manifest-import:default
 file files/puppet.stencil path=lib/svc/stencils/puppet.stencil
 file files/upgrade.sh path=usr/puppetlabs/puppet/bin/upgrade.sh
-dir  path=usr/puppetlabs/puppet/code owner=puppet group=bin mode=755 \
-    revert-tag=system:clone=*
 dir  path=usr/puppetlabs/puppet/modules owner=puppet group=bin mode=755 \
     salvage-from=/etc/puppet/modules
 file path=usr/puppetlabs/puppet/share/locale/config.yaml
