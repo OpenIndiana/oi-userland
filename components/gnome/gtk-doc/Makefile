@@ -27,15 +27,15 @@ BUILD_BITS=             NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk-doc
-COMPONENT_VERSION=	1.24
+COMPONENT_VERSION=	1.25
 COMPONENT_MAJOR_MINOR=	$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/DocumentationProject/GtkDoc
 COMPONENT_ARCHIVE_HASH= \
-    sha256:b420759ea05c760301bada14e428f1b321f5312f44e10a176d6804822dabb58b
+    sha256:1ea46ed400e6501f975acaafea31479cea8f32f911dca4dff036f59e6464fd42
 COMPONENT_BUGDB=	gnome/dev-tools
 COMPONENT_ANITYA_ID=	13140
 
-TPNO=			25261
+TPNO=			34485
 
 # Only supports Python 2.x.
 PYTHON_VERSIONS= 2.7

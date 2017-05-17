@@ -30,14 +30,14 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rest
-COMPONENT_VERSION=	0.7.93
+COMPONENT_VERSION=	0.8.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Librest
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c710644455340a44ddc005c645c466f05c0d779993138ea21a62c6082108b216
+    sha256:e7b89b200c1417073aef739e8a27ff2ab578056c27796ec74f5886a5e0dff647
 COMPONENT_BUGDB=	gnome/libraries
 COMPONENT_ANITYA_ID=	4194
 
-TPNO=			25457
+TPNO=			34510
 
 # Tests do not work on Solaris yet
 TEST_TARGET= $(SKIP_TEST)

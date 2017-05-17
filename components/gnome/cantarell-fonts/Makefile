@@ -27,13 +27,13 @@ BUILD_BITS=             NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cantarell-fonts
-COMPONENT_VERSION=	0.0.18
+COMPONENT_VERSION=	0.0.25
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f84df2ca44fa9266fdffd2b8de1adeff60eb7e7c9ec8e338a229b3126aabb977
+    sha256:14a228aa0b516dfc367b434a850f955a00c57fc549cbb05348e2b150196a737f
 COMPONENT_BUGDB=        gnome/themes
 COMPONENT_ANITYA_ID=	10888
 
-TPNO=			25260
+TPNO=			34504
 
 TEST_TARGET= $(NO_TESTS)
 

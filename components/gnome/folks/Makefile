@@ -30,14 +30,14 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		folks
-COMPONENT_VERSION=	0.11.1
+COMPONENT_VERSION=	0.11.3
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Folks
 COMPONENT_ARCHIVE_HASH= \
-	sha256:6740d9074be911959904b40e7264d298bb5622995098ddfa1751dcd2bc4c917d
+	sha256:2a2828a7c87fd39e5786f8f2cf0ebe47576a74974f1355c478a6dc747d7bcb64
 COMPONENT_BUGDB=        gnome/libraries
 COMPONENT_ANITYA_ID=	13121
 
-TPNO=			25282
+TPNO=			35115
 
 # Tests do not yet work with Userland framework
 TEST_TARGET = $(SKIP_TEST)

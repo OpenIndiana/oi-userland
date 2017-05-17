@@ -25,15 +25,14 @@ BUILD_BITS=  		64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caribou
-COMPONENT_VERSION=	0.4.18.1
+COMPONENT_VERSION=	0.4.21
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Caribou
 COMPONENT_ARCHIVE_HASH= \
-	sha256:aefadf125a647fc68696f4134e99ee43dca121da5de8e1edf6eab5664a9f3150
-COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.4/$(COMPONENT_ARCHIVE)
+	sha256:9c43d9f4bd30f4fea7f780d4e8b14f7589107c52e9cb6bd202bd0d1c2064de55
 COMPONENT_BUGDB=	gnome/accessibility
 COMPONENT_ANITYA_ID=	253
 
-TPNO=			25464
+TPNO=			34523
 
 TEST_TARGET = $(NO_TESTS)
 
