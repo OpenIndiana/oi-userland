@@ -46,6 +46,8 @@ include $(WS_MAKE_RULES)/gnome-component.mk
 # automatically found; to avoid using the current system default, one is
 # explicitly specified here.
 CONFIGURE_ENV += PYTHON="$(PYTHON.2.7)"
+# We need >= 5.18; the default is 5.22 in 12, but 5.12 in 11.3, so be explicit.
+CONFIGURE_ENV += PERL="$(PERL.5.22)"
 
 # Assumes GNU msgfmt in PATH.
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
