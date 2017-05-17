@@ -4,7 +4,7 @@ that causes DHCP to be extremely slow.
 This patch was developed in-house. Since it is Solaris-specific, it is not
 suitable for upstream.
 
---- dnsmasq-2.75/src/dhcp-common.c	2015-07-30 12:59:07.000000000 -0700
+--- dnsmasq-2.76/src/dhcp-common.c	2015-07-30 12:59:07.000000000 -0700
 +++ new/src/dhcp-common.c	2016-09-22 15:12:02.104708123 -0700
 @@ -493,6 +493,58 @@
        errno != EPERM)
@@ -65,7 +65,7 @@ suitable for upstream.
  #endif
  
  static const struct opttab_t {
---- dnsmasq-2.75/src/dnsmasq.h	2016-09-22 15:20:19.502011580 -0700
+--- dnsmasq-2.76/src/dnsmasq.h	2016-09-22 15:20:19.502011580 -0700
 +++ new/src/dnsmasq.h	2016-09-22 13:17:03.865473011 -0700
 @@ -1464,6 +1464,9 @@
  #ifdef HAVE_LINUX_NETWORK
@@ -77,7 +77,7 @@ suitable for upstream.
  #endif
  #  ifdef HAVE_DHCP6
  void display_opts6(void);
---- dnsmasq-2.75/src/dnsmasq.c	2015-07-30 12:59:07.000000000 -0700
+--- dnsmasq-2.76/src/dnsmasq.c	2015-07-30 12:59:07.000000000 -0700
 +++ new/src/dnsmasq.c	2016-09-22 15:20:03.040122945 -0700
 @@ -54,6 +54,10 @@
    char *bound_device = NULL;
