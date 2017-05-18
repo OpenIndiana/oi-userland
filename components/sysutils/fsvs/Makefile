@@ -10,28 +10,32 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2013-2017 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= fsvs
-COMPONENT_VERSION= 1.2.5
-COMPONENT_SUMMARY= FSVS backup/restore/versioning/deployment tool
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=			fsvs
+COMPONENT_VERSION=		1.2.7
+COMPONENT_SUMMARY=		FSVS backup/restore/versioning/deployment tool
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0c3618963dddf6b2e58c814aa91d141e758aeedd7071320a45b8ffaedb3adf78
+  sha256:9bf45a193f23017a9126ccc333b7302467e042a8ea9b57c1a7d31fbb2dff7cc2
 COMPONENT_ARCHIVE_URL= \
   http://download.fsvs-software.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://fsvs.tigris.org/
+COMPONENT_PROJECT_URL=		http://fsvs.tigris.org/
+COMPONENT_FMRI=			backup/fsvs
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=		GPLv3
+COMPONENT_LICENSE_FILE=		LICENSE
 
 PSHAREMAN1=     $(PROTO_DIR)/usr/share/man/man1
 PSHAREMAN5=     $(PROTO_DIR)/usr/share/man/man5
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -I/usr/include/pcre/ 
 CFLAGS += -I/usr/include/svn/ 
@@ -53,8 +57,16 @@ COMPONENT_POST_INSTALL_ACTION = ( mkdir -p $(PROTO_DIR)/usr/share/man/man1; \
 	cp $(SOURCE_DIR)/doc/*.1 $(PROTO_DIR)/usr/share/man/man1; \
 	cp $(SOURCE_DIR)/doc/*.5 $(PROTO_DIR)/usr/share/man/man5)
 
-install: $(INSTALL_32) 
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+test: $(NO_TEST)
+
+REQUIRED_PACKAGES += developer/versioning/subversion
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/apr-util
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += text/gnu-diffutils

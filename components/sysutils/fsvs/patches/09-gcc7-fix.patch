@@ -1,0 +1,117 @@
+diff -ur fsvs-1.2.7-orig/src/cache.c fsvs-1.2.7/src/cache.c
+--- fsvs-1.2.7-orig/src/cache.c	2017-05-18 16:59:52.601219292 +0300
++++ fsvs-1.2.7/src/cache.c	2017-05-18 17:03:23.232318765 +0300
+@@ -209,7 +209,7 @@
+  * Copies the significant bits ' ' .. 'Z' (or, really, \\x20 ..  \\x60) of 
+  * at most 6 bytes of \a stg into a packed bitfield, so that 30bits are 
+  * used.  */
+-inline cache_value_t cch___string_to_cv(const char *stg)
++cache_value_t cch___string_to_cv(const char *stg)
+ {
+   union {
+ 	  cache_value_t cv;
+diff -ur fsvs-1.2.7-orig/src/cp_mv.c fsvs-1.2.7/src/cp_mv.c
+--- fsvs-1.2.7-orig/src/cp_mv.c	2017-05-18 16:59:52.608944083 +0300
++++ fsvs-1.2.7/src/cp_mv.c	2017-05-18 17:02:38.032821484 +0300
+@@ -1085,7 +1085,7 @@
+  * If that isn't possible (because \a path is not below \c wc_path),
+  * \c EINVAL is returned.
+  * The case \c path==wc_path is not allowed, either. */
+-inline int cm___not_below_wcpath(char *path, char **out)
++int cm___not_below_wcpath(char *path, char **out)
+ {
+ 	if (strncmp(path, wc_path, wc_path_len) != 0 ||
+ 			path[wc_path_len] != PATH_SEPARATOR)
+diff -ur fsvs-1.2.7-orig/src/direnum.c fsvs-1.2.7/src/direnum.c
+--- fsvs-1.2.7-orig/src/direnum.c	2017-05-18 16:59:52.601120673 +0300
++++ fsvs-1.2.7/src/direnum.c	2017-05-18 17:02:06.618905633 +0300
+@@ -80,7 +80,7 @@
+ /** Starts enumeration of the given \a path. The directory handle is returned
+  * in \a *dirp.
+  * \return 0 for success, or an error code. */
+-inline int dir__start_enum(dir__handle *dh, char *path)
++int dir__start_enum(dir__handle *dh, char *path)
+ {	
+ 	int status;
+ 
+@@ -108,7 +108,7 @@
+ 
+ /** Simply closes the handle \a dh.
+  * */
+-inline int dir__close(dir__handle dh)
++int dir__close(dir__handle dh)
+ {
+ 	int status;
+ 
+@@ -123,7 +123,7 @@
+ 
+ /** How to get the length of a directory (in bytes), from a handle \a dh,
+  * into \a st->size. */
+-inline int dir__get_dir_size(dir__handle dh, struct sstat_t *st)
++int dir__get_dir_size(dir__handle dh, struct sstat_t *st)
+ {
+ 	int status;
+ 
+@@ -151,7 +151,7 @@
+ typedef DIR* dir__handle;
+ 
+ 
+-inline int dir__start_enum(dir__handle *dh, char *path)
++int dir__start_enum(dir__handle *dh, char *path)
+ {
+ 	int status;
+ 
+@@ -181,7 +181,7 @@
+ }
+ 
+ 
+-inline int dir__close(dir__handle dh)
++int dir__close(dir__handle dh)
+ {
+ 	int status;
+ 
+@@ -193,7 +193,7 @@
+ }
+ 
+ 
+-inline int dir__get_dir_size(dir__handle dh, struct sstat_t *st)
++int dir__get_dir_size(dir__handle dh, struct sstat_t *st)
+ {
+ 	int status;
+ 
+diff -ur fsvs-1.2.7-orig/src/est_ops.c fsvs-1.2.7/src/est_ops.c
+--- fsvs-1.2.7-orig/src/est_ops.c	2017-05-18 16:59:52.608422808 +0300
++++ fsvs-1.2.7/src/est_ops.c	2017-05-18 17:03:06.486506554 +0300
+@@ -1422,7 +1422,7 @@
+ /** Set the estat::do_* bits, depending on the parent.
+  * Should not be called for the root.
+  * */
+-inline void ops___set_todo_bits(struct estat *sts)
++void ops___set_todo_bits(struct estat *sts)
+ {
+ 	/* For recursive operation: If we should do the parent completely, we do 
+ 	 * the sub-entries, too. */
+diff -ur fsvs-1.2.7-orig/src/helper.c fsvs-1.2.7/src/helper.c
+--- fsvs-1.2.7-orig/src/helper.c	2017-05-18 16:59:52.611304000 +0300
++++ fsvs-1.2.7/src/helper.c	2017-05-18 17:02:53.518714329 +0300
+@@ -1476,7 +1476,7 @@
+  * If \a value_len is not \c NULL, it get set to the length of the path in 
+  * the environment variable.
+  * */
+-inline int hlp___is_valid_env(char *env, 
++int hlp___is_valid_env(char *env, 
+ 		char *path2cmp, int p2c_len,
+ 		char **value, int *value_len)
+ {
+diff -ur fsvs-1.2.7-orig/src/options.c fsvs-1.2.7/src/options.c
+--- fsvs-1.2.7-orig/src/options.c	2017-05-18 16:59:52.609896301 +0300
++++ fsvs-1.2.7/src/options.c	2017-05-18 17:01:14.443731955 +0300
+@@ -381,7 +381,7 @@
+ 
+ 
+ /** Find an integer value by comparing with predefined strings. */
+-inline int opt___find_string(const struct opt___val_str_t *list, 
++int opt___find_string(const struct opt___val_str_t *list, 
+ 		const char *string, 
+ 		int *result)
+ {
