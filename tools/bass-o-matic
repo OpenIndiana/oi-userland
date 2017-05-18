@@ -20,6 +20,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2017, Jim Klimov
 #
 #
 # bass-o-matic.py
@@ -41,18 +42,25 @@ def FindComponentPaths(path, debug=None, subdir='/components'):
     paths = []
 
     if debug:
-        print >>debug, "searching %s for component directories" % path
+        print >>debug, "searching %s for component directories" % (path+subdir)
 
+    found = 0
     for dirpath, dirnames, filenames in os.walk(path + subdir):
-        found = 0
 
         for name in filenames:
             if expression.match(name):
+                found = found +1
                 if debug:
                     print >>debug, "found %s" % dirpath
                 paths.append(dirpath)
                 del dirnames[:]
                 break
+
+    if found == 0:
+        print >>sys.stderr, "FindComponentPaths() found nothing, maybe %s contains no p5m manifests?" % (path+subdir)
+    else:
+        if debug:
+            print >>debug, "found %s items" % found
 
     return sorted(paths)
 
@@ -70,12 +78,33 @@ class BassComponent:
             # get required paths    (cd path ; gmake print-required-paths)
             self.required_paths = self.run_make(path, 'print-required-paths')
 
-    def required(self, component):
+            # get required packages (cd path ; gmake print-REQUIRED_PACKAGES)
+            self.required_packages = self.run_make(path, 'print-required-packages')
+
+    def required_path(self, component):
         result = False
 
         s1 = set(self.required_paths)
         s2 = set(component.supplied_paths)
         if s1.intersection(s2):
+            result = True
+
+        return result
+
+    def required_package(self, component):
+        result = False
+
+        s1 = set(self.required_packages)
+        s2 = set(component.supplied_packages)
+        if s1.intersection(s2):
+            result = True
+
+        return result
+
+    def required(self, component):
+        result = False
+
+        if (self.required_path(component) or self.required_package(component)):
             result = True
 
         return result
@@ -96,9 +125,11 @@ class BassComponent:
 
         if self.debug:
             proc.wait()
+            # No need to really "wait" above since stdout is read until closed
+            # Here we need this just to receive and process the error code
             if proc.returncode != 0:
                 print >>self.debug, "exit: %d, %s" % (proc.returncode, proc.stderr.read())
-    
+
         return result
 
     def __str__(self):
@@ -106,18 +137,35 @@ class BassComponent:
         result = result + "\tProvides Package(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_packages)
         result = result + "\tProvides Path(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_paths)
         result = result + "\tRequired Path(s):\n\t\t%s\n" % '\t\t'.join(self.required_paths)
+        result = result + "\tRequired Package(s):\n\t\t%s\n" % '\t\t'.join(self.required_packages)
 
         return result
 
 def usage():
-    print "Usage: %s [-c|--components=(path|depend)] [-z|--zone (zone)]" % (sys.argv[0].split('/')[-1])
+    print "Usage: %s [-c|--components=(path|depend)]" % (sys.argv[0].split('/')[-1])
+    print "     Parse component(s) in specified workspace/subdir to list data"
+    print "     -c | --components 'path'    Print dirname of the component(s)"
+    print "     -c | --components 'depend'  Print dependencies of the component"
+    print "                                 in a manner similar to makefile deps"
+    print "Usage: %s --make [--template-zone=tzone] [--component=NAME] [--] args..." % (sys.argv[0].split('/')[-1])
+    print "     Use the optional template zone to 'gmake args...' for building of the"
+    print "     specified component (without template use the current workspace)"
+    print "     The '--' argument allows to pass dash-prefixed args to the gmake"
+    print "Common arguments:"
+    print "     -d | --debug                Enable printing of debug info (to stdout)"
+    print "     -d -d                       Use twice to print debug info onto stderr"
+    print "     -w | --workspace=WS_TOP     Provide absolute path to workspace root"
+    print "                                 (defaults to WS_TOP envvar if provided)"
+    print "     --subdir=COMP_TOP           Look for recipes for component(s) under"
+    print "                                 the directory named \$WS_TOP/\$COMP_TOP"
+    print "                                 (defaults to '/components')"
     sys.exit(1)
 
 def main():
     import getopt
     import sys
 
-    # FLUSH STDOUT 
+    # FLUSH STDOUT
     sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
     components = {}
@@ -129,6 +177,10 @@ def main():
     subdir="/components"
     workspace = os.getenv('WS_TOP')
 
+    # Note: arguments that do not start with "--" effectively cause the loop
+    # to break, and remaining things remain in args[] e.g. for --make to use.
+    # The standalone "--" argument also breaks out of the loop, allowing to
+    # pass dash-prefixed argumets to the make command.
     try:
         opts, args = getopt.getopt(sys.argv[1:], "w:c:d",
             [ "debug", "workspace=", "components=",
@@ -140,7 +192,7 @@ def main():
     for opt, arg in opts:
         if opt in [ "-w", "--workspace" ]:
             workspace = arg
-        elif opt in [ "-l", "--components" ]:
+        elif opt in [ "-c", "--components", "-l" ]:
             components_arg = arg
         elif opt in [ "--make" ]:
             make_arg = True
@@ -151,25 +203,52 @@ def main():
         elif opt in [ "--subdir" ]:
             subdir = arg
         elif opt in [ "-d", "--debug" ]:
-            debug = sys.stdout
+            if debug is None:
+                debug = sys.stdout
+            else:
+                debug = sys.stderr
         else:
             assert False, "unknown option"
+
+    if workspace is None:
+        print >>sys.stderr, "FATAL: A --workspace argument or WS_TOP envvar is required"
+        usage()
+
+    if (components_arg is None and make_arg is None):
+        print >>sys.stderr, "FATAL: No valid action was requested"
+        usage()
 
     component_paths = FindComponentPaths(workspace, debug, subdir)
 
     if make_arg:
-        if template_zone:
-            print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
+        if component_arg:
+            if template_zone:
+                print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
+            else:
+                print "using current zone as the build environment for %s to run '%s'" % (component_arg, ['gmake'] + args)
+        else:
+            if template_zone:
+                print "using template zone %s to '%s' in workspace '%s'" % (template_zone, ['gmake'] + args, workspace)
+            else:
+                print "using current zone to run '%s' in workspace '%s'" % (['gmake'] + args, workspace)
+        # TODO: Should this loop over component_paths to build each (if several given)?
+        # TODO: Should there be an order of dependencies/parallelism for several paths?
+        # TODO: Should this use or pass the template_zone value somehow?
+# NOTE: Per current usage in components/Makefile, this runs in whatever CWD is provided by caller; perhaps the other modes would benefit from spefial CLI flags
+#        if component_arg:
+#            proc = subprocess.Popen(['gmake'] + args, cwd = workspace + subdir + component_arg)
+#        else:
+#            proc = subprocess.Popen(['gmake'] + args, cwd = workspace)
         proc = subprocess.Popen(['gmake'] + args)
-	rc = proc.wait()
+        rc = proc.wait()
         sys.exit(rc)
 
     if components_arg:
         if components_arg in [ 'path', 'paths', 'dir', 'dirs', 'directories' ]:
             for path in component_paths:
                 print "%s" % path
-            
-        elif components_arg in [ 'depend', 'dependencies' ]:
+
+        elif components_arg in [ 'depend', 'dep', 'deps', 'dependencies' ]:
             for path in component_paths:
                 components[path] = BassComponent(path, debug)
 
@@ -181,8 +260,13 @@ def main():
                         component.required(components[d_path])):
                           print "%s: %s" % (c_path, d_path)
 
+        else:
+            print >>sys.stderr, "FATAL: Invalid value of --components argument: '%s'" % components_arg
+            usage()
+
         sys.exit(0)
 
+    print >>sys.stderr, "FATAL: FindComponentPaths() completed, but no further action was requested"
     sys.exit(1)
 
 if __name__ == "__main__":
