@@ -30,14 +30,14 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libchamplain
-COMPONENT_VERSION=	0.12.11
+COMPONENT_VERSION=	0.12.15
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/libchamplain
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:851e24888d967c10acb8fd878df1292a84b8180eb4c48fc5bfbf1a48896d4aa5
+	sha256:54721a210bdef6d73c5192ed83542023117bf5d7441257e7a7a9f8c05550b874
 COMPONENT_BUGDB=        gnome/libraries
 COMPONENT_ANITYA_ID=	1576
 
-TPNO=			24895
+TPNO=			34564
 
 TEST_TARGET = $(NO_TESTS)
 
