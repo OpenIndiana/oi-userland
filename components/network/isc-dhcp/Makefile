@@ -23,8 +23,10 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.3.4
-IPS_COMPONENT_VERSION=	4.3.4
+COMPONENT_VERSION=	4.3.5
+COMPONENT_FMRI=		service/network/dhcp/isc-dhcp
+COMPONENT_SUMMARY=	ISC DHCP Server and Relay Agent
+COMPONENT_CLASSIFICATION=System/Services
 COMPONENT_SRC_NAME=	dhcp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -32,18 +34,20 @@ COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f5115aee3dd3e6925de4ba47b80ab732ba48b481c8364b6ebade2d43698d607e
+    sha256:eb95936bf15d2393c55dd505bc527d1d4408289cec5a9fa8abb99f7577e7f954
 COMPONENT_BUGDB=	service/dhcp-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Parallel build fails
 COMPONENT_BUILD_ARGS =
 
 CONFIGURE_SCRIPT	= $(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION+=	$(CP) -R $(SOURCE_DIR)/* $(@D)/
+
+CFLAGS+= -std=gnu89 -D_XOPEN_SOURCE=500 -D__EXTENSIONS__
 
 CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS  +=	--sbindir=$(USRLIBDIR)/inet
