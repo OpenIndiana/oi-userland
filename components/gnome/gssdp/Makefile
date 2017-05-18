@@ -30,14 +30,14 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gssdp
-COMPONENT_VERSION=	0.14.11
+COMPONENT_VERSION=	1.0.2
 COMPONENT_PROJECT_URL=  https://developer.gnome.org/gssdp/
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7bf5aeaf2119fe0bec5f3632ecf39dae15bc85276c72c2ad8dd4b0e345c6535a
+	sha256:a1e17c09c7e1a185b0bd84fd6ff3794045a3cd729b707c23e422ff66471535dc
 COMPONENT_BUGDB=        gnome/libraries
 COMPONENT_ANITYA_ID=	1262
 
-TPNO=			25384
+TPNO=			34513
 
 # Needs gobject-introspection, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -68,7 +68,11 @@ COMPONENT_TEST_TRANSFORMS += \
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsoup
