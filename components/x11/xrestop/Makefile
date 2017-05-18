@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Aurelien Larcher
 #
 
@@ -30,14 +31,16 @@ COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xrestop.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = \
-	( cd $(@D) &&  libtoolize --copy --force &&\
+	( cd $(@D) && \
+                 $(MKDIR) m4 && \
+                 libtoolize --copy --force &&\
                  aclocal -I m4 &&\
                  automake -c -f -a &&\
                  autoconf )
