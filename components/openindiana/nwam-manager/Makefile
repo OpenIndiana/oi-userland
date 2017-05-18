@@ -11,6 +11,7 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2017 Gary Mills
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -32,17 +33,17 @@ GIT_REPO=https://github.com/OpenIndiana/nwam-manager
 GIT_BRANCH=oi/hipster
 GIT_CHANGESET=HEAD
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
 # publish: target should appear before inclusion of ips.mk
 publish: update-publish
 
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -51,7 +52,8 @@ $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	  $(GIT_REPO) ; $(GIT) log -1 --format=%H > .downloaded
 
 COMPONENT_PREP_ACTION = \
-        (cd $(@D);  libtoolize --copy --force && \
+        (cd $(@D);  $(MKDIR) m4 && \
+		libtoolize --copy --force && \
 		gnome-doc-prepare --force && \
 		intltoolize --force --copy --automake && \
 		aclocal -I m4 && \
@@ -85,3 +87,16 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 download:: $(SOURCE_DIR)/.downloaded
+
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libglade
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/libgnomeui
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libunique
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

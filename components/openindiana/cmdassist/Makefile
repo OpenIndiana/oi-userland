@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2015 Alexander Pyhalov
 #
 
@@ -28,13 +29,14 @@ COMPONENT_LICENSE=	CDDL
 COMPONENT_FMRI=		gnome/cmdassist
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Documentation
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+					$(MKDIR) m4 && \
 					libtoolize --copy --force &&\
 					glib-gettextize -f &&\
 					intltoolize --force --copy &&\
@@ -51,3 +53,11 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += gnome/gnome-panel
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-component
+REQUIRED_PACKAGES += library/gnome/gnome-libs
+REQUIRED_PACKAGES += system/library
