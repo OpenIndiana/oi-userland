@@ -30,14 +30,14 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		json-glib
-COMPONENT_VERSION=	1.0.4
+COMPONENT_VERSION=	1.2.8
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/JsonGlib
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:80f3593cb6bd13f1465828e46a9f740e2e9bd3cd2257889442b3e62bd6de05cd
+    sha256:fd55a9037d39e7a10f0db64309f5f0265fa32ec962bf85066087b83a2807f40a
 COMPONENT_BUGDB=	gnome/libraries
 COMPONENT_ANITYA_ID=	13144
 
-TPNO=			25461
+TPNO=			34487
 
 # Needs updated glib2, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
