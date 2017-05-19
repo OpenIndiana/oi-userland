@@ -51,8 +51,11 @@ CONFIGURE_OPTIONS  +=		--with-medium=letter
 
 # because viewpathing isn't quite right in this version of a2ps
 COMPONENT_PREP_ACTION = \
-	(cd $(@D) ; ln -s $(SOURCE_DIR)/auxdir/mkinstalldirs)
+	(cd $(@D) ; \
+	$(RM) mkinstalldirs ; \
+	ln -s $(SOURCE_DIR)/auxdir/mkinstalldirs)
 
+COMPONENT_TEST_ARGS += -k
 COMPONENT_TEST_DIR =	$(@D)/tests
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
