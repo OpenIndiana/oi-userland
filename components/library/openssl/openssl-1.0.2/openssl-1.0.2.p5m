@@ -102,6 +102,7 @@ file $(MACH64)/llib-lssl.ln path=lib/openssl/default/$(MACH64)/llib-lssl.ln
 link path=lib/openssl/default/64 target=$(MACH64)
 file etc/openssl/misc/CA.pl path=lib/openssl/default/CA.pl
 link path=lib/openssl/default/engines/$(MACH64)/libpk11.so target=libpk11.so.1
+link path=lib/openssl/default/engines/$(MACH64)/libgost.so target=libgost.so.1
 
 # OpenSSL 0.9.8 libraries
 file path=lib/libcrypto.so.0.9.8 owner=root group=bin mode=0555
@@ -118,10 +119,17 @@ file $(MACH64)/engines/libpk11.so \
     path=lib/openssl/default/engines/$(MACH64)/libpk11.so.1 owner=root \
     group=bin mode=0555
 link path=lib/openssl/default/engines/libpk11.so target=libpk11.so.1
+file $(MACH64)/engines/ccgost/libgost.so \
+    path=lib/openssl/default/engines/$(MACH64)/libgost.so.1 owner=root \
+    group=bin mode=0555
+link path=lib/openssl/default/engines/libgost.so target=libgost.so.1
 
 # 32 bit libraries, lint libraries, and engines.
 file $(MACH32)/engines/libpk11.so \
     path=lib/openssl/default/engines/libpk11.so.1 owner=root group=bin
+file $(MACH32)/engines/ccgost/libgost.so \
+     path=lib/openssl/default/engines/libgost.so.1 owner=root \
+     group=bin mode=0555
 link path=lib/openssl/default/libcrypto.so target=libcrypto.so.1.0.0
 file $(MACH32)/libcrypto.so.1.0.0 path=lib/openssl/default/libcrypto.so.1.0.0
 link path=lib/openssl/default/libssl.so target=libssl.so.1.0.0
@@ -136,13 +144,21 @@ file $(MACH64)/apps/openssl path=lib/openssl/default/openssl owner=root \
 dir  path=lib/openssl/engines group=sys mode=0755
 dir  path=lib/openssl/engines/$(MACH64) group=sys mode=0755
 link path=lib/openssl/engines/$(MACH64)/libpk11.so target=libpk11.so.1
+link path=lib/openssl/engines/$(MACH64)/libgost.so target=libgost.so.1
 link path=lib/openssl/engines/$(MACH64)/libpk11.so.1 \
     target=../../default/engines/$(MACH64)/libpk11.so.1 mediator=openssl \
+    mediator-implementation=default mediator-priority=vendor
+link path=lib/openssl/engines/$(MACH64)/libgost.so.1 \
+    target=../../default/engines/$(MACH64)/libgost.so.1 mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
 link path=lib/openssl/engines/64 target=$(MACH64)
 link path=lib/openssl/engines/libpk11.so target=libpk11.so.1
 link path=lib/openssl/engines/libpk11.so.1 \
     target=../default/engines/libpk11.so.1 mediator=openssl \
+    mediator-implementation=default mediator-priority=vendor
+link path=lib/openssl/engines/libgost.so target=libgost.so.1
+link path=lib/openssl/engines/libgost.so.1 \
+    target=../default/engines/libgost.so.1 mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
 
 # Openssl binaries
