@@ -28,12 +28,17 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zlib
 COMPONENT_VERSION=	1.2.11
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	The Zip compression library
 COMPONENT_PROJECT_URL=	http://www.zlib.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/libpng/zlib/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	library/zlib
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	zlib license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -73,7 +78,7 @@ CONFIGURE_ENV += LDSHARED="$(CC) $(CFLAGS) -G"
 # This LDSHARED definitions is forced to get all required options plus
 # mapfile for result linking. While the one used with configure is just
 # to allow Zlib detect capability of creating shared libraries.
-COMPONENT_BUILD_ARGS = LDSHARED="$(CC) $(CFLAGS) $(LDFLAGS) -G -shared -Wl,-z -Wl,direct -Wl,-z -Wl,text -Wl,-z -Wl,defs -Wl,-h -Wl,libz.so.1 $(LD_OPTIONS_SO) -Wl,-M -Wl,../../mapfile -L."
+COMPONENT_BUILD_ARGS = LDSHARED="$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-z -Wl,text -Wl,-h -Wl,libz.so.1 $(LD_OPTIONS_SO) -Wl,-M -Wl,../../mapfile -L."
 
 build:		$(BUILD_32_and_64)
 
@@ -81,5 +86,4 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
