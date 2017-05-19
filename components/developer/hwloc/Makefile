@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          hwloc
-COMPONENT_VERSION=       1.11.4
+COMPONENT_VERSION=       1.11.7
 COMPONENT_SUMMARY=       hwloc - Portable Hardware Locality
 COMPONENT_PROJECT_URL=   https://www.open-mpi.org/projects/hwloc/
 COMPONENT_FMRI=          developer/hwloc
@@ -24,7 +24,7 @@ COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=       $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=   https://www.open-mpi.org/software/hwloc/v1.11/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fdc59d06c1ddedb0fa41039bb84cb406f0570b6e66223c13a60077831d36e038
+  sha256:ab6910e248eed8c85d08b529917a6aae706b32b346e886ba830895e36a809729
 COMPONENT_LICENSE=      BSD-2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
