@@ -1,0 +1,19 @@
+When the zsh test suite is executed from workspace top level directory, the
+sigpipe is being ignored. At one specific point of zsh test suite this means
+that a process will remain running slowly eating machine memory to a point when
+solaris gaves up and hangs.
+
+This fix is not suitable for upstream as it patches problems with our gate
+infrastructure.
+
+--- zsh-5.3.1/Test/A05execution.ztst	2017-05-12 11:37:03.252868368 +0000
++++ zsh-5.3.1/Test/A05execution.ztst	2017-05-12 11:34:21.456914519 +0000
+@@ -220,7 +220,7 @@ F:side of a pipe to block on write after
+   { setopt MONITOR } 2>/dev/null
+   if [[ -o MONITOR ]]
+   then
+-   ( while :; do print "This is a line"; done ) | () : &
++   ( TRAPPIPE() { exit; }; while :; do print "This is a line"; done ) | () : &
+    sleep 1
+    jobs -l
+   else
