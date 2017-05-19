@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           udunits
 COMPONENT_VERSION=        2.2.25
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           library/udunits
 COMPONENT_SUMMARY=	A C-based package for the programatic handling of units of physical quantities. 
 COMPONENT_PROJECT_URL=   http://www.unidata.ucar.edu/software/udunits/ 
@@ -29,6 +30,8 @@ COMPONENT_LICENSE_FILE= COPYRIGHT
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 
 CONFIGURE_OPTIONS+= --disable-static
 
