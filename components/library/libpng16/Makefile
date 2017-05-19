@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libpng
 COMPONENT_VERSION_SUP=1
 COMPONENT_VERSION_MAJ=6
-COMPONENT_VERSION_MIN=27
+COMPONENT_VERSION_MIN=29
 COMPONENT_VERSION_PAT=0
 COMPONENT_VERSION=	$(COMPONENT_VERSION_SUP).$(COMPONENT_VERSION_MAJ).$(COMPONENT_VERSION_MIN)
 # The XY in "libpngXY" file and directory names
@@ -30,16 +30,16 @@ COMPONENT_SUMMARY=	Portable Network Graphics library version $(COMPONENT_VERSION
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fca2ffd97336356cdab9bfa8936b9d6dfd580a70205e5dfead3ac42cb054b57b
+    sha256:4245b684e8fe829ebb76186327bb37ce5a639938b219882b53d64bd3cfc5f239
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libpng/files/libpng16/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	libpng
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_FMRI= 	image/library/libpng16
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
