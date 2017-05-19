@@ -137,12 +137,16 @@ TEST_PATH	= "PATH=$(GNUBIN):$(USRBINDIR)"
 COMPONENT_TEST_MASTER		= \
     $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
+# Bash tests can't pass if they don't have tty available. This script makes
+# sure to provide a tty if we are missing one
+COMPONENT_TEST_CMD = $(COMPONENT_DIR)/bash_test_wrapper
 
 # The goal is to remove lines like
 #   71d70
 #   < +[8] cat
-# from the test-trap output. To have full controll over the output I use -n
-# gsed parameter (don't print the output automatically)
+# from the test-trap output. This test is producing false positives. To have
+# full controll over the output I use -n gsed parameter (don't print the output
+# automatically)
 COMPONENT_TEST_TRANSFORMS       += \
 	-n \
 	'-e "                           \n\
@@ -152,12 +156,20 @@ COMPONENT_TEST_TRANSFORMS       += \
 	            \# If the line does _NOT_ start with number or < or >, print it \n\
 	            p                   \n\
 	        }                       \n\
-		\# and delete the line so that it does not get printed by the last p command \n\
+		\# and delete the line so that it does not get printed again by the last p command \n\
 	        d                       \n\
 	    }                           \n\
 	    \# Everything else gets printed \n\
 	    p                           \n\
 	"'
+
+# If the tests decided they need to execute itself in screen(1) then move the
+# resulting file to final location where the rest of userland infrastructure
+# will process it
+COMPONENT_POST_TEST_ACTION += \
+    if [ -e "$(COMPONENT_TEST_DIR)/outfile" ]; then \
+	mv $(COMPONENT_TEST_DIR)/outfile $(COMPONENT_TEST_OUTPUT); \
+    fi
 
 COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
@@ -167,4 +179,4 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
-
+REQUIRED_PACKAGES += terminal/screen

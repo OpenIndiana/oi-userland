@@ -1,0 +1,14 @@
+Derived from upstream patch at
+https://bugs.php.net/patch-display.php?bug_id=66013&patch=ext_socket_config.m4.patch&revision=1391710634
+updated for new version and done properly.
+
+--- php-7.1.4/ext/sockets/config.m4.orig	2017-04-11 08:37:32.000000000 -0700
++++ php-7.1.4/ext/sockets/config.m4	2017-05-17 15:06:01.242622090 -0700
+@@ -56,6 +56,6 @@
+     AC_DEFINE(HAVE_AI_V4MAPPED,1,[Whether you have AI_V4MAPPED])
+   fi
+ 
+-  PHP_NEW_EXTENSION([sockets], [sockets.c multicast.c conversions.c sockaddr_conv.c sendrecvmsg.c], [$ext_shared],, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
++  PHP_NEW_EXTENSION([sockets], [sockets.c multicast.c conversions.c sockaddr_conv.c sendrecvmsg.c], [$ext_shared],, [-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -D_XOPEN_SOURCE=600])
+   PHP_INSTALL_HEADERS([ext/sockets/], [php_sockets.h])
+ fi
