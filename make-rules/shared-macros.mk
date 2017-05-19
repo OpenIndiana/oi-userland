@@ -347,7 +347,9 @@ COMPONENT_TEST_TRANSFORMER =	$(GSED)
 COMPONENT_TEST_TRANSFORMS = \
 	'-e "s|$(@D)|\\$$(@D)|g" ' \
 	'-e "s|$(PERL)|\\$$(PERL)|g" ' \
-	'-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
+	'-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" ' \
+	'-e "/^gmake: warning: jobserver unavailable:/d" ' \
+	'-e "/^make: Warning: Ignoring DistributedMake -j option/d" '
 
 # set the default commands used to generate the file containing the set
 # of transforms to be applied to the test results to try to normalize them.

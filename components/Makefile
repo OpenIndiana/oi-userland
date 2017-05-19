@@ -151,7 +151,7 @@ tools:
 
 $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 	@cd $@ && echo "$(TARGET) $@" && \
-	 $(BASS_O_MATIC) $(@:%=--component %) --make $(TARGET) $(LOG)
+	( MAKELEVEL= time $(BASS_O_MATIC) $(@:%=--component %) --make $(TARGET) ) $(LOG)
 
 # Turn userland-incorporator warnings into build failures
 INCORPORATE_WERROR ?= --Werror
