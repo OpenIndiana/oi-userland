@@ -30,17 +30,17 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwnck3
-COMPONENT_VERSION=	3.14.0
+COMPONENT_VERSION=	3.20.1
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SRC=		libwnck-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f5080076346609b4c36394b879f3a86b92ced3b90a37cb54c8e9a14f00e7921c
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libwnck/3.14/$(COMPONENT_ARCHIVE)
+    sha256:1cb03716bc477058dfdf3ebfa4f534de3b13b1aa067fcd064d0b7813291cba72
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libwnck/3.20/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
 COMPONENT_ANITYA_ID=	11006
 
-TPNO=			25831
+TPNO=			35470
 
 TEST_TARGET = $(NO_TESTS)
 
