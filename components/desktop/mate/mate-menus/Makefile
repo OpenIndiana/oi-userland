@@ -60,7 +60,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) -p vendor-packages/64 ; \
 	if test -d vendor-packages-64 ; then \
 	    $(GNUCP) -rpd vendor-packages-64/matemenu* vendor-packages/64/ ; \
-	    $(GNUCP) -rpd vendor-packages-32/matemenu* vendor-packages/ ; \
 	fi ; )
 
 
