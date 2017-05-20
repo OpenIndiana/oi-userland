@@ -41,7 +41,6 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --with-gtk=2.0
 CONFIGURE_OPTIONS+= --with-default-wm 
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
 
@@ -52,9 +51,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -63,7 +62,7 @@ REQUIRED_PACKAGES += system/library/mozilla-nss
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libxklavier
 REQUIRED_PACKAGES += library/desktop/mate/libmatekbd
 REQUIRED_PACKAGES += library/desktop/mate/libmatemixer
