@@ -42,15 +42,15 @@ CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
 CONFIGURE_OPTIONS+=	--disable-static
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += desktop/mate/caja
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
