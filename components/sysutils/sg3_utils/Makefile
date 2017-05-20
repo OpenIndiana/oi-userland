@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sg3_utils
 COMPONENT_VERSION= 1.42
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL= http://sg.danny.cz/sg/sg3_utils.html
@@ -42,9 +43,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
-# to avoid the error
-# /usr/include/sys/feature_tests.h:400:2: error: #error "Compiler or options invalid; UNIX 03 and POSIX.1-2001 applications       require the use of c99"
-CFLAGS += -D__EXTENSIONS__ -D_XOPEN_SOURCE=1 -D_XOPEN_SOURCE_EXTENDED=1
+CFLAGS += -std=c99 $(CPP_XPG6MODE)
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
