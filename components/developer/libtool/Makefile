@@ -20,6 +20,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -47,16 +48,16 @@ COMPONENT_ARCHIVE_HASH_1 = \
 COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; env AUTOMAKE=/usr/bin/automake  ./bootstrap)
+COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
@@ -110,6 +111,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += developer/linker
+REQUIRED_PACKAGES += developer/object-file
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += text/gnu-sed
