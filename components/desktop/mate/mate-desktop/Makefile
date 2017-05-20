@@ -51,9 +51,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -63,7 +63,7 @@ REQIURED_PACKAGES += x11/library/libpthread-stubs
 REQIURED_PACKAGES += library/desktop/atk
 REQIURED_PACKAGES += library/desktop/cairo
 REQIURED_PACKAGES += library/desktop/gdk-pixbuf
-REQIURED_PACKAGES += library/desktop/gtk2
+REQIURED_PACKAGES += library/desktop/gtk3
 REQIURED_PACKAGES += library/desktop/pango
 REQIURED_PACKAGES += library/desktop/startup-notification
 REQIURED_PACKAGES += library/glib2
