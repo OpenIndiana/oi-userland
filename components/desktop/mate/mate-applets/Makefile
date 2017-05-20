@@ -51,9 +51,9 @@ CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV+= LIBS="-lnsl -lsocket"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -62,7 +62,7 @@ REQUIRED_PACKAGES += desktop/mate/mate-panel
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/gtksourceview
 REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/mate/libmateweather
