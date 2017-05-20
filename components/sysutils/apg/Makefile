@@ -24,23 +24,30 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:d1e52029709e2d7f9cb99bedce3e02ee7a63cff7b8e2b4c2bc55b3dc03c28b92
-COMPONENT_ARCHIVE_URL=	http://www.adel.nursat.kz/apg/download/$(COMPONENT_ARCHIVE)
+# Official website is now retired
+#COMPONENT_ARCHIVE_URL=	http://www.adel.nursat.kz/apg/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		security/apg
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	BSD
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION += ( find $(COMPONENT_SRC) -type d -exec chmod u+rwx \{\} \; )
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/security/cracklib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
