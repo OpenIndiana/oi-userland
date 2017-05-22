@@ -1,0 +1,23 @@
+From 981771259d128bf6019dd8ac752c50b38ac1e44e Mon Sep 17 00:00:00 2001
+From: Petr Sumbera <petr.sumbera@oracle.com>
+Date: Mon, 3 Apr 2017 08:48:27 -0700
+Subject: [PATCH] Bug 1353050 - WasmSignalHandlers.cpp should use __sun instead
+ of SOLARIS. r=luke
+
+---
+ js/src/wasm/WasmSignalHandlers.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/js/src/wasm/WasmSignalHandlers.cpp b/js/src/wasm/WasmSignalHandlers.cpp
+index 46342ec..668b9e8 100644
+--- a/js/src/wasm/WasmSignalHandlers.cpp
++++ b/js/src/wasm/WasmSignalHandlers.cpp
+@@ -108,7 +108,7 @@ class AutoSetHandlingSegFault
+ # define R13_sig(p) ((p)->sc_r13)
+ # define R14_sig(p) ((p)->sc_r14)
+ # define R15_sig(p) ((p)->sc_r15)
+-#elif defined(__linux__) || defined(SOLARIS)
++#elif defined(__linux__) || defined(__sun)
+ # if defined(__linux__)
+ #  define XMM_sig(p,i) ((p)->uc_mcontext.fpregs->_xmm[i])
+ #  define EIP_sig(p) ((p)->uc_mcontext.gregs[REG_EIP])
