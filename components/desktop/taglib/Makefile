@@ -28,15 +28,15 @@ COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		taglib
-COMPONENT_VERSION=	1.9.1
+COMPONENT_VERSION=	1.11.1
 COMPONENT_PROJECT_URL=	https://taglib.github.io/
 COMPONENT_ARCHIVE_HASH= \
-	sha256:72d371cd1419a87ae200447a53bff2be219283071e80fd12337928cc967dc71a
+	sha256:b6d1a5a610aae6ff39d93de5efd0fdc787aa9e9dc1e7026fa4c961b26563526b
 COMPONENT_ARCHIVE_URL=	https://taglib.github.io/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/taglib
 COMPONENT_ANITYA_ID=	1982
 
-TPNO=			27551
+TPNO=			32884	
 
 PATCH_LEVEL= 0
 
@@ -48,6 +48,7 @@ TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS += -std=c++11
+CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
 
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += library/zlib
