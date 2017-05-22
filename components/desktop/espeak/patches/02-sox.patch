@@ -1,0 +1,14 @@
+Since SOX is dead upstream, we have eol'd it.
+Bug 26046950 - espeak update due to eof of SOX 
+Bug 24824502 - sox EOF 
+--- espeak-1.44.05-source/src/a	2017-05-18 11:55:51.276740573 -0700
++++ espeak-1.44.05-source/src/readclause.cpp	2017-05-18 11:56:26.945729180 -0700
+@@ -718,7 +718,7 @@
+ 	}
+ 
+ 	f = NULL;
+-#ifdef PLATFORM_POSIX
++#if defined(PLATFORM_POSIX) && !defined(__sun) // no sox
+ 	if((f = fopen(fname,"rb")) != NULL)
+ 	{
+ 		int ix;
