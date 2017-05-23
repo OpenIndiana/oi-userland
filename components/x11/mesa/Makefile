@@ -65,7 +65,7 @@ LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
 DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
 VULKAN_DRIVER_LIST=intel radeon
 GALLIUM_DRIVER_LIST=svga virgl r600 r300 radeonsi swrast
-EGL_PLATFORMS=x11 wayland drm
+EGL_PLATFORMS_LIST=x11 wayland drm
 
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += --enable-dri3
