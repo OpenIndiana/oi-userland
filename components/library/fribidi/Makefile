@@ -16,16 +16,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= fribidi
-
-COMPONENT_VERSION= 0.19.6
+COMPONENT_VERSION= 0.19.7
+COMPONENT_FMRI= library/fribidi
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY= Free Implementation of the Unicode Bidirectional Algorithm
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:cba8b7423c817e5adf50d28ec9079d14eafcec9127b9e8c8f1960c5ad585e17d
+  sha256:08222a6212bbc2276a2d55c3bf370109ae4a35b689acbc66571ad2a670595a8e
 COMPONENT_ARCHIVE_URL= \
   http://fribidi.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://fribidi.org/
+COMPONENT_LICENSE= LGPLv2.1
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
