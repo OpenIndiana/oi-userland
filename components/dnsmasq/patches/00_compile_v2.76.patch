@@ -1,10 +1,10 @@
-Patches to successfully compile dnsmasq-2.75 on Solaris.
+Patches to successfully compile dnsmasq-2.76 on Solaris.
 
 This patch was developed in-house. Since it is Solaris-specific it is not
 suitable for upstream.
 
---- dnsmasq-2.75/src/dnsmasq.h.orig	2016-07-20 15:15:52.633336049 -0700
-+++ dnsmasq-2.75/src/dnsmasq.h	2016-07-20 15:17:28.118001495 -0700
+--- dnsmasq-2.76/src/dnsmasq.h.orig	2016-07-20 15:15:52.633336049 -0700
++++ dnsmasq-2.76/src/dnsmasq.h	2016-07-20 15:17:28.118001495 -0700
 @@ -1265,7 +1265,7 @@
  #ifdef HAVE_DHCP6
  void join_multicast(int dienow);
@@ -14,18 +14,8 @@ suitable for upstream.
  void newaddress(time_t now);
  #endif
  
---- dnsmasq-2.75/src/bpf.c.orig	2016-07-20 15:23:12.206647353 -0700
-+++ dnsmasq-2.75/src/bpf.c	2016-07-20 15:24:42.627316757 -0700
-@@ -20,7 +20,9 @@
- #include <ifaddrs.h>
- 
- #include <sys/param.h>
-+#ifndef HAVE_SOLARIS_NETWORK
- #include <sys/sysctl.h>
-+#endif
- #include <net/if.h>
- #include <net/route.h>
- #include <net/if_dl.h>
+--- dnsmasq-2.76/src/bpf.c.orig	2016-07-20 15:23:12.206647353 -0700
++++ dnsmasq-2.76/src/bpf.c	2016-07-20 15:24:42.627316757 -0700
 @@ -30,8 +32,10 @@
  #endif
  #include <netinet/in_var.h>
@@ -38,8 +28,8 @@ suitable for upstream.
  #ifndef SA_SIZE
  #define SA_SIZE(sa)                                             \
 
---- dnsmasq-2.75/src/config.h.orig	2016-07-22 16:41:00.629870757 -0700
-+++ dnsmasq-2.75/src/config.h	2016-07-22 16:41:37.890924646 -0700
+--- dnsmasq-2.76/src/config.h.orig	2016-07-22 16:41:00.629870757 -0700
++++ dnsmasq-2.76/src/config.h	2016-07-22 16:41:37.890924646 -0700
 @@ -293,7 +293,8 @@
  #define HAVE_GETOPT_LONG
  #undef HAVE_SOCKADDR_SA_LEN
@@ -50,8 +40,8 @@ suitable for upstream.
  #endif
  
  /* Decide if we're going to support IPv6 */
---- dnsmasq-2.75/src/ip6addr.h.orig	2016-07-27 18:32:53.817400897 -0700
-+++ dnsmasq-2.75/src/ip6addr.h	2016-07-27 18:40:54.445231062 -0700
+--- dnsmasq-2.76/src/ip6addr.h.orig	2016-07-27 18:32:53.817400897 -0700
++++ dnsmasq-2.76/src/ip6addr.h	2016-07-27 18:40:54.445231062 -0700
 @@ -14,8 +14,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */

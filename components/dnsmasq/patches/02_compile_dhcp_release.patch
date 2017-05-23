@@ -1,4 +1,4 @@
-Add hooks to compile contrib/wrt/dhcp_release.c. This utility is used to
+Add hooks to compile contrib/lease-tools/dhcp_release.c. This utility is used to
 send a DHCPRELEASE message to tell the local DHCP server to delete a
 particular lease.
 
@@ -8,8 +8,8 @@ IP address of an interface on which Dnsmasq process is listening.
 This patch was developed in-house. Since it is Solaris-specific it is not
 suitable for upstream.
 
---- dnsmasq-2.75/Makefile.orig	2016-07-11 17:16:44.577976921 -0400
-+++ dnsmasq-2.75/Makefile	2016-07-11 17:12:36.902671954 -0400
+--- dnsmasq-2.76/Makefile.orig	2016-07-11 17:16:44.577976921 -0400
++++ dnsmasq-2.76/Makefile	2016-07-11 17:12:36.902671954 -0400
 @@ -19,6 +19,7 @@
  # Variables you may well want to override.
  
@@ -22,7 +22,7 @@ suitable for upstream.
  SRC = src
  PO  = po
  MAN = man
-+WRT = contrib/wrt
++LEASE_TOOLS = contrib/lease-tools
  
  #################################################################
  
@@ -46,7 +46,7 @@ suitable for upstream.
  	rm -f $(BUILDDIR)/*.mo $(BUILDDIR)/*.pot 
 -	rm -f $(BUILDDIR)/.copts_* $(BUILDDIR)/*.o $(BUILDDIR)/dnsmasq.a $(BUILDDIR)/dnsmasq
 +	rm -f $(BUILDDIR)/.copts_* $(BUILDDIR)/*.o $(BUILDDIR)/dnsmasq.a $(BUILDDIR)/dnsmasq \
-+	$(BUILDDIR)/dhcp_release
++		$(BUILDDIR)/dhcp_release
  
  clean : mostly_clean
  	rm -f $(BUILDDIR)/dnsmasq_baseline
@@ -77,7 +77,7 @@ suitable for upstream.
  	ln -s $(top)/$(SRC)/$@ .
  
 +$(dhcp_release_objs:.o=.c):
-+	ln -s $(top)/$(WRT)/$@ .
++	ln -s $(top)/$(LEASE_TOOLS)/$@ .
 +
  $(objs): $(copts_conf) $(hdrs)
  
@@ -92,8 +92,8 @@ suitable for upstream.
  dnsmasq.pot : $(objs:.o=.c) $(hdrs)
  	$(XGETTEXT) -d dnsmasq --foreign-user --omit-header --keyword=_ -o $@ -i $(objs:.o=.c)
  
---- dnsmasq-2.75/contrib/wrt/dhcp_release.c.orig	2016-07-11 17:17:15.545272241 -0400
-+++ dnsmasq-2.75/contrib/wrt/dhcp_release.c	2016-07-11 17:16:03.110231008 -0400
+--- dnsmasq-2.76/contrib/lease-tools/dhcp_release.c.orig	2016-07-11 17:17:15.545272241 -0400
++++ dnsmasq-2.76/contrib/lease-tools/dhcp_release.c	2016-07-11 17:16:03.110231008 -0400
 @@ -33,6 +33,10 @@
     The client-id is optional. If it is "*" then it treated as being missing.
  */

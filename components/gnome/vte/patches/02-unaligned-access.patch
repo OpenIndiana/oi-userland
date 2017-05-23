@@ -1,0 +1,38 @@
+Attribute "packed" causes structure VteCellAttr inside VteCell
+and VteIntCell to be unaligned on 8 byte boundary.
+On SPARC unaligned access to memory causes programs to crash.
+
+This is a temporary patch not suitable for upstream.
+The upstream fix is in progress and is tracked by the following bug:
+https://bugzilla.gnome.org/show_bug.cgi?id=781499
+Once the fix is pulled in via component update or separate patch,
+this patch can be removed.
+
+--- a/src/vterowdata.h
++++ c/src/vterowdata.h
+@@ -80,15 +80,23 @@
+  * VteCell: A single cell's data
+  */
+ 
+-typedef struct _VTE_GNUC_PACKED _VteCell {
++#ifdef __sparc
++#define _VTE_PACKED_ALIGNMENT_FIX
++#else
++#define _VTE_PACKED_ALIGNMENT_FIX _VTE_GNUC_PACKED
++#endif
++
++typedef struct _VTE_PACKED_ALIGNMENT_FIX _VteCell {
+ 	vteunistr c;
+ 	VteCellAttr attr;
+ } VteCell;
++#ifndef __sparc
+ G_STATIC_ASSERT (sizeof (VteCell) == 12);
++#endif
+ 
+ typedef union _VteIntCell {
+ 	VteCell cell;
+-	struct _VTE_GNUC_PACKED {
++	struct _VTE_PACKED_ALIGNMENT_FIX {
+ 		guint32 c;
+ 		guint64 attr;
+ 	} i;
