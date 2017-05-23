@@ -15,14 +15,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja-extensions
-COMPONENT_VERSION=	1.16.0
+COMPONENT_MJR_VERSION=	1.18
+COMPONENT_MNR_VERSION=	1
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Set of extensions for Caja, the MATE file manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7c6c2e414c391f8f2879dd9578e49f1c146eedf306c2ad7789c81032a9f28171
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:bcb2f355c883bdca06a28028ca9a832d84e693257a60ea24304abbf98fa2ea41
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_FMRI=	desktop/mate/caja/caja-extensions
 COMPONENT_LICENSE= GPLv2
@@ -49,7 +51,7 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += desktop/mate/caja
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
