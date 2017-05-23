@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
@@ -25,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		protobuf
 COMPONENT_VERSION=	2.6.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,9 +38,9 @@ COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license 
 COMPONENT_SUMMARY=	Protocol Buffers - Google data interchange format
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--disable-static
 
@@ -48,6 +50,6 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
