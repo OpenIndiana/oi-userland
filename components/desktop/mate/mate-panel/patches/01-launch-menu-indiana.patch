@@ -67,39 +67,47 @@ diff -ur mate-panel-1.16.0/mate-panel/menu.h mate-panel-patched/mate-panel/menu.
  
  #ifdef __cplusplus
 diff -ur mate-panel-1.16.0/mate-panel/panel-menu-bar.c mate-panel-patched/mate-panel/panel-menu-bar.c
---- mate-panel-1.16.0/mate-panel/panel-menu-bar.c	2016-04-06 23:27:37.000000000 +0300
-+++ mate-panel-patched/mate-panel/panel-menu-bar.c	2016-11-19 09:39:32.330487540 +0300
-@@ -141,11 +141,29 @@
+--- mate-panel-1.18.2/mate-panel/panel-menu-bar.c.~1~	2017-05-11 19:09:09.000000000 +0300
++++ mate-panel-1.18.2/mate-panel/panel-menu-bar.c	2017-05-23 17:39:35.312299898 +0300
+@@ -49,6 +49,8 @@
+ #include "panel-icon-names.h"
+ #include "panel-schemas.h"
+ 
++#include <matemenu-tree.h>
++
+ G_DEFINE_TYPE (PanelMenuBar, panel_menu_bar, GTK_TYPE_MENU_BAR)
+ 
+ #define PANEL_MENU_BAR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), PANEL_TYPE_MENU_BAR, PanelMenuBarPrivate))
+@@ -141,9 +143,28 @@
  		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menubar->priv->applications_item), NULL);
  }
  
-+ static void
++static void
 +panel_menu_bar_handle_matemenu_change(MateMenuTree *tree,
 +                          GtkWidget *menu)
 +{
-+       g_object_set_data (G_OBJECT (menu),
-+                       "panel-menu-needs-appending", TRUE);
++	g_object_set_data (G_OBJECT (menu),
++		"panel-menu-needs-appending", TRUE);
 +}
 +
 +static void
 +panel_menu_bar_remove_matemenu_monitor(GtkWidget *menu,
 +                               MateMenuTree *tree)
 +{
-+       matemenu_tree_remove_monitor (tree,
-+                       (MateMenuTreeChangedFunc) panel_menu_bar_handle_matemenu_change,
-+                       menu);
++	matemenu_tree_remove_monitor (tree,
++		(MateMenuTreeChangedFunc) panel_menu_bar_handle_matemenu_change,
++		menu);
 +}
++
 +
  static void panel_menu_bar_init(PanelMenuBar* menubar)
  {
- #if GTK_CHECK_VERSION (3, 0, 0)
  	GtkCssProvider *provider;
- #endif
 +	MateMenuTree *tree;
  
  	menubar->priv = PANEL_MENU_BAR_GET_PRIVATE(menubar);
  
-@@ -168,6 +186,21 @@
+@@ -164,6 +185,21 @@
  
  	menubar->priv->applications_menu = create_applications_menu("mate-applications.menu", NULL, TRUE);
  
