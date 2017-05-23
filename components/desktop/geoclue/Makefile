@@ -28,17 +28,17 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geoclue
-COMPONENT_VERSION=	2.4.5
+COMPONENT_VERSION=	2.4.6
 COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/GeoClue/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:78162d33a2d42477ec241db7fc082439b0e0f9a791eb3a41e5a2aa1eae9145a1
+        sha256:c57df7455c9b4b2f43b0f5d9be14d52f5ff9897236df768f6ca9044b79b6d3b6
 COMPONENT_ARCHIVE_URL=	http://freedesktop.org/software/geoclue/releases/2.4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/libraries
 COMPONENT_ANITYA_ID=	13108
 
-TPNO=			34568
+TPNO=			35143
 
 TEST_TARGET = $(NO_TESTS)
 
