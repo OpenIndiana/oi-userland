@@ -17,12 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
-COMPONENT_VERSION= 13.0.6
+COMPONENT_VERSION= 17.1.1
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:29ef104a7fc082d352b1599bd6cb1d040be424ccd22f5e0eb7ee9b0e9acd3597
+#COMPONENT_ARCHIVE_HASH= \
+  sha256:cf234a6ed4764673886b6661553b54675776ef0898f774716173cec890ac3b17
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
@@ -63,6 +63,9 @@ LDFLAGS= -L$(PROTODIR)$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
 
 DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
+VULKAN_DRIVER_LIST=intel radeon
+GALLIUM_DRIVER_LIST=svga virgl r600 r300 radeonsi swrast
+EGL_PLATFORMS=x11 wayland drm
 
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += --enable-dri3
@@ -71,13 +74,28 @@ CONFIGURE_OPTIONS += --with-dri-drivers='$(DRI_DRIVER_LIST)'
 CONFIGURE_OPTIONS += --disable-gallium-llvm
 CONFIGURE_OPTIONS += --enable-egl
 CONFIGURE_OPTIONS += --enable-gbm
-CONFIGURE_OPTIONS += --with-gallium-drivers=
+CONFIGURE_OPTIONS += --with-gallium-drivers='$(GALLIUM_DRIVER_LIST)'
 CONFIGURE_OPTIONS += --enable-shared-glapi
 CONFIGURE_OPTIONS += --enable-texture-float
 CONFIGURE_OPTIONS += --enable-osmesa
 CONFIGURE_OPTIONS += --with-sha1=libcrypto
-CONFIGURE_OPTIONS += --disable-glx-tls
+CONFIGURE_OPTIONS += --enable-glx-tls
 CONFIGURE_OPTIONS += --disable-shader-cache
+CONFIGURE_OPTIONS += --disable-xvmc
+CONFIGURE_OPTIONS += --disable-omx
+CONFIGURE_OPTIONS += --enable-driglx-direct
+CONFIGURE_OPTIONS += --with-egl-platforms='$(EGL_PLATFORMS_LIST)' 
+CONFIGURE_OPTIONS += --enable-xa
+CONFIGURE_OPTIONS += --enable-gallium-llvm
+CONFIGURE_OPTIONS += --enable-opencl
+CONFIGURE_OPTIONS += --enable-opencl-icd
+CONFIGURE_OPTIONS += --enable-vdpau
+CONFIGURE_OPTIONS += --enable-va
+CONFIGURE_OPTIONS += --enable-gallium-extra-hud
+CONFIGURE_OPTIONS += --enable-lmsensors
+CONFIGURE_OPTIONS += --with-vulkan-drivers='$(VULKAN_DRIVER_LIST)'
+CONFIGURE_OPTIONS += --enable-gles1
+CONFIGURE_OPTIONS += --enable-gles2 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV+=PYTHON=$(PYTHON)
@@ -85,9 +103,9 @@ CONFIGURE_ENV+=CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_BUILD_ARGS =
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/dri2proto
