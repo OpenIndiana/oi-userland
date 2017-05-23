@@ -92,6 +92,7 @@ CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_LIBDIR.32) 
 CONFIGURE_OPTIONS +=	--with-gif=no
+CONFIGURE_OPTIONS +=	--without-imagemagick
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CONFIGURE_OPTIONS +=	emacs_cv_prog_cc_o=no
@@ -221,7 +222,6 @@ endif
 REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/librsvg

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 NAME:             emacs
@@ -159,6 +159,15 @@ information needed to understand how this component is put together.
   for all three. We follow the Linux model in this regard. The Xaw and no-X
   versions are quite stable from release to release, so this isn't a large
   burden.
+
+- By default, emacs will find and use the Image Magick image manipulation
+  library. The problem with this for Solaris is that the IM library APIs
+  are not committed, and change from release to release, as opposed to the
+  command line interfaces which are stable. Any update to IM causes breakage
+  in emacs that takes 2 builds to resolve. At the same time, IM is not central
+  to emacs use, and so, we choose to explicitly disable it with the
+  --without-imagemagick config option. This can be revisited if we find that
+  common emacs use suffers without it, or if IM stabilizes their library APIs.
 
 - With multiple emacs binaries, there is a need for a generic /usr/bin/emacs
   to exist, which will by default run the "best" version of emacs installed
