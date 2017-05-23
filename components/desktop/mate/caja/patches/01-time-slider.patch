@@ -1,12 +1,9 @@
-diff -Nurb caja-1.14.1.orig/configure.ac caja-1.14.1/configure.ac
---- caja-1.14.1.orig/configure.ac	2016-09-17 08:38:42.167956172 +0200
-+++ caja-1.14.1/configure.ac	2016-09-17 08:39:44.396999356 +0200
-@@ -226,6 +226,52 @@
- fi
+--- caja-1.18.3/configure.ac.~1~	2017-05-23 11:06:00.538679606 +0300
++++ caja-1.18.3/configure.ac	2017-05-23 11:07:46.850901997 +0300
+@@ -140,6 +140,51 @@
  
+ dnl ==========================================================================
  
-+dnl ==========================================================================
-+
 +dnl ********************
 +dnl * Check for libzfs *
 +dnl ********************
@@ -50,10 +47,11 @@ diff -Nurb caja-1.14.1.orig/configure.ac caja-1.14.1/configure.ac
 +     ])
 +AC_SUBST(NVPAIR_LIBS)
 +
++dnl ==========================================================================
 +
- #============================================================================
- # libunique
- #============================================================================
+ dnl exempi checking
+ 
+ AM_CONDITIONAL(HAVE_EXEMPI, false)
 diff -Nurb caja-1.14.1.orig/icons/Makefile.am caja-1.14.1/icons/Makefile.am
 --- caja-1.14.1.orig/icons/Makefile.am	2016-09-17 08:38:42.145316683 +0200
 +++ caja-1.14.1/icons/Makefile.am	2016-09-17 08:39:44.413561767 +0200
@@ -2747,19 +2745,21 @@ diff -Nurb caja-1.14.1.orig/libcaja-private/caja-zfs.h caja-1.14.1/libcaja-priva
 +                           gpointer            data);
 +#endif /* CAJA_ZFS_H */
 diff -Nurb caja-1.14.1.orig/libcaja-private/Makefile.am caja-1.14.1/libcaja-private/Makefile.am
---- caja-1.14.1.orig/libcaja-private/Makefile.am	2016-09-17 08:38:42.161418186 +0200
-+++ caja-1.14.1/libcaja-private/Makefile.am	2016-09-17 08:39:44.404257205 +0200
-@@ -39,6 +39,9 @@
+--- caja-1.18.3/libcaja-private/Makefile.am.~1~	2017-05-10 22:52:32.000000000 +0300
++++ caja-1.18.3/libcaja-private/Makefile.am	2017-05-23 11:03:49.881584251 +0300
+@@ -38,7 +38,10 @@
  	$(top_builddir)/eel/libeel-2.la \
  	$(top_builddir)/libcaja-extension/libcaja-extension.la \
  	$(CORE_LIBS) \
+-    -lnotify
 +	$(ZFS_LIBS) \
-+	$(SCF_LIBS)	\
-+	$(NVPAIR_LIBS) \
++	$(SCF_LIBS)     \
++	$(NVPAIR_LIBS) \ 
++	-lnotify \
  	$(NULL)
  
  libcaja_private_la_SOURCES = \
-@@ -189,6 +192,8 @@
+@@ -185,6 +188,8 @@
  	caja-window-slot-info.h \
  	caja-undostack-manager.c \
  	caja-undostack-manager.h \
@@ -2827,9 +2827,9 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window-ui.xml caja-1.14.1/src/ca
  	<toolitem name="Home" action="Home"/>
  	<toolitem name="Computer" action="Go to Computer"/>
 diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-navigation-window.c
---- caja-1.14.1.orig/src/caja-navigation-window.c	2016-09-17 08:38:42.146015673 +0200
-+++ caja-1.14.1/src/caja-navigation-window.c	2016-09-17 08:39:44.406050656 +0200
-@@ -42,6 +42,7 @@
+--- caja-1.18.3/src/caja-navigation-window.c.~1~	2017-05-10 22:52:33.000000000 +0300
++++ caja-1.18.3/src/caja-navigation-window.c	2017-05-23 11:55:11.604345354 +0300
+@@ -41,6 +41,7 @@
  #include "caja-notebook.h"
  #include "caja-window-manage-views.h"
  #include "caja-navigation-window-pane.h"
@@ -2837,7 +2837,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-na
  #include <eel/eel-gtk-extensions.h>
  #include <eel/eel-gtk-macros.h>
  #include <eel/eel-string.h>
-@@ -125,6 +126,13 @@
+@@ -104,6 +105,13 @@
  };
  
  static void
@@ -2851,49 +2851,37 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-na
  caja_navigation_window_init (CajaNavigationWindow *window)
  {
      GtkUIManager *ui_manager;
-@@ -159,7 +167,7 @@
-     gtk_table_attach (GTK_TABLE (CAJA_WINDOW (window)->details->table),
-                       window->details->content_paned,
-                       /* X direction */                   /* Y direction */
--                      0, 1,                               3, 4,
-+                      0, 1,                               4, 5,
-                       GTK_EXPAND | GTK_FILL | GTK_SHRINK, GTK_EXPAND | GTK_FILL | GTK_SHRINK,
-                       0,                                  0);
-     gtk_widget_show (window->details->content_paned);
-@@ -196,6 +204,16 @@
+@@ -164,6 +172,16 @@
  
      ui_manager = caja_window_get_ui_manager (CAJA_WINDOW (window));
      toolbar = gtk_ui_manager_get_widget (ui_manager, "/Toolbar");
 +
 +    /* add custom icon */
 +    caja_navigation_window_set_restore_icon (window, RESTORE_SEARCH);
-+    
++
 +    /* add preference callback */
 +    g_signal_connect_swapped (caja_desktop_preferences,
 +                              g_strconcat ("changed::", CAJA_PREFERENCES_ENABLE_TIME_SLIDER, NULL),
 +                              G_CALLBACK (restore_pref_changed),
 +                              (gpointer) window);
-+    
- #if GTK_CHECK_VERSION(3, 0, 0)
++
      gtk_style_context_add_class (gtk_widget_get_style_context (toolbar), GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
- #endif
-@@ -216,6 +234,15 @@
+     window->details->toolbar = toolbar;
+     gtk_widget_set_hexpand (toolbar, TRUE);
+@@ -180,6 +198,12 @@
      caja_navigation_window_allow_back (window, FALSE);
      caja_navigation_window_allow_forward (window, FALSE);
  
 +    window->zfs_bar = caja_zfs_bar_new ();
 +    
-+    gtk_table_attach (GTK_TABLE (CAJA_WINDOW (window)->details->table),
++    gtk_grid_attach(GTK_GRID (CAJA_WINDOW (window)->details->grid),
 +                      window->zfs_bar,
-+                      /* X direction */                    /* Y direction */
-+                      0, 1,                                3, 4,
-+                      GTK_EXPAND | GTK_FILL | GTK_SHRINK,  0,
-+                      0,                                   0);
++                      0, 2, 1, 1);
 +
      g_signal_connect_swapped (caja_preferences,
                                "changed::" CAJA_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
                                G_CALLBACK(always_use_location_entry_changed),
-@@ -381,6 +408,59 @@
+@@ -345,6 +369,59 @@
      }
  }
  
@@ -2937,7 +2925,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-na
 +    }
 +  
 +    image = gtk_image_new_from_pixbuf (pb); 
-+    gtk_widget_ref (image);
++    g_object_ref (image);
 +    gtk_widget_show (image);
 +    GSList *tmp = gtk_action_get_proxies (action);
 +    for (tmp; tmp ; tmp = tmp->next)
@@ -2953,7 +2941,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-na
  static void
  side_pane_close_requested_callback (GtkWidget *widget,
                                      gpointer user_data)
-@@ -1185,6 +1265,7 @@
+@@ -1141,6 +1218,7 @@
  static void
  real_window_close (CajaWindow *window)
  {
@@ -2961,7 +2949,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-na
      caja_navigation_window_save_geometry (CAJA_NAVIGATION_WINDOW (window));
  }
  
-@@ -1408,6 +1489,19 @@
+@@ -1361,6 +1439,19 @@
      caja_navigation_window_update_split_view_actions_sensitivity (window);
  }
  
@@ -2973,7 +2961,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-na
 +
 +    if (window->zfs_bar != NULL)
 +    {
-+        return GTK_WIDGET_VISIBLE (window->zfs_bar);    
++        return gtk_widget_get_visible(GTK_WIDGET (window->zfs_bar));
 +    }
 +    return FALSE;
 +}
@@ -2981,7 +2969,6 @@ diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.c caja-1.14.1/src/caja-na
  gboolean
  caja_navigation_window_split_view_showing (CajaNavigationWindow *window)
  {
-diff -Nurb caja-1.14.1.orig/src/caja-navigation-window.h caja-1.14.1/src/caja-navigation-window.h
 --- caja-1.14.1.orig/src/caja-navigation-window.h	2016-09-17 08:38:42.153396875 +0200
 +++ caja-1.14.1/src/caja-navigation-window.h	2016-09-17 08:39:44.406309961 +0200
 @@ -65,10 +65,17 @@
@@ -3091,7 +3078,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-window-manage-views.c caja-1.14.1/src/caja-
 +     *    if it doesn't move to the next available one */
 +    if (caja_directory_is_in_snapshot (directory) && caja_is_time_slider_enabled ())
 +    {
-+        if (GTK_WIDGET_VISIBLE (GTK_WIDGET (CAJA_NAVIGATION_WINDOW (window)->zfs_bar)))
++        if (gtk_widget_get_visible (GTK_WIDGET (CAJA_NAVIGATION_WINDOW (window)->zfs_bar)))
 +        {
 +            char *path = g_file_get_path (location);
 +            if (!g_file_test (path, G_FILE_TEST_IS_DIR))
@@ -3304,15 +3291,6 @@ diff -Nurb caja-1.14.1.orig/src/caja-window-slot.h caja-1.14.1/src/caja-window-s
 diff -Nurb caja-1.14.1.orig/src/caja-window.c caja-1.14.1/src/caja-window.c
 --- caja-1.16.1/src/caja-window.c.~1~	2016-10-18 16:36:20.000000000 +0300
 +++ caja-1.16.1/src/caja-window.c	2016-11-18 13:55:37.376433140 +0300
-@@ -195,7 +195,7 @@
-     gtk_widget_show (grid);
-     gtk_container_add (GTK_CONTAINER (window), grid);
- #else
--    table = gtk_table_new (1, 6, FALSE);
-+    table = gtk_table_new (1, 7, FALSE);
-     window->details->table = table;
-     gtk_widget_show (table);
-     gtk_container_add (GTK_CONTAINER (window), table);
 @@ -422,6 +422,18 @@
                       set_allow_up, (window, allow));
  }
@@ -3628,7 +3606,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-zfs-bar.c caja-1.14.1/src/caja-zfs-bar.c
 +            full_command = g_strdup_printf ("/usr/lib/time-slider-delete '%s'", path);
 +        }
 +
-+        gdk_spawn_command_line_on_screen (gtk_widget_get_screen (widget),
++        mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (widget),
 +                full_command, NULL);
 +    }
 +    else
@@ -3637,7 +3615,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-zfs-bar.c caja-1.14.1/src/caja-zfs-bar.c
 +        char *fs = ts_get_zfs_filesystem (path);
 +        /* printf ("take a snapshot of zfs fs %s for dir %s\n", fs, path); */
 +        full_command = g_strdup_printf ("/usr/lib/time-slider-snapshot '%s' '%s'", path, fs);
-+        gdk_spawn_command_line_on_screen (gtk_widget_get_screen (widget),
++        mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (widget),
 +                full_command, NULL);
 +        g_free (fs);
 +    }
@@ -3869,7 +3847,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-zfs-bar.c caja-1.14.1/src/caja-zfs-bar.c
 +    gboolean show = FALSE;
 +    gboolean time_slider_enabled = g_settings_get_boolean (caja_preferences,
 +                                                        CAJA_PREFERENCES_ENABLE_TIME_SLIDER);
-+    gboolean visible = GTK_WIDGET_VISIBLE (GTK_WIDGET (bar));
++    gboolean visible = gtk_widget_get_visible (GTK_WIDGET (bar));
 +    gboolean enable_button = FALSE;
 +    gboolean do_scan = FALSE;
 +    gboolean do_cancel = FALSE;
@@ -4164,7 +4142,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-zfs-bar.c caja-1.14.1/src/caja-zfs-bar.c
 +
 +    if (restore_col_visible)
 +    {
-+        if (!GTK_WIDGET_VISIBLE (widget)) /* hide bar remove pref */
++        if (!gtk_widget_get_visible (widget)) /* hide bar remove pref */
 +        {
 +            char **col_array;
 +            g_ptr_array_add (ret, NULL);
@@ -4178,7 +4156,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-zfs-bar.c caja-1.14.1/src/caja-zfs-bar.c
 +    }
 +    else
 +    {
-+        if (GTK_WIDGET_VISIBLE (widget))
++        if (gtk_widget_get_visible (widget))
 +        {
 +            char **col_array;
 +            g_ptr_array_add (ret,strdup ("restore_info"));
@@ -4349,7 +4327,7 @@ diff -Nurb caja-1.14.1.orig/src/file-manager/fm-directory-view.c caja-1.14.1/src
 +  char *path = g_file_get_path (file);
 +  char *fs = ts_get_zfs_filesystem (path);
 +  char *cmd = g_strdup_printf ("/usr/lib/time-slider-snapshot '%s' '%s'", path, fs);
-+  gdk_spawn_command_line_on_screen (gtk_widget_get_screen (GTK_WIDGET (callback_data)),
++  mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (GTK_WIDGET (callback_data)),
 +                    cmd, NULL);
 +  
 +  g_free (cmd);
@@ -4401,7 +4379,7 @@ diff -Nurb caja-1.14.1.orig/src/file-manager/fm-directory-view.c caja-1.14.1/src
 +    {
 +      char *cmd = g_strdup_printf ("/usr/lib/time-slider-version '%s' '%s'", dir,
 +                                   real_file_path);
-+      gdk_spawn_command_line_on_screen (gtk_widget_get_screen (GTK_WIDGET (callback_data)),
++      mate_gdk_spawn_command_line_on_screen (gtk_widget_get_screen (GTK_WIDGET (callback_data)),
 +                                        cmd, NULL);
 +      g_free (cmd);
 +    }
@@ -4698,19 +4676,18 @@ diff -Nurb caja-1.14.1.orig/src/file-manager/fm-marshal.list caja-1.14.1/src/fil
 @@ -1,2 +0,0 @@
 -BOOLEAN:VOID
 -VOID:OBJECT,OBJECT
-diff -Nurb caja-1.14.1.orig/src/Makefile.am caja-1.14.1/src/Makefile.am
---- caja-1.14.1.orig/src/Makefile.am	2016-09-17 08:38:42.153123636 +0200
-+++ caja-1.14.1/src/Makefile.am	2016-09-17 08:39:44.412753830 +0200
-@@ -41,6 +41,8 @@
+--- caja-1.18.3/src/Makefile.am.~1~	2017-05-10 22:52:32.000000000 +0300
++++ caja-1.18.3/src/Makefile.am	2017-05-23 10:43:41.017892555 +0300
+@@ -35,6 +35,8 @@
  	$(EXIF_LIBS) \
  	$(EXEMPI_LIBS) \
  	$(POPT_LIBS) \
-+	$(SCF_LIBS) \
-+	$(NVPAIR_LIBS) \
++        $(SCF_LIBS) \
++        $(NVPAIR_LIBS) \
+     -lnotify
  	$(NULL)
  
- dbus_freedesktop_built_sources =			\
-@@ -162,6 +164,10 @@
+@@ -153,6 +155,10 @@
  	caja-zoom-action.h \
  	caja-zoom-control.c \
  	caja-zoom-control.h \
@@ -4722,9 +4699,9 @@ diff -Nurb caja-1.14.1.orig/src/Makefile.am caja-1.14.1/src/Makefile.am
  
  nodist_caja_SOURCES = \
 diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
---- caja-1.14.1.orig/src/timescale.c	1970-01-01 01:00:00.000000000 +0100
-+++ caja-1.14.1/src/timescale.c	2016-09-17 08:39:44.413272379 +0200
-@@ -0,0 +1,1280 @@
+--- caja-1.18.3/src/timescale.c.~1~	2017-05-25 17:48:11.861764286 +0300
++++ caja-1.18.3/src/timescale.c	2017-05-25 17:58:16.104229005 +0300
+@@ -0,0 +1,1286 @@
 +/* 
 + * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 + *
@@ -5126,7 +5103,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +
 +    ts->priv->darea = gtk_drawing_area_new (); 
 +
-+    g_signal_connect(ts->priv->darea, "expose-event",
++    g_signal_connect(ts->priv->darea, "draw",
 +            G_CALLBACK(timescale_expose), ts);
 +
 +    g_signal_connect (ts->priv->darea, "query-tooltip",
@@ -5136,7 +5113,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +            G_CALLBACK(key_pressed), ts);
 +    g_signal_connect(ts->priv->darea, "button_press_event",
 +            G_CALLBACK(button_pressed), ts);
-+    GTK_WIDGET_SET_FLAGS (GTK_WIDGET (ts->priv->darea), GTK_CAN_FOCUS);
++    gtk_widget_set_can_focus(GTK_WIDGET (ts->priv->darea), TRUE);
 +    gtk_widget_add_events (GTK_WIDGET (ts->priv->darea), GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK);
 +    g_object_set (G_OBJECT (ts->priv->darea), "has-tooltip", TRUE, NULL);
 +    gtk_widget_set_size_request (GTK_WIDGET (ts->priv->darea), -1, 60);
@@ -5177,7 +5154,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +    gtk_box_pack_start (GTK_BOX (ts), vbox, FALSE, FALSE, 0);
 +    gtk_box_pack_start (GTK_BOX (ts), ts->priv->scrolled, TRUE, TRUE, 0);
 +
-+    GTK_WIDGET_SET_FLAGS (GTK_WIDGET (ts), GTK_CAN_FOCUS);
++    gtk_widget_set_can_focus(GTK_WIDGET (ts), TRUE);
 +    gtk_widget_show_all (GTK_WIDGET (ts));
 +}
 +
@@ -5457,18 +5434,23 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +    static void 
 +set_cr_color (GtkWidget *widget, cairo_t* cr, SnapType type, double alpha)
 +{
++    GtkStyle * s;
++
 +    switch (type)
 +    {
 +        case LOCAL_MANUAL:
 +        case REMOTE_MANUAL:
-+            gdk_cairo_set_source_color (cr, &widget->style->dark[GTK_STATE_SELECTED]);
++            s = gtk_widget_get_style(widget);
++            gdk_cairo_set_source_color (cr, &s->dark[GTK_STATE_SELECTED]);
 +            break;
 +        case LOCAL_AUTOMATIC:
 +        case REMOTE_AUTOMATIC:
-+            gdk_cairo_set_source_color (cr, &widget->style->light[GTK_STATE_SELECTED]);
++            s = gtk_widget_get_style(widget);
++            gdk_cairo_set_source_color (cr, &s->light[GTK_STATE_SELECTED]);
 +            break;
 +        case NOW:
-+            gdk_cairo_set_source_color (cr, &widget->style->black);
++            s = gtk_widget_get_style(widget);
++            gdk_cairo_set_source_color (cr, &s->black);
 +            break;
 +        default:
 +            break;
@@ -5495,7 +5477,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +    PangoFontMetrics *metrics;
 +    PangoRectangle logical_rect;
 +    gint ascent, descent;
-+    cairo_t *cr = gdk_cairo_create (widget->window);
++    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
 +    int i = 0;
 +    double x;
 +    int y;
@@ -5519,18 +5501,19 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +    gboolean space_left = TRUE;
 +    PangoFontDescription *timeline_font = NULL;
 +
-+    if (gtk_widget_has_focus (widget))
-+        gtk_paint_focus (widget->style, widget->window, gtk_widget_get_state (widget),
-+                NULL, widget, NULL,
++    if (gtk_widget_has_focus (widget)) {
++        gtk_paint_focus (gtk_widget_get_style (widget), cr, gtk_widget_get_state (widget),
++                widget, NULL,
 +                0, 0,
-+                widget->allocation.width-1, widget->allocation.height-1);
++                gtk_widget_get_allocated_width(widget)-1, gtk_widget_get_allocated_height(widget)-1);
++    }
 +
 +    if (!ts->priv->snaps)
 +        goto end;
 +
 +    /* smaller font for timeline */
 +
-+    timeline_font = pango_font_description_copy_static (widget->style->font_desc);
++    timeline_font = pango_font_description_copy_static ((gtk_widget_get_style (widget))->font_desc);
 +    pango_font_description_set_size (timeline_font, pango_font_description_get_size (timeline_font) - (PANGO_SCALE*2));
 +
 +    /* determine space needed for 2 lines of text + padding with 
@@ -5538,7 +5521,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +     * and widget->style->font_desc - 1*/
 +
 +    context = gtk_widget_get_pango_context (widget);
-+    metrics = pango_context_get_metrics (context, widget->style->font_desc,
++    metrics = pango_context_get_metrics (context, (gtk_widget_get_style (widget))->font_desc,
 +            pango_context_get_language (context));
 +    ascent = pango_font_metrics_get_ascent (metrics);
 +    descent = pango_font_metrics_get_descent (metrics);
@@ -5556,8 +5539,8 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +
 +
 +    x = PADDING;
-+    bar_max_h = widget->allocation.height - ((line_height + timeline_line_height) + PADDING * 4);
-+    y =  widget->allocation.height - (line_height + (PADDING * 2));
++    bar_max_h = gtk_widget_get_allocated_height(widget) - ((line_height + timeline_line_height) + PADDING * 4);
++    y =  gtk_widget_get_allocated_height(widget) - (line_height + (PADDING * 2));
 +
 +    num_view_snaps = ts->priv->num_snaps;
 +    view_snaps = ts->priv->snaps;
@@ -5570,7 +5553,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +    {
 +        GtkAdjustment *adj;
 +        adj = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled));
-+        gtk_adjustment_set_value (adj, adj->upper - adj->page_size);
++        gtk_adjustment_set_value (adj, gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size (adj));
 +        gtk_adjustment_set_step_increment(adj, BAR_W_MAX + BAR_SPACE);
 +        gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled), adj);
 +        ts->priv->scrollbar_set = TRUE;
@@ -5624,8 +5607,8 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +                char *selected_time_size = g_strdup_printf ("%s - %s",
 +                        tmp_snap->mtime_str, 
 +                        tmp_snap->used_space_str);
-+                gdk_cairo_set_source_color (cr, widget->style->text);
-+                pango_layout_set_font_description (layout, widget->style->font_desc);
++                gdk_cairo_set_source_color (cr,  gtk_widget_get_style(widget)->text);
++                pango_layout_set_font_description (layout, gtk_widget_get_style(widget)->font_desc);
 +                pango_layout_set_text (layout, selected_time_size, -1);
 +                g_free (selected_time_size);
 +            }
@@ -5675,19 +5658,19 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +        adj = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled));
 +        ts->priv->key_pressed = FALSE;
 +
-+        if (adj->value > selected_x)
++        if (gtk_adjustment_get_value (adj) > selected_x)
 +        {
 +            gtk_adjustment_set_value (adj, selected_x - BAR_W_MAX);
 +            gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled), adj);
 +        }
-+        if (adj->value + adj->page_size < selected_x)
++        if (gtk_adjustment_get_value (adj) + gtk_adjustment_get_page_size (adj) < selected_x)
 +        {
-+            gtk_adjustment_set_value (adj, (selected_x + BAR_W_MAX) - adj->page_size);
++            gtk_adjustment_set_value (adj, (selected_x + BAR_W_MAX) - gtk_adjustment_get_page_size (adj));
 +            gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (ts->priv->scrolled), adj);
 +        }
 +    }
 +
-+    pango_layout_set_font_description (layout, widget->style->font_desc);
++    pango_layout_set_font_description (layout, gtk_widget_get_style(widget)->font_desc);
 +
 +    /* try to center the selected text */
 +
@@ -5717,7 +5700,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +        cairo_stroke(cr);
 +
 +        /* then selected text */
-+        gdk_cairo_set_source_color (cr, widget->style->text);
++        gdk_cairo_set_source_color (cr, gtk_widget_get_style(widget)->text);
 +        cairo_move_to(cr, selected_x, PADDING);
 +        pango_cairo_show_layout (cr, layout);
 +    }
@@ -5739,7 +5722,7 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +    pango_layout_set_font_description (layout, timeline_font);
 +    pango_layout_get_pixel_extents (layout,NULL, &logical_rect);
 +
-+    if (logical_rect.width > widget->allocation.width)
++    if (logical_rect.width >  gtk_widget_get_allocated_width(widget))
 +        goto end;
 +
 +    /* draw anchor line */
@@ -5747,16 +5730,16 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +    x += bar_w/2 + .5;
 +
 +    cairo_set_line_width (cr, 1);
-+    gdk_cairo_set_source_color (cr, widget->style->text_aa);
-+    cairo_move_to (cr, x, widget->allocation.height - ((line_height + PADDING*2)-1));
-+    cairo_line_to (cr, x, widget->allocation.height - (line_height/2 + PADDING)-.5);
-+    cairo_line_to (cr, x+2.5, widget->allocation.height - (line_height/2 + PADDING)-.5);
++    gdk_cairo_set_source_color (cr, gtk_widget_get_style(widget)->text_aa);
++    cairo_move_to (cr, x, gtk_widget_get_allocated_height(widget) - ((line_height + PADDING*2)-1));
++    cairo_line_to (cr, x,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++    cairo_line_to (cr, x+2.5,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
 +    cairo_stroke(cr);
 +
 +    x += 3;
 +
-+    gdk_cairo_set_source_color (cr, widget->style->text_aa);
-+    cairo_move_to(cr, x, widget->allocation.height - (line_height + PADDING));
++    gdk_cairo_set_source_color (cr, gtk_widget_get_style(widget)->text_aa);
++    cairo_move_to(cr, x,  gtk_widget_get_allocated_height(widget) - (line_height + PADDING));
 +    pango_cairo_show_layout (cr, layout);
 +
 +    remaining_timeline_space = last_bar_x - (x + logical_rect.width);
@@ -5779,13 +5762,13 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +
 +    x -= bar_space + bar_w/2 + 0.5;
 +
-+    cairo_move_to (cr, x, widget->allocation.height - ((line_height + PADDING*2)-2));
-+    cairo_line_to (cr, x, widget->allocation.height - (line_height/2 + PADDING)-.5);
-+    cairo_line_to (cr, x-2.5, widget->allocation.height - (line_height/2 + PADDING)-.5);
++    cairo_move_to (cr, x,  gtk_widget_get_allocated_height(widget) - ((line_height + PADDING*2)-2));
++    cairo_line_to (cr, x,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++    cairo_line_to (cr, x-2.5,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
 +    cairo_stroke(cr);
 +
 +    cairo_move_to(cr, x - (logical_rect.width + 3.5),
-+            widget->allocation.height - (line_height + PADDING));
++             gtk_widget_get_allocated_height(widget) - (line_height + PADDING));
 +    pango_cairo_show_layout (cr, layout);
 +
 +    remaining_x_end = x - (logical_rect.width + 3.5);
@@ -5819,15 +5802,15 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +        /* draw anchor and text */
 +        x += 0.5;
 +
-+        cairo_move_to (cr, x, widget->allocation.height - ((line_height + PADDING*2)-1));
-+        cairo_line_to (cr, x, widget->allocation.height - (line_height/2 + PADDING)-.5);
-+        cairo_line_to (cr, x+2.5, widget->allocation.height - (line_height/2 + PADDING)-.5);
++        cairo_move_to (cr, x, gtk_widget_get_allocated_height(widget) - ((line_height + PADDING*2)-1));
++        cairo_line_to (cr, x,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
++        cairo_line_to (cr, x+2.5,  gtk_widget_get_allocated_height(widget) - (line_height/2 + PADDING)-.5);
 +        cairo_stroke(cr);
 +
 +        x += 3;
 +
 +        cairo_move_to(cr, x,
-+                widget->allocation.height - (line_height + PADDING));
++                 gtk_widget_get_allocated_height(widget) - (line_height + PADDING));
 +        pango_cairo_show_layout (cr, layout);
 +
 +        remaining_x_start = x + logical_rect.width;
@@ -5850,10 +5833,10 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +{
 +    switch (event->keyval)
 +    {
-+        case GDK_KP_Left:
-+        case GDK_KP_Up:
-+        case GDK_Left:
-+        case GDK_Up:
++        case GDK_KEY_KP_Left:
++        case GDK_KEY_KP_Up:
++        case GDK_KEY_Left:
++        case GDK_KEY_Up:
 +
 +            if (ts->priv->current_pos >= 1)
 +            {
@@ -5864,10 +5847,10 @@ diff -Nurb caja-1.14.1.orig/src/timescale.c caja-1.14.1/src/timescale.c
 +                /* printf ("key_pressed back %d\n", ts->priv->current_pos); */
 +            }
 +            return TRUE;
-+        case GDK_KP_Right:
-+        case GDK_KP_Down:
-+        case GDK_Right:
-+        case GDK_Down:
++        case GDK_KEY_KP_Right:
++        case GDK_KEY_KP_Down:
++        case GDK_KEY_Right:
++        case GDK_KEY_Down:
 +            if (ts->priv->current_pos <= ts->priv->num_snaps - 2)
 +            {
 +                ts->priv->current_pos += 1;
