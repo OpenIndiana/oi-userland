@@ -17,7 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-applets
 COMPONENT_VERSION= 2.32.1.1
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= GNOME panel applets
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -60,7 +60,6 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-REQUIRED_PACKAGES += desktop/character-map/gucharmap
 REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 REQUIRED_PACKAGES += gnome/applet/deskbar-applet
 REQUIRED_PACKAGES += gnome/applet/gnome-netstatus
