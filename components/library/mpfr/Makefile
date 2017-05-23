@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
 COMPONENT_VERSION=      3.1.5
+IPS_COMPONENT_VERSION=  3.1.5.2
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
 COMPONENT_FMRI=					library/mpfr
@@ -45,7 +46,6 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 CLOBBER_PATHS += libmpfr.pc
-PATCH_LEVEL = 0
 
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -std=c99 $(CPP_XPG6MODE)
