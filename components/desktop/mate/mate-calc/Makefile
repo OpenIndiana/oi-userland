@@ -15,14 +15,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-calc
-COMPONENT_VERSION=	1.8.0
+COMPONENT_MJR_VERSION=	1.18
+COMPONENT_MNR_VERSION=	0
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Calculator App
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:13d56287430cbb7d60a74666ba752a1a8ea9692125c6a02f97d0cc98d451d99a
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/sources/$(COMPONENT_NAME)/1.8/$(COMPONENT_ARCHIVE)
+    sha256:9e02ea711000378d25274e532dd161f09172d1dcefdb3aa4b1ab7a2bfa34da61
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE= GPLv2
@@ -32,7 +34,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
@@ -46,7 +48,7 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/atk
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQUIRED_PACKAGES += library/glib2
