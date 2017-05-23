@@ -15,17 +15,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dcraw
-COMPONENT_VERSION=        9.26.0
-COMPONENT_REVISION=       2
+COMPONENT_VERSION=        9.27.0
 COMPONENT_PROJECT_URL=    https://www.cybercom.net/~dcoffin/dcraw/
 COMPONENT_SUMMARY=        dcraw - Decoding RAW digital photos
 COMPONENT_SRC=            $(COMPONENT_NAME)
 COMPONENT_ARCHIVE=        $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=        \
-    sha256:85791d529e037ad5ca09770900ae975e2e4cc1587ca1da4192ca072cbbfafba3
-COMPONENT_ARCHIVE_URL=        http://cybercom.net/~dcoffin/dcraw/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:c1d8cc4f19752a3d3aaab1fceb712ea85b912aa25f1f33f68c69cd42ef987099
+COMPONENT_ARCHIVE_URL= \
+  http://cybercom.net/~dcoffin/dcraw/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	dcraw.license
 COMPONENT_FMRI=		image/dcraw
 COMPONENT_CLASSIFICATION=	System/Media
 
