@@ -16,23 +16,24 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zziplib
-COMPONENT_VERSION=	0.13.62
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.13.66
 COMPONENT_SUMMARY=	Lightweight ZIP library
 COMPONENT_PROJECT_URL=	http://zziplib.sourceforge.net/
 COMPONENT_FMRI=		compress/zziplib
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a1b8033f1a1fd6385f4820b01ee32d8eca818409235d22caf5119e0078c7525b
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/zziplib/files/zziplib13/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+  sha256:59b18c7c4ed348ba8d63fa7e194e6b012cd94197265b7a7b3afb539d8206bd7d
+COMPONENT_ARCHIVE_URL= \
+	http://sourceforge.net/projects/zziplib/files/zziplib13/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
