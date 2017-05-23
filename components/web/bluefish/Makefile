@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
 COMPONENT_VERSION=	2.2.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://bluefish.openoffice.nl/index.html
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_FMRI=		web/editor/bluefish
@@ -40,7 +40,6 @@ CFLAGS += -DANSICPP
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--disable-update-databases
-CONFIGURE_OPTIONS+=	--with-gtk2
 
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
@@ -54,7 +53,7 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
