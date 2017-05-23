@@ -20,19 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
-COMPONENT_VERSION=	3.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a25e89a8ab65fded1731e4186be1bb25cda967834b6df973599cdcd5abdfc19c
+    sha256:dad398ccd5b9faca6b0ab219a036453f62a602a56203ac659b43e889bec35533
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-diffutils
 
@@ -40,22 +39,40 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Tests failure
+unexport SHELLOPTS
+
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_BINDIR.32 =		$(CONFIGURE_PREFIX)/gnu/bin
+CONFIGURE_BINDIR.64 =		$(CONFIGURE_PREFIX)/gnu/bin
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+
+COMPONENT_TEST_DIR =	$(@D)/tests
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^/usr/gnu/bin/make.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
+COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+# Build dependencies
+REQUIRED_PACKAGES += text/gnu-gettext
 
-include $(WS_MAKE_RULES)/depend.mk
+# Auto-generated contents below.  Please manually verify and remove this comment
+REQUIRED_PACKAGES += library/libsigsegv
+REQUIRED_PACKAGES += system/library
