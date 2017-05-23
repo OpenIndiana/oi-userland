@@ -17,14 +17,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-desktop
-COMPONENT_VERSION=	1.16.1
+COMPONENT_MJR_VERSION=	1.18
+COMPONENT_MNR_VERSION=	0
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:587a8da6e65386015101992e1082bb4d4d38420873c70348ba55dc9f9f63f6df
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:6f2dd9fc60bacd0ff27b8328c7addceb9e73a75c7dce7db4132659d588173b8a
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= mate-desktop.license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -59,11 +61,10 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQIURED_PACKAGES += gnome/config/dconf
-REQIURED_PACKAGES += x11/library/libpthread-stubs
 REQIURED_PACKAGES += library/desktop/atk
 REQIURED_PACKAGES += library/desktop/cairo
 REQIURED_PACKAGES += library/desktop/gdk-pixbuf
-REQIURED_PACKAGES += library/desktop/gtk2
+REQIURED_PACKAGES += library/desktop/gtk3
 REQIURED_PACKAGES += library/desktop/pango
 REQIURED_PACKAGES += library/desktop/startup-notification
 REQIURED_PACKAGES += library/glib2
