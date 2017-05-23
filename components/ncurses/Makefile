@@ -26,15 +26,19 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
-COMPONENT_VERSION=	5.7
+COMPONENT_VERSION=	6.0-20170408
+IPS_COMPONENT_VERSION=	6.0.0.20170408
+COMPONENT_PROJECT_URL=	http://invisible-mirror.net/archives/ncurses/current/
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0a9bdea5c7de8ded5c9327ed642915f2cc380753f12d4ad120ef7da3ea3498f4
+    sha256:4276ca4b0eb883e7d314572271f79250f47b2f4842b735e89076f239d3513cb9
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ncurses
 COMPONENT_ANITYA_ID=	2057
 
-TPNO=			5931
+TPNO=			34888
 
-include $(WS_MAKE_RULES)/gnu-component.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Needed to make "gmake test" work.
 COMPONENT_PRE_CONFIGURE_ACTION += \
@@ -45,29 +49,18 @@ CONFIGURE_PREFIX =	/usr/gnu
 # Fix 64-bit linking via compiler.
 LDFLAGS += $(CC_BITS)
 
-CXXFLAGS += -std=sun03
-
-# Expects GNU install.
-CONFIGURE_ENV += INSTALL="$(INSTALL)"
-
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-widec
+CONFIGURE_OPTIONS +=	--enable-symlinks
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
 CONFIGURE_OPTIONS +=	--with-default-terminfo-dir=$(GNUSHARE)/terminfo
-
-# XXX: Ugly hack copied directly from the desktop SUNWncurses.spec file:
-# The sun-color terminfo included in ncurses does not work;
-# copying the one shipped with Sun's curses fixes it:
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) /usr/share/lib/terminfo/s/sun-color \
-	$(PROTO_DIR)$(GNUSHARE)/terminfo/s/;
 
 # We only deliver 64-bit binaries and in /usr/bin.
 COMPONENT_POST_INSTALL_ACTION.32 += \
 	$(GSED) -i -e 's|$(GNUBIN)/i86|$(GNUBIN)|' \
-		$(PROTOGNUBIN)/$(MACH32)/ncurses5-config;
+		$(PROTOGNUBIN)/$(MACH32)/ncursesw6-config;
 
 # There is no master test file because tests are interactive and not
 # tied to the build.
@@ -77,5 +70,3 @@ COMPONENT_TEST_TARGETS =
 $(SKIP_TEST_AT_TOP_LEVEL)
 
 REQUIRED_PACKAGES += shell/bash
-# Required by this Makefile.
-REQUIRED_PACKAGES += system/data/terminfo/terminfo-core
