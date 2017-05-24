@@ -16,24 +16,26 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-menus
-COMPONENT_VERSION=	1.16.0
+COMPONENT_MJR_VERSION=	1.18
+COMPONENT_MNR_VERSION=	0
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Menu of Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:85d51e02cd94f33b13265ba4847e93d99cef5ec3ce7ee4499958f3afe3013c33
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:f07cdb952934b732678ed37a9cd740c8860e9e2d0ddb4d73a8d06cdccfc87e16
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH= $(PATH.gnu)
 GNUCP = /usr/gnu/bin/cp
 
 
@@ -42,7 +44,6 @@ COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--enable-python
 
