@@ -1,0 +1,71 @@
+Provides a Solaris implementation of the floating point exception handler.
+Will not send upstream.
+
+--- IexMath/IexMathFpu.cpp	2014-08-10 14:23:56.000000000 +1000
++++ IexMath/IexMathFpu.cpp	2016-11-09 11:22:07.833814195 +1000
+@@ -271,19 +271,37 @@
+ // it's passed to the signal handler by the kernel.  Use
+ // the kernel's version of the ucontext to get it, see
+ // <asm/sigcontext.h>
+ //
+
++#if defined(__sun)
++#include <sys/ucontext.h>
++#include <sys/regset.h>
++#else
+ #include <asm/sigcontext.h>
++#endif
+ 
+ inline void
+ restoreControlRegs (const ucontext_t & ucon, bool clearExceptions)
+ {
+-    setCw ((ucon.uc_mcontext.fpregs->cw & cwRestoreMask) | cwRestoreVal);
+     
++#if !defined(__sun)
++    setCw ((ucon.uc_mcontext.fpregs->cw & cwRestoreMask) | cwRestoreVal);
+     _fpstate * kfp = reinterpret_cast<_fpstate *> (ucon.uc_mcontext.fpregs);
+     setMxcsr (kfp->magic == 0 ? kfp->mxcsr : 0, clearExceptions);
++
++#else
++    setCw ((ucon.uc_mcontext.fpregs.fp_reg_set.fpchip_state.cw & cwRestoreMask) | cwRestoreVal);
++    fpregset_t kfp = ucon.uc_mcontext.fpregs;
++    uint32_t f_mxcsr = kfp.fp_reg_set.fpchip_state.mxcsr;
++    uint32_t f_xstatus = kfp.fp_reg_set.fpchip_state.xstatus;
++
++    // http://lxr.free-electrons.com/source/arch/x86/include/uapi/asm/sigcontext.h#L7
++    // was very helpful in figuring out this next line.
++    setMxcsr (f_xstatus == 0 ? f_mxcsr : 0, clearExceptions);
++#endif
++
+ }
+ 
+ #endif
+ 
+ } // namespace FpuControl
+@@ -452,20 +470,26 @@
+         return;
+     }
+ }
+ 
+ 
++#if defined(__sun)
++#define	SA_NOMASK	SA_NODEFER
++#endif
++
+ void
+ setFpExceptionHandler (FpExceptionHandler handler)
+ {
+     if (fpeHandler == 0)
+     {
+ 	struct sigaction action;
+ 	sigemptyset (&action.sa_mask);
+ 	action.sa_flags = SA_SIGINFO | SA_NOMASK;
+ 	action.sa_sigaction = (void (*) (int, siginfo_t *, void *)) catchSigFpe;
++#if !defined(__sun)
+ 	action.sa_restorer = 0;
++#endif
+ 
+ 	sigaction (SIGFPE, &action, 0);
+     }
+ 
+     fpeHandler = handler;
