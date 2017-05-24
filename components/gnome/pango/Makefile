@@ -30,14 +30,14 @@ BUILD_BITS =		64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pango
-COMPONENT_VERSION=	1.38.0
+COMPONENT_VERSION=	1.40.4
 COMPONENT_PROJECT_URL=	http://www.pango.org/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1d4e75974bad853ee9ac5fc5caee5e7ab235abbd945d51d01f3806e04e7c226c
+    sha256:f8fdc5fc66356dc4edf915048cceeee065a0e0cb70b3b2598f62bda320129a3e
 COMPONENT_BUGDB=	gnome/pango
 COMPONENT_ANITYA_ID=	11783
 
-TPNO=			24871
+TPNO=			34484
 
 # Requires harfbuzz, which we cannot build on 11.3, so do not publish.
 ifeq ($(BUILD_TYPE), evaluation)
