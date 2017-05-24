@@ -16,33 +16,32 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-media
-COMPONENT_VERSION=	1.16.0
+COMPONENT_MJR_VERSION=	1.18
+COMPONENT_MNR_VERSION=	0
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Multimedia applications for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:87a6aab1635cdf0890b4f99b733eb786144c90730a96d04c41e05ea781cd0a20
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:94d26b96199a3b30e2050596d17e0125f86edf9ef009d4eb318308896f54296c
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = desktop/mate/$(COMPONENT_NAME)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
 CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --with-gtk=2.0
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -55,7 +54,7 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/libmatemixer
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
@@ -63,4 +62,5 @@ REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libunique
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
