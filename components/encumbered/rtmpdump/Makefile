@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rtmpdump
 COMPONENT_VERSION= 2.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= RTMPdump -- a toolkit for RTMP streams
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
@@ -40,13 +41,17 @@ COMPONENT_BUILD_ENV += $(COMPONENT_ENV)
 COMPONENT_INSTALL_ENV.64 = ARCH=/$(MACH64)
 COMPONENT_INSTALL_ENV += $(COMPONENT_ENV)
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(INSTALL_32): $(INSTALL_64)
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
