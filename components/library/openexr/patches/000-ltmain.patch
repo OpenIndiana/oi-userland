@@ -1,0 +1,15 @@
+Avoid core dump when throwing exceptions.
+
+--- ltmain.sh.orig	2017-06-04 02:37:42.757516411 +0000
++++ ltmain.sh	2017-06-04 02:40:55.383378133 +0000
+@@ -805,7 +805,9 @@
+ 
+ 
+   case $host in
+-    *cygwin* | *mingw* | *pw32* | *cegcc*)
++    # Solaris2 added to fix http://debbugs.gnu.org/cgi/bugreport.cgi?bug=16452 
++    # see also: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59788
++    *cygwin* | *mingw* | *pw32* | *cegcc* | *solaris2*)
+       # don't eliminate duplications in $postdeps and $predeps
+       opt_duplicate_compiler_generated_deps=:
+       ;;
