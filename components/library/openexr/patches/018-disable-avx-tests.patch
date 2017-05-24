@@ -1,0 +1,52 @@
+Disable by default to allow reproducible tests.
+
+--- IlmImfTest/testDwaCompressorSimd.cpp.orig	2017-07-20 12:08:28.151692248 +0000
++++ IlmImfTest/testDwaCompressorSimd.cpp	2017-07-20 12:54:04.651530163 +0000
+@@ -292,6 +292,7 @@
+         INVERSE_DCT_SCALAR_TEST_N(dctInverse8x8_sse2, 7, "1x8")
+     }
+ 
++#ifdef OPENEXR_ENABLE_AVX_TESTS
+     if (cpuid.avx) 
+     {
+         cout << "      Inverse, AVX: " << endl;
+@@ -304,6 +305,7 @@
+         INVERSE_DCT_SCALAR_TEST_N(dctInverse8x8_avx, 6, "2x8")
+         INVERSE_DCT_SCALAR_TEST_N(dctInverse8x8_avx, 7, "1x8")
+     }
++#endif
+ }
+ 
+ //
+@@ -349,6 +351,7 @@
+     }
+ 
+ 
++#ifdef OPENEXR_ENABLE_AVX_TESTS
+     CpuId cpuid;
+     if (cpuid.avx && cpuid.f16c)
+     {
+@@ -382,6 +385,7 @@
+             }
+         }
+     }
++#endif
+ }
+ 
+ //
+@@ -426,6 +430,7 @@
+     }
+        
+     // Then compare the two implementations, if supported
++#ifdef OPENEXR_ENABLE_AVX_TESTS
+     CpuId cpuid;
+     if (cpuid.avx && cpuid.f16c)
+     {
+@@ -466,6 +471,7 @@
+             }
+         } // iter
+     } // f16c
++#endif
+ }
+ 
+ 
