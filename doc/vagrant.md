@@ -20,7 +20,7 @@ provider is supported. Vagrant is suitable for cases when you don't have access 
 
 * Download Vagrant from the official [download site](https://www.vagrantup.com/downloads.html). Select a version for your platform. We recommend to use the latest version.
 * Download VirtualBox from the official [download site](https://www.virtualbox.org/wiki/Downloads). We recommend to use always the latest VirtualBox.
-* Fork the [oi-userland repository](https://github.com/OpenIndiana/oi-userland.git) on Github.
+* Fork the [oi-userland repository](https://github.com/OpenIndiana/oi-userland.git) on GitHub.
 * Clone your oi-userland repository somewhere:
 
   ```
@@ -39,13 +39,21 @@ provider is supported. Vagrant is suitable for cases when you don't have access 
   git pull --rebase upstream oi/hipster
   ```
 
+* On Windows make sure, that `rsync` and `ssh` commands are available, and that Hyper-V (if actually installed) is disabled:
+
+  ```
+  dism.exe /Online /Disable-Feature:Microsoft-Hyper-V-All
+  ```
+
+  And restart.
+
 * Start the VM by running:
 
   ```
   vagrant up
   ```
 
-  This might take a while as build utilities will be download and oi-userland configured.
+  This might take a while as development utilities will be downloaded and oi-userland configured.
 
 * Once the VM is online, enter it:
 
@@ -68,8 +76,8 @@ provider is supported. Vagrant is suitable for cases when you don't have access 
 ## Vagrant box updates
 
 Vagrant box is configured to check for updates and if a new update is available,
-Vagrant will display the notice.
+Vagrant will display a notice.
 
 ## Getting help
 
-If not sure, ask.
+If not sure, ask on IRC, mailing list, etc.

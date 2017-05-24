@@ -12,6 +12,7 @@
 
 #
 # Copyright 2016 Adam Stevko. All rights reserved.
+# Copyright 2017 Michal Nowak
 #
 
 Vagrant.configure("2") do |config|
@@ -25,10 +26,10 @@ Vagrant.configure("2") do |config|
   config.vm.box_check_update = true
 
   # Unless OpenIndiana is better supported in vagrant, we have to use this
-  # workaround. The problem is with vagrant creating folder as root:root,
-  # but rsync connects as vagrant and fails to write.
+  # workaround. The problem with vagrant is that it creates folder as root:root,
+  # but rsync connects as vagrant and thus fails to write.
   config.vm.synced_folder ".", "/vagrant", type: "rsync",
-    rsync__args: ["--verbose", "--archive", "-z", "--copy-links"],
+    rsync__args: ["--verbose", "--archive", "--compress", "--copy-links"],
     rsync__rsync_path: "pfexec rsync", owner: "vagrant", group: "vagrant"
 
   # Autoconfigure resources for development VM. The snippet is taken from
@@ -38,22 +39,24 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |v|
     host = RbConfig::CONFIG['host_os']
 
-    # Give VM 1/4 system memory and CPU core count
+    # Get memory size and CPU cores amount
     if host =~ /darwin/
-      # sysctl returns Bytes and we need to convert to MB
-      mem = `sysctl -n hw.memsize`.to_i / 1024
-      cpus = `sysctl -n hw.ncpu`.to_i / 4
+      # sysctl returns Bytes
+      mem = `sysctl -n hw.memsize`.to_i
+      cpus = `sysctl -n hw.ncpu`.to_i
     elsif host =~ /linux/
-      # meminfo shows KB and we need to convert to MB
-      mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
-      cpus = `grep -c Processor /proc/cpuinfo`.to_i / 4
+      # meminfo shows size in kB; convert to Bytes
+      mem = `awk '/MemTotal/ {print $2}' /proc/meminfo`.to_i * 1024
+      cpus = `getconf _NPROCESSORS_ONLN`.to_i
     elsif host =~ /mswin|mingw|cygwin/
       # Windows code via https://github.com/rdsubhas/vagrant-faster
-      mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i / 1024
-      cpus = 2
+      mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i
+      cpus = `echo %NUMBER_OF_PROCESSORS%`.to_i
     end
 
-    mem = mem / 1024 / 4
+    # Give VM 1/4 system memory as well as CPU core count
+    mem /= 1024 ** 2 * 4
+    cpus /= 4
 
     v.customize ["modifyvm", :id, "--memory", mem]
     v.customize ["modifyvm", :id, "--cpus", cpus]
@@ -66,6 +69,6 @@ Vagrant.configure("2") do |config|
     pfexec pkg install build-essential
 
     cd /vagrant && gmake setup
-    echo "VM ready, happy contributing!"
+    echo "VM is ready, happy contributing!"
   SHELL
 end
