@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../../make-rules/shared-macros.mk
@@ -26,7 +27,7 @@ COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
 COMPONENT_VERSION =	1.0.2k
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
 IPS_COMPONENT_VERSION = 1.0.2.11
@@ -45,7 +46,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
 
-PATH=$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
@@ -105,9 +106,9 @@ CONFIGURE_OPTIONS += --enginesdir=$(ENGINESDIR_$(BITS))
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
 CONFIGURE_OPTIONS32_i386 =	solaris-x86-gcc-sunw
-CONFIGURE_OPTIONS32_sparc =	solaris-sparcv9-cc-sunw
+CONFIGURE_OPTIONS32_sparc =	solaris-sparcv9-gcc-sunw
 CONFIGURE_OPTIONS64_i386 =	solaris64-x86_64-gcc-sunw
-CONFIGURE_OPTIONS64_sparc =	solaris64-sparcv9-cc-sunw
+CONFIGURE_OPTIONS64_sparc =	solaris64-sparcv9-gcc-sunw
 
 # Options specific to regular build.
 # They must not be specified as common, as they cannot be overridden.
