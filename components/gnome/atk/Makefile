@@ -30,14 +30,14 @@ BUILD_BITS =            32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atk
-COMPONENT_VERSION=	2.18.0
+COMPONENT_VERSION=	2.24.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ce6c48d77bf951083029d5a396dd552d836fff3c1715d3a7022e917e46d0c92b
+    sha256:bb2daa9a808c73a7a79d2983f333e0ba74be42fc51e3ba1faf2551a636487a49
 COMPONENT_BUGDB=	gnome/a11y-libs-core
 COMPONENT_ANITYA_ID=	130
 
-TPNO=			24624
+TPNO=			34488
 
 # Requires newer version of library/glib2, not buildable on 11.3, so do not
 # publish.
