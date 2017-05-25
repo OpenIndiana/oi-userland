@@ -30,14 +30,14 @@ COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		at-spi2-core
-COMPONENT_VERSION=	2.18.0
+COMPONENT_VERSION=	2.24.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1aeec77db6eb8087049af39a07f55756c55319f739d2998030fe6f4ced03ca76
+    sha256:6179f314fbd903b3cd3477a57b6b1fecca88b76ce769ce777fda0d3e5f61afcd
 COMPONENT_BUGDB=	gnome/a11y-libs-core
 COMPONENT_ANITYA_ID=	7841
 
-TPNO=			24926
+TPNO=			34489
 
 # Needs updated glib2, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
