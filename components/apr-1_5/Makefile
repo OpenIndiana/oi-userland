@@ -62,6 +62,7 @@ COMPONENT_TEST_TARGETS=	test
 
 COMPONENT_TEST_TRANSFORMS += \
         '-e "/microseconds: [0-9]* usec/d" '  \
+	'-e "/^Calling apr_socket_sendfile().../,/^apr_socket_sendfile()->*/d" ' \
 	'-e "/^APR Lock Performance Test/,/make\[2\]: Leaving directory/p" ' \
 	'-e "/.*/d" '
 
