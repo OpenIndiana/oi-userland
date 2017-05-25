@@ -17,22 +17,22 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= shmux
 COMPONENT_VERSION= 1.0.2
 COMPONENT_SUMMARY= shmux - Shell Multiplexor
-COMPONENT_PROJECT_URL= http://web.taranis.org/shmux/
+COMPONENT_PROJECT_URL= https://github.com/shmux/shmux
 COMPONENT_FMRI= shell/shmux
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_URL= \
-    http://web.taranis.org/shmux/dist/$(COMPONENT_ARCHIVE)
+    https://github.com/shmux/shmux/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0886aaca4936926d526988d85df403fa1679a60c355f1be8432bb4bc1e36580f
+    sha256:4b84dc3e0d72d054ed4730d130a509f43441fb61561c11a444d6ee65cbff9c04
 COMPONENT_LICENSE= BSD-like
-
-PATH=/usr/gnu/bin:/usr/bin
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(PATH.gnu)
 
 PATCH_LEVEL=0
 
