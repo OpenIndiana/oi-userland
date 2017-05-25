@@ -16,30 +16,34 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dash
 COMPONENT_VERSION=	0.5.9.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	DASH is a POSIX-compliant implementation of /bin/sh that aims to be as small as possible.
-COMPONENT_PROJECT_URL=  http://gondor.apana.org.au/~herbert/dash/
+COMPONENT_PROJECT_URL=  https://git.kernel.org/pub/scm/utils/dash/dash.git
 COMPONENT_FMRI=		shell/dash
 COMPONENT_CLASSIFICATION=System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	http://gondor.apana.org.au/~herbert/dash/files/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:5ecd5bea72a93ed10eb15a1be9951dd51b52e5da1d4a7ae020efd9826b49e659
+COMPONENT_ARCHIVE_URL=\
+	https://git.kernel.org/pub/scm/utils/dash/dash.git/snapshot/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:3f747013a20a3a9d2932be1a6dd1b002ca5649849b649be0af8a8da80bd8a918
 COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	(cd $(SOURCE_DIR) && autoreconf -i)
 
-build:		$(BUILD_32)
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
 
-test:		$(TEST_32)
+install:	$(INSTALL_64)
+
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += system/library
