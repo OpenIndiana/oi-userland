@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:ede250cd207d8bee4a338265c3007d7a68d5aca791b6ac41af18e9a2aeb34178
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXcomposite.license
 

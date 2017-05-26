@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:c00b382123e58f595b3cecaa50471ebec534660e5f92ae46d94266345844fd73
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXevie.license
 

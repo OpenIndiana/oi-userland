@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:fdd477320aeb5cdd67272838722d6b7d544887dfe7de46e1e7cc0c27c2bea4f2
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXau-1.0.8.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/lib/libXau-1.0.8.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXau.license
 

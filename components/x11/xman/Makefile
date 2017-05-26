@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:b3fa9d2e3f3745c529eb0b6ee4f0e00d936457d11e5221b2efad06ff7c84df29
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xman-1.1.4.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xman-1.1.4.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xman.license
 

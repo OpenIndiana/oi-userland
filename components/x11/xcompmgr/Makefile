@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:c8049b1a2531313be7469ba9b198d334f0b91cc01efc2b20b9afcb117e4d6892
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xcompmgr-1.1.7.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xcompmgr-1.1.7.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xcompmgr.license
 

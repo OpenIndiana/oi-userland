@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:70c3d033874fe48286bc4971d5de9027f2e8ccd0f21b7506fe1bb4472218036d
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/transset-1.0.1.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/transset-1.0.1.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= transset.license
 

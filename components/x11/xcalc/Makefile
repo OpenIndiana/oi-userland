@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:2f73c7160c09dc32586ea07daa408ac897c0a16eaa98cad9f9e4ee98cd9057d8
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xcalc-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xcalc-1.0.6.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xcalc.license
 

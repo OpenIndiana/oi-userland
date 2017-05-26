@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:30f0eaee7e740a080cfb29e3f57a1202e6a5a19a0bfb099c89060cc2986e0328
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xditview-1.0.3.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xditview-1.0.3.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xditview.license
 

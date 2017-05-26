@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= xauth
 COMPONENT_VERSION= 1.0.10
 COMPONENT_SUMMARY= xauth - X authority file utility
-COMPONENT_PROJECT_URL = http://www.x.org/wiki/
+COMPONENT_PROJECT_URL = https://www.x.org/wiki/
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_FMRI= x11/session/xauth
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:49f4fab0de8d418db4ce80dad34e9b879a4199f3e554253a8e1ab68f7c7cb65d
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= COPYING
 

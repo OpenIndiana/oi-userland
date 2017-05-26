@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:f7a80575f3724ac3d9b19eaeab802892ece7e4b0061dd6425b4b789353e25425
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= makedepend.license
 

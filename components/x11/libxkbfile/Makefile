@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:51817e0530961975d9513b773960b4edd275f7d5c72293d5a151ed4f42aeb16a
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libxkbfile.license
 

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:aa1db4f31f7afcfe131bda7ff6e380ff7de41cf1a7009464783043c817c47ce8
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xbiff-1.0.3.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xbiff-1.0.3.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xbiff.license
 

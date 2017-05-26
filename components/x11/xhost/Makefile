@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:93e619ee15471f576cfb30c663e18f5bc70aca577a63d2c2c03f006a7837c29a
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xhost-1.0.7.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xhost-1.0.7.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xhost.license
 

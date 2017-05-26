@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:69aa42885dfc06332ca22eb01cc7187e49206e6d65b74113a8ee4cc345fc2927
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xedit-1.2.2.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xedit-1.2.2.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xedit.license
 

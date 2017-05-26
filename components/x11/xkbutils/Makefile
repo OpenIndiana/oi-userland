@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:d2a18ab90275e8bca028773c44264d2266dab70853db4321bdbc18da75148130
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xkbutils-1.0.4.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xkbutils-1.0.4.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xkbutils.license
 

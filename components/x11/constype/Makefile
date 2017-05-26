@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:c1848a3af93200a6db8a5905e1d9a3ca152cf4eeec4e1e7a50a8fcc6b4a0049a
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/wiki/
+COMPONENT_PROJECT_URL = https://www.x.org/wiki/
 COMPONENT_FMRI= diagnostic/constype
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING

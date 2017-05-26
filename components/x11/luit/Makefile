@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:30b0e787cb07a0f504b70f1d6123930522111ce9d4276f6683a69b322b49c636
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/luit-1.1.1.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/luit-1.1.1.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= luit.license
 

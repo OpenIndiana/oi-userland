@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:24e5e103933a04bfb2e1d18562619ed74031ab515e7343eb546bacdbcbeecf01
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xvidtune-1.0.3.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xvidtune-1.0.3.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xvidtune.license
 
