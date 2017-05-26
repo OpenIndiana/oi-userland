@@ -17,26 +17,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
-COMPONENT_VERSION=        2.7.1
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        2.8
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3a3bb2c4e15ffb433f2032f50a5b5a92558206822e22bfe8cbe339af4aa82f88
+  sha256:a3c603ed84c3c2495f9c9331fe6bba3bb0ee65e06ec331e0a0fb52158291b40b
 COMPONENT_ARCHIVE_URL= \
   http://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://freetype.org/
 COMPONENT_LICENSE=      The FreeType Project License
 COMPONENT_LICENSE_FILE= freetype-2.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 gcc_OPT=-O2
 
@@ -49,6 +48,10 @@ CONFIGURE_OPTIONS+= --with-png
 CONFIGURE_OPTIONS+= --with-harfbuzz
 CONFIGURE_OPTIONS+= --with-pic
 
+COMPONENT_PREP_ACTION = ( cd $(@D); \
+	$(GSED) -ri 's:.*(AUX_MODULES.*valid):\1:' modules.cfg && \
+	$(GSED) -r 's:.*(\#.*SUBPIXEL_RENDERING) .*:\1:' \
+		-i include/freetype/config/ftoption.h ) 
 
 build: $(BUILD_32_and_64)
 
