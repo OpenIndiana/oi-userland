@@ -87,12 +87,14 @@ def FindComponentPaths(path, debug=False, subdir='components',
             if filename == 'Makefile':
                 if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
                     paths.append(dirname)
-
+                    
         # Some components are using SCM checkout as a source code download method and
         # COMPONENT_REVISION is not bumped. With this, we will never rebuild them.
         # In order to rebuild them, we will look for such components and build them
         # every run. These components are located in openindiana category and we care
-        # only about that category.
+        # only about that category. One exception to this rule is meta-packages/history
+        # component, which holds obsoleted components. We add it to paths manually for 
+        # that reason.
         cmd = ['git', 'grep', '-l', 'GIT_REPO *=']
 
         proc = subprocess.Popen(cmd,
@@ -121,6 +123,9 @@ def FindComponentPaths(path, debug=False, subdir='components',
                 if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
                     paths.append(os.path.dirname(line))
 
+        # Add meta-packages/history
+        paths.append('meta-packages/history')
+                    
         paths = list(set(paths))
 
     else:
