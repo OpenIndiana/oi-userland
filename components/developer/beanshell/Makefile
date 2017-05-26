@@ -18,13 +18,14 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		beanshell
 COMPONENT_VERSION=	2.0b6
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.beanshell.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
