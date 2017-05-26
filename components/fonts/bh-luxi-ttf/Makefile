@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=	bh-luxi-ttf
 COMPONENT_VERSION= 1.0.3
 COMPONENT_SUMMARY= The Luxi fonts
-COMPONENT_PROJECT_URL= http://www.x.org/
+COMPONENT_PROJECT_URL= https://www.x.org/
 COMPONENT_FMRI=	system/font/truetype/bh-luxi
 COMPONENT_CLASSIFICATION=	System/Fonts
 COMPONENT_SRC_NAME= font-bh-ttf
