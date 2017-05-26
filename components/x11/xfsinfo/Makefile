@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:d38f4b6db4038f52ba1a09123ef497993194288454c0c13d16debe246f120d8f
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xfsinfo-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xfsinfo-1.0.5.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 
 include $(WS_MAKE_RULES)/prep.mk

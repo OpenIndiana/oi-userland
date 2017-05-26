@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:67c2fc94a7ecedbaae0d1837e82e93d1d98f4a6d759828860e552119af3ce257
 COMPONENT_ARCHIVE_URL= \
   http://downloads.yoctoproject.org/releases/xrestop/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xrestop.license
 

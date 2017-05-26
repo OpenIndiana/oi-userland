@@ -18,13 +18,13 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=           presentproto
 COMPONENT_VERSION=        1.1
 COMPONENT_SUMMARY=        headers for the Present extension to the X11 protocol
-COMPONENT_PROJECT_URL =   http://www.x.org/
+COMPONENT_PROJECT_URL =   https://www.x.org/
 COMPONENT_FMRI=           x11/header/presentproto
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/proto/$(COMPONENT_ARCHIVE)
+  https://www.x.org/releases/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
   sha256:f69b23a8869f78a5898aaf53938b829c8165e597cda34f06024d43ee1e6d26b9
 COMPONENT_LICENSE=        MIT License

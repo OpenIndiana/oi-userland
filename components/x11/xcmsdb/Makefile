@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:e5585361bb8b6a05bb814a8d0e444ee93e0f00180881d3070aff4571e97f67c6
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xcmsdb-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xcmsdb-1.0.5.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xcmsdb.license
 

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:4cba3766ef89557422062287248adeb933999071bad6f3ef9c0a478a3c680119
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xdriinfo-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xdriinfo-1.0.5.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xdriinfo.license
 

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:5d9666fcc6c3de210fc70d5a841a404955af709a616fde530fe4e8f7723e3d3d
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xlsclients-1.1.3.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xlsclients-1.1.3.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xlsclients.license
 

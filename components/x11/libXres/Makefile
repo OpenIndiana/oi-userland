@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:26899054aa87f81b17becc68e8645b240f140464cf90c42616ebb263ec5fa0e5
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXres-1.0.7.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/lib/libXres-1.0.7.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXres.license
 

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:563f4200862efd3334c33a669e0a0aae5bab31f3998db75b87a99a697cc26b5b
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXxf86misc-1.0.3.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/lib/libXxf86misc-1.0.3.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXxf86misc.license
 

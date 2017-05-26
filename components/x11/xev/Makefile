@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:d94ae62a6c1af56c2961d71f5782076ac4116f0fa4e401420ac7e0db33dc314f
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xev-1.2.2.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xev-1.2.2.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xev.license
 

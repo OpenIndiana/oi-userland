@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:9bee88b1025865ad121f72d32576dd3027af1446774aa8300cce3c261d869bc6
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xprop-1.2.2.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xprop-1.2.2.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xprop.license
 

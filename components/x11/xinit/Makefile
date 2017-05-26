@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:75d88d7397a07e01db253163b7c7a00b249b3d30e99489f2734cac9a0c7902b3
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xinit-1.3.4.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xinit-1.3.4.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xinit.license
 

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:f1ed55093356b78daec2678d22f52d42ec11fe88575562d734396962e626d7f6
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/fslsfonts-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/fslsfonts-1.0.5.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= fslsfonts.license
 

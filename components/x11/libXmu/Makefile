@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:756edc7c383254eef8b4e1b733c3bf1dc061b523c9f9833ac7058378b8349d0b
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXmu-1.1.2.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/lib/libXmu-1.1.2.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= COPYING
 

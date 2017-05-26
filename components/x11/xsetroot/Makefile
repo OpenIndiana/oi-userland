@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:ba215daaa78c415fce11b9e58c365d03bb602eaa5ea916578d76861a468cc3d9
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xsetroot-1.1.1.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xsetroot-1.1.1.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 
 include $(WS_MAKE_RULES)/prep.mk

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:3bb396a2268d78de4b1c3e5237a85f7849d3434e87b3cd1f4d57eef614227d79
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xwd-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xwd-1.0.6.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 
 include $(WS_MAKE_RULES)/prep.mk

@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:88ef2a304f32f24b255e879f03c1dcd3a2be3e71d5562205414f267d919f812e
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xkill-1.0.4.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/xkill-1.0.4.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xkill.license
 

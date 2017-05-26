@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:a9ddb3963f263ba13f0ea105d8c45a531832140530217cc559587bb94f02d3e1
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/setxkbmap-1.3.1.tar.bz2
-COMPONENT_PROJECT_URL = http://www.x.org/
+  https://www.x.org/releases/individual/app/setxkbmap-1.3.1.tar.bz2
+COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= setxkbmap.license
 
