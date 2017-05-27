@@ -14,18 +14,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
-COMPONENT_VERSION=	1.3.1
+COMPONENT_VERSION=	1.3.2
 COMPONENT_FMRI=		codec/flac
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_PROJECT_URL=	http://flac.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4773c0099dba767d963fd92143263be338c48702172e8754b9bc5103efe1c56c
-COMPONENT_ARCHIVE_URL=	http://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
+  sha256:91cfc3ed61dc40f47f050a109b08610667d73477af6ef36dcad31c31a4a8d53f
+COMPONENT_ARCHIVE_URL=\
+  http://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	$(COMPONENT_FMRI)
 COMPONENT_LICENSE=	Xiph.org BSD-style, binaries & media player plugins also use GPL v2, LGPL v2.1, documentation uses FDL v1.2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -55,6 +55,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libogg
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
