@@ -16,26 +16,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdvdread
-COMPONENT_VERSION= 5.0.3
+COMPONENT_VERSION= 5.0.4
 COMPONENT_FMRI = library/video/libdvdread
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= Library for reading DVD video disks
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_GIT_HASH=494311d309441846eae697f915b61d2980bfa69d
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
+COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH= \
-  sha256:321cdf2dbdc83c96572bc583cd27d8c660ddb540ff16672ecb28607d018ed82b
+  sha256:c2aa771320ba98cd279ed0ddc204c9751a981eccdb84c121e25beadb21da9300
+# 5.0.4 is a bug fix release which was never released as tarball
 COMPONENT_ARCHIVE_URL= \
-  http://download.videolan.org/pub/videolan/libdvdread/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  https://github.com/mirror/libdvdread/archive/$(COMPONENT_GIT_HASH).zip
 COMPONENT_PROJECT_URL = http://dvdnav.mplayerhq.hu
 COMPONENT_LICENSE = GPLv2.0
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
+
+COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf -f -i )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
@@ -44,3 +48,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
