@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccache
-COMPONENT_VERSION=	3.3.3
+COMPONENT_VERSION=	3.3.4
 COMPONENT_PROJECT_URL=	http://ccache.samba.org/
 COMPONENT_DOWNLOAD_URL=	http://samba.org/ftp/$(COMPONENT_NAME)/
 COMPONENT_DOCUMENTATION_URL =	http://ccache.samba.org/manual.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:2985bc5e32ebe38d2958d508eb54ddcad39eed909489c0c2988035214597ca54
+	sha256:fa9d7f38367431bc86b19ad107d709ca7ecf1574fdacca01698bdf0a47cd8567
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_FMRI=		developer/ccache
@@ -33,9 +33,9 @@ COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 CFLAGS  +=			-D_GNU_SOURCE -D__EXTENSIONS__ --std=c99
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 
@@ -46,6 +46,8 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
