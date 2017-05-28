@@ -23,18 +23,22 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libvorbis
-COMPONENT_VERSION=	1.3.4
+COMPONENT_VERSION=	1.3.5
+COMPONENT_FMRI=		library/libvorbis
+COMPONENT_CLASSIFICATION=		System/Libraries
+COMPONENT_SUMMARY=		libvorbis - general-purpose compressed audio format
 COMPONENT_PROJECT_URL=	http://xiph.org/vorbis/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eee09a0a13ec38662ff949168fe897a25d2526529bc7e805305f381c219a1ecb
-COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/vorbis/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libvorbis
+  sha256:6efbcecdd3e5dfbf090341b485da9d176eb250d893e3eb378c428a2db38301ce
+COMPONENT_ARCHIVE_URL=\
+  http://downloads.xiph.org/releases/vorbis/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	BSD
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-docs
@@ -46,10 +50,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += system/library
