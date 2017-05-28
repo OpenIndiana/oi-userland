@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdiscid
-COMPONENT_VERSION= 0.6.1
+COMPONENT_VERSION= 0.6.2
 COMPONENT_SUMMARY= Library for creating MusicBrainz DiscIDs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:aceb2bd1a8d15d69b2962dec7c51983af32ece318cbbeb1c43c39802922f6dd5
+  sha256:f9e443ac4c0dd4819c2841fcc82169a46fb9a626352cdb9c7f65dd3624cd31b9
 COMPONENT_ARCHIVE_URL= \
   http://ftp.musicbrainz.org/pub/musicbrainz/libdiscid/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://musicbrainz.org/doc/libdiscid
@@ -39,8 +39,7 @@ PATH=$(PATH.gnu)
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
 
-# For tests to pass
-ENV = /usr/bin/env -i
+unexport SHELLOPTS
 
 build: $(BUILD_32_and_64)
 
