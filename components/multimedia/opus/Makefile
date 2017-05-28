@@ -10,32 +10,32 @@
 
 #
 # Copyright 2013 EveryCity Ltd. All rights reserved.
-# Copyright 2016 Aurelien Larcher. All rights reserved.
+# Copyright 2016-2017 Aurelien Larcher. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=       opus
-COMPONENT_VERSION=    1.1.3
-COMPONENT_REVISION=   1
+COMPONENT_VERSION=    1.1.5
 COMPONENT_PROJECT_URL=http://opus-codec.org/
 COMPONENT_SUMMARY=    Opus is an open, royalty-free, versatile audio codec for interactive speech and music transmission over the Internet
 COMPONENT_FMRI=       library/opus
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=    $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=  \
-    sha256:58b6fe802e7e30182e95d0cde890c0ace40b6f125cffc50635f0ad2eef69b633
-COMPONENT_ARCHIVE_URL=http://downloads.xiph.org/releases/opus/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:eb84981ca0f40a3e5d5e58d2e8582cb2fee05a022825a6dfe14d14b04eb563e4
+COMPONENT_ARCHIVE_URL= \
+  http://downloads.xiph.org/releases/opus/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=    BSD
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-ENV+= -i
+unexport SHELLOPTS
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
