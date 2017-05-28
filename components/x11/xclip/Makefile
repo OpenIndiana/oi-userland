@@ -23,16 +23,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xclip
-COMPONENT_VERSION=	0.12
+COMPONENT_VERSION=	0.13
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/xclip/
+COMPONENT_PROJECT_URL=	https://github.com/astrand/xclip
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b7c7fad059ba446df5692d175c2a1d3816e542549661224806db369a0d716c45
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/xclip/files/xclip/0.12/xclip-0.12.tar.gz/download
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:ca5b8804e3c910a66423a882d79bf3c9450b875ac8528791fb60ec9de667f758
+COMPONENT_ARCHIVE_URL= \
+  https://github.com/astrand/xclip/archive/$(COMPONENT_VERSION).tar.gz
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = (cd $(@D); autoreconf -f -i)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -41,11 +45,6 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
