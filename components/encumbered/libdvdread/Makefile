@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdvdread
 COMPONENT_VERSION= 5.0.4
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = library/video/libdvdread
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= Library for reading DVD video disks
