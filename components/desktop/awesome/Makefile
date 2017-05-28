@@ -14,7 +14,6 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         awesome
-COMPONENT_REVISION=     1
 COMPONENT_VERSION=      4.1
 COMPONENT_PROJECT_URL=  https://awesomewm.org
 COMPONENT_SUMMARY=      A highly configurable, next generation framework window manager for X.
@@ -33,7 +32,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_BINDIR.64=	$(CONFIGURE_BINDIR.32)
 
-CMAKE_OPTIONS += "-DLUA_LIBRARY=/usr/lib/64/liblua.so"
+
+# CMake bug workaround: https://gitlab.kitware.com/cmake/cmake/issues/16404
+CMAKE_OPTIONS += "-DLUA_INCLUDE_DIR=/usr/include/lua5.3"
 
 
 build:		$(BUILD_64)
@@ -47,7 +48,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/xdg/libxdg-basedir
-REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
