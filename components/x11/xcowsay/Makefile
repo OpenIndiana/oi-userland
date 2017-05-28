@@ -15,31 +15,27 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcowsay
-COMPONENT_VERSION=	1.3
+COMPONENT_VERSION=	1.4
 COMPONENT_PROJECT_URL=	http://www.doof.me.uk/xcowsay/
 COMPONENT_FMRI=		desktop/xcowsay
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:e055a35d7bb8bf17f07b5336bbd081a1a53f0b02f83c250b714bb6531789ebcf
+	sha256:c7e261ba0262c3821c106ccb6d6f984e3c2da999ad10151364e55d1c699f8e51
 COMPONENT_ARCHIVE_URL=	http://www.nickg.me.uk/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	xcowsay - displays a cute cow and message
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
 
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
