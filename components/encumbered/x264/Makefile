@@ -16,8 +16,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= x264
-COMPONENT_LIB_VERSION= 144
-COMPONENT_SNAPSHOT_DATE= 20150712
+COMPONENT_LIB_VERSION= 148
+COMPONENT_SNAPSHOT_DATE= 20170527
 COMPONENT_VERSION= snapshot-$(COMPONENT_SNAPSHOT_DATE)-2245-stable
 IPS_COMPONENT_VERSION= 0.$(COMPONENT_LIB_VERSION).0.$(COMPONENT_SNAPSHOT_DATE)
 COMPONENT_FMRI = library/video/x264
@@ -26,7 +26,7 @@ COMPONENT_SUMMARY= H.264 encoder library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4ce9d80f472469533adb99723fe43e474b261979dfa79f6a5d0a368f13bbeb90
+  sha256:b28da2d039c88e2ee340722c96adb4bff283320ea4d00ae2e88221c8e21e60fd
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.videolan.org/pub/videolan/x264/snapshots/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.videolan.org/developers/x264.html
@@ -35,12 +35,12 @@ COMPONENT_LICENSE_FILE = COPYING
 
 PKG_MACROS += COMPONENT_LIB_VERSION=$(COMPONENT_LIB_VERSION)
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 CFLAGS.32 = -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
