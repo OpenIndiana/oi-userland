@@ -15,14 +15,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libmatroska
-COMPONENT_VERSION=        1.4.2
+COMPONENT_VERSION=        1.4.7
 COMPONENT_PROJECT_URL=    http://matroska.org/
 COMPONENT_SUMMARY=        Matroska Video Container
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=        \
-    sha256:bea10320f1f1fd121bbd7db9ffc77b2518e8269f00903549c5425478bbf8393f
-COMPONENT_ARCHIVE_URL=        http://dl.matroska.org/downloads/libmatroska/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:46441eb3bae9f970f68affaa211dd74302a7072dcd2becfb1114da11b66525fa
+COMPONENT_ARCHIVE_URL= \
+  http://dl.matroska.org/downloads/libmatroska/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	LICENSE.LGPL
 COMPONENT_FMRI=		library/video/libmatroska
