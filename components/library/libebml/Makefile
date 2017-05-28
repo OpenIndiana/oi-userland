@@ -15,14 +15,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libebml
-COMPONENT_VERSION=        1.3.1
+COMPONENT_VERSION=        1.3.4
 COMPONENT_PROJECT_URL=    http://matroska-org.github.io/libebml/
 COMPONENT_SUMMARY=        Extensible Binary Markup Language
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=        \
-    sha256:195894b31aaca55657c9bc157d744f23b0c25597606b97cfa5a9039c4b684295
-COMPONENT_ARCHIVE_URL=        http://dl.matroska.org/downloads/libebml/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:c50d3ecf133742c6549c0669c3873f968e11a365a5ba17b2f4dc339bbe51f387
+COMPONENT_ARCHIVE_URL= \
+  http://dl.matroska.org/downloads/libebml/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	LICENSE.LGPL
 COMPONENT_FMRI=		library/libebml
