@@ -1,11 +1,13 @@
---- lgi-0.9.1/lgi/Makefile	Fri May 27 21:56:36 2016
-+++ lgi-0.9.1/lgi/Makefile	Sun May 28 17:32:44 2017
+components/runtime/lua-53 is 5.3 - not suitable for upstream
+
+--- lgi-0.9.1/lgi/Makefile	Sun May 28 16:35:56 2017
++++ lgi-0.9.1/lgi/Makefile	Sun May 28 16:46:42 2017
 @@ -17,7 +17,7 @@
  VERSION_FILE = version.lua
  
  ifneq ($(filter cygwin% msys% mingw%, $(HOST_OS)),)
 -CORE = corelgilua51.dll
-+CORE = corelgilua52.dll
++CORE = corelgilua53.dll
  LIBFLAG = -shared
  LIBS += -llua
  else
@@ -14,29 +16,29 @@
  GOBJECT_INTROSPECTION_LIBDIR = $(shell pkg-config --variable=libdir $(GINAME))
  else
 -CORE = corelgilua51.so
-+CORE = corelgilua52.so
++CORE = corelgilua53.so
  LIBFLAG = -shared
  CCSHARED = -fPIC
  endif
---- lgi-0.9.1/lgi/core.c	Fri May 27 21:56:36 2016
-+++ lgi-0.9.1/lgi/core.c	Sun May 28 17:32:28 2017
+--- lgi-0.9.1/lgi/core.c	Sun May 28 16:47:16 2017
++++ lgi-0.9.1/lgi/core.c	Sun May 28 16:47:22 2017
 @@ -673,7 +673,7 @@
  }
  
  G_MODULE_EXPORT int
 -luaopen_lgi_corelgilua51 (lua_State* L)
-+luaopen_lgi_corelgilua52 (lua_State* L)
++luaopen_lgi_corelgilua53 (lua_State* L)
  {
    LgiStateMutex *mutex;
    gint state_id;
---- lgi-0.9.1/lgi/core.lua	Sun May 28 17:31:51 2017
-+++ lgi-0.9.1/lgi/core.lua	Sun May 28 17:32:32 2017
+--- lgi-0.9.1/lgi/core.lua	Sun May 28 16:53:32 2017
++++ lgi-0.9.1/lgi/core.lua	Sun May 28 16:53:35 2017
 @@ -11,7 +11,7 @@
  -- This module decides what kind of core routines should be loaded.
  -- Currently only one implementation exists, standard-Lua C-side
  -- implementation, LuaJIT-FFI-based one is planned.
 -local core = require 'lgi.corelgilua51'
-+local core = require 'lgi.corelgilua52'
++local core = require 'lgi.corelgilua53'
  
  -- Helper methods for converting between CamelCase and uscore_delim
  -- names.

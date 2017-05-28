@@ -27,14 +27,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lgi
 COMPONENT_VERSION=      0.9.1
-COMPONENT_SUMMARY=	Dynamic Lua binding to GObject libraries using GObject-Introspection
+COMPONENT_SUMMARY=	Dynamic Lua 5.3 binding to GObject libraries using GObject-Introspection
 COMPONENT_PROJECT_URL=  https://github.com/pavouk/lgi
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
         sha256:0c70fb2b1ca17d333b7e2c18d5fc943944b5872e063de60df3035ee20b6dafba
 COMPONENT_ARCHIVE_URL=  https://github.com/pavouk/lgi/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_FMRI=	library/lua/lgi-52
+COMPONENT_FMRI=	library/lua/lgi-53
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -53,8 +53,8 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += PATH=$(PATH.$(BITS))
 
-COMPONENT_INSTALL_ARGS += LUA_VERSION=5.2 PREFIX=$(USRDIR)
-COMPONENT_INSTALL_ARGS.64 += LUA_LIBDIR=$(USRDIR)/lib/lua/5.2/64
+COMPONENT_INSTALL_ARGS += LUA_VERSION=5.3 PREFIX=$(USRDIR)
+COMPONENT_INSTALL_ARGS.64 += LUA_LIBDIR=$(USRDIR)/lib/lua/5.3/64
 
 build: $(BUILD_32_and_64)
 
@@ -66,4 +66,4 @@ test: $(NO_TESTS)
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/lua-53
