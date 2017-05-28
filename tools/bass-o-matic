@@ -123,8 +123,10 @@ def FindComponentPaths(path, debug=False, subdir='components',
                 if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
                     paths.append(os.path.dirname(line))
 
-        # Add meta-packages/history
-        paths.append('meta-packages/history')
+        # Add meta-packages/history only if we build the main repository, where
+        # subdir is equal to 'components'.
+        if subdir is 'components':
+            paths.append('meta-packages/history')
                     
         paths = list(set(paths))
 
