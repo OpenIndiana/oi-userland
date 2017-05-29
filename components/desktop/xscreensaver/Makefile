@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2017 Alexander Pyhalov
 #
 
@@ -17,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
 COMPONENT_VERSION=	5.35
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.jwz.org/xscreensaver/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -27,9 +28,9 @@ COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/xscreen
 
 PATCH_LEVEL=		0
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION=	( cp -r $(COMPONENT_DIR)/files/po-sun/* $(SOURCE_DIR)/po && \
 					cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver && \
@@ -43,7 +44,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
 			cp -r $(SOURCE_DIR)/* $(@D) && \
                         cd $(@D) && autoconf
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH = $(PATH.gnu)
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
