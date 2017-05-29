@@ -23,6 +23,7 @@
 
 MODULES_ENV=	. /etc/profile.d/modules.sh
 
+MODULE_PURGE=	module purge
 MODULE_LOAD=	module load
 MODULE_UNLOAD=	module unload
 
