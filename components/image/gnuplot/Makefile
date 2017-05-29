@@ -21,39 +21,63 @@
 
 #
 # Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017, Aurelien Larcher.
 #
 
 include ../../../make-rules/shared-macros.mk
-#libreadline.so needs libcurses.so, but -z ignore will not leave a dependency.
-LD_Z_IGNORE=
 
 COMPONENT_NAME=		gnuplot
-COMPONENT_VERSION=	4.6.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	5.0.6
+COMPONENT_FMRI=	image/gnuplot
+COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
+COMPONENT_SUMMARY=	gnuplot - plotting utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://gnuplot.info/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:6e60adb5039a3541f407c2ade670004178b376754c424c13f0be24c7960c17be
-COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/gnuplot
+  sha256:5bbe4713e555c2e103b7d4ffd45fca69551fff09cf5c3f9cb17428aaacc9b460
+COMPONENT_ARCHIVE_URL=  \
+  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_LICENSE=	gnuplot License
 
 COMPONENT_BUILD_TARGETS = all info
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(USRBINDIR.64):$(PATH.gnu)
+
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += --sysconfdir=/etc/gnu
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS  += --without-libcerf
+CONFIGURE_OPTIONS  += --with-qt=no
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/graphics/wxwidgets
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
