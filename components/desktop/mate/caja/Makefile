@@ -15,15 +15,15 @@
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		caja
-COMPONENT_VERSION=	1.16.1
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
-COMPONENT_SUMMARY=	File manager for the MATE desktop
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:5d201a43bf8aff9366410d03a1a53906073c6bca2201887fcf513050bd69789d
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         caja
+COMPONENT_VERSION=      1.16.5
+COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
+COMPONENT_SUMMARY=      File manager for the MATE desktop
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:fb17721a192a271d05b8ede4fb6202906c9948891f2e219a7677069044ca7553
+COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -35,21 +35,21 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION=	\
-	( cp $(COMPONENT_DIR)/files/icons/*.png $(@D)/icons && \
-		cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
+COMPONENT_PREP_ACTION=  \
+        ( cp $(COMPONENT_DIR)/files/icons/*.png $(@D)/icons && \
+                cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
 
 # Localization files should be updated
 #COMPONENT_PRE_CONFIGURE_ACTION = \
 #  ( cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
 #    cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--with-gnome-distributor="The OpenIndiana Project"
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS+=     --sysconfdir=/etc
+CONFIGURE_OPTIONS+=     --disable-static
+CONFIGURE_OPTIONS+=     --disable-scrollkeeper
+CONFIGURE_OPTIONS+=     --localstatedir=/var/lib
+CONFIGURE_OPTIONS+=     --with-gnome-distributor="The OpenIndiana Project"
+CONFIGURE_OPTIONS+=     --libexecdir=/usr/lib/$(COMPONENT_NAME)
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
@@ -57,9 +57,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:          $(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64)
+install:        $(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
