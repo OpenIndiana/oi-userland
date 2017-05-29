@@ -28,14 +28,14 @@ COMPILER=gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vala
-COMPONENT_VERSION=	0.30.0
+COMPONENT_VERSION=	0.36.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Vala
 COMPONENT_ARCHIVE_HASH= \
-	sha256:61f0337b000f7ed6ef8c1fea87e0047d9bd7c0f91dd9c5b4eb70fd3fb883dedf
+	sha256:d27c9d11302ce6e521d616c89ea509f887de449fa4728d004e51d8f9646a775e
 COMPONENT_BUGDB=        gnome/dev-tools
 COMPONENT_ANITYA_ID=	5065
 
-TPNO=			24623
+TPNO=			34495
 
 # 23285126 - vala integrated tests should be hooked up
 TEST_TARGET= $(SKIP_TEST)

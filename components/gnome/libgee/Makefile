@@ -30,13 +30,13 @@ COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgee
-COMPONENT_VERSION=	0.18.0
+COMPONENT_VERSION=	0.20.0
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:4ad99ef937d071b4883c061df40bfe233f7649d50c354cf81235f180b4244399
+	sha256:21308ba3ed77646dda2e724c0e8d5a2f8d101fb05e078975a532d7887223c2bb
 COMPONENT_BUGDB=        gnome/libraries
 COMPONENT_ANITYA_ID=	1625
 
-TPNO=			24755
+TPNO=			34500
 
 # Needs updated glib2, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)

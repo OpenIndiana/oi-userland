@@ -28,14 +28,14 @@ COMPILER=gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib-networking
-COMPONENT_VERSION=	2.46.0
+COMPONENT_VERSION=	2.50.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3655526d6dbfc697c22cd9b279e14599f8449f5802b12d84485bdc52d96482f0
+    sha256:3f1a442f3c2a734946983532ce59ed49120319fdb10c938447c373d5e5286bee
 COMPONENT_BUGDB=	gnome/glib
 COMPONENT_ANITYA_ID=	10024
 
-TPNO=			25285
+TPNO=			34497
 
 # Needs updated glib2, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
