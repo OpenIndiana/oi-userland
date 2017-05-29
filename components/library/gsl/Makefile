@@ -14,28 +14,27 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME			= gsl
-COMPONENT_VERSION		= 2.1
-COMPONENT_SUMMARY		= GSL - GNU Scientific Library
-COMPONENT_SRC			= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH	= \
-	sha256:59ad06837397617f698975c494fe7b2b698739a59e2fcf830b776428938a0c66
-COMPONENT_ARCHIVE_URL	= ftp://ftp.gnu.org/gnu/gsl/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI			= library/math/gsl
+COMPONENT_NAME=           gsl
+COMPONENT_VERSION=        2.3
+COMPONENT_SUMMARY=        GSL - GNU Scientific Library
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=   sha256:562500b789cd599b3a4f88547a7a3280538ab2ff4939504c8b4ac4ca25feadfb
+COMPONENT_ARCHIVE_URL=    ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=           developer/gsl
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE		= GPL v3
-COMPONENT_LICENSE_FILE	= $(COMPONENT_NAME).license
+COMPONENT_LICENSE=        GPL v3
+COMPONENT_LICENSE_FILE=   COPYING
+COMPONENT_PROJECT_URL=    http://www.gnu.org/software/gsl/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
-CONFIGURE_OPTIONS 	+=	--disable-static
+CONFIGURE_OPTIONS 	+=--disable-static
 
-include $(WS_TOP)/make-rules/shared-targets.mk
 	
 build:		$(BUILD_32_and_64)
 
@@ -43,6 +42,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
