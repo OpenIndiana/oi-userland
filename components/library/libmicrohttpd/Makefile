@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
 COMPONENT_VERSION=	0.9.55
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libmicrohttpd/
 COMPONENT_FMRI=		library/libmicrohttpd
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
