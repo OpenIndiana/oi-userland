@@ -52,6 +52,9 @@ BJAM=./bjam --v2 -d+2 -q address-model=$(BITS) \
 
 COMPONENT_BUILD_ENV += CC="$(CC)" CXX="$(CXX)" LDFLAGS="$(LDFLAGS)"
 
+# Force CPU detection to workaround failure in some virtual environments
+COMPONENT_BUILD_ENV += OPENBLAS_CORETYPE=Prescott
+
 COMPONENT_PRE_BUILD_ACTION = \
 			$(MODULES_ENV); $(MODULE_PURGE); \
 			$(MODULE_LOAD) mpich/gcc/$(BITS)/latest
@@ -116,6 +119,9 @@ REQUIRED_PACKAGES += library/icu
 # Build dependencies for boost mpi
 REQUIRED_PACKAGES += library/mpich/gcc/modulefiles
 REQUIRED_PACKAGES += library/mpich/gcc
+
+# Build dependencies for boost numpy
+REQUIRED_PACKAGES += library/python/numpy-27
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
