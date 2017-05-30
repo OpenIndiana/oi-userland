@@ -49,6 +49,9 @@ CONFIGURE_PREFIX =	/usr/gnu
 # Fix 64-bit linking via compiler.
 LDFLAGS += $(CC_BITS)
 
+# Choose a standard in case the default changes.
+CXXFLAGS += -std=sun03
+
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
 CONFIGURE_OPTIONS +=	--enable-rpath
