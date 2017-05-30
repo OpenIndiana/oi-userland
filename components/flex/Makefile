@@ -38,6 +38,9 @@ TPNO=			35362
 
 LDFLAGS += $(CC_BITS)
 
+# Evaluation builds (x86 full builds only) fail generating .po files.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION +=	( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
