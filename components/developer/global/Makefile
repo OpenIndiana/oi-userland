@@ -13,19 +13,19 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		global
-COMPONENT_VERSION=	6.5.6
+COMPONENT_NAME=         global
+COMPONENT_VERSION=	6.5.7
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/global
 COMPONENT_SUMMARY=	A source code tagging system.
 COMPONENT_DESCRIPTION=	GNU GLOBAL is a source code tagging system that works the same way across diverse environments, such as Emacs editor, Vi editor, Less viewer, Bash shell, various web browsers, etc.
 COMPONENT_FMRI=         developer/global
-COMPONENT_CLASSIFICATION=	Development/Editors
+COMPONENT_CLASSIFICATION=Development/Editors
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:122f9afa69a8daa0f64c12db7f02981fe573f51a163fa3829ed4f832cd281505
+COMPONENT_ARCHIVE_HASH= sha256:d9c08fa524f9499b54241cb2d72f8a7df01453b6d5e012a63784ded08e3acd32
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/global/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
