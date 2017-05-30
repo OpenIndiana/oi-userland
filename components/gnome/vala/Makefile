@@ -40,6 +40,9 @@ TPNO=			34495
 # 23285126 - vala integrated tests should be hooked up
 TEST_TARGET= $(SKIP_TEST)
 
+# Needs updated glib, not available on S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
