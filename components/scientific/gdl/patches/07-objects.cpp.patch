@@ -1,0 +1,32 @@
+--- gdl-0.9.7/src/objects.cpp.orig	Wed May 31 14:10:14 2017
++++ gdl-0.9.7/src/objects.cpp	Wed May 31 14:38:58 2017
+@@ -20,6 +20,11 @@
+ #include <limits>
+ #include <ios>
+ 
++#if defined(__sun__)
++ #include <sys/time.h>
++ #include <sys/loadavg.h>
++#endif
++
+ #include "str.hpp"
+ #include "gdlexception.hpp"
+ #include "initsysvar.hpp"
+@@ -935,7 +940,16 @@
+     {
+       return default_num_threads;
+     }
+-   
++
++#elif defined(__sun__)
++  int nelem = 3;
++  double loadavg[nelem];
++  (void)getloadavg(loadavg,nelem);
++
++  if (.5 < loadavg[LOADAVG_15MIN]) 
++	avload = 1;
++
++  return (nbofproc - avload); 
+ #elif defined (__unix) || defined(__unix__)
+   iff=freopen("/proc/loadavg","r",stderr);
+   fclose(stderr);
