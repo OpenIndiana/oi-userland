@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mongodb
-COMPONENT_VERSION= 3.4.3
+COMPONENT_VERSION= 3.4.4
 COMPONENT_SUMMARY= MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
 COMPONENT_FMRI=	database/mongodb-34
@@ -23,7 +23,7 @@ COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://fastdl.mongodb.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:889d49312ed072130936cfa3281123a0e89228c04f3f8e992a0b92669b28d767
+COMPONENT_ARCHIVE_HASH=	sha256:09e962bf3428474b9790bbd464cb6176817f9da6121c30e096240dbb4d51c9f6
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	APACHE-2.0.txt
 
@@ -31,8 +31,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# MongoDB 3.4 wants GCC 5 compiler
-GCC_ROOT=/usr/gcc/5
+# MongoDB 3.4 wants GCC 7 compiler
+GCC_ROOT=/usr/gcc/7
 
 BUILD_TOOLS= $(BUILD_DIR)/tools/.built
 INSTALL_TOOLS= $(BUILD_DIR)/tools/.installed
@@ -53,6 +53,8 @@ COMPONENT_BUILD_ARGS += --prefix=$(PROTO_DIR)/$(MONGO_PREFIX)
 COMPONENT_BUILD_ARGS += --use-system-zlib
 COMPONENT_BUILD_ARGS += --ssl
 COMPONENT_BUILD_ARGS += --release
+# Fixes gcc 7 build
+COMPONENT_BUILD_ARGS += --disable-warnings-as-errors
 
 COMPONENT_BUILD_TARGETS=	all
 
@@ -76,7 +78,7 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/build/scons
-REQUIRED_PACKAGES += developer/gcc-5
+REQUIRED_PACKAGES += developer/gcc-7
 REQUIRED_PACKAGES += developer/golang
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
