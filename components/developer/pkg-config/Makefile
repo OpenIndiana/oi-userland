@@ -21,27 +21,40 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Aurelien Larcher
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg-config
-COMPONENT_VERSION=	0.28
-COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/pkg-config
+COMPONENT_VERSION=	0.29.2
+COMPONENT_FMRI=	developer/build/pkg-config
+COMPONENT_SUMMARY=	A tool to query library build-time information
+COMPONENT_CLASSIFICATION=	Development/System
+COMPONENT_PROJECT_URL= \
+  https://www.freedesktop.org/wiki/Software/pkg-config
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:6b6eb31c6ec4421174578652c7e141fdaae2dabad1021f420d8713206ac1f845
-COMPONENT_ARCHIVE_URL=	http://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591
+COMPONENT_ARCHIVE_URL= \
+  https://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# otherwise our default PKG_CONFIG_PATH will change to the 64-bit libdir
-#CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
+PATH=$(PATH.gnu)
 
-COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
 ASLR_MODE = $(ASLR_ENABLE)
+
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Strip make lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^Making/d" ' \
+	'-e "/^make/d" '
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -50,6 +63,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += developer/gnome/gettext
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
