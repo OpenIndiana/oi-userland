@@ -1,25 +1,26 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2017 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/image/djvulibre@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=info.classification value="org.opensolaris.category.2008:Applications/Graphics and Imaging"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license='GPLv2'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/any2djvu
 file path=usr/bin/bzz
@@ -42,31 +43,17 @@ file path=usr/bin/djvutxt
 file path=usr/bin/djvuxmlparser
 file path=usr/include/libdjvu/ddjvuapi.h
 file path=usr/include/libdjvu/miniexp.h
-link path=usr/lib/$(MACH64)/libdjvulibre.so target=libdjvulibre.so.21.4.0
-link path=usr/lib/$(MACH64)/libdjvulibre.so.21 target=libdjvulibre.so.21.4.0
-file path=usr/lib/$(MACH64)/libdjvulibre.so.21.4.0
+link path=usr/lib/$(MACH64)/libdjvulibre.so target=libdjvulibre.so.21.6.0
+link path=usr/lib/$(MACH64)/libdjvulibre.so.21 target=libdjvulibre.so.21.6.0
+file path=usr/lib/$(MACH64)/libdjvulibre.so.21.6.0
 file path=usr/lib/$(MACH64)/pkgconfig/ddjvuapi.pc
-link path=usr/lib/libdjvulibre.so target=libdjvulibre.so.21.4.0
-link path=usr/lib/libdjvulibre.so.21 target=libdjvulibre.so.21.4.0
-file path=usr/lib/libdjvulibre.so.21.4.0
+link path=usr/lib/libdjvulibre.so target=libdjvulibre.so.21.6.0
+link path=usr/lib/libdjvulibre.so.21 target=libdjvulibre.so.21.6.0
+file path=usr/lib/libdjvulibre.so.21.6.0
 file path=usr/lib/pkgconfig/ddjvuapi.pc
 file path=usr/share/djvu/osi/cs/messages.xml
 file path=usr/share/djvu/osi/de/libdjvu++.xml
 file path=usr/share/djvu/osi/de/messages.xml
-file path=usr/share/djvu/osi/desktop/djvulibre-mime.xml
-file path=usr/share/djvu/osi/desktop/hi-djvu.svgz
-file path=usr/share/djvu/osi/desktop/hi128-djvu.png
-file path=usr/share/djvu/osi/desktop/hi16-djvu.png
-file path=usr/share/djvu/osi/desktop/hi20-djvu.png
-file path=usr/share/djvu/osi/desktop/hi22-djvu.png
-file path=usr/share/djvu/osi/desktop/hi24-djvu.png
-file path=usr/share/djvu/osi/desktop/hi256-djvu.png
-file path=usr/share/djvu/osi/desktop/hi32-djvu.png
-file path=usr/share/djvu/osi/desktop/hi48-djvu.png
-file path=usr/share/djvu/osi/desktop/hi64-djvu.png
-file path=usr/share/djvu/osi/desktop/hi72-djvu.png
-file path=usr/share/djvu/osi/desktop/hi96-djvu.png
-file path=usr/share/djvu/osi/desktop/register-djvu-mime
 file path=usr/share/djvu/osi/en/djvutools-reference.xml
 file path=usr/share/djvu/osi/en/libdjvu++.xml
 file path=usr/share/djvu/osi/en/messages.xml
@@ -80,6 +67,18 @@ file path=usr/share/djvu/osi/zh/messages.xml
 file path=usr/share/djvu/pubtext/DjVuMessages.dtd
 file path=usr/share/djvu/pubtext/DjVuOCR.dtd
 file path=usr/share/djvu/pubtext/DjVuXML-s.dtd
+file path=usr/share/icons/hicolor/128x128/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/22x22/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/djvu.png
+file path=usr/share/icons/hicolor/scalable/mimetypes/djvu.svgz
 file path=usr/share/man/man1/any2djvu.1
 file path=usr/share/man/man1/bzz.1
 file path=usr/share/man/man1/c44.1
@@ -99,4 +98,6 @@ file path=usr/share/man/man1/djvused.1
 file path=usr/share/man/man1/djvuserve.1
 file path=usr/share/man/man1/djvutoxml.1
 file path=usr/share/man/man1/djvutxt.1
+file path=usr/share/man/man1/djvuxml.1
 file path=usr/share/man/man1/djvuxmlparser.1
+file path=usr/share/mime/packages/djvulibre-mime.xml
