@@ -20,30 +20,34 @@
 #
 
 #
-# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS = 32_and_64
-COMPILER=gcc
+BUILD_BITS= 		64_and_32
+COMPILER=		gcc
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		vala
-COMPONENT_VERSION=	0.36.0
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Vala
+COMPONENT_NAME=		gnome-autoar
+COMPONENT_VERSION=	0.2.2
+COMPONENT_PROJECT_URL=	https://developer.gnome.org/gnome-autoar/ 
 COMPONENT_ARCHIVE_HASH= \
-	sha256:d27c9d11302ce6e521d616c89ea509f887de449fa4728d004e51d8f9646a775e
-COMPONENT_BUGDB=        gnome/dev-tools
-COMPONENT_ANITYA_ID=	5065
+    sha256:e1fe2c06eed30305c38bf0939c72b0e51b4716658e2663a0cf4a4bf57874ca62
+COMPONENT_BUGDB=        gnome/libraries
+COMPONENT_ANITYA_ID=	15236
 
-TPNO=			34495
+TPNO=			34570
 
-# 23285126 - vala integrated tests should be hooked up
+# Test directory exists, but gmake test doesn't provide anything useful
 TEST_TARGET= $(SKIP_TEST)
 
-# Needs updated glib, not available on S11.
+# Needs gobject-introspection, not available in S11
 include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
-REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-gtk-doc
+
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libarchive

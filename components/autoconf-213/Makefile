@@ -20,30 +20,31 @@
 #
 
 #
-# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		nano
-COMPONENT_VERSION=	2.8.4
-COMPONENT_PROJECT_URL=	http://www.nano-editor.org/
+COMPONENT_NAME=		autoconf
+COMPONENT_VERSION=	2.13
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:78a2f3b3f6b500fad995c5e207d2816cbd6b531154aa2a3a2bd50c8fdf7dc57f
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/v2.8/$(COMPONENT_ARCHIVE)
-COMPONENT_ANITYA_ID=	2046
+    sha256:35eb09ad59d78726349bfda05922f892453a2cbc6ec7fe54eb18615fb0c09fd5
+TPNO=			34462
 
-TPNO=			35626
+# AC_F77_LIBRARY_LDFLAGS test wouldn't find ./../config.sub
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-TEST_TARGET= $(NO_TESTS)
-include $(WS_MAKE_RULES)/common.mk
+CONFIGURE_OPTIONS += --program-suffix=-$(COMPONENT_VERSION)
+CONFIGURE_OPTIONS += --datadir=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
-# Ensure ancient autoconf scripts are overwritten with fixed versions that
-# properly detect SunOS 5.x hosts.
-COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-CPPFLAGS += -I$(USRINCDIR)/ncurses
-CFLAGS += -I$(USRINCDIR)/ncurses
+COMPONENT_TEST_ENV += F77=gfortran CC=gcc
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "/Making/d"' \
+        '-e "/Test/d"' \
+        '-e "/Entering directory/d"' \
+        '-e "/Leaving directory/d"'
 
-REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += text/groff
+REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES += $(PERL_PKG)

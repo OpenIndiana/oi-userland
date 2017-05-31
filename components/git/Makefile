@@ -23,18 +23,21 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+# Studio compiler failed to build ref-filter.c:
+# "ref-filter.c", line 223: void function cannot return value
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.12.0
+COMPONENT_VERSION=	2.13.0
 COMPONENT_PROJECT_URL=	http://git-scm.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1821766479062d052cc1897d0ded95212e81e5c7f1039786bc4aec2225a32027
+    sha256:4bbf2ab6f2341253a38f95306ec7936833eb1c42572da5c1fa61f0abb2191258
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_ANITYA_ID=	5350
 
-TPNO=			34354
+TPNO=			35506
 
 #
 # man pages are a separate archive
@@ -42,7 +45,7 @@ TPNO=			34354
 COMPONENT_SRC_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_SRC_1).tar.xz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:8b8356f8d50eff6499c5d05e87c106a7b1b48bd16de1742fa022631909804773
+    sha256:8414f9c62e2b099cd0ea2ca22c55fb6538b13fc7a3ed1508fb9881aae42a97c9
 COMPONENT_ARCHIVE_URL_1 = https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 UNPACK_ARGS_1 =		-r $(COMPONENT_SRC_1)
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC_1)
@@ -61,6 +64,14 @@ PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
 CONFIGURE_SCRIPT    =	$(@D)/configure
 CPPFLAGS += "-I/usr/include/pcre"
+
+# Needed to use the SHA1 implementation from OpenSSL (rather than git's).
+# All three are needed otherwise the git top-level Makefile outputs:
+# * new build flags
+# and rebuilds everything using the git SHA1 implementation from sha1dc/sha1.c
+COMPONENT_BUILD_ENV +=	OPENSSL_SHA1=1
+COMPONENT_INSTALL_ENV += OPENSSL_SHA1=1
+COMPONENT_TEST_ENV +=	OPENSSL_SHA1=1
 
 CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS  +=	--libexecdir=$(USRLIBDIR)
@@ -89,7 +100,7 @@ COMPONENT_INSTALL_ARGS+=	INSTALLVENDORLIB='$$(VENDORPREFIX)'
 COMPONENT_INSTALL_ARGS+=	INSTALLVENDORMAN3DIR='$$(INSTALLMAN3DIR)'
 
 # get rid of terminal escape codes in test output
-COMPONENT_TEST_ENV = TERM=dumb
+COMPONENT_TEST_ENV += TERM=dumb
 
 # Some tests (like t5539-fetch-http-shallow.sh) fail if the proxies are set.
 COMPONENT_TEST_ENV += http_proxy=
@@ -99,6 +110,10 @@ COMPONENT_TEST_ENV += HTTPS_PROXY=
 
 # Some tests (like t9402-git-cvsserver-refs.sh) need GNU diff.
 COMPONENT_TEST_ENV += PATH="$(GNUBIN):$(PATH)"
+
+# We currently get slightly different results for 64-bit x86 and SPARC.
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).$(MACH).master
 
 # many failures; keep going; later versions of git are much cleaner
 COMPONENT_TEST_ARGS += -k -i

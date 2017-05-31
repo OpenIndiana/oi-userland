@@ -53,3 +53,31 @@ https://bz.apache.org/bugzilla/show_bug.cgi?id=57120
  ServerAdmin you@example.com
  ErrorLog "@exp_logfiledir@/error_log"
  TransferLog "@exp_logfiledir@/access_log"
+@@ -141,7 +145,8 @@
+ #   Some ECC cipher suites (http://www.ietf.org/rfc/rfc4492.txt)
+ #   require an ECC certificate which can also be configured in
+ #   parallel.
+-SSLCertificateFile "@exp_sysconfdir@/server.crt"
++SSLCertificateFile "/etc/certs/localhost/host.crt"
++#SSLCertificateFile "@exp_sysconfdir@/server.crt"
+ #SSLCertificateFile "@exp_sysconfdir@/server-dsa.crt"
+ #SSLCertificateFile "@exp_sysconfdir@/server-ecc.crt"
+ 
+@@ -151,7 +156,8 @@
+ #   you've both a RSA and a DSA private key you can configure
+ #   both in parallel (to also allow the use of DSA ciphers, etc.)
+ #   ECC keys, when in use, can also be configured in parallel
+-SSLCertificateKeyFile "@exp_sysconfdir@/server.key"
++SSLCertificateKeyFile "/etc/certs/localhost/host.key"
++#SSLCertificateKeyFile "@exp_sysconfdir@/server.key"
+ #SSLCertificateKeyFile "@exp_sysconfdir@/server-dsa.key"
+ #SSLCertificateKeyFile "@exp_sysconfdir@/server-ecc.key"
+ 
+@@ -172,6 +178,7 @@
+ #         to point to the certificate files. Use the provided
+ #         Makefile to update the hash symlinks after changes.
+ #SSLCACertificatePath "@exp_sysconfdir@/ssl.crt"
++SSLCACertificateFile "/etc/certs/localhost/host-ca/hostca.crt"
+ #SSLCACertificateFile "@exp_sysconfdir@/ssl.crt/ca-bundle.crt"
+ 
+ #   Certificate Revocation Lists (CRL):
