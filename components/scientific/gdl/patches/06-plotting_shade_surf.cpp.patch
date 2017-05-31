@@ -1,0 +1,19 @@
+--- gdl-0.9.7/src/plotting_shade_surf.cpp.orig	Mon May 29 09:53:32 2017
++++ gdl-0.9.7/src/plotting_shade_surf.cpp	Mon May 29 09:54:25 2017
+@@ -390,11 +390,11 @@
+         else actStream->SetColorMap1Ramp(decomposed, 0.5); 
+         //position of light Source. Plplot does not use only the direction of the beam but the position of the illuminating
+         //source. And its illumination looks strange. We try to make the ill. source a bit far in the good direction.
+-        PLFLT sun[3];
+-        sun[0]=xStart+(xEnd-xStart)*(0.5+lightSourcePos[0]);
+-        sun[1]=yStart+(yEnd-yStart)*(0.5+lightSourcePos[1]);
+-        sun[2]=zStart+(zEnd-zStart)*((1.0-zValue)+lightSourcePos[2]);
+-        actStream->lightsource(sun[0],sun[1],sun[2]);
++        PLFLT sunn[3];
++        sunn[0]=xStart+(xEnd-xStart)*(0.5+lightSourcePos[0]);
++        sunn[1]=yStart+(yEnd-yStart)*(0.5+lightSourcePos[1]);
++        sunn[2]=zStart+(zEnd-zStart)*((1.0-zValue)+lightSourcePos[2]);
++        actStream->lightsource(sunn[0],sunn[1],sunn[2]);
+         actStream->surf3d(xg1,yg1,map,cgrid1.nx,cgrid1.ny,meshOpt,NULL,0);
+ 
+         if (stopClip) stopClipping(actStream);
