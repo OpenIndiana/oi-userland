@@ -25,18 +25,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
-COMPONENT_VERSION=	4.5.0
+COMPONENT_VERSION=	4.5.1
 COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/screen/
 COMPONENT_FMRI=		terminal/screen
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:01c3a7c362185f35d6a95dff52d64337076496acd034d717de3c263500cfefb0
+COMPONENT_ARCHIVE_HASH=	sha256:97db2114dd963b016cd4ded34831955dcbe3251e5eee45ac2606e67e9f097b2d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
 COMPONENT_LICENSE= 	GPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -60,4 +59,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/texinfo
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
