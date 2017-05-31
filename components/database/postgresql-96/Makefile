@@ -17,11 +17,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	9.6
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:0187b5184be1c09034e74e44761505e52357248451b0c854dddec6c231fe50c9
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:df088372230b1dd21d87bb81686471508f4c42094d4f4f32b5d8e686fea69fa6
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.postgresql.org/
 
@@ -49,7 +49,6 @@ CONFIGURE_OPTIONS += --docdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/doc
 CONFIGURE_OPTIONS += --htmldir=/usr/postgres/$(COMPONENT_MJR_VERSION)/doc
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --with-system-tzdata=/usr/share/lib/zoneinfo
-CONFIGURE_OPTIONS.64 += --with-tcl
 CONFIGURE_OPTIONS.64 += --with-python
 CONFIGURE_OPTIONS.64 += --with-pam
 CONFIGURE_OPTIONS += --with-openssl
@@ -61,8 +60,6 @@ CONFIGURE_OPTIONS += --enable-thread-safety
 CONFIGURE_OPTIONS += --enable-dtrace
 CONFIGURE_OPTIONS += --enable-integer-datetimes
 CONFIGURE_OPTIONS += --with-includes=/usr/include
-CONFIGURE_OPTIONS += --with-tclconfig=/usr/lib
-CONFIGURE_OPTIONS.64 += --with-perl
 
 CONFIGURE_OPTIONS.32 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
@@ -102,9 +99,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
