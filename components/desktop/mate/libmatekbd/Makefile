@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmatekbd
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.2
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE keyboard shared library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7834c3d70892851bf5346e6b344662b5f8dc79a0f4a7cacbff5eac3bbfd26e9a
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:03df100cf931a1f6880a32b0b3eb90e82e81f6d17085bb44a2a7ca8551a00b0c 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -48,15 +48,15 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 REQIURED_PACKAGES += library/desktop/cairo
 REQIURED_PACKAGES += library/desktop/gdk-pixbuf
-REQIURED_PACKAGES += library/desktop/gtk2
+REQIURED_PACKAGES += library/desktop/gtk3
 REQIURED_PACKAGES += library/desktop/libxklavier
 REQIURED_PACKAGES += library/desktop/pango
 REQIURED_PACKAGES += library/glib2

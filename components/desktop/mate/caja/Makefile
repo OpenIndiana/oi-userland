@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja
-COMPONENT_VERSION=	1.16.1
+COMPONENT_VERSION=	1.18.3
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5d201a43bf8aff9366410d03a1a53906073c6bca2201887fcf513050bd69789d
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:b562c544f907944b2e1ce426b5e1d1d02886ecfff8d44f0a3ae2a2793ac39256 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -57,9 +57,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -68,7 +68,7 @@ REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

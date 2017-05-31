@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmatemixer
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.0
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Mixer library for MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:83ca5fbfd7d8c3904e5ebfd84c17e0b005682551541463f77f703fa97804cf09
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:b99209e310ba614c5b0bd6a97545ba974bc34a74cd29fd50189a5365a9ed7e27 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -49,9 +49,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

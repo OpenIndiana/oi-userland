@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-panel
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.2
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Panel of Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:085b4236f793556381769aeb11744abdebff37254b2ab3eb9f57008d9f93094a
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:6c4f5d63b173079c298ae2d05375081c2e452745f3ccf339da757bf83e5d3e17 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -43,7 +43,6 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS+= --with-gtk=2.0
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
@@ -51,9 +50,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -63,7 +62,7 @@ REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/mate/libmateweather
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop

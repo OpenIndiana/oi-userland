@@ -10,19 +10,20 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Ken Mays
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atril
-COMPONENT_VERSION=	1.16.1
+COMPONENT_VERSION=	1.18.0
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE PDF document viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c74a5f8c8603fa5952efb4343f055677e4474f1907080be9658d4456d3dc092f
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:c2284f17f7b683efa22615f00cf2768ea07667981d8304566e49c3d863de80fd 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	desktop/pdf-viewer/atril
 COMPONENT_CLASSIFICATION=	Applications/Office
 COMPONENT_LICENSE= GPLv3
@@ -43,9 +44,9 @@ CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -55,7 +56,7 @@ REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

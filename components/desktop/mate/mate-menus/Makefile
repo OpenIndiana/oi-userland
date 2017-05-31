@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-menus
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.0
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Menu of Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:85d51e02cd94f33b13265ba4847e93d99cef5ec3ce7ee4499958f3afe3013c33
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:f07cdb952934b732678ed37a9cd740c8860e9e2d0ddb4d73a8d06cdccfc87e16 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -60,15 +60,14 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) -p vendor-packages/64 ; \
 	if test -d vendor-packages-64 ; then \
 	    $(GNUCP) -rpd vendor-packages-64/matemenu* vendor-packages/64/ ; \
-	    $(GNUCP) -rpd vendor-packages-32/matemenu* vendor-packages/ ; \
 	fi ; )
 
 
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

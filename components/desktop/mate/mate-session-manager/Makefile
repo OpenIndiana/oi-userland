@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-session-manager
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.0
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:15a5b986c6ba32bab381ed68d21d50ca14fdbe1e2c28ca990a833f21539b41c6
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:1c50f7866d8c75c1a918754960c6629798d6cb0f8d06aa3e48516ea672c7d419 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -42,21 +42,20 @@ CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --with-gtk=2.0
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/dbus/dbus-x11

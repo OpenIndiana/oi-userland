@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-media
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.18.0
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Multimedia applications for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:87a6aab1635cdf0890b4f99b733eb786144c90730a96d04c41e05ea781cd0a20
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
+    sha256:94d26b96199a3b30e2050596d17e0125f86edf9ef009d4eb318308896f54296c 
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.18/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -42,20 +42,19 @@ CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --with-gtk=2.0
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/libmatemixer
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
