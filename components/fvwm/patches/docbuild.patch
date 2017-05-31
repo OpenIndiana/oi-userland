@@ -1,0 +1,25 @@
+Patch to configure.ac to make it work with a VPATH-based build.  This patch
+has been submitted upstream at
+
+    https://github.com/fvwmorg/fvwm/pull/46
+
+--- fvwm-2.6.3/configure.ac	Thu Oct 13 23:10:43 2011
++++ fvwm-2.6.3/configure.ac	Thu Oct 13 23:11:21 2011
+@@ -301,7 +301,7 @@
+ 			p
+ 			n
+ 			bfindcmd
+-	' < fvwm/functable.c`
++	' < $srcdir/fvwm/functable.c`
+ 	DOC_COMMANDS=`echo $DOC_COMMANDS`
+ 	# with .xml suffix
+ 	DOC_COMMANDS_XML=`for i in $DOC_COMMANDS; do echo ${i}.xml; done`
+@@ -336,7 +336,7 @@
+ 	DOC_MODULES_HTML=`for i in $DOC_MODULES; do echo ${i}.html; done`
+ 	DOC_MODULES_HTML=`echo $DOC_MODULES_HTML`
+ 	# extract man page section names
+-	DOC_SECTIONS=`cat doc/fvwm/sections`
++	DOC_SECTIONS=`cat $srcdir/doc/fvwm/sections`
+ 	DOC_SECTIONS=`echo $DOC_SECTIONS`
+ 	DOC_SECTIONS_XML=`for i in $DOC_SECTIONS; do echo ${i}.xml; done`
+ 	DOC_SECTIONS_XML=`echo $DOC_SECTIONS_XML`
