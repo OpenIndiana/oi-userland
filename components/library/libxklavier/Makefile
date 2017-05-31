@@ -16,16 +16,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libxklavier
-COMPONENT_VERSION= 5.3
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 5.4
 COMPONENT_SUMMARY= XKB utility library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ebec3bc54b5652838502b96223152fb1cd8fcb14ace5cb02d718fc3276bbd404
+  sha256:a30b302f3490e6423d21844dae4411a38e9c9d4f5196df571bc8276a03a53e63
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/5.3/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/LibXklavier/
+  https://cgit.freedesktop.org/libxklavier/snapshot/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.freedesktop.org/wiki/Software/LibXklavier/
 COMPONENT_FMRI= library/desktop/libxklavier
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE = LGPLv2
@@ -37,17 +36,14 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                                        libtoolize --copy --force &&\
-                                        aclocal -I m4 &&\
-					autoheader &&\
-                                        automake -c -f -a &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-gtk-doc
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -60,6 +56,9 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
