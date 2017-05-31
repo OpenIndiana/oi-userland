@@ -1,0 +1,11 @@
+--- boost_1_64_0/tools/build/src/tools/python.jam.orig	2017-05-31 02:50:59.930336688 +0000
++++ boost_1_64_0/tools/build/src/tools/python.jam	2017-05-31 02:55:16.267092242 +0000
+@@ -839,7 +839,7 @@
+     #
+     debug-message "Checking for NumPy..." ;
+     local full-cmd = "import sys; sys.stderr = sys.stdout; import numpy; print(numpy.get_include())" ;
+-    local full-cmd = $(interpreter-cmd)" -c \"$(full-cmd)\"" ;
++    local full-cmd = "OPENBLAS_CORETYPE=Prescott "$(interpreter-cmd)" -c \"$(full-cmd)\"" ;
+     debug-message "running command '$(full-cmd)'" ;
+     local result = [ SHELL $(full-cmd) : strip-eol : exit-status ] ;
+     if $(result[2]) = 0
