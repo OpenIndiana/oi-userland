@@ -10,38 +10,36 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2017 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           xditview
-COMPONENT_VERSION=        1.0.3
-COMPONENT_FMRI=           document/viewer/xditview
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xditview - display ditroff output
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=        xditview
+COMPONENT_VERSION=     1.0.4
+COMPONENT_FMRI=        document/viewer/xditview
+COMPONENT_CLASSIFICATION=System/X11
+COMPONENT_SUMMARY=     xditview - display ditroff output
+COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:30f0eaee7e740a080cfb29e3f57a1202e6a5a19a0bfb099c89060cc2986e0328
+  sha256:307f8df1bc3e90a7fba74dfe16840891c365abc027fbd556027eb057e5d1ff73
 COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xditview-1.0.3.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xditview.license
+  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.x.org/
+COMPONENT_LICENSE=     MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
