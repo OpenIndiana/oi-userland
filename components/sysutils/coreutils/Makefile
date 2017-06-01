@@ -18,20 +18,26 @@
 #
 # CDDL HEADER END
 #
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2017 Gary Mills
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017 Aurelien Larcher
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		coreutils
-COMPONENT_VERSION=	8.25
+COMPONENT_NAME=         coreutils
+COMPONENT_VERSION=      8.27
+COMPONENT_FMRI=         file/gnu-coreutils	
+COMPONENT_SUMMARY=      GNU Core Utilities
+COMPONENT_DESCRIPTION= \
+  GNU Core Utilities are the basic file, shell and text manipulation utilities
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/coreutils/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:31e67c057a5b32a582f26408c789e11c2e8d676593324849dcf5779296cdce87
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-coreutils
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:8891d349ee87b9ff7870f52b6d9312a9db672d2439d289bc57084771ca21656b
+COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -46,21 +52,30 @@ PATCH_LEVEL=		0
 # Prevent gcc register spill error on 32-bit SPARC
 gcc_OPT.sparc.32 =	-O1
 
-CONFIGURE_PREFIX	 =	/usr/gnu
-CONFIGURE_OPTIONS	+=	--libdir=/usr/lib
+# Recreate configure and Makefile to pick up changes in .../src/local.mk
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
+
+CONFIGURE_PREFIX	 =	$(GNUDIR)
+CONFIGURE_BINDIR.64	 =	$(GNUBIN)
+CONFIGURE_OPTIONS	+=	CPPFLAGS=" -I$(USRINCDIR)/gmp"
+CONFIGURE_OPTIONS	+=	--libdir=$(USRLIBDIR.$(BITS))
+# Put libstdbuf in the library directory
+CONFIGURE_OPTIONS	+=	--libexecdir=$(USRLIBDIR.$(BITS))
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-COMPONENT_POST_INSTALL_ACTION +=	( cp $(COMPONENT_DIR)/files/*.1  \
-	$(PROTO_DIR)/usr/gnu/share/man/man1/ ) 
+COMPONENT_POST_INSTALL_ACTION += ( cp $(COMPONENT_DIR)/files/*.1 \
+                                      $(PROTOGNUSHAREMAN1) ) 
 
-# common targets
-build:		$(BUILD_32)
+# Build 32-bit for libstdbuf only, then overwrite with 64bit binaries
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+# Make sure 32-bit binaries are installed first
+$(INSTALL_64): $(INSTALL_32)
+
+install:	$(INSTALL_32_and_64)
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -71,12 +86,29 @@ install:	$(INSTALL_32)
 unexport SHELLOPTS
 
 # Get the binaries to test from the component proto area.
-COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
+COMPONENT_TEST_ENV += PATH=$(PROTOGNUBIN):$(USRBINDIR)
+
+# Always show the build and link lines for easier debugging.
+# COMPONENT_TEST_ARGS +=	V=1
+#
+
+# Master test results are different between x86 and SPARC (different # of
+# tests run).
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+
+# Some tests pass or are skip depending on the host.
+# Let us just check for failed tests.
+COMPONENT_TEST_TRANSFORMS += \
+ 	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 # Currently 2 tests fail
+#   date-debug.sh
 #   dircolors.pl
-#   printf-quote.sh
-test:		install $(TEST_32)
+test:		install $(TEST_64)
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library
