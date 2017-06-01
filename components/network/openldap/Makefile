@@ -23,19 +23,20 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-
-
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
-COMPONENT_VERSION=	2.4.42
+COMPONENT_VERSION=	2.4.44
+COMPONENT_SUMMARY=	OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_PROJECT_URL=	http://www.openldap.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:eeb7b0e2c5852bfd2650e83909bb6152835c0b862fab10b63954dc1bcbba8e63
+    sha256:d7de6bf3c67009c95525dde3a0212cc110d0a70b92af2af8e3ee800e81b88400
 COMPONENT_ARCHIVE_URL=	ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/openldap
+COMPONENT_FMRI=	library/openldap
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	openldap license
 
 SDFVER=			sdf-2.001
 SDFBLIB=		$(BUILD_DIR_32)/${SDFVER}/blib
@@ -46,9 +47,9 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL_1= ftp://ftp.eenet.ee/pub/cpan/authors/id/I/IA/IANC/$(COMPONENT_ARCHIVE_1)
 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -115,7 +116,8 @@ install:	$(INSTALL_32_and_64)
 # build does this always
 test:	$(TEST_32_and_64)
 
-	
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libsasl

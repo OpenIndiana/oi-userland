@@ -1,0 +1,27 @@
+Fixes problem with setting the TLS client protocol version and ciphersuite
+in the NSSWITCH LDAP library in Solaris.
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- openldap-2.4.44/libraries/libldap/ldap.conf.old     Thu Nov  5 10:11:14 2015
++++ openldap-2.4.44/libraries/libldap/ldap.conf Thu Nov  5 10:16:44 2015
+@@ -9,5 +9,8 @@
+ #URI	ldap://ldap.example.com ldap://ldap-master.example.com:666
+ 
+ #SIZELIMIT	12
+ #TIMELIMIT	15
+ #DEREF		never
++
++TLS_PROTOCOL_MIN	3.2
++TLS_CIPHER_SUITE	TLSv1.2:!aNULL:!eNULL:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-DES-CBC3-SHA:DHE-DSS-DES-CBC3-SHA:AES128-SHA:AES256-SHA:DES-CBC3-SHA
+--- openldap-2.4.44/servers/slapd/slapd.conf.old        Thu Nov  5 10:11:25 2015
++++ openldap-2.4.44/servers/slapd/slapd.conf    Thu Nov  5 10:16:24 2015
+@@ -23,6 +23,8 @@
+ #	Require 112-bit (3DES or better) encryption for updates
+ #	Require 63-bit encryption for simple bind
+ # security ssf=1 update_ssf=112 simple_bind=64
++TLSProtocolMin	3.2
++TLSCipherSuite	TLSv1.2:!aNULL:!eNULL:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-DES-CBC3-SHA:DHE-DSS-DES-CBC3-SHA:AES128-SHA:AES256-SHA:DES-CBC3-SHA
+ 
+ # Sample access control policy:
+ #	Root DSE: allow anyone to read it

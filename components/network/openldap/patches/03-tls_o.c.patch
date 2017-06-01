@@ -1,0 +1,23 @@
+Fixes problem with OpenLDAP+OpenSSL cannot trust intermediate
+or leaf certificates. 
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- openldap-2.4.44/libraries/libldap/tls_o.c.old       Thu Nov  5 10:11:36 2015
++++ openldap-2.4.44/libraries/libldap/tls_o.c   Thu Nov  5 10:16:10 2015
+@@ -363,6 +363,16 @@
+ 		}
+ 	}
+ #endif
++
++#ifdef X509_V_FLAG_PARTIAL_CHAIN
++	/*
++	 * Allow intermediate or leaf certificates in the trust list to
++	 * act as trust anchors.
++	 */
++	X509_STORE_set_flags(SSL_CTX_get_cert_store(ctx),
++	    X509_V_FLAG_PARTIAL_CHAIN);
++#endif
++
+ 	return 0;
+ }

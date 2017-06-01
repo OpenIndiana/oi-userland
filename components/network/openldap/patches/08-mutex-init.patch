@@ -1,0 +1,50 @@
+Fixes a race condition that can be triggered when multiple threads
+enter the function ldap_int_utils_init about the same time.
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- openldap-2.4.44/libraries/libldap/util-int.c.old	2016-06-28 12:13:02.410770969 -0700
++++ openldap-2.4.44/libraries/libldap/util-int.c	2016-06-28 12:13:07.923164035 -0700
+@@ -92,6 +92,10 @@
+ 	/* Don't know how to handle this version, pretend it's not there */
+ #	undef HAVE_GETHOSTBYADDR_R
+ # endif
++
++/* use static mutex to protect mutex initialization */
++static ldap_pvt_thread_mutex_t ldap_int_utils_init_mutex = PTHREAD_MUTEX_INITIALIZER;
++
+ #endif /* LDAP_R_COMPILE */
+ 
+ char *ldap_pvt_ctime( const time_t *tp, char *buf )
+@@ -700,9 +704,17 @@
+ 	static int done=0;
+ 	if (done)
+ 	  return;
++#ifndef LDAP_R_COMPILE
+	done=1;
++#endif
+ 
+ #ifdef LDAP_R_COMPILE
++	/* use static mutex to protect mutex initialization */
++	(void) LDAP_MUTEX_LOCK(&ldap_int_utils_init_mutex);
++	if (done) {
++		(void) LDAP_MUTEX_UNLOCK(&ldap_int_utils_init_mutex);
++		return;
++	}
+ #if !defined( USE_CTIME_R ) && !defined( HAVE_REENTRANT_FUNCTIONS )
+ 	ldap_pvt_thread_mutex_init( &ldap_int_ctime_mutex );
+ #endif
+@@ -718,9 +727,13 @@
+ #ifdef HAVE_GSSAPI
+ 	ldap_pvt_thread_mutex_init( &ldap_int_gssapi_mutex );
+ #endif
++ 
++	done=1;
++	/* use static mutex to protect mutex initialization */
++	(void) LDAP_MUTEX_UNLOCK(&ldap_int_utils_init_mutex);
+ #endif
+ 
+ 	/* call other module init functions here... */
+ }
+ 
+ #if defined( NEED_COPY_HOSTENT )
