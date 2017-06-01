@@ -1,0 +1,34 @@
+ipc fixes.
+Will not send upstream.
+
+diff --git a/ipc/glue/MessageLink.cpp b/ipc/glue/MessageLink.cpp
+--- a/ipc/glue/MessageLink.cpp
++++ b/ipc/glue/MessageLink.cpp
+@@ -350,7 +354,7 @@
+         mExistingListener = mTransport->set_listener(this);
+ #ifdef DEBUG
+         if (mExistingListener) {
+-            queue<Message> pending;
++            std::queue<Message> pending;
+             mExistingListener->GetQueuedMessages(pending);
+             MOZ_ASSERT(pending.empty());
+         }
+@@ -366,17 +366,17 @@ ProcessLink::OnChannelOpened()
+     /*assert*/mTransport->Connect();
+ }
+ 
+ void
+ ProcessLink::OnTakeConnectedChannel()
+ {
+     AssertIOThread();
+ 
+-    queue<Message> pending;
++    std::queue<Message> pending;
+     {
+         MonitorAutoLock lock(*mChan->mMonitor);
+ 
+         mChan->mChannelState = ChannelConnected;
+ 
+         mExistingListener = mTransport->set_listener(this);
+         if (mExistingListener) {
+             mExistingListener->GetQueuedMessages(pending);

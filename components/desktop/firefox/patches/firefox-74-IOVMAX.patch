@@ -1,0 +1,19 @@
+Reducing kMaxIOVecSize to fix pipe errors.
+Sent upstream
+https://bugzilla.mozilla.org/show_bug.cgi?id=1345102
+
+--- a/ipc/chromium/src/chrome/common/ipc_channel_posix.cc	2017-03-16 10:13:51.122622438 +0000
++++ b/ipc/chromium/src/chrome/common/ipc_channel_posix.cc	2017-03-16 10:18:13.070831680 +0000
+@@ -40,7 +40,12 @@
+ #endif
+ 
+ // Work around possible OS limitations.
++#if defined(OS_SOLARIS)
++#include <limits.h>
++static const size_t kMaxIOVecSize = IOV_MAX;
++#else
+ static const size_t kMaxIOVecSize = 256;
++#endif
+ 
+ #ifdef MOZ_TASK_TRACER
+ #include "GeckoTaskTracerImpl.h"

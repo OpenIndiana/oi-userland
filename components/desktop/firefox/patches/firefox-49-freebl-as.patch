@@ -1,3 +1,4 @@
+May investigate and send upstream.
 #
 # Building freebl should use the supplied top level compiler to drive the
 # assembler and not whichever gcc it happens to pick up.
@@ -15,3 +16,28 @@
  	ASFLAGS = -x assembler-with-cpp
      endif
      ifeq ($(USE_64),1)
+--- firefox-52.0b8/browser/installer/package-manifest.in.orig	2017-03-02 02:00:48.895901877 +0000
++++ firefox-52.0b8/browser/installer/package-manifest.in	2017-03-02 02:01:09.692008915 +0000
+@@ -718,6 +718,8 @@
+ #if defined(XP_LINUX) && !defined(ANDROID)
+ @BINPATH@/@DLL_PREFIX@freeblpriv3@DLL_SUFFIX@
+ #else
++@BINPATH@/@DLL_PREFIX@freebl_32fpu_3@DLL_SUFFIX@
++@BINPATH@/@DLL_PREFIX@freebl_32int64_3@DLL_SUFFIX@
+ @BINPATH@/@DLL_PREFIX@freebl3@DLL_SUFFIX@
+ #endif
+ @BINPATH@/@DLL_PREFIX@nss3@DLL_SUFFIX@
+@@ -752,13 +754,6 @@
+ #endif
+ #endif
+ 
+-; for Solaris SPARC
+-#ifdef SOLARIS
+-bin/libfreebl_32fpu_3.so
+-bin/libfreebl_32int_3.so
+-bin/libfreebl_32int64_3.so
+-#endif
+-
+ ; [Updater]
+ ;
+ #ifdef MOZ_UPDATER

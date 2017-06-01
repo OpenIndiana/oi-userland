@@ -30,25 +30,22 @@ BUILD_BITS= 32
 COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
-# gcc 5.3 can't compile this version of firefox yet, so keep using 4.9 for now.
-GCC_ROOT = /usr/gcc/4.9
-
 COMPONENT_NAME =		firefox
-COMPONENT_VERSION =		45.9.0esr
+COMPONENT_VERSION =		52.1.0esr
 COMPONENT_PROJECT_URL =		http://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC = 		$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC_NAME).source.tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:2afb02029e115fae65dbe1d9c562cbfeb761a6807338bbd30dbffba616cb2d20
-MOZILLA_FTP = 		        http://ftp.mozilla.org/pub/mozilla.org/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
+    sha256:da2ba9630b8b56c6f5d36d9f3da2d984ef7986dc8b4d804f6947fcea6c24637d
+MOZILLA_FTP = 		        http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL =		$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		firefox/browser
-COMPONENT_ANITYA_ID=	5506
+COMPONENT_ANITYA_ID=    5506
 
-TPNO=				34653
+TPNO=				34811
 
-IPS_COMPONENT_VERSION =		45.9.0
+IPS_COMPONENT_VERSION =		52.1.0
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -59,20 +56,20 @@ IPS_COMPONENT_VERSION =		45.9.0
 # collide due to different files with identical .xpi names.
 COMPONENT_ARCHIVE_1 =           $(COMPONENT_SRC_NAME)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:975800c96388a66ecf94e4b29aa1dd8a91cabeb7eea127713e3dd8454aea16f7
+    sha256:6d9bc56720b116696ec4d4d63660d3c527b45439452fc71e04f64a80fa293986
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
-LANG_LIST = ar be bg ca cs da de el es-AR es-CL es-ES et fi \
-	fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO \
-	pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW
+LANG_LIST = ach af an ar as ast az bg bn-BD bn-IN br bs ca cak cs cy \
+	da de dsb el en-GB en-US en-ZA eo es-AR es-CL es-ES es-MX et \
+	eu fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu \
+	hy-AM id is it ja ka kab kk km kn ko lij lt lv mai mk ml mr ms \
+	nb-NO nl nn-NO or pa-IN pl pt-BR pt-PT rm ro ru si sk sl son \
+	sq sr sv-SE ta te th tr uk uz vi xh zh-CN zh-TW
 
 # Alignment issues on sparc: do not publish until resolved.
 include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Misaligned .bss causes core dumps on sparc.
-LD_MAP_NOEXDATA.sparc=
 
 # /usr/gnu/bin needed to pick up the GNU version of tail and readelf.
 # /usr/sbin needed for dtrace.
@@ -88,39 +85,29 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "mk_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --libdir=/usr/lib" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --mandir=/usr/share/man" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-debug-symbols=no" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-update-packaging" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-debug-symbols" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-channel=esr" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-ffi" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-xinerama" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-gstreamer=1.0" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-system-libffi" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-dtrace" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ;
+        echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --enable-default-toolkit=cairo-gtk2" >> $(MOZCONFIG) ; \
 
 CXXFLAGS +=     -Wno-invalid-offsetof -fpermissive
 CC +=           $(CC_BITS)
 CXX +=          $(CC_BITS)
-
-# Currently, GCC 4.9 incorrectly forces all 32-bit compilation to use lf64(7) 
-# interfaces.  
-CFLAGS += -U_FILE_OFFSET_BITS
-CXXFLAGS += -U_FILE_OFFSET_BITS
 
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
@@ -142,15 +129,13 @@ CONFIGURE_ENV +=	"CXXFLAGS=$(CXXFLAGS)"
 # invalid host type
 # configure: error: can only configure for one host and one target at a time
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+
+#because we touched old-configure.in and js/src/old-configure.in
+COMPONENT_PRE_CONFIGURE_ACTION += (cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); autoreconf; touch configure; cd js/src; autoreconf; touch configure);
 
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/browser/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
-
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR_32)/dist/firefox/precomplete \
-		$(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION)/precomplete ;
 
 COMPONENT_POST_INSTALL_ACTION += \
         $(RM) -rf xpi ; \
@@ -179,7 +164,7 @@ download-xpis:
 	/usr/bin/sha256sum $(COMPONENT_ARCHIVE_1)
 
 SIGNED_LIST.i386 = libsoftokn3.so libnssdbm3.so libfreebl3.so
-SIGNED_LIST.sparc = libsoftokn3.so libnssdbm3.so libfreebl_32int_3.so libfreebl_32int64_3.so
+SIGNED_LIST.sparc = libsoftokn3.so libnssdbm3.so libfreebl_32int64_3.so
 SIGNED_LIST = $(SIGNED_LIST.$(MACH))
 
 COMPONENT_POST_INSTALL_ACTION += \
@@ -191,7 +176,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
 COMPONENT_TEST_TRANSFORMS = \
-	'-e "/^PASSED ALL/,/Failed:/p" ' \
+        '-e "/^PASSED ALL/,/Failed:/p" ' \
 	'-e "/.*/d" '
 
 ifeq ($(BUILD_TYPE), evaluation)
@@ -201,7 +186,7 @@ REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += codec/libvorbis
 endif
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += developer/gcc-49
+REQUIRED_PACKAGES += developer/gcc
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -223,6 +208,7 @@ REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxt

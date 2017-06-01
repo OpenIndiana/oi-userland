@@ -1,0 +1,32 @@
+Wouldn't build with -std=gnu99.
+May investigate and send upstream.
+
+--- firefox-51.0b14/intl/icu/source/common/umapfile.c.bck	2017-01-18 06:00:52.851127046 +0000
++++ firefox-51.0b14/intl/icu/source/common/umapfile.c	2017-01-18 06:01:49.304278791 +0000
+@@ -17,7 +17,7 @@
+  *----------------------------------------------------------------------------*/
+ /* Defines _XOPEN_SOURCE for access to POSIX functions.
+  * Must be before any other #includes. */
+-#include "uposixdefs.h"
++//#include "uposixdefs.h"
+ 
+ #include "unicode/putil.h"
+ #include "udatamem.h"
+--- firefox-51.0b14/intl/icu/source/common/uposixdefs.h.orig	2017-01-18 06:11:23.769094467 +0000
++++ firefox-51.0b14/intl/icu/source/common/uposixdefs.h	2017-01-18 06:13:15.797514955 +0000
+@@ -18,6 +18,8 @@
+ #ifndef __UPOSIXDEFS_H__
+ #define __UPOSIXDEFS_H__
+ 
++#if 0
++
+ /*
+  * Define _XOPEN_SOURCE for access to POSIX functions.
+  *
+@@ -70,4 +72,6 @@
+ #   endif
+ #endif
+ 
++#endif
++
+ #endif  /* __UPOSIXDEFS_H__ */

@@ -28,7 +28,12 @@ new file mode 100644
 diff --git a/storage/mozStorageService.cpp b/storage/mozStorageService.cpp
 --- a/storage/mozStorageService.cpp
 +++ b/storage/mozStorageService.cpp
-@@ -528,9 +528,14 @@
+@@ -523,19 +523,24 @@ static const char* sObserverTopics[] = {
+ nsresult
+ Service::initialize()
+ {
+   MOZ_ASSERT(NS_IsMainThread(), "Must be initialized on the main thread");
+ 
    int rc;
  
  #ifdef MOZ_STORAGE_MEMORY
@@ -46,28 +51,75 @@ diff --git a/storage/mozStorageService.cpp b/storage/mozStorageService.cpp
  #endif
  
    // TODO (bug 1191405): do not preallocate the connections caches until we
+   // have figured the impact on our consumers and memory.
+   sqlite3_config(SQLITE_CONFIG_PAGECACHE, NULL, 0, 0);
+ 
+   // Explicitly initialize sqlite3.  Although this is implicitly called by
+   // various sqlite3 functions (and the sqlite3_open calls in our case),
+diff --git a/memory/mozalloc/mozalloc.cpp b/memory/mozalloc/mozalloc.cpp
+--- a/memory/mozalloc/mozalloc.cpp
++++ b/memory/mozalloc/mozalloc.cpp
+@@ -192,26 +192,50 @@ moz_xvalloc(size_t size)
+         mozalloc_handle_oom(size);
+         return moz_xvalloc(size);
+     }
+     return ptr;
+ }
+ #endif // if defined(HAVE_VALLOC)
+ 
+ #ifndef MOZ_STATIC_RUNTIME
++
++#if defined(MOZ_MEMORY_SOLARIS)
++#include "jemalloc_types.h"
++extern "C" {
++extern size_t malloc_usable_size(const void *ptr);
++extern void jemalloc_stats(jemalloc_stats_t* stats);
++}
++#endif
++
+ size_t
+ moz_malloc_usable_size(void *ptr)
+ {
+     if (!ptr)
+         return 0;
+ 
+ #if defined(XP_DARWIN)
+     return malloc_size(ptr);
+ #elif defined(HAVE_MALLOC_USABLE_SIZE) || defined(MOZ_MEMORY)
++#if defined(SOLARIS)
++    static bool checked = false;
++    static bool using_jemalloc = false;
++    if (!checked) {
++        checked = true;
++        jemalloc_stats_t stats;
++        jemalloc_stats(&stats);
++        using_jemalloc = stats.allocated;
++    }
++    if (using_jemalloc)
++        return malloc_usable_size_impl(ptr);
++    else
++        return 0;
++#else
+     return malloc_usable_size_impl(ptr);
++#endif
+ #elif defined(XP_WIN)
+     return _msize(ptr);
+ #else
+     return 0;
+ #endif
+ }
+ 
+ size_t moz_malloc_size_of(const void *ptr)
 diff --git a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
 --- a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
 +++ b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
-@@ -184,6 +184,9 @@ static const bool config_cache_oblivious
- #include "jemalloc/internal/jemalloc_internal_macros.h"
- 
- /* Size class index type. */
-+#ifdef __sun
-+#define index_t je_index_t
-+#endif
- typedef unsigned szind_t;
- 
- /*
---- a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in	2015-09-15 13:37:17.326056000 +0800
-+++ b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in	2015-09-15 13:37:51.959830000 +0800
-@@ -204,6 +204,9 @@
+@@ -239,6 +239,9 @@
  #  ifdef __alpha__
  #    define LG_QUANTUM		4
  #  endif
 +#  ifdef __sparc__
 +#    define LG_QUANTUM		4
 +#  endif
- #  ifdef __sparc64__
+ #  if (defined(__sparc64__) || defined(__sparcv9) || defined(__sparc_v9__))
  #    define LG_QUANTUM		4
  #  endif

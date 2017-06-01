@@ -1,0 +1,53 @@
+http://emilio.pozuelo.org/posts/75
+
+--- firefox-51.0b14/widget/gtk/mozgtk/gtk2/moz.build.orig	2017-02-02 13:50:38.940620803 +0000
++++ firefox-51.0b14/widget/gtk/mozgtk/gtk2/moz.build	2017-02-02 13:51:10.671630084 +0000
+@@ -28,8 +28,8 @@
+     no_as_needed = ['-Wl,--no-as-needed']
+     as_needed = ['-Wl,--as-needed']
+ else:
+-    no_as_needed = []
+-    as_needed = []
++    no_as_needed = ['-Wl,--no-as-needed']
++    as_needed = ['-Wl,--as-needed']
+ 
+ OS_LIBS += [f for f in CONFIG['MOZ_GTK2_LIBS'] if f.startswith('-L')]
+ OS_LIBS += no_as_needed
+--- firefox-52.0b6/config/config.mk.orig	2017-02-16 05:17:34.950960684 +0000
++++ firefox-52.0b6/config/config.mk	2017-02-16 05:42:03.564541980 +0000
+@@ -513,7 +513,7 @@
+ # MDDEPDIR is the subdirectory where dependency files are stored
+ MDDEPDIR := .deps
+ 
+-EXPAND_LIBS_EXEC = $(PYTHON) $(MOZILLA_DIR)/config/expandlibs_exec.py
++EXPAND_LIBS_EXEC = $(ANDROID_APK_NAME) $(PYTHON) $(MOZILLA_DIR)/config/expandlibs_exec.py
+ EXPAND_LIBS_GEN = $(PYTHON) $(MOZILLA_DIR)/config/expandlibs_gen.py
+ EXPAND_AR = $(EXPAND_LIBS_EXEC) --extract -- $(AR)
+ EXPAND_CC = $(EXPAND_LIBS_EXEC) --uselist -- $(CC)
+--- firefox-52.0b6/widget/gtk/mozgtk/gtk3/moz.build.~1~	2016-09-19 09:19:32.000000000 +0000
++++ firefox-52.0b6/widget/gtk/mozgtk/gtk3/moz.build	2017-02-16 05:50:01.406149138 +0000
+@@ -10,6 +10,13 @@
+ 
+ DEFINES['GTK2_SYMBOLS'] = True
+ 
++# For Solaris we need to create filter library to libgtk3
++# (otherwise run time linker wouldn't find gtk_* functions, expecting
++# them in libmozgtk)
++DEFINES['GTK3_SYMBOLS'] = True
++DEFINES['COMMON_SYMBOLS'] = True
++ANDROID_APK_NAME= 'LD_OPTIONS=-Flibgtk-3.so'
++
+ SharedLibrary('mozgtk')
+ 
+ SONAME = 'mozgtk'
+@@ -26,8 +33,8 @@
+     no_as_needed = ['-Wl,--no-as-needed']
+     as_needed = ['-Wl,--as-needed']
+ else:
+-    no_as_needed = []
+-    as_needed = []
++    no_as_needed = ['-Wl,--no-as-needed']
++    as_needed = ['-Wl,--as-needed']
+ 
+ OS_LIBS += [f for f in CONFIG['MOZ_GTK3_LIBS'] if f.startswith('-L')]
+ OS_LIBS += no_as_needed

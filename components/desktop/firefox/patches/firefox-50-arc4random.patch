@@ -57,14 +57,13 @@ Solaris specific changes, will not send upstream.
  #include <limits.h>
 --- a/ipc/chromium/moz.build	2016-03-28 13:41:06.878922929 -0700
 +++ b/ipc/chromium/moz.build	2016-03-28 13:42:04.555448660 -0700
-@@ -161,6 +161,23 @@
+@@ -161,6 +161,17 @@
              'src/base/message_pump_qt.cc',
          ]
  
 +if os_solaris:
 +    SOURCES += [
 +	'src/base/atomicops_internals_x86_gcc.cc',
-+	'src/base/idle_timer_none.cc',
 +	'src/base/process_util_linux.cc',
 +	'src/base/time_posix.cc',
 +    ]
@@ -72,11 +71,6 @@ Solaris specific changes, will not send upstream.
 +	SOURCES += [
 +            'src/base/message_pump_glib.cc',
 +	]
-+    if not CONFIG['MOZ_NATIVE_LIBEVENT']:
-+	SOURCES += [
-+            'src/third_party/libevent/devpoll.c',
-+	]
-+    LOCAL_INCLUDES += ['src/third_party/libevent/solaris']
 +
  ost = CONFIG['OS_TEST']
  if '86' not in ost and 'arm' not in ost and 'aarch64' != ost and 'mips' not in ost:

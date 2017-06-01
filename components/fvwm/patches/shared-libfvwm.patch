@@ -1,0 +1,271 @@
+Patch to the build system to force libfvwm to be built as a shared library,
+rather than a static library that's linked into 20-odd executables at half
+a megabyte a pop.  This really isn't suitable for upstream unless it can be
+made configurable.  An issue has been filed at
+
+    https://github.com/fvwmorg/fvwm/issues/47
+
+diff -ur fvwm-2.5.30/configure.ac fvwm-2.5.30/configure.ac
+--- fvwm-2.5.30/configure.ac	2010-05-09 10:20:21.000000000 -0700
++++ fvwm-2.5.30/configure.ac	2010-09-28 14:10:00.058646061 -0700
+@@ -1354,6 +1354,8 @@
+ dnl AM_PROG_LEX
+ dnl AC_PROG_YACC
+ 
++AC_PROG_LIBTOOL
++
+ # Checks for header files.
+ AC_HEADER_STDC
+ AC_HEADER_SYS_WAIT
+--- fvwm-2.5.30/fvwm/Makefile.am	Wed Aug 29 23:09:34 2007
++++ fvwm-2.5.30/fvwm/Makefile.am	Tue Sep 28 15:20:21 2010
+@@ -30,8 +30,6 @@
+ 	menucmd.c ewmh_names.c icccm2.c windowshade.c focus_policy.c repeat.c \
+ 	execcontext.c menugeometry.c menudim.c condrc.c infostore.c
+ 
+-fvwm_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-
+ LDADD = \
+ 	-L$(top_builddir)/libs -lfvwm $(Xft_LIBS) $(X_LIBS) $(xpm_LIBS) \
+ 	$(stroke_LIBS) $(X_PRE_LIBS) $(Xinerama_LIBS) -lXext -lX11 \
+--- fvwm-2.6.7/libs/Makefile.am	2016-10-18 06:02:57.000000000 -0700
++++ fvwm-2.6.7/libs/Makefile.am	2017-02-10 13:45:09.506127489 -0800
+@@ -1,9 +1,10 @@
+ ## Process this file with automake to create Makefile.in
+ 
+-noinst_LIBRARIES = libfvwm.a
++verpkglibdir = $(pkglibdir)/@VERSION@
++verpkglib_LTLIBRARIES = libfvwm.la
+ 
+ ## please keep .c files in largest first order to speed up parallel makes
+-libfvwm_a_SOURCES = \
++libfvwm_la_SOURCES = \
+ 	BidiJoin.h Bindings.h ClientMsg.h ColorUtils.h Colorset.h \
+ 	CombineChars.h Cursor.h Event.h FBidi.h FEvent.h FGettext.h FImage.h \
+ 	FRender.h FRenderInit.h FRenderInterface.h FSMlib.h FScreen.h \
+@@ -20,7 +21,7 @@
+ 	BidiJoin.c Flocale.c PictureUtils.c FScreen.c Graphics.c \
+ 	PictureGraphics.c Bindings.c FlocaleCharset.c Parse.c \
+ 	PictureImageLoader.c Colorset.c ColorUtils.c CombineChars.c Module.c \
+-	FRender.c Ficonv.c envvar.c Fft.c  gravity.c \
++	FRender.c Ficonv.c envvar.c Fft.c \
+ 	XResource.c FEvent.c FImage.c WinMagic.c Target.c Picture.c XError.c \
+ 	queue.c fvwmsignal.c System.c PictureBase.c Cursor.c Strings.c \
+ 	fvwmrect.c FRenderInit.c safemalloc.c  FBidi.c \
+@@ -28,7 +29,10 @@
+ 	FGettext.c Rectangles.c timeout.c flist.c charmap.c wcontext.c \
+ 	modifiers.c fsm.c FTips.c fio.c fvwmlib.c
+ 
+-libfvwm_a_LIBADD = @LIBOBJS@
++libfvwm_la_LIBADD = @LIBOBJS@
++libfvwm_la_LDFLAGS = $(xpm_LIBS) $(Xft_LIBS) $(X_LIBS) $(iconv_LIBS) \
++	$(Xrender_LIBS) $(Bidi_LIBS) $(png_LIBS) $(rsvg_LIBS) $(intl_LIBS) \
++	$(X_PRE_LIBS) $(Xcursor_LIBS) $(Xinerama_LIBS) $(X_EXTRA_LIBS) -lXext
+ 
+ AM_CPPFLAGS = -I$(top_srcdir) $(xpm_CFLAGS) $(Xft_CFLAGS) $(X_CFLAGS) \
+ 	$(iconv_CFLAGS) $(Xrender_CFLAGS) $(Bidi_CFLAGS) $(png_CFLAGS) \
+diff -ur fvwm-2.5.30/modules/FvwmAnimate/Makefile.am fvwm-2.5.30/modules/FvwmAnimate/Makefile.am
+--- fvwm-2.5.30/modules/FvwmAnimate/Makefile.am	Sun Jul 15 05:39:39 2007
++++ fvwm-2.5.30/modules/FvwmAnimate/Makefile.am	Tue Sep 28 15:22:46 2010
+@@ -6,7 +6,6 @@
+ EXTRA_DIST = $(man_MANS)
+ 
+ FvwmAnimate_SOURCES = FvwmAnimate.c FvwmAnimate.h
+-FvwmAnimate_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+diff -ur fvwm-2.5.30/modules/FvwmAuto/Makefile.am fvwm-2.5.30/modules/FvwmAuto/Makefile.am
+--- fvwm-2.5.30/modules/FvwmAuto/Makefile.am	Fri Apr  5 01:24:30 2002
++++ fvwm-2.5.30/modules/FvwmAuto/Makefile.am	Tue Sep 28 15:22:47 2010
+@@ -6,7 +6,6 @@
+ EXTRA_DIST = $(man_MANS)
+ 
+ FvwmAuto_SOURCES = FvwmAuto.c
+-FvwmAuto_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ LDADD = -L$(top_builddir)/libs $(X_LIBS) -lfvwm  \
+ 	$(X_PRE_LIBS) -lXext -lX11 $(X_EXTRA_LIBS)
+diff -ur fvwm-2.5.30/modules/FvwmBacker/Makefile.am fvwm-2.5.30/modules/FvwmBacker/Makefile.am
+--- fvwm-2.5.30/modules/FvwmBacker/Makefile.am	Sun Jan 28 07:29:26 2007
++++ fvwm-2.5.30/modules/FvwmBacker/Makefile.am	Tue Sep 28 15:22:49 2010
+@@ -11,7 +11,6 @@
+   ConfigFvwmBacker
+ 
+ FvwmBacker_SOURCES = FvwmBacker.c FvwmBacker.h root_bits.c
+-FvwmBacker_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ LDADD = -L$(top_builddir)/libs $(X_LIBS) -lfvwm \
+ 	$(X_PRE_LIBS) $(Xinerama_LIBS) -lXext -lX11 -lm $(X_EXTRA_LIBS) \
+diff -ur fvwm-2.5.30/modules/FvwmBanner/Makefile.am fvwm-2.5.30/modules/FvwmBanner/Makefile.am
+--- fvwm-2.5.30/modules/FvwmBanner/Makefile.am	Sun Jul 15 05:39:39 2007
++++ fvwm-2.5.30/modules/FvwmBanner/Makefile.am	Tue Sep 28 15:22:52 2010
+@@ -8,7 +8,7 @@
+ EXTRA_DIST = $(man_MANS) fvwm-logo-current.xpm fvwm-logo-current.xbm
+ 
+ FvwmBanner_SOURCES = FvwmBanner.c
+-FvwmBanner_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a fvwm-logo-current.xpm
++FvwmBanner_DEPENDENCIES = fvwm-logo-current.xpm
+ 
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+diff -ur fvwm-2.5.30/modules/FvwmButtons/Makefile.am fvwm-2.5.30/modules/FvwmButtons/Makefile.am
+--- fvwm-2.5.30/modules/FvwmButtons/Makefile.am	Sun Jul 15 05:39:39 2007
++++ fvwm-2.5.30/modules/FvwmButtons/Makefile.am	Tue Sep 28 15:22:56 2010
+@@ -14,8 +14,6 @@
+ 	icons.c icons.h misc.c misc.h output.c parse.c parse.h \
+ 	dynamic.c dynamic.h
+ 
+-FvwmButtons_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+ ## so we might as well link against libXpm, if present.
+diff -ur fvwm-2.5.30/modules/FvwmCommand/Makefile.am fvwm-2.5.30/modules/FvwmCommand/Makefile.am
+--- fvwm-2.5.30/modules/FvwmCommand/Makefile.am	Tue Aug  7 13:17:43 2007
++++ fvwm-2.5.30/modules/FvwmCommand/Makefile.am	Tue Sep 28 15:23:01 2010
+@@ -26,9 +26,6 @@
+ 
+ CLEANFILES = FvwmCommand.sh FvwmCommand.pm
+ 
+-FvwmCommandS_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-FvwmCommand_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-
+ man_MANS = FvwmCommand.1
+ 
+ EXTRA_DIST = $(man_MANS) findcmd.pl
+diff -ur fvwm-2.5.30/modules/FvwmConsole/Makefile.am fvwm-2.5.30/modules/FvwmConsole/Makefile.am
+--- fvwm-2.5.30/modules/FvwmConsole/Makefile.am	Sat Sep  4 09:53:05 1999
++++ fvwm-2.5.30/modules/FvwmConsole/Makefile.am	Tue Sep 28 15:23:04 2010
+@@ -9,9 +9,6 @@
+ FvwmConsole_SOURCES = FvwmConsole.c FvwmConsole.h
+ FvwmConsoleC_SOURCES = FvwmConsoleC.c FvwmConsole.h getline.c
+ 
+-FvwmConsole_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-FvwmConsoleC_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-
+ man_MANS = FvwmConsole.1 FvwmConsoleC.pl.1
+ EXTRA_DIST = FvwmConsoleC.pl.in $(man_MANS) Changes .fvwm2rc.sample
+ 
+diff -ur fvwm-2.5.30/modules/FvwmCpp/Makefile.am fvwm-2.5.30/modules/FvwmCpp/Makefile.am
+--- fvwm-2.5.30/modules/FvwmCpp/Makefile.am	Fri Apr  5 01:24:31 2002
++++ fvwm-2.5.30/modules/FvwmCpp/Makefile.am	Tue Sep 28 15:23:10 2010
+@@ -6,7 +6,6 @@
+ EXTRA_DIST = $(man_MANS)
+ 
+ FvwmCpp_SOURCES = FvwmCpp.c FvwmCpp.h
+-FvwmCpp_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+diff -ur fvwm-2.5.30/modules/FvwmEvent/Makefile.am fvwm-2.5.30/modules/FvwmEvent/Makefile.am
+--- fvwm-2.5.30/modules/FvwmEvent/Makefile.am	Fri Apr  5 01:24:31 2002
++++ fvwm-2.5.30/modules/FvwmEvent/Makefile.am	Tue Sep 28 15:23:19 2010
+@@ -6,7 +6,6 @@
+ EXTRA_DIST = $(man_MANS)
+ 
+ FvwmEvent_SOURCES = FvwmEvent.c
+-FvwmEvent_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ # This module behaves like the old FvwmAudio when invoked with that name.
+ install-exec-local: ../../config.h Makefile
+--- fvwm-2.6.7/modules/FvwmForm/Makefile.am	2016-11-01 02:22:55.000000000 -0700
++++ fvwm-2.6.7/modules/FvwmForm/Makefile.am	2017-02-10 13:41:53.554492188 -0800
+@@ -30,8 +30,6 @@
+ 
+ FvwmForm_SOURCES = FvwmForm.c FvwmForm.h ReadXServer.c ParseCommand.c
+ 
+-FvwmForm_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-
+ config_DATA =             \
+   FvwmForm-Form           \
+   FvwmForm-Capture        \
+diff -ur fvwm-2.5.30/modules/FvwmIconMan/Makefile.am fvwm-2.5.30/modules/FvwmIconMan/Makefile.am
+--- fvwm-2.5.30/modules/FvwmIconMan/Makefile.am	Sun Jan 28 07:29:26 2007
++++ fvwm-2.5.30/modules/FvwmIconMan/Makefile.am	Tue Sep 28 15:23:28 2010
+@@ -14,8 +14,6 @@
+ 	functions.c fvwm.c globals.c readconfig.c readconfig.h \
+ 	winlist.c x.c x.h xmanager.c xmanager.h
+ 
+-FvwmIconMan_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+-
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+ ## so we might as well link against libXpm, if present.
+diff -ur fvwm-2.5.30/modules/FvwmIdent/Makefile.am fvwm-2.5.30/modules/FvwmIdent/Makefile.am
+--- fvwm-2.5.30/modules/FvwmIdent/Makefile.am	Sun Jan 28 07:29:26 2007
++++ fvwm-2.5.30/modules/FvwmIdent/Makefile.am	Tue Sep 28 15:23:30 2010
+@@ -11,7 +11,6 @@
+   ConfigFvwmIdent
+ 
+ FvwmIdent_SOURCES = FvwmIdent.c FvwmIdent.h
+-FvwmIdent_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+diff -ur fvwm-2.5.30/modules/FvwmM4/Makefile.am fvwm-2.5.30/modules/FvwmM4/Makefile.am
+--- fvwm-2.5.30/modules/FvwmM4/Makefile.am	Fri Apr  5 01:24:32 2002
++++ fvwm-2.5.30/modules/FvwmM4/Makefile.am	Tue Sep 28 15:23:32 2010
+@@ -6,7 +6,6 @@
+ EXTRA_DIST = $(man_MANS)
+ 
+ FvwmM4_SOURCES = FvwmM4.c FvwmM4.h
+-FvwmM4_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+diff -ur fvwm-2.5.30/modules/FvwmPager/Makefile.am fvwm-2.5.30/modules/FvwmPager/Makefile.am
+--- fvwm-2.5.30/modules/FvwmPager/Makefile.am	Sun Jul 15 05:39:39 2007
++++ fvwm-2.5.30/modules/FvwmPager/Makefile.am	Tue Sep 28 15:23:33 2010
+@@ -11,7 +11,6 @@
+   ConfigFvwmPager
+ 
+ FvwmPager_SOURCES = FvwmPager.c FvwmPager.h x_pager.c
+-FvwmPager_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+diff -ur fvwm-2.5.30/modules/FvwmProxy/Makefile.am fvwm-2.5.30/modules/FvwmProxy/Makefile.am
+--- fvwm-2.5.30/modules/FvwmProxy/Makefile.am	Sun Jul 15 05:39:39 2007
++++ fvwm-2.5.30/modules/FvwmProxy/Makefile.am	Tue Sep 28 15:23:35 2010
+@@ -11,7 +11,6 @@
+ 	ConfigFvwmProxyDefaults
+ 
+ FvwmProxy_SOURCES = FvwmProxy.c FvwmProxy.h
+-FvwmProxy_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ ## Xpm note: while this module may not depend on Xpm explicitly,
+ ## there are sometimes dependencies through functions in libfvwm
+diff -ur fvwm-2.5.30/modules/FvwmRearrange/Makefile.am fvwm-2.5.30/modules/FvwmRearrange/Makefile.am
+--- fvwm-2.5.30/modules/FvwmRearrange/Makefile.am	Sun Oct 13 08:50:01 2002
++++ fvwm-2.5.30/modules/FvwmRearrange/Makefile.am	Tue Sep 28 15:23:38 2010
+@@ -25,7 +25,6 @@
+ CLEANFILES = $(module_SCRIPTS)
+ 
+ FvwmRearrange_SOURCES = FvwmRearrange.c
+-FvwmRearrange_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ LDADD = -L$(top_builddir)/libs $(X_LIBS) -lm -lfvwm  \
+ 	$(X_PRE_LIBS) $(Xinerama_LIBS) -lXext -lX11 $(X_EXTRA_LIBS)
+diff -ur fvwm-2.5.30/modules/FvwmScript/Makefile.am fvwm-2.5.30/modules/FvwmScript/Makefile.am
+--- fvwm-2.5.30/modules/FvwmScript/Makefile.am	Sun Feb 22 13:29:11 2009
++++ fvwm-2.5.30/modules/FvwmScript/Makefile.am	Tue Sep 28 15:23:46 2010
+@@ -9,7 +9,7 @@
+ 
+ FvwmScript_SOURCES = FvwmScript.c Instructions.c libyywrap.c \
+ 	types.h scanner.c script.c script.h
+-FvwmScript_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a Widgets/libWidgets.a
++FvwmScript_DEPENDENCIES = Widgets/libWidgets.a
+ 
+ YFLAGS = -d
+ 
+--- fvwm-2.5.30/bin/Makefile.am	Sat May 16 03:46:29 2009
++++ fvwm-2.5.30/bin/Makefile.am	Tue Sep 28 15:28:35 2010
+@@ -2,7 +2,6 @@
+ 
+ bin_PROGRAMS = fvwm-root
+ fvwm_root_SOURCE= fvwm-root.c
+-fvwm_root_DEPENDENCIES = $(top_builddir)/libs/libfvwm.a
+ 
+ bin_SCRIPTS = fvwm-config fvwm-bug fvwm-perllib \
+ 	fvwm-convert-2.6 \

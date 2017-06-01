@@ -32,19 +32,19 @@ COMPILER = gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		thunderbird
-COMPONENT_VERSION=	45.8.0
+COMPONENT_VERSION=	52.1.0
 COMPONENT_PROJECT_URL=	http://www.mozilla.com/thunderbird
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:743cbf4856ad460a791f6b17bff175053fccec2af1edd8e8295ac6fda2634c28
+    sha256:c33ca35b6acd1a0dc0d0f4b1df16745a33144c5d3d3715fe05454a5e9eefd48b
 MOZILLA_FTP = 		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	tbird/mailer
 COMPONENT_ANITYA_ID=	4967
 
-TPNO=			34133
+TPNO=			35119
 
-LIGHTNING_VERSION=	4.7.8
+LIGHTNING_VERSION=	5.4.1
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -57,12 +57,12 @@ LIGHTNING_VERSION=	4.7.8
 # collide due to different files with identical .xpi names. 
 COMPONENT_ARCHIVE_1 =   	$(COMPONENT_SRC)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:9bc65e4fe2bd601df31feeeac5690f1d716e28fa677f4f961df92bdc71ce0f54
+    sha256:db8230f438d16212771992f4f5d9c07cfb81d78ed8a3bb877c86f266cecb9d2c
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2 =		lightning-$(LIGHTNING_VERSION)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_2 = \
-    sha256:daf10727864c9b11803e8f21e9b622e7fccda646e6952d1c72906e14a4299472
+    sha256:a43279226f4bc5d18b7464c833c59eb0113be44f1932d107df267793aab94c81
 COMPONENT_ARCHIVE_URL_2 = 	$(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_2)
 
 LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
@@ -74,15 +74,15 @@ CLEAN_PATHS += $(COMPONENT_DIR)/xpi-lightning
 
 # Firefox and Thunderbird share the same firefox*.patch patches. Copy these 
 # patches from the Firefox patches directory and the Thunderbird patches to a 
-# directory of all files (patches-all), except for Firefox patches 42 and 46, 
-# which don't get applied in Thunderbird. (libxul and dtrace patches)
+# directory of all files (patches-all), except for Firefox patches 42, 
+# which don't get applied in Thunderbird. (dtrace patch)
 PATCH_DIR=patches-all
 CLEAN_PATHS += $(PATCH_DIR)
 COPY_COMMON_FILES_1:= $(shell mkdir -p $(PATCH_DIR))
 COPY_COMMON_FILES_2:=  \
     $(shell /usr/bin/rsync -ac patches/* ../firefox/patches/* $(PATCH_DIR))
 COPY_COMMON_FILES_3:= \
-    $(shell /usr/bin/rm -f $(PATCH_DIR)/firefox*42*.patch $(PATCH_DIR)/firefox*46*.patch)
+    $(shell /usr/bin/rm -f $(PATCH_DIR)/firefox*42*.patch)
 
 # Depends on libsmbclient but samba is on the do-not-publish list, so this
 # must be too.
@@ -105,7 +105,6 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-application=mail" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --libdir=/usr/lib" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --mandir=/usr/share/man" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-debug" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-optimize" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
@@ -114,20 +113,17 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-ffi" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-libxul" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-update-packaging" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-gstreamer=1.0" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-debug-symbols=no" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-debug-symbols" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-calendar" >> $(MOZCONFIG) ; \
-        echo 'ac_add_options --with-rpath="\\\\\\$$\\$$ORIGIN"' >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ;
+	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --enable-default-toolkit=cairo-gtk2" >> $(MOZCONFIG) ;
 
 CXXFLAGS += 		-Wno-invalid-offsetof -fpermissive
 CC +=		$(CC_BITS)
@@ -157,7 +153,9 @@ CONFIGURE_ENV +=	"CXXFLAGS=$(CXXFLAGS)"
 # invalid host type
 # configure: error: can only configure for one host and one target at a time
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+
+#because we touched old-configure.in and js/src/old-configure.in
+COMPONENT_PRE_CONFIGURE_ACTION += (cd $(COMPONENT_NAME)-$(COMPONENT_VERSION)/mozilla; autoreconf; touch configure; cd js/src; autoreconf; touch configure);
 
 COMPONENT_POST_CONFIGURE_ACTION += \
         $(CP) $(MOZCONFIG) $(COMPONENT_SRC)/mozconfig
@@ -210,7 +208,7 @@ download-xpis:
 
 download-lightning-xpis:
 	@echo "download-lightning-xpis"
-	$(RM) $(COMPONENT_DIR)/xpi-lightning $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_2)
+	$(RM) -r $(COMPONENT_DIR)/xpi-lightning $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_2)
 	$(MKDIR) $(COMPONENT_DIR)/xpi-lightning
 	@echo "downloading lightning xpis"
 	list1='$(LANG_LIST)' ; for f in $$list1 ; do \
@@ -221,16 +219,6 @@ download-lightning-xpis:
 	(cd $(COMPONENT_DIR); \
 	    $(TAR) czvf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_2) xpi-lightning )
 	/usr/bin/sha256sum $(COMPONENT_ARCHIVE_2)
-
-LIB_LIST.i386 =
-LIB_LIST.sparc = $(PROTOUSRLIBDIR)/thunderbird-devel-$(COMPONENT_VERSION)/sdk/lib/cpu/sparcv8plus/libnspr_flt4.so
-LIB_LIST = $(LIB_LIST.$(MACH))
-
-COMPONENT_POST_INSTALL_ACTION += \
-	slist='$(LIB_LIST)' ; for f in $$slist ; do \
-	    $(MKDIR) $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/cpu/sparcv8plus ; \
-	    $(CP) $$f $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/cpu/sparcv8plus/libnspr_flt4.so ; \
-	done ;
 
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
@@ -266,6 +254,7 @@ REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxt

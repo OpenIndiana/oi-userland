@@ -1,10 +1,9 @@
-For SunAudio audio playback. We need to investigate whether we care about
-this or whether we are just going to support PulseAudio.
+Will not send upstream.
 
 diff --git a/media/libcubeb/src/cubeb.c b/media/libcubeb/src/cubeb.c
 --- a/media/libcubeb/src/cubeb.c
 +++ b/media/libcubeb/src/cubeb.c
-@@ -60,6 +60,9 @@
+@@ -54,6 +54,9 @@
  #if defined(USE_KAI)
  int kai_init(cubeb ** context, char const * context_name);
  #endif
@@ -12,9 +11,9 @@ diff --git a/media/libcubeb/src/cubeb.c b/media/libcubeb/src/cubeb.c
 +int sunaudio_init(cubeb ** context, char const * context_name);
 +#endif
  
- int
- validate_stream_params(cubeb_stream_params stream_params)
-@@ -129,6 +132,9 @@
+ 
+ static int
+@@ -141,6 +144,9 @@
  #if defined(USE_KAI)
      kai_init,
  #endif
@@ -27,7 +26,7 @@ diff --git a/media/libcubeb/src/cubeb.c b/media/libcubeb/src/cubeb.c
 diff --git a/media/libcubeb/src/moz.build b/media/libcubeb/src/moz.build
 --- a/media/libcubeb/src/moz.build
 +++ b/media/libcubeb/src/moz.build
-@@ -31,6 +31,12 @@
+@@ -47,6 +47,12 @@
      ]
      DEFINES['USE_SNDIO'] = True
  
@@ -39,14 +38,14 @@ diff --git a/media/libcubeb/src/moz.build b/media/libcubeb/src/moz.build
 +
  if CONFIG['OS_TARGET'] == 'Darwin':
      SOURCES += [
-         'cubeb_audiounit.c',
+         'cubeb_audiounit.cpp',
 diff --git a/media/libcubeb/src/cubeb_sun.c b/media/libcubeb/src/cubeb_sun.c
 new file mode 100644
 --- /dev/null
 +++ b/media/libcubeb/src/cubeb_sun.c
-@@ -0,0 +1,500 @@
+@@ -0,0 +1,504 @@
 +/*
-+ * Copyright (c) 2013 Ginn Chen <ginnchen@gmail.com>
++ * Copyright (c) 2013, 2017 Ginn Chen <ginnchen@gmail.com>
 + *
 + * This program is made available under an ISC-style license.  See the
 + * accompanying file LICENSE for details.
@@ -194,7 +193,7 @@ new file mode 100644
 +    }
 +
 +    pthread_mutex_unlock(&s->mutex);
-+    unsigned int got = s->data_cb(s, s->arg, s->buf, s->n_frm);
++    unsigned int got = s->data_cb(s, s->arg, NULL, s->buf, s->n_frm);
 +    DPR("sunaudio_mainloop() ask %d got %d\n", s->n_frm, got);
 +    pthread_mutex_lock(&s->mutex);
 +
@@ -271,7 +270,11 @@ new file mode 100644
 +sunaudio_stream_init(cubeb *context,
 +                  cubeb_stream **stream,
 +                  char const *stream_name,
-+                  cubeb_stream_params stream_params, unsigned int latency,
++                  cubeb_devid input_device,
++                  cubeb_stream_params * input_stream_params,
++                  cubeb_devid output_device,
++                  cubeb_stream_params * output_stream_params,
++                  unsigned int latency,
 +                  cubeb_data_callback data_callback,
 +                  cubeb_state_callback state_callback,
 +                  void *user_ptr)
@@ -320,14 +323,14 @@ new file mode 100644
 +  }
 +
 +  if (s->using_oss) {
-+    if (ioctl(s->fd, SNDCTL_DSP_SPEED, &stream_params.rate) < 0) {
++    if (ioctl(s->fd, SNDCTL_DSP_SPEED, &output_stream_params->rate) < 0) {
 +      DPR("ioctl SNDCTL_DSP_SPEED failed.\n");
 +      close(s->fd);
 +      free(s);
 +      return CUBEB_ERROR_INVALID_FORMAT;
 +    }
 +
-+    if (ioctl(s->fd, SNDCTL_DSP_CHANNELS, &stream_params.channels) < 0) {
++    if (ioctl(s->fd, SNDCTL_DSP_CHANNELS, &output_stream_params->channels) < 0) {
 +      DPR("ioctl SNDCTL_DSP_CHANNELS failed.\n");
 +      close(s->fd);
 +      free(s);
@@ -344,8 +347,8 @@ new file mode 100644
 +  } else {
 +    audio_info_t audio_info;
 +    AUDIO_INITINFO(&audio_info)
-+    audio_info.play.sample_rate = stream_params.rate;
-+    audio_info.play.channels = stream_params.channels;
++    audio_info.play.sample_rate = output_stream_params->rate;
++    audio_info.play.channels = output_stream_params->channels;
 +    audio_info.play.encoding = AUDIO_ENCODING_LINEAR;
 +    audio_info.play.precision = 16;
 +    if (ioctl(s->fd, AUDIO_SETINFO, &audio_info) == -1) {
@@ -357,7 +360,7 @@ new file mode 100644
 +  }
 +
 +  s->conv = 0;
-+  switch (stream_params.format) {
++  switch (output_stream_params->format) {
 +    case CUBEB_SAMPLE_S16NE:
 +      s->bytes_per_ch = 2;
 +      break;
@@ -373,8 +376,8 @@ new file mode 100644
 +  }
 +
 +  s->active = 0;
-+  s->rate = stream_params.rate;
-+  s->n_channles = stream_params.channels;
++  s->rate = output_stream_params->rate;
++  s->n_channles = output_stream_params->channels;
 +  s->data_cb = data_callback;
 +  s->state_cb = state_callback;
 +  s->arg = user_ptr;

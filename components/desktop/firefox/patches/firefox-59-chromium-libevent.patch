@@ -1,0 +1,22 @@
+ipc fixes.
+Will not send upstream.
+
+--- firefox-51.0b14/ipc/chromium/src/base/message_pump_libevent.cc.~1~	2016-08-01 09:14:32.000000000 +0000
++++ firefox-51.0b14/ipc/chromium/src/base/message_pump_libevent.cc	2017-01-20 02:24:40.077668140 +0000
+@@ -20,6 +20,16 @@
+ #include "event.h"
+ #include "mozilla/UniquePtr.h"
+ 
++// Workaround for Solaris bug 25427170 (valid just for 32bit FF)
++#undef _EVENT_SIZEOF_LONG
++#undef _EVENT_SIZEOF_OFF_T
++#undef _EVENT_SIZEOF_SIZE_T
++#undef _EVENT_SIZEOF_VOID_P
++#define _EVENT_SIZEOF_LONG 4
++#define _EVENT_SIZEOF_OFF_T 4
++#define _EVENT_SIZEOF_SIZE_T 4
++#define _EVENT_SIZEOF_VOID_P 4
++
+ // This macro checks that the _EVENT_SIZEOF_* constants defined in
+ // ipc/chromiume/src/third_party/<platform>/event2/event-config.h are correct.
+ #define CHECK_EVENT_SIZEOF(TYPE, type) \

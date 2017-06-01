@@ -1,19 +1,6 @@
-Correctly define malloc_usable_size
-
 Get correct abort() function definition for Solaris.
+May investivate and send upstream.
 
-diff --git a/memory/mozalloc/mozalloc.cpp b/memory/mozalloc/mozalloc.cpp
---- a/memory/mozalloc/mozalloc.cpp
-+++ b/memory/mozalloc/mozalloc.cpp
-@@ -197,6 +197,8 @@
- #endif // if defined(HAVE_VALLOC)
- 
- #ifndef MOZ_STATIC_RUNTIME
-+extern "C" size_t malloc_usable_size(const void *ptr);
-+
- size_t
- moz_malloc_usable_size(void *ptr)
- {
 diff --git a/memory/mozalloc/mozalloc_abort.cpp b/memory/mozalloc/mozalloc_abort.cpp
 --- a/memory/mozalloc/mozalloc_abort.cpp
 +++ b/memory/mozalloc/mozalloc_abort.cpp
@@ -21,7 +8,7 @@ diff --git a/memory/mozalloc/mozalloc_abort.cpp b/memory/mozalloc/mozalloc_abort
  //
  // That segmentation fault will be interpreted as another bug by ASan and as a
  // result, ASan will just exit(1) instead of aborting.
-+#if defined(SOLARIS)
++#if 1
 +void std::abort(void)
 +#else
  void abort(void)

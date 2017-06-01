@@ -1,0 +1,17 @@
+May investigate and send upstream.
+
+--- firefox-51.0b14/memory/mozalloc/mozalloc.h.orig	2017-01-30 03:38:58.316817393 +0000
++++ firefox-51.0b14/memory/mozalloc/mozalloc.h	2017-01-30 03:43:57.534497002 +0000
+@@ -18,8 +18,10 @@
+ // corresponding C++ header (e.g. cstdlib) can cause confusion in C++ code
+ // using things defined there. Specifically, with stdlib.h, the use of abs()
+ // in gfx/graphite2/src/inc/UtfCodec.h somehow ends up picking the wrong abs()
+-#  include <cstdlib>
+-#  include <cstring>
++//#  include <cstdlib>
++//#  include <cstring>
++#  include <stdlib.h>
++#  include <string.h>
+ #else
+ #  include <stdlib.h>
+ #  include <string.h>

@@ -1,0 +1,55 @@
+Enable firefox to recognize Solaris.
+Sent upstream
+https://bugzilla.mozilla.org/show_bug.cgi?id=1354510
+
+--- firefox-51.0b9/build/moz.configure/init.configure.bck	2017-01-13 08:33:52.337094019 -0800
++++ firefox-51.0b9/build/moz.configure/init.configure	2017-01-16 02:23:04.414233504 -0800
+@@ -330,6 +330,8 @@
+         canonical_os = canonical_kernel = 'FreeBSD'
+     elif os.startswith('netbsd'):
+         canonical_os = canonical_kernel = 'NetBSD'
++    elif os.startswith('solaris'):
++        canonical_os = canonical_kernel = 'SunOS'
+     elif os.startswith('openbsd'):
+         canonical_os = canonical_kernel = 'OpenBSD'
+     else:
+@@ -569,6 +571,13 @@
+ 
+ set_define('XP_LINUX', target_is_linux)
+ 
++@depends(target)
++def target_is_solaris(target):
++    if target.kernel == 'SunOS':
++        return True
++
++set_define('XP_SOLARIS', target_is_solaris)
++
+ # The application/project to build
+ # ==============================================================
+ option('--enable-application', nargs=1, env='MOZ_BUILD_APP',
+--- firefox-51.0b9/python/mozbuild/mozbuild/configure/constants.py.orig	2017-01-13 07:21:28.629330910 -0800
++++ firefox-51.0b9/python/mozbuild/mozbuild/configure/constants.py	2017-01-16 02:20:47.445222821 -0800
+@@ -24,6 +24,7 @@
+     'NetBSD',
+     'OpenBSD',
+     'OSX',
++    'SunOS',
+     'WINNT',
+ )
+ 
+@@ -35,6 +36,7 @@
+     'Linux',
+     'NetBSD',
+     'OpenBSD',
++    'SunOS',
+     'WINNT',
+ )
+ 
+@@ -97,6 +99,7 @@
+     'Linux': '__linux__',
+     'NetBSD': '__NetBSD__',
+     'OpenBSD': '__OpenBSD__',
++    'SunOS': '__sun__',
+     'WINNT': '_WIN32 || __CYGWIN__',
+ }
+ 
