@@ -1,0 +1,15 @@
+--- sudo-1.8.20p2/src/sudo_edit.c.1	2017-06-01 23:44:43.066476606 +0300
++++ sudo-1.8.20p2/src/sudo_edit.c	2017-06-01 23:45:46.334617453 +0300
+@@ -377,6 +377,12 @@
+  * Directory open flags for use with openat(2).
+  * Use O_SEARCH/O_PATH and/or O_DIRECTORY where possible.
+  */
++#ifdef __sun
++#ifndef O_DIRECTORY
++#define O_DIRECTORY 0
++#endif
++#endif
++
+ #if defined(O_SEARCH)
+ # define DIR_OPEN_FLAGS	(O_SEARCH|O_DIRECTORY)
+ #elif defined(O_PATH)
