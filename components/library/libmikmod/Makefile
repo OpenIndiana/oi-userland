@@ -14,15 +14,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmikmod
-COMPONENT_VERSION=	3.3.8
+COMPONENT_VERSION=	3.3.10
 COMPONENT_SUMMARY=	MOD file playing library
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_PROJECT_URL=	http://mikmod.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4acf6634a477d8b95f18b55a3e2e76052c149e690d202484e8b0ac7589cf37a2
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/mikmod/files/libmikmod/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
+  sha256:00b3f5298431864ebd069de793ec969cfea3ae6f340f6dfae1ff7da1ae24ef48
+COMPONENT_ARCHIVE_URL= \
+  http://sourceforge.net/projects/mikmod/files/libmikmod/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
 COMPONENT_FMRI=		library/audio/libmikmod
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE= COPYING.LIB
@@ -44,3 +45,11 @@ CONFIGURE_OPTIONS  += --enable-openal
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+test:	$(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/openal
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
