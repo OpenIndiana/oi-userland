@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,7 +24,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/admin
 file path=usr/bin/bdiff
-hardlink path=usr/bin/cdc target=rmdel
+hardlink path=usr/bin/cdc target=rmchg
 file path=usr/bin/comb
 file path=usr/bin/delta
 file path=usr/bin/diff
@@ -34,19 +34,20 @@ link path=usr/bin/opatch target=spatch
 file path=usr/bin/prs
 file path=usr/bin/prt
 file path=usr/bin/rcs2sccs
-hardlink path=usr/bin/rmchg target=rmdel
-file path=usr/bin/rmdel
-file path=usr/bin/sact
+file path=usr/bin/rmchg
+hardlink path=usr/bin/rmdel target=rmchg
+hardlink path=usr/bin/sact target=unget
 file path=usr/bin/sccs
 file path=usr/bin/sccscvt
 file path=usr/bin/sccsdiff
 file path=usr/bin/sccslog
-link path=usr/bin/sccspatch target=spatch
+link path=usr/bin/sccspatch target=../../bin/spatch
 file path=usr/bin/spatch
-hardlink path=usr/bin/unget target=sact
+file path=usr/bin/unget
 file path=usr/bin/val
 file path=usr/bin/vc
 file path=usr/bin/what
+file path=usr/ccs/lib/help/locale/C/sc
 file path=usr/include/schily/_regex.h
 file path=usr/include/schily/align.h
 file path=usr/include/schily/alloca.h
@@ -186,7 +187,9 @@ file path=usr/lib/libcomobj.a
 file path=usr/lib/libfind.a
 file path=usr/lib/libgetopt.a
 file path=usr/lib/libmpw.a
+file path=usr/lib/libschily.a
 file path=usr/lib/profiled/libfind.a
+file path=usr/lib/profiled/libschily.a
 file path=usr/share/man/man1/admin.1
 file path=usr/share/man/man1/bdiff.1
 file path=usr/share/man/man1/cdc.1
@@ -195,6 +198,7 @@ file path=usr/share/man/man1/delta.1
 file path=usr/share/man/man1/diff.1
 file path=usr/share/man/man1/get.1
 file path=usr/share/man/man1/help.1
+file path=usr/share/man/man1/opatch.1
 file path=usr/share/man/man1/patch.1
 file path=usr/share/man/man1/prs.1
 file path=usr/share/man/man1/prt.1
@@ -221,10 +225,69 @@ file path=usr/share/man/man1/sccs.1
 file path=usr/share/man/man1/sccscvt.1
 file path=usr/share/man/man1/sccsdiff.1
 file path=usr/share/man/man1/sccslog.1
+file path=usr/share/man/man1/sccspatch.1
+file path=usr/share/man/man1/spatch.1
 file path=usr/share/man/man1/unget.1
 file path=usr/share/man/man1/val.1
 file path=usr/share/man/man1/vc.1
 file path=usr/share/man/man1/what.1
+file path=usr/share/man/man3/absfpath.3
+file path=usr/share/man/man3/absnpath.3
+file path=usr/share/man/man3/abspath.3
+file path=usr/share/man/man3/astoi.3
+file path=usr/share/man/man3/astol.3
+file path=usr/share/man/man3/breakline.3
+file path=usr/share/man/man3/comerr.3
+file path=usr/share/man/man3/comerrno.3
+file path=usr/share/man/man3/errmsg.3
+file path=usr/share/man/man3/errmsgno.3
+file path=usr/share/man/man3/error.3
+file path=usr/share/man/man3/fdown.3
+file path=usr/share/man/man3/fdup.3
+file path=usr/share/man/man3/fexecl.3
+file path=usr/share/man/man3/fexecle.3
+file path=usr/share/man/man3/fexecv.3
+file path=usr/share/man/man3/fexecve.3
+file path=usr/share/man/man3/fgetline.3
+file path=usr/share/man/man3/file_raise.3
+file path=usr/share/man/man3/fileclose.3
+file path=usr/share/man/man3/fileluopen.3
+file path=usr/share/man/man3/fileopen.3
+file path=usr/share/man/man3/filepos.3
+file path=usr/share/man/man3/fileread.3
+file path=usr/share/man/man3/filereopen.3
+file path=usr/share/man/man3/fileseek.3
+file path=usr/share/man/man3/filesize.3
+file path=usr/share/man/man3/filestat.3
+file path=usr/share/man/man3/filewrite.3
+file path=usr/share/man/man3/findline.3
+file path=usr/share/man/man3/flush.3
+file path=usr/share/man/man3/fnmatch.3
+file path=usr/share/man/man3/format.3
+file path=usr/share/man/man3/fpipe.3
+file path=usr/share/man/man3/fprintf.3
+file path=usr/share/man/man3/getallargs.3
+file path=usr/share/man/man3/getargs.3
+file path=usr/share/man/man3/geterrno.3
+file path=usr/share/man/man3/getfiles.3
+file path=usr/share/man/man3/getline.3
+file path=usr/share/man/man3/handlecond.3
+file path=usr/share/man/man3/movebytes.3
+file path=usr/share/man/man3/ofindline.3
+file path=usr/share/man/man3/patcompile.3
+file path=usr/share/man/man3/patmatch.3
+file path=usr/share/man/man3/peekc.3
+file path=usr/share/man/man3/printf.3
+file path=usr/share/man/man3/raisecond.3
+file path=usr/share/man/man3/resolvefpath.3
+file path=usr/share/man/man3/resolvenpath.3
+file path=usr/share/man/man3/resolvepath.3
+file path=usr/share/man/man3/spawnl.3
+file path=usr/share/man/man3/spawnv.3
+file path=usr/share/man/man3/sprintf.3
+file path=usr/share/man/man3/strcatl.3
+file path=usr/share/man/man3/streql.3
+file path=usr/share/man/man3/strlen.3
 file path=usr/share/man/man4/changeset.4
 file path=usr/share/man/man4/sccschangeset.4
 file path=usr/share/man/man4/sccsfile.4

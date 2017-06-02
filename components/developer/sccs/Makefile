@@ -13,30 +13,35 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sccs
-COMPONENT_VERSION= 5.07
-IPS_COMPONENT_VERSION=5.0.7
+COMPONENT_VERSION= 5.08
+IPS_COMPONENT_VERSION=5.0.8
+COMPONENT_FMRI= developer/versioning/sccs
 COMPONENT_SUMMARY= The POSIX standard Source Code Control System
+COMPONENT_CLASSIFICATION= Development/Source Code Management
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH = sha256:e0d04d99ff9158870437b018e4205da2778d716034b70468b0fecc67c597de19
-COMPONENT_PROJECT_URL = http://sccs.sourceforge.net/
-COMPONENT_ARCHIVE_URL= http://sourceforge.net/projects/sccs/files/$(COMPONENT_ARCHIVE)/download
-COMPONENT_CLASSIFICATION= Development/Source Code Management
-COMPONENT_LICENSE_FILE= sccs.license
+COMPONENT_PROJECT_URL= https://sccs.sourceforge.net/
+COMPONENT_ARCHIVE_HASH= \
+  sha256:5ea2898f25272e81f7725d9cd0c6c416bc9b1b3a765acb08855feaef8295692a
+COMPONENT_ARCHIVE_URL= \
+  https://sourceforge.net/projects/sccs/files/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE= GPL,CDDL
-COMPONENT_FMRI= developer/versioning/sccs
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(PATH.illumos)
 
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

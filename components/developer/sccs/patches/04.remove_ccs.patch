@@ -1,8 +1,8 @@
-/usr/ccs/ patch is outdated and should be used only for compatibility
+/usr/ccs/ path is deprecated and should be used only for compatibility
 
-diff -ur sccs-5.07-orig/patch/patch_sym.mk sccs-5.07/patch/patch_sym.mk
---- sccs-5.07-orig/patch/patch_sym.mk	2011-09-06 02:07:37.000000000 +0400
-+++ sccs-5.07/patch/patch_sym.mk	2015-06-04 10:49:23.993718432 +0300
+diff -Nurb sccs-5.08/patch/patch_sym.mk sccs-5.08.patched/patch/patch_sym.mk
+--- sccs-5.08/patch/patch_sym.mk	2011-09-06 00:07:37.000000000 +0000
++++ sccs-5.08.patched/patch/patch_sym.mk	2017-06-03 00:38:14.955159289 +0000
 @@ -6,7 +6,7 @@
  ###########################################################################
  _EXEEXT=	$(EXEEXT)
@@ -12,27 +12,21 @@ diff -ur sccs-5.07-orig/patch/patch_sym.mk sccs-5.07/patch/patch_sym.mk
  TARGET=		sccspatch
  ORIG=		spatch
  PSYMLINKS=	$(DEST_DIR)$(INS_BASE)/$(INSDIR)/$(TARGET)$(_EXEEXT)
-@@ -15,4 +15,4 @@
- 
- $(PSYMLINKS):	$(DEST_DIR)$(INS_BASE)/bin/$(ORIG)$(_EXEEXT)
- 	$(MKDIR) -p $(DEST_DIR)$(INS_BASE)/$(INSDIR)
--	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) ../../bin/$(ORIG)$(_EXEEXT) $@
-+	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) $(ORIG)$(_EXEEXT) $@
-diff -ur sccs-5.07-orig/sccs/man/sccs-admin.1 sccs-5.07/sccs/man/sccs-admin.1
---- sccs-5.07-orig/sccs/man/sccs-admin.1	2015-01-20 01:59:56.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-admin.1	2015-06-04 10:51:51.601304021 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-admin.1 sccs-5.08.patched/sccs/man/sccs-admin.1
+--- sccs-5.08/sccs/man/sccs-admin.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-admin.1	2017-06-03 00:38:14.973215958 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
  .LP
 -.B /usr/ccs/bin/admin
 +.B /usr/bin/admin
- .RB [ -bhnoz ]
+ .RB [ -bhknoz ]
  .RB [ -a\c
  .IR " username " | " groupid" ]...
-diff -ur sccs-5.07-orig/sccs/man/sccs-cdc.1 sccs-5.07/sccs/man/sccs-cdc.1
---- sccs-5.07-orig/sccs/man/sccs-cdc.1	2015-01-20 01:59:56.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-cdc.1	2015-06-04 10:51:51.610454820 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-cdc.1 sccs-5.08.patched/sccs/man/sccs-cdc.1
+--- sccs-5.08/sccs/man/sccs-cdc.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-cdc.1	2017-06-03 00:38:14.978426668 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -42,9 +36,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-cdc.1 sccs-5.07/sccs/man/sccs-cdc.1
  .BI -r "sid \c"
  .RB [ -m\c
  .IR mr-list "] \c
-diff -ur sccs-5.07-orig/sccs/man/sccs-comb.1 sccs-5.07/sccs/man/sccs-comb.1
---- sccs-5.07-orig/sccs/man/sccs-comb.1	2015-01-20 01:59:56.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-comb.1	2015-06-04 10:51:51.618327103 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-comb.1 sccs-5.08.patched/sccs/man/sccs-comb.1
+--- sccs-5.08/sccs/man/sccs-comb.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-comb.1	2017-06-03 00:38:14.986067762 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -54,19 +48,19 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-comb.1 sccs-5.07/sccs/man/sccs-comb.1
  .RB [ -os "] \c
  .RB [ -c\c
  .IR sid-list "] \c
-diff -ur sccs-5.07-orig/sccs/man/sccs-delta.1 sccs-5.07/sccs/man/sccs-delta.1
---- sccs-5.07-orig/sccs/man/sccs-delta.1	2015-01-21 00:25:25.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-delta.1	2015-06-04 10:51:51.636565077 +0300
-@@ -36,7 +36,7 @@
- sccs-delta, delta \- make a delta to an SCCS file
+diff -Nurb sccs-5.08/sccs/man/sccs-delta.1 sccs-5.08.patched/sccs/man/sccs-delta.1
+--- sccs-5.08/sccs/man/sccs-delta.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-delta.1	2017-06-03 00:38:14.998828053 +0000
+@@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
--.B /usr/ccs/bin/delta
-+.B /usr/bin/delta
- .RB [ -dfhnopsz ]
- .RB [ -g
- .I sid-list
-@@ -504,7 +504,7 @@
+ .nf
+-.B /usr/ccs/bin/delta \c
++.B /usr/bin/delta \c
+ .RB [ -dfhnopsz "] \c
+ .RB [ "-g \c
+ .I sid-list \c
+@@ -627,7 +627,7 @@
  for descriptions of the following attributes:
  .sp
  
@@ -75,9 +69,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-delta.1 sccs-5.07/sccs/man/sccs-delta.1
  
  .LP
  
-diff -ur sccs-5.07-orig/sccs/man/sccs-get.1 sccs-5.07/sccs/man/sccs-get.1
---- sccs-5.07-orig/sccs/man/sccs-get.1	2015-01-21 00:38:20.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-get.1	2015-06-04 10:51:51.651565313 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-get.1 sccs-5.08.patched/sccs/man/sccs-get.1
+--- sccs-5.08/sccs/man/sccs-get.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-get.1	2017-06-03 00:38:15.018241410 +0000
 @@ -37,7 +37,7 @@
  sccs-get, get \- retrieve a version of an SCCS file
  .SH SYNOPSIS
@@ -87,7 +81,7 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-get.1 sccs-5.07/sccs/man/sccs-get.1
  .RB [ -beFgkmnopst ]
  .RB [ -l
  [p]]
-@@ -515,7 +515,7 @@
+@@ -654,7 +654,7 @@
  .B get
  version number string and exists.
  
@@ -96,7 +90,7 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-get.1 sccs-5.07/sccs/man/sccs-get.1
  
  .br
  .ne 3
-@@ -620,7 +620,7 @@
+@@ -759,7 +759,7 @@
  .TP
  .BI -r sid
  Same as for
@@ -105,7 +99,7 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-get.1 sccs-5.07/sccs/man/sccs-get.1
  except that
  .B SID
  is mandatory.
-@@ -632,18 +632,18 @@
+@@ -771,18 +771,18 @@
  .TP
  .BI -x sid-list
  Same as for
@@ -127,7 +121,7 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-get.1 sccs-5.07/sccs/man/sccs-get.1
  is as follows:
  
  .LP
-@@ -1088,7 +1088,7 @@
+@@ -1237,7 +1237,7 @@
  for descriptions of the following attributes:
  .sp
  
@@ -136,9 +130,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-get.1 sccs-5.07/sccs/man/sccs-get.1
  
  .LP
  
-diff -ur sccs-5.07-orig/sccs/man/sccs-help.1 sccs-5.07/sccs/man/sccs-help.1
---- sccs-5.07-orig/sccs/man/sccs-help.1	2015-01-21 00:40:01.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-help.1	2015-06-04 10:51:51.658809682 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-help.1 sccs-5.08.patched/sccs/man/sccs-help.1
+--- sccs-5.08/sccs/man/sccs-help.1	2015-01-20 22:40:01.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-help.1	2017-06-03 00:38:15.022958895 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -157,9 +151,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-help.1 sccs-5.07/sccs/man/sccs-help.1
  
  .SH ENVIRONMENT VARIABLES
  .sp
-diff -ur sccs-5.07-orig/sccs/man/sccs-prs.1 sccs-5.07/sccs/man/sccs-prs.1
---- sccs-5.07-orig/sccs/man/sccs-prs.1	2015-01-21 22:52:34.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-prs.1	2015-06-04 10:51:51.675337929 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-prs.1 sccs-5.08.patched/sccs/man/sccs-prs.1
+--- sccs-5.08/sccs/man/sccs-prs.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-prs.1	2017-06-03 00:38:15.032927992 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -178,9 +172,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-prs.1 sccs-5.07/sccs/man/sccs-prs.1
  .fi
  .in -2
  
-diff -ur sccs-5.07-orig/sccs/man/sccs-prt.1 sccs-5.07/sccs/man/sccs-prt.1
---- sccs-5.07-orig/sccs/man/sccs-prt.1	2015-01-21 00:49:27.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-prt.1	2015-06-04 10:51:51.685484552 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-prt.1 sccs-5.08.patched/sccs/man/sccs-prt.1
+--- sccs-5.08/sccs/man/sccs-prt.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-prt.1	2017-06-03 00:38:15.038931158 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -199,9 +193,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-prt.1 sccs-5.07/sccs/man/sccs-prt.1
  
  .LP
  produces a one-line display of the delta table entry for the
-diff -ur sccs-5.07-orig/sccs/man/sccs-rcs2sccs.1 sccs-5.07/sccs/man/sccs-rcs2sccs.1
---- sccs-5.07-orig/sccs/man/sccs-rcs2sccs.1	2015-01-21 22:52:34.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-rcs2sccs.1	2015-06-04 10:51:51.693183872 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-rcs2sccs.1 sccs-5.08.patched/sccs/man/sccs-rcs2sccs.1
+--- sccs-5.08/sccs/man/sccs-rcs2sccs.1	2015-01-21 20:52:34.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-rcs2sccs.1	2017-06-03 00:38:15.045206082 +0000
 @@ -31,7 +31,7 @@
  sccs-rcs2sccs, rcs2sccs \- convert RCS files into SCCS files
  .SH SYNOPSIS
@@ -211,9 +205,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-rcs2sccs.1 sccs-5.07/sccs/man/sccs-rcs2scc
  .RB [ \-rm ]
  .RB [ \-V6 ]
  .RI [ file... ]
-diff -ur sccs-5.07-orig/sccs/man/sccs-rmdel.1 sccs-5.07/sccs/man/sccs-rmdel.1
---- sccs-5.07-orig/sccs/man/sccs-rmdel.1	2015-01-21 00:52:55.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-rmdel.1	2015-06-04 10:51:51.701240632 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-rmdel.1 sccs-5.08.patched/sccs/man/sccs-rmdel.1
+--- sccs-5.08/sccs/man/sccs-rmdel.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-rmdel.1	2017-06-03 00:38:15.049906985 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -223,9 +217,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-rmdel.1 sccs-5.07/sccs/man/sccs-rmdel.1
  .RB [ -d "] \c
  .BI -r "sid \c
  .RB [ -q\c
-diff -ur sccs-5.07-orig/sccs/man/sccs-sact.1 sccs-5.07/sccs/man/sccs-sact.1
---- sccs-5.07-orig/sccs/man/sccs-sact.1	2015-01-21 00:55:18.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-sact.1	2015-06-04 10:51:51.708727781 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-sact.1 sccs-5.08.patched/sccs/man/sccs-sact.1
+--- sccs-5.08/sccs/man/sccs-sact.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-sact.1	2017-06-03 00:38:15.056885126 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -235,9 +229,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-sact.1 sccs-5.07/sccs/man/sccs-sact.1
  .RB [ \-s "] \c
  .IR s.filename...
  .fi
-diff -ur sccs-5.07-orig/sccs/man/sccs-sccsdiff.1 sccs-5.07/sccs/man/sccs-sccsdiff.1
---- sccs-5.07-orig/sccs/man/sccs-sccsdiff.1	2015-01-21 00:57:14.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-sccsdiff.1	2015-06-04 10:51:51.716198191 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-sccsdiff.1 sccs-5.08.patched/sccs/man/sccs-sccsdiff.1
+--- sccs-5.08/sccs/man/sccs-sccsdiff.1	2015-01-20 22:57:14.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-sccsdiff.1	2017-06-03 00:38:15.063760405 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -247,9 +241,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-sccsdiff.1 sccs-5.07/sccs/man/sccs-sccsdif
  .RB [ -p "] \c
  .BI -r "sid \c
  .BI -r "sid \c
-diff -ur sccs-5.07-orig/sccs/man/sccs-unget.1 sccs-5.07/sccs/man/sccs-unget.1
---- sccs-5.07-orig/sccs/man/sccs-unget.1	2015-01-21 00:59:48.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-unget.1	2015-06-04 10:51:51.724156524 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-unget.1 sccs-5.08.patched/sccs/man/sccs-unget.1
+--- sccs-5.08/sccs/man/sccs-unget.1	2015-04-29 20:40:04.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-unget.1	2017-06-03 00:38:15.071350712 +0000
 @@ -37,7 +37,7 @@
  .SH SYNOPSIS
  .LP
@@ -259,9 +253,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-unget.1 sccs-5.07/sccs/man/sccs-unget.1
  .RB [ -ns "] \c
  .RB [ -q\c
  .RI [ nsedelim "]] \c
-diff -ur sccs-5.07-orig/sccs/man/sccs-val.1 sccs-5.07/sccs/man/sccs-val.1
---- sccs-5.07-orig/sccs/man/sccs-val.1	2015-01-21 22:52:34.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs-val.1	2015-06-04 10:51:51.732190449 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs-val.1 sccs-5.08.patched/sccs/man/sccs-val.1
+--- sccs-5.08/sccs/man/sccs-val.1	2015-02-03 21:03:39.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs-val.1	2017-06-03 00:38:15.075993965 +0000
 @@ -37,11 +37,11 @@
  .SH SYNOPSIS
  .LP
@@ -276,9 +270,9 @@ diff -ur sccs-5.07-orig/sccs/man/sccs-val.1 sccs-5.07/sccs/man/sccs-val.1
  .RB [ -T "] [" -s\c
  .RB "] [" "-m \c
  .I name\c
-diff -ur sccs-5.07-orig/sccs/man/sccs.1 sccs-5.07/sccs/man/sccs.1
---- sccs-5.07-orig/sccs/man/sccs.1	2015-01-21 00:04:45.000000000 +0300
-+++ sccs-5.07/sccs/man/sccs.1	2015-06-04 10:51:51.756295273 +0300
+diff -Nurb sccs-5.08/sccs/man/sccs.1 sccs-5.08.patched/sccs/man/sccs.1
+--- sccs-5.08/sccs/man/sccs.1	2015-01-20 22:04:45.000000000 +0000
++++ sccs-5.08.patched/sccs/man/sccs.1	2017-06-03 00:38:15.091517541 +0000
 @@ -602,7 +602,7 @@
  Many of the following
  .B sccs
@@ -306,6 +300,24 @@ diff -ur sccs-5.07-orig/sccs/man/sccs.1 sccs-5.07/sccs/man/sccs.1
  .fi
  .in -2
  
+@@ -1951,7 +1951,7 @@
+ 
+ .in +2
+ .nf
+-.RB example% " sccs get /usr/src/sccs/cc.c
++.RB example% " sccs get /usr/src/scc.c
+ .fi
+ .in -2
+ 
+@@ -1960,7 +1960,7 @@
+ 
+ .in +2
+ .nf
+-.RB example% " sccs -p/usr/src/sccs/ get cc.c
++.RB example% " sccs -p/usr/src/s get cc.c
+ .fi
+ .in -2
+ 
 @@ -2234,7 +2234,7 @@
  .br
  .ne 3
@@ -315,19 +327,19 @@ diff -ur sccs-5.07-orig/sccs/man/sccs.1 sccs-5.07/sccs/man/sccs.1
  .B SCCS
  utility programs
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/admin.c sccs-5.07/sccs/sccs/cmd/src/admin.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/admin.c	2014-09-04 13:52:20.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/admin.c	2015-06-04 10:54:28.134947484 +0300
-@@ -113,7 +113,7 @@
- static char	*z;			/* for validation program name */
- static char	had_flag[NFLAGS], rm_flag[NFLAGS];
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/admin.c sccs-5.08.patched/sccs/sccs/cmd/src/admin.c
+--- sccs-5.08/sccs/sccs/cmd/src/admin.c	2015-03-07 17:51:30.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/admin.c	2017-06-03 00:38:15.105931721 +0000
+@@ -111,7 +111,7 @@
+ static char	had_flag[NFLAGS];	/* -f seen list			*/
+ static char	rm_flag[NFLAGS];	/* -d seen list			*/
  #if	defined(PROTOTYPES) && defined(INS_BASE)
 -static char	Valpgmp[]	=	NOGETTEXT(INS_BASE "/ccs/bin/" "val");
 +static char	Valpgmp[]	=	NOGETTEXT(INS_BASE "/bin/" "val");
  #endif
  static char	Valpgm[]	=	NOGETTEXT("val");
- static int	fexists, num_files;
-@@ -178,10 +178,10 @@
+ static int	fexists;		/* Current file exists		*/
+@@ -179,10 +179,10 @@
  	 */
  #ifdef	PROTOTYPES
  	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
@@ -338,11 +350,11 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/admin.c sccs-5.07/sccs/sccs/cmd/src/ad
 -	   NOGETTEXT("/usr/ccs/lib/locale/"));
 +	   NOGETTEXT("/usr/lib/locale/"));
  #endif
- 	
+ 
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/admin.mk sccs-5.07/sccs/sccs/cmd/src/admin.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/admin.mk	2014-08-14 00:07:38.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/admin.mk	2015-06-04 10:54:28.137990252 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/admin.mk sccs-5.08.patched/sccs/sccs/cmd/src/admin.mk
+--- sccs-5.08/sccs/sccs/cmd/src/admin.mk	2014-08-13 22:07:38.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/admin.mk	2017-06-03 00:38:15.108797383 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -352,9 +364,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/admin.mk sccs-5.07/sccs/sccs/cmd/src/a
  TARGET=		admin
  CPPOPTS +=	-DSUN5_0
  CPPOPTS +=	-DUSE_LARGEFILES
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.c sccs-5.07/sccs/sccs/cmd/src/bdiff.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.c	2011-08-07 18:18:38.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/bdiff.c	2015-06-04 10:54:28.145761892 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/bdiff.c sccs-5.08.patched/sccs/sccs/cmd/src/bdiff.c
+--- sccs-5.08/sccs/sccs/cmd/src/bdiff.c	2015-04-23 20:14:40.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/bdiff.c	2017-06-03 00:38:15.115127826 +0000
 @@ -89,7 +89,7 @@
  static int seglim;	/* limit of size of file segment to be generated */
  
@@ -364,9 +376,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.c sccs-5.07/sccs/sccs/cmd/src/bd
  #endif
  static char diff[]  =  "/usr/bin/diff";
  static char tempskel[] = "/tmp/bdXXXXXX"; /* used to generate temp file names */
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.mk sccs-5.07/sccs/sccs/cmd/src/bdiff.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.mk	2008-01-02 20:01:58.000000000 +0300
-+++ sccs-5.07/sccs/sccs/cmd/src/bdiff.mk	2015-06-04 10:54:28.148862361 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/bdiff.mk sccs-5.08.patched/sccs/sccs/cmd/src/bdiff.mk
+--- sccs-5.08/sccs/sccs/cmd/src/bdiff.mk	2008-01-02 18:01:58.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/bdiff.mk	2017-06-03 00:38:15.117899055 +0000
 @@ -5,7 +5,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -376,9 +388,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/bdiff.mk sccs-5.07/sccs/sccs/cmd/src/b
  TARGET=		bdiff
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/comb.c sccs-5.07/sccs/sccs/cmd/src/comb.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/comb.c	2014-08-09 19:25:25.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/comb.c	2015-06-04 10:54:28.155007390 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/comb.c sccs-5.08.patched/sccs/sccs/cmd/src/comb.c
+--- sccs-5.08/sccs/sccs/cmd/src/comb.c	2015-02-06 20:46:32.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/comb.c	2017-06-03 00:38:15.123081470 +0000
 @@ -90,10 +90,10 @@
  	 */
  #ifdef	PROTOTYPES
@@ -401,9 +413,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/comb.c sccs-5.07/sccs/sccs/cmd/src/com
  	fprintf(iop,"export PATH\n");
  #endif
  	fprintf(iop,"trap \"rm -f COMB$$ comb$$ s.COMB$$; exit 2\" 1 2 3 15\n");
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/comb.mk sccs-5.07/sccs/sccs/cmd/src/comb.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/comb.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/comb.mk	2015-06-04 10:54:28.157919736 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/comb.mk sccs-5.08.patched/sccs/sccs/cmd/src/comb.mk
+--- sccs-5.08/sccs/sccs/cmd/src/comb.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/comb.mk	2017-06-03 00:38:15.125801994 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -413,12 +425,12 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/comb.mk sccs-5.07/sccs/sccs/cmd/src/co
  TARGET=		comb
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/delta.c sccs-5.07/sccs/sccs/cmd/src/delta.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/delta.c	2014-08-09 19:25:25.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/delta.c	2015-06-04 10:54:28.171934980 +0300
-@@ -67,17 +67,17 @@
- static off_t	size_of_file;
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/delta.c sccs-5.08.patched/sccs/sccs/cmd/src/delta.c
+--- sccs-5.08/sccs/sccs/cmd/src/delta.c	2015-04-23 20:18:01.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/delta.c	2017-06-03 00:38:15.137503408 +0000
+@@ -69,17 +69,17 @@
  static off_t	Szqfile;
+ static off_t	Checksum_offset;
  #ifdef	PROTOTYPES
 -static char	BDiffpgm[]  =   NOGETTEXT(INS_BASE "/ccs/bin/" "bdiff");
 +static char	BDiffpgm[]  =   NOGETTEXT(INS_BASE "/bin/" "bdiff");
@@ -438,7 +450,7 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/delta.c sccs-5.07/sccs/sccs/cmd/src/de
  #endif
  static char	Diffpgm[]   =   NOGETTEXT("/usr/bin/diff");
  static char	Diffpgm2[]   =   NOGETTEXT("/bin/diff");
-@@ -140,10 +140,10 @@
+@@ -144,10 +144,10 @@
  	 */
  #ifdef	PROTOTYPES
  	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
@@ -451,9 +463,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/delta.c sccs-5.07/sccs/sccs/cmd/src/de
  #endif
  	
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/delta.mk sccs-5.07/sccs/sccs/cmd/src/delta.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/delta.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/delta.mk	2015-06-04 10:54:28.174943856 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/delta.mk sccs-5.08.patched/sccs/sccs/cmd/src/delta.mk
+--- sccs-5.08/sccs/sccs/cmd/src/delta.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/delta.mk	2017-06-03 00:38:15.140311228 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -463,9 +475,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/delta.mk sccs-5.07/sccs/sccs/cmd/src/d
  TARGET=		delta
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diff.h sccs-5.07/sccs/sccs/cmd/src/diff.h
---- sccs-5.07-orig/sccs/sccs/cmd/src/diff.h	2011-04-22 01:04:52.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/diff.h	2015-06-04 10:54:28.202225462 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/diff.h sccs-5.08.patched/sccs/sccs/cmd/src/diff.h
+--- sccs-5.08/sccs/sccs/cmd/src/diff.h	2011-04-21 23:04:52.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/diff.h	2017-06-03 00:38:15.144164421 +0000
 @@ -188,11 +188,11 @@
  
  #if	defined(INS_BASE)
@@ -482,9 +494,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diff.h sccs-5.07/sccs/sccs/cmd/src/dif
  #endif
  #else
  char diff[] = "/usr/bin/diff";
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diff.mk sccs-5.07/sccs/sccs/cmd/src/diff.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/diff.mk	2009-04-12 23:44:33.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/diff.mk	2015-06-04 10:54:28.205283891 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/diff.mk sccs-5.08.patched/sccs/sccs/cmd/src/diff.mk
+--- sccs-5.08/sccs/sccs/cmd/src/diff.mk	2009-04-12 21:44:33.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/diff.mk	2017-06-03 00:38:15.146989961 +0000
 @@ -5,7 +5,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -494,9 +506,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diff.mk sccs-5.07/sccs/sccs/cmd/src/di
  TARGET=		diff
  #SYMLINKS=	../../bin/sccs
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diffh.mk sccs-5.07/sccs/sccs/cmd/src/diffh.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/diffh.mk	2008-01-02 20:01:58.000000000 +0300
-+++ sccs-5.07/sccs/sccs/cmd/src/diffh.mk	2015-06-04 10:54:28.214090404 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/diffh.mk sccs-5.08.patched/sccs/sccs/cmd/src/diffh.mk
+--- sccs-5.08/sccs/sccs/cmd/src/diffh.mk	2008-01-02 18:01:58.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/diffh.mk	2017-06-03 00:38:15.149776040 +0000
 @@ -5,7 +5,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -506,26 +518,26 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/diffh.mk sccs-5.07/sccs/sccs/cmd/src/d
  TARGET=		diffh
  #SYMLINKS=	../../bin/sccs
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/get.c sccs-5.07/sccs/sccs/cmd/src/get.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/get.c	2015-01-25 16:23:58.000000000 +0300
-+++ sccs-5.07/sccs/sccs/cmd/src/get.c	2015-06-04 10:54:28.228336457 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/get.c sccs-5.08.patched/sccs/sccs/cmd/src/get.c
+--- sccs-5.08/sccs/sccs/cmd/src/get.c	2015-03-10 23:31:06.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/get.c	2017-06-03 00:38:15.158626279 +0000
 @@ -55,13 +55,13 @@
  #define	DATELEN	12
  
  #if defined(__STDC__) || defined(PROTOTYPES)
--#define INCPATH		INS_BASE "/ccs/include"	/* place to find binaries */
-+#define INCPATH		INS_BASE "/include"	/* place to find binaries */
+-#define	INCPATH		INS_BASE "/ccs/include"	/* place to find binaries */
++#define	INCPATH		INS_BASE "/include"	/* place to find binaries */
  #else
  /*
   * XXX With a K&R compiler, you need to edit the following string in case
   * XXX you like to change the install path.
   */
--#define INCPATH		"/usr/ccs/include"	/* place to find binaries */
-+#define INCPATH		"/usr/include"	/* place to find binaries */
+-#define	INCPATH		"/usr/ccs/include"	/* place to find binaries */
++#define	INCPATH		"/usr/include"	/* place to find binaries */
  #endif
  
  
-@@ -144,10 +144,10 @@
+@@ -134,10 +134,10 @@
  	 */
  #ifdef	PROTOTYPES
  	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
@@ -538,9 +550,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/get.c sccs-5.07/sccs/sccs/cmd/src/get.
  #endif
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/get.mk sccs-5.07/sccs/sccs/cmd/src/get.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/get.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/get.mk	2015-06-04 10:54:28.233855743 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/get.mk sccs-5.08.patched/sccs/sccs/cmd/src/get.mk
+--- sccs-5.08/sccs/sccs/cmd/src/get.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/get.mk	2017-06-03 00:38:15.161353054 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -550,9 +562,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/get.mk sccs-5.07/sccs/sccs/cmd/src/get
  TARGET=		get
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help.c sccs-5.07/sccs/sccs/cmd/src/help.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/help.c	2011-11-02 02:53:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/help.c	2015-06-04 10:54:28.247891519 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/help.c sccs-5.08.patched/sccs/sccs/cmd/src/help.c
+--- sccs-5.08/sccs/sccs/cmd/src/help.c	2011-11-01 23:53:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/help.c	2017-06-03 00:38:15.164449190 +0000
 @@ -45,9 +45,9 @@
  #include	<i18n.h>
  
@@ -578,9 +590,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help.c sccs-5.07/sccs/sccs/cmd/src/hel
  #endif
  	
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help.mk sccs-5.07/sccs/sccs/cmd/src/help.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/help.mk	2008-01-02 20:01:58.000000000 +0300
-+++ sccs-5.07/sccs/sccs/cmd/src/help.mk	2015-06-04 10:54:28.253174663 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/help.mk sccs-5.08.patched/sccs/sccs/cmd/src/help.mk
+--- sccs-5.08/sccs/sccs/cmd/src/help.mk	2008-01-02 18:01:58.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/help.mk	2017-06-03 00:38:15.167184213 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -590,9 +602,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help.mk sccs-5.07/sccs/sccs/cmd/src/he
  TARGET=		help
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help2.c sccs-5.07/sccs/sccs/cmd/src/help2.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/help2.c	2014-08-10 17:46:39.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/help2.c	2015-06-04 10:54:28.259203881 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/help2.c sccs-5.08.patched/sccs/sccs/cmd/src/help2.c
+--- sccs-5.08/sccs/sccs/cmd/src/help2.c	2015-02-02 21:59:09.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/help2.c	2017-06-03 00:38:15.170942902 +0000
 @@ -60,21 +60,21 @@
   *
   *	The file to be searched is determined from the argument. If the
@@ -625,8 +637,8 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help2.c sccs-5.07/sccs/sccs/cmd/src/he
  #else
  	char *default_locale = NOGETTEXT("C"); /* Default English. */
  #endif
--	char *helpdir = NOGETTEXT("/usr/ccs/lib/help/locale/");
-+	char *helpdir = NOGETTEXT("/usr/lib/help/locale/");
+-	char *helpdir = NOGETTEXT("/ccs/lib/help/locale/");
++	char *helpdir = NOGETTEXT("/lib/help/locale/");
  	char help_dir[200]; /* Directory to search for help text. */
  	char *locale = NULL; /* User's locale. */
  
@@ -643,9 +655,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help2.c sccs-5.07/sccs/sccs/cmd/src/he
  #endif
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help2.mk sccs-5.07/sccs/sccs/cmd/src/help2.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/help2.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/help2.mk	2015-06-04 10:54:28.262275079 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/help2.mk sccs-5.08.patched/sccs/sccs/cmd/src/help2.mk
+--- sccs-5.08/sccs/sccs/cmd/src/help2.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/help2.mk	2017-06-03 00:38:15.173724682 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -655,9 +667,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/help2.mk sccs-5.07/sccs/sccs/cmd/src/h
  TARGET=		help2
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prs.c sccs-5.07/sccs/sccs/cmd/src/prs.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/prs.c	2014-08-14 00:40:09.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/prs.c	2015-06-04 10:54:28.280393645 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/prs.c sccs-5.08.patched/sccs/sccs/cmd/src/prs.c
+--- sccs-5.08/sccs/sccs/cmd/src/prs.c	2015-02-23 23:24:47.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/prs.c	2017-06-03 00:38:15.185819637 +0000
 @@ -76,7 +76,7 @@
  # include	<schily/sysexits.h>
  
@@ -680,9 +692,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prs.c sccs-5.07/sccs/sccs/cmd/src/prs.
  #endif
  
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prs.mk sccs-5.07/sccs/sccs/cmd/src/prs.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/prs.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/prs.mk	2015-06-04 10:54:28.283419515 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/prs.mk sccs-5.08.patched/sccs/sccs/cmd/src/prs.mk
+--- sccs-5.08/sccs/sccs/cmd/src/prs.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/prs.mk	2017-06-03 00:38:15.188663595 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -692,9 +704,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prs.mk sccs-5.07/sccs/sccs/cmd/src/prs
  TARGET=		prs
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prt.c sccs-5.07/sccs/sccs/cmd/src/prt.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/prt.c	2014-08-09 19:25:25.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/prt.c	2015-06-04 10:54:28.291451026 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/prt.c sccs-5.08.patched/sccs/sccs/cmd/src/prt.c
+--- sccs-5.08/sccs/sccs/cmd/src/prt.c	2014-08-09 17:25:25.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/prt.c	2017-06-03 00:38:15.195133026 +0000
 @@ -148,10 +148,10 @@
  	 */
  #ifdef	PROTOTYPES
@@ -708,9 +720,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prt.c sccs-5.07/sccs/sccs/cmd/src/prt.
  #endif
  	
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prt.mk sccs-5.07/sccs/sccs/cmd/src/prt.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/prt.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/prt.mk	2015-06-04 10:54:28.294366941 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/prt.mk sccs-5.08.patched/sccs/sccs/cmd/src/prt.mk
+--- sccs-5.08/sccs/sccs/cmd/src/prt.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/prt.mk	2017-06-03 00:38:15.197907197 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -720,9 +732,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/prt.mk sccs-5.07/sccs/sccs/cmd/src/prt
  TARGET=		prt
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.mk sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.mk	2011-09-30 20:19:41.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.mk	2015-06-04 10:54:28.297373669 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/rcs2sccs.mk sccs-5.08.patched/sccs/sccs/cmd/src/rcs2sccs.mk
+--- sccs-5.08/sccs/sccs/cmd/src/rcs2sccs.mk	2011-09-30 18:19:41.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/rcs2sccs.mk	2017-06-03 00:38:15.200739834 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -732,9 +744,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.mk sccs-5.07/sccs/sccs/cmd/sr
  INSMODE=	0755
  TARGET=		rcs2sccs
  SCRFILE=	rcs2sccs.sh
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.sh sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.sh
---- sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.sh	2011-10-03 16:41:47.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/rcs2sccs.sh	2015-06-04 10:54:28.302436465 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/rcs2sccs.sh sccs-5.08.patched/sccs/sccs/cmd/src/rcs2sccs.sh
+--- sccs-5.08/sccs/sccs/cmd/src/rcs2sccs.sh	2011-10-03 14:41:47.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/rcs2sccs.sh	2017-06-03 00:38:15.205023677 +0000
 @@ -5,7 +5,7 @@
  # Id: rcs2sccs,v 1.12 90/10/04 20:52:23 kenc Exp Locker: kenc
  
@@ -744,9 +756,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rcs2sccs.sh sccs-5.07/sccs/sccs/cmd/sr
  ############################################################
  ex_code=0
  do_v6=""
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.c sccs-5.07/sccs/sccs/cmd/src/rmchg.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.c	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/rmchg.c	2015-06-04 10:54:28.312760789 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/rmchg.c sccs-5.08.patched/sccs/sccs/cmd/src/rmchg.c
+--- sccs-5.08/sccs/sccs/cmd/src/rmchg.c	2015-02-06 20:46:32.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/rmchg.c	2017-06-03 00:38:15.213270058 +0000
 @@ -131,10 +131,10 @@
  	 */
  #ifdef	PROTOTYPES
@@ -760,9 +772,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.c sccs-5.07/sccs/sccs/cmd/src/rm
  #endif
  	
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.mk sccs-5.07/sccs/sccs/cmd/src/rmchg.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/rmchg.mk	2015-06-04 10:54:28.316785709 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/rmchg.mk sccs-5.08.patched/sccs/sccs/cmd/src/rmchg.mk
+--- sccs-5.08/sccs/sccs/cmd/src/rmchg.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/rmchg.mk	2017-06-03 00:38:15.216030879 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -772,9 +784,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/rmchg.mk sccs-5.07/sccs/sccs/cmd/src/r
  TARGET=		rmchg
  HARDLINKS=	rmdel cdc
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs_sym.mk sccs-5.07/sccs/sccs/cmd/src/sccs_sym.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccs_sym.mk	2009-07-29 01:43:01.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/sccs_sym.mk	2015-06-04 10:54:28.320350863 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccs_sym.mk sccs-5.08.patched/sccs/sccs/cmd/src/sccs_sym.mk
+--- sccs-5.08/sccs/sccs/cmd/src/sccs_sym.mk	2009-07-28 23:43:01.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccs_sym.mk	2017-06-03 00:38:15.218719780 +0000
 @@ -12,6 +12,6 @@
  
  install: $(PSYMLINKS)
@@ -784,50 +796,50 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs_sym.mk sccs-5.07/sccs/sccs/cmd/sr
  	$(MKDIR) -p $(DEST_DIR)$(INS_BASE)/$(INSDIR)
 -	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) ../ccs/bin/$(TARGET)$(_EXEEXT) $@
 +	@echo "	==> INSTALLING symlink \"$@\""; $(RM) $(RM_FORCE) $@; $(SYMLINK) ../bin/$(TARGET)$(_EXEEXT) $@
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs.c sccs-5.07/sccs/sccs/cmd/src/sccs.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccs.c	2015-01-25 15:01:19.000000000 +0300
-+++ sccs-5.07/sccs/sccs/cmd/src/sccs.c	2015-06-04 10:54:28.352148223 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccs.c sccs-5.08.patched/sccs/sccs/cmd/src/sccs.c
+--- sccs-5.08/sccs/sccs/cmd/src/sccs.c	2015-04-23 20:24:10.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccs.c	2017-06-03 00:38:15.246289076 +0000
 @@ -187,9 +187,9 @@
- # endif
- # else
- # if defined(__STDC__) || defined(PROTOTYPES)
--# define PROGPATH(name)	"/usr/ccs/bin/"	#name /* place to find binaries */
-+# define PROGPATH(name)	"/usr/bin/"	#name /* place to find binaries */
- # else
--# define PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
-+# define PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
- # endif
- # endif /* V6 */
- # else
+ #endif
+ #else
+ #if defined(__STDC__) || defined(PROTOTYPES)
+-#define	PROGPATH(name)	"/usr/ccs/bin/"	#name /* place to find binaries */
++#define	PROGPATH(name)	"/usr/bin/"	#name /* place to find binaries */
+ #else
+-#define	PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
++#define	PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
+ #endif
+ #endif /* V6 */
+ #else
 @@ -201,9 +201,9 @@
- # endif
- # else
- # if defined(__STDC__) || defined(PROTOTYPES)
--# define PROGPATH(name)	"/usr/ccs/bin/"	#name /* place to find binaries */
-+# define PROGPATH(name)	"/usr/bin/"	#name /* place to find binaries */
- # else
--# define PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
-+# define PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
- # endif
- # endif /* XPG4 */
- # endif /* DESTDIR */
+ #endif
+ #else
+ #if defined(__STDC__) || defined(PROTOTYPES)
+-#define	PROGPATH(name)	"/usr/ccs/bin/"	#name /* place to find binaries */
++#define	PROGPATH(name)	"/usr/bin/"	#name /* place to find binaries */
+ #else
+-#define	PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
++#define	PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
+ #endif
+ #endif /* XPG4 */
+ #endif /* DESTDIR */
 @@ -212,13 +212,13 @@
  #undef	PROGPATH
  
- # if defined(__STDC__) || defined(PROTOTYPES)
--#define PROGPATH(name)	INS_BASE "/ccs/bin/" #name /* place to find binaries */
-+#define PROGPATH(name)	INS_BASE "/bin/" #name /* place to find binaries */
+ #if defined(__STDC__) || defined(PROTOTYPES)
+-#define	PROGPATH(name)	INS_BASE "/ccs/bin/" #name /* place to find binaries */
++#define	PROGPATH(name)	INS_BASE "/bin/" #name /* place to find binaries */
  #else
  /*
   * XXX With a K&R compiler, you need to edit the following string in case
   * XXX you like to change the install path.
   */
--#define PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
-+#define PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
+-#define	PROGPATH(name) "/usr/ccs/bin/name"	/* place to find binaries */
++#define	PROGPATH(name) "/usr/bin/name"	/* place to find binaries */
  #endif
  #endif	/* defined(INS_BASE) && !defined(XPG4) */
  
-@@ -403,15 +403,15 @@
+@@ -429,15 +429,15 @@
  # endif /* V6 */
  
  #ifdef XPG4
@@ -846,22 +858,40 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs.c sccs-5.07/sccs/sccs/cmd/src/scc
  #endif
  #endif
  
-@@ -473,10 +473,10 @@
-  	 */
+@@ -499,10 +499,10 @@
+ 	 */
  #ifdef	PROTOTYPES
  	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
 -	   NOGETTEXT(INS_BASE "/ccs/lib/locale/"));
 +	   NOGETTEXT(INS_BASE "/lib/locale/"));
  #else
-  	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
-- 	   NOGETTEXT("/usr/ccs/lib/locale/"));
-+ 	   NOGETTEXT("/usr/lib/locale/"));
+ 	(void) bindtextdomain(NOGETTEXT("SUNW_SPRO_SCCS"),
+-	   NOGETTEXT("/usr/ccs/lib/locale/"));
++	   NOGETTEXT("/usr/lib/locale/"));
  #endif
-  	
-  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs.mk sccs-5.07/sccs/sccs/cmd/src/sccs.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccs.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/sccs.mk	2015-06-04 10:54:28.355690449 +0300
+ 
+ 	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
+@@ -3380,7 +3380,7 @@
+ 	FILE	*nfp;
+ 
+ 	strlcpy(nbuf, setrhome, sizeof (nbuf));
+-	strlcat(nbuf, "/.sccs/ncache", sizeof (nbuf));
++	strlcat(nbuf, "/.sncache", sizeof (nbuf));
+ 	nfp = fopen(nbuf, "rb");
+ 	if (nfp == NULL) {
+ 		return (-1);
+@@ -3477,7 +3477,7 @@
+ 		qsort((void *)anames, anum, sizeof (char *), addcmp);
+ 
+ 		strlcpy(nbuf, setrhome, sizeof (nbuf));
+-		strlcat(nbuf, "/.sccs/ncache", sizeof (nbuf));
++		strlcat(nbuf, "/.sncache", sizeof (nbuf));
+ 		nfp = xfcreat(nbuf, 0666);
+ 		for (i = 0; i < anum; i++) {
+ 			fputs(anames[i], nfp);
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccs.mk sccs-5.08.patched/sccs/sccs/cmd/src/sccs.mk
+--- sccs-5.08/sccs/sccs/cmd/src/sccs.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccs.mk	2017-06-03 00:38:15.249180124 +0000
 @@ -5,7 +5,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -871,9 +901,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccs.mk sccs-5.07/sccs/sccs/cmd/src/sc
  TARGET=		sccs
  #SYMLINKS=	../../bin/sccs
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.c sccs-5.07/sccs/sccs/cmd/src/sccscvt.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.c	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/sccscvt.c	2015-06-04 10:54:28.363436914 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccscvt.c sccs-5.08.patched/sccs/sccs/cmd/src/sccscvt.c
+--- sccs-5.08/sccs/sccs/cmd/src/sccscvt.c	2015-02-06 20:46:32.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccscvt.c	2017-06-03 00:38:15.255439538 +0000
 @@ -88,10 +88,10 @@
  	 */
  #ifdef	PROTOTYPES
@@ -887,9 +917,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.c sccs-5.07/sccs/sccs/cmd/src/
  #endif
  
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.mk sccs-5.07/sccs/sccs/cmd/src/sccscvt.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/sccscvt.mk	2015-06-04 10:54:28.366397469 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccscvt.mk sccs-5.08.patched/sccs/sccs/cmd/src/sccscvt.mk
+--- sccs-5.08/sccs/sccs/cmd/src/sccscvt.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccscvt.mk	2017-06-03 00:38:15.258191898 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -899,9 +929,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccscvt.mk sccs-5.07/sccs/sccs/cmd/src
  TARGET=		sccscvt
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.mk sccs-5.07/sccs/sccs/cmd/src/sccsdiff.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.mk	2011-05-18 22:54:29.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/sccsdiff.mk	2015-06-04 10:54:28.369307597 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccsdiff.mk sccs-5.08.patched/sccs/sccs/cmd/src/sccsdiff.mk
+--- sccs-5.08/sccs/sccs/cmd/src/sccsdiff.mk	2011-05-18 20:54:29.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccsdiff.mk	2017-06-03 00:38:15.260969291 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -911,10 +941,10 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.mk sccs-5.07/sccs/sccs/cmd/sr
  INSMODE=	0755
  TARGET=		sccsdiff
  SCRFILE=	sccsdiff.sh
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.sh sccs-5.07/sccs/sccs/cmd/src/sccsdiff.sh
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.sh	2015-01-21 22:25:37.000000000 +0300
-+++ sccs-5.07/sccs/sccs/cmd/src/sccsdiff.sh	2015-06-04 10:54:28.373545628 +0300
-@@ -35,7 +35,7 @@
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccsdiff.sh sccs-5.08.patched/sccs/sccs/cmd/src/sccsdiff.sh
+--- sccs-5.08/sccs/sccs/cmd/src/sccsdiff.sh	2015-01-30 20:37:19.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccsdiff.sh	2017-06-03 00:38:15.264685704 +0000
+@@ -36,7 +36,7 @@
  # if running under control of the NSE (-q option given), will look for
  # get in the directtory from which it was run (if -q, $0 will be full pathname)
  #
@@ -923,9 +953,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccsdiff.sh sccs-5.07/sccs/sccs/cmd/sr
  
  trap "rm -f /tmp/get[abc]$$;exit 1" 1 2 3 15
  umask 077
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.c sccs-5.07/sccs/sccs/cmd/src/sccslog.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.c	2011-10-07 21:56:54.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/sccslog.c	2015-06-04 10:54:28.380292595 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccslog.c sccs-5.08.patched/sccs/sccs/cmd/src/sccslog.c
+--- sccs-5.08/sccs/sccs/cmd/src/sccslog.c	2011-10-07 19:56:54.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccslog.c	2017-06-03 00:38:15.270365198 +0000
 @@ -137,7 +137,7 @@
  
  		if (home == NULL)
@@ -935,9 +965,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.c sccs-5.07/sccs/sccs/cmd/src/
  		f = fopen(nbuf, "r");
  		if (f == NULL) {
  			cannot = 1;
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.mk sccs-5.07/sccs/sccs/cmd/src/sccslog.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.mk	2009-12-23 01:06:03.000000000 +0300
-+++ sccs-5.07/sccs/sccs/cmd/src/sccslog.mk	2015-06-04 10:54:28.383264338 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/sccslog.mk sccs-5.08.patched/sccs/sccs/cmd/src/sccslog.mk
+--- sccs-5.08/sccs/sccs/cmd/src/sccslog.mk	2009-12-22 23:06:03.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/sccslog.mk	2017-06-03 00:38:15.273065719 +0000
 @@ -5,7 +5,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -947,9 +977,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/sccslog.mk sccs-5.07/sccs/sccs/cmd/src
  TARGET=		sccslog
  CPPOPTS +=	-DUSE_LARGEFILES
  CPPOPTS +=	-DSCHILY_PRINT
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/unget.c sccs-5.07/sccs/sccs/cmd/src/unget.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/unget.c	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/unget.c	2015-06-04 10:54:28.389138723 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/unget.c sccs-5.08.patched/sccs/sccs/cmd/src/unget.c
+--- sccs-5.08/sccs/sccs/cmd/src/unget.c	2015-02-06 20:46:32.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/unget.c	2017-06-03 00:38:15.278098923 +0000
 @@ -108,10 +108,10 @@
  	 */
  #ifdef	PROTOTYPES
@@ -963,9 +993,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/unget.c sccs-5.07/sccs/sccs/cmd/src/un
  #endif
  	
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/unget.mk sccs-5.07/sccs/sccs/cmd/src/unget.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/unget.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/unget.mk	2015-06-04 10:54:28.392028853 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/unget.mk sccs-5.08.patched/sccs/sccs/cmd/src/unget.mk
+--- sccs-5.08/sccs/sccs/cmd/src/unget.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/unget.mk	2017-06-03 00:38:15.280877568 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -975,9 +1005,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/unget.mk sccs-5.07/sccs/sccs/cmd/src/u
  TARGET=		unget
  HARDLINKS=	sact
  
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/val.c sccs-5.07/sccs/sccs/cmd/src/val.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/val.c	2014-08-17 14:20:03.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/val.c	2015-06-04 10:54:28.404801446 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/val.c sccs-5.08.patched/sccs/sccs/cmd/src/val.c
+--- sccs-5.08/sccs/sccs/cmd/src/val.c	2015-02-06 20:46:32.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/val.c	2017-06-03 00:38:15.290943091 +0000
 @@ -144,10 +144,10 @@
  	 */
  #ifdef	PROTOTYPES
@@ -991,9 +1021,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/val.c sccs-5.07/sccs/sccs/cmd/src/val.
  #endif
  	
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/val.mk sccs-5.07/sccs/sccs/cmd/src/val.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/val.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/val.mk	2015-06-04 10:54:28.407833438 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/val.mk sccs-5.08.patched/sccs/sccs/cmd/src/val.mk
+--- sccs-5.08/sccs/sccs/cmd/src/val.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/val.mk	2017-06-03 00:38:15.293728460 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -1003,9 +1033,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/val.mk sccs-5.07/sccs/sccs/cmd/src/val
  TARGET=		val
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/vc.mk sccs-5.07/sccs/sccs/cmd/src/vc.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/vc.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/vc.mk	2015-06-04 10:54:28.419837126 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/vc.mk sccs-5.08.patched/sccs/sccs/cmd/src/vc.mk
+--- sccs-5.08/sccs/sccs/cmd/src/vc.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/vc.mk	2017-06-03 00:38:15.296466058 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -1015,9 +1045,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/vc.mk sccs-5.07/sccs/sccs/cmd/src/vc.m
  TARGET=		vc
  
  CPPOPTS +=	-DSUN5_0
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/what.c sccs-5.07/sccs/sccs/cmd/src/what.c
---- sccs-5.07-orig/sccs/sccs/cmd/src/what.c	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/what.c	2015-06-04 10:54:28.424059378 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/what.c sccs-5.08.patched/sccs/sccs/cmd/src/what.c
+--- sccs-5.08/sccs/sccs/cmd/src/what.c	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/what.c	2017-06-03 00:38:15.300211291 +0000
 @@ -82,10 +82,10 @@
  	 */
  #ifdef	PROTOTYPES
@@ -1031,9 +1061,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/what.c sccs-5.07/sccs/sccs/cmd/src/wha
  #endif
  	
  	(void) textdomain(NOGETTEXT("SUNW_SPRO_SCCS"));
-diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/what.mk sccs-5.07/sccs/sccs/cmd/src/what.mk
---- sccs-5.07-orig/sccs/sccs/cmd/src/what.mk	2014-08-09 19:25:26.000000000 +0400
-+++ sccs-5.07/sccs/sccs/cmd/src/what.mk	2015-06-04 10:54:28.426967750 +0300
+diff -Nurb sccs-5.08/sccs/sccs/cmd/src/what.mk sccs-5.08.patched/sccs/sccs/cmd/src/what.mk
+--- sccs-5.08/sccs/sccs/cmd/src/what.mk	2014-08-09 17:25:26.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/cmd/src/what.mk	2017-06-03 00:38:15.302974740 +0000
 @@ -8,7 +8,7 @@
  ###########################################################################
  
@@ -1043,9 +1073,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/cmd/src/what.mk sccs-5.07/sccs/sccs/cmd/src/wh
  TARGET=		what
  #SYMLINKS=	../bin/what
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/ad.mk sccs-5.07/sccs/sccs/help.d/ad.mk
---- sccs-5.07-orig/sccs/sccs/help.d/ad.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/ad.mk	2015-06-04 10:55:16.061985017 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/ad.mk sccs-5.08.patched/sccs/sccs/help.d/ad.mk
+--- sccs-5.08/sccs/sccs/help.d/ad.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/ad.mk	2017-06-03 00:38:15.305687333 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1055,9 +1085,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/ad.mk sccs-5.07/sccs/sccs/help.d/ad.mk
  TARGET=		ad
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/bd.mk sccs-5.07/sccs/sccs/help.d/bd.mk
---- sccs-5.07-orig/sccs/sccs/help.d/bd.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/bd.mk	2015-06-04 10:55:16.068158462 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/bd.mk sccs-5.08.patched/sccs/sccs/help.d/bd.mk
+--- sccs-5.08/sccs/sccs/help.d/bd.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/bd.mk	2017-06-03 00:38:15.308387152 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1067,9 +1097,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/bd.mk sccs-5.07/sccs/sccs/help.d/bd.mk
  TARGET=		bd
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/cb.mk sccs-5.07/sccs/sccs/help.d/cb.mk
---- sccs-5.07-orig/sccs/sccs/help.d/cb.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/cb.mk	2015-06-04 10:55:16.074167563 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/cb.mk sccs-5.08.patched/sccs/sccs/help.d/cb.mk
+--- sccs-5.08/sccs/sccs/help.d/cb.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/cb.mk	2017-06-03 00:38:15.311121182 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1079,9 +1109,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/cb.mk sccs-5.07/sccs/sccs/help.d/cb.mk
  TARGET=		cb
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/cm.mk sccs-5.07/sccs/sccs/help.d/cm.mk
---- sccs-5.07-orig/sccs/sccs/help.d/cm.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/cm.mk	2015-06-04 10:55:16.080807399 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/cm.mk sccs-5.08.patched/sccs/sccs/help.d/cm.mk
+--- sccs-5.08/sccs/sccs/help.d/cm.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/cm.mk	2017-06-03 00:38:15.313834868 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1091,9 +1121,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/cm.mk sccs-5.07/sccs/sccs/help.d/cm.mk
  TARGET=		cm
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/cmds.mk sccs-5.07/sccs/sccs/help.d/cmds.mk
---- sccs-5.07-orig/sccs/sccs/help.d/cmds.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/cmds.mk	2015-06-04 10:55:16.091907501 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/cmds.mk sccs-5.08.patched/sccs/sccs/help.d/cmds.mk
+--- sccs-5.08/sccs/sccs/help.d/cmds.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/cmds.mk	2017-06-03 00:38:15.316506463 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1103,9 +1133,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/cmds.mk sccs-5.07/sccs/sccs/help.d/cmds
  TARGET=		cmds
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/co.mk sccs-5.07/sccs/sccs/help.d/co.mk
---- sccs-5.07-orig/sccs/sccs/help.d/co.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/co.mk	2015-06-04 10:55:16.098795491 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/co.mk sccs-5.08.patched/sccs/sccs/help.d/co.mk
+--- sccs-5.08/sccs/sccs/help.d/co.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/co.mk	2017-06-03 00:38:15.319268372 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1115,9 +1145,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/co.mk sccs-5.07/sccs/sccs/help.d/co.mk
  TARGET=		co
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/de.mk sccs-5.07/sccs/sccs/help.d/de.mk
---- sccs-5.07-orig/sccs/sccs/help.d/de.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/de.mk	2015-06-04 10:55:16.105715563 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/de.mk sccs-5.08.patched/sccs/sccs/help.d/de.mk
+--- sccs-5.08/sccs/sccs/help.d/de.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/de.mk	2017-06-03 00:38:15.321961086 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1127,9 +1157,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/de.mk sccs-5.07/sccs/sccs/help.d/de.mk
  TARGET=		de
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/default.mk sccs-5.07/sccs/sccs/help.d/default.mk
---- sccs-5.07-orig/sccs/sccs/help.d/default.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/default.mk	2015-06-04 10:55:16.111627810 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/default.mk sccs-5.08.patched/sccs/sccs/help.d/default.mk
+--- sccs-5.08/sccs/sccs/help.d/default.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/default.mk	2017-06-03 00:38:15.324626296 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1139,9 +1169,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/default.mk sccs-5.07/sccs/sccs/help.d/d
  TARGET=		default
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/ge.mk sccs-5.07/sccs/sccs/help.d/ge.mk
---- sccs-5.07-orig/sccs/sccs/help.d/ge.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/ge.mk	2015-06-04 10:55:16.117970929 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/ge.mk sccs-5.08.patched/sccs/sccs/help.d/ge.mk
+--- sccs-5.08/sccs/sccs/help.d/ge.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/ge.mk	2017-06-03 00:38:15.327288014 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1151,9 +1181,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/ge.mk sccs-5.07/sccs/sccs/help.d/ge.mk
  TARGET=		ge
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/he.mk sccs-5.07/sccs/sccs/help.d/he.mk
---- sccs-5.07-orig/sccs/sccs/help.d/he.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/he.mk	2015-06-04 10:55:16.123801398 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/he.mk sccs-5.08.patched/sccs/sccs/help.d/he.mk
+--- sccs-5.08/sccs/sccs/help.d/he.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/he.mk	2017-06-03 00:38:15.329930180 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1163,9 +1193,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/he.mk sccs-5.07/sccs/sccs/help.d/he.mk
  TARGET=		he
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/pr.mk sccs-5.07/sccs/sccs/help.d/pr.mk
---- sccs-5.07-orig/sccs/sccs/help.d/pr.mk	2011-04-30 02:48:39.000000000 +0400
-+++ sccs-5.07/sccs/sccs/help.d/pr.mk	2015-06-04 10:55:16.132648179 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/pr.mk sccs-5.08.patched/sccs/sccs/help.d/pr.mk
+--- sccs-5.08/sccs/sccs/help.d/pr.mk	2011-04-30 00:48:39.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/pr.mk	2017-06-03 00:38:15.332616202 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1175,9 +1205,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/pr.mk sccs-5.07/sccs/sccs/help.d/pr.mk
  TARGET=		pr
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/prs.mk sccs-5.07/sccs/sccs/help.d/prs.mk
---- sccs-5.07-orig/sccs/sccs/help.d/prs.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/prs.mk	2015-06-04 10:55:16.138900668 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/prs.mk sccs-5.08.patched/sccs/sccs/help.d/prs.mk
+--- sccs-5.08/sccs/sccs/help.d/prs.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/prs.mk	2017-06-03 00:38:15.335268072 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1187,9 +1217,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/prs.mk sccs-5.07/sccs/sccs/help.d/prs.m
  TARGET=		prs
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/rc.mk sccs-5.07/sccs/sccs/help.d/rc.mk
---- sccs-5.07-orig/sccs/sccs/help.d/rc.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/rc.mk	2015-06-04 10:55:16.145133831 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/rc.mk sccs-5.08.patched/sccs/sccs/help.d/rc.mk
+--- sccs-5.08/sccs/sccs/help.d/rc.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/rc.mk	2017-06-03 00:38:15.338011961 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1199,9 +1229,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/rc.mk sccs-5.07/sccs/sccs/help.d/rc.mk
  TARGET=		rc
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/un.mk sccs-5.07/sccs/sccs/help.d/un.mk
---- sccs-5.07-orig/sccs/sccs/help.d/un.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/un.mk	2015-06-04 10:55:16.150917853 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/un.mk sccs-5.08.patched/sccs/sccs/help.d/un.mk
+--- sccs-5.08/sccs/sccs/help.d/un.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/un.mk	2017-06-03 00:38:15.340699524 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1211,9 +1241,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/un.mk sccs-5.07/sccs/sccs/help.d/un.mk
  TARGET=		un
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/ut.mk sccs-5.07/sccs/sccs/help.d/ut.mk
---- sccs-5.07-orig/sccs/sccs/help.d/ut.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/ut.mk	2015-06-04 10:55:16.157201057 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/ut.mk sccs-5.08.patched/sccs/sccs/help.d/ut.mk
+--- sccs-5.08/sccs/sccs/help.d/ut.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/ut.mk	2017-06-03 00:38:15.343371931 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1223,9 +1253,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/ut.mk sccs-5.07/sccs/sccs/help.d/ut.mk
  TARGET=		ut
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/va.mk sccs-5.07/sccs/sccs/help.d/va.mk
---- sccs-5.07-orig/sccs/sccs/help.d/va.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/va.mk	2015-06-04 10:55:16.162966004 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/va.mk sccs-5.08.patched/sccs/sccs/help.d/va.mk
+--- sccs-5.08/sccs/sccs/help.d/va.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/va.mk	2017-06-03 00:38:15.346056345 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1235,9 +1265,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/va.mk sccs-5.07/sccs/sccs/help.d/va.mk
  TARGET=		va
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/help.d/vc.mk sccs-5.07/sccs/sccs/help.d/vc.mk
---- sccs-5.07-orig/sccs/sccs/help.d/vc.mk	2007-12-02 22:51:51.000000000 +0300
-+++ sccs-5.07/sccs/sccs/help.d/vc.mk	2015-06-04 10:55:16.169511079 +0300
+diff -Nurb sccs-5.08/sccs/sccs/help.d/vc.mk sccs-5.08.patched/sccs/sccs/help.d/vc.mk
+--- sccs-5.08/sccs/sccs/help.d/vc.mk	2007-12-02 20:51:51.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/help.d/vc.mk	2017-06-03 00:38:15.348729366 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1247,9 +1277,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/help.d/vc.mk sccs-5.07/sccs/sccs/help.d/vc.mk
  TARGET=		vc
  #XMK_FILE=	Makefile.man
  
-diff -ur sccs-5.07-orig/sccs/sccs/lib/cassi/src/Makefile sccs-5.07/sccs/sccs/lib/cassi/src/Makefile
---- sccs-5.07-orig/sccs/sccs/lib/cassi/src/Makefile	2007-01-07 21:38:39.000000000 +0300
-+++ sccs-5.07/sccs/sccs/lib/cassi/src/Makefile	2015-06-04 10:55:35.506813147 +0300
+diff -Nurb sccs-5.08/sccs/sccs/lib/cassi/src/Makefile sccs-5.08.patched/sccs/sccs/lib/cassi/src/Makefile
+--- sccs-5.08/sccs/sccs/lib/cassi/src/Makefile	2007-01-07 19:38:39.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/lib/cassi/src/Makefile	2017-06-03 00:38:15.351467625 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1259,9 +1289,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/lib/cassi/src/Makefile sccs-5.07/sccs/sccs/lib
  TARGETLIB=	cassi
  CPPOPTS +=	-DSUN5_0
  CPPOPTS +=	-DUSE_LARGEFILES
-diff -ur sccs-5.07-orig/sccs/sccs/lib/comobj/src/help.c sccs-5.07/sccs/sccs/lib/comobj/src/help.c
---- sccs-5.07-orig/sccs/sccs/lib/comobj/src/help.c	2014-08-10 17:42:06.000000000 +0400
-+++ sccs-5.07/sccs/sccs/lib/comobj/src/help.c	2015-06-04 10:54:58.277361440 +0300
+diff -Nurb sccs-5.08/sccs/sccs/lib/comobj/src/help.c sccs-5.08.patched/sccs/sccs/lib/comobj/src/help.c
+--- sccs-5.08/sccs/sccs/lib/comobj/src/help.c	2015-02-07 23:43:45.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/lib/comobj/src/help.c	2017-06-03 00:38:15.355937601 +0000
 @@ -56,21 +56,21 @@
   *
   *	The file to be searched is determined from the argument. If the
@@ -1308,9 +1338,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/lib/comobj/src/help.c sccs-5.07/sccs/sccs/lib/
  	char	help_dir[max(8192, PATH_MAX+1)]; /* Directory to search for. */
  
  	if ((int) size(p) > 50)
-diff -ur sccs-5.07-orig/sccs/sccs/lib/comobj/src/Makefile sccs-5.07/sccs/sccs/lib/comobj/src/Makefile
---- sccs-5.07-orig/sccs/sccs/lib/comobj/src/Makefile	2007-01-07 21:38:44.000000000 +0300
-+++ sccs-5.07/sccs/sccs/lib/comobj/src/Makefile	2015-06-04 10:54:58.283615063 +0300
+diff -Nurb sccs-5.08/sccs/sccs/lib/comobj/src/Makefile sccs-5.08.patched/sccs/sccs/lib/comobj/src/Makefile
+--- sccs-5.08/sccs/sccs/lib/comobj/src/Makefile	2007-01-07 19:38:44.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/lib/comobj/src/Makefile	2017-06-03 00:38:15.358698658 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
@@ -1320,9 +1350,9 @@ diff -ur sccs-5.07-orig/sccs/sccs/lib/comobj/src/Makefile sccs-5.07/sccs/sccs/li
  TARGETLIB=	comobj
  CPPOPTS +=	-DSUN5_0
  CPPOPTS +=	-DUSE_LARGEFILES
-diff -ur sccs-5.07-orig/sccs/sccs/lib/mpwlib/src/Makefile sccs-5.07/sccs/sccs/lib/mpwlib/src/Makefile
---- sccs-5.07-orig/sccs/sccs/lib/mpwlib/src/Makefile	2007-01-07 21:38:48.000000000 +0300
-+++ sccs-5.07/sccs/sccs/lib/mpwlib/src/Makefile	2015-06-04 10:55:46.171088878 +0300
+diff -Nurb sccs-5.08/sccs/sccs/lib/mpwlib/src/Makefile sccs-5.08.patched/sccs/sccs/lib/mpwlib/src/Makefile
+--- sccs-5.08/sccs/sccs/lib/mpwlib/src/Makefile	2007-01-07 19:38:48.000000000 +0000
++++ sccs-5.08.patched/sccs/sccs/lib/mpwlib/src/Makefile	2017-06-03 00:38:15.361515535 +0000
 @@ -7,7 +7,7 @@
  include		$(SRCROOT)/$(RULESDIR)/rules.top
  ###########################################################################
