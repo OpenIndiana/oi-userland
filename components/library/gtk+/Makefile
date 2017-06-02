@@ -17,13 +17,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
 
-COMPONENT_VERSION= 2.24.30
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.24.31
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0d15cec3b6d55c60eac205b1f3ba81a1ed4eadd9d0f8e7c508bc7065d0c4ca50
+  sha256:68c1922732c7efc08df4656a5366dcc3afdc8791513400dac276009b40954658
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
@@ -35,14 +34,15 @@ include $(WS_MAKE_RULES)/ips.mk
 gcc_OPT = -O2
 CFLAGS += -I/usr/X11/include
 
-COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r  $(SOURCE_DIR) && \
-					cp -r $(SOURCE_DIR)/* $(@D) && \
-                                        cd $(@D) && libtoolize --force &&\
-                                        aclocal -I ./m4 &&\
-					gtkdocize &&\
-                                        autoheader &&\
-                                        automake -a -f -c --gnu &&\
-                                        autoconf )
+COMPONENT_PRE_CONFIGURE_ACTION = \
+ (chmod -R u+r  $(SOURCE_DIR) && \
+          cp -r $(SOURCE_DIR)/* $(@D) && \
+          cd $(@D) && libtoolize --force &&\
+          aclocal -I ./m4 &&\
+          gtkdocize &&\
+          autoheader &&\
+          automake -a -f -c --gnu &&\
+          autoconf )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
