@@ -54,34 +54,6 @@ CXXFLAGS += -std=c++11
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
 
-# START: remove this section (and the depend.mk file) when build servers are
-# installed with the new ilmbase.
-ILMBASE_PROTO =		$(WS_COMPONENTS)/ilmbase/build/prototype/$(MACH)
-ILMBASE_LIBDIR.32 =	$(ILMBASE_PROTO)$(USRLIBDIR)
-ILMBASE_LIBDIR.64 =	$(ILMBASE_PROTO)$(USRLIBDIR64)
-ILMBASE_LIBDIR =	$(ILMBASE_LIBDIR.$(BITS))
-CONFIGURE_ENV +=	LD_LIBRARY_PATH=$(ILMBASE_LIBDIR)
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS) -L$(ILMBASE_LIBDIR)"
-CONFIGURE_OPTIONS +=	--with-ilmbase-prefix=$(ILMBASE_PROTO)$(USRDIR)
-
-# Remove ilmbase .la files to allow openexr libtool usage to work correctly.
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	(cd $(ILMBASE_PROTO) ; \
-        mlist=`/usr/bin/find . -name '*.la'` ; \
-        for f in $$mlist ; do \
-                $(RM) $$f ; \
-        done)
-
-# Needed to successfully run various binaries (such as b44ExpLogTable) during
-# the build process.
-COMPONENT_BUILD_ENV +=	LD_LIBRARY_PATH=$(ILMBASE_LIBDIR)
-
-# Needed to successfully run the various test programs.
-COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(ILMBASE_LIBDIR)
-
-# END: remove this section (and the depend.mk file) when build servers are
-# installed with the new ilmbase.
-
 COMPONENT_TEST_TRANSFORMS += \
      '-e "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g"' \
      '-e "/libtool/d"' \
