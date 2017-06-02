@@ -394,7 +394,7 @@ $(foreach ver,$(PHP_VERSIONS),$(eval $(call php-manifest-rule,$(ver))))
 $(BUILD_DIR)/mkgeneric-php: $(WS_MAKE_RULES)/shared-macros.mk
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PHP_VERSIONS) | tr -d .), \
-		$(call mkgeneric,runtime/php,$(ver)))
+		$(call mkgeneric,web/php,$(ver)))
 
 # Build PHP version-wrapping manifests from the generic version.
 # See the block comment above about why "###PYV###" is used here even
