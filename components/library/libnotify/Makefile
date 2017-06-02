@@ -17,12 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libnotify
-COMPONENT_VERSION= 0.7.6
+COMPONENT_VERSION= 0.7.7
 COMPONENT_SUMMARY= Library for desktop notifications
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0ef61ca400d30e28217979bfa0e73a7406b19c32dd76150654ec5b2bdf47d837
+  sha256:9cb4ce315b2655860c524d46b56010874214ec27e854086c1a1d0260137efc04
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/gnome/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.galago-project.org/news/index.php
@@ -37,17 +37,24 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+
+CONFIGURE_OPTIONS += --disable-static
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
