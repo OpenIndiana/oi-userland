@@ -16,26 +16,26 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xterm
-COMPONENT_VERSION= 318
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 328
 COMPONENT_SUMMARY= xterm - terminal emulator for X 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e71f2b0fb11d6c723c1f9af10fc01048b776f44c1636aa1b71e5eff77deb81d7
+  sha256:b38a7ab2e9f6ab51784ab82a312ca9950e0039da846d37715db4c1ddd47b1d52
 COMPONENT_ARCHIVE_URL= \
   ftp://invisible-island.net/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://invisible-island.net/xterm/
 COMPONENT_FMRI= terminal/xterm
 COMPONENT_LICENSE= MIT
-COMPONENT_LICENSE_FILE= xterm.license
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS += --enable-256-color
 CONFIGURE_OPTIONS += --enable-88-color
@@ -48,11 +48,11 @@ CONFIGURE_OPTIONS += --with-app-defaults=/usr/share/X11/app-defaults
 CONFIGURE_OPTIONS += --with-icondir=/usr/share/pixmaps
 CONFIGURE_OPTIONS += --enable-logging
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
-test: $(TEST_32)
+test: $(TEST_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
