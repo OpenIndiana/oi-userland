@@ -23,11 +23,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.12.3
+COMPONENT_VERSION=	2.13.2
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:016124c54ce2db7a4c2bd26b0de21fbf8f6bcaee04842aa221c7243141df4e42
+COMPONENT_ARCHIVE_HASH=	sha256:0d10ac3751466f81652b62cbda83cc8d8ffd014911462138e039f176e413dde5
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/git
 COMPONENT_FMRI=		developer/versioning/git
@@ -41,7 +41,7 @@ COMPONENT_CLASSIFICATION=	Development/Source Code Management
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:61c3052f80c27526b71b1dbc2563323b31332b64425fc47387f694538538bec2
+COMPONENT_ARCHIVE_HASH_1=	sha256:30e1e1313000eb81f0e348e5083758a33703941a60ab111057b46c3dad968b6e
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -154,6 +154,16 @@ install:	$(INSTALL_64) $(BUILD_DIR)/.manpages $(BUILD_DIR_64)/.contrib
 
 test:	$(TEST_64)
 
+# Test dependencies
+REQUIRED_PACKAGES += system/library/iconv/extra
+REQUIRED_PACKAGES += system/library/iconv/unicode
+REQUIRED_PACKAGES += system/library/iconv/utf-8
+REQUIRED_PACKAGES += library/perl-5/sqlite-dbi
+REQUIRED_PACKAGES += library/perl-5/subversion
+REQUIRED_PACKAGES += locale/is
+REQUIRED_PACKAGES += locale/is-extra
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre
