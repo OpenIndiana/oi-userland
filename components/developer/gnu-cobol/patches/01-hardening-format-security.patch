@@ -1,0 +1,46 @@
+https://sources.debian.net/src/open-cobol/1.1-2/debian/patches/01_hardening-format-security.diff/
+
+Index: open-cobol-1.1/cobc/codegen.c
+===================================================================
+--- open-cobol-1.1.orig/cobc/codegen.c	2009-01-28 18:18:21.000000000 +0000
++++ open-cobol-1.1/cobc/codegen.c	2012-05-09 06:21:19.000000000 +0000
+@@ -278,7 +278,7 @@
+ 		output_indent_level -= level;
+ 	}
+ 
+-	output_line (str);
++	output_line ("%s", str);
+ 
+ 	if (*p == '{' && strcmp (str, ")}") != 0) {
+ 		output_indent_level += level;
+Index: open-cobol-1.1/cobc/error.c
+===================================================================
+--- open-cobol-1.1.orig/cobc/error.c	2009-01-24 13:31:30.000000000 +0000
++++ open-cobol-1.1/cobc/error.c	2012-05-09 06:21:19.000000000 +0000
+@@ -241,7 +241,7 @@
+ 				break;
+ 			}
+ 			strcat (errnamebuff, _("defined here"));
+-			cb_error_x (y, errnamebuff);
++			cb_error_x (y, "%s", errnamebuff);
+ 		}
+ 	}
+ }
+Index: open-cobol-1.1/cobc/typeck.c
+===================================================================
+--- open-cobol-1.1.orig/cobc/typeck.c	2009-01-28 17:57:25.000000000 +0000
++++ open-cobol-1.1/cobc/typeck.c	2012-05-09 06:21:19.000000000 +0000
+@@ -3907,11 +3907,11 @@
+ 	loc = src->source_line ? src : dst;
+ 	if (value_flag) {
+ 		/* VALUE clause */
+-		cb_warning_x (loc, msg);
++		cb_warning_x (loc, "%s", msg);
+ 	} else {
+ 		/* MOVE statement */
+ 		if (flag) {
+-			cb_warning_x (loc, msg);
++			cb_warning_x (loc, "%s", msg);
+ 			if (src_flag) {
+ 				warning_destination (src);
+ 			}
