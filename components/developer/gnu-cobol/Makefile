@@ -20,33 +20,38 @@
 #
 # Copyright (c) 2014, David Hoeppner. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnu-cobol
-COMPONENT_SUMMARY=	COBOL to C compiler
 COMPONENT_VERSION=	1.1
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=	developer/gnu-cobol
+COMPONENT_SUMMARY=	COBOL to C compiler
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/open-cobol/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bd319c0d001e85835c8501ad74c9de0052fe82b8a38b4530f41b49b2af028b9d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gnucobol/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv2, GFDLv1.2, LGPLv2.1
 
 CFLAGS += -I/usr/include/gmp
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFGIURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+# NONE
