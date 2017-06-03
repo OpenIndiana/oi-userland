@@ -20,23 +20,23 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		cunit
-COMPONENT_VERSION=	2.1.3
-COMPONENT_FMRI=     	developer/cunit
+COMPONENT_NAME=         cunit
+COMPONENT_VERSION=      2.1.3
+COMPONENT_FMRI=         developer/cunit
 COMPONENT_CLASSIFICATION=Development/C
+COMPONENT_SUMMARY=     	Automated testing framework for C
 COMPONENT_SRC_NAME=	CUnit
-COMPONENT_SRC_VERSION=	2.1-3
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_SRC_VERSION)
+COMPONENT_SRC_VERSION=  2.1-3
+COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_SRC_VERSION)
 COMPONENT_PROJECT_URL=	http://cunit.sourceforge.net/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f5b29137f845bb08b77ec60584fdb728b4e58f1023e6f249a464efa49a40f214
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/cunit/files/CUnit/$(COMPONENT_SRC_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL= \
+    http://sourceforge.net/projects/cunit/files/CUnit/$(COMPONENT_SRC_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=     	Automated testing framework for C
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -51,17 +51,15 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           chmod u+x configure && \
                           make distclean )
 
-CONFIGURE_OPTIONS+=     --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=     --enable-memtrace
-CONFIGURE_OPTIONS+=     --enable-automated
-CONFIGURE_OPTIONS+=     --enable-basic
-CONFIGURE_OPTIONS+=     --enable-console
-CONFIGURE_OPTIONS+=     --enable-examples
-CONFIGURE_OPTIONS+=     --enable-test
-
-
+CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
+CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= --disable-static
+CONFIGURE_OPTIONS+= --enable-memtrace
+CONFIGURE_OPTIONS+= --enable-automated
+CONFIGURE_OPTIONS+= --enable-basic
+CONFIGURE_OPTIONS+= --enable-console
+CONFIGURE_OPTIONS+= --enable-examples
+CONFIGURE_OPTIONS+= --enable-test
 
 build: $(BUILD_32_and_64)
 
@@ -74,7 +72,5 @@ test: $(TEST_32_and_64)
 	pushd $(BUILD_DIR_32)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd; 
 	pushd $(BUILD_DIR_64)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd; 
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
