@@ -1,6 +1,6 @@
---- src/util.c	2008-07-02 19:28:32.000000000 +0800
-+++ src/util-new.c	2009-02-17 11:06:04.312668000 +0800
-@@ -313,43 +313,78 @@
+--- patchutils-0.3.4/src/util.c.orig	2014-07-24 11:46:17.000000000 +0000
++++ patchutils-0.3.4/src/util.c	2017-06-03 01:27:38.696957280 +0000
+@@ -347,43 +347,78 @@
   */
  
  #ifndef HAVE_GETLINE
@@ -67,7 +67,8 @@
 +			result = -1;
  			break;
 +		}
-+
+ 
+-		len = len + strlen(p);
 +		if (cur_len + 1 >= *n) {
 +			size_t needed_max =
 +			    SSIZE_MAX < SIZE_MAX ? (size_t) SSIZE_MAX + 1 : SIZE_MAX;
@@ -93,8 +94,7 @@
 +
 +		(*lineptr)[cur_len] = i;
 +		cur_len++;
- 
--		len = len + strlen(p);
++
 +		if (i == '\n')
 +			break;
  	}
