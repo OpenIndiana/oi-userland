@@ -13,12 +13,13 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maven
 COMPONENT_VERSION= 3.2.3
 COMPONENT_FMRI= developer/build/maven
 COMPONENT_CLASSIFICATION = Development/Java
+COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
 COMPONENT_PROJECT_URL = http://maven.apache.org
 COMPONENT_SRC= apache-maven-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-bin.tar.gz
@@ -26,10 +27,11 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:bf3f04aadee3a67158aebdfb0b4cb022063329d459d10fd6b4b02223e10aa8ed
 COMPONENT_ARCHIVE_URL= \
   http://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
+COMPONENT_LICENSE= Apache 2.0
+COMPONENT_LICENSE_FILE= LICENSE
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:
 
@@ -39,3 +41,6 @@ install: prep
 
 clean::
 	rm -rf $(BUILD_DIR)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
