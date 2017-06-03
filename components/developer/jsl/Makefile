@@ -20,23 +20,26 @@
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsl
 COMPONENT_VERSION=	0.3.0
+COMPONENT_REVISION=	1
+COMPONENT_FMRI= developer/javascript/jsl
+COMPONENT_SUMMARY=  jsl - JavaScript code linter
+COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.javascriptlint.com
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:86f16792d71fc59b96f65eca65b1b7466dc046efe6d5ac04c6632f1315e83cfa
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/jsl
+  sha256:86f16792d71fc59b96f65eca65b1b7466dc046efe6d5ac04c6632f1315e83cfa
+COMPONENT_ARCHIVE_URL= \
+  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=  MPLv1.1, GPLv2, LGPLv2.1
 
-TPNO=			10774
-
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS = -f src/Makefile
 COMPONENT_BUILD_ARGS += CC="$(CC)"
@@ -56,12 +59,12 @@ COMPONENT_TEST_TARGETS =        $(PROTOUSRBINDIR)/jsl
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		install $(TEST_32)
+test:		install $(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
