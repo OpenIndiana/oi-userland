@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= openjade
 COMPONENT_VERSION= 1.3.2
@@ -30,11 +30,11 @@ COMPONENT_CLASSIFICATION = System/Text Tools
 COMPONENT_LICENSE = MIT-like
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 					
 COMPONENT_PREP_ACTION = 	( cp $(COMPONENT_DIR)/files/jade_style-sheet.dtd  $(@D)/dsssl &&\
 					cd  $(@D) &&\
@@ -49,6 +49,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
                                         
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-spincludedir=/usr/include/OpenSP
 CONFIGURE_OPTIONS += --datadir=/usr/share/sgml/openjade
 CONFIGURE_OPTIONS += --enable-splibdir=/usr/lib
@@ -91,10 +92,10 @@ $(INSTALL_SGML):	$(INSTALL_32)
 	cd $(PROTO_DIR)/usr/share/sgml/ISO_IEC_10179:1996/dtd &&\
 		ln -sf ../../openjade/dsssl.dtd DSSSL_Architecture
 	pushd $(PROTO_DIR)/usr/share/sgml/openjade &&\
-	ln -s ../opensp/japan.dcl . &&\
-	ln -s ../opensp/opensp-implied.dcl sp_implied.dcl &&\
-	ln -s ../opensp/xml.dcl . &&\
-	ln -s ../opensp/xml.soc . &&\
+	ln -sf ../opensp/japan.dcl . &&\
+	ln -sf ../opensp/opensp-implied.dcl sp_implied.dcl &&\
+	ln -sf ../opensp/xml.dcl . &&\
+	ln -sf ../opensp/xml.soc . &&\
 	for d in *.dcl; do \
 		rm -f $${d/.dcl/.decl};\
 		ln -sf $$d $${d/.dcl/.decl} ; \
@@ -105,3 +106,10 @@ $(INSTALL_SGML):	$(INSTALL_32)
 build: $(BUILD_32)
 
 install: $(INSTALL_32) $(INSTALL_HEADERS) $(INSTALL_SGML)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/opensp
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
