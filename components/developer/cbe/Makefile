@@ -12,12 +12,12 @@
 # Copyright 2011, Andrzej Szeszo
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cbe
 COMPONENT_VERSION=	1.8.1
 
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGMANGLE = true
 PKGLINT = true
