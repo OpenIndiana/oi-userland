@@ -23,7 +23,7 @@
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		opensp
 COMPONENT_VERSION=	1.5.1
@@ -33,9 +33,6 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3f0649840dc3d6ec432e3c8d933b178208f3feccb6db111d22c8995ad07c736b
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/openjade/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/opensp
-
-TPNO=			9621
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -71,3 +68,4 @@ install:        $(INSTALL_32_and_64)
 test:           $(TEST_32_and_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
