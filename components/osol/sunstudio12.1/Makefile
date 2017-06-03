@@ -12,7 +12,7 @@
 # Copyright 2012, Andrzej Szeszo
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sunstudio12u1
 COMPONENT_VERSION=	12.1.1
@@ -26,8 +26,8 @@ download::
 	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
 	pkg://opensolaris.org/developer/sunstudio12u1@12.1.1,5.11-0.111:20100306T002245Z
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(SOURCE_DIR)/build/$(MACH)/.installed:
 	@$(MKDIR) $(PROTO_DIR)
@@ -41,3 +41,21 @@ install:	build	$(SOURCE_DIR)/build/$(MACH)/.installed
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += developer/library/xprofile
+REQUIRED_PACKAGES += developer/sunstudio12u1/backend
+REQUIRED_PACKAGES += developer/sunstudio12u1/library/f90-libs
+REQUIRED_PACKAGES += developer/sunstudio12u1/library/math-libs
+REQUIRED_PACKAGES += diagnostic/cpu-counters
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += service/picl
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++/sunpro
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/mtsk
