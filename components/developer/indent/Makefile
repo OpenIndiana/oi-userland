@@ -20,38 +20,44 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Aurelien Larcher
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		indent
-COMPONENT_VERSION=	2.2.9
+COMPONENT_VERSION=	2.2.10
+COMPONENT_FMRI=	developer/gnu-indent
+COMPONENT_SUMMARY=	GNU indent - a tool for improving C source code style
+COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/indent/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0b9387bda5639ed54cf91bd607ab055624a07414f7f6882a75be97fd776ce466
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-indent
+    sha256:8a9b41be5bfcab5d8c1be74204b10ae78789fc3deabea0775fdced8677292639
+COMPONENT_ARCHIVE_URL= \
+    ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLV2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to get "gmake test" working.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
 test:		install
-	@cd $(BUILD_DIR_32)/regression; PATH=/usr/gnu/bin:/usr/bin $(MAKE) test
+	@cd $(BUILD_DIR_64)/regression; PATH=$(PATH.gnu) $(MAKE) test
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
