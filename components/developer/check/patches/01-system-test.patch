@@ -1,0 +1,15 @@
+Patch to allow us to specify an alternate checkmk script when running tests.
+
+This patch should be sent upstream.
+
+--- check-0.9.14/checkmk/test/check_checkmk.orig	2015-08-06 11:03:07.140153543 -0700
++++ check-0.9.14/checkmk/test/check_checkmk	2015-08-06 11:04:59.521955758 -0700
+@@ -39,7 +39,7 @@
+     errfname="$outdir/err"
+     diffname="$outdir/diff"
+     errdiffname="$outdir/err-diff"
+-    CHECKMK="$checkmkdir/checkmk"
++    CHECKMK="${CHECKMK_SCRIPT:-$checkmkdir/checkmk}"
+     checkmk_cmd='"$CHECKMK" "$infname" > "$outfname" 2>"$errfname"'
+ 
+     rm -f "$outfname" "$errfname" "$diffname" "$errdiffname"
