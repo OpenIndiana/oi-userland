@@ -18,29 +18,34 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	2.25
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	3.0
+COMPONENT_FMRI= text/gnu-grep
+COMPONENT_SUMMARY=  GNU grep utilities
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e21e83bac50450e0d0d61a42c154ee0dceaacdbf4f604ef6e79071cb8e596830
+    sha256:e2c81db5056e3e8c5995f0bb5d0d0e1cad1f6f45c3b2fc77b6e81435aed48ab5
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ggrep
+COMPONENT_LICENSE= GPLv3, FDLv1.3 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS  +=		--prefix=/usr
+PATH=$(PATH.gnu)
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
+
+# 64-bit migration
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 # Needed for "gmake test" to work.
 # SHELLOPTS is exported via make-rules/shared-macros.mk,
@@ -51,18 +56,23 @@ ASLR_MODE = $(ASLR_ENABLE)
 # other than "test." 
 unexport SHELLOPTS
 
-# common targets
-build:		$(BUILD_32_and_64)
+# Test transforms retain only relevant results output.
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/TOTAL/p" ' \
+        '-e "/SKIP/p" ' \
+        '-e "/PASS/p" ' \
+        '-e "/FAIL/p" ' \
+        '-e "/ERROR/p" '
 
-install:	$(INSTALL_32_and_64)
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 # 1 test fails - multibyte-white-space (something with illumos locales?)
 # 
-test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += SUNWcs
