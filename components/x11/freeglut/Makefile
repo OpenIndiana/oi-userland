@@ -10,36 +10,35 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2017 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freeglut
-COMPONENT_VERSION=        2.8.1
+COMPONENT_VERSION=        3.0.0
 COMPONENT_FMRI=           x11/library/freeglut
+COMPONENT_SUMMARY= \
+  freeglut - open-source alternative to the OpenGL Utility Toolkit (GLUT) library
+COMPONENT_PROJECT_URL = http://freeglut.sourceforge.net/
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  freeglut - open-source alternative to the OpenGL Utility Toolkit (GLUT) librarys
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:dde46626a62a1cd9cf48a11951cdd592e7067c345cffe193a149dfd47aef999a
+  sha256:2a43be8515b01ea82bcfa17d29ae0d40bd128342f0930cd1f375f1ff999f76a2
 COMPONENT_ARCHIVE_URL= \
   http://downloads.sourceforge.net/project/freeglut/freeglut/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://freeglut.sourceforge.net/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= freeglut.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --x-includes=/usr/include
-CONFIGURE_OPTIONS+= --x-libraries=/usr/lib/$(LIBSUBDIR)
+CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS+= -DFREEGLUT_BUILD_DEMOS=OFF
+CMAKE_OPTIONS+= -DFREEGLUT_BUILD_STATIC_LIBS=OFF
 
 CPPFLAGS += -D__posix__ -D__unix__
 
@@ -49,7 +48,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
