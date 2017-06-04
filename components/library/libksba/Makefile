@@ -24,14 +24,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libksba
-COMPONENT_VERSION=	1.3.4
+COMPONENT_VERSION=	1.3.5
+COMPONENT_FMRI= library/security/libksba
+COMPONENT_SUMMARY=  GnuPG X.509 certificate library
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libksba/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f6c2883cebec5608692d8730843d87f237c0964d923bbe7aa89c05f20558ad4f
+    sha256:41444fd7a6ff73a79ad9728f985e71c9ba8cd3e5e53358e70d5f066d35c1a340
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnupg
+COMPONENT_LICENSE= GPLv3 
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -45,6 +48,12 @@ CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-pic
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^Making/d"' \
+	'-e "/Nothing to be done/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"'
 
 build: $(BUILD_32_and_64)
 
