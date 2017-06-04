@@ -1,50 +1,31 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-set name=pkg.fmri \
-    value=pkg:/text/gnu-grep@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description \
-    value="The grep command searches one or more input files for lines containing a match to a specified pattern."
-set name=pkg.summary value="GNU grep utilities"
-set name=com.oracle.info.description value="GNU grep"
-set name=com.oracle.info.tpno value=8710
-set name=info.classification \
-    value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+#
+# Copyright 2017 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2013/035
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/efgrep path=usr/gnu/bin/egrep
 hardlink path=usr/gnu/bin/fgrep target=./egrep
-hardlink path=usr/gnu/bin/$(MACH64)/egrep target=../egrep
-hardlink path=usr/gnu/bin/$(MACH64)/fgrep target=../egrep
 
 file usr/bin/grep path=usr/gnu/bin/grep
-file usr/bin/$(MACH64)/grep path=usr/gnu/bin/$(MACH64)/grep
 file path=usr/share/info/grep.info
 file path=usr/share/locale/af/LC_MESSAGES/grep.mo
 file path=usr/share/locale/be/LC_MESSAGES/grep.mo
@@ -75,8 +56,8 @@ file path=usr/share/locale/nb/LC_MESSAGES/grep.mo
 file path=usr/share/locale/nl/LC_MESSAGES/grep.mo
 file path=usr/share/locale/pa/LC_MESSAGES/grep.mo
 file path=usr/share/locale/pl/LC_MESSAGES/grep.mo
-file path=usr/share/locale/pt_BR/LC_MESSAGES/grep.mo
 file path=usr/share/locale/pt/LC_MESSAGES/grep.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/grep.mo
 file path=usr/share/locale/ro/LC_MESSAGES/grep.mo
 file path=usr/share/locale/ru/LC_MESSAGES/grep.mo
 file path=usr/share/locale/sk/LC_MESSAGES/grep.mo
@@ -96,7 +77,6 @@ file usr/share/man/man1/grep.1 path=usr/gnu/share/man/man1/grep.1
 legacy pkg=SUNWggrp \
     desc="ggrep - GNU grep utilities" \
     name="ggrep - GNU grep utilities"
-license gnu-grep.license license="GPLv3, FDLv1.3"
 
 link path=usr/bin/gegrep \
     target=../gnu/bin/egrep facet.compat.gnulinks=true
@@ -104,12 +84,6 @@ link path=usr/bin/gfgrep \
     target=../gnu/bin/fgrep facet.compat.gnulinks=true
 link path=usr/bin/ggrep \
     target=../gnu/bin/grep facet.compat.gnulinks=true
-link path=usr/bin/$(MACH64)/gegrep \
-    target=../../gnu/bin/$(MACH64)/egrep facet.compat.gnulinks=true
-link path=usr/bin/$(MACH64)/gfgrep \
-    target=../../gnu/bin/$(MACH64)/fgrep facet.compat.gnulinks=true
-link path=usr/bin/$(MACH64)/ggrep \
-    target=../../gnu/bin/$(MACH64)/grep facet.compat.gnulinks=true
 link path=usr/share/man/man1/gegrep.1 \
     target=../../../gnu/share/man/man1/grep.1 facet.compat.gnulinks=all
 link path=usr/share/man/man1/gfgrep.1 \
@@ -119,6 +93,3 @@ link path=usr/share/man/man1/ggrep.1 \
 link path=usr/sfw/bin/gegrep target=../../gnu/bin/egrep
 link path=usr/sfw/bin/gfgrep target=../../gnu/bin/fgrep
 link path=usr/sfw/bin/ggrep target=../../gnu/bin/grep
-link path=usr/sfw/bin/$(MACH64)/gegrep target=../../../gnu/bin/$(MACH64)/egrep
-link path=usr/sfw/bin/$(MACH64)/gfgrep target=../../../gnu/bin/$(MACH64)/fgrep
-link path=usr/sfw/bin/$(MACH64)/ggrep target=../../../gnu/bin/$(MACH64)/grep
