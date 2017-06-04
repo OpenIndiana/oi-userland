@@ -17,12 +17,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libbonoboui
 
-COMPONENT_VERSION= 2.24.4
+COMPONENT_VERSION= 2.24.5
 COMPONENT_SUMMARY= Bonobo Base User Interface Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4b683a4a933392384267a0bf99771a99ef2ceacee22d67efe5648b894f8ba0c7
+  sha256:fab5f2ac6c842d949861c07cb520afe5bee3dce55805151ce9cd01be0ec46fcd
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
@@ -36,6 +36,7 @@ PATH=$(PATH.gnu)
 gcc_OPT = -O2
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --disable-static
 
 build: $(BUILD_32)
 
