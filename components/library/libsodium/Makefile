@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsodium
-COMPONENT_VERSION= 1.0.8
+COMPONENT_VERSION= 1.0.12
 COMPONENT_SUMMARY= Sodium crypto library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c0f191d2527852641e0a996b7b106d2e04cbc76ea50731b2d0babd3409301926
+  sha256:b8648f1bb3a54b0251cf4ffa4f0d76ded13977d4fa7517d988f4c902dd8e2f95
 COMPONENT_ARCHIVE_URL= \
   https://github.com/jedisct1/libsodium/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://download.libsodium.org/doc/
@@ -30,15 +30,27 @@ COMPONENT_CLASSIFICATION= System/Security
 COMPONENT_LICENSE = ISC
 COMPONENT_LICENSE_FILE = LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # For tests to pass
-ENV=/usr/bin/env -i
+unexport SHELLOPTS
+
+CONFIGURE_OPTIONS += --disable-static
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/\/usr\/gnu\/bin\/make/d"' \
+	'-e "/CC/d"' \
+	'-e "/Making/d"' \
+	'-e "/make/d"' \
+	'-e "/Nothing to be done/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"'
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
