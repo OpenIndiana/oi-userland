@@ -34,7 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3f0649840dc3d6ec432e3c8d933b178208f3feccb6db111d22c8995ad07c736b
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/openjade/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/opensp
--
+
 TPNO=			9621
 
 include $(WS_MAKE_RULES)/prep.mk
