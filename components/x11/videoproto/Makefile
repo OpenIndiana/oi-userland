@@ -16,25 +16,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= videoproto
-COMPONENT_VERSION= 2.3.2
+COMPONENT_VERSION= 2.3.3
 COMPONENT_SUMMARY= headers & documentation for XVideo extension to the X11 protocol
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8dae168cb820fcd32f564879afb3f24d27c176300d9af66819a18265539bd4b6
+  sha256:c7803889fd08e6fcaf7b68cc394fb038b2325d1f315e571a6954577e07cca702
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
+COMPONENT_PROJECT_URL = https://www.freedesktop.org/wiki/
 COMPONENT_FMRI= x11/header/videoproto
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= Development/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GNUBIN):/usr/bin
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --without-xmlto
