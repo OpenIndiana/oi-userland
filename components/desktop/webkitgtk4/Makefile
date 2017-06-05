@@ -68,13 +68,6 @@ LD_OPTIONS.32 += -L $(USRLIB.32)/gnutls-3 -R $(USRLIB.32)/gnutls-3
 LD_OPTIONS.64 += -L $(USRLIB.64)/gnutls-3 -R $(USRLIB.64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
-PKG_CONFIG_PATHS.32 += $(PKG_CONFIG_PATH.32)/libnotify-4
-PKG_CONFIG_PATHS.64 += $(PKG_CONFIG_PATH.64)/libnotify-4
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-LD_OPTIONS.32 += -L $(USRLIB.32)/libnotify-4 -R $(USRLIB.32)/libnotify-4
-LD_OPTIONS.64 += -L $(USRLIB.64)/libnotify-4 -R $(USRLIB.64)/libnotify-4
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
 # Required to ensure expected defines are set; also, ensures project's
 # optimisation level set appropriately.  Would prefer RelWithDebInfo, but that
 # target is curently broken.

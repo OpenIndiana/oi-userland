@@ -45,14 +45,6 @@ endif
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
-# Use the GNOME 3 libnotify even though the GNOME 2 one is still the default
-PKG_CONFIG_PATHS.32 += $(PKG_CONFIG_PATH.32)/libnotify-4
-PKG_CONFIG_PATHS.64 += $(PKG_CONFIG_PATH.64)/libnotify-4
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-LD_OPTIONS.32 += -L $(USRLIB.32)/libnotify-4 -R $(USRLIB.32)/libnotify-4
-LD_OPTIONS.64 += -L $(USRLIB.64)/libnotify-4 -R $(USRLIB.64)/libnotify-4
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
 # Ensures gdialog script specifies explicit version of perl.
 CONFIGURE_ENV += PERL="$(PERL)"
 

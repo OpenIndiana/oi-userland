@@ -64,14 +64,6 @@ CONFIGURE_OPTIONS += --without-cheese
 # Needed due to patch to configure.ac.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
-# Use the GNOME 3 libnotify even though the GNOME 2 one is still the default
-PKG_CONFIG_PATHS.32 += /usr/lib/pkgconfig/libnotify-4
-PKG_CONFIG_PATHS.64 += /usr/lib/$(MACH64)/pkgconfig/libnotify-4
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-LD_OPTIONS.32 += -L /usr/lib/libnotify-4 -R /usr/lib/libnotify-4
-LD_OPTIONS.64 += -L /usr/lib/$(MACH64)/libnotify-4 -R /usr/lib/$(MACH64)/libnotify-4
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
 REQUIRED_PACKAGES += gnome/gnome-settings-daemon
 REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/audio/pulseaudio
