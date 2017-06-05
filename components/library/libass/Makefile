@@ -16,25 +16,26 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libass
-COMPONENT_VERSION= 0.12.3
+COMPONENT_VERSION= 0.13.4
+COMPONENT_FMRI = library/video/libass
 COMPONENT_SUMMARY= Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
+COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5aa6b02b00de7aa2d795e8afa77def47485fcc68a190f4326b6e4d40aee30560
+  sha256:6711469df5fcc47d06e92f7383dcebcf1282591002d2356057997e8936840792
 COMPONENT_ARCHIVE_URL= \
   https://github.com/libass/libass/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://github.com/libass/libass
 COMPONENT_LICENSE = ISC
 COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = library/video/libass
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-asm
+CONFIGURE_OPTIONS += --disable-static
 
 build: $(BUILD_32_and_64)
 
