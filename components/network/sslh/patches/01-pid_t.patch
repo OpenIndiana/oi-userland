@@ -1,0 +1,20 @@
+--- sslh-v1.17/common.c	2015-03-10 09:51:39.000000000 +1300
++++ tmp/sslh-v1.17/common.c	2016-02-09 11:26:13.748927163 +1300
+@@ -541,7 +541,7 @@
+     int res;
+ 
+     name1 = strdup(bin_name);
+-    res = asprintf(&name2, "%s[%d]", basename(name1), getpid());
++    res = asprintf(&name2, "%s[%ld]", basename(name1), getpid());
+     CHECK_RES_DIE(res, "asprintf");
+     openlog(name2, LOG_CONS, LOG_AUTH);
+     free(name1); 
+@@ -641,7 +641,7 @@
+         exit(3);
+     }
+ 
+-    fprintf(f, "%d\n", getpid());
++    fprintf(f, "%ld\n", getpid());
+     fclose(f);
+ }
+ 
