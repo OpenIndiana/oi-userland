@@ -1,0 +1,30 @@
+--- tuxpuck-0.8.2/Makefile.orig	Fri Nov  8 13:50:29 2002
++++ tuxpuck-0.8.2/Makefile	Wed Aug  3 16:50:11 2016
+@@ -1,7 +1,7 @@
+ # Makefile for TuxPuck , Copyright Jacob Kroon 2001-2002
+ NAME		= tuxpuck
+ VERSION		= 0.8.2
+-CC		= gcc
++CC		?= gcc
+ CFLAGS		+= -D_VERSION=\"$(VERSION)\" -g -Wall
+ CSOURCES	= tuxpuck.c video.c audio.c menu.c sprite.c font.c timer.c \
+ 		  board.c entity.c glass.c scoreboard.c player.c zoom.c png.c \
+@@ -21,7 +21,7 @@
+ 
+ $(NAME) : $(OBJS)
+ 	cd data; $(MAKE)
+-	$(CC) $(CFLAGS) $(OBJS) data/libdata.a `sdl-config --libs` -lm -lpng \
++	$(CC) $(CFLAGS) $(OBJS) data/libdata.a $(LDFLAGS) -lm -lpng \
+ 	-ljpeg -lz -lvorbisfile -lvorbis -logg -o $(NAME)
+ 
+ w32icon.o : data/icons/tuxpuck.ico
+@@ -52,7 +52,5 @@
+ 	rm -Rf $(NAME)-$(VERSION)
+ 
+ install : $(NAME)
+-	install -d $(DESTDIR)/usr/bin
+-	install -d $(DESTDIR)/usr/man/man6
+-	install -m755 $(NAME) $(DESTDIR)/usr/bin
+-	install -m644 man/$(NAME).6.gz $(DESTDIR)/usr/man/man6
++	ginstall -d $(DESTDIR)/$(BINDIR)
++	ginstall -m755 $(NAME) $(DESTDIR)/$(BINDIR)
