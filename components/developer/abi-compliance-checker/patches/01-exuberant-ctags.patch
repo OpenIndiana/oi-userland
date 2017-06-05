@@ -1,0 +1,16 @@
+--- abi-compliance-checker-31007a47094495e4e63edc5a226241ca3811701d/abi-compliance-checker.pl	2016-10-26 12:35:37.000000000 +0300
++++ /usr/bin/abi-compliance-checker	2016-10-26 23:05:49.408976703 +0300
+@@ -8170,6 +8170,13 @@
+             printMsg("WARNING", "can't find \'ectags\' program");
+         }
+     }
++    if($OSgroup eq "solaris")
++    { # use exuberant-ctags on OI
++       $CTags = get_CmdPath("exuberant-ctags");
++        if(not $CTags) {
++            printMsg("WARNING", "can't find \'exuberant-ctags\' program");
++        }
++    }
+     if(not $CTags) {
+         $CTags = get_CmdPath("ctags");
+     }
