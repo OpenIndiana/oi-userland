@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2016 Adam Stevko<
 #
 
@@ -16,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		watch
 COMPONENT_VERSION=	3.2.8
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Linux watch utility
 COMPONENT_PROJECT_URL=	http://procps.sourceforge.net
 COMPONENT_FMRI=		utilities/watch
@@ -33,14 +35,19 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_TARGETS= watch
 
+# Check location of ncurses libraries
+ifeq ($(shell test -f /usr/gnu/lib/libncurses.so && echo y),y)
+LDFLAGS+= -L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
+endif
+
 COMPONENT_BUILD_ENV+= CC="$(CC)"
 COMPONENT_BUILD_ENV+= CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV+= LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_INSTALL_ENV+= $(COMPONENT_BUILD_ENV)
 
 $(INSTALL_32): $(BUILD_32)
 	$(MKDIR) $(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) 
-	
 	$(INSTALL) $(BUILD_DIR_32)/watch $(PROTOUSRBINDIR)/watch
 	$(INSTALL) $(BUILD_DIR_32)/watch.1 $(PROTOUSRSHAREMAN1DIR)/watch.1
 

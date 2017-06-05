@@ -18,9 +18,10 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2016 by Jim Klimov. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		testdisk
 COMPONENT_VERSION=	7.0
@@ -31,9 +32,16 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:00bb3b6b22e6aba88580eeb887037aef026968c21a87b5f906c6652cbee3442d
 COMPONENT_ARCHIVE_URL=	https://www.cgsecurity.org/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CPPFLAGS +=	-I/usr/include/ncurses
+
+# Check location of ncurses libraries
+ifeq ($(shell test -f /usr/gnu/lib/libncurses.so && echo y),y)
+LDFLAGS +=	-L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
+endif
 
 CONFIGURE_OPTIONS  +=		--enable-qt
 
@@ -44,6 +52,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/qt4
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library

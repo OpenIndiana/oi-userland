@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2015 Aurelien Larcher
 #
 
@@ -30,14 +31,19 @@ COMPONENT_PROJECT_URL = http://sourceforge.net/projects/gptfdisk/
 COMPONENT_LICENSE_FILE = $(COMPONENT_NAME).license
 COMPONENT_LICENSE = GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PRE_BUILD_ACTION= \
   $(CP) $(COMPONENT_DIR)/files/Makefile.solaris $(BUILD_DIR_$(BITS))
+
+# Check location of ncurses libraries
+ifeq ($(shell test -f /usr/gnu/lib/libncurses.so && echo y),y)
+LDFLAGS+= -L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
+endif
 
 COMPONENT_BUILD_ENV+= CC="$(CC)"
 COMPONENT_BUILD_ENV+= CXX="$(CXX)"
@@ -52,9 +58,16 @@ COMPONENT_INSTALL_ARGS+= -f Makefile.solaris
 COMPONENT_INSTALL_ARGS+= bindir=$(GDISK_BINDIR.$(BITS))
 COMPONENT_INSTALL_ARGS+= mandir=$(USRSHAREMANDIR)/man8
 COMPONENT_INSTALL_ARGS+= docdir=$(USRSHAREDOCDIR)/gdisk
+COMPONENT_INSTALL_ARGS+= INSTALL=$(INSTALL)
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/popt
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
