@@ -33,13 +33,13 @@ include ../../../make-rules/shared-macros.mk
 # directly now, presumably because the original author abandoned it and GNOME
 # depends on it.
 COMPONENT_NAME=		gmime
-COMPONENT_VERSION=	2.6.20
+COMPONENT_VERSION=	2.6.23
 COMPONENT_ARCHIVE_HASH= \
-	sha256:e0a170fb264c2ae4cecd852f4e7aaddb8d58e8f3f0b569ce2d2a4704f55bdf65
+	sha256:7149686a71ca42a1390869b6074815106b061aaeaaa8f2ef8c12c191d9a79f6a
 COMPONENT_BUGDB=        gnome/libraries
 COMPONENT_ANITYA_ID=	13124
 
-TPNO=			25822
+TPNO=			34659
 
 # Needs gobject-introspection, not available on S11.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -69,4 +69,5 @@ REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/zlib

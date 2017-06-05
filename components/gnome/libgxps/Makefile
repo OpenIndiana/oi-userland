@@ -30,13 +30,13 @@ COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgxps
-COMPONENT_VERSION=	0.2.2
+COMPONENT_VERSION=	0.2.5
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:39d104739bf0db43905c315de1d8002460f1a098576f4418f69294013a5820be
+    sha256:3e7594c5c9b077171ec9ccd3ff2b4f4c4b29884d26d4f35e740c8887b40199a0
 COMPONENT_BUGDB=	gnome/libraries
 COMPONENT_ANITYA_ID=	1629
 
-TPNO=			25452
+TPNO=			34503
 
 TEST_TARGET= $(SKIP_TEST)
 
@@ -52,6 +52,7 @@ include $(WS_MAKE_RULES)/gnome-component.mk
 CONFIGURE_OPTIONS += --disable-static
 # Required for other components.
 CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS += --enable-gtk-doc
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --enable-shared
 
