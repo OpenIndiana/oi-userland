@@ -10,13 +10,13 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher.  All rights reserved.
+# Copyright 2016-2017 Aurelien Larcher.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-bad1
-COMPONENT_VERSION= 1.10.3
+COMPONENT_VERSION= 1.12.0
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/bad
@@ -24,7 +24,7 @@ COMPONENT_SRC_NAME= gst-plugins-bad
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:24099351fb6984c9e7560de06e072ff2e33d0b2db38b8fcc7afefb536e5094e7
+  sha256:11b73cfff1b315a8e9be1756435ea84937e7cb90afbab0e8e6975367dbfb8534
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
@@ -41,7 +41,7 @@ COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
                           autoconf )
 gcc_OPT = -O2
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include/mesa
 CFLAGS += -I/usr/X11/include
