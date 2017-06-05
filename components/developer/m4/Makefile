@@ -21,26 +21,42 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017, Aurelien Larcher.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		m4
-COMPONENT_VERSION=	1.4.17
+COMPONENT_VERSION=	1.4.18
+COMPONENT_FMRI=	developer/macro/gnu-m4
+COMPONENT_SUMMARY=	GNU m4
+COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/m4/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3ce725133ee552b8b4baca7837fb772940b25e81b2a9dc92537aeaf733538c9e
+    sha256:ab2633921a5cd38e48797bf5521ad259bdc4b979078034a3b790d7fec5493fab
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/m4/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-m4
+COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(PATH.gnu)
 
 CONFIGURE_PREFIX =	/usr/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+ 	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -51,6 +67,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libsigsegv
+REQUIRED_PACKAGES += system/library
