@@ -12,7 +12,7 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dosbox
 COMPONENT_VERSION=	0.74
@@ -28,16 +28,16 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_FMRI=		runtime/dosbox
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-					aclocal -I. && \
-					autoheader && \
-					libtoolize --automake --copy --force && \
-					automake -a -f -c &&\
-					autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          aclocal -I. && \
+                          autoheader && \
+                          libtoolize --automake --copy --force && \
+                          automake -a -f -c && \
+                          autoconf )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
@@ -51,6 +51,12 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
