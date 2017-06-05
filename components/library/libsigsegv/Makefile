@@ -19,25 +19,42 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Aurelien Larcher
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsigsegv
-COMPONENT_VERSION=	2.6
+COMPONENT_VERSION=	2.11
+COMPONENT_FMRI= library/libsigsegv
+COMPONENT_SUMMARY=  libsigsegv - handling page faults in user mode
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libsigsegv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c18b3b0975ec7e0a6af03a9533d7ffbdc500bb146e0ca338a6174b1346d655bb
+    sha256:dd7c2eb2ef6c47189406d562c1dc0f96f2fc808036834d596075d58377e37a18
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libsigsegv/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libsigsegv
+COMPONENT_LICENSE=  GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
+
+# Test failure
+unexport SHELLOPTS
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+ 	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -46,6 +63,5 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
