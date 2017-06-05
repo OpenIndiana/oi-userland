@@ -20,6 +20,7 @@
 #
 
 #
+# Copyright 2017 Aurelien Larcher
 # Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
@@ -27,15 +28,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtool
-COMPONENT_VERSION=	2.4.2
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.4.6
+COMPONENT_FMRI=	developer/build/libtool
+COMPONENT_SUMMARY=	GNU libtool
+COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libtool/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b38de44862a987293cd3d8dfae1c409d514b6c4e794ebc93648febf9afc38918
+    sha256:e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/libtool
+COMPONENT_LICENSE=	GPLv2, FDLv1.3
 
 # For now, we want to continue to provide the libltdl.so's (and their
 # links) from libtool 1.5.22.
@@ -52,12 +55,13 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=$(PATH.gnu)
+
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-
-COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
+COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap --force)
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
@@ -68,6 +72,14 @@ COMPONENT_POST_INSTALL_ACTION = \
 			-e 's|^LTCC="/.*$$|LTCC="gcc"|' \
 			-e 's|^CC="/.*$$|CC="gcc"|' libtool ; \
 	done)
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^\#\#/p" ' \
+	'-e "/ok/p" ' \
+	'-e "/skipped/p" ' \
+	'-e "/expected failure/p" ' \
+	'-e "/FAILED/p" '
 
 # Macros to configure, build, and install the old version for the time being.
 BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
@@ -111,6 +123,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += developer/linker
 REQUIRED_PACKAGES += developer/object-file
 REQUIRED_PACKAGES += shell/bash
