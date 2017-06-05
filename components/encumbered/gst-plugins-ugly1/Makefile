@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-ugly1
-COMPONENT_VERSION= 1.10.3
+COMPONENT_VERSION= 1.12.0
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/ugly
@@ -24,7 +24,7 @@ COMPONENT_SRC_NAME= gst-plugins-ugly
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c91597d03abff9df435ad4892eae44df1ee14159c7cc7317ac9d2766ff446bd2
+  sha256:5e68ba5046e83ee87b17d7a13931e6091466fd771e1338c5b929ee0944d40ad6
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
@@ -41,7 +41,7 @@ COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
                           autoconf )
 gcc_OPT = -O2
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include/mesa
 CFLAGS += -I/usr/X11/include
