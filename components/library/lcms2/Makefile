@@ -18,13 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Aurelien Larcher 
+# Copyright (c) 2015-2017, Aurelien Larcher 
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_VERSION=      2.7
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      2.8
 COMPONENT_FMRI=         library/lcms2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      The Little Color Management System
@@ -32,11 +31,10 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4524234ae7de185e6b6da5d31d6875085b2198bc63b1211f7dde6e2d197d6a53
-COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	      utility/lcms2
+  sha256:66d02b229d2ea9474e62c2b6cd6720fde946155cd1d0d2bffdab829790a0fb22
+COMPONENT_ARCHIVE_URL=  \
+  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
