@@ -20,16 +20,15 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.9.6
+COMPONENT_VERSION=		6.9.9
 COMPONENT_MAJOR_VERSIOR=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
-COMPONENT_SUBVERSION=		5
-COMPONENT_REVISION=		3
+COMPONENT_SUBVERSION=		0
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
@@ -38,8 +37,8 @@ COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8d0122ba93a3f16d09cadcd4228f996c0048f0a44d92113d3d61150faa78f40c
-COMPONENT_ARCHIVE_URL=		$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
+    sha256:0a8a091dc4f57ec486e03285a1c30dc3f062d58133f848b6274dfc6ae5dbb60b
+COMPONENT_ARCHIVE_URL=		$(COMPONENT_PROJECT_URL)/download/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = Apache 2.0 license
 COMPONENT_LICENSE_FILE = LICENSE
 
@@ -76,6 +75,10 @@ CONFIGURE_ENV += LIBS="$(LIBS)"
 LD_OPTIONS_SO=		-L. -L../../magick/.libs
 COMPONENT_BUILD_ENV +=	LD_OPTIONS_SO="$(LD_OPTIONS_SO)"
 
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS+= --with-modules
 CONFIGURE_OPTIONS+= --enable-shared
@@ -105,6 +108,7 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+PKG_MACROS += COMPONENT_SUBVERSION=$(COMPONENT_SUBVERSION)
 PKG_MACROS += PERL_PKG=$(PERL_PKG)
 
 
@@ -129,12 +133,14 @@ COMPONENT_TEST_TRANSFORMS += \
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-REQUIRED_PACKAGES += SUNWcs
+# Build dependencies
+REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/djvulibre
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += image/library/openjpeg
@@ -146,8 +152,9 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-4-runtime
