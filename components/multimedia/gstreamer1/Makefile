@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gstreamer1
-COMPONENT_VERSION= 1.10.3
+COMPONENT_VERSION= 1.12.0
 COMPONENT_SUMMARY= GNOME streaming media framework
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
 COMPONENT_FMRI= library/audio/gstreamer1
@@ -25,11 +25,10 @@ COMPONENT_SRC_NAME= gstreamer
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:85b9dc1b2991f224fa90d534ec57014896c479e061dc9fa1bc16ae17cbebb63d
+  sha256:14d5eef8297d2bf2a728d38fa43cd92cc267a0ad260cf83d770215212aff4302
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= LGPLv2
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -37,7 +36,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 CFLAGS += -I/usr/sfw/include -I/usr/X11/include
 
