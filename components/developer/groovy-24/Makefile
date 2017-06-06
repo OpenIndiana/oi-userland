@@ -9,23 +9,23 @@
 #
 
 #
-# Copyright 2016 Jim Klimov
+# Copyright 2016-2017 Jim Klimov
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groovy
 COMPONENT_MAJOR_VERSION=	2.4
-COMPONENT_MINOR_VERSION=	8
+COMPONENT_MINOR_VERSION=	11
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	1
 COMPONENT_ARCHIVE=	apache-$(COMPONENT_NAME)-binary-$(COMPONENT_VERSION).zip
 COMPONENT_FMRI=		developer/groovy-24
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://groovy-lang.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:668a65ea17037371a1952cca5f42ebc03329e15d3619aacb4c7dd5f4b39a8dfd
-COMPONENT_ARCHIVE_URL=	https://bintray.com/artifact/download/groovy/maven/$(COMPONENT_ARCHIVE)
+	sha256:4479a3653c565b173fc0d0e5e514a06f1c7d6f93926cbe0c5d8d29e5e4a0347c
+COMPONENT_ARCHIVE_URL=\
+	https://bintray.com/artifact/download/groovy/maven/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		Apache-2.0,BSD,MIT,Eclipse,PublicDomain
 COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_SUMMARY=	Groovy is a Java-based scripting language
@@ -34,7 +34,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION += (cp $(COMPONENT_DIR)/files/Makefile $(SOURCE_DIR))
 
