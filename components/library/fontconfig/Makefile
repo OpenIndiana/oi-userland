@@ -41,6 +41,10 @@ gcc_OPT=-O2
 # This is necessary to pass tests
 ENV=/usr/bin/env -i
 
+# Gperf files should be regenerated
+# https://bugs.freedesktop.org/show_bug.cgi?id=101280
+COMPONENT_PRE_CONFIGURE_ACTION= ($(RM) $(SOURCE_DIR)/src/fcobjshash.h)
+
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --with-confdir=/etc/fonts
 CONFIGURE_OPTIONS+= --with-default-fonts='/usr/share/fonts'
