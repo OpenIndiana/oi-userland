@@ -16,30 +16,31 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libbluray
-COMPONENT_VERSION= 0.9.2
+COMPONENT_VERSION= 1.0.0
 COMPONENT_FMRI = library/video/libbluray
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= An open-source library designed for Blu-Ray Discs playback for media players.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:efc994f42d2bce6af2ce69d05ba89dbbd88bcec7aca065de094fb3a7880ce7ea
+  sha256:f7e3add335c7bbef45824fcd2249a9bf293868598c13f8479352c44ec95374cc
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.videolan.org/pub/videolan/libbluray/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libbluray.html
 COMPONENT_LICENSE = LGPLv2.1
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMMON_BUILD_ENV += JDK_HOME="$(JAVA_HOME)" 
 
 CFLAGS += -I $(JAVA_HOME)/include/solaris
 
-CONFIGURE_OPTIONS += --enable-udf
 CONFIGURE_OPTIONS += --datadir=$(USRSHARELIBDIR)
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-udf
 CONFIGURE_OPTIONS += --with-libxml2
 CONFIGURE_OPTIONS += --with-freetype
 
@@ -47,7 +48,7 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
