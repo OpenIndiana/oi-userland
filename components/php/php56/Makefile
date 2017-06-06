@@ -27,16 +27,16 @@ BUILD_BITS= 64
 # Otherwise studio was working fine for php 5.6
 COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
-include $(WS_COMPONENTS)/php/php56/php56-metadata.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	$(UL_PHP_VERSION)
+COMPONENT_VERSION=	5.6.30
+UL_PHP_MINOR_VERSION=	5.6
 COMPONENT_PROJECT_URL=	http://php.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=\
-    sha256:07187ba2870f89cef334cd2ad6cb801aeec5eaf283da0293a9a6be75d6786d11
+    sha256:a363185c786432f75e3c7ff956b49c3369c3f6906a6b10459f8d1ddc22f70805
 COMPONENT_ARCHIVE_URL=	http://php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
-TPNO=			32826
+TPNO=			35480
 COMPONENT_ANITYA_ID=	12535
 
 include $(WS_MAKE_RULES)/common.mk

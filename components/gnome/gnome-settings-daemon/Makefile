@@ -42,18 +42,11 @@ include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
-# Use the GNOME 3 libnotify even though the GNOME 2 one is still the default
-PKG_CONFIG_PATHS.32 += /usr/lib/pkgconfig/libnotify-4
-PKG_CONFIG_PATHS.64 += /usr/lib/$(MACH64)/pkgconfig/libnotify-4
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-LD_OPTIONS.32 += -L /usr/lib/libnotify-4 -R /usr/lib/libnotify-4
-LD_OPTIONS.64 += -L /usr/lib/$(MACH64)/libnotify-4 -R /usr/lib/$(MACH64)/libnotify-4
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
 # A pkg-config file isn't shipped in Solaris for nss/nspr 64-bit, so we
 # workaround this by using the one-off copy in the evolution-data-server
 # component directory
 PKG_CONFIG_PATHS.64 += $(WS_COMPONENTS)/gnome/evolution-data-server
+PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
 
 CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 

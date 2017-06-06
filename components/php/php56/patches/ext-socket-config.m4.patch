@@ -1,13 +1,15 @@
-# From upstream
-# https://bugs.php.net/patch-display.php?bug_id=66013&patch=ext_socket_config.m4.patch&revision=1391710634
+Derived from upstream patch at
+https://bugs.php.net/patch-display.php?bug_id=66013&patch=ext_socket_config.m4.patch&revision=1391710634
+updated for new version and done properly.
 
---- php-5.5.8/ext/sockets/config.m4.~1~	2014-02-03 17:00:04.190436713 +0400
-+++ php-5.5.8/ext/sockets/config.m4	2014-02-03 17:01:07.630356700 +0400
+
+--- php-5.6.30/ext/sockets/config.m4_orig	2017-01-18 16:17:47.000000000 +0000
++++ php-5.6.30/ext/sockets/config.m4	2017-05-24 08:38:03.533693693 +0000
 @@ -56,6 +56,6 @@
      AC_DEFINE(HAVE_AI_V4MAPPED,1,[Whether you have AI_V4MAPPED])
    fi
  
 -  PHP_NEW_EXTENSION([sockets], [sockets.c multicast.c conversions.c sockaddr_conv.c sendrecvmsg.c], [$ext_shared])
-+  PHP_NEW_EXTENSION([sockets], [sockets.c multicast.c conversions.c sockaddr_conv.c sendrecvmsg.c], [$ext_shared],,-D_XPG4_2)
++  PHP_NEW_EXTENSION([sockets], [sockets.c multicast.c conversions.c sockaddr_conv.c sendrecvmsg.c], [$ext_shared],,-D_XOPEN_SOURCE=600)
    PHP_INSTALL_HEADERS([ext/sockets/], [php_sockets.h])
  fi
