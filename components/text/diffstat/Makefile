@@ -23,17 +23,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffstat
-COMPONENT_VERSION=	1.51
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.61
+COMPONENT_FMRI=	text/diffstat
+COMPONENT_SUMMARY=	A utility which provides statistics based on the output of diff
+COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_PROJECT_URL=	http://invisible-island.net/diffstat/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c0c83c6eea054cbf0a3a9c0621ae3bef1a9a33914d417f08569159c975644075
-COMPONENT_ARCHIVE_URL=	ftp://invisible-island.net/diffstat/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/diffstat
-
-TPNO=			5494
+  sha256:25359e0c27183f997b36c9202583b5dc2df390c20e22a92606af4bf7856a55ee
+COMPONENT_ARCHIVE_URL= \
+  ftp://invisible-island.net/diffstat/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	MIT
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -44,20 +45,24 @@ CPPFLAGS += $(CPP_LARGEFILES)
 
 CC += $(CC_BITS)
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ENV =	PATH=$(@D):$(SOURCE_DIR):$(PATH)
 COMPONENT_TEST_CMD =	./testing/run_test.sh
 COMPONENT_TEST_ARGS =	./testing/case*.pat
 COMPONENT_TEST_TARGETS =
 
+COMPONENT_TEST_TRANSFORMS= \
+	'-e "/Checking/d"'
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+# Auto-generated dependencies
+# NONE
