@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS += --disable-dv1394
 CONFIGURE_OPTIONS += --disable-linsys
 CONFIGURE_OPTIONS += --enable-dvdread
 CONFIGURE_OPTIONS += --enable-dvdnav
-CONFIGURE_OPTIONS += --disable-bluray
+CONFIGURE_OPTIONS += --enable-bluray
 CONFIGURE_OPTIONS += --disable-opencv
 CONFIGURE_OPTIONS += --disable-smbclient
 CONFIGURE_OPTIONS += --enable-sftp
@@ -72,7 +72,7 @@ CONFIGURE_OPTIONS += --disable-decklink
 CONFIGURE_OPTIONS += --enable-gnomevfs
 CONFIGURE_OPTIONS += --disable-vcdx
 CONFIGURE_OPTIONS += --disable-vcd
-CONFIGURE_OPTIONS += --disable-libcddb
+CONFIGURE_OPTIONS += --enable-libcddb
 CONFIGURE_OPTIONS += --enable-screen
 CONFIGURE_OPTIONS += --disable-vnc
 CONFIGURE_OPTIONS += --disable-freerdp
@@ -133,7 +133,7 @@ CONFIGURE_OPTIONS += --disable-tiger
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-xcb
 CONFIGURE_OPTIONS += --enable-xvideo
-CONFIGURE_OPTIONS += --disable-vdpau
+CONFIGURE_OPTIONS += --enable-vdpau
 CONFIGURE_OPTIONS += --enable-sdl
 CONFIGURE_OPTIONS += --enable-sdl-image
 CONFIGURE_OPTIONS += --enable-freetype
@@ -176,7 +176,7 @@ CONFIGURE_OPTIONS += --enable-upnp
 CONFIGURE_OPTIONS += --enable-libxml2
 CONFIGURE_OPTIONS += --disable-libgcrypt
 CONFIGURE_OPTIONS += --disable-gnutls # Requested 'gnutls >= 3.0.20' but version of GnuTLS is 2.8.6
-CONFIGURE_OPTIONS += --disable-taglib
+CONFIGURE_OPTIONS += --enable-taglib
 CONFIGURE_OPTIONS += --enable-notify
 
 
@@ -186,6 +186,7 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
@@ -200,6 +201,7 @@ REQUIRED_PACKAGES += library/audio/libdca
 REQUIRED_PACKAGES += library/audio/libmad
 REQUIRED_PACKAGES += library/audio/libmpcdec
 REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/audio/taglib
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -220,6 +222,7 @@ REQUIRED_PACKAGES += library/qt4
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/video/libass
+REQUIRED_PACKAGES += library/video/libbluray
 REQUIRED_PACKAGES += library/video/libdvbpsi
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
@@ -230,7 +233,6 @@ REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
