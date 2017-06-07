@@ -18,12 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
 #
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ephoto
-COMPONENT_VERSION=      0.0.1
+COMPONENT_VERSION=      1.0
 COMPONENT_FMRI=         image/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/Sound and Video
 COMPONENT_SUMMARY=      Ephoto
@@ -32,10 +32,8 @@ COMPONENT_GIT_DATE= 		20170418
 COMPONENT_GIT_HASH= 	  4f7874b403c098d9258fde7b6c415db1b4ae0740
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:8781102afeb82b894b7c6d7118499b9a782fef14e7cb007162092274d86c1116
 COMPONENT_ARCHIVE_URL= \
-    https://git.enlightenment.org/apps/ephoto.git/snapshot/$(COMPONENT_ARCHIVE)
+    http://www.smhouston.us/stuff/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -46,6 +44,8 @@ PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION= \
     ( cd $(@D); NOCONFIGURE=1 ./autogen.sh; )
+
+CONFIGURE_OPTIONS+= --disable-dependency-tracking
 
 CONFIGURE_BINDIR.64=$(USRBINDIR)
 
