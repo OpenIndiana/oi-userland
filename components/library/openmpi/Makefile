@@ -20,6 +20,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 COMPONENT_NAME =		openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR = 	2.1
 COMPONENT_VERSION = 		$(OPENMPI_VERSION_MAJOR).1
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
@@ -58,6 +59,7 @@ CONFIGURE_OPTIONS+= --enable-ipv6
 CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
 CONFIGURE_OPTIONS+= --enable-mpi-cxx
 CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
+CONFIGURE_OPTIONS+= --disable-pmix-dstore
 CONFIGURE_OPTIONS+= --with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-libs="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
