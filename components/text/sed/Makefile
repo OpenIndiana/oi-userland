@@ -20,37 +20,69 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017, Aurelien Larcher.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
-COMPONENT_VERSION=	4.2.2
+COMPONENT_VERSION=	4.4
+COMPONENT_FMRI=	text/gnu-sed
+COMPONENT_SUMMARY=	GNU implementation of sed, the Unix stream editor
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/sed/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fea0a94d4b605894f3e2d5572e3f96e4413bcad3a085aae7367c2cf07908b2ff
+  sha256:cbd6ebc5aaf080ed60d0162d7f6aeae58211a1ee9ba9bb25623daa6cd942683b
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-sed
+COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(PATH.gnu)
+
+CONFIGURE_BINDIR.64= $(GNUBIN)
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+# Test dependencies
+REQUIRED_PACKAGES += developer/debug/valgrind
+REQUIRED_PACKAGES += developer/versioning/cvs
+REQUIRED_PACKAGES += locale/de
+REQUIRED_PACKAGES += locale/en
+REQUIRED_PACKAGES += locale/fr
+REQUIRED_PACKAGES += locale/fr-extra
+REQUIRED_PACKAGES += locale/zh_cn-extra
 
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
