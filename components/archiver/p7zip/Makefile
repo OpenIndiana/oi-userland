@@ -26,23 +26,24 @@
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-
 COMPONENT_NAME=		p7zip
-COMPONENT_VERSION=	15.14.1
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	16.2
+COMPONENT_SRC_VERSION=	16.02
+COMPONENT_FMRI=	compress/p7zip
+COMPONENT_SUMMARY=	The p7zip compression and archiving utility
+COMPONENT_CLASSIFICATION=	System/Core
 COMPONENT_PROJECT_URL=	http://p7zip.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_SRC_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:699db4da3621904113e040703220abb1148dfef477b55305e2f14a4f1f8f25d4
+    sha256:5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f
 COMPONENT_ARCHIVE_URL=	\
-    http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_SRC_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/p7zip
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_TEST_DIR =           $(@D)
