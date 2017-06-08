@@ -39,6 +39,10 @@
 #define CK_MD_RTM_DISABLE
 #endif /* CK_MD_RTM_DISABLE */
 
+#ifndef CK_MD_LSE_DISABLE
+#define CK_MD_LSE_DISABLE
+#endif /* CK_MD_LSE_DISABLE */
+
 #ifndef CK_MD_POINTER_PACK_DISABLE
 #define CK_MD_POINTER_PACK_DISABLE
 #endif /* CK_MD_POINTER_PACK_DISABLE */
@@ -57,7 +61,11 @@
 #define CK_MD_TSO
 #endif /* CK_MD_TSO */
 
-#define CK_VERSION "0.5.2"
-#define CK_GIT_SHA "f8503f8"
+#ifndef CK_PR_ENABLE_DOUBLE
+#define CK_PR_ENABLE_DOUBLE
+#endif /* CK_PR_ENABLE_DOUBLE */
+
+#define CK_VERSION "0.6.0"
+#define CK_GIT_SHA "d002dc1b4"
 
 #endif /* CK_MD_H */
