@@ -15,30 +15,33 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
+COMPONENT_VERSION=	2.5
 COMPONENT_FMRI=		terminal/tmux
-COMPONENT_VERSION=	2.3
-COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SUMMARY=	tmux terminal multiplexer
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:55313e132f0f42de7e020bf6323a1939ee02ab79c48634aa07475db41573852b
-COMPONENT_ARCHIVE_URL=	https://github.com/tmux/tmux/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:ae135ec37c1bf6b7750a84e3a35e93d91033a806943e034521c8af51b12d95df
+COMPONENT_ARCHIVE_URL= \
+  https://github.com/tmux/tmux/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	BSD
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS +=	-I/usr/include/ncurses
-LDFLAGS +=	-L/usr/gnu/lib -R/usr/gnu/lib
+
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS +=	LIBS="-lncurses"
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/ncurses
