@@ -18,12 +18,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
-COMPONENT_VERSION=	0.32.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.55.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4963e31ba5e17530a87b16588e22928bc044e8d28d02303dded981bff6725b98
+    sha256:537f2bc60d796525705ad9ca8e46899dcc99c2e9480b80051808bae265cdc658
 COMPONENT_ARCHIVE_URL= \
      http://poppler.freedesktop.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://poppler.freedesktop.org/
@@ -38,19 +37,21 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION += \
-    cd $(@D); autoreconf --install --force
-
 COMPONENT_POST_INSTALL_ACTION += \
 	$(RM) $(PROTO_DIR)$(CONFIGURE_LIBDIR.$(BITS))/*.{a,la}
 
 CFLAGS += $($(COMPILER)_C99_ENABLE)
 
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPP_XPG6MODE) $(CPP_LARGEFILES)"
 CONFIGURE_OPTIONS += CXX="$(CXX) $($(COMPILER)_NORUNPATH)"
 CONFIGURE_OPTIONS += --enable-poppler-glib
-CONFIGURE_OPTIONS += --disable-poppler-qt
 CONFIGURE_OPTIONS += --disable-poppler-qt4
+CONFIGURE_OPTIONS += --disable-poppler-qt5
 CONFIGURE_OPTIONS += --enable-zlib
 CONFIGURE_OPTIONS += --enable-xpdf-headers
 
@@ -61,3 +62,22 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 build:	$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+test:	$(NO_TESTS)
+
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += image/library/openjpeg
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/mozilla-nss
