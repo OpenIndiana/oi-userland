@@ -1,0 +1,170 @@
+--- libgd-gd-2.2.4/CMakeLists.txt.orig	2017-06-10 01:26:44.907495342 +0000
++++ libgd-gd-2.2.4/CMakeLists.txt	2017-06-10 01:30:10.593422655 +0000
+@@ -69,14 +69,30 @@
+ 	endif (GD_FOUND)
+ else (USE_EXT_GD)
+ 
+-	SET(GD_VERSION_MAJOR "2")
+-	SET(GD_VERSION_MINOR "2")
+-	SET(GD_VERSION_PATCH "3")
+-	SET(GD_VERSION_EXTRA "")
+-	SET(GD_VERSION "${GD_VERSION_MAJOR}.${GD_VERSION_MINOR}.${GD_VERSION_PATCH}${GD_VERSION_EXTRA}")
+-	SET(GD_VERSION_STRING "${GD_VERSION}")
+-
+-	SET(GD_VERSION_INT "2020333")
++	MACRO(GV VER VAR)
++		execute_process(
++			COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/config/getver.pl ${VER}
++			OUTPUT_VARIABLE ${VAR}
++		)
++	ENDMACRO(GV)
++
++	GV(MAJOR GDLIB_MAJOR)
++	GV(MINOR GDLIB_MINOR)
++	GV(RELEASE GDLIB_REVISION)
++	GV(EXTRA GDLIB_EXTRA)
++	SET(GDLIB_VERSION "${GDLIB_MAJOR}.${GDLIB_MINOR}.${GDLIB_REVISION}${GDLIB_EXTRA}")
++	MESSAGE(STATUS "gd version ${GDLIB_VERSION}")
++
++	MACRO(GV_LT VER VAR)
++		execute_process(
++			COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/config/getlib.sh ${VER}
++			OUTPUT_VARIABLE ${VAR}
++		)
++	ENDMACRO(GV_LT)
++
++	GV_LT(SONAME GDLIB_LIB_SOVERSION)
++	GV_LT(VERSION GDLIB_LIB_VERSION)
++	MESSAGE(STATUS "gd shared lib version ${GDLIB_LIB_SOVERSION} (${GDLIB_LIB_VERSION})")
+ 
+ 	SET(CMAKE_REQUIRED_INCLUDES "/usr/include" "/usr/local/include")
+ 
+@@ -231,9 +247,9 @@
+ SET(CPACK_PACKAGE_NAME "libgd")
+ SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libGD, powerful and easy to use graphic library")
+ SET(CPACK_PACKAGE_VENDOR "http://www.libgd.org")
+-SET(CPACK_PACKAGE_VERSION_MAJOR "2")
+-SET(CPACK_PACKAGE_VERSION_MINOR "2")
+-SET(CPACK_PACKAGE_VERSION_PATCH "3")
++SET(CPACK_PACKAGE_VERSION_MAJOR ${GDLIB_MAJOR})
++SET(CPACK_PACKAGE_VERSION_MINOR ${GDLIB_MINOR})
++SET(CPACK_PACKAGE_VERSION_PATCH ${GDLIB_REVISION})
+ 
+ if(WIN32)
+ 	set(CPACK_GENERATOR ZIP)
+diff --git a/config/getlib.sh b/config/getlib.sh
+new file mode 100755
+index 00000000..4835cf6c
+--- /dev/null
++++ b/config/getlib.sh
+@@ -0,0 +1,42 @@
++#!/bin/sh
++
++GETVER="${0%/*}/getver.pl"
++GDLIB_MAJOR=$("${GETVER}" MAJOR)
++GDLIB_MINOR=$("${GETVER}" MINOR)
++GDLIB_REVISION=$("${GETVER}" RELEASE)
++
++# Dynamic library version information
++# See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
++
++GDLIB_LT_CURRENT=3
++# This is the version where the soname (current above) changes.  We use it
++# to reset the revision base back to zero.  It's a bit of a pain, but some
++# systems restrict the revision range below to [0..255] (like OS X).
++GDLIB_PREV_MAJOR=2
++GDLIB_PREV_MINOR=2
++# This isn't 100% correct, but it tends to be a close enough approximation
++# for how we manage the codebase.  It's rare to do a release that doesn't
++# modify the library since this project is centered around the library.
++GDLIB_LT_REVISION=$(( ((GDLIB_MAJOR - GDLIB_PREV_MAJOR) << 6) | ((GDLIB_MINOR - GDLIB_PREV_MINOR) << 3) | GDLIB_REVISION ))
++GDLIB_LT_AGE=0
++
++# The first three fields we feed into libtool and the OS target determines how
++# they get used.  The last two fields we feed into cmake.  We use the same rules
++# as Linux SONAME versioning in libtool, but cmake should handle it for us.
++case $1 in
++CURRENT)
++	printf '%s' "${GDLIB_LT_CURRENT}"
++	;;
++REVISION)
++	printf '%s' "${GDLIB_LT_REVISION}"
++	;;
++AGE)
++	printf '%s' "${GDLIB_LT_AGE}"
++	;;
++VERSION)
++	printf '%s' "$(( GDLIB_LT_CURRENT - GDLIB_LT_AGE )).${GDLIB_LT_AGE}.${GDLIB_LT_REVISION}"
++	;;
++SONAME)
++	printf '%s' "$(( GDLIB_LT_CURRENT - GDLIB_LT_AGE ))"
++	;;
++esac
+diff --git a/configure.ac b/configure.ac
+index 91643bd6..c3fb034e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -34,20 +34,17 @@ AC_SUBST(GDLIB_REVISION)
+ AC_SUBST(GDLIB_EXTRA)
+ AC_SUBST(GDLIB_VERSION)
+ 
+-# Dynamic library version information
+-# See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
+-
+-GDLIB_LT_CURRENT=3
+-dnl This is the version where the soname (current above) changes.  We use it
+-dnl to reset the revision base back to zero.  It's a bit of a pain, but some
+-dnl systems restrict the revision range below to [0..255] (like OS X).
+-GDLIB_PREV_MAJOR=2
+-GDLIB_PREV_MINOR=2
+-dnl This isn't 100% correct, but it tends to be a close enough approximation
+-dnl for how we manage the codebase.  It's rare to do a release that doesn't
+-dnl modify the library since this project is centered around the library.
+-GDLIB_LT_REVISION=$(( ((GDLIB_MAJOR - GDLIB_PREV_MAJOR) << 6) | ((GDLIB_MINOR - GDLIB_PREV_MINOR) << 3) | GDLIB_REVISION ))
+-GDLIB_LT_AGE=0
++dnl Keep the libtool version details in an external script so cmake can
++dnl access the values too.
++define([lt_gv], [config/getlib.sh ]$1)
++m4_define([gd_LT_CURRENT], esyscmd(lt_gv(CURRENT)))
++m4_define([gd_LT_REVISION], esyscmd(lt_gv(REVISION)))
++m4_define([gd_LT_AGE], esyscmd(lt_gv(AGE)))
++
++GDLIB_LT_CURRENT=gd_LT_CURRENT
++GDLIB_LT_REVISION=gd_LT_REVISION
++GDLIB_LT_AGE=gd_LT_AGE
++
+ AC_SUBST(GDLIB_LT_CURRENT)
+ AC_SUBST(GDLIB_LT_REVISION)
+ AC_SUBST(GDLIB_LT_AGE)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 08fd6991..a621fe1e 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -80,6 +80,8 @@ include(GNUInstallDirs)
+ if (BUILD_SHARED_LIBS)
+ 	add_library(${GD_LIB} ${LIBGD_SRC_FILES})
+ 	set_target_properties(${GD_LIB} PROPERTIES
++		SOVERSION ${GDLIB_LIB_SOVERSION}
++		VERSION ${GDLIB_LIB_VERSION}
+ 		C_VISIBILITY_PRESET hidden
+ 		CXX_VISIBILITY_PRESET hidden
+ 	)
+--- libgd-gd-2.2.4/config/getver.pl.orig	2017-06-10 02:22:01.687457283 +0000
++++ libgd-gd-2.2.4/config/getver.pl	2017-06-10 02:22:10.727104777 +0000
+@@ -8,11 +8,14 @@
+ 
+ use strict;
+ 
++use FindBin;
++
+ my $key = shift;
+ my @version_parts = ();
++my $dir = $FindBin::Bin;
+ 
+-open FH, "<src/gd.h"   # old-style filehandle for max. portability
+-  or die "Unable to open 'version.h' for reading.\n";
++open FH, "<$dir/../src/gd.h"   # old-style filehandle for max. portability
++  or die "Unable to open 'gd.h' for reading.\n";
+ 
+ while(<FH>) {
+   next unless m{version605b5d1778};
