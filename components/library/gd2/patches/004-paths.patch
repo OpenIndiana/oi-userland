@@ -1,0 +1,77 @@
+The CMake-based build system introduced issues fixed in the Autotools-based.
+Paths are hardcoded and the documentation does not install properly.
+
+--- libgd-gd-2.2.4/src/CMakeLists.txt.orig	2017-06-10 01:03:26.537141966 +0000
++++ libgd-gd-2.2.4/src/CMakeLists.txt	2017-06-10 01:05:41.206351732 +0000
+@@ -160,10 +160,10 @@
+ endif()
+ 
+ install(TARGETS ${GD_INSTALL_TARGETS}
+-        RUNTIME DESTINATION bin
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+-install(PROGRAMS bdftogd DESTINATION bin)
++install(PROGRAMS bdftogd DESTINATION ${CMAKE_INSTALL_BINDIR})
+ install(FILES
+ 	entities.h
+ 	gd.h
+@@ -181,4 +181,4 @@
+ 	gdhelpers.h
+ 	jisx0208.h
+ 	wbmp.h
+-	DESTINATION include)
++	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+--- libgd-gd-2.2.4/CMakeLists.txt.orig	2017-06-10 01:06:40.183348174 +0000
++++ libgd-gd-2.2.4/CMakeLists.txt	2017-06-10 01:07:39.411468934 +0000
+@@ -258,27 +258,29 @@
+ ENDIF(ENABLE_LIQ AND LIQ_BUILD)
+ 
+ 
+-INSTALL(FILES docs/INSTALL DESTINATION share/docs)
+-INSTALL(FILES docs/README.JPN DESTINATION share/docs)
+-INSTALL(FILES docs/README.CMAKE DESTINATION share/docs)
+-INSTALL(FILES docs/README.TESTING DESTINATION share/docs)
+-INSTALL(FILES docs/README.TXT DESTINATION share/docs)
+-
+-
+-INSTALL(FILES examples/arc.c DESTINATION share/docs)
+-INSTALL(FILES examples/copyrotated.c DESTINATION share/docs)
+-INSTALL(FILES examples/crop.c DESTINATION share/docs)
+-INSTALL(FILES examples/flip.c DESTINATION share/docs)
+-INSTALL(FILES examples/gif.c DESTINATION share/docs)
+-INSTALL(FILES examples/nnquant.c DESTINATION share/docs)
+-INSTALL(FILES examples/noIcon.pic DESTINATION share/docs)
+-INSTALL(FILES examples/noIcon.sgi DESTINATION share/docs)
+-INSTALL(FILES examples/noIcon.tga DESTINATION share/docs)
+-INSTALL(FILES examples/noIconAlpha.tga DESTINATION share/docs)
+-INSTALL(FILES examples/test_crop_threshold.png DESTINATION share/docs)
+-INSTALL(FILES examples/tgaread.c DESTINATION share/docs)
+-INSTALL(FILES examples/tiffread.c DESTINATION share/docs)
+-INSTALL(FILES examples/windows.c DESTINATION share/docs)
++SET(GDLIB_DOCDIR ${CMAKE_INSTALL_DOCDIR})
++
++INSTALL(FILES docs/INSTALL DESTINATION ${GDLIB_DOCDIR})
++INSTALL(FILES docs/README.JPN DESTINATION ${GDLIB_DOCDIR})
++INSTALL(FILES docs/README.CMAKE DESTINATION ${GDLIB_DOCDIR})
++INSTALL(FILES docs/README.TESTING DESTINATION ${GDLIB_DOCDIR})
++INSTALL(FILES docs/README.TXT DESTINATION ${GDLIB_DOCDIR})
++
++
++INSTALL(FILES examples/arc.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/copyrotated.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/crop.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/flip.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/gif.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/nnquant.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/noIcon.pic DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/noIcon.sgi DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/noIcon.tga DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/noIconAlpha.tga DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/test_crop_threshold.png DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/tgaread.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/tiffread.c DESTINATION ${GDLIB_DOCDIR}/examples)
++INSTALL(FILES examples/windows.c DESTINATION ${GDLIB_DOCDIR}/examples)
+ 
+ 
+ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
