@@ -18,12 +18,14 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           guile
 COMPONENT_VERSION=        1.8.8
+COMPONENT_REVISION=       1
 COMPONENT_SUMMARY=        GNU guile utility
 COMPONENT_PROJECT_URL=    http://www.gnu.org/software/guile/
 COMPONENT_CLASSIFICATION= Development/Other Languages
@@ -39,7 +41,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_ENV+= CPP="/usr/bin/gcc -E"
+CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
