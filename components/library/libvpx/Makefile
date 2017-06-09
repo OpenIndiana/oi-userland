@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvpx
-COMPONENT_VERSION= 1.4.0
-COMPONENT_SUMMARY= The VP8 Codec SDK
+COMPONENT_VERSION= 1.6.1
+COMPONENT_SUMMARY= The WebM VP8/VP9 Codec SDK
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:eca30ea7fae954286c9fe9de9d377128f36b56ea6b8691427783b20c67bcfc13
+  sha256:cda8bb6f0e4848c018177d3a576fa83ed96d762554d7010fe4cfb9d70c22e588
 COMPONENT_ARCHIVE_URL= \
   https://github.com/webmproject/libvpx/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://www.webmproject.org/
@@ -30,11 +30,11 @@ COMPONENT_LICENSE_FILE = LICENSE
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = library/video/libvpx
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 TARGET.32 = x86-solaris-gcc
 TARGET.64 = x86_64-solaris-gcc
@@ -47,6 +47,7 @@ CONFIGURE_OPTIONS += --enable-postproc
 CONFIGURE_OPTIONS += --enable-runtime-cpu-detect
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-examples
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-unit-tests
 CONFIGURE_OPTIONS += --target=$(TARGET.$(BITS))
 
