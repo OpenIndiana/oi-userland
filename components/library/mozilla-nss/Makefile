@@ -17,12 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.30.2
+COMPONENT_VERSION=	3.31
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/ru/docs/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0d4a77ff26bcee79fa8afe0125e0df6ae9e798b6b36782fa29e28febf7cfce24
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_30_2_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:e90561256a3271486162c1fbe8d614d118c333d36a4455be2af8688bd420a65d
+COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_31_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
@@ -73,6 +73,7 @@ install: build
 	$(MKDIR) -p $(PROTO_DIR)/usr/lib/mps/$(MACH64)
 	$(MKDIR) -p $(PROTO_DIR)/usr/include/mps
 	$(MKDIR) -p $(PROTO_DIR)/usr/lib/pkgconfig
+	$(MKDIR) -p $(PROTO_DIR)/usr/lib/$(MACH64)/pkgconfig
 	cp $(BUILD_DIR_32)/dist/public/nss/*.h $(PROTO_DIR)/usr/include/mps
 	cp $(BUILD_DIR_32)/dist/public/dbm/*.h $(PROTO_DIR)/usr/include/mps
 	cp $(BUILD_DIR_32)/dist/SunOS5.11_*_OPT.OBJ/lib/*.so $(PROTO_DIR)/usr/lib/mps
@@ -85,6 +86,8 @@ install: build
 		done
 	cat $(COMPONENT_DIR)/nss.pc | sed s/^Version:/Version:\ $(COMPONENT_VERSION)/ \
 		> $(PROTO_DIR)/usr/lib/pkgconfig/nss.pc 
+	cat $(COMPONENT_DIR)/nss.pc | sed -e "s/^Version:/Version:\ $(COMPONENT_VERSION)/" \
+			-e "s:/usr/lib/mps:/usr/lib/mps/$(MACH64):g" > $(PROTO_DIR)/usr/lib/$(MACH64)/pkgconfig/nss.pc
 	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
         	/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps"' $$i ;\
     		done ;
