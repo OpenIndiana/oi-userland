@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
 COMPONENT_VERSION= 2.8.11
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -74,13 +74,13 @@ CONFIGURE_OPTIONS += --enable-libvpx
 CONFIGURE_OPTIONS += --enable-x11grab
 CONFIGURE_OPTIONS += --enable-libspeex
 CONFIGURE_OPTIONS += --enable-pthreads
-# Incomaptible with GPLv2
+# Incompatible with GPLv2
 #CONFIGURE_OPTIONS += --enable-libopencore-amrnb
 CONFIGURE_OPTIONS += --enable-libass
 CONFIGURE_OPTIONS += --enable-openssl
 CONFIGURE_OPTIONS += --enable-openal
 CONFIGURE_OPTIONS += --enable-avresample
-# Incomaptible with GPLv2
+# Incompatible with GPLv2
 #CONFIGURE_OPTIONS += --enable-libopencore-amrwb
 CONFIGURE_OPTIONS += --enable-libschroedinger
 CONFIGURE_OPTIONS += --enable-libopenjpeg
