@@ -1,0 +1,14 @@
+https://www.illumos.org/issues/8361
+Without this patch in C locale Python considers 0xa0 a space
+
+--- Python-2.7.13/Lib/string.py.1	2017-06-10 03:33:29.959804221 +0000
++++ Python-2.7.13/Lib/string.py	2017-06-10 03:34:10.073176206 +0000
+@@ -527,7 +527,7 @@
+ # that match <ctype.h>'s definitions.
+ 
+ try:
+-    from strop import maketrans, lowercase, uppercase, whitespace
++    from strop import maketrans, lowercase, uppercase
+     letters = lowercase + uppercase
+ except ImportError:
+     pass                                          # Use the original versions
