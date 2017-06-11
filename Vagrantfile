@@ -60,6 +60,20 @@ Vagrant.configure("2") do |config|
 
     v.customize ["modifyvm", :id, "--memory", mem]
     v.customize ["modifyvm", :id, "--cpus", cpus]
+    v.customize ["storagectl", :id, "--name", "SATA Controller", "--hostiocache", "on"]
+    # Enable following line, if oi-userland directory is on non-rotational
+    # drive (e.g. SSD). (This could be automated, but with all those storage
+    # technologies (LVM, partitions, ...) on all three operationg systems,
+    # it's actually error prone to detect it automatically.) macOS has it
+    # enabled by default as recent Macs have SSD anyway.
+    if host =~ /darwin/
+      v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 0, "--nonrotational", "on"]
+    else
+      #v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 0, "--nonrotational", "on"]
+    end
+    # Should we ever support `--discard` option, we need to switch to VDI
+    # virtual disk format first.
+    #v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 0, "--discard", "on"]
   end
 
   # Once vagrant is able to chown files on OpenIndiana, chown line should be
