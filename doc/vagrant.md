@@ -47,6 +47,12 @@ provider is supported. Vagrant is suitable for cases when you don't have access 
 
   And restart.
 
+* If your VirtualBox home directory, usually `~username/VirtualBox VMs/`, is on SSD disk, enable `--nonrotational` configuration option in `Vagrantfile` in `oi-userland/` directory by uncommenting the respective line:
+
+  ```
+  v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 0, "--nonrotational", "on"]
+  ```
+
 * Start the VM by running:
 
   ```
