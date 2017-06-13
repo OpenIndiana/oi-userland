@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
 COMPONENT_VERSION= 	52.1.2esr
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION= 	52.1.2
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
