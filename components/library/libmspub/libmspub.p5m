@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2017 Aurelien Larcher
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,10 +22,14 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/pub2raw
-file path=usr/bin/pub2xhtml
+file usr/bin/$(MACH64)/pub2raw path=usr/bin/pub2raw
+file usr/bin/$(MACH64)/pub2xhtml path=usr/bin/pub2xhtml
 file path=usr/include/libmspub-0.1/libmspub/MSPUBDocument.h
 file path=usr/include/libmspub-0.1/libmspub/libmspub.h
+link path=usr/lib/$(MACH64)/libmspub-0.1.so target=libmspub-0.1.so.1.0.2
+link path=usr/lib/$(MACH64)/libmspub-0.1.so.1 target=libmspub-0.1.so.1.0.2
+file path=usr/lib/$(MACH64)/libmspub-0.1.so.1.0.2
+file path=usr/lib/$(MACH64)/pkgconfig/libmspub-0.1.pc
 link path=usr/lib/libmspub-0.1.so target=libmspub-0.1.so.1.0.2
 link path=usr/lib/libmspub-0.1.so.1 target=libmspub-0.1.so.1.0.2
 file path=usr/lib/libmspub-0.1.so.1.0.2
