@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmspub
 COMPONENT_VERSION=	0.1.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/c++/libmspub
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmspub
@@ -38,12 +39,15 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Fix threading detection issue with boost 1.64
+CXXFLAGS+= -pthread
+
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
