@@ -19,12 +19,13 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2015, Apostolos Syropoulos. All rights reserved.
-# Copyright (c) 2015, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2015-207, Aurelien Larcher. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librevenge
 COMPONENT_VERSION=	0.0.4
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/c++/librevenge
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/p/libwpd/wiki/librevenge/
@@ -41,13 +42,16 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Fix threading detection issue introduced with boost 1.64
+CXXFLAGS+= -pthread
+
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--disable-werror
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
