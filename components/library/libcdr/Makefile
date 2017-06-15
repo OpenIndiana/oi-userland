@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=					libcdr
 COMPONENT_VERSION=			0.1.3
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=     		library/c++/libcdr
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
@@ -35,18 +36,21 @@ COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(CO
 COMPONENT_LICENSE=      MPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+# Fix threading detection issue introduced with boost 1.64
+CXXFLAGS+= -std=c++11 -pthread
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
-test: $(TEST_32)
+test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += library/c++/librevenge
