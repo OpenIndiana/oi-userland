@@ -13,15 +13,15 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= soundtouch
-COMPONENT_VERSION= 1.9.0
+COMPONENT_VERSION= 1.9.2
 COMPONENT_SUMMARY= Audio Processing Library
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ebdc3d6484ee15fcd7145ccde9ba36a5b7d606a68158b1805b58c6d7a3e1052b
+  sha256:4aa443594d77986bf977c2856f5530a8015db406631e4b996f962b1e6809883e
 COMPONENT_ARCHIVE_URL= \
   http://www.surina.net/soundtouch/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.surina.net/soundtouch
@@ -30,9 +30,9 @@ COMPONENT_LICENSE_FILE = COPYING.TXT
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = library/audio/soundtouch
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					$(CONFIG_SHELL) bootstrap )
@@ -46,3 +46,9 @@ CONFIGURE_ENV += AM_CXXFLAGS="$(CXXFLAGS)"
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
