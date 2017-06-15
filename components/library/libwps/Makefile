@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwps
 COMPONENT_VERSION=	0.4.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/c++/libwps
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwps
@@ -45,9 +46,9 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
