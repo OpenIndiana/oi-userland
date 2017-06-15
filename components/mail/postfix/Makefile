@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
-COMPONENT_VERSION=	3.1.1
+COMPONENT_VERSION=	3.1.6
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	http://www.postfix.org/
 COMPONENT_FMRI=		service/network/smtp/postfix
@@ -23,7 +23,7 @@ COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	http://cdn.postfix.johnriley.me/mirrors/postfix-release/official/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:3deda4c34631970490b1b5fbb559905f93531bf1c7eb00e38b0d0deb1dba9982
+COMPONENT_ARCHIVE_HASH=	sha256:e5eb005fd133c6a32ca03e796e0192945eb877be8eb727f30d25547c997c5aa6
 COMPONENT_LICENSE=	IBM PUBLIC LICENSE
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
@@ -53,11 +53,14 @@ COMPONENT_BUILD_ENV+= AUXLIBS="$(AUXLIBS)"
 
 COMPONENT_INSTALL_TARGETS = non-interactive-package install_root="$(PROTO_DIR)"
 
-build:		$(BUILD_32)
+PKG_HARDLINKS += usr/lib/postfix/qmgr
+PKG_HARDLINKS += usr/lib/postfix/lmtp
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
 
-test:		$(TEST_32)
+install:	$(INSTALL_64)
+
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += database/berkeleydb-5
