@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	0.92.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
@@ -31,7 +32,12 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:$(dir $(POD2MAN))
+PATH=$(PATH.gnu)
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 				autoreconf --force --install &&\
@@ -41,26 +47,29 @@ COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 				automake -a -c -f &&\
 				autoconf)
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_OPTIONS+=  --enable-lcms
 CONFIGURE_OPTIONS+=  --enable-poppler-cairo
 CONFIGURE_OPTIONS+=  --disable-binreloc
 CONFIGURE_OPTIONS+=  --with-gnome-vfs
 
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += developer/gsl
 REQUIRED_PACKAGES += image/imagemagick
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/libcdr
 REQUIRED_PACKAGES += library/c++/librevenge
+REQUIRED_PACKAGES += library/c++/libvisio
 REQUIRED_PACKAGES += library/c++/libwpg
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/desktop/c++/atkmm
