@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2017 Alexander Pyhalov
 #
 
@@ -17,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= openal
 COMPONENT_VERSION= 1.16.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= OpenAL is a cross-platform 3D audio API
 COMPONENT_SRC= $(COMPONENT_NAME)-soft-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
