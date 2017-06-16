@@ -1,0 +1,14 @@
+--- openal-soft-1.16.0/CMakeLists.txt-opch	   :: 
++++ openal-soft-1.16.0/CMakeLists.txt	   :: 
+@@ -62,8 +62,9 @@
+     SET(LIBNAME openal)
+ 
+     # These are needed on non-Windows systems for extra features
+-    ADD_DEFINITIONS(-D_GNU_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700)
+-    SET(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -D_GNU_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700")
++    # Old Solaris and illumos versions only know about 200112L and 600
++    ADD_DEFINITIONS(-D_GNU_SOURCE=1 -D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600)
++    SET(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -D_GNU_SOURCE=1 -D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600")
+ ENDIF()
+ 
+ # Set defines for large file support
