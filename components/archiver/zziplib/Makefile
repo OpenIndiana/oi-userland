@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zziplib
 COMPONENT_VERSION=	0.13.66
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Lightweight ZIP library
 COMPONENT_PROJECT_URL=	http://zziplib.sourceforge.net/
 COMPONENT_FMRI=		compress/zziplib
