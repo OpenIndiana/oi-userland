@@ -55,7 +55,15 @@ file usr/lib/xorg/modules/extensions/libglx.so path=usr/lib/mesa/modules/extensi
 # libglx was moved from xorg to mesa
 depend type=optional fmri=x11/library/mesa@7.4.4,5.11-2014.1.3.0
 
+# Required dependencies
 depend fmri=service/opengl/ogl-select type=require
+depend type=require fmri=pkg:/x11/keyboard/data-xkb
+depend type=require fmri=pkg:/x11/keyboard/xkbcomp
+depend type=require fmri=pkg:/system/keyboard/kbd_mode
+
+# Follow solaris-xorg 
+depend type=group fmri=pkg:/x11/server/xorg/driver/xorg-input-keyboard
+depend type=group fmri=pkg:/x11/server/xorg/driver/xorg-input-mouse
 
 file path=usr/bin/$(MACH64)/Xorg mode=4555
 file path=usr/bin/cvt
