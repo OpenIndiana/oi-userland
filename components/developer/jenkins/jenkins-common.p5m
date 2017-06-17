@@ -1,0 +1,52 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016-2017 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/developer/jenkins-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - common system data"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Ensure the UID exists till the end, until after the main packages are removed
+# and in particular do not move databases and logs into lost+found on uninstall
+# Note the locked user password is NL (not NP) because it has to manage crontab
+group groupname=jenkins gid=67
+user ftpuser=false gcos-field="JenkinsCI Reserved UID" group=jenkins password=NL \
+    username=jenkins uid=67 home-dir=/var/lib/jenkins/syshome
+
+# These directories can hold some content generated or downloaded at runtime
+# and can become lost+found when you un/re-install the core package.
+# On a larger deployment, consider splitting the build and configuration
+# storage (build history) locations and making that a standalone ZFS dataset
+# with suitable pool and settings. By default JENKINS_HOME "home" holds the
+# "build" area too; you can change it after setup, via Web-GUI.
+# See e.g. https://stackoverflow.com/a/34918545/4715872 for details.
+# Backups of vital data can be stored in a separate location by this plugin:
+# https://wiki.jenkins-ci.org/display/jenkins/thinbackup
+dir group=jenkins owner=jenkins mode=0755 path=var/lib/jenkins
+dir group=jenkins owner=jenkins mode=0755 path=var/lib/jenkins/home
+dir group=jenkins owner=jenkins mode=0755 path=var/lib/jenkins/backup
+dir group=jenkins owner=jenkins mode=0755 path=var/lib/jenkins/build_record
+dir group=jenkins owner=jenkins mode=0755 path=var/lib/jenkins/build_workspace
+dir group=jenkins owner=jenkins mode=0755 path=var/lib/jenkins/syshome
+dir group=jenkins owner=jenkins mode=0700 path=var/lib/jenkins/syshome/.ssh
+
+# Note: java8+ is required since 2017
+# This may be JRE8 for the server, though JDK8 also suffices :)
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
+#depend fmri=__TBD pkg.debug.depend.file=usr/bin/javac type=require

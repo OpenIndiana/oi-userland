@@ -1,0 +1,86 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016-2017 Jim Klimov
+#
+include ../../../make-rules/shared-macros.mk
+
+# NOTE: Before bumping to the new core version, take a look at
+#   https://jenkins.io/changelog/
+# for "weather report" (user votes on good/bad state of the weekly)
+# At some point it may make sense to deliver packaged LTS releases,
+# and the initial recipe supports that notion already just in case,
+# but no LTS issued so far includes updated libzfs.jar (v0.8+ needed).
+COMPONENT_NAME=		jenkins
+COMPONENT_MAJOR_VERSION=	2
+COMPONENT_MINOR_VERSION=	65
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
+COMPONENT_FMRI=		developer/jenkins-core-weekly
+COMPONENT_CLASSIFICATION=	Development/Java
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	http://jenkins-ci.org/
+COMPONENT_ARCHIVE_URL=\
+	http://mirrors.jenkins-ci.org/war/$(COMPONENT_VERSION)/jenkins.war
+# See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current release, run
+#   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
+COMPONENT_ARCHIVE_HASH=	\
+	sha256:2652cd93906855be034d0c1cdd8ced4eacb158a70ec686bc789428b43343af79
+COMPONENT_LICENSE=		MIT
+COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
+
+# Note: for the core, we only download a WAR - no unpacking, no building...
+include $(WS_MAKE_RULES)/prep-download.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(PATH.gnu)
+
+download::
+
+$(SOURCE_DIR)/.prep:    download
+	$(COMPONENT_PREP_ACTION)
+	$(TOUCH) $@
+
+prep::  $(SOURCE_DIR)/.prep
+
+clean::
+	$(PRE_CLEAN_ACTION)
+	$(RM) -r $(CLEAN_PATHS)
+
+clobber::   clean
+	$(RM) -r $(CLOBBER_PATHS)
+
+COMPONENT_PREP_ACTION = ( $(MKDIR) $(@D)/ && cp $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) $(COMPONENT_DIR)/files/Makefile $(@D)/ )
+
+COMPONENT_COPY_ACTION = cp -r $(SOURCE_DIR)/* $(@D)/
+
+COMPONENT_INSTALL_ENV += JENKINS_VERSION=$(COMPONENT_VERSION)
+COMPONENT_INSTALL_ENV += JENKINS_RELEASE=weekly
+
+
+#COMPONENT_BUILD_ACTION = true
+
+#COMPONENT_INSTALL_ACTION = true
+
+build: $(BUILD_32)
+
+install: $(INSTALL_32)
+
+test: $(NO_TESTS)
+
+# Note: java8+ is required since 2017
+# This may be JRE8 for the server, though JDK8 also suffices :)
+REQUIRED_PACKAGES += SUNWcs
+#REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += system/library
