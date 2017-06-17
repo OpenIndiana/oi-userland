@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2017 Gary Mills
 # Copyright 2017 Alexander Pyhalov
 #
 
@@ -17,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= babl
 COMPONENT_VERSION= 0.1.18
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_FMRI = image/library/babl
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
@@ -34,8 +36,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Need GNU version of awk
+export AWK=gawk
+
 COMPONENT_PREP_ACTION = ( cd $(@D)  && \
-                                autoreconf -f -i)
+                                autoreconf -f -i -I m4)
 
 
 CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
