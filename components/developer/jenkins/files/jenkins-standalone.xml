@@ -61,11 +61,12 @@
                    exec='/usr/bin/java %{java_startup_options} -jar %{jenkins_war_file} --httpPort=%{httpPort} %{jenkins_startup_options}'
                    timeout_seconds='240'>
           <method_context>
+            <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
+<!-- TODO: Configure these by properties? See also a wrap-script TODO above -->
             <method_environment>
               <envvar name='JENKINS_HOME' value='/var/lib/jenkins/home'/>
               <envvar name='LIBZFS4J_ABI' value='openzfs'/>
             </method_environment>
-            <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
           </method_context>
         </exec_method>
 
