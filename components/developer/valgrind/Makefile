@@ -26,17 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.12.0
+COMPONENT_VERSION=	3.13.0
 COMPONENT_FMRI=	developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:67ca4395b2527247780f36148b084f5743a68ab0c850cb43e4a5b4b012cf76a1
-COMPONENT_ARCHIVE_URL=	http://valgrind.org/downloads/$(COMPONENT_ARCHIVE)
+  sha256:d76680ef03f00cd5e970bbdcd4e57fb1f6df7d2e2c071635ef2be74790190c3b
+COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	http://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
-COMPONENT_BUGDB=	developer/debug/valgrind
 COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -44,7 +43,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # Use GNU utilities
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
 # Force use of GCC with given arch support
 CC=$(CC.gcc.$(BITS)) $(CC_BITS) -std=gnu99
