@@ -74,6 +74,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	echo export PYTHON_VERSION=\"$(PYTHON_VERSION)\"; \
 	echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
 	echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
+	echo export USERLAND_ARCHIVES=\"$(USERLAND_ARCHIVES)\"; \
 	) > env.sh && \
 	cd $(SOURCE_DIR) && \
 		$(ENV) -i /opt/onbld/bin/bldenv env.sh "cd usr/src; make install"
