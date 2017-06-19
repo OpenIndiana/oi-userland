@@ -15,11 +15,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GeoIP
-COMPONENT_VERSION=	1.4.8
+COMPONENT_VERSION=	1.6.11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:cf0f6b2bac1153e34d6ef55ee3851479b347d2b5c191fda8ff6a51fab5291ff4
-COMPONENT_ARCHIVE_URL=	http://geolite.maxmind.com/download/geoip/api/c/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		database/geoip
+COMPONENT_SUMMARY=	GeoIP is a C library finds the location of an IP address.
+COMPONENT_ARCHIVE_HASH=	sha256:b0e5a92200b5ab540d118983f7b7191caf4faf1ae879c44afa3ff2a2abcdb0f5
+COMPONENT_ARCHIVE_URL=	https://github.com/maxmind/geoip-api-c/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://dev.maxmind.com/geoip/legacy/geolite/
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE=	geoip.license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -31,6 +37,7 @@ CONFIGURE_OPTIONS +=	--enable-libtool-lock
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--enable-data-files
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_SCRIPT   =	$(@D)/configure
@@ -41,4 +48,3 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) && \
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-
