@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libxcb
 COMPONENT_VERSION=        1.12
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/library/libxcb
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Libraries
@@ -83,3 +84,4 @@ REQUIRED_PACKAGES += x11/header/xcb-protocols
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxau
 REQUIRED_PACKAGES += x11/library/libxdmcp
+REQUIRED_PACKAGES += x11/libpthread-stubs
