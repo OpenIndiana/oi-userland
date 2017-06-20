@@ -50,6 +50,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+CLEAN_PATHS += $(SOURCE_DIR)
+
 download::
 
 $(SOURCE_DIR)/.prep:    download
