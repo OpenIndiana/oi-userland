@@ -58,7 +58,7 @@
      both for JAVA and the JAR itself... Or keep it simple? -->
         <exec_method type='method'
                    name='start'
-                   exec='/usr/bin/java %{java_startup_options} -jar %{jenkins_war_file} --httpPort=%{httpPort} %{jenkins_startup_options}'
+                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{jenkins_war_file} --httpPort=%{httpPort}'
                    timeout_seconds='240'>
           <method_context>
             <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
@@ -82,8 +82,6 @@
         <property_group name='httpd' type='application'>
             <stability value='Evolving' />
             <propval name='httpPort' type='count' value='8080' />
-            <propval name='java_startup_options' type='astring' value='-DsessionTimeout=1440' />
-            <propval name='jenkins_startup_options' type='astring' value='' />
             <propval name='jenkins_war_file' type='astring' value='/usr/share/jenkins/war/jenkins.war' />
         </property_group>
 
