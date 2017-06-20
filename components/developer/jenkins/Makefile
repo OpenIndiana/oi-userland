@@ -82,9 +82,7 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-# Note: java8+ is required since 2017
-# This may be JRE8 for the server, though JDK8 also suffices :)
+# Note: this recipe just downloads and packages stuff.
+# No real build, no magic tools, no java even, should be needed!
 REQUIRED_PACKAGES += SUNWcs
-#REQUIRED_PACKAGES += developer/java/openjdk8
-REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += system/library
