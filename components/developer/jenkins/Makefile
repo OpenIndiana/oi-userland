@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE_URL=\
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:2652cd93906855be034d0c1cdd8ced4eacb158a70ec686bc789428b43343af79
 COMPONENT_LICENSE=		MIT
-COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_LICENSE_FILE= jenkins.license
 COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
 
 # Note: for the core, we only download a WAR - no unpacking, no building...
