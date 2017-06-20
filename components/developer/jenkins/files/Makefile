@@ -6,6 +6,7 @@ build:
 
 install: 
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war
-	mkdir -p $(DESTDIR)/usr/share/jenkins/war-$(JENKINS_RELEASE)
-	cp -f jenkins-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war-$(JENKINS_RELEASE)/
-	ln -rs $(DESTDIR)/usr/share/jenkins/war-$(JENKINS_RELEASE)/jenkins-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war/jenkins.war
+	mkdir -p $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)
+	cp -f jenkins-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/
+	ln -rs $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/jenkins-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/jenkins.war
+	ln -rs $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/jenkins.war $(DESTDIR)/usr/share/jenkins/war/jenkins.war

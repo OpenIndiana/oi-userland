@@ -26,8 +26,13 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # This may be JRE8 for the server, though JDK8 also suffices :)
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
 
-file path=usr/share/jenkins/war-weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
-link path=usr/share/jenkins/war/jenkins.war \
-     target=../war-weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
-     mediator=jenkins-core-weekly \
+file path=usr/share/jenkins/war/weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
+link path=usr/share/jenkins/war/weekly/jenkins.war \
+     target=$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
+     mediator=jenkins-core \
+     mediator-implementation=weekly \
      mediator-version=$(COMPONENT_VERSION)
+link path=usr/share/jenkins/war/jenkins.war \
+     target=../war/weekly/jenkins.war \
+     mediator=jenkins-core \
+     mediator-implementation=weekly
