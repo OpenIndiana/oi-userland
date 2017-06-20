@@ -14,11 +14,15 @@
 include ../../../make-rules/shared-macros.mk
 
 # NOTE: Before bumping to the new core version, take a look at
-#   https://jenkins.io/changelog/
-# for "weather report" (user votes on good/bad state of the weekly)
+#   https://jenkins.io/changelog/ (weekly)
+#   https://jenkins.io/changelog-stable/ (LTS)
+# for "weather report" (user votes on good/bad state of the release).
 # At some point it may make sense to deliver packaged LTS releases,
 # and the initial recipe supports that notion already just in case,
 # but no LTS issued so far includes updated libzfs.jar (v0.8+ needed).
+# Note that for LTS it would make sense to define indexed "additional
+# source" variables below, see e.g. docbook for inspiration.
+
 COMPONENT_NAME=		jenkins
 COMPONENT_MAJOR_VERSION=	2
 COMPONENT_MINOR_VERSION=	65
@@ -32,6 +36,7 @@ COMPONENT_ARCHIVE_URL=\
 	http://mirrors.jenkins-ci.org/war/$(COMPONENT_VERSION)/jenkins.war
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
+# or for LTS  http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:2652cd93906855be034d0c1cdd8ced4eacb158a70ec686bc789428b43343af79
 COMPONENT_LICENSE=		MIT
