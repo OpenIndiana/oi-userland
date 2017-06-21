@@ -1,15 +1,11 @@
---- src/openvpn/console.c.~1~	2016-11-03 11:52:28.000000000 +0300
-+++ src/openvpn/console.c	2016-12-09 12:15:13.455657513 +0300
-@@ -241,7 +241,12 @@
+--- src/openvpn/console_builtin.c.orig	Wed Jun 21 14:29:24 2017
++++ src/openvpn/console_builtin.c	Wed Jun 21 14:29:34 2017
+@@ -239,7 +239,7 @@
      }
-   else
+     else
      {
-+#ifdef __sun
-+      /* On Solaris getpass() returns up to 8 symbols */
-+      char *gp = getpassphrase (prompt);
-+#else
-       char *gp = getpass (prompt);
-+#endif
-       if (gp)
- 	{
- 	  strncpynt (input, gp, capacity);
+-        char *gp = getpass(prompt);
++        char *gp = getpassphrase(prompt);
+         if (gp)
+         {
+             strncpynt(input, gp, capacity);

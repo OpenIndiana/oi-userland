@@ -47,14 +47,14 @@
   * SOCKET INITALIZATION CODE.
   * Create a TCP/UDP socket
 @@ -642,6 +681,10 @@
-   }
- #endif
+      * scripts don't have access to it */
+     set_cloexec(sd);
  
 +#ifdef IP_SEC_OPT
-+  set_ipsec_bypass(sd);
++    set_ipsec_bypass(sd);
 +#endif
 +
-   return sd;
+     return sd;
  }
  
 @@ -729,6 +772,10 @@
@@ -63,7 +63,7 @@
      }
 +
 +#ifdef IP_SEC_OPT
-+  set_ipsec_bypass(sock->sd);
++    set_ipsec_bypass(sock->sd);
 +#endif
  }
  
