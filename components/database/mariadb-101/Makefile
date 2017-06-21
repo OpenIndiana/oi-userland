@@ -16,18 +16,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	10.1.22
+COMPONENT_VERSION=	10.1.24
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:bcb0572e7ad32cea9740a21e9255f733bdf60a5561ffbda317c22dd12b3966ce
+COMPONENT_ARCHIVE_HASH=	sha256:b3df99ae5b1ec8cf6cede4cbc4ae3f54ce66464549cba6d56d9ff4d24e4d551e
 COMPONENT_ARCHIVE_URL=	http://mirrors.coreix.net/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
+CPPFLAGS += -I/usr/include/pcre
 
 CONFIGURE_PREFIX=/usr/mariadb/10.1
 CONFDIR=/etc/mariadb/10.1
@@ -71,6 +72,9 @@ CMAKE_OPTIONS+= -DWITH_ZLIB=system
 CMAKE_OPTIONS+= -DWITH_PCRE=system
 CMAKE_OPTIONS+= -DWITH_SSL=system
 CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
+CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
+
+CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 build:		$(BUILD_32_and_64)
 
@@ -79,9 +83,10 @@ install:	$(INSTALL_32_and_64)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/mariadb-10.1/client
 REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
