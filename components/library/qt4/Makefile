@@ -13,11 +13,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		qt
 COMPONENT_FMRI=		library/qt4
 COMPONENT_VERSION=	4.8.7
+COMPONENT_REVISION=	1
 COMPONENT_VERSION_MJR=	4.8
 COMPONENT_LICENSE=	QT4
 COMPONENT_LICENSE_FILE=	qt4.license
@@ -29,9 +30,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:e2882295097e47fe089f8ac741a95fef47e0a73a3f3cdf21b56990638f626ea0
 COMPONENT_ARCHIVE_URL=	http://download.qt-project.org/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):/usr/bin
 
@@ -98,7 +99,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-93/developer
 REQUIRED_PACKAGES += database/postgres-93/library
 REQUIRED_PACKAGES += database/sqlite-3
