@@ -689,7 +689,7 @@ PKG_MACROS +=   PG_BASEPKG=$(PG_BASEPKG)
 # Default DB version is the oldest one, for hopefully best built compatibility
 # NOTE: At this time the gate does not provide a recipe for actual "mysql"
 # The "/usr/mysql/*" trees are mediated to preferred MariaDB or Percona variant
-MYSQL_VERSION ?=   5.5
+MYSQL_VERSION ?=   10.1
 MYSQL_IMPLEM ?=    mariadb
 MYSQL_VERNUM =     $(subst .,,$(MYSQL_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
