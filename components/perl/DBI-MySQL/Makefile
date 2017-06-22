@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	DBI-MySQL
 COMPONENT_VERSION=	4.0.41
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	The DBI MySQL Interface for Perl
 COMPONENT_SRC=		DBD-mysql-4.041
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,9 +41,9 @@ COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-mysql/lib/DBD/mysql.pm
 # Don't depend on host default MySQL
 PATH=$(MYSQL_BINDIR):/usr/sbin:/usr/bin:/usr/perl5/bin
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/makemaker.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -53,7 +54,7 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/perl-5/database
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
