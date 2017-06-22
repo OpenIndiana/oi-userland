@@ -23,22 +23,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.25
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.4.26
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-   sha256:be6c5eb805216ec205453bb02b1990c82609cb1b145bcb69dc6e99fff45493a9
+   sha256:0b5f65e278c0bf3f87afe0fbc253a919d40b9b2c63c3f66cd844e10ba67ced35
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
