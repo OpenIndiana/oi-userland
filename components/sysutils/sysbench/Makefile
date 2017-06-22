@@ -10,14 +10,14 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sysbench
-
 COMPONENT_VERSION= 0.4.12
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Sysbench - sytem performance benchmark
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -26,22 +26,32 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  \
 	http://distfiles.gentoo.org/distfiles/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://github.com/akopytov/sysbench
+COMPONENT_CLASSIFICATION= Development/System
+COMPONENT_FMRI= benchmark/sysbench
+COMPONENT_LICENSE=  GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION+=        (cd $(@D) && libtoolize -c && $(ACLOCAL))
+COMPONENT_PREP_ACTION+=        (cd $(@D) && $(TOUCH) NEWS AUTHORS && autoreconf -fi)
 
 COMPONENT_POST_INSTALL_ACTION+= \
         $(CP) $(COMPONENT_SRC)/doc/manual.xml $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME)
 
-CONFIGURE_OPTIONS +=    --with-mysql=/usr/mariadb/5.5
 CONFIGURE_OPTIONS +=    --enable-largefile
 CONFIGURE_OPTIONS +=    --bindir=/usr/benchmarks/sysbench/bin
 
-install: $(INSTALL_32) 
+CONFIGURE_ENV +=	mysqlconfig=$(MYSQL_CONFIG)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += database/mariadb-101/library
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
