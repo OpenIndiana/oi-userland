@@ -15,14 +15,15 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
 COMPONENT_VERSION=	5.6.30
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:a363185c786432f75e3c7ff956b49c3369c3f6906a6b10459f8d1ddc22f70805
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PHP_PREFIX=/usr/php/5.6
 PHP_SYSCONFDIR=/etc/php/5.6
@@ -45,19 +46,16 @@ CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 CONFIGURE_OPTIONS.64  +=	--with-php-config=$(PHP_PREFIX)/bin/$(MACH64)/php-config
-CONFIGURE_OPTIONS     +=	--with-pdo-mysql=/usr/mariadb/5.5
+CONFIGURE_OPTIONS     +=	--with-pdo-mysql=$(MYSQL_HOME)
 
 CONFIGURE_OPTIONS     +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-LDFLAGS.32            +=        -L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
-LDFLAGS.64            +=        -L/usr/mariadb/5.5/lib/$(MACH64) -R/usr/mariadb/5.5/lib/$(MACH64)
-
 CFLAGS                  =       $(CC_BITS) -D_POSIX_PTHREAD_SEMANTICS
-CFLAGS                  +=      -I/usr/mariadb/5.5/include
-CPPFLAGS                +=      -I/usr/mariadb/5.5/include
-LDFLAGS                 +=      $(LDFLAGS.$(BITS))
+CFLAGS                  +=      -I$(MYSQL_INCDIR)
+CPPFLAGS                +=      -I$(MYSQL_INCDIR)
+LDFLAGS                 +=      -L$(MYSQL_LIBDIR) -R$(MYSQL_LIBDIR)
 
-CONFIGURE_ENV         +=	PHP_PDO_MYSQL="/usr/mariadb/5.5/bin/mysql_config"
+CONFIGURE_ENV         +=	PDO_MYSQL_CONFIG=$(MYSQL_CONFIG)
 
 CONFIGURE_SCRIPT       =	$(@D)/configure
 
@@ -69,6 +67,8 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-REQUIRED_PACKAGES += database/mariadb-55/library
+test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/php-56/php-common
