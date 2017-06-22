@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.44
+COMPONENT_VERSION=	1.4.45
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e67dd1255320ed93ea13320d0a8a9bd133a4c5e5cb3f1e951b530bda69467236
+    sha256:bfc0d87ff9396185e3556c2bf2e685fc5b28d9461c8ce65e4f88286d4eb0ebc6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
@@ -61,7 +61,7 @@ CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--without-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mariadb/5.5/bin/mysql_config
+CONFIGURE_OPTIONS +=	--with-mysql=$(MYSQL_CONFIG)
 CONFIGURE_OPTIONS +=	--with-ldap
 
 # Enable ASLR for this component
@@ -76,7 +76,7 @@ test:		$(TEST_32)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
