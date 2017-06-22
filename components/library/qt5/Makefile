@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           qt
 COMPONENT_VERSION=        5.8.0
+COMPONENT_REVISION=       1
 COMPONENT_VERSION_MJR=    5.8
 COMPONENT_FMRI=           library/qt5
 COMPONENT_PROJECT_URL=    https://www.qt.io/
@@ -100,7 +101,7 @@ install:	$(INSTALL_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += database/freetds
-REQUIRED_PACKAGES += database/mariadb-55/client
+REQUIRED_PACKAGES += database/mariadb-101/client
 REQUIRED_PACKAGES += database/postgres-93/developer
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += x11/keyboard/data-xkb
@@ -108,7 +109,7 @@ REQUIRED_PACKAGES += x11/library/libpthread-stubs
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/jasper
-REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-93/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libjpeg6
