@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= bacula
 
 COMPONENT_VERSION= 5.2.13
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Bacula (network backup solution)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -34,9 +34,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-MYSQL_BINDIR.32=/usr/mariadb/5.5/bin
-MYSQL_BINDIR.64=/usr/mariadb/5.5/bin/64
 
 LD_Z_IGNORE =
 LD_B_DIRECT =
@@ -73,9 +70,7 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += backup/bacula/bacula-common
-REQUIRED_PACKAGES += backup/bacula/bacula-common/sqlite-3
-REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-93/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/lzo
