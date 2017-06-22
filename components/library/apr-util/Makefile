@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.5.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -41,7 +42,8 @@ PATCH_LEVEL=0
 
 CONFIGURE_PREFIX=/usr/apr-util
 
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mariadb/5.5
+CONFIGURE_OPTIONS +=	--with-mysql=$(MYSQL_HOME)
+CONFIGURE_OPTIONS +=	MYSQL_CONFIG=$(MYSQL_CONFIG)
 CONFIGURE_OPTIONS +=	--with-pgsql=$(PG_HOME)
 CONFIGURE_OPTIONS +=	--with-expat=/usr
 CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
@@ -52,18 +54,14 @@ CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
 CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.64 +=	MYSQL_CONFIG=/usr/mariadb/5.5/bin/$(MACH64)/mysql_config
 CONFIGURE_OPTIONS.64 +=	PGSQL_CONFIG=$(PG_CONFIG.64)
-
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_TEST_TARGETS= test
 
+COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -f)
+
 # We need this to keep doxygen happy (for include/ and docs/ contents).
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
-
-# Some patches need configure script recreation.
-COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D); autoconf);
 
 # Documentation is generated in and directly packaged from 32 bit build
 # directory using doxygen.
@@ -83,7 +81,7 @@ test: $(TEST_32_and_64)
 REQUIRED_PACKAGES+= developer/documentation-tool/doxygen
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-93/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/apr
