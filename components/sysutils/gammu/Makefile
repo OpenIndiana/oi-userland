@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gammu
 COMPONENT_VERSION=	1.37.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://wammu.eu/gammu/
 COMPONENT_SUMMARY=	Command line utility to control your phone
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -58,7 +58,7 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-93/library
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnu-libiconv
