@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
 COMPONENT_VERSION=	2.4.26
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -85,6 +86,7 @@ CONFIGURE_OPTIONS +=	--enable-cache
 CONFIGURE_OPTIONS +=	--enable-file-cache
 CONFIGURE_OPTIONS +=	--enable-disk-cache
 CONFIGURE_OPTIONS +=	--enable-mem-cache
+CONFIGURE_OPTIONS +=	--enable-brotli
 CONFIGURE_OPTIONS +=	--enable-deflate
 CONFIGURE_OPTIONS +=	--enable-cgid
 CONFIGURE_OPTIONS +=	--enable-cgi
@@ -124,6 +126,7 @@ REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/apr-util/apr-ldap
 REQUIRED_PACKAGES += library/apr-util/dbd-mysql
 REQUIRED_PACKAGES += library/apr-util/dbd-sqlite
+REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
