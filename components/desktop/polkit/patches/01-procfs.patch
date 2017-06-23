@@ -1,0 +1,42 @@
+We shouldn't need this now -  should send upstream
+
+--- polkit-0.113/src/polkit/polkitunixprocess.c.~1~	2014-01-14 14:42:25.000000000 -0800
++++ polkit-0.113/src/polkit/polkitunixprocess.c	2015-10-03 00:15:34.441044107 -0700
+@@ -80,7 +80,7 @@
+ 
+ static void subject_iface_init (PolkitSubjectIface *subject_iface);
+ 
+-static guint64 get_start_time_for_pid (gint    pid,
++static guint64 get_start_time_for_pid (pid_t    pid,
+                                        GError **error);
+ 
+ static gint _polkit_unix_process_get_owner (PolkitUnixProcess  *process,
+@@ -512,28 +512,6 @@
+   subject_iface->exists_sync   = polkit_unix_process_exists_sync;
+ }
+ 
+-#ifdef HAVE_SOLARIS
+-static int
+-get_pid_psinfo (pid_t pid, struct psinfo *ps)
+-{
+-  char pname[32];
+-  int  procfd;
+-
+-  (void) snprintf(pname, sizeof(pname), "/proc/%d/psinfo", pid);
+-  if ((procfd = open(pname, O_RDONLY)) == -1)
+-    {
+-      return -1;
+-    }
+-  if (read(procfd, ps, sizeof(struct psinfo)) < 0)
+-    {
+-      (void) close(procfd);
+-      return -1;
+-    }
+-  (void) close(procfd);
+-  return 0;
+-}
+-#endif
+-
+ #ifdef HAVE_FREEBSD
+ static gboolean
+ get_kinfo_proc (pid_t pid, struct kinfo_proc *p)

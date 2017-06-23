@@ -1,0 +1,62 @@
+Changes for building on Solaris
+
+--- polkit-0.113/src/polkitbackend/Makefile.am.~2~	2015-10-03 13:52:17.475883916 -0700
++++ polkit-0.113/src/polkitbackend/Makefile.am	2015-10-03 14:18:33.633728356 -0700
+@@ -50,7 +50,6 @@
+ libpolkit_backend_1_la_CFLAGS =                                        	\
+         -D_POLKIT_COMPILATION                                  		\
+         -D_POLKIT_BACKEND_COMPILATION                                  	\
+-	-DDUK_OPT_HAVE_CUSTOM_H						\
+ 	-DDUK_OPT_INTERRUPT_COUNTER					\
+ 	-D'DUK_OPT_EXEC_TIMEOUT_CHECK(u)=polkit_js_exec_timeout_check(u)' \
+         $(GLIB_CFLAGS)							\
+--- polkit-0.113/src/polkitbackend/duktape.h.~2~	2015-10-03 14:27:51.264274302 -0700
++++ polkit-0.113/src/polkitbackend/duktape.h	2015-10-03 16:27:00.218086316 -0700
+@@ -666,11 +666,20 @@
+ #define DUK_USE_DATE_PRS_STRPTIME
+ #define DUK_USE_DATE_FMT_STRFTIME
+ #include <sys/types.h>
++#if defined(__sun)
++#include <sys/isa_defs.h>
++#ifdef _LITTLE_ENDIAN
++#define DUK_F_BYTEORDER 1
++#else
++#define DUK_F_BYTEORDER 2
++#endif
++#else
+ #if defined(DUK_F_BCC)
+ /* no endian.h */
+ #else
+ #include <endian.h>
+ #endif  /* DUK_F_BCC */
++#endif  /* __sun */
+ #include <limits.h>
+ #include <sys/param.h>
+ #include <sys/time.h>
+@@ -1423,14 +1432,11 @@
+  */
+ #if !defined(DUK_F_BYTEORDER)
+ #if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN) || \
+-    defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN) || \
+     defined(__LITTLE_ENDIAN__)
+ /* Integer little endian */
+ #if defined(__FLOAT_WORD_ORDER) && defined(__LITTLE_ENDIAN) && (__FLOAT_WORD_ORDER == __LITTLE_ENDIAN) || \
+-    defined(_FLOAT_WORD_ORDER) && defined(_LITTLE_ENDIAN) && (_FLOAT_WORD_ORDER == _LITTLE_ENDIAN)
+ #define DUK_F_BYTEORDER 1
+ #elif defined(__FLOAT_WORD_ORDER) && defined(__BIG_ENDIAN) && (__FLOAT_WORD_ORDER == __BIG_ENDIAN) || \
+-      defined(_FLOAT_WORD_ORDER) && defined(_BIG_ENDIAN) && (_FLOAT_WORD_ORDER == _BIG_ENDIAN)
+ #define DUK_F_BYTEORDER 2
+ #elif !defined(__FLOAT_WORD_ORDER) && !defined(_FLOAT_WORD_ORDER)
+ /* Float word order not known, assume not a hybrid. */
+@@ -1439,11 +1445,9 @@
+ /* byte order is little endian but cannot determine IEEE double word order */
+ #endif  /* float word order */
+ #elif defined(__BYTE_ORDER) && defined(__BIG_ENDIAN) && (__BYTE_ORDER == __BIG_ENDIAN) || \
+-      defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN) || \
+       defined(__BIG_ENDIAN__)
+ /* Integer big endian */
+ #if defined(__FLOAT_WORD_ORDER) && defined(__BIG_ENDIAN) && (__FLOAT_WORD_ORDER == __BIG_ENDIAN) || \
+-    defined(_FLOAT_WORD_ORDER) && defined(_BIG_ENDIAN) && (_FLOAT_WORD_ORDER == _BIG_ENDIAN)
+ #define DUK_F_BYTEORDER 3
+ #elif !defined(__FLOAT_WORD_ORDER) && !defined(_FLOAT_WORD_ORDER)
+ /* Float word order not known, assume not a hybrid. */

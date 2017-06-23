@@ -1,0 +1,48 @@
+--- polkit-0.113/src/programs/pkexec.c.~1~	2015-06-18 23:20:50.000000000 +0300
++++ polkit-0.113/src/programs/pkexec.c	2016-08-02 12:20:25.204811128 +0300
+@@ -344,31 +351,17 @@
+ is_valid_shell (const gchar *shell)
+ {
+   gboolean ret;
+-  gchar *contents;
+-  gchar **shells;
+   GError *error;
+   guint n;
++  char *valid_shell;
+ 
+   ret = FALSE;
+ 
+-  contents = NULL;
+-  shells = NULL;
+-
+   error = NULL;
+-  if (!g_file_get_contents ("/etc/shells",
+-                            &contents,
+-                            NULL, /* gsize *length */
+-                            &error))
+-    {
+-      g_printerr ("Error getting contents of /etc/shells: %s\n", error->message);
+-      g_error_free (error);
+-      goto out;
+-    }
+-
+-  shells = g_strsplit (contents, "\n", 0);
+-  for (n = 0; shells != NULL && shells[n] != NULL; n++)
++  
++  while((valid_shell=getusershell())>0)
+     {
+-      if (g_strcmp0 (shell, shells[n]) == 0)
++      if (g_strcmp0 (shell, valid_shell) == 0)
+         {
+           ret = TRUE;
+           goto out;
+@@ -376,8 +369,7 @@
+     }
+ 
+  out:
+-  g_free (contents);
+-  g_strfreev (shells);
++  endusershell();
+   return ret;
+ }
+ 

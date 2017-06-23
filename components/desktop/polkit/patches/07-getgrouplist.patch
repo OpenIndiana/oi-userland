@@ -1,0 +1,68 @@
+Extracted from pkgsrc's patch-src_polkitbackend_polkitbackendjsauthority.c
+
+--- polkit-0.113/src/polkitbackend/polkitbackendjsauthority.c.1	2016-08-02 09:48:00.402057560 +0300
++++ polkit-0.113/src/polkitbackend/polkitbackendjsauthority.c	2016-08-02 09:48:43.662007594 +0300
+@@ -29,6 +29,10 @@
+ #include <glib/gstdio.h>
+ #include <locale.h>
+ #include <glib/gi18n-lib.h>
++#ifdef __sun__
++#include <string.h>
++#endif
++
+ 
+ #include <polkit/polkit.h>
+ #include "polkitbackendjsauthority.h"
+@@ -1413,3 +1417,52 @@
+ 
+   return 0;
+ }
++
++#ifdef __sun__
++int
++getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
++{
++    const struct group *grp;
++    int i, maxgroups, ngroups, ret;
++
++    ret = 0;
++    ngroups = 0;
++    maxgroups = *grpcnt;
++    /*
++     * When installing primary group, duplicate it;
++     * the first element of groups is the effective gid
++     * and will be overwritten when a setgid file is executed.
++     */
++    groups ? groups[ngroups++] = agroup : ngroups++;
++    if (maxgroups > 1)
++        groups ? groups[ngroups++] = agroup : ngroups++;
++    /*
++     * Scan the group file to find additional groups.
++     */
++    setgrent();
++    while ((grp = getgrent()) != NULL) {
++        if (groups) {
++            for (i = 0; i < ngroups; i++) {
++                if (grp->gr_gid == groups[i])
++                    goto skip;
++            }
++        }
++        for (i = 0; grp->gr_mem[i]; i++) {
++            if (!strcmp(grp->gr_mem[i], uname)) {
++                if (ngroups >= maxgroups) {
++                    ret = -1;
++                    break;
++                }
++                groups ? groups[ngroups++] = grp->gr_gid : ngroups++;
++                break;
++            }
++        }
++skip:
++        ;
++    }
++    endgrent();
++    *grpcnt = ngroups;
++    return (ret);
++}
++#endif
++
