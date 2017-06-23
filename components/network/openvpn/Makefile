@@ -16,11 +16,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.4.2
+COMPONENT_VERSION=	2.4.3
 COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:df5c4f384b7df6b08a2f6fa8a84b9fd382baf59c2cef1836f82e2a7f62f1bff9
+COMPONENT_ARCHIVE_HASH=	sha256:15e15fc97f189b52aee7c90ec8355aa77469c773125110b4c2f089abecde36fb
 COMPONENT_PROJECT_URL=	http://openvpn.net
 COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.org/community/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/openvpn
