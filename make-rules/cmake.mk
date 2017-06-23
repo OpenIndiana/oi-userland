@@ -141,6 +141,9 @@ $(BUILD_DIR_64)/.configured:	BITS=64
 
 CMAKE_ENV += $(CMAKE_ENV.$(BITS))
 
+COMPONENT_TEST_CMD=ctest
+COMPONENT_TEST_TARGETS=
+
 # configure the unpacked source for building 32 and 64 bit version
 CMAKE =	cmake
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
