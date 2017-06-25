@@ -14,7 +14,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         awesome
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_VERSION=      4.1
 COMPONENT_PROJECT_URL=  https://awesomewm.org
 COMPONENT_SUMMARY=      A highly configurable, next generation framework window manager for X.
