@@ -13,12 +13,12 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rrdtool
 
 COMPONENT_VERSION= 1.4.7
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Data analysis tool generating graphical representations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://oss.oetiker.ch/rrdtool/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
@@ -46,3 +46,14 @@ CONFIGURE_OPTIONS+= --enable-static=no
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
