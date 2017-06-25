@@ -13,7 +13,7 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mrtg
 COMPONENT_VERSION= 2.17.4
@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://oss.oetiker.ch/mrtg/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://oss.oetiker.ch/mrtg/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -41,3 +41,11 @@ CONFIGURE_OPTIONS+=	--with-gd-inc=/usr/include/gd2
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += image/rrdtool
+REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
