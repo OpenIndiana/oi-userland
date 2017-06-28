@@ -15,22 +15,24 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nginx
-COMPONENT_VERSION=	1.13.1
+COMPONENT_VERSION=	1.13.2
 COMPONENT_LICENSE=	BSD
 COMPONENT_PROJECT_URL=	http://nginx.net/
 COMPONENT_SUMMARY=	Nginx Webserver
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a5856c72a6609a4dc68c88a7f3c33b79e6693343b62952e021e043fe347b6776
+COMPONENT_ARCHIVE_HASH=	sha256:d77f234d14989d273a363f570e1d892395c006fef2ec04789be90f41a1919b70
 COMPONENT_ARCHIVE_URL=	http://nginx.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_FMRI=	web/server/nginx
+COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS =  --prefix=/etc/nginx
-CONFIGURE_OPTIONS += --sbin-path=$(CONFIGURE_SBINDIR.$(BITS))/nginx
+CONFIGURE_OPTIONS += --sbin-path=/usr/sbin/nginx
 CONFIGURE_OPTIONS += --with-ld-opt=$(LD_BITS)
 CONFIGURE_OPTIONS += --with-cc="$(CC) $(CC_BITS)"
 CONFIGURE_OPTIONS += --conf-path=/etc/nginx/nginx.conf
@@ -65,9 +67,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 COMPONENT_POST_INSTALL_ACTION+= \
 	( $(MKDIR) $(PROTO_DIR)/var/nginx/logs )
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
+
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += library/libxml2
