@@ -96,7 +96,7 @@ CLEAN_PATHS += license
 # common targets
 build:		$(BUILD_32) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
 
-install:	build $(INSTALL_32) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
+install:	build $(INSTALL_32) $(PROTOETCDIR)/zprofile license
 
 # build does this always
 test:		$(TEST_32)
