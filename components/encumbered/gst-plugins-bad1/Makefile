@@ -62,6 +62,8 @@ CONFIGURE_OPTIONS += --disable-egl
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
 CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
+# disable openexr until 2.2.0 is merged
+CONFIGURE_OPTIONS += --disable-openexr
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
