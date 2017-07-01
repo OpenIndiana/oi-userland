@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		goaccess
 COMPONENT_VERSION=	1.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GoAccess is an open source real-time web log analyzer and interactive viewer that runs in a terminal in *nix systems or through your browser.
 COMPONENT_PROJECT_URL=	https://goaccess.io/
 COMPONENT_FMRI=		web/goaccess
