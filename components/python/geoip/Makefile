@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GeoIP
 COMPONENT_VERSION=	1.3.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	MaxMind GeoIP Legacy Database - Python API
 COMPONENT_PROJECT_URL=	http://www.maxmind.com/
 COMPONENT_FMRI=		library/python/geoip
