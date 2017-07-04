@@ -1,0 +1,24 @@
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=		cffi
+COMPONENT_VERSION=	1.10.0
+COMPONENT_PROJECT_URL=	http://cffi.readthedocs.org/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	$(COMPONENT_SRC)/LICENSE
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:b3b02911eb1f6ada203b0763ba924234629b51586f72a21faacc638269f4ced5
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+
+PYTHON_VERSIONS=	2.7
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+build:		$(BUILD_32_and_64)
+install:	$(INSTALL_32_and_64)
+ 
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
