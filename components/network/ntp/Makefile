@@ -62,7 +62,6 @@ CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
-CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
@@ -73,7 +72,6 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += SUNWcs

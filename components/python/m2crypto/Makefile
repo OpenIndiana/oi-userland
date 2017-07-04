@@ -60,5 +60,4 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/swig
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library

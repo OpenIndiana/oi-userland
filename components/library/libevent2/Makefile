@@ -49,6 +49,5 @@ install:	$(INSTALL_32_and_64)
 # util/getaddrinfo fails (https://github.com/libevent/libevent/issues/134)
 test:		$(TEST_32_and_64)
 
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

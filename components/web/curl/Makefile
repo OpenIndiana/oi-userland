@@ -63,7 +63,6 @@ CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
 CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-gssapi=/usr --without-ca-bundle
-CONFIGURE_OPTIONS += --with-ca-path=/etc/openssl/certs
 CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --without-libssh2
@@ -85,7 +84,6 @@ test: $(TEST_32_and_64)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/nghttp2
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
