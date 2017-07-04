@@ -1,0 +1,24 @@
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=		idna
+COMPONENT_VERSION=	2.5
+COMPONENT_PROJECT_URL=	https://github.com/kjd/idna
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	$(COMPONENT_SRC)/LICENSE.rst
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:3cb5ce08046c4e3a560fc02f138d0ac63e00f8ce5901a56b32ec8b7994082aab
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+
+PYTHON_VERSIONS=	2.7
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+build:		$(BUILD_32_and_64)
+install:	$(INSTALL_32_and_64)
+ 
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
