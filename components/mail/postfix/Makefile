@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
-COMPONENT_VERSION=	3.1.1
+COMPONENT_VERSION=	3.2.2
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	http://www.postfix.org/
 COMPONENT_FMRI=		service/network/smtp/postfix
@@ -23,9 +23,11 @@ COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	http://cdn.postfix.johnriley.me/mirrors/postfix-release/official/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:3deda4c34631970490b1b5fbb559905f93531bf1c7eb00e38b0d0deb1dba9982
+COMPONENT_ARCHIVE_HASH=	sha256:d06849418d119d09366997b2b481bb23f737629769b4e4a52da42fb3ad8b0576
 COMPONENT_LICENSE=	IBM PUBLIC LICENSE
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+
+PATCH_LEVEL=	0
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -64,5 +66,4 @@ REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
