@@ -45,22 +45,18 @@ file path=etc/openssl/openssl.cnf group=sys mode=0644 \
     original_name=SUNWopenssl:etc/sfw/openssl/openssl.cnf preserve=true
 dir  path=etc/openssl/private group=sys mode=0700
 link path=etc/sfw/openssl target=../openssl
-link path=lib/$(MACH64)/libcrypto.so target=libcrypto.so.1.0.0
 
 # Mediator links for 64-bit libraries
 link path=lib/$(MACH64)/libcrypto.so.1.0.0 \
     target=../openssl/default/$(MACH64)/libcrypto.so.1.0.0 mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
-link path=lib/$(MACH64)/libssl.so target=libssl.so.1.0.0
 link path=lib/$(MACH64)/libssl.so.1.0.0 \
     target=../openssl/default/$(MACH64)/libssl.so.1.0.0 mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
-link path=lib/libcrypto.so target=libcrypto.so.1.0.0
 
 # Mediator links for 32-bit libraries
 link path=lib/libcrypto.so.1.0.0 target=openssl/default/libcrypto.so.1.0.0 \
     mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=lib/libssl.so target=libssl.so.1.0.0
 link path=lib/libssl.so.1.0.0 target=openssl/default/libssl.so.1.0.0 \
     mediator=openssl mediator-implementation=default mediator-priority=vendor
 
@@ -117,100 +113,12 @@ link path=usr/bin/CA.pl target=../../lib/openssl/default/CA.pl \
 link path=usr/bin/openssl target=../../lib/openssl/default/openssl \
     mediator=openssl mediator-implementation=default mediator-priority=vendor
 
-# Header and pkg files.
-file path=usr/include/openssl/aes.h
-file path=usr/include/openssl/asn1.h
-file path=usr/include/openssl/asn1_mac.h
-file path=usr/include/openssl/asn1t.h
-file path=usr/include/openssl/bio.h
-file path=usr/include/openssl/blowfish.h
-file path=usr/include/openssl/bn.h
-file path=usr/include/openssl/buffer.h
-file path=usr/include/openssl/camellia.h
-file path=usr/include/openssl/cast.h
-file path=usr/include/openssl/cmac.h
-file path=usr/include/openssl/cms.h
-file path=usr/include/openssl/comp.h
-file path=usr/include/openssl/conf.h
-file path=usr/include/openssl/conf_api.h
-file path=usr/include/openssl/crypto.h
-file path=usr/include/openssl/des.h
-file path=usr/include/openssl/des_old.h
-file path=usr/include/openssl/dh.h
-file path=usr/include/openssl/dsa.h
-file path=usr/include/openssl/dso.h
-file path=usr/include/openssl/dtls1.h
-file path=usr/include/openssl/e_os2.h
-file path=usr/include/openssl/ebcdic.h
-file path=usr/include/openssl/ec.h
-file path=usr/include/openssl/ecdh.h
-file path=usr/include/openssl/ecdsa.h
-file path=usr/include/openssl/engine.h
-file path=usr/include/openssl/err.h
-file path=usr/include/openssl/evp.h
-file path=usr/include/openssl/hmac.h
-file path=usr/include/openssl/krb5_asn.h
-file path=usr/include/openssl/kssl.h
-file path=usr/include/openssl/lhash.h
-file path=usr/include/openssl/md2.h
-file path=usr/include/openssl/md4.h
-file path=usr/include/openssl/md5.h
-file path=usr/include/openssl/modes.h
-file path=usr/include/openssl/obj_mac.h
-file path=usr/include/openssl/objects.h
-file path=usr/include/openssl/ocsp.h
-# A special case. This header file is patched but possibly overwritten in the
-# proto are with the 64 bit install. We must use the one from the 32 bit build
-# which is the one we have a patch for.
-file $(MACH32)/include/openssl/opensslconf.h \
-    path=usr/include/openssl/opensslconf.h
-file path=usr/include/openssl/opensslv.h
-file path=usr/include/openssl/ossl_typ.h
-file path=usr/include/openssl/pem.h
-file path=usr/include/openssl/pem2.h
-file path=usr/include/openssl/pkcs12.h
-file path=usr/include/openssl/pkcs7.h
-file path=usr/include/openssl/pqueue.h
-file path=usr/include/openssl/rand.h
-file path=usr/include/openssl/rc2.h
-file path=usr/include/openssl/rc4.h
-file path=usr/include/openssl/ripemd.h
-file path=usr/include/openssl/rsa.h
-file path=usr/include/openssl/safestack.h
-file path=usr/include/openssl/sha.h
-file path=usr/include/openssl/srp.h
-file path=usr/include/openssl/srtp.h
-file path=usr/include/openssl/ssl.h
-file path=usr/include/openssl/ssl2.h
-file path=usr/include/openssl/ssl23.h
-file path=usr/include/openssl/ssl3.h
-file path=usr/include/openssl/stack.h
-file path=usr/include/openssl/symhacks.h
-file path=usr/include/openssl/tls1.h
-file path=usr/include/openssl/ts.h
-file path=usr/include/openssl/txt_db.h
-file path=usr/include/openssl/ui.h
-file path=usr/include/openssl/ui_compat.h
-file path=usr/include/openssl/x509.h
-file path=usr/include/openssl/x509_vfy.h
-file path=usr/include/openssl/x509v3.h
-link path=usr/lib/$(MACH64)/libcrypto.so \
-    target=../../../lib/$(MACH64)/libcrypto.so
 link path=usr/lib/$(MACH64)/libcrypto.so.1.0.0 \
     target=../../../lib/$(MACH64)/libcrypto.so.1.0.0
-link path=usr/lib/$(MACH64)/libssl.so target=../../../lib/$(MACH64)/libssl.so
 link path=usr/lib/$(MACH64)/libssl.so.1.0.0 \
     target=../../../lib/$(MACH64)/libssl.so.1.0.0
-file $(MACH64)/libcrypto.pc path=usr/lib/$(MACH64)/pkgconfig/libcrypto.pc
-file $(MACH64)/libssl.pc path=usr/lib/$(MACH64)/pkgconfig/libssl.pc
-file $(MACH64)/openssl.pc path=usr/lib/$(MACH64)/pkgconfig/openssl.pc
-link path=usr/lib/libcrypto.so target=../../lib/libcrypto.so
 link path=usr/lib/libcrypto.so.1.0.0 target=../../lib/libcrypto.so.1.0.0
-link path=usr/lib/libssl.so target=../../lib/libssl.so
 link path=usr/lib/libssl.so.1.0.0 target=../../lib/libssl.so.1.0.0
-file $(MACH32)/libcrypto.pc path=usr/lib/pkgconfig/libcrypto.pc
-file $(MACH32)/libssl.pc path=usr/lib/pkgconfig/libssl.pc
-file $(MACH32)/openssl.pc path=usr/lib/pkgconfig/openssl.pc
 
 # Manual pages.
 link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/openssl
