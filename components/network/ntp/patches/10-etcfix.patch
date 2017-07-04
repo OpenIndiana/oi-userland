@@ -23,9 +23,9 @@ can go away.
  #ifdef PCM_STYLE_SOUND
 -# define INIT_FILE "/etc/ntp.audio"
 +# define INIT_FILE "/etc/inet/ntp.audio"
- int agc =	SOUND_MIXER_WRITE_RECLEV; /* or IGAIN or LINE */
- int monitor =	SOUND_MIXER_WRITE_VOLUME; /* or OGAIN */
- int devmask = 0;
+ 
+ static ioctl_arg_T agc		= SOUND_MIXER_WRITE_RECLEV; /* or IGAIN or LINE */
+ static ioctl_arg_T audiomonitor	= SOUND_MIXER_WRITE_VOLUME; /* or OGAIN */
 --- ntpdate/ntpdate.c.orig	Thu May 14 06:34:41 2009
 +++ ntpdate/ntpdate.c	Thu May 14 06:15:12 2009
 @@ -179,7 +179,7 @@
