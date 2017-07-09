@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nginx
 COMPONENT_VERSION=	1.13.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_LICENSE=	BSD
 COMPONENT_PROJECT_URL=	http://nginx.net/
 COMPONENT_SUMMARY=	Nginx Webserver
@@ -51,6 +51,7 @@ CONFIGURE_OPTIONS += --with-http_dav_module
 CONFIGURE_OPTIONS += --with-http_flv_module
 CONFIGURE_OPTIONS += --with-http_mp4_module
 CONFIGURE_OPTIONS += --with-http_gzip_static_module
+CONFIGURE_OPTIONS += --with-http_gunzip_module
 CONFIGURE_OPTIONS += --with-http_geoip_module
 CONFIGURE_OPTIONS += --with-http_realip_module
 CONFIGURE_OPTIONS += --with-http_secure_link_module
