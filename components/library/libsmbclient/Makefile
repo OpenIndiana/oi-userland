@@ -35,13 +35,12 @@ endif
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.4.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.4.15
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:37c423dd590c63099d952b06c07bf399da7cc6c2e72739b831eedd7dbe8cc18c
+COMPONENT_ARCHIVE_HASH= sha256:011d1a64afecd9e04f14581a6a2afd1f73c33fa1cdc5bfe3aa11c4752954731c
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/samba/libsmbclient
 COMPONENT_CLASSIFICATION=	System/Libraries
