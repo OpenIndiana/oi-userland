@@ -31,9 +31,9 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb.c firefox-43.0b3/media/libcub
    int i;
  
 diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/libcubeb/src/cubeb_sun.c
---- firefox-43.0b3/media/libcubeb/src/cubeb_sun.c	1970-01-01 01:00:00.000000000 +0100
-+++ firefox-43.0b3/media/libcubeb/src/cubeb_sun.c	2015-11-11 04:30:48.171578872 +0100
-@@ -0,0 +1,439 @@
+--- firefox-52.1.2esr/media/libcubeb/src/cubeb_sun.c.~1~	2017-06-07 22:18:09.624692198 +0000
++++ firefox-52.1.2esr/media/libcubeb/src/cubeb_sun.c	2017-06-13 12:55:19.053736900 +0000
+@@ -0,0 +1,443 @@
 +/*
 + * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
 + * FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
@@ -264,7 +264,11 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/li
 +sunaudio_stream_init(cubeb *context,
 +                  cubeb_stream **stream,
 +                  char const *stream_name,
-+                  cubeb_stream_params stream_params, unsigned int latency,
++                  cubeb_devid input_device,
++                  cubeb_stream_params *stream_params,
++                  cubeb_devid output_device,
++                  cubeb_stream_params * output_stream_params,
++                  unsigned int latency,
 +                  cubeb_data_callback data_callback,
 +                  cubeb_state_callback state_callback,
 +                  void *user_ptr)
@@ -313,14 +317,14 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/li
 +  }
 +
 +  if (s->using_oss) {
-+    if (ioctl(s->fd, SNDCTL_DSP_SPEED, &stream_params.rate) < 0) {
++    if (ioctl(s->fd, SNDCTL_DSP_SPEED, &output_stream_params->rate) < 0) {
 +      DPR("ioctl SNDCTL_DSP_SPEED failed.\n");
 +      close(s->fd);
 +      free(s);
 +      return CUBEB_ERROR_INVALID_FORMAT;
 +    }
 +
-+    if (ioctl(s->fd, SNDCTL_DSP_CHANNELS, &stream_params.channels) < 0) {
++    if (ioctl(s->fd, SNDCTL_DSP_CHANNELS, &output_stream_params->channels) < 0) {
 +      DPR("ioctl SNDCTL_DSP_CHANNELS failed.\n");
 +      close(s->fd);
 +      free(s);
@@ -337,8 +341,8 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/li
 +  } else {
 +    audio_info_t audio_info;
 +    AUDIO_INITINFO(&audio_info)
-+    audio_info.play.sample_rate = stream_params.rate;
-+    audio_info.play.channels = stream_params.channels;
++    audio_info.play.sample_rate = output_stream_params->rate;
++    audio_info.play.channels = output_stream_params->channels;
 +    audio_info.play.encoding = AUDIO_ENCODING_LINEAR;
 +    audio_info.play.precision = 16;
 +    if (ioctl(s->fd, AUDIO_SETINFO, &audio_info) == -1) {
@@ -350,7 +354,7 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/li
 +  }
 +
 +  s->conv = 0;
-+  switch (stream_params.format) {
++  switch (output_stream_params->format) {
 +    case CUBEB_SAMPLE_S16NE:
 +      s->bytes_per_ch = 2;
 +      break;
@@ -366,8 +370,8 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/li
 +  }
 +
 +  s->active = 0;
-+  s->rate = stream_params.rate;
-+  s->n_channles = stream_params.channels;
++  s->rate = output_stream_params->rate;
++  s->n_channles = output_stream_params->channels;
 +  s->data_cb = data_callback;
 +  s->state_cb = state_callback;
 +  s->arg = user_ptr;
@@ -473,7 +477,6 @@ diff -Nurb firefox-43.0b3/media/libcubeb/src/cubeb_sun.c firefox-43.0b3/media/li
 +  .stream_stop = sunaudio_stream_stop,
 +  .stream_get_position = sunaudio_stream_get_position
 +};
-diff -Nurb firefox-43.0b3/media/libcubeb/src/moz.build firefox-43.0b3/media/libcubeb/src/moz.build
 --- firefox-52.1.0esr/media/libcubeb/src/moz.build.~1~	2017-04-11 05:13:12.000000000 +0300
 +++ firefox-52.1.0esr/media/libcubeb/src/moz.build	2017-05-05 13:26:33.720036024 +0300
 @@ -58,6 +58,12 @@
