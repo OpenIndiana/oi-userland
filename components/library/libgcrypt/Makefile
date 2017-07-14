@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
 COMPONENT_VERSION=	1.5.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		system/library/security/libgcrypt
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libgcrypt/
