@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
-COMPONENT_VERSION= 	52.1.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	52.2.1
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:88211d0d57dfdae9232617244f9c5406520a538e9e7be6ceec79fdfed175ba84
+  sha256:8b9e4b787f9059973bb3cae41c3957d6907e13e5f0b2310f3730d59ce7d8779a
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/thunderbird/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/thunderbird/
@@ -38,9 +37,9 @@ COMPONENT_ARCHIVE_1=		lightning-$(LIGHTNING_VERSION)-sm+tb-linux.xpi
 COMPONENT_ARCHIVE_HASH_1=	sha256:1dba9da346bf0a4755eb3466b754f3a0acb22f2ff8195d0c907c2afeb23115e8
 COMPONENT_ARCHIVE_URL_1=	https://addons.cdn.mozilla.net/user-media/addons/_attachments/2313/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
 			  cd $(@D)/mozilla && autoconf-2.13 &&\
@@ -48,7 +47,7 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR) && chmod +x $(BUILD_DIR)/gld-wrapper )
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS =	--disable-alsa
 CONFIGURE_OPTIONS +=	--enable-dbus
