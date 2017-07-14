@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-python-desktop
 COMPONENT_VERSION=	2.32.0
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	8
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -45,6 +45,7 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--disable-evince
 CONFIGURE_OPTIONS+=	--disable-gnomeprint
 CONFIGURE_OPTIONS+=	--disable-gnomeprintui
 CONFIGURE_OPTIONS+=	--disable-gtksourceview
