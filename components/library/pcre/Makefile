@@ -25,12 +25,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
-COMPONENT_VERSION=	8.38
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	8.41
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9883e419c336c63b0cb5202b09537c140966d585e4d0da66147dc513da13e629
+    sha256:244838e1f1d14f7e2fa7681b857b3a8566b74215f28133f14a8f5e59241b682c
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  http://pcre.org/
@@ -117,6 +116,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
