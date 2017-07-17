@@ -23,11 +23,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.13.2
+COMPONENT_VERSION=	2.13.3
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0d10ac3751466f81652b62cbda83cc8d8ffd014911462138e039f176e413dde5
+COMPONENT_ARCHIVE_HASH=	sha256:91aa23be428f67eb19616f43fa0229d567e9acf4f08fba33eb0b627e4d323e62
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/git
 COMPONENT_FMRI=		developer/versioning/git
@@ -41,7 +41,7 @@ COMPONENT_CLASSIFICATION=	Development/Source Code Management
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:30e1e1313000eb81f0e348e5083758a33703941a60ab111057b46c3dad968b6e
+COMPONENT_ARCHIVE_HASH_1=	sha256:1128db0302a41b55132bfd507863a7921b995d9ad308396ff2c4ca91177481c2
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -143,6 +143,7 @@ $(BUILD_DIR)/.manpages:
 
 $(BUILD_DIR_64)/.contrib:
 	$(MKDIR) $(PROTOUSRSHAREDIR)/bash-completion/completions
+	$(GMAKE) -C $(BUILD_DIR_64)/contrib/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/diff-highlight/diff-highlight $(PROTOUSRBINDIR)/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/completion/git-completion.bash $(PROTOUSRSHAREDIR)/bash-completion/completions/git
 	(cd $(PROTOUSRSHAREDIR)/bash-completion/completions; $(LN) -sf git gitk)
