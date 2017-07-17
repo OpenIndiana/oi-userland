@@ -62,7 +62,8 @@ CONFIGURE_OPTIONS += --disable-ldap --with-random=/dev/urandom
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
 CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
-CONFIGURE_OPTIONS += --with-gssapi=/usr --without-ca-bundle
+CONFIGURE_OPTIONS += --with-gssapi=/usr
+CONFIGURE_OPTIONS += --with-ca-bundle=/etc/ssl/cert.pem
 CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --without-libssh2
