@@ -25,15 +25,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
-COMPONENT_VERSION=	3.4.17
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4
+COMPONENT_VERSION=	3.5.14
+COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d99abb1b320771b58c949bab85e4b654dd1e3e9d92e2572204b7dc479d923927
-COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4/$(COMPONENT_ARCHIVE)
+    sha256:4aa12dec92f42a0434df794aca3d02f6f2a35b47b48c01252de65f355c051bda
+COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=	library/gnutls-3
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -71,6 +70,7 @@ CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)/$(COMPONENT_NAME)-3/
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --disable-guile
 CONFIGURE_OPTIONS += --with-included-libtasn1
+CONFIGURE_OPTIONS += --with-included-unistring
 #CONFIGURE_OPTIONS += --without-p11-kit
 CONFIGURE_OPTIONS += --disable-ecdhe
 CONFIGURE_OPTIONS += --disable-openssl-compatibility
