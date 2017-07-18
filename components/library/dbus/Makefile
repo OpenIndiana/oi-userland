@@ -16,28 +16,29 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
-COMPONENT_VERSION= 1.10.12
+COMPONENT_VERSION= 1.10.20
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:210a79430b276eafc6406c71705e9140d25b9956d18068df98a70156dc0e475d
+  sha256:e574b9780b5425fde4d973bb596e7ea0f09e00fe2edd662da9016e976c460b48
 COMPONENT_ARCHIVE_URL= \
   http://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL = $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software_2fdbus
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_LICENSE = GPLv2,AFLv2.1
 COMPONENT_CLASSIFICATION = System/Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-gcc_OPT=-O2
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =	( cd $(@D) && autoreconf --force --install )
+
+CPPFLAGS += -std=gnu89
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -56,8 +57,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += text/xmlto
 REQUIRED_PACKAGES += x11/library/libx11
