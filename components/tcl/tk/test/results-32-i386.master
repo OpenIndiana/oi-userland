@@ -1,0 +1,1309 @@
+Tests running in interp:  $(@D)/tktest
+Tests located in:  $(SOURCE_DIR)/tests
+Tests running in:  $(@D)
+Temporary files stored in $(@D)
+Test files sourced into current interpreter
+Running tests that match:  *
+Skipping test files that match:  l.*.test
+Only running test files that match:  *.test
+bell.test
+Bell should ring now ...
+bgerror.test
+bind.test
+bitmap.test
+border.test
+busy.test
+button.test
+canvImg.test
+canvMoveto.test
+canvPs.test
+canvRect.test
+canvText.test
+
+
+==== canvText-20.1 angled text bounding box FAILED
+==== Contents of test case:
+
+    .c create text 2 2 -tag t -anchor center -text 0 -font {Helvetica 24}
+    set bb0 [.c bbox t]
+    .c itemconf t -angle 90
+    set bb1 [.c bbox t]
+    .c itemconf t -angle 180
+    set bb2 [.c bbox t]
+    .c itemconf t -angle 270
+    set bb3 [.c bbox t]
+    list [expr {$bb0 eq $bb2 ? "ok" : "$bb0,$bb2"}]  [expr {$bb1 eq $bb3 ? "ok" : "$bb1,$bb3"}]  [expr {$bb0 eq [transpose $bb1] ? "ok" : "$bb0,$bb1"}]  
+---- Result was:
+{-8 -19 13 23,-9 -19 12 23} {-19 -9 23 12,-19 -8 23 13} {-8 -19 13 23,-19 -9 23 12}
+---- Result should have been (exact matching):
+ok ok ok
+==== canvText-20.1 FAILED
+
+canvWind.test
+canvas.test
+choosedir.test
+clipboard.test
+clrpick.test
+
+
+==== clrpick-2.3 tk_chooseColor command FAILED
+==== Contents of test case:
+
+    ToPressButton . ok
+    tk_chooseColor -parent . -title "Press OK"
+
+---- Result was:
+#d9d9d9
+---- Result should have been (exact matching):
+#808040
+==== clrpick-2.3 FAILED
+
+cmds.test
+color.test
+config.test
+cursor.test
+dialog.test
+embed.test
+entry.test
+event.test
+filebox.test
+focus.test
+
+
+==== focus-2.6 TkFocusFilterEvent procedure, FocusIn events FAILED
+==== Contents of test case:
+
+    focus .t.b1
+    focus .
+    update
+    event gen [testwrapper .t] <FocusIn> -detail NotifyAncestor
+    set focusInfo {}
+    set x [focus]
+    event gen . <KeyPress-x>
+    list $x $focusInfo
+
+---- Result was:
+{} {}
+---- Result should have been (exact matching):
+.t.b1 {press .t.b1 x}
+==== focus-2.6 FAILED
+
+
+
+==== focus-2.7 TkFocusFilterEvent procedure, FocusOut events FAILED
+==== Contents of test case:
+
+    set result {}
+    foreach detail {NotifyAncestor NotifyInferior NotifyNonlinear
+	    NotifyNonlinearVirtual NotifyPointer NotifyPointerRoot
+	    NotifyVirtual} {
+	    focus -force .t.b1
+	    event gen [testwrapper .t] <FocusOut> -detail $detail
+	    update
+	    lappend result [focus]
+    }
+    return $result
+
+---- Result was:
+.t.b1 .t.b1 .t.b1 .t.b1 .t.b1 .t.b1 .t.b1
+---- Result should have been (exact matching):
+{} .t.b1 {} {} .t.b1 .t.b1 {}
+==== focus-2.7 FAILED
+
+
+
+==== focus-2.9 TkFocusFilterEvent procedure, FocusOut events FAILED
+==== Contents of test case:
+
+    focus .t.b1
+    event gen [testwrapper .] <FocusOut> -detail NotifyAncestor
+    focus
+
+---- Result was:
+.t.b1
+---- Result should have been (exact matching):
+
+==== focus-2.9 FAILED
+
+
+
+==== focus-5.1 ChangeXFocus procedure, don't take focus unless have it FAILED
+==== Contents of test case:
+
+    setupbg
+    focusSetup
+    focus -force .t
+    update
+    set result [focus]
+    send [dobg {tk appname}] {focus -force .; update}
+    lappend result [focus]
+    focus .t.b2
+    update
+    lappend result [focus]
+
+---- Result was:
+.t .t {}
+---- Result should have been (exact matching):
+.t {} {}
+==== focus-5.1 FAILED
+
+focusTcl.test
+font.test
+
+
+==== font-4.9 font command: actual FAILED
+==== Contents of test case:
+
+    # (objc > 3) so objPtr = objv[3 + skip]
+    string tolower [font actual {-family times} -family]
+
+---- Result was:
+nimbus roman no9 l
+---- Result should have been (exact matching):
+times
+==== font-4.9 FAILED
+
+
+
+==== font-8.4 font command: families FAILED
+==== Contents of test case:
+
+    # TkpGetFontFamilies()
+    regexp -nocase times [font families]
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== font-8.4 FAILED
+
+
+
+==== font-9.5 font command: measure FAILED
+==== Contents of test case:
+
+    # Tk_TextWidth()
+    expr {[font measure $fixed "abcdefg"] == [font measure $fixed "a"]*7 }
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== font-9.5 FAILED
+
+
+
+==== font-10.9 font command: metrics: get individual metrics FAILED
+==== Contents of test case:
+
+    font metrics $fixed -ascent
+    font metrics $fixed -descent
+    font metrics $fixed -linespace
+    font metrics $fixed -fixed
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== font-10.9 FAILED
+
+
+
+==== font-21.6 Tk_PostscriptFontName procedure: spaces FAILED
+==== Contents of test case:
+
+    psfontname "{new century schoolbook} 10"
+
+---- Result was:
+CenturySchoolbookL
+---- Result should have been (exact matching):
+NewCenturySchlbk-Roman
+==== font-21.6 FAILED
+
+
+
+==== font-24.5 Tk_ComputeTextLayout: break line FAILED
+==== Contents of test case:
+
+    .t.l config -text "000\t00000" -wrap [expr 9 * $ax]
+	update
+	list [expr {[winfo reqwidth .t.l] eq [expr {$ax * 8}]}]  [expr {[winfo reqheight .t.l] eq [expr {$ay * 2}]}]
+
+---- Result was:
+0 1
+---- Result should have been (exact matching):
+1 1
+==== font-24.5 FAILED
+
+
+
+==== font-44.1 TkFontGetPixels: size < 0 FAILED
+==== Contents of test case:
+
+	tk scaling 0.5
+    font actual {times -12} -size
+
+---- Result was:
+-2147483648
+---- Result should have been (exact matching):
+24
+==== font-44.1 FAILED
+
+
+
+==== font-45.3 TkFontGetAliasList: match FAILED
+==== Contents of test case:
+
+    # can fail on Unix systems that have a real "times new roman" font
+    font actual {{times new roman} 10} -family
+
+---- Result was:
+Liberation Serif
+---- Result should have been (exact matching):
+Nimbus Roman No9 L
+==== font-45.3 FAILED
+
+fontchooser.test
+frame.test
+geometry.test
+get.test
+grab.test
+grid.test
+image.test
+imgBmap.test
+imgPNG.test
+imgPPM.test
+imgPhoto.test
+listbox.test
+main.test
+menu.test
+menuDraw.test
+menubut.test
+message.test
+msgbox.test
+obj.test
+oldpack.test
+option.test
+pack.test
+
+
+==== pack-18.1 unmap slaves when master unmapped FAILED
+==== Contents of test case:
+
+
+    # adjust the position of .pack before test to avoid a screen switch
+    # that occurs with window managers that have desktops four times as big
+    # as the screen (screen switch causes scale and other tests to fail).
+
+    wm geometry .pack +100+100
+
+    # On the PC, when the width/height is configured while the window is 
+    # unmapped, the changes don't take effect until the window is remapped.
+    # Who knows why?
+
+    eval destroy [winfo child .pack]
+    frame .pack.a -width 100 -height 50 -relief raised -bd 2
+    pack .pack.a
+    update
+    set result [winfo ismapped .pack.a]
+    wm iconify .pack
+    update
+    lappend result [winfo ismapped .pack.a]
+    .pack.a configure -width 200 -height 75
+    update
+    lappend result [winfo width .pack.a ] [winfo height .pack.a]  [winfo ismapped .pack.a]
+    wm deiconify .pack
+    update
+    lappend result [winfo ismapped .pack.a]
+
+---- Result was:
+1 1 200 75 1 1
+---- Result should have been (exact matching):
+1 0 200 75 0 1
+==== pack-18.1 FAILED
+
+
+
+==== pack-18.2 unmap slaves when master unmapped FAILED
+==== Contents of test case:
+
+
+    # adjust the position of .pack before test to avoid a screen switch
+    # that occurs with window managers that have desktops four times as big
+    # as the screen (screen switch causes scale and other tests to fail).
+
+    wm geometry .pack +100+100
+    frame .pack.a -relief raised -bd 2
+    frame .pack.b -width 70 -height 30 -relief sunken -bd 2
+    pack .pack.a
+    pack .pack.b -in .pack.a
+    update
+    set result [winfo ismapped .pack.b]
+    wm iconify .pack
+    update
+    lappend result [winfo ismapped .pack.b]
+    .pack.b configure -width 100 -height 30
+    update
+    lappend result [winfo width .pack.b ] [winfo height .pack.b]  [winfo ismapped .pack.b]
+    wm deiconify .pack
+    update
+    lappend result [winfo ismapped .pack.b]
+
+---- Result was:
+1 1 100 30 1 1
+---- Result should have been (exact matching):
+1 0 100 30 0 1
+==== pack-18.2 FAILED
+
+packgrid.test
+panedwindow.test
+
+
+==== panedwindow-23.35 ConfigurePanes, -stretch always FAILED
+==== Contents of test case:
+
+	panedwindow .p -showhandle false -height 100 -width 182
+	frame .f1 -width 40 -bg red
+	frame .f2 -width 40 -bg white
+	frame .f3 -width 40 -bg blue
+	frame .f4 -width 40 -bg green
+	.p add .f1 .f2 .f3 .f4 -stretch always
+	pack .p
+	update
+	set result [list]
+	lappend result [winfo width .f1] [winfo width .f2] [winfo width .f3]  [winfo width .f4]
+	.p paneconfigure .f2 -hide 1
+	update
+	lappend result [winfo width .f1] [winfo width .f2] [winfo width .f3]  [winfo width .f4]
+
+---- Result was:
+42 42 43 44 57 42 58 59
+---- Result should have been (exact matching):
+42 43 43 43 58 43 58 58
+==== panedwindow-23.35 FAILED
+
+place.test
+
+
+==== place-8.1 MasterStructureProc, mapping and unmapping slaves FAILED
+==== Contents of test case:
+
+    place .t.f2 -relx 1.0 -rely 1.0 -anchor sw
+    update
+    set result [winfo ismapped .t.f2]
+    wm iconify .t
+    update
+    lappend result [winfo ismapped .t.f2]
+    place .t.f2 -x 40 -y 30 -relx 0 -rely 0 -anchor nw
+    update
+    lappend result [winfo x .t.f2] [winfo y .t.f2] [winfo ismapped .t.f2]
+    wm deiconify .t
+    update
+    lappend result [winfo ismapped .t.f2]
+
+---- Result was:
+1 1 40 30 1 1
+---- Result should have been (exact matching):
+1 0 40 30 0 1
+==== place-8.1 FAILED
+
+
+
+==== place-8.2 MasterStructureProc, mapping and unmapping slaves FAILED
+==== Contents of test case:
+
+    place .t.f -x 0 -y 0 -width 200 -height 100
+    place .t.f2 -in .t.f -relx 1.0 -rely 1.0 -anchor sw -width 50 -height 20
+    update
+    set result [winfo ismapped .t.f2]
+    wm iconify .t
+    update
+    lappend result [winfo ismapped .t.f2]
+    place .t.f2 -x 40 -y 30 -relx 0 -rely 0 -anchor nw
+    update
+    lappend result [winfo x .t.f2] [winfo y .t.f2] [winfo ismapped .t.f2]
+    wm deiconify .t
+    update
+    lappend result [winfo ismapped .t.f2]
+
+---- Result was:
+1 1 42 32 1 1
+---- Result should have been (exact matching):
+1 0 42 32 0 1
+==== place-8.2 FAILED
+
+raise.test
+safe.test
+scale.test
+scrollbar.test
+
+
+==== scrollbar-3.36 ScrollbarWidgetCmd procedure, "fraction" option FAILED
+==== Contents of test case:
+
+    format {%.6g} [.s fraction 4 179]
+
+---- Result was:
+0.976048
+---- Result should have been (exact matching):
+1
+==== scrollbar-3.36 FAILED
+
+
+
+==== scrollbar-3.38 ScrollbarWidgetCmd procedure, "fraction" option FAILED
+==== Contents of test case:
+
+    format {%.6g} [.s fraction 4 178]
+
+---- Result was:
+0.97006
+---- Result should have been (exact matching):
+0.993711
+==== scrollbar-3.38 FAILED
+
+
+
+==== scrollbar-6.12 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .s identify 8 19
+
+---- Result was:
+trough1
+---- Result should have been (exact matching):
+arrow1
+==== scrollbar-6.12 FAILED
+
+
+
+==== scrollbar-6.29 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .s identify 8 180
+
+---- Result was:
+trough2
+---- Result should have been (exact matching):
+arrow2
+==== scrollbar-6.29 FAILED
+
+
+
+==== scrollbar-6.35 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .s identify 18 100
+
+---- Result was:
+
+---- Result should have been (exact matching):
+trough2
+==== scrollbar-6.35 FAILED
+
+
+
+==== scrollbar-6.44 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .t.s identify 100 18
+
+---- Result was:
+
+---- Result should have been (exact matching):
+trough2
+==== scrollbar-6.44 FAILED
+
+select.test
+send.test
+spinbox.test
+text.test
+textBTree.test
+textDisp.test
+textImage.test
+textIndex.test
+textMark.test
+textTag.test
+textWind.test
+
+
+==== textWind-10.8 EmbWinLayoutProc procedure, error in creating window FAILED
+==== Contents of test case:
+
+    .t insert 1.0 "Some sample text"
+    .t window create 1.5 -create {
+        toplevel .t2 -width 100 -height 150
+        wm geom .t2 +0+0
+        concat .t2
+    }
+    set msg {}
+    update
+    set i 0
+    while {[llength $msg] == 1 && [incr i] < 200} { update }
+    return $msg
+
+---- Result was:
+{{can't embed .t2 relative to .t}}
+---- Result should have been (exact matching):
+{{can't embed .t2 relative to .t}} {{window name "t2" already exists in parent}}
+==== textWind-10.8 FAILED
+
+tk.test
+unixButton.test
+unixEmbed.test
+unixFont.test
+
+
+==== unixfont-1.2 TkpGetNativeFont procedure: native FAILED
+==== Contents of test case:
+
+    font measure fixed 0
+
+---- Result was:
+11
+---- Result should have been (exact matching):
+6
+==== unixfont-1.2 FAILED
+
+
+
+==== unixfont-2.2 TkpGetFontFromAttributes procedure: Times relatives FAILED
+==== Contents of test case:
+
+    set x {}
+    lappend x [lindex [font actual {-family "Times New Roman"}] 1]
+    lappend x [lindex [font actual {-family "New York"}] 1]
+    lappend x [lindex [font actual {-family "Times"}] 1]
+
+---- Result was:
+{Liberation Serif} {DejaVu Sans} {Nimbus Roman No9 L}
+---- Result should have been (exact matching):
+times times times
+==== unixfont-2.2 FAILED
+
+
+
+==== unixfont-2.3 TkpGetFontFromAttributes procedure: Courier relatives FAILED
+==== Contents of test case:
+
+    set x {}
+    lappend x [lindex [font actual {-family "Courier New"}] 1]
+    lappend x [lindex [font actual {-family "Monaco"}] 1]
+    lappend x [lindex [font actual {-family "Courier"}] 1]
+
+---- Result was:
+{Liberation Mono} {DejaVu Sans} Courier
+---- Result should have been (exact matching):
+courier courier courier
+==== unixfont-2.3 FAILED
+
+
+
+==== unixfont-2.4 TkpGetFontFromAttributes procedure: Helvetica relatives FAILED
+==== Contents of test case:
+
+    set x {}
+    lappend x [lindex [font actual {-family "Arial"}] 1]
+    lappend x [lindex [font actual {-family "Geneva"}] 1]
+    lappend x [lindex [font actual {-family "Helvetica"}] 1]
+
+---- Result was:
+{Liberation Sans} {DejaVu Sans} {Nimbus Sans L}
+---- Result should have been (exact matching):
+helvetica helvetica helvetica
+==== unixfont-2.4 FAILED
+
+
+
+==== unixfont-2.6 TkpGetFontFromAttributes: fallback to fixed family FAILED
+==== Contents of test case:
+
+    lindex [font actual {-family fixed -size 10}] 1
+
+---- Result was:
+DejaVu Sans
+---- Result should have been (exact matching):
+fixed
+==== unixfont-2.6 FAILED
+
+
+
+==== unixfont-2.8 TkpGetFontFromAttributes: loop over returned font names FAILED
+==== Contents of test case:
+
+    lindex [font actual {-family fixed -size 31}] 1
+
+---- Result was:
+DejaVu Sans
+---- Result should have been (exact matching):
+fixed
+==== unixfont-2.8 FAILED
+
+
+
+==== unixfont-2.9 TkpGetFontFromAttributes: reject adobe courier if possible FAILED
+==== Contents of test case:
+
+    lindex [font actual {-family courier}] 1
+
+---- Result was:
+Courier
+---- Result should have been (exact matching):
+courier
+==== unixfont-2.9 FAILED
+
+
+
+==== unixfont-5.8 Tk_MeasureChars procedure: internal spaces significant FAILED
+==== Contents of test case:
+
+    .b.l config -text "00  000     00000"
+    getsize
+
+---- Result was:
+65 40
+---- Result should have been (exact matching):
+77 40
+==== unixfont-5.8 FAILED
+
+
+
+==== unixfont-5.9 Tk_MeasureChars procedure: TK_PARTIAL_OK FAILED
+==== Contents of test case:
+
+    .b.c dchars $t 0 end
+    .b.c insert $t 0 "0000"
+    .b.c index $t @[expr int($ax*2.5)],1
+
+---- Result was:
+4
+---- Result should have been (exact matching):
+2
+==== unixfont-5.9 FAILED
+
+
+
+==== unixfont-5.12 Tk_MeasureChars procedure: include eol spaces FAILED
+==== Contents of test case:
+
+    .b.l config -text "000   \n000"
+    getsize
+
+---- Result was:
+48 40
+---- Result should have been (exact matching):
+66 40
+==== unixfont-5.12 FAILED
+
+
+
+==== unixfont-8.4 AllocFont procedure: classify characters FAILED
+==== Contents of test case:
+
+    set x 0
+    incr x [font measure $courier "\u4000"]   ;# 6
+    incr x [font measure $courier "\002"]   ;# 4
+    incr x [font measure $courier "\012"]   ;# 2
+    incr x [font measure $courier "\101"]   ;# 1
+    set x
+
+---- Result was:
+24
+---- Result should have been (exact matching):
+78
+==== unixfont-8.4 FAILED
+
+
+
+==== unixfont-8.6 AllocFont procedure: setup widths of special chars FAILED
+==== Contents of test case:
+
+    set x 0
+    incr x [font measure $courier "\001"]   ;# 4
+    incr x [font measure $courier "\002"]   ;# 4
+    incr x [font measure $courier "\012"]   ;# 2
+    set x
+
+---- Result was:
+18
+---- Result should have been (exact matching):
+60
+==== unixfont-8.6 FAILED
+
+
+
+==== unixfont-9.1 GetControlCharSubst procedure: 2 chars subst FAILED
+==== Contents of test case:
+
+    .b.c dchars $t 0 end
+    .b.c insert $t 0 "0\a0"
+    set x {}
+    lappend x [.b.c index $t @[expr $ax*0],0]
+    lappend x [.b.c index $t @[expr $ax*1],0]
+    lappend x [.b.c index $t @[expr $ax*2],0]
+    lappend x [.b.c index $t @[expr $ax*3],0]
+
+---- Result was:
+0 1 3 3
+---- Result should have been (exact matching):
+0 1 1 2
+==== unixfont-9.1 FAILED
+
+
+
+==== unixfont-9.2 GetControlCharSubst procedure: 4 chars subst FAILED
+==== Contents of test case:
+
+    .b.c dchars $t 0 end
+    .b.c insert $t 0 "0\0010"
+    set x {}
+    lappend x [.b.c index $t @[expr $ax*0],0]
+    lappend x [.b.c index $t @[expr $ax*1],0]
+    lappend x [.b.c index $t @[expr $ax*2],0]
+    lappend x [.b.c index $t @[expr $ax*3],0]
+    lappend x [.b.c index $t @[expr $ax*4],0]
+    lappend x [.b.c index $t @[expr $ax*5],0]
+
+---- Result was:
+0 1 3 3 3 3
+---- Result should have been (exact matching):
+0 1 1 1 1 2
+==== unixfont-9.2 FAILED
+
+unixMenu.test
+unixSelect.test
+unixWm.test
+
+
+==== unixWm-8.4 icon windows FAILED
+==== Contents of test case:
+
+    destroy .t
+    destroy .icon
+    toplevel .t -width 100 -height 30
+    wm geom .t +0+0
+    set result [wm iconwindow .t]
+    toplevel .icon -width 50 -height 50 -bg red
+    wm iconwindow .t .icon
+    lappend result [wm iconwindow .t] [wm state .icon]
+    wm iconwindow .t {}
+    lappend result [wm iconwindow .t] [wm state .icon]
+    update
+    lappend result [winfo ismapped .t] [winfo ismapped .icon]
+    wm iconify .t
+    update
+    lappend result [winfo ismapped .t] [winfo ismapped .icon]
+
+---- Result was:
+.icon icon {} withdrawn 1 0 1 0
+---- Result should have been (exact matching):
+.icon icon {} withdrawn 1 0 0 0
+==== unixWm-8.4 FAILED
+
+
+
+==== unixWm-9.3 TkWmMapWindow procedure, iconic windows FAILED
+==== Contents of test case:
+
+    destroy .t
+    toplevel .t -width 100 -height 300 -bg blue
+    wm geom .t +0+0
+    wm iconify .t
+    sleep 500
+    winfo ismapped .t
+
+---- Result was:
+1
+---- Result should have been (exact matching):
+0
+==== unixWm-9.3 FAILED
+
+
+
+==== unixWm-16.3 Tk_WmCmd procedure, "deiconify" option FAILED
+==== Contents of test case:
+
+    wm iconify .t
+    set result {}
+    lappend result [winfo ismapped .t] [wm state .t]
+    wm deiconify .t
+    lappend result [winfo ismapped .t] [wm state .t]
+
+---- Result was:
+1 normal 1 normal
+---- Result should have been (exact matching):
+0 iconic 1 normal
+==== unixWm-16.3 FAILED
+
+
+
+==== unixWm-23.5 Tk_WmCmd procedure, "iconify" option FAILED
+==== Contents of test case:
+
+    destroy .t2
+    toplevel .t2
+    wm geom .t2 +0+0
+    update
+    wm iconify .t2
+    update
+    set result [winfo ismapped .t2]
+    destroy .t2
+    set result
+
+---- Result was:
+1
+---- Result should have been (exact matching):
+0
+==== unixWm-23.5 FAILED
+
+
+
+==== unixWm-23.6 Tk_WmCmd procedure, "iconify" option FAILED
+==== Contents of test case:
+
+    destroy .t2
+    toplevel .t2
+    wm geom .t2 -0+0
+    update
+    set result [winfo ismapped .t2]
+    wm iconify .t2
+    update
+    lappend result [winfo ismapped .t2]
+    destroy .t2
+    set result
+
+---- Result was:
+1 1
+---- Result should have been (exact matching):
+1 0
+==== unixWm-23.6 FAILED
+
+
+
+==== unixWm-42.1 WrapperEventProc procedure, map and unmap events FAILED
+==== Contents of test case:
+
+    destroy .t
+    toplevel .t -width 400 -height 150
+    wm geometry .t +0+0
+    tkwait visibility .t
+    set result {}
+    bind .t <Map> {set x "mapped"}
+    bind .t <Unmap> {set x "unmapped"}
+    set x {no event}
+    wm iconify .t
+    lappend result $x [winfo ismapped .t]
+    set x {no event}
+    wm deiconify .t
+    lappend result $x [winfo ismapped .t]
+
+---- Result was:
+{no event} 1 {no event} 1
+---- Result should have been (exact matching):
+unmapped 0 mapped 1
+==== unixWm-42.1 FAILED
+
+
+
+==== unixWm-45.2 UpdateSizeHints procedure FAILED
+==== Contents of test case:
+
+    destroy .t
+    toplevel .t -width 80 -height 60
+    wm minsize .t 30 40
+    wm maxsize .t 200 500
+    wm geometry .t +0+0
+    tkwait visibility .t
+    set property [testprop [testwrapper .t] WM_NORMAL_HINTS]
+    list [expr [lindex $property 5]] [expr [lindex $property 6]]  [expr [lindex $property 7]] [expr [lindex $property 8]]  [expr [lindex $property 9]] [expr [lindex $property 10]]
+
+---- Result was:
+30 40 200 500 0 0
+---- Result should have been (exact matching):
+30 40 200 500 1 1
+==== unixWm-45.2 FAILED
+
+
+
+==== unixWm-45.4 UpdateSizeHints procedure, not resizable with menu FAILED
+==== Contents of test case:
+
+    destroy .t
+    toplevel .t -width 80 -height 60
+    frame .t.menu -height 23 -width 50
+    testmenubar window .t .t.menu
+    wm resizable .t 0 0
+    wm geometry .t +0+0
+    tkwait visibility .t
+    set property [testprop [testwrapper .t] WM_NORMAL_HINTS]
+    list [winfo height .t]  [expr [lindex $property 5]] [expr [lindex $property 6]]  [expr [lindex $property 7]] [expr [lindex $property 8]]  [expr [lindex $property 9]] [expr [lindex $property 10]]
+
+---- Result was:
+60 80 83 80 83 0 0
+---- Result should have been (exact matching):
+60 80 83 80 83 1 1
+==== unixWm-45.4 FAILED
+
+
+
+==== unixWm-50.1 Tk_CoordsToWindow procedure, finding a toplevel, x-coords FAILED
+==== Contents of test case:
+
+    deleteWindows
+    toplevel .t -width 300 -height 400 -bg green
+    wm geom .t +40+0
+    tkwait visibility .t
+    toplevel .t2 -width 100 -height 80 -bg red
+    wm geom .t2 +140+200
+    tkwait visibility .t2
+    raise .t2
+    set x [winfo rootx .t]
+    set y [winfo rooty .t]
+    list [winfo containing [expr $x - 30] [expr $y + 250]]  [winfo containing [expr $x - 1] [expr $y + 250]]  [winfo containing $x [expr $y + 250]]  [winfo containing [expr $x + 99] [expr $y + 250]]  [winfo containing [expr $x + 100] [expr $y + 250]]  [winfo containing [expr $x + 199] [expr $y + 250]]  [winfo containing [expr $x + 200] [expr $y + 250]]  [winfo containing [expr $x + 220] [expr $y + 250]]
+
+---- Result was:
+{} {} .t .t .t2 .t2 .t .t
+---- Result should have been (exact matching):
+{} {} .t {} .t2 .t2 {} .t
+==== unixWm-50.1 FAILED
+
+
+
+==== unixWm-50.9 Tk_CoordsToWindow procedure, unmapped windows FAILED
+==== Contents of test case:
+
+    destroy .t
+    destroy .t2
+    sleep 500		;# Give window manager time to catch up.
+    toplevel .t -width 200 -height 200 -bg green
+    wm geometry .t +0+0
+    tkwait visibility .t
+    toplevel .t2 -width 200 -height 200 -bg red
+    wm geometry .t2 +0+0
+    tkwait visibility .t2
+    set result [list [winfo containing 100 100]]
+    wm iconify .t2
+    lappend result [winfo containing 100 100]
+
+---- Result was:
+.t2 .t2
+---- Result should have been (exact matching):
+.t2 .t
+==== unixWm-50.9 FAILED
+
+util.test
+visual.test
+visual_bb.test
+winButton.test
+winClipboard.test
+winDialog.test
+winFont.test
+winMenu.test
+winMsgbox.test
+winSend.test
+winWm.test
+
+
+==== winWm-9.2 check wm forget for unmapped parent (#3205464,#2967911) FAILED
+==== Contents of test case:
+
+    pack .t.f.x
+    pack .t.f
+    lappend aid [after 2000 {set ::winwm92 timeout}] [after 100 {
+        wm manage .t.f
+        wm iconify .t
+        lappend aid [after 100 {
+            wm forget .t.f
+            wm deiconify .t
+            lappend aid [after 100 {
+                pack .t.f
+                lappend aid [after 100 {
+		    set ::winwm92 [expr {
+			    [winfo rooty .t.f.x] == 0 ? "failed" : "ok"}]}]
+            }]
+        }]
+    }]
+    vwait ::winwm92
+    foreach id $aid {
+	after cancel $id
+    }
+    set winwm92
+
+---- Result was:
+timeout
+---- Result should have been (exact matching):
+ok
+==== winWm-9.2 FAILED
+
+window.test
+winfo.test
+
+
+==== winfo-9.4 "winfo viewable" command FAILED
+==== Contents of test case:
+
+    wm iconify .
+    winfo viewable .
+
+---- Result was:
+1
+---- Result should have been (exact matching):
+0
+==== winfo-9.4 FAILED
+
+
+
+==== winfo-9.7 "winfo viewable" command FAILED
+==== Contents of test case:
+
+    frame .f1 -width 100 -height 100 -relief raised -bd 2
+    place .f1 -x 0 -y 0
+    frame .f1.f2 -width 50 -height 50 -relief raised -bd 2
+    place .f1.f2 -x 0 -y 0
+    update
+    wm iconify .
+    list [winfo viewable .f1] [winfo viewable .f1.f2]
+
+---- Result was:
+1 1
+---- Result should have been (exact matching):
+0 0
+==== winfo-9.7 FAILED
+
+
+
+==== winfo-13.2 destroying embedded toplevel FAILED
+==== Contents of test case:
+
+    frame .con -container 1
+    pack .con -expand yes -fill both
+    toplevel .emb -use [winfo id .con] -bd 0 -highlightthickness 0
+    button .emb.b
+    pack .emb.b -expand yes -fill both
+    update
+
+    destroy .emb
+    update
+    list embedded [winfo exists .emb.b] container [winfo exists .con]
+
+---- Result was:
+embedded 0 container 0
+---- Result should have been (exact matching):
+embedded 0 container 1
+==== winfo-13.2 FAILED
+
+wm.test
+
+
+==== wm-iconify-3.1 iconify behavior FAILED
+==== Contents of test case:
+
+    toplevel .t2
+    wm geom .t2 -0+0
+    update
+    set result [winfo ismapped .t2]
+    wm iconify .t2
+    update
+    lappend result [winfo ismapped .t2]
+
+---- Result was:
+1 1
+---- Result should have been (exact matching):
+1 0
+==== wm-iconify-3.1 FAILED
+
+
+
+==== wm-stackorder-3.1 unmapped toplevel FAILED
+==== Contents of test case:
+
+    toplevel .t1 ; update
+    toplevel .t2 ; update
+    wm iconify .t1
+    wm stackorder .
+
+---- Result was:
+. .t1 .t2
+---- Result should have been (exact matching):
+. .t2
+==== wm-stackorder-3.1 FAILED
+
+
+
+==== wm-transient-4.1 transient toplevel is withdrawn
+        when mapped if master is iconic FAILED
+==== Contents of test case:
+
+    toplevel .master
+    wm iconify .master
+    update
+    toplevel .subject
+    wm transient .subject .master
+    update
+    list [wm state .subject] [winfo ismapped .subject]
+
+---- Result was:
+normal 1
+---- Result should have been (exact matching):
+withdrawn 0
+==== wm-transient-4.1 FAILED
+
+
+
+==== wm-transient-4.2 already mapped transient toplevel
+        is withdrawn if master is iconic FAILED
+==== Contents of test case:
+
+    toplevel .master
+    raiseDelay
+    wm iconify .master
+    update
+    toplevel .subject
+    update
+    wm transient .subject .master
+    update
+    list [wm state .subject] [winfo ismapped .subject]
+
+---- Result was:
+normal 1
+---- Result should have been (exact matching):
+withdrawn 0
+==== wm-transient-4.2 FAILED
+
+
+
+==== wm-transient-4.3 iconify/deiconify on the master
+        does a withdraw/deiconify on the transient FAILED
+==== Contents of test case:
+
+    toplevel .master
+    toplevel .subject
+    update
+    wm transient .subject .master
+    wm iconify .master
+    update
+    lappend results [wm state .subject] [winfo ismapped .subject]
+    wm deiconify .master
+    update
+    lappend results [wm state .subject] [winfo ismapped .subject]
+
+---- Result was:
+normal 1 normal 1
+---- Result should have been (exact matching):
+withdrawn 0 normal 1
+==== wm-transient-4.3 FAILED
+
+
+
+==== wm-transient-8.1 transient to withdrawn window, Bug 1163496 FAILED
+==== Contents of test case:
+
+    # Verifies that transients stay on top of their masters, even if they were
+    # made transients when those masters were withdrawn.
+    toplevel .t1; wm withdraw  .t1;     update
+    toplevel .t2; wm transient .t2 .t1; update
+    lappend result [winfo ismapped .t1] [winfo ismapped .t2]
+    wm deiconify .t1; update
+    lappend result [winfo ismapped .t1] [winfo ismapped .t2]
+    raise .t1; update
+    lappend result [lsearch -all -inline -glob [wm stackorder .] ".t?"]
+
+---- Result was:
+0 0 1 1 {.t2 .t1}
+---- Result should have been (exact matching):
+0 0 1 1 {.t1 .t2}
+==== wm-transient-8.1 FAILED
+
+
+
+==== wm-state-2.8 state change after map FAILED
+==== Contents of test case:
+
+    toplevel .t
+    update
+    wm state .t iconic
+    wm state .t
+
+---- Result was:
+normal
+---- Result should have been (exact matching):
+iconic
+==== wm-state-2.8 FAILED
+
+
+
+==== wm-state-2.9 state change after map FAILED
+==== Contents of test case:
+
+    toplevel .t
+    update
+    wm iconify .t
+    wm state .t
+
+---- Result was:
+normal
+---- Result should have been (exact matching):
+iconic
+==== wm-state-2.9 FAILED
+
+xmfbox.test
+
+all.tcl:	Total	9375	Passed	8343	Skipped	970	Failed	62
+Sourced 91 Test Files.
+Files with failing tests: canvText.test clrpick.test focus.test font.test pack.test panedwindow.test place.test scrollbar.test textWind.test unixFont.test unixWm.test winWm.test winfo.test wm.test
+Number of tests skipped for each constraint:
+	1	
+    !havePseudocolorVisual
+
+	14	altDisplay
+	2	aqua
+	16	colorsFree
+	10	emptyTest
+	161	fonts
+	2	haveTruecolor24
+	11	knownBug
+	3	macOrWin
+	1	memory
+	131	nonPortable
+	63	nt
+	11	testmetrics
+	7	testwinevent
+	143	textfonts
+	1	userInteraction
+	342	win
+	51	winSend
+
+Tests running in interp:  $(@D)/tktest
+Tests located in:  $(SOURCE_DIR)/tests/ttk
+Tests running in:  $(@D)
+Temporary files stored in $(@D)
+Test files sourced into current interpreter
+Running tests that match:  *
+Skipping test files that match:  l.*.test
+Only running test files that match:  *.test
+checkbutton.test
+combobox.test
+entry.test
+image.test
+labelframe.test
+layout.test
+notebook.test
+panedwindow.test
+progressbar.test
+radiobutton.test
+scrollbar.test
+spinbox.test
+treetags.test
+treeview.test
+ttk.test
+validate.test
+vsapi.test
+
+all.tcl:	Total	461	Passed	444	Skipped	17	Failed	0
+Sourced 17 Test Files.
+Number of tests skipped for each constraint:
+	2	NA
+	4	coreEntry
+	3	coreScrollbar
+	5	nyi
+	3	xpnative

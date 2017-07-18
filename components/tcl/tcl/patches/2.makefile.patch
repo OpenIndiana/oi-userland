@@ -1,19 +1,24 @@
---- tcl8.5.19.orig/unix/Makefile.in	2016-02-08 23:44:53.000000000 +0300
-+++ tcl8.5.19/unix/Makefile.in	2016-05-02 19:11:02.201274959 +0300
+Install the Solaris tcl man pages in sections man3tcl and man1t (instead of
+man3 and mann).
+
+This patch will not be sent upstream.
+
+--- tcl8.6.6/unix/Makefile.in.orig	2017-06-06 13:42:31.781379906 +0000
++++ tcl8.6.6/unix/Makefile.in	2017-06-06 13:46:50.442386833 +0000
 @@ -68,10 +68,10 @@
  MAN1_INSTALL_DIR	= $(MAN_INSTALL_DIR)/man1
  
  # Directory in which to install manual entries for Tcl's C library procedures:
 -MAN3_INSTALL_DIR	= $(MAN_INSTALL_DIR)/man3
-+MAN3_INSTALL_DIR	= $(MAN_INSTALL_DIR)/man3tcl
++MAN3TCL_INSTALL_DIR	= $(MAN_INSTALL_DIR)/man3tcl
  
  # Directory in which to install manual entries for the built-in Tcl commands:
 -MANN_INSTALL_DIR	= $(MAN_INSTALL_DIR)/mann
-+MANN_INSTALL_DIR	= $(MAN_INSTALL_DIR)/man1t
++MAN1T_INSTALL_DIR	= $(MAN_INSTALL_DIR)/man1t
  
  # Path to the html documentation dir:
  HTML_DIR		= @HTML_DIR@
-@@ -263,7 +263,7 @@
+@@ -277,7 +277,7 @@
  
  APP_CC_SWITCHES = $(CC_SWITCHES) @EXTRA_APP_CC_SWITCHES@
  
@@ -22,21 +27,33 @@
  
  DEPEND_SWITCHES	= ${CFLAGS} -I${UNIX_DIR} -I${GENERIC_DIR} \
  ${AC_FLAGS} ${PROTO_FLAGS} ${EXTRA_CFLAGS} @EXTRA_CC_SWITCHES@
-@@ -865,13 +865,13 @@
+@@ -916,7 +916,7 @@
+ 	done;
+ 
+ install-doc: doc
+-	@for i in "$(MAN_INSTALL_DIR)" "$(MAN1_INSTALL_DIR)" "$(MAN3_INSTALL_DIR)" "$(MANN_INSTALL_DIR)" ; \
++	@for i in "$(MAN_INSTALL_DIR)" "$(MAN1_INSTALL_DIR)" "$(MAN3TCL_INSTALL_DIR)" "$(MAN1T_INSTALL_DIR)" ; \
+ 	    do \
+ 	    if [ ! -d "$$i" ] ; then \
+ 		echo "Making directory $$i"; \
+@@ -929,14 +929,14 @@
  	    $(SHELL) $(UNIX_DIR)/installManPage $(MAN_FLAGS) $$i "$(MAN1_INSTALL_DIR)"; \
  	done
  
 -	@echo "Installing and cross-linking C API (.3) docs to $(MAN3_INSTALL_DIR)/";
 -	@for i in $(TOP_DIR)/doc/*.3; do \
-+	@echo "Installing and cross-linking C API (.3tcl) docs to $(MAN3_INSTALL_DIR)/";
+-	    $(SHELL) $(UNIX_DIR)/installManPage $(MAN_FLAGS) $$i "$(MAN3_INSTALL_DIR)"; \
++	@echo "Installing and cross-linking C API (.3tcl) docs to $(MAN3TCL_INSTALL_DIR)/";
 +	@for i in $(TOP_DIR)/doc/*.3tcl; do \
- 	    $(SHELL) $(UNIX_DIR)/installManPage $(MAN_FLAGS) $$i "$(MAN3_INSTALL_DIR)"; \
++	    $(SHELL) $(UNIX_DIR)/installManPage $(MAN_FLAGS) $$i "$(MAN3TCL_INSTALL_DIR)"; \
  	done
  
 -	@echo "Installing and cross-linking command (.n) docs to $(MANN_INSTALL_DIR)/";
 -	@for i in $(TOP_DIR)/doc/*.n; do \
-+	@echo "Installing and cross-linking command (.1t) docs to $(MANN_INSTALL_DIR)/";
+-	    $(SHELL) $(UNIX_DIR)/installManPage $(MAN_FLAGS) $$i "$(MANN_INSTALL_DIR)"; \
++	@echo "Installing and cross-linking command (.1t) docs to $(MAN1T_INSTALL_DIR)/";
 +	@for i in $(TOP_DIR)/doc/*.1t; do \
- 	    $(SHELL) $(UNIX_DIR)/installManPage $(MAN_FLAGS) $$i "$(MANN_INSTALL_DIR)"; \
++	    $(SHELL) $(UNIX_DIR)/installManPage $(MAN_FLAGS) $$i "$(MAN1T_INSTALL_DIR)"; \
  	done
  
+ install-headers:

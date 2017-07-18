@@ -26,13 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
-COMPONENT_VERSION=      8.5.19
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=      8.6.6
+COMPONENT_MINOR_VERSION= $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+/\1.\2/')
 COMPONENT_PROJECT_URL=	http://prdownloads.sourceforge.net/tcl/
 COMPONENT_SRC=          $(COMPONENT_NAME)$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC)-src.tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-core$(COMPONENT_VERSION)-src.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d3f04456da873d17f02efc30734b0300fb6c3b85028d445fe284b83253a6db18
+    sha256:4afa002eac0216bfd05643135ee8c227bac533daf4cee6c38a37e053c4b64696
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libtcl
 COMPONENT_LICENSE=	BSD-like
@@ -55,6 +55,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 #file at the pointed location
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
+CONFIGURE_BINDIR.32 =  $(CONFIGURE_PREFIX)/bin/$(MACH32)
+
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads
@@ -73,7 +75,15 @@ $(PROTOUSRLIBDIR)/tclConfig.sh:		$(INSTALL_32)
 					$(MV) $(PROTOUSRLIBDIR)/tclConfig.sh.new $(PROTOUSRLIBDIR)/tclConfig.sh
 					$(CHMOD) 555 $(PROTOUSRLIBDIR)/tclConfig.sh
 
+# We skip until the beginning (append.test), read until a flaky text
+# (httpold.test), resume with the next (if-old.test), then stop at end time.
+COMPONENT_TEST_TRANSFORMER =    $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/append.test/ {results = 1}; /httpold.test/ {results = 0}; /if-old.test/ {results = 1}; /Tests ended at/ {results = 0}; {if (results) print $0 } '"
+
+PKG_MACROS += COMPONENT_MINOR_VERSION=$(COMPONENT_MINOR_VERSION)
+
 test: 		$(TEST_32_and_64)
 
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
