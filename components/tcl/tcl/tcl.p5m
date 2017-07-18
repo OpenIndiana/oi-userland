@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
@@ -27,267 +27,278 @@ set name=pkg.summary value="Tcl - portable scripting environment"
 set name=pkg.description \
     value="Tcl is a dynamic programming language used in web and desktop applications, networking, administration, testing and many more applications"
 set name=com.oracle.info.description value="the Tcl programming language"
-set name=com.oracle.info.tpno value=9083
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/Other Languages"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2007/317
+set name=org.opensolaris.arc-caseid value=PSARC/2007/317 value=PSARC/2017/157
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=usr/bin/$(MACH64)/tclsh target=tclsh8.5
-file path=usr/bin/$(MACH64)/tclsh8.5
-link path=usr/bin/tclsh target=tclsh8.5
-file path=usr/bin/tclsh8.5
+link path=usr/bin/$(MACH32)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
+file path=usr/bin/$(MACH32)/tclsh$(COMPONENT_MINOR_VERSION)
+link path=usr/bin/$(MACH64)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
+file path=usr/bin/$(MACH64)/tclsh$(COMPONENT_MINOR_VERSION)
+link path=usr/bin/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
+link path=usr/bin/tclsh$(COMPONENT_MINOR_VERSION) \
+    target=$(MACH64)/tclsh$(COMPONENT_MINOR_VERSION)
 file path=usr/include/tcl.h
 file path=usr/include/tclDecls.h
+file path=usr/include/tclOO.h
+file path=usr/include/tclOODecls.h
 file path=usr/include/tclPlatDecls.h
 file path=usr/include/tclTomMath.h
 file path=usr/include/tclTomMathDecls.h
-file path=usr/lib/$(MACH64)/libtcl8.5.so
-file path=usr/lib/$(MACH64)/libtclstub8.5.a
+file path=usr/lib/$(MACH64)/libtcl$(COMPONENT_MINOR_VERSION).so
+link path=usr/lib/$(MACH64)/libtcl8.5.so \
+    target=libtcl$(COMPONENT_MINOR_VERSION).so
+file path=usr/lib/$(MACH64)/libtclstub$(COMPONENT_MINOR_VERSION).a
 file path=usr/lib/$(MACH64)/pkgconfig/tcl.pc
-file path=usr/lib/$(MACH64)/tclConfig.sh
-file path=usr/lib/libtcl8.5.so
-file path=usr/lib/libtclstub8.5.a
+file path=usr/lib/$(MACH64)/tclConfig.sh mode=0555
+file path=usr/lib/$(MACH64)/tclooConfig.sh mode=0555
+file path=usr/lib/libtcl$(COMPONENT_MINOR_VERSION).so
+link path=usr/lib/libtcl8.5.so target=libtcl$(COMPONENT_MINOR_VERSION).so
+file path=usr/lib/libtclstub$(COMPONENT_MINOR_VERSION).a
 file path=usr/lib/pkgconfig/tcl.pc
-file path=usr/lib/tcl8.5/auto.tcl
-file path=usr/lib/tcl8.5/clock.tcl
-file path=usr/lib/tcl8.5/encoding/ascii.enc
-file path=usr/lib/tcl8.5/encoding/big5.enc
-file path=usr/lib/tcl8.5/encoding/cp1250.enc
-file path=usr/lib/tcl8.5/encoding/cp1251.enc
-file path=usr/lib/tcl8.5/encoding/cp1252.enc
-file path=usr/lib/tcl8.5/encoding/cp1253.enc
-file path=usr/lib/tcl8.5/encoding/cp1254.enc
-file path=usr/lib/tcl8.5/encoding/cp1255.enc
-file path=usr/lib/tcl8.5/encoding/cp1256.enc
-file path=usr/lib/tcl8.5/encoding/cp1257.enc
-file path=usr/lib/tcl8.5/encoding/cp1258.enc
-file path=usr/lib/tcl8.5/encoding/cp437.enc
-file path=usr/lib/tcl8.5/encoding/cp737.enc
-file path=usr/lib/tcl8.5/encoding/cp775.enc
-file path=usr/lib/tcl8.5/encoding/cp850.enc
-file path=usr/lib/tcl8.5/encoding/cp852.enc
-file path=usr/lib/tcl8.5/encoding/cp855.enc
-file path=usr/lib/tcl8.5/encoding/cp857.enc
-file path=usr/lib/tcl8.5/encoding/cp860.enc
-file path=usr/lib/tcl8.5/encoding/cp861.enc
-file path=usr/lib/tcl8.5/encoding/cp862.enc
-file path=usr/lib/tcl8.5/encoding/cp863.enc
-file path=usr/lib/tcl8.5/encoding/cp864.enc
-file path=usr/lib/tcl8.5/encoding/cp865.enc
-file path=usr/lib/tcl8.5/encoding/cp866.enc
-file path=usr/lib/tcl8.5/encoding/cp869.enc
-file path=usr/lib/tcl8.5/encoding/cp874.enc
-file path=usr/lib/tcl8.5/encoding/cp932.enc
-file path=usr/lib/tcl8.5/encoding/cp936.enc
-file path=usr/lib/tcl8.5/encoding/cp949.enc
-file path=usr/lib/tcl8.5/encoding/cp950.enc
-file path=usr/lib/tcl8.5/encoding/dingbats.enc
-file path=usr/lib/tcl8.5/encoding/ebcdic.enc
-file path=usr/lib/tcl8.5/encoding/euc-cn.enc
-file path=usr/lib/tcl8.5/encoding/euc-jp.enc
-file path=usr/lib/tcl8.5/encoding/euc-kr.enc
-file path=usr/lib/tcl8.5/encoding/gb12345.enc
-file path=usr/lib/tcl8.5/encoding/gb1988.enc
-file path=usr/lib/tcl8.5/encoding/gb2312-raw.enc
-file path=usr/lib/tcl8.5/encoding/gb2312.enc
-file path=usr/lib/tcl8.5/encoding/iso2022-jp.enc
-file path=usr/lib/tcl8.5/encoding/iso2022-kr.enc
-file path=usr/lib/tcl8.5/encoding/iso2022.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-1.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-10.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-13.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-14.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-15.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-16.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-2.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-3.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-4.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-5.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-6.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-7.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-8.enc
-file path=usr/lib/tcl8.5/encoding/iso8859-9.enc
-file path=usr/lib/tcl8.5/encoding/jis0201.enc
-file path=usr/lib/tcl8.5/encoding/jis0208.enc
-file path=usr/lib/tcl8.5/encoding/jis0212.enc
-file path=usr/lib/tcl8.5/encoding/koi8-r.enc
-file path=usr/lib/tcl8.5/encoding/koi8-u.enc
-file path=usr/lib/tcl8.5/encoding/ksc5601.enc
-file path=usr/lib/tcl8.5/encoding/macCentEuro.enc
-file path=usr/lib/tcl8.5/encoding/macCroatian.enc
-file path=usr/lib/tcl8.5/encoding/macCyrillic.enc
-file path=usr/lib/tcl8.5/encoding/macDingbats.enc
-file path=usr/lib/tcl8.5/encoding/macGreek.enc
-file path=usr/lib/tcl8.5/encoding/macIceland.enc
-file path=usr/lib/tcl8.5/encoding/macJapan.enc
-file path=usr/lib/tcl8.5/encoding/macRoman.enc
-file path=usr/lib/tcl8.5/encoding/macRomania.enc
-file path=usr/lib/tcl8.5/encoding/macThai.enc
-file path=usr/lib/tcl8.5/encoding/macTurkish.enc
-file path=usr/lib/tcl8.5/encoding/macUkraine.enc
-file path=usr/lib/tcl8.5/encoding/shiftjis.enc
-file path=usr/lib/tcl8.5/encoding/symbol.enc
-file path=usr/lib/tcl8.5/encoding/tis-620.enc
-file path=usr/lib/tcl8.5/history.tcl
-file path=usr/lib/tcl8.5/http1.0/http.tcl
-file path=usr/lib/tcl8.5/http1.0/pkgIndex.tcl
-file path=usr/lib/tcl8.5/init.tcl
-file path=usr/lib/tcl8.5/msgs/af.msg
-file path=usr/lib/tcl8.5/msgs/af_za.msg
-file path=usr/lib/tcl8.5/msgs/ar.msg
-file path=usr/lib/tcl8.5/msgs/ar_in.msg
-file path=usr/lib/tcl8.5/msgs/ar_jo.msg
-file path=usr/lib/tcl8.5/msgs/ar_lb.msg
-file path=usr/lib/tcl8.5/msgs/ar_sy.msg
-file path=usr/lib/tcl8.5/msgs/be.msg
-file path=usr/lib/tcl8.5/msgs/bg.msg
-file path=usr/lib/tcl8.5/msgs/bn.msg
-file path=usr/lib/tcl8.5/msgs/bn_in.msg
-file path=usr/lib/tcl8.5/msgs/ca.msg
-file path=usr/lib/tcl8.5/msgs/cs.msg
-file path=usr/lib/tcl8.5/msgs/da.msg
-file path=usr/lib/tcl8.5/msgs/de.msg
-file path=usr/lib/tcl8.5/msgs/de_at.msg
-file path=usr/lib/tcl8.5/msgs/de_be.msg
-file path=usr/lib/tcl8.5/msgs/el.msg
-file path=usr/lib/tcl8.5/msgs/en_au.msg
-file path=usr/lib/tcl8.5/msgs/en_be.msg
-file path=usr/lib/tcl8.5/msgs/en_bw.msg
-file path=usr/lib/tcl8.5/msgs/en_ca.msg
-file path=usr/lib/tcl8.5/msgs/en_gb.msg
-file path=usr/lib/tcl8.5/msgs/en_hk.msg
-file path=usr/lib/tcl8.5/msgs/en_ie.msg
-file path=usr/lib/tcl8.5/msgs/en_in.msg
-file path=usr/lib/tcl8.5/msgs/en_nz.msg
-file path=usr/lib/tcl8.5/msgs/en_ph.msg
-file path=usr/lib/tcl8.5/msgs/en_sg.msg
-file path=usr/lib/tcl8.5/msgs/en_za.msg
-file path=usr/lib/tcl8.5/msgs/en_zw.msg
-file path=usr/lib/tcl8.5/msgs/eo.msg
-file path=usr/lib/tcl8.5/msgs/es.msg
-file path=usr/lib/tcl8.5/msgs/es_ar.msg
-file path=usr/lib/tcl8.5/msgs/es_bo.msg
-file path=usr/lib/tcl8.5/msgs/es_cl.msg
-file path=usr/lib/tcl8.5/msgs/es_co.msg
-file path=usr/lib/tcl8.5/msgs/es_cr.msg
-file path=usr/lib/tcl8.5/msgs/es_do.msg
-file path=usr/lib/tcl8.5/msgs/es_ec.msg
-file path=usr/lib/tcl8.5/msgs/es_gt.msg
-file path=usr/lib/tcl8.5/msgs/es_hn.msg
-file path=usr/lib/tcl8.5/msgs/es_mx.msg
-file path=usr/lib/tcl8.5/msgs/es_ni.msg
-file path=usr/lib/tcl8.5/msgs/es_pa.msg
-file path=usr/lib/tcl8.5/msgs/es_pe.msg
-file path=usr/lib/tcl8.5/msgs/es_pr.msg
-file path=usr/lib/tcl8.5/msgs/es_py.msg
-file path=usr/lib/tcl8.5/msgs/es_sv.msg
-file path=usr/lib/tcl8.5/msgs/es_uy.msg
-file path=usr/lib/tcl8.5/msgs/es_ve.msg
-file path=usr/lib/tcl8.5/msgs/et.msg
-file path=usr/lib/tcl8.5/msgs/eu.msg
-file path=usr/lib/tcl8.5/msgs/eu_es.msg
-file path=usr/lib/tcl8.5/msgs/fa.msg
-file path=usr/lib/tcl8.5/msgs/fa_in.msg
-file path=usr/lib/tcl8.5/msgs/fa_ir.msg
-file path=usr/lib/tcl8.5/msgs/fi.msg
-file path=usr/lib/tcl8.5/msgs/fo.msg
-file path=usr/lib/tcl8.5/msgs/fo_fo.msg
-file path=usr/lib/tcl8.5/msgs/fr.msg
-file path=usr/lib/tcl8.5/msgs/fr_be.msg
-file path=usr/lib/tcl8.5/msgs/fr_ca.msg
-file path=usr/lib/tcl8.5/msgs/fr_ch.msg
-file path=usr/lib/tcl8.5/msgs/ga.msg
-file path=usr/lib/tcl8.5/msgs/ga_ie.msg
-file path=usr/lib/tcl8.5/msgs/gl.msg
-file path=usr/lib/tcl8.5/msgs/gl_es.msg
-file path=usr/lib/tcl8.5/msgs/gv.msg
-file path=usr/lib/tcl8.5/msgs/gv_gb.msg
-file path=usr/lib/tcl8.5/msgs/he.msg
-file path=usr/lib/tcl8.5/msgs/hi.msg
-file path=usr/lib/tcl8.5/msgs/hi_in.msg
-file path=usr/lib/tcl8.5/msgs/hr.msg
-file path=usr/lib/tcl8.5/msgs/hu.msg
-file path=usr/lib/tcl8.5/msgs/id.msg
-file path=usr/lib/tcl8.5/msgs/id_id.msg
-file path=usr/lib/tcl8.5/msgs/is.msg
-file path=usr/lib/tcl8.5/msgs/it.msg
-file path=usr/lib/tcl8.5/msgs/it_ch.msg
-file path=usr/lib/tcl8.5/msgs/ja.msg
-file path=usr/lib/tcl8.5/msgs/kl.msg
-file path=usr/lib/tcl8.5/msgs/kl_gl.msg
-file path=usr/lib/tcl8.5/msgs/ko.msg
-file path=usr/lib/tcl8.5/msgs/ko_kr.msg
-file path=usr/lib/tcl8.5/msgs/kok.msg
-file path=usr/lib/tcl8.5/msgs/kok_in.msg
-file path=usr/lib/tcl8.5/msgs/kw.msg
-file path=usr/lib/tcl8.5/msgs/kw_gb.msg
-file path=usr/lib/tcl8.5/msgs/lt.msg
-file path=usr/lib/tcl8.5/msgs/lv.msg
-file path=usr/lib/tcl8.5/msgs/mk.msg
-file path=usr/lib/tcl8.5/msgs/mr.msg
-file path=usr/lib/tcl8.5/msgs/mr_in.msg
-file path=usr/lib/tcl8.5/msgs/ms.msg
-file path=usr/lib/tcl8.5/msgs/ms_my.msg
-file path=usr/lib/tcl8.5/msgs/mt.msg
-file path=usr/lib/tcl8.5/msgs/nb.msg
-file path=usr/lib/tcl8.5/msgs/nl.msg
-file path=usr/lib/tcl8.5/msgs/nl_be.msg
-file path=usr/lib/tcl8.5/msgs/nn.msg
-file path=usr/lib/tcl8.5/msgs/pl.msg
-file path=usr/lib/tcl8.5/msgs/pt.msg
-file path=usr/lib/tcl8.5/msgs/pt_br.msg
-file path=usr/lib/tcl8.5/msgs/ro.msg
-file path=usr/lib/tcl8.5/msgs/ru.msg
-file path=usr/lib/tcl8.5/msgs/ru_ua.msg
-file path=usr/lib/tcl8.5/msgs/sh.msg
-file path=usr/lib/tcl8.5/msgs/sk.msg
-file path=usr/lib/tcl8.5/msgs/sl.msg
-file path=usr/lib/tcl8.5/msgs/sq.msg
-file path=usr/lib/tcl8.5/msgs/sr.msg
-file path=usr/lib/tcl8.5/msgs/sv.msg
-file path=usr/lib/tcl8.5/msgs/sw.msg
-file path=usr/lib/tcl8.5/msgs/ta.msg
-file path=usr/lib/tcl8.5/msgs/ta_in.msg
-file path=usr/lib/tcl8.5/msgs/te.msg
-file path=usr/lib/tcl8.5/msgs/te_in.msg
-file path=usr/lib/tcl8.5/msgs/th.msg
-file path=usr/lib/tcl8.5/msgs/tr.msg
-file path=usr/lib/tcl8.5/msgs/uk.msg
-file path=usr/lib/tcl8.5/msgs/vi.msg
-file path=usr/lib/tcl8.5/msgs/zh.msg
-file path=usr/lib/tcl8.5/msgs/zh_cn.msg
-file path=usr/lib/tcl8.5/msgs/zh_hk.msg
-file path=usr/lib/tcl8.5/msgs/zh_sg.msg
-file path=usr/lib/tcl8.5/msgs/zh_tw.msg
-file path=usr/lib/tcl8.5/opt0.4/optparse.tcl
-file path=usr/lib/tcl8.5/opt0.4/pkgIndex.tcl
-file path=usr/lib/tcl8.5/package.tcl
-file path=usr/lib/tcl8.5/parray.tcl
-file path=usr/lib/tcl8.5/safe.tcl
-file path=usr/lib/tcl8.5/tclAppInit.c
-file path=usr/lib/tcl8.5/tclIndex
-file path=usr/lib/tcl8.5/tm.tcl
-file path=usr/lib/tcl8.5/word.tcl
-file path=usr/lib/tcl8/8.4/http-2.7.13.tm
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/auto.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/clock.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/ascii.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/big5.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1250.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1251.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1252.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1253.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1254.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1255.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1256.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1257.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1258.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp437.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp737.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp775.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp850.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp852.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp855.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp857.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp860.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp861.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp862.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp863.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp864.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp865.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp866.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp869.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp874.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp932.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp936.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp949.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp950.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/dingbats.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/ebcdic.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/euc-cn.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/euc-jp.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/euc-kr.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/gb12345.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/gb1988.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/gb2312-raw.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/gb2312.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso2022-jp.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso2022-kr.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso2022.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-1.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-10.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-13.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-14.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-15.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-16.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-2.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-3.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-4.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-5.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-6.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-7.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-8.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-9.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/jis0201.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/jis0208.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/jis0212.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/koi8-r.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/koi8-u.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/ksc5601.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macCentEuro.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macCroatian.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macCyrillic.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macDingbats.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macGreek.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macIceland.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macJapan.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macRoman.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macRomania.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macThai.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macTurkish.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/macUkraine.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/shiftjis.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/symbol.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/tis-620.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/history.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/http1.0/http.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/http1.0/pkgIndex.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/init.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/af.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/af_za.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ar.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ar_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ar_jo.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ar_lb.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ar_sy.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/be.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/bg.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/bn.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/bn_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ca.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/cs.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/da.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/de.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/de_at.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/de_be.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/el.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_au.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_be.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_bw.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_ca.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_gb.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_hk.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_ie.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_nz.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_ph.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_sg.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_za.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/en_zw.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/eo.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_ar.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_bo.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_cl.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_co.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_cr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_do.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_ec.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_gt.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_hn.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_mx.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_ni.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_pa.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_pe.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_pr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_py.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_sv.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_uy.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/es_ve.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/et.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/eu.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/eu_es.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fa.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fa_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fa_ir.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fi.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fo.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fo_fo.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fr_be.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fr_ca.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/fr_ch.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ga.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ga_ie.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/gl.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/gl_es.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/gv.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/gv_gb.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/he.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/hi.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/hi_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/hr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/hu.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/id.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/id_id.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/is.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/it.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/it_ch.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ja.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/kl.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/kl_gl.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ko.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ko_kr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/kok.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/kok_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/kw.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/kw_gb.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/lt.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/lv.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/mk.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/mr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/mr_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ms.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ms_my.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/mt.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/nb.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/nl.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/nl_be.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/nn.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/pl.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/pt.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/pt_br.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ro.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ru.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ru_ua.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/sh.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/sk.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/sl.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/sq.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/sr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/sv.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/sw.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ta.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/ta_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/te.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/te_in.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/th.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/tr.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/uk.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/vi.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/zh.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/zh_cn.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/zh_hk.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/zh_sg.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/msgs/zh_tw.msg
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/opt0.4/optparse.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/opt0.4/pkgIndex.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/package.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/parray.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/safe.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/tclAppInit.c
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/tclIndex
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/tm.tcl
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/word.tcl
 file path=usr/lib/tcl8/8.4/platform-1.0.14.tm
 file path=usr/lib/tcl8/8.4/platform/shell-1.1.4.tm
-file path=usr/lib/tcl8/8.5/msgcat-1.5.2.tm
-file path=usr/lib/tcl8/8.5/tcltest-2.3.8.tm
-file path=usr/lib/tclConfig.sh
+file path=usr/lib/tcl8/8.5/msgcat-1.6.0.tm
+file path=usr/lib/tcl8/8.5/tcltest-2.4.0.tm
+file path=usr/lib/tcl8/8.6/http-2.8.9.tm
+file path=usr/lib/tclConfig.sh mode=0555
+file path=usr/lib/tclooConfig.sh mode=0555
 file path=usr/share/man/man1/tclsh.1
-file path=usr/share/man/man1t/SafeBase.1t
 file path=usr/share/man/man1t/Tcl.1t
 file path=usr/share/man/man1t/after.1t
 file path=usr/share/man/man1t/append.1t
 file path=usr/share/man/man1t/apply.1t
+file path=usr/share/man/man1t/argc.1t
+link path=usr/share/man/man1t/argv.1t target=argc.1t
+link path=usr/share/man/man1t/argv0.1t target=argc.1t
 file path=usr/share/man/man1t/array.1t
 file path=usr/share/man/man1t/auto_execok.1t
 link path=usr/share/man/man1t/auto_import.1t target=auto_execok.1t
 link path=usr/share/man/man1t/auto_load.1t target=auto_execok.1t
 link path=usr/share/man/man1t/auto_mkindex.1t target=auto_execok.1t
-link path=usr/share/man/man1t/auto_mkindex_old.1t target=auto_execok.1t
+link path=usr/share/man/man1t/auto_path.1t target=argc.1t
 link path=usr/share/man/man1t/auto_qualify.1t target=auto_execok.1t
 link path=usr/share/man/man1t/auto_reset.1t target=auto_execok.1t
 file path=usr/share/man/man1t/bgerror.1t
@@ -301,11 +312,15 @@ file path=usr/share/man/man1t/clock.1t
 file path=usr/share/man/man1t/close.1t
 file path=usr/share/man/man1t/concat.1t
 file path=usr/share/man/man1t/continue.1t
+file path=usr/share/man/man1t/coroutine.1t
 file path=usr/share/man/man1t/dde.1t
 file path=usr/share/man/man1t/dict.1t
 file path=usr/share/man/man1t/encoding.1t
+link path=usr/share/man/man1t/env.1t target=argc.1t
 file path=usr/share/man/man1t/eof.1t
 file path=usr/share/man/man1t/error.1t
+link path=usr/share/man/man1t/errorCode.1t target=argc.1t
+link path=usr/share/man/man1t/errorInfo.1t target=argc.1t
 file path=usr/share/man/man1t/eval.1t
 file path=usr/share/man/man1t/exec.1t
 file path=usr/share/man/man1t/exit.1t
@@ -336,6 +351,7 @@ file path=usr/share/man/man1t/lindex.1t
 file path=usr/share/man/man1t/linsert.1t
 file path=usr/share/man/man1t/list.1t
 file path=usr/share/man/man1t/llength.1t
+file path=usr/share/man/man1t/lmap.1t
 file path=usr/share/man/man1t/load.1t
 file path=usr/share/man/man1t/lrange.1t
 file path=usr/share/man/man1t/lrepeat.1t
@@ -348,15 +364,23 @@ file path=usr/share/man/man1t/mathfunc.1t
 file path=usr/share/man/man1t/mathop.1t
 file path=usr/share/man/man1t/memory.1t
 file path=usr/share/man/man1t/msgcat.1t
+file path=usr/share/man/man1t/my.1t
 file path=usr/share/man/man1t/namespace.1t
+file path=usr/share/man/man1t/next.1t
+link path=usr/share/man/man1t/nextto.1t target=next.1t
+file path=usr/share/man/man1t/oo_class.1t
+file path=usr/share/man/man1t/oo_copy.1t
+file path=usr/share/man/man1t/oo_define.1t
+link path=usr/share/man/man1t/oo_objdefine.1t target=oo_define.1t
+file path=usr/share/man/man1t/oo_object.1t
 file path=usr/share/man/man1t/open.1t
 file path=usr/share/man/man1t/package.1t
 link path=usr/share/man/man1t/parray.1t target=auto_execok.1t
 file path=usr/share/man/man1t/pid.1t
-file path=usr/share/man/man1t/pkg::create.1t
+file path=usr/share/man/man1t/pkg_create.1t
 file path=usr/share/man/man1t/pkg_mkIndex.1t
 file path=usr/share/man/man1t/platform.1t
-file path=usr/share/man/man1t/platform::shell.1t
+file path=usr/share/man/man1t/platform_shell.1t
 file path=usr/share/man/man1t/proc.1t
 file path=usr/share/man/man1t/puts.1t
 file path=usr/share/man/man1t/pwd.1t
@@ -368,8 +392,10 @@ file path=usr/share/man/man1t/registry.1t
 file path=usr/share/man/man1t/regsub.1t
 file path=usr/share/man/man1t/rename.1t
 file path=usr/share/man/man1t/return.1t
+file path=usr/share/man/man1t/safe.1t
 file path=usr/share/man/man1t/scan.1t
 file path=usr/share/man/man1t/seek.1t
+file path=usr/share/man/man1t/self.1t
 file path=usr/share/man/man1t/set.1t
 file path=usr/share/man/man1t/socket.1t
 file path=usr/share/man/man1t/source.1t
@@ -377,18 +403,34 @@ file path=usr/share/man/man1t/split.1t
 file path=usr/share/man/man1t/string.1t
 file path=usr/share/man/man1t/subst.1t
 file path=usr/share/man/man1t/switch.1t
+file path=usr/share/man/man1t/tailcall.1t
 link path=usr/share/man/man1t/tcl_endOfWord.1t target=auto_execok.1t
 link path=usr/share/man/man1t/tcl_findLibrary.1t target=auto_execok.1t
+link path=usr/share/man/man1t/tcl_interactive.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_library.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_nonwordchars.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_patchLevel.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_pkgPath.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_platform.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_precision.1t target=argc.1t
+file path=usr/share/man/man1t/tcl_prefix.1t
+link path=usr/share/man/man1t/tcl_rcFileName.1t target=argc.1t
 link path=usr/share/man/man1t/tcl_startOfNextWord.1t target=auto_execok.1t
 link path=usr/share/man/man1t/tcl_startOfPreviousWord.1t target=auto_execok.1t
+link path=usr/share/man/man1t/tcl_traceCompile.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_traceExec.1t target=argc.1t
+link path=usr/share/man/man1t/tcl_version.1t target=argc.1t
 link path=usr/share/man/man1t/tcl_wordBreakAfter.1t target=auto_execok.1t
 link path=usr/share/man/man1t/tcl_wordBreakBefore.1t target=auto_execok.1t
+link path=usr/share/man/man1t/tcl_wordchars.1t target=argc.1t
 file path=usr/share/man/man1t/tcltest.1t
-file path=usr/share/man/man1t/tclvars.1t
 file path=usr/share/man/man1t/tell.1t
+file path=usr/share/man/man1t/throw.1t
 file path=usr/share/man/man1t/time.1t
 file path=usr/share/man/man1t/tm.1t
 file path=usr/share/man/man1t/trace.1t
+file path=usr/share/man/man1t/transchan.1t
+file path=usr/share/man/man1t/try.1t
 file path=usr/share/man/man1t/unknown.1t
 file path=usr/share/man/man1t/unload.1t
 file path=usr/share/man/man1t/unset.1t
@@ -398,6 +440,10 @@ file path=usr/share/man/man1t/upvar.1t
 file path=usr/share/man/man1t/variable.1t
 file path=usr/share/man/man1t/vwait.1t
 file path=usr/share/man/man1t/while.1t
+link path=usr/share/man/man1t/yield.1t target=coroutine.1t
+link path=usr/share/man/man1t/yieldto.1t target=coroutine.1t
+file path=usr/share/man/man1t/zlib.1t
+file files/libtcl.3 path=usr/share/man/man3/libtcl.3
 file path=usr/share/man/man3tcl/TCL_MEM_DEBUG.3tcl
 file path=usr/share/man/man3tcl/Tcl_Access.3tcl
 link path=usr/share/man/man3tcl/Tcl_AddErrorInfo.3tcl \
@@ -446,13 +492,17 @@ link path=usr/share/man/man3tcl/Tcl_AttemptAlloc.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/Tcl_AttemptRealloc.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/Tcl_AttemptSetObjLength.3tcl \
     target=Tcl_NewStringObj.3tcl
-file path=usr/share/man/man3tcl/Tcl_BackgroundError.3tcl
+link path=usr/share/man/man3tcl/Tcl_BackgroundError.3tcl \
+    target=Tcl_BackgroundException.3tcl
+file path=usr/share/man/man3tcl/Tcl_BackgroundException.3tcl
 file path=usr/share/man/man3tcl/Tcl_Backslash.3tcl
 link path=usr/share/man/man3tcl/Tcl_BadChannelOption.3tcl \
     target=Tcl_CreateChannel.3tcl
 file path=usr/share/man/man3tcl/Tcl_CallWhenDeleted.3tcl
+file path=usr/share/man/man3tcl/Tcl_CancelEval.3tcl
 link path=usr/share/man/man3tcl/Tcl_CancelIdleCall.3tcl \
     target=Tcl_DoWhenIdle.3tcl
+link path=usr/share/man/man3tcl/Tcl_Canceled.3tcl target=Tcl_CancelEval.3tcl
 link path=usr/share/man/man3tcl/Tcl_ChannelBlockModeProc.3tcl \
     target=Tcl_CreateChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_ChannelBuffered.3tcl \
@@ -490,6 +540,12 @@ link path=usr/share/man/man3tcl/Tcl_ChannelWatchProc.3tcl \
 link path=usr/share/man/man3tcl/Tcl_ChannelWideSeekProc.3tcl \
     target=Tcl_CreateChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_Chdir.3tcl target=Tcl_GetCwd.3tcl
+file path=usr/share/man/man3tcl/Tcl_ClassGetMetadata.3tcl
+file path=usr/share/man/man3tcl/Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_ClassSetDestructor.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_ClassSetMetadata.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
 link path=usr/share/man/man3tcl/Tcl_ClearChannelHandlers.3tcl \
     target=Tcl_CreateChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_Close.3tcl target=Tcl_OpenFileChannel.3tcl
@@ -508,6 +564,8 @@ link path=usr/share/man/man3tcl/Tcl_ConvertElement.3tcl \
     target=Tcl_SplitList.3tcl
 link path=usr/share/man/man3tcl/Tcl_ConvertToType.3tcl \
     target=Tcl_RegisterObjType.3tcl
+link path=usr/share/man/man3tcl/Tcl_CopyObjectInstance.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
 link path=usr/share/man/man3tcl/Tcl_CreateAlias.3tcl target=Tcl_IsSafe.3tcl
 link path=usr/share/man/man3tcl/Tcl_CreateAliasObj.3tcl target=Tcl_IsSafe.3tcl
 file path=usr/share/man/man3tcl/Tcl_CreateChannel.3tcl
@@ -706,6 +764,7 @@ link path=usr/share/man/man3tcl/Tcl_FSRemoveDirectory.3tcl \
 link path=usr/share/man/man3tcl/Tcl_FSRenameFile.3tcl target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_FSSplitPath.3tcl target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_FSStat.3tcl target=Tcl_FSRegister.3tcl
+link path=usr/share/man/man3tcl/Tcl_FSUnloadFile.3tcl target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_FSUnregister.3tcl target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_FSUtime.3tcl target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_Finalize.3tcl target=Tcl_Exit.3tcl
@@ -721,6 +780,7 @@ link path=usr/share/man/man3tcl/Tcl_FindHashEntry.3tcl \
     target=Tcl_InitHashTable.3tcl
 link path=usr/share/man/man3tcl/Tcl_FindNamespace.3tcl \
     target=Tcl_AppendExportList.3tcl
+link path=usr/share/man/man3tcl/Tcl_FindSymbol.3tcl target=Tcl_LoadFile.3tcl
 link path=usr/share/man/man3tcl/Tcl_FirstHashEntry.3tcl \
     target=Tcl_InitHashTable.3tcl
 link path=usr/share/man/man3tcl/Tcl_Flush.3tcl target=Tcl_OpenFileChannel.3tcl
@@ -732,16 +792,24 @@ link path=usr/share/man/man3tcl/Tcl_FreeEncoding.3tcl \
     target=Tcl_GetEncoding.3tcl
 link path=usr/share/man/man3tcl/Tcl_FreeParse.3tcl target=Tcl_ParseCommand.3tcl
 link path=usr/share/man/man3tcl/Tcl_FreeResult.3tcl target=Tcl_SetObjResult.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetAccessTimeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetAlias.3tcl target=Tcl_IsSafe.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetAliasObj.3tcl target=Tcl_IsSafe.3tcl
 file path=usr/share/man/man3tcl/Tcl_GetAssocData.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetBignumFromObj.3tcl \
     target=Tcl_NewIntObj.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetBlockSizeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetBlocksFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetBoolean.3tcl target=Tcl_GetInt.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetBooleanFromObj.3tcl \
     target=Tcl_NewBooleanObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetByteArrayFromObj.3tcl \
     target=Tcl_NewByteArrayObj.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetChangeTimeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetChannel.3tcl \
     target=Tcl_OpenFileChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetChannelBufferSize.3tcl \
@@ -770,6 +838,8 @@ link path=usr/share/man/man3tcl/Tcl_GetChannelType.3tcl \
     target=Tcl_CreateChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetCharLength.3tcl \
     target=Tcl_NewStringObj.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetClassAsObject.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetCommandFromObj.3tcl \
     target=Tcl_CreateObjCommand.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetCommandFullName.3tcl \
@@ -787,6 +857,8 @@ link path=usr/share/man/man3tcl/Tcl_GetCurrentThread.3tcl \
 file path=usr/share/man/man3tcl/Tcl_GetCwd.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetDefaultEncodingDir.3tcl \
     target=Tcl_GetEncoding.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetDeviceTypeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetDouble.3tcl target=Tcl_GetInt.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetDoubleFromObj.3tcl \
     target=Tcl_NewDoubleObj.3tcl
@@ -807,13 +879,23 @@ link path=usr/share/man/man3tcl/Tcl_GetEnsembleMappingDict.3tcl \
     target=Tcl_CreateEnsemble.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetEnsembleNamespace.3tcl \
     target=Tcl_CreateEnsemble.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetEnsembleParameterList.3tcl \
+    target=Tcl_CreateEnsemble.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetEnsembleSubcommandList.3tcl \
     target=Tcl_CreateEnsemble.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetEnsembleUnknownHandler.3tcl \
     target=Tcl_CreateEnsemble.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetErrno.3tcl target=Tcl_SetErrno.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetErrorLine.3tcl \
+    target=Tcl_GetReturnOptions.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetFSDeviceFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetFSInodeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetGlobalNamespace.3tcl \
     target=Tcl_AppendExportList.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetGroupIdFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetHashKey.3tcl \
     target=Tcl_InitHashTable.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetHashValue.3tcl \
@@ -825,11 +907,17 @@ link path=usr/share/man/man3tcl/Tcl_GetIndexFromObjStruct.3tcl \
 file path=usr/share/man/man3tcl/Tcl_GetInt.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetIntFromObj.3tcl target=Tcl_NewIntObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetInterpPath.3tcl target=Tcl_IsSafe.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetLinkCountFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetLongFromObj.3tcl \
     target=Tcl_NewIntObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetMaster.3tcl target=Tcl_IsSafe.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetMathFuncInfo.3tcl \
     target=Tcl_CreateMathFunc.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetModeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetModificationTimeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetNameOfExecutable.3tcl \
     target=Tcl_FindExecutable.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetNamespaceUnknownHandler.3tcl \
@@ -838,6 +926,16 @@ link path=usr/share/man/man3tcl/Tcl_GetObjResult.3tcl \
     target=Tcl_SetObjResult.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetObjType.3tcl \
     target=Tcl_RegisterObjType.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetObjectAsClass.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetObjectCommand.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetObjectFromObj.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetObjectName.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetObjectNamespace.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
 file path=usr/share/man/man3tcl/Tcl_GetOpenFile.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetPathType.3tcl target=Tcl_SplitPath.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetRange.3tcl target=Tcl_NewStringObj.3tcl
@@ -846,9 +944,12 @@ link path=usr/share/man/man3tcl/Tcl_GetRegExpFromObj.3tcl \
 file path=usr/share/man/man3tcl/Tcl_GetReturnOptions.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetServiceMode.3tcl \
     target=Tcl_CreateEventSource.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetSizeFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetSlave.3tcl target=Tcl_IsSafe.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetStackedChannel.3tcl \
     target=Tcl_StackChannel.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetStartupScript.3tcl target=Tcl_Main.3tcl
 file path=usr/share/man/man3tcl/Tcl_GetStdChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetString.3tcl target=Tcl_NewStringObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetStringFromObj.3tcl \
@@ -864,6 +965,8 @@ link path=usr/share/man/man3tcl/Tcl_GetUniChar.3tcl target=Tcl_NewStringObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetUnicode.3tcl target=Tcl_NewStringObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetUnicodeFromObj.3tcl \
     target=Tcl_NewStringObj.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetUserIdFromStat.3tcl \
+    target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetVar.3tcl target=Tcl_SetVar2Ex.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetVar2.3tcl target=Tcl_SetVar2Ex.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetVar2Ex.3tcl target=Tcl_SetVar2Ex.3tcl
@@ -894,6 +997,8 @@ link path=usr/share/man/man3tcl/Tcl_InputBlocked.3tcl \
 link path=usr/share/man/man3tcl/Tcl_InputBuffered.3tcl \
     target=Tcl_OpenFileChannel.3tcl
 file path=usr/share/man/man3tcl/Tcl_Interp.3tcl
+link path=usr/share/man/man3tcl/Tcl_InterpActive.3tcl \
+    target=Tcl_CreateInterp.3tcl
 link path=usr/share/man/man3tcl/Tcl_InterpDeleted.3tcl \
     target=Tcl_CreateInterp.3tcl
 link path=usr/share/man/man3tcl/Tcl_InvalidateStringRep.3tcl \
@@ -956,6 +1061,7 @@ link path=usr/share/man/man3tcl/Tcl_ListObjLength.3tcl \
     target=Tcl_ListObjAppendList.3tcl
 link path=usr/share/man/man3tcl/Tcl_ListObjReplace.3tcl \
     target=Tcl_ListObjAppendList.3tcl
+file path=usr/share/man/man3tcl/Tcl_LoadFile.3tcl
 link path=usr/share/man/man3tcl/Tcl_LogCommandInfo.3tcl \
     target=Tcl_GetReturnOptions.3tcl
 file path=usr/share/man/man3tcl/Tcl_Main.3tcl
@@ -965,22 +1071,51 @@ link path=usr/share/man/man3tcl/Tcl_MakeSafe.3tcl target=Tcl_IsSafe.3tcl
 link path=usr/share/man/man3tcl/Tcl_MakeTcpClientChannel.3tcl \
     target=Tcl_OpenTcpClient.3tcl
 link path=usr/share/man/man3tcl/Tcl_Merge.3tcl target=Tcl_SplitList.3tcl
+link path=usr/share/man/man3tcl/Tcl_MethodDeclarerClass.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_MethodDeclarerObject.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_MethodIsPublic.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_MethodIsType.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_MethodName.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
 link path=usr/share/man/man3tcl/Tcl_MutexFinalize.3tcl \
     target=Tcl_ConditionNotify.3tcl
 link path=usr/share/man/man3tcl/Tcl_MutexLock.3tcl \
     target=Tcl_ConditionNotify.3tcl
 link path=usr/share/man/man3tcl/Tcl_MutexUnlock.3tcl \
     target=Tcl_ConditionNotify.3tcl
+link path=usr/share/man/man3tcl/Tcl_NRAddCallback.3tcl \
+    target=Tcl_NRCreateCommand.3tcl
+link path=usr/share/man/man3tcl/Tcl_NRCallObjProc.3tcl \
+    target=Tcl_NRCreateCommand.3tcl
+link path=usr/share/man/man3tcl/Tcl_NRCmdSwap.3tcl \
+    target=Tcl_NRCreateCommand.3tcl
+file path=usr/share/man/man3tcl/Tcl_NRCreateCommand.3tcl
+link path=usr/share/man/man3tcl/Tcl_NREvalObj.3tcl \
+    target=Tcl_NRCreateCommand.3tcl
+link path=usr/share/man/man3tcl/Tcl_NREvalObjv.3tcl \
+    target=Tcl_NRCreateCommand.3tcl
+link path=usr/share/man/man3tcl/Tcl_NRExprObj.3tcl \
+    target=Tcl_NRCreateCommand.3tcl
 link path=usr/share/man/man3tcl/Tcl_NewBignumObj.3tcl target=Tcl_NewIntObj.3tcl
 file path=usr/share/man/man3tcl/Tcl_NewBooleanObj.3tcl
 file path=usr/share/man/man3tcl/Tcl_NewByteArrayObj.3tcl
 file path=usr/share/man/man3tcl/Tcl_NewDictObj.3tcl
 file path=usr/share/man/man3tcl/Tcl_NewDoubleObj.3tcl
+link path=usr/share/man/man3tcl/Tcl_NewInstanceMethod.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
 file path=usr/share/man/man3tcl/Tcl_NewIntObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_NewListObj.3tcl \
     target=Tcl_ListObjAppendList.3tcl
 link path=usr/share/man/man3tcl/Tcl_NewLongObj.3tcl target=Tcl_NewIntObj.3tcl
+link path=usr/share/man/man3tcl/Tcl_NewMethod.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
 file path=usr/share/man/man3tcl/Tcl_NewObj.3tcl
+link path=usr/share/man/man3tcl/Tcl_NewObjectInstance.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
 file path=usr/share/man/man3tcl/Tcl_NewStringObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_NewUnicodeObj.3tcl \
     target=Tcl_NewStringObj.3tcl
@@ -990,9 +1125,30 @@ link path=usr/share/man/man3tcl/Tcl_NextHashEntry.3tcl \
 link path=usr/share/man/man3tcl/Tcl_NotifyChannel.3tcl \
     target=Tcl_CreateChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_NumUtfChars.3tcl target=Tcl_UniChar.3tcl
+file path=usr/share/man/man3tcl/Tcl_OOInitStubs.3tcl
 link path=usr/share/man/man3tcl/Tcl_ObjGetVar2.3tcl target=Tcl_SetVar2Ex.3tcl
 link path=usr/share/man/man3tcl/Tcl_ObjPrintf.3tcl target=Tcl_NewStringObj.3tcl
 link path=usr/share/man/man3tcl/Tcl_ObjSetVar2.3tcl target=Tcl_SetVar2Ex.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectContextInvokeNext.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectContextIsFiltering.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectContextMethod.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectContextObject.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectContextSkippedArgs.3tcl \
+    target=Tcl_ClassSetConstructor.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectDeleted.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectGetMetadata.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectGetMethodNameMapper.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectSetMetadata.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
+link path=usr/share/man/man3tcl/Tcl_ObjectSetMethodNameMapper.3tcl \
+    target=Tcl_ClassGetMetadata.3tcl
 link path=usr/share/man/man3tcl/Tcl_OpenCommandChannel.3tcl \
     target=Tcl_OpenFileChannel.3tcl
 file path=usr/share/man/man3tcl/Tcl_OpenFileChannel.3tcl
@@ -1003,6 +1159,7 @@ link path=usr/share/man/man3tcl/Tcl_OutputBuffered.3tcl \
     target=Tcl_OpenFileChannel.3tcl
 file path=usr/share/man/man3tcl/Tcl_Panic.3tcl
 link path=usr/share/man/man3tcl/Tcl_PanicVA.3tcl target=Tcl_Panic.3tcl
+file path=usr/share/man/man3tcl/Tcl_ParseArgsObjv.3tcl
 link path=usr/share/man/man3tcl/Tcl_ParseBraces.3tcl \
     target=Tcl_ParseCommand.3tcl
 file path=usr/share/man/man3tcl/Tcl_ParseCommand.3tcl
@@ -1070,6 +1227,8 @@ link path=usr/share/man/man3tcl/Tcl_ServiceAll.3tcl \
     target=Tcl_CreateEventSource.3tcl
 link path=usr/share/man/man3tcl/Tcl_ServiceEvent.3tcl \
     target=Tcl_CreateEventSource.3tcl
+link path=usr/share/man/man3tcl/Tcl_ServiceModeHook.3tcl \
+    target=Tcl_CreateEventSource.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetAssocData.3tcl \
     target=Tcl_GetAssocData.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetBignumObj.3tcl target=Tcl_NewIntObj.3tcl
@@ -1100,6 +1259,8 @@ link path=usr/share/man/man3tcl/Tcl_SetEnsembleFlags.3tcl \
     target=Tcl_CreateEnsemble.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetEnsembleMappingDict.3tcl \
     target=Tcl_CreateEnsemble.3tcl
+link path=usr/share/man/man3tcl/Tcl_SetEnsembleParameterList.3tcl \
+    target=Tcl_CreateEnsemble.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetEnsembleSubcommandList.3tcl \
     target=Tcl_CreateEnsemble.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetEnsembleUnknownHandler.3tcl \
@@ -1108,6 +1269,8 @@ file path=usr/share/man/man3tcl/Tcl_SetErrno.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetErrorCode.3tcl \
     target=Tcl_GetReturnOptions.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetErrorCodeVA.3tcl \
+    target=Tcl_GetReturnOptions.3tcl
+link path=usr/share/man/man3tcl/Tcl_SetErrorLine.3tcl \
     target=Tcl_GetReturnOptions.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetExitProc.3tcl target=Tcl_Exit.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetHashValue.3tcl \
@@ -1121,6 +1284,8 @@ link path=usr/share/man/man3tcl/Tcl_SetMaxBlockTime.3tcl \
     target=Tcl_CreateEventSource.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetNamespaceUnknownHandler.3tcl \
     target=Tcl_AppendExportList.3tcl
+link path=usr/share/man/man3tcl/Tcl_SetNotifier.3tcl \
+    target=Tcl_CreateEventSource.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetObjErrorCode.3tcl \
     target=Tcl_GetReturnOptions.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetObjLength.3tcl \
@@ -1133,6 +1298,7 @@ link path=usr/share/man/man3tcl/Tcl_SetReturnOptions.3tcl \
     target=Tcl_GetReturnOptions.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetServiceMode.3tcl \
     target=Tcl_CreateEventSource.3tcl
+link path=usr/share/man/man3tcl/Tcl_SetStartupScript.3tcl target=Tcl_Main.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetStdChannel.3tcl \
     target=Tcl_GetStdChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_SetStringObj.3tcl \
@@ -1175,6 +1341,8 @@ link path=usr/share/man/man3tcl/Tcl_TraceCommand.3tcl \
     target=Tcl_CommandTraceInfo.3tcl
 file path=usr/share/man/man3tcl/Tcl_TraceVar.3tcl
 link path=usr/share/man/man3tcl/Tcl_TraceVar2.3tcl target=Tcl_TraceVar.3tcl
+link path=usr/share/man/man3tcl/Tcl_TransferResult.3tcl \
+    target=Tcl_SetObjResult.3tcl
 file path=usr/share/man/man3tcl/Tcl_TranslateFileName.3tcl
 link path=usr/share/man/man3tcl/Tcl_TruncateChannel.3tcl \
     target=Tcl_OpenFileChannel.3tcl
@@ -1272,12 +1440,27 @@ link path=usr/share/man/man3tcl/Tcl_WriteObj.3tcl \
 link path=usr/share/man/man3tcl/Tcl_WriteRaw.3tcl \
     target=Tcl_OpenFileChannel.3tcl
 file path=usr/share/man/man3tcl/Tcl_WrongNumArgs.3tcl
+file path=usr/share/man/man3tcl/Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibCRC32.3tcl target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibDeflate.3tcl target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibInflate.3tcl target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibStreamChecksum.3tcl \
+    target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibStreamClose.3tcl \
+    target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibStreamEof.3tcl \
+    target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibStreamGet.3tcl \
+    target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibStreamGetCommandName.3tcl \
+    target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibStreamInit.3tcl \
+    target=Tcl_ZlibAdler32.3tcl
+link path=usr/share/man/man3tcl/Tcl_ZlibStreamPut.3tcl \
+    target=Tcl_ZlibAdler32.3tcl
 link path=usr/share/man/man3tcl/attemptckalloc.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/attemptckrealloc.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/ckalloc.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/ckfree.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/ckrealloc.3tcl target=Tcl_Alloc.3tcl
-legacy pkg=SUNWTcl desc="Tcl - Tool Command Language" \
-    name="Tcl - Tool Command Language"
-license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
-
+license license.terms license=BSD-like
