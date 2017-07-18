@@ -10,42 +10,51 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgtcl
-
-COMPONENT_VERSION= 	1.9
+COMPONENT_VERSION= 	2.2.0
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
-COMPONENT_SRC= 		Pgtcl-$(PGTCL_COMMIT)
-PGTCL_COMMIT=		3b2b2f8e35ec3ae65d2fc295e6a6ce7afbd5e26d
+COMPONENT_SRC= 		Pgtcl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:841805001cd76bb690d75b45490bbd2be1441dd2912fcd33f11170dd0c0b043a
+  sha256:5c607bef6ea9c2fb87a3c852caab40108663c9dc44233f28834b7f7ab73e0bda
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/flightaware/Pgtcl/archive/$(PGTCL_COMMIT).tar.gz
+  https://github.com/flightaware/Pgtcl/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://flightaware.github.io/Pgtcl/
+COMPONENT_FMRI=	database/postgres/pgtcl
+COMPONENT_CLASSIFICATION= Development/Databases
+COMPONENT_LICENSE= BSD
+COMPONENT_LICENSE_FILE= LICENSE
 
 # Don't depend on host default pg_config
-PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
+PATH=$(PG_BINDIR.$(BITS)):$(PATH.illumos)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=	--enable-threads
+CONFIGURE_OPTIONS.64 +=	--enable-64bit
 
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.5/pgtcl1.9
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.5/pgtcl1.9/$(MACH64)
-#CONFIGURE_OPTIONS.32    += --with-tcl="/usr/lib"
-#CONFIGURE_OPTIONS.64    += --with-tcl="/usr/lib/$(MACH64)"
+CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.6/pgtcl2.2
+CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.6/pgtcl2.2/$(MACH64)
 
+CONFIGURE_OPTIONS.32    += --with-tcl="/usr/lib"
+CONFIGURE_OPTIONS.64    += --with-tcl="/usr/lib/$(MACH64)"
 
 COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) && \
 	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) )  
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
+
+test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += system/library
