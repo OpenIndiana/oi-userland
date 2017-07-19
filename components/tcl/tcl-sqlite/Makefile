@@ -24,15 +24,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= tcl-sqlite
-COMPONENT_VERSION		= 3.13.0
-TARBALL_VERSION			= 3130000
+COMPONENT_VERSION		= 3.19.3
+TARBALL_VERSION			= 3190300
 COMPONENT_SUMMARY		= SQL database engine library - tcl files
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:e2797026b3310c9d08bd472f6d430058c6dd139ff9d4e30289884ccd9744086b
+	sha256:06129c03dced9f87733a8cba408871bd60673b8f93b920ba8d815efab0a06301
 COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2016/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.sqlite.org/
+COMPONENT_FMRI=	runtime/tcl-8/tcl-sqlite-3
+COMPONENT_CLASSIFICATION=	Development/Databases
+COMPONENT_LICENSE=	Public Domain
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
