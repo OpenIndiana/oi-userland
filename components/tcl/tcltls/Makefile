@@ -20,32 +20,39 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcltls
-COMPONENT_VERSION=	1.6
+COMPONENT_MAJOR_VERSION=1.6
+COMPONENT_MINOR_VERSION=7
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_SUMMARY=	TCL bindings for OpenSSL
 COMPONENT_PROJECT_URL=	http://tls.sourceforge.net/
 COMPONENT_SRC_NAME=	tls
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:adec50143a9ad634a671d24f7c7bbf2455487eb5f12d290f41797c32a98b93f3
+    sha256:5119de3e5470359b97a8a00d861c9c48433571ee0167af0a952de66c99d3a3b8
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tls/files/tls/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	library/libtls
+COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_FMRI=		runtime/tcl-8/tcl-openssl
+COMPONENT_LICENSE=	BSD-like
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
 CONFIGURE_ENV.64 +=	MACH64DIR="$(MACH64)"
+CONFIGURE_ENV.32 +=	MACH32DIR="$(MACH32)"
 
 CONFIGURE_OPTIONS +=	--with-tclinclude=/usr/include
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--enable-threads
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -KPIC -xstrconst"
 CONFIGURE_OPTIONS +=	--with-tcl=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS.64 += --enable-64bit
+
+PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 COMPONENT_TEST_TARGETS = test
 
@@ -55,6 +62,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += system/library

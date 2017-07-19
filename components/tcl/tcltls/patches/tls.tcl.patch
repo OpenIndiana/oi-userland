@@ -10,23 +10,12 @@
      catch {cd $dir}
      set res [catch {uplevel #0 [list load [file join [pwd] $dll]]} err]
      catch {cd $cwd}
---- tls1.6/configure	Wed Mar 19 15:37:51 2008
-+++ tls1.6/configure	Mon Jul  4 23:20:00 2011
-@@ -8738,8 +8738,8 @@
- echo "$as_me: WARNING: 64bit mode not supported with GCC on $system" >&2;}
- 		    else
- 			do64bit_ok=yes
--			CFLAGS="$CFLAGS -xarch=amd64"
--			LDFLAGS="$LDFLAGS -xarch=amd64"
-+			CFLAGS="$CFLAGS -m64"
-+			LDFLAGS="$LDFLAGS -m64"
- 		    fi
- 		else
- 		    { echo "$as_me:$LINENO: WARNING: 64bit mode not supported for $arch" >&5
-@@ -10126,7 +10126,12 @@
+--- tls1.6.7/configure.~1~	2015-07-07 20:16:02.000000000 +0000
++++ tls1.6.7/configure	2017-07-19 09:35:20.823716591 +0000
+@@ -10345,7 +10345,12 @@
      eval "LD_SEARCH_FLAGS=\"${LD_SEARCH_FLAGS}\""
      if test -n "${OPENSSL}"; then
- 
+
 -    vars="${LD_SEARCH_FLAGS} -L${SSL_LIB_DIR} -lssl -lcrypto ${GCCPATH} ${GCCLIB}"
 +    if test "${with_ssl_dir+set}" = set; then
 +        vars="${LD_SEARCH_FLAGS} -L${SSL_LIB_DIR} -lssl -lcrypto ${GCCPATH} ${GCCLIB}"
@@ -35,29 +24,29 @@
 +    fi
 +
      for i in $vars; do
- 	if test "${TEA_PLATFORM}" = "windows" -a "$GCC" = "yes" ; then
- 	    # Convert foo.lib to -lfoo for GCC.  No-op if not *.lib
-@@ -10170,6 +10175,11 @@
+	if test "${TEA_PLATFORM}" = "windows" -a "$GCC" = "yes" ; then
+	    # Convert foo.lib to -lfoo for GCC.  No-op if not *.lib
+@@ -10389,6 +10394,11 @@
          else
              TCLSH_PROG="${TCL_BIN_DIR}/tclsh"
          fi
 +        if test "$do64bit_ok" = "yes" ; then
 +            TCLSH_PROG="${TCL_BIN_DIR}/${MACH64DIR}/${TCLSH_PROG}"
 +        else
-+            TCLSH_PROG="${TCL_BIN_DIR}/${TCLSH_PROG}"
++            TCLSH_PROG="${TCL_BIN_DIR}/${MACH32DIR}/${TCLSH_PROG}"
 +        fi
      else
          # tclConfig.sh is in install location
          if test "${TEA_PLATFORM}" = "windows"; then
-@@ -10186,7 +10196,11 @@
+@@ -10405,7 +10415,11 @@
                  break
              fi
          done
--        TCLSH_PROG="${REAL_TCL_BIN_DIR}/${TCLSH_PROG}"
+-        TCLSH_PROG="${REAL_TCL_BIN_DIR}${TCLSH_PROG}"
 +        if test "$do64bit_ok" = "yes" ; then
-+            TCLSH_PROG="${REAL_TCL_BIN_DIR}/${MACH64DIR}/${TCLSH_PROG}"
++            TCLSH_PROG="${REAL_TCL_BIN_DIR}${MACH64DIR}/${TCLSH_PROG}"
 +        else
-+            TCLSH_PROG="${REAL_TCL_BIN_DIR}/${TCLSH_PROG}"
++            TCLSH_PROG="${REAL_TCL_BIN_DIR}${MACH32DIR}/${TCLSH_PROG}"
 +        fi
      fi
      echo "$as_me:$LINENO: result: ${TCLSH_PROG}" >&5
