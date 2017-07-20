@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-bad1
 COMPONENT_VERSION= 1.12.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/bad
@@ -62,8 +63,7 @@ CONFIGURE_OPTIONS += --disable-egl
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
 CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
-# disable openexr until 2.2.0 is merged
-CONFIGURE_OPTIONS += --disable-openexr
+CONFIGURE_OPTIONS += --enable-openexr
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -102,6 +102,7 @@ REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/nettle
+REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/opus
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/video/libass
