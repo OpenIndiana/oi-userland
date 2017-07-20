@@ -27,7 +27,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
-COMPONENT_VERSION=	2.2.1
+COMPONENT_VERSION=	2.2.2
 COMPONENT_FMRI=	library/expat
 COMPONENT_SUMMARY=	libexpat - XML parser library
 COMPONENT_DESCRIPTION=	A fast, non-validating, stream-oriented XML parsing library	
@@ -37,7 +37,7 @@ COMPONENT_SRC_NAME=	expat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1868cadae4c82a018e361e2b2091de103cd820aaacb0d6cfa49bd2cd83978885
+    sha256:4f01ba52400fd1d5f370abf40d213220b0b079b311b2da96f5b236b8a3be4917
 COMPONENT_ARCHIVE_URL= \
     http://downloads.sourceforge.net/project/expat/expat/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	expat license
