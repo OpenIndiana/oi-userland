@@ -12,7 +12,7 @@
 // http://www.illumos.org/license/CDDL.
 //
 //
-// Copyright 2016-2017 by Jim Klimov
+// Copyright 2016-2017 by Jim Klimov, fixes 2017 added by Adam Stevko
 //
 -->
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
@@ -74,7 +74,7 @@
      both for JAVA and the JAR itself... Or keep it simple? -->
         <exec_method type='method'
                    name='start'
-                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{jenkins_war_file} --httpPort=%{httpPort}'
+                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort}'
                    timeout_seconds='240'>
           <method_context>
             <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
@@ -111,6 +111,7 @@
                 session -->
             <propval name='ignore_error' type='astring'
                 value='core,signal' />
+            <propval name='duration' type='astring' value='child' />
         </property_group>
 
         <template>
