@@ -22,14 +22,13 @@ set name=pkg.fmri \
     value=pkg:/developer/jenkins-standalone@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY) - standalone service"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-#set name=info.classification value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-depend fmri=pkg:/developer/jenkins-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+depend type=require \
+    fmri=pkg:/developer/jenkins-common
 depend type=require-any \
     fmri=pkg:/developer/jenkins-core-weekly \
     fmri=pkg:/developer/jenkins-core-lts
