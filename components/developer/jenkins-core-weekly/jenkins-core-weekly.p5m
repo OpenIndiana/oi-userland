@@ -26,7 +26,13 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # This may be JRE8 for the server, though JDK8 also suffices :)
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
 
-file path=usr/share/jenkins/war/weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
+# Note: as we deliver the new WAR file, we tell the appservers to refresh
+# using the known (or expected soon) SMF FMRIs. Depending on integration,
+# this would restart a standalone server or bump and redeploy in container.
+file path=usr/share/jenkins/war/weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
+     refresh_fmri=svc:/network/http:jenkins \
+     refresh_fmri=svc:/network/http:jenkins-tomcat \
+     refresh_fmri=svc:/network/http:jenkins-payara
 link path=usr/share/jenkins/war/weekly/jenkins.war \
      target=./$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
      mediator=jenkins-core \
