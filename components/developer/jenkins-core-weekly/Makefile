@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
 COMPONENT_FMRI=		developer/jenkins-core-weekly
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://jenkins-ci.org/
+COMPONENT_PROJECT_URL=	https://jenkins.io/changelog/
 COMPONENT_ARCHIVE_URL=\
 	http://mirrors.jenkins-ci.org/war/$(COMPONENT_VERSION)/jenkins.war
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current release, run
