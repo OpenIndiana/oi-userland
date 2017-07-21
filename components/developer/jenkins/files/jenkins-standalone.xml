@@ -74,7 +74,7 @@
      both for JAVA and the JAR itself... Or keep it simple? -->
         <exec_method type='method'
                    name='start'
-                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort}'
+                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --webroot=%{httpd/jenkins_war_dir}'
                    timeout_seconds='240'>
           <method_context>
             <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
@@ -123,6 +123,8 @@
             <stability value='Evolving' />
             <propval name='httpPort' type='count' value='8080' />
             <propval name='jenkins_war_file' type='astring' value='/usr/share/jenkins/war/jenkins.war' />
+            <!-- Directory into which Jetty webserver would unpack the WAR file -->
+            <propval name='jenkins_war_dir' type='astring' value='/var/lib/jenkins/standalone-war' />
         </property_group>
 
         <property_group name='startd' type='framework'>
