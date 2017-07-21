@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		rss-glx
 COMPONENT_VERSION= 	0.91
 HUMAN_VERSION=		0.9.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	XScreenSaver - Really Slick ScreenSaver OpenGL display modules
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/rss-glx/
 COMPONENT_CLASSIFICATION = System/X11
@@ -27,7 +28,6 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/rss-glx/rss-glx/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= desktop/xscreensaver/hacks/rss-glx
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	rss-glx.license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -36,7 +36,7 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = (chmod -R u+r $(SOURCE_DIR)/ && \
 					cp -r $(SOURCE_DIR)/* $(@D))
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_ENV+=	"XGETTEXT=/usr/gnu/bin/xgettext"
 CONFIGURE_ENV+= "GNOME_DATADIR=/usr/lib/xscreensaver/config"
