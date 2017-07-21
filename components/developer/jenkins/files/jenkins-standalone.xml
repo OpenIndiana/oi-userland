@@ -86,8 +86,27 @@
           </method_context>
         </exec_method>
 
+<!-- Note: Jenkins has a CLI and scriptable REST API that can e.g. schedule
+     a graceful exit, after all running jobs are finished (and blocking
+     creation of new executions), or to do an immediate exit. If a wrapper
+     script is made for the SMF methods, use of this should be an option.
+     Otherwise, handling of SIGTERM is also graceful, though abrupt :)
+-->
         <exec_method type='method'
                    name='stop'
+                   exec=':kill -TERM'
+                   timeout_seconds='60'>
+          <method_context>
+            <method_credential user='jenkins' group='jenkins' />
+          </method_context>
+        </exec_method>
+
+<!-- At the bare minimum, we want to restart and redeploy the WAR file and
+     its Jetty container when the service is refreshed (e.g. package update).
+     So we just kill it (if running) and hope SMF restart would do the rest.
+-->
+        <exec_method type='method'
+                   name='refresh'
                    exec=':kill -TERM'
                    timeout_seconds='60'>
           <method_context>
