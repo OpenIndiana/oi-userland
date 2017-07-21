@@ -30,6 +30,17 @@ COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
 
 include $(WS_MAKE_RULES)/ips.mk
 
+clean::
+	$(RM) -r $(BUILD_DIR)
+
+clobber:: clean
+
+build:
+	$(MKDIR) $(BUILD_DIR)
+
+install:
+	$(MKDIR) $(PROTO_DIR)
+
 test: $(NO_TESTS)
 
 # Note: this recipe just defines packages.
