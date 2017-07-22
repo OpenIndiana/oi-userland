@@ -21,11 +21,11 @@ COMPONENT_FMRI=		runtime/nodejs-8
 COMPONENT_SUMMARY=	Evented I/O for V8 JavaScript.
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://nodejs.org
-COMPONENT_VERSION=	8.1.4
+COMPONENT_VERSION=	8.2.1
 COMPONENT_LICENSE=	BSD-like, MIT, Apache
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a83c86445f79749c46fd4f2c4e681a3e5bb51b2bde5dc7aed1dc38e4e242c301
+COMPONENT_ARCHIVE_HASH=	sha256:02c46d8914540eea73d0ad33bf9f371a28aa0dc8c5d740948491fef044ad8c8b
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -33,7 +33,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # Include /usr/sbin for dtrace
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH=$(PATH.illumos)
 
 CONFIG_SHELL =	$(PYTHON)
 
