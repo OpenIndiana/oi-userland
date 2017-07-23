@@ -1,0 +1,65 @@
+--- enlightenment-0.21.8/configure.ac.orig	2017-05-17 22:53:31.000000000 +0000
++++ enlightenment-0.21.8/configure.ac	2017-07-23 17:09:02.223271760 +0000
+@@ -975,6 +975,12 @@
+       UMOUNT="/sbin/umount"
+       EJECT="/usr/sbin/cdcontrol eject"
+       ;;
++   solaris*)
++      HALT="/sbin/init 5"
++      REBOOT="/sbin/init 6"
++      MOUNT="/sbin/mount"
++      UMOUNT="/sbin/umount"
++      ;;
+    *)
+       if test "x${have_systemd_user_session}" = "xyes"; then
+          HALT="/usr/bin/systemctl poweroff"
+--- enlightenment-0.21.8/data/etc/sysactions.conf.in.orig	2016-06-07 23:01:16.000000000 +0000
++++ enlightenment-0.21.8/data/etc/sysactions.conf.in	2017-07-26 12:13:22.301733762 +0000
+@@ -55,27 +55,27 @@
+ # root is allowed to do anything - but it needs to be here explicitly anyway
+ user:     root      allow: *
+ # members of operator, staff and admin groups should be able to do all
+-group:    operator  allow: *
+-group:    staff     allow: *
+-group:    admin     allow: *
+-group:    sys       allow: *
+-group:    wheel     allow: *
+-group:    adm       allow: *
++#group:    operator  allow: *
++#group:    staff     allow: *
++#group:    admin     allow: *
++#group:    sys       allow: *
++#group:    wheel     allow: *
++#group:    adm       allow: *
+ # common "user" groups for "console users" on desktops/laptops
+-group:    dialout   allow: *
+-group:    disk      allow: *
+-group:    adm       allow: *
+-group:    cdrom     allow: *
+-group:    floppy    allow: *
+-group:    audio     allow: *
+-group:    dip       allow: *
+-group:    plugdev   allow: *
+-group:    netdev    allow: *
+-group:    bluetooth allow: *
+-group:    video     allow: *
+-group:    voice     allow: *
+-group:    fax       allow: *
+-group:    tty       allow: *
++#group:    dialout   allow: *
++#group:    disk      allow: *
++#group:    adm       allow: *
++#group:    cdrom     allow: *
++#group:    floppy    allow: *
++#group:    audio     allow: *
++#group:    dip       allow: *
++#group:    plugdev   allow: *
++#group:    netdev    allow: *
++#group:    bluetooth allow: *
++#group:    video     allow: *
++#group:    voice     allow: *
++#group:    fax       allow: *
++#group:    tty       allow: *
+ # put in a list of other users and groups here that are allowed or denied etc.
+ # e.g.
+ # user:     myuser     allow:  *
