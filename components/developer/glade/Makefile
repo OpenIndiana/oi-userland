@@ -9,21 +9,20 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		glade3
-COMPONENT_VERSION=	3.8.5
-COMPONENT_REVISION=	1
+COMPONENT_NAME=		glade
+COMPONENT_VERSION=	3.18.3
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GLADE User Interface Builder for GNOME
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:58a5f6e4df4028230ddecc74c564808b7ec4471b1925058e29304f778b6b2735
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.8/$(COMPONENT_ARCHIVE)
+    sha256:ecdbce46e7fbfecd463be840b94fbf54d83723b3ebe075414cfd225ddab66452
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/ui-designer/glade
 COMPONENT_CLASSIFICATION=	Development/GNOME and GTK+
 COMPONENT_LICENSE_FILE=	COPYING
@@ -33,24 +32,15 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					intltoolize --force --copy &&\
-					aclocal -I m4 &&\
-					automake -c -f -a &&\
-					autoconf )
-
-COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
-COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+# gobject-introspection
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
 build:		$(BUILD_32)
@@ -58,3 +48,12 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
