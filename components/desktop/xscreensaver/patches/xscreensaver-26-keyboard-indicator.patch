@@ -1,5 +1,5 @@
---- driver/lock-Gtk.c.~5~	2017-04-27 21:23:36.284040048 +0300
-+++ driver/lock-Gtk.c	2017-04-27 21:24:01.766618624 +0300
+--- driver/lock-Gtk.c.~5~	2017-07-25 18:12:10.395545202 +0000
++++ driver/lock-Gtk.c	2017-07-25 18:12:10.411672752 +0000
 @@ -61,9 +61,11 @@
  #include <ctype.h>
  #include <X11/Xos.h>
@@ -11,8 +11,8 @@
 +#include <X11/extensions/XKBrules.h>
  
  #include <gconf/gconf-client.h>
- #include <libbonobo.h>
-@@ -90,6 +92,7 @@
+ #include <atk/atkobject.h>
+@@ -88,6 +90,7 @@
    GtkWidget *button;
    GtkWidget *msg_label;
    GtkWidget *pam_message_label;
@@ -20,7 +20,7 @@
  } PasswdDialog;
  
  /*Global info */
-@@ -100,6 +103,55 @@
+@@ -98,6 +101,55 @@
  
  #define FD_TO_PARENT  9
  
@@ -76,7 +76,7 @@
  /* Send a command to the xscreensaver parent daemon
     Arguments:
      - msg - type of message - "input", "raise_wid", etc.
-@@ -179,7 +231,7 @@
+@@ -177,7 +229,7 @@
    GtkWidget *entry;
    AtkObject *atk_entry;
    GtkWidget *title_label, *msg_label, *prompt_label,
@@ -85,7 +85,7 @@
    AtkObject *atk_title_label, *atk_prompt_label;
    GtkWidget *button;
    GtkWidget *image;
-@@ -274,7 +326,7 @@
+@@ -272,7 +324,7 @@
              _("Percent of time you have left to unlock the screen."));
  
    /* text fields */
@@ -94,7 +94,7 @@
    gtk_box_pack_start (GTK_BOX (hbox1), vbox2,
                        TRUE, TRUE, 0);
    /* AT role =filler */
-@@ -368,6 +420,27 @@
+@@ -366,6 +418,27 @@
  
    gtk_box_pack_start (GTK_BOX (vbox2), pam_msg_label, FALSE, FALSE, 0);
  
@@ -122,7 +122,7 @@
    /* date string */
    tm = localtime (&now);
    memset (buf, 0, sizeof (buf));
-@@ -464,6 +537,53 @@
+@@ -462,6 +535,53 @@
  }
  
  static GdkFilterReturn
@@ -176,7 +176,7 @@
  dialog_filter_func (GdkXEvent *xevent, GdkEvent *gevent, gpointer data)
  {
    PasswdDialog *pwd = data;
-@@ -716,6 +836,16 @@
+@@ -709,6 +829,16 @@
      request_atoms (dpy, atom_lists);
    }
  
@@ -193,7 +193,7 @@
    /* bugid 6346056(P1):
       ATOK pallet sometimes appears in screensave/lock-screen mode
    */
-@@ -773,6 +903,7 @@
+@@ -740,6 +870,7 @@
  
    gdk_display_sync (gtk_widget_get_display (pwd->dialog));
  

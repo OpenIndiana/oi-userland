@@ -530,7 +530,7 @@ diff --git driver/lock-Gtk.c driver/lock-Gtk.c
 new file mode 100644
 --- /dev/null
 +++ driver/lock-Gtk.c
-@@ -0,0 +1,955 @@
+@@ -0,0 +1,730 @@
 +/* lock-Gtk.c -- a GTK+ password dialog for xscreensaver
 + * xscreensaver, Copyright (c) 1993-1998 Jamie Zawinski <jwz@jwz.org>
 + *
@@ -599,8 +599,6 @@ new file mode 100644
 +#include <X11/Xmu/WinUtil.h>
 +
 +#include <gconf/gconf-client.h>
-+#include <libbonobo.h>
-+#include <login-helper/Accessibility_LoginHelper.h>
 +#include <atk/atkobject.h>
 +
 +#include "remote.h"
@@ -1171,11 +1169,6 @@ new file mode 100644
 +  int i;
 +
 +  gboolean  at_enable  = FALSE; /* accessibility mode enabled ? */
-+  Bonobo_ServerInfoList *server_list = NULL;
-+  CORBA_Environment ev;
-+  Accessibility_LoginHelper helper;
-+  Accessibility_LoginHelper *helper_list = NULL;
-+  CORBA_boolean safe;
 +  gboolean center_position = TRUE; /* center dialog on screen? */
 +
 +#ifdef ENABLE_NLS
@@ -1240,33 +1233,7 @@ new file mode 100644
 +      if (!modulesptr || modulesptr [0] == '\0')
 +        putenv ("GTK_MODULES=gail:atk-bridge");
 +
-+      CORBA_exception_init (&ev);
-+      if (!bonobo_init (&argc, argv))
-+        {
-+          g_error ("Can't initialize Bonobo");
-+        }
-+
-+      /* bonobo-activation query lists existing instances */
-+      server_list = bonobo_activation_query (
-+        "(repo_ids.has('IDL:Accessibility/LoginHelper:1.0')) AND _active",
-+        NULL, &ev);
-+
-+      if (BONOBO_EX (&ev))
-+        {
-+          bonobo_debug_shutdown ();
-+          g_error ("LoginHelper query failed : %s",
-+                   bonobo_exception_get_text (&ev));
-+          /* not reached (below) because g_error exits */
-+          CORBA_exception_free (&ev);
-+        }
-+
-+      /*
-+       * 6182506: unlock dialog can be obscured by the magnifier window
-+       * if it's always centered, so don't force that if any accessibility
-+       * helpers are present
-+       */
-+      if (server_list && server_list->_length)
-+        center_position = FALSE;
++      center_position = FALSE;
 +    } /* accessibility enabled */
 +
 +  pwd = make_dialog (center_position);
@@ -1281,178 +1248,6 @@ new file mode 100644
 +  gdk_window_add_filter (GET_WINDOW (pwd->dialog), dialog_filter_func, pwd);
 +  write_windowid ("dialog_win", GDK_WINDOW_XID (GET_WINDOW (pwd->dialog)));
 +
-+  if (server_list && server_list->_length)
-+    {
-+      /* debug only
-+      g_message ("%d LoginHelpers are running.",
-+                 server_list ? server_list->_length : 0);
-+      */
-+
-+      helper_list = g_new0 (Accessibility_LoginHelper, server_list->_length);
-+
-+      /* for each instance... */
-+      for (i = 0; i < server_list->_length; i++)
-+        {
-+          Bonobo_Unknown server;
-+          Bonobo_ServerInfo info = server_list->_buffer[i];
-+
-+          server = bonobo_activation_activate_from_id (
-+              info.iid, Bonobo_ACTIVATION_FLAG_EXISTING_ONLY, NULL, &ev);
-+
-+          if (BONOBO_EX (&ev))
-+            {
-+              g_warning ("Error activating server %d: %s", i,
-+                         bonobo_exception_get_text (&ev));
-+              CORBA_exception_free (&ev);
-+              continue;
-+            }
-+          else if (server == CORBA_OBJECT_NIL)
-+            {
-+              g_warning ("Activated server %d is NIL!", i);
-+              continue;
-+            }
-+
-+          bonobo_activate ();
-+
-+          helper = Bonobo_Unknown_queryInterface
-+            (server, "IDL:Accessibility/LoginHelper:1.0", &ev);
-+
-+          if (BONOBO_EX (&ev))
-+            {
-+              g_warning ("Error performing interface query: %s",
-+                         bonobo_exception_get_text (&ev));
-+              CORBA_exception_free (&ev);
-+              continue;
-+            }
-+          else if (helper == CORBA_OBJECT_NIL)
-+            {
-+              g_warning ("Activated an object which advertised LoginHelper but does not implement it!");
-+              continue;
-+            }
-+
-+          helper_list[i] = helper;
-+          bonobo_object_release_unref (server, &ev);
-+
-+          if (helper && !BONOBO_EX (&ev))
-+            {
-+              /* ask the helper to go into safe mode */
-+              safe = Accessibility_LoginHelper_setSafe (helper, TRUE, &ev);
-+              if (BONOBO_EX (&ev))
-+                {
-+                  g_warning ("setSafe(TRUE) failed: %s",
-+                             bonobo_exception_get_text (&ev));
-+                  CORBA_exception_free (&ev);
-+                }
-+
-+              /* get the raise window list (if the program went into safe mode) */
-+              if (safe)
-+                {
-+                  int j;
-+                  gboolean needs_windows_raised = FALSE;
-+                  Accessibility_LoginHelper_DeviceReqList *list;
-+
-+                  g_debug ("safe");
-+
-+                  /* does this helper need to have windows raised? */
-+                  list = Accessibility_LoginHelper_getDeviceReqs (helper, &ev);
-+
-+                  if (BONOBO_EX (&ev))
-+                    {
-+                      g_warning ("Bonobo exception getting Device Requirements: %s",
-+                                 bonobo_exception_get_text (&ev));
-+                      CORBA_exception_free (&ev);
-+                    }
-+                  else
-+                    {
-+                      g_debug ("LoginHelper device requirements: ");
-+                      if (list->_length == 0)
-+                        g_debug (" - None.");
-+
-+                      for (j = 0; j < list->_length; j++)
-+                        {
-+                          switch (list->_buffer[j])
-+                            {
-+                            case Accessibility_LoginHelper_GUI_EVENTS:
-+                              g_debug (" - Needs access to the GUI event subsystem (e.g. Xserver)");
-+                              break;
-+                            case Accessibility_LoginHelper_CORE_KEYBOARD:
-+                              g_debug (" - Needs access to core keyboard device");
-+                              write_to_parent("ungrab_keyboard", "true", FALSE);
-+                              break;
-+                            case Accessibility_LoginHelper_CORE_POINTER:
-+                              g_debug (" - Needs access to core pointer device");
-+                              write_to_parent("ungrab_pointer", "true", FALSE);
-+                              break;
-+                            case Accessibility_LoginHelper_EXT_INPUT:
-+                              g_debug (" - Reads XInput extended input devices");
-+                              break;
-+                            case Accessibility_LoginHelper_POST_WINDOWS:
-+                              g_debug (" - Posts windows");
-+                              needs_windows_raised = TRUE;
-+                              break;
-+                            case Accessibility_LoginHelper_AUDIO_OUT:
-+                              g_debug (" - Writes to audio device");
-+                              break;
-+                            case Accessibility_LoginHelper_AUDIO_IN:
-+                              g_debug (" - Reads from audio device");
-+                              break;
-+                            case Accessibility_LoginHelper_LOCALHOST:
-+                              g_debug (" - Needs LOCALHOST network connection");
-+                              break;
-+                            case Accessibility_LoginHelper_SERIAL_OUT:
-+                              g_debug (" - Needs to write to one or more serial ports");
-+                              break;
-+                            default:
-+                              break;
-+                            }
-+                        }
-+                      CORBA_free (list);
-+                    }
-+
-+                  if (needs_windows_raised)
-+                    {
-+                      Accessibility_LoginHelper_WindowList *windows
-+                        = Accessibility_LoginHelper_getRaiseWindows
-+                        (helper, &ev);
-+
-+                      if (BONOBO_EX (&ev))
-+                        {
-+                          g_warning ("getRaiseWindows failed: %s",
-+                                     bonobo_exception_get_text (&ev));
-+                          CORBA_exception_free (&ev);
-+                        }
-+
-+                      g_debug ("%d windows need raising", windows->_length);
-+                      for (j = 0; j < windows->_length; j++)
-+                        {
-+                          Window wid = windows->_buffer[j].winID;
-+                          g_debug ("Window ID = 0x%lx", wid);
-+                          if (wid)
-+                            write_windowid ("raise_win", wid);
-+                        }
-+                    }
-+                }
-+              else
-+                {
-+                  g_warning ("LoginHelper %d did not go into safe mode", i);
-+                }
-+            }
-+           else
-+            {
-+              if (BONOBO_EX (&ev))
-+                {
-+                  g_warning ("Error activating %s: %s",
-+                             info.iid, bonobo_exception_get_text (&ev));
-+                  CORBA_exception_free (&ev);
-+                }
-+              else
-+                {
-+                  g_warning ("no active instance of %s found", info.iid);
-+                }
-+            }
-+        }
-+    } /* accessibility helpers active */
-+
 +  /* Flush dialog window ids & any messages about login helpers to parent */
 +  write_to_parent(NULL, NULL, TRUE);
 +
@@ -1462,26 +1257,6 @@ new file mode 100644
 +  g_io_add_watch (ioc, G_IO_IN | G_IO_HUP, handle_input, pwd);
 +
 +  gtk_main ();
-+
-+  /* Reset accessibility helpers back to non-safe mode now that we're done */
-+  if (server_list)
-+    {
-+      for (i = 0; i < server_list->_length; i++)
-+        {
-+          helper = helper_list[i];
-+          /* really no need to check the return value this time */
-+          Accessibility_LoginHelper_setSafe (helper, FALSE, &ev);
-+          if (BONOBO_EX (&ev))
-+            {
-+              g_warning ("setSafe(FALSE) failed: %s",
-+                         bonobo_exception_get_text (&ev));
-+              CORBA_exception_free (&ev);
-+            }
-+          CORBA_Object_release (helper, &ev);
-+        }
-+      CORBA_free (server_list);
-+      bonobo_debug_shutdown ();
-+    }
 +
 +  return 0;
 +}

@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
 COMPONENT_VERSION=	5.35
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.jwz.org/xscreensaver/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -32,19 +32,18 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_POST_UNPACK_ACTION=	( cp -r $(COMPONENT_DIR)/files/po-sun/* $(SOURCE_DIR)/po && \
-					cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver && \
+COMPONENT_POST_UNPACK_ACTION=	( cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver && \
 					chmod a+x  $(SOURCE_DIR)/install-sh && \
 					mkdir -p $(SOURCE_DIR)/mesa/GL && \
 					ln -s /usr/include/mesa/*.h $(SOURCE_DIR)/mesa/GL )
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -if )
 
-COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
-			cp -r $(SOURCE_DIR)/* $(@D) && \
-                        cd $(@D) && autoconf
+PATH=$(PATH.gnu)
 
-PATH = $(PATH.gnu)
+COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
+					cp -rpP $(SOURCE_DIR)/* $(@D)
+
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
@@ -53,20 +52,12 @@ CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL -D_FILE_OFF
 LDFLAGS+=	-I$(@D)/mesa/GL 
 
 CONFIGURE_ENV+=	"XGETTEXT=/usr/gnu/bin/xgettext"
-CONFIGURE_ENV+= "GNOME_DATADIR=/usr/lib/xscreensaver/config"
-CONFIGURE_ENV+= "GLADE_DATADIR=/usr/lib/xscreensaver/config"
 
-
-CONFIGURE_OPTIONS+=	--enable-maintainer-mode 
-CONFIGURE_OPTIONS+=	--with-gnome 
-CONFIGURE_OPTIONS+=	--enable-gtk-doc
-CONFIGURE_OPTIONS+=	--with-gtk2=/usr
 CONFIGURE_OPTIONS+=	--with-pixbuf=/usr 
 CONFIGURE_OPTIONS+=	--enable-locking
 CONFIGURE_OPTIONS+=	--with-pam=/usr 
 CONFIGURE_OPTIONS+=	--without-shadow
 CONFIGURE_OPTIONS+=	--without-kerberos 
-CONFIGURE_OPTIONS+=	--with-dpms
 CONFIGURE_OPTIONS+=	--with-xinput-ext
 CONFIGURE_OPTIONS+=	--with-randr-ext
 CONFIGURE_OPTIONS+=	--enable-root-passwd
@@ -80,13 +71,6 @@ CONFIGURE_OPTIONS+=	--with-image-directory=/usr/share/pixmaps/backgrounds
 CONFIGURE_OPTIONS+=	--with-text-file=/etc/motd
 CONFIGURE_OPTIONS+=	--with-x-app-defaults=/usr/share/X11/app-defaults
 
-COMPONENT_POST_CONFIGURE_ACTION+=	( \
-	cd $(@D)/po && \
-	make generate_potfiles_in -o Makefile && \
-	make POTFILES -o Makefile && \
-	make generate_potfiles_in POTFILES xscreensaver.pot -o Makefile &&  \
-	touch stamp-it )
-
 COMPONENT_INSTALL_ENV += MAKEFLAGS=-e install_prefix=$(PROTO_DIR)
 
 ../rss-glx/build/i86/.built:
@@ -99,17 +83,13 @@ install:	$(INSTALL_32) ../rss-glx/build/i86/.built
 	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)/usr/share/X11/app-defaults/XScreenSaver
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += gnome/accessibility/at-spi
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libbonobo
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/orbit2
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
