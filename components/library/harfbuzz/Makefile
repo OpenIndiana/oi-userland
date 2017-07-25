@@ -23,7 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
-COMPONENT_VERSION=      1.4.6
+COMPONENT_VERSION=      1.4.7
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -31,7 +31,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:21a78b81cd20cbffdb04b59ac7edfb410e42141869f637ae1d6778e74928d293
+    sha256:b85f6627425d54f32118308e053b939c63a388de9bf455b3830f68cad406bc6d
 COMPONENT_ARCHIVE_URL=	\
     http://www.freedesktop.org/software/harfbuzz/release/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
