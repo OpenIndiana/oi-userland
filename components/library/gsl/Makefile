@@ -15,11 +15,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           gsl
-COMPONENT_VERSION=        2.3
+COMPONENT_VERSION=        2.4
 COMPONENT_SUMMARY=        GSL - GNU Scientific Library
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:562500b789cd599b3a4f88547a7a3280538ab2ff4939504c8b4ac4ca25feadfb
+COMPONENT_ARCHIVE_HASH=   sha256:4d46d07b946e7b31c19bbf33dda6204d7bedc2f5462a1bae1d4013426cd1ce9b
 COMPONENT_ARCHIVE_URL=    ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           developer/gsl
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -34,6 +34,8 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS 	+=--disable-static
+
+unexport SHELLOPTS
 
 	
 build:		$(BUILD_32_and_64)
