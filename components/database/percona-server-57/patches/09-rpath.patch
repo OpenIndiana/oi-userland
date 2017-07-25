@@ -1,8 +1,8 @@
 Don't be too clever about adding -R/usr/gcc/x.y/lib
 
---- percona-server-5.7.14-8/configure.cmake.1	2016-10-20 20:09:22.782988625 +0300
-+++ percona-server-5.7.14-8/configure.cmake	2016-10-20 20:11:00.568278994 +0300
-@@ -146,55 +146,6 @@
+--- percona-server-5.7.18-15/configure.cmake	2017-07-25 10:52:14.321449641 +0000
++++ percona-server-5.7.18-15/configure.cmake	2017-07-25 10:51:40.284111301 +0000
+@@ -158,56 +158,6 @@
      "${CMAKE_SHARED_LIBRARY_C_FLAGS} -R'\$ORIGIN/../'${INSTALL_LIBDIR} -R${LIBRARY_PATH}")
  ENDMACRO()
  
@@ -55,6 +55,7 @@ Don't be too clever about adding -R/usr/gcc/x.y/lib
 -  ENDIF()
 -ENDIF()
 -
+-
+ # We assume that developer studio runtime libraries are installed.
  IF(CMAKE_SYSTEM_NAME MATCHES "SunOS" AND
-    CMAKE_C_COMPILER_ID MATCHES "SunPro" AND
-    CMAKE_CXX_FLAGS MATCHES "stlport4")
+    CMAKE_CXX_COMPILER_ID STREQUAL "SunPro" AND
