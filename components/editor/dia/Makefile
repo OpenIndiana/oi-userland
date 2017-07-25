@@ -16,25 +16,36 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dia
 COMPONENT_VERSION=        0.97.3
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
+COMPONENT_COMMIT=         b86085dfe2b048a2d37d587adf8ceba6fb8bc43c
 COMPONENT_PROJECT_URL=    https://wiki.gnome.org/Apps/Dia
 COMPONENT_SUMMARY=        Dia Diagram Editor
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_COMMIT)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:22914e48ef48f894bb5143c5efc3d01ab96e0a0cde80de11058d3b4301377d34
-COMPONENT_ARCHIVE_URL=        http://ftp.gnome.org/pub/GNOME/sources/dia/0.97/$(COMPONENT_ARCHIVE)
+    sha256:447b6979829aa5f4989b8ac5c0685b25f8b8ec740e87853af113891b6e9c2738
+COMPONENT_ARCHIVE_URL=        https://github.com/GNOME/$(COMPONENT_NAME)/archive/$(COMPONENT_COMMIT).zip
+COMPONENT_FMRI=	editor/diagram/dia
+COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
+COMPONENT_LICENSE = 	GPLv2
+COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D) && intltoolize --force --copy &&\
+				autoreconf -fi)
+
+# Missing files in build dir for configure without this.
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_SCRIPT =	$(@D)/configure
 
 CONFIGURE_OPTIONS +=        --sysconfdir=/etc
-CONFIGURE_OPTIONS +=        --enable-gnome
+CONFIGURE_OPTIONS +=        --disable-gnome
 CONFIGURE_OPTIONS +=        --with-cairo
 CONFIGURE_OPTIONS +=        --disable-static
 CONFIGURE_OPTIONS +=        --enable-db2html
@@ -51,8 +62,6 @@ REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/libgnome
-REQUIRED_PACKAGES += library/desktop/libgnomeui
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
