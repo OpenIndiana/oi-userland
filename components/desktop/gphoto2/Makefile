@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gphoto2
-COMPONENT_VERSION= 2.4.14
+COMPONENT_VERSION= 2.5.14
 COMPONENT_SUMMARY= Digital camera utility
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8754cdf1ee8eb3ef636c05d052646957d3f087892ed867543ab9180a3bbaa123
+  sha256:9302d02fb472d4936988382b7277ccdc4edaf7ede56c490278912ffd0627699c
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/gphoto/files/gphoto/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://www.gphoto.org
@@ -30,11 +30,18 @@ COMPONENT_FMRI = desktop/gphoto2
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=    $(JPEG_LDFLAGS)
+
+unexport SHELLOPTS
 
 build: $(BUILD_32)
 
@@ -42,3 +49,11 @@ install: $(INSTALL_32)
 
 # test031 fails
 test: $(TEST_32)
+
+REQUIRED_PACKAGES += image/library/libexif
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += library/aalib
+REQUIRED_PACKAGES += library/libgphoto2-2
+REQUIRED_PACKAGES += library/popt
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += system/library
