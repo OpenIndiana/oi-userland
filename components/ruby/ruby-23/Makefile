@@ -26,13 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.3.3
+COMPONENT_VERSION=	2.3.4
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1a4fa8c2885734ba37b97ffdb4a19b8fba0e8982606db02d936e65bac07419dc
+    sha256:341cd9032e9fd17c452ed8562a8d43f7e45bfe05e411d0d7d627751dd82c578c
 
 COMPONENT_ARCHIVE_URL=	\
 	https://cache.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
@@ -41,8 +41,6 @@ COMPONENT_BUGDB=	utility/ruby
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/configure.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -123,9 +121,24 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# 15861 tests, 2240689 assertions, 0 failures, 0 errors, 54 skips
+# 15975 tests, 2239039 assertions, 0 failures, 1 errors, 46 skips
+# RuntimeError: Error in TestGem#test_self_install_in_rescue
 test:	$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/libyaml
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += runtime/ruby-23/ruby-tk
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
