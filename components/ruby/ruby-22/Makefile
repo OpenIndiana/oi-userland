@@ -26,14 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.2.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.2.7
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f86feaa0a578e8da0924ced3ec68b25b50d69fc9a72cc8d919bc3c73f85f87d7
+    sha256:234c8aee6543da9efd67008e6e7ee740d41ed57a52e797f65043c3b5ec3bcb53
 COMPONENT_ARCHIVE_URL=	\
 	https://cache.ruby-lang.org/pub/ruby/2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ruby
@@ -41,8 +40,6 @@ COMPONENT_BUGDB=	utility/ruby
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/configure.mk
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -123,11 +120,24 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# 15973 tests, 2512048 assertions, 26 failures, 1 errors, 44 skips
+# 16208 tests, 2551501 assertions, 26 failures, 0 errors, 44 skips
 # Failed: FTPTest#test_abort, FTPTest#test_status, TestSprintfComb#test_format_float*
-# Error: TestReadline#test_input_metachar_multibyte
 test:	$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/libyaml
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/ruby-18
+REQUIRED_PACKAGES += runtime/ruby-22
+REQUIRED_PACKAGES += runtime/ruby-22/ruby-tk
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
