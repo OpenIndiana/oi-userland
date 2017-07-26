@@ -1,0 +1,21 @@
+--- libgphoto2-2.5.14/libgphoto2_port/configure.ac.1	2017-07-26 13:32:59.260507037 +0000
++++ libgphoto2-2.5.14/libgphoto2_port/configure.ac	2017-07-26 13:33:50.367392635 +0000
+@@ -174,7 +174,7 @@
+ 	]])dnl
+ ],[
+ 	AC_DEFINE([HAVE_ASM_SYMVERS],1,[Define if there is asm .symver support.])
+-	VERSIONMAPLDFLAGS="-Wl,--version-script=\$(srcdir)/libgphoto2_port.ver"
++	VERSIONMAPLDFLAGS="-Wl,-M -Wl,\$(srcdir)/libgphoto2_port.ver"
+ 	AC_MSG_RESULT(yes)
+ ],[
+ 	VERSIONMAPLDFLAGS=""
+--- libgphoto2-2.5.14/libgphoto2_port/libgphoto2_port/libgphoto2_port.ver.1	2017-07-26 13:36:57.281790508 +0000
++++ libgphoto2-2.5.14/libgphoto2_port/libgphoto2_port/libgphoto2_port.ver	2017-07-26 13:43:49.329465627 +0000
+@@ -70,7 +70,6 @@
+ 
+ # These are only supposed to be used by libgphoto2 internally.
+ LIBGPHOTO2_INTERNAL {
+-	gpi_gphoto_port_type_map;
+ 	gpi_enum_to_string;
+ 	gpi_string_to_enum;
+ 	gpi_string_to_flag;
