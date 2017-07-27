@@ -74,7 +74,7 @@
      both for JAVA and the JAR itself... Or keep it simple? -->
         <exec_method type='method'
                    name='start'
-                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --webroot=%{httpd/jenkins_war_dir}'
+                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --httpListenAddress=%{httpd/httpHost} --webroot=%{httpd/jenkins_war_dir}'
                    timeout_seconds='240'>
           <method_context>
             <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
@@ -118,10 +118,16 @@
      https://wiki.jenkins-ci.org/pages/viewpage.action?pageId=73533946
      Parameters not recognized by the WAR are passed to Winstone container:
      http://winstone.sourceforge.net/#commandLine
+     If you plan to shield the Jenkins application server by a reverse proxy
+     like nginx, apache mod_proxy, etc. running in the same zone - consider
+     setting httpHost=127.0.0.1 below. Conversely, to run Jenkins as "the"
+     webserver in this operating environment, note that this SMF service is
+     sufficiently privileged to use httpPort numbers under 1024 (e.g. 80).
 -->
         <property_group name='httpd' type='application'>
             <stability value='Evolving' />
             <propval name='httpPort' type='count' value='8080' />
+            <propval name='httpHost' type='count' value='0.0.0.0' />
             <propval name='jenkins_war_file' type='astring' value='/usr/share/jenkins/war/jenkins.war' />
             <!-- Directory into which Jetty webserver would unpack the WAR file -->
             <propval name='jenkins_war_dir' type='astring' value='/var/lib/jenkins/standalone-war' />
