@@ -60,7 +60,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # JRE should suffice to run the IDE; JDK would be needed to develop for Java
-#depend type=require fmri=pkg:/runtime/java/openjdk8
+# However having JDK installed properly also puts its tools in default PATH
+depend type=require fmri=pkg:/developer/java/openjdk8
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
 
 link path=usr/bin/netbeans \
