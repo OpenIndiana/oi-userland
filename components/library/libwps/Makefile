@@ -18,13 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwps
-COMPONENT_VERSION=	0.4.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.4.7
 COMPONENT_FMRI=     	library/c++/libwps
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwps
@@ -32,7 +31,7 @@ COMPONENT_SUMMARY=      libwps - library for reading Microsoft Works documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:e48a7c2fd20048a0a8eaf69bad972575f8b9f06e7497c787463f127d332fccd0
+  sha256:2f2cab630bceace24f9dbb7d187cd6cd1f4c9f8a7b682c5f7e49c1e2cb58b217
 COMPONENT_ARCHIVE_URL=	\
   http://sourceforge.net/projects/libwps/files/libwps/libwps-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
