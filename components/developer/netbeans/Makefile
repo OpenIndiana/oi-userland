@@ -27,6 +27,9 @@ COMPONENT_PATCH_VERSION=	0
 NETBEANS_RELEASE=	final
 NETBEANS_TIMESTAMP=	201609300101
 
+# The downloadable ZIP contains one top-level subdirectory which we strip
+TARBALL_TOPDIR=	netbeans
+
 # Remote files for initial version do not include trailing ".0", we do
 # Add suffix to initial releases, like "8.2": rename into "8.2.0"
 # but keep subsequent ones intact like "8.2.1"
@@ -89,6 +92,7 @@ COMPONENT_COPY_ACTION = ( $(CLONEY) $(SOURCE_DIR)/ $(@D)/ )
 
 COMPONENT_INSTALL_ENV += NETBEANS_VERSION=$(COMPONENT_VERSION)
 COMPONENT_INSTALL_ENV += NETBEANS_RELEASE=$(NETBEANS_RELEASE)
+COMPONENT_INSTALL_ENV += TARBALL_TOPDIR=$(TARBALL_TOPDIR)
 COMPONENT_INSTALL_ENV += COMPONENT_ARCHIVE=$(SOURCE_DIR)/$(COMPONENT_ARCHIVE)
 
 build: $(BUILD_32)

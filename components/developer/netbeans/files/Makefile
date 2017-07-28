@@ -15,13 +15,18 @@
 
 NETBEANS_VERSION ?= 8.2.0
 NETBEANS_RELEASE ?= final
+TARBALL_TOPDIR ?= netbeans
 all: build
 
 build: 
 
 install: 
-	mkdir -p $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE)
-	mkdir -p $(DESTDIR)/usr/bin
-	unzip -u $(COMPONENT_ARCHIVE) -d $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE)
+	$(RM) -r $(DESTDIR)/usr
+	mkdir -p $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE).tmp
+	unzip -q -u $(COMPONENT_ARCHIVE) -d $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE).tmp
+	cd $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE).tmp && \
+		mv -f $(TARBALL_TOPDIR) $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE)
+	$(RM) -r $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE).tmp
 	ln -rfs $(DESTDIR)/usr/share/netbeans-$(NETBEANS_VERSION)-$(NETBEANS_RELEASE) $(DESTDIR)/usr/share/netbeans
+	mkdir -p $(DESTDIR)/usr/bin
 	ln -rfs $(DESTDIR)/usr/share/netbeans/bin/netbeans $(DESTDIR)/usr/bin/
