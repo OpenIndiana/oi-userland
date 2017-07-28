@@ -1,20 +1,20 @@
---- ./Makefile.am.orig	2016-06-01 03:36:07.046079960 +0200
-+++ ./Makefile.am	2016-06-01 03:36:37.728290264 +0200
-@@ -97,7 +97,7 @@
- 	src/utf8.h \
+--- libxkbcommon-0.8.0/Makefile.am.orig	2018-03-14 21:34:18.363184296 +0000
++++ libxkbcommon-0.8.0/Makefile.am	2018-03-14 21:36:13.207491147 +0000
+@@ -107,7 +107,7 @@
  	src/utils.c \
  	src/utils.h
--libxkbcommon_la_LDFLAGS = -Wl,--version-script=${srcdir}/xkbcommon.map
-+libxkbcommon_la_LDFLAGS = -Wl,-M${srcdir}/xkbcommon.map
+ if HAVE_VERSION_SCRIPT
+-libxkbcommon_la_LDFLAGS = -Wl,--version-script=${top_srcdir}/xkbcommon.map
++libxkbcommon_la_LDFLAGS = -Wl,-M${top_srcdir}/xkbcommon.map
+ endif HAVE_VERSION_SCRIPT
  
  if ENABLE_X11
- pkgconfig_DATA += xkbcommon-x11.pc
-@@ -111,7 +111,7 @@
- libxkbcommon_x11_la_CFLAGS = $(AM_CFLAGS) $(XCB_XKB_CFLAGS)
- libxkbcommon_x11_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/x11
+@@ -123,7 +123,7 @@
+ libxkbcommon_x11_la_CPPFLAGS = $(AM_CPPFLAGS)
  libxkbcommon_x11_la_LIBADD = libxkbcommon.la $(XCB_XKB_LIBS)
--libxkbcommon_x11_la_LDFLAGS = -Wl,--version-script=${srcdir}/xkbcommon-x11.map
-+libxkbcommon_x11_la_LDFLAGS = -Wl,-M${srcdir}/xkbcommon-x11.map
+ if HAVE_VERSION_SCRIPT
+-libxkbcommon_x11_la_LDFLAGS = -Wl,--version-script=${top_srcdir}/xkbcommon-x11.map
++libxkbcommon_x11_la_LDFLAGS = -Wl,-M${top_srcdir}/xkbcommon-x11.map
+ endif HAVE_VERSION_SCRIPT
  
  libxkbcommon_x11_la_SOURCES = \
- 	src/x11/keymap.c \
