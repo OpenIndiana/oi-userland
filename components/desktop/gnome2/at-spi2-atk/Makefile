@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= at-spi2-atk
-COMPONENT_VERSION= 2.18.1
+COMPONENT_VERSION= 2.24.1
 COMPONENT_SUMMARY= Assistive Technology Service Provider Interface
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c4b15f9386d34d464ddad5f6cc85669742c016df87141ceee93513245979c12d
+  sha256:60dc90ac4f74b8ffe96a9363c25208a443b381bacecfefea6de549f20ed6957d
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.18/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= gnome/accessibility/at-spi2-atk
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
