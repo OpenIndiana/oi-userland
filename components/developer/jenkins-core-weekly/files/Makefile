@@ -20,6 +20,7 @@ all: build
 build: 
 
 install: 
+	$(RM) -r $(DESTDIR)/usr
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)
 	cp -f jenkins-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/
