@@ -74,6 +74,7 @@ LINT_FLAGS += -I$(SOURCE_DIR)/include
 ASLR_MODE = $(ASLR_ENABLE)
 
 ENV = /usr/bin/env -i
+CONFIGURE_ENV += UNAME_LEGACY=
 COMPONENT_TEST_ENV += USER=`id -un`
 
 build: $(BUILD_32_and_64)

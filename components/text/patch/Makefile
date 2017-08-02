@@ -40,6 +40,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_ENABLE)
 
 ENV = /usr/bin/env -i
+CONFIGURE_ENV += UNAME_LEGACY=
 
 # common targets
 build:		$(BUILD_32)
