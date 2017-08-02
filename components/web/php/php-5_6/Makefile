@@ -14,10 +14,10 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.6.30
+COMPONENT_VERSION=	5.6.31
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a363185c786432f75e3c7ff956b49c3369c3f6906a6b10459f8d1ddc22f70805
+COMPONENT_ARCHIVE_HASH=	sha256:c464af61240a9b7729fabe0314cdbdd5a000a4f0c9bd201f89f8628732fe4ae4
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL= 	http://uk1.php.net/distributions/$(COMPONENT_ARCHIVE).asc	
 
@@ -26,8 +26,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # Apache Paths
-AP_PREFIX=/usr/apache2/2.2
-AP_SYSCONFDIR=/etc/apache2/2.2
+AP_PREFIX=/usr/apache2/2.4
+AP_SYSCONFDIR=/etc/apache2/2.4
 
 # PHP Paths
 PHP_PREFIX=/usr/php/5.6
@@ -204,4 +204,4 @@ REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/tidy
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += web/php-56/php-cli
-REQUIRED_PACKAGES += web/server/apache-22
+REQUIRED_PACKAGES += web/server/apache-24
