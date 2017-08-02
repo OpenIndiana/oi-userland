@@ -54,6 +54,7 @@ COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 
 # Otherwise tests fail
 ENV = /usr/bin/env -i
+CONFIGURE_ENV += UNAME_LEGACY=
 
 build: $(BUILD_32_and_64)
 
