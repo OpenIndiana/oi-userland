@@ -66,20 +66,6 @@ COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ARGS +=	COMMON_CFLAGS=''
 COMPONENT_TEST_ARGS +=	CFLAGS="$(CFLAGS)"
 
-# We need GNU awk for the following to work; hence the PATH tweak.
-# We then convert BSD-style section numbers in the libarchive man pages to
-# Solaris-style section numbers.
-COMPONENT_PREP_ACTION = \
-	cd $(@D)/doc ; rm -f man/*.[135] ; env PATH=/usr/gnu/bin:$$PATH $(CONFIG_SHELL) update.sh ; \
-	cd $(@D)/libarchive ; \
-	find . -name "*\.[35]" | xargs sed -i '' 's/\(Xr.*\|Dt.*\)3/\13ARCHIVE/' ; \
-	find . -name "*\.[35]" | xargs sed -i '' \
-	-e 's/Xr \(malloc\|getpwuid\|getgrgud\|strerror\|printf\|getpwnam\|getgrnam\) 3ARCHIVE/Xr \13C/' \
-	-e 's/\(Dt.*LIBARCHIVE.*\)3ARCHIVE/\13LIB/' \
-	-e 's/Xr \(libarchive\|archive\) 3ARCHIVE/Xr libarchive 3LIB/';
-
-PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
-
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Needed for "gmake test" to work successfully.
