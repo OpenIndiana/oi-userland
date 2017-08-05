@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 13.0.6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
@@ -104,11 +105,11 @@ REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu
-REQUIRED_PACKAGES += x11/library/glw
 REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxshmfence
 REQUIRED_PACKAGES += x11/library/libxxf86vm
