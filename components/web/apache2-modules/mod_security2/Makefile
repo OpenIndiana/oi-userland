@@ -23,41 +23,23 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
-COMPONENT_VERSION=	2.7.7
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.9.2
 COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
-COMPONENT_SRC_NAME=	modsecurity-apache
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
+COMPONENT_SRC_NAME=	modsecurity
+COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:11e05cfa6b363c2844c6412a40ff16f0021e302152b38870fd1f2f44b204379b
+    sha256:41a8f73476ec891f3a9e8736b98b64ea5c2105f1ce15ea57a1f05b4bf2ffaeb5
 COMPONENT_ARCHIVE_URL= \
     $(COMPONENT_PROJECT_URL)tarball/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
-
-VARIANT_APACHE22 =       $(BUILD_DIR)/apache-22
-VARIANT_APACHE24 =       $(BUILD_DIR)/apache-24
-
-VARIANTS = $(VARIANT_APACHE22) $(VARIANT_APACHE24)
-
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
-
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
-
-$(VARIANT_APACHE22)/$(MACH64)/.configured: BITS=64
-$(VARIANT_APACHE24)/$(MACH64)/.configured:  BITS=64
-
-$(VARIANT_APACHE22)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.2
-$(VARIANT_APACHE24)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.4
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
-APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
+APXS.32=	/usr/apache2/2.4/bin/apxs
+APXS.64=	/usr/apache2/2.4/bin/$(MACH64)/apxs
 
 CONFIGURE_OPTIONS += LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
@@ -66,11 +48,7 @@ CONFIGURE_OPTIONS += --with-apu=`$(APXS.$(BITS)) -q APU_CONFIG`
 
 COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
 
-build: $(BUILD_32_and_64) $(SOURCE_DIR)/modsecurity.conf-recommended-24
-	$(TOUCH) $(BUILD_DIR)
-
-$(SOURCE_DIR)/modsecurity.conf-recommended-24: $(SOURCE_DIR)/.prep
-	$(GSED) -e 's:apache2/2\.2:apache2/2.4:g' $(SOURCE_DIR)/modsecurity.conf-recommended > $@
+build: $(BUILD_32_and_64)
 
 test: $(TEST_32_and_64)
 
@@ -80,5 +58,4 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += web/server/apache-22
 REQUIRED_PACKAGES += web/server/apache-24
