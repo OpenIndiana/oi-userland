@@ -26,12 +26,12 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
-COMPONENT_VERSION=	4.5.7
+COMPONENT_VERSION=	4.5.17
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5d8e7789f6b2c84696bf58da6e6489246722e13a7ed137f7c9b32f8010017250
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/28/a7/de0dd1f4fae5b2ace921042071ae8563ce47dac475b332e288bc1d773e8d/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
+COMPONENT_ARCHIVE_HASH=	sha256:591779c49deeec1852e99ffe43ca1f3b09de19645de656e9b05320383ca8c251
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/c8/d5/c2dc3bab16cc6cf56b7545819be4bc8b647d2a9d2f701fdf38e0c4574b20/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/mod_wsgi/
 COMPONENT_BUGDB=	utility/apache
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -40,7 +40,11 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PYTHON_VERSIONS = 2.7 3.4
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+APACHE_USR_PREFIX=/usr/apache2/2.4
+
+CFLAGS += -D__EXTENSIONS__
+
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -54,7 +58,7 @@ $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.4/.installed:  PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.installed:  PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
@@ -67,6 +71,8 @@ INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 $(BUILD_32): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs --with-python=$(PYTHON.32) 
 $(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
 
+COMPONENT_POST_INSTALL_ACTION = $(TOUCH) $(BUILD_DIR)
+
 # common targets
 build:		$(BUILD_32_and_64)
 
@@ -75,4 +81,4 @@ install:	$(INSTALL_32_and_64)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += web/server/apache-22
+REQUIRED_PACKAGES += web/server/apache-24
