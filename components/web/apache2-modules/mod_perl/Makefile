@@ -24,6 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
 COMPONENT_VERSION=	2.0.10
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://perl.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,7 +40,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+APACHE_USR_PREFIX=/usr/apache2/2.4
 AP_PERL5LIB=$(APACHE_USR_PREFIX)/lib/perl
 AP_PERL5BIN=$(APACHE_USR_PREFIX)/bin
 PERLMAN=$(APACHE_USR_PREFIX)/man
@@ -56,11 +57,13 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 	INSTALLMAN1DIR=$(PERLMAN)/man1 \
 	INSTALLMAN3DIR=$(PERLMAN)/man3 \
 	INSTALLSCRIPT=$(AP_PERL5BIN) \
-	MP_APXS=$(APACHE_USR_PREFIX)/bin/apxs)
+	MP_NO_THREADS=1 \
+	MP_APXS=$(APACHE_USR_PREFIX)/bin/apxs\
+	MP_APR_CONFIG=/usr/apr/bin/apr-1-config) 
 
 COMPONENT_TEST_TARGETS=	test
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32)
 
@@ -75,4 +78,4 @@ REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += web/server/apache-22
+REQUIRED_PACKAGES += web/server/apache-24
