@@ -45,5 +45,4 @@ test: $(NO_TESTS)
 
 # Note: this recipe just defines packages.
 # No real build, no magic tools, no downloads even, should be needed!
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
+# So, no custom REQUIRED_PACKAGES
