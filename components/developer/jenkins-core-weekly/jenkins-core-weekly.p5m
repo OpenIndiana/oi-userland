@@ -29,15 +29,16 @@ depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
 # Note: as we deliver the new WAR file, we tell the appservers to refresh
 # using the known (or expected soon) SMF FMRIs. Depending on integration,
 # this would restart a standalone server or bump and redeploy in container.
+
 file path=usr/share/jenkins/war/weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
-     refresh_fmri=svc:/network/http:jenkins \
-     refresh_fmri=svc:/network/http:jenkins-tomcat \
-     refresh_fmri=svc:/network/http:jenkins-payara
+     refresh_fmri=svc:/network/http:jenkins
+
 link path=usr/share/jenkins/war/weekly/jenkins.war \
      target=./$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
      mediator=jenkins-core \
      mediator-implementation=jenkins-core-weekly \
      mediator-version=$(COMPONENT_VERSION)
+
 link path=usr/share/jenkins/war/jenkins.war \
      target=./weekly/jenkins.war \
      mediator=jenkins-core \
