@@ -13,8 +13,9 @@
 # Copyright 2016-2017 Jim Klimov
 #
 
-JENKINS_VERSION ?= 2.70
-JENKINS_RELEASE ?= weekly
+# component/Makefile should set values similar to the following example:
+#JENKINS_VERSION ?= 2.70
+#JENKINS_RELEASE ?= weekly
 all: build
 
 build: 
@@ -26,6 +27,8 @@ install:
 	    /*) true ;; \
 	    *)  echo "DESTDIR must be set as an absolute path (got '$(DESTDIR)')" >&2 ; exit 1 ;; \
 	 esac
+	@[ -n "$(JENKINS_VERSION)" ] || { echo "JENKINS_VERSION not set" >&2; exit 1; }
+	@[ -n "$(JENKINS_RELEASE)" ] || { echo "JENKINS_RELEASE not set" >&2; exit 1; }
 	$(RM) -r $(DESTDIR)/usr
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)
