@@ -13,9 +13,10 @@
 # Copyright 2016-2017 Jim Klimov
 #
 
-COMPONENT_VERSION ?= 4.1.2.172.0
-PAYARA_RELEASE ?= server
-TARBALL_TOPDIR ?= payara41
+# component/Makefile should set values similar to the following example:
+#COMPONENT_VERSION ?= 4.1.2.172.0
+#PAYARA_RELEASE ?= server
+#TARBALL_TOPDIR ?= payara41
 all: build
 
 build: 
@@ -26,6 +27,15 @@ build:
 # Domain volatile data is moved from /usr to /var though, as it has
 # the most R/W churn; the configs might stay unchanged.
 install: 
+	@case "$(DESTDIR)" in \
+	    "") echo "DESTDIR must be set" >&2 ; exit 1 ;; \
+	    /)  echo "DESTDIR must be set and not system rootfs" >&2 ; exit 1 ;; \
+	    /*) true ;; \
+	    *)  echo "DESTDIR must be set as an absolute path (got '$(DESTDIR)')" >&2 ; exit 1 ;; \
+	 esac
+	@[ -n "$(COMPONENT_VERSION)" ] || { echo "COMPONENT_VERSION not set" >&2; exit 1; }
+	@[ -n "$(PAYARA_RELEASE)" ] || { echo "PAYARA_RELEASE not set" >&2; exit 1; }
+	@[ -n "$(TARBALL_TOPDIR)" ] || { echo "TARBALL_TOPDIR not set" >&2; exit 1; }
 	$(RM) -r $(DESTDIR)/usr $(DESTDIR)/var
 	mkdir -p $(DESTDIR)/usr/share/payara-$(PAYARA_RELEASE)-$(COMPONENT_VERSION).tmp
 	unzip -q -u $(COMPONENT_ARCHIVE) -d $(DESTDIR)/usr/share/payara-$(PAYARA_RELEASE)-$(COMPONENT_VERSION).tmp
