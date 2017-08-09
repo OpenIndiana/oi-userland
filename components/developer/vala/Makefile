@@ -20,37 +20,40 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2017 Andreas Wacknitz
+# Copyright (c) 2017 agrellum@gmail.com
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		vala
-COMPONENT_VERSION=	0.20.1
-COMPONENT_REVISION=	1
-COMPONENT_LICENSE=	LGPL2.1
-COMPONENT_FMRI=		developer/vala
-COMPONENT_SUMMARY=	Vala programming language
-COMPONENT_CLASSIFICATION=	Development/Other Languages
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Vala
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9cb7ecd18a23525e401c204d4d08341c7d911cd5d78078eee10b747ecb45e481
-COMPONENT_ARCHIVE_URL=	http://download.gnome.org/sources/vala/0.20/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=     vala
+COMPONENT_VERSION=  0.36
+COMPONENT_REVISION= 4
+COMPONENT_LICENSE=  LGPL2.1
+COMPONENT_FMRI=     developer/vala
+COMPONENT_SUMMARY=  Vala programming language
+COMPONENT_CLASSIFICATION=   Development/Other Languages
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Vala
+COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).$(COMPONENT_REVISION)
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:e9f23ce711c1a72ce664d10946fbc5953f01b0b7f2a3562e7a01e362d86de059
+COMPONENT_ARCHIVE_URL=  http://download.gnome.org/sources/vala/0.36/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--enable-shared
+PATH=$(PATH.gnu)
+
+CONFIGURE_OPTIONS  +=  --disable-static
+CONFIGURE_OPTIONS  +=  --enable-shared
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:      $(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64)
+install:    $(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
+test:       $(TEST_32_and_64)
 
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
