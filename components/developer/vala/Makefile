@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     vala
 COMPONENT_VERSION=  0.36.4
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_LICENSE=  LGPL2.1
 COMPONENT_FMRI=     developer/vala
 COMPONENT_SUMMARY=  Vala programming language
