@@ -20,6 +20,12 @@ all: build
 build: 
 
 install: 
+	@case "$(DESTDIR)" in \
+	    "") echo "DESTDIR must be set" >&2 ; exit 1 ;; \
+	    /)  echo "DESTDIR must be set and not system rootfs" >&2 ; exit 1 ;; \
+	    /*) true ;; \
+	    *)  echo "DESTDIR must be set as an absolute path (got '$(DESTDIR)')" >&2 ; exit 1 ;; \
+	 esac
 	$(RM) -r $(DESTDIR)/usr
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)
