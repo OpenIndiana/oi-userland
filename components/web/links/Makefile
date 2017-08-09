@@ -23,14 +23,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
-COMPONENT_VERSION=	2.9
+COMPONENT_VERSION=	2.14
+COMPONENT_SUMMARY=	Text based web browser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://links.twibright.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e2d4e193eb3147f0d745e28d37d510edb22697707e329cbe361bb79037bae332
+  sha256:22fa8dcb5a60b8ffd611de31ebd4c79edce472637a3554bab401795da91d4387
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/links
+COMPONENT_CLASSIFICATION= Applications/Internet
+COMPONENT_FMRI=	web/browser/links
+COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -40,15 +43,18 @@ include $(WS_MAKE_RULES)/ips.mk
 # new configure for it to configure and build properly.
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf)
 
-ASLR_MODE = $(ASLR_ENABLE)
+CONFIGURE_BINDIR.64=	$(CONFIGURE_BINDIR.32)
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:	$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/libevent
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
