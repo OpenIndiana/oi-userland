@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2017 Andreas Wacknitz
-# Copyright (c) 2017 agrellum@gmail.com
+# Copyright (c) 2017 Jason Martin
 #
 include ../../../make-rules/shared-macros.mk
 
