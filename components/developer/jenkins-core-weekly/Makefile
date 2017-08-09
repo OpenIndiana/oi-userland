@@ -27,6 +27,13 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		jenkins
 COMPONENT_MAJOR_VERSION=	2
 COMPONENT_MINOR_VERSION=	73
+# See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
+#   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
+# or for LTS
+#   wget -O - http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256
+COMPONENT_ARCHIVE_HASH=	\
+	sha256:68db613f303b2374758b562448e1d571fb3c7c98aa2f6de0aa540ff5e51638e1
+
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
 COMPONENT_FMRI=		developer/jenkins-core-weekly
@@ -35,12 +42,6 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://jenkins.io/changelog/
 COMPONENT_ARCHIVE_URL=\
 	http://mirrors.jenkins-ci.org/war/$(COMPONENT_VERSION)/jenkins.war
-# See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
-#   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
-# or for LTS
-#   wget -O - http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:68db613f303b2374758b562448e1d571fb3c7c98aa2f6de0aa540ff5e51638e1
 COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE= jenkins.license
 COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
