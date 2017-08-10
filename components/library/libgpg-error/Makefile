@@ -21,29 +21,36 @@
 # Copyright 2013 Colin Ellis. All rights reserved.
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
-COMPONENT_VERSION=	1.19
+COMPONENT_VERSION=	1.27
+COMPONENT_SUMMARY=	GnuPG Error Library
 COMPONENT_PROJECT_URL=	http://www.gnupg.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:53120e1333d5c5d28d87ff2854e9e98719c8e214152f17ad5291704d25c4978b
+    sha256:4f93aac6fecb7da2b92871bb9ee33032be6a87b174f54abf8ddf0911a22d29d2
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	library/security/libgpg-error
+COMPONENT_CLASSIFICATION=	System/Security
+COMPONENT_LICENSE=	LGPLv2.1
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-shared
+CONFIGURE_OPTIONS  +=           --enable-threads=posix
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+test:	$(TEST_32_and_64)
 
-include ../../make-rules/depend.mk
-
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

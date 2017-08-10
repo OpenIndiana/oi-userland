@@ -1,0 +1,20 @@
+--- libgpg-error-1.27/configure.ac.1	2017-08-08 17:50:44.250366489 +0000
++++ libgpg-error-1.27/configure.ac	2017-08-08 17:52:25.817211841 +0000
+@@ -196,13 +196,13 @@
+ ]])
+ 
+ # Find a 64 bit integer type to be used instead of off_t.  We prefer
+-# the standard integer types over int64_t and finally try long long.
+-if test "$ac_cv_sizeof_int" = "8"; then
++# int64_t as it's guaranteed to have the same size for both 32/64-bit archs
++if test "$ac_cv_header_stdint_h" = yes; then
++   replacement_for_off_t="int64_t"
++elif test "$ac_cv_sizeof_int" = "8"; then
+    replacement_for_off_t="int"
+ elif test "$ac_cv_sizeof_long" = "8"; then
+    replacement_for_off_t="long"
+-elif test "$ac_cv_header_stdint_h" = yes; then
+-   replacement_for_off_t="int64_t"
+ elif test "$ac_cv_sizeof_long_long" = "8"; then
+    replacement_for_off_t="long long"
+ else
