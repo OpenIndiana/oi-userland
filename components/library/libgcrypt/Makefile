@@ -24,15 +24,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
-COMPONENT_VERSION=	1.5.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.8.0
 COMPONENT_FMRI=		system/library/security/libgcrypt
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:301826b5e521c867056fd630aad6f0a60e176d18a017da6bc24b1695df3abe79
+    sha256:23e49697b87cc4173b03b4757c8df4314e3149058fa18bdc4f82098f103d891b
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Security
 COMPONENT_LICENSE=	LGPL
@@ -41,11 +40,34 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# GCC 5.3 (and 4.9) with the default optimization -O3 (set via shared-macros.mk),
+# inlines _gcry_cipher_ocb_get_l, double_block_cpy and double_block to
+# _gcry_cipher_ocb_authenticate on amd64. Due to a bug in GCC, the
+# inlined code is incorrect and the library produces data with errors
+# (manifested through failed 'basic' test results).  The optimization is
+# lowered down on the affected platform.  For more information see:
+# https://lists.gnupg.org/pipermail/gcrypt-devel/2016-April/003858.html
+gcc_OPT.i386.64 = -O2
+
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
+CONFIGURE_OPTIONS  +=		--sysconfdir=/etc
 
-CONFIGURE_OPTIONS	+=	--with-gnu-ld
-CONFIGURE_OPTIONS.64	+=	--disable-asm
+# We disalbe asm for 64-bit arch, as this code doesn't compile.
+# But libgcrypt still tries to use asm functions.
+# gcry_cv_gcc_amd64_platform_as_ok switch allows us to prevent this
+CONFIGURE_OPTIONS.64  +=	--disable-asm
+CONFIGURE_ENV.64 +=		gcry_cv_gcc_amd64_platform_as_ok=no
+
+# some tests fail as gcry_control (GCRYCTL_INIT_SECMEM,...)
+# requires root (or proc_lock_memory) privileges
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n -e "/PASS/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/All/p" '
 
 build:		$(BUILD_32_and_64)
 
