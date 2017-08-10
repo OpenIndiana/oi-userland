@@ -1,0 +1,58 @@
+This patch fixes gen-posix-lock-obj used during library build process to
+generate gpg-error.h.  libgpg-error package delivers the gpg-error.h
+header file to the target system. When built on Solaris, the updated
+part of the code generates definition of the gpgrt_lock_t so that it
+respects the required alignment on SPARCv7 (32bit).
+
+The fix can be tested using 'gmake test' in the libgcrypt component. If
+not applied, the t-lock and random tests fail consistently. For more
+information see: https://bugs.gnupg.org/gnupg/issue2378
+
+The fix was created internally and offered for integration to the
+upstream.  It has not been accepted yet.
+
+--- ./src/gen-posix-lock-obj.c.orig	Mon Jun 13 08:07:53 2016
++++ ./src/gen-posix-lock-obj.c	Mon Jun 13 08:08:40 2016
+@@ -42,21 +42,8 @@
+ #endif
+ #endif
+ 
+-/* Special requirements for certain platforms.  */
+-# define USE_LONG_DOUBLE_FOR_ALIGNMENT 0
+-#if defined(__sun) && !defined (__LP64__) && !defined(_LP64)
+-/* Solaris on 32-bit architecture.  */
+-# define USE_DOUBLE_FOR_ALIGNMENT 1
+-#else
+-# define USE_DOUBLE_FOR_ALIGNMENT 0
+-#endif
+-#if defined(__hppa__)
+-# define USE_16BYTE_ALIGNMENT 1
+-#else
+-# define USE_16BYTE_ALIGNMENT 0
+-#endif
+ 
+-#if USE_16BYTE_ALIGNMENT && !HAVE_GCC_ATTRIBUTE_ALIGNED
++#if defined(__hppa__) && !HAVE_GCC_ATTRIBUTE_ALIGNED
+ # error compiler is not able to enforce a 16 byte alignment
+ #endif
+ 
+@@ -122,12 +109,14 @@
+           "\n"
+           "#define GPGRT_LOCK_INITIALIZER {%d,{{",
+           SIZEOF_PTHREAD_MUTEX_T,
+-# if USE_16BYTE_ALIGNMENT
++/* Special requirements for certain platforms. */
++# if defined (__hppa__)
+           "    int _x16_align __attribute__ ((aligned (16)));\n",
+-# elif USE_DOUBLE_FOR_ALIGNMENT
+-          "    double _xd_align;\n",
+-# elif USE_LONG_DOUBLE_FOR_ALIGNMENT
+-          "    long double _xld_align;\n",
++# elif defined(__sun)
++	  "#if (defined(__sparc) || defined(__sparc__)) && \\\n"
++	  "    !defined (__LP64__) && !defined(_LP64)\n"
++          "    double _xd_align;\n"
++	  "#endif\n",
+ # else
+           "",
+ # endif
