@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gvfs
 COMPONENT_VERSION= 1.26.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GNOME virtual file system framework
 COMPONENT_FMRI= library/gnome/gvfs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,11 +38,7 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        (cd $(@D) && \
-					libtoolize --force &&\
-					aclocal -I . &&\
-					autoheader &&\
-					automake &&\
-					autoconf )
+					autoreconf -if)
 
 CFLAGS += -D_XPG4_2
 CFLAGS += -D__EXTENSIONS__
