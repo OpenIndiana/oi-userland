@@ -26,13 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
-COMPONENT_VERSION=      8.6.6
+COMPONENT_VERSION=      8.6.7
 COMPONENT_MINOR_VERSION= $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+/\1.\2/')
 COMPONENT_PROJECT_URL=	http://prdownloads.sourceforge.net/tcl/
 COMPONENT_SRC=          $(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-core$(COMPONENT_VERSION)-src.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4afa002eac0216bfd05643135ee8c227bac533daf4cee6c38a37e053c4b64696
+    sha256:8441fbbce7b7f94a0f53ecfbe5e0be58aa8bbb6eefeff7f43671d4e6d70289d1
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libtcl
 COMPONENT_LICENSE=	BSD-like
