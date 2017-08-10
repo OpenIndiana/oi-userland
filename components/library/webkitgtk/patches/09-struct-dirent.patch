@@ -1,7 +1,7 @@
---- webkitgtk-2.10.4/Source/WebKit2/NetworkProcess/cache/NetworkCacheFileSystem.cpp.1	2015-12-11 19:29:52.280675942 +0300
-+++ webkitgtk-2.10.4/Source/WebKit2/NetworkProcess/cache/NetworkCacheFileSystem.cpp	2015-12-11 19:48:17.318741301 +0300
-@@ -30,8 +30,11 @@
- 
+--- webkitgtk-2.16.6/Source/WebKit2/NetworkProcess/cache/NetworkCacheFileSystem.cpp.~1~	2017-02-20 19:20:17.000000000 +0000
++++ webkitgtk-2.16.6/Source/WebKit2/NetworkProcess/cache/NetworkCacheFileSystem.cpp	2017-08-08 17:07:30.723457009 +0000
+@@ -31,8 +31,11 @@
+ #include "Logging.h"
  #include <WebCore/FileSystem.h>
  #include <dirent.h>
 +#include <limits.h>
@@ -9,10 +9,10 @@
  #include <sys/stat.h>
  #include <sys/time.h>
 +#include <sys/types.h>
+ #include <wtf/Assertions.h>
+ #include <wtf/Function.h>
  #include <wtf/text/CString.h>
- 
- #if USE(SOUP)
-@@ -42,19 +45,6 @@
+@@ -50,19 +53,6 @@
  namespace WebKit {
  namespace NetworkCache {
  
@@ -29,10 +29,10 @@
 -    }
 -}
 -
- void traverseDirectory(const String& path, const std::function<void (const String&, DirectoryEntryType)>& function)
+ void traverseDirectory(const String& path, const Function<void (const String&, DirectoryEntryType)>& function)
  {
      DIR* dir = opendir(WebCore::fileSystemRepresentation(path).data());
-@@ -62,15 +52,25 @@
+@@ -70,15 +60,25 @@
          return;
      dirent* dp;
      while ((dp = readdir(dir))) {

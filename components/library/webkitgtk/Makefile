@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= webkitgtk
-COMPONENT_VERSION= 2.14.7
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.16.6
 COMPONENT_SUMMARY= Web content engine library for GTK+
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:87bcfb96ac2b14df6e764c40c9d74ae3e8409f9cecb242ebe1dbb41c181c0b6d
+  sha256:fc23650df953123c59b9c0edf3855e7bd55bd107820997fc72375811e1ea4b21
 COMPONENT_ARCHIVE_URL= \
   http://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
@@ -44,6 +43,11 @@ LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
+# build with the distribution preferred libjpeg implementation
+CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=    $(JPEG_LDFLAGS)
+
 LDFLAGS+=-lm -lsocket
 
 CMAKE_OPTIONS += -DPORT=GTK
@@ -52,7 +56,6 @@ CMAKE_OPTIONS += -DENABLE_CREDENTIAL_STORAGE=off
 CMAKE_OPTIONS += -DENABLE_GEOLOCATION=off
 CMAKE_OPTIONS += -DENABLE_SAMPLING_PROFILER=off
 CMAKE_OPTIONS += -DENABLE_WEB_AUDIO=off
-CMAKE_OPTIONS += -DENABLE_VIDEO=off
 CMAKE_OPTIONS += -DUSE_LIBHYPHEN=off
 CMAKE_OPTIONS += -DUSE_LIBNOTIFY=on
 CMAKE_OPTIONS += -DUSE_SYSTEM_MALLOC=on
@@ -66,9 +69,10 @@ install: $(INSTALL_32)
 
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/gperf
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
-REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
