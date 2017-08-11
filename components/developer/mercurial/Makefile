@@ -27,12 +27,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	4.2.2
+COMPONENT_VERSION=	4.2.3
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b20132dec5ae6d27ee43a133144069895befe09f7e454bfa9e39950a185f0afe
+    sha256:04908fc7d89e5810edf3d2762f5aecce5b5c0cb8534f3dbff7d0d848d11ff7ac
 COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
