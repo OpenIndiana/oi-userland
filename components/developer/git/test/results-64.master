@@ -2661,8 +2661,8 @@ ok 1 - Testing Git::I18N with NO Perl gettext library
 ok 2 - Git::I18N is located at $(@D)/t/../perl/blib/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
-ok 5 - sanity: __ has a $ prototype
-ok 6 - sanity: __n has a $$$ prototype
+ok 5 - sanity: __n has a $$$ prototype
+ok 6 - sanity: __ has a $ prototype
 ok 7 - sanity: N__ has a $ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
@@ -3531,49 +3531,50 @@ ok 101 - git -c "key=value" support
 ok 102 - git -c can represent empty string
 ok 103 - key sanity-checking
 ok 104 - git -c works with aliases of builtins
-ok 105 - git -c does not split values on equals
-ok 106 - git -c dies on bogus config
-ok 107 - git -c complains about empty key
-ok 108 - git -c complains about empty key and value
-ok 109 - multiple git -c appends config
-ok 110 - last one wins: two level vars
-ok 111 - last one wins: three level vars
-ok 112 - git -c a=VAL rejects invalid 'a'
-ok 113 - git -c .a=VAL rejects invalid '.a'
-ok 114 - git -c a.=VAL rejects invalid 'a.'
-ok 115 - git -c a.0b=VAL rejects invalid 'a.0b'
-ok 116 - git -c a.b c.=VAL rejects invalid 'a.b c.'
-ok 117 - git -c a.b c.0d=VAL rejects invalid 'a.b c.0d'
-ok 118 - git -c a.b=VAL works with valid 'a.b'
-ok 119 - git -c a.b c.d=VAL works with valid 'a.b c.d'
-ok 120 - git -c is not confused by empty environment
-ok 121 - git config --edit works
-ok 122 - git config --edit respects core.editor
-ok 123 - barf on syntax error
-ok 124 - barf on incomplete section header
-ok 125 - barf on incomplete string
-ok 126 - urlmatch
-ok 127 - urlmatch favors more specific URLs
-ok 128 - urlmatch with wildcard
-not ok 129 - unsetting the last key in a section removes header # TODO known breakage
-not ok 130 - adding a key into an empty section reuses header # TODO known breakage
-ok 131 - preserves existing permissions
-ok 132 - set up --show-origin tests
-ok 133 - --show-origin with --list
-ok 134 - --show-origin with --list --null
-ok 135 - --show-origin with single file
-ok 136 - --show-origin with --get-regexp
-ok 137 - --show-origin getting a single key
-ok 138 - set up custom config file
-ok 139 - --show-origin escape special file name characters
-ok 140 - --show-origin stdin
-ok 141 - --show-origin stdin with file include
-ok 142 - --show-origin blob
-ok 143 - --show-origin blob ref
-ok 144 - --local requires a repo
+ok 105 - aliases can be CamelCased
+ok 106 - git -c does not split values on equals
+ok 107 - git -c dies on bogus config
+ok 108 - git -c complains about empty key
+ok 109 - git -c complains about empty key and value
+ok 110 - multiple git -c appends config
+ok 111 - last one wins: two level vars
+ok 112 - last one wins: three level vars
+ok 113 - git -c a=VAL rejects invalid 'a'
+ok 114 - git -c .a=VAL rejects invalid '.a'
+ok 115 - git -c a.=VAL rejects invalid 'a.'
+ok 116 - git -c a.0b=VAL rejects invalid 'a.0b'
+ok 117 - git -c a.b c.=VAL rejects invalid 'a.b c.'
+ok 118 - git -c a.b c.0d=VAL rejects invalid 'a.b c.0d'
+ok 119 - git -c a.b=VAL works with valid 'a.b'
+ok 120 - git -c a.b c.d=VAL works with valid 'a.b c.d'
+ok 121 - git -c is not confused by empty environment
+ok 122 - git config --edit works
+ok 123 - git config --edit respects core.editor
+ok 124 - barf on syntax error
+ok 125 - barf on incomplete section header
+ok 126 - barf on incomplete string
+ok 127 - urlmatch
+ok 128 - urlmatch favors more specific URLs
+ok 129 - urlmatch with wildcard
+not ok 130 - unsetting the last key in a section removes header # TODO known breakage
+not ok 131 - adding a key into an empty section reuses header # TODO known breakage
+ok 132 - preserves existing permissions
+ok 133 - set up --show-origin tests
+ok 134 - --show-origin with --list
+ok 135 - --show-origin with --list --null
+ok 136 - --show-origin with single file
+ok 137 - --show-origin with --get-regexp
+ok 138 - --show-origin getting a single key
+ok 139 - set up custom config file
+ok 140 - --show-origin escape special file name characters
+ok 141 - --show-origin stdin
+ok 142 - --show-origin stdin with file include
+ok 143 - --show-origin blob
+ok 144 - --show-origin blob ref
+ok 145 - --local requires a repo
 # still have 2 known breakage(s)
-# passed all remaining 142 test(s)
-1..144
+# passed all remaining 143 test(s)
+1..145
 *** t1301-shared-repo.sh ***
 ok 1 - shared = 0400 (faulty permission u-w)
 ok 2 - shared=1 does not clear bits preset by umask 002
@@ -12200,8 +12201,9 @@ ok 1 - setup remote repo
 ok 2 - setup proxy script
 ok 3 - setup local repo
 ok 4 - fetch through proxy works
-# passed all 4 test(s)
-1..4
+ok 5 - funny hostnames are rejected before running proxy
+# passed all 5 test(s)
+1..5
 *** t5533-push-cas.sh ***
 ok 1 - setup
 ok 2 - push to update (protected)
@@ -12881,8 +12883,11 @@ ok 48 - push path (enabled)
 ok 49 - push path (disabled)
 ok 50 - fetch path (disabled)
 ok 51 - clone path (disabled)
-# passed all 51 test(s)
-1..51
+ok 52 - setup repo with dash
+ok 53 - repo names starting with dash are rejected
+ok 54 - full paths still work
+# passed all 54 test(s)
+1..54
 *** t5811-proto-disable-git.sh ***
 ok 1 - create git-accessible repo
 ok 2 - clone git:// (enabled)
@@ -12992,8 +12997,12 @@ ok 74 - push git+ssh:// (enabled)
 ok 75 - push git+ssh:// (disabled)
 ok 76 - fetch git+ssh:// (disabled)
 ok 77 - clone git+ssh:// (disabled)
-# passed all 77 test(s)
-1..77
+ok 78 - hostnames starting with dash are rejected
+ok 79 - setup repo with dash
+ok 80 - repo names starting with dash are rejected
+ok 81 - full paths still work
+# passed all 81 test(s)
+1..81
 *** t5814-proto-disable-ext.sh ***
 ok 1 - setup ext wrapper
 ok 2 - setup repository to clone
@@ -14464,8 +14473,9 @@ ok 4 - gc -h with invalid configuration
 ok 5 - gc is not aborted due to a stale symref
 ok 6 - auto gc with too many loose objects does not attempt to create bitmaps
 ok 7 - background auto gc does not run if gc.log is present and recent but does if it is old
-# passed all 7 test(s)
-1..7
+ok 8 - background auto gc respects lock for all operations
+# passed all 8 test(s)
+1..8
 *** t6501-freshen-objects.sh ***
 ok 1 - make repo completely empty (loose)
 ok 2 - disable reflogs (loose)
@@ -18729,7 +18739,10 @@ ok 41 - wc_subdir initial (2)
 ok 42 - rev-parse returned hash
 ok 43 - log . does not show last commit
 ok 44 - cat_blob(outside): size
-1..44
+ok 45 - unquote unquoted path
+ok 46 - unquote simple quoted path
+ok 47 - unquote escape sequences
+1..47
 # test_external test Perl API was ok
 # test_external_without_stderr test no stderr: Perl API was ok
 *** t9800-git-p4-basic.sh ***
@@ -18992,7 +19005,7 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir (stderr)
 failed test(s): t0001 t0204 t4062
 
 fixed   1
-success 16092
+success 16102
 failed  4
 broken  198
-total   16532
+total   16542
