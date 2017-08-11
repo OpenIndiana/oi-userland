@@ -25,24 +25,22 @@
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
-COMPONENT_VERSION=	1.7.20
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.9.7
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:2bdb01eb3f3df5c9370af98580e1892822d6e75f2077ce97fc81749f316ef25a
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
+	sha256:c72a209c883e20245f14c4e644803f50ae83ae24652e385ff5e82300a0d06c3c
+COMPONENT_ARCHIVE_URL=	http://apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATCH_LEVEL = 0
 PYMODS = client core delta fs ra repos wc
 PLMODS= Fs Core Wc Client Repos Ra Delta
 JAVA_ROOT = $(JAVA_HOME)
@@ -64,6 +62,7 @@ GNUCP = /usr/gnu/bin/cp
 CXXFLAGS += $(CC_PIC)
 #CXXFLAGS += -mt -D_REENTRANT -DNDEBUG -DSOLARIS
 CXXFLAGS += $(CPP_LARGEFILES)
+CFLAGS += -D__EXTENSIONS__
 CFLAGS += `pkg-config --cflags neon`
 CFLAGS += $(CPP_LARGEFILES)
 
@@ -113,12 +112,12 @@ APR-CONFIG.32 = /usr/apr/bin/apr-1-config
 APR-CONFIG.64 = /usr/apr/bin/$(MACH64)/apr-1-config
 APU-CONFIG.32 = /usr/apr-util/bin/apu-1-config
 APU-CONFIG.64 = /usr/apr-util/bin/$(MACH64)/apu-1-config
-APXS.32 = /usr/apache2/2.2/bin/apxs
-APXS.64 = /usr/apache2/2.2/bin/$(MACH64)/apxs
-APR-CONFIG-RPATH.32 = /usr/apr/$(APR_VERSION)/lib
-APR-CONFIG-RPATH.64 = /usr/apr/$(APR_VERSION)/lib/$(MACH64)
-APU-CONFIG-RPATH.32 = /usr/apr-util/$(APR_VERSION)/lib
-APU-CONFIG-RPATH.64 = /usr/apr-util/$(APR_VERSION)/lib/$(MACH64)
+APXS.32 = /usr/apache2/2.4/bin/apxs
+APXS.64 = /usr/apache2/2.4/bin/$(MACH64)/apxs
+APR-CONFIG-RPATH.32 = /usr/apr/lib
+APR-CONFIG-RPATH.64 = /usr/apr/lib/$(MACH64)
+APU-CONFIG-RPATH.32 = /usr/apr-util/lib
+APU-CONFIG-RPATH.64 = /usr/apr-util/lib/$(MACH64)
 APACHE_LIBEXECDIR.32 = `$(APXS.32) -q libexecdir`
 APACHE_LIBEXECDIR.64 = `$(APXS.64) -q libexecdir`
 
@@ -137,10 +136,8 @@ CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared 
 #CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock 
-CONFIGURE_OPTIONS += --disable-neon-version-check
 CONFIGURE_OPTIONS += --disable-experimental-libtool
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS += --with-ssl 
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
 CONFIGURE_OPTIONS += --with-apr=/usr/apr
@@ -149,10 +146,13 @@ CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
 CONFIGURE_OPTIONS += --with-swig
-CONFIGURE_OPTIONS += --with-neon=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
+CONFIGURE_OPTIONS += --with-apache-libexecdir=$(APACHE_LIBEXECDIR.$(BITS))
+# libgnome-keyring was obsoleted upstream, disable support for storing svn
+# passwords in gnome-keyring until svn is updated to use libsecret instead
+CONFIGURE_OPTIONS += --without-gnome-keyring
 
 COMPONENT_POST_BUILD_ACTION.32 += \
         ( cd $(BUILD_DIR_$(BITS)) && \
@@ -186,7 +186,7 @@ REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/neon
+REQUIRED_PACKAGES += library/libserf
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
