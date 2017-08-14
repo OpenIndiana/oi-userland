@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Aurelien Larcher
+# Copyright 2017 Till Wegmüller
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-16@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,8 +26,9 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/lib/golang/1.6/pkg/tool/solaris_$(MACH64)/.+ -> \
     default mode 0555>
 
-link path=usr/bin/go target=../lib/golang/1.6/bin/go
-link path=usr/bin/gofmt target=../lib/golang/1.6/bin/gofmt
+link path=usr/share/man/man1/go.1 target=../../golang/1.6/man/man1/go.1 mediator=golang mediator-version=1.6
+link path=usr/bin/go target=../lib/golang/1.6/bin/go mediator=golang mediator-version=1.6
+link path=usr/bin/gofmt target=../lib/golang/1.6/bin/gofmt mediator=golang mediator-version=1.6
 
 file path=usr/lib/golang/1.6/AUTHORS
 file path=usr/lib/golang/1.6/CONTRIBUTING.md
@@ -5650,4 +5652,4 @@ file path=usr/lib/golang/1.6/test/varerr.go
 file path=usr/lib/golang/1.6/test/varinit.go
 file path=usr/lib/golang/1.6/test/writebarrier.go
 file path=usr/lib/golang/1.6/test/zerodivide.go
-file path=usr/share/man/man1/go.1
+file path=usr/share/golang/1.6/man/man1/go.1
