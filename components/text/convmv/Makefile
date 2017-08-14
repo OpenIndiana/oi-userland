@@ -23,22 +23,29 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		convmv
-COMPONENT_VERSION=	1.15
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.03
+IPS_COMPONENT_VERSION=	2.3
+COMPONENT_SUMMARY=	Filename Encoding Conversion Tool
+COMPONENT_DESCRIPTION=	Convmv helps convert a single filename,\
+ a directory tree and the contained files or a whole filesystem\
+ into a different encoding.
 COMPONENT_PROJECT_URL=	http://www.j3e.de/linux/convmv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c315aec78490b588000467d1c51081b36e629de0537c5a17fd48b1acaf8a5135
+    sha256:f898fd850c8ef5abe48f7536e4b23ce4e11b6133974b2fc41d9197dfecc1c027
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/convmv
+COMPONENT_FMRI=		text/convmv
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	GPL2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -51,6 +58,5 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
