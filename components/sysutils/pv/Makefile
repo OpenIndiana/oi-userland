@@ -26,7 +26,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.6.0
+COMPONENT_VERSION=	1.6.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_FMRI=		shell/pipe-viewer
 COMPONENT_SUMMARY=	'Pipe Viewer'
@@ -35,7 +35,7 @@ COMPONENT_LICENSE_FILE=	pv.license
 COMPONENT_PROJECT_URL=	http://www.ivarch.com/programs/pv.shtml
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0ece824e0da27b384d11d1de371f20cafac465e038041adab57fcf4b5036ef8d
+    sha256:608ef935f7a377e1439c181c4fc188d247da10d51a19ef79bcdee5043b0973f1
 COMPONENT_ARCHIVE_URL=	http://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pv
 
@@ -59,7 +59,3 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
