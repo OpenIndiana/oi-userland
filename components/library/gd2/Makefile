@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=	2.2.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	library/gd
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -57,6 +57,8 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Pass iconv related macro not set with CMake
 CFLAGS   += -DHAVE_ICONV_T_DEF=1
+
+COMPONENT_PREP_ACTION = (cp files/unitialized_memory_read.gif $(COMPONENT_SRC)/tests/gif)
 
 # Needed for the test suite
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
