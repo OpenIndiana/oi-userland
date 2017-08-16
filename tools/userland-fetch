@@ -278,8 +278,8 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
 
 def usage():
     print "Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] [-l|--link] " \
-        "[-h|--hash (hash)] [-s|--search (search-dir)] [-S|--sigurl (signature-url)] " \
-        "--url (url)" % (sys.argv[0].split('/')[-1])
+        "[-k|--keep] [-h|--hash (hash)] [-s|--search (search-dir)] " \
+        "[-S|--sigurl (signature-url)] --url (url)" % (sys.argv[0].split('/')[-1])
     sys.exit(1)
 
 
@@ -383,11 +383,22 @@ def main():
 
                 # An invalid hash shouldn't cause us to remove
                 # the target file if the signature was valid.
+                # Also, if the developer is in progress of upgrading
+                # some package version or introduces a new one, and
+                # explicitly ran "gmake fetch", keep the downloaded
+                # file (Makefile is not in position to have a valid
+                # checksum entry just yet) so it does not have to be
+                # downloaded twice.
                 if not sig_valid:
-                    try:
-                        os.remove(name)
-                    except OSError:
-                        pass
+
+                    if keep_arg == False:
+                        try:
+                            print "\nWARN: Removing the corrupt downloaded file"
+                            os.remove(name)
+                        except OSError:
+                            pass
+                    else:
+                        print "\nINFO: Keeping the downloaded file because asked to"
 
                     continue
 
