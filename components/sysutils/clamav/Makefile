@@ -20,6 +20,7 @@ COMPONENT_NAME=		clamav
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
 COMPONENT_VERSION=	0.99.2
+COMPONENT_REVISION=	1
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -36,7 +37,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:167bd6a13e05ece326b968fdb539b05c2ffcfef6018a274a10aeda85c2c0027a
-COMPONENT_PROJECT_URL=	http://www.clamav.org/
+COMPONENT_PROJECT_URL=	http://www.clamav.net/
 COMPONENT_ARCHIVE_URL=	\
 	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -88,6 +89,9 @@ COMPONENT_PREP_ACTION = \
 # Missing files in build dir for configure without this
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.64 =	$(CONFIGURE_PREFIX)/sbin
+
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/clamav
@@ -125,10 +129,7 @@ CONFIGURE_OPTIONS +=	--with-pcre
 # ClamAV includes bluntly <pcre.h> which library/pcre component has in a subdir
 CFLAGS +=	-I/usr/include/pcre
 
-### The clamav-milter requires that libmilter exists (in OI Hipster's
-### sendmail-8.14.4 - or rather illumos-gate's, that is only present
-### for 32-bits at this time, it seems...)
-CONFIGURE_OPTIONS.32 +=	--enable-milter
+CONFIGURE_OPTIONS +=	--enable-milter
 
 # ClamAV has a JIT bytecode support based on CLang LLVM. We serve it.
 # By default it builds its own from copy of the source (takes ages to
@@ -147,18 +148,11 @@ CONFIGURE_OPTIONS.32 +=	--enable-milter
 CONFIGURE_OPTIONS +=	--enable-llvm
 
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-# Ensure 32-bit configs are installed last
-$(INSTALL_32): $(INSTALL_64)
-
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/json-c
