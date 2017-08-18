@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gvfs
 COMPONENT_VERSION= 1.26.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= GNOME virtual file system framework
 COMPONENT_FMRI= library/gnome/gvfs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,6 +57,7 @@ CONFIGURE_OPTIONS += --enable-bash-completion
 CONFIGURE_OPTIONS += --enable-documentation
 CONFIGURE_OPTIONS += --enable-goa
 CONFIGURE_OPTIONS += --disable-gphoto2
+CONFIGURE_OPTIONS += --disable-bluray
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --enable-http
 CONFIGURE_OPTIONS += --enable-keyring
