@@ -156,6 +156,7 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/json-c
+REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
