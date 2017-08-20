@@ -24,17 +24,18 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           efl
 COMPONENT_VERSION=        1.18.5
-COMPONENT_FMRI=           library/e/efl
+COMPONENT_REVISION=       1
+COMPONENT_FMRI=           library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=    http://enlightenment.org
+COMPONENT_PROJECT_URL=    http://www.enlightenment.org
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:56f02aa6b2c4ca0252fb6547fa8d2fdfff842e245a93ae41adca7a191900bf73
 COMPONENT_ARCHIVE_URL= \
   http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        GPL,LGPL,BSD,SMALL
-COMPONENT_SUMMARY=        Enlightenment - Core libraries
+COMPONENT_LICENSE=        BSD 2-clause, GPLv2, LGPLv2.1, Small
+COMPONENT_SUMMARY=        Enlightenment Foundation Libraries
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -50,16 +51,17 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS+= CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
 CONFIGURE_OPTIONS+= --with-opengl=full
+CONFIGURE_OPTIONS+= --with-profile=release
 CONFIGURE_OPTIONS+= --enable-debug
 CONFIGURE_OPTIONS+= --enable-fribidi
 CONFIGURE_OPTIONS+= --enable-harfbuzz
+CONFIGURE_OPTIONS+= --disable-libeeze
 CONFIGURE_OPTIONS+= --enable-lua-old
 CONFIGURE_OPTIONS+= --enable-pulseaudio
 CONFIGURE_OPTIONS+= --disable-cserve
 CONFIGURE_OPTIONS+= --enable-physics
-CONFIGURE_OPTIONS+= --disable-gstreamer
-CONFIGURE_OPTIONS+= --enable-gstreamer1
 CONFIGURE_OPTIONS+= --enable-doc
+CONFIGURE_OPTIONS+= --disable-systemd
 CONFIGURE_OPTIONS+= --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
@@ -80,6 +82,7 @@ test: $(TEST_64)
 REQUIRED_PACKAGES += x11/library/mesa
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw

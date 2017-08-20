@@ -22,11 +22,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:/usr/lib/$(MACH64)/mesa
-
-<transform dir path=usr/lib/*/module.so$ -> default mode 0555>
-<transform dir path=usr/share/mime/*$ -> default group root>
-<transform dir path=usr/share/mime/packages/*$ -> default group root>
+<transform file path=usr/lib/$(MACH64)/e.+/utils/.+ -> default mode 0555>
+<transform file path=usr/lib/$(MACH64)/efreet/.+/efreet.+create -> default mode 0555>
 
 file path=usr/bin/diffeet
 file path=usr/bin/ecore_evas_convert
@@ -1760,9 +1757,9 @@ file path=usr/lib/$(MACH64)/ecore_imf/modules/xim/v-1.18/module.so
 file path=usr/lib/$(MACH64)/ecore_x/bin/v-1.18/ecore_x_vsync mode=0555
 file path=usr/lib/$(MACH64)/edje/modules/elm/v-1.18/module.so
 file path=usr/lib/$(MACH64)/edje/modules/emotion/v-1.18/module.so
-file path=usr/lib/$(MACH64)/edje/utils/v-1.18/epp mode=0555
-file path=usr/lib/$(MACH64)/efreet/v-1.18/efreet_desktop_cache_create mode=0555
-file path=usr/lib/$(MACH64)/efreet/v-1.18/efreet_icon_cache_create mode=0555
+file path=usr/lib/$(MACH64)/edje/utils/v-1.18/epp
+file path=usr/lib/$(MACH64)/efreet/v-1.18/efreet_desktop_cache_create
+file path=usr/lib/$(MACH64)/efreet/v-1.18/efreet_icon_cache_create
 file path=usr/lib/$(MACH64)/elementary/modules/access_output/v-1.18/module.so
 file path=usr/lib/$(MACH64)/elementary/modules/datetime_input_ctxpopup/v-1.18/module.so
 file path=usr/lib/$(MACH64)/elementary/modules/prefs/v-1.18/elm_prefs_swallow.edj
@@ -1773,9 +1770,13 @@ file path=usr/lib/$(MACH64)/elementary/modules/web/none/v-1.18/module.so
 file path=usr/lib/$(MACH64)/emotion/modules/gstreamer1/v-1.18/module.so
 file path=usr/lib/$(MACH64)/ethumb/modules/emotion/v-1.18/module.so
 file path=usr/lib/$(MACH64)/ethumb/modules/emotion/v-1.18/template.edj
-file path=usr/lib/$(MACH64)/ethumb_client/utils/v-1.18/ethumbd_slave mode=0555
-file path=usr/lib/$(MACH64)/evas/modules/engines/gl_generic/v-1.18/module.so pkg.depend.bypass-generate=libGL\.so\.1
-file path=usr/lib/$(MACH64)/evas/modules/engines/gl_x11/v-1.18/module.so pkg.depend.bypass-generate=libGL\.so\.1
+file path=usr/lib/$(MACH64)/ethumb_client/utils/v-1.18/ethumbd_slave
+file path=usr/lib/$(MACH64)/evas/modules/engines/gl_generic/v-1.18/module.so \
+    pkg.depend.bypass-generate=libGL\.so\.1 \
+    pkg.depend.runpath=$PKGDEPEND_RUNPATH:/usr/lib/mesa/$(MACH64)
+file path=usr/lib/$(MACH64)/evas/modules/engines/gl_x11/v-1.18/module.so \
+    pkg.depend.bypass-generate=libGL\.so\.1 \
+    pkg.depend.runpath=$PKGDEPEND_RUNPATH:/usr/lib/mesa/$(MACH64)
 file path=usr/lib/$(MACH64)/evas/modules/engines/software_x11/v-1.18/module.so
 file path=usr/lib/$(MACH64)/evas/modules/image_loaders/gif/v-1.18/module.so
 file path=usr/lib/$(MACH64)/evas/modules/image_loaders/tiff/v-1.18/module.so
