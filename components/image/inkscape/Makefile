@@ -15,8 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
-COMPONENT_VERSION=	0.92.1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	0.92.2
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
@@ -24,42 +23,42 @@ COMPONENT_PROJECT_URL=	http://www.inkscape.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:257405bf802de125f17d123638093a37db02ebe334d243cf9b0d8903f7c89005
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/portableapps/files/Source/Inkscape/$(COMPONENT_ARCHIVE)/download
+	sha256:a628d0e04c254e9840947e6d866974f92c68ae31631a38b94d9b65e5cd84cfd3
+COMPONENT_ARCHIVE_URL=	https://inkscape.org/en/gallery/item/11254/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
+CMAKE_BINDIR.64 = $(CMAKE_BINDIR.32)
 
-COMPONENT_PREP_ACTION =	( cd $(@D)  && \
-				autoreconf --force --install &&\
-				libtoolize --force &&\
-				intltoolize --force --copy --automake &&\
-				aclocal -I. &&\
-				automake -a -c -f &&\
-				autoconf)
+LDFLAGS+= $(JPEG_LDFLAGS)
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-
-CONFIGURE_OPTIONS+=  --enable-lcms
-CONFIGURE_OPTIONS+=  --enable-poppler-cairo
-CONFIGURE_OPTIONS+=  --disable-binreloc
-CONFIGURE_OPTIONS+=  --with-gnome-vfs
+CMAKE_OPTIONS+=  -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS+=  -DCMAKE_ENABLE_LCMS=ON
+CMAKE_OPTIONS+=  -DLCMS2_INCLUDE_DIR=$(USRINCDIR)/lcms2
+CMAKE_OPTIONS+=  -DLCMS2_LIBRARY=$(USRLIBDIR.$(BITS))/liblcms2.so
+CMAKE_OPTIONS+=  -DCMAKE_ENABLE_LCMS=ON
+CMAKE_OPTIONS+=  -DCMAKE_ENABLE_POPPLER_CAIRO=ON
+CMAKE_OPTIONS+=  -DWITH_IMAGE_MAGICK=ON
+CMAKE_OPTIONS+=  -DWITH_LIBCDR=ON
+CMAKE_OPTIONS+=  -DWITH_LIBVISIO=ON
+CMAKE_OPTIONS+=  -DWITH_LIBWPG=ON
+CMAKE_OPTIONS+=  -DCMAKE_ENABLE_BINRELOC=OFF
+CMAKE_OPTIONS+=  -DWITH_GNOME_VFS=ON
+CMAKE_OPTIONS+=  -DWITH_OPENMP=ON
+CMAKE_OPTIONS+=  -DJPEG_INCLUDE_DIR=$(JPEG_INCDIR)
+CMAKE_OPTIONS+=  -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 
 
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(TEST_64)
+test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/gsl
