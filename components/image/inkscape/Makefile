@@ -15,8 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
-COMPONENT_VERSION=	0.92.1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	0.92.2
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
@@ -24,8 +23,8 @@ COMPONENT_PROJECT_URL=	http://www.inkscape.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:257405bf802de125f17d123638093a37db02ebe334d243cf9b0d8903f7c89005
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/portableapps/files/Source/Inkscape/$(COMPONENT_ARCHIVE)/download
+	sha256:a628d0e04c254e9840947e6d866974f92c68ae31631a38b94d9b65e5cd84cfd3
+COMPONENT_ARCHIVE_URL=	https://inkscape.org/en/gallery/item/11254/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
