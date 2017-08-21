@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cvs
 COMPONENT_VERSION=	1.12.13
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	developer/versioning/cvs
 COMPONENT_SUMMARY=	The CVS version control system
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
