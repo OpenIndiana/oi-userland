@@ -11,19 +11,20 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-# This is the last version which provides python gsfgnomemodule
-COMPONENT_VERSION= 1.14.21
-COMPONENT_REVISION= 2
+# 1.14.21 was the last version which provides python gsfgnomemodule
+COMPONENT_VERSION= 1.14.41
+COMPONENT_REVISION= 0
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:eef0a9d6eca4e6af6c16b208947e3c958c428b94d22792bdd0b80c08a4b301db
+  sha256:150b98586a1021d5c49b3d4d065d0aa3e3674ae31db131af5372499d2d3f08d3
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
@@ -49,19 +50,18 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV+=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_ENV+=	am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_ENV+=	PYTHON=$(PYTHON)
-
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-static=no
-CONFIGURE_OPTIONS += --with-python
-CONFIGURE_OPTIONS += --with-bz2
-CONFIGURE_OPTIONS += --with-gnome-vfs
-CONFIGURE_OPTIONS += --with-gio
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library

@@ -15,15 +15,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnumeric
-COMPONENT_VERSION=	1.10.17
+COMPONENT_VERSION=	1.12.35
 COMPONENT_REVISION=	0
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GTK Spreadsheet Application 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8f105a10dc0dd47e14df2879591d2f28482fd03809fa95977dd4d1470a02f963
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.10/$(COMPONENT_ARCHIVE)
+    sha256:77b1e3ce523578a807767ad71680fb865ac021d7bfadf93eada99ae094c06c0a
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Office
 COMPONENT_LICENSE= GPLv2
@@ -44,9 +44,9 @@ CONFIGURE_ENV+= PYTHON=$(PYTHON)
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
@@ -54,7 +54,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/goffice
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgsf
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
