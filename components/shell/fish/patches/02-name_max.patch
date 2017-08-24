@@ -1,0 +1,16 @@
+--- fish-2.6.0/src/wutil.cpp.1	2017-08-24 21:17:28.563901802 +0000
++++ fish-2.6.0/src/wutil.cpp	2017-08-24 21:18:12.394754360 +0000
+@@ -37,6 +37,13 @@
+ #endif
+ #endif
+ 
++// NAME_MAX is not defined on Solaris and suggests the use of pathconf()
++// There is no obvious sensible pathconf() for shared memory and _XPG_NAME_MAX
++// seems a reasonable choice.
++#if !defined(NAME_MAX) && defined(_XOPEN_NAME_MAX)
++#define NAME_MAX _XOPEN_NAME_MAX
++#endif
++
+ /// Map used as cache by wgettext.
+ static owning_lock<std::map<wcstring, wcstring>> wgettext_map;
+ 
