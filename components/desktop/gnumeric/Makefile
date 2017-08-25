@@ -16,7 +16,6 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnumeric
 COMPONENT_VERSION=	1.12.35
-COMPONENT_REVISION=	0
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GTK Spreadsheet Application 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

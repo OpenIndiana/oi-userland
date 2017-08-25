@@ -17,9 +17,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-# 1.14.21 was the last version which provides python gsfgnomemodule
 COMPONENT_VERSION= 1.14.41
-COMPONENT_REVISION= 0
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -57,7 +55,7 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
