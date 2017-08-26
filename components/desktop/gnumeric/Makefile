@@ -34,6 +34,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--without-perl
@@ -43,11 +45,15 @@ CONFIGURE_ENV+= PYTHON=$(PYTHON)
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+# To prevent "libtool_install_magic: unbound variable"
+unexport SHELLOPTS
+
+# All PASS or SKIP unless valgrind installed 08.26.2017
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
