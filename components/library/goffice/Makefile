@@ -54,7 +54,6 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
 #test:		$(NO_TESTS)
