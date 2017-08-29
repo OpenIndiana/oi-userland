@@ -56,7 +56,6 @@ install:	$(INSTALL_32_and_64)
 
 unexport SHELLOPTS
 
-#test:		$(NO_TESTS)
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
