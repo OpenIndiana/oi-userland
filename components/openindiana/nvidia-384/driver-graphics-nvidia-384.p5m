@@ -10,6 +10,7 @@
 
 #
 # Copyright 2012, Andrzej Szeszo
+# Copyright 2017, Jim Klimov
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -26,25 +27,34 @@
 <transform dir path=usr/share/doc$ -> default group other>
 <transform dir path=usr/share/icons$ -> default group other>
 
+<transform file path=.*kernel/drv/.+\.conf -> default mode 0444>
+<transform file path=.*kernel/drv/.+ -> default mode 0555>
+<transform file path=.*kernel/drv/$(MACH64)/.+ -> default mode 0555>
+<transform file path=.*kernel/misc/.+\.conf -> default mode 0444>
+<transform file path=.*kernel/misc/.+ -> default mode 0555>
+<transform file path=.*kernel/misc/$(MACH64)/.+ -> default mode 0555>
+
 set name=pkg.fmri \
-    value=pkg:/driver/graphics/nvidia@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/driver/graphics/nvidia-384@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="NVIDIA Graphics System Software"
 set name=pkg.description \
-    value="X and OpenGL Drivers for NVIDIA Quadro graphics"
+    value="X and OpenGL Drivers for NVIDIA Quadro graphics, driver 389 series"
 set name=description value="NVIDIA Graphics System Software"
 set name=info.classification \
     value=org.opensolaris.category.2008:Drivers/Display
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=variant.opensolaris.zone value=global value=nonglobal
 
 license driver-graphics-nvidia.license license="NVIDIA license"
 
 legacy pkg=NVDAgraphics \
-    desc="X and OpenGL Drivers for NVIDIA Quadro graphics" \
+    desc="X and OpenGL Drivers for NVIDIA Quadro graphics, driver 389 series" \
     name="NVIDIA Graphics System Software" vendor="NVIDIA Corporation"
 
 legacy pkg=NVDAgraphicsr \
-    desc="Kernel Drivers for NVIDIA Quadro graphics" \
+    desc="Kernel Drivers for NVIDIA Quadro graphics, driver 389 series" \
     name="NVIDIA Graphics System Device Driver" vendor="NVIDIA Corporation"
 
 file Solaris/gl.h path=usr/X11/include/NVIDIA/GL/gl.h
@@ -53,11 +63,30 @@ file Solaris/glx.h path=usr/X11/include/NVIDIA/GL/glx.h
 file Solaris/glxext.h path=usr/X11/include/NVIDIA/GL/glxext.h
 file Solaris/vdpau.h path=usr/X11/include/NVIDIA/vdpau/vdpau.h
 file Solaris/vdpau_x11.h path=usr/X11/include/NVIDIA/vdpau/vdpau_x11.h
-file path=kernel/drv/$(MACH64)/nvidia reboot-needed=true \
-    variant.opensolaris.zone=global group=sys
-file path=kernel/drv/nvidia reboot-needed=true variant.opensolaris.zone=global group=sys
-file path=kernel/drv/nvidia.conf reboot-needed=false \
-    variant.opensolaris.zone=global group=sys
+file path=kernel/drv/$(MACH64)/nvidia \
+    pkg.depend.bypass-generate=.* \
+    reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia \
+    pkg.depend.bypass-generate=.* \
+    reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia.conf \
+    preserve=true \
+    reboot-needed=false variant.opensolaris.zone=global group=sys
+file path=kernel/drv/$(MACH64)/nvidia_modeset \
+    pkg.depend.bypass-generate=.* \
+    reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia_modeset \
+    pkg.depend.bypass-generate=.* \
+    reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia_modeset.conf \
+    preserve=true \
+    reboot-needed=false variant.opensolaris.zone=global group=sys
+file path=kernel/misc/gfx_private \
+    pkg.depend.bypass-generate=.* \
+    reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/misc/$(MACH64)/gfx_private \
+    pkg.depend.bypass-generate=.* \
+    reboot-needed=true variant.opensolaris.zone=global group=sys
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libEGL.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv1_CM.so.1
@@ -67,8 +96,6 @@ file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glsi.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau.so.1
 file path=usr/X11/lib/NVIDIA/libEGL.so.1
 file path=usr/X11/lib/NVIDIA/libGL.so.1
 file path=usr/X11/lib/NVIDIA/libGLESv1_CM.so.1
@@ -77,9 +104,7 @@ file path=usr/X11/lib/NVIDIA/libnvidia-eglcore.so.1
 file path=usr/X11/lib/NVIDIA/libnvidia-glcore.so.1
 file path=usr/X11/lib/NVIDIA/libnvidia-glsi.so.1
 file path=usr/X11/lib/NVIDIA/libnvidia-tls.so.1
-file path=usr/X11/lib/NVIDIA/libvdpau.so.1
 file path=usr/X11/lib/NVIDIA/libvdpau_nvidia.so.1
-file path=usr/X11/lib/NVIDIA/libvdpau_trace.so.1
 file path=usr/X11/lib/X11/getconfig/nvda.cfg
 file path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib/$(MACH64)
 file path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib
@@ -88,9 +113,13 @@ file path=usr/X11/lib/modules/drivers/nvidia_drv.so
 file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
 file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
 file path=usr/bin/nvidia-SunOS-bug-report.sh
+file path=usr/bin/$(MACH64)/nvidia-debugdump
 file path=usr/bin/$(MACH64)/nvidia-settings
+file path=usr/bin/$(MACH64)/nvidia-smi
 file path=usr/bin/$(MACH64)/nvidia-xconfig
+file path=usr/bin/$(MACH32)/nvidia-debugdump
 file path=usr/bin/$(MACH32)/nvidia-settings
+file path=usr/bin/$(MACH32)/nvidia-smi
 file path=usr/bin/$(MACH32)/nvidia-xconfig
 file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings
 file path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm
@@ -104,7 +133,11 @@ file path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm
 file path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm
 file path=usr/dt/appconfig/types/C/nvidia-settings.dt
 file path=usr/lib/$(MACH64)/libnvidia-cfg.so.1
+file path=usr/lib/$(MACH64)/libnvidia-gtk2.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libnvidia-ml.so.1
 file path=usr/lib/libnvidia-cfg.so.1
+file path=usr/lib/libnvidia-gtk2.so.$(COMPONENT_VERSION)
+file path=usr/lib/libnvidia-ml.so.1
 file path=usr/share/applications/nvidia-settings.desktop \
     restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
 file path=usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop
@@ -116,7 +149,6 @@ file path=usr/share/doc/NVIDIA/html/appendices.html
 file path=usr/share/doc/NVIDIA/html/commonproblems.html
 file path=usr/share/doc/NVIDIA/html/configlaptop.html
 file path=usr/share/doc/NVIDIA/html/configmultxscreens.html
-file path=usr/share/doc/NVIDIA/html/configtvout.html
 file path=usr/share/doc/NVIDIA/html/configtwinview.html
 file path=usr/share/doc/NVIDIA/html/depth30.html
 file path=usr/share/doc/NVIDIA/html/displaydevicenames.html
@@ -151,6 +183,7 @@ file path=usr/share/doc/NVIDIA/html/xrandrextension.html
 file path=usr/share/icons/NVIDIA/nvidia-settings.png \
     restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file path=usr/share/man/man1/nvidia-settings.1
+file path=usr/share/man/man1/nvidia-smi.1
 file path=usr/share/man/man1/nvidia-xconfig.1
 file path=usr/share/nvidia/nvidia-application-profiles-key-documentation
 file path=usr/share/nvidia/nvidia-application-profiles-rc

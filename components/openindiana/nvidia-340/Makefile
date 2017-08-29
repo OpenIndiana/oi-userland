@@ -22,6 +22,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
 COMPONENT_ARCHIVE_HASH= \
 	sha256:8d6acb83651df2a566c3eb10aebf03e752ab9dac988c5af750b5f0a211ae5936
 COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
+COMPONENT_PROJECT_URL=	http://www.nvidia.com/object/solaris-display-archive.html
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
