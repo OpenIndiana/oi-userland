@@ -30,9 +30,9 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_FMRI=		library/desktop/goffice
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -58,10 +58,6 @@ install:	$(INSTALL_32_and_64)
 unexport SHELLOPTS
 
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
