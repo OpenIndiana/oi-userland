@@ -1,0 +1,77 @@
+--- gnumeric-1.12.35/test/GnumericTest.pm.orig	Sun Mar  5 20:42:35 2017
++++ gnumeric-1.12.35/test/GnumericTest.pm	Sat Aug 26 10:21:43 2017
+@@ -397,7 +397,7 @@
+     my $code = system ("$ssconvert '$file' '$tmp' 2>&1 | sed -e 's/^/| /'");
+     &system_failure ($ssconvert, $code) if $code;
+ 
+-    my $htxt = `zcat -f '$tmp' | $normalize_gnumeric | sha1sum`;
++    my $htxt = `gzip -dcf '$tmp' | $normalize_gnumeric | sha1sum`;
+     my $newsha1 = lc substr ($htxt, 0, 40);
+     die "SHA-1 failure\n" unless $newsha1 =~ /^[0-9a-f]{40}$/;
+ 
+@@ -418,13 +418,13 @@
+ 
+ 	my $tmp1 = "$tmp-old";
+ 	&junkfile ($tmp1);
+-	my $code1 = system ("zcat -f '$saved' >'$tmp1'");
+-	&system_failure ('zcat', $code1) if $code1;
++	my $code1 = system ("gzip -dcf '$saved' >'$tmp1'");
++	&system_failure ('gzip', $code1) if $code1;
+ 
+ 	my $tmp2 = "$tmp-new";
+ 	&junkfile ($tmp2);
+-	my $code2 = system ("zcat -f '$tmp' >'$tmp2'");
+-	&system_failure ('zcat', $code2) if $code2;
++	my $code2 = system ("gzip -dcf '$tmp' >'$tmp2'");
++	&system_failure ('gzip', $code2) if $code2;
+ 
+ 	my $code3 = system ('diff', @ARGV, $tmp1, $tmp2);
+ 
+@@ -487,13 +487,13 @@
+ 
+     my $tmp4 = "$tmp.xml";
+     &junkfile ($tmp4) unless $keep;
+-    $code = system (&quotearg ("zcat", "-f", $tmp1) . " >" . &quotearg ($tmp4));
+-    &system_failure ('zcat', $code) if $code;
++    $code = system (&quotearg ("gzip", "-dcf", $tmp1) . " >" . &quotearg ($tmp4));
++    &system_failure ('gzip', $code) if $code;
+ 
+     my $tmp5 = "$tmp-new.xml";
+     &junkfile ($tmp5) unless $keep;
+-    $code = system (&quotearg ("zcat" , "-f", $tmp3) . " >" . &quotearg ($tmp5));
+-    &system_failure ('zcat', $code) if $code;
++    $code = system (&quotearg ("gzip" , "-dcf", $tmp3) . " >" . &quotearg ($tmp5));
++    &system_failure ('gzip', $code) if $code;
+ 
+     $code = system ('diff', '-u', $tmp4, $tmp5);
+     &system_failure ('diff', $code) if $code;
+@@ -648,7 +648,7 @@
+ 	$file_filtered =~ s{^.*/}{};
+ 	$file_filtered =~ s/(\.gnumeric)$/-filter$1/;
+ 	unlink $file_filtered;
+-	my $cmd = "zcat " . &quotearg ($file_resized) . " | $filter0 >" . &quotearg ($file_filtered);
++	my $cmd = "gzip -dcf " . &quotearg ($file_resized) . " | $filter0 >" . &quotearg ($file_filtered);
+ 	print STDERR "# $cmd\n" if $verbose;
+ 	$code = system ("($cmd) 2>&1 | sed -e 's/^/| /'");
+ 	&system_failure ($ssconvert, $code) if $code;
+@@ -681,15 +681,15 @@
+     my $tmp_xml = "$tmp.xml";
+     unlink $tmp_xml;
+     &junkfile ($tmp_xml) unless $keep;
+-    $code = system ("zcat -f '$file_filtered' | $normalize_gnumeric | $filter1 >'$tmp_xml'");
+-    &system_failure ('zcat', $code) if $code;
++    $code = system ("gzip -dcf '$file_filtered' | $normalize_gnumeric | $filter1 >'$tmp_xml'");
++    &system_failure ('gzip', $code) if $code;
+ 
+     my $tmp2_xml = "$tmp-new.xml";
+     unlink $tmp2_xml;
+     &junkfile ($tmp2_xml) unless $keep;
+-    # print STDERR "zcat -f '$tmp2' | $normalize_gnumeric | $filter2 >'$tmp2_xml'\n";
+-    $code = system ("zcat -f '$tmp2' | $normalize_gnumeric | $filter2 >'$tmp2_xml'");
+-    &system_failure ('zcat', $code) if $code;
++    # print STDERR "gzip -dcf '$tmp2' | $normalize_gnumeric | $filter2 >'$tmp2_xml'\n";
++    $code = system ("gzip -dcf '$tmp2' | $normalize_gnumeric | $filter2 >'$tmp2_xml'");
++    &system_failure ('gzip', $code) if $code;
+ 
+     $code = system ('diff', '-u', $tmp_xml, $tmp2_xml);
+     &system_failure ('diff', $code) if $code && !$ignore_failure;
