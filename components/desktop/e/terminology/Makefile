@@ -23,16 +23,18 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		terminology
-COMPONENT_VERSION=	1.0.0
+COMPONENT_VERSION=      1.1.0
 COMPONENT_FMRI=     	terminal/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SUMMARY= Enlightenment - The best terminal emulator written with the EFL
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://enlightenment.org
+COMPONENT_PROJECT_URL=  https://www.enlightenment.org/about-terminology
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:cc31f0648c83ad8374d35ef60c255eb0a5f1de156ff2567afc6b5b5ef751a45e
-COMPONENT_ARCHIVE_URL=	http://download.enlightenment.org/rel/apps/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      BSD
+COMPONENT_ARCHIVE_HASH= \
+    sha256:8c49f3e5340fe73588f48a3823905cecd9c341c213aed031c2aa752e9ba04551
+COMPONENT_ARCHIVE_URL=  \
+    https://download.enlightenment.org/rel/apps/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      BSD 2-clause
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
