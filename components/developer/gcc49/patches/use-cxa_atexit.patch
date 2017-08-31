@@ -1,0 +1,15 @@
+--- gcc-4.9.4/gcc/config.gcc.1	2017-08-31 00:30:22.732766482 +0000
++++ gcc-4.9.4/gcc/config.gcc	2017-08-31 00:34:20.809250398 +0000
+@@ -820,6 +820,12 @@
+     *-*-solaris2.1[0-9]*)
+       sol2_tm_file="${sol2_tm_file} sol2-10.h"
+       use_gcc_stdint=wrap
++      case ${target} in
++       *-*-solaris2.1[1-9]*)
++         # __cxa_atexit was introduced in Solaris 12/illumos.
++         default_use_cxa_atexit=yes
++         ;;
++     esac
+       ;;
+     *)
+       use_gcc_stdint=provide
