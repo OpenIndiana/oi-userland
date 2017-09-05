@@ -12,7 +12,7 @@
 // http://www.illumos.org/license/CDDL.
 //
 //
-// Copyright 2016-2017 by Jim Klimov, fixes 2017 added by Adam Stevko
+// Copyright 2016-2017 by Jim Klimov
 //
 -->
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
@@ -74,7 +74,7 @@
      both for JAVA and the JAR itself... Or keep it simple? -->
         <exec_method type='method'
                    name='start'
-                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort}'
+                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --httpListenAddress=%{httpd/httpHost} --webroot=%{httpd/jenkins_war_dir}'
                    timeout_seconds='240'>
           <method_context>
             <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
@@ -86,8 +86,27 @@
           </method_context>
         </exec_method>
 
+<!-- Note: Jenkins has a CLI and scriptable REST API that can e.g. schedule
+     a graceful exit, after all running jobs are finished (and blocking
+     creation of new executions), or to do an immediate exit. If a wrapper
+     script is made for the SMF methods, use of this should be an option.
+     Otherwise, handling of SIGTERM is also graceful, though abrupt :)
+-->
         <exec_method type='method'
                    name='stop'
+                   exec=':kill -TERM'
+                   timeout_seconds='60'>
+          <method_context>
+            <method_credential user='jenkins' group='jenkins' />
+          </method_context>
+        </exec_method>
+
+<!-- At the bare minimum, we want to restart and redeploy the WAR file and
+     its Jetty container when the service is refreshed (e.g. package update).
+     So we just kill it (if running) and hope SMF restart would do the rest.
+-->
+        <exec_method type='method'
+                   name='refresh'
                    exec=':kill -TERM'
                    timeout_seconds='60'>
           <method_context>
@@ -99,11 +118,19 @@
      https://wiki.jenkins-ci.org/pages/viewpage.action?pageId=73533946
      Parameters not recognized by the WAR are passed to Winstone container:
      http://winstone.sourceforge.net/#commandLine
+     If you plan to shield the Jenkins application server by a reverse proxy
+     like nginx, apache mod_proxy, etc. running in the same zone - consider
+     setting httpHost=127.0.0.1 below. Conversely, to run Jenkins as "the"
+     webserver in this operating environment, note that this SMF service is
+     sufficiently privileged to use httpPort numbers under 1024 (e.g. 80).
 -->
         <property_group name='httpd' type='application'>
             <stability value='Evolving' />
             <propval name='httpPort' type='count' value='8080' />
+            <propval name='httpHost' type='count' value='0.0.0.0' />
             <propval name='jenkins_war_file' type='astring' value='/usr/share/jenkins/war/jenkins.war' />
+            <!-- Directory into which Jetty webserver would unpack the WAR file -->
+            <propval name='jenkins_war_dir' type='astring' value='/var/lib/jenkins/standalone-war' />
         </property_group>
 
         <property_group name='startd' type='framework'>

@@ -13,7 +13,7 @@
 # Copyright 2016-2017 Jim Klimov
 #
 
-set name=pkg.fmri value=pkg:/developer/jenkins-core-weekly@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY) - weekly core build"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -26,12 +26,19 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # This may be JRE8 for the server, though JDK8 also suffices :)
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
 
-file path=usr/share/jenkins/war/weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
+# Note: as we deliver the new WAR file, we tell the appservers to refresh
+# using the known (or expected soon) SMF FMRIs. Depending on integration,
+# this would restart a standalone server or bump and redeploy in container.
+
+file path=usr/share/jenkins/war/weekly/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
+     refresh_fmri=svc:/network/http:jenkins
+
 link path=usr/share/jenkins/war/weekly/jenkins.war \
      target=./$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
      mediator=jenkins-core \
      mediator-implementation=jenkins-core-weekly \
      mediator-version=$(COMPONENT_VERSION)
+
 link path=usr/share/jenkins/war/jenkins.war \
      target=./weekly/jenkins.war \
      mediator=jenkins-core \
