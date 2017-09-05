@@ -1,0 +1,14 @@
+--- ./src/slurmd/common/xcgroup.h.orig	2016-05-05 22:53:27.647550350 +0200
++++ ./src/slurmd/common/xcgroup.h	2016-05-05 22:53:33.703318333 +0200
+@@ -55,6 +55,11 @@
+ #define	MS_NODEV	0
+ 
+ #define	umount(d)	unmount(d, 0)
++
++#elif defined(__sun) && defined(__SVR4)
++#define	MS_NOEXEC	0
++#define	MS_NODEV	0
++
+ #endif
+ 
+ typedef struct xcgroup_ns {

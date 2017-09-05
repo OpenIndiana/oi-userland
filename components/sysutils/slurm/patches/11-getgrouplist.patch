@@ -1,0 +1,116 @@
+--- slurm-16.05.4/src/slurmd/slurmd/req.c.orig	2016-08-14 05:46:31.855618530 +0200
++++ slurm-16.05.4/src/slurmd/slurmd/req.c	2016-08-14 05:47:05.909990798 +0200
+@@ -100,6 +100,55 @@
+ #include "src/slurmd/common/slurmstepd_init.h"
+ #include "src/slurmd/common/task_plugin.h"
+ 
++#ifdef __sun__
++#include <string.h>
++int
++getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
++{
++    const struct group *grp;
++    int i, maxgroups, ngroups, ret;
++
++    ret = 0;
++    ngroups = 0;
++    maxgroups = *grpcnt;
++    /*
++     * When installing primary group, duplicate it;
++     * the first element of groups is the effective gid
++     * and will be overwritten when a setgid file is executed.
++     */
++    groups ? groups[ngroups++] = agroup : ngroups++;
++    if (maxgroups > 1)
++        groups ? groups[ngroups++] = agroup : ngroups++;
++    /*
++     * Scan the group file to find additional groups.
++     */
++    setgrent();
++    while ((grp = getgrent()) != NULL) {
++        if (groups) {
++            for (i = 0; i < ngroups; i++) {
++                if (grp->gr_gid == groups[i])
++                    goto skip;
++            }
++        }
++        for (i = 0; grp->gr_mem[i]; i++) {
++            if (!strcmp(grp->gr_mem[i], uname)) {
++                if (ngroups >= maxgroups) {
++                    ret = -1;
++                    break;
++                }
++                groups ? groups[ngroups++] = grp->gr_gid : ngroups++;
++                break;
++            }
++        }
++skip:
++        ;
++    }
++    endgrent();
++    *grpcnt = ngroups;
++    return (ret);
++}
++#endif
++
+ #define _LIMIT_INFO 0
+ 
+ #define RETRY_DELAY 15		/* retry every 15 seconds */
+--- slurm-16.05.4/src/slurmd/slurmstepd/mgr.c.orig	2016-08-14 05:48:05.008163571 +0200
++++ slurm-16.05.4/src/slurmd/slurmstepd/mgr.c	2016-08-14 05:48:23.744669503 +0200
+@@ -129,6 +129,55 @@
+ #include "src/slurmd/slurmstepd/step_terminate_monitor.h"
+ #include "src/slurmd/slurmstepd/fname.h"
+ 
++#ifdef __sun__
++#include <string.h>
++int
++getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
++{
++    const struct group *grp;
++    int i, maxgroups, ngroups, ret;
++
++    ret = 0;
++    ngroups = 0;
++    maxgroups = *grpcnt;
++    /*
++     * When installing primary group, duplicate it;
++     * the first element of groups is the effective gid
++     * and will be overwritten when a setgid file is executed.
++     */
++    groups ? groups[ngroups++] = agroup : ngroups++;
++    if (maxgroups > 1)
++        groups ? groups[ngroups++] = agroup : ngroups++;
++    /*
++     * Scan the group file to find additional groups.
++     */
++    setgrent();
++    while ((grp = getgrent()) != NULL) {
++        if (groups) {
++            for (i = 0; i < ngroups; i++) {
++                if (grp->gr_gid == groups[i])
++                    goto skip;
++            }
++        }
++        for (i = 0; grp->gr_mem[i]; i++) {
++            if (!strcmp(grp->gr_mem[i], uname)) {
++                if (ngroups >= maxgroups) {
++                    ret = -1;
++                    break;
++                }
++                groups ? groups[ngroups++] = grp->gr_gid : ngroups++;
++                break;
++            }
++        }
++skip:
++        ;
++    }
++    endgrent();
++    *grpcnt = ngroups;
++    return (ret);
++}
++#endif
++
+ #define RETRY_DELAY 15		/* retry every 15 seconds */
+ #define MAX_RETRY   240		/* retry 240 times (one hour max) */
+ 

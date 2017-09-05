@@ -1,0 +1,76 @@
+--- slurm-16.05.4/src/common/gres.c.orig	2016-08-14 05:21:12.714483779 +0200
++++ slurm-16.05.4/src/common/gres.c	2016-08-14 05:21:20.666241690 +0200
+@@ -73,6 +73,10 @@
+ typedef cpuset_t cpu_set_t;
+ #endif
+ 
++#if defined(__sun) && defined(__SVR4)
++#include <sys/pset.h>
++#endif
++
+ #include <ctype.h>
+ #include <sched.h>
+ #include <stdio.h>
+@@ -5720,6 +5724,9 @@
+ #ifdef __NetBSD__
+ 	// On NetBSD, cpuset_t is an opaque data type
+ 	cpuset_t *mask = cpuset_create();
++#elif defined(__sun) && defined(__SVR4)
++	psetid_t pset;
++	psetid_t opset;
+ #else
+ 	cpu_set_t mask;
+ #endif
+@@ -5729,6 +5736,14 @@
+ 	gres_slurmd_conf_t *gres_slurmd_conf;
+ 	int gres_inx = 0;
+ 
++#if defined(__sun) && defined(__SVR4)
++	rc = pset_create(&pset);
++	rc = pset_bind(PS_QUERY, P_PID, P_MYID, &pset);
++	if(rc) {
++		error("pset_bind error: %m");
++		return  usable_gres;
++	}
++#else
+ 	CPU_ZERO(&mask);
+ #ifdef __FreeBSD__
+ 	rc = cpuset_getaffinity(CPU_LEVEL_WHICH, CPU_WHICH_PID, -1,
+@@ -5738,6 +5753,7 @@
+ #else
+ 	rc = sched_getaffinity(0, &mask);
+ #endif
++#endif
+ 
+ 	if (rc) {
+ 		error("sched_getaffinity error: %m");
+@@ -5762,8 +5778,14 @@
+ 			for (i = 0; i <= i_last; i++) {
+ 				if (!bit_test(gres_slurmd_conf->cpus_bitmap,i))
+ 					continue;
++#if defined(__sun) && defined(__SVR4)
++				rc = pset_assign(pset, i, &opset);
++				if (pset != opset)
++					continue;
++#else
+ 				if (!CPU_ISSET(i, &mask))
+ 					continue;
++#endif
+ 				bit_nset(usable_gres, gres_inx,
+ 					 gres_inx + gres_slurmd_conf->count-1);
+ 				break;
+@@ -5777,6 +5799,14 @@
+ 	cpuset_destroy(mask);
+ #endif
+ 
++#if defined(__sun) && defined(__SVR4)
++	rc = pset_destroy(pset);
++#endif
++
++#if defined(__sun) && defined(__SVR4)
++	rc = pset_destroy(pset);
++#endif
++
+ 	return usable_gres;
+ }
+ 

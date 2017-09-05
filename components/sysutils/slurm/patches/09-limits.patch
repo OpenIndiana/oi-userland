@@ -1,0 +1,13 @@
+--- ./src/slurmctld/job_mgr.c.orig	2016-05-05 21:48:58.094113888 +0200
++++ ./src/slurmctld/job_mgr.c	2016-05-05 21:53:10.226614862 +0200
+@@ -59,6 +59,10 @@
+ #include <sys/param.h>
+ #include <unistd.h>
+ 
++#if defined(__sun) && defined(__SVR4)
++#include <limits.h>
++#endif
++
+ #include "slurm/slurm_errno.h"
+ 
+ #include "src/common/slurm_acct_gather.h"

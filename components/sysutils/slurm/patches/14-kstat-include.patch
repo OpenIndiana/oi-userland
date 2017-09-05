@@ -1,0 +1,13 @@
+--- ./src/slurmd/common/xcpuinfo.c.orig	2016-05-05 22:50:31.549223798 +0200
++++ ./src/slurmd/common/xcpuinfo.c	2016-05-05 22:51:13.930529528 +0200
+@@ -58,6 +58,10 @@
+ #include <string.h>
+ #include <strings.h>
+ 
++#if defined(__sun) && defined(__SVR4)
++#include <kstat.h>
++#endif
++
+ #include "slurm/slurm.h"
+ #include "slurm/slurm_errno.h"
+ #include "src/common/log.h"

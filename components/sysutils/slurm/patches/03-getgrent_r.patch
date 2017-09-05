@@ -1,0 +1,34 @@
+--- ./src/common/uid.c.orig	2016-05-05 18:48:42.515363888 +0200
++++ ./src/common/uid.c	2016-05-05 18:59:39.781482336 +0200
+@@ -312,9 +312,15 @@
+ 
+ 	setgrent();
+ 	while (1) {
++#if defined(__sun) && defined(__SVR4)
++		grpp = getgrent_r(&grp, buf, PW_BUF_SIZE);
++		if (grpp == NULL)
++			break;
++#else
+ 		cc = getgrent_r(&grp, buf, PW_BUF_SIZE, &grpp);
+ 		if (cc)
+ 			break;
++#endif
+ 		if (grpp->gr_gid != gid)
+ 			continue;
+ 		for (cc = 0; grpp->gr_mem[cc] ; cc++) {
+--- ./src/slurmctld/groups.c.orig	2016-05-05 21:24:59.734665702 +0200
++++ ./src/slurmctld/groups.c	2016-05-05 21:28:32.457258898 +0200
+@@ -184,8 +184,13 @@
+ 		 * the same gid
+ 		 */
+ 		slurm_seterrno(0);
++#if defined(__sun) && defined(__SVR4)
++		grp_result = getgrent_r(&grp, grp_buffer, buflen);
++		if (grp_result == NULL) {
++#else
+ 		res = getgrent_r(&grp, grp_buffer, buflen, &grp_result);
+ 		if (res != 0 || grp_result == NULL) {
++#endif
+ 			/* FreeBSD returns 0 and sets the grp_result to NULL
+ 			 * unlike linux which returns ENOENT.
+ 			 */
