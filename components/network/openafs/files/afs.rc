@@ -1,0 +1,207 @@
+#!/bin/sh
+#
+# afs.rc: rc script for AFS on Solaris 11 or OpenSolaris-based platforms
+#
+# Install this script as /etc/init.d/afs.rc
+# then make links like this:
+# ln -s ../init.d/afs.rc /etc/rc0.d/K66afs
+# ln -s ../init.d/afs.rc /etc/rc2.d/S70afs
+#
+CONFIG=/etc/openafs
+AFSDOPT=$CONFIG/afsd.options
+PACKAGE=$CONFIG/package.options
+
+# EXTRAOPTS can be used to enable/disable AFSDB support (-afsdb)
+# and Dynroot (dynamically-generated /afs) support (-dynroot).
+EXTRAOPTS="-afsdb -dynroot -fakestat"
+
+LARGE="-stat 2800 -dcache 2400 -daemons 5 -volumes 128"
+MEDIUM="-stat 2000 -dcache 800 -daemons 3 -volumes 70"
+SMALL="-stat 300 -dcache 100 -daemons 2 -volumes 50"
+
+if [ -f $AFSDOPT ]; then
+    OPTIONS=`cat $AFSDOPT`
+else
+    OPTIONS="$MEDIUM $EXTRAOPTS"
+fi
+
+# Need the commands ps, awk, kill, sleep
+PATH=${PATH}${PATH:+:}/sbin:/bin:/usr/bin
+
+killproc() {            # kill the named process(es)
+      awkfield2='$2'
+        pid=`ps -ef | awk "/$1/ && ! /awk/ {print $awkfield2}"`
+        [ "$pid" != "" ] && kill -KILL $pid
+}
+
+case $1 in
+'start')
+
+## Check to see that /bin/isalist exists and is executable
+if [ ! -x /bin/isalist ] ;then
+      echo "/bin/isalist not executable"
+      exit 1;
+fi
+
+## Determine if we are running the 64 bit OS
+## If sparcv9 then the location of the afs and nfs extensions differ
+
+case `/bin/isalist` in
+    *amd64* )
+              nfssrv=/kernel/misc/amd64/nfssrv
+              afs=/kernel/drv/amd64/afs ;;
+    *sparcv9* )
+              nfssrv=/kernel/misc/sparcv9/nfssrv
+              afs=/kernel/drv/sparcv9/afs ;;
+          * )
+              nfssrv=/kernel/misc/nfssrv
+              afs=/kernel/drv/afs ;;
+esac
+
+
+#
+# Load kernel extensions
+#
+# nfssrv has to be loaded first
+
+
+if [ -f $nfssrv ]; then
+      echo "Loading NFS server kernel extensions"
+      modload $nfssrv
+else
+      echo "$nfssrv does not exist. Skipping AFS startup."
+      exit 1
+fi
+
+## Load AFS kernel extensions
+
+if [ -f $afs ]; then
+      if [ -f /kernel/drv/afs.conf ] ; then
+          echo "Kernel afs.conf already exists"
+      else
+          echo "Creating kernel afs.conf"
+          echo 'name="afs" parent="pseudo";' > /kernel/drv/afs.conf
+      fi
+
+      # load the module
+      if grep '^afs ' /etc/name_to_major >/dev/null ; then
+          echo "Loading AFS kernel extensions"
+          modload $afs
+	  # this can sometimes be necessary to get the /devices afs device to
+	  # attach
+	  update_drv afs
+      else
+          echo "Installing AFS driver and loading kernel extensions"
+          add_drv -m '* 0666 root root' afs
+      fi
+
+      # Create the /dev/afs link
+      if grep name=afs /etc/devlink.tab >/dev/null ; then
+          echo "Entry for afs already exists in /etc/devlink.tab"
+      else
+          echo "Adding entry for afs in /etc/devlink.tab"
+          echo "type=ddi_pseudo;name=afs;addr=0;minor=afs	\D" >> /etc/devlink.tab
+	  devfsadm
+      fi
+else
+      echo "$afs does not exist. Skipping AFS startup."
+      exit 1
+fi
+
+#
+# Start the AFS server processes if a bosserver exists
+#
+
+if [ -x /usr/sbin/bosserver ]; then
+      echo "Starting AFS Server processes"
+      /usr/sbin/bosserver &
+      OPTIONS="$OPTIONS -nosettime"
+      sleep 30
+fi
+
+#
+# Check that all of the client configuration files exist
+#
+
+for file in /usr/sbin/afsd /etc/openafs/cacheinfo \
+          /etc/openafs/ThisCell /etc/openafs/CellServDB
+do
+      if [ ! -f ${file} ]; then
+              echo "${file} does not exist. Not starting AFS client."
+              exit 1
+      fi
+done
+
+#
+# Check that the root directory for AFS (/afs)
+# and the cache directory (as specified in /etc/openafs/cacheinfo) both exist
+#
+
+for dir in `awk -F: '{print $1, $2}' /etc/openafs/cacheinfo`
+do
+      if [ ! -d ${dir} ]; then
+              echo "${dir} does not exist. Not starting AFS client."
+              exit 2
+      fi
+done
+
+echo "Starting afsd"
+/usr/sbin/afsd $OPTIONS
+
+#
+# Run package to update the disk
+#
+if [ -f /usr/afsws/etc/package -a -f $PACKAGE ]; then
+      /usr/afsws/etc/package -v -o `cat $PACKAGE` > /dev/console 2>&1
+case $? in
+0)
+      (echo "Package completed successfully") > /dev/console 2>&1
+      date > /dev/console 2>&1
+      ;;
+4)
+      (echo "Rebooting to restart system") > /dev/console 2>&1
+      sync
+      /etc/reboot
+      ;;
+*)
+      (echo "Package update failed; continuing") > /dev/console 2>&1
+      ;;
+esac
+
+fi
+
+#
+# Start AFS inetd services
+# (See the AFS Command Ref. for notes on the proper configuration of inetd.afs)
+#
+if [ -f /usr/sbin/inetd.afs -a -f /etc/inetd.conf.afs ]; then
+      /usr/sbin/inetd.afs /etc/inetd.conf.afs
+fi
+
+echo ;;
+
+'stop')
+
+#
+# Stop the AFS inetd and server processes
+# We do not kill the afsd process here. It should be possible to do now, but we
+# don't do it yet. Note that you need to parse 'modinfo | grep afs' output and
+# give the id to modunload, in order to unload the kernel module.
+#
+
+echo "Killing inetd.afs"
+killproc inetd.afs
+
+bosrunning=`ps -ef | awk '/bosserver/ && ! /awk/'`
+if [ "${bosrunning}" != "" ]; then
+      echo "Shutting down AFS server processes"
+      /usr/sbin/bos shutdown localhost -localauth -wait
+      echo "Killing AFS bosserver"
+      killproc bosserver
+fi
+
+echo ;;
+
+*)    echo "Invalid option supplied to $0"
+      exit 1;;
+esac
