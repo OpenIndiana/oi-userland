@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2_mixer
 COMPONENT_VERSION=	2.0.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.libsdl.org/projects/SDL_mixer/
 COMPONENT_SUMMARY=	SDL_mixer is a sample multi-channel audio mixer library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,6 +51,31 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Prepare mediation for the two variants of the build
+### Alphanumerics only... conjure up a GMake conversion with patsubst?
+###MEDIATOR_NAME=		$(COMPONENT_NAME)
+MEDIATOR_NAME=		SDL2mixer
+MEDIATOR_VERSION=	$(COMPONENT_VERSION)
+ifeq ($(strip $(USE_ENCUMBERED)),yes)
+# Unencumbered version has lower default priority (none) if both are available
+MEDIATOR_PRIO=		vendor
+MEDIATOR_IMPLEM=	encumbered
+MEDIATOR_SUBDIR=	encumbered
+else
+MEDIATOR_PRIO=
+MEDIATOR_IMPLEM=	unencumbered
+MEDIATOR_SUBDIR=	unencumbered
+endif
+
+MEDIATOR_STRING=	mediator=$(MEDIATOR_NAME) mediator-version=$(MEDIATOR_VERSION) \
+	mediator-implementation=$(MEDIATOR_IMPLEM)
+ifneq ($(strip $(MEDIATOR_PRIO)),)
+MEDIATOR_STRING+=	mediator-priority=$(MEDIATOR_PRIO)
+endif
+
+PKG_OPTIONS +=  -D MEDIATOR_STRING="$(MEDIATOR_STRING)"
+PKG_OPTIONS +=  -D MEDIATOR_SUBDIR="$(MEDIATOR_SUBDIR)"
+
 PATH.32=/usr/gnu/bin:/usr/bin
 PATH.64=/usr/gnu/bin:/usr/gnu/bin/$(MACH64):/usr/bin/$(MACH64):/usr/bin
 PATH=$(PATH.$(BITS))
@@ -57,6 +83,9 @@ PATH=$(PATH.$(BITS))
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
+CONFIGURE_OPTIONS +=	--disable-rpath
+CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--enable-music-cmd
 CONFIGURE_OPTIONS +=	--enable-music-wave

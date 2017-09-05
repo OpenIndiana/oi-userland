@@ -22,14 +22,43 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/include/SDL2/SDL_mixer.h
+# Original object stuffed into subdirs
+file usr/include/SDL2/SDL_mixer.h path=usr/include/SDL2/$(MEDIATOR_SUBDIR)/SDL_mixer.h
 
-file path=usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0.0.1
-link path=usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0 target=libSDL2_mixer-2.0.so.0.0.1
-link path=usr/lib/$(MACH64)/libSDL2_mixer.so target=libSDL2_mixer-2.0.so.0.0.1
-file path=usr/lib/$(MACH64)/pkgconfig/SDL2_mixer.pc
+file usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/$(MACH64)/$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1
+link path=usr/lib/$(MACH64)/$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0 \
+     target=libSDL2_mixer-2.0.so.0.0.1
+link path=usr/lib/$(MACH64)/$(MEDIATOR_SUBDIR)/libSDL2_mixer.so \
+     target=libSDL2_mixer-2.0.so.0.0.1
+file usr/lib/$(MACH64)/pkgconfig/SDL2_mixer.pc \
+     path=usr/lib/$(MACH64)/pkgconfig/$(MEDIATOR_SUBDIR)/SDL2_mixer.pc
 
-file path=usr/lib/libSDL2_mixer-2.0.so.0.0.1
-link path=usr/lib/libSDL2_mixer-2.0.so.0 target=libSDL2_mixer-2.0.so.0.0.1
-link path=usr/lib/libSDL2_mixer.so target=libSDL2_mixer-2.0.so.0.0.1
-file path=usr/lib/pkgconfig/SDL2_mixer.pc
+file usr/lib/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1
+link path=usr/lib/$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0 target=libSDL2_mixer-2.0.so.0.0.1
+link path=usr/lib/$(MEDIATOR_SUBDIR)/libSDL2_mixer.so target=libSDL2_mixer-2.0.so.0.0.1
+file usr/lib/pkgconfig/SDL2_mixer.pc \
+     path=usr/lib/pkgconfig/$(MEDIATOR_SUBDIR)/SDL2_mixer.pc
+
+# Mediation links
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/SDL_mixer.h \
+     path=usr/include/SDL2/SDL_mixer.h
+
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0.0.1
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/$(MACH64)/libSDL2_mixer.so
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/SDL2_mixer.pc \
+     path=usr/lib/$(MACH64)/pkgconfig/SDL2_mixer.pc
+
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/libSDL2_mixer-2.0.so.0.0.1
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/libSDL2_mixer-2.0.so.0
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/libSDL2_mixer-2.0.so.0.0.1 \
+     path=usr/lib/libSDL2_mixer.so
+link $(MEDIATOR_STRING) target=$(MEDIATOR_SUBDIR)/SDL2_mixer.pc \
+     path=usr/lib/pkgconfig/SDL2_mixer.pc
