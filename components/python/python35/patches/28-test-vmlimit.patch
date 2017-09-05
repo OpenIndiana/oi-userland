@@ -1,0 +1,26 @@
+This patch for a Solaris-specific problem but is a good safety precaution,
+so although it is not suitable for upstream as-is, we might offer it in a
+slightly tweaked form at some point in the future.
+
+--- Python-3.5.0/Lib/test/regrtest.py.~1~	2015-09-13 04:41:22.000000000 -0700
++++ Python-3.5.0/Lib/test/regrtest.py	2015-09-14 14:42:45.764365598 -0700
+@@ -187,6 +187,19 @@
+         newsoft = min(hard, max(soft, 1024*2048))
+         resource.setrlimit(resource.RLIMIT_STACK, (newsoft, hard))
+ 
++# The socket test goes crazy on Solaris, slurping up VM until the system
++# dies or the test is killed.  So limit it to 4GB.  While we could do this
++# in the socket test itself, it is more prudent to do it here in case any
++# other tests ever go crazy in a similar fashion.
++if sys.platform == 'sunos5':
++    try:
++        import resource
++    except ImportError:
++        pass
++    else:
++        vm_limit = 4294967296
++        resource.setrlimit(resource.RLIMIT_VMEM, (vm_limit, vm_limit))
++
+ # Test result constants.
+ PASSED = 1
+ FAILED = 0
