@@ -16,14 +16,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany
-COMPONENT_VERSION= 1.30.1
+COMPONENT_VERSION= 1.31
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany
 COMPONENT_SUMMARY= A fast and lightweight IDE
 COMPONENT_DESCRIPTION= Small and fast IDE, which has only a few dependencies from other package (independent on DE)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:0ac360f1f3d6c28790a81d570252a7d40421f6e1d8e5a8d653756bd041d88491
+COMPONENT_ARCHIVE_HASH= \
+  sha256:30fdb906bb76c4251a8bcf83ee267db28c26ef6ab867668a782cec1164a3aba5
 COMPONENT_ARCHIVE_URL= http://download.geany.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.geany.org/Main/HomePage
 COMPONENT_LICENSE= GPLv2
@@ -33,7 +34,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS    += --enable-vte
 CONFIGURE_OPTIONS    += --disable-html-docs
