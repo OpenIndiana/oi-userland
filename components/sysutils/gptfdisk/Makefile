@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2017 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gptfdisk
-COMPONENT_VERSION= 1.0.1
+COMPONENT_VERSION= 1.0.3
 COMPONENT_FMRI = system/storage/gptfdisk
 COMPONENT_CLASSIFICATION = System/Administration and Configuration
 COMPONENT_SUMMARY= GPT fdisk - Disk partitioning tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:864c8aee2efdda50346804d7e6230407d5f42a8ae754df70404dd8b2fdfaeac7
+  sha256:89fd5aec35c409d610a36cb49c65b442058565ed84042f767bba614b8fc91b5c
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/gptfdisk/files/gptfdisk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://sourceforge.net/projects/gptfdisk/
