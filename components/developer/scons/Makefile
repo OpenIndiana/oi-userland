@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scons
-COMPONENT_VERSION=	2.4.1
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://serf.apache.org/
+COMPONENT_VERSION=	2.5.1
+COMPONENT_PROJECT_URL=	http://scons.org/
 COMPONENT_SUMMARY=	SConstruct, a software building tool
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b7e6c7c383b75f3cde4005a9f8d009305237c183f59427150c3cbdebd160baf9
+    sha256:fd3e17baad67cd4dd6b62616b5c1335572f298008a6c17d8375ca2b51c6a4322
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)-src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=		developer/build/scons
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
@@ -61,7 +60,7 @@ $(BUILD_DIR)/$(MACH32)/.installed:	$(BUILD_DIR)/$(MACH32)/.built
 			--root=$(PROTO_DIR) --prefix=$(USRDIR) \
 			--no-version-script --standalone-lib
 	cd $(PROTO_DIR)/$(USRDIR)/bin && \
-		for F in scons sconsign scons-time ; do \
+		for F in scons sconsign scons-configure-cache scons-time ; do \
 			sed -e 's,^#! */usr/bin/env python,#!$(PYTHON),' \
 				< $$F > $$F.py \
 			&& $(CAT) $$F.py > $$F \
