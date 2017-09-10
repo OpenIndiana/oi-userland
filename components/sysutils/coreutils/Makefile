@@ -25,7 +25,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
-COMPONENT_VERSION=      8.27
+COMPONENT_VERSION=      8.28
 COMPONENT_FMRI=         file/gnu-coreutils	
 COMPONENT_SUMMARY=      GNU Core Utilities
 COMPONENT_DESCRIPTION= \
@@ -35,7 +35,7 @@ COMPONENT_PROJECT_URL=	http://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:8891d349ee87b9ff7870f52b6d9312a9db672d2439d289bc57084771ca21656b
+  sha256:1117b1a16039ddd84d51a9923948307cfa28c2cea03d1a2438742253df0a0c65
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3, FDLv1.3
 
