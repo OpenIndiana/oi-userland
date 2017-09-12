@@ -1,26 +1,29 @@
-/*
- *  This patch fixes the performance issue observed while retrieving the
- *  hrStorage parameters in systems with large number of mountpoints
- *  parameters using snmpwalk.
- *
- *  This issue is happening due to the overhead of large number of
- *  ioctl() system calls in getmntent() function called by the
- *  Get_Next_HR_FileSys() function.
- *
- *  We see that in the Get_Next_HR_FileSys() function, inorder to access
- *  the last mountpoint, the /etc/mnttab is opened and we walk through
- *  all the mnttab entries for all filesystems till the end. This is the
- *  reason we find a large number of the MNTIOC_GETMNTENT ioctl() calls.
- *
- *  To reduce the overhead of the getmntent() calls, we maintain a cache
- *  of all the /etc/mnttab entries and walk through the cache instead of
- *  opening /etc/mnttab and walking all the entries for each mountpoint.
- *  This functionality is provided by the load_mnttab_cache_solaris()
- *  function called from the Init_HR_FileSys() function.
- */
---- net-snmp-5.4.4/agent/mibgroup/host/hr_filesys.c.~1~	2011-01-13 15:04:53.000000000 +0300
-+++ net-snmp-5.4.4/agent/mibgroup/host/hr_filesys.c	2015-08-17 21:19:43.518501301 +0300
-@@ -34,6 +34,10 @@
+# 
+#   This patch fixes the performance issue observed while retrieving the
+#   hrStorage parameters in systems with large number of mountpoints
+#   parameters using snmpwalk.
+#  
+#   This issue is happening due to the overhead of large number of
+#   ioctl() system calls in getmntent() function called by the
+#   Get_Next_HR_FileSys() function.
+#  
+#   We see that in the Get_Next_HR_FileSys() function, inorder to access
+#   the last mountpoint, the /etc/mnttab is opened and we walk through
+#   all the mnttab entries for all filesystems till the end. This is the
+#   reason we find a large number of the MNTIOC_GETMNTENT ioctl() calls.
+# 
+#   To reduce the overhead of the getmntent() calls, we maintain a cache
+#   of all the /etc/mnttab entries and walk through the cache instead of
+#   opening /etc/mnttab and walking all the entries for each mountpoint.
+#   This functionality is provided by the load_mnttab_cache_solaris()
+#   function called from the Init_HR_FileSys() function.
+#  
+#  Developed in-house. Bug submitted upstream
+#  https://sourceforge.net/p/net-snmp/bugs/2588/
+#  
+--- a/agent/mibgroup/host/hr_filesys.c	Wed Feb 19 18:36:42 2014
++++ b/agent/mibgroup/host/hr_filesys.c	Wed Nov 26 07:21:17 2014
+@@ -46,6 +46,10 @@
  #include <sys/mount.h>
  #endif
  
@@ -31,7 +34,7 @@
  #include <ctype.h>
  #if HAVE_STRING_H
  #include <string.h>
-@@ -88,7 +92,11 @@
+@@ -108,7 +112,11 @@
  #ifdef solaris2
  
  struct mnttab   HRFS_entry_struct;
@@ -44,7 +47,7 @@
  #define	HRFS_name	mnt_special
  #define	HRFS_mount	mnt_mountp
  #define	HRFS_type	mnt_fstype
-@@ -177,6 +185,9 @@
+@@ -207,6 +215,9 @@
  static u_char  *when_dumped(char *filesys, int level, size_t * length);
  int             header_hrfilesys(struct variable *, oid *, size_t *, int,
                                   size_t *, WriteMethod **);
@@ -54,27 +57,26 @@
  
          /*********************
  	 *
-@@ -621,6 +632,10 @@
+@@ -662,11 +673,14 @@
      HRFS_index = 1;
      if (fp != NULL)
          fclose(fp);
 +#ifdef solaris2
 +    if(!load_mnttab_cache_solaris())
-+        return;
-+#else    
++    	return;
++#else
      fp = fopen(ETC_MNTTAB, "r");
-     if (!fp) {
-       char tmpbuf[STRINGMAX];
-@@ -628,6 +643,7 @@
-       config_perror(tmpbuf);
-     }
+-    if (!fp) {
+-      netsnmp_config_error("Can't open mnttab %s\n", ETC_MNTTAB);
+-    }
  #endif
++
 +#endif
  }
  
  const char     *HRFS_ignores[] = {
-@@ -683,6 +699,117 @@
-     0
+@@ -722,6 +736,117 @@
+     NULL
  };
  
 +#ifdef solaris2
@@ -191,7 +193,7 @@
  int
  Get_Next_HR_FileSys(void)
  {
-@@ -719,17 +846,18 @@
+@@ -758,17 +883,18 @@
  #else
      const char    **cpp;
  
@@ -212,9 +214,9 @@
          return -1;
 -#endif                          /* solaris2 */
  
-     DEBUGMSGTL(("host/hr_filesys", "Get_Next_HRFS %s\n", HRFS_entry->HRFS_name));
- 
-@@ -752,6 +880,8 @@
+     for (cpp = HRFS_ignores; *cpp != NULL; ++cpp)
+         if (!strcmp(HRFS_entry->HRFS_type, *cpp))
+@@ -787,6 +913,8 @@
      }
  
      return HRFS_index++;
@@ -223,7 +225,7 @@
  #endif                          /* HAVE_GETFSSTAT */
  }
  
-@@ -819,9 +949,24 @@
+@@ -854,10 +982,25 @@
          HRFS_entry = NULL;
      }
  #else
@@ -243,8 +245,9 @@
 +    if (HRFS_list != NULL)
 +        free(HRFS_list);
 +    last_access = -1;
-+#endif
-+
  #endif
++
++#endif
  }
+ 
  

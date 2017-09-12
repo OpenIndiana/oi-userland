@@ -1,14 +1,14 @@
-Description: fix denial of service and possible code execution via
- incompletely parsed varBind variables
-Origin: backport, http://sourceforge.net/p/net-snmp/code/ci/f23bcd3ac6ddee5d0a48f9703007ccc738914791/
-Bug: https://sourceforge.net/p/net-snmp/bugs/2615/ (private)
-Bug-Debian: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=788964
+This patch fixes a security issue where snmp_pdu_parse() function 
+could leave incompletely parsed varBind variables in the list of  
+variables. A remote, unauthenticated attacker could exploit this 
+flaw to cause a crash or, potentially, execute arbitrary code.
+The vulnerability is fixed in the upsream and below is the link 
+to the upstream bug.
+https://sourceforge.net/p/net-snmp/bugs/2615/ 
 
-Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
-===================================================================
---- net-snmp-5.4.3~dfsg.orig/snmplib/snmp_api.c	2015-08-13 10:28:13.097188463 -0400
-+++ net-snmp-5.4.3~dfsg/snmplib/snmp_api.c	2015-08-13 10:29:34.493941919 -0400
-@@ -4262,10 +4262,9 @@
+--- a/snmplib/snmp_api.c	Mon Aug  3 03:34:05 2015
++++ b/snmplib/snmp_api.c	Mon Aug  3 03:31:01 2015
+@@ -4270,10 +4270,9 @@
      u_char          type;
      u_char          msg_type;
      u_char         *var_val;
@@ -20,7 +20,7 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
      oid             objid[MAX_OID_LEN];
  
      /*
-@@ -4400,38 +4399,24 @@
+@@ -4486,38 +4486,24 @@
                                (ASN_SEQUENCE | ASN_CONSTRUCTOR),
                                "varbinds");
      if (data == NULL)
@@ -33,26 +33,27 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
      while ((int) *length > 0) {
 -        netsnmp_variable_list *vptemp;
 -        vptemp = (netsnmp_variable_list *) malloc(sizeof(*vptemp));
--        if (0 == vptemp) {
+-        if (NULL == vptemp) {
 -            return -1;
 -        }
--        if (0 == vp) {
+-        if (NULL == vp) {
 -            pdu->variables = vptemp;
 -        } else {
 -            vp->next_variable = vptemp;
 -        }
 -        vp = vptemp;
+-
+-        vp->next_variable = NULL;
+-        vp->val.string = NULL;
 +        vp = SNMP_MALLOC_TYPEDEF(netsnmp_variable_list);
 +        if (NULL == vp)
 +            goto fail;
- 
--        vp->next_variable = NULL;
--        vp->val.string = NULL;
          vp->name_length = MAX_OID_LEN;
--        vp->name = 0;
+-        vp->name = NULL;
 -        vp->index = 0;
--        vp->data = 0;
--        vp->dataFreeHook = 0;
+-        vp->data = NULL;
+-        vp->dataFreeHook = NULL;
++        vp->type = 0;
          DEBUGDUMPSECTION("recv", "VarBind");
          data = snmp_parse_var_op(data, objid, &vp->name_length, &vp->type,
                                   &vp->val_len, &var_val, length);
@@ -65,7 +66,7 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
  
          len = MAX_PACKET_LENGTH;
          DEBUGDUMPHEADER("recv", "Value");
-@@ -4496,7 +4482,7 @@
+@@ -4504,7 +4488,7 @@
                  vp->val.string = (u_char *) malloc(vp->val_len);
              }
              if (vp->val.string == NULL) {
@@ -74,7 +75,7 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
              }
              asn_parse_string(var_val, &len, &vp->type, vp->val.string,
                               &vp->val_len);
-@@ -4507,7 +4493,7 @@
+@@ -4515,7 +4499,7 @@
              vp->val_len *= sizeof(oid);
              vp->val.objid = (oid *) malloc(vp->val_len);
              if (vp->val.objid == NULL) {
@@ -83,7 +84,7 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
              }
              memmove(vp->val.objid, objid, vp->val_len);
              break;
-@@ -4519,19 +4505,35 @@
+@@ -4527,7 +4511,7 @@
          case ASN_BIT_STR:
              vp->val.bitstring = (u_char *) malloc(vp->val_len);
              if (vp->val.bitstring == NULL) {
@@ -92,6 +93,7 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
              }
              asn_parse_bitstring(var_val, &len, &vp->type,
                                  vp->val.bitstring, &vp->val_len);
+@@ -4534,12 +4518,25 @@
              break;
          default:
              snmp_log(LOG_ERR, "bad type returned (%x)\n", vp->type);
@@ -100,7 +102,6 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
              break;
          }
          DEBUGINDENTADD(-4);
-+
 +        if (NULL == vplast) {
 +            pdu->variables = vp;
 +        } else {
@@ -111,14 +112,12 @@ Index: net-snmp-5.4.3~dfsg/snmplib/snmp_api.c
      }
 -    return badtype;
 +    return 0;
-+
-+  fail:
-+    DEBUGMSGTL(("recv", "error while parsing VarBindList\n"));
-+    /** if we were parsing a var, remove it from the pdu and free it */
-+    if (vp)
++    fail:
++      DEBUGMSGTL(("recv", "error while parsing VarBindList\n"));
++      /** if we were parsing a var, remove it from the pdu and free it */
++      if (vp)
 +        snmp_free_var(vp);
-+
-+    return -1;
++      return -1;
  }
  
  /*

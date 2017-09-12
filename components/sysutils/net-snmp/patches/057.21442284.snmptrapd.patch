@@ -1,0 +1,17 @@
+Patch developed inhouse and has been accepted by the community.
+Details can be found at
+https://sourceforge.net/p/net-snmp/bugs/2654/
+The community patch differs slightly from this as it needs to be
+generic for all OSes, hence they have included an extra check for the availability
+of the forkall function. 
+--- net-snmp-5.4.1.old/apps/snmptrapd.c	2007-06-08 03:44:37.000000000 -0700
++++ net-snmp-5.4.1/apps/snmptrapd.c	2015-05-20 05:12:11.512063848 -0700
+@@ -1237,7 +1237,7 @@
+     if (dofork && netsnmp_running) {
+         int             fd;
+ 
+-        switch (fork()) {
++        switch (forkall()) {
+         case -1:
+             fprintf(stderr, "bad fork - %s\n", strerror(errno));
+             _exit(1);

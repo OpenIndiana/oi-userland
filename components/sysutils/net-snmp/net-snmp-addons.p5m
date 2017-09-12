@@ -18,21 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/system/management/snmp/net-snmp/addons@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+#
+# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/addons@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Net-SNMP addon libraries"
 set name=com.oracle.info.description value="the Net-SNMP addon libraries"
-set name=info.classification value="org.opensolaris.category.2008:System/Enterprise Management"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/355
+set name=org.opensolaris.arc-caseid value=LSARC/2008/355 value=PSARC/2014/169
+
+file $(MACH64)/sun/agent/modules/seaExtensions/libseaExtensions.so \
+    path=usr/lib/$(MACH64)/libseaExtensions.so
+file $(MACH32)/sun/agent/modules/seaExtensions/libseaExtensions.so \
+    path=usr/lib/libseaExtensions.so
 
 license COPYING license="BSD, BSD-like"
 
-
-file $(MACH64)/sun/agent/modules/seaExtensions/libseaExtensions.so path=usr/lib/$(MACH64)/libseaExtensions.so
-file $(MACH32)/sun/agent/modules/seaExtensions/libseaExtensions.so path=usr/lib/libseaExtensions.so

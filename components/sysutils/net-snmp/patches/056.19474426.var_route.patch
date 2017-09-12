@@ -1,0 +1,24 @@
+This patch fixes a Solaris specific issue where ipRouteNextHop
+was not returning the default ip address.The bug has been 
+submitted to the community.This patch was suggested in the 
+upstream, it has been included in the Net-SNMP version 5.5
+onwards.
+
+The details can be found in the following location
+https://sourceforge.net/p/net-snmp/bugs/2621/
+
+--- a/agent/mibgroup/mibII/var_route.c
++++ b/agent/mibgroup/mibII/var_route.c
+@@ -769,9 +769,11 @@ var_ipRouteEntry(struct variable * vp,
+                        req_type, &IP_Cmp_Route, &Nextentry) != 0)
+             break;
+ #ifdef HAVE_DEFINED_IRE_CACHE
+-        if(entry.ipRouteInfo.re_ire_type&IRE_CACHE)
++        if(entry.ipRouteInfo.re_ire_type & IRE_CACHE)
+             continue;
+ #endif /* HAVE_DEFINED_IRE_CACHE */
++        if(entry.ipRouteInfo.re_ire_type & IRE_BROADCAST)
++            continue;
+         COPY_IPADDR(cp, (u_char *) & entry.ipRouteDest, op,
+                     current + IP_ROUTEADDR_OFF);
+         if (exact) {
