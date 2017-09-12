@@ -31,7 +31,7 @@ PARFAIT_BUILD=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	3.9.1
+COMPONENT_VERSION=	3.9.2
 COMPONENT_MAJOR_VERSION=	3.9
 COMPONENT_FMRI=	developer/build/cmake
 COMPONENT_LICENSE=	BSD, MIT, GPLv2, Curl, PD
@@ -47,7 +47,7 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:d768ee83d217f91bb597b3ca2ac663da7a8603c97e1f1a5184bc01e0ad2b12bb
+  sha256:954a5801a456ee48e76f01107c9a4961677dd0f3e115275bbd18410dc22ba3c1
 COMPONENT_ARCHIVE_URL= \
   https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
