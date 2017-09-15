@@ -1,0 +1,46 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016-2017 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - long-term support core build"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Note: java8+ is required since 2017
+# This may be JRE8 for the server, though JDK8 also suffices :)
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
+
+# Note: as we deliver the new WAR file, we tell the appservers to refresh
+# using the known (or expected soon) SMF FMRIs. Depending on integration,
+# this would restart a standalone server or bump and redeploy in container.
+
+file path=usr/share/jenkins/war/lts/$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
+     refresh_fmri=svc:/network/http:jenkins
+
+link path=usr/share/jenkins/war/lts/jenkins.war \
+     target=./$(COMPONENT_NAME)-$(COMPONENT_VERSION).war \
+     mediator=jenkins-core \
+     mediator-implementation=jenkins-core-lts \
+     mediator-version=$(COMPONENT_VERSION)
+
+link path=usr/share/jenkins/war/jenkins.war \
+     target=./lts/jenkins.war \
+     mediator=jenkins-core \
+     mediator-implementation=jenkins-core-lts \
+     mediator-version=$(COMPONENT_VERSION)
