@@ -32,6 +32,6 @@ install:
 	$(RM) -r $(DESTDIR)/usr
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war
 	mkdir -p $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)
-	cp -f jenkins-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/
+	cp -f jenkins-$(JENKINS_RELEASE)-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/jenkins-$(JENKINS_VERSION).war
 	ln -rfs $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/jenkins-$(JENKINS_VERSION).war $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/jenkins.war
 	ln -rfs $(DESTDIR)/usr/share/jenkins/war/$(JENKINS_RELEASE)/jenkins.war $(DESTDIR)/usr/share/jenkins/war/jenkins.war
