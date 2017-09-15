@@ -25,18 +25,19 @@ include ../../../make-rules/shared-macros.mk
 # source" variables below, see e.g. docbook for inspiration.
 
 COMPONENT_NAME=		jenkins
+JENKINS_RELEASE=weekly
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	77
+COMPONENT_MINOR_VERSION=	78
+COMPONENT_ARCHIVE_HASH=	\
+	sha256:9d8ce9653d7a1ada2071ad9688ba7938e1e0672586e893e578dbfecdff725df6
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
 #   wget -O - http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:007cf8ef7d0878d7a78a8aa5b5748b629b21496b550a8c0240055f4c822bb2c2
 
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
-COMPONENT_FMRI=		developer/jenkins-core-weekly
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(JENKINS_RELEASE)-$(COMPONENT_VERSION).war
+COMPONENT_FMRI=		developer/jenkins-core-$(JENKINS_RELEASE)
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://jenkins.io/changelog/
@@ -77,7 +78,7 @@ COMPONENT_PREP_ACTION = ( $(MKDIR) $(@D)/ && ln -sfr $(USERLAND_ARCHIVES)/$(COMP
 COMPONENT_COPY_ACTION = ( $(CLONEY) $(SOURCE_DIR)/ $(@D)/ )
 
 COMPONENT_INSTALL_ENV += JENKINS_VERSION=$(COMPONENT_VERSION)
-COMPONENT_INSTALL_ENV += JENKINS_RELEASE=weekly
+COMPONENT_INSTALL_ENV += JENKINS_RELEASE=$(JENKINS_RELEASE)
 
 build: $(BUILD_32)
 
