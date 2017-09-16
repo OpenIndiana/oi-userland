@@ -1,0 +1,23 @@
+--- node-v0.12.18/deps/uv/src/unix/sunos.c.orig	Sat Sep 16 13:24:46 2017
++++ node-v0.12.18/deps/uv/src/unix/sunos.c	Sat Sep 16 13:25:30 2017
+@@ -685,7 +685,8 @@
+   for (ent = addrs; ent != NULL; ent = ent->ifa_next) {
+     if (!((ent->ifa_flags & IFF_UP) && (ent->ifa_flags & IFF_RUNNING)) ||
+         (ent->ifa_addr == NULL) ||
+-        (ent->ifa_addr->sa_family == PF_PACKET)) {
++        (ent->ifa_addr->sa_family != AF_INET &&
++         ent->ifa_addr->sa_family != AF_INET6)) {
+       continue;
+     }
+ 
+@@ -705,6 +706,10 @@
+     if (ent->ifa_addr == NULL)
+       continue;
+ 
++    if (ent->ifa_addr->sa_family != AF_INET &&
++        ent->ifa_addr->sa_family != AF_INET6)
++      continue;
++
+     address->name = uv__strdup(ent->ifa_name);
+ 
+     if (ent->ifa_addr->sa_family == AF_INET6) {
