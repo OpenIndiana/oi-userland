@@ -15,19 +15,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pacemaker
-COMPONENT_VERSION= 1.1.15
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.1.17
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC= $(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9af53ef397fbd1517f380eb4268b48433c41bb38dd3511ed9cb80e9478034775
+COMPONENT_ARCHIVE_HASH= sha256:96e04751e85a266e2daa8c590000a151ff37f0bb7b873d77e38534299d399803
 COMPONENT_PROJECT_URL= https://www.clusterlab.org
 COMPONENT_ARCHIVE_URL= https://github.com/Clusterlabs/$(COMPONENT_NAME)/archive/Pacemaker-$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2,LGPLv2,BSD
 COMPONENT_SUMMARY= Pacemaker is an advanced, scalable high-availability cluster resource manager.
 
-PATH= /usr/gnu/bin:/usr/bin:/usr/sbin:/sbin
+PATH= $(PATH.gnu)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
