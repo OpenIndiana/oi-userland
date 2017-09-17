@@ -1,0 +1,442 @@
+#!/usr/bin/bash
+#
+#       pgpool-II resource agent.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of version 2 of the GNU General Public License as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it would be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Further, this software is distributed without any warranty that it is
+# free of the rightful claim of any third person regarding infringement
+# or the like.  Any license provided herein, whether implied or
+# otherwise, applies only to this software file.  Patent licenses, if
+# any, provided herein do not apply to combinations of this program with
+# other software, or any other product whatsoever.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write the Free Software Foundation,
+# Inc., 59 Temple Place - Suite 330, Boston MA 02111-1307, USA.
+#
+#######################################################################
+#
+# This resource agent was written by Eliot Gable <egable at gmail.com>
+#
+#######################################################################
+
+#######################################################################
+# Initialization:
+
+: ${OCF_FUNCTIONS_DIR=${OCF_ROOT}/resource.d/heartbeat}
+. ${OCF_FUNCTIONS_DIR}/.ocf-shellfuncs
+
+#######################################################################
+
+meta_data() {
+        cat <<END
+<?xml version="1.0"?>
+<!DOCTYPE resource-agent SYSTEM "ra-api-1.dtd">
+<resource-agent name="pgpool2" version="0.1">
+<version>1.0</version>
+
+<longdesc lang="en">
+This resource agent provides basic management of pgpool-II.
+It starts and stops pgpool-II and monitors its status. It will
+also monitor the status of each connection and can optionally
+attempt to automatically reconnect detached nodes or can
+mark the service as failed if there are any detached nodes.
+</longdesc>
+<shortdesc lang="en">Manages pgpool-II</shortdesc>
+
+<parameters>
+
+<parameter name="pcp_admin_username" required="1">
+<longdesc lang="en">
+Administrative username for pgpool-II control.
+</longdesc>
+<shortdesc lang="en">Administrative username.</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="pcp_admin_password" required="1">
+<longdesc lang="en">
+Administrative password for pgpool-II control.
+</longdesc>
+<shortdesc lang="en">Administrative password.</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="pcp_admin_port" required="1">
+<longdesc lang="en">
+Administrative port for pgpool-II control.
+</longdesc>
+<shortdesc lang="en">Administrative port for PCP commands.</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="pcp_admin_host">
+<longdesc lang="en">
+Administrative host for pgpool-II control.
+</longdesc>
+<shortdesc lang="en">Administrative host for PCP commands.</shortdesc>
+<content type="string" default="localhost" />
+</parameter>
+
+<parameter name="pgpool_bin">
+<longdesc lang="en">
+Path to the pgpool-II binary.
+</longdesc>
+<shortdesc lang="en">Path to pgpool.</shortdesc>
+<content type="string" default="/usr/bin/pgpool" />
+</parameter>
+
+<parameter name="pcp_attach_node_bin">
+<longdesc lang="en">
+Path to the pcp_attach_node binary.
+</longdesc>
+<shortdesc lang="en">Path to pcp_attach_node.</shortdesc>
+<content type="string" default="/usr/bin/pcp_attach_node" />
+</parameter>
+
+<parameter name="pcp_detach_node_bin">
+<longdesc lang="en">
+Path to the pcp_detach_node binary.
+</longdesc>
+<shortdesc lang="en">Path to pcp_detach_node.</shortdesc>
+<content type="string" default="/usr/bin/pcp_detach_node" />
+</parameter>
+
+<parameter name="pcp_node_count_bin">
+<longdesc lang="en">
+Path to the pcp_node_count binary.
+</longdesc>
+<shortdesc lang="en">Path to pcp_node_count.</shortdesc>
+<content type="string" default="/usr/bin/pcp_node_count" />
+</parameter>
+
+<parameter name="pcp_node_info_bin">
+<longdesc lang="en">
+Path to the pcp_node_info binary.
+</longdesc>
+<shortdesc lang="en">Path to pcp_node_info.</shortdesc>
+<content type="string" default="/usr/bin/pcp_node_info" />
+</parameter>
+
+<parameter name="stop_mode">
+<longdesc lang="en">
+Stop mode to use when stopping pgpool-II.
+</longdesc>
+<shortdesc lang="en">Stop mode for pgpool-II.</shortdesc>
+<content type="string" default="f" />
+</parameter>
+
+<parameter name="auto_reconnect">
+<longdesc lang="en">
+If "true", then during monitoring actions,
+the resource agent will attempt to re-attach any disconnected
+nodes. No error will be reported if re-attachment fails.
+</longdesc>
+<shortdesc lang="en">Automatically reattach failed nodes</shortdesc>
+<content type="boolean" default="" />
+</parameter>
+
+<parameter name="fail_on_detached">
+<longdesc lang="en">
+This instructs the resource agent to mark pgpool-II in a
+failed state if one or more of the nodes is detached. The monitor
+action will always mark pgpool-II in a failed state if all nodes are
+detached, so this is only useful if you want to mark pgpool-II in a
+failed state if at least one node is detached. The auto_reconnect
+option will always try to reconnect detached nodes (if enabled)
+before this fail_on_detached mechanism triggers.
+</longdesc>
+<shortdesc lang="en">Marks resource as failed if at least one node is detached.</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="fail_on_node_detached">
+<longdesc lang="en">
+This is similar to fail_on_detached, except you can
+specify a comma-seperated list of node IDs. If specified, pgpool2
+will only be marked as "failed" if one of the nodes in the list
+is detached or if all nodes are detached.
+</longdesc>
+<shortdesc lang="en">Specify a list of nodes to monitor for failure.</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+</parameters>
+
+<actions>
+<action name="start"        timeout="20" />
+<action name="stop"         timeout="40" />
+<action name="monitor"     timeout="20" interval="5" depth="0"/>
+<action name="reload"       timeout="20" />
+<action name="meta-data"  timeout="5" />
+<action name="validate-all"  timeout="20" />
+</actions>
+</resource-agent>
+END
+}
+
+#######################################################################
+
+pgpool2_usage() {
+        cat <<END
+usage: $0 {start|stop|status|monitor|validate-all|meta-data}
+
+Expects to have a fully populated OCF RA-compliant environment set.
+END
+}
+
+pgpool2_start() {
+    if pgpool2_status; then
+        ocf_log debug "${OCF_RESOURCE_INSTANCE} $__OCF_ACTION : already started."
+        return $OCF_SUCCESS
+    fi
+    if $PGPOOL; then
+#echo "Trying to start pgpool..." >> /tmp/pgpool
+        sleep 2
+        if pgpool2_status; then
+                ocf_log info "${OCF_RESOURCE_INSTANCE} Successfully started pgpool-II"
+                return $OCF_SUCCESS
+        else
+#echo "pgpool couldn't be started, why?" /tmp/pgpool
+                ocf_log error "${OCF_RESOURCE_INSTANCE} Failed to start pgpool-II"
+                return $OCF_ERR_GENERIC
+        fi
+    else
+        ocf_log error "${OCF_RESOURCE_INSTANCE} Failed to start pgpool-II"
+    fi
+    return $OCF_ERR_GENERIC
+}
+
+pgpool2_stop() {
+    ocf_log info "Using $PGPOOL -m $STOP_MODE stop to stop pgpool-II"
+    if $PGPOOL -m $STOP_MODE stop; then
+        ocf_log info "${OCF_RESOURCE_INSTANCE} Successfully stopped pgpool-II"
+        return $OCF_SUCCESS
+    else
+        ocf_log info "${OCF_RESOURCE_INSTANCE} Already stopped pgpool-II"
+        return $OCF_SUCCESS
+    fi
+}
+
+pgpool2_status() {
+    if [ ! -r "/var/postgres/pgpool-II/pgpool.pid" ]; then
+        return $OCF_NOT_RUNNING
+    fi
+    ps_info=$(ps ax | grep "pgpool" | grep $(cat /var/postgres/pgpool-II/pgpool.pid))
+#echo "ps_info: $ps_info" >> /tmp/pgpool
+    if [ -z "$ps_info" ]; then
+#echo "Found pgpool is NOT running..." >> /tmp/pgpool
+        return $OCF_NOT_RUNNING
+    else
+#echo "Found pgpool is running..." >> /tmp/pgpool
+        # Try to reconnect any detached nodes
+        if ocf_is_true ${OCF_RESKEY_auto_reconnect} ; then
+            NODE_COUNT=$($PCP_NODE_COUNT 1 $OCF_RESKEY_pcp_admin_host $OCF_RESKEY_pcp_admin_port $OCF_RESKEY_pcp_admin_username $OCF_RESKEY_pcp_admin_password)
+            for node in `seq 0 $((NODE_COUNT-1))`; do
+                NODE_INFO=$($PCP_NODE_INFO 1 $OCF_RESKEY_pcp_admin_host $OCF_RESKEY_pcp_admin_port $OCF_RESKEY_pcp_admin_username $OCF_RESKEY_pcp_admin_password $node | awk '{print $3}')
+                if [ "$NODE_INFO" = "3" ]; then
+                    ocf_log info "Node $node is currently detached. Attempting to reattach the node."
+                    $PCP_ATTACH_NODE 1 $OCF_RESKEY_pcp_admin_host $OCF_RESKEY_pcp_admin_port $OCF_RESKEY_pcp_admin_username $OCF_RESKEY_pcp_admin_password $node
+                    ATTACHED="1"
+                fi
+            done
+            if [ -n "${ATTACHED}" ]; then
+                sleep 1
+            fi
+        fi
+        # Fail if configured to fail on one or more detached nodes and a node is still detached
+        if ocf_is_true ${OCF_RESKEY_fail_on_detached} ; then
+            NODE_COUNT=$($PCP_NODE_COUNT 1 $OCF_RESKEY_pcp_admin_host $OCF_RESKEY_pcp_admin_port $OCF_RESKEY_pcp_admin_username $OCF_RESKEY_pcp_admin_password)
+            for node in `seq 0 $((NODE_COUNT-1))`; do
+                NODE_INFO=$($PCP_NODE_INFO 1 $OCF_RESKEY_pcp_admin_host $OCF_RESKEY_pcp_admin_port $OCF_RESKEY_pcp_admin_username $OCF_RESKEY_pcp_admin_password $node | awk '{print $3}')
+                if [ "$NODE_INFO" = "3" ]; then
+                    ocf_log error "Node $node is detached. The pgpool-II service has failed."
+                    return $OCF_ERR_GENERIC
+                fi
+            done
+        fi
+        # Fail if one of the specifically configured nodes is detached at this point
+        if [ -n "${OCF_RESKEY_fail_on_node_detached}" ]; then
+            NODE_COUNT=$($PCP_NODE_COUNT 1 $OCF_RESKEY_pcp_admin_host $OCF_RESKEY_pcp_admin_port $OCF_RESKEY_pcp_admin_username $OCF_RESKEY_pcp_admin_password)
+            for node in `seq 0 $((NODE_COUNT-1))`; do
+                NODE_INFO=$($PCP_NODE_INFO 1 $OCF_RESKEY_pcp_admin_host $OCF_RESKEY_pcp_admin_port $OCF_RESKEY_pcp_admin_username $OCF_RESKEY_pcp_admin_password $node | awk '{print $3}')
+                if [ "$NODE_INFO" = "3" ]; then
+                    TOKEN=${OCF_RESKEY_fail_on_node_detached%%,*}
+                    TOKEN_STRING=${OCF_RESKEY_fail_on_node_detached#*,}
+                    while [ -n "$TOKEN" ] && [ "${TOKEN}" != "${TOKEN_STRING}" ]; do
+                        if [ "$TOKEN" -eq $node ]; then
+                            ocf_log error "Node $node is detached. The pgpool-II service has failed."
+                            return $OCF_ERR_GENERIC
+                        fi
+                        TOKEN=${TOKEN_STRING%%,*}
+                        if [ "${TOKEN_STRING}" == "${TOKEN_STRING#*,}" ]; then
+                            TOKEN_STRING=""
+                        else
+                            TOKEN_STRING=${TOKEN_STRING#*,}
+                        fi
+                    done
+                fi
+            done
+        fi
+    fi
+    # Service is running and there is no reason to fail
+#echo "pgpool should be running..." >> /tmp/pgpool
+    return $OCF_SUCCESS
+}
+
+pgpool2_validate() {
+    # If we're running as a clone, are the clone meta attrs OK?
+#    if [ "${OCF_RESKEY_CRM_meta_clone}" ]; then
+#       if [ "${OCF_RESKEY_CRM_meta_clone_node_max}" != 1 ]; then
+#           ocf_log error "Misconfigured clone parameters. Must set meta attribute \"clone_node_max\" to 1, got ${OCF_RESKEY_CRM_meta_clone_node_max}."
+#           return $OCF_ERR_ARGS
+#       fi
+#    fi
+    if [ -z "$OCF_RESKEY_pcp_admin_username" ]; then
+        ocf_log error "Missing required parameter \"pcp_admin_username\"."
+        return $OCF_ERR_ARGS
+    fi
+    if [ -z "$OCF_RESKEY_pcp_admin_password" ]; then
+        ocf_log error "Missing required parameter \"pcp_admin_password\"."
+        return $OCF_ERR_ARGS
+    fi
+    if [ -z "$OCF_RESKEY_pcp_admin_host" ]; then
+        ocf_log error "Missing required parameter \"pcp_admin_host\"."
+        return $OCF_ERR_ARGS
+    fi
+    if [ -z "$OCF_RESKEY_pcp_admin_port" ]; then
+        ocf_log error "Missing required parameter \"pcp_admin_port\"."
+        return $OCF_ERR_ARGS
+    fi
+    # Did we get a path for the pgpool binary?
+    if [ -z "$OCF_RESKEY_pgpool_bin" ]; then
+        ocf_log error "Missing required parameter \"pgpool_bin\"."
+        return $OCF_ERR_ARGS
+    else
+        if [ -x "$PGPOOL" ]; then
+            ocf_log error "The pgpool binary is not executable or is not installed."
+            return $OCF_ERR_INSTALLED
+        fi
+    fi
+    # Did we get a path for the pcp_attach_node binary?
+    if [ -z "$OCF_RESKEY_pcp_attach_node_bin" ]; then
+        ocf_log error "Missing required parameter \"pcp_attach_node_bin\"."
+        return $OCF_ERR_ARGS
+    else
+        if [ -x "$PCP_ATTACH_NODE" ]; then
+            ocf_log error "The pcp_attach_node binary is not executable or is not installed."
+            return $OCF_ERR_INSTALLED
+        fi
+    fi
+    # Did we get a path for the pcp_detach_node binary?
+    if [ -z "$OCF_RESKEY_pcp_detach_node_bin" ]; then
+        ocf_log error "Missing required parameter \"pcp_detach_node_bin\"."
+        return $OCF_ERR_ARGS
+    else
+        if [ -x "$PCP_DETACH_NODE" ]; then
+            ocf_log error "The pcp_detach_node binary is not executable or is not installed."
+            return $OCF_ERR_INSTALLED
+        fi
+    fi
+    # Did we get a path for the pcp_node_count binary?
+    if [ -z "$OCF_RESKEY_pcp_node_count_bin" ]; then
+        ocf_log error "Missing required parameter \"pcp_node_count_bin\"."
+        return $OCF_ERR_ARGS
+    else
+        if [ -x "$PCP_NODE_COUNT" ]; then
+            ocf_log error "The pcp_node_count binary is not executable or is not installed."
+            return $OCF_ERR_INSTALLED
+        fi
+    fi
+    # Did we get a path for the pcp_node_info binary?
+    if [ -z "$OCF_RESKEY_pcp_node_info_bin" ]; then
+        ocf_log error "Missing required parameter \"pcp_node_info_bin\"."
+        return $OCF_ERR_ARGS
+    else
+        if [ -x "$PCP_NODE_INFO" ]; then
+            ocf_log error "The pcp_node_info binary is not executable or is not installed."
+            return $OCF_ERR_INSTALLED
+        fi
+    fi
+    if [ -n "$OCF_RESKEY_stop_mode" ]; then
+        if ! echo "$OCF_RESKEY_stop_mode" | grep -E '[fsi]|fast|start|immediate' >> /dev/null; then
+            ocf_log error "Stop mode is invalid."
+            return $OCF_ERR_ARGS
+        fi
+    else
+        ocf_log error "Stop mode was not specified."
+        return $OCF_ERR_ARGS
+    fi
+    if [ -n "$OCF_RESKEY_auto_reconnect" ] &&
+       [ "$OCF_RESKEY_auto_reconnect" != "true" ] &&
+       [ "$OCF_RESKEY_auto_reconnect" != "false" ]; then
+        ocf_log error "Parameter 'auto_reconnect' must be empty, 'true', or 'false'."
+        return $OCF_ERR_ARGS
+    fi
+    if [ -n "$OCF_RESKEY_fail_on_detached" ] &&
+       [ "$OCF_RESKEY_fail_on_detached" != "true" ] &&
+       [ "${OCF_RESKEY_fail_on_detached}" != "false" ]; then
+        ocf_log error "Parameter 'fail_on_detached' must be empty, 'true', or 'false'."
+        return $OCF_ERR_ARGS
+    fi
+    shopt -s extglob
+    if [ -n "$OCF_RESKEY_fail_on_node_detached" ]; then
+        TOKEN=${OCF_RESKEY_fail_on_node_detached%%,*}
+        TOKEN_STRING=${OCF_RESKEY_fail_on_node_detached#*,}
+        while [ -n $TOKEN ] && [ "${TOKEN}" != "${TOKEN_STRING}" ]; do
+            case $TOKEN in
+                [^0-9])
+                    ocf_log error "Invalid token '${TOKEN}' in parameter 'fail_on_node_detached'."
+                    return $OCF_ERR_ARGS
+                ;;
+            esac
+            TOKEN=${TOKEN_STRING%%,*}
+            if [ "${TOKEN_STRING}" == "${TOKEN_STRING#*,}" ]; then
+                TOKEN_STRING=""
+            else
+                TOKEN_STRING=${TOKEN_STRING#*,}
+            fi
+        done
+    fi
+    return $OCF_SUCCESS
+}
+
+# These two actions must always succeed
+case $__OCF_ACTION in
+meta-data)      meta_data
+                # OCF variables are not set when querying meta-data
+                exit 0
+                ;;
+usage|help)     pgpool2_usage
+                exit $OCF_SUCCESS
+                ;;
+esac
+
+pgpool2_validate || exit $?
+
+PGPOOL=$OCF_RESKEY_pgpool_bin
+PCP_ATTACH_NODE=$OCF_RESKEY_pcp_attach_node_bin
+PCP_DETACH_NODE=$OCF_RESKEY_pcp_detach_node_bin
+PCP_NODE_COUNT=$OCF_RESKEY_pcp_node_count_bin
+PCP_NODE_INFO=$OCF_RESKEY_pcp_node_info_bin
+STOP_MODE=$OCF_RESKEY_stop_mode
+#echo "$(date)" >> /tmp/pgpool
+case $__OCF_ACTION in
+start)          pgpool2_start;;
+stop)           pgpool2_stop;;
+status|monitor) pgpool2_status;;
+validate-all)   ;;
+*)              pgpool2_usage
+                exit $OCF_ERR_UNIMPLEMENTED
+                ;;
+esac
+rc=$?
+ocf_log debug "${OCF_RESOURCE_INSTANCE} $__OCF_ACTION returned $rc"
+exit $rc
