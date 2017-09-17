@@ -1,10 +1,20 @@
-diff -Nura a/doc/Makefile.am b/doc/Makefile.am
---- a/doc/Makefile.am	2016-11-01 08:50:36.819220851 +0100
-+++ b/doc/Makefile.am	2016-11-01 10:12:52.023882517 +0100
-@@ -49,5 +49,6 @@
+--- cluster-glue-bdd95fd0f89f31b19fa46ffa0ea3f5022ebcd858/doc/Makefile.am.~1~	2017-09-17 09:20:04.219246144 +0000
++++ cluster-glue-bdd95fd0f89f31b19fa46ffa0ea3f5022ebcd858/doc/Makefile.am	2017-09-17 09:21:09.639502953 +0000
+@@ -27,7 +27,7 @@
+ man_MANS		=
  
- hb_report.8: hb_report.8.txt
- 	a2x -f manpage $<
-+	mv $(@:.8=.1m) $@
+ if BUILD_DOC
+-man_MANS		+= ha_logd.8 ha_logger.1 stonith.8 meatclient.8
++man_MANS		+= ha_logd.1m ha_logger.1 stonith.1m meatclient.1m
  
- endif
+ EXTRA_DIST		= $(man_MANS)
+ 
+@@ -41,7 +41,7 @@
+ XSLTPROC_HTML_OPTIONS 	?= $(XSLTPROC_OPTIONS)
+ XSLTPROC_FO_OPTIONS 	?= $(XSLTPROC_OPTIONS)
+ 
+-%.5 %.8 %.1: %.xml
++%.5 %.1m %.1: %.xml
+ 	$(XSLTPROC) \
+ 	$(XSLTPROC_MANPAGES_OPTIONS) \
+ 	$(MANPAGES_STYLESHEET) $<
