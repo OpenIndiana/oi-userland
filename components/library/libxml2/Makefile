@@ -27,20 +27,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-COMPONENT_VERSION=	2.9.4
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.9.5
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ffb911191e509b966deb55de705387f14156e1a56b21824357cdf0053233633c
+    sha256:4031c1ecee9ce7ba4f313e91ef6284164885cdb69937a123f6a83bb6a72dcd38
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxml
 
 # W3C XML Conformance Test Suites
-COMPONENT_ARCHIVE_1= xmlts20080827.tar.gz
+COMPONENT_ARCHIVE_1= xmlts20130923.tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
+    sha256:9b61db9f5dbffa545f4b8d78422167083a8568c59bd1129f94138f936cf6fc1f
 COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -89,6 +88,15 @@ $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
 
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_1));
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^\#\#/p" ' \
+	'-e "/^Making/p" ' \
+	'-e "/^Ran/p" ' \
+	'-e "/^Test/p" ' \
+	'-e "/^Total/p" ' \
+	'-e "/errors were expected/p" '
 
 # common targets
 build:		$(BUILD_32_and_64)
