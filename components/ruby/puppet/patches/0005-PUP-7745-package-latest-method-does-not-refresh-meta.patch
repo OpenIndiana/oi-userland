@@ -1,0 +1,49 @@
+From 281321aec287e9bf781210e8f2f598e34112417d Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Mon, 17 Jul 2017 14:20:02 -0400
+Subject: [PATCH 5/5] (PUP-7745) package latest method does not refresh
+ metadata on Solaris
+
+The latest method currently uses `pkg list -Hvn` which does not imply a
+periodic refresh of package metadata. With this change the latest method
+calls `pkg refresh`.
+
+Patch Accepted Upstream. Pending Merge
+https://github.com/puppetlabs/puppet/pull/6033
+---
+ lib/puppet/provider/package/pkg.rb     | 3 +++
+ spec/unit/provider/package/pkg_spec.rb | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/lib/puppet/provider/package/pkg.rb b/lib/puppet/provider/package/pkg.rb
+index d30df2190..1643162ad 100644
+--- a/lib/puppet/provider/package/pkg.rb
++++ b/lib/puppet/provider/package/pkg.rb
+@@ -171,6 +171,9 @@ Puppet::Type.type(:package).provide :pkg, :parent => Puppet::Provider::Package d
+   # http://defect.opensolaris.org/bz/show_bug.cgi?id=19159%
+   # notes that we can't use -Ha for the same even though the manual page reads that way.
+   def latest
++    # Refresh package metadata before looking for latest versions
++    pkg(:refresh)
++
+     lines = pkg(:list, "-Hvn", @resource[:name]).split("\n")
+ 
+     # remove certificate expiration warnings from the output, but report them
+diff --git a/spec/unit/provider/package/pkg_spec.rb b/spec/unit/provider/package/pkg_spec.rb
+index aa75b502c..7acdce154 100644
+--- a/spec/unit/provider/package/pkg_spec.rb
++++ b/spec/unit/provider/package/pkg_spec.rb
+@@ -101,6 +101,9 @@ describe Puppet::Type.type(:package).provider(:pkg) do
+     end
+ 
+     context ":latest" do
++      before do
++        described_class.expects(:pkg).with(:refresh)
++      end
+       it "should work correctly for ensure latest on solaris 11 (UFOXI) when there are no further packages to install" do
+         described_class.expects(:pkg).with(:list,'-Hvn','dummy').returns File.read(my_fixture('dummy_solaris11.installed'))
+         expect(provider.latest).to eq('1.0.6,5.11-0.175.0.0.0.2.537:20131230T130000Z')
+-- 
+2.14.1
+
+

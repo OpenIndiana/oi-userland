@@ -1,0 +1,114 @@
+From 6894d7edb0c62b4d2daf08968ad934bd9a474b52 Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Mon, 17 Jul 2017 14:47:36 -0400
+Subject: [PATCH 3/5] (no upstream) puppet SMF failure visibility
+
+24680838 puppet agent failures should be visible to administrator via
+    SMF interfaces
+26444488 puppet agent/master smf integration is noisy
+
+    Patch could be submitted but is unlikely to be accepted by upstream.
+    The default behavior is as expected by Puppet.
+---
+ lib/puppet/defaults.rb             |  6 ++++++
+ lib/puppet/util/log.rb             | 26 ++++++++++++++++++++++++++
+ spec/unit/confine/variable_spec.rb |  1 +
+ spec/unit/util/logging_spec.rb     |  1 +
+ 4 files changed, 34 insertions(+)
+
+diff --git a/lib/puppet/defaults.rb b/lib/puppet/defaults.rb
+index 86699133b..2af113634 100644
+--- a/lib/puppet/defaults.rb
++++ b/lib/puppet/defaults.rb
+@@ -123,6 +123,12 @@ module Puppet
+         end
+       end
+     },
++    :degrade_smf_on_error => {
++        :default  => true,
++        :type     => :boolean,
++        :desc     => "Whether the SMF service for puppet should be degraded when an error
++          is logged.",
++    },
+     :strict => {
+       :default    => :warning,
+       :type       => :symbolic_enum,
+diff --git a/lib/puppet/util/log.rb b/lib/puppet/util/log.rb
+index 25fd4b548..c28fae332 100644
+--- a/lib/puppet/util/log.rb
++++ b/lib/puppet/util/log.rb
+@@ -16,6 +16,7 @@ class Puppet::Util::Log
+ 
+   @levels = [:debug,:info,:notice,:warning,:err,:alert,:emerg,:crit]
+   @loglevel = 2
++  @degraded = false
+ 
+   @desttypes = {}
+ 
+@@ -52,6 +53,19 @@ class Puppet::Util::Log
+   # Reset log to basics.  Basically just flushes and closes files and
+   # undefs other objects.
+   def Log.close(destination)
++    if Puppet[:degrade_smf_on_error]
++      if !@degraded
++        # Clear the appropriate service state
++        # The SMF team reports this as a near zero cost operation
++        # Therefore we just send the clear every time instead of checking first
++        if Puppet.run_mode.agent?
++          system '/usr/sbin/svcadm clear puppet:agent > /dev/null 2>&1'
++        elsif Puppet.run_mode.master?
++          system '/usr/sbin/svcadm clear puppet:master > /dev/null 2>&1'
++        end
++      end
++    end
++
+     if @destinations.include?(destination)
+       @destinations[destination].flush if @destinations[destination].respond_to?(:flush)
+       @destinations[destination].close if @destinations[destination].respond_to?(:close)
+@@ -168,6 +182,18 @@ class Puppet::Util::Log
+   # a potential for a loop here, if the machine somehow gets the destination set as
+   # itself.
+   def Log.newmessage(msg)
++    if Puppet[:degrade_smf_on_error]
++      if [:err,:alert,:emerg,:crit].include? msg.level and !@degraded
++        # Mark the appropriate puppet service as degraded
++        @degraded = true
++        if Puppet.run_mode.agent?
++          system '/usr/sbin/svcadm mark -s degraded puppet:agent'
++        elsif Puppet.run_mode.master?
++          system '/usr/sbin/svcadm mark -s degraded puppet:master'
++        end
++      end
++    end
++
+     return if @levels.index(msg.level) < @loglevel
+ 
+     queuemessage(msg) if @destinations.length == 0
+diff --git a/spec/unit/confine/variable_spec.rb b/spec/unit/confine/variable_spec.rb
+index db01f1d12..888f49ca4 100644
+--- a/spec/unit/confine/variable_spec.rb
++++ b/spec/unit/confine/variable_spec.rb
+@@ -27,6 +27,7 @@ describe Puppet::Confine::Variable do
+     end
+ 
+     it "should use settings if the variable name is a valid setting" do
++      Puppet.settings.expects(:value).with(:degrade_smf_on_error).returns nil
+       Puppet.settings.expects(:valid?).with(:myvar).returns true
+       Puppet.settings.expects(:value).with(:myvar).returns "foo"
+       @confine.valid?
+diff --git a/spec/unit/util/logging_spec.rb b/spec/unit/util/logging_spec.rb
+index f5a3e019c..733303c25 100644
+--- a/spec/unit/util/logging_spec.rb
++++ b/spec/unit/util/logging_spec.rb
+@@ -94,6 +94,7 @@ describe Puppet::Util::Logging do
+ 
+   describe "when sending a deprecation warning" do
+     it "does not log a message when deprecation warnings are disabled" do
++      Puppet.expects(:[]).with(:degrade_smf_on_error).returns nil
+       Puppet.expects(:[]).with(:disable_warnings).returns %w[deprecations]
+       @logger.expects(:warning).never
+       @logger.deprecation_warning 'foo'
+-- 
+2.14.1
+
+
