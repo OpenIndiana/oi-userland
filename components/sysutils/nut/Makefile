@@ -104,9 +104,9 @@ CONFIGURE_OPTIONS +=	--with-macosx_ups=no
 
 # Note: Link with the correct ISA of net-snmp (for drivers) and gdlib (for cgi)
 CONFIGURE_OPTIONS +=	--with-snmp
-CONFIGURE_OPTIONS +=	--with-net-snmp-config=$(USRBINDIR)/net-snmp-config-$(BITS)
 
-CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
+CONFIGURE_OPTIONS.32 +=	--with-net-snmp-config=$(USRBINDIR)/net-snmp-config
+CONFIGURE_OPTIONS.64 += --with-net-snmp-config=$(USRBINDIR64)/net-snmp-config
 CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
 
 # Note: building the numerous documents of this projects is time-consuming
@@ -137,3 +137,4 @@ REQUIRED_PACKAGES += system/management/freeipmi
 REQUIRED_PACKAGES += system/management/powerman
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += text/asciidoc
+REQUIRED_PACKAGES += library/gnu-libiconv
