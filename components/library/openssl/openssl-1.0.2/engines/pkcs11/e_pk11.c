@@ -1,6 +1,6 @@
 /*
  * Copyright 2017 Gary Mills
- * Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2017, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/e_pk11.c */
@@ -2319,7 +2319,10 @@ pk11_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	PK11_SESSION *sp;
 	PK11_CIPHER *p_ciph_table_row;
 
-	state->sp = NULL;
+	if (state->sp != NULL) {
+		(void) pk11_cipher_cleanup(ctx);
+		state->sp = NULL;
+	}
 
 	index = cipher_nid_to_pk11(ctx->cipher->nid);
 	if (index < 0 || index >= PK11_CIPHER_MAX)
