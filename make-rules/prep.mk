@@ -24,9 +24,12 @@
 #
 
 include $(WS_MAKE_RULES)/prep-download.mk
+include $(WS_MAKE_RULES)/prep-hg.mk
 include $(WS_MAKE_RULES)/prep-svn.mk
 include $(WS_MAKE_RULES)/prep-unpack.mk
 include $(WS_MAKE_RULES)/prep-patch.mk
+
+$(eval $(call eval-hg-rules))
 
 download::
 

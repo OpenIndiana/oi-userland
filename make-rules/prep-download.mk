@@ -28,7 +28,7 @@ FETCH =		$(WS_TOOLS)/userland-fetch
 # that tells us where the canonical source for the archive can be found.  The
 # macro for the first archive is typically un-suffixed.  By convention,
 # subsequent archives will include a _[0-9]+ in the macro name.  This allows
-# an abitrary number of archives to be downloaded for a particular component
+# an arbitrary number of archives to be downloaded for a particular component
 # Makefile.  It is also important to note that there is a corresponding
 # COMPONENT_ARCHIVE macro defining a local file name for the archive, and
 # optional COMPONENT_ARCHIVE_HASH and COMPONENT_SIG_URL containing a hash of
