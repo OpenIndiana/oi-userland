@@ -16,17 +16,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany-plugins
-COMPONENT_VERSION= 1.30
+COMPONENT_VERSION= 1.31
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
 COMPONENT_SUMMARY= Plugins for Geany editor
 COMPONENT_DESCRIPTION= Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a49202d1c6b2a82446a79c57854596de1e231481163f680c7654f2cb165bc249
+COMPONENT_ARCHIVE_HASH= sha256:933a4f7f041d676f925d021a5adb8c6876879beae53ac06e4a1c70abcb9e25d6
 COMPONENT_ARCHIVE_URL= http://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://plugins.geany.org/
 COMPONENT_LICENSE= GPLv2
+
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -43,12 +45,10 @@ CONFIGURE_ENV+= CHECK_CFLAGS="-I/usr/include/check"
 # cppcheck is not packaged
 CONFIGURE_OPTIONS+= --disable-cppcheck
 
-# requires libutil 
+# requires libutil
 CONFIGURE_OPTIONS+= --disable-debugger
 CONFIGURE_OPTIONS+= --disable-scope
 
-# requires older lua < 5.2
-CONFIGURE_OPTIONS+= --disable-geanylua
 # no lipsum (www.lipsum.com) in OI yet
 CONFIGURE_OPTIONS+= --disable-lipsum
 
