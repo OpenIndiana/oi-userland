@@ -1,20 +1,17 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2013 Adam Stevko. All rights reserved.
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2017 <contributor>
 #
-
-<transform file path=.* -> default pkg.depend.bypass-generate perl >
-<transform link path=usr/bin/(.+) -> default pkg.linted true >
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -27,15 +24,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/$(MACH64)/saidar
 file path=usr/bin/$(MACH64)/statgrab
-file path=usr/bin/$(MACH64)/statgrab-make-mrtg-index
 file path=usr/bin/$(MACH64)/statgrab-make-mrtg-config
-
-link path=usr/bin/saidar                    target=/usr/bin/$(MACH64)/saidar
-link path=usr/bin/statgrab                  target=/usr/bin/$(MACH64)/statgrab
-link path=usr/bin/statgrab-make-mrtg-index  target=/usr/bin/$(MACH64)/statgrab-make-mrtg-index
-link path=usr/bin/statgrab-make-mrtg-config target=/usr/bin/$(MACH64)/statgrab-make-mrtg-config
-
+file path=usr/bin/$(MACH64)/statgrab-make-mrtg-index
 file path=usr/include/statgrab.h
+file path=usr/lib/$(MACH64)/libstatgrab.a
 link path=usr/lib/$(MACH64)/libstatgrab.so target=libstatgrab.so.10.0.0
 link path=usr/lib/$(MACH64)/libstatgrab.so.10 target=libstatgrab.so.10.0.0
 file path=usr/lib/$(MACH64)/libstatgrab.so.10.0.0
@@ -153,12 +145,3 @@ file path=usr/share/man/man3/sg_vector_create.3
 file path=usr/share/man/man3/sg_vector_free.3
 file path=usr/share/man/man3/sg_vector_resize.3
 file path=usr/share/man/man3/statgrab.3
-
-depend fmri=runtime/perl-522@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-522 \
-    type=conditional
-
-depend fmri=runtime/perl-524@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-524 \
-    type=conditional
-
