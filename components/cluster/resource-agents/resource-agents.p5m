@@ -28,14 +28,14 @@ file files/pgpool2 path=usr/lib/ocf/resource.d/heartbeat/pgpool2 mode=0555
 
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/gawk
 
-link path=etc/ha.d/resource.d/ldirectord target=../../../usr/sbin/ldirectord
 link path=usr/lib/ocf/resource.d/redhat  target=../../../share/cluster
 
 file path=etc/ha.d/shellfuncs
 file path=etc/logrotate.d/ldirectord
 file path=usr/include/heartbeat/agent_config.h
 
-file path=usr/lib/heartbeat/findif mode=0555
+file path=usr/lib/heartbeat/findif   mode=0555
+file path=usr/lib/heartbeat/send_arp mode=0555
 
 file path=usr/lib/ocf/lib/heartbeat/apache-conf.sh
 file path=usr/lib/ocf/lib/heartbeat/findif.sh
@@ -155,10 +155,11 @@ file path=usr/lib/ocf/resource.d/heartbeat/vmware mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/vsftpd mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/zabbixserver mode=0555 
 
-file path=usr/sbin/ldirectord
-file path=usr/sbin/ocf-tester
-file path=usr/sbin/ocft
-file path=usr/sbin/rhev-check.sh
+file usr/sbin/$(MACH64)/ldirectord     path=usr/sbin/ldirectord
+file usr/sbin/$(MACH64)/ocf-tester     path=usr/sbin/ocf-tester
+file usr/sbin/$(MACH64)/ocft           path=usr/sbin/ocft
+file usr/sbin/$(MACH64)/rhev-check.sh  path=usr/sbin/rhev-check.sh
+
 file path=usr/share/cluster/ASEHAagent.sh mode=0555
 file path=usr/share/cluster/SAPDatabase mode=0555
 file path=usr/share/cluster/SAPInstance mode=0555
