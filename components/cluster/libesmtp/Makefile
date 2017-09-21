@@ -31,7 +31,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CFLAGS=-D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -DNAME_MAX=255 -DHOST_NAME_MAX=255
+CFLAGS=-m64 -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -DNAME_MAX=255 -DHOST_NAME_MAX=255
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --disable-isoc
@@ -40,11 +40,11 @@ COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); mkdir m4; $(AUTORECONF) -i)
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
-test:           $(TESTS_32)
+test:           $(TESTS_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
