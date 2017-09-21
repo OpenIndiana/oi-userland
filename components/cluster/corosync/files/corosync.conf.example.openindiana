@@ -1,0 +1,58 @@
+# Please read the corosync.conf.5 manual page
+
+# create /etc/corosync/authkey with corosync-keygen
+# copy /etc/corosync/authkey to each node
+# restrict access with chmod 400 /etc/corosync/authkey
+
+totem {
+  cluster_name: example
+  version: 2
+
+  interface {
+    ringnumber: 0
+    bindnetaddr: 192.168.178.0
+    broadcast: yes
+    mcastport: 5405
+    ttl: 1
+  }
+  transport: udpu
+}
+
+logging {
+   fileline: on
+   function_name: on
+   to_stderr: on
+   to_logfile: on
+   to_syslog: off
+   syslog_facility: local6
+   logfile: /var/log/hacluster/corosync.log
+   debug: trace
+   logfile_priority: error
+   syslog_priority: error
+   tags: enter|leave|trace
+   timestamp: on
+#   logger_subsys {
+#      subsys: QUORUM
+#      debug: off
+# }
+}
+
+# expected_votes only to start with one node in the cluster !
+quorum {
+  provider: corosync_votequorum
+  expected_votes: 1
+#  two_node: 1
+}
+
+# already defined in SMF
+#qb {
+#  ipc_type: socket
+#}
+
+nodelist {
+  node {
+    nodeid: 1
+    ring0_addr: FQDN or hostname
+  }
+}
+
