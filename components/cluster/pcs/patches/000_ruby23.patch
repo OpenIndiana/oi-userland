@@ -1,0 +1,30 @@
+--- pcs-0.9.159/pcs/utils.py.orig	2017-09-22 17:58:25.238479061 +0000
++++ pcs-0.9.159/pcs/utils.py	2017-09-22 18:00:27.112235879 +0000
+@@ -1044,7 +1046,7 @@
+     gem_home = os.path.join(pcsd_dir_path, 'vendor/bundle/ruby')
+     env_var["GEM_HOME"] = gem_home
+     stdout, dummy_stderr, retval = cmd_runner().run(
+-        ["/usr/bin/ruby", "-I" + pcsd_dir_path, pcsdcli_path, command],
++        ["/usr/bin/ruby23", "-I" + pcsd_dir_path, pcsdcli_path, command],
+         json.dumps(data),
+         env_var
+     )
+--- pcs-0.9.159/pcsd/pcsd-cli.rb.orig	2017-09-22 18:25:13.990204432 +0000
++++ pcs-0.9.159/pcsd/pcsd-cli.rb	2017-09-22 18:25:54.499259331 +0000
+@@ -1,4 +1,4 @@
+-#!/usr/bin/ruby
++#!/usr/bin/ruby23
+ 
+ require 'rubygems'
+ require 'etc'
+--- pcs-0.9.159/pcsd/pcsd.orig	2017-09-22 18:25:06.165250918 +0000
++++ pcs-0.9.159/pcsd/pcsd	2017-09-22 18:26:19.286770340 +0000
+@@ -20,7 +20,7 @@
+ # Source function library.
+ . /etc/rc.d/init.d/functions
+ 
+-exec="/usr/bin/ruby"
++exec="/usr/bin/ruby23"
+ params=" -C/var/lib/pcsd -I/usr/lib/pcsd -- /usr/lib/pcsd/ssl.rb"
+ prog="pcsd"
+ config="/var/lib/pcsd"

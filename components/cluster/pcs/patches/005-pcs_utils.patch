@@ -1,0 +1,24 @@
+--- pcs-0.9.159/pcs/utils.py.orig	2017-09-24 14:16:17.632803856 +0000
++++ pcs-0.9.159/pcs/utils.py	2017-09-24 14:18:23.027099847 +0000
+@@ -988,8 +988,10 @@
+         else:
+             stdin_pipe = None
+ 
++        pcsd_dir_path = settings.pcsd_exec_location
+         p = subprocess.Popen(
+             args,
++            cwd=pcsd_dir_path,
+             stdin=stdin_pipe,
+             stdout=subprocess.PIPE,
+             stderr=(subprocess.PIPE if ignore_stderr else subprocess.STDOUT),
+@@ -1041,8 +1043,8 @@
+     else:
+         pcsd_dir_path = os.path.join(pcs_dir, '../pcsd')
+     pcsdcli_path = os.path.join(pcsd_dir_path, 'pcsd-cli.rb')
+-    gem_home = os.path.join(pcsd_dir_path, 'vendor/bundle/ruby')
+-    env_var["GEM_HOME"] = gem_home
++    gem_home = os.path.join(pcsd_dir_path, 'vendor/bundle/ruby/2.3.0')
++    env_var["GEM_PATH"] = gem_home
+     stdout, dummy_stderr, retval = cmd_runner().run(
+         ["/usr/bin/ruby", "-I" + pcsd_dir_path, pcsdcli_path, command],
+         json.dumps(data),
