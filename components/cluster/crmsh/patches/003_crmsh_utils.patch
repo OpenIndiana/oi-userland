@@ -1,0 +1,21 @@
+--- crmsh-3.0.1/crmsh/utils.py.orig	2017-09-23 22:48:26.794327194 +0000
++++ crmsh-3.0.1/crmsh/utils.py	2017-09-23 23:12:54.478826458 +0000
+@@ -950,8 +950,17 @@
+     except ValueError:
+         return False
+ 
+-
+ def is_process(s):
++    cmd = "ps -e -o pid,comm | /usr/bin/grep -qs '%s'" % s
++    if options.regression_tests:
++        print ".EXT", cmd
++    proc = subprocess.Popen(cmd,
++                            shell=True,
++                            stdout=subprocess.PIPE)
++    proc.wait()
++    return proc.returncode == 0
++
++def is_process0(s):
+     """
+     Returns true if argument is the name of a running process.
+ 
