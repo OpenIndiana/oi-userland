@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   libstatgrab
 COMPONENT_VERSION=  0.91
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_PROJECT_URL=  http://www.i-scream.org/$(COMPONENT_NAME)
