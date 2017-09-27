@@ -14,7 +14,6 @@
 #
 
 <transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man1/%<1>.1m >
-<transform link path=usr/sbin/(.+) -> default pkg.linted true >
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -174,17 +173,11 @@ file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/wti_nps.la mode=0555
 file path=usr/lib/$(MACH64)/stonith/plugins/stonith2/wti_nps.so mode=0555
 file path=usr/lib/$(MACH64)/stonith/plugins/xen0-ha-dom0-stonith-helper mode=0555
 
-file path=usr/sbin/$(MACH64)/cibsecret
-file path=usr/sbin/$(MACH64)/ha_logger
-file path=usr/sbin/$(MACH64)/lrmadmin
-file path=usr/sbin/$(MACH64)/meatclient
-file path=usr/sbin/$(MACH64)/stonith
-
-link path=usr/sbin/cibsecret  target=/usr/sbin/$(MACH64)/cibsecret
-link path=usr/sbin/ha_logger  target=/usr/sbin/$(MACH64)/ha_logger
-link path=usr/sbin/lrmadmin   target=/usr/sbin/$(MACH64)/lrmadmin
-link path=usr/sbin/meatclient target=/usr/sbin/$(MACH64)/meatclient
-link path=usr/sbin/stonith    target=/usr/sbin/$(MACH64)/stonith
+file path=usr/sbin/cibsecret
+file path=usr/sbin/ha_logger
+file path=usr/sbin/lrmadmin
+file path=usr/sbin/meatclient
+file path=usr/sbin/stonith
 
 file path=usr/share/cluster-glue/ha_cf_support.sh
 file path=usr/share/cluster-glue/ha_log.sh mode=0555
