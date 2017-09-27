@@ -10,13 +10,14 @@
 
 #
 # Copyright 2013 Adam Stevko. All right reserved.
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libesmtp
 COMPONENT_VERSION= 1.0.6
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_PROJECT_URL=  http://www.stafford.uklinux.net/libesmtp
@@ -39,6 +40,8 @@ CONFIGURE_OPTIONS += --disable-isoc
 COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); mkdir m4; $(AUTORECONF) -i)
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 build:          $(BUILD_64)
 
