@@ -36,6 +36,8 @@ CONFIGURE_OPTIONS += --with-libnet=/usr
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+
 build:          $(BUILD_64)
 
 install:        $(INSTALL_64)
