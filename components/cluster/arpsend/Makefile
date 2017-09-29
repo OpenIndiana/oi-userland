@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   arpsend
 COMPONENT_VERSION=  1.2.3
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= utility/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=  https://www.net.princeton.edu/software/$(COMPONENT_NAME)/
@@ -35,11 +36,13 @@ CONFIGURE_OPTIONS += --with-libnet=/usr
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
-build:          $(BUILD_32)
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
-install:        $(INSTALL_32)
+build:          $(BUILD_64)
 
-test:           $(TESTS_32)
+install:        $(INSTALL_64)
+
+test:           $(TESTS_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libnet
