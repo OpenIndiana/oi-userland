@@ -1,0 +1,12 @@
+diff -ruN golang-1.9.orig/src/runtime/runtime-gdb_test.go golang-1.9/src/runtime/runtime-gdb_test.go
+--- golang-1.9.orig/src/runtime/runtime-gdb_test.go	2017-08-24 14:50:31.000000000 -0700
++++ golang-1.9/src/runtime/runtime-gdb_test.go	2017-08-27 08:46:28.054298530 -0700
+@@ -60,7 +60,7 @@
+ 		t.Skip("skipping gdb python tests on solaris; see golang.org/issue/20821")
+ 	}
+ 
+-	cmd := exec.Command("gdb", "-nx", "-q", "--batch", "-iex", "python import sys; print('go gdb python support')")
++	cmd := exec.Command("gdb", "-nx", "-q", "--batch", "-iex", "/usr/bin/amd64/python import sys; print('go gdb python support')")
+ 	out, err := cmd.CombinedOutput()
+ 
+ 	if err != nil {
