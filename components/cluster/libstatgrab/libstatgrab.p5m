@@ -25,16 +25,26 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/bin/$(MACH64)/saidar
+file path=usr/bin/$(MACH64)/statgrab
+file path=usr/bin/$(MACH64)/statgrab-make-mrtg-config
+file path=usr/bin/$(MACH64)/statgrab-make-mrtg-index
 file path=usr/bin/saidar
 file path=usr/bin/statgrab
-file path=usr/bin/statgrab-make-mrtg-index
 file path=usr/bin/statgrab-make-mrtg-config
+file path=usr/bin/statgrab-make-mrtg-index
 
 file path=usr/include/statgrab.h
+
 link path=usr/lib/$(MACH64)/libstatgrab.so target=libstatgrab.so.10.0.0
 link path=usr/lib/$(MACH64)/libstatgrab.so.10 target=libstatgrab.so.10.0.0
 file path=usr/lib/$(MACH64)/libstatgrab.so.10.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/libstatgrab.pc
+link path=usr/lib/libstatgrab.so target=libstatgrab.so.10.0.0
+link path=usr/lib/libstatgrab.so.10 target=libstatgrab.so.10.0.0
+file path=usr/lib/libstatgrab.so.10.0.0
+file path=usr/lib/pkgconfig/libstatgrab.pc
+
 file path=usr/share/doc/libstatgrab/AUTHORS
 file path=usr/share/doc/libstatgrab/COPYING
 file path=usr/share/doc/libstatgrab/COPYING.LGPL
@@ -148,12 +158,3 @@ file path=usr/share/man/man3/sg_vector_create.3
 file path=usr/share/man/man3/sg_vector_free.3
 file path=usr/share/man/man3/sg_vector_resize.3
 file path=usr/share/man/man3/statgrab.3
-
-depend fmri=runtime/perl-522@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-522 \
-    type=conditional
-
-depend fmri=runtime/perl-524@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-524 \
-    type=conditional
-

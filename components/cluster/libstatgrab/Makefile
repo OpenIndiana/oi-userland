@@ -32,17 +32,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATCH_LEVEL= 1
+build:          $(BUILD_32_and_64)
 
-COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
+install:        $(INSTALL_32_and_64)
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TESTS_64)
+test:           $(TESTS_32_and_64)
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
