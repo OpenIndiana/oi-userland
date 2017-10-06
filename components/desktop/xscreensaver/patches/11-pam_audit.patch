@@ -34,9 +34,9 @@ to fallback to direct use of getpwent(), which isn't audited
  3 files changed, 163 insertions(+), 5 deletions(-)
 
 diff --git driver/Makefile.in driver/Makefile.in
---- driver/Makefile.in
-+++ driver/Makefile.in
-@@ -109,8 +109,8 @@ TRUSTED_LIBS	= -lglib-2.0 -lsecdb
+--- driver/Makefile.in.~6~	2017-10-06 09:21:27.619470801 +0000
++++ driver/Makefile.in	2017-10-06 09:22:34.765399528 +0000
+@@ -107,8 +107,8 @@
  TRUSTED_SRCS	= trusted-utils.c
  TRUSTED_OBJS	= trusted-utils.o
  
@@ -47,12 +47,12 @@ diff --git driver/Makefile.in driver/Makefile.in
  
  KERBEROS_SRCS	= passwd-kerberos.c
  KERBEROS_OBJS	= passwd-kerberos.o
-@@ -218,7 +218,7 @@ PDF2JPEG_LIBS	= -framework Cocoa
+@@ -216,7 +216,7 @@
  SAVER_LIBS	= $(LIBS) $(X_LIBS) $(XMU_LIBS) @SAVER_LIBS@ \
  		  $(XDPMS_LIBS) $(XINERAMA_LIBS) $(GL_LIBS) $(X_PRE_LIBS) \
  		  -lXt -lX11 -lXext $(X_EXTRA_LIBS) \
--		  $(PASSWD_LIBS)
-+		  -lbsm $(PASSWD_LIBS)
+-		  $(PASSWD_LIBS) $(INTL_LIBS)
++		  -lbsm $(PASSWD_LIBS) $(INTL_LIBS)
  
  CMD_LIBS	= $(LIBS) $(X_LIBS) \
  		  $(X_PRE_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)
