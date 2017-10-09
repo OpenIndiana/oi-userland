@@ -21,41 +21,47 @@
 
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017 Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
 
 # i18n component requires GNU xgettext
-PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
+PATH=$(PATH.gnu)
 
 COMPONENT_NAME=		dnsmasq
-COMPONENT_VERSION=	2.68
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.78
 COMPONENT_PROJECT_URL=	http://www.thekelleys.org.uk
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:402019d61f53f1ccc04cc6218719fd3b158ea3fca9a83ab55471f981a2097c2f
+	sha256:c92e5d78aa6353354d02aabf74590d08980bb1385d8a00b80ef9bc80430aa1dc
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dnsmasq
 
-TPNO=			16307
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += PREFIX="/usr"
 COMPONENT_BUILD_ARGS += LOCALEDIR="/usr/share/locale"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS) -m$(BITS)"
 COMPONENT_BUILD_TARGETS = "all-i18n"
+COMPONENT_INSTALL_ENV += CC="$(CC)"
+COMPONENT_INSTALL_ARGS += CC="$(CC)"
 COMPONENT_INSTALL_ARGS += PREFIX="/usr"
+COMPONENT_INSTALL_ARGS += BINDIR="$(USRLIBDIR)/inet"
 COMPONENT_INSTALL_TARGETS = "install-i18n"
+
+
+
 
 # common targets
 build:		$(BUILD_32)
@@ -64,10 +70,7 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
-
-REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += system/library

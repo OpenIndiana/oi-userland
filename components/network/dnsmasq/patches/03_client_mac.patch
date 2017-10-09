@@ -3,41 +3,37 @@ that is soliciting the DHCPv6 IP address. This fix uses a simple way to
 retrieve the client MAC address from the client's EUI64 link-local address.
 
 
-*** dnsmasq-2.68/src/dhcp6.c	2013-12-08 07:58:29.000000000 -0800
---- NEW/src/dhcp6.c	2015-02-23 18:33:30.937299563 -0800
-***************
-*** 231,236 ****
---- 231,253 ----
-  
-  void get_client_mac(struct in6_addr *client, int iface, unsigned char *mac, unsigned int *maclenp, unsigned int *mactypep)
-  {
-+ #ifdef HAVE_SOLARIS_NETWORK
-+ /* Solaris does not have an easy way to retrieve MAC address for a given IPv6 address from the kernel.
-+    For now the following workaround should work for OpenStack's needs. */
-+   uint8_t *addr6;
-+ 
-+   *maclenp = ETHER_ADDR_LEN;
-+   *mactypep = ARPHRD_ETHER;
-+   /* Take the EUI64 based client's link-local address and convert it to client's MAC address.
-+      For example: from fe80::f816:3eff:fe5c:df43 link-local address we arrive at fa:16:3e:5c:df:43 */
-+   addr6 = client->s6_addr;
-+   mac[0] = addr6[8] ^ 0x2;
-+   mac[1] = addr6[9];
-+   mac[2] = addr6[10];
-+   mac[3] = addr6[13];
-+   mac[4] = addr6[14];
-+   mac[5]= addr6[15];
-+ #else
-    /* Recieving a packet from a host does not populate the neighbour
-       cache, so we send a neighbour discovery request if we can't 
-       find the sender. Repeat a few times in case of packet loss. */
-***************
-*** 276,281 ****
---- 293,299 ----
-  
-    *maclenp = mac_param.maclen;
-    *mactypep = ARPHRD_ETHER;
-+ #endif /* HAVE_SOLARIS_NETWORK */
-  }
-      
-  static int find_mac(int family, char *addrp, char *mac, size_t maclen, void *parmv)
+--- dnsmasq-2.78/src/dhcp6.c	2017-10-02 15:13:51.000000000 +0000
++++ NEW/src/dhcp6.c	2017-10-07 18:38:07.338649066 +0000
+@@ -252,6 +252,23 @@
+ 
+ void get_client_mac(struct in6_addr *client, int iface, unsigned char *mac, unsigned int *maclenp, unsigned int *mactypep, time_t now)
+ {
++  #ifdef HAVE_SOLARIS_NETWORK
++  /* Solaris does not have an easy way to retrieve MAC address for a given IPv6 address from the kernel.
++     For now the following workaround should work for OpenStack's needs. */
++    uint8_t *addr6;
++  
++    *maclenp = ETHER_ADDR_LEN;
++    *mactypep = ARPHRD_ETHER;
++    /* Take the EUI64 based client's link-local address and convert it to client's MAC address.
++       For example: from fe80::f816:3eff:fe5c:df43 link-local address we arrive at fa:16:3e:5c:df:43 */
++    addr6 = client->s6_addr;
++    mac[0] = addr6[8] ^ 0x2;
++    mac[1] = addr6[9];
++    mac[2] = addr6[10];
++    mac[3] = addr6[13];
++    mac[4] = addr6[14];
++    mac[5]= addr6[15];
++  #else
+   /* Receiving a packet from a host does not populate the neighbour
+      cache, so we send a neighbour discovery request if we can't 
+      find the sender. Repeat a few times in case of packet loss. */
+@@ -292,6 +309,7 @@
+ 
+   *maclenp = maclen;
+   *mactypep = ARPHRD_ETHER;
++#endif /* HAVE_SOLARIS_NETWORK */
+ }
+     
+ static int complete_context6(struct in6_addr *local,  int prefix,
