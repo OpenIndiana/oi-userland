@@ -10,13 +10,14 @@
 
 #
 # Copyright 2013 Adam Stevko. All right reserved.
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libesmtp
 COMPONENT_VERSION= 1.0.6
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_PROJECT_URL=  http://www.stafford.uklinux.net/libesmtp
@@ -31,7 +32,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CFLAGS=-D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -DNAME_MAX=255 -DHOST_NAME_MAX=255
+CFLAGS.32= -m32 -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -DNAME_MAX=255 -DHOST_NAME_MAX=255
+CFLAGS.64= -m64 -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -DNAME_MAX=255 -DHOST_NAME_MAX=255
+CFLAGS=  $(CFLAGS.$(BITS))
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --disable-isoc
@@ -40,11 +43,11 @@ COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); mkdir m4; $(AUTORECONF) -i)
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
-build:          $(BUILD_32)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_32_and_64)
 
-test:           $(TESTS_32)
+test:           $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
