@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   libstatgrab
 COMPONENT_VERSION=  0.91
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_PROJECT_URL=  http://www.i-scream.org/$(COMPONENT_NAME)
@@ -31,16 +32,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATCH_LEVEL= 1
+build:          $(BUILD_32_and_64)
 
-COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
+install:        $(INSTALL_32_and_64)
 
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(TESTS_32)
+test:           $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
