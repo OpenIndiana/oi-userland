@@ -33,6 +33,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+unexport SHELLOPTS
+
 CFLAGS += -DNAME_MAX=255 -DHOST_NAME_MAX=255 -I/usr/include  -I/usr/include/heartbeat \
 				 	-lsocket -lnsl -ldladm -lssp_nonshared -lssp -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
 
@@ -46,18 +48,8 @@ COMPONENT_PREP_ACTION=(cd $(@D); $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) autogen
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
-# I can't figure out why this don't work if 'make test' is used:
-#(cd build/i86/tests ; \
-#       /usr/bin/env  \
-#        /usr/gnu/bin/make \
-#         check)
-# If you call the lines above  all test pass with OK.
-# The lines above are copied from the output of 'make test'.
-# Called by 'make test' only resources.test runs with OK.
-
 COMPONENT_PRE_TEST_ACTION += \
     ($(MKDIR) /var/run/hacluster);
-COMPONENT_TEST_DIR =  $(@D)/tests
 COMPONENT_TEST_TARGETS = check
 
 build:          $(BUILD_32_and_64)
