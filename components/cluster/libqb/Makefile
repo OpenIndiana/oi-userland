@@ -48,9 +48,12 @@ COMPONENT_PREP_ACTION=(cd $(@D); $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) autogen
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
-COMPONENT_PRE_TEST_ACTION += \
-    ($(MKDIR) /var/run/hacluster);
 COMPONENT_TEST_TARGETS = check
+
+#
+# Please note for the target test 
+#    /var/run/hacluster must exist and must be writable for the build user
+#
 
 build:          $(BUILD_32_and_64)
 
