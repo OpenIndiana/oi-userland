@@ -10,6 +10,7 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni) 
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -39,16 +40,31 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --enable-debug
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --with-socket-dir=/var/run/hacluster
+CONFIGURE_OPTIONS += --enable-slow-tests
 
 COMPONENT_PREP_ACTION=(cd $(@D); $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) autogen.sh)
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
+# I can't figure out why this don't work if 'make test' is used:
+#(cd build/i86/tests ; \
+#       /usr/bin/env  \
+#        /usr/gnu/bin/make \
+#         check)
+# If you call the lines above  all test pass with OK.
+# The lines above are copied from the output of 'make test'.
+# Called by 'make test' only resources.test runs with OK.
+
+COMPONENT_PRE_TEST_ACTION += \
+    ($(MKDIR) /var/run/hacluster);
+COMPONENT_TEST_DIR =  $(@D)/tests
+COMPONENT_TEST_TARGETS = check
+
 build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-test:           $(TESTS_32_and_64)
+test:           $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen

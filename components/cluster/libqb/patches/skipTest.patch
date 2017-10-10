@@ -1,0 +1,16 @@
+The method to override system calls to libc is not portable.
+Writing to the syslog works, test is unnecessary.
+
+--- libqb-1.0.2/tests/check_log.c.orig	2017-10-10 11:32:27.247066784 +0000
++++ libqb-1.0.2/tests/check_log.c	2017-10-10 11:33:47.809174401 +0000
+@@ -894,8 +894,9 @@
+ #endif
+ 	add_tcase(s, tc, test_extended_information);
+ 	add_tcase(s, tc, test_zero_tags);
++#ifndef QB_SOLARIS	
+ 	add_tcase(s, tc, test_syslog);
+-
++#endif
+ 	return s;
+ }
+ 
