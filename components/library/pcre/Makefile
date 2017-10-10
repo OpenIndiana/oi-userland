@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
 COMPONENT_VERSION=	8.41
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -39,9 +40,9 @@ COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENCE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # pick up -std=c99 in CFLAGS
 CFLAGS+=	-std=c99
@@ -76,6 +77,7 @@ CONFIGURE_OPTIONS+=	--includedir=$(CONFIGURE_INCLUDEDIR)/pcre
 CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-cpp
+CONFIGURE_OPTIONS+=	--enable-jit
 CONFIGURE_OPTIONS+=	--enable-rebuild-chartables
 CONFIGURE_OPTIONS+=	--enable-utf8
 CONFIGURE_OPTIONS+=	--enable-unicode-properties
