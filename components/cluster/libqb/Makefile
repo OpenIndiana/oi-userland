@@ -32,8 +32,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATCH_LEVEL= 1
-
 CFLAGS += -DNAME_MAX=255 -DHOST_NAME_MAX=255 -I/usr/include  -I/usr/include/heartbeat \
 				 	-lsocket -lnsl -ldladm -lssp_nonshared -lssp -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
 
@@ -46,13 +44,11 @@ COMPONENT_PREP_ACTION=(cd $(@D); $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) autogen
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
-CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
+build:          $(BUILD_32_and_64)
 
-build:          $(BUILD_64)
+install:        $(INSTALL_32_and_64)
 
-install:        $(INSTALL_64)
-
-test:           $(TESTS_64)
+test:           $(TESTS_32_and_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
