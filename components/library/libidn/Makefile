@@ -26,6 +26,7 @@ PATH=$(dir $(CC)):$(JAVA_HOME)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		libidn
 COMPONENT_VERSION=	1.33
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	IDN - The Internationalized Domains Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libidn/
@@ -45,8 +46,6 @@ COMPONENT_ARCHIVE_URL_1 = http://sourceforge.net/projects/tldchk.berlios/files/$
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL = 0
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
@@ -105,7 +104,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	    $(FIND) ./tld/templates -type f -exec chmod 0644 {} + ; \
 	    $(FIND) ./tld/templates -type f -exec touch -acm {} + ; \
 	    $(FIND) ./lib -type f -name "*.pl" -exec touch -acm {} + ; \
-	    $(FIND) ./lib -type f -name "*.pl" -exec chmod 0755 {} + )
+	    $(FIND) ./lib -type f -name "*.pl" -exec chmod 0755 {} + ; \
+	    $(CLONEY) $(SOURCE_DIR) $(@D))
 
 build: $(BUILD_32_and_64)
 
