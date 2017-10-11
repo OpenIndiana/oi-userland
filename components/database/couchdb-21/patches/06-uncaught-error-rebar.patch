@@ -1,0 +1,44 @@
+https://github.com/apache/couchdb/issues/813
+Most probably obsolete with the next version of couchdb.
+The first 2 patches don't solve the issue with erlang 17.5.
+The offending test is excluded with the patch of the Makefile.
+Unfortunately there is no option skip_apps=.
+
+--- apache-couchdb-2.1.0/rebar.config.script.orig	2017-10-14 18:37:10.779502680 +0000
++++ apache-couchdb-2.1.0/rebar.config.script	2017-10-14 18:38:00.234478643 +0000
+@@ -60,11 +60,11 @@
+ {fauxton,          {url, "https://github.com/apache/couchdb-fauxton"},
+                    {tag, "v1.1.13"}, [raw]},
+ %% Third party deps
+-{folsom,           "folsom",           {tag, "CouchDB-0.8.1"}},
++{folsom,           "folsom",           {tag, "CouchDB-0.8.2"}},
+ {ibrowse,          "ibrowse",          {tag, "CouchDB-4.0.1"}},
+ {jiffy,            "jiffy",            {tag, "CouchDB-0.14.11-1"}},
+ {mochiweb,         "mochiweb",         {tag, "CouchDB-2.12.0-1"}},
+-{meck,             "meck",             {tag, "0.8.2"}}
++{meck,             "meck",             {tag, "0.8.8"}}
+ 
+ ],
+ 
+--- apache-couchdb-2.1.0/src/fabric/rebar.config.orig	2017-10-14 18:38:44.289718838 +0000
++++ apache-couchdb-2.1.0/src/fabric/rebar.config	2017-10-14 18:38:57.010493341 +0000
+@@ -11,5 +11,5 @@
+ % the License.
+ 
+ {deps, [
+-    {meck, ".*", {git, "https://github.com/apache/couchdb-meck.git", {tag, "0.8.2"}}}
++    {meck, ".*", {git, "https://github.com/apache/couchdb-meck.git", {tag, "0.8.8"}}}
+ ]}.
+--- apache-couchdb-2.1.0/Makefile.orig	2017-10-14 19:05:55.719885315 +0000
++++ apache-couchdb-2.1.0/Makefile	2017-10-14 19:07:16.043590412 +0000
+@@ -20,7 +20,9 @@
+ DESTDIR=
+ 
+ # Rebar options
+-apps=
++apps=b64url,bear,chttpd,config,couch,couch_epi,couch_event,couch_index, \
++	couch_mrview,couch_peruser,couch_plugins,couch_replicator,couch_stats,couch_tests,ddoc_cache, \
++	ocs,ets_lru,fabric,fauxton,folsom,global_changes,ibrowse,ioq,jiffy,khash,mango,meck,mem3,mochiweb,rebar,rexi,setup,snappy
+ skip_deps=folsom,meck,mochiweb,proper,snappy
+ suites=
+ tests=
