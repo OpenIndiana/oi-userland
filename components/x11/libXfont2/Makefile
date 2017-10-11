@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfont2
 COMPONENT_VERSION= 2.0.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libXfont2 - library for X servers and utilities to access font files
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_CLASSIFICATION = System/X11
