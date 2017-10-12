@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgtcl
-COMPONENT_VERSION= 	2.2.0
+COMPONENT_VERSION= 	2.3.2
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
 COMPONENT_SRC= 		Pgtcl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5c607bef6ea9c2fb87a3c852caab40108663c9dc44233f28834b7f7ab73e0bda
+  sha256:514b4fcaa8c6bbd9625943d4c01aafe73cbc26ddda482b510ced17192271a253
 COMPONENT_ARCHIVE_URL= \
   https://github.com/flightaware/Pgtcl/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://flightaware.github.io/Pgtcl/
@@ -40,8 +40,8 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS.64 +=	--enable-64bit
 
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.6/pgtcl2.2
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.6/pgtcl2.2/$(MACH64)
+CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.6/pgtcl2.3
+CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.6/pgtcl2.3/$(MACH64)
 
 CONFIGURE_OPTIONS.32    += --with-tcl="/usr/lib"
 CONFIGURE_OPTIONS.64    += --with-tcl="/usr/lib/$(MACH64)"
@@ -55,6 +55,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += system/library
