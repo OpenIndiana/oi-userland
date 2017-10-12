@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgadmin3
-COMPONENT_VERSION= 	1.18.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 	1.22.2
 COMPONENT_SUMMARY= 	pgAdminIII administration and development GUI for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:27ac3e296a6ca3da9da8ee22ed98eabfe1377be507877ffc26048fc2a9c6cbc0
+  sha256:9b68b0e3d3f0a261344fb8196825967d1e7acaca1d8cc82c42e12368ca5844ac
 COMPONENT_ARCHIVE_URL= \
   http://ftp.postgresql.org/pub/pgadmin/pgadmin3/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.pgadmin.org
@@ -47,7 +46,7 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt

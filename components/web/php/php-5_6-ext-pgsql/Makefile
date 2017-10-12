@@ -14,15 +14,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.6.31
+COMPONENT_VERSION=	5.6.30
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:c464af61240a9b7729fabe0314cdbdd5a000a4f0c9bd201f89f8628732fe4ae4
+COMPONENT_ARCHIVE_HASH=	sha256:a363185c786432f75e3c7ff956b49c3369c3f6906a6b10459f8d1ddc22f70805
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PHP_PREFIX		=	/usr/php/5.6
 PHP_SYSCONFDIR		=	/etc/php/5.6
@@ -71,6 +72,6 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/php-56/php-common
