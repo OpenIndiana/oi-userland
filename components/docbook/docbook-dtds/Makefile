@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= docbook-dtds
 
 COMPONENT_VERSION= 1.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUBVERSION= 30.1
 COMPONENT_SUMMARY= SGML and XML document type definitions for DocBook.
 COMPONENT_SRC= 3.0-sgml
