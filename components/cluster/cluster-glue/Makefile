@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cluster-glue
 COMPONENT_VERSION= 1.0.12
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_COMMIT= bdd95fd0f89f31b19fa46ffa0ea3f5022ebcd858
@@ -52,11 +53,14 @@ COMPONENT_PREP_ACTION=(cd $(@D); $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) autogen
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
-build:          $(BUILD_32)
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
 
-install:        $(INSTALL_32)
+build:          $(BUILD_64)
 
-test:           $(TESTS_32)
+install:        $(INSTALL_64)
+
+test:           $(TESTS_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
