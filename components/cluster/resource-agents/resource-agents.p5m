@@ -14,6 +14,7 @@
 #
 
 <transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man8/%<1>.8 >
+<transform link path=etc/ha.d/resource.d/(.+) -> default pkg.linted true >
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -28,14 +29,15 @@ file files/pgpool2 path=usr/lib/ocf/resource.d/heartbeat/pgpool2 mode=0555
 
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/gawk
 
-link path=etc/ha.d/resource.d/ldirectord target=../../../usr/sbin/ldirectord
 link path=usr/lib/ocf/resource.d/redhat  target=../../../share/cluster
+link path=etc/ha.d/resource.d/ldirectord target=/usr/sbin/ldirectord
 
 file path=etc/ha.d/shellfuncs
 file path=etc/logrotate.d/ldirectord
 file path=usr/include/heartbeat/agent_config.h
 
-file path=usr/lib/heartbeat/findif mode=0555
+file path=usr/lib/heartbeat/findif   mode=0555
+file path=usr/lib/heartbeat/send_arp mode=0555
 
 file path=usr/lib/ocf/lib/heartbeat/apache-conf.sh
 file path=usr/lib/ocf/lib/heartbeat/findif.sh
@@ -159,6 +161,7 @@ file path=usr/sbin/ldirectord
 file path=usr/sbin/ocf-tester
 file path=usr/sbin/ocft
 file path=usr/sbin/rhev-check.sh
+
 file path=usr/share/cluster/ASEHAagent.sh mode=0555
 file path=usr/share/cluster/SAPDatabase mode=0555
 file path=usr/share/cluster/SAPInstance mode=0555

@@ -10,13 +10,14 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved. 
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= resource-agents
 COMPONENT_VERSION= 4.0.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,14 +51,22 @@ COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); ./autogen.sh)
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
-build:          $(BUILD_32)
+CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
 
-install:        $(INSTALL_32)
+# leaving this folder prevents repeated install actions
+COMPONENT_PRE_INSTALL_ACTION = ( $(RM) -r $(PROTO_DIR)/usr/lib/ocf/; ) 
 
-test:           $(TESTS_32)
+# this component creates binaries (findif, send_arp) and links against 64-bit libraries
+ 
+build:          $(BUILD_64)
+
+install:        $(INSTALL_64)
+
+test:           $(TESTS_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += application/cluster/cluster-glue
