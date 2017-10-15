@@ -10,30 +10,30 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	pg_repack
-COMPONENT_VERSION= 	1.4.2
-COMPONENT_SUMMARY= 	pg_repack - utility to reorganize PostgreSQL tables on-line
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
-COMPONENT_COMMIT=       b0be609adf2579f81e86d77802710211e63e72dc
-COMPONENT_ARCHIVE_HASH= \
+COMPONENT_NAME =	pg_repack
+COMPONENT_VERSION =	1.4.2
+COMPONENT_SUMMARY =	pg_repack - utility to reorganize PostgreSQL tables on-line
+COMPONENT_SRC =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE =	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_HASH = \
   sha256:55a060a7e682d9ec8ef544507ceb9db9ccb4732163bf2082a6e9ec81796b0f0a
 COMPONENT_ARCHIVE_URL = \
   http://api.pgxn.org/dist/pg_repack/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://reorg.github.io/pg_repack/
-COMPONENT_FMRI =        database/postgres-95/pg_repack
-COMPONENT_CLASSIFICATION =      System/Databases
-COMPONENT_LICENSE =     BSD
-COMPONENT_LICENSE_FILE =        COPYRIGHT
+COMPONENT_PROJECT_URL =	http://reorg.github.io/pg_repack/
+COMPONENT_FMRI =	database/postgres-10/pg_repack
+COMPONENT_CLASSIFICATION =	System/Databases
+COMPONENT_LICENSE =	BSD
+COMPONENT_LICENSE_FILE =	COPYRIGHT
 
-PG_VERSION=	9.5
+PG_VERSION=	10
 # Don't depend on host default pg_config
-PATH=		$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
+# Note, for PostgreSQL >= 9.6 $(PG_HOME)/bin contains 64-bit files
+PATH=		$(PG_HOME)/bin:/usr/sbin:/usr/bin
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -41,12 +41,10 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV	+=	USE_PGXS=0
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
-test: $(NO_TESTS)
-
-REQUIRED_PACKAGES += database/postgres-95/developer
-REQUIRED_PACKAGES += database/postgres-95/library
+REQUIRED_PACKAGES += database/postgres-10/developer
+REQUIRED_PACKAGES += database/postgres-10/library
 REQUIRED_PACKAGES += system/library

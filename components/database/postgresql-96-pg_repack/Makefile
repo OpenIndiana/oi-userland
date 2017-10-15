@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	pg_repack
-COMPONENT_VERSION =	1.3.4
+COMPONENT_VERSION =	1.4.2
 COMPONENT_SUMMARY =	pg_repack - utility to reorganize PostgreSQL tables on-line
 COMPONENT_SRC =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH = \
-  sha256:2038c726e948285a3097f1cae0fb9f44d9288716fd9c1e2a50559f7fe9a8939a
+  sha256:55a060a7e682d9ec8ef544507ceb9db9ccb4732163bf2082a6e9ec81796b0f0a
 COMPONENT_ARCHIVE_URL = \
   http://api.pgxn.org/dist/pg_repack/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	http://reorg.github.io/pg_repack/
