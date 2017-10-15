@@ -16,13 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		driver-graphics-nvidia
-COMPONENT_VERSION=	340.102
+COMPONENT_VERSION=	340.104
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8d6acb83651df2a566c3eb10aebf03e752ab9dac988c5af750b5f0a211ae5936
-COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
+	sha256:1fb837b7047e6b08df2a5eb973ae70ea07e5194570b24b966d3f97572cb6a450
+COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.nvidia.com/object/solaris-display-archive.html
 
 include $(WS_MAKE_RULES)/prep.mk
