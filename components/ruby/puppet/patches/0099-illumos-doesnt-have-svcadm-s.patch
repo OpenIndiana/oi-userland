@@ -1,0 +1,12 @@
+svcadm restart doesn't support -s on illumos
+--- puppet-4.10.6/spec/unit/provider/service/smf_spec.rb.1	2017-10-13 10:45:51.938001751 +0000
++++ puppet-4.10.6/spec/unit/provider/service/smf_spec.rb	2017-10-13 10:48:00.811007755 +0000
+@@ -181,7 +181,7 @@
+   describe "when restarting" do
+ 
+     it "should error if timeout occurs while restarting the service" do
+-      @provider.expects(:texecute).with(:restart, ["/usr/sbin/svcadm", :restart, '-s', "/system/myservice"], true)
++      @provider.expects(:texecute).with(:restart, ["/usr/sbin/svcadm", :restart, "/system/myservice"], true)
+       Timeout.expects(:timeout).with(60).raises(Timeout::Error)
+       expect { @provider.restart }.to raise_error Puppet::Error, ('Timed out waiting for /system/myservice to transition states')
+     end
