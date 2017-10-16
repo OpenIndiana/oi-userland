@@ -28,9 +28,9 @@ COMPONENT_NAME=		jenkins
 JENKINS_RELEASE=lts
 COMPONENT_MAJOR_VERSION=	2
 COMPONENT_MINOR_VERSION=	73
-COMPONENT_PATCH_VERSION=	1
+COMPONENT_PATCH_VERSION=	2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:171c6b3d819fb0240ccd06831b4b493bc7d1eb37ca2632c94f907f15b3aedf7f
+	sha256:f6d1351beef34d980b32f8c463be505445f637e2fc62156fecd42891c53c97d3
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
