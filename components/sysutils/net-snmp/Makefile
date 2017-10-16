@@ -27,13 +27,12 @@
 #
 
 #
-## Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
-DOXYGEN= /usr/bin/doxygen
 include ../../../make-rules/shared-macros.mk
 
+DOXYGEN= /usr/bin/doxygen
 PATH=$(VPATH):$(PATH.gnu)
 
 COMPONENT_NAME=		net-snmp
