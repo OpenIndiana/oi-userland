@@ -1,0 +1,288 @@
+#
+# net-snmp can't get "hrProcessorLoad" dynamically after change the no. of CPUs.
+#
+# Developed in-house. Patch submitted to community
+# http://sourceforge.net/p/net-snmp/patches/1284/
+--- a/include/net-snmp/agent/hardware/cpu.h	2014-06-09 04:44:56.766491669 -0700
++++ b/include/net-snmp/agent/hardware/cpu.h	2014-06-09 04:45:47.845551969 -0700
+@@ -52,6 +52,11 @@
+      netsnmp_cpu_info *next;
+ };
+ 
++    /* Auxilary structure used for updating the new cpu list */
++struct cpu_idx {
++	int idx;
++	struct cpu_idx *next;
++};
+ 
+     /*
+      * Possibly not all needed ??
+@@ -60,6 +65,7 @@
+ netsnmp_cpu_info *netsnmp_cpu_get_next( netsnmp_cpu_info* );
+ netsnmp_cpu_info *netsnmp_cpu_get_byIdx(  int,   int );
+ netsnmp_cpu_info *netsnmp_cpu_get_byName( char*, int );
++int netsnmp_update_cpu_list( struct cpu_idx * ); /* returns the number of deleted cpus */
+ 
+ netsnmp_cache *netsnmp_cpu_get_cache( void );
+ int netsnmp_cpu_load( void );
+--- net-snmp-5.7.2.1/agent/mibgroup/hardware/cpu/cpu.c	Wed Feb 19 16:36:42 2014
++++ cpu.c	Thu Oct 30 03:00:29 2014
+@@ -271,4 +271,60 @@
+     cpu2->pageIn     = cpu->pageIn;
+     cpu2->pageOut    = cpu->pageOut;
+ }
++
++    /*
++     * Updates the cpu list, keeping the cpus whose indices are passed
++     * assumes the passed linked list of indices is sorted in ascending order
++     * returns the number of deleted cpus
++     */
++int netsnmp_update_cpu_list( struct cpu_idx *new_cpu_list )
++{
++    netsnmp_cpu_info *prev, *current, *temp1, *temp2;
++    int n=0;
++    netsnmp_cpu_info *cpu;
++
++    for( prev=current=_cpu_head; current && new_cpu_list ;
++        current=current->next, new_cpu_list=new_cpu_list->next ) {
++        if ( current->idx == new_cpu_list->idx ) {
++            prev=current;
++        } else {
++            current=current->next;
++            while ( current && (current->idx != new_cpu_list->idx) )
++                current = current->next;
++            if ( !current ) {
++                /*This shouldn't happen. Something went really wrong */
++                return -1;
++            }
++
++            temp1 = prev->next;
++            prev->next = current;
++            prev = current;
++                /* remove the unassigned cpus */
++            while ( temp1 != current ) {
++                temp2 = temp1;
++                temp1 = temp1->next;
++                n++;
++                SNMP_FREE(temp2->history);
++                SNMP_FREE(temp2);
++            }
++        }
++    } /*end of for */
++
++    if ( !current && new_cpu_list ) {
++        /* This shouldn't happen. */
++        return -1;
++    }
++
++    /* Delete the unassigned trailing cpus from the list */
++    while ( current ) {
++        temp2 = current;
++        current = current->next;
++        n++;
++        SNMP_FREE(temp2->history);
++        SNMP_FREE(temp2);
++     }
++     prev->next = NULL;
++     return n;
++}
++
+ #endif /* NETSNMP_FEATURE_REMOVE_HARDWARE_CPU_COPY_STATS */
+--- net-snmp-5.7.2.1/agent/mibgroup/hardware/cpu/cpu_kstat.c	Wed Feb 19 16:36:42 2014
++++ cpu_kstat.c	Thu Oct 30 03:00:19 2014
+@@ -17,6 +17,8 @@
+ extern kstat_ctl_t  *kstat_fd;
+ extern int           cpu_num;
+ int _cpu_status(char *state);
++static void add_new_kstat_cpu_entry(kstat_t *ksp);
++static struct cpu_idx * add_cpu_idx(struct cpu_idx * head, int idx);
+ 
+     /*
+      * Initialise the list of CPUs on the system
+@@ -23,10 +25,8 @@
+      *   (including descriptions)
+      */
+ void init_cpu_kstat( void ) {
+-    int               i = 0, n = 0, clock, state_begin;
+-    char              ctype[15], ftype[15], state[10];
++    int               n=0;
+     kstat_t          *ksp;
+-    kstat_named_t    *ks_data;
+     netsnmp_cpu_info *cpu = netsnmp_cpu_get_byIdx( -1, 1 );
+     strcpy(cpu->name, "Overall CPU statistics");
+ 
+@@ -41,45 +41,63 @@
+         if ((strcmp(ksp->ks_module, "cpu_info") == 0) &&
+             (strcmp(ksp->ks_class,  "misc"    ) == 0)) {
+             kstat_read(kstat_fd, ksp, NULL );
++            add_new_kstat_cpu_entry(ksp);
+             n++;
+-            clock = 999999;
+-            memset(ctype, 0, sizeof(ctype));
+-            memset(ftype, 0, sizeof(ftype));
+-            memset(state, 0, sizeof(state));
+-            for (i=0, ks_data = ksp->ks_data; i < ksp->ks_ndata; i++, ks_data++) {
+-                if ( strcmp( ks_data->name, "state" ) == 0 ) {
+-                    strlcpy(state, ks_data->value.c, sizeof(state));
+-                } else if ( strcmp( ks_data->name, "state_begin" ) == 0 ) {
+-                    state_begin = ks_data->value.i32;
+-                } else if ( strcmp( ks_data->name, "cpu_type" ) == 0 ) {
+-                    strlcpy(ctype, ks_data->value.c, sizeof(ctype));
+-                } else if ( strcmp( ks_data->name, "fpu_type" ) == 0 ) {
+-                    strlcpy(ftype, ks_data->value.c, sizeof(ftype));
+-                } else if ( strcmp( ks_data->name, "clock_MHz" ) == 0 ) {
+-                    clock = ks_data->value.i32;
+-                }
+-            }
+-            i   = ksp->ks_instance;
+-            cpu = netsnmp_cpu_get_byIdx( i, 1 );
+-            sprintf( cpu->name,  "cpu%d", i );
+-            sprintf( cpu->descr, "CPU %d Sun %d MHz %s with %s FPU %s",
+-                                 i, clock, ctype, ftype, state  );
+-            cpu->status = _cpu_status(state); /* XXX - or in 'n_c_a_load' ? */
+         }
+     }
+-    cpu_num = i;
++    cpu_num = n;
+ }
+ 
+ 
+     /*
++     * adds the new cpu entry to the exisitng list
++     */
++static void
++add_new_kstat_cpu_entry( kstat_t *ksp ) {
++    int i, clock, state_begin;
++    char ctype[15], ftype[15], state[10];
++    kstat_named_t    *ks_data;
++    netsnmp_cpu_info *cpu;
++
++    clock = 999999;
++    memset(ctype, 0, sizeof(ctype));
++    memset(ftype, 0, sizeof(ftype));
++    memset(state, 0, sizeof(state));
++
++    for (i=0, ks_data = ksp->ks_data; i < ksp->ks_ndata; i++, ks_data++) {
++        if ( strcmp( ks_data->name, "state" ) == 0 ) {
++            strncpy( state, ks_data->value.c, sizeof(state));
++            state[sizeof(state)-1] = '\0';
++        } else if ( strcmp( ks_data->name, "state_begin" ) == 0 ) {
++            state_begin = ks_data->value.i32;
++        } else if ( strcmp( ks_data->name, "cpu_type" ) == 0 ) {
++            strncpy( ctype, ks_data->value.c, sizeof(ctype));
++            ctype[sizeof(ctype)-1] = '\0';
++        } else if ( strcmp( ks_data->name, "fpu_type" ) == 0 ) {
++            strncpy( ftype, ks_data->value.c, sizeof(ftype));
++            ftype[sizeof(ftype)-1] = '\0';
++        } else if ( strcmp( ks_data->name, "clock_MHz" ) == 0 ) {
++            clock = ks_data->value.i32;
++        }
++    }
++    i   = ksp->ks_instance;
++    cpu = netsnmp_cpu_get_byIdx( i, 1 );
++    sprintf( cpu->name,  "cpu%d", i );
++    sprintf( cpu->descr, "CPU %d Sun %d MHz %s with %s FPU %s", i, clock, ctype, ftype, state  );
++    cpu->status = _cpu_status(state);
++}
++
++
++    /*
+      * Load the latest CPU usage statistics
+      */
+ int netsnmp_cpu_arch_load( netsnmp_cache *cache, void *magic ) {
+-    int               i=1;
++    int               i=1, n=0;
+     kstat_t          *ksp;
+     cpu_stat_t        cs;
+     netsnmp_cpu_info *cpu = netsnmp_cpu_get_byIdx( -1, 0 );
+     netsnmp_cpu_info *cpu2;
++    struct cpu_idx *new_cpu_list = NULL, *temp_cpu_idx;
+ 
+         /* Clear overall stats, ready for summing individual CPUs */
+     cpu->user_ticks = 0;
+@@ -94,14 +112,40 @@
+ 
+     kstat_chain_update( kstat_fd );
+     DEBUGMSGTL(("cpu", "cpu_kstat load\n "));
++
++    /*
++     * The stats update is three step.
++     * First - add in the new cpus' info to the linked list
++     */
+     for (ksp = kstat_fd->kc_chain; ksp != NULL; ksp = ksp->ks_next) {
+         if (ksp->ks_flags & KSTAT_FLAG_INVALID)
+             continue;
++        if ((strcmp(ksp->ks_module, "cpu_info") == 0) &&
++            (strcmp(ksp->ks_class,  "misc"    ) == 0)) {
++            kstat_read(kstat_fd, ksp, NULL );
++            i = ksp->ks_instance;
++            new_cpu_list = add_cpu_idx( new_cpu_list, i);
++            cpu2 = netsnmp_cpu_get_byIdx( i, 0 );
++            if ( !cpu2 ) {
++                add_new_kstat_cpu_entry(ksp);
++                n++;
++            }
++        }
++    }
++
++
++    /* Second - update the CPU list to reflect new kernel structures */
++    n -= netsnmp_update_cpu_list( new_cpu_list );
++
++    /* Third - for updating stats for the new CPU set */
++    for (ksp = kstat_fd->kc_chain; ksp != NULL; ksp = ksp->ks_next) {
++        if (ksp->ks_flags & KSTAT_FLAG_INVALID)
++            continue;
+         if (strcmp(ksp->ks_module, "cpu_stat") == 0) {
+             i    = ksp->ks_instance;
+             cpu2 = netsnmp_cpu_get_byIdx( i, 0 );
+             if ( !cpu2 )  
+-                break;   /* or continue ? */  /* Skip new CPUs */
++                    continue;  /* This shouldn't happen. Inconsistency in kstat CPU data */
+             if ((ksp->ks_type != KSTAT_TYPE_RAW) ||
+                 (ksp->ks_data_size != sizeof(cs))||
+                 (kstat_read(kstat_fd, ksp, &cs) == -1)) {
+@@ -135,9 +179,43 @@
+             cpu->nCtxSwitches += (unsigned long long)cs.cpu_sysinfo.pswitch;
+         }
+     }
++    cpu_num += n;
++    /* Clean up the temporary CPU index list */
++    while(new_cpu_list) {
++        temp_cpu_idx = new_cpu_list;
++        new_cpu_list = new_cpu_list->next;
++        SNMP_FREE(temp_cpu_idx);
++    }
+     return 0;
+ }
+ 
++    /* returns the new head */
++static struct cpu_idx *
++add_cpu_idx(struct cpu_idx * head, int idx)
++{
++    struct cpu_idx *cpu_idx, *current;
++    cpu_idx = SNMP_MALLOC_TYPEDEF( struct cpu_idx );
++    if ( !cpu_idx ) {
++        DEBUGMSG(("cpu", "(cpu_idx creation failed)\n"));
++        return head;
++    }
++
++    cpu_idx->idx = idx;
++    if ( !head || head->idx > idx ) {
++        cpu_idx->next = head;
++        return cpu_idx;
++    }
++
++    for ( current=head; current; current=current->next ) {
++        if ( !current->next || current->next->idx > idx ) {
++            cpu_idx->next = current->next;
++            current->next = cpu_idx;
++            return head;
++        }
++    }
++
++}
++
+ int
+ _cpu_status( char *state)
+ {

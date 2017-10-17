@@ -1,0 +1,37 @@
+This patch consists of 2 diffs, the 1st diff is taken from the community.
+Details at https://sourceforge.net/p/net-snmp/bugs/2760/
+The second diff has been developed inhouse and has been accepted by the community.
+Details at https://sourceforge.net/p/net-snmp/bugs/2783/  
+--- net-snmp-5.7.2.1.old/agent/mibgroup/ip-mib/data_access/ipaddress_solaris2.c	2014-02-19 16:36:42.000000000 +0000
++++ net-snmp-5.7.2.1/agent/mibgroup/ip-mib/data_access/ipaddress_solaris2.c	2017-05-08 05:46:06.264499949 +0000
+@@ -148,11 +148,11 @@
+     while ((rc = getMibstat(MIB_IP_ADDR, &ipae, sizeof(ipae), req,
+                             &Get_everything, NULL)) == 0) {
+         req = GET_NEXT;
++        if (ipae.ipAdEntAddr == INADDR_ANY)
++            continue;
+         entry = netsnmp_access_ipaddress_entry_create();
+         if (entry == NULL)
+             return (-1);    
+-        if (ipae.ipAdEntAddr == INADDR_ANY)
+-            continue;
+ 
+         ipae.ipAdEntIfIndex.o_bytes[ipae.ipAdEntIfIndex.o_length] = '\0';
+         DEBUGMSGTL(("access:ipaddress:container", "found if %s\n",
+@@ -224,13 +224,13 @@
+     while ((rc = getMibstat(MIB_IP6_ADDR, &ip6ae, sizeof(ip6ae), req,
+                             &Get_everything, NULL)) == 0) {
+         req = GET_NEXT;
+-        entry = netsnmp_access_ipaddress_entry_create();
+-        if (entry == NULL)
+-            return (-1);    
+         if (memcmp((const void *)&ip6ae.ipv6AddrAddress,
+                    (const void *)&in6addr_any,
+                    sizeof (ip6ae.ipv6AddrAddress)) == 0)
+             continue;
++        entry = netsnmp_access_ipaddress_entry_create();
++        if (entry == NULL)
++            return (-1);    
+ 
+         ip6ae.ipv6AddrIfIndex.o_bytes[ip6ae.ipv6AddrIfIndex.o_length] = '\0';
+         DEBUGMSGTL(("access:ipaddress:container", "found if %s\n",

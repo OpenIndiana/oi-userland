@@ -1,49 +1,25 @@
---- net-snmp-5.4.1.2/ltmain.sh.~1~	2007-07-20 01:16:46.000000000 +0400
-+++ net-snmp-5.4.1.2/ltmain.sh	2013-10-17 13:28:51.144583426 +0400
-@@ -1417,7 +1417,9 @@
+# RPATH issues when upgrading net-snmp to version 5.4.1
+#
+# Developed in-house. Solaris-specific; not suitable for upstream
+--- net-snmp-5.7.2/ltmain.sh	Sun Dec 30 23:42:05 2012
++++ net-snmp-5.7.2/ltmain.sh	Sun Dec 30 23:49:01 2012
+@@ -5406,7 +5406,9 @@
  	  if test "$prev" = rpath; then
  	    case "$rpath " in
  	    *" $arg "*) ;;
--	    *) rpath="$rpath $arg" ;;
-+	    *) rpath="$rpath $arg"
-+        # This is make sure only $libdir path is encoded in RUNPATH
-+        sma_rpath="$rpath" ;;
+-	    *) func_append rpath " $arg" ;;
++	    *) func_append rpath " $arg"
++		# This is make sure only $libdir path is encoded in RUNPATH
++			sma_rpath="$rpath" ;;
  	    esac
  	  else
  	    case "$xrpath " in
-@@ -1639,7 +1641,7 @@
- 	continue
- 	;;
- 
--     -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads)
-+     -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads|-f*)
- 	compiler_flags="$compiler_flags $arg"
- 	compile_command="$compile_command $arg"
- 	finalize_command="$finalize_command $arg"
-@@ -2134,7 +2136,7 @@
- 	lib=
- 	found=no
- 	case $deplib in
--	-mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads)
-+	-mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe|-threads|-f*)
- 	  if test "$linkmode,$pass" = "prog,link"; then
- 	    compile_deplibs="$deplib $compile_deplibs"
- 	    finalize_deplibs="$deplib $finalize_deplibs"
-@@ -3890,7 +3892,7 @@
- 	if test "$hardcode_into_libs" = yes; then
- 	  # Hardcode the library paths
- 	  hardcode_libdirs=
--	  dep_rpath=
-+	  dep_rpath="-R $sma_rpath"
- 	  rpath="$finalize_rpath"
- 	  test "$mode" != relink && rpath="$compile_rpath$rpath"
- 	  for libdir in $rpath; do
-@@ -3935,7 +3937,7 @@
+@@ -8046,7 +8048,7 @@
  		fi
  	      else
  		eval flag=\"$hardcode_libdir_flag_spec\"
--		dep_rpath="$dep_rpath $flag"
-+		#dep_rpath="$dep_rpath $flag"
+-		func_append dep_rpath " $flag"
++#func_append dep_rpath " $flag"
  	      fi
  	    elif test -n "$runpath_var"; then
  	      case "$perm_rpath " in

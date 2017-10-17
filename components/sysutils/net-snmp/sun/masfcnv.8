@@ -1,0 +1,505 @@
+'\" te
+.\" Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+.TH masfcnv 8 "28 Oct 2015" "SunOS 5.12" "System Administration Commands"
+.SH NAME
+masfcnv \- SNMP configuration migration script
+.SH SYNOPSIS
+.LP
+.nf
+\fB/usr/lib/net-snmp/masfcnv\fR [\fB-cimnrs\fR] [\fB-l\fR \fIagent\fR\fImaster\fR] 
+     [\fB-p\fR \fIenable\fR\fIdisable\fR\fIerror\fR] [\fB-t\fR \fInone\fR\fIadd\fR] 
+     [\fB-u\fR \fIagent\fR\fImaster\fR\fIerror\fR] [\fB-y\fR \fIagent\fR\fImaster\fR\fIerror\fR]
+.fi
+
+.LP
+.nf
+\fBmasfcnv\fR [\fB-V\fR]
+.fi
+
+.LP
+.nf
+\fBmasfcnv\fR [\fB-?\fR]
+.fi
+
+.SH DESCRIPTION
+.sp
+.LP
+The \fBmasfcnv\fR script is used to assist the system administrator in migrating an existing set of configuration files for the Sun SNMP Management Agent for Sun Fire and Netra Systems (MASF) to the Systems Management Agent (SMA).
+.sp
+.LP
+The script accepts as input the currently installed set of MASF and SMA configuration files and outputs a new set of SMA configuration files. Existing SMA configuration files are backed up by appending \fB\&.bak\fR to the filename. The administrator can choose to output the new configuration to standard output, instead of replacing the current configuration, by specifying the \fB-n\fR option.
+.sp
+.LP
+The migration script must be run as the superuser. Failure to do so causes the script to exit with an error message. Before running the script you should ensure that both the SMA and MASF agents are not running. If the agents are running they will be shut down by the script.
+.sp
+.LP
+The migration script installs a new startup script for the MASF agent in \fB/etc/init.d\fR, as well as a backup of the old script. During migration, MASF will be configured as an AgentX subagent of SMA. All migration settings will be migrated to the SMA configuration file.
+.sp
+.LP
+The migration script aborts if any unrecognized directives are found in either the MASF configuration files or the SMA configuration files. This can be overridden with the \fB-i\fR option. If this option is selected, the behavior is to retain unrecognized directives that were present in the SMA configuration, but remove those present in the MASF configuration.
+.sp
+.LP
+The migration script then proceeds to migrate access control and trap configuration. As a side effect of running the migration script, the following directives might be expanded by the script into multiple directives with an equivalent interpretation:
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBrwcommunity\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBrocommunity\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBrwuser\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBrouser\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBtrapcommunity\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBtrapsink\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBtrap2sink\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBinformsink\fR
+.RE
+.SS "Access Control Migration"
+.sp
+.LP
+Access control directives are expanded into the equivalent com2sec, group, access and view directives. Existing group names are renamed by prepending a prefix to avoid conflict with any which may already be defined in SMA.
+.sp
+.LP
+When migrating SNMPv1 or v2c access control, a conflict can occur if both MASF and SMA configuration files have defined access permissions for the same community and source address. The default behavior is to abort with a message, unless a use of the \fB-y\fR option specifies otherwise. If \fB-y\fR \fBagent\fR is specified then the MASF configuration takes precedence. If \fB-y\fR \fBmaster\fR is specified then the SMA configuration is retained.
+.sp
+.LP
+When migrating USM configuration (SNMPv3), a conflict can occur if both SMA and MASF configurations define a user with the same \fBsecurityName\fR. If this occurs, the behavior of the script is determined by the \fB-u\fR option. If \fB-u\fR \fBagent\fR is specified, the configuration of the user defined in the MASF configuration files is the one that is retained. Otherwise, if the \fB-u\fR \fBmaster\fR option is specified, the use defined in the SMA configuration files is retained.
+.sp
+.LP
+By default, the migration script attempts to migrate USM users from MASF to SMA. The script determines whether there are any SNMPv3 users present in the SMA configuration and whether the default \fBengineID\fR has been overridden in the SMA configuration files. If neither of these conditions obtain, then the any \fBusmUser\fR statements containing localized authentication keys can be migrated to SMA, along with the MASF \fBengineID\fR. This results in the \fBengineID\fR of the SMA master agent changing.
+.sp
+.LP
+If the script determines that there are existing SNMPv3 users or a manually configured \fBengineID\fR present in the SMA configuration, only those users defined in \fBcreateUser\fR statements are transferred. Those users that were defined in \fBusmUser\fR statements are transferred but will have their passwords reset to a random value. You should notify your users of their new password or reset the password yourself by editing the newly-generated configuration file.
+.SS "Trap/Inform Migration"
+.sp
+.LP
+The migration script performs a check to determine whether a trap destination defined for MASF is already specified in an existing SMA \fBtrapsink\fR, \fBtrap2sink\fR or \fBinformsink\fR directive. If this is the case, then the directive in the MASF configuration will be discarded to avoid duplicate traps/informs being received.
+.sp
+.LP
+\fBtrapsink\fR, \fBtrap2sink\fR and \fBinformsink\fR directives specified in the existing SMA configuration are considered valid destinations for MASF traps/informs and will receive them from the MASF subagent after migration.
+.sp
+.LP
+If the \fB-t\fR \fBnone\fR option was specified on the command line, the migration script carries over any remaining MASF trap/inform directives without modification.
+.sp
+.LP
+If the \fB-t\fR \fBadd\fR option was specified (the default), the migration script expands any \fBtrapsink\fR, \fBtrap2sink\fR, or \fBinformsink\fR directives to use the \fBTARGET-MIB\fR and \fBNOTIFICATION-MIB\fR. The \fBTARGET-MIB\fR specifies targets using IP addresses, so it might be desirable to use the \fB-t\fR \fBnone\fR option if, for example, the network allocates IP addresses to hostnames dynamically by means of DHCP.
+.sp
+.LP
+The expanded directives defines filters specific to the MASF agent so that traps from other subagents will not be received by migrated trap destinations. Existing filters present in the SMA configuration are, by default, not modified and might or might not receive MASF traps, depending upon the filters that were originally defined for them.
+.sp
+.LP
+If the \fB-l\fR option is specified, any filters already defined in the \fBTARGET-MIB\fR and the \fBNOTIFICATION-MIB\fR for SMA are extended to include traps from MASF. In the event that a trap destination is already configured in the \fBTARGET-MIB\fR with the same target address and community as an existing MASF trap/inform sink, a conflict will arise.
+.sp
+.LP
+If \fB-l\fR \fBagent\fR was specified and a conflict arises, the migration script uses the target SNMP parameters (that is, the SNMP version and choice of trap/inform) defined by the MASF \fBtrap\fR/\fBinformsink\fR directive to send traps to this destination. Otherwise, if the \fB-l\fR \fBmaster\fR option was specified, the conflict will be resolved using the target SNMP parameters specified in the SMA configuration.
+.SS "Miscellaneous"
+.sp
+.LP
+If the migration script encounters in the MASF configuration file any of the directives listed below and the directives are either not present or differ from the SMA configuration, the script will log a warning message.
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBsyslocation\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBsyscontact\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBsysname\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBsysservices\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBagentgroup\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBagentuser\fR
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+\fBauthtrapenable\fR
+.RE
+.SH OPTIONS
+.sp
+.LP
+The following options are supported:
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-?\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-help\fR\fR
+.ad
+.sp .6
+.RS 4n
+Displays usage information.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-c\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-no-community\fR\fR
+.ad
+.sp .6
+.RS 4n
+Do not transfer v1/v2c communities.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-i\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-ignore-unrecognized-directives\fR\fR
+.ad
+.sp .6
+.RS 4n
+Continue processing if unrecognized directives are present.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-l\fR \fBagent\fR | \fBmaster\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-master-trap-target\fR=\fBagent\fR | \fBmaster\fR\fR
+.ad
+.sp .6
+.RS 4n
+If \fBagent\fR is specified, the existing SMA trap targets will be configured to receive traps that were previously sent to destinations for the Sun Fire SNMP agent. If \fBmaster\fR is specified, the targets will be configured to receive Sun Fire SNMP traps, but existing SNMP target parameters will be used.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-m\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-no-usmuser\fR\fR
+.ad
+.sp .6
+.RS 4n
+Do not transfer usm (v3) users.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-n\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-dry-run\fR\fR
+.ad
+.sp .6
+.RS 4n
+Run the migration without modifying any files. If an error arises, continue processing. This can be used to determine the likely migration issues.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-p\fR \fBenable\fR | \fBdisable\fR | \fBerror\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-use-agent-port\fR=\fBenable\fR | \fBdisable\fR | \fBerror\fR\fR
+.ad
+.sp .6
+.RS 4n
+Indicates whether the port originally used by the Sun Fire SNMP agent should be used by the SMA agent after migration (if the two agents are using different ports). If \fBenable\fR is specified, then the port used by the Sun Fire SNMP agent will also be used by the SMA agent after migration. If \fBdisable\fR is specified, the ports used by SMA will not be updated by the migration tool. If the \fBerror\fR option is specified and the SMA agent is not already using the same ports as those used by the original Sun Fire SNMP agent, an error is reported and the migration process is terminated. If no option is specified the default behavior is equivalent to the \fBerror\fR flag.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-r\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-no-trap\fR\fR
+.ad
+.sp .6
+.RS 4n
+Do not transfer trap destinations.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-s\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-skip-user\fR\fR
+.ad
+.sp .6
+.RS 4n
+If a user is found in the MASF configuration file that cannot be created in the new configuration because of a change in the engine ID, then output a message indicating that the user could not be migrated (needs to be manually recreated) and continue processing. If this option is not present, the migration tool will consider such a situation as an error and abort.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-t\fR \fBnone\fR | \fBadd\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-trap-filter\fR=\fBnone\fR | \fBadd\fR\fR
+.ad
+.sp .6
+.RS 4n
+If \fBnone\fR is specified then the script will copy trap directives directly. The administrator might need to manually update the configuration file to ensure traps are only delivered to their intended destinations. If \fBadd\fR is specifed, trap filters will be constructed so that traps originating from the original Sun Fire SNMP agent are delivered only to the destinations that originally received them. The default behavior is \fBadd\fR.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-u\fR \fBagent\fR | \fBmaster\fR | \fBerror\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-select-user\fR=\fBagent\fR | \fBmaster\fR | \fBerror\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies that if a user with the same name is found in both configuration files that the conflict is to be resolved using the specified configuration file as input. Selecting a user from a particular file will also cause the group declaration for that user to be taken from the same file. If \fBagent\fR is specified then the user will be taken from the configuration file for the Sun Fire SNMP Agent. If \fBmaster\fR is specified, the user will be taken from the SMA configuration. Otherwise, if \fBerror\fR is given, the script will terminate. If this option is not present, the default behavior is equivalent to the \fBerror\fR flag.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-V\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-version\fR\fR
+.ad
+.sp .6
+.RS 4n
+Display the version of this script.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-y\fR \fBagent\fR | \fBmaster\fR | \fBerror\fR\fR
+.ad
+.br
+.na
+\fB\fB-\fR\fB-select-community\fR=\fBagent\fR | \fBmaster\fR | \fBerror\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies that if a community with the same name is found in both configuration files that the conflict is to be resolved using the specified configuration file as input. If \fBagent\fR is specified then the community will be taken from the configuration file for the Sun Fire SNMP Agent. If \fBmaster\fR is specified, the community will be taken from the SMA configuration. Otherwise, if \fBerror\fR is given, the script will terminate. If this option is not present, the default behavior is equivalent to the \fBerror\fR flag.
+.RE
+
+.SH EXAMPLES
+.LP
+\fBExample 1 \fRSimplest Case
+.sp
+.LP
+The command shown below is appropriate for a simple migration. The migration fails if there are any potential conflicts.
+
+.sp
+.in +2
+.nf
+# masfcnv
+.fi
+.in -2
+
+.LP
+\fBExample 2 \fRMigrating Such That MASF Settings Override
+.sp
+.LP
+To migrate the MASF configuration such that it will always succeed, that MASF settings will override in the event of a conflict with SMA, and that access will still be provided on the original MASF port, enter:
+
+.sp
+.in +2
+.nf
+# masfcnv -is -l agent -p enable -u agent -y agent
+.fi
+.in -2
+
+.LP
+\fBExample 3 \fRDry Run, Retaining SMA Settings
+.sp
+.LP
+To attempt a dry run and migrate the configuration such that any conflicts will be resolved by retaining existing SMA settings, enter:
+
+.sp
+.in +2
+.nf
+masfcnv -l master -u master -y master
+.fi
+.in -2
+
+.SH EXIT STATUS
+.sp
+.ne 2
+.mk
+.na
+\fB\fB0\fR\fR
+.ad
+.RS 12n
+.rt  
+Success.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBnon-zero\fR\fR
+.ad
+.RS 12n
+.rt  
+A problem occurred during migration.
+.RE
+
+.SH FILES
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/sma/snmp/snmpd.conf\fR\fR
+.ad
+.br
+.na
+\fB\fB/var/sma_snmp/snmpd.conf\fR\fR
+.ad
+.sp .6
+.RS 4n
+SMA configuration files
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/opt/SUNWmasf/conf/snmpd.conf\fR\fR
+.ad
+.br
+.na
+\fB\fB/var/opt/SUNWmasf/snmpd.dat\fR\fR
+.ad
+.sp .6
+.RS 4n
+MASF configuration files
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/tmp/sma_migration.log\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fBmasfcnv\fR log file
+.RE
+
+.SH ATTRIBUTES
+.sp
+.LP
+See \fBattributes\fR(7) for descriptions of the following attributes:
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilitysystem/management/snmp/net-snmp/documentation
+_
+Interface StabilityVolatile
+.TE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBattributes\fR(7)
+.SH NOTES
+.sp
+.LP
+The former path to this utility, \fB/usr/sfw/lib\fR, is now a link to \fB/usr/lib\fR.

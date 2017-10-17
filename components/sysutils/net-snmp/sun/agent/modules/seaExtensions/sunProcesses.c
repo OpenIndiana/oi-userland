@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * U.S. Government Rights - Commercial software. Government users are subject
  * to the Sun Microsystems, Inc. standard license agreement and applicable
@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
-#include <sys/procfs.h>
+#include <procfs.h>
 #include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -60,7 +60,7 @@
 #define UDQ 50
 
 
-static struct prpsinfo info; /* process information structure from /proc */
+static struct psinfo info; /* process information structure from /proc */
 
 char *ttyname();
 static char *psfile = "/tmp/mibiisa_ps_data";
@@ -241,6 +241,7 @@ get_ps_data(void)
         if (dentp->d_name[0] == '.')                /* skip . and .. */
                 continue;
         (void) strcpy(pname + pdlen, dentp->d_name);
+        (void) strcat(pname + pdlen, "/psinfo");
 retry:
         if ((procfd = open(pname, O_RDONLY)) == -1)
                 continue;
@@ -248,14 +249,14 @@ retry:
         /*
          * Get the info structure for the process and close quickly.
          */
-        if (ioctl(procfd, PIOCPSINFO, (char *)&info) == -1) {
+        if (read(procfd, &info, sizeof (info)) != sizeof (info)) {
             int saverr = errno;
 
             (void) close(procfd);
             if (saverr == EAGAIN)
                 goto retry;
             if (saverr != ENOENT)
-                (void) SYSLOG2("PIOCPSINFO on %s: %s\n",
+                (void) SYSLOG2("read of %s: %s\n",
                                pname, strerror(saverr));
             continue;
         }
@@ -267,13 +268,13 @@ retry:
         psp->pdata.pid = info.pr_pid;
         psp->pdata.ppid = info.pr_ppid;
         psp->pdata.sz = info.pr_size;
-        if (info.pr_wchan)
-            sprintf(psp->pdata.wchan, "%9x", info.pr_wchan);
+        if (info.pr_lwp.pr_wchan)
+            sprintf(psp->pdata.wchan, "%9x", info.pr_lwp.pr_wchan);
         else
             strcpy(psp->pdata.wchan, "         ");
         memset(&psp->pdata.stat[0], 0, STAT_SZ+1);
-        if (info.pr_sname)
-            psp->pdata.stat[0] = info.pr_sname;
+        if (info.pr_lwp.pr_sname)
+            psp->pdata.stat[0] = info.pr_lwp.pr_sname;
         i = 0;
         strcpy(psp->pdata.tty, (char *)gettty(&i));
         psp->pdata.cpu = info.pr_time.tv_sec;

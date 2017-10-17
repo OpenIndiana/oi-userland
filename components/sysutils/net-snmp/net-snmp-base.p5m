@@ -1,4 +1,4 @@
-#
+
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -18,244 +18,438 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+#
+# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 
-set name=pkg.fmri value=pkg:/system/management/snmp/net-snmp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Net-SNMP Agent files and libraries"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=com.oracle.info.description value="the Net-SNMP agent files and libraries"
-set name=info.classification value="org.opensolaris.category.2008:System/Enterprise Management"
 
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/355
+file $(MACH32)/sun/snmpd.conf path=etc/net-snmp/snmp/snmpd.conf overlay=allow \
+    preserve=renamenew
+file sun/net-snmp.xml path=lib/svc/manifest/application/management/net-snmp.xml \
+    restart_fmri=svc:/system/manifest-import:default
+file sun/svc-net-snmp path=lib/svc/method/svc-net-snmp
 
-license COPYING license="BSD, BSD-like"
+file local/mib2c-conf.d/generic-header-top.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-header-top.m2i 
+file local/mib2c-conf.d/mfd-access-container-cached-defines.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-access-container-cached-defines.m2i 
+file local/mib2c-conf.d/generic-table-indexes-from-oid.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-from-oid.m2i 
+file local/mib2c-conf.d/mfd-access-unsorted-external-defines.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-access-unsorted-external-defines.m2i 
+file local/mib2c-conf.d/generic-header-bottom.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-header-bottom.m2i 
+file local/mib2c-conf.d/generic-get-char.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-get-char.m2i 
+file local/mib2c-conf.d/generic-table-indexes-varbind-setup.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-varbind-setup.m2i 
+file local/mib2c-conf.d/generic-table-indexes.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes.m2i 
+file local/mib2c-conf.d/syntax-RowStatus-dependencies.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-dependencies.m2i 
+file local/mib2c-conf.d/details-enums.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/details-enums.m2i 
+file local/mib2c-conf.d/generic-get-decl-bot.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-get-decl-bot.m2i 
+file local/mib2c-conf.d/generic-value-map.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-value-map.m2i 
+file local/mib2c-conf.d/m2c_setup_table.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/m2c_setup_table.m2i 
+file local/mib2c-conf.d/generic-value-map-reverse.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-value-map-reverse.m2i 
+file local/mib2c-conf.d/m2c_table_save_defaults.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/m2c_table_save_defaults.m2i 
+file local/mib2c-conf.d/generic-get-U64.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-get-U64.m2i 
+file local/mib2c-conf.d/syntax-RowStatus-varbind-validate.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-varbind-validate.m2i 
+file local/mib2c-conf.d/syntax-StorageType-dependencies.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-StorageType-dependencies.m2i 
+file local/mib2c-conf.d/syntax-RowStatus-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-get.m2i 
+file local/mib2c-conf.d/subagent.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/subagent.m2c 
+file local/mib2c-conf.d/generic-ctx-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-ctx-get.m2i 
+file local/mib2c-conf.d/node-storage.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/node-storage.m2i 
+file local/mib2c-conf.d/generic-table-indexes-to-oid.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-to-oid.m2i 
+file local/mib2c-conf.d/m2c-internal-warning.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/m2c-internal-warning.m2i 
+file local/mib2c-conf.d/generic-get-long.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-get-long.m2i 
+file local/mib2c-conf.d/mfd-interface.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-interface.m2c 
+file local/mib2c-conf.d/syntax-DateAndTime-readme.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-readme.m2i 
+file local/mib2c-conf.d/generic-table-oids.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-oids.m2c 
+file local/mib2c-conf.d/generic-ctx-set.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-ctx-set.m2i 
+file local/mib2c-conf.d/generic-table-constants.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-constants.m2c 
+file local/mib2c-conf.d/mfd-data-get.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-data-get.m2c 
+file local/mib2c-conf.d/syntax-TestAndIncr-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-TestAndIncr-get.m2i 
+file local/mib2c-conf.d/generic-value-map-func.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-value-map-func.m2i 
+file local/mib2c-conf.d/mfd-interactive-setup.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-interactive-setup.m2c 
+file local/mib2c-conf.d/parent-dependencies.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/parent-dependencies.m2i 
+file local/mib2c-conf.d/mfd-data-set.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-data-set.m2c 
+file local/mib2c-conf.d/generic-table-enums.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-enums.m2c 
+file local/mib2c-conf.d/generic-get-oid.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-get-oid.m2i 
+file local/mib2c-conf.d/generic-ctx-copy.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-ctx-copy.m2i 
+file local/mib2c-conf.d/generic-table-indexes-set.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-set.m2i 
+file local/mib2c-conf.d/details-table.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/details-table.m2i 
+file local/mib2c-conf.d/mfd-makefile.m2m \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-makefile.m2m 
+file local/mib2c-conf.d/parent-set.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/parent-set.m2i 
+file local/mib2c-conf.d/mfd-data-access.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-data-access.m2c 
+file local/mib2c-conf.d/syntax-COUNTER64-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-COUNTER64-get.m2i 
+file local/mib2c-conf.d/default-mfd-top.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/default-mfd-top.m2c 
+file local/mib2c-conf.d/m2c_setup_enum.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/m2c_setup_enum.m2i 
+file local/mib2c-conf.d/syntax-InetAddressType-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-get.m2i 
+file local/mib2c-conf.d/mfd-top.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-top.m2c 
+file local/mib2c-conf.d/node-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/node-get.m2i 
+file local/mib2c-conf.d/mfd-doxygen.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-doxygen.m2c 
+file local/mib2c-conf.d/m2c_setup_node.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/m2c_setup_node.m2i 
+file local/mib2c-conf.d/mfd-readme.m2c \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-readme.m2c 
+file local/mib2c-conf.d/node-set.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/node-set.m2i 
+file local/mib2c-conf.d/mfd-persistence.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/mfd-persistence.m2i 
+file local/mib2c-conf.d/syntax-InetAddressType-set.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-set.m2i 
+file local/mib2c-conf.d/node-varbind-validate.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/node-varbind-validate.m2i 
+file local/mib2c-conf.d/syntax-InetAddress-set.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-set.m2i 
+file local/mib2c-conf.d/generic-data-context.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-data-context.m2i 
+file local/mib2c-conf.d/syntax-DateAndTime-get.m2d \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2d 
+file local/mib2c-conf.d/syntax-InetAddress-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-get.m2i 
+file local/mib2c-conf.d/node-validate.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/node-validate.m2i 
+file local/mib2c-conf.d/generic-source-includes.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-source-includes.m2i 
+file local/mib2c-conf.d/generic-get-decl.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-get-decl.m2i 
+file local/mib2c-conf.d/syntax-DateAndTime-get.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2i 
+file local/mib2c-conf.d/generic-data-allocate.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/generic-data-allocate.m2i 
+file local/mib2c-conf.d/details-node.m2i \
+	 path=etc/net-snmp/snmp/mib2c-data/details-node.m2i 
+file local/mib2c.int_watch.conf \
+	 path=etc/net-snmp/snmp/mib2c.int_watch.conf 
+file local/mib2c.mfd.conf \
+	 path=etc/net-snmp/snmp/mib2c.mfd.conf 
+file local/mib2c.perl.conf \
+	 path=etc/net-snmp/snmp/mib2c.perl.conf 
+file local/mib2c.container.conf \
+	 path=etc/net-snmp/snmp/mib2c.container.conf 
+file local/mib2c.iterate.conf \
+	 path=etc/net-snmp/snmp/mib2c.iterate.conf 
+file local/mib2c.check_values.conf \
+	 path=etc/net-snmp/snmp/mib2c.check_values.conf 
+file local/mib2c.access_functions.conf \
+	 path=etc/net-snmp/snmp/mib2c.access_functions.conf 
+file local/mib2c.notify.conf \
+	 path=etc/net-snmp/snmp/mib2c.notify.conf 
+file local/mib2c.column_enums.conf \
+	 path=etc/net-snmp/snmp/mib2c.column_enums.conf 
+file local/mib2c.array-user.conf \
+	 path=etc/net-snmp/snmp/mib2c.array-user.conf 
+file local/mib2c.emulation.conf \
+	 path=etc/net-snmp/snmp/mib2c.emulation.conf 
+file local/mib2c.old-api.conf \
+	 path=etc/net-snmp/snmp/mib2c.old-api.conf 
+file local/mib2c.column_storage.conf \
+	 path=etc/net-snmp/snmp/mib2c.column_storage.conf 
+file local/mib2c.table_data.conf \
+	 path=etc/net-snmp/snmp/mib2c.table_data.conf 
+file local/mib2c.scalar.conf \
+	 path=etc/net-snmp/snmp/mib2c.scalar.conf 
+file local/mib2c.genhtml.conf \
+	 path=etc/net-snmp/snmp/mib2c.genhtml.conf 
+file local/mib2c.iterate_access.conf \
+	 path=etc/net-snmp/snmp/mib2c.iterate_access.conf 
+file local/mib2c.create-dataset.conf \
+	 path=etc/net-snmp/snmp/mib2c.create-dataset.conf 
+file local/mib2c.row.conf \
+	 path=etc/net-snmp/snmp/mib2c.row.conf 
+file local/mib2c.column_defines.conf \
+	 path=etc/net-snmp/snmp/mib2c.column_defines.conf 
+file local/mib2c.check_values_local.conf \
+	 path=etc/net-snmp/snmp/mib2c.check_values_local.conf 
+file local/mib2c.raw-table.conf \
+	 path=etc/net-snmp/snmp/mib2c.raw-table.conf 
+file mibs/UCD-IPFILTER-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/UCD-IPFILTER-MIB.txt 
+file mibs/IP-FORWARD-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IP-FORWARD-MIB.txt 
+file mibs/DISMAN-NSLOOKUP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/DISMAN-NSLOOKUP-MIB.txt 
+file mibs/IANA-LANGUAGE-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IANA-LANGUAGE-MIB.txt 
+file mibs/DISMAN-SCHEDULE-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/DISMAN-SCHEDULE-MIB.txt 
+file mibs/NET-SNMP-MONITOR-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-MONITOR-MIB.txt 
+file mibs/SNMP-MPD-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-MPD-MIB.txt 
+file mibs/IF-INVERTED-STACK-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IF-INVERTED-STACK-MIB.txt 
+file mibs/SMUX-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SMUX-MIB.txt 
+file mibs/SNMPv2-CONF.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMPv2-CONF.txt 
+file mibs/NET-SNMP-EXTEND-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-EXTEND-MIB.txt 
+file mibs/DISMAN-PING-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/DISMAN-PING-MIB.txt 
+file mibs/IPV6-TCP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IPV6-TCP-MIB.txt 
+file mibs/MTA-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/MTA-MIB.txt 
+file mibs/SNMP-TLS-TM-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-TLS-TM-MIB.txt 
+file mibs/NET-SNMP-SYSTEM-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-SYSTEM-MIB.txt 
+file mibs/IF-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IF-MIB.txt 
+file mibs/SNMPv2-TC.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMPv2-TC.txt 
+file mibs/NET-SNMP-PASS-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-PASS-MIB.txt 
+file mibs/SCTP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SCTP-MIB.txt 
+file mibs/SNMP-VIEW-BASED-ACM-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-VIEW-BASED-ACM-MIB.txt 
+file mibs/IPV6-UDP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IPV6-UDP-MIB.txt 
+file mibs/SNMPv2-TM.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMPv2-TM.txt 
+file mibs/IANA-RTPROTO-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IANA-RTPROTO-MIB.txt 
+file mibs/IANAifType-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IANAifType-MIB.txt 
+file mibs/NET-SNMP-EXAMPLES-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-EXAMPLES-MIB.txt 
+file mibs/UCD-SNMP-MIB-OLD.txt \
+	 path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB-OLD.txt 
+file mibs/IPV6-FLOW-LABEL-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IPV6-FLOW-LABEL-MIB.txt 
+file mibs/RFC-1215.txt \
+	 path=etc/net-snmp/snmp/mibs/RFC-1215.txt 
+file mibs/SNMP-TSM-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-TSM-MIB.txt 
+file mibs/DISMAN-SCRIPT-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/DISMAN-SCRIPT-MIB.txt 
+file mibs/SNMP-PROXY-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-PROXY-MIB.txt 
+file mibs/BRIDGE-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/BRIDGE-MIB.txt 
+file mibs/NET-SNMP-VACM-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-VACM-MIB.txt 
+file mibs/SNMP-NOTIFICATION-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-NOTIFICATION-MIB.txt 
+file mibs/HOST-RESOURCES-TYPES.txt \
+	 path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-TYPES.txt 
+file mibs/SNMP-FRAMEWORK-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-FRAMEWORK-MIB.txt 
+file mibs/NET-SNMP-AGENT-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-AGENT-MIB.txt 
+file mibs/DISMAN-EVENT-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/DISMAN-EVENT-MIB.txt 
+file mibs/UCD-DISKIO-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/UCD-DISKIO-MIB.txt 
+file mibs/AGENTX-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/AGENTX-MIB.txt 
+file mibs/TUNNEL-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/TUNNEL-MIB.txt 
+file mibs/SNMPv2-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMPv2-MIB.txt 
+file mibs/IPV6-TC.txt \
+	 path=etc/net-snmp/snmp/mibs/IPV6-TC.txt 
+file mibs/INET-ADDRESS-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/INET-ADDRESS-MIB.txt 
+file mibs/HCNUM-TC.txt \
+	 path=etc/net-snmp/snmp/mibs/HCNUM-TC.txt 
+file mibs/UCD-DLMOD-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/UCD-DLMOD-MIB.txt 
+file mibs/RFC1213-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/RFC1213-MIB.txt 
+file mibs/NETWORK-SERVICES-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NETWORK-SERVICES-MIB.txt 
+file mibs/SNMP-TARGET-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-TARGET-MIB.txt 
+file mibs/SNMP-USM-AES-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-USM-AES-MIB.txt 
+file mibs/UCD-IPFWACC-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/UCD-IPFWACC-MIB.txt 
+file mibs/SNMP-USER-BASED-SM-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-USER-BASED-SM-MIB.txt 
+file mibs/EtherLike-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/EtherLike-MIB.txt 
+file mibs/HOST-RESOURCES-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-MIB.txt 
+file mibs/UDP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/UDP-MIB.txt 
+file mibs/IPV6-ICMP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IPV6-ICMP-MIB.txt 
+file mibs/UCD-SNMP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB.txt 
+file mibs/SNMP-USM-DH-OBJECTS-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-USM-DH-OBJECTS-MIB.txt 
+file mibs/RFC1155-SMI.txt \
+	 path=etc/net-snmp/snmp/mibs/RFC1155-SMI.txt 
+file mibs/NET-SNMP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-MIB.txt 
+file mibs/DISMAN-EXPRESSION-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/DISMAN-EXPRESSION-MIB.txt 
+file mibs/RMON-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/RMON-MIB.txt 
+file mibs/SNMPv2-SMI.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMPv2-SMI.txt 
+file mibs/TRANSPORT-ADDRESS-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/TRANSPORT-ADDRESS-MIB.txt 
+file mibs/IP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IP-MIB.txt 
+file mibs/IPV6-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IPV6-MIB.txt 
+file mibs/NOTIFICATION-LOG-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NOTIFICATION-LOG-MIB.txt 
+file mibs/DISMAN-TRACEROUTE-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/DISMAN-TRACEROUTE-MIB.txt 
+file mibs/TCP-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/TCP-MIB.txt 
+file mibs/IANA-ADDRESS-FAMILY-NUMBERS-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/IANA-ADDRESS-FAMILY-NUMBERS-MIB.txt 
+file mibs/UCD-DEMO-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/UCD-DEMO-MIB.txt 
+file mibs/SNMP-COMMUNITY-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/SNMP-COMMUNITY-MIB.txt 
+file mibs/NET-SNMP-TC.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-TC.txt 
+file mibs/LM-SENSORS-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/LM-SENSORS-MIB.txt 
+file mibs/NET-SNMP-PERIODIC-NOTIFY-MIB.txt \
+	 path=etc/net-snmp/snmp/mibs/NET-SNMP-PERIODIC-NOTIFY-MIB.txt 
+file apps/snmp_perl_trapd.pl \
+	 path=etc/net-snmp/snmp/snmp_perl_trapd.pl 
+file local/snmpconf.dir/snmp-data/mibs \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/mibs 
+file local/snmpconf.dir/snmp-data/snmpconf-config \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/snmpconf-config 
+file local/snmpconf.dir/snmp-data/output \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/output 
+file local/snmpconf.dir/snmp-data/debugging \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/debugging 
+file local/snmpconf.dir/snmp-data/authopts \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/authopts 
+file local/snmpconf.dir/snmptrapd-data/snmpconf-config \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/snmpconf-config 
+file local/snmpconf.dir/snmptrapd-data/formatting \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/formatting 
+file local/snmpconf.dir/snmptrapd-data/logging \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/logging 
+file local/snmpconf.dir/snmptrapd-data/runtime \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/runtime 
+file local/snmpconf.dir/snmptrapd-data/traphandle \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/traphandle 
+file local/snmpconf.dir/snmptrapd-data/authentication \
+	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/authentication 
 
-file local/mib2c-conf.d/default-mfd-top.m2c path=etc/net-snmp/snmp/mib2c-data/default-mfd-top.m2c
-file local/mib2c-conf.d/details-enums.m2i path=etc/net-snmp/snmp/mib2c-data/details-enums.m2i
-file local/mib2c-conf.d/details-node.m2i path=etc/net-snmp/snmp/mib2c-data/details-node.m2i
-file local/mib2c-conf.d/details-table.m2i path=etc/net-snmp/snmp/mib2c-data/details-table.m2i
-file local/mib2c-conf.d/generic-ctx-copy.m2i path=etc/net-snmp/snmp/mib2c-data/generic-ctx-copy.m2i
-file local/mib2c-conf.d/generic-ctx-get.m2i path=etc/net-snmp/snmp/mib2c-data/generic-ctx-get.m2i
-file local/mib2c-conf.d/generic-ctx-set.m2i path=etc/net-snmp/snmp/mib2c-data/generic-ctx-set.m2i
-file local/mib2c-conf.d/generic-data-allocate.m2i path=etc/net-snmp/snmp/mib2c-data/generic-data-allocate.m2i
-file local/mib2c-conf.d/generic-data-context.m2i path=etc/net-snmp/snmp/mib2c-data/generic-data-context.m2i
-file local/mib2c-conf.d/generic-get-char.m2i path=etc/net-snmp/snmp/mib2c-data/generic-get-char.m2i
-file local/mib2c-conf.d/generic-get-decl-bot.m2i path=etc/net-snmp/snmp/mib2c-data/generic-get-decl-bot.m2i
-file local/mib2c-conf.d/generic-get-decl.m2i path=etc/net-snmp/snmp/mib2c-data/generic-get-decl.m2i
-file local/mib2c-conf.d/generic-get-long.m2i path=etc/net-snmp/snmp/mib2c-data/generic-get-long.m2i
-file local/mib2c-conf.d/generic-get-oid.m2i path=etc/net-snmp/snmp/mib2c-data/generic-get-oid.m2i
-file local/mib2c-conf.d/generic-header-bottom.m2i path=etc/net-snmp/snmp/mib2c-data/generic-header-bottom.m2i
-file local/mib2c-conf.d/generic-header-top.m2i path=etc/net-snmp/snmp/mib2c-data/generic-header-top.m2i
-file local/mib2c-conf.d/generic-source-includes.m2i path=etc/net-snmp/snmp/mib2c-data/generic-source-includes.m2i
-file local/mib2c-conf.d/generic-table-constants.m2c path=etc/net-snmp/snmp/mib2c-data/generic-table-constants.m2c
-file local/mib2c-conf.d/generic-table-enums.m2c path=etc/net-snmp/snmp/mib2c-data/generic-table-enums.m2c
-file local/mib2c-conf.d/generic-table-indexes-from-oid.m2i path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-from-oid.m2i
-file local/mib2c-conf.d/generic-table-indexes-set.m2i path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-set.m2i
-file local/mib2c-conf.d/generic-table-indexes-to-oid.m2i path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-to-oid.m2i
-file local/mib2c-conf.d/generic-table-indexes-varbind-setup.m2i path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-varbind-setup.m2i
-file local/mib2c-conf.d/generic-table-indexes.m2i path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes.m2i
-file local/mib2c-conf.d/generic-table-oids.m2c path=etc/net-snmp/snmp/mib2c-data/generic-table-oids.m2c
-file local/mib2c-conf.d/generic-value-map-func.m2i path=etc/net-snmp/snmp/mib2c-data/generic-value-map-func.m2i
-file local/mib2c-conf.d/generic-value-map-reverse.m2i path=etc/net-snmp/snmp/mib2c-data/generic-value-map-reverse.m2i
-file local/mib2c-conf.d/generic-value-map.m2i path=etc/net-snmp/snmp/mib2c-data/generic-value-map.m2i
-file local/mib2c-conf.d/m2c-internal-warning.m2i path=etc/net-snmp/snmp/mib2c-data/m2c-internal-warning.m2i
-file local/mib2c-conf.d/m2c_setup_enum.m2i path=etc/net-snmp/snmp/mib2c-data/m2c_setup_enum.m2i
-file local/mib2c-conf.d/m2c_setup_node.m2i path=etc/net-snmp/snmp/mib2c-data/m2c_setup_node.m2i
-file local/mib2c-conf.d/m2c_setup_table.m2i path=etc/net-snmp/snmp/mib2c-data/m2c_setup_table.m2i
-file local/mib2c-conf.d/m2c_table_save_defaults.m2i path=etc/net-snmp/snmp/mib2c-data/m2c_table_save_defaults.m2i
-file local/mib2c-conf.d/mfd-access-container-cached-defines.m2i path=etc/net-snmp/snmp/mib2c-data/mfd-access-container-cached-defines.m2i
-file local/mib2c-conf.d/mfd-access-unsorted-external-defines.m2i path=etc/net-snmp/snmp/mib2c-data/mfd-access-unsorted-external-defines.m2i
-file local/mib2c-conf.d/mfd-data-access.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-data-access.m2c
-file local/mib2c-conf.d/mfd-data-get.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-data-get.m2c
-file local/mib2c-conf.d/mfd-data-set.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-data-set.m2c
-file local/mib2c-conf.d/mfd-doxygen.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-doxygen.m2c
-file local/mib2c-conf.d/mfd-interactive-setup.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-interactive-setup.m2c
-file local/mib2c-conf.d/mfd-interface.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-interface.m2c
-file local/mib2c-conf.d/mfd-makefile.m2m path=etc/net-snmp/snmp/mib2c-data/mfd-makefile.m2m
-file local/mib2c-conf.d/mfd-persistence.m2i path=etc/net-snmp/snmp/mib2c-data/mfd-persistence.m2i
-file local/mib2c-conf.d/mfd-readme.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-readme.m2c
-file local/mib2c-conf.d/mfd-top.m2c path=etc/net-snmp/snmp/mib2c-data/mfd-top.m2c
-file local/mib2c-conf.d/node-get.m2i path=etc/net-snmp/snmp/mib2c-data/node-get.m2i
-file local/mib2c-conf.d/node-set.m2i path=etc/net-snmp/snmp/mib2c-data/node-set.m2i
-file local/mib2c-conf.d/node-storage.m2i path=etc/net-snmp/snmp/mib2c-data/node-storage.m2i
-file local/mib2c-conf.d/node-validate.m2i path=etc/net-snmp/snmp/mib2c-data/node-validate.m2i
-file local/mib2c-conf.d/node-varbind-validate.m2i path=etc/net-snmp/snmp/mib2c-data/node-varbind-validate.m2i
-file local/mib2c-conf.d/parent-dependencies.m2i path=etc/net-snmp/snmp/mib2c-data/parent-dependencies.m2i
-file local/mib2c-conf.d/parent-set.m2i path=etc/net-snmp/snmp/mib2c-data/parent-set.m2i
-file local/mib2c-conf.d/subagent.m2c path=etc/net-snmp/snmp/mib2c-data/subagent.m2c
-file local/mib2c-conf.d/syntax-COUNTER64-get.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-COUNTER64-get.m2i
-file local/mib2c-conf.d/syntax-DateAndTime-get.m2d path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2d
-file local/mib2c-conf.d/syntax-DateAndTime-get.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2i
-file local/mib2c-conf.d/syntax-DateAndTime-readme.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-readme.m2i
-file local/mib2c-conf.d/syntax-InetAddress-get.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-get.m2i
-file local/mib2c-conf.d/syntax-InetAddress-set.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-set.m2i
-file local/mib2c-conf.d/syntax-InetAddressType-get.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-get.m2i
-file local/mib2c-conf.d/syntax-InetAddressType-set.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-set.m2i
-file local/mib2c-conf.d/syntax-RowStatus-dependencies.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-dependencies.m2i
-file local/mib2c-conf.d/syntax-RowStatus-get.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-get.m2i
-file local/mib2c-conf.d/syntax-RowStatus-varbind-validate.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-varbind-validate.m2i
-file local/mib2c-conf.d/syntax-StorageType-dependencies.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-StorageType-dependencies.m2i
-file local/mib2c-conf.d/syntax-TestAndIncr-get.m2i path=etc/net-snmp/snmp/mib2c-data/syntax-TestAndIncr-get.m2i
-file local/mib2c.access_functions.conf path=etc/net-snmp/snmp/mib2c.access_functions.conf
-file local/mib2c.array-user.conf path=etc/net-snmp/snmp/mib2c.array-user.conf
-file local/mib2c.check_values.conf path=etc/net-snmp/snmp/mib2c.check_values.conf
-file local/mib2c.check_values_local.conf path=etc/net-snmp/snmp/mib2c.check_values_local.conf
-file local/mib2c.column_defines.conf path=etc/net-snmp/snmp/mib2c.column_defines.conf
-file local/mib2c.column_enums.conf path=etc/net-snmp/snmp/mib2c.column_enums.conf
-file local/mib2c.column_storage.conf path=etc/net-snmp/snmp/mib2c.column_storage.conf
-file local/mib2c.conf path=etc/net-snmp/snmp/mib2c.conf
-file local/mib2c.container.conf path=etc/net-snmp/snmp/mib2c.container.conf
-file local/mib2c.create-dataset.conf path=etc/net-snmp/snmp/mib2c.create-dataset.conf
-file local/mib2c.emulation.conf path=etc/net-snmp/snmp/mib2c.emulation.conf
-file local/mib2c.genhtml.conf path=etc/net-snmp/snmp/mib2c.genhtml.conf
-file local/mib2c.int_watch.conf path=etc/net-snmp/snmp/mib2c.int_watch.conf
-file local/mib2c.iterate.conf path=etc/net-snmp/snmp/mib2c.iterate.conf
-file local/mib2c.iterate_access.conf path=etc/net-snmp/snmp/mib2c.iterate_access.conf
-file local/mib2c.mfd.conf path=etc/net-snmp/snmp/mib2c.mfd.conf
-file local/mib2c.notify.conf path=etc/net-snmp/snmp/mib2c.notify.conf
-file local/mib2c.old-api.conf path=etc/net-snmp/snmp/mib2c.old-api.conf
-file local/mib2c.perl.conf path=etc/net-snmp/snmp/mib2c.perl.conf
-file local/mib2c.row.conf path=etc/net-snmp/snmp/mib2c.row.conf
-file local/mib2c.scalar.conf path=etc/net-snmp/snmp/mib2c.scalar.conf
-file local/mib2c.table_data.conf path=etc/net-snmp/snmp/mib2c.table_data.conf
-file $(MACH32)/sun/agent/mibs/ENTITY-MIB.txt path=etc/net-snmp/snmp/mibs/ENTITY-MIB.txt
-file $(MACH64)/mibs/LM-SENSORS-MIB.txt path=etc/net-snmp/snmp/mibs/LM-SENSORS-MIB.txt
-file $(MACH64)/mibs/NETWORK-SERVICES-MIB.txt path=etc/net-snmp/snmp/mibs/NETWORK-SERVICES-MIB.txt
-file $(MACH32)/sun/agent/mibs/SUN-MIB.txt path=etc/net-snmp/snmp/mibs/SUN-MIB.txt
-file $(MACH32)/sun/agent/mibs/SUN-SEA-EXTENSIONS-MIB.txt path=etc/net-snmp/snmp/mibs/SUN-SEA-EXTENSIONS-MIB.txt
-file $(MACH32)/sun/agent/mibs/SUN-SEA-PROXY-MIB.txt path=etc/net-snmp/snmp/mibs/SUN-SEA-PROXY-MIB.txt
-file $(MACH32)/sun/agent/mibs/smatrap.mib path=etc/net-snmp/snmp/mibs/smatrap.mib
-file mibs/AGENTX-MIB.txt path=etc/net-snmp/snmp/mibs/AGENTX-MIB.txt
-file mibs/DISMAN-EVENT-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-EVENT-MIB.txt
-file mibs/DISMAN-EXPRESSION-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-EXPRESSION-MIB.txt
-file mibs/DISMAN-NSLOOKUP-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-NSLOOKUP-MIB.txt
-file mibs/DISMAN-PING-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-PING-MIB.txt
-file mibs/DISMAN-SCHEDULE-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-SCHEDULE-MIB.txt
-file mibs/DISMAN-SCRIPT-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-SCRIPT-MIB.txt
-file mibs/DISMAN-TRACEROUTE-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-TRACEROUTE-MIB.txt
-file mibs/EtherLike-MIB.txt path=etc/net-snmp/snmp/mibs/EtherLike-MIB.txt
-file mibs/HCNUM-TC.txt path=etc/net-snmp/snmp/mibs/HCNUM-TC.txt
-file mibs/HOST-RESOURCES-MIB.txt path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-MIB.txt
-file mibs/HOST-RESOURCES-TYPES.txt path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-TYPES.txt
-file mibs/IANA-ADDRESS-FAMILY-NUMBERS-MIB.txt path=etc/net-snmp/snmp/mibs/IANA-ADDRESS-FAMILY-NUMBERS-MIB.txt
-file mibs/IANA-LANGUAGE-MIB.txt path=etc/net-snmp/snmp/mibs/IANA-LANGUAGE-MIB.txt
-file mibs/IANA-RTPROTO-MIB.txt path=etc/net-snmp/snmp/mibs/IANA-RTPROTO-MIB.txt
-file mibs/IANAifType-MIB.txt path=etc/net-snmp/snmp/mibs/IANAifType-MIB.txt
-file mibs/IF-INVERTED-STACK-MIB.txt path=etc/net-snmp/snmp/mibs/IF-INVERTED-STACK-MIB.txt
-file mibs/IF-MIB.txt path=etc/net-snmp/snmp/mibs/IF-MIB.txt
-file mibs/INET-ADDRESS-MIB.txt path=etc/net-snmp/snmp/mibs/INET-ADDRESS-MIB.txt
-file mibs/IP-FORWARD-MIB.txt path=etc/net-snmp/snmp/mibs/IP-FORWARD-MIB.txt
-file mibs/IP-MIB.txt path=etc/net-snmp/snmp/mibs/IP-MIB.txt
-file mibs/IPV6-FLOW-LABEL-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-FLOW-LABEL-MIB.txt
-file mibs/IPV6-ICMP-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-ICMP-MIB.txt
-file mibs/IPV6-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-MIB.txt
-file mibs/IPV6-TC.txt path=etc/net-snmp/snmp/mibs/IPV6-TC.txt
-file mibs/IPV6-TCP-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-TCP-MIB.txt
-file mibs/IPV6-UDP-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-UDP-MIB.txt
-file mibs/MTA-MIB.txt path=etc/net-snmp/snmp/mibs/MTA-MIB.txt
-file mibs/NET-SNMP-AGENT-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-AGENT-MIB.txt
-file mibs/NET-SNMP-EXAMPLES-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-EXAMPLES-MIB.txt
-file mibs/NET-SNMP-EXTEND-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-EXTEND-MIB.txt
-file mibs/NET-SNMP-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-MIB.txt
-file mibs/NET-SNMP-MONITOR-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-MONITOR-MIB.txt
-file mibs/NET-SNMP-PASS-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-PASS-MIB.txt
-file mibs/NET-SNMP-SYSTEM-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-SYSTEM-MIB.txt
-file mibs/NET-SNMP-TC.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-TC.txt
-file mibs/NET-SNMP-VACM-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-VACM-MIB.txt
-file mibs/NOTIFICATION-LOG-MIB.txt path=etc/net-snmp/snmp/mibs/NOTIFICATION-LOG-MIB.txt
-file mibs/RFC-1215.txt path=etc/net-snmp/snmp/mibs/RFC-1215.txt
-file mibs/RFC1155-SMI.txt path=etc/net-snmp/snmp/mibs/RFC1155-SMI.txt
-file mibs/RFC1213-MIB.txt path=etc/net-snmp/snmp/mibs/RFC1213-MIB.txt
-file mibs/RMON-MIB.txt path=etc/net-snmp/snmp/mibs/RMON-MIB.txt
-file mibs/SMUX-MIB.txt path=etc/net-snmp/snmp/mibs/SMUX-MIB.txt
-file mibs/SNMP-COMMUNITY-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-COMMUNITY-MIB.txt
-file mibs/SNMP-FRAMEWORK-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-FRAMEWORK-MIB.txt
-file mibs/SNMP-MPD-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-MPD-MIB.txt
-file mibs/SNMP-NOTIFICATION-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-NOTIFICATION-MIB.txt
-file mibs/SNMP-PROXY-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-PROXY-MIB.txt
-file mibs/SNMP-TARGET-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-TARGET-MIB.txt
-file mibs/SNMP-USER-BASED-SM-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-USER-BASED-SM-MIB.txt
-file mibs/SNMP-USM-AES-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-USM-AES-MIB.txt
-file mibs/SNMP-USM-DH-OBJECTS-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-USM-DH-OBJECTS-MIB.txt
-file mibs/SNMP-VIEW-BASED-ACM-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-VIEW-BASED-ACM-MIB.txt
-file mibs/SNMPv2-CONF.txt path=etc/net-snmp/snmp/mibs/SNMPv2-CONF.txt
-file mibs/SNMPv2-MIB.txt path=etc/net-snmp/snmp/mibs/SNMPv2-MIB.txt
-file mibs/SNMPv2-SMI.txt path=etc/net-snmp/snmp/mibs/SNMPv2-SMI.txt
-file mibs/SNMPv2-TC.txt path=etc/net-snmp/snmp/mibs/SNMPv2-TC.txt
-file mibs/SNMPv2-TM.txt path=etc/net-snmp/snmp/mibs/SNMPv2-TM.txt
-file mibs/TCP-MIB.txt path=etc/net-snmp/snmp/mibs/TCP-MIB.txt
-file mibs/TRANSPORT-ADDRESS-MIB.txt path=etc/net-snmp/snmp/mibs/TRANSPORT-ADDRESS-MIB.txt
-file mibs/TUNNEL-MIB.txt path=etc/net-snmp/snmp/mibs/TUNNEL-MIB.txt
-file mibs/UCD-DEMO-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-DEMO-MIB.txt
-file mibs/UCD-DISKIO-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-DISKIO-MIB.txt
-file mibs/UCD-DLMOD-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-DLMOD-MIB.txt
-file mibs/UCD-IPFILTER-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-IPFILTER-MIB.txt
-file mibs/UCD-IPFWACC-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-IPFWACC-MIB.txt
-file mibs/UCD-SNMP-MIB-OLD.txt path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB-OLD.txt
-file mibs/UCD-SNMP-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB.txt
-file mibs/UDP-MIB.txt path=etc/net-snmp/snmp/mibs/UDP-MIB.txt
-file apps/snmp_perl_trapd.pl path=etc/net-snmp/snmp/snmp_perl_trapd.pl
-file local/snmpconf.dir/snmp-data/authopts path=etc/net-snmp/snmp/snmpconf-data/snmp-data/authopts
-file local/snmpconf.dir/snmp-data/debugging path=etc/net-snmp/snmp/snmpconf-data/snmp-data/debugging
-file local/snmpconf.dir/snmp-data/mibs path=etc/net-snmp/snmp/snmpconf-data/snmp-data/mibs
-file local/snmpconf.dir/snmp-data/output path=etc/net-snmp/snmp/snmpconf-data/snmp-data/output
-file local/snmpconf.dir/snmp-data/snmpconf-config path=etc/net-snmp/snmp/snmpconf-data/snmp-data/snmpconf-config
-file local/snmpconf.dir/snmpd-data/acl path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/acl
-file local/snmpconf.dir/snmpd-data/basic_setup path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/basic_setup
-file local/snmpconf.dir/snmpd-data/extending path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/extending
-file local/snmpconf.dir/snmpd-data/monitor path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/monitor
-file local/snmpconf.dir/snmpd-data/operation path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/operation
-file local/snmpconf.dir/snmpd-data/snmpconf-config path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/snmpconf-config
-file local/snmpconf.dir/snmpd-data/system path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/system
-file local/snmpconf.dir/snmpd-data/trapsinks path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/trapsinks
-file local/snmpconf.dir/snmptrapd-data/authentication path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/authentication
-file local/snmpconf.dir/snmptrapd-data/formatting path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/formatting
-file local/snmpconf.dir/snmptrapd-data/logging path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/logging
-file local/snmpconf.dir/snmptrapd-data/runtime path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/runtime
-file local/snmpconf.dir/snmptrapd-data/snmpconf-config path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/snmpconf-config
-file local/snmpconf.dir/snmptrapd-data/traphandle path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/traphandle
-file $(MACH32)/sun/snmpd.conf path=etc/net-snmp/snmp/snmpd.conf preserve=renamenew
-file net-snmp.xml path=lib/svc/manifest/application/management/net-snmp.xml restart_fmri=svc:/system/manifest-import:default
-file svc-net-snmp path=lib/svc/method/svc-net-snmp
-file path=usr/bin/encode_keychange
-file path=usr/bin/fixproc
-file path=usr/bin/ipf-mod.pl
-file path=usr/bin/mib2c
-file path=usr/bin/mib2c-update
-file usr/bin/net-snmp-config path=usr/bin/net-snmp-config-32
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/net-snmp-config path=usr/bin/net-snmp-config-64
-file path=usr/bin/snmpbulkget
-file path=usr/bin/snmpbulkwalk
-file path=usr/bin/snmpcheck
-file path=usr/bin/snmpconf
-file path=usr/bin/snmpdelta
-file path=usr/bin/snmpdf
-file path=usr/bin/snmpget
-file path=usr/bin/snmpgetnext
-file path=usr/bin/snmpnetstat
-file path=usr/bin/snmpset
-file path=usr/bin/snmpstatus
-file path=usr/bin/snmptable
-file path=usr/bin/snmptest
-file path=usr/bin/snmptranslate
-file path=usr/bin/snmptrap
-file path=usr/bin/snmpusm
-file path=usr/bin/snmpvacm
-file path=usr/bin/snmpwalk
-file path=usr/bin/tkmib
-file path=usr/bin/traptoemail
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/encode_keychange \
+    path=usr/bin/encode_keychange
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/fixproc path=usr/bin/fixproc
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/ipf-mod.pl \
+    path=usr/bin/ipf-mod.pl
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/mib2c path=usr/bin/mib2c
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/mib2c-update \
+    path=usr/bin/mib2c-update
+
+file usr/bin/net-snmp-config path=usr/bin/net-snmp-config
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/net-snmp-config \
+    path=usr/bin/$(MACH64)/net-snmp-config
+link path=usr/bin/net-snmp-config-32 target=net-snmp-config pkg.linted=true
+link path=usr/bin/net-snmp-config-64 target=$(MACH64)/net-snmp-config pkg.linted=true
+
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/net-snmp-create-v3-user \
+    path=usr/bin/net-snmp-create-v3-user
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpbulkget \
+    path=usr/bin/snmpbulkget
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpbulkwalk \
+    path=usr/bin/snmpbulkwalk
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpcheck \
+    path=usr/bin/snmpcheck
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpconf path=usr/bin/snmpconf
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpdelta \
+    path=usr/bin/snmpdelta
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpdf path=usr/bin/snmpdf
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpget path=usr/bin/snmpget
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpgetnext \
+    path=usr/bin/snmpgetnext
+link path=usr/bin/snmpinform target=snmptrap
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpnetstat \
+    path=usr/bin/snmpnetstat
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpset path=usr/bin/snmpset
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpstatus \
+    path=usr/bin/snmpstatus
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptable \
+    path=usr/bin/snmptable
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptest path=usr/bin/snmptest
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptranslate \
+    path=usr/bin/snmptranslate
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptrap path=usr/bin/snmptrap
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpusm path=usr/bin/snmpusm
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpvacm path=usr/bin/snmpvacm
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpwalk path=usr/bin/snmpwalk
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/tkmib path=usr/bin/tkmib
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/traptoemail \
+    path=usr/bin/traptoemail
 file path=usr/include/net-snmp/agent/agent_callbacks.h
 file path=usr/include/net-snmp/agent/agent_handler.h
 file path=usr/include/net-snmp/agent/agent_index.h
 file path=usr/include/net-snmp/agent/agent_module_config.h
 file path=usr/include/net-snmp/agent/agent_read_config.h
 file path=usr/include/net-snmp/agent/agent_registry.h
+file path=usr/include/net-snmp/agent/agent_sysORTable.h
 file path=usr/include/net-snmp/agent/agent_trap.h
 file path=usr/include/net-snmp/agent/all_helpers.h
 file path=usr/include/net-snmp/agent/auto_nlist.h
@@ -276,52 +470,73 @@ file path=usr/include/net-snmp/agent/null.h
 file path=usr/include/net-snmp/agent/old_api.h
 file path=usr/include/net-snmp/agent/read_only.h
 file path=usr/include/net-snmp/agent/row_merge.h
-file path=usr/include/net-snmp/agent/scalar_group.h
 file path=usr/include/net-snmp/agent/scalar.h
+file path=usr/include/net-snmp/agent/scalar_group.h
 file path=usr/include/net-snmp/agent/serialize.h
 file path=usr/include/net-snmp/agent/set_helper.h
 file path=usr/include/net-snmp/agent/snmp_agent.h
+file path=usr/include/net-snmp/agent/snmp_get_statistic.h
 file path=usr/include/net-snmp/agent/snmp_vars.h
 file path=usr/include/net-snmp/agent/stash_cache.h
 file path=usr/include/net-snmp/agent/stash_to_next.h
+file path=usr/include/net-snmp/agent/struct.h
+file path=usr/include/net-snmp/agent/sysORTable.h
+file path=usr/include/net-snmp/agent/table.h
 file path=usr/include/net-snmp/agent/table_array.h
 file path=usr/include/net-snmp/agent/table_container.h
 file path=usr/include/net-snmp/agent/table_data.h
 file path=usr/include/net-snmp/agent/table_dataset.h
 file path=usr/include/net-snmp/agent/table_iterator.h
 file path=usr/include/net-snmp/agent/table_tdata.h
-file path=usr/include/net-snmp/agent/table.h
 file path=usr/include/net-snmp/agent/util_funcs.h
 file path=usr/include/net-snmp/agent/var_struct.h
 file path=usr/include/net-snmp/agent/watcher.h
 file path=usr/include/net-snmp/config_api.h
 file path=usr/include/net-snmp/definitions.h
+file path=usr/include/net-snmp/library/README
 file path=usr/include/net-snmp/library/asn1.h
 file path=usr/include/net-snmp/library/callback.h
+file path=usr/include/net-snmp/library/cert_util.h
 file path=usr/include/net-snmp/library/check_varbind.h
-file path=usr/include/net-snmp/library/cmu_compat.h
+file path=usr/include/net-snmp/library/container.h
 file path=usr/include/net-snmp/library/container_binary_array.h
 file path=usr/include/net-snmp/library/container_iterator.h
 file path=usr/include/net-snmp/library/container_list_ssll.h
 file path=usr/include/net-snmp/library/container_null.h
-file path=usr/include/net-snmp/library/container.h
 file path=usr/include/net-snmp/library/data_list.h
 file path=usr/include/net-snmp/library/default_store.h
+file path=usr/include/net-snmp/library/dir_utils.h
 file path=usr/include/net-snmp/library/factory.h
 file path=usr/include/net-snmp/library/fd_event_manager.h
 file path=usr/include/net-snmp/library/file_utils.h
 file path=usr/include/net-snmp/library/getopt.h
 file path=usr/include/net-snmp/library/int64.h
 file path=usr/include/net-snmp/library/keytools.h
+file path=usr/include/net-snmp/library/large_fd_set.h
 file path=usr/include/net-snmp/library/lcd_time.h
 file path=usr/include/net-snmp/library/md5.h
 file path=usr/include/net-snmp/library/mib.h
 file path=usr/include/net-snmp/library/mt_support.h
+file path=usr/include/net-snmp/library/oid.h
 file path=usr/include/net-snmp/library/oid_stash.h
 file path=usr/include/net-snmp/library/parse.h
 file path=usr/include/net-snmp/library/read_config.h
-file path=usr/include/net-snmp/library/README
 file path=usr/include/net-snmp/library/scapi.h
+file path=usr/include/net-snmp/library/snmp-tc.h
+file path=usr/include/net-snmp/library/snmp.h
+file path=usr/include/net-snmp/library/snmpAliasDomain.h
+file path=usr/include/net-snmp/library/snmpCallbackDomain.h
+file path=usr/include/net-snmp/library/snmpIPv4BaseDomain.h
+file path=usr/include/net-snmp/library/snmpIPv6BaseDomain.h
+file path=usr/include/net-snmp/library/snmpSocketBaseDomain.h
+file path=usr/include/net-snmp/library/snmpTCPBaseDomain.h
+file path=usr/include/net-snmp/library/snmpTCPDomain.h
+file path=usr/include/net-snmp/library/snmpTCPIPv6Domain.h
+file path=usr/include/net-snmp/library/snmpUDPBaseDomain.h
+file path=usr/include/net-snmp/library/snmpUDPDomain.h
+file path=usr/include/net-snmp/library/snmpUDPIPv4BaseDomain.h
+file path=usr/include/net-snmp/library/snmpUDPIPv6Domain.h
+file path=usr/include/net-snmp/library/snmpUnixDomain.h
 file path=usr/include/net-snmp/library/snmp_alarm.h
 file path=usr/include/net-snmp/library/snmp_api.h
 file path=usr/include/net-snmp/library/snmp_assert.h
@@ -334,14 +549,6 @@ file path=usr/include/net-snmp/library/snmp_parse_args.h
 file path=usr/include/net-snmp/library/snmp_secmod.h
 file path=usr/include/net-snmp/library/snmp_service.h
 file path=usr/include/net-snmp/library/snmp_transport.h
-file path=usr/include/net-snmp/library/snmp-tc.h
-file path=usr/include/net-snmp/library/snmp.h
-file path=usr/include/net-snmp/library/snmpCallbackDomain.h
-file path=usr/include/net-snmp/library/snmpTCPDomain.h
-file path=usr/include/net-snmp/library/snmpTCPIPv6Domain.h
-file path=usr/include/net-snmp/library/snmpUDPDomain.h
-file path=usr/include/net-snmp/library/snmpUDPIPv6Domain.h
-file path=usr/include/net-snmp/library/snmpUnixDomain.h
 file path=usr/include/net-snmp/library/snmpusm.h
 file path=usr/include/net-snmp/library/snmpv3-security-includes.h
 file path=usr/include/net-snmp/library/snmpv3.h
@@ -349,6 +556,7 @@ file path=usr/include/net-snmp/library/system.h
 file path=usr/include/net-snmp/library/text_utils.h
 file path=usr/include/net-snmp/library/tools.h
 file path=usr/include/net-snmp/library/transform_oids.h
+file path=usr/include/net-snmp/library/types.h
 file path=usr/include/net-snmp/library/ucd_compat.h
 file path=usr/include/net-snmp/library/vacm.h
 file path=usr/include/net-snmp/library/winpipe.h
@@ -356,6 +564,7 @@ file path=usr/include/net-snmp/library/winservice.h
 file path=usr/include/net-snmp/machine/generic.h
 file path=usr/include/net-snmp/mib_api.h
 file path=usr/include/net-snmp/net-snmp-config.h
+file path=usr/include/net-snmp/net-snmp-features.h
 file path=usr/include/net-snmp/net-snmp-includes.h
 file path=usr/include/net-snmp/output_api.h
 file path=usr/include/net-snmp/pdu_api.h
@@ -368,17 +577,24 @@ file path=usr/include/net-snmp/system/bsdi3.h
 file path=usr/include/net-snmp/system/bsdi4.h
 file path=usr/include/net-snmp/system/cygwin.h
 file path=usr/include/net-snmp/system/darwin.h
+file path=usr/include/net-snmp/system/darwin10.h
 file path=usr/include/net-snmp/system/darwin7.h
 file path=usr/include/net-snmp/system/darwin8.h
 file path=usr/include/net-snmp/system/darwin9.h
 file path=usr/include/net-snmp/system/dragonfly.h
 file path=usr/include/net-snmp/system/dynix.h
 file path=usr/include/net-snmp/system/freebsd.h
+file path=usr/include/net-snmp/system/freebsd10.h
+file path=usr/include/net-snmp/system/freebsd11.h
+file path=usr/include/net-snmp/system/freebsd12.h
 file path=usr/include/net-snmp/system/freebsd2.h
 file path=usr/include/net-snmp/system/freebsd3.h
 file path=usr/include/net-snmp/system/freebsd4.h
 file path=usr/include/net-snmp/system/freebsd5.h
 file path=usr/include/net-snmp/system/freebsd6.h
+file path=usr/include/net-snmp/system/freebsd7.h
+file path=usr/include/net-snmp/system/freebsd8.h
+file path=usr/include/net-snmp/system/freebsd9.h
 file path=usr/include/net-snmp/system/generic.h
 file path=usr/include/net-snmp/system/hpux.h
 file path=usr/include/net-snmp/system/irix.h
@@ -387,6 +603,8 @@ file path=usr/include/net-snmp/system/mingw32.h
 file path=usr/include/net-snmp/system/mips.h
 file path=usr/include/net-snmp/system/netbsd.h
 file path=usr/include/net-snmp/system/openbsd.h
+file path=usr/include/net-snmp/system/openbsd4.h
+file path=usr/include/net-snmp/system/openbsd5.h
 file path=usr/include/net-snmp/system/osf5.h
 file path=usr/include/net-snmp/system/solaris.h
 file path=usr/include/net-snmp/system/solaris2.3.h
@@ -413,12 +631,14 @@ file path=usr/include/ucd-snmp/ds_agent.h
 file path=usr/include/ucd-snmp/header_complex.h
 file path=usr/include/ucd-snmp/int64.h
 file path=usr/include/ucd-snmp/keytools.h
-file path=usr/include/ucd-snmp/mib_module_config.h
 file path=usr/include/ucd-snmp/mib.h
+file path=usr/include/ucd-snmp/mib_module_config.h
 file path=usr/include/ucd-snmp/mibincl.h
 file path=usr/include/ucd-snmp/parse.h
 file path=usr/include/ucd-snmp/read_config.h
 file path=usr/include/ucd-snmp/scapi.h
+file path=usr/include/ucd-snmp/snmp-tc.h
+file path=usr/include/ucd-snmp/snmp.h
 file path=usr/include/ucd-snmp/snmp_agent.h
 file path=usr/include/ucd-snmp/snmp_alarm.h
 file path=usr/include/ucd-snmp/snmp_api.h
@@ -428,8 +648,6 @@ file path=usr/include/ucd-snmp/snmp_impl.h
 file path=usr/include/ucd-snmp/snmp_logging.h
 file path=usr/include/ucd-snmp/snmp_parse_args.h
 file path=usr/include/ucd-snmp/snmp_vars.h
-file path=usr/include/ucd-snmp/snmp-tc.h
-file path=usr/include/ucd-snmp/snmp.h
 file path=usr/include/ucd-snmp/snmpusm.h
 file path=usr/include/ucd-snmp/snmpv3.h
 file path=usr/include/ucd-snmp/struct.h
@@ -442,86 +660,108 @@ file path=usr/include/ucd-snmp/ucd-snmp-includes.h
 file path=usr/include/ucd-snmp/util_funcs.h
 file path=usr/include/ucd-snmp/var_struct.h
 file path=usr/include/ucd-snmp/version.h
-file $(MACH64)/sun/agent/modules/entityMib/libentity.so path=usr/lib/$(MACH64)/libentity.so
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmp.so.15.1.3 path=usr/lib/$(MACH64)/libnetsnmp.so.15.1.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmpagent.so.15.1.3 path=usr/lib/$(MACH64)/libnetsnmpagent.so.15.1.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmphelpers.so.15.1.3 path=usr/lib/$(MACH64)/libnetsnmphelpers.so.15.1.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmpmibs.so.15.1.3 path=usr/lib/$(MACH64)/libnetsnmpmibs.so.15.1.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmptrapd.so.15.1.3 path=usr/lib/$(MACH64)/libnetsnmptrapd.so.15.1.3
-file $(MACH32)/sun/agent/modules/entityMib/libentity.so path=usr/lib/libentity.so
-file path=usr/lib/libnetsnmp.so.15.1.3
-file path=usr/lib/libnetsnmpagent.so.15.1.3
-file path=usr/lib/libnetsnmphelpers.so.15.1.3
-file path=usr/lib/libnetsnmpmibs.so.15.1.3
-file path=usr/lib/libnetsnmptrapd.so.15.1.3
-file path=usr/lib/libsnmp.so.15.1.3
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/agentxtrap \
+    path=usr/lib/$(MACH64)/agentxtrap
+file $(MACH64)/sun/agent/modules/entityMib/libentity.so \
+    path=usr/lib/$(MACH64)/libentity.so
+link path=usr/lib/$(MACH64)/libnetsnmp.so target=./libnetsnmp.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmp.so.30 target=./libnetsnmp.so.30.0.3
+file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmp.so.30.0.3 \
+    path=usr/lib/$(MACH64)/libnetsnmp.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmpagent.so \
+    target=./libnetsnmpagent.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmpagent.so.30 \
+    target=./libnetsnmpagent.so.30.0.3
+file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmpagent.so.30.0.3 \
+    path=usr/lib/$(MACH64)/libnetsnmpagent.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmphelpers.so \
+    target=./libnetsnmphelpers.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmphelpers.so.30 \
+    target=./libnetsnmphelpers.so.30.0.3
+file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmphelpers.so.30.0.3 \
+    path=usr/lib/$(MACH64)/libnetsnmphelpers.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmpmibs.so target=./libnetsnmpmibs.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmpmibs.so.30 \
+    target=./libnetsnmpmibs.so.30.0.3
+file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmpmibs.so.30.0.3 \
+    path=usr/lib/$(MACH64)/libnetsnmpmibs.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmptrapd.so \
+    target=./libnetsnmptrapd.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmptrapd.so.30 \
+    target=./libnetsnmptrapd.so.30.0.3
+file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmptrapd.so.30.0.3 \
+    path=usr/lib/$(MACH64)/libnetsnmptrapd.so.30.0.3
+link path=usr/lib/$(MACH64)/libsnmp.so target=./libsnmp.so.30.0.3
+link path=usr/lib/$(MACH64)/libsnmp.so.30 target=./libsnmp.so.30.0.3
+file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libsnmp.so.30.0.3 \
+    path=usr/lib/$(MACH64)/libsnmp.so.30.0.3
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/net-snmp-cert \
+    path=usr/lib/$(MACH64)/net-snmp-cert
+file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmp-bridge-mib \
+    path=usr/lib/$(MACH64)/snmp-bridge-mib
+file $(MACH32)/sun/agent/modules/entityMib/libentity.so \
+    path=usr/lib/libentity.so
+link path=usr/lib/libnetsnmp.so target=./libnetsnmp.so.30.0.3
+link path=usr/lib/libnetsnmp.so.30 target=./libnetsnmp.so.30.0.3
+file path=usr/lib/libnetsnmp.so.30.0.3
+link path=usr/lib/libnetsnmpagent.so target=./libnetsnmpagent.so.30.0.3
+link path=usr/lib/libnetsnmpagent.so.30 target=./libnetsnmpagent.so.30.0.3
+file path=usr/lib/libnetsnmpagent.so.30.0.3
+link path=usr/lib/libnetsnmphelpers.so target=./libnetsnmphelpers.so.30.0.3
+link path=usr/lib/libnetsnmphelpers.so.30 target=./libnetsnmphelpers.so.30.0.3
+file path=usr/lib/libnetsnmphelpers.so.30.0.3
+link path=usr/lib/libnetsnmpmibs.so target=./libnetsnmpmibs.so.30.0.3
+link path=usr/lib/libnetsnmpmibs.so.30 target=./libnetsnmpmibs.so.30.0.3
+file path=usr/lib/libnetsnmpmibs.so.30.0.3
+link path=usr/lib/libnetsnmptrapd.so target=./libnetsnmptrapd.so.30.0.3
+link path=usr/lib/libnetsnmptrapd.so.30 target=./libnetsnmptrapd.so.30.0.3
+file path=usr/lib/libnetsnmptrapd.so.30.0.3
+link path=usr/lib/libsnmp.so target=./libsnmp.so.30.0.3
+link path=usr/lib/libsnmp.so.30 target=./libsnmp.so.30.0.3
+file path=usr/lib/libsnmp.so.30.0.3
 file $(MACH32)/sun/masfcnv path=usr/lib/net-snmp/masfcnv
 file $(MACH32)/sun/masfd path=usr/lib/net-snmp/masfd
-file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::agent::default_store.3
-file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::agent.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::ASN.3
-file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::default_store.3
-file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::netsnmp_request_infoPtr.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::OID.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::TrapReceiver.3
+file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::agent.3
+file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::agent::default_store.3
+file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::default_store.3
+file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::netsnmp_request_infoPtr.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/SNMP.3
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Bundle/Makefile.subs.pl
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/ASN.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/OID.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/TrapReceiver.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent/Support.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent/default_store.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent/netsnmp_request_infoPtr.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/default_store.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/SNMP.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Bundle/NetSNMP/.packlist
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/ASN/ASN.so
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/ASN/autosplit.ix
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/OID/OID.so
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/OID/autosplit.ix
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/TrapReceiver/TrapReceiver.so
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/TrapReceiver/autosplit.ix
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/agent/agent.so
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/agent/autosplit.ix
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/agent/default_store/autosplit.ix
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/agent/default_store/default_store.so
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/ASN/ASN.so
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/ASN/autosplit.ix
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/default_store/autosplit.ix
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/default_store/default_store.so
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/OID/autosplit.ix
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/OID/OID.so
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/TrapReceiver/autosplit.ix
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/TrapReceiver/TrapReceiver.so
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/SNMP/autosplit.ix
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/SNMP/SNMP.so
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Bundle/Makefile.subs.pl
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent/default_store.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent/netsnmp_request_infoPtr.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/agent/Support.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/ASN.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/default_store.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/OID.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/TrapReceiver.pm
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/SNMP.pm
-file build/prototype/$(MACH64)/usr/sbin/$(MACH64)/snmpd path=usr/sbin/$(MACH64)/snmpd
-file build/prototype/$(MACH64)/usr/sbin/$(MACH64)/snmptrapd path=usr/sbin/$(MACH64)/snmptrapd
-file usr/sbin/snmpd path=usr/sbin/$(MACH32)/snmpd
-file usr/sbin/snmptrapd path=usr/sbin/$(MACH32)/snmptrapd
-hardlink path=usr/sbin/snmpd target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/sbin/snmptrapd target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
-link path=usr/bin/net-snmp-config target=./net-snmp-config-32 variant.arch=i386
-link path=usr/bin/net-snmp-config target=./net-snmp-config-64 variant.arch=sparc
-link path=usr/bin/snmpinform target=snmptrap
-link path=usr/lib/$(MACH64)/libnetsnmp.so target=./libnetsnmp.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmp.so.15 target=./libnetsnmp.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmpagent.so target=./libnetsnmpagent.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmpagent.so.15 target=./libnetsnmpagent.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmphelpers.so target=./libnetsnmphelpers.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmphelpers.so.15 target=./libnetsnmphelpers.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmpmibs.so target=./libnetsnmpmibs.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmpmibs.so.15 target=./libnetsnmpmibs.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmptrapd.so target=./libnetsnmptrapd.so.15.1.3
-link path=usr/lib/$(MACH64)/libnetsnmptrapd.so.15 target=./libnetsnmptrapd.so.15.1.3
-link path=usr/lib/libnetsnmp.so target=./libnetsnmp.so.15.1.3
-link path=usr/lib/libnetsnmp.so.15 target=./libnetsnmp.so.15.1.3
-link path=usr/lib/libnetsnmpagent.so target=./libnetsnmpagent.so.15.1.3
-link path=usr/lib/libnetsnmpagent.so.15 target=./libnetsnmpagent.so.15.1.3
-link path=usr/lib/libnetsnmphelpers.so target=./libnetsnmphelpers.so.15.1.3
-link path=usr/lib/libnetsnmphelpers.so.15 target=./libnetsnmphelpers.so.15.1.3
-link path=usr/lib/libnetsnmpmibs.so target=./libnetsnmpmibs.so.15.1.3
-link path=usr/lib/libnetsnmpmibs.so.15 target=./libnetsnmpmibs.so.15.1.3
-link path=usr/lib/libnetsnmptrapd.so target=./libnetsnmptrapd.so.15.1.3
-link path=usr/lib/libnetsnmptrapd.so.15 target=./libnetsnmptrapd.so.15.1.3
-link path=usr/lib/libsnmp.so target=./libsnmp.so.15.1.3
-link path=usr/lib/libsnmp.so.15 target=./libsnmp.so.15.1.3
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/SNMP/autosplit.ix
+file build/prototype/$(MACH64)/usr/sbin/$(MACH64)/snmpd path=usr/sbin/snmpd
+file build/prototype/$(MACH64)/usr/sbin/$(MACH64)/snmptrapd \
+    path=usr/sbin/snmptrapd
 
-depend fmri=library/python/net-snmp-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/python-27 \
-    type=conditional
+license COPYING license="BSD, BSD-like"
+
+depend type=conditional \
+    fmri=library/python/net-snmp-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-27
+
+

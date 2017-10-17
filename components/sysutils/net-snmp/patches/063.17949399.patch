@@ -1,0 +1,24 @@
+# Developed in-house. Submitted upstream
+# https://sourceforge.net/p/net-snmp/bugs/2587/
+# Need to use forkall() to fork all the threads. Otherwise the threads
+# for FM MIB etc will not be spawned causing failures during snmpwalk
+--- net-snmp/snmplib/system.c	Tue Oct  9 15:28:58 2012
++++ net-snmp/snmplib/system.c	Mon Dec  2 23:36:52 2013
+@@ -283,7 +283,7 @@
+      * Fork to return control to the invoking process and to
+      * guarantee that we aren't a process group leader.
+      */
+-    i = fork();
++    i = forkall();
+     if (i != 0) {
+         /* Parent. */
+         DEBUGMSGT(("daemonize","first fork returned %d.\n", i));
+@@ -305,7 +305,7 @@
+         /*
+          * Fork to let the process/session group leader exit.
+          */
+-        if ((i = fork()) != 0) {
++        if ((i = forkall()) != 0) {
+             DEBUGMSGT(("daemonize","second fork returned %d.\n", i));
+             if(i == -1) {
+                 snmp_log(LOG_ERR,"second fork failed (errno %d) in "

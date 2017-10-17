@@ -1,0 +1,18 @@
+This patch fixes a Solaris specific issue related to user creation
+in snmpv3. The patch has been submitted to the community but has
+not been accepted yet.
+
+The details can be found in the following location
+https://sourceforge.net/p/net-snmp/bugs/2607
+
+--- a/net-snmp-create-v3-user.in	Wed Feb 19 16:36:42 2014
++++ b/net-snmp-create-v3-user.in	Wed Dec 23 22:47:04 2015
+@@ -28,7 +28,7 @@
+    NSC_SRCDIR="NET-SNMP-SOURCE-DIR"
+ fi
+ 
+-if @PSCMD@ | egrep ' snmpd *$' > /dev/null 2>&1 ; then
++if " /usr/bin/ps -z `zonename` | egrep ' snmpd *$' " > /dev/null 2>&1 ; then
+     echo "Apparently at least one snmpd demon is already running."
+     echo "You must stop them in order to use this command."
+     exit 1

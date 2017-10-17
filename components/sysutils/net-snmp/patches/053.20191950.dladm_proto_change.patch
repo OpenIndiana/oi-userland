@@ -1,0 +1,27 @@
+This patch is a solaris specific one which fixes a build issue 
+related to change in the prototype of a dladm function. This has 
+not been submitted to the community.
+--- net-snmp-5.4.1.old/agent/mibgroup/kernel_sunos5.c	2015-01-08 06:55:57.165428600 -0600
++++ net-snmp-5.4.1/agent/mibgroup/kernel_sunos5.c	2015-01-08 06:50:09.992840500 -0600
+@@ -62,6 +62,7 @@
+ 
+ #include <libdladm.h>
+ #include <libdllink.h>
++#include <libnetcfg.h>
+ /*-
+  * Includes of local application header files 
+  */
+@@ -1733,7 +1734,12 @@
+         dladm_phys_attr_t dpa;
+         dladm_handle_t handle;
+ 
+-        if (dladm_open(&handle, NULL) != DLADM_STATUS_OK) {
++#ifdef NETADM_ACTIVE_PROFILE
++        if (dladm_open(&handle, NULL)
++#else
++        if (dladm_open(&handle)
++#endif
++            != DLADM_STATUS_OK) {
+             DEBUGMSGTL(("kernel_sunos5","dladm_open failed "
+                        "with errno=%d\n",errno));
+             return (-1);
