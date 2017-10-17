@@ -29,7 +29,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
+COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 PATCH_LEVEL = 0
 
@@ -37,6 +37,7 @@ CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	--without-oss
 CONFIGURE_OPTIONS +=	--with-gsm=internal
+CONFIGURE_OPTIONS +=  --with-netsnmp=$(BINDIR)
 
 COMPONENT_INSTALL_TARGETS += samples
 
