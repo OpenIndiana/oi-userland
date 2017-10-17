@@ -1,0 +1,29 @@
+From eaf1f72ed8994b708d94ec2de7b1a99f5c4a39b8 Mon Sep 17 00:00:00 2001
+From: Michal Srb <msrb@suse.com>
+Date: Thu, 27 Jul 2017 11:54:26 +0200
+Subject: xkb: Escape non-printable characters correctly.
+
+XkbStringText escapes non-printable characters using octal numbers. Such escape
+sequence would be at most 5 characters long ("\0123"), so it reserves 5 bytes
+in the buffer. Due to char->unsigned int conversion, it would print much longer
+string for negative numbers.
+
+Reviewed-by: Keith Packard <keithp@keithp.com>
+Signed-off-by: Julien Cristau <jcristau@debian.org>
+
+diff --git a/xkb/xkbtext.c b/xkb/xkbtext.c
+index ffbc546..ead2b1a 100644
+--- a/xkb/xkbtext.c
++++ b/xkb/xkbtext.c
+@@ -603,7 +603,7 @@ XkbStringText(char *str, unsigned format)
+             }
+             else {
+                 *out++ = '0';
+-                sprintf(out, "%o", *in);
++                sprintf(out, "%o", (unsigned char) *in);
+                 while (*out != '\0')
+                     out++;
+             }
+-- 
+cgit v0.10.2
+
