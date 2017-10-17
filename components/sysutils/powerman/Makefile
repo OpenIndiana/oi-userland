@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	powerman
 COMPONENT_VERSION=	2.3.24
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Powerman - power management software ($(COMPONENT_VERSION))
 COMPONENT_DESCRIPTION=	LLNL CHAOS powerman is free UNIX/Linux software that controls (remotely and in parallel) switched power distribution units
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
