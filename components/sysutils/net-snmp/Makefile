@@ -49,6 +49,7 @@ COMPONENT_SUMMARY= Net-SNMP Agent files and libraries
 
 BUILD_32_and_64 += $(BUILD_DIR_32)/.docs
 
+COMPONENT_BUILD_ARGS=
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
