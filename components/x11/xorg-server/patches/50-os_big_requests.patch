@@ -1,0 +1,30 @@
+From 9c23685009aa96f4b861dcc5d2e01dbee00c4dd9 Mon Sep 17 00:00:00 2001
+From: Michal Srb <msrb@suse.com>
+Date: Fri, 7 Jul 2017 17:04:03 +0200
+Subject: os: Make sure big requests have sufficient length.
+
+A client can send a big request where the 32B "length" field has value
+0. When the big request header is removed and the length corrected,
+the value will underflow to 0xFFFFFFFF.  Functions processing the
+request later will think that the client sent much more data and may
+touch memory beyond the receive buffer.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+Index: xorg-server-1.18.4/os/io.c
+===================================================================
+--- xorg-server-1.18.4.orig/os/io.c	2017-10-13 08:41:51.219841417 -0400
++++ xorg-server-1.18.4/os/io.c	2017-10-13 08:41:51.215841377 -0400
+@@ -480,6 +480,11 @@ ReadRequestFromClient(ClientPtr client)
+         if (++timesThisConnection >= MAX_TIMES_PER)
+             YieldControl();
+     if (move_header) {
++        if (client->req_len < bytes_to_int32(sizeof(xBigReq) - sizeof(xReq))) {
++            YieldControlDeath();
++            return -1;
++        }
++
+         request = (xReq *) oci->bufptr;
+         oci->bufptr += (sizeof(xBigReq) - sizeof(xReq));
+         *(xReq *) oci->bufptr = *request;
