@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= couchdb-common
 COMPONENT_VERSION= 1.0
-COMPONENT_FMRI= application/database/$(COMPONENT_NAME)
+COMPONENT_FMRI= database/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_PROJECT_URL= http://couchdb.apache.org/
 COMPONENT_LICENSE= Apache 2.0
