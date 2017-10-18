@@ -27,6 +27,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+depend type=require fmri=runtime/erlang@17.5-2017.0.0.0
 depend type=require fmri=runtime/python-27
 depend type=require fmri=library/python/netaddr-27
 depend type=require fmri=database/couchdb-common
@@ -37,7 +38,7 @@ file path=etc/couchdb/default.d/README
 file path=etc/couchdb/default.d/default.ini
 file path=etc/couchdb/default.ini
 file path=etc/couchdb/local.d/README
-file path=etc/couchdb/local.ini            owner=couchdb group=couchdb mode=0664
+file path=etc/couchdb/local.ini            owner=couchdb group=couchdb mode=0664 preserve=yes 
 file path=etc/couchdb/vm.args
 
 link path=/usr/lib/$(MACH64)/couchdb/etc target=/etc/couchdb
