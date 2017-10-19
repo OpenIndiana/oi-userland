@@ -27,12 +27,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# CouchDB 2.1.0 must have an erlang runtime < 19
 depend type=require fmri=runtime/erlang@17.5-2017.0.0.0
 depend type=require fmri=runtime/python-27
 depend type=require fmri=library/python/netaddr-27
 depend type=require fmri=database/couchdb-common
 
-dir  path=etc/couchdb/local.d/ owner=couchdb group=couchdb mode=0755
+dir  path=etc/couchdb/local.d owner=couchdb group=couchdb mode=0755
 
 file path=etc/couchdb/default.d/README
 file path=etc/couchdb/default.d/default.ini

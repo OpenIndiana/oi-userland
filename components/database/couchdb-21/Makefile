@@ -32,8 +32,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CFLAGS += -std=c99 -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS 
-CXXFLAGE += -std=c99 -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
+CFLAGS += $(gcc_C99_ENABLE) -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS 
+CXXFLAGE += $(gcc_C99_ENABLE) -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
 
 ENV += CC="$(CC)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
@@ -45,7 +45,8 @@ COMPONENT_PREP_ACTION = ( \
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
-CONFIGURE_OPTIONS = --user $(COMPONENT_NAME) --with-curl
+CONFIGURE_OPTIONS = --user $(COMPONENT_NAME)
+CONFIGURE_OPTIONS = --with-curl
 
 COMPONENT_BUILD_ENV += --docdir="$(USRSHAREDOCDIR)"
 
@@ -62,7 +63,7 @@ COMPONENT_INSTALL_TARGETS = release
 # CouchDB uses couchjs as external process over STDOUT/STDIN/STDERR.
 #
 
-# Te project doesn't have an install section but let user copy the folder rel/couchdb.
+# The project doesn't have an install section but let user copy the folder rel/couchdb.
 # Here we prepare manually the image in the prototype folder and do the rest with a makefile.
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
   ($(RM) -r $(PROTO_DIR)/*; \

@@ -1,21 +1,21 @@
    
 install:
-	if [ -d  $(DESTDIR)$(ETCDIR) ]; then    rm -rf $(DESTDIR)$(ETCDIR); fi
-	if [ -d  $(DESTDIR)$(MANDIR) ]; then    rm -rf $(DESTDIR)$(MANDIR); fi
-	if [ -d  $(DESTDIR)$(DOCDIR) ]; then    rm -rf $(DESTDIR)$(DOCDIR); fi
-	rm -rf   $(DESTDIR)$(RELDIR)/var	
-	mkdir -p $(DESTDIR)$(BINDIR)
-	mkdir -p $(DESTDIR)$(MANDIR)/man1/	
-	mkdir -p $(DESTDIR)$(DOCDIR)
-	mkdir -p $(DESTDIR)$(ETCDIR)
-	mv       $(DESTDIR)$(RELDIR)/etc/*             $(DESTDIR)$(ETCDIR)/
+	if [ -d  $(DESTDIR)$(ETCDIR) ]; then  $(RM) -r $(DESTDIR)$(ETCDIR); fi
+	if [ -d  $(DESTDIR)$(MANDIR) ]; then  $(RM) -r $(DESTDIR)$(MANDIR); fi
+	if [ -d  $(DESTDIR)$(DOCDIR) ]; then  $(RM) -r $(DESTDIR)$(DOCDIR); fi
+	$(RM) -r $(DESTDIR)$(RELDIR)/var	
+	$(MKDIR) $(DESTDIR)$(BINDIR)
+	$(MKDIR) $(DESTDIR)$(MANDIR)/man1/	
+	$(MKDIR) $(DESTDIR)$(DOCDIR)
+	$(MKDIR) $(DESTDIR)$(ETCDIR)
+	$(MV)    $(DESTDIR)$(RELDIR)/etc/*             $(DESTDIR)$(ETCDIR)/
 	cp -f    default.ini                           $(DESTDIR)$(ETCDIR)/default.d/
-	mv       $(DESTDIR)$(RELDIR)/share/docs/*      $(DESTDIR)$(MANDIR)/man1/	
-	mv       $(DESTDIR)$(RELDIR)/share/www/docs/*  $(DESTDIR)$(DOCDIR)/ 
-	ln -s -f           $(RELDIR)/bin/couchdb       $(DESTDIR)$(BINDIR)/couchdb
-	ln -s -f           $(RELDIR)/bin/couchjs       $(DESTDIR)$(BINDIR)/couchjs
-	ln -s -f           $(RELDIR)/bin/couchup       $(DESTDIR)$(BINDIR)/couchup
-	rm -rf   $(DESTDIR)$(RELDIR)/etc
-	rm -rf   $(DESTDIR)$(RELDIR)/share/docs
-	rm -rf   $(DESTDIR)$(RELDIR)/share/www/docs
-	ln -s -f $(DESTDIR)$(ETCDIR)                   $(DESTDIR)$(RELDIR)/etc
+	$(MV)    $(DESTDIR)$(RELDIR)/share/docs/*      $(DESTDIR)$(MANDIR)/man1/	
+	$(MV)    $(DESTDIR)$(RELDIR)/share/www/docs/*  $(DESTDIR)$(DOCDIR)/ 
+	$(SYMLINK) -f      $(RELDIR)/bin/couchdb       $(DESTDIR)$(BINDIR)/couchdb
+	$(SYMLINK) -f      $(RELDIR)/bin/couchjs       $(DESTDIR)$(BINDIR)/couchjs
+	$(SYMLINK) -f      $(RELDIR)/bin/couchup       $(DESTDIR)$(BINDIR)/couchup
+	$(RM) -r $(DESTDIR)$(RELDIR)/etc
+	$(RM) -r $(DESTDIR)$(RELDIR)/share/docs
+	$(RM) -r $(DESTDIR)$(RELDIR)/share/www/docs
+	$(SYMLINK) -f $(DESTDIR)$(ETCDIR)              $(DESTDIR)$(RELDIR)/etc
