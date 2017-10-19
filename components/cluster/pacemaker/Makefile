@@ -48,7 +48,7 @@ PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
-CONFIGURE_OPTIONS.64 += --libexecdir=$(CONFIGURE_PREFIX)/lib/$(MACH64)
+CONFIGURE_OPTIONS.64 += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
