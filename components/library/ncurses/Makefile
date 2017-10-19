@@ -28,30 +28,28 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	ncurses
-COMPONENT_VERSION=	5.9
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	6.0-20171014
+IPS_COMPONENT_VERSION=	$(subst -,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:6bd5b15a0d64f65a2a84c60e7bebb8467cfd7312b886309c5ecd87ea5c441ace
+COMPONENT_ARCHIVE_URL=	http://invisible-mirror.net/archives/ncurses/current/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/ncurses
 COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to make "gmake test" work.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_PREFIX =	/usr/gnu
-
-# Workaround compilation failure with macro "mouse_trafo"
-CPPFLAGS += -P
 
 # force XPG6 standard
 CXXFLAGS += -D_XPG6
@@ -61,31 +59,26 @@ CFLAGS += -std=c99 -D_POSIX_C_SOURCE=200112L
 
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
+CONFIGURE_OPTIONS +=	--with-abi-version=5
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-widec
-CONFIGURE_OPTIONS +=	--enable-pc-files
+CONFIGURE_OPTIONS +=	--enable-symlinks
+CONFIGURE_OPTIONS +=	--disable-lib-suffixes
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
+CONFIGURE_OPTIONS +=	--with-pkg-config-libdir=$(PKG_CONFIG_PATH)
+CONFIGURE_OPTIONS +=	--enable-pc-files
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-# XXX: Ugly hack copied directly from the desktop SUNWncurses.spec file:
-# The sun-color terminfo included in ncurses does not work;
-# copying the one shipped with Sun's curses fixes it:
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) /usr/share/lib/terminfo/s/sun-color \
-	$(PROTO_DIR)$(GNULIB)/terminfo/s/
-
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/test
 COMPONENT_TEST_TARGETS =
-
-ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-test:           $(TEST_32_and_64)
+test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
