@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-acecad
 COMPONENT_VERSION= 1.5.0
+COMPONENT_REVISIION= 1
 COMPONENT_SUMMARY= xf86-input-acecad - Acecad Flair input driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2

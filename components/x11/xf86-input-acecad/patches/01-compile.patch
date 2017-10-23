@@ -1,0 +1,29 @@
+--- a/src/acecad.c	2011-05-04 15:55:22.000000000 -0700
++++ b/src/acecad.c	2017-02-02 11:20:04.899609322 -0800
+@@ -491,7 +491,7 @@
+ 
+     if (local->fd != -1)
+     {
+-        RemoveEnabledDevice (local->fd);
++        xf86RemoveEnabledDevice (local);
+         if (priv->buffer)
+         {
+             XisbFree(priv->buffer);
+@@ -499,7 +499,7 @@
+         }
+         xf86CloseSerial(local->fd);
+     }
+-    RemoveEnabledDevice (local->fd);
++    xf86RemoveEnabledDevice (local);
+     local->fd = -1;
+     return Success;
+ 
+@@ -601,7 +601,7 @@
+ 
+     if (local->fd != -1)
+     {
+-        RemoveEnabledDevice (local->fd);
++        xf86RemoveEnabledDevice (local);
+         if (priv->buffer)
+         {
+             XisbFree(priv->buffer);
