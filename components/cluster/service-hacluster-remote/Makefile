@@ -30,7 +30,7 @@ COMPONENT_VERSION= 1.0
 COMPONENT_FMRI= service/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_PROJECT_URL= http://www.linux-ha.org/doc/dev-guides/ra-dev-guide.html
-COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE= GPLv2
 COMPONENT_SUMMARY= SMF service for HA cluster remote, managing pacemaker-remote
 
 include $(WS_MAKE_RULES)/ips.mk
