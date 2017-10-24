@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-vesa
 COMPONENT_VERSION= 2.3.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-vesa - VESA driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -30,9 +31,9 @@ COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-vesa
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \
