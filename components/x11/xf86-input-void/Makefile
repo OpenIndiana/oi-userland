@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-void
 COMPONENT_VERSION= 1.4.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-input-void - null input driver for Xorg server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-void

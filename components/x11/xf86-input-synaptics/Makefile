@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-synaptics
 COMPONENT_VERSION= 1.9.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-input-synaptics - Synaptics touchpad driver for X.Org
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-synaptics

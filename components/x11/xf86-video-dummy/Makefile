@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-dummy
 COMPONENT_VERSION= 0.3.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= \
   xf86-video-dummy - virtual/offscreen frame buffer driver for the Xorg X server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
