@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pcs
-COMPONENT_VERSION= 0.9.154
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 0.9.159
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/pcs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f4720b4d64d8647dcd0e63fd883c5c1ad9bc49a3777f5092f8b3e01f193838a4
+COMPONENT_ARCHIVE_HASH= sha256:9493c780c36a7f4a8336bbe40ff34ec22e21155798ad458bd8b347a4bc774f8f
 COMPONENT_ARCHIVE_URL= https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz 
 COMPONENT_LICENSE= GPLv2
 COMPONENT_SUMMARY= Pacemaker command line interface and GUI.
@@ -32,7 +31,7 @@ include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/ruby.mk
 
-PATH= /usr/gnu/bin:/usr/ruby/$(RUBY_VERSION)/bin/:/usr/bin:/usr/sbin:/sbin
+PATH=$(PATH.gnu):/usr/ruby/$(RUBY_VERSION)/bin	
 
 PATCH_LEVEL= 1
 
@@ -41,7 +40,9 @@ ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 ENV += PYTHON_SITELIB=$(PYTHON_VENDOR_PACKAGES)
 ENV += PYTHON=$(PYTHON)
-COMPONENT_BUILD_GMAKE_ARGS += BASH_COMPLETION_DIR=/usr/share/bash-completion/completions
+ENV += PATH=$(PATH)
+
+COMPONENT_BUILD_GMAKE_ARGS += BASH_COMPLETION_DIR=$(PROTO_DIR)/usr/share/bash-completion/completions
 
 PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
 PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
@@ -50,8 +51,8 @@ PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
 COMPONENT_PRE_BUILD_ACTION = ($(RM) -r $(PROTO_DIR))
 
 COMPONENT_POST_BUILD_ACTION=( \
-    mkdir -p  $(PROTO_DIR)/usr/share/pcs/examples; \
-    mv $(PROTO_DIR)/etc/logrotate.d    $(PROTO_DIR)/usr/share/pcs/examples )
+    $(MKDIR)  $(PROTO_DIR)/usr/share/pcs/examples; \
+    $(MV) $(PROTO_DIR)/etc/logrotate.d    $(PROTO_DIR)/usr/share/pcs/examples )
 
 # pytthon installation class overwrites the shebang during installation
 $(INSTALL_32):  $(BUILD_32)
