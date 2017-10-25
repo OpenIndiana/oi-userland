@@ -9,14 +9,13 @@
 #
 
 #
-# # Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hacluster-remote
 COMPONENT_VERSION=	      1.0
-COMPONENT_REVISION=	      1
 COMPONENT_FMRI=           metapackages/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Meta Packages/Group Packages
 COMPONENT_SUMMARY=	      High availaiblity cluster with pacemaker-remote and pcsd managgement gui
