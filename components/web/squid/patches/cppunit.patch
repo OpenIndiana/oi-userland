@@ -1,0 +1,33 @@
+--- squid-3.5.27/configure.ac.1	2017-10-26 01:03:46.234439966 +0000
++++ squid-3.5.27/configure.ac	2017-10-26 01:13:06.021039319 +0000
+@@ -127,7 +127,6 @@
+ AC_PATH_PROG(CHMOD, chmod, $FALSE)
+ AC_PATH_PROG(TR, tr, $FALSE)
+ AC_PATH_PROG(RM, rm, $FALSE)
+-AC_PATH_PROG(CPPUNITCONFIG, cppunit-config, false)
+ dnl Libtool 2.2.6 requires: rm -f
+ RM="$RM -f"
+ 
+@@ -2735,19 +2734,9 @@
+ AC_MSG_NOTICE([X-Accelerator-Vary support enabled: $enable_x_accelerator_vary])
+ 
+ 
+-if $CPPUNITCONFIG --help >/dev/null; then
+-  squid_cv_cppunit_version="`$CPPUNITCONFIG --version`"
+-  AC_MSG_NOTICE([using system installed cppunit version $squid_cv_cppunit_version])
+-  unset squid_cv_cppunit_version
+-  SQUID_CPPUNIT_LIBS="`$CPPUNITCONFIG --libs`"
+-  SQUID_CPPUNIT_LA=''
+-  SQUID_CPPUNIT_INC="`$CPPUNITCONFIG --cflags`"
+-else
+-  AC_MSG_WARN([cppunit does not appear to be installed. squid does not require this, but code testing with 'make check' will fail.])
+-  SQUID_CPPUNIT_LA='' 
+-  SQUID_CPPUNIT_LIBS=''
+-  SQUID_CPPUNIT_INC=''
+-fi
++PKG_CHECK_MODULES([SQUID_CPPUNIT], [cppunit])
++SQUID_CPPUNIT_LA=''
++SQUID_CPPUNIT_INC="$SQUID_CPPUNIT_CFLAGS"
+ 
+ AC_ARG_WITH(cppunit-basedir,
+   AS_HELP_STRING([--with-cppunit-basedir=PATH],
