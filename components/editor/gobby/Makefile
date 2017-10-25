@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gobby
 COMPONENT_VERSION= 0.4.94
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/gobby
 COMPONENT_SUMMARY= A collaborative text editor
@@ -36,6 +36,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+CXXFLAGS+= -std=c++11 $(CPP_XPG6MODE)
 
 LDFLAGS += -lnsl -lsocket
 
