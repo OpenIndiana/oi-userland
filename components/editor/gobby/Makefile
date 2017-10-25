@@ -37,6 +37,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+CXXFLAGS+= -std=c++11 $(CPP_XPG6MODE)
+
 LDFLAGS += -lnsl -lsocket
 CXXFLAGS += -std=c++11
 
