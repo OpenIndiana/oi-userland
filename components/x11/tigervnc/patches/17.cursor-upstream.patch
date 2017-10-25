@@ -1,0 +1,205 @@
+From 9a739d4bc716d08fd6a24cb50ad1d6a8367dfbd3 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 5 Aug 2017 15:16:29 -0700
+Subject: [PATCH] x0vncserver: Use Xfixes to display cursors if available
+
+https://github.com/TigerVNC/tigervnc/issues/361
+
+This is a simple implementation that refetches and transforms the cursor
+image every time it changes, and doesn't use the cursor naming functions
+of the XFixes extension to save & cache cursor images.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ unix/x0vncserver/CMakeLists.txt  |   7 +++
+ unix/x0vncserver/x0vncserver.cxx | 111 ++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 106 insertions(+), 12 deletions(-)
+
+diff --git a/unix/x0vncserver/CMakeLists.txt b/unix/x0vncserver/CMakeLists.txt
+index 82f0d2ac..82ea4239 100644
+--- a/unix/x0vncserver/CMakeLists.txt
++++ b/unix/x0vncserver/CMakeLists.txt
+@@ -31,6 +31,13 @@ else()
+   message(WARNING "No DAMAGE extension.  x0vncserver will have to use the slower polling method.")
+ endif()
+ 
++if(X11_FOUND AND X11_Xfixes_LIB)
++  add_definitions(-DHAVE_XFIXES)
++  target_link_libraries(x0vncserver ${X11_Xfixes_LIB})
++else()
++  message(WARNING "No XFIXES extension.  x0vncserver will not be able to show cursors.")
++endif()
++
+ target_link_libraries(x0vncserver ${X11_LIBRARIES})
+ 
+ install(TARGETS x0vncserver DESTINATION ${BIN_DIR})
+diff --git a/unix/x0vncserver/x0vncserver.cxx b/unix/x0vncserver/x0vncserver.cxx
+index 8f73ac2c..315d30c5 100644
+--- a/unix/x0vncserver/x0vncserver.cxx
++++ b/unix/x0vncserver/x0vncserver.cxx
+@@ -45,6 +45,9 @@
+ #ifdef HAVE_XDAMAGE
+ #include <X11/extensions/Xdamage.h>
+ #endif
++#ifdef HAVE_XFIXES
++#include <X11/extensions/Xfixes.h>
++#endif
+ 
+ #include <x0vncserver/Geometry.h>
+ #include <x0vncserver/Image.h>
+@@ -141,7 +144,7 @@ class XDesktop : public SDesktop, public TXGlobalEventHandler
+   XDesktop(Display* dpy_, Geometry *geometry_)
+     : dpy(dpy_), geometry(geometry_), pb(0), server(0),
+       oldButtonMask(0), haveXtest(false), haveDamage(false),
+-      maxButtons(0), running(false)
++      haveXfixes(false), maxButtons(0), running(false)
+   {
+ #ifdef HAVE_XTEST
+     int xtestEventBase;
+@@ -174,6 +177,21 @@ class XDesktop : public SDesktop, public TXGlobalEventHandler
+ #ifdef HAVE_XDAMAGE
+     }
+ #endif
++
++#ifdef HAVE_XFIXES
++    int xfixesErrorBase;
++
++    if (XFixesQueryExtension(dpy, &xfixesEventBase, &xfixesErrorBase)) {
++      if (not haveDamage)
++        TXWindow::setGlobalEventHandler(this);
++      haveXfixes = true;
++    } else {
++#endif
++      vlog.info("XFIXES extension not present");
++      vlog.info("Will not be able to display cursors");
++#ifdef HAVE_XFIXES
++    }
++#endif
+   }
+   virtual ~XDesktop() {
+     stop();
+@@ -212,6 +230,13 @@ class XDesktop : public SDesktop, public TXGlobalEventHandler
+     }
+ #endif
+ 
++#ifdef HAVE_XFIXES
++    if (haveXfixes) {
++      XFixesSelectCursorInput(dpy, DefaultRootWindow(dpy),
++                              XFixesDisplayCursorNotifyMask);
++    }
++#endif
++
+     running = true;
+   }
+ 
+@@ -273,23 +298,81 @@ class XDesktop : public SDesktop, public TXGlobalEventHandler
+ 
+   virtual bool handleGlobalEvent(XEvent* ev) {
+ #ifdef HAVE_XDAMAGE
+-    XDamageNotifyEvent* dev;
+-    Rect rect;
++    if (ev->type == xdamageEventBase) {
++      XDamageNotifyEvent* dev;
++      Rect rect;
+ 
+-    if (ev->type != xdamageEventBase)
+-      return false;
++      if (!running)
++        return true;
++
++      dev = (XDamageNotifyEvent*)ev;
++      rect.setXYWH(dev->area.x, dev->area.y, dev->area.width, dev->area.height);
++      server->add_changed(rect);
+ 
+-    if (!running)
+       return true;
++    }
++#endif
+ 
+-    dev = (XDamageNotifyEvent*)ev;
+-    rect.setXYWH(dev->area.x, dev->area.y, dev->area.width, dev->area.height);
+-    server->add_changed(rect);
++#ifdef HAVE_XFIXES
++    if (ev->type == xfixesEventBase + XFixesCursorNotify) {
++      XFixesCursorNotifyEvent* cev;
++      XFixesCursorImage *cim;
+ 
+-    return true;
+-#else
+-  return false;
++      if (!running)
++        return true;
++
++      cev = (XFixesCursorNotifyEvent*)ev;
++
++      if (cev->subtype != XFixesDisplayCursorNotify)
++        return false;
++
++      cim = XFixesGetCursorImage(dpy);
++      if (cim == NULL)
++        return false;
++
++      // Copied from XserverDesktop::setCursor() in
++      // unix/xserver/hw/vnc/XserverDesktop.cc and adapted to
++      // handle long -> U32 conversion for 64-bit Xlib
++      rdr::U8* cursorData;
++      rdr::U8 *out;
++      const unsigned long *pixels;
++
++      cursorData = new rdr::U8[cim->width * cim->height * 4];
++
++      // Un-premultiply alpha
++      pixels = cim->pixels;
++      out = cursorData;
++      for (int y = 0; y < cim->height; y++) {
++        for (int x = 0; x < cim->width; x++) {
++          rdr::U8 alpha;
++          rdr::U32 pixel = *pixels++;
++          rdr::U8 *in = (rdr::U8 *) &pixel;
++
++          alpha = in[3];
++          if (alpha == 0)
++            alpha = 1; // Avoid division by zero
++
++          *out++ = (unsigned)*in++ * 255/alpha;
++          *out++ = (unsigned)*in++ * 255/alpha;
++          *out++ = (unsigned)*in++ * 255/alpha;
++          *out++ = *in++;
++        }
++      }
++
++      try {
++        server->setCursor(cim->width, cim->height, Point(cim->xhot, cim->yhot),
++                          cursorData, 0);
++      } catch (rdr::Exception& e) {
++        vlog.error("XserverDesktop::setCursor: %s",e.str());
++      }
++
++      delete [] cursorData;
++      XFree(cim);
++      return true;
++    }
+ #endif
++
++    return false;
+   }
+ 
+ protected:
+@@ -300,12 +383,16 @@ class XDesktop : public SDesktop, public TXGlobalEventHandler
+   int oldButtonMask;
+   bool haveXtest;
+   bool haveDamage;
++  bool haveXfixes;
+   int maxButtons;
+   bool running;
+ #ifdef HAVE_XDAMAGE
+   Damage damage;
+   int xdamageEventBase;
+ #endif
++#ifdef HAVE_XFIXES
++  int xfixesEventBase;
++#endif
+ };
+ 
+ 
+

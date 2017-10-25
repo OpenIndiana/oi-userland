@@ -1,51 +1,6 @@
-# Copyright (c) 2007, 2015, Oracle and/or its affiliates. All rights reserved.
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice (including the next
-# paragraph) shall be included in all copies or substantial portions of the
-# Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-#
-
-diff --git common/rfb/Makefile.am common/rfb/Makefile.am
-index 1894871..ad4956e 100644
---- common/rfb/Makefile.am
-+++ common/rfb/Makefile.am
-@@ -55,7 +55,7 @@ librfb_la_SOURCES += $(VENCRYPT_HDRS) $(VENCRYPT_SRCS)
- endif
- 
- librfb_la_CPPFLAGS = -I$(top_srcdir)/common -I$(top_srcdir)/win
--librfb_la_LIBADD = @GNUTLS_LIBS@
-+librfb_la_LIBADD = @GNUTLS_LIBS@ $(LIBS)
- 
- if HAVE_PAM
- librfb_la_SOURCES += UnixPasswordValidator.cxx UnixPasswordValidator.h pam.c pam.h
-diff --git unix/vncserver unix/vncserver
-index f3468ed..b8682f6 100755
---- unix/vncserver
-+++ unix/vncserver
-@@ -40,6 +40,7 @@ $vncClasses = "";
- 
- $xauth = "xauth";
- 
-+$ENV{PATH} = "/usr/X11/bin:" . $ENV{PATH};
- &SanityCheck();
- 
- #
-@@ -76,6 +77,15 @@ $defaultXStartup
+--- a/unix/vncserver	2017-03-11 02:25:51.655811658 +0000
++++ b/unix/vncserver	2017-03-11 02:33:43.344291034 +0000
+@@ -76,6 +76,15 @@
         "if [ -f /etc/X11/xinit/xinitrc ]; then\n".
         "  exec sh /etc/X11/xinit/xinitrc\n".
         "fi\n".
@@ -61,137 +16,164 @@ index f3468ed..b8682f6 100755
         "[ -r \$HOME/.Xresources ] && xrdb \$HOME/.Xresources\n".
         "xsetroot -solid grey\n".
         "xterm -geometry 80x24+10+10 -ls -title \"\$VNCDESKTOP Desktop\" &\n".
-diff --git unix/xserver/hw/vnc/Makefile.am unix/xserver/hw/vnc/Makefile.am
-index 8c49429..50b03e5 100644
---- unix/xserver/hw/vnc/Makefile.am
-+++ unix/xserver/hw/vnc/Makefile.am
-@@ -17,7 +17,7 @@ libvnccommon_la_SOURCES = $(HDRS) vncExtInit.cc vncHooks.cc XserverDesktop.cc \
+--- a/unix/xserver/hw/vnc/Makefile.am	2017-03-11 08:13:43.250650526 +0000
++++ b/unix/xserver/hw/vnc/Makefile.am	2017-03-11 08:14:11.089457087 +0000
+@@ -20,7 +20,7 @@
  
  libvnccommon_la_CPPFLAGS = -DVENDOR_RELEASE="$(VENDOR_RELEASE)" \
  	-DVENDOR_STRING="\"$(VENDOR_STRING)\"" -I$(TIGERVNC_SRCDIR)/common -UHAVE_CONFIG_H \
--	-I$(TIGERVNC_SRCDIR)/unix/vncconfig $(XVNC_CPPFLAGS) -I$(includedir)/pixman-1 -I$(includedir)
-+	-I$(TIGERVNC_SRCDIR)/unix/vncconfig $(XVNC_CPPFLAGS) $(PIXMAN_CFLAGS) -I$(includedir)
+-	-I$(TIGERVNC_SRCDIR)/unix/vncconfig $(XVNC_CPPFLAGS) ${XSERVERLIBS_CFLAGS} -I$(includedir) \
++	-I$(TIGERVNC_SRCDIR)/unix/vncconfig $(XVNC_CPPFLAGS) ${XSERVERLIBS_CFLAGS} -I$(includedir) -I/usr/include/xorg \
+ 	-I$(top_srcdir)/include
  
  bin_PROGRAMS = Xvnc
- 
-@@ -33,13 +33,16 @@ Xvnc_CPPFLAGS = $(XVNC_CPPFLAGS) -DTIGERVNC -DNO_HW_ONLY_EXTS -DNO_MODULE_EXTS \
+@@ -40,7 +40,8 @@
  	-UHAVE_CONFIG_H \
  	-DXFree86Server -DVENDOR_RELEASE="$(VENDOR_RELEASE)" \
  	-DVENDOR_STRING="\"$(VENDOR_STRING)\"" -I$(TIGERVNC_SRCDIR)/common \
--	-I$(top_srcdir)/include -I$(includedir)/pixman-1 -I$(includedir)
-+	-I$(top_srcdir)/include $(PIXMAN_CFLAGS)
+-	-I$(top_srcdir)/include ${XSERVERLIBS_CFLAGS} -I$(includedir)
++	-I$(top_srcdir)/include ${XSERVERLIBS_CFLAGS} -I$(includedir) \
++	-I/usr/include/xorg
+ 
+ Xvnc_LDADD = $(XVNC_LIBS) libvnccommon.la $(COMMON_LIBS) \
+ 	$(XSERVER_LIBS) $(XSERVER_SYS_LIBS) $(XVNC_SYS_LIBS) -lX11
+@@ -60,7 +61,8 @@
+ 	-I$(top_srcdir)/hw/xfree86/os-support \
+ 	-I$(top_srcdir)/hw/xfree86/os-support/bus \
+ 	-I$(top_srcdir)/include \
+-	${XSERVERLIBS_CFLAGS} -I$(includedir)
++	${XSERVERLIBS_CFLAGS} -I$(includedir) \
++	-I/usr/include/xorg
+ 
+ libvnc_la_LDFLAGS = -module -avoid-version -Wl,-z,now
+ 
+--- a/unix/xserver/hw/vnc/vncHooks.c	2017-03-11 08:55:08.961273317 +0000
++++ b/unix/xserver/hw/vnc/vncHooks.c	2017-03-11 08:56:24.506368154 +0000
+@@ -129,8 +129,7 @@
+ static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
+                                  pointer pReadmask);
+ #else
+-static void vncHooksBlockHandler(ScreenPtr pScreen, void * pTimeout,
+-                                 void * pReadmask);
++static void vncHooksBlockHandler(ScreenPtr pScreen, void * pTimeout);
+ #endif
+ #ifdef RENDER
+ static void vncHooksComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, 
+@@ -717,8 +716,7 @@
+ static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
+                                  pointer pReadmask)
+ #else
+-static void vncHooksBlockHandler(ScreenPtr pScreen_, void * pTimeout,
+-                                 void * pReadmask)
++static void vncHooksBlockHandler(ScreenPtr pScreen_, void * pTimeout)
+ #endif
+ {
+ #if XORG <= 112
+@@ -732,7 +730,7 @@
+ #if XORG <= 112
+   (*pScreen->BlockHandler) (i, blockData, pTimeout, pReadmask);
+ #else
+-  (*pScreen->BlockHandler) (pScreen, pTimeout, pReadmask);
++  (*pScreen->BlockHandler) (pScreen, pTimeout);
+ #endif
+ 
+   vncHooksScreen->ignoreHooks--;
+--- a/unix/xserver/hw/vnc/Makefile.am	2017-03-11 15:32:58.976784002 +0000
++++ b/unix/xserver/hw/vnc/Makefile.am	2017-03-11 15:35:57.896191911 +0000
+@@ -44,10 +44,13 @@
+ 	-I/usr/include/xorg
  
  Xvnc_LDADD = $(XVNC_LIBS) libvnccommon.la $(COMMON_LIBS) \
 -	$(XSERVER_LIBS) $(XSERVER_SYS_LIBS) $(XVNC_SYS_LIBS) -lX11
-+	-ljpeg -lz \
-+	../../IA/libIA.la \
++	-ljpeg -lz ../../IA/libIA.la \
 +	$(XSERVER_LIBS) $(XSERVER_SYS_LIBS) $(XVNC_SYS_LIBS)
  
  Xvnc_LDFLAGS = $(LD_EXPORT_SYMBOLS_FLAG)
++Xvnc_LDFLAGS += $(GNUTLS_LDFLAGS)
  
 +if XORG
  libvnc_la_LTLIBRARIES = libvnc.la
  libvnc_ladir = $(moduledir)/extensions
  
-@@ -49,11 +57,12 @@ libvnc_la_CPPFLAGS = $(XVNC_CPPFLAGS) -I$(TIGERVNC_SRCDIR)/common -UHAVE_CONFIG_
- 	-I$(top_srcdir)/hw/xfree86/common \
- 	-I$(top_srcdir)/hw/xfree86/os-support \
+@@ -62,10 +64,11 @@
  	-I$(top_srcdir)/hw/xfree86/os-support/bus \
--	-I$(includedir)/pixman-1 -I$(includedir)
-+	$(PIXMAN_CFLAGS)
+ 	-I$(top_srcdir)/include \
+ 	${XSERVERLIBS_CFLAGS} -I$(includedir) \
+-	-I/usr/include/xorg
++	-I/usr/include/xorg $(PIXMAN_CFLAGS)
  
- libvnc_la_LDFLAGS = -module -avoid-version
+ libvnc_la_LDFLAGS = -module -avoid-version -Wl,-z,now
  
  libvnc_la_LIBADD = libvnccommon.la $(COMMON_LIBS)
 +endif
  
  EXTRA_DIST = Xvnc.man
+--- a/cmake/StaticBuild.cmake	2017-02-15 18:15:12.881885498 +0000
++++ b/cmake/StaticBuild.cmake	2017-02-15 18:20:07.054136785 +0000
+@@ -7,6 +7,11 @@
+ # a lot of details change with each different build environment.
+ #
  
-
-diff --git unix/xserver/hw/vnc/Xvnc.man unix/xserver/hw/vnc/Xvnc.man
-index 356925d..ea9ee56 100644
---- unix/xserver/hw/vnc/Xvnc.man
-+++ unix/xserver/hw/vnc/Xvnc.man
-@@ -71,8 +71,7 @@ List all the options and parameters
- 
- .SH PARAMETERS
- VNC parameters can be set both via the command-line and through the
--\fBvncconfig\fP(1) program, and with a VNC-enabled Xorg server via Options
--entries in the xorg.conf file.
-+\fBvncconfig\fP(1) program.
- 
- Parameters can be turned on with -\fIparam\fP or off with
- -\fIparam\fP=0.  Parameters which take a value can be specified as
-@@ -225,12 +224,12 @@ is a hexadecimal keysym. For example, to exchange the " and @ symbols you would
- RemapKeys=0x22<>0x40
- 
- .SH USAGE WITH INETD
--By configuring the \fBinetd\fP(1) service appropriately, Xvnc can be launched
-+By configuring the \fBinetd\fP(1M) service appropriately, Xvnc can be launched
- on demand when a connection comes in, rather than having to be started
- manually.  When given the \fB-inetd\fP option, instead of listening for TCP
- connections on a given port it uses its standard input and standard output.
- There are two modes controlled by the wait/nowait entry in the inetd.conf file.
--
-+.PP
- In the nowait mode, Xvnc uses its standard input and output directly as the
- connection to a viewer.  It never has a listening socket, so cannot accept
- further connections from viewers (it can however connect out to listening
-@@ -238,17 +237,26 @@ viewers by use of the vncconfig program).  Further viewer connections to the
- same TCP port result in inetd spawning off a new Xvnc to deal with each
- connection.  When the connection to the viewer dies, the Xvnc and any
- associated X clients die.  This behaviour is most useful when combined with the
--XDMCP options -query and -once.  An typical example in inetd.conf might be (all
--on one line):
--
--5950   stream   tcp nowait nobody  /usr/local/bin/Xvnc Xvnc -inetd -query
--localhost -once securitytypes=none
--
--In this example a viewer connection to :50 will result in a new Xvnc for that
--connection which should display the standard XDM login screen on that machine.
--Because the user needs to login via XDM, it is usually OK to accept connections
--without a VNC password in this case.
--
-+XDMCP options -query and -once.  
-+.PP
-+The provided application/x11/xvnc-inetd service defaults to running
++SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> <LINK_FLAGS> crS <TARGET> <OBJECTS>")
++SET(CMAKE_C_ARCHIVE_APPEND "<CMAKE_AR> <LINK_FLAGS> r <TARGET> <OBJECTS>")
++SET(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> <LINK_FLAGS> crS <TARGET> <OBJECTS>")
++SET(CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> <LINK_FLAGS> r <TARGET> <OBJECTS>")
 +
-+.B "/usr/bin/Xvnc -inetd -query localhost -once securitytypes=none"
-+
-+in nowait mode.   This service can be enabled via 
-+.BR svcadm (1m),
-+and configured to use other modes or arguments via
-+.BR svccfg (1m).
-+.PP
-+In this configuration, connecting to :0 will result in a new Xvnc for that
-+connection which should display the standard graphical login screen on that 
-+machine.   (To enable this, you will also have to enable XDMCP network 
-+connections on the login screen.   See 
-+.BR gdm (1)
-+for details.)
-+Because the user needs to login via this screen, it is usually OK to accept 
-+connections without a VNC password in this case.
-+.PP
- In the wait mode, when the first connection comes in, inetd gives the listening
- socket to Xvnc.  This means that for a given TCP port, there is only ever one
- Xvnc at a time.  Further viewer connections to the same port are accepted by
-@@ -256,14 +264,14 @@ the same Xvnc in the normal way.  Even when the original connection is broken,
- the Xvnc will continue to run.  If this is used with the XDMCP options -query
- and -once, the Xvnc and associated X clients will die when the user logs out of
- the X session in the normal way.  It is important to use a VNC password in this
--case.  A typical entry in inetd.conf might be:
--
--5951   stream   tcp wait   james     /usr/local/bin/Xvnc Xvnc -inetd -query localhost -once passwordFile=/home/james/.vnc/passwd
-+case.  A typical command line to include in the service exec property might be:
+ option(BUILD_STATIC
+     "Link statically against most libraries, if possible" OFF)
  
-+.B "/usr/bin/Xvnc Xvnc -inetd -query localhost -once passwordFile=/home/james/.vnc/passwd"
-+.PP
- In fact typically, you would have one entry for each user who uses VNC
- regularly, each of whom has their own dedicated TCP port which they use.  In
--this example, when user "james" connects to :51, he enters his VNC password,
--then gets the XDM login screen where he logs in in the normal way.  However,
-+this example, when user "james" connects, he enters his VNC password,
-+then gets the login screen where he logs in in the normal way.  However,
- unlike the previous example, if he disconnects, the session remains persistent,
- and when he reconnects he will get the same session back again.  When he logs
- out of the X session, the Xvnc will die, but of course a new one will be
+--- a/java/CMakeLists.txt	2017-03-13 20:34:32.537260248 +0000
++++ b/java/CMakeLists.txt	2017-03-13 20:34:46.649466591 +0000
+@@ -7,7 +7,7 @@
+ 
+ find_package(Java)
+ 
+-set(DEFAULT_JAVACFLAGS "-source 1.6 -target 1.6 -Xlint:all,-serial,-cast,-unchecked,-fallthrough,-dep-ann,-deprecation,-rawtypes")
++set(DEFAULT_JAVACFLAGS "-source 1.8 -target 1.8 -Xlint:all,-serial,-cast,-unchecked,-fallthrough,-dep-ann,-deprecation,-rawtypes")
+ set(JAVACFLAGS ${DEFAULT_JAVACFLAGS} CACHE STRING
+   "Java compiler flags (Default: ${DEFAULT_JAVACFLAGS})")
+ message(STATUS "Java compiler flags = ${JAVACFLAGS}")
+--- a/unix/vncserver	2017-03-15 22:22:18.716281139 -0700
++++ b/unix/vncserver	2017-03-15 22:22:55.978586599 -0700
+@@ -257,7 +257,20 @@
+ 
+ # Make an X server cookie and set up the Xauthority file
+ 
+-$cookie = `mcookie`;
++my $cookie = "";
++if (open(URANDOM, '<', '/dev/urandom')) {
++  my $randata;
++  if (sysread(URANDOM, $randata, 16) == 16) {
++    $cookie = unpack 'h*', $randata;
++  }
++  close(URANDOM);
++}
++if ($cookie eq "") {
++  srand(time+$$+unpack("L",`cat $vncUserDir/passwd`));
++  for (1..16) {
++    $cookie .= sprintf("%02x", int(rand(256)) % 256);
++  }
++}
+ 
+ open(XAUTH, "|xauth -f $xauthorityFile source -");
+ print XAUTH "add $host:$displayNumber . $cookie\n";
+@@ -796,7 +809,7 @@
+     #
+ 
+  cmd:
+-    foreach $cmd ("uname","mcookie","xauth") {
++    foreach $cmd ("uname","xauth") {
+ 	for (split(/:/,$ENV{PATH})) {
+ 	    if (-x "$_/$cmd") {
+ 		next cmd;
+--- a/vncviewer/vncviewer.cxx	2017-03-16 12:33:53.666780502 -0700
++++ b/vncviewer/vncviewer.cxx	2017-03-16 12:34:37.502948883 -0700
+@@ -481,7 +481,7 @@
+ 
+   init_fltk();
+ 
+-#if !defined(WIN32) && !defined(__APPLE__)
++#if !defined(WIN32) && !defined(__APPLE__) && !defined(sun)
+   fl_open_display();
+   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
+ #endif

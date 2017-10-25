@@ -1,0 +1,157 @@
+--- a/common/rfb/VNCServerST.h	2017-03-11 06:59:07.962768480 +0000
++++ a/commn/rfb/VNCServerST.h	2017-03-11 06:58:41.503370638 +0000
+@@ -191,6 +191,9 @@
+     bool getDisable() { return disableclients;};
+     void setDisable(bool disable) { disableclients = disable;};
+ 
++    // - Check how many of the clients are authenticated.
++    int authClientCount();
++
+   protected:
+ 
+     friend class VNCSConnectionST;
+@@ -225,9 +228,6 @@
+     RenderedCursor renderedCursor;
+     bool renderedCursorInvalid;
+ 
+-    // - Check how many of the clients are authenticated.
+-    int authClientCount();
+-
+     bool needRenderedCursor();
+     void startDefer();
+     bool checkDefer();
+--- a/unix/xserver/dix/main.c	2017-03-11 06:59:49.187950322 +0000
++++ b/unix/xserver/dix/main.c	2017-03-11 07:02:26.877648855 +0000
+@@ -120,6 +120,10 @@
+ #include "dpmsproc.h"
+ #endif
+ 
++#ifdef sun
++#include <priv.h>
++#endif
++
+ #ifdef SUNSOFT
+ extern void DtloginInit(void);
+ extern void DtloginCloseDown(void);
+@@ -155,6 +159,38 @@
+ {
+         remove(sym_authfile);
+ }
++
++void
++SetPrivileges(void)
++{
++        priv_set_t *pPrivSet;
++
++        if ((pPrivSet = priv_allocset()) == NULL) {
++                return;
++       }
++
++        /*
++         * Establish the basic set of privileges.
++         */
++        priv_basicset(pPrivSet);
++
++        /* Add needed privileges. */
++        (void) priv_addset(pPrivSet, PRIV_PROC_AUDIT);
++       (void) priv_addset(pPrivSet, PRIV_FILE_DAC_READ);
++       (void) priv_addset(pPrivSet, PRIV_FILE_DAC_WRITE);
++
++       /* Set the permitted privilege set. */
++       if (setppriv(PRIV_SET, PRIV_PERMITTED, pPrivSet) !=0) {
++               ErrorF("Could not setppriv() PRIV_PERMITTED");
++       }
++
++       /* Set the limit privilege set. */
++       if (setppriv(PRIV_SET, PRIV_LIMIT, pPrivSet) !=0) {
++               ErrorF("Could not setppriv() PRIV_LIMT");
++       }
++
++       priv_freeset(pPrivSet);
++}
+ #endif
+ 
+ CallbackListPtr RootWindowFinalizeCallback = NULL;
+@@ -181,6 +217,7 @@
+     ProcessCommandLine(argc, argv);
+ 
+ #if defined(sun)
++    SetPrivileges();
+     xauthfile = GetAuthFilename();
+     if (xauthfile)
+         SetupXauthFile(xauthfile);
+--- a/unix/xserver/hw/vnc/XserverDesktop.cc	2017-03-11 07:02:46.013551753 +0000
++++ b/unix/xserver/he/vnc/XserverDesktop.cc	2017-03-11 07:05:22.875711797 +0000
+@@ -49,6 +49,8 @@
+ using namespace rfb;
+ using namespace network;
+ 
++extern bool screenlock;
++
+ static LogWriter vlog("XserverDesktop");
+ 
+ class FileHTTPServer : public rfb::HTTPServer {
+@@ -415,11 +417,28 @@
+     server->getSockets(&sockets);
+     for (i = sockets.begin(); i != sockets.end(); i++) {
+       int fd = (*i)->getFd();
++      int status;
++      pid_t pid;
+       if ((*i)->isShutdown()) {
+         vlog.debug("client gone, sock %d",fd);
+         server->removeSocket(*i);
+         vncClientGone(fd);
+         delete (*i);
++       /*
++        * If the screenlock option is chosen, lock the screen when the client
++        * disconnects.
++        */
++        if (screenlock && (server->authClientCount() == 0)) {
++          if ((pid = fork()) < 0) {
++            vlog.error("Could not fork");
++          } else if (pid == 0) {
++            if (execlp("/usr/lib/vnclock", "vnclock",
++             display, NULL) < 0) {
++              vlog.error("Could not exec vnclock");
++            }
++            exit(0);
++          }
++        }
+       } else {
+         FD_SET(fd, fds);
+       }
+--- a/unix/xserver/hw/vnc/xvnc.c	2017-03-11 07:05:59.180874619 +0000
++++ b/unix/xserver/hw/vnc/xvnc.c	2017-03-11 07:06:37.372837487 +0000
+@@ -593,6 +595,12 @@
+ 	return 1;
+     }
+ 
++    if (strcmp(argv[i], "-screenlock") == 0) {
++        screenlock = TRUE;
++        return 1;
++    }
++
++
+     if (strcmp(argv[i], "-noclipboard") == 0) {
+ 	vncNoClipboard = 1;
+ 	return 1;
+--- a/unix/xserver/hw/vnc/XserverDesktop.cc	2017-03-11 09:03:36.417666425 +0000
++++ b/unix/xserver/hw/vnc/XserverDesktop.cc	2017-03-11 09:09:29.677355333 +0000
+@@ -49,6 +49,7 @@
+ using namespace rfb;
+ using namespace network;
+ 
++extern const char *display;
+ extern bool screenlock;
+ 
+ static LogWriter vlog("XserverDesktop");
+--- a/unix/xserver/hw/vnc/xvnc.c	2017-03-11 16:07:25.578163353 +0000
++++ b/unix/xserver/hw/vnc/xvnc.c	2017-03-11 16:07:50.184293399 +0000
+@@ -154,6 +152,7 @@
+ 
+ static int vncVerbose = DEFAULT_LOG_VERBOSITY;
+ 
++Bool screenlock = FALSE;
+ 
+ static void
+ vncPrintBanner(void)
