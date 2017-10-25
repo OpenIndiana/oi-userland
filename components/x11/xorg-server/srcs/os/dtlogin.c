@@ -261,6 +261,12 @@ dtlogin_create_pipe(int port, struct dmdata *dmd)
 
     snprintf(pipename, sizeof(pipename), "%s/%d", DTLOGIN_PATH, port);
 
+    /* Workaround: cleanup pipe if it has not been removed. */
+    if (stat(pipename, &statbuf) == 0) {
+        DtloginInfo("Cleanup leftover display manager pipe: %s\n", pipename);
+        remove(pipename);
+    }
+
     if (mkfifo(pipename, S_IRUSR | S_IWUSR) < 0)
 	return -1;
 
