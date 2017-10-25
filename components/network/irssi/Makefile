@@ -17,14 +17,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
-COMPONENT_VERSION=	1.0.4
+COMPONENT_VERSION=	1.0.5
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_FMRI=		network/chat/irssi
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:b85c07dbafe178213eccdc69f5f8f0ac024dea01c67244668f91ec1c06b986ca
+  sha256:c2556427e12eb06cabfed40839ac6f57eb8b1aa6365fab6dfcd331b7a04bb914
 COMPONENT_ARCHIVE_URL= \
   https://github.com/irssi/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://irssi.org/
