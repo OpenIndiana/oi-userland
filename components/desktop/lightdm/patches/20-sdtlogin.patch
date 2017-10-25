@@ -1,0 +1,188 @@
+Use /var/dt/sdtlogin pipe, created by xorg server, to send user ids,
+so that server could drop privileges.
+
+--- lightdm-1.19.3/src/session-child.c.~8~	2017-10-25 09:04:02.187093081 +0000
++++ lightdm-1.19.3/src/session-child.c	2017-10-25 09:09:14.198153389 +0000
+@@ -222,6 +222,116 @@
+     g_free(save_dir);
+ }
+ 
++static void
++solaris_xserver_cred (const char *username, uid_t uid, gid_t gid, const char *home_dir,
++                      const char *xdisplay)
++{
++    static FILE *fp;
++    struct stat statbuf;
++    gid_t  groups[NGROUPS_UMAX];
++    char *tmp, *p, pipe[MAXPATHLEN], info[MAXPATHLEN];
++    int display_number = 0;
++    int fd, i;
++    int ngroups;
++
++    if (fp == NULL) {	/* Open & setup fp on first access */
++         /*
++          * Handshake with server. Make sure it created a pipe.
++          * Open and write.
++          */
++         if ((tmp = strstr (xdisplay, ":")) != NULL) {
++          tmp++;
++          display_number = g_ascii_strtod (tmp, &p);
++
++          if (errno != 0) {
++               g_warning ("solaris_xserver_cred: problem"
++                    " getting display number\n");
++               return;
++          }
++     }
++
++     if (stat (SDTLOGIN_DIR, &statbuf) == 0) {
++          if (! S_ISDIR(statbuf.st_mode)) {
++               g_warning ("solaris_xserver_cred: %s is not"
++                    " a directory\n", SDTLOGIN_DIR);
++               return;
++          }
++     } else {
++          g_warning ("solaris_xserver_cred: %s: %s\n",
++                  SDTLOGIN_DIR, g_strerror(errno));
++          return;
++     }
++
++     snprintf (pipe, sizeof(pipe), "%s/%d",
++            SDTLOGIN_DIR, display_number);
++     fd = open (pipe, O_RDWR | O_CLOEXEC | O_NOFOLLOW);
++
++     if (fd < 0) {
++          g_warning ("solaris_xserver_cred: could not open"
++                  " %s: %s\n", pipe, g_strerror(errno));
++          return;
++     }
++     if (fstat (fd, &statbuf) == 0 ) {
++          if (! S_ISFIFO(statbuf.st_mode)) {
++               close (fd);
++               g_warning ("solaris_xserver_cred: %s is not"
++                    " a pipe\n", pipe);
++               return;
++          }
++     } else {
++          close (fd);
++          g_warning ("solaris_xserver_cred: %s: %s\n",
++                  pipe, g_strerror(errno));
++          return;
++     }
++     fp = fdopen (fd, "w");
++     if (fp == NULL) {
++          close (fd);
++          g_warning ("solaris_xserver_cred: could not fdopen"
++                  " %s: %s\n", pipe, g_strerror(errno));
++          return;
++     }
++    }
++
++    snprintf (info, sizeof(info), "GID=\"%d\"; ", gid);
++    fputs (info, fp);
++    g_debug ("solaris_xserver_cred: %s\n", info);
++
++    if (initgroups (username, gid) == -1) {
++         ngroups = 0;
++    } else {
++         ngroups = getgroups (NGROUPS_UMAX, groups);
++    }
++
++    for (i=0; i < ngroups; i++) {
++         snprintf (info, sizeof(info), "G_LIST_ID=\"%u\" ", groups[i]);
++         fputs (info, fp);
++         g_debug ("solaris_xserver_cred: %s\n", info);
++    }
++
++    if (ngroups > 0) {
++         fputc (';', fp);
++    }
++
++    snprintf (info, sizeof(info), " HOME=\"%s\" ", home_dir);
++    fputs (info, fp);
++    g_debug ("solaris_xserver_cred: %s\n", info);
++
++    snprintf (info, sizeof(info), " UID=\"%d\" EOF=\"\";",
++        uid);
++    fputs (info, fp);
++    g_debug ("solaris_xserver_cred: %s\n", info);
++
++    /*
++     * Handshake with server. Make sure it read the pipe.
++     *
++     * Do not close file descriptor, but leave it open for further use.
++     */
++    fflush (fp);
++
++    return;
++}
++
+ static gchar *
+ read_string (void)
+ {
+@@ -854,6 +964,13 @@
+     uid = user_get_uid (user);
+     gid = user_get_gid (user);
+     home_directory = user_get_home_directory (user);
++
++#ifdef __sun
++    if (xdisplay) { /* Should always be true */
++        solaris_xserver_cred (username, uid, gid, home_directory, xdisplay);
++    }
++#endif
++
+     child_pid = fork ();
+     if (child_pid == 0)
+     {
+--- lightdm-1.19.3/common/configuration.h.1	2017-10-25 08:43:04.689998057 +0000
++++ lightdm-1.19.3/common/configuration.h	2017-10-25 08:44:56.582620720 +0000
+@@ -12,6 +12,15 @@
+ #ifndef CONFIGURATION_H_
+ #define CONFIGURATION_H_
+ 
++/* 
++ * Perhaps, it's not the best place for it, but it's the only common header 
++ * of lightdm.c and sesion-child.c
++ */
++#ifdef __sun
++#define DT_DIR "/var/dt"
++#define SDTLOGIN_DIR "/var/dt/sdtlogin"
++#endif
++
+ #include <glib-object.h>
+ 
+ G_BEGIN_DECLS
+--- lightdm-1.19.3/src/lightdm.c.~4~	2017-10-25 09:12:24.672787804 +0000
++++ lightdm-1.19.3/src/lightdm.c	2017-10-25 11:05:49.884502470 +0000
+@@ -16,6 +16,7 @@
+ #include <sys/stat.h>
+ #include <glib.h>
+ #include <glib/gi18n.h>
++#include <glib/gstdio.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <sys/stat.h>
+@@ -1529,6 +1530,23 @@
+         g_warning ("Failed to make cache directory %s: %s", dir, strerror (errno));
+     g_free (dir);
+ 
++#ifdef __sun
++    {
++        struct stat statbuf;
++        int r;
++
++        r = stat (DT_DIR, &statbuf);
++        if (r < 0) {
++           g_mkdir (DT_DIR, 0755);
++        }
++
++        r = stat (SDTLOGIN_DIR, &statbuf);
++        if (r < 0) {
++           g_mkdir (SDTLOGIN_DIR, 0700);
++        } 
++    }
++#endif
++
+     log_init ();
+ 
+     /* Show queued messages once logging is complete */
