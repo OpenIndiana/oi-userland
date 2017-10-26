@@ -825,6 +825,9 @@ CPP_LARGEFILES =		$(CPP_LARGEFILES.$(BITS))
 # we currently do not support.
 CPP_POSIX =	-D_POSIX_C_SOURCE=200112L -D_POSIX_PTHREAD_SEMANTICS
 
+# XPG7 mode.  This option enables XPG7 conformance, plus extensions.
+CPP_XPG7MODE=	-D_XOPEN_SOURCE=700 -D__EXTENSIONS__=1 -D_XPG7
+
 # XPG6 mode.  This option enables XPG6 conformance, plus extensions.
 # Amongst other things, this option will cause system calls like
 # popen (3C) and system (3C) to invoke the standards-conforming
