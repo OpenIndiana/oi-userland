@@ -23,27 +23,32 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.18
+COMPONENT_VERSION=	1.19.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b5b55b75726c04c06fe253daec9329a6f1a3c0c1878e3ea76ebfebc139ea9cc1
+    sha256:4f4a673b6d466efa50fbfba796bd84a46ae24e370fa562ede5b21ab53c11a920
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
+
+# wget doesn't detect libidn2 include directory
+CPPFLAGS +=	-I/usr/include/idn2
 
 # Enforce openssl (--with-ssl=openssl) instead of default gnutls
 # (--with-ssl) as wget doesn't work for secure connections with gnutls. 
-# Set PATH to find /usr/perl5/bin/pod2man, so that the man page wget.1
-# can be automatically generated
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-ssl=openssl
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
+CONFIGURE_OPTIONS +=	--enable-iri
+
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # Some tests fail, see http://savannah.gnu.org/bugs/?48281
 # Keep just the final test report
@@ -54,17 +59,13 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^See/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^Please/p" '
 
-# Master test results are the same for 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+build:		$(BUILD_64)
 
-build:		$(BUILD_32_and_64)
+install:	$(INSTALL_64)
 
-install:	$(INSTALL_32_and_64)
+test:		$(TEST_64)
 
-test:		$(TEST_32_and_64)
-
-REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
