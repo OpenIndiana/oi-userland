@@ -26,7 +26,9 @@ license COPYING license='LGPLv2.1'
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 <transform file path=usr/lib/ibus/.* -> default mode 0555>
 
-file files/ibus-xinput path=usr/X11/xinit/imf.d/0010.ibus mode=0555
+depend fmri=system/input-method/imf-startup type=require
+
+file files/ibus-xinput path=etc/X11/xinit/imf.d/0010.ibus mode=0555
 
 file path=etc/dconf/db/ibus.d/00-upstream-settings
 file path=etc/dconf/profile/ibus
