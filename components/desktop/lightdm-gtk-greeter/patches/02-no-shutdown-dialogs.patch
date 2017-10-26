@@ -1,20 +1,21 @@
 Remove shutdown/restart dialog unless  it's explicitly enabled
 
---- lightdm-gtk-greeter-2.0.2/src/lightdm-gtk-greeter.c.~2~	2017-08-29 18:18:56.117499263 +0000
-+++ lightdm-gtk-greeter-2.0.2/src/lightdm-gtk-greeter.c	2017-08-29 18:18:56.134661510 +0000
-@@ -94,6 +94,9 @@
+--- lightdm-gtk-greeter-2.0.2/src/lightdm-gtk-greeter.c.orig	2017-10-26 22:05:13.499783031 +0000
++++ lightdm-gtk-greeter-2.0.2/src/lightdm-gtk-greeter.c	2017-10-26 22:04:05.108693769 +0000
+@@ -94,6 +94,10 @@
  static GtkLabel     *power_title, *power_text;
  static GtkImage     *power_icon;
  
 +static const gchar *DEFAULT_LAYOUT[] = {"~spacer", "~spacer", "~host", "~spacer",
-+                                     "~session", "~a11y", "~clock", NULL};
++                                        "~session", "~layout", "~a11y", "~clock", NULL};
++
 +
  static const gchar *POWER_WINDOW_DATA_LOOP = "power-window-loop";           /* <GMainLoop*> */
  static const gchar *POWER_WINDOW_DATA_RESPONSE = "power-window-response";   /* <GtkResponseType> */
  
-@@ -460,6 +463,32 @@
- {
-     gchar *new_message = NULL;
+@@ -486,6 +490,32 @@
+         return FALSE;
+     }
  
 +    gchar **names;
 +    gsize length;
@@ -45,12 +46,12 @@ Remove shutdown/restart dialog unless  it's explicitly enabled
      /* Check if there are still users logged in, count them and if so, display a warning */
      gint logged_in_users = 0;
      GList *items = lightdm_user_list_get_users (lightdm_user_list_get_instance ());
-@@ -1442,9 +1471,6 @@
+@@ -1468,9 +1498,6 @@
      gboolean inited = FALSE;
      #endif
  
 -    const gchar *DEFAULT_LAYOUT[] = {"~spacer", "~spacer", "~host", "~spacer",
--                                     "~session", "~a11y", "~clock", NULL};
+-                                     "~session", "~layout", "~a11y", "~clock", NULL};
 -
      gchar **names = config_get_string_list (NULL, CONFIG_KEY_INDICATORS, NULL);
      if (!names)
