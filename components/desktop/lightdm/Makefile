@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lightdm
 COMPONENT_VERSION= 1.19.3
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= Light display manager
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -35,9 +35,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
+
+CPPFLAGS+= $(CPP_XPG7MODE)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
