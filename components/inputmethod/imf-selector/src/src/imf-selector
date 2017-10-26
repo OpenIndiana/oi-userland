@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python2.7
 #
 # CDDL HEADER START
 #
@@ -30,14 +30,13 @@ import signal
 import sys
 import getopt
 import time
-import gtk
-import gobject
-import gnome
-import pango
 import commands
 import locale
 from os import path
-from gtk import gdk
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk
 
 _  = lambda a : gettext.dgettext("imf-selector", a)
 
@@ -52,8 +51,6 @@ class IMSelector(object):
 
     def __init__(self):
         super(IMSelector, self).__init__()
-        props = {gnome.PARAM_APP_DATADIR: self.DATADIR}
-        gnome.program_init('imf-selector', '0.1', properties=props)
         self.__init_ui()
         self.__create_lst()
         self.__mark_cnt_im()
@@ -61,38 +58,37 @@ class IMSelector(object):
     def __init_ui(self):
         gettext.bindtextdomain("imf-selector", self.LOCALEDIR)
         gettext.bind_textdomain_codeset("imf-selector", "UTF-8")
-        self.dlg = gtk.Dialog(_("Input Method Framework Selector"))
+        self.dlg = Gtk.Dialog(_("Input Method Framework Selector"))
         self.dlg.set_size_request(400,200) 
         self.dlg.set_border_width(5)
-        self.dlg.set_type_hint("normal")
-        self.dlg.set_has_separator(False)
+        self.dlg.set_type_hint(Gdk.WindowTypeHint.NORMAL)
         self.dlg.connect("delete_event", self.__quit)
 
-        vbox = gtk.VBox(spacing=7)
-        self.dlg.vbox.pack_start(vbox)
+        vbox = Gtk.VBox(spacing=7)
+        self.dlg.vbox.pack_start(vbox, True, True, 0)
 
-        self.enable_btn = gtk.CheckButton(_("_Enable Input Method Framework"))
-        vbox.pack_start(self.enable_btn, expand=False)
+        self.enable_btn = Gtk.CheckButton(_("Enable Input Method Framework"))
+        vbox.pack_start(self.enable_btn, False, False, 0)
         self.enable_btn.connect("toggled", self.__toggle_im, None)
 
-        scroll_window = gtk.ScrolledWindow()
-        scroll_window.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        vbox.pack_start(scroll_window)
+        scroll_window = Gtk.ScrolledWindow()
+        scroll_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        vbox.pack_start(scroll_window, False, False, 0)
 
-        self.tv = gtk.TreeView() 
-        self.lst = gtk.ListStore(gobject.TYPE_STRING)
+        self.tv = Gtk.TreeView() 
+        self.lst = Gtk.ListStore(str)
         self.tv.set_model(self.lst)
-        tv_clm = gtk.TreeViewColumn(_("Available Input Method Framework"))
-        tv_cl = gtk.CellRendererText()
+        tv_clm = Gtk.TreeViewColumn(_("Available Input Method Framework"))
+        tv_cl = Gtk.CellRendererText()
         tv_clm.pack_start(tv_cl, True)
         tv_clm.add_attribute(tv_cl, 'text', 0)
         self.tv.append_column(tv_clm)
         scroll_window.add(self.tv) 
 
-        help_btn = gtk.Button(_("_Help"))
-        default_btn = gtk.Button(_("_Reset"))
-        cancel_btn = gtk.Button(_("_Cancel"))
-        ok_btn = gtk.Button(_("_OK"))
+        help_btn = Gtk.Button(_("Help"))
+        default_btn = Gtk.Button(_("Reset"))
+        cancel_btn = Gtk.Button(_("Cancel"))
+        ok_btn = Gtk.Button(_("OK"))
         self.dlg.action_area.pack_start(help_btn, True, True, 0) 
         self.dlg.action_area.pack_start(default_btn, True, True, 0)
         self.dlg.action_area.pack_start(cancel_btn, True, True, 0) 
@@ -110,7 +106,7 @@ class IMSelector(object):
             self.__enable_im()
 
     def __launch_help(self, widget=None, data=None):
-        gnome.help_display('imf-selector.xml')
+	 os.spawnv(os.P_NOWAIT, "/usr/bin/yelp", ["/usr/bin/yelp", "gnome-help:imf-selector"])
 
     def __default(self, widget=None, data=None):
         im = self.__exec_script('-default')
@@ -132,7 +128,7 @@ class IMSelector(object):
         return None
 
     def __quit(self, widget=None, data=None):
-        gtk.main_quit()
+        Gtk.main_quit()
         return False
 
     def __disable_im(self):
@@ -199,12 +195,12 @@ class IMSelector(object):
         msg = _("Do you update your configuration ?\n"\
                 "This configuration becomes effective "\
                 "from next desktop login.")
-        dlg = gtk.MessageDialog(type = gtk.MESSAGE_INFO,
-                    buttons = gtk.BUTTONS_YES_NO,
+        dlg = Gtk.MessageDialog(type = Gtk.MessageType.INFO,
+                    buttons = Gtk.ButtonsType.YES_NO,
                     message_format = msg)
         id = dlg.run()
         dlg.destroy()
-        if id == gtk.RESPONSE_YES:
+        if id == Gtk.ResponseType.YES:
             if(not self.ENABLE_FLAG):
                 if(self.__exec_script('-set') != False):
                     self.__quit()
@@ -212,7 +208,7 @@ class IMSelector(object):
                 imname = self.lst.get_value(iter, 0)
                 if(self.__exec_script('-set', self.XIM_DATA[imname]) != False):
                     self.__quit()
-        elif id == gtk.RESPONSE_NO:
+        elif id == Gtk.ResponseType.NO:
             return
 
     def __unselect_all(self):
@@ -221,15 +217,15 @@ class IMSelector(object):
         selection.unselect_all()
 
     def __show_err_dlg(self, msg):
-        dlg = gtk.MessageDialog(type = gtk.MESSAGE_ERROR,
-                    buttons = gtk.BUTTONS_OK,
+        dlg = Gtk.MessageDialog(type = Gtk.MessageType.ERROR,
+                    buttons = Gtk.ButtonsType.OK,
                     message_format = msg)
         id = dlg.run()
         dlg.destroy()
 
     def run(self):
         self.dlg.show_all()
-        gtk.main()
+        Gtk.main()
 
     def init_priorui(self, script, engine, imf):
         msg = _("Found Input Method '%s' under '%s' framework on "\
@@ -238,20 +234,20 @@ class IMSelector(object):
                 "This configuration becomes effective "\
                 "from next desktop login.") %(engine, imf)
         
-        self.priordlg = gtk.MessageDialog(type = gtk.MESSAGE_INFO,
-                    buttons = gtk.BUTTONS_YES_NO,
+        self.priordlg = Gtk.MessageDialog(type = Gtk.MessageType.INFO,
+                    buttons = Gtk.ButtonsType.YES_NO,
                     message_format = msg)
         id = self.priordlg.run()
         self.priordlg.destroy()
-        if(id == gtk.RESPONSE_YES):
+        if(id == Gtk.ResponseType.YES):
             self.__exec_script('-set', script)
-        elif(id == gtk.RESPONSE_NO):
+        elif(id == Gtk.ResponseType.NO):
             self.__exec_script('-set', 'IGNORE')
         sys.exit(0)
 
     def run_prior(self, script, engine, imf):
         self.init_priorui(script, engine, imf)
-        gtk.main()
+        Gtk.main()
 
 if __name__ == "__main__":
     try:
