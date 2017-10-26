@@ -33,11 +33,10 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d92c77acdc3b132ff6b2de06a1321654a556defa21b7dd3e8d4829434ed64e8e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/automake
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
@@ -49,6 +48,6 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
