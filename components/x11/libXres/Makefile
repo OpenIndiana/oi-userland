@@ -16,26 +16,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXres
-COMPONENT_VERSION=        1.0.7
+COMPONENT_VERSION=        1.2.0
 COMPONENT_FMRI=           x11/library/libxres
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXres - X Resource extension library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:26899054aa87f81b17becc68e8645b240f140464cf90c42616ebb263ec5fa0e5
+  sha256:ff75c1643488e64a7cfbced27486f0f944801319c84c18d3bd3da6bf28c812d4
 COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/libXres-1.0.7.tar.bz2
+  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXres.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
