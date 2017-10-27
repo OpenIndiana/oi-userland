@@ -17,18 +17,20 @@
                      <property name="shadow_type">none</property>
                      <child>
 --- ibus-1.5.13/setup/main.py.~1~	2016-02-22 11:46:23.000000000 +0000
-+++ ibus-1.5.13/setup/main.py	2017-10-26 20:36:10.684124059 +0000
-@@ -25,6 +25,7 @@
-
++++ ibus-1.5.13/setup/main.py	2017-10-27 08:44:34.828623420 +0000
+@@ -24,7 +24,9 @@
+ from __future__ import print_function
+ 
  import os
++import shutil
  import signal
 +import subprocess
  import sys
  import time
-
-@@ -506,35 +507,26 @@
+ 
+@@ -506,35 +508,38 @@
          model.set(iter, COLUMN_PRELOAD, data[DATA_PRELOAD])
-
+ 
      def __is_auto_start(self):
 -        link_file = path.join(GLib.get_user_config_dir(),
 -                              "autostart/ibus.desktop")
@@ -70,12 +72,24 @@
 +    def __checkbutton_auto_start_toggled_cb(self, button):
 +        IBUS_SCRIPT="/etc/X11/xinit/imf.d/0010.ibus"
 +
-+        home = os.getenv("HOME")
-+        if home:
-+            if self.__checkbutton_auto_start.get_active():
-+               os.system("/usr/bin/cat %s > %s/.imf" % (IBUS_SCRIPT, home))
-+            else:
-+               os.system("/usr/bin/rm -f %s/.imf" % (home))
-
++        try:
++            home = os.getenv("HOME")
++            if home:
++                config_file = path.join(home, ".imf")
++                if self.__checkbutton_auto_start.get_active():
++                   shutil.copyfile(IBUS_SCRIPT, config_file)
++                elif os.path.exists(config_file):
++                   os.unlink(config_file)
++        except Exception as e:
++            dlg = Gtk.MessageDialog(message_type = Gtk.MessageType.ERROR,
++                    transient_for = self.__window,
++                    buttons = Gtk.ButtonsType.CLOSE,
++                    text = str(e))
++            dlg.run()
++            dlg.destroy()
++            self.__flush_gtk_events()
++            return
++
+ 
      def __sigusr1_cb(self, *args):
          self.__window.present()
