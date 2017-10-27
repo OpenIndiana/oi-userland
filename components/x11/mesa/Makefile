@@ -18,14 +18,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 13.0.6
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0937804f43746339b1f9540d8f9c8b4a1bb3d3eec0e4020eac283b8799798239
+  sha256:29ef104a7fc082d352b1599bd6cb1d040be424ccd22f5e0eb7ee9b0e9acd3597
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_ARCHIVE)
+  https://mesa.freedesktop.org/archive/older-versions/13.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
 include $(WS_MAKE_RULES)/prep.mk
