@@ -1,0 +1,18 @@
+Debian: https://sources.debian.net/src/dvd%2Brw-tools/7.1-11.1/debian/patches/09-wctomb.patch/
+
+Author: Kees Cook <kees@debian.org>
+Description: wctomb called with too small a buffer, patch originally taken from fedora (Closes: #497833).
+
+MB_LEN_MAX is typically 16 in glibc
+
+--- a/transport.hxx
++++ b/transport.hxx
+@@ -124,7 +124,7 @@
+ extern "C" char *plusminus_locale()
+ { static class __plusminus {
+     private:
+-	char str[4];
++	char str[16];
+     public:
+ 	__plusminus()	{   setlocale(LC_CTYPE,ENV_LOCALE);
+ 			    int l = wctomb(str,(wchar_t)(unsigned char)'±');

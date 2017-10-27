@@ -1,0 +1,17 @@
+## Description: Fix spurious "CLOSE SESSION failed" on BD-R
+## Origin/Author: Thomas Schmitt <scdbackup@gmx.net>
+## Bug: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=713016
+Index: dvd+rw-tools-7.1/growisofs_mmc.cpp
+===================================================================
+--- dvd+rw-tools-7.1.orig/growisofs_mmc.cpp
++++ dvd+rw-tools-7.1/growisofs_mmc.cpp
+@@ -756,6 +757,9 @@ static void bd_r_format (Scsi_Command &c
+ 
+     wait_for_unit (cmd);
+ 
++    // debian bug #713016
++    bdr_plus_pow = 1;
++
+     cmd[0] = 0x35;	// FLUSH CACHE
+     cmd[9] = 0;
+     cmd.transport();
