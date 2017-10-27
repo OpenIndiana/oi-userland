@@ -1,0 +1,148 @@
+--- a/common/rfb/VNCSConnectionST.cxx	2017-03-11 02:36:55.540218849 +0000
++++ b/common/rfb/VNCSConnectionST.cxx	2017-03-11 02:39:43.674794316 +0000
+@@ -42,6 +42,10 @@
+ #define XK_XKB_KEYS
+ #include <rfb/keysymdef.h>
+ 
++#ifdef HAVE_LIBBSM
++#include <ucred.h>
++#endif
++
+ using namespace rfb;
+ 
+ static LogWriter vlog("VNCSConnST");
+@@ -87,6 +91,26 @@
+   lastEventTime = time(0);
+ 
+   server->clients.push_front(this);
++
++#ifdef HAVE_LIBBSM
++  if (adt_start_session(&audit_handle, NULL, 0) != 0) {
++      vlog.error("adt_start_session failed: %s", strerror(errno));
++  } else {
++    ucred_t             *uc = NULL;
++
++    if (getpeerucred(sock->getFd(), &uc) == 0) {
++      if (adt_set_from_ucred(audit_handle, uc, ADT_NEW) != 0) {
++       vlog.error("adt_set_from_ucred failed: %s", strerror(errno));
++      }
++      ucred_free(uc);
++    } else {
++      if (adt_set_user(audit_handle, ADT_NO_ATTRIB, ADT_NO_ATTRIB,
++                      ADT_NO_ATTRIB, ADT_NO_ATTRIB, NULL, ADT_NEW) != 0) {
++       vlog.error("adt_set_user failed: %s", strerror(errno));
++      }
++    }
++  }
++#endif
+ }
+ 
+ 
+@@ -109,6 +133,10 @@
+   // Remove this client from the server
+   server->clients.remove(this);
+ 
++#ifdef HAVE_LIBBSM
++  adt_end_session(audit_handle);
++#endif
++
+   delete [] fenceData;
+ }
+ 
+@@ -136,6 +164,32 @@
+ 
+   if (authenticated()) {
+       server->lastDisconnectTime = time(0);
++
++#ifdef HAVE_LIBBSM
++      adt_event_data_t    *event;
++
++      if ((event = adt_alloc_event(audit_handle, ADT_vnc_disconnect)) == NULL) {
++       vlog.error("adt_alloc_event failed: %s", strerror(errno));
++      } else {
++       event->adt_vnc_disconnect.peer = sock->getFd();
++       if (adt_put_event(event, ADT_SUCCESS, ADT_SUCCESS) != 0) {
++         vlog.error("adt_put_event failed: %s", strerror(errno));
++       }
++       adt_free_event(event);
++      }
++  } else { // authentication failed
++    adt_event_data_t    *event;
++
++    if ((event = adt_alloc_event(audit_handle, ADT_vnc_connect)) == NULL) {
++      vlog.error("adt_alloc_event failed: %s", strerror(errno));
++    } else {
++      event->adt_vnc_connect.peer = sock->getFd();
++      if (adt_put_event(event, ADT_FAILURE, EACCES) != 0) {
++       vlog.error("adt_put_event failed: %s", strerror(errno));
++      }
++      adt_free_event(event);
++    }
++#endif
+   }
+ 
+   // Just shutdown the socket and mark our state as closing.  Eventually the
+@@ -399,6 +453,20 @@
+ 
+ void VNCSConnectionST::authSuccess()
+ {
++#ifdef HAVE_LIBBSM
++  adt_event_data_t    *event;
++
++  if ((event = adt_alloc_event(audit_handle, ADT_vnc_connect)) == NULL) {
++    vlog.error("adt_alloc_event failed: %s", strerror(errno));
++  } else {
++    event->adt_vnc_connect.peer = sock->getFd();
++    if (adt_put_event(event, ADT_SUCCESS, ADT_SUCCESS) != 0) {
++      vlog.error("adt_put_event failed: %s", strerror(errno));
++    }
++    adt_free_event(event);
++  }
++#endif
++
+   lastEventTime = time(0);
+ 
+   server->startDesktop();
+--- a/common/rfb/VNCSConnectionST.h	2017-03-11 02:39:57.633769393 +0000
++++ b/common/rfb/VNCSConnectionST.h	2017-03-11 02:40:40.852107134 +0000
+@@ -34,6 +34,15 @@
+ #include <rfb/Timer.h>
+ #include <rfb/EncodeManager.h>
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#ifdef HAVE_LIBBSM
++#include <bsm/adt.h>
++#include <bsm/adt_event.h>
++#endif
++
+ struct RTTInfo;
+ 
+ namespace rfb {
+@@ -215,6 +224,11 @@
+ 
+     CharArray closeReason;
+     time_t startTime;
++
++#ifdef HAVE_LIBBSM
++    adt_session_data_t  *audit_handle;
++#endif
++
+   };
+ }
+ #endif
+--- a/common/rfb/CMakeLists.txt	2017-03-11 02:41:59.057489972 +0000
++++ b/common/rfb/CMakeLists.txt	2017-03-11 02:43:05.536358580 +0000
+@@ -80,6 +80,10 @@
+   set(RFB_LIBRARIES ${RFB_LIBRARIES} ${PAM_LIBS})
+ endif()
+ 
++if(HAVE_LIBBSM)
++  set(RFB_LIBRARIES ${RFB_LIBRARIES} ${PAM_LIBS} -lbsm)
++endif()
++
+ if(GNUTLS_FOUND)
+   set(RFB_SOURCES
+     ${RFB_SOURCES}

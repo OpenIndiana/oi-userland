@@ -1,0 +1,57 @@
+Remove buildtime from binaries to avoid unnecessary change in ELF data.
+
+--- a/unix/vncconfig/buildtime.c	2017-03-11 07:16:26.183735940 +0000
++++ b/unix/vncconfig/buildtime.c	2017-03-11 07:16:39.430141048 +0000
+@@ -15,4 +15,3 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+  * USA.
+  */
+-char buildtime[] = __DATE__ " " __TIME__;
+--- a/unix/x0vncserver/buildtime.c	2017-03-11 07:17:57.463804435 +0000
++++ b/unix/x0vncserver/buildtime.c	2017-03-11 07:18:05.366932835 +0000
+@@ -15,4 +15,3 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+  * USA.
+  */
+-char buildtime[] = __DATE__ " " __TIME__;
+--- a/unix/x0vncserver/x0vncserver.cxx	2017-03-11 07:18:21.907552984 +0000
++++ b/unix/x0vncserver/x0vncserver.cxx	2017-03-11 07:18:47.120136121 +0000
+@@ -56,8 +56,6 @@
+ #include <sys/proto.h>
+ #endif
+ 
+-extern char buildtime[];
+-
+ using namespace rfb;
+ using namespace network;
+ 
+@@ -412,8 +410,8 @@
+ 
+ static void printVersion(FILE *fp)
+ {
+-  fprintf(fp, "TigerVNC Server version %s, built %s\n",
+-          PACKAGE_VERSION, buildtime);
++  fprintf(fp, "TigerVNC Server version %s\n",
++          PACKAGE_VERSION);
+ }
+ 
+ static void usage()
+--- a/unix/xserver/hw/vnc/xvnc.c	2017-03-11 07:19:51.661067238 +0000
++++ b/unix/xserver/hw/vnc/xvnc.c	2017-03-11 07:20:31.799071698 +0000
+@@ -79,7 +79,6 @@
+ #include "dpmsproc.h"
+ #endif
+ #include <X11/keysym.h>
+-  extern char buildtime[];
+ #undef VENDOR_RELEASE
+ #undef VENDOR_STRING
+ #include "version-config.h"
+@@ -157,7 +156,7 @@
+ static void
+ vncPrintBanner(void)
+ {
+-    ErrorF("\nXvnc %s - built %s\n%s", XVNCVERSION, buildtime, XVNCCOPYRIGHT);
++    ErrorF("\nXvnc %s \n%s", XVNCVERSION, XVNCCOPYRIGHT);
+     ErrorF("Underlying X server release %d, %s\n\n", VENDOR_RELEASE,
+            VENDOR_STRING);
+ }
