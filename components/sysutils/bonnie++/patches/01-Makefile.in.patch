@@ -1,13 +1,15 @@
---- Makefile.in.~1~	2002-10-14 00:26:36.000000000 +0400
-+++ Makefile.in	2014-03-19 11:55:40.335278219 +0400
-@@ -33,14 +33,14 @@
- 	$(CXX) zcav.cpp -o zcav $(ZCAVOBJS) $(LFLAGS)
+--- bonnie++-1.97.3/Makefile.in.~1~	2017-10-27 23:21:57.314828968 +0000
++++ bonnie++-1.97.3/Makefile.in	2017-10-27 23:27:26.094316079 +0000
+@@ -52,15 +52,15 @@
+ 	$(LINK) generate_randfile.o -o generate_randfile
  
- install-bin: $(EXES)
+ install-bin: $(EXE) $(EXES)
 -	mkdir -p $(eprefix)/bin $(eprefix)/sbin
 -	@INSTALL_PROGRAM@ @stripping@ $(EXES) $(eprefix)/sbin
+-	@INSTALL_PROGRAM@ @stripping@ $(EXE) $(eprefix)/bin
 -	@INSTALL_SCRIPT@ $(SCRIPTS) $(eprefix)/bin
 +	mkdir -p $(DESTDIR)/$(eprefix)/bin $(DESTDIR)/usr/benchmarks/bonnie++
++	@INSTALL_PROGRAM@ @stripping@ $(EXE) $(DESTDIR)/usr/benchmarks/bonnie++
 +	@INSTALL_PROGRAM@ @stripping@ $(EXES) $(DESTDIR)/usr/benchmarks/bonnie++
 +	@INSTALL_SCRIPT@ $(SCRIPTS) $(DESTDIR)/usr/benchmarks/bonnie++
  
@@ -19,5 +21,5 @@
 +	@INSTALL_DATA@ $(MAN1) $(DESTDIR)/@mandir@/man1
 +	@INSTALL_DATA@ $(MAN8) $(DESTDIR)/@mandir@/man1
  
- %.o: %.cpp %.h bonnie.h port.h
+ %.o: %.cpp
  	$(CXX) -c $<

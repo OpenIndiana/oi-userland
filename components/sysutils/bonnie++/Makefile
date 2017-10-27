@@ -13,32 +13,39 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= bonnie++
-COMPONENT_VERSION= 1.03e
-IPS_COMPONENT_VERSION= 1.3.5
+COMPONENT_VERSION= 1.97.3
 HUMAN_VERSION= $(COMPONENT_VERSION)
 COMPONENT_SUMMARY= bonnie++ - Benchmark Harddrive utility
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:cb3866116634bf65760b6806be4afa7e24a1cad6f145c876df8721f01ba2e2cb
+  sha256:e27b386ae0dc054fa7b530aab6bdead7aea6337a864d1f982bc9ebacb320746e
 COMPONENT_ARCHIVE_URL= \
   http://www.coker.com.au/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.coker.com.au/bonnie++/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-PATCH_LEVEL=0
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV	+=  PERL=$(PERL)
+gcc_OPT= -O2
 
-build: $(BUILD_32)
+COMPONENT_BUILD_ARGS+= CXXFLAGS="$(gcc_OPT) $(CXXFLAGS)"
+COMPONENT_BUILD_ARGS+= LDFLAGS="$(LDFLAGS)"
 
-install: $(INSTALL_32)
+build: $(BUILD_64)
+
+install: $(INSTALL_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
