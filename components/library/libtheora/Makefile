@@ -13,10 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libtheora
 COMPONENT_VERSION= 1.1.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Theora video compression codec
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,16 +31,15 @@ COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE = Xiph.org BSD-style
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-asm
 CONFIGURE_OPTIONS+= --disable-examples
 
 build: $(BUILD_32_and_64)
@@ -47,3 +47,7 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libogg
+REQUIRED_PACKAGES += system/library
