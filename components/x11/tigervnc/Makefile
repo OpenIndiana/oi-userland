@@ -193,6 +193,7 @@ install: $(INSTALL_32) $(BUILD_DIR)/.installed_jar $(BUILD_DIR)/.installed_Xvnc
 
 # Build dependencies
 REQUIRED_PACKAGES += text/xmlto
+REQUIRED_PACKAGES += x11/server/xorg
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
