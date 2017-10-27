@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk

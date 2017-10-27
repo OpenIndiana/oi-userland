@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/sh
 # Start/stop HACluster service
 #
 . /lib/svc/share/smf_include.sh
@@ -40,22 +40,8 @@ chown ${CLUSTER_USER}:${CLUSTER_GROUP} /var/log/${MYNAME}/${MYNAME}.log
 [ ! -d /var/run/${MYNAME} ] && mkdir -p /var/run/${MYNAME}
 chown -R ${CLUSTER_USER}:${CLUSTER_GROUP} /var/run/${MYNAME}
 
-killapp() {
-        pid=`pgrep -f $1`
-        if [ "x${pid}" != "x" ]; then
-                kill -9 ${pid}
-        fi
-        return 0
-}
-
 start() {
-        stop
         ${APPPATH}${PACEMAKERD} &
-        return 0
-}
-
-stop() {
-        killapp ${APPPATH}${PACEMAKERD}
         return 0
 }
 
@@ -63,15 +49,8 @@ case "$1" in
         'start')
            start
            ;;
-        'restart')
-           stop
-           start
-           ;;
-        'stop')
-           stop
-           ;;
         *)
-           echo "Usage: -bash { start | stop | restart}"
+           echo "Usage: ${0} { start }"
            exit 1
            ;;
 esac
