@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		  x11-server-utilities
 COMPONENT_VERSION=	  7.5
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=		  x11/x11-server-utilities
 COMPONENT_CLASSIFICATION= Meta Packages/Group Packages
 COMPONENT_SUMMARY=	  X11 server state utilities
