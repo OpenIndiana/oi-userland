@@ -1,21 +1,3 @@
---- ibus-1.5.13/setup/setup.ui.~1~	2016-02-22 11:46:23.000000000 +0000
-+++ ibus-1.5.13/setup/setup.ui	2017-10-26 20:06:46.964623585 +0000
-@@ -1033,7 +1033,6 @@
-               <object class="GtkBox" id="vbox4">
-                 <property name="orientation">vertical</property>
-                 <property name="can_focus">False</property>
--                <property name="no_show_all">True</property>
-                 <child>
-                   <placeholder/>
-                 </child>
-@@ -1060,7 +1059,6 @@
-                 <child>
-                   <object class="GtkFrame" id="frame1">
-                     <property name="can_focus">False</property>
--                    <property name="no_show_all">True</property>
-                     <property name="label_xalign">0</property>
-                     <property name="shadow_type">none</property>
-                     <child>
 --- ibus-1.5.13/setup/main.py.~1~	2016-02-22 11:46:23.000000000 +0000
 +++ ibus-1.5.13/setup/main.py	2017-10-27 08:44:34.828623420 +0000
 @@ -24,7 +24,9 @@
@@ -93,3 +75,90 @@
  
      def __sigusr1_cb(self, *args):
          self.__window.present()
+--- ibus-1.5.13/setup/setup.ui	2016-02-22 11:46:23.000000000 +0000
++++ ibus-1.5.13/setup/setup.ui	2017-10-27 13:27:28.737335853 +0000
+@@ -635,6 +635,41 @@
+                     <property name="position">1</property>
+                   </packing>
+                 </child>
++                 <child>
++                  <object class="GtkFrame" id="frame1">
++                    <property name="can_focus">False</property>
++                    <property name="label_xalign">0</property>
++                    <property name="shadow_type">none</property>
++                    <child>
++                      <object class="GtkCheckButton" id="checkbutton_auto_start">
++                        <property name="label" translatable="yes">Start ibus on login</property>
++                        <property name="use_action_appearance">False</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_action_appearance">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="halign">start</property>
++                        <property name="draw_indicator">True</property>
++                        <property name="margin_top">6</property>
++                        <property name="margin_left">12</property>
++                      </object>
++                    </child>
++                    <child type="label">
++                      <object class="GtkLabel" id="label4">
++                        <property name="visible">True</property>
++                        <property name="can_focus">False</property>
++                        <property name="label" translatable="yes">&lt;b&gt;Startup&lt;/b&gt;</property>
++                        <property name="use_markup">True</property>
++                      </object>
++                    </child>
++                  </object>
++                  <packing>
++                    <property name="expand">False</property>
++                    <property name="fill">False</property>
++                    <property name="position">2</property>
++                  </packing>
++                </child>
+               </object>
+             </child>
+             <child type="tab">
+@@ -1057,42 +1092,6 @@
+                     <property name="position">1</property>
+                   </packing>
+                 </child>
+-                <child>
+-                  <object class="GtkFrame" id="frame1">
+-                    <property name="can_focus">False</property>
+-                    <property name="no_show_all">True</property>
+-                    <property name="label_xalign">0</property>
+-                    <property name="shadow_type">none</property>
+-                    <child>
+-                      <object class="GtkCheckButton" id="checkbutton_auto_start">
+-                        <property name="label" translatable="yes">Start ibus on login</property>
+-                        <property name="use_action_appearance">False</property>
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">True</property>
+-                        <property name="receives_default">False</property>
+-                        <property name="use_action_appearance">False</property>
+-                        <property name="use_underline">True</property>
+-                        <property name="halign">start</property>
+-                        <property name="draw_indicator">True</property>
+-                        <property name="margin_top">6</property>
+-                        <property name="margin_left">12</property>
+-                      </object>
+-                    </child>
+-                    <child type="label">
+-                      <object class="GtkLabel" id="label4">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">False</property>
+-                        <property name="label" translatable="yes">&lt;b&gt;Startup&lt;/b&gt;</property>
+-                        <property name="use_markup">True</property>
+-                      </object>
+-                    </child>
+-                  </object>
+-                  <packing>
+-                    <property name="expand">False</property>
+-                    <property name="fill">False</property>
+-                    <property name="position">2</property>
+-                  </packing>
+-                </child>
+               </object>
+               <packing>
+                 <property name="position">3</property>
