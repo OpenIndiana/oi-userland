@@ -1,0 +1,355 @@
+--- old/usr/src/uts/common/io/comstar/port/iscsit/iscsit.c	Wed Oct 18 10:32:12 2017
++++ new/usr/src/uts/common/io/comstar/port/iscsit/iscsit.c	Wed Oct 18 10:32:12 2017
+@@ -22,6 +22,7 @@
+  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+  *
+  * Copyright 2014, 2015 Nexenta Systems, Inc. All rights reserved.
++ * Copyright (c) 2017, Joyent, Inc.  All rights reserved.
+  */
+ 
+ #include <sys/cpuvar.h>
+@@ -124,7 +125,7 @@
+ static idm_status_t iscsit_enable_svc(iscsit_hostinfo_t *hostinfo);
+ static void iscsit_disable_svc(void);
+ 
+-static int
++static boolean_t
+ iscsit_check_cmdsn_and_queue(idm_pdu_t *rx_pdu);
+ 
+ static void
+@@ -1541,8 +1542,9 @@
+ 	/*
+ 	 * If it's not immediate data then start the transfer
+ 	 */
+-	ASSERT(ibuf->ibuf_is_immed == B_FALSE);
+ 	if (dbuf->db_flags & DB_DIRECTION_TO_RPORT) {
++		if (ibuf->ibuf_is_immed)
++			return(iscsit_idm_to_stmf(IDM_STATUS_SUCCESS));
+ 		/*
+ 		 * The DB_SEND_STATUS_GOOD flag in the STMF data buffer allows
+ 		 * the port provider to phase-collapse, i.e. send the status
+@@ -1566,6 +1568,7 @@
+ 
+ 		return (iscsit_idm_to_stmf(idm_rc));
+ 	} else if (dbuf->db_flags & DB_DIRECTION_FROM_RPORT) {
++		ASSERT(ibuf->ibuf_is_immed == B_FALSE);
+ 		/* Grab the SN lock (see comment above) */
+ 		mutex_enter(&ict_sess->ist_sn_mutex);
+ 		idm_rc = idm_buf_rx_from_ini(iscsit_task->it_idm_task,
+@@ -3115,8 +3118,10 @@
+  * CmdSN order. So out-of-order non-immediate commands are queued up on a
+  * session-wide wait queue. Duplicate commands are ignored.
+  *
++ * returns B_TRUE for commands which can be executed immediately (are
++ * non-deferred), B_FALSE for cases where a command was deferred or invalid.
+  */
+-static int
++static boolean_t
+ iscsit_check_cmdsn_and_queue(idm_pdu_t *rx_pdu)
+ {
+ 	idm_conn_t		*ic = rx_pdu->isp_ic;
+@@ -3130,9 +3135,15 @@
+ 		DTRACE_PROBE2(immediate__cmd, iscsit_sess_t *, ist,
+ 		    idm_pdu_t *, rx_pdu);
+ 		mutex_exit(&ist->ist_sn_mutex);
+-		return (ISCSIT_CMDSN_EQ_EXPCMDSN);
++		return (B_TRUE);
+ 	}
+-	if (iscsit_sna_lt(ist->ist_expcmdsn, ntohl(hdr->cmdsn))) {
++	/*
++	 * See RFC3270 3.1.1.2: non-immediate commands outside of the
++	 * expected window (from expcmdsn to maxcmdsn, inclusive)
++	 * should be silently ignored.
++	 */
++	if (iscsit_sna_lt(ist->ist_expcmdsn, ntohl(hdr->cmdsn)) &&
++	    iscsit_sna_lt(ntohl(hdr->cmdsn), ist->ist_maxcmdsn)) {
+ 		/*
+ 		 * Out-of-order commands (cmdSN higher than ExpCmdSN)
+ 		 * are staged on a fixed-size circular buffer until
+@@ -3144,15 +3155,24 @@
+ 		rx_pdu->isp_queue_time = gethrtime();
+ 		iscsit_add_pdu_to_queue(ist, rx_pdu);
+ 		mutex_exit(&ist->ist_sn_mutex);
+-		return (ISCSIT_CMDSN_GT_EXPCMDSN);
+-	} else if (iscsit_sna_lt(ntohl(hdr->cmdsn), ist->ist_expcmdsn)) {
++		return (B_FALSE);
++	} else if (iscsit_sna_lt(ntohl(hdr->cmdsn), ist->ist_expcmdsn) ||
++	    iscsit_sna_lt(ist->ist_maxcmdsn, ntohl(hdr->cmdsn))) {
++		/*
++		 * See above, this command is outside of our acceptable
++		 * window, we need to discard/complete.
++		 */
+ 		DTRACE_PROBE3(cmdsn__lt__expcmdsn, iscsit_sess_t *, ist,
+ 		    iscsit_conn_t *, ict, idm_pdu_t *, rx_pdu);
+ 		mutex_exit(&ist->ist_sn_mutex);
+-		return (ISCSIT_CMDSN_LT_EXPCMDSN);
++		idm_pdu_complete(rx_pdu, IDM_STATUS_SUCCESS);
++		/*
++		 * tell our callers that the PDU "finished."
++		 */
++		return (B_FALSE);
+ 	} else {
+ 		mutex_exit(&ist->ist_sn_mutex);
+-		return (ISCSIT_CMDSN_EQ_EXPCMDSN);
++		return (B_TRUE);
+ 	}
+ }
+ 
+--- old/usr/src/uts/common/io/comstar/port/iscsit/iscsit.h	Wed Oct 18 10:32:12 2017
++++ new/usr/src/uts/common/io/comstar/port/iscsit/iscsit.h	Wed Oct 18 10:32:12 2017
+@@ -22,6 +22,7 @@
+ /*
+  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+  * Copyright 2014 Nexenta Systems, Inc.  All rights reserved.
++ * Copyright (c) 2017, Joyent, Inc.  All rights reserved.
+  */
+ 
+ #ifndef _ISCSIT_H_
+@@ -61,9 +62,6 @@
+ #define	ISCSIT_MAX_WINDOW	1024
+ #define	ISCSIT_RXPDU_QUEUE_LEN	2048
+ 
+-#define	ISCSIT_CMDSN_LT_EXPCMDSN	-1
+-#define	ISCSIT_CMDSN_EQ_EXPCMDSN	1
+-#define	ISCSIT_CMDSN_GT_EXPCMDSN	0
+ /*
+  * MC/S: A timeout is maintained to recover from lost CmdSN (holes in the
+  * CmdSN ordering). When the timeout is reached, the ExpCmdSN is advanced
+--- old/usr/src/uts/common/io/idm/idm_so.c	Wed Oct 18 10:32:12 2017
++++ new/usr/src/uts/common/io/idm/idm_so.c	Wed Oct 18 10:32:12 2017
+@@ -24,6 +24,7 @@
+  */
+ /*
+  * Copyright (c) 2013 by Delphix. All rights reserved.
++ * Copyright (c) 2017, Joyent, Inc.  All rights reserved.
+  */
+ 
+ #include <sys/conf.h>
+@@ -732,7 +733,104 @@
+ 	return ((ptr[0] << 16) | (ptr[1] << 8) | ptr[2]);
+ }
+ 
++static boolean_t
++idm_dataseglenokay(idm_conn_t *ic, idm_pdu_t *pdu)
++{
++	iscsi_hdr_t     *bhs;
+ 
++	if (ic->ic_conn_type == CONN_TYPE_TGT &&
++	    pdu->isp_datalen > ic->ic_conn_params.max_recv_dataseglen) {
++		IDM_CONN_LOG(CE_WARN,
++		    "idm_dataseglenokay: exceeded the max data segment length");
++		return (B_FALSE);
++	}
++
++	bhs = pdu->isp_hdr;
++	/*
++	 * Filter out any RFC3720 data-size violations.
++	 */
++	switch (IDM_PDU_OPCODE(pdu)) {
++	case ISCSI_OP_SCSI_TASK_MGT_MSG:
++	case ISCSI_OP_SCSI_TASK_MGT_RSP:
++	case ISCSI_OP_RTT_RSP:
++	case ISCSI_OP_LOGOUT_CMD:
++		/*
++		 * Data-segment not allowed and additional headers not allowed.
++		 * (both must be zero according to the RFC3720.)
++		 */
++		if (bhs->hlength != 0 || pdu->isp_datalen != 0)
++			return (B_FALSE);
++		break;
++	case ISCSI_OP_NOOP_OUT:
++	case ISCSI_OP_LOGIN_CMD:
++	case ISCSI_OP_TEXT_CMD:
++	case ISCSI_OP_SNACK_CMD:
++	case ISCSI_OP_NOOP_IN:
++	case ISCSI_OP_SCSI_RSP:
++	case ISCSI_OP_LOGIN_RSP:
++	case ISCSI_OP_TEXT_RSP:
++	case ISCSI_OP_SCSI_DATA_RSP:
++	case ISCSI_OP_LOGOUT_RSP:
++	case ISCSI_OP_ASYNC_EVENT:
++	case ISCSI_OP_REJECT_MSG:
++		/*
++		 * Additional headers not allowed.
++		 * (must be zero according to RFC3720.)
++		 */
++		if (bhs->hlength != 0)
++			return (B_FALSE);
++		break;
++	case ISCSI_OP_SCSI_CMD:
++		/*
++		 * See RFC3720, section 10.3
++		 *
++		 * For pure read cmds, data-segment-length must be zero.
++		 * For non-final transfers, data-size must be even number of
++		 * 4-byte words.
++		 * For any transfer, an expected byte count must be provided.
++		 * For bidirectional transfers, an additional-header must be
++		 * provided (for the read byte-count.)
++		 */
++		if (pdu->isp_datalen != 0) {
++			if ((bhs->flags & (ISCSI_FLAG_CMD_READ |
++			    ISCSI_FLAG_CMD_WRITE)) == ISCSI_FLAG_CMD_READ)
++				return (B_FALSE);
++			if ((bhs->flags & ISCSI_FLAG_FINAL) == 0 &&
++			    ((pdu->isp_datalen & 0x3) != 0))
++				return (B_FALSE);
++		}
++		if (bhs->flags & (ISCSI_FLAG_CMD_READ |
++		    ISCSI_FLAG_CMD_WRITE)) {
++			iscsi_scsi_cmd_hdr_t *cmdhdr =
++			    (iscsi_scsi_cmd_hdr_t *)bhs;
++			/*
++			 * we're transfering some data, we must have a
++			 * byte count
++			 */
++			if (cmdhdr->data_length == 0)
++				return (B_FALSE);
++		}
++		break;
++	case ISCSI_OP_SCSI_DATA:
++		/*
++		 * See RFC3720, section 10.7
++		 *
++		 * Additional headers aren't allowed, and the data-size must
++		 * be an even number of 4-byte words (unless the final bit
++		 * is set.)
++		 */
++		if (bhs->hlength != 0)
++			return (B_FALSE);
++		if ((bhs->flags & ISCSI_FLAG_FINAL) == 0 &&
++		    ((pdu->isp_datalen & 0x3) != 0))
++			return (B_FALSE);
++		break;
++	default:
++		break;
++	}
++	return (B_TRUE);
++}
++
+ static idm_status_t
+ idm_sorecvhdr(idm_conn_t *ic, idm_pdu_t *pdu)
+ {
+@@ -764,10 +862,10 @@
+ 	pdu->isp_hdrlen = sizeof (iscsi_hdr_t) +
+ 	    (bhs->hlength * sizeof (uint32_t));
+ 	pdu->isp_datalen = n2h24(bhs->dlength);
+-	if (ic->ic_conn_type == CONN_TYPE_TGT &&
+-	    pdu->isp_datalen > ic->ic_conn_params.max_recv_dataseglen) {
++
++	if (!idm_dataseglenokay(ic, pdu)) {
+ 		IDM_CONN_LOG(CE_WARN,
+-		    "idm_sorecvhdr: exceeded the max data segment length");
++		    "idm_sorecvhdr: invalid data segment length");
+ 		return (IDM_STATUS_FAIL);
+ 	}
+ 	if (bhs->hlength > IDM_SORX_CACHE_AHSLEN) {
+@@ -1550,13 +1648,12 @@
+ 
+ 	ASSERT(ic != NULL);
+ 	ASSERT(pdu != NULL);
++	ASSERT(IDM_PDU_OPCODE(pdu) == ISCSI_OP_SCSI_DATA_RSP);
+ 
+ 	bhs	= (iscsi_data_hdr_t *)pdu->isp_hdr;
+ 	datasn	= ntohl(bhs->datasn);
+ 	offset	= ntohl(bhs->offset);
+ 
+-	ASSERT(bhs->opcode == ISCSI_OP_SCSI_DATA_RSP);
+-
+ 	/*
+ 	 * Look up the task corresponding to the initiator task tag
+ 	 * to get the buffers affiliated with the task.
+@@ -1611,7 +1708,7 @@
+ 	 * Revisit, need to provide an explicit client entry point for
+ 	 * phase collapse completions.
+ 	 */
+-	if (((ihp->opcode & ISCSI_OPCODE_MASK) == ISCSI_OP_SCSI_DATA_RSP) &&
++	if ((IDM_PDU_OPCODE(pdu) == ISCSI_OP_SCSI_DATA_RSP) &&
+ 	    (idrhp->flags & ISCSI_FLAG_DATA_STATUS)) {
+ 		(*ic->ic_conn_ops.icb_rx_scsi_rsp)(ic, pdu);
+ 	}
+@@ -1638,10 +1735,10 @@
+ 
+ 	ASSERT(ic != NULL);
+ 	ASSERT(pdu != NULL);
++	ASSERT(IDM_PDU_OPCODE(pdu) == ISCSI_OP_SCSI_DATA);
+ 
+ 	bhs = (iscsi_data_hdr_t *)pdu->isp_hdr;
+ 	offset = ntohl(bhs->offset);
+-	ASSERT(bhs->opcode == ISCSI_OP_SCSI_DATA);
+ 
+ 	/*
+ 	 * Look up the task corresponding to the initiator task tag
+@@ -1687,6 +1784,29 @@
+ 	 */
+ 	if (bhs->flags & ISCSI_FLAG_FINAL) {
+ 		/*
++		 * We have gotten the last data-message for the current
++		 * transfer.  idb_xfer_len represents the data that the
++		 * command intended to transfer, it does not represent the
++		 * actual number of bytes transferred. If we have not
++		 * transferred the expected number of bytes something is
++		 * wrong.
++		 *
++		 * We have two options, when there is a mismatch, we can
++		 * regard the transfer as invalid -- or we can modify our
++		 * notion of "xfer_len." In order to be as stringent as
++		 * possible, here we regard this transfer as in error; and
++		 * bail out.
++		 */
++		if (idb->idb_buflen == idb->idb_xfer_len &&
++		    idb->idb_buflen != (idb->idb_exp_offset - idb->idb_bufoffset)) {
++			printf("idm_so_rx_dataout: incomplete transfer, protocol err");
++			IDM_CONN_LOG(CE_NOTE, "idm_so_rx_dataout: incomplete transfer: "
++			    "%ld, %d", offset, (int)(idb->idb_exp_offset - offset));
++			idm_task_rele(idt);
++			idm_pdu_rx_protocol_error(ic, pdu);
++			return;
++		}
++		/*
+ 		 * We only want to call idm_buf_rx_from_ini_done once
+ 		 * per transfer.  It's possible that this task has
+ 		 * already been aborted in which case
+@@ -1884,7 +2004,7 @@
+ 	bhs	= (iscsi_data_hdr_t *)pdu->isp_hdr;
+ 
+ 	offset	= ntohl(bhs->offset);
+-	opcode	= bhs->opcode;
++	opcode	= IDM_PDU_OPCODE(pdu);
+ 	dlength = n2h24(bhs->dlength);
+ 
+ 	ASSERT((opcode == ISCSI_OP_SCSI_DATA_RSP) ||
+@@ -2189,7 +2309,7 @@
+ 	}
+ 
+ 	/* Setup the data */
+-	if (pdu->isp_datalen) {
++	if (pdu->isp_datalen != 0) {
+ 		idm_task_t		*idt;
+ 		idm_buf_t		*idb;
+ 		iscsi_data_hdr_t	*ihp;
+@@ -2196,8 +2316,8 @@
+ 		ihp = (iscsi_data_hdr_t *)pdu->isp_hdr;
+ 		/* Write of immediate data */
+ 		if (ic->ic_ffp &&
+-		    (ihp->opcode == ISCSI_OP_SCSI_CMD ||
+-		    ihp->opcode == ISCSI_OP_SCSI_DATA)) {
++		    (IDM_PDU_OPCODE(pdu) == ISCSI_OP_SCSI_CMD ||
++		    IDM_PDU_OPCODE(pdu) == ISCSI_OP_SCSI_DATA)) {
+ 			idt = idm_task_find(ic, ihp->itt, ihp->ttt);
+ 			if (idt) {
+ 				mutex_enter(&idt->idt_mutex);
+@@ -2250,11 +2370,11 @@
+ 		 * RFC3720/10.2.3: A zero-length Data Segment also
+ 		 * implies a zero-length data digest.
+ 		 */
+-		if (pdu->isp_datalen) {
++		if (pdu->isp_datalen != 0) {
+ 			data_digest_crc = idm_crc32c(pdu->isp_data,
+ 			    pdu->isp_datalen);
+ 		}
+-		if (pad_len) {
++		if (pad_len != 0) {
+ 			data_digest_crc = idm_crc32c_continued(&pad,
+ 			    pad_len, data_digest_crc);
+ 		}
