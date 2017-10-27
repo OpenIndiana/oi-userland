@@ -12,10 +12,11 @@
 # Copyright (c) 2013 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dvd+rw-tools
 COMPONENT_VERSION=        7.1
+COMPONENT_REVISION=       1
 COMPONENT_PROJECT_URL=    http://fy.chalmers.se/~appro/linux/DVD+RW/
 COMPONENT_SUMMARY=        DVD creation utilities
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,9 +29,13 @@ COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_FMRI=		media/dvd+rw-tools
 COMPONENT_CLASSIFICATION=	System/Media
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_BINDIR.64= $(COMPONENT_BINDIR)
+
+CPPFLAGS+= $(CPP_XPG6MODE)
 
 CFLAGS += -D_FILE_OFFSET_BITS=64
 CFLAGS += -DI_KNOW_ALL_ABOUT_SUDO
@@ -38,14 +43,13 @@ CFLAGS += -DI_KNOW_ALL_ABOUT_SUDO
 COMPONENT_BUILD_ARGS += CC=$(CC)
 COMPONENT_BUILD_ARGS += CXX=$(CXX)
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
                                         
 # common targets
-build:                $(BUILD_32)
+build:                $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
 test:                $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
