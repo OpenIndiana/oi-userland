@@ -1,0 +1,102 @@
+'\" t
+.\"
+.\" Copyright 2001 Keith Packard
+.\"
+.\" Permission to use, copy, modify, distribute, and sell this software and its
+.\" documentation for any purpose is hereby granted without fee, provided that
+.\" the above copyright notice appear in all copies and that both that
+.\" copyright notice and this permission notice appear in supporting
+.\" documentation, and that the name of Keith Packard not be used in
+.\" advertising or publicity pertaining to distribution of the software without
+.\" specific, written prior permission.  Keith Packard makes no
+.\" representations about the suitability of this software for any purpose.  It
+.\" is provided "as is" without express or implied warranty.
+.\"
+.\" KEITH PACKARD DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+.\" INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+.\" EVENT SHALL KEITH PACKARD BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+.\" CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+.\" DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+.\" TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+.\" PERFORMANCE OF THIS SOFTWARE.
+.\"
+.\" Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.\"
+.TH DISPSWITCH 1
+.SH NAME
+dispswitch \- Display Device Switch
+.SH SYNOPSIS
+.B "/usr/bin/dispswitch"
+[\-display \fIdisplay\fP]
+[\-key \fIkeysym\fP]
+[\-mod \fImodifier\fP]
+[\-help]
+[\-verbose]
+[\-nosideview]
+[\-testrun]
+.SH DESCRIPTION
+.I Dispswitch
+uses hotkey to switch/rotate on/off of display devices up to 3 devices. Side-by-side views are included when two devices are connected. It works on systems where both server and driver support RandR version 1.2 (or above). 
+User can define a hotkey with -key and -mod options (see below), the default is "Shift + F5".
+
+If a key stroke is hit 5 seconds or longer after the previous switch, display devices are re-probed so that any changes such as adding or removing devices, can be detected and adapted to.
+
+If a new display device is added whose mode size is larger than the one with which X server is started, or a side-by-side view is switched into that needs a larger mode to cover both screens, a config file specifying larger virtual screen size (Virtual field in Screen Section) will be needed during X server startup. Otherwise the larger mode will not be realized, or the side-by-side view will be skipped.
+
+.IP \-help
+Print out a summary of the usage and exit.
+.IP "\-verbose or -v"
+Print out debug messages when run.
+.IP \-nosideview
+Skip side-by-side views in two devices rotating.
+.IP \-testrun
+Switch/rotate display device states repeatedly without hotkey strokes.
+.IP "\-key <keysym> or -k <keysym>"
+Define the keysym of hotkey to be <keysym>, which can be any entry defined in
+defined in /usr/include/X11/keysymdef.h, with prefix XK_ removed, such as F5, F8, Escape.
+.IP "\-mod <modifier> or -m <modifier>"
+Define the modifier of hotkey to be <modifier>. <modifier> is any or combination of modifiers on your system. Run 
+.BR xmodmap (1)
+to find all available modifiers on your system. They can be none, shift, control, mod1, mod3, mod4, mod5, any.
+.SH
+Examples:
+
+dispswitch -key Escape -mod shift		defines hotkey to be 'shift + Esc'
+.sp
+dispswitch -key F2 -mod "shift+control" 	defines hotkey to be 'shift + control + F2'
+
+
+.\" Begin Sun update
+.SH "ATTRIBUTES"
+See \fBattributes\fR(7) for descriptions of the following attributes:
+.sp
+.TS
+allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPE	ATTRIBUTE VALUE
+Availability	pkg:/x11/x11-server-utilities
+Interface Stability	Volatile
+.TE 
+.sp
+.\" End Sun update
