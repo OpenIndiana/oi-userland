@@ -1,0 +1,58 @@
+#!/bin/sh
+# Start/stop HACluster service
+#
+. /lib/svc/share/smf_include.sh
+
+#==#==# Pacemaker Remote
+# Use a custom directory for finding the authkey.
+PCMK_authkey_location=/etc/pacemaker/authkey
+#
+# Specify a custom port for Pacemaker Remote connections
+PCMK_remote_port=3121
+
+## Tracing with ebug version
+# PCMK_trace_files=1
+# PCMK_trace_functions=1
+# PCMK_trace_formats=1
+# PCMK_trace_tags=1
+
+export PCMK_ipc_type=socket
+export PCMK_logfile=/var/log/hacluster/pacemaker.log
+
+export CLUSTER_USER=hacluster
+export CLUSTER_GROUP=haclient
+export PATH=/usr/gnu/bin:${PATH}
+MYNAME=hacluster
+APPPATH=/usr/sbin/
+PACEMAKERD=pacemaker_remoted
+PACEMAKER_PROCESSES=pacemaker
+SLEEPINTERVALL=5
+
+
+# all processes should log to the common folder /var/log/${MYNAME
+[ ! -d /var/log/${MYNAME} ] && mkdir -p /var/log/${MYNAME}
+
+# dumps of crashs, check the folder for problems
+[ ! -d /var/lib/pacemaker/cores ] && mkdir -p /var/lib/pacemaker/cores
+
+touch /var/log/${MYNAME}/${MYNAME}.log
+chown ${CLUSTER_USER}:${CLUSTER_GROUP} /var/log/${MYNAME}/${MYNAME}.log
+[ ! -d /var/run/${MYNAME} ] && mkdir -p /var/run/${MYNAME}
+chown -R ${CLUSTER_USER}:${CLUSTER_GROUP} /var/run/${MYNAME}
+
+start() {
+        ${APPPATH}${PACEMAKERD} &
+        return 0
+}
+
+case "$1" in
+        'start')
+           start
+           ;;
+        *)
+           echo "Usage: ${0} { start }"
+           exit 1
+           ;;
+esac
+exit 0
+
