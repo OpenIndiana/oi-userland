@@ -16,9 +16,7 @@ Patches not suitable for upstream
  lib/puppet/provider/package/puppet_gem.rb     |  2 +-
  lib/puppet/reference/configuration.rb         |  2 +-
  lib/puppet/util/run_mode.rb                   |  2 +-
- man/man5/puppet.conf.5                        |  4 ++--
  man/man8/puppet-config.8                      |  2 +-
- man/man8/puppet-module.8                      | 14 +++++++-------
  spec/unit/provider/package/puppet_gem_spec.rb |  2 +-
  spec/unit/util/run_mode_spec.rb               |  4 ++--
  14 files changed, 38 insertions(+), 37 deletions(-)
@@ -214,28 +212,6 @@ index cf6c4613a..21968cea8 100644
        end
  
        def run_dir
-diff --git a/man/man5/puppet.conf.5 b/man/man5/puppet.conf.5
-index 3c2d97cfa..710f750ea 100644
---- a/man/man5/puppet.conf.5
-+++ b/man/man5/puppet.conf.5
-@@ -121,7 +121,7 @@ The search path for \fBglobal\fR modules\. Should be specified as a list of dire
- These are the modules that will be used by \fIall\fR environments\. Note that the \fBmodules\fR directory of the active environment will have priority over any global directories\. For more info, see https://docs\.puppetlabs\.com/puppet/latest/reference/environments\.html
- .
- .IP "\(bu" 4
--\fIDefault\fR: $codedir/modules:/opt/puppetlabs/puppet/modules
-+\fIDefault\fR: $codedir/modules:/usr/puppetlabs/puppet/modules
- .
- .IP "" 0
- .
-@@ -1730,7 +1730,7 @@ The user puppet master should run as\.
- Where Puppet stores dynamic and growing data\. The default for this setting is calculated specially, like \fBconfdir\fR_\.
- .
- .IP "\(bu" 4
--\fIDefault\fR: /opt/puppetlabs/puppet/cache
-+\fIDefault\fR: /var/puppetlabs/puppet/cache
- .
- .IP "" 0
- .
 diff --git a/man/man8/puppet-config.8 b/man/man8/puppet-config.8
 index 35310d0c4..5df37e4da 100644
 --- a/man/man8/puppet-config.8
@@ -249,65 +225,6 @@ index 35310d0c4..5df37e4da 100644
  .
  .SH "COPYRIGHT AND LICENSE"
  Copyright 2011 by Puppet Labs Apache 2 license; see COPYING
-diff --git a/man/man8/puppet-module.8 b/man/man8/puppet-module.8
-index 62591fe87..b5b05a572 100644
---- a/man/man8/puppet-module.8
-+++ b/man/man8/puppet-module.8
-@@ -340,13 +340,13 @@ $ puppet module install puppetlabs\-vcsrepo \-v 0\.0\.4 Preparing to install int
- Install a module into a specific directory:
- .
- .P
--$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/opt/puppetlabs/puppet/modules Preparing to install into /opt/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /opt/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
-+$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/usr/puppetlabs/puppet/modules Preparing to install into /usr/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /usr/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
- .
- .P
- Install a module into a specific directory and check for dependencies in other directories:
- .
- .P
--$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/opt/puppetlabs/puppet/modules \-\-modulepath /etc/puppetlabs/code/modules Preparing to install into /opt/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /opt/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
-+$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/usr/puppetlabs/puppet/modules \-\-modulepath /etc/puppetlabs/code/modules Preparing to install into /usr/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /usr/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
- .
- .P
- Install a module from a release archive:
-@@ -367,25 +367,25 @@ $ puppet module install puppetlabs\-vcsrepo\-0\.0\.4\.tar\.gz \-\-ignore\-depend
- List installed modules:
- .
- .P
--$ puppet module list /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /opt/puppetlabs/puppet/modules (no modules installed)
-+$ puppet module list /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /usr/puppetlabs/puppet/modules (no modules installed)
- .
- .P
- List installed modules in a tree view:
- .
- .P
--$ puppet module list \-\-tree /etc/puppetlabs/code/modules └─┬ puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-stdlib (v2\.2\.1) ├─┬ puppetlabs\-mysql (v0\.0\.1) │ └── bodepd\-create_resources (v0\.0\.1) └── puppetlabs\-sqlite (v0\.0\.1) /opt/puppetlabs/puppet/modules (no modules installed)
-+$ puppet module list \-\-tree /etc/puppetlabs/code/modules └─┬ puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-stdlib (v2\.2\.1) ├─┬ puppetlabs\-mysql (v0\.0\.1) │ └── bodepd\-create_resources (v0\.0\.1) └── puppetlabs\-sqlite (v0\.0\.1) /usr/puppetlabs/puppet/modules (no modules installed)
- .
- .P
- List installed modules from a specified environment:
- .
- .P
--$ puppet module list \-\-environment production /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /opt/puppetlabs/puppet/modules (no modules installed)
-+$ puppet module list \-\-environment production /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /usr/puppetlabs/puppet/modules (no modules installed)
- .
- .P
- List installed modules from a specified modulepath:
- .
- .P
--$ puppet module list \-\-modulepath /opt/puppetlabs/puppet/modules /opt/puppetlabs/puppet/modules (no modules installed)
-+$ puppet module list \-\-modulepath /usr/puppetlabs/puppet/modules /usr/puppetlabs/puppet/modules (no modules installed)
- .
- .P
- \fBsearch\fR
-@@ -409,7 +409,7 @@ $ puppet module uninstall puppetlabs\-ssh Removed /etc/puppetlabs/code/modules/s
- Uninstall a module from a specific directory:
- .
- .P
--$ puppet module uninstall puppetlabs\-ssh \-\-modulepath /opt/puppetlabs/puppet/modules Removed /opt/puppetlabs/puppet/modules/ssh (v1\.0\.0)
-+$ puppet module uninstall puppetlabs\-ssh \-\-modulepath /usr/puppetlabs/puppet/modules Removed /usr/puppetlabs/puppet/modules/ssh (v1\.0\.0)
- .
- .P
- Uninstall a module from a specific environment:
 diff --git a/spec/unit/provider/package/puppet_gem_spec.rb b/spec/unit/provider/package/puppet_gem_spec.rb
 index 017e0c408..2817701dd 100644
 --- a/spec/unit/provider/package/puppet_gem_spec.rb

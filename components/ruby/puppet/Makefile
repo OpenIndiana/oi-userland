@@ -23,13 +23,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		puppet
-COMPONENT_VERSION=	4.10.6
+COMPONENT_VERSION=	5.2.0
 COMPONENT_SUMMARY=	Puppet - configuration management toolkit
 COMPONENT_PROJECT_URL=	http://puppetlabs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:19250a3659339961953d48d71aa5951d52bcee3bac0a1e2f45042aa82fcf358a
+    sha256:4b6cedb9c5d288b3218d08e9f0b688596c173896a4575b26c9438151f32a135c
 COMPONENT_ARCHIVE_URL=	https://downloads.puppetlabs.com/puppet/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/management/puppet
 COMPONENT_LICENSE=	Apache v2.0
