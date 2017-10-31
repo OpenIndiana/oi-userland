@@ -13,10 +13,12 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnonlin
 COMPONENT_VERSION= 0.10.17
+COMPONENT_FMRI= library/audio/gstreamer/plugin/gnonlin
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SUMMARY= Non-linear editing elements for GStreamer
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -25,16 +27,18 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
+COMPONENT_LICENSE= GPLv2, LGPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
-CONFIGURE_OPTIONS += --enable-gtk-doc
+# Documentation generation has changed
+CONFIGURE_OPTIONS += --disable-gtk-doc
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -45,3 +49,8 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
