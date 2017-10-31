@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openindiana-backgrounds
 COMPONENT_VERSION=	1.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_PROJECT_URL=	https://github.com/OpenIndiana/openindiana-backgrounds
 COMPONENT_SUMMARY=	Selection of OpenIndiana backgrounds for the desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
