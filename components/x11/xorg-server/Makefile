@@ -136,15 +136,21 @@ REQUIRED_PACKAGES += x11/library/xcb-util-image
 REQUIRED_PACKAGES += x11/library/xcb-util-keysyms
 REQUIRED_PACKAGES += x11/library/xcb-util-renderutil
 REQUIRED_PACKAGES += x11/library/xcb-util-wm
+REQUIRED_PACKAGES += x11/library/xtrans
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += developer/debug/mdb
 
+# Sustained dependencies
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxv
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += service/hal
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
@@ -152,13 +158,15 @@ REQUIRED_PACKAGES += x11/library/libdmx
 REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxdmcp
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxfont2
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxmuu
+REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/libxrender
-REQUIRED_PACKAGES += x11/library/libxv
+REQUIRED_PACKAGES += x11/library/libxshmfence
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
