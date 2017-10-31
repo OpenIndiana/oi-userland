@@ -12,10 +12,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkspell
 COMPONENT_VERSION=	2.0.16
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://gtkspell.sourceforge.net/
 COMPONENT_SUMMARY=	Gtkspell provides word-processor-style highlighting and replacement of misspelled words in a GtkTextView widget
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,17 +29,17 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_FMRI= 	library/desktop/gtkspell
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --copy --force &&\
-					aclocal -I . &&\
-					automake -c -f -a &&\
-					autoconf )
+COMPONENT_PREP_ACTION =	( cd $(@D)  && \
+	libtoolize --copy --force &&\
+	aclocal -I . &&\
+	automake -c -f -a &&\
+	autoconf )
 
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
@@ -52,6 +53,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/spell-checking/enchant
+REQUIRED_PACKAGES += system/library
