@@ -217,5 +217,4 @@ REQUIRED_PACKAGES += system/library/security/libmcrypt
 REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/tidy
 REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += web/php-70/php-cli
 REQUIRED_PACKAGES += web/server/apache-24
