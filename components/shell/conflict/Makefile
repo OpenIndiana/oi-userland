@@ -32,8 +32,9 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=	http://invisible-island.net/conflict/conflict.html
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:30e14808768a938df139a1b76f8f7397e1b3bf46a18ceabcc8b1b1a70d5ea8a9
-COMPONENT_ARCHIVE_URL=	ftp://invisible-island.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+  sha256:30e14808768a938df139a1b76f8f7397e1b3bf46a18ceabcc8b1b1a70d5ea8a9
+COMPONENT_ARCHIVE_URL= \
+  http://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/conflict
 
 include $(WS_MAKE_RULES)/prep.mk
