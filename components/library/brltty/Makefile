@@ -89,6 +89,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += system/header/header-ugen
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/python/cython-34
