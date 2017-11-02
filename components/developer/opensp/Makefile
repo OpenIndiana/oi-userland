@@ -27,19 +27,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		opensp
 COMPONENT_VERSION=	1.5.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://openjade.sourceforge.net/
 COMPONENT_SRC=		OpenSP-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3f0649840dc3d6ec432e3c8d933b178208f3feccb6db111d22c8995ad07c736b
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/openjade/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/opensp
-
-TPNO=			9621
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
 
@@ -69,6 +69,4 @@ build:          $(BUILD_32_and_64)
 install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
