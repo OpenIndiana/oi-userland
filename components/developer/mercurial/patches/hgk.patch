@@ -3,13 +3,13 @@ making the user do any extra configuration.  Because this is patch is
 specific to Solaris, it's not appropriate for sending upstream, and because
 it's so simple, it's effectively a zero maintenance burden.
 
---- mercurial-3.4/hgext/hgk.py.orig	Fri May  1 14:48:50 2015
-+++ mercurial-3.4/hgext/hgk.py	Mon May  4 14:43:19 2015
-@@ -326,6 +326,6 @@
+--- mercurial-4.4/hgext/hgk.py.~2~	2017-11-02 08:59:55.767258967 +0000
++++ mercurial-4.4/hgext/hgk.py	2017-11-02 09:02:32.468370116 +0000
+@@ -352,6 +352,6 @@
      if repo.filtername is None:
          optstr += '--hidden'
  
--    cmd = ui.config("hgk", "path", "hgk") + " %s %s" % (optstr, " ".join(etc))
+-    cmd = ui.config("hgk", "path") + " %s %s" % (optstr, " ".join(etc))
 +    cmd = ui.config("hgk", "path", "/usr/demo/mercurial/hgk") + " %s %s" % (optstr, " ".join(etc))
      ui.debug("running %s\n" % cmd)
-     ui.system(cmd)
+     ui.system(cmd, blockedtag='hgk_view')
