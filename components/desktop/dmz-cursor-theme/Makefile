@@ -12,7 +12,7 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dmz-cursor-theme
 COMPONENT_VERSION=	0.4.4
@@ -26,11 +26,10 @@ COMPONENT_ARCHIVE_URL=	http://http.debian.net/debian/pool/main/d/dmz-cursor-them
 COMPONENT_FMRI=		gnome/theme/cursor/dmz-cursor
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Theming
 COMPONENT_LICENSE=	CC-BY-SA-3.0
-COMPONENT_LICENSE_FILE=	dmz-cursor-theme.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/Makefile $(@D))
 
@@ -40,3 +39,6 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES+= image/xcursorgen
