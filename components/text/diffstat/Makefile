@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
   sha256:25359e0c27183f997b36c9202583b5dc2df390c20e22a92606af4bf7856a55ee
 COMPONENT_ARCHIVE_URL= \
-  ftp://invisible-island.net/diffstat/$(COMPONENT_ARCHIVE)
+  https://invisible-mirror.net/archives/diffstat/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 
 include $(WS_MAKE_RULES)/prep.mk
