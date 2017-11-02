@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gparted
 COMPONENT_VERSION= 0.4.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME Partition Editor
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -30,7 +31,7 @@ COMPONENT_CLASSIFICATION = System/Administration and Configuration
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
