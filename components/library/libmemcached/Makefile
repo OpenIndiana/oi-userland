@@ -23,10 +23,11 @@
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmemcached
 COMPONENT_VERSION=	1.0.17
+COMPONENT_REVISION=     1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -35,12 +36,13 @@ COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/1.0/1.0.17/+download/
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 COMPONENT_BUGDB=	database/memcached
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CXXFLAGS += -D__EXTENSIONS__ -D_XPG5
-LDFLAGS += -D__EXTENSIONS__ -D_XPG5 -lsocket -lnsl
+CFLAGS  += -std=c99 $(CPP_XPG6MODE)
+CXXFLAGS+= -std=c++98 $(CPP_XPG6MODE)
+LDFLAGS += $(CPP_XPG6MODE) -lsocket -lnsl
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
@@ -51,12 +53,7 @@ CONFIGURE_OPTIONS +=    --without-mysql
 CONFIGURE_OPTIONS +=    --without-gearmand
 CONFIGURE_OPTIONS +=    --without-memcached
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-					aclocal -I./m4 && \
-					autoheader && \
-					libtoolize --automake --copy --force && \
-					automake -a -f -c &&\
-					autoconf )
+COMPONENT_PREP_ACTION =  ( cd $(@D) && autoreconf -vif )
 
 # need some files in $(SOURCE_DIR)/docs during build
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -95,6 +92,8 @@ install:	$(INSTALL_32_and_64)
 # Some tests fail because memcached is not running.
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
