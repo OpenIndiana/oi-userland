@@ -25,8 +25,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     vala
-COMPONENT_VERSION=  0.36.4
-COMPONENT_REVISION= 2
+COMPONENT_VERSION=  0.36.6
 COMPONENT_LICENSE=  LGPL2.1
 COMPONENT_FMRI=     developer/vala
 COMPONENT_SUMMARY=  Vala programming language
@@ -35,7 +34,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Vala
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:e9f23ce711c1a72ce664d10946fbc5953f01b0b7f2a3562e7a01e362d86de059
+    sha256:e0cc036d00db726c05192f3b51bd8acc07966fbc814f8aa84157c61ee0370215
 COMPONENT_ARCHIVE_URL=  http://download.gnome.org/sources/vala/0.36/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -44,6 +43,11 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_SCRIPT = $(@D)/configure
+
+CONFIGURE_OPTIONS  +=  CC=gcc
 CONFIGURE_OPTIONS  +=  --disable-static
 CONFIGURE_OPTIONS  +=  --enable-shared
 
@@ -52,6 +56,10 @@ build:      $(BUILD_32_and_64)
 
 install:    $(INSTALL_32_and_64)
 
+# Failed tests: /methods/bug653391 - cc1: some warnings being treated as errors
+# Failed tests: /control-flow/bug736774-2 - core dumped but probably should
+# Failed tests: /dbus/enum-string-marshalling - needs upstream fix
+# Failed tests: /dbus/filedescriptor-errors/server - problem with charset.alias
 test:       $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/glib2
