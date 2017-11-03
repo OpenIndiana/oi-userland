@@ -20,13 +20,13 @@ COMPONENT_NAME= libproxy
 COMPONENT_VERSION= 0.3.1
 COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Libproxy is a library that provides automatic proxy configuration management
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:82e27b1b391fbf36ae1433729b7431739212171fbffc34c55eb75b60e20998fb
+  sha256:dbb2dd519d58c0a41c5c59204863c327dfa61f3ac564fc448ab2703a35610a2e
 COMPONENT_ARCHIVE_URL= \
-  http://libproxy.googlecode.com/files/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://code.google.com/p/libproxy/
+  https://github.com/libproxy/libproxy/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://github.com/libproxy/libproxy
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
