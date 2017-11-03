@@ -54,6 +54,10 @@ install:	$(INSTALL_32_and_64)
 # FAIL: time.test: strptime: GNU %s format: gmtoff on EST+5
 test:		 $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += editor/gnu-emacs
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/readline
