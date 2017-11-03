@@ -1,0 +1,172 @@
+#!/bin/sh
+
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+#
+
+# check the requirements
+if [ ! -f /usr/bin/dot ] || [ ! -f /usr/bin/gs ]; then
+echo "-> Ups! We need graphviz and ghostscript, please install the packages with:"
+echo "pkg install print/filter/ghostscript image/graphviz"
+exit
+fi
+
+# Build scfdot, invoke it to generate a graph description, and run dot to
+# render it to PostScript.  The resulting file will be <hostname>.ps .
+
+# Options to pass to scfdot.  This limits the graph to 300" by 42", includes
+# legend.ps as the legend (built below), and consolidates inetd services into
+# a single node.  See the comment at the top of scfdot.c for other options.
+
+SCFDOTOPTSH='-s 300,42 -l legend.ps -x consolidate_inetd_svcs'
+SCFDOTOPTSL='-L'
+
+# Margin, in inches, to include above and below the legend.
+LEGEND_MARGIN=3
+
+# Options to pass to dot when rendering the graph.  Consider increasing
+# mclimit, which dictates how long dot spends optimizing node placement.  It
+# defaults to 1.0; 100 should produce good output, but it may take a long
+# time.
+DOTOPTS=
+#DOTOPTS='-Gmclimit=100'
+
+cat << EOF > /tmp/setpage.awk
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at CDDL.LICENSE.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at CDDL.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+#
+# This script reads a PostScript file and adds commands which inform an HP
+# DesignJet (5500ps, though it also works on an 800ps, too) of the size of the
+# page.  Otherwise, it won't print more than about 50" long.
+#
+
+# Not sure if this is exactly the right size, or if it will always precede
+# BeginSetup, but it works for dot-produced .ps files.
+/^%%BoundingBox:/ { width = \$4; height = \$5 }
+
+/^%%BeginSetup\$/ {
+	if (width == 0 || height == 0) {
+		exit 1;
+	}
+	print;
+
+	# I doubt this is necessary, but the PPD spec suggests it.
+	print "%%BeginFeature: *CustomPageSize";
+
+	# Here we print the parameters to the code below.  We add an inch of
+	# 'far' margin (the 'near' margin should have already been set by dot
+	# to be whatever margin was set to in the .dot file).
+	printf "%d %d\n", width + 72, height + 72;
+
+	# This is the magic code from HP's ppd file.  Actually, the ppd code
+	# begins with pop pop pop, but that just discards the orientation and
+	# offset parameters, so if we don't print them in the first place, it
+	# won't matter.
+	print "<</PageSize [ 5 -2 roll ] /ImagingBBox null>>setpagedevice";
+
+	print "%%EndFeature";
+	next;
+}
+
+{ print }
+EOF
+
+cat << EOF > /tmp/enlarge.awk
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at CDDL.LICENSE.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at CDDL.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+#
+# Enlarge the bounding box of a PostScript file by amounts specified on the
+# command line.  They should be specified by assignments to the left, right,
+# top, and bottom variables, in inches.  For example,
+#
+#	awk -f enlarge.awk file.ps top=2 bottom=2 > newfile.ps
+#
+
+BEGIN {
+	left = 0;
+	bottom = 0;
+	right = 0;
+	top = 0;
+}
+
+/^%%BoundingBox:/ {
+	printf "%s %d %d %d %d\n", \$1, \$2 - left * 72, \$3 - bottom * 72, \\
+	    \$4 + right * 72, \$5 + top * 72;
+	next;
+}
+
+{ print }
+EOF
+
+
+scfdot ${SCFDOTOPTSL}     > /tmp/legend.dot
+dot -Teps /tmp/legend.dot > /tmp/legend.ps
+awk -f /tmp/enlarge.awk top=${LEGEND_MARGIN} bottom=${LEGEND_MARGIN} \
+      /tmp/legend.ps      > legend.ps
+scfdot ${SCFDOTOPTSH}     > /tmp/hostname.dot
+dot -Tps2 ${DOTOPTS} < /tmp/hostname.dot > /tmp/hostname.ps
+awk -f /tmp/setpage.awk /tmp/hostname.ps > hostname.ps
+echo "use the following values to define media size in gsview"
+grep BoundingBox hostname.ps|tail -1
+ps2pdf -dPDFFitPage hostname.ps hostname.pdf
+mv hostname.ps  `hostname`.ps
+mv hostname.pdf `hostname`.pdf
+rm /tmp/legend.dot /tmp/legend.ps legend.ps /tmp/setpage.awk /tmp/enlarge.awk
+echo "created `hostname`.ps and `hostname`.pdf"
+
