@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = libneon
 COMPONENT_VERSION = 0.29.6
@@ -31,12 +31,11 @@ COMPONENT_SRC = $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
     sha256:9c640b728d6dc80ef1e48f83181166ab6bc95309cece5537e01ffdd01b96eb43
-COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/neon
+COMPONENT_ARCHIVE_URL = ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/distfiles/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 
@@ -60,7 +59,7 @@ CONFIGURE_OPTIONS += --with-ssl=openssl
 CONFIGURE_OPTIONS += --with-libproxy
 CONFIGURE_OPTIONS += --with-libxml2
 
-COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+COMPONENT_TEST_ENV +=	PATH="$(PATH.gnu)"
 
 build:		$(BUILD_32_and_64)
 
@@ -68,7 +67,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libproxy
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
