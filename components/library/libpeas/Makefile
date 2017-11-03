@@ -90,7 +90,7 @@ install: $(INSTALL_32_and_64)
 test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
-REQUIRED_PACKAGES += desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
