@@ -62,3 +62,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += system/header/header-usb
