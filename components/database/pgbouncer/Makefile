@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
 COMPONENT_VERSION= 	1.7.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -44,7 +44,7 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-REQUIRED_PACKAGES += database/postgres-93/developer
+REQUIRED_PACKAGES += database/postgres-94/developer
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += SUNWcs

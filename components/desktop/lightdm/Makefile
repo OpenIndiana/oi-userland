@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lightdm
 COMPONENT_VERSION= 1.19.3
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= Light display manager
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -35,9 +35,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
+
+CPPFLAGS+= $(CPP_XPG7MODE)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
@@ -59,8 +61,13 @@ install: $(INSTALL_32)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/libxklavier
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/yelp-tools
+REQUIRED_PACKAGES += library/gnome/yelp-xsl
+# libxml2 is required for xmllint
+REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += text/itstool
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxdmcp

@@ -18,6 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		marco
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	1
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Window Manager
@@ -61,6 +62,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += gnome/zenity
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

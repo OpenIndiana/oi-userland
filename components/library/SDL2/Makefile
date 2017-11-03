@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
-COMPONENT_VERSION=	2.0.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.0.7
 COMPONENT_PROJECT_URL=	http://www.libsdl.org/
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:da55e540bf6331824153805d58b590a29c39d2d506c6d02fa409aedeab21174b
+    sha256:490428b41c3231395d2774dd25cdd6e5e2bae308adc77ebb61219ad49d6537cc
 COMPONENT_ARCHIVE_URL=	http://www.libsdl.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl2
 # Note: license change from LGPL was significant in 2.x vs 1.x series, and now

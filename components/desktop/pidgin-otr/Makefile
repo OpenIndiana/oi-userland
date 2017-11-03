@@ -51,6 +51,10 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
+# Build dependencies
+REQUIRED_PACKAGES += communication/im/pidgin
 
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libotr
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libgcrypt

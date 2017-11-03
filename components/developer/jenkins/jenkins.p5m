@@ -17,7 +17,6 @@ set name=pkg.fmri \
     value=pkg:/developer/jenkins@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
@@ -26,7 +25,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # TODO: At some point this package should help mediate between weekly
 # or LTS releases. Maybe it will do so automagically just by virtue of
 # pulling newer updates of already-installed "require-any" dependencies?
-depend fmri=pkg:/developer/jenkins-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+depend type=require \
+    fmri=pkg:/developer/jenkins-common
 depend type=require-any \
     fmri=pkg:/developer/jenkins-core-weekly \
     fmri=pkg:/developer/jenkins-core-lts

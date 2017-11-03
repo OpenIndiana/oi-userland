@@ -1,0 +1,99 @@
+--- a/xserver/configure.ac	2017-03-10 21:40:30.206339625 +0000
++++ b/xserver/configure.ac	2017-03-10 21:44:12.591376691 +0000
+@@ -74,6 +74,7 @@
+ AC_CONFIG_HEADERS(include/version-config.h)
+ 
+ AM_PROG_AS
++AC_PROG_CXX
+ AC_PROG_LN_S
+ LT_PREREQ([2.2])
+ LT_INIT([disable-static win32-dll])
+@@ -1843,7 +1844,15 @@
+ 	AC_SUBST([XVFB_SYS_LIBS])
+ fi
+ 
++dnl Xvnc DDX
++AC_SUBST([XVNC_CPPFLAGS], ["-DHAVE_DIX_CONFIG_H $XEXT_INC $FB_INC $MI_INC $REND$ER_INC $RANDR_INC"])
++AC_SUBST([XVNC_LIBS], ["$FB_LIB $FIXES_LIB $XEXT_LIB $CONFIG_LIB $DBE_LIB $RECORD_LIB $GLX_LIBS $RANDR_LIB $RENDER_LIB $DAMAGE_LIB $MIEXT_SYNC_LIB $MIEXT_DAMAGE_LIB $MIEXT_SHADOW_LIB $XI_LIB $XKB_LIB $XKB_STUB_LIB $COMPOSITE_LIB $MAIN_LIB"])
++AC_SUBST([XVNC_SYS_LIBS], ["$GLX_SYS_LIBS"])
+ 
++dnl This is necessary to allow Xvnc to statically link with GnuTLS
++AC_ARG_VAR(GNUTLS_LDFLAGS, [Custom linker flags for using GnuTLS, e.g. -L{GnuTLS directory}/lib -lgnutls])
++AC_SUBST(GNUTLS_LDFLAGS)
++
+ dnl Xnest DDX
+ 
+ PKG_CHECK_MODULES(XNESTMODULES, [$LIBXEXT x11 xau $XDMCP_MODULES], [have_xnest=yes], [have_xnest=no])
+@@ -1877,6 +1886,7 @@
+ 	esac
+ fi
+ AC_MSG_RESULT([$XORG])
++AC_DEFINE_UNQUOTED(XORG_VERSION_CURRENT, [$VENDOR_RELEASE], [Current Xorg version])
+ 
+ if test "x$XORG" = xyes; then
+ 	XORG_DDXINCS='-I$(top_srcdir)/hw/xfree86 -I$(top_srcdir)/hw/xfree86/include -I$(top_srcdir)/hw/xfree86/common'
+@@ -2097,6 +2107,7 @@
+ 	AC_DEFINE(XORGSERVER, 1, [Building Xorg server])
+ 	AC_DEFINE(XFree86Server, 1, [Building XFree86 server])
+ 	AC_DEFINE_UNQUOTED(XORG_VERSION_CURRENT, [$VENDOR_RELEASE], [Current Xorg version])
++	AC_DEFINE(XFree86LOADER, 1, [Building loadable XFree86 server])
+ 	AC_DEFINE(NEED_XF86_TYPES, 1, [Need XFree86 typedefs])
+ 	AC_DEFINE(NEED_XF86_PROTOTYPES, 1, [Need XFree86 helper functions])
+ 	AC_DEFINE(__XSERVERNAME__, "Xorg", [Name of X server])
+@@ -2673,6 +2684,7 @@
+ hw/dmx/man/Makefile
+ hw/vfb/Makefile
+ hw/vfb/man/Makefile
++hw/vnc/Makefile
+ hw/xnest/Makefile
+ hw/xnest/man/Makefile
+ hw/xwin/Makefile
+--- a/xserver/mi/miinitext.c	2017-03-10 21:44:44.946571184 +0000
++++ b/xserver/mi/miinitext.c	2017-03-10 21:46:46.955057506 +0000
+@@ -122,6 +122,10 @@
+     Bool *disablePtr;
+ } ExtensionToggle;
+ 
++#ifdef TIGERVNC
++extern void vncExtensionInit(INITARGS);
++#endif
++
+ static ExtensionToggle ExtensionToggleList[] = {
+     /* sort order is extension name string as shown in xdpyinfo */
+     {"Generic Events", &noGEExtension},
+--- a/xserver/hw/Makefile.am	2017-03-10 21:39:51.235948808 +0000
++++ b/xserver/hw/Makefile.am	2017-03-10 21:40:16.316330428 +0000
+@@ -38,7 +38,8 @@
+ 	$(DMX_SUBDIRS)		\
+ 	$(KDRIVE_SUBDIRS)	\
+ 	$(XQUARTZ_SUBDIRS)	\
+-	$(XWAYLAND_SUBDIRS)
++	$(XWAYLAND_SUBDIRS)	\
++	vnc
+ 
+ DIST_SUBDIRS = dmx xfree86 vfb xnest xwin xquartz kdrive xwayland
+
+--- a/xserver/hw/vnc/xorg-version.h	2017-03-10 21:59:47.431217512 +0000
++++ b/xserver/hw/vnc/xorg-version.h	2017-03-10 21:59:34.822780465 +0000
+@@ -50,6 +50,8 @@
+ #define XORG 117
+ #elif XORG_VERSION_CURRENT < ((1 * 10000000) + (18 * 100000) + (99 * 1000))
+ #define XORG 118
++#elif XORG_VERSION_CURRENT < ((1 * 10000000) + (19 * 100000) + (99 * 1000))
++#define XORG 119
+ #else
+ #error "X.Org newer than 1.18 is not supported"
+ #endif
+--- a/xserver/mi/miinitext.c      2017-03-15 16:58:11.726667022 -0700
++++ b/xserver/mi/miinitext.c      2017-03-15 16:59:07.210502266 -0700
+@@ -297,6 +297,9 @@
+ #ifdef DPMSExtension
+     {DPMSExtensionInit, DPMSExtensionName, &noDPMSExtension},
+ #endif
++#ifdef TIGERVNC
++    {vncExtensionInit, "VNC", NULL},
++#endif
+ #ifdef PRESENT
+     {present_extension_init, PRESENT_NAME, NULL},
+ #endif
+

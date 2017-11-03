@@ -1,0 +1,20 @@
+This patch fixes a Solaris specific issue with buffer overrun of
+if_nameindex->if_name. Memory for this buffer is allocated by
+if_nameindex() and therefore correct string routines must be used
+to access it. The patch has been submitted to the community
+but has not been accepted yet.
+
+The details can be found in the following location
+https://sourceforge.net/p/net-snmp/bugs/2721/
+
+--- a/agent/mibgroup/kernel_sunos5.c.orig	2016-06-22 21:01:43.093780856 -0700
++++ b/agent/mibgroup/kernel_sunos5.c	2016-06-22 21:07:14.515956349 -0700
+@@ -1541,7 +1541,7 @@
+      ifnp->if_index != 0 && (i < nentries); ifnp++) {
+ 
+         DEBUGMSGTL(("kernel_sunos5", "...... getif %s\n", ifnp->if_name));
+-        memcpy(lifrp->lifr_name, ifnp->if_name, LIFNAMSIZ);
++        strlcpy(lifrp->lifr_name, ifnp->if_name, LIFNAMSIZ);
+         if_isv6 = B_FALSE;
+ 
+         flags_unknown = B_FALSE;

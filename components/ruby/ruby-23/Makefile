@@ -26,13 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.3.4
+COMPONENT_VERSION=	2.3.5
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:341cd9032e9fd17c452ed8562a8d43f7e45bfe05e411d0d7d627751dd82c578c
+    sha256:7d3a7dabb190c2da06c963063342ca9a214bcd26f2158e904f0ec059b065ffda
 
 COMPONENT_ARCHIVE_URL=	\
 	https://cache.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
@@ -121,7 +121,7 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# 15975 tests, 2239039 assertions, 0 failures, 1 errors, 46 skips
+# 16018 tests, 2238920 assertions, 0 failures, 1 errors, 47 skips
 # RuntimeError: Error in TestGem#test_self_install_in_rescue
 test:	$(TEST_32)
 

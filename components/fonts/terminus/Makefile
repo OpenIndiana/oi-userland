@@ -48,3 +48,6 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES+= x11/bdftopcf

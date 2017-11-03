@@ -1,0 +1,129 @@
+--- pcs-0.9.159/pcsd/pcs.rb.~1~	2017-06-30 17:33:01.000000000 +0000
++++ pcs-0.9.159/pcsd/pcs.rb	2017-09-26 15:03:17.755738686 +0000
+@@ -26,6 +26,15 @@
+ class InvalidFileNameException < NameError
+ end
+ 
++def solaris_getservice(service)
++    if service == "pacemaker_remote"
++      service = "hacluster-remote"
++    else
++      service = "hacluster"
++    end
++    return service
++end
++
+ def getAllSettings(auth_user, cib_dom=nil)
+   unless cib_dom
+     cib_dom = get_cib_dom(auth_user)
+@@ -978,7 +987,11 @@
+ end
+ 
+ def pacemaker_running?()
+-  is_service_running?('pacemaker')
++	if ISSOLARIS
++	  is_service_running?('pacemakerd')
++	else	
++    is_service_running?('pacemaker')
++  end		
+ end
+ 
+ def pacemaker_remote_running?()
+@@ -1039,6 +1052,8 @@
+     sleep(10)
+     if ISSYSTEMCTL
+       exec("systemctl", "restart", "pcsd")
++		elsif ISSOLARIS
++		  exec("svcadm", "restart", "pcsd")	
+     else
+       exec("service", "pcsd", "restart")
+     end
+@@ -1803,7 +1818,11 @@
+ end
+ 
+ def get_node_uptime()
+-  uptime = `cat /proc/uptime`.chomp.split(' ')[0].split('.')[0].to_i
++	if ISSOLARIS
++		uptime = Time.now.to_i - `kstat -p unix:0:system_misc:boot_time`.chomp.split(' ')[1].to_i
++	else	
++    uptime = `cat /proc/uptime`.chomp.split(' ')[0].split('.')[0].to_i
++	end	
+   mm, ss = uptime.divmod(60)
+   hh, mm = mm.divmod(60)
+   dd, hh = hh.divmod(24)
+@@ -2068,6 +2087,9 @@
+ def is_service_enabled?(service)
+   if ISSYSTEMCTL
+     cmd = ['systemctl', 'is-enabled', "#{service}.service"]
++  elsif ISSOLARIS
++    service = solaris_getservice(service)
++    cmd = ['svcs', '-lv', service, '|','grep enabled|grep true']
+   else
+     cmd = ['chkconfig', service]
+   end
+@@ -2078,6 +2100,8 @@
+ def is_service_running?(service)
+   if ISSYSTEMCTL
+     cmd = ['systemctl', 'status', "#{service}.service"]
++	elsif ISSOLARIS
++		cmd = ['pgrep', '-f', service]
+   else
+     cmd = ['service', service, 'status']
+   end
+@@ -2086,6 +2110,12 @@
+ end
+ 
+ def is_service_installed?(service)
++  if ISSOLARIS
++    service = solaris_getservice(service)
++    cmd = ['svcs', '-lv', service]
++    _, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), *cmd)
++    return (retcode == 0)
++  end
+   unless ISSYSTEMCTL
+     stdout, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), 'chkconfig')
+     if retcode != 0
+@@ -2120,6 +2150,9 @@
+   if ISSYSTEMCTL
+     # fails when the service is not installed
+     cmd = ['systemctl', 'enable', "#{service}.service"]
++  elsif ISSOLARIS
++    service = solaris_getservice(service)
++    cmd = ['svcadm', 'enable', service]
+   else
+     # fails when the service is not installed
+     cmd = ['chkconfig', service, 'on']
+@@ -2136,6 +2169,9 @@
+ 
+   if ISSYSTEMCTL
+     cmd = ['systemctl', 'disable', "#{service}.service"]
++  elsif ISSOLARIS
++    service = solaris_getservice(service)
++    cmd = ['svcadm', 'disable', service]
+   else
+     cmd = ['chkconfig', service, 'off']
+   end
+@@ -2146,7 +2182,10 @@
+ def start_service(service)
+   if ISSYSTEMCTL
+     cmd = ['systemctl', 'start', "#{service}.service"]
+-  else
++  elsif ISSOLARIS
++    service = solaris_getservice(service)
++    cmd = ['svcadm', 'enable', service]
++  else		
+     cmd = ['service', service, 'start']
+   end
+   _, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), *cmd)
+@@ -2159,7 +2198,10 @@
+   end
+   if ISSYSTEMCTL
+     cmd = ['systemctl', 'stop', "#{service}.service"]
+-  else
++  elsif ISSOLARIS
++    service = solaris_getservice(service)
++    cmd = ['svcadm', 'disable', service]
++  else		
+     cmd = ['service', service, 'stop']
+   end
+   _, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), *cmd)

@@ -23,13 +23,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.9.0
+COMPONENT_VERSION=	4.9.2
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
 COMPONENT_SUMMARY=	A tool for network monitoring and data acquisition
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eae98121cbb1c9adbedd9a777bf2eae9fa1c1c676424a54740311c8abcee5a5e
+    sha256:798b3536a29832ce0cbb07fafb1ce5097c95e308a6f592d14052e1ef1505fe79
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=	diagnostic/tcpdump
@@ -59,6 +59,9 @@ LD_B_DIRECT=
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-user=nobody
 CONFIGURE_OPTIONS += --without-crypto
+
+# Fixes tests
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 ASLR_MODE = $(ASLR_ENABLE)
 

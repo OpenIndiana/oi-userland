@@ -2,26 +2,22 @@ Need to drop ECDH from algorithm list when building on Solaris,
 since our GnuTLS build disables it in
 userland/components/gnutls-3/patches/02_remove_elliptical.patch
 
-diff --git a/common/rfb/CSecurityTLS.cxx b/common/rfb/CSecurityTLS.cxx
-index a60dbdd..032cbdd 100644
---- common/rfb/CSecurityTLS.cxx
-+++ common/rfb/CSecurityTLS.cxx
-@@ -215,7 +215,7 @@ bool CSecurityTLS::processMsg(CConnection* cc)
+--- a/common/rfb/SSecurityTLS.cxx	2017-03-11 06:54:49.040654074 +0000
++++ b/common/rfb/SSecurityTLS.cxx	2017-03-11 06:55:09.835235271 +0000
+@@ -158,7 +158,7 @@
  
- void CSecurityTLS::setParam()
+ void SSecurityTLS::setParams(gnutls_session_t session)
  {
 -  static const char kx_anon_priority[] = ":+ANON-ECDH:+ANON-DH";
 +  static const char kx_anon_priority[] = ":+ANON-DH";
  
    int ret;
    char *prio;
-diff --git a/common/rfb/SSecurityTLS.cxx b/common/rfb/SSecurityTLS.cxx
-index c2b1ded..59fa561 100644
---- common/rfb/SSecurityTLS.cxx
-+++ common/rfb/SSecurityTLS.cxx
-@@ -181,7 +181,7 @@ bool SSecurityTLS::processMsg(SConnection *sc)
+--- a/common/rfb/CSecurityTLS.cxx	2017-03-11 06:54:14.514328881 +0000
++++ b/common/rfb/CSecurityTLS.cxx	2017-03-11 06:54:38.542837546 +0000
+@@ -192,7 +192,7 @@
  
- void SSecurityTLS::setParams(gnutls_session_t session)
+ void CSecurityTLS::setParam()
  {
 -  static const char kx_anon_priority[] = ":+ANON-ECDH:+ANON-DH";
 +  static const char kx_anon_priority[] = ":+ANON-DH";

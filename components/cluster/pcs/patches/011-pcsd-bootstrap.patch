@@ -1,0 +1,20 @@
+--- pcs-0.9.159/pcsd/bootstrap.rb.orig	2017-09-23 22:12:58.081950693 +0000
++++ pcs-0.9.159/pcsd/bootstrap.rb	2017-09-23 22:14:34.870954741 +0000
+@@ -5,6 +5,9 @@
+ 
+ require 'settings.rb'
+ 
++def is_solaris()
++   return (`uname -s`.chomp.eql? "SunOS")
++end
+ 
+ def is_rhel6()
+   # Checking corosync version works in most cases and supports non-rhel
+@@ -51,6 +54,7 @@
+ # unique instance signature, allows detection of dameon restarts
+ DAEMON_INSTANCE_SIGNATURE = Digest::SHA2.hexdigest("#{Time.now} #{rand()}")
+ COROSYNC = COROSYNC_BINARIES + "corosync"
++ISSOLARIS = is_solaris
+ ISRHEL6 = is_rhel6
+ ISSYSTEMCTL = is_systemctl
+ if ISRHEL6

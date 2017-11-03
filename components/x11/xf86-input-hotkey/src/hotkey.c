@@ -36,6 +36,10 @@
 #include <libsysevent.h>
 #include <xkbsrv.h>
 
+#if GET_ABI_MAJOR(ABI_XINPUT_VERSION) >= 23
+#define HAVE_THREADED_INPUT	1
+#endif
+
 static int HkeyPreInit(InputDriverPtr drv, InputInfoPtr pInfo, int flags);
 static void HkeyUnInit(InputDriverPtr drv, InputInfoPtr pInfo, int flags);
 
@@ -259,7 +263,11 @@ HkeyProc(DeviceIntPtr device, int what)
     	    if (device->public.on)
 	    	break;
 	    xf86FlushInput(pInfo->fd);
+#if HAVE_THREADED_INPUT
+      xf86AddEnabledDevice(pInfo);
+#else
 	    AddEnabledDevice(pInfo->fd);
+#endif
 
 	    if (device->master)
 		dixSetPrivate(&device->master->devPrivates, 
@@ -269,7 +277,11 @@ HkeyProc(DeviceIntPtr device, int what)
 	    break;
 	case DEVICE_CLOSE:
 	    if (pInfo->fd != -1)
+#if HAVE_THREADED_INPUT
+    xf86RemoveEnabledDevice(pInfo);
+#else
 		RemoveEnabledDevice(pInfo->fd);
+#endif
 	    close(hotkey_event_fd[0]);
 	    close(hotkey_event_fd[1]);
 	    hotkey_events_fini();
@@ -278,7 +290,11 @@ HkeyProc(DeviceIntPtr device, int what)
 	    if (!device->public.on)
 		break;
 	    if (pInfo->fd != -1)
+#if HAVE_THREADED_INPUT
+    xf86RemoveEnabledDevice(pInfo);
+#else
 		RemoveEnabledDevice(pInfo->fd);
+#endif
 
 	    if (device->master)
 		dixSetPrivate(&device->master->devPrivates, 

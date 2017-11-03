@@ -16,35 +16,32 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tigervnc
-COMPONENT_VERSION= 1.1.0
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 1.7.1
 COMPONENT_SUMMARY= TigerVNC X11/VNC server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:594b70825a2c24863afd7b8dd2a5bc1935807118c6726e1d98396dee44d060f4
+  sha256:3c021ec0bee4611020c0bcbab995b0ef2f6f1a46127a52b368827f3275527ccc
 COMPONENT_ARCHIVE_URL= \
-  ftp://tux.rainside.sk/gentoo/distfiles/$(COMPONENT_ARCHIVE)
+  https://github.com/TigerVNC/tigervnc/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://tigervnc.org/
 COMPONENT_LICENSE_FILE= LICENCE.TXT
 COMPONENT_LICENSE= GPLv2
 
-PATCH_LEVEL=0
-
 # Note that the xorg additional patch (tigervnc-xserver) does not fit this pattern. That is intentional
 PATCH_PATTERN = [0-9][0-9]*.patch
 
-XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc11-xorg111.patch
-XORG_ADDITIONAL_PATCH_2 = $(PATCH_DIR)/tigervnc11-xorg112.patch
-XORG_ADDITIONAL_PATCH_3 = $(PATCH_DIR)/tigervnc11-xorg117.patch
-XORG_ADDITIONAL_PATCH_4 = $(PATCH_DIR)/tigervnc11-xorg118.patch
+XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc-xserver119.patch
+XORG_ADDITIONAL_PATCH_2 = $(PATCH_DIR)/tigervnc-screenlock.patch
 
-XORG_SERVER_VERSION= 1.18.4
-XORG_SERVER_PATCH= xserver118.patch
+XORG_SERVER_VERSION= 1.19.5
+XORG_SERVER_PATCH= xserver119.patch
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(PATH.gnu)
 
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
 
@@ -54,9 +51,7 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
 	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/$(XORG_SERVER_PATCH)
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2) 
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_3) 
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_4) 
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2)
 	( cd $(@D)/unix/xserver && \
 		aclocal -I m4 && \
 		autoheader && \
@@ -69,6 +64,11 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/.prep:
 	$(GMAKE) -C $(COMPONENT_DIR)/../xorg-server prep
 
+# Build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
 GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
@@ -78,20 +78,14 @@ LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
-COMPONENT_PREP_ACTION = \
-    ( cd $(@D) && \
-      aclocal -I m4 && \
-      autoheader && \
-      libtoolize --automake --copy --force && \
-      automake -a -f -c &&\
-      autoconf )
+COMPONENT_PRE_CMAKE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS+= --with-installed-zlib
-CONFIGURE_OPTIONS+= --with-system-jpeg 
-CONFIGURE_OPTIONS+= --without-simd
-CONFIGURE_OPTIONS+= --localstatedir=/var
+CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS+= -DENABLE_NLS:BOOL=OFF
+CMAKE_OPTIONS+= -DBUILD_JAVA:BOOL=TRUE
+CMAKE_OPTIONS+= -DCMAKE_C_ARCHIVE_CREATE:STRING="crS"
+CMAKE_OPTIONS+= -DCMAKE_CXX_ARCHIVE_CREATE:STRING="crS"
+CMAKE_OPTIONS+= -G "Unix Makefiles"
 
 CONFIGURE_LIBDIR = /usr/lib/vnc
 
@@ -104,8 +98,14 @@ CPPFLAGS += -I/usr/include/pixman-1
 CPPFLAGS += -I/usr/include/mesa
 CPPFLAGS += -I/usr/include/xorg
 
+# Required for linking to libXfont2
+X11_SERVERLIBS_DIR=/usr/lib/xorg
+LDFLAGS+= -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR) 
+
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
+JAVA_SOURCE_DIR  = $(SOURCE_DIR)/java/com/tigervnc
+JAVA_BUILD_DIR   = $(BUILD_DIR_32)/java
 JAVA_INSTALL_DIR = $(PROTO_DIR)/usr/share/vnc/classes
 
 XVNC_CONFIGURE_SCRIPT=	$(BUILD_DIR_32)/unix/xserver/configure
@@ -148,25 +148,17 @@ XVNC_CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
 XVNC_CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 XVNC_CONFIGURE_OPTIONS += --without-int10
 XVNC_CONFIGURE_OPTIONS += --disable-selective-werror
+XVNC_CONFIGURE_OPTIONS += AR_FLAGS="cruS"
+XVNC_CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 
-$(BUILD_DIR)/.built_jar: $(BULD_32)
-	$(ENV) $(COMPONENT_BUILD_ENV) \
-                $(GMAKE) -C $(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer  $(COMPONENT_BUILD_GMAKE_ARGS)
+
+$(BUILD_DIR)/.configured_Xvnc: $(BUILD_DIR_32)/.configured
+	(cd $(BUILD_DIR_32)/unix/xserver ; \
+		$(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) \
+	       	$(XVNC_CONFIGURE_SCRIPT) $(XVNC_CONFIGURE_OPTIONS))
 	$(TOUCH) $(@)
 
-$(BUILD_DIR)/.installed_jar: $(INSTALL_32) $(BUILD_DIR)/.built_jar
-	rm -fr $(JAVA_INSTALL_DIR)
-	$(MKDIR) $(JAVA_INSTALL_DIR)
-	$(INSTALL) -m 0444  $(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer/README \
-		$(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer/LICENCE.TXT \
-		$(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer/index.html \
-		$(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer/index.vnc \
-		$(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer/tigervnc_16.gif \
-		$(JAVA_INSTALL_DIR)
-	$(INSTALL) -m 0555 $(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer/VncViewer.jar $(JAVA_INSTALL_DIR)
-	$(TOUCH) $(@)
-
-$(BUILD_DIR)/.built_Xvnc: $(BULD_32) $(BUILD_DIR)/.configured_Xvnc
+$(BUILD_DIR)/.built_Xvnc: $(BUILD_32) $(BUILD_DIR)/.configured_Xvnc
 	(cd $(BUILD_DIR_32)/unix; $(ENV) $(COMPONENT_BUILD_ENV) \
 	$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_BUILD_ARGS) \
 	$(COMPONENT_BUILD_TARGETS))
@@ -175,6 +167,19 @@ $(BUILD_DIR)/.built_Xvnc: $(BULD_32) $(BUILD_DIR)/.configured_Xvnc
 	$(COMPONENT_BUILD_TARGETS))
 	$(TOUCH) $@
 
+$(BUILD_DIR)/.installed_jar: $(INSTALL_32)
+	rm -fr $(JAVA_INSTALL_DIR)
+	$(MKDIR) $(JAVA_INSTALL_DIR)
+	$(INSTALL) -m 0444 \
+	$(JAVA_SOURCE_DIR)/vncviewer/README \
+	$(JAVA_SOURCE_DIR)/vncviewer/LICENCE.TXT \
+	$(JAVA_SOURCE_DIR)/vncviewer/index.html \
+	$(JAVA_SOURCE_DIR)/vncviewer/index.vnc \
+	$(JAVA_SOURCE_DIR)/vncviewer/tigervnc_16.gif \
+	$(JAVA_INSTALL_DIR)
+	$(INSTALL) -m 0555 $(JAVA_BUILD_DIR)/VncViewer.jar $(JAVA_INSTALL_DIR)
+	$(TOUCH) $(@)
+
 $(BUILD_DIR)/.installed_Xvnc: $(INSTALL_32) $(BUILD_DIR)/.built_Xvnc
 	(cd $(BUILD_DIR_32)/unix/xserver/hw/vnc; $(ENV) $(COMPONENT_INSTALL_ENV) \
 	$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_INSTALL_ARGS) \
@@ -182,16 +187,17 @@ $(BUILD_DIR)/.installed_Xvnc: $(INSTALL_32) $(BUILD_DIR)/.built_Xvnc
 	$(TOUCH) $@
 
 
-$(BUILD_DIR)/.configured_Xvnc: $(BUILD_DIR_32)/.configured
-	(cd $(BUILD_DIR_32)/unix/xserver ; $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL)  $(XVNC_CONFIGURE_SCRIPT) $(XVNC_CONFIGURE_OPTIONS))
-	$(TOUCH) $(@)
-
-build: $(BUILD_32) $(BUILD_DIR)/.built_jar $(BUILD_DIR)/.built_Xvnc
+build: $(BUILD_32) $(BUILD_DIR)/.built_Xvnc
 
 install: $(INSTALL_32) $(BUILD_DIR)/.installed_jar $(BUILD_DIR)/.installed_Xvnc
 
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+# Build dependencies
+REQUIRED_PACKAGES += text/xmlto
+REQUIRED_PACKAGES += x11/server/xorg
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += library/fltk
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/zlib
@@ -200,12 +206,12 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += text/xmlto
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau
+REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxdmcp
 REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxfont2
 REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/server/xserver-common
-REQUIRED_PACKAGES += x11/server/xorg

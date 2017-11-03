@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-mga
 COMPONENT_VERSION= 1.6.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-mga - Matrox MGA driver for the Xorg X server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-mga

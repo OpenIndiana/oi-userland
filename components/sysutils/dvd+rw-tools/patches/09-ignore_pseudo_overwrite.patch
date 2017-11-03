@@ -1,0 +1,22 @@
+Description: Ignore pseudo overwrite feature of bluray drives
+ When a BD-R is used with a Bluray drive, the drive can say that it supports
+ the Pseudo Overwrite (POW) feature to calculate the capacity to be used.
+ .
+ If the drive says that it supports POW, then the capacity of the medium is
+ reported as being less than its actual capacity, resulting in inability to
+ write a full bluray disc.
+Author: Michael Herscheid <michael.herscheid@positix.de>
+Bug-Debian: http://bugs.debian.org/615978
+Forwarded: no
+Last-Update: 2011-03-07
+--- a/growisofs_mmc.cpp
++++ b/growisofs_mmc.cpp
+@@ -410,7 +410,7 @@
+ 	    }
+ 
+ 	    nwa = 0;
+-	    if (buf[7]&1 && !bdr_plus_pow)	// NWA_V
++	    if (buf[7]&1)	// NWA_V
+ 	    {	nwa  = buf[12]<<24;
+ 		nwa |= buf[13]<<16;
+ 		nwa |= buf[14]<<8;

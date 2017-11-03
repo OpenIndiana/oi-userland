@@ -29,7 +29,7 @@ COMPONENT_SUMMARY=	Snort data acquisition library for packet I/O
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b40e1d1273e08aaeaa86e69d4f28d535b7e53bdb3898adf539266b63137be7cb
+  sha256:d41da5f7793e66044e6927dd868c0525e7ee4ec1a3515bf74ef9a30cd9273af0
 COMPONENT_ARCHIVE_URL=	https://snort.org/downloads/snort/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/daq
 COMPONENT_LICENSE=	GPLv2
@@ -39,6 +39,9 @@ COMPONENT_CLASSIFICATION=	System/Libraries
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# error: tokdefs.h: No such file or directory
+COMPONENT_BUILD_ARGS=
 
 CONFIGURE_OPTIONS +=    --enable-static=no
 

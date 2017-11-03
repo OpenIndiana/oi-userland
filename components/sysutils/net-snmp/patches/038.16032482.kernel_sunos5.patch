@@ -1,23 +1,21 @@
---- net-snmp-5.4.1.2/agent/Makefile.in.~1~	2014-03-13 23:54:04.717800170 +0400
-+++ net-snmp-5.4.1.2/agent/Makefile.in	2014-03-13 23:56:36.202934491 +0400
-@@ -121,6 +121,8 @@
- LOBJS		= $(LLIBAGENTOBJS) $(LAGENTOBJS) mib_modules.lo auto_nlist.lo
+# Net-SNMP ifOperStatus on solaris11 VM guest domain is not correct.
+# Due to networking changes in Solaris 11 and above, we need to use dladm/dlpi calls from
+# net-snmp to fetch the interface names to be used in the kstat calls.
+#
+# Developed in-house. Bug submitted upstream
+# https://sourceforge.net/p/net-snmp/bugs/2590/
+#
+--- net-snmp-5.7.2.1/snmplib/Makefile.in	Thu Oct 30 02:07:41 2014
++++ net-snmp-5.7.2.1/snmplib/Makefile.in	Thu Oct 30 02:08:06 2014
+@@ -222,7 +222,7 @@
+ TOBJS=$(LOBJS)
  
- LIB_LD_ADD_AGENT	=-lnetsnmp -lnetsnmphelpers
-+
-+LIB_LD_ADD_MIBS	=-ldladm
-  
- LIB_LD_ADD_PATH_MIBS	=-Lhelpers -L../snmplib
+ # To satisfy -zdefs
+-LIB_LD_ADD =-lnsl -lsocket -L$(libdir)
++LIB_LD_ADD =-lnsl -lsocket -ldladm -L$(libdir)
  
-@@ -150,7 +152,7 @@
- 	$(RANLIB) $(AGENTLIB)
+ FEATUREFILE     = $(top_builddir)/include/net-snmp/library/features.h
  
- libnetsnmpmibs.$(LIB_EXTENSION)$(LIB_VERSION): ${LMIBOBJS} $(HELPERLIB) $(AGENTLIB) $(USELIBS)
--	$(LIB_LD_CMD) $(MIBLIB) ${LMIBOBJS} $(HELPERLIB) $(AGENTLIB) $(USELIBS) ${LMIBLIBS} $(LDFLAGS) $(LIB_LD_LIBS)
-+	$(LIB_LD_CMD) $(MIBLIB) ${LMIBOBJS} $(HELPERLIB) $(AGENTLIB) $(USELIBS) ${LMIBLIBS} $(LDFLAGS) $(LIB_LD_LIBS) $(LIB_LD_ADD_MIBS)
- 	$(RANLIB) $(MIBLIB)
- 
- agentlib: $(AGENTLIB)
 --- net-snmp-5.4.1.old/agent/mibgroup/kernel_sunos5.c	2014-02-25 06:04:49.253524010 -0500
 +++ net-snmp-5.4.1/agent/mibgroup/kernel_sunos5.c	2014-02-26 05:32:10.697219080 -0500
 @@ -60,6 +60,8 @@
@@ -49,7 +47,7 @@
 +        dladm_phys_attr_t dpa;
 +        dladm_handle_t handle;
 +
-+        if (dladm_open(&handle) != DLADM_STATUS_OK) {
++        if (dladm_open(&handle, NULL) != DLADM_STATUS_OK) {
 +            DEBUGMSGTL(("kernel_sunos5","dladm_open failed "
 +                       "with errno=%d\n",errno));
 +            return (-1);

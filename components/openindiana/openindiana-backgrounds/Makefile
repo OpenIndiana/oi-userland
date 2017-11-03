@@ -15,25 +15,28 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openindiana-backgrounds
-COMPONENT_VERSION=	0.1.1
-IPS_COMPONENT_VERSION=	1.0
-COMPONENT_PROJECT_URL=	http://openindiana.org
-COMPONENT_SUMMARY=	Selection of OpenIndiana backgrounds for the GNOME desktop
+COMPONENT_VERSION=	1.0
+COMPONENT_REVISION= 2
+COMPONENT_PROJECT_URL=	https://github.com/OpenIndiana/openindiana-backgrounds
+COMPONENT_SUMMARY=	Selection of OpenIndiana backgrounds for the desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3435a7a2ab1506629b2b9ee65232f66ea9b03d355006773b9abb65a316811a97
-COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
+  sha256:41ba81106998b4e322463590a21b0cd96300703bef07901f40461132bb884adc
+COMPONENT_ARCHIVE_URL= \
+  https://github.com/OpenIndiana/openindiana-backgrounds/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=	gnome/theme/background/os-backgrounds
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Theming
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+COMPONENT_PREP_ACTION= (cd $(@D); sh autogen.sh)
 
 # common targets
 build:		$(BUILD_32)
@@ -42,6 +45,4 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated contents below.  Please manually verify and remove this comment

@@ -1,0 +1,18 @@
+Debian: https://sources.debian.net/src/dvd%2Brw-tools/7.1-11.1/debian/patches/03-growisofs-dvd-dl.patch/
+
+Author: Joe Shaw <joeshaw@suse.de>
+Description: Don't abort when a DVD-DL disk is underful (Closes: #340698).
+
+--- a/growisofs_mmc.cpp
++++ b/growisofs_mmc.cpp
+@@ -1640,9 +1640,7 @@
+     blocks += 15, blocks &= ~15;
+ 
+     if (blocks <= split)
+-	fprintf (stderr,":-( more than 50%% of space will be *wasted*!\n"
+-			"    use single layer media for this recording\n"),
+-	exit (FATAL_START(EMEDIUMTYPE));
++	fprintf (stderr,":-? more than 50%% of space will be *wasted*!\n");
+ 
+     blocks /= 16;
+     blocks += 1;

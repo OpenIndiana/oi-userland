@@ -9,14 +9,14 @@
 #
 
 #
-# Copyright 2016 Adam Stevko
+# Copyright 2017 Adam Stevko
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkgtree
 COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2	
 COMPONENT_PROJECT_URL=	https://github.com/msmark/pkgtree
 COMPONENT_FMRI=		developer/pkgtree
 COMPONENT_CLASSIFICATION= System/Packaging
@@ -52,5 +52,4 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/perl-516
 REQUIRED_PACKAGES += runtime/perl-522

@@ -1,0 +1,92 @@
+Patches to successfully compile dnsmasq-2.76 on Solaris.
+
+This patch was developed in-house. Since it is Solaris-specific it is not
+suitable for upstream.
+
+--- dnsmasq-2.76/src/dnsmasq.h.orig	2016-07-20 15:15:52.633336049 -0700
++++ dnsmasq-2.76/src/dnsmasq.h	2016-07-20 15:17:28.118001495 -0700
+@@ -1265,7 +1265,7 @@
+ #ifdef HAVE_DHCP6
+ void join_multicast(int dienow);
+ #endif
+-#if defined(HAVE_LINUX_NETWORK) || defined(HAVE_BSD_NETWORK)
++#if defined(HAVE_LINUX_NETWORK) || defined(HAVE_BSD_NETWORK) || defined(HAVE_SOLARIS_NETWORK)
+ void newaddress(time_t now);
+ #endif
+ 
+--- dnsmasq-2.76/src/bpf.c.orig	2016-07-20 15:23:12.206647353 -0700
++++ dnsmasq-2.76/src/bpf.c	2016-07-20 15:24:42.627316757 -0700
+@@ -30,8 +32,10 @@
+ #endif
+ #include <netinet/in_var.h>
+ #ifdef HAVE_IPV6
++#ifndef HAVE_SOLARIS_NETWORK
+ #  include <netinet6/in6_var.h>
+ #endif
++#endif
+ 
+ #ifndef SA_SIZE
+ #define SA_SIZE(sa)                                             \
+
+--- dnsmasq-2.76/src/config.h.orig	2016-07-22 16:41:00.629870757 -0700
++++ dnsmasq-2.76/src/config.h	2016-07-22 16:41:37.890924646 -0700
+@@ -293,7 +293,8 @@
+ #define HAVE_GETOPT_LONG
+ #undef HAVE_SOCKADDR_SA_LEN
+ #define ETHER_ADDR_LEN 6 
+- 
++#undef HAVE_IPSET
++
+ #endif
+ 
+ /* Decide if we're going to support IPv6 */
+--- dnsmasq-2.76/src/ip6addr.h.orig	2016-07-27 18:32:53.817400897 -0700
++++ dnsmasq-2.76/src/ip6addr.h	2016-07-27 18:40:54.445231062 -0700
+@@ -14,8 +14,41 @@
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
++#ifdef HAVE_SOLARIS_NETWORK
++#ifdef _BIG_ENDIAN	
++#define IN6_IS_ADDR_ULA(a) \
++	(((a)->_S6_un._S6_u32[0] & htonl (0x000000ff))                        \
++	 == htonl (0x000000fd))
+ 
++#define IN6_IS_ADDR_ULA_ZERO(a) \
++	(((a)->_S6_un._S6_u32[0] == htonl (0x000000fd))                              \
++	 && ((a)->_S6_un._S6_u32[1] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[2] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[3] == 0))
+ 
++#define IN6_IS_ADDR_LINK_LOCAL_ZERO(a) \
++ 	(((a)->_S6_un._S6_u32[0] == htonl (0x000080fe))                        \
++	 && ((a)->_S6_un._S6_u32[1] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[2] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[3] == 0))
++#else /* _BIG_ENDIAN */
++#define IN6_IS_ADDR_ULA(a) \
++	(((a)->_S6_un._S6_u32[0] & htonl (0xff000000))                        \
++	 == htonl (0xfd000000))
++
++#define IN6_IS_ADDR_ULA_ZERO(a) \
++	(((a)->_S6_un._S6_u32[0] == htonl (0xfd000000))                              \
++	 && ((a)->_S6_un._S6_u32[1] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[2] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[3] == 0))
++
++#define IN6_IS_ADDR_LINK_LOCAL_ZERO(a) \
++	(((a)->_S6_un._S6_u32[0] == htonl (0xfe800000))                        \
++	 && ((a)->_S6_un._S6_u32[1] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[2] == 0)                                     \
++	 && ((a)->_S6_un._S6_u32[3] == 0))
++#endif /* _BIG_ENDIAN */
++#else /* HAVE_SOLARIS_NETWORK */
+ #define IN6_IS_ADDR_ULA(a) \
+         ((((__const uint32_t *) (a))[0] & htonl (0xff000000))                 \
+          == htonl (0xfd000000))
+@@ -31,4 +64,4 @@
+          && ((__const uint32_t *) (a))[1] == 0                                \
+          && ((__const uint32_t *) (a))[2] == 0                                \
+          && ((__const uint32_t *) (a))[3] == 0)
+-
++#endif /* HAVE_SOLARIS_NETWORK */

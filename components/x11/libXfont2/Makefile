@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfont2
-COMPONENT_VERSION= 2.0.1
+COMPONENT_VERSION= 2.0.2
 COMPONENT_SUMMARY= libXfont2 - library for X servers and utilities to access font files
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_CLASSIFICATION = System/X11
@@ -26,13 +26,13 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e9fbbb475ddd171b3a6a54b989cbade1f6f874fc35d505ebc5be426bc6e4db7e
+  sha256:94088d3b87f7d42c7116d9adaad155859e93330c6e47f5989f2de600b9a6c111
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
 

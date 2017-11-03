@@ -9,31 +9,29 @@
 #
 
 #
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
+PATH= $(USRBINDIR64):$(PATH.gnu)
+
 COMPONENT_NAME= pacemaker
-COMPONENT_VERSION= 1.1.15
+COMPONENT_VERSION= 1.1.17
 COMPONENT_REVISION= 1
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC= $(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9af53ef397fbd1517f380eb4268b48433c41bb38dd3511ed9cb80e9478034775
+COMPONENT_ARCHIVE_HASH= sha256:96e04751e85a266e2daa8c590000a151ff37f0bb7b873d77e38534299d399803
 COMPONENT_PROJECT_URL= https://www.clusterlab.org
 COMPONENT_ARCHIVE_URL= https://github.com/Clusterlabs/$(COMPONENT_NAME)/archive/Pacemaker-$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2,LGPLv2,BSD
 COMPONENT_SUMMARY= Pacemaker is an advanced, scalable high-availability cluster resource manager.
 
-PATH= /usr/gnu/bin:/usr/bin:/usr/sbin:/sbin
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL = 1
 
 COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); $(CONFIG_SHELL) autogen.sh )
 
@@ -44,16 +42,14 @@ CONFIGURE_SCRIPT= $(@D)/configure
 CFLAGS += -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -lssp_nonshared -lssp -lnsl
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
-GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
 GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
 PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
 
-LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
+CONFIGURE_OPTIONS.64 += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --with-corosync
@@ -65,16 +61,20 @@ CONFIGURE_OPTIONS += --with-acl=no
 CONFIGURE_OPTIONS += --enable-upstart=no
 CONFIGURE_OPTIONS += --enable-systemd=no
 CONFIGURE_OPTIONS += --enable-fatal-warnings=no
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 COMPONENT_POST_INSTALL_ACTION=( \
-    mkdir -p $(PROTO_DIR)/usr/share/pacemaker/examples; \
-    mv $(PROTO_DIR)/etc/logrotate.d $(PROTO_DIR)/usr/share/pacemaker/examples )
+    $(RM) -r $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples; \
+    $(MKDIR) $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples; \
+    $(MV)    $(PROTO_DIR)/etc/logrotate.d  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples;)
 
-build:          $(BUILD_32)
+CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
 
-install:        $(INSTALL_32)
+build:          $(BUILD_64)
 
-test:           $(TESTS_32)
+install:        $(INSTALL_64)
+
+test:           $(TESTS_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += utility/arpsend

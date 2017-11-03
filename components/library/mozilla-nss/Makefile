@@ -17,18 +17,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.31
+COMPONENT_VERSION=	3.33
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/ru/docs/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e90561256a3271486162c1fbe8d614d118c333d36a4455be2af8688bd420a65d
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_31_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:98f0dabd36408e83dd3a11727336cc3cdfee4cbdd9aede2b2831eb2389c284e4
+COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_33_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
 
-# Generate symbolic info for debuggers
-COMPONENT_BUILD_ENV += XCFLAGS="-g"
+# Generate symbolic info for debuggers and use c99 by default
+COMPONENT_BUILD_ENV += XCFLAGS="-g -std=c99 -D__EXTENSIONS__"
 
 COMPONENT_BUILD_ENV += PATH=$(GCC_ROOT)/bin:$(PATH)
 COMPONENT_BUILD_ENV += PKG_CONFIG_ALLOW_SYSTEM_LIBS=1

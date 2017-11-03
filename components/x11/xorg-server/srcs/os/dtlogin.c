@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2017, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -84,10 +84,10 @@ extern const char *GetAuthFilename(void);
 struct dmuser {
     uid_t	uid;
     gid_t	gid;			/* Primary group */
-    gid_t	groupids[NGROUPS_UMAX];	/* Supplementary groups */
-    int		groupid_cnt;
     char *	homedir;
     projid_t	projid;
+    int		groupid_cnt;
+    gid_t	groupids[NGROUPS_UMAX];	/* Supplementary groups */
 };
 
 /* Data passed to block/wakeup handlers */
@@ -95,7 +95,7 @@ struct dmdata {
     int		pipeFD;
     char *	pipename;	/* path to pipe */
     char *	buf;		/* contains characters to be processed */
-    int		bufsize;	/* size allocated for buf */
+    size_t	bufsize;	/* size allocated for buf */
     struct dmuser user;		/* target user, to switch to on login */
 };
 
@@ -110,17 +110,19 @@ static struct dmdata *dmHandlerData;
 static struct dmuser originalUser; /* user to switch back to in CloseDown */
 
 static Bool DtloginCloseScreen(ScreenPtr pScreen);
-static void DtloginBlockHandler(void *, struct timeval **, void *);
-static void DtloginWakeupHandler(void *, int, void *);
 static int  dtlogin_create_pipe(int, struct dmdata *);
+static void dtlogin_pipe_notify(int, int, void *);
 static void dtlogin_receive_packet(struct dmdata *);
 static int  dtlogin_parse_packet(struct dmdata *, char *);
 static void dtlogin_process(struct dmuser *user, int user_logged_in);
 static void dtlogin_close_pipe(struct dmdata *);
 
-#define DtloginError(fmt, arg)	LogMessageVerb(X_ERROR, 1, fmt ": %s\n", \
-						arg, strerror(errno))
-#define DtloginInfo(fmt, arg)	LogMessageVerb(X_INFO, 5, fmt, arg)
+#define DtloginError(fmt, ...) \
+    LogMessageVerb(X_ERROR, 1, "dtlogin: " fmt ": %s\n", __VA_ARGS__, \
+		   strerror(errno))
+
+#define DtloginInfo(fmt, ...) \
+    LogMessageVerb(X_INFO,  5, "dtlogin: " fmt, __VA_ARGS__)
 
 /*
  * initialize DTLOGIN: create pipe; set handlers.
@@ -165,9 +167,7 @@ DtloginInit(void)
 
     dmHandlerData = dmd;
 
-    RegisterBlockAndWakeupHandlers (DtloginBlockHandler,
-				    DtloginWakeupHandler,
-				    (void *) dmd);
+    SetNotifyFd(dmd->pipeFD, dtlogin_pipe_notify, X_NOTIFY_READ, dmd);
 }
 
 /*
@@ -178,10 +178,7 @@ DtloginInit(void)
 _X_HIDDEN void
 DtloginCloseDown(void)
 {
-    if (geteuid() != 0) {		/* reset privs back to root */
-	if (seteuid(0) < 0) {
-	    DtloginError("Error in resetting euid to %d", 0);
-	}
+    if (geteuid() != originalUser.uid) {
 	dtlogin_process(&originalUser, 0);
     }
 
@@ -199,45 +196,13 @@ DtloginCloseScreen (ScreenPtr pScreen)
 
     /* Unwrap CloseScreen and call down to further levels */
     pScreenPriv = (struct dmScreenPriv *)
-	dixLookupPrivate(&pScreen->devPrivates, dmScreenKey);
+	dixGetPrivate(&pScreen->devPrivates, dmScreenKey);
+    dixSetPrivate(&pScreen->devPrivates, dmScreenKey, NULL);
 
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
     free (pScreenPriv);
 
     return (*pScreen->CloseScreen) (pScreen);
-}
-
-static void
-DtloginBlockHandler(
-    void         *data,
-    struct timeval  **wt, /* unused */
-    void         *pReadmask)
-{
-    struct dmdata *dmd = (struct dmdata *) data;
-    fd_set *LastSelectMask = (fd_set*)pReadmask;
-
-    FD_SET(dmd->pipeFD, LastSelectMask);
-}
-
-static void
-DtloginWakeupHandler(
-    void   *data,   /* unused */
-    int     i,
-    void   *pReadmask)
-{
-    struct dmdata *dmd = (struct dmdata *) data;
-    fd_set* LastSelectMask = (fd_set*)pReadmask;
-
-    if (i > 0)
-    {
-	if (FD_ISSET(dmd->pipeFD, LastSelectMask))
-	{
-	    FD_CLR(dmd->pipeFD, LastSelectMask);
-	    dtlogin_receive_packet(dmd);
-	    /* dmd may have been freed in dtlogin_receive_packet, do
-	       not use after this point */
-	}
-    }
 }
 
 static int
@@ -261,10 +226,19 @@ dtlogin_create_pipe(int port, struct dmdata *dmd)
 
     snprintf(pipename, sizeof(pipename), "%s/%d", DTLOGIN_PATH, port);
 
-    if (mkfifo(pipename, S_IRUSR | S_IWUSR) < 0)
-	return -1;
+    /* Workaround: cleanup pipe if it has not been removed. */
+    if (stat(pipename, &statbuf) == 0) {
+        DtloginInfo("Cleanup leftover display manager pipe: %s\n", pipename);
+        remove(pipename);
+    }
 
-    if ((pipeFD = open(pipename, O_RDONLY | O_NONBLOCK)) < 0) {
+    if (mkfifo(pipename, S_IRUSR | S_IWUSR) < 0) {
+	DtloginError("Cannot create display manager pipe %s", pipename);
+	return -1;
+    }
+
+    if ((pipeFD = open(pipename, O_RDWR | O_NONBLOCK)) < 0) {
+	DtloginError("Cannot open display manager pipe %s", pipename);
 	remove(pipename);
 	return -1;
     }
@@ -274,14 +248,14 @@ dtlogin_create_pipe(int port, struct dmdata *dmd)
     /* To make sure root has rw permissions. */
     (void) fchmod(pipeFD, 0600);
 
+    DtloginInfo("Created display manager pipe: %s\n", dmd->pipename);
     return pipeFD;
 }
 
 static void dtlogin_close_pipe(struct dmdata *dmd)
 {
-    RemoveBlockAndWakeupHandlers (DtloginBlockHandler,
-				  DtloginWakeupHandler, dmd);
-
+    DtloginInfo("Closing display manager pipe: %s\n", dmd->pipename);
+    RemoveNotifyFd(dmd->pipeFD);
     close(dmd->pipeFD);
     remove(dmd->pipename);
     free(dmd->pipename);
@@ -294,17 +268,48 @@ static void dtlogin_close_pipe(struct dmdata *dmd)
     }
 }
 
+static void dtlogin_pipe_notify(int fd, int events, void *data)
+{
+    struct dmdata *dmd = (struct dmdata *) data;
+
+    assert(fd == dmd->pipeFD);
+
+    if (events & X_NOTIFY_READ) {
+	dtlogin_receive_packet(dmd);
+        /* dmd may have been freed in dtlogin_receive_packet,
+	   do not use after this point */
+    } else {
+	if (events & X_NOTIFY_ERROR) {
+	    DtloginError("Lost connection on %s (fd %d)",
+			 dmd->pipename, dmd->pipeFD);
+	} else {
+	    DtloginError("Unexpected notification event 0x%x", events);
+	}
+	dtlogin_close_pipe(dmd);
+	/* dmd has been freed in dtlogin_close_pipe,
+	   do not use after this point */
+    }
+}
+
 static void
 dtlogin_receive_packet(struct dmdata *dmd)
 {
-    int bufLen, nbRead;
+    size_t bufLen;
+    ssize_t nbRead;
     char *p, *n;
     int done = 0;
 
     if (dmd->buf == NULL) {
-	dmd->bufsize = BUFLEN;
-	dmd->buf = malloc(dmd->bufsize);
-	dmd->buf[0] = '\0';
+	dmd->buf = malloc(BUFLEN);
+	if (dmd->buf != NULL) {
+	    dmd->buf[0] = '\0';
+	    dmd->bufsize = BUFLEN;
+	} else {
+	    DtloginError("Failed to allocate display manager pipe buffer of %d",
+			 BUFLEN);
+	    dtlogin_close_pipe(dmd);
+	    return;
+	}
     }
 
     /* Read data from pipe and split into tokens, buffering the rest */
@@ -316,8 +321,11 @@ dtlogin_receive_packet(struct dmdata *dmd)
 	 * delimiter yet. Keep track of alloced size.
 	 */
 	if (bufLen > (dmd->bufsize/2)) {
-	    dmd->bufsize += BUFLEN;
-	    dmd->buf = realloc(dmd->buf, dmd->bufsize);
+	    char *newbuf = realloc(dmd->buf, dmd->bufsize + BUFLEN);
+	    if (newbuf != NULL) {
+		dmd->buf = newbuf;
+		dmd->bufsize += BUFLEN;
+	    }
 	}
 
 	nbRead = read(dmd->pipeFD, dmd->buf + bufLen,
@@ -329,12 +337,16 @@ dtlogin_receive_packet(struct dmdata *dmd)
 	    } else if (errno == EAGAIN) {
 		return; 	/* return to WaitFor, wait for select() */
 	    } else {
+		DtloginError("Unexpected error on display manager pipe %s",
+			     dmd->pipename);
 		dtlogin_close_pipe(dmd);
 		return;
 	    }
 	}
 
 	if (nbRead == 0) { /* End of file */
+	    DtloginError("Unexpected EOF on display manager pipe %s",
+			 dmd->pipename);
 	    dtlogin_close_pipe(dmd);
 	    return;
 	}
@@ -350,16 +362,17 @@ dtlogin_receive_packet(struct dmdata *dmd)
 	    DtloginInfo("Next packet: %s\n", p);
 	    done = dtlogin_parse_packet(dmd, p);
 	    if (done) {
-		dtlogin_close_pipe(dmd);	/* free's dmd */
-		return;
+		break;
 	    }
 	    p = n+1;
 	}
 
 	/* save the rest for the next iteration */
-	if (p < (dmd->buf + bufLen)) {
+	if (!done && (p < (dmd->buf + bufLen))) {
 	    DtloginInfo("Left over: %s\n", p);
 	    strcpy(dmd->buf, p);
+	} else {
+	    dmd->buf[0] = '\0';
 	}
     }
 }
@@ -415,8 +428,7 @@ dtlogin_parse_packet(struct dmdata *dmd, char *s)
 
 	s = p + 1; /* start of next pair */
 
-	DtloginInfo("Received key \"%s\" =>", k);
-	DtloginInfo(" value \"%s\"\n", v);
+	DtloginInfo("Received key \"%s\" => value \"%s\"\n", k, v);
 
 	/* Found key & value, now process & put into dmd */
 	if (strcmp(k, "EOF") == 0) {
@@ -477,11 +489,18 @@ dtlogin_process(struct dmuser *user, int user_logged_in)
     struct passwd *ppasswd;
     const char *auth_file = NULL;
 
+    if (geteuid() != 0) {		/* reset privs back to root */
+	if (seteuid(0) < 0) {
+	    DtloginError("Error in resetting euid to %d", 0);
+	}
+    }
+
     auth_file = GetAuthFilename();
 
     if (auth_file) {
 	if (chown(auth_file, user->uid, user->gid) < 0)
-	    DtloginError("Error in changing owner to %d", user->uid);
+	    DtloginError("Error in changing owner of %s to %d",
+			 auth_file, user->uid);
     }
 
     /* This gid dance is necessary in order to make sure
@@ -524,6 +543,11 @@ dtlogin_process(struct dmuser *user, int user_logged_in)
 	if (ppasswd == NULL) {
 	    DtloginError("Error in getting user name for %d", user->uid);
 	} else {
+	    if (strcmp(ppasswd->pw_name, "gdm") == 0) {
+		/* Avoid trying to screenlock the login screen with a
+		   non-existent password for the gdm user */
+		user_logged_in = 0;
+	    }
 	    if (getdefaultproj(ppasswd->pw_name, &proj,
 			       (void *)&proj_buf, PROJECT_BUFSZ) == NULL) {
 		DtloginError("Error in getting project id for %s",
@@ -557,19 +581,23 @@ dtlogin_process(struct dmuser *user, int user_logged_in)
 		for (i = 0; i < screenInfo.numScreens; i++)
 		{
 		    ScreenPtr pScreen = screenInfo.screens[i];
-		    struct dmScreenPriv *pScreenPriv
-			= calloc(1, sizeof(struct dmScreenPriv));
+		    struct dmScreenPriv *pScreenPriv = (struct dmScreenPriv *)
+			dixLookupPrivate(&pScreen->devPrivates, dmScreenKey);
 
-		    dixSetPrivate(&pScreen->devPrivates, dmScreenKey,
-				  pScreenPriv);
+		    if (pScreenPriv == NULL) {
+			pScreenPriv = calloc(1, sizeof(struct dmScreenPriv));
 
-		    if (pScreenPriv != NULL) {
-			pScreenPriv->CloseScreen = pScreen->CloseScreen;
-			pScreen->CloseScreen = DtloginCloseScreen;
-		    } else {
-			DtloginError("Failed to allocate %d bytes"
-				     " for uid reset info",
-				     (int) sizeof(struct dmScreenPriv));
+			if (pScreenPriv != NULL) {
+			    pScreenPriv->CloseScreen = pScreen->CloseScreen;
+			    pScreen->CloseScreen = DtloginCloseScreen;
+
+			    dixSetPrivate(&pScreen->devPrivates, dmScreenKey,
+					  pScreenPriv);
+			} else {
+			    DtloginError("Failed to allocate %d bytes"
+					 " for screen privates",
+					 (int) sizeof(struct dmScreenPriv));
+			}
 		    }
 		}
 	    } else {
@@ -580,9 +608,9 @@ dtlogin_process(struct dmuser *user, int user_logged_in)
     }
 
     if (user->homedir != NULL) {
-	char *env_str = Xprintf("HOME=%s", user->homedir);
+	char *env_str;
 
-	if (env_str == NULL) {
+	if (asprintf(&env_str, "HOME=%s", user->homedir) == -1) {
 	    DtloginError("Not enough memory to setenv HOME=%s", user->homedir);
 	} else {
 	    DtloginInfo("Setting %s\n",env_str);

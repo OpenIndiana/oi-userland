@@ -1,0 +1,19 @@
+This patch fixes a issue related to retrieving 
+the value of tcpOutRsts from tcpstat structure. The patch has
+been accepted by the community.
+
+The details can be found in the following location
+https://sourceforge.net/p/net-snmp/bugs/2599/
+
+--- a/agent/mibgroup/mibII/tcp.c	Wed Apr  1 02:40:40 2015
++++ b/agent/mibgroup/mibII/tcp.c	Wed Apr  1 02:44:23 2015
+@@ -306,6 +306,9 @@
+             ret_value = tcpstat.tcpOutRsts;
+             break;
+ 	}
++#elif defined(solaris2)
++        ret_value = tcpstat.tcpOutRsts;
++        break;  
+ #endif			/* linux */
+         netsnmp_set_request_error(reqinfo, request, SNMP_NOSUCHOBJECT);
+         continue;

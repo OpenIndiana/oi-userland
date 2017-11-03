@@ -23,15 +23,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ephoto
-COMPONENT_VERSION=      1.0
+COMPONENT_VERSION=      1.5
 COMPONENT_FMRI=         image/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/Sound and Video
 COMPONENT_SUMMARY=      Ephoto
-COMPONENT_PROJECT_URL=  http://enlightenment.org
+COMPONENT_DESCRIPTION=  A comprehensive image viewer based on the EFL
+COMPONENT_PROJECT_URL=  http://www.smhouston.us/ephoto
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-		sha256:fe005e3983dd4b32017b86fc961990bf58ce6927bd8a6cac9cdab511b7f885f3
+    sha256:ffd5e42a309bb3bbb70010938a7065ed553901937784078cd1c66ba707897412
 COMPONENT_ARCHIVE_URL= \
     http://www.smhouston.us/stuff/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD

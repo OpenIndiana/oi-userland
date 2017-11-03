@@ -14,76 +14,35 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-# NOTE: Before bumping to the new core version, take a look at
-#   https://jenkins.io/changelog/ (weekly)
-#   https://jenkins.io/changelog-stable/ (LTS)
-# for "weather report" (user votes on good/bad state of the release).
-# At some point it may make sense to deliver packaged LTS releases,
-# and the initial recipe supports that notion already just in case,
-# but no LTS issued so far includes updated libzfs.jar (v0.8+ needed).
-# Note that for LTS it would make sense to define indexed "additional
-# source" variables below, see e.g. docbook for inspiration.
+# NOTE: Initial jenkins recipe had one component for both the JAR
+# file downloads and the OpenIndiana integration helper packages.
+# Due to this, initial version for helper packages starts from that.
 
 COMPONENT_NAME=		jenkins
-COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	65
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).war
-COMPONENT_FMRI=		developer/jenkins-core-weekly
-COMPONENT_CLASSIFICATION=	Development/Java
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	2.65
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=		developer/jenkins
+COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	http://jenkins-ci.org/
-COMPONENT_ARCHIVE_URL=\
-	http://mirrors.jenkins-ci.org/war/$(COMPONENT_VERSION)/jenkins.war
-# See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current release, run
-#   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
-# or for LTS  http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:2652cd93906855be034d0c1cdd8ced4eacb158a70ec686bc789428b43343af79
 COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE= jenkins.license
 COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
 
-# Note: for the core, we only download a WAR - no unpacking, no building...
-include $(WS_MAKE_RULES)/prep-download.mk
-include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(PATH.gnu)
-
-CLEAN_PATHS += $(SOURCE_DIR)
-
-download::
-
-$(SOURCE_DIR)/.prep:    download
-	$(COMPONENT_PREP_ACTION)
-	$(TOUCH) $@
-
-prep::  $(SOURCE_DIR)/.prep
-
 clean::
-	$(PRE_CLEAN_ACTION)
-	$(RM) -r $(CLEAN_PATHS)
+	$(RM) -r $(BUILD_DIR)
 
-clobber::   clean
-	$(RM) -r $(CLOBBER_PATHS)
+clobber:: clean
 
-COMPONENT_PREP_ACTION = ( $(MKDIR) $(@D)/ && ln -sfr $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) $(COMPONENT_DIR)/files/Makefile $(@D)/ )
+build:
+	$(MKDIR) $(BUILD_DIR)
 
-# This, and the symlinks in the custom Makefile, save quite a bit
-# of storage overhead (do not need to copy the WAR 3 extra times)
-COMPONENT_COPY_ACTION = ( $(CLONEY) $(SOURCE_DIR)/ $(@D)/ )
-
-COMPONENT_INSTALL_ENV += JENKINS_VERSION=$(COMPONENT_VERSION)
-COMPONENT_INSTALL_ENV += JENKINS_RELEASE=weekly
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+install:
+	$(MKDIR) $(PROTO_DIR)
 
 test: $(NO_TESTS)
 
-# Note: this recipe just downloads and packages stuff.
-# No real build, no magic tools, no java even, should be needed!
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
+# Note: this recipe just defines packages.
+# No real build, no magic tools, no downloads even, should be needed!
+# So, no custom REQUIRED_PACKAGES

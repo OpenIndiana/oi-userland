@@ -22,6 +22,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# enlightenment_start execs "dbus-launch --exit-with-session"
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/bin/dbus-launch \
+    pkg.debug.depend.reason=usr/bin/enlightenment_start
+
 <transform file path=usr/lib/$(MACH64)/enlightenment/utils/(.*)$ -> default mode 0555>
 
 file path=etc/enlightenment/sysactions.conf mode=0644 preserve=true
@@ -254,10 +259,6 @@ file path=usr/lib/$(MACH64)/enlightenment/modules/conf_window_remembers/solaris2
 file path=usr/lib/$(MACH64)/enlightenment/modules/connman/e-module-connman.edj
 file path=usr/lib/$(MACH64)/enlightenment/modules/connman/module.desktop
 file path=usr/lib/$(MACH64)/enlightenment/modules/connman/solaris2.11-i386-ver-0.21/module.so
-file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/e-module-cpufreq.edj
-file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/module.desktop
-file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/solaris2.11-i386-ver-0.21/freqset mode=04555
-file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/solaris2.11-i386-ver-0.21/module.so
 file path=usr/lib/$(MACH64)/enlightenment/modules/everything/e-module-everything-start.edj
 file path=usr/lib/$(MACH64)/enlightenment/modules/everything/e-module-everything.edj
 file path=usr/lib/$(MACH64)/enlightenment/modules/everything/module.desktop

@@ -71,7 +71,8 @@ install:	$(INSTALL_32)
 test:		$(TEST_32)
 
 # Build dependency manually added
-REQUIRED_PACKAGES+= developer/gperf 
+REQUIRED_PACKAGES += developer/gperf 
+REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated
 REQUIRED_PACKAGES += runtime/perl-522

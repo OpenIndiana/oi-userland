@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-vmware
 COMPONENT_VERSION= 13.2.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-vmware - VMWare driver for the Xorg X server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-vmware

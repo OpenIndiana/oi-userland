@@ -66,6 +66,9 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += editor/gnu-emacs
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/cairo

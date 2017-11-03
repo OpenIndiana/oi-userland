@@ -28,14 +28,14 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.5.25
+COMPONENT_VERSION=      3.5.27
 COMPONENT_SUMMARY=	Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:28959254c32b8cd87e9599b6beb97352cf0638524e0f5ac3e1754f08462f3585
+    sha256:5ddb4367f2dc635921f9ca7a59d8b87edb0412fa203d1543393ac3c7f9fef0ec
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/proxy/squid
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
@@ -56,6 +56,9 @@ CFLAGS += $(CPP_LARGEFILES)
 
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
+
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/sbin
 
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
@@ -101,9 +104,9 @@ CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_ILP32_OFFBIG
 CONFIGURE_OPTIONS += --with-pthreads
 
 # common targets
-build:		$(BUILD_32) 
+build:		$(BUILD_64) 
 
-install:	$(INSTALL_32) 
+install:	$(INSTALL_64) 
 
 # configure says it needs cppunit to test with.
 # After some work I can get cppunit to build but it quickly
@@ -145,7 +148,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Can not open file/d" ' \
 	'-e "/ERROR/p" '
 
-test:	$(TEST_32)
+test:	$(TEST_64)
 
 
 REQUIRED_PACKAGES += developer/cppunit

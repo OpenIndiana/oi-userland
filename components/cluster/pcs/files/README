@@ -1,0 +1,86 @@
+1) Create a configuration file for corosync
+Copy the example and edit /etc/corosync/corosync.conf
+
+cp /usr/share/corosync/examples/conf/corosync.conf.example.openindiana /etc/corosync/corosync.conf
+
+Edit the file and change IP adresses and names.
+
+You should define one or more rings and the nodes participating in the cluster.
+The example uses as transport udpu (UDPUnicast) over port 5405.
+You may use multiple rings if you have multiple network connections between the cluster nodes.
+
+Use in ring0 full qualified domain names which are resolvable over DNS or IP addresses.
+The nodenames in ring0 are used to connect to remote hosts when you use the cluster gui pcsd.
+The nodenames must also be resolvable from the system where you start the browser to connect to pcsd.
+
+
+2) Create the authentication token for corosync
+
+Create an authentication token for corosync with:
+create /etc/corosync/authkey with corosync-keygen
+
+Copy /etc/corosync/authkey to all nodes participating in the cluster.
+Restrict the acces to the token with:
+chmod 400 /etc/corosync/authkey
+
+
+3) Define a password for user hacluster
+
+If you want to use pcsd you need an user account with the permission to login to pcsd. 
+By default this is the user account hacluster which is installed without a password.
+Define a password with:
+pfexec passwd hacluster
+You must do this on each node in your cluster.
+
+
+4) Configuration of pcsd
+
+Create the file /usr/lib/pcsd/env with the content:
+export PCSD_DEBUG=false
+export RACK_ENV=production
+export PCSD_BIND_ADDR=<IP address to bind>
+
+Enable the gui with
+svcadm enable pcsd
+
+
+5) Configuration of pcsd for cluster nodes
+
+The cluster gui uses tokens to login to the other cluster nodes.
+The gui is controlled by the service pcsd which connects over port tcp/2224 to other cluster nodes.
+You may create the tokens via the gui or the command line.
+
+Login via ssh to one node of each cluster which you want to manage in pcsd. 
+Create the tokens with
+pcs cluster auth -u hacluster
+The command creates the tokens and distributes them in the cluster.
+
+Now start a browser and connect to https://<one of your cluster nodes>:2224.
+Login with user hacluster and the password you defined in 3).
+Use "Manage Clusters" and then "Add Existing".
+Use as "Node Name/IP" one of the names defined in ring0 in corosync.conf.
+Now a new cluster with the name you defined in corosync.conf should be presented in the selection list.
+
+
+6) Integration of zones as "remote node"
+
+Pacemaker can manage resources in zones from the service installed in the global zone. 
+Install the package hacluster-remote in the zone.
+Confígure pcsd (see above "Configuration of pcsd") and start pcsd with
+#zone >svcadm enable pcsd
+Change the password of user hacluster (see above).
+
+Change to the globale zone.
+Create the token which uses the pcsd service in the global zone to access the pcsd service in the zone: 
+#global zone> pcs cluster auth node1 -u hacluster
+Add the virtual node with:
+#global zone> pcs cluster node add-remote node1
+
+"node1" is the name of the zone in the example. 
+
+
+7) Logs
+
+You find the logs of corosync, pacemaker and pcsd in /var/log/hacluster/.
+
+

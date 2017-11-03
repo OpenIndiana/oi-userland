@@ -1,0 +1,27 @@
+Debian: https://sources.debian.net/src/dvd%2Brw-tools/7.1-11.1/debian/patches/01-growisofs-pioneer.patch/
+
+Author: n/a
+Description: Fixes to fail closing session on some PIONEER DVD-RW drives
+
+--- a/growisofs_mmc.cpp
++++ b/growisofs_mmc.cpp
+@@ -1743,8 +1743,17 @@
+ 	cmd[1] = 0x01;		// "IMMED"
+ 	cmd[2] = 0x02;		// "Close session"
+ 	cmd[9] = 0;
+-	if ((err=cmd.transport()))
+-	    sperror ("CLOSE SESSION",err);
++
++	// it seems, that pioneer is a bit crappy
++	while (err=cmd.transport()) {
++	    if (SK(err)==0x2 && ASC(err)==0x04 && ASCQ(err)==0x07) {
++		    sperror ("CLOSE SESSION (but try to continue)",err);
++		    usleep(10000);
++	    } else {
++		    sperror ("CLOSE SESSION",err);
++		    break;
++	    }
++	}
+ 
+ 	if (wait_for_unit (cmd)) break;
+  

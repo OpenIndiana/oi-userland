@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-keyboard
 COMPONENT_VERSION= 1.9.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= \
   xf86-input-keyboard - Keyboard input driver for the Xorg X server
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-keyboard

@@ -660,7 +660,7 @@ PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
 # Config magic for Postgres/EnterpriseDB/...
 # Default DB version is the oldest one, for hopefully best built complatibility
-PG_VERSION ?=   9.3
+PG_VERSION ?=   9.4
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
@@ -824,6 +824,9 @@ CPP_LARGEFILES =		$(CPP_LARGEFILES.$(BITS))
 # functions. Also avoids the component's #define _POSIX_C_SOURCE to some value
 # we currently do not support.
 CPP_POSIX =	-D_POSIX_C_SOURCE=200112L -D_POSIX_PTHREAD_SEMANTICS
+
+# XPG7 mode.  This option enables XPG7 conformance, plus extensions.
+CPP_XPG7MODE=	-D_XOPEN_SOURCE=700 -D__EXTENSIONS__=1 -D_XPG7
 
 # XPG6 mode.  This option enables XPG6 conformance, plus extensions.
 # Amongst other things, this option will cause system calls like

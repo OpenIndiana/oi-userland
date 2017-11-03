@@ -27,13 +27,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-COMPONENT_VERSION=	2.9.4
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.9.6
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ffb911191e509b966deb55de705387f14156e1a56b21824357cdf0053233633c
+    sha256:8b9038cca7240e881d462ea391882092dfdc6d4f483f72683e817be08df5ebbc
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxml
 
@@ -65,18 +64,20 @@ COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if
 # can build and test separate python 3.4 support.
 COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python3.4 ; \
     $(GSED) -i -e 's|-lpython2[.]7|-lpython3.4m|' \
-     -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/python3.4m|' \
+     -e 's|usr/bin/python2[.]7|usr/bin/python3.4m|' \
+     -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/$(MACH64)/python3.4m|' \
      -e 's|usr/include/python2[.]7|usr/include/python3.4m|' \
      -e 's/2[.]7/3.4/g' `find python3.4 -name Makefile`)
 
 # After we have built/installed libxml2, build/install the python
-# support for python 3.4
+# support for python 3.4 
 COMPONENT_POST_INSTALL_ACTION = \
     (cd $(@D)/python3.4 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
 
-# It's nice to test also python 3.4 module.
+# It's nice to test also python 3.4 module (LC_ALL is set to avoid test failure).
 COMPONENT_POST_TEST_ACTION = \
-    (cd $(@D)/python3.4 ; $(GMAKE) $(COMPONENT_TEST_ARGS) test)
+    (cd $(@D)/python3.4 ; \
+    LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) test)
 
 # We have patched our 64 bit python so it will search for modules only in
 # '64/' directories. Now we need to provide one. Otherwise python will
@@ -89,6 +90,15 @@ $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
 
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_1));
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "s/^make\[.*$$/[EnD]/" ' \
+	'-e "/^\#\# XML regression tests/,/^\[EnD\]/p" ' \
+	'-e "/^\#\# running Python regression tests/,/^\[EnD\]/p" ' \
+	'-e "/.*/d" '
+
 
 # common targets
 build:		$(BUILD_32_and_64)

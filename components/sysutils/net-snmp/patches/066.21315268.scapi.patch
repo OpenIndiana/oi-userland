@@ -1,0 +1,115 @@
+This patch is taken from the community. Details at
+https://sourceforge.net/p/net-snmp/mailman/message/34275277/
+--- net-snmp-5.7.2.1.old/snmplib/scapi.c	2014-02-19 16:36:42.000000000 +0000
++++ net-snmp-5.7.2.1/snmplib/scapi.c	2017-07-21 03:52:11.616499080 +0000
+@@ -832,15 +832,35 @@
+ #endif
+ #ifdef HAVE_AES
+     if (ISTRANSFORM(privtype, AESPriv)) {
+-        (void) AES_set_encrypt_key(key, properlength*8, &aes_key);
++      EVP_CIPHER_CTX ctx;
++      int outlen = 0;
++      int tmplen = 0;
++
++      EVP_CIPHER_CTX_init(&ctx);
++
++      EVP_EncryptInit_ex(&ctx, EVP_aes_128_cfb(), NULL, key, iv);
++
++      EVP_CIPHER_CTX_set_key_length(&ctx, keylen);
++
++      if(!EVP_EncryptUpdate(&ctx, ciphertext, &outlen, plaintext, ptlen))
++      {
++         snmp_log(LOG_ERR, "Cipher encryption update of plaintext failed\n");
++         return FALSE;
++      }
++
++      /* Buffer passed to EVP_EncryptFinal() must be after data just
++       * encrypted to avoid overwriting it.
++       */
++      if(!EVP_EncryptFinal_ex(&ctx, ciphertext + outlen, &tmplen))
++      {
++         snmp_log(LOG_ERR, "Final cipher encryption of plaintext failed\n");
++         return FALSE;
++      }
+ 
+-        memcpy(my_iv, iv, ivlen);
+-        /*
+-         * encrypt the data 
+-         */
+-        AES_cfb128_encrypt(plaintext, ciphertext, ptlen,
+-                           &aes_key, my_iv, &new_ivlen, AES_ENCRYPT);
+-        *ctlen = ptlen;
++      outlen += tmplen;
++
++      EVP_CIPHER_CTX_cleanup(&ctx);
++      *ctlen = outlen;
+     }
+ #endif
+   sc_encrypt_quit:
+@@ -1055,15 +1075,58 @@
+ #endif
+ #ifdef HAVE_AES
+     if (ISTRANSFORM(privtype, AESPriv)) {
+-        (void) AES_set_encrypt_key(key, properlength*8, &aes_key);
+ 
+-        memcpy(my_iv, iv, ivlen);
+-        /*
+-         * encrypt the data 
+-         */
+-        AES_cfb128_encrypt(ciphertext, plaintext, ctlen,
+-                           &aes_key, my_iv, &new_ivlen, AES_DECRYPT);
+-        *ptlen = ctlen;
++      int decryptedLength = 0;
++      int lastDecryptLength = 0;
++
++      EVP_CIPHER_CTX cryptCtx;
++
++      /*
++       * Initialization
++       */
++      EVP_CIPHER_CTX_init(&cryptCtx);
++
++      if (EVP_DecryptInit_ex(&cryptCtx, EVP_aes_128_cfb(), NULL, key, iv) == 1)
++      {
++         EVP_CIPHER_CTX_set_key_length(&cryptCtx, keylen);
++
++         /* 
++          * Note that EVP_DecryptUpdate will alter the value of the third
++          * parameter to be equal to the amount of data that was written.
++          * This is not always the entire length of the decrypted data!
++          * To finish the decryption process, use EVP_DecryptFinal_ex.
++          * This will decrypt any remaining data
++          */
++         if (EVP_DecryptUpdate(&cryptCtx, plaintext, &decryptedLength,
++                               ciphertext, ctlen) == 1)
++         {
++             /*
++              * Stick the final data at the end of the last decrypted data.
++              */
++
++            if(EVP_DecryptFinal_ex(&cryptCtx, plaintext + decryptedLength,
++                                   &lastDecryptLength) == 1)
++            {
++                decryptedLength = decryptedLength + lastDecryptLength;
++                plaintext[decryptedLength] = 0;
++            }
++           else
++            {
++               snmp_log(LOG_ERR, "EVP_DecryptFinal_ex final decryption failed.\n");
++               return FALSE;
++            }
++         }
++         else
++         {
++               snmp_log(LOG_ERR, "EVP_DecryptUpdate update decryption failed.\n");
++               return FALSE;
++         }
++      }
++      else
++      {
++            snmp_log(LOG_ERR,"EVP_DecryptInit_ex init decryption failed.\n");
++            return FALSE;
++      }
+     }
+ #endif
+ 

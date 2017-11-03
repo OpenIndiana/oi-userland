@@ -19,6 +19,7 @@ COMPONENTS+= dri3proto
 COMPONENTS+= evieext # evieproto in X11 gate
 COMPONENTS+= fixesproto
 COMPONENTS+= fontsproto
+COMPONENTS+= fontcacheproto
 COMPONENTS+= glproto
 COMPONENTS+= inputproto
 COMPONENTS+= kbproto
@@ -32,12 +33,14 @@ COMPONENTS+= scrnsaverproto
 COMPONENTS+= videoproto
 COMPONENTS+= xcmiscproto
 COMPONENTS+= xextproto
+COMPONENTS+= xf86bigfontproto
 COMPONENTS+= xf86dgaproto
 COMPONENTS+= xf86driproto
 COMPONENTS+= xf86miscproto
 COMPONENTS+= xf86vidmodeproto
 COMPONENTS+= xineramaproto
 COMPONENTS+= xcb-proto # xcbproto in X11 gate
+COMPONENTS+= xproxymanagementprotocol
 COMPONENTS+= sun-ext-protos
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
@@ -66,7 +69,7 @@ COMPONENTS+= ../library/fontconfig
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= libpthread-stubs
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-COMPONENTS+= ../openindiana/gfx-drm
+#COMPONENTS+= ../openindiana/gfx-drm
 COMPONENTS+= libfontenc
 COMPONENTS+= libpciaccess
 COMPONENTS+= libxcb
@@ -127,13 +130,15 @@ COMPONENTS+= libXrandr
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= mesa
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-COMPONENTS+= libepoxy
 COMPONENTS+= glu # libglu in X11 gate
+COMPONENTS+= glw # not in X11 gate
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libepoxy
 COMPONENTS+= freeglut
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= ../pixman
 COMPONENTS+= libxkbcommon
-#COMPONENTS+= libvdpau TBD
+COMPONENTS+= ../library/libvdpau
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 # app
@@ -154,7 +159,7 @@ COMPONENTS+= installalias
 COMPONENTS+= listres
 COMPONENTS+= luit
 COMPONENTS+= kbd_mode
-COMPONENTS+= mesa-demos
+#COMPONENTS+= mesa-demos
 COMPONENTS+= mkcookie
 COMPONENTS+= oclock
 COMPONENTS+= sessreg
@@ -232,36 +237,7 @@ COMPONENTS+= mkfontscale
 COMPONENTS+= mkfontdir
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
-COMPONENTS+= xorg-server
-COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-
-COMPONENTS+= tigervnc
-COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-
-# driver
-COMPONENTS+= xf86-input-keyboard
-COMPONENTS+= xf86-input-mouse
-COMPONENTS+= xf86-input-void
-COMPONENTS+= xf86-video-ast
-COMPONENTS+= xf86-video-mga
-COMPONENTS+= xf86-video-dummy		
-COMPONENTS+= xf86-input-acecad
-COMPONENTS+= xf86-input-synaptics
-COMPONENTS+= xf86-input-vmmouse
-COMPONENTS+= xf86-input-hotkey
-COMPONENTS+= xf86-video-ati
-COMPONENTS+= xf86-video-cirrus
-COMPONENTS+= xf86-video-intel
-COMPONENTS+= xf86-video-mach64
-COMPONENTS+= xf86-video-nv
-COMPONENTS+= xf86-video-openchrome
-COMPONENTS+= xf86-video-r128
-COMPONENTS+= xf86-video-savage
-COMPONENTS+= xf86-video-trident
-COMPONENTS+= xf86-video-vesa
-COMPONENTS+= xf86-video-vmware
-COMPONENTS+= ../meta-packages/xorg-video
-COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+include xorg.mk
 
 COMPONENTS+= rgb
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
@@ -271,6 +247,7 @@ COMPONENTS+= rasterfile
 COMPONENTS+= ogl-select
 COMPONENTS+= workspace-patterns
 COMPONENTS+= xcursor-themes
+COMPONENTS+= xkeyboard-config
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 # font

@@ -1,0 +1,18 @@
+--- crmsh-3.0.1/Makefile.am.orig	2017-09-23 22:42:56.388407735 +0000
++++ crmsh-3.0.1/Makefile.am	2017-09-23 22:43:58.284283594 +0000
+@@ -46,6 +46,7 @@
+ 
+ %.8: %.8.adoc
+ 	a2x -f manpage $<
++	mv $(@:.8=.1m) $@
+ 
+ # Shared data files
+ install-data-hook:
+@@ -72,6 +73,7 @@
+ 	-mkdir -p $(DESTDIR)$(pkgpythondir)
+ 	$(PYTHON) $(srcdir)/setup.py install \
+ 		--root $(DESTDIR)/// \
++		--install-lib=$(PYTHON_SITELIB) \
+ 		$(python_prefix) \
+ 		--record $(DESTDIR)$(pkgpythondir)/install_files.txt \
+ 		--verbose

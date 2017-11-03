@@ -1,0 +1,16 @@
+--- goffice-0.10.35/goffice/math/go-math.h.sun	Sat Apr 11 22:14:13 2015
++++ goffice-0.10.35/goffice/math/go-math.h	Fri Aug 25 14:54:57 2017
+@@ -2,7 +2,12 @@
+ #define __GO_MATH_H
+ 
+ #include <goffice/goffice-features.h>
+-#include <math.h>
++/* solaris hides finite in ieeefp.h, not math.h */
++#ifdef __sun__
++	#include <ieeefp.h>
++#else
++	#include <math.h>
++#endif
+ #include <glib.h>
+ #include <goffice/goffice.h>
+ 

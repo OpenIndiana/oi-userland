@@ -1,0 +1,589 @@
+diff -Nur crmsh-3.0.1.orig/crmsh/main.py crmsh-3.0.1/crmsh/main.py
+--- crmsh-3.0.1.orig/crmsh/main.py	2017-09-24 09:05:42.540535404 +0000
++++ crmsh-3.0.1/crmsh/main.py	2017-09-24 09:13:07.426507383 +0000
+@@ -90,7 +90,7 @@
+ Call %prog with a level name as argument to start an interactive
+ session from that level.
+ 
+-See the crm(8) man page or call %prog help for more details.""",
++See the crm(1m) man page or call %prog help for more details.""",
+                           version="%prog " + config.CRM_VERSION)
+     parser.disable_interspersed_args()
+     parser.add_option("-f", "--file", dest="filename", metavar="FILE",
+diff -Nur crmsh-3.0.1.orig/crmsh/ra.py crmsh-3.0.1/crmsh/ra.py
+--- crmsh-3.0.1.orig/crmsh/ra.py	2017-09-24 09:05:42.540739325 +0000
++++ crmsh-3.0.1/crmsh/ra.py	2017-09-24 09:13:07.438998768 +0000
+@@ -118,7 +118,7 @@
+     def _stonith_types(self):
+         rc, l = stdout2list("stonith -L")
+         if rc != 0:
+-            # stonith(8) may not be installed
++            # stonith(1m) may not be installed
+             common_debug("stonith exited with code %d" % rc)
+             l = []
+         for ra in os_types_list("/usr/sbin/fence_*"):
+diff -Nur crmsh-3.0.1.orig/crmsh/ui_root.py crmsh-3.0.1/crmsh/ui_root.py
+--- crmsh-3.0.1.orig/crmsh/ui_root.py	2017-09-24 09:05:42.541339130 +0000
++++ crmsh-3.0.1/crmsh/ui_root.py	2017-09-24 09:13:07.440338934 +0000
+@@ -142,7 +142,7 @@
+     @command.level(ui_resource.RscMgmt)
+     @command.help('''resources management
+ Everything related to resources management is available at this
+-level. Most commands are implemented using the crm_resource(8)
++level. Most commands are implemented using the crm_resource(1m)
+ program.
+ ''')
+     def do_resource(self):
+@@ -169,7 +169,7 @@
+     @command.help('''show cluster status
+ Show cluster status. The status is displayed by `crm_mon`. Supply
+ additional arguments for more information or different format.
+-See `crm_mon(8)` for more details.
++See `crm_mon(1m)` for more details.
+ 
+ Usage:
+ ...............
+diff -Nur crmsh-3.0.1.orig/crmsh/utils.py crmsh-3.0.1/crmsh/utils.py
+--- crmsh-3.0.1.orig/crmsh/utils.py	2017-09-24 09:05:42.541510812 +0000
++++ crmsh-3.0.1/crmsh/utils.py	2017-09-24 09:13:07.501750424 +0000
+@@ -789,7 +789,7 @@
+ 
+ def run_ptest(graph_s, nograph, scores, utilization, actions, verbosity):
+     '''
+-    Pipe graph_s thru ptest(8). Show graph using dotty if requested.
++    Pipe graph_s thru ptest(1m). Show graph using dotty if requested.
+     '''
+     actions_filter = "grep LogActions: | grep -vw Leave"
+     ptest = "2>&1 %s -x -" % config.core.ptest
+diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
+--- crmsh-3.0.1.orig/doc/crm.8.adoc	2017-09-24 09:05:42.541731177 +0000
++++ crmsh-3.0.1/doc/crm.8.adoc	2017-09-24 09:13:07.412429664 +0000
+@@ -2,7 +2,7 @@
+ :man version:  2.3.0
+ :man manual:   crmsh documentation
+ 
+-crm(8)
++crm(1m)
+ ======
+ 
+ NAME
+@@ -862,7 +862,7 @@
+ 
+ Show cluster status. The status is displayed by `crm_mon`. Supply
+ additional arguments for more information or different format.
+-See `crm_mon(8)` for more details.
++See `crm_mon(1m)` for more details.
+ 
+ Example:
+ ...............
+@@ -898,7 +898,7 @@
+ Performs basic checks for the cluster configuration and
+ current status, reporting potential issues.
+ 
+-See `crm_verify(8)` and `crm_simulate(8)` for more details.
++See `crm_verify(1m)` and `crm_simulate(1m)` for more details.
+ 
+ Example:
+ ...............
+@@ -1656,7 +1656,7 @@
+ This level is for management of shadow CIBs. It is available both
+ at the top level and the `configure` level.
+ 
+-All the commands are implemented using `cib_shadow(8)` and the
++All the commands are implemented using `cib_shadow(1m)` and the
+ `CIB_shadow` environment variable. The user prompt always
+ includes the name of the currently active shadow or the live CIB.
+ 
+@@ -1874,7 +1874,7 @@
+ At this level resources may be managed.
+ 
+ All (or almost all) commands are implemented with the CRM tools
+-such as `crm_resource(8)`.
++such as `crm_resource(1m)`.
+ 
+ [[cmdhelp_resource_ban,ban a resource from a node]]
+ ==== `ban`
+@@ -3747,8 +3747,8 @@
+ [[cmdhelp_configure_ptest,show cluster actions if changes were committed]]
+ ==== `ptest` (`simulate`)
+ 
+-Show PE (Policy Engine) motions using `ptest(8)` or
+-`crm_simulate(8)`.
++Show PE (Policy Engine) motions using `ptest(1m)` or
++`crm_simulate(1m)`.
+ 
+ A CIB is constructed using the current user edited configuration
+ and the status from the running CIB. The resulting CIB is run
+@@ -3832,7 +3832,7 @@
+ attributes and node capacity (utilization). The `status` shortcut
+ references the whole status section of the CIB. Read access to
+ status is necessary for various monitoring tools such as
+-`crm_mon(8)` (aka `crm status`).
++`crm_mon(1m)` (aka `crm status`).
+ 
+ For more information on rule expressions, see
+ <<topics_Syntax_RuleExpressions,Syntax: Rule expressions>>.
+@@ -4379,7 +4379,7 @@
+ run with the CIB which was loaded along with the status section.
+ 
+ The `simulate` and `run` commands as well as all status
+-modification commands are implemented using `crm_simulate(8)`.
++modification commands are implemented using `crm_simulate(1m)`.
+ 
+ [[cmdhelp_cibstatus_load,load the CIB status section]]
+ ==== `load`
+@@ -5117,7 +5117,7 @@
+ This command will print actions planned by the PE and run
+ graphviz (`dotty`) to display a graphical representation of the
+ transition. Of course, for the latter an X11 session is required.
+-This command invokes `ptest(8)` in background.
++This command invokes `ptest(1m)` in background.
+ 
+ The +showdot+ subcommand runs graphviz (`dotty`) to display a
+ graphical representation of the +.dot+ file which has been
+@@ -5225,7 +5225,7 @@
+ for collecting data to attach to bug reports, or for detecting the
+ root cause of errors resulting in resource failover, for example.
+ 
+-See `crmsh_hb_report(8)` for more details on arguments,
++See `crmsh_hb_report(1m)` for more details on arguments,
+ or call `crm report -h`
+ 
+ Usage:
+@@ -5288,8 +5288,8 @@
+ 
+ SEE ALSO
+ --------
+-crm_resource(8), crm_attribute(8), crm_mon(8), cib_shadow(8),
+-ptest(8), dotty(1), crm_simulate(8), cibadmin(8)
++crm_resource(1m), crm_attribute(1m), crm_mon(1m), cib_shadow(1m),
++ptest(1m), dotty(1), crm_simulate(1m), cibadmin(1m)
+ 
+ 
+ COPYING
+diff -Nur crmsh-3.0.1.orig/doc/crmsh_hb_report.8.adoc crmsh-3.0.1/doc/crmsh_hb_report.8.adoc
+--- crmsh-3.0.1.orig/doc/crmsh_hb_report.8.adoc	2017-09-24 09:05:42.541760964 +0000
++++ crmsh-3.0.1/doc/crmsh_hb_report.8.adoc	2017-09-24 09:13:07.318722210 +0000
+@@ -2,7 +2,7 @@
+ :man version:  1.2
+ :man manual:   Pacemaker documentation
+ 
+-crmsh_hb_report(8)
++crmsh_hb_report(1m)
+ ==================
+ 
+ NAME
+@@ -19,7 +19,7 @@
+ 
+ DESCRIPTION
+ -----------
+-The crmsh_hb_report(8) is a utility to collect all information (logs,
++The crmsh_hb_report(1m) is a utility to collect all information (logs,
+ configuration files, system information, etc) relevant to
+ Pacemaker (CRM) over the given period of time.
+ 
+@@ -205,7 +205,7 @@
+ Most files are copied verbatim or they contain output of a
+ command. For instance, cib.xml is a copy of the CIB found in
+ /var/lib/heartbeat/crm/cib.xml. crm_verify.txt is output of the
+-crm_verify(8) program.
++crm_verify(1m) program.
+ 
+ Some files are result of a more involved processing:
+ 
+@@ -240,7 +240,7 @@
+ 
+ 	*sysstats.txt*::
+ 	Output of various system commands such as ps(1), uptime(1),
+-	netstat(8), and ip(8). The dynamic part of the system.
++	netstat(1m), and ip(1m). The dynamic part of the system.
+ 
+ description.txt should contain a user supplied description of the
+ problem, but since it is very seldom used, it will be dropped
+@@ -427,7 +427,7 @@
+ - save log messages matching user defined patterns
+   (defaults to ERRORs and CRITical conditions)
+ - report if there were coredumps and by whom
+-- report crm_verify(8) results
++- report crm_verify(1m) results
+ - save log messages matching major events to events.txt
+ - in case logging is configured without loghost, node logs and
+   events files are combined using a perl utility
+@@ -467,7 +467,7 @@
+ 
+ SEE ALSO
+ --------
+-crm(8), Date::Parse(3)
++crm(1m), Date::Parse(3)
+ 
+ 
+ COPYING
+diff -Nur crmsh-3.0.1.orig/doc/development.md crmsh-3.0.1/doc/development.md
+--- crmsh-3.0.1.orig/doc/development.md	2017-09-24 09:05:42.541787731 +0000
++++ crmsh-3.0.1/doc/development.md	2017-09-24 09:13:07.317291936 +0000
+@@ -115,7 +115,7 @@
+ 	for +[[topic_+) and command reference (search for
+ 	+[[cmdhelp_+). Every user interface change needs to be
+ 	reflected here. _Actually, every user interface change has to
+-	start here_. A source for the +crm(8)+ man page too.
++	start here_. A source for the +crm(1m)+ man page too.
+ 
+ - `crmsh/cibconfig.py`
+ 
+diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-1.2.adoc crmsh-3.0.1/doc/website-v1/man-1.2.adoc
+--- crmsh-3.0.1.orig/doc/website-v1/man-1.2.adoc	2017-09-24 09:05:42.543960558 +0000
++++ crmsh-3.0.1/doc/website-v1/man-1.2.adoc	2017-09-24 09:13:07.371691317 +0000
+@@ -2,7 +2,7 @@
+ :man version:  1.2.6
+ :man manual:   crmsh documentation
+ 
+-crm(8)
++crm(1m)
+ ======
+ 
+ NOTE: This is the documentation for stable release 1.2.6 of `crmsh`.
+@@ -31,7 +31,7 @@
+ 
+ `crm` is also a management tool. For management tasks it relies
+ almost exclusively on other command line tools, such as
+-`crm_resource(8)` or `crm_attribute(8)`.  Use of these programs
++`crm_resource(1m)` or `crm_attribute(1m)`.  Use of these programs
+ is, however, plagued by the notorious weakness common to all UNIX
+ tools: a multitude of options, necessary for operation and yet
+ very hard to remember. `crm` tries to present a consistent
+@@ -590,7 +590,7 @@
+ 
+ Show cluster status. The status is displayed by `crm_mon`. Supply
+ additional arguments for more information or different format.
+-See `crm_mon(8)` for more details.
++See `crm_mon(1m)` for more details.
+ 
+ Usage:
+ ...............
+@@ -605,7 +605,7 @@
+ This level is for management of shadow CIBs. It is available both
+ at the top level and the `configure` level.
+ 
+-All the commands are implemented using `cib_shadow(8)` and the
++All the commands are implemented using `cib_shadow(1m)` and the
+ `CIB_shadow` environment variable. The user prompt always
+ includes the name of the currently active shadow or the live CIB.
+ 
+@@ -800,7 +800,7 @@
+ At this level resources may be managed.
+ 
+ All (or almost all) commands are implemented with the CRM tools
+-such as `crm_resource(8)`.
++such as `crm_resource(1m)`.
+ 
+ [[cmdhelp_resource_status,show status of resources]]
+ ==== `status` (`show`, `list`)
+@@ -2129,7 +2129,7 @@
+ attributes and node capacity (utilization). The `status` shortcut
+ references the whole status section of the CIB. Read access to
+ status is necessary for various monitoring tools such as
+-`crm_mon(8)` (aka `crm status`).
++`crm_mon(1m)` (aka `crm status`).
+ 
+ Usage:
+ ...............
+@@ -2377,8 +2377,8 @@
+ [[cmdhelp_configure_ptest,show cluster actions if changes were committed]]
+ ==== `ptest` (`simulate`)
+ 
+-Show PE (Policy Engine) motions using `ptest(8)` or
+-`crm_simulate(8)`.
++Show PE (Policy Engine) motions using `ptest(1m)` or
++`crm_simulate(1m)`.
+ 
+ A CIB is constructed using the current user edited configuration
+ and the status from the running CIB. The resulting CIB is run
+@@ -2743,7 +2743,7 @@
+ run with the CIB which was loaded along with the status section.
+ 
+ The `simulate` and `run` commands as well as all status
+-modification commands are implemented using `crm_simulate(8)`.
++modification commands are implemented using `crm_simulate(1m)`.
+ 
+ [[cmdhelp_cibstatus_load,load the CIB status section]]
+ ==== `load`
+@@ -3234,7 +3234,7 @@
+ This command will print actions planned by the PE and run
+ graphviz (`dotty`) to display a graphical representation of the
+ transition. Of course, for the latter an X11 session is required.
+-This command invokes `ptest(8)` in background.
++This command invokes `ptest(1m)` in background.
+ 
+ The `showdot` subcommand runs graphviz (`dotty`) to display a
+ graphical representation of the `.dot` file which has been
+@@ -3423,8 +3423,8 @@
+ 
+ SEE ALSO
+ --------
+-crm_resource(8), crm_attribute(8), crm_mon(8), cib_shadow(8),
+-ptest(8), dotty(1), crm_simulate(8), cibadmin(8)
++crm_resource(1m), crm_attribute(1m), crm_mon(1m), cib_shadow(1m),
++ptest(1m), dotty(1), crm_simulate(1m), cibadmin(1m)
+ 
+ 
+ COPYING
+diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-2.0.adoc crmsh-3.0.1/doc/website-v1/man-2.0.adoc
+--- crmsh-3.0.1.orig/doc/website-v1/man-2.0.adoc	2017-09-24 09:05:42.544021062 +0000
++++ crmsh-3.0.1/doc/website-v1/man-2.0.adoc	2017-09-24 09:13:07.392216859 +0000
+@@ -2,7 +2,7 @@
+ :man version:  2.3.2
+ :man manual:   crmsh documentation
+ 
+-crm(8)
++crm(1m)
+ ======
+ 
+ NAME
+@@ -862,7 +862,7 @@
+ 
+ Show cluster status. The status is displayed by `crm_mon`. Supply
+ additional arguments for more information or different format.
+-See `crm_mon(8)` for more details.
++See `crm_mon(1m)` for more details.
+ 
+ Example:
+ ...............
+@@ -898,7 +898,7 @@
+ Performs basic checks for the cluster configuration and
+ current status, reporting potential issues.
+ 
+-See `crm_verify(8)` and `crm_simulate(8)` for more details.
++See `crm_verify(1m)` and `crm_simulate(1m)` for more details.
+ 
+ Example:
+ ...............
+@@ -1389,7 +1389,7 @@
+ This level is for management of shadow CIBs. It is available both
+ at the top level and the `configure` level.
+ 
+-All the commands are implemented using `cib_shadow(8)` and the
++All the commands are implemented using `cib_shadow(1m)` and the
+ `CIB_shadow` environment variable. The user prompt always
+ includes the name of the currently active shadow or the live CIB.
+ 
+@@ -1607,7 +1607,7 @@
+ At this level resources may be managed.
+ 
+ All (or almost all) commands are implemented with the CRM tools
+-such as `crm_resource(8)`.
++such as `crm_resource(1m)`.
+ 
+ [[cmdhelp_resource_ban,ban a resource from a node]]
+ ==== `ban`
+@@ -3480,8 +3480,8 @@
+ [[cmdhelp_configure_ptest,show cluster actions if changes were committed]]
+ ==== `ptest` (`simulate`)
+ 
+-Show PE (Policy Engine) motions using `ptest(8)` or
+-`crm_simulate(8)`.
++Show PE (Policy Engine) motions using `ptest(1m)` or
++`crm_simulate(1m)`.
+ 
+ A CIB is constructed using the current user edited configuration
+ and the status from the running CIB. The resulting CIB is run
+@@ -3565,7 +3565,7 @@
+ attributes and node capacity (utilization). The `status` shortcut
+ references the whole status section of the CIB. Read access to
+ status is necessary for various monitoring tools such as
+-`crm_mon(8)` (aka `crm status`).
++`crm_mon(1m)` (aka `crm status`).
+ 
+ For more information on rule expressions, see
+ <<topics_Syntax_RuleExpressions,Syntax: Rule expressions>>.
+@@ -4112,7 +4112,7 @@
+ run with the CIB which was loaded along with the status section.
+ 
+ The `simulate` and `run` commands as well as all status
+-modification commands are implemented using `crm_simulate(8)`.
++modification commands are implemented using `crm_simulate(1m)`.
+ 
+ [[cmdhelp_cibstatus_load,load the CIB status section]]
+ ==== `load`
+@@ -4850,7 +4850,7 @@
+ This command will print actions planned by the PE and run
+ graphviz (`dotty`) to display a graphical representation of the
+ transition. Of course, for the latter an X11 session is required.
+-This command invokes `ptest(8)` in background.
++This command invokes `ptest(1m)` in background.
+ 
+ The +showdot+ subcommand runs graphviz (`dotty`) to display a
+ graphical representation of the +.dot+ file which has been
+@@ -4958,7 +4958,7 @@
+ for collecting data to attach to bug reports, or for detecting the
+ root cause of errors resulting in resource failover, for example.
+ 
+-See `crmsh_hb_report(8)` for more details on arguments,
++See `crmsh_hb_report(1m)` for more details on arguments,
+ or call `crm report -h`
+ 
+ Usage:
+@@ -5021,8 +5021,8 @@
+ 
+ SEE ALSO
+ --------
+-crm_resource(8), crm_attribute(8), crm_mon(8), cib_shadow(8),
+-ptest(8), dotty(1), crm_simulate(8), cibadmin(8)
++crm_resource(1m), crm_attribute(1m), crm_mon(1m), cib_shadow(1m),
++ptest(1m), dotty(1), crm_simulate(1m), cibadmin(1m)
+ 
+ 
+ COPYING
+diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-3.adoc crmsh-3.0.1/doc/website-v1/man-3.adoc
+--- crmsh-3.0.1.orig/doc/website-v1/man-3.adoc	2017-09-24 09:05:42.544083937 +0000
++++ crmsh-3.0.1/doc/website-v1/man-3.adoc	2017-09-24 09:13:07.361446648 +0000
+@@ -2,7 +2,7 @@
+ :man version:  2.3.0
+ :man manual:   crmsh documentation
+ 
+-crm(8)
++crm(1m)
+ ======
+ 
+ NAME
+@@ -862,7 +862,7 @@
+ 
+ Show cluster status. The status is displayed by `crm_mon`. Supply
+ additional arguments for more information or different format.
+-See `crm_mon(8)` for more details.
++See `crm_mon(1m)` for more details.
+ 
+ Example:
+ ...............
+@@ -898,7 +898,7 @@
+ Performs basic checks for the cluster configuration and
+ current status, reporting potential issues.
+ 
+-See `crm_verify(8)` and `crm_simulate(8)` for more details.
++See `crm_verify(1m)` and `crm_simulate(1m)` for more details.
+ 
+ Example:
+ ...............
+@@ -1650,7 +1650,7 @@
+ This level is for management of shadow CIBs. It is available both
+ at the top level and the `configure` level.
+ 
+-All the commands are implemented using `cib_shadow(8)` and the
++All the commands are implemented using `cib_shadow(1m)` and the
+ `CIB_shadow` environment variable. The user prompt always
+ includes the name of the currently active shadow or the live CIB.
+ 
+@@ -1868,7 +1868,7 @@
+ At this level resources may be managed.
+ 
+ All (or almost all) commands are implemented with the CRM tools
+-such as `crm_resource(8)`.
++such as `crm_resource(1m)`.
+ 
+ [[cmdhelp_resource_ban,ban a resource from a node]]
+ ==== `ban`
+@@ -3741,8 +3741,8 @@
+ [[cmdhelp_configure_ptest,show cluster actions if changes were committed]]
+ ==== `ptest` (`simulate`)
+ 
+-Show PE (Policy Engine) motions using `ptest(8)` or
+-`crm_simulate(8)`.
++Show PE (Policy Engine) motions using `ptest(1m)` or
++`crm_simulate(1m)`.
+ 
+ A CIB is constructed using the current user edited configuration
+ and the status from the running CIB. The resulting CIB is run
+@@ -3826,7 +3826,7 @@
+ attributes and node capacity (utilization). The `status` shortcut
+ references the whole status section of the CIB. Read access to
+ status is necessary for various monitoring tools such as
+-`crm_mon(8)` (aka `crm status`).
++`crm_mon(1m)` (aka `crm status`).
+ 
+ For more information on rule expressions, see
+ <<topics_Syntax_RuleExpressions,Syntax: Rule expressions>>.
+@@ -4373,7 +4373,7 @@
+ run with the CIB which was loaded along with the status section.
+ 
+ The `simulate` and `run` commands as well as all status
+-modification commands are implemented using `crm_simulate(8)`.
++modification commands are implemented using `crm_simulate(1m)`.
+ 
+ [[cmdhelp_cibstatus_load,load the CIB status section]]
+ ==== `load`
+@@ -5111,7 +5111,7 @@
+ This command will print actions planned by the PE and run
+ graphviz (`dotty`) to display a graphical representation of the
+ transition. Of course, for the latter an X11 session is required.
+-This command invokes `ptest(8)` in background.
++This command invokes `ptest(1m)` in background.
+ 
+ The +showdot+ subcommand runs graphviz (`dotty`) to display a
+ graphical representation of the +.dot+ file which has been
+@@ -5219,7 +5219,7 @@
+ for collecting data to attach to bug reports, or for detecting the
+ root cause of errors resulting in resource failover, for example.
+ 
+-See `crmsh_hb_report(8)` for more details on arguments,
++See `crmsh_hb_report(1m)` for more details on arguments,
+ or call `crm report -h`
+ 
+ Usage:
+@@ -5282,8 +5282,8 @@
+ 
+ SEE ALSO
+ --------
+-crm_resource(8), crm_attribute(8), crm_mon(8), cib_shadow(8),
+-ptest(8), dotty(1), crm_simulate(8), cibadmin(8)
++crm_resource(1m), crm_attribute(1m), crm_mon(1m), cib_shadow(1m),
++ptest(1m), dotty(1), crm_simulate(1m), cibadmin(1m)
+ 
+ 
+ COPYING
+diff -Nur crmsh-3.0.1.orig/hb_report/hb_report.in crmsh-3.0.1/hb_report/hb_report.in
+--- crmsh-3.0.1.orig/hb_report/hb_report.in	2017-09-24 09:05:42.544753624 +0000
++++ crmsh-3.0.1/hb_report/hb_report.in	2017-09-24 09:13:07.249754093 +0000
+@@ -915,7 +915,7 @@
+ 		if which crm_diff > /dev/null 2>&1; then
+ 			crm_diff -c -n $1 -o $2
+ 		else
+-			info "crm_diff(8) not found, cannot diff CIBs"
++			info "crm_diff(1m) not found, cannot diff CIBs"
+ 		fi
+ 	else
+ 		echo "can't compare cibs from running and stopped systems"
+diff -Nur crmsh-3.0.1.orig/scripts/sbd/main.yml crmsh-3.0.1/scripts/sbd/main.yml
+--- crmsh-3.0.1.orig/scripts/sbd/main.yml	2017-09-24 09:05:42.547095140 +0000
++++ crmsh-3.0.1/scripts/sbd/main.yml	2017-09-24 09:13:07.290211741 +0000
+@@ -13,7 +13,7 @@
+   A shared device must be available and visible on all nodes.
+ 
+   For more information, see http://www.linux-ha.org/wiki/SBD_Fencing
+-  or the sbd(8) manual page.
++  or the sbd(1m) manual page.
+ 
+ parameters:
+   - name: id
+diff -Nur crmsh-3.0.1.orig/templates/apache crmsh-3.0.1/templates/apache
+--- crmsh-3.0.1.orig/templates/apache	2017-09-24 09:05:42.547288453 +0000
++++ crmsh-3.0.1/templates/apache	2017-09-24 09:13:07.316061414 +0000
+@@ -36,7 +36,7 @@
+ 
+ %optional
+ 
+-# Extra options to apply when starting apache. See man httpd(8).
++# Extra options to apply when starting apache. See man httpd(1m).
+ 
+ %% options 
+ 
+diff -Nur crmsh-3.0.1.orig/test/unittests/test_scripts.py crmsh-3.0.1/test/unittests/test_scripts.py
+--- crmsh-3.0.1.orig/test/unittests/test_scripts.py	2017-09-24 09:05:42.551006901 +0000
++++ crmsh-3.0.1/test/unittests/test_scripts.py	2017-09-24 09:13:07.237062191 +0000
+@@ -147,7 +147,7 @@
+ 
+ <parameter name="options">
+ <longdesc lang="en">
+-Extra options to apply when starting apache. See man httpd(8).
++Extra options to apply when starting apache. See man httpd(1m).
+ </longdesc>
+ <shortdesc lang="en">command line options</shortdesc>
+ <content type="string" />

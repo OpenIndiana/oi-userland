@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-trident
 COMPONENT_VERSION= 1.3.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-trident - Trident video driver for the Xorg X server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-trident

@@ -13,7 +13,7 @@
      DnsQueryData *query_data = (DnsQueryData *)data;
      struct  hostent *phost;
 -#ifndef _WIN32    
-+#if !defined(_WIN32) && !defined(sun)
++#if !defined(_WIN32) && !defined(__sun__)
  #ifdef HAVE_GETHOSTBYNAME_R
      struct  hostent hostinfo;
      char buf[1024];

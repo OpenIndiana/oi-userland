@@ -36,9 +36,7 @@ set name=pkg.description value="$(COMPONENT_SUMMARY)"
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-group groupname=haclient gid=66
-user username=hacluster ftpuser=false gcos-field="HA Cluster Reserved UID" group=haclient \
-password=NP uid=66
+depend fmri=pkg:/application/cluster/hacluster-common type=require
 
 file files/hacluster.xml path=lib/svc/manifest/application/hacluster.xml restart_fmri=svc:/system/manifest-import:default
 file files/svc-hacluster path=lib/svc/method/svc-hacluster

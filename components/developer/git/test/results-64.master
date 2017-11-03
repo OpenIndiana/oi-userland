@@ -112,30 +112,18 @@ ok 30 - init notices EPERM
 ok 31 - init creates a new bare directory with global --bare
 ok 32 - init prefers command line to GIT_DIR
 ok 33 - init with separate gitdir
-not ok 34 - init in long base path
-#	
-#		# exceed initial buffer size of strbuf_getcwd()
-#		component=123456789abcdef &&
-#		test_when_finished "chmod 0700 $component; rm -rf $component" &&
-#		p31=$component/$component &&
-#		p127=$p31/$p31/$p31/$p31 &&
-#		mkdir -p $p127 &&
-#		chmod 0111 $component &&
-#		(
-#			cd $p127 &&
-#			git init newdir
-#		)
-#	
-ok 35 - re-init on .git file
-ok 36 - re-init to update git link
-ok 37 - re-init to move gitdir
-ok 38 - re-init to move gitdir symlink
-ok 39 # skip .git hidden (missing MINGW)
-ok 40 # skip bare git dir not hidden (missing MINGW)
-ok 41 - remote init from does not use config from cwd
-ok 42 - re-init from a linked worktree
-# failed 1 among 42 test(s)
-1..42
+ok 34 - init in long base path
+ok 35 # skip init in long restricted base path (missing GETCWD_IGNORES_PERMS)
+ok 36 - re-init on .git file
+ok 37 - re-init to update git link
+ok 38 - re-init to move gitdir
+ok 39 - re-init to move gitdir symlink
+ok 40 # skip .git hidden (missing MINGW)
+ok 41 # skip bare git dir not hidden (missing MINGW)
+ok 42 - remote init from does not use config from cwd
+ok 43 - re-init from a linked worktree
+# passed all 43 test(s)
+1..43
 *** t0002-gitfile.sh ***
 ok 1 - initial setup
 ok 2 - bad setup: invalid .git file format
@@ -218,46 +206,54 @@ ok 18 - show date (unix:1466000000 +0200)
 ok 19 - show date (iso-local:1466000000 +0200)
 ok 20 - show date (raw-local:1466000000 +0200)
 ok 21 - show date (unix-local:1466000000 +0200)
-ok 22 - show date (iso:5758122296 -0400)
-ok 23 - show date (iso-local:5758122296 -0400)
-ok 24 - parse date (2008)
-ok 25 - parse date (2008-02)
-ok 26 - parse date (2008-02-14)
-ok 27 - parse date (2008-02-14 20:30:45)
-ok 28 - parse date (2008-02-14 20:30:45 -0500)
-ok 29 - parse date (2008-02-14 20:30:45 -0015)
-ok 30 - parse date (2008-02-14 20:30:45 -5)
-ok 31 - parse date (2008-02-14 20:30:45 -5:)
-ok 32 - parse date (2008-02-14 20:30:45 -05)
-ok 33 - parse date (2008-02-14 20:30:45 -:30)
-ok 34 - parse date (2008-02-14 20:30:45 -05:00)
-ok 35 - parse date (2008-02-14 20:30:45 TZ=EST5)
-ok 36 - parse approxidate (now)
-ok 37 - parse approxidate (5 seconds ago)
-ok 38 - parse approxidate (5.seconds.ago)
-ok 39 - parse approxidate (10.minutes.ago)
-ok 40 - parse approxidate (yesterday)
-ok 41 - parse approxidate (3.days.ago)
-ok 42 - parse approxidate (3.weeks.ago)
-ok 43 - parse approxidate (3.months.ago)
-ok 44 - parse approxidate (2.years.3.months.ago)
-ok 45 - parse approxidate (6am yesterday)
-ok 46 - parse approxidate (6pm yesterday)
-ok 47 - parse approxidate (3:00)
-ok 48 - parse approxidate (15:00)
-ok 49 - parse approxidate (noon today)
-ok 50 - parse approxidate (noon yesterday)
-ok 51 - parse approxidate (last tuesday)
-ok 52 - parse approxidate (July 5th)
-ok 53 - parse approxidate (06/05/2009)
-ok 54 - parse approxidate (06.05.2009)
-ok 55 - parse approxidate (Jun 6, 5AM)
-ok 56 - parse approxidate (5AM Jun 6)
-ok 57 - parse approxidate (6AM, June 7, 2009)
-ok 58 - parse approxidate (2008-12-01)
-ok 59 - parse approxidate (2009-12-01)
-# passed all 59 test(s)
-1..59
+ok 22 - show date (format:%z:1466000000 +0200)
+ok 23 - show date (format-local:%z:1466000000 +0200)
+ok 24 - show date (format:%Z:1466000000 +0200)
+ok 25 - show date (format-local:%Z:1466000000 +0200)
+ok 26 - show date (format:%%z:1466000000 +0200)
+ok 27 - show date (format-local:%%z:1466000000 +0200)
+ok 28 - show date (format:%Y-%m-%d %H:%M:%S:1466000000 +0200)
+ok 29 - show date (format-local:%Y-%m-%d %H:%M:%S:1466000000 +0200)
+ok 30 - show date (iso:5758122296 -0400)
+ok 31 - show date (iso-local:5758122296 -0400)
+ok 32 - parse date (2008)
+ok 33 - parse date (2008-02)
+ok 34 - parse date (2008-02-14)
+ok 35 - parse date (2008-02-14 20:30:45)
+ok 36 - parse date (2008-02-14 20:30:45 -0500)
+ok 37 - parse date (2008-02-14 20:30:45 -0015)
+ok 38 - parse date (2008-02-14 20:30:45 -5)
+ok 39 - parse date (2008-02-14 20:30:45 -5:)
+ok 40 - parse date (2008-02-14 20:30:45 -05)
+ok 41 - parse date (2008-02-14 20:30:45 -:30)
+ok 42 - parse date (2008-02-14 20:30:45 -05:00)
+ok 43 - parse date (2008-02-14 20:30:45 TZ=EST5)
+ok 44 - parse approxidate (now)
+ok 45 - parse approxidate (5 seconds ago)
+ok 46 - parse approxidate (5.seconds.ago)
+ok 47 - parse approxidate (10.minutes.ago)
+ok 48 - parse approxidate (yesterday)
+ok 49 - parse approxidate (3.days.ago)
+ok 50 - parse approxidate (3.weeks.ago)
+ok 51 - parse approxidate (3.months.ago)
+ok 52 - parse approxidate (2.years.3.months.ago)
+ok 53 - parse approxidate (6am yesterday)
+ok 54 - parse approxidate (6pm yesterday)
+ok 55 - parse approxidate (3:00)
+ok 56 - parse approxidate (15:00)
+ok 57 - parse approxidate (noon today)
+ok 58 - parse approxidate (noon yesterday)
+ok 59 - parse approxidate (last tuesday)
+ok 60 - parse approxidate (July 5th)
+ok 61 - parse approxidate (06/05/2009)
+ok 62 - parse approxidate (06.05.2009)
+ok 63 - parse approxidate (Jun 6, 5AM)
+ok 64 - parse approxidate (5AM Jun 6)
+ok 65 - parse approxidate (6AM, June 7, 2009)
+ok 66 - parse approxidate (2008-12-01)
+ok 67 - parse approxidate (2009-12-01)
+# passed all 67 test(s)
+1..67
 *** t0007-git-var.sh ***
 ok 1 - get GIT_AUTHOR_IDENT
 ok 2 - get GIT_COMMITTER_IDENT
@@ -704,8 +700,129 @@ ok 1 - setup
 ok 2 - works for commands and guides by default
 ok 3 - --exclude-guides does not work for guides
 ok 4 - --help does not work for guides
-# passed all 4 test(s)
-1..4
+ok 5 - generate builtin list
+ok 6 - add can handle -h
+ok 7 - am can handle -h
+ok 8 - annotate can handle -h
+ok 9 - apply can handle -h
+ok 10 - archive can handle -h
+ok 11 - bisect--helper can handle -h
+ok 12 - blame can handle -h
+ok 13 - branch can handle -h
+ok 14 - bundle can handle -h
+ok 15 - cat-file can handle -h
+ok 16 - check-attr can handle -h
+ok 17 - check-ignore can handle -h
+ok 18 - check-mailmap can handle -h
+ok 19 - check-ref-format can handle -h
+ok 20 - checkout can handle -h
+ok 21 - checkout-index can handle -h
+ok 22 - cherry can handle -h
+ok 23 - cherry-pick can handle -h
+ok 24 - clean can handle -h
+ok 25 - clone can handle -h
+ok 26 - column can handle -h
+ok 27 - commit can handle -h
+ok 28 - commit-tree can handle -h
+ok 29 - config can handle -h
+ok 30 - count-objects can handle -h
+ok 31 - credential can handle -h
+ok 32 - describe can handle -h
+ok 33 - diff can handle -h
+ok 34 - diff-files can handle -h
+ok 35 - diff-index can handle -h
+ok 36 - diff-tree can handle -h
+ok 37 - difftool can handle -h
+ok 38 - fast-export can handle -h
+ok 39 - fetch can handle -h
+ok 40 - fetch-pack can handle -h
+ok 41 - fmt-merge-msg can handle -h
+ok 42 - for-each-ref can handle -h
+ok 43 - format-patch can handle -h
+ok 44 - fsck can handle -h
+ok 45 - fsck-objects can handle -h
+ok 46 - gc can handle -h
+ok 47 - get-tar-commit-id can handle -h
+ok 48 - grep can handle -h
+ok 49 - hash-object can handle -h
+ok 50 - help can handle -h
+ok 51 - index-pack can handle -h
+ok 52 - init can handle -h
+ok 53 - init-db can handle -h
+ok 54 - interpret-trailers can handle -h
+ok 55 - log can handle -h
+ok 56 - ls-files can handle -h
+ok 57 - ls-remote can handle -h
+ok 58 - ls-tree can handle -h
+ok 59 - mailinfo can handle -h
+ok 60 - mailsplit can handle -h
+ok 61 - merge can handle -h
+ok 62 - merge-base can handle -h
+ok 63 - merge-file can handle -h
+ok 64 - merge-index can handle -h
+ok 65 - merge-ours can handle -h
+ok 66 - merge-recursive can handle -h
+ok 67 - merge-recursive-ours can handle -h
+ok 68 - merge-recursive-theirs can handle -h
+ok 69 - merge-subtree can handle -h
+ok 70 - merge-tree can handle -h
+ok 71 - mktag can handle -h
+ok 72 - mktree can handle -h
+ok 73 - mv can handle -h
+ok 74 - name-rev can handle -h
+ok 75 - notes can handle -h
+ok 76 - pack-objects can handle -h
+ok 77 - pack-redundant can handle -h
+ok 78 - pack-refs can handle -h
+ok 79 - patch-id can handle -h
+ok 80 - pickaxe can handle -h
+ok 81 - prune can handle -h
+ok 82 - prune-packed can handle -h
+ok 83 - pull can handle -h
+ok 84 - push can handle -h
+ok 85 - read-tree can handle -h
+ok 86 - rebase--helper can handle -h
+ok 87 - receive-pack can handle -h
+ok 88 - reflog can handle -h
+ok 89 - remote can handle -h
+ok 90 - remote-ext can handle -h
+ok 91 - remote-fd can handle -h
+ok 92 - repack can handle -h
+ok 93 - replace can handle -h
+ok 94 - rerere can handle -h
+ok 95 - reset can handle -h
+ok 96 - rev-list can handle -h
+ok 97 - rev-parse can handle -h
+ok 98 - revert can handle -h
+ok 99 - rm can handle -h
+ok 100 - send-pack can handle -h
+ok 101 - shortlog can handle -h
+ok 102 - show can handle -h
+ok 103 - show-branch can handle -h
+ok 104 - show-ref can handle -h
+ok 105 - stage can handle -h
+ok 106 - status can handle -h
+ok 107 - stripspace can handle -h
+ok 108 - submodule--helper can handle -h
+ok 109 - symbolic-ref can handle -h
+ok 110 - tag can handle -h
+ok 111 - unpack-file can handle -h
+ok 112 - unpack-objects can handle -h
+ok 113 - update-index can handle -h
+ok 114 - update-ref can handle -h
+ok 115 - update-server-info can handle -h
+ok 116 - upload-archive can handle -h
+ok 117 - upload-archive--writer can handle -h
+ok 118 - var can handle -h
+ok 119 - verify-commit can handle -h
+ok 120 - verify-pack can handle -h
+ok 121 - verify-tag can handle -h
+ok 122 - version can handle -h
+ok 123 - whatchanged can handle -h
+ok 124 - worktree can handle -h
+ok 125 - write-tree can handle -h
+# passed all 125 test(s)
+1..125
 *** t0013-sha1dc.sh ***
 1..0 # SKIP skipping sha1 collision tests, DC_SHA1 not set
 *** t0020-crlf.sh ***
@@ -770,8 +887,11 @@ ok 20 - process filter should restart after unexpected write failure
 ok 21 - process filter should not be restarted if it signals an error
 ok 22 - process filter abort stops processing of all further files
 ok 23 - invalid process filter must fail (and not hang!)
-# passed all 23 test(s)
-1..23
+ok 24 - delayed checkout in process filter
+ok 25 - missing file in delayed checkout
+ok 26 - invalid file in delayed checkout
+# passed all 26 test(s)
+1..26
 *** t0022-crlf-rename.sh ***
 ok 1 - setup
 ok 2 - diff -M
@@ -2661,9 +2781,9 @@ ok 1 - Testing Git::I18N with NO Perl gettext library
 ok 2 - Git::I18N is located at $(@D)/t/../perl/blib/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
-ok 5 - sanity: __n has a $$$ prototype
-ok 6 - sanity: __ has a $ prototype
-ok 7 - sanity: N__ has a $ prototype
+ok 5 - sanity: N__ has a $ prototype
+ok 6 - sanity: __n has a $$$ prototype
+ok 7 - sanity: __ has a $ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -3202,68 +3322,70 @@ ok 5 - 2-way (1)
 # passed all 5 test(s)
 1..5
 *** t1013-read-tree-submodule.sh ***
-ok 1 - git read-tree --recurse-submodules -u -m: added submodule is checked out
-ok 2 - git read-tree --recurse-submodules -u -m: added submodule is checked out in empty dir
-ok 3 - git read-tree --recurse-submodules -u -m: added submodule doesn't remove untracked file with same name
-not ok 4 - git read-tree --recurse-submodules -u -m: added submodule removes an untracked ignored file # TODO known breakage
-ok 5 - git read-tree --recurse-submodules -u -m: replace tracked file with submodule checks out submodule
-ok 6 - git read-tree --recurse-submodules -u -m: replace directory with submodule
-ok 7 - git read-tree --recurse-submodules -u -m: removed submodule removes submodules working tree
-ok 8 - git read-tree --recurse-submodules -u -m: removed submodule absorbs submodules .git directory
-not ok 9 - git read-tree --recurse-submodules -u -m: replace submodule with a directory # TODO known breakage
-not ok 10 - git read-tree --recurse-submodules -u -m: replace submodule containing a .git directory with a directory must absorb the git dir # TODO known breakage
-ok 11 - git read-tree --recurse-submodules -u -m: replace submodule with a file
-not ok 12 - git read-tree --recurse-submodules -u -m: replace submodule with a file must fail with untracked files # TODO known breakage
-ok 13 - git read-tree --recurse-submodules -u -m: replace submodule with a file works ignores ignored files in submodule
-ok 14 - git read-tree --recurse-submodules -u -m: modified submodule updates submodule work tree
-ok 15 - git read-tree --recurse-submodules -u -m: updating to a missing submodule commit fails
-ok 16 - git read-tree --recurse-submodules -u -m: modified submodule updates submodule recursively
-ok 17 - git read-tree --recurse-submodules -u --reset: added submodule is checked out
-ok 18 - git read-tree --recurse-submodules -u --reset: added submodule ignores empty directory
-ok 19 - git read-tree --recurse-submodules -u --reset: added submodule does remove untracked unignored file with same name when forced
-ok 20 - git read-tree --recurse-submodules -u --reset: replace tracked file with submodule populates the submodule
-ok 21 - git read-tree --recurse-submodules -u --reset: replace directory with submodule
-ok 22 - git read-tree --recurse-submodules -u --reset: removed submodule leaves submodule directory and its contents in place
-ok 23 - git read-tree --recurse-submodules -u --reset: removed submodule leaves submodule containing a .git directory alone
-ok 24 - git read-tree --recurse-submodules -u --reset: replace submodule with a directory
-ok 25 - git read-tree --recurse-submodules -u --reset: replace submodule containing a .git directory with a directory must fail
-ok 26 - git read-tree --recurse-submodules -u --reset: replace submodule with a file
-ok 27 - git read-tree --recurse-submodules -u --reset: replace submodule with a file ignoring ignored files
-not ok 28 - git read-tree --recurse-submodules -u --reset: replace submodule with a file stops for untracked files # TODO known breakage
-ok 29 - git read-tree --recurse-submodules -u --reset: modified submodule updates submodule work tree
-ok 30 - git read-tree --recurse-submodules -u --reset: modified submodule does not update submodule work tree to invalid commit
-ok 31 - git read-tree --recurse-submodules -u --reset: modified submodule does not update submodule work tree from invalid commit
-ok 32 - git read-tree -u -m: added submodule creates empty directory
-ok 33 - git read-tree -u -m: added submodule leaves existing empty directory alone
-ok 34 - git read-tree -u -m: added submodule doesn't remove untracked unignored file with same name
-ok 35 - git read-tree -u -m: replace tracked file with submodule creates empty directory
-ok 36 - git read-tree -u -m: replace directory with submodule
-ok 37 - git read-tree -u -m: removed submodule leaves submodule directory and its contents in place
-ok 38 - git read-tree -u -m: removed submodule leaves submodule containing a .git directory alone
-ok 39 - git read-tree -u -m: replace submodule with a directory must fail
-ok 40 - git read-tree -u -m: replace submodule containing a .git directory with a directory must fail
-not ok 41 - git read-tree -u -m: replace submodule with a file must fail # TODO known breakage
-not ok 42 - git read-tree -u -m: replace submodule containing a .git directory with a file must fail # TODO known breakage
-ok 43 - git read-tree -u -m: modified submodule does not update submodule work tree
-ok 44 - git read-tree -u -m: modified submodule does not update submodule work tree to invalid commit
-ok 45 - git read-tree -u -m: modified submodule does not update submodule work tree from invalid commit
-ok 46 - git read-tree -u --reset: added submodule creates empty directory
-ok 47 - git read-tree -u --reset: added submodule leaves existing empty directory alone
-ok 48 - git read-tree -u --reset: added submodule does remove untracked unignored file with same name when forced
-ok 49 - git read-tree -u --reset: replace tracked file with submodule creates empty directory
-ok 50 - git read-tree -u --reset: replace directory with submodule
-ok 51 - git read-tree -u --reset: removed submodule leaves submodule directory and its contents in place
-ok 52 - git read-tree -u --reset: removed submodule leaves submodule containing a .git directory alone
-not ok 53 - git read-tree -u --reset: replace submodule with a directory must fail # TODO known breakage
-not ok 54 - git read-tree -u --reset: replace submodule containing a .git directory with a directory must fail # TODO known breakage
-not ok 55 - git read-tree -u --reset: replace submodule with a file must fail # TODO known breakage
-not ok 56 - git read-tree -u --reset: replace submodule containing a .git directory with a file must fail # TODO known breakage
-ok 57 - git read-tree -u --reset: modified submodule does not update submodule work tree
-ok 58 - git read-tree -u --reset: modified submodule does not update submodule work tree to invalid commit
-ok 59 - git read-tree -u --reset: modified submodule does not update submodule work tree from invalid commit
+ok 1 - git read-tree -u -m --recurse-submodules: added submodule is checked out
+ok 2 - git read-tree -u -m --recurse-submodules: added submodule is checked out in empty dir
+ok 3 - git read-tree -u -m --recurse-submodules: added submodule doesn't remove untracked file with same name
+not ok 4 - git read-tree -u -m --recurse-submodules: added submodule removes an untracked ignored file # TODO known breakage
+ok 5 - git read-tree -u -m --recurse-submodules: replace tracked file with submodule checks out submodule
+ok 6 - git read-tree -u -m --recurse-submodules: replace directory with submodule
+ok 7 - git read-tree -u -m --recurse-submodules: removed submodule removes submodules working tree
+ok 8 - git read-tree -u -m --recurse-submodules: removed submodule absorbs submodules .git directory
+not ok 9 - git read-tree -u -m --recurse-submodules: replace submodule with a directory # TODO known breakage
+not ok 10 - git read-tree -u -m --recurse-submodules: replace submodule containing a .git directory with a directory must absorb the git dir # TODO known breakage
+ok 11 - git read-tree -u -m --recurse-submodules: replace submodule with a file
+not ok 12 - git read-tree -u -m --recurse-submodules: replace submodule with a file must fail with untracked files # TODO known breakage
+ok 13 - git read-tree -u -m --recurse-submodules: replace submodule with a file works ignores ignored files in submodule
+ok 14 - git read-tree -u -m --recurse-submodules: modified submodule updates submodule work tree
+ok 15 - git -c submodule.recurse=true read-tree -u -m: modified submodule updates submodule work tree
+ok 16 - git read-tree -u -m --recurse-submodules: updating to a missing submodule commit fails
+ok 17 - git read-tree -u -m --recurse-submodules: modified submodule updates submodule recursively
+ok 18 - git read-tree -u --reset --recurse-submodules: added submodule is checked out
+ok 19 - git read-tree -u --reset --recurse-submodules: added submodule ignores empty directory
+ok 20 - git read-tree -u --reset --recurse-submodules: added submodule does remove untracked unignored file with same name when forced
+ok 21 - git read-tree -u --reset --recurse-submodules: replace tracked file with submodule populates the submodule
+ok 22 - git read-tree -u --reset --recurse-submodules: replace directory with submodule
+ok 23 - git read-tree -u --reset --recurse-submodules: removed submodule leaves submodule directory and its contents in place
+ok 24 - git read-tree -u --reset --recurse-submodules: removed submodule leaves submodule containing a .git directory alone
+ok 25 - git read-tree -u --reset --recurse-submodules: replace submodule with a directory
+ok 26 - git read-tree -u --reset --recurse-submodules: replace submodule containing a .git directory with a directory must fail
+ok 27 - git read-tree -u --reset --recurse-submodules: replace submodule with a file
+ok 28 - git read-tree -u --reset --recurse-submodules: replace submodule with a file ignoring ignored files
+not ok 29 - git read-tree -u --reset --recurse-submodules: replace submodule with a file stops for untracked files # TODO known breakage
+ok 30 - git read-tree -u --reset --recurse-submodules: modified submodule updates submodule work tree
+ok 31 - git read-tree -u --reset --recurse-submodules: modified submodule does not update submodule work tree to invalid commit
+ok 32 - git read-tree -u --reset --recurse-submodules: modified submodule does update submodule work tree from invalid commit
+ok 33 - git read-tree -u --reset --recurse-submodules: updating submodules fixes .git links
+ok 34 - git read-tree -u -m: added submodule creates empty directory
+ok 35 - git read-tree -u -m: added submodule leaves existing empty directory alone
+ok 36 - git read-tree -u -m: added submodule doesn't remove untracked unignored file with same name
+ok 37 - git read-tree -u -m: replace tracked file with submodule creates empty directory
+ok 38 - git read-tree -u -m: replace directory with submodule
+ok 39 - git read-tree -u -m: removed submodule leaves submodule directory and its contents in place
+ok 40 - git read-tree -u -m: removed submodule leaves submodule containing a .git directory alone
+ok 41 - git read-tree -u -m: replace submodule with a directory must fail
+ok 42 - git read-tree -u -m: replace submodule containing a .git directory with a directory must fail
+not ok 43 - git read-tree -u -m: replace submodule with a file must fail # TODO known breakage
+not ok 44 - git read-tree -u -m: replace submodule containing a .git directory with a file must fail # TODO known breakage
+ok 45 - git read-tree -u -m: modified submodule does not update submodule work tree
+ok 46 - git read-tree -u -m: modified submodule does not update submodule work tree to invalid commit
+ok 47 - git read-tree -u -m: modified submodule does not update submodule work tree from invalid commit
+ok 48 - git read-tree -u --reset: added submodule creates empty directory
+ok 49 - git read-tree -u --reset: added submodule leaves existing empty directory alone
+ok 50 - git read-tree -u --reset: added submodule does remove untracked unignored file with same name when forced
+ok 51 - git read-tree -u --reset: replace tracked file with submodule creates empty directory
+ok 52 - git read-tree -u --reset: replace directory with submodule
+ok 53 - git read-tree -u --reset: removed submodule leaves submodule directory and its contents in place
+ok 54 - git read-tree -u --reset: removed submodule leaves submodule containing a .git directory alone
+not ok 55 - git read-tree -u --reset: replace submodule with a directory must fail # TODO known breakage
+not ok 56 - git read-tree -u --reset: replace submodule containing a .git directory with a directory must fail # TODO known breakage
+not ok 57 - git read-tree -u --reset: replace submodule with a file must fail # TODO known breakage
+not ok 58 - git read-tree -u --reset: replace submodule containing a .git directory with a file must fail # TODO known breakage
+ok 59 - git read-tree -u --reset: modified submodule does not update submodule work tree
+ok 60 - git read-tree -u --reset: modified submodule does not update submodule work tree to invalid commit
+ok 61 - git read-tree -u --reset: modified submodule does not update submodule work tree from invalid commit
 # still have 11 known breakage(s)
-# passed all remaining 48 test(s)
-1..59
+# passed all remaining 50 test(s)
+1..61
 *** t1014-read-tree-confusing.sh ***
 ok 1 - create base tree
 ok 2 - enable core.protectHFS for rejection tests
@@ -3666,9 +3788,11 @@ ok 23 - conditional include, early config reading
 ok 24 - conditional include, set up symlinked $HOME
 ok 25 - conditional include, $HOME expansion with symlinks
 ok 26 - conditional include, relative path with symlinks
-ok 27 - include cycles are detected
-# passed all 27 test(s)
-1..27
+ok 27 - conditional include, gitdir matching symlink
+ok 28 - conditional include, gitdir matching symlink, icase
+ok 29 - include cycles are detected
+# passed all 29 test(s)
+1..29
 *** t1306-xdg-files.sh ***
 ok 1 - read config: xdg file exists and ~/.gitconfig doesn't
 ok 2 - read config: xdg file exists and ~/.gitconfig exists
@@ -3731,14 +3855,15 @@ ok 19 - find value from a configset
 ok 20 - find value with highest priority from a configset
 ok 21 - find value_list for a key from a configset
 ok 22 - proper error on non-existent files
-ok 23 - proper error on non-accessible files
-ok 24 - proper error on error in default config files
-ok 25 - proper error on error in custom config files
-ok 26 - check line errors for malformed values
-ok 27 - error on modifying repo config without repo
-ok 28 - iteration shows correct origins
-# passed all 28 test(s)
-1..28
+ok 23 - proper error on directory "files"
+ok 24 - proper error on non-accessible files
+ok 25 - proper error on error in default config files
+ok 26 - proper error on error in custom config files
+ok 27 - check line errors for malformed values
+ok 28 - error on modifying repo config without repo
+ok 29 - iteration shows correct origins
+# passed all 29 test(s)
+1..29
 *** t1309-early-config.sh ***
 ok 1 - read early config
 ok 2 - in a sub-directory
@@ -4126,6 +4251,13 @@ ok 15 - delete_reflog() not allowed
 ok 16 - create-reflog() not allowed
 # passed all 16 test(s)
 1..16
+*** t1407-worktree-ref-store.sh ***
+ok 1 - setup
+ok 2 - resolve_ref(<shared-ref>)
+ok 3 - resolve_ref(<per-worktree-ref>)
+ok 4 - create_symref(FOO, refs/heads/master)
+# passed all 4 test(s)
+1..4
 *** t1410-reflog.sh ***
 ok 1 - setup
 ok 2 - rewind
@@ -4169,10 +4301,8 @@ ok 15 - --date magic does not override explicit @{0} syntax
 ok 16 - empty reflog file
 ok 17 - git log -g -p shows diffs vs. parents
 ok 18 - reflog exists works
-ok 19 - showing multiple reflogs works
-ok 20 - showing multiple reflogs with an old date
-# passed all 20 test(s)
-1..20
+# passed all 18 test(s)
+1..18
 *** t1412-reflog-loop.sh ***
 ok 1 - setup commits
 ok 2 - setup reflog with alternating commits
@@ -4189,6 +4319,21 @@ ok 6 - attach to self
 ok 7 - attach to other
 # passed all 7 test(s)
 1..7
+*** t1414-reflog-walk.sh ***
+ok 1 - set up some reflog entries
+ok 2 - set up expected reflog
+ok 3 - reflog walk shows expected logs
+ok 4 - reflog can limit with --no-merges
+ok 5 - reflog can limit with pathspecs
+ok 6 - pathspec limiting handles merges
+ok 7 - --parents shows true parents
+ok 8 - walking multiple reflogs shows all
+ok 9 - date-limiting does not interfere with other logs
+ok 10 - min/max age uses entry date to limit
+ok 11 - walk prefers reflog to ref tip
+ok 12 - rev-list -g complains when there are no reflogs
+# passed all 12 test(s)
+1..12
 *** t1420-lost-found.sh ***
 ok 1 - setup
 ok 2 - lost and found something
@@ -4296,15 +4441,16 @@ ok 59 - fsck --connectivity-only with explicit head
 ok 60 - fsck --name-objects
 ok 61 - alternate objects are correctly blamed
 ok 62 - fsck errors in packed objects
-ok 63 - fsck finds problems in duplicate loose objects
-ok 64 - fsck detects trailing loose garbage (commit)
-ok 65 - fsck detects trailing loose garbage (blob)
-ok 66 - fsck notices dangling objects
-ok 67 - fsck $name notices bogus $name
-ok 68 - bogus head does not fallback to all heads
-ok 69 - detect corrupt index file in fsck
-# passed all 69 test(s)
-1..69
+ok 63 - fsck fails on corrupt packfile
+ok 64 - fsck finds problems in duplicate loose objects
+ok 65 - fsck detects trailing loose garbage (commit)
+ok 66 - fsck detects trailing loose garbage (blob)
+ok 67 - fsck notices dangling objects
+ok 68 - fsck $name notices bogus $name
+ok 69 - bogus head does not fallback to all heads
+ok 70 - detect corrupt index file in fsck
+# passed all 70 test(s)
+1..70
 *** t1500-rev-parse.sh ***
 ok 1 - setup
 ok 2 - toplevel: --is-bare-repository
@@ -4812,6 +4958,13 @@ ok 5 - out of bounds index.version issues warning
 ok 6 - GIT_INDEX_VERSION takes precedence over config
 # passed all 6 test(s)
 1..6
+*** t1601-index-bogus.sh ***
+ok 1 - create tree with null sha1
+ok 2 - read-tree refuses to read null sha1
+ok 3 - GIT_ALLOW_NULL_SHA1 overrides refusal
+ok 4 - git write-tree refuses to write null sha1
+# passed all 4 test(s)
+1..4
 *** t1700-split-index.sh ***
 ok 1 - enable split index
 ok 2 - add one file
@@ -5006,54 +5159,56 @@ ok 17 - git checkout --recurse-submodules: replace submodule with a file
 not ok 18 - git checkout --recurse-submodules: replace submodule with a file must fail with untracked files # TODO known breakage
 ok 19 - git checkout --recurse-submodules: replace submodule with a file works ignores ignored files in submodule
 ok 20 - git checkout --recurse-submodules: modified submodule updates submodule work tree
-ok 21 - git checkout --recurse-submodules: updating to a missing submodule commit fails
-ok 22 - git checkout --recurse-submodules: modified submodule updates submodule recursively
-ok 23 - git checkout -f --recurse-submodules: added submodule is checked out
-ok 24 - git checkout -f --recurse-submodules: added submodule ignores empty directory
-ok 25 - git checkout -f --recurse-submodules: added submodule does remove untracked unignored file with same name when forced
-ok 26 - git checkout -f --recurse-submodules: replace tracked file with submodule populates the submodule
-ok 27 - git checkout -f --recurse-submodules: replace directory with submodule
-ok 28 - git checkout -f --recurse-submodules: removed submodule leaves submodule directory and its contents in place
-ok 29 - git checkout -f --recurse-submodules: removed submodule leaves submodule containing a .git directory alone
-ok 30 - git checkout -f --recurse-submodules: replace submodule with a directory
-ok 31 - git checkout -f --recurse-submodules: replace submodule containing a .git directory with a directory must fail
-ok 32 - git checkout -f --recurse-submodules: replace submodule with a file
-ok 33 - git checkout -f --recurse-submodules: replace submodule with a file ignoring ignored files
-not ok 34 - git checkout -f --recurse-submodules: replace submodule with a file stops for untracked files # TODO known breakage
-ok 35 - git checkout -f --recurse-submodules: modified submodule updates submodule work tree
-ok 36 - git checkout -f --recurse-submodules: modified submodule does not update submodule work tree to invalid commit
-ok 37 - git checkout -f --recurse-submodules: modified submodule does not update submodule work tree from invalid commit
-ok 38 - git checkout: added submodule creates empty directory
-ok 39 - git checkout: added submodule leaves existing empty directory alone
-ok 40 - git checkout: added submodule doesn't remove untracked unignored file with same name
-ok 41 - git checkout: replace tracked file with submodule creates empty directory
-ok 42 - git checkout: replace directory with submodule
-ok 43 - git checkout: removed submodule leaves submodule directory and its contents in place
-ok 44 - git checkout: removed submodule leaves submodule containing a .git directory alone
-ok 45 - git checkout: replace submodule with a directory must fail
-ok 46 - git checkout: replace submodule containing a .git directory with a directory must fail
-not ok 47 - git checkout: replace submodule with a file must fail # TODO known breakage
-not ok 48 - git checkout: replace submodule containing a .git directory with a file must fail # TODO known breakage
-ok 49 - git checkout: modified submodule does not update submodule work tree
-ok 50 - git checkout: modified submodule does not update submodule work tree to invalid commit
-ok 51 - git checkout: modified submodule does not update submodule work tree from invalid commit
-ok 52 - git checkout -f: added submodule creates empty directory
-ok 53 - git checkout -f: added submodule leaves existing empty directory alone
-ok 54 - git checkout -f: added submodule does remove untracked unignored file with same name when forced
-ok 55 - git checkout -f: replace tracked file with submodule creates empty directory
-ok 56 - git checkout -f: replace directory with submodule
-ok 57 - git checkout -f: removed submodule leaves submodule directory and its contents in place
-ok 58 - git checkout -f: removed submodule leaves submodule containing a .git directory alone
-not ok 59 - git checkout -f: replace submodule with a directory must fail # TODO known breakage
-not ok 60 - git checkout -f: replace submodule containing a .git directory with a directory must fail # TODO known breakage
-not ok 61 - git checkout -f: replace submodule with a file must fail # TODO known breakage
-not ok 62 - git checkout -f: replace submodule containing a .git directory with a file must fail # TODO known breakage
-ok 63 - git checkout -f: modified submodule does not update submodule work tree
-ok 64 - git checkout -f: modified submodule does not update submodule work tree to invalid commit
-ok 65 - git checkout -f: modified submodule does not update submodule work tree from invalid commit
+ok 21 - git -c submodule.recurse=true checkout: modified submodule updates submodule work tree
+ok 22 - git checkout --recurse-submodules: updating to a missing submodule commit fails
+ok 23 - git checkout --recurse-submodules: modified submodule updates submodule recursively
+ok 24 - git checkout -f --recurse-submodules: added submodule is checked out
+ok 25 - git checkout -f --recurse-submodules: added submodule ignores empty directory
+ok 26 - git checkout -f --recurse-submodules: added submodule does remove untracked unignored file with same name when forced
+ok 27 - git checkout -f --recurse-submodules: replace tracked file with submodule populates the submodule
+ok 28 - git checkout -f --recurse-submodules: replace directory with submodule
+ok 29 - git checkout -f --recurse-submodules: removed submodule leaves submodule directory and its contents in place
+ok 30 - git checkout -f --recurse-submodules: removed submodule leaves submodule containing a .git directory alone
+ok 31 - git checkout -f --recurse-submodules: replace submodule with a directory
+ok 32 - git checkout -f --recurse-submodules: replace submodule containing a .git directory with a directory must fail
+ok 33 - git checkout -f --recurse-submodules: replace submodule with a file
+ok 34 - git checkout -f --recurse-submodules: replace submodule with a file ignoring ignored files
+not ok 35 - git checkout -f --recurse-submodules: replace submodule with a file stops for untracked files # TODO known breakage
+ok 36 - git checkout -f --recurse-submodules: modified submodule updates submodule work tree
+ok 37 - git checkout -f --recurse-submodules: modified submodule does not update submodule work tree to invalid commit
+ok 38 - git checkout -f --recurse-submodules: modified submodule does update submodule work tree from invalid commit
+ok 39 - git checkout -f --recurse-submodules: updating submodules fixes .git links
+ok 40 - git checkout: added submodule creates empty directory
+ok 41 - git checkout: added submodule leaves existing empty directory alone
+ok 42 - git checkout: added submodule doesn't remove untracked unignored file with same name
+ok 43 - git checkout: replace tracked file with submodule creates empty directory
+ok 44 - git checkout: replace directory with submodule
+ok 45 - git checkout: removed submodule leaves submodule directory and its contents in place
+ok 46 - git checkout: removed submodule leaves submodule containing a .git directory alone
+ok 47 - git checkout: replace submodule with a directory must fail
+ok 48 - git checkout: replace submodule containing a .git directory with a directory must fail
+not ok 49 - git checkout: replace submodule with a file must fail # TODO known breakage
+not ok 50 - git checkout: replace submodule containing a .git directory with a file must fail # TODO known breakage
+ok 51 - git checkout: modified submodule does not update submodule work tree
+ok 52 - git checkout: modified submodule does not update submodule work tree to invalid commit
+ok 53 - git checkout: modified submodule does not update submodule work tree from invalid commit
+ok 54 - git checkout -f: added submodule creates empty directory
+ok 55 - git checkout -f: added submodule leaves existing empty directory alone
+ok 56 - git checkout -f: added submodule does remove untracked unignored file with same name when forced
+ok 57 - git checkout -f: replace tracked file with submodule creates empty directory
+ok 58 - git checkout -f: replace directory with submodule
+ok 59 - git checkout -f: removed submodule leaves submodule directory and its contents in place
+ok 60 - git checkout -f: removed submodule leaves submodule containing a .git directory alone
+not ok 61 - git checkout -f: replace submodule with a directory must fail # TODO known breakage
+not ok 62 - git checkout -f: replace submodule containing a .git directory with a directory must fail # TODO known breakage
+not ok 63 - git checkout -f: replace submodule with a file must fail # TODO known breakage
+not ok 64 - git checkout -f: replace submodule containing a .git directory with a file must fail # TODO known breakage
+ok 65 - git checkout -f: modified submodule does not update submodule work tree
+ok 66 - git checkout -f: modified submodule does not update submodule work tree to invalid commit
+ok 67 - git checkout -f: modified submodule does not update submodule work tree from invalid commit
 # still have 10 known breakage(s)
-# passed all remaining 55 test(s)
-1..65
+# passed all remaining 57 test(s)
+1..67
 *** t2014-switch.sh ***
 ok 1 - setup
 ok 2 - check all changes are staged
@@ -5421,7 +5576,7 @@ ok 8 - can "commit -a" with an i-t-a entry
 ok 9 - cache-tree invalidates i-t-a paths
 ok 10 - cache-tree does not ignore dir that has i-t-a entries
 ok 11 - cache-tree does skip dir that becomes empty
-ok 12 - commit: ita entries ignored in empty intial commit check
+ok 12 - commit: ita entries ignored in empty initial commit check
 ok 13 - commit: ita entries ignored in empty commit check
 # passed all 13 test(s)
 1..13
@@ -5570,21 +5725,22 @@ ok 4 - ls-files does not output files not added to a repo
 ok 5 - ls-files recurses more than 1 level
 ok 6 - ls-files works with GIT_DIR
 ok 7 - --recurse-submodules and pathspecs setup
-ok 8 - --recurse-submodules and pathspecs
+ok 8 - inactive submodule
 ok 9 - --recurse-submodules and pathspecs
 ok 10 - --recurse-submodules and pathspecs
 ok 11 - --recurse-submodules and pathspecs
 ok 12 - --recurse-submodules and pathspecs
-ok 13 - --recurse-submodules and relative paths
-ok 14 - --recurse-submodules does not support --error-unmatch
-ok 15 - --recurse-submodules and --deleted are incompatible
-ok 16 - --recurse-submodules and --modified are incompatible
-ok 17 - --recurse-submodules and --others are incompatible
-ok 18 - --recurse-submodules and --stage are incompatible
-ok 19 - --recurse-submodules and --killed are incompatible
-ok 20 - --recurse-submodules and --unmerged are incompatible
-# passed all 20 test(s)
-1..20
+ok 13 - --recurse-submodules and pathspecs
+ok 14 - --recurse-submodules and relative paths
+ok 15 - --recurse-submodules does not support --error-unmatch
+ok 16 - --recurse-submodules and --deleted are incompatible
+ok 17 - --recurse-submodules and --modified are incompatible
+ok 18 - --recurse-submodules and --others are incompatible
+ok 19 - --recurse-submodules and --stage are incompatible
+ok 20 - --recurse-submodules and --killed are incompatible
+ok 21 - --recurse-submodules and --unmerged are incompatible
+# passed all 21 test(s)
+1..21
 *** t3008-ls-files-lazy-init-name-hash.sh ***
 ok 1 - no buffer overflow in lazy_init_name_hash
 # passed all 1 test(s)
@@ -5772,177 +5928,179 @@ ok 36 - wildmatch:     match 'foo/bar' 'foo/**/bar'
 ok 37 - wildmatch:     match 'foo/bar' 'foo/**/**/bar'
 ok 38 - wildmatch:  no match 'foo/bar' 'foo?bar'
 ok 39 - wildmatch:  no match 'foo/bar' 'foo[/]bar'
-ok 40 - wildmatch:  no match 'foo/bar' 'f[^eiu][^eiu][^eiu][^eiu][^eiu]r'
-ok 41 - wildmatch:     match 'foo-bar' 'f[^eiu][^eiu][^eiu][^eiu][^eiu]r'
-ok 42 - wildmatch:     match 'foo' '**/foo'
-ok 43 - wildmatch:     match 'XXX/foo' '**/foo'
-ok 44 - wildmatch:     match 'bar/baz/foo' '**/foo'
-ok 45 - wildmatch:  no match 'bar/baz/foo' '*/foo'
-ok 46 - wildmatch:  no match 'foo/bar/baz' '**/bar*'
-ok 47 - wildmatch:     match 'deep/foo/bar/baz' '**/bar/*'
-ok 48 - wildmatch:  no match 'deep/foo/bar/baz/' '**/bar/*'
-ok 49 - wildmatch:     match 'deep/foo/bar/baz/' '**/bar/**'
-ok 50 - wildmatch:  no match 'deep/foo/bar' '**/bar/*'
-ok 51 - wildmatch:     match 'deep/foo/bar/' '**/bar/**'
-ok 52 - wildmatch:  no match 'foo/bar/baz' '**/bar**'
-ok 53 - wildmatch:     match 'foo/bar/baz/x' '*/bar/**'
-ok 54 - wildmatch:  no match 'deep/foo/bar/baz/x' '*/bar/**'
-ok 55 - wildmatch:     match 'deep/foo/bar/baz/x' '**/bar/*/*'
-ok 56 - wildmatch:  no match 'acrt' 'a[c-c]st'
-ok 57 - wildmatch:     match 'acrt' 'a[c-c]rt'
-ok 58 - wildmatch:  no match ']' '[!]-]'
-ok 59 - wildmatch:     match 'a' '[!]-]'
-ok 60 - wildmatch:  no match '' '\'
-ok 61 - wildmatch:  no match '\' '\'
-ok 62 - wildmatch:  no match 'XXX/\' '*/\'
-ok 63 - wildmatch:     match 'XXX/\' '*/\\'
-ok 64 - wildmatch:     match 'foo' 'foo'
-ok 65 - wildmatch:     match '@foo' '@foo'
-ok 66 - wildmatch:  no match 'foo' '@foo'
-ok 67 - wildmatch:     match '[ab]' '\[ab]'
-ok 68 - wildmatch:     match '[ab]' '[[]ab]'
-ok 69 - wildmatch:     match '[ab]' '[[:]ab]'
-ok 70 - wildmatch:  no match '[ab]' '[[::]ab]'
-ok 71 - wildmatch:     match '[ab]' '[[:digit]ab]'
-ok 72 - wildmatch:     match '[ab]' '[\[:]ab]'
-ok 73 - wildmatch:     match '?a?b' '\??\?b'
-ok 74 - wildmatch:     match 'abc' '\a\b\c'
-ok 75 - wildmatch:  no match 'foo' ''
-ok 76 - wildmatch:     match 'foo/bar/baz/to' '**/t[o]'
-ok 77 - wildmatch:     match 'a1B' '[[:alpha:]][[:digit:]][[:upper:]]'
-ok 78 - wildmatch:  no match 'a' '[[:digit:][:upper:][:space:]]'
-ok 79 - wildmatch:     match 'A' '[[:digit:][:upper:][:space:]]'
-ok 80 - wildmatch:     match '1' '[[:digit:][:upper:][:space:]]'
-ok 81 - wildmatch:  no match '1' '[[:digit:][:upper:][:spaci:]]'
-ok 82 - wildmatch:     match ' ' '[[:digit:][:upper:][:space:]]'
-ok 83 - wildmatch:  no match '.' '[[:digit:][:upper:][:space:]]'
-ok 84 - wildmatch:     match '.' '[[:digit:][:punct:][:space:]]'
-ok 85 - wildmatch:     match '5' '[[:xdigit:]]'
-ok 86 - wildmatch:     match 'f' '[[:xdigit:]]'
-ok 87 - wildmatch:     match 'D' '[[:xdigit:]]'
-ok 88 - wildmatch:     match '_' '[[:alnum:][:alpha:][:blank:][:cntrl:][:digit:][:graph:][:lower:][:print:][:punct:][:space:][:upper:][:xdigit:]]'
-ok 89 - wildmatch:     match '.' '[^[:alnum:][:alpha:][:blank:][:cntrl:][:digit:][:lower:][:space:][:upper:][:xdigit:]]'
-ok 90 - wildmatch:     match '5' '[a-c[:digit:]x-z]'
-ok 91 - wildmatch:     match 'b' '[a-c[:digit:]x-z]'
-ok 92 - wildmatch:     match 'y' '[a-c[:digit:]x-z]'
-ok 93 - wildmatch:  no match 'q' '[a-c[:digit:]x-z]'
-ok 94 - wildmatch:     match ']' '[\\-^]'
-ok 95 - wildmatch:  no match '[' '[\\-^]'
-ok 96 - wildmatch:     match '-' '[\-_]'
-ok 97 - wildmatch:     match ']' '[\]]'
-ok 98 - wildmatch:  no match '\]' '[\]]'
-ok 99 - wildmatch:  no match '\' '[\]]'
-ok 100 - wildmatch:  no match 'ab' 'a[]b'
-ok 101 - wildmatch:  no match 'a[]b' 'a[]b'
-ok 102 - wildmatch:  no match 'ab[' 'ab['
-ok 103 - wildmatch:  no match 'ab' '[!'
-ok 104 - wildmatch:  no match 'ab' '[-'
-ok 105 - wildmatch:     match '-' '[-]'
-ok 106 - wildmatch:  no match '-' '[a-'
-ok 107 - wildmatch:  no match '-' '[!a-'
-ok 108 - wildmatch:     match '-' '[--A]'
-ok 109 - wildmatch:     match '5' '[--A]'
-ok 110 - wildmatch:     match ' ' '[ --]'
-ok 111 - wildmatch:     match '$' '[ --]'
-ok 112 - wildmatch:     match '-' '[ --]'
-ok 113 - wildmatch:  no match '0' '[ --]'
-ok 114 - wildmatch:     match '-' '[---]'
-ok 115 - wildmatch:     match '-' '[------]'
-ok 116 - wildmatch:  no match 'j' '[a-e-n]'
-ok 117 - wildmatch:     match '-' '[a-e-n]'
-ok 118 - wildmatch:     match 'a' '[!------]'
-ok 119 - wildmatch:  no match '[' '[]-a]'
-ok 120 - wildmatch:     match '^' '[]-a]'
-ok 121 - wildmatch:  no match '^' '[!]-a]'
-ok 122 - wildmatch:     match '[' '[!]-a]'
-ok 123 - wildmatch:     match '^' '[a^bc]'
-ok 124 - wildmatch:     match '-b]' '[a-]b]'
-ok 125 - wildmatch:  no match '\' '[\]'
-ok 126 - wildmatch:     match '\' '[\\]'
-ok 127 - wildmatch:  no match '\' '[!\\]'
-ok 128 - wildmatch:     match 'G' '[A-\\]'
-ok 129 - wildmatch:  no match 'aaabbb' 'b*a'
-ok 130 - wildmatch:  no match 'aabcaa' '*ba*'
-ok 131 - wildmatch:     match ',' '[,]'
-ok 132 - wildmatch:     match ',' '[\\,]'
-ok 133 - wildmatch:     match '\' '[\\,]'
-ok 134 - wildmatch:     match '-' '[,-.]'
-ok 135 - wildmatch:  no match '+' '[,-.]'
-ok 136 - wildmatch:  no match '-.]' '[,-.]'
-ok 137 - wildmatch:     match '2' '[\1-\3]'
-ok 138 - wildmatch:     match '3' '[\1-\3]'
-ok 139 - wildmatch:  no match '4' '[\1-\3]'
-ok 140 - wildmatch:     match '\' '[[-\]]'
-ok 141 - wildmatch:     match '[' '[[-\]]'
-ok 142 - wildmatch:     match ']' '[[-\]]'
-ok 143 - wildmatch:  no match '-' '[[-\]]'
-ok 144 - wildmatch:     match '-adobe-courier-bold-o-normal--12-120-75-75-m-70-iso8859-1' '-*-*-*-*-*-*-12-*-*-*-m-*-*-*'
-ok 145 - wildmatch:  no match '-adobe-courier-bold-o-normal--12-120-75-75-X-70-iso8859-1' '-*-*-*-*-*-*-12-*-*-*-m-*-*-*'
-ok 146 - wildmatch:  no match '-adobe-courier-bold-o-normal--12-120-75-75-/-70-iso8859-1' '-*-*-*-*-*-*-12-*-*-*-m-*-*-*'
-ok 147 - wildmatch:     match 'XXX/adobe/courier/bold/o/normal//12/120/75/75/m/70/iso8859/1' 'XXX/*/*/*/*/*/*/12/*/*/*/m/*/*/*'
-ok 148 - wildmatch:  no match 'XXX/adobe/courier/bold/o/normal//12/120/75/75/X/70/iso8859/1' 'XXX/*/*/*/*/*/*/12/*/*/*/m/*/*/*'
-ok 149 - wildmatch:     match 'abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txt' '**/*a*b*g*n*t'
-ok 150 - wildmatch:  no match 'abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txtz' '**/*a*b*g*n*t'
-ok 151 - wildmatch:  no match 'foo' '*/*/*'
-ok 152 - wildmatch:  no match 'foo/bar' '*/*/*'
-ok 153 - wildmatch:     match 'foo/bba/arr' '*/*/*'
-ok 154 - wildmatch:  no match 'foo/bb/aa/rr' '*/*/*'
-ok 155 - wildmatch:     match 'foo/bb/aa/rr' '**/**/**'
-ok 156 - wildmatch:     match 'abcXdefXghi' '*X*i'
-ok 157 - wildmatch:  no match 'ab/cXd/efXg/hi' '*X*i'
-ok 158 - wildmatch:     match 'ab/cXd/efXg/hi' '*/*X*/*/*i'
-ok 159 - wildmatch:     match 'ab/cXd/efXg/hi' '**/*X*/**/*i'
-ok 160 - pathmatch:     match 'foo' 'foo'
-ok 161 - pathmatch:  no match 'foo' 'fo'
-ok 162 - pathmatch:     match 'foo/bar' 'foo/bar'
-ok 163 - pathmatch:     match 'foo/bar' 'foo/*'
-ok 164 - pathmatch:     match 'foo/bba/arr' 'foo/*'
-ok 165 - pathmatch:     match 'foo/bba/arr' 'foo/**'
-ok 166 - pathmatch:     match 'foo/bba/arr' 'foo*'
-ok 167 - pathmatch:     match 'foo/bba/arr' 'foo**'
-ok 168 - pathmatch:     match 'foo/bba/arr' 'foo/*arr'
-ok 169 - pathmatch:     match 'foo/bba/arr' 'foo/**arr'
-ok 170 - pathmatch:  no match 'foo/bba/arr' 'foo/*z'
-ok 171 - pathmatch:  no match 'foo/bba/arr' 'foo/**z'
-ok 172 - pathmatch:     match 'foo/bar' 'foo?bar'
-ok 173 - pathmatch:     match 'foo/bar' 'foo[/]bar'
-ok 174 - pathmatch:  no match 'foo' '*/*/*'
-ok 175 - pathmatch:  no match 'foo/bar' '*/*/*'
-ok 176 - pathmatch:     match 'foo/bba/arr' '*/*/*'
-ok 177 - pathmatch:     match 'foo/bb/aa/rr' '*/*/*'
-ok 178 - pathmatch:     match 'abcXdefXghi' '*X*i'
-ok 179 - pathmatch:     match 'ab/cXd/efXg/hi' '*/*X*/*/*i'
-ok 180 - pathmatch:     match 'ab/cXd/efXg/hi' '*Xg*i'
-ok 181 - wildmatch:  no match 'a' '[A-Z]'
-ok 182 - wildmatch:     match 'A' '[A-Z]'
-ok 183 - wildmatch:  no match 'A' '[a-z]'
-ok 184 - wildmatch:     match 'a' '[a-z]'
-ok 185 - wildmatch:  no match 'a' '[[:upper:]]'
-ok 186 - wildmatch:     match 'A' '[[:upper:]]'
-ok 187 - wildmatch:  no match 'A' '[[:lower:]]'
-ok 188 - wildmatch:     match 'a' '[[:lower:]]'
-ok 189 - wildmatch:  no match 'A' '[B-Za]'
-ok 190 - wildmatch:     match 'a' '[B-Za]'
-ok 191 - wildmatch:  no match 'A' '[B-a]'
-ok 192 - wildmatch:     match 'a' '[B-a]'
-ok 193 - wildmatch:  no match 'z' '[Z-y]'
-ok 194 - wildmatch:     match 'Z' '[Z-y]'
-ok 195 - iwildmatch:    match 'a' '[A-Z]'
-ok 196 - iwildmatch:    match 'A' '[A-Z]'
-ok 197 - iwildmatch:    match 'A' '[a-z]'
-ok 198 - iwildmatch:    match 'a' '[a-z]'
-ok 199 - iwildmatch:    match 'a' '[[:upper:]]'
-ok 200 - iwildmatch:    match 'A' '[[:upper:]]'
-ok 201 - iwildmatch:    match 'A' '[[:lower:]]'
-ok 202 - iwildmatch:    match 'a' '[[:lower:]]'
-ok 203 - iwildmatch:    match 'A' '[B-Za]'
-ok 204 - iwildmatch:    match 'a' '[B-Za]'
-ok 205 - iwildmatch:    match 'A' '[B-a]'
-ok 206 - iwildmatch:    match 'a' '[B-a]'
-ok 207 - iwildmatch:    match 'z' '[Z-y]'
-ok 208 - iwildmatch:    match 'Z' '[Z-y]'
-# passed all 208 test(s)
-1..208
+ok 40 - wildmatch:  no match 'foo/bar' 'foo[^a-z]bar'
+ok 41 - wildmatch:  no match 'foo/bar' 'f[^eiu][^eiu][^eiu][^eiu][^eiu]r'
+ok 42 - wildmatch:     match 'foo-bar' 'f[^eiu][^eiu][^eiu][^eiu][^eiu]r'
+ok 43 - wildmatch:     match 'foo' '**/foo'
+ok 44 - wildmatch:     match 'XXX/foo' '**/foo'
+ok 45 - wildmatch:     match 'bar/baz/foo' '**/foo'
+ok 46 - wildmatch:  no match 'bar/baz/foo' '*/foo'
+ok 47 - wildmatch:  no match 'foo/bar/baz' '**/bar*'
+ok 48 - wildmatch:     match 'deep/foo/bar/baz' '**/bar/*'
+ok 49 - wildmatch:  no match 'deep/foo/bar/baz/' '**/bar/*'
+ok 50 - wildmatch:     match 'deep/foo/bar/baz/' '**/bar/**'
+ok 51 - wildmatch:  no match 'deep/foo/bar' '**/bar/*'
+ok 52 - wildmatch:     match 'deep/foo/bar/' '**/bar/**'
+ok 53 - wildmatch:  no match 'foo/bar/baz' '**/bar**'
+ok 54 - wildmatch:     match 'foo/bar/baz/x' '*/bar/**'
+ok 55 - wildmatch:  no match 'deep/foo/bar/baz/x' '*/bar/**'
+ok 56 - wildmatch:     match 'deep/foo/bar/baz/x' '**/bar/*/*'
+ok 57 - wildmatch:  no match 'acrt' 'a[c-c]st'
+ok 58 - wildmatch:     match 'acrt' 'a[c-c]rt'
+ok 59 - wildmatch:  no match ']' '[!]-]'
+ok 60 - wildmatch:     match 'a' '[!]-]'
+ok 61 - wildmatch:  no match '' '\'
+ok 62 - wildmatch:  no match '\' '\'
+ok 63 - wildmatch:  no match 'XXX/\' '*/\'
+ok 64 - wildmatch:     match 'XXX/\' '*/\\'
+ok 65 - wildmatch:     match 'foo' 'foo'
+ok 66 - wildmatch:     match '@foo' '@foo'
+ok 67 - wildmatch:  no match 'foo' '@foo'
+ok 68 - wildmatch:     match '[ab]' '\[ab]'
+ok 69 - wildmatch:     match '[ab]' '[[]ab]'
+ok 70 - wildmatch:     match '[ab]' '[[:]ab]'
+ok 71 - wildmatch:  no match '[ab]' '[[::]ab]'
+ok 72 - wildmatch:     match '[ab]' '[[:digit]ab]'
+ok 73 - wildmatch:     match '[ab]' '[\[:]ab]'
+ok 74 - wildmatch:     match '?a?b' '\??\?b'
+ok 75 - wildmatch:     match 'abc' '\a\b\c'
+ok 76 - wildmatch:  no match 'foo' ''
+ok 77 - wildmatch:     match 'foo/bar/baz/to' '**/t[o]'
+ok 78 - wildmatch:     match 'a1B' '[[:alpha:]][[:digit:]][[:upper:]]'
+ok 79 - wildmatch:  no match 'a' '[[:digit:][:upper:][:space:]]'
+ok 80 - wildmatch:     match 'A' '[[:digit:][:upper:][:space:]]'
+ok 81 - wildmatch:     match '1' '[[:digit:][:upper:][:space:]]'
+ok 82 - wildmatch:  no match '1' '[[:digit:][:upper:][:spaci:]]'
+ok 83 - wildmatch:     match ' ' '[[:digit:][:upper:][:space:]]'
+ok 84 - wildmatch:  no match '.' '[[:digit:][:upper:][:space:]]'
+ok 85 - wildmatch:     match '.' '[[:digit:][:punct:][:space:]]'
+ok 86 - wildmatch:     match '5' '[[:xdigit:]]'
+ok 87 - wildmatch:     match 'f' '[[:xdigit:]]'
+ok 88 - wildmatch:     match 'D' '[[:xdigit:]]'
+ok 89 - wildmatch:     match '_' '[[:alnum:][:alpha:][:blank:][:cntrl:][:digit:][:graph:][:lower:][:print:][:punct:][:space:][:upper:][:xdigit:]]'
+ok 90 - wildmatch:     match '.' '[^[:alnum:][:alpha:][:blank:][:cntrl:][:digit:][:lower:][:space:][:upper:][:xdigit:]]'
+ok 91 - wildmatch:     match '5' '[a-c[:digit:]x-z]'
+ok 92 - wildmatch:     match 'b' '[a-c[:digit:]x-z]'
+ok 93 - wildmatch:     match 'y' '[a-c[:digit:]x-z]'
+ok 94 - wildmatch:  no match 'q' '[a-c[:digit:]x-z]'
+ok 95 - wildmatch:     match ']' '[\\-^]'
+ok 96 - wildmatch:  no match '[' '[\\-^]'
+ok 97 - wildmatch:     match '-' '[\-_]'
+ok 98 - wildmatch:     match ']' '[\]]'
+ok 99 - wildmatch:  no match '\]' '[\]]'
+ok 100 - wildmatch:  no match '\' '[\]]'
+ok 101 - wildmatch:  no match 'ab' 'a[]b'
+ok 102 - wildmatch:  no match 'a[]b' 'a[]b'
+ok 103 - wildmatch:  no match 'ab[' 'ab['
+ok 104 - wildmatch:  no match 'ab' '[!'
+ok 105 - wildmatch:  no match 'ab' '[-'
+ok 106 - wildmatch:     match '-' '[-]'
+ok 107 - wildmatch:  no match '-' '[a-'
+ok 108 - wildmatch:  no match '-' '[!a-'
+ok 109 - wildmatch:     match '-' '[--A]'
+ok 110 - wildmatch:     match '5' '[--A]'
+ok 111 - wildmatch:     match ' ' '[ --]'
+ok 112 - wildmatch:     match '$' '[ --]'
+ok 113 - wildmatch:     match '-' '[ --]'
+ok 114 - wildmatch:  no match '0' '[ --]'
+ok 115 - wildmatch:     match '-' '[---]'
+ok 116 - wildmatch:     match '-' '[------]'
+ok 117 - wildmatch:  no match 'j' '[a-e-n]'
+ok 118 - wildmatch:     match '-' '[a-e-n]'
+ok 119 - wildmatch:     match 'a' '[!------]'
+ok 120 - wildmatch:  no match '[' '[]-a]'
+ok 121 - wildmatch:     match '^' '[]-a]'
+ok 122 - wildmatch:  no match '^' '[!]-a]'
+ok 123 - wildmatch:     match '[' '[!]-a]'
+ok 124 - wildmatch:     match '^' '[a^bc]'
+ok 125 - wildmatch:     match '-b]' '[a-]b]'
+ok 126 - wildmatch:  no match '\' '[\]'
+ok 127 - wildmatch:     match '\' '[\\]'
+ok 128 - wildmatch:  no match '\' '[!\\]'
+ok 129 - wildmatch:     match 'G' '[A-\\]'
+ok 130 - wildmatch:  no match 'aaabbb' 'b*a'
+ok 131 - wildmatch:  no match 'aabcaa' '*ba*'
+ok 132 - wildmatch:     match ',' '[,]'
+ok 133 - wildmatch:     match ',' '[\\,]'
+ok 134 - wildmatch:     match '\' '[\\,]'
+ok 135 - wildmatch:     match '-' '[,-.]'
+ok 136 - wildmatch:  no match '+' '[,-.]'
+ok 137 - wildmatch:  no match '-.]' '[,-.]'
+ok 138 - wildmatch:     match '2' '[\1-\3]'
+ok 139 - wildmatch:     match '3' '[\1-\3]'
+ok 140 - wildmatch:  no match '4' '[\1-\3]'
+ok 141 - wildmatch:     match '\' '[[-\]]'
+ok 142 - wildmatch:     match '[' '[[-\]]'
+ok 143 - wildmatch:     match ']' '[[-\]]'
+ok 144 - wildmatch:  no match '-' '[[-\]]'
+ok 145 - wildmatch:     match '-adobe-courier-bold-o-normal--12-120-75-75-m-70-iso8859-1' '-*-*-*-*-*-*-12-*-*-*-m-*-*-*'
+ok 146 - wildmatch:  no match '-adobe-courier-bold-o-normal--12-120-75-75-X-70-iso8859-1' '-*-*-*-*-*-*-12-*-*-*-m-*-*-*'
+ok 147 - wildmatch:  no match '-adobe-courier-bold-o-normal--12-120-75-75-/-70-iso8859-1' '-*-*-*-*-*-*-12-*-*-*-m-*-*-*'
+ok 148 - wildmatch:     match 'XXX/adobe/courier/bold/o/normal//12/120/75/75/m/70/iso8859/1' 'XXX/*/*/*/*/*/*/12/*/*/*/m/*/*/*'
+ok 149 - wildmatch:  no match 'XXX/adobe/courier/bold/o/normal//12/120/75/75/X/70/iso8859/1' 'XXX/*/*/*/*/*/*/12/*/*/*/m/*/*/*'
+ok 150 - wildmatch:     match 'abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txt' '**/*a*b*g*n*t'
+ok 151 - wildmatch:  no match 'abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txtz' '**/*a*b*g*n*t'
+ok 152 - wildmatch:  no match 'foo' '*/*/*'
+ok 153 - wildmatch:  no match 'foo/bar' '*/*/*'
+ok 154 - wildmatch:     match 'foo/bba/arr' '*/*/*'
+ok 155 - wildmatch:  no match 'foo/bb/aa/rr' '*/*/*'
+ok 156 - wildmatch:     match 'foo/bb/aa/rr' '**/**/**'
+ok 157 - wildmatch:     match 'abcXdefXghi' '*X*i'
+ok 158 - wildmatch:  no match 'ab/cXd/efXg/hi' '*X*i'
+ok 159 - wildmatch:     match 'ab/cXd/efXg/hi' '*/*X*/*/*i'
+ok 160 - wildmatch:     match 'ab/cXd/efXg/hi' '**/*X*/**/*i'
+ok 161 - pathmatch:     match 'foo' 'foo'
+ok 162 - pathmatch:  no match 'foo' 'fo'
+ok 163 - pathmatch:     match 'foo/bar' 'foo/bar'
+ok 164 - pathmatch:     match 'foo/bar' 'foo/*'
+ok 165 - pathmatch:     match 'foo/bba/arr' 'foo/*'
+ok 166 - pathmatch:     match 'foo/bba/arr' 'foo/**'
+ok 167 - pathmatch:     match 'foo/bba/arr' 'foo*'
+ok 168 - pathmatch:     match 'foo/bba/arr' 'foo**'
+ok 169 - pathmatch:     match 'foo/bba/arr' 'foo/*arr'
+ok 170 - pathmatch:     match 'foo/bba/arr' 'foo/**arr'
+ok 171 - pathmatch:  no match 'foo/bba/arr' 'foo/*z'
+ok 172 - pathmatch:  no match 'foo/bba/arr' 'foo/**z'
+ok 173 - pathmatch:     match 'foo/bar' 'foo?bar'
+ok 174 - pathmatch:     match 'foo/bar' 'foo[/]bar'
+ok 175 - pathmatch:     match 'foo/bar' 'foo[^a-z]bar'
+ok 176 - pathmatch:  no match 'foo' '*/*/*'
+ok 177 - pathmatch:  no match 'foo/bar' '*/*/*'
+ok 178 - pathmatch:     match 'foo/bba/arr' '*/*/*'
+ok 179 - pathmatch:     match 'foo/bb/aa/rr' '*/*/*'
+ok 180 - pathmatch:     match 'abcXdefXghi' '*X*i'
+ok 181 - pathmatch:     match 'ab/cXd/efXg/hi' '*/*X*/*/*i'
+ok 182 - pathmatch:     match 'ab/cXd/efXg/hi' '*Xg*i'
+ok 183 - wildmatch:  no match 'a' '[A-Z]'
+ok 184 - wildmatch:     match 'A' '[A-Z]'
+ok 185 - wildmatch:  no match 'A' '[a-z]'
+ok 186 - wildmatch:     match 'a' '[a-z]'
+ok 187 - wildmatch:  no match 'a' '[[:upper:]]'
+ok 188 - wildmatch:     match 'A' '[[:upper:]]'
+ok 189 - wildmatch:  no match 'A' '[[:lower:]]'
+ok 190 - wildmatch:     match 'a' '[[:lower:]]'
+ok 191 - wildmatch:  no match 'A' '[B-Za]'
+ok 192 - wildmatch:     match 'a' '[B-Za]'
+ok 193 - wildmatch:  no match 'A' '[B-a]'
+ok 194 - wildmatch:     match 'a' '[B-a]'
+ok 195 - wildmatch:  no match 'z' '[Z-y]'
+ok 196 - wildmatch:     match 'Z' '[Z-y]'
+ok 197 - iwildmatch:    match 'a' '[A-Z]'
+ok 198 - iwildmatch:    match 'A' '[A-Z]'
+ok 199 - iwildmatch:    match 'A' '[a-z]'
+ok 200 - iwildmatch:    match 'a' '[a-z]'
+ok 201 - iwildmatch:    match 'a' '[[:upper:]]'
+ok 202 - iwildmatch:    match 'A' '[[:upper:]]'
+ok 203 - iwildmatch:    match 'A' '[[:lower:]]'
+ok 204 - iwildmatch:    match 'a' '[[:lower:]]'
+ok 205 - iwildmatch:    match 'A' '[B-Za]'
+ok 206 - iwildmatch:    match 'a' '[B-Za]'
+ok 207 - iwildmatch:    match 'A' '[B-a]'
+ok 208 - iwildmatch:    match 'a' '[B-a]'
+ok 209 - iwildmatch:    match 'z' '[Z-y]'
+ok 210 - iwildmatch:    match 'Z' '[Z-y]'
+# passed all 210 test(s)
+1..210
 *** t3100-ls-tree-restrict.sh ***
 ok 1 - setup
 ok 2 - ls-tree plain
@@ -6164,8 +6322,13 @@ ok 20 - ambiguous branch/tag not marked
 ok 21 - local-branch symrefs shortened properly
 ok 22 - sort branches, ignore case
 ok 23 - git branch --format option
-# passed all 23 test(s)
-1..23
+ok 24 - set up color tests
+ok 25 - %(color) omitted without tty
+ok 26 # skip %(color) present with tty (missing TTY)
+ok 27 - color.branch=always overrides auto-color
+ok 28 - --color overrides auto-color
+# passed all 28 test(s)
+1..28
 *** t3204-branch-name-interpretation.sh ***
 ok 1 - set up repo
 ok 2 - update branch via @{-1}
@@ -6906,12 +7069,23 @@ ok 4 - at beginning of file
 ok 1 - setup
 ok 2 - interactive rebase --continue works with touched file
 ok 3 - non-interactive rebase --continue works with touched file
-ok 4 - non-interactive rebase --continue with rerere enabled
-ok 5 - rebase --continue can not be used with other options
-ok 6 - rebase --continue remembers merge strategy and options
-ok 7 - rebase --continue remembers --rerere-autoupdate
-# passed all 7 test(s)
-1..7
+ok 4 - rebase --continue can not be used with other options
+ok 5 - rebase --continue remembers merge strategy and options
+ok 6 - setup rerere database
+ok 7 - rebase  --continue remembers --rerere-autoupdate
+ok 8 - rebase  --continue honors rerere.autoUpdate
+ok 9 - rebase  --continue remembers --no-rerere-autoupdate
+ok 10 - rebase -m --continue remembers --rerere-autoupdate
+ok 11 - rebase -m --continue honors rerere.autoUpdate
+ok 12 - rebase -m --continue remembers --no-rerere-autoupdate
+ok 13 - rebase -i --continue remembers --rerere-autoupdate
+ok 14 - rebase -i --continue honors rerere.autoUpdate
+ok 15 - rebase -i --continue remembers --no-rerere-autoupdate
+ok 16 - rebase --preserve-merges --continue remembers --rerere-autoupdate
+ok 17 - rebase --preserve-merges --continue honors rerere.autoUpdate
+ok 18 - rebase --preserve-merges --continue remembers --no-rerere-autoupdate
+# passed all 18 test(s)
+1..18
 *** t3419-rebase-patch-id.sh ***
 ok 1 - setup
 ok 2 - setup: 500 lines
@@ -7179,11 +7353,14 @@ ok 6 - cherry-pick two root commits
 ok 1 - setup
 ok 2 - conflicting merge
 ok 3 - fixup
-ok 4 - cherry-pick conflict
-ok 5 - reconfigure
-ok 6 - cherry-pick conflict without rerere
-# passed all 6 test(s)
-1..6
+ok 4 - cherry-pick conflict with --rerere-autoupdate
+ok 5 - cherry-pick conflict repsects rerere.autoUpdate
+ok 6 - cherry-pick conflict with --no-rerere-autoupdate
+ok 7 - cherry-pick --continue rejects --rerere-autoupdate
+ok 8 - cherry-pick --rerere-autoupdate more than once
+ok 9 - cherry-pick conflict without rerere
+# passed all 9 test(s)
+1..9
 *** t3505-cherry-pick-empty.sh ***
 ok 1 - setup
 ok 2 - cherry-pick an empty commit
@@ -8915,16 +9092,17 @@ ok 33 - modified submodule contains untracked and modifed content (dirty ignored
 ok 34 - modified submodule contains untracked and modifed content (all ignored)
 ok 35 - modified submodule contains modifed content
 ok 36 - deleted submodule
-ok 37 - multiple submodules
-ok 38 - path filter
-ok 39 - given commit
-ok 40 - given commit --submodule
-ok 41 - given commit --submodule=short
-ok 42 - setup .git file for sm2
-ok 43 - diff --submodule with .git file
-ok 44 - diff --submodule with objects referenced by alternates
-# passed all 44 test(s)
-1..44
+ok 37 - create second submodule
+ok 38 - multiple submodules
+ok 39 - path filter
+ok 40 - given commit
+ok 41 - given commit --submodule
+ok 42 - given commit --submodule=short
+ok 43 - setup .git file for sm2
+ok 44 - diff --submodule with .git file
+ok 45 - diff --submodule with objects referenced by alternates
+# passed all 45 test(s)
+1..45
 *** t4042-diff-textconv-caching.sh ***
 ok 1 - setup
 ok 2 - first textconv works
@@ -9294,41 +9472,59 @@ ok 34 - modified submodule contains untracked and modified content (dirty ignore
 ok 35 - modified submodule contains untracked and modified content (all ignored)
 ok 36 - modified submodule contains modified content
 ok 37 - deleted submodule
-ok 38 - multiple submodules
-ok 39 - path filter
-ok 40 - given commit
-ok 41 - setup .git file for sm2
-ok 42 - diff --submodule=diff with .git file
-ok 43 - setup nested submodule
-ok 44 - move nested submodule HEAD
-ok 45 - diff --submodule=diff with moved nested submodule HEAD
-# passed all 45 test(s)
-1..45
+ok 38 - create second submodule
+ok 39 - multiple submodules
+ok 40 - path filter
+ok 41 - given commit
+ok 42 - setup .git file for sm2
+ok 43 - diff --submodule=diff with .git file
+ok 44 - setup nested submodule
+ok 45 - move nested submodule HEAD
+ok 46 - diff --submodule=diff with moved nested submodule HEAD
+ok 47 - diff --submodule=diff recurses into nested submodules
+# passed all 47 test(s)
+1..47
 *** t4061-diff-indent.sh ***
 ok 1 - prepare
 ok 2 - diff: ugly spaces
-ok 3 - diff: nice spaces with --indent-heuristic
-ok 4 - diff: nice spaces with diff.indentHeuristic
-ok 5 - diff: --no-indent-heuristic overrides config
+ok 3 - diff: --no-indent-heuristic overrides config
+ok 4 - diff: nice spaces with --indent-heuristic
+ok 5 - diff: nice spaces with diff.indentHeuristic=true
 ok 6 - diff: --indent-heuristic with --patience
 ok 7 - diff: --indent-heuristic with --histogram
 ok 8 - diff: ugly functions
 ok 9 - diff: nice functions with --indent-heuristic
-ok 10 - blame: ugly spaces
-ok 11 - blame: nice spaces with --indent-heuristic
-ok 12 - blame: nice spaces with diff.indentHeuristic
-ok 13 - blame: --no-indent-heuristic overrides config
-# passed all 13 test(s)
-1..13
+ok 10 - blame: nice spaces with --indent-heuristic
+ok 11 - blame: nice spaces with diff.indentHeuristic=true
+ok 12 - blame: ugly spaces with --no-indent-heuristic
+ok 13 - blame: ugly spaces with diff.indentHeuristic=false
+ok 14 - blame: --no-indent-heuristic overrides config
+ok 15 - blame: --indent-heuristic overrides config
+ok 16 - diff-tree: nice spaces with --indent-heuristic
+ok 17 - diff-tree: nice spaces with diff.indentHeuristic=true
+ok 18 - diff-tree: ugly spaces with --no-indent-heuristic
+ok 19 - diff-tree: ugly spaces with diff.indentHeuristic=false
+ok 20 - diff-tree: --indent-heuristic overrides config
+ok 21 - diff-tree: --no-indent-heuristic overrides config
+ok 22 - diff-index: nice spaces with --indent-heuristic
+ok 23 - diff-index: nice spaces with diff.indentHeuristic=true
+ok 24 - diff-index: ugly spaces with --no-indent-heuristic
+ok 25 - diff-index: ugly spaces with diff.indentHeuristic=false
+ok 26 - diff-index: --indent-heuristic overrides config
+ok 27 - diff-index: --no-indent-heuristic overrides config
+ok 28 - diff-files: nice spaces with --indent-heuristic
+ok 29 - diff-files: nice spaces with diff.indentHeuristic=true
+ok 30 - diff-files: ugly spaces with --no-indent-heuristic
+ok 31 - diff-files: ugly spaces with diff.indentHeuristic=false
+ok 32 - diff-files: --indent-heuristic overrides config
+ok 33 - diff-files: --no-indent-heuristic overrides config
+# passed all 33 test(s)
+1..33
 *** t4062-diff-pickaxe.sh ***
 ok 1 - setup
-not ok 2 - -G matches
-#	
-#		git diff --name-only -G "^0{4096}$" HEAD^ >out &&
-#		test 4096-zeroes.txt = "$(cat out)"
-#	
+ok 2 - -G matches
 ok 3 - -S --pickaxe-regex
-# failed 1 among 3 test(s)
+# passed all 3 test(s)
 1..3
 *** t4063-diff-blobs.sh ***
 ok 1 - create some blobs
@@ -9688,11 +9884,13 @@ ok 70 - missing blanks at EOF must only match blank lines
 ok 71 - missing blank line should match context line with spaces
 ok 72 - same, but with the --ignore-space-option
 ok 73 - same, but with CR-LF line endings && cr-at-eol set
-ok 74 - same, but with CR-LF line endings && cr-at-eol unset
-ok 75 - whitespace=fix to expand
-ok 76 - whitespace check skipped for excluded paths
-# passed all 76 test(s)
-1..76
+ok 74 - CR-LF line endings && add line && text=auto
+ok 75 - CR-LF line endings && change line && text=auto
+ok 76 - LF in repo, CRLF in worktree && change line && text=auto
+ok 77 - whitespace=fix to expand
+ok 78 - whitespace check skipped for excluded paths
+# passed all 78 test(s)
+1..78
 *** t4125-apply-ws-fuzz.sh ***
 ok 1 - setup
 ok 2 - nofix
@@ -9896,47 +10094,49 @@ ok 22 - am changes committer and keeps author
 ok 23 - am --signoff adds Signed-off-by: line
 ok 24 - am stays in branch
 ok 25 - am --signoff does not add Signed-off-by: line if already there
-ok 26 - am without --keep removes Re: and [PATCH] stuff
-ok 27 - am --keep really keeps the subject
-ok 28 - am --keep-non-patch really keeps the non-patch part
-ok 29 - setup am -3
-ok 30 - am -3 falls back to 3-way merge
-ok 31 - am -3 -p0 can read --no-prefix patch
-ok 32 - am with config am.threeWay falls back to 3-way merge
-ok 33 - am with config am.threeWay overridden by --no-3way
-ok 34 - am can rename a file
-ok 35 - am -3 can rename a file
-ok 36 - am -3 can rename a file after falling back to 3-way merge
-ok 37 - am -3 -q is quiet
-ok 38 - am pauses on conflict
-ok 39 - am --skip works
-ok 40 - am --abort removes a stray directory
-ok 41 - am refuses patches when paused
-ok 42 - am --resolved works
-ok 43 - am --resolved fails if index has no changes
-ok 44 - am --resolved fails if index has unmerged entries
-ok 45 - am takes patches from a Pine mailbox
-ok 46 - am fails on mail without patch
-ok 47 - am fails on empty patch
-ok 48 - am works from stdin in subdirectory
-ok 49 - am works from file (relative path given) in subdirectory
-ok 50 - am works from file (absolute path given) in subdirectory
-ok 51 - am --committer-date-is-author-date
-ok 52 - am without --committer-date-is-author-date
-ok 53 - am --ignore-date
-ok 54 - am into an unborn branch
-ok 55 - am newline in subject
-ok 56 - am -q is quiet
-ok 57 - am empty-file does not infloop
-ok 58 - am --message-id really adds the message id
-ok 59 - am.messageid really adds the message id
-ok 60 - am --message-id -s signs off after the message id
-ok 61 - am -3 works with rerere
-ok 62 - am -s unexpected trailer block
-ok 63 - am --patch-format=mboxrd handles mboxrd
-ok 64 - am works with multi-line in-body headers
-# passed all 64 test(s)
-1..64
+ok 26 - am --signoff adds Signed-off-by: if another author is preset
+ok 27 - am --signoff duplicates Signed-off-by: if it is not the last one
+ok 28 - am without --keep removes Re: and [PATCH] stuff
+ok 29 - am --keep really keeps the subject
+ok 30 - am --keep-non-patch really keeps the non-patch part
+ok 31 - setup am -3
+ok 32 - am -3 falls back to 3-way merge
+ok 33 - am -3 -p0 can read --no-prefix patch
+ok 34 - am with config am.threeWay falls back to 3-way merge
+ok 35 - am with config am.threeWay overridden by --no-3way
+ok 36 - am can rename a file
+ok 37 - am -3 can rename a file
+ok 38 - am -3 can rename a file after falling back to 3-way merge
+ok 39 - am -3 -q is quiet
+ok 40 - am pauses on conflict
+ok 41 - am --skip works
+ok 42 - am --abort removes a stray directory
+ok 43 - am refuses patches when paused
+ok 44 - am --resolved works
+ok 45 - am --resolved fails if index has no changes
+ok 46 - am --resolved fails if index has unmerged entries
+ok 47 - am takes patches from a Pine mailbox
+ok 48 - am fails on mail without patch
+ok 49 - am fails on empty patch
+ok 50 - am works from stdin in subdirectory
+ok 51 - am works from file (relative path given) in subdirectory
+ok 52 - am works from file (absolute path given) in subdirectory
+ok 53 - am --committer-date-is-author-date
+ok 54 - am without --committer-date-is-author-date
+ok 55 - am --ignore-date
+ok 56 - am into an unborn branch
+ok 57 - am newline in subject
+ok 58 - am -q is quiet
+ok 59 - am empty-file does not infloop
+ok 60 - am --message-id really adds the message id
+ok 61 - am.messageid really adds the message id
+ok 62 - am --message-id -s signs off after the message id
+ok 63 - am -3 works with rerere
+ok 64 - am -s unexpected trailer block
+ok 65 - am --patch-format=mboxrd handles mboxrd
+ok 66 - am works with multi-line in-body headers
+# passed all 66 test(s)
+1..66
 *** t4151-am-abort.sh ***
 ok 1 - setup
 ok 2 - am stops at a patch that does not apply
@@ -10063,47 +10263,50 @@ ok 28 - log --grep option parsing
 ok 29 - log -i --grep
 ok 30 - log --grep -i
 ok 31 - log -F -E --grep=<ere> uses ere
-ok 32 - log with grep.patternType configuration
-ok 33 - log with grep.patternType configuration and command line
-ok 34 - simple log --graph
-ok 35 - simple log --graph --line-prefix="123 "
-ok 36 - set up merge history
-ok 37 - log --graph with merge
-ok 38 - log --graph --line-prefix="| | | " with merge
-ok 39 - log --graph with merge with log.graphColors
-ok 40 - log --raw --graph -m with merge
-ok 41 - diff-tree --graph
-ok 42 - log --graph with full output
-ok 43 - set up more tangled history
-ok 44 - log --graph with merge
-ok 45 - log.decorate configuration
-ok 46 - log.decorate config parsing
-ok 47 # skip log output on a TTY (missing TTY)
-ok 48 - reflog is expected format
-ok 49 - whatchanged is expected format
-ok 50 - log.abbrevCommit configuration
-ok 51 - show added path under "--follow -M"
-ok 52 - git log -c --follow
-ok 53 - log --graph with diff and stats
-ok 54 - log --line-prefix="*** " --graph with diff and stats
-ok 55 - log --graph with --name-status
-ok 56 - log --graph with --name-only
-ok 57 - dotdot is a parent directory
-ok 58 # skip setup signed branch (missing GPG)
-ok 59 # skip log --graph --show-signature (missing GPG)
-ok 60 # skip log --graph --show-signature for merged tag (missing GPG)
-ok 61 # skip --no-show-signature overrides --show-signature (missing GPG)
-ok 62 # skip log.showsignature=true behaves like --show-signature (missing GPG)
-ok 63 # skip --no-show-signature overrides log.showsignature=true (missing GPG)
-ok 64 # skip --show-signature overrides log.showsignature=false (missing GPG)
-ok 65 - log --graph --no-walk is forbidden
-ok 66 - log diagnoses bogus HEAD
-ok 67 - set up --source tests
-ok 68 - log --source paints branch names
-ok 69 - log --source paints tag names
-ok 70 - log --source paints symmetric ranges
-# passed all 70 test(s)
-1..70
+ok 32 - log -F -E --perl-regexp --grep=<pcre> uses PCRE
+ok 33 - log with grep.patternType configuration
+ok 34 - log with grep.patternType configuration and command line
+ok 35 - log with various grep.patternType configurations & command-lines
+ok 36 - simple log --graph
+ok 37 - simple log --graph --line-prefix="123 "
+ok 38 - set up merge history
+ok 39 - log --graph with merge
+ok 40 - log --graph --line-prefix="| | | " with merge
+ok 41 - log --graph with merge with log.graphColors
+ok 42 - log --raw --graph -m with merge
+ok 43 - diff-tree --graph
+ok 44 - log --graph with full output
+ok 45 - set up more tangled history
+ok 46 - log --graph with merge
+ok 47 - log.decorate configuration
+ok 48 - log.decorate config parsing
+ok 49 # skip log output on a TTY (missing TTY)
+ok 50 - reflog is expected format
+ok 51 - whatchanged is expected format
+ok 52 - log.abbrevCommit configuration
+ok 53 - show added path under "--follow -M"
+ok 54 - git log -c --follow
+ok 55 - log --graph with diff and stats
+ok 56 - log --line-prefix="*** " --graph with diff and stats
+ok 57 - log --graph with --name-status
+ok 58 - log --graph with --name-only
+ok 59 - dotdot is a parent directory
+ok 60 # skip setup signed branch (missing GPG)
+ok 61 # skip log --graph --show-signature (missing GPG)
+ok 62 # skip log --graph --show-signature for merged tag (missing GPG)
+ok 63 # skip --no-show-signature overrides --show-signature (missing GPG)
+ok 64 # skip log.showsignature=true behaves like --show-signature (missing GPG)
+ok 65 # skip --no-show-signature overrides log.showsignature=true (missing GPG)
+ok 66 # skip --show-signature overrides log.showsignature=false (missing GPG)
+ok 67 - log --graph --no-walk is forbidden
+ok 68 - log diagnoses bogus HEAD
+ok 69 - log does not default to HEAD when rev input is given
+ok 70 - set up --source tests
+ok 71 - log --source paints branch names
+ok 72 - log --source paints tag names
+ok 73 - log --source paints symmetric ranges
+# passed all 73 test(s)
+1..73
 *** t4203-mailmap.sh ***
 ok 1 - setup
 ok 2 - check-mailmap no arguments
@@ -10236,12 +10439,19 @@ ok 2 - "git log :/" should not be ambiguous
 ok 3 - "git log :/a" should be ambiguous (applied both rev and worktree)
 ok 4 - "git log :/a -- " should not be ambiguous
 ok 5 - "git log -- :/a" should not be ambiguous
-ok 6 - "git log :" should be ambiguous
-ok 7 - git log -- :
-ok 8 - git log HEAD -- :/
-ok 9 - command line pathspec parsing for "git log"
-# passed all 9 test(s)
-1..9
+ok 6 - "git log :/in" should not be ambiguous
+ok 7 - "git log :" should be ambiguous
+ok 8 - git log -- :
+ok 9 - git log HEAD -- :/
+ok 10 - "git log :^sub" is not ambiguous
+ok 11 - "git log :^does-not-exist" does not match anything
+ok 12 - "git log :!" behaves the same as :^
+ok 13 - "git log :(exclude)sub" is not ambiguous
+ok 14 - "git log :(exclude)sub --" must resolve as an object
+ok 15 - "git log :(unknown-magic) complains of bogus magic
+ok 16 - command line pathspec parsing for "git log"
+# passed all 16 test(s)
+1..16
 *** t4209-log-pickaxe.sh ***
 ok 1 - setup
 ok 2 - log --grep (match)
@@ -10504,23 +10714,44 @@ ok 1 - setup
 ok 2 - git archive
 ok 3 -  archive/ignored does not exist
 ok 4 -  archive/ignored-by-tree does not exist
-ok 5 -  archive/ignored-by-worktree exists
-ok 6 - git archive with worktree attributes
-ok 7 -  worktree/ignored does not exist
-ok 8 -  worktree/ignored-by-tree exists
-ok 9 -  worktree/ignored-by-worktree does not exist
-ok 10 - git archive --worktree-attributes option
-ok 11 -  worktree2/ignored does not exist
-ok 12 -  worktree2/ignored-by-tree exists
-ok 13 -  worktree2/ignored-by-worktree does not exist
-ok 14 - git archive vs. bare
-ok 15 - git archive with worktree attributes, bare
-ok 16 -  bare-worktree/ignored does not exist
-ok 17 -  bare-worktree/ignored-by-tree exists
-ok 18 -  bare-worktree/ignored-by-worktree exists
-ok 19 - export-subst
-# passed all 19 test(s)
-1..19
+ok 5 -  archive/ignored-by-tree.d does not exist
+ok 6 -  archive/ignored-by-tree.d/file does not exist
+ok 7 -  archive/ignored-by-worktree exists
+ok 8 -  archive/excluded-by-pathspec.d exists
+ok 9 -  archive/excluded-by-pathspec.d/file exists
+ok 10 - git archive with pathspec
+ok 11 -  archive-pathspec/ignored does not exist
+ok 12 -  archive-pathspec/ignored-by-tree does not exist
+ok 13 -  archive-pathspec/ignored-by-tree.d does not exist
+ok 14 -  archive-pathspec/ignored-by-tree.d/file does not exist
+ok 15 -  archive-pathspec/ignored-by-worktree exists
+not ok 16 -  archive-pathspec/excluded-by-pathspec.d does not exist # TODO known breakage
+ok 17 -  archive-pathspec/excluded-by-pathspec.d/file does not exist
+ok 18 - git archive with wildcard pathspec
+ok 19 -  archive-pathspec-wildcard/ignored does not exist
+ok 20 -  archive-pathspec-wildcard/ignored-by-tree does not exist
+ok 21 -  archive-pathspec-wildcard/ignored-by-tree.d does not exist
+ok 22 -  archive-pathspec-wildcard/ignored-by-tree.d/file does not exist
+ok 23 -  archive-pathspec-wildcard/ignored-by-worktree exists
+ok 24 -  archive-pathspec-wildcard/excluded-by-pathspec.d does not exist
+ok 25 -  archive-pathspec-wildcard/excluded-by-pathspec.d/file does not exist
+ok 26 - git archive with worktree attributes
+ok 27 -  worktree/ignored does not exist
+ok 28 -  worktree/ignored-by-tree exists
+ok 29 -  worktree/ignored-by-worktree does not exist
+ok 30 - git archive --worktree-attributes option
+ok 31 -  worktree2/ignored does not exist
+ok 32 -  worktree2/ignored-by-tree exists
+ok 33 -  worktree2/ignored-by-worktree does not exist
+ok 34 - git archive vs. bare
+ok 35 - git archive with worktree attributes, bare
+ok 36 -  bare-worktree/ignored does not exist
+ok 37 -  bare-worktree/ignored-by-tree exists
+ok 38 -  bare-worktree/ignored-by-worktree exists
+ok 39 - export-subst
+# still have 1 known breakage(s)
+# passed all remaining 38 test(s)
+1..39
 *** t5002-archive-attr-pattern.sh ***
 ok 1 - setup
 ok 2 - git archive
@@ -10610,8 +10841,10 @@ ok 8 - create a commit with an empty subtree
 ok 9 - archive empty subtree with no pathspec
 ok 10 - archive empty subtree by direct pathspec
 ok 11 - zip archive with many entries
-# passed all 11 test(s)
-1..11
+ok 12 # skip zip archive bigger than 4GB (missing EXPENSIVE of EXPENSIVE,UNZIP,UNZIP_ZIP64_SUPPORT)
+ok 13 # skip zip archive with files bigger than 4GB (missing EXPENSIVE of EXPENSIVE,LONG_IS_64BIT,UNZIP,UNZIP_ZIP64_SUPPORT,ZIPINFO)
+# passed all 13 test(s)
+1..13
 *** t5100-mailinfo.sh ***
 ok 1 - split sample box
 ok 2 - mailinfo 0001
@@ -10707,11 +10940,13 @@ ok 30 - verify resulting packs
 ok 31 - set up pack for non-repo tests
 ok 32 - index-pack --stdin complains of non-repo
 ok 33 - index-pack <pack> works in non-repo
-ok 34 - fake a SHA1 hash collision
-ok 35 - make sure index-pack detects the SHA1 collision
-ok 36 - make sure index-pack detects the SHA1 collision (large blobs)
-# passed all 36 test(s)
-1..36
+ok 34 # skip index-pack --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,C_LOCALE_OUTPUT)
+ok 35 # skip pack-objects --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,C_LOCALE_OUTPUT)
+ok 36 - fake a SHA1 hash collision
+ok 37 - make sure index-pack detects the SHA1 collision
+ok 38 - make sure index-pack detects the SHA1 collision (large blobs)
+# passed all 38 test(s)
+1..38
 *** t5301-sliding-window.sh ***
 ok 1 - setup
 ok 2 - verify-pack -v, defaults
@@ -11127,297 +11362,300 @@ ok 54 - test --all, --depth, and explicit head
 ok 55 - test --all, --depth, and explicit tag
 ok 56 - shallow fetch with tags does not break the repository
 ok 57 - fetch-pack can fetch a raw sha1
-ok 58 - fetch-pack --diag-url ssh+git://host/repo
-ok 59 - fetch-pack --diag-url ssh+git://host/~repo
-ok 60 - fetch-pack --diag-url ssh+git://host:/repo
-ok 61 - fetch-pack --diag-url ssh+git://host:/~repo
-ok 62 - fetch-pack --diag-url ssh+git://user@host/repo
-ok 63 - fetch-pack --diag-url ssh+git://user@host/~repo
-ok 64 - fetch-pack --diag-url ssh+git://user@host:/repo
-ok 65 - fetch-pack --diag-url ssh+git://user@host:/~repo
-ok 66 - fetch-pack --diag-url ssh+git://user@[::1]/repo
-ok 67 - fetch-pack --diag-url ssh+git://user@[::1]/~repo
-ok 68 - fetch-pack --diag-url ssh+git://user@[::1]:/repo
-ok 69 - fetch-pack --diag-url ssh+git://user@[::1]:/~repo
-ok 70 - fetch-pack --diag-url ssh+git://user@::1/repo
-ok 71 - fetch-pack --diag-url ssh+git://user@::1/~repo
-ok 72 - fetch-pack --diag-url ssh+git://user@::1:/repo
-ok 73 - fetch-pack --diag-url ssh+git://user@::1:/~repo
-ok 74 - fetch-pack --diag-url ssh+git://host:22/repo
-ok 75 - fetch-pack --diag-url ssh+git://User@host:22/repo
-ok 76 - fetch-pack --diag-url ssh+git://User@[::1]:22/repo
-ok 77 - fetch-pack --diag-url git+ssh://host/repo
-ok 78 - fetch-pack --diag-url git+ssh://host/~repo
-ok 79 - fetch-pack --diag-url git+ssh://host:/repo
-ok 80 - fetch-pack --diag-url git+ssh://host:/~repo
-ok 81 - fetch-pack --diag-url git+ssh://user@host/repo
-ok 82 - fetch-pack --diag-url git+ssh://user@host/~repo
-ok 83 - fetch-pack --diag-url git+ssh://user@host:/repo
-ok 84 - fetch-pack --diag-url git+ssh://user@host:/~repo
-ok 85 - fetch-pack --diag-url git+ssh://user@[::1]/repo
-ok 86 - fetch-pack --diag-url git+ssh://user@[::1]/~repo
-ok 87 - fetch-pack --diag-url git+ssh://user@[::1]:/repo
-ok 88 - fetch-pack --diag-url git+ssh://user@[::1]:/~repo
-ok 89 - fetch-pack --diag-url git+ssh://user@::1/repo
-ok 90 - fetch-pack --diag-url git+ssh://user@::1/~repo
-ok 91 - fetch-pack --diag-url git+ssh://user@::1:/repo
-ok 92 - fetch-pack --diag-url git+ssh://user@::1:/~repo
-ok 93 - fetch-pack --diag-url git+ssh://host:22/repo
-ok 94 - fetch-pack --diag-url git+ssh://User@host:22/repo
-ok 95 - fetch-pack --diag-url git+ssh://User@[::1]:22/repo
-ok 96 - fetch-pack --diag-url git://host/repo
-ok 97 - fetch-pack --diag-url git://host/~repo
-ok 98 - fetch-pack --diag-url git://host:/repo
-ok 99 - fetch-pack --diag-url git://host:/~repo
-ok 100 - fetch-pack --diag-url git://user@host/repo
-ok 101 - fetch-pack --diag-url git://user@host/~repo
-ok 102 - fetch-pack --diag-url git://user@host:/repo
-ok 103 - fetch-pack --diag-url git://user@host:/~repo
-ok 104 - fetch-pack --diag-url git://user@[::1]/repo
-ok 105 - fetch-pack --diag-url git://user@[::1]/~repo
-ok 106 - fetch-pack --diag-url git://user@[::1]:/repo
-ok 107 - fetch-pack --diag-url git://user@[::1]:/~repo
-ok 108 - fetch-pack --diag-url git://user@::1/repo
-ok 109 - fetch-pack --diag-url git://user@::1/~repo
-ok 110 - fetch-pack --diag-url git://user@::1:/repo
-ok 111 - fetch-pack --diag-url git://user@::1:/~repo
-ok 112 - fetch-pack --diag-url git://host:22/repo
-ok 113 - fetch-pack --diag-url git://User@host:22/repo
-ok 114 - fetch-pack --diag-url git://User@[::1]:22/repo
-ok 115 - fetch-pack --diag-url ssh://host/repo
-ok 116 - fetch-pack --diag-url ssh://host/~repo
-ok 117 - fetch-pack --diag-url ssh://host:/repo
-ok 118 - fetch-pack --diag-url ssh://host:/~repo
-ok 119 - fetch-pack --diag-url ssh://user@host/repo
-ok 120 - fetch-pack --diag-url ssh://user@host/~repo
-ok 121 - fetch-pack --diag-url ssh://user@host:/repo
-ok 122 - fetch-pack --diag-url ssh://user@host:/~repo
-ok 123 - fetch-pack --diag-url ssh://user@[::1]/repo
-ok 124 - fetch-pack --diag-url ssh://user@[::1]/~repo
-ok 125 - fetch-pack --diag-url ssh://user@[::1]:/repo
-ok 126 - fetch-pack --diag-url ssh://user@[::1]:/~repo
-ok 127 - fetch-pack --diag-url ssh://user@::1/repo
-ok 128 - fetch-pack --diag-url ssh://user@::1/~repo
-ok 129 - fetch-pack --diag-url ssh://user@::1:/repo
-ok 130 - fetch-pack --diag-url ssh://user@::1:/~repo
-ok 131 - fetch-pack --diag-url ssh://host:22/repo
-ok 132 - fetch-pack --diag-url ssh://User@host:22/repo
-ok 133 - fetch-pack --diag-url ssh://User@[::1]:22/repo
-ok 134 - fetch-pack --diag-url file://User@[::1]/repo
-ok 135 - fetch-pack --diag-url file://User@[::1]/~repo
-ok 136 - fetch-pack --diag-url ./nohost:repo
-ok 137 - fetch-pack --diag-url ./file:nohost/~repo
-ok 138 - fetch-pack --diag-url ./nohost:12:repo
-ok 139 - fetch-pack --diag-url ./file:nohost:12/~repo
-ok 140 - fetch-pack --diag-url ./[::1]:repo
-ok 141 - fetch-pack --diag-url ./file:[::1]/~repo
-ok 142 - fetch-pack --diag-url ./[::1]:23:repo
-ok 143 - fetch-pack --diag-url ./file:[::1]:23/~repo
-ok 144 - fetch-pack --diag-url ./[:repo
-ok 145 - fetch-pack --diag-url ./file:[/~repo
-ok 146 - fetch-pack --diag-url ./[:aa:repo
-ok 147 - fetch-pack --diag-url ./file:[:aa/~repo
-ok 148 - fetch-pack --diag-url host:repo
-ok 149 - fetch-pack --diag-url host:/~repo
-ok 150 - fetch-pack --diag-url [::1]:repo
-ok 151 - fetch-pack --diag-url [::1]:/~repo
-ok 152 - fetch-pack --diag-url ssh+git://host/re:po
-ok 153 - fetch-pack --diag-url ssh+git://host/~re:po
-ok 154 - fetch-pack --diag-url ssh+git://host:/re:po
-ok 155 - fetch-pack --diag-url ssh+git://host:/~re:po
-ok 156 - fetch-pack --diag-url ssh+git://user@host/re:po
-ok 157 - fetch-pack --diag-url ssh+git://user@host/~re:po
-ok 158 - fetch-pack --diag-url ssh+git://user@host:/re:po
-ok 159 - fetch-pack --diag-url ssh+git://user@host:/~re:po
-ok 160 - fetch-pack --diag-url ssh+git://user@[::1]/re:po
-ok 161 - fetch-pack --diag-url ssh+git://user@[::1]/~re:po
-ok 162 - fetch-pack --diag-url ssh+git://user@[::1]:/re:po
-ok 163 - fetch-pack --diag-url ssh+git://user@[::1]:/~re:po
-ok 164 - fetch-pack --diag-url ssh+git://user@::1/re:po
-ok 165 - fetch-pack --diag-url ssh+git://user@::1/~re:po
-ok 166 - fetch-pack --diag-url ssh+git://user@::1:/re:po
-ok 167 - fetch-pack --diag-url ssh+git://user@::1:/~re:po
-ok 168 - fetch-pack --diag-url ssh+git://host:22/re:po
-ok 169 - fetch-pack --diag-url ssh+git://User@host:22/re:po
-ok 170 - fetch-pack --diag-url ssh+git://User@[::1]:22/re:po
-ok 171 - fetch-pack --diag-url git+ssh://host/re:po
-ok 172 - fetch-pack --diag-url git+ssh://host/~re:po
-ok 173 - fetch-pack --diag-url git+ssh://host:/re:po
-ok 174 - fetch-pack --diag-url git+ssh://host:/~re:po
-ok 175 - fetch-pack --diag-url git+ssh://user@host/re:po
-ok 176 - fetch-pack --diag-url git+ssh://user@host/~re:po
-ok 177 - fetch-pack --diag-url git+ssh://user@host:/re:po
-ok 178 - fetch-pack --diag-url git+ssh://user@host:/~re:po
-ok 179 - fetch-pack --diag-url git+ssh://user@[::1]/re:po
-ok 180 - fetch-pack --diag-url git+ssh://user@[::1]/~re:po
-ok 181 - fetch-pack --diag-url git+ssh://user@[::1]:/re:po
-ok 182 - fetch-pack --diag-url git+ssh://user@[::1]:/~re:po
-ok 183 - fetch-pack --diag-url git+ssh://user@::1/re:po
-ok 184 - fetch-pack --diag-url git+ssh://user@::1/~re:po
-ok 185 - fetch-pack --diag-url git+ssh://user@::1:/re:po
-ok 186 - fetch-pack --diag-url git+ssh://user@::1:/~re:po
-ok 187 - fetch-pack --diag-url git+ssh://host:22/re:po
-ok 188 - fetch-pack --diag-url git+ssh://User@host:22/re:po
-ok 189 - fetch-pack --diag-url git+ssh://User@[::1]:22/re:po
-ok 190 - fetch-pack --diag-url git://host/re:po
-ok 191 - fetch-pack --diag-url git://host/~re:po
-ok 192 - fetch-pack --diag-url git://host:/re:po
-ok 193 - fetch-pack --diag-url git://host:/~re:po
-ok 194 - fetch-pack --diag-url git://user@host/re:po
-ok 195 - fetch-pack --diag-url git://user@host/~re:po
-ok 196 - fetch-pack --diag-url git://user@host:/re:po
-ok 197 - fetch-pack --diag-url git://user@host:/~re:po
-ok 198 - fetch-pack --diag-url git://user@[::1]/re:po
-ok 199 - fetch-pack --diag-url git://user@[::1]/~re:po
-ok 200 - fetch-pack --diag-url git://user@[::1]:/re:po
-ok 201 - fetch-pack --diag-url git://user@[::1]:/~re:po
-ok 202 - fetch-pack --diag-url git://user@::1/re:po
-ok 203 - fetch-pack --diag-url git://user@::1/~re:po
-ok 204 - fetch-pack --diag-url git://user@::1:/re:po
-ok 205 - fetch-pack --diag-url git://user@::1:/~re:po
-ok 206 - fetch-pack --diag-url git://host:22/re:po
-ok 207 - fetch-pack --diag-url git://User@host:22/re:po
-ok 208 - fetch-pack --diag-url git://User@[::1]:22/re:po
-ok 209 - fetch-pack --diag-url ssh://host/re:po
-ok 210 - fetch-pack --diag-url ssh://host/~re:po
-ok 211 - fetch-pack --diag-url ssh://host:/re:po
-ok 212 - fetch-pack --diag-url ssh://host:/~re:po
-ok 213 - fetch-pack --diag-url ssh://user@host/re:po
-ok 214 - fetch-pack --diag-url ssh://user@host/~re:po
-ok 215 - fetch-pack --diag-url ssh://user@host:/re:po
-ok 216 - fetch-pack --diag-url ssh://user@host:/~re:po
-ok 217 - fetch-pack --diag-url ssh://user@[::1]/re:po
-ok 218 - fetch-pack --diag-url ssh://user@[::1]/~re:po
-ok 219 - fetch-pack --diag-url ssh://user@[::1]:/re:po
-ok 220 - fetch-pack --diag-url ssh://user@[::1]:/~re:po
-ok 221 - fetch-pack --diag-url ssh://user@::1/re:po
-ok 222 - fetch-pack --diag-url ssh://user@::1/~re:po
-ok 223 - fetch-pack --diag-url ssh://user@::1:/re:po
-ok 224 - fetch-pack --diag-url ssh://user@::1:/~re:po
-ok 225 - fetch-pack --diag-url ssh://host:22/re:po
-ok 226 - fetch-pack --diag-url ssh://User@host:22/re:po
-ok 227 - fetch-pack --diag-url ssh://User@[::1]:22/re:po
-ok 228 - fetch-pack --diag-url file://User@[::1]/re:po
-ok 229 - fetch-pack --diag-url file://User@[::1]/~re:po
-ok 230 - fetch-pack --diag-url ./nohost:re:po
-ok 231 - fetch-pack --diag-url ./file:nohost/~re:po
-ok 232 - fetch-pack --diag-url ./nohost:12:re:po
-ok 233 - fetch-pack --diag-url ./file:nohost:12/~re:po
-ok 234 - fetch-pack --diag-url ./[::1]:re:po
-ok 235 - fetch-pack --diag-url ./file:[::1]/~re:po
-ok 236 - fetch-pack --diag-url ./[::1]:23:re:po
-ok 237 - fetch-pack --diag-url ./file:[::1]:23/~re:po
-ok 238 - fetch-pack --diag-url ./[:re:po
-ok 239 - fetch-pack --diag-url ./file:[/~re:po
-ok 240 - fetch-pack --diag-url ./[:aa:re:po
-ok 241 - fetch-pack --diag-url ./file:[:aa/~re:po
-ok 242 - fetch-pack --diag-url host:re:po
-ok 243 - fetch-pack --diag-url host:/~re:po
-ok 244 - fetch-pack --diag-url [::1]:re:po
-ok 245 - fetch-pack --diag-url [::1]:/~re:po
-ok 246 - fetch-pack --diag-url ssh+git://host/re/po
-ok 247 - fetch-pack --diag-url ssh+git://host/~re/po
-ok 248 - fetch-pack --diag-url ssh+git://host:/re/po
-ok 249 - fetch-pack --diag-url ssh+git://host:/~re/po
-ok 250 - fetch-pack --diag-url ssh+git://user@host/re/po
-ok 251 - fetch-pack --diag-url ssh+git://user@host/~re/po
-ok 252 - fetch-pack --diag-url ssh+git://user@host:/re/po
-ok 253 - fetch-pack --diag-url ssh+git://user@host:/~re/po
-ok 254 - fetch-pack --diag-url ssh+git://user@[::1]/re/po
-ok 255 - fetch-pack --diag-url ssh+git://user@[::1]/~re/po
-ok 256 - fetch-pack --diag-url ssh+git://user@[::1]:/re/po
-ok 257 - fetch-pack --diag-url ssh+git://user@[::1]:/~re/po
-ok 258 - fetch-pack --diag-url ssh+git://user@::1/re/po
-ok 259 - fetch-pack --diag-url ssh+git://user@::1/~re/po
-ok 260 - fetch-pack --diag-url ssh+git://user@::1:/re/po
-ok 261 - fetch-pack --diag-url ssh+git://user@::1:/~re/po
-ok 262 - fetch-pack --diag-url ssh+git://host:22/re/po
-ok 263 - fetch-pack --diag-url ssh+git://User@host:22/re/po
-ok 264 - fetch-pack --diag-url ssh+git://User@[::1]:22/re/po
-ok 265 - fetch-pack --diag-url git+ssh://host/re/po
-ok 266 - fetch-pack --diag-url git+ssh://host/~re/po
-ok 267 - fetch-pack --diag-url git+ssh://host:/re/po
-ok 268 - fetch-pack --diag-url git+ssh://host:/~re/po
-ok 269 - fetch-pack --diag-url git+ssh://user@host/re/po
-ok 270 - fetch-pack --diag-url git+ssh://user@host/~re/po
-ok 271 - fetch-pack --diag-url git+ssh://user@host:/re/po
-ok 272 - fetch-pack --diag-url git+ssh://user@host:/~re/po
-ok 273 - fetch-pack --diag-url git+ssh://user@[::1]/re/po
-ok 274 - fetch-pack --diag-url git+ssh://user@[::1]/~re/po
-ok 275 - fetch-pack --diag-url git+ssh://user@[::1]:/re/po
-ok 276 - fetch-pack --diag-url git+ssh://user@[::1]:/~re/po
-ok 277 - fetch-pack --diag-url git+ssh://user@::1/re/po
-ok 278 - fetch-pack --diag-url git+ssh://user@::1/~re/po
-ok 279 - fetch-pack --diag-url git+ssh://user@::1:/re/po
-ok 280 - fetch-pack --diag-url git+ssh://user@::1:/~re/po
-ok 281 - fetch-pack --diag-url git+ssh://host:22/re/po
-ok 282 - fetch-pack --diag-url git+ssh://User@host:22/re/po
-ok 283 - fetch-pack --diag-url git+ssh://User@[::1]:22/re/po
-ok 284 - fetch-pack --diag-url git://host/re/po
-ok 285 - fetch-pack --diag-url git://host/~re/po
-ok 286 - fetch-pack --diag-url git://host:/re/po
-ok 287 - fetch-pack --diag-url git://host:/~re/po
-ok 288 - fetch-pack --diag-url git://user@host/re/po
-ok 289 - fetch-pack --diag-url git://user@host/~re/po
-ok 290 - fetch-pack --diag-url git://user@host:/re/po
-ok 291 - fetch-pack --diag-url git://user@host:/~re/po
-ok 292 - fetch-pack --diag-url git://user@[::1]/re/po
-ok 293 - fetch-pack --diag-url git://user@[::1]/~re/po
-ok 294 - fetch-pack --diag-url git://user@[::1]:/re/po
-ok 295 - fetch-pack --diag-url git://user@[::1]:/~re/po
-ok 296 - fetch-pack --diag-url git://user@::1/re/po
-ok 297 - fetch-pack --diag-url git://user@::1/~re/po
-ok 298 - fetch-pack --diag-url git://user@::1:/re/po
-ok 299 - fetch-pack --diag-url git://user@::1:/~re/po
-ok 300 - fetch-pack --diag-url git://host:22/re/po
-ok 301 - fetch-pack --diag-url git://User@host:22/re/po
-ok 302 - fetch-pack --diag-url git://User@[::1]:22/re/po
-ok 303 - fetch-pack --diag-url ssh://host/re/po
-ok 304 - fetch-pack --diag-url ssh://host/~re/po
-ok 305 - fetch-pack --diag-url ssh://host:/re/po
-ok 306 - fetch-pack --diag-url ssh://host:/~re/po
-ok 307 - fetch-pack --diag-url ssh://user@host/re/po
-ok 308 - fetch-pack --diag-url ssh://user@host/~re/po
-ok 309 - fetch-pack --diag-url ssh://user@host:/re/po
-ok 310 - fetch-pack --diag-url ssh://user@host:/~re/po
-ok 311 - fetch-pack --diag-url ssh://user@[::1]/re/po
-ok 312 - fetch-pack --diag-url ssh://user@[::1]/~re/po
-ok 313 - fetch-pack --diag-url ssh://user@[::1]:/re/po
-ok 314 - fetch-pack --diag-url ssh://user@[::1]:/~re/po
-ok 315 - fetch-pack --diag-url ssh://user@::1/re/po
-ok 316 - fetch-pack --diag-url ssh://user@::1/~re/po
-ok 317 - fetch-pack --diag-url ssh://user@::1:/re/po
-ok 318 - fetch-pack --diag-url ssh://user@::1:/~re/po
-ok 319 - fetch-pack --diag-url ssh://host:22/re/po
-ok 320 - fetch-pack --diag-url ssh://User@host:22/re/po
-ok 321 - fetch-pack --diag-url ssh://User@[::1]:22/re/po
-ok 322 - fetch-pack --diag-url file://User@[::1]/re/po
-ok 323 - fetch-pack --diag-url file://User@[::1]/~re/po
-ok 324 - fetch-pack --diag-url ./nohost:re/po
-ok 325 - fetch-pack --diag-url ./file:nohost/~re/po
-ok 326 - fetch-pack --diag-url ./nohost:12:re/po
-ok 327 - fetch-pack --diag-url ./file:nohost:12/~re/po
-ok 328 - fetch-pack --diag-url ./[::1]:re/po
-ok 329 - fetch-pack --diag-url ./file:[::1]/~re/po
-ok 330 - fetch-pack --diag-url ./[::1]:23:re/po
-ok 331 - fetch-pack --diag-url ./file:[::1]:23/~re/po
-ok 332 - fetch-pack --diag-url ./[:re/po
-ok 333 - fetch-pack --diag-url ./file:[/~re/po
-ok 334 - fetch-pack --diag-url ./[:aa:re/po
-ok 335 - fetch-pack --diag-url ./file:[:aa/~re/po
-ok 336 - fetch-pack --diag-url host:re/po
-ok 337 - fetch-pack --diag-url host:/~re/po
-ok 338 - fetch-pack --diag-url [::1]:re/po
-ok 339 - fetch-pack --diag-url [::1]:/~re/po
-ok 340 # skip fetch-pack --diag-url file://c:/repo (missing MINGW)
-ok 341 # skip fetch-pack --diag-url c:repo (missing MINGW)
-ok 342 - clone shallow since ...
-ok 343 - fetch shallow since ...
-ok 344 - shallow clone exclude tag two
-ok 345 - fetch exclude tag one
-ok 346 - fetching deepen
-# passed all 346 test(s)
-1..346
+ok 58 - fetch-pack can fetch a raw sha1 that is advertised as a ref
+ok 59 - fetch-pack can fetch a raw sha1 overlapping a named ref
+ok 60 - fetch-pack cannot fetch a raw sha1 that is not advertised as a ref
+ok 61 - fetch-pack --diag-url ssh+git://host/repo
+ok 62 - fetch-pack --diag-url ssh+git://host/~repo
+ok 63 - fetch-pack --diag-url ssh+git://host:/repo
+ok 64 - fetch-pack --diag-url ssh+git://host:/~repo
+ok 65 - fetch-pack --diag-url ssh+git://user@host/repo
+ok 66 - fetch-pack --diag-url ssh+git://user@host/~repo
+ok 67 - fetch-pack --diag-url ssh+git://user@host:/repo
+ok 68 - fetch-pack --diag-url ssh+git://user@host:/~repo
+ok 69 - fetch-pack --diag-url ssh+git://user@[::1]/repo
+ok 70 - fetch-pack --diag-url ssh+git://user@[::1]/~repo
+ok 71 - fetch-pack --diag-url ssh+git://user@[::1]:/repo
+ok 72 - fetch-pack --diag-url ssh+git://user@[::1]:/~repo
+ok 73 - fetch-pack --diag-url ssh+git://user@::1/repo
+ok 74 - fetch-pack --diag-url ssh+git://user@::1/~repo
+ok 75 - fetch-pack --diag-url ssh+git://user@::1:/repo
+ok 76 - fetch-pack --diag-url ssh+git://user@::1:/~repo
+ok 77 - fetch-pack --diag-url ssh+git://host:22/repo
+ok 78 - fetch-pack --diag-url ssh+git://User@host:22/repo
+ok 79 - fetch-pack --diag-url ssh+git://User@[::1]:22/repo
+ok 80 - fetch-pack --diag-url git+ssh://host/repo
+ok 81 - fetch-pack --diag-url git+ssh://host/~repo
+ok 82 - fetch-pack --diag-url git+ssh://host:/repo
+ok 83 - fetch-pack --diag-url git+ssh://host:/~repo
+ok 84 - fetch-pack --diag-url git+ssh://user@host/repo
+ok 85 - fetch-pack --diag-url git+ssh://user@host/~repo
+ok 86 - fetch-pack --diag-url git+ssh://user@host:/repo
+ok 87 - fetch-pack --diag-url git+ssh://user@host:/~repo
+ok 88 - fetch-pack --diag-url git+ssh://user@[::1]/repo
+ok 89 - fetch-pack --diag-url git+ssh://user@[::1]/~repo
+ok 90 - fetch-pack --diag-url git+ssh://user@[::1]:/repo
+ok 91 - fetch-pack --diag-url git+ssh://user@[::1]:/~repo
+ok 92 - fetch-pack --diag-url git+ssh://user@::1/repo
+ok 93 - fetch-pack --diag-url git+ssh://user@::1/~repo
+ok 94 - fetch-pack --diag-url git+ssh://user@::1:/repo
+ok 95 - fetch-pack --diag-url git+ssh://user@::1:/~repo
+ok 96 - fetch-pack --diag-url git+ssh://host:22/repo
+ok 97 - fetch-pack --diag-url git+ssh://User@host:22/repo
+ok 98 - fetch-pack --diag-url git+ssh://User@[::1]:22/repo
+ok 99 - fetch-pack --diag-url git://host/repo
+ok 100 - fetch-pack --diag-url git://host/~repo
+ok 101 - fetch-pack --diag-url git://host:/repo
+ok 102 - fetch-pack --diag-url git://host:/~repo
+ok 103 - fetch-pack --diag-url git://user@host/repo
+ok 104 - fetch-pack --diag-url git://user@host/~repo
+ok 105 - fetch-pack --diag-url git://user@host:/repo
+ok 106 - fetch-pack --diag-url git://user@host:/~repo
+ok 107 - fetch-pack --diag-url git://user@[::1]/repo
+ok 108 - fetch-pack --diag-url git://user@[::1]/~repo
+ok 109 - fetch-pack --diag-url git://user@[::1]:/repo
+ok 110 - fetch-pack --diag-url git://user@[::1]:/~repo
+ok 111 - fetch-pack --diag-url git://user@::1/repo
+ok 112 - fetch-pack --diag-url git://user@::1/~repo
+ok 113 - fetch-pack --diag-url git://user@::1:/repo
+ok 114 - fetch-pack --diag-url git://user@::1:/~repo
+ok 115 - fetch-pack --diag-url git://host:22/repo
+ok 116 - fetch-pack --diag-url git://User@host:22/repo
+ok 117 - fetch-pack --diag-url git://User@[::1]:22/repo
+ok 118 - fetch-pack --diag-url ssh://host/repo
+ok 119 - fetch-pack --diag-url ssh://host/~repo
+ok 120 - fetch-pack --diag-url ssh://host:/repo
+ok 121 - fetch-pack --diag-url ssh://host:/~repo
+ok 122 - fetch-pack --diag-url ssh://user@host/repo
+ok 123 - fetch-pack --diag-url ssh://user@host/~repo
+ok 124 - fetch-pack --diag-url ssh://user@host:/repo
+ok 125 - fetch-pack --diag-url ssh://user@host:/~repo
+ok 126 - fetch-pack --diag-url ssh://user@[::1]/repo
+ok 127 - fetch-pack --diag-url ssh://user@[::1]/~repo
+ok 128 - fetch-pack --diag-url ssh://user@[::1]:/repo
+ok 129 - fetch-pack --diag-url ssh://user@[::1]:/~repo
+ok 130 - fetch-pack --diag-url ssh://user@::1/repo
+ok 131 - fetch-pack --diag-url ssh://user@::1/~repo
+ok 132 - fetch-pack --diag-url ssh://user@::1:/repo
+ok 133 - fetch-pack --diag-url ssh://user@::1:/~repo
+ok 134 - fetch-pack --diag-url ssh://host:22/repo
+ok 135 - fetch-pack --diag-url ssh://User@host:22/repo
+ok 136 - fetch-pack --diag-url ssh://User@[::1]:22/repo
+ok 137 - fetch-pack --diag-url file://User@[::1]/repo
+ok 138 - fetch-pack --diag-url file://User@[::1]/~repo
+ok 139 - fetch-pack --diag-url ./nohost:repo
+ok 140 - fetch-pack --diag-url ./file:nohost/~repo
+ok 141 - fetch-pack --diag-url ./nohost:12:repo
+ok 142 - fetch-pack --diag-url ./file:nohost:12/~repo
+ok 143 - fetch-pack --diag-url ./[::1]:repo
+ok 144 - fetch-pack --diag-url ./file:[::1]/~repo
+ok 145 - fetch-pack --diag-url ./[::1]:23:repo
+ok 146 - fetch-pack --diag-url ./file:[::1]:23/~repo
+ok 147 - fetch-pack --diag-url ./[:repo
+ok 148 - fetch-pack --diag-url ./file:[/~repo
+ok 149 - fetch-pack --diag-url ./[:aa:repo
+ok 150 - fetch-pack --diag-url ./file:[:aa/~repo
+ok 151 - fetch-pack --diag-url host:repo
+ok 152 - fetch-pack --diag-url host:/~repo
+ok 153 - fetch-pack --diag-url [::1]:repo
+ok 154 - fetch-pack --diag-url [::1]:/~repo
+ok 155 - fetch-pack --diag-url ssh+git://host/re:po
+ok 156 - fetch-pack --diag-url ssh+git://host/~re:po
+ok 157 - fetch-pack --diag-url ssh+git://host:/re:po
+ok 158 - fetch-pack --diag-url ssh+git://host:/~re:po
+ok 159 - fetch-pack --diag-url ssh+git://user@host/re:po
+ok 160 - fetch-pack --diag-url ssh+git://user@host/~re:po
+ok 161 - fetch-pack --diag-url ssh+git://user@host:/re:po
+ok 162 - fetch-pack --diag-url ssh+git://user@host:/~re:po
+ok 163 - fetch-pack --diag-url ssh+git://user@[::1]/re:po
+ok 164 - fetch-pack --diag-url ssh+git://user@[::1]/~re:po
+ok 165 - fetch-pack --diag-url ssh+git://user@[::1]:/re:po
+ok 166 - fetch-pack --diag-url ssh+git://user@[::1]:/~re:po
+ok 167 - fetch-pack --diag-url ssh+git://user@::1/re:po
+ok 168 - fetch-pack --diag-url ssh+git://user@::1/~re:po
+ok 169 - fetch-pack --diag-url ssh+git://user@::1:/re:po
+ok 170 - fetch-pack --diag-url ssh+git://user@::1:/~re:po
+ok 171 - fetch-pack --diag-url ssh+git://host:22/re:po
+ok 172 - fetch-pack --diag-url ssh+git://User@host:22/re:po
+ok 173 - fetch-pack --diag-url ssh+git://User@[::1]:22/re:po
+ok 174 - fetch-pack --diag-url git+ssh://host/re:po
+ok 175 - fetch-pack --diag-url git+ssh://host/~re:po
+ok 176 - fetch-pack --diag-url git+ssh://host:/re:po
+ok 177 - fetch-pack --diag-url git+ssh://host:/~re:po
+ok 178 - fetch-pack --diag-url git+ssh://user@host/re:po
+ok 179 - fetch-pack --diag-url git+ssh://user@host/~re:po
+ok 180 - fetch-pack --diag-url git+ssh://user@host:/re:po
+ok 181 - fetch-pack --diag-url git+ssh://user@host:/~re:po
+ok 182 - fetch-pack --diag-url git+ssh://user@[::1]/re:po
+ok 183 - fetch-pack --diag-url git+ssh://user@[::1]/~re:po
+ok 184 - fetch-pack --diag-url git+ssh://user@[::1]:/re:po
+ok 185 - fetch-pack --diag-url git+ssh://user@[::1]:/~re:po
+ok 186 - fetch-pack --diag-url git+ssh://user@::1/re:po
+ok 187 - fetch-pack --diag-url git+ssh://user@::1/~re:po
+ok 188 - fetch-pack --diag-url git+ssh://user@::1:/re:po
+ok 189 - fetch-pack --diag-url git+ssh://user@::1:/~re:po
+ok 190 - fetch-pack --diag-url git+ssh://host:22/re:po
+ok 191 - fetch-pack --diag-url git+ssh://User@host:22/re:po
+ok 192 - fetch-pack --diag-url git+ssh://User@[::1]:22/re:po
+ok 193 - fetch-pack --diag-url git://host/re:po
+ok 194 - fetch-pack --diag-url git://host/~re:po
+ok 195 - fetch-pack --diag-url git://host:/re:po
+ok 196 - fetch-pack --diag-url git://host:/~re:po
+ok 197 - fetch-pack --diag-url git://user@host/re:po
+ok 198 - fetch-pack --diag-url git://user@host/~re:po
+ok 199 - fetch-pack --diag-url git://user@host:/re:po
+ok 200 - fetch-pack --diag-url git://user@host:/~re:po
+ok 201 - fetch-pack --diag-url git://user@[::1]/re:po
+ok 202 - fetch-pack --diag-url git://user@[::1]/~re:po
+ok 203 - fetch-pack --diag-url git://user@[::1]:/re:po
+ok 204 - fetch-pack --diag-url git://user@[::1]:/~re:po
+ok 205 - fetch-pack --diag-url git://user@::1/re:po
+ok 206 - fetch-pack --diag-url git://user@::1/~re:po
+ok 207 - fetch-pack --diag-url git://user@::1:/re:po
+ok 208 - fetch-pack --diag-url git://user@::1:/~re:po
+ok 209 - fetch-pack --diag-url git://host:22/re:po
+ok 210 - fetch-pack --diag-url git://User@host:22/re:po
+ok 211 - fetch-pack --diag-url git://User@[::1]:22/re:po
+ok 212 - fetch-pack --diag-url ssh://host/re:po
+ok 213 - fetch-pack --diag-url ssh://host/~re:po
+ok 214 - fetch-pack --diag-url ssh://host:/re:po
+ok 215 - fetch-pack --diag-url ssh://host:/~re:po
+ok 216 - fetch-pack --diag-url ssh://user@host/re:po
+ok 217 - fetch-pack --diag-url ssh://user@host/~re:po
+ok 218 - fetch-pack --diag-url ssh://user@host:/re:po
+ok 219 - fetch-pack --diag-url ssh://user@host:/~re:po
+ok 220 - fetch-pack --diag-url ssh://user@[::1]/re:po
+ok 221 - fetch-pack --diag-url ssh://user@[::1]/~re:po
+ok 222 - fetch-pack --diag-url ssh://user@[::1]:/re:po
+ok 223 - fetch-pack --diag-url ssh://user@[::1]:/~re:po
+ok 224 - fetch-pack --diag-url ssh://user@::1/re:po
+ok 225 - fetch-pack --diag-url ssh://user@::1/~re:po
+ok 226 - fetch-pack --diag-url ssh://user@::1:/re:po
+ok 227 - fetch-pack --diag-url ssh://user@::1:/~re:po
+ok 228 - fetch-pack --diag-url ssh://host:22/re:po
+ok 229 - fetch-pack --diag-url ssh://User@host:22/re:po
+ok 230 - fetch-pack --diag-url ssh://User@[::1]:22/re:po
+ok 231 - fetch-pack --diag-url file://User@[::1]/re:po
+ok 232 - fetch-pack --diag-url file://User@[::1]/~re:po
+ok 233 - fetch-pack --diag-url ./nohost:re:po
+ok 234 - fetch-pack --diag-url ./file:nohost/~re:po
+ok 235 - fetch-pack --diag-url ./nohost:12:re:po
+ok 236 - fetch-pack --diag-url ./file:nohost:12/~re:po
+ok 237 - fetch-pack --diag-url ./[::1]:re:po
+ok 238 - fetch-pack --diag-url ./file:[::1]/~re:po
+ok 239 - fetch-pack --diag-url ./[::1]:23:re:po
+ok 240 - fetch-pack --diag-url ./file:[::1]:23/~re:po
+ok 241 - fetch-pack --diag-url ./[:re:po
+ok 242 - fetch-pack --diag-url ./file:[/~re:po
+ok 243 - fetch-pack --diag-url ./[:aa:re:po
+ok 244 - fetch-pack --diag-url ./file:[:aa/~re:po
+ok 245 - fetch-pack --diag-url host:re:po
+ok 246 - fetch-pack --diag-url host:/~re:po
+ok 247 - fetch-pack --diag-url [::1]:re:po
+ok 248 - fetch-pack --diag-url [::1]:/~re:po
+ok 249 - fetch-pack --diag-url ssh+git://host/re/po
+ok 250 - fetch-pack --diag-url ssh+git://host/~re/po
+ok 251 - fetch-pack --diag-url ssh+git://host:/re/po
+ok 252 - fetch-pack --diag-url ssh+git://host:/~re/po
+ok 253 - fetch-pack --diag-url ssh+git://user@host/re/po
+ok 254 - fetch-pack --diag-url ssh+git://user@host/~re/po
+ok 255 - fetch-pack --diag-url ssh+git://user@host:/re/po
+ok 256 - fetch-pack --diag-url ssh+git://user@host:/~re/po
+ok 257 - fetch-pack --diag-url ssh+git://user@[::1]/re/po
+ok 258 - fetch-pack --diag-url ssh+git://user@[::1]/~re/po
+ok 259 - fetch-pack --diag-url ssh+git://user@[::1]:/re/po
+ok 260 - fetch-pack --diag-url ssh+git://user@[::1]:/~re/po
+ok 261 - fetch-pack --diag-url ssh+git://user@::1/re/po
+ok 262 - fetch-pack --diag-url ssh+git://user@::1/~re/po
+ok 263 - fetch-pack --diag-url ssh+git://user@::1:/re/po
+ok 264 - fetch-pack --diag-url ssh+git://user@::1:/~re/po
+ok 265 - fetch-pack --diag-url ssh+git://host:22/re/po
+ok 266 - fetch-pack --diag-url ssh+git://User@host:22/re/po
+ok 267 - fetch-pack --diag-url ssh+git://User@[::1]:22/re/po
+ok 268 - fetch-pack --diag-url git+ssh://host/re/po
+ok 269 - fetch-pack --diag-url git+ssh://host/~re/po
+ok 270 - fetch-pack --diag-url git+ssh://host:/re/po
+ok 271 - fetch-pack --diag-url git+ssh://host:/~re/po
+ok 272 - fetch-pack --diag-url git+ssh://user@host/re/po
+ok 273 - fetch-pack --diag-url git+ssh://user@host/~re/po
+ok 274 - fetch-pack --diag-url git+ssh://user@host:/re/po
+ok 275 - fetch-pack --diag-url git+ssh://user@host:/~re/po
+ok 276 - fetch-pack --diag-url git+ssh://user@[::1]/re/po
+ok 277 - fetch-pack --diag-url git+ssh://user@[::1]/~re/po
+ok 278 - fetch-pack --diag-url git+ssh://user@[::1]:/re/po
+ok 279 - fetch-pack --diag-url git+ssh://user@[::1]:/~re/po
+ok 280 - fetch-pack --diag-url git+ssh://user@::1/re/po
+ok 281 - fetch-pack --diag-url git+ssh://user@::1/~re/po
+ok 282 - fetch-pack --diag-url git+ssh://user@::1:/re/po
+ok 283 - fetch-pack --diag-url git+ssh://user@::1:/~re/po
+ok 284 - fetch-pack --diag-url git+ssh://host:22/re/po
+ok 285 - fetch-pack --diag-url git+ssh://User@host:22/re/po
+ok 286 - fetch-pack --diag-url git+ssh://User@[::1]:22/re/po
+ok 287 - fetch-pack --diag-url git://host/re/po
+ok 288 - fetch-pack --diag-url git://host/~re/po
+ok 289 - fetch-pack --diag-url git://host:/re/po
+ok 290 - fetch-pack --diag-url git://host:/~re/po
+ok 291 - fetch-pack --diag-url git://user@host/re/po
+ok 292 - fetch-pack --diag-url git://user@host/~re/po
+ok 293 - fetch-pack --diag-url git://user@host:/re/po
+ok 294 - fetch-pack --diag-url git://user@host:/~re/po
+ok 295 - fetch-pack --diag-url git://user@[::1]/re/po
+ok 296 - fetch-pack --diag-url git://user@[::1]/~re/po
+ok 297 - fetch-pack --diag-url git://user@[::1]:/re/po
+ok 298 - fetch-pack --diag-url git://user@[::1]:/~re/po
+ok 299 - fetch-pack --diag-url git://user@::1/re/po
+ok 300 - fetch-pack --diag-url git://user@::1/~re/po
+ok 301 - fetch-pack --diag-url git://user@::1:/re/po
+ok 302 - fetch-pack --diag-url git://user@::1:/~re/po
+ok 303 - fetch-pack --diag-url git://host:22/re/po
+ok 304 - fetch-pack --diag-url git://User@host:22/re/po
+ok 305 - fetch-pack --diag-url git://User@[::1]:22/re/po
+ok 306 - fetch-pack --diag-url ssh://host/re/po
+ok 307 - fetch-pack --diag-url ssh://host/~re/po
+ok 308 - fetch-pack --diag-url ssh://host:/re/po
+ok 309 - fetch-pack --diag-url ssh://host:/~re/po
+ok 310 - fetch-pack --diag-url ssh://user@host/re/po
+ok 311 - fetch-pack --diag-url ssh://user@host/~re/po
+ok 312 - fetch-pack --diag-url ssh://user@host:/re/po
+ok 313 - fetch-pack --diag-url ssh://user@host:/~re/po
+ok 314 - fetch-pack --diag-url ssh://user@[::1]/re/po
+ok 315 - fetch-pack --diag-url ssh://user@[::1]/~re/po
+ok 316 - fetch-pack --diag-url ssh://user@[::1]:/re/po
+ok 317 - fetch-pack --diag-url ssh://user@[::1]:/~re/po
+ok 318 - fetch-pack --diag-url ssh://user@::1/re/po
+ok 319 - fetch-pack --diag-url ssh://user@::1/~re/po
+ok 320 - fetch-pack --diag-url ssh://user@::1:/re/po
+ok 321 - fetch-pack --diag-url ssh://user@::1:/~re/po
+ok 322 - fetch-pack --diag-url ssh://host:22/re/po
+ok 323 - fetch-pack --diag-url ssh://User@host:22/re/po
+ok 324 - fetch-pack --diag-url ssh://User@[::1]:22/re/po
+ok 325 - fetch-pack --diag-url file://User@[::1]/re/po
+ok 326 - fetch-pack --diag-url file://User@[::1]/~re/po
+ok 327 - fetch-pack --diag-url ./nohost:re/po
+ok 328 - fetch-pack --diag-url ./file:nohost/~re/po
+ok 329 - fetch-pack --diag-url ./nohost:12:re/po
+ok 330 - fetch-pack --diag-url ./file:nohost:12/~re/po
+ok 331 - fetch-pack --diag-url ./[::1]:re/po
+ok 332 - fetch-pack --diag-url ./file:[::1]/~re/po
+ok 333 - fetch-pack --diag-url ./[::1]:23:re/po
+ok 334 - fetch-pack --diag-url ./file:[::1]:23/~re/po
+ok 335 - fetch-pack --diag-url ./[:re/po
+ok 336 - fetch-pack --diag-url ./file:[/~re/po
+ok 337 - fetch-pack --diag-url ./[:aa:re/po
+ok 338 - fetch-pack --diag-url ./file:[:aa/~re/po
+ok 339 - fetch-pack --diag-url host:re/po
+ok 340 - fetch-pack --diag-url host:/~re/po
+ok 341 - fetch-pack --diag-url [::1]:re/po
+ok 342 - fetch-pack --diag-url [::1]:/~re/po
+ok 343 # skip fetch-pack --diag-url file://c:/repo (missing MINGW)
+ok 344 # skip fetch-pack --diag-url c:repo (missing MINGW)
+ok 345 - clone shallow since ...
+ok 346 - fetch shallow since ...
+ok 347 - shallow clone exclude tag two
+ok 348 - fetch exclude tag one
+ok 349 - fetching deepen
+# passed all 349 test(s)
+1..349
 *** t5501-fetch-push-alternates.sh ***
 ok 1 - setup
 ok 2 - pushing into a repository with the same alternate
@@ -12085,35 +12323,36 @@ ok 5 - fetch with tagopt=--tags gets tag
 *** t5526-fetch-submodules.sh ***
 ok 1 - setup
 ok 2 - fetch --recurse-submodules recurses into submodules
-ok 3 - fetch --recurse-submodules -j2 has the same output behaviour
-ok 4 - fetch alone only fetches superproject
-ok 5 - fetch --no-recurse-submodules only fetches superproject
-ok 6 - using fetchRecurseSubmodules=true in .gitmodules recurses into submodules
-ok 7 - --no-recurse-submodules overrides .gitmodules config
-ok 8 - using fetchRecurseSubmodules=false in .git/config overrides setting in .gitmodules
-ok 9 - --recurse-submodules overrides fetchRecurseSubmodules setting from .git/config
-ok 10 - --quiet propagates to submodules
-ok 11 - --quiet propagates to parallel submodules
-ok 12 - --dry-run propagates to submodules
-ok 13 - Without --dry-run propagates to submodules
-ok 14 - recurseSubmodules=true propagates into submodules
-ok 15 - --recurse-submodules overrides config in submodule
-ok 16 - --no-recurse-submodules overrides config setting
-ok 17 - Recursion doesn't happen when no new commits are fetched in the superproject
-ok 18 - Recursion stops when no new submodule commits are fetched
-ok 19 - Recursion doesn't happen when new superproject commits don't change any submodules
-ok 20 - Recursion picks up config in submodule
-ok 21 - Recursion picks up all submodules when necessary
-ok 22 - '--recurse-submodules=on-demand' doesn't recurse when no new commits are fetched in the superproject (and ignores config)
-ok 23 - '--recurse-submodules=on-demand' recurses as deep as necessary (and ignores config)
-ok 24 - '--recurse-submodules=on-demand' stops when no new submodule commits are found in the superproject (and ignores config)
-ok 25 - 'fetch.recurseSubmodules=on-demand' overrides global config
-ok 26 - 'submodule.<sub>.fetchRecurseSubmodules=on-demand' overrides fetch.recurseSubmodules
-ok 27 - don't fetch submodule when newly recorded commits are already present
-ok 28 - fetching submodules respects parallel settings
-ok 29 - fetching submodule into a broken repository
-# passed all 29 test(s)
-1..29
+ok 3 - submodule.recurse option triggers recursive fetch
+ok 4 - fetch --recurse-submodules -j2 has the same output behaviour
+ok 5 - fetch alone only fetches superproject
+ok 6 - fetch --no-recurse-submodules only fetches superproject
+ok 7 - using fetchRecurseSubmodules=true in .gitmodules recurses into submodules
+ok 8 - --no-recurse-submodules overrides .gitmodules config
+ok 9 - using fetchRecurseSubmodules=false in .git/config overrides setting in .gitmodules
+ok 10 - --recurse-submodules overrides fetchRecurseSubmodules setting from .git/config
+ok 11 - --quiet propagates to submodules
+ok 12 - --quiet propagates to parallel submodules
+ok 13 - --dry-run propagates to submodules
+ok 14 - Without --dry-run propagates to submodules
+ok 15 - recurseSubmodules=true propagates into submodules
+ok 16 - --recurse-submodules overrides config in submodule
+ok 17 - --no-recurse-submodules overrides config setting
+ok 18 - Recursion doesn't happen when no new commits are fetched in the superproject
+ok 19 - Recursion stops when no new submodule commits are fetched
+ok 20 - Recursion doesn't happen when new superproject commits don't change any submodules
+ok 21 - Recursion picks up config in submodule
+ok 22 - Recursion picks up all submodules when necessary
+ok 23 - '--recurse-submodules=on-demand' doesn't recurse when no new commits are fetched in the superproject (and ignores config)
+ok 24 - '--recurse-submodules=on-demand' recurses as deep as necessary (and ignores config)
+ok 25 - '--recurse-submodules=on-demand' stops when no new submodule commits are found in the superproject (and ignores config)
+ok 26 - 'fetch.recurseSubmodules=on-demand' overrides global config
+ok 27 - 'submodule.<sub>.fetchRecurseSubmodules=on-demand' overrides fetch.recurseSubmodules
+ok 28 - don't fetch submodule when newly recorded commits are already present
+ok 29 - fetching submodules respects parallel settings
+ok 30 - fetching submodule into a broken repository
+# passed all 30 test(s)
+1..30
 *** t5527-fetch-odd-refs.sh ***
 ok 1 - setup repo with odd suffix ref
 ok 2 - suffix ref is ignored during fetch
@@ -12177,25 +12416,27 @@ ok 4 - push fails if submodule commit not on remote
 ok 5 - push succeeds after commit was pushed to remote
 ok 6 - push succeeds if submodule commit not on remote but using on-demand on command line
 ok 7 - push succeeds if submodule commit not on remote but using on-demand from config
-ok 8 - push recurse-submodules on command line overrides config
-ok 9 - push recurse-submodules last one wins on command line
-ok 10 - push succeeds if submodule commit not on remote using on-demand from cmdline overriding config
-ok 11 - push succeeds if submodule commit disabling recursion from cmdline overriding config
-ok 12 - push succeeds if submodule commit disabling recursion from cmdline (alternative form) overriding config
-ok 13 - push fails if recurse submodules option passed as yes
-ok 14 - push fails when commit on multiple branches if one branch has no remote
-ok 15 - push succeeds if submodule has no remote and is on the first superproject commit
-ok 16 - push unpushed submodules when not needed
-ok 17 - push unpushed submodules when not needed 2
-ok 18 - push unpushed submodules recursively
-ok 19 - push unpushable submodule recursively fails
-ok 20 - push --dry-run does not recursively update submodules
+ok 8 - push succeeds if submodule commit not on remote but using auto-on-demand via submodule.recurse config
+ok 9 - push recurse-submodules on command line overrides config
+ok 10 - push recurse-submodules last one wins on command line
+ok 11 - push succeeds if submodule commit not on remote using on-demand from cmdline overriding config
+ok 12 - push succeeds if submodule commit disabling recursion from cmdline overriding config
+ok 13 - push succeeds if submodule commit disabling recursion from cmdline (alternative form) overriding config
+ok 14 - push fails if recurse submodules option passed as yes
+ok 15 - push fails when commit on multiple branches if one branch has no remote
+ok 16 - push succeeds if submodule has no remote and is on the first superproject commit
+ok 17 - push unpushed submodules when not needed
+ok 18 - push unpushed submodules when not needed 2
+ok 19 - push unpushed submodules recursively
+ok 20 - push unpushable submodule recursively fails
 ok 21 - push --dry-run does not recursively update submodules
-ok 22 - push only unpushed submodules recursively
-ok 23 - push propagating the remotes name to a submodule
-ok 24 - push propagating refspec to a submodule
-# passed all 24 test(s)
-1..24
+ok 22 - push --dry-run does not recursively update submodules
+ok 23 - push only unpushed submodules recursively
+ok 24 - push propagating the remotes name to a submodule
+ok 25 - push propagating refspec to a submodule
+ok 26 - push propagating HEAD refspec to a submodule
+# passed all 26 test(s)
+1..26
 *** t5532-fetch-proxy.sh ***
 ok 1 - setup remote repo
 ok 2 - setup proxy script
@@ -12451,11 +12692,15 @@ not ok 53 - git_pull_noff: replace submodule containing a .git directory with a 
 ok 54 - git_pull_noff: modified submodule does not update submodule work tree
 ok 55 - git_pull_noff: modified submodule does not update submodule work tree to invalid commit
 ok 56 - git_pull_noff: modified submodule does not update submodule work tree from invalid commit
+ok 57 - pull --recurse-submodule setup
+ok 58 - recursive pull updates working tree
+ok 59 - recursive rebasing pull
+ok 60 - pull rebase recursing fails with conflicts
 # still have 11 known breakage(s)
-# passed all remaining 45 test(s)
-1..56
+# passed all remaining 49 test(s)
+1..60
 *** t5580-clone-push-unc.sh ***
-1..0 # SKIP skipping UNC path tests, requires Windows
+1..0 # SKIP skipping Windows-only path tests
 *** t5600-clone-fail-cleanup.sh ***
 ok 1 - clone of non-existent source should fail
 ok 2 - failed clone should not leave a directory
@@ -12737,15 +12982,18 @@ ok 6 # skip clone -c core.hideDotFiles (missing MINGW)
 ok 1 - setup
 ok 2 - by default all branches will be kept updated
 ok 3 - by default no tags will be kept updated
-ok 4 - --single-branch while HEAD pointing at master
-ok 5 - --single-branch while HEAD pointing at side
-ok 6 - --single-branch with explicit --branch side
-ok 7 - --single-branch with explicit --branch with tag fetches updated tag
-ok 8 - --single-branch with --mirror
-ok 9 - --single-branch with explicit --branch and --mirror
-ok 10 - --single-branch with detached
-# passed all 10 test(s)
-1..10
+ok 4 - clone with --no-tags
+ok 5 - --single-branch while HEAD pointing at master
+ok 6 - --single-branch while HEAD pointing at master and --no-tags
+ok 7 - --single-branch while HEAD pointing at side
+ok 8 - --single-branch with explicit --branch side
+ok 9 - --single-branch with explicit --branch with tag fetches updated tag
+ok 10 - --single-branch with explicit --branch with tag fetches updated tag despite --no-tags
+ok 11 - --single-branch with --mirror
+ok 12 - --single-branch with explicit --branch and --mirror
+ok 13 - --single-branch with detached
+# passed all 13 test(s)
+1..13
 *** t5613-info-alternate.sh ***
 ok 1 - preparing first repository
 ok 2 - preparing second repository
@@ -12762,7 +13010,7 @@ ok 12 - relative duplicates are eliminated
 ok 13 # skip dup finding can be case-insensitive (missing CASE_INSENSITIVE_FS)
 # passed all 13 test(s)
 1..13
-*** t5614-clone-submodules.sh ***
+*** t5614-clone-submodules-shallow.sh ***
 ok 1 - setup
 ok 2 - nonshallow clone implies nonshallow submodule
 ok 3 - shallow clone with shallow submodule
@@ -13130,8 +13378,9 @@ ok 42 - --bisect a4 ^a2 ^a3 ^b4 ^c2
 ok 43 - --bisect a4 ^a2 ^a3 ^b4 ^c2 ^c3
 ok 44 - --bisect a4 ^a2 ^a3 ^b4
 ok 45 - --bisect c3 ^a2 ^a3 ^b4 ^c2
-# passed all 45 test(s)
-1..45
+ok 46 - --bisect can default to good/bad refs
+# passed all 46 test(s)
+1..46
 *** t6003-rev-list-topo-order.sh ***
 ok 1 - rev-list has correct number of entries
 ok 2 - simple topo order
@@ -13202,52 +13451,68 @@ ok 9 - format subject
 ok 10 - format subject-truncated
 ok 11 - format body
 ok 12 - format raw-body
-ok 13 - format colors
-ok 14 - format advanced-colors
-ok 15 - %C(auto,...) does not enable color by default
-ok 16 - %C(auto,...) enables colors for color.diff
-ok 17 - %C(auto,...) enables colors for color.ui
-ok 18 - %C(auto,...) respects --color
-ok 19 - %C(auto,...) respects --no-color
-ok 20 # skip %C(auto,...) respects --color=auto (stdout is tty) (missing TTY)
-ok 21 - %C(auto,...) respects --color=auto (stdout not tty)
-ok 22 - %C(auto) respects --color
-ok 23 - %C(auto) respects --no-color
-ok 24 - setup complex body
-ok 25 - format complex-encoding
-ok 26 - format complex-subject
-ok 27 - format complex-subject-trunc
-ok 28 - format complex-subject-mtrunc
-ok 29 - format complex-subject-ltrunc
-ok 30 - prepare expected messages (for test %b)
-ok 31 - format complex-body
-ok 32 - format complex-subject-commitencoding-unset
-ok 33 - format complex-subject-commitencoding-unset-trunc
-ok 34 - format complex-subject-commitencoding-unset-mtrunc
-ok 35 - format complex-subject-commitencoding-unset-ltrunc
-ok 36 - format complex-body-commitencoding-unset
-ok 37 - %x00 shows NUL
-ok 38 - %ad respects --date=
-ok 39 - empty email
-ok 40 - del LF before empty (1)
-ok 41 - del LF before empty (2)
-ok 42 - add LF before non-empty (1)
-ok 43 - add LF before non-empty (2)
-ok 44 - add SP before non-empty (1)
-ok 45 - add SP before non-empty (2)
-ok 46 - --abbrev
-ok 47 - %H is not affected by --abbrev-commit
-ok 48 - %h is not affected by --abbrev-commit
-ok 49 - "%h %gD: %gs" is same as git-reflog
-ok 50 - "%h %gD: %gs" is same as git-reflog (with date)
-ok 51 - "%h %gD: %gs" is same as git-reflog (with --abbrev)
-ok 52 - %gd shortens ref name
-ok 53 - reflog identity
-ok 54 - oneline with empty message
-ok 55 - single-character name is parsed correctly
-ok 56 - unused %G placeholders are passed through
-# passed all 56 test(s)
-1..56
+ok 13 - basic colors
+ok 14 - advanced colors
+ok 15 - %Cred does not enable color by default
+ok 16 - %Cred enables colors for color.diff
+ok 17 - %Cred enables colors for color.ui
+ok 18 - %Cred respects --color
+ok 19 - %Cred respects --no-color
+ok 20 # skip %Cred respects --color=auto (stdout is tty) (missing TTY)
+ok 21 - %Cred respects --color=auto (stdout not tty)
+ok 22 - %C(...) does not enable color by default
+ok 23 - %C(...) enables colors for color.diff
+ok 24 - %C(...) enables colors for color.ui
+ok 25 - %C(...) respects --color
+ok 26 - %C(...) respects --no-color
+ok 27 # skip %C(...) respects --color=auto (stdout is tty) (missing TTY)
+ok 28 - %C(...) respects --color=auto (stdout not tty)
+ok 29 - %C(auto,...) does not enable color by default
+ok 30 - %C(auto,...) enables colors for color.diff
+ok 31 - %C(auto,...) enables colors for color.ui
+ok 32 - %C(auto,...) respects --color
+ok 33 - %C(auto,...) respects --no-color
+ok 34 # skip %C(auto,...) respects --color=auto (stdout is tty) (missing TTY)
+ok 35 - %C(auto,...) respects --color=auto (stdout not tty)
+ok 36 - %C(always,...) enables color even without tty
+ok 37 - %C(auto) respects --color
+ok 38 - %C(auto) respects --no-color
+ok 39 - rev-list %C(auto,...) respects --color
+ok 40 - setup complex body
+ok 41 - format complex-encoding
+ok 42 - format complex-subject
+ok 43 - format complex-subject-trunc
+ok 44 - format complex-subject-mtrunc
+ok 45 - format complex-subject-ltrunc
+ok 46 - prepare expected messages (for test %b)
+ok 47 - format complex-body
+ok 48 - format complex-subject-commitencoding-unset
+ok 49 - format complex-subject-commitencoding-unset-trunc
+ok 50 - format complex-subject-commitencoding-unset-mtrunc
+ok 51 - format complex-subject-commitencoding-unset-ltrunc
+ok 52 - format complex-body-commitencoding-unset
+ok 53 - %x00 shows NUL
+ok 54 - %ad respects --date=
+ok 55 - empty email
+ok 56 - del LF before empty (1)
+ok 57 - del LF before empty (2)
+ok 58 - add LF before non-empty (1)
+ok 59 - add LF before non-empty (2)
+ok 60 - add SP before non-empty (1)
+ok 61 - add SP before non-empty (2)
+ok 62 - --abbrev
+ok 63 - %H is not affected by --abbrev-commit
+ok 64 - %h is not affected by --abbrev-commit
+ok 65 - "%h %gD: %gs" is same as git-reflog
+ok 66 - "%h %gD: %gs" is same as git-reflog (with date)
+ok 67 - "%h %gD: %gs" is same as git-reflog (with --abbrev)
+ok 68 - %gd shortens ref name
+ok 69 - reflog identity
+ok 70 - oneline with empty message
+ok 71 - single-character name is parsed correctly
+ok 72 - unused %G placeholders are passed through
+# passed all 72 test(s)
+1..72
 *** t6007-rev-list-cherry-pick-file.sh ***
 ok 1 - setup
 ok 2 - --left-right
@@ -13429,15 +13694,16 @@ ok 36 - rev-list --remotes=foo
 ok 37 - rev-list --exclude with --branches
 ok 38 - rev-list --exclude with --all
 ok 39 - rev-list accumulates multiple --exclude
-not ok 40 - rev-list may want to succeed with empty output on no input (1) # TODO known breakage
-not ok 41 - rev-list may want to succeed with empty output on no input (2) # TODO known breakage
-not ok 42 - rev-list may want to succeed with empty output on no input (3) # TODO known breakage
-ok 43 - shortlog accepts --glob/--tags/--remotes
-not ok 44 - shortlog accepts --glob as detached option # TODO known breakage
-not ok 45 - shortlog --glob is not confused by option-like argument # TODO known breakage
-# still have 7 known breakage(s)
-# passed all remaining 38 test(s)
-1..45
+not ok 40 - rev-list should succeed with empty output on empty stdin # TODO known breakage
+ok 41 - rev-list should succeed with empty output with all refs excluded
+ok 42 - rev-list should succeed with empty output with empty --all
+ok 43 - rev-list should succeed with empty output with empty glob
+ok 44 - shortlog accepts --glob/--tags/--remotes
+not ok 45 - shortlog accepts --glob as detached option # TODO known breakage
+not ok 46 - shortlog --glob is not confused by option-like argument # TODO known breakage
+# still have 5 known breakage(s)
+# passed all remaining 41 test(s)
+1..46
 *** t6019-rev-list-ancestry-path.sh ***
 ok 1 - setup
 ok 2 - rev-list D..M
@@ -14099,7 +14365,7 @@ ok 44 - describe --contains and --match
 ok 45 - describe --exclude
 ok 46 - describe --contains and --no-match
 ok 47 - setup and absorb a submodule
-ok 48 - describe chokes on severly broken submodules
+ok 48 - describe chokes on severely broken submodules
 ok 49 - describe ignoring a borken submodule
 # passed all 49 test(s)
 1..49
@@ -14369,51 +14635,54 @@ ok 144 - basic atom: head push:trackshort
 ok 145 - Check that :track[short] cannot be used with other atoms
 ok 146 - Check that :track[short] works when upstream is invalid
 ok 147 - Check for invalid refname format
-ok 148 - Check %(color:...) 
-ok 149 - Check ambiguous head and tag refs (strict)
-ok 150 - Check ambiguous head and tag refs (loose)
-ok 151 - Check ambiguous head and tag refs II (loose)
-ok 152 - an unusual tag with an incomplete line
-ok 153 - create tag with subject and body content
-ok 154 - basic atom: refs/tags/subject-body subject
-ok 155 - basic atom: refs/tags/subject-body body
-ok 156 - basic atom: refs/tags/subject-body contents
-ok 157 - create tag with multiline subject
-ok 158 - basic atom: refs/tags/multiline subject
-ok 159 - basic atom: refs/tags/multiline contents:subject
-ok 160 - basic atom: refs/tags/multiline body
-ok 161 - basic atom: refs/tags/multiline contents:body
-ok 162 - basic atom: refs/tags/multiline contents:signature
-ok 163 - basic atom: refs/tags/multiline contents
-ok 164 # skip create signed tags (missing GPG)
-ok 165 # skip basic atom: refs/tags/signed-empty subject (missing GPG)
-ok 166 # skip basic atom: refs/tags/signed-empty contents:subject (missing GPG)
-ok 167 # skip basic atom: refs/tags/signed-empty body (missing GPG)
-ok 168 # skip basic atom: refs/tags/signed-empty contents:body (missing GPG)
-ok 169 # skip basic atom: refs/tags/signed-empty contents:signature (missing GPG)
-ok 170 # skip basic atom: refs/tags/signed-empty contents (missing GPG)
-ok 171 # skip basic atom: refs/tags/signed-short subject (missing GPG)
-ok 172 # skip basic atom: refs/tags/signed-short contents:subject (missing GPG)
-ok 173 # skip basic atom: refs/tags/signed-short body (missing GPG)
-ok 174 # skip basic atom: refs/tags/signed-short contents:body (missing GPG)
-ok 175 # skip basic atom: refs/tags/signed-short contents:signature (missing GPG)
-ok 176 # skip basic atom: refs/tags/signed-short contents (missing GPG)
-ok 177 # skip basic atom: refs/tags/signed-long subject (missing GPG)
-ok 178 # skip basic atom: refs/tags/signed-long contents:subject (missing GPG)
-ok 179 # skip basic atom: refs/tags/signed-long body (missing GPG)
-ok 180 # skip basic atom: refs/tags/signed-long contents:body (missing GPG)
-ok 181 # skip basic atom: refs/tags/signed-long contents:signature (missing GPG)
-ok 182 # skip basic atom: refs/tags/signed-long contents (missing GPG)
-ok 183 - Verify sort with multiple keys
-ok 184 - do not dereference NULL upon %(HEAD) on unborn branch
-ok 185 - basic atom: head contents:trailers
-ok 186 - Add symbolic ref for the following tests
-ok 187 - Verify usage of %(symref) atom
-ok 188 - Verify usage of %(symref:short) atom
-ok 189 - Verify usage of %(symref:lstrip) atom
-ok 190 - Verify usage of %(symref:rstrip) atom
-# passed all 190 test(s)
-1..190
+ok 148 - set up color tests
+ok 149 # skip %(color) shows color with a tty (missing TTY)
+ok 150 - %(color) does not show color without tty
+ok 151 - color.ui=always can override tty check
+ok 152 - Check ambiguous head and tag refs (strict)
+ok 153 - Check ambiguous head and tag refs (loose)
+ok 154 - Check ambiguous head and tag refs II (loose)
+ok 155 - an unusual tag with an incomplete line
+ok 156 - create tag with subject and body content
+ok 157 - basic atom: refs/tags/subject-body subject
+ok 158 - basic atom: refs/tags/subject-body body
+ok 159 - basic atom: refs/tags/subject-body contents
+ok 160 - create tag with multiline subject
+ok 161 - basic atom: refs/tags/multiline subject
+ok 162 - basic atom: refs/tags/multiline contents:subject
+ok 163 - basic atom: refs/tags/multiline body
+ok 164 - basic atom: refs/tags/multiline contents:body
+ok 165 - basic atom: refs/tags/multiline contents:signature
+ok 166 - basic atom: refs/tags/multiline contents
+ok 167 # skip create signed tags (missing GPG)
+ok 168 # skip basic atom: refs/tags/signed-empty subject (missing GPG)
+ok 169 # skip basic atom: refs/tags/signed-empty contents:subject (missing GPG)
+ok 170 # skip basic atom: refs/tags/signed-empty body (missing GPG)
+ok 171 # skip basic atom: refs/tags/signed-empty contents:body (missing GPG)
+ok 172 # skip basic atom: refs/tags/signed-empty contents:signature (missing GPG)
+ok 173 # skip basic atom: refs/tags/signed-empty contents (missing GPG)
+ok 174 # skip basic atom: refs/tags/signed-short subject (missing GPG)
+ok 175 # skip basic atom: refs/tags/signed-short contents:subject (missing GPG)
+ok 176 # skip basic atom: refs/tags/signed-short body (missing GPG)
+ok 177 # skip basic atom: refs/tags/signed-short contents:body (missing GPG)
+ok 178 # skip basic atom: refs/tags/signed-short contents:signature (missing GPG)
+ok 179 # skip basic atom: refs/tags/signed-short contents (missing GPG)
+ok 180 # skip basic atom: refs/tags/signed-long subject (missing GPG)
+ok 181 # skip basic atom: refs/tags/signed-long contents:subject (missing GPG)
+ok 182 # skip basic atom: refs/tags/signed-long body (missing GPG)
+ok 183 # skip basic atom: refs/tags/signed-long contents:body (missing GPG)
+ok 184 # skip basic atom: refs/tags/signed-long contents:signature (missing GPG)
+ok 185 # skip basic atom: refs/tags/signed-long contents (missing GPG)
+ok 186 - Verify sort with multiple keys
+ok 187 - do not dereference NULL upon %(HEAD) on unborn branch
+ok 188 - basic atom: head contents:trailers
+ok 189 - Add symbolic ref for the following tests
+ok 190 - Verify usage of %(symref) atom
+ok 191 - Verify usage of %(symref:short) atom
+ok 192 - Verify usage of %(symref:lstrip) atom
+ok 193 - Verify usage of %(symref:rstrip) atom
+# passed all 193 test(s)
+1..193
 *** t6301-for-each-ref-errors.sh ***
 ok 1 - setup
 ok 2 - Broken refs are reported correctly
@@ -14790,17 +15059,21 @@ ok 183 - versionsort.suffix overrides versionsort.prereleaseSuffix
 ok 184 - version sort with very long prerelease suffix
 ok 185 - --contains and --no-contains work in a deep repo
 ok 186 - --format should list tags as per format given
-ok 187 - setup --merged test tags
-ok 188 - --merged can be used in non-list mode
-ok 189 - --merged is incompatible with --no-merged
-ok 190 - --merged shows merged tags
-ok 191 - --no-merged show unmerged tags
-ok 192 - --no-merged can be used in non-list mode
-ok 193 - ambiguous branch/tags not marked
-ok 194 - --contains combined with --no-contains
-ok 195 - Does --[no-]contains stop at commits? Yes!
-# passed all 195 test(s)
-1..195
+ok 187 - set up color tests
+ok 188 - %(color) omitted without tty
+ok 189 # skip %(color) present with tty (missing TTY)
+ok 190 - color.ui=always overrides auto-color
+ok 191 - setup --merged test tags
+ok 192 - --merged can be used in non-list mode
+ok 193 - --merged is incompatible with --no-merged
+ok 194 - --merged shows merged tags
+ok 195 - --no-merged show unmerged tags
+ok 196 - --no-merged can be used in non-list mode
+ok 197 - ambiguous branch/tags not marked
+ok 198 - --contains combined with --no-contains
+ok 199 - Does --[no-]contains stop at commits? Yes!
+# passed all 199 test(s)
+1..199
 *** t7005-editor.sh ***
 ok 1 - determine default editor
 ok 2 - setup
@@ -14836,71 +15109,83 @@ ok 12 # skip no pager with --no-pager (missing TTY)
 ok 13 # skip configuration can disable pager (missing TTY)
 ok 14 # skip git config uses a pager if configured to (missing TTY)
 ok 15 # skip configuration can enable pager (from subdir) (missing TTY)
-ok 16 - tests can detect color
-ok 17 - no color when stdout is a regular file
-ok 18 # skip color when writing to a pager (missing TTY)
-ok 19 # skip colors are suppressed by color.pager (missing TTY)
-ok 20 - color when writing to a file intended for a pager
-ok 21 # skip colors are sent to pager for external commands (missing TTY)
-ok 22 - setup: some aliases
-ok 23 # skip git log - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 24 # skip git log - PAGER overrides default pager (missing TTY)
-ok 25 # skip git log - repository-local core.pager setting overrides PAGER (missing TTY)
-ok 26 # skip git log - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 27 # skip git log - GIT_PAGER overrides core.pager (missing TTY)
-ok 28 # skip git -p log - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 29 # skip git -p log - PAGER overrides default pager (missing TTY)
-ok 30 # skip git -p log - repository-local core.pager setting overrides PAGER (missing TTY)
-ok 31 # skip git -p log - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 32 # skip git -p log - GIT_PAGER overrides core.pager (missing TTY)
-ok 33 # skip git aliasedlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 34 # skip git aliasedlog - PAGER overrides default pager (missing TTY)
-ok 35 # skip git aliasedlog - repository-local core.pager setting overrides PAGER (missing TTY)
-ok 36 # skip git aliasedlog - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 37 # skip git aliasedlog - GIT_PAGER overrides core.pager (missing TTY)
-ok 38 # skip git -p aliasedlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 39 # skip git -p aliasedlog - PAGER overrides default pager (missing TTY)
-ok 40 # skip git -p aliasedlog - repository-local core.pager setting overrides PAGER (missing TTY)
-ok 41 # skip git -p aliasedlog - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 42 # skip git -p aliasedlog - GIT_PAGER overrides core.pager (missing TTY)
-ok 43 # skip git -p true - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 44 # skip git -p true - PAGER overrides default pager (missing TTY)
-ok 45 # skip git -p true - repository-local core.pager setting overrides PAGER (missing TTY)
-ok 46 # skip git -p true - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 47 # skip git -p true - GIT_PAGER overrides core.pager (missing TTY)
-ok 48 # skip git -p request-pull - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 49 # skip git -p request-pull - PAGER overrides default pager (missing TTY)
-ok 50 # skip git -p request-pull - repository-local core.pager setting overrides PAGER (missing TTY)
-ok 51 # skip git -p request-pull - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 52 # skip git -p request-pull - GIT_PAGER overrides core.pager (missing TTY)
-ok 53 # skip git -p - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 54 # skip git -p - PAGER overrides default pager (missing TTY)
-ok 55 # skip git -p - repository-local core.pager setting is not used (missing TTY)
-ok 56 # skip git -p - GIT_PAGER overrides core.pager (missing TTY)
-ok 57 # skip core.pager in repo config works and retains cwd (missing TTY)
-ok 58 # skip core.pager is found via alias in subdirectory (missing TTY)
-ok 59 # skip no pager for 'git -p nonsense' (missing TTY)
-ok 60 # skip git shortlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 61 # skip git shortlog - PAGER overrides default pager (missing TTY)
-ok 62 # skip git shortlog - repository-local core.pager setting overrides PAGER (missing TTY)
-ok 63 # skip git shortlog - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 64 # skip git shortlog - GIT_PAGER overrides core.pager (missing TTY)
-ok 65 - setup: configure shortlog not to paginate
-ok 66 # skip no pager for 'git shortlog' (missing TTY)
-ok 67 # skip git shortlog - core.pager is not used from subdirectory (missing TTY)
-ok 68 # skip git -p shortlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
-ok 69 # skip git -p shortlog - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 70 # skip git -p apply </dev/null - core.pager overrides PAGER from subdirectory (missing TTY)
-ok 71 # skip command-specific pager (missing TTY)
-ok 72 # skip command-specific pager overrides core.pager (missing TTY)
-ok 73 # skip command-specific pager overridden by environment (missing TTY)
-ok 74 - setup external command
-ok 75 # skip command-specific pager works for external commands (missing TTY)
-ok 76 # skip sub-commands of externals use their own pager (missing TTY)
-ok 77 # skip external command pagers override sub-commands (missing TTY)
-ok 78 - command with underscores does not complain
-# passed all 78 test(s)
-1..78
+ok 16 # skip git tag -l defaults to paging (missing TTY)
+ok 17 # skip git tag -l respects pager.tag (missing TTY)
+ok 18 # skip git tag -l respects --no-pager (missing TTY)
+ok 19 # skip git tag with no args defaults to paging (missing TTY)
+ok 20 # skip git tag with no args respects pager.tag (missing TTY)
+ok 21 # skip git tag --contains defaults to paging (missing TTY)
+ok 22 # skip git tag --contains respects pager.tag (missing TTY)
+ok 23 # skip git tag -a defaults to not paging (missing TTY)
+ok 24 # skip git tag -a ignores pager.tag (missing TTY)
+ok 25 # skip git tag -a respects --paginate (missing TTY)
+ok 26 # skip git tag as alias ignores pager.tag with -a (missing TTY)
+ok 27 # skip git tag as alias respects pager.tag with -l (missing TTY)
+ok 28 - tests can detect color
+ok 29 - no color when stdout is a regular file
+ok 30 # skip color when writing to a pager (missing TTY)
+ok 31 # skip colors are suppressed by color.pager (missing TTY)
+ok 32 - color when writing to a file intended for a pager
+ok 33 # skip colors are sent to pager for external commands (missing TTY)
+ok 34 - setup: some aliases
+ok 35 # skip git log - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 36 # skip git log - PAGER overrides default pager (missing TTY)
+ok 37 # skip git log - repository-local core.pager setting overrides PAGER (missing TTY)
+ok 38 # skip git log - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 39 # skip git log - GIT_PAGER overrides core.pager (missing TTY)
+ok 40 # skip git -p log - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 41 # skip git -p log - PAGER overrides default pager (missing TTY)
+ok 42 # skip git -p log - repository-local core.pager setting overrides PAGER (missing TTY)
+ok 43 # skip git -p log - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 44 # skip git -p log - GIT_PAGER overrides core.pager (missing TTY)
+ok 45 # skip git aliasedlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 46 # skip git aliasedlog - PAGER overrides default pager (missing TTY)
+ok 47 # skip git aliasedlog - repository-local core.pager setting overrides PAGER (missing TTY)
+ok 48 # skip git aliasedlog - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 49 # skip git aliasedlog - GIT_PAGER overrides core.pager (missing TTY)
+ok 50 # skip git -p aliasedlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 51 # skip git -p aliasedlog - PAGER overrides default pager (missing TTY)
+ok 52 # skip git -p aliasedlog - repository-local core.pager setting overrides PAGER (missing TTY)
+ok 53 # skip git -p aliasedlog - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 54 # skip git -p aliasedlog - GIT_PAGER overrides core.pager (missing TTY)
+ok 55 # skip git -p true - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 56 # skip git -p true - PAGER overrides default pager (missing TTY)
+ok 57 # skip git -p true - repository-local core.pager setting overrides PAGER (missing TTY)
+ok 58 # skip git -p true - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 59 # skip git -p true - GIT_PAGER overrides core.pager (missing TTY)
+ok 60 # skip git -p request-pull - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 61 # skip git -p request-pull - PAGER overrides default pager (missing TTY)
+ok 62 # skip git -p request-pull - repository-local core.pager setting overrides PAGER (missing TTY)
+ok 63 # skip git -p request-pull - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 64 # skip git -p request-pull - GIT_PAGER overrides core.pager (missing TTY)
+ok 65 # skip git -p - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 66 # skip git -p - PAGER overrides default pager (missing TTY)
+ok 67 # skip git -p - repository-local core.pager setting is not used (missing TTY)
+ok 68 # skip git -p - GIT_PAGER overrides core.pager (missing TTY)
+ok 69 # skip core.pager in repo config works and retains cwd (missing TTY)
+ok 70 # skip core.pager is found via alias in subdirectory (missing TTY)
+ok 71 # skip no pager for 'git -p nonsense' (missing TTY)
+ok 72 # skip git shortlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 73 # skip git shortlog - PAGER overrides default pager (missing TTY)
+ok 74 # skip git shortlog - repository-local core.pager setting overrides PAGER (missing TTY)
+ok 75 # skip git shortlog - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 76 # skip git shortlog - GIT_PAGER overrides core.pager (missing TTY)
+ok 77 - setup: configure shortlog not to paginate
+ok 78 # skip no pager for 'git shortlog' (missing TTY)
+ok 79 # skip git shortlog - core.pager is not used from subdirectory (missing TTY)
+ok 80 # skip git -p shortlog - default pager is used by default (missing TTY of SIMPLEPAGER,TTY)
+ok 81 # skip git -p shortlog - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 82 # skip git -p apply </dev/null - core.pager overrides PAGER from subdirectory (missing TTY)
+ok 83 # skip command-specific pager (missing TTY)
+ok 84 # skip command-specific pager overrides core.pager (missing TTY)
+ok 85 # skip command-specific pager overridden by environment (missing TTY)
+ok 86 - setup external command
+ok 87 # skip command-specific pager works for external commands (missing TTY)
+ok 88 # skip sub-commands of externals use their own pager (missing TTY)
+ok 89 # skip external command pagers override sub-commands (missing TTY)
+ok 90 - command with underscores does not complain
+# passed all 90 test(s)
+1..90
 *** t7007-show.sh ***
 ok 1 - setup
 ok 2 - showing a tag that point at a missing object
@@ -14931,33 +15216,75 @@ ok 9 - git grep -F ile a
 ok 10 - git grep -Fi iLE a
 ok 11 - git grep ile a
 ok 12 - git grep .fi a # TODO known breakage vanished
-ok 13 - git grep -F y<NUL>f a
-ok 14 - git grep -F y<NUL>x a
-ok 15 - git grep -Fi Y<NUL>f a
-ok 16 - git grep -Fi Y<NUL>x a
-ok 17 - git grep y<NUL>f a
-ok 18 - git grep y<NUL>x a
-ok 19 - grep respects binary diff attribute
-ok 20 - grep --cached respects binary diff attribute
-ok 21 - grep --cached respects binary diff attribute (2)
-ok 22 - grep revision respects binary diff attribute
-ok 23 - grep respects not-binary diff attribute
-ok 24 - setup textconv filters
-ok 25 - grep does not honor textconv
-ok 26 - grep --textconv honors textconv
-ok 27 - grep --no-textconv does not honor textconv
-ok 28 - grep --textconv blob honors textconv
+ok 13 - git grep -f f -F 'y<NUL>f' a
+ok 14 - git grep -f f -F 'y<NUL>x' a
+ok 15 - git grep -f f -Fi 'Y<NUL>f' a
+ok 16 - git grep -f f -Fi 'Y<NUL>x' a
+ok 17 - git grep -f f  'y<NUL>f' a
+ok 18 - git grep -f f  'y<NUL>x' a
+ok 19 - git grep -f f  'æ<NUL>ð' a
+ok 20 - git grep -f f -F 'e<NUL>m[*]c' a
+ok 21 - git grep -f f -Fi 'E<NUL>M[*]C' a
+ok 22 - git grep -f f -F 'y<NUL>[f]' a
+ok 23 - git grep -f f -F '[y]<NUL>f' a
+ok 24 - git grep -f f -Fi 'Y<NUL>[F]' a
+ok 25 - git grep -f f -Fi '[Y]<NUL>F' a
+ok 26 - git grep -f f -F 'æ<NUL>[ð]' a
+ok 27 - git grep -f f -F '[æ]<NUL>ð' a
+ok 28 - git grep -f f -Fi 'Æ<NUL>[Ð]' a
+ok 29 - git grep -f f -Fi '[Æ]<NUL>Ð' a
+not ok 30 - git grep -f f -i 'Æ<NUL>Ð' a # TODO known breakage
+not ok 31 - git grep -f f  'y<NUL>[f]' a # TODO known breakage
+not ok 32 - git grep -f f  '[y]<NUL>f' a # TODO known breakage
+not ok 33 - git grep -f f -i 'Y<NUL>[F]' a # TODO known breakage
+not ok 34 - git grep -f f -i '[Y]<NUL>f' a # TODO known breakage
+not ok 35 - git grep -f f  'æ<NUL>[ð]' a # TODO known breakage
+not ok 36 - git grep -f f  '[æ]<NUL>ð' a # TODO known breakage
+not ok 37 - git grep -f f -i 'Æ<NUL>[Ð]' a # TODO known breakage
+not ok 38 - git grep -f f  'e<NUL>m.*c<NUL>' a # TODO known breakage
+not ok 39 - git grep -f f -i 'E<NUL>M.*c<NUL>' a # TODO known breakage
+not ok 40 - git grep -f f  'e<NUL>m[*]c' a # TODO known breakage
+not ok 41 - git grep -f f -i 'E<NUL>M[*]C' a # TODO known breakage
+ok 42 - git grep -f f -i 'NOMATCH<NUL>ð' a
+not ok 43 - git grep -f f -i '[Æ]<NUL>NOMATCH' a # TODO known breakage
+not ok 44 - git grep -f f -i '[æ]<NUL>NOMATCH' a # TODO known breakage
+ok 45 - git grep -f f -i '[Æ]<NUL>ð' a
+ok 46 - git grep -f f -i '[æ]<NUL>ð' a
+ok 47 - git grep -f f -F 'y<NUL>[f]' a
+ok 48 - git grep -f f -Fi 'Y<NUL>[F]' a
+ok 49 - git grep -f f  'y<NUL>NOMATCH' a
+ok 50 - git grep -f f  '<NUL>NOMATCH' a
+ok 51 - git grep -f f -i 'Y<NUL>NOMATCH' a
+ok 52 - git grep -f f -i '<NUL>NOMATCH' a
+ok 53 - git grep -f f -F 'æ<NUL>[ð]' a
+ok 54 - git grep -f f -Fi 'Æ<NUL>[Ð]' a
+ok 55 - git grep -f f  'y<NUL>NÓMATCH' a
+ok 56 - git grep -f f  '<NUL>NÓMATCH' a
+ok 57 - git grep -f f -i 'Y<NUL>NÓMATCH' a
+ok 58 - git grep -f f -i '<NUL>NÓMATCH' a
+ok 59 - grep respects binary diff attribute
+ok 60 - grep --cached respects binary diff attribute
+ok 61 - grep --cached respects binary diff attribute (2)
+ok 62 - grep revision respects binary diff attribute
+ok 63 - grep respects not-binary diff attribute
+ok 64 - setup textconv filters
+ok 65 - grep does not honor textconv
+ok 66 - grep --textconv honors textconv
+ok 67 - grep --no-textconv does not honor textconv
+ok 68 - grep --textconv blob honors textconv
 # 1 known breakage(s) vanished; please update test(s)
-# passed all remaining 27 test(s)
-1..28
+# still have 14 known breakage(s)
+# passed all remaining 53 test(s)
+1..68
 *** t7009-filter-branch-null-sha1.sh ***
 ok 1 - setup: base commits
 ok 2 - setup: a commit with a bogus null sha1 in the tree
 ok 3 - setup: bring HEAD and index in sync
-ok 4 - filter commands are still checked
-ok 5 - removing the broken entry works
-# passed all 5 test(s)
-1..5
+ok 4 - noop filter-branch complains
+ok 5 - filter commands are still checked
+ok 6 - removing the broken entry works
+# passed all 6 test(s)
+1..6
 *** t7010-setup.sh ***
 ok 1 - setup
 ok 2 - git add (absolute)
@@ -15111,8 +15438,10 @@ ok 38 - setting core.untrackedCache to false and using git status removes the ca
 ok 39 - using --untracked-cache does not fail when core.untrackedCache is false
 ok 40 - setting core.untrackedCache to keep
 ok 41 - test ident field is working
-# passed all 41 test(s)
-1..41
+ok 42 - untracked cache survives a checkout
+ok 43 - untracked cache survives a commit
+# passed all 43 test(s)
+1..43
 *** t7064-wtstatus-pv2.sh ***
 ok 1 - setup
 ok 2 - before initial commit, nothing added, only untracked
@@ -15301,51 +15630,84 @@ ok 42 - check: X U B B --keep XXXXX
 # passed all 42 test(s)
 1..42
 *** t7112-reset-submodule.sh ***
-ok 1 - git reset --keep: added submodule creates empty directory
-ok 2 - git reset --keep: added submodule leaves existing empty directory alone
-ok 3 - git reset --keep: added submodule doesn't remove untracked unignored file with same name
-ok 4 - git reset --keep: replace tracked file with submodule creates empty directory
-ok 5 - git reset --keep: replace directory with submodule
-ok 6 - git reset --keep: removed submodule leaves submodule directory and its contents in place
-ok 7 - git reset --keep: removed submodule leaves submodule containing a .git directory alone
-ok 8 - git reset --keep: replace submodule with a directory must fail
-ok 9 - git reset --keep: replace submodule containing a .git directory with a directory must fail
-not ok 10 - git reset --keep: replace submodule with a file must fail # TODO known breakage
-not ok 11 - git reset --keep: replace submodule containing a .git directory with a file must fail # TODO known breakage
-ok 12 - git reset --keep: modified submodule does not update submodule work tree
-ok 13 - git reset --keep: modified submodule does not update submodule work tree to invalid commit
-ok 14 - git reset --keep: modified submodule does not update submodule work tree from invalid commit
-ok 15 - git reset --merge: added submodule creates empty directory
-ok 16 - git reset --merge: added submodule leaves existing empty directory alone
-ok 17 - git reset --merge: added submodule doesn't remove untracked unignored file with same name
-ok 18 - git reset --merge: replace tracked file with submodule creates empty directory
-ok 19 - git reset --merge: replace directory with submodule
-ok 20 - git reset --merge: removed submodule leaves submodule directory and its contents in place
-ok 21 - git reset --merge: removed submodule leaves submodule containing a .git directory alone
-ok 22 - git reset --merge: replace submodule with a directory must fail
-ok 23 - git reset --merge: replace submodule containing a .git directory with a directory must fail
-not ok 24 - git reset --merge: replace submodule with a file must fail # TODO known breakage
-not ok 25 - git reset --merge: replace submodule containing a .git directory with a file must fail # TODO known breakage
-ok 26 - git reset --merge: modified submodule does not update submodule work tree
-ok 27 - git reset --merge: modified submodule does not update submodule work tree to invalid commit
-ok 28 - git reset --merge: modified submodule does not update submodule work tree from invalid commit
-ok 29 - git reset --hard: added submodule creates empty directory
-ok 30 - git reset --hard: added submodule leaves existing empty directory alone
-ok 31 - git reset --hard: added submodule does remove untracked unignored file with same name when forced
-ok 32 - git reset --hard: replace tracked file with submodule creates empty directory
-ok 33 - git reset --hard: replace directory with submodule
-ok 34 - git reset --hard: removed submodule leaves submodule directory and its contents in place
-ok 35 - git reset --hard: removed submodule leaves submodule containing a .git directory alone
-not ok 36 - git reset --hard: replace submodule with a directory must fail # TODO known breakage
-not ok 37 - git reset --hard: replace submodule containing a .git directory with a directory must fail # TODO known breakage
-not ok 38 - git reset --hard: replace submodule with a file must fail # TODO known breakage
-not ok 39 - git reset --hard: replace submodule containing a .git directory with a file must fail # TODO known breakage
-ok 40 - git reset --hard: modified submodule does not update submodule work tree
-ok 41 - git reset --hard: modified submodule does not update submodule work tree to invalid commit
-ok 42 - git reset --hard: modified submodule does not update submodule work tree from invalid commit
-# still have 8 known breakage(s)
-# passed all remaining 34 test(s)
-1..42
+ok 1 - git reset --keep --recurse-submodules: added submodule is checked out
+ok 2 - git reset --keep --recurse-submodules: added submodule is checked out in empty dir
+ok 3 - git reset --keep --recurse-submodules: added submodule doesn't remove untracked file with same name
+not ok 4 - git reset --keep --recurse-submodules: added submodule removes an untracked ignored file # TODO known breakage
+ok 5 - git reset --keep --recurse-submodules: replace tracked file with submodule checks out submodule
+ok 6 - git reset --keep --recurse-submodules: replace directory with submodule
+ok 7 - git reset --keep --recurse-submodules: removed submodule removes submodules working tree
+ok 8 - git reset --keep --recurse-submodules: removed submodule absorbs submodules .git directory
+not ok 9 - git reset --keep --recurse-submodules: replace submodule with a directory # TODO known breakage
+not ok 10 - git reset --keep --recurse-submodules: replace submodule containing a .git directory with a directory must absorb the git dir # TODO known breakage
+ok 11 - git reset --keep --recurse-submodules: replace submodule with a file
+not ok 12 - git reset --keep --recurse-submodules: replace submodule with a file must fail with untracked files # TODO known breakage
+ok 13 - git reset --keep --recurse-submodules: replace submodule with a file works ignores ignored files in submodule
+ok 14 - git reset --keep --recurse-submodules: modified submodule updates submodule work tree
+ok 15 - git -c submodule.recurse=true reset --keep: modified submodule updates submodule work tree
+ok 16 - git reset --keep --recurse-submodules: updating to a missing submodule commit fails
+ok 17 - git reset --keep --recurse-submodules: modified submodule updates submodule recursively
+ok 18 - git reset --hard --recurse-submodules: added submodule is checked out
+ok 19 - git reset --hard --recurse-submodules: added submodule ignores empty directory
+ok 20 - git reset --hard --recurse-submodules: added submodule does remove untracked unignored file with same name when forced
+ok 21 - git reset --hard --recurse-submodules: replace tracked file with submodule populates the submodule
+ok 22 - git reset --hard --recurse-submodules: replace directory with submodule
+ok 23 - git reset --hard --recurse-submodules: removed submodule leaves submodule directory and its contents in place
+ok 24 - git reset --hard --recurse-submodules: removed submodule leaves submodule containing a .git directory alone
+ok 25 - git reset --hard --recurse-submodules: replace submodule with a directory
+ok 26 - git reset --hard --recurse-submodules: replace submodule containing a .git directory with a directory must fail
+ok 27 - git reset --hard --recurse-submodules: replace submodule with a file
+ok 28 - git reset --hard --recurse-submodules: replace submodule with a file ignoring ignored files
+not ok 29 - git reset --hard --recurse-submodules: replace submodule with a file stops for untracked files # TODO known breakage
+ok 30 - git reset --hard --recurse-submodules: modified submodule updates submodule work tree
+ok 31 - git reset --hard --recurse-submodules: modified submodule does not update submodule work tree to invalid commit
+ok 32 - git reset --hard --recurse-submodules: modified submodule does update submodule work tree from invalid commit
+ok 33 - git reset --hard --recurse-submodules: updating submodules fixes .git links
+ok 34 - git reset --keep: added submodule creates empty directory
+ok 35 - git reset --keep: added submodule leaves existing empty directory alone
+ok 36 - git reset --keep: added submodule doesn't remove untracked unignored file with same name
+ok 37 - git reset --keep: replace tracked file with submodule creates empty directory
+ok 38 - git reset --keep: replace directory with submodule
+ok 39 - git reset --keep: removed submodule leaves submodule directory and its contents in place
+ok 40 - git reset --keep: removed submodule leaves submodule containing a .git directory alone
+ok 41 - git reset --keep: replace submodule with a directory must fail
+ok 42 - git reset --keep: replace submodule containing a .git directory with a directory must fail
+not ok 43 - git reset --keep: replace submodule with a file must fail # TODO known breakage
+not ok 44 - git reset --keep: replace submodule containing a .git directory with a file must fail # TODO known breakage
+ok 45 - git reset --keep: modified submodule does not update submodule work tree
+ok 46 - git reset --keep: modified submodule does not update submodule work tree to invalid commit
+ok 47 - git reset --keep: modified submodule does not update submodule work tree from invalid commit
+ok 48 - git reset --merge: added submodule creates empty directory
+ok 49 - git reset --merge: added submodule leaves existing empty directory alone
+ok 50 - git reset --merge: added submodule doesn't remove untracked unignored file with same name
+ok 51 - git reset --merge: replace tracked file with submodule creates empty directory
+ok 52 - git reset --merge: replace directory with submodule
+ok 53 - git reset --merge: removed submodule leaves submodule directory and its contents in place
+ok 54 - git reset --merge: removed submodule leaves submodule containing a .git directory alone
+ok 55 - git reset --merge: replace submodule with a directory must fail
+ok 56 - git reset --merge: replace submodule containing a .git directory with a directory must fail
+not ok 57 - git reset --merge: replace submodule with a file must fail # TODO known breakage
+not ok 58 - git reset --merge: replace submodule containing a .git directory with a file must fail # TODO known breakage
+ok 59 - git reset --merge: modified submodule does not update submodule work tree
+ok 60 - git reset --merge: modified submodule does not update submodule work tree to invalid commit
+ok 61 - git reset --merge: modified submodule does not update submodule work tree from invalid commit
+ok 62 - git reset --hard: added submodule creates empty directory
+ok 63 - git reset --hard: added submodule leaves existing empty directory alone
+ok 64 - git reset --hard: added submodule does remove untracked unignored file with same name when forced
+ok 65 - git reset --hard: replace tracked file with submodule creates empty directory
+ok 66 - git reset --hard: replace directory with submodule
+ok 67 - git reset --hard: removed submodule leaves submodule directory and its contents in place
+ok 68 - git reset --hard: removed submodule leaves submodule containing a .git directory alone
+not ok 69 - git reset --hard: replace submodule with a directory must fail # TODO known breakage
+not ok 70 - git reset --hard: replace submodule containing a .git directory with a directory must fail # TODO known breakage
+not ok 71 - git reset --hard: replace submodule with a file must fail # TODO known breakage
+not ok 72 - git reset --hard: replace submodule containing a .git directory with a file must fail # TODO known breakage
+ok 73 - git reset --hard: modified submodule does not update submodule work tree
+ok 74 - git reset --hard: modified submodule does not update submodule work tree to invalid commit
+ok 75 - git reset --hard: modified submodule does not update submodule work tree from invalid commit
+# still have 13 known breakage(s)
+# passed all remaining 62 test(s)
+1..75
 *** t7201-co.sh ***
 ok 1 - setup
 ok 2 - checkout from non-existing branch
@@ -15560,8 +15922,9 @@ ok 97 - clone --recurse-submodules with a pathspec works
 ok 98 - clone with multiple --recurse-submodules options
 ok 99 - clone and subsequent updates correctly auto-initialize submodules
 ok 100 - init properly sets the config
-# passed all 100 test(s)
-1..100
+ok 101 - recursive clone respects -q
+# passed all 101 test(s)
+1..101
 *** t7401-submodule-summary.sh ***
 ok 1 - added submodule
 ok 2 - added submodule (subdirectory)
@@ -15579,14 +15942,15 @@ ok 13 - typechanged submodule(submodule->blob)
 ok 14 - nonexistent commit
 ok 15 - typechanged submodule(blob->submodule)
 ok 16 - deleted submodule
-ok 17 - multiple submodules
-ok 18 - path filter
-ok 19 - given commit
-ok 20 - --for-status
-ok 21 - fail when using --files together with --cached
-ok 22 - should not fail in an empty repo
-# passed all 22 test(s)
-1..22
+ok 17 - create second submodule
+ok 18 - multiple submodules
+ok 19 - path filter
+ok 20 - given commit
+ok 21 - --for-status
+ok 22 - fail when using --files together with --cached
+ok 23 - should not fail in an empty repo
+# passed all 23 test(s)
+1..23
 *** t7402-submodule-rebase.sh ***
 ok 1 - setup
 ok 2 - rebase with a dirty submodule
@@ -15757,7 +16121,7 @@ ok 10 - error in history in fetchrecursesubmodule lets continue
 *** t7412-submodule-absorbgitdirs.sh ***
 ok 1 - setup a real submodule
 ok 2 - absorb the git dir
-ok 3 - absorbing does not fail for deinitalized submodules
+ok 3 - absorbing does not fail for deinitialized submodules
 ok 4 - setup nested submodule
 ok 5 - absorb the git dir in a nested submodule
 ok 6 - re-setup nested submodule
@@ -15779,6 +16143,14 @@ ok 7 - is-active with submodule.active and submodule.<name>.active
 ok 8 - is-active, submodule.active and submodule add
 # passed all 8 test(s)
 1..8
+*** t7414-submodule-mistakes.sh ***
+ok 1 - create embedded repository
+ok 2 - git-add on embedded repository warns
+ok 3 - --no-warn-embedded-repo suppresses warning
+ok 4 - no warning when updating entry
+ok 5 - submodule add does not warn
+# passed all 5 test(s)
+1..5
 *** t7500-commit.sh ***
 ok 1 - a basic commit in an empty tree should succeed
 ok 2 - nonexistent template file should return error
@@ -15813,8 +16185,9 @@ ok 30 - commit --squash works with -C for same commit
 ok 31 - commit --squash works with -c for same commit
 ok 32 - commit --squash works with editor
 ok 33 - invalid message options when using --fixup
-# passed all 33 test(s)
-1..33
+ok 34 - new line found before status message in commit template
+# passed all 34 test(s)
+1..34
 *** t7501-commit.sh ***
 ok 1 - initial status
 ok 2 - fail initial amend
@@ -16100,107 +16473,117 @@ ok 44 - status ignores commit.verbose=true
 *** t7508-status.sh ***
 ok 1 - status -h in broken repository
 ok 2 - commit -h in broken repository
-ok 3 - setup
-ok 4 - status (1)
-ok 5 - status --column
-ok 6 - status --column status.displayCommentPrefix=false
-ok 7 - status with status.displayCommentPrefix=true
-ok 8 - status with status.displayCommentPrefix=false
-ok 9 - status -v
-ok 10 - status -v -v
-ok 11 - setup fake editor
-ok 12 - commit ignores status.displayCommentPrefix=false in COMMIT_EDITMSG
-ok 13 - status (advice.statusHints false)
-ok 14 - status -s
-ok 15 - status with gitignore
-ok 16 - status with gitignore (nothing untracked)
-ok 17 - status -s -b
-ok 18 - status -s -z -b
-ok 19 - setup dir3
-ok 20 - status -uno
-ok 21 - status (status.showUntrackedFiles no)
-ok 22 - status -uno (advice.statusHints false)
-ok 23 - status -s -uno
-ok 24 - status -s (status.showUntrackedFiles no)
-ok 25 - status -unormal
-ok 26 - status (status.showUntrackedFiles normal)
-ok 27 - status -s -unormal
-ok 28 - status -s (status.showUntrackedFiles normal)
-ok 29 - status -uall
-ok 30 - status (status.showUntrackedFiles all)
-ok 31 - teardown dir3
-ok 32 - status -s -uall
-ok 33 - status -s (status.showUntrackedFiles all)
-ok 34 - status with relative paths
-ok 35 - status -s with relative paths
-ok 36 - status --porcelain ignores relative paths setting
-ok 37 - setup unique colors
-ok 38 - status with color.ui
-ok 39 - status with color.status
-ok 40 - status -s with color.ui
-ok 41 - status -s with color.status
-ok 42 - status -s -b with color.status
-ok 43 - status --porcelain ignores color.ui
-ok 44 - status --porcelain ignores color.status
-ok 45 - status --porcelain respects -b
-ok 46 - status without relative paths
-ok 47 - status -s without relative paths
-ok 48 - dry-run of partial commit excluding new file in index
-ok 49 - status refreshes the index
-ok 50 - setup status submodule summary
-ok 51 - status submodule summary is disabled by default
-ok 52 - status --untracked-files=all does not show submodule
-ok 53 - status -s submodule summary is disabled by default
-ok 54 - status -s --untracked-files=all does not show submodule
-ok 55 - status submodule summary
-ok 56 - status submodule summary with status.displayCommentPrefix=false
-ok 57 - commit with submodule summary ignores status.displayCommentPrefix
-ok 58 - status -s submodule summary
-ok 59 - status submodule summary (clean submodule): commit
-ok 60 - status -s submodule summary (clean submodule)
-ok 61 - status -z implies porcelain
-ok 62 - commit --dry-run submodule summary (--amend)
-ok 63 - status succeeds in a read-only repository
-ok 64 - --ignore-submodules=untracked suppresses submodules with untracked content
-ok 65 - .gitmodules ignore=untracked suppresses submodules with untracked content
-ok 66 - .git/config ignore=untracked suppresses submodules with untracked content
-ok 67 - --ignore-submodules=dirty suppresses submodules with untracked content
-ok 68 - .gitmodules ignore=dirty suppresses submodules with untracked content
-ok 69 - .git/config ignore=dirty suppresses submodules with untracked content
-ok 70 - --ignore-submodules=dirty suppresses submodules with modified content
-ok 71 - .gitmodules ignore=dirty suppresses submodules with modified content
-ok 72 - .git/config ignore=dirty suppresses submodules with modified content
-ok 73 - --ignore-submodules=untracked doesn't suppress submodules with modified content
-ok 74 - .gitmodules ignore=untracked doesn't suppress submodules with modified content
-ok 75 - .git/config ignore=untracked doesn't suppress submodules with modified content
-ok 76 - --ignore-submodules=untracked doesn't suppress submodule summary
-ok 77 - .gitmodules ignore=untracked doesn't suppress submodule summary
-ok 78 - .git/config ignore=untracked doesn't suppress submodule summary
-ok 79 - --ignore-submodules=dirty doesn't suppress submodule summary
-ok 80 - .gitmodules ignore=dirty doesn't suppress submodule summary
-ok 81 - .git/config ignore=dirty doesn't suppress submodule summary
-ok 82 - status (core.commentchar with submodule summary)
-ok 83 - status (core.commentchar with two chars with submodule summary)
-ok 84 - --ignore-submodules=all suppresses submodule summary
-ok 85 - .gitmodules ignore=all suppresses unstaged submodule summary
-ok 86 - .git/config ignore=all suppresses unstaged submodule summary
-ok 87 - setup of test environment
-ok 88 - "status.short=true" same as "-s"
-ok 89 - "status.short=true" weaker than "--no-short"
-ok 90 - "status.short=false" same as "--no-short"
-ok 91 - "status.short=false" weaker than "-s"
-ok 92 - "status.branch=true" same as "-b"
-ok 93 - "status.branch=true" different from "--no-branch"
-ok 94 - "status.branch=true" weaker than "--no-branch"
-ok 95 - "status.branch=true" weaker than "--porcelain"
-ok 96 - "status.branch=false" same as "--no-branch"
-ok 97 - "status.branch=false" weaker than "-b"
-ok 98 - Restore default test environment
-ok 99 - git commit will commit a staged but ignored submodule
-ok 100 - git commit --dry-run will show a staged but ignored submodule
-ok 101 - git commit -m will commit a staged but ignored submodule
-# passed all 101 test(s)
-1..101
+ok 3 - create upstream branch
+ok 4 - setup
+ok 5 - status (1)
+ok 6 - status --column
+ok 7 - status --column status.displayCommentPrefix=false
+ok 8 - status with status.displayCommentPrefix=true
+ok 9 - status with status.displayCommentPrefix=false
+ok 10 - status -v
+ok 11 - status -v -v
+ok 12 - setup fake editor
+ok 13 - commit ignores status.displayCommentPrefix=false in COMMIT_EDITMSG
+ok 14 - status (advice.statusHints false)
+ok 15 - status -s
+ok 16 - status with gitignore
+ok 17 - status with gitignore (nothing untracked)
+ok 18 - status -s -b
+ok 19 - status -s -z -b
+ok 20 - setup dir3
+ok 21 - status -uno
+ok 22 - status (status.showUntrackedFiles no)
+ok 23 - status -uno (advice.statusHints false)
+ok 24 - status -s -uno
+ok 25 - status -s (status.showUntrackedFiles no)
+ok 26 - status -unormal
+ok 27 - status (status.showUntrackedFiles normal)
+ok 28 - status -s -unormal
+ok 29 - status -s (status.showUntrackedFiles normal)
+ok 30 - status -uall
+ok 31 - status (status.showUntrackedFiles all)
+ok 32 - teardown dir3
+ok 33 - status -s -uall
+ok 34 - status -s (status.showUntrackedFiles all)
+ok 35 - status with relative paths
+ok 36 - status -s with relative paths
+ok 37 - status --porcelain ignores relative paths setting
+ok 38 - setup unique colors
+ok 39 - status with color.ui
+ok 40 - status with color.status
+ok 41 - status -s with color.ui
+ok 42 - status -s with color.status
+ok 43 - status -s -b with color.status
+ok 44 - status --porcelain ignores color.ui
+ok 45 - status --porcelain ignores color.status
+ok 46 - status --porcelain respects -b
+ok 47 - status without relative paths
+ok 48 - status -s without relative paths
+ok 49 - dry-run of partial commit excluding new file in index
+ok 50 - status refreshes the index
+ok 51 - setup status submodule summary
+ok 52 - status submodule summary is disabled by default
+ok 53 - status --untracked-files=all does not show submodule
+ok 54 - status -s submodule summary is disabled by default
+ok 55 - status -s --untracked-files=all does not show submodule
+ok 56 - status submodule summary
+ok 57 - status submodule summary with status.displayCommentPrefix=false
+ok 58 - commit with submodule summary ignores status.displayCommentPrefix
+ok 59 - status -s submodule summary
+ok 60 - status submodule summary (clean submodule): commit
+ok 61 - status -s submodule summary (clean submodule)
+ok 62 - status -z implies porcelain
+ok 63 - commit --dry-run submodule summary (--amend)
+ok 64 - status succeeds in a read-only repository
+ok 65 - --ignore-submodules=untracked suppresses submodules with untracked content
+ok 66 - .gitmodules ignore=untracked suppresses submodules with untracked content
+ok 67 - .git/config ignore=untracked suppresses submodules with untracked content
+ok 68 - --ignore-submodules=dirty suppresses submodules with untracked content
+ok 69 - .gitmodules ignore=dirty suppresses submodules with untracked content
+ok 70 - .git/config ignore=dirty suppresses submodules with untracked content
+ok 71 - --ignore-submodules=dirty suppresses submodules with modified content
+ok 72 - .gitmodules ignore=dirty suppresses submodules with modified content
+ok 73 - .git/config ignore=dirty suppresses submodules with modified content
+ok 74 - --ignore-submodules=untracked doesn't suppress submodules with modified content
+ok 75 - .gitmodules ignore=untracked doesn't suppress submodules with modified content
+ok 76 - .git/config ignore=untracked doesn't suppress submodules with modified content
+ok 77 - --ignore-submodules=untracked doesn't suppress submodule summary
+ok 78 - .gitmodules ignore=untracked doesn't suppress submodule summary
+ok 79 - .git/config ignore=untracked doesn't suppress submodule summary
+ok 80 - --ignore-submodules=dirty doesn't suppress submodule summary
+ok 81 - .gitmodules ignore=dirty doesn't suppress submodule summary
+ok 82 - .git/config ignore=dirty doesn't suppress submodule summary
+ok 83 - status (core.commentchar with submodule summary)
+ok 84 - status (core.commentchar with two chars with submodule summary)
+ok 85 - --ignore-submodules=all suppresses submodule summary
+ok 86 - .gitmodules ignore=all suppresses unstaged submodule summary
+ok 87 - .git/config ignore=all suppresses unstaged submodule summary
+ok 88 - setup of test environment
+ok 89 - "status.short=true" same as "-s"
+ok 90 - "status.short=true" weaker than "--no-short"
+ok 91 - "status.short=false" same as "--no-short"
+ok 92 - "status.short=false" weaker than "-s"
+ok 93 - "status.branch=true" same as "-b"
+ok 94 - "status.branch=true" different from "--no-branch"
+ok 95 - "status.branch=true" weaker than "--no-branch"
+ok 96 - "status.branch=true" weaker than "--porcelain"
+ok 97 - "status.branch=false" same as "--no-branch"
+ok 98 - "status.branch=false" weaker than "-b"
+ok 99 - Restore default test environment
+ok 100 - git commit will commit a staged but ignored submodule
+ok 101 - git commit --dry-run will show a staged but ignored submodule
+ok 102 - git commit -m will commit a staged but ignored submodule
+ok 103 - show stash info with "--show-stash"
+ok 104 - no stash info with "--show-stash --no-show-stash"
+ok 105 - "status.showStash=false" weaker than "--show-stash"
+ok 106 - "status.showStash=true" weaker than "--no-show-stash"
+ok 107 - no additionnal info if no stash entries
+ok 108 - "No commits yet" should be noted in status output
+ok 109 - "No commits yet" should not be noted in status output
+ok 110 - "Initial commit" should be noted in commit template
+ok 111 - "Initial commit" should not be noted in commit template
+# passed all 111 test(s)
+1..111
 *** t7509-commit.sh ***
 ok 1 - -C option copies authorship and message
 ok 2 - -C option copies only the message with --reset-author
@@ -16472,8 +16855,9 @@ ok 52 - merge detects mod-256 conflicts (recursive)
 ok 53 - merge detects mod-256 conflicts (resolve)
 ok 54 - merge nothing into void
 ok 55 - merge can be completed with --continue
-# passed all 55 test(s)
-1..55
+ok 56 - killed merge can be completed with --continue
+# passed all 56 test(s)
+1..56
 *** t7601-merge-pull-config.sh ***
 ok 1 - setup
 ok 2 - merge c1 with c2
@@ -16830,159 +17214,177 @@ ok 24 - grep HEAD with grep.patterntype=basic
 ok 25 - grep HEAD with grep.patterntype=extended
 ok 26 - grep HEAD with grep.patterntype=fixed
 ok 27 - grep HEAD with grep.patterntype=perl
-ok 28 - grep HEAD with grep.patternType=default and grep.extendedRegexp=true
-ok 29 - grep HEAD with grep.extendedRegexp=true and grep.patternType=default
-ok 30 - grep HEAD with grep.patternType=extended and grep.extendedRegexp=false
-ok 31 - grep HEAD with grep.patternType=basic and grep.extendedRegexp=true
-ok 32 - grep HEAD with grep.extendedRegexp=false and grep.patternType=extended
-ok 33 - grep HEAD with grep.extendedRegexp=true and grep.patternType=basic
-ok 34 - grep --count HEAD
-ok 35 - grep --count -h HEAD
-ok 36 - grep -w in working tree
+ok 28 # skip grep HEAD with grep.patterntype=perl errors without PCRE (missing !PCRE)
+ok 29 - grep HEAD with grep.patternType=default and grep.extendedRegexp=true
+ok 30 - grep HEAD with grep.extendedRegexp=true and grep.patternType=default
+ok 31 - grep HEAD with grep.patternType=extended and grep.extendedRegexp=false
+ok 32 - grep HEAD with grep.patternType=basic and grep.extendedRegexp=true
+ok 33 - grep HEAD with grep.extendedRegexp=false and grep.patternType=extended
+ok 34 - grep HEAD with grep.extendedRegexp=true and grep.patternType=basic
+ok 35 - grep --count HEAD
+ok 36 - grep --count -h HEAD
 ok 37 - grep -w in working tree
 ok 38 - grep -w in working tree
-ok 39 - grep -w in working tree (w)
-ok 40 - grep -w in working tree (x)
-ok 41 - grep -w in working tree (y-1)
-ok 42 - grep -w in working tree (y-2)
-ok 43 - grep -w in working tree (z)
-ok 44 - grep in working tree (t-1)
-ok 45 - grep in working tree (t-2)
-ok 46 - grep in working tree (t-3)
-ok 47 - grep -c in working tree (no /dev/null)
-ok 48 - grep --max-depth -1 in working tree
-ok 49 - grep --max-depth 0 in working tree
-ok 50 - grep --max-depth 0 -- '*' in working tree
-ok 51 - grep --max-depth 1 in working tree
-ok 52 - grep --max-depth 0 -- t in working tree
-ok 53 - grep --max-depth 0 -- . t in working tree
-ok 54 - grep --max-depth 0 -- t . in working tree
-ok 55 - grep in working tree with grep.extendedRegexp=false
-ok 56 - grep in working tree with grep.extendedRegexp=true
-ok 57 - grep in working tree with grep.patterntype=basic
-ok 58 - grep in working tree with grep.patterntype=extended
-ok 59 - grep in working tree with grep.patterntype=fixed
-ok 60 - grep in working tree with grep.patterntype=perl
-ok 61 - grep in working tree with grep.patternType=default and grep.extendedRegexp=true
-ok 62 - grep in working tree with grep.extendedRegexp=true and grep.patternType=default
-ok 63 - grep in working tree with grep.patternType=extended and grep.extendedRegexp=false
-ok 64 - grep in working tree with grep.patternType=basic and grep.extendedRegexp=true
-ok 65 - grep in working tree with grep.extendedRegexp=false and grep.patternType=extended
-ok 66 - grep in working tree with grep.extendedRegexp=true and grep.patternType=basic
-ok 67 - grep --count in working tree
-ok 68 - grep --count -h in working tree
-ok 69 - grep -l -C
-ok 70 - grep -c -C
-ok 71 - grep -L -C
-ok 72 - grep -e A --and -e B
-ok 73 - grep ( -e A --or -e B ) --and -e B
-ok 74 - grep -e A --and --not -e B
-ok 75 - grep should ignore GREP_OPTIONS
-ok 76 - grep -f, non-existent file
-ok 77 - grep -f, one pattern
-ok 78 - grep -f, multiple patterns
-ok 79 - grep, multiple patterns
-ok 80 - grep -f, ignore empty lines
-ok 81 - grep -f, ignore empty lines, read patterns from stdin
-ok 82 - grep -q, silently report matches
-ok 83 - grep -C1 hunk mark between files
-ok 84 - log grep setup
-ok 85 - log grep (1)
-ok 86 - log grep (2)
-ok 87 - log grep (3)
-ok 88 - log grep (4)
-ok 89 - log grep (5)
-ok 90 - log grep (6)
-ok 91 - log grep (7)
-ok 92 - log grep (8)
-ok 93 - log grep (9)
-ok 94 - log grep (9)
-ok 95 - log --grep-reflog can only be used under -g
-ok 96 - log with multiple --grep uses union
-ok 97 - log --all-match with multiple --grep uses intersection
-ok 98 - log with multiple --author uses union
-ok 99 - log --all-match with multiple --author still uses union
-ok 100 - log --grep --author uses intersection
-ok 101 - log --grep --grep --author takes union of greps and intersects with author
-ok 102 - log ---all-match -grep --author --author still takes union of authors and intersects with grep
-ok 103 - log --grep --author --author takes union of authors and intersects with grep
-ok 104 - log --all-match --grep --grep --author takes intersection
-ok 105 - log --author does not search in timestamp
-ok 106 - log --committer does not search in timestamp
-ok 107 - grep with CE_VALID file
-ok 108 - grep -p with userdiff
-ok 109 - grep -p
-ok 110 - grep -p -B5
-ok 111 - grep -W
-ok 112 - grep -W shows no trailing empty lines
-ok 113 - grep -W with userdiff
-ok 114 - grep from a subdirectory to search wider area (1)
-ok 115 - grep from a subdirectory to search wider area (2)
-ok 116 - grep -Fi
-ok 117 - outside of git repository
-ok 118 - outside of git repository with fallbackToNoIndex
-ok 119 - inside git repository but with --no-index
-ok 120 - grep --no-index descends into repos, but not .git
-ok 121 - setup double-dash tests
-ok 122 - grep -- pattern
-ok 123 - grep -- pattern -- pathspec
-ok 124 - grep -e pattern -- path
-ok 125 - grep -e -- -- path
-ok 126 - dashdash disambiguates rev as rev
-ok 127 - dashdash disambiguates pathspec as pathspec
-ok 128 - report bogus arg without dashdash
-ok 129 - report bogus rev with dashdash
-ok 130 - allow non-existent path with dashdash
-ok 131 - grep --no-index pattern -- path
-ok 132 - grep --no-index complains of revs
-ok 133 - grep --no-index prefers paths to revs
-ok 134 - grep --no-index does not "diagnose" revs
-ok 135 - grep --perl-regexp pattern
-ok 136 - grep -P pattern
-ok 137 - grep pattern with grep.extendedRegexp=true
-ok 138 - grep -P pattern with grep.extendedRegexp=true
-ok 139 - grep -P -v pattern
-ok 140 - grep -P -i pattern
-ok 141 - grep -P -w pattern
-ok 142 - grep -G invalidpattern properly dies 
-ok 143 - grep invalidpattern properly dies with grep.patternType=basic
-ok 144 - grep -E invalidpattern properly dies 
-ok 145 - grep invalidpattern properly dies with grep.patternType=extended
-ok 146 - grep -P invalidpattern properly dies 
-ok 147 - grep invalidpattern properly dies with grep.patternType=perl
-ok 148 - grep -G -E -F pattern
-ok 149 - grep pattern with grep.patternType=basic, =extended, =fixed
-ok 150 - grep -E -F -G pattern
-ok 151 - grep pattern with grep.patternType=extended, =fixed, =basic
-ok 152 - grep -F -G -E pattern
-ok 153 - grep pattern with grep.patternType=fixed, =basic, =extended
-ok 154 - grep -G -F -P -E pattern
-ok 155 - grep pattern with grep.patternType=fixed, =basic, =perl, =extended
-ok 156 - grep -G -F -E -P pattern
-ok 157 - grep pattern with grep.patternType=fixed, =basic, =extended, =perl
-ok 158 - grep -P pattern with grep.patternType=fixed
-ok 159 - grep -F pattern with grep.patternType=basic
-ok 160 - grep -G pattern with grep.patternType=fixed
-ok 161 - grep -E pattern with grep.patternType=fixed
-ok 162 - grep --color, separator
-ok 163 - grep --break
-ok 164 - grep --break with context
-ok 165 - grep --heading
-ok 166 - mimic ack-grep --group
-ok 167 - grep -E "^ "
-ok 168 - grep -P "^ "
-ok 169 - grep --color -e A -e B with context
-ok 170 - grep --color -e A --and -e B with context
-ok 171 - grep --color -e A --and --not -e B with context
-ok 172 - grep --color -e A --and -e B -p with context
-ok 173 - grep can find things only in the work tree
-ok 174 - grep can find things only in the work tree (i-t-a)
-ok 175 - grep does not search work tree with assume unchanged
-ok 176 - grep can find things only in the index
-ok 177 - grep does not report i-t-a with -L --cached
-ok 178 - grep does not report i-t-a and assume unchanged with -L
-# passed all 178 test(s)
-1..178
+ok 39 - grep -w in working tree
+ok 40 - grep -w in working tree (w)
+ok 41 - grep -w in working tree (x)
+ok 42 - grep -w in working tree (y-1)
+ok 43 - grep -w in working tree (y-2)
+ok 44 - grep -w in working tree (z)
+ok 45 - grep in working tree (t-1)
+ok 46 - grep in working tree (t-2)
+ok 47 - grep in working tree (t-3)
+ok 48 - grep -c in working tree (no /dev/null)
+ok 49 - grep --max-depth -1 in working tree
+ok 50 - grep --max-depth 0 in working tree
+ok 51 - grep --max-depth 0 -- '*' in working tree
+ok 52 - grep --max-depth 1 in working tree
+ok 53 - grep --max-depth 0 -- t in working tree
+ok 54 - grep --max-depth 0 -- . t in working tree
+ok 55 - grep --max-depth 0 -- t . in working tree
+ok 56 - grep in working tree with grep.extendedRegexp=false
+ok 57 - grep in working tree with grep.extendedRegexp=true
+ok 58 - grep in working tree with grep.patterntype=basic
+ok 59 - grep in working tree with grep.patterntype=extended
+ok 60 - grep in working tree with grep.patterntype=fixed
+ok 61 - grep in working tree with grep.patterntype=perl
+ok 62 # skip grep in working tree with grep.patterntype=perl errors without PCRE (missing !PCRE)
+ok 63 - grep in working tree with grep.patternType=default and grep.extendedRegexp=true
+ok 64 - grep in working tree with grep.extendedRegexp=true and grep.patternType=default
+ok 65 - grep in working tree with grep.patternType=extended and grep.extendedRegexp=false
+ok 66 - grep in working tree with grep.patternType=basic and grep.extendedRegexp=true
+ok 67 - grep in working tree with grep.extendedRegexp=false and grep.patternType=extended
+ok 68 - grep in working tree with grep.extendedRegexp=true and grep.patternType=basic
+ok 69 - grep --count in working tree
+ok 70 - grep --count -h in working tree
+ok 71 - grep -l -C
+ok 72 - grep -c -C
+ok 73 - grep -L -C
+ok 74 - grep --files-without-match --quiet
+ok 75 - grep -e A --and -e B
+ok 76 - grep ( -e A --or -e B ) --and -e B
+ok 77 - grep -e A --and --not -e B
+ok 78 - grep should ignore GREP_OPTIONS
+ok 79 - grep -f, non-existent file
+ok 80 - grep -f, one pattern
+ok 81 - grep -f, multiple patterns
+ok 82 - grep, multiple patterns
+ok 83 - grep -f, ignore empty lines
+ok 84 - grep -f, ignore empty lines, read patterns from stdin
+ok 85 - grep -q, silently report matches
+ok 86 - grep -C1 hunk mark between files
+ok 87 - log grep setup
+ok 88 - log grep (1)
+ok 89 - log grep (2)
+ok 90 - log grep (3)
+ok 91 - log grep (4)
+ok 92 - log grep (5)
+ok 93 - log grep (6)
+ok 94 - log grep (7)
+ok 95 - log grep (8)
+ok 96 - log grep (9)
+ok 97 - log grep (9)
+ok 98 - log --grep-reflog can only be used under -g
+ok 99 - log with multiple --grep uses union
+ok 100 - log --all-match with multiple --grep uses intersection
+ok 101 - log with multiple --author uses union
+ok 102 - log --all-match with multiple --author still uses union
+ok 103 - log --grep --author uses intersection
+ok 104 - log --grep --grep --author takes union of greps and intersects with author
+ok 105 - log ---all-match -grep --author --author still takes union of authors and intersects with grep
+ok 106 - log --grep --author --author takes union of authors and intersects with grep
+ok 107 - log --all-match --grep --grep --author takes intersection
+ok 108 - log --author does not search in timestamp
+ok 109 - log --committer does not search in timestamp
+ok 110 - grep with CE_VALID file
+ok 111 - grep -p with userdiff
+ok 112 - grep -p
+ok 113 - grep -p -B5
+ok 114 - grep -W
+ok 115 - grep -W shows no trailing empty lines
+ok 116 - grep -W with userdiff
+ok 117 - grep --threads=0 & -c grep.threads=0
+ok 118 - grep --threads=1 & -c grep.threads=1
+ok 119 - grep --threads=2 & -c grep.threads=2
+ok 120 - grep --threads=3 & -c grep.threads=3
+ok 121 - grep --threads=4 & -c grep.threads=4
+ok 122 - grep --threads=5 & -c grep.threads=5
+ok 123 - grep --threads=6 & -c grep.threads=6
+ok 124 - grep --threads=7 & -c grep.threads=7
+ok 125 - grep --threads=8 & -c grep.threads=8
+ok 126 - grep --threads=9 & -c grep.threads=9
+ok 127 - grep --threads=10 & -c grep.threads=10
+ok 128 # skip grep --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,C_LOCALE_OUTPUT)
+ok 129 - grep from a subdirectory to search wider area (1)
+ok 130 - grep from a subdirectory to search wider area (2)
+ok 131 - grep -Fi
+ok 132 - outside of git repository
+ok 133 - outside of git repository with fallbackToNoIndex
+ok 134 - inside git repository but with --no-index
+ok 135 - grep --no-index descends into repos, but not .git
+ok 136 - setup double-dash tests
+ok 137 - grep -- pattern
+ok 138 - grep -- pattern -- pathspec
+ok 139 - grep -e pattern -- path
+ok 140 - grep -e -- -- path
+ok 141 - dashdash disambiguates rev as rev
+ok 142 - dashdash disambiguates pathspec as pathspec
+ok 143 - report bogus arg without dashdash
+ok 144 - report bogus rev with dashdash
+ok 145 - allow non-existent path with dashdash
+ok 146 - grep --no-index pattern -- path
+ok 147 - grep --no-index complains of revs
+ok 148 - grep --no-index prefers paths to revs
+ok 149 - grep --no-index does not "diagnose" revs
+ok 150 - grep --perl-regexp pattern
+ok 151 # skip grep --perl-regexp pattern errors without PCRE (missing !PCRE)
+ok 152 - grep -P pattern
+ok 153 # skip grep -P pattern errors without PCRE (missing !PCRE)
+ok 154 - grep pattern with grep.extendedRegexp=true
+ok 155 - grep -P pattern with grep.extendedRegexp=true
+ok 156 - grep -P -v pattern
+ok 157 - grep -P -i pattern
+ok 158 - grep -P -w pattern
+ok 159 - grep -P backreferences work (the PCRE NO_AUTO_CAPTURE flag is not set)
+ok 160 - grep -G invalidpattern properly dies 
+ok 161 - grep invalidpattern properly dies with grep.patternType=basic
+ok 162 - grep -E invalidpattern properly dies 
+ok 163 - grep invalidpattern properly dies with grep.patternType=extended
+ok 164 - grep -P invalidpattern properly dies 
+ok 165 - grep invalidpattern properly dies with grep.patternType=perl
+ok 166 - grep -G -E -F pattern
+ok 167 - grep pattern with grep.patternType=basic, =extended, =fixed
+ok 168 - grep -E -F -G pattern
+ok 169 - grep pattern with grep.patternType=extended, =fixed, =basic
+ok 170 - grep -F -G -E pattern
+ok 171 - grep pattern with grep.patternType=fixed, =basic, =extended
+ok 172 - grep -G -F -P -E pattern
+ok 173 - grep pattern with grep.patternType=fixed, =basic, =perl, =extended
+ok 174 - grep -G -F -E -P pattern
+ok 175 - grep pattern with grep.patternType=fixed, =basic, =extended, =perl
+ok 176 - grep -P pattern with grep.patternType=fixed
+ok 177 - grep -F pattern with grep.patternType=basic
+ok 178 - grep -G pattern with grep.patternType=fixed
+ok 179 - grep -E pattern with grep.patternType=fixed
+ok 180 - grep --color, separator
+ok 181 - grep --break
+ok 182 - grep --break with context
+ok 183 - grep --heading
+ok 184 - mimic ack-grep --group
+ok 185 - grep -E "^ "
+ok 186 - grep -P "^ "
+ok 187 - grep --color -e A -e B with context
+ok 188 - grep --color -e A --and -e B with context
+ok 189 - grep --color -e A --and --not -e B with context
+ok 190 - grep --color -e A --and -e B -p with context
+ok 191 - grep can find things only in the work tree
+ok 192 - grep can find things only in the work tree (i-t-a)
+ok 193 - grep does not search work tree with assume unchanged
+ok 194 - grep can find things only in the index
+ok 195 - grep does not report i-t-a with -L --cached
+ok 196 - grep does not report i-t-a and assume unchanged with -L
+# passed all 196 test(s)
+1..196
 *** t7811-grep-open.sh ***
 ok 1 - determine default pager
 ok 2 - setup
@@ -17018,25 +17420,28 @@ ok 2 - grep pcre string
 *** t7814-grep-recurse-submodules.sh ***
 ok 1 - setup directory structure and submodule
 ok 2 - grep correctly finds patterns in a submodule
-ok 3 - grep and basic pathspecs
-ok 4 - grep and nested submodules
-ok 5 - grep and multiple patterns
-ok 6 - grep and multiple patterns
-ok 7 - basic grep tree
-ok 8 - grep tree HEAD^
-ok 9 - grep tree HEAD^^
-ok 10 - grep tree and pathspecs
-ok 11 - grep tree and pathspecs
-ok 12 - grep tree and more pathspecs
-ok 13 - grep tree and more pathspecs
-ok 14 - grep recurse submodule colon in name
-ok 15 - grep history with moved submoules
-ok 16 - grep using relative path
-ok 17 - grep from a subdir
-ok 18 - --recurse-submodules and --untracked are incompatible
-ok 19 - --recurse-submodules and --no-index are incompatible
-# passed all 19 test(s)
-1..19
+ok 3 - grep finds patterns in a submodule via config
+ok 4 - grep --no-recurse-submodules overrides config
+ok 5 - grep and basic pathspecs
+ok 6 - grep and nested submodules
+ok 7 - grep and multiple patterns
+ok 8 - grep and multiple patterns
+ok 9 - basic grep tree
+ok 10 - grep tree HEAD^
+ok 11 - grep tree HEAD^^
+ok 12 - grep tree and pathspecs
+ok 13 - grep tree and pathspecs
+ok 14 - grep tree and more pathspecs
+ok 15 - grep tree and more pathspecs
+ok 16 - grep recurse submodule colon in name
+ok 17 - grep history with moved submoules
+ok 18 - grep using relative path
+ok 19 - grep from a subdir
+ok 20 - --recurse-submodules and --untracked are incompatible
+ok 21 - --recurse-submodules and --no-index are incompatible
+ok 22 - grep --recurse-submodules should pass the pattern type along
+# passed all 22 test(s)
+1..22
 *** t8001-annotate.sh ***
 ok 1 - setup A lines
 ok 2 - blame 1 author
@@ -17532,8 +17937,10 @@ ok 146 - setup expected-list
 ok 147 - use email list in --cc --to and --bcc
 ok 148 - aliases work with email list
 ok 149 - leading and trailing whitespaces are removed
-# passed all 149 test(s)
-1..149
+ok 150 - invoke hook
+ok 151 - test that send-email works outside a repo
+# passed all 151 test(s)
+1..151
 *** t9002-column.sh ***
 ok 1 - setup
 ok 2 - never
@@ -17852,7 +18259,7 @@ ok 5 - test dcommit to trailing_dotlock branch
 # passed all 5 test(s)
 1..5
 *** t9119-git-svn-info.sh ***
-1..0 # SKIP skipping svn-info test (SVN version: 1.7.20 not supported)
+1..0 # SKIP skipping svn-info test (SVN version: 1.9.7 not supported)
 *** t9120-git-svn-clone-with-percent-escapes.sh ***
 ok 1 - setup svnrepo
 ok 2 - test clone with percent escapes
@@ -18449,7 +18856,7 @@ ok 155 - S: initialize for S tests
 ok 156 - S: filemodify with garbage after mark must fail
 ok 157 - S: filemodify with garbage after inline must fail
 ok 158 - S: filemodify with garbage after sha1 must fail
-ok 159 - S: notemodify with garabge after mark dataref must fail
+ok 159 - S: notemodify with garbage after mark dataref must fail
 ok 160 - S: notemodify with garbage after inline dataref must fail
 ok 161 - S: notemodify with garbage after sha1 dataref must fail
 ok 162 - S: notemodify with garbage after mark commit-ish must fail
@@ -18613,9 +19020,13 @@ ok 38 - cvs status (no subdirs in header)
 ok 39 - cvs co -c (shows module database)
 ok 40 - cvs log
 ok 41 - cvs annotate
+ok 42 - create remote-cvs helper
+ok 43 - cvs server does not run with vanilla git-shell
+ok 44 - configure git shell to run cvs server
+ok 45 - cvs server can run with recommended config
 # still have 1 known breakage(s)
-# passed all remaining 40 test(s)
-1..41
+# passed all remaining 44 test(s)
+1..45
 *** t9401-git-cvsserver-crlf.sh ***
 ok 1 - setup
 ok 2 - cvs co (default crlf)
@@ -18806,6 +19217,8 @@ ok 47 - unquote escape sequences
 *** t9829-git-p4-jobs.sh ***
 1..0 # SKIP skipping git p4 tests; no p4 or p4d
 *** t9830-git-p4-symlink-dir.sh ***
+1..0 # SKIP skipping git p4 tests; no p4 or p4d
+*** t9831-git-p4-triggers.sh ***
 1..0 # SKIP skipping git p4 tests; no p4 or p4d
 *** t9901-git-web--browse.sh ***
 ok 1 - URL with an ampersand in it
@@ -19002,10 +19415,10 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir (stderr)
 # passed all 66 test(s)
 1..66
 
-failed test(s): t0001 t0204 t4062
+failed test(s): t0204
 
 fixed   1
-success 16102
-failed  4
-broken  198
-total   16542
+success 16473
+failed  2
+broken  216
+total   16956

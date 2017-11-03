@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	numpy
-COMPONENT_VERSION= 	1.12.1
+COMPONENT_VERSION= 	1.13.3
 COMPONENT_FMRI= 	library/python/numpy
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d56d7fff81e844a407afa0503080c814e5d87678e338a73b8d8f98137713cfa9
+  sha256:4c6b4eef790528bebb7ec9590d74cc193868940fe68e4109a91c196df72d8094
 COMPONENT_ARCHIVE_URL= \
   https://github.com/numpy/numpy/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://numpy.scipy.org/
@@ -36,6 +36,8 @@ include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 LD_OPTIONS	+= -lm
+
+CFLAGS+= -std=gnu99 -D_XOPEN_SOURCE=600
 
 COMPONENT_PRE_BUILD_ACTION  +=	$(CLONEY) $(SOURCE_DIR) $(@D) ;
 

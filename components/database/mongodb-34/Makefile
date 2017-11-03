@@ -15,7 +15,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mongodb
-COMPONENT_VERSION= 3.4.4
+COMPONENT_VERSION= 3.4.9
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
 COMPONENT_FMRI=	database/mongodb-34
@@ -23,7 +24,7 @@ COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://fastdl.mongodb.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:09e962bf3428474b9790bbd464cb6176817f9da6121c30e096240dbb4d51c9f6
+COMPONENT_ARCHIVE_HASH=	sha256:2fd0f47a5f9175e71d3d381e81a1b6a2500c9c414dd6ae0940ad6194a0e85549
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	APACHE-2.0.txt
 
@@ -53,6 +54,7 @@ COMPONENT_BUILD_ARGS += --prefix=$(PROTO_DIR)/$(MONGO_PREFIX)
 COMPONENT_BUILD_ARGS += --use-system-zlib
 COMPONENT_BUILD_ARGS += --ssl
 COMPONENT_BUILD_ARGS += --release
+COMPONENT_BUILD_ARGS += --disable-ggdb
 # Fixes gcc 7 build
 COMPONENT_BUILD_ARGS += --disable-warnings-as-errors
 
@@ -70,11 +72,40 @@ $(INSTALL_TOOLS): $(BUILD_TOOLS) $(INSTALL_64)
 	$(CP) $(BUILD_DIR)/tools/bin/* $(PROTO_DIR)/$(MONGO_PREFIX)/bin
 	$(TOUCH) $(@)
 
+TEST_SUITES += core
+TEST_SUITES += dbtest
+TEST_SUITES += dur_jscore_passthrough
+TEST_SUITES += jstestfuzz
+TEST_SUITES += jstestfuzz_replication
+TEST_SUITES += jstestfuzz_sharded
+TEST_SUITES += replica_sets_jscore_passthrough
+TEST_SUITES += unittests
+
+# A bit of magic to replace spaces with commas
+comma:= ,
+empty:=
+space:= $(empty) $(empty)
+
+COMPONENT_TEST_CMD = $(PYTHON) buildscripts/resmoke.py \
+			--continueOnFailure \
+			--dbpathPrefix=/tmp/db \
+			--suites=$(subst $(space),$(comma),$(TEST_SUITES))
+
+COMPONENT_TEST_TARGETS =
+
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/\[resmoke\][ -+0-9T:\.\-]*//"' \
+                                '-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* seconds/ SEC seconds/"' \
+                                '-n ' \
+                                '-e "/Summary of all suites/,\\$$p"'
+
+# Not strictly necessary
+$(TEST_64):     $(INSTALL_64) $(INSTALL_TOOLS)
+
 build:		$(BUILD_64) $(BUILD_TOOLS)
 
 install:	$(INSTALL_64) $(INSTALL_TOOLS)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/build/scons

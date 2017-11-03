@@ -1,0 +1,164 @@
+--- ibus-1.5.13/setup/main.py.~1~	2016-02-22 11:46:23.000000000 +0000
++++ ibus-1.5.13/setup/main.py	2017-10-27 08:44:34.828623420 +0000
+@@ -24,7 +24,9 @@
+ from __future__ import print_function
+ 
+ import os
++import shutil
+ import signal
++import subprocess
+ import sys
+ import time
+ 
+@@ -506,35 +508,38 @@
+         model.set(iter, COLUMN_PRELOAD, data[DATA_PRELOAD])
+ 
+     def __is_auto_start(self):
+-        link_file = path.join(GLib.get_user_config_dir(),
+-                              "autostart/ibus.desktop")
+-        ibus_desktop = path.join(os.getenv("IBUS_PREFIX"),
+-                                 "share/applications/ibus.desktop")
+-
+-        if not path.exists(link_file):
+-            return False
+-        if not path.islink(link_file):
+-            return False
+-        if path.realpath(link_file) != ibus_desktop:
+-            return False
+-        return True
+-
+-    def __checkbutton_auto_start_toggled_cb(self, button):
+-        auto_start_dir = path.join(GLib.get_user_config_dir(), "autostart")
+-        if not path.isdir(auto_start_dir):
+-            os.makedirs(auto_start_dir)
+-
+-        link_file = path.join(GLib.get_user_config_dir(),
+-                              "autostart/ibus.desktop")
+-        ibus_desktop = path.join(os.getenv("IBUS_PREFIX"),
+-                                 "share/applications/ibus.desktop")
+-        # unlink file
++        home = os.getenv("HOME")
++        config_file = path.join(home, ".imf")
+         try:
+-            os.unlink(link_file)
++            if os.path.isfile(config_file):
++	        im = subprocess.check_output(["/usr/bin/sh", config_file, "-name"])
++                if im.startswith("IBus "):
++                    return True
+         except:
+             pass
+-        if self.__checkbutton_auto_start.get_active():
+-            os.symlink(ibus_desktop, link_file)
++        return False
++
++    def __checkbutton_auto_start_toggled_cb(self, button):
++        IBUS_SCRIPT="/etc/X11/xinit/imf.d/0010.ibus"
++
++        try:
++            home = os.getenv("HOME")
++            if home:
++                config_file = path.join(home, ".imf")
++                if self.__checkbutton_auto_start.get_active():
++                   shutil.copyfile(IBUS_SCRIPT, config_file)
++                elif os.path.exists(config_file):
++                   os.unlink(config_file)
++        except Exception as e:
++            dlg = Gtk.MessageDialog(message_type = Gtk.MessageType.ERROR,
++                    transient_for = self.__window,
++                    buttons = Gtk.ButtonsType.CLOSE,
++                    text = str(e))
++            dlg.run()
++            dlg.destroy()
++            self.__flush_gtk_events()
++            return
++
+ 
+     def __sigusr1_cb(self, *args):
+         self.__window.present()
+--- ibus-1.5.13/setup/setup.ui	2016-02-22 11:46:23.000000000 +0000
++++ ibus-1.5.13/setup/setup.ui	2017-10-27 13:27:28.737335853 +0000
+@@ -635,6 +635,41 @@
+                     <property name="position">1</property>
+                   </packing>
+                 </child>
++                 <child>
++                  <object class="GtkFrame" id="frame1">
++                    <property name="can_focus">False</property>
++                    <property name="label_xalign">0</property>
++                    <property name="shadow_type">none</property>
++                    <child>
++                      <object class="GtkCheckButton" id="checkbutton_auto_start">
++                        <property name="label" translatable="yes">Start ibus on login</property>
++                        <property name="use_action_appearance">False</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_action_appearance">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="halign">start</property>
++                        <property name="draw_indicator">True</property>
++                        <property name="margin_top">6</property>
++                        <property name="margin_left">12</property>
++                      </object>
++                    </child>
++                    <child type="label">
++                      <object class="GtkLabel" id="label4">
++                        <property name="visible">True</property>
++                        <property name="can_focus">False</property>
++                        <property name="label" translatable="yes">&lt;b&gt;Startup&lt;/b&gt;</property>
++                        <property name="use_markup">True</property>
++                      </object>
++                    </child>
++                  </object>
++                  <packing>
++                    <property name="expand">False</property>
++                    <property name="fill">False</property>
++                    <property name="position">2</property>
++                  </packing>
++                </child>
+               </object>
+             </child>
+             <child type="tab">
+@@ -1057,42 +1092,6 @@
+                     <property name="position">1</property>
+                   </packing>
+                 </child>
+-                <child>
+-                  <object class="GtkFrame" id="frame1">
+-                    <property name="can_focus">False</property>
+-                    <property name="no_show_all">True</property>
+-                    <property name="label_xalign">0</property>
+-                    <property name="shadow_type">none</property>
+-                    <child>
+-                      <object class="GtkCheckButton" id="checkbutton_auto_start">
+-                        <property name="label" translatable="yes">Start ibus on login</property>
+-                        <property name="use_action_appearance">False</property>
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">True</property>
+-                        <property name="receives_default">False</property>
+-                        <property name="use_action_appearance">False</property>
+-                        <property name="use_underline">True</property>
+-                        <property name="halign">start</property>
+-                        <property name="draw_indicator">True</property>
+-                        <property name="margin_top">6</property>
+-                        <property name="margin_left">12</property>
+-                      </object>
+-                    </child>
+-                    <child type="label">
+-                      <object class="GtkLabel" id="label4">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">False</property>
+-                        <property name="label" translatable="yes">&lt;b&gt;Startup&lt;/b&gt;</property>
+-                        <property name="use_markup">True</property>
+-                      </object>
+-                    </child>
+-                  </object>
+-                  <packing>
+-                    <property name="expand">False</property>
+-                    <property name="fill">False</property>
+-                    <property name="position">2</property>
+-                  </packing>
+-                </child>
+               </object>
+               <packing>
+                 <property name="position">3</property>

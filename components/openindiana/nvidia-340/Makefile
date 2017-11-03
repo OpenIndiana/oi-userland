@@ -11,6 +11,8 @@
 
 #
 # Copyright 2012, Andrzej Szeszo
+# Copyright 2017, Andre Lupa
+# Copyright 2017, Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk

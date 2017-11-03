@@ -1,0 +1,41 @@
+diff -ur mongodb-src-r3.4.9-1/src/mongo/util/time_support.cpp mongodb-src-r3.4.9/src/mongo/util/time_support.cpp
+--- mongodb-src-r3.4.9-1/src/mongo/util/time_support.cpp	2017-09-13 21:03:35.070466359 +0000
++++ mongodb-src-r3.4.9/src/mongo/util/time_support.cpp	2017-09-13 21:03:20.111971842 +0000
+@@ -49,12 +49,6 @@
+ #include <boost/date_time/filetime_functions.hpp>
+ #endif
+
+-#ifdef __sun
+-// Some versions of Solaris do not have timegm defined, so fall back to our implementation when
+-// building on Solaris.  See SERVER-13446.
+-extern "C" time_t timegm(struct tm* const tmp);
+-#endif
+-
+ namespace mongo {
+
+ Date_t Date_t::max() {
+@@ -903,6 +897,7 @@
+ }
+
+ #else
++#include <time.h>
+ #include <sys/time.h>
+ unsigned long long curTimeMillis64() {
+     timeval tv;
+diff -ur mongodb-src-r3.4.9-1/src/third_party/SConscript mongodb-src-r3.4.9/src/third_party/SConscript
+--- mongodb-src-r3.4.9-1/src/third_party/SConscript	2017-09-13 21:02:26.695806786 +0000
++++ mongodb-src-r3.4.9/src/third_party/SConscript	2017-09-13 21:02:46.986485303 +0000
+@@ -291,13 +291,6 @@
+
+
+ tzEnv = env.Clone()
+-if env.TargetOSIs('solaris'):
+-    tzEnv.InjectThirdPartyIncludePaths(libraries=['tz'])
+-    tzEnv.SConscript('tz/SConscript', exports={ 'env' : tzEnv })
+-    tzEnv = tzEnv.Clone(
+-        LIBDEPS=[
+-            'tz/tz',
+-        ])
+
+ tzEnv.Library(
+     target='shim_tz',

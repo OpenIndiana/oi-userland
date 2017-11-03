@@ -20,9 +20,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:c464af61240a9b7729fabe0314cdbdd5a000a4f0c9bd201f89f8628732fe4ae4
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PHP_PREFIX		=	/usr/php/5.6
 PHP_SYSCONFDIR		=	/etc/php/5.6
@@ -71,6 +71,6 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/php-56/php-common

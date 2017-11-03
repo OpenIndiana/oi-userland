@@ -16,14 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	10.1.24
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	10.1.28
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:b3df99ae5b1ec8cf6cede4cbc4ae3f54ce66464549cba6d56d9ff4d24e4d551e
-COMPONENT_ARCHIVE_URL=	http://mirrors.coreix.net/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:292dc8fff420c4bdaf3a2c3381ec3c99292965db2b09de0d7fec414c00032bbd
+COMPONENT_ARCHIVE_URL=	 ftp://mirrors.fe.up.pt/pub/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
@@ -77,14 +76,18 @@ CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
 
 CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
+COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+test:	$(TEST_32_and_64)
+
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/mariadb-10.1/client
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/security/cracklib
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522

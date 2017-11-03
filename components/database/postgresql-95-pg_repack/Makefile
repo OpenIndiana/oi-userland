@@ -16,28 +16,37 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pg_repack
-COMPONENT_VERSION= 	1.3.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	1.4.2
 COMPONENT_SUMMARY= 	pg_repack - utility to reorganize PostgreSQL tables on-line
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
+COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
 COMPONENT_COMMIT=       b0be609adf2579f81e86d77802710211e63e72dc
 COMPONENT_ARCHIVE_HASH= \
-  sha256:82edbacf7ace9ebefccecaa04150e763a1f16675fd5a566f97bd7e810a12d41c
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/reorg/pg_repack/archive/$(COMPONENT_COMMIT).zip
+  sha256:55a060a7e682d9ec8ef544507ceb9db9ccb4732163bf2082a6e9ec81796b0f0a
+COMPONENT_ARCHIVE_URL = \
+  http://api.pgxn.org/dist/pg_repack/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://reorg.github.io/pg_repack/
+COMPONENT_FMRI =        database/postgres-95/pg_repack
+COMPONENT_CLASSIFICATION =      System/Databases
+COMPONENT_LICENSE =     BSD
+COMPONENT_LICENSE_FILE =        COPYRIGHT
 
 PG_VERSION=	9.5
 # Don't depend on host default pg_config
 PATH=		$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV	+=	USE_PGXS=0
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += database/postgres-95/developer
+REQUIRED_PACKAGES += database/postgres-95/library
+REQUIRED_PACKAGES += system/library

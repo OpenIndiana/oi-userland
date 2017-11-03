@@ -16,13 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lightdm-gtk-greeter
-COMPONENT_VERSION= 2.0.1
+COMPONENT_VERSION= 2.0.2
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GTK greeter for LDM
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3264008c8f51323413c2a6ac16523930b75f4ecdde6da8b6fe47ec9bffd9310c
+  sha256:8ee6d93d1d6837b3590f64ac4d5bac5db888a8861dff1cb2ef10f7816ad36690
 COMPONENT_ARCHIVE_URL= \
   https://launchpad.net/lightdm-gtk-greeter/2.0/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://launchpad.net/lightdm-gtk-greeter/
@@ -35,13 +35,15 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --disable-indicator-services-command
+CONFIGURE_OPTIONS += --disable-at-spi-command
 
 CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
 

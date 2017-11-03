@@ -1,0 +1,38 @@
+diff -Nura a/pcsd.logrotate b/pcsd.logrotate
+--- a/pcsd/pcsd.logrotate	2016-10-26 16:05:48.216174312 +0200
++++ b/pcsd/pcsd.logrotate	2016-10-26 16:11:26.316978450 +0200
+@@ -1,4 +1,4 @@
+-/var/log/pcsd/pcsd.log {
++/var/log/hacluster/pcsd.log {
+     rotate 5
+     weekly
+     missingok
+diff -Nura a/ssl.rb b/ssl.rb
+--- a/pcsd/ssl.rb	2016-10-26 16:05:27.469339703 +0200
++++ b/pcsd/ssl.rb	2016-10-26 16:10:33.750086914 +0200
+@@ -13,7 +13,7 @@
+ end
+ 
+ server_name = WEBrick::Utils::getservername
+-$logger = configure_logger('/var/log/pcsd/pcsd.log')
++$logger = configure_logger('/var/log/hacluster/pcsd.log')
+ 
+ def generate_cert_key_pair(server_name)
+   name = "/C=US/ST=MN/L=Minneapolis/O=pcsd/OU=pcsd/CN=#{server_name}"
+--- pcs-0.9.159/pcsd/pcsd.rb.orig	2017-09-22 19:01:23.828492882 +0000
++++ pcs-0.9.159/pcsd/pcsd.rb	2017-09-22 19:02:36.254644731 +0000
+@@ -108,12 +108,12 @@
+     ENV['PCSD_DISABLE_GUI'] and ENV['PCSD_DISABLE_GUI'].downcase == 'true'
+   )
+   PCS = get_pcs_path()
+-  logger = File.open("/var/log/pcsd/pcsd.log", "a+", 0600)
++  logger = File.open("/var/log/hacluster/pcsd.log", "a+", 0600)
+   STDOUT.reopen(logger)
+   STDERR.reopen(logger)
+   STDOUT.sync = true
+   STDERR.sync = true
+-  $logger = configure_logger('/var/log/pcsd/pcsd.log')
++  $logger = configure_logger('/var/log/hacluster/pcsd.log')
+   $semaphore_cfgsync = Mutex.new
+ end
+ 

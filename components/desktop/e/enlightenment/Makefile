@@ -23,17 +23,17 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         enlightenment
-COMPONENT_VERSION=      0.21.8
+COMPONENT_VERSION=      0.21.9
 COMPONENT_FMRI=         desktop/window-manager/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_SUMMARY=      Enlightenment - The Compositing Window Manager and Desktop Shell
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://enlightenment.org
+COMPONENT_PROJECT_URL=  https://www.enlightenment.org
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:44332443b39ac6f0563713c3d85acbbba0011dd7659e6b7d500ec09e05896197
+    sha256:6b328eec14c5b658b8b3f448d9b65dfc189d98db7b92610e56c438f1232f4973
 COMPONENT_ARCHIVE_URL= \
-    http://download.enlightenment.org/rel/apps/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+    https://download.enlightenment.org/rel/apps/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -45,9 +45,10 @@ CONFIGURE_BINDIR.64=$(USRBINDIR)
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS+=	--disable-cpufreq
 CONFIGURE_OPTIONS+=	--disable-temperature
 CONFIGURE_OPTIONS+=	--disable-device-udev
-CONFIGURE_OPTIONS+= --disable-mount-udisks
+CONFIGURE_OPTIONS+=	--disable-mount-udisks
 
 COMPONENT_PREP_ACTION= \
     ( cd $(@D); aclocal -I m4 --install && autoconf && automake -a; )

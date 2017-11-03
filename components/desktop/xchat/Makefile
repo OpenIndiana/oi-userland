@@ -36,7 +36,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
 					aclocal &&\
 					$(TOUCH) NEWS &&\
-					automake -c -f && \
+					automake --add-missing -c -f && \
 					autoconf )
 
 # Missing files in build dir without this.
