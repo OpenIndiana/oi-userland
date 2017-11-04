@@ -1,0 +1,35 @@
+Only in imap-2007f: .patched-z_50ec_missing_headers.patch
+diff -ur imap-2007f-orig/src/dmail/dmail.c imap-2007f/src/dmail/dmail.c
+--- imap-2007f-orig/src/dmail/dmail.c	2017-11-04 06:31:25.313126397 +0000
++++ imap-2007f/src/dmail/dmail.c	2017-11-04 06:42:36.805654585 +0000
+@@ -30,6 +30,7 @@
+ #include <pwd.h>
+ #include <errno.h>
+ extern int errno;		/* just in case */
++#include <ctype.h>
+ #include <sysexits.h>
+ #include <sys/file.h>
+ #include <sys/stat.h>
+diff -ur imap-2007f-orig/src/mlock/mlock.c imap-2007f/src/mlock/mlock.c
+--- imap-2007f-orig/src/mlock/mlock.c	2017-11-04 06:31:25.312386602 +0000
++++ imap-2007f/src/mlock/mlock.c	2017-11-04 06:39:45.466202025 +0000
+@@ -40,6 +40,7 @@
+ #include <netdb.h>
+ #include <ctype.h>
+ #include <string.h>
++#include <unistd.h>
+ 
+ #define LOCKTIMEOUT 5		/* lock timeout in minutes */
+ #define LOCKPROTECTION 0664
+Only in imap-2007f/src/mlock: mlock.c.~1~
+diff -ur imap-2007f-orig/src/tmail/tmail.c imap-2007f/src/tmail/tmail.c
+--- imap-2007f-orig/src/tmail/tmail.c	2017-11-04 06:31:25.313698634 +0000
++++ imap-2007f/src/tmail/tmail.c	2017-11-04 06:42:23.350153840 +0000
+@@ -30,6 +30,7 @@
+ #include <pwd.h>
+ #include <errno.h>
+ extern int errno;		/* just in case */
++#include <ctype.h>
+ #include <sysexits.h>
+ #include <sys/file.h>
+ #include <sys/stat.h>
