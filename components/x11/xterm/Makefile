@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xterm
-COMPONENT_VERSION= 328
+COMPONENT_VERSION= 330
 COMPONENT_SUMMARY= xterm - terminal emulator for X 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b38a7ab2e9f6ab51784ab82a312ca9950e0039da846d37715db4c1ddd47b1d52
+  sha256:7aeef9f29f6b95e09f481173c8c3053357bf5ffe162585647f690fd1707556df
 COMPONENT_ARCHIVE_URL= \
-  ftp://invisible-island.net/xterm/$(COMPONENT_ARCHIVE)
+  http://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://invisible-island.net/xterm/
 COMPONENT_FMRI= terminal/xterm
 COMPONENT_LICENSE= MIT
@@ -54,6 +54,10 @@ install: $(INSTALL_64)
 
 test: $(TEST_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += terminal/luit
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
