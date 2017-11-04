@@ -1,10 +1,14 @@
-Added to support Kolab integration.  Kolab Systems working on getting upstream
-http://kolab.org/cgi-bin/viewcvs-kolab.cgi/server/patches/imap/c-client-2006k/
+Description: Implement support for IMAP extension METADATA (rfc5464)
+ Provides get/set ANNOTATIONS support to the c-client library.
+ .
+ [Version: 2006j2]
+Forwarded: no
+Origin: http://www-old.kolab.org/cgi-bin/viewcvs-kolab.cgi/server/patches/imap/
+Bug-Debian: http://bugs.debian.org/456591
+Last-Update: 2012-04-07
 
-Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
-===================================================================
---- uw-imap-2007e~dfsg.orig/src/c-client/imap4r1.c	2010-08-03 09:23:47.000000000 -0400
-+++ uw-imap-2007e~dfsg/src/c-client/imap4r1.c	2010-08-03 09:24:30.000000000 -0400
+--- a/src/c-client/imap4r1.c
++++ b/src/c-client/imap4r1.c
 @@ -133,7 +133,8 @@
  #define MULTIAPPEND 13
  #define SNLIST 14
@@ -46,18 +50,18 @@ Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
 +{
 +  IMAPARG *args[4],ambx,apth,aval;
 +  long ret;
-+  
++
 +  ambx.type = ASTRING;
 +  ambx.text = (void *) annotation->mbox;
 +  args[0] = &ambx;
-+  
++
 +  apth.type = QSTRING;
 +  apth.text = (void *) annotation->entry;
 +  args[1] = &apth;
 +
 +  STRINGLIST *st,*l;
 +  ANNOTATION_VALUES *v;
-+  
++
 +  l = st = mail_newstringlist();
 +  v = annotation->values;
 +  while(v){
@@ -71,19 +75,19 @@ Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
 +    }
 +    v = v->next;
 +  }
-+  
++
 +  aval.type = QLIST;
 +  aval.text = (void *)st;
 +  args[2] = &aval;
 +  args[3] = NIL;
-+  
++
 +  ret = imap_annotation_work(stream, "SETANNOTATION",args);
 +  mail_free_stringlist(&st);
 +  return ret;
 +}
-+  
-+  
-+  
++
++
++
 +/* IMAP get annotation
 + * Accepts: mail stream
 + *          mailbox name
@@ -98,9 +102,9 @@ Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
 +  long ret;
 +  ambx.type = ASTRING;
 +  ambx.text = (void*) mailbox;
-+  args[0] = &ambx; 
++  args[0] = &ambx;
 +
-+ 
++
 +  apth.type = QLIST;
 +  apth.text = (void*) entries;
 +  args[1] = &apth;
@@ -202,20 +206,20 @@ Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
    }
  
 +  else if (!strcmp (reply->key,"ANNOTATION") && (s = reply->text)){
-+    char * mbox;    
++    char * mbox;
 +    /* response looks like ANNOTATION "mailbox" "entry" ("attr" "value" ["attr" "value"]) ["entry" ("attr "value" ["attr" "value"] )]*/
 +    getannotation_t an = (getannotation_t) mail_parameters (NIL,GET_ANNOTATION,NIL);
-+    
++
 +    mbox = imap_parse_astring (stream, &s, reply,NIL);
-+    
++
 +    while(*s){
-+      ANNOTATION * al = mail_newannotation();    
++      ANNOTATION * al = mail_newannotation();
 +      al->mbox = cpystr(mbox);
 +      t = imap_parse_astring (stream, &s, reply,NIL);
 +      al->entry = t;
 +      STRINGLIST *strlist;
 +      if (s){while (*s == ' ')s++;}
-+      
++
 +      strlist = imap_parse_stringlist(stream, &s,reply);
 +
 +      ANNOTATION_VALUES *vlIter, *vlBegin;
@@ -230,8 +234,8 @@ Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
 +            vlBegin = vlIter;
 +          }
 +          if ( strlist->text.size )
-+            vlIter->attr = cpystr (strlist->text.data);        
-+          strlist = strlist->next;        
++            vlIter->attr = cpystr (strlist->text.data);
++          strlist = strlist->next;
 +          if(!strlist) continue;
 +          if ( strlist->text.size )
 +            vlIter->value = cpystr (strlist->text.data);
@@ -239,7 +243,7 @@ Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
 +        }
 +      }
 +      al->values = vlBegin;
-+      if (an) 
++      if (an)
 +        (*an) (stream,al);
 +      mail_free_annotation(&al);
 +    }
@@ -248,20 +252,16 @@ Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.c
    else if (!strcmp (reply->key,"ACL") && (s = reply->text) &&
  	   (t = imap_parse_astring (stream,&s,reply,NIL))) {
      getacl_t ar = (getacl_t) mail_parameters (NIL,GET_ACL,NIL);
-Index: uw-imap-2007e~dfsg/src/c-client/imap4r1.h
-===================================================================
---- uw-imap-2007e~dfsg.orig/src/c-client/imap4r1.h	2010-08-03 09:23:50.000000000 -0400
-+++ uw-imap-2007e~dfsg/src/c-client/imap4r1.h	2010-08-03 09:24:30.000000000 -0400
+--- a/src/c-client/imap4r1.h
++++ b/src/c-client/imap4r1.h
 @@ -279,3 +279,5 @@
  long imap_setquota (MAILSTREAM *stream,char *qroot,STRINGLIST *limits);
  long imap_getquota (MAILSTREAM *stream,char *qroot);
  long imap_getquotaroot (MAILSTREAM *stream,char *mailbox);
 +long imap_getannotation (MAILSTREAM *stream,char *mailbox,STRINGLIST *entries,STRINGLIST *attributes);
-+long imap_setannotation (MAILSTREAM *stream,ANNOTATION *annotation); 
-Index: uw-imap-2007e~dfsg/src/c-client/mail.c
-===================================================================
---- uw-imap-2007e~dfsg.orig/src/c-client/mail.c	2010-08-03 09:23:56.000000000 -0400
-+++ uw-imap-2007e~dfsg/src/c-client/mail.c	2010-08-03 09:24:30.000000000 -0400
++long imap_setannotation (MAILSTREAM *stream,ANNOTATION *annotation);
+--- a/src/c-client/mail.c
++++ b/src/c-client/mail.c
 @@ -67,6 +67,7 @@
  static newsrcquery_t mailnewsrcquery = NIL;
  				/* ACL results callback */
@@ -282,7 +282,7 @@ Index: uw-imap-2007e~dfsg/src/c-client/mail.c
    case SET_ACL:
      mailaclresults = (getacl_t) value;
    case GET_ACL:
-@@ -5714,7 +5720,15 @@
+@@ -5717,7 +5723,15 @@
    return (ACLLIST *) memset (fs_get (sizeof (ACLLIST)),0,sizeof (ACLLIST));
  }
  
@@ -298,7 +298,7 @@ Index: uw-imap-2007e~dfsg/src/c-client/mail.c
  /* Mail instantiate new quotalist
   * Returns: new quotalist
   */
-@@ -6037,6 +6051,25 @@
+@@ -6040,6 +6054,25 @@
    }
  }
  
@@ -324,10 +324,8 @@ Index: uw-imap-2007e~dfsg/src/c-client/mail.c
  
  /* Mail garbage collect quotalist
   * Accepts: pointer to quotalist pointer
-Index: uw-imap-2007e~dfsg/src/c-client/mail.h
-===================================================================
---- uw-imap-2007e~dfsg.orig/src/c-client/mail.h	2010-08-03 09:23:58.000000000 -0400
-+++ uw-imap-2007e~dfsg/src/c-client/mail.h	2010-08-03 09:24:30.000000000 -0400
+--- a/src/c-client/mail.h
++++ b/src/c-client/mail.h
 @@ -353,6 +353,8 @@
  #define SET_SCANCONTENTS (long) 573
  #define GET_MHALLOWINBOX (long) 574
@@ -381,10 +379,8 @@ Index: uw-imap-2007e~dfsg/src/c-client/mail.h
  void mail_free_body (BODY **body);
  void mail_free_body_data (BODY *body);
  void mail_free_body_parameter (PARAMETER **parameter);
-Index: uw-imap-2007e~dfsg/src/mtest/mtest.c
-===================================================================
---- uw-imap-2007e~dfsg.orig/src/mtest/mtest.c	2010-08-03 09:24:06.000000000 -0400
-+++ uw-imap-2007e~dfsg/src/mtest/mtest.c	2010-08-03 09:24:30.000000000 -0400
+--- a/src/mtest/mtest.c
++++ b/src/mtest/mtest.c
 @@ -145,6 +145,8 @@
  #endif
    return NIL;
@@ -408,18 +404,18 @@ Index: uw-imap-2007e~dfsg/src/mtest/mtest.c
 +          STRINGLIST *cur = entries;
 +          cur->text.size = strlen((char *) (cur->text.data = (unsigned char*)cpystr (parms)));
 +          cur->next = NIL;
-+          
++
 +          STRINGLIST *attributes = mail_newstringlist();
 +          cur = attributes;
 +          cur->text.size = strlen((char *) (cur->text.data = (unsigned char*)cpystr ("*")));
 +          cur->next = NIL;
-+          
++
 +          imap_getannotation(stream,"INBOX",entries,attributes);
 +          mail_free_stringlist(&entries);
 +          mail_free_stringlist(&attributes);
 +        }
 +      }
-+      break;  
++      break;
      case 'E':			/* Expunge command */
        mail_expunge (stream);
        last = 0;
