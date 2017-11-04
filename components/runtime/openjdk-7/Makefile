@@ -19,7 +19,7 @@ COMPONENT_NAME= oppenjdk-7
 
 OPENJDK_BUILD_NUMBER=80
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
-COMPONENT_REVISION=4
+COMPONENT_REVISION=5
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20150609.tar.xz
@@ -109,7 +109,7 @@ cacerts.out: $(BUILD_32)
 $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
 	[ -d $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0 ] || $(MKDIR) $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	chmod -R u+rw $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
-	cp -a $(@D)/build/solaris-*/j2sdk-image/* $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
+	$(CP) -a $(@D)/build/solaris-*/j2sdk-image/* $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	$(TOUCH) $@
 
 build: $(BUILD_32_and_64) cacerts.out
