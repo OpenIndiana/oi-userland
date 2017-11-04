@@ -37,10 +37,7 @@ PATH=$(PATH.gnu)
 CFLAGS += -D_FILE_OFFSET_BITS=64
 
 # Regenerate yelp rules
-COMPONENT_PREP_ACTION = ( cd $(@D) \
-				&& libtoolize --automake --copy --force \
-				&& automake --add-missing --copy \
-				&& autoreconf -f )
+COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -vif ) 
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
