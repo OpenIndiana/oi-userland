@@ -23,36 +23,44 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fastcgi
 COMPONENT_VERSION=	2.4.0
-COMPONENT_PROJECT_URL=	http://www.fastcgi.com/
-COMPONENT_SRC_NAME=	fcgi
+COMPONENT_FMRI=		library/fastcgi
+COMPONENT_SUMMARY=	the FastCGI web server interface
+COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
+COMPONENT_PROJECT_URL=	https://fastcgi-archives.github.io/
+COMPONENT_SRC_NAME=	fcgi2
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:66fc45c6b36a21bf2fbbb68e90f780cc21a9da1fffbae75e76d2b4402d3f05b9
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/fcgi
+  sha256:b152df7f301847b2bcf8b65672bfb212ed0cee640a5917aecaa36baa05f6f283
+COMPONENT_ARCHIVE_URL=	\
+  https://github.com/FastCGI-Archives/fcgi2/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_LICENSE=	FastCGI
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION= ( cd $(@D) && \
+                         touch INSTALL NEWS AUTHORS ChangeLog COPYING && \
+                         autoreconf --force --install )
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
 
 COMPONENT_BUILD_ARGS=
-# common targets
-build:     $(BUILD_32_and_64)
 
-install:        $(INSTALL_32_and_64)
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
