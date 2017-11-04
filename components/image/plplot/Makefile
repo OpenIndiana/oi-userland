@@ -11,6 +11,7 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         plplot
@@ -68,6 +69,8 @@ build:		$(BUILD_64)
 install:	$(INSTALL_64)
 
 test:		$(TEST_64)
+
+REQUIRED_PACKAGES += library/qhull
 
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
