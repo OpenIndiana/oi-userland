@@ -27,40 +27,41 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lftp
-COMPONENT_VERSION=	4.3.8
+COMPONENT_VERSION=	4.8.3
+COMPONENT_FMRI=         network/ftp/lftp
+COMPONENT_SUMMARY=      lftp - Sophisticated file transfer program
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://lftp.yar.ru
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:39643be125a05eb1c316ea4f42ba4d73c331695a2e3654f4d34f85d4d63c37ad
-COMPONENT_ARCHIVE_URL=	http://lftp.yar.ru/ftp/old/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/lftp
+  sha256:de7aee451afaa1aa391f7076b5f602922c2da0e05524a8d8fea413eda83cc78b
+COMPONENT_ARCHIVE_URL=	http://lftp.yar.ru/ftp/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv3
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL =   0
 
-CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
-CONFIGURE_OPTIONS  +=		--with-openssl
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
-CFLAGS += -D_XPG6
+CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
+CONFIGURE_OPTIONS +=	--with-openssl
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
+
+CFLAGS += -std=gnu99 $(CPP_XPG6MODE)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/readline
