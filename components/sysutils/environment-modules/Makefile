@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		environment-modules
 COMPONENT_VERSION=	3.2.10
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=		package/$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	http://modules.sourceforge.net/
 SOURCE_NAME=		modules
