@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	udpxy
 COMPONENT_VERSION= 1.0.23
-COMPONENT_REVISION= 9
+COMPONENT_REVISION= 10
 IPS_COMPONENT_VERSION= $(COMPONENT_VERSION).$(COMPONENT_REVISION) 
 COMPONENT_SUMMARY=udpxy is a UDP-to-HTTP multicast traffic relay daemon: it forwards UDP traffic from a given multicast subscription to the requesting HTTP client.
 COMPONENT_PROJECT_URL=	http://www.udpxy.com/
@@ -24,8 +24,8 @@ COMPONENT_FMRI=	network/udpxy
 COMPONENT_CLASSIFICATION=  Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_REVISION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	http://www.udpxy.com/download/1_23/$(COMPONENT_NAME).$(COMPONENT_VERSION)-$(COMPONENT_REVISION)-prod.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6ce33b1d14a1aeab4bd2566aca112e41943df4d002a7678d9a715108e6b714bd
+COMPONENT_ARCHIVE_URL=	http://www.udpxy.com/download/$(COMPONENT_NAME)/$(COMPONENT_NAME)-src.tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:187d5306136b9ed1bb59a7f2822bbcb1cc0a279090dba88a7a6bd78ab20a95a6
 COMPONENT_LICENSE= GPLv3
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -39,14 +39,19 @@ LDFLAGS+= -lsocket
 LDFLAGS+= -lnsl
 
 COMPONENT_BUILD_ENV+= CC=$(CC)
+COMPONENT_BUILD_ENV+= CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV+= LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV+= CDEFS="$(CDEFS)"
 COMPONENT_INSTALL_ENV+= PREFIX=/usr
 
 COMPONENT_BUILD_TARGETS= release
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
