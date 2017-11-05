@@ -20,21 +20,32 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
-COMPONENT_VERSION=	1.0.19
+COMPONENT_VERSION=	1.0.27
+COMPONENT_FMRI=         image/scanner/xsane/sane-backends
+COMPONENT_SUMMARY=      SANE library and backends
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:13271a7eb4dc4aa6072162abbd78848e4faad32c468b9b44e7f95cde96a4e17e
-COMPONENT_ARCHIVE_URL=	ftp://ftp2.sane-project.org/pub/sane/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libsane
+  sha256:293747bf37275c424ebb2c833f8588601a60b2f9653945d5a3194875355e36c9
+COMPONENT_ARCHIVE_URL=	http://fossies.org/linux/misc/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS += -std=gnu89
+LDFLAGS+=-lnsl -lsocket
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS +=	--disable-locking
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
@@ -46,6 +57,13 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/libgphoto2-2
+REQUIRED_PACKAGES += library/libusb-1
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
