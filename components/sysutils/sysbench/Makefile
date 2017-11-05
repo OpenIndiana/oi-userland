@@ -17,14 +17,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sysbench
 COMPONENT_VERSION= 0.4.12
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Sysbench - sytem performance benchmark
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:83fa7464193e012c91254e595a89894d8e35b4a38324b52a5974777e3823ea9e
 COMPONENT_ARCHIVE_URL=  \
-	http://distfiles.gentoo.org/distfiles/$(COMPONENT_ARCHIVE)
+  ftp://ftp.netbsd.org/pub/pkgsrc/distfiles/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://github.com/akopytov/sysbench
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_FMRI= benchmark/sysbench
@@ -34,6 +34,8 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS+= -std=c89
 
 COMPONENT_PREP_ACTION+=        (cd $(@D) && $(TOUCH) NEWS AUTHORS && autoreconf -fi)
 
