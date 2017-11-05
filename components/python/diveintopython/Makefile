@@ -27,16 +27,18 @@ COMPONENT_ARCHIVE_URL= \
   http://www.diveintopython.net/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.diveintopython.net/
 COMPONENT_LICENSE=	FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_FMRI=	documentation/diveintopython
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/Makefile $(@D))
 
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Build dependencies
+REQUIRED_PACKAGES += gnome/theme/nimbus 
