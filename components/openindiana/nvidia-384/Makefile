@@ -203,6 +203,17 @@ install_headers_32:	install_reloc_32
 $(INSTALL_32):	$(BUILD_32) install_drv_32 install_mv_bigdirs_32 install_mv_desktop_32 install_mv_tools_32 install_mv_X11drv_32 install_headers_32
 	$(TOUCH) $@
 
+$(SAMPLE_MANIFEST_FILE):	sample-manifest
+	[ -s "$@" ] && $(TOUCH) $@
+
+$(SAMPLE_MANIFEST_FILE).nvidia:	$(SAMPLE_MANIFEST_FILE)
+	sed -e 's,-$(NVIDIA_DRIVER_MAJOR_VERSION),-$$\(NVIDIA_DRIVER_MAJOR_VERSION\),g' \
+	    -e 's,^\(link .*[^\\]\)$$,\1 $$\(NVIDIA_MEDIATOR\),g' \
+	    -e 's,^\(    target=.*[^\\]\)$$, \1 $$\(NVIDIA_MEDIATOR\),g' \
+	    < $< > $@
+
+sample-manifest-nvidia: $(SAMPLE_MANIFEST_FILE).nvidia
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
