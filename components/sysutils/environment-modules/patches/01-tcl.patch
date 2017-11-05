@@ -1,0 +1,26 @@
+--- modules-3.2.10/cmdModule.c.orig	Sun Nov  5 15:47:54 2017
++++ modules-3.2.10/cmdModule.c	Sun Nov  5 15:50:04 2017
+@@ -56,7 +56,11 @@
+ /**				      MACROS				     **/
+ /** ************************************************************************ **/
+ 
+-/** not applicable **/
++/** For Tcl < 8.6 compatibility **/
++#if (TCL_MAJOR_VERSION < 8) || (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION < 6)
++#define Tcl_GetErrorLine(interp) (interp->errorLine)
++#define Tcl_SetErrorLine(interp,lineNum) (interp->errorLine = lineNum)
++#endif
+ 
+ /** ************************************************************************ **/
+ /** 				    LOCAL DATA				     **/
+@@ -640,8 +644,8 @@
+             case TCL_OK:	gotPartial = 0;
+ 			        continue;	/** while **/
+ 	    
+-            case TCL_ERROR:	interp->errorLine = ((linenum-1)-gotPartial) +
+-				    interp->errorLine;
++            case TCL_ERROR:	Tcl_SetErrorLine(interp, ((linenum-1)-gotPartial) +
++				    Tcl_GetErrorLine(interp));
+ 	    			/* FALLTHROUGH */
+ 
+             case TCL_LEVEL0_RETURN:
