@@ -26,21 +26,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zope.interface
-COMPONENT_VERSION=	3.3.0
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://zope.org/Wikis/Interfaces/FrontPage
+COMPONENT_VERSION=	4.4.3
+COMPONENT_FMRI=         library/python/python-zope-interface
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_PROJECT_URL=	https://zope.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c049ef6f0748a2db26c7d01de1566e52f048e5fa6fbbb8da90c43e55597a5075
-COMPONENT_ARCHIVE_URL=	http://www.zope.org/Products/ZopeInterface/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/zope
+  sha256:b95df9334460dbd2dee0578a39651343aa99ddf6cde85f0ff5c49060047174de
+COMPONENT_ARCHIVE_URL= \
+  https://github.com/zopefoundation/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_LICENSE=      ZPL
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:          $(BUILD_32_and_64)
