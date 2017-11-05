@@ -47,19 +47,160 @@ $(BUILD_32):	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(TOUCH) $@
 
-$(INSTALL_32): 	$(BUILD_32)
-	[ -d $(PROTO_DIR)/kernel/drv/amd64 ] || mkdir -p $(PROTO_DIR)/kernel/drv/amd64
+check_protodir_32:	$(BUILD_32)
+	[ -n "$(PROTO_DIR)" ] && [ x"$(PROTO_DIR)" != x/ ] || exit
+
+$(BUILD_DIR_32)/.installed_drv:	check_protodir_32
+	$(RM) -r "$(PROTO_DIR)/kernel"
+	[ -d "$(PROTO_DIR)/kernel/drv/$(MACH64)" ] || $(MKDIR) "$(PROTO_DIR)/kernel/drv/$(MACH64)"
 	for i in \
-	    kernel/drv/amd64/nvidia kernel/drv/nvidia kernel/drv/nvidia.conf \
-	    kernel/drv/amd64/nvidia_modeset kernel/drv/nvidia_modeset kernel/drv/nvidia_modeset.conf \
-	 ; do \
-	    cp $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i \
-	 ; done
-	[ -d $(PROTO_DIR)/kernel/misc/amd64 ] || mkdir -p $(PROTO_DIR)/kernel/misc/amd64
-	cp $(SOURCE_DIR)/gfx_private/SunOS-5.11/gfx_private $(PROTO_DIR)/kernel/misc/
-	cp $(SOURCE_DIR)/gfx_private/SunOS-5.11/amd64/gfx_private $(PROTO_DIR)/kernel/misc/amd64/
-	[ -n "$(PROTO_DIR)" ] && rm -fr $(PROTO_DIR)/usr
-	cp -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
+	    kernel/drv/$(MACH64)/nvidia kernel/drv/nvidia \
+	    kernel/drv/$(MACH64)/nvidia_modeset kernel/drv/nvidia_modeset \
+	; do \
+	    cp "$(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i" \
+	        "$(PROTO_DIR)/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	    && ln -s "`basename $$i`-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/$$i" \
+	    || exit ; \
+	done
+	cp "$(SOURCE_DIR)/NVDAgraphicsr/reloc/kernel/drv/nvidia.conf" \
+	    "$(PROTO_DIR)/kernel/drv/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION).conf" \
+	    && ln -s "nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION).conf" \
+	        "$(PROTO_DIR)/kernel/drv/nvidia.conf"
+	cp "$(SOURCE_DIR)/NVDAgraphicsr/reloc/kernel/drv/nvidia_modeset.conf" \
+	    "$(PROTO_DIR)/kernel/drv/nvidia_modeset-$(NVIDIA_DRIVER_MAJOR_VERSION).conf" \
+	    && ln -s "nvidia_modeset-$(NVIDIA_DRIVER_MAJOR_VERSION).conf" \
+	        "$(PROTO_DIR)/kernel/drv/nvidia_modeset.conf"
+	[ -d "$(PROTO_DIR)/kernel/misc/$(MACH64)" ] || mkdir -p "$(PROTO_DIR)/kernel/misc/$(MACH64)"
+	for i in \
+	    gfx_private $(MACH64)/gfx_private \
+	; do \
+	    cp "$(SOURCE_DIR)/gfx_private/SunOS-5.11/$$i" \
+	        "$(PROTO_DIR)/kernel/misc/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	    && ln -s "`basename $$i`-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/kernel/misc/$$i" \
+	    || exit ; \
+	done
+	$(TOUCH) $@
+
+install_drv_32: $(BUILD_DIR_32)/.installed_drv
+
+$(BUILD_DIR_32)/.installed_reloc:	check_protodir_32
+	$(RM) -r "$(PROTO_DIR)/usr"
+	cp -a "$(SOURCE_DIR)/NVDAgraphics/reloc" "$(PROTO_DIR)/usr"
+	$(TOUCH) $@
+
+install_reloc_32: $(BUILD_DIR_32)/.installed_reloc
+
+install_mv_bigdirs_32:	install_reloc_32
+	for i in \
+	    share/doc/NVIDIA \
+	    share/icons/NVIDIA \
+	    X11/lib/NVIDIA \
+	    X11/lib/modules/extensions/NVIDIA \
+	    X11/lib/modules/NVIDIA \
+	; do \
+	    mv -f "$(PROTO_DIR)/usr/$$i" \
+	        "$(PROTO_DIR)/usr/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	    && ln -s "NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/$$i" \
+	    || exit ; \
+	done
+	for i in \
+	    share/nvidia \
+	; do \
+	    mv -f "$(PROTO_DIR)/usr/$$i" \
+	        "$(PROTO_DIR)/usr/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	    && ln -s "nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/$$i" \
+	    || exit ; \
+	done
+
+install_mv_desktop_32:	install_reloc_32
+	mv -f "$(PROTO_DIR)/usr/share/applications/nvidia-settings.desktop" \
+	    "$(PROTO_DIR)/usr/share/applications/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).desktop" \
+	    && ln -s "nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).desktop" \
+	        "$(PROTO_DIR)/usr/share/applications/nvidia-settings.desktop"
+	mv -f "$(PROTO_DIR)/usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop" \
+	    "$(PROTO_DIR)/usr/share/control-center-2.0/capplets/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).s10.desktop" \
+	    && ln -s "nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).s10.desktop" \
+	        "$(PROTO_DIR)/usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop"
+	mv -f "$(PROTO_DIR)/usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings" \
+	    "$(PROTO_DIR)/usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	    && ln -s "nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	        "$(PROTO_DIR)/usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings"
+	mv -f "$(PROTO_DIR)/usr/dt/appconfig/icons/C" \
+	    "$(PROTO_DIR)/usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)"
+	$(MKDIR) "$(PROTO_DIR)/usr/dt/appconfig/icons/C"
+	cd "$(PROTO_DIR)/usr/dt/appconfig/icons/C" \
+	    && ln -s "../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/"* .
+	mv -f "$(PROTO_DIR)/usr/dt/appconfig/types/C/nvidia-settings.dt" \
+	    "$(PROTO_DIR)/usr/dt/appconfig/types/C/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).dt" \
+	    && ln -s "nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).dt" \
+	        "$(PROTO_DIR)/usr/dt/appconfig/types/C/nvidia-settings.dt"
+
+install_mv_tools_32:	install_reloc_32
+	for i in settings xconfig smi ; do \
+	    mv -f "$(PROTO_DIR)/usr/share/man/man1/nvidia-$$i.1" \
+	        "$(PROTO_DIR)/usr/share/man/man1/nvidia-$$i-$(NVIDIA_DRIVER_MAJOR_VERSION).1" \
+	    && ln -s "nvidia-$$i-$(NVIDIA_DRIVER_MAJOR_VERSION).1" "$(PROTO_DIR)/usr/share/man/man1/nvidia-$$i.1" \
+	    || exit ; \
+	done
+	for i in settings xconfig smi debugdump ; do \
+	    mv -f "$(PROTO_DIR)/usr/bin/$(MACH32)/nvidia-$$i" \
+	        "$(PROTO_DIR)/usr/bin/$(MACH32)/nvidia-$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	    && ln -s "nvidia-$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/bin/$(MACH32)/nvidia-$$i" \
+	    || exit ; \
+	    mv -f "$(PROTO_DIR)/usr/bin/$(MACH64)/nvidia-$$i" \
+	        "$(PROTO_DIR)/usr/bin/$(MACH64)/nvidia-$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
+	    && ln -s "nvidia-$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/bin/$(MACH64)/nvidia-$$i" \
+	    || exit ; \
+	done
+	mv -f "$(PROTO_DIR)/usr/bin/nvidia-SunOS-bug-report.sh" \
+	    "$(PROTO_DIR)/usr/bin/nvidia-SunOS-bug-report-$(NVIDIA_DRIVER_MAJOR_VERSION).sh" \
+	    && ln -s "nvidia-SunOS-bug-report-$(NVIDIA_DRIVER_MAJOR_VERSION).sh" "$(PROTO_DIR)/usr/bin/nvidia-SunOS-bug-report.sh"
+	mv -f "$(PROTO_DIR)/usr/lib/libnvidia-cfg.so.1" \
+	    "$(PROTO_DIR)/usr/lib/libnvidia-cfg-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	    && ln -s "libnvidia-cfg-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	        "$(PROTO_DIR)/usr/lib/libnvidia-cfg.so.1"
+	mv -f "$(PROTO_DIR)/usr/lib/libnvidia-gtk2.so.$(COMPONENT_VERSION)" \
+	    "$(PROTO_DIR)/usr/lib/libnvidia-gtk2-$(NVIDIA_DRIVER_MAJOR_VERSION).so.$(COMPONENT_VERSION)" \
+	    && ln -s "libnvidia-gtk2-$(NVIDIA_DRIVER_MAJOR_VERSION).so.$(COMPONENT_VERSION)" \
+	        "$(PROTO_DIR)/usr/lib/libnvidia-gtk2.so.$(COMPONENT_VERSION)"
+	mv -f "$(PROTO_DIR)/usr/lib/libnvidia-ml.so.1" \
+	    "$(PROTO_DIR)/usr/lib/libnvidia-ml-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	    && ln -s "libnvidia-ml-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	        "$(PROTO_DIR)/usr/lib/libnvidia-ml.so.1"
+	mv -f "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-cfg.so.1" \
+	    "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-cfg-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	    && ln -s "libnvidia-cfg-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	        "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-cfg.so.1"
+	mv -f "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-gtk2.so.$(COMPONENT_VERSION)" \
+	    "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-gtk2-$(NVIDIA_DRIVER_MAJOR_VERSION).so.$(COMPONENT_VERSION)" \
+	    && ln -s "libnvidia-gtk2-$(NVIDIA_DRIVER_MAJOR_VERSION).so.$(COMPONENT_VERSION)" \
+	        "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-gtk2.so.$(COMPONENT_VERSION)"
+	mv -f "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-ml.so.1" \
+	    "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-ml-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	    && ln -s "libnvidia-ml-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1" \
+	        "$(PROTO_DIR)/usr/lib/$(MACH64)/libnvidia-ml.so.1"
+	mv -f "$(PROTO_DIR)/usr/X11/lib/X11/getconfig/nvda.cfg" \
+	    "$(PROTO_DIR)/usr/X11/lib/X11/getconfig/nvda-$(NVIDIA_DRIVER_MAJOR_VERSION).cfg" \
+	    && ln -s "nvda-$(NVIDIA_DRIVER_MAJOR_VERSION).cfg" \
+	        "$(PROTO_DIR)/usr/X11/lib/X11/getconfig/nvda.cfg"
+
+install_mv_X11drv_32:	install_reloc_32
+	mv -f "$(PROTO_DIR)/usr/X11/lib/modules/drivers" \
+	    "$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers"
+	$(MKDIR) "$(PROTO_DIR)/usr/X11/lib/modules/drivers/$(MACH64)"
+	cd "$(PROTO_DIR)/usr/X11/lib/modules/drivers" \
+	    && ln -s "../NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers/"*.* .
+	cd "$(PROTO_DIR)/usr/X11/lib/modules/drivers/$(MACH64)" \
+	    && ln -s "../../NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers/$(MACH64)/"*.* .
+
+install_headers_32:	install_reloc_32
+	$(MKDIR) "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL"
+	cp $(COMPONENT_DIR)/Solaris/gl*.h "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL"
+	$(MKDIR) "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau"
+	cp $(COMPONENT_DIR)/Solaris/vdp*.h "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau"
+	ln -s "NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/X11/include/NVIDIA"
+
+$(INSTALL_32):	$(BUILD_32) install_drv_32 install_mv_bigdirs_32 install_mv_desktop_32 install_mv_tools_32 install_mv_X11drv_32 install_headers_32
 	$(TOUCH) $@
 
 build: $(BUILD_32)
