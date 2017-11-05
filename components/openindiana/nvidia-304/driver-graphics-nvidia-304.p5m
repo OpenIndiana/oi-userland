@@ -58,145 +58,240 @@ legacy pkg=NVDAgraphicsr \
     desc="Kernel Drivers for NVIDIA Quadro graphics, driver $(NVIDIA_DRIVER_MAJOR_VERSION) series" \
     name="NVIDIA Graphics System Device Driver" vendor="NVIDIA Corporation"
 
-file Solaris/gl.h path=usr/X11/include/NVIDIA/GL/gl.h
-file Solaris/glext.h path=usr/X11/include/NVIDIA/GL/glext.h
-file Solaris/glx.h path=usr/X11/include/NVIDIA/GL/glx.h
-file Solaris/glxext.h path=usr/X11/include/NVIDIA/GL/glxext.h
-file Solaris/vdpau.h path=usr/X11/include/NVIDIA/vdpau/vdpau.h
-file Solaris/vdpau_x11.h path=usr/X11/include/NVIDIA/vdpau/vdpau_x11.h
-file path=kernel/drv/$(MACH64)/nvidia \
-    reboot-needed=true variant.opensolaris.zone=global group=sys
-file path=kernel/drv/nvidia \
-    reboot-needed=true variant.opensolaris.zone=global group=sys
-file path=kernel/drv/nvidia.conf \
-    preserve=true \
-    reboot-needed=false variant.opensolaris.zone=global group=sys
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
-file path=usr/X11/lib/NVIDIA/libGL.so.1
-file path=usr/X11/lib/NVIDIA/libXvMCNVIDIA.so.1
+##### Files, dirs and mediation symlinks provided by original packaging
+##### and manipulated by our Makefile; mostly matches the generated
+##### sample-manifest.p5m with a few differences: "link" objects made
+##### after the dirs or files they link to; NVIDIA_DRIVER_MAJOR_VERSION
+##### replaced the hardcoded numbers; NVIDIA_MEDIATOR added to symlinks
+##### where mediation was intended; original recipe's IPS modifiers
+##### added back to some actions.
+
+file path=kernel/drv/$(MACH64)/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION) \
+     reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION) \
+     reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION).conf \
+     preserve=true \
+     reboot-needed=false variant.opensolaris.zone=global group=sys
+link path=kernel/drv/$(MACH64)/nvidia target=nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+link path=kernel/drv/nvidia target=nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+link path=kernel/drv/nvidia.conf target=nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION).conf $(NVIDIA_MEDIATOR)
+
+file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/gl.h
+file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/glext.h
+file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/glx.h
+file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/glxext.h
+file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau/vdpau.h
+file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau/vdpau_x11.h
+link path=usr/X11/include/NVIDIA target=NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libGL.so.1
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-glcore.so.1
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-tls.so.1
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libvdpau_nvidia.so.1
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libGL.so.1
 # Note: no 64-bit XvMC in tarball, and it is not served in other branches at all
-file path=usr/X11/lib/NVIDIA/libnvidia-glcore.so.1
-file path=usr/X11/lib/NVIDIA/libnvidia-tls.so.1
-file path=usr/X11/lib/NVIDIA/libvdpau_nvidia.so.1
-file path=usr/X11/lib/X11/getconfig/nvda.cfg
-file path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib/$(MACH64)
-file path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib
-file path=usr/X11/lib/modules/drivers/$(MACH64)/nvidia_drv.so
-file path=usr/X11/lib/modules/drivers/nvidia_drv.so
-file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
-file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
-file path=usr/bin/nvidia-SunOS-bug-report.sh
-file path=usr/bin/nvidia-settings
-file path=usr/bin/nvidia-xconfig
-file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings
-file path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.l_m.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.m.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.m.pm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.m_m.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.t.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm
-file path=usr/dt/appconfig/types/C/nvidia-settings.dt
-file path=usr/lib/libnvidia-cfg.so.1
-file path=usr/share/applications/nvidia-settings.desktop \
-    restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
-file path=usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop
-file path=usr/share/doc/NVIDIA/README.txt
-file path=usr/share/doc/NVIDIA/html/acknowledgements.html
-file path=usr/share/doc/NVIDIA/html/addressingcapabilities.html
-file path=usr/share/doc/NVIDIA/html/addtlresources.html
-file path=usr/share/doc/NVIDIA/html/appendices.html
-file path=usr/share/doc/NVIDIA/html/commonproblems.html
-file path=usr/share/doc/NVIDIA/html/configlaptop.html
-file path=usr/share/doc/NVIDIA/html/configmultxscreens.html
-file path=usr/share/doc/NVIDIA/html/configtvout.html
-file path=usr/share/doc/NVIDIA/html/configtwinview.html
-file path=usr/share/doc/NVIDIA/html/configuringagp.html
-file path=usr/share/doc/NVIDIA/html/depth30.html
-file path=usr/share/doc/NVIDIA/html/displaydevicenames.html
-file path=usr/share/doc/NVIDIA/html/dpi.html
-file path=usr/share/doc/NVIDIA/html/editxconfig.html
-file path=usr/share/doc/NVIDIA/html/faq.html
-file path=usr/share/doc/NVIDIA/html/flippingubb.html
-file path=usr/share/doc/NVIDIA/html/framelock.html
-file path=usr/share/doc/NVIDIA/html/glxsupport.html
-file path=usr/share/doc/NVIDIA/html/index.html
-file path=usr/share/doc/NVIDIA/html/installationandconfiguration.html
-file path=usr/share/doc/NVIDIA/html/installdriver.html
-file path=usr/share/doc/NVIDIA/html/installedcomponents.html
-file path=usr/share/doc/NVIDIA/html/introduction.html
-file path=usr/share/doc/NVIDIA/html/knownissues.html
-file path=usr/share/doc/NVIDIA/html/minimumrequirements.html
-file path=usr/share/doc/NVIDIA/html/newusertips.html
-file path=usr/share/doc/NVIDIA/html/nvidiasettings.html
-file path=usr/share/doc/NVIDIA/html/openglenvvariables.html
-file path=usr/share/doc/NVIDIA/html/programmingmodes.html
-file path=usr/share/doc/NVIDIA/html/sdi.html
-file path=usr/share/doc/NVIDIA/html/sli.html
-file path=usr/share/doc/NVIDIA/html/supportedchips.html
-file path=usr/share/doc/NVIDIA/html/swapcard.html
-file path=usr/share/doc/NVIDIA/html/vdpausupport.html
-file path=usr/share/doc/NVIDIA/html/xcompositeextension.html
-file path=usr/share/doc/NVIDIA/html/xconfigoptions.html
-file path=usr/share/doc/NVIDIA/html/xineramaglx.html
-file path=usr/share/doc/NVIDIA/html/xrandrextension.html
-file path=usr/share/icons/NVIDIA/nvidia-settings.png \
-    restart_fmri=svc:/application/desktop-cache/icon-cache:default
-file path=usr/share/man/man1/nvidia-settings.1
-file path=usr/share/man/man1/nvidia-xconfig.1
-link path=dev/nvidia0 target=fbs/nvidia0 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia1 target=fbs/nvidia1 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia10 target=fbs/nvidia10 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia11 target=fbs/nvidia11 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia12 target=fbs/nvidia12 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia13 target=fbs/nvidia13 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia14 target=fbs/nvidia14 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia15 target=fbs/nvidia15 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia2 target=fbs/nvidia2 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia3 target=fbs/nvidia3 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia4 target=fbs/nvidia4 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia5 target=fbs/nvidia5 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia6 target=fbs/nvidia6 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia7 target=fbs/nvidia7 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia8 target=fbs/nvidia8 variant.opensolaris.zone=global pkg.linted=true
-link path=dev/nvidia9 target=fbs/nvidia9 variant.opensolaris.zone=global pkg.linted=true
+###file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libXvMCNVIDIA.a
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libXvMCNVIDIA.so.1
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-glcore.so.1
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-tls.so.1
+file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libvdpau_nvidia.so.1
+link path=usr/X11/lib/NVIDIA target=NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+
+file path=usr/X11/lib/X11/getconfig/nvda-$(NVIDIA_DRIVER_MAJOR_VERSION).cfg
+link path=usr/X11/lib/X11/getconfig/nvda.cfg target=nvda-$(NVIDIA_DRIVER_MAJOR_VERSION).cfg \
+     $(NVIDIA_MEDIATOR)
+
+file path=usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-wfb.so.1 \
+     pkg.debug.depend.path=usr/lib/$(MACH64)
+file path=usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-wfb.so.1 \
+     pkg.debug.depend.path=usr/lib
+link path=usr/X11/lib/modules/NVIDIA target=NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+
+file path=usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers/$(MACH64)/nvidia_drv.so
+file path=usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers/nvidia_drv.so
+link path=usr/X11/lib/modules/drivers/$(MACH64)/nvidia_drv.so \
+     target=../../NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers/$(MACH64)/nvidia_drv.so \
+     $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/modules/drivers/nvidia_drv.so \
+     target=../NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers/nvidia_drv.so \
+     $(NVIDIA_MEDIATOR)
+
+file path=usr/X11/lib/modules/extensions/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libglx.so.1
+file path=usr/X11/lib/modules/extensions/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libglx.so.1
+link path=usr/X11/lib/modules/extensions/NVIDIA target=NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION) \
+     $(NVIDIA_MEDIATOR)
+
+file path=usr/bin/nvidia-SunOS-bug-report-$(NVIDIA_DRIVER_MAJOR_VERSION).sh
+link path=usr/bin/nvidia-SunOS-bug-report.sh \
+     target=nvidia-SunOS-bug-report-$(NVIDIA_DRIVER_MAJOR_VERSION).sh $(NVIDIA_MEDIATOR)
+
+file path=usr/bin/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION)
+link path=usr/bin/nvidia-settings target=nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+file path=usr/bin/nvidia-xconfig-$(NVIDIA_DRIVER_MAJOR_VERSION)
+link path=usr/bin/nvidia-xconfig target=nvidia-xconfig-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+
+file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION)
+link path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings \
+     target=nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.l.bm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.l.pm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.l_m.bm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.m.bm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.m.pm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.m_m.bm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.t.bm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.t.pm
+file path=usr/dt/appconfig/icons/C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.t_m.bm
+link path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.l.bm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.l.pm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.l_m.bm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.l_m.bm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.m.bm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.m.bm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.m.pm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.m.pm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.m_m.bm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.m_m.bm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.t.bm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.t.bm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.t.pm $(NVIDIA_MEDIATOR)
+link path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm \
+     target=../C-NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.t_m.bm $(NVIDIA_MEDIATOR)
+
+file path=usr/dt/appconfig/types/C/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).dt
+link path=usr/dt/appconfig/types/C/nvidia-settings.dt \
+     target=nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).dt $(NVIDIA_MEDIATOR)
+
+file path=usr/lib/libnvidia-cfg-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1
+link path=usr/lib/libnvidia-cfg.so.1 target=libnvidia-cfg-$(NVIDIA_DRIVER_MAJOR_VERSION).so.1 \
+     $(NVIDIA_MEDIATOR)
+
+file path=usr/share/applications/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).desktop
+link path=usr/share/applications/nvidia-settings.desktop \
+     target=nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).desktop \
+     restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default $(NVIDIA_MEDIATOR)
+file path=usr/share/control-center-2.0/capplets/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).s10.desktop
+link path=usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop \
+     target=nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).s10.desktop $(NVIDIA_MEDIATOR)
+
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/README.txt
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/acknowledgements.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/addressingcapabilities.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/addtlresources.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/appendices.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/commonproblems.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/configlaptop.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/configmultxscreens.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/configtvout.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/configtwinview.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/configuringagp.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/depth30.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/displaydevicenames.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/dpi.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/editxconfig.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/faq.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/flippingubb.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/framelock.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/glxsupport.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/index.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/installationandconfiguration.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/installdriver.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/installedcomponents.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/introduction.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/knownissues.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/minimumrequirements.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/newusertips.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/nvidiasettings.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/openglenvvariables.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/programmingmodes.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/sdi.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/sli.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/supportedchips.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/swapcard.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/vdpausupport.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/xcompositeextension.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/xconfigoptions.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/xineramaglx.html
+file path=usr/share/doc/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/html/xrandrextension.html
+link path=usr/share/doc/NVIDIA target=NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
+
+file path=usr/share/icons/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/nvidia-settings.png
+link path=usr/share/icons/NVIDIA target=NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR) \
+     restart_fmri=svc:/application/desktop-cache/icon-cache:default
+
+file path=usr/share/man/man1/nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).1
+link path=usr/share/man/man1/nvidia-settings.1 \
+     target=nvidia-settings-$(NVIDIA_DRIVER_MAJOR_VERSION).1 $(NVIDIA_MEDIATOR)
+file path=usr/share/man/man1/nvidia-xconfig-$(NVIDIA_DRIVER_MAJOR_VERSION).1
+link path=usr/share/man/man1/nvidia-xconfig.1 \
+     target=nvidia-xconfig-$(NVIDIA_DRIVER_MAJOR_VERSION).1 $(NVIDIA_MEDIATOR)
+
+##### Links to device nodes not provided in originally packaged FS objects
+##### NVIDIA_MEDIATOR added to symlinks just in case to avoid conflicts
+
+link path=dev/nvidia0 target=fbs/nvidia0 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia1 target=fbs/nvidia1 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia10 target=fbs/nvidia10 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia11 target=fbs/nvidia11 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia12 target=fbs/nvidia12 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia13 target=fbs/nvidia13 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia14 target=fbs/nvidia14 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia15 target=fbs/nvidia15 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia2 target=fbs/nvidia2 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia3 target=fbs/nvidia3 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia4 target=fbs/nvidia4 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia5 target=fbs/nvidia5 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia6 target=fbs/nvidia6 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia7 target=fbs/nvidia7 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia8 target=fbs/nvidia8 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+link path=dev/nvidia9 target=fbs/nvidia9 variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
 link path=dev/nvidiactl target=../devices/pseudo/nvidia@255:nvidiactl \
-    variant.opensolaris.zone=global pkg.linted=true
-link path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so target=libGL.so.1
-link path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so \
-    target=libnvidia-tls.so.1
-link path=usr/X11/lib/NVIDIA/libGL.so target=libGL.so.1
-link path=usr/X11/lib/NVIDIA/libnvidia-tls.so target=libnvidia-tls.so.1
-link path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so \
-    target=libnvidia-wfb.so.1
-link path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so \
-    target=libnvidia-wfb.so.1
-link path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so \
-    target=libglx.so.1
-link path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so target=libglx.so.1
+    variant.opensolaris.zone=global pkg.linted=true $(NVIDIA_MEDIATOR)
+
+##### Links to (mediated) shared objects not provided in originally packaged FS objects
+##### NVIDIA_MEDIATOR added to some of the symlinks just in case to avoid conflicts
+
+link path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libGL.so target=libGL.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-tls.so \
+     target=libnvidia-tls.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libGL.so \
+     target=libGL.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-tls.so \
+     target=libnvidia-tls.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-wfb.so \
+     target=libnvidia-wfb.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-wfb.so \
+     target=libnvidia-wfb.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/modules/extensions/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libglx.so \
+     target=libglx.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/X11/lib/modules/extensions/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libglx.so \
+     target=libglx.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/$(MACH64)/libnvidia-glcore.so.1 \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
-link path=usr/lib/$(MACH64)/libnvidia-tls.so target=libnvidia-tls.so.1
+     target=../../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-glcore.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/lib/$(MACH64)/libnvidia-tls.so \
+     target=libnvidia-tls.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/$(MACH64)/libnvidia-tls.so.1 \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
+     target=../../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-tls.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/$(MACH64)/libvdpau_nvidia.so \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+     target=../../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libvdpau_nvidia.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
-    target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+     target=../../../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libvdpau_nvidia.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/libnvidia-glcore.so.1 \
-    target=../X11/lib/NVIDIA/libnvidia-glcore.so.1
-link path=usr/lib/libnvidia-tls.so target=libnvidia-tls.so.1
+     target=../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-glcore.so.1 $(NVIDIA_MEDIATOR)
+link path=usr/lib/libnvidia-tls.so target=libnvidia-tls.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/libnvidia-tls.so.1 \
-    target=../X11/lib/NVIDIA/libnvidia-tls.so.1
+     target=../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-tls.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/libvdpau_nvidia.so \
-    target=../X11/lib/NVIDIA/libvdpau_nvidia.so.1
+     target=../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libvdpau_nvidia.so.1 $(NVIDIA_MEDIATOR)
 link path=usr/lib/vdpau/libvdpau_nvidia.so.1 \
-    target=../../X11/lib/NVIDIA/libvdpau_nvidia.so.1
+     target=../../X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libvdpau_nvidia.so.1 $(NVIDIA_MEDIATOR)
+
+##### Register PCI IDs served by this driver
 
 driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,40" \
