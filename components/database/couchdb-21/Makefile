@@ -67,12 +67,12 @@ COMPONENT_INSTALL_TARGETS = release
 # Here we prepare manually the image in the prototype folder and do the rest with a makefile.
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
   ($(RM) -r $(PROTO_DIR)/*; \
-   $(MKDIR) $(PROTO_DIR)$(USRLIBDIR64); \
+   $(MKDIR) $(PROTO_DIR)$(USRLIBDIR64)/couchdb-21; \
    $(CP) $(BUILD_DIR_64)/LICENSE $(COMPONENT_NAME).license; \
-   $(CP) -r $(BUILD_DIR_64)/rel/couchdb $(PROTO_DIR)$(USRLIBDIR64) ); \
+   $(CP) -r $(BUILD_DIR_64)/rel/couchdb/* $(PROTO_DIR)$(USRLIBDIR64)/couchdb-21/ ); \
    cd $(BUILD_DIR_64); \
-   $(GMAKE) -f Makefile.openindiana DESTDIR=$(PROTO_DIR) BINDIR=$(USRBINDIR) MANDIR=$(USRSHAREMANDIR) \
-      DOCDIR=$(USRSHAREDOCDIR)/couchdb ETCDIR=$(ETCDIR)/couchdb RELDIR=$(USRLIBDIR64)/couchdb
+   $(GMAKE) -f Makefile.openindiana DESTDIR=$(PROTO_DIR) MANDIR=$(USRSHAREMANDIR) BINDIR=$(USRBINDIR) \
+      DOCDIR=$(USRSHAREDOCDIR)/couchdb-21 ETCDIR=$(ETCDIR)/couchdb-21 RELDIR=$(USRLIBDIR64)/couchdb-21
 
 build:          $(BUILD_64)
 

@@ -13,7 +13,7 @@
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/service/database/$(COMPONENT_NAME)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/service/database/$(COMPONENT_NAME)-21@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -25,7 +25,11 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 depend type=require fmri=database/couchdb-21
 depend type=require fmri=database/couchdb-common
 
-file files/couchdb.xml path=lib/svc/manifest/application/couchdb-21.xml restart_fmri=svc:/system/manifest-import:default
+file files/auth_attr path=etc/security/auth_attr.d/couchdb-21
+file files/exec_attr path=etc/security/exec_attr.d/couchdb-21
+file files/prof_attr path=etc/security/prof_attr.d/couchdb-21
+file files/user_attr path=etc/user_attr.d/couchdb-21
+file files/couchdb-21.xml path=lib/svc/manifest/application/couchdb-21.xml restart_fmri=svc:/system/manifest-import:default
 
 dir  path=var/couchdb-21/data  owner=couchdb group=couchdb mode=0755
 dir  path=var/couchdb-21/index owner=couchdb group=couchdb mode=0755
