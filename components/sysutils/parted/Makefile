@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= parted
 # It's illumos-gate version based on parted 1.8.8
@@ -23,8 +23,8 @@ COMPONENT_SUMMARY= GNU Parted - Partition Editor
 COMPONENT_SRC = src
 COMPONENT_PROJECT_URL = http://www.gnu.org/software/parted/
 
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 clobber: clean
 
@@ -44,3 +44,10 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += system/library/libdiskmgt/header-libdiskmgt
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdiskmgt
