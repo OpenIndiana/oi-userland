@@ -4,6 +4,9 @@
 
 eval "$(egrep '^A[1-9][0-9]*=|^ALIASES=' $1/NVDAgraphicsr/install/postinstall)"
 
+FIRST=yes
 for i in $ALIASES; do
-	printf "\talias=$i \\\\\n"
+	[ "$FIRST" = no ] && printf " \\\\\n" || FIRST=no
+	printf "\talias=$i"
 done
+echo ""
