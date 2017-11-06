@@ -23,39 +23,41 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
-COMPONENT_VERSION=	3.2.5
+COMPONENT_VERSION=	3.2.6
+COMPONENT_FMRI=         network/ftp/ncftp
+COMPONENT_SUMMARY=      NcFTP - client application implementing FTP
+COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_PROJECT_URL=	http://www.ncftp.com/ncftp/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b4ebe2415761a5137cd1d313c8fc1352f26d8963cc9e9e354e29720aa2089d42
+  sha256:5f200687c05d0807690d9fb770327b226f02dd86155b49e750853fce4e31098d
 COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ncftp-client
+COMPONENT_LICENSE= Artistic
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_32) 
+CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_$(BITS)) 
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-include ../../make-rules/shared-targets.mk
-
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+install:	$(INSTALL_64)
 
 test:	$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
