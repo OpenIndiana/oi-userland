@@ -26,8 +26,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      3.1.5
-IPS_COMPONENT_VERSION=  3.1.5.2
+COMPONENT_VERSION=      3.1.6
+IPS_COMPONENT_VERSION=  3.1.6.1
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
 COMPONENT_FMRI=					library/mpfr
@@ -36,14 +36,14 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ca498c1c7a74dd37a576f353312d1e68d490978de4395fa28f1cbd46a364e658
-COMPONENT_LICENSE=			LGPLv2.1,GPLv2,FDLv1.2	
+    sha256:cf4f4b2d80abb79e820e78c8077b6725bbbb4e8f41896783c899087be0e94068
+COMPONENT_LICENSE=      LGPLv2.1,GPLv2,FDLv1.2	
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(PATH.illumos)
 
 CLOBBER_PATHS += libmpfr.pc
 
