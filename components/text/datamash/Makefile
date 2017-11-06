@@ -20,28 +20,33 @@
 #
 # Copyright (c) 2014, David Hoeppner. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		datamash
+COMPONENT_VERSION=	1.2
+COMPONENT_FMRI=	        text/datamash
 COMPONENT_SUMMARY=	performs numeric, textual and statistical operations on data files
-COMPONENT_VERSION=	1.0.6
+COMPONENT_CLASSIFICATION=System/Text Tools      
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/datamash/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:0154c25c45b5506b6d618ca8e18d0ef093dac47946ac0df464fb21e77b504118
+  sha256:e8d46fb22ccc77e5380f26cde622a733f363d388b04a2c22e7fb6de0e9d85996
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv3
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-build:		$(BUILD_32_and_64)
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
-install:	$(INSTALL_32_and_64)
+build:		$(BUILD_64)
 
-test:		$(TEST_32_and_64)
+install:	$(INSTALL_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+test:		$(TEST_64)
 
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
