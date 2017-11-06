@@ -163,6 +163,9 @@ $(SAMPLE_MANIFEST_FILE).nvidia:	$(SAMPLE_MANIFEST_FILE)
 	    -e 's,^\(link .*[^\\]\)$$,\1 $$\(NVIDIA_MEDIATOR\),g' \
 	    -e 's,^\(    target=.*[^\\]\)$$, \1 $$\(NVIDIA_MEDIATOR\),g' \
 	    < $< > $@
+	( echo ""; echo "##### Register PCI IDs served by this driver"; echo ""; \
+	  echo 'driver name=nvidia perms="* 0666 root root" \' ) >> $@
+	$(SHELL) $(COMPONENT_DIR)/print-pci-ids.sh $(SOURCE_DIR) >> $@
 
 sample-manifest-nvidia: $(SAMPLE_MANIFEST_FILE).nvidia
 
