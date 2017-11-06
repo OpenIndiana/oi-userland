@@ -16,3 +16,15 @@
 -
          rc = bind( lsock, (struct sockaddr*)&servaddr, sizeof(servaddr) );
          if( 0 != rc ) break;
+
+--- udpxy-1.0.23-10/netop.c.orig	Sun Nov  5 08:08:14 2017
++++ udpxy-1.0.23-10/netop.c	Sun Nov  5 08:09:27 2017
+@@ -47,7 +47,7 @@
+ setup_listener( const char* ipaddr, int port, int* sockfd, int bklog )
+ {
+ #define LOWMARK 10 /* do not accept input of less than X octets */
+-    int rc, lsock, wmark = LOWMARK;
++    int rc, lsock;
+     struct sockaddr_in servaddr;
+     const int ON = 1;
+ 
