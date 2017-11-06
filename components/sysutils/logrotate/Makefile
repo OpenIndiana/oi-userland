@@ -12,28 +12,29 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logrotate
-COMPONENT_VERSION=	3-9-1
-IPS_COMPONENT_VERSION=	$(subst -,.,$(COMPONENT_VERSION))
+COMPONENT_VERSION=	3.13.0
 COMPONENT_PROJECT_URL=	https://github.com/logrotate/logrotate
 COMPONENT_SUMMARY=	Logrotate - Rotates and compresses log files
-COMPONENT_SRC=		$(COMPONENT_NAME)-r$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5bf8e478c428e7744fefa465118f8296e7e771c981fb6dffb7527856a0ea3617
-COMPONENT_ARCHIVE_URL=	https://github.com/logrotate/logrotate/archive/r$(COMPONENT_VERSION).tar.gz
+  sha256:2ea33f69176dd2668fb85307210d7ed0411ff2a0429e4a0a2d881e740160e4b0
+COMPONENT_ARCHIVE_URL=	https://github.com/logrotate/logrotate/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_FMRI=		system/file/logrotate
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 				$(TOUCH) NEWS README AUTHORS ChangeLog &&\
@@ -43,8 +44,12 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 				autoconf )
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/popt
+REQUIRED_PACKAGES += system/library
