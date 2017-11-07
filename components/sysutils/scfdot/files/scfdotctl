@@ -28,18 +28,19 @@ fi
 # legend.ps as the legend (built below), and consolidates inetd services into
 # a single node.  See the comment at the top of scfdot.c for other options.
 
-SCFDOTOPTSH='-s 300,42 -l legend.ps -x consolidate_inetd_svcs'
+SCFDOTOPTSH=-s\ 300,42\ -l\ legend.ps\ -x\ consolidate_inetd_svcs
 SCFDOTOPTSL='-L'
 
 # Margin, in inches, to include above and below the legend.
-LEGEND_MARGIN=3
+# LEGEND_MARGIN=3
 
 # Options to pass to dot when rendering the graph.  Consider increasing
 # mclimit, which dictates how long dot spends optimizing node placement.  It
 # defaults to 1.0; 100 should produce good output, but it may take a long
 # time.
-DOTOPTS=
-#DOTOPTS='-Gmclimit=100'
+DOTOPTS=-Gmclimit=100
+
+HOSTNAME=`hostname`
 
 cat << EOF > /tmp/setpage.awk
 #
@@ -155,18 +156,21 @@ BEGIN {
 EOF
 
 
-scfdot ${SCFDOTOPTSL}     > /tmp/legend.dot
+scfdot "${SCFDOTOPTSL}"     > /tmp/legend.dot
 dot -Teps /tmp/legend.dot > /tmp/legend.ps
-awk -f /tmp/enlarge.awk top=${LEGEND_MARGIN} bottom=${LEGEND_MARGIN} \
+# awk doesn't like quoted argument 
+awk -f /tmp/enlarge.awk top=3 bottom=3 \
       /tmp/legend.ps      > legend.ps
-scfdot ${SCFDOTOPTSH}     > /tmp/hostname.dot
-dot -Tps2 ${DOTOPTS} < /tmp/hostname.dot > /tmp/hostname.ps
+scfdot "${SCFDOTOPTSH}"     > /tmp/hostname.dot
+echo "If you want to speed up the process use lower values for option Gmclimit (used value: ${DOTOPTS})"
+dot -Tps2 "${DOTOPTS}" < /tmp/hostname.dot > /tmp/hostname.ps
 awk -f /tmp/setpage.awk /tmp/hostname.ps > hostname.ps
 echo "use the following values to define media size in gsview"
 grep BoundingBox hostname.ps|tail -1
 ps2pdf -dPDFFitPage hostname.ps hostname.pdf
-mv hostname.ps  `hostname`.ps
-mv hostname.pdf `hostname`.pdf
+mv hostname.ps  "${HOSTNAME}.ps"
+mv hostname.pdf "${HOSTNAME}.pdf"
 rm /tmp/legend.dot /tmp/legend.ps legend.ps /tmp/setpage.awk /tmp/enlarge.awk
-echo "created `hostname`.ps and `hostname`.pdf"
+echo "created ${HOSTNAME}.ps and ${HOSTNAME}.pdf"
+
 
