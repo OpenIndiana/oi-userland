@@ -37,12 +37,18 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CXXFLAGS+= -std=c++11
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/rarian
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
