@@ -106,9 +106,16 @@ cacerts.out: $(BUILD_32)
                   -storepass pkgsrc;                                    \
         done
 
+JAVA_MACH.32=i386
+JAVA_MACH.64=amd64
+
+# Workaround: cleanup for subsequent publish
+# cp: /export/home/userland/oi-userland/components/runtime/openjdk-7/build/prototype/i386/usr/jdk/instances/openjdk1.7.0/jre/lib/i386/client/libjsig.so: File exists
+
 $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
 	[ -d $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0 ] || $(MKDIR) $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	chmod -R u+rw $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
+	$(RM) -r $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0/jre/lib/$(JAVA_MACH.$(BITS))
 	$(CP) -a $(@D)/build/solaris-*/j2sdk-image/* $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	$(TOUCH) $@
 
