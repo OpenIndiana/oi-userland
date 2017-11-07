@@ -1,33 +1,40 @@
 --- vala-0.36.6/tests/testrunner.sh	Sun Oct  8 10:39:01 2017
-+++ vala-0.36.6/tests/testrunner.sh.new	Thu Nov  2 17:08:47 2017
-@@ -29,7 +29,11 @@
++++ vala-0.36.6/tests/testrunner.sh.new	Mon Nov  6 15:47:05 2017
+@@ -19,6 +19,7 @@
+ #
+ # Author:
+ # 	Jürg Billeter <j@bitron.ch>
++# This version patched to run on OpenIndiana by Jason Martin
+ 
+ builddir=$PWD
+ topbuilddir=$builddir/..
+@@ -29,7 +30,8 @@
  export G_DEBUG=fatal_warnings
  
  VALAC=$topbuilddir/compiler/valac$EXEEXT
 -VALAFLAGS="$VALAFLAGS --vapidir $vapidir --disable-warnings --main main --save-temps -X -g -X -O0 -X -pipe -X -lm -X -DGETTEXT_PACKAGE=\"valac\" -X -Werror=return-type -X -Werror=init-self -X -Werror=implicit -X -Werror=sequence-point -X -Werror=return-type -X -Werror=uninitialized -X -Werror=pointer-arith -X -Werror=int-to-pointer-cast -X -Werror=pointer-to-int-cast -X -Wformat -X -Werror=format-security -X -Werror=format-nonliteral -X -Werror=redundant-decls -X -Werror=int-conversion"
-+#VALAFLAGS="$VALAFLAGS --vapidir $vapidir --disable-warnings --main main --save-temps -X -g -X -O0 -X -pipe -X -lm -X -DGETTEXT_PACKAGE=\"valac\" -X -Werror=return-type -X -Werror=init-self -X -Werror=implicit -X -Werror=sequence-point -X -Werror=return-type -X -Werror=uninitialized -X -Werror=pointer-arith -X -Werror=int-to-pointer-cast -X -Werror=pointer-to-int-cast -X -Wformat -X -Werror=format-security -X -Werror=format-nonliteral -X -Werror=redundant-decls -X -Werror=int-conversion"
-+# Hardcoded --cc flag for now; Use ./configure CC=gcc when building vala
-+# System can have many CC's and gcc may not be default
-+# Remove -X -Werror=int-conversion; Not an option with gcc (GCC) 4.9.4 OpenIndiana build
-+VALAFLAGS="$VALAFLAGS --cc=gcc --vapidir $vapidir --disable-warnings --main main --save-temps -X -g -X -O0 -X -pipe -X -lm -X -DGETTEXT_PACKAGE=\"valac\" -X -Werror=return-type -X -Werror=init-self -X -Werror=implicit -X -Werror=sequence-point -X -Werror=return-type -X -Werror=uninitialized -X -Werror=pointer-arith -X -Werror=int-to-pointer-cast -X -Werror=pointer-to-int-cast -X -Wformat -X -Werror=format-security -X -Werror=format-nonliteral -X -Werror=redundant-decls"
++# Removed -X -Werror=int-conversion, not an option with oi gcc (GCC) 4.9.4; Removed -X -Werror=int-to-pointer-cast and -X -Werror=pointer-to-int-cast for BUILD_32_and_64 test compares
++VALAFLAGS="$VALAFLAGS --vapidir $vapidir --disable-warnings --main main --save-temps -X -g -X -O0 -X -pipe -X -lm -X -DGETTEXT_PACKAGE=\"valac\" -X -Werror=return-type -X -Werror=init-self -X -Werror=implicit -X -Werror=sequence-point -X -Werror=return-type -X -Werror=uninitialized -X -Werror=pointer-arith -X -Wformat -X -Werror=format-security -X -Werror=format-nonliteral -X -Werror=redundant-decls"
  VAPIGEN=$topbuilddir/vapigen/vapigen$EXEEXT
  VAPIGENFLAGS="--vapidir $vapidir"
  
-@@ -114,26 +118,32 @@
+@@ -114,26 +116,24 @@
  }
  
  testdir=_test
 -rm -rf $testdir
 -mkdir $testdir
 -cd $testdir
++passed=0
++failed=0
  
 -echo -n -e "TEST: Building...\033[72G"
-+# Added
-+echo "Use gmake test &> test.log to record test logs to a file" 
-+# Changed echo -n -e to printf; No echo -options SunOS; just use newline
-+printf "TEST: Building...\n"
++echo "TEST: Building...\n"
  
 -cat << "EOF" > checkall
+-all=0
+-fail=0
+-EOF
 +for testfile in "$@"; do
 +	PACKAGES=gio-2.0
 +	SOURCEFILES=
@@ -35,11 +42,6 @@
 +	rm -rf $testdir
 +	mkdir $testdir
 +	cd $testdir
-+
-+	cat << "EOF" > checkall
- all=0
- fail=0
- EOF
  
 -cat << "EOF" > main.vala
 +	cat << "EOF" > main.vala
@@ -51,68 +53,55 @@
 -SOURCEFILES=
 -for testfile in "$@"; do
 -	rm -f prepare check
-+	# Changed; entire $testdir is removed inside loop now
-+	#rm -f prepare check
  	echo 'set -e' >> prepare
  
  	case "$testfile" in
-@@ -172,7 +182,8 @@
+@@ -172,7 +172,7 @@
  						INHEADER=0
  					fi
  				else
 -					if echo "$line" | grep -q "^[A-Za-z]\+:"; then
-+					# Changed "^[A-Za-z]\+:" to "^[A-Za-z]*:"
 +					if echo "$line" | grep -q "^[A-Za-z]*:"; then
  						sourceend
  						PART=$(($PART + 1))
  						INHEADER=1
-@@ -189,24 +200,28 @@
+@@ -189,27 +189,7 @@
  	esac
  
  	cat prepare check > $ns.check
-+	# Changed echo -n -e and echo -e to printf
-+	# Changed [72G to [50G TEST RESULT SUMMARY all one line and < 80 chars. 
- 	cat << EOF >> checkall
+-	cat << EOF >> checkall
 -echo -n -e "  /$testpath: \033[72G"
-+printf "  /$testpath: \033[50G"
- ((all++))
- if bash $ns.check &>log; then
+-((all++))
+-if bash $ns.check &>log; then
 -	echo -e "\033[0;32mOK\033[m"
-+	printf "\033[0;32mOK\033[m"
- else
- 	((fail++))
+-else
+-	((fail++))
 -	echo -e "\033[0;31mFAIL\033[m"
-+	printf "\033[0;31mFAIL\033[m"
- 	cat log
- fi
- EOF
+-	cat log
+-fi
+-EOF
 -done
-+# Moved to end
-+#done
  
-+# Adds space between RESULT and Summary
- cat << "EOF" >> checkall
- if [ $fail -eq 0 ]; then
+-cat << "EOF" >> checkall
+-if [ $fail -eq 0 ]; then
 -	echo "All $all tests passed"
-+	echo " All $all tests passed"
- else
+-else
 -	echo "$fail of $all tests failed"
-+	echo " $fail of $all tests failed"
- 	exit 1
- fi
- EOF
-@@ -217,23 +232,21 @@
+-	exit 1
+-fi
+-EOF
+ 
+ cat << "EOF" >> main.vala
+ 	default: assert_not_reached ();
+@@ -217,23 +197,25 @@
  }
  EOF
  
 -cat $SOURCEFILES >> main.vala
-+	# cat $SOURCEFILES does not catch empty; hangs waiting for stdin
 +	if [ -n "$SOURCEFILES" ]
 +	then
 +		cat $SOURCEFILES >> main.vala
-+		# Changed echo -n " --pkg" to printf "%s" " --pkg="
 +		if ! $VALAC $VALAFLAGS -o test$EXEEXT $([ -z "$PACKAGES" ] || echo $PACKAGES | xargs -n 1 printf "%s" " --pkg=") main.vala &>log; then
-+			# Only show extra logging for failed compiles; checkall shows failed test anyway
 +			cat log
 +		fi
 +	fi
@@ -122,8 +111,14 @@
 -else
 -	echo -e "\033[0;31mFAIL\033[m"
 -	cat log
-+	# Just run checkall; do not exit even on fails; finish all tests
-+	bash checkall
++	if bash $ns.check &>log; then
++		echo "PASS: /$testfile"
++		((passed++))
++	else
++		echo "FAIL: /$testfile"
++		((failed++))
++		cat log
++	fi
  
 -	cd $builddir
 -	exit 1
@@ -137,6 +132,6 @@
 -	cd $builddir
 -	exit 1
 -fi
--
-+# Added; finish in build directory 
++echo "TOTAL: passed $passed of $# tests and failed $failed"
+ 
 +cd $builddir

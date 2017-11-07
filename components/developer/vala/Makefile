@@ -47,19 +47,21 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS  +=  CC=gcc
 CONFIGURE_OPTIONS  +=  --disable-static
 CONFIGURE_OPTIONS  +=  --enable-shared
+
+COMPONENT_TEST_ENV += CC=$(CC)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-ne "/^PASS:/p" ' \
+	'-ne "/^FAIL:/p" ' \
+	'-ne "/^TOTAL:/p" '
 
 # common targets
 build:      $(BUILD_32_and_64)
 
 install:    $(INSTALL_32_and_64)
 
-# Failed tests: /methods/bug653391 - cc1: some warnings being treated as errors
-# Failed tests: /control-flow/bug736774-2 - core dumped but probably should
-# Failed tests: /dbus/enum-string-marshalling - needs upstream fix
-# Failed tests: /dbus/filedescriptor-errors/server - problem with charset.alias
 test:       $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/glib2
