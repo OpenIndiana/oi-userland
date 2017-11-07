@@ -23,21 +23,25 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		getopt
-COMPONENT_VERSION=	1.1.5
+COMPONENT_VERSION=	1.1.6
+COMPONENT_FMRI= shell/gnu-getopt
+COMPONENT_SUMMARY= parse command-line arguments from shell scripts
+COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL=	http://frodo.looijaard.name/project/getopt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:11893276b94b1629606ab75772143918a5713259950fbf4216288e246f19fbb6
-COMPONENT_ARCHIVE_URL=	http://frodo.looijaard.name/system/files/software/getopt/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-getopt
+    sha256:d0bf1dc642a993e7388a1cddfb9409bed375c21d5278056ccca3a0acd09dc5fe
+COMPONENT_ARCHIVE_URL= \
+    http://frodo.looijaard.name/system/files/software/getopt/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE= GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # getopt doesn't use configure, override the hard-wired values in the Makefile.
 COMPONENT_BUILD_ARGS+=	CC="$(CC) $(CC_BITS)"
@@ -56,12 +60,11 @@ COMPONENT_POST_UNPACK_ACTION= \
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
