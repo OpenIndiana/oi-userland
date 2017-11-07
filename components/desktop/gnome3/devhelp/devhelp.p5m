@@ -22,7 +22,15 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/devhelp
+depend type=require fmri=library/desktop/gtk3/gtk3-nocsd
+
+link path=usr/bin/devhelp target=../lib/csd/devhelp \
+    mediator=nocsd mediator-implementation=disable
+link path=usr/bin/devhelp target=gtk3-nocsd \
+    mediator=nocsd mediator-implementation=gtk3-nocsd \
+    pkg.linted.userland.action002.0=true
+file usr/bin/devhelp path=usr/lib/csd/devhelp mode=0555
+
 file path=usr/include/devhelp-3.0/devhelp/devhelp.h
 file path=usr/include/devhelp-3.0/devhelp/dh-app.h
 file path=usr/include/devhelp-3.0/devhelp/dh-assistant-view.h

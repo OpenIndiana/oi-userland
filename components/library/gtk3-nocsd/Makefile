@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk3-nocsd
 COMPONENT_VERSION=	3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/desktop/gtk3/gtk3-nocsd
 COMPONENT_SUMMARY=	A small module used to disable the client side decoration of Gtk+ 3
 COMPONENT_CLASSIFICATION=Applications/Plug-ins and Run-times
@@ -47,13 +48,9 @@ COMPONENT_INSTALL_ENV += bindir=$(BINDIR.$(BITS))
 COMPONENT_INSTALL_ENV += libdir=$(LIBDIR.$(BITS))
 COMPONENT_INSTALL_ENV += bashcompletiondir=/usr/share/bash-completion/completions
 
-$(PROTO_DIR)/etc/X11/xinit/xinitrc.d/0310.gtk3-nocsd: $(INSTALL_32_and_64) $(COMPONENT_DIR)/files/gtk3-nocsd
-	$(MKDIR) $(dir $@)
-	$(GSED) -e 's:%MACH64%:$(MACH64):g' $(COMPONENT_DIR)/files/gtk3-nocsd > $@
-
 build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64) $(PROTO_DIR)/etc/X11/xinit/xinitrc.d/0310.gtk3-nocsd
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 

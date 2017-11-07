@@ -1,0 +1,11 @@
+--- gtk3-nocsd-3/gtk3-nocsd.in.1	2017-11-07 08:20:42.579095542 +0000
++++ gtk3-nocsd-3/gtk3-nocsd.in	2017-11-07 08:29:36.672144975 +0000
+@@ -72,7 +72,7 @@
+ 
+ # Find the real program (the first one that's not symlinked to get3-nocsd)
+ APPNAME="$(basename "$0")"
+-for APPPATH in $(which -a "$APPNAME") /bin/false; do
++for APPPATH in /usr/lib/csd/"${APPNAME}" $(which -a "$APPNAME") /bin/false; do
+     APPPATH_LINK="$(readlink -fe "$APPPATH")"
+     [ x"${APPPATH_LINK##*/}"x = x"gtk3-nocsd"x ] || break
+ done
