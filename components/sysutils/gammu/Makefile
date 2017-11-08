@@ -57,6 +57,10 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += utility/bash-completion
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-94/developer
