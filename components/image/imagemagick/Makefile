@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		6.9.9
+COMPONENT_REVISION=		1
 COMPONENT_MAJOR_VERSIOR=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
 COMPONENT_SUBVERSION=		21
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
