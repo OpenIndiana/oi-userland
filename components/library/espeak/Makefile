@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= espeak
 COMPONENT_VERSION= 1.48.04
 IPS_COMPONENT_VERSION= 1.48.4
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= eSpeak - compact open source software speech synthesizer
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-source
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
