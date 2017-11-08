@@ -1,51 +1,36 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
+
 #
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
+# Copyright 2017 Aurelien Larcher
 #
-# CDDL HEADER END
-#
-# Copyright (c) 2013 David Hoeppner. All rights reserved.
-#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 # pull the manpages out of the component dir
 <transform file path=usr/share/man/(man3/.+$) -> set action.hash %<\1> >
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/library/libyaml@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description \
-    value=" LibYAML is a YAML 1.1 parser and emitter written in C."
-set name=pkg.summary value="libyaml - yaml parser and emitter"
-set name=com.oracle.info.description value="yasml parser and emitter"
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Libraries
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/yaml.h
-file path=usr/lib/$(MACH64)/libyaml-0.so.2.0.4
+link path=usr/lib/$(MACH64)/libyaml-0.so.2 target=libyaml-0.so.2.0.5
+file path=usr/lib/$(MACH64)/libyaml-0.so.2.0.5
+link path=usr/lib/$(MACH64)/libyaml.so target=libyaml-0.so.2.0.5
 file path=usr/lib/$(MACH64)/pkgconfig/yaml-0.1.pc
-file path=usr/lib/libyaml-0.so.2.0.4
+link path=usr/lib/libyaml-0.so.2 target=libyaml-0.so.2.0.5
+file path=usr/lib/libyaml-0.so.2.0.5
+link path=usr/lib/libyaml.so target=libyaml-0.so.2.0.5
 file path=usr/lib/pkgconfig/yaml-0.1.pc
-
-link path=usr/lib/$(MACH64)/libyaml-0.so.2 target=libyaml-0.so.2.0.4
-link path=usr/lib/$(MACH64)/libyaml.so target=libyaml-0.so.2.0.4
-link path=usr/lib/libyaml-0.so.2 target=libyaml-0.so.2.0.4
-link path=usr/lib/libyaml.so target=libyaml-0.so.2.0.4
-
-license libyaml.license license=MIT

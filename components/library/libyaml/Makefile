@@ -23,22 +23,29 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yaml
-COMPONENT_VERSION=	0.1.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.1.7
+COMPONENT_FMRI=	library/libyaml
+COMPONENT_SUMMARY= LibYAML is a YAML 1.1 parser and emitter written in C
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	http://pyyaml.org/wiki/LibYAML
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC_NAME= libyaml
+COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7da6971b4bd08a986dd2a61353bc422362bd0edcc67d7ebaac68c95f74182749
-COMPONENT_ARCHIVE_URL=	http://pyyaml.org/download/libyaml/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libyaml
+    sha256:e1884d0fa1eec8cf869ac6bebbf25391e81956aa2970267f974a9fa5e0b968e2
+COMPONENT_ARCHIVE_URL=	https://github.com/yaml/libyaml/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_LICENSE= MIT
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_PREP_ACTION= (cd $(@D); ./bootstrap )
+
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
+
+unexport SHELLOPTS
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -47,6 +54,5 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
