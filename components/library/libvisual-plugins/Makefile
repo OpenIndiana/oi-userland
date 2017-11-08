@@ -13,10 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvisual-plugins
 COMPONENT_VERSION= 0.4.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Visualization plugins for the Libvisual library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -30,9 +31,9 @@ COMPONENT_LICENSE = GPLv2
 COMPONENT_FMRI = library/desktop/libvisual/plugins
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
@@ -40,9 +41,19 @@ CONFIGURE_OPTIONS += --enable-shared=yes
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --disable-corona
 CONFIGURE_OPTIONS += --disable-gforce
+CONFIGURE_OPTIONS += --disable-esd
+# Only 0.8 supported
+CONFIGURE_OPTIONS += --disable-gstreamer-plugin
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/libvisual
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
