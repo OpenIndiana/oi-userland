@@ -1,5 +1,5 @@
 --- vala-0.36.6/tests/testrunner.sh	Sun Oct  8 10:39:01 2017
-+++ vala-0.36.6/tests/testrunner.sh.new	Mon Nov  6 15:47:05 2017
++++ vala-0.36.6/tests/testrunner.sh.new	Wed Nov  8 10:53:07 2017
 @@ -19,6 +19,7 @@
  #
  # Author:
@@ -8,17 +8,43 @@
  
  builddir=$PWD
  topbuilddir=$builddir/..
-@@ -29,7 +30,8 @@
+@@ -29,7 +30,34 @@
  export G_DEBUG=fatal_warnings
  
  VALAC=$topbuilddir/compiler/valac$EXEEXT
 -VALAFLAGS="$VALAFLAGS --vapidir $vapidir --disable-warnings --main main --save-temps -X -g -X -O0 -X -pipe -X -lm -X -DGETTEXT_PACKAGE=\"valac\" -X -Werror=return-type -X -Werror=init-self -X -Werror=implicit -X -Werror=sequence-point -X -Werror=return-type -X -Werror=uninitialized -X -Werror=pointer-arith -X -Werror=int-to-pointer-cast -X -Werror=pointer-to-int-cast -X -Wformat -X -Werror=format-security -X -Werror=format-nonliteral -X -Werror=redundant-decls -X -Werror=int-conversion"
-+# Removed -X -Werror=int-conversion, not an option with oi gcc (GCC) 4.9.4; Removed -X -Werror=int-to-pointer-cast and -X -Werror=pointer-to-int-cast for BUILD_32_and_64 test compares
-+VALAFLAGS="$VALAFLAGS --vapidir $vapidir --disable-warnings --main main --save-temps -X -g -X -O0 -X -pipe -X -lm -X -DGETTEXT_PACKAGE=\"valac\" -X -Werror=return-type -X -Werror=init-self -X -Werror=implicit -X -Werror=sequence-point -X -Werror=return-type -X -Werror=uninitialized -X -Werror=pointer-arith -X -Wformat -X -Werror=format-security -X -Werror=format-nonliteral -X -Werror=redundant-decls"
++# OpenIndiana add -v flag for extra logging
++# Removed -X -Werror=int-conversion, not an option with oi gcc (GCC) 4.9.4
++# Removed -X -Werror=int-to-pointer-cast and -X -Werror=pointer-to-int-cast
++#  for BUILD_32_and_64 test compares
++VALAFLAGS="$VALAFLAGS \
++	-v \
++	--vapidir \
++	$vapidir \
++	--disable-warnings \
++	--main main \
++	--save-temps \
++	-X -g \
++	-X -O0 \
++	-X -pipe \
++	-X -lm \
++	-X -DGETTEXT_PACKAGE=\"valac\" \
++	-X -Werror=return-type \
++	-X -Werror=init-self \
++	-X -Werror=implicit \
++	-X -Werror=sequence-point \
++	-X -Werror=return-type \
++	-X -Werror=uninitialized \
++	-X -Werror=pointer-arith \
++	-X -Wformat \
++	-X -Werror=format-security \
++	-X -Werror=format-nonliteral \
++	-X -Werror=redundant-decls"
++
  VAPIGEN=$topbuilddir/vapigen/vapigen$EXEEXT
  VAPIGENFLAGS="--vapidir $vapidir"
  
-@@ -114,26 +116,24 @@
+@@ -114,26 +142,28 @@
  }
  
  testdir=_test
@@ -37,6 +63,10 @@
 -EOF
 +for testfile in "$@"; do
 +	PACKAGES=gio-2.0
++	# quick hack to get this test to pass; remove when test changes
++	if [ "$testfile" = "dbus/enum-string-marshalling.vala" ]; then
++		PACKAGES="$PACKAGES gio-unix-2.0"
++	fi
 +	SOURCEFILES=
 +	cd $builddir
 +	rm -rf $testdir
@@ -56,7 +86,7 @@
  	echo 'set -e' >> prepare
  
  	case "$testfile" in
-@@ -172,7 +172,7 @@
+@@ -172,7 +202,7 @@
  						INHEADER=0
  					fi
  				else
@@ -65,7 +95,7 @@
  						sourceend
  						PART=$(($PART + 1))
  						INHEADER=1
-@@ -189,27 +189,7 @@
+@@ -189,27 +219,7 @@
  	esac
  
  	cat prepare check > $ns.check
@@ -93,7 +123,7 @@
  
  cat << "EOF" >> main.vala
  	default: assert_not_reached ();
-@@ -217,23 +197,25 @@
+@@ -217,23 +227,25 @@
  }
  EOF
  
