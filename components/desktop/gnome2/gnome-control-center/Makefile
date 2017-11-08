@@ -69,3 +69,35 @@ test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += gnome/theme/gnome-icon-theme
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += desktop/gksu
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += gnome/gnome-menus
+REQUIRED_PACKAGES += gnome/window-manager/metacity
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/evolution-data-server
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gnome-desktop
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libxklavier
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/libgnomekbd
+REQUIRED_PACKAGES += library/libunique
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxft
+REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxscrnsaver
