@@ -21,18 +21,19 @@
 
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2017 Ken Mays
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	8.0.0711
+COMPONENT_VERSION=	8.0.1282
 IPS_COMPONENT_VERSION=  $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.0*\([1-9]\)/.\1/')
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:142e436936876d705703b7c91a385894a76dde510d0984c10352743f8e047fb3
+COMPONENT_ARCHIVE_HASH=sha256:25edf0475c19e2581b3c1bef7b26db73e7af5775217065439df66a3ba9e41785 
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -70,6 +71,7 @@ CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-rubyinterp=dynamic
+CONFIGURE_OPTIONS +=	--enable-terminal
 
 # We build two variants: with and without X support.
 $(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --without-x
