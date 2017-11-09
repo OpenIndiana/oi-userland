@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
 COMPONENT_VERSION= 	52.4.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).source.tar.xz
@@ -108,7 +109,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	unzip -u -d $(LIGHTNING_DIR) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
 	for file in $(PROTO_DIR)/usr/lib/thunderbird-$(COMPONENT_VERSION)/*.so \
           $(PROTO_DIR)/usr/lib/thunderbird-$(COMPONENT_VERSION)/plugin-container; do \
-	  /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib:/usr/lib/thunderbird"' $$file ;\
+	  /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib:/usr/lib/thunderbird:$(GCC_ROOT)/lib"' $$file ;\
+	  /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib:/usr/lib/thunderbird:$(GCC_ROOT)/lib"' $$file ;\
 	done ;
 
 
