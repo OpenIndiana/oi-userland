@@ -50,7 +50,6 @@ CONFIGURE_SCRIPT = $(@D)/configure
 CONFIGURE_OPTIONS  +=  --disable-static
 CONFIGURE_OPTIONS  +=  --enable-shared
 
-COMPONENT_TEST_ENV += CC=$(CC)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-ne "/^PASS:/p" ' \
