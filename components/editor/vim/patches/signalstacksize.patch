@@ -1,0 +1,26 @@
+This patch works around an issue with vim dumping core with SIGSEGV when
+handling a more benign signal (typically SIGHUP or SIGTERM).  Vim tries to
+run all the exit-vim autocommands, which end up busting the alternate stack
+at its default size.  Doubling the default seems to do the trick, but it
+continues to be just a guess.
+
+This fix was suggested by the maintainer, but the patch has not yet been
+submitted upstream.
+
+diff --git a/src/os_unix.c b/src/os_unix.c
+index f0a5621..3e34b27 100644
+--- a/src/os_unix.c
++++ b/src/os_unix.c
+@@ -841,9 +841,10 @@ mch_stackcheck(char *p)
+ # include <AvailabilityMacros.h>
+ #endif
+ 
+-#ifndef SIGSTKSZ
+-# define SIGSTKSZ 8000    /* just a guess of how much stack is needed... */
++#ifdef SIGSTKSZ
++# undef SIGSTKSZ
+ #endif
++#define SIGSTKSZ 16384    /* just a guess of how much stack is needed... */
+ 
+ # ifdef HAVE_SIGALTSTACK
+ static stack_t sigstk;			/* for sigaltstack() */
