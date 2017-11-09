@@ -16,12 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
-COMPONENT_VERSION=	3.75
+COMPONENT_VERSION=	3.76
 COMPONENT_FMRI=		data/iso-codes
 COMPONENT_SUMMARY=	ISO code lists and translations
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:7335e0301cd77cd4ee019bf5d3709aa79309d49dd66e85ba350caf67e00b00cd
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:38ea8c1de7c07d5b4c9603ec65c238c155992a2e2ab0b02725d0926d1ad480c4
 COMPONENT_PROJECT_URL=	http://alioth.debian.org/projects/pkg-isocodes
 COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/iso-codes/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
