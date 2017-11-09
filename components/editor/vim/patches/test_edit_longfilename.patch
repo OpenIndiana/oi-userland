@@ -1,0 +1,53 @@
+Patch 545 doesn't have the right fix.  See the pull request at
+
+    https://github.com/vim/vim/pull/1616
+
+This fix has not yet been submitted upstream.
+
+diff --git a/src/testdir/test_edit.vim b/src/testdir/test_edit.vim
+index 0986bf9b1..857f4627b 100644
+--- a/src/testdir/test_edit.vim
++++ b/src/testdir/test_edit.vim
+@@ -1329,16 +1329,6 @@ func Test_edit_complete_very_long_name()
+     return
+   endif
+ 
+-  let dirname = getcwd() . "/Xdir"
+-  let longdirname = dirname . repeat('/' . repeat('d', 255), 4)
+-  try
+-    call mkdir(longdirname, 'p')
+-  catch /E739:/
+-    " Long directory name probably not supported.
+-    call delete(dirname, 'rf')
+-    return
+-  endtry
+-
+   " Try to get the Vim window position before setting 'columns'.
+   let winposx = getwinposx()
+   let winposy = getwinposy()
+@@ -1348,7 +1338,24 @@ func Test_edit_complete_very_long_name()
+   call assert_equal(2000, &columns)
+   set noswapfile
+ 
+-  let longfilename = longdirname . '/' . repeat('a', 255)
++  let dirname = getcwd() . "/Xdir"
++  let path_max = str2nr(system('getconf PATH_MAX ' . getcwd()))
++  if ! path_max
++    path_max = 1024
++  endif
++  let name_max = str2nr(system('getconf NAME_MAX ' . getcwd()))
++  if ! name_max
++    name_max = 255
++  endif
++  let dirs = (path_max - len(dirname)) / name_max
++  let longdirname = dirname . repeat('/' . repeat('d', name_max), dirs)
++  " Make sure there's at least enough room for a slash and a one-character
++  " filename (plus a null byte).
++  if len(longdirname) + 3 > path_max
++    let longdirname = dirname . repeat('/' . repeat('d', name_max), dirs - 1)
++  endif
++  let longfilename = longdirname . '/' . repeat('a', path_max - len(longdirname) - 2)
++  call mkdir(longdirname, 'p')
+   call writefile(['Totum', 'Table'], longfilename)
+   new
+   exe "next Xfile " . longfilename
