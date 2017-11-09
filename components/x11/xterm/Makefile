@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xterm
 COMPONENT_VERSION= 330
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xterm - terminal emulator for X 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
@@ -48,11 +49,11 @@ CONFIGURE_OPTIONS += --with-app-defaults=/usr/share/X11/app-defaults
 CONFIGURE_OPTIONS += --with-icondir=/usr/share/pixmaps
 CONFIGURE_OPTIONS += --enable-logging
 
-build: $(BUILD_64)
+build: $(BUILD_32)
 
-install: $(INSTALL_64)
+install: $(INSTALL_32)
 
-test: $(TEST_64)
+test: $(TEST_32)
 
 # Build dependencies
 REQUIRED_PACKAGES += terminal/luit
