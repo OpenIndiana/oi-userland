@@ -1885,18 +1885,6 @@ index 5745df2..6ed4b97 100644
  #ifdef FEAT_KEYMAP
      char_u	*b_p_keymap;	/* 'keymap' */
  #endif
-diff --git a/src/testdir/Make_all.mak b/src/testdir/Make_all.mak
-index b7fb15c..04d20aa 100644
---- a/src/testdir/Make_all.mak
-+++ b/src/testdir/Make_all.mak
-@@ -206,6 +206,7 @@ NEW_TESTS = test_arabic.res \
- 	    test_textobjects.res \
- 	    test_undo.res \
- 	    test_usercommands.res \
-+	    test_vartabs.res \
- 	    test_viminfo.res \
- 	    test_vimscript.res \
- 	    test_visual.res \
 diff --git a/src/testdir/test_breakindent.vim b/src/testdir/test_breakindent.vim
 index 7deffbe..8eab66a 100644
 --- a/src/testdir/test_breakindent.vim
@@ -2726,33 +2714,6 @@ index 0000000..fd87061
 +
 +  bwipeout!
 +endfunc
-diff --git a/src/version.c b/src/version.c
-index b5af6be..04ab99a 100644
---- a/src/version.c
-+++ b/src/version.c
-@@ -662,6 +662,11 @@ static char *(features[]) =
- #else
- 	"-user_commands",
- #endif
-+#ifdef FEAT_VARTABS
-+	"+vartabs",
-+#else
-+	"-vartabs",
-+#endif
- #ifdef FEAT_WINDOWS
- 	"+vertsplit",
- #else
-@@ -1628,6 +1633,10 @@ static int included_patches[] =
- static char *(extra_patches[]) =
- {   /* Add your patch description below this line */
- /**/
-+#ifdef FEAT_VARTABS
-+    "variable tabstops",
-+#endif
-+/**/
-     NULL
- };
- 
 diff --git a/src/workshop.c b/src/workshop.c
 index 0b9774f..be911b7 100644
 --- a/src/workshop.c
@@ -2876,3 +2837,39 @@ index 8eab66a..008d01d 100644
    " breakindent set and shift by 1, Number and list set sbr=# and briopt:sbr
    call s:test_windows('setl briopt=shift:1,sbr,min:0 nu nuw=4 sbr=# list cpo+=n ts=4 vts=4')
    " make sure, cache is invalidated!
+
+--- a/src/testdir/Make_all.mak	2017-11-09 13:38:32.984682873 +0000
++++ b/src/testdir/Make_all.mak	2017-11-09 13:40:23.525191166 +0000
+@@ -168,6 +168,7 @@
+ 	    test_undo.res \
+ 	    test_usercommands.res \
+ 	    test_user_func.res \
++	    test_vartabs.res \
+ 	    test_viminfo.res \
+ 	    test_vimscript.res \
+ 	    test_visual.res \
+--- a/src/version.c.old	2017-11-09 12:05:31.000000000 +0000
++++ b/src/version.c	2017-11-09 13:56:38.146289787 +0000
+@@ -668,6 +668,11 @@
+ 	"-user_commands",
+ #endif
+ 	"+vertsplit",
++#ifdef FEAT_VARTABS
++       "+vartabs",
++#else
++       "-vartabs",
++#endif
+ #ifdef FEAT_VIRTUALEDIT
+ 	"+virtualedit",
+ #else
+@@ -3339,6 +3344,10 @@
+ static char *(extra_patches[]) =
+ {   /* Add your patch description below this line */
+ /**/
++#ifdef FEAT_VARTABS
++    "variable tabstops",
++#endif
++/**/
+     NULL
+ };
+ 
