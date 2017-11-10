@@ -42,7 +42,7 @@ DOTOPTS=-Gmclimit=100
 
 HOSTNAME=`hostname`
 
-cat << EOF > /tmp/setpage.awk
+cat << EOF > /tmp/setpage.awk.$$
 #
 # CDDL HEADER START
 #
@@ -105,7 +105,7 @@ cat << EOF > /tmp/setpage.awk
 { print }
 EOF
 
-cat << EOF > /tmp/enlarge.awk
+cat << EOF > /tmp/enlarge.awk.$$
 #
 # CDDL HEADER START
 #
@@ -156,21 +156,21 @@ BEGIN {
 EOF
 
 
-scfdot "${SCFDOTOPTSL}"     > /tmp/legend.dot
-dot -Teps /tmp/legend.dot > /tmp/legend.ps
+scfdot "${SCFDOTOPTSL}"      > /tmp/legend.dot.$$
+dot -Teps /tmp/legend.dot.$$ > /tmp/legend.ps.$$
 # awk doesn't like quoted argument 
-awk -f /tmp/enlarge.awk top=3 bottom=3 \
-      /tmp/legend.ps      > legend.ps
-scfdot "${SCFDOTOPTSH}"     > /tmp/hostname.dot
+awk -f /tmp/enlarge.awk.$$ top=3 bottom=3 \
+      /tmp/legend.ps.$$      > legend.ps
+scfdot "${SCFDOTOPTSH}"      > /tmp/hostname.dot.$$
 echo "If you want to speed up the process use lower values for option Gmclimit (used value: ${DOTOPTS})"
-dot -Tps2 "${DOTOPTS}" < /tmp/hostname.dot > /tmp/hostname.ps
-awk -f /tmp/setpage.awk /tmp/hostname.ps > hostname.ps
+dot -Tps2 "${DOTOPTS}" < /tmp/hostname.dot.$$ > /tmp/hostname.ps.$$
+awk -f /tmp/setpage.awk.$$ /tmp/hostname.ps.$$ > hostname.ps
 echo "use the following values to define media size in gsview"
 grep BoundingBox hostname.ps|tail -1
 ps2pdf -dPDFFitPage hostname.ps hostname.pdf
 mv hostname.ps  "${HOSTNAME}.ps"
 mv hostname.pdf "${HOSTNAME}.pdf"
-rm /tmp/legend.dot /tmp/legend.ps legend.ps /tmp/setpage.awk /tmp/enlarge.awk
+rm /tmp/legend.dot.$$ /tmp/legend.ps.$$ legend.ps /tmp/setpage.awk.$$ /tmp/enlarge.awk.$$
 echo "created ${HOSTNAME}.ps and ${HOSTNAME}.pdf"
 
 
