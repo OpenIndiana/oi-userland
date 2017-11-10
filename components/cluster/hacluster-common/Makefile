@@ -35,6 +35,8 @@ COMPONENT_SUMMARY= Common items for hacluster components.
 
 include $(WS_MAKE_RULES)/ips.mk
 
+download:
+
 build:
 
 install:
