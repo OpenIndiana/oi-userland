@@ -13,15 +13,15 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= nghttp2
-COMPONENT_VERSION= 1.3.4
+COMPONENT_VERSION= 1.27.0
 COMPONENT_SUMMARY= HTTP/2 C Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:63c1d70e50f0c8514e261be88b66720df095269791aa008d76c09e0c3a4c085f
+  sha256:d3c9542e26c3819c50963e02d285973b38ec1dd2816133c852a224f0bd911952
 COMPONENT_ARCHIVE_URL= \
   https://github.com/tatsuhiro-t/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://nghttp2.org/
@@ -30,17 +30,33 @@ COMPONENT_LICENSE = MIT
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/nghttp2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS += --disable-examples
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-examples
 CONFIGURE_OPTIONS += --disable-python-bindings
 CONFIGURE_OPTIONS += --disable-app
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/TOTAL:/p" ' \
+        '-e "/SKIP:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" ' \
+        '-e "/ERROR:/p" '
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-# test suite is empty
 test: $(TEST_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/cunit
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
