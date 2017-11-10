@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xorg-video
 COMPONENT_VERSION=	0.5.11
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Xorg server video drivers group
 
 include ../../../make-rules/ips.mk
