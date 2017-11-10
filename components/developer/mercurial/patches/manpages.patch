@@ -1,5 +1,5 @@
---- mercurial-4.4/doc/hg.1.orig	Thu Nov  2 00:54:44 2017
-+++ mercurial-4.4/doc/hg.1	Thu Nov  2 09:06:18 2017
+--- mercurial-4.4.1/doc/hg.1.orig	Tue Nov  7 21:15:40 2017
++++ mercurial-4.4.1/doc/hg.1	Fri Nov 10 17:56:02 2017
 @@ -3,33 +3,6 @@
  .TH HG 1 "" "" "Mercurial Manual"
  .SH NAME
@@ -11788,8 +11788,8 @@
  .SH COPYING
  .sp
  Copyright (C) 2005\-2017 Matt Mackall.
---- mercurial-4.4/doc/hgignore.5.orig	Thu Nov  2 00:54:44 2017
-+++ mercurial-4.4/doc/hgignore.5	Thu Nov  2 09:06:20 2017
+--- mercurial-4.4.1/doc/hgignore.5.orig	Tue Nov  7 21:15:41 2017
++++ mercurial-4.4.1/doc/hgignore.5	Fri Nov 10 17:55:56 2017
 @@ -3,33 +3,6 @@
  .TH HGIGNORE 5 "" "" "Mercurial Manual"
  .SH NAME
@@ -11915,8 +11915,8 @@
  .SH COPYING
  .sp
  This manual page is copyright 2006 Vadim Gelfer.
---- mercurial-4.4/doc/hgrc.5.orig	Thu Nov  2 00:54:45 2017
-+++ mercurial-4.4/doc/hgrc.5	Thu Nov  2 09:06:20 2017
+--- mercurial-4.4.1/doc/hgrc.5.orig	Tue Nov  7 21:15:42 2017
++++ mercurial-4.4.1/doc/hgrc.5	Fri Nov 10 17:56:03 2017
 @@ -3,33 +3,6 @@
  .TH HGRC 5 "" "" "Mercurial Manual"
  .SH NAME
@@ -13697,13 +13697,43 @@
  .fi
  .sp
  rewrites \fBhttp://server/foo\-hg/\fP into \fBhttp://hg.server/foo/\fP.
-@@ -2353,19 +2211,19 @@
+@@ -2353,12 +2211,12 @@
  .sp
  Relative subrepository paths are first made absolute, and the
  rewrite rules are then applied on the full (absolute) path. If \fBpattern\fP
 -doesn\(aqt match the full path, an attempt is made to apply it on the
 +doesn't match the full path, an attempt is made to apply it on the
  relative path alone. The rules are applied in definition order.
+ .SS \fBsubrepos\fP
+ .sp
+ This section contains options that control the behavior of the
+-subrepositories feature. See also \%\fBhg help subrepos\fP\:.
++subrepositories feature. See also \fBhg help subrepos\fP.
+ .sp
+ Security note: auditing in Mercurial is known to be insufficient to
+ prevent clone\-time code execution with carefully constructed Git
+@@ -2366,13 +2224,13 @@
+ subrepos. Both Git and Subversion subrepos are disabled by default
+ out of security concerns. These subrepo types can be enabled using
+ the respective options below.
+-.INDENT 0.0
++.RS 0
+ .TP
+ .B \fBallowed\fP
+ .sp
+ Whether subrepositories are allowed in the working directory.
+ .sp
+-When false, commands involving subrepositories (like \%\fBhg update\fP\:)
++When false, commands involving subrepositories (like \fBhg update\fP)
+ will fail for all subrepository types.
+ (default: true)
+ .TP
+@@ -2399,18 +2257,18 @@
+ .sp
+ See the security note above before enabling Subversion subrepos.
+ (default: false)
+-.UNINDENT
++.RE
  .SS \fBtemplatealias\fP
  .sp
 -Alias definitions for templates. See \%\fBhg help templates\fP\: for details.
@@ -13721,7 +13751,7 @@
  user or to a trusted group, as various hgrc features allow arbitrary
  commands to be run. This issue is often encountered when configuring
  hooks or extensions for shared repositories or servers. However,
-@@ -2377,7 +2235,7 @@
+@@ -2422,7 +2280,7 @@
  group with name \fB*\fP. These settings must be placed in an
  \fIalready\-trusted file\fP to take effect, such as \fB$HOME/.hgrc\fP of the
  user or service running Mercurial.
@@ -13730,7 +13760,7 @@
  .TP
  .B \fBusers\fP
  .sp
-@@ -2386,17 +2244,17 @@
+@@ -2431,17 +2289,17 @@
  .B \fBgroups\fP
  .sp
  Comma\-separated list of trusted groups.
@@ -13751,7 +13781,7 @@
  (default: True)
  .TP
  .B \fBaskusername\fP
-@@ -2411,7 +2269,7 @@
+@@ -2456,7 +2314,7 @@
  .sp
  Whether the "clone bundles" feature is enabled.
  .sp
@@ -13760,7 +13790,7 @@
  bundle file from a URL instead of using the normal exchange mechanism.
  .sp
  This can likely result in faster and more reliable clones.
-@@ -2429,7 +2287,7 @@
+@@ -2474,7 +2332,7 @@
  clone, this would add significant and unexpected load to the server
  since the server is expecting clone operations to be offloaded to
  pre\-generated bundles. Failing fast (the default behavior) ensures
@@ -13769,7 +13799,7 @@
  fails.
  .sp
  (default: False)
-@@ -2444,17 +2302,17 @@
+@@ -2489,17 +2347,17 @@
  bundle over another.
  .sp
  The following keys are defined by Mercurial:
@@ -13790,7 +13820,7 @@
  .sp
  Server operators may define custom keys.
  .sp
-@@ -2467,7 +2325,7 @@
+@@ -2512,7 +2370,7 @@
  .sp
  When to colorize output. Possible value are Boolean ("yes" or "no"), or
  "debug", or "always". (default: "yes"). "yes" will use color whenever it
@@ -13799,7 +13829,7 @@
  .TP
  .B \fBcommitsubrepos\fP
  .sp
-@@ -2486,7 +2344,7 @@
+@@ -2531,7 +2389,7 @@
  .TP
  .B \fBfallbackencoding\fP
  .sp
@@ -13808,7 +13838,7 @@
  UTF\-8. (default: ISO\-8859\-1)
  .TP
  .B \fBgraphnodetemplate\fP
-@@ -2510,12 +2368,12 @@
+@@ -2555,12 +2413,12 @@
  .B \fBinterface\fP
  .sp
  Select the default interface for interactive features (default: text).
@@ -13824,7 +13854,7 @@
  This config overrides the interface specified by ui.interface.
  .TP
  .B \fBlogtemplate\fP
-@@ -2525,7 +2383,7 @@
+@@ -2570,7 +2428,7 @@
  .B \fBmerge\fP
  .sp
  The conflict resolution program to use during a manual merge.
@@ -13833,7 +13863,7 @@
  For configuring merge tools see the \fB[merge\-tools]\fP section.
  .TP
  .B \fBmergemarkers\fP
-@@ -2532,7 +2390,7 @@
+@@ -2577,7 +2435,7 @@
  .sp
  Sets the merge conflict marker label styling. The \fBdetailed\fP
  style uses the \fBmergemarkertemplate\fP setting to style the labels.
@@ -13842,7 +13872,7 @@
  One of \fBbasic\fP or \fBdetailed\fP.
  (default: \fBbasic\fP)
  .TP
-@@ -2539,7 +2397,7 @@
+@@ -2584,7 +2442,7 @@
  .B \fBmergemarkertemplate\fP
  .sp
  The template used to print the commit description next to each conflict
@@ -13851,7 +13881,7 @@
  format.
  .sp
  Defaults to showing the hash, tags, branches, bookmarks, author, and
-@@ -2562,7 +2420,7 @@
+@@ -2607,7 +2465,7 @@
  .TP
  .B \fBpaginate\fP
  .sp
@@ -13860,7 +13890,7 @@
  for details.
  .TP
  .B \fBpatch\fP
-@@ -2583,12 +2441,12 @@
+@@ -2628,12 +2486,12 @@
  .sp
  Check for portable filenames. Can be \fBwarn\fP, \fBignore\fP or \fBabort\fP.
  (default: \fBwarn\fP)
@@ -13875,7 +13905,7 @@
  Windows because it contains reserved parts like \fBAUX\fP, reserved
  characters like \fB:\fP, or would cause a case collision with an existing
  file).
-@@ -2595,7 +2453,7 @@
+@@ -2640,7 +2498,7 @@
  .TP
  .B \fBignore\fP
  .sp
@@ -13884,7 +13914,7 @@
  .TP
  .B \fBabort\fP
  .sp
-@@ -2608,9 +2466,7 @@
+@@ -2653,9 +2511,7 @@
  .B \fBfalse\fP
  .sp
  Alias for \fBignore\fP.
@@ -13895,7 +13925,7 @@
  .TP
  .B \fBquiet\fP
  .sp
-@@ -2678,26 +2534,26 @@
+@@ -2723,26 +2579,26 @@
  occurs. Setting this to True will make Mercurial print a traceback
  on all exceptions, even those recognized by Mercurial (such as
  IOError or MemoryError). (default: False)
@@ -13931,7 +13961,7 @@
  <fred@example.com>\fP. Environment variables in the
  username are expanded.
  .sp
-@@ -2709,11 +2565,11 @@
+@@ -2754,11 +2610,11 @@
  .B \fBverbose\fP
  .sp
  Increase the amount of output printed. (default: False)
@@ -13945,7 +13975,7 @@
  run through a webserver (\fBhgweb.cgi\fP and the derivatives for FastCGI
  and WSGI).
  .sp
-@@ -2729,9 +2585,9 @@
+@@ -2774,9 +2630,9 @@
  command line:
  .sp
  .nf
@@ -13957,7 +13987,7 @@
  .fi
  .sp
  Note that this will allow anybody to push anything to the server and
-@@ -2738,7 +2594,7 @@
+@@ -2783,7 +2639,7 @@
  that this should not be used for public servers.
  .sp
  The full set of options is:
@@ -13966,7 +13996,7 @@
  .TP
  .B \fBaccesslog\fP
  .sp
-@@ -2818,13 +2674,13 @@
+@@ -2863,13 +2719,13 @@
  To disable SSL verification temporarily, specify \fB\-\-insecure\fP from
  command line.
  .sp
@@ -13982,7 +14012,7 @@
  \-\-\-\-\-BEGIN CERTIFICATE\-\-\-\-\-
  \&... (certificate in base64 PEM encoding) ...
  \-\-\-\-\-END CERTIFICATE\-\-\-\-\-
-@@ -2831,7 +2687,7 @@
+@@ -2876,7 +2732,7 @@
  \-\-\-\-\-BEGIN CERTIFICATE\-\-\-\-\-
  \&... (certificate in base64 PEM encoding) ...
  \-\-\-\-\-END CERTIFICATE\-\-\-\-\-
@@ -13991,7 +14021,7 @@
  .fi
  .TP
  .B \fBcache\fP
-@@ -2840,7 +2696,7 @@
+@@ -2885,7 +2741,7 @@
  .TP
  .B \fBcertificate\fP
  .sp
@@ -14000,7 +14030,7 @@
  .TP
  .B \fBcollapse\fP
  .sp
-@@ -2912,7 +2768,7 @@
+@@ -2957,7 +2813,7 @@
  .TP
  .B \fBdescription\fP
  .sp
@@ -14009,7 +14039,7 @@
  (default: "unknown")
  .TP
  .B \fBencoding\fP
-@@ -2986,7 +2842,7 @@
+@@ -3031,7 +2887,7 @@
  .TP
  .B \fBprefix\fP
  .sp
@@ -14018,7 +14048,7 @@
  .TP
  .B \fBpush_ssl\fP
  .sp
-@@ -3025,7 +2881,7 @@
+@@ -3070,7 +2926,7 @@
  .sp
  Where to find the HTML templates. The default path to the HTML templates
  can be obtained from \fBhg debuginstall\fP.
@@ -14027,7 +14057,7 @@
  .SS \fBwebsub\fP
  .sp
  Web substitution filter definition. You can use this section to
-@@ -3047,9 +2903,9 @@
+@@ -3092,9 +2948,9 @@
  which in turn imitates the Unix sed replacement syntax:
  .sp
  .nf
@@ -14039,7 +14069,7 @@
  .fi
  .sp
  You can use any separator other than "/". The final "i" is optional
-@@ -3058,12 +2914,12 @@
+@@ -3103,12 +2959,12 @@
  Examples:
  .sp
  .nf
@@ -14054,7 +14084,7 @@
  .fi
  .SS \fBworker\fP
  .sp
-@@ -3070,7 +2926,7 @@
+@@ -3115,7 +2971,7 @@
  Parallel master/worker configuration. We currently perform working
  directory updates in parallel on Unix\-like systems, which greatly
  helps performance.
@@ -14063,7 +14093,7 @@
  .TP
  .B \fBnumcpus\fP
  .sp
-@@ -3081,7 +2937,7 @@
+@@ -3126,7 +2982,7 @@
  .B \fBbackgroundclose\fP
  .sp
  Whether to enable closing file handles on background threads during certain
@@ -14072,7 +14102,7 @@
  handles that have been written or appended to. By performing file closing
  on background threads, file write rate can increase substantially.
  (default: true on Windows, false elsewhere)
-@@ -3089,7 +2945,7 @@
+@@ -3134,7 +2990,7 @@
  .B \fBbackgroundcloseminfilecount\fP
  .sp
  Minimum number of files required to trigger background file closing.
@@ -14081,7 +14111,7 @@
  threads.
  (default: 2048)
  .TP
-@@ -3105,18 +2961,18 @@
+@@ -3150,18 +3006,18 @@
  Number of threads to process background file closes. Only relevant if
  \fBbackgroundclose\fP is enabled.
  (default: 4)
