@@ -48,7 +48,7 @@ stack_info(uintptr_t pc, int signo, void *arg)
 	Dl_info info;
 	void *sym;
 
-	if (dladdr1((void *)pc, &info, &sym, RTLD_DL_SYMENT) != NULL) {
+	if (dladdr1((void *)pc, &info, &sym, RTLD_DL_SYMENT) != 0) {
 		if (strstr(info.dli_fname, ".so") == NULL)
 			*(char **)arg = (char *)info.dli_fname;
 	}
