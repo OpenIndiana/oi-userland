@@ -22,6 +22,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/xorg/modules/$(MACH64)/drivers/vboxvideo_drv.so
+<transform file path=usr/lib/xorg/modules/drivers/$(MACH64)/(.+)$ -> set action.hash usr/lib/xorg/modules/$(MACH64)/drivers/%<\1> >
+
+file path=usr/lib/xorg/modules/drivers/$(MACH64)/vboxvideo_drv.so
 file path=usr/lib/xorg/modules/drivers/vboxvideo_drv.so
 file path=usr/share/man/man7/vboxvideo.7
