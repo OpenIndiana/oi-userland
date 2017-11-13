@@ -221,8 +221,18 @@ if [ -n "$SMF_ACTION" ]; then
         uninstall
         exit
     fi
+
+    if [ "$SMF_ACTION" = refresh ] \
+    && [ "$NVIDIA_VERSION" -gt 0 ] 2>/dev/null \
+    && [ ! -d "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION" ] \
+    ; then
+        echo "NOTE: NVIDIA_VERSION='$NVIDIA_VERSION' previously saved in SMF is no longer available; will try to re-detect something among installed packages" >&2
+        NVIDIA_VERSION="auto"
+    fi
 fi
 
+# In case of SMF refresh, if there was an NVIDIA_VERSION already set up,
+# then it would still be used, unless that driver major version got removed
 case "$NVIDIA_VERSION" in
     none) uninstall; exit ;;
     auto) NVIDIA_VERSION="`detect_best_version`" ;;
