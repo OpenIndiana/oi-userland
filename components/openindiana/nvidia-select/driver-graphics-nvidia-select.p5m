@@ -13,29 +13,21 @@
 # Copyright 2017, Jim Klimov
 #
 
+<transform dir path=usr$ -> default group sys>
+
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
 set name=description value="$(COMPONENT_DESCRIPTION)"
-set name=info.classification value="org.opensolaris.category.2008:Meta Packages/Group Packages" value="org.opensolaris.category.2008:Drivers/Display"
+set name=info.classification value="org.opensolaris.category.2008:Drivers/Display"
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 
 set name=variant.opensolaris.zone value=global value=nonglobal
 
-legacy pkg=NVDAgraphics \
-    desc="X and OpenGL Drivers for NVIDIA Quadro graphics, mediation metapackage" \
-    name="NVIDIA Graphics System Software" vendor="NVIDIA Corporation"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-legacy pkg=NVDAgraphicsr \
-    desc="Kernel Drivers for NVIDIA Quadro graphics, mediation metapackage" \
-    name="NVIDIA Graphics System Device Driver" vendor="NVIDIA Corporation"
-
-depend type=require-any \
-    fmri=pkg:/driver/graphics/nvidia-340 \
-    fmri=pkg:/driver/graphics/nvidia-304 \
-    fmri=pkg:/driver/graphics/nvidia-384 \
-    fmri=pkg:/driver/graphics/nvidia-387
-
-depend type=require \
-    fmri=pkg:/driver/graphics/nvidia-select
+# Delivered as a standalone package to allow future evolution independently
+# of other drivers and metapackages - e.g. to add a service like ogl-select,
+# or increase smartness (or knowledge-base) for guessing the best-fit driver.
+file nvidia-select path=usr/bin/nvidia-select

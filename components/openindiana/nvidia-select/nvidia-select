@@ -1,0 +1,219 @@
+#! /bin/sh
+
+#
+# Select one of the installed mediatable NVidia drivers
+# as the one to run for your current system under BASEDIR.
+# This should be executed as root (or sufficiently privileged user).
+#
+
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+# Copyright 2017, Jim Klimov
+# Portions Copyright 2003-2005 Sun Microsystems, Inc.  All rights reserved.
+#
+
+DRV="nvidia"
+
+# From driver makefiles:
+# NVIDIA_MEDIATOR="mediator=nvidia-drv mediator-implementation=nvidia-drv-proprietary mediator-version=$(NVIDIA_DRIVER_MAJOR_VERSION)"
+MEDIATOR_NAME="nvidia-drv"
+MEDIATOR_IMPL="nvidia-drv-proprietary"
+
+PATH="/usr/sbin:/sbin:/usr/bin:/bin:$PATH"
+LANG=C
+LC_ALL=C
+TZ=UTC
+export PATH LANG LC_ALL TZ
+
+die() {
+    echo "FATAL: $*" >&2
+    exit 1
+}
+
+usage() {
+    cat << EOF
+Usage: $0 [-R dirname] {select VERSION | uninstall}
+    -R dirname  Manipulate system image in an alternate boot
+                environment under dirname
+    uninstall   Remove nvidia driver from driver_aliases (if any)
+    select VER  (Verify that the request is valid, and) Uninstall
+                an existing setup, if any, and add the driver_aliases
+                entries for the chosen major version - if it is
+                installed on your system. Also mediate the symlinks
+                to point to this version's drivers, libraries and
+                other files via default system paths.
+                A version named "auto" (the default) would guess the
+                best driver for you - be careful.
+EOF
+}
+
+uninstall() {
+    if grep "\<nvidia\>" "$BASEDIR"/etc/name_to_major > /dev/null 2>&1 ; then
+        rem_drv -b "$BASEDIR" "$DRV"
+    fi
+}
+
+detect_best_version() {
+    # Return the number after "/usr/share/nvidia-" prefix, which happens
+    # to be part of the IPS mediation tag too.
+    # TODO: Make this smarter, e.g. following prtconf lookup of existing
+    # devices and matching against provided driver_aliases snippets, and
+    # then pick the newest candidate. At a later point this can refer to
+    # some sort of database of some known device-vs-driver best matches.
+
+    ls -1d "$BASEDIR"/usr/share/nvidia-* \
+        | sed 's,^.*/nvidia-,,' | sort -n | tail -1
+}
+
+check_add_drv()
+{
+# Function: check_add_drv()
+#
+# This function will check if the module has an entry in etc/name_to_major
+# If not simply calls add_drv with the arguments given. If there is
+# such an entry in name_to_major file, it adds entries in driver_aliases
+# driver_classes and minor_perm if necessary.
+# The syntax of this function is the same as add_drv.
+
+    alias=""
+    class=""
+    ADD_ALIAS=0
+    ADD_CLASS=0
+    ADD_MINOR=0
+    OPTIND=1
+    IS_NET_DRIVER=0
+
+    cmd="add_drv"
+
+    NO_CMD=
+    while getopts i:b:m:c:N  opt
+    do
+        case $opt in
+            N ) NO_CMD=1;;
+            i ) ADD_ALIAS=1
+                alias="$OPTARG"
+                cmd="$cmd -i '$alias'"
+                ;;
+            m ) ADD_MINOR=1
+                minor="$OPTARG"
+                cmd="$cmd -m '$minor'"
+                ;;
+            c)  ADD_CLASS=1
+                class="$OPTARG"
+                cmd="$cmd -c $class"
+                ;;
+            b)  BASEDIR="$OPTARG"
+                cmd="$cmd -b $BASEDIR"
+                ;;
+            \?)     echo "check_add_drv can not handle this option"
+                return
+                ;;
+            esac
+    done
+    shift "`/usr/bin/expr $OPTIND - 1`"
+
+    drvname="$1"
+    cmd="$cmd $drvname"
+    drvname="`echo $drvname | /usr/bin/sed 's;.*/;;g'`"
+
+    /usr/bin/grep "^$drvname[   ]" $BASEDIR/etc/name_to_major >  /dev/null 2>&1
+
+    if [ "$NO_CMD" = "" -a $? -ne 0 ]
+    then
+        eval $cmd
+    else
+        # entry already in name_to_major, add alias, class, minorperm
+        # if necessary
+        if [ $ADD_ALIAS = 1 ]
+        then
+            for i in $alias
+            do
+                /usr/bin/egrep "^$drvname[  ]+$i" $BASEDIR/etc/driver_aliases>/dev/null 2>&1
+                if [ $? -ne 0 ]
+                then
+                    echo "$drvname $i" >> $BASEDIR/etc/driver_aliases
+                fi
+            done
+        fi
+
+        if [ $ADD_CLASS = 1 ]
+        then
+            /usr/bin/egrep "^$drvname[  ]+$class( | |$)" $BASEDIR/etc/driver_classes > /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                echo "$drvname\t$class" >> $BASEDIR/etc/driver_classes
+            fi
+        fi
+
+        if [ $ADD_MINOR = 1 ]
+        then
+            /usr/bin/grep "^$drvname:" $BASEDIR/etc/minor_perm > /dev/null 2>&1
+            if [ $? -ne 0 ]
+            then
+                minorentry="$drvname:$minor"
+                echo $minorentry >> $BASEDIR/etc/minor_perm
+            fi
+        fi
+    fi
+}
+
+
+if [ -z "${BASEDIR-}" ]; then
+    BASEDIR="/"
+fi
+
+if [ -z "${NVIDIA_VERSION-}" ]; then
+    NVIDIA_VERSION="auto"
+fi
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -h|--help|-help) usage ; exit 0 ;;
+        -R) BASEDIR="$2"; shift ;;
+        select) NVIDIA_VERSION="$2"; shift ;;
+        uninstall) NVIDIA_VERSION="none" ;;
+        *)  die "Unsuported argument: $1" ;;
+    esac
+    shift
+done
+
+[ -d "$BASEDIR" ] || \
+    die "Non-existent BASEDIR requested: $BASEDIR"
+
+case "$NVIDIA_VERSION" in
+    none) uninstall; exit ;;
+    auto) NVIDIA_VERSION="`detect_best_version`" ;;
+    nvidia-[0-9]*)
+        NVIDIA_VERSION="`echo "$NVIDIA_VERSION" | sed 's,^nvidia-,,'`" ;;
+esac
+
+if [ -z "$NVIDIA_VERSION" ] \
+|| [ ! -d "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION" ] \
+; then
+    die "Could not detect an NVIDIA_VERSION, or it is not installed: " \
+        "got '$NVIDIA_VERSION'"
+fi
+
+uninstall
+
+ALTROOT_FLAG=""
+[ "$BASEDIR" = "/" ] || ALTROOT_FLAG="chroot '$BASEDIR'"
+
+$ALTROOT_FLAG /usr/bin/pkg set-mediator -I "$MEDIATOR_IMPL" --no-backup-be --deny-new-be --no-be-activate -V "$NVIDIA_VERSION" "$MEDIATOR_NAME" \
+    || die "Failed to select mediator version $NVIDIA_VERSION"
+
+# This file is provided by each nvidia-XYZ package we ship
+if [ -s "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" ] ; then
+    ALIASES="`cat "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" | tr '[\\\n]' ' '`"
+    check_add_drv -b "${BASEDIR}" -i "${ALIASES}" \
+        -m '* 0666 root root' "${DRV}"
+    touch "${BASEDIR}/reconfigure"
+fi
