@@ -179,13 +179,14 @@ fi
 [ -n "${SMF_FMRI-}" ] || SMF_FMRI="svc:/system/nvidia-select:default"
 
 SMF_ACTION=""
+USER_ACTION=""
 UPDATE_SMF="no"
 while [ "$#" -gt 0 ]; do
     case "$1" in
         -h|--help|-help) usage ; exit 0 ;;
         -R) BASEDIR="$2"; shift ;;
-        select) NVIDIA_VERSION="$2"; shift ;;
-        uninstall) NVIDIA_VERSION="none" ;;
+        select) USER_ACTION="$1"; NVIDIA_VERSION="$2"; shift ;;
+        uninstall) USER_ACTION="$1"; NVIDIA_VERSION="none" ;;
         --update-smf) UPDATE_SMF="yes" ;;
         start|refresh) SMF_ACTION="$1" ;;
         stop) exit 0 ;;
