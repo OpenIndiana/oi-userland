@@ -97,18 +97,11 @@ install_mv_bigdirs_32:	install_reloc_32
 	    X11/lib/NVIDIA \
 	    X11/lib/modules/extensions/NVIDIA \
 	    X11/lib/modules/NVIDIA \
-	; do \
-	    mv -f "$(PROTO_DIR)/usr/$$i" \
-	        "$(PROTO_DIR)/usr/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
-	    && ln -s "NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/$$i" \
-	    || exit ; \
-	done
-	for i in \
 	    share/nvidia \
 	; do \
 	    mv -f "$(PROTO_DIR)/usr/$$i" \
 	        "$(PROTO_DIR)/usr/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
-	    && ln -s "nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/$$i" \
+	    && ln -s "`basename $$i`-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/$$i" \
 	    || exit ; \
 	done
 
