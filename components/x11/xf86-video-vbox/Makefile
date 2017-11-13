@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= xf86-video-vbox
 # Use version string from Xorg module
 COMPONENT_VERSION= 1.0.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-vbox - VirtualBox UMS driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
