@@ -193,7 +193,11 @@ install_headers_32:	install_reloc_32
 	cp $(COMPONENT_DIR)/Solaris/vdp*.h "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau"
 	ln -s "NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/X11/include/NVIDIA"
 
-$(INSTALL_32):	$(BUILD_32) install_drv_32 install_mv_bigdirs_32 install_mv_desktop_32 install_mv_tools_32 install_mv_X11drv_32 install_headers_32
+# Help to register PCI IDs served by this driver with nvidia-select
+install_driver_aliases_32:	install_mv_bigdirs_32
+	$(SHELL) $(COMPONENT_DIR)/print-pci-ids.sh $(SOURCE_DIR) >> "$(PROTO_DIR)/usr/share/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION)/driver_aliases.txt"
+
+$(INSTALL_32):	$(BUILD_32) install_drv_32 install_mv_bigdirs_32 install_mv_desktop_32 install_mv_tools_32 install_mv_X11drv_32 install_headers_32 install_driver_aliases_32
 	$(TOUCH) $@
 
 $(SAMPLE_MANIFEST_FILE):	sample-manifest
@@ -204,9 +208,6 @@ $(SAMPLE_MANIFEST_FILE).nvidia:	$(SAMPLE_MANIFEST_FILE)
 	    -e 's,^\(link .*[^\\]\)$$,\1 $$\(NVIDIA_MEDIATOR\),g' \
 	    -e 's,^\(    target=.*[^\\]\)$$, \1 $$\(NVIDIA_MEDIATOR\),g' \
 	    < $< > $@
-	( echo ""; echo "##### Register PCI IDs served by this driver"; echo ""; \
-	  echo 'driver name=nvidia perms="* 0666 root root" \' ) >> $@
-	$(SHELL) $(COMPONENT_DIR)/print-pci-ids.sh $(SOURCE_DIR) >> $@
 
 sample-manifest-nvidia: $(SAMPLE_MANIFEST_FILE).nvidia
 
