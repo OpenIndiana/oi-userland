@@ -174,12 +174,17 @@ if [ -z "${NVIDIA_VERSION-}" ]; then
     NVIDIA_VERSION="auto"
 fi
 
+[ -n "${SMF_FMRI-}" ] || SMF_FMRI="svc:/system/nvidia-select:default"
+
+SMF_ACTION=""
 while [ "$#" -gt 0 ]; do
     case "$1" in
         -h|--help|-help) usage ; exit 0 ;;
         -R) BASEDIR="$2"; shift ;;
         select) NVIDIA_VERSION="$2"; shift ;;
         uninstall) NVIDIA_VERSION="none" ;;
+        start|refresh) SMF_ACTION="$1" ;;
+        stop) exit 0 ;;
         *)  die "Unsuported argument: $1" ;;
     esac
     shift
@@ -188,12 +193,36 @@ done
 [ -d "$BASEDIR" ] || \
     die "Non-existent BASEDIR requested: $BASEDIR"
 
+NVIDIA_VERSION_SMF=""
+if [ -n "$SMF_ACTION" ]; then
+    svccfg -s "$SMF_FMRI" addpg options 2>/dev/null || true
+    NVIDIA_VERSION_SMF="`svcprop -p options/NVIDIA_VERSION $SMF_FMRI`" \
+        && [ -n "$NVIDIA_VERSION_SMF" ] && NVIDIA_VERSION="$NVIDIA_VERSION_SMF"
+
+    if [ "$SMF_ACTION" = start ] \
+    && [ -d "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION" ] \
+    ; then
+        # Driver already at a defined major version, and it is still installed
+        exit 0
+    fi
+
+    if [ "$SMF_ACTION" = refresh ] \
+    && [ -z "`ls -1d "$BASEDIR/usr/share/nvidia-"{0,1,2,3,4,5,6,7,8,9}* 2>/dev/null`" ] \
+    ; then
+        # Last driver removed
+        svccfg -s "$SMF_FMRI" setprop "options/NVIDIA_VERSION" = astring: auto
+        uninstall
+        exit
+    fi
+fi
+
 case "$NVIDIA_VERSION" in
     none) uninstall; exit ;;
     auto) NVIDIA_VERSION="`detect_best_version`" ;;
     nvidia-[0-9]*)
         NVIDIA_VERSION="`echo "$NVIDIA_VERSION" | sed 's,^nvidia-,,'`" ;;
 esac
+
 
 if [ -z "$NVIDIA_VERSION" ] \
 || [ ! -d "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION" ] \
@@ -216,4 +245,9 @@ if [ -s "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" ] ; then
     check_add_drv -b "${BASEDIR}" -i "${ALIASES}" \
         -m '* 0666 root root' "${DRV}"
     touch "${BASEDIR}/reconfigure"
+fi
+
+if [ -n "$SMF_ACTION" ]; then
+    svccfg -s "$SMF_FMRI" setprop "options/NVIDIA_VERSION" = astring: "$NVIDIA_VERSION" \
+        || die "Failed to remember NVIDIA_VERSION='$NVIDIA_VERSION' into SMF properties for '$SMF_FMRI'"
 fi
