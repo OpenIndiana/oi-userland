@@ -13,41 +13,46 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
-COMPONENT_VERSION= 1.6.0
+COMPONENT_VERSION= 1.6.1
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2fac9e7be7e9424b2c5570d8affe568db39f7572c10ed48d4e13cddf03f7097f
+  sha256:bef0d9c0fef2e4e8746956b68e4d6c6641f6b85bd2908d91731efb68eba9e3f5
 COMPONENT_ARCHIVE_URL= \
-  http://www.abisource.com/downloads/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.abisource.com/projects/enchant/
-COMPONENT_LICENSE_FILE = COPYING.LIB
+  https://github.com/AbiWord/enchant/releases/download/enchant-1-6-1/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://abiword.github.io/enchant/
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_FMRI = library/spell-checking/enchant
 COMPONENT_CLASSIFICATION = Applications/Accessories
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --copy --force &&\
-					aclocal -I ac-helpers &&\
-					automake -c -f -a &&\
-					autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -vif )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --with-myspell-dir=/usr/share/spell/myspell
 CONFIGURE_OPTIONS += --disable-aspell
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += OBJC=$(CC)
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# C tests pass but we do not have unittest-cpp
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += text/hunspell
