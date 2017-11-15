@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 COMPONENT_VERSION=	7.4p1
+COMPONENT_REVISION=	1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
@@ -88,9 +89,9 @@ CONFIGURE_OPTIONS += --bindir=/usr/bin
 CONFIGURE_OPTIONS += --disable-lastlog
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # Because of certain set up requirement, the regress test suite is ported to
 # the STC gate.
