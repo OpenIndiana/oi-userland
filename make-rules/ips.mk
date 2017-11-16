@@ -62,6 +62,10 @@ GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-libs
 
+ifneq ($(GCC_ROOT), /usr/gcc/4.9)
+PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-gcc-usr-lib
+endif
+
 COMPARISON_TRANSFORMS +=	$(WS_TOP)/transforms/comparison-cleanup
 COMPARISON_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 
