@@ -17,13 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	52.4.1esr
-IPS_COMPONENT_VERSION= 	52.4.1
+COMPONENT_VERSION= 	52.5.0esr
+IPS_COMPONENT_VERSION= 	52.5.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:96fab11b7e5bd016f80718161ee8dd8afdf989a2cd03106a148b15def2569457
+  sha256:0e583576f6bbdc9d863656c43b8c97a60f276725bca20459b7511e2afacac85f
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -39,8 +39,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
                           cd $(@D)/js/src && autoconf-2.13 )
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR); chmod +x $(BUILD_DIR)/gld-wrapper )
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 CONFIGURE_OPTIONS =	--enable-application=browser
 CONFIGURE_OPTIONS +=	--enable-official-branding
