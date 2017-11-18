@@ -46,7 +46,7 @@ builtin printf
 #
 function fetch_repo
 {
-    pfexec pkg publisher -Ha > /tmp/repo_temp_store 2>>$err_log
+    pfexec pkg publisher -H > /tmp/repo_temp_store 2>>$err_log
     if [ $? -ne 0 ]; then
         print -u2 "$0: Error found when getting repo list"
         exit 1
