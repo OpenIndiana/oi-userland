@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		qt
 COMPONENT_FMRI=		library/qt4
 COMPONENT_VERSION=	4.8.7
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_VERSION_MJR=	4.8
 COMPONENT_LICENSE=	QT4
 COMPONENT_LICENSE_FILE=	qt4.license
@@ -34,7 +34,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):/usr/bin
+PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):$(GCC_ROOT)/bin:/usr/bin
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D))
@@ -42,6 +42,11 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D))
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 COMPONENT_INSTALL_ENV+=	INSTALL_ROOT=$(PROTO_DIR)
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS=	-prefix /usr/lib/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MJR)
 CONFIGURE_OPTIONS.32=	-bindir /usr/lib/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MJR)/bin
@@ -81,7 +86,7 @@ COMPONENT_POST_INSTALL_ACTION.32= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSI
 	cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR); \
 	mv tests tests.32 ; \
 	find $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/tests.32 -type f | \
-		xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib"')
+	xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "$(GCC_ROOT)/lib:/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib"')
 	
 
 COMPONENT_POST_INSTALL_ACTION.64= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/mkspecs ; \
@@ -91,7 +96,7 @@ COMPONENT_POST_INSTALL_ACTION.64= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSI
 	mv tests.32 tests; \
 	mv tests.64 tests/$(MACH64); \
 	find $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/tests/$(MACH64) -type f | \
-		xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib/$(MACH64)"')
+	xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "$(GCC_ROOT)/lib/$(MACH64):/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib/$(MACH64)"')
 
 COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
@@ -101,12 +106,14 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += database/mariadb-101/library
+# Build dependencies
 REQUIRED_PACKAGES += database/postgres-94/developer
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer
@@ -118,8 +125,8 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
