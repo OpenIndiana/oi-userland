@@ -26,6 +26,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=etc/.* -> default mode 0644>
 
 file files/asterisk.xml path=lib/svc/manifest/network/asterisk.xml
+file files/asterisk path=lib/svc/method/asterisk
 
 group groupname="asterisk" gid=82
 user group=asterisk username=asterisk uid=82
@@ -34,15 +35,16 @@ dir  path=var/lib/asterisk/agi-bin
 dir  path=var/lib/asterisk/keys
 dir  path=var/lib/asterisk/documentation/thirdparty
 dir  path=var/lib/asterisk/firmware/iax
-dir  path=var/spool/asterisk/tmp
-dir  path=var/spool/asterisk/voicemail/default/1234/INBOX
-dir  path=var/spool/asterisk/dictate
-dir  path=var/spool/asterisk/monitor
-dir  path=var/spool/asterisk/system
-dir  path=var/spool/asterisk/meetme
-dir  path=var/log/asterisk/cdr-csv
-dir  path=var/log/asterisk/cel-custom
-dir  path=var/log/asterisk/cdr-custom
+dir  path=var/spool/asterisk/tmp owner=asterisk group=asterisk
+dir  path=var/spool/asterisk/voicemail/default/1234/INBOX owner=asterisk group=asterisk
+dir  path=var/spool/asterisk/dictate owner=asterisk group=asterisk
+dir  path=var/spool/asterisk/monitor owner=asterisk group=asterisk
+dir  path=var/spool/asterisk/system owner=asterisk group=asterisk
+dir  path=var/spool/asterisk/meetme owner=asterisk group=asterisk
+dir  path=var/log/asterisk/cdr-csv owner=asterisk group=asterisk
+dir  path=var/log/asterisk/cel-custom owner=asterisk group=asterisk
+dir  path=var/log/asterisk/cdr-custom owner=asterisk group=asterisk
+dir  path=var/log/asterisk owner=asterisk group=asterisk
 
 file path=etc/asterisk/acl.conf
 file path=etc/asterisk/adsi.conf
