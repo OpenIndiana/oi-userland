@@ -14,8 +14,6 @@
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=		import_profiler
 COMPONENT_VERSION=	0.0.3
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/import-profiler
@@ -31,9 +29,9 @@ COMPONENT_LICENSE=       MIT
 
 PYTHON_VERSIONS=	2.7 3.4
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_FETCH_USER_AGENT=wget
 
@@ -47,5 +45,6 @@ install:	$(INSTALL_32)
 
 test:           $(NO_TEST)
 
-REQUIRED_PACKAGES += runtime/python-$(PYVER)
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += system/library
