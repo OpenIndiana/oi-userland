@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gmtp
-COMPONENT_VERSION=	1.3.10
+COMPONENT_VERSION=	1.3.11
 COMPONENT_PROJECT_URL=	http://gmtp.sourceforge.net/
 COMPONENT_SUMMARY=	A simple MP3 and Media player client for UNIX and UNIX like systems
 COMPONENT_FMRI=		system/media/gmtp
@@ -23,22 +23,25 @@ COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b21b9a8e66ae7bb09fc70ac7e317a0e32aff3917371a7241dea73c41db1dd13b
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/gmtp/files/gMTP-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+  sha256:5a830c9c448aa2caf7a844aaa9ba38c2ac0239547366c1e6874e0080bd5f0613
+COMPONENT_ARCHIVE_URL= \
+  http://sourceforge.net/projects/gmtp/files/gMTP-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-gtk3
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
