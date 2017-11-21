@@ -1,0 +1,86 @@
+--- samba-4.4.16/lib/replace/wscript.1	2017-11-21 20:38:13.955999198 +0000
++++ samba-4.4.16/lib/replace/wscript	2017-11-21 20:39:00.934646318 +0000
+@@ -391,14 +391,11 @@
+         else:
+             # Some hosts need lib iconv for linking with lib intl
+             # So we try with flags just in case it helps.
+-            oldflags = list(conf.env['EXTRA_LDFLAGS']);
+-            conf.env['EXTRA_LDFLAGS'].extend(["-liconv"])
+             conf.CHECK_FUNCS_IN('dgettext gettext bindtextdomain textdomain bind_textdomain_codeset',
+                                 'intl', checklibc=False, headers='libintl.h')
+-            conf.env['EXTRA_LDFLAGS'] = oldflags
+             if conf.env['HAVE_GETTEXT'] and conf.env['HAVE_DGETTEXT']:
+                 # save for dependency definitions
+-                conf.env.intl_libs='iconv intl'
++                conf.env.intl_libs='intl'
+ 
+     # did we find both prototypes and a library to link against?
+     # if not, unset the detected values (see Bug #9911)
+--- samba-4.4.16/source3/wscript.1	2017-11-21 20:52:31.020799872 +0000
++++ samba-4.4.16/source3/wscript	2017-11-21 20:56:12.712418627 +0000
+@@ -896,7 +896,7 @@
+ 
+     if Options.options.with_iconv:
+         conf.env.with_iconv = True
+-        if not conf.CHECK_FUNCS_IN('iconv_open', 'iconv', headers='iconv.h'):
++        if not conf.CHECK_FUNCS('iconv_open', headers='iconv.h'):
+             conf.env.with_iconv = False
+         if conf.env.with_iconv:
+             conf.DEFINE('HAVE_ICONV', 1)
+--- samba-4.4.16/buildtools/wafsamba/samba_conftests.py.1	2017-11-21 21:18:07.258674078 +0000
++++ samba-4.4.16/buildtools/wafsamba/samba_conftests.py	2017-11-21 21:19:02.582733588 +0000
+@@ -74,7 +74,7 @@
+ def CHECK_ICONV(conf, define='HAVE_NATIVE_ICONV'):
+     '''check if the iconv library is installed
+        optionally pass a define'''
+-    if conf.CHECK_FUNCS_IN('iconv_open', 'iconv', checklibc=True, headers='iconv.h'):
++    if conf.CHECK_FUNCS('iconv_open', headers='iconv.h'):
+         conf.DEFINE(define, 1)
+         return True
+     return False
+@@ -155,7 +155,6 @@
+                            define=define,
+                            execute=True,
+                            msg=msg,
+-                           lib='iconv',
+                            headers=headers)
+ 
+ def find_config_dir(conf):
+--- samba-4.4.16/lib/util/charset/wscript_configure.~1~	2016-01-26 14:45:46.000000000 +0000
++++ samba-4.4.16/lib/util/charset/wscript_configure	2017-11-21 21:30:46.905897540 +0000
+@@ -8,11 +8,9 @@
+ # managed to link when specifying -liconv a executable even if there is no
+ # libiconv.so or libiconv.a
+ 
+-conf.CHECK_LIB(libs="iconv", shlib=True)
++# conf.CHECK_LIB(libs="iconv", shlib=True)
+ 
+ #HP-UX can use libiconv as an add-on package, which has #define iconv_open libiconv_open
+-if (conf.CHECK_FUNCS_IN('iconv_open', 'iconv', checklibc=False, headers='iconv.h') or
+-    conf.CHECK_FUNCS_IN('libiconv_open', 'iconv', checklibc=False, headers='iconv.h') or 
+-    conf.CHECK_FUNCS('iconv_open', headers='iconv.h')):
++if conf.CHECK_FUNCS('iconv_open', headers='iconv.h'):
+     
+     conf.DEFINE('HAVE_NATIVE_ICONV', 1)
+--- samba-4.4.16/source4/torture/local/wscript_build.1	2017-11-21 21:40:04.260192120 +0000
++++ samba-4.4.16/source4/torture/local/wscript_build	2017-11-21 21:40:15.971925595 +0000
+@@ -21,7 +21,7 @@
+ 	nss_tests.c
+ 	fsrvp_state.c'''
+ 
+-TORTURE_LOCAL_DEPS = 'RPC_NDR_ECHO TDR LIBCLI_SMB MESSAGING iconv POPT_CREDENTIALS TORTURE_AUTH TORTURE_UTIL TORTURE_NDR TORTURE_LIBCRYPTO share torture_registry PROVISION ldb samdb replace-test RPC_FSS_STATE'
++TORTURE_LOCAL_DEPS = 'RPC_NDR_ECHO TDR LIBCLI_SMB MESSAGING POPT_CREDENTIALS TORTURE_AUTH TORTURE_UTIL TORTURE_NDR TORTURE_LIBCRYPTO share torture_registry PROVISION ldb samdb replace-test RPC_FSS_STATE'
+ 
+ bld.SAMBA_MODULE('TORTURE_LOCAL',
+ 	source=TORTURE_LOCAL_SOURCE,
+--- samba-4.4.16/lib/util/charset/wscript_build.1	2017-11-21 21:45:57.437333352 +0000
++++ samba-4.4.16/lib/util/charset/wscript_build	2017-11-21 21:46:29.161218029 +0000
+@@ -2,7 +2,7 @@
+ 
+ bld.SAMBA_SUBSYSTEM('ICONV_WRAPPER',
+                     source='iconv.c',
+-                    public_deps='iconv replace talloc')
++                    public_deps='replace talloc')
+ 
+ bld.SAMBA_SUBSYSTEM('charset',
+                     public_headers='charset.h',
