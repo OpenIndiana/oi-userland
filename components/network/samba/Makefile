@@ -45,6 +45,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.4.16
+COMPONENT_REVISION=	1
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
@@ -261,7 +262,6 @@ clean::
 	$(RM) -r $(BUILD_DIR)
 
 REQUIRED_PACKAGES += library/file-monitor/gamin
-REQUIRED_PACKAGES += library/gnu-libiconv
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
