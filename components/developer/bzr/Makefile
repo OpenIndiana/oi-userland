@@ -45,5 +45,5 @@ install:        $(INSTALL_64)
 test:           $(NO_TEST)
 
 REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/import-profiler-27
 REQUIRED_PACKAGES += runtime/python-27
-
