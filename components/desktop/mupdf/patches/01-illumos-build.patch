@@ -1,0 +1,88 @@
+--- mupdf-1.11-source/Makerules.orig	2017-11-22 21:28:42.240754238 +0000
++++ mupdf-1.11-source/Makerules	2017-11-22 21:45:37.561993195 +0000
+@@ -5,6 +5,7 @@
+ OS := $(OS:MSYS%=MINGW)
+ OS := $(OS:Windows_NT=MINGW)
+ OS := $(OS:Darwin=MACOS)
++OS := $(OS:SunOS=Sun)
+ 
+ HAVE_LIBDL ?= yes
+ 
+@@ -13,11 +14,15 @@
+ 
+ ifeq (,$(findstring -fembed-bitcode,$(XCFLAGS)))
+ # clang does not support these in combination with -fembed-bitcode
++ifneq "$(OS)" "Sun"
+ CFLAGS += -ffunction-sections -fdata-sections
+ endif
++endif
+ 
+ ifeq "$(OS)" "MACOS"
+ LDREMOVEUNREACH := -Wl,-dead_strip
++else ifeq "$(OS)" "Sun"
++LDREMOVEUNREACH := -z ignore
+ else
+ LDREMOVEUNREACH := -Wl,--gc-sections
+ endif
+@@ -159,6 +164,61 @@
+ SYS_LIBJPEG_LIBS := -ljpeg
+ SYS_ZLIB_LIBS := -lz
+ 
++# SunOS uses pkg-config for system libraries.
++else ifeq "$(OS)" "Sun"
++
++HAVE_PTHREAD := yes
++SYS_PTHREAD_CFLAGS :=
++SYS_PTHREAD_LIBS := -lpthread
++
++ifeq "$(shell pkg-config --exists 'libcrypto <= 1.0.1t' && echo yes)" "yes"
++HAVE_LIBCRYPTO := yes
++SYS_LIBCRYPTO_CFLAGS := -DHAVE_LIBCRYPTO $(shell pkg-config --cflags libcrypto)
++SYS_LIBCRYPTO_LIBS := $(shell pkg-config --libs libcrypto)
++endif
++
++ifeq "$(shell pkg-config --exists libcurl && echo yes)" "yes"
++HAVE_CURL := yes
++SYS_CURL_CFLAGS := $(shell pkg-config --cflags libcurl)
++SYS_CURL_LIBS := $(shell pkg-config --libs libcurl)
++ifeq "$(shell pkg-config --exists openssl && echo yes)" "yes"
++HAVE_OPENSSL_SSL := yes
++SYS_CURL_CFLAGS += $(shell pkg-config --cflags openssl)
++SYS_CURL_DEPS += $(shell pkg-config --libs openssl)
++endif
++endif
++SYS_CURL_DEPS += -lpthread -lrt
++
++ifeq "$(shell pkg-config --exists x11 xext && echo yes)" "yes"
++HAVE_X11 := yes
++SYS_X11_CFLAGS := $(shell pkg-config --cflags x11 xext)
++SYS_X11_LIBS := $(shell pkg-config --libs x11 xext)
++endif
++
++ifeq "$(shell pkg-config --exists harfbuzz && echo yes)" "yes"
++SYS_HARFBUZZ_CFLAGS := $(shell pkg-config --cflags harfbuzz)
++SYS_HARFBUZZ_LIBS := $(shell pkg-config --libs harfbuzz)
++endif
++
++ifeq "$(shell pkg-config --exists freetype2 && echo yes)" "yes"
++SYS_FREETYPE_CFLAGS := $(shell pkg-config --cflags freetype2)
++SYS_FREETYPE_LIBS := $(shell pkg-config --libs freetype2)
++endif
++
++ifeq "$(shell pkg-config --exists libopenjp2 && echo yes)" "yes"
++SYS_OPENJPEG_CFLAGS := $(shell pkg-config --cflags libopenjp2)
++SYS_OPENJPEG_LIBS := $(shell pkg-config --libs libopenjp2)
++endif
++
++SYS_JBIG2DEC_LIBS := -ljbig2dec
++SYS_LIBJPEG_LIBS := -ljpeg
++SYS_ZLIB_LIBS := -lz
++
++SOEXT = .so
++CFLAGS += -std=c99 -fPIC
++CFLAGS += -D_XOPEN_SOURCE=600
++SFLAG = -shared -fPIC
++
+ endif
+ 
+ # The following section is an example of how to simply do cross-compilation
