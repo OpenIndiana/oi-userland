@@ -20,7 +20,7 @@ COMPONENT_NAME=		clamav
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
 COMPONENT_VERSION=	0.99.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
