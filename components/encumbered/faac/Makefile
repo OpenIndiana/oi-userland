@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= faac
 COMPONENT_VERSION= 1.28
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Reference encoder and encoding library for MPEG2/4 AAC
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,10 +31,10 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_FMRI = audio/faac
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -49,3 +50,9 @@ CONFIGURE_OPTIONS += --with-mp4v2
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
