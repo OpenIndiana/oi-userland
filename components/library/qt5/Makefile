@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           qt
 COMPONENT_VERSION=        5.8.0
-COMPONENT_REVISION=       3
+COMPONENT_REVISION=       4
 COMPONENT_VERSION_MJR=    5.8
 COMPONENT_FMRI=           library/qt5
 COMPONENT_PROJECT_URL=    https://www.qt.io/
@@ -37,7 +37,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):/usr/gnu/bin:/usr/bin
+PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):$(GCC_ROOT)/bin:$(PATH.gnu)
 
 QT_PREFIX=$(USRLIBDIR)/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MJR)
 
@@ -45,6 +45,11 @@ QT_ARCHSUBDIR.32=
 QT_ARCHSUBDIR.64=$(MACH64)
 QT_PLATFORM.32= solaris-g++
 QT_PLATFORM.64= solaris-g++-64
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS = -prefix $(QT_PREFIX)
 CONFIGURE_OPTIONS+= -verbose
@@ -82,16 +87,18 @@ QT_EGLSORPATH=$(shell realpath -m --relative-to=$(QT_EGLDIR) $(QT_XORGDIR))
 # Set relative runpath to eql libraries
 QT_DRMSORPATH=$(shell realpath -m --relative-to=$(QT_LIBDIR) $(QT_XORGDIR))
 
+GCC_LIBDIR=$(GCC_ROOT)/lib/$(ARCHLIBSUBDIR)
+
 COMPONENT_POST_INSTALL_ACTION= ( \
-/usr/bin/elfedit -e 'dyn:runpath "$$ORIGIN/$(QT_QTSQLRPATH):$$ORIGIN/$(QT_MYSQLRPATH)"' \
+/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$$ORIGIN/$(QT_QTSQLRPATH):$$ORIGIN/$(QT_MYSQLRPATH)"' \
 	$(PROTO_DIR)$(QT_SQLDIR)/libqsqlmysql.so; \
-/usr/bin/elfedit -e 'dyn:runpath "$$ORIGIN/$(QT_QTSQLRPATH):$$ORIGIN/$(QT_PGSQLRPATH)"' \
+/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$$ORIGIN/$(QT_QTSQLRPATH):$$ORIGIN/$(QT_PGSQLRPATH)"' \
 	$(PROTO_DIR)$(QT_SQLDIR)/libqsqlpsql.so; \
-/usr/bin/elfedit -e 'dyn:runpath "$$ORIGIN/$(QT_QTEGLRPATH):$$ORIGIN/$(QT_EGLSORPATH)"' \
+/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$$ORIGIN/$(QT_QTEGLRPATH):$$ORIGIN/$(QT_EGLSORPATH)"' \
 	$(PROTO_DIR)$(QT_EGLDIR)/libqeglfs-kms-integration.so; \
-/usr/bin/elfedit -e 'dyn:runpath "$$ORIGIN/$(QT_QTEGLRPATH):$$ORIGIN/$(QT_EGLSORPATH)"' \
+/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$$ORIGIN/$(QT_QTEGLRPATH):$$ORIGIN/$(QT_EGLSORPATH)"' \
 	$(PROTO_DIR)$(QT_EGLDIR)/libqeglfs-kms-egldevice-integration.so; \
-/usr/bin/elfedit -e 'dyn:runpath "$$ORIGIN:$$ORIGIN/$(QT_DRMSORPATH)"' \
+/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$$ORIGIN:$$ORIGIN/$(QT_DRMSORPATH)"' \
 	$(PROTO_DIR)$(QT_LIBDIR)/libQt5EglFsKmsSupport.so.$(COMPONENT_VERSION); \
 )
 
@@ -108,9 +115,9 @@ REQUIRED_PACKAGES += x11/keyboard/data-xkb
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += database/mariadb-101/library
-REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
@@ -125,6 +132,7 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
@@ -136,7 +144,6 @@ REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/hunspell
-REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
