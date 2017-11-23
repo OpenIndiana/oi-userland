@@ -14,6 +14,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ldns
 COMPONENT_VERSION=	1.6.17
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:8b88e059452118e8949a2752a55ce59bc71fa5bc414103e17f5b6b06f9bcc8cd
@@ -24,15 +25,19 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Missing files in build dir for tests without this.
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CONFIGURE_OPTIONS +=    --with-examples
 CONFIGURE_OPTIONS +=    --with-drill
 CONFIGURE_OPTIONS +=	--disable-static
 
-build:          $(BUILD_32)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_32_and_64)
 
-test:           $(TESTS_32)
+test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
