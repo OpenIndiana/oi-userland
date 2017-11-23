@@ -64,3 +64,19 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += audio/lame
+REQUIRED_PACKAGES += audio/twolame
+REQUIRED_PACKAGES += codec/opencore-amr
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/audio/liba52
+REQUIRED_PACKAGES += library/audio/libcdio
+REQUIRED_PACKAGES += library/audio/libmad
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/video/libdvdread
+REQUIRED_PACKAGES += library/video/libmpeg2
+REQUIRED_PACKAGES += library/video/x264
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/orc
