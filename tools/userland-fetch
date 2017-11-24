@@ -230,6 +230,14 @@ def download_paths(search, filename, url):
     if url is not None and url not in urls:
         urls.append(url)
 
+    # last resort path
+    if filename is not None:
+        tmp = os.getenv('DOWNLOAD_FALLBACK_PATH')
+        if tmp:
+            file = os.path.basename(filename)
+
+            urls += [base + '/' + file for base in tmp.split(' ')]
+
     return urls
 
 
