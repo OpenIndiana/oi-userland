@@ -44,10 +44,15 @@ PATH = $(PATH.illumos)
 #EXTERNAL_ARCHIVE_MIRROR = \
 #	http://static.opensolaris.org/action/browse/userland/tarball/userland
 
+DLC_ARCHIVE_MIRROR = http://dlc.openindiana.org/oi-userland/source-archives
+
 # Default to looking for source archives on the internal mirror and the external
 # mirror before we hammer on the community source archive repositories.
 #export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
 #export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
+
+# Look for file at DLC server as last resort
+export DOWNLOAD_FALLBACK_PATH =  $(DLC_ARCHIVE_MIRROR)
 
 # The workspace starts at the mercurial root
 ifeq ($(origin WS_TOP), undefined)
