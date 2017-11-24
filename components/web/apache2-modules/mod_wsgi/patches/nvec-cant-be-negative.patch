@@ -1,0 +1,30 @@
+Fix for https://github.com/GrahamDumpleton/mod_wsgi/issues/246
+https://github.com/GrahamDumpleton/mod_wsgi/pull/247
+
+--- mod_wsgi-4.5.17/src/server/mod_wsgi.c.1	2017-11-24 21:05:51.358689456 +0000
++++ mod_wsgi-4.5.17/src/server/mod_wsgi.c	2017-11-24 21:16:26.579739959 +0000
+@@ -10702,7 +10702,7 @@
+     if (nvec > iov_max) {
+         int offset = 0;
+ 
+-        while (nvec > 0) {
++        while (nvec != 0) {
+             apr_status_t rv;
+ 
+             rv = wsgi_socket_sendv_limit(sock, &vec[offset],
+@@ -10710,9 +10710,12 @@
+ 
+             if (rv != APR_SUCCESS)
+                 return rv;
+-
+-            nvec -= iov_max;
+-            offset += iov_max;
++            if (nvec > iov_max) {
++                nvec -= iov_max;
++                offset += iov_max;
++            } else {
++                nvec = 0;
++            }
+         }
+ 
+         return APR_SUCCESS;
