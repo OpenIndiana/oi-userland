@@ -84,4 +84,7 @@ REQUIRED_PACKAGES += runtime/erlang
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += runtime/spidermonkey
-
+# only required for target test
+# REQUIRED_PACKAGES += library/python/nose-27
+# REQUIRED_PACKAGES += library/python/requests-27
+# pip install hypothesis
