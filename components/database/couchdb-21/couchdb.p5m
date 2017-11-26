@@ -34,11 +34,13 @@ depend type=require fmri=runtime/python-27
 depend type=require fmri=library/python/netaddr-27
 depend type=require fmri=database/couchdb-common
 
+link path=usr/lib/$(MACH64)/couchdb-21/etc target=../../../../etc/couchdb-21
+
 dir  path=etc/couchdb-21/local.d owner=couchdb group=couchdb mode=0755
 
 # users should create a link to their preferred logging system
-file files/couchdb-21.logrotate   path=etc/couchdb-21/couchdb-21.logrotate
-file files/couchdb-21.logadm.conf path=etc/couchdb-21/couchdb-21.logadm.conf
+file files/couchdb-21.logrotate   path=etc/couchdb-21/couchdb-21.logrotate   owner=couchdb group=couchdb mode=0664 preserve=yes
+file files/couchdb-21.logadm.conf path=etc/couchdb-21/couchdb-21.logadm.conf owner=couchdb group=couchdb mode=0664 preserve=yes
 
 file path=etc/couchdb-21/vm.args
 file path=etc/couchdb-21/default.ini
@@ -46,8 +48,6 @@ file path=etc/couchdb-21/default.d/README
 file path=etc/couchdb-21/default.d/default.ini
 file path=etc/couchdb-21/local.ini            owner=couchdb group=couchdb mode=0664 preserve=yes 
 file path=etc/couchdb-21/local.d/README
-
-link path=usr/lib/$(MACH64)/couchdb-21/etc target=../../../../etc/couchdb-21
 
 # mediators
 link path=usr/bin/couchdb target=../lib/$(MACH64)/couchdb-21/bin/couchdb \
