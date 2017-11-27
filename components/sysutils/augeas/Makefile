@@ -30,9 +30,6 @@ COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-PKG_MACROS += LIBAUGEAS_VER=so.0.23.0
-PKG_MACROS += LIBFA_VER=so.1.4.5
-
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
