@@ -45,10 +45,14 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CC=gcc -m64 -I/usr/include/gd2
-CPP=gcc -m64 -E -I/usr/include/gd2
-CXX=g++ -m64 -I/usr/include/gd2
-LDFLAGS += -L/usr/lib/libjpeg8-turbo/lib/amd64 -R/usr/lib/libjpeg8-turbo/lib/amd64 -lnsl -lsocket
+CC=gcc
+CPP=gcc -E
+CXX=g++ -m64
+
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -I$(USRINCDIR)/gd2
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS) -I$(USRINCDIR)/gd2
+CPPFLAGS += $(JPEG_CPPFLAGS) -I$(USRINCDIR)/gd2
+LDFLAGS  += $(JPEG_LDFLAGS) -lnsl -lsocket
 
 COMPONENT_BUILD_ENV += "HOME=/tmp"
 CONFIGURE_ENV += "HOME=/tmp"
@@ -69,7 +73,9 @@ CONFIGURE_OPTIONS +=	--enable-riak
 CONFIGURE_OPTIONS +=	--enable-redis
 CONFIGURE_OPTIONS +=	--enable-user=daemon
 
-COMPONENT_BUILD_ARGS += CC="$(CC)" CPP="$(CPP)" CXX="$(CXX)" LDFLAGS="$(LDFLAGS)"
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/bin
+
+COMPONENT_BUILD_ARGS += CC="$(CC)" CPP="$(CPP)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_TARGETS = all
 
 COMPONENT_TEST_ARGS = "CT_BACKENDS=mnesia"
