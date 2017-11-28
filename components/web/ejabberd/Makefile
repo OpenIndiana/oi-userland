@@ -45,6 +45,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CXX      += $(CC_BITS)
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -I$(USRINCDIR)/gd2
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS) -I$(USRINCDIR)/gd2
 CPPFLAGS += $(JPEG_CPPFLAGS) -I$(USRINCDIR)/gd2
@@ -52,7 +53,6 @@ LDFLAGS  += $(JPEG_LDFLAGS) -lnsl -lsocket
 
 CONFIGURE_ENV += "HOME=/tmp"
 CONFIGURE_ENV += "CPP=$(CC) -E"
-CONFIGURE_ENV += "CXX=$(CXX) $(CC_BITS)"
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 COMPONENT_INSTALL_ENV += "HOME=/tmp"
 
@@ -69,7 +69,6 @@ CONFIGURE_OPTIONS +=	--enable-sqlite
 CONFIGURE_OPTIONS +=	--enable-pam
 CONFIGURE_OPTIONS +=	--enable-riak
 CONFIGURE_OPTIONS +=	--enable-redis
-CONFIGURE_OPTIONS +=	--enable-user=daemon
 
 CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
