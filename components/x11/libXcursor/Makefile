@@ -16,23 +16,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXcursor
-COMPONENT_VERSION=        1.1.14
+COMPONENT_VERSION=        1.1.15
 COMPONENT_FMRI=           x11/library/libxcursor
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXcursor - Client-side cursor loading library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9bc6acb21ca14da51bda5bc912c8955bc6e5e433f0ab00c5e8bef842596c33df
+  sha256:294e670dd37cd23995e69aae626629d4a2dfe5708851bbc13d032401b7a3df6b
 COMPONENT_ARCHIVE_URL= \
   https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXcursor.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
