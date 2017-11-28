@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freeglut
 COMPONENT_VERSION=        3.0.0
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/library/freeglut
 COMPONENT_SUMMARY= \
   freeglut - open-source alternative to the OpenGL Utility Toolkit (GLUT) library
@@ -41,6 +42,9 @@ CMAKE_OPTIONS+= -DFREEGLUT_BUILD_DEMOS=OFF
 CMAKE_OPTIONS+= -DFREEGLUT_BUILD_STATIC_LIBS=OFF
 
 CPPFLAGS += -D__posix__ -D__unix__
+
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
 
 build: $(BUILD_32_and_64)
 
