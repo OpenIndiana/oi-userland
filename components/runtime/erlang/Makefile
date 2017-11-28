@@ -79,6 +79,7 @@ LDFLAGS += $(CC_BITS)
 
 CXXFLAGS += -std=c++11
 
+CONFIGURE_OPTIONS.64 += --with-wx-config=/usr/bin/$(MACH64)/wx-config
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
