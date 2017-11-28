@@ -25,7 +25,7 @@ CDDL HEADER END
     Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
 -->
 
-<service_bundle type='manifest' name='SUNWejabberdr:ejabberd'>
+<service_bundle type='manifest' name='ejabberd'>
 
 <service
 	name='network/xmpp'
@@ -62,18 +62,21 @@ CDDL HEADER END
 
 		<method_context>
 			<method_credential user='daemon' group='daemon' />
+        <method_environment>
+          <envvar name='HOME' value='/tmp' />
+        </method_environment>
 		</method_context>
 
 		<exec_method
 			type='method'
 			name='start'
-			exec='/lib/svc/method/xmpp-ejabberd start'
+			exec='/lib/svc/method/svc-xmpp-ejabberd start'
 			timeout_seconds='60' />
 
 		<exec_method
 			type='method'
 			name='stop'
-			exec='/lib/svc/method/xmpp-ejabberd stop'
+			exec='/lib/svc/method/svc-xmpp-ejabberd stop'
 			timeout_seconds='60' />
 
 		<property_group name='general' type='framework'>
