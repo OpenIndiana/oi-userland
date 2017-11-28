@@ -69,9 +69,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 
-# Multiple issues building on 11.3
-#include $(WS_MAKE_RULES)/no-evaluation.mk
-
 CFLAGS += -std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
 # Fix 64-bit linking.
@@ -117,6 +114,11 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=	V=1
+
+# fix build on jenkins
+COMPONENT_BUILD_ENV += HOME=/tmp
+COMPONENT_INSTALL_ENV += HOME=/tmp
+COMPONENT_TEST_ENV += HOME=/tmp
 
 COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
 
