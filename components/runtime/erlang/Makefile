@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 # Built in SFW with gcc and builds cleanly now only with gcc
 
@@ -98,7 +99,9 @@ ASLR_MODE =	$(ASLR_DISABLE)
 # need for /usr/bin/ld and /usr/gnu/bin/tar.  This is still the case with
 # erlang version 17.5.
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CP) -rp $(SOURCE_DIR)/. $(@D))
+  ($(CP) -rp $(SOURCE_DIR)/. $(@D); \
+   cd $(@D); ./otp_build autoconf )
+
 CONFIGURE_SCRIPT =		$(@D)/configure
 
 # We need to re-run the nested configure script for the wx sub-component so
@@ -128,14 +131,21 @@ COMPONENT_TEST_TARGETS =	tests
 COMPONENT_SYSTEM_TEST_ENV +=	ERL_TOP=$(BUILD_DIR_64)
 COMPONENT_SYSTEM_TEST_TARGETS =	tests
 
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^gmake.*release_tests_spec/d" '
-
 # remove INSTALL_PREFIX from path
 COMPONENT_POST_INSTALL_ACTION += \
 	$(PERL) -pi -e "s|$(PROTO_DIR)||g" \
 		$(PROTOUSRLIBDIR64)/erlang/bin/erl \
 		$(PROTOUSRLIBDIR64)/erlang/releases/RELEASES
+
+# the target test creates the binaries
+# this action starts the smoke-tests
+# copy the results from smoke-tests to the predefined file
+COMPONENT_POST_TEST_ACTION = \
+   (cd $(@D); scripts/run-smoke-tests; \
+    $(CP) $(@D)/release/tests/test_server/index.html $(COMPONENT_TEST_OUTPUT))
+
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/<tfoot>/,/<\/tfoot>/ { print $0 }'"
 
 # common targets
 build:    $(BUILD_64)
