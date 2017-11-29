@@ -27,19 +27,19 @@ include ../../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
-COMPONENT_NAME=					gmp
-COMPONENT_VERSION=			6.1.2
-COMPONENT_REVISION=			1
-COMPONENT_SUMMARY=			GNU Multiple Precision Bignum Library
-COMPONENT_PROJECT_URL=	http://gmplib.org/
-COMPONENT_FMRI=					library/gmp	
+COMPONENT_NAME=         gmp
+COMPONENT_VERSION=      6.1.2
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      GNU Multiple Precision Bignum Library
+COMPONENT_PROJECT_URL=  http://gmplib.org/
+COMPONENT_FMRI=         library/gmp    
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
   sha256:5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
-COMPONENT_LICENSE=			LGPLv3,GPLv3,FDLv1.3
+COMPONENT_LICENSE=      LGPLv3,GPLv3,FDLv1.3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -106,11 +106,22 @@ PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
 
 GMP_SOVERSION=4.5.2
 
+GCCLIBDIR  =$(GCC_ROOT)/lib
+GCCLIBDIR64=$(GCC_ROOT)/lib/$(MACH64)
+
 COMPONENT_POST_INSTALL_ACTION = \
     ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
       $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
+      $(ELFEDIT) -e "dyn:runpath $(GCCLIBDIR)" \
+					$(PROTOUSRLIBDIR)/libgmpxx.so.$(GMP_SOVERSION) ; \
+      $(ELFEDIT) -e "dyn:runpath $(GCCLIBDIR64)" \
+					$(PROTOUSRLIBDIR64)/libgmpxx.so.$(GMP_SOVERSION) ; \
+      $(ELFEDIT) -e "dyn:rpath $(GCCLIBDIR)" \
+					$(PROTOUSRLIBDIR)/libgmpxx.so.$(GMP_SOVERSION) ; \
+      $(ELFEDIT) -e "dyn:rpath $(GCCLIBDIR64)" \
+					$(PROTOUSRLIBDIR64)/libgmpxx.so.$(GMP_SOVERSION) ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
 					$(COMPONENT_DIR)/Solaris/libgmp-64.pc > $(COMPONENT_DIR)/libgmp.pc ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
