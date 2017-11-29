@@ -1,0 +1,31 @@
+diff --git a/js/src/config/jemalloc_solaris.map b/js/src/config/jemalloc_solaris.map
+new file mode 100644
+index 0000000..7f4db39
+--- /dev/null
++++ b/config/jemalloc_solaris.map
+@@ -0,0 +1,12 @@
++{
++    global:
++        calloc             = NODIRECT;
++        free               = NODIRECT;
++        jemalloc_stats     = NODIRECT;
++        malloc             = NODIRECT;
++        malloc_usable_size = NODIRECT;
++        memalign           = NODIRECT;
++        posix_memalign     = NODIRECT;
++        realloc            = NODIRECT;
++        valloc             = NODIRECT;
++};
+diff --git a/js/src/config/config.mk b/js/src/config/config.mk
+index 8aef9e5..1ddeaad 100644
+--- a/config/config.mk
++++ b/config/config.mk
+@@ -160,7 +160,7 @@ MOZ_UNICHARUTIL_LIBS = $(LIBXUL_DIST)/lib/$(LIB_PREFIX)unicharutil_s.$(LIB_SUFFI
+ MOZ_WIDGET_SUPPORT_LIBS    = $(DIST)/lib/$(LIB_PREFIX)widgetsupport_s.$(LIB_SUFFIX)
+ 
+ ifdef MOZ_MEMORY
+-ifneq (,$(filter-out WINNT WINCE,$(OS_ARCH)))
++ifneq (,$(filter-out WINNT WINCE SunOS,$(OS_ARCH)))
+ JEMALLOC_LIBS = $(MKSHLIB_FORCE_ALL) $(call EXPAND_MOZLIBNAME,jemalloc) $(MKSHLIB_UNFORCE_ALL)
+ # If we are linking jemalloc into a program, we want the jemalloc symbols
+ # to be exported
