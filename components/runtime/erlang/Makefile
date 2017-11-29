@@ -87,6 +87,7 @@ CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --enable-hipe
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
+CONFIGURE_OPTIONS += --with-ssl-rpath=no
 
 # Erlang doesn't appear to like ASLR: it uses mmap() with MAP_FIXED, and
 # makes assumptions about memory layout that aren't true on Solaris x86,
