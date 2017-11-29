@@ -40,30 +40,18 @@ CFLAGS.32=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CXXFLAGS+=	$(CXXFLAGS.$(BITS))
 CFLAGS+=	$(CFLAGS.$(BITS))
 
+COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 
-COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-COMPONENT_TEST_ARGS = -k
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/passed/p" ' \
-        '-e "/failed/p" ' \
-        '-e "/Checks:/p" ' \
-        '-e "/Total:/p" ' \
-        '-e "/Passed/p" ' \
-        '-e "/Failed/p" ' \
-        '-e "/Failure expected/p" ' \
-        '-e "/SKIP/p" ' \
-        '-e "/PASS/p" ' \
-        '-e "/FAIL/p" '
-
 # XXX why does this coredump without the workaround?
 # Fixes coredump in gnulib-test/test-localename test
 CONFIGURE_OPTIONS  +=           ac_cv_func_newlocale=no
+
+COMPONENT_INSTALL_ARGS += lensdir=$(USRSHAREDIR)/augeas/lenses
 
 # Needed for "gmake test" to work.
 # SHELLOPTS is exported via make-rules/shared-macros.mk,
@@ -74,7 +62,9 @@ CONFIGURE_OPTIONS  +=           ac_cv_func_newlocale=no
 # other than "test."
 unexport SHELLOPTS
 
-COMPONENT_INSTALL_ARGS += lensdir=$(USRSHAREDIR)/augeas/lenses
+COMPONENT_TEST_ARGS = -k
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS  = '/TOTAL/,/ERROR/'
 
 build: $(BUILD_32_and_64)
 
