@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rhythmbox
-COMPONENT_VERSION= 3.4.1
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 3.4.2
 COMPONENT_SUMMARY= Rhythmbox Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:039f86661cba495f9429df6572fa79e68279635809e52fa0d19f57e8db8341b6
+  sha256:c27622fb7658d3c8e935937a562ebd8a65f5316a12694d6a06cb17f790b6ec43
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
@@ -35,7 +34,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CXXFLAGS+= -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\"
 CXXFLAGS+= -std=gnu++0x
@@ -57,6 +56,11 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/itstool
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += desktop/cd-burning/brasero
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/atk
