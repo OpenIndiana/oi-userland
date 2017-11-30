@@ -26,7 +26,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.19
+COMPONENT_VERSION=	4.8.20
 COMPONENT_FMRI=		file/mc
 COMPONENT_SUMMARY=	The GNU Midnight Commander file manager
 COMPONENT_DESCRIPTION=	GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell
@@ -35,7 +35,7 @@ COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eb9e56bbb5b2893601d100d0e0293983049b302c5ab61bfb544ad0ee2cc1f2df
+    sha256:017ee7f4f8ae420a04f4d6fcebaabe5b494661075c75442c76e9c8b1923d501c
 COMPONENT_ARCHIVE_URL=	http://ftp.midnight-commander.org/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
@@ -44,6 +44,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS += --sysconfdir=/usr/share
 CONFIGURE_OPTIONS += --libexecdir=/usr/share
@@ -58,12 +59,10 @@ CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 # Enable Address Space Layout Randomization
 ASLR_MODE = $(ASLR_ENABLE)
 
-$(INSTALL_32):	$(INSTALL_64)
-
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
