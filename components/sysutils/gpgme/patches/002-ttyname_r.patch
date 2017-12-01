@@ -19,3 +19,21 @@ The buffer must be at least _POSIX_PATH_MAX in size - ttyname_r(3C)
    char *dft_ttytype = NULL;
  
    gpg = calloc (1, sizeof *gpg);
+--- src/engine-gpgsm.c.~1~	2008-11-03 19:50:12.000000000 +0000
++++ src/engine-gpgsm.c	2017-12-01 22:03:04.689259043 +0000
+@@ -28,6 +28,7 @@
+ #include <sys/types.h>
+ #include <assert.h>
+ #include <unistd.h>
++#include <limits.h>
+ #include <locale.h>
+ #include <fcntl.h> /* FIXME */
+ #include <errno.h>
+@@ -353,7 +354,7 @@
+   int child_fds[4];
+ #endif
+   char *dft_display = NULL;
+-  char dft_ttyname[64];
++  char dft_ttyname[_POSIX_PATH_MAX];
+   char *dft_ttytype = NULL;
+   char *optstr;
