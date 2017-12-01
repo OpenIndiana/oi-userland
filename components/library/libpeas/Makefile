@@ -30,6 +30,7 @@ COMPONENT_SUMMARY=	A gobject-based plugins engine for GNOME
 COMPONENT_DESCRIPTION=	libpeas is a gobject-based plugins engine, and is targeted\
  at giving every application the chance to assume its own extensibility.
 COMPONENT_VERSION=	1.16.0
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libpeas
 COMPONENT_MAJOR_MINOR=        $(basename $(COMPONENT_VERSION))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,6 +57,7 @@ CONFIGURE_ENV.64 += PYTHON3_CONFIG=/usr/bin/$(MACH64)/python3.4-config
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --enable-lua5.2
+CONFIGURE_OPTIONS += --disable-luajit
 CONFIGURE_OPTIONS += --enable-python2
 CONFIGURE_OPTIONS += --enable-python3
 CONFIGURE_OPTIONS += --enable-shared
