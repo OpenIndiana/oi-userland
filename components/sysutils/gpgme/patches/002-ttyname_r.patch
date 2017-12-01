@@ -1,0 +1,21 @@
+The buffer must be at least _POSIX_PATH_MAX in size - ttyname_r(3C)
+
+--- src/rungpg.c.1	2017-12-01 21:39:50.326278808 +0000
++++ src/rungpg.c	2017-12-01 21:40:36.736402674 +0000
+@@ -28,6 +28,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <unistd.h>
++#include <limits.h>
+ #include <locale.h>
+ 
+ #include "gpgme.h"
+@@ -414,7 +415,7 @@
+   engine_gpg_t gpg;
+   gpgme_error_t rc = 0;
+   char *dft_display = NULL;
+-  char dft_ttyname[64];
++  char dft_ttyname[_POSIX_PATH_MAX];
+   char *dft_ttytype = NULL;
+ 
+   gpg = calloc (1, sizeof *gpg);
