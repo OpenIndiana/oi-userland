@@ -20,7 +20,7 @@ COMPONENT_NAME=		clamav
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
 COMPONENT_VERSION=	0.99.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -61,6 +61,8 @@ PKG_OPTIONS +=	-D COMPONENT_VERSION_LIB_FULL="$(COMPONENT_VERSION_LIB_FULL)"
 # Still, this can help with not dying on e.g. huge log files :-)
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
+
+CFLAGS   += -std=gnu89  $(CPP_XPG5MODE)
 
 # Make sure that *-config scripts are taken from proper MACH$(BITS) dir
 PATH.64=$(GNUBIN)/$(MACH64):$(USRBINDIR64):$(GNUBIN):$(USRBINDIR)
