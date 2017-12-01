@@ -139,6 +139,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOUSRLIBDIR64)/erlang/bin/erl \
 		$(PROTOUSRLIBDIR64)/erlang/releases/RELEASES
 
+# hostname not FQDN must be resolvable or send_receive will fail
+COMPONENT_PRE_TEST_ACTION= /usr/sbin/ping -a `hostname`
+
+#
 # the target test creates the binaries
 # this action starts the smoke-tests
 # copy the results from smoke-tests to the predefined file
