@@ -1,0 +1,43 @@
+diff -pruN '--exclude=*.orig' open-vm-tools-10.1.15~/lib/nicInfo/nicInfoPosix.c open-vm-tools-10.1.15/lib/nicInfo/nicInfoPosix.c
+--- open-vm-tools-10.1.15~/lib/nicInfo/nicInfoPosix.c	2017-09-29 21:15:57.000000000 +0000
++++ open-vm-tools-10.1.15/lib/nicInfo/nicInfoPosix.c	2017-10-03 09:31:21.952732216 +0000
+@@ -34,11 +34,8 @@
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <errno.h>
+-#if defined(__FreeBSD__) || defined(__APPLE__)
+-# include <sys/sysctl.h>
+ # include <ifaddrs.h>
+ # include <net/if.h>
+-#endif
+ #ifndef NO_DNET
+ # ifdef DNET_IS_DUMBNET
+ #  include <dumbnet.h>
+@@ -171,7 +168,7 @@ GuestInfoGetFqdn(int outBufLen,    // IN
+ }
+ 
+ 
+-#ifdef USERWORLD
++#if defined(USERWORLD) || defined(sun)
+ /*
+  ******************************************************************************
+  * CountNetmaskBits --                                                   */ /**
+@@ -259,7 +256,7 @@ GuestInfoGetNicInfo(NicInfoV3 *nicInfo)
+    }
+ 
+    return TRUE;
+-#elif defined(USERWORLD)
++#elif defined(USERWORLD) || defined(sun)
+    struct ifaddrs *ifaddrs = NULL;
+ 
+    if (getifaddrs(&ifaddrs) == 0 && ifaddrs != NULL) {
+@@ -348,7 +345,7 @@ GuestInfoGetNicInfo(NicInfoV3 *nicInfo)
+  *
+  ******************************************************************************
+  */
+-#if defined(__FreeBSD__) || defined(__APPLE__) || defined(USERWORLD)
++#if 1
+ 
+ char *
+ GuestInfoGetPrimaryIP(void)
+

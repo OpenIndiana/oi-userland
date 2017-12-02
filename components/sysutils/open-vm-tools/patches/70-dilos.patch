@@ -1,20 +1,7 @@
-Index: open-vm-tools-9.4.6-1770165/open-vm-tools/lib/syncDriver/syncDriverPosix.c
-===================================================================
---- open-vm-tools-9.4.6-1770165/open-vm-tools/lib/syncDriver/syncDriverPosix.c.orig
-+++ open-vm-tools-9.4.6-1770165/open-vm-tools/lib/syncDriver/syncDriverPosix.c
-@@ -73,7 +73,7 @@ SyncDriverIsRemoteFSType(const char *fsT
-
-    for (i = 0; i < ARRAYSIZE(gRemoteFSTypes); i++) {
-       if (Str_Strncmp(fsType, gRemoteFSTypes[i],
--                      sizeof gRemoteFSTypes[i]) == 0) {
-+                      (int)sizeof (gRemoteFSTypes[i])) == 0) {
-          return TRUE;
-       }
-    }
 Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/misc/timeutil.c
 ===================================================================
---- open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/misc/timeutil.c.orig
-+++ open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/misc/timeutil.c
+--- open-vm-tools-2013.04.16-1098359/lib/misc/timeutil.c.orig
++++ open-vm-tools-2013.04.16-1098359/lib/misc/timeutil.c
 @@ -855,7 +855,7 @@ TimeUtil_GetTimeFormat(int64 utcTime,  /
     const time_t t = (time_t) utcTime;  // Implicit narrowing on 32-bit
 
@@ -26,8 +13,8 @@ Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/misc/timeutil.c
  #endif
 Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris.c
 ===================================================================
---- open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris.c.orig
-+++ open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris.c
+--- open-vm-tools-2013.04.16-1098359/lib/procMgr/procMgrSolaris.c.orig
++++ open-vm-tools-2013.04.16-1098359/lib/procMgr/procMgrSolaris.c
 @@ -647,7 +647,7 @@ ProcMgr_ImpersonateUserStart(const char
     char *userLocal;
 
@@ -66,8 +53,8 @@ Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris
 
 Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/include/vmci_sockets.h
 ===================================================================
---- open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/include/vmci_sockets.h.orig
-+++ open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/include/vmci_sockets.h
+--- open-vm-tools-2013.04.16-1098359/lib/include/vmci_sockets.h.orig
++++ open-vm-tools-2013.04.16-1098359/lib/include/vmci_sockets.h
 @@ -487,7 +487,7 @@ struct uuid_2_cid {
        }
  #  endif // !NT_INCLUDED
