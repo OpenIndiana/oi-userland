@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	          spidermonkey
 COMPONENT_VERSION=        1.8.5
+COMPONENT_REVISION=       1
 COMPONENT_SUMMARY=        Javascript engine
 COMPONENT_PROJECT_URL=    https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey
 COMPONENT_FMRI=	          library/spidermonkey
