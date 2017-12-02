@@ -1,260 +1,257 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2017 Aurelien Larcher
 #
 
-# Transforms
-<transform file path=.+/lib/.+\.a$ -> drop>
-<transform file path=.+/lib/.+\.la$ -> drop>
-<transform file path=.+/share/info/dir -> drop>
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-
-set name=pkg.fmri value=pkg:/text/aspell@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GNU Aspell spell checking library"
-set name=info.upstream-url value="http://aspell.net/"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.classification \
-    value="org.opensolaris.category.2008:System/Text Tools"
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:/usr/gnu/lib
 
-license aspell.license license="LGPLv2.1"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-dir path=/usr/include/pspell
-dir path=/usr/lib/$(MACH64)/aspell-0.60
-dir path=/usr/lib/aspell-0.60
-file path=/usr/bin/$(MACH64)/aspell
-file path=/usr/bin/$(MACH64)/aspell-import
-file path=/usr/bin/$(MACH64)/precat
-file path=/usr/bin/$(MACH64)/preunzip
-file path=/usr/bin/$(MACH64)/prezip
-file path=/usr/bin/$(MACH64)/prezip-bin
-file path=/usr/bin/$(MACH64)/pspell-config
-file path=/usr/bin/$(MACH64)/run-with-aspell
-file path=/usr/bin/$(MACH64)/word-list-compress
-file path=/usr/bin/aspell
-file path=/usr/bin/aspell-import
-file path=/usr/bin/precat
-file path=/usr/bin/preunzip
-file path=/usr/bin/prezip
-file path=/usr/bin/prezip-bin
-file path=/usr/bin/pspell-config
-file path=/usr/bin/run-with-aspell
-file path=/usr/bin/word-list-compress
-file path=/usr/include/aspell.h
-file path=/usr/include/pspell/pspell.h
-file path=/usr/lib/$(MACH64)/aspell-0.60/ccpp.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/comment.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/context-filter.info
-file path=/usr/lib/$(MACH64)/aspell-0.60/context-filter.so
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1250.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1250.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1251.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1251.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1252.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1252.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1253.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1253.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1254.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1254.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1255.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1255.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1256.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1256.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1257.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1257.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1258.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/cp1258.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/dvorak.kbd
-file path=/usr/lib/$(MACH64)/aspell-0.60/email-filter.info
-file path=/usr/lib/$(MACH64)/aspell-0.60/email-filter.so
-file path=/usr/lib/$(MACH64)/aspell-0.60/email.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/html-filter.info
-file path=/usr/lib/$(MACH64)/aspell-0.60/html.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-1.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-1.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-10.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-10.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-11.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-11.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-13.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-13.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-14.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-14.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-15.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-15.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-16.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-16.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-2.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-2.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-3.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-3.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-4.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-4.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-5.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-5.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-6.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-6.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-7.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-7.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-8.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-8.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-9.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/iso-8859-9.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/ispell
-file path=/usr/lib/$(MACH64)/aspell-0.60/koi8-r.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/koi8-r.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/koi8-u.cmap
-file path=/usr/lib/$(MACH64)/aspell-0.60/koi8-u.cset
-file path=/usr/lib/$(MACH64)/aspell-0.60/none.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/nroff-filter.info
-file path=/usr/lib/$(MACH64)/aspell-0.60/nroff-filter.so
-file path=/usr/lib/$(MACH64)/aspell-0.60/nroff.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/perl.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/sgml-filter.info
-file path=/usr/lib/$(MACH64)/aspell-0.60/sgml-filter.so
-file path=/usr/lib/$(MACH64)/aspell-0.60/sgml.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/spell
-file path=/usr/lib/$(MACH64)/aspell-0.60/split.kbd
-file path=/usr/lib/$(MACH64)/aspell-0.60/standard.kbd
-file path=/usr/lib/$(MACH64)/aspell-0.60/tex-filter.info
-file path=/usr/lib/$(MACH64)/aspell-0.60/tex-filter.so
-file path=/usr/lib/$(MACH64)/aspell-0.60/tex.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/texinfo-filter.info
-file path=/usr/lib/$(MACH64)/aspell-0.60/texinfo-filter.so
-file path=/usr/lib/$(MACH64)/aspell-0.60/texinfo.amf
-file path=/usr/lib/$(MACH64)/aspell-0.60/url.amf
-file path=/usr/lib/$(MACH64)/libaspell.so.15.1.5
-file path=/usr/lib/$(MACH64)/libpspell.so.15.1.5
-file path=/usr/lib/aspell-0.60/ccpp.amf
-file path=/usr/lib/aspell-0.60/comment.amf
-file path=/usr/lib/aspell-0.60/context-filter.info
-file path=/usr/lib/aspell-0.60/context-filter.so
-file path=/usr/lib/aspell-0.60/cp1250.cmap
-file path=/usr/lib/aspell-0.60/cp1250.cset
-file path=/usr/lib/aspell-0.60/cp1251.cmap
-file path=/usr/lib/aspell-0.60/cp1251.cset
-file path=/usr/lib/aspell-0.60/cp1252.cmap
-file path=/usr/lib/aspell-0.60/cp1252.cset
-file path=/usr/lib/aspell-0.60/cp1253.cmap
-file path=/usr/lib/aspell-0.60/cp1253.cset
-file path=/usr/lib/aspell-0.60/cp1254.cmap
-file path=/usr/lib/aspell-0.60/cp1254.cset
-file path=/usr/lib/aspell-0.60/cp1255.cmap
-file path=/usr/lib/aspell-0.60/cp1255.cset
-file path=/usr/lib/aspell-0.60/cp1256.cmap
-file path=/usr/lib/aspell-0.60/cp1256.cset
-file path=/usr/lib/aspell-0.60/cp1257.cmap
-file path=/usr/lib/aspell-0.60/cp1257.cset
-file path=/usr/lib/aspell-0.60/cp1258.cmap
-file path=/usr/lib/aspell-0.60/cp1258.cset
-file path=/usr/lib/aspell-0.60/dvorak.kbd
-file path=/usr/lib/aspell-0.60/email-filter.info
-file path=/usr/lib/aspell-0.60/email-filter.so
-file path=/usr/lib/aspell-0.60/email.amf
-file path=/usr/lib/aspell-0.60/html-filter.info
-file path=/usr/lib/aspell-0.60/html.amf
-file path=/usr/lib/aspell-0.60/iso-8859-1.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-1.cset
-file path=/usr/lib/aspell-0.60/iso-8859-10.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-10.cset
-file path=/usr/lib/aspell-0.60/iso-8859-11.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-11.cset
-file path=/usr/lib/aspell-0.60/iso-8859-13.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-13.cset
-file path=/usr/lib/aspell-0.60/iso-8859-14.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-14.cset
-file path=/usr/lib/aspell-0.60/iso-8859-15.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-15.cset
-file path=/usr/lib/aspell-0.60/iso-8859-16.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-16.cset
-file path=/usr/lib/aspell-0.60/iso-8859-2.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-2.cset
-file path=/usr/lib/aspell-0.60/iso-8859-3.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-3.cset
-file path=/usr/lib/aspell-0.60/iso-8859-4.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-4.cset
-file path=/usr/lib/aspell-0.60/iso-8859-5.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-5.cset
-file path=/usr/lib/aspell-0.60/iso-8859-6.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-6.cset
-file path=/usr/lib/aspell-0.60/iso-8859-7.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-7.cset
-file path=/usr/lib/aspell-0.60/iso-8859-8.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-8.cset
-file path=/usr/lib/aspell-0.60/iso-8859-9.cmap
-file path=/usr/lib/aspell-0.60/iso-8859-9.cset
-file path=/usr/lib/aspell-0.60/ispell
-file path=/usr/lib/aspell-0.60/koi8-r.cmap
-file path=/usr/lib/aspell-0.60/koi8-r.cset
-file path=/usr/lib/aspell-0.60/koi8-u.cmap
-file path=/usr/lib/aspell-0.60/koi8-u.cset
-file path=/usr/lib/aspell-0.60/none.amf
-file path=/usr/lib/aspell-0.60/nroff-filter.info
-file path=/usr/lib/aspell-0.60/nroff-filter.so
-file path=/usr/lib/aspell-0.60/nroff.amf
-file path=/usr/lib/aspell-0.60/perl.amf
-file path=/usr/lib/aspell-0.60/sgml-filter.info
-file path=/usr/lib/aspell-0.60/sgml-filter.so
-file path=/usr/lib/aspell-0.60/sgml.amf
-file path=/usr/lib/aspell-0.60/spell
-file path=/usr/lib/aspell-0.60/split.kbd
-file path=/usr/lib/aspell-0.60/standard.kbd
-file path=/usr/lib/aspell-0.60/tex-filter.info
-file path=/usr/lib/aspell-0.60/tex-filter.so
-file path=/usr/lib/aspell-0.60/tex.amf
-file path=/usr/lib/aspell-0.60/texinfo-filter.info
-file path=/usr/lib/aspell-0.60/texinfo-filter.so
-file path=/usr/lib/aspell-0.60/texinfo.amf
-file path=/usr/lib/aspell-0.60/url.amf
-file path=/usr/lib/libaspell.so.15.1.5
-file path=/usr/lib/libpspell.so.15.1.5
-file path=/usr/share/info/aspell-dev.info
-file path=/usr/share/info/aspell.info
-file path=/usr/share/locale/be/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/ca/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/cs/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/da/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/de/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/en_GB/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/es/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/fr/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/ga/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/it/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/mn/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/nl/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/pt_BR/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/ro/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/ru/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/rw/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/sk/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/sl/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/sr/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/sv/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/tg/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/uk/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/vi/LC_MESSAGES/aspell.mo
-file path=/usr/share/locale/wa/LC_MESSAGES/aspell.mo
-file path=/usr/share/man/man1/aspell-import.1
-file path=/usr/share/man/man1/aspell.1
-file path=/usr/share/man/man1/prezip-bin.1
-file path=/usr/share/man/man1/pspell-config.1
-file path=/usr/share/man/man1/run-with-aspell.1
-file path=/usr/share/man/man1/word-list-compress.1
-link path=/usr/lib/$(MACH64)/libaspell.so target=libaspell.so.15.1.5
-link path=/usr/lib/$(MACH64)/libaspell.so.15 target=libaspell.so.15.1.5
-link path=/usr/lib/$(MACH64)/libpspell.so target=libpspell.so.15.1.5
-link path=/usr/lib/$(MACH64)/libpspell.so.15 target=libpspell.so.15.1.5
-link path=/usr/lib/libaspell.so target=libaspell.so.15.1.5
-link path=/usr/lib/libaspell.so.15 target=libaspell.so.15.1.5
-link path=/usr/lib/libpspell.so target=libpspell.so.15.1.5
-link path=/usr/lib/libpspell.so.15 target=libpspell.so.15.1.5
+file path=usr/bin/$(MACH64)/aspell
+file path=usr/bin/$(MACH64)/aspell-import
+file path=usr/bin/$(MACH64)/precat
+file path=usr/bin/$(MACH64)/preunzip
+file path=usr/bin/$(MACH64)/prezip
+file path=usr/bin/$(MACH64)/prezip-bin
+file path=usr/bin/$(MACH64)/pspell-config
+file path=usr/bin/$(MACH64)/run-with-aspell
+file path=usr/bin/$(MACH64)/word-list-compress
+file path=usr/bin/aspell
+file path=usr/bin/aspell-import
+file path=usr/bin/precat
+file path=usr/bin/preunzip
+file path=usr/bin/prezip
+file path=usr/bin/prezip-bin
+file path=usr/bin/pspell-config
+file path=usr/bin/run-with-aspell
+file path=usr/bin/word-list-compress
+file path=usr/include/aspell.h
+file path=usr/include/pspell/pspell.h
+file path=usr/lib/$(MACH64)/aspell-0.60/ccpp.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/comment.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/context-filter.info
+file path=usr/lib/$(MACH64)/aspell-0.60/context-filter.so
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1250.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1250.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1251.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1251.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1252.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1252.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1253.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1253.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1254.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1254.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1255.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1255.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1256.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1256.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1257.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1257.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1258.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/cp1258.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/dvorak.kbd
+file path=usr/lib/$(MACH64)/aspell-0.60/email-filter.info
+file path=usr/lib/$(MACH64)/aspell-0.60/email-filter.so
+file path=usr/lib/$(MACH64)/aspell-0.60/email.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/html-filter.info
+file path=usr/lib/$(MACH64)/aspell-0.60/html.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-1.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-1.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-10.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-10.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-11.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-11.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-13.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-13.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-14.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-14.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-15.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-15.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-16.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-16.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-2.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-2.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-3.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-3.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-4.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-4.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-5.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-5.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-6.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-6.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-7.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-7.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-8.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-8.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-9.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/iso-8859-9.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/ispell
+file path=usr/lib/$(MACH64)/aspell-0.60/koi8-r.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/koi8-r.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/koi8-u.cmap
+file path=usr/lib/$(MACH64)/aspell-0.60/koi8-u.cset
+file path=usr/lib/$(MACH64)/aspell-0.60/none.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/nroff-filter.info
+file path=usr/lib/$(MACH64)/aspell-0.60/nroff-filter.so
+file path=usr/lib/$(MACH64)/aspell-0.60/nroff.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/perl.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/sgml-filter.info
+file path=usr/lib/$(MACH64)/aspell-0.60/sgml-filter.so
+file path=usr/lib/$(MACH64)/aspell-0.60/sgml.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/spell
+file path=usr/lib/$(MACH64)/aspell-0.60/split.kbd
+file path=usr/lib/$(MACH64)/aspell-0.60/standard.kbd
+file path=usr/lib/$(MACH64)/aspell-0.60/tex-filter.info
+file path=usr/lib/$(MACH64)/aspell-0.60/tex-filter.so
+file path=usr/lib/$(MACH64)/aspell-0.60/tex.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/texinfo-filter.info
+file path=usr/lib/$(MACH64)/aspell-0.60/texinfo-filter.so
+file path=usr/lib/$(MACH64)/aspell-0.60/texinfo.amf
+file path=usr/lib/$(MACH64)/aspell-0.60/url.amf
+link path=usr/lib/$(MACH64)/libaspell.so target=libaspell.so.15.1.5
+link path=usr/lib/$(MACH64)/libaspell.so.15 target=libaspell.so.15.1.5
+file path=usr/lib/$(MACH64)/libaspell.so.15.1.5
+link path=usr/lib/$(MACH64)/libpspell.so target=libpspell.so.15.1.5
+link path=usr/lib/$(MACH64)/libpspell.so.15 target=libpspell.so.15.1.5
+file path=usr/lib/$(MACH64)/libpspell.so.15.1.5
+file path=usr/lib/aspell-0.60/ccpp.amf
+file path=usr/lib/aspell-0.60/comment.amf
+file path=usr/lib/aspell-0.60/context-filter.info
+file path=usr/lib/aspell-0.60/context-filter.so
+file path=usr/lib/aspell-0.60/cp1250.cmap
+file path=usr/lib/aspell-0.60/cp1250.cset
+file path=usr/lib/aspell-0.60/cp1251.cmap
+file path=usr/lib/aspell-0.60/cp1251.cset
+file path=usr/lib/aspell-0.60/cp1252.cmap
+file path=usr/lib/aspell-0.60/cp1252.cset
+file path=usr/lib/aspell-0.60/cp1253.cmap
+file path=usr/lib/aspell-0.60/cp1253.cset
+file path=usr/lib/aspell-0.60/cp1254.cmap
+file path=usr/lib/aspell-0.60/cp1254.cset
+file path=usr/lib/aspell-0.60/cp1255.cmap
+file path=usr/lib/aspell-0.60/cp1255.cset
+file path=usr/lib/aspell-0.60/cp1256.cmap
+file path=usr/lib/aspell-0.60/cp1256.cset
+file path=usr/lib/aspell-0.60/cp1257.cmap
+file path=usr/lib/aspell-0.60/cp1257.cset
+file path=usr/lib/aspell-0.60/cp1258.cmap
+file path=usr/lib/aspell-0.60/cp1258.cset
+file path=usr/lib/aspell-0.60/dvorak.kbd
+file path=usr/lib/aspell-0.60/email-filter.info
+file path=usr/lib/aspell-0.60/email-filter.so
+file path=usr/lib/aspell-0.60/email.amf
+file path=usr/lib/aspell-0.60/html-filter.info
+file path=usr/lib/aspell-0.60/html.amf
+file path=usr/lib/aspell-0.60/iso-8859-1.cmap
+file path=usr/lib/aspell-0.60/iso-8859-1.cset
+file path=usr/lib/aspell-0.60/iso-8859-10.cmap
+file path=usr/lib/aspell-0.60/iso-8859-10.cset
+file path=usr/lib/aspell-0.60/iso-8859-11.cmap
+file path=usr/lib/aspell-0.60/iso-8859-11.cset
+file path=usr/lib/aspell-0.60/iso-8859-13.cmap
+file path=usr/lib/aspell-0.60/iso-8859-13.cset
+file path=usr/lib/aspell-0.60/iso-8859-14.cmap
+file path=usr/lib/aspell-0.60/iso-8859-14.cset
+file path=usr/lib/aspell-0.60/iso-8859-15.cmap
+file path=usr/lib/aspell-0.60/iso-8859-15.cset
+file path=usr/lib/aspell-0.60/iso-8859-16.cmap
+file path=usr/lib/aspell-0.60/iso-8859-16.cset
+file path=usr/lib/aspell-0.60/iso-8859-2.cmap
+file path=usr/lib/aspell-0.60/iso-8859-2.cset
+file path=usr/lib/aspell-0.60/iso-8859-3.cmap
+file path=usr/lib/aspell-0.60/iso-8859-3.cset
+file path=usr/lib/aspell-0.60/iso-8859-4.cmap
+file path=usr/lib/aspell-0.60/iso-8859-4.cset
+file path=usr/lib/aspell-0.60/iso-8859-5.cmap
+file path=usr/lib/aspell-0.60/iso-8859-5.cset
+file path=usr/lib/aspell-0.60/iso-8859-6.cmap
+file path=usr/lib/aspell-0.60/iso-8859-6.cset
+file path=usr/lib/aspell-0.60/iso-8859-7.cmap
+file path=usr/lib/aspell-0.60/iso-8859-7.cset
+file path=usr/lib/aspell-0.60/iso-8859-8.cmap
+file path=usr/lib/aspell-0.60/iso-8859-8.cset
+file path=usr/lib/aspell-0.60/iso-8859-9.cmap
+file path=usr/lib/aspell-0.60/iso-8859-9.cset
+file path=usr/lib/aspell-0.60/ispell
+file path=usr/lib/aspell-0.60/koi8-r.cmap
+file path=usr/lib/aspell-0.60/koi8-r.cset
+file path=usr/lib/aspell-0.60/koi8-u.cmap
+file path=usr/lib/aspell-0.60/koi8-u.cset
+file path=usr/lib/aspell-0.60/none.amf
+file path=usr/lib/aspell-0.60/nroff-filter.info
+file path=usr/lib/aspell-0.60/nroff-filter.so
+file path=usr/lib/aspell-0.60/nroff.amf
+file path=usr/lib/aspell-0.60/perl.amf
+file path=usr/lib/aspell-0.60/sgml-filter.info
+file path=usr/lib/aspell-0.60/sgml-filter.so
+file path=usr/lib/aspell-0.60/sgml.amf
+file path=usr/lib/aspell-0.60/spell
+file path=usr/lib/aspell-0.60/split.kbd
+file path=usr/lib/aspell-0.60/standard.kbd
+file path=usr/lib/aspell-0.60/tex-filter.info
+file path=usr/lib/aspell-0.60/tex-filter.so
+file path=usr/lib/aspell-0.60/tex.amf
+file path=usr/lib/aspell-0.60/texinfo-filter.info
+file path=usr/lib/aspell-0.60/texinfo-filter.so
+file path=usr/lib/aspell-0.60/texinfo.amf
+file path=usr/lib/aspell-0.60/url.amf
+link path=usr/lib/libaspell.so target=libaspell.so.15.1.5
+link path=usr/lib/libaspell.so.15 target=libaspell.so.15.1.5
+file path=usr/lib/libaspell.so.15.1.5
+link path=usr/lib/libpspell.so target=libpspell.so.15.1.5
+link path=usr/lib/libpspell.so.15 target=libpspell.so.15.1.5
+file path=usr/lib/libpspell.so.15.1.5
+file path=usr/share/info/aspell-dev.info
+file path=usr/share/info/aspell.info
+file path=usr/share/locale/ast/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/be/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/ca/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/cs/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/da/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/de/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/es/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/fi/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/fr/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/ga/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/id/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/it/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/ja/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/mn/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/ms/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/nl/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/ro/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/ru/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/rw/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/sk/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/sl/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/sr/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/sv/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/tg/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/uk/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/vi/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/wa/LC_MESSAGES/aspell.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/aspell.mo
+file path=usr/share/man/man1/aspell-import.1
+file path=usr/share/man/man1/aspell.1
+file path=usr/share/man/man1/prezip-bin.1
+file path=usr/share/man/man1/pspell-config.1
+file path=usr/share/man/man1/run-with-aspell.1
+file path=usr/share/man/man1/word-list-compress.1

@@ -1,0 +1,27 @@
+--- lightdm-gtk-greeter-2.0.1/src/lightdm-gtk-greeter.c.orig	Thu May 11 05:15:03 2017
++++ lightdm-gtk-greeter-2.0.1/src/lightdm-gtk-greeter.c	Thu May 11 05:21:13 2017
+@@ -502,10 +502,13 @@
+ 
+     if (logged_in_users > 0)
+     {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+         gchar *warning = g_strdup_printf (ngettext ("Warning: There is still %d user logged in.",
+                                                     "Warning: There are still %d users logged in.",
+                                                     logged_in_users),
+                                           logged_in_users);
++#pragma GCC diagnostic pop
+         message = new_message = g_markup_printf_escaped ("<b>%s</b>\n%s", warning, message);
+         g_free (warning);
+     }
+@@ -718,7 +721,10 @@
+     time (&rawtime);
+     timeinfo = localtime (&rawtime);
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+     strftime (time_str, 50, clock_format, timeinfo);
++#pragma GCC diagnostic pop
+     markup = g_markup_printf_escaped ("<b>%s</b>", time_str);
+     if (g_strcmp0 (markup, gtk_label_get_label (GTK_LABEL (clock_label))) != 0)
+         gtk_label_set_markup (GTK_LABEL (clock_label), markup);

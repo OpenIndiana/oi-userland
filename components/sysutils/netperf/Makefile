@@ -16,20 +16,24 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		netperf
 COMPONENT_VERSION=	2.7.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	Netperf is a benchmark that can be used to measure the performance of many different types of networking.
 COMPONENT_PROJECT_URL=	http://www.netperf.org/netperf/
 COMPONENT_FMRI=		benchmark/netperf
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	ftp://ftp.netperf.org/netperf/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:9170c4758463bc5342dcdbfc88a40b586fcc9d7ccca048ecbb3b2d49387a28b9
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL=	https://github.com/HewlettPackard/netperf/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:4569bafa4cca3d548eb96a486755af40bd9ceb6ab7c6abd81cc6aa4875007c4e
 COMPONENT_LICENSE=	HP
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+
+CFLAGS+= -std=gnu89
 
 CONFIGURE_OPTIONS+= --enable-histogram
 CONFIGURE_OPTIONS+= --enable-dirty
@@ -45,11 +49,11 @@ CONFIGURE_OPTIONS+= --enable-spin
 CONFIGURE_OPTIONS+= --enable-burst
 CONFIGURE_OPTIONS+= --enable-cpuutil=kstat
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
