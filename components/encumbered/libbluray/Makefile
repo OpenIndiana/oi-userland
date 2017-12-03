@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libbluray
-COMPONENT_VERSION= 1.0.1
+COMPONENT_VERSION= 1.0.2
 COMPONENT_FMRI = library/video/libbluray
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= An open-source library designed for Blu-Ray Discs playback for media players.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0f9f9a1db2f48cafc70ed2596ff3594b597e2027408f5f2be6191c245d67853a
+  sha256:6d9e7c4e416f664c330d9fa5a05ad79a3fb39b95adfc3fd6910cbed503b7aeff
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.videolan.org/pub/videolan/libbluray/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libbluray.html
