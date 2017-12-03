@@ -1,0 +1,24 @@
+On Solaris, pam modules are always dynamic, but use the #define check that
+gnome-keyring does in gkr-pam-module.c for consistency.
+
+Solaris should define PAM_EXTERN by default in appropriate pam header files
+just as Linux/BSD do:
+24969227 Add PAM_EXTERN for Linux/BSD module source compatibility
+
+--- gnome-keyring-3.16.0/pam/mock-pam.c	2015-07-06 14:02:14.786683308 -0700
++++ gnome-keyring-3.16.0/pam/mock-pam.c	2015-07-06 14:03:45.431087928 -0700
+@@ -31,6 +31,14 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
++#ifndef PAM_EXTERN
++#ifdef PAM_STATIC
++#define PAM_EXTERN static
++#else
++#define PAM_EXTERN extern
++#endif
++#endif
++
+ static int
+ prompt_password (pam_handle_t *ph,
+                  const char *prompt,
