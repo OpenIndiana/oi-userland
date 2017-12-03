@@ -10,28 +10,25 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 Alexander Pyhalov
 #
 
-set name=pkg.fmri value=pkg:/library/desktop/gtk-vnc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Development/GNOME and GTK+"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-license gtk-vnc.license license="LGPLv2.1"
-
-# Generated section:
 file path=usr/bin/$(MACH64)/gvnccapture
 file path=usr/bin/gvnccapture
-file path=usr/include/gtk-vnc-1.0/gtk-vnc.h
-file path=usr/include/gtk-vnc-1.0/vncdisplay.h
-file path=usr/include/gtk-vnc-1.0/vncdisplayenums.h
-file path=usr/include/gtk-vnc-1.0/vncgrabsequence.h
-file path=usr/include/gtk-vnc-1.0/vncimageframebuffer.h
+file path=usr/include/gtk-vnc-2.0/gtk-vnc.h
+file path=usr/include/gtk-vnc-2.0/vncdisplay.h
+file path=usr/include/gtk-vnc-2.0/vncdisplayenums.h
+file path=usr/include/gtk-vnc-2.0/vncgrabsequence.h
+file path=usr/include/gtk-vnc-2.0/vncimageframebuffer.h
 file path=usr/include/gvnc-1.0/gvnc.h
 file path=usr/include/gvnc-1.0/vncaudio.h
 file path=usr/include/gvnc-1.0/vncaudioformat.h
@@ -49,10 +46,10 @@ file path=usr/include/gvncpulse-1.0/gvncpulse.h
 file path=usr/include/gvncpulse-1.0/vncaudiopulse.h
 file path=usr/lib/$(MACH64)/girepository-1.0/GVnc-1.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/GVncPulse-1.0.typelib
-file path=usr/lib/$(MACH64)/girepository-1.0/GtkVnc-1.0.typelib
-link path=usr/lib/$(MACH64)/libgtk-vnc-1.0.so target=libgtk-vnc-1.0.so.0.0.1
-link path=usr/lib/$(MACH64)/libgtk-vnc-1.0.so.0 target=libgtk-vnc-1.0.so.0.0.1
-file path=usr/lib/$(MACH64)/libgtk-vnc-1.0.so.0.0.1
+file path=usr/lib/$(MACH64)/girepository-1.0/GtkVnc-2.0.typelib
+link path=usr/lib/$(MACH64)/libgtk-vnc-2.0.so target=libgtk-vnc-2.0.so.0.0.2
+link path=usr/lib/$(MACH64)/libgtk-vnc-2.0.so.0 target=libgtk-vnc-2.0.so.0.0.2
+file path=usr/lib/$(MACH64)/libgtk-vnc-2.0.so.0.0.2
 link path=usr/lib/$(MACH64)/libgvnc-1.0.so target=libgvnc-1.0.so.0.0.1
 link path=usr/lib/$(MACH64)/libgvnc-1.0.so.0 target=libgvnc-1.0.so.0.0.1
 file path=usr/lib/$(MACH64)/libgvnc-1.0.so.0.0.1
@@ -60,27 +57,28 @@ link path=usr/lib/$(MACH64)/libgvncpulse-1.0.so target=libgvncpulse-1.0.so.0.0.1
 link path=usr/lib/$(MACH64)/libgvncpulse-1.0.so.0 \
     target=libgvncpulse-1.0.so.0.0.1
 file path=usr/lib/$(MACH64)/libgvncpulse-1.0.so.0.0.1
-file path=usr/lib/$(MACH64)/pkgconfig/gtk-vnc-1.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/gtk-vnc-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gvnc-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gvncpulse-1.0.pc
 file path=usr/lib/girepository-1.0/GVnc-1.0.typelib
 file path=usr/lib/girepository-1.0/GVncPulse-1.0.typelib
-file path=usr/lib/girepository-1.0/GtkVnc-1.0.typelib
-link path=usr/lib/libgtk-vnc-1.0.so target=libgtk-vnc-1.0.so.0.0.1
-link path=usr/lib/libgtk-vnc-1.0.so.0 target=libgtk-vnc-1.0.so.0.0.1
-file path=usr/lib/libgtk-vnc-1.0.so.0.0.1
+file path=usr/lib/girepository-1.0/GtkVnc-2.0.typelib
+link path=usr/lib/libgtk-vnc-2.0.so target=libgtk-vnc-2.0.so.0.0.2
+link path=usr/lib/libgtk-vnc-2.0.so.0 target=libgtk-vnc-2.0.so.0.0.2
+file path=usr/lib/libgtk-vnc-2.0.so.0.0.2
 link path=usr/lib/libgvnc-1.0.so target=libgvnc-1.0.so.0.0.1
 link path=usr/lib/libgvnc-1.0.so.0 target=libgvnc-1.0.so.0.0.1
 file path=usr/lib/libgvnc-1.0.so.0.0.1
 link path=usr/lib/libgvncpulse-1.0.so target=libgvncpulse-1.0.so.0.0.1
 link path=usr/lib/libgvncpulse-1.0.so.0 target=libgvncpulse-1.0.so.0.0.1
 file path=usr/lib/libgvncpulse-1.0.so.0.0.1
-file path=usr/lib/pkgconfig/gtk-vnc-1.0.pc
+file path=usr/lib/pkgconfig/gtk-vnc-2.0.pc
 file path=usr/lib/pkgconfig/gvnc-1.0.pc
 file path=usr/lib/pkgconfig/gvncpulse-1.0.pc
 file path=usr/share/gir-1.0/GVnc-1.0.gir
 file path=usr/share/gir-1.0/GVncPulse-1.0.gir
-file path=usr/share/gir-1.0/GtkVnc-1.0.gir
+file path=usr/share/gir-1.0/GtkVnc-2.0.gir
+file path=usr/share/locale/bs/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/ca/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/ca@valencia/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/cs/LC_MESSAGES/gtk-vnc.mo
@@ -92,8 +90,10 @@ file path=usr/share/locale/eo/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/es/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/eu/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/fr/LC_MESSAGES/gtk-vnc.mo
+file path=usr/share/locale/fur/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/gd/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/gl/LC_MESSAGES/gtk-vnc.mo
+file path=usr/share/locale/guc/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/he/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/hu/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/id/LC_MESSAGES/gtk-vnc.mo
@@ -104,6 +104,7 @@ file path=usr/share/locale/lt/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/lv/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/nb/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/nds/LC_MESSAGES/gtk-vnc.mo
+file path=usr/share/locale/oc/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/pa/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/pl/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/pt/LC_MESSAGES/gtk-vnc.mo
@@ -124,3 +125,9 @@ file path=usr/share/locale/zh_CN/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/zh_HK/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/gtk-vnc.mo
 file path=usr/share/man/man1/gvnccapture.1
+file path=usr/share/vala/vapi/gtk-vnc-2.0.deps
+file path=usr/share/vala/vapi/gtk-vnc-2.0.vapi
+file path=usr/share/vala/vapi/gvnc-1.0.deps
+file path=usr/share/vala/vapi/gvnc-1.0.vapi
+file path=usr/share/vala/vapi/gvncpulse-1.0.deps
+file path=usr/share/vala/vapi/gvncpulse-1.0.vapi
