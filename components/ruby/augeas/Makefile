@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby-augeas
 COMPONENT_VERSION=	0.5.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
@@ -35,6 +36,7 @@ COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
 COMPONENT_PROJECT_URL=  https://github.com/hercules-team/ruby-augeas
 COMPONENT_BUGDB=	utility/augeas
 COMPONENT_ANITYA_ID=	7017
+COMPONENT_CLASSIFICATION= System/Administration and Configuration
 COMPONENT_FMRI=	library/ruby/augeas
 COMPONENT_SUMMARY= Ruby bindings for Augeas configuration editor
 COMPONENT_DESCRIPTION= The class Augeas provides bindings to augeas [http://augeas.net] library.
