@@ -16,15 +16,20 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		seahorse
-COMPONENT_VERSION=	2.32.0
-COMPONENT_REVISION=	4
+COMPONENT_MJR_VERSION=	3.20
+COMPONENT_MNR_VERSION=	0
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Seahorse
 COMPONENT_SUMMARY=	Seahorse is a GNOME application for managing encryption keys
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f55468237246a485317d59e2fbc1b1ef5f5bd4c5a7b9ff6f40c3d921af0ed52d
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+    sha256:e2b07461ed54a8333e5628e9b8e517ec2b731068377bf376570aad998274c6df
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		gnome/security/seahorse
+COMPONENT_CLASSIFICATION=System/Security
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -32,35 +37,32 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH = $(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        aclocal -I. && \
-                                        autoheader && \
-                                        libtoolize --automake --copy --force && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
+
+CPPFLAGS += -I/usr/include/openldap
+
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--enable-introspection=no
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+
+CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += crypto/gnupg
-REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += gnome/gnome-keyring
 REQUIRED_PACKAGES += library/desktop/atk
-REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-keyring
-REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/gnome/gcr
+REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/network/avahi
