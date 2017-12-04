@@ -72,7 +72,7 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Set standard explicitly
 CFLAGS   += -std=gnu89
-CXXFLAGS += -std=g++98
+CXXFLAGS += -std=gnu++98
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
