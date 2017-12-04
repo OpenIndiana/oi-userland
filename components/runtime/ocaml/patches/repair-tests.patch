@@ -1,0 +1,47 @@
+
+https://caml.inria.fr/mantis/view.php?id=7685
+https://caml.inria.fr/mantis/view.php?id=7686
+
+--- ocaml-4.06.0/testsuite/tests/lib-dynlink-csharp/Makefile.orig	2017-12-04 16:55:54.081569859 +0000
++++ ocaml-4.06.0/testsuite/tests/lib-dynlink-csharp/Makefile	2017-12-04 16:56:51.089899537 +0000
+@@ -40,7 +40,7 @@
+ .PHONY: bytecode
+ bytecode:
+ 	@printf " ... testing 'bytecode':"
+-	@if ! $(SUPPORTS_SHARED_LIBRARIES) || ! which $(CSC_COMMAND) >/dev/null 2>&1; \
++	@if ! $(SUPPORTS_SHARED_LIBRARIES) || command -v $(CSC_COMMAND) >/dev/null 2>&1; \
+ 	then \
+ 	  echo " => skipped"; \
+ 	else \
+@@ -55,7 +55,7 @@
+ .PHONY: bytecode-dll
+ bytecode-dll:
+ 	@printf " ... testing 'bytecode-dll':"
+-	@if ! $(SUPPORTS_SHARED_LIBRARIES) || ! which $(CSC_COMMAND) > /dev/null 2>&1; \
++	@if ! $(SUPPORTS_SHARED_LIBRARIES) || command -v $(CSC_COMMAND) > /dev/null 2>&1; \
+ 	then \
+ 	  echo " => skipped"; \
+ 	else \
+@@ -73,7 +73,7 @@
+ native:
+ 	@printf " ... testing 'native':"
+ 	@if ! $(SUPPORTS_SHARED_LIBRARIES) || $(BYTECODE_ONLY) \
+-	    || ! which $(CSC_COMMAND) > /dev/null 2>&1; then \
++	    || command -v $(CSC_COMMAND) > /dev/null 2>&1; then \
+ 	  echo " => skipped"; \
+ 	else \
+ 	  rm -f main.exe main.dll; \
+@@ -88,7 +88,7 @@
+ native-dll:
+ 	@printf " ... testing 'native-dll':"
+ 	@if ! $(SUPPORTS_SHARED_LIBRARIES) || $(BYTECODE_ONLY) \
+-	    || ! which $(CSC_COMMAND) > /dev/null 2>&1; then \
++	    || command -v $(CSC_COMMAND) > /dev/null 2>&1; then \
+ 	  echo " => skipped"; \
+ 	else \
+ 	  rm -f main.exe main_obj.$(O) main.dll; \
+--- ocaml-4.06.0/testsuite/tests/basic/float.reference.orig	2017-12-04 18:33:56.140895262 +0000
++++ ocaml-4.06.0/testsuite/tests/basic/float.reference	2017-12-04 18:34:06.093706170 +0000
+@@ -1 +1 @@
+-1./.0. = inf
++1./.0. = Inf

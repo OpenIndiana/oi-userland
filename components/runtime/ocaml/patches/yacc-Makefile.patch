@@ -1,0 +1,11 @@
+--- ocaml-4.06.0/yacc/Makefile.orig	2017-12-04 11:01:13.764791215 +0000
++++ ocaml-4.06.0/yacc/Makefile	2017-12-04 11:02:01.370843904 +0000
+@@ -28,7 +28,7 @@
+ endif
+ 
+ ocamlyacc$(EXE): $(OBJS)
+-	$(MKEXE_ANSI) -o ocamlyacc$(EXE) $(OBJS) $(EXTRALIBS)
++	$(MKEXE_ANSI) $(BYTECCLIBS) -o ocamlyacc$(EXE) $(OBJS) $(EXTRALIBS)
+ 
+ version.h : ../VERSION
+ 	echo "#define OCAML_VERSION \"`sed -e 1q $^ | tr -d '\r'`\"" > $@
