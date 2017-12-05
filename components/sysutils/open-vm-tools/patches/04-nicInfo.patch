@@ -1,0 +1,13 @@
+--- open-vm-tools-stable-10.1.15/lib/nicInfo/nicInfoPosix.c.orig	2017-12-05 10:16:50.182094452 +0000
++++ open-vm-tools-stable-10.1.15/lib/nicInfo/nicInfoPosix.c	2017-12-05 10:18:32.310179456 +0000
+@@ -34,8 +34,10 @@
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <errno.h>
++#if defined(__FreeBSD__) || defined(__APPLE__) || defined(__sun)
+ #if defined(__FreeBSD__) || defined(__APPLE__)
+ # include <sys/sysctl.h>
++#endif
+ # include <ifaddrs.h>
+ # include <net/if.h>
+ #endif

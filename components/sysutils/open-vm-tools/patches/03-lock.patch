@@ -1,0 +1,55 @@
+diff -pruN '--exclude=*.orig' open-vm-tools-10.1.15~/lib/file/fileLockPrimitive.c open-vm-tools-10.1.15/lib/file/fileLockPrimitive.c
+--- open-vm-tools-10.1.15~/lib/file/fileLockPrimitive.c	2017-09-29 21:15:57.000000000 +0000
++++ open-vm-tools-10.1.15/lib/file/fileLockPrimitive.c	2017-10-03 09:31:21.681628379 +0000
+@@ -60,8 +60,8 @@
+ #define LOGLEVEL_MODULE main
+ #include "loglevel_user.h"
+ 
+-#define LOCK_SHARED     "S"
+-#define LOCK_EXCLUSIVE  "X"
++#define __LOCK_SHARED     "S"
++#define __LOCK_EXCLUSIVE  "X"
+ #define FILELOCK_PROGRESS_DEARTH 8000 // Dearth of progress time in msec
+ #define FILELOCK_PROGRESS_SAMPLE 200  // Progress sampling time in msec
+ 
+@@ -472,8 +472,8 @@ fixedUp:
+       goto corrupt;
+    }
+ 
+-   if ((strcmp(argv[3], LOCK_SHARED) != 0) &&
+-       (strcmp(argv[3], LOCK_EXCLUSIVE) != 0)) {
++   if ((strcmp(argv[3], __LOCK_SHARED) != 0) &&
++       (strcmp(argv[3], __LOCK_EXCLUSIVE) != 0)) {
+       goto corrupt;
+    }
+ 
+@@ -1096,8 +1096,8 @@ FileLockWaitForPossession(const char *lo
+        ((memberValues->lamportNumber == myValues->lamportNumber) &&
+           (Unicode_Compare(memberValues->memberName,
+                            myValues->memberName) < 0))) &&
+-        ((strcmp(memberValues->lockType, LOCK_EXCLUSIVE) == 0) ||
+-         (strcmp(myValues->lockType, LOCK_EXCLUSIVE) == 0))) {
++        ((strcmp(memberValues->lockType, __LOCK_EXCLUSIVE) == 0) ||
++         (strcmp(myValues->lockType, __LOCK_EXCLUSIVE) == 0))) {
+       char *path;
+       uint32 loopCount;
+       Bool   thisMachine;
+@@ -1675,7 +1675,7 @@ FileLockIntrinsicPortable(const char *pa
+           */
+ 
+          Warning(LGPFX" %s implicit %s lock succeeded on '%s'.\n",
+-                 __FUNCTION__, LOCK_SHARED, pathName);
++                 __FUNCTION__, __LOCK_SHARED, pathName);
+ 
+          *err = 0;
+          memberFilePath = &implicitReadToken;
+@@ -1838,7 +1838,7 @@ FileLockIntrinsic(const char *pathName,
+    /* Construct the locking directory path */
+    lockBase = Unicode_Append(pathName, FILELOCK_SUFFIX);
+ 
+-   myValues.lockType = exclusivity ? LOCK_EXCLUSIVE : LOCK_SHARED;
++   myValues.lockType = exclusivity ? __LOCK_EXCLUSIVE : __LOCK_SHARED;
+    myValues.exclusivity = exclusivity;
+    myValues.waitTime = 0;
+    myValues.msecMaxWaitTime = msecMaxWaitTime;
+

@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Adam Stevko
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,18 +24,23 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/open-vm-tools.xml path=lib/svc/manifest/system/virtualization/open-vm-tools.xml restart_fmri=svc:/system/manifest-import:default
+file files/tools.conf        path=etc/vmware-tools/tools.conf preserve=true
 
-file path=etc/vmware-tools/poweroff-vm-default
-file path=etc/vmware-tools/poweron-vm-default
-file path=etc/vmware-tools/resume-vm-default
-file path=etc/vmware-tools/scripts/vmware/network
-file path=etc/vmware-tools/statechange.subr
-file path=etc/vmware-tools/suspend-vm-default
-file path=etc/vmware-tools/vm-support
+dir path=var/log/vmtools
 
+file path=etc/vmware-tools/poweroff-vm-default    mode=0555
+file path=etc/vmware-tools/poweron-vm-default     mode=0555
+file path=etc/vmware-tools/resume-vm-default      mode=0555
+file path=etc/vmware-tools/scripts/vmware/network mode=0555
+file path=etc/vmware-tools/statechange.subr       mode=0555
+file path=etc/vmware-tools/suspend-vm-default     mode=0555
+file path=etc/vmware-tools/vm-support             mode=0555
+
+file path=usr/bin/vmhgfs-fuse
 file path=usr/bin/vmtoolsd
 file path=usr/bin/vmware-checkvm
 file path=usr/bin/vmware-hgfsclient
+file path=usr/bin/vmware-namespace-cmd
 file path=usr/bin/vmware-rpctool
 file path=usr/bin/vmware-toolbox-cmd
 file path=usr/bin/vmware-vmblock-fuse
@@ -72,3 +78,4 @@ file path=usr/share/open-vm-tools/messages/ja/vmtoolsd.vmsg
 file path=usr/share/open-vm-tools/messages/ko/toolboxcmd.vmsg
 file path=usr/share/open-vm-tools/messages/ko/vmtoolsd.vmsg
 file path=usr/share/open-vm-tools/messages/zh_CN/toolboxcmd.vmsg
+
