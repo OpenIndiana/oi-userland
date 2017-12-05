@@ -271,7 +271,7 @@ diff --git driver/Makefile.in driver/Makefile.in
  xscreensaver: $(SAVER_OBJS)
 -	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS)
 +	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS) \
-+	-lgconf-2 -lgobject-2.0
++	-lgconf-2 -lgobject-2.0 -lglib-2.0
  
  xscreensaver-command: $(CMD_OBJS)
  	$(CC) $(LDFLAGS) -o $@ $(CMD_OBJS) $(CMD_LIBS)
@@ -3533,7 +3533,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
         { NULL, NULL } /* Must be last to terminate list */
        };
      const struct atom_request *atom_lists[3] = { NULL, NULL, NULL };
-@@ -1163,8 +1186,36 @@
+@@ -1163,8 +1186,30 @@
  main_loop (saver_info *si)
  {
    saver_preferences *p = &si->prefs;
@@ -3547,12 +3547,6 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
 +** voice for each type-in char in the password field of
 +** pop-up dialog
 +*/
-+
-+  /* BUG #6573182
-+  ** g_type_init should be done before calling gconf_client routines
-+  ** so that xscreensaver does not dump core if gconf daemon is not running.
-+  */
-+  g_type_init ();
 +
 +  /*
 +  ** 6395649 at-spi-registryd starts when screen is locked even
