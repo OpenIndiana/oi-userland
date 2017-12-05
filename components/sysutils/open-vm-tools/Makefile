@@ -44,9 +44,9 @@ CFLAGS += -std=gnu99
 CFLAGS += -D__EXTENSIONS__
 CFLAGS += -D_XOPEN_SOURCE=600
 CFLAGS += -D__SOLARIS__=1
+CFLAGS += -D_FILE_OFFSET_BITS=64
 CFLAGS += -Wno-deprecated-declarations
 CFLAGS += -Wno-unused-local-typedefs
-CFLAGS += -D_FILE_OFFSET_BITS=64
 
 LDFLAGS += -lnsl
 
@@ -55,7 +55,6 @@ CONFIGURE_OPTIONS += --disable-multimon
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --enable-deploypkg=no
-CONFIGURE_OPTIONS += --without-dnet
 CONFIGURE_OPTIONS += --without-gtk2
 CONFIGURE_OPTIONS += --without-gtkmm
 CONFIGURE_OPTIONS += --without-icu
@@ -67,10 +66,12 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:		$(NO_TESTS)
+# there are no tests defined
+test:		  $(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library/libdnet
 REQUIRED_PACKAGES += library/libfuse
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
