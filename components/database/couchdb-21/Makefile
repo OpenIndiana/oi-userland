@@ -74,9 +74,6 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
    $(GMAKE) -f Makefile.openindiana DESTDIR=$(PROTO_DIR) MANDIR=$(USRSHAREMANDIR) BINDIR=$(USRBINDIR) \
       DOCDIR=$(USRSHAREDOCDIR)/couchdb/21 ETCDIR=$(ETCDIR)/couchdb/21 RELDIR=$(USRLIBDIR64)/couchdb/21
 
-COMPONENT_PRE_TEST_ACTION += \
-   pip install hypothesis
-
 COMPONENT_TEST_ENV += http_proxy= https_proxy=
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = /OK/
@@ -92,5 +89,8 @@ REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += library/spidermonkey
 # only required for target test
-REQUIRED_PACKAGES += library/python/nose-27
-REQUIRED_PACKAGES += library/python/requests-27
+# this modules are in the repository
+# REQUIRED_PACKAGES += library/python/nose-27
+# REQUIRED_PACKAGES += library/python/requests-27
+# and install this via pip
+# pip install hypothesis
