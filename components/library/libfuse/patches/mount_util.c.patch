@@ -1,9 +1,5 @@
-
-Options -i, -l do not exist in Illumos umount
-Options -i, -f do not exist or differ in meaning in Illumos mount
- 
---- libfuse/mount_util.c.orig	2017-12-05 22:13:00.030067695 +0000
-+++ libfuse/mount_util.c	2017-12-05 22:14:22.818357506 +0000
+--- libfuse/mount_util.c.orig	2017-12-06 22:17:00.200753628 +0000
++++ libfuse/mount_util.c	2017-12-06 22:16:13.152587853 +0000
 @@ -58,6 +58,7 @@
          return -1;
      }
@@ -25,7 +21,7 @@ Options -i, -f do not exist or differ in meaning in Illumos mount
                  strerror(errno));
          exit(1);
      }
-@@ -112,10 +113,17 @@
+@@ -112,10 +113,12 @@
          return -1;
      }
      if (res == 0) {
@@ -35,13 +31,8 @@ Options -i, -f do not exist or differ in meaning in Illumos mount
 -        execl("/bin/umount", "/bin/umount", "-i", mnt, lazy ? "-l" : NULL,
 -              NULL);
 -        fprintf(stderr, "%s: failed to execute /bin/umount: %s\n", progname,
-+        if (lazy) {
-+            execle("/sbin/umount", "/sbin/umount", "-a", mnt, 
++        execle("/sbin/umount", "/sbin/umount", "-a", mnt, 
 +                   NULL, &env);
-+        } else {
-+            execle("/sbin/umount", "/sbin/umount", "-a", mnt,
-+                   NULL, &env);
-+        }
 +        fprintf(stderr, "%s: failed to execute /sbin/umount: %s\n", progname,
                  strerror(errno));
          exit(1);
