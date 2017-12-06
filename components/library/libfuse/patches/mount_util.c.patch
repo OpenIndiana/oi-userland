@@ -1,5 +1,9 @@
---- libfuse/mount_util.c.ref	2010-06-15 16:46:54.000000000 +0200
-+++ libfuse/mount_util.c	2016-05-03 21:36:52.782854200 +0200
+
+Options -i, -l do not exist in Illumos umount
+Options -i, -f do not exist or differ in meaning in Illumos mount
+ 
+--- libfuse/mount_util.c.orig	2017-12-05 22:13:00.030067695 +0000
++++ libfuse/mount_util.c	2017-12-05 22:14:22.818357506 +0000
 @@ -58,6 +58,7 @@
          return -1;
      }
@@ -7,19 +11,21 @@
 +        char *env = NULL;
          char templ[] = "/tmp/fusermountXXXXXX";
          char *tmp;
-
-@@ -79,8 +80,8 @@
+ 
+@@ -79,9 +80,9 @@
              exit(1);
          }
          rmdir(tmp);
 -        execl("/bin/mount", "/bin/mount", "-i", "-f", "-t", type, "-o", opts,
 -              fsname, mnt, NULL);
-+        execle("/bin/mount", "/bin/mount", "-i", "-f", "-t", type, "-o", opts,
+-        fprintf(stderr, "%s: failed to execute /bin/mount: %s\n", progname,
++        execle("/sbin/mount", "/sbin/mount", "-t", type, "-o", opts,
 +              fsname, mnt, NULL, &env);
-         fprintf(stderr, "%s: failed to execute /bin/mount: %s\n", progname,
++        fprintf(stderr, "%s: failed to execute /sbin/mount: %s\n", progname,
                  strerror(errno));
          exit(1);
-@@ -112,9 +113,16 @@
+     }
+@@ -112,10 +113,17 @@
          return -1;
      }
      if (res == 0) {
@@ -28,13 +34,15 @@
          setuid(geteuid());
 -        execl("/bin/umount", "/bin/umount", "-i", mnt, lazy ? "-l" : NULL,
 -              NULL);
+-        fprintf(stderr, "%s: failed to execute /bin/umount: %s\n", progname,
 +        if (lazy) {
-+            execle("/bin/umount", "/bin/umount", "-i", mnt, "-l",
++            execle("/sbin/umount", "/sbin/umount", "-a", mnt, 
 +                   NULL, &env);
 +        } else {
-+            execle("/bin/umount", "/bin/umount", "-i", mnt,
++            execle("/sbin/umount", "/sbin/umount", "-a", mnt,
 +                   NULL, &env);
 +        }
-         fprintf(stderr, "%s: failed to execute /bin/umount: %s\n", progname,
++        fprintf(stderr, "%s: failed to execute /sbin/umount: %s\n", progname,
                  strerror(errno));
          exit(1);
+     }
