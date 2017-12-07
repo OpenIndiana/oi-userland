@@ -1,14 +1,14 @@
-   
+ 
 install:
-	if [ -d  $(DESTDIR)$(ETCDIR) ]; then  $(RM) -r $(DESTDIR)$(ETCDIR); fi
-	if [ -d  $(DESTDIR)$(MANDIR) ]; then  $(RM) -r $(DESTDIR)$(MANDIR); fi
-	if [ -d  $(DESTDIR)$(DOCDIR) ]; then  $(RM) -r $(DESTDIR)$(DOCDIR); fi
-	/bin/rm -rf $(DESTDIR)$(RELDIR)/var
+	rm -rf $(DESTDIR)
+	mkdir -p  $(DESTDIR)$(RELDIR)
+	cp -r  rel/couchdb/* $(DESTDIR)$(RELDIR)/
+	/bin/rm -rf   $(DESTDIR)$(RELDIR)/var
 	/bin/mkdir -p $(DESTDIR)$(MANDIR)/man1/
 	/bin/mkdir -p $(DESTDIR)$(BINDIR)
 	/bin/mkdir -p $(DESTDIR)$(DOCDIR)
 	/bin/mkdir -p $(DESTDIR)$(ETCDIR)
-	/bin/mv -f  $(DESTDIR)$(RELDIR)/etc/*             $(DESTDIR)$(ETCDIR)/
+	/bin/mv -f    $(DESTDIR)$(RELDIR)/etc/*           $(DESTDIR)$(ETCDIR)/
 	cp -f    default.ini                              $(DESTDIR)$(ETCDIR)/default.d/
 	/bin/mv -f  $(DESTDIR)$(RELDIR)/share/docs/*      $(DESTDIR)$(MANDIR)/man1/	
 	/bin/mv -f  $(DESTDIR)$(RELDIR)/share/www/docs/*  $(DESTDIR)$(DOCDIR)/ 

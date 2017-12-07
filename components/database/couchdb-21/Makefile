@@ -18,6 +18,7 @@ PATH= $(USRBINDIR64):$(PATH.illumos)
 
 COMPONENT_NAME=           couchdb
 COMPONENT_VERSION=        2.1.1
+COMPONENT_VERSION_MAJOR=  2.1
 COMPONENT_FMRI=           database/$(COMPONENT_NAME)-21
 COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_PROJECT_URL=    http://couchdb.apache.org/
@@ -25,12 +26,15 @@ COMPONENT_SRC=            apache-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=   sha256:d5f255abc871ac44f30517e68c7b30d1503ec0f6453267d641e00452c04e7bcc
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=    http://apache.mirror.iphh.net/$(COMPONENT_NAME)/source/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        Apache 2.0
 COMPONENT_SUMMARY=        Apache CouchDB is a document-oriented database.
+COMPONENT_LICENSE=        Apache 2.0
+COMPONENT_LICENSE_FILE=   $(USRLIBDIR64)/couchdb/2.1/LICENSE
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PKG_MACROS += COMPONENT_VERSION_MAJOR=$(COMPONENT_VERSION_MAJOR)
 
 CFLAGS += $(gcc_C99_ENABLE) -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS 
 CXXFLAGE += $(gcc_C99_ENABLE) -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
@@ -39,20 +43,16 @@ ENV += CC="$(CC)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CONFIGURE_SCRIPT= $(@D)/configure
+
 COMPONENT_PREP_ACTION = ( \
 	$(CP) $(COMPONENT_DIR)/files/Makefile.openindiana $(@D); \
 	$(CP) $(COMPONENT_DIR)/files/default.ini $(@D); )
-
-CONFIGURE_SCRIPT= $(@D)/configure
 
 CONFIGURE_OPTIONS = --user $(COMPONENT_NAME)
 CONFIGURE_OPTIONS = --with-curl
 
 COMPONENT_BUILD_ENV += --docdir="$(USRSHAREDOCDIR)"
-
-COMPONENT_INSTALL_ARGS += COMPONENT_DIR=$(USRDIR)/$(COMPONENT_NAME)/$(COMPONENT_VERSION) V=1
-
-COMPONENT_INSTALL_TARGETS = release
 
 #
 # This is a mixed 64bit and 32bit installation.
@@ -63,16 +63,21 @@ COMPONENT_INSTALL_TARGETS = release
 # CouchDB uses couchjs as external process over STDOUT/STDIN/STDERR.
 #
 
-# The project doesn't have an install section but let user copy the folder rel/couchdb.
-# Here we prepare manually the image in the prototype folder and do the rest with a makefile.
-$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
-  ($(RM) -r $(PROTO_DIR)/*; \
-   $(MKDIR) $(PROTO_DIR)$(USRLIBDIR64)/couchdb/21; \
-   $(CP) $(BUILD_DIR_64)/LICENSE $(COMPONENT_NAME).license; \
-   $(CP) -r $(BUILD_DIR_64)/rel/couchdb/* $(PROTO_DIR)$(USRLIBDIR64)/couchdb/21/ ); \
-   cd $(BUILD_DIR_64); \
-   $(GMAKE) -f Makefile.openindiana DESTDIR=$(PROTO_DIR) MANDIR=$(USRSHAREMANDIR) BINDIR=$(USRBINDIR) \
-      DOCDIR=$(USRSHAREDOCDIR)/couchdb/21 ETCDIR=$(ETCDIR)/couchdb/21 RELDIR=$(USRLIBDIR64)/couchdb/21
+COMPONENT_INSTALL_ARGS += COMPONENT_DIR=$(USRDIR)/$(COMPONENT_NAME)/$(COMPONENT_VERSION) V=1
+
+COMPONENT_INSTALL_TARGETS = release
+
+# The project doesn't have an install section but let the user copy the folder rel/couchdb.
+# Here we prepare manually the image in the prototype folder with a makefile.
+COMPONENT_POST_INSTALL_ACTION= \
+   cd $(@D); \
+   $(GMAKE) -f Makefile.openindiana \
+      DESTDIR=$(PROTO_DIR) \
+      MANDIR=$(USRSHAREMANDIR) \
+      BINDIR=$(USRBINDIR) \
+      DOCDIR=$(USRSHAREDOCDIR)/couchdb/$(COMPONENT_VERSION_MAJOR) \
+      ETCDIR=$(ETCDIR)/couchdb/$(COMPONENT_VERSION_MAJOR) \
+      RELDIR=$(USRLIBDIR64)/couchdb/$(COMPONENT_VERSION_MAJOR)
 
 COMPONENT_TEST_ENV += http_proxy= https_proxy=
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
