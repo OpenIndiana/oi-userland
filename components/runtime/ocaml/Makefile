@@ -139,11 +139,6 @@ install:	$(INSTALL_64)
 
 test:		  $(TEST_64)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/tcl-8
-REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdnet
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += editor/gnu-emacs
