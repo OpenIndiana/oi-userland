@@ -28,7 +28,7 @@ COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=    http://apache.mirror.iphh.net/$(COMPONENT_NAME)/source/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=        Apache CouchDB is a document-oriented database.
 COMPONENT_LICENSE=        Apache 2.0
-COMPONENT_LICENSE_FILE=   $(USRLIBDIR64)/couchdb/2.1/LICENSE
+COMPONENT_LICENSE_FILE=   $(USRDIR)/couchdb/$(COMPONENT_VERSION_MAJOR)/LICENSE
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -71,13 +71,14 @@ COMPONENT_INSTALL_TARGETS = release
 # Here we prepare manually the image in the prototype folder with a makefile.
 COMPONENT_POST_INSTALL_ACTION= \
    cd $(@D); \
+	 $(RM) -r $(PROTO_DIR); \
    $(GMAKE) -f Makefile.openindiana \
       DESTDIR=$(PROTO_DIR) \
       MANDIR=$(USRSHAREMANDIR) \
       BINDIR=$(USRBINDIR) \
       DOCDIR=$(USRSHAREDOCDIR)/couchdb/$(COMPONENT_VERSION_MAJOR) \
       ETCDIR=$(ETCDIR)/couchdb/$(COMPONENT_VERSION_MAJOR) \
-      RELDIR=$(USRLIBDIR64)/couchdb/$(COMPONENT_VERSION_MAJOR)
+      RELDIR=$(USRDIR)/couchdb/$(COMPONENT_VERSION_MAJOR)
 
 COMPONENT_TEST_ENV += http_proxy= https_proxy=
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
