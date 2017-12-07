@@ -15,7 +15,7 @@
 -        execl("/bin/mount", "/bin/mount", "-i", "-f", "-t", type, "-o", opts,
 -              fsname, mnt, NULL);
 -        fprintf(stderr, "%s: failed to execute /bin/mount: %s\n", progname,
-+        execle("/sbin/mount", "/sbin/mount", "-t", type, "-o", opts,
++        execle("/sbin/mount", "/sbin/mount", "-F", type, "-o", opts,
 +              fsname, mnt, NULL, &env);
 +        fprintf(stderr, "%s: failed to execute /sbin/mount: %s\n", progname,
                  strerror(errno));
@@ -31,7 +31,7 @@
 -        execl("/bin/umount", "/bin/umount", "-i", mnt, lazy ? "-l" : NULL,
 -              NULL);
 -        fprintf(stderr, "%s: failed to execute /bin/umount: %s\n", progname,
-+        execle("/sbin/umount", "/sbin/umount", "-a", mnt, 
++        execle("/sbin/umount", "/sbin/umount",  mnt,
 +                   NULL, &env);
 +        fprintf(stderr, "%s: failed to execute /sbin/umount: %s\n", progname,
                  strerror(errno));
