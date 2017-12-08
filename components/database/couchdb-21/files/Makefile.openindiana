@@ -1,0 +1,20 @@
+ 
+install:
+	mkdir -p  $(DESTDIR)$(RELDIR)
+	cp -r  rel/couchdb/* $(DESTDIR)$(RELDIR)/
+	/bin/rm -rf   $(DESTDIR)$(RELDIR)/var
+	/bin/mkdir -p $(DESTDIR)$(MANDIR)/man1/
+	/bin/mkdir -p $(DESTDIR)$(BINDIR)
+	/bin/mkdir -p $(DESTDIR)$(DOCDIR)
+	/bin/mkdir -p $(DESTDIR)$(ETCDIR)
+	/bin/mv -f    $(DESTDIR)$(RELDIR)/etc/*           $(DESTDIR)$(ETCDIR)/
+	cp -f    default.ini                              $(DESTDIR)$(ETCDIR)/default.d/
+	/bin/mv -f  $(DESTDIR)$(RELDIR)/share/docs/*      $(DESTDIR)$(MANDIR)/man1/	
+	/bin/mv -f  $(DESTDIR)$(RELDIR)/share/www/docs/*  $(DESTDIR)$(DOCDIR)/ 
+	/bin/ln -fs $(RELDIR)/bin/couchdb                 $(DESTDIR)$(BINDIR)/couchdb
+	/bin/ln -fs $(RELDIR)/bin/couchjs                 $(DESTDIR)$(BINDIR)/couchjs
+	/bin/ln -fs $(RELDIR)/bin/couchup                 $(DESTDIR)$(BINDIR)/couchup
+	/bin/rm -rf $(DESTDIR)$(RELDIR)/etc
+	/bin/rm -rf $(DESTDIR)$(RELDIR)/share/docs
+	/bin/rm -rf $(DESTDIR)$(RELDIR)/share/www/docs
+	/bin/ln -fs $(DESTDIR)$(ETCDIR)                   $(DESTDIR)$(RELDIR)/etc
