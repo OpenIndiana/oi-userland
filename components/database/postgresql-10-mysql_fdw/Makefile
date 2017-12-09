@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	mysql_fdw
 COMPONENT_VERSION =	REL-2_3_0
+COMPONENT_REVISION =	1
 IPS_COMPONENT_VERSION =	2.3.0
 COMPONENT_SUMMARY =	MySQL Foreign Data Wrapper for PostgreSQL 10
 COMPONENT_SRC =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,7 +26,7 @@ COMPONENT_ARCHIVE_HASH = \
   sha256:a21a3acea36cee61a8831e06f6f90fe8fede175e8de9d9c15e0123a071d7e7c4
 COMPONENT_ARCHIVE_URL = \
   https://github.com/EnterpriseDB/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL =	http://reorg.github.io/pg_repack/
+COMPONENT_PROJECT_URL =	https://github.com/EnterpriseDB/mysql_fdw/
 COMPONENT_FMRI =	database/postgres-10/mysql_fdw
 COMPONENT_CLASSIFICATION =	System/Databases
 COMPONENT_LICENSE =	MIT
