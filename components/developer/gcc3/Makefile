@@ -56,6 +56,8 @@ CXXFLAGS += -std=c++98
 # enabling this causes libstdc++ to break
 LD_B_DIRECT=
 
+COMPONENT_BUILD_ARGS=
+
 CONFIGURE_PREFIX =	/usr/gcc/3.4
 
 # we need to override CONFIGURE_OPTIONS because GCC uses a configure that
