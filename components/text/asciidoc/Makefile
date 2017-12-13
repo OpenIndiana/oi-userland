@@ -16,19 +16,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	asciidoc
-COMPONENT_VERSION= 	8.6.9
+COMPONENT_VERSION= 	8.6.10
 COMPONENT_SUMMARY= 	Text based document generation tool
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:78db9d0567c8ab6570a6eff7ffdf84eadd91f2dfc0a92a2d0105d323cab4e1f0
+  sha256:9e52f8578d891beaef25730a92a6e723596ddbd07bfe0d2a56486fcf63a0b983
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/asciidoc/files/asciidoc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+  https://github.com/asciidoc/asciidoc/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://www.methods.co.nz/asciidoc/
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D); autoreconf -vif )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -a  $(SOURCE_DIR)/* $(@D))
