@@ -113,13 +113,13 @@ COMPONENT_INSTALL_ARGS += EMACSDIR="$(UL_PROTO_DATADIR)/emacs/site-lisp"
 # contents since it will make it easier to see new files need to be packaged
 # when Ocaml is updated.
 #
-COMPONENT_POST_INSTALL_ACTION = (cd $(@D)/emacs ; \
-                $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) install install-ocamltags $(COMPONENT_INSTALL_ARGS); \
-                cd $(@D); \
-                $(MKDIR) -p $(UL_PROTO_INFODIR); \
-                $(CP) $(@D)/infoman/ocaml*.gz $(UL_PROTO_INFODIR); \
-                $(MKDIR) -p $(UL_PROTO_EXAM); \
-                $(CP) $(UL_OCAML_PDFDOC) $(UL_PROTO_DOCDIR)/refman.pdf; \
+COMPONENT_POST_INSTALL_ACTION = (cd $(@D)/emacs &&\
+                $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) BINDIR=$(UL_PROTO_BINDIR) install install-ocamltags $(COMPONENT_INSTALL_ARGS) &&\
+                cd $(@D) &&\
+                $(MKDIR) -p $(UL_PROTO_INFODIR) &&\
+                $(CP) $(@D)/infoman/ocaml*.gz $(UL_PROTO_INFODIR) &&\
+                $(MKDIR) -p $(UL_PROTO_EXAM) &&\
+                $(CP) $(UL_OCAML_PDFDOC) $(UL_PROTO_DOCDIR)/refman.pdf &&\
                 $(CP) -R $(@D)/htmlman $(UL_PROTO_DOCDIR)) 
 
 # target all uses the new ocamltests, legacy uses the Makefile based tests.
