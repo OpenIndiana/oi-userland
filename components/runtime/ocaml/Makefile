@@ -68,7 +68,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 
-COMPONENT_BUILD_GMAKE_ARGS += -j1
+COMPONENT_BUILD_ARGS += -j1
 
 # Set up some environment variables to make things look nicer.
 # We make an 64 build and use /usr/bin/ for the commands
