@@ -67,6 +67,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+
+COMPONENT_BUILD_GMAKE_ARGS += -j1
+
 # Set up some environment variables to make things look nicer.
 # We make an 64 build and use /usr/bin/ for the commands
 UL_OCAML_PDFDOC     = $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2)
