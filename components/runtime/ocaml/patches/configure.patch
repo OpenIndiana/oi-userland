@@ -1,0 +1,51 @@
+--- ocaml-4.06.0/configure.orig	2017-12-04 11:36:24.080365021 +0000
++++ ocaml-4.06.0/configure	2017-12-04 11:44:43.943010668 +0000
+@@ -823,8 +823,11 @@
+         *gcc*)
+           sharedcccompopts="-fPIC"
+           if sh ./solaris-ld; then
+-            mksharedlib="ld -G"
+-            rpath="-R"
++            case "$target" in
++            x86_64*) mksharedlib="/usr/bin/ld -shared" ;;
++            *)       mksharedlib="/usr/bin/ld -G" ;;
++            esac
++						rpath="-R"
+             mksharedlibrpath="-R"
+           else
+             mksharedlib="$cc -shared"
+@@ -996,6 +999,7 @@
+   x86_64-*-mingw*)              arch=amd64; system=mingw;;
+   aarch64-*-linux*)             arch=arm64; system=linux;;
+   x86_64-*-cygwin*)             arch=amd64; system=cygwin;;
++	x86_64-*-solaris*)            arch=amd64; system=solaris;;
+ esac
+ 
+ # Some platforms exist both in 32-bit and 64-bit variants, not distinguished
+@@ -1019,7 +1023,6 @@
+ case "$arch,$cc,$system,$model" in
+   *,*,rhapsody,*)      if $arch64; then partialld="ld -r -arch ppc64"; fi;;
+   amd64,gcc*,macosx,*) partialld="ld -r -arch x86_64";;
+-  amd64,gcc*,solaris,*) partialld="ld -r -m elf_x86_64";;
+   power,gcc*,elf,ppc)   partialld="ld -r -m elf32ppclinux";;
+   power,gcc*,elf,ppc64)   partialld="ld -r -m elf64ppc";;
+   power,gcc*,elf,ppc64le)   partialld="ld -r -m elf64lppc";;
+@@ -1037,8 +1040,8 @@
+                     fi;;
+   amd64,solaris)  as="${TOOLPREF}as --64"
+                   aspp="${TOOLPREF}gcc -m64 -c";;
+-  i386,solaris)   as="${TOOLPREF}as"
+-                  aspp="${TOOLPREF}gcc -c";;
++  i386,solaris)   as="${TOOLPREF}as --32"
++                  aspp="${TOOLPREF}gcc -m32 -c";;
+   power,elf)      if $arch64; then
+                     as="${TOOLPREF}as -a64 -mppc64"
+                     aspp="${TOOLPREF}gcc -m64 -c"
+@@ -1080,6 +1083,7 @@
+   amd64,openbsd) profiling='true';;
+   amd64,freebsd) profiling='true';;
+   amd64,netbsd) profiling='true';;
++	amd64,solaris) profiling='true';;
+   arm,netbsd) profiling='true';;
+   amd64,gnu) profiling='true';;
+   arm,linux*) profiling='true';;

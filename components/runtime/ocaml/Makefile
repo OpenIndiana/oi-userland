@@ -21,107 +21,93 @@
 
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
-# ocaml configure system checks for gcc as gcc*, 
-# so we can't set -cc option to $(CC).
-# Instead we set PATH to $(GCC_ROOT)/bin:$(PATH) and -cc to gcc
-PATH=$(GCC_ROOT)/bin:$(USRBINDIR):$(GNUBIN):$(USRSBINDIR)
+PATH= $(PATH.gnu)
 
-COMPONENT_NAME=		ocaml
-COMPONENT_VERSION=	3.11.2
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://www.ocaml.org
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-    sha256:86f3387a0d7e7c8be2a3c53af083a5a726e333686208d5ea0dd6bb5ac3f58143
-COMPONENT_ARCHIVE_URL=	http://caml.inria.fr/distrib/ocaml-3.11/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=		       ocaml
+COMPONENT_FMRI=          runtime/ocaml
+COMPONENT_VERSION_MAJOR= 4.06
+COMPONENT_VERSION=       $(COMPONENT_VERSION_MAJOR).0
+IPS_COMPONENT_VERSION=   4.0.6
+COMPONENT_PROJECT_URL=	 http://www.ocaml.org
+COMPONENT_SRC=		       $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	     $(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=  sha256:011879c913e8f988ecdac020b205e2baa4023052efed25013bdb9a6b0d5c6a80
+COMPONENT_ARCHIVE_URL=   https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_SUMMARY=       Objective Caml compiler and programming environment
+COMPONENT_LICENSE=       QPLv1, GPLv2
+COMPONENT_LICENSE_FILE=  $(COMPONENT_NAME).license
+COMPONENT_CLASSIFICATION= Development/System
+COMPONENT_DESCRIPTION= Objective Caml is a high-level, strongly-typed, functional and \
+object-oriented programming language from the ML family of languages. This package comprises \
+two batch compilers (a fast bytecode compiler and an optimizing native-code compiler), \
+an interactive toplevel system, parsing tools (Lex,Yacc,Camlp4), a replay debugger, \
+a documentation generator, and a comprehensive library.
 
 # Documentation sources
 #
-COMPONENT_ARCHIVE_1= ocaml-3.11-refman.html.tar.gz
-COMPONENT_ARCHIVE_HASH_1= \
-    sha256:1c65b334ccb155aefa1e5e930a91f816d843d37e26b27d3a0351c57149005a5c
-COMPONENT_ARCHIVE_URL_1= http://caml.inria.fr/distrib/ocaml-3.11/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_1= ocaml-$(COMPONENT_VERSION_MAJOR)-refman-html.tar.gz
+COMPONENT_ARCHIVE_HASH_1= sha256:a9a0b94eaead064c525a62de6520b5092a0ea0467c2f03584d6fa462c9afaa7e
+COMPONENT_ARCHIVE_URL_1= https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_1)
 
-COMPONENT_ARCHIVE_2= ocaml-3.11-refman.pdf
-COMPONENT_ARCHIVE_HASH_2= \
-    sha256:35f5adfeb92817f7e3ef66dec6b4ca910f48a3a2cf0bfa34bd155fe6866de405
-COMPONENT_ARCHIVE_URL_2= http://caml.inria.fr/distrib/ocaml-3.11/$(COMPONENT_ARCHIVE_2)
+COMPONENT_ARCHIVE_2= ocaml-$(COMPONENT_VERSION_MAJOR)-refman.pdf
+COMPONENT_ARCHIVE_HASH_2= sha256:e6c13808ea06ef3de3e7708073fafa338e0354c5662a2bbc5847356cd354af71
+COMPONENT_ARCHIVE_URL_2= https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_2)
 
-COMPONENT_ARCHIVE_3= ocaml-3.11-refman.info.tar.gz
-COMPONENT_ARCHIVE_HASH_3= \
-    sha256:48eedc6a870bef84562b2d0ed25d9c3b15ab646f72ecfb4c6c2cbaccc6b4081d
-COMPONENT_ARCHIVE_URL_3= http://caml.inria.fr/distrib/ocaml-3.11/$(COMPONENT_ARCHIVE_3)
+COMPONENT_ARCHIVE_3= ocaml-$(COMPONENT_VERSION_MAJOR)-refman.info.tar.gz
+COMPONENT_ARCHIVE_HASH_3= sha256:28581838c61492ee20f5380a9cf240a692d430dfb32cbc75f611f6a29b55ccac
+COMPONENT_ARCHIVE_URL_3= https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_3)
 
-TPNO=			9233
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_BUILD_ARGS=
+
+COMPONENT_BUILD_ARGS += -j1
+
+# Set up some environment variables to make things look nicer.
+# We make an 64 build and use /usr/bin/ for the commands
+UL_OCAML_PDFDOC     = $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2)
+UL_OCAML_INCLUDES = -nostdlib -I stdlib -I utils -I parsing -I typing -I bytecomp -I asmcomp -I driver
+UL_OCAML_ALLINCLUDES = $(UL_OCAML_INCLUDES) -I otherlibs/unix -I otherlibs/str -I otherlibs/dynlink
+UL_PROTO_BINDIR     = $(PROTO_DIR)/$(CONFIGURE_BINDIR.32)
+UL_PROTO_LIBDIR     = $(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
+UL_PROTO_INFODIR    = $(PROTO_DIR)/$(CONFIGURE_INFODIR)
+UL_PROTO_DATADIR    = $(PROTO_DIR)/$(CONFIGURE_PREFIX)/share
+UL_PROTO_DOCDIR     = $(UL_PROTO_DATADIR)/doc/ocaml
+UL_PROTO_EXAM       = $(UL_PROTO_DOCDIR)/otherlibs/labltk
 
 # Ocaml does not use a standard configure script, but has its own handwritten
 # one.  So we must specify the arguments it accepts by hand.
 #
-CONFIGURE_OPTIONS = --bindir $(CONFIGURE_BINDIR.$(BITS))
+CONFIGURE_OPTIONS  = --bindir $(CONFIGURE_BINDIR.32)
 CONFIGURE_OPTIONS += --libdir $(CONFIGURE_LIBDIR.$(BITS))/ocaml
 CONFIGURE_OPTIONS += --x11lib $(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --x11include $(CONFIGURE_INCLUDEDIR)
 CONFIGURE_OPTIONS += --mandir $(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS += -cc gcc
-CONFIGURE_OPTIONS += -aspp "/usr/bin/as -P"
-CONFIGURE_OPTIONS += -as "/usr/bin/as"
+CONFIGURE_OPTIONS += -cc "$(GCC_ROOT)/bin/gcc $(CC_BITS)"
+CONFIGURE_OPTIONS += -aspp "$(GCC_ROOT)/bin/gcc $(CC_BITS) -c"
+CONFIGURE_OPTIONS += -as "$(GAS) --$(BITS)"
+CONFIGURE_OPTIONS += -spacetime
+CONFIGURE_OPTIONS += -flambda
+CONFIGURE_OPTIONS += -verbose
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+  ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 COMPONENT_BUILD_TARGETS = world opt opt.opt
 
-# Set up some environment variables to make things look nicer.
-#
-UL_OCAML_PDFDOC     = $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2)
-UL_OCAML_INCLUDES = -nostdlib -I stdlib -I utils -I parsing -I typing -I bytecomp -I asmcomp -I driver
-UL_OCAML_ALLINCLUDES = $(UL_OCAML_INCLUDES) -I otherlibs/unix -I otherlibs/str -I otherlibs/dynlink
-UL_PROTO_BINDIR     = $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS))
-UL_PROTO_LIBDIR     = $(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
-UL_PROTO_INFODIR    = $(PROTO_DIR)/$(CONFIGURE_INFODIR)
-UL_PROTO_DATADIR    = $(PROTO_DIR)/$(CONFIGURE_PREFIX)/share
-COMPONENT_INSTALL_ARGS += EMACSDIR="$(UL_PROTO_DATADIR)/emacs/site-lisp"
-UL_PROTO_DOCDIR     = $(UL_PROTO_DATADIR)/doc/ocaml
-UL_PROTO_EXAM       = $(UL_PROTO_DOCDIR)/otherlibs/labltk
-
-# This action unpacks the additional tarballs and builds some additional
-# useful programs.  For example, the ocamlbyteinfo and ocamlplugininfo
-# utilities are useful additions from Debian, and also included in RHEL.
-# http://git.debian.org/?p=pkg-ocaml-maint/packages/ocaml.git;a=tree;f=debian/ocamlbyteinfo;hb=HEAD
-#
-
 COMPONENT_POST_BUILD_ACTION = (cd $(@D); \
-                $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
-                $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_3); \
-                $(CP) $(COMPONENT_DIR)/files/ocamlbyteinfo.ml $(@D); \
-                $(CP) $(COMPONENT_DIR)/files/ocamlplugininfo.ml $(@D); \
-                $(CP) ./otherlibs/dynlink/natdynlink.ml .; \
-                ($(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) \
-                 $(COMPONENT_BUILD_ARGS) -C emacs ocamltags); \
-                ($(ENV) $(COMPONENT_BUILD_ENV) \
-                 boot/ocamlrun ./ocamlc $(UL_OCAML_ALLINCLUDES) \
-                 dynlinkaux.cmo ocamlbyteinfo.ml -o ocamlbyteinfo); \
-                ($(ENV) $(COMPONENT_BUILD_ENV) \
-                 boot/ocamlrun ./ocamlopt $(UL_OCAML_ALLINCLUDES) \
-                 unix.cmxa str.cmxa natdynlink.ml ocamlplugininfo.ml \
-                 -o ocamlplugininfo); \
-                ($(ENV) $(COMPONENT_BUILD_ENV) \
-                 boot/ocamlrun ./ocamlopt $(UL_OCAML_INCLUDES) \
-                 -o objinfo config.cmx tools/objinfo.ml))
+   $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
+   $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_3); \
+   ($(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) \
+   $(COMPONENT_BUILD_ARGS) -C emacs ocamltags)) 
 
-COMPONENT_INSTALL_ARGS += BINDIR="$(UL_PROTO_BINDIR)"
-COMPONENT_INSTALL_ARGS += LIBDIR="$(UL_PROTO_LIBDIR)/ocaml"
-COMPONENT_INSTALL_ARGS += MANDIR="$(PROTOUSRSHAREMANDIR)"
 COMPONENT_INSTALL_ARGS += EMACSDIR="$(UL_PROTO_DATADIR)/emacs/site-lisp"
 
 # This action moves additional files we want to install into the proto area.
@@ -129,36 +115,35 @@ COMPONENT_INSTALL_ARGS += EMACSDIR="$(UL_PROTO_DATADIR)/emacs/site-lisp"
 # contents since it will make it easier to see new files need to be packaged
 # when Ocaml is updated.
 #
-COMPONENT_POST_INSTALL_ACTION = (cd $(@D)/emacs ; \
-                $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) install install-ocamltags $(COMPONENT_INSTALL_ARGS); \
-                cd $(@D); \
-                $(MKDIR) -p $(UL_PROTO_INFODIR); \
-                $(CP) $(@D)/infoman/ocaml*.gz $(UL_PROTO_INFODIR); \
-                $(MKDIR) -p $(UL_PROTO_EXAM); \
-                $(CP) $(UL_OCAML_PDFDOC) $(UL_PROTO_DOCDIR)/refman.pdf; \
-                $(CP) -R $(@D)/htmlman $(UL_PROTO_DOCDIR); \
-                $(CP) -R $(@D)/otherlibs/labltk/examples_* $(UL_PROTO_EXAM); \
-                $(RM) $(UL_PROTO_EXAM)/examples_*/.cvsignore)
+COMPONENT_POST_INSTALL_ACTION = (cd $(@D)/emacs &&\
+                $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) BINDIR=$(UL_PROTO_BINDIR) install install-ocamltags $(COMPONENT_INSTALL_ARGS) &&\
+                cd $(@D) &&\
+                $(MKDIR) -p $(UL_PROTO_INFODIR) &&\
+                $(CP) $(@D)/infoman/ocaml*.gz $(UL_PROTO_INFODIR) &&\
+                $(MKDIR) -p $(UL_PROTO_EXAM) &&\
+                $(CP) $(UL_OCAML_PDFDOC) $(UL_PROTO_DOCDIR)/refman.pdf &&\
+                $(CP) -R $(@D)/htmlman $(UL_PROTO_DOCDIR)) 
 
-# ASLR should be enabled when 64-bit support is enabled, which is planned as
-# a follow-on step.
-#
+# target all uses the new ocamltests, legacy uses the Makefile based tests.
+# All tests succeed but the parsing of the ocamltest results is wrong and 
+# leads to erroneously failing tests.
+# Only native tests are concerned.
+#COMPONENT_TEST_TARGETS = all
+COMPONENT_TEST_TARGETS = legacy
+COMPONENT_TEST_ARGS += SHELL=$(SHELL) 
+COMPONENT_TEST_DIR =  $(@D)/testsuite
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS  = "'/tests passed|tests skipped|tests failed|unexpected errors|tests considered/'"
+
+# ASLR should be enabled when 64-bit support is enabled
 # ASLR_MODE = $(ASLR_DISABLE)
 
-# Files built in the COMPONENT_POST_INSTALL_ACTION are found by setting 
-# PKG_PROTO_DIRS as follows:
-#
-PKG_PROTO_DIRS +=       $(BUILD_DIR_$(BITS))
+build:		$(BUILD_64)
 
-build:		$(BUILD_32)
+install:	$(INSTALL_64)
 
-install:	$(INSTALL_32)
+test:		  $(TEST_64)
 
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/tcl-8
-REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += editor/gnu-emacs
