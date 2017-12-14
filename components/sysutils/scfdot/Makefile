@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scfdot
 COMPONENT_VERSION=	20130322
+COMPONENT_REVISION= 1
 COMPONENT_COMMIT_ID=	8b61bb49223b7f576d4f0eac75b74d35c99771ab
 COMPONENT_SUMMARY=	SMF Dependency Graph Generator
 COMPONENT_PROJECT_URL=	https://java.net/projects/scfdot/
