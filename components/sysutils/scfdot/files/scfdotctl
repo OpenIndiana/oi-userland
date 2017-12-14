@@ -107,7 +107,9 @@ dot -Tps2 ${DOTOPTS} < /tmp/hostname.dot.$$ > /tmp/hostname.ps.$$
 awk -f /tmp/functions.awk.$$ f=setpage /tmp/hostname.ps.$$ > "${HOSTNAME}.ps"
 grep BoundingBox "${HOSTNAME}.ps"|tail -1
 ps2pdf -dPDFFitPage "${HOSTNAME}.ps" "${HOSTNAME}.pdf"
-rm /tmp/legend.*.$$ /tmp/hostname.*.$$ /tmp/functions.awk.$$ "/tmp/${HOSTNAME}-legend.ps.$$"
+rm /tmp/legend.dot.$$ /tmp/legend.ps.$$ \
+   /tmp/hostname.dot.$$ /tmp/hostname.ps.$$ \
+   /tmp/functions.awk.$$ "/tmp/${HOSTNAME}-legend.ps.$$"
 echo "created ${HOSTNAME}.ps and ${HOSTNAME}.pdf"
 
 
