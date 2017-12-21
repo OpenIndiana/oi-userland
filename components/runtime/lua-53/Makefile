@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			lua
 COMPONENT_VERSION=		5.3.2
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=		Lua is a powerful, fast, lightweight, embeddable scripting language.
 COMPONENT_PROJECT_URL=		https://www.lua.org/
 COMPONENT_FMRI=			runtime/lua-53
