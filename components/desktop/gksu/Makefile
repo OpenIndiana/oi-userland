@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gksu
 COMPONENT_VERSION=	2.0.2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/gksu/
 COMPONENT_SUMMARY=	Graphical frontend to su
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +45,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
+CONFIGURE_OPTIONS+=	--disable-nautilus-extension
 
 # -O2 is hardcoded
 gcc_OPT=
@@ -57,7 +58,6 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += gnome/file-manager/nautilus
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libgksu
