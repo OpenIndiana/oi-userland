@@ -13,11 +13,12 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= shared-mime-info
 
 COMPONENT_VERSION= 0.90
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= application/MIME type registry
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -26,18 +27,19 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://freedesktop.org/~hadess/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/Software/shared-mime-info
+COMPONENT_FMRI = desktop/shared-mime-info
+COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
+COMPONENT_LICENSE = GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-gcc_OPT = -O2
+PATH=$(PATH.gnu)
 
-PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_SCRIPT =$(@D)/configure
+CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_ENV+= PERL=$(PERL)
 
@@ -50,3 +52,7 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(TEST_32)
+
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += system/library

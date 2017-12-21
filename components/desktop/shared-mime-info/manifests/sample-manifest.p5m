@@ -10,26 +10,19 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/desktop/shared-mime-info@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-<transform file path=usr/share/mime/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-license shared-mime-info.license license="GPLv2"
-
-dir path=usr/share/application-registry
-file files/defaults.list path=usr/share/applications/defaults.list
-
-# Generated section:
-file path=usr/bin/update-mime-database mode=0555
+file path=usr/bin/update-mime-database
 file path=usr/share/locale/ar/LC_MESSAGES/shared-mime-info.mo
 file path=usr/share/locale/az/LC_MESSAGES/shared-mime-info.mo
 file path=usr/share/locale/be@latin/LC_MESSAGES/shared-mime-info.mo
@@ -122,6 +115,7 @@ file path=usr/share/mime/application/rtf.xml
 file path=usr/share/mime/application/sdp.xml
 file path=usr/share/mime/application/sieve.xml
 file path=usr/share/mime/application/smil.xml
+file path=usr/share/mime/application/vnd.apple.mpegurl.xml
 file path=usr/share/mime/application/vnd.corel-draw.xml
 file path=usr/share/mime/application/vnd.emusic-emusic_package.xml
 file path=usr/share/mime/application/vnd.google-earth.kml+xml.xml
@@ -480,6 +474,7 @@ file path=usr/share/mime/image/rle.xml
 file path=usr/share/mime/image/svg+xml-compressed.xml
 file path=usr/share/mime/image/svg+xml.xml
 file path=usr/share/mime/image/tiff.xml
+file path=usr/share/mime/image/vnd.adobe.photoshop.xml
 file path=usr/share/mime/image/vnd.djvu.xml
 file path=usr/share/mime/image/vnd.dwg.xml
 file path=usr/share/mime/image/vnd.dxf.xml
@@ -592,6 +587,7 @@ file path=usr/share/mime/text/tab-separated-values.xml
 file path=usr/share/mime/text/troff.xml
 file path=usr/share/mime/text/vnd.graphviz.xml
 file path=usr/share/mime/text/vnd.rn-realtext.xml
+file path=usr/share/mime/text/vnd.sun.j2me.app-descriptor.xml
 file path=usr/share/mime/text/vnd.trolltech.linguist.xml
 file path=usr/share/mime/text/vnd.wap.wml.xml
 file path=usr/share/mime/text/vnd.wap.wmlscript.xml
