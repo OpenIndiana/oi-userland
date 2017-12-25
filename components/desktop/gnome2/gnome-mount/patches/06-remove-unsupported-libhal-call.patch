@@ -1,0 +1,23 @@
+--- gnome-mount-0.8/src/gnome-mount.c.1	2017-12-25 13:30:20.618799764 +0000
++++ gnome-mount-0.8/src/gnome-mount.c	2017-12-25 13:32:43.300157929 +0000
+@@ -3124,8 +3124,9 @@
+ 
+                         /* don't prompt for password if the device is locked
+                          * (e.g. https://bugzilla.redhat.com/show_bug.cgi?id=437309 )
+-                         */
+-                        if (libhal_device_is_locked_by_others (hal_ctx,
++                         */ 
++                        /* Our libhal is a bit too old for this:  
++                           if (libhal_device_is_locked_by_others (hal_ctx,
+                                                                libhal_volume_get_udi (volume),
+                                                                "org.freedesktop.Hal.Device.Storage",
+                                                                NULL)) {
+@@ -3133,7 +3134,7 @@
+                                         g_message (_("Crypto device %s is locked"),
+                                                    libhal_volume_get_udi (volume));
+                                 goto out;
+-                        }
++                        } */
+ 
+ 			g_debug ("Crypto volume - UDI '%s'", udi);
+ 
