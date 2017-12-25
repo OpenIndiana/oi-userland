@@ -1,0 +1,94 @@
+--- gnome-mount-0.8/src/gnome-mount.c.~2~	2017-12-25 13:02:49.653208503 +0000
++++ gnome-mount-0.8/src/gnome-mount.c	2017-12-25 13:18:56.135513983 +0000
+@@ -51,14 +52,14 @@
+ #define NOTIFY_EXPIRES_DEFAULT -1
+ #endif
+ 
+-#if !defined(sun) && !defined(__FreeBSD__)
++#if !defined(__sun) && !defined(__FreeBSD__)
+ #include <mntent.h>
+ #elif defined(__FreeBSD__)
+ #include <fstab.h>
+ #include <sys/param.h>
+ #include <sys/ucred.h>
+ #include <sys/mount.h>
+-#elif defined(sun)
++#elif defined(__sun)
+ #include <sys/mnttab.h>
+ #endif
+ 
+@@ -677,7 +678,7 @@
+ get_mntent_mount_point(const char *device_file)
+ {
+ 	char *mount_point;
+-#if! defined(sun) && !defined(__FreeBSD__)
++#if! defined(__sun) && !defined(__FreeBSD__)
+ 	FILE *f;
+ 	struct mntent mnt;
+ 	struct mntent *mnte;
+@@ -686,7 +687,7 @@
+ 	struct statfs *mounts;
+ 	int n_mounts;
+ 	int i;
+-#elif defined(sun)
++#elif defined(__sun)
+ 	FILE *f;
+ 	struct mnttab mnt;
+ 	struct mnttab mpref = { NULL, NULL, NULL, NULL, NULL };
+@@ -708,7 +709,7 @@
+ 		endmntent (f);
+ 	}
+ 
+-#elif defined(sun) /* sun */
++#elif defined(__sun) /* sun */
+ 
+ 	if ((f = fopen(MNTTAB, "r")) != NULL) {
+ 		mpref.mnt_special = (char *)device_file;
+@@ -862,8 +863,11 @@
+ static gboolean
+ fstab_open (gpointer *handle)
+ {
+-#ifdef __FreeBSD__
++#if defined( __FreeBSD__)
+ 	return setfsent () == 1;
++#elif defined(__sun)
++	*handle = fopen ("/etc/vfstab", "r");
++        return *handle != NULL;
+ #else
+ 	*handle = fopen ("/etc/fstab", "r");
+ 	return *handle != NULL;
+@@ -873,7 +877,7 @@
+ static char *
+ fstab_next (gpointer handle, char **mount_point)
+ {
+-#ifdef __FreeBSD__
++#if defined (__FreeBSD__)
+ 	struct fstab *fstab;
+ 
+ 	fstab = getfsent ();
+@@ -884,6 +888,16 @@
+ 	}
+ 
+ 	return fstab ? fstab->fs_spec : NULL;
++#elif defined(__sun__)
++	struct mnttab mp;
++
++	if (getmntent (handle, &mp) != -1 ) {
++	        if (mount_point != NULL) {
++		    *mount_point = mp.mnt_mountp;
++                }
++                return mp.mnt_special;
++        }
++	return NULL;
+ #else
+ 	struct mntent *mnt;
+ 
+@@ -2875,7 +2889,7 @@
+ 		goto out;
+ 
+ 	if (opt_device_file != NULL) {
+-#ifndef sun
++#ifndef __sun
+ 		resolved_device_file = resolve_symlink (opt_device_file);
+ 		if (resolved_device_file == NULL) {
+ 			goto out;
