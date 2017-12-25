@@ -65,10 +65,9 @@ diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/M
 +	rm -f *~
 +
 +-include $(top_srcdir)/git.mk
-diff -urN upower-0.99.4-orig/src/illumos/up-apm-native.h upower-0.99.4/src/illumos/up-apm-native.h
---- upower-0.99.4-orig/src/illumos/up-apm-native.h	1970-01-01 03:00:00.000000000 +0000
-+++ upower-0.99.4/src/illumos/up-apm-native.h	2017-12-22 13:55:07.266831854 +0000
-@@ -0,0 +1,79 @@
+--- /dev/null	2017-12-25 11:21:27.000000000 +0000
++++ upower-0.99.4/src/illumos/up-apm-native.h	2017-12-25 11:21:02.569672318 +0000
+@@ -0,0 +1,69 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -98,19 +97,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-apm-native.h upower-0.99.4/src/illum
 +#include <fcntl.h> /* open() */
 +/* kevent() */
 +#include <sys/types.h>
-+#include <sys/event.h>
 +#include <sys/time.h>
 +#include <sys/ioctl.h> /* ioctl() */
 +/* APM macros */
-+
-+#include <machine/apmvar.h>
-+
-+/* sensor struct defs */
-+#include <sys/sensors.h>
-+
-+/* sysctl() */
-+#include <sys/param.h>
-+#include <sys/sysctl.h>
 +
 +#include <glib.h>
 +#include <glib-object.h>
@@ -868,9 +857,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
  if BACKEND_TYPE_LINUX
  upowerd_LDADD += 						\
  	linux/libupshared.la					\
---- upower-0.99.4/src/illumos/up-native.c.~1~	2017-12-22 14:11:55.208862987 +0000
-+++ upower-0.99.4/src/illumos/up-native.c	2017-12-22 17:22:20.462171014 +0000
-@@ -0,0 +1,146 @@
+--- upower-0.99.4/src/illumos/up-native.c.~1~	2017-12-25 11:08:52.519878162 +0000
++++ upower-0.99.4/src/illumos/up-native.c	2017-12-25 11:15:58.604857631 +0000
+@@ -0,0 +1,186 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -894,8 +883,14 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +#include "up-apm-native.h"
 +#include "up-native.h"
-+#include <unistd.h> /* close() */
++#include <libdevinfo.h>
++#include <glib.h>
++#include <fcntl.h>
 +#include <string.h> /* strcmp() */
++#include <sys/acpi_drv.h>
++#include <unistd.h> /* close() */
++
++#define DEVFS_PREFIX "/devices"
 +
 +/* XXX why does this macro needs to be in the .c ? */
 +G_DEFINE_TYPE (UpApmNative, up_apm_native, G_TYPE_OBJECT)
@@ -926,21 +921,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	return native->path;
 +}
 +
-+int
-+up_apm_get_fd()
-+{
-+	static int apm_fd = 0;
-+	if (apm_fd == 0) {
-+		g_debug("apm_fd is not initialized yet, opening");
-+		/* open /dev/apm */
-+		if ((apm_fd = open("/dev/apm", O_RDONLY)) == -1) {
-+			if (errno != ENXIO && errno != ENOENT)
-+				g_error("cannot open device file");
-+		}
-+	}
-+	return apm_fd;
-+}
-+
 +/**
 + * up_native_get_native_path:
 + * @object: the native tracking object
@@ -956,25 +936,73 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +}
 +
 +static int
-+find_acpi_drv(di_node_t node, void *arg)
++find_acpi_power_device(di_node_t node, void *arg)
 +{
 +     gboolean *pfound;
 +
 +     pfound = (gboolean *) arg;
 +     *pfound = FALSE;
 +     char * dn=di_driver_name(node);
-+     if(dn && !strcmp("acpi_drv",dn)) {
-+        *pfound = TRUE;
-+        return DI_WALK_TERMINATE;
++     if (dn && !strcmp("acpi_drv",dn)) {
++        di_minor_t minor;
++
++        minor = DI_MINOR_NIL;
++        while ((minor = di_minor_next(node, minor)) != DI_MINOR_NIL) {
++            char *dp, *fdp;
++            int fd;
++            int pow;
++            char *mname;
++
++            dp=di_devfs_path(node);
++            if (!dp) {
++                g_warning("Couldn't get path for acpi_drv device");
++                continue;
++            }
++
++            mname = di_minor_name(minor);
++            if (strncmp("battery", mname, strlen("battery")) != 0 && strncmp("ac", mname, strlen("ac")) != 0) {
++                g_debug("Device %s is not ac or battery. Skipping.", mname);
++                di_devfs_path_free(dp);
++                continue;
++            }
++            fdp = g_strconcat(DEVFS_PREFIX, dp,":", di_minor_name(minor), NULL);
++            if (!fdp) {
++                g_warning("Couldn't allocate memory");
++                di_devfs_path_free(dp);
++                continue;
++            }
++            
++            fd = open(fdp, O_RDONLY);
++            if (fd == -1) {
++                g_warning("Couldn't open %s device", fdp);
++                di_devfs_path_free(dp);
++                g_free(fdp);
++                continue;
++            }
++
++            if (ioctl(fd, ACPI_DRV_IOC_POWER_STATUS, &pow) < 0) {          
++                close(fd);  
++                g_warning("Couldn't get power status for device %s", fdp);
++                di_devfs_path_free(dp);
++                g_free(fdp);
++                continue;
++            }
++
++            *pfound = TRUE;
++            close(fd);
++            g_free(fdp);
++            di_devfs_path_free(dp);
++            return DI_WALK_TERMINATE;
++	}
 +     }
 +     return DI_WALK_CONTINUE;
 +}
 +
 +/**
 + * detect if we are on a desktop system or a laptop
-+ * We could use something more sofisticated, but we 
-+ * inherit HAL behavior - we consider system a laptop
-+ * if acpi_drv is present
++ * We consider system a laptop if acpi_drv is present
++ * and we can get power state from ac or button
++ * device
 + */
 +gboolean
 +up_native_is_laptop()
@@ -984,11 +1012,11 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +     di_node_t root_node;
 +
 +     errno = 0;
-+     if((root_node = di_init("/", DINFOSUBTREE)) == DI_NODE_NIL) {
++     if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
 +           g_error("di_init() failed: %s", g_strerror(errno));
 +           return FALSE;
 +     }
-+     di_walk_node(root_node, DI_WALK_CLDFIRST, &found, find_acpi_drv);
++     di_walk_node(root_node, DI_WALK_CLDFIRST, &found, find_acpi_power_device);
 +     di_fini(root_node);
 +     return found;
 +}
@@ -1017,3 +1045,4 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	}
 +	return FALSE;
 +}
++
