@@ -160,9 +160,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4-orig/src/illumos/up-backend.c	1970-01-01 03:00:00.000000000 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-26 16:58:46.201387131 +0000
-@@ -0,0 +1,804 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-26 16:55:30.866978608 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-26 17:57:45.308764006 +0000
+@@ -0,0 +1,833 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -204,14 +204,15 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static void	up_backend_init	(UpBackend		*backend);
 +static void	up_backend_finalize	(GObject		*object);
 +
-+static gboolean	up_backend_apm_get_power_info(struct apm_power_info*);
++static int	up_backend_acpi_get_ac_online();
++static gboolean	up_backend_acpi_get_power_info(UpDevice *device, struct apm_power_info*);
 +UpDeviceState up_backend_apm_get_battery_state_value(u_char battery_state);
 +static void	up_backend_update_acpibat_state(UpDevice*, struct sensordev);
 +static void	up_backend_update_lid_status(UpDaemon*);
 +
-+static gboolean		up_apm_device_get_on_battery	(UpDevice *device, gboolean *on_battery);
-+static gboolean		up_apm_device_get_online		(UpDevice *device, gboolean *online);
-+static gboolean		up_apm_device_refresh		(UpDevice *device);
++static gboolean		up_acpi_device_get_on_battery	(UpDevice *device, gboolean *on_battery);
++static gboolean		up_acpi_device_get_online		(UpDevice *device, gboolean *online);
++static gboolean		up_acpi_device_refresh		(UpDevice *device);
 +
 +static int		minor_device_ioctl(di_node_t node, void *arg);
 +static gboolean		up_backend_is_laptop ();
@@ -263,7 +264,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +/* those three ripped from freebsd/up-device-supply.c */
 +gboolean
-+up_apm_device_get_on_battery (UpDevice *device, gboolean * on_battery)
++up_acpi_device_get_on_battery (UpDevice *device, gboolean * on_battery)
 +{
 +	UpDeviceKind type;
 +	UpDeviceState state;
@@ -289,7 +290,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +}
 +
 +gboolean
-+up_apm_device_get_online (UpDevice *device, gboolean * online)
++up_acpi_device_get_online (UpDevice *device, gboolean * online)
 +{
 +	UpDeviceKind type;
 +	gboolean online_tmp;
@@ -406,7 +407,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 + **/
 +
 +static gboolean
-+up_backend_apm_get_power_info(struct apm_power_info *bstate) {
++up_backend_acpi_get_power_info(UpDevice device, struct apm_power_info *bstate) {
 +	bstate->battery_state = 255;
 +	bstate->ac_state = 255;
 +	bstate->battery_life = 0;
@@ -440,17 +441,17 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static gboolean
 +up_backend_update_ac_state(UpDevice* device)
 +{
-+	gboolean ret, new_is_online, cur_is_online;
-+	struct apm_power_info a;
++	gboolean new_is_online, cur_is_online;
++	int ret;
 +
 +	up_backend_update_lid_status(up_device_get_daemon(device));
-+	ret = up_backend_apm_get_power_info(&a);
-+	if (!ret)
-+		return ret;
++	ret = up_backend_acpi_get_ac_online();
++	if (ret < 0)
++		return FALSE;
 +
 +	g_object_get (device, "online", &cur_is_online, (void*) NULL);
-+	/* XXX use acpiac0.indicator0 if available */
-+	new_is_online = (a.ac_state == APM_AC_ON ? TRUE : FALSE);
++
++	new_is_online = (ret > 0 ? TRUE : FALSE);
 +	if (cur_is_online != new_is_online)
 +	{
 +		g_object_set (device,
@@ -471,7 +472,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	gint64 cur_time_to_empty, new_time_to_empty;
 +	struct apm_power_info a;
 +
-+	ret = up_backend_apm_get_power_info(&a);
++	ret = up_backend_acpi_get_power_info(device, &a);
 +	if (!ret)
 +		return ret;
 +
@@ -610,20 +611,20 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +/* callback updating the device */
 +static gboolean
-+up_backend_apm_powerchange_event_cb(gpointer object)
++up_backend_acpi_powerchange_event_cb(gpointer object)
 +{
 +	UpBackend *backend;
 +
 +	g_return_val_if_fail (UP_IS_BACKEND (object), FALSE);
 +	backend = UP_BACKEND (object);
-+	up_apm_device_refresh(backend->priv->ac);
-+	up_apm_device_refresh(backend->priv->battery);
++	up_acpi_device_refresh(backend->priv->ac);
++	up_acpi_device_refresh(backend->priv->battery);
 +	/* return false to not endless loop */
 +	return FALSE;
 +}
 +
 +static gboolean
-+up_apm_device_refresh(UpDevice* device)
++up_acpi_device_refresh(UpDevice* device)
 +{
 +	UpDeviceKind type;
 +	gboolean ret;
@@ -713,7 +714,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			continue;
 +		if (ev.ident == (guint) up_apm_get_fd() && APM_EVENT_TYPE(ev.data) == APM_POWER_CHANGE ) {
 +			/* g_idle_add the callback */
-+			g_idle_add((GSourceFunc) up_backend_apm_powerchange_event_cb, backend);
++			g_idle_add((GSourceFunc) up_backend_acpi_powerchange_event_cb, backend);
 +		}
 +	}
 +	return NULL;
@@ -779,13 +780,13 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		backend->priv->ac = UP_DEVICE(up_device_new());
 +		backend->priv->battery = UP_DEVICE(up_device_new ());
 +		device_class = UP_DEVICE_GET_CLASS (backend->priv->battery);
-+		device_class->get_on_battery = up_apm_device_get_on_battery;
-+		device_class->get_online = up_apm_device_get_online;
-+		device_class->refresh = up_apm_device_refresh;
++		device_class->get_on_battery = up_acpi_device_get_on_battery;
++		device_class->get_online = up_acpi_device_get_online;
++		device_class->refresh = up_acpi_device_refresh;
 +		device_class = UP_DEVICE_GET_CLASS (backend->priv->ac);
-+		device_class->get_on_battery = up_apm_device_get_on_battery;
-+		device_class->get_online = up_apm_device_get_online;
-+		device_class->refresh = up_apm_device_refresh;
++		device_class->get_on_battery = up_acpi_device_get_on_battery;
++		device_class->get_online = up_acpi_device_get_online;
++		device_class->refresh = up_acpi_device_refresh;
 +		/* creates thread */
 +		if((backend->priv->apm_thread = (GThread*) g_thread_try_new("apm-poller",(GThreadFunc)up_backend_apm_event_thread, (void*) backend, &err) == NULL))
 +		{
@@ -966,6 +967,34 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
 +	di_fini(root_node);
 +	return ma.device_path;
++}
++
++static int
++up_backend_acpi_get_ac_online()
++{
++	di_node_t root_node;
++	
++	struct mdi_arg ma;
++	int state = 0;
++	
++	ma.name = "ac";
++	ma.exact_match = FALSE;
++	ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
++	ma.result = &state;
++	ma.device_path = NULL;
++	
++	errno = 0;
++	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++		g_error("di_init() failed: %s", g_strerror(errno));
++		return FALSE;
++	}
++	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	if (ma.device_path)
++		g_free(ma.device_path);
++	if (!ma.success)
++		state = -1;
++	return state;
 +}
 diff -urN upower-0.99.4-orig/src/illumos/up-native.c upower-0.99.4/src/illumos/up-native.c
 --- upower-0.99.4-orig/src/illumos/up-native.c	1970-01-01 03:00:00.000000000 +0000
