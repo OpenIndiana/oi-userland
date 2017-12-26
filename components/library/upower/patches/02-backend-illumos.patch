@@ -72,8 +72,8 @@ diff -ur upower-0.99.4-orig/configure.ac upower-0.99.4/configure.ac
  	linux/libupshared.la					\
 diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/Makefile.am
 --- upower-0.99.4-orig/src/illumos/Makefile.am	1970-01-01 03:00:00.000000000 +0000
-+++ upower-0.99.4/src/illumos/Makefile.am	2017-12-26 12:39:36.740060101 +0000
-@@ -0,0 +1,26 @@
++++ upower-0.99.4/src/illumos/Makefile.am	2017-12-26 13:43:52.205877032 +0000
+@@ -0,0 +1,27 @@
 +## Process this file with automake to produce Makefile.in
 +
 +AM_CPPFLAGS = \
@@ -90,6 +90,7 @@ diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/M
 +endif
 +
 +libupshared_la_SOURCES =					\
++	up-native.c						\
 +	up-backend.c						\
 +	$(BUILT_SOURCES)
 +
@@ -100,10 +101,68 @@ diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/M
 +	rm -f *~
 +
 +-include $(top_srcdir)/git.mk
+diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illumos/up-acpi-native.h
+--- upower-0.99.4-orig/src/illumos/up-acpi-native.h	1970-01-01 03:00:00.000000000 +0000
++++ upower-0.99.4/src/illumos/up-acpi-native.h	2017-12-26 13:41:47.340610361 +0000
+@@ -0,0 +1,54 @@
++/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
++ *
++ * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
++ *
++ * Licensed under the GNU General Public License Version 2
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++#ifndef __UP_ACPI_NATIVE_H__
++#define __UP_ACPI_NATIVE_H__
++
++#include <glib.h>
++#include <glib-object.h>
++
++G_BEGIN_DECLS
++
++#define UP_TYPE_ACPI_NATIVE		(up_acpi_native_get_type ())
++#define UP_ACPI_NATIVE(o)	   	(G_TYPE_CHECK_INSTANCE_CAST ((o), UP_TYPE_ACPI_NATIVE, UpAcpiNative))
++#define UP_ACPI_NATIVE_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), UP_TYPE_ACPI_NATIVE, UpAcpiNativeClass))
++#define UP_IS_ACPI_NATIVE(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), UP_TYPE_ACPI_NATIVE))
++#define UP_IS_ACPI_NATIVE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), UP_TYPE_ACPI_NATIVE))
++#define UP_ACPI_NATIVE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), UP_TYPE_ACPI_NATIVE, UpAcpiNativeClass))
++
++typedef struct
++{
++	GObject	parent;
++	gchar*	path;
++} UpAcpiNative;
++
++typedef struct
++{
++	GObjectClass	parent_class;
++} UpAcpiNativeClass;
++
++
++UpAcpiNative* up_acpi_native_new (const char*);
++const gchar * up_acpi_native_get_path (UpAcpiNative*);
++GType up_acpi_native_get_type (void);
++G_END_DECLS
++
++#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- /dev/null	2017-12-26 13:22:48.000000000 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-26 13:22:25.428637898 +0000
-@@ -0,0 +1,754 @@
+--- upower-0.99.4-orig/src/illumos/up-backend.c	1970-01-01 03:00:00.000000000 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-26 14:28:58.169183969 +0000
+@@ -0,0 +1,803 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -128,6 +187,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +#include "up-backend.h"
 +#include "up-daemon.h"
 +#include "up-device.h"
++#include "up-acpi-native.h"
 +#include "up-backend-bsd-private.h"
 +#include <stdio.h>
 +#include <string.h> /* strcmp() */
@@ -156,6 +216,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static int		minor_device_ioctl(di_node_t node, void *arg);
 +static gboolean		up_backend_is_laptop ();
 +
++static char*		up_backend_get_ac_device_path(const char *device);
++
 +#define UP_BACKEND_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), UP_TYPE_BACKEND, UpBackendPrivate))
 +
 +struct UpBackendPrivate
@@ -176,6 +238,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	gboolean	present;
 +	gboolean	success;
 +	void 		*result;
++	char		*device_path;
 +};
 +
 +enum {
@@ -258,24 +321,35 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +gboolean
 +up_backend_coldplug (UpBackend *backend, UpDaemon *daemon)
 +{
-+	UpApmNative *acnative = NULL;
-+	UpApmNative *battnative = NULL;
++	UpAcpiNative *acnative = NULL;
++	UpAcpiNative *battnative = NULL;
 +	backend->priv->daemon = g_object_ref (daemon);
 +
 +	if (backend->priv->is_laptop)
 +	{
-+		up_backend_update_lid_status(daemon);
-+		acnative = up_apm_native_new("/ac");
-+		if (!up_device_coldplug (backend->priv->ac, backend->priv->daemon, G_OBJECT(acnative)))
-+			g_warning ("failed to coldplug ac");
-+		else
-+			g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, acnative, backend->priv->ac);
++		char *devpath;
 +
-+		battnative = up_apm_native_new("/batt");
-+		if (!up_device_coldplug (backend->priv->battery, backend->priv->daemon, G_OBJECT(battnative)))
-+			g_warning ("failed to coldplug battery");
-+		else
-+			g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, battnative, backend->priv->battery);
++		devpath = up_backend_get_ac_device_path("ac");
++		if (devpath) {
++			acnative = up_acpi_native_new(devpath);
++			if (!up_device_coldplug (backend->priv->ac, backend->priv->daemon, G_OBJECT(acnative)))
++				g_warning ("failed to coldplug ac");
++			else
++				g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, acnative, backend->priv->ac);
++			g_free(devpath);
++		}
++
++		up_backend_update_lid_status(daemon);
++		devpath = up_backend_get_ac_device_path("battery");
++		if (devpath) {
++			batnative = up_acpi_native_new(devpath);
++			if (!up_device_coldplug (backend->priv->battery, backend->priv->daemon, G_OBJECT(battnative)))
++				g_warning ("failed to coldplug battery");
++			else
++				g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, battnative, backend->priv->battery);
++			g_free(devpath);
++		}
++
 +	}
 +
 +	return TRUE;
@@ -581,6 +655,12 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	di_node_t root_node;
 +	struct mdi_arg ma;
 +        int state = 0;
++
++	ma.name = "lid";
++	ma.exact_match = TRUE;
++	ma.ctl = ACPI_DRV_IOC_LID_UPDATE;
++	ma.result = &state;
++	ma.device_path = NULL;
 +	
 +	errno = 0;
 +	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
@@ -592,6 +672,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	
 +	up_daemon_set_lid_is_present (daemon, ma.present);
 +	up_daemon_set_lid_is_closed (daemon, state ? FALSE: TRUE);
++	if (ma.device_path)
++		g_free(ma.device_path);
 +}
 +
 +/* thread doing kqueue() on apm device */
@@ -794,8 +876,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			}
 +			
 +			mname = di_minor_name(minor);
-+			if (st->exact_match && strcmp(st->name, mname) != 0 ||
-+			    !st->exact_match && strncmp(st->name, mname, strlen(st->name)) != 0) {
++			if ((st->exact_match && strcmp(st->name, mname) != 0) ||
++			    (!st->exact_match && strncmp(st->name, mname, strlen(st->name)) != 0)) {
 +				g_debug("Device %s is not a %s. Skipping.", mname, st->name);
 +				di_devfs_path_free(dp);
 +				continue;
@@ -847,6 +929,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	ma.exact_match = FALSE;
 +	ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
 +	ma.result = &state;
++	ma.device_path = NULL;
 +	
 +	errno = 0;
 +	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
@@ -855,6 +938,102 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	}
 +	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
 +	di_fini(root_node);
++	if (ma.device_path)
++		g_free(ma.device_path);
 +	return ma.success;
 +}
 +
++static char*
++up_backend_get_ac_device_path(const char *device)
++{
++	di_node_t root_node;
++	
++	struct mdi_arg ma;
++	int state = 0;
++	
++	ma.name = device;
++	ma.exact_match = FALSE;
++	ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
++	ma.result = &state;
++	ma.device_path = NULL;
++	
++	errno = 0;
++	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++		g_error("di_init() failed: %s", g_strerror(errno));
++		return FALSE;
++	}
++	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	return ma.device_path;
++}
+diff -urN upower-0.99.4-orig/src/illumos/up-native.c upower-0.99.4/src/illumos/up-native.c
+--- upower-0.99.4-orig/src/illumos/up-native.c	1970-01-01 03:00:00.000000000 +0000
++++ upower-0.99.4/src/illumos/up-native.c	2017-12-26 13:49:53.077225711 +0000
+@@ -0,0 +1,67 @@
++/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
++ *
++ * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
++ *
++ * Licensed under the GNU General Public License Version 2
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++#include "up-acpi-native.h"
++#include "up-native.h"
++#include <unistd.h> /* close() */
++#include <string.h> /* strcmp() */
++
++G_DEFINE_TYPE (UpAcpiNative, up_acpi_native, G_TYPE_OBJECT)
++
++static void
++up_acpi_native_class_init (UpAcpiNativeClass *klass)
++{
++}
++
++static void
++up_acpi_native_init (UpAcpiNative *self)
++{
++	self->path = NULL;
++}
++
++UpAcpiNative *
++up_acpi_native_new(const gchar * path)
++{
++	UpAcpiNative *native;
++	native = UP_ACPI_NATIVE (g_object_new (UP_TYPE_ACPI_NATIVE, NULL));
++	native->path = g_strdup(path);
++	return native;
++}
++
++const gchar *
++up_acpi_native_get_path(UpAcpiNative * native)
++{
++	return native->path;
++}
++
++/**
++ * up_native_get_native_path:
++ * @object: the native tracking object
++ *
++ * This converts a GObject used as the device data into a native path.
++ *
++ * Return value: The native path for the device which is unique, e.g. "/devices/pseudo/acpi_drv@0:battery0"
++ **/
++const gchar *
++up_native_get_native_path (GObject *object)
++{
++	return up_acpi_native_get_path (UP_ACPI_NATIVE (object));
++}
