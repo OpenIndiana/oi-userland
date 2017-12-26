@@ -36,6 +36,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+CPPFLAGS += $(CPP_LARGEFILES)
+
 COMPONENT_PREP_ACTION = (cd $(@D) && \
 				libtoolize --copy --force &&\
 				glib-gettextize -f &&\
@@ -52,6 +54,8 @@ CONFIGURE_OPTIONS += --enable-gtk-doc
 CONFIGURE_OPTIONS += --enable-man-pages
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
+
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
