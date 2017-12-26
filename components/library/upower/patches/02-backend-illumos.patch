@@ -33,10 +33,47 @@ diff -ur upower-0.99.4-orig/configure.ac upower-0.99.4/configure.ac
  src/linux/Makefile
  src/bsd/Makefile
  tools/Makefile
+--- upower-0.99.4-orig/src/Makefile.am	2017-12-22 13:49:01.088869218 +0000
++++ upower-0.99.4/src/Makefile.am	2017-12-22 14:11:15.858740851 +0000
+@@ -1,7 +1,7 @@
+ ## Process this file with automake to produce Makefile.in
+ 
+-DIST_SUBDIRS = dummy freebsd linux openbsd bsd
+-SUBDIRS = dummy freebsd linux openbsd
++DIST_SUBDIRS = dummy freebsd linux openbsd bsd illumos
++SUBDIRS = dummy freebsd linux openbsd illumos
+ 
+ if BACKEND_TYPE_FREEBSD
+ SUBDIRS += bsd
+@@ -11,6 +11,10 @@
+ SUBDIRS += bsd
+ endif
+ 
++if BACKEND_TYPE_ILLUMOS
++SUBDIRS += bsd
++endif
++
+ AM_CPPFLAGS = \
+ 	$(PIE_CFLAGS)						\
+ 	-I$(top_builddir)/src -I$(top_srcdir)/src		\
+@@ -89,6 +93,13 @@
+ 	bsd/libupsharedcommon.la
+ endif
+ 
++if BACKEND_TYPE_ILLUMOS
++upowerd_LDADD +=						\
++	illumos/libupshared.la				\
++	bsd/libupsharedcommon.la
++endif
++
++
+ if BACKEND_TYPE_LINUX
+ upowerd_LDADD += 						\
+ 	linux/libupshared.la					\
 diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/Makefile.am
 --- upower-0.99.4-orig/src/illumos/Makefile.am	1970-01-01 03:00:00.000000000 +0000
-+++ upower-0.99.4/src/illumos/Makefile.am	2017-12-22 13:55:26.658441035 +0000
-@@ -0,0 +1,28 @@
++++ upower-0.99.4/src/illumos/Makefile.am	2017-12-26 12:39:36.740060101 +0000
+@@ -0,0 +1,26 @@
 +## Process this file with automake to produce Makefile.in
 +
 +AM_CPPFLAGS = \
@@ -54,8 +91,6 @@ diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/M
 +
 +libupshared_la_SOURCES =					\
 +	up-backend.c						\
-+	up-native.c						\
-+	up-apm-native.h						\
 +	$(BUILT_SOURCES)
 +
 +libupshared_la_CFLAGS =					\
@@ -65,82 +100,10 @@ diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/M
 +	rm -f *~
 +
 +-include $(top_srcdir)/git.mk
---- /dev/null	2017-12-25 11:21:27.000000000 +0000
-+++ upower-0.99.4/src/illumos/up-apm-native.h	2017-12-25 11:21:02.569672318 +0000
-@@ -0,0 +1,69 @@
-+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
-+ *
-+ * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
-+ *
-+ * Licensed under the GNU General Public License Version 2
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software
-+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-+ */
-+
-+#ifndef __UP_APM_NATIVE_H__
-+#define __UP_APM_NATIVE_H__
-+
-+/* os-specific headers */
-+#include <errno.h> /* errno */
-+#include <fcntl.h> /* open() */
-+/* kevent() */
-+#include <sys/types.h>
-+#include <sys/time.h>
-+#include <sys/ioctl.h> /* ioctl() */
-+/* APM macros */
-+
-+#include <glib.h>
-+#include <glib-object.h>
-+
-+G_BEGIN_DECLS
-+
-+#define UP_TYPE_APM_NATIVE		(up_apm_native_get_type ())
-+#define UP_APM_NATIVE(o)	   	(G_TYPE_CHECK_INSTANCE_CAST ((o), UP_TYPE_APM_NATIVE, UpApmNative))
-+#define UP_APM_NATIVE_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), UP_TYPE_APM_NATIVE, UpApmNativeClass))
-+#define UP_IS_APM_NATIVE(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), UP_TYPE_APM_NATIVE))
-+#define UP_IS_APM_NATIVE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), UP_TYPE_APM_NATIVE))
-+#define UP_APM_NATIVE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), UP_TYPE_APM_NATIVE, UpApmNativeClass))
-+
-+typedef struct
-+{
-+	GObject	parent;
-+	gchar*	path;
-+} UpApmNative;
-+
-+typedef struct
-+{
-+	GObjectClass	parent_class;
-+} UpApmNativeClass;
-+
-+
-+// XX in .c ?
-+//GType up_apm_native_get_type (void);
-+//G_DEFINE_TYPE (UpApmNative, up_apm_native, G_TYPE_OBJECT)
-+
-+UpApmNative* up_apm_native_new (const char*);
-+const gchar * up_apm_native_get_path(UpApmNative*);
-+int up_apm_get_fd();
-+gboolean up_native_is_laptop();
-+gboolean up_native_get_sensordev(const char*, struct sensordev*);
-+G_END_DECLS
-+
-+#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-25 11:29:28.648881474 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-25 18:13:14.653665012 +0000
-@@ -0,0 +1,719 @@
+--- /dev/null	2017-12-26 13:22:48.000000000 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-26 13:22:25.428637898 +0000
+@@ -0,0 +1,754 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -161,19 +124,19 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 + * along with this program; if not, write to the Free Software
 + * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 + */
-+
-+#include "up-apm-native.h"
 +
 +#include "up-backend.h"
 +#include "up-daemon.h"
 +#include "up-device.h"
++#include "up-backend-bsd-private.h"
 +#include <stdio.h>
 +#include <string.h> /* strcmp() */
 +#include <libdevinfo.h>
 +#include <glib.h>
++#include <glib-object.h>
 +#include <fcntl.h>
++#include <unistd.h>
 +#include <sys/acpi_drv.h>
-+
 +
 +#define DEVFS_PREFIX "/devices"
 +
@@ -190,6 +153,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static gboolean		up_apm_device_get_online		(UpDevice *device, gboolean *online);
 +static gboolean		up_apm_device_refresh		(UpDevice *device);
 +
++static int		minor_device_ioctl(di_node_t node, void *arg);
++static gboolean		up_backend_is_laptop ();
++
 +#define UP_BACKEND_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), UP_TYPE_BACKEND, UpBackendPrivate))
 +
 +struct UpBackendPrivate
@@ -201,6 +167,15 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	gboolean		is_laptop;
 +	UpConfig		*config;
 +	GDBusProxy		*seat_manager_proxy;
++};
++
++struct mdi_arg {
++	const char	*name;
++	gboolean	exact_match;
++	int		ctl;
++	gboolean	present;
++	gboolean	success;
++	void 		*result;
 +};
 +
 +enum {
@@ -597,75 +572,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	return ret;
 +}
 +
-+static int
-+get_lid_status(di_node_t node, void *arg)
-+{
-+	struct lid_state *st;
-+	
-+	st = (struct lid_state*) arg;
-+	st->present = st->open = FALSE;
-+	
-+	char * dn=di_driver_name(node);
-+	if (dn && !strcmp("acpi_drv",dn)) {
-+		di_minor_t minor;
-+		
-+		minor = DI_MINOR_NIL;
-+		while ((minor = di_minor_next(node, minor)) != DI_MINOR_NIL) {
-+			char *dp, *fdp;
-+			int fd;
-+			int state;
-+			char *mname;
-+			
-+			dp=di_devfs_path(node);
-+			if (!dp) {
-+				g_warning("Couldn't get path for acpi_drv device");
-+				continue;
-+			}
-+			
-+			mname = di_minor_name(minor);
-+			if (strcmp("lid", mname) != 0) {
-+				g_debug("Device %s is not a lid. Skipping.", mname);
-+				di_devfs_path_free(dp);
-+				continue;
-+			}
-+			fdp = g_strconcat(DEVFS_PREFIX, dp,":", di_minor_name(minor), NULL);
-+			if (!fdp) {
-+				g_warning("Couldn't allocate memory");
-+				di_devfs_path_free(dp);
-+				continue;
-+			}
-+			
-+			fd = open(fdp, O_RDONLY);
-+			if (fd == -1) {
-+				g_warning("Couldn't open %s device", fdp);
-+				di_devfs_path_free(dp);
-+				g_free(fdp);
-+				continue;
-+			}
-+			
-+			st->present = TRUE;
-+			
-+			if (ioctl(fd, ACPI_DRV_IOC_LID_UPDATE, &state) < 0) {          
-+				close(fd);  
-+				g_warning("Couldn't get lid status for device %s", fdp);
-+				di_devfs_path_free(dp);
-+				g_free(fdp);
-+				continue;
-+			}
-+			
-+			if (state != 0) {
-+				st->open = TRUE;
-+			}
-+			
-+			close(fd);
-+			g_free(fdp);
-+			di_devfs_path_free(dp);
-+			return DI_WALK_TERMINATE;
-+		}
-+	}
-+	return DI_WALK_CONTINUE;
-+}
-+
 +/*
 + * Check the lid status, return TRUE if one was found, FALSE otherwise.
 + */
@@ -673,20 +579,19 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +up_backend_update_lid_status(UpDaemon *daemon)
 +{
 +	di_node_t root_node;
-+	struct lid_state st;
-+	st.present = FALSE;
-+	st.open = FALSE;
++	struct mdi_arg ma;
++        int state = 0;
 +	
 +	errno = 0;
 +	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
 +		g_error("di_init() failed: %s", g_strerror(errno));
 +		return;
 +	}
-+	di_walk_node(root_node, DI_WALK_CLDFIRST, &st, get_lid_status);
++	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
 +	di_fini(root_node);
 +	
-+	up_daemon_set_lid_is_present (daemon, st.present);
-+	up_daemon_set_lid_is_closed (daemon, !st.open);
++	up_daemon_set_lid_is_present (daemon, ma.present);
++	up_daemon_set_lid_is_closed (daemon, state ? FALSE: TRUE);
 +}
 +
 +/* thread doing kqueue() on apm device */
@@ -784,7 +689,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	gint64 current_time;
 +
 +	backend->priv = UP_BACKEND_GET_PRIVATE (backend);
-+	backend->priv->is_laptop = up_native_is_laptop();
++	backend->priv->is_laptop = up_backend_is_laptop();
 +	g_debug("is_laptop:%d",backend->priv->is_laptop);
 +	if (backend->priv->is_laptop)
 +	{
@@ -860,231 +765,96 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +	G_OBJECT_CLASS (up_backend_parent_class)->finalize (object);
 +}
---- upower-0.99.4-orig/src/Makefile.am	2017-12-22 13:49:01.088869218 +0000
-+++ upower-0.99.4/src/Makefile.am	2017-12-22 14:11:15.858740851 +0000
-@@ -1,7 +1,7 @@
- ## Process this file with automake to produce Makefile.in
- 
--DIST_SUBDIRS = dummy freebsd linux openbsd bsd
--SUBDIRS = dummy freebsd linux openbsd
-+DIST_SUBDIRS = dummy freebsd linux openbsd bsd illumos
-+SUBDIRS = dummy freebsd linux openbsd illumos
- 
- if BACKEND_TYPE_FREEBSD
- SUBDIRS += bsd
-@@ -11,6 +11,10 @@
- SUBDIRS += bsd
- endif
- 
-+if BACKEND_TYPE_ILLUMOS
-+SUBDIRS += bsd
-+endif
-+
- AM_CPPFLAGS = \
- 	$(PIE_CFLAGS)						\
- 	-I$(top_builddir)/src -I$(top_srcdir)/src		\
-@@ -89,6 +93,13 @@
- 	bsd/libupsharedcommon.la
- endif
- 
-+if BACKEND_TYPE_ILLUMOS
-+upowerd_LDADD +=						\
-+	illumos/libupshared.la				\
-+	bsd/libupsharedcommon.la
-+endif
-+
-+
- if BACKEND_TYPE_LINUX
- upowerd_LDADD += 						\
- 	linux/libupshared.la					\
---- upower-0.99.4/src/illumos/up-native.c.~1~	2017-12-25 18:14:39.290078739 +0000
-+++ upower-0.99.4/src/illumos/up-native.c	2017-12-25 18:16:32.978550764 +0000
-@@ -0,0 +1,188 @@
-+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
-+ *
-+ * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
-+ *
-+ * Licensed under the GNU General Public License Version 2
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software
-+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-+ */
-+
-+#include "up-apm-native.h"
-+#include "up-native.h"
-+#include <libdevinfo.h>
-+#include <glib.h>
-+#include <fcntl.h>
-+#include <string.h> /* strcmp() */
-+#include <sys/acpi_drv.h>
-+#include <unistd.h> /* close() */
-+
-+#define DEVFS_PREFIX "/devices"
-+
-+/* XXX why does this macro needs to be in the .c ? */
-+G_DEFINE_TYPE (UpApmNative, up_apm_native, G_TYPE_OBJECT)
-+
-+static void
-+up_apm_native_class_init (UpApmNativeClass *klass)
-+{
-+}
-+
-+static void
-+up_apm_native_init (UpApmNative *self)
-+{
-+	self->path = "empty";
-+}
-+
-+UpApmNative *
-+up_apm_native_new(const gchar * path)
-+{
-+	UpApmNative *native;
-+	native = UP_APM_NATIVE (g_object_new (UP_TYPE_APM_NATIVE, NULL));
-+	native->path = g_strdup(path);
-+	return native;
-+}
-+
-+const gchar *
-+up_apm_native_get_path(UpApmNative * native)
-+{
-+	return native->path;
-+}
-+
-+/**
-+ * up_native_get_native_path:
-+ * @object: the native tracking object
-+ *
-+ * This converts a GObject used as the device data into a native path.
-+ *
-+ * Return value: The native path for the device which is unique, e.g. "/sys/class/power/BAT1"
-+ **/
-+const gchar *
-+up_native_get_native_path (GObject *object)
-+{
-+	return up_apm_native_get_path (UP_APM_NATIVE (object));
-+}
 +
 +static int
-+find_acpi_power_device(di_node_t node, void *arg)
++minor_device_ioctl(di_node_t node, void *arg)
 +{
-+     gboolean *pfound;
-+     char *dn;
-+
-+     pfound = (gboolean *) arg;
-+     *pfound = FALSE;
-+
-+     dn=di_driver_name(node);
-+     if (dn && !strcmp("acpi_drv",dn)) {
-+        di_minor_t minor;
-+
-+        minor = DI_MINOR_NIL;
-+        while ((minor = di_minor_next(node, minor)) != DI_MINOR_NIL) {
-+            char *dp, *fdp;
-+            int fd;
-+            int pow;
-+            char *mname;
-+
-+            dp=di_devfs_path(node);
-+            if (!dp) {
-+                g_warning("Couldn't get path for acpi_drv device");
-+                continue;
-+            }
-+
-+            mname = di_minor_name(minor);
-+            if (strncmp("battery", mname, strlen("battery")) != 0 && strncmp("ac", mname, strlen("ac")) != 0) {
-+                g_debug("Device %s is not ac or battery. Skipping.", mname);
-+                di_devfs_path_free(dp);
-+                continue;
-+            }
-+            fdp = g_strconcat(DEVFS_PREFIX, dp,":", di_minor_name(minor), NULL);
-+            if (!fdp) {
-+                g_warning("Couldn't allocate memory");
-+                di_devfs_path_free(dp);
-+                continue;
-+            }
-+            
-+            fd = open(fdp, O_RDONLY);
-+            if (fd == -1) {
-+                g_warning("Couldn't open %s device", fdp);
-+                di_devfs_path_free(dp);
-+                g_free(fdp);
-+                continue;
-+            }
-+
-+            if (ioctl(fd, ACPI_DRV_IOC_POWER_STATUS, &pow) < 0) {          
-+                close(fd);  
-+                g_warning("Couldn't get power status for device %s", fdp);
-+                di_devfs_path_free(dp);
-+                g_free(fdp);
-+                continue;
-+            }
-+
-+            *pfound = TRUE;
-+            close(fd);
-+            g_free(fdp);
-+            di_devfs_path_free(dp);
-+            return DI_WALK_TERMINATE;
-+	}
-+     }
-+     return DI_WALK_CONTINUE;
-+}
-+
-+/**
-+ * detect if we are on a desktop system or a laptop
-+ * We consider system a laptop if acpi_drv is present
-+ * and we can get power state from ac or button
-+ * device
-+ */
-+gboolean
-+up_native_is_laptop()
-+{
-+     gboolean found;
-+
-+     di_node_t root_node;
-+
-+     errno = 0;
-+     if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
-+           g_error("di_init() failed: %s", g_strerror(errno));
-+           return FALSE;
-+     }
-+     di_walk_node(root_node, DI_WALK_CLDFIRST, &found, find_acpi_power_device);
-+     di_fini(root_node);
-+     return found;
-+}
-+
-+/**
-+ * get a sensordev by its xname (acpibatX/acpiacX)
-+ * returns a gboolean if found or not
-+ */
-+gboolean
-+up_native_get_sensordev(const char * id, struct sensordev * snsrdev)
-+{
-+	int devn;
-+	size_t sdlen = sizeof(struct sensordev);
-+	int mib[] = {CTL_HW, HW_SENSORS, 0, 0 ,0};
-+
-+	for (devn = 0 ; ; devn++) {
-+		mib[2] = devn;
-+		if (sysctl(mib, 3, snsrdev, &sdlen, NULL, 0) == -1) {
-+			if (errno == ENXIO)
++	struct mdi_arg *st;
++	char *dn;
++	
++	st = (struct mdi_arg*) arg;
++	
++	st->present = FALSE;
++	st->success = FALSE;
++	
++	dn=di_driver_name(node);
++	if (dn && !strcmp("acpi_drv",dn)) {
++		di_minor_t minor;
++		
++		minor = DI_MINOR_NIL;
++		while ((minor = di_minor_next(node, minor)) != DI_MINOR_NIL) {
++			char *dp, *fdp;
++			int fd;
++			char *mname;
++			
++			dp=di_devfs_path(node);
++			if (!dp) {
++				g_warning("Couldn't get path for acpi_drv device");
 +				continue;
-+			if (errno == ENOENT)
-+				break;
++			}
++			
++			mname = di_minor_name(minor);
++			if (st->exact_match && strcmp(st->name, mname) != 0 ||
++			    !st->exact_match && strncmp(st->name, mname, strlen(st->name)) != 0) {
++				g_debug("Device %s is not a %s. Skipping.", mname, st->name);
++				di_devfs_path_free(dp);
++				continue;
++			}
++			fdp = g_strconcat(DEVFS_PREFIX, dp,":", di_minor_name(minor), NULL);
++			if (!fdp) {
++				g_warning("Couldn't allocate memory");
++				di_devfs_path_free(dp);
++				continue;
++			}
++			
++			fd = open(fdp, O_RDONLY);
++			if (fd == -1) {
++				g_warning("Couldn't open %s device", fdp);
++				di_devfs_path_free(dp);
++				g_free(fdp);
++				continue;
++			}
++			
++			st->present = TRUE;
++			
++			if (ioctl(fd, st->ctl, st->result) < 0) {          
++				close(fd);  
++				g_warning("ioctl %d to device %s failed", st->ctl, fdp);
++				di_devfs_path_free(dp);
++				g_free(fdp);
++				continue;
++			}
++			st->success = TRUE;
++			
++			close(fd);
++			g_free(fdp);
++			di_devfs_path_free(dp);
++			return DI_WALK_TERMINATE;
 +		}
-+		if (!strcmp(snsrdev->xname, id))
-+			return TRUE;
 +	}
-+	return FALSE;
++	return DI_WALK_CONTINUE;
++}
++
++static gboolean
++up_backend_is_laptop()
++{
++	di_node_t root_node;
++	
++	struct mdi_arg ma;
++	int state = 0;
++	
++	ma.name = "ac";
++	ma.exact_match = FALSE;
++	ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
++	ma.result = &state;
++	
++	errno = 0;
++	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++		g_error("di_init() failed: %s", g_strerror(errno));
++		return FALSE;
++	}
++	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	return ma.success;
 +}
 +
