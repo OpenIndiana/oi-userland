@@ -161,8 +161,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
 --- upower-0.99.4-orig/src/illumos/up-backend.c	1970-01-01 03:00:00.000000000 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-26 14:28:58.169183969 +0000
-@@ -0,0 +1,803 @@
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-26 16:58:46.201387131 +0000
+@@ -0,0 +1,804 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -329,6 +329,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	{
 +		char *devpath;
 +
++		up_backend_update_lid_status(daemon);
++
 +		devpath = up_backend_get_ac_device_path("ac");
 +		if (devpath) {
 +			acnative = up_acpi_native_new(devpath);
@@ -339,7 +341,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			g_free(devpath);
 +		}
 +
-+		up_backend_update_lid_status(daemon);
 +		devpath = up_backend_get_ac_device_path("battery");
 +		if (devpath) {
 +			batnative = up_acpi_native_new(devpath);
