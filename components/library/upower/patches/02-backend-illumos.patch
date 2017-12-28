@@ -160,9 +160,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-27 16:01:57.156297737 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-27 16:06:33.906860494 +0000
-@@ -0,0 +1,875 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-28 11:03:30.694919975 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-28 11:04:09.013419117 +0000
+@@ -0,0 +1,856 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -209,7 +209,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +static int	up_backend_acpi_get_ac_online();
 +static gboolean	up_backend_acpi_get_power_info(UpDevice *device, struct apm_power_info*);
-+UpDeviceState up_backend_apm_get_battery_state_value(u_char battery_state);
 +static void	up_backend_update_lid_status(UpDaemon*);
 +
 +static gboolean		up_acpi_device_get_on_battery	(UpDevice *device, gboolean *on_battery);
@@ -421,24 +420,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		return FALSE;
 +	}
 +	return TRUE;
-+}
-+
-+UpDeviceState up_backend_apm_get_battery_state_value(u_char battery_state) {
-+	switch(battery_state) {
-+		case APM_BATT_HIGH:
-+			return UP_DEVICE_STATE_FULLY_CHARGED;
-+		case APM_BATT_LOW:
-+			return UP_DEVICE_STATE_DISCHARGING; // XXXX
-+		case APM_BATT_CRITICAL:
-+			return UP_DEVICE_STATE_EMPTY;
-+		case APM_BATT_CHARGING:
-+			return UP_DEVICE_STATE_CHARGING;
-+		case APM_BATTERY_ABSENT:
-+			return UP_DEVICE_STATE_EMPTY;
-+		case APM_BATT_UNKNOWN:
-+			return UP_DEVICE_STATE_UNKNOWN;
-+	}
-+	return -1;
 +}
 +
 +static gboolean
