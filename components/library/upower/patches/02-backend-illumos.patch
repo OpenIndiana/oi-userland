@@ -160,9 +160,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-28 11:05:02.007551539 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-28 11:10:00.326709015 +0000
-@@ -0,0 +1,841 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-28 12:29:21.071480511 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-28 12:32:25.287437352 +0000
+@@ -0,0 +1,843 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -197,6 +197,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +#include <fcntl.h>
 +#include <unistd.h>
 +#include <sys/acpi_drv.h>
++#include <libsysevent.h>
++#include <sys/sysevent/dev.h>
++#include <sys/sysevent/pwrctl.h>
 +
 +#define DEVFS_PREFIX "/devices"
 +
@@ -215,10 +218,16 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static gboolean		up_acpi_device_refresh		(UpDevice *device);
 +
 +static int		minor_device_ioctl(di_node_t node, void *arg);
-+static gboolean		up_backend_is_laptop ();
++static gboolean		up_backend_is_laptop (void);
 +static int		estimate_time(int charge_rate, int current_charge, int last_fullcharge, int is_discharging, int is_charging);
 +
 +static char*		up_backend_get_ac_device_path(const char *device);
++
++static sysevent_handle_t *shp;
++static UpBackend	*current_backend = NULL;
++static void		up_backend_sysevent_dev_handler(sysevent_t *ev);
++static void		up_backend_initialize_sysevent_handler(void);
++
 +
 +#define UP_BACKEND_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), UP_TYPE_BACKEND, UpBackendPrivate))
 +
@@ -227,7 +236,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	UpDaemon		*daemon;
 +	UpDevice		*ac;
 +	UpDevice		*battery;
-+	GThread			*apm_thread;
 +	gboolean		is_laptop;
 +	UpConfig		*config;
 +	GDBusProxy		*seat_manager_proxy;
@@ -600,20 +608,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	return FALSE;
 +}
 +
-+/* callback updating the device */
-+static gboolean
-+up_backend_acpi_powerchange_event_cb(gpointer object)
-+{
-+	UpBackend *backend;
-+
-+	g_return_val_if_fail (UP_IS_BACKEND (object), FALSE);
-+	backend = UP_BACKEND (object);
-+	up_acpi_device_refresh(backend->priv->ac);
-+	up_acpi_device_refresh(backend->priv->battery);
-+	/* return false to not endless loop */
-+	return FALSE;
-+}
-+
 +static gboolean
 +up_acpi_device_refresh(UpDevice* device)
 +{
@@ -669,48 +663,47 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		g_free(ma.device_path);
 +}
 +
-+/* thread doing kqueue() on apm device */
-+static gpointer
-+up_backend_apm_event_thread(gpointer object)
-+{
-+	int kq, nevents;
-+	struct kevent ev;
-+	struct timespec ts = {600, 0}, sts = {0, 0};
-+
-+	UpBackend *backend;
-+
-+	g_return_val_if_fail (UP_IS_BACKEND (object), NULL);
-+	backend = UP_BACKEND (object);
-+
-+	g_debug("setting up apm thread");
-+
-+	kq = kqueue();
-+	if (kq <= 0)
-+		g_error("kqueue");
-+	EV_SET(&ev, up_apm_get_fd(), EVFILT_READ, EV_ADD | EV_ENABLE | EV_CLEAR,
-+	    0, 0, NULL);
-+	nevents = 1;
-+	if (kevent(kq, &ev, nevents, NULL, 0, &sts) < 0)
-+		g_error("kevent");
-+
-+	/* blocking wait on kqueue */
-+	for (;;) {
-+		int rv;
-+
-+		/* 10mn timeout */
-+		sts = ts;
-+		if ((rv = kevent(kq, NULL, 0, &ev, 1, &sts)) < 0)
-+			break;
-+		if (!rv)
-+			continue;
-+		if (ev.ident == (guint) up_apm_get_fd() && APM_EVENT_TYPE(ev.data) == APM_POWER_CHANGE ) {
-+			/* g_idle_add the callback */
-+			g_idle_add((GSourceFunc) up_backend_acpi_powerchange_event_cb, backend);
-+		}
++static void
++up_backend_sysevent_dev_handler(sysevent_t *ev) {
++	char *class;
++	char *subclass;
++	
++	if ((class = sysevent_get_class_name(ev)) == NULL)
++		return;
++	
++	if ((subclass = sysevent_get_subclass_name(ev)) == NULL)
++		return;
++	
++	if (strcmp(class, EC_PWRCTL) == 0) {
++		up_acpi_device_refresh(current_backend->priv->ac);
++		up_acpi_device_refresh(current_backend->priv->battery);
 +	}
-+	return NULL;
-+	/* shouldnt be reached ? */
 +}
++
++static void
++up_backend_initialize_sysevent_handler() {
++	const char *subcl[6];
++	
++	shp = sysevent_bind_handle(up_backend_sysevent_dev_handler);
++	if (shp == NULL) {
++		g_warning("Failed to initialize sysevent handler");
++		return;
++	}
++	
++	subcl[0] = ESC_PWRCTL_ADD;
++	subcl[1] = ESC_PWRCTL_REMOVE;
++	subcl[2] = ESC_PWRCTL_STATE_CHANGE;
++	subcl[3] = ESC_PWRCTL_BRIGHTNESS_UP;
++	subcl[4] = ESC_PWRCTL_BRIGHTNESS_DOWN;
++	subcl[5] = ESC_PWRCTL_POWER_BUTTON;
++	
++	if (sysevent_subscribe_event(shp, EC_PWRCTL, subcl, 6) != 0) {
++		g_warning("Failed to subscribe to EC_PWRCTL events");
++		sysevent_unbind_handle(shp);
++		return;
++	}
++}
++
 +
 +/**
 + * GObject class functions
@@ -763,6 +756,12 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	UpDeviceClass *device_class;
 +	gint64 current_time;
 +
++	/* Trying to mimic singleton */
++	if (current_backend != NULL) {
++		backend->priv = current_backend->priv;
++		return;
++	}
++
 +	backend->priv = UP_BACKEND_GET_PRIVATE (backend);
 +	backend->priv->is_laptop = up_backend_is_laptop();
 +	g_debug("is_laptop:%d",backend->priv->is_laptop);
@@ -778,12 +777,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		device_class->get_on_battery = up_acpi_device_get_on_battery;
 +		device_class->get_online = up_acpi_device_get_online;
 +		device_class->refresh = up_acpi_device_refresh;
-+		/* creates thread */
-+		if((backend->priv->apm_thread = (GThread*) g_thread_try_new("apm-poller",(GThreadFunc)up_backend_apm_event_thread, (void*) backend, &err) == NULL))
-+		{
-+			g_warning("Thread create failed: %s", err->message);
-+			g_error_free (err);
-+		}
 +
 +		/* setup dummy */
 +		current_time = g_get_real_time () / G_USEC_PER_SEC;
@@ -804,6 +797,12 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			      "power-supply", TRUE,
 +			      "update-time", (guint64) current_time,
 +			      (void*) NULL);
++
++		/* Initilaize global backend pointer for use in sysevent handler */
++		current_backend = backend;
++		/* Initialize sysevent handler */
++		up_backend_initialize_sysevent_handler();
++		
 +	}
 +
 +	backend->priv->config = up_config_new ();
@@ -828,6 +827,10 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +	backend = UP_BACKEND (object);
 +
++	sysevent_unbind_handle(shp);
++	shp = NULL;
++	current_backend = NULL;
++
 +	g_object_unref (backend->priv->config);
 +	if (backend->priv->daemon != NULL)
 +		g_object_unref (backend->priv->daemon);
@@ -836,7 +839,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	if (backend->priv->ac != NULL)
 +		g_object_unref (backend->priv->ac);
 +	g_clear_object (&backend->priv->seat_manager_proxy);
-+	/* XXX stop apm_thread ? */
 +
 +	G_OBJECT_CLASS (up_backend_parent_class)->finalize (object);
 +}
