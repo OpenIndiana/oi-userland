@@ -160,9 +160,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-28 11:03:30.694919975 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-28 11:04:09.013419117 +0000
-@@ -0,0 +1,856 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-28 11:05:02.007551539 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-28 11:10:00.326709015 +0000
+@@ -0,0 +1,841 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -208,7 +208,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static void	up_backend_finalize	(GObject		*object);
 +
 +static int	up_backend_acpi_get_ac_online();
-+static gboolean	up_backend_acpi_get_power_info(UpDevice *device, struct apm_power_info*);
 +static void	up_backend_update_lid_status(UpDaemon*);
 +
 +static gboolean		up_acpi_device_get_on_battery	(UpDevice *device, gboolean *on_battery);
@@ -405,22 +404,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +
 +/**
-+ * OpenBSD specific code
++ * illumos specific code
 + **/
-+
-+static gboolean
-+up_backend_acpi_get_power_info(UpDevice *device, struct apm_power_info *bstate) {
-+	bstate->battery_state = 255;
-+	bstate->ac_state = 255;
-+	bstate->battery_life = 0;
-+	bstate->minutes_left = -1;
-+
-+	if (-1 == ioctl(up_apm_get_fd(), APM_IOC_GETPOWER, bstate)) {
-+		g_error("ioctl on apm fd failed : %s", g_strerror(errno));
-+		return FALSE;
-+	}
-+	return TRUE;
-+}
 +
 +static gboolean
 +up_backend_update_ac_state(UpDevice* device)
