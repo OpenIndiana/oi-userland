@@ -71,9 +71,9 @@ diff -ur upower-0.99.4-orig/configure.ac upower-0.99.4/configure.ac
  upowerd_LDADD += 						\
  	linux/libupshared.la					\
 diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/Makefile.am
---- upower-0.99.4-orig/src/illumos/Makefile.am	1970-01-01 03:00:00.000000000 +0000
-+++ upower-0.99.4/src/illumos/Makefile.am	2017-12-26 13:43:52.205877032 +0000
-@@ -0,0 +1,27 @@
+--- upower-0.99.4/src/illumos/Makefile.am.~1~	2017-12-28 12:33:16.160144165 +0000
++++ upower-0.99.4/src/illumos/Makefile.am	2017-12-28 12:37:16.557439612 +0000
+@@ -0,0 +1,31 @@
 +## Process this file with automake to produce Makefile.in
 +
 +AM_CPPFLAGS = \
@@ -96,6 +96,10 @@ diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/M
 +
 +libupshared_la_CFLAGS =					\
 +	$(WARNINGFLAGS_C)
++
++libupshared_la_LDFLAGS =					\
++	-lsysevent						\
++	-ldevinfo
 +
 +clean-local :
 +	rm -f *~
@@ -162,7 +166,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
 --- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-28 12:29:21.071480511 +0000
 +++ upower-0.99.4/src/illumos/up-backend.c	2017-12-28 12:32:25.287437352 +0000
-@@ -0,0 +1,843 @@
+@@ -0,0 +1,842 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -752,7 +756,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static void
 +up_backend_init (UpBackend *backend)
 +{
-+	GError *err = NULL;
 +	UpDeviceClass *device_class;
 +	gint64 current_time;
 +
