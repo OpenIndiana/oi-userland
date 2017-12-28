@@ -47,6 +47,8 @@ COMPONENT_PREP_ACTION = (cd $(@D) && \
 				automake -c -f -a &&\
 				autoconf )
 
+CONFIGURE_BINDIR.64 = /usr/bin
+
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
@@ -61,8 +63,12 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
