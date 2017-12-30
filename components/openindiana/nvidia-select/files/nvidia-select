@@ -254,9 +254,27 @@ uninstall
 ALTROOT_FLAG=""
 [ "$BASEDIR" = "/" ] || ALTROOT_FLAG="chroot '$BASEDIR'"
 
-echo "INFO: setting mediator $MEDIATOR_NAME to $MEDIATOR_IMPL / $NVIDIA_VERSION under $BASEDIR ..." >&2
-$ALTROOT_FLAG /usr/bin/pkg set-mediator -I "$MEDIATOR_IMPL" --no-backup-be --deny-new-be --no-be-activate -V "$NVIDIA_VERSION" "$MEDIATOR_NAME" \
-    || die "Failed to select mediator version $NVIDIA_VERSION"
+EXISTING_MEDIATOR_DATA="`$ALTROOT_FLAG /usr/bin/pkg mediator -H -Ftsv "$MEDIATOR_NAME"`" \
+&& [ -n "${EXISTING_MEDIATOR_DATA-}" ] \
+|| EXISTING_MEDIATOR_DATA=""
+
+if [ -n "${EXISTING_MEDIATOR_DATA-}" ] ; then
+    if [ x"`echo "$EXISTING_MEDIATOR_DATA" | awk '{print $1}'`" = x"$MEDIATOR_NAME" ] \
+    && [ x"`echo "$EXISTING_MEDIATOR_DATA" | awk '{print $NF}'`" = x"$MEDIATOR_IMPL" ] \
+    && [ x"`echo "$EXISTING_MEDIATOR_DATA" | awk '{print $3}'`" = x"$NVIDIA_VERSION" ] \
+    ; then
+        echo "INFO: mediator $MEDIATOR_NAME already set to $MEDIATOR_IMPL / $NVIDIA_VERSION under $BASEDIR ..." >&2
+    else
+        # Cause setting up the mediator below
+        EXISTING_MEDIATOR_DATA=""
+    fi
+fi
+
+if [ -z "${EXISTING_MEDIATOR_DATA-}" ] ; then
+    echo "INFO: setting mediator $MEDIATOR_NAME to $MEDIATOR_IMPL / $NVIDIA_VERSION under $BASEDIR ..." >&2
+    $ALTROOT_FLAG /usr/bin/pkg set-mediator -I "$MEDIATOR_IMPL" --no-backup-be --deny-new-be --no-be-activate -V "$NVIDIA_VERSION" "$MEDIATOR_NAME" \
+        || die "Failed ($?) to select mediator version $NVIDIA_VERSION"
+fi
 
 # This file is provided by each nvidia-XYZ package we ship
 if [ -s "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" ] ; then
