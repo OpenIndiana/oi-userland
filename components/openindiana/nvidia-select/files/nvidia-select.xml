@@ -68,25 +68,27 @@ DEALINGS IN THE SOFTWARE.
 	        <service_fmri value='svc:/application/opengl/ogl-select' />
 	</dependent>
 
+	<!-- Note regarding timeouts: it can take quite a while to
+	     manipulate filesystem roots, so better be on the safe side -->
 	<exec_method
 		type='method'
 		name='start'
 		exec='/usr/bin/nvidia-select %m'
-		timeout_seconds='30'>
+		timeout_seconds='300'>
 	</exec_method>
 
 	<exec_method
 		type='method'
 		name='stop'
 		exec='/usr/bin/method/nvidia-select %m'
-		timeout_seconds='30'>
+		timeout_seconds='300'>
 	</exec_method>
 
 	<exec_method
 		type='method'
 		name='refresh'
 		exec='/usr/bin/method/nvidia-select %m'
-		timeout_seconds='30'>
+		timeout_seconds='300'>
 	</exec_method>
 
 	<property_group name='startd' type='framework'>
