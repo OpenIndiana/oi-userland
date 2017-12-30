@@ -202,7 +202,7 @@ done
 # boot environment is actually running, so for it then the BASEDIR=="/"
 NVIDIA_VERSION_SMF=""
 if [ -n "$SMF_ACTION" ]; then
-    svccfg -s "$SMF_FMRI" addpg options 2>/dev/null || true
+    svccfg -s "$SMF_FMRI" addpg options application 2>/dev/null || true
     NVIDIA_VERSION_SMF="`svcprop -p options/NVIDIA_VERSION $SMF_FMRI`" \
         && [ -n "$NVIDIA_VERSION_SMF" ] && NVIDIA_VERSION="$NVIDIA_VERSION_SMF"
 
@@ -287,7 +287,7 @@ fi
 
 if [ -n "$SMF_ACTION" ] || [ "$BASEDIR" = / -a "$UPDATE_SMF" = "yes" ] ; then
     echo "INFO: updating service properties under $BASEDIR ..." >&2
-    svccfg -s "$SMF_FMRI" addpg options 2>/dev/null || true
+    svccfg -s "$SMF_FMRI" addpg options application 2>/dev/null || true
     svccfg -s "$SMF_FMRI" setprop "options/NVIDIA_VERSION" = astring: "$NVIDIA_VERSION" \
         || die "Failed to remember NVIDIA_VERSION='$NVIDIA_VERSION' into SMF properties for '$SMF_FMRI'"
 fi
