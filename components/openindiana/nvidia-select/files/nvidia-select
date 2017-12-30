@@ -279,7 +279,7 @@ fi
 # This file is provided by each nvidia-XYZ package we ship
 if [ -s "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" ] ; then
     echo "INFO: installing driver associations under $BASEDIR ..." >&2
-    ALIASES="`cat "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" | tr '[\\\n]' ' '`"
+    ALIASES="`cat "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" | tr '[\\\n]' ' ' | sed 's,alias=\"\([^\"]*\)\",\1 ,g'`"
     check_add_drv -b "${BASEDIR}" -i "${ALIASES}" \
         -m '* 0666 root root' "${DRV}"
     touch "${BASEDIR}/reconfigure"
