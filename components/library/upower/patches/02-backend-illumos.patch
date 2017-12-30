@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-28 12:29:21.071480511 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-28 12:32:25.287437352 +0000
-@@ -0,0 +1,842 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-30 16:48:01.336548304 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2017-12-30 17:10:56.803334115 +0000
+@@ -0,0 +1,866 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -228,10 +228,11 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static char*		up_backend_get_ac_device_path(const char *device);
 +
 +static sysevent_handle_t *shp;
-+static UpBackend	*current_backend = NULL;
 +static void		up_backend_sysevent_dev_handler(sysevent_t *ev);
-+static void		up_backend_initialize_sysevent_handler(void);
-+
++static gboolean		sysevent_iochannel_data(GIOChannel *, GIOCondition, gpointer);
++static void		up_backend_initialize_sysevent_handler(UpBackend *backend);
++static int		sysevent_pipe_fds[2];
++static GIOChannel	*sysevent_iochannel;
 +
 +#define UP_BACKEND_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), UP_TYPE_BACKEND, UpBackendPrivate))
 +
@@ -667,6 +668,25 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		g_free(ma.device_path);
 +}
 +
++static gboolean
++sysevent_iochannel_data(GIOChannel *source, GIOCondition condition, gpointer user_data)
++{
++        GError *err = NULL;
++        gchar *s = NULL;
++        gsize len;
++	UpBackend *backend;
++
++	backend = UP_BACKEND(user_data);
++
++        while (g_io_channel_read_line (sysevent_iochannel, &s, &len, NULL,
++            &err) == G_IO_STATUS_NORMAL) {
++		up_acpi_device_refresh(backend->priv->ac);
++                up_acpi_device_refresh(backend->priv->battery);
++	}
++
++	return TRUE;
++}
++
 +static void
 +up_backend_sysevent_dev_handler(sysevent_t *ev) {
 +	char *class;
@@ -679,15 +699,28 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		return;
 +	
 +	if (strcmp(class, EC_PWRCTL) == 0) {
-+		up_acpi_device_refresh(current_backend->priv->ac);
-+		up_acpi_device_refresh(current_backend->priv->battery);
++		write(sysevent_pipe_fds[1],"\n", strlen("\n") + 1);
 +	}
 +}
 +
 +static void
-+up_backend_initialize_sysevent_handler() {
++up_backend_initialize_sysevent_handler(UpBackend *backend) {
 +	const char *subcl[6];
++	GError *err = NULL;
 +	
++	if (pipe(sysevent_pipe_fds) != 0) {
++		g_warning("Failed to initialize sysevent pipe");
++		return;
++	}
++
++	sysevent_iochannel = g_io_channel_unix_new (sysevent_pipe_fds[0]);
++        if (sysevent_iochannel == NULL) {
++		g_warning("Failed to create sysevent iochannel");
++                return;
++        }
++	g_io_channel_set_flags (sysevent_iochannel, G_IO_FLAG_NONBLOCK, &err);
++	g_io_add_watch (sysevent_iochannel, G_IO_IN, sysevent_iochannel_data, backend);
++
 +	shp = sysevent_bind_handle(up_backend_sysevent_dev_handler);
 +	if (shp == NULL) {
 +		g_warning("Failed to initialize sysevent handler");
@@ -759,12 +792,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	UpDeviceClass *device_class;
 +	gint64 current_time;
 +
-+	/* Trying to mimic singleton */
-+	if (current_backend != NULL) {
-+		backend->priv = current_backend->priv;
-+		return;
-+	}
-+
 +	backend->priv = UP_BACKEND_GET_PRIVATE (backend);
 +	backend->priv->is_laptop = up_backend_is_laptop();
 +	g_debug("is_laptop:%d",backend->priv->is_laptop);
@@ -801,10 +828,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			      "update-time", (guint64) current_time,
 +			      (void*) NULL);
 +
-+		/* Initilaize global backend pointer for use in sysevent handler */
-+		current_backend = backend;
 +		/* Initialize sysevent handler */
-+		up_backend_initialize_sysevent_handler();
++		up_backend_initialize_sysevent_handler(backend);
 +		
 +	}
 +
@@ -832,7 +857,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +	sysevent_unbind_handle(shp);
 +	shp = NULL;
-+	current_backend = NULL;
 +
 +	g_object_unref (backend->priv->config);
 +	if (backend->priv->daemon != NULL)
