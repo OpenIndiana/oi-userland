@@ -21,6 +21,9 @@
 #
 
 DRV="nvidia"
+# When guessing in auto mode and there is no good hint from prtinfo etc.,
+# pick this version as the legacy default - the only one provided previously.
+DISTRO_DEFAULT_VERSION="340"
 
 # From driver makefiles:
 # NVIDIA_MEDIATOR="mediator=nvidia-drv mediator-implementation=nvidia-drv-proprietary mediator-version=$(NVIDIA_DRIVER_MAJOR_VERSION)"
@@ -63,16 +66,29 @@ uninstall() {
     fi
 }
 
-detect_best_version() {
+list_available_versions() {
     # Return the number after "/usr/share/nvidia-" prefix, which happens
     # to be part of the IPS mediation tag too.
+    ls -1d "$BASEDIR"/usr/share/nvidia-* \
+        | sed 's,^.*/nvidia-,,' | sort -n
+}
+
+detect_best_version() {
+    # Use the distro default if available, or newest version otherwise.
     # TODO: Make this smarter, e.g. following prtconf lookup of existing
     # devices and matching against provided driver_aliases snippets, and
     # then pick the newest candidate. At a later point this can refer to
     # some sort of database of some known device-vs-driver best matches.
 
-    ls -1d "$BASEDIR"/usr/share/nvidia-* \
-        | sed 's,^.*/nvidia-,,' | sort -n | tail -1
+    AVAILABLE_VERSIONS="`list_available_versions`" || AVAILABLE_VERSIONS=""
+    [ -n "$AVAILABLE_VERSIONS" ] || return
+
+    if echo "$AVAILABLE_VERSIONS" | grep -w "$DISTRO_DEFAULT_VERSION" >/dev/null ; then
+        echo "$DISTRO_DEFAULT_VERSION"
+        return 0
+    fi
+
+    echo "$AVAILABLE_VERSIONS" | tail -1
 }
 
 check_add_drv()
