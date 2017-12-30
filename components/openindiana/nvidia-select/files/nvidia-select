@@ -291,3 +291,38 @@ if [ -n "$SMF_ACTION" ] || [ "$BASEDIR" = / -a "$UPDATE_SMF" = "yes" ] ; then
     svccfg -s "$SMF_FMRI" setprop "options/NVIDIA_VERSION" = astring: "$NVIDIA_VERSION" \
         || die "Failed to remember NVIDIA_VERSION='$NVIDIA_VERSION' into SMF properties for '$SMF_FMRI'"
 fi
+
+# TOTHINK: Should any failures here be fatal? e.g. mismatch of drv vs. hw?..
+echo "INFO: Trying to (re)load the kernel driver..." 2>&1
+OLD_DRV="`/usr/sbin/modinfo | awk '( $6 == "nvidia") { print $0 }`" || OLD_DRV=""
+if [ -n "$OLD_DRV" ] ; then
+    echo "INFO: Old driver info:" >&2
+    echo "$OLD_DRV" >&2
+    /usr/sbin/modunload -i `echo "$OLD_DRV" | head -1 | awk '{print $1}'` \
+        || echo "FAILED to unload the old kernel driver..."
+fi
+
+case "`isainfo`" in
+    *amd64*)
+        modload /kernel/drv/amd64/nvidia ;;
+    *sparcv9*)
+        modload /kernel/drv/sparcv9/nvidia ;;
+    *i386*|*sparcv7*)
+        modload /kernel/drv/nvidia ;;
+    *)  echo "Unexpected architecture: `isainfo`" >&2
+        exit 0
+        ;;
+esac
+[ $? = 0 ] || echo "FAILED to load the new kernel driver..."
+
+NEW_DRV="`/usr/sbin/modinfo | awk '( $6 == "nvidia") { print $0 }`" || NEW_DRV=""
+if [ -n "$NEW_DRV" ] ; then
+    if [ "$NEW_DRV" = "$OLD_DRV" ] ; then
+        echo "INFO: New driver seems to be same as the old one" >&2
+    else
+        echo "INFO: New driver info:" >&2
+        echo "$NEW_DRV" >&2
+    fi
+else
+    echo "FAILED to find any details about the newly loaded driver" >&2
+fi
