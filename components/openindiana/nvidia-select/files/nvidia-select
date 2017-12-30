@@ -209,14 +209,14 @@ if [ -n "$SMF_ACTION" ]; then
     if [ "$SMF_ACTION" = start ] \
     && [ -d "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION" ] \
     ; then
-        # Driver already at a defined major version, and it is still installed
+        echo "SKIP: Driver already at a defined major version $NVIDIA_VERSION, and it is still installed" >&2
         exit 0
     fi
 
     if [ "$SMF_ACTION" = refresh ] \
     && [ -z "`ls -1d "$BASEDIR/usr/share/nvidia-"{0,1,2,3,4,5,6,7,8,9}* 2>/dev/null`" ] \
     ; then
-        # Last driver removed
+        echo "NOTE: Last driver removed, uninstalling driver associations and reverting service to "auto" mode to try to re-detect something among installed packages..." >&2
         svccfg -s "$SMF_FMRI" setprop "options/NVIDIA_VERSION" = astring: auto
         uninstall
         exit
@@ -248,16 +248,19 @@ if [ -z "$NVIDIA_VERSION" ] \
         "got '$NVIDIA_VERSION'"
 fi
 
+echo "INFO: uninstalling driver associations under $BASEDIR ..." >&2
 uninstall
 
 ALTROOT_FLAG=""
 [ "$BASEDIR" = "/" ] || ALTROOT_FLAG="chroot '$BASEDIR'"
 
+echo "INFO: setting mediator $MEDIATOR_NAME to $MEDIATOR_IMPL / $NVIDIA_VERSION under $BASEDIR ..." >&2
 $ALTROOT_FLAG /usr/bin/pkg set-mediator -I "$MEDIATOR_IMPL" --no-backup-be --deny-new-be --no-be-activate -V "$NVIDIA_VERSION" "$MEDIATOR_NAME" \
     || die "Failed to select mediator version $NVIDIA_VERSION"
 
 # This file is provided by each nvidia-XYZ package we ship
 if [ -s "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" ] ; then
+    echo "INFO: installing driver associations under $BASEDIR ..." >&2
     ALIASES="`cat "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" | tr '[\\\n]' ' '`"
     check_add_drv -b "${BASEDIR}" -i "${ALIASES}" \
         -m '* 0666 root root' "${DRV}"
@@ -265,6 +268,7 @@ if [ -s "$BASEDIR/usr/share/nvidia-$NVIDIA_VERSION/driver_aliases.txt" ] ; then
 fi
 
 if [ -n "$SMF_ACTION" ] || [ "$BASEDIR" = / -a "$UPDATE_SMF" = "yes" ] ; then
+    echo "INFO: updating service properties under $BASEDIR ..." >&2
     svccfg -s "$SMF_FMRI" addpg options 2>/dev/null || true
     svccfg -s "$SMF_FMRI" setprop "options/NVIDIA_VERSION" = astring: "$NVIDIA_VERSION" \
         || die "Failed to remember NVIDIA_VERSION='$NVIDIA_VERSION' into SMF properties for '$SMF_FMRI'"
