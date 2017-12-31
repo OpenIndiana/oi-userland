@@ -288,7 +288,9 @@ fi
 
 if [ -z "${EXISTING_MEDIATOR_DATA-}" ] ; then
     echo "INFO: setting mediator $MEDIATOR_NAME to $MEDIATOR_IMPL / $NVIDIA_VERSION under $BASEDIR ..." >&2
-    $ALTROOT_FLAG /usr/bin/pkg set-mediator -I "$MEDIATOR_IMPL" --no-backup-be --deny-new-be --no-be-activate -V "$NVIDIA_VERSION" "$MEDIATOR_NAME" \
+    $ALTROOT_FLAG /usr/bin/pkg set-mediator \
+        --no-backup-be --deny-new-be --no-be-activate --no-index \
+        -I "$MEDIATOR_IMPL" -V "$NVIDIA_VERSION" "$MEDIATOR_NAME" \
         || die "Failed ($?) to select mediator version $NVIDIA_VERSION"
 fi
 
