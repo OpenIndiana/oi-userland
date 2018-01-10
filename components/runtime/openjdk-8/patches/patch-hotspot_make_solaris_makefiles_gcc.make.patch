@@ -28,16 +28,6 @@ GCC support.
  
  ARCHFLAG = $(ARCHFLAG/$(BUILDARCH))
  
-@@ -86,7 +98,8 @@ ARCHFLAG/amd64   = -m64 -march=k8
- 
- # Optional sub-directory in /usr/lib where BUILDARCH libraries are kept.
- ISA_DIR=$(ISA_DIR/$(BUILDARCH))
--ISA_DIR/amd64=/amd64
-+ISA_DIR/amd64=
-+NOMULTIARCHISA_DIR/amd64=/amd64
- ISA_DIR/i486=
- ISA_DIR/sparcv9=/64
- 
 @@ -94,10 +107,9 @@ ISA_DIR/sparcv9=/64
  CFLAGS     += $(ARCHFLAG)
  AOUT_FLAGS += $(ARCHFLAG)
@@ -46,7 +36,7 @@ GCC support.
  
  ifeq ($(BUILDARCH), amd64)
 -ASFLAGS += -march=k8  -march=amd64
-+ASFLAGS += -march=k8
++ASFLAGS += -march=k8  -64
  LFLAGS += -march=k8 
  endif
  

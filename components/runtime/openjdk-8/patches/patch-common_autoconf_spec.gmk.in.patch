@@ -8,7 +8,7 @@ $NetBSD: patch-common_autoconf_spec.gmk.in,v 1.4 2015/06/10 13:29:57 tnn Exp $
  # LDFLAGS used to link the jdk native libraries (C-code)
 -LDFLAGS_JDKLIB:=@LDFLAGS_JDKLIB@
 +# Do not use -Wl,-R here. The build system chokes on "," in LDFLAGS. -Xlinker works.
-+LDFLAGS_JDKLIB:=-Xlinker -R@prefix@/java/openjdk8/jre/lib@OPENJDK_TARGET_CPU_LIBDIR@ -Xlinker -R@prefix@/java/openjdk8/jre/lib@OPENJDK_TARGET_CPU_LIBDIR@/server @LDFLAGS_JDKLIB@
++LDFLAGS_JDKLIB:=-Xlinker -R\$$$$ORIGIN/server  @LDFLAGS_JDKLIB@
  LDFLAGS_JDKLIB_SUFFIX:=@LDFLAGS_JDKLIB_SUFFIX@
  
  # On some platforms the linker cannot be used to create executables, thus
@@ -17,7 +17,7 @@ $NetBSD: patch-common_autoconf_spec.gmk.in,v 1.4 2015/06/10 13:29:57 tnn Exp $
  
  # LDFLAGS used to link the jdk native launchers (C-code)
 -LDFLAGS_JDKEXE:=@LDFLAGS_JDKEXE@
-+LDFLAGS_JDKEXE:=-Xlinker -R@prefix@/java/openjdk8/jre/lib@OPENJDK_TARGET_CPU_LIBDIR@/jli @LDFLAGS_JDKEXE@
++LDFLAGS_JDKEXE:=-Xlinker -R\$$$$ORIGIN/server @LDFLAGS_JDKEXE@
  LDFLAGS_JDKEXE_SUFFIX:=@LDFLAGS_JDKEXE_SUFFIX@
  
  # LDFLAGS specific to C++ linking.
