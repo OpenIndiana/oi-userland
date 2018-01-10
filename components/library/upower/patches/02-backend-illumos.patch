@@ -164,8 +164,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-10 12:05:22.393987504 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-10 12:20:32.000552439 +0000
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-10 12:30:23.173431073 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-10 12:40:17.149980516 +0000
 @@ -0,0 +1,871 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
@@ -603,14 +603,14 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		                        "is-present", TRUE,
 +       			                 (void*) NULL);
 +				g_object_set (device,
-+					"energy", reporting_current,
-+					"energy-full", reporting_lastfull,
-+					"energy-full-design", reporting_design_capacity,
-+					"energy-rate", reporting_rate,
-+					"energy-empty", reporting_lowcap,
-+					"voltage", present_voltage,
++					"energy", (gdouble) reporting_current,
++					"energy-full", (gdouble) reporting_lastfull,
++					"energy-full-design", (gdouble) reporting_design_capacity,
++					"energy-rate", (gdouble) reporting_rate,
++					"energy-empty", (gdouble) reporting_lowcap,
++					"voltage", (gdouble) present_voltage,
 +					"capacity", new_percentage,
-+					NULL);
++					(void*) NULL);
 +       			return TRUE;
 +        	}
 +	}
