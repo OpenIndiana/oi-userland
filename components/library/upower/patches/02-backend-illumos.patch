@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2017-12-30 16:48:01.336548304 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2017-12-30 17:10:56.803334115 +0000
-@@ -0,0 +1,866 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-10 12:05:22.393987504 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-10 12:20:32.000552439 +0000
+@@ -0,0 +1,871 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -209,6 +209,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +#define BST_FLAG_DISCHARGING	(0x1)
 +#define BST_FLAG_CHARGING	(0x2)
++
++#define DEVPATH_ALLOWED_CHARS "abcdefghijklmnopqrstuvwxyz0123456789/_"
 +
 +static void	up_backend_class_init	(UpBackendClass	*klass);
 +static void	up_backend_init	(UpBackend		*backend);
@@ -348,6 +350,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +		devpath = up_backend_get_ac_device_path("ac");
 +		if (devpath) {
++			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
 +			acnative = up_acpi_native_new(devpath);
 +			if (!up_device_coldplug (backend->priv->ac, backend->priv->daemon, G_OBJECT(acnative)))
 +				g_warning ("failed to coldplug ac");
@@ -358,6 +361,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +		devpath = up_backend_get_ac_device_path("battery");
 +		if (devpath) {
++			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
 +			battnative = up_acpi_native_new(devpath);
 +			if (!up_device_coldplug (backend->priv->battery, backend->priv->daemon, G_OBJECT(battnative)))
 +				g_warning ("failed to coldplug battery");
@@ -663,7 +667,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	di_fini(root_node);
 +	
 +	up_daemon_set_lid_is_present (daemon, ma.present);
-+	up_daemon_set_lid_is_closed (daemon, state ? FALSE: TRUE);
++	if (ma.present) 
++		up_daemon_set_lid_is_closed (daemon, state ? FALSE: TRUE);
 +	if (ma.device_path)
 +		g_free(ma.device_path);
 +}
@@ -931,7 +936,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			st->success = TRUE;
 +			
 +			close(fd);
-+			g_free(fdp);
++			st->device_path = fdp;
 +			di_devfs_path_free(dp);
 +			return DI_WALK_TERMINATE;
 +		}
