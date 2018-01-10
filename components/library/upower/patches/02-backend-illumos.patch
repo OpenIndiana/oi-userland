@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-10 12:30:23.173431073 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-10 12:40:17.149980516 +0000
-@@ -0,0 +1,871 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-10 12:50:05.199080007 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-10 12:51:34.896097218 +0000
+@@ -0,0 +1,863 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -518,14 +518,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		
 +		charging = bst.bst_state & BST_FLAG_CHARGING;
 +		discharging = bst.bst_state & BST_FLAG_DISCHARGING;
-+
-+		printf("Is present: %d, bif_unit=%d, bif_last_cap=%x bif_design_cap=%x bif_voltage=%x\n", ma.present, bif.bif_unit, bif.bif_last_cap, bif.bif_design_cap, bif.bif_voltage);
-+		
-+		printf("Is present: %d, bst_state=%x is_charging=%d is_discharging=%d bst_rate=%x bst_rem_cap=%x bif_low_cap=%x\n", ma.present, bst.bst_state,
-+			bst.bst_state & BST_FLAG_CHARGING,
-+			bst.bst_state & BST_FLAG_DISCHARGING,
-+			bst.bst_rate,
-+			bst.bst_rem_cap, bif.bif_low_cap);
 +
 +		reporting_rate = bst.bst_rate;
 +		reporting_current = bst.bst_rem_cap;
