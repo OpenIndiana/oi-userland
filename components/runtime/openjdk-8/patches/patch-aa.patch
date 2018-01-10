@@ -1,0 +1,128 @@
+$NetBSD: patch-aa,v 1.5 2017/09/02 04:13:42 ryoon Exp $
+
+DragonFly support.
+Add workaround for missing  sem_timedwait() in NetBSD < 6.99.4
+
+--- hotspot/src/os/bsd/vm/os_bsd.cpp.orig	2017-08-29 17:18:54.000000000 +0000
++++ hotspot/src/os/bsd/vm/os_bsd.cpp
+@@ -114,8 +114,11 @@
+ # include <vm/vm_param.h>
+ #endif
+ 
+-#if defined(__FreeBSD__) || defined(__NetBSD__)
++#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+ # include <elf.h>
++#if !defined(EM_ALPHA)
++#define EM_ALPHA 0x9026
++#endif
+ #endif
+ 
+ #ifdef __NetBSD__
+@@ -292,6 +295,7 @@ void os::Bsd::initialize_system_info() {
+   size_t len;
+   int cpu_val;
+   julong mem_val;
++  struct rlimit limits;
+ 
+   /* get processors count via hw.ncpus sysctl */
+   mib[0] = CTL_HW;
+@@ -330,14 +334,11 @@ void os::Bsd::initialize_system_info() {
+        _physical_memory = 256*1024*1024;       // fallback (XXXBSD?)
+   }
+ 
+-#ifdef __OpenBSD__
+-  {
+-       // limit _physical_memory memory view on OpenBSD since
+-       // datasize rlimit restricts us anyway.
+-       struct rlimit limits;
+-       getrlimit(RLIMIT_DATA, &limits);
+-       _physical_memory = MIN2(_physical_memory, (julong)limits.rlim_cur);
+-  }
++  getrlimit(RLIMIT_DATA, &limits);
++  _physical_memory = MIN2(_physical_memory, (julong)limits.rlim_cur);
++#if defined(RLIMIT_AS)
++  getrlimit(RLIMIT_AS, &limits);
++  _physical_memory = MIN2(_physical_memory, (julong)limits.rlim_cur);
+ #endif
+ }
+ 
+@@ -389,7 +390,7 @@ void os::init_system_properties_values()
+ //        ...
+ //        7: The default directories, normally /lib and /usr/lib.
+ #ifndef DEFAULT_LIBPATH
+-#define DEFAULT_LIBPATH "/lib:/usr/lib"
++#define DEFAULT_LIBPATH "@PREFIX@/lib/jni:@PREFIX@/lib:/lib:/usr/lib"
+ #endif
+ 
+ // Base path of extensions installed on the system.
+@@ -1587,7 +1588,9 @@ void * os::dll_load(const char *filename
+     {EM_PPC,         EM_PPC,     ELFCLASS32, ELFDATA2MSB, (char*)"Power PC 32"},
+     {EM_PPC64,       EM_PPC64,   ELFCLASS64, ELFDATA2MSB, (char*)"Power PC 64"},
+     {EM_ARM,         EM_ARM,     ELFCLASS32,   ELFDATA2LSB, (char*)"ARM"},
++#if 0
+     {EM_S390,        EM_S390,    ELFCLASSNONE, ELFDATA2MSB, (char*)"IBM System/390"},
++#endif
+     {EM_ALPHA,       EM_ALPHA,   ELFCLASS64, ELFDATA2LSB, (char*)"Alpha"},
+     {EM_MIPS_RS3_LE, EM_MIPS_RS3_LE, ELFCLASS32, ELFDATA2LSB, (char*)"MIPSel"},
+     {EM_MIPS,        EM_MIPS,    ELFCLASS32, ELFDATA2MSB, (char*)"MIPS"},
+@@ -2121,6 +2124,33 @@ bool Semaphore::timedwait(unsigned int s
+ 
+ #else
+ 
++#if defined(__NetBSD__) && (__NetBSD_Version__ < 699000400)
++static inline int sem_timedwait(sem_t *sem, struct timespec *ts) {
++  struct timespec onems = { 0, 1000000 };
++  struct timespec total = { 0, 0 };
++  struct timespec unslept;
++  struct timespec elapsed;
++  struct timespec tmp;
++
++  while (timespeccmp(ts, &total, >)) {
++    if (sem_trywait(sem) == 0)
++      return 0;
++
++    if (errno != EAGAIN)
++      return -1;
++
++    (void)nanosleep(&onems, &unslept);
++
++    timespecsub(&onems, &unslept, &elapsed);
++    timespecadd(&total, &elapsed, &tmp);
++    total.tv_sec = tmp.tv_sec;
++    total.tv_nsec = tmp.tv_nsec;
++  }
++  errno = ETIMEDOUT;
++  return -1;
++}
++#endif /* __NetBSD__ */
++
+ bool Semaphore::trywait() {
+   return sem_trywait(&_semaphore) == 0;
+ }
+@@ -2271,7 +2301,7 @@ static void warn_fail_commit_memory(char
+ //       problem.
+ bool os::pd_commit_memory(char* addr, size_t size, bool exec) {
+   int prot = exec ? PROT_READ|PROT_WRITE|PROT_EXEC : PROT_READ|PROT_WRITE;
+-#ifdef __OpenBSD__
++#if defined(__OpenBSD__) || defined(__NetBSD__)
+   // XXX: Work-around mmap/MAP_FIXED bug temporarily on OpenBSD
+   if (::mprotect(addr, size, prot) == 0) {
+     return true;
+@@ -2874,7 +2904,7 @@ OSReturn os::set_native_priority(Thread*
+ #ifdef __OpenBSD__
+   // OpenBSD pthread_setprio starves low priority threads
+   return OS_OK;
+-#elif defined(__FreeBSD__)
++#elif defined(__FreeBSD__) || defined(__DragonFly__)
+   int ret = pthread_setprio(thread->osthread()->pthread_id(), newpri);
+   return (ret == 0) ? OS_OK : OS_ERR;
+ #elif defined(__APPLE__) || defined(__NetBSD__)
+@@ -2903,7 +2933,7 @@ OSReturn os::get_native_priority(const T
+   }
+ 
+   errno = 0;
+-#if defined(__OpenBSD__) || defined(__FreeBSD__)
++#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+   *priority_ptr = pthread_getprio(thread->osthread()->pthread_id());
+ #elif defined(__APPLE__) || defined(__NetBSD__)
+   int policy;
