@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-10 12:50:05.199080007 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-10 12:51:34.896097218 +0000
-@@ -0,0 +1,864 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-11 17:30:25.149054131 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-11 18:52:14.318987219 +0000
+@@ -0,0 +1,867 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -581,7 +581,10 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			if (new_percentage >= 99.0) {
 +				new_state = UP_DEVICE_STATE_FULLY_CHARGED;
 +			} else {
-+				new_state = UP_DEVICE_STATE_PENDING_CHARGE;
++				/* Really we should set UP_DEVICE_STATE_PENDING_CHARGE here, 
++				   but it seems that up_daemon can't sum up such device 
++				   and we end up in unkonw state, so let's say that we are charging */
++				new_state = UP_DEVICE_STATE_CHARGING;
 +			}
 +		}	 
 +
