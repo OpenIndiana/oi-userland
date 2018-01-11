@@ -51,6 +51,7 @@ CONFIGURE_BINDIR.64 = /usr/bin
 
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk-doc
 CONFIGURE_OPTIONS += --enable-man-pages
