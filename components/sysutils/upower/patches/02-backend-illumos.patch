@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-11 17:30:25.149054131 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-11 18:52:14.318987219 +0000
-@@ -0,0 +1,867 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-12 07:02:35.209232139 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-12 07:20:36.009870421 +0000
+@@ -0,0 +1,883 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -228,7 +228,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static gboolean		up_backend_is_laptop (void);
 +static int		estimate_time(int charge_rate, int current_charge, int last_fullcharge, int is_discharging, int is_charging);
 +
-+static char*		up_backend_get_ac_device_path(const char *device);
++static char*		up_backend_get_ac_device_path(enum acpi_drv_type device);
 +
 +static sysevent_handle_t *shp;
 +static void		up_backend_sysevent_dev_handler(sysevent_t *ev);
@@ -349,7 +349,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +		up_backend_update_lid_status(daemon);
 +
-+		devpath = up_backend_get_ac_device_path("ac");
++		devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_AC);
 +		if (devpath) {
 +			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
 +			acnative = up_acpi_native_new(devpath);
@@ -360,7 +360,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			g_free(devpath);
 +		}
 +
-+		devpath = up_backend_get_ac_device_path("battery");
++		devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_CBAT);
 +		if (devpath) {
 +			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
 +			battnative = up_acpi_native_new(devpath);
@@ -967,17 +967,33 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +}
 +
 +static char*
-+up_backend_get_ac_device_path(const char *device)
++up_backend_get_ac_device_path(enum acpi_drv_type device)
 +{
 +	di_node_t root_node;
 +	
 +	struct mdi_arg ma;
 +	int state = 0;
++	acpi_bif_t bif;
 +	
-+	ma.name = device;
-+	ma.exact_match = FALSE;
-+	ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
-+	ma.result = &state;
++	switch (device) {
++		case ACPI_DRV_TYPE_CBAT:
++			ma.name = "battery";
++			ma.ctl = ACPI_DRV_IOC_INFO;
++			ma.exact_match = FALSE;
++			/* We don't do it as we ignore result anyway */
++			/* memset(&bif, 0, sizeof(bif));*/
++			ma.result = &bif;
++			break;
++		case ACPI_DRV_TYPE_AC:
++			ma.name = "ac";
++			ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
++			ma.exact_match = FALSE;
++			ma.result = &state;
++			break;
++		default:
++			return NULL;
++	}
++
 +	ma.device_path = NULL;
 +	
 +	errno = 0;
