@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-12 07:02:35.209232139 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-12 07:20:36.009870421 +0000
-@@ -0,0 +1,883 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-12 07:25:54.590178253 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-12 12:43:30.695064727 +0000
+@@ -0,0 +1,896 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -213,6 +213,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +#define DEVPATH_ALLOWED_CHARS "abcdefghijklmnopqrstuvwxyz0123456789/_"
 +
++#define POLL_INTERVAL	20*1000 /* 20 seconds */
++
 +static void	up_backend_class_init	(UpBackendClass	*klass);
 +static void	up_backend_init	(UpBackend		*backend);
 +static void	up_backend_finalize	(GObject		*object);
@@ -236,6 +238,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static void		up_backend_initialize_sysevent_handler(UpBackend *backend);
 +static int		sysevent_pipe_fds[2];
 +static GIOChannel	*sysevent_iochannel;
++static gboolean		simulate_iochannel_data (gpointer data);
 +
 +#define UP_BACKEND_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), UP_TYPE_BACKEND, UpBackendPrivate))
 +
@@ -688,6 +691,13 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	return TRUE;
 +}
 +
++static gboolean
++simulate_iochannel_data (gpointer data) {
++	write(sysevent_pipe_fds[1],"\n", strlen("\n") + 1);
++
++	return TRUE;
++}
++
 +static void
 +up_backend_sysevent_dev_handler(sysevent_t *ev) {
 +	char *class;
@@ -831,6 +841,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +		/* Initialize sysevent handler */
 +		up_backend_initialize_sysevent_handler(backend);
++		/* Some acpi devices are broken enough to avoid generating
++			EC_PWRCTL events, so we force update once per POLL_INTERVAL */
++		g_timeout_add (POLL_INTERVAL, simulate_iochannel_data, NULL);
 +		
 +	}
 +
