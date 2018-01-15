@@ -11,19 +11,18 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
-# Copyright 2016-2017 Aurelien Larcher
+# Copyright 2016-2018 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
-COMPONENT_VERSION= 1.19.5
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.19.6
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:18fffa8eb93d06d2800d06321fc0df4d357684d8d714315a66d8dfa7df251447
+  sha256:a732502f1db000cf36a376cd0c010ffdbf32ecdd7f1fa08ba7f5bdf9601cc197
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
@@ -124,6 +123,8 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 # Build dependencies
+REQUIRED_PACKAGES += x11/documentation/xorg-docs
+REQUIRED_PACKAGES += x11/documentation/xorg-sgml-doctools
 REQUIRED_PACKAGES += x11/header/dri2proto
 REQUIRED_PACKAGES += x11/header/dri3proto
 REQUIRED_PACKAGES += x11/header/glproto
