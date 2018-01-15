@@ -18,12 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2015-2018, Aurelien Larcher. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
-COMPONENT_VERSION=      1.7.1
+COMPONENT_VERSION=      1.7.4
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -31,7 +31,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9645a6e83313b690602017f18d4eb2adf81f2e54c6fc4471e19331304965154e
+    sha256:b5d6ac8415f97f3540d73f3f91c41c5c10f8a4d76350f11a7184062aae88ac0b
 COMPONENT_ARCHIVE_URL=	\
     http://www.freedesktop.org/software/harfbuzz/release/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
