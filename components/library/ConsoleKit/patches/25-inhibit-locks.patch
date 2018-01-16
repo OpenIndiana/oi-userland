@@ -1,0 +1,141 @@
+Take logging changes from 
+
+commit fe00334409cdfd0a7640fc76ad66c5b629b8e3bc
+Author: Eric Koegel <eric.koegel@gmail.com>
+Date:   Sun Oct 19 12:15:35 2014 +0300
+
+    Make the inhibit locks inhibit the actions
+    
+    Also refactors some of the logging code to remove duplications.
+    Not sure if the can or auth checks should return FALSE if there's
+    an inhibit lock on the action... but that can be easily added in
+    the future.
+
+diff --git a/src/ck-manager.c b/src/ck-manager.c
+index 2670304..3ff8ec7 100644
+--- a/src/ck-manager.c
++++ b/src/ck-manager.c
+@@ -458,8 +458,11 @@ log_seat_removed_event (CkManager  *manager,
+         g_free (sid);
+ }
+ 
++/* Generic logger for system actions such as CK_LOG_EVENT_SYSTEM_STOP,
++ * restart, hibernate, and suspend */
+ static void
+-log_system_stop_event (CkManager  *manager)
++log_system_action_event (CkManager *manager,
++                         CkLogEventType type)
+ {
+         CkLogEvent         event;
+         gboolean           res;
+@@ -467,73 +470,7 @@ log_system_stop_event (CkManager  *manager)
+ 
+         memset (&event, 0, sizeof (CkLogEvent));
+ 
+-        event.type = CK_LOG_EVENT_SYSTEM_STOP;
+-        g_get_current_time (&event.timestamp);
+-
+-        error = NULL;
+-        res = ck_event_logger_queue_event (manager->priv->logger, &event, &error);
+-        if (! res) {
+-                g_debug ("Unable to log event: %s", error->message);
+-                g_error_free (error);
+-        }
+-
+-        /* FIXME: in this case we should block and wait for log to flush */
+-}
+-
+-static void
+-log_system_restart_event (CkManager  *manager)
+-{
+-        CkLogEvent         event;
+-        gboolean           res;
+-        GError            *error;
+-
+-        memset (&event, 0, sizeof (CkLogEvent));
+-
+-        event.type = CK_LOG_EVENT_SYSTEM_RESTART;
+-        g_get_current_time (&event.timestamp);
+-
+-        error = NULL;
+-        res = ck_event_logger_queue_event (manager->priv->logger, &event, &error);
+-        if (! res) {
+-                g_debug ("Unable to log event: %s", error->message);
+-                g_error_free (error);
+-        }
+-
+-        /* FIXME: in this case we should block and wait for log to flush */
+-}
+-
+-static void
+-log_system_suspend_event (CkManager  *manager)
+-{
+-        CkLogEvent         event;
+-        gboolean           res;
+-        GError            *error;
+-
+-        memset (&event, 0, sizeof (CkLogEvent));
+-
+-        event.type = CK_LOG_EVENT_SYSTEM_SUSPEND;
+-        g_get_current_time (&event.timestamp);
+-
+-        error = NULL;
+-        res = ck_event_logger_queue_event (manager->priv->logger, &event, &error);
+-        if (! res) {
+-                g_debug ("Unable to log event: %s", error->message);
+-                g_error_free (error);
+-        }
+-
+-        /* FIXME: in this case we should block and wait for log to flush */
+-}
+-
+-static void
+-log_system_hibernate_event (CkManager  *manager)
+-{
+-        CkLogEvent         event;
+-        gboolean           res;
+-        GError            *error;
+-
+-        memset (&event, 0, sizeof (CkLogEvent));
+-
+-        event.type = CK_LOG_EVENT_SYSTEM_HIBERNATE;
++        event.type = type;
+         g_get_current_time (&event.timestamp);
+ 
+         error = NULL;
+@@ -1138,7 +1075,7 @@ do_restart (CkManager             *manager,
+ 
+         g_debug ("ConsoleKit preforming Restart");
+ 
+-        log_system_restart_event (manager);
++        log_system_action_event (manager, CK_LOG_EVENT_SYSTEM_RESTART);
+ 
+         error = NULL;
+         res = g_spawn_command_line_async (PREFIX "/lib/ConsoleKit/scripts/ck-system-restart",
+@@ -1225,7 +1169,7 @@ do_stop (CkManager             *manager,
+ 
+         g_debug ("Stopping system");
+ 
+-        log_system_stop_event (manager);
++        log_system_action_event (manager, CK_LOG_EVENT_SYSTEM_STOP);
+ 
+         error = NULL;
+         res = g_spawn_command_line_async (PREFIX "/lib/ConsoleKit/scripts/ck-system-stop",
+@@ -1301,7 +1252,7 @@ do_suspend (CkManager             *manager,
+ 
+         g_debug ("ConsoleKit preforming Suspend");
+ 
+-        log_system_suspend_event (manager);
++        log_system_action_event (manager, CK_LOG_EVENT_SYSTEM_SUSPEND);
+ 
+         error = NULL;
+         res = g_spawn_command_line_async (PREFIX "/lib/ConsoleKit/scripts/ck-system-suspend",
+@@ -1402,7 +1360,7 @@ do_hibernate (CkManager             *manager,
+ 
+         g_debug ("ConsoleKit preforming Hibernate");
+ 
+-        log_system_hibernate_event (manager);
++        log_system_action_event (manager, CK_LOG_EVENT_SYSTEM_HIBERNATE);
+ 
+         error = NULL;
+         res = g_spawn_command_line_async (PREFIX "/lib/ConsoleKit/scripts/ck-system-hibernate",

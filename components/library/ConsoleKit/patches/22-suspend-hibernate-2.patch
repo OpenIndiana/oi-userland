@@ -1,0 +1,311 @@
+From b65cb6f48bfa768acafdb7b6dcee32f600925688 Mon Sep 17 00:00:00 2001
+From: Eric Koegel <eric.koegel@gmail.com>
+Date: Mon, 13 Oct 2014 10:00:22 +0300
+Subject: [PATCH] More Suspend DBUS API work
+
+We need a Can/Auth split for suspend/hibernate because the user
+may be authorized but the system is unable to perform those
+actions. Additionally start working the inhibit calls. We also
+need to actually add the suspend/hibernate tools.
+---
+ configure.ac                               |   3 +-
+ src/ck-manager.c                           |  46 ++++++++++-
+ src/ck-manager.h                           |  10 +++
+ src/ck-sysdeps-freebsd.c                   |  67 +++++++++++++++-
+ src/ck-sysdeps-gnu.c                       |  14 ++++
+ src/ck-sysdeps-linux.c                     |  37 +++++++++
+ src/ck-sysdeps-openbsd.c                   |  12 +++
+ src/ck-sysdeps-solaris.c                   |  14 ++++
+ src/ck-sysdeps.h                           |   3 +
+ src/org.freedesktop.ConsoleKit.Manager.xml | 122 +++++++++++++++++++++++++++++
+ 10 files changed, 322 insertions(+), 6 deletions(-)
+
+diff --git a/src/ck-manager.c b/src/ck-manager.c
+index eff383c..6d80304 100644
+--- a/src/ck-manager.c
++++ b/src/ck-manager.c
+@@ -1355,8 +1355,8 @@ ck_manager_suspend (CkManager             *manager,
+ }
+ 
+ gboolean
+-ck_manager_can_suspend (CkManager  *manager,
+-                        DBusGMethodInvocation *context)
++ck_manager_auth_suspend (CkManager  *manager,
++                         DBusGMethodInvocation *context)
+ 
+ {
+         const char *action;
+@@ -1377,6 +1377,20 @@ ck_manager_can_suspend (CkManager  *manager,
+         return TRUE;
+ }
+ 
++gboolean
++ck_manager_can_suspend (CkManager  *manager,
++                        DBusGMethodInvocation *context)
++
++{
++        if (ck_system_can_suspend ()) {
++                dbus_g_method_return (context, TRUE);
++        } else {
++                dbus_g_method_return (context, FALSE);
++        }
++
++        return TRUE;
++}
++
+ static void
+ do_hibernate (CkManager             *manager,
+               DBusGMethodInvocation *context,
+@@ -1442,8 +1456,8 @@ ck_manager_hibernate (CkManager             *manager,
+ }
+ 
+ gboolean
+-ck_manager_can_hibernate (CkManager  *manager,
+-                          DBusGMethodInvocation *context)
++ck_manager_auth_hibernate (CkManager  *manager,
++                           DBusGMethodInvocation *context)
+ 
+ {
+         const char *action;
+@@ -1464,6 +1478,30 @@ ck_manager_can_hibernate (CkManager  *manager,
+         return TRUE;
+ }
+ 
++gboolean
++ck_manager_can_hibernate (CkManager  *manager,
++                          DBusGMethodInvocation *context)
++
++{
++        if (ck_system_can_hibernate ()) {
++                dbus_g_method_return (context, TRUE);
++        } else {
++                dbus_g_method_return (context, FALSE);
++        }
++
++        return TRUE;
++}
++
++gboolean
++ck_manager_inhibit (CkManager *manager,
++                    gchar *what,
++                    gchar *who,
++                    gchar *why,
++                    DBusGMethodInvocation *context)
++{
++        return TRUE;
++}
++
+ static void
+ on_seat_active_session_changed_full (CkSeat     *seat,
+                                      CkSession  *old_session,
+diff --git a/src/ck-manager.h b/src/ck-manager.h
+index bfa2c01..d464056 100644
+--- a/src/ck-manager.h
++++ b/src/ck-manager.h
+@@ -97,6 +97,16 @@ gboolean            ck_manager_can_suspend                    (CkManager *manage
+                                                                 DBusGMethodInvocation *context);
+ gboolean            ck_manager_can_hibernate                  (CkManager *manager,
+                                                                DBusGMethodInvocation *context);
++gboolean            ck_manager_auth_suspend                   (CkManager *manager,
++                                                                DBusGMethodInvocation *context);
++gboolean            ck_manager_auth_hibernate                 (CkManager *manager,
++                                                               DBusGMethodInvocation *context);
++gboolean            ck_manager_inhibit                        (CkManager *manager,
++                                                               gchar *what,
++                                                               gchar *who,
++                                                               gchar *why,
++                                                               DBusGMethodInvocation *context);
++
+ /* Authoritative properties */
+ gboolean            ck_manager_open_session                   (CkManager             *manager,
+                                                                DBusGMethodInvocation *context);
+diff --git a/src/ck-sysdeps-solaris.c b/src/ck-sysdeps-solaris.c
+index bb37e1e..63cb6e0 100644
+--- a/src/ck-sysdeps-solaris.c
++++ b/src/ck-sysdeps-solaris.c
+@@ -529,3 +529,17 @@ ck_get_active_console_num (int    console_fd,
+ 
+         return ret;
+ }
++
++gboolean
++ck_system_can_suspend (void)
++{
++        /* TODO: not implemented */
++        return FALSE;
++}
++
++gboolean
++ck_system_can_hibernate (void)
++{
++        /* TODO: not implemented */
++        return FALSE;
++}
+diff --git a/src/ck-sysdeps.h b/src/ck-sysdeps.h
+index 644d053..73c2608 100644
+--- a/src/ck-sysdeps.h
++++ b/src/ck-sysdeps.h
+@@ -54,6 +54,9 @@
+                                                uid_t          *uid,
+                                                GError        **error);
+ 
++gboolean     ck_system_can_suspend            (void);
++gboolean     ck_system_can_hibernate          (void);
++
+ int          ck_get_a_console_fd              (void);
+ 
+ gboolean     ck_fd_is_a_console               (int             fd);
+diff --git a/src/org.freedesktop.ConsoleKit.Manager.xml b/src/org.freedesktop.ConsoleKit.Manager.xml
+index ae6a90c..7070225 100644
+--- a/src/org.freedesktop.ConsoleKit.Manager.xml
++++ b/src/org.freedesktop.ConsoleKit.Manager.xml
+@@ -16,6 +16,11 @@
+     <method name="CanRestart">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+       <arg name="can_restart" type="b" direction="out"/>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method returns whether the user is authorized to restart the computer system.</doc:para>
++        </doc:description>
++      </doc:doc>
+     </method>
+ 
+     <method name="Stop">
+@@ -30,6 +35,11 @@
+     <method name="CanStop">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+       <arg name="can_stop" type="b" direction="out"/>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method returns whether the user is authorized to shutdown the computer system.</doc:para>
++        </doc:description>
++      </doc:doc>
+     </method>
+ 
+     <method name="Suspend">
+@@ -44,6 +54,21 @@
+     <method name="CanSuspend">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+       <arg name="can_suspend" type="b" direction="out"/>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method returns whether the computer system is capable of suspending.</doc:para>
++        </doc:description>
++      </doc:doc>
++    </method>
++
++    <method name="AuthSuspend">
++      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
++      <arg name="auth_suspend" type="b" direction="out"/>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method returns whether the user is authorized to suspend the computer system.</doc:para>
++        </doc:description>
++      </doc:doc>
+     </method>
+ 
+     <method name="Hibernate">
+@@ -58,6 +83,103 @@
+     <method name="CanHibernate">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+       <arg name="can_hibernate" type="b" direction="out"/>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method returns whether the computer system is capable of hibernating.</doc:para>
++        </doc:description>
++      </doc:doc>
++    </method>
++
++    <method name="AuthHibernate">
++      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
++      <arg name="auth_hibernate" type="b" direction="out"/>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method returns whether the user is authorized to hibernate the computer system.</doc:para>
++        </doc:description>
++      </doc:doc>
++    </method>
++
++    <method name="Inhibit">
++      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
++      <arg name="what" type="s" direction="in">
++        <doc:doc>
++          <doc:summary>What is a colon-separated list of lock types. The list of lock types are: shutdown, sleep, idle, handle-power-key, handle-suspend-key, handle-hibernate-key. Example: "shutdown:idle"</doc:summary>
++        </doc:doc>
++      </arg>
++      <arg name="who"  type="s" direction="in">
++        <doc:doc>
++          <doc:summary>Who is a human-readable, descriptive string of who is taking the lock. Example: "Xfburn"</doc:summary>
++        </doc:doc>
++      </arg>
++      <arg name="why"  type="s" direction="in">
++        <doc:doc>
++          <doc:summary>Why is a human-readable, descriptive string of why the program is taking the lock. Example: "Burning a DVD, interrupting now will ruin the DVD."</doc:summary>
++        </doc:doc>
++      </arg>
++      <arg name="fd"   type="h" direction="out">
++        <doc:doc>
++          <doc:description>
++            <doc:para>Returns a file descriptor that encapsulates the lock, or -1 on failure. As soon as the file descriptor is closed (and all its duplicates) the lock is automatically released. If the client dies while the lock is taken it is automatically closed and the lock is automatically released.</doc:para>
++          </doc:description>
++        </doc:doc>
++      </arg>
++      <doc:doc>
++        <doc:description>
++        <doc:para>See this simple example:
++          <doc:example language="c" title="simple example"><doc:code>
++    DBusConnection *bus_connection;
++    DBusMessage *message = NULL, *reply = NULL;
++    DBusError error;
++    gint fd = -1;
++    const char *what = "shutdown:sleep";
++    const char *who = "Xfburn";
++    const char *why = "Burning a DVD, interrupting now will ruin the DVD.";
++
++    message = dbus_message_new_method_call ("org.freedesktop.ConsoleKit",
++                                            "/org/freedesktop/ConsoleKit/Manager",
++                                            "org.freedesktop.ConsoleKit.Manager",
++                                            "Inhibit");
++
++    if (!message)
++    {
++        g_warning ("Unable to call Inhibit()");
++        return fd;
++    }
++
++    if (!dbus_message_append_args (message,
++                                   DBUS_TYPE_STRING, &amp;what,
++                                   DBUS_TYPE_STRING, &amp;who,
++                                   DBUS_TYPE_STRING, &amp;why,
++                                   DBUS_TYPE_INVALID))
++    {
++        g_warning ("Unable to call Inhibit()");
++        dbus_message_unref (message);
++        return fd;
++    }
++
++    reply = dbus_connection_send_with_reply_and_block (bus_connection, message, -1, &amp;error);
++    if (!reply)
++    {
++        g_warning ("Unable to inhibit: %s", error.message);
++        dbus_message_unref (message);
++        return fd;
++    }
++
++    if (!dbus_message_get_args (reply, &amp;error,
++                                DBUS_TYPE_UNIX_FD, &amp;fd,
++                                DBUS_TYPE_INVALID))
++    {
++        g_warning ("Inhibit() reply parsing failed: %s", error.message);
++    }
++
++    dbus_message_unref (message);
++    dbus_message_unref (reply);
++    dbus_error_free (&amp;error);
++    return fd;
++          </doc:code></doc:example></doc:para>
++        </doc:description>
++      </doc:doc>
+     </method>
+ 
+     <method name="OpenSession">

@@ -1,0 +1,608 @@
+From 5660e2c036463e899fb0da69297e88cf1bb6bbd8 Mon Sep 17 00:00:00 2001
+From: Eric Koegel <eric.koegel@gmail.com>
+Date: Mon, 20 Oct 2014 14:26:27 +0300
+Subject: [PATCH] Add HybridSleep support and change CanSleep
+
+Emulate the logind API to make it more easier for porting to
+ConsoleKit2 for the CanSuspend/CanHibernate/CanHybridSleep methods.
+They now return:
+yes - system can and user explicitly authorized by polkit, rbac, or neither is running
+no  - system can and user explicitly unauthorized by polkit or rbac
+challenge - system can and user requires elevation via polkit
+na - system does not support it (hardware or backend support missing).
+The auth methods have been removed.
+Currently HybridSleep only works on Linux.
+---
+ data/ConsoleKit.conf                       |   8 +-
+ data/org.freedesktop.consolekit.policy     |  20 ++-
+ src/ck-manager.c                           | 274 +++++++++++++++++++++++++----
+ src/ck-manager.h                           |  21 ++-
+ src/ck-sysdeps-freebsd.c                   |   7 +
+ src/ck-sysdeps-gnu.c                       |   7 +
+ src/ck-sysdeps-linux.c                     |   6 +
+ src/ck-sysdeps-openbsd.c                   |   7 +
+ src/ck-sysdeps-solaris.c                   |   7 +
+ src/ck-sysdeps.h                           |   1 +
+ src/org.freedesktop.ConsoleKit.Manager.xml |  43 +++--
+ tools/freebsd/Makefile.am                  |   1 +
+ tools/freebsd/ck-system-hybridsleep        |   4 +
+ tools/linux/Makefile.am                    |   1 +
+ tools/linux/ck-system-hybridsleep          |  12 ++
+ tools/openbsd/Makefile.am                  |   1 +
+ tools/openbsd/ck-system-hybridsleep        |   5 +
+ tools/solaris/Makefile.am                  |   1 +
+ tools/solaris/ck-system-hybridsleep        |   4 +
+ 19 files changed, 372 insertions(+), 58 deletions(-)
+ create mode 100644 tools/freebsd/ck-system-hybridsleep
+ create mode 100644 tools/linux/ck-system-hybridsleep
+ create mode 100644 tools/openbsd/ck-system-hybridsleep
+ create mode 100644 tools/solaris/ck-system-hybridsleep
+
+diff --git a/data/ConsoleKit.conf b/data/ConsoleKit.conf
+index 35c79a8..2b05219 100644
+--- a/data/ConsoleKit.conf
++++ b/data/ConsoleKit.conf
+@@ -42,9 +42,6 @@
+     <allow send_destination="org.freedesktop.ConsoleKit"
+            send_interface="org.freedesktop.ConsoleKit.Manager"
+            send_member="CanSuspend"/>
+-    <allow send_destination="org.freedesktop.ConsoleKit"
+-           send_interface="org.freedesktop.ConsoleKit.Manager"
+-           send_member="AuthSuspend"/>
+     <allow send_destination="org.freedesktop.ConsoleKit"
+            send_interface="org.freedesktop.ConsoleKit.Manager"
+            send_member="Hibernate"/>
+@@ -53,7 +50,10 @@
+            send_member="CanHibernate"/>
+     <allow send_destination="org.freedesktop.ConsoleKit"
+            send_interface="org.freedesktop.ConsoleKit.Manager"
+-           send_member="AuthHibernate"/>
++           send_member="HybridSleep"/>
++    <allow send_destination="org.freedesktop.ConsoleKit"
++           send_interface="org.freedesktop.ConsoleKit.Manager"
++           send_member="CanHybridSleep"/>
+     <allow send_destination="org.freedesktop.ConsoleKit"
+            send_interface="org.freedesktop.ConsoleKit.Manager"
+            send_member="Inhibit"/>
+diff --git a/data/org.freedesktop.consolekit.policy b/data/org.freedesktop.consolekit.policy
+index 76a6cc8..3898d9a 100644
+--- a/data/org.freedesktop.consolekit.policy
++++ b/data/org.freedesktop.consolekit.policy
+@@ -63,7 +63,7 @@ Policy definitions for ConsoleKit
+     </defaults>
+   </action>
+ 
+-    <action id="org.freedesktop.consolekit.system.hibernate">
++  <action id="org.freedesktop.consolekit.system.hibernate">
+     <description>Hibernate the system</description>
+     <message>System policy prevents hibernating the system</message>
+     <defaults>
+@@ -80,4 +80,22 @@ Policy definitions for ConsoleKit
+       <allow_active>auth_admin_keep</allow_active>
+     </defaults>
+   </action>
++
++  <action id="org.freedesktop.consolekit.system.hybridsleep">
++    <description>Hybrid sleep the system (sleep + hibernate)</description>
++    <message>System policy prevents hybrid sleeping the system</message>
++    <defaults>
++      <allow_inactive>no</allow_inactive>
++      <allow_active>yes</allow_active>
++    </defaults>
++  </action>
++
++  <action id="org.freedesktop.consolekit.system.hybridsleep-multiple-users">
++    <description>Hybrid sleep the system (sleep + hibernate) when multiple users are logged in</description>
++    <message>System policy prevents hybrid sleeping the system when other users are logged in</message>
++    <defaults>
++      <allow_inactive>no</allow_inactive>
++      <allow_active>auth_admin_keep</allow_active>
++    </defaults>
++  </action>
+ </policyconfig>
+diff --git a/src/ck-manager.c b/src/ck-manager.c
+index 3ff8ec7..78b8092 100644
+--- a/src/ck-manager.c
++++ b/src/ck-manager.c
+@@ -856,6 +856,59 @@ ready_cb (PolkitAuthority *authority,
+         g_object_unref (ret);
+ }
+ 
++static void
++sleep_ready_cb (PolkitAuthority *authority,
++                GAsyncResult    *res,
++                DBusGMethodInvocation *context)
++{
++        PolkitAuthorizationResult *ret;
++        GError *error;
++
++        error = NULL;
++        ret = polkit_authority_check_authorization_finish (authority, res, &error);
++        if (error != NULL) {
++                dbus_g_method_return_error (context, error);
++                g_error_free (error);
++        }
++        else if (polkit_authorization_result_get_is_authorized (ret)) {
++                dbus_g_method_return (context, "yes");
++        }
++        else if (polkit_authorization_result_get_is_challenge (ret)) {
++                dbus_g_method_return (context, "challenge");
++        }
++        else {
++                dbus_g_method_return (context, "no");
++        }
++
++        g_object_unref (ret);
++}
++
++/* We use this and sleep_ready_cb to avoid breaking API compability with
++ * ConsoleKit for Stop and Restart */
++static void
++get_polkit_sleep_permissions (CkManager   *manager,
++                              const char  *action,
++                              DBusGMethodInvocation *context)
++{
++        const char    *sender;
++        PolkitSubject *subject;
++
++        g_debug ("get permissions for action %s", action);
++
++        sender = dbus_g_method_get_sender (context);
++        subject = polkit_system_bus_name_new (sender);
++
++        polkit_authority_check_authorization (manager->priv->pol_ctx,
++                                              subject,
++                                              action,
++                                              NULL,
++                                              0,
++                                              NULL,
++                                              (GAsyncReadyCallback) sleep_ready_cb,
++                                              context);
++        g_object_unref (subject);
++}
++
+ static void
+ get_polkit_permissions (CkManager   *manager,
+                         const char  *action,
+@@ -1314,38 +1367,55 @@ ck_manager_suspend (CkManager             *manager,
+         return TRUE;
+ }
+ 
++/**
++ * ck_manager_can_suspend:
++ * @manager: the @CkManager object
++ * @context: We return a string here, either:
++ * yes - system can and user explicitly authorized by polkit, rbac, or neither is running
++ * no  - system can and user explicitly unauthorized by polkit or rbac
++ * challenge - system can and user requires elevation via polkit
++ * na - system does not support it (hardware or backend support missing).
++ *
++ * Determines if the system can suspend.
++ * Example:
++  dbus-send --system --dest=org.freedesktop.ConsoleKit \
++  --type=method_call --print-reply --reply-timeout=2000 \
++  /org/freedesktop/ConsoleKit/Manager \
++  org.freedesktop.ConsoleKit.Manager.CanSuspend
++ *
++ * Returnes TRUE.
++ **/
+ gboolean
+-ck_manager_auth_suspend (CkManager  *manager,
+-                         DBusGMethodInvocation *context)
++ck_manager_can_suspend (CkManager  *manager,
++                        DBusGMethodInvocation *context)
+ 
+ {
+         const char *action;
+ 
+-        action = "org.freedesktop.consolekit.system.suspend";
++        if (get_system_num_users (manager) > 1) {
++                action = "org.freedesktop.consolekit.system.suspend-multiple-users";
++        } else {
++                action = "org.freedesktop.consolekit.system.suspend";
++        }
+ 
++        if (ck_system_can_suspend ()) {
+ #if defined HAVE_POLKIT
+-        get_polkit_permissions (manager, action, context);
++        /* polkit_sleep will return the yes, no, and challenge */
++        get_polkit_sleep_permissions (manager, action, context);
+ #elif defined ENABLE_RBAC_SHUTDOWN
+-        if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY,
+-                                        NULL, NULL)) {
+-                dbus_g_method_return (context, TRUE);
++        /* rbac determines either yes or no. There is no challenge with rbac */
++        if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, NULL, NULL)) {
++                dbus_g_method_return (context, "yes");
+         } else {
+-                dbus_g_method_return (context, FALSE);
++                dbus_g_method_return (context, "no");
+         }
++#else
++                /* neither polkit or rbac. assumed single user system */
++                dbus_g_method_return (context, "yes");
+ #endif
+-
+-        return TRUE;
+-}
+-
+-gboolean
+-ck_manager_can_suspend (CkManager  *manager,
+-                        DBusGMethodInvocation *context)
+-
+-{
+-        if (ck_system_can_suspend ()) {
+-                dbus_g_method_return (context, TRUE);
+         } else {
+-                dbus_g_method_return (context, FALSE);
++                /* not supported by system (or consolekit backend) */
++                dbus_g_method_return (context, "na");
+         }
+ 
+         return TRUE;
+@@ -1422,38 +1492,181 @@ ck_manager_hibernate (CkManager             *manager,
+         return TRUE;
+ }
+ 
++/**
++ * ck_manager_can_hibernate:
++ * @manager: the @CkManager object
++ * @context: We return a string here, either:
++ * yes - system can and user explicitly authorized by polkit, rbac, or neither is running
++ * no  - system can and user explicitly unauthorized by polkit or rbac
++ * challenge - system can and user requires elevation via polkit
++ * na - system does not support it (hardware or backend support missing).
++ *
++ * Determines if the system can hibernate.
++ * Example:
++  dbus-send --system --dest=org.freedesktop.ConsoleKit \
++  --type=method_call --print-reply --reply-timeout=2000 \
++  /org/freedesktop/ConsoleKit/Manager \
++  org.freedesktop.ConsoleKit.Manager.CanHibernate
++ *
++ * Returnes TRUE.
++ **/
+ gboolean
+-ck_manager_auth_hibernate (CkManager  *manager,
+-                           DBusGMethodInvocation *context)
++ck_manager_can_hibernate (CkManager  *manager,
++                          DBusGMethodInvocation *context)
+ 
+ {
+         const char *action;
+ 
+-        action = "org.freedesktop.consolekit.system.hibernate";
++        if (get_system_num_users (manager) > 1) {
++                action = "org.freedesktop.consolekit.system.hibernate-multiple-users";
++        } else {
++                action = "org.freedesktop.consolekit.system.hibernate";
++        }
+ 
++        if (ck_system_can_hibernate ()) {
+ #if defined HAVE_POLKIT
+-        get_polkit_permissions (manager, action, context);
++        /* polkit_sleep will return the yes, no, and challenge */
++        get_polkit_sleep_permissions (manager, action, context);
+ #elif defined ENABLE_RBAC_SHUTDOWN
+-        if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY,
+-                                        NULL, NULL)) {
+-                dbus_g_method_return (context, TRUE);
++        /* rbac determines either yes or no. There is no challenge with rbac */
++        if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, NULL, NULL)) {
++                dbus_g_method_return (context, "yes");
+         } else {
++                dbus_g_method_return (context, "no");
++        }
++#else
++                /* neither polkit or rbac. assumed single user system */
++                dbus_g_method_return (context, "yes");
++#endif
++        } else {
++                /* not supported by system (or consolekit backend) */
++                dbus_g_method_return (context, "na");
++        }
++
++        return TRUE;
++}
++
++static void
++do_hybrid_sleep (CkManager             *manager,
++                 DBusGMethodInvocation *context,
++                 void *arg)
++{
++        GError *error;
++        gboolean res;
++
++        g_debug ("ConsoleKit preforming Hybrid Sleep");
++
++        log_system_action_event (manager, CK_LOG_EVENT_SYSTEM_HIBERNATE);
++
++        error = NULL;
++        res = g_spawn_command_line_async (PREFIX "/lib/ConsoleKit/scripts/ck-system-hybridsleep",
++                                          &error);
++        if (! res) {
++                GError *new_error;
++
++                g_warning ("Unable to hybrid sleep system: %s", error->message);
++
++                new_error = g_error_new (CK_MANAGER_ERROR,
++                                         CK_MANAGER_ERROR_GENERAL,
++                                         "Unable to hybrid sleep system: %s", error->message);
++                dbus_g_method_return_error (context, new_error);
++                g_error_free (new_error);
++
++                g_error_free (error);
++        } else {
++                dbus_g_method_return (context);
++        }
++}
++
++/*
++  Example:
++  dbus-send --system --dest=org.freedesktop.ConsoleKit \
++  --type=method_call --print-reply --reply-timeout=2000 \
++  /org/freedesktop/ConsoleKit/Manager \
++  org.freedesktop.ConsoleKit.Manager.Hibernate
++*/
++gboolean
++ck_manager_hybrid_sleep (CkManager             *manager,
++                         DBusGMethodInvocation *context)
++{
++        const char *action;
++
++        /* Check if something in inhibiting that action */
++        /* if (ck_inhibit_manager_is_suspend_inhibited (manager->priv->inhibit_manager)) {
++                g_debug ("hybrid sleep inhibited");
+                 dbus_g_method_return (context, FALSE);
++                return TRUE;
++        } */
++
++        if (get_system_num_users (manager) > 1) {
++                action = "org.freedesktop.consolekit.system.hybridsleep-multiple-users";
++        } else {
++                action = "org.freedesktop.consolekit.system.hybridsleep";
+         }
++
++        g_debug ("ConsoleKit Hibernate: %s", action);
++
++#if defined HAVE_POLKIT
++        check_polkit_permissions (manager, context, action, do_hybrid_sleep);
++#elif defined ENABLE_RBAC_SHUTDOWN
++        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, do_hybrid_sleep, NULL);
++#else
++        g_warning ("Compiled without PolicyKit or RBAC support!");
++        do_hybrid_sleep(manager, context, NULL);
+ #endif
+ 
+         return TRUE;
+ }
+ 
++/**
++ * ck_manager_can_hybrid_sleep:
++ * @manager: the @CkManager object
++ * @context: We return a string here, either:
++ * yes - system can and user explicitly authorized by polkit, rbac, or neither is running
++ * no  - system can and user explicitly unauthorized by polkit or rbac
++ * challenge - system can and user requires elevation via polkit
++ * na - system does not support it (hardware or backend support missing).
++ *
++ * Determines if the system can hybrid sleep (suspend + hibernate).
++ * Example:
++  dbus-send --system --dest=org.freedesktop.ConsoleKit \
++  --type=method_call --print-reply --reply-timeout=2000 \
++  /org/freedesktop/ConsoleKit/Manager \
++  org.freedesktop.ConsoleKit.Manager.CanHibernate
++ *
++ * Returnes TRUE.
++ **/
+ gboolean
+-ck_manager_can_hibernate (CkManager  *manager,
+-                          DBusGMethodInvocation *context)
++ck_manager_can_hybrid_sleep (CkManager  *manager,
++                             DBusGMethodInvocation *context)
+ 
+ {
++        const char *action;
++
++        if (get_system_num_users (manager) > 1) {
++                action = "org.freedesktop.consolekit.system.hybridsleep-multiple-users";
++        } else {
++                action = "org.freedesktop.consolekit.system.hybridsleep";
++        }
++
+         if (ck_system_can_hibernate ()) {
+-                dbus_g_method_return (context, TRUE);
++#if defined HAVE_POLKIT
++        /* polkit_sleep will return the yes, no, and challenge */
++        get_polkit_sleep_permissions (manager, action, context);
++#elif defined ENABLE_RBAC_SHUTDOWN
++        /* rbac determines either yes or no. There is no challenge with rbac */
++        if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, NULL, NULL)) {
++                dbus_g_method_return (context, "yes");
+         } else {
+-                dbus_g_method_return (context, FALSE);
++                dbus_g_method_return (context, "no");
++        }
++#else
++                /* neither polkit or rbac. assumed single user system */
++                dbus_g_method_return (context, "yes");
++#endif
++        } else {
++                /* not supported by system (or consolekit backend) */
++                dbus_g_method_return (context, "na");
+         }
+ 
+         return TRUE;
+diff --git a/src/ck-manager.h b/src/ck-manager.h
+index d464056..7a58223 100644
+--- a/src/ck-manager.h
++++ b/src/ck-manager.h
+@@ -90,14 +90,12 @@
+ gboolean            ck_manager_hibernate                      (CkManager             *manager,
+                                                                DBusGMethodInvocation *context);
+ 
+-gboolean            ck_manager_can_stop                       (CkManager *manager,
+-                                                                DBusGMethodInvocation *context);
+-gboolean            ck_manager_can_restart                    (CkManager *manager,
++gboolean            ck_manager_hybrid_sleep                   (CkManager             *manager,
+                                                                DBusGMethodInvocation *context);
+ 
+-gboolean            ck_manager_can_suspend                    (CkManager *manager,
+-                                                                DBusGMethodInvocation *context);
+-gboolean            ck_manager_can_hibernate                  (CkManager *manager,
++gboolean            ck_manager_can_stop                       (CkManager             *manager,
++                                                               DBusGMethodInvocation *context);
++gboolean            ck_manager_can_restart                    (CkManager             *manager,
+                                                                DBusGMethodInvocation *context);
+ 
+ gboolean             ck_manager_get_available_operating_systems (CkManager *manager,
+@@ -105,10 +103,14 @@
+ gboolean             ck_manager_restart_with_parameters       (CkManager *manager,
+                                                                const gchar *parameters,
+                                                                DBusGMethodInvocation *context);
+-gboolean            ck_manager_auth_suspend                   (CkManager *manager,
++
++gboolean            ck_manager_can_suspend                    (CkManager             *manager,
+                                                                 DBusGMethodInvocation *context);
+-gboolean            ck_manager_auth_hibernate                 (CkManager *manager,
++gboolean            ck_manager_can_hibernate                  (CkManager             *manager,
++                                                               DBusGMethodInvocation *context);
++gboolean            ck_manager_can_hybrid_sleep               (CkManager             *manager,
+                                                                DBusGMethodInvocation *context);
++
+ gboolean            ck_manager_inhibit                        (CkManager *manager,
+                                                                gchar *what,
+                                                                gchar *who,
+diff --git a/src/ck-sysdeps-solaris.c b/src/ck-sysdeps-solaris.c
+index 63cb6e0..9d26380 100644
+--- a/src/ck-sysdeps-solaris.c
++++ b/src/ck-sysdeps-solaris.c
+@@ -543,3 +543,10 @@ ck_system_can_hibernate (void)
+         /* TODO: not implemented */
+         return FALSE;
+ }
++
++gboolean
++ck_system_can_hybrid_sleep (void)
++{
++        /* TODO: not implemented */
++        return FALSE;
++}
+diff --git a/src/ck-sysdeps.h b/src/ck-sysdeps.h
+index 73c2608..cf677bc 100644
+--- a/src/ck-sysdeps.h
++++ b/src/ck-sysdeps.h
+@@ -75,6 +75,7 @@ gboolean     ck_wait_for_active_console_num   (int             console_fd,
+ 
+ gboolean     ck_system_can_suspend            (void);
+ gboolean     ck_system_can_hibernate          (void);
++gboolean     ck_system_can_hybrid_sleep       (void);
+ 
+ #ifdef HAVE_SYS_VT_SIGNAL
+ gint         ck_get_vt_signal_fd              (void);
+diff --git a/src/org.freedesktop.ConsoleKit.Manager.xml b/src/org.freedesktop.ConsoleKit.Manager.xml
+index 18957c2..1732e0a 100644
+--- a/src/org.freedesktop.ConsoleKit.Manager.xml
++++ b/src/org.freedesktop.ConsoleKit.Manager.xml
+@@ -53,49 +53,66 @@
+ 
+     <method name="CanSuspend">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+-      <arg name="can_suspend" type="b" direction="out"/>
++      <arg name="can_suspend" type="s" direction="out"/>
+       <doc:doc>
+         <doc:description>
+-          <doc:para>This method returns whether the computer system is capable of suspending.</doc:para>
++          <doc:para>This method emulates the logind implementation.
++                    Returns whether the system supports suspending and whether the calling user is eligible to hibernate the system.
++                    Returns one of "na", "yes", "no" or "challenge".
++                    If "na" is returned suspending is not available because of hardware support.
++                    If "yes" is returned suspending is supported and the user may suspend without further authentication.
++                    If "no" is returned suspending is available but the user is not allowed to suspend.
++                    If "challenge" is returned suspending is available, but only after authorization.</doc:para>
+         </doc:description>
+       </doc:doc>
+     </method>
+ 
+-    <method name="AuthSuspend">
++    <method name="Hibernate">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+-      <arg name="auth_suspend" type="b" direction="out"/>
+       <doc:doc>
+         <doc:description>
+-          <doc:para>This method returns whether the user is authorized to suspend the computer system.</doc:para>
++          <doc:para>This method initiates a request to hibernate the computer system.</doc:para>
+         </doc:description>
+       </doc:doc>
+     </method>
+ 
+-    <method name="Hibernate">
++    <method name="CanHibernate">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
++      <arg name="can_hibernate" type="s" direction="out"/>
+       <doc:doc>
+         <doc:description>
+-          <doc:para>This method initiates a request to hibernate the computer system.</doc:para>
++          <doc:para>This method emulates the logind implementation.
++                    Returns whether the system supports hibernation and whether the calling user is eligible to hibernate the system.
++                    Returns one of "na", "yes", "no" or "challenge".
++                    If "na" is returned hibernation is not available because of hardware support.
++                    If "yes" is returned hibernation is supported and the user may hibernate without further authentication.
++                    If "no" is returned hibernation is available but the user is not allowed to hibernate.
++                    If "challenge" is returned hibernation is available, but only after authorization.</doc:para>
+         </doc:description>
+       </doc:doc>
+     </method>
+ 
+-    <method name="CanHibernate">
++    <method name="HybridSleep">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+-      <arg name="can_hibernate" type="b" direction="out"/>
+       <doc:doc>
+         <doc:description>
+-          <doc:para>This method returns whether the computer system is capable of hibernating.</doc:para>
++          <doc:para>This method initiates a request to hybrid sleep (suspend + hibernate) the computer system.</doc:para>
+         </doc:description>
+       </doc:doc>
+     </method>
+ 
+-    <method name="AuthHibernate">
++    <method name="CanHybridSleep">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+-      <arg name="auth_hibernate" type="b" direction="out"/>
++      <arg name="can_suspend" type="s" direction="out"/>
+       <doc:doc>
+         <doc:description>
+-          <doc:para>This method returns whether the user is authorized to hibernate the computer system.</doc:para>
++          <doc:para>This method emulates the logind implementation.
++                    Returns whether the system supports hybrid sleep (suspend + hibernate) and whether the calling user is eligible to hybrid sleep the system.
++                    Returns one of "na", "yes", "no" or "challenge".
++                    If "na" is returned hybrid sleeping is not available because of hardware support.
++                    If "yes" is returned hybrid sleeping is supported and the user may hybrid sleep without further authentication.
++                    If "no" is returned hybrid sleeping is available but the user is not allowed to hybrid sleep.
++                    If "challenge" is returned hybrid sleeping is available, but only after authorization.</doc:para>
+         </doc:description>
+       </doc:doc>
+     </method>
+diff --git a/tools/solaris/Makefile.am b/tools/solaris/Makefile.am
+index 50b9b27..85a7166 100644
+--- a/tools/solaris/Makefile.am
++++ b/tools/solaris/Makefile.am
+@@ -12,6 +12,7 @@ script_SCRIPTS =			\
+ 	ck-system-restart		\
+ 	ck-system-suspend		\
+ 	ck-system-hibernate		\
++	ck-system-hybridsleep		\
+ 	$(NULL)
+ 
+ EXTRA_DIST =				\
+diff --git a/tools/solaris/ck-system-hybridsleep b/tools/solaris/ck-system-hybridsleep
+new file mode 100644
+index 0000000..5f31342
+--- /dev/null
++++ b/tools/solaris/ck-system-hybridsleep
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++# FIXME: Implement this
++exit 1
