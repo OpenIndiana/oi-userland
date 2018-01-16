@@ -1,0 +1,14 @@
+--- mate-power-manager-1.18.1/src/gpm-brightness.c.1	2018-01-16 07:26:45.891311170 +0000
++++ mate-power-manager-1.18.1/src/gpm-brightness.c	2018-01-16 07:29:22.128743384 +0000
+@@ -159,7 +159,11 @@
+ 	gchar *command = NULL;
+ 
+ 	/* get the data */
++#if defined(__sun) && defined(__SVR4)
++	command = g_strdup_printf ("pfexec " SBINDIR "/mate-power-backlight-helper --%s %i", argument, value);
++#else
+ 	command = g_strdup_printf ("pkexec " SBINDIR "/mate-power-backlight-helper --%s %i", argument, value);
++#endif
+ 	ret = g_spawn_command_line_sync (command, NULL, NULL, &exit_status, &error);
+ 	if (!ret) {
+ 		egg_error ("failed to get value: %s", error->message);
