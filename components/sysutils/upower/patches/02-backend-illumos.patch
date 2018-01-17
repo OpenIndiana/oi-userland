@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-12 07:25:54.590178253 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-12 12:43:30.695064727 +0000
-@@ -0,0 +1,896 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-17 19:45:53.800556433 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-17 19:50:39.353111097 +0000
+@@ -0,0 +1,915 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -483,9 +483,31 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		g_free(ma.device_path);
 +	
 +	if (!ma.success) {
-+		g_warning("Couldn't get state of battery");
-+		return FALSE;
++		/* If device file is present, but ioctl has failed, 
++		     consider that battery is absent */
++		if (ma.present) {
++			g_object_set (device,
++				"state", UP_DEVICE_STATE_EMPTY,
++				"percentage", (gdouble) 0.0,
++				"time-to-empty", (guint64) 0,
++				"is-present", FALSE,
++				(void*) NULL);
++			/* Reset some known fields which remain untouched below. */
++			g_object_set(device,
++				"is-rechargeable", FALSE,
++				"energy", (gdouble) 0.0,
++				"energy-empty", (gdouble) 0.0,
++				"energy-full", (gdouble) 0.0,
++				"energy-full-design", (gdouble) 0.0,
++				"energy-rate", (gdouble) 0.0,
++				NULL);
++			return TRUE;
++		} else {
++			g_warning("Couldn't get state of battery");
++			return FALSE;
++		}
 +	}
++
 +
 +	memset(&bst, 0, sizeof(bst));
 +	ma.name = "battery";
@@ -591,7 +613,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			}
 +		}	 
 +
-+		/* TODO: find out when battery is not present */
 +		if (cur_state != new_state ||
 +			percentage != new_percentage ||
 +			cur_time_to_empty != new_time_to_empty) {
@@ -934,18 +955,16 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			}
 +			
 +			st->present = TRUE;
++			st->device_path = fdp;
 +			
 +			if (ioctl(fd, st->ctl, st->result) < 0) {          
-+				close(fd);  
++				st->success = FALSE;
 +				g_warning("ioctl %d to device %s failed", st->ctl, fdp);
-+				di_devfs_path_free(dp);
-+				g_free(fdp);
-+				continue;
++			} else {
++				st->success = TRUE;
 +			}
-+			st->success = TRUE;
 +			
 +			close(fd);
-+			st->device_path = fdp;
 +			di_devfs_path_free(dp);
 +			return DI_WALK_TERMINATE;
 +		}
