@@ -38,7 +38,6 @@ COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
 
-
 #
 # man pages are a separate archive
 #
