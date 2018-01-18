@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-17 19:45:53.800556433 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-17 19:50:39.353111097 +0000
-@@ -0,0 +1,915 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-18 07:05:52.083078877 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-18 07:09:32.173261860 +0000
+@@ -0,0 +1,919 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -227,7 +227,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +static gboolean		up_acpi_device_refresh		(UpDevice *device);
 +
 +static int		minor_device_ioctl(di_node_t node, void *arg);
-+static gboolean		up_backend_is_laptop (void);
 +static int		estimate_time(int charge_rate, int current_charge, int last_fullcharge, int is_discharging, int is_charging);
 +
 +static char*		up_backend_get_ac_device_path(enum acpi_drv_type device);
@@ -247,7 +246,8 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	UpDaemon		*daemon;
 +	UpDevice		*ac;
 +	UpDevice		*battery;
-+	gboolean		is_laptop;
++	gboolean		has_ac_device; /* ac device node is present */
++	gboolean		has_bat_device; /* battery device node is present */
 +	UpConfig		*config;
 +	GDBusProxy		*seat_manager_proxy;
 +};
@@ -344,14 +344,15 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +{
 +	UpAcpiNative *acnative = NULL;
 +	UpAcpiNative *battnative = NULL;
++	char *devpath;
++
 +	backend->priv->daemon = g_object_ref (daemon);
 +
-+	if (backend->priv->is_laptop)
-+	{
-+		char *devpath;
-+
++	if (backend->priv->has_ac_device || backend->priv->has_bat_device) {
 +		up_backend_update_lid_status(daemon);
++	}
 +
++	if (backend->priv->has_ac_device) {
 +		devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_AC);
 +		if (devpath) {
 +			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
@@ -362,7 +363,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +				g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, acnative, backend->priv->ac);
 +			g_free(devpath);
 +		}
++	}
 +
++	if (backend->priv->has_bat_device) {
 +		devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_CBAT);
 +		if (devpath) {
 +			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
@@ -373,7 +376,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +				g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, battnative, backend->priv->battery);
 +			g_free(devpath);
 +		}
-+
 +	}
 +
 +	return TRUE;
@@ -705,8 +707,12 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +
 +        while (g_io_channel_read_line (sysevent_iochannel, &s, &len, NULL,
 +            &err) == G_IO_STATUS_NORMAL) {
-+		up_acpi_device_refresh(backend->priv->ac);
-+                up_acpi_device_refresh(backend->priv->battery);
++		if (backend->priv->has_ac_device) {
++			up_acpi_device_refresh(backend->priv->ac);
++		}
++		if (backend->priv->has_bat_device) {
++                	up_acpi_device_refresh(backend->priv->battery);
++		}
 +	}
 +
 +	return TRUE;
@@ -746,7 +752,7 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +	}
 +
 +	sysevent_iochannel = g_io_channel_unix_new (sysevent_pipe_fds[0]);
-+        if (sysevent_iochannel == NULL) {
++	if (sysevent_iochannel == NULL) {
 +		g_warning("Failed to create sysevent iochannel");
 +                return;
 +        }
@@ -822,26 +828,54 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +up_backend_init (UpBackend *backend)
 +{
 +	UpDeviceClass *device_class;
++	char *devpath = NULL;
 +	gint64 current_time;
 +
 +	backend->priv = UP_BACKEND_GET_PRIVATE (backend);
-+	backend->priv->is_laptop = up_backend_is_laptop();
-+	g_debug("is_laptop:%d",backend->priv->is_laptop);
-+	if (backend->priv->is_laptop)
++
++	devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_AC);
++	if (devpath) {
++		backend->priv->has_ac_device = TRUE;
++		g_free(devpath);
++	} else {
++		backend->priv->has_ac_device = FALSE;
++	}
++
++	devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_CBAT);
++	if (devpath) {
++		backend->priv->has_bat_device = TRUE;
++		g_free(devpath);
++	} else {
++		backend->priv->has_bat_device = FALSE;
++	}
++
++	current_time = g_get_real_time () / G_USEC_PER_SEC;
++	if (backend->priv->has_ac_device)
 +	{
 +		backend->priv->ac = UP_DEVICE(up_device_new());
-+		backend->priv->battery = UP_DEVICE(up_device_new ());
-+		device_class = UP_DEVICE_GET_CLASS (backend->priv->battery);
-+		device_class->get_on_battery = up_acpi_device_get_on_battery;
-+		device_class->get_online = up_acpi_device_get_online;
-+		device_class->refresh = up_acpi_device_refresh;
 +		device_class = UP_DEVICE_GET_CLASS (backend->priv->ac);
 +		device_class->get_on_battery = up_acpi_device_get_on_battery;
 +		device_class->get_online = up_acpi_device_get_online;
 +		device_class->refresh = up_acpi_device_refresh;
 +
 +		/* setup dummy */
-+		current_time = g_get_real_time () / G_USEC_PER_SEC;
++		g_object_set (backend->priv->ac,
++			      "type", UP_DEVICE_KIND_LINE_POWER,
++			      "online", TRUE,
++			      "power-supply", TRUE,
++			      "update-time", (guint64) current_time,
++			      (void*) NULL);
++	} 
++
++	if (backend->priv->has_bat_device)
++	{
++		backend->priv->battery = UP_DEVICE(up_device_new ());
++		device_class = UP_DEVICE_GET_CLASS (backend->priv->battery);
++		device_class->get_on_battery = up_acpi_device_get_on_battery;
++		device_class->get_online = up_acpi_device_get_online;
++		device_class->refresh = up_acpi_device_refresh;
++
++		/* setup dummy */
 +		g_object_set (backend->priv->battery,
 +			      "type", UP_DEVICE_KIND_BATTERY,
 +			      "power-supply", TRUE,
@@ -853,13 +887,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			      "time-to-empty", (gint64) 0,
 +			      "update-time", (guint64) current_time,
 +			      (void*) NULL);
-+		g_object_set (backend->priv->ac,
-+			      "type", UP_DEVICE_KIND_LINE_POWER,
-+			      "online", TRUE,
-+			      "power-supply", TRUE,
-+			      "update-time", (guint64) current_time,
-+			      (void*) NULL);
++	}
 +
++	if (backend->priv->has_bat_device || backend->priv->has_ac_device) {
 +		/* Initialize sysevent handler */
 +		up_backend_initialize_sysevent_handler(backend);
 +		/* Some acpi devices are broken enough to avoid generating
@@ -970,32 +1000,6 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		}
 +	}
 +	return DI_WALK_CONTINUE;
-+}
-+
-+static gboolean
-+up_backend_is_laptop()
-+{
-+	di_node_t root_node;
-+	
-+	struct mdi_arg ma;
-+	int state = 0;
-+	
-+	ma.name = "ac";
-+	ma.exact_match = FALSE;
-+	ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
-+	ma.result = &state;
-+	ma.device_path = NULL;
-+	
-+	errno = 0;
-+	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
-+		g_error("di_init() failed: %s", g_strerror(errno));
-+		return FALSE;
-+	}
-+	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
-+	di_fini(root_node);
-+	if (ma.device_path)
-+		g_free(ma.device_path);
-+	return ma.success;
 +}
 +
 +static char*
