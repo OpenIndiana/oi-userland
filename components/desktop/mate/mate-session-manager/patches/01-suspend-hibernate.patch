@@ -1,0 +1,23 @@
+Our ConsoleKit is ancient and its methods' signatures differ
+--- mate-session-manager-1.18.2/mate-session/gsm-consolekit.c.1	2018-01-18 11:36:47.326994348 +0000
++++ mate-session-manager-1.18.2/mate-session/gsm-consolekit.c	2018-01-18 11:55:17.121407899 +0000
+@@ -499,7 +499,9 @@
+                                               "Suspend",
+                                               INT_MAX,
+                                               &error,
++#ifndef __sun
+                                               G_TYPE_BOOLEAN, TRUE, /* interactive */
++#endif
+                                               G_TYPE_INVALID,
+                                               G_TYPE_INVALID);
+ 
+@@ -528,7 +530,9 @@
+                                               "Hibernate",
+                                               INT_MAX,
+                                               &error,
++#ifndef __sun
+                                               G_TYPE_BOOLEAN, TRUE, /* interactive */
++#endif
+                                               G_TYPE_INVALID,
+                                               G_TYPE_INVALID);
+ 
