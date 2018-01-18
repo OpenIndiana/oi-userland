@@ -23,7 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.3.5
+COMPONENT_VERSION=	4.3.6
 COMPONENT_FMRI=		service/network/dhcp/isc-dhcp
 COMPONENT_SUMMARY=	ISC DHCP Server and Relay Agent
 COMPONENT_CLASSIFICATION=System/Services
@@ -34,7 +34,7 @@ COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:eb95936bf15d2393c55dd505bc527d1d4408289cec5a9fa8abb99f7577e7f954
+    sha256:a41eaf6364f1377fe065d35671d9cf82bbbc8f21207819b2b9f33f652aec6f1b
 COMPONENT_BUGDB=	service/dhcp-server
 
 include $(WS_MAKE_RULES)/prep.mk
