@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.10.6-P1
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	9.10.6.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -50,13 +51,10 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 # that was overriden by setting CONFIGARGS to hide build server
 # pathnames.
 
-# Traditionally all BIND executables are installed in sbin not bin.
 # DNS libraries are in usr/lib/dns - Override settings from configure.mk
-CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/sbin
 CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib/dns
 
 CONFIGURE_OPTIONS +=	--with-libtool
-CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	--with-openssl
@@ -69,6 +67,11 @@ CONFIGURE_OPTIONS +=	--with-pkcs11
 # To make it use version 2.9.x we need to skip this check by
 # specifying path where libxml2 is installed.
 CONFIGURE_OPTIONS +=	--with-libxml2=/usr
+
+CONFIGURE_ENV +=	PYTHON=$(PYTHON)
+
+COMPONENT_BUILD_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_INSTALL_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
