@@ -109,18 +109,16 @@ Dependencies Resolved
     a .depend.res copy in the build directory, the umbrella dependency
     resolution target is {build-dir}/.resolved-$(MACH).
 
-    The resolution step is also set up to use the -e flag to pkgdepend resolve,
-    which limits the set of packages it looks at to resolve the dependencies it
-    generated in the previous step.  This makes the resolution step a great deal
-    faster, but requires that you keep a static list of these packages checked
-    into the workspace, and update it when packages are added to it.  Having
-    extra packages in there is safe.
+    The resolution step is also set up to use the -e flag to pkgdepend
+    resolve, which limits the set of packages it looks at to resolve the
+    dependencies it generated in the previous step.  This makes the resolution
+    step a great deal faster, but requires that you keep a static list of
+    these packages, and update it when packages are added to it.  Having extra
+    packages in there is safe.
 
-    In order to create this list, build and publish your component (or at least
-    through the resolution stage) without a file "resolve.deps" in the component
-    directory, and run "gmake sample-resolve.deps".  If the file is empty (that
-    is, no computed dependencies were found), a warning will be emitted and the
-    file will be removed, as pkgdepend currently errors out in that case.
+    This list is kept as the REQUIRED_PACKAGES list in your component
+    Makefile, which you must append to (as shared-rules introduce some
+    packages there themselves for your benefit).
 
     To test, run "gmake clean" and re-publish.
 
