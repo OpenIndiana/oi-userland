@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		transmission
 COMPONENT_VERSION=	2.92
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.transmissionbt.com/
 COMPONENT_SUMMARY=	GTK and console BitTorrent client
 COMPONENT_FMRI=		desktop/torrent/transmission
