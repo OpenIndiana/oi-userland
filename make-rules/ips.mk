@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
@@ -376,31 +376,24 @@ PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
-# These files should contain a list of packages that the component is known to
-# depend on.  Using resolve.deps is not required, but significantly speeds up
-# the "pkg resolve" step.
-# XXX existing pkg5 is too old for that
-#EXTDEPFILES = $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
+# pkgdepend resolve builds a map of all installed packages by default.  This
+# makes dependency resolution particularly slow.  We can dramatically improve
+# performance here by creating a file with a list of packages that we know
+# are needed, dramatically reducing the overhead involved in creating and
+# searching this map.
+#
+# Generate a resolve.deps file from the dependencies in the Makefile and
+# fragments that it uses.
+RESOLVE_DEPS=$(BUILD_DIR)/resolve.deps
 
-# This is a target that should only be run by hand, and not something that
-# .resolved-$(MACH) should depend on.
-sample-resolve.deps:
-	echo "<transform depend type=(require|require-any) -> print %(fmri)>" > rd-trans
-	for i in build/*.depend; do \
-		$(PKGMOGRIFY) -O /dev/null $$i rd-trans | tr " " "\n" | sort -u > m1; \
-		$(PKGMOGRIFY) -O /dev/null $$i.res rd-trans | tr " " "\n" | sort -u > m2; \
-		comm -13 m1 m2; \
-	done | sed -e 's/@[^ ]*//g' -e 's,pkg:/,,g' | sort -u > resolve.deps
-	$(RM) rd-trans m1 m2
-	if [[ ! -s resolve.deps ]]; then \
-		echo "No computed dependencies found; removing empty resolve.deps."; \
-		$(RM) resolve.deps; \
-	fi
-
+$(RESOLVE_DEPS):	Makefile $(BUILD_DIR)
+	@for pkg in $(REQUIRED_PACKAGES:%=/%) ; do \
+	    echo $${pkg} ; \
+	done | sort -u >$@
 
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
-	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
 
 #
