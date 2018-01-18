@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	2.14.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -36,6 +37,7 @@ COMPONENT_LICENSE_FILE=	git.license
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
+
 
 #
 # man pages are a separate archive
