@@ -61,3 +61,6 @@ install: $(INSTALL_32_and_64)
 		/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps/$(MACH64)"' $$i ;\
 		done
 	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
