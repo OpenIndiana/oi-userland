@@ -33,3 +33,43 @@ install:
 
 clean:
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += compatibility/packages/SUNWxwinc
+REQUIRED_PACKAGES += compatibility/packages/SUNWxwman
+REQUIRED_PACKAGES += compatibility/packages/SUNWxwopt
+REQUIRED_PACKAGES += compatibility/packages/SUNWxwplr
+REQUIRED_PACKAGES += compatibility/packages/SUNWxwplt
+REQUIRED_PACKAGES += compatibility/packages/SUNWxwpmn
+REQUIRED_PACKAGES += compatibility/packages/SUNWxwslb
+REQUIRED_PACKAGES += library/motif/libdpstkxm
+REQUIRED_PACKAGES += system/font/daewoo-misc
+REQUIRED_PACKAGES += system/font/isas-misc
+REQUIRED_PACKAGES += system/font/jis-misc
+REQUIRED_PACKAGES += system/font/misc-ethiopic
+REQUIRED_PACKAGES += system/font/misc-meltho
+REQUIRED_PACKAGES += system/font/truetype/google-droid
+REQUIRED_PACKAGES += system/font/xorg/cyrillic
+REQUIRED_PACKAGES += system/font/xorg/iso8859-1
+REQUIRED_PACKAGES += system/font/xorg/iso8859-10
+REQUIRED_PACKAGES += system/font/xorg/iso8859-11
+REQUIRED_PACKAGES += system/font/xorg/iso8859-13
+REQUIRED_PACKAGES += system/font/xorg/iso8859-14
+REQUIRED_PACKAGES += system/font/xorg/iso8859-15
+REQUIRED_PACKAGES += system/font/xorg/iso8859-16
+REQUIRED_PACKAGES += system/font/xorg/iso8859-2
+REQUIRED_PACKAGES += system/font/xorg/iso8859-3
+REQUIRED_PACKAGES += system/font/xorg/iso8859-4
+REQUIRED_PACKAGES += system/font/xorg/iso8859-5
+REQUIRED_PACKAGES += system/font/xorg/iso8859-7
+REQUIRED_PACKAGES += system/font/xorg/iso8859-8
+REQUIRED_PACKAGES += system/font/xorg/iso8859-9
+REQUIRED_PACKAGES += system/font/xorg/xorg-core
+REQUIRED_PACKAGES += system/kernel/hardware-cursor
+REQUIRED_PACKAGES += x11/compatibility/links-svid
+REQUIRED_PACKAGES += x11/library/dps
+REQUIRED_PACKAGES += x11/library/libowconfig
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw4
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw5
+REQUIRED_PACKAGES += x11/network/rstart
+REQUIRED_PACKAGES += x11/network/x11-network-proxies
