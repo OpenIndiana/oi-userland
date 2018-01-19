@@ -386,10 +386,12 @@ $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 # fragments that it uses.
 RESOLVE_DEPS=$(BUILD_DIR)/resolve.deps
 
-$(RESOLVE_DEPS):	Makefile $(BUILD_DIR)
-	@for pkg in $(REQUIRED_PACKAGES:%=/%) ; do \
+$(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
+	@(for pkg in $(REQUIRED_PACKAGES:%=/%) ; do \
 	    echo $${pkg} ; \
-	done | sort -u >$@
+	done ; \
+	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) | \
+		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | sort -u >$@
 
 # resolve the dependencies all at once
 $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
