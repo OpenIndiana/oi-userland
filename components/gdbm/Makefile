@@ -52,6 +52,5 @@ install:	$(INSTALL_32_and_64)
 COMPONENT_TEST_TARGETS =	progs
 test:	$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
