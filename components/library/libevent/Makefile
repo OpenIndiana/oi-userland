@@ -66,6 +66,5 @@ install:	$(INSTALL_32_and_64)
 # them because we delete things that the tests want (see above).
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
