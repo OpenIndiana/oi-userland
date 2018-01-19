@@ -37,3 +37,10 @@ include $(WS_MAKE_RULES)/ips.mk
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/chmlib
+REQUIRED_PACKAGES += library/graphics/wxwidgets
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
