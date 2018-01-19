@@ -113,3 +113,9 @@ $(TEST_64):  $(BUILD_64)
 	cd $(COMPONENT_TEST_DIR) && \
 	$(ENV) $(COMPONENT_TEST_ENV) $(CONFIG_SHELL) all.sh &&\
 	$(TOUCH) $(BUILD_DIR_$(BITS))/.tested
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/mozilla-nss
