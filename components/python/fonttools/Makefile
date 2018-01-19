@@ -47,3 +47,7 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:           $(NO_TEST)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += runtime/python-27
