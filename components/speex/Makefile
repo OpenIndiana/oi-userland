@@ -42,3 +42,9 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libogg
+REQUIRED_PACKAGES += library/speexdsp
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
