@@ -67,3 +67,6 @@ install:	$(INSTALL_32_and_64)
 # If you do have Check on your system, then uncomment the TEST_32 line.
 test:		$(TEST_32_and_64)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
