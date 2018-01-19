@@ -78,3 +78,7 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 download:: $(SOURCE_DIR)/.downloaded
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/pygobject-3-27
+REQUIRED_PACKAGES += runtime/python-27
