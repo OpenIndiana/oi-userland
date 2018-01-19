@@ -41,3 +41,18 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/fribidi
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libunibreak
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
