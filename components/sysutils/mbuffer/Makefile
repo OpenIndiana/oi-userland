@@ -36,3 +36,9 @@ include $(WS_MAKE_RULES)/ips.mk
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/libmhash
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
