@@ -55,8 +55,5 @@ install:        $(INSTALL_32)
 # findutils tests use dejagnu which isn't currently included in Solaris.
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
