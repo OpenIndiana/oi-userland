@@ -67,3 +67,8 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
