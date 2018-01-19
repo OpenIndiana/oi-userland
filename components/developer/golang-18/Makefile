@@ -155,3 +155,5 @@ install:	build $(INSTALL_64)
 
 test:		$(TEST_64)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
