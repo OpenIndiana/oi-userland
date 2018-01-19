@@ -42,4 +42,10 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
