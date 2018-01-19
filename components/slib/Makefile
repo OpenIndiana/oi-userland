@@ -60,6 +60,5 @@ test:	$(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/bash
