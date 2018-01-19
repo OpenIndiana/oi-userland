@@ -109,3 +109,13 @@ install:	$(INSTALL_32_and_64)
 	$(PYTHON.3.4.32) -m compileall $(PROTO_DIR)/usr/lib/python3.4/vendor-packages
 
 test:		$(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
