@@ -38,3 +38,7 @@ COMPONENT_INSTALL_ARGS += BINDIR=$(PROTO_DIR)/usr/bin
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
