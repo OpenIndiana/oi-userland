@@ -46,3 +46,6 @@ install:       $(BUILD_32_and_64)
 		$(INSTALL) $(BUILD_DIR_32)/nicstat.1 $(PROTOUSRSHAREMAN1MDIR)/nicstat.1m
 		$(TOUCH) $(BUILD_DIR_32)/.installed
 		$(TOUCH) $(BUILD_DIR_64)/.installed
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
