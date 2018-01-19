@@ -78,3 +78,6 @@ install:	$(INSTALL_32_and_64) $(PROTODOCDIR)
 		$(CP) -r $(SOURCE_DIR)/htmldoc/api $(PROTODOCDIR)
 
 test:		$(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
