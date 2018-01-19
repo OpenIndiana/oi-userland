@@ -46,3 +46,11 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/speech/gnome-speech
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libbonobo
+REQUIRED_PACKAGES += library/orbit2
+REQUIRED_PACKAGES += library/speech/espeak
+REQUIRED_PACKAGES += system/library
