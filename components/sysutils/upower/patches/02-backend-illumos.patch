@@ -164,9 +164,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illu
 +
 +#endif
 diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
---- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-18 07:05:52.083078877 +0000
-+++ upower-0.99.4/src/illumos/up-backend.c	2018-01-18 07:09:32.173261860 +0000
-@@ -0,0 +1,919 @@
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-20 09:48:32.501653060 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-20 12:33:59.490627981 +0000
+@@ -0,0 +1,918 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
@@ -625,11 +625,11 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +		                        "is-present", TRUE,
 +       			                 (void*) NULL);
 +				g_object_set (device,
-+					"energy", (gdouble) reporting_current,
-+					"energy-full", (gdouble) reporting_lastfull,
-+					"energy-full-design", (gdouble) reporting_design_capacity,
-+					"energy-rate", (gdouble) reporting_rate,
-+					"energy-empty", (gdouble) reporting_lowcap,
++					"energy", ((gdouble) reporting_current)/1000.0,
++					"energy-full", ((gdouble) reporting_lastfull)/1000.0,
++					"energy-full-design", ((gdouble)reporting_design_capacity)/1000.0 ,
++					"energy-rate", ((gdouble) reporting_rate)/1000.0,
++					"energy-empty", ((gdouble) reporting_lowcap)/1000.0,
 +					"voltage", (gdouble) present_voltage,
 +					"capacity", new_percentage,
 +					(void*) NULL);
@@ -658,10 +658,9 @@ diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/
 +			break;
 +	}
 +
-+	if (ret)
-+		g_object_set (device, "update-time", (guint64) g_get_real_time () / G_USEC_PER_SEC, NULL);
++	g_object_set (device, "update-time", (guint64) g_get_real_time () / G_USEC_PER_SEC, NULL);
 +
-+	return ret;
++	return TRUE;
 +}
 +
 +/*
