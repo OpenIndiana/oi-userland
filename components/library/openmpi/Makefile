@@ -94,6 +94,6 @@ REQUIRED_PACKAGES += diagnostic/cpu-counters
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

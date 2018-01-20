@@ -112,5 +112,5 @@ test:		$(TEST_64)
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/math

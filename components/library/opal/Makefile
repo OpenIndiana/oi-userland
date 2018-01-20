@@ -70,6 +70,6 @@ REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += library/desktop/ptlib
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
