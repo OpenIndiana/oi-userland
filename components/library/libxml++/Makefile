@@ -51,4 +51,4 @@ REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime

@@ -60,5 +60,5 @@ REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
