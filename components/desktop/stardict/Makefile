@@ -73,6 +73,6 @@ REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

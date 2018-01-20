@@ -53,5 +53,5 @@ test:		$(TEST_64)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
