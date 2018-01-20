@@ -182,4 +182,4 @@ REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += system/header/header-picl
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime

@@ -77,6 +77,6 @@ REQUIRED_PACKAGES+= developer/lexer/flex
 
 # Auto-generated contents below.  Please manually verify and remove this comment
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
