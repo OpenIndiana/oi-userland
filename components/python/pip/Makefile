@@ -35,7 +35,12 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
 REQUIRED_PACKAGES += library/python/requests-27
 REQUIRED_PACKAGES += library/python/requests-34
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
