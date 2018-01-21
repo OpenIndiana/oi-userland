@@ -54,6 +54,8 @@ test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/speex
+REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += system/library
