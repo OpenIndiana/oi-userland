@@ -51,9 +51,14 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Build dependency
 REQUIRED_PACKAGES += library/desktop/c++/mm-common
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
