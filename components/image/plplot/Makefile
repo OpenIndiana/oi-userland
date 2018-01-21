@@ -70,18 +70,16 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-REQUIRED_PACKAGES += library/qhull
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/qhull
+REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/tcl-8
-REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
-REQUIRED_PACKAGES += system/library/gfortran-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gfortran-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
