@@ -53,6 +53,7 @@ test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/audio/sdl-sound
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
