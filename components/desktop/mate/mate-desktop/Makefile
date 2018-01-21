@@ -59,15 +59,19 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
-REQIURED_PACKAGES += gnome/config/dconf
-REQIURED_PACKAGES += library/desktop/atk
-REQIURED_PACKAGES += library/desktop/cairo
-REQIURED_PACKAGES += library/desktop/gdk-pixbuf
-REQIURED_PACKAGES += library/desktop/gtk3
-REQIURED_PACKAGES += library/desktop/pango
-REQIURED_PACKAGES += library/desktop/startup-notification
-REQIURED_PACKAGES += library/glib2
-REQIURED_PACKAGES += system/library/math
-REQIURED_PACKAGES += x11/library/libx11
-REQIURED_PACKAGES += x11/library/libxrandr
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/dconf
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/startup-notification
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxrandr
