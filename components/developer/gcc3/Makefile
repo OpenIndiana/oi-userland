@@ -97,9 +97,11 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test: $(TEST_32)
 
-REQUIRED_PACKAGES += developer/gnu-binutils
-REQUIRED_PACKAGES += developer/library/lint
-REQUIRED_PACKAGES += developer/linker
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/linker
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c-runtime
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/math
