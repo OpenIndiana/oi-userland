@@ -114,6 +114,9 @@ COMPONENT_PRE_TEST_ACTION = \
 # http://graphviz.org/bugs/b2063.html
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -128,6 +131,10 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/math/gts
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
