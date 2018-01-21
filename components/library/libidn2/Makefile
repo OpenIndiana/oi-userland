@@ -52,4 +52,6 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += system/library
