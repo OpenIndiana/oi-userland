@@ -75,14 +75,18 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/percona-server-57/client
-REQUIRED_PACKAGES += database/percona-server-57/library
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libsasl
+REQUIRED_PACKAGES += web/curl
