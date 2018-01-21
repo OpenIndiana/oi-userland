@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cups-filters
 COMPONENT_VERSION= 1.11.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Additional backends, filters and other software for CUPS
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -41,6 +42,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CPPFLAGS = -D_POSIX_PTHREAD_SEMANTICS
 
+# Build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
@@ -51,8 +57,9 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/glib2
@@ -63,6 +70,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += print/psutils
 REQUIRED_PACKAGES += print/qpdf
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/g++-4-runtime
