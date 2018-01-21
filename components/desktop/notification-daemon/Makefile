@@ -43,14 +43,19 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += gnome/config/gconf
+# Build dependencies
 REQUIRED_PACKAGES += gnome/gnome-panel
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += library/desktop/libsexy
+REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += system/library
