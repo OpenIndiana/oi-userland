@@ -124,9 +124,16 @@ install: $(INSTALL_32)
 
 test: $(TEST_32)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 # Required by test suite
 REQUIRED_PACKAGES+= developer/test/dejagnu
 REQUIRED_PACKAGES+= developer/build/autogen
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/gc
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-7-runtime
+REQUIRED_PACKAGES += system/library/gcc-7-runtime
+REQUIRED_PACKAGES += system/library/gfortran-7-runtime
+REQUIRED_PACKAGES += system/library/gobjc-7-runtime
+REQUIRED_PACKAGES += system/library/math
