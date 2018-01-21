@@ -67,8 +67,12 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-REQUIRED_PACKAGES += database/sqlite-3
+# Buld time dependencies
 REQUIRED_PACKAGES += developer/gperf
+REQUIRED_PACKAGES += library/gnutls-3
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/audio/gstreamer1
@@ -81,21 +85,22 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxdamage
