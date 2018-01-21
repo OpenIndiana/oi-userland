@@ -31,7 +31,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
 
 COMPONENT_BUILD_ENV += TARGET_ARCH=desktop
 COMPONENT_BUILD_ENV += UI_TYPE=gtk
@@ -54,5 +54,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libunibreak
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
