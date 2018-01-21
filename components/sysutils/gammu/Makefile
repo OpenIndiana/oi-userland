@@ -59,18 +59,15 @@ test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
+REQUIRED_PACKAGES += database/postgres-94/developer
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/mariadb-101/library
-REQUIRED_PACKAGES += database/postgres-94/developer
+REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libusb-1
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += utility/bash-completion
 REQUIRED_PACKAGES += web/curl
