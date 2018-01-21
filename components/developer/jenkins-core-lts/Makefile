@@ -87,6 +87,5 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-# Note: this recipe just downloads and packages stuff.
-# No real build, no magic tools, no java even, should be needed!
-# So, no custom REQUIRED_PACKAGES
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/java/openjdk8
