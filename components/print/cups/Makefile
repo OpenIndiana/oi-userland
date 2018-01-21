@@ -85,17 +85,19 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+# Build dependencies
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += service/network/dns/mdns
+REQUIRED_PACKAGES += service/network/slp
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += service/network/dns/mdns
-REQUIRED_PACKAGES += service/network/slp
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
@@ -103,3 +105,4 @@ REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += system/network/avahi
