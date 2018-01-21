@@ -60,8 +60,11 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
 REQUIRED_PACKAGES += database/postgres-94/developer
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += database/postgres-94/library
@@ -73,6 +76,7 @@ REQUIRED_PACKAGES += library/gnu-libiconv
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libical
+REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/libssh2
@@ -87,7 +91,6 @@ REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
