@@ -1191,6 +1191,9 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
+# Add default dependency to SUNWcs
+REQUIRED_PACKAGES += SUNWcs
+
 #
 # Packages with tools that are required to build Userland components
 #
