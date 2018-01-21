@@ -47,6 +47,6 @@ install:
 
 test: $(NO_TESTS)
 
-# Note: this recipe just defines packages.
-# No real build, no magic tools, no downloads even, should be needed!
-# So, no custom REQUIRED_PACKAGES
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/java/openjdk8
