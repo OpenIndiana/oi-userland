@@ -182,14 +182,19 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/versioning/subversion
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libserf
+REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
