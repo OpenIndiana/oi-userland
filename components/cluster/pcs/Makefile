@@ -66,10 +66,11 @@ install:        $(INSTALL_32)
 
 test:           $(TESTS_32)
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/ruby/bundler
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
