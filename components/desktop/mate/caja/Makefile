@@ -65,7 +65,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
