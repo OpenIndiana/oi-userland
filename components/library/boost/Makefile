@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		boost
 COMPONENT_VERSION=	1.64.0
 COMPONENT_SRC_VERSION=	1_64_0
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=		system/library/boost
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=	boost - free peer-reviewed portable C++ source libraries
@@ -35,6 +36,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/modules.mk
 
+PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+
 LIBDIR.32= $(USRLIBDIR)
 LIBDIR.64= $(USRLIBDIR64)
 LIBDIR= $(LIBDIR.$(BITS))
@@ -48,9 +51,9 @@ BJAM=./bjam --v2 -d+2 -q address-model=$(BITS) \
 	--prefix=$(PROTO_DIR)$(USRDIR) \
 	--libdir=$(PROTO_DIR)$(LIBDIR) \
 	-sGCC_ROOT_DIRECTORY=$(GCC_ROOT) -sGCC=gcc -sGXX=g++ \
-	--user-config=./user-config.jam
+	--user-config=./user-config.jam --without-fiber
 
-COMPONENT_BUILD_ENV += CC="$(CC)" CXX="$(CXX)" LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV += PATH="$(PATH)" CC="$(CC)" CXX="$(CXX)" LDFLAGS="$(LDFLAGS)"
 
 # Force CPU detection to workaround failure in some virtual environments
 COMPONENT_BUILD_ENV += OPENBLAS_CORETYPE=Prescott
@@ -114,17 +117,17 @@ clean::
 
 # Build dependencies for boost locale
 REQUIRED_PACKAGES += developer/icu
-REQUIRED_PACKAGES += library/icu
 
 # Build dependencies for boost mpi
 REQUIRED_PACKAGES += library/mpich/gcc/modulefiles
-REQUIRED_PACKAGES += library/mpich/gcc
 
 # Build dependencies for boost numpy
 REQUIRED_PACKAGES += library/python/numpy-27
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/mpich/gcc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
