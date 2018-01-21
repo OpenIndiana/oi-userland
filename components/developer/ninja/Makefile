@@ -32,6 +32,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+
 COMPONENT_BUILD_ACTION = cd $(@D); \
   CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py --bootstrap --with-python=$(PYTHON.64)
 
