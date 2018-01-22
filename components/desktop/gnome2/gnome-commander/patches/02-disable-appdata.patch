@@ -1,0 +1,33 @@
+--- gnome-commander-1.8.0/data/Makefile.am	2017-10-08 11:56:26.000000000 +0000
++++ Makefile.am	2018-01-22 13:45:55.226132901 +0000
+@@ -15,13 +15,6 @@
+ gsettings_SCHEMAS = org.gnome.@PACKAGE@.gschema.xml
+ @GSETTINGS_RULES@
+ 
+-appdatadir = $(datadir)/appdata
+-appdata_in_files = @PACKAGE@.appdata.xml.in
+-appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+-
+-$(appdata_DATA): $(appdata_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
+-
+ mimetopdir = $(datadir)/@PACKAGE@/mime
+ mimexmldir = $(mimetopdir)/packages
+ mimexml_DATA = gnome-commander-mime.xml
+@@ -33,7 +26,6 @@
+ 	ln -sf @PACKAGE@.ebuild @PACKAGE@-@VERSION@.ebuild
+ 
+ EXTRA_DIST =              \
+-	$(appdata_in_files)   \
+ 	$(desktop_in_files)   \
+ 	@PACKAGE@.spec        \
+ 	$(ebuild_files)       \
+@@ -43,7 +35,7 @@
+ 
+ CLEANFILES = org.gnome.@PACKAGE@.gschema.valid
+ 
+-DISTCLEANFILES = $(appdata_DATA) $(desktop_DATA)
++DISTCLEANFILES = $(desktop_DATA)
+ 
+ HAVE_UPDATE_MIME_DATABASE = @HAVE_UPDATE_MIME_DATABASE@
+ 
