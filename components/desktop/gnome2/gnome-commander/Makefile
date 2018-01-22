@@ -55,6 +55,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/exiv2
 REQUIRED_PACKAGES += library/audio/taglib
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
