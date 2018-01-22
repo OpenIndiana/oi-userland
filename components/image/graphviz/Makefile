@@ -41,7 +41,7 @@ PATH_PHP.32 = /usr/php/5.6/bin
 PATH_PHP.64 = /usr/php/5.6/bin/$(MACH64)
 PATH = /usr/bin:/usr/gnu/bin:$(PATH_PHP.$(BITS))
 
-CPPFLAGS += -I/usr/lib/amd64/ocaml
+CPPFLAGS += -I/usr/lib/$(MACH64)/ocaml
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
 # CPPFLAGS +=	-I/usr/include/gmp
@@ -81,7 +81,7 @@ CONFIGURE_OPTIONS.64 +=	--enable-ruby=no
 CONFIGURE_OPTIONS.64 +=	--enable-tcl=no
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--with-qt=no
-CONFIGURE_OPTIONS += --with-gdincludedir=/usr/include/gd2
+CONFIGURE_OPTIONS += --with-gdincludedir=$(CONFIGURE_INCLUDEDIR)/gd2
 
 CONFIGURE_ENV.32 += ac_cv_path_GDLIB_CONFIG=/usr/bin/gdlib-config
 CONFIGURE_ENV.64 += ac_cv_path_GDLIB_CONFIG=/usr/bin/$(MACH64)/gdlib-config
