@@ -1,0 +1,14 @@
+--- mate-power-manager-1.18.1/src/gpm-prefs-core.c.1	2018-01-11 12:52:15.525991619 +0000
++++ mate-power-manager-1.18.1/src/gpm-prefs-core.c	2018-01-11 12:53:15.951251346 +0000
+@@ -800,7 +800,11 @@
+ 		prefs->priv->has_button_lid = up_client_get_lid_is_present (prefs->priv->client);
+ 	}
+ 
++#if defined(__sun) && defined(__SVR4)
++	prefs->priv->has_button_suspend = FALSE;
++#else
+ 	prefs->priv->has_button_suspend = TRUE;
++#endif
+ 
+ 	/* find if we have brightness hardware */
+ 	brightness = gpm_brightness_new ();

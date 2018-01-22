@@ -1,0 +1,101 @@
+We want to have 'hibernate/sleep' policy by default, when it's supported, but if suspend/hibernate is
+not supported, we avoid doing anything excepting critical actions.
+So we correct policy: set it to "Do nothing" when shutdown/hibernate/sleep is not supported and 
+set default policy for action-critical-battery to shutdown, as it has more chances to be supported.
+
+diff -ur mate-power-manager-1.18.1-1/data/org.mate.power-manager.gschema.xml.in mate-power-manager-1.18.1/data/org.mate.power-manager.gschema.xml.in
+--- mate-power-manager-1.18.1-1/data/org.mate.power-manager.gschema.xml.in	2018-01-16 11:29:39.040541678 +0000
++++ mate-power-manager-1.18.1/data/org.mate.power-manager.gschema.xml.in	2018-01-16 11:52:06.994940315 +0000
+@@ -27,7 +27,7 @@
+       <description>The type of sleeping that should be performed when the computer is inactive.</description>
+     </key>
+     <key name="action-critical-battery" enum="org.mate.power-manager.ActionType">
+-      <default>'hibernate'</default>
++      <default>'shutdown'</default>
+       <summary>Battery critical low action</summary>
+       <description>The action to take when the battery is critically low.</description>
+     </key>
+diff -ur mate-power-manager-1.18.1-1/src/gpm-manager.c mate-power-manager-1.18.1/src/gpm-manager.c
+--- mate-power-manager-1.18.1-1/src/gpm-manager.c	2018-01-16 11:29:39.046702244 +0000
++++ mate-power-manager-1.18.1/src/gpm-manager.c	2018-01-16 12:04:22.087910646 +0000
+@@ -661,6 +661,28 @@
+ 	return TRUE;
+ }
+ 
++static void
++gpm_manager_correct_policy(GpmManager  *manager, GpmActionPolicy *policy)
++{
++	gboolean allowed = FALSE;
++
++	if (*policy == GPM_ACTION_POLICY_SUSPEND) {
++		egg_console_kit_can_suspend (manager->priv->console, &allowed, NULL);
++	} else if (*policy == GPM_ACTION_POLICY_HIBERNATE) {
++		egg_console_kit_can_hibernate (manager->priv->console, &allowed, NULL);
++        } else if (*policy == GPM_ACTION_POLICY_SHUTDOWN) {
++		egg_console_kit_can_stop(manager->priv->console, &allowed, NULL);
++	}
++	if ((*policy == GPM_ACTION_POLICY_SUSPEND || *policy == GPM_ACTION_POLICY_HIBERNATE || *policy == GPM_ACTION_POLICY_SHUTDOWN)
++	    && (allowed == FALSE)){
++       		GpmActionPolicy old_policy;
++
++		old_policy = *policy;
++		*policy = GPM_ACTION_POLICY_NOTHING;
++		egg_debug ("corrected policy: set policy to %i (as %i is not supported or allowed)", *policy, old_policy);
++        }
++}
++
+ /**
+  * gpm_manager_perform_policy:
+  * @manager: This class instance
+@@ -680,6 +703,8 @@
+ 
+ 	policy = g_settings_get_enum (manager->priv->settings, policy_key);
+ 	egg_debug ("action: %s set to %i (%s)", policy_key, policy, reason);
++      
++        gpm_manager_correct_policy(manager, &policy);
+ 
+ 	if (policy == GPM_ACTION_POLICY_NOTHING) {
+ 		egg_debug ("doing nothing, reason: %s", reason);
+@@ -728,6 +753,8 @@
+ 	else
+ 		policy = g_settings_get_enum (manager->priv->settings, GPM_SETTINGS_ACTION_SLEEP_TYPE_BATT);
+ 
++	gpm_manager_correct_policy(manager, &policy);
++
+ 	if (policy == GPM_ACTION_POLICY_NOTHING) {
+ 		egg_debug ("doing nothing as system idle action");
+ 
+@@ -1433,6 +1460,8 @@
+ 		/* we have to do different warnings depending on the policy */
+ 		policy = g_settings_get_enum (manager->priv->settings, GPM_SETTINGS_ACTION_CRITICAL_BATT);
+ 
++		gpm_manager_correct_policy(manager, &policy);
++
+ 		/* use different text for different actions */
+ 		if (policy == GPM_ACTION_POLICY_NOTHING) {
+ 			/* TRANSLATORS: tell the use to insert the plug, as we're not going to do anything */
+@@ -1585,6 +1614,8 @@
+ 		/* we have to do different warnings depending on the policy */
+ 		policy = g_settings_get_enum (manager->priv->settings, GPM_SETTINGS_ACTION_CRITICAL_BATT);
+ 
++		gpm_manager_correct_policy(manager, &policy);
++
+ 		/* use different text for different actions */
+ 		if (policy == GPM_ACTION_POLICY_NOTHING) {
+ 			/* TRANSLATORS: computer will shutdown without saving data */
+diff -ur mate-power-manager-1.18.1-1/src/gpm-prefs-core.c mate-power-manager-1.18.1/src/gpm-prefs-core.c
+--- mate-power-manager-1.18.1-1/src/gpm-prefs-core.c	2018-01-16 11:29:39.048575717 +0000
++++ mate-power-manager-1.18.1/src/gpm-prefs-core.c	2018-01-16 12:05:03.956736871 +0000
+@@ -232,6 +232,12 @@
+ 	g_object_set_data (G_OBJECT (widget), "settings_key", (gpointer) gpm_pref_key);
+ 	g_signal_connect (G_OBJECT (widget), "changed",
+ 			  G_CALLBACK (gpm_prefs_action_combo_changed_cb), prefs);
++	
++	if (value == GPM_ACTION_POLICY_SUSPEND && !prefs->priv->can_suspend ||
++	    value == GPM_ACTION_POLICY_HIBERNATE && !prefs->priv->can_hibernate ||
++	    value == GPM_ACTION_POLICY_SHUTDOWN && !prefs->priv->can_shutdown ) {
++		value = GPM_ACTION_POLICY_NOTHING;
++	}
+ 
+ 	for (i=0; actions[i] != -1; i++) {
+ 		policy = actions[i];

@@ -1,0 +1,22 @@
+As
+1) currently we can control brightness levels on illumos only on some
+Toshiba laptops
+2) this code knows nothing about illumos,
+we disable blacklight helper to avoid warnings like:
+
+** (mate-power-backlight-helper:82740): WARNING **: failed to find any devices:
+ Error opening directory '/sys/class/backlight': No such file or directory
+
+--- mate-power-manager-1.18.1/src/gpm-backlight-helper.c.1	2018-01-11 12:08:34.614360138 +0000
++++ mate-power-manager-1.18.1/src/gpm-backlight-helper.c	2018-01-11 12:38:20.646912292 +0000
+@@ -160,6 +160,10 @@
+ 	gchar *filename_file = NULL;
+ 	gchar *contents = NULL;
+ 
++#if defined(__sun) && defined(__SVR4)
++	return GCM_BACKLIGHT_HELPER_EXIT_CODE_FAILED;
++#endif 
++
+ 	const GOptionEntry options[] = {
+ 		{ "set-brightness", '\0', 0, G_OPTION_ARG_INT, &set_brightness,
+ 		   /* command line argument */
