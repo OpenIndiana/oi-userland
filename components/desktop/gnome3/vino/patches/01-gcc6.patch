@@ -1,0 +1,22 @@
+--- vino-3.22.0/server/vino-status-icon.c.orig	2018-01-22 05:51:37.913217868 +0000
++++ vino-3.22.0/server/vino-status-icon.c	2018-01-22 05:56:39.331786308 +0000
+@@ -100,10 +100,15 @@
+ 
+       n_clients = g_slist_length (icon->priv->clients);
+ 
+-      tooltip = g_strdup_printf (ngettext ("One person is viewing your desktop",
+-                                           "%d people are viewing your desktop",
+-                                           n_clients),
+-                                 n_clients);
++      if (n_clients > 1)
++        {
++          tooltip = g_strdup_printf ("%d people are viewing your desktop",
++                                     n_clients);
++        }
++      else
++        {
++          tooltip = g_strdup_printf ("One person is viewing your desktop");
++        }
+       visible = (visible) && ( (icon->priv->visibility == VINO_STATUS_ICON_VISIBILITY_CLIENT) ||
+ 			     (icon->priv->visibility == VINO_STATUS_ICON_VISIBILITY_ALWAYS) );
+     }
