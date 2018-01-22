@@ -1,0 +1,26 @@
+A lot of upower clients expect to get some answer from up_client_get_devices().
+So to avoid fixing all consumers we want to return empty device list to them.
+
+--- upower-0.99.4/libupower-glib/up-client.c.1	2018-01-11 11:01:18.708705809 +0000
++++ upower-0.99.4/libupower-glib/up-client.c	2018-01-11 11:01:49.927915101 +0000
+@@ -96,17 +96,17 @@
+ 
+ 	g_return_val_if_fail (UP_IS_CLIENT (client), NULL);
+ 
++	array = g_ptr_array_new ();
++
+ 	if (up_exported_daemon_call_enumerate_devices_sync (client->priv->proxy,
+ 							    &devices,
+ 							    NULL,
+ 							    &error) == FALSE) {
+ 		g_warning ("up_client_get_devices failed: %s", error->message);
+ 		g_error_free (error);
+-		return NULL;
++		return array;
+ 	}
+ 
+-	array = g_ptr_array_new ();
+-
+ 	for (i = 0; devices[i] != NULL; i++) {
+ 		UpDevice *device;
+ 		const char *object_path = devices[i];

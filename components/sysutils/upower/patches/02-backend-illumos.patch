@@ -1,0 +1,1159 @@
+diff -ur upower-0.99.4-orig/configure.ac upower-0.99.4/configure.ac
+--- upower-0.99.4-orig/configure.ac	2017-12-22 13:49:01.103499900 +0000
++++ upower-0.99.4/configure.ac	2017-12-22 13:52:02.433807222 +0000
+@@ -182,13 +182,14 @@
+ dnl ---------------------------------------------------------------------------
+ AC_ARG_WITH([backend],
+ 	    AS_HELP_STRING([--with-backend=<option>],
+-			   [Default backend to use linux, freebsd, openbsd, dummy (dummy)]))
++			   [Default backend to use linux, freebsd, openbsd, illumos, dummy (dummy)]))
+ # default to a sane option
+ AC_CANONICAL_HOST
+ if test x$with_backend = x; then
+ 	AS_CASE([$host],
+ 		[*-linux*],   [with_backend=linux],
+ 		[*-*freebsd*], [with_backend=freebsd],
++		[*-*solaris*], [with_backend=illumos],
+ 		[*-openbsd*], [with_backend=openbsd],
+ 		              [with_backend=dummy])
+ fi
+@@ -216,6 +217,7 @@
+ AM_CONDITIONAL(BACKEND_TYPE_LINUX, [test x$with_backend = xlinux])
+ AM_CONDITIONAL(BACKEND_TYPE_FREEBSD, [test x$with_backend = xfreebsd])
+ AM_CONDITIONAL(BACKEND_TYPE_OPENBSD, [test x$with_backend = xopenbsd])
++AM_CONDITIONAL(BACKEND_TYPE_ILLUMOS, [test x$with_backend = xillumos])
+ 
+ dnl ---------------------------------------------------------------------------
+ dnl - Build self tests
+@@ -252,6 +254,7 @@
+ src/dummy/Makefile
+ src/freebsd/Makefile
+ src/openbsd/Makefile
++src/illumos/Makefile
+ src/linux/Makefile
+ src/bsd/Makefile
+ tools/Makefile
+--- upower-0.99.4-orig/src/Makefile.am	2017-12-22 13:49:01.088869218 +0000
++++ upower-0.99.4/src/Makefile.am	2017-12-22 14:11:15.858740851 +0000
+@@ -1,7 +1,7 @@
+ ## Process this file with automake to produce Makefile.in
+ 
+-DIST_SUBDIRS = dummy freebsd linux openbsd bsd
+-SUBDIRS = dummy freebsd linux openbsd
++DIST_SUBDIRS = dummy freebsd linux openbsd bsd illumos
++SUBDIRS = dummy freebsd linux openbsd illumos
+ 
+ if BACKEND_TYPE_FREEBSD
+ SUBDIRS += bsd
+@@ -11,6 +11,10 @@
+ SUBDIRS += bsd
+ endif
+ 
++if BACKEND_TYPE_ILLUMOS
++SUBDIRS += bsd
++endif
++
+ AM_CPPFLAGS = \
+ 	$(PIE_CFLAGS)						\
+ 	-I$(top_builddir)/src -I$(top_srcdir)/src		\
+@@ -90,6 +94,13 @@
+ 	bsd/libupsharedcommon.la
+ endif
+ 
++if BACKEND_TYPE_ILLUMOS
++upowerd_LDADD +=						\
++	illumos/libupshared.la				\
++	bsd/libupsharedcommon.la
++endif
++
++
+ if BACKEND_TYPE_LINUX
+ upowerd_LDADD += 						\
+ 	linux/libupshared.la					\
+diff -urN upower-0.99.4-orig/src/illumos/Makefile.am upower-0.99.4/src/illumos/Makefile.am
+--- upower-0.99.4/src/illumos/Makefile.am.~1~	2017-12-28 12:33:16.160144165 +0000
++++ upower-0.99.4/src/illumos/Makefile.am	2017-12-28 12:37:16.557439612 +0000
+@@ -0,0 +1,31 @@
++## Process this file with automake to produce Makefile.in
++
++AM_CPPFLAGS = \
++	-I$(top_builddir)/src -I$(top_srcdir)/src		\
++	-I$(top_builddir)/ -I$(top_srcdir)/			\
++	-DUP_COMPILATION					\
++	-DG_LOG_DOMAIN=\"UPower-illumos\"			\
++	-I$(top_srcdir)/libupower-glib				\
++	$(POLKIT_CFLAGS)					\
++	$(GLIB_CFLAGS)
++
++if BACKEND_TYPE_ILLUMOS
++noinst_LTLIBRARIES = libupshared.la
++endif
++
++libupshared_la_SOURCES =					\
++	up-native.c						\
++	up-backend.c						\
++	$(BUILT_SOURCES)
++
++libupshared_la_CFLAGS =					\
++	$(WARNINGFLAGS_C)
++
++libupshared_la_LDFLAGS =					\
++	-lsysevent						\
++	-ldevinfo
++
++clean-local :
++	rm -f *~
++
++-include $(top_srcdir)/git.mk
+diff -urN upower-0.99.4-orig/src/illumos/up-acpi-native.h upower-0.99.4/src/illumos/up-acpi-native.h
+--- upower-0.99.4-orig/src/illumos/up-acpi-native.h	1970-01-01 03:00:00.000000000 +0000
++++ upower-0.99.4/src/illumos/up-acpi-native.h	2017-12-26 13:41:47.340610361 +0000
+@@ -0,0 +1,54 @@
++/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
++ *
++ * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
++ *
++ * Licensed under the GNU General Public License Version 2
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++#ifndef __UP_ACPI_NATIVE_H__
++#define __UP_ACPI_NATIVE_H__
++
++#include <glib.h>
++#include <glib-object.h>
++
++G_BEGIN_DECLS
++
++#define UP_TYPE_ACPI_NATIVE		(up_acpi_native_get_type ())
++#define UP_ACPI_NATIVE(o)	   	(G_TYPE_CHECK_INSTANCE_CAST ((o), UP_TYPE_ACPI_NATIVE, UpAcpiNative))
++#define UP_ACPI_NATIVE_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), UP_TYPE_ACPI_NATIVE, UpAcpiNativeClass))
++#define UP_IS_ACPI_NATIVE(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), UP_TYPE_ACPI_NATIVE))
++#define UP_IS_ACPI_NATIVE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), UP_TYPE_ACPI_NATIVE))
++#define UP_ACPI_NATIVE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), UP_TYPE_ACPI_NATIVE, UpAcpiNativeClass))
++
++typedef struct
++{
++	GObject	parent;
++	gchar*	path;
++} UpAcpiNative;
++
++typedef struct
++{
++	GObjectClass	parent_class;
++} UpAcpiNativeClass;
++
++
++UpAcpiNative* up_acpi_native_new (const char*);
++const gchar * up_acpi_native_get_path (UpAcpiNative*);
++GType up_acpi_native_get_type (void);
++G_END_DECLS
++
++#endif
+diff -urN upower-0.99.4-orig/src/illumos/up-backend.c upower-0.99.4/src/illumos/up-backend.c
+--- upower-0.99.4/src/illumos/up-backend.c.~1~	2018-01-20 09:48:32.501653060 +0000
++++ upower-0.99.4/src/illumos/up-backend.c	2018-01-20 12:33:59.490627981 +0000
+@@ -0,0 +1,918 @@
++/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
++ *
++ * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
++ * Copyright (C) 2018 Alexander Pyhalov <apyhalov@gmail.com>
++ *
++ * Licensed under the GNU General Public License Version 2
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++#include "up-backend.h"
++#include "up-daemon.h"
++#include "up-device.h"
++#include "up-acpi-native.h"
++#include "up-backend-bsd-private.h"
++#include <stdio.h>
++#include <string.h> /* strcmp() */
++#include <libdevinfo.h>
++#include <glib.h>
++#include <glib-object.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <sys/acpi_drv.h>
++#include <libsysevent.h>
++#include <sys/sysevent/dev.h>
++#include <sys/sysevent/pwrctl.h>
++
++#define DEVFS_PREFIX "/devices"
++
++#define BST_FLAG_DISCHARGING	(0x1)
++#define BST_FLAG_CHARGING	(0x2)
++
++#define DEVPATH_ALLOWED_CHARS "abcdefghijklmnopqrstuvwxyz0123456789/_"
++
++#define POLL_INTERVAL	20*1000 /* 20 seconds */
++
++static void	up_backend_class_init	(UpBackendClass	*klass);
++static void	up_backend_init	(UpBackend		*backend);
++static void	up_backend_finalize	(GObject		*object);
++
++static int	up_backend_acpi_get_ac_online();
++static void	up_backend_update_lid_status(UpDaemon*);
++
++static gboolean		up_acpi_device_get_on_battery	(UpDevice *device, gboolean *on_battery);
++static gboolean		up_acpi_device_get_online		(UpDevice *device, gboolean *online);
++static gboolean		up_acpi_device_refresh		(UpDevice *device);
++
++static int		minor_device_ioctl(di_node_t node, void *arg);
++static int		estimate_time(int charge_rate, int current_charge, int last_fullcharge, int is_discharging, int is_charging);
++
++static char*		up_backend_get_ac_device_path(enum acpi_drv_type device);
++
++static sysevent_handle_t *shp;
++static void		up_backend_sysevent_dev_handler(sysevent_t *ev);
++static gboolean		sysevent_iochannel_data(GIOChannel *, GIOCondition, gpointer);
++static void		up_backend_initialize_sysevent_handler(UpBackend *backend);
++static int		sysevent_pipe_fds[2];
++static GIOChannel	*sysevent_iochannel;
++static gboolean		simulate_iochannel_data (gpointer data);
++
++#define UP_BACKEND_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), UP_TYPE_BACKEND, UpBackendPrivate))
++
++struct UpBackendPrivate
++{
++	UpDaemon		*daemon;
++	UpDevice		*ac;
++	UpDevice		*battery;
++	gboolean		has_ac_device; /* ac device node is present */
++	gboolean		has_bat_device; /* battery device node is present */
++	UpConfig		*config;
++	GDBusProxy		*seat_manager_proxy;
++};
++
++struct mdi_arg {
++	const char	*name;
++	gboolean	exact_match;
++	int		ctl;
++	gboolean	present;
++	gboolean	success;
++	void 		*result;
++	char		*device_path;
++};
++
++enum {
++	SIGNAL_DEVICE_ADDED,
++	SIGNAL_DEVICE_REMOVED,
++	SIGNAL_LAST
++};
++
++struct lid_state {
++	gboolean present;
++	gboolean open;
++};
++
++static guint signals [SIGNAL_LAST] = { 0 };
++
++G_DEFINE_TYPE (UpBackend, up_backend, G_TYPE_OBJECT)
++
++/**
++ * functions called by upower daemon
++ **/
++
++
++/* those three ripped from freebsd/up-device-supply.c */
++gboolean
++up_acpi_device_get_on_battery (UpDevice *device, gboolean * on_battery)
++{
++	UpDeviceKind type;
++	UpDeviceState state;
++	gboolean is_present;
++
++	g_return_val_if_fail (on_battery != NULL, FALSE);
++
++	g_object_get (device,
++		      "type", &type,
++		      "state", &state,
++		      "is-present", &is_present,
++		      (void*) NULL);
++
++	if (type != UP_DEVICE_KIND_BATTERY)
++		return FALSE;
++	if (state == UP_DEVICE_STATE_UNKNOWN)
++		return FALSE;
++	if (!is_present)
++		return FALSE;
++
++	*on_battery = (state == UP_DEVICE_STATE_DISCHARGING);
++	return TRUE;
++}
++
++gboolean
++up_acpi_device_get_online (UpDevice *device, gboolean * online)
++{
++	UpDeviceKind type;
++	gboolean online_tmp;
++
++	g_return_val_if_fail (online != NULL, FALSE);
++
++	g_object_get (device,
++		      "type", &type,
++		      "online", &online_tmp,
++		      (void*) NULL);
++
++	if (type != UP_DEVICE_KIND_LINE_POWER)
++		return FALSE;
++
++	*online = online_tmp;
++
++	return TRUE;
++}
++/**
++ * up_backend_coldplug:
++ * @backend: The %UpBackend class instance
++ * @daemon: The %UpDaemon controlling instance
++ *
++ * Finds all the devices already plugged in, and emits device-add signals for
++ * each of them.
++ *
++ * Return value: %TRUE for success
++ **/
++gboolean
++up_backend_coldplug (UpBackend *backend, UpDaemon *daemon)
++{
++	UpAcpiNative *acnative = NULL;
++	UpAcpiNative *battnative = NULL;
++	char *devpath;
++
++	backend->priv->daemon = g_object_ref (daemon);
++
++	if (backend->priv->has_ac_device || backend->priv->has_bat_device) {
++		up_backend_update_lid_status(daemon);
++	}
++
++	if (backend->priv->has_ac_device) {
++		devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_AC);
++		if (devpath) {
++			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
++			acnative = up_acpi_native_new(devpath);
++			if (!up_device_coldplug (backend->priv->ac, backend->priv->daemon, G_OBJECT(acnative)))
++				g_warning ("failed to coldplug ac");
++			else
++				g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, acnative, backend->priv->ac);
++			g_free(devpath);
++		}
++	}
++
++	if (backend->priv->has_bat_device) {
++		devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_CBAT);
++		if (devpath) {
++			devpath = g_strcanon(devpath, DEVPATH_ALLOWED_CHARS, '_');
++			battnative = up_acpi_native_new(devpath);
++			if (!up_device_coldplug (backend->priv->battery, backend->priv->daemon, G_OBJECT(battnative)))
++				g_warning ("failed to coldplug battery");
++			else
++				g_signal_emit (backend, signals[SIGNAL_DEVICE_ADDED], 0, battnative, backend->priv->battery);
++			g_free(devpath);
++		}
++	}
++
++	return TRUE;
++}
++
++/**
++ * up_backend_unplug:
++ * @backend: The %UpBackend class instance
++ *
++ * Forget about all learned devices, effectively undoing up_backend_coldplug.
++ * Resources are released without emitting signals.
++ */
++void
++up_backend_unplug (UpBackend *backend)
++{
++	if (backend->priv->daemon != NULL) {
++		g_object_unref (backend->priv->daemon);
++		backend->priv->daemon = NULL;
++	}
++}
++
++/**
++ * up_backend_get_seat_manager_proxy:
++ * @backend: The %UpBackend class instance
++ *
++ * Returns the seat manager object or NULL on error. [transfer none]
++ */
++GDBusProxy *
++up_backend_get_seat_manager_proxy (UpBackend  *backend)
++{
++	g_return_val_if_fail (UP_IS_BACKEND (backend), NULL);
++
++	return backend->priv->seat_manager_proxy;
++}
++
++/**
++ * up_backend_get_config:
++ * @backend: The %UpBackend class instance
++ *
++ * Returns the UpConfig object or NULL on error. [transfer none]
++ */
++UpConfig *
++up_backend_get_config (UpBackend  *backend)
++{
++	g_return_val_if_fail (UP_IS_BACKEND (backend), NULL);
++
++	return backend->priv->config;
++}
++
++
++/**
++ * illumos specific code
++ **/
++
++static gboolean
++up_backend_update_ac_state(UpDevice* device)
++{
++	gboolean new_is_online, cur_is_online;
++	int ret;
++
++	up_backend_update_lid_status(up_device_get_daemon(device));
++	ret = up_backend_acpi_get_ac_online();
++	if (ret < 0)
++		return FALSE;
++
++	g_object_get (device, "online", &cur_is_online, (void*) NULL);
++
++	new_is_online = (ret > 0 ? TRUE : FALSE);
++	if (cur_is_online != new_is_online)
++	{
++		g_object_set (device,
++			"online", new_is_online,
++			(void*) NULL);
++		return TRUE;
++	}
++	return FALSE;
++}
++
++static gboolean
++up_backend_update_battery_state(UpDevice* device)
++{
++	gdouble percentage = 0, new_percentage = 0;
++	gboolean is_present;
++	UpDeviceState cur_state, new_state;
++	gint64 cur_time_to_empty, new_time_to_empty; /* in seconds */
++
++	di_node_t root_node;
++	struct mdi_arg ma;
++	acpi_bst_t bst;
++	acpi_bif_t bif;
++	
++	new_state = UP_DEVICE_STATE_UNKNOWN;
++
++	memset(&bif, 0, sizeof(bif));
++	ma.name = "battery";
++	ma.exact_match = FALSE;
++	ma.ctl = ACPI_DRV_IOC_INFO;
++	ma.result = &bif;
++	
++     	errno = 0;
++     	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++     	      g_error("di_init() failed: %s", g_strerror(errno));
++     	}
++     	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	if (ma.device_path)
++		g_free(ma.device_path);
++	
++	if (!ma.success) {
++		/* If device file is present, but ioctl has failed, 
++		     consider that battery is absent */
++		if (ma.present) {
++			g_object_set (device,
++				"state", UP_DEVICE_STATE_EMPTY,
++				"percentage", (gdouble) 0.0,
++				"time-to-empty", (guint64) 0,
++				"is-present", FALSE,
++				(void*) NULL);
++			/* Reset some known fields which remain untouched below. */
++			g_object_set(device,
++				"is-rechargeable", FALSE,
++				"energy", (gdouble) 0.0,
++				"energy-empty", (gdouble) 0.0,
++				"energy-full", (gdouble) 0.0,
++				"energy-full-design", (gdouble) 0.0,
++				"energy-rate", (gdouble) 0.0,
++				NULL);
++			return TRUE;
++		} else {
++			g_warning("Couldn't get state of battery");
++			return FALSE;
++		}
++	}
++
++
++	memset(&bst, 0, sizeof(bst));
++	ma.name = "battery";
++	ma.exact_match = FALSE;
++	ma.ctl = ACPI_DRV_IOC_STATUS;
++	ma.result = &bst;
++
++     	errno = 0;
++     	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++     	      g_error("di_init() failed: %s", g_strerror(errno));
++              return FALSE;
++     	}
++     	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	if (ma.device_path)
++		g_free(ma.device_path);
++
++	g_object_get (device,
++		"state", &cur_state,
++		"percentage", &percentage,
++		"time-to-empty", &cur_time_to_empty,
++		"is-present", &is_present,
++		(void*) NULL);
++
++	if (ma.success) {
++	        int reporting_rate;
++		int reporting_current;
++		int reporting_lastfull;
++		int reporting_lowcap;
++		int reporting_design_capacity;
++		int design_voltage;
++		int present_voltage;
++		int charging, discharging;
++		
++		charging = bst.bst_state & BST_FLAG_CHARGING;
++		discharging = bst.bst_state & BST_FLAG_DISCHARGING;
++
++		reporting_rate = bst.bst_rate;
++		reporting_current = bst.bst_rem_cap;
++		reporting_lastfull = bif.bif_last_cap;
++		reporting_lowcap = bif.bif_low_cap;
++		design_voltage = bif.bif_voltage;
++		present_voltage = bst.bst_voltage;
++		reporting_design_capacity = bif.bif_design_cap;
++		if (bif.bif_unit) {	/* Battery is reporting in mAh */
++				/*
++		                 * If the present_voltage is inaccurate, set it to the
++               			 * design_voltage.
++                 		 */
++				if (((present_voltage * 10) < design_voltage) ||
++				    (present_voltage <= 0) ||
++				    (present_voltage > design_voltage)) {
++				        present_voltage = design_voltage;
++				}
++				reporting_rate = (reporting_rate * present_voltage) / 1000;
++				reporting_lastfull = (reporting_lastfull * present_voltage) /1000;
++				reporting_current = (reporting_current * present_voltage) / 1000;
++				reporting_design_capacity = (reporting_design_capacity * present_voltage) / 1000;
++				reporting_lowcap = (reporting_lowcap * present_voltage) / 1000;
++		}
++
++		/* Make sure the current charge does not exceed the full charge */
++        	if (reporting_current > reporting_lastfull) {
++        		reporting_current = reporting_lastfull;
++        	}
++		
++		if (reporting_current < 0) {
++			reporting_current = 0;
++		}
++		
++		if (!(charging) && !(discharging)) {
++			reporting_rate = 0;
++		}
++		
++		if (reporting_lastfull > 0) {
++			new_percentage = ((double) reporting_current / (double) reporting_lastfull) * 100.0;	
++		}
++		if (new_percentage < 0) {
++			new_percentage = 0;
++		}
++		if (new_percentage > 100) {
++			new_percentage = 100;
++		}
++		
++		new_time_to_empty = estimate_time(reporting_rate, reporting_current, reporting_lastfull, discharging, charging);
++		if (new_time_to_empty < 0) { /* Need to do something more sane here */
++			new_time_to_empty = 0;
++		}
++
++		if (discharging)
++			new_state = UP_DEVICE_STATE_DISCHARGING;
++		else if (charging)
++			new_state = UP_DEVICE_STATE_CHARGING;
++
++		if (!discharging && !charging) {
++			if (new_percentage >= 99.0) {
++				new_state = UP_DEVICE_STATE_FULLY_CHARGED;
++			} else {
++				/* Really we should set UP_DEVICE_STATE_PENDING_CHARGE here, 
++				   but it seems that up_daemon can't sum up such device 
++				   and we end up in unkonw state, so let's say that we are charging */
++				new_state = UP_DEVICE_STATE_CHARGING;
++			}
++		}	 
++
++		if (cur_state != new_state ||
++			percentage != new_percentage ||
++			cur_time_to_empty != new_time_to_empty) {
++		                g_object_set (device,
++					"state", new_state,
++					"percentage", new_percentage,
++		                        "time-to-empty", new_time_to_empty,
++		                        "is-present", TRUE,
++       			                 (void*) NULL);
++				g_object_set (device,
++					"energy", ((gdouble) reporting_current)/1000.0,
++					"energy-full", ((gdouble) reporting_lastfull)/1000.0,
++					"energy-full-design", ((gdouble)reporting_design_capacity)/1000.0 ,
++					"energy-rate", ((gdouble) reporting_rate)/1000.0,
++					"energy-empty", ((gdouble) reporting_lowcap)/1000.0,
++					"voltage", (gdouble) present_voltage,
++					"capacity", new_percentage,
++					(void*) NULL);
++       			return TRUE;
++        	}
++	}
++	return FALSE;
++}
++
++static gboolean
++up_acpi_device_refresh(UpDevice* device)
++{
++	UpDeviceKind type;
++	gboolean ret;
++	g_object_get (device, "type", &type, NULL);
++
++	switch (type) {
++		case UP_DEVICE_KIND_LINE_POWER:
++			ret = up_backend_update_ac_state(device);
++			break;
++		case UP_DEVICE_KIND_BATTERY:
++			ret = up_backend_update_battery_state(device);
++			break;
++		default:
++			g_assert_not_reached ();
++			break;
++	}
++
++	g_object_set (device, "update-time", (guint64) g_get_real_time () / G_USEC_PER_SEC, NULL);
++
++	return TRUE;
++}
++
++/*
++ * Check the lid status, return TRUE if one was found, FALSE otherwise.
++ */
++static void
++up_backend_update_lid_status(UpDaemon *daemon)
++{
++	di_node_t root_node;
++	struct mdi_arg ma;
++        int state = 0;
++
++	ma.name = "lid";
++	ma.exact_match = TRUE;
++	ma.ctl = ACPI_DRV_IOC_LID_UPDATE;
++	ma.result = &state;
++	ma.device_path = NULL;
++	
++	errno = 0;
++	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++		g_error("di_init() failed: %s", g_strerror(errno));
++		return;
++	}
++	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	
++	up_daemon_set_lid_is_present (daemon, ma.present);
++	if (ma.present) 
++		up_daemon_set_lid_is_closed (daemon, state ? FALSE: TRUE);
++	if (ma.device_path)
++		g_free(ma.device_path);
++}
++
++static gboolean
++sysevent_iochannel_data(GIOChannel *source, GIOCondition condition, gpointer user_data)
++{
++        GError *err = NULL;
++        gchar *s = NULL;
++        gsize len;
++	UpBackend *backend;
++
++	backend = UP_BACKEND(user_data);
++
++        while (g_io_channel_read_line (sysevent_iochannel, &s, &len, NULL,
++            &err) == G_IO_STATUS_NORMAL) {
++		if (backend->priv->has_ac_device) {
++			up_acpi_device_refresh(backend->priv->ac);
++		}
++		if (backend->priv->has_bat_device) {
++                	up_acpi_device_refresh(backend->priv->battery);
++		}
++	}
++
++	return TRUE;
++}
++
++static gboolean
++simulate_iochannel_data (gpointer data) {
++	write(sysevent_pipe_fds[1],"\n", strlen("\n") + 1);
++
++	return TRUE;
++}
++
++static void
++up_backend_sysevent_dev_handler(sysevent_t *ev) {
++	char *class;
++	char *subclass;
++	
++	if ((class = sysevent_get_class_name(ev)) == NULL)
++		return;
++	
++	if ((subclass = sysevent_get_subclass_name(ev)) == NULL)
++		return;
++	
++	if (strcmp(class, EC_PWRCTL) == 0) {
++		write(sysevent_pipe_fds[1],"\n", strlen("\n") + 1);
++	}
++}
++
++static void
++up_backend_initialize_sysevent_handler(UpBackend *backend) {
++	const char *subcl[6];
++	GError *err = NULL;
++	
++	if (pipe(sysevent_pipe_fds) != 0) {
++		g_warning("Failed to initialize sysevent pipe");
++		return;
++	}
++
++	sysevent_iochannel = g_io_channel_unix_new (sysevent_pipe_fds[0]);
++	if (sysevent_iochannel == NULL) {
++		g_warning("Failed to create sysevent iochannel");
++                return;
++        }
++	g_io_channel_set_flags (sysevent_iochannel, G_IO_FLAG_NONBLOCK, &err);
++	g_io_add_watch (sysevent_iochannel, G_IO_IN, sysevent_iochannel_data, backend);
++
++	shp = sysevent_bind_handle(up_backend_sysevent_dev_handler);
++	if (shp == NULL) {
++		g_warning("Failed to initialize sysevent handler");
++		return;
++	}
++	
++	subcl[0] = ESC_PWRCTL_ADD;
++	subcl[1] = ESC_PWRCTL_REMOVE;
++	subcl[2] = ESC_PWRCTL_STATE_CHANGE;
++	subcl[3] = ESC_PWRCTL_BRIGHTNESS_UP;
++	subcl[4] = ESC_PWRCTL_BRIGHTNESS_DOWN;
++	subcl[5] = ESC_PWRCTL_POWER_BUTTON;
++	
++	if (sysevent_subscribe_event(shp, EC_PWRCTL, subcl, 6) != 0) {
++		g_warning("Failed to subscribe to EC_PWRCTL events");
++		sysevent_unbind_handle(shp);
++		return;
++	}
++}
++
++
++/**
++ * GObject class functions
++ **/
++
++/**
++ * up_backend_new:
++ *
++ * Return value: a new %UpBackend object.
++ **/
++UpBackend *
++up_backend_new (void)
++{
++	return g_object_new (UP_TYPE_BACKEND, NULL);
++}
++
++/**
++ * up_backend_class_init:
++ * @klass: The UpBackendClass
++ **/
++static void
++up_backend_class_init (UpBackendClass *klass)
++{
++	GObjectClass *object_class = G_OBJECT_CLASS (klass);
++	object_class->finalize = up_backend_finalize;
++
++	signals [SIGNAL_DEVICE_ADDED] =
++		g_signal_new ("device-added",
++			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
++			      G_STRUCT_OFFSET (UpBackendClass, device_added),
++			      NULL, NULL, NULL,
++			      G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
++	signals [SIGNAL_DEVICE_REMOVED] =
++		g_signal_new ("device-removed",
++			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
++			      G_STRUCT_OFFSET (UpBackendClass, device_removed),
++			      NULL, NULL, NULL,
++			      G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
++
++	g_type_class_add_private (klass, sizeof (UpBackendPrivate));
++}
++
++/**
++ * up_backend_init:
++ **/
++static void
++up_backend_init (UpBackend *backend)
++{
++	UpDeviceClass *device_class;
++	char *devpath = NULL;
++	gint64 current_time;
++
++	backend->priv = UP_BACKEND_GET_PRIVATE (backend);
++
++	devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_AC);
++	if (devpath) {
++		backend->priv->has_ac_device = TRUE;
++		g_free(devpath);
++	} else {
++		backend->priv->has_ac_device = FALSE;
++	}
++
++	devpath = up_backend_get_ac_device_path(ACPI_DRV_TYPE_CBAT);
++	if (devpath) {
++		backend->priv->has_bat_device = TRUE;
++		g_free(devpath);
++	} else {
++		backend->priv->has_bat_device = FALSE;
++	}
++
++	current_time = g_get_real_time () / G_USEC_PER_SEC;
++	if (backend->priv->has_ac_device)
++	{
++		backend->priv->ac = UP_DEVICE(up_device_new());
++		device_class = UP_DEVICE_GET_CLASS (backend->priv->ac);
++		device_class->get_on_battery = up_acpi_device_get_on_battery;
++		device_class->get_online = up_acpi_device_get_online;
++		device_class->refresh = up_acpi_device_refresh;
++
++		/* setup dummy */
++		g_object_set (backend->priv->ac,
++			      "type", UP_DEVICE_KIND_LINE_POWER,
++			      "online", TRUE,
++			      "power-supply", TRUE,
++			      "update-time", (guint64) current_time,
++			      (void*) NULL);
++	} 
++
++	if (backend->priv->has_bat_device)
++	{
++		backend->priv->battery = UP_DEVICE(up_device_new ());
++		device_class = UP_DEVICE_GET_CLASS (backend->priv->battery);
++		device_class->get_on_battery = up_acpi_device_get_on_battery;
++		device_class->get_online = up_acpi_device_get_online;
++		device_class->refresh = up_acpi_device_refresh;
++
++		/* setup dummy */
++		g_object_set (backend->priv->battery,
++			      "type", UP_DEVICE_KIND_BATTERY,
++			      "power-supply", TRUE,
++			      "is-present", TRUE,
++			      "is-rechargeable", TRUE,
++			      "has-history", TRUE,
++			      "state", UP_DEVICE_STATE_UNKNOWN,
++			      "percentage", 0.0f,
++			      "time-to-empty", (gint64) 0,
++			      "update-time", (guint64) current_time,
++			      (void*) NULL);
++	}
++
++	if (backend->priv->has_bat_device || backend->priv->has_ac_device) {
++		/* Initialize sysevent handler */
++		up_backend_initialize_sysevent_handler(backend);
++		/* Some acpi devices are broken enough to avoid generating
++			EC_PWRCTL events, so we force update once per POLL_INTERVAL */
++		g_timeout_add (POLL_INTERVAL, simulate_iochannel_data, NULL);
++		
++	}
++
++	backend->priv->config = up_config_new ();
++	backend->priv->seat_manager_proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SYSTEM,
++									   0,
++									   NULL,
++									   CONSOLEKIT2_DBUS_NAME,
++									   CONSOLEKIT2_DBUS_PATH,
++									   CONSOLEKIT2_DBUS_INTERFACE,
++									   NULL,
++									   NULL);
++}
++/**
++ * up_backend_finalize:
++ **/
++static void
++up_backend_finalize (GObject *object)
++{
++	UpBackend *backend;
++
++	g_return_if_fail (UP_IS_BACKEND (object));
++
++	backend = UP_BACKEND (object);
++
++	sysevent_unbind_handle(shp);
++	shp = NULL;
++
++	g_object_unref (backend->priv->config);
++	if (backend->priv->daemon != NULL)
++		g_object_unref (backend->priv->daemon);
++	if (backend->priv->battery != NULL)
++		g_object_unref (backend->priv->battery);
++	if (backend->priv->ac != NULL)
++		g_object_unref (backend->priv->ac);
++	g_clear_object (&backend->priv->seat_manager_proxy);
++
++	G_OBJECT_CLASS (up_backend_parent_class)->finalize (object);
++}
++
++static int
++minor_device_ioctl(di_node_t node, void *arg)
++{
++	struct mdi_arg *st;
++	char *dn;
++	
++	st = (struct mdi_arg*) arg;
++	
++	st->present = FALSE;
++	st->success = FALSE;
++	
++	dn=di_driver_name(node);
++	if (dn && !strcmp("acpi_drv",dn)) {
++		di_minor_t minor;
++		
++		minor = DI_MINOR_NIL;
++		while ((minor = di_minor_next(node, minor)) != DI_MINOR_NIL) {
++			char *dp, *fdp;
++			int fd;
++			char *mname;
++			
++			dp=di_devfs_path(node);
++			if (!dp) {
++				g_warning("Couldn't get path for acpi_drv device");
++				continue;
++			}
++			
++			mname = di_minor_name(minor);
++			if ((st->exact_match && strcmp(st->name, mname) != 0) ||
++			    (!st->exact_match && strncmp(st->name, mname, strlen(st->name)) != 0)) {
++				g_debug("Device %s is not a %s. Skipping.", mname, st->name);
++				di_devfs_path_free(dp);
++				continue;
++			}
++			fdp = g_strconcat(DEVFS_PREFIX, dp,":", di_minor_name(minor), NULL);
++			if (!fdp) {
++				g_warning("Couldn't allocate memory");
++				di_devfs_path_free(dp);
++				continue;
++			}
++			
++			fd = open(fdp, O_RDONLY);
++			if (fd == -1) {
++				g_warning("Couldn't open %s device", fdp);
++				di_devfs_path_free(dp);
++				g_free(fdp);
++				continue;
++			}
++			
++			st->present = TRUE;
++			st->device_path = fdp;
++			
++			if (ioctl(fd, st->ctl, st->result) < 0) {          
++				st->success = FALSE;
++				g_warning("ioctl %d to device %s failed", st->ctl, fdp);
++			} else {
++				st->success = TRUE;
++			}
++			
++			close(fd);
++			di_devfs_path_free(dp);
++			return DI_WALK_TERMINATE;
++		}
++	}
++	return DI_WALK_CONTINUE;
++}
++
++static char*
++up_backend_get_ac_device_path(enum acpi_drv_type device)
++{
++	di_node_t root_node;
++	
++	struct mdi_arg ma;
++	int state = 0;
++	acpi_bif_t bif;
++	
++	switch (device) {
++		case ACPI_DRV_TYPE_CBAT:
++			ma.name = "battery";
++			ma.ctl = ACPI_DRV_IOC_INFO;
++			ma.exact_match = FALSE;
++			/* We don't do it as we ignore result anyway */
++			/* memset(&bif, 0, sizeof(bif));*/
++			ma.result = &bif;
++			break;
++		case ACPI_DRV_TYPE_AC:
++			ma.name = "ac";
++			ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
++			ma.exact_match = FALSE;
++			ma.result = &state;
++			break;
++		default:
++			return NULL;
++	}
++
++	ma.device_path = NULL;
++	
++	errno = 0;
++	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++		g_error("di_init() failed: %s", g_strerror(errno));
++		return FALSE;
++	}
++	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	return ma.device_path;
++}
++
++static int
++up_backend_acpi_get_ac_online()
++{
++	di_node_t root_node;
++	
++	struct mdi_arg ma;
++	int state = 0;
++	
++	ma.name = "ac";
++	ma.exact_match = FALSE;
++	ma.ctl = ACPI_DRV_IOC_POWER_STATUS;
++	ma.result = &state;
++	ma.device_path = NULL;
++	
++	errno = 0;
++	if((root_node = di_init("/", DINFOSUBTREE|DINFOMINOR)) == DI_NODE_NIL) {
++		g_error("di_init() failed: %s", g_strerror(errno));
++		return FALSE;
++	}
++	di_walk_node(root_node, DI_WALK_CLDFIRST, &ma, minor_device_ioctl);
++	di_fini(root_node);
++	if (ma.device_path)
++		g_free(ma.device_path);
++	if (!ma.success)
++		state = -1;
++	return state;
++}
++
++static int
++estimate_time(int charge_rate, int current_charge, int last_fullcharge, int is_discharging, int is_charging)
++{
++	int rem_secs = 0;
++	if (charge_rate > 0 && last_fullcharge >= current_charge && (is_discharging ^ is_charging)) {
++		if (is_discharging) {
++			rem_secs = ((double) current_charge / (double) charge_rate) * 60 * 60;
++		} else {
++			rem_secs = (((double)(last_fullcharge - current_charge))/ (double) charge_rate) * 60 * 60;
++		}
++		return rem_secs;
++	} else {
++		/* Can't estimate time */
++		return -1;
++	} 
++}
+diff -urN upower-0.99.4-orig/src/illumos/up-native.c upower-0.99.4/src/illumos/up-native.c
+--- upower-0.99.4-orig/src/illumos/up-native.c	1970-01-01 03:00:00.000000000 +0000
++++ upower-0.99.4/src/illumos/up-native.c	2017-12-26 13:49:53.077225711 +0000
+@@ -0,0 +1,68 @@
++/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
++ *
++ * Copyright (C) 2011 Landry Breuil <landry@openbsd.org>
++ * Copyright (C) 2018 Alexander Pyhalov <apyhalov@gmail.com>
++ *
++ * Licensed under the GNU General Public License Version 2
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++#include "up-acpi-native.h"
++#include "up-native.h"
++#include <unistd.h> /* close() */
++#include <string.h> /* strcmp() */
++
++G_DEFINE_TYPE (UpAcpiNative, up_acpi_native, G_TYPE_OBJECT)
++
++static void
++up_acpi_native_class_init (UpAcpiNativeClass *klass)
++{
++}
++
++static void
++up_acpi_native_init (UpAcpiNative *self)
++{
++	self->path = NULL;
++}
++
++UpAcpiNative *
++up_acpi_native_new(const gchar * path)
++{
++	UpAcpiNative *native;
++	native = UP_ACPI_NATIVE (g_object_new (UP_TYPE_ACPI_NATIVE, NULL));
++	native->path = g_strdup(path);
++	return native;
++}
++
++const gchar *
++up_acpi_native_get_path(UpAcpiNative * native)
++{
++	return native->path;
++}
++
++/**
++ * up_native_get_native_path:
++ * @object: the native tracking object
++ *
++ * This converts a GObject used as the device data into a native path.
++ *
++ * Return value: The native path for the device which is unique, e.g. "/devices/pseudo/acpi_drv@0:battery0"
++ **/
++const gchar *
++up_native_get_native_path (GObject *object)
++{
++	return up_acpi_native_get_path (UP_ACPI_NATIVE (object));
++}
