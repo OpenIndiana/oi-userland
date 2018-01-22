@@ -1,0 +1,65 @@
+From b886a4524b0a987c154f8f181ed54812804660d2 Mon Sep 17 00:00:00 2001
+From: Eric Koegel <eric.koegel@gmail.com>
+Date: Tue, 14 Oct 2014 19:01:31 +0300
+Subject: [PATCH] Add the suspend/hibernate scripts
+
+Also add the test-inhibit.c file to the repo, oops.
+---
+ src/.gitignore                    |   1 +
+ src/test-inhibit.c                | 163 ++++++++++++++++++++++++++++++++++++++
+ tools/freebsd/Makefile.am         |   2 +
+ tools/freebsd/ck-system-hibernate |  12 +++
+ tools/freebsd/ck-system-suspend   |  12 +++
+ tools/linux/Makefile.am           |   2 +
+ tools/linux/ck-system-hibernate   |  12 +++
+ tools/linux/ck-system-suspend     |  12 +++
+ tools/openbsd/Makefile.am         |   2 +
+ tools/openbsd/ck-system-hibernate |  12 +++
+ tools/openbsd/ck-system-suspend   |  12 +++
+ tools/solaris/Makefile.am         |   2 +
+ tools/solaris/ck-system-hibernate |   4 +
+ tools/solaris/ck-system-suspend   |   4 +
+ 14 files changed, 252 insertions(+)
+ create mode 100644 src/test-inhibit.c
+ create mode 100644 tools/freebsd/ck-system-hibernate
+ create mode 100644 tools/freebsd/ck-system-suspend
+ create mode 100644 tools/linux/ck-system-hibernate
+ create mode 100644 tools/linux/ck-system-suspend
+ create mode 100644 tools/openbsd/ck-system-hibernate
+ create mode 100644 tools/openbsd/ck-system-suspend
+ create mode 100644 tools/solaris/ck-system-hibernate
+ create mode 100644 tools/solaris/ck-system-suspend
+
+diff --git a/tools/solaris/Makefile.am b/tools/solaris/Makefile.am
+index f668722..50b9b27 100644
+--- a/tools/solaris/Makefile.am
++++ b/tools/solaris/Makefile.am
+@@ -10,6 +10,8 @@ scriptdir = $(prefix)/lib/ConsoleKit/scripts
+ script_SCRIPTS =			\
+ 	ck-system-stop			\
+ 	ck-system-restart		\
++	ck-system-suspend		\
++	ck-system-hibernate		\
+ 	$(NULL)
+ 
+ EXTRA_DIST =				\
+diff --git a/tools/solaris/ck-system-hibernate b/tools/solaris/ck-system-hibernate
+new file mode 100644
+index 0000000..5f31342
+--- /dev/null
++++ b/tools/solaris/ck-system-hibernate
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++# FIXME: Implement this
++exit 1
+diff --git a/tools/solaris/ck-system-suspend b/tools/solaris/ck-system-suspend
+new file mode 100644
+index 0000000..5f31342
+--- /dev/null
++++ b/tools/solaris/ck-system-suspend
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++# FIXME: Implement this
++exit 1
