@@ -95,13 +95,26 @@ install:        $(INSTALL_64)
 
 test:           $(TEST_64)
 
+# Build dependencies
 REQUIRED_PACKAGES += runtime/erlang
 REQUIRED_PACKAGES += developer/icu
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += library/spidermonkey
+
 # only required for target test
 # this modules are in the repository
 # REQUIRED_PACKAGES += library/python/nose-27
 # REQUIRED_PACKAGES += library/python/requests-27
 # and install this via pip
 # pip install hypothesis
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/spidermonkey
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
