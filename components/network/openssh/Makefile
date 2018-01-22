@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018 Till Wegmüller
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -87,6 +88,9 @@ CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
 CONFIGURE_OPTIONS += --bindir=/usr/bin
 CONFIGURE_OPTIONS += --disable-lastlog
+
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm755 $(SOURCE_DIR)/contrib/ssh-copy-id $(PROTOUSRBINDIR)/ssh-copy-id;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-copy-id.1 $(PROTOUSRSHAREMAN1DIR)/ssh-copy-id.1;
 
 # common targets
 build:		$(BUILD_64)
