@@ -60,7 +60,11 @@ $(BUILD_DIR)/%/.installed: $(BUILD_32)
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
+# Build dependencies
 REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += runtime/sbcl
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
