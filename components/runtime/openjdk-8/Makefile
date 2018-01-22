@@ -17,13 +17,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-8
 
-OPENJDK_BUILD_NUMBER=144
+OPENJDK_BUILD_NUMBER=152
 COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
-COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20170830.tar.xz
+COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20171128.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6b639a4c210000b9d132f299de6f762b7cfce05ff369442fe1f5f1264b21b77e
+  sha256:c6b4807d0d9dbf60e9d3e0d3a6f44b15023653305e559363d8fa3d98ad2341ac
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.netbsd.org/pub/pkgsrc/distfiles/openjdk7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://openjdk.java.net/
@@ -39,7 +39,7 @@ PATCH_LEVEL=0
 
 CC=gcc
 CXX=g++
-PATH=$(GCC_ROOT)/bin:/usr/gnu/bin:/usr/bin:/usr/sbin
+PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -r $(SOURCE_DIR)/* $(@D))
 CONFIGURE_SCRIPT=	$(BUILD_DIR_$(BITS))/common/autoconf/configure
@@ -54,6 +54,9 @@ CONFIGURE_OPTIONS+=        --disable-precompiled-headers
 CONFIGURE_OPTIONS+=        --disable-ccache
 CONFIGURE_OPTIONS+=        --with-user-release-suffix=oi-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS+=        --with-update-version=$(OPENJDK_BUILD_NUMBER)
+# OpenJDK uses CLFAGS for C and C++ unfortunately
+CONFIGURE_OPTIONS+=        --with-extra-cflags="-std=gnu89 -std=gnu++98 "
+CONFIGURE_OPTIONS+=        --with-extra-cxxflags="-std=gnu++98 "
 
 CONFIGURE_ENV+=	AS=$(GAS)
 CONFIGURE_ENV+=	STRIP=$(STRIP)
@@ -98,10 +101,10 @@ build: $(BUILD_64)
 
 install: $(MY_INSTALLED) cacerts.out
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += developer/java/openjdk7
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/java/openjdk7
+REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-6-runtime
