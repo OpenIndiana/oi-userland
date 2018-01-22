@@ -43,6 +43,7 @@ install:     		$(INSTALL_32)
 
 test:			$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -52,7 +53,7 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gnome-vfs
-REQUIRED_PACKAGES += library/python-2/lxml-27
+REQUIRED_PACKAGES += library/python/lxml-27
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += runtime/python-27
