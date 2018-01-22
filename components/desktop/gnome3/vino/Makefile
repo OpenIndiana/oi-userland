@@ -55,10 +55,6 @@ CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--enable-http-server=yes
-CONFIGURE_OPTIONS+=	--enable-gnome-keyring=yes
-CONFIGURE_OPTIONS+=	--enable-avahi=yes
-CONFIGURE_OPTIONS+=	--enable-libunique=yes
 CONFIGURE_OPTIONS+=	--enable-ipv6=yes
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--with-gcrypt
