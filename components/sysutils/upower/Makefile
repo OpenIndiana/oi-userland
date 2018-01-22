@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= upower
-COMPONENT_VERSION= 0.99.4
+COMPONENT_VERSION= 0.99.7
 COMPONENT_PROJECT_URL = http://upower.freedesktop.org/
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=system/upower
@@ -24,7 +24,7 @@ COMPONENT_SUMMARY= A service for enumerating and querying data related to power 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9ca325a6ccef505529b268ebbbd9becd0ce65a65f6ac7ee31e2e5b17648037b0
+  sha256:24bcc2f6ab25a2533bac70b587bcb019e591293076920f5b5e04bdedc140a401
 COMPONENT_ARCHIVE_URL= \
   http://upower.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
