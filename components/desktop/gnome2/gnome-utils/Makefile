@@ -65,16 +65,18 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += gnome/gnome-panel
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libbonoboui
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-component
-REQUIRED_PACKAGES += library/gnome/gnome-libs
+REQUIRED_PACKAGES += library/libbonobo
 REQUIRED_PACKAGES += library/libgtop
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
