@@ -97,9 +97,12 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
 
 install: $(INSTALL_32)
 
+# Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/pulseaudio
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -117,6 +120,7 @@ REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxdamage
