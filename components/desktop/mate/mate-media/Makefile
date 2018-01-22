@@ -60,7 +60,6 @@ REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libunique
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
