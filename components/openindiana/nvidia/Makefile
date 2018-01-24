@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		driver-graphics-nvidia
 COMPONENT_VERSION=	340.104
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
@@ -25,6 +26,14 @@ COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_POST_INSTALL_ACTION = ( \
+	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 ; \
+	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 ; \
+	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib:/lib:/usr/lib" \
+		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 ; \
+	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib/$(MACH64):/lib/$(MACH64):/usr/lib/$(MACH64)"\
+		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 ; )
 
 $(SOURCE_DIR)/.unpacked: download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR)
@@ -41,6 +50,7 @@ $(INSTALL_32): 	$(BUILD_32)
 	    cp $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
 	rm -fr $(PROTO_DIR)/usr
 	cp -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
+	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
 build: $(BUILD_32)
