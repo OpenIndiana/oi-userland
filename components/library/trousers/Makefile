@@ -22,10 +22,11 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		trousers
 COMPONENT_VERSION=	0.3.11.2
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/trousers/files/trousers/
@@ -33,15 +34,24 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:8a96f924836187e406161f797b709ea52ade6c89ceffe489f7254b51088938d5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)0.3.11/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
-LIBS = -lnsl -lsocket -lgen
+LIBS = -lnsl -lsocket -lgen -lscf -lbsm -lresolv
 CFLAGS += -DSOLARIS -DBI_OPENSSL -D_REENTRANT
 
 LDFLAGS += $(CC_BITS)
+
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
+
+# deliver tcsd in /usr/lib*
+CONFIGURE_SBINDIR.32 = $(CONFIGURE_LIBDIR.32)
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_LIBDIR.64)
+
+COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf -vif )
 
 CONFIGURE_OPTIONS += --with-gui=openssl
 CONFIGURE_OPTIONS += LD="$(CC)"
@@ -56,11 +66,7 @@ COMPONENT_POST_CONFIGURE_ACTION = (cd $(COMPONENT_SRC); \
 	done; \
 	for f in `ls src/include/*.h` ; do \
 		/usr/bin/dos2unix $$f $$f; \
-	done; \
-	/usr/bin/libtoolize -f; \
-	$(ACLOCAL); \
-	$(AUTOMAKE) src/tspi/Makefile; \
-	$(AUTOCONF))
+	done;)
 
 COMPONENT_TEST_TARGETS = 
 
@@ -73,6 +79,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
