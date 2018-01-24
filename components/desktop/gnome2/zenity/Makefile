@@ -48,8 +48,11 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
