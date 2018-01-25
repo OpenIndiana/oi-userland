@@ -1,0 +1,48 @@
+From d7c3a78c83a83678a0c442bc01d6224695c9abf0 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Wed, 27 Jan 2016 16:49:07 -0500
+Subject: [PATCH 10/11] sol2: Use appropriate values objects for the various C
+ and C++ standards
+
+I'm reasonable confident of the C cases, less confident of the C++
+cases.
+
+This is on the basis that c99 and greater implies XPG6 (and vice versa), as the
+manual pages and headers say/enforce.  It is possible that C11 should
+imply xpg7 if and when we support that.
+
+C99 and greater get strict ansi.
+
+C otherwise gets transitional ansi (and no UNIX standard)
+
+C++ gets strict ansi, other than in C++98.  And gets no UNIX standards
+objects at all.
+---
+ gcc/config/sol2.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index e2f7d2429a9..f3e6140d9a0 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -170,8 +170,15 @@ along with GCC; see the file COPYING3.  If not see
+ #define SUPPORTS_INIT_PRIORITY HAVE_INITFINI_ARRAY_SUPPORT
+ 
+ #undef STARTFILE_ARCH_SPEC
+-#define STARTFILE_ARCH_SPEC "%{ansi:values-Xc.o%s} \
+-			    %{!ansi:values-Xa.o%s}"
++#define STARTFILE_ARCH_SPEC "%{std=c1x|std=gnu1x:values-Xc.o%s values-xpg6.o%s; \
++			       std=c11|std=gnu11:values-Xc.o%s values-xpg6.o%s; \
++			       std=c99|std=gnu99:values-Xc.o%s values-xpg6.o%s; \
++			       std=c9x|std=gnu9x:values-Xc.o%s values-xpg6.o%s; \
++			       std=c++0x|std=gnu++0x:values-Xc.o%s; \
++			       std=c++11|std=gnu++11:values-Xc.o%s; \
++			       std=c++03|std=gnu++03:values-Xc.o%s; \
++			       :values-Xa.o%s}"
++
+ 
+ #if defined(HAVE_LD_PIE) && defined(HAVE_SOLARIS_CRTS)
+ #define STARTFILE_CRTBEGIN_SPEC "%{static:crtbegin.o%s; \
+-- 
+2.15.0
+
