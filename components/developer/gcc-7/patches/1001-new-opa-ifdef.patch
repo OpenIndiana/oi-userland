@@ -1,0 +1,18 @@
+--- gcc-7.1.0.orig/libstdc++-v3/libsupc++/new_opa.cc	2017-01-26 15:30:45.000000000 +0100
++++ gcc-7.1.0/libstdc++-v3/libsupc++/new_opa.cc	2017-05-04 17:16:25.920300456 +0200
+@@ -31,7 +31,6 @@
+ using std::new_handler;
+ using std::bad_alloc;
+ 
+-#if !_GLIBCXX_HAVE_ALIGNED_ALLOC
+ #if _GLIBCXX_HAVE__ALIGNED_MALLOC
+ #define aligned_alloc(al,sz) _aligned_malloc(sz,al)
+ #elif _GLIBCXX_HAVE_POSIX_MEMALIGN
+@@ -82,7 +81,6 @@
+   return aligned_ptr;
+ }
+ #endif
+-#endif
+ 
+ _GLIBCXX_WEAK_DEFINITION void *
+ operator new (std::size_t sz, std::align_val_t al)
