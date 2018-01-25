@@ -55,5 +55,7 @@ REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/versioning/git
+REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/extended-system-utilities
+REQUIRED_PACKAGES += text/gawk
+REQUIRED_PACKAGES += text/gnu-grep
