@@ -58,6 +58,7 @@ install:	$(INSTALL_32)
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
-REQUIRED_PACKAGES += runtime/sbcl
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
