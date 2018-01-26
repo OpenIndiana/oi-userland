@@ -50,7 +50,8 @@ unexport SHELLOPTS
 
 test:		$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/math/openblas
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gfortran-4-runtime
+REQUIRED_PACKAGES += system/library/gfortran-6-runtime
 REQUIRED_PACKAGES += system/library/math
