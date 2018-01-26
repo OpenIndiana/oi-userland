@@ -68,8 +68,11 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/libcroco
+REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
