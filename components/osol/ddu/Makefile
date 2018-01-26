@@ -62,14 +62,18 @@ install: $(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += system/pciutils/pci.ids
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += library/python-2/python-notify-27
-REQUIRED_PACKAGES += library/python-2/simplejson-27
+REQUIRED_PACKAGES += diagnostic/ddu/library
 REQUIRED_PACKAGES += library/python/gnome-python-27
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += library/python/python-notify-27
+REQUIRED_PACKAGES += library/python/simplejson-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/hal
-REQUIRED_PACKAGES += system/pciutils/pci.ids
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
