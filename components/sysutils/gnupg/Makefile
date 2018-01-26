@@ -118,6 +118,12 @@ install: $(INSTALL_32)
 
 test: $(TEST_32)
 
+# Missing dependencies for pinentry
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libsecret
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/pth
