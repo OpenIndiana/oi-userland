@@ -100,6 +100,7 @@ REQUIRED_PACKAGES += system/header/header-drm
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
@@ -111,5 +112,4 @@ REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxshmfence
 REQUIRED_PACKAGES += x11/library/libxxf86vm
