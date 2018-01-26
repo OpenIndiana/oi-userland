@@ -40,5 +40,6 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-# Build dependencies
-REQUIRED_PACKAGES += gnome/theme/nimbus 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/theme/nimbus
+REQUIRED_PACKAGES += library/desktop/libgnome
