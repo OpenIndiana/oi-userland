@@ -19,14 +19,12 @@ COMPONENT_NAME=		clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	0.99.2
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	0.99.3
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 endif
-COMPONENT_REVISION=	1
 ### Library files are tagged with unique per-version numbers
 COMPONENT_VERSION_LIB_MAJOR=	7
 COMPONENT_VERSION_LIB_FULL=	$(COMPONENT_VERSION_LIB_MAJOR).1.1
@@ -36,7 +34,7 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:167bd6a13e05ece326b968fdb539b05c2ffcfef6018a274a10aeda85c2c0027a
+	sha256:00fa5292a6e00a3a4035b826267748965d5d2c4943d8ff417d740238263e8e84
 COMPONENT_PROJECT_URL=	http://www.clamav.net/
 COMPONENT_ARCHIVE_URL=	\
 	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
@@ -69,17 +67,6 @@ PATH.64=$(GNUBIN)/$(MACH64):$(USRBINDIR64):$(GNUBIN):$(USRBINDIR)
 PATH.32=$(GNUBIN):$(USRBINDIR)
 PATH=$(PATH.$(BITS))
 
-USRLIBDIR.32=$(USRLIBDIR)
-USRLIBDIR.64=$(USRLIBDIR64)
-
-GNULIBDIR.32=$(GNULIB)
-GNULIBDIR.64=$(GNULIB64)
-
-LDFLAGS.$(BITS) += -L$(GNULIBDIR.$(BITS)) -R$(GNULIBDIR.$(BITS))
-
-# Redefine the LDFLAGS completely, try to avoid "/usr/lib" in 64-bit bins/libs
-LDFLAGS = $(LDFLAGS.$(BITS)) -m$(BITS)
-
 COMPONENT_PREP_ACTION = \
     (cd $(@D) &&\
         aclocal -I . &&\
@@ -95,6 +82,7 @@ CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CONFIGURE_SBINDIR.64 =	$(CONFIGURE_PREFIX)/sbin
 
 CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--disable-rpath
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/clamav
 CONFIGURE_OPTIONS +=	--with-dbdir=$(VARDIR)/clamav/db
@@ -149,6 +137,8 @@ CONFIGURE_OPTIONS +=	--enable-milter
 #   https://github.com/vrtadmin/clamav-bytecode-compiler/releases
 CONFIGURE_OPTIONS +=	--enable-llvm
 
+# Without this libclamunrar.so gets /usr/lib/$(MACH64) RPATH
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 build:		$(BUILD_64)
 
