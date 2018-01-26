@@ -1,0 +1,15 @@
+Without this patch pcre-config adds -R/usr/lib/amd64 flags,
+and screws gcc-6 builds
+
+--- pcre-8.41/pcre-config.in.1	2018-01-26 18:10:09.268940268 +0000
++++ pcre-8.41/pcre-config.in	2018-01-26 18:10:54.409535157 +0000
+@@ -34,9 +34,6 @@
+ 
+ libR=
+ case `uname -s` in
+-  *SunOS*)
+-  libR=" -R@libdir@"
+-  ;;
+   *BSD*)
+   libR=" -Wl,-R@libdir@"
+   ;;
