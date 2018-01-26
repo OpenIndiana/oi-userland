@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgbadger
 COMPONENT_VERSION= 	7.1
@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/dalibo/pgbadger/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://dalibo.github.io/pgbadger/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Using makemaker.mk here is an overkill,
 # because we don't need versioned  pgbadger
@@ -39,3 +39,7 @@ PKG_PROTO_DIRS += $(BUILD_DIR_32)
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
