@@ -131,6 +131,7 @@ REQUIRED_PACKAGES += x11/library/libxfont
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/libxscrnsaver
 REQUIRED_PACKAGES += x11/library/libxshmfence
 REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/library/libxv
