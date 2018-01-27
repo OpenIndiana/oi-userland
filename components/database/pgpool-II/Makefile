@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgpool-II
 COMPONENT_VERSION= 	3.6.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	pgpool-II middle ware
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -38,6 +39,10 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -D__EXTENSIONS__
+
+# We don't want libtool to embed runpath to /usr/lib/$(MACH64),
+# but we want to see runpath to $(PG_LIBDIR.64)
+LD_OPTIONS += -R$(PG_LIBDIR.64)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
