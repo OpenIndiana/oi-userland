@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autoconf
 COMPONENT_VERSION=	2.69
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autoconf/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
