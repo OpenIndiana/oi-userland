@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
 COMPONENT_VERSION=	1.1.29
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -34,6 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b5976e3857837e7617b29f2249ebb5eeac34e249208d31f1fbf7a6ba7a4090ce
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxslt/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxslt
+
+# When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
+CONFIGURE_FIX_LIBTOOL_RPATH=no
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -53,6 +57,8 @@ CONFIGURE_OPTIONS += --with-html-subdir=html
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
+
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
