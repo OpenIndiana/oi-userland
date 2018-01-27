@@ -29,7 +29,7 @@ COMPONENT_NAME=		aalib
 COMPONENT_VERSION=	1.4.0
 HUMAN_VERSION=		1.4rc5
 IPS_COMPONENT_VERSION =	1.4.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://aa-project.sourceforge.net/aalib/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
@@ -38,11 +38,15 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/aa-project/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/aalib
 
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
+
+COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
 
 # We need to reset configure options here because aalib is confused with
 # CC and CFLAGS definitions as configure parameters.
@@ -67,10 +71,6 @@ install:	$(INSTALL_32_and_64)
 # actually there is a test we put in the demos,
 # but it's 32-bit only and not a target
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += SUNWcs
