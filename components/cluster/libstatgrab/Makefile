@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   libstatgrab
 COMPONENT_VERSION=  0.91
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_PROJECT_URL=  http://www.i-scream.org/$(COMPONENT_NAME)
@@ -31,6 +31,8 @@ COMPONENT_SUMMARY= libstatgrab is a library that provides cross platform access 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_ENV.64    += lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
 
 build:          $(BUILD_32_and_64)
 
