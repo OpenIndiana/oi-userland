@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
 COMPONENT_VERSION=	5.2.3
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://tukaani.org/xz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,6 +40,10 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_OPTIONS +=            --disable-rpath
+
+CONFIGURE_ENV.64 +=             LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 COMPONENT_TEST_DIR =            $(@D)/tests
 
