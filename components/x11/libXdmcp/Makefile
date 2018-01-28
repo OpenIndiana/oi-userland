@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libXdmcp
 
 COMPONENT_VERSION= 1.1.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libXdmcp - X Display Manager Control Protocol (XDMCP) library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
