@@ -1,0 +1,23 @@
+--- libtool-2.4.6/m4/libtool.m4.orig	Tue Jan 20 10:15:19 2015
++++ libtool-2.4.6/m4/libtool.m4	Fri Jan 26 23:33:45 2018
+@@ -2995,6 +2995,20 @@
+   hardcode_into_libs=yes
+   # ldd complains unless libraries are executable
+   postinstall_cmds='chmod +x $lib'
++
++  # Solaris runtime linker default search path for both 32 and 64 bit.
++  # /lib and /usr/lib are the default 32 bit paths.  The 64 bit paths
++  # are architecture dependent and also include a */64 symlink that
++  # is an equivalent to the architecture specific 64 bit path.
++  sys_lib_dlsearch_path_spec="/lib /usr/lib"
++  for ac_dir in $sys_lib_dlsearch_path_spec ; do
++    for ac_mach64 in 64 amd64 sparcv9 ; do
++      ac_dir_mach64=$ac_dir/$ac_mach64
++      if test -d $ac_dir_mach64 -o -L $ac_dir_mach64; then
++        sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec $ac_dir_mach64"
++      fi
++    done
++  done
+   ;;
+ 
+ sunos4*)

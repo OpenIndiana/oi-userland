@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtool
 COMPONENT_VERSION=	2.4.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	developer/build/libtool
 COMPONENT_SUMMARY=	GNU libtool
 COMPONENT_CLASSIFICATION=	Development/GNU
