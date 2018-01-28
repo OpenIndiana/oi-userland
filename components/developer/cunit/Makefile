@@ -49,7 +49,7 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           automake --add-missing --include-deps --copy && \
                           autoconf && \
                           chmod u+x configure && \
-                          make distclean )
+                          $(RM) config.status)
 
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= --enable-shared
