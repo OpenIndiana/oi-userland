@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          hwloc
 COMPONENT_VERSION=       1.11.8
+COMPONENT_REVISION=      1
 COMPONENT_SUMMARY=       hwloc - Portable Hardware Locality
 COMPONENT_PROJECT_URL=   https://www.open-mpi.org/projects/hwloc/
 COMPONENT_FMRI=          developer/hwloc
@@ -27,17 +28,19 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:ecef10265084d9123dc0b03d82ff5ee06fbf5ba755a912e7511ae590c9ee594d
 COMPONENT_LICENSE=      BSD-2
 
+# When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_ENV=+ENV=/usr/bin/env
 
 CONFIGURE_OPTIONS+= --enable-cairo
 CONFIGURE_OPTIONS+= --enable-cpuid
 CONFIGURE_OPTIONS+= --enable-libxml2
 CONFIGURE_OPTIONS+= --enable-pci
 
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 build:		$(BUILD_32_and_64)
 
