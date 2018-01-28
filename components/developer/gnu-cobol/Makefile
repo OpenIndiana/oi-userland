@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnu-cobol
 COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	developer/gnu-cobol
 COMPONENT_SUMMARY=	COBOL to C compiler
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -36,16 +36,23 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gnucobol/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, GFDLv1.2, LGPLv2.1
 
-CFLAGS += -I/usr/include/gmp
+# When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
+CONFIGURE_FIX_LIBTOOL_RPATH = no
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CFLAGS += -I/usr/include/gmp
+
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
+
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFGIURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 build:		$(BUILD_64)
 
@@ -54,9 +61,9 @@ install:	$(INSTALL_64)
 test:		$(TEST_64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
