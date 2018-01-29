@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= exiv2
 COMPONENT_VERSION= 0.25
-COMPONENT_REVISION = 1
+COMPONENT_REVISION = 2
 COMPONENT_SUMMARY= Image metadata library and tools
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -32,12 +32,20 @@ COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_PREP_ACTION = (cd $(@D)/config && libtoolize -f && autoconf -o ../configure)
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
      $(CLONEY) $(SOURCE_DIR) $(@D)
+
+CONFIGURE_OPTIONS += --disable-rpath
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+CONFIGURE_ENV.64 += lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
 
 # mkdir option '-v' is used
 PATH=$(PATH.gnu)
