@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=        fltk
 COMPONENT_VERSION=     1.3.4
 COMPONENT_REL_VERSION=2
+COMPONENT_REVISION=    1
 COMPONENT_SUMMARY=     fltk - Fast Light Toolkit
 COMPONENT_PROJECT_URL= http://www.fltk.org
 COMPONENT_FMRI=        library/fltk
@@ -28,6 +29,8 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_ARCHIVE_HASH= \
   sha256:25d349c18c99508737d48f225a2eb26a43338f9247551cab72a317fa42cda910
 COMPONENT_LICENSE= GPLv2
+
+CONFIGURE_FIX_LIBTOOL_RPATH= no
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
