@@ -1,5 +1,5 @@
---- vala-0.36.6/tests/testrunner.sh	Sun Oct  8 10:39:01 2017
-+++ vala-0.36.6/tests/testrunner.sh.new	Wed Nov  8 10:53:07 2017
+--- vala-0.36.9/tests/testrunner.sh.~1~	Sun Jan 21 11:37:29 2018
++++ vala-0.36.9/tests/testrunner.sh	Mon Jan 29 11:54:22 2018
 @@ -19,6 +19,7 @@
  #
  # Author:
@@ -8,43 +8,22 @@
  
  builddir=$PWD
  topbuilddir=$builddir/..
-@@ -29,7 +30,34 @@
- export G_DEBUG=fatal_warnings
- 
- VALAC=$topbuilddir/compiler/valac$EXEEXT
--VALAFLAGS="$VALAFLAGS --vapidir $vapidir --disable-warnings --main main --save-temps -X -g -X -O0 -X -pipe -X -lm -X -DGETTEXT_PACKAGE=\"valac\" -X -Werror=return-type -X -Werror=init-self -X -Werror=implicit -X -Werror=sequence-point -X -Werror=return-type -X -Werror=uninitialized -X -Werror=pointer-arith -X -Werror=int-to-pointer-cast -X -Werror=pointer-to-int-cast -X -Wformat -X -Werror=format-security -X -Werror=format-nonliteral -X -Werror=redundant-decls -X -Werror=int-conversion"
-+# OpenIndiana add -v flag for extra logging
-+# Removed -X -Werror=int-conversion, not an option with oi gcc (GCC) 4.9.4
-+# Removed -X -Werror=int-to-pointer-cast and -X -Werror=pointer-to-int-cast
-+#  for BUILD_32_and_64 test compares
-+VALAFLAGS="$VALAFLAGS \
-+	-v \
-+	--vapidir \
-+	$vapidir \
-+	--disable-warnings \
-+	--main main \
-+	--save-temps \
-+	-X -g \
-+	-X -O0 \
-+	-X -pipe \
-+	-X -lm \
-+	-X -DGETTEXT_PACKAGE=\"valac\" \
-+	-X -Werror=return-type \
-+	-X -Werror=init-self \
-+	-X -Werror=implicit \
-+	-X -Werror=sequence-point \
-+	-X -Werror=return-type \
-+	-X -Werror=uninitialized \
-+	-X -Werror=pointer-arith \
-+	-X -Wformat \
-+	-X -Werror=format-security \
-+	-X -Werror=format-nonliteral \
+@@ -44,13 +45,10 @@
+ 	-X -Werror=return-type \
+ 	-X -Werror=uninitialized \
+ 	-X -Werror=pointer-arith \
+-	-X -Werror=int-to-pointer-cast \
+-	-X -Werror=pointer-to-int-cast \
+ 	-X -Wformat \
+ 	-X -Werror=format-security \
+ 	-X -Werror=format-nonliteral \
+-	-X -Werror=redundant-decls \
+-	-X -Werror=int-conversion"
 +	-X -Werror=redundant-decls"
-+
  VAPIGEN=$topbuilddir/vapigen/vapigen$EXEEXT
  VAPIGENFLAGS="--vapidir $vapidir"
  
-@@ -114,26 +142,28 @@
+@@ -135,26 +133,28 @@
  }
  
  testdir=_test
@@ -86,7 +65,7 @@
  	echo 'set -e' >> prepare
  
  	case "$testfile" in
-@@ -172,7 +202,7 @@
+@@ -193,7 +193,7 @@
  						INHEADER=0
  					fi
  				else
@@ -95,7 +74,7 @@
  						sourceend
  						PART=$(($PART + 1))
  						INHEADER=1
-@@ -189,27 +219,7 @@
+@@ -210,27 +210,7 @@
  	esac
  
  	cat prepare check > $ns.check
@@ -123,7 +102,7 @@
  
  cat << "EOF" >> main.vala
  	default: assert_not_reached ();
-@@ -217,23 +227,25 @@
+@@ -238,23 +218,25 @@
  }
  EOF
  
