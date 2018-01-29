@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libepoxy
 COMPONENT_VERSION=	1.3.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		x11/library/libepoxy
 COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_PROJECT_URL=	http://xorg.freedesktop.org
@@ -29,9 +30,9 @@ COMPONENT_ARCHIVE_URL=	\
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_LICENSE=	MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PREP_ACTION =        (cd $(@D) && \
@@ -41,7 +42,7 @@ COMPONENT_PREP_ACTION =        (cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # common targets
 build:		$(BUILD_32_and_64)
