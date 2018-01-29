@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
 COMPONENT_VERSION=	5.0.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	image/gnuplot
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	gnuplot - plotting utility
@@ -40,11 +41,16 @@ COMPONENT_ARCHIVE_URL=  \
   http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	gnuplot License
 
+# When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 COMPONENT_BUILD_TARGETS = all info
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 PATH=$(USRBINDIR.64):$(PATH.gnu)
 
@@ -58,6 +64,8 @@ CONFIGURE_OPTIONS  += --without-libcerf
 CONFIGURE_OPTIONS  += --with-qt=no
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
+
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 # common targets
 build:		$(BUILD_64)
