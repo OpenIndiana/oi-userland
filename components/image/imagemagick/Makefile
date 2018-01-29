@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		6.9.9
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_MAJOR_VERSIOR=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
 COMPONENT_SUBVERSION=		21
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
@@ -43,9 +43,13 @@ COMPONENT_ARCHIVE_URL=		https://github.com/ImageMagick/ImageMagick/archive/$(COM
 COMPONENT_LICENSE = Apache 2.0 license
 COMPONENT_LICENSE_FILE = LICENSE
 
+CONFIGURE_FIX_LIBTOOL_RPATH=no
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
