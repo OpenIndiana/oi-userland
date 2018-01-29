@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= rrdtool
 
 COMPONENT_VERSION= 1.4.7
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Data analysis tool generating graphical representations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -28,12 +28,16 @@ COMPONENT_ARCHIVE_URL= \
   http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://oss.oetiker.ch/rrdtool/
 
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -fi && autoreconf -fi ) 
+
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_ENV	+=  PERL=$(PERL)
 CONFIGURE_ENV	+=  PERLCC=$(CC)

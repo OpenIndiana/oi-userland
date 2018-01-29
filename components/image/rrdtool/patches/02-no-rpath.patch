@@ -1,0 +1,20 @@
+--- rrdtool-1.4.7/bindings/Makefile.am.1	2018-01-29 14:24:36.205983461 +0000
++++ rrdtool-1.4.7/bindings/Makefile.am	2018-01-29 14:24:58.584865699 +0000
+@@ -33,7 +33,7 @@
+ 
+ # rules for building the pyton module
+ python: Makefile
+-	cd python && env BUILDLIBDIR=../../src/.libs $(PYTHON) setup.py build_ext --rpath=$(libdir) && env LIBDIR=../../src/.libs $(PYTHON) setup.py build
++	cd python && env BUILDLIBDIR=../../src/.libs $(PYTHON) setup.py build_ext && env LIBDIR=../../src/.libs $(PYTHON) setup.py build
+ 
+ # rules for building the perl module
+ perl_piped: perl-piped/Makefile
+@@ -46,7 +46,7 @@
+ 	cd perl-shared && $(MAKE)
+ 
+ perl-shared/Makefile: perl-shared/Makefile.PL Makefile
+-	cd perl-shared && $(PERL) Makefile.PL $(PERLFLAGS) $(PERL_MAKE_OPTIONS) RPATH=$(libdir)
++	cd perl-shared && $(PERL) Makefile.PL $(PERLFLAGS) $(PERL_MAKE_OPTIONS)
+ # LIBS="$(LDFLAGS) $(LIBS)" $(PERLFLAGS) $(PERL_MAKE_OPTIONS)
+ 
+ clean-local:
