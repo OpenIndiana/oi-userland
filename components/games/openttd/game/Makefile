@@ -17,7 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openttd
 COMPONENT_VERSION=	1.6.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.openttd.org/en/
 COMPONENT_FMRI=		games/openttd/openttd-core
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,11 +30,12 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	OpenTTD is an open source simulation game based upon Transport Tycoon Deluxe
 COMPONENT_CLASSIFICATION="Applications/Games"
 
+CONFIGURE_FIX_LIBTOOL_RPATH=no
 CONFIGURE_DEFAULT_DIRS=no
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --prefix-dir=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --binary-dir=bin
