@@ -16,8 +16,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cairomm
-
 COMPONENT_VERSION= 1.11.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= cairomm - C++ Wrapper for the cairo Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -32,6 +32,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+CXXFLAGS += -std=c++11
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
