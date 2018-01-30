@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gtkmm3
 
 COMPONENT_VERSION= 3.14.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= gtkmm - C++ Wrapper for the Gtk+ Library
 COMPONENT_SRC= gtkmm-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -35,7 +36,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+CXXFLAGS += -std=c++11
 
 build: $(BUILD_32_and_64)
 
