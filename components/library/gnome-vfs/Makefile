@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-vfs
 COMPONENT_VERSION= 2.24.4
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_FMRI= library/gnome/gnome-vfs
 COMPONENT_SUMMARY= GNOME virtual file system framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
