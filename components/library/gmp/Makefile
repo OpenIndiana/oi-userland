@@ -29,6 +29,7 @@ PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=					gmp
 COMPONENT_VERSION=			6.1.2
+COMPONENT_REVISION=			1
 COMPONENT_SUMMARY=			GNU Multiple Precision Bignum Library
 COMPONENT_PROJECT_URL=	http://gmplib.org/
 COMPONENT_FMRI=					library/gmp	
@@ -110,14 +111,6 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
-      $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR)" \
-					$(PROTOUSRLIBDIR)/libgmpxx.so.$(GMP_SOVERSION) ; \
-      $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR64)" \
-					$(PROTOUSRLIBDIR64)/libgmpxx.so.$(GMP_SOVERSION) ; \
-      $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR)" \
-					$(PROTOUSRLIBDIR)/libgmpxx.so.$(GMP_SOVERSION) ; \
-      $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR64)" \
-					$(PROTOUSRLIBDIR64)/libgmpxx.so.$(GMP_SOVERSION) ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
 					$(COMPONENT_DIR)/Solaris/libgmp-64.pc > $(COMPONENT_DIR)/libgmp.pc ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
