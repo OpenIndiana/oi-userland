@@ -1,0 +1,12 @@
+--- libopenusb-1.0.1/src/Makefile.am.1	2018-01-30 20:36:11.801924259 +0000
++++ libopenusb-1.0.1/src/Makefile.am	2018-01-30 20:36:54.040624240 +0000
+@@ -57,6 +57,9 @@
+ # add libopenusb.so as a dependency for sunos.so, to avoid parallel building errors
+ sunos_la_DEPENDENCIES = $(lib_LTLIBRARIES)
+ 
++install-sunos-backend: $(usblib_LTLIBRARIES)
++	$(CC) $(CFLAGS) -shared -Wl,-h -Wl,sunos.so -o .libs/sunos.so  .libs/sunos_la-sunos.o  -L.libs $(sunos_la_LIBADD)
++
+ endif
+ 
+ libopenusb_la_SOURCES = usb.c devices.c usbi.h list.c descriptors.c api.c io.c emulation.c list.h descr.h
