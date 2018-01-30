@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ptlib
 COMPONENT_VERSION= 2.10.11
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= PTLib Class Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI=library/desktop/ptlib
@@ -30,6 +30,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/gnome/sources/ptlib/2.10/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MPLv1.0
+
+CONFIGURE_FIX_LIBTOOL_RPATH = no
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
