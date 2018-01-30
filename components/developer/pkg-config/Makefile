@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg-config
 COMPONENT_VERSION=	0.29.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	developer/build/pkg-config
 COMPONENT_SUMMARY=	A tool to query library build-time information
 COMPONENT_CLASSIFICATION=	Development/System
@@ -48,6 +49,9 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=$(PATH.gnu)
 
 ASLR_MODE = $(ASLR_ENABLE)
+
+# have pkg-config strip any of the default linker search directories
+CONFIGURE_OPTIONS += --with-system-library-path='/lib:/usr/lib:/lib/${MACH64}:/usr/lib/${MACH64}:/lib/64:/usr/lib/64'
 
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
