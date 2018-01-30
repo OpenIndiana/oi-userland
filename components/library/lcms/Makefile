@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms
 COMPONENT_VERSION=      1.19
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -33,16 +33,25 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lcms
 
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
-PATCH_LEVEL = 0
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 # It seems that we have no other way to designate that we want large file support
 CFLAGS += $(CPP_LARGEFILES)
 CXXFLAGS += $(CPP_LARGEFILES)
+
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += PYTHONMODULEDIR="$(PYTHON_VENDOR_PACKAGES)"
@@ -55,6 +64,9 @@ CONFIGURE_OPTIONS  +=           --with-tiff
 CONFIGURE_OPTIONS  +=           --with-zlib
 CONFIGURE_OPTIONS  +=           --with-python
 CONFIGURE_OPTIONS  +=           --with-pic
+
+CONFIGURE_OPTIONS += --disable-rpath
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
@@ -76,3 +88,12 @@ install: $(INSTALL_32_and_64)
 
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/lcms
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
