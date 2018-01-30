@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openusb
 COMPONENT_VERSION=	1.0.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         system/library/usb/openusb
 COMPONENT_SUMMARY=      A USB device management library
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -37,21 +38,23 @@ COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/openusb/files/libopenusb/libopenusb%20$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=      LGPLv2.1, BSD 
 
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-PATCH_LEVEL = 1
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 CFLAGS+= -std=gnu89
 
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/src; $(MAKE) install-sunos-backend)
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build: $(BUILD_32_and_64)
 
