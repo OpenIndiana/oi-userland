@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= pangomm
 
 COMPONENT_VERSION= 2.28.4
-COMPONENT_REVISION=1
+COMPONENT_REVISION=2
 COMPONENT_SUMMARY= pangomm - C++ Wrapper for the pango Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -33,6 +33,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+CXXFLAGS += -std=c++11
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
