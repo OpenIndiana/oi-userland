@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	2.2.9
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -69,10 +70,14 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/gem.1-generic \
 	    > Solaris/gem.1 ; \
 	$(GSED) -e "s/RUBY_VER/$(RUBY_VER)/" \
-	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/ruby.1.sedscript \
+	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" \
+	    Solaris/ruby.1.sedscript \
 	    > Solaris/ruby.1.sedscript.mod ; \
 	$(GSED) -e  "s/RUBY_VER/$(RUBY_VER)/" \
-	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/rbconfig.sedscript \
+	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" \
+	    -e "s,%%CC%%,$(CC)," \
+	    -e "s,%%CXX%%,$(CXX)," \
+	    Solaris/rbconfig.sedscript \
 	    > Solaris/rbconfig.sedscript.mod ; \
 	$(GSED) -i -f Solaris/ruby.1.sedscript.mod \
 	    $(PROTORUBYDIR)/share/man/man1/ruby.1 ; \
