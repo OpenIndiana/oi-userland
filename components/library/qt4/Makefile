@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		qt
 COMPONENT_FMRI=		library/qt4
 COMPONENT_VERSION=	4.8.7
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_VERSION_MJR=	4.8
 COMPONENT_LICENSE=	QT4
 COMPONENT_LICENSE_FILE=	qt4.license
@@ -81,7 +81,7 @@ COMPONENT_POST_INSTALL_ACTION.32= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSI
 	cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR); \
 	mv tests tests.32 ; \
 	find $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/tests.32 -type f | \
-		xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "/usr/lib:/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib"')
+		xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib"')
 	
 
 COMPONENT_POST_INSTALL_ACTION.64= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/mkspecs ; \
@@ -91,7 +91,7 @@ COMPONENT_POST_INSTALL_ACTION.64= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSI
 	mv tests.32 tests; \
 	mv tests.64 tests/$(MACH64); \
 	find $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/tests/$(MACH64) -type f | \
-		xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "/usr/lib/64:/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib/$(MACH64)"')
+		xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib/$(MACH64)"')
 
 COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
