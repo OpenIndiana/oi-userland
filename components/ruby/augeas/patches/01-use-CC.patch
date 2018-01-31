@@ -1,0 +1,14 @@
+--- ruby-augeas-0.5.0/ext/augeas/extconf.rb.~1~	2018-01-31 20:55:16.911617952 +0000
++++ ruby-augeas-0.5.0/ext/augeas/extconf.rb	2018-01-31 20:58:00.300392901 +0000
+@@ -23,6 +23,11 @@
+
+ extension_name = '_augeas'
+
++RbConfig::CONFIG['CC'] = ENV['CC'] if ENV['CC']
++RbConfig::MAKEFILE_CONFIG['CC'] = ENV['CC'] if ENV['CC']
++
++print RbConfig::CONFIG['CC']
++
+ unless pkg_config("augeas")
+     raise "augeas-devel not installed"
+ end

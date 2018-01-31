@@ -45,6 +45,8 @@ COMPONENT_LICENSE_FILE=	augeas.license
 
 TPNO=                   21871
 
+GCC_VERSION = 6
+
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
     $(GEM) spec $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
@@ -53,6 +55,13 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/gem.mk
 include $(WS_MAKE_RULES)/ruby.mk
+
+LD_OPTIONS=
+COMMON_ENV += LD_OPTIONS="-R$(GCC_ROOT)/lib"
+COMMON_ENV += CC=$(CC)
+
+COMPONENT_BUILD_ENV += $(COMMON_ENV)
+COMPONENT_INSTALL_ENV += $(COMMON_ENV)
 
 COMPONENT_TEST_CMD=	/usr/bin/rake
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)

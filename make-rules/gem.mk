@@ -34,7 +34,7 @@ GEMSPEC=$(COMPONENT_NAME).gemspec
 # Some gems projects have to be built using rake
 # Allow GEM build/install commands to be overwritten
 # to account for possible differences
-GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEM_BUILD_ARGS) $(GEMSPEC))
+GEM_BUILD_ACTION=(cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) $(GEM) build $(GEM_BUILD_ARGS) $(GEMSPEC))
 
 # Build install args in a more readable fashion
 ifeq ($(firstword $(subst .,$(space),$(RUBY_VERSION))),2)
@@ -49,7 +49,7 @@ GEM_INSTALL_ARGS += --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin
 # cd into build directory
 # gem 2.2.3 uses .gem from the cwd ignoring command line .gem file
 # gem 1.8.23.2 uses command line .gem file OR .gem from cwd
-GEM_INSTALL_ACTION= (cd $(@D); $(GEM) install $(GEM_INSTALL_ARGS) $(COMPONENT_NAME))
+GEM_INSTALL_ACTION= (cd $(@D); $(ENV) $(COMPONENT_INSTALL_ENV) $(GEM) install $(GEM_INSTALL_ARGS) $(COMPONENT_NAME))
 
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
