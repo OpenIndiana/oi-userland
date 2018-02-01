@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-gcc
 COMPONENT_VERSION=	4.4.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	GCC - 4.4.4 compilers patched for illumos
 COMPONENT_SRC=		illumos-gcc-0f5ed4c
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -66,6 +66,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+GCC_VERSION=4.9
+
 CC_BITS=
 CFLAGS=		-g -O2
 CONFIG_SHELL=	/bin/sh
@@ -86,8 +88,6 @@ CONFIGURE_OPTIONS +=	--with-ld=/usr/bin/ld
 CONFIGURE_OPTIONS +=	--without-gnu-ld
 CONFIGURE_OPTIONS +=	--enable-languages="c,c++,objc"
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
-CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
 CONFIGURE_OPTIONS +=	--with-pkgversion="Illumos $(ILLUMOS_VERSION)"
 CONFIGURE_OPTIONS +=	--with-bugurl="http://github.com/illumos/gcc/issues"
 
@@ -107,6 +107,10 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
+# Build dependencies
+REQUIRED_PACKAGES += developer/gcc-49
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
