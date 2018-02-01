@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xkeyboard-config
-COMPONENT_VERSION=        2.22
+COMPONENT_VERSION=        2.23.1
 COMPONENT_SUMMARY=        X Keyboard Configuration Database
 COMPONENT_PROJECT_URL=    https://freedesktop.org/wiki/Software/XKeyboardConfig/
 COMPONENT_FMRI=           x11/keyboard/data-xkb
@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE=	  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   https://www.x.org/releases/individual/data/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:deaec9989fbc443358b43864437b7b6d39caff07890a4a8055105ce9fcaa59bd
+  sha256:2a4bbc05fea22151b7a7c8ac2655d549aa9b0486bedc7f5a68c72716343b02f3
 COMPONENT_LICENSE=        MIT
 
 include $(WS_MAKE_RULES)/prep.mk
