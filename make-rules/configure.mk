@@ -81,6 +81,15 @@ CONFIGURE_ENV += FCFLAGS="$(FCFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
+# Hack to avoid libtool hardcoding 64-bit runpaths in binaries.
+CONFIGURE_FIX_LIBTOOL_RPATH?=yes
+
+ifeq ($(CONFIGURE_FIX_LIBTOOL_RPATH),yes)
+CONFIGURE_OPTIONS += --disable-rpath
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+CONFIGURE_ENV.64 += lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
+endif
+
 # Rewrite absolute source-code paths into relative for ccache, so that any
 # workspace with a shared CCACHE_DIR can benefit when compiling a component
 ifneq ($(strip $(CCACHE)),)
