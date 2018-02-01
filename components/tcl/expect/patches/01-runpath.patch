@@ -1,0 +1,20 @@
+--- expect5.45/tclconfig/tcl.m4.orig	2018-02-01 20:11:56.341496746 +0000
++++ expect5.45/tclconfig/tcl.m4	2018-02-01 20:13:23.347239827 +0000
+@@ -1911,8 +1911,6 @@
+ 	    SHLIB_SUFFIX=".so"
+ 	    AS_IF([test "$GCC" = yes], [
+ 		SHLIB_LD='${CC} -shared'
+-		CC_SEARCH_FLAGS='-Wl,-R,${LIB_RUNTIME_DIR}'
+-		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
+ 		AS_IF([test "$do64bit_ok" = yes], [
+ 		    AS_IF([test "$arch" = "sparcv9 sparc"], [
+ 			# We need to specify -static-libgcc or we need to
+@@ -1938,8 +1936,6 @@
+ 		    *)
+ 			SHLIB_LD='/usr/ccs/bin/ld -G -z text';;
+ 		esac
+-		CC_SEARCH_FLAGS='-Wl,-R,${LIB_RUNTIME_DIR}'
+-		LD_SEARCH_FLAGS='-R ${LIB_RUNTIME_DIR}'
+ 	    ])
+ 	    ;;
+     esac
