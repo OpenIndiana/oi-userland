@@ -1,0 +1,20 @@
+--- illumos-gcc-0f5ed4c/configure.orig	2018-02-02 15:07:57.063210914 +0000
++++ illumos-gcc-0f5ed4c/configure	2018-02-02 15:15:02.003165503 +0000
+@@ -4542,7 +4542,7 @@
+   gmplibs="-L$with_mpfr_lib $gmplibs"
+ fi
+ if test "x$with_mpfr$with_mpfr_include$with_mpfr_lib" = x && test -d ${srcdir}/mpfr; then
+-  gmplibs='-L$$r/$(HOST_SUBDIR)/mpfr/.libs -L$$r/$(HOST_SUBDIR)/mpfr/_libs '"$gmplibs"
++  gmplibs='$$r/$(HOST_SUBDIR)/mpfr/src/.libs/libmpfr.a '
+   gmpinc='-I$$r/$(HOST_SUBDIR)/mpfr/src -I$$s/mpfr/src '"$gmpinc"
+   # Do not test the mpfr version.  Assume that it is sufficient, since
+   # it is in the source tree, and the library has not been built yet
+@@ -4594,7 +4594,7 @@
+   gmplibs="-L$with_gmp_lib $gmplibs"
+ fi
+ if test "x$with_gmp$with_gmp_include$with_gmp_lib" = x && test -d ${srcdir}/gmp; then
+-  gmplibs='-L$$r/$(HOST_SUBDIR)/gmp/.libs -L$$r/$(HOST_SUBDIR)/gmp/_libs '"$gmplibs"
++  gmplibs="$gmplibs"'$$r/$(HOST_SUBDIR)/gmp/.libs/libgmp.a '
+   gmpinc='-I$$r/$(HOST_SUBDIR)/gmp -I$$s/gmp '"$gmpinc"
+   extra_mpfr_configure_flags='--with-gmp-build=$$r/$(HOST_SUBDIR)/gmp'
+   # Do not test the gmp version.  Assume that it is sufficient, since
