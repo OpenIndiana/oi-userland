@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libtheora
 COMPONENT_VERSION= 1.1.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Theora video compression codec
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -37,6 +37,10 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+# Code in decode.c looks crappy and GCC warns about it.
+# This seeems to disable some loop optimizations and fixes crash in oc_init()
+gcc_OPT = -O2 
+
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --disable-static
@@ -47,6 +51,9 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libogg
