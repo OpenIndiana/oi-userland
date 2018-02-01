@@ -1,27 +1,21 @@
-Source:
-Internal
-Info:
 This patch is created so that objcopy will support additional targets.
-Status:
-Submitted upstream. Emailed binutils@sourceware.org and submitted
-bug at https://sourceware.org/bugzilla/show_bug.cgi?id=19501.  Fix
-is in version 2.26.
+Upstream bug https://sourceware.org/bugzilla/show_bug.cgi?id=19501, "Fixed in version 2.26." doesn't contain all of the targets originally submitted.
 
---- a/bfd/config.bfd	2015-12-21 14:44:52.467611718 -0800
-+++ b/bfd/config.bfd	2015-12-21 14:48:28.692616591 -0800
-@@ -526,13 +526,13 @@
+--- a/bfd/config.bfd	Mon Jul 10 04:54:41 2017
++++ b/bfd/config.bfd	Sat Dec  9 14:55:19 2017
+@@ -639,13 +639,13 @@
    i[3-7]86-*-solaris2*)
      targ_defvec=i386_elf32_sol2_vec
-     targ_selvecs="i386_coff_vec"
--    targ64_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec"
-+    targ64_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec i386_pe_vec x86_64_pe_vec x86_64_pei_vec i386_pei_vec"
+     targ_selvecs="iamcu_elf32_vec i386_coff_vec i386_pei_vec"
+-    targ64_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec x86_64_pei_vec"
++    targ64_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec x86_64_pei_vec i386_pei_vec x86_64_pe_vec i386_pe_vec"
      want64=true
      ;;
  #ifdef BFD64
    x86_64-*-solaris2*)
      targ_defvec=i386_elf32_sol2_vec
--    targ_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec i386_coff_vec"
-+    targ_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec i386_coff_vec i386_pe_vec x86_64_pe_vec x86_64_pei_vec i386_pei_vec"
+-    targ_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec iamcu_elf32_vec i386_coff_vec i386_pei_vec x86_64_pei_vec"
++    targ_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec iamcu_elf32_vec i386_coff_vec x86_64_pei_vec i386_pei_vec x86_64_pe_vec i386_pe_vec"
      want64=true
      ;;
  #endif

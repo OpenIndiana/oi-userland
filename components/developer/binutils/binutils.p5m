@@ -19,192 +19,569 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018 Norm Jacobs
 #
 <transform file path=usr.*/man/.*$ -> default mangler.man.stability uncommitted>
 <transform link path=usr/bin/g.* -> default facet.compat.gnulinks true>
 <transform link path=usr/share/man/man1/g.* -> default facet.compat.gnulinks true>
-
 set name=pkg.fmri \
     value=pkg:/developer/gnu-binutils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="binutils - GNU binutils"
 set name=com.oracle.info.description value="GNU binutils"
 set name=com.oracle.info.tpno value=7483
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/GNU
+set name=info.classification value=org.opensolaris.category.2008:Development/GNU
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2008/656
+set name=org.opensolaris.arc-caseid value=PSARC/2008/656
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-
-file path=usr/gnu/include/ansidecl.h
-file path=usr/gnu/include/bfd.h
-file path=usr/gnu/include/bfdlink.h
-file path=usr/gnu/include/dis-asm.h
-file path=usr/gnu/include/symcat.h
+link path=usr/bin/gaddr2line target=../gnu/bin/addr2line
+link path=usr/bin/gar target=../gnu/bin/ar
+link path=usr/bin/gas target=../gnu/bin/as
+link path=usr/bin/gc++filt target=../gnu/bin/c++filt
+link path=usr/bin/gelfedit target=../gnu/bin/elfedit
+link path=usr/bin/ggprof target=../gnu/bin/gprof
+link path=usr/bin/gld target=../gnu/bin/ld
+link path=usr/bin/gnm target=../gnu/bin/nm
+link path=usr/bin/gobjcopy target=../gnu/bin/objcopy
+link path=usr/bin/gobjdump target=../gnu/bin/objdump
+link path=usr/bin/granlib target=../gnu/bin/ranlib
+link path=usr/bin/greadelf target=../gnu/bin/readelf
+link path=usr/bin/gsize target=../gnu/bin/size
+link path=usr/bin/gstrings target=../gnu/bin/strings
+link path=usr/bin/gstrip target=../gnu/bin/gstrip
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/ar target=../../bin/ar
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/as target=../../bin/as
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/gstrip target=../../bin/gstrip
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/ld target=../../bin/ld
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/nm target=../../bin/nm
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/objcopy target=../../bin/objcopy
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/objdump target=../../bin/objdump
+hardlink path=usr/gnu/$(GNU_ARCH)/bin/ranlib target=../../bin/ranlib
 # SPARC linker scripts
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.x variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xbn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xd variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xdc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xdw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xr variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xs variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xsc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xsw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xu variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc.xw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.x variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xbn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xd variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xdc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xdw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xr variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xs variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xsc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xsw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xu variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf32_sparc_sol2.xw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.x variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xbn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xd variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xdc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xdw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xr variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xs variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xsc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xsw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xu variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc.xw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.x variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xbn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xd variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xdc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xdw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xn variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xr variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xs variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xsc variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xsw variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xu variant.arch=sparc
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf64_sparc_sol2.xw variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.x \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xbn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xd \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xdc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xdce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xde \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xdw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xdwe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xr \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xs \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xsc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xsce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xse \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xsw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xswe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xu \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc.xwe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.x \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xbn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xd \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xdc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xdce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xde \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xdw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xdwe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xr \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xs \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xsc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xsce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xse \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xsw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xswe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xu \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf32_sparc_sol2.xwe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.x \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xbn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xd \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xdc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xdce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xde \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xdw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xdwe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xr \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xs \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xsc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xsce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xse \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xsw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xswe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xu \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc.xwe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.x \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xbn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xd \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xdc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xdce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xde \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xdw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xdwe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xn \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xr \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xs \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xsc \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xsce \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xse \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xsw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xswe \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xu \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xw \
+    variant.arch=sparc
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf64_sparc_sol2.xwe \
+    variant.arch=sparc
 # Intel linker scripts
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.x variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xbn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xd variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xdc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xdw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xr variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xs variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xsc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xsw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xu variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386.xw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.x variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xbn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xr variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xs variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xsc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xsw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xu variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_ldso.xw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.x variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xbn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xr variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xs variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xsc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xsw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xu variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_i386_sol2.xw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.x variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xbn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xd variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xdc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xdw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xr variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xs variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xsc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xsw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xu variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_k1om.xw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.x variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xbn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xd variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xdc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xdw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xr variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xs variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xsc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xsw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xu variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_l1om.xw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.x variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xbn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xd variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xdc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xdw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xr variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xs variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xsc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xsw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xu variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64.xw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.x variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xbn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xd variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xdc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xdw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xn variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xr variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xs variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xsc variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xsw variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xu variant.arch=i386
-file path=usr/gnu/$(GNU_ARCH)/lib/ldscripts/elf_x86_64_sol2.xw variant.arch=i386
-
-file path=usr/gnu/bin/addr2line
-file path=usr/gnu/bin/ar
-file path=usr/gnu/bin/as
-file path=usr/gnu/bin/c++filt
-file path=usr/gnu/bin/elfedit
-file path=usr/gnu/bin/gprof
-file path=usr/gnu/bin/ld
-file path=usr/gnu/bin/nm
-file path=usr/gnu/bin/objcopy
-file path=usr/gnu/bin/objdump
-file path=usr/gnu/bin/ranlib
-file path=usr/gnu/bin/readelf
-file path=usr/gnu/bin/size
-file path=usr/gnu/bin/strings
-file usr/gnu/bin/strip path=usr/gnu/bin/gstrip
-
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xd \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xdc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xdce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xde \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xdw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xdwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386.xwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_ldso.xwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xd \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xdc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xdce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xde \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xdw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xdwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_i386_sol2.xwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xd \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xdc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xdce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xde \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xdw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xdwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_iamcu.xwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xd \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xdc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xdce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xde \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xdw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xdwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_k1om.xwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xd \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xdc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xdce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xde \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xdw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xdwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_l1om.xwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xd \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xdc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xdce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xde \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xdw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xdwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64.xwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.x \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xbn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xd \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xdc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xdce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xde \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xdw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xdwe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xn \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xr \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xs \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xsc \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xsce \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xse \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xsw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xswe \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xu \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xw \
+    variant.arch=i386
+file path=usr/gnu/$(GNU_TARGET_TRIPLE)/lib/ldscripts/elf_x86_64_sol2.xwe \
+    variant.arch=i386
 file path=usr/gnu/bin/$(MACH64)/addr2line
 file path=usr/gnu/bin/$(MACH64)/ar
 file path=usr/gnu/bin/$(MACH64)/as
 file path=usr/gnu/bin/$(MACH64)/c++filt
 file path=usr/gnu/bin/$(MACH64)/elfedit
 file path=usr/gnu/bin/$(MACH64)/gprof
+file usr/gnu/bin/$(MACH64)/strip path=usr/gnu/bin/$(MACH64)/gstrip
 file path=usr/gnu/bin/$(MACH64)/ld
 file path=usr/gnu/bin/$(MACH64)/nm
 file path=usr/gnu/bin/$(MACH64)/objcopy
@@ -213,17 +590,43 @@ file path=usr/gnu/bin/$(MACH64)/ranlib
 file path=usr/gnu/bin/$(MACH64)/readelf
 file path=usr/gnu/bin/$(MACH64)/size
 file path=usr/gnu/bin/$(MACH64)/strings
-file usr/gnu/bin/$(MACH64)/strip path=usr/gnu/bin/$(MACH64)/gstrip
+file path=usr/gnu/bin/addr2line
+file path=usr/gnu/bin/ar
+file path=usr/gnu/bin/as
+file path=usr/gnu/bin/c++filt
+file path=usr/gnu/bin/elfedit
+file path=usr/gnu/bin/gprof
+file usr/gnu/bin/strip path=usr/gnu/bin/gstrip
+file path=usr/gnu/bin/ld
+file path=usr/gnu/bin/nm
+file path=usr/gnu/bin/objcopy
+file path=usr/gnu/bin/objdump
+file path=usr/gnu/bin/ranlib
+file path=usr/gnu/bin/readelf
+file path=usr/gnu/bin/size
+file path=usr/gnu/bin/strings
 
+
+file path=usr/gnu/include/ansidecl.h
+file path=usr/gnu/include/bfd.h
+file path=usr/gnu/include/bfdlink.h
+file path=usr/gnu/include/dis-asm.h
+file path=usr/gnu/include/symcat.h
+file path=usr/gnu/lib/$(MACH64)/libbfd.a
+file path=usr/gnu/lib/$(MACH64)/libopcodes.a
+file path=usr/gnu/lib/libbfd.a
+file path=usr/gnu/lib/libopcodes.a
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/ld.mo
+file path=usr/gnu/share/locale/ca/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/de/LC_MESSAGES/gprof.mo
+file path=usr/gnu/share/locale/de/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/de/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/eo/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/es/LC_MESSAGES/bfd.mo
@@ -247,6 +650,7 @@ file path=usr/gnu/share/locale/fr/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/ga/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/ga/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/ga/LC_MESSAGES/opcodes.mo
+file path=usr/gnu/share/locale/hr/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/hr/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/hu/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/id/LC_MESSAGES/bfd.mo
@@ -268,6 +672,7 @@ file path=usr/gnu/share/locale/ms/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/nl/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/nl/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/gprof.mo
+file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/binutils.mo
@@ -277,15 +682,20 @@ file path=usr/gnu/share/locale/ru/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/ru/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/ru/LC_MESSAGES/gas.mo
 file path=usr/gnu/share/locale/ru/LC_MESSAGES/gprof.mo
+file path=usr/gnu/share/locale/ru/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/rw/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/rw/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/rw/LC_MESSAGES/gas.mo
 file path=usr/gnu/share/locale/rw/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/sk/LC_MESSAGES/binutils.mo
+file path=usr/gnu/share/locale/sr/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/sr/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/sr/LC_MESSAGES/gprof.mo
+file path=usr/gnu/share/locale/sr/LC_MESSAGES/ld.mo
+file path=usr/gnu/share/locale/sr/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/sv/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/sv/LC_MESSAGES/binutils.mo
+file path=usr/gnu/share/locale/sv/LC_MESSAGES/gas.mo
 file path=usr/gnu/share/locale/sv/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/sv/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/sv/LC_MESSAGES/opcodes.mo
@@ -308,17 +718,19 @@ file path=usr/gnu/share/locale/vi/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/vi/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/binutils.mo
+file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/gas.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/zh_TW/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/zh_TW/LC_MESSAGES/ld.mo
-
 file path=usr/gnu/share/man/man1/addr2line.1
 file path=usr/gnu/share/man/man1/ar.1
 file path=usr/gnu/share/man/man1/as.1
 file path=usr/gnu/share/man/man1/c++filt.1
+file path=usr/gnu/share/man/man1/dlltool.1 variant.arch=drop
 file path=usr/gnu/share/man/man1/elfedit.1
 file path=usr/gnu/share/man/man1/gprof.1
+file usr/gnu/share/man/man1/strip.1 path=usr/gnu/share/man/man1/gstrip.1
 file path=usr/gnu/share/man/man1/ld.1
 file path=usr/gnu/share/man/man1/nlmconv.1
 file path=usr/gnu/share/man/man1/nm.1
@@ -328,38 +740,8 @@ file path=usr/gnu/share/man/man1/ranlib.1
 file path=usr/gnu/share/man/man1/readelf.1
 file path=usr/gnu/share/man/man1/size.1
 file path=usr/gnu/share/man/man1/strings.1
-file usr/gnu/share/man/man1/strip.1 path=usr/gnu/share/man/man1/gstrip.1
-file path=usr/share/info/as.info
-file path=usr/share/info/bfd.info
-file path=usr/share/info/binutils.info
-file path=usr/share/info/gprof.info
-file path=usr/share/info/ld.info
-
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/ar target=../../bin/ar
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/as target=../../bin/as
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/ld target=../../bin/ld
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/nm target=../../bin/nm
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/objcopy target=../../bin/objcopy
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/objdump target=../../bin/objdump
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/ranlib target=../../bin/ranlib
-hardlink path=usr/gnu/$(GNU_ARCH)/bin/gstrip target=../../bin/gstrip
-
-link path=usr/bin/gaddr2line target=../gnu/bin/addr2line
-link path=usr/bin/gar target=../gnu/bin/ar
-link path=usr/bin/gas target=../gnu/bin/as
-link path=usr/bin/gc++filt target=../gnu/bin/c++filt
-link path=usr/bin/gelfedit target=../gnu/bin/elfedit
-link path=usr/bin/ggprof target=../gnu/bin/gprof
-link path=usr/bin/gld target=../gnu/bin/ld
-link path=usr/bin/gnm target=../gnu/bin/nm
-link path=usr/bin/gobjcopy target=../gnu/bin/objcopy
-link path=usr/bin/gobjdump target=../gnu/bin/objdump
-link path=usr/bin/granlib target=../gnu/bin/ranlib
-link path=usr/bin/greadelf target=../gnu/bin/readelf
-link path=usr/bin/gsize target=../gnu/bin/size
-link path=usr/bin/gstrings target=../gnu/bin/strings
-link path=usr/bin/gstrip target=../gnu/bin/gstrip
-
+file path=usr/gnu/share/man/man1/windmc.1 variant.arch=drop
+file path=usr/gnu/share/man/man1/windres.1 variant.arch=drop
 link path=usr/sfw/bin/gaddr2line target=../../gnu/bin/addr2line
 link path=usr/sfw/bin/gar target=../../gnu/bin/ar
 link path=usr/sfw/bin/gas target=../../gnu/bin/as
@@ -375,25 +757,24 @@ link path=usr/sfw/bin/greadelf target=../../gnu/bin/readelf
 link path=usr/sfw/bin/gsize target=../../gnu/bin/size
 link path=usr/sfw/bin/gstrings target=../../gnu/bin/strings
 link path=usr/sfw/bin/gstrip target=../../gnu/bin/gstrip
-
+file path=usr/share/info/as.info
+file path=usr/share/info/bfd.info
+file path=usr/share/info/binutils.info
+file path=usr/share/info/gprof.info
+file path=usr/share/info/ld.info
 link path=usr/share/man/man1/gaddr2line.1 \
     target=../../../gnu/share/man/man1/addr2line.1
-link path=usr/share/man/man1/gar.1 \
-    target=../../../gnu/share/man/man1/ar.1
-link path=usr/share/man/man1/gas.1 \
-    target=../../../gnu/share/man/man1/as.1
+link path=usr/share/man/man1/gar.1 target=../../../gnu/share/man/man1/ar.1
+link path=usr/share/man/man1/gas.1 target=../../../gnu/share/man/man1/as.1
 link path=usr/share/man/man1/gc++filt.1 \
     target=../../../gnu/share/man/man1/c++filt.1
 link path=usr/share/man/man1/gelfedit.1 \
     target=../../../gnu/share/man/man1/elfedit.1
-link path=usr/share/man/man1/ggprof.1 \
-    target=../../../gnu/share/man/man1/gprof.1
-link path=usr/share/man/man1/gld.1 \
-    target=../../../gnu/share/man/man1/ld.1
+link path=usr/share/man/man1/ggprof.1 target=../../../gnu/share/man/man1/gprof.1
+link path=usr/share/man/man1/gld.1 target=../../../gnu/share/man/man1/ld.1
 link path=usr/share/man/man1/gnlmconv.1 \
     target=../../../gnu/share/man/man1/nlmconv.1
-link path=usr/share/man/man1/gnm.1 \
-    target=../../../gnu/share/man/man1/nm.1
+link path=usr/share/man/man1/gnm.1 target=../../../gnu/share/man/man1/nm.1
 link path=usr/share/man/man1/gobjcopy.1 \
     target=../../../gnu/share/man/man1/objcopy.1
 link path=usr/share/man/man1/gobjdump.1 \
@@ -402,15 +783,11 @@ link path=usr/share/man/man1/granlib.1 \
     target=../../../gnu/share/man/man1/ranlib.1
 link path=usr/share/man/man1/greadelf.1 \
     target=../../../gnu/share/man/man1/readelf.1
-link path=usr/share/man/man1/gsize.1 \
-    target=../../../gnu/share/man/man1/size.1
+link path=usr/share/man/man1/gsize.1 target=../../../gnu/share/man/man1/size.1
 link path=usr/share/man/man1/gstrings.1 \
     target=../../../gnu/share/man/man1/strings.1
 link path=usr/share/man/man1/gstrip.1 \
     target=../../../gnu/share/man/man1/gstrip.1
-
-legacy pkg=SUNWbinutils \
-    desc="GNU binutils - Binary file utilities" \
+legacy pkg=SUNWbinutils desc="GNU binutils - Binary file utilities" \
     name="binutils - GNU binutils"
-
 license binutils.license license="GPLv3, FDLv1.3"
