@@ -19,35 +19,30 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018 Norm Jacobs
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.25.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.30
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
+	sha256:efeade848067e9a03f1918b1da0d37aaffa0b0127a06b5e9236229851d9d0c09
 COMPONENT_BUGDB=	utility/gnu-binutils
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-PARCH =		$(MACH:i386=i386-pc)
-GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
+_GNU_TARGET_TRIPLE =	$(MACH:i386=i386-pc)
+GNU_TARGET_TRIPLE =	$(_GNU_TARGET_TRIPLE:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 
-PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
-
-CFLAGS += -std=c99 $(CPP_XPG6MODE)
-CFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
-CXXFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
-CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
+PKG_MACROS +=	GNU_TARGET_TRIPLE="$(GNU_TARGET_TRIPLE)"
 
 CONFIGURE_PREFIX =	/usr/gnu
 
@@ -59,8 +54,8 @@ CONFIGURE_OPTIONS +=    --enable-plugins=no
 CONFIGURE_OPTIONS +=    --enable-nls
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
 CONFIGURE_OPTIONS +=    --enable-largefile=yes
-
-CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS +=	--with-system-zlib
+CONFIGURE_OPTIONS +=    --target=$(GNU_TARGET_TRIPLE)
 
 $(INSTALL_32):	$(INSTALL_64)
 
