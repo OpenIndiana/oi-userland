@@ -1,0 +1,15 @@
+closed libdemangle from Studio is used in breakpad crash reporter, which we disable,
+but libxul is linked to it in any case
+--- firefox-52.6.0esr/toolkit/library/moz.build.1	Thu Feb  1 20:35:39 2018
++++ firefox-52.6.0esr/toolkit/library/moz.build	Thu Feb  1 20:37:21 2018
+@@ -324,10 +324,6 @@
+     OS_LIBS += [
+         'elf',
+     ]
+-    if CONFIG['GNU_CC']:
+-        OS_LIBS += [
+-            'demangle',
+-        ]
+ 
+ if CONFIG['OS_ARCH'] == 'FreeBSD':
+     OS_LIBS += [
