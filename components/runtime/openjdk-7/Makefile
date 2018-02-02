@@ -19,6 +19,7 @@ COMPONENT_NAME= oppenjdk-7
 
 OPENJDK_BUILD_NUMBER=141
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20170813.tar.xz
@@ -47,6 +48,8 @@ CLEAN_PATHS += $(RHINO)
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+
 PATCH_LEVEL=0
 
 COMPONENT_POST_UNPACK_ACTION += rm -fr $(RHINO) cacerts cacerts.out;
@@ -71,6 +74,8 @@ endif
 
 
 COMPONENT_ENV+=      LANG=C
+COMPONENT_ENV+=      EXTRA_CFLAGS="-std=gnu++98 -Wno-error -fno-lifetime-dse -fno-delete-null-pointer-checks"
+COMPONENT_ENV+=      EXTRA_CPPFLAGS="-std=gnu++98 -Wno-error -fno-lifetime-dse -fno-delete-null-pointer-checks"
 COMPONENT_ENV+=      ALT_BOOTDIR=$(JAVA7_HOME)
 COMPONENT_ENV+=      ALT_OBJCOPY=/usr/gnu/bin/objcopy
 COMPONENT_ENV+=      ALT_COMPILER_PATH=$(GCC_ROOT)/bin
@@ -124,6 +129,7 @@ install: $(INSTALL_32_and_64)
 
 .NOTPARALLEL:
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/java/openjdk7
 REQUIRED_PACKAGES += library/zlib
