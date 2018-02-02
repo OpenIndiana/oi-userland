@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
 COMPONENT_VERSION= 	52.6.0esr
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 IPS_COMPONENT_VERSION= 	52.6.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -89,7 +89,7 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
           $(PROTO_DIR)/usr/lib/firefox/*.so \
           $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell \
           $(PROTO_DIR)/usr/lib/firefox/plugin-container; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
         $$file ;\
     done ; \
     for file in $(PROTO_DIR)/usr/lib/firefox/sdk/bin/*.py; do \
