@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
 COMPONENT_VERSION=      7.54.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
