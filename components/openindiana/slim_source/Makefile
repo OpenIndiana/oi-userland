@@ -33,7 +33,7 @@ PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/nightly-nd/repo.redist
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 COMPONENT_ENV = CC=$(CC)
 COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
@@ -109,3 +109,6 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 .NOTPARALLEL:
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
+
+# Build dependencies
+REQUIRED_PACKAGES += system/library/install/libinstzones
