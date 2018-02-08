@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		install-types
 COMPONENT_VERSION=	0.1
-COMPONENT_REVISION=	28
+COMPONENT_REVISION=	29
 COMPONENT_SUMMARY=	A meta-packages that install common applications for ISOs
 
 include $(WS_MAKE_RULES)/ips.mk
