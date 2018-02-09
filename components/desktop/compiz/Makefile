@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz
 COMPONENT_VERSION=	0.8.10
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=		desktop/compiz
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	OpenGL compositing window manager
@@ -45,7 +45,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         intltoolize )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--enable-gnome
+CONFIGURE_OPTIONS+=	--disable-gconf
+CONFIGURE_OPTIONS+=	--disable-gnome
+CONFIGURE_OPTIONS+=	--disable-metacity
 CONFIGURE_OPTIONS+=	--disable-kde
 CONFIGURE_OPTIONS+=	--disable-kde4
 CONFIGURE_OPTIONS+=	--disable-kconfig
@@ -61,9 +63,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += gnome/window-manager/metacity
+# Auto-generated dependencies
+REQUIRED_PACKAGES += desktop/mate/marco
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
@@ -78,6 +79,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu
 REQUIRED_PACKAGES += x11/library/libice
