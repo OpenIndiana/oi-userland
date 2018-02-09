@@ -19,6 +19,7 @@ COMPONENT_NAME=		libmatemixer
 COMPONENT_MJR_VERSION=  1.18
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Mixer library for MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,6 +44,7 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --enable-pulseaudio
+CONFIGURE_OPTIONS+= --enable-oss
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
@@ -57,5 +59,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Build requirements
+REQUIRED_PACKAGES += system/header/header-audio
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
