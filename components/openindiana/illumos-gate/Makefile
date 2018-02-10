@@ -28,9 +28,9 @@ FETCH=$(WS_TOOLS)/userland-fetch
 DEBUG=no
 
 ifeq ($(DEBUG),yes)
-NIGHTLY_OPTIONS=-nCDmprt
+NIGHTLY_OPTIONS=-nCDmpt
 else
-NIGHTLY_OPTIONS=-nCmprt
+NIGHTLY_OPTIONS=-nCmpt
 endif
 ONNV_BUILDNUM=$(BRANCHID)
 
