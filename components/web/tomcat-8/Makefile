@@ -67,9 +67,8 @@ COMPONENT_PRE_BUILD_ACTION= \
 COMPONENT_PRE_BUILD_ACTION+= \
 	($(MKDIR) $(@D)/ECJ/scripts/binary/META-INF; cd $(@D)/ECJ ; \
 	    $(JAVA_HOME)/bin/jar xf $(ARCHIVES_LOCATION)/$(COMPONENT_ARCHIVE_1); \
-	    $(GPATCH) $(GPATCH_FLAGS) < $(COMPONENT_DIR)/patches/ECJ.ecj-patch; \
 	    $(CP) META-INF/MANIFEST.MF scripts/binary/META-INF/; \
-	    JAVA_HOME="$(JAVA_HOME)" LC_ALL="en_US.UTF-8" $(ANT) )
+	    JAVA_HOME="$(JAVA_HOME)" LC_ALL="en_US.UTF-8" JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8" $(ANT) )
 
 # Create configuration backup archive for custom user's deployments.
 COMPONENT_POST_BUILD_ACTION= \
@@ -84,5 +83,9 @@ install: build
 
 test:	$(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/java/openjdk7
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/ant
+REQUIRED_PACKAGES += developer/java/openjdk8
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/java/openjdk8
