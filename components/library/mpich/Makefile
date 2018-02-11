@@ -93,9 +93,13 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/modulefile.32 $(BUILD_DIR)/modulefile
 
 test:	$(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += system/header/header-picl
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
