@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= audacity
 COMPONENT_VERSION= 2.1.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Cross-platform audio software for recording and editing
 COMPONENT_SRC= audacity-Audacity-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= Audacity-$(COMPONENT_VERSION).zip
@@ -71,6 +72,7 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+REQUIRED_PACKAGES += shell/which
 REQUIRED_PACKAGES += video/ffmpeg
 
 REQUIRED_PACKAGES += audio/twolame
