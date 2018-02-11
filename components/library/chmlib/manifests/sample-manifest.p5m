@@ -10,25 +10,23 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2017 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/library/desktop/chmlib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license chmlib.license license="LGPLv2.1"
-
-# Generated section:
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/chm_lib.h
 file path=usr/include/lzx.h
 link path=usr/lib/$(MACH64)/libchm.so target=libchm.so.0.0.0
 link path=usr/lib/$(MACH64)/libchm.so.0 target=libchm.so.0.0.0
-file path=usr/lib/$(MACH64)/libchm.so.0.0.0 mode=0555
+file path=usr/lib/$(MACH64)/libchm.so.0.0.0
 link path=usr/lib/libchm.so target=libchm.so.0.0.0
 link path=usr/lib/libchm.so.0 target=libchm.so.0.0.0
-file path=usr/lib/libchm.so.0.0.0 mode=0555
+file path=usr/lib/libchm.so.0.0.0
