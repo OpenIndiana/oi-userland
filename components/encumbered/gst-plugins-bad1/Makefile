@@ -78,6 +78,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += system/header/header-drm
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += audio/faac
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += compress/bzip2
@@ -93,8 +97,10 @@ REQUIRED_PACKAGES += library/audio/libmpcdec
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libvdpau
+REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/libofa
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libwebp
@@ -110,9 +116,12 @@ REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmms
 REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
