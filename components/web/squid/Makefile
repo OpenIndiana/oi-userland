@@ -150,15 +150,20 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:	$(TEST_64)
 
-
+# Build dependencies
 REQUIRED_PACKAGES += developer/cppunit
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl
