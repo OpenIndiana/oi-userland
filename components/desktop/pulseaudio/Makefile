@@ -86,10 +86,11 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl
