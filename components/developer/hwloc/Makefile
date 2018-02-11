@@ -48,10 +48,15 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += system/header/header-picl
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
