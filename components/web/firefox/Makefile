@@ -89,9 +89,8 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
           $(PROTO_DIR)/usr/lib/firefox/*.so \
           $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell \
           $(PROTO_DIR)/usr/lib/firefox/plugin-container; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
-        $$file ;\
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  $$file ; \
     done ; \
     for file in $(PROTO_DIR)/usr/lib/firefox/sdk/bin/*.py; do \
         $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $$file; \
