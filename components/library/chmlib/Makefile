@@ -13,26 +13,30 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= chmlib
-
 COMPONENT_VERSION= 0.40
 COMPONENT_SUMMARY= A library for reading Microsoft .CHM files
+COMPONENT_PROJECT_URL = http://www.jedrea.com/chmlib/
+COMPONENT_FMRI= library/desktop/chmlib
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:512148ed1ca86dea051ebcf62e6debbb00edfdd9720cde28f6ed98071d3a9617
 COMPONENT_ARCHIVE_URL= \
   http://www.jedrea.com/chmlib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.jedrea.com/chmlib/
+COMPONENT_LICENSE= LGPLv2.1
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
-# COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+# COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_OPTIONS+= --disable-static
 
 build: $(BUILD_32_and_64)
 
