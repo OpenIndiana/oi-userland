@@ -13,17 +13,16 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/desktop/fbreader@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Office"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license fbreader.license license="GPLv2"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Generated section:
-file path=usr/bin/FBReader mode=0555
+file path=usr/bin/FBReader
 file path=usr/share/FBReader/default/config.xml
 file path=usr/share/FBReader/default/external.xml
 file path=usr/share/FBReader/default/fullscreen_toolbar.xml

@@ -13,23 +13,25 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= fbreader
-
 COMPONENT_VERSION= 0.12.10
 COMPONENT_SUMMARY= Powerful e-book reader
+COMPONENT_PROJECT_URL = http://www.fbreader.org/
+COMPONENT_FMRI= desktop/fbreader
+COMPONENT_CLASSIFICATION= Applications/Office
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-sources-$(COMPONENT_VERSION).tgz
 COMPONENT_ARCHIVE_HASH= \
   sha256:328aec454db80e225aa0b5c31adef74bf62a14357482947e87e9731686b3c624
 COMPONENT_ARCHIVE_URL= \
   http://www.fbreader.org/files/sources/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.fbreader.org/
+COMPONENT_LICENSE= GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
 
