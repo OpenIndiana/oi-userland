@@ -11,21 +11,23 @@
 #
 # Copyright 2014 (c) Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+PREFERRED_BITS=64
 
-COMPONENT_NAME=		lft
-COMPONENT_VERSION=	3.72
-COMPONENT_FMRI=		diagnostic/lft
-COMPONENT_PROJECT_URL=	http://pwhois.org/lft/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=         lft
+COMPONENT_VERSION=      3.8
+COMPONENT_SUMMARY=      Layer Four Traceroute (LFT) and WhoB
+COMPONENT_PROJECT_URL=  http://pwhois.org/lft/
+COMPONENT_FMRI=         diagnostic/lft
+COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e51535ad0c04c75a76e44db2e38641d1803d0d7c212b7be79580532057c11d88
-COMPONENT_ARCHIVE_URL=	http://pwhois.org/dl/index.who?file=$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	$(COMPONENT_FMRI)
-COMPONENT_LICENSE=	VOSTROM Public License for Open Source
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=	Layer Four Traceroute (LFT) and WhoB
+  sha256:10f427e77b0f8207817329bd8ef0310078434612620073369264d15e6f97e990
+COMPONENT_ARCHIVE_URL= \
+  http://pwhois.org/dl/index.who?file=$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      VOSTROM Public License for Open Source
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -36,10 +38,9 @@ COMPONENT_POST_CONFIGURE_ACTION= $(CP) $(SOURCE_DIR)/*.c $(SOURCE_DIR)/*.h $(SOU
 
 COMPONENT_INSTALL_ARGS=DESTDIR=$(PROTO_DIR)
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
