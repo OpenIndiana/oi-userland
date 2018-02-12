@@ -20,36 +20,44 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+PREFERRED_BITS=64
 
-COMPONENT_NAME=		wdiff
-COMPONENT_VERSION=	1.2.2
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wdiff/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=         wdiff
+COMPONENT_VERSION=      1.2.2
+COMPONENT_SUMMARY=      GNU wdiff - a front end to GNU diff for comparing files on a word per word basis
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/wdiff/
+COMPONENT_FMRI=         text/wdiff
+COMPONENT_CLASSIFICATION=System/Text Tools
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:34ff698c870c87e6e47a838eeaaae729fa73349139fc8db12211d2a22b78af6b
+  sha256:34ff698c870c87e6e47a838eeaaae729fa73349139fc8db12211d2a22b78af6b
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wdiff/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/wdiff
+COMPONENT_LICENSE=      GPLv3 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
+CONFIGURE_OPTIONS +=	CC="$(CC) $(CC_BITS)"
 CONFIGURE_OPTIONS +=	--enable-experimental
 
-CFLAGS_BUILD +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
+CFLAGS_BUILD +=	-DDIFF_PROGRAM="$(GNUBINDIR)/diff"
 
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) $(CFLAGS_BUILD)"
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n -e "/^  [0-9]:/p"'
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
