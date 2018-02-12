@@ -1,0 +1,77 @@
+--- gutenprint-5.2.14/src/testpattern/Makefile.am.orig	2018-06-02 14:15:26.933328896 +0000
++++ gutenprint-5.2.14/src/testpattern/Makefile.am	2018-06-02 14:44:47.019132483 +0000
+@@ -28,6 +28,7 @@
+ 
+ if BUILD_TESTPATTERN
+ 
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS = run-testpattern-1 run-testpattern-2
+ 
+ bin_PROGRAMS = testpattern
+--- gutenprint-5.2.14/src/cups/Makefile.am.orig	2018-06-02 14:14:49.429862366 +0000
++++ gutenprint-5.2.14/src/cups/Makefile.am	2018-06-02 14:23:13.399633928 +0000
+@@ -95,6 +95,7 @@
+ 	mv $(DESTDIR)$(pkglibdir)/backend/backend_gutenprint "$(DESTDIR)$(pkglibdir)/backend/gutenprint$(GUTENPRINT_MAJOR_VERSION)$(GUTENPRINT_MINOR_VERSION)+usb"
+ endif
+ 
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS= test-ppds test-rastertogutenprint
+ noinst_SCRIPTS=test-ppds test-rastertogutenprint
+ endif
+--- gutenprint-5.2.14/src/cups/test-ppds.orig	2018-06-02 14:15:00.953653976 +0000
++++ gutenprint-5.2.14/src/cups/test-ppds	2018-06-02 14:44:04.816087366 +0000
+@@ -50,7 +50,7 @@
+ # Also, a number of our media sizes aren't named correctly, but we'll
+ # accept those issues rather than cluttering the namespace further and/or
+ # changing tag names.
+-cupstestppdopts='-I profiles -W sizes -I filters'
++cupstestppdopts='-I profiles -W sizes -I filters  -W translations'
+ 
+ # This lets us report progress
+ testcmd="echo -n . 1>&2; cupstestppd $cupstestppdopts "'"$@"'
+--- gutenprint-5.2.14/test/Makefile.am.orig	2018-06-02 14:15:39.223974984 +0000
++++ gutenprint-5.2.14/test/Makefile.am	2018-06-02 14:47:45.540261192 +0000
+@@ -30,6 +30,7 @@
+ ## It is essentially a giant unit test for the weave code.
+ ## testdither doesn't actually test anything; there appears to be no way
+ ## for it to actually return anything.
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS = curve run-weavetest testdither
+ 
+ ## Programs
+@@ -74,4 +75,4 @@
+ CLEANFILES = mixed-color-1bit.ppm
+ MAINTAINERCLEANFILES = Makefile.in
+ 
+-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest run-testdither
++EXTRA_DIST = cyan-sweep.tif parse-escp2 run-testdither
+--- gutenprint-5.2.14/src/testpattern/Makefile.in.orig	2018-06-02 14:54:10.666995120 +0000
++++ gutenprint-5.2.14/src/testpattern/Makefile.in	2018-06-02 14:55:03.809466161 +0000
+@@ -94,6 +94,7 @@
+ POST_UNINSTALL = :
+ build_triplet = @build@
+ host_triplet = @host@
++@BUILD_TESTPATTERN_TRUE@TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ @BUILD_TESTPATTERN_TRUE@bin_PROGRAMS = testpattern$(EXEEXT)
+ @BUILD_TESTPATTERN_TRUE@noinst_PROGRAMS = printers$(EXEEXT) \
+ @BUILD_TESTPATTERN_TRUE@	printer_options$(EXEEXT)
+--- gutenprint-5.2.14/src/cups/Makefile.in.orig	2018-06-02 14:55:37.943884386 +0000
++++ gutenprint-5.2.14/src/cups/Makefile.in	2018-06-02 14:56:17.884828395 +0000
+@@ -96,6 +96,7 @@
+ @BUILD_CUPS_1_2_TRUE@cupsexec_driver_PROGRAMS = gutenprint.@GUTENPRINT_RELEASE_VERSION@$(EXEEXT)
+ @BUILD_CUPS_TRUE@bin_PROGRAMS = cups-calibrate$(EXEEXT)
+ @BUILD_CUPS_TRUE@sbin_PROGRAMS = cups-genppd.@GUTENPRINT_RELEASE_VERSION@$(EXEEXT)
++@BUILD_CUPS_TRUE@TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ @BUILD_CUPS_TRUE@cupsexec_filter_PROGRAMS = rastertogutenprint.@GUTENPRINT_RELEASE_VERSION@$(EXEEXT) \
+ @BUILD_CUPS_TRUE@	commandtoepson$(EXEEXT) \
+ @BUILD_CUPS_TRUE@	commandtocanon$(EXEEXT)
+--- gutenprint-5.2.14/test/Makefile.in.orig	2018-06-02 14:57:27.465068777 +0000
++++ gutenprint-5.2.14/test/Makefile.in	2018-06-02 14:57:42.857335522 +0000
+@@ -93,6 +93,7 @@
+ POST_UNINSTALL = :
+ build_triplet = @build@
+ host_triplet = @host@
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS = curve$(EXEEXT) run-weavetest testdither$(EXEEXT)
+ @BUILD_TEST_TRUE@noinst_PROGRAMS = testdither$(EXEEXT) \
+ @BUILD_TEST_TRUE@	escp2-weavetest$(EXEEXT) unprint$(EXEEXT) \
