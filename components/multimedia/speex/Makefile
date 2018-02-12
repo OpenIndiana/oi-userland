@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= speex
 COMPONENT_VERSION= 1.2rc2
@@ -31,11 +31,11 @@ COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE = BSD
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 
