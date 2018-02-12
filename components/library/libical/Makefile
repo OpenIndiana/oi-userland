@@ -13,7 +13,7 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libical
 COMPONENT_VERSION=	1.0
