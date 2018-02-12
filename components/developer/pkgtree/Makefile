@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkgtree
 COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	2	
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://github.com/msmark/pkgtree
 COMPONENT_FMRI=		developer/pkgtree
 COMPONENT_CLASSIFICATION= System/Packaging
@@ -53,3 +53,4 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
