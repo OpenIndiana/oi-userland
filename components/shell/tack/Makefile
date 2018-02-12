@@ -12,42 +12,45 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+PREFERRED_BITS=64
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tack
-COMPONENT_VERSION=	1.07
-IPS_COMPONENT_VERSION=	1.0.7
+COMPONENT_VERSION=	1.08
+IPS_COMPONENT_VERSION=	1.0.8
+COMPONENT_SUMMARY=	TACK - terminfo action checker
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
-COMPONENT_SUMMARY=	A CRT screen handling and optimization package
+COMPONENT_FMRI=		terminal/tack
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e7ce787d1f7c63e51781eca9ebf4c349fcf4cbecb78cf37d60754f4c122c87fe
-COMPONENT_ARCHIVE_URL=	ftp://ftp.invisible-island.net/ncurses/tack-1.07.tgz
-COMPONENT_FMRI=		terminal/tack
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
+  sha256:5916dde4e5624c3f1aa82af450db55bff050e80fb5d3f0cb1c94f502220ac907
+COMPONENT_ARCHIVE_URL= \
+  ftp://ftp.invisible-island.net/ncurses/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_PREFIX = /usr/gnu
+CONFIGURE_PREFIX = $(GNUDIR)
 
 CFLAGS += -I/usr/include/ncurses
 
 CONFIGURE_OPTIONS +=	--enable-widec
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
