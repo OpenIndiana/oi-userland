@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		mate-terminal
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	2
+COMPONENT_REVISION=     1
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE terminal emulator
@@ -34,7 +35,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
@@ -47,15 +48,17 @@ LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
 COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
