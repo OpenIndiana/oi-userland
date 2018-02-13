@@ -19,6 +19,7 @@ COMPONENT_NAME=		mate-settings-daemon
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	fork of gnome-settings-deamon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,7 +43,7 @@ COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/$(COMPONENT_NAME)
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV.64 += NSS_LIBS="-L/usr/lib/mps/64"
@@ -51,9 +52,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
