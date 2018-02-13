@@ -18,7 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		marco
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Window Manager
@@ -46,6 +46,8 @@ COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh;\
 CFLAGS+=-D__EXTENSIONS__
 CFLAGS+=-std=gnu99
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
@@ -56,9 +58,9 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
