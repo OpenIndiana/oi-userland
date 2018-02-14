@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libvorbis
 COMPONENT_VERSION=	1.3.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/libvorbis
 COMPONENT_CLASSIFICATION=		System/Libraries
 COMPONENT_SUMMARY=		libvorbis - general-purpose compressed audio format
