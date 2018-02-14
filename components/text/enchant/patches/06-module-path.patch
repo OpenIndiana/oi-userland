@@ -1,0 +1,30 @@
+--- enchant-1.6.1/src/Makefile.am.orig	2018-02-14 16:05:09.661613820 +0000
++++ enchant-1.6.1/src/Makefile.am	2018-02-14 16:05:40.794046210 +0000
+@@ -1,6 +1,6 @@
+ SUBDIRS=. aspell ispell uspell myspell hspell applespell voikko zemberek
+ 
+-AM_CPPFLAGS=-I$(top_srcdir) $(ENCHANT_CFLAGS) $(CC_WARN_CFLAGS) -DENCHANT_GLOBAL_MODULE_DIR=\"$(libdir)/enchant\" -DENCHANT_GLOBAL_ORDERING=\"$(datadir)/enchant\" -D_ENCHANT_BUILD=1 -DENCHANT_VERSION_STRING=\"@ENCHANT_MAJOR_VERSION@.@ENCHANT_MINOR_VERSION@.@ENCHANT_MICRO_VERSION@\"
++AM_CPPFLAGS=-I$(top_srcdir) $(ENCHANT_CFLAGS) $(CC_WARN_CFLAGS) -DENCHANT_GLOBAL_MODULE_DIR=\"$(libexecdir)/enchant\" -DENCHANT_GLOBAL_ORDERING=\"$(datadir)/enchant\" -D_ENCHANT_BUILD=1 -DENCHANT_VERSION_STRING=\"@ENCHANT_MAJOR_VERSION@.@ENCHANT_MINOR_VERSION@.@ENCHANT_MICRO_VERSION@\"
+ 
+ lib_LTLIBRARIES = libenchant.la
+ 
+--- enchant-1.6.1/src/enchant.c.orig	2018-02-14 20:25:22.142669617 +0000
++++ enchant-1.6.1/src/enchant.c	2018-02-14 20:26:50.839131645 +0000
+@@ -261,7 +261,7 @@
+ 
+ #if defined(ENCHANT_GLOBAL_MODULE_DIR)
+ 	module_dirs = enchant_slist_append_unique_path (module_dirs, g_strdup (ENCHANT_GLOBAL_MODULE_DIR));
+-#endif
++#else
+ 	/* Dynamically locate library and search for modules relative to it. */
+ 	prefix = enchant_get_prefix_dir();
+ 	if(prefix)
+@@ -270,7 +270,7 @@
+ 			g_free(prefix);
+ 			module_dirs = enchant_slist_append_unique_path (module_dirs, module_dir);
+ 		}
+-
++#endif
+ 	/* Use ENCHANT_MODULE_PATH env var */
+ 	{
+ 		const gchar* env = g_getenv("ENCHANT_MODULE_PATH");
