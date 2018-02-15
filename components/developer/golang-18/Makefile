@@ -30,6 +30,7 @@ PATCH_EACH_ARCHIVE= 1
 COMPONENT_NAME=			golang
 COMPONENT_VERSION=		1.8.3
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | gsed -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
+COMPONENT_REVISION=             1
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -76,6 +77,7 @@ COMPONENT_ARCHIVE_URL_1=	https://storage.googleapis.com/golang/$(COMPONENT_ARCHI
 GOROOT_FINAL=		/usr/lib/golang/$(COMPONENT_MAJOR_VERSION)
 # Enable easier stack unwinding for debugging.
 GOEXPERIMENT=		framepointer
+COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS) $(CPP_XPG6MODE)"
 COMPONENT_BUILD_ENV +=	GOROOT_FINAL="$(GOROOT_FINAL)"
 COMPONENT_BUILD_ENV +=	GOEXPERIMENT="$(GOEXPERIMENT)"
 COMPONENT_BUILD_ENV +=	\
