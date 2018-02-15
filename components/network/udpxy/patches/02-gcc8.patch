@@ -1,0 +1,28 @@
+--- udpxy-1.0.23-10/udpxrec.c.orig	2018-05-25 07:50:38.063817252 +0000
++++ udpxy-1.0.23-10/udpxrec.c	2018-05-25 07:51:08.606689705 +0000
+@@ -558,10 +558,10 @@
+                         else {
+                             if( g_recopt.bg_time < now ) {
+                                 (void)strncpy( now_buf, Zasctime(localtime( &now )),
+-                                        sizeof(now_buf) );
++                                        sizeof(now_buf)-1 );
+                                 (void)strncpy( sel_buf,
+                                         Zasctime(localtime( &g_recopt.bg_time )),
+-                                        sizeof(sel_buf) );
++                                        sizeof(sel_buf)-1 );
+ 
+                                 (void) fprintf( stderr,
+                                         "Selected %s time is in the past, "
+@@ -588,10 +588,10 @@
+                         else {
+                             if( g_recopt.end_time < now ) {
+                                 (void)strncpy( now_buf, Zasctime(localtime( &now )),
+-                                        sizeof(now_buf) );
++                                        sizeof(now_buf)-1 );
+                                 (void)strncpy( sel_buf,
+                                         Zasctime(localtime( &g_recopt.end_time )),
+-                                        sizeof(sel_buf) );
++                                        sizeof(sel_buf)-1 );
+ 
+                                 (void) fprintf( stderr,
+                                         "Selected %s time is in the past, "
