@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
-COMPONENT_VERSION= 2.2.7
+COMPONENT_VERSION= 2.2.8
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:225c4cc22f4d7623ec2d4bda10f7e6e93bcf8de66d2a99145f85735963ee2026
+  sha256:9bf046848fb56d93518881b39099b8288ee005d5ba0ddf705b6f6643b8d562ec
 COMPONENT_ARCHIVE_URL= \
   http://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.videolan.org/vlc
