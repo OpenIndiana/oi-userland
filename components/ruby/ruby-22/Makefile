@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	2.2.10
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -142,6 +143,6 @@ REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
