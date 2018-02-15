@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
 COMPONENT_VERSION=	1.4.7
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.sbcl.org/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,7 +34,7 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
 COMPONENT_ENV +=	CC="$(CC)"
-COMPONENT_BUILD_ARGS  =	--prefix=/usr
+COMPONENT_BUILD_ARGS  =	--prefix=$(USRDIR)
 COMPONENT_BUILD_ARGS +=	--arch=x86
 # Tests fail with this option enabled
 #COMPONENT_BUILD_ARGS +=	--with-sb-thread
