@@ -1,0 +1,11 @@
+--- memcached-1.4.33/util.c.orig	2018-02-15 10:49:39.671563281 +0000
++++ memcached-1.4.33/util.c	2018-02-15 11:02:29.759656673 +0000
+@@ -18,7 +18,7 @@
+         if (isalnum(x) || x == '-' || x == '.' || x == '_' || x == '~') {
+             uriencode_map[x] = NULL;
+         } else {
+-            snprintf(str, 4, "%%%02X", x);
++            snprintf(str, 4, "%%%02hhX", (unsigned char)x);
+             uriencode_map[x] = str;
+             str += 3; /* lobbing off the \0 is fine */
+         }
