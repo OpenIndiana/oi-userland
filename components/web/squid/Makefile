@@ -29,6 +29,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
 COMPONENT_VERSION=      3.5.27
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
