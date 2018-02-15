@@ -1,0 +1,22 @@
+--- czmq-3.0.2/src/zsys.c.orig	2018-02-15 08:32:39.331818019 +0000
++++ czmq-3.0.2/src/zsys.c	2018-02-15 08:33:43.686492626 +0000
+@@ -1071,7 +1071,7 @@
+             }
+         }
+         //   We record the current process id in the lock file
+-        char pid_buffer [10];
++        char pid_buffer [16];
+         snprintf (pid_buffer, sizeof (pid_buffer), "%6" PRIi64 "\n", (int64_t)getpid ());
+         if (write (handle, pid_buffer, strlen (pid_buffer)) != strlen (pid_buffer)) {
+             zsys_error ("cannot write to lockfile: %s", strerror (errno));
+--- czmq-3.0.2/src/zgossip_engine.inc.orig	2018-02-15 08:32:34.220530713 +0000
++++ czmq-3.0.2/src/zgossip_engine.inc	2018-02-15 08:34:17.962113327 +0000
+@@ -258,7 +258,7 @@
+ {
+     if (client) {
+         s_client_t *self = (s_client_t *) client;
+-        snprintf (self->log_prefix, sizeof (self->log_prefix) - 1,
++        snprintf (self->log_prefix, sizeof (self->log_prefix),
+             "%6d:%-33s", self->unique_id, string);
+     }
+ }
