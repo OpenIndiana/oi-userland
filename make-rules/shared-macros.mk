@@ -515,6 +515,13 @@ export CCACHE := $(shell \
 GCC_VERSION =	6
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
+# Define runtime package names to be used in dependencies
+GCC_VERSION_MAJOR    = $(shell echo $(GCC_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
+GCC_RUNTIME_PKG      = system/library/gcc-$(GCC_VERSION_MAJOR)-runtime
+GXX_RUNTIME_PKG      = system/library/g++-$(GCC_VERSION_MAJOR)-runtime
+GFORTRAN_RUNTIME_PKG = system/library/gfortran-$(GCC_VERSION_MAJOR)-runtime
+GOBJC_RUNTIME_PKG    = system/library/gobjc-$(GCC_VERSION_MAJOR)-runtime
+
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
 F77.studio.32 = $(SPRO_VROOT)/bin/f77
@@ -1203,6 +1210,16 @@ REQUIRED_PACKAGES += metapackages/build-essential
 ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
 REQUIRED_PACKAGES += system/library
 endif
+
+# Define substitution rules for some packages.
+# Such package names may change and would be better defined with a macro to
+# avoid mass modification of the Makefiles.
+
+# Runtime package names are changed at compiler version major bumps.
+REQUIRED_PACKAGES_SUBST+= GCC_RUNTIME_PKG
+REQUIRED_PACKAGES_SUBST+= GXX_RUNTIME_PKG
+REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
+REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
 include $(WS_MAKE_RULES)/environment.mk
 
