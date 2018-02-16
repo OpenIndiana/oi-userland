@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-extra
 COMPONENT_VERSION=	0.8.10
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	extra effects plugins for compiz
 COMPONENT_SRC=		plugins-extra
