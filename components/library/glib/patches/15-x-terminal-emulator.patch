@@ -1,5 +1,5 @@
---- glib-2.43.4/gio/gdesktopappinfo.c.~1~	2015-02-07 13:35:55.000000000 +0300
-+++ glib-2.43.4/gio/gdesktopappinfo.c	2016-10-29 12:48:46.694082010 +0300
+--- glib-2.54.3/gio/gdesktopappinfo.c.~1~	2018-01-08 23:00:49.000000000 +0000
++++ glib-2.54.3/gio/gdesktopappinfo.c	2018-02-19 15:43:20.188865573 +0000
 @@ -25,6 +25,7 @@
  #include "config.h"
  
@@ -8,7 +8,7 @@
  #include <string.h>
  #include <unistd.h>
  
-@@ -2449,6 +2450,7 @@
+@@ -2452,6 +2453,7 @@
    int term_argc = 0;
    char *check;
    char **the_argv;
@@ -16,14 +16,9 @@
  
    g_return_val_if_fail (argc != NULL, FALSE);
    g_return_val_if_fail (argv != NULL, FALSE);
-@@ -2470,35 +2472,58 @@
-   term_argc = 2;
-   term_argv = g_new0 (char *, 3);
- 
--  check = g_find_program_in_path ("gnome-terminal");
--  if (check != NULL)
-+  check = g_find_program_in_path ("x-terminal-emulator");
-+  if (check != NULL) 
+@@ -2476,28 +2478,54 @@
+   check = g_find_program_in_path ("gnome-terminal");
+   if (check != NULL)
      {
 -      term_argv[0] = check;
 -      /* Note that gnome-terminal takes -x and
@@ -38,8 +33,6 @@
 -        check = g_find_program_in_path ("color-xterm");
 -      if (check == NULL)
 -        check = g_find_program_in_path ("rxvt");
--      if (check == NULL)
--        check = g_find_program_in_path ("xterm");
 -      if (check == NULL)
 -        check = g_find_program_in_path ("dtterm");
 -      if (check == NULL)
@@ -96,7 +89,5 @@
 -      term_argv[0] = check;
 -      term_argv[1] = g_strdup ("-e");
      }
--
-   real_argc = term_argc + *argc;
-   real_argv = g_new (char *, real_argc + 1);
  
+   real_argc = term_argc + *argc;

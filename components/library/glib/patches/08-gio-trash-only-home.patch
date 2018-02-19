@@ -1,24 +1,26 @@
---- glib-2.20.1/gio/glocalfile.c.ori	2009-04-15 03:46:56.161574399 +0100
-+++ glib-2.20.1/gio/glocalfile.c	2009-04-15 03:48:57.698109713 +0100
-@@ -1732,123 +1733,26 @@
+--- glib-2.55.2/gio/glocalfile.c.~1~	2018-01-09 00:34:19.000000000 +0000
++++ glib-2.55.2/gio/glocalfile.c	2018-02-16 12:20:09.786992190 +0000
+@@ -1987,6 +1987,7 @@
+   char *dirname, *globaldir;
+   GVfsClass *class;
+   GVfs *vfs;
++  GFile *trash;
+   int errsv;
+ 
+   if (g_lstat (local->filename, &file_stat) != 0)
+@@ -2004,123 +2005,26 @@
  
    is_homedir_trash = FALSE;
    trashdir = NULL;
 -  if (file_stat.st_dev == home_stat.st_dev)
-+  /* Always move to .Trash in the user's home directory
-+  */
-+  is_homedir_trash = TRUE;
-+  errno = 0;
-+  trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
-+  if (g_mkdir_with_parents (trashdir, 0700) < 0)
-     {
+-    {
 -      is_homedir_trash = TRUE;
 -      errno = 0;
 -      trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
 -      if (g_mkdir_with_parents (trashdir, 0700) < 0)
 -	{
 -          char *display_name;
--          int errsv = errno;
+-          errsv = errno;
 -
 -          display_name = g_filename_display_name (trashdir);
 -          g_set_error (error, G_IO_ERROR,
@@ -38,13 +40,13 @@
 -
 -      uid = geteuid ();
 -      g_snprintf (uid_str, sizeof (uid_str), "%lu", (unsigned long)uid);
--      
--      topdir = find_topdir_for (local->filename);
+-
+-      topdir = _g_local_file_find_topdir_for (local->filename);
 -      if (topdir == NULL)
 -	{
--	  g_set_error_literal (error, G_IO_ERROR,
--                               G_IO_ERROR_NOT_SUPPORTED,
--                               _("Unable to find toplevel directory for trash"));
+-          g_set_io_error (error,
+-                          _("Unable to find toplevel directory to trash %s"),
+-                          file, G_IO_ERROR_NOT_SUPPORTED);
 -	  return FALSE;
 -	}
 -      
@@ -117,17 +119,25 @@
 -		}
 -	    }
 -	}
-+      char *display_name;
-+      int errsv = errno;
- 
+-
 -      if (trashdir == NULL)
 -	{
 -	  g_free (topdir);
--	  g_set_error_literal (error, G_IO_ERROR,
--                               G_IO_ERROR_NOT_SUPPORTED,
--                               _("Unable to find or create trash directory"));
+-          g_set_io_error (error,
+-                          _("Unable to find or create trash directory for %s"),
+-                          file, G_IO_ERROR_NOT_SUPPORTED);
 -	  return FALSE;
 -	}
++  /* Always move to .Trash in the user's home directory
++  */
++  is_homedir_trash = TRUE;
++  errno = 0;
++  trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
++  if (g_mkdir_with_parents (trashdir, 0700) < 0)
++    {
++      char *display_name;
++      int errsv = errno;
++
 +      display_name = g_filename_display_name (trashdir);
 +      g_set_error (error, G_IO_ERROR,
 +                   g_io_error_from_errno (errsv),
@@ -141,7 +151,7 @@
  
    /* Trashdir points to the trash dir with the "info" and "files" subdirectories */
  
-@@ -1912,8 +1816,8 @@
+@@ -2213,8 +2117,8 @@
    trashfile = g_build_filename (filesdir, trashname, NULL);
  
    g_free (filesdir);
@@ -150,9 +160,9 @@
 +  trash = g_file_new_for_path(trashfile);
 +  if (!g_file_move (file, trash, 0, cancellable, NULL, NULL, NULL))
      {
-       int errsv = errno;
+       errsv = errno;
  
-@@ -1921,6 +1825,7 @@
+@@ -2223,6 +2127,7 @@
        g_free (trashname);
        g_free (infofile);
        g_free (trashfile);
@@ -160,18 +170,7 @@
  
        if (errsv == EXDEV)
  	/* The trash dir was actually on another fs anyway!?
-diff -ruN glib-2.23.5.orig/gio/glocalfile.c glib-2.23.5/gio/glocalfile.c
---- glib-2.23.5.orig/gio/glocalfile.c	2010-03-12 01:24:16.709204235 +0000
-+++ glib-2.23.5/gio/glocalfile.c	2010-03-12 01:25:06.966511383 +0000
-@@ -1806,6 +1806,7 @@
-   char *dirname, *globaldir;
-   GVfsClass *class;
-   GVfs *vfs;
-+  GFile *trash;
- 
-   if (g_lstat (local->filename, &file_stat) != 0)
-     {
-@@ -1939,6 +1940,7 @@
+@@ -2245,6 +2150,7 @@
      class->local_file_moved (vfs, local->filename, trashfile);
  
    g_free (trashfile);
