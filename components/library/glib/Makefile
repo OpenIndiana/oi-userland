@@ -15,23 +15,24 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= glib
-COMPONENT_VERSION= 2.46.2
-COMPONENT_REVISION= 1
+COMPONENT_NAME=	glib
+COMPONENT_MJR_VERSION=  2.54
+COMPONENT_MNR_VERSION=  3
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= GNOME core libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5031722e37036719c1a09163cc6cf7c326e4c4f1f1e074b433c156862bd733db
+  sha256:963fdc6685dc3da8e5381dfb9f15ca4b5709b28be84d9d05a9bb8e446abac0a8
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.46/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gtk.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 LDFLAGS += -lsocket -lsecdb -lnsl
 
@@ -42,7 +43,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D))
 CONFIGURE_SCRIPT = $(@D)/configure
 
 # GCC 6
-CFLAGS += -std=gnu89 -Wno-error=format-nonliteral
+CFLAGS += -Wno-error=format-nonliteral
+CPPFLAGS += $(CPP_XPG6MODE)
 
 CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
@@ -52,6 +54,7 @@ CONFIGURE_OPTIONS += --enable-shared
 
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
+CONFIGURE_ENV    += CPPFLAGS="$(CPPFLAGS)"
 
 DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
@@ -59,15 +62,22 @@ COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 # Otherwise tests fail
 ENV = /usr/bin/env -i
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^FAIL:/p" ' \
+	'-e "/^ERROR:/p" ' \
+	'-e "/^\#/p" ' \
+
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-# Failed tests: gdatetime, convert, strfuncs, string, timer
 test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27

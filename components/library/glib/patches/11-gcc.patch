@@ -2,37 +2,38 @@ gcc complaints about mismatched types for format specifiers.
 
 Need to determine if we should file an upstream bug.
 
---- glib-2.44.1/gio/gdbusauthmechanismsha1.c	Fri Dec 19 13:49:48 2014
-+++ glib-2.44.1/gio/gdbusauthmechanismsha1.c	Wed May 20 10:56:38 2015
-@@ -272,7 +272,7 @@
+--- glib-2.54.3/gio/gdbusauthmechanismsha1.c	2018-02-19 15:48:05.266240515 +0000
++++ glib-2.54.3/gio/gdbusauthmechanismsha1.c	2018-01-09 00:34:19.000000000 +0000
+@@ -273,7 +273,7 @@
                             G_IO_ERROR_FAILED,
-                            _("Permissions on directory '%s' are malformed. Expected mode 0700, got 0%o"),
+                            _("Permissions on directory “%s” are malformed. Expected mode 0700, got 0%o"),
                             path,
 -                           statbuf.st_mode & 0777);
-+                           (unsigned int) statbuf.st_mode & 0777);
++                           (guint) (statbuf.st_mode & 0777));
                g_free (path);
                path = NULL;
                goto out;
---- glib-2.44.1/gio/gdbusmessage.c	Tue May 12 19:39:04 2015
-+++ glib-2.44.1/gio/gdbusmessage.c	Wed May 20 10:56:38 2015
-@@ -3472,9 +3472,9 @@
-               if (fstat (fds[n], &statbuf) == 0)
+--- glib-2.54.3/gio/gdbusmessage.c.~1~	2018-01-08 23:00:42.000000000 +0000
++++ glib-2.54.3/gio/gdbusmessage.c	2018-02-19 15:57:23.277441619 +0000
+@@ -3479,10 +3479,10 @@
                  {
+ #ifndef MAJOR_MINOR_NOT_FOUND                       
                    g_string_append_printf (fs, "%s" "dev=%d:%d", fs->len > 0 ? "," : "",
 -                                          major (statbuf.st_dev), minor (statbuf.st_dev));
-+                                          (int) major (statbuf.st_dev), (int) minor (statbuf.st_dev));
++                                          (gint) major (statbuf.st_dev), (gint) minor (statbuf.st_dev));
+ #endif                  
                    g_string_append_printf (fs, "%s" "mode=0%o", fs->len > 0 ? "," : "",
 -                                          statbuf.st_mode);
-+                                          (unsigned int) statbuf.st_mode);
++                                          (guint) statbuf.st_mode);
                    g_string_append_printf (fs, "%s" "ino=%" G_GUINT64_FORMAT, fs->len > 0 ? "," : "",
                                            (guint64) statbuf.st_ino);
                    g_string_append_printf (fs, "%s" "uid=%u", fs->len > 0 ? "," : "",
-@@ -3482,7 +3482,7 @@
-                   g_string_append_printf (fs, "%s" "gid=%u", fs->len > 0 ? "," : "",
+@@ -3491,7 +3491,7 @@
                                            (guint) statbuf.st_gid);
+ #ifndef MAJOR_MINOR_NOT_FOUND                     
                    g_string_append_printf (fs, "%s" "rdev=%d:%d", fs->len > 0 ? "," : "",
 -                                          major (statbuf.st_rdev), minor (statbuf.st_rdev));
-+                                          (int) major (statbuf.st_rdev), (int) minor (statbuf.st_rdev));
++                                          (gint) major (statbuf.st_rdev), (gint) minor (statbuf.st_rdev));
+ #endif                  
                    g_string_append_printf (fs, "%s" "size=%" G_GUINT64_FORMAT, fs->len > 0 ? "," : "",
                                            (guint64) statbuf.st_size);
-                   g_string_append_printf (fs, "%s" "atime=%" G_GUINT64_FORMAT, fs->len > 0 ? "," : "",
