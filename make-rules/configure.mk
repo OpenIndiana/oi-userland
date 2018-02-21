@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
 
@@ -57,12 +57,27 @@
 
 CONFIGURE_PREFIX =	/usr
 
-CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/bin
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin/$(MACH64)
-CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib
-CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
-CONFIGURE_SBINDIR.32 =	$(CONFIGURE_PREFIX)/sbin
-CONFIGURE_SBINDIR.64 =	$(CONFIGURE_PREFIX)/sbin/$(MACH64)
+# If the component prefers 64-bit binaries, then ensure builds deliver 64-bit
+# binaries to the standard directories and 32-bit binaries to the non-standard
+# location.  This allows simplification of package manifests and makes it
+# easier to deliver the 64-bit binaries as the default.
+ifeq ($(strip $(PREFERRED_BITS)),64)
+CONFIGURE_BINDIR.32  = $(CONFIGURE_PREFIX)/bin/$(MACH32)
+CONFIGURE_BINDIR.64  = $(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.32 = $(CONFIGURE_PREFIX)/sbin/$(MACH32)
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/sbin
+else
+CONFIGURE_BINDIR.32  = $(CONFIGURE_PREFIX)/bin
+CONFIGURE_BINDIR.64  = $(CONFIGURE_PREFIX)/bin/$(MACH64)
+CONFIGURE_SBINDIR.32 = $(CONFIGURE_PREFIX)/sbin
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/sbin/$(MACH64)
+endif
+
+# Regardless of PREFERRED_BITS, 64-bit libraries should always be delivered to
+# the appropriate subdirectory by default.
+CONFIGURE_LIBDIR.32  = $(CONFIGURE_PREFIX)/lib
+CONFIGURE_LIBDIR.64  = $(CONFIGURE_PREFIX)/lib/$(MACH64)
+
 CONFIGURE_MANDIR =	$(CONFIGURE_PREFIX)/share/man
 CONFIGURE_LOCALEDIR =	$(CONFIGURE_PREFIX)/share/locale
 # all texinfo documentation seems to go to /usr/share/info no matter what
