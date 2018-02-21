@@ -19,7 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright 2017 Gary Mills
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # These symbols should be used in component Makefiles
@@ -111,6 +111,40 @@ include $(WS_MAKE_RULES)/ips-buildinfo.mk
 COMPILER =		gcc
 LINKER =		gcc
 BITS =			32
+
+# The values of BITS changes during the build process for components that
+# are built 32-bit and 64-bit.  This macro makes it possible to determine
+# which components are only built 64-bit and allow other make-rules files
+# to adjust accordingly.  Possible values are: '32', '64', '32_and_64',
+# '64_and_32', and 'NO_ARCH' (the orderings specify build preference).
+BUILD_BITS ?=$(BITS)
+ifeq ($(strip $(BUILD_BITS)),64)
+BITS ?=			64
+else
+BITS ?=			32
+endif
+
+# Based on BUILD_BITS, determine which binaries are preferred for a build.
+# This macro is for the convenience of other make-rules files and should not be
+# overridden by developers.
+ifeq ($(strip $(BUILD_BITS)),64)
+PREFERRED_BITS=64
+endif
+# Unlike Solaris we still prefer 32bit
+ifeq ($(strip $(BUILD_BITS)),64_and_32)
+PREFERRED_BITS=32
+endif
+PREFERRED_BITS ?= 32
+
+# Map target build to macro/variable naming conventions.  This macro is for the
+# convenience of other make-rules files and should not be overridden by
+# developers.
+ifeq ($(BUILD_BITS),64_and_32)
+MK_BITS=32_and_64
+else
+MK_BITS=$(strip $(BUILD_BITS))
+endif
+
 PYTHON_VERSION =	2.7
 PYTHON_VERSIONS =	2.7
 
