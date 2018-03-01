@@ -9,19 +9,19 @@
 #
 
 #
-# Copyright 2017 Jason Martin
+# Copyright 2018 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnumeric
-COMPONENT_VERSION=	1.12.35
+COMPONENT_VERSION=	1.12.38
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GTK Spreadsheet Application 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:77b1e3ce523578a807767ad71680fb865ac021d7bfadf93eada99ae094c06c0a
+    sha256:3435d7d93a47a32764b1ec2d03f7fbb348a97af52530815e49370803a1a69c65
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Office
@@ -50,9 +50,13 @@ install:	$(INSTALL_64)
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
-# All PASS or SKIP unless valgrind installed 08.26.2017
+# all valgrind tests still fail 03/01/18
 test:		$(TEST_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/itstool
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
