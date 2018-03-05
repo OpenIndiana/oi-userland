@@ -10,12 +10,14 @@
 
 #
 # Copyright 2016 Adam Stevko
+# Copyright 2017 Till Wegmueller
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
 COMPONENT_VERSION=	3.1.6
+COMPONENT_REVISON=	1
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	http://www.postfix.org/
 COMPONENT_FMRI=		service/network/smtp/postfix
@@ -38,11 +40,13 @@ CCARGS+=	-DDEF_NEWALIAS_PATH=\\\"/usr/sbin/newaliases\\\"
 CCARGS+=	-DUSE_TLS
 CCARGS+=	-DHAS_DB
 CCARGS+=	-DHAS_SQLITE
+CCARGS+=	-DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl
 
 AUXLIBS=	-lssl
 AUXLIBS+=	-lcrypto
 AUXLIBS+=	-ldb-5.3
 AUXLIBS+=	-lsqlite3
+AUXLIBS+=	-lsasl
 
 
 COMPONENT_BUILD_ENV+= CC=$(CC)
@@ -69,3 +73,4 @@ REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libsasl
