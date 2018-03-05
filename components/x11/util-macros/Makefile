@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           util-macros
-COMPONENT_VERSION=        1.19.1
+COMPONENT_VERSION=        1.19.2
 COMPONENT_FMRI=           developer/build/autoconf/xorg-macros
 COMPONENT_SUMMARY=        GNU autoconf macros for X.Org software packages
 COMPONENT_PROJECT_URL = https://x.org
@@ -24,7 +24,7 @@ COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:472ad0e41d1e0abf5ecafd29460bf1b8d47e53d4b7d3abf1f66d02dc576547b8
+  sha256:9225c45c3de60faf971979a55a5536f3562baa4b6f02246c23e98ac0c09a75b7
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/util/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=        MIT License
