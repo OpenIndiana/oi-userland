@@ -46,7 +46,7 @@ AUXLIBS=	-lssl
 AUXLIBS+=	-lcrypto
 AUXLIBS+=	-ldb-5.3
 AUXLIBS+=	-lsqlite3
-AUXLIBS+=	-L/usr/lib/sasl -lsasl
+AUXLIBS+=	-lsasl
 
 
 COMPONENT_BUILD_ENV+= CC=$(CC)
