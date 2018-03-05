@@ -16,25 +16,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           editres
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
 COMPONENT_FMRI=           x11/editres
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  editres - dynamic resource editor for Xt applications
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3b66d1240bde853872bbb341c4b8fb029094d0a5d21347a58831f15b162c4df0
+  sha256:089ad34628e55a779b97e369f55fb12caefc96d684b508d9022eb9e12b775c11
 COMPONENT_ARCHIVE_URL= \
   https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 
