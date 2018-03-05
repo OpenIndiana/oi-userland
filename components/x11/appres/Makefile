@@ -16,25 +16,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           appres
-COMPONENT_VERSION=        1.0.4
+COMPONENT_VERSION=        1.0.5
 COMPONENT_FMRI=           x11/appres
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  appres - Xt application resource list utility
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9f614e9427cd9641a4a801ed5055700afa410674c0b7aa186b86078f11b83e8d
+  sha256:ffad893712c81943b919e3cbfe46fc65259cc0d9eb96d5e658670e3fbb265928
 COMPONENT_ARCHIVE_URL= \
   https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 
