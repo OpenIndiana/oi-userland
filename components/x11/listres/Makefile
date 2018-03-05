@@ -16,25 +16,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           listres
-COMPONENT_VERSION=        1.0.3
+COMPONENT_VERSION=        1.0.4
 COMPONENT_FMRI=           x11/listres
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  listres - Xt widget resource list utility
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c3d71e9a01650e3fd470189a749cd0202ef03d9e399350a7a7443d7595ed478e
+  sha256:6a1229f478796e141d6658762f432ebbe1f6083b27550847d52239b3f7ec2b10
 COMPONENT_ARCHIVE_URL= \
   https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 
