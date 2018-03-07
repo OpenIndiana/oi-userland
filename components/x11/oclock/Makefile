@@ -13,32 +13,33 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           oclock
-COMPONENT_VERSION=        1.0.3
+COMPONENT_VERSION=        1.0.4
 COMPONENT_FMRI=           x11/oclock
 COMPONENT_CLASSIFICATION= Applications/Accessories
 COMPONENT_SUMMARY=  oclock - round X clock 
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:54f5fb85f5828705683f457e559fb18753332db15ae82da561b0ae5a63915091
+  sha256:cc20cfc1c0d5128d89e1eecd9ba52e58f111075be163e0aeda5690dbaafbaefe
 COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/oclock-1.0.3.tar.bz2
+  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= oclock.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
