@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= fontconfig
-COMPONENT_VERSION= 2.12.4
+COMPONENT_VERSION= 2.13.1
 COMPONENT_SUMMARY=  Fontconfig - Font configuration and customization library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:668293fcc4b3c59765cdee5cee05941091c0879edcc24dfec5455ef83912e45c
+  sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741
 COMPONENT_ARCHIVE_URL= \
   http://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/fontconfig/
@@ -39,14 +39,16 @@ PATH=$(PATH.gnu)
 gcc_OPT=-O2
 
 # This is necessary to pass tests
-ENV=/usr/bin/env -i
+unexport SHELLOPTS
+
+COMPONENT_PREP_ACTION=  ( cd $(@D); autoreconf )
 
 # Gperf files should be regenerated
 # https://bugs.freedesktop.org/show_bug.cgi?id=101280
 COMPONENT_PRE_CONFIGURE_ACTION= ($(RM) $(SOURCE_DIR)/src/fcobjshash.h)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --with-confdir=/etc/fonts
+CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS+= --with-baseconfigdir=$(ETCDIR)/fonts
 CONFIGURE_OPTIONS+= --with-default-fonts='/usr/share/fonts'
 CONFIGURE_OPTIONS+= --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
 CONFIGURE_OPTIONS+= --with-cache-dir=/var/cache/fontconfig
