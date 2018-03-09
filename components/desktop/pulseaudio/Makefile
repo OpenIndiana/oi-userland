@@ -13,10 +13,15 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pulseaudio
 COMPONENT_VERSION= 11.1
+COMPONENT_REVISION= 1
+COMPONENT_FMRI = library/audio/pulseaudio
+COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= Sample Rate Converter for audio
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -25,10 +30,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://freedesktop.org/software/pulseaudio/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/PulseAudio/
-COMPONENT_LICENSE_FILE = pulseaudio.license
 COMPONENT_LICENSE = LGPLv2.1,GPLv2,MIT,adrian-license,Sun Public Domain license
-COMPONENT_FMRI = library/audio/pulseaudio
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
