@@ -1,0 +1,15 @@
+2018-03-06  Morten Welinder  <terra@gnome.org>
+goffice/math/go-math.c (do_sinpil): Improve accuracy of fallback.
+sinpi/cospi/tanpi/cotpi improvement.
+Remove patch next release
+--- goffice-0.10.38/goffice/math/go-math.c.~1~	Wed Apr 15 18:43:21 2015
++++ goffice-0.10.38/goffice/math/go-math.c	Thu Mar  8 10:27:23 2018
+@@ -1126,7 +1126,7 @@
+ 	else if (x == 0.25)
+ 		y = 0.707106781186547524400844362104849039284835937688474036588339L;
+ 	else
+-		y = (k & 1) ? cos (M_PIgo * x) : sin (M_PIgo * x);
++		y = (k & 1) ? cosl (M_PIgo * x) : sinl (M_PIgo * x);
+ 
+ 	return (k & 2) ? 0 - y : y;
+ }

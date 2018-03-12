@@ -44,7 +44,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 
-CFLAGS+= -std=gnu99
 LDFLAGS += -lm
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
@@ -52,13 +51,14 @@ CONFIGURE_ENV+= PYTHON=$(PYTHON)
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
+# TEST_32 fails test-math
 test:		$(TEST_64)
 
 REQUIRED_PACKAGES += image/library/librsvg
