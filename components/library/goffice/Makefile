@@ -59,7 +59,7 @@ install:	$(INSTALL_32_and_64)
 unexport SHELLOPTS
 
 # TEST_32 fails test-math
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
