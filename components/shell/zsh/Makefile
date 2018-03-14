@@ -27,14 +27,14 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	5.3.1
+COMPONENT_VERSION=	5.4.2
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fc886cb2ade032d006da8322c09a7e92b2309177811428b121192d44832920da
+    sha256:a80b187b6b770f092ea1f53e89021d06c03d8bbe6a5e996bcca3267de14c5e52
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/zsh
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -90,6 +90,8 @@ license: $(COMPONENT_SRC)/LICENCE
 	tail +13 $< > $@
 
 CLEAN_PATHS += license
+
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 # common targets
 build:		$(BUILD_64) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
