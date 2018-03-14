@@ -19,7 +19,7 @@ COMPONENT_NAME=		clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	0.99.3
+COMPONENT_VERSION=	0.99.4
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -34,7 +34,7 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:00fa5292a6e00a3a4035b826267748965d5d2c4943d8ff417d740238263e8e84
+	sha256:d72ac3273bde8d2e5e28ec9978373ee3ab4529fd868bc3fc4d2d2671228f2461
 COMPONENT_PROJECT_URL=	http://www.clamav.net/
 COMPONENT_ARCHIVE_URL=	\
 	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
