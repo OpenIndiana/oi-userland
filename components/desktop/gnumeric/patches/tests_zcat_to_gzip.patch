@@ -1,6 +1,6 @@
---- gnumeric-1.12.35/test/GnumericTest.pm.orig	Sun Mar  5 20:42:35 2017
-+++ gnumeric-1.12.35/test/GnumericTest.pm	Sat Aug 26 10:21:43 2017
-@@ -397,7 +397,7 @@
+--- gnumeric-1.12.38/test/GnumericTest.pm.~1~	Mon Dec  4 19:46:02 2017
++++ gnumeric-1.12.38/test/GnumericTest.pm	Thu Mar  1 10:11:55 2018
+@@ -404,7 +404,7 @@
      my $code = system ("$ssconvert '$file' '$tmp' 2>&1 | sed -e 's/^/| /'");
      &system_failure ($ssconvert, $code) if $code;
  
@@ -9,7 +9,7 @@
      my $newsha1 = lc substr ($htxt, 0, 40);
      die "SHA-1 failure\n" unless $newsha1 =~ /^[0-9a-f]{40}$/;
  
-@@ -418,13 +418,13 @@
+@@ -425,13 +425,13 @@
  
  	my $tmp1 = "$tmp-old";
  	&junkfile ($tmp1);
@@ -27,25 +27,25 @@
  
  	my $code3 = system ('diff', @ARGV, $tmp1, $tmp2);
  
-@@ -487,13 +487,13 @@
+@@ -495,13 +495,13 @@
  
      my $tmp4 = "$tmp.xml";
      &junkfile ($tmp4) unless $keep;
--    $code = system (&quotearg ("zcat", "-f", $tmp1) . " >" . &quotearg ($tmp4));
+-    $code = system (&quotearg ("zcat", "-f", $tmp1) . "| $normalize_gnumeric >" . &quotearg ($tmp4));
 -    &system_failure ('zcat', $code) if $code;
-+    $code = system (&quotearg ("gzip", "-dcf", $tmp1) . " >" . &quotearg ($tmp4));
++    $code = system (&quotearg ("gzip", "-dcf", $tmp1) . "| $normalize_gnumeric >" . &quotearg ($tmp4));
 +    &system_failure ('gzip', $code) if $code;
  
      my $tmp5 = "$tmp-new.xml";
      &junkfile ($tmp5) unless $keep;
--    $code = system (&quotearg ("zcat" , "-f", $tmp3) . " >" . &quotearg ($tmp5));
+-    $code = system (&quotearg ("zcat" , "-f", $tmp3) . " | $normalize_gnumeric >" . &quotearg ($tmp5));
 -    &system_failure ('zcat', $code) if $code;
-+    $code = system (&quotearg ("gzip" , "-dcf", $tmp3) . " >" . &quotearg ($tmp5));
++    $code = system (&quotearg ("gzip" , "-dcf", $tmp3) . " | $normalize_gnumeric >" . &quotearg ($tmp5));
 +    &system_failure ('gzip', $code) if $code;
  
      $code = system ('diff', '-u', $tmp4, $tmp5);
      &system_failure ('diff', $code) if $code;
-@@ -648,7 +648,7 @@
+@@ -656,7 +656,7 @@
  	$file_filtered =~ s{^.*/}{};
  	$file_filtered =~ s/(\.gnumeric)$/-filter$1/;
  	unlink $file_filtered;
@@ -54,7 +54,7 @@
  	print STDERR "# $cmd\n" if $verbose;
  	$code = system ("($cmd) 2>&1 | sed -e 's/^/| /'");
  	&system_failure ($ssconvert, $code) if $code;
-@@ -681,15 +681,15 @@
+@@ -689,15 +689,15 @@
      my $tmp_xml = "$tmp.xml";
      unlink $tmp_xml;
      &junkfile ($tmp_xml) unless $keep;
