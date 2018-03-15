@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
 COMPONENT_VERSION= 1.19.6
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -143,6 +143,7 @@ REQUIRED_PACKAGES += x11/library/xtrans
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += developer/debug/mdb
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
 
 # Sustained dependencies
 REQUIRED_PACKAGES += x11/library/libxmu
