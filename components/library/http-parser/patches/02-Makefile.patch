@@ -1,0 +1,23 @@
+--- http-parser-2.6.2/Makefile.orig	2018-03-15 13:58:36.875689005 +0000
++++ http-parser-2.6.2/Makefile	2018-03-15 14:01:10.395239186 +0000
+@@ -124,17 +124,19 @@
+ install: library
+ 	$(INSTALL) -D  http_parser.h $(INCLUDEDIR)/http_parser.h
+ 	$(INSTALL) -D $(SONAME) $(LIBDIR)/$(SONAME)
++	rm -f $(LIBDIR)/libhttp_parser.$(SOEXT)
+ 	ln -s $(SONAME) $(LIBDIR)/libhttp_parser.$(SOEXT)
+ 
+ install-strip: library
+ 	$(INSTALL) -D  http_parser.h $(INCLUDEDIR)/http_parser.h
+ 	$(INSTALL) -D -s $(SONAME) $(LIBDIR)/$(SONAME)
++	rm -f $(LIBDIR)/libhttp_parser.$(SOEXT)
+ 	ln -s $(SONAME) $(LIBDIR)/libhttp_parser.$(SOEXT)
+ 
+ uninstall:
+ 	rm $(INCLUDEDIR)/http_parser.h
+ 	rm $(LIBDIR)/$(SONAME)
+-	rm $(LIBDIR)/libhttp_parser.so
++	rm $(LIBDIR)/libhttp_parser.$(SOEXT)
+ 
+ clean:
+ 	rm -f *.o *.a tags test test_fast test_g \
