@@ -16,17 +16,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	python-ldap
-COMPONENT_VERSION= 	2.4.25
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	3.0.0
 COMPONENT_FMRI= 	library/python/python-ldap
 COMPONENT_SUMMARY= 	Python modules for implementing LDAP clients
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:62d00dbc86f3f9b21beacd9b826e8f9895f900637a60a6d4e7ab59a1cdc64e56
+  sha256:86746b912a2cd37a54b06c694f021b0c8556d4caeab75ef50435ada152e2fbe1
 COMPONENT_ARCHIVE_URL= \
-  $(call pypi_url)
+  https://pypi.python.org/packages/c1/52/dfb508364bce92bb2a6ccbe718b69c8857b5d6fcd6af259ab0c36ee68730/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/python-ldap
 COMPONENT_LICENSE_FILE=	LICENCE
 COMPONENT_LICENSE=	PYTHON_STYLE
