@@ -39,10 +39,8 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) && autoreconf -fiv )
 
-# Configure does not find the correct JPEG library, use 64bit pkg-config
-PKG_CONFIG +=	/usr/bin/$(MACH64)/pkg-config
-CFLAGS +=	`$(PKG_CONFIG) --cflags libturbojpeg`
-LDFLAGS +=	`$(PKG_CONFIG) --libs libturbojpeg`
+CFLAGS +=	$(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+LDFLAGS +=	$(JPEG_LDFLAGS)
 
 build:		$(BUILD_64)
 
