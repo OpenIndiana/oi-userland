@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
-COMPONENT_VERSION= 4.0.8
+COMPONENT_VERSION= 4.0.9
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:59d7a5a8ccd92059913f246877db95a2918e6c04fb9d43fd74e5c3390dac2910
+  sha256:6e7bdeec2c310734e734d19aae3a71ebe37a4d842e0e23dbb1b8921c0026cfcd
 COMPONENT_ARCHIVE_URL= \
   http://download.osgeo.org/libtiff/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.simplesystems.org/libtiff/
