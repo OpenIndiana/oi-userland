@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.33
+COMPONENT_VERSION=	1.4.37
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:83726c8d68258c56712373072abb25a449c257398075a39ec0867fd8ba69771d
+    sha256:2f335ab9110ce39036c5271ef39a582a852e424bc9659e421844073cfdf8606b
 COMPONENT_ARCHIVE_URL=	http://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 
@@ -39,7 +39,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+gcc_OPT=-O0
 
 COMPONENT_PREP_ACTION = \
     (cd $(@D) && \
@@ -52,14 +52,11 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-
 COMPONENT_TEST_TARGETS=	test
 
 CFLAGS += -D__ATTRIBUTE_DISABLED
 
-CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/lib/
-CONFIGURE_OPTIONS.32 +=	--with-libevent=/usr/lib/
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/${MACH64}
 CONFIGURE_OPTIONS +=	--enable-dtrace
 CONFIGURE_OPTIONS +=	--disable-docs
@@ -69,12 +66,11 @@ CONFIGURE_OPTIONS +=	--localstatedir=/var
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-# t/lru-maintainer.t fails
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += SUNWcs
