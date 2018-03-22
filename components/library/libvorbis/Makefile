@@ -23,8 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libvorbis
-COMPONENT_VERSION=	1.3.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.3.6
 COMPONENT_FMRI=		library/libvorbis
 COMPONENT_CLASSIFICATION=		System/Libraries
 COMPONENT_SUMMARY=		libvorbis - general-purpose compressed audio format
@@ -32,7 +31,7 @@ COMPONENT_PROJECT_URL=	http://xiph.org/vorbis/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:6efbcecdd3e5dfbf090341b485da9d176eb250d893e3eb378c428a2db38301ce
+  sha256:6ed40e0241089a42c48604dc00e362beee00036af2d8b3f46338031c9e0351cb
 COMPONENT_ARCHIVE_URL=\
   http://downloads.xiph.org/releases/vorbis/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
