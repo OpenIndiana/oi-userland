@@ -39,6 +39,9 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) && autoreconf -fiv )
 
+# Use OpenSSL
+CONFIGURE_OPTIONS += --without-gnutls
+
 CFLAGS +=	$(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 LDFLAGS +=	$(JPEG_LDFLAGS)
 
