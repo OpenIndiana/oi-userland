@@ -11,7 +11,6 @@ This is the main file for DDU GUI part
 
 import sys
 import os
-import gnome
 from xml.dom import minidom
 from xml.dom import Node
 import commands
@@ -53,7 +52,7 @@ try:
 except AttributeError:
     pass
 
-os.putenv('LD_LIBRARY_PATH', '/usr/lib:/lib:/usr/ddu/lib')
+os.putenv('LD_LIBRARY_PATH', '/usr/ddu/lib')
 from utils import DetailInf
 from utils import SubmitDlg
 from utils import InstDrv
@@ -1117,9 +1116,7 @@ class HDDgui:
     def help_clicked(self, widget):
         """show help dialog"""
         del widget
-        props = { gnome.PARAM_APP_DATADIR : ABSPATH+'/help' }
-        gnome.program_init('ddu', '1.0', properties = props)
-        gnome.help_display('ddu')
+        subprocess.Popen(["yelp", "ghelp://%s/help/gnome/help/ddu/C/ddu.xml" % (ABSPATH) ])
 
     def drv_clicked(self, widget):
         """
