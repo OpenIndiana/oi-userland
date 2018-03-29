@@ -26,15 +26,15 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.0.2n
+COMPONENT_VERSION =	1.0.2o
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.14
+IPS_COMPONENT_VERSION = 1.0.2.15
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:370babb75f278c39e0c50e8c4e7493bc0f18db6867478341a832a982fd15a8fe
+    sha256:ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
@@ -126,8 +126,14 @@ $(BUILD_DIR)/$(MACH64)/.configured:	CONFIGURE_OPTIONS += \
 # populated source code directory. However, the Userland configuration phase is
 # run from the build directory. So, we must get the full source code into the
 # build directory.
+
+# We do not ship our engines as patches since it would be more difficult to
+# update the files which have been under continuous development. We rather copy
+# the files to the right directories.
 COMPONENT_PRE_CONFIGURE_ACTION = \
-    ( $(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH$(BITS)); )
+    ( $(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH$(BITS)); \
+      echo "Cloning engines..."; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/engines; )
 
 # We deliver only one opensslconf.h file which must be suitable for both 32 and
 # 64 bits. Depending on the configuration option, OpenSSL's Configure script
@@ -137,13 +143,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_POST_CONFIGURE_ACTION = \
     ( [ $(BITS) -eq 32 ] && $(GPATCH) -p1 $(@D)/crypto/opensslconf.h \
       patches-post-config/opensslconf.patch; cd $(@D); $(MAKE) depend; )
-
-# We do not ship our engines as patches since it would be more difficult to
-# update the files which have been under continuous development. We rather copy
-# the files to the right directories.
-COMPONENT_PRE_BUILD_ACTION = \
-    ( echo "Cloning engines..."; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/engines; )
 
 COMPONENT_BUILD_TARGETS= depend all
 
