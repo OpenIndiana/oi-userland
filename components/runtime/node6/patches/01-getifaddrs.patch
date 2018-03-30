@@ -1,15 +1,5 @@
 --- node-v6.11.3/deps/uv/src/unix/sunos.c.orig	Sat Sep 16 13:39:06 2017
 +++ node-v6.11.3/deps/uv/src/unix/sunos.c	Sat Sep 16 13:39:34 2017
-@@ -761,7 +761,8 @@
-   for (ent = addrs; ent != NULL; ent = ent->ifa_next) {
-     if (!((ent->ifa_flags & IFF_UP) && (ent->ifa_flags & IFF_RUNNING)) ||
-         (ent->ifa_addr == NULL) ||
--        (ent->ifa_addr->sa_family == PF_PACKET)) {
-+        (ent->ifa_addr->sa_family != AF_INET &&
-+         ent->ifa_addr->sa_family != AF_INET6)) {
-       continue;
-     }
- 
 @@ -783,6 +784,10 @@
      if (ent->ifa_addr == NULL)
        continue;
