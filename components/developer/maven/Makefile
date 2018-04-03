@@ -11,12 +11,13 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2018 Olaf Bohlen.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maven
-COMPONENT_VERSION= 3.2.3
+COMPONENT_VERSION= 3.5.3
 COMPONENT_FMRI= developer/build/maven
 COMPONENT_CLASSIFICATION = Development/Java
 COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
@@ -24,7 +25,7 @@ COMPONENT_PROJECT_URL = http://maven.apache.org
 COMPONENT_SRC= apache-maven-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-bin.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:bf3f04aadee3a67158aebdfb0b4cb022063329d459d10fd6b4b02223e10aa8ed
+  sha256:b52956373fab1dd4277926507ab189fb797b3bc51a2a267a193c931fffad8408
 COMPONENT_ARCHIVE_URL= \
   http://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= Apache 2.0
