@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ptlib
 COMPONENT_VERSION= 2.10.11
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= PTLib Class Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI=library/desktop/ptlib
@@ -56,11 +56,15 @@ CONFIGURE_OPTIONS += --enable-httpsvc
 CONFIGURE_OPTIONS += --enable-v4l2
 CONFIGURE_OPTIONS += --enable-lua
 
+COMPONENT_POST_INSTALL_ACTION= \
+            (cd $(PROTOUSRDIR) ;  \
+             $(MV) include/ptbuildopts.h include/ptbuildopts-$(BITS).h )
+
 ENV += -i
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
