@@ -16,15 +16,21 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgweather
-COMPONENT_VERSION= 2.30.3
+COMPONENT_MJR_VERSION= 3.24
+COMPONENT_MNR_VERSION= 1
+COMPONENT_VERSION=$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= Library to access weather information from online services
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b835374661423f37c46aa8e37368ae24a68856f117b7c21e475a21efdba5264c
+  sha256:1227316037b63dac4153031a22abccb3d2ac679a7409e29cd303eec499eb653c
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gnome.org
+COMPONENT_FMRI= library/desktop/libgweather
+COMPONENT_CLASSIFICATION = Development/GNOME and GTK+
+COMPONENT_LICENSE = GPLv2
+COMPONENT_LICENSE_FILE = COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -32,14 +38,16 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+CFLAGS += -std=gnu99 -D_XOPEN_SOURCE=700
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var/lib
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --enable-all-translations-in-one-xml
 CONFIGURE_OPTIONS += --with-zoneinfo-dir=/usr/share/lib/zoneinfo
 
-COMPONENT_INSTALL_ENV+=  GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 build: $(BUILD_32_and_64)
 
@@ -48,9 +56,9 @@ install: $(INSTALL_32_and_64)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/geocode-glib
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
