@@ -1,0 +1,20 @@
+--- opal-3.10.10/plugins/audio/SILK/SILK_SDK/Makefile.1	2018-04-05 12:18:27.175755208 +0000
++++ opal-3.10.10/plugins/audio/SILK/SILK_SDK/Makefile	2018-04-05 12:20:59.804849252 +0000
+@@ -16,7 +16,7 @@
+ LIBSUFFIX = .a
+ OBJSUFFIX = .o
+ 
+-CC     = $(TOOLCHAIN_PREFIX)gcc$(TOOLCHAIN_SUFFIX)
++CC     = $(SILK_CC)
+ AR     = $(TOOLCHAIN_PREFIX)ar
+ RANLIB = $(TOOLCHAIN_PREFIX)ranlib
+ CP     = $(TOOLCHAIN_PREFIX)cp
+@@ -27,6 +27,8 @@
+ ldlibs-from-libs       = $(addprefix -l,$(1))
+ 
+ CFLAGS	+= -Wall -enable-threads -O3 -fPIC
++CFLAGS += $(SILK_CFLAGS)
++LDFLAGS += $(SILK_LDFLAGS)
+ 
+ CFLAGS  += $(call cflags-from-defines,$(CDEFINES))
+ CFLAGS  += $(call cflags-from-defines,$(ADDED_DEFINES))
