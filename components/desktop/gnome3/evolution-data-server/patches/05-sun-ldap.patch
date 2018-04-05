@@ -1,0 +1,71 @@
+--- evolution-data-server-3.24.0/src/addressbook/backends/ldap/openldap-extract.h.1	2018-04-04 13:35:26.590537500 +0000
++++ evolution-data-server-3.24.0/src/addressbook/backends/ldap/openldap-extract.h	2018-04-04 15:10:33.651525772 +0000
+@@ -30,6 +30,20 @@
+ #include <string.h>
+ #include <assert.h>
+ 
++#ifdef SUNLDAP
++#include <ldap.h>
++#include <lber.h>
++
++/*   copy from openldap Ldap-init.h   */
++#define LBER_CALLOC(n,s)        calloc((n),(s))
++#define LBER_REALLOC(p,s)       realloc((p),(s))
++/*   vfree is defined in openldap-extract.h */
++#define LBER_VFREE(v)           vfree((gpointer *)(v))
++#define LBER_FREE(p)            free((p))
++#define LDAP_OPT_SSL 10
++#endif
++
++
+ /* from various header files */
+ 
+ #define LDAP_CONST const
+@@ -54,6 +68,7 @@
+ #define LDAP_RANGE(n,x,y)	(((x) <= (n)) && ((n) <= (y)))
+ #define LDAP_NAME_ERROR(n)	LDAP_RANGE((n),0x20,0x24) /* 32-34,36 */
+ 
++#ifndef SUNLDAP
+ #define ldap_msgtype(lm) (lm)->lm_msgtype
+ #define ldap_msgid(lm) (lm)->lm_msgid
+ #ifndef LDAP_TYPE_OR_VALUE_EXISTS
+@@ -68,6 +83,7 @@
+ #ifndef LDAP_INSUFFICIENT_ACCESS
+ #define LDAP_INSUFFICIENT_ACCESS 0x32
+ #endif
++#endif
+ 
+ #define LDAP_SCHERR_OUTOFMEM		1
+ #define LDAP_SCHERR_UNEXPTOKEN		2
+@@ -749,6 +765,7 @@
+ }
+ 
+ /* from utf-8.c */
++#ifndef SUNLDAP
+ 
+ #define LDAP_UTF8_NEXT(p) g_utf8_next_char((p))
+ #define LDAP_UTF8_INCR(p) ((p)=LDAP_UTF8_NEXT((p)))
+@@ -1448,3 +1465,4 @@
+ 	return rc;
+ }
+ 
++#endif
+--- evolution-data-server-3.24.0/cmake/modules/FindLDAP.cmake.1	2018-04-04 18:08:25.242695820 +0000
++++ evolution-data-server-3.24.0/cmake/modules/FindLDAP.cmake	2018-04-04 18:09:31.759940700 +0000
+@@ -108,6 +108,8 @@
+ add_ldap_lib_if_provides(resolv res_query)
+ add_ldap_lib_if_provides(resolv __res_query)
+ add_ldap_lib_if_provides(socket bind)
++
++if(WITH_OPENLDAP)
+ CHECK_LIBRARY_EXISTS(lber ber_get_tag "" liblber_provides_ber_get_tag)
+ if(liblber_provides_ber_get_tag)
+ 	if(WITH_STATIC_LDAP)
+@@ -122,6 +124,7 @@
+ 		set(LDAP_LIBS "${LDAP_LIBS} -llber")
+ 	endif(WITH_STATIC_LDAP)
+ endif(liblber_provides_ber_get_tag)
++endif(WITH_OPENLDAP)
+ 
+ CHECK_LIBRARY_EXISTS(ldap ldap_open "" libldap_provides_ldap_open)
+ if(libldap_provides_ldap_open)

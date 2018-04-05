@@ -1,0 +1,21 @@
+--- evolution-data-server-3.24.0/cmake/modules/GObjectIntrospection.cmake.~1~	2017-03-20 11:47:25.000000000 +0000
++++ evolution-data-server-3.24.0/cmake/modules/GObjectIntrospection.cmake	2018-04-04 16:46:08.677019245 +0000
+@@ -116,7 +116,7 @@
+ 		file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${_gir_name}_files "${_gir_files}")
+ 
+ 		add_custom_command(
+-			COMMAND ${CMAKE_COMMAND} -E env "CC='${CMAKE_C_COMPILER}'" LDFLAGS=
++			COMMAND ${CMAKE_COMMAND} -E env CC=${CMAKE_C_COMPILER} CFLAGS=${CMAKE_C_FLAGS} LDFLAGS=${CMAKE_SHARED_LINKER_FLAGS}
+ 				${INTROSPECTION_SCANNER_ENV}
+ 				${G_IR_SCANNER}
+ 				${INTROSPECTION_SCANNER_ARGS}
+@@ -146,7 +146,8 @@
+ 		if(NOT DEFINED ${_gir_name}_SKIP_TYPELIB OR NOT ${${_gir_name}_SKIP_TYPELIB})
+ 			string(REPLACE ".gir" ".typelib" _typelib "${gir}")
+ 			add_custom_command(
+-				COMMAND ${G_IR_COMPILER}
++				COMMAND ${CMAKE_COMMAND} -E env CC=${CMAKE_C_COMPILER} CFLAGS=${CMAKE_C_FLAGS} LDFLAGS=${CMAKE_SHARED_LINKER_FLAGS} 
++                                        ${G_IR_COMPILER}
+ 					${INTROSPECTION_COMPILER_ARGS}
+ 					--includedir=${CMAKE_CURRENT_SOURCE_DIR}
+ 					${CMAKE_CURRENT_BINARY_DIR}/${gir}
