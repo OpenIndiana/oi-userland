@@ -22,9 +22,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file files/ptbuildopts.h path=usr/include/ptbuildopts.h
+
 # Generated section:
 link path=usr/bin/ptlib-config target=../share/ptlib/make/ptlib-config
-file path=usr/include/ptbuildopts.h
+file path=usr/include/ptbuildopts-32.h
+file path=usr/include/ptbuildopts-64.h
 file path=usr/include/ptclib/asnber.h
 file path=usr/include/ptclib/asner.h
 file path=usr/include/ptclib/asnper.h
@@ -187,6 +190,13 @@ file path=usr/include/ptlib/video.h
 file path=usr/include/ptlib/videoio.h
 file path=usr/include/ptlib/videoio1394dc.h
 file path=usr/include/ptlib/wxstring.h
+link path=usr/lib/$(MACH64)/libpt.so target=libpt.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libpt.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libpt_s.a
+file path=usr/lib/$(MACH64)/pkgconfig/ptlib.pc
+file path=usr/lib/$(MACH64)/ptlib-$(COMPONENT_VERSION)/devices/sound/pulse_pwplugin.so
+file path=usr/lib/$(MACH64)/ptlib-$(COMPONENT_VERSION)/devices/sound/sunaudio_pwplugin.so
+file path=usr/lib/$(MACH64)/ptlib-$(COMPONENT_VERSION)/devices/videoinput/v4l2_pwplugin.so
 link path=usr/lib/libpt.so target=libpt.so.$(COMPONENT_VERSION)
 file path=usr/lib/libpt.so.$(COMPONENT_VERSION)
 file path=usr/lib/libpt_s.a

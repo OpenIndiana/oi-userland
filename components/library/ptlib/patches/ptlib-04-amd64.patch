@@ -1,0 +1,14 @@
+--- ptlib-2.10.11/make/unix.mak.1	2018-04-05 11:34:21.217368658 +0000
++++ ptlib-2.10.11/make/unix.mak	2018-04-05 11:37:02.374666217 +0000
+@@ -315,6 +315,11 @@
+ endif
+ endif
+ 
++ifeq ($(MACHTYPE),x86_64)
++STDCCFLAGS	+= -DP_64BIT
++STDCCFLAGS	+= -m64
++endif
++
+ ENDLDLIBS	+= -lsocket -lnsl -ldl -lposix4
+ 
+ # Sparc Solaris 2.x, using gcc 2.x
