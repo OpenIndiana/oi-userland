@@ -12,11 +12,13 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ekiga
 COMPONENT_VERSION=	4.0.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI= communication/conferencing/ekiga
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
 COMPONENT_PROJECT_URL=	http://www.ekiga.org
@@ -53,17 +55,17 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-ldap
 CONFIGURE_OPTIONS+=	--disable-notify
 CONFIGURE_OPTIONS+=	--enable-xv
+CONFIGURE_OPTIONS+=	--disable-gconf
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/evolution-data-server
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
