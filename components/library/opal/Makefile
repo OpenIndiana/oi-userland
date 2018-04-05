@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opal
 COMPONENT_VERSION= 3.10.10
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= library/libopal
@@ -32,8 +33,6 @@ COMPONENT_LICENSE= MPLv1.0
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
 
 OPAL_FFMPEG_PATCH =\
 sed -e 's/CODEC_ID/AV_&/' \
@@ -59,9 +58,19 @@ CONFIGURE_OPTIONS += --enable-localgsm
 CONFIGURE_OPTIONS += --disable-x264
 CONFIGURE_OPTIONS += --disable-libavcodec
 
-build: $(BUILD_32)
+# opal comes with SILK SDK, which has own build system
+COMPONENT_BUILD_ENV += SILK_CC="$(CC)"
+COMPONENT_BUILD_ENV += SILK_CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += SILK_LDFLAGS="$(LDFLAGS)"
 
-install: $(INSTALL_32)
+COMPONENT_POST_INSTALL_ACTION= \
+            (cd $(PROTOUSRDIR) ;  \
+             $(MV) include/opal/opal/buildopts.h include/opal/opal/buildopts-$(BITS).h )
+
+
+build: $(BUILD_32_and_64)
+
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
