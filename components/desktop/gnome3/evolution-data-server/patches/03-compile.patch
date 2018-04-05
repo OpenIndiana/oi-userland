@@ -1,0 +1,13 @@
+Fix undef symbol during compile. Potentially send upstream.
+
+--- a/src/camel/camel-movemail.c	2017-11-09 13:01:34.446295991 -0800
++++ b/src/camel/camel-movemail.c	2017-11-09 13:01:42.100368032 -0800
+@@ -146,7 +146,7 @@
+ 	}
+ 
+ #ifdef ENABLE_BROKEN_SPOOL
+-	res = camel_movemail_solaris (sfd, dfd, ex);
++	res = camel_movemail_solaris (sfd, dfd, error);
+ #else
+ 	res = camel_movemail_copy_file (sfd, dfd, error);
+ #endif
