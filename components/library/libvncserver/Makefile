@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libvncserver
 COMPONENT_VERSION=	0.9.10
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://libvnc.github.io
 COMPONENT_SRC=		$(COMPONENT_NAME)-LibVNCServer-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	LibVNCServer-$(COMPONENT_VERSION).tar.gz
@@ -38,6 +39,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) && autoreconf -fiv )
+
+LD_OPTIONS += $(LD_Z_DEFS)
 
 # Use OpenSSL
 CONFIGURE_OPTIONS += --without-gnutls
