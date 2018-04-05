@@ -1,26 +1,29 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2018 Alexander Pyhalov
 #
 
-set name=pkg.fmri value=pkg:/library/desktop/json-glib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license='LGPLv2.1'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/bin/json-glib-format
+file path=usr/bin/json-glib-validate
 file path=usr/include/json-glib-1.0/json-glib/json-builder.h
 file path=usr/include/json-glib-1.0/json-glib/json-enum-types.h
 file path=usr/include/json-glib-1.0/json-glib/json-generator.h
@@ -31,17 +34,123 @@ file path=usr/include/json-glib-1.0/json-glib/json-parser.h
 file path=usr/include/json-glib-1.0/json-glib/json-path.h
 file path=usr/include/json-glib-1.0/json-glib/json-reader.h
 file path=usr/include/json-glib-1.0/json-glib/json-types.h
+file path=usr/include/json-glib-1.0/json-glib/json-utils.h
+file path=usr/include/json-glib-1.0/json-glib/json-version-macros.h
 file path=usr/include/json-glib-1.0/json-glib/json-version.h
 file path=usr/lib/$(MACH64)/girepository-1.0/Json-1.0.typelib
 link path=usr/lib/$(MACH64)/libjson-glib-1.0.so \
-    target=libjson-glib-1.0.so.0.1400.2
+    target=libjson-glib-1.0.so.0.200.8
 link path=usr/lib/$(MACH64)/libjson-glib-1.0.so.0 \
-    target=libjson-glib-1.0.so.0.1400.2
-file path=usr/lib/$(MACH64)/libjson-glib-1.0.so.0.1400.2
+    target=libjson-glib-1.0.so.0.200.8
+file path=usr/lib/$(MACH64)/libjson-glib-1.0.so.0.200.8
 file path=usr/lib/$(MACH64)/pkgconfig/json-glib-1.0.pc
 file path=usr/lib/girepository-1.0/Json-1.0.typelib
-link path=usr/lib/libjson-glib-1.0.so target=libjson-glib-1.0.so.0.1400.2
-link path=usr/lib/libjson-glib-1.0.so.0 target=libjson-glib-1.0.so.0.1400.2
-file path=usr/lib/libjson-glib-1.0.so.0.1400.2
+link path=usr/lib/libjson-glib-1.0.so target=libjson-glib-1.0.so.0.200.8
+link path=usr/lib/libjson-glib-1.0.so.0 target=libjson-glib-1.0.so.0.200.8
+file path=usr/lib/libjson-glib-1.0.so.0.200.8
 file path=usr/lib/pkgconfig/json-glib-1.0.pc
 file path=usr/share/gir-1.0/Json-1.0.gir
+file path=usr/share/gtk-doc/html/json-glib/JsonBuilder.html
+file path=usr/share/gtk-doc/html/json-glib/JsonGenerator.html
+file path=usr/share/gtk-doc/html/json-glib/JsonParser.html
+file path=usr/share/gtk-doc/html/json-glib/JsonPath.html
+file path=usr/share/gtk-doc/html/json-glib/JsonReader.html
+file path=usr/share/gtk-doc/html/json-glib/annotation-glossary.html
+file path=usr/share/gtk-doc/html/json-glib/ch01.html
+file path=usr/share/gtk-doc/html/json-glib/ch02.html
+file path=usr/share/gtk-doc/html/json-glib/ch03.html
+file path=usr/share/gtk-doc/html/json-glib/ch04.html
+file path=usr/share/gtk-doc/html/json-glib/ch06.html
+file path=usr/share/gtk-doc/html/json-glib/home.png
+file path=usr/share/gtk-doc/html/json-glib/index.html
+file path=usr/share/gtk-doc/html/json-glib/ix01.html
+file path=usr/share/gtk-doc/html/json-glib/ix02.html
+file path=usr/share/gtk-doc/html/json-glib/ix03.html
+file path=usr/share/gtk-doc/html/json-glib/ix04.html
+file path=usr/share/gtk-doc/html/json-glib/ix05.html
+file path=usr/share/gtk-doc/html/json-glib/ix06.html
+file path=usr/share/gtk-doc/html/json-glib/ix07.html
+file path=usr/share/gtk-doc/html/json-glib/ix08.html
+file path=usr/share/gtk-doc/html/json-glib/ix09.html
+file path=usr/share/gtk-doc/html/json-glib/ix10.html
+file path=usr/share/gtk-doc/html/json-glib/ix11.html
+file path=usr/share/gtk-doc/html/json-glib/json-advanced.html
+file path=usr/share/gtk-doc/html/json-glib/json-base.html
+file path=usr/share/gtk-doc/html/json-glib/json-format-tool.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-Boxed-Types-Serialization.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-GObject-Serialization.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-JSON-Array.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-JSON-GVariant-Integration.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-JSON-Node.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-JSON-Object.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-Serializable-Interface.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-Utility-API.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib-Versioning-information.html
+file path=usr/share/gtk-doc/html/json-glib/json-glib.devhelp2
+file path=usr/share/gtk-doc/html/json-glib/json-overview.html
+file path=usr/share/gtk-doc/html/json-glib/json-streams.html
+file path=usr/share/gtk-doc/html/json-glib/json-tools.html
+file path=usr/share/gtk-doc/html/json-glib/json-validate-tool.html
+file path=usr/share/gtk-doc/html/json-glib/left-insensitive.png
+file path=usr/share/gtk-doc/html/json-glib/left.png
+file path=usr/share/gtk-doc/html/json-glib/license.html
+file path=usr/share/gtk-doc/html/json-glib/right-insensitive.png
+file path=usr/share/gtk-doc/html/json-glib/right.png
+file path=usr/share/gtk-doc/html/json-glib/style.css
+file path=usr/share/gtk-doc/html/json-glib/tools.html
+file path=usr/share/gtk-doc/html/json-glib/up-insensitive.png
+file path=usr/share/gtk-doc/html/json-glib/up.png
+file path=usr/share/locale/as/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/bg/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/bs/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ca/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/cs/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/da/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/de/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/el/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/eo/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/es/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/et/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/eu/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/fr/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/fur/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/gl/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/he/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/hi/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/hu/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/id/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/it/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ja/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ko/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ky/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/lt/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/lv/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ml/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/nb/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/oc/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/or/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/pa/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/pl/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/pt/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ro/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ru/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/sk/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/sl/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/sr/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/sv/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/te/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/tg/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/tr/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/ug/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/uk/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/vi/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/json-glib-1.0.mo
+file path=usr/share/man/man1/json-glib-format.1
+file path=usr/share/man/man1/json-glib-validate.1
