@@ -12,23 +12,31 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		json-glib
-COMPONENT_VERSION=	0.14.2
+COMPONENT_MJR_VERSION=	1.2
+COMPONENT_MNR_VERSION=	8
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://live.gnome.org/JsonGlib
 COMPONENT_SUMMARY=	JSON parser library for GLib
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b816a5fa3e5664b08679a6972a6e5693d6cc1990ff4a6f94c07554db96be94a7
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.14/$(COMPONENT_ARCHIVE)
+    sha256:fd55a9037d39e7a10f0db64309f5f0265fa32ec962bf85066087b83a2807f40a
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	library/desktop/json-glib
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--disable-static
 
@@ -36,12 +44,32 @@ CONFIGURE_OPTIONS+=	--disable-static
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
+# for the tests
+unexport SHELLOPTS
+COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
+COMPONENT_TEST_DIR=     $(@D)/json-glib/tests
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_ARGS =   -k -i
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/ERROR:/p" '
+
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32_and_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += data/docbook/xsl
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += library/libxslt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
