@@ -25,19 +25,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		patch
 COMPONENT_VERSION=	2.7.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/patch/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7436f5a19f93c3ca83153ce9c5cbe4847e97c5d956e57a220121e741f6e7968f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gpatch
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 ENV = /usr/bin/env -i
 
