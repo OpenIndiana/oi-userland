@@ -1,0 +1,20 @@
+diff -puNr gnugo-3.8.orig/regression/eval.sh gnugo-3.8/regression/eval.sh
+--- gnugo-3.8.orig/regression/eval.sh	2009-02-17 21:41:31.000000000 +0000
++++ gnugo-3.8/regression/eval.sh	2018-04-12 13:45:28.753815527 +0000
+@@ -15,4 +15,4 @@ options3=$4  # May be omitted
+ options4=$5  # May be omitted  FIXME: Do multiple options better.
+ 
+ $GNUGO --quiet $options1 $options2 $options3 $options4 --mode gtp <$tstfile |\
+-	awk -f $RD/regress.awk tst=$tstfile verbose=1
++	gawk -f $RD/regress.awk tst=$tstfile verbose=1
+diff -puNr gnugo-3.8.orig/regression/regress.sh gnugo-3.8/regression/regress.sh
+--- gnugo-3.8.orig/regression/regress.sh	2009-02-17 21:41:31.000000000 +0000
++++ gnugo-3.8/regression/regress.sh	2018-04-12 13:45:17.510391825 +0000
+@@ -19,6 +19,6 @@ shift
+ 
+ cd $srcdir
+ $GNUGO --quiet "$@" --mode gtp < $tstfile \
+-	| awk -f regress.awk tst=$tstfile url=$GNUGO_REGRESSION_URL
++	| gawk -f regress.awk tst=$tstfile url=$GNUGO_REGRESSION_URL
+ 
+ # regress.sh ends here

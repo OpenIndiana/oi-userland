@@ -19,30 +19,41 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
+# Copyright 2018 Harry Liebel <hliebel@gmail.com>
 #
-include ../../make-rules/shared-macros.mk
+
+PREFERRED_BITS=64
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnugo
 COMPONENT_VERSION=	3.8
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=		games/gnugo
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gnugo/
+COMPONENT_SUMMARY=	gnugo - program that plays the game of Go.
+COMPONENT_DESCRIPTION=	GNU Go is a free program that plays the game of Go.
+COMPONENT_CLASSIFICATION=Applications/Games
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:da68d7a65f44dcf6ce6e4e630b6f6dd9897249d34425920bfdd4e07ff1866a72
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gnugo/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	gnugo.license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
-# Auto-generated dependencies
+REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
