@@ -1,34 +1,30 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018 Harry Liebel <hliebel@gmail.com>
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmng
 COMPONENT_VERSION=	1.0.10
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://www.libmng.com/
+COMPONENT_REVISION=	3
+COMPONENT_FMRI=		library/graphics/libmng
+COMPONENT_PROJECT_URL=	http://www.libpng.org/pub/mng
+COMPONENT_SUMMARY=	The Multiple Image Network Graphics Library
+COMPONENT_DESCRIPTION=	A PNG-like image format library supporting multiple images, animations and transparent JPEG.
+COMPONENT_LICENSE=	MNG License (BSD-like)
+COMPONENT_CLASSIFICATION= System/Libraries
+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -55,11 +51,10 @@ COMPONENT_ARCHIVE_HASH_5 = \
     sha256:fe8e0a7aa7371c4c1369b56485fdbd96699e53f0078d7369162c883bb7dac1ca
 COMPONENT_ARCHIVE_URL_5 = http://www.libpng.org/pub/mng/spec/index.html
 
-COMPONENT_BUGDB=	library/libmng
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # because Solaris installed the lcms headers elsewhere
 CFLAGS += `pkg-config --cflags lcms2`

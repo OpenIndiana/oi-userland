@@ -1,0 +1,48 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018 Harry Liebel <hliebel@gmail.com>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file Solaris/libmng.pc path=usr/lib/pkgconfig/libmng.pc
+file libmng-64.pc path=usr/lib/$(MACH64)/pkgconfig/libmng.pc
+file doc/Plan1.png path=usr/share/doc/libmng/html/Plan1.png
+file doc/Plan2.png path=usr/share/doc/libmng/html/Plan2.png
+file index.html path=usr/share/doc/libmng/html/index.html
+file jng-1.0-20010209-pdg.html path=usr/share/doc/libmng/html/jng-1.0-20010209-pdg.html
+file mng-1.0-20010209-pdg.html path=usr/share/doc/libmng/html/mng-1.0-20010209-pdg.html
+file mng-lc-1.0-20010209-pdg.html path=usr/share/doc/libmng/html/mng-lc-1.0-20010209-pdg.html
+file mng-vlc-1.0-20010209-pdg.html path=usr/share/doc/libmng/html/mng-vlc-1.0-20010209-pdg.html
+
+file path=usr/include/libmng/libmng.h
+file path=usr/include/libmng/libmng_conf.h
+file path=usr/include/libmng/libmng_types.h
+link path=usr/lib/$(MACH64)/libmng.so target=libmng.so.1.0.0
+link path=usr/lib/$(MACH64)/libmng.so.1 target=libmng.so.1.0.0
+file path=usr/lib/$(MACH64)/libmng.so.1.0.0
+link path=usr/lib/libmng.so target=libmng.so.1.0.0
+link path=usr/lib/libmng.so.1 target=libmng.so.1.0.0
+file path=usr/lib/libmng.so.1.0.0
+file path=usr/share/man/man3/libmng.3
+file path=usr/share/man/man5/jng.5
+file path=usr/share/man/man5/mng.5
