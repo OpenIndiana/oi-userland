@@ -28,7 +28,6 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f8b64a9820c2ccbdb263a0cb7bcf4caadce0857fdf4e2f52111ca33b4a131760
 COMPONENT_ARCHIVE_URL=	http://groups.csail.mit.edu/mac/ftpdir/scm/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= 	BSD-like, PD
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION=Development/Other Languages
 
 include $(WS_MAKE_RULES)/prep.mk
