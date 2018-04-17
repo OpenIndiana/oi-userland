@@ -1,0 +1,228 @@
+diff -puNr nethack-3.6.0.orig/include/config.h nethack-3.6.0.new/include/config.h
+--- nethack-3.6.0.orig/include/config.h	2015-11-17 05:58:34.000000000 +0000
++++ nethack-3.6.0.new/include/config.h	2018-04-11 15:19:09.136438049 +0000
+@@ -43,7 +43,7 @@
+ #if !defined(NOTTYGRAPHICS)
+ #define TTY_GRAPHICS /* good old tty based graphics */
+ #endif
+-/* #define X11_GRAPHICS */   /* X11 interface */
++#define X11_GRAPHICS   /* X11 interface */
+ /* #define QT_GRAPHICS */    /* Qt interface */
+ /* #define GNOME_GRAPHICS */ /* Gnome interface */
+ /* #define MSWIN_GRAPHICS */ /* Windows NT, CE, Graphics */
+@@ -250,11 +250,11 @@
+ 
+ #if defined(UNIX) && !defined(ZLIB_COMP) && !defined(COMPRESS)
+ /* path and file name extension for compression program */
+-#define COMPRESS "/usr/bin/compress" /* Lempel-Ziv compression */
+-#define COMPRESS_EXTENSION ".Z"      /* compress's extension */
++/* #define COMPRESS "/usr/bin/compress" */ /* Lempel-Ziv compression */
++/* #define COMPRESS_EXTENSION ".Z"      */ /* compress's extension */
+ /* An example of one alternative you might want to use: */
+-/* #define COMPRESS "/usr/local/bin/gzip" */ /* FSF gzip compression */
+-/* #define COMPRESS_EXTENSION ".gz" */       /* normal gzip extension */
++#define COMPRESS "/usr/local/bin/gzip"  /* FSF gzip compression */
++#define COMPRESS_EXTENSION ".gz"        /* normal gzip extension */
+ #endif
+ 
+ #ifndef COMPRESS
+@@ -317,7 +317,7 @@
+  * otherwise it will be the current directory.
+  */
+ #ifndef HACKDIR
+-#define HACKDIR "/usr/games/lib/nethackdir"
++#define HACKDIR "/usr/lib/nethack"
+ #endif
+ 
+ /*
+@@ -412,7 +412,7 @@ typedef unsigned char uchar;
+  * functions that have been macroized.
+  */
+ 
+-/* #define VISION_TABLES */ /* use vision tables generated at compile time */
++#define VISION_TABLES 1 /* use vision tables generated at compile time */
+ #ifndef VISION_TABLES
+ #ifndef NO_MACRO_CPATH
+ #define MACRO_CPATH /* use clear_path macros instead of functions */
+diff -puNr nethack-3.6.0.orig/include/unixconf.h nethack-3.6.0.new/include/unixconf.h
+--- nethack-3.6.0.orig/include/unixconf.h	2015-11-17 10:54:25.000000000 +0000
++++ nethack-3.6.0.new/include/unixconf.h	2018-04-11 15:19:34.868808995 +0000
+@@ -95,13 +95,13 @@
+  */
+ 
+ /* #define NO_FILE_LINKS */                       /* if no hard links */
+-/* #define LOCKDIR "/usr/games/lib/nethackdir" */ /* where to put locks */
++#define LOCKDIR "/var/games/nethack" /* where to put locks */
+ 
+ /*
+  * If you want the static parts of your playground on a read-only file
+  * system, define VAR_PLAYGROUND to be where the variable parts are kept.
+  */
+-/* #define VAR_PLAYGROUND "/var/lib/games/nethack" */
++#define VAR_PLAYGROUND "/var/games/nethack"
+ 
+ /*
+  * Define DEF_PAGER as your default pager, e.g. "/bin/cat" or "/usr/ucb/more"
+@@ -128,7 +128,7 @@
+  * "extra output" method is used, but not all systems provide access to
+  * a fine-grained timer.
+  */
+-/* #define TIMED_DELAY */ /* usleep() */
++#define TIMED_DELAY  /* usleep() */
+ #endif
+ 
+ /*
+diff -puNr nethack-3.6.0.orig/sys/unix/Makefile.src nethack-3.6.0.new/sys/unix/Makefile.src
+--- nethack-3.6.0.orig/sys/unix/Makefile.src	2015-11-12 07:51:56.000000000 +0000
++++ nethack-3.6.0.new/sys/unix/Makefile.src	2018-04-11 15:20:05.875612342 +0000
+@@ -39,7 +39,7 @@ SHELL=/bin/sh
+ # SHELL=E:/GEMINI2/MUPFEL.TTP
+ 
+ # Usually, the C compiler driver is used for linking:
+-#LINK=$(CC)
++LINK=$(CC)
+ 
+ # Pick the SYSSRC and SYSOBJ lines corresponding to your desired operating
+ # system.
+@@ -122,8 +122,8 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o un
+ # LFLAGS = -s
+ 
+ # flags for BSD/OS 2.0
+-# CFLAGS = -O -I../include -I/usr/X11/include
+-# LFLAGS = -L/usr/X11/lib
++CFLAGS += -O -I../include -I/usr/X11/include
++LFLAGS += -L/usr/X11/lib
+ 
+ # flags for Linux
+ #   compile normally
+@@ -160,8 +160,8 @@ GNOMEINC=-I/usr/lib/glib/include -I/usr/
+ # The Qt and Be window systems are written in C++, while the rest of
+ # NetHack is standard C.  If using Qt, uncomment the LINK line here to get
+ # the C++ libraries linked in.
+-CXXFLAGS = $(CFLAGS) -I. -I$(QTDIR)/include
+-CXX=g++
++#CXXFLAGS = $(CFLAGS) -I. -I$(QTDIR)/include
++#CXX=g++
+ #LINK=g++
+ #	For cross-compiling, eg. with gcc on Linux (see also CC further up):
+ #CXX=arm-linux-g++
+@@ -222,8 +222,8 @@ WINBEOBJ =
+ 
+ #
+ #
+-#WINSRC = $(WINTTYSRC)
+-#WINOBJ = $(WINTTYOBJ)
++WINSRC = $(WINTTYSRC) $(WINX11SRC)
++WINOBJ = $(WINTTYOBJ) $(WINX11OBJ)
+ 
+ # on some systems the termcap library is in -ltermcap or -lcurses
+ # on 386 Xenix, the -ltermlib tputs() seems not to work; use -lcurses instead
+@@ -239,7 +239,7 @@ WINBEOBJ =
+ # WINTTYLIB = -lcurses
+ # WINTTYLIB = -lcurses16
+ # WINTTYLIB = -lncurses
+-#WINTTYLIB = -ltermlib
++WINTTYLIB = -lncurses
+ #
+ # libraries for X11
+ # If USE_XPM is defined in config.h, you will also need -lXpm here.
+@@ -263,7 +263,7 @@ WINGEMLIB = -le_gem -lgem
+ # libraries for BeOS 
+ WINBELIB = -lbe
+ 
+-#WINLIB = $(WINTTYLIB)
++WINLIB = -Wl,-zignore $(WINTTYLIB) $(WINX11LIB)
+ 
+ # any other strange libraries your system needs (for Sysunix only -- the more
+ # specialized targets should already be right)
+diff -puNr nethack-3.6.0.orig/sys/unix/Makefile.top nethack-3.6.0.new/sys/unix/Makefile.top
+--- nethack-3.6.0.orig/sys/unix/Makefile.top	2015-11-18 20:54:59.000000000 +0000
++++ nethack-3.6.0.new/sys/unix/Makefile.top	2018-04-11 16:46:19.739923510 +0000
+@@ -17,20 +17,20 @@ NHSROOT=.
+ # MAKE = make
+ 
+ # make NetHack
+-#PREFIX	 = /usr
++PREFIX	 = /usr
+ GAME     = nethack
+ # GAME     = nethack.prg
+-#GAMEUID  = games
+-#GAMEGRP  = bin
++GAMEUID  = bin
++GAMEGRP  = games
+ 
+ # Permissions - some places use setgid instead of setuid, for instance
+ # See also the option "SECURE" in include/config.h
+-#GAMEPERM = 04755
++GAMEPERM = 02755
+ FILEPERM = 0644
+-# VARFILEPERM = 0644
++VARFILEPERM = 0644
+ EXEPERM  = 0755
+ DIRPERM  = 0755
+-# VARDIRPERM = 0755
++VARDIRPERM = 0755
+ 
+ # VARDIR may also appear in unixconf.h as "VAR_PLAYGROUND" else HACKDIR
+ #
+@@ -39,15 +39,17 @@ DIRPERM  = 0755
+ # therefore there should not be anything in HACKDIR that you want to keep
+ # (if there is, you'll have to do the installation by hand or modify the
+ # instructions)
+-#HACKDIR  = $(PREFIX)/games/lib/$(GAME)dir
+-#VARDIR  = $(HACKDIR)
++HACKDIR  = $(ROOT)/$(PREFIX)/lib/$(GAME)
++CLIENT_HACKDIR = $(PREFIX)/lib/$(GAME)
++VARDIR  = $(ROOT)/var/games/nethack
++INSTDIR = $(HACKDIR)
+ # Where nethack.sh in installed.  If this is not defined, the wrapper is not used.
+-#SHELLDIR = $(PREFIX)/games
++SHELLDIR = $(ROOT)/$(PREFIX)/bin
+ 
+ # per discussion in Install.X11 and Install.Qt
+ #VARDATND = 
+ # VARDATND = x11tiles NetHack.ad pet_mark.xbm pilemark.xpm
+-# VARDATND = x11tiles NetHack.ad pet_mark.xbm pilemark.xpm rip.xpm
++VARDATND = x11tiles NetHack.ad pet_mark.xbm pilemark.xbm rip.xpm
+ # for Atari/Gem
+ # VARDATND = nh16.img title.img GEM_RSC.RSC rip.img
+ # for BeOS
+@@ -206,7 +208,7 @@ dofiles:
+ 	cp util/recover $(INSTDIR)
+ 	-if test -n '$(SHELLDIR)'; then rm -f $(SHELLDIR)/$(GAME); fi
+ 	if test -n '$(SHELLDIR)'; then \
+-		sed -e 's;/usr/games/lib/nethackdir;$(HACKDIR);' \
++		sed -e 's;/usr/games/lib/nethackdir;$(CLIENT_HACKDIR);' \
+ 		-e 's;HACKDIR/nethack;HACKDIR/$(GAME);' \
+ 		< sys/unix/nethack.sh \
+ 		> $(SHELLDIR)/$(GAME) ; fi
+diff -puNr nethack-3.6.0.orig/sys/unix/Makefile.utl nethack-3.6.0.new/sys/unix/Makefile.utl
+--- nethack-3.6.0.orig/sys/unix/Makefile.utl	2015-12-07 08:26:01.000000000 +0000
++++ nethack-3.6.0.new/sys/unix/Makefile.utl	2018-04-11 15:51:07.132740394 +0000
+@@ -92,8 +92,8 @@ NHSROOT=..
+ # flags for debugging:
+ # CFLAGS = -g -I../include
+ 
+-#CFLAGS = -O -I../include
+-#LFLAGS =
++CFLAGS += -O -I../include
++LFLAGS +=
+ 
+ LIBS =
+ 
+@@ -104,11 +104,11 @@ OBJDIR = ../src
+ 
+ # yacc/lex programs to use to generate *_comp.h, *_lex.c, and *_yacc.c.
+ # if, instead of yacc/lex you have bison/flex, comment/uncomment the following.
+-YACC     = yacc
+-LEX      = lex
+-# YACC     = bison -y
++#YACC     = yacc
++#LEX      = lex
++YACC     = bison -y
+ # YACC     = byacc
+-# LEX      = flex
++LEX      = flex
+ 
+ # these are the names of the output files from YACC/LEX. Under MS-DOS
+ # and similar systems, they may differ

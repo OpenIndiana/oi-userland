@@ -21,27 +21,33 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018 Harry Liebel <hliebel@gmail.com>
 #
 
-include ../../make-rules/shared-macros.mk
+PREFERRED_BITS=64
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nethack
-COMPONENT_VERSION=	3.4.3
-COMPONENT_PROJECT_URL=	http://www.nethack.org/
+COMPONENT_VERSION=	3.6.0
+COMPONENT_PROJECT_URL=	https://www.nethack.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-343-src.tgz
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-360-src.tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bb39c3d2a9ee2df4a0c8fdde708fbc63740853a7608d2f4c560b488124866fe4
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/nethack
+    sha256:1ade698d8458b8d87a4721444cb73f178c74ed1b6fde537c12000f8edf2cb18a
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		games/nethack
+COMPONENT_LICENSE=      Nethack
+COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_SUMMARY=      A single-player dungeon exploration game
+COMPONENT_DESCRIPTION=	Nethack is a turn-based single-player dungeon exploration game related to Hack and Rogue.  The primary interface is a pseudo-graphical display rendered in text in a terminal, and controlled by the keyboard.
+COMPONENT_CLASSIFICATION="Applications/Games"
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATCH_LEVEL=0
+PATH=$(PATH.gnu)
 
 # Need to use Makefiles in the sys/unix directory and copy them into various
 # other directories.
@@ -53,14 +59,19 @@ COMPONENT_INSTALL_ARGS += CHGRP=true
 COMPONENT_INSTALL_ARGS += ROOT=$(PROTO_DIR)
 
 COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += LFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CC=$(CC)
+COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += LFLAGS="$(CFLAGS)"
 
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc
+PKG_PROTO_DIRS += $(COMPONENT_SRC)/sys/unix
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 	sed -e 's/^!\(NetHack.tomb\)/\1/' -e 's/^!\(NetHack.pet\)/\1/' \
 		-e 's/^!\(NetHack.tile_file\)/\1/' \
 		$(COMPONENT_SRC)/win/X11/NetHack.ad \
@@ -68,11 +79,12 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-# Auto-generated dependencies
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/compatibility/links-xorg
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += developer/lexer/flex

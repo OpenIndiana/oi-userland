@@ -1,44 +1,26 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/games/nethack@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description value="Nethack is a turn-based single-player dungeon exploration game related to Hack and Rogue.  The primary interface is a pseudo-graphical display rendered in text in a terminal, and controlled by the keyboard."
-set name=pkg.summary value="A single-player dungeon exploration game"
-set name=com.oracle.info.description value="the nethack game"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Applications/Games
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+#
+# Copyright 2017 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2008/172
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license nethack.copyright license=Nethack
-
-dir path=var/games/nethack mode=0775 group=games
-dir path=var/games/nethack/save mode=0775 group=games
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/nethack
 file path=usr/lib/nethack/Arc-fila.lev
@@ -112,15 +94,23 @@ file path=usr/lib/nethack/asmodeus.lev
 file path=usr/lib/nethack/astral.lev
 file path=usr/lib/nethack/baalz.lev
 file path=usr/lib/nethack/bigrm-1.lev
+file path=usr/lib/nethack/bigrm-10.lev
 file path=usr/lib/nethack/bigrm-2.lev
 file path=usr/lib/nethack/bigrm-3.lev
 file path=usr/lib/nethack/bigrm-4.lev
 file path=usr/lib/nethack/bigrm-5.lev
+file path=usr/lib/nethack/bigrm-6.lev
+file path=usr/lib/nethack/bigrm-7.lev
+file path=usr/lib/nethack/bigrm-8.lev
+file path=usr/lib/nethack/bigrm-9.lev
+file path=usr/lib/nethack/bogusmon
 file path=usr/lib/nethack/castle.lev
 file path=usr/lib/nethack/cmdhelp
 file path=usr/lib/nethack/data
 file path=usr/lib/nethack/dungeon
 file path=usr/lib/nethack/earth.lev
+file path=usr/lib/nethack/engrave
+file path=usr/lib/nethack/epitaph
 file path=usr/lib/nethack/fakewiz1.lev
 file path=usr/lib/nethack/fakewiz2.lev
 file path=usr/lib/nethack/fire.lev
@@ -132,6 +122,8 @@ file path=usr/lib/nethack/knox.lev
 file path=usr/lib/nethack/license
 file path=usr/lib/nethack/medusa-1.lev
 file path=usr/lib/nethack/medusa-2.lev
+file path=usr/lib/nethack/medusa-3.lev
+file path=usr/lib/nethack/medusa-4.lev
 file path=usr/lib/nethack/minefill.lev
 file path=usr/lib/nethack/minend-1.lev
 file path=usr/lib/nethack/minend-2.lev
@@ -143,15 +135,16 @@ file path=usr/lib/nethack/minetn-4.lev
 file path=usr/lib/nethack/minetn-5.lev
 file path=usr/lib/nethack/minetn-6.lev
 file path=usr/lib/nethack/minetn-7.lev
-file path=usr/lib/nethack/nethack mode=2555 group=games
+file path=usr/lib/nethack/nethack
 file path=usr/lib/nethack/opthelp
 file path=usr/lib/nethack/options
 file path=usr/lib/nethack/oracle.lev
 file path=usr/lib/nethack/oracles
 file path=usr/lib/nethack/orcus.lev
 file path=usr/lib/nethack/pet_mark.xbm
+file path=usr/lib/nethack/pilemark.xbm
 file path=usr/lib/nethack/quest.dat
-file path=usr/lib/nethack/recover mode=0555
+file path=usr/lib/nethack/recover
 file path=usr/lib/nethack/rip.xpm
 file path=usr/lib/nethack/rumors
 file path=usr/lib/nethack/sanctum.lev
@@ -163,9 +156,11 @@ file path=usr/lib/nethack/soko3-1.lev
 file path=usr/lib/nethack/soko3-2.lev
 file path=usr/lib/nethack/soko4-1.lev
 file path=usr/lib/nethack/soko4-2.lev
+file path=usr/lib/nethack/symbols
 file path=usr/lib/nethack/tower1.lev
 file path=usr/lib/nethack/tower2.lev
 file path=usr/lib/nethack/tower3.lev
+file path=usr/lib/nethack/tribute
 file path=usr/lib/nethack/valley.lev
 file path=usr/lib/nethack/water.lev
 file path=usr/lib/nethack/wizard1.lev
@@ -173,12 +168,7 @@ file path=usr/lib/nethack/wizard2.lev
 file path=usr/lib/nethack/wizard3.lev
 file path=usr/lib/nethack/wizhelp
 file path=usr/lib/nethack/x11tiles
-
-file nethack.6 path=usr/share/man/man6/nethack.6
-
-file path=var/games/nethack/logfile mode=0664 group=games \
-    original_name=SUNWnethack:var/games/nethack/logfile preserve=true
-file path=var/games/nethack/perm mode=0664 group=games \
-    original_name=SUNWnethack:var/games/nethack/perm preserve=true
-file path=var/games/nethack/record mode=0664 group=games \
-    original_name=SUNWnethack:var/games/nethack/record preserve=true
+file path=var/games/nethack/logfile
+file path=var/games/nethack/perm
+file path=var/games/nethack/record
+file path=var/games/nethack/xlogfile

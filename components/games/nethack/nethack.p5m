@@ -10,17 +10,22 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018 Harry Liebel <hliebel@gmail.com>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir path=var/games/nethack mode=0775 group=games
+dir path=var/games/nethack/save mode=0775 group=games
 
 file path=usr/bin/nethack
 file path=usr/lib/nethack/Arc-fila.lev
@@ -94,15 +99,23 @@ file path=usr/lib/nethack/asmodeus.lev
 file path=usr/lib/nethack/astral.lev
 file path=usr/lib/nethack/baalz.lev
 file path=usr/lib/nethack/bigrm-1.lev
+file path=usr/lib/nethack/bigrm-10.lev
 file path=usr/lib/nethack/bigrm-2.lev
 file path=usr/lib/nethack/bigrm-3.lev
 file path=usr/lib/nethack/bigrm-4.lev
 file path=usr/lib/nethack/bigrm-5.lev
+file path=usr/lib/nethack/bigrm-6.lev
+file path=usr/lib/nethack/bigrm-7.lev
+file path=usr/lib/nethack/bigrm-8.lev
+file path=usr/lib/nethack/bigrm-9.lev
+file path=usr/lib/nethack/bogusmon
 file path=usr/lib/nethack/castle.lev
 file path=usr/lib/nethack/cmdhelp
 file path=usr/lib/nethack/data
 file path=usr/lib/nethack/dungeon
 file path=usr/lib/nethack/earth.lev
+file path=usr/lib/nethack/engrave
+file path=usr/lib/nethack/epitaph
 file path=usr/lib/nethack/fakewiz1.lev
 file path=usr/lib/nethack/fakewiz2.lev
 file path=usr/lib/nethack/fire.lev
@@ -114,6 +127,8 @@ file path=usr/lib/nethack/knox.lev
 file path=usr/lib/nethack/license
 file path=usr/lib/nethack/medusa-1.lev
 file path=usr/lib/nethack/medusa-2.lev
+file path=usr/lib/nethack/medusa-3.lev
+file path=usr/lib/nethack/medusa-4.lev
 file path=usr/lib/nethack/minefill.lev
 file path=usr/lib/nethack/minend-1.lev
 file path=usr/lib/nethack/minend-2.lev
@@ -125,15 +140,16 @@ file path=usr/lib/nethack/minetn-4.lev
 file path=usr/lib/nethack/minetn-5.lev
 file path=usr/lib/nethack/minetn-6.lev
 file path=usr/lib/nethack/minetn-7.lev
-file path=usr/lib/nethack/nethack
+file path=usr/lib/nethack/nethack mode=2555 group=games
 file path=usr/lib/nethack/opthelp
 file path=usr/lib/nethack/options
 file path=usr/lib/nethack/oracle.lev
 file path=usr/lib/nethack/oracles
 file path=usr/lib/nethack/orcus.lev
 file path=usr/lib/nethack/pet_mark.xbm
+file path=usr/lib/nethack/pilemark.xbm
 file path=usr/lib/nethack/quest.dat
-file path=usr/lib/nethack/recover
+file path=usr/lib/nethack/recover mode=0555
 file path=usr/lib/nethack/rip.xpm
 file path=usr/lib/nethack/rumors
 file path=usr/lib/nethack/sanctum.lev
@@ -145,9 +161,11 @@ file path=usr/lib/nethack/soko3-1.lev
 file path=usr/lib/nethack/soko3-2.lev
 file path=usr/lib/nethack/soko4-1.lev
 file path=usr/lib/nethack/soko4-2.lev
+file path=usr/lib/nethack/symbols
 file path=usr/lib/nethack/tower1.lev
 file path=usr/lib/nethack/tower2.lev
 file path=usr/lib/nethack/tower3.lev
+file path=usr/lib/nethack/tribute
 file path=usr/lib/nethack/valley.lev
 file path=usr/lib/nethack/water.lev
 file path=usr/lib/nethack/wizard1.lev
@@ -155,6 +173,14 @@ file path=usr/lib/nethack/wizard2.lev
 file path=usr/lib/nethack/wizard3.lev
 file path=usr/lib/nethack/wizhelp
 file path=usr/lib/nethack/x11tiles
-file path=var/games/nethack/logfile
-file path=var/games/nethack/perm
-file path=var/games/nethack/record
+file sysconf path=usr/lib/nethack/sysconf preserve=true
+
+file nethack.6 path=usr/share/man/man6/nethack.6
+
+file path=var/games/nethack/logfile mode=0664 group=games \
+    original_name=SUNWnethack:var/games/nethack/logfile preserve=true
+file path=var/games/nethack/perm mode=0664 group=games \
+    original_name=SUNWnethack:var/games/nethack/perm preserve=true
+file path=var/games/nethack/record mode=0664 group=games \
+    original_name=SUNWnethack:var/games/nethack/record preserve=true
+file path=var/games/nethack/xlogfile mode=0664 group=games preserve=true
