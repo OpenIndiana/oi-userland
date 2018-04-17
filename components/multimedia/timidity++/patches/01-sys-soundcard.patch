@@ -1,25 +1,21 @@
 diff -puNr TiMidity++-2.14.0.orig/timidity/midi_a.c TiMidity++-2.14.0/timidity/midi_a.c
 --- TiMidity++-2.14.0.orig/timidity/midi_a.c	2009-03-14 15:49:59.000000000 +0000
-+++ TiMidity++-2.14.0/timidity/midi_a.c	2018-04-10 07:35:49.743687930 +0000
-@@ -49,14 +49,14 @@
++++ TiMidity++-2.14.0/timidity/midi_a.c	2018-04-17 14:36:21.184520463 +0000
+@@ -49,6 +49,9 @@
  #endif
  #include <fcntl.h>
  #include <stdlib.h>
--#ifdef HAVE_SYS_SOUNDCARD_H
--#include <sys/soundcard.h>
--#if defined(__NetBSD__) || defined(__OpenBSD__)
--#include <sys/midiio.h>
--#endif
--#else
-+//#ifdef HAVE_SYS_SOUNDCARD_H
-+//#include <sys/soundcard.h>
-+//#if defined(__NetBSD__) || defined(__OpenBSD__)
-+//#include <sys/midiio.h>
-+//#endif
-+//#else
++#if defined (__sun)
++#include "server_defs.h"
++#else
+ #ifdef HAVE_SYS_SOUNDCARD_H
+ #include <sys/soundcard.h>
+ #if defined(__NetBSD__) || defined(__OpenBSD__)
+@@ -57,6 +60,7 @@
+ #else
  #include "server_defs.h"
--#endif /* HAVE_SYS_SOUNDCARD_H */
-+//#endif /* HAVE_SYS_SOUNDCARD_H */
+ #endif /* HAVE_SYS_SOUNDCARD_H */
++#endif /* __sun */
  #ifdef WIN32
  #ifndef STDOUT_FILENO
  #define STDOUT_FILENO 1
