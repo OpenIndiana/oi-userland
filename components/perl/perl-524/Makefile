@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		perl
 COMPONENT_VERSION=	5.24.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Perl 5.24
 PERL_VERSION=		5.24
 COMPONENT_PROJECT_URL=	http://www.perl.org/
