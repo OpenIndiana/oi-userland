@@ -17,13 +17,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-8
 
-OPENJDK_BUILD_NUMBER=152
+OPENJDK_BUILD_NUMBER=162
 COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
-COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20171128.tar.xz
+COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20180212.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c6b4807d0d9dbf60e9d3e0d3a6f44b15023653305e559363d8fa3d98ad2341ac
+  sha256:21d69b71415c129b3cd5e9c8adb8a7263864dc90f5b06216bc82f879b111367d
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.netbsd.org/pub/pkgsrc/distfiles/openjdk7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://openjdk.java.net/
@@ -55,7 +55,7 @@ CONFIGURE_OPTIONS+=        --disable-ccache
 CONFIGURE_OPTIONS+=        --with-user-release-suffix=oi-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS+=        --with-update-version=$(OPENJDK_BUILD_NUMBER)
 # OpenJDK uses CLFAGS for C and C++ unfortunately
-CONFIGURE_OPTIONS+=        --with-extra-cflags="-std=gnu89 -std=gnu++98 "
+CONFIGURE_OPTIONS+=        --with-extra-cflags="-std=gnu89 -std=gnu++98 -fno-lifetime-dse"
 CONFIGURE_OPTIONS+=        --with-extra-cxxflags="-std=gnu++98 "
 
 CONFIGURE_ENV+=	AS=$(GAS)
