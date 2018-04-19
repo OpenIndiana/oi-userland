@@ -1,0 +1,19 @@
+Earlier Apache detected lua 5.3 automatically. Avoid switching to lua 5.2
+
+--- modules/lua/config.m4.1	2018-04-19 18:07:25.641376284 +0000
++++ modules/lua/config.m4	2018-04-19 18:10:00.407186327 +0000
+@@ -56,10 +56,10 @@
+ fi
+ 
+ if test -n "$PKGCONFIG" -a -z "$lua_path" \
+-   && $PKGCONFIG --atleast-version=5.1 lua; then
+-  LUA_LIBS="`$PKGCONFIG --libs lua`"
+-  LUA_CFLAGS="`$PKGCONFIG --cflags lua`"
+-  LUA_VERSION="`$PKGCONFIG --modversion lua`"
++   && $PKGCONFIG --atleast-version=5.3 lua5.3; then
++  LUA_LIBS="`$PKGCONFIG --libs lua5.3`"
++  LUA_CFLAGS="`$PKGCONFIG --cflags lua5.3`"
++  LUA_VERSION="`$PKGCONFIG --modversion lua5.3`"
+   AC_MSG_NOTICE([using Lua $LUA_VERSION configuration from pkg-config])
+ else
+   AC_CHECK_LIB(m, pow, lib_m="-lm")
