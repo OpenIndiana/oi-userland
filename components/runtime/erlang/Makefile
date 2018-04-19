@@ -30,6 +30,7 @@ PATH=$(JAVA_HOME)/bin:$(USRBINDIR)
 
 COMPONENT_NAME=           erlang
 COMPONENT_VERSION=        19.3
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           runtime/erlang
 COMPONENT_PROJECT_URL=    http://www.erlang.org/
 COMPONENT_SRC_NAME=       otp_src
