@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-mount
 COMPONENT_VERSION= 0.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Programs for mounting, unmounting and ejecting storage devices
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -51,8 +52,8 @@ test: $(NO_TESTS)
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
