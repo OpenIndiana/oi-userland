@@ -1,0 +1,25 @@
+From 2e4a241d60562d0b259ce7d40e0cadae7a75c3ed Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Tue, 13 Feb 2018 13:34:05 -0800
+Subject: [PATCH] OS-6610 KVM should tolerate %cr3 changes Reviewed by: Patrick
+ Mooney <patrick.mooney@joyent.com> Approved by: Robert Mustacchi
+ <rm@joyent.com>
+
+---
+ kvm_vmx.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kvm_vmx.c b/kvm_vmx.c
+index 5f7d90c..e585b20 100644
+--- a/kvm_vmx.c
++++ b/kvm_vmx.c
+@@ -879,6 +879,9 @@ vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 		rdmsrl(MSR_IA32_SYSENTER_ESP, sysenter_esp);
+ 		vmcs_writel(HOST_IA32_SYSENTER_ESP, sysenter_esp); /* 22.2.3 */
+ 
++		/* We also have a per-CPU %cr3 if we're using kpti */
++		vmcs_writel(HOST_CR3, read_cr3());  /* 22.2.3 */
++
+ 		/*
+ 		 * Make sure that the TSC_OFFSET reflects both this CPU's tick
+ 		 * delta and the guest's TSC offset.
