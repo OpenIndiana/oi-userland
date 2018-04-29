@@ -18,11 +18,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	augeas
-COMPONENT_VERSION= 1.9.0
+COMPONENT_VERSION= 1.10.1
 COMPONENT_SUMMARY= Augeas is a utility for editing configuration files	
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2b463d398cabc9b42747aa61d3e83ed6a93ce03d9074cf8e7a7bd3107a668343
+COMPONENT_ARCHIVE_HASH=	sha256:52db256afab261d31cc147eaa1a71795a5fec59e888dfd0b65a84c7aacd6364d
 COMPONENT_ARCHIVE_URL= http://download.augeas.net/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://augeas.net/index.html
 COMPONENT_FMRI=	library/$(COMPONENT_NAME)
@@ -75,3 +75,4 @@ test: $(TEST_32_and_64)
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
