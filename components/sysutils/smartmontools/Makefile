@@ -25,14 +25,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= smartmontools
 COMPONENT_SUMMARY= smartmontools contains utilities that control and monitor storage devices
-COMPONENT_VERSION= 6.5
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 6.6
 COMPONENT_FMRI= storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= http://downloads.sourceforge.net/smartmontools
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:89e8bb080130bc6ce148573ba5bb91bfe30236b64b1b5bbca26515d4b5c945bc
+COMPONENT_ARCHIVE_HASH= sha256:51f43d0fb064fccaf823bbe68cf0d317d0895ff895aa353b3339a3b316a53054
 COMPONENT_ARCHIVE_URL= http://sourceforge.net/projects/smartmontools/files/smartmontools/${COMPONENT_VERSION}/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
 
@@ -43,9 +42,10 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION =  ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --with-savestates
+CONFIGURE_OPTIONS += --with-attributelog
 CONFIGURE_OPTIONS += --with-drivedbdir=yes
-CONFIGURE_OPTIONS += --with-savestates=/var/lib/smartmontools/smartd.
-CONFIGURE_OPTIONS += --with-attributelog=/var/lib/smartmontools/attrlog.
 CONFIGURE_OPTIONS += --with-smartdscriptdir=/usr/sbin
 CONFIGURE_OPTIONS += --with-nvme-devicescan=yes
 
