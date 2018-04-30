@@ -1,11 +1,10 @@
-diff -ruN haproxy-1.6.6.orig/Makefile haproxy-1.6.6/Makefile
---- haproxy-1.6.6.orig/Makefile	2016-06-26 20:41:01.000000000 +0300
-+++ haproxy-1.6.6/Makefile	2016-10-06 12:00:05.287917022 +0300
-@@ -591,7 +591,7 @@
+--- haproxy-1.8.8/Makefile.orig	2018-04-30 11:17:29.449330347 +0000
++++ haproxy-1.8.8/Makefile	2018-04-30 11:17:50.402619103 +0000
+@@ -632,7 +632,7 @@
  
  BUILD_OPTIONS   += $(call ignore_implicit,USE_LUA)
  OPTIONS_CFLAGS  += -DUSE_LUA $(if $(LUA_INC),-I$(LUA_INC))
--LUA_LD_FLAGS := -Wl,--export-dynamic $(if $(LUA_LIB),-L$(LUA_LIB))
+-LUA_LD_FLAGS := -Wl,$(if $(EXPORT_SYMBOL),$(EXPORT_SYMBOL),--export-dynamic) $(if $(LUA_LIB),-L$(LUA_LIB))
 +LUA_LD_FLAGS := $(if $(LUA_LIB),-L$(LUA_LIB))
  ifeq ($(LUA_LIB_NAME),)
  # Try to automatically detect the Lua library
