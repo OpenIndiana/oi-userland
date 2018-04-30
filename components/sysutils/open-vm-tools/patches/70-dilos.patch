@@ -51,26 +51,23 @@ Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris
        return FALSE;
     }
 
-Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/include/vmci_sockets.h
-===================================================================
---- open-vm-tools-2013.04.16-1098359/lib/include/vmci_sockets.h.orig
-+++ open-vm-tools-2013.04.16-1098359/lib/include/vmci_sockets.h
-@@ -487,7 +487,7 @@ struct uuid_2_cid {
+--- open-vm-tools-stable-10.2.5/lib/include/vmci_sockets.h.orig	2018-04-30 12:10:50.994448776 +0000
++++ open-vm-tools-stable-10.2.5/lib/include/vmci_sockets.h	2018-04-30 12:12:27.824324960 +0000
+@@ -524,7 +524,7 @@
        }
  #  endif // !NT_INCLUDED
  #else // _WIN32
--#if (defined(linux) && !defined(VMKERNEL)) || (defined(__APPLE__))
-+#if (defined(linux) && !defined(VMKERNEL)) || (defined(__APPLE__)) || (defined(__sun))
- #  if defined(linux) && defined(__KERNEL__)
+-#if (defined(__linux__) && !defined(VMKERNEL)) || (defined(__APPLE__))
++#if (defined(__linux__) && !defined(VMKERNEL)) || (defined(__APPLE__)) || (defined(__sun))
+ #  if defined(__linux__) && defined(__KERNEL__)
     void VMCISock_KernelRegister(void);
     void VMCISock_KernelDeregister(void);
-@@ -507,7 +507,7 @@ struct uuid_2_cid {
+@@ -544,7 +544,7 @@
  /** \cond PRIVATE */
  #  define VMCI_SOCKETS_DEFAULT_DEVICE      "/dev/vsock"
  #  define VMCI_SOCKETS_CLASSIC_ESX_DEVICE  "/vmfs/devices/char/vsock/vsock"
--#  if defined(linux)
-+#  if defined(linux) || defined(__sun)
+-#  if defined(__linux__)
++#  if defined(__linux__) || (defined(__sun))
  #     define VMCI_SOCKETS_VERSION       1972
  #     define VMCI_SOCKETS_GET_AF_VALUE  1976
  #     define VMCI_SOCKETS_GET_LOCAL_CID 1977
-
