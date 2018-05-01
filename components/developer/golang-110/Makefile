@@ -83,10 +83,6 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_POST_UNPACK_ACTION= \
 	$(MV) go $(COMPONENT_SRC)
 
-COMPONENT_POST_UNPACK_ACTION_1= \
-	$(MV) go $(COMPONENT_SRC_1) && \
-	$(CP) -r $(COMPONENT_SRC_1) $(COMPONENT_SRC)/$(COMPONENT_SRC_1)
-
 # Fixup compressed data affected by patches.
 COMPONENT_PREP_ACTION= \
 	cd $(COMPONENT_SRC) && \
@@ -133,3 +129,4 @@ install:	build $(INSTALL_64)
 
 test:		$(TEST_64)
 
+REQUIRED_PACKAGES += developer/golang-18
