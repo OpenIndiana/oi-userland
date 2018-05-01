@@ -61,6 +61,7 @@ CONFIGURE_OPTIONS += --enable-integer-datetimes
 CONFIGURE_OPTIONS += --with-includes=/usr/include
 CONFIGURE_OPTIONS += --with-tclconfig=/usr/lib
 CONFIGURE_OPTIONS.64 += --with-perl
+CONFIGURE_OPTIONS += --with-uuid=e2fs
 
 CONFIGURE_OPTIONS.32 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
