@@ -1,22 +1,56 @@
---- ghostscript-8.64/ijs/Makefile.am.orig	Tue Mar 29 04:38:15 2011
-+++ ghostscript-8.64/ijs/Makefile.am	Tue Mar 29 04:38:26 2011
-@@ -24,7 +24,7 @@
+Solaris specific patch to use newer version of automake(1) tool
+Patch is not submitted upstream
+===========
+--- ghostscript-9.22/ijs/Makefile.am.orig	2017-12-01 11:56:13.741952506 +0000
++++ ghostscript-9.22/ijs/Makefile.am	2017-12-01 11:56:35.100278845 +0000
+@@ -23,7 +23,7 @@
  
  ## Process this file with automake to produce Makefile.in.
  
--AUTOMAKE_OPTIONS = 1.6 foreign dist-bzip2 no-dependencies 
-+AUTOMAKE_OPTIONS = 1.10 foreign dist-bzip2 no-dependencies 
+-AUTOMAKE_OPTIONS = 1.8 foreign dist-bzip2 no-dependencies
++AUTOMAKE_OPTIONS = 1.15 foreign dist-bzip2 no-dependencies
  
  @SET_MAKE@
  
---- ghostscript-8.64/ijs/autogen.sh.orig	Tue Mar 29 04:39:57 2011
-+++ ghostscript-8.64/ijs/autogen.sh	Tue Mar 29 04:39:17 2011
+--- ghostscript-9.22/ijs/autogen.sh.orig	2017-12-01 11:56:07.008050639 +0000
++++ ghostscript-9.22/ijs/autogen.sh	2017-12-01 12:04:44.844915536 +0000
 @@ -33,7 +33,7 @@
- 
  # do we need automake?
- (grep "^AM_INIT_AUTOMAKE" "$CONFIG_AC" >/dev/null) && {
+ if test "x$USE_OLD" = "xyes" ; then
+   (grep "^AM_INIT_AUTOMAKE" "$CONFIG_AC" >/dev/null) && {
+-    AM_NEEDED=`fgrep AUTOMAKE_OPTIONS Makefile.am | $VERSIONGREP`
++    AM_NEEDED=`fgrep AUTOMAKE_OPTIONS Makefile.am | nawk '{print $3}'`
+     AM_NMAJOR=`echo $AM_NEEDED |cut -d. -f1`
+     AM_NMINOR=`echo $AM_NEEDED |cut -d. -f2`
+     AM_NPATCHLEVEL=`echo $AM_NEEDED |cut -d. -f3`
+@@ -96,7 +96,7 @@
+   AM_MIN=`echo $AM_VER |cut -d. -f2`
+   AM_PAT=`echo $AM_VER |cut -d. -f3`
+ 
 -  AM_NEEDED=`fgrep AUTOMAKE_OPTIONS Makefile.am | $VERSIONGREP`
 +  AM_NEEDED=`fgrep AUTOMAKE_OPTIONS Makefile.am | nawk '{print $3}'`
-   AM_NMAJOR=`echo $AM_NEEDED |cut -d. -f1`
-   AM_NMINOR=`echo $AM_NEEDED |cut -d. -f2`
-   AM_NPATCHLEVEL=`echo $AM_NEEDED |cut -d. -f3`
+   AM_MAJOR_REQ=`echo $AM_NEEDED |cut -d. -f1`
+   AM_MINOR_REQ=`echo $AM_NEEDED |cut -d. -f2`
+   
+--- ghostscript-9.22/tiff/Makefile.am.orig	2017-12-01 11:52:44.053570871 +0000
++++ ghostscript-9.22/tiff/Makefile.am	2017-12-01 11:52:58.558322025 +0000
+@@ -25,7 +25,7 @@
+ 
+ docdir = $(LIBTIFF_DOCDIR)
+ 
+-AUTOMAKE_OPTIONS = 1.12 dist-zip foreign
++AUTOMAKE_OPTIONS = 1.15 dist-zip foreign
+ ACLOCAL_AMFLAGS = -I m4
+ 
+ docfiles = \
+--- ghostscript-9.22/tiff/test/Makefile.am.orig	2017-12-01 11:54:07.958034002 +0000
++++ ghostscript-9.22/tiff/test/Makefile.am	2017-12-01 11:54:37.153814949 +0000
+@@ -23,7 +23,7 @@
+ 
+ # Process this file with automake to produce Makefile.in.
+ 
+-AUTOMAKE_OPTIONS = 1.12 color-tests parallel-tests foreign
++AUTOMAKE_OPTIONS = 1.15 color-tests parallel-tests foreign
+ 
+ LIBTIFF = $(top_builddir)/libtiff/libtiff.la
+ 

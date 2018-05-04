@@ -1,11 +1,16 @@
---- ghostscript-9.00/cups/gdevcups.c	Thu Aug 12 23:40:47 2010
-+++ gdevcups.c	Wed Mar  7 13:16:38 2012
-@@ -3459,7 +3459,7 @@
-       sp = ((gx_device_printer *)pdev)->space_params;
+Patch to fix issue with GS & HP Printers
+Bug # 15777965.
+
+NOTE : This patch will not be pushed upstream.
+
+--- ghostscript-9.22/cups/gdevcups.c.orig	2017-12-04 02:16:50.673349342 +0000
++++ ghostscript-9.22/cups/gdevcups.c	2017-12-04 02:17:38.126522038 +0000
+@@ -3889,7 +3889,7 @@
  
-       if ((code = gdev_prn_maybe_realloc_memory((gx_device_printer *)pdev, &sp, 
+       if ((code = gdev_prn_maybe_realloc_memory((gx_device_printer *)pdev,
+                                                 &sp_old,
 -						width_old, height_old,
 +						width, height,
- 						cups->page_uses_transparency))
+ 						transp_old))
  	  < 0)
- 	return (code);
+         goto done;
