@@ -77,6 +77,7 @@ export ASLR_MODE
 # a 32-bit znapzend? For now we work around the mess by having it all in a
 # dedicated directory per ARCH, including the perl modules.
 CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS +=	--exec-prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-svcinstall=/lib/svc/manifest/system
 CONFIGURE_OPTIONS +=	--with-svcname-smf=system/filesystem/zfs/znapzend
