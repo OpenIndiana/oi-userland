@@ -50,6 +50,7 @@ PKG_OPTIONS += -D GCC_RUNTIME_PKG="$(GCC_RUNTIME_PKG)"
 COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin \
         && ORIGDIR="../share/$(COMPONENT_NAME)/bin" \
         && for BINFILE in znapzend znapzendzetup znapzendztats ; do \
+            rm -f "$(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin/$$BINFILE" || true ; \
             ln -sf "$$ORIGDIR/$$BINFILE" "$(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin/" || exit ; \
         done )
 
