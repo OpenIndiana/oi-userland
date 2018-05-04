@@ -45,16 +45,12 @@ COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 PKG_OPTIONS += -D GCC_RUNTIME_PKG="$(GCC_RUNTIME_PKG)"
 
-# NOTE: Code below assumes that BINDIR64 is one layer under BINDIR32
-# Othewise might use GNU ln -rsf ...
-COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS)) \
-        && case "$(BITS)" in \
-            32) ORIGDIR="../share/$(COMPONENT_NAME)/$(MACH32)/bin" ;; \
-            64) ORIGDIR="../../share/$(COMPONENT_NAME)/$(MACH64)/bin" ;; \
-            *) echo "Unsupported BITS value: $(BITS)" >&2 ; exit 1 ;; \
-        esac \
+# Note: Building and installing for one bitness, so for PATH to have
+# the binaries, it should be linked straight in bin/ (no $BITS magic)
+COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin \
+        && ORIGDIR="../share/$(COMPONENT_NAME)/bin" \
         && for BINFILE in znapzend znapzendzetup znapzendztats ; do \
-            ln -sf "$$ORIGDIR/$$BINFILE" "$(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS))/" || exit ; \
+            ln -sf "$$ORIGDIR/$$BINFILE" "$(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin/" || exit ; \
         done )
 
 # NOTE: znapzend is a script, but it can pull some PERL modules and some may be
@@ -62,16 +58,16 @@ COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BIT
 # TODO: package dependency modules as separate IPS requirements, and build only
 # a 32-bit znapzend? For now we work around the mess by having it all in a
 # dedicated directory per ARCH, including the perl modules.
-CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)/$(MACH$(BITS))
+CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-svcinstall=/lib/svc/manifest/system
 CONFIGURE_OPTIONS +=	--with-svcname-smf=system/filesystem/zfs/znapzend
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
-test: $(TEST_32_and_64)
+test: $(TEST_64)
 
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
