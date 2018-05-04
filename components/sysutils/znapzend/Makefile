@@ -66,11 +66,11 @@ CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-svcinstall=/lib/svc/manifest/system
 CONFIGURE_OPTIONS +=	--with-svcname-smf=system/filesystem/zfs/znapzend
 
-build: $(BUILD_64)
+build: $(BUILD_32)
 
-install: $(INSTALL_64)
+install: $(INSTALL_32)
 
-test: $(TEST_64)
+test: $(TEST_32)
 
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
