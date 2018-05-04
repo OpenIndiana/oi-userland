@@ -1,0 +1,97 @@
+https://github.com/mate-desktop/mate-system-monitor/issues/118
+https://bugzilla.gnome.org/show_bug.cgi?id=742070
+
+From 20c9025bc43ccf024de6bb7df6a5e27962ac8ce9 Mon Sep 17 00:00:00 2001
+From: Alexander Pyhalov <apyhalov@gmail.com>
+Date: Fri, 4 May 2018 16:28:18 +0300
+Subject: [PATCH] mate-system-monitor crash on openindiana
+
+---
+ src/procman.h     |  4 ++--
+ src/proctable.cpp | 23 ++++++++++++++++++++---
+ 2 files changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/src/procman.h b/src/procman.h
+index d3db85c..d7f1ce9 100644
+--- a/src/procman.h
++++ b/src/procman.h
+@@ -190,8 +190,8 @@ class ProcInfo
+ 
+     gchar        *security_context;
+ 
+-    const guint    pid;
+-    guint        ppid;
++    const pid_t    pid;
++    pid_t        ppid;
+     guint        uid;
+ 
+ // private:
+diff --git a/src/proctable.cpp b/src/proctable.cpp
+index f4e1e54..f2eb3b5 100644
+--- a/src/proctable.cpp
++++ b/src/proctable.cpp
+@@ -812,7 +812,15 @@ update_info (ProcData *procdata, ProcInfo *info)
+ 
+     ProcInfo::cpu_times[info->pid] = info->cpu_time = proctime.rtime;
+     info->nice = procuid.nice;
+-    info->ppid = procuid.ppid;
++
++    // set the ppid only if one can exist
++    // i.e. pid=0 can never have a parent
++    if (info->pid > 0) {
++        info->ppid = procuid.ppid;
++    }
++
++    g_assert(info->pid != info->ppid);
++    g_assert(info->ppid != -1 || info->pid == 0);
+ 
+     /* get cgroup data */
+     get_process_cgroup_info(info);
+@@ -822,11 +830,14 @@ update_info (ProcData *procdata, ProcInfo *info)
+ 
+ 
+ ProcInfo::ProcInfo(pid_t pid)
+-    : tooltip(NULL),
++    : node(),
++      pixbuf(),
++      tooltip(NULL),
+       name(NULL),
+       arguments(NULL),
+       security_context(NULL),
+       pid(pid),
++      ppid(-1),
+       uid(-1)
+ {
+     ProcInfo * const info = this;
+@@ -943,6 +954,8 @@ refresh_list (ProcData *procdata, const pid_t* pid_list, const guint n)
+ 
+ 
+                 // inserts the process in the treeview if :
++                // - it has no parent (ppid = -1),
++                //   ie it is for example the [kernel] on FreeBSD
+                 // - it is init
+                 // - its parent is already in tree
+                 // - its parent is unreachable
+@@ -956,7 +969,7 @@ refresh_list (ProcData *procdata, const pid_t* pid_list, const guint n)
+                 // see proctable_update_list (ProcData * const procdata)
+ 
+ 
+-                if ((*it)->ppid == 0 or in_tree.find((*it)->ppid) != in_tree.end()) {
++                if ((*it)->ppid <= 0 or in_tree.find((*it)->ppid) != in_tree.end()) {
+                     insert_info_to_tree(*it, procdata);
+                     in_tree.insert((*it)->pid);
+                     it = addition.erase(it);
+@@ -1031,6 +1044,10 @@ proctable_update_list (ProcData * const procdata)
+     procdata->cpu_total_time = MAX(cpu.total - procdata->cpu_total_time_last, 1);
+     procdata->cpu_total_time_last = cpu.total;
+ 
++    // FIXME: not sure if glibtop always returns a sorted list of pid
++    // but it is important otherwise refresh_list won't find the parent
++    std::sort(pid_list, pid_list + proclist.number);
++
+     refresh_list (procdata, pid_list, proclist.number);
+ 
+     selection.restore(procdata->tree);
+-- 
+2.16.2
+
