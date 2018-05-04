@@ -43,6 +43,8 @@ COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && autoreconf --force --install --ver
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
+PKG_OPTIONS += -D GCC_RUNTIME_PKG="$(GCC_RUNTIME_PKG)"
+
 # NOTE: Code below assumes that BINDIR64 is one layer under BINDIR32
 # Othewise might use GNU ln -rsf ...
 COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS)) \
@@ -74,3 +76,4 @@ test: $(TEST_32_and_64)
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
