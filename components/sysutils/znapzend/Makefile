@@ -44,8 +44,14 @@ COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && autoreconf --force --install --ver
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Preferred (build) version of gcc
+GCCLIBDIR  =$(GCC_ROOT)/lib
+
 PKG_OPTIONS += -D GCC_RUNTIME_PKG="$(GCC_RUNTIME_PKG)"
 PKG_OPTIONS += -D GCC_ROOT="$(GCC_ROOT)"
+PKG_OPTIONS += -D GCC_VERSION="$(GCC_VERSION)"
+
+ELFEDIT = /usr/bin/elfedit
+
 
 # Note: Building and installing for one bitness, so for PATH to have
 # the binaries, it should be linked straight in bin/ (no $BITS magic)
@@ -54,7 +60,30 @@ COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin 
         && for BINFILE in znapzend znapzendzetup znapzendztatz ; do \
             rm -f "$(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin/$$BINFILE" || true ; \
             ln -sf "$$ORIGDIR/$$BINFILE" "$(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin/" || exit ; \
-        done )
+        done \
+        && find $(PROTO_DIR)/$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)/lib/ -type f -name '*.so*' \
+            | while read LIBFILE ; do \
+                $(CHMOD) +w "$$LIBFILE" \
+                && $(ELFEDIT) -e "dyn:rpath $(GCCLIBDIR)" "$$LIBFILE" \
+                && $(CHMOD) -w "$$LIBFILE" \
+                || exit ; \
+            done \
+        )
+
+# Help runtime linker find libssp.so that ListUtil's library refers to
+# Note: for us, suffices if it is 32-bit
+LDFLAGS += -R$(GCCLIBDIR)
+LDFLAGS += -Wl,-rpath,$(GCCLIBDIR)
+export LDFLAGS
+
+LD_OPTIONS += -L$(GCCLIBDIR) -R$(GCCLIBDIR)
+export LD_OPTIONS
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
+export ASLR_MODE
+
+CFLAGS += -static-libgcc
 
 # NOTE: znapzend is a script, but it can pull some PERL modules and some may be
 # ARCHed, and/or these may (package-)conflict with dependencies of other pkgs.
@@ -65,6 +94,11 @@ CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-svcinstall=/lib/svc/manifest/system
 CONFIGURE_OPTIONS +=	--with-svcname-smf=system/filesystem/zfs/znapzend
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS +=	LD_OPTIONS="$(LD_OPTIONS)"
+CONFIGURE_OPTIONS +=	ASLR_MODE="$(ASLR_MODE)"
+CONFIGURE_OPTIONS += --enable-static --disable-shared
 
 build: $(BUILD_32)
 
