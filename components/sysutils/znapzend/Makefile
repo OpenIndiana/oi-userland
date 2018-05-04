@@ -19,7 +19,7 @@ COMPONENT_NAME=	znapzend
 COMPONENT_VERSION=	0.18.0
 COMPONENT_SUMMARY=	zfs backup with remote capabilities and mbuffer integration
 COMPONENT_DESCRIPTION=	ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
- send and receive todo its work. It has the built-in ability to manage both local\
+ send and receive to do its work. It has the built-in ability to manage both local\
  snapshots as well as remote copies by thining them out as time progresses.\
  The ZnapZend configuration is stored as properties in the ZFS filesystem itself,\
  see znapzendzetup to get started.
@@ -44,7 +44,7 @@ COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && autoreconf --force --install --ver
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # NOTE: Code below assumes that BINDIR64 is one layer under BINDIR32
-# Othewise might user GNU ln -rsf ...
+# Othewise might use GNU ln -rsf ...
 COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS)) \
         && case "$(BITS)" in \
             32) ORIGDIR="../share/$(COMPONENT_NAME)/$(MACH32)/bin" ;; \
