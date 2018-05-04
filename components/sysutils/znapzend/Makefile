@@ -43,7 +43,9 @@ COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && autoreconf --force --install --ver
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
+# Preferred (build) version of gcc
 PKG_OPTIONS += -D GCC_RUNTIME_PKG="$(GCC_RUNTIME_PKG)"
+PKG_OPTIONS += -D GCC_ROOT="$(GCC_ROOT)"
 
 # Note: Building and installing for one bitness, so for PATH to have
 # the binaries, it should be linked straight in bin/ (no $BITS magic)
