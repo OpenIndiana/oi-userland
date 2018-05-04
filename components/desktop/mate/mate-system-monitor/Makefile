@@ -19,6 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		mate-system-monitor
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	2
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE system monitor
