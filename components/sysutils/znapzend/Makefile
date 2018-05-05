@@ -67,10 +67,6 @@ COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin 
             done \
         )
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-export ASLR_MODE
-
 # NOTE: znapzend is a script, but it can pull some PERL modules and some may be
 # ARCHed, and/or these may (package-)conflict with dependencies of other pkgs.
 # TODO: package dependency modules as separate IPS requirements, and build only
