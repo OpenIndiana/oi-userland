@@ -14,33 +14,34 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= ico
-COMPONENT_VERSION= 1.0.4
-COMPONENT_SUMMARY= ico X11 animation demo
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2932767098f95ca129a0c7f0fecb0a18c789a79c1747f7423fdfe9f4e0c53590
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
-COMPONENT_FMRI= x11/ico
-COMPONENT_LICENSE= MIT
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_NAME=           ico
+COMPONENT_VERSION=        1.0.5
+COMPONENT_SUMMARY=        ico X11 animation demo
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)wiki/
+COMPONENT_FMRI=           x11/ico
 COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+  sha256:d73b62f29eb98d850f16b76d759395180b860b613fbe1686b18eee99a6e3773f
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT
+COMPONENT_LICENSE_FILE=   COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
