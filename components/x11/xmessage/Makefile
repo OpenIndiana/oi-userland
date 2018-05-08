@@ -13,34 +13,32 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=		xmessage
-COMPONENT_VERSION=	1.0.4
-COMPONENT_PROJECT_URL=	http://xorg.freedesktop.org
-COMPONENT_FMRI=		x11/xmessage
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=			  xmessage
+COMPONENT_VERSION=		  1.0.5
+COMPONENT_SUMMARY=		  xmessage - display a message or query in a window
+COMPONENT_PROJECT_URL=	  $(XORG_BASE_URL)
+COMPONENT_FMRI=			  x11/xmessage
+COMPONENT_CLASSIFICATION= Applications/Accessories
+COMPONENT_SRC=			  $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:bcdf4b461c439bb3ade6e1e41c47d6218b912da8e9396b7ad70856db2f95ab68
-COMPONENT_ARCHIVE_URL=	http://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_SUMMARY=	xmessage - display a message or query in a window
+  sha256:373dfb81e7a6f06d3d22485a12fcde6e255d58c6dee1bbaeb00c7d0caa9b2029
+COMPONENT_ARCHIVE_URL=	  $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=		  MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
