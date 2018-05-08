@@ -14,27 +14,26 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xcursor-themes
-COMPONENT_VERSION=        1.0.4
+COMPONENT_VERSION=        1.0.5
+COMPONENT_SUMMARY=        Cursor themes from X.Org
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/data/xcursor-themes
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  Cursor themes from X.Org
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e3fd2c05b9df0d88a3d1192c02143295744685f4f9a03db116e206698331bb86
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/data/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xcursor-themes.license
+  sha256:ae8381d39096598f7fe93fbd3ab079d93347a989f29e017f399ffcd20c8e1272
+COMPONENT_ARCHIVE_URL=    $(XORG_DATA_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32)
 
