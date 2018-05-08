@@ -14,35 +14,34 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xpr
-COMPONENT_VERSION=        1.0.4
+COMPONENT_VERSION=        1.0.5
+COMPONENT_SUMMARY=		  xpr - utility for printing xwd window dump images
+COMPONENT_PROJECT_URL=	  $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/xpr
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xpr - utility for printing xwd window dump images
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=		      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fed98df31eb93d3dca4688cb535aabad06be572e70ace3b1685679c18dd86cb5
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xpr-1.0.4.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xpr.license
+  sha256:b936e0f1f8d63f5ad097a0bbdce2e67c34f5d49b7263f32a832ff62d394d1e1f
+COMPONENT_ARCHIVE_URL=	  $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=		  MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
