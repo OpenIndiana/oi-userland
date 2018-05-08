@@ -14,30 +14,30 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xwd
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
+COMPONENT_SUMMARY=        xwd - utility for dumping an image of an X window
+COMPONENT_PROJECT_URL =   $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/xwd
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xwd - utility for dumping an image of an X window
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3bb396a2268d78de4b1c3e5237a85f7849d3434e87b3cd1f4d57eef614227d79
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xwd-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
+  sha256:cd6815b8b9e0b98e284d3d732fb12162159cb9dcee4f45a7d4c0bd8b308a6794
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT License
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
