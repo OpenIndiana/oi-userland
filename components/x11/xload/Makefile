@@ -14,36 +14,37 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= xload
-COMPONENT_VERSION= 1.1.2
-COMPONENT_SUMMARY= xload - system load average display for X
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:83f8e6260435f1df2e2e5036bb3325688b79f0b33069ef445eff5058d127e078
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
-COMPONENT_FMRI= diagnostic/xload
-COMPONENT_LICENSE= MIT
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_NAME=           xload
+COMPONENT_VERSION=        1.1.3
+COMPONENT_SUMMARY=        xload - system load average display for X
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
+COMPONENT_FMRI=           diagnostic/xload
 COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+  sha256:f34e4803871d771325cfe52bebd98cc5b6040d3f065184ec73de436f9a375907
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT
+COMPONENT_LICENSE_FILE=   COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-PKG_PROTO_DIRS+=$(BUILD_DIR_32)
+PKG_PROTO_DIRS+=$(BUILD_DIR_64)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxmu
