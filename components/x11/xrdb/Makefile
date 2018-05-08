@@ -14,39 +14,38 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xrdb
-COMPONENT_VERSION=        1.1.0
+COMPONENT_VERSION=        1.1.1
+COMPONENT_SUMMARY=        xrdb - X server resource database utility
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/xrdb
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xrdb - X server resource database utility
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:73827b6bbfc9d27ca287d95a1224c306d7053cd7b8156641698d7dc541ca565b
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xrdb-1.1.0.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xrdb.license
+  sha256:2d23ade7cdbb487996bf77cbb32cbe9bdb34d004748a53de7a4a97660d2217b7
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --with-cpp=/usr/lib/cpp
 
 CPPFLAGS+= -DPATHETICCPP
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxmuu
