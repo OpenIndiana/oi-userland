@@ -14,27 +14,26 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xbitmaps
-COMPONENT_VERSION=        1.1.1
+COMPONENT_VERSION=        1.1.2
+COMPONENT_SUMMARY=        bitmap images from X.Org
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/data/xbitmaps
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  bitmap images from X.Org
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3671b034356bbc4d32d052808cf646c940ec8b2d1913adac51b1453e41aa1e9d  
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/data/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xbitmaps.license
+  sha256:b9f0c71563125937776c8f1f25174ae9685314cbd130fb4c2efce811981e07ee
+COMPONENT_ARCHIVE_URL=    $(XORG_DATA_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 
