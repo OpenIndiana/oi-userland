@@ -1,3 +1,4 @@
+#
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
@@ -33,9 +34,9 @@ include $(WS_MAKE_RULES)/ips.mk
 CMAKE_OPTIONS += -DBUILD_PYTHON=OFF
 CMAKE_OPTIONS += -DCMAKE_CXX_STANDARD_LIBRARIES="-lsocket -lnsl" 
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
