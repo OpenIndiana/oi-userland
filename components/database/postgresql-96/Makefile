@@ -11,6 +11,7 @@
 #
 # Copyright 2012-2013, EveryCity Ltd. All rights reserved.
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Till Wegm√ller
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	9.6
 COMPONENT_MNR_VERSION=	8
+COMPONENT_REVISION=     1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -61,6 +63,7 @@ CONFIGURE_OPTIONS += --enable-integer-datetimes
 CONFIGURE_OPTIONS += --with-includes=/usr/include
 CONFIGURE_OPTIONS += --with-tclconfig=/usr/lib
 CONFIGURE_OPTIONS.64 += --with-perl
+CONFIGURE_OPTIONS += --with-uuid=e2fs
 
 CONFIGURE_OPTIONS.32 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
