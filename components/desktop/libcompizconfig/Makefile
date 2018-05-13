@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          libcompizconfig
 COMPONENT_VERSION=       0.8.10
+COMPONENT_REVISION=      1
 COMPONENT_FMRI=          desktop/compiz/library/libcompizconfig
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_PROJECT_URL=   http://www.northfield.ws/
@@ -63,6 +64,6 @@ test:        $(NO_TESTS)
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += x11/library/libx11
