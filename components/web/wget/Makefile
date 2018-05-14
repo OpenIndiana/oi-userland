@@ -22,21 +22,21 @@
 #
 include ../../../make-rules/shared-macros.mk
 
+PREFERRED_BITS=64
+
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.19.2
+COMPONENT_VERSION=	1.19.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4f4a673b6d466efa50fbfba796bd84a46ae24e370fa562ede5b21ab53c11a920
+    sha256:b39212abe1a73f2b28f4c6cb223c738559caac91d6e416a6d91d4b9d55c9faee
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 # wget doesn't detect libidn2 include directory
 CPPFLAGS +=	-I/usr/include/idn2
