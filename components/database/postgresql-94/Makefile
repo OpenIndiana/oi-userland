@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	9.4
 COMPONENT_MNR_VERSION=	17
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -62,6 +63,7 @@ CONFIGURE_OPTIONS += --enable-dtrace
 CONFIGURE_OPTIONS += --enable-integer-datetimes
 CONFIGURE_OPTIONS += --with-includes=/usr/include
 CONFIGURE_OPTIONS += --with-tclconfig=/usr/lib
+CONFIGURE_OPTIONS += --with-uuid=e2fs
 
 CONFIGURE_OPTIONS.32 += --with-perl
 CONFIGURE_OPTIONS.32 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
