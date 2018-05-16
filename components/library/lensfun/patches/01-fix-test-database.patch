@@ -1,0 +1,38 @@
+diff -ru lensfun-0.3.2.orig/tests/CMakeLists.txt lensfun-0.3.2/tests/CMakeLists.txt
+--- lensfun-0.3.2.orig/tests/CMakeLists.txt	2015-11-15 18:07:26.000000000 +0000
++++ lensfun-0.3.2/tests/CMakeLists.txt	2018-05-16 17:51:26.555265133 +0000
+@@ -1,6 +1,6 @@
+ ADD_EXECUTABLE(test_database test_database.cpp)
+ TARGET_LINK_LIBRARIES(test_database lensfun ${COMMON_LIBS})
+-ADD_TEST(Database test_database)
++ADD_TEST(NAME Database WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} COMMAND test_database)
+ 
+ ADD_EXECUTABLE(test_modifier test_modifier.cpp)
+ TARGET_LINK_LIBRARIES(test_modifier lensfun ${COMMON_LIBS})
+@@ -30,4 +30,4 @@
+ ADD_TEST(Modifier_coord_geometry test_modifier_coord_geometry)
+ 
+ FIND_PACKAGE(PythonInterp REQUIRED)
+-ADD_TEST(NAME Database_integrity COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/check_database/check_database.py ../../data/db)
++ADD_TEST(NAME Database_integrity COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/check_database/check_database.py ${CMAKE_SOURCE_DIR}/data/db)
+diff -ru lensfun-0.3.2.orig/tests/test_database.cpp lensfun-0.3.2/tests/test_database.cpp
+--- lensfun-0.3.2.orig/tests/test_database.cpp	2015-11-15 18:07:26.000000000 +0000
++++ lensfun-0.3.2/tests/test_database.cpp	2018-05-16 17:51:26.555407487 +0000
+@@ -9,14 +9,14 @@
+ 
+ void db_setup(lfFixture *lfFix, gconstpointer data)
+ {
+-    lfFix->db = lf_db_new ();
+-    lfFix->db->Load();
++    lfFix->db = new lfDatabase ();
++    lfFix->db->LoadDirectory("data/db");
+ }
+ 
+ 
+ void db_teardown(lfFixture *lfFix, gconstpointer data)
+ {
+-    lfFix->db->Destroy();
++    delete lfFix->db;
+ }
+ 
+ 
