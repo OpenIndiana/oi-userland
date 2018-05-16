@@ -23,15 +23,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cdrtools
-COMPONENT_VERSION=      3.02a07
+COMPONENT_VERSION=      3.02a09
 IPS_COMPONENT_VERSION=	3.0.2
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	CD/DVD/BluRay command line recording software
 COMPONENT_DESCRIPTION=	the cdrtools CD/DVD/BluRay recording software
 COMPONENT_SRC=          $(COMPONENT_NAME)-3.02
 COMPONENT_PROJECT_URL= 	http://sourceforge.net/projects/cdrtools/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:16fcef1f97f42701dbf84cf8e6d5c90b19bdc1249d606bc06e41bc305e67606b
+    sha256:c7e4f732fb299e9b5d836629dadf5512aa5e6a5624ff438ceb1d056f4dcb07c2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=	media/cdrtools
 COMPONENT_CLASSIFICATION=       System/Media
