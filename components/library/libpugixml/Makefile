@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        pugixml
 COMPONENT_VERSION=     1.9
+COMPONENT_REVISION=    1
 COMPONENT_SUMMARY=     pugixml - light-weight C++ XML processing library
 COMPONENT_PROJECT_URL= https://pugixml.org/
 COMPONENT_FMRI=        library/pugixml
