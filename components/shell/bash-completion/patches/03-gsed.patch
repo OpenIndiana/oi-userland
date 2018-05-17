@@ -1,0 +1,849 @@
+diff -pruNb bash-completion-2.8/bash_completion bash-completion-2.8.patched/bash_completion
+--- bash-completion-2.8/bash_completion	2018-05-17 11:39:02.489729076 +0000
++++ bash-completion-2.8.patched/bash_completion	2018-05-17 13:33:06.722556192 +0000
+@@ -874,12 +874,12 @@ _mac_addresses()
+         ) )
+ 
+     # ARP cache
+-    COMPREPLY+=( $( { arp -an || ip neigh show; } 2>/dev/null | command sed -ne \
++    COMPREPLY+=( $( { arp -an || ip neigh show; } 2>/dev/null | command gsed -ne \
+         "s/.*[[:space:]]\($re\)[[:space:]].*/\1/p" -ne \
+         "s/.*[[:space:]]\($re\)[[:space:]]*$/\1/p" ) )
+ 
+     # /etc/ethers
+-    COMPREPLY+=( $( command sed -ne \
++    COMPREPLY+=( $( command gsed -ne \
+         "s/^[[:space:]]*\($re\)[[:space:]].*/\1/p" /etc/ethers 2>/dev/null ) )
+ 
+     COMPREPLY=( $( compgen -W '${COMPREPLY[@]}' -- "$cur" ) )
+@@ -919,7 +919,7 @@ _ip_addresses()
+ {
+     local PATH=$PATH:/sbin
+     COMPREPLY+=( $( compgen -W \
+-        "$( { LC_ALL=C ifconfig -a || ip addr show; } 2>/dev/null | command sed -ne \
++        "$( { LC_ALL=C ifconfig -a || ip addr show; } 2>/dev/null | command gsed -ne \
+             's/.*addr:\([^[:space:]]*\).*/\1/p' -ne \
+             's|.*inet[[:space:]]\{1,\}\([^[:space:]/]*\).*|\1|p' )" \
+         -- "$cur" ) )
+@@ -1032,7 +1032,7 @@ _expand()
+ [[ $OSTYPE == *@(solaris|aix)* ]] &&
+ _pids()
+ {
+-    COMPREPLY=( $( compgen -W '$( command ps -efo pid | command sed 1d )' -- "$cur" ))
++    COMPREPLY=( $( compgen -W '$( command ps -efo pid | command gsed 1d )' -- "$cur" ))
+ } ||
+ _pids()
+ {
+@@ -1044,7 +1044,7 @@ _pids()
+ [[ $OSTYPE == *@(solaris|aix)* ]] &&
+ _pgids()
+ {
+-    COMPREPLY=( $( compgen -W '$( command ps -efo pgid | command sed 1d )' -- "$cur" ))
++    COMPREPLY=( $( compgen -W '$( command ps -efo pgid | command gsed 1d )' -- "$cur" ))
+ } ||
+ _pgids()
+ {
+@@ -1058,13 +1058,13 @@ _pgids()
+ _pnames()
+ {
+     COMPREPLY=( $( compgen -X '<defunct>' -W '$( command ps -efo comm | \
+-        command sed -e 1d -e "s:.*/::" -e "s/^-//" | sort -u )' -- "$cur" ) )
++        command gsed -e 1d -e "s:.*/::" -e "s/^-//" | sort -u )' -- "$cur" ) )
+ } ||
+ _pnames()
+ {
+     if [[ "$1" == -s ]]; then
+         COMPREPLY=( $( compgen -X '<defunct>' \
+-            -W '$( command ps axo comm | command sed -e 1d )' -- "$cur" ) )
++            -W '$( command ps axo comm | command gsed -e 1d )' -- "$cur" ) )
+     else
+         # FIXME: completes "[kblockd/0]" to "0". Previously it was completed
+         # to "kblockd" which isn't correct either. "kblockd/0" would be
+@@ -1072,7 +1072,7 @@ _pnames()
+         # containing "/" specially unless -r is given so that wouldn't quite
+         # work either. Perhaps it'd be best to not complete these to anything
+         # for now.
+-        COMPREPLY=( $( compgen -X '<defunct>' -W '$( command ps axo command= | command sed -e \
++        COMPREPLY=( $( compgen -X '<defunct>' -W '$( command ps axo command= | command gsed -e \
+             "s/ .*//" -e \
+             "s:.*/::" -e \
+             "s/:$//" -e \
+@@ -1391,7 +1391,7 @@ _dvd_devices()
+ _terms()
+ {
+     COMPREPLY+=( $( compgen -W \
+-        "$( command sed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap \
++        "$( command gsed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap \
+             2>/dev/null )" -- "$cur" ) )
+     COMPREPLY+=( $( compgen -W "$( { toe -a 2>/dev/null || toe 2>/dev/null; } \
+         | gawk '{ print $1 }' | sort -u )" -- "$cur" ) )
+@@ -1441,7 +1441,7 @@ _included_ssh_config_files()
+     [[ $# -lt 1 ]] && echo "error: $FUNCNAME: missing mandatory argument CONFIG"
+     local configfile i f
+     configfile=$1
+-    local included=$( command sed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\{1,\}\([^#%]*\)\(#.*\)\{0,1\}$/\1/p' "${configfile}" )
++    local included=$( command gsed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\{1,\}\([^#%]*\)\(#.*\)\{0,1\}$/\1/p' "${configfile}" )
+     for i in ${included[@]}; do
+         # Check the origin of $configfile to complete relative included paths on included
+         # files according to ssh_config(5):
+@@ -1613,7 +1613,7 @@ _known_hosts_real()
+ 
+     # append any available aliases from ssh config files
+     if [[ ${#config[@]} -gt 0 && -n "$aliases" ]]; then
+-        local hosts=$( command sed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]]\{1,\}\([^#*?%]*\)\(#.*\)\{0,1\}$/\1/p' "${config[@]}" )
++        local hosts=$( command gsed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]]\{1,\}\([^#*?%]*\)\(#.*\)\{0,1\}$/\1/p' "${config[@]}" )
+         COMPREPLY+=( $( compgen -P "$prefix$user" \
+             -S "$suffix" -W "$hosts" -- "$cur" ) )
+     fi
+@@ -1853,7 +1853,7 @@ _longopt()
+             return
+             ;;
+         --+([-a-z0-9_]))
+-            local argtype=$( LC_ALL=C $1 --help 2>&1 | command sed -ne \
++            local argtype=$( LC_ALL=C $1 --help 2>&1 | command gsed -ne \
+                 "s|.*$prev\[\{0,1\}=[<[]\{0,1\}\([-A-Za-z0-9_]\{1,\}\).*|\1|p" )
+             case ${argtype,,} in
+                 *dir*)
+@@ -1872,7 +1872,7 @@ _longopt()
+ 
+     if [[ "$cur" == -* ]]; then
+         COMPREPLY=( $( compgen -W "$( LC_ALL=C $1 --help 2>&1 | \
+-            command sed -ne 's/.*\(--[-A-Za-z0-9]\{1,\}=\{0,1\}\).*/\1/p' | sort -u )" \
++            command gsed -ne 's/.*\(--[-A-Za-z0-9]\{1,\}=\{0,1\}\).*/\1/p' | sort -u )" \
+             -- "$cur" ) )
+         [[ $COMPREPLY == *= ]] && compopt -o nospace
+     elif [[ "$1" == @(rmdir|chroot) ]]; then
+diff -pruNb bash-completion-2.8/completions/2to3 bash-completion-2.8.patched/completions/2to3
+--- bash-completion-2.8/completions/2to3	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/2to3	2018-05-17 13:33:06.695893149 +0000
+@@ -11,7 +11,7 @@ _2to3()
+             ;;
+         -f|--fix|-x|--nofix)
+             COMPREPLY=( $( compgen -W \
+-                "$( $1 --list-fixes 2>/dev/null | command sed -e 1d )" -- "$cur" ) )
++                "$( $1 --list-fixes 2>/dev/null | command gsed -e 1d )" -- "$cur" ) )
+             return
+             ;;
+         -j|--processes)
+diff -pruNb bash-completion-2.8/completions/7z bash-completion-2.8.patched/completions/7z
+--- bash-completion-2.8/completions/7z	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/7z	2018-05-17 13:33:06.705453118 +0000
+@@ -106,7 +106,7 @@ _7z()
+         if [[ ${words[1]} == d ]]; then
+             local IFS=$'\n'
+             COMPREPLY=( $( compgen -W "$( printf '%s\n' $( $1 l ${words[2]} \
+-                -slt 2>/dev/null | command sed -n '/^Path =/s/^Path = \(.*\)$/\1/p' \
++                -slt 2>/dev/null | command gsed -n '/^Path =/s/^Path = \(.*\)$/\1/p' \
+                 2>/dev/null | tail -n+2 ) )" -- "$cur" ) )
+             compopt -o filenames
+         else
+diff -pruNb bash-completion-2.8/completions/_svn bash-completion-2.8.patched/completions/_svn
+--- bash-completion-2.8/completions/_svn	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/_svn	2018-05-17 13:33:06.699673669 +0000
+@@ -35,7 +35,7 @@ _svn()
+                 ;;
+             --encoding)
+                 COMPREPLY=( $( compgen -W '$( iconv --list | \
+-                    command sed -e "s@//@@;" )' -- "$cur" ) )
++                    command gsed -e "s@//@@;" )' -- "$cur" ) )
+                 return
+                 ;;
+             --editor-cmd|--diff-cmd|--diff3-cmd)
+diff -pruNb bash-completion-2.8/completions/abook bash-completion-2.8.patched/completions/abook
+--- bash-completion-2.8/completions/abook	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/abook	2018-05-17 13:33:06.703238094 +0000
+@@ -23,12 +23,12 @@ _abook()
+     case $prev in
+         --informat)
+             COMPREPLY=( $( compgen -W "$($1 --formats | \
+-                command sed -n -e 's/^'$'\t''\([a-z]*\).*/\1/p' -e '/^$/q')" \
++                command gsed -n -e 's/^'$'\t''\([a-z]*\).*/\1/p' -e '/^$/q')" \
+                 -- "$cur" ) )
+             ;;
+         --outformat)
+             COMPREPLY=( $( compgen -W "$($1 --formats | \
+-                command sed -n -e '/^$/,$s/^'$'\t''\([a-z]*\).*/\1/p')" \
++                command gsed -n -e '/^$/,$s/^'$'\t''\([a-z]*\).*/\1/p')" \
+                 -- "$cur" ) )
+             ;;
+         --infile)
+diff -pruNb bash-completion-2.8/completions/adb bash-completion-2.8.patched/completions/adb
+--- bash-completion-2.8/completions/adb	2018-05-17 11:39:02.490115590 +0000
++++ bash-completion-2.8.patched/completions/adb	2018-05-17 13:33:06.691685931 +0000
+@@ -4,7 +4,7 @@ _adb_command_usage()
+ {
+     COMPREPLY=( $( compgen -W \
+         '$( "$1" help 2>&1 | command ggrep "^ *\(adb \)\? *$2 " \
+-            | command sed -e "s/[]|[]/\n/g" | _parse_help - )' -- "$cur" ) )
++            | command gsed -e "s/[]|[]/\n/g" | _parse_help - )' -- "$cur" ) )
+ }
+ 
+ _adb()
+@@ -53,7 +53,7 @@ _adb()
+             ;;
+         forward)
+             COMPREPLY=( $( compgen -W \
+-                '$( "$1" help 2>&1 | command sed -ne "s/^ *adb  *forward  *-/-/p" | \
++                '$( "$1" help 2>&1 | command gsed -ne "s/^ *adb  *forward  *-/-/p" | \
+                     _parse_help - )' -- "$cur" ) )
+             ;;
+         reboot)
+diff -pruNb bash-completion-2.8/completions/alias bash-completion-2.8.patched/completions/alias
+--- bash-completion-2.8/completions/alias	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/alias	2018-05-17 13:33:06.700021422 +0000
+@@ -10,7 +10,7 @@ _alias()
+             COMPREPLY=( $( compgen -A alias -- "$cur" ) )
+             ;;
+         *=)
+-            COMPREPLY=( "$( alias ${cur%=} 2>/dev/null | command sed \
++            COMPREPLY=( "$( alias ${cur%=} 2>/dev/null | command gsed \
+                 -e 's|^alias '"$cur"'\(.*\)$|\1|' )" )
+             ;;
+     esac
+diff -pruNb bash-completion-2.8/completions/configure bash-completion-2.8.patched/completions/configure
+--- bash-completion-2.8/completions/configure	2018-05-17 11:39:02.491094974 +0000
++++ bash-completion-2.8.patched/completions/configure	2018-05-17 13:33:06.696265578 +0000
+@@ -29,7 +29,7 @@ _configure()
+     if [[ -n $COMP_CONFIGURE_HINTS ]]; then
+         COMPREPLY=( $( compgen -W "$( $1 --help 2>&1 | \
+             gawk '/^  --[A-Za-z]/ { print $1; \
+-            if ($2 ~ /--[A-Za-z]/) print $2 }' | command sed -e 's/[[,].*//g' )" \
++            if ($2 ~ /--[A-Za-z]/) print $2 }' | command gsed -e 's/[[,].*//g' )" \
+             -- "$cur" ) )
+         [[ $COMPREPLY == *=* ]] && compopt -o nospace
+     else
+diff -pruNb bash-completion-2.8/completions/cvs bash-completion-2.8.patched/completions/cvs
+--- bash-completion-2.8/completions/cvs	2018-05-17 11:39:02.491804494 +0000
++++ bash-completion-2.8.patched/completions/cvs	2018-05-17 13:33:06.697917265 +0000
+@@ -248,9 +248,9 @@ _cvs()
+                     # far, but other changes (something other than
+                     # changed/removed/new) may be missing
+                     changed=( $( cvs -q diff --brief 2>&1 | \
+-                        command sed -ne 's/^Files [^ ]* and \([^ ]*\) differ$/\1/p' ) )
++                        command gsed -ne 's/^Files [^ ]* and \([^ ]*\) differ$/\1/p' ) )
+                     newremoved=( $( cvs -q diff --brief 2>&1 | \
+-                        command sed -ne 's/^cvs diff: \([^ ]*\) .*, no comparison available$/\1/p' ) )
++                        command gsed -ne 's/^cvs diff: \([^ ]*\) .*, no comparison available$/\1/p' ) )
+                     COMPREPLY=( $( compgen -W '${changed[@]:-} \
+                         ${newremoved[@]:-}' -- "$cur" ) )
+                 else
+diff -pruNb bash-completion-2.8/completions/dot bash-completion-2.8.patched/completions/dot
+--- bash-completion-2.8/completions/dot	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/dot	2018-05-17 13:33:06.711861877 +0000
+@@ -13,13 +13,13 @@ _dot()
+             ;;
+         -T*)
+             local langs=( $( "$1" -TNON_EXISTENT 2>&1 | \
+-                command sed -ne 's/.*one of://p' ) )
++                command gsed -ne 's/.*one of://p' ) )
+             COMPREPLY=( $( compgen -P -T -W '${langs[@]}' -- "${cur#-T}" ) )
+             return
+             ;;
+         -K*)
+             local layouts=( $( "$1" -KNON_EXISTENT 2>&1 | \
+-                command sed -ne 's/.*one of://p' ) )
++                command gsed -ne 's/.*one of://p' ) )
+             COMPREPLY=( $( compgen -P -K -W '${layouts[@]}' -- "${cur#-K}" ) )
+             return
+             ;;
+diff -pruNb bash-completion-2.8/completions/gcc bash-completion-2.8.patched/completions/gcc
+--- bash-completion-2.8/completions/gcc	2018-05-17 11:39:02.472227681 +0000
++++ bash-completion-2.8.patched/completions/gcc	2018-05-17 13:33:06.690271943 +0000
+@@ -40,7 +40,7 @@ _gcc()
+         # for C/C++/ObjectiveC it's useless
+         # for FORTRAN/Java it's an error
+         COMPREPLY=( $( compgen -W "$( $cc --help 2>/dev/null | tr '\t' ' ' |\
+-            command sed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/' )" -- "$cur" ) )
++            command gsed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/' )" -- "$cur" ) )
+         [[ $COMPREPLY == *= ]] && compopt -o nospace
+     else
+         _filedir
+diff -pruNb bash-completion-2.8/completions/gdb bash-completion-2.8.patched/completions/gdb
+--- bash-completion-2.8/completions/gdb	2018-05-17 11:39:02.492400685 +0000
++++ bash-completion-2.8.patched/completions/gdb	2018-05-17 13:33:06.701325251 +0000
+@@ -27,7 +27,7 @@ _gdb()
+             # names manually.
+             IFS=":"
+             local path_array=( $( \
+-                command sed -e 's/:\{2,\}/:/g' -e 's/^://' -e 's/:$//' <<<"$PATH" ) )
++                command gsed -e 's/:\{2,\}/:/g' -e 's/^://' -e 's/:$//' <<<"$PATH" ) )
+             IFS=$'\n'
+             COMPREPLY=( $( compgen -d -W '$(find "${path_array[@]}" . \
+                 -mindepth 1 -maxdepth 1 -not -type d -executable \
+diff -pruNb bash-completion-2.8/completions/gpg2 bash-completion-2.8.patched/completions/gpg2
+--- bash-completion-2.8/completions/gpg2	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/gpg2	2018-05-17 13:33:06.713118537 +0000
+@@ -16,16 +16,16 @@ _gpg2()
+             ;;
+         --export|--sign-key|--lsign-key|--nrsign-key|--nrlsign-key|--edit-key)
+             # return list of public keys
+-            COMPREPLY=( $( compgen -W "$( $1 --list-keys 2>/dev/null | command sed -ne \
++            COMPREPLY=( $( compgen -W "$( $1 --list-keys 2>/dev/null | command gsed -ne \
+                 's@^pub.*/\([^ ]*\).*$@\1@p' -ne \
+                 's@^.*\(<\([^>]*\)>\).*$@\2@p' )" -- "$cur" ) )
+             return
+             ;;
+         -r|--recipient)
+             COMPREPLY=( $( compgen -W "$( $1 --list-keys 2>/dev/null | \
+-                command sed -ne 's@^.*<\([^>]*\)>.*$@\1@p')" -- "$cur" ) )
++                command gsed -ne 's@^.*<\([^>]*\)>.*$@\1@p')" -- "$cur" ) )
+             if [[ -e ~/.gnupg/gpg.conf ]]; then
+-                COMPREPLY+=( $( compgen -W "$( command sed -ne \
++                COMPREPLY+=( $( compgen -W "$( command gsed -ne \
+                     's@^[ \t]*group[ \t][ \t]*\([^=]*\).*$@\1@p' \
+                     ~/.gnupg/gpg.conf)" -- "$cur" ) )
+             fi
+diff -pruNb bash-completion-2.8/completions/iconv bash-completion-2.8.patched/completions/iconv
+--- bash-completion-2.8/completions/iconv	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/iconv	2018-05-17 13:33:06.716486557 +0000
+@@ -12,7 +12,7 @@ _iconv()
+             ;;
+         -f|--from-code|-t|--to-code)
+             COMPREPLY=( $( compgen -W '$( iconv -l | \
+-                command sed -e "s@/*\$@@" -e "s/[,()]//g" )' -- "$cur" ) )
++                command gsed -e "s@/*\$@@" -e "s/[,()]//g" )' -- "$cur" ) )
+             return
+             ;;
+         -o|--output)
+diff -pruNb bash-completion-2.8/completions/iperf bash-completion-2.8.patched/completions/iperf
+--- bash-completion-2.8/completions/iperf	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/iperf	2018-05-17 13:33:06.691062735 +0000
+@@ -45,10 +45,10 @@ _iperf()
+     for i in ${words[@]}; do
+         case $i in
+             -s|--server)
+-                filter='command sed -e /^Client.specific/,/^$/d'
++                filter='command gsed -e /^Client.specific/,/^$/d'
+                 ;;
+             -c|--client)
+-                filter='command sed -e /^Server.specific/,/^$/d'
++                filter='command gsed -e /^Server.specific/,/^$/d'
+                 ;;
+         esac
+     done
+diff -pruNb bash-completion-2.8/completions/java bash-completion-2.8.patched/completions/java
+--- bash-completion-2.8/completions/java	2018-05-17 11:39:02.473184393 +0000
++++ bash-completion-2.8.patched/completions/java	2018-05-17 13:33:06.704677345 +0000
+@@ -71,9 +71,9 @@ _java_classes()
+ 
+         elif [[ -d $i ]]; then
+             COMPREPLY+=(
+-                $( compgen -d -- "$i/$cur" | command sed -e "s|^$i/\(.*\)|\1.|" )
++                $( compgen -d -- "$i/$cur" | command gsed -e "s|^$i/\(.*\)|\1.|" )
+                 $( compgen -f -X '!*.class' -- "$i/$cur" | \
+-                    command sed -e '/\$/d' -e "s|^$i/||" )
++                    command gsed -e '/\$/d' -e "s|^$i/||" )
+             )
+             [[ $COMPREPLY == *.class ]] || compopt -o nospace
+ 
+@@ -103,7 +103,7 @@ _java_packages()
+     for i in ${sourcepath//:/ }; do
+         if [[ -d $i ]]; then
+             COMPREPLY+=( $( command ls -F -d $i/$cur* 2>/dev/null | \
+-                command sed -e 's|^'$i'/||' ) )
++                command gsed -e 's|^'$i'/||' ) )
+         fi
+     done
+     # keep only packages
+@@ -304,7 +304,7 @@ _javac()
+         # For some reason there may be -g:none AND -g:{lines,source,vars};
+         # convert the none case to the curly brace format so it parses like
+         # the others.
+-        local opts=$( "$1" $helpopt 2>&1 | command sed -e 's/-g:none/-g:{none}/' -ne \
++        local opts=$( "$1" $helpopt 2>&1 | command gsed -e 's/-g:none/-g:{none}/' -ne \
+             "s/^[[:space:]]*${cur%%:*}:{\([^}]\{1,\}\)}.*/\1/p" )
+         COMPREPLY=( $( compgen -W "${opts//,/ }" -- "${cur#*:}" ) )
+         return
+diff -pruNb bash-completion-2.8/completions/lz4 bash-completion-2.8.patched/completions/lz4
+--- bash-completion-2.8/completions/lz4	2018-03-16 16:22:46.000000000 +0000
++++ bash-completion-2.8.patched/completions/lz4	2018-05-17 13:33:06.699031707 +0000
+@@ -14,7 +14,7 @@ _lz4()
+ 
+     if [[ "$cur" == -* ]]; then
+         COMPREPLY=( $( compgen -W \
+-            '$( _parse_help "$1" -h | command sed -e "/#/d" ) -B{4..7} -i{1..9}' \
++            '$( _parse_help "$1" -h | command gsed -e "/#/d" ) -B{4..7} -i{1..9}' \
+             -- "$cur" ) )
+         return
+     fi
+diff -pruNb bash-completion-2.8/completions/make bash-completion-2.8.patched/completions/make
+--- bash-completion-2.8/completions/make	2018-03-11 00:00:13.000000000 +0000
++++ bash-completion-2.8.patched/completions/make	2018-05-17 13:33:06.694325412 +0000
+@@ -6,7 +6,7 @@ _make_target_extract_script()
+     shift
+ 
+     local prefix="$1"
+-    local prefix_pat=$( command sed 's/[][\,.*^$(){}?+|/]/\\&/g' <<<"$prefix" )
++    local prefix_pat=$( command gsed 's/[][\,.*^$(){}?+|/]/\\&/g' <<<"$prefix" )
+     local basename=${prefix##*/}
+     local dirname_len=$(( ${#prefix} - ${#basename} ))
+ 
+@@ -156,7 +156,7 @@ _make()
+         COMPREPLY=( $( LC_ALL=C \
+             $1 -npq __BASH_MAKE_COMPLETION__=1 \
+                 "${makef[@]}" "${makef_dir[@]}" .DEFAULT 2>/dev/null | \
+-            command sed -ne "$script" ) )
++            command gsed -ne "$script" ) )
+ 
+         if [[ $mode != -d ]]; then
+             # Completion will occur if there is only one suggestion
+diff -pruNb bash-completion-2.8/completions/mount bash-completion-2.8.patched/completions/mount
+--- bash-completion-2.8/completions/mount	2018-05-17 11:39:02.495468875 +0000
++++ bash-completion-2.8.patched/completions/mount	2018-05-17 13:33:06.706074854 +0000
+@@ -42,8 +42,8 @@ _mount()
+         if [[ -n $host ]]; then
+             COMPREPLY=( $( compgen -P "//$host" -W \
+                 "$( smbclient -d 0 -NL $host 2>/dev/null |
+-                command sed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
+-                command sed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p' )" \
++                command gsed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
++                command gsed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p' )" \
+                     -- "${cur#//$host}" ) )
+         fi
+     elif [[ -r /etc/vfstab ]]; then
+diff -pruNb bash-completion-2.8/completions/mplayer bash-completion-2.8.patched/completions/mplayer
+--- bash-completion-2.8/completions/mplayer	2018-05-17 11:39:02.496324946 +0000
++++ bash-completion-2.8.patched/completions/mplayer	2018-05-17 13:33:06.693034501 +0000
+@@ -4,8 +4,8 @@ _mplayer_options_list()
+ {
+     cur=${cur%\\}
+     COMPREPLY=( $( compgen -W "$( $1 -noconfig all $2 help 2>/dev/null | \
+-        command sed -e '/^Available/,/^$/!d' -e '/^Available/d' | gawk '{print $1}' | \
+-        command sed -e 's/:$//' -e 's/^'${2#-}'$//' -e 's/<.*//' )" -- "$cur" ) )
++        command gsed -e '/^Available/,/^$/!d' -e '/^Available/d' | gawk '{print $1}' | \
++        command gsed -e 's/:$//' -e 's/^'${2#-}'$//' -e 's/<.*//' )" -- "$cur" ) )
+ }
+ 
+ _mplayer()
+@@ -57,7 +57,7 @@ _mplayer()
+             ;;
+         -subcp|-msgcharset)
+             local cp
+-            cp=( $( iconv --list 2>/dev/null | command sed -e "s@//@@;" 2>/dev/null ) )
++            cp=( $( iconv --list 2>/dev/null | command gsed -e "s@//@@;" 2>/dev/null ) )
+             if [[ "$cur" == "${cur,,}" ]]; then
+                 COMPREPLY=( $( compgen -W '${cp[@],,}' -- "$cur" ) )
+             else
+@@ -275,7 +275,7 @@ _mplayer()
+     case $cur in
+         -*)
+             COMPREPLY=( $( compgen -W '$( $cmd -noconfig all -list-options 2>/dev/null | \
+-                command sed -ne '1,/^[[:space:]]*Name/d' \
++                command gsed -ne '1,/^[[:space:]]*Name/d' \
+                     -e "s/^[[:space:]]*/-/" -e "s/[[:space:]:].*//" \
+                     -e "/^-\(Total\|.*\*\)\{0,1\}$/!p" )' -- "$cur" ) )
+             ;;
+diff -pruNb bash-completion-2.8/completions/mutt bash-completion-2.8.patched/completions/mutt
+--- bash-completion-2.8/completions/mutt	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/mutt	2018-05-17 13:33:06.710399742 +0000
+@@ -55,7 +55,7 @@ _muttconffiles()
+     sofar=" $1 "
+     shift
+     while [[ "$1" ]]; do
+-        newconffiles=( $(command sed -n 's|^source[[:space:]]\{1,\}\([^[:space:]]\{1,\}\).*$|\1|p' $(eval printf %s $1) ) )
++        newconffiles=( $(command gsed -n 's|^source[[:space:]]\{1,\}\([^[:space:]]\{1,\}\).*$|\1|p' $(eval printf %s $1) ) )
+         for file in "${newconffiles[@]}"; do
+             __expand_tilde_by_ref file
+             [[ ! -f "$file" || $sofar == *\ $file\ * ]] && continue
+@@ -78,7 +78,7 @@ _muttaliases()
+     [[ -z $muttrc ]] && return
+ 
+     conffiles=( $(eval _muttconffiles $muttrc $muttrc) )
+-    aliases=( $( command sed -n 's|^alias[[:space:]]\{1,\}\([^[:space:]]\{1,\}\).*$|\1|p' \
++    aliases=( $( command gsed -n 's|^alias[[:space:]]\{1,\}\([^[:space:]]\{1,\}\).*$|\1|p' \
+         $(eval echo "${conffiles[@]}") ) )
+     COMPREPLY+=( $( compgen -W "${aliases[*]}" -- "$cur" ) )
+ }
+@@ -90,13 +90,13 @@ _muttquery()
+     local cur=$1 querycmd muttcmd=${words[0]}
+     local -a queryresults
+ 
+-    querycmd="$( $muttcmd -Q query_command 2>/dev/null | command sed -e 's|^query_command=\"\(.*\)\"$|\1|' -e 's|%s|'$cur'|' )"
++    querycmd="$( $muttcmd -Q query_command 2>/dev/null | command gsed -e 's|^query_command=\"\(.*\)\"$|\1|' -e 's|%s|'$cur'|' )"
+     if [[ -z "$cur" || -z "$querycmd" ]]; then
+         queryresults=()
+     else
+         __expand_tilde_by_ref querycmd
+         queryresults=( $( $querycmd | \
+-            command sed -n '2,$s|^\([^[:space:]]\{1,\}\).*|\1|p' ) )
++            command gsed -n '2,$s|^\([^[:space:]]\{1,\}\).*|\1|p' ) )
+     fi
+ 
+     COMPREPLY+=( $( compgen -W "${queryresults[*]}" -- "$cur" ) )
+@@ -110,7 +110,7 @@ _muttfiledir()
+ 
+     muttrc=$(_muttrc)
+     if [[ $cur == [=+]* ]]; then
+-        folder="$( $muttcmd -F "$muttrc" -Q folder 2>/dev/null | command sed -e 's|^folder=\"\(.*\)\"$|\1|' )"
++        folder="$( $muttcmd -F "$muttrc" -Q folder 2>/dev/null | command gsed -e 's|^folder=\"\(.*\)\"$|\1|' )"
+         : folder:=~/Mail
+ 
+         # Match any file in $folder beginning with $cur
+@@ -121,7 +121,7 @@ _muttfiledir()
+         return
+     elif [[ $cur == !* ]]; then
+         spoolfile="$( $muttcmd -F "$muttrc" -Q spoolfile 2>/dev/null | \
+-            command sed -e 's|^spoolfile=\"\(.*\)\"$|\1|' )"
++            command gsed -e 's|^spoolfile=\"\(.*\)\"$|\1|' )"
+         [[ ! -z $spoolfile ]] && eval cur="${cur/^!/$spoolfile}"
+     fi
+     _filedir
+diff -pruNb bash-completion-2.8/completions/mysql bash-completion-2.8.patched/completions/mysql
+--- bash-completion-2.8/completions/mysql	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/mysql	2018-05-17 13:33:06.707413195 +0000
+@@ -11,7 +11,7 @@ _mysql()
+             return
+             ;;
+         -D|--database)
+-            COMPREPLY=( $( compgen -W "$(mysqlshow 2>/dev/null | command sed -ne '2d' -e 's/^|.\([^|]*\)|.*/\1/p')" -- "$cur" ) )
++            COMPREPLY=( $( compgen -W "$(mysqlshow 2>/dev/null | command gsed -ne '2d' -e 's/^|.\([^|]*\)|.*/\1/p')" -- "$cur" ) )
+             return
+             ;;
+ 
+@@ -78,7 +78,7 @@ _mysql()
+     esac
+ 
+     COMPREPLY=( $( compgen -W \
+-        "$(mysqlshow 2>/dev/null | command sed -ne '2d' -e 's/^|.\([^|]*\)|.*/\1/p')" \
++        "$(mysqlshow 2>/dev/null | command gsed -ne '2d' -e 's/^|.\([^|]*\)|.*/\1/p')" \
+         -- "$cur" ) )
+ } &&
+ complete -F _mysql mysql
+diff -pruNb bash-completion-2.8/completions/ncftp bash-completion-2.8.patched/completions/ncftp
+--- bash-completion-2.8/completions/ncftp	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/ncftp	2018-05-17 13:33:06.707981075 +0000
+@@ -17,7 +17,7 @@ _ncftp()
+     fi
+ 
+     if [[ $cword -eq 1 && -f ~/.ncftp/bookmarks ]]; then
+-        COMPREPLY=( $( compgen -W '$( command sed -ne "s/^\([^,]\{1,\}\),.*$/\1/p" \
++        COMPREPLY=( $( compgen -W '$( command gsed -ne "s/^\([^,]\{1,\}\),.*$/\1/p" \
+             ~/.ncftp/bookmarks )' -- "$cur" ) )
+     fi
+ 
+diff -pruNb bash-completion-2.8/completions/pdftotext bash-completion-2.8.patched/completions/pdftotext
+--- bash-completion-2.8/completions/pdftotext	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/pdftotext	2018-05-17 13:33:06.700372627 +0000
+@@ -11,7 +11,7 @@ _pdftotext()
+             ;;
+         -enc)
+             COMPREPLY=( $( compgen -W '$( "$1" -listenc 2>/dev/null |
+-                command sed -e 1d )' -- "$cur" ) )
++                command gsed -e 1d )' -- "$cur" ) )
+             return
+             ;;
+         -eol)
+diff -pruNb bash-completion-2.8/completions/perl bash-completion-2.8.patched/completions/perl
+--- bash-completion-2.8/completions/perl	2018-05-17 11:39:02.498412148 +0000
++++ bash-completion-2.8.patched/completions/perl	2018-05-17 13:33:06.697106724 +0000
+@@ -118,7 +118,7 @@ _perldoc()
+             if [[ $cur == p* ]]; then
+                 COMPREPLY+=( $( compgen -W \
+                     '$( PERLDOC_PAGER=cat "$1" -u perl |  \
+-                    command sed -ne "/perl.*Perl overview/,/perlwin32/p" | \
++                    command gsed -ne "/perl.*Perl overview/,/perlwin32/p" | \
+                     gawk "\$NF=2 && \$1 ~ /^perl/ { print \$1 }" )' \
+                     -- "$cur" ) )
+             fi
+diff -pruNb bash-completion-2.8/completions/pgrep bash-completion-2.8.patched/completions/pgrep
+--- bash-completion-2.8/completions/pgrep	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/pgrep	2018-05-17 13:33:06.696635960 +0000
+@@ -38,7 +38,7 @@ _pgrep()
+     if [[ $cur == -* ]]; then
+         local help='$( _parse_help "$1" )'
+         [[ $help ]] || help='$( "$1" --usage 2>&1 |
+-            command sed -e "s/\[-signal\]//" -e "s/\[-SIGNAL\]//" |
++            command gsed -e "s/\[-signal\]//" -e "s/\[-SIGNAL\]//" |
+             _parse_usage - )'
+         COMPREPLY=( $( compgen -W "$help" -- "$cur" ) )
+         [[ $cword -eq 1 && $1 == *pkill ]] && _signals -
+diff -pruNb bash-completion-2.8/completions/postcat bash-completion-2.8.patched/completions/postcat
+--- bash-completion-2.8/completions/postcat	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/postcat	2018-05-17 13:33:06.698273020 +0000
+@@ -25,7 +25,7 @@ _postcat()
+         local len=${#cur} pval
+         idx=0
+         for pval in $( mailq 2>/dev/null | \
+-            command sed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; s/[* !].*$//' ); do
++            command gsed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; s/[* !].*$//' ); do
+             if [[ "$cur" == "${pval:0:$len}" ]]; then
+                 COMPREPLY[$idx]=$pval
+                 idx=$(($idx+1))
+diff -pruNb bash-completion-2.8/completions/postsuper bash-completion-2.8.patched/completions/postsuper
+--- bash-completion-2.8/completions/postsuper	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/postsuper	2018-05-17 13:33:06.693656482 +0000
+@@ -16,7 +16,7 @@ _postsuper()
+             len=${#cur}
+             idx=0
+             for pval in ALL $( mailq 2>/dev/null | \
+-                command sed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; s/[* !].*$//' ); do
++                command gsed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; s/[* !].*$//' ); do
+                 if [[ "$cur" == "${pval:0:$len}" ]]; then
+                     COMPREPLY[$idx]=$pval
+                     idx=$(($idx+1))
+@@ -28,7 +28,7 @@ _postsuper()
+             len=${#cur}
+             idx=0
+             for pval in ALL $( mailq 2>/dev/null | \
+-                command sed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; s/[* ].*$//; /!$/d' ); do
++                command gsed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; s/[* ].*$//; /!$/d' ); do
+                 if [[ "$cur" == "${pval:0:$len}" ]]; then
+                     COMPREPLY[$idx]=$pval
+                     idx=$(($idx+1))
+@@ -40,7 +40,7 @@ _postsuper()
+             len=${#cur}
+             idx=0
+             for pval in ALL $( mailq 2>/dev/null | \
+-                command sed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; /^[0-9A-Z]*[* ]/d; s/!.*$//' ); do
++                command gsed -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; /^[0-9A-Z]*[* ]/d; s/!.*$//' ); do
+                 if [[ "$cur" == "${pval:0:$len}" ]]; then
+                     COMPREPLY[$idx]=$pval
+                     idx=$(($idx+1))
+diff -pruNb bash-completion-2.8/completions/puppet bash-completion-2.8.patched/completions/puppet
+--- bash-completion-2.8/completions/puppet	2017-11-22 14:35:53.000000000 +0000
++++ bash-completion-2.8.patched/completions/puppet	2018-05-17 13:33:06.695493408 +0000
+@@ -22,7 +22,7 @@ _puppet_certs()
+         && puppetca=puppetca
+ 
+     if [[ "$1" == --all ]]; then
+-        cert_list=$( $puppetca --list --all | command sed -e 's/^[+-]\{0,1\}\s*\(\S\+\)\s\+.*$/\1/' )
++        cert_list=$( $puppetca --list --all | command gsed -e 's/^[+-]\{0,1\}\s*\(\S\+\)\s\+.*$/\1/' )
+     else
+         cert_list=$( $puppetca --list )
+     fi
+@@ -31,7 +31,7 @@ _puppet_certs()
+ 
+ _puppet_types()
+ {
+-    puppet_types=$( puppet describe --list | command sed -e 's/^\(\S\{1,\}\).*$/\1/' )
++    puppet_types=$( puppet describe --list | command gsed -e 's/^\(\S\{1,\}\).*$/\1/' )
+     COMPREPLY+=( $( compgen -W "$puppet_types" -- "$cur" ) )
+ }
+ 
+@@ -41,7 +41,7 @@ _puppet_references()
+     PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin type puppetdoc  &>/dev/null \
+         && puppetdoc=puppetdoc
+ 
+-    puppet_doc_list=$( $puppetdoc --list | command sed -e 's/^\(\S\{1,\}\).*$/\1/' )
++    puppet_doc_list=$( $puppetdoc --list | command gsed -e 's/^\(\S\{1,\}\).*$/\1/' )
+     COMPREPLY+=( $( compgen -W "$puppet_doc_list" -- "$cur" ) )
+ }
+ 
+diff -pruNb bash-completion-2.8/completions/qdbus bash-completion-2.8.patched/completions/qdbus
+--- bash-completion-2.8/completions/qdbus	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/qdbus	2018-05-17 13:33:06.715922364 +0000
+@@ -7,7 +7,7 @@ _qdbus()
+ 
+     [[ -n $cur ]] && unset "words[$((${#words[@]}-1))]"
+     COMPREPLY=( $( compgen -W '$( command ${words[@]} 2>/dev/null | \
+-        command sed "s/(.*)//" )' -- "$cur" ) )
++        command gsed "s/(.*)//" )' -- "$cur" ) )
+ } &&
+ complete -F _qdbus qdbus dcop
+ 
+diff -pruNb bash-completion-2.8/completions/screen bash-completion-2.8.patched/completions/screen
+--- bash-completion-2.8/completions/screen	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/screen	2018-05-17 13:33:06.694763209 +0000
+@@ -2,7 +2,7 @@
+ 
+ _screen_sessions()
+ {
+-    local sessions=( $( command screen -ls | command sed -ne \
++    local sessions=( $( command screen -ls | command gsed -ne \
+         's|^\t\{1,\}\([0-9]\{1,\}\.[^\t]\{1,\}\).*'"$1"'.*$|\1|p' ) )
+     if [[ $cur == +([0-9])?(.*) ]]; then
+         # Complete sessions including pid prefixes
+diff -pruNb bash-completion-2.8/completions/smbclient bash-completion-2.8.patched/completions/smbclient
+--- bash-completion-2.8/completions/smbclient	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/smbclient	2018-05-17 13:33:06.701984118 +0000
+@@ -16,7 +16,7 @@ _samba_hosts()
+ {
+     if [[ -n ${COMP_SAMBA_SCAN:-} ]]; then
+         COMPREPLY=( $( compgen -W "$( smbtree -N -S | \
+-            command sed -ne 's/^[[:space:]]*\\\\*\([^[:space:]]*\).*/\1/p' \
++            command gsed -ne 's/^[[:space:]]*\\\\*\([^[:space:]]*\).*/\1/p' \
+             )" -- "$cur" ) )
+     fi
+ }
+diff -pruNb bash-completion-2.8/completions/ssh bash-completion-2.8.patched/completions/ssh
+--- bash-completion-2.8/completions/ssh	2018-01-27 04:05:39.000000000 +0000
++++ bash-completion-2.8.patched/completions/ssh	2018-05-17 13:33:06.709489666 +0000
+@@ -312,7 +312,7 @@ _scp_remote_files()
+     local path=${cur#*:}
+ 
+     # unescape (3 backslashes to 1 for chars we escaped)
+-    path=$( command sed -e 's/\\\\\\\('$_scp_path_esc'\)/\\\1/g' <<<"$path" )
++    path=$( command gsed -e 's/\\\\\\\('$_scp_path_esc'\)/\\\1/g' <<<"$path" )
+ 
+     # default to home dir of specified user on remote host
+     if [[ -z $path ]]; then
+@@ -324,13 +324,13 @@ _scp_remote_files()
+         # escape problematic characters; remove non-dirs
+         files=$( ssh -o 'Batchmode yes' $userhost \
+             command ls -aF1dL "$path*" 2>/dev/null | \
+-            command sed -e 's/'$_scp_path_esc'/\\\\\\&/g' -e '/[^\/]$/d' )
++            command gsed -e 's/'$_scp_path_esc'/\\\\\\&/g' -e '/[^\/]$/d' )
+     else
+         # escape problematic characters; remove executables, aliases, pipes
+         # and sockets; add space at end of file names
+         files=$( ssh -o 'Batchmode yes' $userhost \
+             command ls -aF1dL "$path*" 2>/dev/null | \
+-            command sed -e 's/'$_scp_path_esc'/\\\\\\&/g' -e 's/[*@|=]$//g' \
++            command gsed -e 's/'$_scp_path_esc'/\\\\\\&/g' -e 's/[*@|=]$//g' \
+             -e 's/[^\/]$/& /g' )
+     fi
+     COMPREPLY+=( $files )
+@@ -352,10 +352,10 @@ _scp_local_files()
+ 
+     if $dirsonly ; then
+         COMPREPLY+=( $( command ls -aF1dL $cur* 2>/dev/null | \
+-            command sed -e "s/$_scp_path_esc/\\\\&/g" -e '/[^\/]$/d' -e "s/^/$1/") )
++            command gsed -e "s/$_scp_path_esc/\\\\&/g" -e '/[^\/]$/d' -e "s/^/$1/") )
+     else
+         COMPREPLY+=( $( command ls -aF1dL $cur* 2>/dev/null | \
+-            command sed -e "s/$_scp_path_esc/\\\\&/g" -e 's/[*@|=]$//g' \
++            command gsed -e "s/$_scp_path_esc/\\\\&/g" -e 's/[*@|=]$//g' \
+             -e 's/[^\/]$/& /g' -e "s/^/$1/") )
+     fi
+ }
+diff -pruNb bash-completion-2.8/completions/strings bash-completion-2.8.patched/completions/strings
+--- bash-completion-2.8/completions/strings	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/strings	2018-05-17 13:33:06.712477518 +0000
+@@ -15,7 +15,7 @@ _strings()
+             ;;
+         -T|--target)
+             COMPREPLY=( $( compgen -W '$( LC_ALL=C "$1" --help 2>/dev/null | \
+-                command sed -ne "s/: supported targets: \(.*\)/\1/p" )' -- "$cur" ) )
++                command gsed -ne "s/: supported targets: \(.*\)/\1/p" )' -- "$cur" ) )
+             return
+             ;;
+         -e|--encoding)
+diff -pruNb bash-completion-2.8/completions/sysbench bash-completion-2.8.patched/completions/sysbench
+--- bash-completion-2.8/completions/sysbench	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/sysbench	2018-05-17 13:33:06.711233855 +0000
+@@ -79,7 +79,7 @@ _sysbench()
+             ;;
+         --db-driver)
+             COMPREPLY=( $( compgen -W "$( $1 --test=oltp help 2>/dev/null |
+-                command sed -e '/^.*database drivers:/,/^$/!d' \
++                command gsed -e '/^.*database drivers:/,/^$/!d' \
+                     -ne 's/^  *\([^ ]*\) .*/\1/p' )" -- "$cur" ) )
+             return
+             ;;
+diff -pruNb bash-completion-2.8/completions/tar bash-completion-2.8.patched/completions/tar
+--- bash-completion-2.8/completions/tar	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/tar	2018-05-17 13:33:06.715373515 +0000
+@@ -411,7 +411,7 @@ __tar_try_list_archive()
+     shift
+ 
+     read tarball <<<"$(printf -- '%s\n' "$@" \
+-        | command sed -n "/^.\{1,\}$regex\$/p")"
++        | command gsed -n "/^.\{1,\}$regex\$/p")"
+     if [[ -n "$tarball" ]]; then
+         local IFS=$'\n'
+         COMPREPLY=($(compgen -o filenames -W "$(
+diff -pruNb bash-completion-2.8/completions/valgrind bash-completion-2.8.patched/completions/valgrind
+--- bash-completion-2.8/completions/valgrind	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/valgrind	2018-05-17 13:33:06.702863112 +0000
+@@ -34,7 +34,7 @@ _valgrind()
+             COMPREPLY=( $( compgen -W '$(
+                 for f in /usr{,/local}/lib{,64}/valgrind/*; do
+                     [[ $f != *.so && -x $f ]] &&
+-                        command sed -ne "s/^.*\/\(.*\)-\([^-]*\)-\([^-]*\)/\1/p" <<<$f
++                        command gsed -ne "s/^.*\/\(.*\)-\([^-]*\)-\([^-]*\)/\1/p" <<<$f
+                 done )' -- "$cur" ) )
+             return
+             ;;
+@@ -70,7 +70,7 @@ _valgrind()
+         # generic cases parsed from --help output
+         --+([-A-Za-z0-9_]))
+             local value=$( $1 --help-debug $tool 2>/dev/null | \
+-                command sed -ne "s|^[[:blank:]]*$prev=\([^[:blank:]]\{1,\}\).*|\1|p" )
++                command gsed -ne "s|^[[:blank:]]*$prev=\([^[:blank:]]\{1,\}\).*|\1|p" )
+             case $value in
+                 \<file*\>)
+                     _filedir
+diff -pruNb bash-completion-2.8/completions/wget bash-completion-2.8.patched/completions/wget
+--- bash-completion-2.8/completions/wget	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/wget	2018-05-17 13:33:06.700944771 +0000
+@@ -115,7 +115,7 @@ _wget()
+             return
+             ;;
+         --user|--http-user|--proxy-user|--ftp-user)
+-            COMPREPLY=( $( compgen -W "$( command sed -n \
++            COMPREPLY=( $( compgen -W "$( command gsed -n \
+                 '/^login/s/^[[:blank:]]*login[[:blank:]]//p' ~/.netrc \
+                 2>/dev/null )" -- "$cur" ) )
+             return
+@@ -137,7 +137,7 @@ _wget()
+         --local-encoding|--remote-encoding)
+             type -P xauth &>/dev/null && \
+             COMPREPLY=( $( compgen -W '$( iconv -l 2>/dev/null | \
+-                command sed -e "s@/*\$@@" -e "s/[,()]//g" 2>/dev/null )' -- "$cur" ) )
++                command gsed -e "s@/*\$@@" -e "s/[,()]//g" 2>/dev/null )' -- "$cur" ) )
+             return
+             ;;
+         -e|--execute)
+diff -pruNb bash-completion-2.8/completions/xgamma bash-completion-2.8.patched/completions/xgamma
+--- bash-completion-2.8/completions/xgamma	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/xgamma	2018-05-17 13:33:06.702393929 +0000
+@@ -7,7 +7,7 @@ _xgamma()
+ 
+     case "$prev" in
+         -screen)
+-            local screens=$( xrandr --query 2>/dev/null | command sed -n \
++            local screens=$( xrandr --query 2>/dev/null | command gsed -n \
+                 '/^Screen /s|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null )
+             COMPREPLY=( $( compgen -W "$screens" -- "$cur" ) )
+             return
+@@ -30,7 +30,7 @@ _xgamma()
+                 compopt -o nospace
+             elif [[ "$cur" == :*.* ]]; then
+                 # local screen numbers
+-                local t screens=$( xrandr --query 2>/dev/null | command sed -ne \
++                local t screens=$( xrandr --query 2>/dev/null | command gsed -ne \
+                     '/^Screen /s|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null )
+                 t="${cur#:}"
+                 COMPREPLY=( $( compgen -P "${t%.*}." -W "$screens" -- \
+diff -pruNb bash-completion-2.8/completions/xrandr bash-completion-2.8.patched/completions/xrandr
+--- bash-completion-2.8/completions/xrandr	2018-05-17 11:39:02.500325881 +0000
++++ bash-completion-2.8.patched/completions/xrandr	2018-05-17 13:33:06.706742760 +0000
+@@ -25,7 +25,7 @@ _xrandr()
+                 fi
+             done
+             if [[ $output ]]; then
+-                local modes=$( "$1" | command sed -e "1,/$output/ d" \
++                local modes=$( "$1" | command gsed -e "1,/$output/ d" \
+                     -e "/connected/,$ d" \
+                     -e "s/\([^[:space:]]\)[[:space:]].*/\1/" )
+                 COMPREPLY=( $( compgen -W "$modes" -- "$cur" ) )
+@@ -47,7 +47,7 @@ _xrandr()
+             ;;
+         --setprovideroutputsource|--setprovideroffloadsink)
+             local providers=$( "$1" --listproviders 2>/dev/null |
+-                command sed -ne 's/.* name:\([^ ]*\).*/\1/p' )
++                command gsed -ne 's/.* name:\([^ ]*\).*/\1/p' )
+             COMPREPLY=( $( compgen -W "$providers" -- "$cur" ) )
+             # TODO 2nd arg needed, is that a provider as well?
+             return
+@@ -55,7 +55,7 @@ _xrandr()
+     esac
+ 
+     COMPREPLY=( $( compgen -W '$( "$1" -help 2>&1 |
+-        command sed -e "s/ or / /g" -e "s/<[^>]*>]//g" | _parse_help - )' -- "$cur" ) )
++        command gsed -e "s/ or / /g" -e "s/<[^>]*>]//g" | _parse_help - )' -- "$cur" ) )
+ } &&
+ complete -F _xrandr xrandr
+ 
+diff -pruNb bash-completion-2.8/completions/xsltproc bash-completion-2.8.patched/completions/xsltproc
+--- bash-completion-2.8/completions/xsltproc	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/xsltproc	2018-05-17 13:33:06.698651488 +0000
+@@ -16,7 +16,7 @@ _xsltproc()
+             ;;
+         --encoding)
+             # some aliases removed
+-            COMPREPLY=( $( compgen -W "$( iconv -l | command sed -e '/^UTF[1378]/d' \
++            COMPREPLY=( $( compgen -W "$( iconv -l | command gsed -e '/^UTF[1378]/d' \
+                 -e '/^ISO[0-9_]/d' -e '/^8859/d' -e 's/\/.*//')" -- "$cur" ) )
+             return
+             ;;

@@ -1,0 +1,500 @@
+diff -pruNb bash-completion-2.8/bash_completion bash-completion-2.8.patched/bash_completion
+--- bash-completion-2.8/bash_completion	2018-03-17 01:25:59.000000000 +0000
++++ bash-completion-2.8.patched/bash_completion	2018-05-17 11:04:56.830380324 +0000
+@@ -948,7 +948,7 @@ _available_interfaces()
+         else
+             ifconfig -a || ip link show
+         fi
+-    } 2>/dev/null | awk \
++    } 2>/dev/null | gawk \
+         '/^[^ \t]/ { if ($1 ~ /^[0-9]+:/) { print $2 } else { print $1 } }' ) )
+ 
+     COMPREPLY=( $( compgen -W '${COMPREPLY[@]/%[[:punct:]]/}' -- "$cur" ) )
+@@ -1298,10 +1298,10 @@ _fstypes()
+             $( awk '! /\*/ { print $NF }' /etc/filesystems 2>/dev/null )"
+     else
+         # Generic
+-        fss="$( awk '/^[ \t]*[^#]/ { print $3 }' /etc/fstab 2>/dev/null )
+-            $( awk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null )
+-            $( awk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null )
+-            $( awk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null )
++        fss="$( gawk '/^[ \t]*[^#]/ { print $3 }' /etc/fstab 2>/dev/null )
++            $( gawk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null )
++            $( gawk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null )
++            $( gawk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null )
+             $( [[ -d /etc/fs ]] && command ls /etc/fs )"
+     fi
+ 
+@@ -1364,7 +1364,7 @@ _count_args()
+ _pci_ids()
+ {
+     COMPREPLY+=( $( compgen -W \
+-        "$( PATH="$PATH:/sbin" lspci -n | awk '{print $3}')" -- "$cur" ) )
++        "$( PATH="$PATH:/sbin" lspci -n | gawk '{print $3}')" -- "$cur" ) )
+ }
+ 
+ # This function completes on USB IDs
+@@ -1394,7 +1394,7 @@ _terms()
+         "$( command sed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap \
+             2>/dev/null )" -- "$cur" ) )
+     COMPREPLY+=( $( compgen -W "$( { toe -a 2>/dev/null || toe 2>/dev/null; } \
+-        | awk '{ print $1 }' | sort -u )" -- "$cur" ) )
++        | gawk '{ print $1 }' | sort -u )" -- "$cur" ) )
+ }
+ 
+ # a little help for FreeBSD ports users
+@@ -1529,7 +1529,7 @@ _known_hosts_real()
+         # TODO(?): try to make known hosts files with more than one consecutive
+         #          spaces in their name work (watch out for ~ expansion
+         #          breakage! Alioth#311595)
+-        tmpkh=( $( awk 'sub("^[ \t]*([Gg][Ll][Oo][Bb][Aa][Ll]|[Uu][Ss][Ee][Rr])[Kk][Nn][Oo][Ww][Nn][Hh][Oo][Ss][Tt][Ss][Ff][Ii][Ll][Ee][ \t]+", "") { print $0 }' "${config[@]}" | sort -u ) )
++        tmpkh=( $( gawk 'sub("^[ \t]*([Gg][Ll][Oo][Bb][Aa][Ll]|[Uu][Ss][Ee][Rr])[Kk][Nn][Oo][Ww][Nn][Hh][Oo][Ss][Tt][Ss][Ff][Ii][Ll][Ee][ \t]+", "") { print $0 }' "${config[@]}" | sort -u ) )
+         IFS=$OIFS
+         for i in "${tmpkh[@]}"; do
+             # First deal with quoted entries...
+@@ -1582,7 +1582,7 @@ _known_hosts_real()
+ 
+         if [[ ${#kh[@]} -gt 0 ]]; then
+             # FS needs to look for a comma separated list
+-            COMPREPLY+=( $( awk 'BEGIN {FS=","}
++            COMPREPLY+=( $( gawk 'BEGIN {FS=","}
+             /^\s*[^|\#]/ {
+             sub("^@[^ ]+ +", ""); \
+             sub(" .*$", ""); \
+@@ -1628,12 +1628,12 @@ _known_hosts_real()
+         # time ago, so...
+         COMPREPLY+=( $( compgen -P "$prefix$user" -S "$suffix" -W \
+             "$( avahi-browse -cpr _workstation._tcp 2>/dev/null | \
+-                awk -F';' '/^=/ { print $7 }' | sort -u )" -- "$cur" ) )
++                gawk -F';' '/^=/ { print $7 }' | sort -u )" -- "$cur" ) )
+     fi
+ 
+     # Add hosts reported by ruptime.
+     COMPREPLY+=( $( compgen -W \
+-        "$( ruptime 2>/dev/null | awk '!/^ruptime:/ { print $1 }' )" \
++        "$( ruptime 2>/dev/null | gawk '!/^ruptime:/ { print $1 }' )" \
+         -- "$cur" ) )
+ 
+     # Add results of normal hostname completion, unless
+diff -pruNb bash-completion-2.8/completions/adb bash-completion-2.8.patched/completions/adb
+--- bash-completion-2.8/completions/adb	2018-05-17 10:15:22.798629020 +0000
++++ bash-completion-2.8.patched/completions/adb	2018-05-17 10:45:22.883899319 +0000
+@@ -36,7 +36,7 @@ _adb()
+             tmp+=( $( compgen -W '$( _parse_help "$1" help )' -- "$cur" ) )
+         fi
+         if [[ ! $cur || $cur != -* ]]; then
+-            tmp+=( $( $1 help 2>&1 | awk '$1 == "adb" { print $2 }' ) )
++            tmp+=( $( $1 help 2>&1 | gawk '$1 == "adb" { print $2 }' ) )
+             tmp+=( devices connect disconnect sideload )
+         fi
+         COMPREPLY=( $( compgen -W '${tmp[@]}' -- "$cur" ) )
+diff -pruNb bash-completion-2.8/completions/aspell bash-completion-2.8.patched/completions/aspell
+--- bash-completion-2.8/completions/aspell	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/aspell	2018-05-17 10:45:22.873401740 +0000
+@@ -33,7 +33,7 @@ _aspell()
+             ;;
+         --mode)
+             COMPREPLY=( $( compgen -W "$( $1 modes 2>/dev/null | \
+-                awk '{ print $1 }' )" -- "$cur" ) )
++                gawk '{ print $1 }' )" -- "$cur" ) )
+             return
+             ;;
+         --sug-mode)
+@@ -51,7 +51,7 @@ _aspell()
+             ;;
+         --add-filter|--rem-filter)
+             COMPREPLY=( $( compgen -W "$( $1 filters 2>/dev/null | \
+-                awk '{ print $1 }' )" -- "$cur" ) )
++                gawk '{ print $1 }' )" -- "$cur" ) )
+             return
+             ;;
+     esac
+diff -pruNb bash-completion-2.8/completions/ccache bash-completion-2.8.patched/completions/ccache
+--- bash-completion-2.8/completions/ccache	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/ccache	2018-05-17 10:45:22.870391847 +0000
+@@ -21,7 +21,7 @@ _ccache()
+         -o|--set-config)
+             if [[ $cur != *=* ]]; then
+                 COMPREPLY=( $( compgen -S = -W "$( $1 -p 2>/dev/null | \
+-                    awk '$3 = "=" { print $2 }' )" -- "$cur" ) )
++                    gawk '$3 = "=" { print $2 }' )" -- "$cur" ) )
+                 [[ $COMPREPLY == *= ]] && compopt -o nospace
+             fi
+             return
+diff -pruNb bash-completion-2.8/completions/configure bash-completion-2.8.patched/completions/configure
+--- bash-completion-2.8/completions/configure	2017-09-21 22:25:23.000000000 +0000
++++ bash-completion-2.8.patched/completions/configure	2018-05-17 10:45:22.881207763 +0000
+@@ -28,7 +28,7 @@ _configure()
+ 
+     if [[ -n $COMP_CONFIGURE_HINTS ]]; then
+         COMPREPLY=( $( compgen -W "$( $1 --help 2>&1 | \
+-            awk '/^  --[A-Za-z]/ { print $1; \
++            gawk '/^  --[A-Za-z]/ { print $1; \
+             if ($2 ~ /--[A-Za-z]/) print $2 }' | command sed -e 's/[[,].*//g' )" \
+             -- "$cur" ) )
+         [[ $COMPREPLY == *=* ]] && compopt -o nospace
+diff -pruNb bash-completion-2.8/completions/convert bash-completion-2.8.patched/completions/convert
+--- bash-completion-2.8/completions/convert	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/convert	2018-05-17 10:45:22.863252698 +0000
+@@ -50,7 +50,7 @@ _ImageMagick()
+             return
+             ;;
+         -format)
+-            COMPREPLY=( $( compgen -W "$( convert -list format | awk \
++            COMPREPLY=( $( compgen -W "$( convert -list format | gawk \
+                 '/ [r-][w-][+-] / { sub("[*]$","",$1); print tolower($1) }' )" \
+                 -- "$cur" ) )
+             return
+diff -pruNb bash-completion-2.8/completions/cvs bash-completion-2.8.patched/completions/cvs
+--- bash-completion-2.8/completions/cvs	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/cvs	2018-05-17 10:45:22.879572905 +0000
+@@ -22,7 +22,7 @@ _cvs_modules()
+ 
+ _cvs_commands()
+ {
+-    cvs --help-commands 2>&1 | awk '/^(     *|\t)/ { print $1 }'
++    cvs --help-commands 2>&1 | gawk '/^(     *|\t)/ { print $1 }'
+ }
+ 
+ _cvs_command_options()
+@@ -39,7 +39,7 @@ _cvs_roots()
+ {
+     local -a cvsroots
+     cvsroots=( $CVSROOT )
+-    [[ -r ~/.cvspass ]] && cvsroots+=( $( awk '{ print $2 }' ~/.cvspass ) )
++    [[ -r ~/.cvspass ]] && cvsroots+=( $( gawk '{ print $2 }' ~/.cvspass ) )
+     [[ -r CVS/Root ]] && mapfile -tO ${#cvsroots[@]} cvsroots < CVS/Root
+     COMPREPLY=( $( compgen -W '${cvsroots[@]}' -- "$cur" ) )
+     __ltrim_colon_completions "$cur"
+@@ -222,7 +222,7 @@ _cvs()
+             if [[ "$cur" != -* ]]; then
+                 [[ -z $cvsroot ]] && cvsroot=$CVSROOT
+                 COMPREPLY=( $( cvs -d "$cvsroot" co -c 2> /dev/null | \
+-                    awk '{print $1}' ) )
++                    gawk '{print $1}' ) )
+                 COMPREPLY=( $( compgen -W '${COMPREPLY[@]}' -- "$cur" ) )
+             else
+                 _cvs_command_options "$1" $mode
+@@ -298,7 +298,7 @@ _cvs()
+ 
+             if [[ "$cur" != -* ]]; then
+                 [[ -z $cvsroot ]] && cvsroot=$CVSROOT
+-                COMPREPLY=( $( cvs -d "$cvsroot" co -c | awk '{print $1}' ) )
++                COMPREPLY=( $( cvs -d "$cvsroot" co -c | gawk '{print $1}' ) )
+                 COMPREPLY=( $( compgen -W '${COMPREPLY[@]}' -- "$cur" ) )
+             else
+                 _cvs_command_options "$1" $mode
+diff -pruNb bash-completion-2.8/completions/fusermount bash-completion-2.8.patched/completions/fusermount
+--- bash-completion-2.8/completions/fusermount	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/fusermount	2018-05-17 10:45:22.875304982 +0000
+@@ -10,7 +10,7 @@ _fusermount()
+             return
+             ;;
+         -u)
+-            COMPREPLY=( $( compgen -W "$( awk \
++            COMPREPLY=( $( compgen -W "$( gawk \
+                 '{ if ($3 ~ /^fuse(\.|$)/) print $2 }' /etc/mtab \
+                 2>/dev/null )" -- "$cur" ) )
+             return
+diff -pruNb bash-completion-2.8/completions/gdb bash-completion-2.8.patched/completions/gdb
+--- bash-completion-2.8/completions/gdb	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/gdb	2018-05-17 10:45:22.874064535 +0000
+@@ -35,7 +35,7 @@ _gdb()
+         fi
+     elif [[ $cword -eq 2 ]]; then
+         COMPREPLY=( $( compgen -W "$( command ps axo comm,pid | \
+-            awk '{if ($1 ~ /^'"${prev##*/}"'/) print $2}' )" -- "$cur" ) )
++            gawk '{if ($1 ~ /^'"${prev##*/}"'/) print $2}' )" -- "$cur" ) )
+         compopt -o filenames
+         COMPREPLY+=( $( compgen -f -X '!?(*/)core?(.+([0-9]))' -o plusdirs \
+             -- "$cur" ) )
+diff -pruNb bash-completion-2.8/completions/getconf bash-completion-2.8.patched/completions/getconf
+--- bash-completion-2.8/completions/getconf	2017-11-08 09:00:19.000000000 +0000
++++ bash-completion-2.8.patched/completions/getconf	2018-05-17 10:45:22.874708368 +0000
+@@ -12,7 +12,7 @@ _getconf()
+             ;;
+         -v)
+             COMPREPLY=( $( compgen -W \
+-                '$( "$1" -a 2>/dev/null | awk "{ print \$1 }" )' -- \
++                '$( "$1" -a 2>/dev/null | gawk "{ print \$1 }" )' -- \
+                 "${cur:-POSIX_V}" ) )
+             return
+             ;;
+@@ -24,7 +24,7 @@ _getconf()
+         COMPREPLY=( $( compgen -W '-a -v' -- "$cur" ) )
+     else
+         COMPREPLY=( $( compgen -W \
+-            '$( "$1" -a 2>/dev/null | awk "{ print \$1 }" )' -- "$cur" ) )
++            '$( "$1" -a 2>/dev/null | gawk "{ print \$1 }" )' -- "$cur" ) )
+     fi
+ } &&
+ complete -F _getconf getconf
+diff -pruNb bash-completion-2.8/completions/gm bash-completion-2.8.patched/completions/gm
+--- bash-completion-2.8/completions/gm	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/gm	2018-05-17 10:45:22.878319531 +0000
+@@ -3,7 +3,7 @@
+ _gm_commands()
+ {
+     COMPREPLY+=( $( compgen -W '$( "$1" help |
+-        awk "/^ +[^ ]+ +- / { print \$1 }" )' -- "$cur" ) )
++        gawk "/^ +[^ ]+ +- / { print \$1 }" )' -- "$cur" ) )
+ }
+ 
+ _gm()
+diff -pruNb bash-completion-2.8/completions/ipmitool bash-completion-2.8.patched/completions/ipmitool
+--- bash-completion-2.8/completions/ipmitool	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/ipmitool	2018-05-17 10:45:22.869611022 +0000
+@@ -52,7 +52,7 @@ _ipmitool()
+             ;;
+         -o)
+             COMPREPLY=( $( compgen -W "$( $1 -o list 2>&1 | \
+-                awk '/^[ \t]+/ { print $1 }' ) list" -- "$cur" ) )
++                gawk '/^[ \t]+/ { print $1 }' ) list" -- "$cur" ) )
+             return
+             ;;
+     esac
+diff -pruNb bash-completion-2.8/completions/ktutil bash-completion-2.8.patched/completions/ktutil
+--- bash-completion-2.8/completions/ktutil	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/ktutil	2018-05-17 10:45:22.877759120 +0000
+@@ -3,13 +3,13 @@
+ _heimdal_principals()
+ {
+     COMPREPLY=( $( compgen -W "$( kadmin -l dump 2>/dev/null | \
+-        awk '{print $1}' )" -- "$cur" ) )
++        gawk '{print $1}' )" -- "$cur" ) )
+ }
+ 
+ _heimdal_realms()
+ {
+     COMPREPLY=( $( compgen -W "( kadmin -l dump 2>/dev/null | \
+-        awk '{print $1}' | awk -F@ '{print $2}' )" -- "$cur" ) )
++        gawk '{print $1}' | gawk -F@ '{print $2}' )" -- "$cur" ) )
+ }
+ 
+ _heimdal_encodings()
+diff -pruNb bash-completion-2.8/completions/mcrypt bash-completion-2.8.patched/completions/mcrypt
+--- bash-completion-2.8/completions/mcrypt	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/mcrypt	2018-05-17 10:45:22.883192460 +0000
+@@ -23,7 +23,7 @@ _mcrypt()
+             ;;
+         -a|--algorithm)
+             COMPREPLY=( $( compgen -W "$( $1 --list 2>/dev/null | \
+-                awk '{print $1}' )" -- "$cur" ) )
++                gawk '{print $1}' )" -- "$cur" ) )
+             return
+             ;;
+         -h|--hash)
+diff -pruNb bash-completion-2.8/completions/mount bash-completion-2.8.patched/completions/mount
+--- bash-completion-2.8/completions/mount	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/mount	2018-05-17 10:45:22.868670598 +0000
+@@ -31,7 +31,7 @@ _mount()
+         for sm in "$(type -P showmount)" {,/usr}/{,s}bin/showmount; do
+             [[ -x $sm ]] || continue
+             COMPREPLY=( $( compgen -W "$( "$sm" -e ${cur%%:*} | \
+-                awk 'NR>1 {print $1}' )" -- "${cur#*:}" ) )
++                gawk 'NR>1 {print $1}' )" -- "${cur#*:}" ) )
+             return
+         done
+     fi
+@@ -48,7 +48,7 @@ _mount()
+         fi
+     elif [[ -r /etc/vfstab ]]; then
+         # Solaris
+-        COMPREPLY=( $( compgen -W "$( awk '! /^[ \t]*#/ {if ($3 ~ /\//) print $3}' /etc/vfstab )" -- "$cur" ) )
++        COMPREPLY=( $( compgen -W "$( gawk '! /^[ \t]*#/ {if ($3 ~ /\//) print $3}' /etc/vfstab )" -- "$cur" ) )
+     elif [[ ! -e /etc/fstab ]]; then
+         # probably Cygwin
+         COMPREPLY=( $( compgen -W "$( $1 | awk '! /^[ \t]*#/ {if ($3 ~ /\//) print $3}' )" -- "$cur" ) )
+diff -pruNb bash-completion-2.8/completions/mplayer bash-completion-2.8.patched/completions/mplayer
+--- bash-completion-2.8/completions/mplayer	2018-02-19 11:27:12.000000000 +0000
++++ bash-completion-2.8.patched/completions/mplayer	2018-05-17 10:45:22.882689933 +0000
+@@ -4,7 +4,7 @@ _mplayer_options_list()
+ {
+     cur=${cur%\\}
+     COMPREPLY=( $( compgen -W "$( $1 -noconfig all $2 help 2>/dev/null | \
+-        command sed -e '/^Available/,/^$/!d' -e '/^Available/d' | awk '{print $1}' | \
++        command sed -e '/^Available/,/^$/!d' -e '/^Available/d' | gawk '{print $1}' | \
+         command sed -e 's/:$//' -e 's/^'${2#-}'$//' -e 's/<.*//' )" -- "$cur" ) )
+ }
+ 
+diff -pruNb bash-completion-2.8/completions/msynctool bash-completion-2.8.patched/completions/msynctool
+--- bash-completion-2.8/completions/msynctool	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/msynctool	2018-05-17 10:45:22.876960487 +0000
+@@ -8,7 +8,7 @@ _msynctool()
+     case $words in
+         --configure)
+             COMPREPLY=( $( compgen -W "$($1 --showgroup \
+-                $prev | awk '/^Member/ {print $2}' | command sed \
++                $prev | gawk '/^Member/ {print $2}' | command sed \
+                 -e 's/:$//' )" -- "$cur" ) )
+             return
+             ;;
+diff -pruNb bash-completion-2.8/completions/mtx bash-completion-2.8.patched/completions/mtx
+--- bash-completion-2.8/completions/mtx	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/mtx	2018-05-17 10:45:22.865859337 +0000
+@@ -12,11 +12,11 @@ _mtx()
+         inventory status load unload eepos first last next"
+ 
+     tapes=$(mtx status 2>/dev/null | \
+-        awk '/Storage Element [0-9]+:Full/ { printf "%s ", $3 }')
++        gawk '/Storage Element [0-9]+:Full/ { printf "%s ", $3 }')
+     tapes=${tapes//:Full}
+ 
+     drives=$(mtx status 2>/dev/null | \
+-        awk '/Data Transfer Element [0-9]+:(Full|Empty)/ { printf "%s ", $4 }')
++        gawk '/Data Transfer Element [0-9]+:(Full|Empty)/ { printf "%s ", $4 }')
+     drives=${drives//:Full}
+     drives=${drives//:Empty}
+ 
+diff -pruNb bash-completion-2.8/completions/openssl bash-completion-2.8.patched/completions/openssl
+--- bash-completion-2.8/completions/openssl	2018-03-11 08:04:39.000000000 +0000
++++ bash-completion-2.8.patched/completions/openssl	2018-05-17 10:45:22.867282088 +0000
+@@ -22,14 +22,14 @@ _openssl_sections()
+ 
+     [[ ! -f $config ]] && return
+ 
+-    COMPREPLY=( $( compgen -W "$( awk '/\[.*\]/ {print $2}' $config )" \
++    COMPREPLY=( $( compgen -W "$( gawk '/\[.*\]/ {print $2}' $config )" \
+         -- "$cur" ) )
+ }
+ 
+ _openssl_digests()
+ {
+     "$1" dgst -h 2>&1 | \
+-        awk '/^-.*[ \t]to use the .* message digest algorithm/ { print $1 }'
++        gawk '/^-.*[ \t]to use the .* message digest algorithm/ { print $1 }'
+ }
+ 
+ _openssl()
+diff -pruNb bash-completion-2.8/completions/perl bash-completion-2.8.patched/completions/perl
+--- bash-completion-2.8/completions/perl	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/perl	2018-05-17 10:45:22.880606549 +0000
+@@ -119,7 +119,7 @@ _perldoc()
+                 COMPREPLY+=( $( compgen -W \
+                     '$( PERLDOC_PAGER=cat "$1" -u perl |  \
+                     command sed -ne "/perl.*Perl overview/,/perlwin32/p" | \
+-                    awk "\$NF=2 && \$1 ~ /^perl/ { print \$1 }" )' \
++                    gawk "\$NF=2 && \$1 ~ /^perl/ { print \$1 }" )' \
+                     -- "$cur" ) )
+             fi
+         fi
+diff -pruNb bash-completion-2.8/completions/pkg-config bash-completion-2.8.patched/completions/pkg-config
+--- bash-completion-2.8/completions/pkg-config	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/pkg-config	2018-05-17 10:45:22.864552127 +0000
+@@ -36,7 +36,7 @@ _pkg_config()
+         [[ $COMPREPLY == *= ]] && compopt -o nospace
+     else
+         COMPREPLY=( $( compgen -W "$( $1 --list-all \
+-            2>/dev/null | awk '{print $1}' )" -- "$cur" ) )
++            2>/dev/null | gawk '{print $1}' )" -- "$cur" ) )
+     fi
+ } &&
+ complete -F _pkg_config pkg-config
+diff -pruNb bash-completion-2.8/completions/psql bash-completion-2.8.patched/completions/psql
+--- bash-completion-2.8/completions/psql	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/psql	2018-05-17 10:45:22.872428694 +0000
+@@ -5,7 +5,7 @@ _pg_databases()
+     # -w was introduced in 8.4, https://launchpad.net/bugs/164772
+     # "Access privileges" in output may contain linefeeds, hence the NF > 1
+     COMPREPLY=( $( compgen -W "$( psql -XAtqwlF $'\t' 2>/dev/null | \
+-        awk 'NF > 1 { print $1 }' )" -- "$cur" ) )
++        gawk 'NF > 1 { print $1 }' )" -- "$cur" ) )
+ }
+ 
+ _pg_users()
+diff -pruNb bash-completion-2.8/completions/qemu bash-completion-2.8.patched/completions/qemu
+--- bash-completion-2.8/completions/qemu	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/qemu	2018-05-17 10:45:22.881956066 +0000
+@@ -26,17 +26,17 @@ _qemu()
+             return
+             ;;
+         -soundhw)
+-            COMPREPLY=( $( compgen -W "$( $1 -soundhw ? | awk \
++            COMPREPLY=( $( compgen -W "$( $1 -soundhw ? | gawk \
+                 '/^[[:lower:]]/ {print $1}' ) all" -- "$cur" ) )
+             return
+             ;;
+         -M)
+-            COMPREPLY=( $( compgen -W "$( $1 -M ? | awk \
++            COMPREPLY=( $( compgen -W "$( $1 -M ? | gawk \
+                 '/^[[:lower:]]/ {print $1}' )" -- "$cur" ) )
+             return
+             ;;
+         -cpu)
+-            COMPREPLY=( $( compgen -W "$( $1 -cpu ? | awk \
++            COMPREPLY=( $( compgen -W "$( $1 -cpu ? | gawk \
+                 '{print $2}' )" -- "$cur" ) )
+             return
+             ;;
+@@ -83,7 +83,7 @@ _qemu()
+             ;;
+         -watchdog)
+             COMPREPLY=( $( compgen -W "$( $1 -watchdog ? 2>&1 | \
+-                awk '{print $1}' )" -- "$cur" ) )
++                gawk '{print $1}' )" -- "$cur" ) )
+             return
+             ;;
+         -watchdog-action)
+diff -pruNb bash-completion-2.8/completions/tshark bash-completion-2.8.patched/completions/tshark
+--- bash-completion-2.8/completions/tshark	2018-02-02 11:26:57.000000000 +0000
++++ bash-completion-2.8.patched/completions/tshark	2018-05-17 10:45:22.876061458 +0000
+@@ -22,7 +22,7 @@ _tshark()
+                 fi
+             done
+             COMPREPLY=( $( compgen -W "$( "$1" $opts -L 2>&1 | \
+-                awk '/^  / { print $1 }' )" -- "$cur" ) )
++                gawk '/^  / { print $1 }' )" -- "$cur" ) )
+             return
+             ;;
+         -a|-b)
+@@ -46,7 +46,7 @@ _tshark()
+             ;;
+         -F)
+             COMPREPLY=( $( compgen -W "$( "$1" -F 2>&1 | \
+-                awk '/^  / { print $1 }' )" -- "$cur" ) )
++                gawk '/^  / { print $1 }' )" -- "$cur" ) )
+             return
+             ;;
+         -O)
+@@ -87,7 +87,7 @@ _tshark()
+             ;;
+         -G)
+             COMPREPLY=( $( compgen -W "$( "$1" -G ? 2>/dev/null | \
+-                awk '/^[ \t]*-G / \
++                gawk '/^[ \t]*-G / \
+                     { sub("^[[]","",$2); sub("[]]$","",$2); print $2 }' )" \
+                 -- "$cur" ) )
+             return
+diff -pruNb bash-completion-2.8/completions/xfreerdp bash-completion-2.8.patched/completions/xfreerdp
+--- bash-completion-2.8/completions/xfreerdp	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/xfreerdp	2018-05-17 10:45:22.865109709 +0000
+@@ -8,7 +8,7 @@ _xfreerdp()
+     case $prev in
+         -k)
+             COMPREPLY=( $( compgen -W "$($1 --kbd-list | \
+-                awk '/^0x/ {print $1}')" -- "$cur" ) )
++                gawk '/^0x/ {print $1}')" -- "$cur" ) )
+             return
+             ;;
+         -a)
+@@ -29,7 +29,7 @@ _xfreerdp()
+         COMPREPLY=( $( compgen -W '-u -d -s -c -p -n -t -g -a -z -f -x -O -o -k
+             --kbd-list -h --plugin --data' -- "$cur" ) )
+     else
+-        COMPREPLY=( $( compgen -W "$(awk '{print $1}' ~/.freerdp/known_hosts \
++        COMPREPLY=( $( compgen -W "$(gawk '{print $1}' ~/.freerdp/known_hosts \
+             2>/dev/null)" -- "$cur" ) )
+     fi
+ 
+diff -pruNb bash-completion-2.8/completions/xrandr bash-completion-2.8.patched/completions/xrandr
+--- bash-completion-2.8/completions/xrandr	2017-09-21 22:25:24.000000000 +0000
++++ bash-completion-2.8.patched/completions/xrandr	2018-05-17 10:45:22.867997695 +0000
+@@ -12,7 +12,7 @@ _xrandr()
+             return
+             ;;
+         --output|--left-of|--right-of|--above|--below|--same-as)
+-            local outputs=$( "$1" | awk '/connected/ {print $1}' )
++            local outputs=$( "$1" | gawk '/connected/ {print $1}' )
+             COMPREPLY=( $( compgen -W "$outputs" -- "$cur" ) )
+             return
+             ;;

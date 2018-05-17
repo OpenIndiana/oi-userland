@@ -56,8 +56,8 @@ diff -Nurb bash-completion-2.5.orig/completions/apt-get bash-completion-2.5/comp
 +                    command ggrep "^Source: $cur" | sort -u | cut -f2 -d" " ) )
                  ;;
              *)
-                 COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
-@@ -44,7 +44,7 @@
+                 if [[ $special == install && $cur == */* ]]; then
+@@ -48,7 +48,7 @@
              ;;
          -t|--target-release|--default-release)
              COMPREPLY=( $( apt-cache policy | \
@@ -139,7 +139,7 @@ diff -Nurb bash-completion-2.5.orig/completions/dpkg bash-completion-2.5/complet
 diff -Nurb bash-completion-2.5.orig/completions/gcc bash-completion-2.5/completions/gcc
 --- bash-completion-2.5.orig/completions/gcc	2017-06-02 18:26:34.805024802 +0000
 +++ bash-completion-2.5/completions/gcc	2017-06-02 18:28:36.817852884 +0000
-@@ -50,16 +50,16 @@
+@@ -48,16 +48,16 @@
  } &&
  complete -F _gcc gcc g++ gfortran g77 g95 gcj gpc &&
  {
@@ -367,15 +367,15 @@ diff -Nurb bash-completion-2.5.orig/completions/wvdial bash-completion-2.5/compl
 diff -Nurb bash-completion-2.5.orig/test/lib/completions/dpkg.exp bash-completion-2.5/test/lib/completions/dpkg.exp
 --- bash-completion-2.5.orig/test/lib/completions/dpkg.exp	2017-06-02 18:26:34.716655547 +0000
 +++ bash-completion-2.5/test/lib/completions/dpkg.exp	2017-06-02 18:28:36.750135366 +0000
-@@ -18,7 +18,7 @@
+@@ -16,7 +16,7 @@
  
  
-     # Build list of installed packages
--if {[assert_exec {dpkg --get-selections | command grep \[\[:space:\]\]install$ | cut -f1} packages]} {
-+if {[assert_exec {dpkg --get-selections | command ggrep \[\[:space:\]\]install$ | cut -f1} packages]} {
+ # Build list of installed packages
+-if {[assert_exec {dpkg --get-selections | command grep \[\[:space:\]\]install$ | cut -f1} packages "" "untested"]} {
++if {[assert_exec {dpkg --get-selections | command ggrep \[\[:space:\]\]install$ | cut -f1} packages "" "untested"]} {
      assert_complete $packages "dpkg -L "
  }
- 
+ sync_after_int
 diff -Nurb bash-completion-2.5.orig/test/lib/completions/feh.exp bash-completion-2.5/test/lib/completions/feh.exp
 --- bash-completion-2.5.orig/test/lib/completions/feh.exp	2017-06-02 18:26:34.735927627 +0000
 +++ bash-completion-2.5/test/lib/completions/feh.exp	2017-06-02 18:29:28.777399390 +0000
@@ -427,7 +427,7 @@ diff -Nurb bash-completion-2.5.orig/test/lib/completions/sysctl.exp bash-complet
 diff -Nurb bash-completion-2.5.orig/test/lib/library.exp bash-completion-2.5/test/lib/library.exp
 --- bash-completion-2.5.orig/test/lib/library.exp	2017-06-02 18:26:34.710844011 +0000
 +++ bash-completion-2.5/test/lib/library.exp	2017-06-02 18:28:36.767530729 +0000
-@@ -648,7 +648,7 @@
+@@ -670,7 +670,7 @@
          # Retrieving hosts is successful?
      if { [catch {exec bash -c {
          type avahi-browse >&/dev/null \
