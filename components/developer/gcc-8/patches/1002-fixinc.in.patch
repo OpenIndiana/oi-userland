@@ -1,0 +1,21 @@
+diff -ruN gcc-4.7.3.orig/fixincludes/fixinc.in gcc-4.7.3/fixincludes/fixinc.in
+--- gcc-4.7.3.orig/fixincludes/fixinc.in	2013-05-16 01:21:03.102224280 +0000
++++ gcc-4.7.3/fixincludes/fixinc.in	2013-05-16 01:20:54.675745658 +0000
+@@ -196,7 +196,7 @@
+ 
+ while [ -n "$dirs" ] && [ $levels -gt 0 ]
+ do
+-  levels=`expr $levels - 1`
++  levels=`expr $levels - 1; true`
+   newdirs=
+   for d in $dirs
+   do
+@@ -325,7 +325,7 @@
+           cd $LIB
+           while [ x$dirname != x ]; do
+             component=`echo $dirname | sed -e 's|/.*$||'`
+-            mkdir $component >/dev/null 2>&1
++            mkdir -p $component >/dev/null 2>&1
+             cd $component
+             dirmade=$dirmade/$component
+             dirname=`echo $dirname | sed -e 's|[^/]*/||'`
