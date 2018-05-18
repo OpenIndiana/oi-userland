@@ -23,13 +23,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.54.1
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=      7.60.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:cd404b808b253512dafec4fed0fb2cc98370d818a7991826c3021984fc27f9d0
+    sha256:e9c37986337743f37fd14fe8737f246e97aec94b39d1b71e8a5973f72a9fc4f5
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE).asc
 COMPONENT_BUGDB=	library/curl
@@ -38,14 +37,16 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATCH_LEVEL = 0
+# Community code uses different defs
+$(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
+$(BUILD_DIR_64)/.configured:   CPPFLAGS += -D__LP64=64
 
 GSSAPI_LIBDIR_32 = /usr/lib
 GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
 
 CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += `pkg-config --cflags libidn`
-CPPFLAGS += `pkg-config --cflags libidn`
+#CFLAGS += `pkg-config --cflags libidn`
+#CPPFLAGS += `pkg-config --cflags libidn`
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap"
 
@@ -62,7 +63,7 @@ CONFIGURE_OPTIONS += --disable-sspi --enable-crypto-auth
 CONFIGURE_OPTIONS += --enable-cookies --disable-hidden-symbols
 CONFIGURE_OPTIONS += --disable-soname-bump
 CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
-CONFIGURE_OPTIONS += --with-ssl --with-ldap-lib=ldap_r-2.4
+CONFIGURE_OPTIONS += --with-ssl=/usr --with-ldap-lib=ldap_r-2.4
 CONFIGURE_OPTIONS += --with-lber-lib=lber-2.4
 CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
 CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
@@ -76,10 +77,15 @@ CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include
 
-ASLR_MODE = $(ASLR_ENABLE)
+# Generate configuration scripts form .am-files
+COMPONENT_PREP_ACTION = (cd $(@D) ; $(SHELL) buildconf )
 
 ENV = /usr/bin/env -i
+COMPONENT_TEST_ENV += CC="$(CC)"
 COMPONENT_TEST_ENV += USER=`id -un`
+COMPONENT_TEST_ENV += PATH="$(GCC_ROOT)/bin:$(GNUBIN):$(PATH)"
+COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_TEST_ARGS+= -k -i
 
 build: $(BUILD_32_and_64)
 
@@ -89,6 +95,7 @@ test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
