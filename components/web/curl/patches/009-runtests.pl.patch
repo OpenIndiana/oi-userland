@@ -4,12 +4,16 @@ created as a pre-requisite to running the numerous Perl tests.
 
 This patch adjusts LD_PRELOAD to be LD_PRELOAD_32 or LD_PRELOAD_64
 depending upong whether we are running the 32 or 64 bit tests.
+This is required because during testing are the compiled binaries
+executed via shell wrapper. The shell in shebang line is #!/bin/sh which
+is 64bit binary and fails when you try to preload 32bit binary via
+LD_PRELOAD.
 
 As this is Solaris specific, this patch will not be pushed upstream.
 
---- tests/runtests.pl.orig	2014-09-10 12:26:52.624143266 -0700
-+++ tests/runtests.pl	2014-09-10 16:51:13.663390869 -0700
-@@ -3060,6 +3060,12 @@
+--- a/tests/runtests.pl	2017-10-04 05:47:09.000000000 +0000
++++ b/tests/runtests.pl	2017-10-20 05:20:40.459651061 +0000
+@@ -3657,6 +3657,12 @@
                              # print "Skipping LD_PRELOAD due to no release shared build\n";
                              next;
                          }
