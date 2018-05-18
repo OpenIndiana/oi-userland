@@ -1,0 +1,28 @@
+From da0a2bd04983b4442b739612dd65722f2f7147c1 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sun, 24 Jan 2016 18:30:00 +0000
+Subject: [PATCH 09/12] symtab: disable non-interposable alias generation if
+ function cloning is disabled
+
+---
+ gcc/symtab.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/gcc/symtab.c b/gcc/symtab.c
+index c1533083573..97e6cb06df7 100644
+--- a/gcc/symtab.c
++++ b/gcc/symtab.c
+@@ -1764,6 +1764,10 @@ symtab_node::noninterposable_alias (void)
+   tree new_decl;
+   symtab_node *new_node = NULL;
+ 
++  /* Do not allow a clone to be created if function-cloning is disabled */
++  if (!flag_clone_functions)
++	  return NULL;
++
+   /* First try to look up existing alias or base object
+      (if that is already non-overwritable).  */
+   symtab_node *node = ultimate_alias_target ();
+-- 
+2.16.2
+

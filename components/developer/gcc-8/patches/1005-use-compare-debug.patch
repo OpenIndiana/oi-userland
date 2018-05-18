@@ -1,0 +1,13 @@
+For some reason avx_*.o and sse_*.o contain a lot of debug info in 
+a way that make stage2/stage3 comparison fail.
+--- gcc-8.1.0/Makefile.in.orig	2018-05-22 00:50:48.638276609 +0000
++++ gcc-8.1.0/Makefile.in	2018-05-22 01:00:26.122572368 +0000
+@@ -544,7 +544,7 @@
+ STAGEautofeedback_CFLAGS = $(STAGE3_CFLAGS)
+ STAGEautofeedback_TFLAGS = $(STAGE3_TFLAGS)
+ 
+-do-compare = @do_compare@
++do-compare = $(srcdir)/contrib/compare-debug $$f1 $$f2
+ do-compare3 = $(do-compare)
+ 
+ # -----------------------------------------------
