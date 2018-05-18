@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bash-completion
-COMPONENT_VERSION=      2.5
+COMPONENT_VERSION=      2.8
 COMPONENT_FMRI=         utility/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=      Programmable completion functions for bash
 COMPONENT_CLASSIFICATION=System/Shells
@@ -23,7 +23,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/scop/bash-completion
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b0b9540c65532825eca030f1241731383f89b2b65e80f3492c5dd2f0438c95cf
+  sha256:c01f5570f5698a0dda8dc9cfb2a83744daa1ec54758373a6e349bd903375f54d
 COMPONENT_ARCHIVE_URL= \
   https://github.com/scop/bash-completion/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
