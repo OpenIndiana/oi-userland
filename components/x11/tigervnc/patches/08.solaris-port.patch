@@ -47,37 +47,6 @@
  
  libvnc_la_LDFLAGS = -module -avoid-version -Wl,-z,now
  
---- a/unix/xserver/hw/vnc/vncHooks.c	2017-03-11 08:55:08.961273317 +0000
-+++ b/unix/xserver/hw/vnc/vncHooks.c	2017-03-11 08:56:24.506368154 +0000
-@@ -129,8 +129,7 @@
- static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
-                                  pointer pReadmask);
- #else
--static void vncHooksBlockHandler(ScreenPtr pScreen, void * pTimeout,
--                                 void * pReadmask);
-+static void vncHooksBlockHandler(ScreenPtr pScreen, void * pTimeout);
- #endif
- #ifdef RENDER
- static void vncHooksComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, 
-@@ -717,8 +716,7 @@
- static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
-                                  pointer pReadmask)
- #else
--static void vncHooksBlockHandler(ScreenPtr pScreen_, void * pTimeout,
--                                 void * pReadmask)
-+static void vncHooksBlockHandler(ScreenPtr pScreen_, void * pTimeout)
- #endif
- {
- #if XORG <= 112
-@@ -732,7 +730,7 @@
- #if XORG <= 112
-   (*pScreen->BlockHandler) (i, blockData, pTimeout, pReadmask);
- #else
--  (*pScreen->BlockHandler) (pScreen, pTimeout, pReadmask);
-+  (*pScreen->BlockHandler) (pScreen, pTimeout);
- #endif
- 
-   vncHooksScreen->ignoreHooks--;
 --- a/unix/xserver/hw/vnc/Makefile.am	2017-03-11 15:32:58.976784002 +0000
 +++ b/unix/xserver/hw/vnc/Makefile.am	2017-03-11 15:35:57.896191911 +0000
 @@ -44,10 +44,13 @@
@@ -133,39 +102,17 @@
  set(JAVACFLAGS ${DEFAULT_JAVACFLAGS} CACHE STRING
    "Java compiler flags (Default: ${DEFAULT_JAVACFLAGS})")
  message(STATUS "Java compiler flags = ${JAVACFLAGS}")
---- a/unix/vncserver	2017-03-15 22:22:18.716281139 -0700
-+++ b/unix/vncserver	2017-03-15 22:22:55.978586599 -0700
-@@ -257,7 +257,20 @@
+--- tigervnc-1.8.0/unix/vncserver.~3~	2018-05-19 10:12:57.878402758 +0000
++++ tigervnc-1.8.0/unix/vncserver	2018-05-19 10:15:10.651993596 +0000
+@@ -303,7 +303,7 @@
  
  # Make an X server cookie and set up the Xauthority file
- 
+ # mcookie is a part of util-linux, usually only GNU/Linux systems have it.
 -$cookie = `mcookie`;
 +my $cookie = "";
-+if (open(URANDOM, '<', '/dev/urandom')) {
-+  my $randata;
-+  if (sysread(URANDOM, $randata, 16) == 16) {
-+    $cookie = unpack 'h*', $randata;
-+  }
-+  close(URANDOM);
-+}
-+if ($cookie eq "") {
-+  srand(time+$$+unpack("L",`cat $vncUserDir/passwd`));
-+  for (1..16) {
-+    $cookie .= sprintf("%02x", int(rand(256)) % 256);
-+  }
-+}
- 
- open(XAUTH, "|xauth -f $xauthorityFile source -");
- print XAUTH "add $host:$displayNumber . $cookie\n";
-@@ -796,7 +809,7 @@
-     #
- 
-  cmd:
--    foreach $cmd ("uname","mcookie","xauth") {
-+    foreach $cmd ("uname","xauth") {
- 	for (split(/:/,$ENV{PATH})) {
- 	    if (-x "$_/$cmd") {
- 		next cmd;
+ # Fallback for non GNU/Linux OS - use /dev/urandom on systems that have it,
+ # otherwise use perl's random number generator, seeded with the sum
+ # of the current time, our PID and part of the encrypted form of the password.
 --- a/vncviewer/vncviewer.cxx	2017-03-16 12:33:53.666780502 -0700
 +++ b/vncviewer/vncviewer.cxx	2017-03-16 12:34:37.502948883 -0700
 @@ -481,7 +481,7 @@

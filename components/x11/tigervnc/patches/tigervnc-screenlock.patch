@@ -82,16 +82,17 @@
          SetupXauthFile(xauthfile);
 --- a/unix/xserver/hw/vnc/XserverDesktop.cc	2017-03-11 07:02:46.013551753 +0000
 +++ b/unix/xserver/he/vnc/XserverDesktop.cc	2017-03-11 07:05:22.875711797 +0000
-@@ -49,6 +49,8 @@
+@@ -51,6 +51,9 @@
  using namespace rfb;
  using namespace network;
  
++extern const char *display;
 +extern bool screenlock;
 +
  static LogWriter vlog("XserverDesktop");
  
  class FileHTTPServer : public rfb::HTTPServer {
-@@ -415,11 +417,28 @@
+@@ -478,12 +481,29 @@
      server->getSockets(&sockets);
      for (i = sockets.begin(); i != sockets.end(); i++) {
        int fd = (*i)->getFd();
@@ -99,6 +100,7 @@
 +      pid_t pid;
        if ((*i)->isShutdown()) {
          vlog.debug("client gone, sock %d",fd);
+         vncRemoveNotifyFd(fd);
          server->removeSocket(*i);
          vncClientGone(fd);
          delete (*i);
@@ -118,8 +120,8 @@
 +          }
 +        }
        } else {
-         FD_SET(fd, fds);
-       }
+         /* Update existing NotifyFD to listen for write (or not) */
+         vncSetNotifyFd(fd, screenIndex, true, (*i)->outStream().bufferUsage() > 0);
 --- a/unix/xserver/hw/vnc/xvnc.c	2017-03-11 07:05:59.180874619 +0000
 +++ b/unix/xserver/hw/vnc/xvnc.c	2017-03-11 07:06:37.372837487 +0000
 @@ -593,6 +595,12 @@
@@ -135,16 +137,6 @@
      if (strcmp(argv[i], "-noclipboard") == 0) {
  	vncNoClipboard = 1;
  	return 1;
---- a/unix/xserver/hw/vnc/XserverDesktop.cc	2017-03-11 09:03:36.417666425 +0000
-+++ b/unix/xserver/hw/vnc/XserverDesktop.cc	2017-03-11 09:09:29.677355333 +0000
-@@ -49,6 +49,7 @@
- using namespace rfb;
- using namespace network;
- 
-+extern const char *display;
- extern bool screenlock;
- 
- static LogWriter vlog("XserverDesktop");
 --- a/unix/xserver/hw/vnc/xvnc.c	2017-03-11 16:07:25.578163353 +0000
 +++ b/unix/xserver/hw/vnc/xvnc.c	2017-03-11 16:07:50.184293399 +0000
 @@ -154,6 +152,7 @@

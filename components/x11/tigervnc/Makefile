@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tigervnc
-COMPONENT_VERSION= 1.7.1
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.8.0
 COMPONENT_SUMMARY= TigerVNC X11/VNC server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3c021ec0bee4611020c0bcbab995b0ef2f6f1a46127a52b368827f3275527ccc
+  sha256:9951dab0e10f8de03996ec94bec0d938da9f36d48dca8c954e8bbc95c16338f8
 COMPONENT_ARCHIVE_URL= \
   https://github.com/TigerVNC/tigervnc/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://tigervnc.org/
@@ -32,8 +31,7 @@ COMPONENT_LICENSE= GPLv2
 # Note that the xorg additional patch (tigervnc-xserver) does not fit this pattern. That is intentional
 PATCH_PATTERN = [0-9][0-9]*.patch
 
-XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc-xserver119.patch
-XORG_ADDITIONAL_PATCH_2 = $(PATCH_DIR)/tigervnc-screenlock.patch
+XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc-screenlock.patch
 
 XORG_SERVER_VERSION= 1.19.6
 XORG_SERVER_PATCH= xserver119.patch
@@ -42,7 +40,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
+# Avoid prepending /usr/gnu/bin to $(PATH)
+# as ld is used during dix build and GNU ld
+# can't handle dtrace probes
+PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
 
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
 
@@ -52,7 +53,6 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
 	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/$(XORG_SERVER_PATCH)
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2)
 	( cd $(@D)/unix/xserver && \
 		aclocal -I m4 && \
 		autoheader && \
@@ -218,5 +218,6 @@ REQUIRED_PACKAGES += x11/library/libxdmcp
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxfont2
+REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/server/xserver-common
