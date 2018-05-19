@@ -1,43 +1,6 @@
---- src/CMakeLists.txt
-+++ src/CMakeLists.txt
-@@ -106,7 +106,7 @@ set_target_properties(graphite2 PROPERTI
-                                             LT_VERSION_REVISION ${GRAPHITE_API_REVISION}
-                                             LT_VERSION_AGE ${GRAPHITE_API_AGE})
- 
--if  (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-+if  (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
-     set_target_properties(graphite2 PROPERTIES 
-         COMPILE_FLAGS   "-Wall -Wextra -Wno-unknown-pragmas -Wendif-labels -Wshadow -Wctor-dtor-privacy -Wnon-virtual-dtor -fno-rtti -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -fno-stack-protector"
-         LINK_FLAGS      "-nodefaultlibs ${GRAPHITE_LINK_FLAGS}" 
-@@ -127,7 +127,7 @@ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Linu
-     endif (${CMAKE_CXX_COMPILER} MATCHES  ".*mingw.*")
-     set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
-     CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
--endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-+endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
- 
- if  (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-     set_target_properties(graphite2 PROPERTIES 
---- tests/examples/CMakeLists.txt
-+++ tests/examples/CMakeLists.txt
-@@ -29,12 +29,12 @@ macro(test_example TESTNAME SRCFILE)
-     endif (GRAPHITE2_ASAN)
- endmacro(test_example)
- 
--if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
-     find_package(Freetype)
-     if (${FREETYPE_FOUND})
-         include_directories(${FREETYPE_INCLUDE_DIRS})
-     endif (${FREETYPE_FOUND})
--endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-+endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
- 
- macro(test_freetype TESTNAME SRCFILE)
-     if (${FREETYPE_FOUND})
---- tests/vm/CMakeLists.txt
-+++ tests/vm/CMakeLists.txt
-@@ -34,12 +34,12 @@ if  (${CMAKE_COMPILER_IS_GNUCXX})
+--- tests/vm/CMakeLists.txt.orig	2018-05-19 16:48:20.794325336 +0000
++++ tests/vm/CMakeLists.txt	2018-05-19 16:51:22.477737183 +0000
+@@ -34,12 +34,12 @@
  	target_link_libraries(vm-test-direct vm-test-common)
  endif  (${CMAKE_COMPILER_IS_GNUCXX})
  
@@ -52,3 +15,40 @@
  
  add_test(vm-test-call-threading vm-test-call ${testing_SOURCE_DIR}/fonts/tiny.ttf 1)
  set_tests_properties(vm-test-call-threading PROPERTIES
+--- tests/examples/CMakeLists.txt.orig	2018-05-19 16:46:29.754761504 +0000
++++ tests/examples/CMakeLists.txt	2018-05-19 16:47:57.191478320 +0000
+@@ -29,12 +29,12 @@
+     endif (GRAPHITE2_ASAN)
+ endmacro(test_example)
+ 
+-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
++if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+     find_package(Freetype)
+     if (${FREETYPE_FOUND})
+         include_directories(${FREETYPE_INCLUDE_DIRS})
+     endif (${FREETYPE_FOUND})
+-endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
++endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+ 
+ macro(test_freetype TESTNAME SRCFILE)
+     if (${FREETYPE_FOUND})
+--- src/CMakeLists.txt.orig	2018-05-19 16:44:36.921088002 +0000
++++ src/CMakeLists.txt	2018-05-19 16:45:54.194593270 +0000
+@@ -110,7 +110,7 @@
+                                             LT_VERSION_REVISION ${GRAPHITE_API_REVISION}
+                                             LT_VERSION_AGE ${GRAPHITE_API_AGE})
+ 
+-if  (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
++if  (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+     set_target_properties(graphite2 PROPERTIES
+         COMPILE_FLAGS   "-Wall -Wextra -Wno-unknown-pragmas -Wendif-labels -Wshadow -Wctor-dtor-privacy -Wnon-virtual-dtor -fno-rtti -fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden"
+         LINK_FLAGS      "-nodefaultlibs ${GRAPHITE_LINK_FLAGS}"
+@@ -140,7 +140,7 @@
+     endif (${CMAKE_CXX_COMPILER} MATCHES  ".*mingw.*")
+     set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
+     CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
+-endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
++endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "k.*BSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "GNU" OR ${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+ 
+ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+     set_target_properties(graphite2 PROPERTIES
