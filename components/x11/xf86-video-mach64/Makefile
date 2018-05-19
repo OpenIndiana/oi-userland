@@ -16,21 +16,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-mach64
-COMPONENT_VERSION= 6.9.5
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 6.9.6
 COMPONENT_SUMMARY= xf86-video-mach64 - MACH64 driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3e98985b6e044189efd42342862208f472881c25debf22230a1d54a96d71b41f
+  sha256:7a0707c71bb522430f83bb5e9d9ee697e661e35534a3a2d10834f86b327a3c9c
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
-include $(WS_TOP)/make-rules/prep.mk
-
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \
