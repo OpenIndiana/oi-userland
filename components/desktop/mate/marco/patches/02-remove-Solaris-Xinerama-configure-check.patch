@@ -1,0 +1,30 @@
+Remove Solaris Xinerama check as we leverage XFree Xinerama.
+
+--- marco-1.18.3/configure.ac	2018-05-19 08:46:22.487960093 +0000
++++ marco-1.18.3/configure.ac	2018-05-19 08:46:57.904575972 +0000
+@@ -299,25 +299,6 @@ use_solaris_xinerama=no
+ use_xfree_xinerama=no
+ if test "${try_xinerama}" != no; then
+     case "$host" in
+-        *-*-solaris*)
+-            # Check for solaris
+-            use_solaris_xinerama=yes
+-            AC_CHECK_LIB(Xext, XineramaGetInfo,
+-                         use_solaris_xinerama=yes, use_solaris_xinerama=no,
+-                         $ALL_X_LIBS)
+-            if test "x$use_solaris_xinerama" = "xyes"; then
+-                AC_CHECK_HEADER(X11/extensions/xinerama.h,
+-                                if test -z "`echo $ALL_X_LIBS | grep "\-lXext" 2> /dev/null`"; then
+-                                    X_EXTRA_LIBS="-lXext $X_EXTRA_LIBS"
+-                                fi
+-                                AC_DEFINE(HAVE_SOLARIS_XINERAMA, , [Have Solaris-style Xinerama])
+-                                AC_DEFINE(HAVE_XINERAMA, , [Have some version of Xinerama]),
+-                                use_solaris_xinerama=no,
+-                                [#include <X11/Xlib.h>])
+-            fi
+-            AC_MSG_CHECKING(for Xinerama support on Solaris)
+-            AC_MSG_RESULT($use_solaris_xinerama);
+-            ;;
+         *)
+             # Check for XFree
+             use_xfree_xinerama=yes
