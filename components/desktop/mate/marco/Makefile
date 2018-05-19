@@ -17,15 +17,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		marco
 COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=	2
+COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Window Manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:65a276104745817208582e5da1894eeb86391ea2e288775aa1d098e679ba8b53
+    sha256:8494feb5e6fc06584ac3e91e98c601789adab62d6d64474300316fc2c35b8aa8
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -52,6 +51,7 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --enable-maintainer-mode
+CONFIGURE_OPTIONS+= --enable-xinerama
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -66,6 +66,10 @@ test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += gnome/zenity
+REQUIRED_PACKAGES += text/itstool
+# Needed for autogen.sh
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
+REQUIRED_PACKAGES += library/gnome/yelp-tools
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
@@ -87,5 +91,6 @@ REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
