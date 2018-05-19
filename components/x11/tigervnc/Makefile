@@ -13,10 +13,13 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+PREFERRED_BITS = 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tigervnc
 COMPONENT_VERSION= 1.8.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= TigerVNC X11/VNC server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -54,11 +57,7 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/$(XORG_SERVER_PATCH)
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
 	( cd $(@D)/unix/xserver && \
-		aclocal -I m4 && \
-		autoheader && \
-		libtoolize --automake --copy --force && \
-		automake -a -f -c &&\
-		autoconf)
+		autoreconf -fi -I m4)
 	$(TOUCH) $@
 
 
@@ -70,14 +69,16 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
+JPEG_PKG_CONFIG_PATH = $(JPEG_LIBDIR.$(BITS))/pkgconfig
+
 # Set standard explicitly
-CFLAGS   += -std=gnu89
+CFLAGS   += -std=gnu99
 CXXFLAGS += -std=gnu++98
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
 GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
-PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(JPEG_PKG_CONFIG_PATH):$(PKG_CONFIG_PATH.$(BITS))
 
 LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
@@ -104,16 +105,18 @@ CPPFLAGS += -I/usr/include/mesa
 CPPFLAGS += -I/usr/include/xorg
 
 # Required for linking to libXfont2
-X11_SERVERLIBS_DIR=/usr/lib/xorg
-LDFLAGS+= -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR) 
+X11_SERVERLIBS_DIR.32=/usr/lib/xorg
+X11_SERVERLIBS_DIR.64=/usr/lib/xorg/$(MACH64)
+LDFLAGS+= -L$(X11_SERVERLIBS_DIR.$(BITS)) -R$(X11_SERVERLIBS_DIR.$(BITS)) 
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 JAVA_SOURCE_DIR  = $(SOURCE_DIR)/java/com/tigervnc
-JAVA_BUILD_DIR   = $(BUILD_DIR_32)/java
+JAVA_BUILD_DIR   = $(BUILD_DIR_64)/java
 JAVA_INSTALL_DIR = $(PROTO_DIR)/usr/share/vnc/classes
 
-XVNC_CONFIGURE_SCRIPT=	$(BUILD_DIR_32)/unix/xserver/configure
+XVNC_CONFIGURE_SCRIPT=	$(BUILD_DIR_64)/unix/xserver/configure
 
 XVNC_CONFIGURE_OPTIONS += --bindir=/usr/bin
 XVNC_CONFIGURE_OPTIONS += --disable-builddocs
@@ -153,26 +156,31 @@ XVNC_CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
 XVNC_CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 XVNC_CONFIGURE_OPTIONS += --without-int10
 XVNC_CONFIGURE_OPTIONS += --disable-selective-werror
+XVNC_CONFIGURE_OPTIONS += CC="$(CC)"
 XVNC_CONFIGURE_OPTIONS += AR_FLAGS="cruS"
 XVNC_CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
+XVNC_CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+XVNC_CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
 
+$(BUILD_DIR)/.configured_Xvnc: BITS=64
+$(BUILD_DIR)/.built_Xvnc: BITS=64
 
-$(BUILD_DIR)/.configured_Xvnc: $(BUILD_DIR_32)/.configured
-	(cd $(BUILD_DIR_32)/unix/xserver ; \
+$(BUILD_DIR)/.configured_Xvnc: $(BUILD_DIR_64)/.configured
+	(cd $(BUILD_DIR_64)/unix/xserver ; \
 		$(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) \
 	       	$(XVNC_CONFIGURE_SCRIPT) $(XVNC_CONFIGURE_OPTIONS))
 	$(TOUCH) $(@)
 
-$(BUILD_DIR)/.built_Xvnc: $(BUILD_32) $(BUILD_DIR)/.configured_Xvnc
-	(cd $(BUILD_DIR_32)/unix; $(ENV) $(COMPONENT_BUILD_ENV) \
+$(BUILD_DIR)/.built_Xvnc: $(BUILD_64) $(BUILD_DIR)/.configured_Xvnc
+	(cd $(BUILD_DIR_64)/unix; $(ENV) $(COMPONENT_BUILD_ENV) \
 	$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_BUILD_ARGS) \
 	$(COMPONENT_BUILD_TARGETS))
-	(cd $(BUILD_DIR_32)/unix/xserver; $(ENV) $(COMPONENT_BUILD_ENV) \
+	(cd $(BUILD_DIR_64)/unix/xserver; $(ENV) $(COMPONENT_BUILD_ENV) \
 	$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_BUILD_ARGS) \
 	$(COMPONENT_BUILD_TARGETS))
 	$(TOUCH) $@
 
-$(BUILD_DIR)/.installed_jar: $(INSTALL_32)
+$(BUILD_DIR)/.installed_jar: $(INSTALL_64)
 	rm -fr $(JAVA_INSTALL_DIR)
 	$(MKDIR) $(JAVA_INSTALL_DIR)
 	$(INSTALL) -m 0444 \
@@ -185,16 +193,16 @@ $(BUILD_DIR)/.installed_jar: $(INSTALL_32)
 	$(INSTALL) -m 0555 $(JAVA_BUILD_DIR)/VncViewer.jar $(JAVA_INSTALL_DIR)
 	$(TOUCH) $(@)
 
-$(BUILD_DIR)/.installed_Xvnc: $(INSTALL_32) $(BUILD_DIR)/.built_Xvnc
-	(cd $(BUILD_DIR_32)/unix/xserver/hw/vnc; $(ENV) $(COMPONENT_INSTALL_ENV) \
+$(BUILD_DIR)/.installed_Xvnc: $(INSTALL_64) $(BUILD_DIR)/.built_Xvnc
+	(cd $(BUILD_DIR_64)/unix/xserver/hw/vnc; $(ENV) $(COMPONENT_INSTALL_ENV) \
 	$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_INSTALL_ARGS) \
 	$(COMPONENT_INSTALL_TARGETS))
 	$(TOUCH) $@
 
 
-build: $(BUILD_32) $(BUILD_DIR)/.built_Xvnc
+build: $(BUILD_64) $(BUILD_DIR)/.built_Xvnc
 
-install: $(INSTALL_32) $(BUILD_DIR)/.installed_jar $(BUILD_DIR)/.installed_Xvnc
+install: $(INSTALL_64) $(BUILD_DIR)/.installed_jar $(BUILD_DIR)/.installed_Xvnc
 
 # Build dependencies
 REQUIRED_PACKAGES += text/xmlto
