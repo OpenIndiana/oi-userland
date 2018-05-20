@@ -27,13 +27,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	8.0.1282
-IPS_COMPONENT_VERSION=  $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.0*\([1-9]\)/.\1/')
+COMPONENT_VERSION=	8.1.0005
+# Remove leading zeros in the patch-level part of $COMPONENT_VERSION (IPS does not like them)
+IPS_COMPONENT_VERSION=  $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.00*\([1-9]\)/.\1/')
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=sha256:25edf0475c19e2581b3c1bef7b26db73e7af5775217065439df66a3ba9e41785 
+COMPONENT_ARCHIVE_HASH=sha256:e8e2d11b0012f109c5158c76a06dac33871756fd862fce018c4ebb99bd985988
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -42,7 +43,7 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/configure  $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
 				  find $(@D) -name \*.sh  -exec chmod +x '{}' ';' )
 
-PKG_MACROS +=  VIMVER=vim80
+PKG_MACROS +=  VIMVER=vim81
 
 X_VARIANT =	$(BUILD_DIR)/$(MACH32)-gvim
 NOX_VARIANT =	$(BUILD_DIR)/$(MACH32)-vim
@@ -105,15 +106,16 @@ install:	$(INSTALL_32) $(BUILD_DIR)/license
 #  A lot of tests fail with 'Cannot create directory'
 test:		$(TEST_32)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
