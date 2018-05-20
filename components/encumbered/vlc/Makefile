@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 2.2.8
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
@@ -28,7 +29,6 @@ COMPONENT_ARCHIVE_URL= \
   http://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.videolan.org/vlc
 COMPONENT_LICENSE = GPLv2.0,LGPLv2.1
-COMPONENT_LICENSE_FILE = $(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/prep.mk
