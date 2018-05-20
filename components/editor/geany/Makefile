@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany
-COMPONENT_VERSION= 1.31
+COMPONENT_VERSION= 1.33
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany
 COMPONENT_SUMMARY= A fast and lightweight IDE
@@ -24,7 +24,7 @@ COMPONENT_DESCRIPTION= Small and fast IDE, which has only a few dependencies fro
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:30fdb906bb76c4251a8bcf83ee267db28c26ef6ab867668a782cec1164a3aba5
+  sha256:66baaff43f12caebcf0efec9a5533044dc52837f799c73a1fd7312caa86099c2
 COMPONENT_ARCHIVE_URL= http://download.geany.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.geany.org/Main/HomePage
 COMPONENT_LICENSE= GPLv2
@@ -84,3 +84,4 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxscrnsaver
 REQUIRED_PACKAGES += x11/library/mesa
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
