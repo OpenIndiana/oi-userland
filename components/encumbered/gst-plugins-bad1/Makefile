@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-bad1
-COMPONENT_VERSION= 1.12.4
+COMPONENT_VERSION= 1.12.5
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/bad
@@ -24,7 +24,7 @@ COMPONENT_SRC_NAME= gst-plugins-bad
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0c7857be16686d5c1ba6e34bd338664d3d4599d32714a8eca5c8a41a101e2d08
+  sha256:40f82fa775ce8ecfc930fd13073e8643b90cba9b6f8dd2462ec45a93120c7d81
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
@@ -116,8 +116,8 @@ REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmms
 REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
