@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
 COMPONENT_VERSION= 2.8.13
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -26,7 +27,6 @@ COMPONENT_ARCHIVE_URL= \
   http://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.ffmpeg.org/
 COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = ffmpeg.license
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = video/ffmpeg
 
