@@ -17,8 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	dejavu-fonts-ttf
 COMPONENT_VERSION= 2.37
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= The DejaVu fonts
-COMPONENT_PROJECT_URL= http://dejavu-fonts.org/
+COMPONENT_PROJECT_URL= https://dejavu-fonts.github.io/
 COMPONENT_FMRI=		system/font/truetype/dejavu
 COMPONENT_CLASSIFICATION=	System/Fonts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,19 +30,19 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:fa9ca4d13871dd122f61258a80d01751d603b4d3ee14095d65453b4e846e17d7
 COMPONENT_LICENSE=	Bitstream Vera Fonts License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 FONT_CONF_DIR=/etc/fonts/conf.avail
 FONT_TTF_DIR=/usr/share/fonts/TrueType
 THIS_FONT_DIR=$(FONT_TTF_DIR)/dejavu
 
-COMPONENT_BUILD_ACTION= cd $(@D) ; mkfontscale ; mkfontdir
+COMPONENT_BUILD_ACTION= cd $(@D)/ttf ; mkfontscale ; mkfontdir
 
 COMPONENT_INSTALL_ACTION= cd $(@D) && \
 	rm -rf $(PROTO_DIR)$(THIS_FONT_DIR) && mkdir -p $(PROTO_DIR)$(THIS_FONT_DIR) && \
-		$(INSTALL) -c -m 0444 ttf/*.ttf fonts.dir fonts.scale $(PROTO_DIR)$(THIS_FONT_DIR); \
+		$(INSTALL) -c -m 0444 ttf/*.ttf ttf/fonts.dir ttf/fonts.scale $(PROTO_DIR)$(THIS_FONT_DIR); \
 	rm -rf $(PROTO_DIR)$(FONT_CONF_DIR) && mkdir -p $(PROTO_DIR)$(FONT_CONF_DIR) && \
 		$(INSTALL) -c -m 0444 fontconfig/*.conf $(PROTO_DIR)$(FONT_CONF_DIR)
 
