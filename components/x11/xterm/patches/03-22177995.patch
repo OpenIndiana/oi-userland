@@ -1,0 +1,21 @@
+Fix for 22177995 - /dev/console and /dev/mslog redirection getting garbled 
+in legacy locale on s11
+
+--- a/main.c	2018-05-01 14:49:40.101061412 -0700
++++ b/main.c	2018-05-01 14:50:39.799033068 -0700
+@@ -2613,6 +2613,15 @@
+ 	    SysError(ERROR_LUMALLOC);
+ 
+ 	x_appendargv(command_to_exec_with_luit, split_filter);
++
++        if (Console) {
++            char *encoding_opt1[2];
++            int pos = 0;
++            encoding_opt1[pos++] = "-C";
++            encoding_opt1[pos] = 0;
++            x_appendargv(command_to_exec_with_luit, encoding_opt1);
++        }
++
+ 	if (count_using) {
+ 	    char *encoding_opt[4];
+ 	    encoding_opt[0] = x_strdup("-encoding");
