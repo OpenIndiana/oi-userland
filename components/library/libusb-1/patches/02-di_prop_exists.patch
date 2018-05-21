@@ -42,7 +42,7 @@ We don't have di_prop_exists() function. Trying to emulate it.
  	dn = myself;
  	/* find the root hub */
 -	while (di_prop_exists(DDI_DEV_T_ANY, dn, "root-hub") != 1) {
-+	while (di_prop_lookup_ints(DDI_DEV_T_ANY, dn, "root-hub", &j) <= 0) {
++	while (di_prop_lookup_ints(DDI_DEV_T_ANY, dn, "root-hub", &j) != 0) {
  		usbi_dbg("find_root_hub:%s", di_devfs_path(dn));
  		n = di_prop_lookup_ints(DDI_DEV_T_ANY, dn,
  				"assigned-address", &addr_prop);
