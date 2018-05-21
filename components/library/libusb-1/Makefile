@@ -39,6 +39,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
+
 CONFIGURE_OPTIONS  +=	--enable-static=no
 CONFIGURE_OPTIONS  +=   --enable-log
 
@@ -64,3 +67,4 @@ test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-usb
+REQUIRED_PACKAGES += system/header/header-ugen

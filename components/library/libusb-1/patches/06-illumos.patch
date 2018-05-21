@@ -1,0 +1,88 @@
+--- libusb-1.0.22/libusb/os/sunos_usb.c.~4~	2018-05-21 21:22:32.865088060 +0000
++++ libusb-1.0.22/libusb/os/sunos_usb.c	2018-05-21 21:26:42.292238042 +0000
+@@ -81,6 +81,8 @@
+ static void sunos_clear_transfer_priv(struct usbi_transfer *);
+ static int sunos_handle_transfer_completion(struct usbi_transfer *);
+ static int sunos_clock_gettime(int, struct timespec *);
++
++#ifdef SOLARIS_11
+ static int sunos_kernel_driver_active(struct libusb_device_handle *, int interface);
+ static int sunos_detach_kernel_driver (struct libusb_device_handle *dev, int interface_number);
+ static int sunos_attach_kernel_driver (struct libusb_device_handle *dev, int interface_number);
+@@ -88,6 +90,7 @@
+ static int sunos_usb_ioctl(struct libusb_device *dev, int cmd);
+ 
+ static struct devctl_iocdata iocdata;
++#endif
+ static int sunos_get_link(di_devlink_t devlink, void *arg)
+ {
+ 	walk_link_t *larg = (walk_link_t *)arg;
+@@ -116,7 +119,6 @@
+ 	return (DI_WALK_TERMINATE);
+ }
+ 
+-
+ static int sunos_physpath_to_devlink(
+ 	const char *node_path, const char *match, char **link_path)
+ {
+@@ -146,6 +148,7 @@
+ 	return 0;
+ }
+ 
++#ifdef SOLARIS_11
+ static int
+ sunos_usb_ioctl(struct libusb_device *dev, int cmd)
+ {
+@@ -237,6 +240,7 @@
+ 
+ 	return (dpriv->ugenpath == NULL);
+ }
++#endif
+ 
+ /*
+  * Private functions
+@@ -254,6 +258,7 @@
+ 	usbi_dbg("");
+ }
+ 
++#ifdef SOLARIS_11
+ static string_list_t *
+ sunos_new_string_list(void)
+ {
+@@ -471,6 +476,7 @@
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static int
+ sunos_fill_in_dev_info(di_node_t node, struct libusb_device *dev)
+@@ -983,10 +989,12 @@
+ 		hpriv->eps[i].statfd = -1;
+ 	}
+ 
++#ifdef SOLARIS11
+ 	if (sunos_kernel_driver_active(handle, 0)) {
+ 		/* pretend we can open the device */
+ 		return (LIBUSB_SUCCESS);
+ 	}
++#endif
+ 
+ 	if ((ret = sunos_usb_open_ep0(hpriv, dpriv)) != LIBUSB_SUCCESS) {
+ 		usbi_dbg("fail: %d", ret);
+@@ -1672,9 +1680,15 @@
+         .reset_device = sunos_reset_device, /* TODO */
+         .alloc_streams = NULL,
+         .free_streams = NULL,
++#ifdef SOLARIS11
+         .kernel_driver_active = sunos_kernel_driver_active,
+         .detach_kernel_driver = sunos_detach_kernel_driver,
+         .attach_kernel_driver = sunos_attach_kernel_driver,
++#else
++        .kernel_driver_active = NULL,
++        .detach_kernel_driver = NULL,
++        .attach_kernel_driver = NULL,
++#endif
+         .destroy_device = sunos_destroy_device,
+         .submit_transfer = sunos_submit_transfer,
+         .cancel_transfer = sunos_cancel_transfer,
