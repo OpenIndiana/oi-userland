@@ -57,6 +57,14 @@ CONFIGURE_OPTIONS +=    --enable-largefile=yes
 CONFIGURE_OPTIONS +=	--with-system-zlib
 CONFIGURE_OPTIONS +=    --target=$(GNU_TARGET_TRIPLE)
 
+COMPONENT_TEST_ARGS += -k
+
+# Keep only the test results.  Details are always in the build directory
+COMPONENT_TEST_TRANSFORMS += \
+	'-n '\
+	'-e "/^\# of/p" '\
+	'-e "/Summary =/p" '
+
 $(INSTALL_32):	$(INSTALL_64)
 
 # common targets
