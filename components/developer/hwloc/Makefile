@@ -9,23 +9,25 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher
+# Copyright 2016-2018 Aurelien Larcher
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=          hwloc
-COMPONENT_VERSION=       1.11.8
-COMPONENT_REVISION=      1
-COMPONENT_SUMMARY=       hwloc - Portable Hardware Locality
-COMPONENT_PROJECT_URL=   https://www.open-mpi.org/projects/hwloc/
-COMPONENT_FMRI=          developer/hwloc
+COMPONENT_NAME=         hwloc
+COMPONENT_VERSION_MAJOR=2.0
+COMPONENT_VERSION=      $(COMPONENT_VERSION_MAJOR).1
+COMPONENT_SUMMARY=      hwloc - Portable Hardware Locality
+COMPONENT_PROJECT_URL=  https://www.open-mpi.org/projects/hwloc/
+COMPONENT_FMRI=         developer/hwloc
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
-COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=       $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_URL=   https://www.open-mpi.org/software/hwloc/v1.11/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_URL= \
+  https://www.open-mpi.org/software/hwloc/v$(COMPONENT_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ecef10265084d9123dc0b03d82ff5ee06fbf5ba755a912e7511ae590c9ee594d
+  sha256:b97575cc26751f252b5c9f5c00be94cab66977da2e127456a5ae2418649ec049
 COMPONENT_LICENSE=      BSD-2
 
 # When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
@@ -41,6 +43,15 @@ CONFIGURE_OPTIONS+= --enable-libxml2
 CONFIGURE_OPTIONS+= --enable-pci
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+
+unexport SHELLOPTS
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/TOTAL:/p" ' \
+        '-e "/SKIP:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" ' \
+        '-e "/ERROR:/p" '
 
 build:		$(BUILD_32_and_64)
 
