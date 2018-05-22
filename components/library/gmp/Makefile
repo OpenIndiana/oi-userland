@@ -149,5 +149,5 @@ install: $(INSTALL_32_and_64)
 test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

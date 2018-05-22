@@ -68,6 +68,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl

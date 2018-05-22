@@ -99,5 +99,5 @@ REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
