@@ -70,7 +70,7 @@ REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/nspr/header-nspr
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += developer/build/autoconf-213
 

@@ -42,5 +42,5 @@ install: $(INSTALL_32)
 REQUIRED_PACKAGES += library/desktop/chmlib
 REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
