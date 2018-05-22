@@ -80,6 +80,6 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += system/library/gfortran-6-runtime
+REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
