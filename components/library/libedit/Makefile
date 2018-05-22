@@ -23,22 +23,32 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libedit
-COMPONENT_VERSION=	20130712-3.1
+COMPONENT_VERSION=	20170329-3.1
 IPS_COMPONENT_VERSION=  3.1
+COMPONENT_SUMMARY=	Libedit - Command line editor library
 COMPONENT_PROJECT_URL=	http://www.thrysoee.dk/editline/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5d9b1a9dd66f1fe28bbd98e4d8ed1a22d8da0d08d902407dcc4a0702c8d88a37
+    sha256:91f2d90fbd2a048ff6dad7131d9a39e690fd8a8fd982a353f1333dd4017dd4be
 COMPONENT_ARCHIVE_URL=	http://www.thrysoee.dk/editline/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libedit
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_FMRI=	library/libedit
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	BSD
+
+# Uses GNU awk
+PATH=$(PATH.gnu)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f)
+
 CONFIGURE_OPTIONS +=   --enable-shared
 CONFIGURE_OPTIONS +=   --disable-static
+CONFIGURE_OPTIONS +=   --enable-widec
 
 
 # common targets
@@ -47,6 +57,10 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+
+# Build dependencies
+REQUIRED_PACKAGES += text/gawk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
