@@ -43,4 +43,4 @@ REQUIRED_PACKAGES += library/desktop/chmlib
 REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
