@@ -74,4 +74,4 @@ REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
