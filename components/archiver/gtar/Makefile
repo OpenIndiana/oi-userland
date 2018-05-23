@@ -20,21 +20,25 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
-COMPONENT_VERSION=	1.29
+COMPONENT_VERSION=	1.30
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:236b11190c0a3a6885bdb8d61424f2b36a5872869aa3f7f695dea4b4843ae2f2
+    sha256:87592b86cb037c554375f5868bdd3cc57748aef38d6cb741c81065f0beac63b7
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gtar
+COMPONENT_FMRI=		archiver/gnu-tar
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
@@ -42,17 +46,20 @@ CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-#181 tests were successful.
-#23 tests were skipped.
-test:		$(TEST_32_and_64)
+# ERROR: 195 tests were run,
+# 3 failed unexpectedly: 156 175 176
+# 25 tests were skipped.
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/gzip
 REQUIRED_PACKAGES += network/ssh
+# rmt(1M)
+REQUIRED_PACKAGES += service/network/network-clients
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library
