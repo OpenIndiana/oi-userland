@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
 COMPONENT_VERSION=      8.29
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=         file/gnu-coreutils	
 COMPONENT_SUMMARY=      GNU Core Utilities
 COMPONENT_DESCRIPTION= \
@@ -64,6 +65,9 @@ CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
+
+# OS as reported by `uname -o`
+CONFIGURE_ENV		+=	gl_cv_host_operating_system=illumos
 
 COMPONENT_POST_INSTALL_ACTION += ( cp $(COMPONENT_DIR)/files/*.1 \
                                       $(PROTOGNUSHAREMAN1) ) 
