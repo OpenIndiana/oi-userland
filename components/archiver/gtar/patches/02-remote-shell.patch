@@ -1,8 +1,8 @@
 Patch origin: in-house
 Patch status: Solaris-specific; not suitable for upstream
 
---- tar-1.29/src/tar.c.~1~	2016-03-24 08:42:14.000000000 +0300
-+++ tar-1.29/src/tar.c	2016-10-30 07:55:27.016201289 +0300
+--- tar-1.30/src/tar.c.~1~	2016-03-24 08:42:14.000000000 +0300
++++ tar-1.30/src/tar.c	2016-10-30 07:55:27.016201289 +0300
 @@ -588,7 +588,7 @@
    {"rmt-command", RMT_COMMAND_OPTION, N_("COMMAND"), 0,
     N_("use given rmt COMMAND instead of rmt"), GRID+1 },
@@ -12,27 +12,27 @@ Patch status: Solaris-specific; not suitable for upstream
  #ifdef DEVICE_PREFIX
    {"-[0-7][lmh]", 0, NULL, OPTION_DOC, /* It is OK, since 'name' will never be
  					  translated */
---- tar-1.29/doc/tar.info-1.~1~	2016-05-16 11:52:52.000000000 +0300
-+++ tar-1.29/doc/tar.info-1	2016-10-30 08:00:55.817485210 +0300
-@@ -3034,7 +3034,7 @@
+--- tar-1.30/doc/tar.info-1.~1~	2016-05-16 11:52:52.000000000 +0300
++++ tar-1.30/doc/tar.info-1	2016-10-30 08:00:55.817485210 +0300
+@@ -3032,7 +3032,7 @@
  
            $ tar --show-defaults
            --format=gnu -f- -b20 --quoting-style=escape
 -          --rmt-command=/usr/libexec/rmt --rsh-command=/usr/bin/rsh
-+          --rmt-command=/usr/libexec/rmt --rsh-command=/usr/bin/ssh
++          --rmt-command=/usr/sbin/rmt --rsh-command=/usr/bin/ssh
  
       Notice, that this option outputs only one line.  The example output
       above has been split to fit page boundaries.  *Note defaults::.
-@@ -3604,7 +3604,7 @@
+@@ -3615,7 +3615,7 @@
  
       $ tar --show-defaults
       --format=gnu -f- -b20 --quoting-style=escape
 -     --rmt-command=/etc/rmt --rsh-command=/usr/bin/rsh
-+     --rmt-command=/etc/rmt --rsh-command=/usr/bin/ssh
++     --rmt-command=/usr/sbin/rmt --rsh-command=/usr/bin/ssh
  
  Notice, that this option outputs only one line.  The example output
  above has been split to fit page boundaries.
-@@ -3613,7 +3613,7 @@
+@@ -3624,7 +3624,7 @@
  'gnu' archive format (*note Formats::), it uses standard output as the
  archive, if no '--file' option has been given (*note file tutorial::),
  the default blocking factor is 20 (*note Blocking Factor::).  It also
@@ -41,7 +41,7 @@ Patch status: Solaris-specific; not suitable for upstream
  binaries.
  
  
-@@ -6154,8 +6154,8 @@
+@@ -6135,8 +6135,8 @@
       Full file name of 'mt' binary.
  
   -- Backup variable: RSH
@@ -52,7 +52,7 @@ Patch status: Solaris-specific; not suitable for upstream
       to use public key authentication.
  
   -- Backup variable: RSH_COMMAND
-@@ -6314,9 +6314,9 @@
+@@ -6295,9 +6295,9 @@
       BACKUP_HOUR=1
       TAPE_FILE=/dev/nrsmt0
  
@@ -65,7 +65,7 @@ Patch status: Solaris-specific; not suitable for upstream
  
       # Override MT_STATUS function:
       my_status() {
-@@ -6614,10 +6614,10 @@
+@@ -6595,10 +6595,10 @@
     If the archive file name includes a colon (':'), then it is assumed
  to be a file on another machine.  If the archive file is
  'USER@HOST:FILE', then FILE is used on the host HOST.  The remote host
@@ -79,7 +79,7 @@ Patch status: Solaris-specific; not suitable for upstream
  'rmt' program installed (this command is included in the GNU 'tar'
  distribution and by default is installed under 'PREFIX/libexec/rmt',
  where PREFIX means your installation prefix).  If you need to use a file
-@@ -7657,7 +7657,7 @@
+@@ -7636,7 +7636,7 @@
  'H'
       Do not apply transformation to hard link targets.
  
@@ -88,8 +88,8 @@ Patch status: Solaris-specific; not suitable for upstream
  archive members and targets of symbolic and hard links.
  
     Default scope flags can also be changed using 'flags=' statement in
---- tar-1.29/doc/tar.info-2.~1~	2016-10-30 08:04:42.386436773 +0300
-+++ tar-1.29/doc/tar.info-2	2016-10-30 08:07:01.340671522 +0300
+--- tar-1.30/doc/tar.info-2.~1~	2016-10-30 08:04:42.386436773 +0300
++++ tar-1.30/doc/tar.info-2	2016-10-30 08:07:01.340671522 +0300
 @@ -2207,9 +2207,9 @@
     If the file name contains a ':', it is interpreted as 'hostname:file
  name'.  If the HOSTNAME contains an "at" sign ('@'), it is treated as
