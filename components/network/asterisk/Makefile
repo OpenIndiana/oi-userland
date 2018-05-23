@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_URL=	http://downloads.asterisk.org/pub/telephony/asterisk/old-
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
@@ -72,7 +72,6 @@ REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmime
-REQUIRED_PACKAGES += library/gnu-libiconv
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libical
@@ -90,10 +89,11 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
