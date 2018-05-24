@@ -64,13 +64,16 @@ install:  $(INSTALL_32)
 
 test:     $(TEST_32)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/nspr/header-nspr
+REQUIRED_PACKAGES += developer/build/autoconf-213
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/nspr/header-nspr
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += developer/build/autoconf-213
-
