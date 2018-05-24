@@ -42,6 +42,8 @@ include $(WS_MAKE_RULES)/ips.mk
 # Find issues with undefined symbols in build time
 LD_OPTIONS += $(LD_Z_DEFS)
 
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+
 CONFIGURE_OPTIONS  +=	--enable-static=no
 CONFIGURE_OPTIONS  +=   --enable-log
 
