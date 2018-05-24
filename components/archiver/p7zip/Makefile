@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p7zip
 COMPONENT_VERSION=	16.2
+COMPONENT_REVISION=	1
 COMPONENT_SRC_VERSION=	16.02
 COMPONENT_FMRI=	compress/p7zip
 COMPONENT_SUMMARY=	The p7zip compression and archiving utility
@@ -89,8 +90,9 @@ COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
 # build does this always
 test:	$(TEST_32_and_64)
 
+REQUIRED_PACKAGES += system/library/math
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += system/library/math
