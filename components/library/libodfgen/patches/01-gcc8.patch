@@ -1,0 +1,234 @@
+--- libodfgen-0.1.6/src/FillManager.cxx.orig	2018-05-25 07:56:01.672503796 +0000
++++ libodfgen-0.1.6/src/FillManager.cxx	2018-05-25 07:56:25.543061950 +0000
+@@ -102,7 +102,7 @@
+ 	if (!gradient)
+ 		gradient = style.child("svg:radialGradient");
+ 	if (gradient) pList.insert("svg:linearGradient", *gradient);
+-	char const *(wh[]) =
++	char const *wh[] =
+ 	{
+ 		"draw:border", "draw:cx", "draw:cy", "draw:end-color", "draw:end-intensity",
+ 		"draw:start-color", "draw:start-intensity", "draw:style"
+@@ -246,7 +246,7 @@
+ 	sValue.sprintf("%i", (unsigned)(angle*10));
+ 	pList.insert("draw:angle", sValue);
+ 	// basic data
+-	char const *(wh[]) = { "draw:border", "draw:cx", "draw:cy"	};
++	char const *wh[] = { "draw:border", "draw:cx", "draw:cy"	};
+ 	for (unsigned i=0; i<ODFGEN_N_ELEMENTS(wh); ++i)
+ 	{
+ 		if (style[wh[i]])
+--- libodfgen-0.1.6/src/GraphicStyle.cxx.orig	2018-05-25 07:58:21.388261452 +0000
++++ libodfgen-0.1.6/src/GraphicStyle.cxx	2018-05-25 07:58:33.018589126 +0000
+@@ -305,7 +305,7 @@
+ 		}
+ 	}
+ 	// other
+-	char const *(others[])=
++	char const *others[]=
+ 	{
+ 		"draw:ole-draw-aspect",
+ 		"draw:show-unit",
+--- libodfgen-0.1.6/src/PageSpan.cxx.orig	2018-05-25 07:59:13.661721779 +0000
++++ libodfgen-0.1.6/src/PageSpan.cxx	2018-05-25 08:00:02.380981338 +0000
+@@ -142,7 +142,7 @@
+ 	pHandler->endElement("style:page-layout-properties");
+ 
+ 	for (int j=0; j<2; ++j) {
+-		char const *(wh[])={"librevenge:header", "librevenge:footer"};
++		char const *wh[]={"librevenge:header", "librevenge:footer"};
+ 		if (!mpPropList.child(wh[j]) || mpPropList.child(wh[j])->count()!=1)
+ 			continue;
+ 		pHandler->startElement(j==0 ? "style:header-style" : "style:footer-style", librevenge::RVNGPropertyList());
+@@ -401,7 +401,7 @@
+ 		layoutList.insert(i.key(), i()->clone());
+ 	}
+ 	for (int j=0; j<3; ++j) {
+-		char const *(wh[])={"librevenge:footnote", "librevenge:header", "librevenge:footer"};
++		char const *wh[]={"librevenge:footnote", "librevenge:header", "librevenge:footer"};
+ 		if (propList.child(wh[j]))
+ 			layoutList.insert(wh[j], *propList.child(wh[j]));
+ 	}
+--- libodfgen-0.1.6/src/PageSpan.hxx.orig	2018-05-25 08:00:13.727266949 +0000
++++ libodfgen-0.1.6/src/PageSpan.hxx	2018-05-25 08:00:25.053431466 +0000
+@@ -166,7 +166,7 @@
+ 	librevenge::RVNGString msLayoutName;
+ 	//! the page drawing display name
+ 	librevenge::RVNGString msDrawingName;
+-	libodfgen::DocumentElementVector *(mpContent[C_NumContentTypes]);
++	libodfgen::DocumentElementVector *mpContent[C_NumContentTypes];
+ };
+ 
+ //! class used to store the list of created page
+--- libodfgen-0.1.6/src/SheetStyle.cxx.orig	2018-05-25 08:01:09.088769795 +0000
++++ libodfgen-0.1.6/src/SheetStyle.cxx	2018-05-25 08:01:17.151108518 +0000
+@@ -596,7 +596,7 @@
+ 
+ librevenge::RVNGString SheetManager::convertFormula(const librevenge::RVNGPropertyListVector &formula)
+ {
+-	char const *(operators[])=
++	char const *operators[]=
+ 	{
+ 		"(", ")", "+", "-", "*", "/", "=", "<>",  ";", "<", ">", "<=", ">=", "^", "&", "!", "~", ":", "%", "{", "}", "|"
+ 	};
+--- libodfgen-0.1.6/src/OdcGenerator.cxx.orig	2018-05-25 08:01:50.081769293 +0000
++++ libodfgen-0.1.6/src/OdcGenerator.cxx	2018-05-25 08:03:15.298187192 +0000
+@@ -303,7 +303,7 @@
+ 	standardStyleOpenElement.write(pHandler);
+ 	pHandler->endElement("style:style");
+ 
+-	static char const *(s_paraStyle[4*4]) =
++	static char const *s_paraStyle[4*4] =
+ 	{
+ 		"Text_Body", "Text Body", "Standard", "text",
+ 		"Table_Contents", "Table Contents", "Text_Body", "extra",
+@@ -564,7 +564,7 @@
+ 	TagOpenElement *openElement = new TagOpenElement("chart:chart");
+ 	for (int i=0; i<8; ++i)
+ 	{
+-		static char const *(wh[8]) =
++		static char const *wh[8] =
+ 		{
+ 			"chart:class", "chart:column-mapping", "chart:row-mapping",
+ 			"svg:height", "svg:width", "xlink:href", "xlink:type", "xml:id"
+@@ -617,7 +617,7 @@
+ 	TagOpenElement *openElement = new TagOpenElement(what.c_str());
+ 	for (int i=0; i<2; ++i)
+ 	{
+-		static char const *(wh[2]) =
++		static char const *wh[2] =
+ 		{
+ 			"svg:x", "svg:y"
+ 		};
+@@ -631,7 +631,7 @@
+ 	{
+ 		for (int i=0; i<4; ++i)
+ 		{
+-			static char const *(wh[4]) =
++			static char const *wh[4] =
+ 			{
+ 				"chart:legend-align", "chart:legend-position",
+ 				"style:legend-expansion",  "style:legend-expansion-aspect-ratio"
+@@ -676,7 +676,7 @@
+ 	TagOpenElement *openElement = new TagOpenElement("chart:plot-area");
+ 	for (int i=0; i<17; ++i)
+ 	{
+-		static char const *(wh[17]) =
++		static char const *wh[17] =
+ 		{
+ 			"chart:data-source-has-labels",
+ 			"dr3d:ambient-color", "dr3d:distance", "dr3d:focal-length", "dr3d:lighting-mode",
+@@ -752,7 +752,7 @@
+ 	TagOpenElement *openElement = new TagOpenElement("chart:axis");
+ 	for (int i=0; i<2; ++i)
+ 	{
+-		static char const *(wh[2]) =
++		static char const *wh[2] =
+ 		{
+ 			"chart:dimension", "chart:name"
+ 		};
+@@ -797,7 +797,7 @@
+ 			TagOpenElement *childElement = new TagOpenElement("chart:title");
+ 			for (int i=0; i<2; ++i)
+ 			{
+-				static char const *(wh[2]) =
++				static char const *wh[2] =
+ 				{
+ 					"svg:x", "svg:y"
+ 				};
+@@ -829,7 +829,7 @@
+ 	TagOpenElement *openElement = new TagOpenElement("chart:series");
+ 	for (int i=0; i<3; ++i)
+ 	{
+-		static char const *(wh[3]) =
++		static char const *wh[3] =
+ 		{
+ 			"chart:attached-axis", "chart:class", "xml:id"
+ 		};
+@@ -840,7 +840,7 @@
+ 		openElement->addAttribute("chart:style-name",mpImpl->getChartStyleName(propList["librevenge:chart-id"]->getInt()));
+ 	for (int i=0; i<2; ++i)
+ 	{
+-		static char const *(wh[2]) =
++		static char const *wh[2] =
+ 		{
+ 			"chart:label-cell-address", "chart:values-cell-range-address"
+ 		};
+@@ -865,7 +865,7 @@
+ 			TagOpenElement *childElement = new TagOpenElement("chart:data-point");
+ 			for (int i=0; i<2; ++i)
+ 			{
+-				static char const *(wh[2]) =
++				static char const *wh[2] =
+ 				{
+ 					"chart:repeated", "xml:id"
+ 				};
+--- libodfgen-0.1.6/src/OdfGenerator.cxx.orig	2018-05-25 08:04:06.661530868 +0000
++++ libodfgen-0.1.6/src/OdfGenerator.cxx	2018-05-25 08:04:27.140172065 +0000
+@@ -479,7 +479,7 @@
+ 
+ void OdfGenerator::addFrameProperties(const librevenge::RVNGPropertyList &propList, TagOpenElement &element) const
+ {
+-	static char const *(frameAttrib[])=
++	static char const *frameAttrib[]=
+ 	{
+ 		"draw:z-index",
+ 		"fo:max-width", "fo:max-height",
+@@ -617,7 +617,7 @@
+ 	// add the default layers
+ 	for (int i=0; i<5; ++i)
+ 	{
+-		static char const *(defaults[])= {"layout", "background", "backgroundobjects", "controls", "measurelines"};
++		static char const *defaults[]= {"layout", "background", "backgroundobjects", "controls", "measurelines"};
+ 		if (mLayerNameSet.find(defaults[i])!=mLayerNameSet.end())
+ 			continue;
+ 		layer.addAttribute("draw:name", defaults[i]);
+--- libodfgen-0.1.6/src/OdsGenerator.cxx.orig	2018-05-25 08:06:22.409180605 +0000
++++ libodfgen-0.1.6/src/OdsGenerator.cxx	2018-05-25 08:08:05.866254352 +0000
+@@ -572,7 +572,7 @@
+ 	standardStyleOpenElement.write(pHandler);
+ 	pHandler->endElement("style:style");
+ 
+-	static char const *(s_paraStyle[4*10]) =
++	static char const *s_paraStyle[4*10] =
+ 	{
+ 		"Text_Body", "Text Body", "Standard", "text",
+ 		"Table_Contents", "Table Contents", "Text_Body", "extra",
+@@ -597,7 +597,7 @@
+ 		pHandler->endElement("style:style");
+ 	}
+ 
+-	static char const *(s_textStyle[2*4])=
++	static char const *s_textStyle[2*4]=
+ 	{
+ 		"Footnote_Symbol", "Footnote Symbol", "Endnote_Symbol", "Endnote Symbol",
+ 		"Footnote_anchor", "Footnote anchor", "Endnote_anchor", "Endnote anchor"
+--- libodfgen-0.1.6/src/OdtGenerator.cxx.orig	2018-05-25 08:08:37.788704149 +0000
++++ libodfgen-0.1.6/src/OdtGenerator.cxx	2018-05-25 08:09:09.003758894 +0000
+@@ -228,7 +228,7 @@
+ 	standardStyleOpenElement.write(pHandler);
+ 	pHandler->endElement("style:style");
+ 
+-	static char const *(s_paraStyle[4*10]) =
++	static char const *s_paraStyle[4*10] =
+ 	{
+ 		"Text_Body", "Text Body", "Standard", "text",
+ 		"Table_Contents", "Table Contents", "Text_Body", "extra",
+@@ -253,7 +253,7 @@
+ 		pHandler->endElement("style:style");
+ 	}
+ 
+-	static char const *(s_textStyle[2*4])=
++	static char const *s_textStyle[2*4]=
+ 	{
+ 		"Footnote_Symbol", "Footnote Symbol", "Endnote_Symbol", "Endnote Symbol",
+ 		"Footnote_anchor", "Footnote anchor", "Endnote_anchor", "Endnote anchor"
+@@ -284,7 +284,7 @@
+ 	lineOpenElement.write(pHandler);
+ 	pHandler->endElement("text:linenumbering-configuration");
+ 
+-	static char const *(s_noteConfig[4*2])=
++	static char const *s_noteConfig[4*2]=
+ 	{
+ 		"footnote", "Footnote_Symbol", "Footnote_anchor", "1",
+ 		"endnote", "Endnote_Symbol", "Endnote_anchor", "i"
