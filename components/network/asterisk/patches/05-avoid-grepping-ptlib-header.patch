@@ -1,0 +1,13 @@
+Avoid grepping ptbuildopts.h, as it was modified and doesn't contain version string
+
+--- configure	2018-05-25 05:30:26.530109960 +0000
++++ configure	2018-05-25 05:32:13.223779465 +0000
+@@ -30658,7 +30658,7 @@
+ 	fi
+ 
+ 	if test "${HAS_PWLIB:-unset}" != "unset"; then
+-		PWLIB_VERSION=`grep "$VNAME \"" ${PWLIB_INCDIR}/ptbuildopts.h | sed -e 's/[[:space:]]\{1,\}/ /g' | cut -f3 -d ' ' | sed -e 's/"//g'`
++		PWLIB_VERSION=`pkg-config --modversion ptlib | sed -e 's/[[:space:]]\{1,\}/ /g' | cut -f3 -d ' ' | sed -e 's/"//g'`
+ 		PWLIB_MAJOR_VERSION=`echo ${PWLIB_VERSION} | cut -f1 -d.`
+ 		PWLIB_MINOR_VERSION=`echo ${PWLIB_VERSION} | cut -f2 -d.`
+ 		PWLIB_BUILD_NUMBER=`echo ${PWLIB_VERSION} | cut -f3 -d.`
