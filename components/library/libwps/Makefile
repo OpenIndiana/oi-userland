@@ -23,7 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwps
-COMPONENT_VERSION=	0.4.7
+COMPONENT_VERSION=	0.4.9
 COMPONENT_FMRI=     	library/c++/libwps
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwps
@@ -31,7 +31,7 @@ COMPONENT_SUMMARY=      libwps - library for reading Microsoft Works documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:2f2cab630bceace24f9dbb7d187cd6cd1f4c9f8a7b682c5f7e49c1e2cb58b217
+  sha256:13beb0c733bb1544a542b6ab1d9d205f218e9a2202d1d4cac056f79f6db74922
 COMPONENT_ARCHIVE_URL=	\
   http://sourceforge.net/projects/libwps/files/libwps/libwps-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
@@ -39,8 +39,6 @@ COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-#CXXFLAGS += -Wno-error=implicit-fallthrough
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
