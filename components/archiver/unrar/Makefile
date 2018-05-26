@@ -28,13 +28,13 @@ include ../../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		unrar
-COMPONENT_VERSION=	5.4.5
+COMPONENT_VERSION=	5.6.4
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Rar archives extractor utility
 COMPONENT_PROJECT_URL=	http://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e470c584332422893fb52e049f2cbd99e24dc6c6da971008b4e2ae4284f8796c
+    sha256:9335d2201870f2034007c04be80e00f1dc23932cb88b329d55c76134e6ba49fe
 COMPONENT_ARCHIVE_URL=	http://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	archiver/unrar
 COMPONENT_CLASSIFICATION= Applications/System Utilities
