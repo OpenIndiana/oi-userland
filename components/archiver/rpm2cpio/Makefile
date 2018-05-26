@@ -32,8 +32,8 @@ include ../../../make-rules/shared-macros.mk
 # COMPONENT_PROJECT_URL site.
 #
 COMPONENT_NAME=		rpm2cpio
-COMPONENT_VERSION=	1.3
-COMPONENT_REVISION=	1
+# FreeBSD revision 404282
+COMPONENT_VERSION=	1.4
 COMPONENT_PROJECT_URL=	http://svnweb.freebsd.org/ports/head/archivers/rpm2cpio
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	utility/rpm
@@ -70,4 +70,4 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += library/libarchive
