@@ -20,12 +20,14 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Jim Klimov
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixz
 COMPONENT_VERSION=	1.0.6
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/vasi/$(COMPONENT_NAME)/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -39,9 +41,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CFLAGS += $(CPP_LARGEFILES)
 
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 # Userland default includes -mt which links with libthread which we don't need.
@@ -52,11 +56,11 @@ COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR) && $(AUTORECONF) -if)
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 # Build dependencies added manually
 REQUIRED_PACKAGES += text/asciidoc
