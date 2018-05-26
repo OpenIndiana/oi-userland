@@ -1,0 +1,32 @@
+--- pigz-2.4/Makefile.orig	2018-06-06 19:38:13.206226284 +0000
++++ pigz-2.4/Makefile	2018-06-06 19:44:55.993031070 +0000
+@@ -5,11 +5,14 @@
+ ZOPFLI=zopfli/src/zopfli/
+ ZOP=deflate.o blocksplitter.o tree.o lz77.o cache.o hash.o util.o squeeze.o katajainen.o
+ 
++BINDIR?=/usr/bin
++MANDIR?=/usr/share/man
++
+ # use gcc and gmake on Solaris
+ 
+ pigz: pigz.o yarn.o try.o $(ZOP)
+ 	$(CC) $(LDFLAGS) -o pigz pigz.o yarn.o try.o $(ZOP) $(LIBS)
+-	ln -f pigz unpigz
++	ln -sf pigz unpigz
+ 
+ pigz.o: pigz.c yarn.h try.h $(ZOPFLI)deflate.h $(ZOPFLI)util.h
+ 
+@@ -98,6 +101,13 @@
+ pigz.pdf: pigz.1
+ 	groff -mandoc -f H -T ps pigz.1 | ps2pdf - pigz.pdf
+ 
++install:
++	@mkdir -p $(DESTDIR)$(BINDIR)
++	@install -m0755 pigz $(DESTDIR)$(BINDIR)
++	@install -m0755 unpigz $(DESTDIR)$(BINDIR)
++	@mkdir -p $(DESTDIR)$(MANDIR)/man1
++	@install -m0644 pigz.1 $(DESTDIR)$(MANDIR)/man1
++
+ all: pigz pigzj pigzt pigzn docs
+ 
+ clean:
