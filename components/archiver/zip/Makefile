@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zip
 COMPONENT_VERSION=	3.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.info-zip.org/Zip.html
 COMPONENT_SRC=		$(COMPONENT_NAME)30
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
@@ -33,36 +34,36 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f0e8bb1f9b7eb0b01285495a2699df3a4b766784c1765a8f1aeedf63c0806369
 COMPONENT_ARCHIVE_URL=	ftp://ftp.info-zip.org/pub/infozip/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/zip
+COMPONENT_FMRI=		compress/zip
 
 LD_OPTIONS=
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # remove the unwanted file.
 COMPONENT_PREP_ACTION = rm -f $(SOURCE_DIR)/match.S
 
 # The Makefile we want is under unix/Makefile
-COMPONENT_BUILD_ARGS += -f unix/Makefile
-COMPONENT_BUILD_TARGETS += generic CC=$(CC)
-COMPONENT_INSTALL_ARGS += -f unix/Makefile
+COMPONENT_BUILD_ARGS    += -f unix/Makefile
+COMPONENT_BUILD_TARGETS += generic CC="$(CC) $(CC_BITS)"
+COMPONENT_INSTALL_ARGS  += -f unix/Makefile
 
 # This doesn't respect DESTDIR, so overload BINDIR and MANDIR when we install.
 COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
-
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += system/library
