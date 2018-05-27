@@ -23,18 +23,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xcb-proto
-COMPONENT_VERSION=        1.12
+COMPONENT_VERSION=        1.13
+COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
+COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
 COMPONENT_FMRI=           x11/header/xcb-protocols
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:5922aba4c664ab7899a29d92ea91a87aa4c1fc7eb5ee550325c3216c480a4906
+  sha256:7b98721e669be80284e9bbfeab02d2d0d54cd11172b72271e47a2fe875e2bde1
 COMPONENT_ARCHIVE_URL=    http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=        MIT
-COMPONENT_LICENSE_FILE=   $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -48,7 +47,9 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += runtime/python-27
-
-REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
