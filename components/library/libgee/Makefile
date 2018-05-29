@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/libgee/0.20/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=    library/libgee
 COMPONENT_FMRI=     library/libgee
+COMPONENT_CLASSIFICATION=   Development/C
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
