@@ -19,33 +19,40 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
+# Copyright (c) 2018 Jason Martin
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libgee
-COMPONENT_VERSION=	0.8.6
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Libgee
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:cf9188b225a4e4b84696a13e5f9af0af0aa19a9ed05d01d1161023069f5be3d6
-COMPONENT_ARCHIVE_URL=	http://download.gnome.org/sources/libgee/0.8/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libgee
+COMPONENT_NAME=     libgee
+COMPONENT_VERSION=  0.20.1
+COMPONENT_SUMMARY=  GObject based collection and utility library
+COMPONENT_LICENSE = LGPLv2.1
+COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libgee
+COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:bb2802d29a518e8c6d2992884691f06ccfcc25792a5686178575c7111fea4630
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/libgee/0.20/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=    library/libgee
+COMPONENT_FMRI=     library/libgee
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--enable-shared
+CONFIGURE_OPTIONS  +=       --disable-static
+CONFIGURE_OPTIONS  +=       --enable-shared
 
-# common targets
-build:		$(BUILD_32_and_64)
+# gobject-introspection
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-install:	$(INSTALL_32_and_64)
+build:      $(BUILD_32_and_64)
 
-test:		$(TEST_32_and_64)
+install:    $(INSTALL_32_and_64)
 
-# Auto-generated dependencies
+test:       $(TEST_32_and_64)
+
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
