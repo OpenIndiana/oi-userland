@@ -11,19 +11,22 @@
 #
 # Copyright 2017, Longrin Wischnewski.
 #
+
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fish
-COMPONENT_VERSION=      2.7.0
+COMPONENT_VERSION=      2.7.1
 COMPONENT_FMRI=         shell/fish
 COMPONENT_CLASSIFICATION=System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3a76b7cae92f9f88863c35c832d2427fb66082f98e92a02203dc900b8fa87bcb
+  sha256:e42bb19c7586356905a58578190be792df960fa81de35effb1ca5a5a981f0c5a
 COMPONENT_ARCHIVE_URL= \
-  https://fishshell.com/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_SUMMARY= \
   Fish is a smart and user-friendly command line shell for macOS, Linux, and the rest of the family.
@@ -31,8 +34,6 @@ COMPONENT_SUMMARY= \
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64 = $(USRBINDIR)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
