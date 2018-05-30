@@ -26,7 +26,6 @@ PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
-PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		pinentry
 COMPONENT_VERSION=	1.1.0
@@ -36,13 +35,13 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:68076686fa724a290ea49cdf0d1c0c1500907d1b759a3bcbfbec0293e8f56570
 COMPONENT_ARCHIVE_URL=	https://www.gnupg.org/ftp/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	security/pinentry
 COMPONENT_FMRI=		security/pinentry
-
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(PATH.gnu)
 
 PATCH_LEVEL = 0
 
@@ -58,6 +57,7 @@ LIBS = -lsocket -lnsl -lpkcs11
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
+CONFIGURE_ENV +=	FLTK_CONFIG="$(USRBINDIR.$(BITS))/fltk-config"
 
 CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
