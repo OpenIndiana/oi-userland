@@ -23,25 +23,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.16.2
+COMPONENT_VERSION=	2.16.4
+COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
+COMPONENT_FMRI=		developer/versioning/git
+COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5560578bd21468d98637f41515c165d32f69caff0838b8989dee5ce10022c717
+COMPONENT_ARCHIVE_HASH=	sha256:6e69b0e9c487e5da52a14d4829f0b6a28b2c18a0bb6fb67c0dc8b5b5658bd532
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/git
-COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	git.license
-COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
-COMPONENT_CLASSIFICATION=	Development/Source Code Management
 
 #
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:42eee5134cc8b3b64c736025edfbfee86c2ecb76e37980a0aff26c86b5abcb05
+COMPONENT_ARCHIVE_HASH_1=	sha256:482bf4ca717c4b5fccfcf4ced156bb0536c15b3e9bfb505638275d799d2321cf
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
