@@ -16,15 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lightdm
-COMPONENT_VERSION= 1.19.3
-COMPONENT_REVISION= 7
+COMPONENT_VERSION= 1.26.0
 COMPONENT_SUMMARY= Light display manager
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:09c245cfe1f111f9590f135a2b1eeef9c72df8fcaca44ba9758376d2be80e5a4
+  sha256:c95e14e9131b5f95ecba42faaab2cfa917371193caa54fa1b4322ad7a89334f0
 COMPONENT_ARCHIVE_URL= \
-  https://launchpad.net/lightdm/1.19/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+  https://github.com/CanonicalLtd/lightdm/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.freedesktop.org/wiki/Software/LightDM/
 COMPONENT_FMRI = system/display-manager/lightdm
 COMPONENT_CLASSIFICATION=       Desktop (GNOME)/Sessions
@@ -74,3 +73,5 @@ REQUIRED_PACKAGES += text/itstool
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxdmcp
+# Required by include of sys/soundcard.h in 13-save-audio-settings.patch
+REQUIRED_PACKAGES += system/header/header-audio

@@ -12,7 +12,7 @@
  
 --- lightdm-1.19.3/configure.ac.1	2016-08-11 16:35:29.359045915 +0300
 +++ lightdm-1.19.3/configure.ac	2016-08-11 16:37:03.732983253 +0300
-@@ -129,6 +129,15 @@
+@@ -155,6 +155,15 @@
  fi
  AM_CONDITIONAL(COMPILE_LIBLIGHTDM_QT5, test x"$compile_liblightdm_qt5" != "xno")
  
@@ -44,7 +44,7 @@
  #include "session.h"
  #include "configuration.h"
  #include "console-kit.h"
-@@ -130,6 +137,141 @@
+@@ -130,6 +130,141 @@
                           G_IMPLEMENT_INTERFACE (
                               LOGGER_TYPE, session_logger_iface_init));
  
@@ -186,13 +186,14 @@
  Session *
  session_new (void)
  {
-@@ -605,9 +747,15 @@
+@@ -574,10 +574,16 @@ session_real_start (Session *session)
+ 
      /* Run the child */
-     arg0 = g_strdup_printf ("%d", to_child_output);
-     arg1 = g_strdup_printf ("%d", from_child_input);
+     g_autofree gchar *arg0 = g_strdup_printf ("%d", to_child_output);
 +#ifdef HAVE_SMF_CONTRACTS
 +    contracts_pre_fork ();
 +#endif
+     g_autofree gchar *arg1 = g_strdup_printf ("%d", from_child_input);
      session->priv->pid = fork ();
      if (session->priv->pid == 0)
      {
@@ -202,7 +203,7 @@
          /* Run us again in session child mode */
          execlp ("lightdm",
                  "lightdm",
-@@ -615,6 +763,11 @@
+@@ -585,6 +585,10 @@ session_real_start (Session *session)
                  arg0, arg1, NULL);
          _exit (EXIT_FAILURE);
      }
@@ -210,7 +211,6 @@
 +    /* Child would have already exited */
 +    contracts_post_fork_parent ((session->priv->pid > 0));
 +#endif
-+
-     g_free (arg0);
-     g_free (arg1);
  
+     if (session->priv->pid < 0)
+     {

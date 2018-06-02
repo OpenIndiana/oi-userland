@@ -1,6 +1,6 @@
 --- lightdm-1.19.3/src/process.c.~1~	2015-10-22 06:01:59.000000000 +0300
 +++ lightdm-1.19.3/src/process.c	2016-08-07 22:47:18.054306139 +0300
-@@ -251,7 +251,7 @@
+@@ -247,7 +247,7 @@
          return FALSE;
      }
  
@@ -9,7 +9,7 @@
  
      process->priv->pid = pid;
  
-@@ -292,7 +292,7 @@
+@@ -288,7 +288,7 @@
      if (process->priv->pid == 0)
          return;
  
@@ -18,7 +18,7 @@
  
      if (kill (process->priv->pid, signum) < 0)
      {
-@@ -398,7 +398,7 @@
+@@ -392,7 +392,7 @@
          return FALSE;
      }
  
@@ -27,18 +27,18 @@
  
      process = g_hash_table_lookup (processes, GINT_TO_POINTER (pid));
      if (process == NULL)
---- lightdm-1.19.3/src/lightdm.c.1	2016-08-07 22:48:39.705411866 +0300
-+++ lightdm-1.19.3/src/lightdm.c	2016-08-07 22:49:19.938941492 +0300
-@@ -1233,7 +1233,7 @@
+--- lightdm-1.26.0/src/lightdm.c	2018-06-01 06:57:28.489224869 +0000
++++ lightdm-1.26.0/src/lightdm.c.new	2018-06-01 07:02:18.853439100 +0000
+@@ -560,7 +560,7 @@ main (int argc, char **argv)
  #endif
      loop = g_main_loop_new (NULL, FALSE);
  
--    messages = g_list_append (messages, g_strdup_printf ("Starting Light Display Manager %s, UID=%i PID=%i", VERSION, getuid (), getpid ()));
-+    messages = g_list_append (messages, g_strdup_printf ("Starting Light Display Manager %s, UID=%i PID=%li", VERSION, getuid (), (long)getpid ()));
+-    GList *messages = g_list_append (NULL, g_strdup_printf ("Starting Light Display Manager %s, UID=%i PID=%i", VERSION, getuid (), getpid ()));
++    GList *messages = g_list_append (NULL, g_strdup_printf ("Starting Light Display Manager %s, UID=%i PID=%li", VERSION, getuid (), (long)getpid ()));
  
      g_signal_connect (process_get_current (), PROCESS_SIGNAL_GOT_SIGNAL, G_CALLBACK (signal_cb), NULL);
  
-@@ -1374,7 +1374,7 @@
+@@ -717,7 +717,7 @@
      pid_file = fopen (pid_path, "w");
      if (pid_file)
      {

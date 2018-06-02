@@ -1,59 +1,107 @@
---- lightdm-1.19.3/liblightdm-gobject/power.c.~2~	2018-01-16 14:50:14.909246176 +0000
-+++ lightdm-1.19.3/liblightdm-gobject/power.c	2018-01-16 14:51:44.132600719 +0000
-@@ -20,6 +20,8 @@
+--- lightdm-1.26.0/liblightdm-gobject/power.c	2018-06-02 09:37:42.900744191 +0000
++++ lightdm-1.26.0/liblightdm-gobject/power.c	2018-06-02 09:55:40.723462201 +0000
+@@ -29,6 +29,8 @@ static GDBusProxy *upower_proxy = NULL;
  static GDBusProxy *ck_proxy = NULL;
  static GDBusProxy *login1_proxy = NULL;
  
-+static GVariant * ck_call_function (const gchar *function, GError **error);
++static GVariant * ck_call_function (const gchar *function, GVariant *parameters, GError **error);
 +
  static GVariant *
  upower_call_function (const gchar *function, GError **error)
  {
-@@ -93,7 +95,11 @@
+@@ -121,7 +123,11 @@ lightdm_get_can_suspend (void)
      if (!getenv("XDG_VTNR"))
          return FALSE;
- 
+     
 +#if defined(__sun)
-+    r = ck_call_function ("CanSuspend", NULL);
++    g_autoptr(GVariant) r = ck_call_function ("CanSuspend", NULL, NULL);
 +#else
-     r = login1_call_function ("CanSuspend", NULL, NULL);
+     g_autoptr(GVariant) r = login1_call_function ("CanSuspend", NULL, NULL);
 +#endif
+     gboolean can_suspend = FALSE;
      if (r)
      {
-         gchar *result;
-@@ -129,7 +135,11 @@
-     GVariant *result;
-     gboolean suspended;
+@@ -168,7 +174,11 @@ lightdm_suspend (GError **error)
+         return FALSE;
  
+     g_autoptr(GError) login1_error = NULL;
 +#if defined(__sun)
-+    result = ck_call_function ("Suspend", NULL);
++    g_autoptr(GVariant) login1_result = ck_call_function ("Suspend", g_variant_new("(b)", FALSE), NULL);
 +#else
-     result = login1_call_function ("Suspend", g_variant_new("(b)", FALSE), error);
+     g_autoptr(GVariant) login1_result = login1_call_function ("Suspend", g_variant_new("(b)", FALSE), &login1_error);
 +#endif
-     if (!result)
-     {
-         if (error)
-@@ -162,7 +172,11 @@
+     if (login1_result)
+         return TRUE;
+ 
+@@ -199,7 +209,11 @@ lightdm_get_can_hibernate (void)
      if (!getenv("XDG_VTNR"))
          return FALSE;
  
 +#if defined(__sun)
-+    r = ck_call_function ("CanHibernate", NULL);
++    g_autoptr(GVariant) r = ck_call_function ("CanHibernate", NULL, NULL);
 +#else
-     r = login1_call_function ("CanHibernate", NULL, NULL);
+     g_autoptr(GVariant) r = login1_call_function ("CanHibernate", NULL, NULL);
 +#endif
+     gboolean can_hibernate = FALSE;
      if (r)
      {
-         gchar *result;
-@@ -202,7 +216,11 @@
+@@ -246,7 +260,11 @@ lightdm_hibernate (GError **error)
+         return FALSE;
+ 
+     g_autoptr(GError) login1_error = NULL;
++#if defined(__sun)
++    g_autoptr(GVariant) login1_result = ck_call_function ("Hibernate", g_variant_new("(b)", FALSE), NULL);
++#else
+     g_autoptr(GVariant) login1_result = login1_call_function ("Hibernate", g_variant_new("(b)", FALSE), &login1_error);
++#endif
+     if (login1_result)
+         return TRUE;
+ 
+@@ -277,7 +295,11 @@ lightdm_get_can_restart (void)
      if (!getenv("XDG_VTNR"))
          return FALSE;
  
 +#if defined(__sun)
-+    result = ck_call_function ("Hibernate", NULL);
++    g_autoptr(GVariant) r = ck_call_function ("CanReboot", NULL, NULL);
 +#else
-     result = login1_call_function ("Hibernate", g_variant_new("(b)", FALSE), error);
+     g_autoptr(GVariant) r = login1_call_function ("CanReboot", NULL, NULL);
 +#endif
-     if (!result)
+     gboolean can_restart = FALSE;
+     if (r)
      {
-         if (error)
+@@ -314,7 +336,11 @@ lightdm_restart (GError **error)
+         return FALSE;
+ 
+     g_autoptr(GError) login1_error = NULL;
++#if defined(__sun)
++    g_autoptr(GVariant) login1_result = ck_call_function ("Reboot", g_variant_new("(b)", FALSE), NULL);
++#else
+     g_autoptr(GVariant) login1_result = login1_call_function ("Reboot", g_variant_new("(b)", FALSE), &login1_error);
++#endif
+     if (login1_result)
+         return TRUE;
+ 
+@@ -336,7 +362,11 @@ lightdm_get_can_shutdown (void)
+     if (!getenv("XDG_VTNR"))
+         return FALSE;
+ 
++#if defined(__sun)
++    g_autoptr(GVariant) r = ck_call_function ("CanPowerOff", NULL, NULL);
++#else
+     g_autoptr(GVariant) r = login1_call_function ("CanPowerOff", NULL, NULL);
++#endif
+     gboolean can_shutdown = FALSE;
+     if (r)
+     {
+@@ -373,7 +403,11 @@ lightdm_shutdown (GError **error)
+         return FALSE;
+ 
+     g_autoptr(GError) login1_error = NULL;
++#if defined(__sun)
++    g_autoptr(GVariant) login1_result = ck_call_function ("PowerOff", g_variant_new("(b)", FALSE), NULL);
++#else
+     g_autoptr(GVariant) login1_result = login1_call_function ("PowerOff", g_variant_new("(b)", FALSE), &login1_error);
++#endif
+     if (login1_result)
+         return TRUE;
+ 
