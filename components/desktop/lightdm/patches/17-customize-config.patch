@@ -7,7 +7,7 @@ We need to customize default configuration:
 
 --- lightdm-1.19.3/src/lightdm.c.~3~	2016-08-12 19:54:56.871477375 +0300
 +++ lightdm-1.19.3/src/lightdm.c	2016-08-12 19:54:56.927097430 +0300
-@@ -1454,11 +1454,11 @@
+@@ -810,11 +810,11 @@
      if (!config_has_key (config_get_instance (), "Seat:*", "pam-service"))
          config_set_string (config_get_instance (), "Seat:*", "pam-service", "lightdm");
      if (!config_has_key (config_get_instance (), "Seat:*", "pam-autologin-service"))
@@ -23,7 +23,7 @@ We need to customize default configuration:
      if (!config_has_key (config_get_instance (), "Seat:*", "xserver-share"))
 --- lightdm-1.19.3/data/lightdm.conf.~1~	2016-06-20 03:31:51.000000000 +0300
 +++ lightdm-1.19.3/data/lightdm.conf	2016-08-12 19:58:31.887145185 +0300
-@@ -61,7 +61,7 @@
+@@ -63,7 +63,7 @@
  # unity-compositor-command = Unity compositor command to run (can also contain arguments e.g. unity-system-compositor -special-option)
  # unity-compositor-timeout = Number of seconds to wait for compositor to start
  # greeter-session = Session to load for greeter
@@ -32,7 +32,7 @@ We need to customize default configuration:
  # greeter-allow-guest = True if the greeter should show a guest login option
  # greeter-show-manual-login = True if the greeter should offer a manual login option
  # greeter-show-remote-login = True if the greeter should offer a remote login option
-@@ -87,10 +87,10 @@
+@@ -89,10 +89,10 @@
  [Seat:*]
  #type=local
  #pam-service=lightdm
@@ -45,7 +45,7 @@ We need to customize default configuration:
  #xmir-command=Xmir
  #xserver-config=
  #xserver-layout=
-@@ -108,7 +108,7 @@
+@@ -110,7 +110,7 @@
  #greeter-allow-guest=true
  #greeter-show-manual-login=false
  #greeter-show-remote-login=true
@@ -54,7 +54,7 @@ We need to customize default configuration:
  #allow-user-switching=true
  #allow-guest=true
  #guest-session=
-@@ -159,9 +159,9 @@
+@@ -161,9 +161,9 @@
  #
  [VNCServer]
  #enabled=false
@@ -88,7 +88,7 @@ We need to customize default configuration:
  static void
 --- lightdm-1.19.3/src/seat.c.1	2016-08-13 10:39:56.098357291 +0300
 +++ lightdm-1.19.3/src/seat.c	2016-08-13 10:56:21.727142124 +0300
-@@ -545,9 +545,16 @@
+@@ -523,9 +523,16 @@
  static void
  set_greeter_hints (Seat *seat, Greeter *greeter)
  {

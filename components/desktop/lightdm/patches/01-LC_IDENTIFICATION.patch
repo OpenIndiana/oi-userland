@@ -1,27 +1,25 @@
-$NetBSD: patch-ae,v 1.1.1.1 2012/05/15 03:29:36 jeremy-c-reed Exp $
-
 https://bugs.launchpad.net/lightdm/+bug/790186
 
---- a/liblightdm-gobject/language.c.orig	2012-05-14 21:00:33.000000000 -0500
-+++ b/liblightdm-gobject/language.c	2012-05-14 21:13:28.000000000 -0500
-@@ -229,10 +229,16 @@
+--- lightdm-1.26.0/liblightdm-gobject/language.c	2018-02-07 00:31:03.000000000 +0000
++++ lightdm-1.26.0/liblightdm-gobject/language.c	2018-06-02 09:11:20.129001120 +0000
+@@ -214,10 +214,16 @@ lightdm_language_get_name (LightDMLangua
          if (locale)
          {
-             gchar *current = setlocale (LC_ALL, NULL);
+             const gchar *current = setlocale (LC_ALL, NULL);
 +#ifdef LC_IDENTIFICATION
              setlocale (LC_IDENTIFICATION, locale);
 +#endif
              setlocale (LC_MESSAGES, "");
  
 +#ifdef _NL_IDENTIFICATION_LANGUAGE
-             gchar *language_en = nl_langinfo (_NL_IDENTIFICATION_LANGUAGE);
+             const gchar *language_en = nl_langinfo (_NL_IDENTIFICATION_LANGUAGE);
 +#else
-+            gchar *language_en = "Unknown";
++            const gchar *language_en = "Unknown";
 +#endif
              if (language_en && strlen (language_en) > 0)
                  priv->name = g_strdup (dgettext ("iso_639_3", language_en));
  
-@@ -272,10 +278,16 @@
+@@ -254,10 +260,16 @@ lightdm_language_get_territory (LightDML
          if (locale)
          {
              gchar *current = setlocale (LC_ALL, NULL);
