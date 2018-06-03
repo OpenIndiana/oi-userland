@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= taglib
 COMPONENT_VERSION= 1.11.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = library/audio/taglib
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_PROJECT_URL = https://taglib.github.io/
