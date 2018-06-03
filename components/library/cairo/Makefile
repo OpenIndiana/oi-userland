@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cairo
-COMPONENT_VERSION= 1.14.8
+COMPONENT_VERSION= 1.14.12
 COMPONENT_SUMMARY= Vector graphics library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d1f2d98ae9a4111564f6de4e013d639cf77155baf2556582295a0f00a9bc5e20
+  sha256:8c90f00c500b2299c0a323dd9beead2a00353752b2092ead558139bd67f7bf16
 COMPONENT_ARCHIVE_URL= \
   http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cairographics.org/
@@ -30,18 +30,18 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING-LGPL-2.1
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =	( cd $(@D) && libtoolize --force --copy&&\
-					aclocal  -I build && \
-					gtkdocize &&\
-                                        autoheader &&\
-                                        automake -a -f -c --gnu &&\
-                                        autoconf )
+                                      aclocal  -I build && \
+                                      gtkdocize &&\
+                                      autoheader &&\
+                                      automake -a -f -c --gnu &&\
+                                      autoconf )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D))
 
