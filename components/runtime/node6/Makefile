@@ -11,7 +11,7 @@
 #
 # Copyright 2015 EveryCity Ltd. All rights reserved.
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2016, 2017 Andreas Wacknitz
+# Copyright 2016, 2017, 2018 Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -21,12 +21,12 @@ COMPONENT_FMRI=		runtime/nodejs-6
 COMPONENT_SUMMARY=	Evented I/O for V8 JavaScript.
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://nodejs.org
-COMPONENT_VERSION=	6.14.0
+COMPONENT_VERSION=	6.14.2
 COMPONENT_LICENSE=	BSD-like, MIT, Apache
 COMPONENT_LICENSE_FILE=	node.license	
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:87892f42c5c48bb6367e0299ec81e1d18e560e401eddc50dd746acc4c896bd7c
+COMPONENT_ARCHIVE_HASH=	sha256:418901524257a2750930d659b3b9f8b8bb0b166974ab2103192270f80bd5f677
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -48,8 +48,8 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
-
