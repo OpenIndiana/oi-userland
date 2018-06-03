@@ -1,0 +1,19 @@
+make[4]: Entering directory '/export/home/newman/ws/oi-userland/components/library/glib/build/i86/gio'
+  CC       libgio_2_0_la-gunixmounts.lo
+gunixmounts.c: In function '_g_get_unix_mounts':
+gunixmounts.c:713:52: error: 'struct mnttab' has no member named 'mnt_opts'; did you mean 'mnt_mntopts'?
+                                              mntent.mnt_opts,
+                                                    ^
+make[4]: *** [Makefile:3969: libgio_2_0_la-gunixmounts.lo] Error 1
+
+--- glib-2.57.1/gio/gunixmounts.c	2018-06-03 14:31:52.050420474 +0000
++++ glib-2.57.1/gio/gunixmounts.c.new	2018-06-03 14:31:28.514097625 +0000
+@@ -710,7 +710,7 @@ _g_get_unix_mounts (void)
+       mount_entry = create_unix_mount_entry (mntent.mnt_special,
+                                              mntent.mnt_mountp,
+                                              mntent.mnt_fstype,
+-                                             mntent.mnt_opts,
++                                             mntent.mnt_mntopts,
+                                              is_read_only);
+ 
+       return_list = g_list_prepend (return_list, mount_entry);

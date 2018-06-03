@@ -1,10 +1,11 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
@@ -13,7 +14,7 @@
 # Copyright 2016 Jim Klimov
 #
 
-set name=pkg.fmri value=pkg:/library/glib2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -27,7 +28,7 @@ license COPYING license='LGPLv2'
 <transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
-depend fmri=library/glib2/charset-alias@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+depend fmri=$(COMPONENT_FMRI)/charset-alias@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 file path=usr/bin/$(MACH64)/gapplication
 file path=usr/bin/$(MACH64)/gdbus
@@ -324,24 +325,24 @@ file path=usr/include/glib-2.0/gobject/gvaluetypes.h
 #file path=usr/lib/$(MACH64)/charset.alias
 file path=usr/lib/$(MACH64)/gio/modules/libgiofam.so
 file path=usr/lib/$(MACH64)/glib-2.0/include/glibconfig.h
-link path=usr/lib/$(MACH64)/libgio-2.0.so target=libgio-2.0.so.0.5400.3
-link path=usr/lib/$(MACH64)/libgio-2.0.so.0 target=libgio-2.0.so.0.5400.3
-file path=usr/lib/$(MACH64)/libgio-2.0.so.0.5400.3
-link path=usr/lib/$(MACH64)/libglib-2.0.so target=libglib-2.0.so.0.5400.3
-link path=usr/lib/$(MACH64)/libglib-2.0.so.0 target=libglib-2.0.so.0.5400.3
-file path=usr/lib/$(MACH64)/libglib-2.0.so.0.5400.3
-link path=usr/lib/$(MACH64)/libgmodule-2.0.so target=libgmodule-2.0.so.0.5400.3
+link path=usr/lib/$(MACH64)/libgio-2.0.so target=libgio-2.0.so.0.5701.0
+link path=usr/lib/$(MACH64)/libgio-2.0.so.0 target=libgio-2.0.so.0.5701.0
+file path=usr/lib/$(MACH64)/libgio-2.0.so.0.5701.0
+link path=usr/lib/$(MACH64)/libglib-2.0.so target=libglib-2.0.so.0.5701.0
+link path=usr/lib/$(MACH64)/libglib-2.0.so.0 target=libglib-2.0.so.0.5701.0
+file path=usr/lib/$(MACH64)/libglib-2.0.so.0.5701.0
+link path=usr/lib/$(MACH64)/libgmodule-2.0.so target=libgmodule-2.0.so.0.5701.0
 link path=usr/lib/$(MACH64)/libgmodule-2.0.so.0 \
-    target=libgmodule-2.0.so.0.5400.3
-file path=usr/lib/$(MACH64)/libgmodule-2.0.so.0.5400.3
-link path=usr/lib/$(MACH64)/libgobject-2.0.so target=libgobject-2.0.so.0.5400.3
+    target=libgmodule-2.0.so.0.5701.0
+file path=usr/lib/$(MACH64)/libgmodule-2.0.so.0.5701.0
+link path=usr/lib/$(MACH64)/libgobject-2.0.so target=libgobject-2.0.so.0.5701.0
 link path=usr/lib/$(MACH64)/libgobject-2.0.so.0 \
-    target=libgobject-2.0.so.0.5400.3
-file path=usr/lib/$(MACH64)/libgobject-2.0.so.0.5400.3
-link path=usr/lib/$(MACH64)/libgthread-2.0.so target=libgthread-2.0.so.0.5400.3
+    target=libgobject-2.0.so.0.5701.0
+file path=usr/lib/$(MACH64)/libgobject-2.0.so.0.5701.0
+link path=usr/lib/$(MACH64)/libgthread-2.0.so target=libgthread-2.0.so.0.5701.0
 link path=usr/lib/$(MACH64)/libgthread-2.0.so.0 \
-    target=libgthread-2.0.so.0.5400.3
-file path=usr/lib/$(MACH64)/libgthread-2.0.so.0.5400.3
+    target=libgthread-2.0.so.0.5701.0
+file path=usr/lib/$(MACH64)/libgthread-2.0.so.0.5701.0
 file path=usr/lib/$(MACH64)/pkgconfig/gio-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gio-unix-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/glib-2.0.pc
@@ -353,21 +354,21 @@ file path=usr/lib/$(MACH64)/pkgconfig/gthread-2.0.pc
 #file path=usr/lib/charset.alias
 file path=usr/lib/gio/modules/libgiofam.so
 file path=usr/lib/glib-2.0/include/glibconfig.h
-link path=usr/lib/libgio-2.0.so target=libgio-2.0.so.0.5400.3
-link path=usr/lib/libgio-2.0.so.0 target=libgio-2.0.so.0.5400.3
-file path=usr/lib/libgio-2.0.so.0.5400.3
-link path=usr/lib/libglib-2.0.so target=libglib-2.0.so.0.5400.3
-link path=usr/lib/libglib-2.0.so.0 target=libglib-2.0.so.0.5400.3
-file path=usr/lib/libglib-2.0.so.0.5400.3
-link path=usr/lib/libgmodule-2.0.so target=libgmodule-2.0.so.0.5400.3
-link path=usr/lib/libgmodule-2.0.so.0 target=libgmodule-2.0.so.0.5400.3
-file path=usr/lib/libgmodule-2.0.so.0.5400.3
-link path=usr/lib/libgobject-2.0.so target=libgobject-2.0.so.0.5400.3
-link path=usr/lib/libgobject-2.0.so.0 target=libgobject-2.0.so.0.5400.3
-file path=usr/lib/libgobject-2.0.so.0.5400.3
-link path=usr/lib/libgthread-2.0.so target=libgthread-2.0.so.0.5400.3
-link path=usr/lib/libgthread-2.0.so.0 target=libgthread-2.0.so.0.5400.3
-file path=usr/lib/libgthread-2.0.so.0.5400.3
+link path=usr/lib/libgio-2.0.so target=libgio-2.0.so.0.5701.0
+link path=usr/lib/libgio-2.0.so.0 target=libgio-2.0.so.0.5701.0
+file path=usr/lib/libgio-2.0.so.0.5701.0
+link path=usr/lib/libglib-2.0.so target=libglib-2.0.so.0.5701.0
+link path=usr/lib/libglib-2.0.so.0 target=libglib-2.0.so.0.5701.0
+file path=usr/lib/libglib-2.0.so.0.5701.0
+link path=usr/lib/libgmodule-2.0.so target=libgmodule-2.0.so.0.5701.0
+link path=usr/lib/libgmodule-2.0.so.0 target=libgmodule-2.0.so.0.5701.0
+file path=usr/lib/libgmodule-2.0.so.0.5701.0
+link path=usr/lib/libgobject-2.0.so target=libgobject-2.0.so.0.5701.0
+link path=usr/lib/libgobject-2.0.so.0 target=libgobject-2.0.so.0.5701.0
+file path=usr/lib/libgobject-2.0.so.0.5701.0
+link path=usr/lib/libgthread-2.0.so target=libgthread-2.0.so.0.5701.0
+link path=usr/lib/libgthread-2.0.so.0 target=libgthread-2.0.so.0.5701.0
+file path=usr/lib/libgthread-2.0.so.0.5701.0
 file path=usr/lib/pkgconfig/gio-2.0.pc
 file path=usr/lib/pkgconfig/gio-unix-2.0.pc
 file path=usr/lib/pkgconfig/glib-2.0.pc
@@ -383,10 +384,10 @@ file path=usr/share/bash-completion/completions/gapplication
 file path=usr/share/bash-completion/completions/gdbus
 file path=usr/share/bash-completion/completions/gresource
 file path=usr/share/bash-completion/completions/gsettings
-file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libglib-2.0.so.0.5400.3-gdb.py
-file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libgobject-2.0.so.0.5400.3-gdb.py
-file path=usr/share/gdb/auto-load/usr/lib/libglib-2.0.so.0.5400.3-gdb.py
-file path=usr/share/gdb/auto-load/usr/lib/libgobject-2.0.so.0.5400.3-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libglib-2.0.so.0.5701.0-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libgobject-2.0.so.0.5701.0-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/libglib-2.0.so.0.5701.0-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/libgobject-2.0.so.0.5701.0-gdb.py
 file path=usr/share/gettext/its/gschema.its
 file path=usr/share/gettext/its/gschema.loc
 file path=usr/share/glib-2.0/codegen/__init__.py
