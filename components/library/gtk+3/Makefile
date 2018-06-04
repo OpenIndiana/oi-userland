@@ -16,16 +16,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
-COMPONENT_VERSION= 3.18.9
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 3.22.30
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:783d7f8b00f9b4224cc94d7da885a67598e711c2d6d79c9c873c6b203e83acbd
+  sha256:a1a4a5c12703d4e1ccda28333b87ff462741dc365131fbc94c218ae81d9a6567
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gtk.org/
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.22/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.gtk.org/
 COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
@@ -97,6 +96,7 @@ REQUIRED_PACKAGES += x11/server/xvfb
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-atk
+REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
