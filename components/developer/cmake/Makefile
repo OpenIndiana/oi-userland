@@ -23,6 +23,7 @@
 # Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2016 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
+PREFERRED_BITS=64
 
 # parfait seems to hang on libcmsysTestDynload.so.bc, so for
 # now we have to disable it.
@@ -30,27 +31,26 @@ PARFAIT_BUILD=no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	3.9.6
-COMPONENT_MAJOR_VERSION=	3.9
-COMPONENT_FMRI=	developer/build/cmake
-COMPONENT_LICENSE=	BSD, MIT, GPLv2, Curl, PD
-COMPONENT_LICENSE_FILE= cmake.license
+COMPONENT_NAME=         cmake
+COMPONENT_MAJOR_VERSION=3.11
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).3
+COMPONENT_PROJECT_URL=  https://www.cmake.org/
+COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
-COMPONENT_SUMMARY=A cross-platform, open-source make system
+COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
 It is used to control the software compilation process using simple platform \
 and compiler-independent configuration files. \
 CMake generates native makefiles and workspaces that can be used in the \
 workspaces that can be used in the compiler environment of your choice.
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:7410851a783a41b521214ad987bb534a7e4a65e059651a2514e6ebfc8f46b218
+  sha256:287135b6beb7ffc1ccd02707271080bbf14c21d80c067ae2c0040e5f3508c39a
 COMPONENT_ARCHIVE_URL= \
   https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://www.cmake.org/
+COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -90,6 +90,10 @@ CONFIGURE_OPTIONS += 	--system-liblzma
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
+COMPONENT_BUILD_ENV +=	FC="$(FC)"
+COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV +=	CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_BUILD_ENV +=	FCFLAGS="$(FCFLAGS)"
 COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 COMPONENT_BUILD_TARGETS =	all
@@ -104,12 +108,24 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_TEST_ENV += LANG=C
 COMPONENT_TEST_ENV += CC="$(CC)"
 COMPONENT_TEST_ENV += CXX="$(CXX)"
+COMPONENT_TEST_ENV += FC="$(FC)"
 COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ENV += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_TEST_ENV += FCFLAGS="$(FCFLAGS)"
 COMPONENT_TEST_ENV += LDFLAGS="$(LDFLAGS)"
 
 # Results output is different on Intel vs. SPARC.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+
+# Most Fortran tests fail because -m64 they do not pass compiler flags as they should.
+# The following tests FAILED:
+#         39 - FortranOnly (Failed)
+#         40 - VSGNUFortran (Failed)
+#         83 - Module.CheckIPOSupported-Fortran (Failed)
+#        232 - Fortran (Failed)
+#        233 - FortranModules (Failed)
+#        262 - CMakeOnly.CompilerIdFortran (Failed)
+#        425 - RunCMake.CompilerLauncher (Failed)
 
 COMPONENT_TEST_TARGETS =	test
 
@@ -124,11 +140,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
