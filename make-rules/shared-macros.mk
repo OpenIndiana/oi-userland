@@ -1030,6 +1030,21 @@ CC_PIC =	$($(COMPILER)_PIC)
 CFLAGS.gcc +=	$(gcc_OPT)
 CFLAGS.gcc +=	$(gcc_XREGS)
 
+# Default GNU C++ compiler flags.  Add the required feature to your Makefile
+# with CXXFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add CXXFLAGS to any environment other than the
+# configure environment.
+CXXFLAGS.gcc +=	$(gcc_OPT)
+CXXFLAGS.gcc +=	$(gcc_XREGS)
+
+# Default GNU FORTRAN compiler flags.  Add the required feature to your Makefile
+# with FCFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += FCFLAGS="$(FCFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add FCFLAGS to any environment other than the
+# configure environment.
+FCFLAGS.gcc +=	$(gcc_OPT)
+FCFLAGS.gcc +=	$(gcc_XREGS)
 
 # Build 32 or 64 bit objects.
 CFLAGS +=	$(CC_BITS)
@@ -1067,10 +1082,16 @@ CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
 
+# Add compiler specific 'default' features
+CXXFLAGS +=	$(CXXFLAGS.$(COMPILER))
+
 # Build 32 or 64 bit objects in FORTRAN as well.
 F77FLAGS +=	$(CC_BITS)
 FCFLAGS +=	$(CC_BITS)
 
+# Add compiler specific 'default' features
+F77FLAGS +=	$(FCFLAGS.$(COMPILER))
+FCFLAGS +=	$(FCFLAGS.$(COMPILER))
 
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
