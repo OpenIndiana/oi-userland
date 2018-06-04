@@ -11,11 +11,12 @@
 #
 # Copyright 2015-2017 Aurelien Larcher
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
-COMPONENT_VERSION=	0.92.2
+COMPONENT_VERSION=	0.92.3
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
@@ -23,8 +24,8 @@ COMPONENT_PROJECT_URL=	http://www.inkscape.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a628d0e04c254e9840947e6d866974f92c68ae31631a38b94d9b65e5cd84cfd3
-COMPONENT_ARCHIVE_URL=	https://inkscape.org/en/gallery/item/11254/$(COMPONENT_ARCHIVE)
+	sha256:063296c05a65d7a92a0f627485b66221487acfc64a24f712eb5237c4bd7816b2
+COMPONENT_ARCHIVE_URL=	https://inkscape.org/en/gallery/item/12187/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -32,8 +33,6 @@ include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
-
-CMAKE_BINDIR.64 = $(CMAKE_BINDIR.32)
 
 LDFLAGS+= $(JPEG_LDFLAGS)
 
