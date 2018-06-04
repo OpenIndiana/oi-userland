@@ -21,33 +21,34 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher
 #
+
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gawk
-COMPONENT_VERSION=	4.2.0
-COMPONENT_FMRI=	text/gawk
-COMPONENT_SUMMARY=	GNU awk
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gawk/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=          gawk
+COMPONENT_VERSION=       4.2.1
+COMPONENT_SUMMARY=       GNU awk
+COMPONENT_PROJECT_URL=   https://www.gnu.org/software/gawk/
+COMPONENT_FMRI=          text/gawk
+COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=       $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d4f3cd31c001fd0ed52832d4fbfbdfeaa38ad541c182f80ff8fdf87324a6a9f2
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv3, FDLv1.3
+  sha256:d1119785e746d46a8209d28b2de404a57f983aa48670f4e225531d3bdc175551
+COMPONENT_ARCHIVE_URL=   http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=       GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CFLAGS+= -std=c99 $(CPP_XPG6MODE)
+CFLAGS+= $(gcc_C99_ENABLE) $(CPP_XPG6MODE)
 CFLAGS+= -I$(USRINCDIR)/mpfr -I$(USRINCDIR)/gmp
 
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS	+=	--with-mpfr=$(LIBDIR.$(BITS))
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 COMPONENT_TEST_ENV+= LANG=C LC_ALL=C
 
