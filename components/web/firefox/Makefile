@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= 	firefox
 COMPONENT_VERSION= 	52.8.0esr
 IPS_COMPONENT_VERSION= 	52.8.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
@@ -48,7 +48,7 @@ CONFIGURE_OPTIONS +=	--disable-debug-symbols
 CONFIGURE_OPTIONS +=	--enable-update-channel=esr
 CONFIGURE_OPTIONS +=	--disable-tests
 CONFIGURE_OPTIONS +=	--enable-jemalloc
-CONFIGURE_OPTIONS +=	--enable-optimize="-O2"
+CONFIGURE_OPTIONS +=	--enable-optimize="-O2 -fno-schedule-insns2 -fno-lifetime-dse -fno-delete-null-pointer-checks"
 CONFIGURE_OPTIONS +=	--disable-dtrace
 CONFIGURE_OPTIONS +=	--disable-crashreporter
 CONFIGURE_OPTIONS +=	--enable-pulseaudio
