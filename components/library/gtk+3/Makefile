@@ -16,15 +16,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
-COMPONENT_VERSION= 3.18.9
-COMPONENT_REVISION= 3
+COMPONENT_MJR_VERSION= 3.22
+COMPONENT_MNR_VERSION= 28
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:783d7f8b00f9b4224cc94d7da885a67598e711c2d6d79c9c873c6b203e83acbd
+  sha256:d299612b018cfed7b2c689168ab52b668023708e17c335eb592260d186f15e1f
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
 COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
@@ -35,7 +36,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 
@@ -97,6 +98,7 @@ REQUIRED_PACKAGES += x11/server/xvfb
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-atk
+REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
