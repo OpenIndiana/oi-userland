@@ -25,19 +25,20 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		autoconf-archive
-COMPONENT_VERSION=	2017.09.28
-IPS_COMPONENT_VERSION=	2017.9.28
-COMPONENT_FMRI=		developer/build/autoconf-archive
-COMPONENT_SUMMARY=	GNU Autoconf Archive
+COMPONENT_NAME=         autoconf-archive
+COMPONENT_VERSION=      2018.03.13
+IPS_COMPONENT_VERSION=  2018.3.13
+COMPONENT_FMRI=         developer/build/autoconf-archive
+COMPONENT_SUMMARY=      GNU Autoconf Archive
 COMPONENT_CLASSIFICATION=Development/GNU
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autoconf-archive/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:5c9fb5845b38b28982a3ef12836f76b35f46799ef4a2e46b48e2bd3c6182fa01
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv3	
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/autoconf-archive/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=  \
+  sha256:6175f90d9fa64c4d939bdbb3e8511ae0ee2134863a2c7bf8d9733819efa6e159
+COMPONENT_ARCHIVE_URL= \
+  http://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv3  
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
