@@ -13,17 +13,18 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= shared-mime-info
 
-COMPONENT_VERSION= 0.90
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.9
 COMPONENT_SUMMARY= application/MIME type registry
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:52c9f84a8c72de631a0458542980b1728560f59845eb5e93e1dbe825f4b72304
+  sha256:5c0133ec4e228e41bdf52f726d271a2d821499c2ab97afd3aa3d6cf43efcdc83
 COMPONENT_ARCHIVE_URL= \
   http://freedesktop.org/~hadess/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/Software/shared-mime-info
@@ -47,11 +48,11 @@ COMPONENT_BUILD_ARGS=
 
 COMPONENT_INSTALL_TARGET =  install-strip
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
-test: $(TEST_32)
+test: $(TEST_64)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
