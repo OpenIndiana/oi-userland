@@ -20,11 +20,13 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
 COMPONENT_VERSION=	4.4
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=	shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -83,8 +85,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D); autoconf -f -i )
 CONFIGURE_ENV += LIBS="$(LIBS)"
 CONFIGURE_ENV += LD_OPTIONS="-lc -lm -lgen -lsocket -lnsl -lresolv $(LD_Z_IGNORE)"
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-
 CONFIGURE_OPTIONS += --disable-profiling
 CONFIGURE_OPTIONS += --disable-strict-posix-default
 CONFIGURE_OPTIONS += --enable-alias
@@ -130,6 +130,9 @@ CONFIGURE_OPTIONS += --with-installed-readline=no
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)
+
+COMPONENT_TEST_MASTER		= \
+    $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 # The tests use /tmp/xx, and there can only be one user running
 # the them at a time. Need to remove /tmp/xx after testing to
