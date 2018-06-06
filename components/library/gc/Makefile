@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gc
 
-COMPONENT_VERSION= 7.6.4
+COMPONENT_VERSION= 7.6.6
 COMPONENT_FMRI= library/gc
 COMPONENT_SUMMARY= Boehm-Demers-Weiser garbage collector for C/C++
 COMPONENT_CLASSIFICATION= Development/C++
@@ -25,19 +25,19 @@ COMPONENT_PROJECT_URL= http://www.hboehm.info/gc/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b94c1f2535f98354811ee644dccab6e84a0cf73e477ca03fb5a3758fb1fecd1c
+  sha256:e968edf8f80d83284dd473e00a5e3377addc2df261ffb7e6dc77c9a34a0039dc
 COMPONENT_ARCHIVE_URL= \
-  http://www.hboehm.info/gc/gc_source/$(COMPONENT_ARCHIVE)
+  https://github.com/ivmai/bdwgc/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, MIT
 
 COMPONENT_NAME_1= libatomic_ops
-COMPONENT_VERSION_1= 7.6.2
+COMPONENT_VERSION_1= 7.6.4
 COMPONENT_SRC_1= $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-  sha256:219724edad3d580d4d37b22e1d7cb52f0006d282d26a9b8681b560a625142ee6
+  sha256:5b823d5a685dd70caeef8fc50da7d763ba7f6167fe746abca7762e2835b3dd4e
 COMPONENT_ARCHIVE_URL_1= \
-  http://www.hboehm.info/gc/gc_source/$(COMPONENT_ARCHIVE_1)
+  https://github.com/ivmai/libatomic_ops/releases/download/v$(COMPONENT_VERSION_1)/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
