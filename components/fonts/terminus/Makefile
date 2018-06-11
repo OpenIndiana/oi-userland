@@ -11,18 +11,19 @@
 
 #
 # Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		terminus-font
-COMPONENT_VERSION=	4.40
-COMPONENT_PROJECT_URL=	http://terminus-font.sourceforge.net/
+COMPONENT_VERSION=	4.46
+COMPONENT_PROJECT_URL=	https://terminus-font.sourceforge.net/
 COMPONENT_SUMMARY=	Terminus Font
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:64f52c24d3f1c1e39f21e6c43077a9be3e21d4384f176f5766c00558ba670711
+    sha256:16d58f25fde6705549a95c9b89e132ea5d94045fb89be2d177cb7a98f5b54a06
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/terminus-font/files/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=		system/font/terminus
 COMPONENT_LICENSE_FILE=	terminus.license
