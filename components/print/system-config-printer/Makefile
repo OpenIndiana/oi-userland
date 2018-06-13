@@ -11,13 +11,14 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= system-config-printer
 COMPONENT_VERSION= 1.4.8
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 IPS_COMPONENT_VERSION= 2.30.0
 COMPONENT_SUMMARY= Print Manager for CUPS
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,3 +57,4 @@ REQUIRED_PACKAGES += library/python/pycups-27
 REQUIRED_PACKAGES += library/python/pygobject-3-27
 REQUIRED_PACKAGES += library/python/python-dbus-27
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += text/xmlto
