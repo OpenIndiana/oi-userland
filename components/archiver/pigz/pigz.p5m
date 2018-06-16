@@ -1,23 +1,21 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
-#
-
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013, Adam Stevko. All rights reserved.
 # Copyright (c) 2016, Jim Klimov
+# Copyright (c) 2018, Michal Nowak
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability Uncommitted>
-
-set name=pkg.fmri value=pkg:/compress/pigz@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="parallel implementation of gzip"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Parallel implementation of gzip"
 set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -25,13 +23,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license pigz.license license='BSD-like'
 
-file $(MACH32)/pigz path=usr/bin/$(MACH32)/pigz
-link path=usr/bin/$(MACH32)/unpigz target=./pigz
-
-file $(MACH64)/pigz path=usr/bin/$(MACH64)/pigz
-link path=usr/bin/$(MACH64)/unpigz target=./pigz
-
-hardlink path=usr/bin/pigz target=../lib/isaexec pkg.linted.userland.action002.0=true
-link path=usr/bin/unpigz target=./pigz
-
-file pigz.1 path=usr/share/man/man1/pigz.1
+file path=usr/bin/pigz
+link path=usr/bin/unpigz target=pigz
+file path=usr/share/man/man1/pigz.1
+link path=usr/share/man/man1/unpigz.1 target=pigz.1
