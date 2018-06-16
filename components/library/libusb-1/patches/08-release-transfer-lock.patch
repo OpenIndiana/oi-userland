@@ -1,0 +1,10 @@
+--- libusb-1.0.22/libusb/os/sunos_usb.c.~5~	2018-05-22 08:57:25.153943880 +0000
++++ libusb-1.0.22/libusb/os/sunos_usb.c	2018-05-22 09:02:19.631926413 +0000
+@@ -1375,6 +1375,7 @@
+ 	usbi_dbg("Done: ctrl data bytes %d", ret);
+ 
+ 	/* sync transfer handling */
++	usbi_mutex_unlock(&LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->lock);
+ 	ret = usbi_handle_transfer_completion(LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer),
+ 	    transfer->status);
+ 

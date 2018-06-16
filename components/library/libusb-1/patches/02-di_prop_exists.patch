@@ -1,7 +1,7 @@
 We don't have di_prop_exists() function. Trying to emulate it.
---- libusb-1.0.20/libusb/os/sunos_usb.c	2016-03-23 13:14:45.245042700 +0300
-+++ libusb-1.0.20/libusb/os/sunos_usb.c	2016-03-23 13:14:42.001865927 +0300
-@@ -88,7 +88,7 @@
+--- libusb-1.0.22/libusb/os/sunos_usb.c.~1~	2018-03-17 10:23:37.000000000 +0000
++++ libusb-1.0.22/libusb/os/sunos_usb.c	2018-05-21 11:26:13.206160946 +0000
+@@ -476,7 +476,7 @@
  sunos_fill_in_dev_info(di_node_t node, struct libusb_device *dev)
  {
  	int	proplen;
@@ -10,7 +10,7 @@ We don't have di_prop_exists() function. Trying to emulate it.
  	char	*phypath;
  	uint8_t	*rdata;
  	struct libusb_device_descriptor	*descr;
-@@ -151,14 +151,12 @@
+@@ -546,13 +546,13 @@
  	}
  
  	/* speed */
@@ -21,28 +21,28 @@ We don't have di_prop_exists() function. Trying to emulate it.
 +	} else if (di_prop_lookup_ints(DDI_DEV_T_ANY, node, "high-speed", &i) >= 0) {
  		dev->speed = LIBUSB_SPEED_HIGH;
 -	} else if (di_prop_exists(DDI_DEV_T_ANY, node, "full-speed") == 1) {
-+	} else {
++	} else if (di_prop_lookup_ints(DDI_DEV_T_ANY, node, "full-speed", &i) >= 0) {
  		dev->speed = LIBUSB_SPEED_FULL;
 -	} else if (di_prop_exists(DDI_DEV_T_ANY, node, "super-speed") == 1) {
--		dev->speed = LIBUSB_SPEED_SUPER;
++	} else if (di_prop_lookup_ints(DDI_DEV_T_ANY, node, "super-speed", &i) >= 0) {
+ 		dev->speed = LIBUSB_SPEED_SUPER;
  	}
  
- 	usbi_dbg("vid=%x pid=%x, path=%s, bus_nmber=0x%x, port_number=%d, "
-@@ -180,7 +178,7 @@
+@@ -574,7 +574,7 @@
+ 	uint64_t		bdf = 0;
  	struct libusb_device	*dev;
  	sunos_dev_priv_t	*devpriv;
- 	const char		*path, *newpath;
--	int			 n, i;
-+	int			i, n, *j;
+-	int			n;
++	int			n, *j;
+ 	int			i = 0;
  	int			*addr_prop;
  	uint8_t			bus_number = 0;
+@@ -594,7 +594,7 @@
  
-@@ -198,7 +196,7 @@
- 	pnode = myself;
- 	i = 0;
- 	while (pnode != DI_NODE_NIL) {
--		if (di_prop_exists(DDI_DEV_T_ANY, pnode, "root-hub") == 1) {
-+		if (di_prop_lookup_ints(DDI_DEV_T_ANY, pnode, "root-hub", &j) >= 0) {
- 			/* walk to root */
- 			uint32_t *regbuf = NULL;
- 			uint32_t reg;
+ 	dn = myself;
+ 	/* find the root hub */
+-	while (di_prop_exists(DDI_DEV_T_ANY, dn, "root-hub") != 1) {
++	while (di_prop_lookup_ints(DDI_DEV_T_ANY, dn, "root-hub", &j) != 0) {
+ 		usbi_dbg("find_root_hub:%s", di_devfs_path(dn));
+ 		n = di_prop_lookup_ints(DDI_DEV_T_ANY, dn,
+ 				"assigned-address", &addr_prop);

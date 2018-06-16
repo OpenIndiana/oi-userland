@@ -1,0 +1,123 @@
+list_* functions in SunOS libusb port are available only in later
+Solaris releases and not available in illumos.
+
+--- libusb-1.0.22/config.h.in~	2018-03-25 04:20:09.000000000 +0000
++++ libusb-1.0.22/config.h.in	2018-05-24 11:27:15.592716594 +0000
+@@ -32,6 +32,9 @@
+ /* Define to 1 if you have the <libudev.h> header file. */
+ #undef HAVE_LIBUDEV_H
+ 
++/* Define to 1 if you have list_* API */
++#undef HAVE_LIST_API
++
+ /* Define to 1 if you have the <linux/netlink.h> header file. */
+ #undef HAVE_LINUX_NETLINK_H
+ 
+--- libusb-1.0.22/libusb/os/sunos_usb.c.~4~	2018-05-21 21:22:32.865088060 +0000
++++ libusb-1.0.22/libusb/os/sunos_usb.c	2018-05-21 21:26:42.292238042 +0000
+@@ -81,6 +81,8 @@
+ static void sunos_clear_transfer_priv(struct usbi_transfer *);
+ static int sunos_handle_transfer_completion(struct usbi_transfer *);
+ static int sunos_clock_gettime(int, struct timespec *);
++
++#ifdef HAVE_LIST_API
+ static int sunos_kernel_driver_active(struct libusb_device_handle *, int interface);
+ static int sunos_detach_kernel_driver (struct libusb_device_handle *dev, int interface_number);
+ static int sunos_attach_kernel_driver (struct libusb_device_handle *dev, int interface_number);
+@@ -88,6 +90,7 @@
+ static int sunos_usb_ioctl(struct libusb_device *dev, int cmd);
+ 
+ static struct devctl_iocdata iocdata;
++#endif
+ static int sunos_get_link(di_devlink_t devlink, void *arg)
+ {
+ 	walk_link_t *larg = (walk_link_t *)arg;
+@@ -146,6 +148,7 @@
+ 	return 0;
+ }
+ 
++#ifdef HAVE_LIST_API
+ static int
+ sunos_usb_ioctl(struct libusb_device *dev, int cmd)
+ {
+@@ -237,6 +240,7 @@
+ 
+ 	return (dpriv->ugenpath == NULL);
+ }
++#endif
+ 
+ /*
+  * Private functions
+@@ -254,6 +258,7 @@
+ 	usbi_dbg("");
+ }
+ 
++#ifdef HAVE_LIST_API
+ static string_list_t *
+ sunos_new_string_list(void)
+ {
+@@ -471,6 +476,7 @@
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static int
+ sunos_fill_in_dev_info(di_node_t node, struct libusb_device *dev)
+@@ -983,10 +989,12 @@
+ 		hpriv->eps[i].statfd = -1;
+ 	}
+ 
++#ifdef HAVE_LIST_API
+ 	if (sunos_kernel_driver_active(handle, 0)) {
+ 		/* pretend we can open the device */
+ 		return (LIBUSB_SUCCESS);
+ 	}
++#endif
+ 
+ 	if ((ret = sunos_usb_open_ep0(hpriv, dpriv)) != LIBUSB_SUCCESS) {
+ 		usbi_dbg("fail: %d", ret);
+@@ -1672,9 +1680,15 @@
+         .reset_device = sunos_reset_device, /* TODO */
+         .alloc_streams = NULL,
+         .free_streams = NULL,
++#ifdef HAVE_LIST_API
+         .kernel_driver_active = sunos_kernel_driver_active,
+         .detach_kernel_driver = sunos_detach_kernel_driver,
+         .attach_kernel_driver = sunos_attach_kernel_driver,
++#else
++        .kernel_driver_active = NULL,
++        .detach_kernel_driver = NULL,
++        .attach_kernel_driver = NULL,
++#endif
+         .destroy_device = sunos_destroy_device,
+         .submit_transfer = sunos_submit_transfer,
+         .cancel_transfer = sunos_cancel_transfer,
+--- libusb-1.0.22/configure.ac.~1~	2018-03-17 10:23:37.000000000 +0000
++++ libusb-1.0.22/configure.ac	2018-05-24 14:29:15.009807487 +0000
+@@ -161,6 +161,25 @@
+ 	LIBS="-pthread -ldevinfo"
+ 	AC_CHECK_HEADERS([poll.h])
+ 	AC_DEFINE([POLL_NFDS_TYPE],[nfds_t],[type of second poll() argument])
++	AC_MSG_CHECKING([whether public list API is available])
++	AC_LINK_IFELSE([AC_LANG_PROGRAM(
++     	[[#include <sys/list.h>
++		#include <stdlib.h>
++		#include <stddef.h>
++		typedef list_t string_list_t;
++		typedef struct string_node {
++			char            *string;
++			list_node_t     link;
++		} string_node_t;
++	]],
++        [string_list_t *list;
++		list = calloc(1, sizeof(*list));
++		if (list != NULL)
++               list_create(list, sizeof(string_node_t),
++                            offsetof(string_node_t, link));])],
++                    [AC_DEFINE([HAVE_LIST_API], [1], [Public list API is present])
++			 AC_MSG_RESULT([yes])],
++                    [AC_MSG_RESULT([no])])
+ 	;;
+ netbsd)
+ 	AC_DEFINE(OS_NETBSD, 1, [NetBSD backend])

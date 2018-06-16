@@ -1,5 +1,6 @@
 libusb_close() can interrupt transfer to device, 
-in this case all async requests should exit gracefully
+setting dev_handle to NULL.
+In this case all async requests should exit gracefully
 
 --- libusb-1.0.20/libusb/os/sunos_usb.c.1	2017-07-26 22:04:56.962714963 +0000
 +++ libusb-1.0.20/libusb/os/sunos_usb.c	2017-07-26 22:12:17.008463206 +0000
@@ -23,7 +24,7 @@ in this case all async requests should exit gracefully
 +        
 +	/* libusb can forcibly interrupt transfer in do_close() */
 +	if (dev_handle != NULL) {
-+		hpriv = (sunos_dev_handle_priv_t *)xfer->dev_handle->os_priv;
++		hpriv = (sunos_dev_handle_priv_t *)dev_handle->os_priv;
 +		ep = sunos_usb_ep_index(xfer->endpoint);
 +	
 +		ret = aio_error(aiocb);
@@ -54,3 +55,33 @@ in this case all async requests should exit gracefully
  }
  
  static int
+--- libusb-1.0.22/libusb/io.c.1	2018-05-24 09:29:12.839198625 +0000
++++ libusb-1.0.22/libusb/io.c	2018-05-24 09:45:08.596674342 +0000
+@@ -1706,15 +1706,19 @@
+  * function will be called the next time an event handler runs. */
+ void usbi_signal_transfer_completion(struct usbi_transfer *transfer)
+ {
+-	struct libusb_context *ctx = ITRANSFER_CTX(transfer);
+-	int pending_events;
++	libusb_device_handle *dev_handle = USBI_TRANSFER_TO_LIBUSB_TRANSFER(transfer)->dev_handle;
+ 
+-	usbi_mutex_lock(&ctx->event_data_lock);
+-	pending_events = usbi_pending_events(ctx);
+-	list_add_tail(&transfer->completed_list, &ctx->completed_transfers);
+-	if (!pending_events)
+-		usbi_signal_event(ctx);
+-	usbi_mutex_unlock(&ctx->event_data_lock);
++	if (dev_handle) { 
++		struct libusb_context *ctx = HANDLE_CTX(dev_handle);
++		int pending_events;
++
++		usbi_mutex_lock(&ctx->event_data_lock);
++		pending_events = usbi_pending_events(ctx);
++		list_add_tail(&transfer->completed_list, &ctx->completed_transfers);
++		if (!pending_events)
++			usbi_signal_event(ctx);
++		usbi_mutex_unlock(&ctx->event_data_lock);
++	}
+ }
+ 
+ /** \ingroup libusb_poll
