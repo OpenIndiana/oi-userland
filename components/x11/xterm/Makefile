@@ -11,11 +11,14 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xterm
 COMPONENT_VERSION= 333
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xterm - terminal emulator for X 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
@@ -49,12 +52,13 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-test: $(TEST_32)
+test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += terminal/luit
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
