@@ -11,13 +11,13 @@
 #
 # Copyright 2016 Adam Stevko
 # Copyright 2017 Till Wegmueller
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
-COMPONENT_VERSION=	3.1.6
-COMPONENT_REVISON=	1
+COMPONENT_VERSION=	3.3.1
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	http://www.postfix.org/
 COMPONENT_FMRI=		service/network/smtp/postfix
@@ -25,8 +25,8 @@ COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	http://cdn.postfix.johnriley.me/mirrors/postfix-release/official/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:e5eb005fd133c6a32ca03e796e0192945eb877be8eb727f30d25547c997c5aa6
-COMPONENT_LICENSE=	IBM PUBLIC LICENSE
+COMPONENT_ARCHIVE_HASH=	sha256:54f514dae42b5275cb4bc9c69283f16c06200b71813d0bb696568c4ba7ae7e3b
+COMPONENT_LICENSE=	IBM PUBLIC LICENSE, Eclipse Public License 2.0
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/prep.mk
