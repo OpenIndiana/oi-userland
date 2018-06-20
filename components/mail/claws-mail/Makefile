@@ -10,18 +10,19 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
+# Copyright (c) 2018 Michal Nowak
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	3.15.1
+COMPONENT_VERSION=	3.16.0
 COMPONENT_PROJECT_URL=	http://www.claws-mail.org
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8d093c2f32db863c1141d56e35424c04ee48fe5d6adf4c7f349f647fa3149542
+    sha256:c212133d3d962129d8c7995c1c7d973faef2a8914481c0c74578217bf4c897ab
 COMPONENT_ARCHIVE_URL=	http://www.claws-mail.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
@@ -32,6 +33,9 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
+
+CPPFLAGS += -I/usr/include/gnutls-3
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
@@ -62,6 +66,7 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
