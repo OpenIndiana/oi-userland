@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgphoto2
-COMPONENT_VERSION= 2.5.14
+COMPONENT_VERSION= 2.5.18
 COMPONENT_SUMMARY= Digital camera library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d3ce70686fb87d6791b9adcbb6e5693bfbe1cfef9661c23c75eb8a699ec4e274
+  sha256:5b17b89d7ca0ec35c72c94ac3701e87d49e52371f9509b8e5c08c913ae57a7ec
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/gphoto/files/libgphoto/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://www.gphoto.org
@@ -47,7 +47,7 @@ LD_Z_IGNORE=
 
 CFLAGS.32 += -D_FILE_OFFSET_BITS=64
 CFLAGS	  += $(CFLAGS.$(BITS))
-CFLAGS	  += -std=gnu89 $(CPP_XPG5MODE)
+CFLAGS	  += -std=gnu99 $(CPP_XPG6MODE)
 
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
 
