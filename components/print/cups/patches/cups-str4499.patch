@@ -1,0 +1,21 @@
+https://bugzilla.redhat.com/show_bug.cgi?id=1193105
+
+diff -up cups-1.7.5/backend/snmp-supplies.c.str4499 cups-1.7.5/backend/snmp-supplies.c
+--- backend/snmp-supplies.c.str4499	2013-09-27 17:18:26.000000000 +0100
++++ backend/snmp-supplies.c	2015-02-18 12:40:31.603246538 +0000
+@@ -304,6 +304,7 @@ backendSNMPSupplies(
+               else
+                 new_supply_state |= CUPS_OPC_NEAR_EOL;
+               break;
++#if 0 /* Because no two vendors report waste containers the same, disable SNMP reporting of same */
+           case CUPS_TC_wasteInk :
+           case CUPS_TC_wastePaper :
+           case CUPS_TC_wasteToner :
+@@ -314,6 +315,7 @@ backendSNMPSupplies(
+               else
+                 new_supply_state |= CUPS_WASTE_ALMOST_FULL;
+               break;
++#endif /* 0 */
+           case CUPS_TC_cleanerUnit :
+           case CUPS_TC_fuserCleaningPad :
+               if (percent <= 1)
