@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018, Michal Nowak
 #
 
 <transform file path=usr.*/man/.+/flea\.1$ -> default mangler.man.stability uncommitted>
@@ -35,7 +36,7 @@
 <transform file path=etc/mutt/mime.types$ -> default mode 0644>
 <transform file path=etc/mutt/mime.types$ -> default preserve renamenew>
 
-set name=pkg.fmri value=pkg:/mail/mutt@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The Mutt E-Mail Client"
 set name=pkg.description \
     value="Mutt is a small but very powerful text-based mail client for Unix operating systems."
@@ -149,9 +150,7 @@ file path=usr/share/locale/tr/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/uk/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/mutt.mo
-file path=usr/share/man/man1/flea.1
 file path=usr/share/man/man1/mutt.1
-file path=usr/share/man/man1/muttbug.1
 file path=usr/share/man/man1/pgpewrap.1
 file path=usr/share/man/man1/pgpring.1
 file path=usr/share/man/man1/smime_keys.1
