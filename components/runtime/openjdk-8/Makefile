@@ -17,13 +17,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-8
 
-OPENJDK_BUILD_NUMBER=162
+OPENJDK_BUILD_NUMBER=172
 COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
-COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20180212.tar.xz
+COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20180527.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:21d69b71415c129b3cd5e9c8adb8a7263864dc90f5b06216bc82f879b111367d
+  sha256:2929378dd3a41b7953fd5f0244ea684a06a3d71e447516eb0a99ade8e952273f
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.netbsd.org/pub/pkgsrc/distfiles/openjdk7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://openjdk.java.net/
