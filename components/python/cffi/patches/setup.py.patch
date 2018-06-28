@@ -1,0 +1,19 @@
+We don't have __sync_synchronize, so don't bother testing for it.
+Not contributed upstream, but may be in future.
+
+
+--- cffi-1.11.4/setup.py.orig	2018-01-13 11:28:57.000000000 -0800
++++ cffi-1.11.4/setup.py	2018-02-15 17:32:38.870952346 -0800
+@@ -73,11 +73,11 @@
+             no_working_compiler_found()
+         sys.stderr.write("Note: will not use '__thread' in the C code\n")
+         _safe_to_ignore()
+ 
+ def ask_supports_sync_synchronize():
+-    if sys.platform == 'win32':
++    if sys.platform == 'win32' or sys.platform == 'sunos5':
+         return
+     config = get_config()
+     ok = config.try_link('int main(void) { __sync_synchronize(); return 0; }')
+     if ok:
+         define_macros.append(('HAVE_SYNC_SYNCHRONIZE', None))
