@@ -1,0 +1,247 @@
+
+The testsuite makes some incorrect assumptions:
+
+  - Don't use the -pthread flag for compilation; as Studio doesn't have any
+    clue what to do with it, and we don't need it on Solaris, anyway.
+
+  - don't assume that enums can be unsigned or are the same size as long:
+
+    https://bitbucket.org/cffi/cffi/issue/143/test_enum_size-makes-invalid-assumptions
+
+  - There is one test helper in test_recompiler where we suddenly try to do C++
+    but without changing the compiler executable. This works in gcc but not with
+    Studio.
+
+  - test_recompiler has some test cases work in gcc or clang but not with Studio:
+    test_some_float_type and test_some_float_invalid_3 raise an error "non-constant
+    initializer involving a cast".
+    test_restrict_fields uses the __restrict keyword, which seems to require gcc.
+
+  - Don't force the use of gcc when compiling a test shared object; get
+    that passed in from the makefile.
+
+
+--- cffi-1.11.4/testing/cffi0/callback_in_thread.py	2015-06-09 03:04:07.000000000 -0700
++++ cffi-1.11.4/testing/cffi0/callback_in_thread.py	2015-08-11 10:56:22.822161292 -0700
+@@ -22,7 +22,7 @@
+             pthread_create(&thread, NULL, my_wait_function, (void*)mycb);
+             return 0;
+         }
+-    """, extra_compile_args=['-pthread'])
++    """)
+     seen = []
+     @ffi.callback('int(*)(int,int)')
+     def mycallback(x, y):
+
+--- cffi-1.11.4/testing/cffi1/test_new_ffi_1.py	2015-06-09 03:04:07.000000000 -0700
++++ cffi-1.11.4/testing/cffi1/test_new_ffi_1.py	2015-08-12 15:18:12.105387245 -0700
+@@ -81,6 +81,10 @@
+         DEFS = DEFS.replace('data[0]', 'data[1]')   # not supported
+         CCODE = (DEFS + "\n#pragma pack(push,1)\n" + DEFS_PACKED +
+                  "\n#pragma pack(pop)\n")
++    elif sys.platform == "sunos5":
++        DEFS = DEFS.replace('data[0]', 'data[1]')   # not supported
++        CCODE = (DEFS +
++                 DEFS_PACKED.replace('/*here*/', '__attribute__((packed))'))
+     else:
+         CCODE = (DEFS +
+                  DEFS_PACKED.replace('/*here*/', '__attribute__((packed))'))
+@@ -893,9 +897,9 @@
+         assert ffi.cast("enum foq", 0) != ffi.cast("enum bar", 0)
+         assert ffi.cast("enum bar", 0) != ffi.cast("int", 0)
+         assert repr(ffi.cast("enum bar", -1)) == "<cdata 'enum bar' -1: CC1>"
+-        assert repr(ffi.cast("enum foq", -1)) == (  # enums are unsigned, if
+-            "<cdata 'enum foq' 4294967295>") or (   # they contain no neg value
+-                sys.platform == "win32")            # (but not on msvc)
++        assert repr(ffi.cast("enum foq", -1)) == (   # enums are unsigned, if
++            "<cdata 'enum foq' 4294967295>") or (    # they contain no neg value
++                sys.platform in ("win32", "sunos5")) # (but not on msvc or SS)
+         # enum baz { A2=0x1000, B2=0x2000 };
+         assert ffi.string(ffi.cast("enum baz", 0x1000)) == "A2"
+         assert ffi.string(ffi.cast("enum baz", 0x2000)) == "B2"
+@@ -1011,7 +1015,7 @@
+     def test_bitfield_enum(self):
+         # typedef enum { AA1, BB1, CC1 } foo_e_t;
+         # typedef struct { foo_e_t f:2; } bfenum_t;
+-        if sys.platform == "win32":
++        if sys.platform in ("win32", "sunos5"):
+             py.test.skip("enums are not unsigned")
+         s = ffi.new("bfenum_t *")
+         s.f = 2
+@@ -1211,7 +1215,7 @@
+         assert repr(p.a).startswith("<cdata 'int[2]' 0x")
+ 
+     def test_struct_containing_array_varsize_workaround(self):
+-        if sys.platform == "win32":
++        if sys.platform in ("win32", "sunos5"):
+             py.test.skip("array of length 0 not supported")
+         # struct array0 { int len; short data[0]; };
+         p = ffi.new("char[]", ffi.sizeof("struct array0") + 7 * SIZE_OF_SHORT)
+--- cffi-1.11.4/testing/cffi1/test_recompiler.py	2015-06-09 03:04:10.000000000 -0700
++++ cffi-1.11.4/testing/cffi1/test_recompiler.py	2015-08-11 11:08:16.757848317 -0700
+@@ -26,10 +26,14 @@
+ def verify(ffi, module_name, source, *args, **kwds):
+     no_cpp = kwds.pop('no_cpp', False)
+     kwds.setdefault('undef_macros', ['NDEBUG'])
+     module_name = '_CFFI_' + module_name
+     ffi.set_source(module_name, source)
++    if sys.platform == 'sunos5':
++        kwds['extra_compile_args'] = (kwds.get('extra_compile_args', []) +
++            ["-errtags=yes", "-errwarn=E_ASSIGNMENT_TYPE_MISMATCH,"
++            "E_RETURN_VALUE_TYPE_MISMATCH"])
+     if not os.environ.get('NO_CPP') and not no_cpp:   # test the .cpp mode too
+         kwds.setdefault('source_extension', '.cpp')
+         source = 'extern "C" {\n%s\n}' % (source,)
+     elif sys.platform != 'win32':
+         # add '-Werror' to the existing 'extra_compile_args' flags
+
+--- cffi-1.11.4/testing/cffi1/test_verify1.py	2015-06-09 03:04:07.000000000 -0700
++++ cffi-1.11.4/testing/cffi1/test_verify1.py	2015-08-12 15:02:07.774160223 -0700
+@@ -19,11 +19,15 @@
+         extra_compile_args = ['-Werror', '-Wall', '-Wextra', '-Wconversion']
+         # special things for clang
+         extra_compile_args.append('-Qunused-arguments')
+     else:
+         # assume a standard gcc
+-        extra_compile_args = ['-Werror', '-Wall', '-Wextra', '-Wconversion']
++        # We add the -Wno-unknown-pragmas because Solaris' python is build
++        # with Studio, which uses no_inline rather than noinline.
++        extra_compile_args = ['-Werror', '-Wall',
++                              '-Wextra', '-Wconversion',
++                              '-Wno-unknown-pragmas']
+ 
+ class FFI(FFI):
+     error = _cffi_backend.FFI.error
+     _extra_compile_args = extra_compile_args
+     _verify_counter = 0
+
+@@ -75,6 +77,10 @@
+         py.test.skip("needs GCC or Clang")
+     ffi = FFI()
+     ffi.cdef(cdef)
++    if sys.platform == 'sunos5':
++        lib = ffi.verify(source, **kargs)
++        return lib
++
+     py.test.raises(VerificationError, ffi.verify, source, **kargs)
+     extra_compile_args_orig = extra_compile_args[:]
+     extra_compile_args.remove('-Wconversion')
+@@ -1726,13 +1732,13 @@
+              ('-123',          4, -1),
+              ('-2147483647-1', 4, -1),
+              ]
+-    if FFI().sizeof("long") == 8:
++    if FFI().sizeof("long") == 8 and sys.platform != 'sunos5':
+         cases += [('4294967296L',        8, 2**64-1),
+                   ('%dUL' % (2**64-1),   8, 2**64-1),
+                   ('-2147483649L',       8, -1),
+                   ('%dL-1L' % (1-2**63), 8, -1)]
+     for hidden_value, expected_size, expected_minus1 in cases:
+-        if sys.platform == 'win32' and 'U' in hidden_value:
++        if sys.platform in ('win32', 'sunos5') and 'U' in hidden_value:
+             continue   # skipped on Windows
+         ffi = FFI()
+         ffi.cdef("enum foo_e { AA, BB, ... };")
+@@ -1740,7 +1746,7 @@
+         assert lib.AA == 0
+         assert lib.BB == eval(hidden_value.replace('U', '').replace('L', ''))
+         assert ffi.sizeof("enum foo_e") == expected_size
+-        if sys.platform != 'win32':
++        if sys.platform not in  ('win32', 'sunos5'):
+             assert int(ffi.cast("enum foo_e", -1)) == expected_minus1
+     # test with the large value hidden:
+     # disabled so far, doesn't work
+@@ -1759,7 +1765,7 @@
+                     (0xffffffff, 'U'),
+                     (maxulong, 'UL'),
+                     (-int(maxulong / 3), 'L')]:
+-        if c2c and sys.platform == 'win32':
++        if c2c and sys.platform in ('win32', 'sunos5'):
+             continue     # enums may always be signed with MSVC
+         ffi = FFI()
+         ffi.cdef("enum foo_e { AA };")
+--- cffi-1.11.4/testing/cffi0/test_ownlib.py	2015-06-09 03:04:07.000000000 -0700
++++ cffi-1.11.4/testing/cffi0/test_ownlib.py	2015-08-12 13:55:21.239982926 -0700
+@@ -1,4 +1,4 @@
+-import py, sys
++import os, py, sys
+ import subprocess, weakref
+ from cffi import FFI
+ from cffi.backend_ctypes import CTypesBackend
+@@ -102,7 +102,6 @@
+         from testing.udir import udir
+         udir.join('testownlib.c').write(SOURCE)
+         if sys.platform == 'win32':
+-            import os
+             # did we already build it?
+             if os.path.exists(str(udir.join('testownlib.dll'))):
+                 cls.module = str(udir.join('testownlib.dll'))
+@@ -129,7 +128,7 @@
+                 cls.module = str(udir.join('testownlib.dll'))
+         else:
+             subprocess.check_call(
+-                'cc testownlib.c -shared -fPIC -o testownlib.so',
++                os.getenv('TESTOWNLIB_CC') % ('testownlib.c', 'testownlib.so'),
+                 cwd=str(udir), shell=True)
+             cls.module = str(udir.join('testownlib.so'))
+
+--- cffi-1.11.4/testing/cffi0/test_verify.py    2015-06-09 03:04:07.000000000 -0700
++++ cffi-1.11.4/testing/cffi0/test_verify.py    2015-08-12 14:17:18.300215250 -0700
+@@ -17,12 +17,16 @@
+         # assume a standard clang or gcc
+         extra_compile_args = ['-Werror', '-Wall', '-Wextra', '-Wconversion']
+         # special things for clang
+         extra_compile_args.append('-Qunused-arguments')
+     else:
+-        # assume a standard gcc
+-        extra_compile_args = ['-Werror', '-Wall', '-Wextra', '-Wconversion']
++        # assume a standard gcc.
++        # We add the -Wno-unknown-pragmas because Solaris' python is compiled with
++        # Studio and uses no_inline rather than noinline.
++        extra_compile_args = ['-Werror', '-Wall',
++                              '-Wextra', '-Wconversion',
++                              '-Wno-unknown-pragmas']
+ 
+     class FFI(FFI):
+         def verify(self, *args, **kwds):
+             return super(FFI, self).verify(
+                 *args, extra_compile_args=extra_compile_args, **kwds)
+
+@@ -95,6 +98,11 @@
+         py.test.skip("needs GCC or Clang")
+     ffi = FFI()
+     ffi.cdef(cdef)
++
++    if sys.platform == 'sunos5':
++        lib = ffi.verify(source, **kargs)
++        return lib
++
+     py.test.raises(VerificationError, ffi.verify, source, **kargs)
+     extra_compile_args_orig = extra_compile_args[:]
+     extra_compile_args.remove('-Wconversion')
+@@ -1737,13 +1745,13 @@
+              ('-123',          4, -1),
+              ('-2147483647-1', 4, -1),
+              ]
+-    if FFI().sizeof("long") == 8:
++    if FFI().sizeof("long") == 8 and sys.platform != 'sunos5':
+         cases += [('4294967296L',        8, 2**64-1),
+                   ('%dUL' % (2**64-1),   8, 2**64-1),
+                   ('-2147483649L',       8, -1),
+                   ('%dL-1L' % (1-2**63), 8, -1)]
+     for hidden_value, expected_size, expected_minus1 in cases:
+-        if sys.platform == 'win32' and 'U' in hidden_value:
++        if sys.platform in ('win32', 'sunos5') and 'U' in hidden_value:
+             continue   # skipped on Windows
+         ffi = FFI()
+         ffi.cdef("enum foo_e { AA, BB, ... };")
+@@ -1768,7 +1776,7 @@
+                         (maxulong, -1, ''),
+                         (-1, 0xffffffff, 'U'),
+                         (-1, maxulong, 'UL')]:
+-        if c2c and sys.platform == 'win32':
++        if c2c and sys.platform in ('win32', 'sunos5'):
+             continue     # enums may always be signed with MSVC
+         ffi = FFI()
+         ffi.cdef("enum foo_e { AA=%s };" % c1)
+
