@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
@@ -173,6 +173,9 @@ endif
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
 
-# Make it easy to construct a URL for a pypi source download.
-PYPI_BASE = http://pypi.python.org/packages/source
-pypi_url = $(PYPI_BASE)/$(shell echo $(COMPONENT_NAME) | cut -c1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+# Make it easy to construct a URL for a pypi source download. This
+# construct supports an optional call to a number from
+# NUM_EXTRA_ARCHIVES for multiple archive downloads.
+pypi_url_multi = pypi:///$(COMPONENT_NAME_$(1))==$(COMPONENT_VERSION_$(1))
+pypi_url_single = pypi:///$(COMPONENT_NAME)==$(COMPONENT_VERSION)
+pypi_url = $(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))

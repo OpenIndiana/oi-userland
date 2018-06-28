@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # fetch.py - a file download utility
@@ -32,12 +32,13 @@ import errno
 import os
 import sys
 import shutil
+import json
 import subprocess
 import re
 import gzip
 import bz2
-from urllib import splittype
-from urllib2 import urlopen
+from urllib import splittype, splithost
+from urllib2 import urlopen, HTTPError
 from urllib2 import Request
 import hashlib
 
@@ -228,7 +229,11 @@ def download_paths(search, filename, url):
 
     # command line url is a fallback, so it's last
     if url is not None and url not in urls:
-        urls.append(url)
+        scheme, path = splittype(url)
+        if scheme == "pypi":
+            url = pypi_url(url, os.path.basename(filename))
+        if url != None and url not in urls:
+            urls.append(url)
 
     # last resort path
     if filename is not None:
@@ -240,6 +245,64 @@ def download_paths(search, filename, url):
 
     return urls
 
+def pypi_url(url, filename):
+	"""Given a pypi: URL, return the real URL for that component/version.
+
+	The pypi scheme has a host (with an empty host defaulting to
+	pypi.python.org), and a path that should be of the form
+	"component==version".  Other specs could be supported, but == is the
+	only thing that makes sense in this context.
+
+	The filename argument is the name of the expected file to download, so
+	that when pypi gives us multiple archives to choose from, we can pick
+	the right one.
+	"""
+
+	host, path = splithost(splittype(url)[1])
+
+	# We have to use ==; anything fancier would require pkg_resources, but
+	# really that's the only thing that makes sense in this context.
+	try:
+		name, version = re.match("/(.*)==(.*)$", path).groups()
+	except AttributeError:
+		print "PyPI URLs must be of the form 'pypi:///component==version'"
+		return None
+
+	if not host:
+		jsurl = "https://pypi.python.org/pypi/%s/json" % name
+	else:
+		jsurl = "https://%s/pypi/%s/json" % (host, name)
+
+	try:
+		f = urlopen(jsurl)
+	except HTTPError as e:
+		if e.getcode() == 404:
+			print "Unknown component '%s'" % name
+		else:
+			printIOError(e, "Can't open PyPI JSON url %s" % url)
+		return None
+	except IOError as e:
+		printIOError(e, "Can't open PyPI JSON url %s" % url)
+		return None
+
+	js = json.load(f)
+	try:
+		verblock = js["releases"][version]
+	except KeyError:
+		print "Unknown version '%s'" % version
+		return None
+
+	urls = [ d["url"] for d in verblock ]
+	for archiveurl in urls:
+		if archiveurl.endswith("/%s" % filename):
+			return archiveurl
+
+	if urls:
+		print "None of the following URLs delivers '%s':" % filename
+		print "  " + "\n  ".join(urls)
+	else:
+		print "Couldn't find any suitable URLs"
+	return None
 
 def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
     """Attempts to download a file from a number of possible locations.
