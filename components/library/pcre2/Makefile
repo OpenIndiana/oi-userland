@@ -46,7 +46,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 TEST_TARGET= install $(TEST_32_and_64)
-SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 
 # pick up -std=c99 in CFLAGS
 CFLAGS+=	-std=c99
@@ -63,9 +62,6 @@ CXXFLAGS+=	$(CC_PIC)
 
 # turn on support for large files
 CXXFLAGS+=	$(CPP_LARGEFILES)
-
-LINT_FLAGS+=	$(CPP_LARGEFILES)
-LINT_FLAGS+=	-I$(PROTOUSRINCDIR)/pcre
 
 CONFIGURE_ENV+=	"CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV+=	"CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
