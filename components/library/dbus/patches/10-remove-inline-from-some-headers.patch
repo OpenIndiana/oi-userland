@@ -1,0 +1,74 @@
+This patch makes illumos-gate build: https://github.com/OpenIndiana/oi-userland/pull/4297#issuecomment-402036563
+
+```
+/usr/include/dbus-1.0/dbus/dbus-address.h:74: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+/usr/include/dbus-1.0/dbus/dbus-message.h:366: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+/usr/include/dbus-1.0/dbus/dbus-connection.h:464: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+/usr/include/dbus-1.0/dbus/dbus-pending-call.h:87: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+/usr/include/dbus-1.0/dbus/dbus-server.h:115: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'void'
+dmake: Warning: Command failed for target `pics/libhal.o'
+```
+
+```
+ 74 static inline void
+ 75 dbus_clear_address_entries (DBusAddressEntry ***pointer_to_entries)
+ 76 {
+ 77   _dbus_clear_pointer_impl (DBusAddressEntry *, pointer_to_entries,
+ 78                             dbus_address_entries_free);
+ 79 }
+```
+--- dbus-1.12.8/dbus/dbus-address.h	2017-10-30 13:26:18.000000000 +0000
++++ dbus-1.12.8/dbus/dbus-address.h	2018-07-04 21:04:36.033281868 +0000
+@@ -71,7 +71,7 @@ char* dbus_address_unescape_value (const
+  * pointer_to_entries must not be #NULL, but *pointer_to_entries
+  * may be #NULL.
+  */
+-static inline void
++static void
+ dbus_clear_address_entries (DBusAddressEntry ***pointer_to_entries)
+ {
+   _dbus_clear_pointer_impl (DBusAddressEntry *, pointer_to_entries,
+--- dbus-1.12.8/dbus/dbus-connection.h	2017-10-30 13:26:18.000000000 +0000
++++ dbus-1.12.8/dbus/dbus-connection.h	2018-07-04 21:04:42.641032977 +0000
+@@ -461,7 +461,7 @@ dbus_bool_t dbus_connection_get_socket
+  * pointer_to_connection must not be #NULL, but *pointer_to_connection
+  * may be #NULL.
+  */
+-static inline void
++static void
+ dbus_clear_connection (DBusConnection **pointer_to_connection)
+ {
+   _dbus_clear_pointer_impl (DBusConnection, pointer_to_connection,
+--- dbus-1.12.8/dbus/dbus-message.h	2017-10-30 13:26:18.000000000 +0000
++++ dbus-1.12.8/dbus/dbus-message.h	2018-07-04 21:05:04.576402315 +0000
+@@ -363,7 +363,7 @@ dbus_bool_t dbus_message_get_allow_inter
+  * pointer_to_message must not be #NULL, but *pointer_to_message
+  * may be #NULL.
+  */
+-static inline void
++static void
+ dbus_clear_message (DBusMessage **pointer_to_message)
+ {
+   _dbus_clear_pointer_impl (DBusMessage, pointer_to_message,
+--- dbus-1.12.8/dbus/dbus-pending-call.h	2017-10-30 13:26:18.000000000 +0000
++++ dbus-1.12.8/dbus/dbus-pending-call.h	2018-07-04 21:05:12.336140616 +0000
+@@ -84,7 +84,7 @@ void*       dbus_pending_call_get_data
+  * pointer_to_pending_call must not be #NULL, but *pointer_to_pending_call
+  * may be #NULL.
+  */
+-static inline void
++static void
+ dbus_clear_pending_call (DBusPendingCall **pointer_to_pending_call)
+ {
+   _dbus_clear_pointer_impl (DBusPendingCall, pointer_to_pending_call,
+--- dbus-1.12.8/dbus/dbus-server.h	2017-10-30 13:26:18.000000000 +0000
++++ dbus-1.12.8/dbus/dbus-server.h	2018-07-04 21:05:16.288682825 +0000
+@@ -112,7 +112,7 @@ void*       dbus_server_get_data
+  * pointer_to_server must not be #NULL, but *pointer_to_server
+  * may be #NULL.
+  */
+-static inline void
++static void
+ dbus_clear_server (DBusServer **pointer_to_server)
+ {
+   _dbus_clear_pointer_impl (DBusServer, pointer_to_server, dbus_server_unref);
