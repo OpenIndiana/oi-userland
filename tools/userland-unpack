@@ -20,6 +20,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 #
 # unpack.py - an archive unpack utility
@@ -44,6 +45,8 @@ def uncompress_unpack_commands(filename, verbose=False):
 		uncompress = "/usr/bin/uncompress -c"
 	elif (re.search("(\.7z)$", filename) != None):
 		uncompress = "/usr/bin/7z --s"
+	elif (re.search("(\.lz)$", filename) != None):
+		uncompress = "/usr/bin/lzip -dc"
 	elif (re.search("(\.xz)$", filename) != None):
 		uncompress = "/usr/bin/xz -dc"
 	elif (re.search("(\.zip)$", filename) != None):
