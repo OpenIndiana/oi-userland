@@ -10,7 +10,10 @@
 
 #
 # Copyright 2018 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2018 Michal Nowak
 #
+
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -32,18 +35,17 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-build:		$(BUILD_32_and_64)
 
-include $(WS_MAKE_RULES)/shared-targets.mk
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/testing|tests/'"
 
-install:	$(INSTALL_32_and_64)
+build:		$(BUILD_64)
 
-test:		$(TEST_32_and_64)
+install:	$(INSTALL_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+test:		$(TEST_64)
 
-include $(WS_MAKE_RULES)/depend.mk
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
