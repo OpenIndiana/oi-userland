@@ -28,7 +28,6 @@ file path=etc/pulse/daemon.conf
 file path=etc/pulse/default.pa
 file path=etc/pulse/system.pa
 file path=etc/xdg/autostart/pulseaudio.desktop
-file path=usr/bin/$(MACH32)/esdcompat
 file path=usr/bin/$(MACH32)/pacat
 file path=usr/bin/$(MACH32)/pacmd
 file path=usr/bin/$(MACH32)/pactl
@@ -39,8 +38,8 @@ link path=usr/bin/$(MACH32)/parecord target=pacat
 file path=usr/bin/$(MACH32)/pasuspender
 file path=usr/bin/$(MACH32)/pax11publish
 file path=usr/bin/$(MACH32)/pulseaudio
+file path=usr/bin/$(MACH32)/qpaeq
 file path=usr/bin/$(MACH32)/start-pulseaudio-x11
-file path=usr/bin/esdcompat
 file path=usr/bin/pacat
 file path=usr/bin/pacmd
 file path=usr/bin/pactl
@@ -51,6 +50,7 @@ link path=usr/bin/parecord target=pacat
 file path=usr/bin/pasuspender
 file path=usr/bin/pax11publish
 file path=usr/bin/pulseaudio
+file path=usr/bin/qpaeq
 file path=usr/bin/start-pulseaudio-x11
 file path=usr/include/pulse/cdecl.h
 file path=usr/include/pulse/channelmap.h
@@ -94,9 +94,9 @@ file path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so.0.0.5
 link path=usr/lib/$(MACH64)/libpulse-simple.so target=libpulse-simple.so.0.1.1
 link path=usr/lib/$(MACH64)/libpulse-simple.so.0 target=libpulse-simple.so.0.1.1
 file path=usr/lib/$(MACH64)/libpulse-simple.so.0.1.1
-link path=usr/lib/$(MACH64)/libpulse.so target=libpulse.so.0.20.2
-link path=usr/lib/$(MACH64)/libpulse.so.0 target=libpulse.so.0.20.2
-file path=usr/lib/$(MACH64)/libpulse.so.0.20.2
+link path=usr/lib/$(MACH64)/libpulse.so target=libpulse.so.0.20.3
+link path=usr/lib/$(MACH64)/libpulse.so.0 target=libpulse.so.0.20.3
+file path=usr/lib/$(MACH64)/libpulse.so.0.20.3
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse-mainloop-glib.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse-simple.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse.pc
@@ -111,6 +111,7 @@ file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libraop.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/librtp.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-allow-passthrough.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-always-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-always-source.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-augment-properties.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-card-restore.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-cli-protocol-tcp.so
@@ -125,8 +126,10 @@ file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-detect.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-device-manager.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-device-restore.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-echo-cancel.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-equalizer-sink.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-filter-apply.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-filter-heuristics.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-gsettings.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-tcp.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-unix.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-intended-roles.so
@@ -175,6 +178,7 @@ file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-x11-publis
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-x11-xsmp.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-discover.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-publish.so
+file path=usr/lib/$(MACH64)/pulse/gsettings-helper
 file path=usr/lib/$(MACH64)/pulseaudio/libpulsecommon-$(COMPONENT_VERSION).so
 file path=usr/lib/$(MACH64)/pulseaudio/libpulsecore-$(COMPONENT_VERSION).so
 file path=usr/lib/cmake/PulseAudio/PulseAudioConfig.cmake
@@ -187,9 +191,9 @@ file path=usr/lib/libpulse-mainloop-glib.so.0.0.5
 link path=usr/lib/libpulse-simple.so target=libpulse-simple.so.0.1.1
 link path=usr/lib/libpulse-simple.so.0 target=libpulse-simple.so.0.1.1
 file path=usr/lib/libpulse-simple.so.0.1.1
-link path=usr/lib/libpulse.so target=libpulse.so.0.20.2
-link path=usr/lib/libpulse.so.0 target=libpulse.so.0.20.2
-file path=usr/lib/libpulse.so.0.20.2
+link path=usr/lib/libpulse.so target=libpulse.so.0.20.3
+link path=usr/lib/libpulse.so.0 target=libpulse.so.0.20.3
+file path=usr/lib/libpulse.so.0.20.3
 file path=usr/lib/pkgconfig/libpulse-mainloop-glib.pc
 file path=usr/lib/pkgconfig/libpulse-simple.pc
 file path=usr/lib/pkgconfig/libpulse.pc
@@ -204,6 +208,7 @@ file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libraop.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/librtp.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-allow-passthrough.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-always-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-always-source.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-augment-properties.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-card-restore.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-cli-protocol-tcp.so
@@ -218,8 +223,10 @@ file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-detect.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-device-manager.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-device-restore.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-echo-cancel.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-equalizer-sink.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-filter-apply.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-filter-heuristics.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-gsettings.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-tcp.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-unix.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-intended-roles.so
@@ -268,8 +275,10 @@ file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-x11-publish.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-x11-xsmp.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-discover.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-publish.so
+file path=usr/lib/pulse/gsettings-helper
 file path=usr/lib/pulseaudio/libpulsecommon-$(COMPONENT_VERSION).so
 file path=usr/lib/pulseaudio/libpulsecore-$(COMPONENT_VERSION).so
+file path=usr/share/GConf/gsettings/pulseaudio.convert
 link path=usr/share/bash-completion/completions/pacat target=pulseaudio
 link path=usr/share/bash-completion/completions/pacmd target=pulseaudio
 link path=usr/share/bash-completion/completions/pactl target=pulseaudio
@@ -279,6 +288,7 @@ link path=usr/share/bash-completion/completions/parec target=pulseaudio
 link path=usr/share/bash-completion/completions/parecord target=pulseaudio
 link path=usr/share/bash-completion/completions/pasuspender target=pulseaudio
 file path=usr/share/bash-completion/completions/pulseaudio
+file path=usr/share/glib-2.0/schemas/org.freedesktop.pulseaudio.gschema.xml
 file path=usr/share/locale/as/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/be/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/bn_IN/LC_MESSAGES/pulseaudio.mo
@@ -323,7 +333,6 @@ file path=usr/share/locale/tr/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/uk/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/pulseaudio.mo
-file path=usr/share/man/man1/esdcompat.1
 file path=usr/share/man/man1/pacat.1
 file path=usr/share/man/man1/pacmd.1
 file path=usr/share/man/man1/pactl.1
@@ -335,7 +344,7 @@ link path=usr/share/man/man1/parecord.1 target=pacat.1
 file path=usr/share/man/man1/pasuspender.1
 file path=usr/share/man/man1/pax11publish.1
 file path=usr/share/man/man1/pulseaudio.1
-file path=usr/share/man/man1/start-pulseaudio-x$(COMPONENT_VERSION)
+file path=usr/share/man/man1/start-pulseaudio-x11.1
 file path=usr/share/man/man5/default.pa.5
 file path=usr/share/man/man5/pulse-cli-syntax.5
 file path=usr/share/man/man5/pulse-client.conf.5
