@@ -11,24 +11,26 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
-COMPONENT_VERSION= 1.10.20
+COMPONENT_VERSION= 1.12.8
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e574b9780b5425fde4d973bb596e7ea0f09e00fe2edd662da9016e976c460b48
+  sha256:e2dc99e7338303393b6663a98320aba6a63421bcdaaf571c8022f815e5896eb3
 COMPONENT_ARCHIVE_URL= \
   http://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL = $(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software_2fdbus
+COMPONENT_PROJECT_URL = https://www.freedesktop.org/wiki/Software/dbus/
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_LICENSE = GPLv2,AFLv2.1
 COMPONENT_CLASSIFICATION = System/Libraries
+COMPONENT_FMRI = system/library/dbus
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -47,20 +49,27 @@ CONFIGURE_OPTIONS += --with-dbus-user=root
 CONFIGURE_OPTIONS += --with-dbus-daemondir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-static
 
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV    += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
+
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
+
+# To prevent "libtool_install_magic: unbound variable"
+unexport SHELLOPTS
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test: $(TEST_32_and_64)
 
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gnome/yelp-tools
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/xmlto
 REQUIRED_PACKAGES += x11/library/libx11
