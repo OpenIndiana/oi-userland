@@ -17,14 +17,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xcb-util-xrm
-COMPONENT_VERSION=      1.2
+COMPONENT_VERSION=      1.3
 COMPONENT_FMRI=         x11/library/xcb-util-xrm
 COMPONENT_CLASSIFICATION=Development/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://github.com/Airblader/xcb-util-xrm
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c4a1d64d4a6973c649e3b6e3c418242f11e39c65d4d227d555d48f6df0558567
-COMPONENT_ARCHIVE_URL=  http://github.com/Airblader/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:0129f74c327ae65e2f4ad4002f300b4f02c9aff78c00997f1f1c5a430f922f34
+COMPONENT_ARCHIVE_URL= \
+  http://github.com/Airblader/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_SUMMARY=      XCB utility functions for the X resource manager.
@@ -42,7 +44,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libxcb
