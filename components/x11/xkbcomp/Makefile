@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xkbcomp
-COMPONENT_VERSION=        1.4.1
+COMPONENT_VERSION=        1.4.2
 COMPONENT_FMRI=           x11/keyboard/xkbcomp
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xkbcomp - compile XKB keyboard description
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:748dc4cf58ac95684106bd9cf163ac6ab7de9a236faec02a6f4d4006d63a5736
+  sha256:6dd8bcb9be7e85bd7294abe261b8c7b0539d2fc93e41b80fb8bd013767ce8424
 COMPONENT_ARCHIVE_URL= \
   https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
