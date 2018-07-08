@@ -17,15 +17,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
-COMPONENT_VERSION=        2.8.1
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        2.9.1
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e5435f02e02d2b87bb8e4efdcaa14b1f78c9cf3ab1ed80f94b6382fb6acc7d78
+  sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d
 COMPONENT_ARCHIVE_URL= \
   http://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://freetype.org/
@@ -43,6 +42,7 @@ gcc_OPT=-O2
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --enable-biarch-config
+CONFIGURE_OPTIONS+= --enable-freetype-config
 CONFIGURE_OPTIONS+= --with-zlib
 CONFIGURE_OPTIONS+= --with-bzip2
 CONFIGURE_OPTIONS+= --with-png
