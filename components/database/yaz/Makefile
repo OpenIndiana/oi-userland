@@ -11,20 +11,21 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= yaz
-COMPONENT_VERSION= 5.18.0
+COMPONENT_VERSION= 5.25.0
 COMPONENT_SUMMARY= toolkit supporting the development of Z39.50/SRW/SRU clients and servers
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b37ebbfc5b88ddb4fc5d8aefca345b48acac196211d35b11f292aafe636f660c
+  sha256:980759ffeb6ccb319dfa41613c56764c18b1f02b78cb2a1ade8dee1e2ec7a183
 COMPONENT_ARCHIVE_URL= \
   http://ftp.indexdata.dk/pub/yaz/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.indexdata.dk/yaz
+COMPONENT_PROJECT_URL = https://www.indexdata.com/resources/software/yaz/
 COMPONENT_FMRI = database/yaz
 COMPONENT_CLASSIFICATION = Development/Databases
 COMPONENT_LICENSE = BSD
@@ -43,7 +44,10 @@ LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
+CONFIGURE_OPTIONS += --with-xml2
+CONFIGURE_OPTIONS += --with-xslt
 CONFIGURE_OPTIONS += --without-icu
+CONFIGURE_OPTIONS += --disable-static
 
 # Without this tests fail
 ENV=/usr/bin/env -i
