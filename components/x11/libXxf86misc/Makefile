@@ -16,25 +16,24 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXxf86misc
-COMPONENT_VERSION=        1.0.3
+COMPONENT_VERSION=        1.0.4
 COMPONENT_FMRI=           x11/library/libxxf86misc
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXxf86misc - getting and setting of input device attributes
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:563f4200862efd3334c33a669e0a0aae5bab31f3998db75b87a99a697cc26b5b
+  sha256:a89c03e2b0f16239d67a2031b9003f31b5a686106bbdb3c797fb88ae472af380
 COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/libXxf86misc-1.0.3.tar.bz2
+  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXxf86misc.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
