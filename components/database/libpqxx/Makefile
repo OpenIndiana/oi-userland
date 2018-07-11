@@ -11,20 +11,20 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libpqxx
-COMPONENT_VERSION= 4.0.1
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 6.2.4
 COMPONENT_SUMMARY= C++ binding library for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:097ceda2797761ce517faa5bee186c883df1c407cb2aada613a16773afeedc38
+  sha256:91a295d9e06fc36db5d993970aa1928e053a57ec03bf6284a1c534844ed35ed3
 COMPONENT_ARCHIVE_URL= \
-  http://pqxx.org/download/software/libpqxx/$(COMPONENT_ARCHIVE)
+  https://github.com/jtv/libpqxx/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= http://pqxx.org/development/libpqxx/
 COMPONENT_FMRI= database/postgres/library/c++/libpqxx
 COMPONENT_CLASSIFICATION= Development/Databases
@@ -46,8 +46,8 @@ CONFIGURE_SCRIPT=	$(@D)/configure
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
-COMPONENT_POST_INSTALL_ACTION.64= ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-4.0 && \
-	cp -a $(SOURCE_DIR)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-4.0 )  
+COMPONENT_POST_INSTALL_ACTION.64= ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) && \
+	cp -a $(BUILD_DIR)/amd64/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) )
 
 COMPONENT_POST_INSTALL_ACTION += $(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
@@ -63,3 +63,5 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += text/xmlto
