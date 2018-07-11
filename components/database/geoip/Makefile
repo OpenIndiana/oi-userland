@@ -10,17 +10,18 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GeoIP
-COMPONENT_VERSION=	1.6.11
+COMPONENT_VERSION=	1.6.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_FMRI=		database/geoip
 COMPONENT_SUMMARY=	GeoIP is a C library finds the location of an IP address.
-COMPONENT_ARCHIVE_HASH=	sha256:b0e5a92200b5ab540d118983f7b7191caf4faf1ae879c44afa3ff2a2abcdb0f5
+COMPONENT_ARCHIVE_HASH=	sha256:1dfb748003c5e4b7fd56ba8c4cd786633d5d6f409547584f6910398389636f80
 COMPONENT_ARCHIVE_URL=	https://github.com/maxmind/geoip-api-c/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://dev.maxmind.com/geoip/legacy/geolite/
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -45,9 +46,17 @@ CONFIGURE_SCRIPT   =	$(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) && \
 		cd $(@D) && libtoolize && ./bootstrap )
 
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
+
+# Needed for tests to pass.
+unexport SHELLOPTS
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
