@@ -10,13 +10,15 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mongodb
-COMPONENT_VERSION= 3.4.9
-COMPONENT_REVISION= 2
+COMPONENT_MAJOR_VERSION= 3.4
+COMPONENT_MINOR_VERSION= 16
+COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_SUMMARY= MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
 COMPONENT_FMRI=	database/mongodb-34
@@ -24,7 +26,7 @@ COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://fastdl.mongodb.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:2fd0f47a5f9175e71d3d381e81a1b6a2500c9c414dd6ae0940ad6194a0e85549
+COMPONENT_ARCHIVE_HASH=	sha256:4dbfd72906d4bfe6bf22229c9ae525acde908ad676878a6512d749964fb3de2a
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	APACHE-2.0.txt
 
@@ -35,7 +37,7 @@ include $(WS_MAKE_RULES)/ips.mk
 BUILD_TOOLS= $(BUILD_DIR)/tools/.built
 INSTALL_TOOLS= $(BUILD_DIR)/tools/.installed
 
-MONGO_PREFIX=usr/mongodb/3.4
+MONGO_PREFIX=usr/mongodb/$(COMPONENT_MAJOR_VERSION)
 
 GMAKE=scons
 
@@ -104,12 +106,16 @@ install:	$(INSTALL_64) $(INSTALL_TOOLS)
 
 test:		$(TEST_64)
 
+# Test requirements
+REQUIRED_PACKAGES += library/python/pymongo-27
+REQUIRED_PACKAGES += library/python/pyyaml
+
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/scons
 REQUIRED_PACKAGES += developer/gcc-6
 REQUIRED_PACKAGES += developer/golang
 
-# Auto-generated dependencies
+# Auto-generated dependencies via `gmake GMAKE=gmake REQUIRED_PACKAGES`
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
