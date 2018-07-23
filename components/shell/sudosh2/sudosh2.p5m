@@ -11,6 +11,7 @@
 
 #
 # Copyright (c) 2016 Predrag Zečević
+# Copyright (c) 2018 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,15 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# add explicit dependency to sudo
 depend fmri=pkg:/security/sudo type=require
 
-#
 dir path=/var/adm/sudosh mode=1733 group=root
 
 file path=etc/sudosh.conf mode=0644 group=root preserve=true
-file path=usr/bin/$(MACH64)/sudosh
-file path=usr/bin/$(MACH64)/sudosh-replay
 file path=usr/bin/sudosh
 file path=usr/bin/sudosh-replay
 file path=usr/share/man/man1/sudosh.1
