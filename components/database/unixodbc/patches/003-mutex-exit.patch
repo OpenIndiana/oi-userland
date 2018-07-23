@@ -1,11 +1,6 @@
-From: Dan McDonald <danmcd@omniti.com>
-Date: Fri, 18 Sep 2015 13:10:25 -0400
-Subject: [PATCH] illumos 6209 breaks unixodbc build:  mutex_exit() collisions
-
-diff -ru unixODBC-2.3.2.orig/DriverManager/__handles.c unixODBC-2.3.2/DriverManager/__handles.c
---- a/DriverManager/__handles.c.~1~	2015-08-22 19:39:05.000000000 +0300
-+++ b/DriverManager/__handles.c	2015-11-25 16:35:32.634610509 +0300
-@@ -294,7 +294,7 @@
+--- unixODBC-2.3.6/odbcinst/SQLGetPrivateProfileString.c	2016-12-12 13:03:47.000000000 +0000
++++ unixODBC-2.3.6/odbcinst/SQLGetPrivateProfileString.c.new	2018-07-08 17:39:50.758706457 +0000
+@@ -39,7 +39,7 @@ static int mutex_entry( pth_mutex_t *mut
      return pth_mutex_acquire( mutex, 0, NULL );
  }
  
@@ -14,7 +9,7 @@ diff -ru unixODBC-2.3.2.orig/DriverManager/__handles.c unixODBC-2.3.2/DriverMana
  {
      return pth_mutex_release( mutex );
  }
-@@ -313,7 +313,7 @@
+@@ -55,7 +55,7 @@ static int mutex_entry( pthread_mutex_t
      return pthread_mutex_lock( mutex );
  }
  
@@ -23,7 +18,7 @@ diff -ru unixODBC-2.3.2.orig/DriverManager/__handles.c unixODBC-2.3.2/DriverMana
  {
      return pthread_mutex_unlock( mutex );
  }
-@@ -332,7 +332,7 @@
+@@ -71,7 +71,7 @@ static int mutex_entry( mutex_t *mutex )
      return mutex_lock( mutex );
  }
  
@@ -32,7 +27,7 @@ diff -ru unixODBC-2.3.2.orig/DriverManager/__handles.c unixODBC-2.3.2/DriverMana
  {
      return mutex_unlock( mutex );
  }
-@@ -340,7 +340,7 @@
+@@ -79,7 +79,7 @@ static int mutex_exit( mutex_t *mutex )
  #else
  
  #define mutex_entry(x)
@@ -41,341 +36,7 @@ diff -ru unixODBC-2.3.2.orig/DriverManager/__handles.c unixODBC-2.3.2/DriverMana
  
  #endif
  
-@@ -355,7 +355,7 @@
- 
- void mutex_pool_exit( void )
- {
--    mutex_exit( &mutex_pool );
-+    odbc_mutex_exit( &mutex_pool );
- }
- 
- /*
-@@ -369,7 +369,7 @@
- 
- void mutex_iconv_exit( void )
- {
--    mutex_exit( &mutex_iconv );
-+    odbc_mutex_exit( &mutex_iconv );
- }
- 
- /*
-@@ -384,7 +384,7 @@
- 
- void mutex_lib_exit( void )
- {
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- }
- 
- /*
-@@ -466,7 +466,7 @@
- 
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return environment;
- }
-@@ -504,7 +504,7 @@
-         ptr = ptr -> next_class_list;
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return ret;
- 
-@@ -567,7 +567,7 @@
- 
-     free( environment );
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- }
- 
- /*
-@@ -623,7 +623,7 @@
- 
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return connection;
- }
-@@ -650,7 +650,7 @@
-          * connection lock, and create the env lock
-          */
- 	if(old_level != TS_LEVEL0)
--            mutex_exit( &connection -> mutex );
-+            odbc_mutex_exit( &connection -> mutex );
-         mutex_entry( &mutex_env );
-     }
-     else if ( old_level == TS_LEVEL3 )
-@@ -661,7 +661,7 @@
-          */
- 	if(level != TS_LEVEL0)
- 	    mutex_entry( &connection -> mutex );
--        mutex_exit( &mutex_env );
-+        odbc_mutex_exit( &mutex_env );
-     }
- 
- #endif
-@@ -700,7 +700,7 @@
-         ptr = ptr -> next_class_list;
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return ret;
- #endif
-@@ -758,7 +758,7 @@
- 
-     free( connection );
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- }
- 
- /*
-@@ -802,7 +802,7 @@
- 
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return statement;
- }
-@@ -821,7 +821,7 @@
-     statement -> next_conn_list = connection -> statements;
-     connection -> statements = statement;
- #endif
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- }
- 
- /*
-@@ -922,7 +922,7 @@
-         statement = statement -> next_class_list;
-     }
- #endif
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- }
- 
- /*
-@@ -1008,7 +1008,7 @@
-         }
-     }
- #endif
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return ret;
- }
-@@ -1058,7 +1058,7 @@
-         ptr = ptr -> next_class_list;
-     }
- #endif
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return found;
- }
-@@ -1101,7 +1101,7 @@
-         ptr = ptr -> next_class_list;
-     }
- #endif
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return found;
- }
-@@ -1148,7 +1148,7 @@
-         ptr = ptr -> next_class_list;
-     }
- #endif
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return found;
- }
-@@ -1195,7 +1195,7 @@
-         ptr = ptr -> next_class_list;
-     }
- #endif
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return found;
- }
-@@ -1237,7 +1237,7 @@
-         ptr = ptr -> next_class_list;
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return ret;
- 
-@@ -1349,7 +1349,7 @@
- 
-     free( statement );
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- }
- 
- /*
-@@ -1391,7 +1391,7 @@
- #endif
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return descriptor;
- }
-@@ -1429,7 +1429,7 @@
-         ptr = ptr -> next_class_list;
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return ret;
- 
-@@ -1497,7 +1497,7 @@
-         }
-     }
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
-     return ret;
- }
-@@ -1582,7 +1582,7 @@
- 
-     free( descriptor );
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- }
- 
- #if defined ( HAVE_LIBPTHREAD ) || defined ( HAVE_LIBTHREAD ) || defined( HAVE_LIBPTH )
-@@ -1655,19 +1655,19 @@
-     switch( type )
-     {
-       case SQL_HANDLE_ENV:
--        mutex_exit( &mutex_env );
-+        odbc_mutex_exit( &mutex_env );
-         break;
- 
-       case SQL_HANDLE_DBC:
-         connection = handle;
-         if ( connection -> protection_level == TS_LEVEL3 )
-         {
--            mutex_exit( &mutex_env );
-+            odbc_mutex_exit( &mutex_env );
-         }
-         else if ( connection -> protection_level == TS_LEVEL2 ||
-                 connection -> protection_level == TS_LEVEL1 )
-         {
--            mutex_exit( &connection -> mutex );
-+            odbc_mutex_exit( &connection -> mutex );
-         }
-         break;
- 
-@@ -1675,15 +1675,15 @@
-         statement = handle;
-         if ( statement -> connection -> protection_level == TS_LEVEL3 )
-         {
--            mutex_exit( &mutex_env );
-+            odbc_mutex_exit( &mutex_env );
-         }
-         else if ( statement -> connection -> protection_level == TS_LEVEL2 )
-         {
--            mutex_exit( &statement -> connection -> mutex );
-+            odbc_mutex_exit( &statement -> connection -> mutex );
-         }
-         else if ( statement -> connection -> protection_level == TS_LEVEL1 )
-         {
--            mutex_exit( &statement -> mutex );
-+            odbc_mutex_exit( &statement -> mutex );
-         }
-         break;
- 
-@@ -1691,15 +1691,15 @@
-         descriptor = handle;
-         if ( descriptor -> connection -> protection_level == TS_LEVEL3 )
-         {
--            mutex_exit( &mutex_env );
-+            odbc_mutex_exit( &mutex_env );
-         }
-         else if ( descriptor -> connection -> protection_level == TS_LEVEL2 )
-         {
--            mutex_exit( &descriptor -> connection -> mutex );
-+            odbc_mutex_exit( &descriptor -> connection -> mutex );
-         }
-         else if ( descriptor -> connection -> protection_level == TS_LEVEL1 )
-         {
--            mutex_exit( &descriptor -> mutex );
-+            odbc_mutex_exit( &descriptor -> mutex );
-         }
-         break;
-     }
-@@ -1766,7 +1766,7 @@
- 			break;
- 	}
- 
--    mutex_exit( &mutex_lists );
-+    odbc_mutex_exit( &mutex_lists );
- 
- 	return found_handle;
- }
-diff -ru unixODBC-2.3.2.orig/odbcinst/SQLGetPrivateProfileString.c unixODBC-2.3.2/odbcinst/SQLGetPrivateProfileString.c
---- a/odbcinst/SQLGetPrivateProfileString.c	Mon Apr 15 11:41:27 2013
-+++ b/odbcinst/SQLGetPrivateProfileString.c	Fri Sep 18 13:04:45 2015
-@@ -39,7 +39,7 @@
-     return pth_mutex_acquire( mutex, 0, NULL );
- }
- 
--static int mutex_exit( pth_mutex_t *mutex )
-+static int odbc_mutex_exit( pth_mutex_t *mutex )
- {
-     return pth_mutex_release( mutex );
- }
-@@ -55,7 +55,7 @@
-     return pthread_mutex_lock( mutex );
- }
- 
--static int mutex_exit( pthread_mutex_t *mutex )
-+static int odbc_mutex_exit( pthread_mutex_t *mutex )
- {
-     return pthread_mutex_unlock( mutex );
- }
-@@ -71,7 +71,7 @@
-     return mutex_lock( mutex );
- }
- 
--static int mutex_exit( mutex_t *mutex )
-+static int odbc_mutex_exit( mutex_t *mutex )
- {
-     return mutex_unlock( mutex );
- }
-@@ -79,7 +79,7 @@
- #else
- 
- #define mutex_entry(x)
--#define mutex_exit(x)
-+#define odbc_mutex_exit(x)
- 
- #endif
- 
-@@ -270,7 +270,7 @@
+@@ -295,7 +295,7 @@ static int check_ini_cache( int *ret,
  	rval = _check_ini_cache( ret, pszSection, pszEntry, pszDefault,
  			pRetBuffer, nRetBuffer, pszFileName );
  
@@ -384,78 +45,21 @@ diff -ru unixODBC-2.3.2.orig/odbcinst/SQLGetPrivateProfileString.c unixODBC-2.3.
  
  	return rval;
  }
-@@ -298,7 +298,7 @@
+@@ -323,7 +323,7 @@ static void save_ini_cache( int ret,
  			pRetBuffer, nRetBuffer, pszFileName );
  	}
  
 -	mutex_exit( &mutex_ini );
 +	odbc_mutex_exit( &mutex_ini );
- 
- 	return rval;
- }
-diff -ru unixODBC-2.3.2.orig/odbcinst/_logging.c unixODBC-2.3.2/odbcinst/_logging.c
---- a/odbcinst/_logging.c	Mon Apr 15 11:41:27 2013
-+++ b/odbcinst/_logging.c	Fri Sep 18 13:05:06 2015
-@@ -71,7 +71,7 @@
-     return pth_mutex_acquire( &mutex_log, 0, NULL );
  }
  
--static int mutex_exit( void )
-+static int odbc_mutex_exit( void )
- {
-     return pth_mutex_release( &mutex_log );
- }
-@@ -87,7 +87,7 @@
-     return pthread_mutex_lock( &mutex_log );
+ void __clear_ini_cache( void ) 
+@@ -332,7 +332,7 @@ void __clear_ini_cache( void )
+ 
+     _clear_ini_cache();
+ 
+-	mutex_exit( &mutex_ini );
++	odbc_mutex_exit( &mutex_ini );
  }
  
--static int mutex_exit( void )
-+static int odbc_mutex_exit( void )
- {
-     return pthread_mutex_unlock( &mutex_log );
- }
-@@ -103,7 +103,7 @@
-     return mutex_lock( &mutex_log );
- }
- 
--static int mutex_exit( void )
-+static int odbc_mutex_exit( void )
- {
-     return mutex_unlock( &mutex_log );
- }
-@@ -111,7 +111,7 @@
  #else
- 
- #define mutex_entry()
--#define mutex_exit()
-+#define odbc_mutex_exit()
- 
- #endif
- /*
-@@ -156,7 +156,7 @@
-                 pszMessage );
-     }
- 
--    mutex_exit();
-+    odbc_mutex_exit();
- 
-     return ret;
- }
-@@ -182,7 +182,7 @@
-     if ( hODBCINSTLog )
-         ret = logPeekMsg( hODBCINSTLog, nMsg, phMsg );
- 
--    mutex_exit();
-+    odbc_mutex_exit();
- 
-     return ret;
- }
-@@ -196,7 +196,7 @@
-     if ( hODBCINSTLog ) 
-         ret = logClear( hODBCINSTLog );
- 
--    mutex_exit();
-+    odbc_mutex_exit();
- 
-     return ret;
- }

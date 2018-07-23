@@ -20,21 +20,22 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Andreas Wacknitz
+# Copyright (c) 2018, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(PATH.illumos)
 
 COMPONENT_NAME=		unixODBC
-COMPONENT_VERSION=	2.3.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.3.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://unixodbc.org/
+COMPONENT_PROJECT_URL=	http://www.unixodbc.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2e1509a96bb18d248bf08ead0d74804957304ff7c6f8b2e5965309c632421e39
+    sha256:88b637f647c052ecc3861a3baa275c3b503b193b6a49ff8c28b2568656d14d69
 COMPONENT_ARCHIVE_URL=	ftp://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/unixodbc
+COMPONENT_FMRI=		library/unixodbc
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -86,26 +87,11 @@ CONFIGURE_OPTIONS  +=	--with-pic
 CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV  +=   INSTALL="$(INSTALL)"
 
-PROTOPKGCONFIGDIR32 = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
-
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
-	$(MKDIR) $(PROTOPKGCONFIGDIR32)
-	$(MKDIR) $(PROTOPKGCONFIGDIR64)
-	$(GSED) -e "s#SED_SIZEOF_LONG#4#g" \
-	    $(COMPONENT_DIR)/Solaris/unixODBC.pc > \
-	    $(PROTOPKGCONFIGDIR32)/unixODBC.pc
-	$(GSED) -e "s#SED_SIZEOF_LONG#8#g" \
-	    $(COMPONENT_DIR)/Solaris/unixODBC.pc > \
-	    $(COMPONENT_DIR)/unixODBC.pc.1
-	$(GSED) -e 's#/lib#/lib/$(MACH64)#g' \
-	    $(COMPONENT_DIR)/unixODBC.pc.1 > \
-	    $(PROTOPKGCONFIGDIR64)/unixODBC.pc
-	$(RM) -f $(COMPONENT_DIR)/unixODBC.pc.1
 
-test: $(TEST_32_and_64)
+test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/readline
