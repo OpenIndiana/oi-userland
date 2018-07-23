@@ -20,17 +20,21 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		which
 COMPONENT_VERSION=	2.21
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://savannah.gnu.org/projects/which/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f4a245b94124b377d8b49646bf421f9155d36aa7614b6ebf83705d3ffc76eaad
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-which
+COMPONENT_FMRI=		shell/which
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -41,15 +45,15 @@ CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	--disable-iberty
 CONFIGURE_OPTIONS  +=	--disable-dependency-tracking
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
