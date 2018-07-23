@@ -10,12 +10,16 @@
 
 #
 # Copyright 2016 Predrag Zečević
+# Copyright 2018 Michal Nowak
 #
+
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sudosh2
 COMPONENT_VERSION= 1.0.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= sudosh - an auditing layer between sudo and a user shell, that can also be used as a login shell
 COMPONENT_PROJECT_URL= https://github.com/squash/sudosh2
 COMPONENT_FMRI= shell/sudosh2
@@ -34,13 +38,13 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf -i; )
+COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf -i -f )
 
-build:          $(BUILD_32_and_64)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32_and_64)
+install:        $(INSTALL_64)
 
-test:           $(TEST_32_and_64)
+test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += security/sudo
