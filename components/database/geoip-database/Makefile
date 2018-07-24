@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geoip-database
 COMPONENT_VERSION= 20180327
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GeoLite geolocation databases compiled by MaxMind
 COMPONENT_PROJECT_URL= https://dev.maxmind.com/geoip/legacy/geolite/
 COMPONENT_FMRI= database/$(COMPONENT_NAME)
@@ -51,7 +52,7 @@ COMPONENT_ARCHIVE_HASH_4=sha256:3bbe69a4f8d00c9c9ba24c0d9b40146e40ed8125f083a236
 COMPONENT_SRC_5=GeoIPASNumv6.dat-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_5=$(COMPONENT_SRC_5).gz
 COMPONENT_ARCHIVE_URL_5=http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNumv6.dat.gz 
-COMPONENT_ARCHIVE_HASH_5=sha256:8b9b18bc68876989f2a819ae1dd144f08cd8bc9af3e461973a46e9026a4334f5
+COMPONENT_ARCHIVE_HASH_5=sha256:328400186915b3470fe35446c3bc9a62a53ef2a953e70c5f952918bd3fb57328
 
 
 include $(WS_MAKE_RULES)/prep.mk
