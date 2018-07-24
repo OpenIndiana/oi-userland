@@ -21,21 +21,22 @@
 
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	5.4.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	5.5.1
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a80b187b6b770f092ea1f53e89021d06c03d8bbe6a5e996bcca3267de14c5e52
+    sha256:e1c38808fcbe0cc1344d55c9a758349f7ba1e317325b154621ac37eddac4aa80
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_FMRI=		shell/zsh
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -58,15 +59,8 @@ CONFIGURE_OPTIONS += --enable-pcre
 CONFIGURE_OPTIONS += --with-tcsetpgrp
 CONFIGURE_OPTIONS += --disable-gdbm
 
-# pcre-config --libs unnecessarily emits "-R/usr/lib"; we remove it so that it
-# doesn't end up in the binaries.
-COMPONENT_POST_CONFIGURE_ACTION = \
-	(cd $(@D); \
-	sed -e 's,-R/usr/lib,,' \
-		config.status > config.status.new; \
-	mv config.status.new config.status; \
-	chmod 755 config.status; \
-	./config.status)
+COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D); ./config.status)
+
 
 COMPOVERRIDES = $(shell test -d Completion && find Completion -type f -print)
 
@@ -77,7 +71,7 @@ $(PROTOETCDIR)/zprofile: $(PROTOETCDIR)
 	$(RM) $@; $(SYMLINK) profile $@
 
 # The configure test for NIS tests to make sure that NIS is working, not whether
-# it's available to compile against.  We actually want to go through the switch
+# it's available to compile against. We actually want to go through the switch
 # in all cases, so we force it off, regardless of whether the build environment
 # has it enabled.
 CONFIGURE_ENV += zsh_cv_sys_nis=no
@@ -102,6 +96,7 @@ install:	build $(INSTALL_64) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc licens
 # build does this always
 test:		$(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += system/library
