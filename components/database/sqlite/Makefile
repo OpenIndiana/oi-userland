@@ -19,18 +19,20 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 Louis M. Picciano. All rights reserved.
+# Copyright (c) 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME			= sqlite
-COMPONENT_VERSION		= 3.19.3
-TARBALL_VERSION			= 3190300
-COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
-COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		sqlite
+COMPONENT_VERSION=	3.24.0
+TARBALL_VERSION=	3240000
+COMPONENT_SRC=		sqlite-autoconf-$(TARBALL_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:06129c03dced9f87733a8cba408871bd60673b8f93b920ba8d815efab0a06301
-COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2017/$(COMPONENT_ARCHIVE)
+	sha256:d9d14e88c6fb6d68de9ca0d1f9797477d82fc3aed613558f87ffbdbbc5ceb74a
+COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2018/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		database/sqlite-3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -60,7 +62,7 @@ CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
 CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 
-#Fixes firefox crash with new sqlite, don't remove until proper fix
+# Fixes firefox crash with new sqlite, don't remove until proper fix
 gcc_OPT                 =  -O2
 
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
@@ -72,11 +74,12 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
+test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/libedit
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
