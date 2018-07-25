@@ -21,21 +21,25 @@
 
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018, Michal Nowak
 #
+
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
-COMPONENT_VERSION=	20160222
+COMPONENT_VERSION=	20180722
 # A leading "0." is included to make it easier to upgrade the package, should
 # the maintainers decide to go to a more standard version numbering system.
-IPS_COMPONENT_VERSION=  0.2016.2.22
+IPS_COMPONENT_VERSION=  0.2018.7.22
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/parallel/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8dfbe539036a6ff02f9f542751e8621f42d285b3c9a7d9245042a6cc6ddc55ea
+    sha256:cf0d421cd78c58741395f94f568c33a0fe409bd5f4bd45f1ae804ec2d32dc318
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE).sig
 COMPONENT_SUMMARY=	GNU parallel is a shell tool for executing jobs in parallel using one or more computers.
 COMPONENT_FMRI=		shell/parallel
 COMPONENT_LICENSE_FILE=	COPYING
@@ -51,12 +55,14 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_BUILD_ENV +=    PATH="/usr/bin:/usr/gnu/bin:/usr/perl5/bin"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/which
+REQUIRED_PACKAGES += SUNWcs
