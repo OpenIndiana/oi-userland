@@ -10,12 +10,13 @@
 
 #
 # Copyright 2016 Adam Stevko
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zsh-completions
-COMPONENT_VERSION=	0.18.0
+COMPONENT_VERSION=	0.27.0
 COMPONENT_SUMMARY=	Additional completion definitions for Zsh.
 COMPONENT_PROJECT_URL=	https://github.com/zsh-users/zsh-completions
 COMPONENT_FMRI=		utility/$(COMPONENT_NAME)
@@ -23,7 +24,7 @@ COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/zsh-users/zsh-completions/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:b94eb63d044920a4ea6d5d51ae4f237f21b0c3174f3c58ff464b5284477cdb7a
+COMPONENT_ARCHIVE_HASH= sha256:9b817b73e709aca0e7e5a41471b5b63467d1e7aa69ef755b6ce39b99e61cd47a
 COMPONENT_LICENSE=	Various
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
