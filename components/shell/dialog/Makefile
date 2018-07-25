@@ -10,20 +10,25 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
+
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dialog
 COMPONENT_VERSION=	1.3
-COMPONENT_TIMESTAMP=	20160209
+COMPONENT_TIMESTAMP=	20180621
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://invisible-island.net/dialog/dialog.html
 COMPONENT_SUMMARY=	dialog - display dialog boxes from shell scripts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_TIMESTAMP)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0314f7f2195edc58e7567a024dc1d658c2f8ea732796d8fa4b4927df49803f87
+    sha256:4a4859e2b22d24e46c1a529b5a5605b95503aa04da4432f7bbd713e3e867587a
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/dialog/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	https://invisible-mirror.net/archives/dialog/$(COMPONENT_ARCHIVE).asc
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
@@ -42,10 +47,9 @@ CONFIGURE_OPTIONS+=	--enable-included-msgs
 CONFIGURE_OPTIONS+=	--enable-nls
 CONFIGURE_OPTIONS+=	--enable-widec
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
