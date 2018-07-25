@@ -1,0 +1,26 @@
+https://jira.mongodb.org/browse/SERVER-36111
+
+From dbb523fbbf98d6d3638b631939c06602ddee30e7 Mon Sep 17 00:00:00 2001
+From: Max Hirschhorn <max.hirschhorn@mongodb.com>
+Date: Mon, 16 Jul 2018 10:25:39 -0400
+Subject: [PATCH] SERVER-36111 Remove unnecessary and unguarded usage of
+ archival module.
+
+This fixes the AttributeError that would otherwise occur when running
+resmoke.py without specifying the --archiveFile command line option.
+---
+ buildscripts/resmokelib/testing/job.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/buildscripts/resmokelib/testing/job.py b/buildscripts/resmokelib/testing/job.py
+index c8be906dd3a..ad324bd0d1d 100644
+--- a/buildscripts/resmokelib/testing/job.py
++++ b/buildscripts/resmokelib/testing/job.py
+@@ -115,7 +115,6 @@ def _execute_test(self, test):
+ 
+         finally:
+             success = self.report.find_test_info(test).status == "pass"
+-            self.archival.archive(self.logger, test, success)
+             if self.archival:
+                 self.archival.archive(self.logger, test, success)
+ 
