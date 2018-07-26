@@ -1,0 +1,77 @@
+cpuid(1) -- dump and extract information from the x86 CPUID instruction
+=======================================================================
+
+## SYNOPSIS
+
+`cpuid` [--help] [--dump] [--vendor <name>] [--ignore-vendor] [--parse <filename>]
+
+## DESCRIPTION
+
+`cpuid` is a very simple C program, designed to dump and extract information
+from the x86 CPUID instruction.
+
+`cpuid` is capable of dumping all CPUID leaves (except any unknown leaves which
+require special ECX values to dump all information). `cpuid` can only decode
+certain leaves, but this functionality will be expanded as the CPUID
+specifications provided by AMD and Intel change.
+
+## OPTIONS
+
+  `-c`, `--cpu`
+  Index (starting at 0) of CPU to get info from
+
+  `-d`, `--dump`
+  Dump a raw CPUID table
+
+  `-f`, `--parse`
+  Read and decode a raw CPUID table from the file specified
+
+  `-h`, `--help`
+  Print list of options
+
+  `--ignore-vendor`
+  Show feature flags from all vendors
+
+  `--sanity`
+  Do a sanity check of the CPUID data
+
+  `--vendor`
+  Override the processor vendor string
+
+  `--version`
+  Print `cpuid` version and license
+
+## STANDARDS
+
+You can find current Intel and AMD CPUID specifications at these locations:
+
+[Intel Software Developer Manual volume 2A](https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-2a-manual.html)
+
+[AMD Processor Programming Reference](http://developer.amd.com/resources/developer-guides-manuals/)
+
+Please notify me if you notice any inconsistencies or if features you
+find relevant are not being decoded.
+
+## BUGS
+
+If you find a bug in `cpuid`, please submit details about it to the bug tracker
+on GitHub: https://github.com/tycho/cpuid/issues
+
+If the bug is regarding the decoding or dumping of CPUID details, then you
+should include the dump.txt and decode.txt generated with these commands:
+
+```
+cpuid -d -c -1 > dump.txt
+cpuid -c -1 > decode.txt
+```
+
+You should also specify what revision of `cpuid` you are running. If you don't
+know, you can find out with:
+
+```
+cpuid --version
+```
+
+## AUTHOR
+
+Steven Noonan <steven@uplinklabs.net>
