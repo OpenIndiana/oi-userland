@@ -10,18 +10,19 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
+# Copyright 2018, Michal Nowak
 # 
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.7.21-21
-IPS_COMPONENT_VERSION=	5.7.21.21
+COMPONENT_VERSION=	5.7.22-22
+IPS_COMPONENT_VERSION=	5.7.22.22
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:8f9b3723741ad8f7b4d1d9366199aa3e7bb081b46130260c13fe9c14302d6b6b
-COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.percona.com/
+COMPONENT_ARCHIVE_HASH=	sha256:3b94644861628fa6e17b82318220327f0beb2767739c976c961c8a9eb6c9783a
+COMPONENT_ARCHIVE_URL=	https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 # We need specific boost version
 COMPONENT_ARCHIVE_1= boost_1_59_0.tar.gz
