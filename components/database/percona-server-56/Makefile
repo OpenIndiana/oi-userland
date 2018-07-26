@@ -10,6 +10,7 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
+# Copyright 2018, Michal Nowak
 # 
 
 include ../../../make-rules/shared-macros.mk
@@ -17,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 CMAKE= cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.6.39-83.1
-IPS_COMPONENT_VERSION=	5.6.39.83.1
+COMPONENT_VERSION=	5.6.40-84.0
+IPS_COMPONENT_VERSION=	5.6.40.84.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:48939062738cd5e7769381e31ec581492317ff48c19d0b7ce362e0e61b5d01e2
+COMPONENT_ARCHIVE_HASH=	sha256:9d817e00610368c27184b26928a8c6d5db61c8df745365d462fedecb3291847c
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -84,14 +85,41 @@ $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	$(COMPONENT_POST_CONFIGURE_ACTION)
 	$(TOUCH) $@
 
+COMPONENT_TEST_TARGETS=
+
+COMPONENT_TEST_TRANSFORMS= \
+	'-n ' \
+	'-e "s/ \].*/ \]/"' \
+	'-e "s/ w[0-9] //"' \
+	'-e "s/\[//"' \
+	'-e "s/\]//"' \
+	'-e "s/  */ /g"' \
+	'-e "s/ $$//"' \
+	'-e "/pass$$/p"' \
+	'-e "/fail$$/p"'
+
+COMPONENT_TEST_CMD= mysql-test/mtr \
+	--parallel=$(shell getconf NPROCESSORS_ONLN) \
+	--mem \
+	--force \
+	--retry=0 \
+	--mysqld=--binlog-format=mixed \
+	--force-restart \
+	--max-test-fail=0 \
+	--skip-test-list=unstable-tests | sort
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+test:		$(TEST_32_and_64)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
