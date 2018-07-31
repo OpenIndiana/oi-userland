@@ -12,6 +12,7 @@
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 # Copyright 2016-2017, Wiselabs Software Ltda - http://www.wiselabs.com.br . All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 set name=pkg.fmri \
@@ -20,8 +21,8 @@ set name=pkg.summary \
     value="MariaDB 10.1 libraries"
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Databases
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license mariadb-101.license license=GPLv2
@@ -32,9 +33,9 @@ link path=usr/mysql/include target=../mariadb/10.1/include mediator=mysql mediat
 link path=usr/mariadb/10.1/include/mysql target=. 
 file path=usr/mariadb/10.1/include/auth_dialog_client.h
 file path=usr/mariadb/10.1/include/big_endian.h
-file path=usr/mariadb/10.1/include/byte_order_generic_x86_64.h
-file path=usr/mariadb/10.1/include/byte_order_generic_x86.h
 file path=usr/mariadb/10.1/include/byte_order_generic.h
+file path=usr/mariadb/10.1/include/byte_order_generic_x86.h
+file path=usr/mariadb/10.1/include/byte_order_generic_x86_64.h
 file path=usr/mariadb/10.1/include/client_plugin.h
 file path=usr/mariadb/10.1/include/decimal.h
 file path=usr/mariadb/10.1/include/errmsg.h
@@ -61,62 +62,27 @@ file path=usr/mariadb/10.1/include/my_pthread.h
 file path=usr/mariadb/10.1/include/my_sys.h
 file path=usr/mariadb/10.1/include/my_valgrind.h
 file path=usr/mariadb/10.1/include/my_xml.h
-file path=usr/mariadb/10.1/include/mysql_com_server.h
+file path=usr/mariadb/10.1/include/mysql.h mode=0444
 file path=usr/mariadb/10.1/include/mysql_com.h
+file path=usr/mariadb/10.1/include/mysql_com_server.h
 file path=usr/mariadb/10.1/include/mysql_embed.h
 file path=usr/mariadb/10.1/include/mysql_time.h
 file path=usr/mariadb/10.1/include/mysql_version.h mode=0444
-file path=usr/mariadb/10.1/include/mysql.h mode=0444
 file path=usr/mariadb/10.1/include/mysqld_ername.h mode=0444
 file path=usr/mariadb/10.1/include/mysqld_error.h mode=0444
+file path=usr/mariadb/10.1/include/plugin.h
 file path=usr/mariadb/10.1/include/plugin_audit.h
-file path=usr/mariadb/10.1/include/plugin_auth_common.h
 file path=usr/mariadb/10.1/include/plugin_auth.h
+file path=usr/mariadb/10.1/include/plugin_auth_common.h
 file path=usr/mariadb/10.1/include/plugin_encryption.h
 file path=usr/mariadb/10.1/include/plugin_ftparser.h
 file path=usr/mariadb/10.1/include/plugin_password_validation.h
-file path=usr/mariadb/10.1/include/plugin.h
-file path=usr/mariadb/10.1/include/service_base64.h
-file path=usr/mariadb/10.1/include/service_debug_sync.h
-file path=usr/mariadb/10.1/include/service_encryption_scheme.h
-file path=usr/mariadb/10.1/include/service_encryption.h
-file path=usr/mariadb/10.1/include/service_kill_statement.h
-file path=usr/mariadb/10.1/include/service_logger.h
-file path=usr/mariadb/10.1/include/service_md5.h
-file path=usr/mariadb/10.1/include/service_my_crypt.h
-file path=usr/mariadb/10.1/include/service_my_print_error.h
-file path=usr/mariadb/10.1/include/service_my_snprintf.h
-file path=usr/mariadb/10.1/include/service_progress_report.h
-file path=usr/mariadb/10.1/include/service_sha1.h
-file path=usr/mariadb/10.1/include/service_sha2.h
-file path=usr/mariadb/10.1/include/service_thd_alloc.h
-file path=usr/mariadb/10.1/include/service_thd_autoinc.h
-file path=usr/mariadb/10.1/include/service_thd_error_context.h
-file path=usr/mariadb/10.1/include/service_thd_rnd.h
-file path=usr/mariadb/10.1/include/service_thd_specifics.h
-file path=usr/mariadb/10.1/include/service_thd_timezone.h
-file path=usr/mariadb/10.1/include/service_thd_wait.h
-file path=usr/mariadb/10.1/include/service_wsrep.h
-file path=usr/mariadb/10.1/include/services.h
-file path=usr/mariadb/10.1/include/sql_common.h
-file path=usr/mariadb/10.1/include/sql_state.h mode=0444
-file path=usr/mariadb/10.1/include/sslopt-case.h
-file path=usr/mariadb/10.1/include/sslopt-longopts.h
-file path=usr/mariadb/10.1/include/sslopt-vars.h
-file path=usr/mariadb/10.1/include/typelib.h
+file path=usr/mariadb/10.1/include/private/atomic/gcc_builtins.h
 
-file path=usr/mariadb/10.1/include/psi/mysql_file.h
-file path=usr/mariadb/10.1/include/psi/mysql_idle.h
-file path=usr/mariadb/10.1/include/psi/mysql_socket.h
-file path=usr/mariadb/10.1/include/psi/mysql_stage.h
-file path=usr/mariadb/10.1/include/psi/mysql_statement.h
-file path=usr/mariadb/10.1/include/psi/mysql_table.h
-file path=usr/mariadb/10.1/include/psi/mysql_thread.h
-file path=usr/mariadb/10.1/include/psi/psi_abi_v0.h
-file path=usr/mariadb/10.1/include/psi/psi_abi_v1.h
-file path=usr/mariadb/10.1/include/psi/psi_abi_v2.h
-file path=usr/mariadb/10.1/include/psi/psi.h
-
+file path=usr/mariadb/10.1/include/private/atomic/generic-msvc.h
+file path=usr/mariadb/10.1/include/private/atomic/nolock.h
+file path=usr/mariadb/10.1/include/private/atomic/solaris.h
+file path=usr/mariadb/10.1/include/private/atomic/x86-gcc.h
 file path=usr/mariadb/10.1/include/private/authors.h
 file path=usr/mariadb/10.1/include/private/bounded_queue.h
 file path=usr/mariadb/10.1/include/private/client_settings.h
@@ -138,8 +104,8 @@ file path=usr/mariadb/10.1/include/private/event_queue.h
 file path=usr/mariadb/10.1/include/private/event_scheduler.h
 file path=usr/mariadb/10.1/include/private/events.h
 file path=usr/mariadb/10.1/include/private/field.h
-file path=usr/mariadb/10.1/include/private/filesort_utils.h
 file path=usr/mariadb/10.1/include/private/filesort.h
+file path=usr/mariadb/10.1/include/private/filesort_utils.h
 file path=usr/mariadb/10.1/include/private/ft_global.h
 file path=usr/mariadb/10.1/include/private/gcalc_slicescan.h
 file path=usr/mariadb/10.1/include/private/gcalc_tools.h
@@ -147,12 +113,13 @@ file path=usr/mariadb/10.1/include/private/group_by_handler.h
 file path=usr/mariadb/10.1/include/private/gstream.h
 file path=usr/mariadb/10.1/include/private/ha_partition.h
 file path=usr/mariadb/10.1/include/private/handler.h
-file path=usr/mariadb/10.1/include/private/hash_filo.h
 file path=usr/mariadb/10.1/include/private/hash.h
+file path=usr/mariadb/10.1/include/private/hash_filo.h
 file path=usr/mariadb/10.1/include/private/heap.h
 file path=usr/mariadb/10.1/include/private/hostname.h
 file path=usr/mariadb/10.1/include/private/init.h
 file path=usr/mariadb/10.1/include/private/innodb_priv.h
+file path=usr/mariadb/10.1/include/private/item.h
 file path=usr/mariadb/10.1/include/private/item_cmpfunc.h
 file path=usr/mariadb/10.1/include/private/item_create.h
 file path=usr/mariadb/10.1/include/private/item_func.h
@@ -164,17 +131,16 @@ file path=usr/mariadb/10.1/include/private/item_subselect.h
 file path=usr/mariadb/10.1/include/private/item_sum.h
 file path=usr/mariadb/10.1/include/private/item_timefunc.h
 file path=usr/mariadb/10.1/include/private/item_xmlfunc.h
-file path=usr/mariadb/10.1/include/private/item.h
 file path=usr/mariadb/10.1/include/private/key.h
 file path=usr/mariadb/10.1/include/private/keycaches.h
-file path=usr/mariadb/10.1/include/private/lex_symbol.h
 file path=usr/mariadb/10.1/include/private/lex.h
+file path=usr/mariadb/10.1/include/private/lex_symbol.h
 file path=usr/mariadb/10.1/include/private/lf.h
 file path=usr/mariadb/10.1/include/private/lock.h
-file path=usr/mariadb/10.1/include/private/log_event_old.h
-file path=usr/mariadb/10.1/include/private/log_event.h
-file path=usr/mariadb/10.1/include/private/log_slow.h
 file path=usr/mariadb/10.1/include/private/log.h
+file path=usr/mariadb/10.1/include/private/log_event.h
+file path=usr/mariadb/10.1/include/private/log_event_old.h
+file path=usr/mariadb/10.1/include/private/log_slow.h
 file path=usr/mariadb/10.1/include/private/maria.h
 file path=usr/mariadb/10.1/include/private/mdl.h
 file path=usr/mariadb/10.1/include/private/mem_root_array.h
@@ -200,8 +166,8 @@ file path=usr/mariadb/10.1/include/private/my_md5.h
 file path=usr/mariadb/10.1/include/private/my_nosys.h
 file path=usr/mariadb/10.1/include/private/my_rdtsc.h
 file path=usr/mariadb/10.1/include/private/my_rnd.h
+file path=usr/mariadb/10.1/include/private/my_service_manager.h
 file path=usr/mariadb/10.1/include/private/my_stacktrace.h
-file path=usr/mariadb/10.1/include/private/my_systemd.h
 file path=usr/mariadb/10.1/include/private/my_time.h
 file path=usr/mariadb/10.1/include/private/my_tree.h
 file path=usr/mariadb/10.1/include/private/my_uctype.h
@@ -211,9 +177,9 @@ file path=usr/mariadb/10.1/include/private/myisamchk.h
 file path=usr/mariadb/10.1/include/private/myisammrg.h
 file path=usr/mariadb/10.1/include/private/myisampack.h
 file path=usr/mariadb/10.1/include/private/mysql_async.h
+file path=usr/mariadb/10.1/include/private/mysqld.h
 file path=usr/mariadb/10.1/include/private/mysqld_default_groups.h
 file path=usr/mariadb/10.1/include/private/mysqld_suffix.h
-file path=usr/mariadb/10.1/include/private/mysqld.h
 file path=usr/mariadb/10.1/include/private/mysys_err.h
 file path=usr/mariadb/10.1/include/private/nt_servc.h
 file path=usr/mariadb/10.1/include/private/opt_range.h
@@ -222,9 +188,9 @@ file path=usr/mariadb/10.1/include/private/parse_file.h
 file path=usr/mariadb/10.1/include/private/partition_element.h
 file path=usr/mariadb/10.1/include/private/partition_info.h
 file path=usr/mariadb/10.1/include/private/password.h
+file path=usr/mariadb/10.1/include/private/probes_mysql.h
 file path=usr/mariadb/10.1/include/private/probes_mysql_dtrace.h
 file path=usr/mariadb/10.1/include/private/probes_mysql_nodtrace.h
-file path=usr/mariadb/10.1/include/private/probes_mysql.h
 file path=usr/mariadb/10.1/include/private/procedure.h
 file path=usr/mariadb/10.1/include/private/protocol.h
 file path=usr/mariadb/10.1/include/private/queues.h
@@ -239,8 +205,8 @@ file path=usr/mariadb/10.1/include/private/rpl_handler.h
 file path=usr/mariadb/10.1/include/private/rpl_injector.h
 file path=usr/mariadb/10.1/include/private/rpl_mi.h
 file path=usr/mariadb/10.1/include/private/rpl_parallel.h
-file path=usr/mariadb/10.1/include/private/rpl_record_old.h
 file path=usr/mariadb/10.1/include/private/rpl_record.h
+file path=usr/mariadb/10.1/include/private/rpl_record_old.h
 file path=usr/mariadb/10.1/include/private/rpl_reporting.h
 file path=usr/mariadb/10.1/include/private/rpl_rli.h
 file path=usr/mariadb/10.1/include/private/rpl_tblmap.h
@@ -249,11 +215,11 @@ file path=usr/mariadb/10.1/include/private/scheduler.h
 file path=usr/mariadb/10.1/include/private/service_versions.h
 file path=usr/mariadb/10.1/include/private/set_var.h
 file path=usr/mariadb/10.1/include/private/slave.h
+file path=usr/mariadb/10.1/include/private/sp.h
 file path=usr/mariadb/10.1/include/private/sp_cache.h
 file path=usr/mariadb/10.1/include/private/sp_head.h
 file path=usr/mariadb/10.1/include/private/sp_pcontext.h
 file path=usr/mariadb/10.1/include/private/sp_rcontext.h
-file path=usr/mariadb/10.1/include/private/sp.h
 file path=usr/mariadb/10.1/include/private/spatial.h
 file path=usr/mariadb/10.1/include/private/sql_acl.h
 file path=usr/mariadb/10.1/include/private/sql_admin.h
@@ -277,8 +243,8 @@ file path=usr/mariadb/10.1/include/private/sql_cursor.h
 file path=usr/mariadb/10.1/include/private/sql_db.h
 file path=usr/mariadb/10.1/include/private/sql_delete.h
 file path=usr/mariadb/10.1/include/private/sql_derived.h
-file path=usr/mariadb/10.1/include/private/sql_digest_stream.h
 file path=usr/mariadb/10.1/include/private/sql_digest.h
+file path=usr/mariadb/10.1/include/private/sql_digest_stream.h
 file path=usr/mariadb/10.1/include/private/sql_do.h
 file path=usr/mariadb/10.1/include/private/sql_error.h
 file path=usr/mariadb/10.1/include/private/sql_explain.h
@@ -296,11 +262,11 @@ file path=usr/mariadb/10.1/include/private/sql_load.h
 file path=usr/mariadb/10.1/include/private/sql_locale.h
 file path=usr/mariadb/10.1/include/private/sql_manager.h
 file path=usr/mariadb/10.1/include/private/sql_parse.h
-file path=usr/mariadb/10.1/include/private/sql_partition_admin.h
 file path=usr/mariadb/10.1/include/private/sql_partition.h
+file path=usr/mariadb/10.1/include/private/sql_partition_admin.h
 file path=usr/mariadb/10.1/include/private/sql_plist.h
-file path=usr/mariadb/10.1/include/private/sql_plugin_compat.h
 file path=usr/mariadb/10.1/include/private/sql_plugin.h
+file path=usr/mariadb/10.1/include/private/sql_plugin_compat.h
 file path=usr/mariadb/10.1/include/private/sql_prepare.h
 file path=usr/mariadb/10.1/include/private/sql_priv.h
 file path=usr/mariadb/10.1/include/private/sql_profile.h
@@ -330,8 +296,8 @@ file path=usr/mariadb/10.1/include/private/strfunc.h
 file path=usr/mariadb/10.1/include/private/structs.h
 file path=usr/mariadb/10.1/include/private/sys_vars_shared.h
 file path=usr/mariadb/10.1/include/private/t_ctype.h
-file path=usr/mariadb/10.1/include/private/table_cache.h
 file path=usr/mariadb/10.1/include/private/table.h
+file path=usr/mariadb/10.1/include/private/table_cache.h
 file path=usr/mariadb/10.1/include/private/thr_alarm.h
 file path=usr/mariadb/10.1/include/private/thr_lock.h
 file path=usr/mariadb/10.1/include/private/thr_malloc.h
@@ -347,6 +313,7 @@ file path=usr/mariadb/10.1/include/private/waiting_threads.h
 file path=usr/mariadb/10.1/include/private/welcome_copyright_notice.h
 file path=usr/mariadb/10.1/include/private/winservice.h
 file path=usr/mariadb/10.1/include/private/wqueue.h
+file path=usr/mariadb/10.1/include/private/wsrep.h
 file path=usr/mariadb/10.1/include/private/wsrep_applier.h
 file path=usr/mariadb/10.1/include/private/wsrep_binlog.h
 file path=usr/mariadb/10.1/include/private/wsrep_mysqld.h
@@ -356,13 +323,45 @@ file path=usr/mariadb/10.1/include/private/wsrep_thd.h
 file path=usr/mariadb/10.1/include/private/wsrep_utils.h
 file path=usr/mariadb/10.1/include/private/wsrep_var.h
 file path=usr/mariadb/10.1/include/private/wsrep_xid.h
-file path=usr/mariadb/10.1/include/private/wsrep.h
-
-file path=usr/mariadb/10.1/include/private/atomic/gcc_builtins.h
-file path=usr/mariadb/10.1/include/private/atomic/generic-msvc.h
-file path=usr/mariadb/10.1/include/private/atomic/nolock.h
-file path=usr/mariadb/10.1/include/private/atomic/solaris.h
-file path=usr/mariadb/10.1/include/private/atomic/x86-gcc.h
+file path=usr/mariadb/10.1/include/psi/mysql_file.h
+file path=usr/mariadb/10.1/include/psi/mysql_idle.h
+file path=usr/mariadb/10.1/include/psi/mysql_socket.h
+file path=usr/mariadb/10.1/include/psi/mysql_stage.h
+file path=usr/mariadb/10.1/include/psi/mysql_statement.h
+file path=usr/mariadb/10.1/include/psi/mysql_table.h
+file path=usr/mariadb/10.1/include/psi/mysql_thread.h
+file path=usr/mariadb/10.1/include/psi/psi.h
+file path=usr/mariadb/10.1/include/psi/psi_abi_v0.h
+file path=usr/mariadb/10.1/include/psi/psi_abi_v1.h
+file path=usr/mariadb/10.1/include/psi/psi_abi_v2.h
+file path=usr/mariadb/10.1/include/service_base64.h
+file path=usr/mariadb/10.1/include/service_debug_sync.h
+file path=usr/mariadb/10.1/include/service_encryption.h
+file path=usr/mariadb/10.1/include/service_encryption_scheme.h
+file path=usr/mariadb/10.1/include/service_kill_statement.h
+file path=usr/mariadb/10.1/include/service_logger.h
+file path=usr/mariadb/10.1/include/service_md5.h
+file path=usr/mariadb/10.1/include/service_my_crypt.h
+file path=usr/mariadb/10.1/include/service_my_print_error.h
+file path=usr/mariadb/10.1/include/service_my_snprintf.h
+file path=usr/mariadb/10.1/include/service_progress_report.h
+file path=usr/mariadb/10.1/include/service_sha1.h
+file path=usr/mariadb/10.1/include/service_sha2.h
+file path=usr/mariadb/10.1/include/service_thd_alloc.h
+file path=usr/mariadb/10.1/include/service_thd_autoinc.h
+file path=usr/mariadb/10.1/include/service_thd_error_context.h
+file path=usr/mariadb/10.1/include/service_thd_rnd.h
+file path=usr/mariadb/10.1/include/service_thd_specifics.h
+file path=usr/mariadb/10.1/include/service_thd_timezone.h
+file path=usr/mariadb/10.1/include/service_thd_wait.h
+file path=usr/mariadb/10.1/include/service_wsrep.h
+file path=usr/mariadb/10.1/include/services.h
+file path=usr/mariadb/10.1/include/sql_common.h
+file path=usr/mariadb/10.1/include/sql_state.h
+file path=usr/mariadb/10.1/include/sslopt-case.h
+file path=usr/mariadb/10.1/include/sslopt-longopts.h
+file path=usr/mariadb/10.1/include/sslopt-vars.h
+file path=usr/mariadb/10.1/include/typelib.h
 
 file path=usr/mariadb/10.1/lib/$(MACH64)/libmysqlclient.a
 file path=usr/mariadb/10.1/lib/$(MACH64)/libmysqlclient.so.18.0.0 mode=0555
@@ -372,17 +371,21 @@ link path=usr/mariadb/10.1/lib/$(MACH64)/libmysqlclient_r.so target=libmysqlclie
 link path=usr/mariadb/10.1/lib/$(MACH64)/libmysqlclient_r.so.18 target=libmysqlclient.so
 
 file path=usr/mariadb/10.1/lib/$(MACH64)/libmysqld.a
+link path=usr/mariadb/10.1/lib/$(MACH64)/libmysqld.so target=libmysqld.so.18
 file path=usr/mariadb/10.1/lib/$(MACH64)/libmysqld.so.18
 file path=usr/mariadb/10.1/lib/$(MACH64)/libmysqlservices.a
 
 file path=usr/mariadb/10.1/lib/libmysqlclient.a
-file path=usr/mariadb/10.1/lib/libmysqlclient.so.18.0.0 mode=0555
-link path=usr/mariadb/10.1/lib/libmysqlclient.so.18 target=libmysqlclient.so.18.0.0
 link path=usr/mariadb/10.1/lib/libmysqlclient.so target=libmysqlclient.so.18
+link path=usr/mariadb/10.1/lib/libmysqlclient.so.18 \
+    target=libmysqlclient.so.18.0.0
+file path=usr/mariadb/10.1/lib/libmysqlclient.so.18.0.0
 link path=usr/mariadb/10.1/lib/libmysqlclient_r.so target=libmysqlclient.so
 link path=usr/mariadb/10.1/lib/libmysqlclient_r.so.18 target=libmysqlclient.so
-
+link path=usr/mariadb/10.1/lib/libmysqlclient_r.so.18.0.0 \
+    target=libmysqlclient.so
 file path=usr/mariadb/10.1/lib/libmysqld.a
+link path=usr/mariadb/10.1/lib/libmysqld.so target=libmysqld.so.18
 file path=usr/mariadb/10.1/lib/libmysqld.so.18
 file path=usr/mariadb/10.1/lib/libmysqlservices.a
 
