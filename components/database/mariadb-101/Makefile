@@ -11,17 +11,21 @@
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
 # Copyright 2016-2017, Wiselabs Software Ltda - http://www.wiselabs.com.br . All rights reserved.
+# Copyright 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	10.1.31
+COMPONENT_MAJOR_VERSION=10.1
+COMPONENT_MINOR_VERSION=34
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:ab7641c2fe4e5289da6141766a9c3350e013def56fafd6f1377080bc8048b2e6
-COMPONENT_ARCHIVE_URL=	ftp://mirrors.fe.up.pt/pub/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.mariadb.org/
+COMPONENT_ARCHIVE_HASH=	sha256:c7e0719fd08790c096585bf867fe87e084b310f2f3679e059e3b10b9fd6d5548
+COMPONENT_ARCHIVE_URL=	https://downloads.mariadb.com/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
@@ -29,9 +33,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -I/usr/include/pcre
 
-CONFIGURE_PREFIX=/usr/mariadb/10.1
-CONFDIR=/etc/mariadb/10.1
-DATA_PREFIX=/var/mariadb/10.1
+CONFIGURE_PREFIX=/usr/mariadb/$(COMPONENT_MAJOR_VERSION)
+CONFDIR=/etc/mariadb/$(COMPONENT_MAJOR_VERSION)
+DATA_PREFIX=/var/mariadb/$(COMPONENT_MAJOR_VERSION)
 
 CMAKE_BINDIR.32 =	bin
 CMAKE_BINDIR.64 =	bin/$(MACH64)
@@ -73,16 +77,43 @@ CMAKE_OPTIONS+= -DWITH_SSL=system
 CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
 CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS+= -DCMAKE_REQUIRED_INCLUDES=/usr/include/pcre
+CMAKE_OPTIONS+= -DWITH_INNOBASE_STORAGE_ENGINE=1
+CMAKE_OPTIONS+= -DWITH_INNODB_MEMCACHED=ON
+CMAKE_OPTIONS+= -DWITH_COMMENT="OpenIndiana MariaDB"
+CMAKE_OPTIONS+= -DWITH_XTRADB_STORAGE_ENGINE=1
+CMAKE_OPTIONS+= -DWITH_CSV_STORAGE_ENGINE=1
+CMAKE_OPTIONS+= -DCOMPILATION_COMMENT="OpenIndiana package"
 
 CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
+
+COMPONENT_TEST_TRANSFORMS= \
+	'-n ' \
+	'-e "s/ \].*/ \]/"' \
+	'-e "s/ w[0-9] //"' \
+	'-e "s/\[//"' \
+	'-e "s/\]//"' \
+	'-e "s/  */ /g"' \
+	'-e "s/ $$//"' \
+	'-e "/pass$$/p"' \
+	'-e "/fail$$/p"'
+
+# --mem option may hung the system
+COMPONENT_TEST_CMD= mysql-test/mtr \
+	--parallel=$(shell getconf NPROCESSORS_ONLN) \
+	--force \
+	--retry=0 \
+	--mysqld=--binlog-format=mixed \
+	--force-restart \
+	--max-test-fail=0 \
+	--skip-test-list=unstable-tests
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(TEST_32_and_64)
+test:		$(TEST_32_and_64)
+
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

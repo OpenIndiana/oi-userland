@@ -12,6 +12,7 @@
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 # Copyright 2016-2017, Wiselabs Software Ltda - http://www.wiselabs.com.br . All rights reserved.
+# Copyright 2018, Michal Nowak
 #
 
 set name=pkg.fmri \
@@ -92,6 +93,8 @@ file path=usr/mariadb/10.1/bin/$(MACH64)/wsrep_sst_common
 file path=usr/mariadb/10.1/bin/$(MACH64)/wsrep_sst_mariabackup
 file path=usr/mariadb/10.1/bin/$(MACH64)/wsrep_sst_mysqldump
 file path=usr/mariadb/10.1/bin/$(MACH64)/wsrep_sst_rsync
+link path=usr/mariadb/10.1/bin/$(MACH64)/wsrep_sst_rsync_wan \
+    target=wsrep_sst_rsync
 file path=usr/mariadb/10.1/bin/$(MACH64)/wsrep_sst_xtrabackup
 file path=usr/mariadb/10.1/bin/$(MACH64)/wsrep_sst_xtrabackup-v2
 
@@ -129,6 +132,7 @@ file path=usr/mariadb/10.1/bin/wsrep_sst_common
 file path=usr/mariadb/10.1/bin/wsrep_sst_mariabackup
 file path=usr/mariadb/10.1/bin/wsrep_sst_mysqldump
 file path=usr/mariadb/10.1/bin/wsrep_sst_rsync
+link path=usr/mariadb/10.1/bin/wsrep_sst_rsync_wan target=wsrep_sst_rsync
 file path=usr/mariadb/10.1/bin/wsrep_sst_xtrabackup
 file path=usr/mariadb/10.1/bin/wsrep_sst_xtrabackup-v2
 
@@ -242,6 +246,7 @@ file path=usr/mariadb/10.1/man/man8/mysqld.8
 
 file path=usr/mariadb/10.1/share/charsets/Index.xml
 file path=usr/mariadb/10.1/share/charsets/README
+file path=usr/mariadb/10.1/share/charsets/armscii8.xml
 file path=usr/mariadb/10.1/share/charsets/ascii.xml
 file path=usr/mariadb/10.1/share/charsets/cp1250.xml
 file path=usr/mariadb/10.1/share/charsets/cp1251.xml
@@ -276,9 +281,12 @@ file path=usr/mariadb/10.1/share/french/errmsg.sys
 file path=usr/mariadb/10.1/share/german/errmsg.sys
 file path=usr/mariadb/10.1/share/greek/errmsg.sys
 file path=usr/mariadb/10.1/share/hungarian/errmsg.sys
+file path=usr/mariadb/10.1/share/install_spider.sql
 file path=usr/mariadb/10.1/share/italian/errmsg.sys
 file path=usr/mariadb/10.1/share/japanese/errmsg.sys
 file path=usr/mariadb/10.1/share/korean/errmsg.sys
+file path=usr/mariadb/10.1/share/maria_add_gis_sp.sql
+file path=usr/mariadb/10.1/share/maria_add_gis_sp_bootstrap.sql
 file path=usr/mariadb/10.1/share/mysql/binary-configure mode=0555
 file path=usr/mariadb/10.1/share/mysql/magic
 file path=usr/mariadb/10.1/share/mysql/my-huge.cnf
@@ -289,23 +297,13 @@ file path=usr/mariadb/10.1/share/mysql/my-small.cnf
 file path=usr/mariadb/10.1/share/mysql/mysql-log-rotate mode=0555
 file path=usr/mariadb/10.1/share/mysql/mysql.server mode=0555
 file path=usr/mariadb/10.1/share/mysql/mysqld_multi.server mode=0555
-file path=usr/mariadb/10.1/share/mysql/wsrep_notify
 file path=usr/mariadb/10.1/share/mysql/wsrep.cnf
-file path=usr/mariadb/10.1/share/mysql/policy/apparmor/README
-file path=usr/mariadb/10.1/share/mysql/policy/apparmor/usr.sbin.mysqld
-file path=usr/mariadb/10.1/share/mysql/policy/apparmor/usr.sbin.mysqld.local
-file path=usr/mariadb/10.1/share/mysql/policy/selinux/mariadb-server.fc
-file path=usr/mariadb/10.1/share/mysql/policy/selinux/mariadb-server.te
-file path=usr/mariadb/10.1/share/mysql/policy/selinux/mariadb.te
-file path=usr/mariadb/10.1/share/mysql/policy/selinux/README
+file path=usr/mariadb/10.1/share/mysql/wsrep_notify
 file path=usr/mariadb/10.1/share/mysql_performance_tables.sql
 file path=usr/mariadb/10.1/share/mysql_system_tables.sql
 file path=usr/mariadb/10.1/share/mysql_system_tables_data.sql
 file path=usr/mariadb/10.1/share/mysql_test_data_timezone.sql
 file path=usr/mariadb/10.1/share/mysql_to_mariadb.sql
-file path=usr/mariadb/10.1/share/install_spider.sql
-file path=usr/mariadb/10.1/share/maria_add_gis_sp_bootstrap.sql
-file path=usr/mariadb/10.1/share/maria_add_gis_sp.sql
 file path=usr/mariadb/10.1/share/norwegian-ny/errmsg.sys
 file path=usr/mariadb/10.1/share/norwegian/errmsg.sys
 file path=usr/mariadb/10.1/share/polish/errmsg.sys
