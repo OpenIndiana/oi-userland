@@ -1,0 +1,11 @@
+--- zziplib-0.13.69/docs/Makefile.am	2018-03-17 13:46:45.000000000 +0000
++++ zziplib-0.13.69/docs/Makefile.am	2018-08-03 08:44:03.111721716 +0000
+@@ -166,6 +166,8 @@ manpages.tar : zziplib.xml zzipmmapped.x
+ 	;   mv man3_/man3 man3; rm -r man3_; fi \
+ 	; echo 'chmod 664 man3/*.3' \
+ 	;       chmod 664 man3/*.3  \
++	; echo "sed -i -e 's@^.so @.so man3/@' man3/*.3" \
++	; sed -i -e 's@^.so @.so man3/@' man3/*.3 \
+ 	; echo '$(PAX_TAR_CREATE) "$@" man3/' \
+ 	;       $(PAX_TAR_CREATE) "$@" man3/  \
+ 	; echo '$(DELETE); rm man3/*.3 ; rmdir man3' \
