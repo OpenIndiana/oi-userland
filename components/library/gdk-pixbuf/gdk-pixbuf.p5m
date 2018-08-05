@@ -23,6 +23,9 @@ license COPYING license='LGPLv2'
 
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
+# Otherwise `gdk-pixbuf-csource` won't recognize file types
+depend type=require fmri=desktop/shared-mime-info
+
 file path=usr/bin/$(MACH64)/gdk-pixbuf-csource
 file path=usr/bin/$(MACH64)/gdk-pixbuf-pixdata
 file path=usr/bin/$(MACH64)/gdk-pixbuf-query-loaders
