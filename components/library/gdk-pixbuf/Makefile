@@ -11,31 +11,31 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gdk-pixbuf
-
-COMPONENT_VERSION= 2.31.6
-COMPONENT_REVISION= 5
+COMPONENT_VERSION= 2.36.12
 COMPONENT_SUMMARY= GNOME gdk-pixbuf
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:111203d6f295d69d36e7190204248331cd37285130ac483becdedcd3f0135d18
+  sha256:fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.31/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://cairographics.org
+  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.36/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://gitlab.gnome.org/GNOME/gdk-pixbuf
+COMPONENT_FMRI=	library/desktop/gdk-pixbuf
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal  -I m4 && \
-				libtoolize --force --copy&&\
-				autoheader &&\
-				automake -a -f -c --gnu &&\
+				libtoolize --force --copy&& \
+				autoheader && \
+				automake -a -f -c --gnu && \
 				autoconf )
 
 # build with the distribution preferred libjpeg implementation
@@ -67,21 +67,24 @@ COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-# fix tests
+# This file is required by a jpeg test, but missing from the release tarball
+COMPONENT_PRE_TEST_ACTION+= ( $(CP) $(COMPONENT_DIR)/files/bug753605-atsize.jpg $(SOURCE_DIR)/tests/ )
+
+# Fix tests
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 unexport SHELLOPTS
+
+COMPONENT_TEST_TRANSFORMS += '-ne "/^SKIP/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^PASS/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^FAIL/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^XPASS/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^XFAIL/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^ERROR/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
-
-# TOTAL: 77
-# PASS:  71
-# SKIP:  0
-# XFAIL: 0
-# FAIL:  0
-# XPASS: 0
-# ERROR: 6
 
 test: $(TEST_32_and_64)
 
