@@ -19,14 +19,14 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pulseaudio
-COMPONENT_VERSION= 12.0
+COMPONENT_VERSION= 12.2
 COMPONENT_FMRI = library/audio/pulseaudio
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= Sample Rate Converter for audio
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6e422dbdc9fd11c0cb6af869e5eda73dc24a8be3c14725440edd51ce6b464444
+  sha256:809668ffc296043779c984f53461c2b3987a45b7a25eb2f0a1d11d9f23ba4055
 COMPONENT_ARCHIVE_URL= \
   http://freedesktop.org/software/pulseaudio/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/PulseAudio/
