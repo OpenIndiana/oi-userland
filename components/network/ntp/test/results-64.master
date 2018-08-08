@@ -1,17 +1,19 @@
-crypto.c:12:test_MakeMd5Mac:PASS
-crypto.c:13:test_MakeSHA1Mac:PASS
-crypto.c:14:test_VerifyCorrectMD5:PASS
-crypto.c:15:test_VerifySHA1:PASS
-crypto.c:16:test_VerifyFailure:PASS
-crypto.c:17:test_PacketSizeNotMultipleOfFourBytes:PASS
+crypto.c:15:test_MakeMd5Mac:PASS
+crypto.c:16:test_MakeSHA1Mac:PASS
+crypto.c:111:test_MakeCMac:IGNORE: OpenSSL not found, skipping...
+crypto.c:18:test_VerifyCorrectMD5:PASS
+crypto.c:19:test_VerifySHA1:PASS
+crypto.c:202:test_VerifyCMAC:IGNORE: OpenSSL not found, skipping...
+crypto.c:21:test_VerifyFailure:PASS
+crypto.c:22:test_PacketSizeNotMultipleOfFourBytes:PASS
 
 -----------------------
-6 Tests: 
+8 Tests: 
 6 PASS 
 0 XFAIL 
 0 Failures 
 0 XPASS 
-0 Ignored 
+2 Ignored 
 
 OK
 PASS test-crypto (exit status: 0)
@@ -31,6 +33,10 @@ keyFile.c:16:test_ReadKeyFileWithInvalidHex:PASS
 
 OK
 PASS test-keyFile (exit status: 0)
+An error occured while parsing the KoD db file /dev/null
+An error occured while parsing the KoD db file /dev/null
+An error occured while parsing the KoD db file /dev/null
+An error occured while parsing the KoD db file /dev/null
 kodDatabase.c:14:test_SingleEntryHandling:PASS
 kodDatabase.c:15:test_MultipleEntryHandling:PASS
 kodDatabase.c:16:test_NoMatchInSearch:PASS
@@ -92,6 +98,7 @@ PASS test-log (exit status: 0)
 
 OK
 PASS test-networking (exit status: 0)
+KOD code DENY from 192.0.2.1 192.0.2.1
 packetHandling.c:17:test_GenerateUnauthenticatedPacket:PASS
 packetHandling.c:18:test_GenerateAuthenticatedPacket:PASS
 packetHandling.c:19:test_OffsetCalculationPositiveOffset:PASS
@@ -113,34 +120,47 @@ packetHandling.c:26:test_HandleCorrectPacket:PASS
 
 OK
 PASS test-packetHandling (exit status: 0)
-packetProcessing.c:20:test_TooShortLength:PASS
-packetProcessing.c:21:test_LengthNotMultipleOfFour:PASS
-packetProcessing.c:22:test_TooShortExtensionFieldLength:PASS
-packetProcessing.c:23:test_UnauthenticatedPacketReject:PASS
-Crypto NAK = 0x00000000
-packetProcessing.c:24:test_CryptoNAKPacketReject:PASS
-packetProcessing.c:25:test_AuthenticatedPacketInvalid:PASS
+UnitTest: Incredible packet length: 47.  Discarding.
+UnitTest: Incredible packet length: 47.  Discarding.
+UnitTest: Incredible packet length: 54.  Discarding.
+UnitTest: Incredible packet length: 51.  Discarding.
+UnitTest: Missing extension field.  Discarding.
+UnitTest: Packet shows wrong version (0)
+packetProcessing.c:23:test_TooShortLength:PASS
+packetProcessing.c:24:test_LengthNotMultipleOfFour:PASS
+packetProcessing.c:25:test_TooShortExtensionFieldLength:PASS
+packetProcessing.c:26:test_UnauthenticatedPacketReject:PASS
+Crypto NAK = 0x00000000 from 0.0.0.0
+packetProcessing.c:27:test_CryptoNAKPacketReject:PASS
+packetProcessing.c:28:test_AuthenticatedPacketInvalid:PASS
 unrecognized key ID = 0x00000032
-packetProcessing.c:26:test_AuthenticatedPacketUnknownKey:PASS
-packetProcessing.c:27:test_ServerVersionTooOld:PASS
-packetProcessing.c:28:test_ServerVersionTooNew:PASS
-packetProcessing.c:29:test_NonWantedMode:PASS
-packetProcessing.c:30:test_KoDRate:PASS
-packetProcessing.c:31:test_KoDDeny:PASS
-packetProcessing.c:32:test_RejectUnsyncedServer:PASS
-packetProcessing.c:33:test_RejectWrongResponseServerMode:PASS
-packetProcessing.c:34:test_AcceptNoSentPacketBroadcastMode:PASS
-packetProcessing.c:35:test_CorrectUnauthenticatedPacket:PASS
-packetProcessing.c:36:test_CorrectAuthenticatedPacketMD5:PASS
-packetProcessing.c:37:test_CorrectAuthenticatedPacketSHA1:PASS
+packetProcessing.c:29:test_AuthenticatedPacketUnknownKey:PASS
+UnitTest: Packet shows wrong version (5)
+UnitTest: mode 3 stratum 0
+UnitTest: 0.0.0.0 not in sync, skipping this server
+0.0.0.0 response org expected to match sent xmt
+resp org: 000003e8.00000000  Thu, Feb  7 2036  7:44:56.000
+sent xmt: 000007d0.00000000  Thu, Feb  7 2036  8:01:36.000
+Old:PASS
+packetProcessing.c:31:test_ServerVersionTooNew:PASS
+packetProcessing.c:32:test_NonWantedMode:PASS
+packetProcessing.c:33:test_KoDRate:PASS
+packetProcessing.c:34:test_KoDDeny:PASS
+packetProcessing.c:35:test_RejectUnsyncedServer:PASS
+packetProcessing.c:36:test_RejectWrongResponseServerMode:PASS
+packetProcessing.c:37:test_AcceptNoSentPacketBroadcastMode:PASS
+packetProcessing.c:38:test_CorrectUnauthenticatedPacket:PASS
+packetProcessing.c:39:test_CorrectAuthenticatedPacketMD5:PASS
+packetProcessing.c:40:test_CorrectAuthenticatedPacketSHA1:PASS
+packetProcessing.c:488:test_CorrectAuthenticatedPacketCMAC:IGNORE: OpenSSL CMAC not used, skipping...
 
 -----------------------
-18 Tests: 
+19 Tests: 
 18 PASS 
 0 XFAIL 
 0 Failures 
 0 XPASS 
-0 Ignored 
+1 Ignored 
 
 OK
 PASS test-packetProcessing (exit status: 0)
@@ -162,7 +182,7 @@ utilities.c:16:test_IPv4Address:PASS
 utilities.c:17:test_IPv6Address:PASS
 utilities.c:18:test_SetLiVnMode1:PASS
 utilities.c:19:test_SetLiVnMode2:PASS
-utilities.c:20:test_PktOutput:PASS
+Comparision failed on line 2utilities.c:20:test_PktOutput:PASS
 utilities.c:21:test_LfpOutputBinaryFormat:PASS
 utilities.c:22:test_LfpOutputDecimalFormat:PASS
 
@@ -194,7 +214,7 @@ a_md5encrypt.c:40:test_Encrypt:PASS
 a_md5encrypt.c:41:test_DecryptValid:PASS
 a_md5encrypt.c:42:test_DecryptInvalid:PASS
 a_md5encrypt.c:43:test_IPv4AddressToRefId:PASS
-a_md5encrypt.c:113:test_IPv6AddressToRefId:IGNORE: Skipping because of big endian problem?
+a_md5encrypt.c:109:test_IPv6AddressToRefId:IGNORE: Skipping because of big endian problem?
 
 -----------------------
 5 Tests: 
@@ -239,17 +259,23 @@ atouint.c:13:test_IllegalChar:PASS
 
 OK
 PASS test-atouint (exit status: 0)
-authkeys.c:25:test_AddTrustedKeys:PASS
-authkeys.c:26:test_AddUntrustedKey:PASS
-authkeys.c:27:test_HaveKeyCorrect:PASS
-authkeys.c:28:test_HaveKeyIncorrect:PASS
-authkeys.c:29:test_AddWithAuthUseKey:PASS
-authkeys.c:30:test_EmptyKey:PASS
-authkeys.c:31:test_auth_log2:PASS
+authkeys.c:79:test_AddTrustedKeys:PASS
+authkeys.c:92:test_AddUntrustedKey:PASS
+authkeys.c:102:test_HaveKeyCorrect:PASS
+authkeys.c:113:test_HaveKeyIncorrect:PASS
+authkeys.c:122:test_AddWithAuthUseKey:PASS
+authkeys.c:131:test_EmptyKey:PASS
+authkeys.c:160:test_auth_log2:PASS
+authkeys.c:203:test_AddrMatch_anull:PASS
+authkeys.c:234:test_AddrMatch_self4:PASS
+authkeys.c:245:test_AddrMatch_self6:PASS
+authkeys.c:256:test_AddrMatch_afmix:PASS
+authkeys.c:268:test_AddrMatch_ipv4:PASS
+authkeys.c:298:test_AddrMatch_ipv6:PASS
 
 -----------------------
-7 Tests: 
-7 PASS 
+13 Tests: 
+13 PASS 
 0 XFAIL 
 0 Failures 
 0 XPASS 
@@ -645,15 +671,17 @@ IPv4 comparision failed, expected: 192.0.2.1(192.0.2.1) but was: 192.0.2.1(192.0
 
 OK
 PASS test-socktoa (exit status: 0)
-ssl_init.c:17:test_MD5KeyTypeWithoutDigestLength:PASS
-ssl_init.c:18:test_MD5KeyTypeWithDigestLength:PASS
-ssl_init.c:19:test_SHA1KeyTypeWithDigestLength:PASS
-ssl_init.c:20:test_MD5KeyName:PASS
-ssl_init.c:21:test_SHA1KeyName:PASS
+ssl_init.c:20:test_MD5KeyTypeWithoutDigestLength:PASS
+ssl_init.c:21:test_MD5KeyTypeWithDigestLength:PASS
+ssl_init.c:22:test_SHA1KeyTypeWithDigestLength:PASS
+ssl_init.c:23:test_CMACKeyTypeWithDigestLength:PASS
+ssl_init.c:24:test_MD5KeyName:PASS
+ssl_init.c:25:test_SHA1KeyName:PASS
+ssl_init.c:26:test_CMACKeyName:PASS
 
 -----------------------
-5 Tests: 
-5 PASS 
+7 Tests: 
+7 PASS 
 0 XFAIL 
 0 Failures 
 0 XPASS 
@@ -726,246 +754,246 @@ timespecops.c:51:test_SubNsecOflow:PASS
 timespecops.c:52:test_Neg:PASS
 timespecops.c:53:test_AbsNoFrac:PASS
 timespecops.c:54:test_AbsWithFrac:PASS
-m_expr which is -2.1 
+m_expr which is -2.000000001 
 and
 n_expr which is -2.18446744073709551613
-are not close; diff=0.4nsec
-m_expr which is -2.1 
+are not close; diff=0.000000004nsec
+m_expr which is -2.000000001 
 and
 n_expr which is -2.18446744073709551614
-are not close; diff=0.3nsec
-m_expr which is -2.1 
+are not close; diff=0.000000003nsec
+m_expr which is -2.000000001 
 and
-n_expr which is -2.4
-are not close; diff=0.3nsec
-m_expr which is -2.1 
+n_expr which is -2.000000004
+are not close; diff=0.000000003nsec
+m_expr which is -2.000000001 
 and
-n_expr which is -2.5
-are not close; diff=0.4nsec
+n_expr which is -2.000000005
+are not close; diff=0.000000004nsec
 m_expr which is -2.500000000 
 and
 n_expr which is -2.499999996
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is -2.500000000 
 and
 n_expr which is -2.499999997
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -2.500000000 
 and
 n_expr which is -2.500000003
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -2.500000000 
 and
 n_expr which is -2.500000004
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is -2.999999999 
 and
 n_expr which is -2.999999995
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is -2.999999999 
 and
 n_expr which is -2.999999996
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -2.999999999 
 and
 n_expr which is -2.1000000002
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -2.999999999 
 and
 n_expr which is -2.1000000003
-are not close; diff=0.4nsec
-m_expr which is -1.1 
+are not close; diff=0.000000004nsec
+m_expr which is -1.000000001 
 and
 n_expr which is -1.18446744073709551613
-are not close; diff=0.4nsec
-m_expr which is -1.1 
+are not close; diff=0.000000004nsec
+m_expr which is -1.000000001 
 and
 n_expr which is -1.18446744073709551614
-are not close; diff=0.3nsec
-m_expr which is -1.1 
+are not close; diff=0.000000003nsec
+m_expr which is -1.000000001 
 and
-n_expr which is -1.4
-are not close; diff=0.3nsec
-m_expr which is -1.1 
+n_expr which is -1.000000004
+are not close; diff=0.000000003nsec
+m_expr which is -1.000000001 
 and
-n_expr which is -1.5
-are not close; diff=0.4nsec
+n_expr which is -1.000000005
+are not close; diff=0.000000004nsec
 m_expr which is -1.500000000 
 and
 n_expr which is -1.499999996
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is -1.500000000 
 and
 n_expr which is -1.499999997
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -1.500000000 
 and
 n_expr which is -1.500000003
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -1.500000000 
 and
 n_expr which is -1.500000004
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is -1.999999999 
 and
 n_expr which is -1.999999995
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is -1.999999999 
 and
 n_expr which is -1.999999996
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -1.999999999 
 and
 n_expr which is -1.1000000002
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is -1.999999999 
 and
 n_expr which is -1.1000000003
-are not close; diff=0.4nsec
-m_expr which is 0.1 
+are not close; diff=0.000000004nsec
+m_expr which is 0.000000001 
 and
 n_expr which is 0.18446744073709551613
-are not close; diff=0.4nsec
-m_expr which is 0.1 
+are not close; diff=0.000000004nsec
+m_expr which is 0.000000001 
 and
 n_expr which is 0.18446744073709551614
-are not close; diff=0.3nsec
-m_expr which is 0.1 
+are not close; diff=0.000000003nsec
+m_expr which is 0.000000001 
 and
-n_expr which is 0.4
-are not close; diff=0.3nsec
-m_expr which is 0.1 
+n_expr which is 0.000000004
+are not close; diff=0.000000003nsec
+m_expr which is 0.000000001 
 and
-n_expr which is 0.5
-are not close; diff=0.4nsec
+n_expr which is 0.000000005
+are not close; diff=0.000000004nsec
 m_expr which is 0.500000000 
 and
 n_expr which is 0.499999996
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 0.500000000 
 and
 n_expr which is 0.499999997
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 0.500000000 
 and
 n_expr which is 0.500000003
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 0.500000000 
 and
 n_expr which is 0.500000004
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 0.999999999 
 and
 n_expr which is 0.999999995
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 0.999999999 
 and
 n_expr which is 0.999999996
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 0.999999999 
 and
 n_expr which is 0.1000000002
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 0.999999999 
 and
 n_expr which is 0.1000000003
-are not close; diff=0.4nsec
-m_expr which is 1.1 
+are not close; diff=0.000000004nsec
+m_expr which is 1.000000001 
 and
 n_expr which is 1.18446744073709551613
-are not close; diff=0.4nsec
-m_expr which is 1.1 
+are not close; diff=0.000000004nsec
+m_expr which is 1.000000001 
 and
 n_expr which is 1.18446744073709551614
-are not close; diff=0.3nsec
-m_expr which is 1.1 
+are not close; diff=0.000000003nsec
+m_expr which is 1.000000001 
 and
-n_expr which is 1.4
-are not close; diff=0.3nsec
-m_expr which is 1.1 
+n_expr which is 1.000000004
+are not close; diff=0.000000003nsec
+m_expr which is 1.000000001 
 and
-n_expr which is 1.5
-are not close; diff=0.4nsec
+n_expr which is 1.000000005
+are not close; diff=0.000000004nsec
 m_expr which is 1.500000000 
 and
 n_expr which is 1.499999996
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 1.500000000 
 and
 n_expr which is 1.499999997
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 1.500000000 
 and
 n_expr which is 1.500000003
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 1.500000000 
 and
 n_expr which is 1.500000004
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 1.999999999 
 and
 n_expr which is 1.999999995
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 1.999999999 
 and
 n_expr which is 1.999999996
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 1.999999999 
 and
 n_expr which is 1.1000000002
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 1.999999999 
 and
 n_expr which is 1.1000000003
-are not close; diff=0.4nsec
-m_expr which is 2.1 
+are not close; diff=0.000000004nsec
+m_expr which is 2.000000001 
 and
 n_expr which is 2.18446744073709551613
-are not close; diff=0.4nsec
-m_expr which is 2.1 
+are not close; diff=0.000000004nsec
+m_expr which is 2.000000001 
 and
 n_expr which is 2.18446744073709551614
-are not close; diff=0.3nsec
-m_expr which is 2.1 
+are not close; diff=0.000000003nsec
+m_expr which is 2.000000001 
 and
-n_expr which is 2.4
-are not close; diff=0.3nsec
-m_expr which is 2.1 
+n_expr which is 2.000000004
+are not close; diff=0.000000003nsec
+m_expr which is 2.000000001 
 and
-n_expr which is 2.5
-are not close; diff=0.4nsec
+n_expr which is 2.000000005
+are not close; diff=0.000000004nsec
 m_expr which is 2.500000000 
 and
 n_expr which is 2.499999996
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 2.500000000 
 and
 n_expr which is 2.499999997
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 2.500000000 
 and
 n_expr which is 2.500000003
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 2.500000000 
 and
 n_expr which is 2.500000004
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 2.999999999 
 and
 n_expr which is 2.999999995
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 m_expr which is 2.999999999 
 and
 n_expr which is 2.999999996
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 2.999999999 
 and
 n_expr which is 2.1000000002
-are not close; diff=0.3nsec
+are not close; diff=0.000000003nsec
 m_expr which is 2.999999999 
 and
 n_expr which is 2.1000000003
-are not close; diff=0.4nsec
+are not close; diff=0.000000004nsec
 timespecops.c:55:test_Helpers2:PASS
 timespecops.c:56:test_ToLFPbittest:PASS
 timespecops.c:57:test_ToLFPrelPos:PASS
@@ -1005,246 +1033,246 @@ timevalops.c:51:test_SubUsecOflow:PASS
 timevalops.c:52:test_Neg:PASS
 timevalops.c:53:test_AbsNoFrac:PASS
 timevalops.c:54:test_AbsWithFrac:PASS
-m_expr which is -2.1 
+m_expr which is -2.000001 
 and
 n_expr which is -2.18446744073709551613
-are not close; diff=0.4usec
-m_expr which is -2.1 
+are not close; diff=0.000004usec
+m_expr which is -2.000001 
 and
 n_expr which is -2.18446744073709551614
-are not close; diff=0.3usec
-m_expr which is -2.1 
+are not close; diff=0.000003usec
+m_expr which is -2.000001 
 and
-n_expr which is -2.4
-are not close; diff=0.3usec
-m_expr which is -2.1 
+n_expr which is -2.000004
+are not close; diff=0.000003usec
+m_expr which is -2.000001 
 and
-n_expr which is -2.5
-are not close; diff=0.4usec
+n_expr which is -2.000005
+are not close; diff=0.000004usec
 m_expr which is -2.500000 
 and
 n_expr which is -2.499996
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is -2.500000 
 and
 n_expr which is -2.499997
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -2.500000 
 and
 n_expr which is -2.500003
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -2.500000 
 and
 n_expr which is -2.500004
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is -2.999999 
 and
 n_expr which is -2.999995
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is -2.999999 
 and
 n_expr which is -2.999996
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -2.999999 
 and
 n_expr which is -2.1000002
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -2.999999 
 and
 n_expr which is -2.1000003
-are not close; diff=0.4usec
-m_expr which is -1.1 
+are not close; diff=0.000004usec
+m_expr which is -1.000001 
 and
 n_expr which is -1.18446744073709551613
-are not close; diff=0.4usec
-m_expr which is -1.1 
+are not close; diff=0.000004usec
+m_expr which is -1.000001 
 and
 n_expr which is -1.18446744073709551614
-are not close; diff=0.3usec
-m_expr which is -1.1 
+are not close; diff=0.000003usec
+m_expr which is -1.000001 
 and
-n_expr which is -1.4
-are not close; diff=0.3usec
-m_expr which is -1.1 
+n_expr which is -1.000004
+are not close; diff=0.000003usec
+m_expr which is -1.000001 
 and
-n_expr which is -1.5
-are not close; diff=0.4usec
+n_expr which is -1.000005
+are not close; diff=0.000004usec
 m_expr which is -1.500000 
 and
 n_expr which is -1.499996
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is -1.500000 
 and
 n_expr which is -1.499997
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -1.500000 
 and
 n_expr which is -1.500003
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -1.500000 
 and
 n_expr which is -1.500004
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is -1.999999 
 and
 n_expr which is -1.999995
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is -1.999999 
 and
 n_expr which is -1.999996
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -1.999999 
 and
 n_expr which is -1.1000002
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is -1.999999 
 and
 n_expr which is -1.1000003
-are not close; diff=0.4usec
-m_expr which is 0.1 
+are not close; diff=0.000004usec
+m_expr which is 0.000001 
 and
 n_expr which is 0.18446744073709551613
-are not close; diff=0.4usec
-m_expr which is 0.1 
+are not close; diff=0.000004usec
+m_expr which is 0.000001 
 and
 n_expr which is 0.18446744073709551614
-are not close; diff=0.3usec
-m_expr which is 0.1 
+are not close; diff=0.000003usec
+m_expr which is 0.000001 
 and
-n_expr which is 0.4
-are not close; diff=0.3usec
-m_expr which is 0.1 
+n_expr which is 0.000004
+are not close; diff=0.000003usec
+m_expr which is 0.000001 
 and
-n_expr which is 0.5
-are not close; diff=0.4usec
+n_expr which is 0.000005
+are not close; diff=0.000004usec
 m_expr which is 0.500000 
 and
 n_expr which is 0.499996
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 0.500000 
 and
 n_expr which is 0.499997
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 0.500000 
 and
 n_expr which is 0.500003
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 0.500000 
 and
 n_expr which is 0.500004
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 0.999999 
 and
 n_expr which is 0.999995
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 0.999999 
 and
 n_expr which is 0.999996
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 0.999999 
 and
 n_expr which is 0.1000002
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 0.999999 
 and
 n_expr which is 0.1000003
-are not close; diff=0.4usec
-m_expr which is 1.1 
+are not close; diff=0.000004usec
+m_expr which is 1.000001 
 and
 n_expr which is 1.18446744073709551613
-are not close; diff=0.4usec
-m_expr which is 1.1 
+are not close; diff=0.000004usec
+m_expr which is 1.000001 
 and
 n_expr which is 1.18446744073709551614
-are not close; diff=0.3usec
-m_expr which is 1.1 
+are not close; diff=0.000003usec
+m_expr which is 1.000001 
 and
-n_expr which is 1.4
-are not close; diff=0.3usec
-m_expr which is 1.1 
+n_expr which is 1.000004
+are not close; diff=0.000003usec
+m_expr which is 1.000001 
 and
-n_expr which is 1.5
-are not close; diff=0.4usec
+n_expr which is 1.000005
+are not close; diff=0.000004usec
 m_expr which is 1.500000 
 and
 n_expr which is 1.499996
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 1.500000 
 and
 n_expr which is 1.499997
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 1.500000 
 and
 n_expr which is 1.500003
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 1.500000 
 and
 n_expr which is 1.500004
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 1.999999 
 and
 n_expr which is 1.999995
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 1.999999 
 and
 n_expr which is 1.999996
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 1.999999 
 and
 n_expr which is 1.1000002
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 1.999999 
 and
 n_expr which is 1.1000003
-are not close; diff=0.4usec
-m_expr which is 2.1 
+are not close; diff=0.000004usec
+m_expr which is 2.000001 
 and
 n_expr which is 2.18446744073709551613
-are not close; diff=0.4usec
-m_expr which is 2.1 
+are not close; diff=0.000004usec
+m_expr which is 2.000001 
 and
 n_expr which is 2.18446744073709551614
-are not close; diff=0.3usec
-m_expr which is 2.1 
+are not close; diff=0.000003usec
+m_expr which is 2.000001 
 and
-n_expr which is 2.4
-are not close; diff=0.3usec
-m_expr which is 2.1 
+n_expr which is 2.000004
+are not close; diff=0.000003usec
+m_expr which is 2.000001 
 and
-n_expr which is 2.5
-are not close; diff=0.4usec
+n_expr which is 2.000005
+are not close; diff=0.000004usec
 m_expr which is 2.500000 
 and
 n_expr which is 2.499996
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 2.500000 
 and
 n_expr which is 2.499997
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 2.500000 
 and
 n_expr which is 2.500003
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 2.500000 
 and
 n_expr which is 2.500004
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 2.999999 
 and
 n_expr which is 2.999995
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 m_expr which is 2.999999 
 and
 n_expr which is 2.999996
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 2.999999 
 and
 n_expr which is 2.1000002
-are not close; diff=0.3usec
+are not close; diff=0.000003usec
 m_expr which is 2.999999 
 and
 n_expr which is 2.1000003
-are not close; diff=0.4usec
+are not close; diff=0.000004usec
 timevalops.c:55:test_Helpers2:PASS
 timevalops.c:56:test_ToLFPbittest:PASS
 timevalops.c:57:test_ToLFPrelPos:PASS
@@ -1355,39 +1383,39 @@ ymd2yd.c:10:test_LeapYearDecember:PASS
 
 OK
 PASS test-ymd2yd (exit status: 0)
-leapsec.c:351:test_ValidateGood:PASS
-leapsec.c:362:test_ValidateNoHash:PASS
-leapsec.c:373:test_ValidateBad:PASS
-leapsec.c:385:test_ValidateMalformed:PASS
-leapsec.c:397:test_ValidateMalformedShort:PASS
-leapsec.c:409:test_ValidateNoLeadZero:PASS
-leapsec.c:426:test_tableSelect:PASS
-leapsec.c:466:test_loadFileExpire:PASS
-leapsec.c:487:test_loadFileTTL:PASS
-leapsec.c:522:test_lsQueryPristineState:PASS
-leapsec.c:538:test_ls2009faraway:PASS
-leapsec.c:559:test_ls2009weekaway:PASS
-leapsec.c:580:test_ls2009houraway:PASS
-leapsec.c:601:test_ls2009secaway:PASS
-leapsec.c:622:test_ls2009onspot:PASS
-leapsec.c:643:test_ls2009nodata:PASS
-leapsec.c:664:test_ls2009limdata:PASS
-leapsec.c:689:test_qryJumpFarAhead:PASS
-leapsec.c:712:test_qryJumpAheadToTransition:PASS
-leapsec.c:737:test_qryJumpAheadOverTransition:PASS
-leapsec.c:767:test_addDynamic:PASS
-leapsec.c:961:test_taiEmptyTable:PASS
-leapsec.c:974:test_taiTableFixed:PASS
-leapsec.c:990:test_taiTableDynamic:PASS
-leapsec.c:1020:test_taiTableDynamicDeadZone:PASS
-leapsec.c:1044:test_ls2009seqInsElectric:PASS
-leapsec.c:1091:test_ls2009seqInsDumb:PASS
-leapsec.c:1143:test_ls2009seqDelElectric:PASS
-leapsec.c:1190:test_ls2009seqDelDumb:PASS
-leapsec.c:1236:test_ls2012seqInsElectric:PASS
-leapsec.c:1283:test_ls2012seqInsDumb:PASS
-leapsec.c:1336:test_lsEmptyTableDumb:PASS
-leapsec.c:1365:test_lsEmptyTableElectric:PASS
+leapsec.c:329:test_ValidateGood:PASS
+leapsec.c:339:test_ValidateNoHash:PASS
+leapsec.c:349:test_ValidateBad:PASS
+leapsec.c:359:test_ValidateMalformed:PASS
+leapsec.c:369:test_ValidateMalformedShort:PASS
+leapsec.c:379:test_ValidateNoLeadZero:PASS
+leapsec.c:394:test_tableSelect:PASS
+leapsec.c:431:test_loadFileExpire:PASS
+leapsec.c:449:test_loadFileTTL:PASS
+leapsec.c:482:test_lsQueryPristineState:PASS
+leapsec.c:496:test_ls2009faraway:PASS
+leapsec.c:515:test_ls2009weekaway:PASS
+leapsec.c:534:test_ls2009houraway:PASS
+leapsec.c:553:test_ls2009secaway:PASS
+leapsec.c:572:test_ls2009onspot:PASS
+leapsec.c:591:test_ls2009nodata:PASS
+leapsec.c:610:test_ls2009limdata:PASS
+leapsec.c:633:test_qryJumpFarAhead:PASS
+leapsec.c:656:test_qryJumpAheadToTransition:PASS
+leapsec.c:679:test_qryJumpAheadOverTransition:PASS
+leapsec.c:706:test_addDynamic:PASS
+leapsec.c:892:test_taiEmptyTable:PASS
+leapsec.c:906:test_taiTableFixed:PASS
+leapsec.c:920:test_taiTableDynamic:PASS
+leapsec.c:948:test_taiTableDynamicDeadZone:PASS
+leapsec.c:970:test_ls2009seqInsElectric:PASS
+leapsec.c:1015:test_ls2009seqInsDumb:PASS
+leapsec.c:1064:test_ls2009seqDelElectric:PASS
+leapsec.c:1109:test_ls2009seqDelDumb:PASS
+leapsec.c:1153:test_ls2012seqInsElectric:PASS
+leapsec.c:1198:test_ls2012seqInsDumb:PASS
+leapsec.c:1249:test_lsEmptyTableDumb:PASS
+leapsec.c:1272:test_lsEmptyTableElectric:PASS
 
 -----------------------
 33 Tests: 
@@ -1399,13 +1427,13 @@ leapsec.c:1365:test_lsEmptyTableElectric:PASS
 
 OK
 PASS test-leapsec (exit status: 0)
-ntp_prio_q.c:39:test_AllocateDeallocateNode:PASS
+ntp_prio_q.c:38:test_AllocateDeallocateNode:PASS
 ntp_prio_q.c:46:test_EmptyQueue:PASS
-ntp_prio_q.c:60:test_OneElementQueue:PASS
-ntp_prio_q.c:88:test_MultipleElementQueue:PASS
-ntp_prio_q.c:126:test_CustomOrderQueue:PASS
-ntp_prio_q.c:183:test_DestroyNonEmptyQueue:PASS
-ntp_prio_q.c:205:test_AppendQueues:PASS
+ntp_prio_q.c:61:test_OneElementQueue:PASS
+ntp_prio_q.c:90:test_MultipleElementQueue:PASS
+ntp_prio_q.c:129:test_CustomOrderQueue:PASS
+ntp_prio_q.c:187:test_DestroyNonEmptyQueue:PASS
+ntp_prio_q.c:211:test_AppendQueues:PASS
 
 -----------------------
 7 Tests: 
@@ -1417,26 +1445,7 @@ ntp_prio_q.c:205:test_AppendQueues:PASS
 
 OK
 PASS test-ntp_prio_q (exit status: 0)
-ntp_restrict.c:66:test_RestrictionsAreEmptyAfterInit:PASS
-ntp_restrict.c:92:test_ReturnsCorrectDefaultRestrictions:PASS
-ntp_restrict.c:103:test_HackingDefaultRestriction:PASS
-ntp_restrict.c:126:test_CantRemoveDefaultEntry:PASS
-ntp_restrict.c:137:test_AddingNewRestriction:PASS
-ntp_restrict.c:150:test_TheMostFittingRestrictionIsMatched:PASS
-ntp_restrict.c:172:test_DeletedRestrictionIsNotMatched:PASS
-ntp_restrict.c:196:test_RestrictUnflagWorks:PASS
-
------------------------
-8 Tests: 
-8 PASS 
-0 XFAIL 
-0 Failures 
-0 XPASS 
-0 Ignored 
-
-OK
-PASS test-ntp_restrict (exit status: 0)
-rc_cmdlength.c:16:test_EvaluateCommandLength:PASS
+rc_cmdlength.c:14:test_EvaluateCommandLength:PASS
 
 -----------------------
 1 Tests: 
@@ -1452,8 +1461,8 @@ PASS test-rc_cmdlength (exit status: 0)
    ntp : tests/ntpd/test-suite.log
 =============================================
 
-# TOTAL: 4
-# PASS:  4
+# TOTAL: 3
+# PASS:  3
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -1830,6 +1839,9 @@ PASS test-ntpq (exit status: 0)
 /* Provide the explicit 127.0.0.0/8 martian filter? */
 #define ENABLE_BUG3020_FIX 1
 
+/* Enable CMAC support? */
+#define ENABLE_CMAC 1
+
 /* nls support in libopts */
 /* #undef ENABLE_NLS */
 
@@ -1890,6 +1902,14 @@ PASS test-ntpq (exit status: 0)
 
 /* Define to 1 if you have the `daemon' function. */
 #define HAVE_DAEMON 1
+
+/* Define to 1 if you have the declaration of `siglongjmp', and to 0 if you
+   don't. */
+#define HAVE_DECL_SIGLONGJMP 1
+
+/* Define to 1 if you have the declaration of `sigsetjmp', and to 0 if you
+   don't. */
+#define HAVE_DECL_SIGSETJMP 1
 
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
@@ -2171,6 +2191,12 @@ PASS test-ntpq (exit status: 0)
 
 /* if you have NT Threads */
 /* #undef HAVE_NT_THREADS */
+
+/* Define to 1 if you have the <openssl/cmac.h> header file. */
+#define HAVE_OPENSSL_CMAC_H 1
+
+/* Define to 1 if you have the <openssl/hmac.h> header file. */
+#define HAVE_OPENSSL_HMAC_H 1
 
 /* Define to 1 if the system has the type `pid_t'. */
 #define HAVE_PID_T 1
@@ -2476,6 +2502,9 @@ PASS test-ntpq (exit status: 0)
 /* Define to 1 if you have the <sys/lock.h> header file. */
 #define HAVE_SYS_LOCK_H 1
 
+/* Define to 1 if you have the <sys/mac.h> header file. */
+#define HAVE_SYS_MAC_H 1
+
 /* Define to 1 if you have the <sys/mman.h> header file. */
 #define HAVE_SYS_MMAN_H 1
 
@@ -2635,6 +2664,9 @@ PASS test-ntpq (exit status: 0)
 
 /* Do we have the TIO serial stuff? */
 /* #undef HAVE_TIO_SERIAL_STUFF */
+
+/* Are TrustedBSD MAC policy privileges available? */
+/* #undef HAVE_TRUSTEDBSD_MAC */
 
 /* Define to 1 if the system has the type `uint16_t'. */
 #define HAVE_UINT16_T 1
@@ -2861,8 +2893,7 @@ PASS test-ntpq (exit status: 0)
 /* Should we align with the NIST lockclock scheme? */
 /* #undef LOCKCLOCK */
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
 
 /* Does the target support multicast IP? */

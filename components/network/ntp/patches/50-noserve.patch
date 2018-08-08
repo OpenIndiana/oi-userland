@@ -1,20 +1,13 @@
 See:
-	http://bugzilla.ntp.org/show_bug.cgi?id=2367
-
---- ntpd/ntp_proto.c
-+++ ntpd/ntp_proto.c
-@@ -429,9 +429,11 @@ receive(
+       http://bugzilla.ntp.org/show_bug.cgi?id=2367
+--- ntpd/ntp_proto.c	2018-02-27 16:15:26.000000000 +0000
++++ ntpd/ntp_proto.c	2018-08-20 19:38:12.382954467 +0000
+@@ -680,7 +680,7 @@ receive(
  		process_control(rbufp, restrict_mask);
  		return;
  	}
 -	if (restrict_mask & RES_DONTSERVE) {
--		sys_restricted++;
--		return;				/* no time serve */
-+	if (hismode == MODE_CLIENT) {
-+		if (restrict_mask & RES_DONTSERVE) {
-+			sys_restricted++;
-+			return;				/* no time serve */
-+		}
- 	}
- 
- 	/*
++	if (hismode == MODE_CLIENT && (restrict_mask & RES_DONTSERVE)) {
+ 		DPRINTF(2, ("receive: drop: RES_DONTSERVE\n"));
+ 		sys_restricted++;
+ 		return;				/* no time serve */

@@ -4,9 +4,9 @@ reported as NTP community bug 2990 (http://bugs.ntp.org/show_bug.cgi?id=2990)
 and this patch may be removed after upgrading to a version of NTP which has
 bug 2990 fixed.
 
---- include/ntpd.h
-+++ include/ntpd.h
-@@ -480,6 +480,7 @@ extern struct peer *sys_peer;		/* curren
+--- include/ntpd.h.orig	2018-02-27 16:15:24.000000000 +0000
++++ include/ntpd.h	2018-08-24 23:53:29.057546443 +0000
+@@ -483,6 +483,7 @@ extern struct peer *sys_peer;		/* curren
   * Nonspecified system state variables.
   */
  extern int	sys_bclient;		/* we set our time to broadcasts */
@@ -14,9 +14,9 @@ bug 2990 fixed.
  extern double	sys_bdelay; 		/* broadcast client default delay */
  extern int	sys_authenticate;	/* requre authentication for config */
  extern l_fp	sys_authdelay;		/* authentication delay */
---- ntpd/ntp_io.c
-+++ ntpd/ntp_io.c
-@@ -2017,9 +2017,6 @@ update_interfaces(
+--- ntpd/ntp_io.c.orig	2018-08-14 13:51:07.000000000 +0000
++++ ntpd/ntp_io.c	2018-08-24 23:53:29.058545366 +0000
+@@ -2011,9 +2011,6 @@ update_interfaces(
  	 */
  	refresh_all_peerinterfaces();
  
@@ -26,9 +26,9 @@ bug 2990 fixed.
  	if (sys_bclient)
  		io_setbclient();
  
---- ntpd/ntp_proto.c
-+++ ntpd/ntp_proto.c
-@@ -105,6 +105,7 @@ int leap_sec_in_progress;
+--- ntpd/ntp_proto.c.orig	2018-08-14 13:51:07.000000000 +0000
++++ ntpd/ntp_proto.c	2018-08-24 23:53:29.059562548 +0000
+@@ -122,6 +122,7 @@ int leap_sec_in_progress;
   * Nonspecified system state variables
   */
  int	sys_bclient;		/* broadcast client enable */
@@ -36,16 +36,16 @@ bug 2990 fixed.
  double	sys_bdelay;		/* broadcast client default delay */
  int	sys_authenticate;	/* requre authentication for config */
  l_fp	sys_authdelay;		/* authentication delay */
-@@ -1083,7 +1084,7 @@ receive(
+@@ -1431,7 +1432,7 @@ receive(
  			return;
  		}
  #endif /* AUTOKEY */
 -		if (sys_bclient == 0) {
 +		if (sys_bclient == 0 && sys_mclient == 0) {
+ 			DPRINTF(2, ("receive: AM_NEWBCL drop: not a bclient\n"));
  			sys_restricted++;
  			return;			/* not enabled */
- 		}
-@@ -4209,6 +4210,7 @@ init_proto(void)
+@@ -5005,6 +5006,7 @@ init_proto(void)
  	sys_survivors = 0;
  	sys_manycastserver = 0;
  	sys_bclient = 0;
@@ -53,7 +53,7 @@ bug 2990 fixed.
  	sys_bdelay = BDELAY_DEFAULT;	/*[Bug 3031] delay cutoff */
  	sys_authenticate = 1;
  	sys_stattime = current_time;
-@@ -4356,7 +4358,7 @@ proto_config(
+@@ -5156,7 +5158,7 @@ proto_config(
  	case PROTO_MULTICAST_ADD: /* add group address */
  		if (svalue != NULL)
  			io_multicast_add(svalue);
@@ -62,9 +62,9 @@ bug 2990 fixed.
  		break;
  
  	case PROTO_MULTICAST_DEL: /* delete group address */
---- ntpd/ntp_request.c
-+++ ntpd/ntp_request.c
-@@ -1117,7 +1117,7 @@ sys_info(
+--- ntpd/ntp_request.c.orig	2018-08-14 13:51:06.000000000 +0000
++++ ntpd/ntp_request.c	2018-08-24 23:53:29.060070167 +0000
+@@ -1104,7 +1104,7 @@ sys_info(
  	is->flags = 0;
  	if (sys_authenticate)
  		is->flags |= INFO_FLAG_AUTHENTICATE;
