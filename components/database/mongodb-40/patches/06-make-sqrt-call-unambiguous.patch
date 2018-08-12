@@ -1,0 +1,37 @@
+Address:
+```
+src/mongo/db/storage/key_string_test.cpp: In member function 'virtual void UnitTest__KeyStringTest__AllPerm2Compare::_doTest()':
+src/mongo/db/storage/key_string_test.cpp:896:47: error: call of overloaded 'sqrt(const size_t&)' is ambiguous
+     size_t maxElements = sqrt(kMaxPermElements);
+                                               ^
+In file included from /usr/include/math.h:32:0,
+                 from /usr/gcc/6/include/c++/6.4.0/cmath:45,
+                 from src/mongo/db/storage/key_string_test.cpp:36:
+/usr/include/iso/math_iso.h:85:15: note: candidate: double std::sqrt(double)
+ extern double sqrt __P((double));
+               ^~~~
+/usr/include/iso/math_iso.h:186:15: note: candidate: float std::sqrt(float)
+  inline float sqrt(float __X) { return __sqrtf(__X); }
+               ^~~~
+/usr/include/iso/math_iso.h:218:21: note: candidate: long double std::sqrt(long double)
+  inline long double sqrt(long double __X) { return __sqrtl(__X); }
+                     ^~~~
+scons: *** [build/opt/mongo/db/storage/key_string_test.o] Error 1
+Compiling build/opt/mongo/db/views/view_catalog_test.o
+scons: building terminated because of errors.
+build/opt/mongo/db/storage/key_string_test.o failed: Error 1
+```
+
+--- mongodb-src-r4.0.1/src/mongo/db/storage/key_string_test.cpp.orig	2018-08-10 13:41:42.768216303 +0000
++++ mongodb-src-r4.0.1/src/mongo/db/storage/key_string_test.cpp	2018-08-10 13:42:38.912749299 +0000
+@@ -922,8 +922,8 @@
+     // Select only a small subset of elements, as the combination is quadratic.
+     // We want to select two subsets independently, so all combinations will get tested eventually.
+     // kMaxPermElements is the desired number of elements to pass to testPermutation.
+-    const size_t kMaxPermElements = kDebugBuild ? 100'000 : 500'000;
+-    size_t maxElements = sqrt(kMaxPermElements);
++    const float kMaxPermElements = kDebugBuild ? 100'000 : 500'000;
++    float maxElements = sqrt(kMaxPermElements);
+     auto firstElements = thinElements(baseElements, seed, maxElements);
+     auto secondElements = thinElements(baseElements, seed + 1, maxElements);
+ 

@@ -1,0 +1,31 @@
+--- mongodb-src-r4.0.1/src/mongo/db/free_mon/free_mon_processor.cpp.orig	2018-08-10 15:37:21.429410336 +0000
++++ mongodb-src-r4.0.1/src/mongo/db/free_mon/free_mon_processor.cpp	2018-08-10 15:37:34.298119705 +0000
+@@ -106,7 +106,7 @@
+ }
+ 
+ bool MetricsRetryCounter::incrementError() {
+-    _base = static_cast<int>(pow(2, std::min(6, static_cast<int>(_retryCount)))) * _min;
++    _base = static_cast<int>(pow(2.0, std::min(6.0, static_cast<double>(_retryCount)))) * _min;
+     _current = _base + Seconds(randomJitter(_random, _min.count() / 2, _min.count()));
+     ++_retryCount;
+ 
+--- mongodb-src-r4.0.1/src/mongo/db/free_mon/free_mon_controller_test.cpp.orig	2018-08-10 16:31:35.521116996 +0000
++++ mongodb-src-r4.0.1/src/mongo/db/free_mon/free_mon_controller_test.cpp	2018-08-10 16:32:24.091758119 +0000
+@@ -486,7 +486,7 @@
+         for (int i = 1; i <= 10; ++i) {
+             ASSERT_TRUE(counter.incrementError());
+ 
+-            int64_t base = pow(2, i);
++            int64_t base = pow(2.0, i);
+             ASSERT_RANGE(Seconds(base), Seconds(2), Seconds(10));
+         }
+ 
+@@ -525,7 +525,7 @@
+         for (int i = 0; i <= 6; ++i) {
+             ASSERT_TRUE(counter.incrementError());
+ 
+-            int64_t base = pow(2, i);
++            int64_t base = pow(2.0, i);
+             ASSERT_RANGE(Seconds(base), Seconds(minTime / 2), Seconds(minTime));
+         }
+ 
