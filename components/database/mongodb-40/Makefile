@@ -11,6 +11,7 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -40,6 +41,7 @@ INSTALL_TOOLS= $(BUILD_DIR)/tools/.installed
 MONGO_PREFIX=usr/mongodb/$(COMPONENT_MAJOR_VERSION)
 
 GMAKE=scons
+CORES=$(shell psrinfo -v|grep '^Status of'|tail -1|awk '{print $$5}')
 
 COMPONENT_BUILD_ARGS += TARGET_ARCH=x86_64
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
@@ -57,6 +59,7 @@ COMPONENT_BUILD_ARGS += --release
 COMPONENT_BUILD_ARGS += --disable-ggdb
 # Fixes gcc 7 build
 COMPONENT_BUILD_ARGS += --disable-warnings-as-errors
+COMPONENT_BUILD_ARGS += -j $(CORES)
 
 COMPONENT_BUILD_TARGETS=	all
 
