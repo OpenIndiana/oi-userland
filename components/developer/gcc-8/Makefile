@@ -11,13 +11,13 @@
 
 #
 # Copyright 2013 Andrzej Szeszo.  All rights reserved.
-# Copyright 2016-2017 Aurelien Larcher. All rights reserved.
+# Copyright 2016-2018 Aurelien Larcher. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
-COMPONENT_VERSION= 8.1.0
+COMPONENT_VERSION= 8.2.0
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 THIS_GCC_PKGVERSION= $(COMPONENT_VERSION)-OI-$(COMPONENT_REVISION)
 COMPONENT_FMRI= developer/gcc-$(COMPONENT_MAJOR_VERSION)
@@ -33,7 +33,7 @@ COMPONENT_SUMMARY= GNU Compiler Collection
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1d1866f992626e61349a1ccd0b8d5253816222cdc13390dcfaa74b093aa2b153
+  sha256:196c3c04ba2613f893283977e6011b2345d1cd1af9abeac58e916b1aab3e0080
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnu.org/gnu/gcc/gcc-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gcc.gnu.org/
