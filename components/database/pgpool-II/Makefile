@@ -64,8 +64,12 @@ install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += database/postgres-94/library
+# Build dependencies
 REQUIRED_PACKAGES += data/docbook/dtds
+REQUIRED_PACKAGES += developer/documentation-tool/openjade
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
