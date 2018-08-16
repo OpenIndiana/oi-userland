@@ -70,6 +70,10 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += web/php-70/php-common
+REQUIRED_PACKAGES += web/php-70/extension/php-json
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libcouchbase
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += web/php-70/php-common
