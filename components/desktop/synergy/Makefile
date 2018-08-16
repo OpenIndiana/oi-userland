@@ -35,6 +35,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+LDFLAGS += -lnsl -lsocket
+
 CMAKE_OPTIONS += CMAKE_BUILD_TYPE=Release
 
 COMPONENT_PREP_ACTION += ($(RM) $(COMPONENT_SRC)/src/test/CMakeLists.txt)
