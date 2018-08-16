@@ -36,6 +36,9 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build Dependencies
+REQUIRED_PACKAGES += developer/build/automake-110
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
