@@ -61,6 +61,8 @@ CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 CPPFLAGS  +=	        -DNOMINUM
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
+LDFLAGS += -lnsl -lsocket
+
 # ISC dhcp contains bind tarball. As it is configured in build stage
 # we have to pass CFLAGS and LDFLAGS to its configure at build time.
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
