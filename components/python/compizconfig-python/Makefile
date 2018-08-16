@@ -65,5 +65,6 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += desktop/compiz/library/libcompizconfig
+REQUIRED_PACKAGES += library/python/pyrex-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
