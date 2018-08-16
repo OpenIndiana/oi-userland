@@ -82,8 +82,7 @@ install: $(INSTALL_32_and_64)
 test:           $(NO_TESTS)
 
 # Build dependencies
-REQUIRED_PACKAGES += library/desktop/harfbuzz
-REQUIRED_PACKAGES += library/gnome/gnome-desktop
+REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 
