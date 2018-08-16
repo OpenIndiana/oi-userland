@@ -66,6 +66,9 @@ install:        $(INSTALL_32)
 
 test:           $(TESTS_32)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/ruby/bundler
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libffi
