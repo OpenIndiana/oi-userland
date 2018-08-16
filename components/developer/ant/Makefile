@@ -83,6 +83,7 @@ test:  $(TEST_32)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += developer/parser/antlr-2
 REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += library/java/commons-bsf
 
