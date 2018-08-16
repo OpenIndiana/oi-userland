@@ -70,6 +70,9 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/xmltoman
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/gtk2
