@@ -1,6 +1,6 @@
-From 24b0af3ecb957085354642026877159b6022f800 Mon Sep 17 00:00:00 2001
+From 45d1b2b67f237d9c7bfe77b1cf5c5a457679b530 Mon Sep 17 00:00:00 2001
 From: Alan Coopersmith <alan.coopersmith@oracle.com>
-Date: Sat, 25 Mar 2017 23:18:43 -0700
+Date: Fri, 1 Jun 2018 16:41:23 -0700
 Subject: [PATCH] Port from libglade to GtkBuilder
 
 Need to discuss with upstream if they'll accept this, but we need it
@@ -8,18 +8,20 @@ in order to obsolete our libglade package.
 ---
  configure.in                       |    5 +-
  driver/Makefile.in                 |   14 +-
- driver/demo-Gtk.c                  |  123 +-
+ driver/demo-Gtk.c                  |  154 +-
  driver/xscreensaver-demo.glade2.in | 3136 ------------------------------------
  driver/xscreensaver-demo.ui.in     | 2912 +++++++++++++++++++++++++++++++++
- 5 files changed, 2981 insertions(+), 3209 deletions(-)
+ po/Makefile.in.in                  |    2 +-
+ po/POTFILES.in                     |    2 +-
+ 7 files changed, 2999 insertions(+), 3226 deletions(-)
  delete mode 100644 driver/xscreensaver-demo.glade2.in
  create mode 100644 driver/xscreensaver-demo.ui.in
 
 diff --git a/configure.in b/configure.in
-index 4c4dee5..5ff8aea 100644
+index 68928a0..ca8cb07 100644
 --- configure.in
 +++ configure.in
-@@ -2660,10 +2660,9 @@
+@@ -2668,10 +2668,9 @@ if test "$with_gtk" = yes; then
    have_gtk=no
    
    ok="yes"
@@ -31,7 +33,7 @@ index 4c4dee5..5ff8aea 100644
    pkg_check_version      gdk-pixbuf-2.0  2.0.0
    pkg_check_version gdk-pixbuf-xlib-2.0  2.0.0
    have_gtk="$ok"
-@@ -4163,7 +4162,7 @@
+@@ -4146,7 +4145,7 @@ AC_OUTPUT(Makefile
            po/Makefile.in
            driver/Makefile
            driver/xscreensaver.pam
@@ -41,7 +43,7 @@ index 4c4dee5..5ff8aea 100644
  
  ###############################################################################
 diff --git a/driver/Makefile.in b/driver/Makefile.in
-index c132304..b24536e 100644
+index 1f490f6..c20dabb 100644
 --- driver/Makefile.in
 +++ driver/Makefile.in
 @@ -237,7 +237,7 @@ MEN		= $(MEN_1) @MEN_OSX@
@@ -88,7 +90,7 @@ index c132304..b24536e 100644
  	       rm -f $(install_prefix)$(GTK_GLADEDIR)/$$target               ;\
  	 fi
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
-index 27d2316..87ae8a5 100644
+index 0dfc387..4ca25fd 100644
 --- driver/demo-Gtk.c
 +++ driver/demo-Gtk.c
 @@ -92,7 +92,6 @@
@@ -108,6 +110,27 @@ index 27d2316..87ae8a5 100644
  #endif /* HAVE_GTK2 */
  
    Bool debug_p;			/* whether to print diagnostics */
+@@ -274,13 +273,13 @@ static void schedule_preview_check (state *);
+ /* Prototypes of functions used by the Glade-generated code,
+    to avoid warnings.
+  */
+-void exit_menu_cb (GtkMenuItem *, gpointer user_data);
+-void about_menu_cb (GtkMenuItem *, gpointer user_data);
+-void doc_menu_cb (GtkMenuItem *, gpointer user_data);
+-void file_menu_cb (GtkMenuItem *, gpointer user_data);
+-void activate_menu_cb (GtkMenuItem *, gpointer user_data);
+-void lock_menu_cb (GtkMenuItem *, gpointer user_data);
+-void kill_menu_cb (GtkMenuItem *, gpointer user_data);
++void exit_menu_cb (GtkAction *, gpointer user_data);
++void about_menu_cb (GtkAction *, gpointer user_data);
++void doc_menu_cb (GtkAction *, gpointer user_data);
++void file_menu_cb (GtkAction *, gpointer user_data);
++void activate_menu_cb (GtkAction *, gpointer user_data);
++void lock_menu_cb (GtkAction *, gpointer user_data);
++void kill_menu_cb (GtkAction *, gpointer user_data);
+ void restart_menu_cb (GtkWidget *, gpointer user_data);
+ void run_this_cb (GtkButton *, gpointer user_data);
+ void manual_cb (GtkButton *, gpointer user_data);
 @@ -343,20 +342,31 @@ name_to_widget (state *s, const char *name)
        /* First try to load the Glade file from the current directory;
           if there isn't one there, check the installed directory.
@@ -157,7 +180,80 @@ index 27d2316..87ae8a5 100644
  
  #else /* !HAVE_GTK2 */
  
-@@ -1633,11 +1643,8 @@ flush_dialog_changes_and_save (state *s)
+@@ -775,7 +785,7 @@ run_hack (state *s, int list_elt, Bool report_errors_p)
+  */
+ 
+ G_MODULE_EXPORT void
+-exit_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
++exit_menu_cb (GtkAction *menu_action, gpointer user_data)
+ {
+   state *s = global_state_kludge;  /* I hate C so much... */
+   flush_dialog_changes_and_save (s);
+@@ -794,7 +804,7 @@ wm_toplevel_close_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
+ 
+ 
+ G_MODULE_EXPORT void
+-about_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
++about_menu_cb (GtkAction *menu_action, gpointer user_data)
+ {
+   char msg [2048];
+   char *vers = strdup (screensaver_id + 4);
+@@ -847,7 +857,8 @@ about_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
+ 
+     GtkWidget *dialog = gtk_dialog_new ();
+     GtkWidget *hbox, *icon, *vbox, *label1, *label2, *hb, *ok;
+-    GtkWidget *parent = GTK_WIDGET (menuitem);
++    GSList *proxies = gtk_action_get_proxies (menu_action);
++    GtkWidget *parent = GTK_WIDGET (proxies->data);
+     while (GET_PARENT (parent))
+       parent = GET_PARENT (parent);
+ 
+@@ -928,7 +939,7 @@ about_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
+ 
+ 
+ G_MODULE_EXPORT void
+-doc_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
++doc_menu_cb (GtkAction *menu_action, gpointer user_data)
+ {
+   state *s = global_state_kludge;  /* I hate C so much... */
+   saver_preferences *p = &s->prefs;
+@@ -956,7 +967,7 @@ doc_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
+ 
+ 
+ G_MODULE_EXPORT void
+-file_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
++file_menu_cb (GtkAction *menu_action, gpointer user_data)
+ {
+   state *s = global_state_kludge;  /* I hate C so much... */
+   sensitize_menu_items (s, False);
+@@ -964,7 +975,7 @@ file_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
+ 
+ 
+ G_MODULE_EXPORT void
+-activate_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
++activate_menu_cb (GtkAction *menu_action, gpointer user_data)
+ {
+   state *s = global_state_kludge;  /* I hate C so much... */
+   run_cmd (s, XA_ACTIVATE, 0);
+@@ -972,7 +983,7 @@ activate_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
+ 
+ 
+ G_MODULE_EXPORT void
+-lock_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
++lock_menu_cb (GtkAction *menu_action, gpointer user_data)
+ {
+   state *s = global_state_kludge;  /* I hate C so much... */
+   run_cmd (s, XA_LOCK, 0);
+@@ -980,7 +991,7 @@ lock_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
+ 
+ 
+ G_MODULE_EXPORT void
+-kill_menu_cb (GtkMenuItem *menuitem, gpointer user_data)
++kill_menu_cb (GtkAction *menu_action, gpointer user_data)
+ {
+   state *s = global_state_kludge;  /* I hate C so much... */
+   run_cmd (s, XA_EXIT, 0);
+@@ -1627,11 +1638,8 @@ flush_dialog_changes_and_save (state *s)
  
    /* Map the mode menu to `saver_mode' enum values. */
    {
@@ -171,7 +267,7 @@ index 27d2316..87ae8a5 100644
      if (menu_elt < 0 || menu_elt >= countof(mode_menu_order)) abort();
      p2->mode = mode_menu_order[menu_elt];
    }
-@@ -1743,9 +1750,10 @@ flush_popup_changes_and_save (state *s)
+@@ -1737,9 +1745,10 @@ flush_popup_changes_and_save (state *s)
    int list_elt = selected_list_element (s);
  
    GtkEntry *cmd = GTK_ENTRY (name_to_widget (s, "cmd_text"));
@@ -184,7 +280,7 @@ index 27d2316..87ae8a5 100644
    const char *command = gtk_entry_get_text (cmd);
  
    char c;
-@@ -1790,7 +1798,7 @@ flush_popup_changes_and_save (state *s)
+@@ -1784,7 +1793,7 @@ flush_popup_changes_and_save (state *s)
      {
        gdk_beep ();				  /* unparsable */
        visual = "";
@@ -193,7 +289,7 @@ index 27d2316..87ae8a5 100644
      }
  
    changed = flush_changes (s, list_elt, -1, command, visual);
-@@ -1838,21 +1846,8 @@ mode_menu_item_cb (GtkWidget *widget, gpointer user_data)
+@@ -1832,21 +1841,8 @@ mode_menu_item_cb (GtkWidget *widget, gpointer user_data)
    GtkWidget *list = name_to_widget (s, "list");
    int list_elt;
  
@@ -217,7 +313,7 @@ index 27d2316..87ae8a5 100644
  
    /* Keep the same list element displayed as before; except if we're
       switching *to* "one screensaver" mode from any other mode, set
-@@ -2867,13 +2862,13 @@ populate_prefs_page (state *s)
+@@ -2861,13 +2857,13 @@ populate_prefs_page (state *s)
  
    /* Map the `saver_mode' enum to mode menu to values. */
    {
@@ -233,7 +329,7 @@ index 27d2316..87ae8a5 100644
      update_list_sensitivity (s);
    }
  
-@@ -3022,7 +3017,7 @@ sensitize_menu_items (state *s, Bool force_p)
+@@ -3015,7 +3011,7 @@ sensitize_menu_items (state *s, Bool force_p)
    static Bool running_p = False;
    static time_t last_checked = 0;
    time_t now = time ((time_t *) 0);
@@ -242,7 +338,7 @@ index 27d2316..87ae8a5 100644
                            /* "demo" */ };
    int i;
  
-@@ -3034,8 +3029,9 @@ sensitize_menu_items (state *s, Bool force_p)
+@@ -3027,8 +3023,9 @@ sensitize_menu_items (state *s, Bool force_p)
  
    for (i = 0; i < countof(names); i++)
      {
@@ -254,7 +350,7 @@ index 27d2316..87ae8a5 100644
      }
  }
  
-@@ -3107,7 +3103,7 @@ fix_text_entry_sizes (state *s)
+@@ -3100,7 +3097,7 @@ fix_text_entry_sizes (state *s)
    /* Now fix the width of the combo box.
     */
    w = GTK_WIDGET (name_to_widget (s, "visual_combo"));
@@ -263,7 +359,7 @@ index 27d2316..87ae8a5 100644
    width = gdk_string_width (w->style->font, "PseudoColor___");
    gtk_widget_set_usize (w, width, -2);
  
-@@ -3313,7 +3309,7 @@ populate_demo_window (state *s, int list_elt)
+@@ -3306,7 +3303,7 @@ populate_demo_window (state *s, int list_elt)
    GtkFrame *frame1 = GTK_FRAME (name_to_widget (s, "preview_frame"));
    GtkFrame *frame2 = GTK_FRAME (name_to_widget (s, "opt_frame"));
    GtkEntry *cmd    = GTK_ENTRY (name_to_widget (s, "cmd_text"));
@@ -272,7 +368,7 @@ index 27d2316..87ae8a5 100644
    GtkWidget *list  = GTK_WIDGET (name_to_widget (s, "list"));
  
    if (p->mode == BLANK_ONLY)
-@@ -3363,7 +3359,7 @@ populate_demo_window (state *s, int list_elt)
+@@ -3356,7 +3353,7 @@ populate_demo_window (state *s, int list_elt)
      gtk_window_set_title (GTK_WINDOW (s->popup_widget), title);
    }
  
@@ -281,7 +377,7 @@ index 27d2316..87ae8a5 100644
                        (hack
                         ? (hack->visual && *hack->visual
                            ? hack->visual
-@@ -5164,31 +5160,32 @@ main (int argc, char **argv)
+@@ -5151,31 +5148,32 @@ main (int argc, char **argv)
  #endif /* !HAVE_GTK2 */
  
    /* Hook up callbacks to the items on the mode menu. */
@@ -3482,7 +3578,7 @@ index ad0095d..0000000
 -</glade-interface>
 diff --git a/driver/xscreensaver-demo.ui.in b/driver/xscreensaver-demo.ui.in
 new file mode 100644
-index 0000000..9c31a9b
+index 0000000..7be9797
 --- /dev/null
 +++ driver/xscreensaver-demo.ui.in
 @@ -0,0 +1,2912 @@
@@ -3797,7 +3893,7 @@ index 0000000..9c31a9b
 +                          <object class="GtkEventBox" id="lock_button_eventbox">
 +                            <property name="visible">True</property>
 +                            <property name="tooltip-text" translatable="yes">Whether a password should be required to un-blank the screen.</property>
-+                            <property name="visible_window">True</property>
++                            <property name="visible_window">False</property>
 +                            <property name="above_child">False</property>
 +                            <child>
 +                              <object class="GtkCheckButton" id="lock_button">
@@ -6398,5 +6494,32 @@ index 0000000..9c31a9b
 +    </action-widgets>
 +  </object>
 +</interface>
+diff --git a/po/Makefile.in.in b/po/Makefile.in.in
+index 3d4b024..a8f10c0 100644
+--- po/Makefile.in.in
++++ po/Makefile.in.in
+@@ -300,7 +300,7 @@ generate_potfiles_in:
+ 	 ( cd $(top_srcdir);			\
+ 	   echo "# Auto-generated: `LANG=C date`" ;	\
+ 	   ( grep -l '_("' driver/*.[ch] ;	\
+-	     ls driver/*.glade2.in			\
++	     ls driver/*.ui.in			\
+ 		driver/*.desktop.in		\
+ 		hacks/config/*.xml ) | sort	\
+ 	  ) > $$tmp &&				\
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index 89066f9..ca389e4 100644
+--- po/POTFILES.in
++++ po/POTFILES.in
+@@ -2,7 +2,7 @@
+ driver/demo-Gtk-conf.c
+ driver/demo-Gtk.c
+ driver/screensaver-properties.desktop.in
+-driver/xscreensaver-demo.glade2.in
++driver/xscreensaver-demo.ui.in
+ hacks/config/abstractile.xml
+ hacks/config/anemone.xml
+ hacks/config/anemotaxis.xml
 -- 
-2.7.4
+2.15.0
+
