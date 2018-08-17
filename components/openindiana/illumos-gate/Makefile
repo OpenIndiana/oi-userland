@@ -19,13 +19,14 @@ COMPONENT_NAME=		illumos-gate
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=git://github.com/illumos/illumos-gate.git
-GIT_BRANCH=master
+GIT_REPO=git://github.com/alarcher/illumos-gate.git
+GIT_BRANCH=gcc-next
 GIT_CHANGESET=HEAD
 
 FETCH=$(WS_TOOLS)/userland-fetch
 
 DEBUG=no
+RELEASE_MINOR=99
 
 ifeq ($(DEBUG),yes)
 NIGHTLY_OPTIONS=-nCDmpt
