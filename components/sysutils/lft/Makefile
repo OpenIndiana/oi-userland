@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lft
 COMPONENT_VERSION=      3.8
+IPS_COMPONENT_VERSION=  3.80
 COMPONENT_SUMMARY=      Layer Four Traceroute (LFT) and WhoB
 COMPONENT_PROJECT_URL=  http://pwhois.org/lft/
 COMPONENT_FMRI=         diagnostic/lft
