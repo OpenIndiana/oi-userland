@@ -41,10 +41,20 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
   ($(CLONEY) $(SOURCE_DIR) $(@D) ) 
 
 CFLAGS += -std=gnu99
-CFLAGS += -D__EXTENSIONS__
-CFLAGS += -D_XOPEN_SOURCE=600
-CFLAGS += -D__SOLARIS__=1
-CFLAGS += -D_FILE_OFFSET_BITS=64
+
+# This package need defines in CPPFLAGS so they apply to
+# C++ compiles as well as C.
+CPPFLAGS += -D__EXTENSIONS__
+CPPFLAGS += -D_XOPEN_SOURCE=600
+CPPFLAGS += -D__SOLARIS__=1
+CPPFLAGS += -D_FILE_OFFSET_BITS=64
+# open-vm-tools have if defined(sun) all over (should be __sun)
+CPPFLAGS += -Dsun
+# and this one means S11 or later (not S10, S9)
+CPPFLAGS += -DSOL11
+
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
 CFLAGS += -Wno-deprecated-declarations
 CFLAGS += -Wno-unused-local-typedefs
 CFLAGS += -Wno-unused-variable
@@ -56,12 +66,14 @@ CONFIGURE_OPTIONS += --disable-multimon
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --enable-deploypkg=no
-CONFIGURE_OPTIONS += --without-gtk2
-CONFIGURE_OPTIONS += --without-gtkmm
+CONFIGURE_OPTIONS += --with-gtk2
+CONFIGURE_OPTIONS += --with-gtkmm
 CONFIGURE_OPTIONS += --without-icu
 CONFIGURE_OPTIONS += --without-kernel-modules
-CONFIGURE_OPTIONS += --without-x
 CONFIGURE_OPTIONS += --without-xerces
+
+# Need C++ compatible xdr headers
+CONFIGURE_OPTIONS += RPCGENFLAGS="-C"
 
 build:		$(BUILD_32)
 
