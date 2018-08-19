@@ -17,18 +17,17 @@ include ../../../make-rules/shared-macros.mk
 MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
-COMPONENT_NAME =		openmpi/$(COMPILER)
+COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR = 	2.1
-COMPONENT_VERSION = 		$(OPENMPI_VERSION_MAJOR).2
-COMPONENT_REVISION = 1
-COMPONENT_FMRI =		library/openmpi/$(COMPILER)
-COMPONENT_CLASSIFICATION = Development/High Performance Computing
+COMPONENT_VERSION = 		$(OPENMPI_VERSION_MAJOR).5
+COMPONENT_FMRI =            library/openmpi/$(COMPILER)
+COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
 COMPONENT_SRC_NAME =		openmpi
 COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-  sha256:e5bf7b2d7517f5cb7c9e1fed15d2df2da501669072477b21a513e892a22663bc
+  sha256:185e6315a870cc00c06e9094ac168b7df50bc5d450b8b2474a22ffbafc03d75d
 COMPONENT_ARCHIVE_URL =	\
   http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 
