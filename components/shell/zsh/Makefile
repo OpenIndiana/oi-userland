@@ -87,7 +87,7 @@ license: $(COMPONENT_SRC)/LICENCE
 
 CLEAN_PATHS += license
 
-COMPONENT_POST_INSTALL_ACTION = find $(BUILD_DIR) -name '*.~1~' -exec rm {} \;
+COMPONENT_POST_INSTALL_ACTION = find $(PROTO_DIR) -name '*.~1~' -exec rm {} \;
 
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
