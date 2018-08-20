@@ -11,6 +11,7 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= docbook-xsl
 COMPONENT_VERSION= 1.78.1
 COMPONENT_SUBVERSION= 5.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Norman Walsh's XSL stylesheets for DocBook XML
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2

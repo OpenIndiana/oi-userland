@@ -1,0 +1,20 @@
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=831831
+
+--- docbook-xsl-1.78.1/manpages/other.xsl	2012-01-09 15:08:12.000000000 +0000
++++ docbook-xsl-1.78.1/manpages/other.xsl.new	2018-08-02 22:10:59.366799379 +0000
+@@ -595,7 +595,14 @@ manvolnum
+           <xsl:with-param name="message-prolog">Note: </xsl:with-param>
+           <xsl:with-param name="message-epilog"> (soelim stub)</xsl:with-param>
+           <xsl:with-param name="content">
+-            <xsl:value-of select="'.so '"/>
++            <xsl:choose>
++              <xsl:when test="$man.output.in.separate.dir = 0">
++              <xsl:value-of select="concat('.so man', $section, '/')"/>
++              </xsl:when>
++              <xsl:otherwise>
++              <xsl:value-of select="'.so '"/> <!-- added case -->
++              </xsl:otherwise>
++              </xsl:choose>
+             <xsl:call-template name="make.adjusted.man.filename">
+               <xsl:with-param name="name" select="$first.refname"/>
+               <xsl:with-param name="section" select="$section"/>
