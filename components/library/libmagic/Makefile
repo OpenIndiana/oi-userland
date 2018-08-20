@@ -11,7 +11,9 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2018 Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 # Note: The primary component we deliver initially is libmagic here
@@ -20,11 +22,11 @@ include ../../../make-rules/shared-macros.mk
 # we ALSO deliver a "gfile" built from darwinsys sources, as a bonus.
 COMPONENT_NAME=		file
 COMPONENT_FMRI=		library/magic
-COMPONENT_VERSION=	5.33
+COMPONENT_VERSION=	5.34
 COMPONENT_PROJECT_URL=	http://www.darwinsys.com/file/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1c52c8c3d271cd898d5511c36a68059cda94036111ab293f01f83c3525b737c6
+COMPONENT_ARCHIVE_HASH=	sha256:f15a50dbbfa83fec0bd1161e8e191b092ec832720e30cd14536e044ac623b20a
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/file/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	libmagic for recognizing the type of data contained in a computer file using magic numbers
 COMPONENT_CLASSIFICATION=	System/Libraries
