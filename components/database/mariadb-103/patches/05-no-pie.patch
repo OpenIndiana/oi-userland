@@ -1,0 +1,11 @@
+--- mariadb-10.3.8/CMakeLists.txt       2018-07-02 09:34:08.000000000 +0000
++++ mariadb-10.3.8/CMakeLists.txt.new   2018-07-13 23:42:27.764726536 +0000
+@@ -230,7 +230,7 @@ IF(NOT WITH_TSAN)
+   OPTION(SECURITY_HARDENED "Use security-enhancing compiler features (stack protector, relro, etc)" ${security_default})
+   IF(SECURITY_HARDENED)
+     # security-enhancing flags
+-    MY_CHECK_AND_SET_COMPILER_FLAG("-pie -fPIC")
++    MY_CHECK_AND_SET_COMPILER_FLAG("-fPIC")
+     MY_CHECK_AND_SET_COMPILER_FLAG("-Wl,-z,relro,-z,now")
+     MY_CHECK_AND_SET_COMPILER_FLAG("-fstack-protector --param=ssp-buffer-size=4")
+     MY_CHECK_AND_SET_COMPILER_FLAG("-D_FORTIFY_SOURCE=2" RELEASE RELWITHDEBINFO)
