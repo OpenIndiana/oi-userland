@@ -16,12 +16,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         petsc
 COMPONENT_VERSION=      3.7.7
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      PETSc - Portable, Extensible Toolkit for Scientific Computation
 COMPONENT_PROJECT_URL=  http://www.mcs.anl.gov/petsc/
 COMPONENT_FMRI=         library/math/petsc
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=		  $(COMPONENT_NAME)-lite-$(COMPONENT_VERSION).tar.gz
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-lite-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= \
   http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
@@ -89,14 +90,55 @@ COMPONENT_TEST_ENV   = PETSC_DIR=$(COMPONENT_MPI_BUILD_DIR)
 PETSCLIB_RUNPATH=$(shell realpath -m --relative-to=$(MPI_LIBDIR) $(USRLIBDIR.$(BITS)))
 PETSCGCC_RUNPATH=$(shell realpath -m --relative-to=$(MPI_LIBDIR) $(MPI_COMPILER_LIBDIR))
 
+# Remove destdir to generated variables
+PETSC_FILES =include/petscconf.h
+PETSC_FILES+=include/petscmachineinfo.h
+PETSC_FILES+=include/petscconfiginfo.h
+PETSC_FILES+=lib/petsc/conf/make.log
+PETSC_FILES+=lib/petsc/conf/rules
+PETSC_FILES+=lib/petsc/conf/petscrules
+PETSC_FILES+=lib/petsc/conf/configure.log
+PETSC_FILES+=lib/petsc/conf/petscvariables
+PETSC_FILES+=lib/petsc/conf/modules/petsc/$(COMPONENT_VERSION)
+PETSC_FILES+=lib/petsc/conf/reconfigure-arch-sunos5-c-opt.py
+PETSC_FILES+=lib/petsc/conf/RDict.db
+PETSC_FILES+=lib/petsc/conf/uninstall.py
+PETSC_FILES+=lib/petsc/conf/variables
+PETSC_FILES+=lib/petsc/conf/PETScBuildInternal.cmake
+PETSC_FILES+=lib/pkgconfig/PETSc.pc
+# Each external package configuration should be processed
+PETSC_FILES+=lib/petsc/conf/pkg.conf.hypre
+PETSC_FILES+=lib/petsc/conf/pkg.conf.metis
+PETSC_FILES+=lib/petsc/conf/pkg.conf.scalapack
+PETSC_FILES+=lib/petsc/conf/pkg.conf.suitesparse
+PETSC_FILES+=lib/petsc/conf/pkg.conf.superlu
+
+# Fix runtime path
+PETSC_LIBS =lib/libpetscmat.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libpetscdm.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libpetsctao.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libpetscsnes.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libpetscsys.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libpetscksp.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libpetscts.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libpetscvec.so.$(COMPONENT_VERSION)
+PETSC_LIBS+=lib/libmetis.so
+PETSC_LIBS+=lib/libsuperlu.so
+
 COMPONENT_POST_INSTALL_ACTION = ( \
 	$(FIND) $(PROTO_DIR)$(MPI_PREFIX) -name *.py -exec \
 		$(GSED) -i -e '1 s:\#!/usr/bin/env python[0-9.]*:\#!/usr/bin/python$(PYTHON_VERSION):' {} \; ; \
-	$(FIND) $(PROTO_DIR)$(MPI_PREFIX) -name *.pc -exec \
-		$(GSED) -i -e 's|$(PROTO_DIR)||g' {} \; ; \
-	for lib in $(PROTO_DIR)$(MPI_LIBDIR)/*.so; \
+	for f in $(PETSC_FILES); \
 	do \
-		/usr/bin/elfedit -e 'dyn:runpath "$$ORIGIN:$$ORIGIN/$(PETSCGCC_RUNPATH):$$ORIGIN/$(PETSCLIB_RUNPATH)"' $$lib; \
+		$(GSED) -i -e 's|$(PROTO_DIR)||g' \
+			-e 's|$(COMPONENT_MPI_BUILD_DIR)|$(MPI_PREFIX)|g' \
+			-e 's|$(COMPONENT_DIR)|.|g' \
+			$(PROTO_DIR)$(MPI_PREFIX)/$$f; \
+       	done; \
+	for f in $(PETSC_LIBS); \
+	do \
+		/usr/bin/elfedit -e 'dyn:runpath "$$ORIGIN:$$ORIGIN/$(PETSCGCC_RUNPATH):$$ORIGIN/$(PETSCLIB_RUNPATH)"' \
+			$(PROTO_DIR)$(MPI_PREFIX)/$$f; \
 	done; )
 
 # DESTDIR should be removed as we install directly in the proto area
