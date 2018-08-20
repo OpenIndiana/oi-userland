@@ -19,18 +19,21 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		top
 COMPONENT_VERSION=	3.8beta1
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://www.unixtop.org/
+COMPONENT_REVISION=	3
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/unixtop/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6c683e9cb092078cbc1b2233b15fa8bd3d35a00874e6ba27cf54370d1d64fa4d
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/unixtop/files/unixtop/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		diagnostic/top
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
