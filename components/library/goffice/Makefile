@@ -7,6 +7,7 @@
 # source. A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
+
 #
 # Copyright (c) 2014 Alexander Pyhalov
 # Copyright 2018 Jason Martin
@@ -70,6 +71,7 @@ unexport SHELLOPTS
 
 test:       $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
