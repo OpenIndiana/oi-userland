@@ -17,16 +17,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libX11
 
-COMPONENT_VERSION= 1.6.5
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.6.6
 COMPONENT_SUMMARY= libX11 - X11 core protocol client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4d3890db2ba225ba8c55ca63c6409c1ebb078a2806de59fb16342768ae63435d
+  sha256:65fe181d40ec77f45417710c6a67431814ab252d21c2e85c75dd1ed568af414f
 COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
+  https://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://xorg.freedesktop.org
 COMPONENT_FMRI = x11/library/libx11
 COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE = MIT
