@@ -18,22 +18,23 @@ MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =            openmpi/$(COMPILER)
-OPENMPI_VERSION_MAJOR = 	2.1
-COMPONENT_VERSION = 		$(OPENMPI_VERSION_MAJOR).5
+OPENMPI_VERSION_MAJOR =     2.1
+COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).5
+COMPONENT_REVISION =        1
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
-COMPONENT_PROJECT_URL =		http://www.open-mpi.org
-COMPONENT_SRC_NAME =		openmpi
-COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
+COMPONENT_PROJECT_URL =     http://www.open-mpi.org
+COMPONENT_SRC_NAME =        openmpi
+COMPONENT_SRC =             $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE =         $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
   sha256:185e6315a870cc00c06e9094ac168b7df50bc5d450b8b2474a22ffbafc03d75d
-COMPONENT_ARCHIVE_URL =	\
+COMPONENT_ARCHIVE_URL = \
   http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 
-COMPONENT_SUMMARY =     	OpenMPI - High Performance Message Passing Library
-COMPONENT_LICENSE_FILE = 	$(COMPONENT_SRC_NAME).license
-COMPONENT_LICENSE      = 	BSD 2-Clause
+COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
+COMPONENT_LICENSE_FILE =    $(COMPONENT_SRC_NAME).license
+COMPONENT_LICENSE      =    BSD 2-Clause
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -59,6 +60,7 @@ CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
 CONFIGURE_OPTIONS+= --enable-mpi-cxx
 CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
 CONFIGURE_OPTIONS+= --disable-pmix-dstore
+CONFIGURE_OPTIONS+= --disable-event-epoll
 CONFIGURE_OPTIONS+= --with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-libs="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
