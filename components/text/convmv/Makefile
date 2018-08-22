@@ -21,13 +21,14 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		convmv
-COMPONENT_VERSION=	2.03
-IPS_COMPONENT_VERSION=	2.3
+COMPONENT_VERSION=	2.05
+IPS_COMPONENT_VERSION=	2.5
 COMPONENT_SUMMARY=	Filename Encoding Conversion Tool
 COMPONENT_DESCRIPTION=	Convmv helps convert a single filename,\
  a directory tree and the contained files or a whole filesystem\
@@ -36,7 +37,7 @@ COMPONENT_PROJECT_URL=	http://www.j3e.de/linux/convmv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f898fd850c8ef5abe48f7536e4b23ce4e11b6133974b2fc41d9197dfecc1c027
+    sha256:53b6ac8ae4f9beaee5bc5628f6a5382bfd14f42a5bed3d881b829d7b52d81ca6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/convmv
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
