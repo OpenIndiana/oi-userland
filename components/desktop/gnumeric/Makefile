@@ -14,17 +14,17 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gnumeric
-COMPONENT_VERSION=	1.12.39
-COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	GTK Spreadsheet Application 
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:26cceb7fa97dc7eee7181a79a6251a85b1f1464dcaaaf7624829f7439c5f7d3f
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		desktop/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Applications/Office
+COMPONENT_NAME=     gnumeric
+COMPONENT_VERSION=  1.12.43
+COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_SUMMARY=  GTK Spreadsheet Application
+COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:87c9abd6260cf29401fa1e0fcce374e8c7bcd1986608e4049f6037c9d32b5fd5
+COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     desktop/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=   Applications/Office
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
@@ -36,23 +36,25 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--without-perl
+CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS+= --without-perl
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
-# common targets
-build:		$(BUILD_64)
+COMPONENT_TEST_ARGS += -k
 
-install:	$(INSTALL_64)
+# common targets
+build:      $(BUILD_64)
+
+install:    $(INSTALL_64)
 
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
-# t2001-func-help.pl and valgrind tests fail 03.15.2018
-test:		$(TEST_64)
+test:       $(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
