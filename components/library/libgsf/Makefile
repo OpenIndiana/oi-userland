@@ -17,45 +17,59 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-COMPONENT_VERSION= 1.14.41
+COMPONENT_VERSION= 1.14.44
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:150b98586a1021d5c49b3d4d065d0aa3e3674ae31db131af5372499d2d3f08d3
+  sha256:68bede10037164764992970b4cb57cd6add6986a846d04657af9d5fac774ffde
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_PROJECT_URL= http://www.gnome.org
 COMPONENT_FMRI= library/desktop/libgsf
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2
+COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE = COPYING.LIB
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                                        libtoolize --copy --force &&\
-                                        aclocal -I m4 &&\
-					autoheader &&\
-                                        automake -c -f -a &&\
-                                        autoconf &&\
-					cp /usr/share/gettext/config.rpath .)
+COMPONENT_PREP_ACTION= ( cd $(@D)  && \
+                            libtoolize --copy --force &&\
+                            aclocal -I m4 &&\
+                            autoheader &&\
+                            automake -c -f -a &&\
+                            autoconf &&\
+                            cp /usr/share/gettext/config.rpath .)
 
 # Missing files in build dir without this.
-COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-static=no
+
+COMPONENT_TEST_ENV += CC=$(CC)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+    '-ne "/^\# TOTAL:/p" ' \
+    '-ne "/^\# PASS:/p" ' \
+    '-ne "/^\# SKIP:/p" ' \
+    '-ne "/^\# XFAIL:/p" ' \
+    '-ne "/^\# FAIL:/p" ' \
+    '-ne "/^\# XPASS:/p" ' \
+    '-ne "/^\# ERROR::/p" '
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+# To prevent "libtool_install_magic: unbound variable"
+unexport SHELLOPTS
+
+test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
