@@ -21,19 +21,19 @@
 
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.4.7
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://python.org/
+COMPONENT_VERSION=	3.4.9
+COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8714cf2b56dd36922dec8fa184d4936e1001c22fb439798cb73dda069e129d1b
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:59629676ba2b01a798f5211d8f63c26ee52f1d5133cf37583e0bf1bad50c2bd9
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
 
@@ -149,6 +149,7 @@ COMPONENT_TEST_TARGETS = test < /dev/null
 
 test:				$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += database/sqlite-3
