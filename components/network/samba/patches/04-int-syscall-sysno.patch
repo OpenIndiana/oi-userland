@@ -1,0 +1,18 @@
+../lib/uid_wrapper/uid_wrapper.c:1213:10: error: conflicting types for 'syscall'
+ long int syscall (long int sysno, ...)
+          ^
+In file included from ../lib/uid_wrapper/uid_wrapper.c:31:0:
+/usr/include/sys/syscall.h:514:13: note: previous declaration of 'syscall' was here
+ extern long syscall(int, ...);
+
+--- samba-4.8.4/third_party/uid_wrapper/uid_wrapper.c.1	2018-08-22 16:37:10.292249219 +0000
++++ samba-4.8.4/third_party/uid_wrapper/uid_wrapper.c	2018-08-22 16:37:50.353013082 +0000
+@@ -235,7 +235,7 @@
+ typedef int (*__libc_setgroups)(size_t size, const gid_t *list);
+ 
+ #ifdef HAVE_SYSCALL
+-typedef long int (*__libc_syscall)(long int sysno, ...);
++typedef long int (*__libc_syscall)(int sysno, ...);
+ #endif
+ 
+ #define UWRAP_SYMBOL_ENTRY(i) \
