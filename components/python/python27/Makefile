@@ -110,7 +110,9 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 # common targets
 $(INSTALL_32):  $(INSTALL_64)
+
 build:		$(BUILD_32_and_64)
+
 install:	$(INSTALL_32_and_64)
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
@@ -127,7 +129,14 @@ install:	$(INSTALL_32_and_64)
 COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
 COMPONENT_TEST_TARGETS = test
 
-test:				$(TEST_32_and_64)
+# The test output contains details from each test, in whatever order they
+# complete.  The default _TRANSFORMER is not powerful enough to deal with
+# this; we need heavier artillery.  Extract just the sections that start
+# with "tests OK." and end with "Makefile: " for comparison.
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /Total duration/ { \$$$\0 = \"\" }; /LD_LIBRARY_PATH/ { results = 0 } { if (results) print }'"
+
+test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
