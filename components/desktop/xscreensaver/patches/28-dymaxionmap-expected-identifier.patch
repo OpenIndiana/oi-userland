@@ -1,0 +1,34 @@
+Compilation of XScreenSaver 5.40 on OpenIndiana (illumos kernel) fails:
+
+dymaxionmap.c: In function 'create_daylight_mask':
+dymaxionmap.c:280:7: error: expected identifier or '(' before numeric constant
+   XYZ sun;
+       ^
+dymaxionmap.c:283:6: error: request for member 'x' in something not a structure or union
+   sun.x = 0;
+      ^
+dymaxionmap.c:284:6: error: request for member 'y' in something not a structure or union
+   sun.y = cos (axial_tilt);
+      ^
+dymaxionmap.c:285:6: error: request for member 'z' in something not a structure or union
+   sun.z = sin (axial_tilt);
+      ^
+dymaxionmap.c:303:29: error: incompatible type for argument 1 of 'vector_angle'
+           a = vector_angle (sun, v);
+                             ^
+dymaxionmap.c:246:1: note: expected 'XYZ {aka struct <anonymous>}' but argument is of type 'int'
+ vector_angle (XYZ a, XYZ b)
+ ^~~~~~~~~~~~ 
+
+Fix suggested by XScreenSaver author Jamie Zawinski.
+--- hacks/glx/dymaxionmap.c	2018-04-19 03:19:36.000000000 +0000
++++ hacks/glx/dymaxionmap.c	2018-09-03 19:40:00.499461269 +0000
+@@ -14,6 +14,8 @@
+  * other special, indirect and consequential damages.
+  */
+ 
++#undef sun
++
+ #define LABEL_FONT "-*-helvetica-bold-r-normal-*-*-240-*-*-*-*-*-*"
+ 
+ #ifdef STANDALONE
