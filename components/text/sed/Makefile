@@ -22,12 +22,13 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher.
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
-COMPONENT_VERSION=	4.4
+COMPONENT_VERSION=	4.5
 COMPONENT_FMRI=	text/gnu-sed
 COMPONENT_SUMMARY=	GNU implementation of sed, the Unix stream editor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -35,7 +36,7 @@ COMPONENT_PROJECT_URL=	http://www.gnu.org/software/sed/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:cbd6ebc5aaf080ed60d0162d7f6aeae58211a1ee9ba9bb25623daa6cd942683b
+  sha256:7aad73c8839c2bdadca9476f884d2953cdace9567ecd0d90f9959f229d146b40
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
