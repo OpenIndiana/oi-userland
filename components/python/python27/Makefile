@@ -19,19 +19,19 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	2.7.14
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://python.org/
+COMPONENT_VERSION=	2.7.15
+COMPONENT_PROJECT_URL=	https://python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:71ffb26e09e78650e424929b2b457b9c912ac216576e6bd9e7d204ed03296a66
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:22d9b1ac5b26135ad2b8c2901a9413537e08749a753356ee913c84dbd2df5574
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
 
@@ -110,7 +110,9 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 # common targets
 $(INSTALL_32):  $(INSTALL_64)
+
 build:		$(BUILD_32_and_64)
+
 install:	$(INSTALL_32_and_64)
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
@@ -127,10 +129,16 @@ install:	$(INSTALL_32_and_64)
 COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
 COMPONENT_TEST_TARGETS = test
 
-test:				$(TEST_32_and_64)
+# The test output contains details from each test, in whatever order they
+# complete.  The default _TRANSFORMER is not powerful enough to deal with
+# this; we need heavier artillery.  Extract just the sections that start
+# with "tests OK." and end with "Makefile: " for comparison.
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /Total duration/ { \$$$\0 = \"\" }; /^make|LD_LIBRARY_PATH/ { results = 0 } { if (results) print }'"
+
+test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/database/gdbm
@@ -146,5 +154,6 @@ REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-27/tests
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

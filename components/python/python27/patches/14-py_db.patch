@@ -1,17 +1,17 @@
 This patch adds Python debugger support.  It may be contributed upstream at
 some point, but the suitability (or lack thereof) has not yet been determined.
 
---- Python-2.7.13/Makefile.pre.in.~2~	2016-12-19 19:45:55.359307641 +0300
-+++ Python-2.7.13/Makefile.pre.in	2016-12-19 19:46:55.550550819 +0300
-@@ -431,7 +431,7 @@
+--- Python-2.7.15/Makefile.pre.in	2018-08-23 19:21:55.679929900 +0000
++++ Python-2.7.15/Makefile.pre.in	2018-08-23 19:32:47.145140718 +0000
+@@ -403,7 +403,7 @@ LIBRARY_OBJS=	\
  
  # Default target
  all:		@DEF_MAKE_ALL_RULE@
--build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks
-+build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks build-py_db
+-build_all:	check-clean-src $(BUILDPYTHON) oldsharedmods sharedmods gdbhooks
++build_all:	check-clean-src $(BUILDPYTHON) oldsharedmods sharedmods gdbhooks build-py_db
  
- # Compile a binary with profile guided optimization.
- profile-opt:
+ # Check that the source is clean when building out of source.
+ check-clean-src:
 @@ -856,6 +856,15 @@
  
  $(LIBRARY_OBJS) $(MODOBJS) Modules/python.o: $(PYTHON_HEADERS)
