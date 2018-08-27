@@ -134,7 +134,7 @@ COMPONENT_TEST_TARGETS = test
 # this; we need heavier artillery.  Extract just the sections that start
 # with "tests OK." and end with "Makefile: " for comparison.
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /Total duration/ { \$$$\0 = \"\" }; /LD_LIBRARY_PATH/ { results = 0 } { if (results) print }'"
+COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /Total duration/ { \$$$\0 = \"\" }; /^make|LD_LIBRARY_PATH/ { results = 0 } { if (results) print }'"
 
 test: $(TEST_32_and_64)
 
