@@ -1,0 +1,75 @@
+From 6d6a2a62a21b2f301ba4c493beeebc860d618a7d Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Sat, 9 Jun 2018 23:31:58 +0000
+Subject: [PATCH] OS-7006 kvm leaks host %xcr0 Reviewed by: Jerry Jelinek
+ <jerry.jelinek@joyent.com> Reviewed by: Alex Wilson <alex.wilson@joyent.com>
+ Reviewed by: John Levon <john.levon@joyent.com> Approved by: Jerry Jelinek
+ <jerry.jelinek@joyent.com>
+
+---
+ kvm_x86.c     | 16 ++++++++++++++++
+ kvm_x86host.h |  3 +++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/kvm_x86.c b/kvm_x86.c
+index 0ca5496..ba90eb4 100644
+--- a/kvm_x86.c
++++ b/kvm_x86.c
+@@ -30,6 +30,7 @@
+ #include <sys/fp.h>
+ #include <sys/tss.h>
+ #include <sys/x86_archext.h>
++#include <sys/controlregs.h>
+ 
+ #include <vm/page.h>
+ #include <vm/hat.h>
+@@ -4534,6 +4535,9 @@ kvm_load_guest_fpu(struct kvm_vcpu *vcpu)
+ 
+ 	vcpu->guest_fpu_loaded = 1;
+ 	hma_fpu_start_guest(vcpu->arch.guest_fpu);
++	if (vcpu->kvm->arch.need_xcr0) {
++		set_xcr(XFEATURE_ENABLED_MASK, XFEATURE_LEGACY_FP);
++	}
+ 	KVM_TRACE1(fpu, int, 1);
+ }
+ 
+@@ -4544,6 +4548,10 @@ kvm_put_guest_fpu(struct kvm_vcpu *vcpu)
+ 		return;
+ 
+ 	vcpu->guest_fpu_loaded = 0;
++	if (vcpu->kvm->arch.need_xcr0) {
++		set_xcr(XFEATURE_ENABLED_MASK, vcpu->kvm->arch.host_xcr0);
++	}
++	KVM_TRACE1(fpu, int, 1);
+ 	hma_fpu_stop_guest(vcpu->arch.guest_fpu);
+ 	KVM_VCPU_KSTAT_INC(vcpu, kvmvs_fpu_reload);
+ 	set_bit(KVM_REQ_DEACTIVATE_FPU, &vcpu->requests);
+@@ -4801,6 +4809,14 @@ kvm_arch_create_vm(void)
+ 	/* Reserve bit 0 of irq_sources_bitmap for userspace irq source */
+ 	set_bit(KVM_USERSPACE_IRQ_SOURCE_ID, &kvm->arch.irq_sources_bitmap);
+ 
++	if ((native_read_cr4() & CR4_OSXSAVE) != 0) {
++		kvm->arch.need_xcr0 = 1;
++		kvm->arch.host_xcr0 = get_xcr(XFEATURE_ENABLED_MASK);
++	} else {
++		kvm->arch.need_xcr0 = 0;
++		kvm->arch.host_xcr0 = 0;
++	}
++
+ 	return (kvm);
+ }
+ 
+diff --git a/kvm_x86host.h b/kvm_x86host.h
+index fc3bd33..c87523f 100644
+--- a/kvm_x86host.h
++++ b/kvm_x86host.h
+@@ -533,6 +533,9 @@ typedef struct kvm_arch {
+ 
+ 	struct kvm_xen_hvm_config xen_hvm_config;
+ 
++	uint8_t need_xcr0;
++	uint64_t host_xcr0;
++
+ 	/* fields used by HYPER-V emulation */
+ 	uint64_t hv_guest_os_id;
+ 	uint64_t hv_hypercall;
