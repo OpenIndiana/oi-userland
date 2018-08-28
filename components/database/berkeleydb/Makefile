@@ -21,21 +21,21 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		berkeleydb
-COMPONENT_VERSION=	5.3.21
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
+COMPONENT_VERSION=	5.3.28
+COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html
 COMPONENT_SRC_NAME=	db
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ddd92a930317df92021054c03992392db9ea5cddba43bef8920d392a82114fb8
+    sha256:e0a992d740709892e81f9d93f06daf305cf73fb81b545afe72478043172c3628
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	database/berkeley
+COMPONENT_FMRI=	database/berkeleydb-5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -91,6 +91,17 @@ CONFIGURE_OPTIONS += --enable-tcl
 CONFIGURE_OPTIONS += --with-tcl=/usr/lib
 CONFIGURE_OPTIONS += --enable-dbm
 CONFIGURE_OPTIONS += $(configure_test)
+
+# Don't use rpath
+COMPONENT_POST_CONFIGURE_ACTION.32 = \
+	(cd $(BUILD_DIR_32) ; \
+	find . -name libtool -exec $(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' {} \; ; \
+	find . -name libtool -exec $(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' {} \;)
+COMPONENT_POST_CONFIGURE_ACTION.64 = \
+	(cd $(BUILD_DIR_64) ; \
+	find . -name libtool -exec $(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' {} \; ; \
+	find . -name libtool -exec $(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' {} \;)
+COMPONENT_POST_CONFIGURE_ACTION = $(COMPONENT_POST_CONFIGURE_ACTION.$(BITS))
 
 COMPONENT_TEST_TARGETS = test
 
