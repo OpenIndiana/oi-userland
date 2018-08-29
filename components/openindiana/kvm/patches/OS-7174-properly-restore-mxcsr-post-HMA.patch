@@ -1,0 +1,40 @@
+From 4149738a32ab6ac380a31c309d116e3dfef47a98 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Fri, 24 Aug 2018 23:07:43 +0000
+Subject: [PATCH] OS-7174 KVM doesn't properly restore mxcsr post-HMA Reviewed
+ by: Jerry Jelinek <jerry.jelinek@joyent.com> Reviewed by: Patrick Mooney
+ <patrick.mooney@joyent.com> Approved by: Jerry Jelinek
+ <jerry.jelinek@joyent.com>
+
+---
+ kvm_x86.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kvm_x86.c b/kvm_x86.c
+index 233b484..622198a 100644
+--- a/kvm_x86.c
++++ b/kvm_x86.c
+@@ -4468,6 +4468,7 @@ kvm_arch_vcpu_ioctl_get_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
+ 	fpu->last_ip = fxsave.fx_rip;
+ 	fpu->last_dp = fxsave.fx_rdp;
+ 	memcpy(fpu->xmm, fxsave.fx_xmm, sizeof (fxsave.fx_xmm));
++	fpu->mxcsr = fxsave.fx_mxcsr;
+ 
+ 	vcpu_put(vcpu);
+ 
+@@ -4491,6 +4492,7 @@ kvm_arch_vcpu_ioctl_set_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
+ 	fxsave.fx_rip = fpu->last_ip;
+ 	fxsave.fx_rdp = fpu->last_dp;
+ 	memcpy(fxsave.fx_xmm, fpu->xmm, sizeof (fxsave.fx_xmm));
++	fxsave.fx_mxcsr = fpu->mxcsr;
+ 
+ 	ret = hma_fpu_set_fxsave_state(vcpu->arch.guest_fpu, &fxsave);
+ 
+@@ -4502,6 +4504,7 @@ kvm_arch_vcpu_ioctl_set_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
+ void
+ fx_init(struct kvm_vcpu *vcpu)
+ {
++	vcpu->arch.cr0 |= X86_CR0_ET;
+ 	hma_fpu_init(vcpu->arch.guest_fpu);
+ }
+ 
