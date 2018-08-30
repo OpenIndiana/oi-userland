@@ -20,16 +20,18 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 PREFERRED_BITS= 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
 COMPONENT_VERSION=      9.23
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=	GPL Ghostscript
-COMPONENT_PROJECT_URL=	http://ghostscript.com/
+COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
