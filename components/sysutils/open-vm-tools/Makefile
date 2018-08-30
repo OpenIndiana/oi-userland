@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		open-vm-tools
 COMPONENT_VERSION=	10.3.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	open-vm-tools is a set of services and modules that enable several features in VMware products for better management of, and seamless user interactions with, guests.
 COMPONENT_PROJECT_URL=	https://github.com/vmware/open-vm-tools
 COMPONENT_FMRI=		system/virtualization/open-vm-tools
@@ -34,8 +35,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION = \
 	($(MV) $(SOURCE_DIR)/open-vm-tools/* $(SOURCE_DIR) && \
-	$(RM) -r $(SOURCE_DIR)/open-vm-tools && \
-  cd $(@D) && autoreconf -v -i )	
+	$(RM) -r $(SOURCE_DIR)/open-vm-tools) 
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -v -i -f )	
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
   ($(CLONEY) $(SOURCE_DIR) $(@D) ) 
@@ -62,14 +64,12 @@ CONFIGURE_OPTIONS += --disable-multimon
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --enable-deploypkg=no
-#CONFIGURE_OPTIONS += --without-gtk2
 CONFIGURE_OPTIONS += --with-gtk2
-#CONFIGURE_OPTIONS += --without-gtkmm
 CONFIGURE_OPTIONS += --with-gtkmm
 CONFIGURE_OPTIONS += --without-icu
 CONFIGURE_OPTIONS += --without-kernel-modules
-#CONFIGURE_OPTIONS += --without-x
 CONFIGURE_OPTIONS += --without-xerces
+CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_OPTIONS += RPCGENFLAGS="-C"
 
@@ -80,9 +80,28 @@ install:	$(INSTALL_32)
 # there are no tests defined
 test:		  $(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += system/library/libdnet
-REQUIRED_PACKAGES += library/libfuse
-REQUIRED_PACKAGES += system/library
+# Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/c++/glibmm
+REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/desktop/c++/atkmm
+REQUIRED_PACKAGES += library/desktop/c++/cairomm
+REQUIRED_PACKAGES += library/desktop/c++/gtkmm
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libfuse
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdnet
+REQUIRED_PACKAGES += system/virtualization/open-vm-tools
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxtst
