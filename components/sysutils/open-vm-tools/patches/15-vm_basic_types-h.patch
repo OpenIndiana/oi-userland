@@ -1,0 +1,38 @@
+--- open-vm-tools-stable-10.3.0/lib/include/vm_basic_types.h.~1~	Fri Jul 13 14:54:23 2018
++++ open-vm-tools-stable-10.3.0/lib/include/vm_basic_types.h	Sun Aug 19 14:51:28 2018
+@@ -272,7 +272,7 @@
+ #endif
+ 
+ #if !defined(USING_AUTOCONF)
+-#   if defined(__FreeBSD__) || defined(sun)
++#   if defined(__FreeBSD__) || defined(__sun)
+ #      ifdef KLD_MODULE
+ #         include <sys/types.h>
+ #      else
+@@ -1058,7 +1058,7 @@
+  * Linux it's an int.
+  * Use this like this: printf("The pid is %" FMTPID ".\n", pid);
+  */
+-#ifdef sun
++#ifdef __sun
+ #   ifdef VM_X86_64
+ #      define FMTPID "d"
+ #   else
+@@ -1073,7 +1073,7 @@
+  * is a ulong, but on other platforms it's an unsigned int.
+  * Use this like this: printf("The uid is %" FMTUID ".\n", uid);
+  */
+-#if defined(sun) && !defined(SOL11)
++#if defined(__sun) && !defined(SOL11)
+ #   ifdef VM_X86_64
+ #      define FMTUID "u"
+ #   else
+@@ -1088,7 +1088,7 @@
+  * Linux it's an int.
+  * Use this like this: printf("The mode is %" FMTMODE ".\n", mode);
+  */
+-#ifdef sun
++#ifdef __sun
+ #   ifdef VM_X86_64
+ #      define FMTMODE "o"
+ #   else

@@ -1,0 +1,27 @@
+--- open-vm-tools-stable-10.3.0/lib/include/vmblock.h.~1~	Fri Jul 13 14:54:23 2018
++++ open-vm-tools-stable-10.3.0/lib/include/vmblock.h	Sun Aug 19 14:23:22 2018
+@@ -83,7 +83,7 @@
+ #ifndef _VMBLOCK_H_
+ #define _VMBLOCK_H_
+ 
+-#if defined(sun) || defined(__FreeBSD__)
++#if defined(__sun) || defined(__FreeBSD__)
+ # include <sys/ioccom.h>
+ #endif
+ 
+@@ -169,13 +169,13 @@
+                                        "/" VMBLOCK_CONTROL_DEVNAME
+ # define VMBLOCK_DEVICE_MODE            O_WRONLY
+ 
+-#elif defined(sun) || defined(__FreeBSD__)
++#elif defined(__sun) || defined(__FreeBSD__)
+ # define VMBLOCK_FS_NAME                "vmblock"
+ # define VMBLOCK_MOUNT_POINT            "/var/run/" VMBLOCK_FS_NAME
+ # define VMBLOCK_FS_ROOT                VMBLOCK_MOUNT_POINT
+ # define VMBLOCK_DEVICE                 VMBLOCK_MOUNT_POINT
+ # define VMBLOCK_DEVICE_MODE            O_RDONLY
+-# if defined(sun)                       /* if (sun) { */
++# if defined(__sun)                     /* if (__sun) { */
+    /*
+     * Construct ioctl(2) commands for blocks.  _IO() is a helper macro to
+     * construct unique command values more easily.  I chose 'v' because I

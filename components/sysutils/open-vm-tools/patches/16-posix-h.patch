@@ -1,0 +1,42 @@
+--- open-vm-tools-stable-10.3.0/lib/include/posix.h~	Fri Jul 13 14:54:23 2018
++++ open-vm-tools-stable-10.3.0/lib/include/posix.h	Sun Aug 19 15:41:02 2018
+@@ -71,7 +71,7 @@
+ struct utimbuf;
+ struct timeval;
+ struct passwd;
+-#if !defined(sun)
++#if !defined(__sun)
+ struct mntent;
+ #else
+ struct mnttab;
+@@ -194,7 +194,7 @@
+ int Posix_Getgrnam_r(const char *name, struct group *gr,
+                  char *buf, size_t size, struct group **pgr);
+ 
+-#if !defined(sun)
++#if !defined(__sun)
+ int Posix_Statfs(const char *pathName, struct statfs *statfsbuf);
+ 
+ int Posix_GetGroupList(const char *user, gid_t group, gid_t *groups,
+@@ -211,10 +211,10 @@
+                                  char *buf, int size);
+ 
+ #endif // !defined(__APPLE__) && !defined(__FreeBSD__)
+-#else  // !defined(sun)
++#else  // !defined(__sun)
+ int Posix_Getmntent(FILE *fp, struct mnttab *mp);
+ 
+-#endif // !defined(sun)
++#endif // !defined(__sun)
+ #if !defined(__APPLE__)
+ 
+ 
+@@ -252,7 +252,7 @@
+    ASSERT(name);
+ 
+    if ((gethostbyname_r(name, &he, buffer, sizeof buffer,
+-#if !defined(sun) && !defined(SOLARIS) && !defined(SOL10)
++#if !defined(__sun) && !defined(SOLARIS) && !defined(SOL10)
+                         &phe,
+ #endif
+                         &error) == 0) && phe) {
