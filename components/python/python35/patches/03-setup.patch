@@ -1,0 +1,104 @@
+This patch modifies the setup script to support Solaris.
+As it is Solaris-specific, it is not suitable for upstream.
+
+--- Python-3.5.3/setup.py.~2~	2017-01-17 11:05:22.740312434 +0000
++++ Python-3.5.3/setup.py	2017-01-17 11:05:22.765910178 +0000
+@@ -487,12 +487,15 @@
+             return ['m']
+ 
+     def detect_modules(self):
+-        # Ensure that /usr/local is always used, but the local build
+-        # directories (i.e. '.' and 'Include') must be first.  See issue
+-        # 10520.
+         if not cross_compiling:
+-            add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
+-            add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
++            if host_platform != 'sunos5':
++                # Upstream notes the following for source builds:
++                #    Ensure that /usr/local is always used, but the local build
++                #    directories (i.e. '.' and 'Include') must be first.  See
++                #    issue 10520.
++                # But we skip that for Solaris system builds.
++                add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
++                add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
+         # only change this for cross builds for 3.3, issues on Mageia
+         if cross_compiling:
+             self.add_gcc_paths()
+@@ -785,6 +788,13 @@
+                                                      ['/usr/lib/termcap'],
+                                                      'termcap'):
+                 readline_libs.append('termcap')
++
++            if host_platform == 'sunos5':
++                # insert '-zrecord' before the readline libraries that we
++                # want to link with to avoid rl_insert() elimination
++                readline_extra_link_args = ('-Wl,-zrecord','-lreadline','-lncurses')
++                readline_libs = ()
++
+             exts.append( Extension('readline', ['readline.c'],
+                                    library_dirs=['/usr/lib/termcap'],
+                                    extra_link_args=readline_extra_link_args,
+@@ -808,7 +818,8 @@
+ 
+         # socket(2)
+         exts.append( Extension('_socket', ['socketmodule.c'],
+-                               depends = ['socketmodule.h']) )
++                               depends = ['socketmodule.h'],
++                               libraries = ['socket', 'nsl', 'resolv']) )
+         # Detect SSL support for the socket module (via _ssl)
+         search_for_ssl_incs_in = [
+                               '/usr/local/ssl/include',
+@@ -1344,6 +1355,10 @@
+             curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
+ 
+         if curses_library.startswith('ncurses'):
++            if host_platform == 'sunos5':
++                curses_defines.append(('HAVE_NCURSESW', '1'))
++                curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
++                curses_includes.append('/usr/include/ncurses')
+             curses_libs = [curses_library]
+             exts.append( Extension('_curses', ['_cursesmodule.c'],
+                                    include_dirs=curses_includes,
+@@ -1368,10 +1383,32 @@
+         # If the curses module is enabled, check for the panel module
+         if (module_enabled(exts, '_curses') and
+             self.compiler.find_library_file(lib_dirs, panel_library)):
++            panel_lib_dirs = []
++            if host_platform == 'sunos5':
++                # Look for libpanel under /usr/gnu/lib on Solaris.
++                # os.uname() does not include the processor. platform.uname()
++                # does, but the platform module is not available in setup.
++                # Work around this by parsing os.system('uname -p') output.
++                tmpfile = os.path.join(self.build_temp, 'processor')
++                if not os.path.exists(self.build_temp):
++                    os.makedirs(self.build_temp)
++                os.system('/usr/bin/uname -p > %s 2> /dev/null' %tmpfile)
++                processor = ''
++                try:
++                    with open(tmpfile) as fp:
++                        processor = fp.readline().strip()
++                finally:
++                    os.unlink(tmpfile)
++                if processor == 'sparc':
++                    panel_lib_dirs.append('/usr/gnu/lib/sparcv9')
++                else:
++                    panel_lib_dirs.append('/usr/gnu/lib/amd64')
+             exts.append( Extension('_curses_panel', ['_curses_panel.c'],
+                                    include_dirs=curses_includes,
+                                    define_macros=curses_defines,
+-                                   libraries = [panel_library] + curses_libs) )
++                                   libraries = [panel_library] + curses_libs,
++                                   library_dirs = panel_lib_dirs,
++                                   runtime_library_dirs = panel_lib_dirs) )
+         else:
+             missing.append('_curses_panel')
+ 
+@@ -1968,7 +2005,7 @@
+             # this option. If you want to compile ctypes with the Sun
+             # compiler, please research a proper solution, instead of
+             # finding some -z option for the Sun compiler.
+-            extra_link_args.append('-mimpure-text')
++            pass
+ 
+         elif host_platform.startswith('hp-ux'):
+             extra_link_args.append('-fPIC')

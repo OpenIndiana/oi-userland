@@ -1,0 +1,15 @@
+This patch was originated in-house.  It is to work around a bug (21825650)
+in getrandom(2).  That bug was fixed in S12, and in an 11.3 SRU, but not in
+time for 11.3 GA, so this patch is still needed for FOSS Evaluation builds.
+
+--- Python-3.5.3/Python/random.c.~1~	2017-01-17 11:31:43.712295534 +0000
++++ Python-3.5.3/Python/random.c	2017-01-17 11:34:15.498815511 +0000
+@@ -154,7 +154,7 @@ py_getrandom(void *buffer, Py_ssize_t si
+             /* ENOSYS: the syscall is not supported by the kernel.
+                EPERM: the syscall is blocked by a security policy (ex: SECCOMP)
+                or something else. */
+-            if (errno == ENOSYS || errno == EPERM) {
++            if (errno == ENOSYS || errno == EINVAL || errno == EPERM) {
+                 getrandom_works = 0;
+                 return 0;
+             }

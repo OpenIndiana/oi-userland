@@ -1,0 +1,27 @@
+This patch is an OpenIndiana-specific hack (based on Solaris hack); it will not be submitted upstream.
+
+--- Python-3.5.0a4/Lib/distutils/sysconfig.py.~2~	2015-04-20 13:52:42.184303501 -0700
++++ Python-3.5.0a4/Lib/distutils/sysconfig.py	2015-04-20 13:52:42.193807107 -0700
+@@ -210,6 +210,22 @@
+         else:
+             archiver = ar + ' ' + ar_flags
+ 
++        # Force PIC compilation. Determine if GNU compiler or otherwise
++        # and set the PIC flag(s) accordingly. Defaults to GNU compiler.
++        if re.search('-.PIC', cflags) == None:
++            try:
++                out = os.popen(cc + ' --version 2>/dev/null', 'r')
++                out_string = out.read()
++                out.close()
++                result = re.search(' (\d+\.\d+(\.\d+)*)', out_string)
++                kpic_flags = "-fPIC -DPIC" if result else "-KPIC -DPIC"
++            except ImportError:
++                # The only time the above should fail is during boot-strapping
++                # when time (os imports subprocess which imports time) is not
++                # yet available.  Assume GNU compiler for that case anyway.
++                kpic_flags = "-fPIC -DPIC"
++            cflags += ' ' + kpic_flags
++
+         cc_cmd = cc + ' ' + cflags
+         compiler.set_executables(
+             preprocessor=cpp,
