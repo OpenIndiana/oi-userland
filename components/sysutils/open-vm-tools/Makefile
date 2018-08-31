@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		open-vm-tools
 COMPONENT_VERSION=	10.3.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	open-vm-tools is a set of services and modules that enable several features in VMware products for better management of, and seamless user interactions with, guests.
 COMPONENT_PROJECT_URL=	https://github.com/vmware/open-vm-tools
 COMPONENT_FMRI=		system/virtualization/open-vm-tools
@@ -34,17 +35,28 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION = \
 	($(MV) $(SOURCE_DIR)/open-vm-tools/* $(SOURCE_DIR) && \
-	$(RM) -r $(SOURCE_DIR)/open-vm-tools && \
-  cd $(@D) && autoreconf -v -i )	
+	$(RM) -r $(SOURCE_DIR)/open-vm-tools) 
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -v -i -f )	
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
   ($(CLONEY) $(SOURCE_DIR) $(@D) ) 
 
 CFLAGS += -std=gnu99
-CFLAGS += -D__EXTENSIONS__
-CFLAGS += -D_XOPEN_SOURCE=600
-CFLAGS += -D__SOLARIS__=1
-CFLAGS += -D_FILE_OFFSET_BITS=64
+
+# This package need defines in CPPFLAGS so they apply to
+# C++ compiles as well as C.
+CPPFLAGS += -D__EXTENSIONS__
+CPPFLAGS += -D_XOPEN_SOURCE=600
+CPPFLAGS += -D__SOLARIS__=1
+CPPFLAGS += -D_FILE_OFFSET_BITS=64
+# open-vm-tools have if defined(sun) all over (should be __sun)
+CPPFLAGS += -Dsun
+# and this one means S11 or later (not S10, S9)
+CPPFLAGS += -DSOL11
+
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
 CFLAGS += -Wno-deprecated-declarations
 CFLAGS += -Wno-unused-local-typedefs
 CFLAGS += -Wno-unused-variable
@@ -56,12 +68,15 @@ CONFIGURE_OPTIONS += --disable-multimon
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --enable-deploypkg=no
-CONFIGURE_OPTIONS += --without-gtk2
-CONFIGURE_OPTIONS += --without-gtkmm
+CONFIGURE_OPTIONS += --with-gtk2
+CONFIGURE_OPTIONS += --with-gtkmm
 CONFIGURE_OPTIONS += --without-icu
 CONFIGURE_OPTIONS += --without-kernel-modules
-CONFIGURE_OPTIONS += --without-x
 CONFIGURE_OPTIONS += --without-xerces
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+
+# Need C++ compatible xdr headers
+CONFIGURE_OPTIONS += RPCGENFLAGS="-C"
 
 build:		$(BUILD_32)
 
@@ -70,9 +85,28 @@ install:	$(INSTALL_32)
 # there are no tests defined
 test:		  $(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += system/library/libdnet
-REQUIRED_PACKAGES += library/libfuse
-REQUIRED_PACKAGES += system/library
+# Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/c++/glibmm
+REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/desktop/c++/atkmm
+REQUIRED_PACKAGES += library/desktop/c++/cairomm
+REQUIRED_PACKAGES += library/desktop/c++/gtkmm
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libfuse
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdnet
+REQUIRED_PACKAGES += system/virtualization/open-vm-tools
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxtst

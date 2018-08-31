@@ -28,6 +28,10 @@ file files/tools.conf        path=etc/vmware-tools/tools.conf preserve=true
 
 dir path=var/log/vmtools
 
+# Install desktop part automatically if Xorg is installed
+depend type=conditional fmri=pkg:/system/virtualization/open-vm-tools-desktop@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=pkg:/x11/server/xorg
+
 file path=etc/vmware-tools/poweroff-vm-default    mode=0555
 file path=etc/vmware-tools/poweron-vm-default     mode=0555
 file path=etc/vmware-tools/resume-vm-default      mode=0555
