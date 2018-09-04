@@ -50,7 +50,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
-CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=gnu99 -D_FILE_OFFSET_BITS=64
+CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=c99 -D_FILE_OFFSET_BITS=64
 CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL -D_FILE_OFFSET_BITS=64
 LDFLAGS+=	-I$(@D)/mesa/GL 
 
