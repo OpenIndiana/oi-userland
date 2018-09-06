@@ -148,6 +148,8 @@ endif
 PYTHON_VERSION =	2.7
 PYTHON_VERSIONS =	2.7
 
+PYTHON_64_ONLY_VERSIONS = 3.5
+
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
 CLONEY =	$(WS_TOOLS)/cloney
@@ -613,6 +615,9 @@ PYTHON.3.4.VENDOR_PACKAGES.32 = /usr/lib/python3.4/vendor-packages
 PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
 PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
 
+PYTHON.3.5.VENDOR_PACKAGES.64 = /usr/lib/python3.5/vendor-packages
+PYTHON.3.5.VENDOR_PACKAGES = $(PYTHON.3.5.VENDOR_PACKAGES.$(BITS))
+
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(WS_TOOLS)/parfait/cc
 CXX.studio.32 =	$(WS_TOOLS)/parfait/CC
@@ -660,6 +665,9 @@ PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
 PYTHON.3.4.32 =	/usr/bin/python3.4
 PYTHON.3.4.64 =	/usr/bin/$(MACH64)/python3.4
+
+PYTHON.3.5.32 =	/usr/bin/python3.5
+PYTHON.3.5.64 =	/usr/bin/python3.5
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
