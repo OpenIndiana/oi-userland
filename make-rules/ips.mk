@@ -81,6 +81,7 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/devel
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-soabi
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-no-32bit
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
@@ -123,6 +124,8 @@ PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
 
 PKG_MACROS +=           PYTHON_2.7_ONLY=\#
 PKG_MACROS +=           PYTHON_3.4_ONLY=\#
+PKG_MACROS +=           PYTHON_3.5_ONLY=\#
+PKG_MACROS +=           PYTHON_32_ONLY=
 
 MANGLED_DIR =	$(PROTO_DIR)/mangled
 
@@ -238,6 +241,10 @@ mkgeneric = \
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
+
+ifneq ($(filter $(1),$(PYTHON_64_ONLY_VERSIONS)),)
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
+endif
 
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
 	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@

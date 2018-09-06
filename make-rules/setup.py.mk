@@ -24,32 +24,42 @@
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
+$(BUILD_DIR)/%-3.5/.built:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.installed:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.installed:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.installed:		PYTHON_VERSION=3.4
+$(BUILD_DIR)/%-3.5/.installed:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.tested:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.tested:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.tested:		PYTHON_VERSION=3.4
+$(BUILD_DIR)/%-3.5/.tested:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.tested-and-compared:	PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.tested-and-compared:	PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.tested-and-compared:	PYTHON_VERSION=3.4
+$(BUILD_DIR)/%-3.5/.tested-and-compared:	PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested-and-compared:	BITS=64
 
-BUILD_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
+PYTHON_32_VERSIONS = $(filter-out $(PYTHON_64_ONLY_VERSIONS), $(PYTHON_VERSIONS))
+
+BUILD_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 BUILD_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
 
-INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+ifeq ($(PYTHON_VERSION),3.5)
+BUILD_32_and_64 = $(BUILD_64)
+endif
+
+INSTALL_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 INSTALL_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
 
@@ -63,16 +73,16 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # Reset arguments specified as environmnent variables
 COMPONENT_BUILD_ARGS =
 
-# If we are building Python 2.6 or 3.4 support, build them and install them
+# If we are building Python 3.4 or 3.5 support, build them and install them
 # before Python 2.7, so 2.7 is installed last and is the canonical version.
 # When we change the default, the new default should go last.
-ifneq ($(findstring 2.6,$(PYTHON_VERSIONS)),)
-$(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-2.6/.built
-$(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-2.6/.installed
-endif
 ifneq ($(findstring 3.4,$(PYTHON_VERSIONS)),)
 $(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.4/.built
 $(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-3.4/.installed
+endif
+ifneq ($(findstring 3.5,$(PYTHON_VERSIONS)),)
+$(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.5/.built
+$(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-3.5/.installed
 endif
 
 # Create a distutils config file specific to the combination of build
@@ -128,11 +138,11 @@ COMPONENT_TEST_ARGS +=	./runtests.py
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
-TEST_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
+TEST_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
 TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested)
 TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested)
 else
-TEST_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared)
+TEST_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared)
 TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared)
 TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
 endif
