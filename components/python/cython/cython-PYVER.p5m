@@ -22,11 +22,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-link path=usr/bin/$(MACH64)/cygdb target=cygdb-$(PYVER) \
+$(PYTHON_32_ONLY)link path=usr/bin/$(MACH64)/cygdb target=cygdb-$(PYVER) \
   mediator=python mediator-version=$(PYVER)
-link path=usr/bin/$(MACH64)/cython target=cython-$(PYVER) \
+$(PYTHON_32_ONLY)link path=usr/bin/$(MACH64)/cython target=cython-$(PYVER) \
   mediator=python mediator-version=$(PYVER)
-link path=usr/bin/$(MACH64)/cythonize target=cythonize-$(PYVER) \
+$(PYTHON_32_ONLY)link path=usr/bin/$(MACH64)/cythonize target=cythonize-$(PYVER) \
   mediator=python mediator-version=$(PYVER)
 link path=usr/bin/cygdb target=cygdb-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
@@ -35,9 +35,9 @@ link path=usr/bin/cython target=cython-$(PYVER) mediator=python \
 link path=usr/bin/cythonize target=cythonize-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 
-file path=usr/bin/$(MACH64)/cygdb-$(PYVER)
-file path=usr/bin/$(MACH64)/cython-$(PYVER)
-file path=usr/bin/$(MACH64)/cythonize-$(PYVER)
+$(PYTHON_32_ONLY)file path=usr/bin/$(MACH64)/cygdb-$(PYVER)
+$(PYTHON_32_ONLY)file path=usr/bin/$(MACH64)/cython-$(PYVER)
+$(PYTHON_32_ONLY)file path=usr/bin/$(MACH64)/cythonize-$(PYVER)
 file path=usr/bin/cygdb-$(PYVER)
 file path=usr/bin/cython-$(PYVER)
 file path=usr/bin/cythonize-$(PYVER)
@@ -47,6 +47,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cython-$(COMPONENT_VERSION)-py$
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/64/StringIOTree.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Build/BuildExecutable.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Build/Cythonize.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Build/Dependencies.py
@@ -61,8 +62,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Build/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/CodeWriter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/Code.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/FlowControl.so
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/FusedNode.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/Lexicon.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/Parsing.so
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/Pythran.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/Scanning.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/64/Visitor.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/AnalysedTreeTransforms.py
@@ -83,6 +86,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/FlowControl.pxd
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/FlowControl.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/FlowControl.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/FusedNode.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/FusedNode.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Future.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Interpreter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Lexicon.py
@@ -102,6 +106,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Parsing.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Pipeline.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/PyrexTypes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Pythran.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Pythran.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Scanning.pxd
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Scanning.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Scanning.so
@@ -116,6 +121,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/TestParse
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/TestSignatureMatching.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/TestTreeFragment.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/TestTreePath.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/TestTypes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/TestUtilityLoad.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/TestVisitor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Compiler/Tests/__init__.py
@@ -301,6 +307,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Runtime/refnanny.pyx
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Runtime/refnanny.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Shadow.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/StringIOTree.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/StringIOTree.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Tempita/64/_tempita.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Tempita/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Tempita/_looper.py
@@ -313,6 +320,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Tests/TestJediTyper.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Tests/TestStringIOTree.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Tests/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Tests/xmlrunner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Utility/AsyncGen.c
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Utility/Buffer.c
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Utility/Builtins.c
 file path=usr/lib/python$(PYVER)/vendor-packages/Cython/Utility/CConvert.pyx
