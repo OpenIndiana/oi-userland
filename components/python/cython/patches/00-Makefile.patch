@@ -7,14 +7,20 @@ optimization for our build process.
 
 Patch was written in-house.
 
---- Cython-0.26/Makefile.~1~	2017-08-02 07:59:21.685807610 +0000
-+++ Cython-0.26/Makefile	2017-08-02 07:59:57.292646923 +0000
-@@ -5,7 +5,7 @@
+
+
+--- Cython-0.28.2/Makefile.orig	2018-04-26 14:00:27.215975827 -0700
++++ Cython-0.28.2/Makefile	2018-04-26 14:00:41.387250608 -0700
+@@ -7,11 +7,11 @@
+ MANYLINUX_IMAGE_686=quay.io/pypa/manylinux1_i686
+ 
  all:    local
  
  local:
 -	${PYTHON} setup.py build_ext --inplace
 +	${PYTHON} setup.py build_ext
  
- TMPDIR = .repo_tmp
- .git: .gitrev
+ sdist: dist/Cython-$(VERSION).tar.gz
+ 
+ dist/Cython-$(VERSION).tar.gz:
+ 	$(PYTHON) setup.py sdist
