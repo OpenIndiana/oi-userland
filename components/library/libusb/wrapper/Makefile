@@ -20,17 +20,18 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libusb-wrapper
 COMPONENT_VERSION=	0.1.8
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	0.5.11
 COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	library/libusb
 
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR_32)/.built: BITS=32
 $(BUILD_DIR_64)/.built: BITS=64
@@ -44,7 +45,7 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 $(SOURCE_DIR)/.prep:
 	$(TOUCH) $@
 
-$(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc
+$(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
 
 download:
@@ -54,7 +55,7 @@ clobber:	clean
 
 prep:	$(SOURCE_DIR)/.prep
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32_and_64) $(BUILD_DIR)/libusb-64.pc
 
 install:	$(INSTALL_32_and_64)
 

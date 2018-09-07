@@ -21,7 +21,7 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../../../../make-rules/shared-macros.mk
+include ../../../../../../make-rules/shared-macros.mk
 
 LIBNAME =	libusbugen.so.1
 SRCS =		libusbugen.c
