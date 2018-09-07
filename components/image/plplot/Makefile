@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         plplot
 COMPONENT_VERSION=      5.13.0
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://plplot.sourceforge.net
 COMPONENT_SUMMARY=	A cross-platform software package for creating scientific plots.
 COMPONENT_FMRI=         image/plplot

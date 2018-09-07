@@ -1,0 +1,81 @@
+plplot forgets about install prefix while searching for self
+
+There's a mess in cmake infrastructure if CMAKE_INSTALL_FOO_DIR is 
+relative or not. Trying to fix it.
+
+--- plplot-5.13.0/cmake/modules/instdirs.cmake.~1~	2017-08-26 05:43:25.000000000 +0000
++++ plplot-5.13.0/cmake/modules/instdirs.cmake	2018-09-07 18:45:27.925109366 +0000
+@@ -34,6 +34,8 @@
+ # locations below (without the CMAKE_INSTALL prefix) that are directly
+ # used for installations.
+ 
++INCLUDE(GNUInstallDirs)
++
+ set(INSTALL_LOCATION_VARIABLES_LIST)
+ set(
+   CMAKE_INSTALL_EXEC_PREFIX
+@@ -99,56 +101,56 @@
+ 
+ set(
+   DATA_DIR
+-  ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${PLPLOT_VERSION}
++  ${CMAKE_INSTALL_FULL_DATADIR}/${PACKAGE}${PLPLOT_VERSION}
+   CACHE PATH "PLplot install location for architecture-independent data"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST DATA_DIR)
+ 
+ set(
+   LIB_DIR
+-  ${CMAKE_INSTALL_LIBDIR}
++  ${CMAKE_INSTALL_FULL_LIBDIR}
+   CACHE PATH "PLplot install location for object code libraries"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST LIB_DIR)
+ 
+ set(
+   INCLUDE_DIR
+-  ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE}
++  ${CMAKE_INSTALL_FULL_INCLUDEDIR}/${PACKAGE}
+   CACHE PATH "PLplot install location for C header files"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST INCLUDE_DIR)
+ 
+ set(
+   BIN_DIR
+-  ${CMAKE_INSTALL_BINDIR}
++  ${CMAKE_INSTALL_FULL_BINDIR}
+   CACHE PATH "PLplot install location for user executables"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST BIN_DIR)
+ 
+ set(
+   DRV_DIR
+-  ${CMAKE_INSTALL_LIBDIR}/${PACKAGE}${PLPLOT_VERSION}/drivers
++  ${CMAKE_INSTALL_FULL_LIBDIR}/${PACKAGE}${PLPLOT_VERSION}/drivers
+   CACHE PATH "PLplot install location for dynamically loaded devices"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST DRV_DIR)
+ 
+ set(
+   DOC_DIR
+-  ${CMAKE_INSTALL_DATADIR}/doc/${PACKAGE}
++  ${CMAKE_INSTALL_FULL_DATADIR}/doc/${PACKAGE}
+   CACHE PATH "PLplot install location for (architecture-independent) documentation files"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST DOC_DIR)
+ 
+ set(
+   INFO_DIR
+-  ${CMAKE_INSTALL_INFODIR}
++  ${CMAKE_INSTALL_FULL_INFODIR}
+   CACHE PATH "PLplot install location for (architecture-independent) info files"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST INFO_DIR)
+ 
+ set(
+   MAN_DIR
+-  ${CMAKE_INSTALL_MANDIR}
++  ${CMAKE_INSTALL_FULL_MANDIR}
+   CACHE PATH "PLplot install location for (architecture-independent) man files"
+   )
+ list(APPEND INSTALL_LOCATION_VARIABLES_LIST MAN_DIR)
