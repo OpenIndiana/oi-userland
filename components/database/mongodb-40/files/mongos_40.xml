@@ -13,9 +13,9 @@ http://www.illumos.org/license/CDDL.
 Copyright 2012 EveryCity Ltd. All rights reserved.
 
 -->
-<service_bundle type="manifest" name="mongodb">
+<service_bundle type="manifest" name="mongos">
 
-  <service name="application/database/mongodb_40" type="service" version="1">
+  <service name="application/database/mongos_40" type="service" version="1">
 
     <dependency name="network" grouping="require_all" restart_on="error" type="service">
       <service_fmri value="svc:/milestone/network:default"/>
@@ -25,7 +25,7 @@ Copyright 2012 EveryCity Ltd. All rights reserved.
       <service_fmri value="svc:/system/filesystem/local:default"/>
     </dependency>
 
-    <exec_method type="method" name="start" exec="/usr/mongodb/4.0/bin/mongod --fork --config %{options/config}" timeout_seconds="60">
+    <exec_method type="method" name="start" exec="/usr/mongodb/4.0/bin/mongos --fork --config %{options/config}" timeout_seconds="60">
       <method_context>
         <method_credential user='mongodb' group='mongodb' privileges='basic,proc_lock_memory'/>
         <method_environment>
@@ -43,7 +43,7 @@ Copyright 2012 EveryCity Ltd. All rights reserved.
     </property_group>
 
     <property_group name='options' type='application'>
-       <propval name='config' type='astring' value='/etc/mongodb/4.0/mongod.conf' />
+       <propval name='config' type='astring' value='/etc/mongodb/4.0/mongos.conf' />
     </property_group>
 
     <instance name="default" enabled="false"/>
