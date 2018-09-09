@@ -62,3 +62,4 @@ REQUIRED_PACKAGES += x11/library/xcb-util-keysyms
 REQUIRED_PACKAGES += x11/library/xcb-util-wm
 REQUIRED_PACKAGES += x11/library/xcb-util-xrm
 REQUIRED_PACKAGES += image/imagemagick
+REQUIRED_PACKAGES += library/lua/lgi-52
