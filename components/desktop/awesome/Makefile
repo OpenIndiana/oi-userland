@@ -10,19 +10,19 @@
 
 #
 # Copyright (c) 2017 Dariusz Sendkowski
+# Copyright (c) 2018 Till Wegmüller
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         awesome
-COMPONENT_REVISION=     1
-COMPONENT_VERSION=      4.1
+COMPONENT_VERSION=      4.2
 COMPONENT_PROJECT_URL=  https://awesomewm.org
 COMPONENT_SUMMARY=      A highly configurable, next generation framework window manager for X.
 COMPONENT_FMRI=         desktop/window-manager/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:27a1db13ef4aa8e104a795e8c11c8611d75d8b0d864c277b8ef7c6f1ab6d04b8
+COMPONENT_ARCHIVE_HASH=	sha256:ac5da1a99f5fad083821993d2b56d1cd9594164eafc0be2beb540598345d974f
 COMPONENT_ARCHIVE_URL=  https://github.com/awesomeWM/awesome-releases/raw/master/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= LICENSE
@@ -42,13 +42,18 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TEST)
 
+# Packages Required at Buildtime. Not found By gmake
+REQUIRED_PACKAGES += image/imagemagick
+REQUIRED_PACKAGES += library/lua/lgi-52
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/xdg/libxdg-basedir
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
