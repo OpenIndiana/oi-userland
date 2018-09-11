@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mongodb
 COMPONENT_MAJOR_VERSION= 4.0
-COMPONENT_MINOR_VERSION= 1
+COMPONENT_MINOR_VERSION= 2
 COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_SUMMARY= MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
@@ -27,7 +27,7 @@ COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://fastdl.mongodb.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:c9b2ab4ea6899b631e77b7aed3b3653eed1086a75cb0f3bf74910c49d55a7dff
+COMPONENT_ARCHIVE_HASH=	sha256:adadf5c7f71bee774eb316f64e96c02690fa3ef53b9b5480a97e44cf4df09b86
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	APACHE-2.0.txt
 
@@ -101,6 +101,8 @@ COMPONENT_TEST_TRANSFORMS +=    '-e "s/\[resmoke\][ -+0-9T:\.\-]*//"' \
                                 '-n ' \
                                 '-e "/Summary of all suites/,\\$$p"'
 
+ENV = /usr/bin/env -i
+
 # Not strictly necessary
 $(TEST_64):     $(INSTALL_64) $(INSTALL_TOOLS)
 
@@ -119,6 +121,7 @@ REQUIRED_PACKAGES += developer/build/scons
 REQUIRED_PACKAGES += developer/gcc-6
 REQUIRED_PACKAGES += developer/golang
 REQUIRED_PACKAGES += library/python/typing
+REQUIRED_PACKAGES += library/python/cheetah-27
 
 # Auto-generated dependencies via `gmake GMAKE=gmake REQUIRED_PACKAGES`
 REQUIRED_PACKAGES += SUNWcs
@@ -130,3 +133,4 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
