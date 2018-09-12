@@ -16,13 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= crmsh
-COMPONENT_VERSION= 3.0.1
+COMPONENT_VERSION= 3.0.3
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/crmsh
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:de10df384d3a5b5700cce96b9e907c2e5c17bffc376bc65503f50219d9812b15
+COMPONENT_ARCHIVE_HASH= sha256:364fadb0d0c9619676e10bb75f4ea833a49019aa77ddb26229bc9d1c435585c0
 COMPONENT_ARCHIVE_URL=  https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2
 COMPONENT_SUMMARY= crmsh is a command-line interface for High-Availability cluster management and part of the Clusterlabs project.
