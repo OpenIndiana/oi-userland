@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	backports.shutil_get_terminal_size
 COMPONENT_VERSION= 	1.0.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://pypi.org/project/backports.shutil_get_terminal_size/
 COMPONENT_FMRI=	library/python/backports.shutil_get_terminal_size
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= backports.ssl_match_hostname
 COMPONENT_VERSION= 3.5.0.1
+COMPONENT_REVISION= 1
 COMPONENT_SRC_VERSION= 29bca6a22953
 COMPONENT_FMRI= library/python/backports.ssl_match_hostname
 COMPONENT_PROJECT_URL= http://bitbucket.org/brandon/backports.ssl_match_hostname
