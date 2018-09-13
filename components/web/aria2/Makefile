@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           aria2
 COMPONENT_VERSION=        1.34.0
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           web/aria2
 COMPONENT_PROJECT_URL=    https://aria2.github.io/
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -61,6 +62,7 @@ CXXFLAGS += -I/usr/include/gmp
 LDFLAGS += -lsocket -lnsl
 
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-ca-bundle=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS += --with-bashcompletiondir=/usr/share/bash-completion/completions/
 
 CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
