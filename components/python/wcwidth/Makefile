@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wcwidth
 COMPONENT_VERSION=	0.1.7
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Measures number of Terminal column cells of wide-character codes
 COMPONENT_PROJECT_URL=	https://github.com/jquast/wcwidth
 COMPONENT_FMRI=		library/python/wcwidth
@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE_URL=	https://github.com/jquast/wcwidth/archive/$(COMPONENT_VER
 COMPONENT_ARCHIVE_HASH=	sha256:c0122eb9a4ef7ab6489d0ef7c72db4143387b9466e27385cd5201950f49583b3
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -40,3 +40,4 @@ test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES+= runtime/python-27
 REQUIRED_PACKAGES+= runtime/python-34
+REQUIRED_PACKAGES+= runtime/python-35
