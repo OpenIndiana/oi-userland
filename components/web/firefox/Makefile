@@ -14,17 +14,18 @@
 # Copyright 2013-2017 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	52.9.0esr
-IPS_COMPONENT_VERSION= 	52.9.0
+COMPONENT_VERSION= 	60.2.0esr
+IPS_COMPONENT_VERSION= 	60.2.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC= 		$(COMPONENT_NAME)-$(IPS_COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c01d09658c53c1b3a496e353a24dad03b26b81d3b1d099abc26a06f81c199dd6
+  sha256:795bdc8b5648234ce74322e3e9b219947d984ce3a1e4e09ce1061fafbbe77717
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -36,10 +37,14 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=$(USRBINDIR.64):$(PATH.illumos)
+
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
                           cd $(@D)/js/src && autoconf-2.13 )
 
-COMPONENT_PRE_CONFIGURE_ACTION = (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR); chmod +x $(BUILD_DIR)/gld-wrapper )
+
+FIREFOX_LIBDIR=	$(CONFIGURE_LIBDIR.$(BITS)
+GNU_ARCH=x86_64-sun-solaris
 
 CONFIGURE_OPTIONS =	--enable-application=browser
 CONFIGURE_OPTIONS +=	--enable-official-branding
@@ -47,20 +52,27 @@ CONFIGURE_OPTIONS +=	--disable-updater
 CONFIGURE_OPTIONS +=	--disable-debug-symbols
 CONFIGURE_OPTIONS +=	--enable-update-channel=esr
 CONFIGURE_OPTIONS +=	--disable-tests
-CONFIGURE_OPTIONS +=	--enable-jemalloc
+CONFIGURE_OPTIONS +=	--disable-jemalloc
 CONFIGURE_OPTIONS +=	--enable-optimize="-O2 -fno-schedule-insns2 -fno-lifetime-dse -fno-delete-null-pointer-checks"
 CONFIGURE_OPTIONS +=	--disable-dtrace
 CONFIGURE_OPTIONS +=	--disable-crashreporter
 CONFIGURE_OPTIONS +=	--enable-pulseaudio
+CONFIGURE_OPTIONS +=	--disable-webrtc
 CONFIGURE_OPTIONS +=	--with-intl-api
 CONFIGURE_OPTIONS +=	--disable-debug
-CONFIGURE_OPTIONS +=	--enable-default-toolkit=cairo-gtk2
-CONFIGURE_OPTIONS +=	--prefix=/usr
-CONFIGURE_OPTIONS +=	--libdir=/usr/lib
+CONFIGURE_OPTIONS +=	--enable-default-toolkit=cairo-gtk3
+CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS +=	--host=$(GNU_ARCH)
+CONFIGURE_OPTIONS +=	--target=$(GNU_ARCH)
 
+
+ENV +=  PATH=$(PATH)
 ENV +=	CC=$(CC)
-ENV +=	GLD_WRAPPER=$(BUILD_DIR)/gld-wrapper
+ENV +=	CFLAGS="$(CFLAGS)"
 ENV +=	CXX=$(CXX)
+ENV +=	CXXFLAGS="$(CXXFLAGS)"
+ENV +=	LDFLAGS="$(LDFLAGS) -lm"
 ENV +=	MOZILLA_OFFICIAL=1
 ENV +=	MOZ_TELEMETRY_REPORTING=1
 ENV +=	MOZ_PACKAGE_JSSHELL=1
@@ -68,7 +80,8 @@ ENV +=	MOZ_PKG_FORMAT=XZ
 ENV +=	PKG_SKIP_STRIP=1
 ENV +=	MOZILLA_PKG_NAME=firefox
 ENV +=	SHELL="/bin/bash"
-ENV +=  LDFLAGS="-L$(BUILD_DIR_32)/dist/lib -L$(BUILD_DIR_32)/dist/bin"
+ENV +=  LDFLAGS="-L$(BUILD_DIR_64)/dist/lib -L$(BUILD_DIR_64)/dist/bin"
+ENV +=  PYTHON="$(PYTHON)"
 
 CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)
@@ -83,21 +96,21 @@ $(LANG_FILES):
 
 download prep:: $(LANG_FILES)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
 COMPONENT_POST_INSTALL_ACTION  = ( \
-    for file in $(PROTO_DIR)/usr/lib/firefox/sdk/lib/*.so \
-          $(PROTO_DIR)/usr/lib/firefox/*.so \
-          $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell \
-          $(PROTO_DIR)/usr/lib/firefox/plugin-container; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  $$file ; \
+    for file in $(PROTO_DIR)$(FIREFOXLIBDIR)/firefox/sdk/lib/*.so \
+          $(PROTO_DIR)$(FIREFOXLIBDIR)/firefox/*.so \
+          $(PROTO_DIR)$(FIREFOXLIBDIR)/firefox/sdk/bin/xpcshell \
+          $(PROTO_DIR)$(FIREFOXLIBDIR)/firefox/plugin-container; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_ROOT)/lib/$(LIBSUBDIR):$(FIREFOXLIBDIR)/firefox:$$ORIGIN:$$ORIGIN/.."' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib/$(LIBSUBDIR):$(FIREFOXLIBDIR)/firefox:$$ORIGIN:$$ORIGIN/.."'  $$file ; \
     done ; \
-    for file in $(PROTO_DIR)/usr/lib/firefox/sdk/bin/*.py; do \
+    for file in $(PROTO_DIR)$(FIREFOXLIBDIR)/firefox/sdk/bin/*.py; do \
         $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $$file; \
     done )
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-213

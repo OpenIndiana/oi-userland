@@ -1,0 +1,25 @@
+--- firefox-60.2.0/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h.orig	2018-09-27 17:40:00.885613218 +0000
++++ firefox-60.2.0/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h	2018-09-27 17:43:03.470684480 +0000
+@@ -32,6 +32,9 @@
+ /* Define to 1 if you have the `arc4random_buf' function. */
+ #define EVENT__HAVE_ARC4RANDOM_BUF 1
+ 
++/* Define to 1 if you have the `arc4random_addrandom' function. */
++/* #undef _EVENT_HAVE_ARC4RANDOM_ADDRANDOM */
++
+ /* Define to 1 if you have the <arpa/inet.h> header file. */
+ #define EVENT__HAVE_ARPA_INET_H 1
+ 
+--- firefox-60.2.0/ipc/chromium/src/third_party/libevent/evutil_rand.c.orig	2018-09-27 17:45:41.243698144 +0000
++++ firefox-60.2.0/ipc/chromium/src/third_party/libevent/evutil_rand.c	2018-09-27 17:45:25.638274672 +0000
+@@ -195,8 +195,10 @@
+ void
+ evutil_secure_rng_add_bytes(const char *buf, size_t n)
+ {
++#ifdef _EVENT_HAVE_ARC4RANDOM_ADDRANDOM
+ 	arc4random_addrandom((unsigned char*)buf,
+ 	    n>(size_t)INT_MAX ? INT_MAX : (int)n);
++#endif
+ }
+ 
+ void
