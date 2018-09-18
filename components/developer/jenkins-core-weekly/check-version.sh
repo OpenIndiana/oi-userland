@@ -2,7 +2,7 @@
 
 # Find the latest (tarball) release under original site
 #
-# Copyright 2016-2017 Jim Klimov
+# Copyright 2016-2018 Jim Klimov
 #
 
 BASE_URL="http://mirrors.jenkins-ci.org/war/"
@@ -18,3 +18,6 @@ CHECKSUM="`wget -O - "$BASE_URL/latest/jenkins.war.sha256" 2>/dev/null`" \
 
 echo "=== Data in current `dirname $0`/Makefile:"
 egrep '(^[\t\ ]*(COMPONENT_[A-Z]*_VERSION.*=|JENKINS_RELEASE.*=)|sha256:)' "`dirname $0`/Makefile"
+
+echo "=== Please edit the Makefile and commit like this:"
+echo "    git add -p Makefile; git commit -m 'Bump jenkins-core-weekly to v${VERSION}'"
