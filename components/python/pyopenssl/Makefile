@@ -24,30 +24,44 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyOpenSSL
-COMPONENT_VERSION=	0.13
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	16.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:21e12b03abaa0e04ecc8cd9c251598f71bae11c9f385304234e4ea5618c6163b
+    sha256:7779a3bbb74e79db234af6a08775568c6769b5821faecf6e2f4143edb227516e
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
-COMPONENT_PROJECT_URL=  https://launchpad.net/pyopenssl
+COMPONENT_PROJECT_URL=  https://pyopenssl.org/
 COMPONENT_BUGDB=	python-mod/pyopenssl
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_TEST_DIR = $(COMPONENT_SRC)/OpenSSL/test
-# The .so files are under ./OpenSSL/64 not ./64/OpenSSL so the
-# $(PYTHON_VENDOR_PACKAGES) variable for 64bit Python is wrong.
-# Everything works fine if we just add the 32bit path.
-COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
-COMPONENT_TEST_CMD = $(SHELL)
-COMPONENT_TEST_ARGS = $(COMPONENT_DIR)/files/runtests
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+COMPONENT_PRE_TEST_ACTION = $(CP) -r $(COMPONENT_SRC)/tests $(@D)
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/^\. lib/p" ' \
+        '-e "/^\. tests/p" ' \
+        '-e "/^s tests/p" ' \
+        '-e "/^F tests/p" '
+
+# In tests/test_crypto.py::FunctionTests::test_dump_certificate, the serial number line
+# outputs the same hex as the key, so this is a false error.
+# In tests/test_ssl.py::ConnectionTests::test_set_seesion_wrong_method, This test doesn't
+# work for our version of OpenSSL, which is 1.0.2j; this test only supports OpenSSL 1.0.0
+COMPONENT_TEST_DIR = $(@D)
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32):$(PYTHON_VENDOR_PACKAGES)
+# Some tests require unicode characters, otherwise ~17 tests will fail
+COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
+COMPONENT_TEST_CMD = $(PYTHON.$(PYTHON_VERSION).$(BITS)) /usr/bin/py.test-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS = --result-log=$(COMPONENT_TEST_OUTPUT)
+
+# The pep8 and pyflakes output lines sometimes come in a different order.
+COMPONENT_TEST_COMPARE_CMD = sort -o $(COMPONENT_TEST_SNAPSHOT) $(COMPONENT_TEST_SNAPSHOT); $(GDIFF) -uN
+
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -59,4 +73,5 @@ test:		$(TEST_32_and_64)
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
