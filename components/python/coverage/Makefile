@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coverage
 COMPONENT_VERSION=	4.0.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://nedbatchelder.com/code/coverage/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,7 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/coverage
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -57,6 +58,8 @@ test:		$(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
