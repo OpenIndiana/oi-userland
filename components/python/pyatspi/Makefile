@@ -18,6 +18,7 @@ COMPONENT_NAME=		pyatspi
 COMPONENT_MJR_VERSION=	2.24
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -29,19 +30,24 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 PATH=$(PATH.gnu)
 
-PYTHON_VERSIONS = 3.4
+PYTHON_VERSIONS = 3.4 3.5
 
 VARIANT_PYTHON34 = $(BUILD_DIR)/python-34
+VARIANT_PYTHON35 = $(BUILD_DIR)/python-35
 
-VARIANTS = $(VARIANT_PYTHON34)
+VARIANTS = $(VARIANT_PYTHON34) $(VARIANT_PYTHON35)
 
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
+BUILD_NO_ARCH = $(VARIANTS:%=%/$(MACH32)/.built)
 
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
+INSTALL_NO_ARCH = $(VARIANTS:%=%/$(MACH32)/.installed)
 
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.4.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.3.4.VENDOR_PACKAGES.32)
+
+$(VARIANT_PYTHON35)/$(MACH32)/.configured: PYTHON=$(PYTHON.3.5.32)
+$(VARIANT_PYTHON35)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.5.VENDOR_PACKAGES.32)
+$(VARIANT_PYTHON35)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.3.5.VENDOR_PACKAGES.32)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -56,8 +62,8 @@ CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
 
 # common targets
 # Doesn't contain binary modules 
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
