@@ -15,20 +15,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libffi
-COMPONENT_VERSION=	3.0.13
+COMPONENT_VERSION=	3.2.1
 COMPONENT_PROJECT_URL=	http://sourceware.org/libffi/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1dddde1400c3bcb7749d398071af88c3e4754058d2d4c0b3696c2f82dc5cf11c
+    sha256:d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37
 COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CFLAGS += -DFFI_MMAP_EXEC_WRIT=1
+
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
+CONFIGURE_OPTIONS  +=		--disable-raw-api
 
 build:		$(BUILD_32_and_64)
 
