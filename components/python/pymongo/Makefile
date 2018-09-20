@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pymongo
 COMPONENT_VERSION= 	3.4.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI= 	library/python/$(COMPONENT_NAME)
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -29,7 +30,7 @@ COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	Apache-2.0
 COMPONENT_CLASSIFICATION= Development/Python
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,4 +44,5 @@ test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
