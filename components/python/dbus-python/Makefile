@@ -15,30 +15,31 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus-python
-COMPONENT_VERSION=	1.2.4
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	1.2.8
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/DBusBindings/
 COMPONENT_SUMMARY=	Python bindings for D-Bus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e2f1d6871f74fba23652e51d10873e54f71adab0525833c19bad9e99b1b2f9cc
+    sha256:abf12bbb765e300bf8e2a1b2f32f85949eab06998dbda127952c31cb63957b6f
 COMPONENT_ARCHIVE_URL=	http://dbus.freedesktop.org/releases/dbus-python/$(COMPONENT_ARCHIVE)
 
 PATH=$(PATH.gnu)
 
-PYTHON_VERSIONS = 2.7 3.4
+PYTHON_VERSIONS = 2.7 3.4 3.5
 
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 VARIANT_PYTHON34 = $(BUILD_DIR)/python-34
+VARIANT_PYTHON35 = $(BUILD_DIR)/python-35
 
-VARIANTS = $(VARIANT_PYTHON27) $(VARIANT_PYTHON34)
+VARIANTS_32 = $(VARIANT_PYTHON27) $(VARIANT_PYTHON34)
+VARIANTS_64 = $(VARIANT_PYTHON27) $(VARIANT_PYTHON34) $(VARIANT_PYTHON35)
 
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+BUILD_32 = $(VARIANTS_32:%=%/$(MACH32)/.built)
+BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
 
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+INSTALL_32 = $(VARIANTS_32:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS_64:%=%/$(MACH64)/.installed)
 
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
@@ -58,9 +59,16 @@ $(VARIANT_PYTHON34)/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.4.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.3.4.VENDOR_PACKAGES.32)
 
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: BITS=64
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: PYTHON=$(PYTHON.3.5.64)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.5.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.3.5.VENDOR_PACKAGES.64)
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-dbus-user=root
@@ -80,6 +88,7 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library
