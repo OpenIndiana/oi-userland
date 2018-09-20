@@ -1,0 +1,26 @@
+We should use compiler to get -m$(BITS) option
+
+--- pygobject-3.18.2/m4/python.m4.~1~	2015-03-30 11:49:41.000000000 +0000
++++ pygobject-3.18.2/m4/python.m4	2018-09-19 20:41:03.148565881 +0000
+@@ -54,14 +54,16 @@
+ fi
+ AC_SUBST(PYTHON_INCLUDES)
+ dnl check if the headers exist:
+-save_CPPFLAGS="$CPPFLAGS"
+-CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
+-AC_TRY_CPP([#include <Python.h>],dnl
++save_CFLAGS="$CFLAGS"
++CFLAGS="$CFLAGS $PYTHON_INCLUDES"
++AC_COMPILE_IFELSE( 
++[AC_LANG_PROGRAM([[#include <Python.h>]],
++   [[]])],
+ [AC_MSG_RESULT(found)
+-$1],dnl
++$1],
+ [AC_MSG_RESULT(not found)
+ $2])
+-CPPFLAGS="$save_CPPFLAGS"
++CFLAGS="$save_CFLAGS"
+ ])
+ 
+ dnl a macro to check for ability to embed python
