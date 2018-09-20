@@ -24,19 +24,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylxml
-COMPONENT_VERSION=	3.5.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.2.5
 COMPONENT_PROJECT_URL=	http://lxml.de/
 COMPONENT_SRC_NAME=	lxml
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:349f93e3a4b09cc59418854ab8013d027d246757c51744bf20069bc89016f578
+    sha256:36720698c29e7a9626a0dc802ef8885f8f0239bfd1689628ecd459a061f2807f
 
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/lxml
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -49,6 +48,19 @@ COMPONENT_TEST_CMD=	$(MAKE)
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
 COMPONENT_TEST_ENV+=	PYTHON=$(PYTHON)
 COMPONENT_TEST_ENV+=	LC_ALL=en_US.UTF-8
+
+# Prevent errors like: OSError: Error reading file 'http://127.0.0.1:59951/':
+# failed to load HTTP resource
+COMPONENT_TEST_ENV+=    http_proxy=
+COMPONENT_TEST_ENV+=    https_proxy=
+COMPONENT_TEST_ENV+=    HTTP_PROXY=
+COMPONENT_TEST_ENV+=    HTTPS_PROXY=
+
+COMPONENT_TEST_TRANSFORMER = $(GSED) -E
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/micro=[0-9]*/micro=/" ' \
+	'-e "s/^Ran.*/Ran/" ' \
+	'-ne "/^(Ran|FAIL)/,\\$$p" '
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -64,4 +76,6 @@ test:		$(TEST_32_and_64)
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
