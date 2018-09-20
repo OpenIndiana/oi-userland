@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	dulwich
 COMPONENT_VERSION= 	0.14.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Python implementation of the Git file formats and protocols
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -26,18 +27,19 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/d8/be/8cb595710e7bf2a32b0ac64f1455e1f0554ec8aa9ed62c49b084afe22ab6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/dulwich
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMMANDS = dul-receive-pack  dul-upload-pack  dulwich
 
 COMPONENT_POST_INSTALL_ACTION= \
-        (for cmd in $(COMMANDS) ; \
+	( $(MKDIR) $(PROTO_DIR)/$(dir $(PYTHON.$(PYTHON_VERSION).$(BITS))); \
+        for cmd in $(COMMANDS) ; \
         do $(MV) -f $(PROTO_DIR)/usr/bin/$${cmd} \
-                $(PROTO_DIR)/usr/bin/$${cmd}$(PYTHON_VERSION).$(BITS); \
+                $(PROTO_DIR)/$(dir $(PYTHON.$(PYTHON_VERSION).$(BITS)))/$${cmd}$(PYTHON_VERSION); \
         done;)
 
 build: $(BUILD_32_and_64)
@@ -49,4 +51,5 @@ test:	$(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
