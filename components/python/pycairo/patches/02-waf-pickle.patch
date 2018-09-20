@@ -1,0 +1,14 @@
+Patch from upstream bug https://bugs.freedesktop.org/show_bug.cgi?id=76759
+to fix build with Python 3.5
+
+--- pycairo-1.10.0/.waf3-1.6.4-e3c1e08604b18a10567cfcd2d02eb6e6/waflib/Build.py.orig       2011-03-29 10:52:54.000000000 -0400
++++ pycairo-1.10.0/.waf3-1.6.4-e3c1e08604b18a10567cfcd2d02eb6e6/waflib/Build.py        
+@@ -162,6 +162,8 @@
+ 			try:
+ 				f=open(db+'.tmp','wb')
+ 				cPickle.dump(data,f)
++			except AttributeError as err:
++				print(format(err))
+ 			finally:
+ 				if f:
+ 					f.close()
