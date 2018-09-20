@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cffi
 COMPONENT_VERSION=	1.11.4
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -36,7 +37,7 @@ COMPONENT_PROJECT_URL=	http://cffi.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/cffi
 COMPONENT_ANITYA_ID=	5536
 
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -47,7 +48,7 @@ CFLAGS += $(CC_BITS)
 
 # We get spurious test failures with python 3.4
 COMPONENT_TEST_DIR =	$(@D)/tests
-COMPONENT_TEST_ENV =	PYTHON_VERSIONS="2.7 3.4"
+COMPONENT_TEST_ENV =	PYTHON_VERSIONS="2.7 3.4 3.5"
 COMPONENT_TEST_ENV +=	$(PYTHON_ENV)
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 COMPONENT_TEST_ENV +=	TESTOWNLIB_CC="$(CC) $(CC_PIC) %s $(CC_BITS) -shared -o %s"
@@ -80,4 +81,8 @@ test:		$(TEST_32_and_64)
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/python/pycparser-27
 REQUIRED_PACKAGES += library/python/pycparser-34
+REQUIRED_PACKAGES += library/python/pycparser-35
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
