@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -28,7 +29,6 @@ set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=org.opensolaris.arc-caseid value=LSARC/2008/360
 
 <transform file path=usr/lib/git-core/.* -> default mode 0555>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -170,6 +170,7 @@ hardlink path=usr/lib/git-core/git-prune target=git
 hardlink path=usr/lib/git-core/git-prune-packed target=git
 hardlink path=usr/lib/git-core/git-pull target=git
 hardlink path=usr/lib/git-core/git-push target=git
+hardlink path=usr/lib/git-core/git-range-diff target=git
 hardlink path=usr/lib/git-core/git-read-tree target=git
 hardlink path=usr/lib/git-core/git-rebase--helper target=git
 hardlink path=usr/lib/git-core/git-receive-pack target=git
@@ -189,6 +190,7 @@ hardlink path=usr/lib/git-core/git-rev-parse target=git
 hardlink path=usr/lib/git-core/git-revert target=git
 hardlink path=usr/lib/git-core/git-rm target=git
 hardlink path=usr/lib/git-core/git-send-pack target=git
+hardlink path=usr/lib/git-core/git-serve target=git
 hardlink path=usr/lib/git-core/git-shortlog target=git
 hardlink path=usr/lib/git-core/git-show target=git
 hardlink path=usr/lib/git-core/git-show-branch target=git
@@ -222,6 +224,7 @@ file path=usr/lib/git-core/mergetools/diffuse
 file path=usr/lib/git-core/mergetools/ecmerge
 file path=usr/lib/git-core/mergetools/emerge
 file path=usr/lib/git-core/mergetools/examdiff
+file path=usr/lib/git-core/mergetools/guiffy
 file path=usr/lib/git-core/mergetools/gvimdiff
 file path=usr/lib/git-core/mergetools/gvimdiff2
 file path=usr/lib/git-core/mergetools/gvimdiff3
@@ -237,10 +240,14 @@ file path=usr/lib/git-core/mergetools/vimdiff2
 file path=usr/lib/git-core/mergetools/vimdiff3
 file path=usr/lib/git-core/mergetools/winmerge
 file path=usr/lib/git-core/mergetools/xxdiff
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Error.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/FromCPAN/Error.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/FromCPAN/Mail/Address.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/I18N.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/IndexInfo.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/LoadCPAN.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/LoadCPAN/Error.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/LoadCPAN/Mail/Address.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/Packet.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/SVN.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/SVN/Editor.pm
@@ -375,6 +382,7 @@ file path=usr/share/man/man1/git-citool.1
 file path=usr/share/man/man1/git-clean.1
 file path=usr/share/man/man1/git-clone.1
 file path=usr/share/man/man1/git-column.1
+file path=usr/share/man/man1/git-commit-graph.1
 file path=usr/share/man/man1/git-commit-tree.1
 file path=usr/share/man/man1/git-commit.1
 file path=usr/share/man/man1/git-config.1
@@ -448,6 +456,7 @@ file path=usr/share/man/man1/git-prune.1
 file path=usr/share/man/man1/git-pull.1
 file path=usr/share/man/man1/git-push.1
 file path=usr/share/man/man1/git-quiltimport.1
+file path=usr/share/man/man1/git-range-diff.1
 file path=usr/share/man/man1/git-read-tree.1
 file path=usr/share/man/man1/git-rebase.1
 file path=usr/share/man/man1/git-receive-pack.1
