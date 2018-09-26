@@ -78,25 +78,3 @@ index 92a1bb5..70367ca 100644
  dnl Check for the flag that fails if stuff are missing.
  
  AC_MSG_CHECKING(--enable-fail-if-missing argument)
-diff --git a/src/version.c b/src/version.c
-index 766937d..9cb6e57 100644
---- a/src/version.c
-+++ b/src/version.c
-@@ -44,11 +44,17 @@ make_version(void)
-      * VAX C can't catenate strings in the preprocessor.
-      */
-     strcpy(longVersion, VIM_VERSION_LONG_DATE);
-+#ifdef BUILD_DATE
-+    strcat(longVersion, BUILD_DATE);
-+#else
-     strcat(longVersion, __DATE__);
-     strcat(longVersion, " ");
-     strcat(longVersion, __TIME__);
-+#endif
-     strcat(longVersion, ")");
- }
-+# elif defined(BUILD_DATE)
-+char	*longVersion = VIM_VERSION_LONG_DATE BUILD_DATE ")";
- # else
- char	*longVersion = VIM_VERSION_LONG_DATE __DATE__ " " __TIME__ ")";
- # endif
