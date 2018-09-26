@@ -32,26 +32,56 @@ up automatically after running the tests, and we can emit those results to
 the master file.  This might be interesting to upstream, but is really
 specific to running the tests in an external framework.
 
---- git-2.7.4/t/Makefile	Thu Mar 17 13:47:59 2016
-+++ git-2.7.4/t/Makefile	Tue Mar 22 14:28:40 2016
-@@ -36,6 +36,9 @@
- test: pre-clean $(TEST_LINT)
- 	$(MAKE) aggregate-results-and-cleanup
+--- git-2.19.0/t/Makefile	2018-09-24 10:56:27.954589694 +0000
++++ git-2.19.0/t/Makefile.new	2018-09-24 11:00:26.172819681 +0000
+@@ -48,6 +48,9 @@ failed:
+ 		sed -n 's/\.counts$$/.sh/p') && \
+ 	test -z "$$failed" || $(MAKE) $$failed
  
 +test-noclean: pre-clean $(TEST_LINT)
 +	$(MAKE) T
 +
- prove: pre-clean $(TEST_LINT)
- 	@echo "*** prove ***"; $(PROVE) --exec '$(SHELL_PATH_SQ)' $(GIT_PROVE_OPTS) $(T) :: $(GIT_TEST_OPTS)
+ prove: pre-clean check-chainlint $(TEST_LINT)
+ 	@echo "*** prove ***"; $(PROVE) --exec '$(TEST_SHELL_PATH_SQ)' $(GIT_PROVE_OPTS) $(T) :: $(GIT_TEST_OPTS)
  	$(MAKE) clean-except-prove-cache
-@@ -68,6 +71,8 @@
+@@ -93,6 +96,8 @@ test-lint-executable:
  test-lint-shell-syntax:
  	@'$(PERL_PATH_SQ)' check-non-portable-shell.pl $(T) $(THELPERS)
  
 +T: $(T)
 +
- aggregate-results-and-cleanup: $(T)
- 	$(MAKE) aggregate-results
- 	$(MAKE) clean
-
-
+ test-lint-filenames:
+ 	@# We do *not* pass a glob to ls-files but use grep instead, to catch
+ 	@# non-ASCII characters (which are quoted within double-quotes)
+--- git-2.19.0/t/t5703-upload-pack-ref-in-want.sh	2018-09-10 20:39:13.000000000 +0000
++++ git-2.19.0/t/t5703-upload-pack-ref-in-want.sh.new	2018-09-24 23:40:08.238518117 +0000
+@@ -49,15 +49,15 @@ test_expect_success 'setup repository' '
+ 
+ test_expect_success 'config controls ref-in-want advertisement' '
+ 	git serve --advertise-capabilities >out &&
+-	! grep -a ref-in-want out &&
++	! ggrep -a ref-in-want out &&
+ 
+ 	git config uploadpack.allowRefInWant false &&
+ 	git serve --advertise-capabilities >out &&
+-	! grep -a ref-in-want out &&
++	! ggrep -a ref-in-want out &&
+ 
+ 	git config uploadpack.allowRefInWant true &&
+ 	git serve --advertise-capabilities >out &&
+-	grep -a ref-in-want out
++	ggrep -a ref-in-want out
+ '
+ 
+ test_expect_success 'invalid want-ref line' '
+--- git-2.19.0/t/t7005-editor.sh	2018-09-10 20:39:13.000000000 +0000
++++ git-2.19.0/t/t7005-editor.sh.new	2018-09-26 09:50:31.939889944 +0000
+@@ -112,7 +112,7 @@ do
+ done
+ 
+ test_expect_success 'editor with a space' '
+-	echo "echo space >\$1" >"e space.sh" &&
++	echo "echo space > \"\$1\"" > "e space.sh" &&
+ 	chmod a+x "e space.sh" &&
+ 	GIT_EDITOR="./e\ space.sh" git commit --amend &&
+ 	test space = "$(git show -s --pretty=format:%s)"
