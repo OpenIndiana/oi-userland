@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cups-filters
 COMPONENT_VERSION= 1.11.2
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Additional backends, filters and other software for CUPS
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:4b485408897953889ce41d2981fa71a5479b70d8d1d853829d205492ce250675
 COMPONENT_ARCHIVE_URL= \
   https://www.openprinting.org/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.openprinting.org
+COMPONENT_PROJECT_URL = https://wiki.linuxfoundation.org/openprinting/cups-filters
 COMPONENT_FMRI= print/cups-filters
 COMPONENT_CLASSIFICATION= System/Printing
 COMPONENT_LICENSE=      GPLv2,GPLv3,LGPLv2,LGPLv2.1
