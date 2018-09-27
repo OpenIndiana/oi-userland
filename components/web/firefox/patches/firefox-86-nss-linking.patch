@@ -1,0 +1,56 @@
+NSS linking requires '-z noexecstack'. Should be investigated.
+
+diff -r 6dea0ee45b66 security/nss/coreconf/config.gypi
+--- a/security/nss/coreconf/config.gypi	Thu Sep 28 15:49:14 2017 -0700
++++ b/security/nss/coreconf/config.gypi	Tue Oct 10 08:17:53 2017 +0000
+@@ -35,7 +30,7 @@
+         },{
+           'use_system_sqlite%': 0,
+         }],
+-        ['OS=="mac" or OS=="win"', {
++        ['OS=="mac" or OS=="solaris" or OS=="win"', {
+           'cc_use_gnu_ld%': 0,
+         }, {
+           'cc_use_gnu_ld%': 1,
+@@ -357,6 +352,11 @@
+               '_REENTRANT',
+             ],
+           }],
++          [ 'OS!="mac" and OS!="win" and OS!="solaris"', {
++            'ldflags': [
++              '-z', 'noexecstack',
++            ],
++          }],
+           [ 'OS!="mac" and OS!="win"', {
+             'cflags': [
+               '-fPIC',
+@@ -367,9 +367,6 @@
+             'cflags_cc': [
+               '-std=c++0x',
+             ],
+-            'ldflags': [
+-              '-z', 'noexecstack',
+-            ],
+             'conditions': [
+               [ 'target_arch=="ia32"', {
+                 'cflags': ['-m32'],
+@@ -588,7 +585,7 @@
+     },
+   },
+   'conditions': [
+-    [ 'cc_use_gnu_ld==1', {
++    [ 'cc_use_gnu_ld==1 or OS=="solaris"', {
+       'variables': {
+         'process_map_file': ['/bin/sh', '-c', '/usr/bin/env grep -v ";-" >(mapfile) | sed -e "s,;+,," -e "s; DATA ;;" -e "s,;;,," -e "s,;.*,;," > >@(_outputs)'],
+       },
+diff -r 6dea0ee45b66 python/mozbuild/mozbuild/frontend/gyp_reader.py
+--- a/python/mozbuild/mozbuild/frontend/gyp_reader.py	Thu Sep 28 15:49:14 2017 -0700
++++ b/python/mozbuild/mozbuild/frontend/gyp_reader.py	Tue Oct 10 08:20:34 2017 +0000
+@@ -282,6 +282,7 @@
+             context['ASFLAGS'] = target_conf.get('asflags_mozilla', [])
+             if use_defines_in_asflags and defines:
+                 context['ASFLAGS'] += ['-D' + d for d in defines]
++            context['LDFLAGS'] = target_conf.get('ldflags', [])
+             flags = target_conf.get('cflags_mozilla', [])
+             if flags:
+                 suffix_map = {

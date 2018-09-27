@@ -1,0 +1,11 @@
+--- a/xpcom/threads/CondVar.h	2018-12-03 23:11:00.000000000 +0000
++++ b/xpcom/threads/CondVar.h	2019-01-24 14:54:46.879054306 +0000
+@@ -67,7 +67,7 @@
+     if (aInterval == PR_INTERVAL_NO_TIMEOUT) {
+       mImpl.wait(*mLock);
+     } else {
+-      mImpl.wait_for(*mLock, TimeDuration::FromMilliseconds(double(aInterval)));
++      mImpl.wait_for(*mLock, TimeDuration::FromMilliseconds(double(PR_IntervalToMilliseconds(aInterval))));
+     }
+     return NS_OK;
+   }

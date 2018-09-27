@@ -567,6 +567,10 @@ export CCACHE := $(shell \
 GCC_VERSION =	6
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
+GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
+GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
+GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
+
 # Define runtime package names to be used in dependencies
 GCC_VERSION_MAJOR    = $(shell echo $(GCC_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 GCC_RUNTIME_PKG      = system/library/gcc-$(GCC_VERSION_MAJOR)-runtime
