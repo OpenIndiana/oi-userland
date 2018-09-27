@@ -12,6 +12,7 @@
 #
 # Copyright 2016 Aurelien Larcher.  All rights reserved.
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -22,6 +23,7 @@ CLANG_NAME=cfe
 COMPONENT_VERSION= 4.0.1
 COMPONENT_MAJOR_VERSION= \
   $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
+COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL = http://llvm.org/
 COMPONENT_FMRI= developer/clang-40
 COMPONENT_CLASSIFICATION= Development/C
@@ -47,6 +49,8 @@ CMAKE_PREFIX= /usr/clang/$(COMPONENT_MAJOR_VERSION)
 
 PATH=$(PATH.illumos)
 
+PKG_MACROS+= GCC_VERSION=$(GCC_VERSION)
+
 COMPONENT_POST_UNPACK_ACTION += \
   $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) && \
 	mv $(CLANG_NAME)-$(COMPONENT_VERSION).src $(COMPONENT_SRC)/tools/clang
@@ -55,7 +59,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
 COMPONENT_POST_INSTALL_ACTION =  \
 for file in `echo $(PROTO_DIR)/$(CMAKE_PREFIX)/bin/*`; do \
-	elfedit -e 'dyn:runpath $(GCC_ROOT)/lib:$$ORIGIN/../lib' $$file ; \
+	elfedit -e 'dyn:runpath $(GCC_LIBDIR):$$ORIGIN/../lib' $$file ; \
 done && \
 for file in \
 	`ggrep -rlh '^\#!*/usr/bin/env python' $(PROTO_DIR)/$(CMAKE_PREFIX)`; do \
@@ -68,16 +72,16 @@ COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
 CMAKE_OPTIONS += -DCMAKE_C_COMPILER=$(CC)
 CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER=$(CXX)
 CMAKE_OPTIONS += -DGCC_INSTALL_PREFIX=$(GCC_ROOT)
-CMAKE_OPTIONS += -DCMAKE_CXX_LINK_FLAGS="-L$(GCC_ROOT)/lib -Wl,-rpath,$(GCC_ROOT)/lib"
+CMAKE_OPTIONS += -DCMAKE_CXX_LINK_FLAGS="-L$(GCC_LIBDIR) -Wl,-rpath,$(GCC_LIBDIR)"
 CMAKE_OPTIONS += -DLLVM_ENABLE_ASSERTIONS=ON
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE="Release"
 
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
-test: $(TEST_32)
+test: $(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libxml2

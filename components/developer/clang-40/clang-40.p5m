@@ -23,6 +23,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 
+
 # Mediated links
 link path=usr/bin/bugpoint target=../clang/4.0/bin/bugpoint mediator=clang mediator-version=4.0
 link path=usr/bin/c-index-test target=../clang/4.0/bin/c-index-test mediator=clang mediator-version=4.0
@@ -72,13 +73,19 @@ link path=usr/bin/scan-view target=../clang/4.0/bin/scan-view mediator=clang med
 link path=usr/bin/verify-uselistorder target=../clang/4.0/bin/verify-uselistorder mediator=clang mediator-version=4.0
 link path=usr/bin/yaml2obj target=../clang/4.0/bin/yaml2obj mediator=clang mediator-version=4.0
 
-depend fmri=developer/gcc-49 type=require
+depend fmri=developer/gcc-$(GCC_VERSION) type=require
 depend fmri=developer/gnu-binutils type=require
 depend fmri=developer/linker type=require
 depend fmri=system/header type=require
 depend fmri=developer/library/lint type=require
 
-<transform file path=usr/clang/$(COMPONENT_VERSION)/bin/+ -> default mode 0555>
+<transform file path=usr/clang/4.0/bin/+ -> default mode 0555>
+<transform file path=usr/clang/4.0/bin/.*.so.* -> \
+	default pkg.linted.userland.action001.3 true >
+<transform file path=usr/clang/4.0/lib/.*.so.* -> \
+	default pkg.linted.userland.action001.2 true >
+<transform file path=usr/clang/4.0/lib/.*.so.* -> \
+	default pkg.linted.userland.action001.3 true >
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
 file path=usr/clang/4.0/bin/bugpoint
