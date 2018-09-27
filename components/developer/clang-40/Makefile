@@ -55,7 +55,15 @@ COMPONENT_POST_UNPACK_ACTION += \
   $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) && \
 	mv $(CLANG_NAME)-$(COMPONENT_VERSION).src $(COMPONENT_SRC)/tools/clang
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PREP_ACTION = ( \
+	$(GSED) -i -e 's|OPENINDIANA_GCC_VERSION|\"$(GCC_FULL_VERSION)\"|' \
+		$(SOURCE_DIR)/tools/clang/lib/Driver/ToolChains.cpp ; \
+	$(GSED) -i -e 's|OPENINDIANA_GCC_LIBPATH|\"$(GCC_LIBGCCDIR)\"|' \
+		 $(SOURCE_DIR)/tools/clang/lib/Driver/ToolChains.cpp ; \
+	$(GSED) -i -e 's|OPENINDIANA_GCC_INCPATH|\"$(GCC_INCGXXDIR)\"|' \
+		 $(SOURCE_DIR)/tools/clang/lib/Frontend/InitHeaderSearch.cpp ; )
+
+COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
 
 COMPONENT_POST_INSTALL_ACTION =  \
 for file in `echo $(PROTO_DIR)/$(CMAKE_PREFIX)/bin/*`; do \
