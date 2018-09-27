@@ -578,6 +578,16 @@ CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
 F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
+# GCC directory macros
+GCC_FULL_VERSION = $(shell $(CC.gcc.$(BITS)) -dumpversion)
+GCC_BINDIR =	$(GCC_ROOT)/bin
+GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
+GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
+GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
+GCC_INCDIR =	$(GCC_ROOT)/include
+GCC_LIBGCCDIR =	$(GCC_ROOT)/lib/gcc
+GCC_INCGXXDIR =	$(GCC_ROOT)/include/c++/$(GCC_FULL_VERSION)
+
 ifneq ($(strip $(CCACHE)),)
 
 CCACHE_WRAP_ROOT   =	$(WS_TOOLS)/ccache-wrap
