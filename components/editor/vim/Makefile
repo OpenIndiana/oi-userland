@@ -27,7 +27,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	8.1.0005
+COMPONENT_VERSION=	8.1.0436
 COMPONENT_REVISION=	1
 # Remove leading zeros in the patch-level part of $COMPONENT_VERSION (IPS does not like them)
 IPS_COMPONENT_VERSION=  $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.00*\([1-9]\)/.\1/')
@@ -35,7 +35,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=sha256:e8e2d11b0012f109c5158c76a06dac33871756fd862fce018c4ebb99bd985988
+COMPONENT_ARCHIVE_HASH=sha256:71380ba8ef78efb5dbb1ba0ea9ca59107cb963f8936fd9cfec8a5ca5f8b46942
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -64,7 +64,6 @@ CFLAGS += -std=c99 -D_XOPEN_SOURCE=600
 CONFIGURE_ENV +=	vi_cv_path_perl=$(PERL)
 # zh_CN.cp936.po has invalid characters which GNU msgfmt seems to be able to ignore.
 CONFIGURE_ENV +=	MSGFMT=gmsgfmt
-CONFIGURE_ENV +=	SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH)
 
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="oi-userland build environment"
