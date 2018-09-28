@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nasm
 COMPONENT_VERSION=	2.13.03
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=	developer/assembler/nasm
 COMPONENT_SUMMARY=	The Netwide Assembler
 COMPONENT_CLASSIFICATION=	Development/Other Languages
