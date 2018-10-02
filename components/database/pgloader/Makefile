@@ -16,12 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgloader
-COMPONENT_VERSION= 	3.3.0.50
+# Later versions can't load data from SQLite
+# https://github.com/dimitri/pgloader/issues/843
+COMPONENT_VERSION= 	3.5.1
 COMPONENT_SUMMARY= 	Data loading tool for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9b6505278839a706afb7017e0a59fdb6b43fc58aafe4685aacf7f4beb2fa128f
+  sha256:0cd8ccd9356b02ea6ec44e85a1a047ac7166e0a7d3520d2ca1a9923908bcaef3
 COMPONENT_ARCHIVE_URL= \
   https://github.com/dimitri/pgloader/archive/v$(COMPONENT_VERSION).zip
 COMPONENT_PROJECT_URL = http://pgloader.io/
@@ -50,11 +52,9 @@ install: $(INSTALL_32)
 
 $(BUILD_DIR)/%/.installed: $(BUILD_32)
 	$(MKDIR) $(PROTO_DIR)/usr/bin \
-		$(PROTO_DIR)/usr/share/doc/pgloader \
-		$(PROTO_DIR)/usr/share/man/man1
+		$(PROTO_DIR)/usr/share/doc/pgloader
 	cp $(BUILD_DIR_32)/build/bin/pgloader $(PROTO_DIR)/usr/bin/pgloader
 	cp $(BUILD_DIR_32)/TODO.md $(BUILD_DIR_32)/README.md $(PROTO_DIR)/usr/share/doc/pgloader
-	cp $(BUILD_DIR_32)/pgloader.1 $(PROTO_DIR)/usr/share/man/man1
 	$(TOUCH) $@
 
 clean::
@@ -62,7 +62,7 @@ clean::
 
 # Build dependencies
 REQUIRED_PACKAGES += library/freetds
-REQUIRED_PACKAGES += runtime/sbcl
+REQUIRED_PACKAGES += runtime/ccl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
