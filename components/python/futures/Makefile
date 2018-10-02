@@ -1,3 +1,4 @@
+#
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
@@ -30,8 +31,14 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_TEST_DIR = $(COMPONENT_SRC)
+COMPONENT_TEST_ARGS = ./test_futures.py
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s/[0-9\.]*s$$/Ns/" '
+
 build:          $(BUILD_NO_ARCH)
 
 install:        $(INSTALL_NO_ARCH)
 
-test:           $(NO_TESTS)
+test:           $(TEST_NO_ARCH)
