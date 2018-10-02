@@ -10,22 +10,23 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Ken Mays
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vte
-COMPONENT_VERSION=	0.28.2
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	0.54.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
 COMPONENT_FMRI=		library/desktop/vte
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8d04e202b617373dfb47689e5e628febe2c58840b34cccc4af4feb88c48df903
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.28/$(COMPONENT_ARCHIVE)
+    sha256:a724fa0543c689e30a3d0ff07e4195a86dc7c4fe57b469be97c7c87f27604e53
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/vte/$(COMPONENT_NAME)/0.54/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -53,8 +54,8 @@ CFLAGS += $(CPP_XPG6MODE) -std=c99
 
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 
-COMPONENT_POST_INSTALL_ACTION = ( mv -f $(PROTO_DIR)/usr/lib/python2.7/site-packages/gtk-2.0/vtemodule.so \
-	$(PROTO_DIR)/usr/lib/python2.7/site-packages/gtk-2.0/vtemodule-$(BITS).so)
+COMPONENT_POST_INSTALL_ACTION = ( mv -f $(PROTO_DIR)/usr/lib/python3.4/site-packages/gtk-3.0/vtemodule.so \
+	$(PROTO_DIR)/usr/lib/python3.4/site-packages/gtk-3.0/vtemodule-$(BITS).so)
 
 # common targets
 
