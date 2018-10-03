@@ -1,0 +1,28 @@
+--- vte-0.54.1/src/app/app.cc.orig	2018-09-24 20:43:09.065011712 +0000
++++ vte-0.54.1/src/app/app.cc		2018-10-02 22:00:14.469762048 +0000
+@@ -23,6 +23,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/wait.h>
++#include <errno.h>
+ 
+ #include <glib.h>
+ #include <glib/gprintf.h>
+@@ -308,7 +309,7 @@
+                 else
+                         alpha = get_alpha();
+ 
+-                GdkRGBA color{bg_color};
++                GdkRGBA color = bg_color;
+                 color.alpha = alpha;
+                 return color;
+         }
+@@ -1292,7 +1293,7 @@
+         auto pid = fork();
+         switch (pid) {
+         case -1: /* error */
+-                g_set_error(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Error forking: %m");
++                g_set_error(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Error forking: %s", strerror(errno));
+                 return false;
+ 
+         case 0: /* child */ {

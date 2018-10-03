@@ -1,0 +1,17 @@
+$NetBSD: patch-src_vte.cc,v 1.2 2018/06/22 14:34:43 jperkin Exp $
+
+Use correct includes on SunOS.
+Don't use packet mode on SunOS.
+
+--- src/vte.cc.orig	2018-05-21 19:31:53.000000000 +0000
++++ src/vte.cc
+@@ -25,6 +25,9 @@
+ #include <string.h>
+ #include <sys/ioctl.h>
+ #include <sys/param.h> /* howmany() */
++#ifdef __sun
++#include <sys/ptyvar.h>
++#endif
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <math.h>
