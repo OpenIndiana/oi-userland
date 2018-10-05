@@ -1,29 +1,29 @@
---- ./configure.ac	Fri Jul 10 11:23:57 2015
-+++ ./configure.ac	Fri Jul 10 11:31:10 2015
-@@ -84,6 +84,12 @@
-         has_znow=no
-         EPOXY_LINK_LIBS=""
-         ;;
-+    solaris*)
-+        build_egl=no
-+        build_glx=yes
-+        build_wgl=no
-+        EPOXY_LINK_LIBS=""
-+        ;;
-     *)
-         build_egl=yes
-         build_glx=yes
---- ./src/dispatch_common.h	Fri Jul 10 11:57:22 2015
-+++ ./src/dispatch_common.h	Fri Jul 10 11:58:48 2015
-@@ -33,6 +33,11 @@
- #define PLATFORM_HAS_GLX 1
+--- libepoxy-1.5.2/configure.ac	2018-04-25 13:11:02.000000000 +0000
++++ libepoxy-1.5.2/configure.ac.new	2018-10-03 22:18:21.033179641 +0000
+@@ -141,6 +141,13 @@ AS_CASE([$host_os],
+     EPOXY_LINK_LIBS=""
+   ],
+ 
++  [solaris*], [
++    build_egl=no
++    build_glx=yes
++    build_wgl=no
++    EPOXY_LINK_LIBS=""
++  ],
++
+   [
+     build_wgl=no
+     has_znow=yes
+--- libepoxy-1.5.2/src/dispatch_common.h	2018-05-19 12:51:34.000000000 +0000
++++ libepoxy-1.5.2/src/dispatch_common.h.new	2018-10-03 22:21:02.744237840 +0000
+@@ -35,6 +35,10 @@
+ #define PLATFORM_HAS_EGL ENABLE_EGL
+ #define PLATFORM_HAS_GLX 0
  #define PLATFORM_HAS_WGL 0
- #define EPOXY_IMPORTEXPORT
 +#elif defined(__sun) && defined(__SVR4)
 +#define PLATFORM_HAS_EGL 0
 +#define PLATFORM_HAS_GLX 1
 +#define PLATFORM_HAS_WGL 0
-+#define EPOXY_IMPORTEXPORT
  #else
- #define PLATFORM_HAS_EGL 1
- #define PLATFORM_HAS_GLX 1
+ #define PLATFORM_HAS_EGL ENABLE_EGL
+ #define PLATFORM_HAS_GLX ENABLE_GLX

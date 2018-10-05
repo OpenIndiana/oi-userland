@@ -10,23 +10,23 @@
 
 #
 # Copyright (c) 2016 Aurelien Larcher
+# Copyright (c) 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libepoxy
-COMPONENT_VERSION=	1.3.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.5.2
 COMPONENT_FMRI=		x11/library/libepoxy
 COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_PROJECT_URL=	http://xorg.freedesktop.org
 COMPONENT_SUMMARY=	library for handling OpenGL function pointers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1d8668b0a259c709899e1c4bab62d756d9002d546ce4f59c9665e2fc5f001a64
+    sha256:a9562386519eb3fd7f03209f279f697a8cba520d3c155d6e253c3e138beca7d8
 COMPONENT_ARCHIVE_URL=	\
-    https://github.com/anholt/libepoxy/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    https://github.com/anholt/libepoxy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_LICENSE=	MIT
 
@@ -41,6 +41,8 @@ COMPONENT_PREP_ACTION =        (cd $(@D) && \
                                         autoheader && \
                                         automake -a -f -c &&\
                                         autoconf )
+
+CONFIGURE_ENV.32 += CPPFLAGS="$(CPP_LARGEFILES.32)"
 
 PATH=$(PATH.gnu)
 
