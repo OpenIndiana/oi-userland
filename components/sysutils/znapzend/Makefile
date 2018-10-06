@@ -67,12 +67,16 @@ COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin 
             done \
         )
 
+CONFIGURE_ENV += PERL=$(PERL)
+
 # NOTE: znapzend is a script, but it can pull some PERL modules and some may be
 # ARCHed, and/or these may (package-)conflict with dependencies of other pkgs.
 # TODO: package dependency modules as separate IPS requirements, and build only
 # a 32-bit znapzend? For now we work around the mess by having it all in a
 # dedicated directory per ARCH, including the perl modules.
 CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
+# Install man pages to /usr/share
+CONFIGURE_OPTIONS  =	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--exec-prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-svcinstall=/lib/svc/manifest/system
@@ -85,6 +89,5 @@ install: $(INSTALL_32)
 test: $(TEST_32)
 
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
