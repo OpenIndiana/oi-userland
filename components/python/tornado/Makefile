@@ -10,6 +10,7 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright (c) 2018 Till Wegmueller
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -17,13 +18,11 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		tornado
-COMPONENT_VERSION=	4.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.5.3
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/tornado
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:99abd3aede45c93739346ee7384e710120121c3744da155d5cff1c0101702228
+COMPONENT_ARCHIVE_HASH=	sha256:6d14e47eab0e15799cf3cdcc86b0b98279da68522caace2bd7ce644287685f0a
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/t/tornado/$(COMPONENT_ARCHIVE)
 
 PYTHON_VERSIONS=	2.7
