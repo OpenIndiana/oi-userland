@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 7.3.0
-COMPONENT_REVISION=1
+COMPONENT_REVISION=2
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 THIS_GCC_PKGVERSION= $(COMPONENT_VERSION)-OI-$(COMPONENT_REVISION)
 COMPONENT_FMRI= developer/gcc-$(COMPONENT_MAJOR_VERSION)
@@ -107,6 +107,7 @@ CONFIGURE_OPTIONS+= --without-gnu-ld
 CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
 CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_ARCH)/bin
 CONFIGURE_OPTIONS+= --disable-libitm
+CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
 # On SPARC systems, use Sun Assembler
 CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
