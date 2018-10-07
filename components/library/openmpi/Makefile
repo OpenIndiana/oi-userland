@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2013-2017 Aurelien Larcher.  All rights reserved.
+# Copyright 2013-2018 Aurelien Larcher.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,9 +18,8 @@ MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =            openmpi/$(COMPILER)
-OPENMPI_VERSION_MAJOR =     2.1
-COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).5
-COMPONENT_REVISION =        1
+OPENMPI_VERSION_MAJOR =     3.1
+COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).2
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_PROJECT_URL =     http://www.open-mpi.org
@@ -28,7 +27,7 @@ COMPONENT_SRC_NAME =        openmpi
 COMPONENT_SRC =             $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =         $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-  sha256:185e6315a870cc00c06e9094ac168b7df50bc5d450b8b2474a22ffbafc03d75d
+  sha256:363c8a1258d12df28657e9b13bfe41e30fc129a4cfb89fcf53ff68bbe1bd65b3
 COMPONENT_ARCHIVE_URL = \
   http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 
@@ -59,7 +58,7 @@ CONFIGURE_OPTIONS+= --enable-ipv6
 CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
 CONFIGURE_OPTIONS+= --enable-mpi-cxx
 CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
-CONFIGURE_OPTIONS+= --disable-pmix-dstore
+CONFIGURE_OPTIONS+= --enable-pmix-dstore
 CONFIGURE_OPTIONS+= --disable-event-epoll
 CONFIGURE_OPTIONS+= --with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
@@ -93,13 +92,14 @@ test:	$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-picl
+REQUIRED_PACKAGES += diagnostic/cpu-counters
+REQUIRED_PACKAGES += service/picl
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += diagnostic/cpu-counters
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += service/picl
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
