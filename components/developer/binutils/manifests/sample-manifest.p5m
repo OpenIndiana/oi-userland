@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2018 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,17 +22,26 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ar
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/as
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ld
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ar \
+    target=../../bin/ar
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/as \
+    target=../../bin/as
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ld \
+    target=../../bin/ld
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ld.bfd \
-    target=ld
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/nm
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objcopy
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objdump
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ranlib
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/readelf
-file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/strip
+    target=../../bin/ld
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/nm \
+    target=../../bin/nm
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objcopy \
+    target=../../bin/objcopy
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objdump \
+    target=../../bin/objdump
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ranlib \
+    target=../../bin/ranlib
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/readelf \
+    target=../../bin/readelf
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/strip \
+    target=../../bin/strip
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386.x
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386.xbn
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386.xc
@@ -209,8 +218,8 @@ file path=usr/gnu/bin/$(MACH64)/as
 file path=usr/gnu/bin/$(MACH64)/c++filt
 file path=usr/gnu/bin/$(MACH64)/elfedit
 file path=usr/gnu/bin/$(MACH64)/gprof
-hardlink path=usr/gnu/bin/$(MACH64)/ld target=ld.bfd
-file path=usr/gnu/bin/$(MACH64)/ld.bfd
+file path=usr/gnu/bin/$(MACH64)/ld
+hardlink path=usr/gnu/bin/$(MACH64)/ld.bfd target=ld
 file path=usr/gnu/bin/$(MACH64)/nm
 file path=usr/gnu/bin/$(MACH64)/objcopy
 file path=usr/gnu/bin/$(MACH64)/objdump
@@ -220,34 +229,25 @@ file path=usr/gnu/bin/$(MACH64)/size
 file path=usr/gnu/bin/$(MACH64)/strings
 file path=usr/gnu/bin/$(MACH64)/strip
 file path=usr/gnu/bin/addr2line
-hardlink path=usr/gnu/bin/ar \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ar
-hardlink path=usr/gnu/bin/as \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/as
+file path=usr/gnu/bin/ar
+file path=usr/gnu/bin/as
 file path=usr/gnu/bin/c++filt
 file path=usr/gnu/bin/elfedit
 file path=usr/gnu/bin/gprof
-hardlink path=usr/gnu/bin/ld \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ld
-hardlink path=usr/gnu/bin/ld.bfd \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ld
-hardlink path=usr/gnu/bin/nm \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/nm
-hardlink path=usr/gnu/bin/objcopy \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objcopy
-hardlink path=usr/gnu/bin/objdump \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objdump
-hardlink path=usr/gnu/bin/ranlib \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ranlib
-hardlink path=usr/gnu/bin/readelf \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/readelf
+file path=usr/gnu/bin/ld
+hardlink path=usr/gnu/bin/ld.bfd target=ld
+file path=usr/gnu/bin/nm
+file path=usr/gnu/bin/objcopy
+file path=usr/gnu/bin/objdump
+file path=usr/gnu/bin/ranlib
+file path=usr/gnu/bin/readelf
 file path=usr/gnu/bin/size
 file path=usr/gnu/bin/strings
-hardlink path=usr/gnu/bin/strip \
-    target=../$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/strip
+file path=usr/gnu/bin/strip
 file path=usr/gnu/include/ansidecl.h
 file path=usr/gnu/include/bfd.h
 file path=usr/gnu/include/bfdlink.h
+file path=usr/gnu/include/diagnostics.h
 file path=usr/gnu/include/dis-asm.h
 file path=usr/gnu/include/symcat.h
 file path=usr/gnu/lib/$(MACH64)/libbfd.a
@@ -309,6 +309,8 @@ file path=usr/gnu/share/locale/ja/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/ms/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/nl/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/nl/LC_MESSAGES/opcodes.mo
+file path=usr/gnu/share/locale/pt/LC_MESSAGES/bfd.mo
+file path=usr/gnu/share/locale/pt/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/opcodes.mo
@@ -369,7 +371,6 @@ file path=usr/gnu/share/man/man1/dlltool.1
 file path=usr/gnu/share/man/man1/elfedit.1
 file path=usr/gnu/share/man/man1/gprof.1
 file path=usr/gnu/share/man/man1/ld.1
-file path=usr/gnu/share/man/man1/nlmconv.1
 file path=usr/gnu/share/man/man1/nm.1
 file path=usr/gnu/share/man/man1/objcopy.1
 file path=usr/gnu/share/man/man1/objdump.1
