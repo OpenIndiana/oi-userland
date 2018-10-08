@@ -29,15 +29,15 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.29.0
-COMPONENT_FMRI=	developer/lang/rustc
+COMPONENT_VERSION=	1.29.1
+COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a4eb34ffd47f76afe2abd813f398512d5a19ef00989d37306217c9c9ec2f61e9
+    sha256:f1b0728b66ce6bce6d72bbe5ea9e3a24ea22a045665da2ed8fcdfad14f61a349
 COMPONENT_ARCHIVE_URL=	http://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT or Apache-2.0
 
@@ -59,7 +59,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
+PATH=$(GCC_BINDIR):$(PATH.gnu)
 
 PATCH_LEVEL=0
 
@@ -139,12 +139,35 @@ COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 COMPONENT_PRE_INSTALL_ACTION = \
 	mkdir -p $(PROTO_DIR)
 
+RUSTC_BIN_POST = cargo
+RUSTC_BIN_POST+= rls
+RUSTC_BIN_POST+= rustc
+RUSTC_BIN_POST+= rustdoc
+
+# Create symlinks in place of copies to generate proper link actions
+# Edit runpath so that libraries are resolved both in the proto area and system-wide
 COMPONENT_POST_INSTALL_ACTION= \
-	( $(RM) $(PROTOUSRLIBDIR)/*.so; \
-	  $(MKDIR) $(PROTOUSRLIBDIR.$(BITS)); \
-	  $(RM) $(PROTOUSRLIBDIR.$(BITS))/*.so; \
-	  cd $(PROTOUSRLIBDIR.$(BITS)); \
-	  $(LN) -s ../rustlib/$(RUST_ARCH)/lib/*.so .; )
+  ( $(RM) $(PROTOUSRLIBDIR)/*.so; \
+    $(MKDIR) $(PROTOUSRLIBDIR.$(BITS)); \
+    $(RM) $(PROTOUSRLIBDIR.$(BITS))/*.so; \
+    cd $(PROTOUSRLIBDIR.$(BITS)); \
+    $(LN) -s ../rustlib/$(RUST_ARCH)/lib/*.so .; \
+    for file in $(RUSTC_BIN_POST); \
+    do \
+      /usr/bin/elfedit -e \
+        'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$$ORIGIN/../lib/rustlib/$(RUST_ARCH)/lib:$$ORIGIN/../lib/$(MACH64)"' \
+        $(PROTOUSRBINDIR)/$$file ; \
+      /usr/bin/elfedit -e \
+        'dyn:value -s  RPATH   "$(GCC_LIBDIR):$$ORIGIN/../lib/rustlib/$(RUST_ARCH)/lib:$$ORIGIN/../lib/$(MACH64)"' \
+	$(PROTOUSRBINDIR)/$$file ; \
+    done; \
+    for file in $(PROTOUSRLIBDIR)/rustlib/$(RUST_ARCH)/lib/*.so; \
+    do \
+      /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$$ORIGIN:$$ORIGIN/../../$(MACH64)"' $$file ; \
+      /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$$ORIGIN:$$ORIGIN/../../$(MACH64)"' $$file ; \
+    done; )
+
+	    
 
 build: $(BUILD_64)
 
