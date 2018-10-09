@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		arpack
 COMPONENT_VERSION=	3.6.3
+COMPONENT_REVISION=	1
 REAL_NAME=		arpack-ng
 COMPONENT_PROJECT_URL=	https://github.com/opencollab/arpack-ng
 COMPONENT_SUMMARY=	Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
@@ -36,7 +37,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install && libtoolize --force --copy )
 
-CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/arpack
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 COMPONENT_TEST_TRANSFORMS += \
