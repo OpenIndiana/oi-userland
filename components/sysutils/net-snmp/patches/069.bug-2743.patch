@@ -1,0 +1,24 @@
+BUG: 2743: snmpd crashes when receiving a GetNext PDU with multiple Varbinds
+
+skip out-of-range varbinds when calling next handler
+
+--- net-snmp-5.7.3/agent/helpers/table.c.1	2018-10-09 22:23:29.575291696 +0000
++++ net-snmp-5.7.3/agent/helpers/table.c	2018-10-09 22:29:09.662141925 +0000
+@@ -406,6 +406,8 @@
+             if (reqinfo->mode == MODE_GET)
+                 table_helper_cleanup(reqinfo, request,
+                                      SNMP_NOSUCHOBJECT);
++            else
++                request->processed = 1; /* skip if next handler called */
+             continue;
+         }
+ 
+@@ -483,6 +485,8 @@
+ #endif /* NETSNMP_NO_WRITE_SUPPORT */
+                     table_helper_cleanup(reqinfo, request,
+                                          SNMP_NOSUCHOBJECT);
++                else
++                    request->processed = 1; /* skip if next handler called */
+                 continue;
+             }
+             /*
