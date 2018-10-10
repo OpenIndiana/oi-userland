@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
 COMPONENT_VERSION=	1.29.1
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -140,6 +141,7 @@ COMPONENT_PRE_INSTALL_ACTION = \
 	mkdir -p $(PROTO_DIR)
 
 RUSTC_BIN_POST = cargo
+RUSTC_BIN_POST+= clippy-driver
 RUSTC_BIN_POST+= rls
 RUSTC_BIN_POST+= rustc
 RUSTC_BIN_POST+= rustdoc
