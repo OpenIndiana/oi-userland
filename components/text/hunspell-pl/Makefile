@@ -15,8 +15,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-pl
-COMPONENT_VERSION=	20171124
-IPS_COMPONENT_VERSION=	2017.11.24
+COMPONENT_VERSION=	20180925
+IPS_COMPONENT_VERSION=	2018.9.25
 COMPONENT_PROJECT_URL=	http://sjp.pl/slownik/en/
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for Polish
 COMPONENT_LICENSE=	MPL1.1
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION	= System/Localizations
 COMPONENT_SRC=            sjp-myspell-pl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:2b417bb3efee2db6b8c23c539b116ae88fe338551b59cbb678d4f47f4299d155
+    sha256:9f7d22107b4a9ef5c26dcc22eaeaa548c8a782c67d71b4e13814276e7ee86eb2
 COMPONENT_ARCHIVE_URL=   http://sjp.pl/slownik/ort/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=	-r $(COMPONENT_SRC)
 
@@ -60,3 +60,6 @@ install: $(SOURCE_DIR)/.installed
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Build dependencies
+REQUIRED_PACKAGES+= text/aspell
