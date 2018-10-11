@@ -15,8 +15,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-en
-COMPONENT_VERSION=	2016.01.19
-IPS_COMPONENT_VERSION=	2016.1.19
+COMPONENT_VERSION=	2018.04.16
+IPS_COMPONENT_VERSION=	2018.4.16
 COMPONENT_PROJECT_URL=	http://wordlist.aspell.net/
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for English
 COMPONENT_LICENSE=	BSD-like
@@ -29,26 +29,26 @@ PATCH_EACH_ARCHIVE=1
 COMPONENT_SRC=            hunspell-en_US-large-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:1c8a7a5a993313620a7d96e74e5c45f4df7ab9ad0141764ffeea66db9bfc089f
+    sha256:0c27a253da79c72b59c1241f2a90c43ee0bf0f795d4e8fce62e5eeb8f093a9f6
 COMPONENT_ARCHIVE_URL=   https://sourceforge.net/projects/wordlist/files/speller/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
 COMPONENT_SRC_1=            hunspell-en_GB-large-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_1=        $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_HASH_1=        \
-    sha256:edcca9b78ae8923e6209db523355b4a91ac6d9daad94df12413498b4e5069719
+    sha256:b19e51a95d85c103b545f9d9a621febfdd8cf706358138748038c4bd4b3f8df8
 COMPONENT_ARCHIVE_URL_1=   https://sourceforge.net/projects/wordlist/files/speller/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 UNPACK_ARGS_1+=-r $(COMPONENT_SRC_1)
 
 COMPONENT_SRC_2=            hunspell-en_CA-large-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_2=        $(COMPONENT_SRC_2).zip
 COMPONENT_ARCHIVE_HASH_2=        \
-    sha256:04fd5dcfdca048e18640a1d420077473ab105431fc14ebe307bda452732abf6c
+    sha256:0a3aeaca7a31c28c066c0cd499ed3e011d33582a606c51a645d19abd7def0088
 COMPONENT_ARCHIVE_URL_2=   https://sourceforge.net/projects/wordlist/files/speller/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_2)
 UNPACK_ARGS_2+=-r $(COMPONENT_SRC_2)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 DESTDIR=/usr/share/spell/hunspell
 LINKDIR=/usr/share/spell/myspell
@@ -89,3 +89,6 @@ install: $(SOURCE_DIR)/.installed
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Build dependencies
+REQUIRED_PACKAGES+= text/aspell
