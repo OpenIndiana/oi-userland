@@ -1,9 +1,10 @@
 1) Set default background, remove it in high contrast accessibility mode.
 2) Set default user icon.
-3) Use non-symbolic icons and nimbus icon theme. 
---- lightdm-gtk-greeter-2.0.2/src/lightdm-gtk-greeter.c.~1~	2016-10-06 12:31:54.000000000 +0000
-+++ lightdm-gtk-greeter-2.0.2/src/lightdm-gtk-greeter.c	2017-08-29 18:17:48.381975286 +0000
-@@ -100,7 +100,7 @@ static GtkLabel     *power_title, *power
+3) Use non-symbolic icons and nimbus icon theme.
+4) Use nimbus theme.
+--- lightdm-gtk-greeter-2.0.5/src/lightdm-gtk-greeter.c.~1~	2018-03-15 03:23:15.000000000 +0000
++++ lightdm-gtk-greeter-2.0.5/src/lightdm-gtk-greeter.c	2018-10-11 18:22:16.322470324 +0000
+@@ -100,7 +100,7 @@
  static GtkImage     *power_icon;
  
  static const gchar *DEFAULT_LAYOUT[] = {"~spacer", "~spacer", "~host", "~spacer",
@@ -12,7 +13,7 @@
  
  static const gchar *POWER_WINDOW_DATA_LOOP = "power-window-loop";           /* <GMainLoop*> */
  static const gchar *POWER_WINDOW_DATA_RESPONSE = "power-window-response";   /* <GtkResponseType> */
-@@ -308,15 +308,14 @@ struct SavedFocusData
+@@ -308,15 +308,14 @@
  gpointer greeter_save_focus(GtkWidget* widget);
  void greeter_restore_focus(const gpointer saved_data);
  
@@ -30,7 +31,7 @@
      greeter_background_set_monitor_config (greeter_background, name, background,
                                             config_get_bool (group, CONFIG_KEY_USER_BACKGROUND, -1),
                                             config_get_bool (group, CONFIG_KEY_LAPTOP, -1),
-@@ -1061,7 +1061,7 @@
+@@ -1061,7 +1060,7 @@
                      if (gtk_icon_theme_has_icon (icon_theme, icon_name))
                          gtk_image_set_from_icon_name (GTK_IMAGE (session_badge), icon_name, GTK_ICON_SIZE_MENU);
                      else
@@ -39,7 +40,7 @@
                      g_free (icon_name);
                      break;
                  }
-@@ -1868,11 +1868,13 @@
+@@ -1868,11 +1867,13 @@
      {
          g_object_set (gtk_settings_get_default (), "gtk-theme-name", "HighContrast", NULL);
          g_object_set (gtk_settings_get_default (), "gtk-icon-theme-name", "HighContrast", NULL);
@@ -53,25 +54,34 @@
      }
  }
  
-@@ -1920,7 +1920,7 @@
+@@ -1920,7 +1921,7 @@
  void
- restart_cb (GtkWidget *widget, LightDMGreeter *greeter)
+ restart_cb (GtkWidget *widget, LightDMGreeter *ldm)
  {
 -    if (show_power_prompt ("restart", "view-refresh-symbolic",
 +    if (show_power_prompt ("restart", "view-refresh",
                             _("Restart"),
                             _("Are you sure you want to close all programs and restart the computer?")))
          lightdm_restart (NULL);
-@@ -1929,7 +1929,7 @@
+@@ -1929,7 +1930,7 @@
  void
- shutdown_cb (GtkWidget *widget, LightDMGreeter *greeter)
+ shutdown_cb (GtkWidget *widget, LightDMGreeter *ldm)
  {
 -    if (show_power_prompt ("shutdown", "system-shutdown-symbolic",
 +    if (show_power_prompt ("shutdown", "system-shutdown",
                             _("Shut Down"),
                             _("Are you sure you want to close all programs and shut down the computer?")))
          lightdm_shutdown (NULL);
-@@ -2848,7 +2848,7 @@
+@@ -2838,7 +2839,7 @@
+     }
+ 
+     /* Set GTK+ settings */
+-    value = config_get_string (NULL, CONFIG_KEY_THEME, NULL);
++    value = config_get_string (NULL, CONFIG_KEY_THEME, "nimbus");
+     if (value)
+     {
+         g_debug ("[Configuration] Changing GTK+ theme to '%s'", value);
+@@ -2848,7 +2849,7 @@
      g_object_get (gtk_settings_get_default (), "gtk-theme-name", &default_theme_name, NULL);
      g_debug ("[Configuration] GTK+ theme: '%s'", default_theme_name);
  
@@ -80,7 +90,7 @@
      if (value)
      {
          g_debug ("[Configuration] Changing icons theme to '%s'", value);
-@@ -3006,7 +3006,7 @@
+@@ -3006,7 +3007,7 @@
      }
      else
      {
@@ -89,7 +99,7 @@
          if (value)
          {
              if (value[0] == '#')
-@@ -3034,8 +3034,8 @@ main (int argc, char **argv)
+@@ -3034,8 +3035,8 @@
      {
          GSList *sessions = NULL;
  
@@ -100,7 +110,7 @@
          else
              session_badge = gtk_image_new_from_icon_name ("document-properties", GTK_ICON_SIZE_MENU);
          gtk_widget_show (session_badge);
-@@ -3098,8 +3098,8 @@
+@@ -3098,8 +3099,8 @@
      /* a11y menu */
      if (gtk_widget_get_visible (a11y_menuitem))
      {
@@ -111,7 +121,7 @@
          else
              image = gtk_image_new_from_icon_name ("preferences-desktop-accessibility", GTK_ICON_SIZE_MENU);
          gtk_widget_show (image);
-@@ -3127,8 +3127,8 @@
+@@ -3127,8 +3128,8 @@
      /* Power menu */
      if (gtk_widget_get_visible (power_menuitem))
      {
@@ -122,7 +132,7 @@
          else
              image = gtk_image_new_from_icon_name ("system-shutdown", GTK_ICON_SIZE_MENU);
          gtk_widget_show (image);
-@@ -3181,7 +3181,7 @@
+@@ -3181,7 +3182,7 @@
      {
          gtk_menu_item_set_label (GTK_MENU_ITEM (clock_menuitem), "");
          clock_label = gtk_bin_get_child (GTK_BIN (clock_menuitem));
