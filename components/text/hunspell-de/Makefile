@@ -15,8 +15,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-de
-COMPONENT_VERSION=	20151222
-IPS_COMPONENT_VERSION=	2015.12.22
+COMPONENT_VERSION=	20161207
+IPS_COMPONENT_VERSION=	2016.12.7
 COMPONENT_PROJECT_URL=	https://www.j3e.de/ispell/igerman98/index_en.html
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for German
 COMPONENT_LICENSE=	GPLv2
@@ -27,12 +27,12 @@ COMPONENT_CLASSIFICATION	= System/Localizations
 COMPONENT_SRC=            igerman98-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:5964178dc87b9be9dfe7cb256c2e35e139e86063225c19cb1fe2cc7cb11d7e4e
+    sha256:17296f03c5fea62d76ecc530ebe80f6adc430278f58d472dc1842d71612960a8
 COMPONENT_ARCHIVE_URL=   https://www.j3e.de/ispell/igerman98/dict/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_TARGETS = hunspell-all
 
@@ -70,3 +70,6 @@ $(SOURCE_DIR)/.installed:       $(BUILD_32)
 build: $(BUILD_32)
 
 install: $(SOURCE_DIR)/.installed
+
+# Build dependencies
+REQUIRED_PACKAGES+= text/aspell
