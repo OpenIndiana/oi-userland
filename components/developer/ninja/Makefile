@@ -9,13 +9,14 @@
 #
 
 #
-# Copyright 2017 Aurelien Larcher
+# Copyright 2017-2018 Aurelien Larcher
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=      1.7.2
+COMPONENT_VERSION=      1.8.2
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_FMRI=         developer/build/ninja
@@ -25,14 +26,14 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
   https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9
+  sha256:86b8700c3d0880c2b44c2ff67ce42774aaf8c28cbf57725cb881569288c1c6f4
 COMPONENT_LICENSE=      Apache License version 2.0
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+PATH=$(GCC_BINDIR):$(PATH.illumos)
 
 COMPONENT_BUILD_ACTION = cd $(@D); \
   CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py --bootstrap --with-python=$(PYTHON.64)
@@ -54,6 +55,8 @@ COMPONENT_INSTALL_ACTION = cd $(@D); \
 	$(MKDIR) $(PROTO_DIR)/usr/share/zsh-completions && \
   install -vDm644 misc/zsh-completion \
       $(PROTO_DIR)/usr/share/zsh-completions/_ninja
+
+COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[/p"'
 
 build:    $(BUILD_64)
 
