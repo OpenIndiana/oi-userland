@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nimbus
 COMPONENT_VERSION=	0.1.9
-COMPONENT_REVISION=	14
+COMPONENT_REVISION=	15
 COMPONENT_PROJECT_URL=	https://java.net/projects/solaris-desktop/pages/Home
 COMPONENT_SUMMARY=	Engine for Sun Nimbus GTK2 Theme
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
