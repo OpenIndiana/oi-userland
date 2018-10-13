@@ -1,44 +1,43 @@
---- mate-applets-1.18.1/multiload/linux-proc.c.~1~	2016-01-03 04:03:50.000000000 +0300
-+++ mate-applets-1.18.1/multiload/linux-proc.c	2017-05-23 18:11:45.207049026 +0300
-@@ -115,6 +115,13 @@
+--- mate-applets-1.20.2/multiload/linux-proc.c	2018-05-29 14:01:21.000000000 +0000
++++ mate-applets-1.20.2/multiload/linux-proc.c.new	2018-06-07 20:35:00.109496448 +0000
+@@ -115,6 +115,13 @@ GetDiskLoad (int Maximum, int data [3],
  
- 	read = write = 0;
+     read = write = 0;
  
 +
-+        /*
-+          At the moment, Solaris can't get the read/write information for filesystem
-+          so we would like to use disk to get them, later when some unstable interfaces
-+          become stable or public, will use them
-+        */
-+        /*
- 	mountentries = glibtop_get_mountlist (&mountlist, FALSE);
++    /*
++      At the moment, Solaris can't get the read/write information for filesystem
++      so we would like to use disk to get them, later when some unstable interfaces
++      become stable or public, will use them
++    */
++    /*
+     mountentries = glibtop_get_mountlist (&mountlist, FALSE);
  
- 	for (i = 0; i < mountlist.number; i++)
-@@ -131,6 +138,10 @@
- 	}
- 
- 	g_free(mountentries);
-+        */
-+        glibtop_fsusage fsusage;
-+        glibtop_get_fsusage(&fsusage,"/"); /* "/" will not use, just as a input */
-+        read = fsusage.read; write = fsusage.write;
- 
- 	readdiff  = read - lastread;
- 	writediff = write - lastwrite;
-@@ -335,7 +346,7 @@
- 	autoscaler_init(&scaler, 60, 501);
+     for (i = 0; i < mountlist.number; i++)
+@@ -130,6 +137,10 @@ GetDiskLoad (int Maximum, int data [3],
+         read += fsusage.read; write += fsusage.write;
      }
  
--
++    */
++    glibtop_fsusage fsusage;
++    glibtop_get_fsusage(&fsusage,"/"); /* "/" will not use, just as a input */
++    read = fsusage.read; write = fsusage.write;
+     g_free(mountentries);
+ 
+     readdiff  = read - lastread;
+@@ -327,6 +338,7 @@ GetNet (int Maximum, int data [4], LoadG
+         autoscaler_init(&scaler, 60, 501);
+     }
+ 
 +    netlist.flags = 1;
      devices = glibtop_get_netlist(&netlist);
  
      for(i = 0; i < netlist.number; ++i)
-@@ -345,7 +356,12 @@
+@@ -336,7 +348,12 @@ GetNet (int Maximum, int data [4], LoadG
  
- 	glibtop_get_netload(&netload, devices[i]);
+         glibtop_get_netload(&netload, devices[i]);
  
--	g_return_if_fail((netload.flags & needed_netload_flags) == needed_netload_flags);
+-        g_return_if_fail((netload.flags & needed_netload_flags) == needed_netload_flags);
 +        /* this is not correct, because after run get netlist, there are lots of net devices,
 +           not all of them meet the requirement of needed_netload_flags, but we don't need to
 +           exit, we can just ignore them, and try to continue with the next one */
@@ -46,5 +45,5 @@
 +            continue;
 +
  
- 	if (!(netload.if_flags & (1L << GLIBTOP_IF_FLAGS_UP)))
- 	    continue;
+         if (!(netload.if_flags & (1L << GLIBTOP_IF_FLAGS_UP)))
+             continue;
