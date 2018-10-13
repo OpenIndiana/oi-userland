@@ -10,6 +10,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 PREFERRED_BITS= 64
@@ -17,15 +18,15 @@ PREFERRED_BITS= 64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atril
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	5
+COMPONENT_MJR_VERSION=	1.20
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE PDF document viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9511f79f35df908792a588b888e8fb5aa843224fefe91875fc39cf984edf3e0a
+    sha256:4793d9f9ada26659e5bd2bf5c9be0106b231543d25d4bd7172fbe2ec59d25de3
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	desktop/pdf-viewer/atril
 COMPONENT_CLASSIFICATION=	Applications/Office
@@ -60,6 +61,7 @@ REQUIRED_PACKAGES += library/desktop/mate/mate-common
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/caja
+REQUIRED_PACKAGES += desktop/mate/caja/caja-extensions
 REQUIRED_PACKAGES += image/djvulibre
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/atk
