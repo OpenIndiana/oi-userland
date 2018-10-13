@@ -10,6 +10,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 PREFERRED_BITS= 64
@@ -17,15 +18,15 @@ PREFERRED_BITS= 64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-terminal
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MJR_VERSION=	1.20
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE terminal emulator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d65af10035de13a71b7cec5caa49b9eb7f84510e074367dd8fea39e12734abdb
+    sha256:27a97914d92f5cc1b0744fe10c60d0484d7eeb699bc5dafe2fc3f75b4f41d979
 COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
@@ -63,12 +64,14 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/vte-291
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
