@@ -10,12 +10,13 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-control-center
-COMPONENT_MJR_VERSION=	1.18
+COMPONENT_MJR_VERSION=	1.20
 COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
@@ -23,7 +24,7 @@ COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9a1d7c93174ccb996d8fa682348a04bb6256815ec9cc110fc85d87e75e19fd91
+    sha256:6d7e4c23cbfee2ec3682b6b07c0226742775c669f6e47862691d84ffc742f172
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/control-center
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
