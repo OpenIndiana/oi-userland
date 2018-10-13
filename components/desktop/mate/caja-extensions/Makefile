@@ -10,20 +10,21 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja-extensions
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.20
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Set of extensions for Caja, the MATE file manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6aa9e7da54c1e660eb714a934654cd7d44303a7d4df7be5d2ee3fe337d1bb218
+    sha256:7610931d4a3135f2f3b88551652907e4ef25c48b3f18c8e83ecd65c3df606706
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_FMRI=	desktop/mate/caja/caja-extensions
