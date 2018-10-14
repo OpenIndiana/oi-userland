@@ -27,6 +27,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-themes-standard
 COMPONENT_VERSION=	3.22.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Base themes for the GNOME desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
