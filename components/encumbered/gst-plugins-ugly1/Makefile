@@ -10,13 +10,13 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher.  All rights reserved.
+# Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-ugly1
-COMPONENT_VERSION= 1.12.5
+COMPONENT_VERSION= 1.14.4
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/ugly
@@ -24,10 +24,10 @@ COMPONENT_SRC_NAME= gst-plugins-ugly
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:67724b0188439b0abd2191ce4cd40ed88e4278cbb784898e16f3ec94760ef96e
+  sha256:ac02d837f166c35ff6ce0738e281680d0b90052cfb1f0255dcf6aaca5f0f6d23
 COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
+  https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://gstreamer.freedesktop.org/
 COMPONENT_LICENSE= LGPLv2
 
 include $(WS_MAKE_RULES)/encumbered.mk
@@ -70,14 +70,12 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-REQUIRED_PACKAGES += audio/lame
-REQUIRED_PACKAGES += audio/twolame
+# Auto-generated dependencies
 REQUIRED_PACKAGES += codec/opencore-amr
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/liba52
 REQUIRED_PACKAGES += library/audio/libcdio
-REQUIRED_PACKAGES += library/audio/libmad
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmpeg2
