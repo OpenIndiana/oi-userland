@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2018 Alexander Pyhalov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -21,147 +21,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-<transform file path=usr/share/icons/.* -> default restart_fmri svc:/application/desktop-cache/icon-cache:default>
-
-# This optionally brings in unico gtk3 engine if gtk3 is installed
-depend type=conditional fmri=gnome/theme/gtk3-engines/unico predicate=library/desktop/gtk3
-
-depend type=require fmri=gnome/theme/gnome-icon-theme
-depend type=require fmri=library/desktop/gtk3/gtk3-nocsd
-
-link path=usr/share/icons/nimbus/16x16/status/image-missing.png target=../../../gnome/16x16/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/20x20/status/image-missing.png target=../../../gnome/20x20/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/status/image-missing.png target=../../../gnome/24x24/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/status/image-missing.png target=../../../gnome/32x32/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/status/image-missing.png target=../../../gnome/48x48/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
-
-# grep -E '/(user-home|user-desktop|drive-harddisk|network-workgroup|network-server).png'  nimbus.p5m  |\
-#   grep path |grep icons/ |    gawk -F '=' ' {  PT=$NF; PT1=$NF; gsub(".png","-symbolic.png",PT1); n=split($NF, a, "/"); TGT=a[n];print "link path="PT1" target="TGT; }'  
-link path=usr/share/icons/nimbus/16x16/devices/drive-harddisk-symbolic.png target=drive-harddisk.png
-link path=usr/share/icons/nimbus/16x16/places/network-server-symbolic.png target=network-server.png
-link path=usr/share/icons/nimbus/16x16/places/network-workgroup-symbolic.png target=network-workgroup.png
-link path=usr/share/icons/nimbus/16x16/places/user-desktop-symbolic.png target=user-desktop.png
-link path=usr/share/icons/nimbus/16x16/places/user-home-symbolic.png target=user-home.png
-link path=usr/share/icons/nimbus/24x24/devices/drive-harddisk-symbolic.png target=drive-harddisk.png
-link path=usr/share/icons/nimbus/24x24/places/network-server-symbolic.png target=network-server.png
-link path=usr/share/icons/nimbus/24x24/places/network-workgroup-symbolic.png target=network-workgroup.png
-link path=usr/share/icons/nimbus/24x24/places/user-desktop-symbolic.png target=user-desktop.png
-link path=usr/share/icons/nimbus/24x24/places/user-home-symbolic.png target=user-home.png
-link path=usr/share/icons/nimbus/32x32/places/network-workgroup-symbolic.png target=network-workgroup.png
-link path=usr/share/icons/nimbus/36x36/places/network-server-symbolic.png target=network-server.png
-link path=usr/share/icons/nimbus/36x36/places/user-desktop-symbolic.png target=user-desktop.png
-link path=usr/share/icons/nimbus/36x36/places/user-home-symbolic.png target=user-home.png
-link path=usr/share/icons/nimbus/48x48/devices/drive-harddisk-symbolic.png target=drive-harddisk.png
-link path=usr/share/icons/nimbus/48x48/places/network-server-symbolic.png target=network-server.png
-link path=usr/share/icons/nimbus/48x48/places/network-workgroup-symbolic.png target=network-workgroup.png
-link path=usr/share/icons/nimbus/48x48/places/user-desktop-symbolic.png target=user-desktop.png
-link path=usr/share/icons/nimbus/48x48/places/user-home-symbolic.png target=user-home.png
-link path=usr/share/icons/nimbus/72x72/places/network-server-symbolic.png target=network-server.png
-link path=usr/share/icons/nimbus/72x72/places/network-workgroup-symbolic.png target=network-workgroup.png
-link path=usr/share/icons/nimbus/72x72/places/user-desktop-symbolic.png target=user-desktop.png
-
-# Something like 
-# grep -E '/(go-down|go-up|go-previous|go-next|edit|bookmarks)'  nimbus.p5m  |grep path |grep icons/ | \
-#   gawk -F '=' ' {  PT=$NF; PT1=$NF; gsub(".png","-symbolic.png",PT1); n=split($NF, a, "/"); TGT=a[n];print "link path="PT1" target="TGT; }'  |grep usr/share
-link path=usr/share/icons/nimbus/16x16/actions/edit-copy-symbolic.png target=edit-copy.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-cut-symbolic.png target=edit-cut.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-delete-symbolic.png target=edit-delete.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-find-replace-symbolic.png target=edit-find-replace.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-find-symbolic.png target=edit-find.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-font-symbolic.png target=edit-font.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-paste-symbolic.png target=edit-paste.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-redo-symbolic.png target=edit-redo.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-revert-symbolic.png target=edit-revert.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-undelete-symbolic.png target=edit-undelete.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-undo-symbolic.png target=edit-undo.png
-link path=usr/share/icons/nimbus/16x16/actions/edit-symbolic.png target=edit.png
-link path=usr/share/icons/nimbus/16x16/actions/editdelete-symbolic.png target=editdelete.png
-link path=usr/share/icons/nimbus/16x16/actions/editpaste-symbolic.png target=editpaste.png
-link path=usr/share/icons/nimbus/16x16/actions/go-down-symbolic.png target=go-down.png
-link path=usr/share/icons/nimbus/16x16/actions/go-next-symbolic.png target=go-next.png
-link path=usr/share/icons/nimbus/16x16/actions/go-previous-symbolic.png target=go-previous.png
-link path=usr/share/icons/nimbus/16x16/actions/go-up-symbolic.png target=go-up.png
-link path=usr/share/icons/nimbus/16x16/places/edittrash-symbolic.png target=edittrash.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-copy-symbolic.png target=edit-copy.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-cut-symbolic.png target=edit-cut.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-delete-symbolic.png target=edit-delete.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-find-replace-symbolic.png target=edit-find-replace.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-find-symbolic.png target=edit-find.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-font-symbolic.png target=edit-font.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-paste-symbolic.png target=edit-paste.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-redo-symbolic.png target=edit-redo.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-revert-symbolic.png target=edit-revert.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-undelete-symbolic.png target=edit-undelete.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-undo-symbolic.png target=edit-undo.png
-link path=usr/share/icons/nimbus/24x24/actions/edit-symbolic.png target=edit.png
-link path=usr/share/icons/nimbus/24x24/actions/editdelete-symbolic.png target=editdelete.png
-link path=usr/share/icons/nimbus/24x24/actions/editpaste-symbolic.png target=editpaste.png
-link path=usr/share/icons/nimbus/24x24/actions/go-down-symbolic.png target=go-down.png
-link path=usr/share/icons/nimbus/24x24/actions/go-next-symbolic.png target=go-next.png
-link path=usr/share/icons/nimbus/24x24/actions/go-previous-symbolic.png target=go-previous.png
-link path=usr/share/icons/nimbus/24x24/actions/go-up-symbolic.png target=go-up.png
-link path=usr/share/icons/nimbus/24x24/places/edittrash-symbolic.png target=edittrash.png
-link path=usr/share/icons/nimbus/32x32/places/edittrash-symbolic.png target=edittrash.png
-link path=usr/share/icons/nimbus/36x36/actions/edit-symbolic.png target=edit.png
-link path=usr/share/icons/nimbus/36x36/places/edittrash-symbolic.png target=edittrash.png
-link path=usr/share/icons/nimbus/48x48/actions/edit-symbolic.png target=edit.png
-link path=usr/share/icons/nimbus/48x48/places/edittrash-symbolic.png target=edittrash.png
-link path=usr/share/icons/nimbus/72x72/places/edittrash-symbolic.png target=edittrash.png
-
-# Different folder types
-link path=usr/share/icons/nimbus/12x12/places/folder-symbolic.png target=folder.png
-link path=usr/share/icons/nimbus/16x16/places/folder-symbolic.png target=folder.png
-link path=usr/share/icons/nimbus/24x24/places/folder-symbolic.png target=folder.png
-link path=usr/share/icons/nimbus/32x32/places/folder-symbolic.png target=folder.png
-link path=usr/share/icons/nimbus/36x36/places/folder-symbolic.png target=folder.png
-link path=usr/share/icons/nimbus/48x48/places/folder-symbolic.png target=folder.png
-link path=usr/share/icons/nimbus/72x72/places/folder-symbolic.png target=folder.png
-
-link path=usr/share/icons/nimbus/16x16/places/folder-documents-symbolic.png target=../../../gnome/16x16/places/folder-documents.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-documents-symbolic.png target=../../../gnome/24x24/places/folder-documents.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-documents-symbolic.png target=../../../gnome/32x32/places/folder-documents.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-documents-symbolic.png target=../../../gnome/48x48/places/folder-documents.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-download-symbolic.png target=../../../gnome/16x16/places/folder-download.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-download-symbolic.png target=../../../gnome/24x24/places/folder-download.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-download-symbolic.png target=../../../gnome/32x32/places/folder-download.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-download-symbolic.png target=../../../gnome/48x48/places/folder-download.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-music-symbolic.png target=../../../gnome/16x16/places/folder-music.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-music-symbolic.png target=../../../gnome/24x24/places/folder-music.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-music-symbolic.png target=../../../gnome/32x32/places/folder-music.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-music-symbolic.png target=../../../gnome/48x48/places/folder-music.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-pictures-symbolic.png target=../../../gnome/16x16/places/folder-pictures.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-pictures-symbolic.png target=../../../gnome/24x24/places/folder-pictures.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-pictures-symbolic.png target=../../../gnome/32x32/places/folder-pictures.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-pictures-symbolic.png target=../../../gnome/48x48/places/folder-pictures.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-publicshare-symbolic.png target=../../../gnome/16x16/places/folder-publicshare.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-publicshare-symbolic.png target=../../../gnome/24x24/places/folder-publicshare.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-publicshare-symbolic.png target=../../../gnome/32x32/places/folder-publicshare.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-publicshare-symbolic.png target=../../../gnome/48x48/places/folder-publicshare.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-templates-symbolic.png target=../../../gnome/16x16/places/folder-templates.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-templates-symbolic.png target=../../../gnome/24x24/places/folder-templates.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-templates-symbolic.png target=../../../gnome/32x32/places/folder-templates.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-templates-symbolic.png target=../../../gnome/48x48/places/folder-templates.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-videos-symbolic.png target=../../../gnome/16x16/places/folder-videos.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-videos-symbolic.png target=../../../gnome/24x24/places/folder-videos.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-videos-symbolic.png target=../../../gnome/32x32/places/folder-videos.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-videos-symbolic.png target=../../../gnome/48x48/places/folder-videos.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-remote-symbolic.png target=../../../gnome/16x16/places/folder-videos.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-remote-symbolic.png target=../../../gnome/24x24/places/folder-videos.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-remote-symbolic.png target=../../../gnome/32x32/places/folder-videos.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-remote-symbolic.png target=../../../gnome/48x48/places/folder-videos.png pkg.linted.userland.action002.0=true
-
-link path=usr/share/icons/nimbus/16x16/places/folder-saved-search-symbolic.png target=../../../gnome/16x16/places/folder-saved-search.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/24x24/places/folder-saved-search-symbolic.png target=../../../gnome/24x24/places/folder-saved-search.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/32x32/places/folder-saved-search-symbolic.png target=../../../gnome/32x32/places/folder-saved-search.png pkg.linted.userland.action002.0=true
-link path=usr/share/icons/nimbus/48x48/places/folder-saved-search-symbolic.png target=../../../gnome/48x48/places/folder-saved-search.png pkg.linted.userland.action002.0=true
 
 file path=usr/lib/$(MACH64)/gtk-2.0/2.10.0/engines/libnimbus.so
 file path=usr/lib/gtk-2.0/2.10.0/engines/libnimbus.so
@@ -180,6 +39,8 @@ file path=usr/share/icons/nimbus/12x12/emblems/emblem-nowrite.png
 file path=usr/share/icons/nimbus/12x12/emblems/emblem-symbolic-link.png
 file path=usr/share/icons/nimbus/12x12/places/file.png
 file path=usr/share/icons/nimbus/12x12/places/folder-drag-accept.png
+link path=usr/share/icons/nimbus/12x12/places/folder-symbolic.png \
+    target=folder.png
 file path=usr/share/icons/nimbus/12x12/places/folder.png
 link path=usr/share/icons/nimbus/12x12/places/folder_open.png \
     target=folder-drag-accept.png
@@ -212,22 +73,49 @@ file path=usr/share/icons/nimbus/16x16/actions/document-properties.png
 file path=usr/share/icons/nimbus/16x16/actions/document-save-as.png
 file path=usr/share/icons/nimbus/16x16/actions/document-save.png
 link path=usr/share/icons/nimbus/16x16/actions/down.png target=go-down.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-copy-symbolic.png \
+    target=edit-copy.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-copy.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-cut-symbolic.png \
+    target=edit-cut.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-cut.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-delete-symbolic.png \
+    target=edit-delete.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-delete.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-find-replace-symbolic.png \
+    target=edit-find-replace.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-find-replace.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-find-symbolic.png \
+    target=edit-find.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-find.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-font-symbolic.png \
+    target=edit-font.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-font.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-paste-symbolic.png \
+    target=edit-paste.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-paste.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-redo-symbolic.png \
+    target=edit-redo.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-redo.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-revert-symbolic.png \
+    target=edit-revert.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-revert.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-symbolic.png target=edit.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-undelete-symbolic.png \
+    target=edit-undelete.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-undelete.png
+link path=usr/share/icons/nimbus/16x16/actions/edit-undo-symbolic.png \
+    target=edit-undo.png
 file path=usr/share/icons/nimbus/16x16/actions/edit-undo.png
 file path=usr/share/icons/nimbus/16x16/actions/edit.png
 link path=usr/share/icons/nimbus/16x16/actions/editcopy.png target=edit-copy.png
 link path=usr/share/icons/nimbus/16x16/actions/editcut.png target=edit-cut.png
+link path=usr/share/icons/nimbus/16x16/actions/editdelete-symbolic.png \
+    target=editdelete.png
 link path=usr/share/icons/nimbus/16x16/actions/editdelete.png \
     target=edit-delete.png
+link path=usr/share/icons/nimbus/16x16/actions/editpaste-symbolic.png \
+    target=editpaste.png
 link path=usr/share/icons/nimbus/16x16/actions/editpaste.png \
     target=edit-paste.png
 file path=usr/share/icons/nimbus/16x16/actions/execute.png
@@ -269,14 +157,22 @@ link path=usr/share/icons/nimbus/16x16/actions/gnome-stock-text-indent.png \
 link path=usr/share/icons/nimbus/16x16/actions/gnome-stock-text-unindent.png \
     target=format-indent-less.png
 file path=usr/share/icons/nimbus/16x16/actions/go-bottom.png
+link path=usr/share/icons/nimbus/16x16/actions/go-down-symbolic.png \
+    target=go-down.png
 file path=usr/share/icons/nimbus/16x16/actions/go-down.png
 file path=usr/share/icons/nimbus/16x16/actions/go-first.png
 file path=usr/share/icons/nimbus/16x16/actions/go-home.png
 file path=usr/share/icons/nimbus/16x16/actions/go-jump.png
 file path=usr/share/icons/nimbus/16x16/actions/go-last.png
+link path=usr/share/icons/nimbus/16x16/actions/go-next-symbolic.png \
+    target=go-next.png
 file path=usr/share/icons/nimbus/16x16/actions/go-next.png
+link path=usr/share/icons/nimbus/16x16/actions/go-previous-symbolic.png \
+    target=go-previous.png
 file path=usr/share/icons/nimbus/16x16/actions/go-previous.png
 file path=usr/share/icons/nimbus/16x16/actions/go-top.png
+link path=usr/share/icons/nimbus/16x16/actions/go-up-symbolic.png \
+    target=go-up.png
 file path=usr/share/icons/nimbus/16x16/actions/go-up.png
 link path=usr/share/icons/nimbus/16x16/actions/gohome.png target=go-home.png
 link path=usr/share/icons/nimbus/16x16/actions/gtk-about.png \
@@ -403,6 +299,11 @@ file path=usr/share/icons/nimbus/16x16/actions/list-add.png
 file path=usr/share/icons/nimbus/16x16/actions/list-remove.png
 file path=usr/share/icons/nimbus/16x16/actions/network.png
 link path=usr/share/icons/nimbus/16x16/actions/next.png target=go-next.png
+file path=usr/share/icons/nimbus/16x16/actions/pan-down-symbolic.png
+file path=usr/share/icons/nimbus/16x16/actions/pan-end-symbolic-rtl.png
+file path=usr/share/icons/nimbus/16x16/actions/pan-end-symbolic.png
+file path=usr/share/icons/nimbus/16x16/actions/pan-start-symbolic.png
+file path=usr/share/icons/nimbus/16x16/actions/pan-up-symbolic.png
 file path=usr/share/icons/nimbus/16x16/actions/preferences.png
 link path=usr/share/icons/nimbus/16x16/actions/previous.png \
     target=go-previous.png
@@ -658,6 +559,8 @@ link path=usr/share/icons/nimbus/16x16/categories/xfce-office.png \
 link path=usr/share/icons/nimbus/16x16/devices/3floppy_unmount.png \
     target=media-floppy.png
 file path=usr/share/icons/nimbus/16x16/devices/audio-card.png
+link path=usr/share/icons/nimbus/16x16/devices/drive-harddisk-symbolic.png \
+    target=drive-harddisk.png
 file path=usr/share/icons/nimbus/16x16/devices/drive-harddisk.png
 file path=usr/share/icons/nimbus/16x16/devices/drive-removable-media.png
 link path=usr/share/icons/nimbus/16x16/devices/gnome-dev-cdrom.png \
@@ -1041,16 +944,32 @@ file path=usr/share/icons/nimbus/16x16/mimetypes/x-office-document.png
 file path=usr/share/icons/nimbus/16x16/mimetypes/x-office-presentation.png
 file path=usr/share/icons/nimbus/16x16/mimetypes/x-office-spreadsheet.png
 file path=usr/share/icons/nimbus/16x16/places/application-x-executable.png
+link \
+    path=usr/share/icons/nimbus/16x16/places/application-x-gnome-saved-search.png \
+    target=folder-saved-search.png
 file path=usr/share/icons/nimbus/16x16/places/bookmark-missing.png
 file path=usr/share/icons/nimbus/16x16/places/bookmark.png
 link path=usr/share/icons/nimbus/16x16/places/desktop.png \
     target=user-desktop.png
+link path=usr/share/icons/nimbus/16x16/places/edittrash-symbolic.png \
+    target=user-trash-full.png
 link path=usr/share/icons/nimbus/16x16/places/edittrash.png \
     target=user-trash-full.png
 link path=usr/share/icons/nimbus/16x16/places/emptytrash.png \
     target=user-trash.png
 file path=usr/share/icons/nimbus/16x16/places/file.png
+file path=usr/share/icons/nimbus/16x16/places/folder-documents.png
+file path=usr/share/icons/nimbus/16x16/places/folder-download.png
 file path=usr/share/icons/nimbus/16x16/places/folder-drag-accept.png
+file path=usr/share/icons/nimbus/16x16/places/folder-music.png
+file path=usr/share/icons/nimbus/16x16/places/folder-pictures.png
+file path=usr/share/icons/nimbus/16x16/places/folder-publicshare.png
+file path=usr/share/icons/nimbus/16x16/places/folder-remote.png
+file path=usr/share/icons/nimbus/16x16/places/folder-saved-search.png
+link path=usr/share/icons/nimbus/16x16/places/folder-symbolic.png \
+    target=folder.png
+file path=usr/share/icons/nimbus/16x16/places/folder-templates.png
+file path=usr/share/icons/nimbus/16x16/places/folder-videos.png
 file path=usr/share/icons/nimbus/16x16/places/folder.png
 link path=usr/share/icons/nimbus/16x16/places/folder_home.png \
     target=user-home.png
@@ -1062,13 +981,21 @@ link path=usr/share/icons/nimbus/16x16/places/gnome-fs-directory-accept.png \
     target=folder-drag-accept.png
 link path=usr/share/icons/nimbus/16x16/places/gnome-fs-directory.png \
     target=folder.png
+link path=usr/share/icons/nimbus/16x16/places/gnome-fs-ftp.png \
+    target=folder-remote.png
 link path=usr/share/icons/nimbus/16x16/places/gnome-fs-home.png \
     target=user-home.png
 link path=usr/share/icons/nimbus/16x16/places/gnome-fs-network.png \
     target=network-workgroup.png
+link path=usr/share/icons/nimbus/16x16/places/gnome-fs-nfs.png \
+    target=folder-remote.png
 link path=usr/share/icons/nimbus/16x16/places/gnome-fs-server.png \
     target=network-server.png
 file path=usr/share/icons/nimbus/16x16/places/gnome-fs-share.png
+link path=usr/share/icons/nimbus/16x16/places/gnome-fs-smb.png \
+    target=folder-remote.png
+link path=usr/share/icons/nimbus/16x16/places/gnome-fs-ssh.png \
+    target=folder-remote.png
 link path=usr/share/icons/nimbus/16x16/places/gnome-fs-trash-empty.png \
     target=user-trash.png
 link path=usr/share/icons/nimbus/16x16/places/gnome-fs-trash-full.png \
@@ -1079,6 +1006,9 @@ link \
 link \
     path=usr/share/icons/nimbus/16x16/places/gnome-mime-x-directory-smb-server.png \
     target=network-server.png
+link \
+    path=usr/share/icons/nimbus/16x16/places/gnome-mime-x-directory-smb-share.png \
+    target=folder-remote.png
 link \
     path=usr/share/icons/nimbus/16x16/places/gnome-mime-x-directory-smb-workgroup.png \
     target=network-workgroup.png
@@ -1092,8 +1022,14 @@ link path=usr/share/icons/nimbus/16x16/places/gtk-network.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/16x16/places/inode-directory.png \
     target=folder.png
+link path=usr/share/icons/nimbus/16x16/places/network-server-symbolic.png \
+    target=network-server.png
 file path=usr/share/icons/nimbus/16x16/places/network-server.png
+link path=usr/share/icons/nimbus/16x16/places/network-workgroup-symbolic.png \
+    target=network-workgroup.png
 file path=usr/share/icons/nimbus/16x16/places/network-workgroup.png
+link path=usr/share/icons/nimbus/16x16/places/network.png \
+    target=folder-remote.png
 link path=usr/share/icons/nimbus/16x16/places/network_local.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/16x16/places/redhat-network-server.png \
@@ -1110,9 +1046,17 @@ link path=usr/share/icons/nimbus/16x16/places/trashcan_empty.png \
     target=user-trash.png
 link path=usr/share/icons/nimbus/16x16/places/trashcan_full.png \
     target=user-trash-full.png
+link path=usr/share/icons/nimbus/16x16/places/user-desktop-symbolic.png \
+    target=user-desktop.png
 file path=usr/share/icons/nimbus/16x16/places/user-desktop.png
+link path=usr/share/icons/nimbus/16x16/places/user-home-symbolic.png \
+    target=user-home.png
 file path=usr/share/icons/nimbus/16x16/places/user-home.png
+link path=usr/share/icons/nimbus/16x16/places/user-trash-full-symbolic.png \
+    target=user-trash-full.png
 file path=usr/share/icons/nimbus/16x16/places/user-trash-full.png
+link path=usr/share/icons/nimbus/16x16/places/user-trash-symbolic.png \
+    target=user-trash.png
 file path=usr/share/icons/nimbus/16x16/places/user-trash.png
 file path=usr/share/icons/nimbus/16x16/places/web.png
 link path=usr/share/icons/nimbus/16x16/places/xfce-trash_empty.png \
@@ -1133,6 +1077,9 @@ link path=usr/share/icons/nimbus/16x16/status/gtk-dialog-info.png \
     target=dialog-information.png
 link path=usr/share/icons/nimbus/16x16/status/gtk-dialog-warning.png \
     target=dialog-warning.png
+link path=usr/share/icons/nimbus/16x16/status/gtk-missing-image.png \
+    target=image-missing.png
+file path=usr/share/icons/nimbus/16x16/status/image-missing.png
 link path=usr/share/icons/nimbus/16x16/status/important.png \
     target=dialog-warning.png
 link path=usr/share/icons/nimbus/16x16/status/info.png \
@@ -1188,22 +1135,49 @@ file path=usr/share/icons/nimbus/24x24/actions/document-properties.png
 file path=usr/share/icons/nimbus/24x24/actions/document-save-as.png
 file path=usr/share/icons/nimbus/24x24/actions/document-save.png
 link path=usr/share/icons/nimbus/24x24/actions/down.png target=go-down.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-copy-symbolic.png \
+    target=edit-copy.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-copy.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-cut-symbolic.png \
+    target=edit-cut.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-cut.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-delete-symbolic.png \
+    target=edit-delete.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-delete.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-find-replace-symbolic.png \
+    target=edit-find-replace.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-find-replace.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-find-symbolic.png \
+    target=edit-find.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-find.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-font-symbolic.png \
+    target=edit-font.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-font.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-paste-symbolic.png \
+    target=edit-paste.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-paste.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-redo-symbolic.png \
+    target=edit-redo.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-redo.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-revert-symbolic.png \
+    target=edit-revert.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-revert.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-symbolic.png target=edit.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-undelete-symbolic.png \
+    target=edit-undelete.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-undelete.png
+link path=usr/share/icons/nimbus/24x24/actions/edit-undo-symbolic.png \
+    target=edit-undo.png
 file path=usr/share/icons/nimbus/24x24/actions/edit-undo.png
 file path=usr/share/icons/nimbus/24x24/actions/edit.png
 link path=usr/share/icons/nimbus/24x24/actions/editcopy.png target=edit-copy.png
 link path=usr/share/icons/nimbus/24x24/actions/editcut.png target=edit-cut.png
+link path=usr/share/icons/nimbus/24x24/actions/editdelete-symbolic.png \
+    target=editdelete.png
 link path=usr/share/icons/nimbus/24x24/actions/editdelete.png \
     target=edit-delete.png
+link path=usr/share/icons/nimbus/24x24/actions/editpaste-symbolic.png \
+    target=editpaste.png
 link path=usr/share/icons/nimbus/24x24/actions/editpaste.png \
     target=edit-paste.png
 file path=usr/share/icons/nimbus/24x24/actions/execute.png
@@ -1245,14 +1219,22 @@ link path=usr/share/icons/nimbus/24x24/actions/gnome-stock-text-indent.png \
 link path=usr/share/icons/nimbus/24x24/actions/gnome-stock-text-unindent.png \
     target=format-indent-less.png
 file path=usr/share/icons/nimbus/24x24/actions/go-bottom.png
+link path=usr/share/icons/nimbus/24x24/actions/go-down-symbolic.png \
+    target=go-down.png
 file path=usr/share/icons/nimbus/24x24/actions/go-down.png
 file path=usr/share/icons/nimbus/24x24/actions/go-first.png
 file path=usr/share/icons/nimbus/24x24/actions/go-home.png
 file path=usr/share/icons/nimbus/24x24/actions/go-jump.png
 file path=usr/share/icons/nimbus/24x24/actions/go-last.png
+link path=usr/share/icons/nimbus/24x24/actions/go-next-symbolic.png \
+    target=go-next.png
 file path=usr/share/icons/nimbus/24x24/actions/go-next.png
+link path=usr/share/icons/nimbus/24x24/actions/go-previous-symbolic.png \
+    target=go-previous.png
 file path=usr/share/icons/nimbus/24x24/actions/go-previous.png
 file path=usr/share/icons/nimbus/24x24/actions/go-top.png
+link path=usr/share/icons/nimbus/24x24/actions/go-up-symbolic.png \
+    target=go-up.png
 file path=usr/share/icons/nimbus/24x24/actions/go-up.png
 link path=usr/share/icons/nimbus/24x24/actions/gohome.png target=go-home.png
 link path=usr/share/icons/nimbus/24x24/actions/gtk-about.png \
@@ -1411,6 +1393,11 @@ file path=usr/share/icons/nimbus/24x24/actions/media-skip-backward.png
 file path=usr/share/icons/nimbus/24x24/actions/media-skip-forward.png
 file path=usr/share/icons/nimbus/24x24/actions/network.png
 link path=usr/share/icons/nimbus/24x24/actions/next.png target=go-next.png
+file path=usr/share/icons/nimbus/24x24/actions/pan-down-symbolic.png
+file path=usr/share/icons/nimbus/24x24/actions/pan-end-symbolic-rtl.png
+file path=usr/share/icons/nimbus/24x24/actions/pan-end-symbolic.png
+file path=usr/share/icons/nimbus/24x24/actions/pan-start-symbolic.png
+file path=usr/share/icons/nimbus/24x24/actions/pan-up-symbolic.png
 link path=usr/share/icons/nimbus/24x24/actions/player_eject.png \
     target=media-eject.png
 link path=usr/share/icons/nimbus/24x24/actions/player_end.png \
@@ -1804,6 +1791,8 @@ link path=usr/share/icons/nimbus/24x24/devices/3floppy_unmount.png \
 file path=usr/share/icons/nimbus/24x24/devices/audio-card.png
 file path=usr/share/icons/nimbus/24x24/devices/battery.png
 file path=usr/share/icons/nimbus/24x24/devices/computer.png
+link path=usr/share/icons/nimbus/24x24/devices/drive-harddisk-symbolic.png \
+    target=drive-harddisk.png
 file path=usr/share/icons/nimbus/24x24/devices/drive-harddisk.png
 file path=usr/share/icons/nimbus/24x24/devices/drive-removable-media.png
 link path=usr/share/icons/nimbus/24x24/devices/gnome-dev-battery.png \
@@ -1950,6 +1939,9 @@ link path=usr/share/icons/nimbus/24x24/mimetypes/txt2.png \
 link path=usr/share/icons/nimbus/24x24/mimetypes/unknown.png \
     target=text-x-generic.png
 file path=usr/share/icons/nimbus/24x24/places/application-x-executable.png
+link \
+    path=usr/share/icons/nimbus/24x24/places/application-x-gnome-saved-search.png \
+    target=folder-saved-search.png
 file path=usr/share/icons/nimbus/24x24/places/blockdev.png
 file path=usr/share/icons/nimbus/24x24/places/bookmark-missing.png
 file path=usr/share/icons/nimbus/24x24/places/bookmark.png
@@ -1957,12 +1949,25 @@ link path=usr/share/icons/nimbus/24x24/places/desktop.png \
     target=user-desktop.png
 link path=usr/share/icons/nimbus/24x24/places/distributor-logo.png \
     target=start-here.png
+link path=usr/share/icons/nimbus/24x24/places/edittrash-symbolic.png \
+    target=user-trash-full.png
 link path=usr/share/icons/nimbus/24x24/places/edittrash.png \
     target=user-trash-full.png
 link path=usr/share/icons/nimbus/24x24/places/emptytrash.png \
     target=user-trash.png
 file path=usr/share/icons/nimbus/24x24/places/file.png
+file path=usr/share/icons/nimbus/24x24/places/folder-documents.png
+file path=usr/share/icons/nimbus/24x24/places/folder-download.png
 file path=usr/share/icons/nimbus/24x24/places/folder-drag-accept.png
+file path=usr/share/icons/nimbus/24x24/places/folder-music.png
+file path=usr/share/icons/nimbus/24x24/places/folder-pictures.png
+file path=usr/share/icons/nimbus/24x24/places/folder-publicshare.png
+file path=usr/share/icons/nimbus/24x24/places/folder-remote.png
+file path=usr/share/icons/nimbus/24x24/places/folder-saved-search.png
+link path=usr/share/icons/nimbus/24x24/places/folder-symbolic.png \
+    target=folder.png
+file path=usr/share/icons/nimbus/24x24/places/folder-templates.png
+file path=usr/share/icons/nimbus/24x24/places/folder-videos.png
 file path=usr/share/icons/nimbus/24x24/places/folder.png
 link path=usr/share/icons/nimbus/24x24/places/folder_home.png \
     target=user-home.png
@@ -1998,6 +2003,9 @@ link \
     path=usr/share/icons/nimbus/24x24/places/gnome-mime-x-directory-smb-server.png \
     target=network-server.png
 link \
+    path=usr/share/icons/nimbus/24x24/places/gnome-mime-x-directory-smb-share.png \
+    target=folder-remote.png
+link \
     path=usr/share/icons/nimbus/24x24/places/gnome-mime-x-directory-smb-workgroup.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/24x24/places/gnome-stock-trash-full.png \
@@ -2010,8 +2018,14 @@ link path=usr/share/icons/nimbus/24x24/places/gtk-network.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/24x24/places/inode-directory.png \
     target=folder.png
+link path=usr/share/icons/nimbus/24x24/places/network-server-symbolic.png \
+    target=network-server.png
 file path=usr/share/icons/nimbus/24x24/places/network-server.png
+link path=usr/share/icons/nimbus/24x24/places/network-workgroup-symbolic.png \
+    target=network-workgroup.png
 file path=usr/share/icons/nimbus/24x24/places/network-workgroup.png
+link path=usr/share/icons/nimbus/24x24/places/network.png \
+    target=folder-remote.png
 link path=usr/share/icons/nimbus/24x24/places/network_local.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/24x24/places/novell-button.png \
@@ -2038,9 +2052,17 @@ link path=usr/share/icons/nimbus/24x24/places/trashcan_empty.png \
     target=user-trash.png
 link path=usr/share/icons/nimbus/24x24/places/trashcan_full.png \
     target=user-trash-full.png
+link path=usr/share/icons/nimbus/24x24/places/user-desktop-symbolic.png \
+    target=user-desktop.png
 file path=usr/share/icons/nimbus/24x24/places/user-desktop.png
+link path=usr/share/icons/nimbus/24x24/places/user-home-symbolic.png \
+    target=user-home.png
 file path=usr/share/icons/nimbus/24x24/places/user-home.png
+link path=usr/share/icons/nimbus/24x24/places/user-trash-full-symbolic.png \
+    target=user-trash-full.png
 file path=usr/share/icons/nimbus/24x24/places/user-trash-full.png
+link path=usr/share/icons/nimbus/24x24/places/user-trash-symbolic.png \
+    target=user-trash.png
 file path=usr/share/icons/nimbus/24x24/places/user-trash.png
 file path=usr/share/icons/nimbus/24x24/places/web.png
 link path=usr/share/icons/nimbus/24x24/places/xfce-trash_empty.png \
@@ -2090,6 +2112,9 @@ link path=usr/share/icons/nimbus/24x24/status/gtk-dialog-question.png \
     target=dialog-question.png
 link path=usr/share/icons/nimbus/24x24/status/gtk-dialog-warning.png \
     target=dialog-warning.png
+link path=usr/share/icons/nimbus/24x24/status/gtk-missing-image.png \
+    target=image-missing.png
+file path=usr/share/icons/nimbus/24x24/status/image-missing.png
 link path=usr/share/icons/nimbus/24x24/status/important.png \
     target=dialog-warning.png
 link path=usr/share/icons/nimbus/24x24/status/info.png \
@@ -2705,16 +2730,32 @@ link path=usr/share/icons/nimbus/32x32/mimetypes/www.png target=text-html.png
 file path=usr/share/icons/nimbus/32x32/mimetypes/x-office-document.png
 file path=usr/share/icons/nimbus/32x32/mimetypes/x-office-presentation.png
 file path=usr/share/icons/nimbus/32x32/mimetypes/x-office-spreadsheet.png
+link \
+    path=usr/share/icons/nimbus/32x32/places/application-x-gnome-saved-search.png \
+    target=folder-saved-search.png
 file path=usr/share/icons/nimbus/32x32/places/bookmark-missing.png
 file path=usr/share/icons/nimbus/32x32/places/bookmark.png
 link path=usr/share/icons/nimbus/32x32/places/distributor-logo.png \
     target=start-here.png
+link path=usr/share/icons/nimbus/32x32/places/edittrash-symbolic.png \
+    target=user-trash-full.png
 link path=usr/share/icons/nimbus/32x32/places/edittrash.png \
     target=user-trash-full.png
 link path=usr/share/icons/nimbus/32x32/places/emptytrash.png \
     target=user-trash.png
 file path=usr/share/icons/nimbus/32x32/places/file.png
+file path=usr/share/icons/nimbus/32x32/places/folder-documents.png
+file path=usr/share/icons/nimbus/32x32/places/folder-download.png
 file path=usr/share/icons/nimbus/32x32/places/folder-drag-accept.png
+file path=usr/share/icons/nimbus/32x32/places/folder-music.png
+file path=usr/share/icons/nimbus/32x32/places/folder-pictures.png
+file path=usr/share/icons/nimbus/32x32/places/folder-publicshare.png
+file path=usr/share/icons/nimbus/32x32/places/folder-remote.png
+file path=usr/share/icons/nimbus/32x32/places/folder-saved-search.png
+link path=usr/share/icons/nimbus/32x32/places/folder-symbolic.png \
+    target=folder.png
+file path=usr/share/icons/nimbus/32x32/places/folder-templates.png
+file path=usr/share/icons/nimbus/32x32/places/folder-videos.png
 file path=usr/share/icons/nimbus/32x32/places/folder.png
 link path=usr/share/icons/nimbus/32x32/places/folder_open.png \
     target=folder-drag-accept.png
@@ -2736,6 +2777,9 @@ link path=usr/share/icons/nimbus/32x32/places/gnome-fs-trash-full.png \
 link path=usr/share/icons/nimbus/32x32/places/gnome-main-menu.png \
     target=start-here.png
 link \
+    path=usr/share/icons/nimbus/32x32/places/gnome-mime-x-directory-smb-share.png \
+    target=folder-remote.png
+link \
     path=usr/share/icons/nimbus/32x32/places/gnome-mime-x-directory-smb-workgroup.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/32x32/places/gnome-stock-trash-full.png \
@@ -2748,7 +2792,11 @@ link path=usr/share/icons/nimbus/32x32/places/gtk-network.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/32x32/places/inode-directory.png \
     target=folder.png
+link path=usr/share/icons/nimbus/32x32/places/network-workgroup-symbolic.png \
+    target=network-workgroup.png
 file path=usr/share/icons/nimbus/32x32/places/network-workgroup.png
+link path=usr/share/icons/nimbus/32x32/places/network.png \
+    target=folder-remote.png
 link path=usr/share/icons/nimbus/32x32/places/network_local.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/32x32/places/novell-button.png \
@@ -2764,7 +2812,11 @@ link path=usr/share/icons/nimbus/32x32/places/trashcan_empty.png \
     target=user-trash.png
 link path=usr/share/icons/nimbus/32x32/places/trashcan_full.png \
     target=user-trash-full.png
+link path=usr/share/icons/nimbus/32x32/places/user-trash-full-symbolic.png \
+    target=user-trash-full.png
 file path=usr/share/icons/nimbus/32x32/places/user-trash-full.png
+link path=usr/share/icons/nimbus/32x32/places/user-trash-symbolic.png \
+    target=user-trash.png
 file path=usr/share/icons/nimbus/32x32/places/user-trash.png
 file path=usr/share/icons/nimbus/32x32/places/web.png
 link path=usr/share/icons/nimbus/32x32/places/xfce-trash_empty.png \
@@ -2803,6 +2855,9 @@ link path=usr/share/icons/nimbus/32x32/status/gtk-dialog-info.png \
     target=dialog-information.png
 link path=usr/share/icons/nimbus/32x32/status/gtk-dialog-warning.png \
     target=dialog-warning.png
+link path=usr/share/icons/nimbus/32x32/status/gtk-missing-image.png \
+    target=image-missing.png
+file path=usr/share/icons/nimbus/32x32/status/image-missing.png
 link path=usr/share/icons/nimbus/32x32/status/important.png \
     target=dialog-warning.png
 link path=usr/share/icons/nimbus/32x32/status/info.png \
@@ -2839,6 +2894,7 @@ link path=usr/share/icons/nimbus/32x32/status/stock_dialog-info.png \
 link path=usr/share/icons/nimbus/32x32/status/stock_dialog-warning.png \
     target=dialog-warning.png
 file path=usr/share/icons/nimbus/36x36/actions/document-new.png
+link path=usr/share/icons/nimbus/36x36/actions/edit-symbolic.png target=edit.png
 file path=usr/share/icons/nimbus/36x36/actions/edit.png
 link path=usr/share/icons/nimbus/36x36/actions/filenew.png \
     target=document-new.png
@@ -2936,12 +2992,16 @@ link path=usr/share/icons/nimbus/36x36/mimetypes/unknown.png \
     target=text-x-generic.png
 link path=usr/share/icons/nimbus/36x36/places/desktop.png \
     target=user-desktop.png
+link path=usr/share/icons/nimbus/36x36/places/edittrash-symbolic.png \
+    target=user-trash-full.png
 link path=usr/share/icons/nimbus/36x36/places/edittrash.png \
     target=user-trash-full.png
 link path=usr/share/icons/nimbus/36x36/places/emptytrash.png \
     target=user-trash.png
 file path=usr/share/icons/nimbus/36x36/places/file.png
 file path=usr/share/icons/nimbus/36x36/places/folder-drag-accept.png
+link path=usr/share/icons/nimbus/36x36/places/folder-symbolic.png \
+    target=folder.png
 file path=usr/share/icons/nimbus/36x36/places/folder.png
 link path=usr/share/icons/nimbus/36x36/places/folder_home.png \
     target=user-home.png
@@ -2980,6 +3040,8 @@ link path=usr/share/icons/nimbus/36x36/places/gtk-directory.png \
     target=folder.png
 link path=usr/share/icons/nimbus/36x36/places/inode-directory.png \
     target=folder.png
+link path=usr/share/icons/nimbus/36x36/places/network-server-symbolic.png \
+    target=network-server.png
 file path=usr/share/icons/nimbus/36x36/places/network-server.png
 link path=usr/share/icons/nimbus/36x36/places/redhat-network-server.png \
     target=network-server.png
@@ -2994,13 +3056,22 @@ link path=usr/share/icons/nimbus/36x36/places/trashcan_empty.png \
     target=user-trash.png
 link path=usr/share/icons/nimbus/36x36/places/trashcan_full.png \
     target=user-trash-full.png
+link path=usr/share/icons/nimbus/36x36/places/user-desktop-symbolic.png \
+    target=user-desktop.png
 file path=usr/share/icons/nimbus/36x36/places/user-desktop.png
+link path=usr/share/icons/nimbus/36x36/places/user-home-symbolic.png \
+    target=user-home.png
 file path=usr/share/icons/nimbus/36x36/places/user-home.png
+link path=usr/share/icons/nimbus/36x36/places/user-trash-full-symbolic.png \
+    target=user-trash-full.png
 file path=usr/share/icons/nimbus/36x36/places/user-trash-full.png
+link path=usr/share/icons/nimbus/36x36/places/user-trash-symbolic.png \
+    target=user-trash.png
 file path=usr/share/icons/nimbus/36x36/places/user-trash.png
 link path=usr/share/icons/nimbus/36x36/places/xfce-trash_empty.png \
     target=user-trash.png
 file path=usr/share/icons/nimbus/48x48/actions/document-print.png
+link path=usr/share/icons/nimbus/48x48/actions/edit-symbolic.png target=edit.png
 file path=usr/share/icons/nimbus/48x48/actions/edit.png
 link path=usr/share/icons/nimbus/48x48/actions/fileprint.png \
     target=document-print.png
@@ -3019,6 +3090,11 @@ link path=usr/share/icons/nimbus/48x48/actions/kcontrol.png \
     target=preferences.png
 link path=usr/share/icons/nimbus/48x48/actions/kfm_home.png target=go-home.png
 file path=usr/share/icons/nimbus/48x48/actions/network.png
+file path=usr/share/icons/nimbus/48x48/actions/pan-down-symbolic.png
+file path=usr/share/icons/nimbus/48x48/actions/pan-end-symbolic-rtl.png
+file path=usr/share/icons/nimbus/48x48/actions/pan-end-symbolic.png
+file path=usr/share/icons/nimbus/48x48/actions/pan-start-symbolic.png
+file path=usr/share/icons/nimbus/48x48/actions/pan-up-symbolic.png
 file path=usr/share/icons/nimbus/48x48/actions/preferences.png
 link path=usr/share/icons/nimbus/48x48/actions/redhat-home.png \
     target=go-home.png
@@ -3332,6 +3408,8 @@ link path=usr/share/icons/nimbus/48x48/devices/3floppy_unmount.png \
 file path=usr/share/icons/nimbus/48x48/devices/audio-card.png
 file path=usr/share/icons/nimbus/48x48/devices/battery.png
 file path=usr/share/icons/nimbus/48x48/devices/computer.png
+link path=usr/share/icons/nimbus/48x48/devices/drive-harddisk-symbolic.png \
+    target=drive-harddisk.png
 file path=usr/share/icons/nimbus/48x48/devices/drive-harddisk.png
 file path=usr/share/icons/nimbus/48x48/devices/drive-removable-media.png
 link path=usr/share/icons/nimbus/48x48/devices/gnome-dev-battery.png \
@@ -3749,6 +3827,9 @@ file path=usr/share/icons/nimbus/48x48/mimetypes/x-office-document.png
 file path=usr/share/icons/nimbus/48x48/mimetypes/x-office-presentation.png
 file path=usr/share/icons/nimbus/48x48/mimetypes/x-office-spreadsheet.png
 file path=usr/share/icons/nimbus/48x48/places/application-x-executable.png
+link \
+    path=usr/share/icons/nimbus/48x48/places/application-x-gnome-saved-search.png \
+    target=folder-saved-search.png
 file path=usr/share/icons/nimbus/48x48/places/blockdev.png
 file path=usr/share/icons/nimbus/48x48/places/bookmark-missing.png
 file path=usr/share/icons/nimbus/48x48/places/bookmark.png
@@ -3756,12 +3837,25 @@ link path=usr/share/icons/nimbus/48x48/places/desktop.png \
     target=user-desktop.png
 link path=usr/share/icons/nimbus/48x48/places/distributor-logo.png \
     target=start-here.png
+link path=usr/share/icons/nimbus/48x48/places/edittrash-symbolic.png \
+    target=user-trash-full.png
 link path=usr/share/icons/nimbus/48x48/places/edittrash.png \
     target=user-trash-full.png
 link path=usr/share/icons/nimbus/48x48/places/emptytrash.png \
     target=user-trash.png
 file path=usr/share/icons/nimbus/48x48/places/file.png
+file path=usr/share/icons/nimbus/48x48/places/folder-documents.png
+file path=usr/share/icons/nimbus/48x48/places/folder-download.png
 file path=usr/share/icons/nimbus/48x48/places/folder-drag-accept.png
+file path=usr/share/icons/nimbus/48x48/places/folder-music.png
+file path=usr/share/icons/nimbus/48x48/places/folder-pictures.png
+file path=usr/share/icons/nimbus/48x48/places/folder-publicshare.png
+file path=usr/share/icons/nimbus/48x48/places/folder-remote.png
+file path=usr/share/icons/nimbus/48x48/places/folder-saved-search.png
+link path=usr/share/icons/nimbus/48x48/places/folder-symbolic.png \
+    target=folder.png
+file path=usr/share/icons/nimbus/48x48/places/folder-templates.png
+file path=usr/share/icons/nimbus/48x48/places/folder-videos.png
 file path=usr/share/icons/nimbus/48x48/places/folder.png
 link path=usr/share/icons/nimbus/48x48/places/folder_home.png \
     target=user-home.png
@@ -3797,6 +3891,9 @@ link \
     path=usr/share/icons/nimbus/48x48/places/gnome-mime-x-directory-smb-server.png \
     target=network-server.png
 link \
+    path=usr/share/icons/nimbus/48x48/places/gnome-mime-x-directory-smb-share.png \
+    target=folder-remote.png
+link \
     path=usr/share/icons/nimbus/48x48/places/gnome-mime-x-directory-smb-workgroup.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/48x48/places/gnome-stock-trash-full.png \
@@ -3809,8 +3906,14 @@ link path=usr/share/icons/nimbus/48x48/places/gtk-network.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/48x48/places/inode-directory.png \
     target=folder.png
+link path=usr/share/icons/nimbus/48x48/places/network-server-symbolic.png \
+    target=network-server.png
 file path=usr/share/icons/nimbus/48x48/places/network-server.png
+link path=usr/share/icons/nimbus/48x48/places/network-workgroup-symbolic.png \
+    target=network-workgroup.png
 file path=usr/share/icons/nimbus/48x48/places/network-workgroup.png
+link path=usr/share/icons/nimbus/48x48/places/network.png \
+    target=folder-remote.png
 link path=usr/share/icons/nimbus/48x48/places/network_local.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/48x48/places/novell-button.png \
@@ -3830,9 +3933,17 @@ link path=usr/share/icons/nimbus/48x48/places/trashcan_empty.png \
     target=user-trash.png
 link path=usr/share/icons/nimbus/48x48/places/trashcan_full.png \
     target=user-trash-full.png
+link path=usr/share/icons/nimbus/48x48/places/user-desktop-symbolic.png \
+    target=user-desktop.png
 file path=usr/share/icons/nimbus/48x48/places/user-desktop.png
+link path=usr/share/icons/nimbus/48x48/places/user-home-symbolic.png \
+    target=user-home.png
 file path=usr/share/icons/nimbus/48x48/places/user-home.png
+link path=usr/share/icons/nimbus/48x48/places/user-trash-full-symbolic.png \
+    target=user-trash-full.png
 file path=usr/share/icons/nimbus/48x48/places/user-trash-full.png
+link path=usr/share/icons/nimbus/48x48/places/user-trash-symbolic.png \
+    target=user-trash.png
 file path=usr/share/icons/nimbus/48x48/places/user-trash.png
 file path=usr/share/icons/nimbus/48x48/places/web.png
 link path=usr/share/icons/nimbus/48x48/places/xfce-trash_empty.png \
@@ -3859,6 +3970,9 @@ link path=usr/share/icons/nimbus/48x48/status/gtk-dialog-question.png \
     target=dialog-question.png
 link path=usr/share/icons/nimbus/48x48/status/gtk-dialog-warning.png \
     target=dialog-warning.png
+link path=usr/share/icons/nimbus/48x48/status/gtk-missing-image.png \
+    target=image-missing.png
+file path=usr/share/icons/nimbus/48x48/status/image-missing.png
 link path=usr/share/icons/nimbus/48x48/status/important.png \
     target=dialog-warning.png
 link path=usr/share/icons/nimbus/48x48/status/info.png \
@@ -4206,12 +4320,16 @@ file path=usr/share/icons/nimbus/72x72/mimetypes/x-office-presentation.png
 file path=usr/share/icons/nimbus/72x72/mimetypes/x-office-spreadsheet.png
 link path=usr/share/icons/nimbus/72x72/places/desktop.png \
     target=user-desktop.png
+link path=usr/share/icons/nimbus/72x72/places/edittrash-symbolic.png \
+    target=user-trash-full.png
 link path=usr/share/icons/nimbus/72x72/places/edittrash.png \
     target=user-trash-full.png
 link path=usr/share/icons/nimbus/72x72/places/emptytrash.png \
     target=user-trash.png
 file path=usr/share/icons/nimbus/72x72/places/file.png
 file path=usr/share/icons/nimbus/72x72/places/folder-drag-accept.png
+link path=usr/share/icons/nimbus/72x72/places/folder-symbolic.png \
+    target=folder.png
 file path=usr/share/icons/nimbus/72x72/places/folder.png
 link path=usr/share/icons/nimbus/72x72/places/folder_open.png \
     target=folder-drag-accept.png
@@ -4253,7 +4371,11 @@ link path=usr/share/icons/nimbus/72x72/places/gtk-network.png \
     target=network-workgroup.png
 link path=usr/share/icons/nimbus/72x72/places/inode-directory.png \
     target=folder.png
+link path=usr/share/icons/nimbus/72x72/places/network-server-symbolic.png \
+    target=network-server.png
 file path=usr/share/icons/nimbus/72x72/places/network-server.png
+link path=usr/share/icons/nimbus/72x72/places/network-workgroup-symbolic.png \
+    target=network-workgroup.png
 file path=usr/share/icons/nimbus/72x72/places/network-workgroup.png
 link path=usr/share/icons/nimbus/72x72/places/network_local.png \
     target=network-workgroup.png
@@ -4271,8 +4393,14 @@ link path=usr/share/icons/nimbus/72x72/places/trashcan_empty.png \
     target=user-trash.png
 link path=usr/share/icons/nimbus/72x72/places/trashcan_full.png \
     target=user-trash-full.png
+link path=usr/share/icons/nimbus/72x72/places/user-desktop-symbolic.png \
+    target=user-desktop.png
 file path=usr/share/icons/nimbus/72x72/places/user-desktop.png
+link path=usr/share/icons/nimbus/72x72/places/user-trash-full-symbolic.png \
+    target=user-trash-full.png
 file path=usr/share/icons/nimbus/72x72/places/user-trash-full.png
+link path=usr/share/icons/nimbus/72x72/places/user-trash-symbolic.png \
+    target=user-trash.png
 file path=usr/share/icons/nimbus/72x72/places/user-trash.png
 file path=usr/share/icons/nimbus/72x72/places/web.png
 link path=usr/share/icons/nimbus/72x72/places/xfce-trash_empty.png \
@@ -4879,6 +5007,47 @@ file path=usr/share/themes/nimbus/gtk-2.0/zoom-best-fit.png
 file path=usr/share/themes/nimbus/gtk-2.0/zoom-in.png
 file path=usr/share/themes/nimbus/gtk-2.0/zoom-original.png
 file path=usr/share/themes/nimbus/gtk-2.0/zoom-out.png
+file path=usr/share/themes/nimbus/gtk-3.0/apps/budgie.css
+file path=usr/share/themes/nimbus/gtk-3.0/apps/desktop.css
+file path=usr/share/themes/nimbus/gtk-3.0/apps/gnome-flashback.css
+file path=usr/share/themes/nimbus/gtk-3.0/apps/gnome-terminal.css
+file path=usr/share/themes/nimbus/gtk-3.0/apps/libreoffice.css
+file path=usr/share/themes/nimbus/gtk-3.0/apps/mate.css
+file path=usr/share/themes/nimbus/gtk-3.0/apps/synaptic.css
+file path=usr/share/themes/nimbus/gtk-3.0/apps/unity.css
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-checked-active.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-checked-hover.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-checked-insensitive.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-checked.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-mixed-active.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-mixed-hover.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-mixed-insensitive.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-mixed-symbolic.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-mixed.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-unchecked-active.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-unchecked-hover.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-unchecked-insensitive.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/checkbox-unchecked.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-mixed-active.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-mixed-hover.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-mixed-insensitive.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-mixed-symbolic.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-mixed.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-selected-active.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-selected-hover.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-selected-insensitive.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-selected.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-unselected-active.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-unselected-hover.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-unselected-insensitive.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/radio-unselected.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/scrollbar-slider-horiz.png
+file path=usr/share/themes/nimbus/gtk-3.0/assets/scrollbar-slider.png
+file path=usr/share/themes/nimbus/gtk-3.0/gtk-widgets-assets.css
+file path=usr/share/themes/nimbus/gtk-3.0/gtk-widgets.css
+file path=usr/share/themes/nimbus/gtk-3.0/gtk.css
+file path=usr/share/themes/nimbus/gtk-3.0/settings.ini
+file path=usr/share/themes/nimbus/gtk-3.0/thumbnail.png
 file path=usr/share/themes/nimbus/index.theme
 file path=usr/share/themes/nimbus/light-index.theme
 file path=usr/share/themes/nimbus/metacity-1/button-close-icon-prelight.png
@@ -4902,250 +5071,3 @@ file path=usr/share/themes/nimbus/metacity-1/button-unmax-icon-pressed.png
 file path=usr/share/themes/nimbus/metacity-1/button-unmax-icon-unfocused.png
 file path=usr/share/themes/nimbus/metacity-1/button-unmax-icon.png
 file path=usr/share/themes/nimbus/metacity-1/metacity-theme-1.xml
-
-# GTK 3.0 theme
-
-link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/gnome-applications.css \
-    target=../../../nimbus/gtk-3.0/apps/gnome-applications.css
-link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/granite-widgets.css \
-    target=../../../nimbus/gtk-3.0/apps/granite-widgets.css
-link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/lightdm-gtk-greeter.css \
-    target=../../../nimbus/gtk-3.0/apps/lightdm-gtk-greeter.css
-link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/lightdm-unity-greeter.css \
-    target=../../../nimbus/gtk-3.0/apps/lightdm-unity-greeter.css
-link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/nautilus/button_normal.png \
-    target=../../../../nimbus/gtk-3.0/apps/nautilus/button_normal.png
-link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/nautilus/trans.png \
-    target=../../../../nimbus/gtk-3.0/apps/nautilus/trans.png
-file path=usr/share/themes/dark-nimbus/gtk-3.0/apps/unity.css
-file path=usr/share/themes/dark-nimbus/gtk-3.0/assets/button-active.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/button-default-active.png \
-    target=../../../nimbus/gtk-3.0/assets/button-default-active.png
-link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/button-default.png \
-    target=../../../nimbus/gtk-3.0/assets/button-default.png
-file path=usr/share/themes/dark-nimbus/gtk-3.0/assets/button-disabled.png
-file path=usr/share/themes/dark-nimbus/gtk-3.0/assets/button-hover.png
-file path=usr/share/themes/dark-nimbus/gtk-3.0/assets/button.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/checked-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/checked-hover.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/checked-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/checked-insensitive.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/checked.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/checked.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/unchecked-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-hover.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive-mixed.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/unchecked-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-mixed.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/check/unchecked.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/nautilus/button_normal.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/nautilus/button_normal.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/selected-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/selected-hover.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/selected-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/selected-insensitive.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/selected.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/selected.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/unselected-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-hover.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive-mixed.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/unselected-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-mixed.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/buttons/radio/unselected.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected.png
-link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/close-active.svg \
-    target=../../../nimbus/gtk-3.0/assets/close-active.svg
-link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/close-backdrop.svg \
-    target=../../../nimbus/gtk-3.0/assets/close-backdrop.svg
-link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/close-hover.svg \
-    target=../../../nimbus/gtk-3.0/assets/close-hover.svg
-link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/close.svg \
-    target=../../../nimbus/gtk-3.0/assets/close.svg
-link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/combobox-button.png \
-    target=../../../nimbus/gtk-3.0/assets/combobox-button.png
-file path=usr/share/themes/dark-nimbus/gtk-3.0/assets/resize-grip.png
-link \
-    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/scale-slider-insensitive.png \
-    target=../../../nimbus/gtk-3.0/assets/scale-slider-insensitive.png
-link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/scale-slider.png \
-    target=../../../nimbus/gtk-3.0/assets/scale-slider.png
-file path=usr/share/themes/dark-nimbus/gtk-3.0/gtk-main.css
-link path=usr/share/themes/dark-nimbus/gtk-3.0/gtk-widgets-assets.css \
-    target=../../nimbus/gtk-3.0/gtk-widgets-assets.css
-file path=usr/share/themes/dark-nimbus/gtk-3.0/gtk-widgets.css
-link path=usr/share/themes/dark-nimbus/gtk-3.0/gtk.css \
-    target=../../nimbus/gtk-3.0/gtk.css
-link path=usr/share/themes/dark-nimbus/gtk-3.0/settings.ini \
-    target=../../nimbus/gtk-3.0/settings.ini
-link path=usr/share/themes/light-nimbus/gtk-3.0/apps/gnome-applications.css \
-    target=../../../nimbus/gtk-3.0/apps/gnome-applications.css
-link path=usr/share/themes/light-nimbus/gtk-3.0/apps/granite-widgets.css \
-    target=../../../nimbus/gtk-3.0/apps/granite-widgets.css
-link path=usr/share/themes/light-nimbus/gtk-3.0/apps/lightdm-gtk-greeter.css \
-    target=../../../nimbus/gtk-3.0/apps/lightdm-gtk-greeter.css
-link path=usr/share/themes/light-nimbus/gtk-3.0/apps/lightdm-unity-greeter.css \
-    target=../../../nimbus/gtk-3.0/apps/lightdm-unity-greeter.css
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/apps/nautilus/button_normal.png \
-    target=../../../../nimbus/gtk-3.0/apps/nautilus/button_normal.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/apps/nautilus/trans.png \
-    target=../../../../nimbus/gtk-3.0/apps/nautilus/trans.png
-file path=usr/share/themes/light-nimbus/gtk-3.0/apps/unity.css
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/button-active.png \
-    target=../../../nimbus/gtk-3.0/assets/button-active.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/button-default-active.png \
-    target=../../../nimbus/gtk-3.0/assets/button-default-active.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/button-default.png \
-    target=../../../nimbus/gtk-3.0/assets/button-default.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/button-disabled.png \
-    target=../../../nimbus/gtk-3.0/assets/button-disabled.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/button-hover.png \
-    target=../../../nimbus/gtk-3.0/assets/button-hover.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/button.png \
-    target=../../../nimbus/gtk-3.0/assets/button.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/checked-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/checked-hover.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/checked-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/checked-insensitive.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/checked.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/checked.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/unchecked-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-hover.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive-mixed.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/unchecked-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked-mixed.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/check/unchecked.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/check/unchecked.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/nautilus/button_normal.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/nautilus/button_normal.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/selected-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/selected-hover.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/selected-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/selected-insensitive.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/selected.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/selected.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/unselected-hover.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-hover.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive-mixed.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/unselected-mixed.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected-mixed.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/buttons/radio/unselected.png \
-    target=../../../../../nimbus/gtk-3.0/assets/buttons/radio/unselected.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/close-active.svg \
-    target=../../../nimbus/gtk-3.0/assets/close-active.svg
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/close-backdrop.svg \
-    target=../../../nimbus/gtk-3.0/assets/close-backdrop.svg
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/close-hover.svg \
-    target=../../../nimbus/gtk-3.0/assets/close-hover.svg
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/close.svg \
-    target=../../../nimbus/gtk-3.0/assets/close.svg
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/combobox-button.png \
-    target=../../../nimbus/gtk-3.0/assets/combobox-button.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/resize-grip.png \
-    target=../../../nimbus/gtk-3.0/assets/resize-grip.png
-link \
-    path=usr/share/themes/light-nimbus/gtk-3.0/assets/scale-slider-insensitive.png \
-    target=../../../nimbus/gtk-3.0/assets/scale-slider-insensitive.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/assets/scale-slider.png \
-    target=../../../nimbus/gtk-3.0/assets/scale-slider.png
-link path=usr/share/themes/light-nimbus/gtk-3.0/gtk-main.css \
-    target=../../nimbus/gtk-3.0/gtk-main.css
-link path=usr/share/themes/light-nimbus/gtk-3.0/gtk-widgets-assets.css \
-    target=../../nimbus/gtk-3.0/gtk-widgets-assets.css
-file path=usr/share/themes/light-nimbus/gtk-3.0/gtk-widgets.css
-link path=usr/share/themes/light-nimbus/gtk-3.0/gtk.css \
-    target=../../nimbus/gtk-3.0/gtk.css
-link path=usr/share/themes/light-nimbus/gtk-3.0/settings.ini \
-    target=../../nimbus/gtk-3.0/settings.ini
-file path=usr/share/themes/nimbus/gtk-3.0/apps/gnome-applications.css
-file path=usr/share/themes/nimbus/gtk-3.0/apps/granite-widgets.css
-file path=usr/share/themes/nimbus/gtk-3.0/apps/lightdm-gtk-greeter.css
-file path=usr/share/themes/nimbus/gtk-3.0/apps/lightdm-unity-greeter.css
-file path=usr/share/themes/nimbus/gtk-3.0/apps/nautilus/button_normal.png
-file path=usr/share/themes/nimbus/gtk-3.0/apps/nautilus/trans.png
-file path=usr/share/themes/nimbus/gtk-3.0/apps/unity.css
-file path=usr/share/themes/nimbus/gtk-3.0/assets/button-active.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/button-default-active.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/button-default.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/button-disabled.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/button-hover.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/button.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/checked-hover.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/checked-insensitive.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/checked.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/unchecked-hover.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive-mixed.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/unchecked-insensitive.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/unchecked-mixed.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/check/unchecked.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/nautilus/button_normal.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/selected-hover.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/selected-insensitive.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/selected.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/unselected-hover.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive-mixed.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/unselected-insensitive.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/unselected-mixed.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/buttons/radio/unselected.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/close-active.svg
-file path=usr/share/themes/nimbus/gtk-3.0/assets/close-backdrop.svg
-file path=usr/share/themes/nimbus/gtk-3.0/assets/close-hover.svg
-file path=usr/share/themes/nimbus/gtk-3.0/assets/close.svg
-file path=usr/share/themes/nimbus/gtk-3.0/assets/combobox-button.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/resize-grip.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/scale-slider-insensitive.png
-file path=usr/share/themes/nimbus/gtk-3.0/assets/scale-slider.png
-file path=usr/share/themes/nimbus/gtk-3.0/gtk-main.css
-file path=usr/share/themes/nimbus/gtk-3.0/gtk-widgets-assets.css
-file path=usr/share/themes/nimbus/gtk-3.0/gtk-widgets.css
-file path=usr/share/themes/nimbus/gtk-3.0/gtk.css
-file path=usr/share/themes/nimbus/gtk-3.0/settings.ini
