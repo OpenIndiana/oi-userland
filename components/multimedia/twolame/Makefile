@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= twolame
 COMPONENT_VERSION= 0.3.13
+COMPONENT_REVISION=2
 COMPONENT_SUMMARY= twolame MP3 Encoder
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,7 +31,6 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = audio/twolame
 
-include $(WS_TOP)/make-rules/encumbered.mk
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
