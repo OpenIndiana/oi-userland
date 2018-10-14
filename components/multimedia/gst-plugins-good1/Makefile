@@ -10,13 +10,13 @@
 #
 
 #
-# Copyright 2016-2017 Aurelien Larcher.  All rights reserved.
+# Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-good1
-COMPONENT_VERSION= 1.12.5
+COMPONENT_VERSION= 1.14.4
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/good
@@ -24,7 +24,7 @@ COMPONENT_SRC_NAME= gst-plugins-good
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2c84b23bbe06e40c99dece5ea4520b337a15aa4e7eba1290e6d14834e2005555
+  sha256:5f8b553260cb0aac56890053d8511db1528d53cae10f0287cfce2cb2acc70979
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
@@ -54,7 +54,8 @@ CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --enable-orc
-CONFIGURE_OPTIONS += --disable-sunaudio
+CONFIGURE_OPTIONS += --enable-lame
+CONFIGURE_OPTIONS += --enable-twolame
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
 CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
@@ -72,6 +73,8 @@ install: $(INSTALL_32_and_64)
 test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += audio/lame
+REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/bzip2
@@ -83,6 +86,7 @@ REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/video/libvpx
