@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lame
 COMPONENT_VERSION= 3.99.5
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= lame  MP3 encoder
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -31,7 +31,6 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Media
 COMPONENT_FMRI = audio/lame
 
-include $(WS_TOP)/make-rules/encumbered.mk
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
