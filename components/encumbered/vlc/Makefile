@@ -12,6 +12,7 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -47,6 +48,8 @@ CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS           +=    $(JPEG_LDFLAGS)
 
 PATH=$(PATH.gnu)
+
+CONFIGURE_ENV += LUAC=$(USRBINDIR64)/luac
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
@@ -180,9 +183,9 @@ CONFIGURE_OPTIONS += --enable-taglib
 CONFIGURE_OPTIONS += --enable-notify
 
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
