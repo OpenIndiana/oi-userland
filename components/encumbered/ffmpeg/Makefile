@@ -12,17 +12,17 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
-COMPONENT_VERSION= 2.8.13
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.8.15
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:df9b98cb584a004ce8e29b4c954cfb8d9e45dac52b4c6d036f25dfbaa3086778
+  sha256:35647f6c1f6d4a1719bc20b76bf4c26e4ccd665f46b5676c0e91c5a04622ee21
 COMPONENT_ARCHIVE_URL= \
   http://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.ffmpeg.org/
@@ -94,13 +94,15 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 COMPONENT_TEST_ENV+= PATH=$(PROTO_DIR)/usr/bin:$(PATH)
 COMPONENT_TEST_ENV+= LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib
 
-$(TEST_32):	$(INSTALL_32)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results.master
 
-build: $(BUILD_32)
+COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" '
 
-install: $(INSTALL_32)
+build: $(BUILD_32_and_64)
 
-test:	$(TEST_32)
+install: $(INSTALL_32_and_64)
+
+test:	$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += codec/libtheora
