@@ -1,0 +1,11 @@
+--- net-snmp-5.7.3/Makefile.in.~2~	2018-10-15 13:40:35.086440987 +0000
++++ net-snmp-5.7.3/Makefile.in	2018-10-15 14:16:39.181608101 +0000
+@@ -222,7 +222,7 @@
+ 
+ # python specific build rules
+ #
+-PYMAKE=$(PYTHON) setup.py $(PYTHONARGS)
++PYMAKE=/usr/bin/env CFLAGS="$(CFLAGS)" CC="$(CC)" $(PYTHON) setup.py $(PYTHONARGS)
+ pythonmodules: subdirs
+ 	@(dir=`pwd`; cd python; $(PYMAKE) build --basedir=$$dir) ; \
+         if test $$? != 0 ; then \
