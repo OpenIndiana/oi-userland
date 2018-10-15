@@ -13,11 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-WS_REPO =       $(WS_TOP)/$(MACH)/encumbered-repo
+WS_REPO =       $(WS_TOP)/$(MACH)/repo
 
 COMPONENT_PKGLINT_ENV += ENCUMBERED=true
 
-PUBLISHER  = hipster-encumbered
+PUBLISHER  = userland-encumbered
 
 BASS_O_MATIC =  $(WS_TOOLS)/bass-o-matic --subdir=components/encumbered
 
