@@ -23,8 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libodfgen
-COMPONENT_VERSION=	0.1.6
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.1.7
 COMPONENT_FMRI=     	library/c++/libodfgen
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/p/libwpd/wiki/libodfgen/
@@ -32,7 +31,7 @@ COMPONENT_SUMMARY=      libodfgen - ODF export library using librevenge
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:03b210ab44f05e38091508cdca6ba0ff73de3ea8a168f849b8f1c5059c20b9e9
+  sha256:323e491f956c8ca2abb12c998e350670930a32317bf9662b0615dd4b3922b831
 COMPONENT_ARCHIVE_URL=	\
   http://sourceforge.net/projects/libwpd/files/libodfgen/libodfgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
