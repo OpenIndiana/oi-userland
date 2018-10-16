@@ -20,18 +20,20 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmspub
-COMPONENT_VERSION=	0.1.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.1.4
 COMPONENT_FMRI=     	library/c++/libmspub
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmspub
 COMPONENT_SUMMARY=      libmspub - library for reading Microsoft Publisher documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:b0baabf82d20c08ad000e80fa02154ce2f2ffde1ee60240d6e3a917c3b35560f
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:ef36c1a1aabb2ba3b0bedaaafe717bf4480be2ba8de6f3894be5fd3702b013ba
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/libmspub/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 
