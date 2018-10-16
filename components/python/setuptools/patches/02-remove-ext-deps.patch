@@ -1,0 +1,87 @@
+
+This patch removes external and irrelevant / obsolete dependencies from
+our build of this component.
+
+Not submitting it upstream because it's purely Solaris-specific.
+
+
+--- setuptools-39.2.0/setuptools/ssl_support.py.orig	2018-06-14 16:04:34.978024979 -0700
++++ setuptools-39.2.0/setuptools/ssl_support.py	2018-06-14 16:07:47.239230668 -0700
+@@ -16,20 +16,11 @@
+ __all__ = [
+     'VerifyingHTTPSHandler', 'find_ca_bundle', 'is_available', 'cert_paths',
+     'opener_for'
+ ]
+ 
+-cert_paths = """
+-/etc/pki/tls/certs/ca-bundle.crt
+-/etc/ssl/certs/ca-certificates.crt
+-/usr/share/ssl/certs/ca-bundle.crt
+-/usr/local/share/certs/ca-root.crt
+-/etc/ssl/cert.pem
+-/System/Library/OpenSSL/certs/cert.pem
+-/usr/local/share/certs/ca-root-nss.crt
+-/etc/ssl/ca-bundle.pem
+-""".strip().split()
++cert_paths = "/etc/certs/ca-certificates.crt"
+ 
+ try:
+     HTTPSHandler = urllib.request.HTTPSHandler
+     HTTPSConnection = http_client.HTTPSConnection
+ except AttributeError:
+@@ -207,54 +198,8 @@
+     return urllib.request.build_opener(
+         VerifyingHTTPSHandler(ca_bundle or find_ca_bundle())
+     ).open
+ 
+ 
+-# from jaraco.functools
+-def once(func):
+-    @functools.wraps(func)
+-    def wrapper(*args, **kwargs):
+-        if not hasattr(func, 'always_returns'):
+-            func.always_returns = func(*args, **kwargs)
+-        return func.always_returns
+-    return wrapper
+-
+-
+-@once
+-def get_win_certfile():
+-    try:
+-        import wincertstore
+-    except ImportError:
+-        return None
+-
+-    class CertFile(wincertstore.CertFile):
+-        def __init__(self):
+-            super(CertFile, self).__init__()
+-            atexit.register(self.close)
+-
+-        def close(self):
+-            try:
+-                super(CertFile, self).close()
+-            except OSError:
+-                pass
+-
+-    _wincerts = CertFile()
+-    _wincerts.addstore('CA')
+-    _wincerts.addstore('ROOT')
+-    return _wincerts.name
+-
+-
+ def find_ca_bundle():
+     """Return an existing CA bundle path, or None"""
+-    extant_cert_paths = filter(os.path.isfile, cert_paths)
+-    return (
+-        get_win_certfile()
+-        or next(extant_cert_paths, None)
+-        or _certifi_where()
+-    )
+-
+-
+-def _certifi_where():
+-    try:
+-        return __import__('certifi').where()
+-    except (ImportError, ResolutionError, ExtractionError):
+-        pass
++    return "/etc/certs/ca-certificates.crt"

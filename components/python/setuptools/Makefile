@@ -22,15 +22,12 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=		setuptools
-COMPONENT_VERSION=	19.2
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	39.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f90ed8eb70b14b0594ba74e9de4ffca040c0ec8ee505cbf3570499467859f71a
+    sha256:f7cddbb5f5c640311eb00eab6e849f7701fa70bf6a183fc8a2c33dd1d1672fb2
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/pypa/setuptools
 COMPONENT_BUGDB=	python-mod/setuptools
@@ -40,6 +37,10 @@ PYTHON_VERSIONS=	2.7 3.4 3.5
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+# Need to bootstrap setuptools before we can run setup
+
+COMPONENT_PREP_ACTION = (cd $(@D) ; $(PYTHON) bootstrap.py)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
