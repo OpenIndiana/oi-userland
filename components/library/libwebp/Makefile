@@ -11,19 +11,20 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2018 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
-COMPONENT_VERSION= 0.6.0
+COMPONENT_VERSION= 1.0.0
 COMPONENT_FMRI= library/libwebp 
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e1bd8b81098b8094edba0f161baf89f9fb1492e3fca19cf1d28eff4b88518702
+  sha256:c5c5ebf979543ac1f3348df8f6245262abd787a147b9632c880d92bfc38dbbeb
 COMPONENT_ARCHIVE_URL= \
   https://github.com/webmproject/libwebp/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = https://github.com/webmproject/
