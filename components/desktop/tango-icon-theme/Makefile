@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tango-icon-theme
 COMPONENT_VERSION=      0.8.90
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  http://tango.freedesktop.org/
 COMPONENT_SUMMARY=      Tango icon theme
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
