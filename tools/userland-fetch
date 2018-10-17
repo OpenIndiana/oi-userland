@@ -41,6 +41,7 @@ from urllib import splittype, splithost
 from urllib2 import urlopen, HTTPError
 from urllib2 import Request
 import hashlib
+from httplib import BadStatusLine
 
 
 def printIOError(e, txt):
@@ -173,6 +174,10 @@ def download(url, filename=None, user_agent_arg=None, quiet=None):
     except IOError as e:
         if not quiet:
             printIOError(e, "Can't open url " + url)
+        return None
+    except BadStatusLine as e:
+        if not quiet:
+            print("Can't open url %s: server answered with code which we couldn't understand " % (url))
         return None
 
     # 3xx, 4xx and 5xx (f|ht)tp codes designate unsuccessfull action
