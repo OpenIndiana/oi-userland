@@ -11,20 +11,21 @@
 #
 # Copyright (c) 2014 Alexander Pyhalov
 # Copyright (c) 2014 Ken Mays
+# Copyright (c) 2018 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnome-icon-theme
-COMPONENT_VERSION=      2.31.0
+COMPONENT_VERSION=      3.12.0
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_SUMMARY=      GNOME Icon Themes 
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:ea7e05b77ead159379392b3b275ca0c9cbacd7d936014e447cc7c5e27a767982
-COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.31/$(COMPONENT_ARCHIVE)
-
+    sha256:359e720b9202d3aba8d477752c4cd11eced368182281d51ffd64c8572b4e503a
+COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		gnome/theme/gnome-icon-theme
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
