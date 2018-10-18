@@ -1,0 +1,76 @@
+#!/usr/bin/python2.7
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2018 Adam Stevko
+#
+
+#
+# translate.py - Translate component FMRI to component path
+#
+
+from __future__ import print_function
+
+import argparse
+import os
+import json
+import sys
+
+
+class MappingDatabase(object):
+    def __init__(self, data=None):
+        self._data = data
+
+    @classmethod
+    def load_from_file(self, file_path):
+        with open(file_path, 'r') as f:
+            data = json.loads(f.read())
+        return self(data=data)
+
+    def get_path_by_fmri(self, fmri):
+        for item in self._data:
+            if item['component_fmri'] == fmri:
+                return item['component_path']
+
+
+def main():
+    workspace_default_path = os.path.dirname(sys.argv[0]).rsplit('/', 1)[0]
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-w', '--workspace', default=workspace_default_path, help='Path to workspace')
+    parser.add_argument('--subdir', default='components', help='Directory holding components')
+    parser.add_argument('--mapping', default='mapping.json', help='Mapping file')
+    parser.add_argument('--fmri', default=None, help='Component FMRI')
+
+    args = parser.parse_args()
+
+    workspace_path = args.workspace
+    subdir = args.subdir
+    mapping_file = args.mapping
+    fmri = args.fmri
+
+    mapping_file_path = os.path.join(workspace_path, subdir, mapping_file)
+
+    if not os.path.exists(mapping_file_path):
+        sys.stderr.write('Mapping file {} does not exist, build it by running "gmake mapping.json" in {}'.format(
+            mapping_file_path, os.path.join(workspace_path, subdir)))
+        sys.exit(2)
+
+    db = MappingDatabase().load_from_file(mapping_file_path)
+
+    component_path = db.get_path_by_fmri(fmri=fmri)
+    if component_path:
+        print(component_path)
+
+
+if __name__ == '__main__':
+    main()
