@@ -29,6 +29,7 @@ import re
 import logging
 import subprocess
 import multiprocessing
+import sys
 
 try:
     from scandir import walk
@@ -43,17 +44,12 @@ COMONENT_MAPPING_FILENAME = 'component_mapping.json'
 def find_component_paths(path, subdir='components', debug=False):
     expression = re.compile(r'.+\.p5m$', re.IGNORECASE)
 
-    if debug:
-        logger.debug('searching %s for component directories', path)
-
     paths = []
     workspace_path = os.path.join(path, subdir)
 
     for dirpath, dirnames, filenames in walk(workspace_path):
         for name in filenames:
             if expression.match(name):
-                if debug:
-                    logger.debug('found %s', dirpath)
                 paths.append(dirpath)
                 del dirnames[:]
                 break
@@ -61,11 +57,8 @@ def find_component_paths(path, subdir='components', debug=False):
     return paths
 
 
-def generate_component_data(component_path, debug=False):
+def generate_component_data(component_path):
     result = []
-
-    if debug:
-        logger.debug('Executing \'gmake print-value-COMPONENT_NAME print-package-names\' in %s', component_path)
 
     proc = subprocess.Popen(['gmake', 'print-value-COMPONENT_NAME', 'print-package-names'],
                             stdout=subprocess.PIPE,
@@ -82,12 +75,12 @@ def generate_component_data(component_path, debug=False):
     return component_fmris, component_name, component_relative_path
 
 
-def generate_userland_mapping(workspace_path, subdir='components', debug=False):
+def generate_userland_mapping(workspace_path, subdir='components'):
     mapping = []
 
-    paths = find_component_paths(path=workspace_path, subdir=subdir, debug=debug)
+    paths = find_component_paths(path=workspace_path, subdir=subdir)
     pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-    results = [pool.apply(generate_component_data, args=(path, debug)) for path in paths]
+    results = pool.map(generate_component_data, paths)
 
     for component_fmris, component_name, component_relative_path in results:
         for component_fmri in component_fmris:
@@ -101,19 +94,23 @@ def generate_userland_mapping(workspace_path, subdir='components', debug=False):
 
 
 def main():
+    try:
+        os.environ['WS_TOP']
+    except KeyError:
+        sys.stderr.write('WS_TOP is not set and workspace was not provide!')
+        sys.exit(1)
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-w', '--workspace', default=os.getenv('WS_TOP'), help='Path to workspace')
     parser.add_argument('--subdir', default='components', help='Directory holding components')
-    parser.add_argument('-d', '--debug', action='store_true', default=False)
 
     args = parser.parse_args()
 
     workspace = args.workspace
     subdir = args.subdir
-    debug = args.debug
 
-    generate_userland_mapping(workspace_path=workspace, subdir=subdir, debug=debug)
+    generate_userland_mapping(workspace_path=workspace, subdir=subdir)
 
 
 if __name__ == '__main__':
