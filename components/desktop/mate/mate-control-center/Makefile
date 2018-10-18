@@ -18,6 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		mate-control-center
 COMPONENT_MJR_VERSION=	1.20
 COMPONENT_MNR_VERSION=	3
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
