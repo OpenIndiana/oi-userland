@@ -1308,3 +1308,12 @@ print-%:
 print-value-%:
 	@echo '$(subst ','\'',$($*))'
 
+# Provide default print package targets for components that do not rely on IPS.
+# Define them implicitly so that the definitions do not collide with ips.mk
+define print-package-rule
+echo $(strip $(PACKAGE_$(1))) | tr ' ' '\n'
+endef
+
+print-package-%:
+	@$(call print-package-rule,$(shell tr '[a-z]' '[A-Z]' <<< $*))
+

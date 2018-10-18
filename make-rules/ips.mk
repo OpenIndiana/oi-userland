@@ -141,24 +141,50 @@ ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
 
+define ips-print-names-rule
+$(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+endef
+
+define ips-print-names-versioned-rule
+$(foreach v,$($(1)V_VALUES),\
+	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u))
+endef
+
+define ips-print-names-type-rule
+$(foreach m,$($(1)_MANIFESTS),$(call ips-print-names-versioned-rule,$(1),$(m)))
+endef
+
+VERSIONED_MANIFEST_TYPES =
+UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m, $(CANONICAL_MANIFESTS))
+
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
-UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PYVER.p5m,$(CANONICAL_MANIFESTS)))
+VERSIONED_MANIFEST_TYPES+= PY
+NOPY_MANIFESTS = $(filter-out %-PYVER.p5m,$(UNVERSIONED_MANIFESTS))
 PY_MANIFESTS = $(filter %-PYVER.p5m,$(CANONICAL_MANIFESTS))
-PYV_MANIFESTS = $(foreach v,$(shell echo $(PYTHON_VERSIONS) | tr -d .),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
+PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) | tr -d .)
+PYV_FMRI_VERSION = PYV
+PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
 else
-UNVERSIONED_MANIFESTS = $(CANONICAL_MANIFESTS)
+NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
 
 # Look for manifests which need to be duplicated for each version of perl.
 ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
-NOPERL_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS)))
+VERSIONED_MANIFEST_TYPES+= PERL
+NOPERL_MANIFESTS = $(filter-out %-PERLVER.p5m,$(NOPY_MANIFESTS))
 PERL_MANIFESTS = $(filter %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS))
-PERLV_MANIFESTS = $(foreach v,$(shell echo $(PERL_VERSIONS) | tr -d .),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
+PERLV_VALUES = $(shell echo $(PERL_VERSIONS) | tr -d .)
+PERLV_FMRI_VERSION = PLV
+PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
 PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
 else
-NOPERL_MANIFESTS = $(UNVERSIONED_MANIFESTS)
+NOPERL_MANIFESTS = $(NOPY_MANIFESTS)
 endif
 
 # Look for manifests which need to be duplicated for each version of ruby.
@@ -166,10 +192,12 @@ endif
 # Perl manifests.  Extract the Ruby Manifests from NOPERL_MANIFESTS.
 # Any remaining manifests are stored in NONRUBY_MANIFESTS
 ifeq ($(findstring -RUBYVER,$(NOPERL_MANIFESTS)),-RUBYVER)
-NORUBY_MANIFESTS = $(filter-out %GENFRAG.p5m,\
-                      $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS)))
+VERSIONED_MANIFEST_TYPES+= RUBY
+NORUBY_MANIFESTS = $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBY_MANIFESTS = $(filter %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
-RUBYV_MANIFESTS = $(foreach v,$(shell echo $(RUBY_VERSIONS)),\
+RUBYV_VALUES = $(RUBY_VERSIONS)
+RUBYV_FMRI_VERSION = RUBYV
+RUBYV_MANIFESTS = $(foreach v,$(RUBYV_VERSIONS),\
                       $(shell echo $(RUBY_MANIFESTS) |\
                       sed -e 's/-RUBYVER.p5m/-$(shell echo $(v) |\
                       cut -d. -f1,2 | tr -d .).p5m/g'))
@@ -177,6 +205,8 @@ RUBYNV_MANIFESTS = $(shell echo $(RUBY_MANIFESTS) | sed -e 's/-RUBYVER//')
 else
 NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
 endif
+
+NONVER_MANIFESTS = $(NORUBY_MANIFESTS)
 
 VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
@@ -463,12 +493,11 @@ $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
 
 print-package-names:	canonical-manifests
-	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
-		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+	@echo $(call ips-print-names-rule,$(NONVER_MANIFESTS)) \
+		$(foreach t,$(VERSIONED_MANIFEST_TYPES),$(call ips-print-names-type-rule,$(t))) | tr ' ' '\n'
 
 print-package-paths:	canonical-manifests
-	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
