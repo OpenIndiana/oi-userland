@@ -11,21 +11,21 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tracker
-COMPONENT_VERSION= 1.8.1
-COMPONENT_REVISION= 4
+COMPONENT_VERSION= 1.8.3
 COMPONENT_SUMMARY= Desktop search tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e3ed4cb384486ebc086adfad68b5d25f8b0424eb6eb1aca2252a508b757fbe51
+  sha256:9bbf8c8525b3a1496716a350bc50ba06af5e880a4386506ca3e45d6779065c42
 COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/$(COMPONENT_NAME)/1.8/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.tracker-project.org
+COMPONENT_PROJECT_URL = https://gitlab.gnome.org/GNOME/tracker
 COMPONENT_FMRI= library/desktop/search/tracker
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= GPLv2,LGPLv2.1
@@ -108,12 +108,15 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
+test: $(TEST_32)
+
 # Build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
