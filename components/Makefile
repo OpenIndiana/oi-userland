@@ -90,7 +90,7 @@ component-hook:	$(COMPONENT_DIRS.nosetup)
 clean:		$(COMPONENT_DIRS.nosetup)
 	$(RM) $(WS_TOP)/components/$(ENCUMBERED)components.mk \
 	$(WS_TOP)/components/$(ENCUMBERED)depends.mk \
-	$(WS_TOP)/components/$(ENCUMBERED)mapping.json \
+	$(WS_TOP)/components/mapping.json \
 	.profile
 
 clobber:	$(COMPONENT_DIRS.nosetup) clean
