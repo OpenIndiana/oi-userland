@@ -29,7 +29,6 @@ import re
 import logging
 import subprocess
 import multiprocessing
-import sys
 
 try:
     from scandir import walk
@@ -57,10 +56,10 @@ def find_component_paths(path, subdir='components', debug=False):
     return paths
 
 
-def generate_component_data(component_path):
+def generate_component_data(component_path, subdir='components'):
     result = []
 
-    proc = subprocess.Popen(['gmake', 'print-value-COMPONENT_NAME', 'print-package-names'],
+    proc = subprocess.Popen(['gmake', '-s', 'print-value-COMPONENT_NAME', 'print-package-names'],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
                             cwd=component_path)
@@ -70,7 +69,7 @@ def generate_component_data(component_path):
 
     component_name = result[0]
     component_fmris = result[1:]
-    component_relative_path = component_path.split(os.environ['WS_TOP'])[-1].replace('/', '', 1)
+    component_relative_path = component_path.split(os.path.join(os.environ['WS_TOP'], subdir))[-1].replace('/', '', 1)
 
     return component_fmris, component_name, component_relative_path
 
