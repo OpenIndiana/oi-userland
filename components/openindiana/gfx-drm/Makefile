@@ -132,6 +132,13 @@ clean::
 clobber::       clean
 	$(RM) -r $(CLOBBER_PATHS)
 
+PACKAGE_NAMES  = driver/graphics/agpgart
+PACKAGE_NAMES += driver/graphics/drm
+PACKAGE_NAMES += system/header/header-agp
+PACKAGE_NAMES += system/header/header-drm
+PACKAGE_NAMES += system/test/libdrm
+PACKAGE_NAMES += x11/library/libdrm
+
 REQUIRED_PACKAGES += developer/build/onbld
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += system/library
