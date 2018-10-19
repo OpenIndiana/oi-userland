@@ -1,0 +1,43 @@
+--- CherryPy-17.3.0/cherrypy/test/logtest.py.~1~	2018-08-16 16:04:25.000000000 +0000
++++ CherryPy-17.3.0/cherrypy/test/logtest.py	2018-10-18 12:38:38.965989280 +0000
+@@ -56,41 +56,6 @@
+         if not self.interactive:
+             raise self.failureException(msg)
+
+-        p = ('    Show: '
+-             '[L]og [M]arker [P]attern; '
+-             '[I]gnore, [R]aise, or sys.e[X]it >> ')
+-        sys.stdout.write(p + ' ')
+-        # ARGH
+-        sys.stdout.flush()
+-        while True:
+-            i = getchar().upper()
+-            if i not in 'MPLIRX':
+-                continue
+-            print(i.upper())  # Also prints new line
+-            if i == 'L':
+-                for x, line in enumerate(data):
+-                    if (x + 1) % self.console_height == 0:
+-                        # The \r and comma should make the next line overwrite
+-                        sys.stdout.write('<-- More -->\r ')
+-                        m = getchar().lower()
+-                        # Erase our "More" prompt
+-                        sys.stdout.write('            \r ')
+-                        if m == 'q':
+-                            break
+-                    print(line.rstrip())
+-            elif i == 'M':
+-                print(repr(marker or self.lastmarker))
+-            elif i == 'P':
+-                print(repr(pattern))
+-            elif i == 'I':
+-                # return without raising the normal exception
+-                return
+-            elif i == 'R':
+-                raise self.failureException(msg)
+-            elif i == 'X':
+-                self.exit()
+-            sys.stdout.write(p + ' ')
+-
+     def exit(self):
+         sys.exit()
