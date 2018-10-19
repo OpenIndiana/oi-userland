@@ -647,7 +647,7 @@ F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
 RUBY_VERSION =  2.3
-RUBY_LIB_VERSION.2.2 = 2.2.0	
+RUBY_LIB_VERSION.2.2 = 2.2.0
 RUBY_LIB_VERSION.2.3 = 2.3.0
 RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
 RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
@@ -1303,3 +1303,8 @@ include $(WS_MAKE_RULES)/environment.mk
 # is not always what you get.
 print-%:
 	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'
+
+# A simple rule to print only the value of any macro.
+print-value-%:
+	@echo '$(subst ','\'',$($*))'
+
