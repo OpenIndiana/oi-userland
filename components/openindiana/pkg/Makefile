@@ -98,5 +98,18 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
 
+PACKAGE_NAMES  = consolidation/ips/ips-incorporation
+PACKAGE_NAMES += consolidation/ips/ips-message-files
+PACKAGE_NAMES += developer/opensolaris/pkg5
+PACKAGE_NAMES += package/pkg
+PACKAGE_NAMES += package/pkg/depot
+PACKAGE_NAMES += package/pkg/package-manager
+PACKAGE_NAMES += package/pkg/system-repository
+PACKAGE_NAMES += package/pkg/update-manager
+PACKAGE_NAMES += package/pkg/zones-proxy
+PACKAGE_NAMES += system/zones/brand/ipkg
+PACKAGE_NAMES += system/zones/brand/kvm
+PACKAGE_NAMES += system/zones/brand/nlipkg
+
 REQUIRED_PACKAGES += developer/opensolaris/pkg5
 REQUIRED_PACKAGES += system/zones/internal
