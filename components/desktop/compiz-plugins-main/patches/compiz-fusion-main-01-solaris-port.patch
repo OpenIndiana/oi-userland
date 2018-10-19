@@ -1,96 +1,3 @@
-diff -rup compiz-plugins-main-0.8.2/configure.ac compiz-plugins-main-0.8.2.fix/configure.ac
---- compiz-plugins-main-0.8.2/configure.ac	2009-03-05 04:36:21.000000000 +0100
-+++ compiz-plugins-main-0.8.2.fix/configure.ac	2009-09-03 16:28:53.347532732 +0200
-@@ -1,6 +1,6 @@
- AC_PREREQ(2.57)
- 
--m4_define([plugins_main_version], [esyscmd(. ./VERSION;echo -n $VERSION)])
-+m4_define([plugins_main_version], [esyscmd(. ./VERSION;echo $VERSION | tr -d "\n")])
- 
- AC_INIT([compiz-plugins-main], [plugins_main_version], [maniac@opencompositing.org])
- 
-diff -rup compiz-plugins-main-0.8.2/include/compiz-animation.h compiz-plugins-main-0.8.2.fix/include/compiz-animation.h
---- compiz-plugins-main-0.8.2/include/compiz-animation.h	2009-03-05 04:36:21.000000000 +0100
-+++ compiz-plugins-main-0.8.2.fix/include/compiz-animation.h	2009-09-03 16:28:53.353094573 +0200
-@@ -215,7 +215,7 @@ typedef struct _AnimBaseFunctions {
- 
- #define OPTION_GETTERS(extensionBaseFunctions,				\
- 		       extensionPluginInfo, firstEffectOption)		\
--static inline CompOptionValue *						\
-+static CompOptionValue *						\
- animGetOptVal (CompWindow *w,						\
- 	       int optionId)						\
- {									\
-@@ -223,35 +223,35 @@ animGetOptVal (CompWindow *w,						\
-     	(w, (extensionPluginInfo), optionId - (firstEffectOption));	\
- }						\
- 						\
--inline Bool					\
-+Bool					\
- animGetB (CompWindow *w,			\
- 	  int optionId)				\
- {						\
-     return animGetOptVal (w, optionId)->b;	\
- }						\
- 						\
--inline int					\
-+int					\
- animGetI (CompWindow *w,			\
- 	  int optionId)				\
- {						\
-     return animGetOptVal (w, optionId)->i;	\
- }						\
- 						\
--inline float					\
-+float					\
- animGetF (CompWindow *w,			\
- 	  int optionId)				\
- {						\
-     return animGetOptVal (w, optionId)->f;	\
- }						\
- 						\
--inline char *					\
-+char *					\
- animGetS (CompWindow *w,			\
- 	  int optionId)				\
- {						\
-     return animGetOptVal (w, optionId)->s;	\
- }						\
- 						\
--inline unsigned short *				\
-+unsigned short *				\
- animGetC (CompWindow *w,			\
- 	  int optionId)				\
- {						\
-@@ -260,23 +260,23 @@ animGetC (CompWindow *w,			\
- 
- #define OPTION_GETTERS_HDR			\
- 						\
--inline Bool					\
-+Bool					\
- animGetB (CompWindow *w,			\
- 	  int optionId);			\
- 						\
--inline int					\
-+int					\
- animGetI (CompWindow *w,			\
- 	  int optionId);			\
- 						\
--inline float					\
-+float					\
- animGetF (CompWindow *w,			\
- 	  int optionId);			\
- 						\
--inline char *					\
-+char *					\
- animGetS (CompWindow *w,			\
- 	  int optionId);			\
- 						\
--inline unsigned short *				\
-+unsigned short *				\
- animGetC (CompWindow *w,			\
- 	  int optionId);
- 
 diff -rup compiz-plugins-main-0.8.2/metadata/animation.xml.in compiz-plugins-main-0.8.2.fix/metadata/animation.xml.in
 --- compiz-plugins-main-0.8.2/metadata/animation.xml.in	2009-03-05 04:36:21.000000000 +0100
 +++ compiz-plugins-main-0.8.2.fix/metadata/animation.xml.in	2009-09-03 16:28:53.347953996 +0200
@@ -103,27 +10,26 @@ diff -rup compiz-plugins-main-0.8.2/metadata/animation.xml.in compiz-plugins-mai
  	    </default>
  	  </option>
  	  <option name="focus_matches" type="list">
-diff -rup compiz-plugins-main-0.8.2/metadata/colorfilter.xml.in compiz-plugins-main-0.8.2.fix/metadata/colorfilter.xml.in
---- compiz-plugins-main-0.8.2/metadata/colorfilter.xml.in	2009-03-05 04:36:21.000000000 +0100
-+++ compiz-plugins-main-0.8.2.fix/metadata/colorfilter.xml.in	2009-09-03 16:28:53.348168749 +0200
+--- compiz-plugins-main-0.8.14/metadata/colorfilter.xml.in	2017-04-18 02:52:15.000000000 +0000
++++ compiz-plugins-main-0.8.14/metadata/colorfilter.xml.in.new	2018-10-18 22:35:52.332364767 +0000
 @@ -13,17 +13,17 @@
        <option name="toggle_window_key" type="key">
          <_short>Toggle window filtering</_short>
          <_long>Toggle filtering for currently focused window.</_long>
--        <default>&lt;Super&gt;f</default>
-+        <default>&lt;Mod4&gt;f</default>
+-        <default>&lt;Super&gt;&lt;Alt&gt;f</default>
++        <default>&lt;Mod4&gt;&lt;Alt&gt;f</default>
        </option>
        <option name="toggle_screen_key" type="key">
          <_short>Toggle screen filtering</_short>
          <_long>Toggle filtering for every window on the screen.</_long>
--        <default>&lt;Super&gt;d</default>
-+        <default>&lt;Mod4&gt;d</default>
+-        <default>&lt;Super&gt;&lt;Alt&gt;d</default>
++        <default>&lt;Mod4&gt;&lt;Alt&gt;d</default>
        </option>
        <option name="switch_filter_key" type="key">
          <_short>Switch filter</_short>
          <_long>Select filter to use from filters list : either apply all filters or only one specific filter (triggering this action switches filters one by one and eventually comes back to the "all filters" mode).</_long>
--        <default>&lt;Control&gt;&lt;Super&gt;s</default>
-+        <default>&lt;Control&gt;&lt;Mod4&gt;s</default>
+-        <default>&lt;Super&gt;&lt;Alt&gt;s</default>
++        <default>&lt;Mod4&gt;&lt;Alt&gt;s</default>
        </option>
      </display>
      <screen>
@@ -157,9 +63,8 @@ diff -rup compiz-plugins-main-0.8.2/metadata/expo.xml.in compiz-plugins-main-0.8
  				</option>
  				<option name="multioutput_mode" type="int">
  					<_short>Multi Output Mode</_short>
-diff -rup compiz-plugins-main-0.8.2/metadata/ezoom.xml.in compiz-plugins-main-0.8.2.fix/metadata/ezoom.xml.in
---- compiz-plugins-main-0.8.2/metadata/ezoom.xml.in	2009-03-05 04:36:21.000000000 +0100
-+++ compiz-plugins-main-0.8.2.fix/metadata/ezoom.xml.in	2009-09-03 16:30:27.772055719 +0200
+--- compiz-plugins-main-0.8.14/metadata/ezoom.xml.in	2017-04-18 02:52:15.000000000 +0000
++++ compiz-plugins-main-0.8.14/metadata/ezoom.xml.in	2018-10-18 22:39:11.035111803 +0000
 @@ -22,7 +22,7 @@
  		<option type="button" name="zoom_in_button">
  		    <_short>Zoom In</_short>
@@ -191,8 +96,8 @@ diff -rup compiz-plugins-main-0.8.2/metadata/ezoom.xml.in compiz-plugins-main-0.
  		    <option type="key" name="fit_to_window_key">
  			<_short>Fit zoomed area to window</_short>
  			<_long>Zooms in/out so the focused window is zoomed to the maximum while still being fully visible.</_long>
--			<default>&lt;Super&gt;r</default>
-+			<default>&lt;Mod4&gt;r</default>
+-			<default>&lt;Super&gt;f</default>
++			<default>&lt;Mod4&gt;f</default>
  		    </option>
  		</subgroup>
  	    </group>
@@ -367,15 +272,6 @@ diff -rup compiz-plugins-main-0.8.2/metadata/resizeinfo.xml.in compiz-plugins-ma
  	  <min>10</min>
  	  <max>5000</max>
  	</option>
-@@ -22,7 +22,7 @@
- 	  <_short> Show resize info for all windows. </_short>
- 	  <_long> Show resize info for all windows as opposed to just
- 	  windows with a resize increment of greater than 1. </_long>
--	  <default>false</default>
-+	  <default>true</default>
- 	</option>
- 	<option name="text_color" type="color">
- 	  <_short> Text color. </_short>
 diff -rup compiz-plugins-main-0.8.2/metadata/ring.xml.in compiz-plugins-main-0.8.2.fix/metadata/ring.xml.in
 --- compiz-plugins-main-0.8.2/metadata/ring.xml.in	2009-03-05 04:36:21.000000000 +0100
 +++ compiz-plugins-main-0.8.2.fix/metadata/ring.xml.in	2009-09-03 16:28:53.350905772 +0200
@@ -493,48 +389,6 @@ diff -rup compiz-plugins-main-0.8.2/metadata/thumbnail.xml.in compiz-plugins-mai
          </option>
          <subgroup>
            <_short>Window title</_short>
-diff -rup compiz-plugins-main-0.8.2/metadata/wall.xml.in compiz-plugins-main-0.8.2.fix/metadata/wall.xml.in
---- compiz-plugins-main-0.8.2/metadata/wall.xml.in	2009-03-05 04:36:21.000000000 +0100
-+++ compiz-plugins-main-0.8.2.fix/metadata/wall.xml.in	2009-09-03 16:28:53.351702111 +0200
-@@ -178,12 +178,12 @@
- 				<option name="allow_wraparound" type="bool">
- 					<_short>Allow Wrap-Around</_short>
- 					<_long>Allow wrap-around when moving the wall up/down/left/right</_long>
--					<default>false</default>
-+					<default>true</default>
- 				</option>
- 				<option name="slide_duration" type="float">
- 					<_short>Wall Sliding Duration</_short>
- 					<_long>Duration (in s) for wall sliding viewport switching animation</_long>
--					<default>0.3</default>
-+					<default>0.2</default>
- 					<min>0.0</min>
- 					<max>5.0</max>
- 					<precision>0.05</precision>
-diff -rup compiz-plugins-main-0.8.2/src/animation/animation-internal.h compiz-plugins-main-0.8.2.fix/src/animation/animation-internal.h
---- compiz-plugins-main-0.8.2/src/animation/animation-internal.h	2009-03-05 04:36:21.000000000 +0100
-+++ compiz-plugins-main-0.8.2.fix/src/animation/animation-internal.h	2009-09-03 16:28:53.352497873 +0200
-@@ -426,7 +426,7 @@ applyPerspectiveSkew (CompOutput *output
- 		      CompTransform *transform,
- 		      Point *center);
- 
--inline void
-+void
- applyTransform (CompTransform *wTransform,
- 		CompTransform *transform);
- 
-diff -rup compiz-plugins-main-0.8.2/src/animation/zoomside.c compiz-plugins-main-0.8.2.fix/src/animation/zoomside.c
---- compiz-plugins-main-0.8.2/src/animation/zoomside.c	2009-03-05 04:36:21.000000000 +0100
-+++ compiz-plugins-main-0.8.2.fix/src/animation/zoomside.c	2009-09-03 16:28:53.352743710 +0200
-@@ -303,7 +303,7 @@ getZoomCenterScaleFull (CompWindow *w,
- 	*pRotateProgress = rotateProgress;
- }
- 
--inline void
-+void
- getZoomCenterScale (CompWindow *w,
- 		    Point *pCurCenter, Point *pCurScale)
- {
 --- compiz-plugins-main-0.8.2.fix/src/session/session.c	2009-03-05 04:36:21.000000000 +0100
 +++ compiz-plugins-main-0.8.2/src/session/session.c	2009-09-04 16:05:21.074608920 +0200
 @@ -42,6 +42,25 @@

@@ -10,20 +10,22 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
+# Copyright (c) 2018 Michal Nowak
 #
+
+PREFERRED_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-main
-COMPONENT_VERSION=	0.8.10
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.8.14
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	main effects plugins for compiz
-COMPONENT_SRC=		plugins-main
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:28988060199a46cb92d010075de0bf822a72d4fcb93a12205c06824c0e6da1cf
-COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
+    sha256:eca9f0a1a0db7a10d3d382ee99c54d021b00429f07e154241121a8888e3eca56
+COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -44,16 +46,16 @@ CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS           +=    $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--enable-schemas
-
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
-# common targets
-build:		$(BUILD_32)
+CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--disable-static
 
-install:	$(INSTALL_32)
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
