@@ -1,35 +1,21 @@
-diff -x '*~' -x '*.*~' -x '*.rej' -x '*.orig' -Nrup libcompizconfig-0.8.4.orig/config/config libcompizconfig-0.8.4/config/config
---- libcompizconfig-0.8.4.orig/config/config	2009-10-15 08:06:12.324613010 +0200
-+++ libcompizconfig-0.8.4/config/config	2009-10-15 08:06:29.308065755 +0200
-@@ -14,7 +14,8 @@ integration = true
- plugin_list_autosort = true
- 
+--- libcompizconfig-0.8.14/config/config	2017-04-18 02:51:42.000000000 +0000
++++ libcompizconfig-0.8.14/config/config.new	2018-10-20 17:46:20.433742905 +0000
+@@ -1,3 +1,4 @@
  [general]
--backend = ini
-+backend = gconf
-+integration = true
+ backend = ini
  plugin_list_autosort = true
- 
- 
-diff -x '*~' -x '*.*~' -x '*.rej' -x '*.orig' -Nrup libcompizconfig-0.8.4.orig/configure.ac libcompizconfig-0.8.4/configure.ac
---- libcompizconfig-0.8.4.orig/configure.ac	2009-10-15 08:06:12.323163716 +0200
-+++ libcompizconfig-0.8.4/configure.ac	2009-10-15 08:06:29.308326426 +0200
-@@ -1,6 +1,6 @@
- AC_PREREQ(2.57)
- 
--AC_INIT([libcompizconfig],esyscmd(. ./VERSION;echo -n $VERSION), [dev@opencompositing.org])
-+AC_INIT([libcompizconfig],esyscmd(. ./VERSION;echo $VERSION | tr -d "\n"), [dev@opencompositing.org])
- 
- #AC_CONFIG_AUX_DIR(config)
- 
-@@ -17,6 +17,7 @@ AC_PROG_CPP
- AC_PROG_LIBTOOL
++integration = true
+--- libcompizconfig-0.8.14/configure.ac	2017-04-18 11:04:22.000000000 +0000
++++ libcompizconfig-0.8.14/configure.ac.new	2018-10-20 17:48:32.176757053 +0000
+@@ -14,6 +14,7 @@ AC_PROG_CPP
+ LT_INIT
  AC_HEADER_STDC
  AC_CHECK_HEADERS([stdlib.h sys/time.h unistd.h])
 +AC_CHECK_FUNCS(va_copy __va_copy vasprintf asprintf strcasestr strsep)
- IT_PROG_INTLTOOL([0.35.0])
- AC_SUBST(ALL_LINGUAS)
- AM_GLIB_GNU_GETTEXT
+ AC_CONFIG_MACRO_DIR([m4])
+ 
+ if test "x$GCC" = "xyes"; then
+diff -x '*~' -x '*.*~' -x '*.rej' -x '*.orig' -Nrup libcompizconfig-0.8.4.orig/configure.ac libcompizconfig-0.8.4/configure.ac
 diff -x '*~' -x '*.*~' -x '*.rej' -x '*.orig' -Nrup libcompizconfig-0.8.4.orig/src/Makefile.am libcompizconfig-0.8.4/src/Makefile.am
 --- libcompizconfig-0.8.4.orig/src/Makefile.am	2009-10-15 08:06:12.325570865 +0200
 +++ libcompizconfig-0.8.4/src/Makefile.am	2009-10-15 08:06:29.308522964 +0200
