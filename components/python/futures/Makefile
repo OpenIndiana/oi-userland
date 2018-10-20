@@ -16,7 +16,6 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=futures
 COMPONENT_VERSION=3.2.0
-COMPONENT_SUMMARY='Backport of Python futures for 2.7'
 COMPONENT_PROJECT_URL=https://github.com/agronholm/pythonfutures
 COMPONENT_FMRI=library/python/futures
 COMPONENT_CLASSIFICATION=Development/Python
@@ -24,7 +23,6 @@ COMPONENT_SRC=          python$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=https://github.com/agronholm/pythonfutures/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=sha256:fc959e162a3ea775c827f8a5e1810ecd175dbb986c2b16864b47fe491ad6950b
-COMPONENT_LICENSE='PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2'
 COMPONENT_LICENSE_FILE=LICENSE
 
 include $(WS_MAKE_RULES)/prep.mk
