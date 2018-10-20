@@ -28,3 +28,13 @@ COMPONENT_NAME=		"Package History"
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/history.mk
 
+PACKAGE_NAMES  = consolidation/admin/admin-incorporation
+PACKAGE_NAMES += consolidation/gnome_l10n/gnome_l10n-incorporation
+PACKAGE_NAMES += consolidation/gnome/gnome-incorporation
+PACKAGE_NAMES += consolidation/l10n/l10n-incorporation
+PACKAGE_NAMES += consolidation/nvidia/nvidia-incorporation
+PACKAGE_NAMES += consolidation/sfw/sfw-incorporation
+PACKAGE_NAMES += consolidation/solaris_re/solaris_re-incorporation
+PACKAGE_NAMES += consolidation/SunVTS/SunVTS-incorporation
+PACKAGE_NAMES += consolidation/xvm/xvm-incorporation
+PACKAGE_NAMES += SUNWacpidump
