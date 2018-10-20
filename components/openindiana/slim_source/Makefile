@@ -110,5 +110,27 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
 
+PACKAGE_NAMES  = consolidation/install/install-incorporation
+PACKAGE_NAMES += consolidation/install/install-redistributable
+PACKAGE_NAMES += install/distribution-constructor
+PACKAGE_NAMES += install/installadm
+PACKAGE_NAMES += SUNWauto-install-common
+PACKAGE_NAMES += SUNWauto-install
+PACKAGE_NAMES += SUNWdistro-const
+PACKAGE_NAMES += SUNWgui-install
+PACKAGE_NAMES += SUNWinstall-libs
+PACKAGE_NAMES += SUNWinstall-test
+PACKAGE_NAMES += SUNWinstall
+PACKAGE_NAMES += SUNWinstalladm-tools
+PACKAGE_NAMES += SUNWslim-utils
+PACKAGE_NAMES += system/install
+PACKAGE_NAMES += system/install/auto-install
+PACKAGE_NAMES += system/install/auto-install/auto-install-common
+PACKAGE_NAMES += system/install/gui-install
+PACKAGE_NAMES += system/install/media/internal
+PACKAGE_NAMES += system/install/tests
+PACKAGE_NAMES += system/install/text-install
+PACKAGE_NAMES += system/library/install
+
 # Build dependencies
 REQUIRED_PACKAGES += system/library/install/libinstzones
