@@ -13,9 +13,9 @@ diff --git a/myproposal.h b/myproposal.h
 index 072e36ec..f6322a73 100644
 --- a/myproposal.h
 +++ b/myproposal.h
-@@ -108,11 +108,13 @@
- 	HOSTKEY_ECDSA_CERT_METHODS \
- 	"ssh-ed25519-cert-v01@openssh.com," \
+@@ -110,11 +110,13 @@
+ 	"rsa-sha2-512-cert-v01@openssh.com," \
+ 	"rsa-sha2-256-cert-v01@openssh.com," \
  	"ssh-rsa-cert-v01@openssh.com," \
 +	"ssh-dss-cert-v01@openssh.com," \
  	HOSTKEY_ECDSA_METHODS \
@@ -32,28 +32,28 @@ diff --git a/ssh_config.4 b/ssh_config.4
 index 4492ecaf..dadd092a 100644
 --- a/ssh_config.4
 +++ b/ssh_config.4
-@@ -1314,8 +1314,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
- ecdsa-sha2-nistp521-cert-v01@openssh.com,
+@@ -809,8 +809,9 @@
  ssh-ed25519-cert-v01@openssh.com,
+ rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-256-cert-v01@openssh.com,
  ssh-rsa-cert-v01@openssh.com,
 +ssh-dss-cert-v01@openssh.com,
  ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
--ssh-ed25519,ssh-rsa
+-ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa
 +ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa,ssh-dss
  .Ed
  .Pp
- The list of available key types may also be obtained using
+ The
 diff --git a/sshd_config.4 b/sshd_config.4
 index de03ac5e..6a6f940b 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
-@@ -1312,8 +1312,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
- ecdsa-sha2-nistp521-cert-v01@openssh.com,
+@@ -763,8 +763,9 @@
  ssh-ed25519-cert-v01@openssh.com,
+ rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-256-cert-v01@openssh.com,
  ssh-rsa-cert-v01@openssh.com,
 +ssh-dss-cert-v01@openssh.com,
  ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
--ssh-ed25519,ssh-rsa
+-ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa
 +ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa,ssh-dss
  .Ed
  .Pp

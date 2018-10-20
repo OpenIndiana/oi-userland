@@ -10,15 +10,10 @@ We have contributed back this fix to the OpenSSH upstream community. For
 more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2440
 In the future, if this fix is accepted by the upsteam in a later release, we
 will remove this patch when we upgrade to that release.
----
- session.c | 138 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
- session.h |   3 ++
- 2 files changed, 137 insertions(+), 4 deletions(-)
 
-diff --git a/session.c b/session.c
-index a08aa69d..9586901e 100644
---- a/session.c
-+++ b/session.c
+diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
+--- a~/session.c	1970-01-01 00:00:00
++++ a/session.c	1970-01-01 00:00:00
 @@ -63,6 +63,10 @@
  #include <unistd.h>
  #include <limits.h>
@@ -30,9 +25,9 @@ index a08aa69d..9586901e 100644
  #include "openbsd-compat/sys-queue.h"
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -131,6 +135,11 @@ static void do_authenticated2(Authctxt *);
+@@ -133,6 +137,11 @@ static void do_authenticated2(struct ssh
  
- static int session_pty_req(Session *);
+ static int session_pty_req(struct ssh *, Session *);
  
 +#ifdef PER_SESSION_XAUTHFILE
 +void   session_xauthfile_cleanup(Session *);
@@ -42,19 +37,19 @@ index a08aa69d..9586901e 100644
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1056,6 +1065,11 @@ do_setup_env(Session *s, const char *shell)
- 	if (getenv("TZ"))
- 		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
+@@ -1125,6 +1134,11 @@ do_setup_env(struct ssh *ssh, Session *s
+ 		    auth_sock_name);
+ 
  
 +#ifdef PER_SESSION_XAUTHFILE
 +        if (s->auth_file != NULL)
 +                child_set_env(&env, &envsize, "XAUTHORITY", s->auth_file);
 +#endif
 +
- 	/* Set custom environment options from RSA authentication. */
- 	while (custom_environment) {
- 		struct envstring *ce = custom_environment;
-@@ -1958,6 +1972,11 @@ session_x11_req(Session *s)
+ 	/* Set custom environment options from pubkey authentication. */
+ 	if (options.permit_user_env) {
+ 		for (n = 0 ; n < auth_opts->nenv; n++) {
+@@ -2008,6 +2022,11 @@ session_x11_req(struct ssh *ssh, Session
  {
  	int success;
  
@@ -66,13 +61,13 @@ index a08aa69d..9586901e 100644
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -1969,19 +1988,78 @@ session_x11_req(Session *s)
+@@ -2019,19 +2038,78 @@ session_x11_req(struct ssh *ssh, Session
  	s->screen = packet_get_int();
  	packet_check_eom();
  
 -	if (xauth_valid_string(s->auth_proto) &&
 -	    xauth_valid_string(s->auth_data))
--		success = session_setup_x11fwd(s);
+-		success = session_setup_x11fwd(ssh, s);
 -	else {
 +	if (!xauth_valid_string(s->auth_proto) ||
 +	    !xauth_valid_string(s->auth_data)) {
@@ -97,7 +92,7 @@ index a08aa69d..9586901e 100644
 +			    "for the buffer allocated");
 +			success = 0;
 +			goto out;
-+		}
+ 	}
 +		/*
 +		 * we don't want that "creating new authority file" message to
 +		 * be printed by xauth(1) so we must create that file
@@ -129,10 +124,10 @@ index a08aa69d..9586901e 100644
 +		error("failed to create a directory for the temporary X "
 +		    "authority file: %.100s; will use the default xauth file",
 +		    strerror(errno));
- 	}
++	}
 +#endif
 +
-+	success = session_setup_x11fwd(s);
++	success = session_setup_x11fwd(ssh, s);
 +
 +out:
  	if (!success) {
@@ -149,7 +144,7 @@ index a08aa69d..9586901e 100644
  	return success;
  }
  
-@@ -2170,6 +2248,51 @@ session_pty_cleanup(Session *s)
+@@ -2221,6 +2299,51 @@ session_pty_cleanup(Session *s)
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -201,7 +196,7 @@ index a08aa69d..9586901e 100644
  static char *
  sig2name(int sig)
  {
-@@ -2310,6 +2433,9 @@ session_close(Session *s)
+@@ -2360,6 +2483,9 @@ session_close(struct ssh *ssh, Session *
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -211,9 +206,9 @@ index a08aa69d..9586901e 100644
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2556,6 +2682,10 @@ do_cleanup(Authctxt *authctxt)
- 	/* remove agent socket */
- 	auth_sock_cleanup_proc(authctxt->pw);
+@@ -2613,6 +2739,10 @@ do_cleanup(struct ssh *ssh, Authctxt *au
+ 		auth_info_file = NULL;
+ 	}
  
 +#ifdef PER_SESSION_XAUTHFILE
 +	cleanup_all_session_xauthfile();
@@ -222,10 +217,9 @@ index a08aa69d..9586901e 100644
  	/*
  	 * Cleanup ptys/utmp only if privsep is disabled,
  	 * or if running in monitor.
-diff --git a/session.h b/session.h
-index 98e1dafe..f211c19c 100644
---- a/session.h
-+++ b/session.h
+diff -wpruN '--exclude=*.orig' a~/session.h a/session.h
+--- a~/session.h	1970-01-01 00:00:00
++++ a/session.h	1970-01-01 00:00:00
 @@ -49,6 +49,9 @@ struct Session {
  	char	*auth_display;
  	char	*auth_proto;
@@ -236,6 +230,3 @@ index 98e1dafe..f211c19c 100644
  	int	single_connection;
  
  	int	chanid;
--- 
-2.11.0
-

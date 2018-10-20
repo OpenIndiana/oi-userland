@@ -3,19 +3,10 @@ From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
 Subject: [PATCH 06/34] GSS store creds for Solaris
 
----
- configure.ac    |  3 +++
- gss-serv-krb5.c |  7 ++++++-
- gss-serv.c      | 44 ++++++++++++++++++++++++++++++++++++++++++++
- servconf.c      |  4 ++++
- sshd.c          | 14 ++++++++++++++
- 5 files changed, 71 insertions(+), 1 deletion(-)
-
-diff --git a/configure.ac b/configure.ac
-index eb9f45dc..f5deed69 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -949,6 +949,9 @@ mips-sony-bsd|mips-sony-newsos4)
+diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -1044,6 +1044,9 @@ mips-sony-bsd|mips-sony-newsos4)
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
@@ -25,11 +16,10 @@ index eb9f45dc..f5deed69 100644
  	;;
  *-*-sunos4*)
  	CPPFLAGS="$CPPFLAGS -DSUNOS4"
-diff --git a/gss-serv-krb5.c b/gss-serv-krb5.c
-index 795992d9..6e6cff7b 100644
---- a/gss-serv-krb5.c
-+++ b/gss-serv-krb5.c
-@@ -110,7 +110,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
+diff -wpruN '--exclude=*.orig' a~/gss-serv-krb5.c a/gss-serv-krb5.c
+--- a~/gss-serv-krb5.c	1970-01-01 00:00:00
++++ a/gss-serv-krb5.c	1970-01-01 00:00:00
+@@ -109,7 +109,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client
  	return retval;
  }
  
@@ -38,7 +28,7 @@ index 795992d9..6e6cff7b 100644
  /* This writes out any forwarded credentials from the structure populated
   * during userauth. Called after we have setuid to the user */
  
-@@ -196,6 +196,7 @@ ssh_gssapi_krb5_storecreds(ssh_gssapi_client *client)
+@@ -195,6 +195,7 @@ ssh_gssapi_krb5_storecreds(ssh_gssapi_cl
  
  	return;
  }
@@ -46,7 +36,7 @@ index 795992d9..6e6cff7b 100644
  
  ssh_gssapi_mech gssapi_kerberos_mech = {
  	"toWM5Slw5Ew8Mqkay+al2g==",
-@@ -204,7 +205,11 @@ ssh_gssapi_mech gssapi_kerberos_mech = {
+@@ -203,7 +204,11 @@ ssh_gssapi_mech gssapi_kerberos_mech = {
  	NULL,
  	&ssh_gssapi_krb5_userok,
  	NULL,
@@ -58,11 +48,10 @@ index 795992d9..6e6cff7b 100644
  };
  
  #endif /* KRB5 */
-diff --git a/gss-serv.c b/gss-serv.c
-index 53993d67..209ffe82 100644
---- a/gss-serv.c
-+++ b/gss-serv.c
-@@ -320,22 +320,66 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
+diff -wpruN '--exclude=*.orig' a~/gss-serv.c a/gss-serv.c
+--- a~/gss-serv.c	1970-01-01 00:00:00
++++ a/gss-serv.c	1970-01-01 00:00:00
+@@ -319,22 +319,66 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_g
  void
  ssh_gssapi_cleanup_creds(void)
  {
@@ -94,31 +83,31 @@ index 53993d67..209ffe82 100644
 +	    GSS_C_INITIATE, &gssapi_client.mech->oid, 1, 1, NULL, NULL);
 +
 +	if (GSS_ERROR(maj_status)) {
-+		Buffer b;
++		struct sshbuf *b;
 +		gss_buffer_desc msg;
 +		OM_uint32 lmin;
 +		OM_uint32 more = 0;
-+		buffer_init(&b);
++		if ((b = sshbuf_new()) == NULL) fatal("malloc");
 +		/* GSS-API error */
 +		do {
 +			gss_display_status(&lmin, maj_status, GSS_C_GSS_CODE,
 +			    GSS_C_NULL_OID, &more, &msg);
-+			buffer_append(&b, msg.value, msg.length);
-+			buffer_put_char(&b, '\n');
++			sshbuf_put(b, msg.value, msg.length);
++			sshbuf_put(b, "\n", 1);
 +			gss_release_buffer(&lmin, &msg);
 +		} while (more != 0);
 +		/* Mechanism specific error */
 +		do {
 +			gss_display_status(&lmin, min_status, GSS_C_MECH_CODE,
 +			    &gssapi_client.mech->oid, &more, &msg);
-+			buffer_append(&b, msg.value, msg.length);
-+			buffer_put_char(&b, '\n');
++			sshbuf_put(b, msg.value, msg.length);
++			sshbuf_put(b, "\n", 1);
 +			gss_release_buffer(&lmin, &msg);
 +		} while (more != 0);
-+		buffer_put_char(&b, '\0');
++		sshbuf_put(b, "\0", 1);
 +		error("GSS-API error while storing delegated credentials: %s",
-+		    buffer_ptr(&b));
-+		buffer_free(&b);
++		    sshbuf_ptr(b));
++		sshbuf_free(b);
 +	}
 +#else	/* #ifdef USE_GSS_STORE_CRED */
  	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
@@ -129,11 +118,10 @@ index 53993d67..209ffe82 100644
  }
  
  /* This allows GSSAPI methods to do things to the childs environment based
-diff --git a/servconf.c b/servconf.c
-index 409d4800..e98c6500 100644
---- a/servconf.c
-+++ b/servconf.c
-@@ -484,7 +484,11 @@ static struct {
+diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
+@@ -559,7 +559,11 @@ static struct {
  	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
  #ifdef GSSAPI
  	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
@@ -145,11 +133,10 @@ index 409d4800..e98c6500 100644
  	{ "gssapistrictacceptorcheck", sGssStrictAcceptor, SSHCFG_GLOBAL },
  #else
  	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
-diff --git a/sshd.c b/sshd.c
-index 1dc4d182..e39b3024 100644
---- a/sshd.c
-+++ b/sshd.c
-@@ -2048,9 +2048,23 @@ main(int ac, char **av)
+diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
+--- a~/sshd.c	1970-01-01 00:00:00
++++ a/sshd.c	1970-01-01 00:00:00
+@@ -2181,9 +2181,23 @@ main(int ac, char **av)
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {
@@ -173,6 +160,3 @@ index 1dc4d182..e39b3024 100644
  	}
  #endif
  #ifdef USE_PAM
--- 
-2.11.0
-

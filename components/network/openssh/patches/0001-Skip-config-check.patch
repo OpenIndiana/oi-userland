@@ -10,15 +10,10 @@ Subject: [PATCH 01/34] Skip config check
 # they are not suitable in a build system.  This is for Solaris only, so we
 # will not contribute back this change to the upstream community.
 #
----
- Makefile.in | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/Makefile.in b/Makefile.in
-index e10f3742..4bbfb736 100644
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -302,7 +302,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
+diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
+--- a~/Makefile.in	1970-01-01 00:00:00
++++ a/Makefile.in	1970-01-01 00:00:00
+@@ -324,7 +324,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGE
  install-nosysconf: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files
  
  check-config:
@@ -35,7 +30,4 @@ index e10f3742..4bbfb736 100644
 +	@echo 'Oracle Solaris: skipping check-config'
  
  install-files:
- 	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir)
--- 
-2.11.0
-
+ 	$(MKDIR_P) $(DESTDIR)$(bindir)
