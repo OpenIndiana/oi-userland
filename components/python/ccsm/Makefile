@@ -10,20 +10,21 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccsm
-COMPONENT_VERSION=	0.8.10
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.northfield.ws/
+COMPONENT_VERSION=	0.8.14
+COMPONENT_PROJECT_URL=	http://www.northfield.ws
 COMPONENT_SUMMARY=	ccsm settings manager for the CompizConfig system
-COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ae622878b651ff215de2673a057ca6c34f5fe4e68d8cf2eb073fb83e4cda3254
-COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
+    sha256:f2f23068706f52b8d9d0a06520b09070cfc9b5e5bbac82b71ee7f30ce39f872c
+COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
+COMPONENT_FMRI=		desktop/compiz/ccsm
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -36,36 +37,31 @@ PATH=$(PATH.gnu)
 
 COMPONENT_BUILD_ARGS += --prefix=/usr
 
-COMPONENT_INSTALL_ARGS = --prefix=/usr
-COMPONENT_INSTALL_ARGS +=       --root $(PROTO_DIR) 
-COMPONENT_INSTALL_ARGS +=       --install-lib=$(PYTHON_LIB)
-COMPONENT_INSTALL_ARGS +=       --install-purelib=$(PYTHON_LIB)
-COMPONENT_INSTALL_ARGS +=       --install-platlib=$(PYTHON_LIB)
-COMPONENT_INSTALL_ARGS +=       --force
+COMPONENT_INSTALL_ARGS =	--prefix=/usr
+COMPONENT_INSTALL_ARGS +=	--root=$(PROTO_DIR)
+COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS +=	--install-purelib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS +=	--install-platlib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS +=	--force
 
 COMPONENT_POST_BUILD_ACTION = \
 		(cd $(SOURCE_DIR);\
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Conflicts.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Constants.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Pages.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Settings.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Utils.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Widgets.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/Window.py; \
-		$(GSED) -i -e '1 s/env python/python2.7/' ccm/__init__.py; )
+		$(GSED) -i -e '1 i\#!$(PYTHON)' ccm/*.py{,.in} )
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-# Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pycairo-27
-REQUIRED_PACKAGES += library/python/pygobject-27
+# Build dependencies
 REQUIRED_PACKAGES += library/python/pygtk2-27
-REQUIRED_PACKAGES += library/python/python-compizconfig-27
 REQUIRED_PACKAGES += library/python/python-dbus-27
 REQUIRED_PACKAGES += library/python/python-sexy-27
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/pycairo-27
+REQUIRED_PACKAGES += library/python/pygobject-3-27
+REQUIRED_PACKAGES += library/python/python-compizconfig-27
 REQUIRED_PACKAGES += runtime/python-27
