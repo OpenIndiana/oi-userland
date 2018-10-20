@@ -15,9 +15,9 @@ diff --git a/configure.ac b/configure.ac
 index 5e64db3b..bf9c5449 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1494,6 +1494,62 @@ AC_ARG_WITH([skey],
- 	]
- )
+@@ -1529,6 +1529,62 @@
+ 	AC_MSG_RESULT([no])
+ fi
  
 +# Check whether user wants TCP wrappers support
 +TCPW_MSG="no"
@@ -78,19 +78,19 @@ index 5e64db3b..bf9c5449 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5136,6 +5192,7 @@ echo "                 KerberosV support: $KRB5_MSG"
+@@ -5216,6 +5272,7 @@
+ echo "                   OSF SIA support: $SIA_MSG"
+ echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
- echo "                 Smartcard support: $SCARD_MSG"
- echo "                     S/KEY support: $SKEY_MSG"
 +echo "              TCP Wrappers support: $TCPW_MSG"
  echo "              MD5 password support: $MD5_MSG"
  echo "                   libedit support: $LIBEDIT_MSG"
- echo "  Solaris process contract support: $SPC_MSG"
+ echo "                   libldns support: $LDNS_MSG"
 diff --git a/sshd.1m b/sshd.1m
 index 387ea69e..55cf3f0d 100644
 --- a/sshd.1m
 +++ b/sshd.1m
-@@ -825,6 +825,12 @@ the user's home directory becomes accessible.
+@@ -873,6 +873,12 @@
  This file should be writable only by the user, and need not be
  readable by anyone else.
  .Pp
@@ -103,14 +103,14 @@ index 387ea69e..55cf3f0d 100644
  .It Pa /etc/hosts.equiv
  This file is for host-based authentication (see
  .Xr ssh 1 ) .
-@@ -956,6 +962,7 @@ Each SSHv2 userauth type has its own PAM service name:
+@@ -1002,6 +1008,7 @@
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,
 +.Xr hosts_access 5 ,
  .Xr login.conf 5 ,
- .Xr moduli 4 ,
- .Xr sshd_config 4 ,
+ .Xr moduli 5 ,
+ .Xr sshd_config 5 ,
 diff --git a/sshd.c b/sshd.c
 index 67171704..75da16b7 100644
 --- a/sshd.c
@@ -133,9 +133,9 @@ index 67171704..75da16b7 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -1997,6 +2008,24 @@ main(int ac, char **av)
- #ifdef SSH_AUDIT_EVENTS
- 	audit_connection_from(remote_ip, remote_port);
+@@ -2024,6 +2035,24 @@
+ 	if (!debug_flag && !inetd_flag && setsid() < 0)
+ 		error("setsid: %.100s", strerror(errno));
  #endif
 +#ifdef LIBWRAP
 +	allow_severity = options.log_facility|LOG_INFO;
@@ -156,8 +156,5 @@ index 67171704..75da16b7 100644
 +	}
 +#endif /* LIBWRAP */
  
- 	/* Log the connection. */
- 	laddr = get_local_ipaddr(sock_in);
--- 
-2.11.0
-
+ 	if (rexec_flag) {
+ 		int fd;

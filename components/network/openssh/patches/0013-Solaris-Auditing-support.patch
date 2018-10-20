@@ -3,26 +3,14 @@ From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
 Subject: [PATCH 13/34] Solaris Auditing support
 
----
- INSTALL         |  15 +-
- Makefile.in     |   2 +-
- README.platform |   7 +-
- audit-solaris.c | 574 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- configure.ac    |   9 +-
- defines.h       |   5 +
- sshd.c          |   6 +
- 7 files changed, 609 insertions(+), 9 deletions(-)
- create mode 100644 audit-solaris.c
-
-diff --git a/INSTALL b/INSTALL
-index 6bc80b68..03417493 100644
---- a/INSTALL
-+++ b/INSTALL
-@@ -98,9 +98,13 @@ http://www.gnu.org/software/autoconf/
+diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
+--- a~/INSTALL	1970-01-01 00:00:00
++++ a/INSTALL	1970-01-01 00:00:00
+@@ -92,9 +92,13 @@ http://www.gnu.org/software/autoconf/
  
  Basic Security Module (BSM):
  
--Native BSM support is know to exist in Solaris from at least 2.5.1,
+-Native BSM support is known to exist in Solaris from at least 2.5.1,
 -FreeBSD 6.1 and OS X.  Alternatively, you may use the OpenBSM
 -implementation (http://www.openbsm.org).
 +Native BSM support is known to exist in Solaris from at least 2.5.1
@@ -33,9 +21,9 @@ index 6bc80b68..03417493 100644
 +Alternatively, you may use the OpenBSM implementation
 +(http://www.openbsm.org).
  
+ makedepend:
  
- 2. Building / Installation
-@@ -153,8 +157,9 @@ name).
+@@ -154,8 +158,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -47,12 +35,11 @@ index 6bc80b68..03417493 100644
  
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
-diff --git a/Makefile.in b/Makefile.in
-index 82065077..48d773de 100644
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -100,7 +100,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
- 	sshconnect.o sshconnect1.o sshconnect2.o mux.o
+diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
+--- a~/Makefile.in	1970-01-01 00:00:00
++++ a/Makefile.in	1970-01-01 00:00:00
+@@ -108,7 +108,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
+ 	sshconnect.o sshconnect2.o mux.o
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
@@ -60,11 +47,10 @@ index 82065077..48d773de 100644
  	sshpty.o sshlogin.o servconf.o serverloop.o \
  	auth.o auth2.o auth-options.o session.o \
  	auth2-chall.o groupaccess.o \
-diff --git a/README.platform b/README.platform
-index c7be95fb..ae461550 100644
---- a/README.platform
-+++ b/README.platform
-@@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
+diff -wpruN '--exclude=*.orig' a~/README.platform a/README.platform
+--- a~/README.platform	1970-01-01 00:00:00
++++ a/README.platform	1970-01-01 00:00:00
+@@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian base
  libssl-dev, libz-dev and libpam-dev.
  
  
@@ -75,7 +61,7 @@ index c7be95fb..ae461550 100644
  If you enable BSM auditing on Solaris, you need to update audit_event(4)
  for praudit(1m) to give sensible output.  The following line needs to be
  added to /etc/security/audit_event:
-@@ -85,6 +85,9 @@ There is no official registry of 3rd party event numbers, so if this
+@@ -85,6 +85,9 @@ There is no official registry of 3rd par
  number is already in use on your system, you may change it at build time
  by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
  
@@ -85,11 +71,9 @@ index c7be95fb..ae461550 100644
  
  Platforms using PAM
  -------------------
-diff --git a/audit-solaris.c b/audit-solaris.c
-new file mode 100644
-index 00000000..fc0839f5
---- /dev/null
-+++ b/audit-solaris.c
+diff -wpruN '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
+--- a~/audit-solaris.c	1970-01-01 00:00:00
++++ a/audit-solaris.c	1970-01-01 00:00:00
 @@ -0,0 +1,574 @@
 +/*
 + * CDDL HEADER START
@@ -120,8 +104,8 @@ index 00000000..fc0839f5
 +#if defined(USE_SOLARIS_AUDIT)
 +
 +#include "audit.h"
-+#include "buffer.h"
-+#include "key.h"
++#include "sshbuf.h"
++#include "sshkey.h"
 +#include "hostfile.h"
 +#include "auth.h"
 +#include "log.h"
@@ -665,11 +649,10 @@ index 00000000..fc0839f5
 +	(void) adt_end_session(ah);
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
-diff --git a/configure.ac b/configure.ac
-index f5deed69..7a36eee9 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -1561,7 +1561,7 @@ AC_ARG_WITH([libedit],
+diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -1608,7 +1608,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -678,7 +661,7 @@ index f5deed69..7a36eee9 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1598,6 +1598,13 @@ AC_ARG_WITH([audit],
+@@ -1645,6 +1645,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -692,11 +675,10 @@ index f5deed69..7a36eee9 100644
  	  debug)
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
-diff --git a/defines.h b/defines.h
-index c89f85a8..a2ec7361 100644
---- a/defines.h
-+++ b/defines.h
-@@ -645,6 +645,11 @@ struct winsize {
+diff -wpruN '--exclude=*.orig' a~/defines.h a/defines.h
+--- a~/defines.h	1970-01-01 00:00:00
++++ a/defines.h	1970-01-01 00:00:00
+@@ -650,6 +650,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -708,11 +690,10 @@ index c89f85a8..a2ec7361 100644
  #if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
-diff --git a/sshd.c b/sshd.c
-index e39b3024..eee363ab 100644
---- a/sshd.c
-+++ b/sshd.c
-@@ -2043,7 +2043,9 @@ main(int ac, char **av)
+diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
+--- a~/sshd.c	1970-01-01 00:00:00
++++ a/sshd.c	1970-01-01 00:00:00
+@@ -2176,7 +2176,9 @@ main(int ac, char **av)
  	}
  
  #ifdef SSH_AUDIT_EVENTS
@@ -722,8 +703,8 @@ index e39b3024..eee363ab 100644
  #endif
  
  #ifdef GSSAPI
-@@ -2073,6 +2075,10 @@ main(int ac, char **av)
- 		do_pam_session();
+@@ -2206,6 +2208,10 @@ main(int ac, char **av)
+ 		do_pam_session(ssh);
  	}
  #endif
 +#ifdef	USE_SOLARIS_AUDIT
@@ -733,6 +714,3 @@ index e39b3024..eee363ab 100644
  
  	/*
  	 * In privilege separation, we fork another child and prepare
--- 
-2.11.0
-

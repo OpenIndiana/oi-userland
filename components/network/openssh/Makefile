@@ -25,31 +25,38 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	7.4p1
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	7.8p1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	7.4.0.1
+IPS_COMPONENT_VERSION=	7.8.0.1
 
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1b1fc4a14e2024293181924ed24872e6f2e06293f3e8926a376b8aec481f19d1
+COMPONENT_ARCHIVE_HASH=	sha256:1a484bb15152c183bb2514e112aa30dd34138c3cfb032eee5490a66c507144ca
 COMPONENT_ARCHIVE_URL=	http://mirror.yandex.ru/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=utility/openssh
-
-TPNO_OPENSSH=		21980
-TPNO_GSSKEX=		20377
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Enable ASLR for this component
-# ASLR_MODE = $(ASLR_ENABLE)
+GENERATED_MAN_4_PAGES = moduli ssh_config sshd_config 
+GENERATED_MAN_1m_PAGES = sftp-server ssh-keysign ssh-pkcs11-helper sshd
+
+# Move man pages to correct section and fix header
+define process-man-rule
+uc=$(shell echo $(3)| tr '[:lower:]' '[:upper:]')
+$(PATCH_STAMPS):	$(SOURCE_DIR)/$(1).$(3)
+
+$(SOURCE_DIR)/$(1).$(3):	$(SOURCE_DIR)/.unpacked
+	cat $(SOURCE_DIR)/$(1).$(2) | $(GSED) -E "s/^(\.Dt +[^ ]+).*$//\1 $$(uc)/"  > $$@
+endef
+
+$(foreach man,$(GENERATED_MAN_4_PAGES),$(eval $(call process-man-rule,$(man),5,4)))
+$(foreach man,$(GENERATED_MAN_1m_PAGES),$(eval $(call process-man-rule,$(man),8,1m)))
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 

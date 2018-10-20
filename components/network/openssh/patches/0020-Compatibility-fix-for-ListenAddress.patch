@@ -13,31 +13,21 @@ diff --git a/servconf.c b/servconf.c
 index b492f32b..1501af6a 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -763,11 +763,22 @@ process_queued_listen_addrs(ServerOptions *options)
- 		options->address_family = AF_UNSPEC;
+@@ -923,7 +923,16 @@
  
  	for (i = 0; i < options->num_queued_listens; i++) {
--		add_listen_addr(options, options->queued_listen_addrs[i],
--		    options->queued_listen_ports[i]);
+ 		qla = &options->queued_listen_addrs[i];
+-		add_listen_addr(options, qla->addr, qla->rdomain, qla->port);
 +		/*
 +		 * To retain backwards compat with SunSSH, convert any listener
 +		 * on :: into a listener of unspecified AF (so it listens on
 +		 * v4 too)
 +		 */
-+		if (strcmp(options->queued_listen_addrs[i], "::") == 0) {
-+			add_listen_addr(options, NULL,
-+			    options->queued_listen_ports[i]);
++		if (strcmp(qla->addr,"::") == 0) {
++			add_listen_addr(options, NULL, qla->rdomain, qla->port);
 +		} else {
-+			add_listen_addr(options, options->queued_listen_addrs[i],
-+			    options->queued_listen_ports[i]);
++			add_listen_addr(options, qla->addr, qla->rdomain, qla->port);
 +		}
- 		free(options->queued_listen_addrs[i]);
- 		options->queued_listen_addrs[i] = NULL;
+ 		free(qla->addr);
+ 		free(qla->rdomain);
  	}
-+
- 	free(options->queued_listen_addrs);
- 	options->queued_listen_addrs = NULL;
- 	free(options->queued_listen_ports);
--- 
-2.11.0
-
