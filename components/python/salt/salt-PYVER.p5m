@@ -22,7 +22,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='Apache License 2.0'
 
-# Tornado does a lot of try/import/except, making pkgdepend unhapyy
+# Salt does a lot of try/import/except, making pkgdepend unhapyy
+# If one disables this line pkg will try to add dependencies to a giant list of dependencies that
+# salt does not need. Salt uses try import on purpose. For example to import the correct module for the given OS
+# e.g. import additional dependencies on windows which are uninstalleable on Illumos or Linux
 <transform path=usr/lib/python$(PYVER)/vendor-packages/salt/.*\.py -> default pkg.depend.bypass-generate .* >
 
 # force a dependency on the Python runtime
@@ -46,21 +49,35 @@ dir  path=etc/salt owner=root group=root mode=0755
 dir  path=var/log/salt owner=root group=root mode=0755
 file files/salt.xml path=lib/svc/manifest/application/salt.xml
 
+# Create Mediated Links
+link path=usr/bin/salt mediator=salt mediator-version=2.7 target=./salt-27
+link path=usr/bin/salt-api mediator=salt mediator-version=2.7 target=./salt-api-27
+link path=usr/bin/salt-call mediator=salt mediator-version=2.7 target=./salt-call-27
+link path=usr/bin/salt-cp mediator=salt mediator-version=2.7 target=./salt-cp-27
+link path=usr/bin/salt-key mediator=salt mediator-version=2.7 target=./salt-key-27
+link path=usr/bin/salt-master mediator=salt mediator-version=2.7 target=./salt-master-27
+link path=usr/bin/salt-minion mediator=salt mediator-version=2.7 target=./salt-minion-27
+link path=usr/bin/salt-proxy mediator=salt mediator-version=2.7 target=./salt-proxy-27
+link path=usr/bin/salt-run mediator=salt mediator-version=2.7 target=./salt-run-27
+link path=usr/bin/salt-ssh mediator=salt mediator-version=2.7 target=./salt-ssh-27
+link path=usr/bin/salt-syndic mediator=salt mediator-version=2.7 target=./salt-syndic-27
+link path=usr/bin/salt-unity mediator=salt mediator-version=2.7 target=./salt-unity-27
+link path=usr/bin/spm mediator=salt mediator-version=2.7 target=./spm-27
 
-file path=usr/bin/salt
-file path=usr/bin/salt-api
-file path=usr/bin/salt-call
-file path=usr/bin/salt-cloud
-file path=usr/bin/salt-cp
-file path=usr/bin/salt-key
-file path=usr/bin/salt-master
-file path=usr/bin/salt-minion
-file path=usr/bin/salt-proxy
-file path=usr/bin/salt-run
-file path=usr/bin/salt-ssh
-file path=usr/bin/salt-syndic
-file path=usr/bin/salt-unity
-file path=usr/bin/spm
+file usr/bin/salt path=usr/bin/salt-27
+file usr/bin/salt-api path=usr/bin/salt-api-27
+file usr/bin/salt-call path=usr/bin/salt-call-27
+file usr/bin/salt-cloud path=usr/bin/salt-cloud-27
+file usr/bin/salt-cp path=usr/bin/salt-cp-27
+file usr/bin/salt-key path=usr/bin/salt-key-27
+file usr/bin/salt-master path=usr/bin/salt-master-27
+file usr/bin/salt-minion path=usr/bin/salt-minion-27
+file usr/bin/salt-proxy path=usr/bin/salt-proxy-27
+file usr/bin/salt-run path=usr/bin/salt-run-27
+file usr/bin/salt-ssh path=usr/bin/salt-ssh-27
+file usr/bin/salt-syndic path=usr/bin/salt-syndic-27
+file usr/bin/salt-unity path=usr/bin/salt-unity-27
+file usr/bin/spm path=usr/bin/spm-27
 file path=usr/lib/python$(PYVER)/vendor-packages/salt-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/salt/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/salt/_compat.py
