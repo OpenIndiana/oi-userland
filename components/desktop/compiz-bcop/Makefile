@@ -10,22 +10,24 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
+# Copyright (c) 2018 Michal Nowak
 #
+
+PREFERRED_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-bcop
-COMPONENT_VERSION=	0.8.10
+COMPONENT_VERSION=	0.8.14
 COMPONENT_FMRI=		desktop/compiz/bcop
 COMPONENT_CLASSIFICATION=Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	beryl compiz XML option parser
-COMPONENT_SRC_NAME=	bcop
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:76a8e8c04f1c07cb4d2c204512806f94a59f4089a00a9c344be8f62d531d6504
-COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC_NAME).tar.gz
+    sha256:5e495317ba6f17eaba8c7316e2a0c9a9b0b8d5b692dd7548ab0d90ba18891174
+COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 COMPONENT_LICENSE=	MIT, LGPLv2.1, GPLv2
 
 
@@ -46,9 +48,9 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-getopt=/usr/gnu/bin/getopt
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
