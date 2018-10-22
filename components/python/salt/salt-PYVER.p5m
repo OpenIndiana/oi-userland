@@ -23,9 +23,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='Apache License 2.0'
 
 # Salt does a lot of try/import/except, making pkgdepend unhapyy
-# If one disables this line pkg will try to add dependencies to a giant list of dependencies that
-# salt does not need. Salt uses try import on purpose. For example to import the correct module for the given OS
-# e.g. import additional dependencies on windows which are uninstalleable on Illumos or Linux
+# If one disables this line pkg will try to add a giant list of optional dependencies to the package
+# Salt uses try import on purpose. Salt requires the admin to add optional dependencies via it's states. 
 <transform path=usr/lib/python$(PYVER)/vendor-packages/salt/.*\.py -> default pkg.depend.bypass-generate .* >
 
 # force a dependency on the Python runtime
