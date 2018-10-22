@@ -27,14 +27,14 @@ COMPONENT_NAME=     libgee
 COMPONENT_VERSION=  0.20.1
 COMPONENT_SUMMARY=  GObject based collection and utility library
 COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libgee
+COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libgee
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
     sha256:bb2802d29a518e8c6d2992884691f06ccfcc25792a5686178575c7111fea4630
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/libgee/0.20/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=     library/libgee
-COMPONENT_CLASSIFICATION=   Development/C
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libgee/0.20/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			library/desktop/libgee
+COMPONENT_CLASSIFICATION=	Development/GNOME and GTK+
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -49,5 +49,6 @@ install:    $(INSTALL_32_and_64)
 
 test:       $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
