@@ -13,18 +13,18 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=salt
-COMPONENT_VERSION=2018.3.2
-COMPONENT_SUMMARY=	Portable, distributed, remote execution and configuration management system
-COMPONENT_PROJECT_URL=http://saltstack.com
-COMPONENT_FMRI=system/management/$(COMPONENT_NAME)
+COMPONENT_NAME=			salt
+COMPONENT_VERSION=		2018.3.2
+COMPONENT_SUMMARY=		Portable, distributed, remote execution and configuration management system
+COMPONENT_PROJECT_URL=		http://saltstack.com
+COMPONENT_FMRI=			system/management/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=https://github.com/saltstack/salt/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=sha256:d86eeea2e5387f4a64bbf0a11d103bfc8aac1122e19d39cc0945d33efdc797bd
-COMPONENT_LICENSE=	Apache License 2.0
-COMPONENT_LICENSE_FILE=LICENSE
+COMPONENT_SRC=          	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=		https://github.com/saltstack/salt/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=		sha256:d86eeea2e5387f4a64bbf0a11d103bfc8aac1122e19d39cc0945d33efdc797bd
+COMPONENT_LICENSE=		Apache License 2.0
+COMPONENT_LICENSE_FILE=		LICENSE
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
