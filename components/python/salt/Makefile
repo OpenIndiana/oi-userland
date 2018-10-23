@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			salt
 COMPONENT_VERSION=		2018.3.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Portable, distributed, remote execution and configuration management system
 COMPONENT_PROJECT_URL=		http://saltstack.com
 COMPONENT_FMRI=			system/management/$(COMPONENT_NAME)
