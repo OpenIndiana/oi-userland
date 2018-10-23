@@ -37,4 +37,5 @@ install:        $(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-REQUIRED_PACKAGES+=runtime/python-27
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-27
