@@ -1,0 +1,54 @@
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+ Copyright(c) 2018 Till Wegmueller
+
+-->
+<service_bundle type="manifest" name="salt">
+  <service name="application/salt" type="service" version="1">
+    <dependency name="filesystem" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/system/filesystem/minimal"/>
+    </dependency>
+    <dependency name="network" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/milestone/network"/>
+    </dependency>
+    <dependency name="identity" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/system/identity:node"/>
+    </dependency>
+    <exec_method type="method" name="start" exec=":true" timeout_seconds="60"/>
+    <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
+    <instance name="master" enabled="false">
+	    <exec_method type="method" name="start" exec="/usr/bin/salt-master -d --log-file=%{config/logdest} -c %{config/confdir}" timeout_seconds="600"/>
+      <property_group name="config" type="application">
+        <propval name="logdest" type="astring" value="/var/log/salt/master.log"/>
+	<propval name="confdir" type="astring" value="/etc/salt"/>
+      </property_group>
+    </instance>
+    <instance name="minion" enabled="false">
+      <exec_method type="method" name="start" exec="/usr/bin/salt-minion -d --log-file=%{config/logdest} -c %{config/confdir}" timeout_seconds="600"/>
+      <property_group name="config" type="application">
+        <propval name="logdest" type="astring" value="/var/log/salt/minion.log"/>
+	<propval name="confdir" type="astring" value="/etc/salt"/>
+      </property_group>
+    </instance>
+    <stability value="Unstable"/>
+  </service>
+</service_bundle>
