@@ -37,13 +37,4 @@ install:        $(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-REQUIRED_PACKAGES+=library/python/futures-27
-REQUIRED_PACKAGES+=library/python/msgpack-python-27
-REQUIRED_PACKAGES+=library/python/pyyaml-27
-REQUIRED_PACKAGES+=library/python/jinja2-27
-REQUIRED_PACKAGES+=library/python/markupsafe-27
-REQUIRED_PACKAGES+=library/python/requests-27
-REQUIRED_PACKAGES+=library/python/tornado-27
 REQUIRED_PACKAGES+=runtime/python-27
-REQUIRED_PACKAGES+=library/python/pyzmq-27
-REQUIRED_PACKAGES+=library/python/cryptography-27

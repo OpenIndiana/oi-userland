@@ -49,19 +49,34 @@ dir  path=var/log/salt owner=root group=root mode=0755
 file files/salt.xml path=lib/svc/manifest/application/salt.xml
 
 # Create Mediated Links
-link path=usr/bin/salt mediator=salt mediator-version=2.7 target=./salt-27
-link path=usr/bin/salt-api mediator=salt mediator-version=2.7 target=./salt-api-27
-link path=usr/bin/salt-call mediator=salt mediator-version=2.7 target=./salt-call-27
-link path=usr/bin/salt-cp mediator=salt mediator-version=2.7 target=./salt-cp-27
-link path=usr/bin/salt-key mediator=salt mediator-version=2.7 target=./salt-key-27
-link path=usr/bin/salt-master mediator=salt mediator-version=2.7 target=./salt-master-27
-link path=usr/bin/salt-minion mediator=salt mediator-version=2.7 target=./salt-minion-27
-link path=usr/bin/salt-proxy mediator=salt mediator-version=2.7 target=./salt-proxy-27
-link path=usr/bin/salt-run mediator=salt mediator-version=2.7 target=./salt-run-27
-link path=usr/bin/salt-ssh mediator=salt mediator-version=2.7 target=./salt-ssh-27
-link path=usr/bin/salt-syndic mediator=salt mediator-version=2.7 target=./salt-syndic-27
-link path=usr/bin/salt-unity mediator=salt mediator-version=2.7 target=./salt-unity-27
-link path=usr/bin/spm mediator=salt mediator-version=2.7 target=./spm-27
+link path=usr/bin/salt mediator=salt mediator-version=$(PYVER) target=./salt-$(PYV)
+link path=usr/bin/salt-api mediator=salt mediator-version=$(PYVER) target=./salt-api-$(PYV)
+link path=usr/bin/salt-call mediator=salt mediator-version=$(PYVER) target=./salt-call-$(PYV)
+link path=usr/bin/salt-cp mediator=salt mediator-version=$(PYVER) target=./salt-cp-$(PYV)
+link path=usr/bin/salt-key mediator=salt mediator-version=$(PYVER) target=./salt-key-$(PYV)
+link path=usr/bin/salt-master mediator=salt mediator-version=$(PYVER) target=./salt-master-$(PYV)
+link path=usr/bin/salt-minion mediator=salt mediator-version=$(PYVER) target=./salt-minion-$(PYV)
+link path=usr/bin/salt-proxy mediator=salt mediator-version=$(PYVER) target=./salt-proxy-$(PYV)
+link path=usr/bin/salt-run mediator=salt mediator-version=$(PYVER) target=./salt-run-$(PYV)
+link path=usr/bin/salt-ssh mediator=salt mediator-version=$(PYVER) target=./salt-ssh-$(PYV)
+link path=usr/bin/salt-syndic mediator=salt mediator-version=$(PYVER) target=./salt-syndic-$(PYV)
+link path=usr/bin/salt-unity mediator=salt mediator-version=$(PYVER) target=./salt-unity-$(PYV)
+link path=usr/bin/spm mediator=salt mediator-version=$(PYVER) target=./spm-$(PYV)
+
+# Create Mediated Symlinks for Manpages
+link path=usr/share/man/man1/salt.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-api.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-api.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-cloud.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-cloud.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-cp.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-cp.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-key.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-key.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-master.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-master.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-minion.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-minion.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-proxy.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-proxy.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-run.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-run.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-ssh.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-ssh.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/salt-syndic.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-syndic.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man1/spm.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/spm.1 mediator=salt mediator-version=$(PYVER)
+link path=usr/share/man/man7/salt.7 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man7/salt.7 mediator=salt mediator-version=$(PYVER)
 
 file usr/bin/salt path=usr/bin/salt-27
 file usr/bin/salt-api path=usr/bin/salt-api-27
