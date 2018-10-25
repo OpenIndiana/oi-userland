@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtool
 COMPONENT_VERSION=	2.4.6
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	developer/build/libtool
 COMPONENT_SUMMARY=	GNU libtool
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -62,7 +62,7 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap --force)
+COMPONENT_PREP_ACTION = (cd $(@D) ; $(TOUCH) $(SOURCE_DIR)/README-release ; ./bootstrap --force --no-git)
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
