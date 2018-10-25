@@ -2,9 +2,9 @@ New default for lighttpd (since 1.4.46) is to use setsockopt(IPV6_V6ONLY).
 This will definately break existing installations, so we revert 
 to previous behavior.
 
---- src/configfile.c.1	2017-10-23 22:44:50.108274525 +0000
-+++ src/configfile.c	2017-10-23 22:45:25.639117864 +0000
-@@ -242,7 +242,7 @@
+--- src/configfile.c.~1~	2018-10-15 01:35:58.000000000 +0000
++++ src/configfile.c	2018-10-25 09:11:14.027438342 +0000
+@@ -352,7 +352,7 @@
  		s->use_xattr     = 0;
  		s->ssl_enabled   = 0;
  		s->use_ipv6      = (i == 0) ? 0 : srv->config_storage[0]->use_ipv6;
@@ -13,17 +13,17 @@ to previous behavior.
  		s->defer_accept  = (i == 0) ? 0 : srv->config_storage[0]->defer_accept;
  #ifdef HAVE_LSTAT
  		s->follow_symlink = 1;
---- src/network.c.1	2017-10-23 22:46:52.979521809 +0000
-+++ src/network.c	2017-10-23 22:47:17.791163501 +0000
-@@ -283,9 +283,9 @@
- 					log_error_write(srv, __FILE__, __LINE__, "ss", "setsockopt(IPV6_V6ONLY) failed:", strerror(errno));
- 					return -1;
- 				}
--			} else {
-+			} /* else {
- 				log_error_write(srv, __FILE__, __LINE__, "s", "warning: server.set-v6only will be removed soon, update your config to have different sockets for ipv4 and ipv6");
--			}
-+			} */
- 		}
- #endif
+--- src/network.c.~1~	2018-10-25 09:11:14.028380126 +0000
++++ src/network.c	2018-10-25 09:16:32.743971898 +0000
+@@ -189,9 +189,9 @@
+ 	if (*host != '\0' && AF_INET6 == family) {
+ 		if (s->set_v6only) {
+ 			set_v6only = 1;
+-		} else {
++		} /* else {
+ 			log_error_write(srv, __FILE__, __LINE__, "s", "warning: server.set-v6only will be removed soon, update your config to have different sockets for ipv4 and ipv6");
+-		}
++		} */
+ 	}
+       #endif
  
