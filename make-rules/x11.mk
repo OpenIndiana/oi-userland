@@ -16,6 +16,11 @@
 PREFERRED_BITS=64
 
 #
+# General macros
+#
+PKG_X11_VERSION=7.7
+
+#
 # Provide macros for commonly used urls
 #
 
