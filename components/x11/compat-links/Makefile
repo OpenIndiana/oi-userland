@@ -14,17 +14,15 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           compat-links
-COMPONENT_VERSION=        7.5
-COMPONENT_FMRI=           x11/compatibility/links-xorg
-COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SUMMARY=      Compatibility links for X11 files
-COMPONENT_LICENSE=      Oracle
-COMPONENT_LICENSE_FILE= compat-links.license
+COMPONENT_VERSION=        $(PKG_X11_VERSION)
+COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_LICENSE=        Oracle
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: 
 
