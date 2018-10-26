@@ -1,0 +1,916 @@
+# Add target descriptions for x86 Solaris architectures
+# Will be contributed upstream if possible.
+
+--- gdb-8.0-orig/gdb/features/i386/32bit-solaris.c	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/32bit-solaris.c	2017-06-15 14:37:00.960279405 -0700
+@@ -0,0 +1,16 @@
++/* THIS FILE IS GENERATED.  -*- buffer-read-only: t -*- vi:set ro:
++  Original: 32bit-solaris.xml */
++
++#include "defs.h"
++#include "osabi.h"
++#include "target-descriptions.h"
++
++struct target_desc *tdesc_32bit_solaris;
++static void
++initialize_tdesc_32bit_solaris (void)
++{
++  struct target_desc *result = allocate_target_description ();
++  struct tdesc_feature *feature;
++
++  tdesc_32bit_solaris = result;
++}
+
+--- gdb-8.0-orig/gdb/features/i386/32bit-solaris.xml	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/32bit-solaris.xml	2017-06-15 14:34:17.727041140 -0700
+@@ -0,0 +1,11 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!DOCTYPE feature SYSTEM "gdb-target.dtd">
++<feature name="org.gnu.gdb.i386.solaris">
++  <reg name="orig_eax" bitsize="32" type="int" regnum="41"/>
++</feature>
+
+--- gdb-8.0-orig/gdb/features/i386/64bit-solaris.c	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/64bit-solaris.c	2017-06-15 14:37:00.968212065 -0700
+@@ -0,0 +1,16 @@
++/* THIS FILE IS GENERATED.  -*- buffer-read-only: t -*- vi:set ro:
++  Original: 64bit-solaris.xml */
++
++#include "defs.h"
++#include "osabi.h"
++#include "target-descriptions.h"
++
++struct target_desc *tdesc_64bit_solaris;
++static void
++initialize_tdesc_64bit_solaris (void)
++{
++  struct target_desc *result = allocate_target_description ();
++  struct tdesc_feature *feature;
++
++  tdesc_64bit_solaris = result;
++}
+
+--- gdb-8.0-orig/gdb/features/i386/64bit-solaris.xml	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/64bit-solaris.xml	2017-06-15 14:34:17.733953755 -0700
+@@ -0,0 +1,11 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!DOCTYPE feature SYSTEM "gdb-target.dtd">
++<feature name="org.gnu.gdb.i386.solaris">
++  <reg name="orig_rax" bitsize="64" type="int" regnum="57"/>
++</feature>
+
+--- gdb-8.0-orig/gdb/features/i386/amd64-avx-solaris.c	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/amd64-avx-solaris.c	2017-06-15 14:37:00.977535205 -0700
+@@ -0,0 +1,173 @@
++/* THIS FILE IS GENERATED.  -*- buffer-read-only: t -*- vi:set ro:
++  Original: amd64-avx-solaris.xml */
++
++#include "defs.h"
++#include "osabi.h"
++#include "target-descriptions.h"
++
++struct target_desc *tdesc_amd64_avx_solaris;
++static void
++initialize_tdesc_amd64_avx_solaris (void)
++{
++  struct target_desc *result = allocate_target_description ();
++  struct tdesc_feature *feature;
++  struct tdesc_type *field_type;
++  struct tdesc_type *type;
++
++  set_tdesc_architecture (result, bfd_scan_arch ("i386:x86-64"));
++
++  set_tdesc_osabi (result, osabi_from_tdesc_string ("Solaris"));
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.core");
++  field_type = tdesc_create_flags (feature, "i386_eflags", 4);
++  tdesc_add_flag (field_type, 0, "CF");
++  tdesc_add_flag (field_type, 1, "");
++  tdesc_add_flag (field_type, 2, "PF");
++  tdesc_add_flag (field_type, 4, "AF");
++  tdesc_add_flag (field_type, 6, "ZF");
++  tdesc_add_flag (field_type, 7, "SF");
++  tdesc_add_flag (field_type, 8, "TF");
++  tdesc_add_flag (field_type, 9, "IF");
++  tdesc_add_flag (field_type, 10, "DF");
++  tdesc_add_flag (field_type, 11, "OF");
++  tdesc_add_flag (field_type, 14, "NT");
++  tdesc_add_flag (field_type, 16, "RF");
++  tdesc_add_flag (field_type, 17, "VM");
++  tdesc_add_flag (field_type, 18, "AC");
++  tdesc_add_flag (field_type, 19, "VIF");
++  tdesc_add_flag (field_type, 20, "VIP");
++  tdesc_add_flag (field_type, 21, "ID");
++
++  tdesc_create_reg (feature, "rax", 0, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rbx", 1, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rcx", 2, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rdx", 3, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rsi", 4, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rdi", 5, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rbp", 6, 1, NULL, 64, "data_ptr");
++  tdesc_create_reg (feature, "rsp", 7, 1, NULL, 64, "data_ptr");
++  tdesc_create_reg (feature, "r8", 8, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r9", 9, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r10", 10, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r11", 11, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r12", 12, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r13", 13, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r14", 14, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r15", 15, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rip", 16, 1, NULL, 64, "code_ptr");
++  tdesc_create_reg (feature, "eflags", 17, 1, NULL, 32, "i386_eflags");
++  tdesc_create_reg (feature, "cs", 18, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ss", 19, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ds", 20, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "es", 21, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "fs", 22, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "gs", 23, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "st0", 24, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st1", 25, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st2", 26, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st3", 27, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st4", 28, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st5", 29, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st6", 30, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st7", 31, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "fctrl", 32, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fstat", 33, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "ftag", 34, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fiseg", 35, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fioff", 36, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "foseg", 37, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fooff", 38, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fop", 39, 1, "float", 32, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.sse");
++  field_type = tdesc_named_type (feature, "ieee_single");
++  tdesc_create_vector (feature, "v4f", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "ieee_double");
++  tdesc_create_vector (feature, "v2d", field_type, 2);
++
++  field_type = tdesc_named_type (feature, "int8");
++  tdesc_create_vector (feature, "v16i8", field_type, 16);
++
++  field_type = tdesc_named_type (feature, "int16");
++  tdesc_create_vector (feature, "v8i16", field_type, 8);
++
++  field_type = tdesc_named_type (feature, "int32");
++  tdesc_create_vector (feature, "v4i32", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "int64");
++  tdesc_create_vector (feature, "v2i64", field_type, 2);
++
++  type = tdesc_create_union (feature, "vec128");
++  field_type = tdesc_named_type (feature, "v4f");
++  tdesc_add_field (type, "v4_float", field_type);
++  field_type = tdesc_named_type (feature, "v2d");
++  tdesc_add_field (type, "v2_double", field_type);
++  field_type = tdesc_named_type (feature, "v16i8");
++  tdesc_add_field (type, "v16_int8", field_type);
++  field_type = tdesc_named_type (feature, "v8i16");
++  tdesc_add_field (type, "v8_int16", field_type);
++  field_type = tdesc_named_type (feature, "v4i32");
++  tdesc_add_field (type, "v4_int32", field_type);
++  field_type = tdesc_named_type (feature, "v2i64");
++  tdesc_add_field (type, "v2_int64", field_type);
++  field_type = tdesc_named_type (feature, "uint128");
++  tdesc_add_field (type, "uint128", field_type);
++
++  field_type = tdesc_create_flags (feature, "i386_mxcsr", 4);
++  tdesc_add_flag (field_type, 0, "IE");
++  tdesc_add_flag (field_type, 1, "DE");
++  tdesc_add_flag (field_type, 2, "ZE");
++  tdesc_add_flag (field_type, 3, "OE");
++  tdesc_add_flag (field_type, 4, "UE");
++  tdesc_add_flag (field_type, 5, "PE");
++  tdesc_add_flag (field_type, 6, "DAZ");
++  tdesc_add_flag (field_type, 7, "IM");
++  tdesc_add_flag (field_type, 8, "DM");
++  tdesc_add_flag (field_type, 9, "ZM");
++  tdesc_add_flag (field_type, 10, "OM");
++  tdesc_add_flag (field_type, 11, "UM");
++  tdesc_add_flag (field_type, 12, "PM");
++  tdesc_add_flag (field_type, 15, "FZ");
++
++  tdesc_create_reg (feature, "xmm0", 40, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm1", 41, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm2", 42, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm3", 43, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm4", 44, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm5", 45, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm6", 46, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm7", 47, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm8", 48, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm9", 49, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm10", 50, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm11", 51, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm12", 52, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm13", 53, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm14", 54, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm15", 55, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "mxcsr", 56, 1, "vector", 32, "i386_mxcsr");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.solaris");
++  tdesc_create_reg (feature, "orig_rax", 57, 1, NULL, 64, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.avx");
++  tdesc_create_reg (feature, "ymm0h", 58, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm1h", 59, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm2h", 60, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm3h", 61, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm4h", 62, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm5h", 63, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm6h", 64, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm7h", 65, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm8h", 66, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm9h", 67, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm10h", 68, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm11h", 69, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm12h", 70, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm13h", 71, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm14h", 72, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm15h", 73, 1, NULL, 128, "uint128");
++
++  tdesc_amd64_avx_solaris = result;
++}
+
+--- gdb-8.0-orig/gdb/features/i386/amd64-avx-solaris.xml	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/amd64-avx-solaris.xml	2017-06-15 14:34:17.740876070 -0700
+@@ -0,0 +1,18 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- AMD64 with AVX - Solaris.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386:x86-64</architecture>
++  <osabi>Solaris</osabi>
++  <xi:include href="64bit-core.xml"/>
++  <xi:include href="64bit-sse.xml"/>
++  <xi:include href="64bit-solaris.xml"/>
++  <xi:include href="64bit-avx.xml"/>
++</target>
+
+--- gdb-8.0-orig/gdb/features/i386/amd64-solaris.c	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/amd64-solaris.c	2017-08-15 10:53:58.517876365 -0700
+@@ -0,0 +1,155 @@
++/* THIS FILE IS GENERATED.  -*- buffer-read-only: t -*- vi:set ro:
++  Original: amd64-solaris.xml */
++
++#include "defs.h"
++#include "osabi.h"
++#include "target-descriptions.h"
++
++struct target_desc *tdesc_amd64_solaris;
++static void
++initialize_tdesc_amd64_solaris (void)
++{
++  struct target_desc *result = allocate_target_description ();
++  struct tdesc_feature *feature;
++  struct tdesc_type *field_type;
++  struct tdesc_type *type;
++
++  set_tdesc_architecture (result, bfd_scan_arch ("i386:x86-64"));
++
++  set_tdesc_osabi (result, osabi_from_tdesc_string ("Solaris"));
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.core");
++  type = tdesc_create_flags (feature, "i386_eflags", 4);
++  tdesc_add_flag (type, 0, "CF");
++  tdesc_add_flag (type, 1, "");
++  tdesc_add_flag (type, 2, "PF");
++  tdesc_add_flag (type, 4, "AF");
++  tdesc_add_flag (type, 6, "ZF");
++  tdesc_add_flag (type, 7, "SF");
++  tdesc_add_flag (type, 8, "TF");
++  tdesc_add_flag (type, 9, "IF");
++  tdesc_add_flag (type, 10, "DF");
++  tdesc_add_flag (type, 11, "OF");
++  tdesc_add_flag (type, 14, "NT");
++  tdesc_add_flag (type, 16, "RF");
++  tdesc_add_flag (type, 17, "VM");
++  tdesc_add_flag (type, 18, "AC");
++  tdesc_add_flag (type, 19, "VIF");
++  tdesc_add_flag (type, 20, "VIP");
++  tdesc_add_flag (type, 21, "ID");
++
++  tdesc_create_reg (feature, "rax", 0, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rbx", 1, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rcx", 2, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rdx", 3, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rsi", 4, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rdi", 5, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rbp", 6, 1, NULL, 64, "data_ptr");
++  tdesc_create_reg (feature, "rsp", 7, 1, NULL, 64, "data_ptr");
++  tdesc_create_reg (feature, "r8", 8, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r9", 9, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r10", 10, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r11", 11, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r12", 12, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r13", 13, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r14", 14, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "r15", 15, 1, NULL, 64, "int64");
++  tdesc_create_reg (feature, "rip", 16, 1, NULL, 64, "code_ptr");
++  tdesc_create_reg (feature, "eflags", 17, 1, NULL, 32, "i386_eflags");
++  tdesc_create_reg (feature, "cs", 18, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ss", 19, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ds", 20, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "es", 21, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "fs", 22, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "gs", 23, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "st0", 24, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st1", 25, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st2", 26, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st3", 27, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st4", 28, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st5", 29, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st6", 30, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st7", 31, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "fctrl", 32, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fstat", 33, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "ftag", 34, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fiseg", 35, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fioff", 36, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "foseg", 37, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fooff", 38, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fop", 39, 1, "float", 32, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.sse");
++  field_type = tdesc_named_type (feature, "ieee_single");
++  tdesc_create_vector (feature, "v4f", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "ieee_double");
++  tdesc_create_vector (feature, "v2d", field_type, 2);
++
++  field_type = tdesc_named_type (feature, "int8");
++  tdesc_create_vector (feature, "v16i8", field_type, 16);
++
++  field_type = tdesc_named_type (feature, "int16");
++  tdesc_create_vector (feature, "v8i16", field_type, 8);
++
++  field_type = tdesc_named_type (feature, "int32");
++  tdesc_create_vector (feature, "v4i32", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "int64");
++  tdesc_create_vector (feature, "v2i64", field_type, 2);
++
++  type = tdesc_create_union (feature, "vec128");
++  field_type = tdesc_named_type (feature, "v4f");
++  tdesc_add_field (type, "v4_float", field_type);
++  field_type = tdesc_named_type (feature, "v2d");
++  tdesc_add_field (type, "v2_double", field_type);
++  field_type = tdesc_named_type (feature, "v16i8");
++  tdesc_add_field (type, "v16_int8", field_type);
++  field_type = tdesc_named_type (feature, "v8i16");
++  tdesc_add_field (type, "v8_int16", field_type);
++  field_type = tdesc_named_type (feature, "v4i32");
++  tdesc_add_field (type, "v4_int32", field_type);
++  field_type = tdesc_named_type (feature, "v2i64");
++  tdesc_add_field (type, "v2_int64", field_type);
++  field_type = tdesc_named_type (feature, "uint128");
++  tdesc_add_field (type, "uint128", field_type);
++
++  type = tdesc_create_flags (feature, "i386_mxcsr", 4);
++  tdesc_add_flag (type, 0, "IE");
++  tdesc_add_flag (type, 1, "DE");
++  tdesc_add_flag (type, 2, "ZE");
++  tdesc_add_flag (type, 3, "OE");
++  tdesc_add_flag (type, 4, "UE");
++  tdesc_add_flag (type, 5, "PE");
++  tdesc_add_flag (type, 6, "DAZ");
++  tdesc_add_flag (type, 7, "IM");
++  tdesc_add_flag (type, 8, "DM");
++  tdesc_add_flag (type, 9, "ZM");
++  tdesc_add_flag (type, 10, "OM");
++  tdesc_add_flag (type, 11, "UM");
++  tdesc_add_flag (type, 12, "PM");
++  tdesc_add_flag (type, 15, "FZ");
++
++  tdesc_create_reg (feature, "xmm0", 40, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm1", 41, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm2", 42, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm3", 43, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm4", 44, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm5", 45, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm6", 46, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm7", 47, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm8", 48, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm9", 49, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm10", 50, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm11", 51, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm12", 52, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm13", 53, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm14", 54, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm15", 55, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "mxcsr", 56, 1, "vector", 32, "i386_mxcsr");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.solaris");
++  tdesc_create_reg (feature, "orig_rax", 57, 1, NULL, 64, "int");
++
++  tdesc_amd64_solaris = result;
++}
+
+--- gdb-8.0-orig/gdb/features/i386/amd64-solaris.xml	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/amd64-solaris.xml	2017-06-15 14:34:17.747573225 -0700
+@@ -0,0 +1,17 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- AMD64 - Solaris.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386:x86-64</architecture>
++  <osabi>Solaris</osabi>
++  <xi:include href="64bit-core.xml"/>
++  <xi:include href="64bit-sse.xml"/>
++  <xi:include href="64bit-solaris.xml"/>
++</target>
+
+--- gdb-8.0-orig/gdb/features/i386/i386-avx-solaris.c	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/i386-avx-solaris.c	2017-06-15 14:37:00.986099290 -0700
+@@ -0,0 +1,149 @@
++/* THIS FILE IS GENERATED.  -*- buffer-read-only: t -*- vi:set ro:
++  Original: i386-avx-solaris.xml */
++
++#include "defs.h"
++#include "osabi.h"
++#include "target-descriptions.h"
++
++struct target_desc *tdesc_i386_avx_solaris;
++static void
++initialize_tdesc_i386_avx_solaris (void)
++{
++  struct target_desc *result = allocate_target_description ();
++  struct tdesc_feature *feature;
++  struct tdesc_type *field_type;
++  struct tdesc_type *type;
++
++  set_tdesc_architecture (result, bfd_scan_arch ("i386"));
++
++  set_tdesc_osabi (result, osabi_from_tdesc_string ("Solaris"));
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.core");
++  field_type = tdesc_create_flags (feature, "i386_eflags", 4);
++  tdesc_add_flag (field_type, 0, "CF");
++  tdesc_add_flag (field_type, 1, "");
++  tdesc_add_flag (field_type, 2, "PF");
++  tdesc_add_flag (field_type, 4, "AF");
++  tdesc_add_flag (field_type, 6, "ZF");
++  tdesc_add_flag (field_type, 7, "SF");
++  tdesc_add_flag (field_type, 8, "TF");
++  tdesc_add_flag (field_type, 9, "IF");
++  tdesc_add_flag (field_type, 10, "DF");
++  tdesc_add_flag (field_type, 11, "OF");
++  tdesc_add_flag (field_type, 14, "NT");
++  tdesc_add_flag (field_type, 16, "RF");
++  tdesc_add_flag (field_type, 17, "VM");
++  tdesc_add_flag (field_type, 18, "AC");
++  tdesc_add_flag (field_type, 19, "VIF");
++  tdesc_add_flag (field_type, 20, "VIP");
++  tdesc_add_flag (field_type, 21, "ID");
++
++  tdesc_create_reg (feature, "eax", 0, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ecx", 1, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "edx", 2, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ebx", 3, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "esp", 4, 1, NULL, 32, "data_ptr");
++  tdesc_create_reg (feature, "ebp", 5, 1, NULL, 32, "data_ptr");
++  tdesc_create_reg (feature, "esi", 6, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "edi", 7, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "eip", 8, 1, NULL, 32, "code_ptr");
++  tdesc_create_reg (feature, "eflags", 9, 1, NULL, 32, "i386_eflags");
++  tdesc_create_reg (feature, "cs", 10, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ss", 11, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ds", 12, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "es", 13, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "fs", 14, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "gs", 15, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "st0", 16, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st1", 17, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st2", 18, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st3", 19, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st4", 20, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st5", 21, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st6", 22, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st7", 23, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "fctrl", 24, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fstat", 25, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "ftag", 26, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fiseg", 27, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fioff", 28, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "foseg", 29, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fooff", 30, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fop", 31, 1, "float", 32, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.sse");
++  field_type = tdesc_named_type (feature, "ieee_single");
++  tdesc_create_vector (feature, "v4f", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "ieee_double");
++  tdesc_create_vector (feature, "v2d", field_type, 2);
++
++  field_type = tdesc_named_type (feature, "int8");
++  tdesc_create_vector (feature, "v16i8", field_type, 16);
++
++  field_type = tdesc_named_type (feature, "int16");
++  tdesc_create_vector (feature, "v8i16", field_type, 8);
++
++  field_type = tdesc_named_type (feature, "int32");
++  tdesc_create_vector (feature, "v4i32", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "int64");
++  tdesc_create_vector (feature, "v2i64", field_type, 2);
++
++  type = tdesc_create_union (feature, "vec128");
++  field_type = tdesc_named_type (feature, "v4f");
++  tdesc_add_field (type, "v4_float", field_type);
++  field_type = tdesc_named_type (feature, "v2d");
++  tdesc_add_field (type, "v2_double", field_type);
++  field_type = tdesc_named_type (feature, "v16i8");
++  tdesc_add_field (type, "v16_int8", field_type);
++  field_type = tdesc_named_type (feature, "v8i16");
++  tdesc_add_field (type, "v8_int16", field_type);
++  field_type = tdesc_named_type (feature, "v4i32");
++  tdesc_add_field (type, "v4_int32", field_type);
++  field_type = tdesc_named_type (feature, "v2i64");
++  tdesc_add_field (type, "v2_int64", field_type);
++  field_type = tdesc_named_type (feature, "uint128");
++  tdesc_add_field (type, "uint128", field_type);
++
++  field_type = tdesc_create_flags (feature, "i386_mxcsr", 4);
++  tdesc_add_flag (field_type, 0, "IE");
++  tdesc_add_flag (field_type, 1, "DE");
++  tdesc_add_flag (field_type, 2, "ZE");
++  tdesc_add_flag (field_type, 3, "OE");
++  tdesc_add_flag (field_type, 4, "UE");
++  tdesc_add_flag (field_type, 5, "PE");
++  tdesc_add_flag (field_type, 6, "DAZ");
++  tdesc_add_flag (field_type, 7, "IM");
++  tdesc_add_flag (field_type, 8, "DM");
++  tdesc_add_flag (field_type, 9, "ZM");
++  tdesc_add_flag (field_type, 10, "OM");
++  tdesc_add_flag (field_type, 11, "UM");
++  tdesc_add_flag (field_type, 12, "PM");
++  tdesc_add_flag (field_type, 15, "FZ");
++
++  tdesc_create_reg (feature, "xmm0", 32, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm1", 33, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm2", 34, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm3", 35, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm4", 36, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm5", 37, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm6", 38, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm7", 39, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "mxcsr", 40, 1, "vector", 32, "i386_mxcsr");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.solaris");
++  tdesc_create_reg (feature, "orig_eax", 41, 1, NULL, 32, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.avx");
++  tdesc_create_reg (feature, "ymm0h", 42, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm1h", 43, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm2h", 44, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm3h", 45, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm4h", 46, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm5h", 47, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm6h", 48, 1, NULL, 128, "uint128");
++  tdesc_create_reg (feature, "ymm7h", 49, 1, NULL, 128, "uint128");
++
++  tdesc_i386_avx_solaris = result;
++}
+
+--- gdb-8.0-orig/gdb/features/i386/i386-avx-solaris.xml	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/i386-avx-solaris.xml	2017-06-15 14:34:17.754551240 -0700
+@@ -0,0 +1,18 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- I386 with AVX - Solaris.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386</architecture>
++  <osabi>Solaris</osabi>
++  <xi:include href="32bit-core.xml"/>
++  <xi:include href="32bit-sse.xml"/>
++  <xi:include href="32bit-solaris.xml"/>
++  <xi:include href="32bit-avx.xml"/>
++</target>
+
+--- gdb-8.0-orig/gdb/features/i386/i386-mmx-solaris.c	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/i386-mmx-solaris.c	2017-06-15 14:37:00.993826705 -0700
+@@ -0,0 +1,77 @@
++/* THIS FILE IS GENERATED.  -*- buffer-read-only: t -*- vi:set ro:
++  Original: i386-mmx-solaris.xml */
++
++#include "defs.h"
++#include "osabi.h"
++#include "target-descriptions.h"
++
++struct target_desc *tdesc_i386_mmx_solaris;
++static void
++initialize_tdesc_i386_mmx_solaris (void)
++{
++  struct target_desc *result = allocate_target_description ();
++  struct tdesc_feature *feature;
++  struct tdesc_type *field_type;
++
++  set_tdesc_architecture (result, bfd_scan_arch ("i386"));
++
++  set_tdesc_osabi (result, osabi_from_tdesc_string ("Solaris"));
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.core");
++  field_type = tdesc_create_flags (feature, "i386_eflags", 4);
++  tdesc_add_flag (field_type, 0, "CF");
++  tdesc_add_flag (field_type, 1, "");
++  tdesc_add_flag (field_type, 2, "PF");
++  tdesc_add_flag (field_type, 4, "AF");
++  tdesc_add_flag (field_type, 6, "ZF");
++  tdesc_add_flag (field_type, 7, "SF");
++  tdesc_add_flag (field_type, 8, "TF");
++  tdesc_add_flag (field_type, 9, "IF");
++  tdesc_add_flag (field_type, 10, "DF");
++  tdesc_add_flag (field_type, 11, "OF");
++  tdesc_add_flag (field_type, 14, "NT");
++  tdesc_add_flag (field_type, 16, "RF");
++  tdesc_add_flag (field_type, 17, "VM");
++  tdesc_add_flag (field_type, 18, "AC");
++  tdesc_add_flag (field_type, 19, "VIF");
++  tdesc_add_flag (field_type, 20, "VIP");
++  tdesc_add_flag (field_type, 21, "ID");
++
++  tdesc_create_reg (feature, "eax", 0, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ecx", 1, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "edx", 2, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ebx", 3, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "esp", 4, 1, NULL, 32, "data_ptr");
++  tdesc_create_reg (feature, "ebp", 5, 1, NULL, 32, "data_ptr");
++  tdesc_create_reg (feature, "esi", 6, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "edi", 7, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "eip", 8, 1, NULL, 32, "code_ptr");
++  tdesc_create_reg (feature, "eflags", 9, 1, NULL, 32, "i386_eflags");
++  tdesc_create_reg (feature, "cs", 10, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ss", 11, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ds", 12, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "es", 13, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "fs", 14, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "gs", 15, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "st0", 16, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st1", 17, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st2", 18, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st3", 19, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st4", 20, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st5", 21, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st6", 22, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st7", 23, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "fctrl", 24, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fstat", 25, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "ftag", 26, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fiseg", 27, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fioff", 28, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "foseg", 29, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fooff", 30, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fop", 31, 1, "float", 32, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.solaris");
++  tdesc_create_reg (feature, "orig_eax", 41, 1, NULL, 32, "int");
++
++  tdesc_i386_mmx_solaris = result;
++}
+
+--- gdb-8.0-orig/gdb/features/i386/i386-mmx-solaris.xml	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/i386-mmx-solaris.xml	2017-06-15 14:34:17.761511220 -0700
+@@ -0,0 +1,16 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- I386 with MMX - Solaris.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386</architecture>
++  <osabi>Solaris</osabi>
++  <xi:include href="32bit-core.xml"/>
++  <xi:include href="32bit-solaris.xml"/>
++</target>
+
+--- gdb-8.0-orig/gdb/features/i386/i386-solaris.c	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/i386-solaris.c	2017-08-10 10:34:43.088427955 -0700
+@@ -0,0 +1,139 @@
++/* THIS FILE IS GENERATED.  -*- buffer-read-only: t -*- vi:set ro:
++  Original: i386-solaris.xml */
++
++#include "defs.h"
++#include "osabi.h"
++#include "target-descriptions.h"
++
++struct target_desc *tdesc_i386_solaris;
++static void
++initialize_tdesc_i386_solaris (void)
++{
++  struct target_desc *result = allocate_target_description ();
++  struct tdesc_feature *feature;
++  struct tdesc_type *field_type;
++  struct tdesc_type *type;
++
++  set_tdesc_architecture (result, bfd_scan_arch ("i386"));
++
++  set_tdesc_osabi (result, osabi_from_tdesc_string ("Solaris"));
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.core");
++  type = tdesc_create_flags (feature, "i386_eflags", 4);
++  tdesc_add_flag (type, 0, "CF");
++  tdesc_add_flag (type, 1, "");
++  tdesc_add_flag (type, 2, "PF");
++  tdesc_add_flag (type, 4, "AF");
++  tdesc_add_flag (type, 6, "ZF");
++  tdesc_add_flag (type, 7, "SF");
++  tdesc_add_flag (type, 8, "TF");
++  tdesc_add_flag (type, 9, "IF");
++  tdesc_add_flag (type, 10, "DF");
++  tdesc_add_flag (type, 11, "OF");
++  tdesc_add_flag (type, 14, "NT");
++  tdesc_add_flag (type, 16, "RF");
++  tdesc_add_flag (type, 17, "VM");
++  tdesc_add_flag (type, 18, "AC");
++  tdesc_add_flag (type, 19, "VIF");
++  tdesc_add_flag (type, 20, "VIP");
++  tdesc_add_flag (type, 21, "ID");
++
++  tdesc_create_reg (feature, "eax", 0, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ecx", 1, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "edx", 2, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ebx", 3, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "esp", 4, 1, NULL, 32, "data_ptr");
++  tdesc_create_reg (feature, "ebp", 5, 1, NULL, 32, "data_ptr");
++  tdesc_create_reg (feature, "esi", 6, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "edi", 7, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "eip", 8, 1, NULL, 32, "code_ptr");
++  tdesc_create_reg (feature, "eflags", 9, 1, NULL, 32, "i386_eflags");
++  tdesc_create_reg (feature, "cs", 10, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ss", 11, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "ds", 12, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "es", 13, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "fs", 14, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "gs", 15, 1, NULL, 32, "int32");
++  tdesc_create_reg (feature, "st0", 16, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st1", 17, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st2", 18, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st3", 19, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st4", 20, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st5", 21, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st6", 22, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "st7", 23, 1, NULL, 80, "i387_ext");
++  tdesc_create_reg (feature, "fctrl", 24, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fstat", 25, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "ftag", 26, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fiseg", 27, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fioff", 28, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "foseg", 29, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fooff", 30, 1, "float", 32, "int");
++  tdesc_create_reg (feature, "fop", 31, 1, "float", 32, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.solaris");
++  tdesc_create_reg (feature, "orig_eax", 41, 1, NULL, 32, "int");
++
++  feature = tdesc_create_feature (result, "org.gnu.gdb.i386.sse");
++  field_type = tdesc_named_type (feature, "ieee_single");
++  tdesc_create_vector (feature, "v4f", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "ieee_double");
++  tdesc_create_vector (feature, "v2d", field_type, 2);
++
++  field_type = tdesc_named_type (feature, "int8");
++  tdesc_create_vector (feature, "v16i8", field_type, 16);
++
++  field_type = tdesc_named_type (feature, "int16");
++  tdesc_create_vector (feature, "v8i16", field_type, 8);
++
++  field_type = tdesc_named_type (feature, "int32");
++  tdesc_create_vector (feature, "v4i32", field_type, 4);
++
++  field_type = tdesc_named_type (feature, "int64");
++  tdesc_create_vector (feature, "v2i64", field_type, 2);
++
++  type = tdesc_create_union (feature, "vec128");
++  field_type = tdesc_named_type (feature, "v4f");
++  tdesc_add_field (type, "v4_float", field_type);
++  field_type = tdesc_named_type (feature, "v2d");
++  tdesc_add_field (type, "v2_double", field_type);
++  field_type = tdesc_named_type (feature, "v16i8");
++  tdesc_add_field (type, "v16_int8", field_type);
++  field_type = tdesc_named_type (feature, "v8i16");
++  tdesc_add_field (type, "v8_int16", field_type);
++  field_type = tdesc_named_type (feature, "v4i32");
++  tdesc_add_field (type, "v4_int32", field_type);
++  field_type = tdesc_named_type (feature, "v2i64");
++  tdesc_add_field (type, "v2_int64", field_type);
++  field_type = tdesc_named_type (feature, "uint128");
++  tdesc_add_field (type, "uint128", field_type);
++
++  type = tdesc_create_flags (feature, "i386_mxcsr", 4);
++  tdesc_add_flag (type, 0, "IE");
++  tdesc_add_flag (type, 1, "DE");
++  tdesc_add_flag (type, 2, "ZE");
++  tdesc_add_flag (type, 3, "OE");
++  tdesc_add_flag (type, 4, "UE");
++  tdesc_add_flag (type, 5, "PE");
++  tdesc_add_flag (type, 6, "DAZ");
++  tdesc_add_flag (type, 7, "IM");
++  tdesc_add_flag (type, 8, "DM");
++  tdesc_add_flag (type, 9, "ZM");
++  tdesc_add_flag (type, 10, "OM");
++  tdesc_add_flag (type, 11, "UM");
++  tdesc_add_flag (type, 12, "PM");
++  tdesc_add_flag (type, 15, "FZ");
++
++  tdesc_create_reg (feature, "xmm0", 32, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm1", 33, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm2", 34, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm3", 35, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm4", 36, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm5", 37, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm6", 38, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "xmm7", 39, 1, NULL, 128, "vec128");
++  tdesc_create_reg (feature, "mxcsr", 40, 1, "vector", 32, "i386_mxcsr");
++
++  tdesc_i386_solaris = result;
++}
+
+--- gdb-8.0-orig/gdb/features/i386/i386-solaris.xml	1969-12-31 16:00:00.000000000 -0800
++++ gdb-8.0/gdb/features/i386/i386-solaris.xml	2017-06-15 14:34:17.768477865 -0700
+@@ -0,0 +1,17 @@
++<?xml version="1.0"?>
++<!-- Copyright (C) 2010-2013 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  -->
++
++<!-- I386 with SSE - Solaris.  -->
++
++<!DOCTYPE target SYSTEM "gdb-target.dtd">
++<target>
++  <architecture>i386</architecture>
++  <osabi>Solaris</osabi>
++  <xi:include href="32bit-core.xml"/>
++  <xi:include href="32bit-solaris.xml"/>
++  <xi:include href="32bit-sse.xml"/>
++</target>
+
+--- gdb-8.0-orig/gdb/testsuite/gdb.xml/tdesc-regs.exp	2017-06-04 08:51:27.000000000 -0700
++++ gdb-8.0/gdb/testsuite/gdb.xml/tdesc-regs.exp	2017-07-20 12:56:22.368103375 -0700
+@@ -79,11 +79,21 @@ switch -glob -- [istarget] {
+     "tic6x-*-*" {
+ 	set core-regs {tic6x-core.xml}
+     }
++    "i?86-*-solaris*" {
++	set architecture "i386"
++	set regdir "i386/"
++        set core-regs {32bit-solaris.xml 32bit-core.xml 32bit-sse.xml}
++    }
+     "i?86-*-*" {
+ 	set architecture "i386"
+ 	set regdir "i386/"
+         set core-regs {32bit-core.xml 32bit-sse.xml}
+     }
++    "x86_64-*-solaris*" {
++	set architecture "i386:x86-64"
++	set regdir "i386/"
++        set core-regs {64bit-solaris.xml 64bit-core.xml 64bit-sse.xml}
++    }
+     "x86_64-*-*" {
+ 	set architecture "i386:x86-64"
+ 	set regdir "i386/"
