@@ -21,23 +21,23 @@
 
 #
 # Copyright 2017 Gary Mills
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2018, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
-COMPONENT_VERSION=	7.10.1
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	8.0.1
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-     sha256:ff14f8050e6484508c73cbfa63731e57901478490ca1672dc0b5e2b03f6af622
+     sha256:3dbd5f93e36ba2815ad0efab030dcd0c7b211d7b353a40a53f4c02d7d56295e3
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	http://www.gnu.org/software/gdb/
 COMPONENT_BUGDB=	utility/gdb
 
-TPNO=			17258
+TPNO=			36110
 CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/prep.mk
