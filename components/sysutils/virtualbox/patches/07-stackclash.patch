@@ -1,0 +1,20 @@
+Patch from Andy Fiddaman <omnios@citrus-it.net>
+
+Following the integration of '9641 want stack-clash mitigation', as_map()
+now expects callback functions to be:
+
+typedef int (*segcreate_func_t)(struct seg **, void *);
+
+--- VirtualBox-5.2.22/src/VBox/Runtime/r0drv/solaris/memobj-r0drv-solaris.h~	2018-11-12 19:36:10.872893469 +0000
++++ VirtualBox-5.2.22/src/VBox/Runtime/r0drv/solaris/memobj-r0drv-solaris.h	2018-11-12 19:36:33.791976901 +0000
+@@ -56,8 +56,9 @@
+ static vnode_t s_segVBoxVnode;
+ 
+ 
+-DECLINLINE(int) rtR0SegVBoxSolCreate(seg_t *pSeg, void *pvArgs)
++DECLINLINE(int) rtR0SegVBoxSolCreate(seg_t **ppSeg, void *pvArgs)
+ {
++    seg_t          *pSeg       = *ppSeg;
+     struct as      *pAddrSpace = pSeg->s_as;
+     PSEGVBOX_CRARGS pArgs      = pvArgs;
+     PSEGVBOX_DATA   pData      = kmem_zalloc(sizeof(*pData), KM_SLEEP);
