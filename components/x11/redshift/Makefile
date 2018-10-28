@@ -10,11 +10,15 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
+# Copyright (c) 2018 Michal Nowak
 #
+
+PREFERRED_BITS=	64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		redshift
-COMPONENT_VERSION=	1.11
+COMPONENT_VERSION=	1.12
 COMPONENT_PROJECT_URL=	http://jonls.dk/redshift/
 COMPONENT_SUMMARY=	Redshift adjusts the color temperature of your screen according to your surroundings
 COMPONENT_FMRI=         x11/redshift
@@ -22,7 +26,7 @@ COMPONENT_CLASSIFICATION=       System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:10e350f93951c0521dd6f103d67a485972c307214f036e009acea2978fe4f359
+    sha256:d2f8c5300e3ce2a84fe6584d2f1483aa9eadc668ab1951b2c2b8a03ece3a22ba
 COMPONENT_ARCHIVE_URL=	https://github.com/jonls/redshift/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
@@ -37,15 +41,16 @@ CONFIGURE_ENV	+= XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV	+= MSGFMT=/usr/gnu/bin/msgfmt
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
 
-CONFIGURE_OPTIONS	+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+# There are no binary python modules, install them in 32-bit path
+CONFIGURE_OPTIONS	+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES.32)"
 CONFIGURE_OPTIONS	+= --enable-gui
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32_and_64)
+test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-drm
