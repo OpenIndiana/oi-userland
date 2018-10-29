@@ -20,6 +20,8 @@ PREFERRED_BITS=64
 #
 PKG_X11_VERSION=7.7
 
+X11_COMPONENTS_DIR = $(WS_COMPONENTS)/x11
+
 #
 # Provide macros for commonly used urls
 #
@@ -39,6 +41,16 @@ XORG_TEST_BASE_URL    = $(XORG_BASE_URL)/test
 XORG_UTIL_BASE_URL    = $(XORG_BASE_URL)/util
 XORG_XCB_BASE_URL     = $(XORG_BASE_URL)/xcb
 XORG_XSERVER_BASE_URL = $(XORG_BASE_URL)/xserver
+
+#
+# Default X11 component values
+#
+COMPONENT_PROJECT_URL ?= $(XORG_PROJECT_URL)
+COMPONENT_SRC         ?= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE     ?= $(COMPONENT_SRC).tar.bz2
+ifneq ($(strip $(X11_CATEGORY)),)
+COMPONENT_ARCHIVE_URL ?= $(XORG_$(X11_CATEGORY)_BASE_URL)/$(COMPONENT_ARCHIVE)
+endif
 
 #
 # Define library install paths
