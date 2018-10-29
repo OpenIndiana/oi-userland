@@ -91,9 +91,11 @@ endif
 ifeq ($(strip $(BUILD_STYLE)),ant)
 ASLR_MODE= $(ASLR_NOT_APPLICABLE)
 else
+ifeq ($(strip $(DEFAULT_ASLR_ENABLE)),yes)
 # Enable ASLR by default unless target build is NO_ARCH.
 ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
 ASLR_MODE= $(ASLR_ENABLE)
+endif # DEFAULT_ASLR_ENABLE yes
 endif # BUILD_BITS NO_ARCH
 endif # BUILD_STYLE ant
 
