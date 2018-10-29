@@ -18,6 +18,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           x11-compatibility
 COMPONENT_VERSION=        $(PKG_OS_VERSION)
+COMPONENT_REVISION=       1
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_LICENSE=        Oracle
 
