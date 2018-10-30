@@ -1,0 +1,27 @@
+From b59e74c179d1300127c837a3f81df1533dc280c9 Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Wed, 20 Mar 2019 00:08:14 +0100
+Subject: [PATCH 6/7] libgo_runtime_proc.c
+
+---
+ libgo/runtime/proc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libgo/runtime/proc.c b/libgo/runtime/proc.c
+index c6ac972bd41..d179cebf082 100644
+--- a/libgo/runtime/proc.c
++++ b/libgo/runtime/proc.c
+@@ -11,6 +11,10 @@
+ #include "config.h"
+ 
+ #ifdef HAVE_DL_ITERATE_PHDR
++#ifdef __sun
++#undef _FILE_OFFSET_BITS
++#define _FILE_OFFSET_BITS 32
++#endif
+ #include <link.h>
+ #endif
+ 
+-- 
+2.20.1
+

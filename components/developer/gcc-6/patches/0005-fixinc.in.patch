@@ -1,0 +1,34 @@
+From d6f01e322e1ef5c624ea32f3455a6d6c8a2d9408 Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Wed, 20 Mar 2019 00:07:58 +0100
+Subject: [PATCH 5/7] fixinc.in
+
+---
+ fixincludes/fixinc.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fixincludes/fixinc.in b/fixincludes/fixinc.in
+index f7b8d8f1ee3..67e6e001287 100755
+--- a/fixincludes/fixinc.in
++++ b/fixincludes/fixinc.in
+@@ -212,7 +212,7 @@ search_dirs=""
+ 
+ while [ -n "$dirs" ] && [ $levels -gt 0 ]
+ do
+-  levels=`expr $levels - 1`
++  levels=`expr $levels - 1; true`
+   newdirs=
+   for d in $dirs
+   do
+@@ -341,7 +341,7 @@ if $LINKS; then
+           cd $LIB
+           while [ x$dirname != x ]; do
+             component=`echo $dirname | sed -e 's|/.*$||'`
+-            mkdir $component >/dev/null 2>&1
++            mkdir -p $component >/dev/null 2>&1
+             cd $component
+             dirmade=$dirmade/$component
+             dirname=`echo $dirname | sed -e 's|[^/]*/||'`
+-- 
+2.20.1
+
