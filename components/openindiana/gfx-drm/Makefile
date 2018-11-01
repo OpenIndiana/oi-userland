@@ -63,7 +63,7 @@ $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 prep::	$(SOURCE_DIR)/.patched
 
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
-	@[ -d $(BUILD_DIR)/$(MACH) ] || $(MKDIR) $(BUILD_DIR)/$(MACH)
+	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
 		cat myenv.sh | \
 		(sed \
@@ -76,10 +76,13 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
 	echo export USERLAND_ARCHIVES=\"$(USERLAND_ARCHIVES)\"; \
 	) > env.sh && \
+	cp tools/bldenv $(BUILD_DIR)/$(MACH)/bldenv && \
+	BLDENV=$(BUILD_DIR)/$(MACH)/bldenv && \
+	chmod u+wx $(BUILD_DIR)/$(MACH)/bldenv && \
 	cd $(SOURCE_DIR) && \
-		$(ENV) -i /opt/onbld/bin/bldenv env.sh "cd usr/src; make install"
+		$(ENV) -i $${BLDENV} env.sh "cd usr/src; make install" && \
 	cd $(SOURCE_DIR) && \
-		$(ENV) -i /opt/onbld/bin/bldenv env.sh "cd usr/src/pkg; make install"
+		$(ENV) -i $${BLDENV} env.sh "cd usr/src/pkg; make install"
 	$(TOUCH) $@
 
 PROTO_DIR=$(SOURCE_DIR)/proto/root_i386/
