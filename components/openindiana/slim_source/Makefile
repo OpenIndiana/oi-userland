@@ -57,6 +57,9 @@ download:: $(SOURCE_DIR)/.downloaded
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded Makefile
 	$(MKDIR) $(@D) && \
         cd $(SOURCE_DIR) && \
+	cp usr/src/tools/env/nightly $(BUILD_DIR)/$(MACH)/nightly && \
+	chmod u+wx $(BUILD_DIR)/$(MACH)/nightly && \
+	NIGHTLY="$(BUILD_DIR)/$(MACH)/nightly" && \
         cat usr/src/tools/env/developer.sh | \
           (sed \
             -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
@@ -72,7 +75,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded Makefile
           echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
           echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
           developer.sh && \
-        time /opt/onbld/bin/nightly developer.sh &&\
+        time $${NIGHTLY} developer.sh &&\
 	$(TOUCH) $@
 
 build install: $(BUILD_DIR)/$(MACH)/.built
