@@ -82,7 +82,15 @@ $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 prep::	$(SOURCE_DIR)/.patched
 
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
+	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
+	  if [ -f tools/nightly ] ; then  \
+		cp tools/nightly $(BUILD_DIR)/$(MACH)/nightly ; \
+	  else  \
+		cp usr/src/tools/scripts/nightly.sh $(BUILD_DIR)/$(MACH)/nightly ; \
+	  fi && \
+	  chmod u+wx $(BUILD_DIR)/$(MACH)/nightly && \
+	  NIGHTLY="$(BUILD_DIR)/$(MACH)/nightly" && \
 	  cat usr/src/tools/env/illumos.sh | \
 	  (sed \
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
@@ -99,8 +107,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
 	  illumos.sh && \
-	  time $(ENV) -i /opt/onbld/bin/nightly illumos.sh
-	@[ -d $(BUILD_DIR)/$(MACH) ] || $(MKDIR) $(BUILD_DIR)/$(MACH)
+	  time $(ENV) -i $${NIGHTLY} illumos.sh
 	$(TOUCH) $@
 
 build install: $(BUILD_DIR)/$(MACH)/.built
