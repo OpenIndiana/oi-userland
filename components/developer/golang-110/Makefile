@@ -28,8 +28,8 @@ include ../../../make-rules/shared-macros.mk
 PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
-COMPONENT_VERSION=		1.10
-COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | gsed -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
+COMPONENT_MAJOR_VERSION=	1.10
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).4
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -37,10 +37,10 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:f3de49289405fda5fd1483a8fe6bd2fa5469e005fd567df64485c4fa000c7f24
+COMPONENT_ARCHIVE_HASH=		sha256:6fe44965ed453cd968a81988523e9b0e794d3a478f91fd7983c28763d52d5781
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
-MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_VERSION)/man/man1
+MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
 
 # Go has a number of supplementary tools and packages that are located in
 # separate archives or source repositories. Because Go currently forces a
@@ -76,6 +76,8 @@ COMPONENT_INSTALL_ENV += GOPATH="$(SUPP_ROOT)"
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PKG_MACROS+= GO_MAJOR=$(COMPONENT_MAJOR_VERSION)
 
 # We have to fiddle with the package archives to get them into the same source
 # directory so that we can use the standard build targets.  We're effectively
@@ -119,6 +121,7 @@ define COMPONENT_INSTALL_ACTION=
 		-exec /usr/gnu/bin/cp --parents {} $(COMPONENT_TARGET_DIR) \;); \
 	(cd $(BUILD_DIR_64) && $(CP) -r bin $(COMPONENT_TARGET_DIR)/); \
 	(cd $(BUILD_DIR_64) && $(CP) -r pkg $(COMPONENT_TARGET_DIR)/); \
+	(rm -r $(COMPONENT_TARGET_DIR)/pkg/obj); \
 	($(MKDIR) -p $(MEDIATEDUSRSHAREMAN1DIR) && cp -f $(COMPONENT_DIR)/files/go.1 $(MEDIATEDUSRSHAREMAN1DIR));
 endef
 
