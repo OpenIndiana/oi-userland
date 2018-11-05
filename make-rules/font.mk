@@ -164,10 +164,10 @@ CONFIGURE_OPTIONS += --without-compression
 endif
 
 # Add font metadata to packages to make it easier to search for fonts
-$(MANIFEST_BASE)-%.mogrified: PUBLISH_TRANSFORMS += $(@:.mogrified=.font-transforms)
+$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.mogrified): PUBLISH_TRANSFORMS += $(@:.mogrified=.font-transforms)
 
-$(MANIFESTS:%.p5m=%.mogrified): font-transforms
-font-transforms: $(MANIFESTS:%.p5m=%.font-transforms)
+$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.mogrified): font-transforms
+font-transforms: $(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.font-transforms)
 
 $(MANIFEST_BASE)-%.font-transforms: %.p5m
 	$(PERL) $(WS_TOOLS)/generate_font_metadata.pl \
