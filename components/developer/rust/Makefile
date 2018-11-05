@@ -29,8 +29,7 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.29.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=	1.29.2
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -38,7 +37,7 @@ COMPONENT_PROJECT_URL=	http://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f1b0728b66ce6bce6d72bbe5ea9e3a24ea22a045665da2ed8fcdfad14f61a349
+    sha256:5088e796aa2e47478cdf41e7243fc5443fafab0a7c70a11423e57c80c04167c9
 COMPONENT_ARCHIVE_URL=	http://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT or Apache-2.0
 
@@ -67,8 +66,18 @@ PATCH_LEVEL=0
 # Need some help to pick the correct ar binary
 GNUAR=$(GNUBIN)/ar
 
+# getpwuid_r failure
+CFLAGS  +=-D_POSIX_PTHREAD_SEMANTICS
+CXXFLAGS+=-D_POSIX_PTHREAD_SEMANTICS
+
 # Add arch triplet to pkg macros
 PKG_MACROS+= RUST_ARCH="$(RUST_ARCH)"
+
+COMPONENT_PREP_ACTION = \
+	$(GSED) -i -e 's/9c6af198a2f80da827054784faf70bc404673d9568fb45664b4f73c46245fdbd/c3851969a854d6ccaa8a94369f1288025149d1ebdc74b36f224423f35b18f7a7/' \
+		$(SOURCE_DIR)/src/vendor/libc/.cargo-checksum.json; \
+	$(GSED) -i -e 's/cb94a0b54e47022b2e9b58b45e0196785c61d083760333276226da435cc040d9/bcb195562cf830c9e2078757e6d0976f86ede59816ff305e21a2764a4a4cf43e/' \
+		$(SOURCE_DIR)/src/vendor/rand/.cargo-checksum.json;
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -115,7 +124,9 @@ CONFIGURE_OPTIONS += --python=$(PYTHON)
 # Cleanup standard environment!
 COMPONENT_BUILD_ENV =
 COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CXX=$(CXX)
+COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_ENV += AR=$(GNUAR)
 COMPONENT_BUILD_ENV += RUSTC=$(RUST_BOOTSTRAP_PATH)/bin/rustc
 # Enforce linker consistency
