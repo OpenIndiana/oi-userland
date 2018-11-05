@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		X-incorporation
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	X consolidation incorporation
 
 include ../../../make-rules/ips.mk
