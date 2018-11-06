@@ -1,0 +1,234 @@
+--- mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c.~1~	2018-05-19 15:55:23.000000000 +0000
++++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-06 14:04:27.399487760 +0000
+@@ -35,6 +35,15 @@
+ #include <errno.h>
+ #include <string.h>
+ #include <sys/wait.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <termios.h>
++
++#define PASSWD "/usr/bin/passwd"
++#define PTMX "/dev/ptmx"
++
++/* /dev/pts/N */
++#define PTY_MAX_NAME 20
+ 
+ #if __sun
+ #include <sys/types.h>
+@@ -67,6 +76,8 @@
+ 
+ 	/* Communication with the passwd program */
+ 	GPid backend_pid;
++	int pty_m;
++	int pty_s;
+ 
+ 	GIOChannel *backend_stdin;
+ 	GIOChannel *backend_stdout;
+@@ -170,85 +181,108 @@
+ spawn_passwd (PasswordDialog *pdialog, GError **error)
+ {
+ 	gchar	*argv[2];
+-	gchar	*envp[1];
+-	gint	my_stdin, my_stdout, my_stderr;
++	int	pid;
++	char	slave_name[PTY_MAX_NAME];
++	char	*name;
+ 
+-	argv[0] = "/usr/bin/passwd";	/* Is it safe to rely on a hard-coded path? */
++	argv[0] = PASSWD;	/* Is it safe to rely on a hard-coded path? */
+ 	argv[1] = NULL;
+ 
+-	envp[0] = NULL;					/* If we pass an empty array as the environment,
+-									 * will the childs environment be empty, and the
+-									 * locales set to the C default? From the manual:
+-									 * "If envp is NULL, the child inherits its
+-									 * parent'senvironment."
+-									 * If I'm wrong here, we somehow have to set
+-									 * the locales here.
+-									 */
+-
+-	if (!g_spawn_async_with_pipes (NULL,						/* Working directory */
+-								   argv,						/* Argument vector */
+-								   envp,						/* Environment */
+-								   G_SPAWN_DO_NOT_REAP_CHILD,	/* Flags */
+-								   NULL,						/* Child setup */
+-								   NULL,						/* Data to child setup */
+-								   &pdialog->backend_pid,		/* PID */
+-								   &my_stdin,						/* Stdin */
+-								   &my_stdout,						/* Stdout */
+-								   &my_stderr,						/* Stderr */
+-								   error)) {					/* GError */
+-
+-		/* An error occurred */
+-		free_passwd_resources (pdialog);
+-
++	pdialog->pty_m = open(PTMX, O_RDWR);
++	if (pdialog->pty_m > 0) {
++		name = ptsname(pdialog->pty_m);
++		if (name && (strlen(name) < PTY_MAX_NAME)) {
++			strlcpy(slave_name, name, PTY_MAX_NAME);
++		} else {
++			fprintf(stderr, "Couldn't get slave_name of pty\n");
++			return FALSE;
++		}
++	} else {
++		fprintf(stderr, "Couldn't open pseudo-tty\n");
+ 		return FALSE;
+ 	}
+ 
+-	/* 2>&1 */
+-	if (dup2 (my_stderr, my_stdout) == -1) {
+-		/* Failed! */
+-		g_set_error (error,
+-					 PASSDLG_ERROR,
+-					 PASSDLG_ERROR_BACKEND,
+-					 "%s",
+-					 strerror (errno));
+-
+-		/* Clean up */
+-		stop_passwd (pdialog);
+-
++	if (grantpt(pdialog->pty_m) < 0) {
++		fprintf(stderr, "Couldn't set permission on slave device: %s\n", strerror(errno));
+ 		return FALSE;
+ 	}
+ 
+-	/* Open IO Channels */
+-	pdialog->backend_stdin = g_io_channel_unix_new (my_stdin);
+-	pdialog->backend_stdout = g_io_channel_unix_new (my_stdout);
+-
+-	/* Set raw encoding */
+-	/* Set nonblocking mode */
+-	if (g_io_channel_set_encoding (pdialog->backend_stdin, NULL, error) != G_IO_STATUS_NORMAL ||
+-		g_io_channel_set_encoding (pdialog->backend_stdout, NULL, error) != G_IO_STATUS_NORMAL ||
+-		g_io_channel_set_flags (pdialog->backend_stdin, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ||
+-		g_io_channel_set_flags (pdialog->backend_stdout, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ) {
++	if (unlockpt(pdialog->pty_m) < 0) {
++		fprintf(stderr, "Couldn't unlock slave device: %s\n", strerror(errno));
++		return FALSE;
++	}
++		
++	pdialog->pty_s = open(slave_name, O_RDWR);
+ 
+-		/* Clean up */
+-		stop_passwd (pdialog);
++	if (pdialog->pty_s < 0) {
++		fprintf(stderr, "Couldn't open slave terminal device: %s\n", strerror(errno));
+ 		return FALSE;
+ 	}
+ 
+-	/* Turn off buffering */
+-	g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
+-	g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
+-
+-	/* Add IO Channel watcher */
+-	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
+-													   G_IO_IN | G_IO_PRI,
+-													   (GIOFunc) io_watch_stdout, pdialog);
++	pid = fork();
++	if (pid == 0) {
++		/* Child */
++		
++		if (setsid() < 0) {
++			fprintf(stderr, "Couldn't create new process group: %s\n", strerror(errno));
++			return FALSE;
++		}
++		
++		/* Set controlling terminal to our tty */
++		if (ioctl(pdialog->pty_s,TIOCSCTTY, NULL) < 0) {
++			fprintf(stderr, "Couldn't establish controlling terminal: %s\n", strerror(errno));
++			return FALSE;
++		}
++		
++		/* Set stdin, stdout, stderr to our tty */
++		dup2(pdialog->pty_s, 0);
++		dup2(pdialog->pty_s, 1);
++		dup2(pdialog->pty_s, 2);
++		
++		execvp(argv[0], argv);
+ 
+-	/* Add child watcher */
+-	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
++		/* Error */
++		fprintf(stderr, "Couldn't exec passwd: %s\n", strerror(errno));
++		return FALSE;
++	} else if (pid > 0) {
+ 
+-	/* Success! */
++		/* Open IO Channels */
++		pdialog->backend_stdin = g_io_channel_unix_new (pdialog->pty_m);
++		pdialog->backend_stdout = g_io_channel_unix_new (pdialog->pty_m);
++		pdialog->backend_pid = pid;
++
++		/* Set raw encoding */
++		/* Set nonblocking mode */
++		if (g_io_channel_set_encoding (pdialog->backend_stdin, NULL, error) != G_IO_STATUS_NORMAL ||
++			g_io_channel_set_encoding (pdialog->backend_stdout, NULL, error) != G_IO_STATUS_NORMAL ||
++			g_io_channel_set_flags (pdialog->backend_stdin, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ||
++			g_io_channel_set_flags (pdialog->backend_stdout, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ) {
++	
++			/* Clean up */
++			stop_passwd (pdialog);
++			return FALSE;
++		}
+ 
+-	return TRUE;
++		/* Turn off buffering */
++		g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
++		g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
++		
++		/* Add IO Channel watcher */
++		pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
++														   G_IO_IN | G_IO_PRI,
++														   (GIOFunc) io_watch_stdout, pdialog);
++		
++		/* Add child watcher */
++		pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
++		
++		/* Success! */
++		
++		return TRUE;
++	} else {
++		/* Error */
++		fprintf(stderr, "Couldn't fork: %s\n", strerror(errno));
++		return FALSE;
++	}
+ }
+ 
+ /* Stop passwd backend */
+@@ -316,6 +350,14 @@
+ 		pdialog->backend_stdout = NULL;
+ 	}
+ 
++	if (pdialog->pty_m != -1) {
++		close(pdialog->pty_m);
++	}
++
++	if (pdialog->pty_s != -1) {
++		close(pdialog->pty_s);
++	}
++
+ 	/* Remove IO watcher */
+ 	if (pdialog->backend_stdout_watch_id != 0) {
+ 
+@@ -822,7 +864,7 @@
+ 
+ 		/* translators: Unable to launch <program>: <error message> */
+ 		details = g_strdup_printf (_("Unable to launch %s: %s"),
+-					   "/usr/bin/passwd", error->message);
++					   PASSWD, error->message);
+ 
+ 		passdlg_error_dialog (GTK_WINDOW (parent),
+ 				      _("Unable to launch backend"),
+@@ -1030,6 +1072,10 @@
+ 	/* Initialize backend_pid. -1 means the backend is not running */
+ 	pdialog->backend_pid = -1;
+ 
++	/* Initialize pty slave and master fds */
++	pdialog->pty_m = -1;
++	pdialog->pty_s = -1;
++
+ 	/* Initialize IO Channels */
+ 	pdialog->backend_stdin = NULL;
+ 	pdialog->backend_stdout = NULL;
