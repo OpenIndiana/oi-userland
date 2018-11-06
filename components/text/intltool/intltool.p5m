@@ -13,22 +13,22 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/text/intltool@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license intltool.license license="GPL v2"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend type=optional fmri=pkg:/developer/gnome/gettext@2.30.0,5.11-0.151.1.8.1
 
-file path=usr/bin/intltool-extract mode=0555
-file path=usr/bin/intltool-merge mode=0555
-file path=usr/bin/intltool-prepare mode=0555
-file path=usr/bin/intltool-update mode=0555
-file path=usr/bin/intltoolize mode=0555
+file path=usr/bin/intltool-extract
+file path=usr/bin/intltool-merge
+file path=usr/bin/intltool-prepare
+file path=usr/bin/intltool-update
+file path=usr/bin/intltoolize
 file path=usr/share/aclocal/intltool.m4
 file path=usr/share/intltool/Makefile.in.in
 file path=usr/share/man/man8/intltool-extract.8

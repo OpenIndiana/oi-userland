@@ -11,31 +11,37 @@
 #
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved.
 #
+PREFERRED_BITS=64
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		intltool
-COMPONENT_VERSION=	0.50.2
+COMPONENT_VERSION=	0.51.0
+COMPONENT_FMRI=		text/intltool
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Translation Tools for GNOME Internationalization
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:67f25c5c6fb71d095793a7f895b245e65e829e8bde68c6c8b4c912144ff34406
-COMPONENT_ARCHIVE_URL=	https://launchpad.net/intltool/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+  sha256:67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
+COMPONENT_ARCHIVE_URL=\
+  https://launchpad.net/intltool/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE= GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-# common targets
-build:		$(BUILD_32)
+COMPONENT_TEST_TRANSFORMS+= $(CONFIGURE_TEST_TRANSFORMS)
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
 
-test:		$(NO_TESTS)
+install:	$(INSTALL_64)
+
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
