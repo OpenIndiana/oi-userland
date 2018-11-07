@@ -16,26 +16,26 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xvidcore
-COMPONENT_VERSION= 1.3.4
+COMPONENT_VERSION= 1.3.5
 COMPONENT_FMRI = library/video/xvid
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= ISO MPEG-4 compliant video codec
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4e9fd62728885855bc5007fe1be58df42e5e274497591fec37249e1052ae316f
+  sha256:165ba6a2a447a8375f7b06db5a3c91810181f2898166e7c8137401d7fc894cf0
 COMPONENT_ARCHIVE_URL= \
   http://downloads.xvid.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.xvid.com/
 COMPONENT_LICENSE = GPLv2.0
 COMPONENT_LICENSE_FILE = LICENSE
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION += ( cd $(COMPONENT_SRC)/build/generic && $(CONFIG_SHELL) bootstrap.sh)
 
