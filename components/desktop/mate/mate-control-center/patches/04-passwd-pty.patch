@@ -1,11 +1,26 @@
 --- mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c.~1~	2018-05-19 15:55:23.000000000 +0000
-+++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-06 14:04:27.399487760 +0000
-@@ -35,6 +35,15 @@
++++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-07 08:03:22.778722749 +0000
+@@ -27,6 +27,13 @@
+ #  include <config.h>
+ #endif
+ 
++/* This is needed to get ptmx-related functions in GLIBC */
++#ifndef _XOPEN_SOURCE
++#define _XOPEN_SOURCE 600
++#endif
++/* If _XOPEN_SOURCE is defined, this is needed to get TIOCSCTTY on illumos */
++#define __EXTENSIONS__
++
+ /* Are all of these needed? */
+ #include <gdk/gdkkeysyms.h>
+ #include <pwd.h>
+@@ -35,6 +42,16 @@
  #include <errno.h>
  #include <string.h>
  #include <sys/wait.h>
 +#include <sys/stat.h>
 +#include <fcntl.h>
++#include <stropts.h>
 +#include <termios.h>
 +
 +#define PASSWD "/usr/bin/passwd"
@@ -16,7 +31,7 @@
  
  #if __sun
  #include <sys/types.h>
-@@ -67,6 +76,8 @@
+@@ -67,6 +84,8 @@
  
  	/* Communication with the passwd program */
  	GPid backend_pid;
@@ -25,7 +40,7 @@
  
  	GIOChannel *backend_stdin;
  	GIOChannel *backend_stdout;
-@@ -170,85 +181,108 @@
+@@ -170,85 +189,108 @@
  spawn_passwd (PasswordDialog *pdialog, GError **error)
  {
  	gchar	*argv[2];
@@ -67,7 +82,7 @@
 +	if (pdialog->pty_m > 0) {
 +		name = ptsname(pdialog->pty_m);
 +		if (name && (strlen(name) < PTY_MAX_NAME)) {
-+			strlcpy(slave_name, name, PTY_MAX_NAME);
++			strncpy(slave_name, name, PTY_MAX_NAME);
 +		} else {
 +			fprintf(stderr, "Couldn't get slave_name of pty\n");
 +			return FALSE;
@@ -197,7 +212,7 @@
  }
  
  /* Stop passwd backend */
-@@ -316,6 +350,14 @@
+@@ -316,6 +358,14 @@
  		pdialog->backend_stdout = NULL;
  	}
  
@@ -212,7 +227,7 @@
  	/* Remove IO watcher */
  	if (pdialog->backend_stdout_watch_id != 0) {
  
-@@ -822,7 +864,7 @@
+@@ -822,7 +872,7 @@
  
  		/* translators: Unable to launch <program>: <error message> */
  		details = g_strdup_printf (_("Unable to launch %s: %s"),
@@ -221,7 +236,7 @@
  
  		passdlg_error_dialog (GTK_WINDOW (parent),
  				      _("Unable to launch backend"),
-@@ -1030,6 +1072,10 @@
+@@ -1030,6 +1080,10 @@
  	/* Initialize backend_pid. -1 means the backend is not running */
  	pdialog->backend_pid = -1;
  
