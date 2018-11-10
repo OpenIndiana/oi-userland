@@ -1,6 +1,6 @@
 --- mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c.~1~	2018-05-19 15:55:23.000000000 +0000
-+++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-07 08:03:22.778722749 +0000
-@@ -27,6 +27,13 @@
++++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-10 07:32:06.233652988 +0000
+@@ -27,6 +27,11 @@
  #  include <config.h>
  #endif
  
@@ -8,13 +8,11 @@
 +#ifndef _XOPEN_SOURCE
 +#define _XOPEN_SOURCE 600
 +#endif
-+/* If _XOPEN_SOURCE is defined, this is needed to get TIOCSCTTY on illumos */
-+#define __EXTENSIONS__
 +
  /* Are all of these needed? */
  #include <gdk/gdkkeysyms.h>
  #include <pwd.h>
-@@ -35,6 +42,16 @@
+@@ -35,6 +40,16 @@
  #include <errno.h>
  #include <string.h>
  #include <sys/wait.h>
@@ -31,16 +29,15 @@
  
  #if __sun
  #include <sys/types.h>
-@@ -67,6 +84,8 @@
+@@ -67,6 +82,7 @@
  
  	/* Communication with the passwd program */
  	GPid backend_pid;
 +	int pty_m;
-+	int pty_s;
  
  	GIOChannel *backend_stdin;
  	GIOChannel *backend_stdout;
-@@ -170,85 +189,108 @@
+@@ -170,85 +186,116 @@
  spawn_passwd (PasswordDialog *pdialog, GError **error)
  {
  	gchar	*argv[2];
@@ -78,7 +75,7 @@
 -		/* An error occurred */
 -		free_passwd_resources (pdialog);
 -
-+	pdialog->pty_m = open(PTMX, O_RDWR);
++	pdialog->pty_m = open(PTMX, O_RDWR|O_NOCTTY);
 +	if (pdialog->pty_m > 0) {
 +		name = ptsname(pdialog->pty_m);
 +		if (name && (strlen(name) < PTY_MAX_NAME)) {
@@ -119,17 +116,11 @@
 -		g_io_channel_set_encoding (pdialog->backend_stdout, NULL, error) != G_IO_STATUS_NORMAL ||
 -		g_io_channel_set_flags (pdialog->backend_stdin, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ||
 -		g_io_channel_set_flags (pdialog->backend_stdout, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ) {
-+	if (unlockpt(pdialog->pty_m) < 0) {
-+		fprintf(stderr, "Couldn't unlock slave device: %s\n", strerror(errno));
-+		return FALSE;
-+	}
-+		
-+	pdialog->pty_s = open(slave_name, O_RDWR);
- 
+-
 -		/* Clean up */
 -		stop_passwd (pdialog);
-+	if (pdialog->pty_s < 0) {
-+		fprintf(stderr, "Couldn't open slave terminal device: %s\n", strerror(errno));
++	if (unlockpt(pdialog->pty_m) < 0) {
++		fprintf(stderr, "Couldn't unlock slave device: %s\n", strerror(errno));
  		return FALSE;
  	}
  
@@ -144,33 +135,48 @@
 +	pid = fork();
 +	if (pid == 0) {
 +		/* Child */
++		int pty_s;
++
 +		
 +		if (setsid() < 0) {
 +			fprintf(stderr, "Couldn't create new process group: %s\n", strerror(errno));
 +			return FALSE;
 +		}
-+		
-+		/* Set controlling terminal to our tty */
-+		if (ioctl(pdialog->pty_s,TIOCSCTTY, NULL) < 0) {
-+			fprintf(stderr, "Couldn't establish controlling terminal: %s\n", strerror(errno));
-+			return FALSE;
-+		}
-+		
-+		/* Set stdin, stdout, stderr to our tty */
-+		dup2(pdialog->pty_s, 0);
-+		dup2(pdialog->pty_s, 1);
-+		dup2(pdialog->pty_s, 2);
-+		
-+		execvp(argv[0], argv);
  
 -	/* Add child watcher */
 -	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
-+		/* Error */
-+		fprintf(stderr, "Couldn't exec passwd: %s\n", strerror(errno));
-+		return FALSE;
-+	} else if (pid > 0) {
++		/* Now we are a session leader, on System V first open tty will become controlling tty */
++		pty_s = open(slave_name, O_RDWR);
  
 -	/* Success! */
++		if (pty_s < 0) {
++			fprintf(stderr, "Couldn't open slave terminal device: %s\n", strerror(errno));
++			return FALSE;
++		}
++		
++#if defined(TIOCSCTTY) && !defined(__sun)
++		/* BSD systems need to set controlling tty explicitly. Solaris/illumos can export
++		   TIOCSCTTY when __EXTENSIONS__ are defined, but doesn't need this. */
++		if (ioctl(pty_s,TIOCSCTTY, NULL) < 0) {
++			fprintf(stderr, "Couldn't establish controlling terminal: %s\n", strerror(errno));
++			close(pty_s);
++			return FALSE;
++		}
++#endif
++		
++		/* Set stdin, stdout, stderr to our tty */
++		dup2(pty_s, 0);
++		dup2(pty_s, 1);
++		dup2(pty_s, 2);
++		
++		execvp(argv[0], argv);
++
++		/* Error */
++		fprintf(stderr, "Couldn't exec passwd: %s\n", strerror(errno));
++		close(pty_s);
++		return FALSE;
++	} else if (pid > 0) {
++
 +		/* Open IO Channels */
 +		pdialog->backend_stdin = g_io_channel_unix_new (pdialog->pty_m);
 +		pdialog->backend_stdout = g_io_channel_unix_new (pdialog->pty_m);
@@ -212,7 +218,7 @@
  }
  
  /* Stop passwd backend */
-@@ -316,6 +358,14 @@
+@@ -316,6 +363,10 @@
  		pdialog->backend_stdout = NULL;
  	}
  
@@ -220,14 +226,10 @@
 +		close(pdialog->pty_m);
 +	}
 +
-+	if (pdialog->pty_s != -1) {
-+		close(pdialog->pty_s);
-+	}
-+
  	/* Remove IO watcher */
  	if (pdialog->backend_stdout_watch_id != 0) {
  
-@@ -822,7 +872,7 @@
+@@ -822,7 +873,7 @@
  
  		/* translators: Unable to launch <program>: <error message> */
  		details = g_strdup_printf (_("Unable to launch %s: %s"),
@@ -236,13 +238,12 @@
  
  		passdlg_error_dialog (GTK_WINDOW (parent),
  				      _("Unable to launch backend"),
-@@ -1030,6 +1080,10 @@
+@@ -1030,6 +1081,9 @@
  	/* Initialize backend_pid. -1 means the backend is not running */
  	pdialog->backend_pid = -1;
  
-+	/* Initialize pty slave and master fds */
++	/* Initialize pty master fd */
 +	pdialog->pty_m = -1;
-+	pdialog->pty_s = -1;
 +
  	/* Initialize IO Channels */
  	pdialog->backend_stdin = NULL;
