@@ -1,5 +1,5 @@
 --- mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c.~1~	2018-05-19 15:55:23.000000000 +0000
-+++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-10 07:32:06.233652988 +0000
++++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-10 08:59:36.935195423 +0000
 @@ -27,6 +27,11 @@
  #  include <config.h>
  #endif
@@ -29,21 +29,13 @@
  
  #if __sun
  #include <sys/types.h>
-@@ -67,6 +82,7 @@
- 
- 	/* Communication with the passwd program */
- 	GPid backend_pid;
-+	int pty_m;
- 
- 	GIOChannel *backend_stdin;
- 	GIOChannel *backend_stdout;
-@@ -170,85 +186,116 @@
+@@ -170,85 +185,123 @@
  spawn_passwd (PasswordDialog *pdialog, GError **error)
  {
  	gchar	*argv[2];
 -	gchar	*envp[1];
 -	gint	my_stdin, my_stdout, my_stderr;
-+	int	pid;
++	int	pid, pty_m;
 +	char	slave_name[PTY_MAX_NAME];
 +	char	*name;
  
@@ -75,13 +67,14 @@
 -		/* An error occurred */
 -		free_passwd_resources (pdialog);
 -
-+	pdialog->pty_m = open(PTMX, O_RDWR|O_NOCTTY);
-+	if (pdialog->pty_m > 0) {
-+		name = ptsname(pdialog->pty_m);
++	pty_m = open(PTMX, O_RDWR|O_NOCTTY);
++	if (pty_m > 0) {
++		name = ptsname(pty_m);
 +		if (name && (strlen(name) < PTY_MAX_NAME)) {
 +			strncpy(slave_name, name, PTY_MAX_NAME);
 +		} else {
 +			fprintf(stderr, "Couldn't get slave_name of pty\n");
++			close(pty_m);
 +			return FALSE;
 +		}
 +	} else {
@@ -101,8 +94,9 @@
 -		/* Clean up */
 -		stop_passwd (pdialog);
 -
-+	if (grantpt(pdialog->pty_m) < 0) {
++	if (grantpt(pty_m) < 0) {
 +		fprintf(stderr, "Couldn't set permission on slave device: %s\n", strerror(errno));
++		close(pty_m);
  		return FALSE;
  	}
  
@@ -119,8 +113,9 @@
 -
 -		/* Clean up */
 -		stop_passwd (pdialog);
-+	if (unlockpt(pdialog->pty_m) < 0) {
++	if (unlockpt(pty_m) < 0) {
 +		fprintf(stderr, "Couldn't unlock slave device: %s\n", strerror(errno));
++		close(pty_m);
  		return FALSE;
  	}
  
@@ -136,8 +131,8 @@
 +	if (pid == 0) {
 +		/* Child */
 +		int pty_s;
-+
 +		
++		close(pty_m);
 +		if (setsid() < 0) {
 +			fprintf(stderr, "Couldn't create new process group: %s\n", strerror(errno));
 +			return FALSE;
@@ -176,10 +171,14 @@
 +		close(pty_s);
 +		return FALSE;
 +	} else if (pid > 0) {
-+
+ 
+-	return TRUE;
 +		/* Open IO Channels */
-+		pdialog->backend_stdin = g_io_channel_unix_new (pdialog->pty_m);
-+		pdialog->backend_stdout = g_io_channel_unix_new (pdialog->pty_m);
++		pdialog->backend_stdin = g_io_channel_unix_new (pty_m);
++		/* g_io_channel_shutdown(pdialog->backend_stdin) will close associated file descriptor (pty_m),
++		   but this will generate warning on g_io_channel_shutdown(pdialog->backend_stdout).
++		   To avoid it, dup() file descriptor */
++		pdialog->backend_stdout = g_io_channel_unix_new (dup(pty_m));
 +		pdialog->backend_pid = pid;
 +
 +		/* Set raw encoding */
@@ -193,8 +192,7 @@
 +			stop_passwd (pdialog);
 +			return FALSE;
 +		}
- 
--	return TRUE;
++
 +		/* Turn off buffering */
 +		g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
 +		g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
@@ -213,23 +211,13 @@
 +	} else {
 +		/* Error */
 +		fprintf(stderr, "Couldn't fork: %s\n", strerror(errno));
++		close(pty_m);
 +		return FALSE;
 +	}
  }
  
  /* Stop passwd backend */
-@@ -316,6 +363,10 @@
- 		pdialog->backend_stdout = NULL;
- 	}
- 
-+	if (pdialog->pty_m != -1) {
-+		close(pdialog->pty_m);
-+	}
-+
- 	/* Remove IO watcher */
- 	if (pdialog->backend_stdout_watch_id != 0) {
- 
-@@ -822,7 +873,7 @@
+@@ -822,7 +875,7 @@
  
  		/* translators: Unable to launch <program>: <error message> */
  		details = g_strdup_printf (_("Unable to launch %s: %s"),
@@ -238,13 +226,3 @@
  
  		passdlg_error_dialog (GTK_WINDOW (parent),
  				      _("Unable to launch backend"),
-@@ -1030,6 +1081,9 @@
- 	/* Initialize backend_pid. -1 means the backend is not running */
- 	pdialog->backend_pid = -1;
- 
-+	/* Initialize pty master fd */
-+	pdialog->pty_m = -1;
-+
- 	/* Initialize IO Channels */
- 	pdialog->backend_stdin = NULL;
- 	pdialog->backend_stdout = NULL;
