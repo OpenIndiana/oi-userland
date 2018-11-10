@@ -1,5 +1,7 @@
---- mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c.~1~	2018-05-19 15:55:23.000000000 +0000
-+++ mate-control-center-1.20.3/capplets/about-me/mate-about-me-password.c	2018-11-10 21:18:53.937876433 +0000
+diff --git a/capplets/about-me/mate-about-me-password.c b/capplets/about-me/mate-about-me-password.c
+index abac117..3e64fd4 100644
+--- a/capplets/about-me/mate-about-me-password.c
++++ b/capplets/about-me/mate-about-me-password.c
 @@ -27,6 +27,11 @@
  #  include <config.h>
  #endif
@@ -29,7 +31,7 @@
  
  #if __sun
  #include <sys/types.h>
-@@ -85,6 +100,9 @@
+@@ -85,6 +100,9 @@ typedef struct {
  /* Buffer size for backend output */
  #define BUFSIZE 64
  
@@ -39,7 +41,7 @@
  /*
   * Error handling {{
   */
-@@ -170,85 +188,156 @@
+@@ -170,85 +188,178 @@ static gboolean
  spawn_passwd (PasswordDialog *pdialog, GError **error)
  {
  	gchar	*argv[2];
@@ -83,19 +85,26 @@
 +		if (name && (strlen(name) < PTY_MAX_NAME)) {
 +			strncpy(slave_name, name, PTY_MAX_NAME);
 +		} else {
-+			fprintf(stderr, "Couldn't get slave_name of pty\n");
++			g_set_error(error,
++                		PASSDLG_ERROR,
++				PASSDLG_ERROR_BACKEND,
++				_("Couldn't get slave_name of pty"));
 +			close(pty_m);
 +			return FALSE;
 +		}
 +	} else {
-+		fprintf(stderr, "Couldn't open pseudo-tty\n");
++		g_set_error (error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't open pseudo-tty"));
  		return FALSE;
  	}
  
 -	/* 2>&1 */
 -	if (dup2 (my_stderr, my_stdout) == -1) {
 -		/* Failed! */
--		g_set_error (error,
++	if (grantpt(pty_m) < 0) {
+ 		g_set_error (error,
 -					 PASSDLG_ERROR,
 -					 PASSDLG_ERROR_BACKEND,
 -					 "%s",
@@ -104,8 +113,10 @@
 -		/* Clean up */
 -		stop_passwd (pdialog);
 -
-+	if (grantpt(pty_m) < 0) {
-+		fprintf(stderr, "Couldn't set permission on slave device: %s\n", strerror(errno));
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't set permission on slave device: %s"),
++			strerror(errno));
 +		close(pty_m);
  		return FALSE;
  	}
@@ -120,28 +131,27 @@
 -		g_io_channel_set_encoding (pdialog->backend_stdout, NULL, error) != G_IO_STATUS_NORMAL ||
 -		g_io_channel_set_flags (pdialog->backend_stdin, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ||
 -		g_io_channel_set_flags (pdialog->backend_stdout, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ) {
--
--		/* Clean up */
--		stop_passwd (pdialog);
 +	if (unlockpt(pty_m) < 0) {
-+		fprintf(stderr, "Couldn't unlock slave device: %s\n", strerror(errno));
-+		close(pty_m);
- 		return FALSE;
- 	}
- 
--	/* Turn off buffering */
--	g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
--	g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
--
--	/* Add IO Channel watcher */
--	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
--													   G_IO_IN | G_IO_PRI,
--													   (GIOFunc) io_watch_stdout, pdialog);
-+	if (pipe2(err_pipe, O_CLOEXEC) < 0) {
-+		fprintf(stderr, "Couldn't create error reporting pipe: %s\n", strerror(errno));
++		g_set_error (error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't unlock slave device: %s"),
++			strerror(errno));
 +		close(pty_m);
 +		return FALSE;
 +	}
+ 
+-		/* Clean up */
+-		stop_passwd (pdialog);
++	if (pipe2(err_pipe, O_CLOEXEC) < 0) {
++		g_set_error (error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't create error reporting pipe: %s"),
++			strerror(errno));
++		close(pty_m);
+ 		return FALSE;
+ 	}
 +		
 +	pid = fork();
 +	if (pid == 0) {
@@ -152,19 +162,23 @@
 +
 +		close(pty_m);
 +		if (setsid() < 0) {
-+			len = snprintf(buf, ERRBUFSIZE, "Couldn't create new process group: %s\n", strerror(errno));
++			len = snprintf(buf, ERRBUFSIZE, _("Couldn't create new process group: %s"), strerror(errno));
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
 +			return FALSE;
 +		}
  
--	/* Add child watcher */
--	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
+-	/* Turn off buffering */
+-	g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
+-	g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
 +		/* Now we are a session leader, on System V first open tty will become controlling tty */
 +		pty_s = open(slave_name, O_RDWR);
  
--	/* Success! */
+-	/* Add IO Channel watcher */
+-	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
+-													   G_IO_IN | G_IO_PRI,
+-													   (GIOFunc) io_watch_stdout, pdialog);
 +		if (pty_s < 0) {
-+			len = snprintf(buf, ERRBUFSIZE, "Couldn't open slave terminal device: %s\n", strerror(errno));
++			len = snprintf(buf, ERRBUFSIZE, _("Couldn't open slave terminal device: %s"), strerror(errno));
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
 +			return FALSE;
 +		}
@@ -174,7 +188,7 @@
 +		   TIOCSCTTY when __EXTENSIONS__ are defined, but doesn't need this. */
 +		if (ioctl(pty_s,TIOCSCTTY, NULL) < 0) {
 +			close(pty_s);
-+			len=snprintf(buf, ERRBUFSIZE, "Couldn't establish controlling terminal: %s\n", strerror(errno));
++			len=snprintf(buf, ERRBUFSIZE, _("Couldn't establish controlling terminal: %s"), strerror(errno));
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
 +			return FALSE;
 +		}
@@ -189,7 +203,7 @@
 +
 +		/* Error */
 +		close(pty_s);
-+		len=snprintf(buf, ERRBUFSIZE, "Couldn't exec passwd: %s\n", strerror(errno));
++		len=snprintf(buf, ERRBUFSIZE, _("Couldn't exec passwd: %s"), strerror(errno));
 +		write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
 +		return FALSE;
 +	} else if (pid > 0) {
@@ -229,17 +243,19 @@
 +			g_io_channel_set_encoding (pdialog->backend_stdout, NULL, error) != G_IO_STATUS_NORMAL ||
 +			g_io_channel_set_flags (pdialog->backend_stdin, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ||
 +			g_io_channel_set_flags (pdialog->backend_stdout, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ) {
-+	
++
 +			/* Clean up */
 +			stop_passwd (pdialog);
 +			return FALSE;
 +		}
  
--	return TRUE;
+-	/* Add child watcher */
+-	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
 +		/* Turn off buffering */
 +		g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
 +		g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
-+		
+ 
+-	/* Success! */
 +		/* Add IO Channel watcher */
 +		pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
 +														   G_IO_IN | G_IO_PRI,
@@ -247,20 +263,25 @@
 +		
 +		/* Add child watcher */
 +		pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
-+		
+ 
+-	return TRUE;
 +		/* Success! */
-+		
++
 +		return TRUE;
 +	} else {
 +		/* Error */
-+		fprintf(stderr, "Couldn't fork: %s\n", strerror(errno));
++		g_set_error(error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't fork: %s"),
++			strerror(errno));
 +		close(pty_m);
 +		return FALSE;
 +	}
  }
  
  /* Stop passwd backend */
-@@ -822,7 +924,7 @@
+@@ -822,7 +933,7 @@ passdlg_spawn_passwd (PasswordDialog *pdialog)
  
  		/* translators: Unable to launch <program>: <error message> */
  		details = g_strdup_printf (_("Unable to launch %s: %s"),
