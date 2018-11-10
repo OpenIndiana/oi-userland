@@ -1,5 +1,5 @@
 diff --git a/capplets/about-me/mate-about-me-password.c b/capplets/about-me/mate-about-me-password.c
-index abac117..3e64fd4 100644
+index abac117..06daafb 100644
 --- a/capplets/about-me/mate-about-me-password.c
 +++ b/capplets/about-me/mate-about-me-password.c
 @@ -27,6 +27,11 @@
@@ -213,7 +213,7 @@ index abac117..3e64fd4 100644
 +
 +		close(err_pipe[1]);
 +		/* Wait for child to run exec() and read possible error message */
-+		while (pos < ERRBUFSIZE - 1 && ((rb=read(err_pipe[0], &buf[pos], BUFSIZE-1-pos)) > 0)) {
++		while (pos < ERRBUFSIZE - 1 && ((rb=read(err_pipe[0], &buf[pos], ERRBUFSIZE-1-pos)) > 0)) {
 +			pos += rb;
 +		}
 +		close(err_pipe[0]);
