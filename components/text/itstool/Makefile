@@ -24,14 +24,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		itstool
-COMPONENT_VERSION=	2.0.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.0.4
 COMPONENT_SUMMARY=	ITS Tool allows you to translate your XML documents with PO files using rules from the W3C Internationalization Tag Set
 COMPONENT_PROJECT_URL=	http://itstool.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bf909fb59b11a646681a8534d5700fec99be83bb2c57badf8c1844512227033a
+    sha256:97c208b51da33e0b553e830b92655f8deb9132f8fbe9a646771f95c33226eb60
 COMPONENT_ARCHIVE_URL=	http://files.itstool.org/itstool/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	text/$(COMPONENT_NAME)
 COMPONENT_LICENSE=	GPLv3
