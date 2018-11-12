@@ -1,8 +1,8 @@
 diff --git a/capplets/about-me/mate-about-me-password.c b/capplets/about-me/mate-about-me-password.c
-index abac117..06daafb 100644
+index abac117..55ee452 100644
 --- a/capplets/about-me/mate-about-me-password.c
 +++ b/capplets/about-me/mate-about-me-password.c
-@@ -27,6 +27,11 @@
+@@ -27,6 +27,14 @@
  #  include <config.h>
  #endif
  
@@ -11,10 +11,13 @@ index abac117..06daafb 100644
 +#define _XOPEN_SOURCE 600
 +#endif
 +
++/* This is needed to get pipe2() in GLIBC */
++#define _GNU_SOURCE
++
  /* Are all of these needed? */
  #include <gdk/gdkkeysyms.h>
  #include <pwd.h>
-@@ -35,6 +40,16 @@
+@@ -35,6 +43,16 @@
  #include <errno.h>
  #include <string.h>
  #include <sys/wait.h>
@@ -31,7 +34,7 @@ index abac117..06daafb 100644
  
  #if __sun
  #include <sys/types.h>
-@@ -85,6 +100,9 @@ typedef struct {
+@@ -85,6 +103,9 @@ typedef struct {
  /* Buffer size for backend output */
  #define BUFSIZE 64
  
@@ -41,7 +44,7 @@ index abac117..06daafb 100644
  /*
   * Error handling {{
   */
-@@ -170,85 +188,178 @@ static gboolean
+@@ -170,85 +191,178 @@ static gboolean
  spawn_passwd (PasswordDialog *pdialog, GError **error)
  {
  	gchar	*argv[2];
@@ -166,17 +169,13 @@ index abac117..06daafb 100644
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
 +			return FALSE;
 +		}
++
++		/* Now we are a session leader, on System V first open tty will become controlling tty */
++		pty_s = open(slave_name, O_RDWR);
  
 -	/* Turn off buffering */
 -	g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
 -	g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
-+		/* Now we are a session leader, on System V first open tty will become controlling tty */
-+		pty_s = open(slave_name, O_RDWR);
- 
--	/* Add IO Channel watcher */
--	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
--													   G_IO_IN | G_IO_PRI,
--													   (GIOFunc) io_watch_stdout, pdialog);
 +		if (pty_s < 0) {
 +			len = snprintf(buf, ERRBUFSIZE, _("Couldn't open slave terminal device: %s"), strerror(errno));
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
@@ -249,13 +248,16 @@ index abac117..06daafb 100644
 +			return FALSE;
 +		}
  
--	/* Add child watcher */
--	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
+-	/* Add IO Channel watcher */
+-	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
+-													   G_IO_IN | G_IO_PRI,
+-													   (GIOFunc) io_watch_stdout, pdialog);
 +		/* Turn off buffering */
 +		g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
 +		g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
  
--	/* Success! */
+-	/* Add child watcher */
+-	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
 +		/* Add IO Channel watcher */
 +		pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
 +														   G_IO_IN | G_IO_PRI,
@@ -264,9 +266,10 @@ index abac117..06daafb 100644
 +		/* Add child watcher */
 +		pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
  
--	return TRUE;
+-	/* Success! */
 +		/* Success! */
-+
+ 
+-	return TRUE;
 +		return TRUE;
 +	} else {
 +		/* Error */
@@ -281,7 +284,7 @@ index abac117..06daafb 100644
  }
  
  /* Stop passwd backend */
-@@ -822,7 +933,7 @@ passdlg_spawn_passwd (PasswordDialog *pdialog)
+@@ -822,7 +936,7 @@ passdlg_spawn_passwd (PasswordDialog *pdialog)
  
  		/* translators: Unable to launch <program>: <error message> */
  		details = g_strdup_printf (_("Unable to launch %s: %s"),
