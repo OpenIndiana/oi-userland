@@ -1,0 +1,59 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/idnkit@$(PKG_SOLARIS_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Internationalized Domain Name kit (idnkit-2.3/JPRS)"
+set name=pkg.description \
+    value="Library for handling internationalized domain names."
+set name=com.oracle.info.description \
+    value="Toolkit for handling internationalized domain names (IDN)."
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Internationalization
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2012/004
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+license idnkit2.license license=JPRS
+
+link path=usr/lib/$(MACH64)/libidnkit.so target=libidnkit.so.2.0.3
+link path=usr/lib/$(MACH64)/libidnkit.so.2 target=libidnkit.so.2.0.3
+file path=usr/lib/$(MACH64)/libidnkit.so.2.0.3
+link path=usr/lib/$(MACH64)/libidnkitlite.so target=libidnkitlite.so.2.0.3
+link path=usr/lib/$(MACH64)/libidnkitlite.so.2 target=libidnkitlite.so.2.0.3
+file path=usr/lib/$(MACH64)/libidnkitlite.so.2.0.3
+link path=usr/lib/libidnkit.so target=libidnkit.so.2.0.3
+link path=usr/lib/libidnkit.so.2 target=libidnkit.so.2.0.3
+file path=usr/lib/libidnkit.so.2.0.3
+link path=usr/lib/libidnkitlite.so target=libidnkitlite.so.2.0.3
+link path=usr/lib/libidnkitlite.so.2 target=libidnkitlite.so.2.0.3
+file path=usr/lib/libidnkitlite.so.2.0.3
+file path=usr/share/man/man5/idn2.conf.5
+file path=usr/share/man/man5/idn2rc.5
+file path=usr/share/man/man5/idnalias.conf.5
+file path=usr/share/man/man5/idnlang.conf.5
