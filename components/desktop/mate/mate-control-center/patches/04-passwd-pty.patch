@@ -1,5 +1,5 @@
 diff --git a/capplets/about-me/mate-about-me-password.c b/capplets/about-me/mate-about-me-password.c
-index abac117..55ee452 100644
+index abac117..5a82566 100644
 --- a/capplets/about-me/mate-about-me-password.c
 +++ b/capplets/about-me/mate-about-me-password.c
 @@ -27,6 +27,14 @@
@@ -167,19 +167,23 @@ index abac117..55ee452 100644
 +		if (setsid() < 0) {
 +			len = snprintf(buf, ERRBUFSIZE, _("Couldn't create new process group: %s"), strerror(errno));
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
-+			return FALSE;
++			exit(1);
 +		}
-+
-+		/* Now we are a session leader, on System V first open tty will become controlling tty */
-+		pty_s = open(slave_name, O_RDWR);
  
 -	/* Turn off buffering */
 -	g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
 -	g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
++		/* Now we are a session leader, on System V first open tty will become controlling tty */
++		pty_s = open(slave_name, O_RDWR);
+ 
+-	/* Add IO Channel watcher */
+-	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
+-													   G_IO_IN | G_IO_PRI,
+-													   (GIOFunc) io_watch_stdout, pdialog);
 +		if (pty_s < 0) {
 +			len = snprintf(buf, ERRBUFSIZE, _("Couldn't open slave terminal device: %s"), strerror(errno));
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
-+			return FALSE;
++			exit(1);
 +		}
 +		
 +#if defined(TIOCSCTTY) && !defined(__sun)
@@ -189,7 +193,7 @@ index abac117..55ee452 100644
 +			close(pty_s);
 +			len=snprintf(buf, ERRBUFSIZE, _("Couldn't establish controlling terminal: %s"), strerror(errno));
 +			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
-+			return FALSE;
++			exit(1);
 +		}
 +#endif
 +		
@@ -204,7 +208,7 @@ index abac117..55ee452 100644
 +		close(pty_s);
 +		len=snprintf(buf, ERRBUFSIZE, _("Couldn't exec passwd: %s"), strerror(errno));
 +		write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
-+		return FALSE;
++		exit(1);
 +	} else if (pid > 0) {
 +		int rb, pos = 0;
 +		char buf[ERRBUFSIZE];
@@ -248,16 +252,13 @@ index abac117..55ee452 100644
 +			return FALSE;
 +		}
  
--	/* Add IO Channel watcher */
--	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
--													   G_IO_IN | G_IO_PRI,
--													   (GIOFunc) io_watch_stdout, pdialog);
+-	/* Add child watcher */
+-	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
 +		/* Turn off buffering */
 +		g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
 +		g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
  
--	/* Add child watcher */
--	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
+-	/* Success! */
 +		/* Add IO Channel watcher */
 +		pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
 +														   G_IO_IN | G_IO_PRI,
@@ -266,10 +267,9 @@ index abac117..55ee452 100644
 +		/* Add child watcher */
 +		pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
  
--	/* Success! */
-+		/* Success! */
- 
 -	return TRUE;
++		/* Success! */
++
 +		return TRUE;
 +	} else {
 +		/* Error */
