@@ -151,6 +151,21 @@ PYTHON_VERSIONS =	2.7
 
 PYTHON_64_ONLY_VERSIONS = 3.5
 
+# PYTHON3_SOABI variable defines the naming scheme
+# of python3 extension libraries: cpython or abi3.
+# Currently, most of the components use cpython naming scheme by default,
+# only python/xattr and python/cryptography require abi3 naming.
+PYTHON3_SOABI ?= cpython
+ifeq ($(PYTHON3_SOABI),cpython)
+PY3_CYTHON_NAMING=
+PY3_ABI3_NAMING=\#
+else ifeq ($(PYTHON3_SOABI),abi3)
+PY3_CYTHON_NAMING=\#
+PY3_ABI3_NAMING=
+else
+$(error "Invalid python naming scheme '$(PYTHON3_SOABI)' selected!")
+endif
+
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
 CLONEY =	$(WS_TOOLS)/cloney

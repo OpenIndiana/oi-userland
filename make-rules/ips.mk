@@ -85,42 +85,46 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-no-32bit
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
+define add-limiting-variable
+PKG_VARS += $(1)
+MANIFEST_LIMITING_VARS += -D $(1)="$(subst #,\#,$($(1)))"
+endef
+
+# Make all the limiting variables available to manifest processing
+$(foreach var, $(filter PY3_%_NAMING,$(.VARIABLES)), \
+    $(eval $(call add-limiting-variable,$(var))))
+
+
 ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
 AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
 else
 AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/drop-all
 endif
 
-PKG_MACROS +=		MACH=$(MACH)
-PKG_MACROS +=		MACH32=$(MACH32)
-PKG_MACROS +=		MACH64=$(MACH64)
-PKG_MACROS +=		PUBLISHER=$(PUBLISHER)
-PKG_MACROS +=		PUBLISHER_LOCALIZABLE=$(PUBLISHER_LOCALIZABLE)
-PKG_MACROS +=		CONSOLIDATION=$(CONSOLIDATION)
-PKG_MACROS +=		BUILD_VERSION=$(BUILD_VERSION)
-PKG_MACROS +=		SOLARIS_VERSION=$(SOLARIS_VERSION)
-PKG_MACROS +=		OS_VERSION=$(OS_VERSION)
-PKG_MACROS +=		PKG_SOLARIS_VERSION=$(PKG_SOLARIS_VERSION)
-PKG_MACROS +=		HUMAN_VERSION=$(HUMAN_VERSION)
-PKG_MACROS +=		IPS_COMPONENT_VERSION=$(IPS_COMPONENT_VERSION)
-PKG_MACROS +=		COMPONENT_VERSION=$(COMPONENT_VERSION)
-PKG_MACROS +=		COMPONENT_PROJECT_URL=$(COMPONENT_PROJECT_URL)
-PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
-PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
-PKG_MACROS +=		COMPONENT_HG_REV=$(COMPONENT_HG_REV)
-PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
-PKG_MACROS +=		COMPONENT_FMRI=$(COMPONENT_FMRI)
-PKG_MACROS +=		COMPONENT_LICENSE_FILE=$(COMPONENT_LICENSE_FILE)
-PKG_MACROS +=		TPNO=$(TPNO)
-PKG_MACROS +=		USERLAND_GIT_REMOTE=$(USERLAND_GIT_REMOTE)
-PKG_MACROS +=		USERLAND_GIT_BRANCH=$(USERLAND_GIT_BRANCH)
-PKG_MACROS +=		USERLAND_GIT_REV=$(USERLAND_GIT_REV)
+# For items defined as variables or that may contain whitespace, add
+# them to a list to be expanded into PKG_OPTIONS later.
+PKG_VARS += ARC_CASE TPNO
+PKG_VARS += MACH MACH32 MACH64
+PKG_VARS += BUILD_VERSION OS_VERSION PKG_SOLARIS_VERSION
+PKG_VARS += CONSOLIDATION
+PKG_VARS += COMPONENT_VERSION IPS_COMPONENT_VERSION HUMAN_VERSION
+PKG_VARS += COMPONENT_ARCHIVE_URL COMPONENT_PROJECT_URL COMPONENT_NAME
+PKG_VARS += COMPONENT_FMRI COMPONENT_LICENSE_FILE
+PKG_VARS += COMPONENT_SUMMARY COMPONENT_DESCRIPTION COMPONENT_LICENSE
+PKG_VARS += HG_REPO HG_REV HG_URL COMPONENT_HG_URL COMPONENT_HG_REV
+PKG_VARS += GIT_COMMIT_ID GIT_REPO GIT_TAG
+PKG_VARS += MACH MACH32 MACH64
+PKG_VARS += PUBLISHER PUBLISHER_LOCALIZABLE
+PKG_VARS += USERLAND_GIT_REMOTE USERLAND_GIT_BRANCH USERLAND_GIT_REV
+
+# For items that need special definition, add them to PKG_MACROS.
+# IPS_COMPONENT_VERSION suitable for use in regular expressions.
+PKG_MACROS += IPS_COMPONENT_RE_VERSION=$(subst .,\\.,$(IPS_COMPONENT_VERSION))
+# COMPONENT_VERSION suitable for use in regular expressions.
+PKG_MACROS += COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
-					-D COMPONENT_SUMMARY="$(strip $(COMPONENT_SUMMARY))" \
-					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))" \
-					-D COMPONENT_DESCRIPTION="$(strip $(COMPONENT_DESCRIPTION))" \
-					-D COMPONENT_LICENSE="$(strip $(COMPONENT_LICENSE))"
+					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))"
 
 PKG_MACROS +=           PYTHON_2.7_ONLY=\#
 PKG_MACROS +=           PYTHON_3.4_ONLY=\#
@@ -270,16 +274,16 @@ mkgeneric = \
 # Define and execute a macro that generates a rule to create a manifest for a
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
 
 ifneq ($(filter $(1),$(PYTHON_64_ONLY_VERSIONS)),)
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
 endif
 
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
-	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
+$(MANIFEST_BASE)-%-$(2).p5m: %-PYVER.p5m
+	$(PKGMOGRIFY) -D PYVER=$(1) $(MANIFEST_LIMITING_VARS) -D PYV=$(2)  $$< > $$@
 endef
-$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
+$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(shell echo $(ver)|tr -d .))))
 
 # A rule to create a helper transform package for python, that will insert the
 # appropriate conditional dependencies into a python library's
@@ -523,6 +527,15 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# workspace.
 	$(error Missing canonical manifest(s))
 endif
+
+# Component variables are expanded directly to PKG_OPTIONS instead of via
+# PKG_MACROS since the values may contain whitespace.
+mkdefine = -D $(1)="$(2)"
+
+# Expand PKG_VARS into defines via PKG_OPTIONS.
+$(foreach var, $(PKG_VARS), \
+    $(eval PKG_OPTIONS += $(call mkdefine,$(var),$$($(var)))) \
+)
 
 # This converts required paths to containing package names for be able to
 # properly setup the build environment for a component.
