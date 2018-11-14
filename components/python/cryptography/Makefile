@@ -23,11 +23,14 @@
 # Copyright (c) 2014, 2018, Oracle and/or its affiliates. All rights reserved.
 #
 
+# Component uses ABI3 naming.
+PYTHON3_SOABI=abi3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
 COMPONENT_VERSION=	2.1.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
