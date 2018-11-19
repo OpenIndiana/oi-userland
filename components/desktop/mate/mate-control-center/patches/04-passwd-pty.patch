@@ -1,0 +1,295 @@
+diff --git a/capplets/about-me/mate-about-me-password.c b/capplets/about-me/mate-about-me-password.c
+index abac117..5a82566 100644
+--- a/capplets/about-me/mate-about-me-password.c
++++ b/capplets/about-me/mate-about-me-password.c
+@@ -27,6 +27,14 @@
+ #  include <config.h>
+ #endif
+ 
++/* This is needed to get ptmx-related functions in GLIBC */
++#ifndef _XOPEN_SOURCE
++#define _XOPEN_SOURCE 600
++#endif
++
++/* This is needed to get pipe2() in GLIBC */
++#define _GNU_SOURCE
++
+ /* Are all of these needed? */
+ #include <gdk/gdkkeysyms.h>
+ #include <pwd.h>
+@@ -35,6 +43,16 @@
+ #include <errno.h>
+ #include <string.h>
+ #include <sys/wait.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <stropts.h>
++#include <termios.h>
++
++#define PASSWD "/usr/bin/passwd"
++#define PTMX "/dev/ptmx"
++
++/* /dev/pts/N */
++#define PTY_MAX_NAME 20
+ 
+ #if __sun
+ #include <sys/types.h>
+@@ -85,6 +103,9 @@ typedef struct {
+ /* Buffer size for backend output */
+ #define BUFSIZE 64
+ 
++/* Bufffer size for backend error messages */
++#define ERRBUFSIZE 1024
++
+ /*
+  * Error handling {{
+  */
+@@ -170,85 +191,178 @@ static gboolean
+ spawn_passwd (PasswordDialog *pdialog, GError **error)
+ {
+ 	gchar	*argv[2];
+-	gchar	*envp[1];
+-	gint	my_stdin, my_stdout, my_stderr;
++	int	pid, pty_m, err_pipe[2];
++	char	slave_name[PTY_MAX_NAME];
++	char	*name;
+ 
+-	argv[0] = "/usr/bin/passwd";	/* Is it safe to rely on a hard-coded path? */
++	argv[0] = PASSWD;	/* Is it safe to rely on a hard-coded path? */
+ 	argv[1] = NULL;
+ 
+-	envp[0] = NULL;					/* If we pass an empty array as the environment,
+-									 * will the childs environment be empty, and the
+-									 * locales set to the C default? From the manual:
+-									 * "If envp is NULL, the child inherits its
+-									 * parent'senvironment."
+-									 * If I'm wrong here, we somehow have to set
+-									 * the locales here.
+-									 */
+-
+-	if (!g_spawn_async_with_pipes (NULL,						/* Working directory */
+-								   argv,						/* Argument vector */
+-								   envp,						/* Environment */
+-								   G_SPAWN_DO_NOT_REAP_CHILD,	/* Flags */
+-								   NULL,						/* Child setup */
+-								   NULL,						/* Data to child setup */
+-								   &pdialog->backend_pid,		/* PID */
+-								   &my_stdin,						/* Stdin */
+-								   &my_stdout,						/* Stdout */
+-								   &my_stderr,						/* Stderr */
+-								   error)) {					/* GError */
+-
+-		/* An error occurred */
+-		free_passwd_resources (pdialog);
+-
++	pty_m = open(PTMX, O_RDWR|O_NOCTTY);
++	if (pty_m > 0) {
++		name = ptsname(pty_m);
++		if (name && (strlen(name) < PTY_MAX_NAME)) {
++			strncpy(slave_name, name, PTY_MAX_NAME);
++		} else {
++			g_set_error(error,
++                		PASSDLG_ERROR,
++				PASSDLG_ERROR_BACKEND,
++				_("Couldn't get slave_name of pty"));
++			close(pty_m);
++			return FALSE;
++		}
++	} else {
++		g_set_error (error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't open pseudo-tty"));
+ 		return FALSE;
+ 	}
+ 
+-	/* 2>&1 */
+-	if (dup2 (my_stderr, my_stdout) == -1) {
+-		/* Failed! */
++	if (grantpt(pty_m) < 0) {
+ 		g_set_error (error,
+-					 PASSDLG_ERROR,
+-					 PASSDLG_ERROR_BACKEND,
+-					 "%s",
+-					 strerror (errno));
+-
+-		/* Clean up */
+-		stop_passwd (pdialog);
+-
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't set permission on slave device: %s"),
++			strerror(errno));
++		close(pty_m);
+ 		return FALSE;
+ 	}
+ 
+-	/* Open IO Channels */
+-	pdialog->backend_stdin = g_io_channel_unix_new (my_stdin);
+-	pdialog->backend_stdout = g_io_channel_unix_new (my_stdout);
+-
+-	/* Set raw encoding */
+-	/* Set nonblocking mode */
+-	if (g_io_channel_set_encoding (pdialog->backend_stdin, NULL, error) != G_IO_STATUS_NORMAL ||
+-		g_io_channel_set_encoding (pdialog->backend_stdout, NULL, error) != G_IO_STATUS_NORMAL ||
+-		g_io_channel_set_flags (pdialog->backend_stdin, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ||
+-		g_io_channel_set_flags (pdialog->backend_stdout, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ) {
++	if (unlockpt(pty_m) < 0) {
++		g_set_error (error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't unlock slave device: %s"),
++			strerror(errno));
++		close(pty_m);
++		return FALSE;
++	}
+ 
+-		/* Clean up */
+-		stop_passwd (pdialog);
++	if (pipe2(err_pipe, O_CLOEXEC) < 0) {
++		g_set_error (error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't create error reporting pipe: %s"),
++			strerror(errno));
++		close(pty_m);
+ 		return FALSE;
+ 	}
++		
++	pid = fork();
++	if (pid == 0) {
++		/* Child */
++		int pty_s, len;
++		char buf[ERRBUFSIZE];
++		close(err_pipe[0]);
++
++		close(pty_m);
++		if (setsid() < 0) {
++			len = snprintf(buf, ERRBUFSIZE, _("Couldn't create new process group: %s"), strerror(errno));
++			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
++			exit(1);
++		}
+ 
+-	/* Turn off buffering */
+-	g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
+-	g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
++		/* Now we are a session leader, on System V first open tty will become controlling tty */
++		pty_s = open(slave_name, O_RDWR);
+ 
+-	/* Add IO Channel watcher */
+-	pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
+-													   G_IO_IN | G_IO_PRI,
+-													   (GIOFunc) io_watch_stdout, pdialog);
++		if (pty_s < 0) {
++			len = snprintf(buf, ERRBUFSIZE, _("Couldn't open slave terminal device: %s"), strerror(errno));
++			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
++			exit(1);
++		}
++		
++#if defined(TIOCSCTTY) && !defined(__sun)
++		/* BSD systems need to set controlling tty explicitly. Solaris/illumos can export
++		   TIOCSCTTY when __EXTENSIONS__ are defined, but doesn't need this. */
++		if (ioctl(pty_s,TIOCSCTTY, NULL) < 0) {
++			close(pty_s);
++			len=snprintf(buf, ERRBUFSIZE, _("Couldn't establish controlling terminal: %s"), strerror(errno));
++			write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
++			exit(1);
++		}
++#endif
++		
++		/* Set stdin, stdout, stderr to our tty */
++		dup2(pty_s, 0);
++		dup2(pty_s, 1);
++		dup2(pty_s, 2);
++		
++		execvp(argv[0], argv);
++
++		/* Error */
++		close(pty_s);
++		len=snprintf(buf, ERRBUFSIZE, _("Couldn't exec passwd: %s"), strerror(errno));
++		write(err_pipe[1], buf, (len>ERRBUFSIZE) ? ERRBUFSIZE : len );
++		exit(1);
++	} else if (pid > 0) {
++		int rb, pos = 0;
++		char buf[ERRBUFSIZE];
++		
++
++		close(err_pipe[1]);
++		/* Wait for child to run exec() and read possible error message */
++		while (pos < ERRBUFSIZE - 1 && ((rb=read(err_pipe[0], &buf[pos], ERRBUFSIZE-1-pos)) > 0)) {
++			pos += rb;
++		}
++		close(err_pipe[0]);
++		if (pos > 0) {
++			/* There were messages in err_pipe */
++			buf[pos+1] = '\0';
++			g_set_error (error,
++                       		PASSDLG_ERROR,
++				PASSDLG_ERROR_BACKEND,
++				buf);
++
++			stop_passwd(pdialog);
++			return FALSE;
++		}	
++
++		/* Open IO Channels */
++		pdialog->backend_stdin = g_io_channel_unix_new (pty_m);
++		/* g_io_channel_shutdown(pdialog->backend_stdin) will close associated file descriptor (pty_m),
++		   but this will generate warning on g_io_channel_shutdown(pdialog->backend_stdout).
++		   To avoid it, dup() file descriptor */
++		pdialog->backend_stdout = g_io_channel_unix_new (dup(pty_m));
++		pdialog->backend_pid = pid;
++
++		/* Set raw encoding */
++		/* Set nonblocking mode */
++		if (g_io_channel_set_encoding (pdialog->backend_stdin, NULL, error) != G_IO_STATUS_NORMAL ||
++			g_io_channel_set_encoding (pdialog->backend_stdout, NULL, error) != G_IO_STATUS_NORMAL ||
++			g_io_channel_set_flags (pdialog->backend_stdin, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ||
++			g_io_channel_set_flags (pdialog->backend_stdout, G_IO_FLAG_NONBLOCK, error) != G_IO_STATUS_NORMAL ) {
++
++			/* Clean up */
++			stop_passwd (pdialog);
++			return FALSE;
++		}
+ 
+-	/* Add child watcher */
+-	pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
++		/* Turn off buffering */
++		g_io_channel_set_buffered (pdialog->backend_stdin, FALSE);
++		g_io_channel_set_buffered (pdialog->backend_stdout, FALSE);
+ 
+-	/* Success! */
++		/* Add IO Channel watcher */
++		pdialog->backend_stdout_watch_id = g_io_add_watch (pdialog->backend_stdout,
++														   G_IO_IN | G_IO_PRI,
++														   (GIOFunc) io_watch_stdout, pdialog);
++		
++		/* Add child watcher */
++		pdialog->backend_child_watch_id = g_child_watch_add (pdialog->backend_pid, (GChildWatchFunc) child_watch_cb, pdialog);
+ 
+-	return TRUE;
++		/* Success! */
++
++		return TRUE;
++	} else {
++		/* Error */
++		g_set_error(error,
++                	PASSDLG_ERROR,
++			PASSDLG_ERROR_BACKEND,
++			_("Couldn't fork: %s"),
++			strerror(errno));
++		close(pty_m);
++		return FALSE;
++	}
+ }
+ 
+ /* Stop passwd backend */
+@@ -822,7 +936,7 @@ passdlg_spawn_passwd (PasswordDialog *pdialog)
+ 
+ 		/* translators: Unable to launch <program>: <error message> */
+ 		details = g_strdup_printf (_("Unable to launch %s: %s"),
+-					   "/usr/bin/passwd", error->message);
++					   PASSWD, error->message);
+ 
+ 		passdlg_error_dialog (GTK_WINDOW (parent),
+ 				      _("Unable to launch backend"),
