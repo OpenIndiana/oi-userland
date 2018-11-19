@@ -1,0 +1,18 @@
+https://github.com/itstool/itstool/issues/22
+--- itstool-2.0.5/itstool.in	2018-08-21 18:27:24.000000000 +0000
++++ itstool-2.0.5/itstool.in	2018-11-19 22:52:13.798661440 +0000
+@@ -1060,9 +1060,13 @@
+             if strict:
+                 raise
+             else:
+-                sys.stderr.write('Warning: Could not merge %stranslation for msgid:\n%s\n' % (
++                try:
++                    sys.stderr.write('Warning: Could not merge %stranslation for msgid:\n%s\n' % (
+                         (lang + ' ') if lang is not None else '',
+                         msgstr.encode('utf-8')))
++                except UnicodeDecodeError:
++                    sys.stderr.write('Warning: Could not merge %stranslation for non-utf-8 msgid.\n' % (
++                        (lang + ' ') if lang is not None else ''))
+                 self._xml_err = ''
+                 return node
+         def scan_node(node):
