@@ -27,15 +27,15 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.0.2p
+COMPONENT_VERSION =	1.0.2q
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.16
+IPS_COMPONENT_VERSION = 1.0.2.17
 COMPONENT_PROJECT_URL=	https://www.openssl.org
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:50a98e07b1a89eb8f6a99477f262df71c6fa7bef77df4dc83025a2845c827d00
+    sha256:5744cfcbcec2b1b48629f7354203bc1e5e9b5466998bbccc5b5fcde3b18eb684
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
