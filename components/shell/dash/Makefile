@@ -10,23 +10,23 @@
 
 #
 # Copyright 2016 Adam Stevko
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dash
-COMPONENT_VERSION=	0.5.9.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.5.10.2
 COMPONENT_SUMMARY=	DASH is a POSIX-compliant implementation of /bin/sh that aims to be as small as possible.
-COMPONENT_PROJECT_URL=  https://git.kernel.org/pub/scm/utils/dash/dash.git
+COMPONENT_PROJECT_URL=  http://gondor.apana.org.au/~herbert/dash
 COMPONENT_FMRI=		shell/dash
 COMPONENT_CLASSIFICATION=System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=\
-	https://git.kernel.org/pub/scm/utils/dash/dash.git/snapshot/$(COMPONENT_ARCHIVE)
+	http://gondor.apana.org.au/~herbert/dash/files/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:3f747013a20a3a9d2932be1a6dd1b002ca5649849b649be0af8a8da80bd8a918
+  sha256:c34e1259c4179a6551dc3ceb41c668cf3be0135c5ec430deb2edfc17fff44da9
 COMPONENT_LICENSE=	BSD
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -44,6 +44,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(TEST_64)
+test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
