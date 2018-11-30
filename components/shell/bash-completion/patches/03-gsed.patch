@@ -76,7 +76,7 @@ diff -pruNb bash-completion-2.8/bash_completion bash-completion-2.8.patched/bash
 +        "$( command gsed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap \
              2>/dev/null )" -- "$cur" ) )
      COMPREPLY+=( $( compgen -W "$( { toe -a 2>/dev/null || toe 2>/dev/null; } \
-         | gawk '{ print $1 }' | sort -u )" -- "$cur" ) )
+         | nawk '{ print $1 }' | sort -u )" -- "$cur" ) )
 @@ -1441,7 +1441,7 @@ _included_ssh_config_files()
      [[ $# -lt 1 ]] && echo "error: $FUNCNAME: missing mandatory argument CONFIG"
      local configfile i f
@@ -206,7 +206,7 @@ diff -pruNb bash-completion-2.8/completions/configure bash-completion-2.8.patche
 @@ -29,7 +29,7 @@ _configure()
      if [[ -n $COMP_CONFIGURE_HINTS ]]; then
          COMPREPLY=( $( compgen -W "$( $1 --help 2>&1 | \
-             gawk '/^  --[A-Za-z]/ { print $1; \
+             nawk '/^  --[A-Za-z]/ { print $1; \
 -            if ($2 ~ /--[A-Za-z]/) print $2 }' | command sed -e 's/[[,].*//g' )" \
 +            if ($2 ~ /--[A-Za-z]/) print $2 }' | command gsed -e 's/[[,].*//g' )" \
              -- "$cur" ) )
@@ -408,9 +408,9 @@ diff -pruNb bash-completion-2.8/completions/mplayer bash-completion-2.8.patched/
  {
      cur=${cur%\\}
      COMPREPLY=( $( compgen -W "$( $1 -noconfig all $2 help 2>/dev/null | \
--        command sed -e '/^Available/,/^$/!d' -e '/^Available/d' | gawk '{print $1}' | \
+-        command sed -e '/^Available/,/^$/!d' -e '/^Available/d' | nawk '{print $1}' | \
 -        command sed -e 's/:$//' -e 's/^'${2#-}'$//' -e 's/<.*//' )" -- "$cur" ) )
-+        command gsed -e '/^Available/,/^$/!d' -e '/^Available/d' | gawk '{print $1}' | \
++        command gsed -e '/^Available/,/^$/!d' -e '/^Available/d' | nawk '{print $1}' | \
 +        command gsed -e 's/:$//' -e 's/^'${2#-}'$//' -e 's/<.*//' )" -- "$cur" ) )
  }
  
@@ -542,7 +542,7 @@ diff -pruNb bash-completion-2.8/completions/perl bash-completion-2.8.patched/com
                      '$( PERLDOC_PAGER=cat "$1" -u perl |  \
 -                    command sed -ne "/perl.*Perl overview/,/perlwin32/p" | \
 +                    command gsed -ne "/perl.*Perl overview/,/perlwin32/p" | \
-                     gawk "\$NF=2 && \$1 ~ /^perl/ { print \$1 }" )' \
+                     nawk "\$NF=2 && \$1 ~ /^perl/ { print \$1 }" )' \
                      -- "$cur" ) )
              fi
 diff -pruNb bash-completion-2.8/completions/pgrep bash-completion-2.8.patched/completions/pgrep
