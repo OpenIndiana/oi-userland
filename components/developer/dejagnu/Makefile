@@ -21,21 +21,23 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
+
 PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			dejagnu
-COMPONENT_VERSION=	1.6.1
+COMPONENT_VERSION=		1.6.2
 COMPONENT_FMRI=			developer/test/dejagnu
-COMPONENT_SUMMARY=	DejaGnu - a framework for testing other programs
+COMPONENT_SUMMARY=		DejaGnu - a framework for testing other programs
 COMPONENT_CLASSIFICATION=	Development/GNU
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/dejagnu/
+COMPONENT_PROJECT_URL=		https://www.gnu.org/software/dejagnu/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bf5b28bb797e0ace4cfc0766a996339c795d8223bef54158be7887046bc01692
+    sha256:0d0671e1b45189c5fc8ade4b3b01635fb9eeab45cf54f57db23e4c4c1a17d261
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
@@ -59,5 +61,5 @@ install:	$(INSTALL_64)
 test:		$(TEST_64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/expect
+REQUIRED_PACKAGES += SUNWcs
