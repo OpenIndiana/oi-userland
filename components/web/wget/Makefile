@@ -19,18 +19,20 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 PREFERRED_BITS=64
 
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.19.5
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
+COMPONENT_VERSION=	1.20
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b39212abe1a73f2b28f4c6cb223c738559caac91d6e416a6d91d4b9d55c9faee
+    sha256:b0b80f565ac27f5e56c847431c75b4f8fcb31af9dad2bf5ce947d89651f3681e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
@@ -65,9 +67,13 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+# For the test suite
+REQUIRED_PACKAGES += library/perl-5/http-daemon
+REQUIRED_PACKAGES += library/perl-5/http-message
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libidn2
-REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
