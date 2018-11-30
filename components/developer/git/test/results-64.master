@@ -2506,6 +2506,10 @@ ok 9 - rename (silent unicode normalization)
 ok 10 - merge (silent unicode normalization)
 # passed all 10 test(s)
 1..10
+*** t0051-windows-named-pipe.sh ***
+ok 1 # skip o_append write to named pipe (missing MINGW)
+# passed all 1 test(s)
+1..1
 *** t0055-beyond-symlinks.sh ***
 ok 1 - setup
 ok 2 - update-index --add beyond symlinks
@@ -2732,21 +2736,23 @@ ok 202 - match .gitmodules
 # passed all 202 test(s)
 1..202
 *** t0061-run-command.sh ***
-ok 1 - start_command reports ENOENT
-ok 2 - run_command can run a command
-ok 3 - run_command can run a script without a #! line
-ok 4 - run_command does not try to execute a directory
-ok 5 - run_command passes over non-executable file
-ok 6 - run_command reports EACCES
-ok 7 - unreadable directory in PATH
-ok 8 - run_command runs in parallel with more jobs available than tasks
-ok 9 - run_command runs in parallel with as many jobs as tasks
-ok 10 - run_command runs in parallel with more tasks than jobs available
-ok 11 - run_command is asked to abort gracefully
-ok 12 - run_command outputs 
-ok 13 - GIT_TRACE with environment variables
-# passed all 13 test(s)
-1..13
+ok 1 - start_command reports ENOENT (slash)
+ok 2 - start_command reports ENOENT (no slash)
+ok 3 - run_command can run a command
+ok 4 - run_command is restricted to PATH
+ok 5 - run_command can run a script without a #! line
+ok 6 - run_command does not try to execute a directory
+ok 7 - run_command passes over non-executable file
+ok 8 - run_command reports EACCES
+ok 9 - unreadable directory in PATH
+ok 10 - run_command runs in parallel with more jobs available than tasks
+ok 11 - run_command runs in parallel with as many jobs as tasks
+ok 12 - run_command runs in parallel with more tasks than jobs available
+ok 13 - run_command is asked to abort gracefully
+ok 14 - run_command outputs 
+ok 15 - GIT_TRACE with environment variables
+# passed all 15 test(s)
+1..15
 *** t0062-revision-walking.sh ***
 ok 1 - setup
 ok 2 - revision walking can be done twice
@@ -2812,19 +2818,20 @@ ok 7 - write-tree establishes cache-tree
 ok 8 - test-tool scrap-cache-tree works
 ok 9 - second commit has cache-tree
 ok 10 - commit --interactive gives cache-tree on partial commit
-ok 11 - commit in child dir has cache-tree
-ok 12 - reset --hard gives cache-tree
-ok 13 - reset --hard without index gives cache-tree
-ok 14 - checkout gives cache-tree
-ok 15 - checkout -b gives cache-tree
-ok 16 - checkout -B gives cache-tree
-ok 17 - merge --ff-only maintains cache-tree
-ok 18 - merge maintains cache-tree
-ok 19 - partial commit gives cache-tree
-ok 20 - no phantom error when switching trees
-ok 21 - switching trees does not invalidate shared index
-# passed all 21 test(s)
-1..21
+ok 11 - commit -p with shrinking cache-tree
+ok 12 - commit in child dir has cache-tree
+ok 13 - reset --hard gives cache-tree
+ok 14 - reset --hard without index gives cache-tree
+ok 15 - checkout gives cache-tree
+ok 16 - checkout -b gives cache-tree
+ok 17 - checkout -B gives cache-tree
+ok 18 - merge --ff-only maintains cache-tree
+ok 19 - merge maintains cache-tree
+ok 20 - partial commit gives cache-tree
+ok 21 - no phantom error when switching trees
+ok 22 - switching trees does not invalidate shared index
+# passed all 22 test(s)
+1..22
 *** t0100-previous.sh ***
 ok 1 - branch -d @{-1}
 ok 2 - branch -d @{-12} when there is not enough switches yet
@@ -2903,8 +2910,8 @@ ok 2 - Git::I18N is located at $(@D)/t/../perl/build/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
 ok 5 - sanity: N__ has a $ prototype
-ok 6 - sanity: __ has a $ prototype
-ok 7 - sanity: __n has a $$$ prototype
+ok 6 - sanity: __n has a $$$ prototype
+ok 7 - sanity: __ has a $ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -3069,18 +3076,21 @@ ok 5 - missing ref object, but promised, passes fsck
 ok 6 - missing object, but promised, passes fsck
 ok 7 - missing CLI object, but promised, passes fsck
 ok 8 - fetching of missing objects
-ok 9 - rev-list stops traversal at missing and promised commit
-ok 10 - rev-list stops traversal at missing and promised tree
-ok 11 - rev-list stops traversal at missing and promised blob
-ok 12 - rev-list stops traversal at promisor commit, tree, and blob
-ok 13 - rev-list accepts missing and promised objects on command line
-ok 14 - gc repacks promisor objects separately from non-promisor objects
-ok 15 - gc does not repack promisor objects if there are none
-ok 16 - repack -d does not irreversibly delete promisor objects
-ok 17 - gc stops traversal when a missing but promised object is reached
-# passed all 17 test(s)
+ok 9 - fetching of missing objects works with ref-in-want enabled
+ok 10 - fetching of missing blobs works
+ok 11 - fetching of missing trees does not fetch blobs
+ok 12 - rev-list stops traversal at missing and promised commit
+ok 13 - rev-list stops traversal at missing and promised tree
+ok 14 - rev-list stops traversal at missing and promised blob
+ok 15 - rev-list stops traversal at promisor commit, tree, and blob
+ok 16 - rev-list accepts missing and promised objects on command line
+ok 17 - gc repacks promisor objects separately from non-promisor objects
+ok 18 - gc does not repack promisor objects if there are none
+ok 19 - repack -d does not irreversibly delete promisor objects
+ok 20 - gc stops traversal when a missing but promised object is reached
+# passed all 20 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..17
+1..20
 *** t1000-read-tree-m-3way.sh ***
 ok 1 - adding test file NN and Z/NN
 ok 2 - adding test file ND and Z/ND
@@ -4147,71 +4157,73 @@ ok 104 - stdin delete ref fails with wrong old value
 ok 105 - stdin delete ref fails with zero old value
 ok 106 - stdin update symref works option no-deref
 ok 107 - stdin delete symref works option no-deref
-ok 108 - stdin delete ref works with right old value
-ok 109 - stdin update/create/verify combination works
-ok 110 - stdin verify succeeds for correct value
-ok 111 - stdin verify succeeds for missing reference
-ok 112 - stdin verify treats no value as missing
-ok 113 - stdin verify fails for wrong value
-ok 114 - stdin verify fails for mistaken null value
-ok 115 - stdin verify fails for mistaken empty value
-ok 116 - stdin update refs works with identity updates
-ok 117 - stdin update refs fails with wrong old value
-ok 118 - stdin delete refs works with packed and loose refs
-ok 119 - stdin -z works on empty input
-ok 120 - stdin -z fails on empty line
-ok 121 - stdin -z fails on empty command
-ok 122 - stdin -z fails on only whitespace
-ok 123 - stdin -z fails on leading whitespace
-ok 124 - stdin -z fails on unknown command
-ok 125 - stdin -z fails create with no ref
-ok 126 - stdin -z fails create with no new value
-ok 127 - stdin -z fails create with too many arguments
-ok 128 - stdin -z fails update with no ref
-ok 129 - stdin -z fails update with too few args
-ok 130 - stdin -z emits warning with empty new value
-ok 131 - stdin -z fails update with no new value
-ok 132 - stdin -z fails update with no old value
-ok 133 - stdin -z fails update with too many arguments
-ok 134 - stdin -z fails delete with no ref
-ok 135 - stdin -z fails delete with no old value
-ok 136 - stdin -z fails delete with too many arguments
-ok 137 - stdin -z fails verify with too many arguments
-ok 138 - stdin -z fails verify with no old value
-ok 139 - stdin -z fails option with unknown name
-ok 140 - stdin -z fails with duplicate refs
-ok 141 - stdin -z create ref works
-ok 142 - stdin -z update ref creates with zero old value
-ok 143 - stdin -z update ref creates with empty old value
-ok 144 - stdin -z create ref works with path with space to blob
-ok 145 - stdin -z update ref fails with wrong old value
-ok 146 - stdin -z update ref fails with bad old value
-ok 147 - stdin -z create ref fails when ref exists
-ok 148 - stdin -z create ref fails with bad new value
-ok 149 - stdin -z create ref fails with empty new value
-ok 150 - stdin -z update ref works with right old value
-ok 151 - stdin -z delete ref fails with wrong old value
-ok 152 - stdin -z delete ref fails with zero old value
-ok 153 - stdin -z update symref works option no-deref
-ok 154 - stdin -z delete symref works option no-deref
-ok 155 - stdin -z delete ref works with right old value
-ok 156 - stdin -z update/create/verify combination works
-ok 157 - stdin -z verify succeeds for correct value
-ok 158 - stdin -z verify succeeds for missing reference
-ok 159 - stdin -z verify treats no value as missing
-ok 160 - stdin -z verify fails for wrong value
-ok 161 - stdin -z verify fails for mistaken null value
-ok 162 - stdin -z verify fails for mistaken empty value
-ok 163 - stdin -z update refs works with identity updates
-ok 164 - stdin -z update refs fails with wrong old value
-ok 165 - stdin -z delete refs works with packed and loose refs
-ok 166 - fails with duplicate HEAD update
-ok 167 - fails with duplicate ref update via symref
-ok 168 - large transaction creating branches does not burst open file limit
-ok 169 - large transaction deleting branches does not burst open file limit
-ok 170 - handle per-worktree refs in refs/bisect
-# passed all 170 test(s)
-1..170
+ok 108 - stdin update symref works flag --no-deref
+ok 109 - stdin delete symref works flag --no-deref
+ok 110 - stdin delete ref works with right old value
+ok 111 - stdin update/create/verify combination works
+ok 112 - stdin verify succeeds for correct value
+ok 113 - stdin verify succeeds for missing reference
+ok 114 - stdin verify treats no value as missing
+ok 115 - stdin verify fails for wrong value
+ok 116 - stdin verify fails for mistaken null value
+ok 117 - stdin verify fails for mistaken empty value
+ok 118 - stdin update refs works with identity updates
+ok 119 - stdin update refs fails with wrong old value
+ok 120 - stdin delete refs works with packed and loose refs
+ok 121 - stdin -z works on empty input
+ok 122 - stdin -z fails on empty line
+ok 123 - stdin -z fails on empty command
+ok 124 - stdin -z fails on only whitespace
+ok 125 - stdin -z fails on leading whitespace
+ok 126 - stdin -z fails on unknown command
+ok 127 - stdin -z fails create with no ref
+ok 128 - stdin -z fails create with no new value
+ok 129 - stdin -z fails create with too many arguments
+ok 130 - stdin -z fails update with no ref
+ok 131 - stdin -z fails update with too few args
+ok 132 - stdin -z emits warning with empty new value
+ok 133 - stdin -z fails update with no new value
+ok 134 - stdin -z fails update with no old value
+ok 135 - stdin -z fails update with too many arguments
+ok 136 - stdin -z fails delete with no ref
+ok 137 - stdin -z fails delete with no old value
+ok 138 - stdin -z fails delete with too many arguments
+ok 139 - stdin -z fails verify with too many arguments
+ok 140 - stdin -z fails verify with no old value
+ok 141 - stdin -z fails option with unknown name
+ok 142 - stdin -z fails with duplicate refs
+ok 143 - stdin -z create ref works
+ok 144 - stdin -z update ref creates with zero old value
+ok 145 - stdin -z update ref creates with empty old value
+ok 146 - stdin -z create ref works with path with space to blob
+ok 147 - stdin -z update ref fails with wrong old value
+ok 148 - stdin -z update ref fails with bad old value
+ok 149 - stdin -z create ref fails when ref exists
+ok 150 - stdin -z create ref fails with bad new value
+ok 151 - stdin -z create ref fails with empty new value
+ok 152 - stdin -z update ref works with right old value
+ok 153 - stdin -z delete ref fails with wrong old value
+ok 154 - stdin -z delete ref fails with zero old value
+ok 155 - stdin -z update symref works option no-deref
+ok 156 - stdin -z delete symref works option no-deref
+ok 157 - stdin -z delete ref works with right old value
+ok 158 - stdin -z update/create/verify combination works
+ok 159 - stdin -z verify succeeds for correct value
+ok 160 - stdin -z verify succeeds for missing reference
+ok 161 - stdin -z verify treats no value as missing
+ok 162 - stdin -z verify fails for wrong value
+ok 163 - stdin -z verify fails for mistaken null value
+ok 164 - stdin -z verify fails for mistaken empty value
+ok 165 - stdin -z update refs works with identity updates
+ok 166 - stdin -z update refs fails with wrong old value
+ok 167 - stdin -z delete refs works with packed and loose refs
+ok 168 - fails with duplicate HEAD update
+ok 169 - fails with duplicate ref update via symref
+ok 170 - large transaction creating branches does not burst open file limit
+ok 171 - large transaction deleting branches does not burst open file limit
+ok 172 - handle per-worktree refs in refs/bisect
+# passed all 172 test(s)
+1..172
 *** t1401-symbolic-ref.sh ***
 ok 1 - symbolic-ref writes HEAD
 ok 2 - symbolic-ref reads HEAD
@@ -4662,13 +4674,14 @@ ok 63 - fsck errors in packed objects
 ok 64 - fsck fails on corrupt packfile
 ok 65 - fsck finds problems in duplicate loose objects
 ok 66 - fsck detects trailing loose garbage (commit)
-ok 67 - fsck detects trailing loose garbage (blob)
-ok 68 - fsck notices dangling objects
-ok 69 - fsck $name notices bogus $name
-ok 70 - bogus head does not fallback to all heads
-ok 71 - detect corrupt index file in fsck
-# passed all 71 test(s)
-1..71
+ok 67 - fsck detects trailing loose garbage (large blob)
+ok 68 - fsck detects truncated loose object
+ok 69 - fsck notices dangling objects
+ok 70 - fsck $name notices bogus $name
+ok 71 - bogus head does not fallback to all heads
+ok 72 - detect corrupt index file in fsck
+# passed all 72 test(s)
+1..72
 *** t1500-rev-parse.sh ***
 ok 1 - setup
 ok 2 - toplevel: --is-bare-repository
@@ -5208,7 +5221,7 @@ ok 11 - unify index, two files remain
 ok 12 - rev-parse --shared-index-path
 ok 13 - set core.splitIndex config variable to true
 ok 14 - set core.splitIndex config variable to false
-ok 15 - set core.splitIndex config variable to true
+ok 15 - set core.splitIndex config variable back to true
 ok 16 - check behavior with splitIndex.maxPercentChange unset
 ok 17 - check splitIndex.maxPercentChange set to 0
 ok 18 - shared index files expire after 2 weeks by default
@@ -5220,6 +5233,40 @@ ok 23 - graceful handling when splitting index is not allowed
 ok 24 - writing split index with null sha1 does not write cache tree
 # passed all 24 test(s)
 1..24
+*** t1701-racy-split-index.sh ***
+ok 1 - setup
+ok 2 - split the index while adding a racily clean file #0
+ok 3 - split the index while adding a racily clean file #1
+ok 4 - split the index while adding a racily clean file #2
+ok 5 - split the index while adding a racily clean file #3
+ok 6 - split the index while adding a racily clean file #4
+ok 7 - add a racily clean file to an already split index #0
+ok 8 - add a racily clean file to an already split index #1
+ok 9 - add a racily clean file to an already split index #2
+ok 10 - add a racily clean file to an already split index #3
+ok 11 - add a racily clean file to an already split index #4
+ok 12 - split the index when the index contains a racily clean cache entry #0
+ok 13 - split the index when the index contains a racily clean cache entry #1
+ok 14 - split the index when the index contains a racily clean cache entry #2
+ok 15 - split the index when the index contains a racily clean cache entry #3
+ok 16 - split the index when the index contains a racily clean cache entry #4
+ok 17 - update the split index when it contains a new racily clean cache entry #0
+ok 18 - update the split index when it contains a new racily clean cache entry #1
+ok 19 - update the split index when it contains a new racily clean cache entry #2
+ok 20 - update the split index when it contains a new racily clean cache entry #3
+ok 21 - update the split index when it contains a new racily clean cache entry #4
+ok 22 - update the split index when a racily clean cache entry is stored only in the shared index #0
+ok 23 - update the split index when a racily clean cache entry is stored only in the shared index #1
+ok 24 - update the split index when a racily clean cache entry is stored only in the shared index #2
+ok 25 - update the split index when a racily clean cache entry is stored only in the shared index #3
+ok 26 - update the split index when a racily clean cache entry is stored only in the shared index #4
+ok 27 - update the split index after unpack trees() copied a racily clean cache entry from the shared index #0
+ok 28 - update the split index after unpack trees() copied a racily clean cache entry from the shared index #1
+ok 29 - update the split index after unpack trees() copied a racily clean cache entry from the shared index #2
+ok 30 - update the split index after unpack trees() copied a racily clean cache entry from the shared index #3
+ok 31 - update the split index after unpack trees() copied a racily clean cache entry from the shared index #4
+# passed all 31 test(s)
+1..31
 *** t2000-checkout-cache-clash.sh ***
 ok 1 - git update-index --add various paths.
 ok 2 - git checkout-index without -f should fail on conflicting work tree.
@@ -8356,8 +8403,9 @@ ok 8 - new base, A B C
 ok 9 - new base, B...C
 ok 10 - changed commit
 ok 11 - changed message
-# passed all 11 test(s)
-1..11
+ok 12 - no commits on one side
+# passed all 12 test(s)
+1..12
 *** t3210-pack-refs.sh ***
 ok 1 - enable reflogs
 ok 2 - prepare a trivial repository
@@ -9087,8 +9135,9 @@ ok 18 - autosquash with empty custom instructionFormat
 ok 19 - autosquash with multiple empty patches
 ok 20 - extra spaces after fixup!
 ok 21 - wrapped original subject
-# passed all 21 test(s)
-1..21
+ok 22 - abort last squash
+# passed all 22 test(s)
+1..22
 *** t3416-rebase-onto-threedots.sh ***
 ok 1 - setup
 ok 2 - rebase --onto master...topic
@@ -11546,8 +11595,9 @@ ok 9 - diff from repo subdir shows real paths (explicit)
 ok 10 - diff from repo subdir shows real paths (implicit)
 ok 11 - diff --no-index from repo subdir respects config (explicit)
 ok 12 - diff --no-index from repo subdir respects config (implicit)
-# passed all 12 test(s)
-1..12
+ok 13 - diff --no-index from repo subdir with absolute paths
+# passed all 13 test(s)
+1..13
 *** t4054-diff-bogus-tree.sh ***
 ok 1 - create bogus tree
 ok 2 - create tree with matching file
@@ -12423,8 +12473,10 @@ ok 27 - explicit rerere --rerere-autoupdate overrides
 ok 28 - rerere --no-no-rerere-autoupdate
 ok 29 - rerere -h
 ok 30 - multiple identical conflicts
-# passed all 30 test(s)
-1..30
+ok 31 - setup simple stage 1 handling
+ok 32 - test simple stage 1 handling
+# passed all 32 test(s)
+1..32
 *** t4201-shortlog.sh ***
 ok 1 - setup
 ok 2 - default output format
@@ -12527,8 +12579,9 @@ ok 80 - set up --source tests
 ok 81 - log --source paints branch names
 ok 82 - log --source paints tag names
 ok 83 - log --source paints symmetric ranges
-# passed all 83 test(s)
-1..83
+ok 84 - --exclude-promisor-objects does not BUG-crash
+# passed all 84 test(s)
+1..84
 *** t4203-mailmap.sh ***
 ok 1 - setup
 ok 2 - check-mailmap no arguments
@@ -12643,9 +12696,10 @@ ok 54 - pretty format %(trailers) shows trailers
 ok 55 - %(trailers:only) shows only "key: value" trailers
 ok 56 - %(trailers:unfold) unfolds trailers
 ok 57 - :only and :unfold work together
+ok 58 - trailer parsing not fooled by --- line
 # still have 1 known breakage(s)
-# passed all remaining 56 test(s)
-1..57
+# passed all remaining 57 test(s)
+1..58
 *** t4206-log-follow-harder-copies.sh ***
 ok 1 - add a file path0 and commit.
 ok 2 - Change path0.
@@ -12791,6 +12845,14 @@ ok 8 - expand/no-expand for --pretty=raw
 ok 9 - expand/no-expand for --pretty=email
 # passed all 9 test(s)
 1..9
+*** t4214-log-graph-octopus.sh ***
+ok 1 - set up merge history
+ok 2 - log --graph with tricky octopus merge with colors
+ok 3 - log --graph with tricky octopus merge, no color
+ok 4 - log --graph with normal octopus merge, no color
+ok 5 - log --graph with normal octopus merge with colors
+# passed all 5 test(s)
+1..5
 *** t4252-am-options.sh ***
 ok 1 - setup
 ok 2 - interrupted am --whitespace=fix
@@ -13506,33 +13568,41 @@ ok 38 - check normal git operations: bare repo with graph, commit 8 vs merge 1
 ok 39 - check normal git operations: bare repo with graph, commit 8 vs merge 2
 ok 40 - perform fast-forward merge in full repo
 ok 41 - check that gc computes commit-graph
-ok 42 - git commit-graph verify
-ok 43 - detect bad signature
-ok 44 - detect bad version
-ok 45 - detect bad hash version
-ok 46 - detect low chunk count
-ok 47 - detect missing OID fanout chunk
-ok 48 - detect missing OID lookup chunk
-ok 49 - detect missing commit data chunk
-ok 50 - detect incorrect fanout
-ok 51 - detect incorrect fanout final value
-ok 52 - detect incorrect OID order
-ok 53 - detect OID not in object database
-ok 54 - detect incorrect tree OID
-ok 55 - detect incorrect parent int-id
-ok 56 - detect extra parent int-id
-ok 57 - detect wrong parent
-ok 58 - detect incorrect generation number
-ok 59 - detect incorrect generation number
-ok 60 - detect incorrect commit date
-ok 61 - detect incorrect parent for octopus merge
-ok 62 - detect invalid checksum hash
-ok 63 - git fsck (checks commit-graph)
-ok 64 - setup non-the_repository tests
-ok 65 - parse_commit_in_graph works for non-the_repository
-ok 66 - get_commit_tree_in_graph works for non-the_repository
-# passed all 66 test(s)
-1..66
+ok 42 - replace-objects invalidates commit-graph
+ok 43 - commit grafts invalidate commit-graph
+ok 44 - replace-objects invalidates commit-graph
+ok 45 - git commit-graph verify
+ok 46 - detect bad signature
+ok 47 - detect bad version
+ok 48 - detect bad hash version
+ok 49 - detect low chunk count
+ok 50 - detect missing OID fanout chunk
+ok 51 - detect missing OID lookup chunk
+ok 52 - detect missing commit data chunk
+ok 53 - detect incorrect fanout
+ok 54 - detect incorrect fanout final value
+ok 55 - detect incorrect OID order
+ok 56 - detect OID not in object database
+ok 57 - detect incorrect tree OID
+ok 58 - detect incorrect parent int-id
+ok 59 - detect extra parent int-id
+ok 60 - detect wrong parent
+ok 61 - detect incorrect generation number
+ok 62 - detect incorrect generation number
+ok 63 - detect incorrect commit date
+ok 64 - detect incorrect parent for octopus merge
+ok 65 - detect invalid checksum hash
+ok 66 - git fsck (checks commit-graph)
+ok 67 - setup non-the_repository tests
+ok 68 - parse_commit_in_graph works for non-the_repository
+ok 69 - get_commit_tree_in_graph works for non-the_repository
+# passed all 69 test(s)
+1..69
+*** t5321-pack-large-objects.sh ***
+ok 1 - setup
+ok 2 - repack large deltas
+# passed all 2 test(s)
+1..2
 *** t5400-send-pack.sh ***
 ok 1 - setup
 ok 2 - pack the source repository
@@ -14970,9 +15040,10 @@ ok 7 - fetch something upstream has but hidden by clients shallow boundaries
 ok 8 - fetch that requires changes in .git/shallow is filtered
 ok 9 - fetch --update-shallow
 ok 10 - shallow fetch from a read-only repo
-# passed all 10 test(s)
+ok 11 - .git/shallow is edited by repack
+# passed all 11 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..10
+1..11
 *** t5538-push-shallow.sh ***
 ok 1 - setup
 ok 2 - push from shallow clone
@@ -17535,15 +17606,16 @@ ok 196 - %(contents:trailers:only) and %(contents:trailers:unfold) work together
 ok 197 - %(trailers) rejects unknown trailers arguments
 ok 198 - %(contents:trailers) rejects unknown trailers arguments
 ok 199 - basic atom: head contents:trailers
-ok 200 - Add symbolic ref for the following tests
-ok 201 - Verify usage of %(symref) atom
-ok 202 - Verify usage of %(symref:short) atom
-ok 203 - Verify usage of %(symref:lstrip) atom
-ok 204 - Verify usage of %(symref:rstrip) atom
-ok 205 - :remotename and :remoteref
-ok 206 - for-each-ref --ignore-case ignores case
-# passed all 206 test(s)
-1..206
+ok 200 - trailer parsing not fooled by --- line
+ok 201 - Add symbolic ref for the following tests
+ok 202 - Verify usage of %(symref) atom
+ok 203 - Verify usage of %(symref:short) atom
+ok 204 - Verify usage of %(symref:lstrip) atom
+ok 205 - Verify usage of %(symref:rstrip) atom
+ok 206 - :remotename and :remoteref
+ok 207 - for-each-ref --ignore-case ignores case
+# passed all 207 test(s)
+1..207
 *** t6301-for-each-ref-errors.sh ***
 ok 1 - setup
 ok 2 - Broken refs are reported correctly
@@ -19138,8 +19210,10 @@ ok 32 - commit --squash works with -c for same commit
 ok 33 - commit --squash works with editor
 ok 34 - invalid message options when using --fixup
 ok 35 - new line found before status message in commit template
-# passed all 35 test(s)
-1..35
+ok 36 - setup empty commit with unstaged rename and copy
+ok 37 - check commit with unstaged rename and copy
+# passed all 37 test(s)
+1..37
 *** t7501-commit.sh ***
 ok 1 - initial status
 ok 2 - fail initial amend
@@ -19196,21 +19270,22 @@ ok 52 - sign off (2)
 ok 53 - signoff gap
 ok 54 - signoff gap 2
 ok 55 - signoff respects trailer config
-ok 56 - multiple -m
-ok 57 - amend commit to fix author
-ok 58 - git commit <file> with dirty index
-ok 59 - same tree (single parent)
-ok 60 - same tree (single parent) --allow-empty
-ok 61 - same tree (merge and amend merge)
-ok 62 - amend using the message from another commit
-ok 63 - amend using the message from a commit named with tag
-ok 64 - amend can copy notes
-ok 65 - commit a file whose name is a dash
-ok 66 - --only works on to-be-born branch
-ok 67 - --dry-run with conflicts fixed from a merge
+ok 56 - signoff not confused by ---
+ok 57 - multiple -m
+ok 58 - amend commit to fix author
+ok 59 - git commit <file> with dirty index
+ok 60 - same tree (single parent)
+ok 61 - same tree (single parent) --allow-empty
+ok 62 - same tree (merge and amend merge)
+ok 63 - amend using the message from another commit
+ok 64 - amend using the message from a commit named with tag
+ok 65 - amend can copy notes
+ok 66 - commit a file whose name is a dash
+ok 67 - --only works on to-be-born branch
+ok 68 - --dry-run with conflicts fixed from a merge
 # still have 2 known breakage(s)
-# passed all remaining 65 test(s)
-1..67
+# passed all remaining 66 test(s)
+1..68
 *** t7502-commit.sh ***
 ok 1 - output summary format
 ok 2 - output summary format: root-commit
@@ -19732,8 +19807,10 @@ ok 76 - only trailers
 ok 77 - only-trailers omits non-trailer in middle of block
 ok 78 - only input
 ok 79 - unfold
-# passed all 79 test(s)
-1..79
+ok 80 - handling of --- lines in input
+ok 81 - suppress --- handling
+# passed all 81 test(s)
+1..81
 *** t7514-commit-patch.sh ***
 ok 1 - setup (initial)
 ok 2 - edit hunk "commit -p -m message"
@@ -20749,8 +20826,9 @@ ok 115 - blame --abbrev=<n> works
 ok 116 - blame -l aligns regular and boundary commits
 ok 117 - blame --abbrev=40 behaves like -l
 ok 118 - --no-abbrev works like --abbrev=40
-# passed all 118 test(s)
-1..118
+ok 119 - --exclude-promisor-objects does not BUG-crash
+# passed all 119 test(s)
+1..119
 *** t8003-blame-corner-cases.sh ***
 ok 1 - setup
 ok 2 - straight copy without -C
@@ -22194,298 +22272,11 @@ ok 14 - idents are shared
 # passed all 14 test(s)
 1..14
 *** t9400-git-cvsserver-server.sh ***
-ok 1 - setup
-ok 2 - basic checkout
-ok 3 - pserver authentication
-ok 4 - pserver authentication failure (non-anonymous user)
-ok 5 - pserver authentication success (non-anonymous user with password)
-ok 6 - pserver authentication (login)
-ok 7 - pserver authentication failure (login/non-anonymous user)
-ok 8 - req_Root failure (relative pathname)
-ok 9 - req_Root failure (conflicting roots)
-ok 10 - req_Root (strict paths)
-ok 11 - req_Root failure (strict-paths)
-ok 12 - req_Root (w/o strict-paths)
-ok 13 - req_Root failure (w/o strict-paths)
-ok 14 - req_Root (base-path)
-ok 15 - req_Root failure (base-path)
-ok 16 - req_Root (export-all)
-ok 17 - req_Root failure (export-all w/o whitelist)
-ok 18 - req_Root (everything together)
-ok 19 - gitcvs.enabled = false
-ok 20 - gitcvs.ext.enabled = true
-ok 21 - gitcvs.ext.enabled = false
-ok 22 - gitcvs.dbname
-ok 23 - gitcvs.ext.dbname
-ok 24 - cvs update (create new file)
-ok 25 - cvs update (update existing file)
-not ok 26 - cvs update w/o -d doesn't create subdir (TODO) # TODO known breakage
-ok 27 - cvs update (subdirectories)
-ok 28 - cvs update (delete file)
-ok 29 - cvs update (re-add deleted file)
-ok 30 - cvs update (merge)
-ok 31 - cvs update (conflict merge)
-ok 32 - cvs update (-C)
-ok 33 - cvs update (merge no-op)
-ok 34 - cvs update (-p)
-ok 35 - cvs update (module list supports packed refs)
-ok 36 - cvs status
-ok 37 - cvs status (nonrecursive)
-ok 38 - cvs status (no subdirs in header)
-ok 39 - cvs co -c (shows module database)
-ok 40 - cvs log
-ok 41 - cvs annotate
-ok 42 - create remote-cvs helper
-ok 43 - cvs server does not run with vanilla git-shell
-ok 44 - configure git shell to run cvs server
-ok 45 - cvs server can run with recommended config
-# still have 1 known breakage(s)
-# passed all remaining 44 test(s)
-1..45
+1..0 # SKIP skipping git-cvsserver tests, Perl SQLite interface unavailable
 *** t9401-git-cvsserver-crlf.sh ***
-ok 1 - setup
-ok 2 - cvs co (default crlf)
-ok 3 - cvs co (allbinary)
-ok 4 - cvs co (use attributes/allbinary)
-ok 5 - cvs co (use attributes)
-ok 6 - adding files
-ok 7 - updating
-ok 8 - cvs co (use attributes/guess)
-ok 9 - setup multi-line files
-ok 10 - cvs co (guess)
-ok 11 - cvs co another copy (guess)
-ok 12 - cvs status - sticky options
-ok 13 - add text (guess)
-ok 14 - add bin (guess)
-ok 15 - remove files (guess)
-ok 16 - cvs ci (guess)
-ok 17 - update subdir of other copy (guess)
-ok 18 - update/merge full other copy (guess)
-# passed all 18 test(s)
-1..18
+1..0 # SKIP skipping git-cvsserver tests, Perl SQLite interface unavailable
 *** t9402-git-cvsserver-refs.sh ***
-ok 1 - setup v1, b1
-ok 2 - cvs co v1
-ok 3 - cvs co b1
-ok 4 - cvs co b1 [cvswork3]
-not ok 5 - edit cvswork3 and save diff
-#	
-#		(
-#			cd cvswork3 &&
-#			sed -e "s/line1/line1 - data/" adir/afile >adir/afileNEW &&
-#			mv -f adir/afileNEW adir/afile &&
-#			echo "afile5" >adir/afile5 &&
-#			rm t2 &&
-#			cvs -f add adir/afile5 &&
-#			cvs -f rm t2 &&
-#			! cvs -f diff -N -u >"$WORKDIR/cvswork3edit.diff"
-#		)
-#	
-ok 6 - setup v1.2 on b1
-ok 7 - cvs -f up (on b1 adir)
-ok 8 - cvs up (on b1 /)
-ok 9 - cvs up (on b1 /) (again; check CVS/Tag files)
-ok 10 - cvs up -r v1
-ok 11 - cvs up
-ok 12 - cvs up (again; check CVS/Tag files)
-ok 13 - setup simple b2
-ok 14 - cvs co b2 [into cvswork2]
-not ok 15 - root dir edit [cvswork2]
-#	
-#		(
-#			cd cvswork2 && echo "Line 2" >>textfile.c &&
-#			! cvs -f diff -u >"$WORKDIR/cvsEdit1.diff" &&
-#			cvs -f commit -m "edit textfile.c" textfile.c
-#		) >cvsEdit1.log 2>&1
-#	
-not ok 16 - root dir rm file [cvswork2]
-#	
-#		(
-#			cd cvswork2 &&
-#			cvs -f rm -f t2 &&
-#			cvs -f diff -u >../cvsEdit2-empty.diff &&
-#			! cvs -f diff -N -u >"$WORKDIR/cvsEdit2-N.diff" &&
-#			cvs -f commit -m "rm t2"
-#		) >cvsEdit2.log 2>&1
-#	
-not ok 17 - subdir edit/add/rm files [cvswork2]
-#	
-#		(
-#			cd cvswork2 &&
-#			sed -e "s/line 1/line 1 (v2)/" adir/bdir/bfile >adir/bdir/bfileNEW &&
-#			mv -f adir/bdir/bfileNEW adir/bdir/bfile &&
-#			rm adir/bdir/b2file &&
-#			cd adir &&
-#			cvs -f rm bdir/b2file &&
-#			echo "4th file" >bdir/b4file &&
-#			cvs -f add bdir/b4file &&
-#			! cvs -f diff -N -u >"$WORKDIR/cvsEdit3.diff" &&
-#			git fetch gitcvs.git b2:b2 &&
-#			(
-#			  cd .. &&
-#			  ! cvs -f diff -u -N -r v1.2 >"$WORKDIR/cvsEdit3-v1.2.diff" &&
-#			  ! cvs -f diff -u -N -r v1.2 -r v1 >"$WORKDIR/cvsEdit3-v1.2-v1.diff"
-#			) &&
-#			cvs -f commit -m "various add/rm/edit"
-#		) >cvs.log 2>&1
-#	
-not ok 18 - validate result of edits [cvswork2]
-#	
-#		git fetch gitcvs.git b2:b2 &&
-#		git tag v2 b2 &&
-#		git push --tags gitcvs.git b2:b2 &&
-#		check_start_tree cvswork2 &&
-#		check_file cvswork2 textfile.c v2 &&
-#		check_file cvswork2 adir/afile v2 &&
-#		check_file cvswork2 adir/a2file v2 &&
-#		check_file cvswork2 adir/bdir/bfile v2 &&
-#		check_file cvswork2 adir/bdir/b4file v2 &&
-#		check_end_full_tree cvswork2 v2
-#	
-not ok 19 - validate basic diffs saved during above cvswork2 edits
-#	
-#		test $(grep Index: cvsEdit1.diff | wc -l) = 1 &&
-#		test_must_be_empty cvsEdit2-empty.diff &&
-#		test $(grep Index: cvsEdit2-N.diff | wc -l) = 1 &&
-#		test $(grep Index: cvsEdit3.diff | wc -l) = 3 &&
-#		rm -rf diffSandbox &&
-#		git clone -q -n . diffSandbox &&
-#		(
-#			cd diffSandbox &&
-#			git checkout v1 &&
-#			git apply -p0 --index <"$WORKDIR/cvsEdit1.diff" &&
-#			git apply -p0 --index <"$WORKDIR/cvsEdit2-N.diff" &&
-#			git apply -p0 --directory=adir --index <"$WORKDIR/cvsEdit3.diff" &&
-#			git diff --exit-code v2
-#		) >"check_diff_apply.out" 2>&1
-#	
-not ok 20 - validate v1.2 diff saved during last cvswork2 edit
-#	
-#		test $(grep Index: cvsEdit3-v1.2.diff | wc -l) = 9 &&
-#		check_diff cvsEdit3-v1.2.diff v1.2 v2
-#	
-not ok 21 - validate v1.2 v1 diff saved during last cvswork2 edit
-#	
-#		test $(grep Index: cvsEdit3-v1.2-v1.diff | wc -l) = 9 &&
-#		check_diff cvsEdit3-v1.2-v1.diff v1.2 v1
-#	
-not ok 22 - cvs up [cvswork2]
-#	
-#		( cd cvswork2 && cvs -f up ) >cvs.log 2>&1 &&
-#		check_start_tree cvswork2 &&
-#		check_file cvswork2 textfile.c v2 &&
-#		check_file cvswork2 adir/afile v2 &&
-#		check_file cvswork2 adir/a2file v2 &&
-#		check_file cvswork2 adir/bdir/bfile v2 &&
-#		check_file cvswork2 adir/bdir/b4file v2 &&
-#		check_end_full_tree cvswork2 v2
-#	
-not ok 23 - cvs up -r b2 [back to cvswork]
-#	
-#		( cd cvswork && cvs -f up -r b2 ) >cvs.log 2>&1 &&
-#		check_start_tree cvswork &&
-#		check_file cvswork textfile.c v2 &&
-#		check_file cvswork adir/afile v2 &&
-#		check_file cvswork adir/a2file v2 &&
-#		check_file cvswork adir/bdir/bfile v2 &&
-#		check_file cvswork adir/bdir/b4file v2 &&
-#		check_end_full_tree cvswork v2
-#	
-ok 24 - cvs up -r b1
-ok 25 - cvs up -A
-ok 26 - cvs up (check CVS/Tag files)
-ok 27 - cvs up -r heads/b1
-not ok 28 - cvs up -r heads_-s-b2 (cvsserver escape mechanism)
-#	
-#		( cd cvswork && cvs -f up -r heads_-s-b2 ) >cvs.log 2>&1 &&
-#		check_start_tree cvswork &&
-#		check_file cvswork textfile.c v2 &&
-#		check_file cvswork adir/afile v2 &&
-#		check_file cvswork adir/a2file v2 &&
-#		check_file cvswork adir/bdir/bfile v2 &&
-#		check_file cvswork adir/bdir/b4file v2 &&
-#		check_end_full_tree cvswork v2
-#	
-ok 29 - cvs up -r $(git rev-parse v1)
-ok 30 - cvs diff -r v1 -u
-not ok 31 - cvs diff -N -r v2 -u
-#	
-#		( cd cvswork && ! cvs -f diff -N -r v2 -u >../cvsDiff.out 2>../cvs.log ) &&
-#		test_must_be_empty cvs.log &&
-#		test -s cvsDiff.out &&
-#		check_diff cvsDiff.out v2 v1 >check_diff.out 2>&1
-#	
-not ok 32 - cvs diff -N -r v2 -r v1.2
-#	
-#		( cd cvswork && ! cvs -f diff -N -r v2 -r v1.2 -u >../cvsDiff.out 2>../cvs.log ) &&
-#		test_must_be_empty cvs.log &&
-#		test -s cvsDiff.out &&
-#		check_diff cvsDiff.out v2 v1.2 >check_diff.out 2>&1
-#	
-not ok 33 - apply early [cvswork3] diff to b3
-#	
-#		git clone -q . gitwork3 &&
-#		(
-#			cd gitwork3 &&
-#			git checkout -b b3 v1 &&
-#			git apply -p0 --index <"$WORKDIR/cvswork3edit.diff" &&
-#			git commit -m "cvswork3 edits applied"
-#		) &&
-#		git fetch gitwork3 b3:b3 &&
-#		git tag v3 b3
-#	
-not ok 34 - check [cvswork3] diff
-#	
-#		( cd cvswork3 && ! cvs -f diff -N -u >"$WORKDIR/cvsDiff.out" 2>../cvs.log ) &&
-#		test_must_be_empty cvs.log &&
-#		test -s cvsDiff.out &&
-#		test $(grep Index: cvsDiff.out | wc -l) = 3 &&
-#		test_cmp cvsDiff.out cvswork3edit.diff &&
-#		check_diff cvsDiff.out v1 v3 >check_diff.out 2>&1
-#	
-ok 35 - merge early [cvswork3] b3 with b1
-not ok 36 - cvs up dirty [cvswork3]
-#	
-#		(
-#			cd cvswork3 &&
-#			cvs -f up &&
-#			! cvs -f diff -N -u >"$WORKDIR/cvsDiff.out"
-#		) >cvs.log 2>&1 &&
-#		test -s cvsDiff.out &&
-#		test $(grep Index: cvsDiff.out | wc -l) = 2 &&
-#		check_start_tree cvswork3 &&
-#		check_file cvswork3 textfile.c v3merged &&
-#		check_file cvswork3 t3 v3merged &&
-#		check_file cvswork3 adir/afile v3merged &&
-#		check_file cvswork3 adir/a3file v3merged &&
-#		check_file cvswork3 adir/afile5 v3merged &&
-#		check_file cvswork3 adir/bdir/bfile v3merged &&
-#		check_file cvswork3 adir/bdir/b3file v3merged &&
-#		check_file cvswork3 cdir/cfile v3merged &&
-#		check_end_full_tree cvswork3 v3merged
-#	
-not ok 37 - cvs commit [cvswork3]
-#	
-#		(
-#			cd cvswork3 &&
-#			cvs -f commit -m "dirty sandbox after auto-merge"
-#		) >cvs.log 2>&1 &&
-#		check_start_tree cvswork3 &&
-#		check_file cvswork3 textfile.c v3merged &&
-#		check_file cvswork3 t3 v3merged &&
-#		check_file cvswork3 adir/afile v3merged &&
-#		check_file cvswork3 adir/a3file v3merged &&
-#		check_file cvswork3 adir/afile5 v3merged &&
-#		check_file cvswork3 adir/bdir/bfile v3merged &&
-#		check_file cvswork3 adir/bdir/b3file v3merged &&
-#		check_file cvswork3 cdir/cfile v3merged &&
-#		check_end_full_tree cvswork3 v3merged &&
-#		git fetch gitcvs.git b3:b4 &&
-#		git tag v4.1 b4 &&
-#		git diff --exit-code v4.1 v3merged >check_diff_apply.out 2>&1
-#	
-# failed 17 among 37 test(s)
-1..37
+1..0 # SKIP skipping git-cvsserver tests, Perl SQLite interface unavailable
 *** t9500-gitweb-standalone-no-errors.sh ***
 1..0 # SKIP skipping gitweb tests, CGI & CGI::Util & CGI::Carp modules not available
 *** t9501-gitweb-standalone-http-status.sh ***
@@ -22839,10 +22630,10 @@ ok 65 - prompt - hide if pwd ignored - inside gitdir
 # passed all 65 test(s)
 1..65
 
-failed test(s): t0204 t3900 t9402
+failed test(s): t0204 t3900
 
 fixed   1
-success 19382
-failed  20
-broken  260
-total   19976
+success 19365
+failed  3
+broken  259
+total   19942
