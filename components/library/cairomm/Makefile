@@ -11,21 +11,22 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= cairomm
-COMPONENT_VERSION= 1.11.2
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= cairomm - C++ Wrapper for the cairo Library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		cairomm
+COMPONENT_VERSION=	1.12.2
+COMPONENT_SUMMARY=	cairomm - C++ Wrapper for the cairo Library
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_FMRI=		library/desktop/c++/cairomm
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ccf677098c1e08e189add0bd146f78498109f202575491a82f1815b6bc28008d
+  sha256:45c47fd4d0aa77464a75cdca011143fea3ef795c4753f6e860057da5fb8bd599
 COMPONENT_ARCHIVE_URL= \
   http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://cairographics.org/cairomm/
+COMPONENT_PROJECT_URL=	http://cairographics.org/cairomm/
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -37,15 +38,15 @@ CXXFLAGS += -std=c++11
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test:		$(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
