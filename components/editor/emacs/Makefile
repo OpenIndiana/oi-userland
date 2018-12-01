@@ -19,16 +19,17 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	25.3
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
+COMPONENT_VERSION=	26.1
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:253ac5e7075e594549b83fd9ec116a9dc37294d415e2f21f8ee109829307c00b
+    sha256:1cf4fc240cd77c25309d15e18593789c8dbfba5c2b44d8f77c886542300fd32c
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -58,6 +59,8 @@ LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
+
+CFLAGS	+= $(shell pkg-config --cflags lcms2)
 
 # emacs creates a directory in usr/lib/emacs/$(COMPONENT_VERSION) that
 # contains the platform name. Although the name is platform dependent,
@@ -91,7 +94,7 @@ COMPILER =	gcc
 # CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # configure options common to all variants of emacs that we want to build.
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR) --with-compress-info=no
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
@@ -194,17 +197,15 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 # Solaris, it is delivered by system/prerequisite/gnu.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
-
 # common targets
 build:          $(BUILD_32)
 
 install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
 
-test:	$(NO_TESTS)
+test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += file/gnu-findutils
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -214,6 +215,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
@@ -227,6 +229,7 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxinerama
