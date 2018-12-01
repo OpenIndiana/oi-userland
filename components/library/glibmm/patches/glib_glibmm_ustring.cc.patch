@@ -2,42 +2,32 @@ OI (and Solaris) iconv doesn't support WCHAR_T <-> UTF-8 conversions
 ( https://www.illumos.org/issues/5089 ). But internal encoding used 
 in WCHAR_T is UCS-4LE, so we use it.
 
---- glibmm-2.28.2/glib/glibmm/ustring.cc.~1~	2014-11-28 17:13:54.224573590 +0300
-+++ glibmm-2.28.2/glib/glibmm/ustring.cc	2014-11-28 17:20:42.966679418 +0300
-@@ -1279,7 +1279,12 @@
+--- glibmm-2.58.0/glib/glibmm/ustring.cc	2018-05-06 12:47:56.000000000 +0000
++++ glibmm-2.58.0/glib/glibmm/ustring.cc.new	2018-12-01 19:55:47.373116133 +0000
+@@ -1377,7 +1377,7 @@ ustring::FormatStream::to_string() const
+ #else
    gsize n_bytes = 0;
-   const ScopedPtr<char> buf (g_convert(reinterpret_cast<const char*>(str.data()),
-                                        str.size() * sizeof(std::wstring::value_type),
-+#if defined(__sun)
-+                                       "UTF-8", "UCS-4LE", 0, &n_bytes, &error));
-+#else
-                                        "UTF-8", "WCHAR_T", 0, &n_bytes, &error));
-+#endif
-+
- # endif /* !(__STDC_ISO_10646__ || G_OS_WIN32) */
+   const auto buf = make_unique_ptr_gfree(g_convert(reinterpret_cast<const char*>(str.data()),
+-    str.size() * sizeof(std::wstring::value_type), "UTF-8", "WCHAR_T", nullptr, &n_bytes, &error));
++    str.size() * sizeof(std::wstring::value_type), "UTF-8", "UCS-4LE", nullptr, &n_bytes, &error));
+ #endif /* !(__STDC_ISO_10646__ || G_OS_WIN32) */
  
  #else /* !GLIBMM_HAVE_WIDE_STREAM */
-@@ -1363,7 +1368,11 @@
+@@ -1465,7 +1465,7 @@ operator>>(std::wistream& is, ustring& u
+ #else
    gsize n_bytes = 0;
-   const ScopedPtr<char> buf (g_convert(reinterpret_cast<const char*>(wstr.data()),
-                                        wstr.size() * sizeof(std::wstring::value_type),
-+#if defined(__sun)
-+                                       "UTF-8", "UCS-4LE", 0, &n_bytes, &error));
-+#else
-                                        "UTF-8", "WCHAR_T", 0, &n_bytes, &error));
-+#endif
+   const auto buf = make_unique_ptr_gfree(g_convert(reinterpret_cast<const char*>(wstr.data()),
+-    wstr.size() * sizeof(std::wstring::value_type), "UTF-8", "WCHAR_T", nullptr, &n_bytes, &error));
++    wstr.size() * sizeof(std::wstring::value_type), "UTF-8", "UCS-4LE", nullptr, &n_bytes, &error));
  #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)
  
    if (error)
-@@ -1393,7 +1402,11 @@
-   // with g_convert(), while iconv on the command line handles it just fine.
-   // Maybe a bug in GLib?
-   const ScopedPtr<char> buf (g_convert(utf8_string.raw().data(), utf8_string.raw().size(),
-+#if defined(__sun)
-+                                       "UCS-4LE", "UTF-8", 0, 0, &error));
-+#else
-                                        "WCHAR_T", "UTF-8", 0, 0, &error));
-+#endif
+@@ -1493,7 +1493,7 @@ operator<<(std::wostream& os, const ustr
+     g_utf8_to_utf16(utf8_string.raw().data(), utf8_string.raw().size(), nullptr, nullptr, &error));
+ #else
+   const auto buf = make_unique_ptr_gfree(g_convert(utf8_string.raw().data(),
+-    utf8_string.raw().size(), "WCHAR_T", "UTF-8", nullptr, nullptr, &error));
++    utf8_string.raw().size(), "UCS-4LE", "UTF-8", nullptr, nullptr, &error));
  #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)
  
    if (error)
