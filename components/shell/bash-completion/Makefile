@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bash-completion
 COMPONENT_VERSION=      2.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=         utility/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=      Programmable completion functions for bash
 COMPONENT_CLASSIFICATION=System/Shells
@@ -30,9 +30,23 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/scop/bash-completion/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 
+# Fetch OpenIndiana/openindiana-completions project with
+# OpenIndiana-specific bash completions.
+COMPONENT_OI_COMPLETIONS_COMMIT=7380959fd677d4bf3f418291051816c3fe8c7d3c
+COMPONENT_ARCHIVE_1=		$(COMPONENT_OI_COMPLETIONS_COMMIT).zip
+COMPONENT_ARCHIVE_HASH_1=	\
+	sha256:d607cee939b11a46223dec898ee60ec479d88d69c406b0e6b4e5ef4102e43326
+COMPONENT_ARCHIVE_URL_1=	\
+	https://github.com/OpenIndiana/openindiana-completions/archive/$(COMPONENT_ARCHIVE_1)
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_POST_UNPACK_ACTION = ( unzip -jo $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) -d $(@D)/completions/ )
+
+# Because of openindiana-completions patch
+COMPONENT_PREP_ACTION=	cd $(@D) && autoreconf -fi
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
