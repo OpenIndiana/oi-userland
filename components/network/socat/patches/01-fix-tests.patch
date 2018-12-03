@@ -1,0 +1,127 @@
+READLINE test tends to hang the suite.
+
+So does (as the comment in the script rightfully says) OPENSSL_METHOD_DTLS1 test,
+hence disabling it as well.
+
+OPENSSL_METHOD_* tests require GNU sort.
+--- socat-1.7.3.2/test.sh.~1~	2017-01-22 19:07:10.000000000 +0000
++++ socat-1.7.3.2/test.sh	2018-12-01 22:57:10.378181390 +0000
+@@ -4964,100 +4964,6 @@ fi ;; # NUMCOND, feats
+ esac
+ N=$((N+1))
+ 
+-
+-NAME=READLINE
+-#set -vx
+-case "$TESTS" in
+-*%$N%*|*%functions%*|*%pty%*|*%readline%*|*%$NAME%*)
+-TEST="$NAME: readline with password and sigint"
+-if ! eval $NUMCOND; then :;
+-elif ! feat=$(testaddrs readline pty); then
+-    $PRINTF "test $F_n $TEST... ${YELLOW}$(echo "$feat"| tr 'a-z' 'A-Z') not available${NORMAL}\n" $N
+-    numCANT=$((numCANT+1))
+-else
+-SAVETERM="$TERM"; TERM=	# 'cause konsole might print controls even in raw
+-SAVEMICS=$MICROS
+-#MICROS=2000000
+-ts="$td/test$N.sh"
+-to="$td/test$N.stdout"
+-tpi="$td/test$N.inpipe"
+-tpo="$td/test$N.outpipe"
+-te="$td/test$N.stderr"
+-tr="$td/test$N.ref"
+-tdiff="$td/test$N.diff"
+-da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
+-# the feature that we really want to test is in the readline.sh script:
+-CMD="$TRACE $SOCAT $opts -t1 open:$tpi,nonblock!!open:$tpo exec:\"./readline.sh -nh ./readline-test.sh\",pty,ctty,setsid,raw,echo=0,isig"
+-#echo "$CMD" >"$ts"
+-#chmod a+x "$ts"
+-printf "test $F_n $TEST... " $N
+-rm -f "$tpi" "$tpo"
+-mkfifo "$tpi"
+-touch "$tpo"
+-#
+-# during development of this test, the following command line succeeded:
+-# (sleep 1; $ECHO "user\n\c"; sleep 1; $ECHO "password\c"; sleep 1; $ECHO "\n\c"; sleep 1; $ECHO "test 1\n\c"; sleep 1; $ECHO "\003\c"; sleep 1; $ECHO "test 2\n\c"; sleep 1; $ECHO "exit\n\c"; sleep 1) |$TRACE $SOCAT -d -d -d -d -lf/tmp/gerhard/debug1 -v -x - exec:'./readline.sh ./readline-test.sh',pty,ctty,setsid,raw,echo=0,isig
+-#
+-PATH=${SOCAT%socat}:$PATH eval "$CMD 2>$te &"
+-pid=$!	# background process id
+-usleep $MICROS
+-
+-(
+-usleep $((3*MICROS))
+-$ECHO "user\n\c"
+-usleep $MICROS
+-$ECHO "password\c"
+-usleep $MICROS
+-$ECHO "\n\c"
+-usleep $MICROS
+-$ECHO "test 1\n\c"
+-usleep $MICROS
+-$ECHO "\003\c"
+-usleep $MICROS
+-$ECHO "test 2\n\c"
+-usleep $MICROS
+-$ECHO "exit\n\c"
+-usleep $MICROS
+-) >"$tpi"
+-
+-cat >$tr <<EOF
+-readline feature test program
+-Authentication required
+-Username: user
+-Password: 
+-prog> test 1
+-executing test 1
+-prog> ./readline-test.sh got SIGINT
+-test 2
+-executing test 2
+-prog> exit
+-EOF
+-
+-#0 if ! sed 's/.*\r//g' "$tpo" |diff -q "$tr" - >/dev/null 2>&1; then
+-#0 if ! sed 's/.*'"$($ECHO '\r\c')"'/</g' "$tpo" |diff -q "$tr" - >/dev/null 2>&1; then
+-wait
+-if ! tr "$($ECHO '\r \c')" "% " <$tpo |sed 's/%$//g' |sed 's/.*%//g' |diff "$tr" - >"$tdiff" 2>&1; then
+-    $PRINTF "$FAILED: $TRACE $SOCAT:\n"
+-    echo "$CMD"
+-    cat "$te"
+-    cat "$tdiff"
+-    numFAIL=$((numFAIL+1))
+-    listFAIL="$listFAIL $N"
+-else
+-   $PRINTF "$OK\n"
+-   if [ -n "$debug" ]; then cat $te; fi
+-   numOK=$((numOK+1))
+-fi
+-kill $pid 2>/dev/null	# necc on OpenBSD
+-wait
+-MICROS=$SAVEMICS
+-TERM="$SAVETERM"
+-fi ;; # NUMCOND, feats
+-esac
+-PORT=$((PORT+1))
+-N=$((N+1))
+-
+-
+ NAME=GENDERCHANGER
+ case "$TESTS" in
+ *%$N%*|*%functions%*|*%$NAME%*)
+@@ -12282,7 +12188,7 @@ OPENSSL_VERSION_GOOD=1.0.2 	# this is ju
+ 				# known good: 1.0.2j
+ 
+ # test if the various SSL methods can be used with OpenSSL
+-for method in SSL3 SSL23 TLS1 TLS1.1 TLS1.2 DTLS1; do
++for method in SSL3 SSL23 TLS1 TLS1.1 TLS1.2; do
+ 
+ NAME=OPENSSL_METHOD_$method
+ case "$TESTS" in
+@@ -12305,7 +12211,7 @@ da="test$N $(date) $RANDOM"
+ CMD0="$SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,method=$method,cipher=aNULL,verify=0 PIPE"
+ CMD1="$SOCAT $opts - OPENSSL-CONNECT:$LOCALHOST:$PORT,method=$method,cipher=aNULL,verify=0"
+ printf "test $F_n $TEST... " $N
+-if [ "$method" = DTLS1 -a "$(echo -e "$OPENSSL_VERSION\n1.0.2" |sort -V |tail -n 1)" = "$OPENSSL_VERSION_GOOD" ]; then
++if [ "$method" = DTLS1 -a "$(echo -e "$OPENSSL_VERSION\n1.0.2" |gsort -V |tail -n 1)" = "$OPENSSL_VERSION_GOOD" ]; then
+     $PRINTF "${YELLOW}might hang, skipping${NORMAL}\n"
+     numCANT=$((numCANT+1))
+ else
