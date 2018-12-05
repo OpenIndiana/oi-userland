@@ -26,6 +26,7 @@ set name=variant.opensolaris.zone value="global"
 set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:opt/VirtualBox/amd64
 
 <transform file path=opt/VirtualBox/$(MACH64)/.+ -> default pkg.linted.userland.action001.3 true>
+<transform file path=platform/i86pc/kernel/drv/.+ -> default pkg.depend.bypass-generate .* >
 
 file files/run-once.sh path=/opt/VirtualBox/run-once.sh owner=root group=sys mode=0555
 file files/virtualbox-run-once.xml path=/var/svc/manifest/application/virtualbox/virtualbox-run-once.xml restart_fmri=svc:/system/manifest-import:default
