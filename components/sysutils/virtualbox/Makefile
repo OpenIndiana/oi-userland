@@ -51,9 +51,9 @@ PATH=$(PATH.gnu)
 X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
-QT5_ROOT=/usr/lib/qt/5
-PATH=$(PATH.gnu):$(QT5_ROOT)/bin/amd64
-PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64):$(QT5_ROOT)/lib/amd64/pkgconfig
+QT5_ROOT=/usr/lib/qt/5.8
+PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
+PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
 
 CONFIGURE_SCRIPT=$(@D)/configure
 
