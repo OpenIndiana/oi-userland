@@ -22,14 +22,18 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-set name=variant.opensolaris.zone value="global"
+set name=variant.opensolaris.zone value=global value=nonglobal
 set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:opt/VirtualBox/amd64
 
 <transform file path=opt/VirtualBox/$(MACH64)/.+ -> default pkg.linted.userland.action001.3 true>
 <transform file path=platform/i86pc/kernel/drv/.+ -> default pkg.depend.bypass-generate .* >
+<transform file path=platform/i86pc/kernel/drv/.+ -> default variant.opensolaris.zone "global" >
 
 file files/run-once.sh path=/opt/VirtualBox/run-once.sh owner=root group=sys mode=0555
-file files/virtualbox-run-once.xml path=/var/svc/manifest/application/virtualbox/virtualbox-run-once.xml restart_fmri=svc:/system/manifest-import:default
+file files/virtualbox-run-once.xml \
+  path=var/svc/manifest/application/virtualbox/virtualbox-run-once.xml \
+  restart_fmri=svc:/system/manifest-import:default \
+  variant.opensolaris.zone="global"
 
 #file path=autoresponse
 #file path=checkinstall.sh
