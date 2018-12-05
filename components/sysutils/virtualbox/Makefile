@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      5.2.22
-COMPONENT_SUMMARY=      VirtualBox - Host drivers
+COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
 COMPONENT_CLASSIFICATION= System/Virtualization
