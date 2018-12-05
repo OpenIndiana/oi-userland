@@ -207,6 +207,7 @@ def mangle_elf(manifest, action, src, dest):
 
 	#
 	# Strip any runtime linker default search path elements from the file
+	# and replace relative paths with absolute paths
 	#
 	ELFEDIT = '/usr/bin/elfedit'
 
@@ -238,7 +239,17 @@ def mangle_elf(manifest, action, src, dest):
 
 			for dir in original_dirs:
 				if dir not in rtld_default_dirs:
-					keep_dirs.append(dir)
+					if dir.startswith('$ORIGIN'):
+						path = action.attrs['path']
+						dirname = os.path.dirname(path)
+						if dirname[0] != '/':
+							dirname = '/' + dirname
+						corrected_dir = dir.replace('$ORIGIN', dirname)
+						corrected_dir = os.path.realpath(corrected_dir)
+						matched_dirs.append(dir)
+						keep_dirs.append(corrected_dir)
+                                	else:
+					    keep_dirs.append(dir)
 				else:
 					matched_dirs.append(dir)
 
