@@ -125,6 +125,9 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += system/header/header-audio
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += driver/usb
 REQUIRED_PACKAGES += image/library/libpng16
