@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      5.2.22
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
@@ -132,6 +133,7 @@ REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += driver/usb
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += SUNWcs
@@ -141,7 +143,9 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
