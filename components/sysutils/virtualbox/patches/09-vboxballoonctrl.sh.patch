@@ -1,0 +1,33 @@
+--- VirtualBox-5.2.22/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh.1	2018-12-10 09:54:40.286527019 +0000
++++ VirtualBox-5.2.22/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh	2018-12-10 09:56:21.557797022 +0000
+@@ -23,15 +23,17 @@
+ VW_OPT="$1"
+ VW_EXIT=0
+ 
++VBOXBALLOONCTRL=/opt/VirtualBox/64/VBoxBalloonCtrl
++
+ case $VW_OPT in
+     start)
+-        if [ ! -f /opt/VirtualBox/VBoxBalloonCtrl ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxBalloonCtrl does not exist."
++        if [ ! -f $VBOXBALLOONCTRL ]; then
++            echo "ERROR: $VBOXBALLOONCTRL does not exist."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+-        if [ ! -x /opt/VirtualBox/VBoxBalloonCtrl ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxBalloonCtrl is not executable."
++        if [ ! -x $VBOXBALLOONCTRL ]; then
++            echo "ERROR: $VBOXBALLOONCTRL is not executable."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+@@ -91,7 +93,7 @@
+         [ -n "$VBOXWATCHDOG_LOGSIZE" ]      && PARAMS="$PARAMS -S \"$VBOXWATCHDOG_LOGSIZE\""
+         [ -n "$VBOXWATCHDOG_LOGINTERVAL" ]  && PARAMS="$PARAMS -I \"$VBOXWATCHDOG_LOGINTERVAL\""
+ 
+-        exec su - "$VBOXWATCHDOG_USER" -c "/opt/VirtualBox/VBoxBalloonCtrl $PARAMS"
++        exec su - "$VBOXWATCHDOG_USER" -c "$VBOXBALLOONCTRL $PARAMS"
+ 
+         VW_EXIT=$?
+         if [ $VW_EXIT != 0 ]; then
