@@ -47,9 +47,11 @@ test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += text/rarian
+REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/desktop/c++/atkmm
@@ -57,7 +59,6 @@ REQUIRED_PACKAGES += library/desktop/c++/gtkmm
 REQUIRED_PACKAGES += library/desktop/c++/pangomm
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/storage/parted
