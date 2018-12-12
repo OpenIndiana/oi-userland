@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -34,7 +35,9 @@ dir path=etc/sudoers.d mode=0750 group=root
 
 file path=etc/sudoers original_name=SUNWsudo:etc/sudoers overlay=allow \
 	preserve=true mode=0440 group=root
+file path=usr/bin/cvtsudoers
 file path=usr/bin/sudo mode=4511
+link path=usr/bin/sudoedit target=sudo
 file path=usr/bin/sudoreplay mode=0511
 file path=usr/include/sudo_plugin.h
 file path=usr/lib/$(MACH64)/sudo/group_file.so
@@ -61,7 +64,9 @@ file path=usr/share/doc/sudo/examples/syslog.conf
 file path=usr/share/doc/sudo/schema.ActiveDirectory
 file path=usr/share/doc/sudo/schema.OpenLDAP
 file path=usr/share/doc/sudo/schema.iPlanet
-file path=usr/share/doc/sudo/sudoers2ldif
+file path=usr/share/doc/sudo/schema.olcSudo
+link path=usr/share/locale/ast.UTF-8 target=ast
+file path=usr/share/locale/ast/LC_MESSAGES/sudo.mo
 link path=usr/share/locale/ca.UTF-8 target=ca
 file path=usr/share/locale/ca/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/ca/LC_MESSAGES/sudoers.mo
@@ -90,6 +95,9 @@ file path=usr/share/locale/fi/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/fr.UTF-8 target=fr
 file path=usr/share/locale/fr/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/fr/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/fur.UTF-8 target=fur
+file path=usr/share/locale/fur/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/fur/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/gl.UTF-8 target=gl
 file path=usr/share/locale/gl/LC_MESSAGES/sudo.mo
 link path=usr/share/locale/hr.UTF-8 target=hr
@@ -120,6 +128,9 @@ file path=usr/share/locale/nn/LC_MESSAGES/sudo.mo
 link path=usr/share/locale/pl.UTF-8 target=pl
 file path=usr/share/locale/pl/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/pl/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/pt.UTF-8 target=pt
+file path=usr/share/locale/pt/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/pt/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/pt_BR.UTF-8 target=pt_BR
 file path=usr/share/locale/pt_BR/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/sudoers.mo
@@ -150,13 +161,15 @@ file path=usr/share/locale/vi/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/zh_CN.UTF-8 target=zh_CN
 file path=usr/share/locale/zh_CN/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/zh_TW.UTF-8 target=zh_TW
+file path=usr/share/locale/zh_TW/LC_MESSAGES/sudo.mo
+file path=usr/share/man/man1/cvtsudoers.1
 file path=usr/share/man/man1m/sudo.1m
 file path=usr/share/man/man1m/sudo_plugin.1m
+link path=usr/share/man/man1m/sudoedit.1m target=sudo.1m
 file path=usr/share/man/man1m/sudoreplay.1m
 file path=usr/share/man/man1m/visudo.1m
 file path=usr/share/man/man4/sudo.conf.4
 file path=usr/share/man/man4/sudoers.4
 file path=usr/share/man/man4/sudoers.ldap.4
-
-link path=usr/bin/sudoedit target=sudo
-link path=usr/share/man/man1m/sudoedit.1m target=sudo.1m
+file path=usr/share/man/man4/sudoers_timestamp.4
