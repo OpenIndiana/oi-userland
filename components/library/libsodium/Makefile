@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsodium
-COMPONENT_VERSION= 1.0.13
+COMPONENT_VERSION= 1.0.16
 COMPONENT_SUMMARY= Sodium crypto library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9c13accb1a9e59ab3affde0e60ef9a2149ed4d6e8f99c93c7a5b97499ee323fd
+  sha256:eeadc7e1e1bcef09680fb4837d448fbdf57224978f865ac1c16745868fbd0533
 COMPONENT_ARCHIVE_URL= \
   https://github.com/jedisct1/libsodium/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://download.libsodium.org/doc/
@@ -33,6 +33,9 @@ COMPONENT_LICENSE_FILE = LICENSE
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# pynacl tests dump core with -O3
+gcc_OPT = -O2
 
 # For tests to pass
 unexport SHELLOPTS
