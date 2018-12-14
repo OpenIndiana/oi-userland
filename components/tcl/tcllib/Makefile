@@ -10,20 +10,22 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
+# Copyright (c) 2018, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcllib
-COMPONENT_VERSION=	1.18
-COMPONENT_PROJECT_URL=	http://tcllib.sourceforge.net/
+COMPONENT_VERSION=	1.19
+COMPONENT_PROJECT_URL=	https://core.tcl.tk/tcllib/doc/trunk/embedded/index.html
 COMPONENT_SUMMARY=	The standard Tcl library
 COMPONENT_FMRI=		tcl/tcllib
 COMPONENT_CLASSIFICATION=       Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:73ee3067e20663e9401d0291028f9a5ffab8e71c7bbe1673c79edb5f266cfe7c
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/tcllib/$(COMPONENT_ARCHIVE)
+    sha256:4a4f73cc8aca1d6b625717b0ace61205cddaa7768f5f9a0e160dd62abb4177ef
+COMPONENT_ARCHIVE_URL=	https://core.tcl.tk/tcllib/uv/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	TCL
 COMPONENT_LICENSE_FILE=	license.terms
 
@@ -57,4 +59,5 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/tcl-8
