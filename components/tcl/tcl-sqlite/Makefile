@@ -19,27 +19,30 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 Louis M. Picciano. All rights reserved.
+# Copyright (c) 2020 Michal Nowak
 #
+
+BUILD_BITS=			32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= tcl-sqlite
-COMPONENT_VERSION		= 3.19.3
-TARBALL_VERSION			= 3190300
+COMPONENT_VERSION		= 3.30.1
+TARBALL_VERSION			= 3300100
 COMPONENT_SUMMARY		= SQL database engine library - tcl files
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:06129c03dced9f87733a8cba408871bd60673b8f93b920ba8d815efab0a06301
-COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2016/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.sqlite.org/
-COMPONENT_FMRI=	runtime/tcl-8/tcl-sqlite-3
-COMPONENT_CLASSIFICATION=	Development/Databases
-COMPONENT_LICENSE=	Public Domain
+	sha256:8c5a50db089bd2a1b08dbc5b00d2027602ca7ff238ba7658fabca454d4298e60
+COMPONENT_ARCHIVE_URL		= http://www.sqlite.org/2019/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL		= http://www.sqlite.org/
+COMPONENT_FMRI			= runtime/tcl-8/tcl-sqlite-3
+COMPONENT_CLASSIFICATION	= Development/Databases
+COMPONENT_LICENSE		= Public Domain
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS			+= -DNDEBUG
@@ -59,10 +62,5 @@ CONFIGURE_OPTIONS.32	+= --with-tcl="/usr/lib"
 CONFIGURE_OPTIONS.64	+= --with-tcl="/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS.64	+= LIBS="-m64"
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
