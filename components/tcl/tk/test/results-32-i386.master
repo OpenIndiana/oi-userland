@@ -34,7 +34,7 @@ canvText.test
     set bb3 [.c bbox t]
     list [expr {$bb0 eq $bb2 ? "ok" : "$bb0,$bb2"}]  [expr {$bb1 eq $bb3 ? "ok" : "$bb1,$bb3"}]  [expr {$bb0 eq [transpose $bb1] ? "ok" : "$bb0,$bb1"}]  
 ---- Result was:
-{-8 -19 13 23,-9 -19 12 23} {-19 -9 23 12,-19 -8 23 13} {-8 -19 13 23,-19 -9 23 12}
+{-8 -17 13 22,-9 -18 12 21} {-17 -9 22 12,-18 -8 21 13} {-8 -17 13 22,-17 -9 22 12}
 ---- Result should have been (exact matching):
 ok ok ok
 ==== canvText-20.1 FAILED
@@ -67,7 +67,68 @@ embed.test
 entry.test
 event.test
 filebox.test
+
+
+==== filebox-7.1-0 tk_getOpenFile - directory not readable FAILED
+==== Contents of test case:
+
+		ToEnterFileByKey .t1 NOTREADABLE $fileDir
+		ToPressButton .t1 ok
+		ToPressButton .t1 cancel
+		tk_getOpenFile -parent .t1  -title "Please select the NOTREADABLE directory"  -initialdir $fileDir
+		set gotmessage
+	    
+---- Result was:
+
+---- Result should have been (glob matching):
+*NOTREADABLE*
+==== filebox-7.1-0 FAILED
+
 focus.test
+
+
+==== focus-1.1 Tk_FocusCmd procedure FAILED
+==== Contents of test case:
+
+    focusClear
+    focus
+
+---- Result was:
+.t
+---- Result should have been (exact matching):
+
+==== focus-1.1 FAILED
+
+
+
+==== focus-1.3 Tk_FocusCmd procedure FAILED
+==== Contents of test case:
+
+    focusClear
+    focus .t.b3
+    focus
+
+---- Result was:
+.t.b3
+---- Result should have been (exact matching):
+
+==== focus-1.3 FAILED
+
+
+
+==== focus-1.12 Tk_FocusCmd procedure, -displayof option FAILED
+==== Contents of test case:
+
+    focusClear
+    focus .t
+    focus -displayof .t.b3
+
+---- Result was:
+.t
+---- Result should have been (exact matching):
+
+==== focus-1.12 FAILED
+
 
 
 ==== focus-2.6 TkFocusFilterEvent procedure, FocusIn events FAILED
@@ -127,6 +188,146 @@ focus.test
 
 
 
+==== focus-2.10 TkFocusFilterEvent procedure, Enter events FAILED
+==== Contents of test case:
+
+    set result {}
+    focus .t.b1
+    focusClear
+    foreach detail {NotifyAncestor NotifyInferior NotifyNonlinear
+	        NotifyNonlinearVirtual NotifyVirtual} {
+	    event gen [testwrapper .t] <Enter> -detail $detail -focus 1
+	    update
+	    lappend result [focus]
+	    event gen [testwrapper .t] <Leave> -detail NotifyAncestor
+	    update
+    }
+    return $result
+
+---- Result was:
+.t.b1 .t.b1 .t.b1 .t.b1 .t.b1
+---- Result should have been (exact matching):
+.t.b1 {} .t.b1 .t.b1 .t.b1
+==== focus-2.10 FAILED
+
+
+
+==== focus-2.15 TkFocusFilterEvent procedure, Leave events FAILED
+==== Contents of test case:
+
+    set result {}
+    focus .t.b1
+    foreach detail {NotifyAncestor NotifyInferior NotifyNonlinear
+	    NotifyNonlinearVirtual NotifyVirtual} {
+	    focusClear
+	    event gen [testwrapper .t] <Enter> -detail NotifyAncestor -focus 1
+	    update
+	    event gen [testwrapper .t] <Leave> -detail $detail
+	    update
+	    lappend result [focus]
+    }
+    return $result
+
+---- Result was:
+.t.b1 .t.b1 .t.b1 .t.b1 .t.b1
+---- Result should have been (exact matching):
+{} .t.b1 {} {} {}
+==== focus-2.15 FAILED
+
+
+
+==== focus-2.16 TkFocusFilterEvent procedure, Leave events FAILED
+==== Contents of test case:
+
+    focusClear
+    focus .t.b1
+    event gen [testwrapper .t] <Enter> -detail NotifyAncestor -focus 1
+    update
+    set focusInfo {}
+    event gen [testwrapper .t] <Leave> -detail NotifyAncestor
+    update
+    return $focusInfo
+
+---- Result was:
+out .t.b1 NotifyAncestor
+out .t NotifyVirtual
+in .t NotifyVirtual
+in .t.b1 NotifyAncestor
+
+---- Result should have been (exact matching):
+out .t.b1 NotifyAncestor
+out .t NotifyVirtual
+
+==== focus-2.16 FAILED
+
+
+
+==== focus-2.17 TkFocusFilterEvent procedure, Leave events FAILED
+==== Contents of test case:
+
+    focusClear
+    focus .t.b1
+    event gen [testwrapper .t] <Enter> -detail NotifyAncestor -focus 1
+    update
+    set focusInfo {}
+    event gen .t.b1 <Leave> -detail NotifyAncestor
+    event gen [testwrapper .] <Leave> -detail NotifyAncestor
+    update
+    list $focusInfo [focus]
+
+---- Result was:
+{out .t.b1 NotifyAncestor
+out .t NotifyVirtual
+in .t NotifyVirtual
+in .t.b1 NotifyAncestor
+} .t.b1
+---- Result should have been (exact matching):
+{out .t.b1 NotifyAncestor
+out .t NotifyVirtual
+} {}
+==== focus-2.17 FAILED
+
+
+
+==== focus-3.5 SetFocus procedure, generating events FAILED
+==== Contents of test case:
+
+    focusSetup
+    focusClear
+    set focusInfo {}
+    focus -force .t.b2
+    update
+    return $focusInfo
+
+---- Result was:
+in .t.b2 NotifyAncestor
+
+---- Result should have been (exact matching):
+in .t NotifyVirtual
+in .t.b2 NotifyAncestor
+
+==== focus-3.5 FAILED
+
+
+
+==== focus-4.1 TkFocusDeadWindow procedure FAILED
+==== Contents of test case:
+
+    focusSetup
+    update
+    focus -force .b
+    update
+    destroy .t
+    focus
+
+---- Result was:
+
+---- Result should have been (exact matching):
+.b
+==== focus-4.1 FAILED
+
+
+
 ==== focus-5.1 ChangeXFocus procedure, don't take focus unless have it FAILED
 ==== Contents of test case:
 
@@ -147,6 +348,117 @@ focus.test
 .t {} {}
 ==== focus-5.1 FAILED
 
+
+
+==== focus-6.1 miscellaneous - embedded application in same process FAILED
+==== Contents of test case:
+
+    toplevel .t
+    wm geometry .t +0+0
+    frame .t.f1 -container 1
+    frame .t.f2
+    pack .t.f1 .t.f2
+    entry .t.f2.e1 -bg red
+    pack .t.f2.e1
+    bind all <FocusIn> {lappend x "focus in %W %d"}
+    bind all <FocusOut> {lappend x "focus out %W %d"}
+    interp create child
+    child eval "set argv {-use [winfo id .t.f1]}"
+    load {} Tk child
+    child eval {
+	    entry .e1 -bg lightBlue
+	    pack .e1
+	    bind all <FocusIn> {lappend x "focus in %W %d"}
+	    bind all <FocusOut> {lappend x "focus out %W %d"}
+	    set x {}
+    }
+
+    # Claim the focus and wait long enough for it to really arrive.
+
+    focus -force .t.f2.e1
+    after 300 {set timer 1}
+    vwait timer
+    set x {}
+    lappend x [focus] [child eval focus]
+
+    # See if a "focus" command will move the focus to the embedded
+    # application.
+
+    child eval {focus .e1}
+    after 300 {set timer 1}
+    vwait timer
+    lappend x |
+    child eval {lappend x |}
+
+    # Bring the focus back to the main application.
+
+    focus .t.f2.e1
+    after 300 {set timer 1}
+    vwait timer
+    set result [list $x [child eval {set x}]]
+    return $result
+
+---- Result was:
+{.t.f2.e1 . |} {{focus in . NotifyAncestor} {focus in .e1 NotifyAncestor} |}
+---- Result should have been (exact matching):
+{.t.f2.e1 {} {focus out .t.f2.e1 NotifyNonlinear} {focus out .t.f2 NotifyNonlinearVirtual} {focus in .t.f1 NotifyNonlinear} | {focus out .t.f1 NotifyNonlinear} {focus in .t.f2 NotifyNonlinearVirtual} {focus in .t.f2.e1 NotifyNonlinear}} {{focus in . NotifyVirtual} {focus in .e1 NotifyAncestor} | {focus out .e1 NotifyAncestor} {focus out . NotifyVirtual}}
+==== focus-6.1 FAILED
+
+
+
+==== focus-6.2 miscellaneous - embedded application in different process FAILED
+==== Contents of test case:
+
+    setupbg
+    toplevel .t
+    wm geometry .t +0+0
+    frame .t.f1 -container 1
+    frame .t.f2
+    pack .t.f1 .t.f2
+    entry .t.f2.e1 -bg red
+    pack .t.f2.e1
+    bind all <FocusIn> {lappend x "focus in %W %d"}
+    bind all <FocusOut> {lappend x "focus out %W %d"}
+    setupbg -use [winfo id .t.f1]
+    dobg {
+	    entry .e1 -bg lightBlue
+	    pack .e1
+	    bind all <FocusIn> {lappend x "focus in %W %d"}
+	    bind all <FocusOut> {lappend x "focus out %W %d"}
+	    set x {}
+    }
+
+    # Claim the focus and wait long enough for it to really arrive.
+
+    focus -force .t.f2.e1
+    after 300 {set timer 1}
+    vwait timer
+    set x {}
+    lappend x [focus] [dobg focus]
+
+    # See if a "focus" command will move the focus to the embedded
+    # application.
+
+    dobg {focus .e1}
+    after 300 {set timer 1}
+    vwait timer
+    lappend x |
+    dobg {lappend x |}
+
+    # Bring the focus back to the main application.
+
+    focus .t.f2.e1
+    after 300 {set timer 1}
+    vwait timer
+    set result [list $x [dobg {set x}]]
+    return $result
+
+---- Result was:
+{.t.f2.e1 . |} {{focus in .e1 NotifyAncestor} |}
+---- Result should have been (exact matching):
+{.t.f2.e1 {} {focus out .t.f2.e1 NotifyNonlinear} {focus out .t.f2 NotifyNonlinearVirtual} {focus in .t.f1 NotifyNonlinear} | {focus out .t.f1 NotifyNonlinear} {focus in .t.f2 NotifyNonlinearVirtual} {focus in .t.f2.e1 NotifyNonlinear}} {{focus in . NotifyVirtual} {focus in .e1 NotifyAncestor} | {focus out .e1 NotifyAncestor} {focus out . NotifyVirtual}}
+==== focus-6.2 FAILED
+
 focusTcl.test
 font.test
 
@@ -158,7 +470,7 @@ font.test
     string tolower [font actual {-family times} -family]
 
 ---- Result was:
-nimbus roman no9 l
+liberation serif
 ---- Result should have been (exact matching):
 times
 ==== font-4.9 FAILED
@@ -179,61 +491,16 @@ times
 
 
 
-==== font-9.5 font command: measure FAILED
-==== Contents of test case:
-
-    # Tk_TextWidth()
-    expr {[font measure $fixed "abcdefg"] == [font measure $fixed "a"]*7 }
-
----- Result was:
-0
----- Result should have been (exact matching):
-1
-==== font-9.5 FAILED
-
-
-
-==== font-10.9 font command: metrics: get individual metrics FAILED
-==== Contents of test case:
-
-    font metrics $fixed -ascent
-    font metrics $fixed -descent
-    font metrics $fixed -linespace
-    font metrics $fixed -fixed
-
----- Result was:
-0
----- Result should have been (exact matching):
-1
-==== font-10.9 FAILED
-
-
-
 ==== font-21.6 Tk_PostscriptFontName procedure: spaces FAILED
 ==== Contents of test case:
 
     psfontname "{new century schoolbook} 10"
 
 ---- Result was:
-CenturySchoolbookL
+DejavuSans
 ---- Result should have been (exact matching):
 NewCenturySchlbk-Roman
 ==== font-21.6 FAILED
-
-
-
-==== font-24.5 Tk_ComputeTextLayout: break line FAILED
-==== Contents of test case:
-
-    .t.l config -text "000\t00000" -wrap [expr 9 * $ax]
-	update
-	list [expr {[winfo reqwidth .t.l] eq [expr {$ax * 8}]}]  [expr {[winfo reqheight .t.l] eq [expr {$ay * 2}]}]
-
----- Result was:
-0 1
----- Result should have been (exact matching):
-1 1
-==== font-24.5 FAILED
 
 
 
@@ -244,24 +511,10 @@ NewCenturySchlbk-Roman
     font actual {times -12} -size
 
 ---- Result was:
--2147483648
+9
 ---- Result should have been (exact matching):
 24
 ==== font-44.1 FAILED
-
-
-
-==== font-45.3 TkFontGetAliasList: match FAILED
-==== Contents of test case:
-
-    # can fail on Unix systems that have a real "times new roman" font
-    font actual {{times new roman} 10} -family
-
----- Result was:
-Liberation Serif
----- Result should have been (exact matching):
-Nimbus Roman No9 L
-==== font-45.3 FAILED
 
 fontchooser.test
 frame.test
@@ -297,7 +550,7 @@ pack.test
 
     wm geometry .pack +100+100
 
-    # On the PC, when the width/height is configured while the window is 
+    # On the PC, when the width/height is configured while the window is
     # unmapped, the changes don't take effect until the window is remapped.
     # Who knows why?
 
@@ -434,6 +687,7 @@ place.test
 
 raise.test
 safe.test
+safePrimarySelection.test
 scale.test
 scrollbar.test
 
@@ -464,7 +718,7 @@ scrollbar.test
 
 
 
-==== scrollbar-6.12 ScrollbarPosition procedure FAILED
+==== scrollbar-6.12.1 ScrollbarPosition procedure FAILED
 ==== Contents of test case:
 
     .s identify 8 19
@@ -473,11 +727,11 @@ scrollbar.test
 trough1
 ---- Result should have been (exact matching):
 arrow1
-==== scrollbar-6.12 FAILED
+==== scrollbar-6.12.1 FAILED
 
 
 
-==== scrollbar-6.29 ScrollbarPosition procedure FAILED
+==== scrollbar-6.29.1 ScrollbarPosition procedure FAILED
 ==== Contents of test case:
 
     .s identify 8 180
@@ -486,7 +740,7 @@ arrow1
 trough2
 ---- Result should have been (exact matching):
 arrow2
-==== scrollbar-6.29 FAILED
+==== scrollbar-6.29.1 FAILED
 
 
 
@@ -518,8 +772,159 @@ select.test
 send.test
 spinbox.test
 text.test
+
+
+==== text-27.15d <<Selection>> virtual event on <Delete> with cursor inside selection FAILED
+==== Contents of test case:
+
+    pack [text .t]
+    .t insert end "There is a selection in this text widget,\n"
+    .t insert end "and it will be impacted by the <Delete> event received.\n"
+    .t insert end "Therefore a <<Selection>> event must fire back."
+    .t tag add sel 1.0 1.28
+    bind .t <<Selection>> "set ::retval <<Selection>>_fired"
+    update
+    set ::retval no_<<Selection>>_event_fired
+    .t mark set insert 1.15
+    focus .t
+    event generate .t <Delete>
+    update
+    set ::retval
+
+---- Result was:
+no_<<Selection>>_event_fired
+---- Result should have been (exact matching):
+<<Selection>>_fired
+==== text-27.15d FAILED
+
 textBTree.test
 textDisp.test
+
+
+==== textDisp-19.17 count -ypixels with indices in elided lines FAILED
+==== Contents of test case:
+
+    .t configure -wrap none
+    .t delete 1.0 end
+    for {set i 1} {$i < 100} {incr i} {
+        .t insert end [string repeat "Line $i" 20]
+        .t insert end "\n"
+    }
+    .t tag add hidden 5.15 20.15
+    .t tag configure hidden -elide true
+    set res {}
+    update
+    lappend res  [.t count -ypixels 1.0 6.0]  [.t count -ypixels 2.0 7.5]  [.t count -ypixels 5.0 8.5]  [.t count -ypixels 6.1 6.2]  [.t count -ypixels 6.1 18.8]  [.t count -ypixels 18.0 20.50]  [.t count -ypixels 5.2 20.60]  [.t count -ypixels 20.60 20.70]  [.t count -ypixels 5.0 25.0]  [.t count -ypixels 25.0 5.0]  [.t count -ypixels 25.4 27.50]  [.t count -ypixels 35.0 38.0]
+    .t yview 35.0
+    lappend res [.t count -ypixels 5.0 25.0]
+
+---- Result was:
+60 45 0 0 0 0 0 0 300 -300 30 45 300
+---- Result should have been (exact matching):
+60 45 0 0 0 0 0 0 75 -75 30 45 75
+==== textDisp-19.17 FAILED
+
+
+
+==== textDisp-19.18 count -ypixels with indices in elided lines FAILED
+==== Contents of test case:
+
+    .t configure -wrap none
+    .t delete 1.0 end
+    for {set i 1} {$i < 100} {incr i} {
+        .t insert end [string repeat "Line $i" 20]
+        .t insert end "\n"
+    }
+    .t tag add hidden 5.15 20.15
+    .t tag configure hidden -elide true
+    .t yview 35.0
+    set res {}
+    update
+    lappend res [.t count -ypixels 5.0 25.0]
+    .t yview scroll [expr {- 15 * $fixedHeight}] pixels
+    updateText
+    lappend res [.t count -ypixels 5.0 25.0]
+
+---- Result was:
+300 300
+---- Result should have been (exact matching):
+75 75
+==== textDisp-19.18 FAILED
+
+
+
+==== textDisp-20.1 FindDLine FAILED
+==== Contents of test case:
+
+    .t yview 48.0
+    list [.t dlineinfo 46.0] [.t dlineinfo 47.0] [.t dlineinfo 49.0]  [.t dlineinfo 58.0]
+
+---- Result was:
+{} {} {3 18 49 15 11} {}
+---- Result should have been (exact matching):
+{} {} {3 18 49 15 12} {}
+==== textDisp-20.1 FAILED
+
+
+
+==== textDisp-20.2 FindDLine FAILED
+==== Contents of test case:
+ 
+    .t yview 100.0
+    .t yview -pickplace 53.0
+    list [.t dlineinfo 50.0] [.t dlineinfo 50.14] [.t dlineinfo 50.21]
+
+---- Result was:
+{3 -2 140 15 11} {3 -2 140 15 11} {3 13 133 15 11}
+---- Result should have been (exact matching):
+{3 -2 140 15 12} {3 -2 140 15 12} {3 13 133 15 12}
+==== textDisp-20.2 FAILED
+
+
+
+==== textDisp-20.3 FindDLine FAILED
+==== Contents of test case:
+
+    .t yview 100.0
+    .t yview 49.0
+    list [.t dlineinfo 50.0] [.t dlineinfo 50.24] [.t dlineinfo 57.0]
+
+---- Result was:
+{3 18 140 15 11} {3 33 133 15 11} {}
+---- Result should have been (exact matching):
+{3 18 140 15 12} {3 33 133 15 12} {}
+==== textDisp-20.3 FAILED
+
+
+
+==== textDisp-20.4 FindDLine FAILED
+==== Contents of test case:
+
+    .t yview 100.0
+    .t yview 42.0
+    list [.t dlineinfo 50.0] [.t dlineinfo 50.24] [.t dlineinfo 50.40]
+
+---- Result was:
+{3 123 140 15 11} {3 138 133 15 11} {}
+---- Result should have been (exact matching):
+{3 123 140 15 12} {3 138 133 15 12} {}
+==== textDisp-20.4 FAILED
+
+
+
+==== textDisp-20.5 FindDLine FAILED
+==== Contents of test case:
+
+    .t yview 100.0
+    .t yview 48.0
+    list [.t dlineinfo 50.0] [.t dlineinfo 50.20] [.t dlineinfo 50.40]
+
+---- Result was:
+{3 33 371 15 11} {3 33 371 15 11} {3 33 371 15 11}
+---- Result should have been (exact matching):
+{3 33 371 15 12} {3 33 371 15 12} {3 33 371 15 12}
+==== textDisp-20.5 FAILED
+
 textImage.test
 textIndex.test
 textMark.test
@@ -527,7 +932,7 @@ textTag.test
 textWind.test
 
 
-==== textWind-10.8 EmbWinLayoutProc procedure, error in creating window FAILED
+==== textWind-10.7 EmbWinLayoutProc procedure, error in creating window FAILED
 ==== Contents of test case:
 
     .t insert 1.0 "Some sample text"
@@ -538,19 +943,47 @@ textWind.test
     }
     set msg {}
     update
-    set i 0
-    while {[llength $msg] == 1 && [incr i] < 200} { update }
-    return $msg
+    lappend msg [.t bbox 1.5]
 
 ---- Result was:
-{{can't embed .t2 relative to .t}}
+{{can't embed .t2 relative to .t}} {40 12 0 0}
 ---- Result should have been (exact matching):
-{{can't embed .t2 relative to .t}} {{window name "t2" already exists in parent}}
-==== textWind-10.8 FAILED
+{{can't embed .t2 relative to .t}} {{window name "t2" already exists in parent}} {40 12 0 0}
+==== textWind-10.7 FAILED
 
 tk.test
 unixButton.test
 unixEmbed.test
+
+
+==== unixEmbed-8.1 TkpClaimFocus procedure FAILED
+==== Contents of test case:
+
+    frame .f1 -container 1 -width 200 -height 50
+    frame .f2 -width 200 -height 50
+    pack .f1 .f2
+    dobg "set w1 [winfo id .f1]"
+    dobg {
+	    eval destroy [winfo child .]
+	    toplevel .t1 -use $w1 -highlightthickness 2 -bd 2 -relief sunken
+    }
+    focus -force .f2
+    update
+    list [dobg {
+	    focus .t1
+	    set x [list [focus]]
+	    update
+	    after 500
+	    update
+	    lappend x [focus]
+    }] [focus]
+
+---- Result was:
+{.t1 .t1} .f2
+---- Result should have been (exact matching):
+{{} .t1} .f1
+==== unixEmbed-8.1 FAILED
+
 unixFont.test
 
 
@@ -576,7 +1009,7 @@ unixFont.test
     lappend x [lindex [font actual {-family "Times"}] 1]
 
 ---- Result was:
-{Liberation Serif} {DejaVu Sans} {Nimbus Roman No9 L}
+{Liberation Serif} {DejaVu Sans} {Liberation Serif}
 ---- Result should have been (exact matching):
 times times times
 ==== unixfont-2.2 FAILED
@@ -608,7 +1041,7 @@ courier courier courier
     lappend x [lindex [font actual {-family "Helvetica"}] 1]
 
 ---- Result was:
-{Liberation Sans} {DejaVu Sans} {Nimbus Sans L}
+{Liberation Sans} {DejaVu Sans} {Liberation Sans}
 ---- Result should have been (exact matching):
 helvetica helvetica helvetica
 ==== unixfont-2.4 FAILED
@@ -892,9 +1325,11 @@ unixWm.test
     bind .t <Unmap> {set x "unmapped"}
     set x {no event}
     wm iconify .t
+    animationDelay
     lappend result $x [winfo ismapped .t]
     set x {no event}
     wm deiconify .t
+    animationDelay
     lappend result $x [winfo ismapped .t]
 
 ---- Result was:
@@ -946,25 +1381,25 @@ unmapped 0 mapped 1
 
 
 
-==== unixWm-50.1 Tk_CoordsToWindow procedure, finding a toplevel, x-coords FAILED
+==== unixWm-50.1 Tk_CoordsToWindow procedure, finding a toplevel, x-coords, title bar FAILED
 ==== Contents of test case:
 
-    deleteWindows
+    update
     toplevel .t -width 300 -height 400 -bg green
-    wm geom .t +40+0
+    wm geom .t +100+100
     tkwait visibility .t
-    toplevel .t2 -width 100 -height 80 -bg red
-    wm geom .t2 +140+200
+    toplevel .t2 -width 100 -height 200 -bg red
+    wm geom .t2 +200+200
     tkwait visibility .t2
     raise .t2
+    update
     set x [winfo rootx .t]
     set y [winfo rooty .t]
-    list [winfo containing [expr $x - 30] [expr $y + 250]]  [winfo containing [expr $x - 1] [expr $y + 250]]  [winfo containing $x [expr $y + 250]]  [winfo containing [expr $x + 99] [expr $y + 250]]  [winfo containing [expr $x + 100] [expr $y + 250]]  [winfo containing [expr $x + 199] [expr $y + 250]]  [winfo containing [expr $x + 200] [expr $y + 250]]  [winfo containing [expr $x + 220] [expr $y + 250]]
-
+    list [winfo containing [expr $x - 30]  [expr $y + 250]]  [winfo containing [expr $x - 1]   [expr $y + 250]]  [winfo containing $x              [expr $y + 250]]  [winfo containing [expr $x + 99]  [expr $y + 250]]  [winfo containing [expr $x + 100] [expr $y + 250]]  [winfo containing [expr $x + 150] [expr $y + 90]]  [winfo containing [expr $x + 199] [expr $y + 250]]  [winfo containing [expr $x + 200] [expr $y + 250]]  [winfo containing [expr $x + 220] [expr $y + 250]]  
 ---- Result was:
-{} {} .t .t .t2 .t2 .t .t
+{} {} .t .t .t2 .t .t2 .t .t
 ---- Result should have been (exact matching):
-{} {} .t {} .t2 .t2 {} .t
+{} {} .t {} .t2 {} .t2 {} .t
 ==== unixWm-50.1 FAILED
 
 
@@ -983,6 +1418,7 @@ unmapped 0 mapped 1
     tkwait visibility .t2
     set result [list [winfo containing 100 100]]
     wm iconify .t2
+    animationDelay
     lappend result [winfo containing 100 100]
 
 ---- Result was:
@@ -1070,28 +1506,6 @@ winfo.test
 0 0
 ==== winfo-9.7 FAILED
 
-
-
-==== winfo-13.2 destroying embedded toplevel FAILED
-==== Contents of test case:
-
-    frame .con -container 1
-    pack .con -expand yes -fill both
-    toplevel .emb -use [winfo id .con] -bd 0 -highlightthickness 0
-    button .emb.b
-    pack .emb.b -expand yes -fill both
-    update
-
-    destroy .emb
-    update
-    list embedded [winfo exists .emb.b] container [winfo exists .con]
-
----- Result was:
-embedded 0 container 0
----- Result should have been (exact matching):
-embedded 0 container 1
-==== winfo-13.2 FAILED
-
 wm.test
 
 
@@ -1127,6 +1541,25 @@ wm.test
 ---- Result should have been (exact matching):
 . .t2
 ==== wm-stackorder-3.1 FAILED
+
+
+
+==== wm-stackorder-5.2 A normal toplevel can't be raised above an  overrideredirect toplevel on unix FAILED
+==== Contents of test case:
+
+    toplevel .t
+    tkwait visibility .t	    
+    wm overrideredirect .t 1
+    raise .
+    update
+    raiseDelay
+    wm stackorder . isabove .t
+
+---- Result was:
+1
+---- Result should have been (exact matching):
+0
+==== wm-stackorder-5.2 FAILED
 
 
 
@@ -1248,29 +1681,30 @@ iconic
 
 xmfbox.test
 
-all.tcl:	Total	9375	Passed	8343	Skipped	970	Failed	62
-Sourced 91 Test Files.
-Files with failing tests: canvText.test clrpick.test focus.test font.test pack.test panedwindow.test place.test scrollbar.test textWind.test unixFont.test unixWm.test winWm.test winfo.test wm.test
+all.tcl:	Total	9629	Passed	8614	Skipped	936	Failed	79
+Sourced 92 Test Files.
+Files with failing tests: canvText.test clrpick.test filebox.test focus.test font.test pack.test panedwindow.test place.test scrollbar.test text.test textDisp.test textWind.test unixEmbed.test unixFont.test unixWm.test winWm.test winfo.test wm.test
 Number of tests skipped for each constraint:
 	1	
     !havePseudocolorVisual
 
 	14	altDisplay
-	2	aqua
-	16	colorsFree
+	25	aqua
+	5	aquaOrWin32
+	1	cliboardManagerPresent
 	10	emptyTest
-	161	fonts
+	125	fonts
 	2	haveTruecolor24
-	11	knownBug
-	3	macOrWin
+	7	knownBug
 	1	memory
-	131	nonPortable
+	136	nonPortable
 	63	nt
+	2	pressbutton
 	11	testmetrics
 	7	testwinevent
-	143	textfonts
-	1	userInteraction
-	342	win
+	133	textfonts
+	2	userInteraction
+	340	win
 	51	winSend
 
 Tests running in interp:  $(@D)/tktest
@@ -1299,7 +1733,7 @@ ttk.test
 validate.test
 vsapi.test
 
-all.tcl:	Total	461	Passed	444	Skipped	17	Failed	0
+all.tcl:	Total	480	Passed	463	Skipped	17	Failed	0
 Sourced 17 Test Files.
 Number of tests skipped for each constraint:
 	2	NA
