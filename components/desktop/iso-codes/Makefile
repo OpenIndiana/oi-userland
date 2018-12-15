@@ -11,20 +11,21 @@
 #
 # Copyright 2014 Ken Mays. All rights reserved.
 # Copyright 2016 Adam Stevko. All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
-COMPONENT_VERSION=	3.76
+COMPONENT_VERSION=	4.1
 COMPONENT_FMRI=		data/iso-codes
 COMPONENT_SUMMARY=	ISO code lists and translations
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:38ea8c1de7c07d5b4c9603ec65c238c155992a2e2ab0b02725d0926d1ad480c4
-COMPONENT_PROJECT_URL=	http://alioth.debian.org/projects/pkg-isocodes
-COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/iso-codes/$(COMPONENT_ARCHIVE)
+  sha256:67117fb76f32c8fb5e37d2d60bce238f1f8e865cc7b569a57cbc3017ca15488a
+COMPONENT_PROJECT_URL=	https://salsa.debian.org/iso-codes-team/iso-codes
+COMPONENT_ARCHIVE_URL=	https://ftp.osuosl.org/pub/blfs/conglomeration/iso-codes/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Localizations
 
@@ -32,10 +33,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# GNU ln is needed
+# GNU ln is needed as '-v' option is used, and GNU msgfmt is required
 PATH=$(PATH.gnu)
 
-CLEAN_PATHS+= build
+CLEAN_PATHS	+= build
 
 # Failure to update symlinks
 COMPONENT_POST_CONFIGURE_ACTION= \
@@ -47,4 +48,7 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-REQUIRED_PACKAGES+= runtime/python-34
+# bin/xml_from_json.py script requires a Python 3 interpret
+REQUIRED_PACKAGES += runtime/python-34
+
+# Auto-generated dependencies
