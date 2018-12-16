@@ -16,7 +16,6 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
 COMPONENT_VERSION=	2.8
-COMPONENT_REVISION=	1
 COMPONENT_FMRI=		terminal/tmux
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SUMMARY=	tmux terminal multiplexer
