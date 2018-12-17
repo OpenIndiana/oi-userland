@@ -25,35 +25,37 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlite
-COMPONENT_VERSION=	3.24.0
-TARBALL_VERSION=	3240000
-COMPONENT_SRC=		sqlite-autoconf-$(TARBALL_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_VERSION=	3.26.0
+TARBALL_VERSION=	3260000
+COMPONENT_SRC=		sqlite-src-$(TARBALL_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:d9d14e88c6fb6d68de9ca0d1f9797477d82fc3aed613558f87ffbdbbc5ceb74a
-COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2018/$(COMPONENT_ARCHIVE)
+	sha256:e042825ba823d61db7edc45e52655c0434903a1b54bbe85a55880c9aa5884f7b
+COMPONENT_PROJECT_URL=	https://www.sqlite.org
+COMPONENT_ARCHIVE_URL=	https://www.sqlite.org/2018/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		database/sqlite-3
+COMPONENT_LICENSE=	PublicDomain
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                                        libtoolize --copy --force &&\
-                                        aclocal -I . &&\
-                                        automake -c -f -a &&\
-                                        autoconf )
+COMPONENT_PRE_CONFIGURE_ACTION	+= $(CP) $(COMPONENT_DIR)/files/mapfile $(@D) ;
 
-COMPONENT_BUILD_ARGS=
-
-COMPONENT_PRE_CONFIGURE_ACTION   += $(CLONEY) $(SOURCE_DIR) $(@D);
-COMPONENT_PRE_CONFIGURE_ACTION   += $(CP) $(COMPONENT_DIR)/mapfile $(@D)
+# 'oserror' test has too low threshold for file descriptor depletion. When it's
+# bumped 32-bit is fine, however on 64-bit the whole test suite crashes.
+COMPONENT_PRE_CONFIGURE_ACTION	+= $(RM) $(SOURCE_DIR)/test/oserror.test ;
 
 CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS			+= -DNDEBUG
 CFLAGS			+= -DSQLITE_SECURE_DELETE 
 CFLAGS			+= -DSQLITE_ENABLE_DBSTAT_VTAB
 CFLAGS			+= -DSQLITE_ENABLE_FTS3 
+CFLAGS			+= -DSQLITE_ENABLE_FTS4 
+CFLAGS			+= -DSQLITE_ENABLE_FTS5 
+CFLAGS			+= -DSQLITE_ENABLE_JSON1
+CFLAGS			+= -DSQLITE_ENABLE_RTREE
+CFLAGS			+= -DSQLITE_ENABLE_UPDATE_DELETE_LIMIT
 CFLAGS			+= -DUSE_PREAD 
 CFLAGS			+= -DHAVE_USLEEP
 CFLAGS			+= -DHAVE_FDATASYNC
@@ -61,20 +63,36 @@ CFLAGS			+= -DHAVE_STATVFS
 CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
 CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
+CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
 # Fixes firefox crash with new sqlite, don't remove until proper fix
 gcc_OPT                 =  -O2
 
+CONFIGURE_OPTIONS.32	+= --with-tcl="$(USRLIBDIR)"
+CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
+CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS	+= --disable-static
+CONFIGURE_OPTIONS	+= --enable-readline
+CONFIGURE_OPTIONS	+= --enable-fts3
+CONFIGURE_OPTIONS	+= --enable-fts4
+CONFIGURE_OPTIONS	+= --enable-fts5
+CONFIGURE_OPTIONS	+= --enable-json1
+CONFIGURE_OPTIONS	+= --enable-update-limit
+CONFIGURE_OPTIONS	+= --enable-rtree
 CONFIGURE_OPTIONS	+= --enable-threadsafe 
 CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS	+= --disable-static
+
+# Install sqlite3(1) man page
+COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
+
+COMPONENT_TEST_TARGETS = test
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/libedit
