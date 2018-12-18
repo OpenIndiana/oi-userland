@@ -1,5 +1,5 @@
 Fixes a race condition that can be triggered when multiple threads
-enter the function ldap_int_utils_init about the same time.
+enter the function ldap_int_initialize about the same time.
 Patch was developed in-house; it is Solaris specific and
 will not be contributed upstream.
 
@@ -48,3 +48,40 @@ will not be contributed upstream.
  }
  
  #if defined( NEED_COPY_HOSTENT )
+--- openldap-2.4.45/libraries/libldap/init.c.old	2017-06-01 15:01:07.000000000 -0500
++++ openldap-2.4.45/libraries/libldap/init.c	2018-08-10 15:02:10.585133567 -0500
+@@ -657,13 +657,32 @@
+ #ifndef HAVE_POLL
+ 	if ( ldap_int_tblsize == 0 ) ldap_int_ip_init();
+ #endif
+ 
+ #ifdef HAVE_CYRUS_SASL
+-	if ( ldap_int_sasl_init() != 0 ) {
+-		return;
++{	static int sasl_init_done = 0;
++	if (sasl_init_done != 1) {
++		int retnow = 0;
++		LDAP_MUTEX_LOCK( &ldap_int_hostname_mutex );
++		{
++			/* no second init, if first init failed */
++			if (sasl_init_done == -1) {
++				retnow = 1;
++			} else if (sasl_init_done == 0) {
++				if ( ldap_int_sasl_init() != 0 ) {
++					sasl_init_done = -1;
++					retnow = 1;
++				} else {
++					sasl_init_done = 1;
++				}
++			}
++		}
++		LDAP_MUTEX_UNLOCK( &ldap_int_hostname_mutex );
++		if (retnow == 1)
++			return;
+ 	}
++}
+ #endif
+ 
+ 	ldap_int_initialize_global_options(gopts, dbglvl);
+ 
+ 	if( getenv("LDAPNOINIT") != NULL ) {
