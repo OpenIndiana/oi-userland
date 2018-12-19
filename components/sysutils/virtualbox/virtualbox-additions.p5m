@@ -32,7 +32,7 @@ group gid=59 groupname=vboxsf
 depend type=require fmri=x11/server/xorg/driver/xorg-video-vboxvideo
 
 file path=etc/fs/vboxfs/vboxfsmount owner=root group=bin mode=0555
-file path=etc/xdg/autostart/1099.vboxclient 
+file path=etc/xdg/autostart/vboxclient.desktop
 file path=lib/opengl/ogl_select/vbox_vendor_select mode=0555
 file path=usr/bin/VBoxClient
 file path=usr/bin/VBoxClient-all
@@ -53,12 +53,11 @@ file path=usr/lib/$(MACH64)/VBoxOGLpackspu.so
 file path=usr/lib/$(MACH64)/VBoxOGLpassthroughspu.so
 #file path=usr/lib/xorg/modules/drivers/$(MACH64)/vboxvideo_drv.so
 file path=usr/sbin/vboxmslnk
-file path=usr/share/applications/vboxclient.desktop
 file path=var/svc/manifest/application/virtualbox/vboxmslnk.xml
 file path=var/svc/manifest/application/virtualbox/vboxservice.xml
 
 driver devlink=type=ddi_pseudo;name=vboxguest\t\D alias=pci80ee,cafe name=vboxguest  perms="* 0666 root sys" variant.opensolaris.zone=global
-driver name=vboxms variant.opensolaris.zone=global
+driver name=vboxms perms="* 0666 root sys" variant.opensolaris.zone=global
 driver name=vboxvideo variant.opensolaris.zone=global
 
 # postinstall script delivered this as links:

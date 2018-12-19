@@ -159,9 +159,7 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	$(MKDIR) $(PROTO_DIR)/etc/fs/vboxfs
 	cp $(VBOX_BINDIR)/vboxfsmount $(PROTO_DIR)/etc/fs/vboxfs
 	$(MKDIR) $(PROTO_DIR)/etc/xdg/autostart
-	cp $(VBOX_BINDIR)/1099.vboxclient $(PROTO_DIR)/etc/xdg/autostart
-	$(MKDIR) $(PROTO_DIR)/usr/share/applications
-	cp $(VBOX_BINDIR)/vboxclient.desktop $(PROTO_DIR)/usr/share/applications
+	cp $(VBOX_BINDIR)/vboxclient.desktop $(PROTO_DIR)/etc/xdg/autostart
 	$(MKDIR) $(PROTO_DIR)/$(X11_SERVERDRV_DIR)
 	cp $(VBOX_BINDIR)/vboxvideo_drv_system.so $(PROTO_DIR)/$(X11_SERVERDRV_DIR)/vboxvideo_drv.so
 	$(MKDIR) $(PROTO_DIR)/lib/opengl/ogl_select
