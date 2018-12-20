@@ -19,19 +19,23 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
+
+PREFERRED_BITS=	64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xorriso
-COMPONENT_VERSION=      1.4.6
+COMPONENT_VERSION=      1.5.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	command line ISO-9660 and Rock Ridge manipulation tool
-COMPONENT_PROJECT_URL=  http://scdbackup.sourceforge.net/xorriso/
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/xorriso/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:526f728c7eee6f8c4b69fbf391789e6c80806197c2861cf5922cf7cfe1035784
-COMPONENT_ARCHIVE_URL=  http://scdbackup.sourceforge.net/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	media/xorriso
+	sha256:a93fa7ae5bb1902198cddfec25201388156932f36f2f5da829bf4fcae9a6062b
+COMPONENT_ARCHIVE_URL=  https://www.gnu.org/software/xorriso/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		media/xorriso
 COMPONENT_CLASSIFICATION=	System/Media
 COMPONENT_LICENSE=	GPLv3
 
@@ -47,12 +51,13 @@ CONFIGURE_OPTIONS  +=           --sysconfdir=/etc/gnu
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
