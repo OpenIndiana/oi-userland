@@ -1,0 +1,29 @@
+--- VirtualBox-5.2.22/src/VBox/Additions/solaris/Installer/vbox_vendor_select.~1~	2018-11-08 22:36:12.000000000 +0000
++++ VirtualBox-5.2.22/src/VBox/Additions/solaris/Installer/vbox_vendor_select	2018-12-20 17:12:34.412473131 +0000
+@@ -31,7 +31,7 @@
+ # DEALINGS IN THE SOFTWARE.
+ #
+ 
+-LINKDIR=/system/volatile/opengl
++LINKDIR=/var/run/opengl
+ MESA_SELECT=/lib/opengl/ogl_select/mesa_vendor_select
+ 
+ PATH=/usr/bin:/usr/sbin
+@@ -86,4 +86,17 @@
+ 	make_link /usr/lib/amd64/VBoxOGL.so ${LINKDIR}/lib/amd64/libGL.so.1
+ fi
+ 
++# EGL libraries
++if [[ -f ${LINKDIR}/lib/libEGL.so.1 ]] && [[ -f /usr/lib/VBoxEGL.so ]] ; then
++	make_link /usr/lib/VBoxEGL.so ${LINKDIR}/lib/libEGL.so.1
++fi
++if [[ -f ${LINKDIR}/lib/i386/libEGL.so.1 ]] && \
++	[[ -f /usr/lib/i386/VBoxEGL.so ]] ; then
++	make_link /usr/lib/i386/VBoxEGL.so ${LINKDIR}/lib/i386/libEGL.so.1
++fi
++if [[ -f ${LINKDIR}/lib/amd64/libEGL.so.1 ]] && \
++	[[ -f /usr/lib/amd64/VBoxEGL.so ]] ; then
++	make_link /usr/lib/amd64/VBoxEGL.so ${LINKDIR}/lib/amd64/libEGL.so.1
++fi
++
+ return 0

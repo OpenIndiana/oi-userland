@@ -65,7 +65,7 @@ VBOX_FS_MODULES= vboxfs
 
 VBOX_BINS= VBoxControl VBoxService VBoxClient
 VBOX_SBINS= vboxmslnk
-VBOX_OGLLIBS= VBoxOGL.so VBoxOGLarrayspu.so VBoxOGLcrutil.so VBoxOGLerrorspu.so VBoxOGLfeedbackspu.so VBoxOGLpackspu.so VBoxOGLpassthroughspu.so
+VBOX_OGLLIBS= VBoxOGL.so VBoxOGLarrayspu.so VBoxOGLcrutil.so VBoxOGLerrorspu.so VBoxOGLfeedbackspu.so VBoxOGLpackspu.so VBoxOGLpassthroughspu.so VBoxEGL.so
 
 QT5_ROOT=/usr/lib/qt/5.8
 PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
@@ -166,7 +166,7 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	cp $(VBOX_BINDIR)/vbox_vendor_select $(PROTO_DIR)/lib/opengl/ogl_select
 	$(TOUCH) $@
 		
-$(BUILD_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk"
+$(BUILD_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk KBUILD_VERBOSE=3"
 
 build:		$(BUILD_64) 
 
