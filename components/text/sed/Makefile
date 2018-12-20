@@ -28,16 +28,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
-COMPONENT_VERSION=	4.5
-COMPONENT_FMRI=	text/gnu-sed
+COMPONENT_VERSION=	4.6
+COMPONENT_FMRI=		text/gnu-sed
 COMPONENT_SUMMARY=	GNU implementation of sed, the Unix stream editor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/sed/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/sed/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:7aad73c8839c2bdadca9476f884d2953cdace9567ecd0d90f9959f229d146b40
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
+	sha256:beff6acf1c7838cc722714d143a64e706e2fd3bd1e00d3cd75152f596b09bb9e
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/prep.mk
