@@ -95,7 +95,13 @@ PASS: test-asn1 94 /asn1/any-raw/not-set
 PASS: test-asn1 95 /asn1/any-into/explicit
 PASS: test-asn1 96 /asn1/any-into/explicit-not-set
 PASS: test-asn1 97 /asn1/get-element/not-set
-ERROR: test-asn1x process failed: 251
+PASS: test-asn1x 1 /asn1x/encode-decode-0-Certificate
+PASS: test-asn1x 2 /asn1x/encode-decode-1-pkcs-8-PrivateKeyInfo
+PASS: test-asn1x 3 /asn1x/encode-decode-2-RSAPrivateKey
+PASS: test-asn1x 4 /asn1x/encode-decode-3-pkcs-7-ContentInfo
+PASS: test-asn1x 5 /asn1x/encode-decode-4-pkcs-7-ContentInfo
+PASS: test-asn1x 6 /asn1x/pkcs12-decode/1
+PASS: test-asn1x 7 /asn1x/pkcs5-personal-name/invalid
 PASS: test-dn 1 /dn/read_dn
 PASS: test-dn 2 /dn/dn_value
 PASS: test-dn 3 /dn/parse_dn
@@ -449,14 +455,16 @@ PASS: test-openssh 3 /gcr/openssh/parse_v2_dsa
 PASS: test-openssh 4 /gcr/openssh/parse_v2_ecdsa
 PASS: test-openssh 5 /gcr/openssh/parse_v1_options
 PASS: test-openssh 6 /gcr/openssh/parse_v2_options
-ERROR:$(SOURCE_DIR)/gcr/test-secure-memory.c:62:test_alloc_free: assertion failed: (ret == TRUE)
+ERROR:$(SOURCE_DIR)/gcr/test-secure-memory.c:95:test_alloc_free: assertion failed: (ret == TRUE)
 FAIL: test-secure-memory 1 /memory/alloc-free
-ERROR:$(SOURCE_DIR)/gcr/test-secure-memory.c:86:test_alloc_two: assertion failed: (ret == TRUE)
+ERROR:$(SOURCE_DIR)/gcr/test-secure-memory.c:119:test_alloc_two: assertion failed: (ret == TRUE)
 FAIL: test-secure-memory 2 /memory/alloc-two
-PASS: test-secure-memory 3 /memory/realloc
-ERROR:$(SOURCE_DIR)/gcr/test-secure-memory.c:131:test_realloc_across: assertion failed (IS_ZERO == find_non_zero (p2, 16200)): (-1 == 1088)
-FAIL: test-secure-memory 4 /memory/realloc-across
-ERROR: test-secure-memory process failed: 250
+FAIL: test-secure-memory 3 /memory/alloc-oversized
+PASS: test-secure-memory 4 /memory/realloc
+ERROR:$(SOURCE_DIR)/gcr/test-secure-memory.c:185:test_realloc_across: assertion failed (IS_ZERO == find_non_zero (p2, 16200)): (-1 == 1088)
+FAIL: test-secure-memory 5 /memory/realloc-across
+FAIL: test-secure-memory 6 /memory/realloc-oversized
+ERROR: test-secure-memory process failed: 251
 PASS: test-trust 1 /gcr/trust/is_pinned_none
 PASS: test-trust 2 /gcr/trust/add_and_is_pinned
 PASS: test-trust 3 /gcr/trust/add_certificate_pinned_fail
@@ -466,75 +474,91 @@ PASS: test-trust 6 /gcr/trust/add_and_remov_pinned_async
 PASS: test-trust 7 /gcr/trust/is_certificate_anchored_not
 PASS: test-trust 8 /gcr/trust/is_certificate_anchored_yes
 PASS: test-trust 9 /gcr/trust/is_certificate_anchored_async
-PASS: test-parser 1 /gcr/parser/der_key_v2_des_p8
-PASS: test-parser 2 /gcr/parser/client_pem
-PASS: test-parser 3 /gcr/parser/cacert_org_pem
-PASS: test-parser 4 /gcr/parser/generic_dsa_crt
-PASS: test-parser 5 /gcr/parser/jabber_server_cer
-PASS: test-parser 6 /gcr/parser/dhansak_collabora_cer
-PASS: test-parser 7 /gcr/parser/thawte_personal_basic_ca_pem
-PASS: test-parser 8 /gcr/parser/thawte_personal_premium_ca_pem
-PASS: test-parser 9 /gcr/parser/pem_rsa_2048_req
-PASS: test-parser 10 /gcr/parser/cert_ecc521_pem
-PASS: test-parser 11 /gcr/parser/der_key_pbe_sha1_des_p8
-PASS: test-parser 12 /gcr/parser/der_rsa_2048_spkac
-PASS: test-parser 13 /gcr/parser/ecc_strong_key
-PASS: test-parser 14 /gcr/parser/thawte_time_stamping_ca_pem
-PASS: test-parser 15 /gcr/parser/cacert_org_cer
-PASS: test-parser 16 /gcr/parser/der_key_pbe_sha1_rc2_40_p8
-PASS: test-parser 17 /gcr/parser/startcom_ca_cer
-PASS: test-parser 18 /gcr/parser/der_key_pbe_sha1_rc4_128_p8
-PASS: test-parser 19 /gcr/parser/generic_dsa_key
-PASS: test-parser 20 /gcr/parser/thawte_server_ca_pem
-PASS: test-parser 21 /gcr/parser/der_certificate_crt
-PASS: test-parser 22 /gcr/parser/ecc256_pem
-PASS: test-parser 23 /gcr/parser/usr0052_firefox_p12
-PASS: test-parser 24 /gcr/parser/client_spk
-PASS: test-parser 25 /gcr/parser/ecc_strong_crt
-PASS: test-parser 26 /gcr/parser/openssh_keys_pub
-PASS: test-parser 27 /gcr/parser/base64_rsa_2048_spkac
-PASS: test-parser 28 /gcr/parser/client_crt
-PASS: test-parser 29 /gcr/parser/generic_dsa_pem
-PASS: test-parser 30 /gcr/parser/thawte_personal_freemail_ca_pem
-PASS: test-parser 31 /gcr/parser/rsa_root_certificate_1_pem
-PASS: test-parser 32 /gcr/parser/personal_p12
-PASS: test-parser 33 /gcr/parser/ecc_strong_spk
-PASS: test-parser 34 /gcr/parser/der_certificate_dsa_cer
-PASS: test-parser 35 /gcr/parser/der_key_pbe_md5_des_p8
-PASS: test-parser 36 /gcr/parser/der_key_v2_des3_p8
-PASS: test-parser 37 /gcr/parser/der_key_encrypted_pkcs5_p8
-PASS: test-parser 38 /gcr/parser/cert_ecc521_pub
-PASS: test-parser 39 /gcr/parser/der_key_dsa_p8
-PASS: test-parser 40 /gcr/parser/email_p12
-PASS: test-parser 41 /gcr/parser/der_rsa_1024_key
-PASS: test-parser 42 /gcr/parser/der_key_p8
-PASS: test-parser 43 /gcr/parser/secring_gpg
-PASS: test-parser 44 /gcr/parser/generic_dsa_spk
-PASS: test-parser 45 /gcr/parser/collabora_ca_cer
-PASS: test-parser 46 /gcr/parser/pem_pkcs8_key
-PASS: test-parser 47 /gcr/parser/unclient_p12
-PASS: test-parser 48 /gcr/parser/der_key_pbe_sha1_3des_p8
-PASS: test-parser 49 /gcr/parser/der_ec_256_key
-PASS: test-parser 50 /gcr/parser/pem_rsa_enc_key
-PASS: test-parser 51 /gcr/parser/client_key
-PASS: test-parser 52 /gcr/parser/der_dsa_1024_key
-PASS: test-parser 53 /gcr/parser/test_x509_swiss_p7b
-PASS: test-parser 54 /gcr/parser/pem_with_attributes_req
-PASS: test-parser 55 /gcr/parser/rsa_security_1024_v3_pem
-PASS: test-parser 56 /gcr/parser/rsa_security_2048_v3_pem
-PASS: test-parser 57 /gcr/parser/der_rsa_2048_p10
-PASS: test-parser 58 /gcr/parser/thawte_premium_server_ca_pem
-PASS: test-parser 59 /gcr/parser/ca_certificates_crt
-PASS: test-parser 60 /gcr/parser/startcom_intermediate_cer
-PASS: test-parser 61 /gcr/parser/werner_koch_asc
-PASS: test-parser 62 /gcr/parser/pubring_gpg
-PASS: test-parser 63 /gcr/parser/pem_dsa_1024_key
+PASS: test-parser 1 /gcr/parser/der_rsa_2048_spkac
+PASS: test-parser 2 /gcr/parser/openssh_keys_pub
+PASS: test-parser 3 /gcr/parser/generic_dsa_key
+PASS: test-parser 4 /gcr/parser/startcom_ca_cer
+PASS: test-parser 5 /gcr/parser/ecc_strong_spk
+PASS: test-parser 6 /gcr/parser/pem_with_attributes_req
+PASS: test-parser 7 /gcr/parser/pem_pkcs8_key
+PASS: test-parser 8 /gcr/parser/startcom_intermediate_cer
+PASS: test-parser 9 /gcr/parser/client_pem
+PASS: test-parser 10 /gcr/parser/ca_certificates_crt
+PASS: test-parser 11 /gcr/parser/test_x509_swiss_p7b
+PASS: test-parser 12 /gcr/parser/thawte_personal_premium_ca_pem
+PASS: test-parser 13 /gcr/parser/personal_p12
+PASS: test-parser 14 /gcr/parser/generic_dsa_crt
+PASS: test-parser 15 /gcr/parser/der_key_v2_des_p8
+PASS: test-parser 16 /gcr/parser/jabber_server_cer
+PASS: test-parser 17 /gcr/parser/client_spk
+PASS: test-parser 18 /gcr/parser/der_key_pbe_md5_des_p8
+PASS: test-parser 19 /gcr/parser/unclient_p12
+PASS: test-parser 20 /gcr/parser/collabora_ca_cer
+PASS: test-parser 21 /gcr/parser/thawte_premium_server_ca_pem
+PASS: test-parser 22 /gcr/parser/der_rsa_1024_key
+PASS: test-parser 23 /gcr/parser/ecc256_pem
+PASS: test-parser 24 /gcr/parser/der_key_pbe_sha1_rc2_40_p8
+PASS: test-parser 25 /gcr/parser/der_key_dsa_p8
+PASS: test-parser 26 /gcr/parser/der_dsa_1024_key
+PASS: test-parser 27 /gcr/parser/email_p12
+PASS: test-parser 28 /gcr/parser/cert_ecc521_pem
+PASS: test-parser 29 /gcr/parser/pem_dsa_1024_key
+PASS: test-parser 30 /gcr/parser/der_ec_256_key
+PASS: test-parser 31 /gcr/parser/dhansak_collabora_cer
+PASS: test-parser 32 /gcr/parser/der_rsa_2048_p10
+PASS: test-parser 33 /gcr/parser/der_certificate_dsa_cer
+PASS: test-parser 34 /gcr/parser/der_certificate_crt
+PASS: test-parser 35 /gcr/parser/generic_dsa_spk
+PASS: test-parser 36 /gcr/parser/thawte_personal_basic_ca_pem
+PASS: test-parser 37 /gcr/parser/der_key_pbe_sha1_3des_p8
+PASS: test-parser 38 /gcr/parser/cacert_org_cer
+PASS: test-parser 39 /gcr/parser/der_key_v2_des3_p8
+PASS: test-parser 40 /gcr/parser/ecc_strong_key
+PASS: test-parser 41 /gcr/parser/cert_ecc521_pub
+PASS: test-parser 42 /gcr/parser/client_crt
+PASS: test-parser 43 /gcr/parser/werner_koch_asc
+PASS: test-parser 44 /gcr/parser/der_key_encrypted_pkcs5_p8
+PASS: test-parser 45 /gcr/parser/rsa_security_1024_v3_pem
+PASS: test-parser 46 /gcr/parser/rsa_security_2048_v3_pem
+PASS: test-parser 47 /gcr/parser/pem_rsa_2048_req
+PASS: test-parser 48 /gcr/parser/thawte_time_stamping_ca_pem
+PASS: test-parser 49 /gcr/parser/cacert_org_pem
+PASS: test-parser 50 /gcr/parser/thawte_server_ca_pem
+PASS: test-parser 51 /gcr/parser/rsa_root_certificate_1_pem
+PASS: test-parser 52 /gcr/parser/usr0052_firefox_p12
+PASS: test-parser 53 /gcr/parser/pem_rsa_enc_key
+PASS: test-parser 54 /gcr/parser/thawte_personal_freemail_ca_pem
+PASS: test-parser 55 /gcr/parser/pubring_gpg
+PASS: test-parser 56 /gcr/parser/der_key_pbe_sha1_rc4_128_p8
+PASS: test-parser 57 /gcr/parser/client_key
+PASS: test-parser 58 /gcr/parser/ecc_strong_crt
+PASS: test-parser 59 /gcr/parser/secring_gpg
+PASS: test-parser 60 /gcr/parser/der_key_pbe_sha1_des_p8
+PASS: test-parser 61 /gcr/parser/der_key_p8
+PASS: test-parser 62 /gcr/parser/generic_dsa_pem
+PASS: test-parser 63 /gcr/parser/base64_rsa_2048_spkac
 PASS: test-parser 64 /gcr/parser/parse_null
 PASS: test-parser 65 /gcr/parser/parse_empty
 PASS: test-parser 66 /gcr/parser/parse_stream
 PASS: test-parser 67 /gcr/parser/parsed_bytes
 PASS: test-parser 68 /gcr/parser/filename
-ERROR: test-record process failed: 251
+PASS: test-record 1 /gcr/record/parse-colons
+PASS: test-record 2 /gcr/record/parse-spaces
+PASS: test-record 3 /gcr/record/parse_part
+PASS: test-record 4 /gcr/record/parse_too_long
+PASS: test-record 5 /gcr/record/free_null
+PASS: test-record 6 /gcr/record/find
+PASS: test-record 7 /gcr/record/count
+PASS: test-record 8 /gcr/record/copy
+PASS: test-record 9 /gcr/record/boxed
+PASS: test-record 10 /gcr/record/get_string
+PASS: test-record 11 /gcr/record/get_string_null
+PASS: test-record 12 /gcr/record/get_string_latin1
+PASS: test-record 13 /gcr/record/get_uint
+PASS: test-record 14 /gcr/record/get_uint_invalid
+PASS: test-record 15 /gcr/record/get_uint_range
+PASS: test-record 16 /gcr/record/get_base64
+PASS: test-record 17 /gcr/record/get_schema
 PASS: test-memory-icon 1 /gcr/memory-icon/equal_same
 PASS: test-memory-icon 2 /gcr/memory-icon/equal_not
 PASS: test-memory-icon 3 /gcr/memory-icon/equal_data
@@ -590,10 +614,13 @@ FAIL: test-system-prompt 16 /gcr/system-prompt/after-close-dismisses
 FAIL: test-system-prompt 17 /gcr/system-prompt/close-from-prompter
 FAIL: test-system-prompt 18 /gcr/system-prompt/watch-cancels
 ERROR: test-system-prompt process failed: 251
-# TOTAL: 578
-# PASS:  538
+PASS: test-ssh-askpass 1 /gcr/ssh-askpass/ssh-keygen
+PASS: test-ssh-askpass 2 /gcr/ssh-askpass/cancelled
+PASS: test-ssh-askpass 3 /gcr/ssh-askpass/properties
+# TOTAL: 605
+# PASS:  565
 # SKIP:  0
 # XFAIL: 0
-# FAIL:  34
+# FAIL:  36
 # XPASS: 0
-# ERROR: 6
+# ERROR: 4
