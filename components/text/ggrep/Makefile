@@ -17,21 +17,24 @@
 # information: Portions Copyright [yyyy] [name of copyright owner]
 #
 # CDDL HEADER END
+
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	3.1
-COMPONENT_FMRI= text/gnu-grep
-COMPONENT_SUMMARY=  GNU grep utilities
+COMPONENT_VERSION=	3.2
+COMPONENT_FMRI=		text/gnu-grep
+COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:db625c7ab3bb3ee757b3926a5cfa8d9e1c3991ad24707a83dde8a5ef2bf7a07e
+	sha256:8e6e1f05bf76c30f52605278d0ab06c322e7bfa69e3c193499a8fd2c2c31599c
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv3, FDLv1.3 
 
@@ -74,6 +77,11 @@ install:	$(INSTALL_64)
 # 
 test:		$(TEST_64)
 
+# Testsuite requirements
+REQUIRED_PACKAGES += locale/tr
+REQUIRED_PACKAGES += locale/ru-extra
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
