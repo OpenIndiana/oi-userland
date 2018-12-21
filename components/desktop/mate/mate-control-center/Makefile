@@ -17,15 +17,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-control-center
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	3
-COMPONENT_REVISION=	2
+COMPONENT_MNR_VERSION=	4
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6d7e4c23cbfee2ec3682b6b07c0226742775c669f6e47862691d84ffc742f172
+    sha256:44255adf12802e69b57afe68bbffe412271a86d6ecfb4dad0985033963b35de6
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/control-center
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
@@ -54,19 +53,17 @@ test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/desktop-file-utils
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco
-REQUIRED_PACKAGES += desktop/mate/mate-settings-daemon
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libxklavier
 REQUIRED_PACKAGES += library/desktop/mate/libmatekbd
-REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/mate/mate-menus
 REQUIRED_PACKAGES += library/desktop/pango
