@@ -20,14 +20,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-applets
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9a2609dbb3ea4e0bdee67d819c899a6ce7c06f4447be804464fbc2bbba070631
+    sha256:aeccbd2100fe0b2cb09096b395e957a7e538f2092961710771fdc6487900a578
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -63,6 +63,8 @@ install:	$(INSTALL_64)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
+REQUIRED_PACKAGES += library/python/pygobject-3-27
+# Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -76,8 +78,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgtop
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/python/pygobject-3-27
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
