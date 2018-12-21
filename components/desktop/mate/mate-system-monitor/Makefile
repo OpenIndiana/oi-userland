@@ -56,6 +56,9 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += mate-common
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
