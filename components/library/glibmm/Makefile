@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glibmm
 COMPONENT_VERSION=	2.58.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	glibmm - C++ Wrapper for the Glib2 Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
