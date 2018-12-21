@@ -18,14 +18,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-media
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Multimedia applications for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:49273998491d802df97306c10dfd49178fc266ddbce3f0b2ef61390c503d64b5
+    sha256:dbd60c7c8beabc8e93842c03da7767bad5694c09bca5df88fcf0e6aa0552d319
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -56,6 +56,7 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/libmatemixer
