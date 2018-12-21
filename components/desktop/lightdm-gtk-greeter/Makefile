@@ -11,25 +11,25 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= lightdm-gtk-greeter
-COMPONENT_VERSION= 2.0.5
-COMPONENT_REVISION= 4
-COMPONENT_SUMMARY= GTK greeter for LDM
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		lightdm-gtk-greeter
+COMPONENT_VERSION=	2.0.6
+COMPONENT_SUMMARY=	LightDM GTK+ Greeter
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5dc608d58ff9d15117c9d99b55e5f038d39e2f1691f03ce1dc1c8881560387df
+	sha256:255cf4039ab2536020ca8714bdc98300c8f71719183bbb5b18ef96f43c2e3ade
 COMPONENT_ARCHIVE_URL= \
-  https://launchpad.net/lightdm-gtk-greeter/2.0/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://launchpad.net/lightdm-gtk-greeter/
-COMPONENT_FMRI = system/display-manager/lightdm/gtk-greeter
-COMPONENT_CLASSIFICATION=       Desktop (GNOME)/Sessions
-COMPONENT_LICENSE=      GPLv3
-COMPONENT_LICENSE_FILE= COPYING
+	https://launchpad.net/lightdm-gtk-greeter/2.0/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://launchpad.net/lightdm-gtk-greeter/
+COMPONENT_FMRI=		system/display-manager/lightdm/gtk-greeter
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
+COMPONENT_LICENSE=		GPLv3
+COMPONENT_LICENSE_FILE=		COPYING
 
 EXO_COMMIT=accb025add4338618ea66f5dab67f51965e216f0
 COMPONENT_ARCHIVE_1= exo-csource.c 
@@ -74,10 +74,11 @@ CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_64)
+build:		$(BUILD_64)
 
-install: $(INSTALL_64)
+install:	$(INSTALL_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
