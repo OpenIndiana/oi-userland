@@ -18,14 +18,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmateweather
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Library to accessing online weather information
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:21f35e05bb586c1a01b9754ad48726470ab456778350de32b6c5bdb286b5e12e
+    sha256:bb4363c64a81885c0656be71a8965df22d0acff64df46cadd424d5116c0f57cf
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -39,7 +39,6 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh 
-
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
@@ -58,6 +57,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
