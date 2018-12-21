@@ -18,14 +18,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-panel
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MNR_VERSION=	4
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Panel of Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ceb56d7de37c162e3671e3bf061753d0af3aa3b8e477b04ddb90301a9ab6e856
+    sha256:8d9065533ce7d46ada8afcbde589eef35e59adb685306ba8d98fde411fcfed0a
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -61,8 +61,9 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += gnome/help-viewer/yelp
-REQUIRED_PACKAGES += library/gnome/yelp-tools
+# Build requires
+REQUIRED_PACKAGES += text/itstool
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -81,4 +82,3 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxrandr
-REQUIRED_PACKAGES += text/itstool
