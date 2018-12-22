@@ -11,24 +11,25 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= lightdm
-COMPONENT_VERSION= 1.26.0
-COMPONENT_SUMMARY= Light display manager
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=		lightdm
+COMPONENT_VERSION=	1.28.0
+COMPONENT_SUMMARY=	Light display manager
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c95e14e9131b5f95ecba42faaab2cfa917371193caa54fa1b4322ad7a89334f0
+	sha256:f20f599d8d7cf90b77a2df33c6e9e615abc443123b1b228de1c20a636aecfa07
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/CanonicalLtd/lightdm/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.freedesktop.org/wiki/Software/LightDM/
-COMPONENT_FMRI = system/display-manager/lightdm
+	https://github.com/CanonicalLtd/lightdm/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/LightDM/
+COMPONENT_FMRI=		system/display-manager/lightdm
 COMPONENT_CLASSIFICATION=       Desktop (GNOME)/Sessions
-COMPONENT_LICENSE=      GPLv3
-COMPONENT_LICENSE_FILE= COPYING.GPL3
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING.GPL3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -56,22 +57,23 @@ CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_64)
+build:		$(BUILD_64)
 
-install: $(INSTALL_64)
+install:	$(INSTALL_64)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/desktop/libxklavier
-REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += library/gnome/yelp-xsl
 # libxml2 is required for xmllint
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += text/itstool
+# Required by include of sys/soundcard.h in 13-save-audio-settings.patch
+REQUIRED_PACKAGES += system/header/header-audio
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/libxklavier
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
-REQUIRED_PACKAGES += text/itstool
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxdmcp
-# Required by include of sys/soundcard.h in 13-save-audio-settings.patch
-REQUIRED_PACKAGES += system/header/header-audio

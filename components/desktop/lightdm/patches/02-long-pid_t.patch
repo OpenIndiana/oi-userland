@@ -1,34 +1,46 @@
---- lightdm-1.19.3/src/process.c.~1~	2015-10-22 06:01:59.000000000 +0300
-+++ lightdm-1.19.3/src/process.c	2016-08-07 22:47:18.054306139 +0300
-@@ -247,7 +247,7 @@
+--- lightdm-1.28.0/src/process.c	2018-12-22 00:05:08.200018798 +0000
++++ lightdm-1.28.0/src/process.c.new	2018-12-22 10:05:06.767183248 +0000
+@@ -172,9 +172,9 @@ process_watch_cb (GPid pid, gint status,
+     priv->exit_status = status;
+ 
+     if (WIFEXITED (status))
+-        g_debug ("Process %d exited with return value %d", pid, WEXITSTATUS (status));
++        g_debug ("Process %ld exited with return value %d", (long)pid, WEXITSTATUS (status));
+     else if (WIFSIGNALED (status))
+-        g_debug ("Process %d terminated with signal %d", pid, WTERMSIG (status));
++        g_debug ("Process %ld terminated with signal %d", (long)pid, WTERMSIG (status));
+ 
+     if (priv->quit_timeout)
+         g_source_remove (priv->quit_timeout);
+@@ -261,7 +261,7 @@ process_start (Process *process, gboolea
          return FALSE;
      }
  
--    g_debug ("Launching process %d: %s", pid, process->priv->command);
-+    g_debug ("Launching process %ld: %s", (long) pid, process->priv->command);
+-    g_debug ("Launching process %d: %s", pid, priv->command);
++    g_debug ("Launching process %ld: %s", (long)pid, priv->command);
  
-     process->priv->pid = pid;
+     priv->pid = pid;
  
-@@ -288,7 +288,7 @@
-     if (process->priv->pid == 0)
+@@ -306,7 +306,7 @@ process_signal (Process *process, int si
+     if (priv->pid == 0)
          return;
  
--    g_debug ("Sending signal %d to process %d", signum, process->priv->pid);
-+    g_debug ("Sending signal %d to process %ld", signum, (long) process->priv->pid);
+-    g_debug ("Sending signal %d to process %d", signum, priv->pid);
++    g_debug ("Sending signal %d to process %ld", signum, (long)priv->pid);
  
-     if (kill (process->priv->pid, signum) < 0)
+     if (kill (priv->pid, signum) < 0)
      {
-@@ -392,7 +392,7 @@
+@@ -417,7 +417,7 @@ handle_signal (GIOChannel *source, GIOCo
          return FALSE;
      }
  
 -    g_debug ("Got signal %d from process %d", signo, pid);
-+    g_debug ("Got signal %d from process %ld", signo, (long) pid);
++    g_debug ("Got signal %d from process %ld", signo, (long)pid);
  
-     process = g_hash_table_lookup (processes, GINT_TO_POINTER (pid));
+     Process *process = g_hash_table_lookup (processes, GINT_TO_POINTER (pid));
      if (process == NULL)
---- lightdm-1.26.0/src/lightdm.c	2018-06-01 06:57:28.489224869 +0000
-+++ lightdm-1.26.0/src/lightdm.c.new	2018-06-01 07:02:18.853439100 +0000
+--- lightdm-1.28.0/src/lightdm.c.~1~	2018-08-21 01:58:09.000000000 +0000
++++ lightdm-1.28.0/src/lightdm.c	2018-12-22 00:05:08.200566588 +0000
 @@ -560,7 +560,7 @@ main (int argc, char **argv)
  #endif
      loop = g_main_loop_new (NULL, FALSE);
@@ -38,8 +50,8 @@
  
      g_signal_connect (process_get_current (), PROCESS_SIGNAL_GOT_SIGNAL, G_CALLBACK (signal_cb), NULL);
  
-@@ -717,7 +717,7 @@
-     pid_file = fopen (pid_path, "w");
+@@ -717,7 +717,7 @@ main (int argc, char **argv)
+     FILE *pid_file = fopen (pid_path, "w");
      if (pid_file)
      {
 -        fprintf (pid_file, "%d\n", getpid ());
