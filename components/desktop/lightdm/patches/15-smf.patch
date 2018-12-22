@@ -28,8 +28,8 @@
  AC_ARG_ENABLE([libaudit],
      AS_HELP_STRING([--enable-libaudit],
                     [Enable libaudit logging of login and logout events [[default=auto]]]),
---- lightdm-1.19.3/src/session.c.~1~	2016-07-12 00:48:01.000000000 +0300
-+++ lightdm-1.19.3/src/session.c	2016-08-11 17:15:33.399907116 +0300
+--- lightdm-1.28.0/src/session.c	2018-08-30 02:28:55.000000000 +0000
++++ lightdm-1.28.0/src/session.c	2018-12-22 12:13:04.194567557 +0000
 @@ -21,6 +21,13 @@
  #include <grp.h>
  #include <pwd.h>
@@ -44,9 +44,9 @@
  #include "session.h"
  #include "configuration.h"
  #include "console-kit.h"
-@@ -130,6 +130,141 @@
+@@ -131,6 +138,141 @@ G_DEFINE_TYPE_WITH_CODE (Session, sessio
                           G_IMPLEMENT_INTERFACE (
-                              LOGGER_TYPE, session_logger_iface_init));
+                              LOGGER_TYPE, session_logger_iface_init))
  
 +#ifdef HAVE_SMF_CONTRACTS
 +static int contracts_fd = -1;
@@ -186,7 +186,7 @@
  Session *
  session_new (void)
  {
-@@ -574,10 +574,16 @@ session_real_start (Session *session)
+@@ -612,10 +754,16 @@ session_real_start (Session *session)
  
      /* Run the child */
      g_autofree gchar *arg0 = g_strdup_printf ("%d", to_child_output);
@@ -194,8 +194,8 @@
 +    contracts_pre_fork ();
 +#endif
      g_autofree gchar *arg1 = g_strdup_printf ("%d", from_child_input);
-     session->priv->pid = fork ();
-     if (session->priv->pid == 0)
+     priv->pid = fork ();
+     if (priv->pid == 0)
      {
 +#ifdef HAVE_SMF_CONTRACTS
 +        contracts_post_fork_child ();
@@ -203,14 +203,14 @@
          /* Run us again in session child mode */
          execlp ("lightdm",
                  "lightdm",
-@@ -585,6 +585,10 @@ session_real_start (Session *session)
+@@ -623,6 +771,10 @@ session_real_start (Session *session)
                  arg0, arg1, NULL);
          _exit (EXIT_FAILURE);
      }
 +#ifdef HAVE_SMF_CONTRACTS
 +    /* Child would have already exited */
-+    contracts_post_fork_parent ((session->priv->pid > 0));
++    contracts_post_fork_parent ((priv->pid > 0));
 +#endif
  
-     if (session->priv->pid < 0)
+     if (priv->pid < 0)
      {
