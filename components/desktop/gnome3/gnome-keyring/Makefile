@@ -11,20 +11,21 @@
 #
 # Copyright (c) 2017 Alexander Pyhalov
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-keyring
-COMPONENT_MJR_VERSION=	3.20
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MJR_VERSION=	3.28
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME Keyring
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:97964e723f454be509c956ed5e38b5c2fd7363f43bd3f153b94a4a63eb888c8c
+	sha256:81171b7d07211b216b4c9bb79bf2deb3deca18fe8d56d46dda1c4549b4a2646a
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
 COMPONENT_FMRI=		gnome/gnome-keyring
@@ -37,7 +38,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
 PAM_MODULE_DIR.32 = $(USRLIBDIR)/security
 PAM_MODULE_DIR.64 = $(PAM_MODULE_DIR.32)/$(MACH64)
@@ -61,15 +62,14 @@ CONFIGURE_OPTIONS += --with-pic
 # Linux-specific capabilities support.
 CONFIGURE_OPTIONS += --without-libcap-ng
 
-
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32_and_64)
 
-# Auto-generated contents below.  Please manually verify and remove this comment
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gcr
 REQUIRED_PACKAGES += system/library
