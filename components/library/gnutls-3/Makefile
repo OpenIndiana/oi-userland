@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_VERSION=	3.5.14
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
