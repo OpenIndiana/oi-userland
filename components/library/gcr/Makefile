@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcr
 COMPONENT_VERSION=	3.28.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://github.com/GNOME/gcr
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
