@@ -16,22 +16,21 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= dbus
-COMPONENT_VERSION= 1.12.8
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= Simple IPC library based on messages
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		dbus
+COMPONENT_VERSION=	1.12.12
+COMPONENT_SUMMARY=	Simple IPC library based on messages
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e2dc99e7338303393b6663a98320aba6a63421bcdaaf571c8022f815e5896eb3
+	sha256:9546f226011a1e5d9d77245fe5549ef25af4694053189d624d0d6ac127ecf5f8
 COMPONENT_ARCHIVE_URL= \
-  http://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL = $(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_PROJECT_URL = https://www.freedesktop.org/wiki/Software/dbus/
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_LICENSE = GPLv2,AFLv2.1
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = system/library/dbus
+	http://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/dbus/
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	GPLv2,AFLv2.1
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_FMRI=		system/library/dbus
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -66,11 +65,14 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/build/autoconf-archive
-REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/xmlto
+REQUIRED_PACKAGES += x11/library/libx11
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
