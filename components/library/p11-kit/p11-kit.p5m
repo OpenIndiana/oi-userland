@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,8 +25,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform path=usr/lib/($(MACH64)/)?p11-kit/.* -> default mode 0555 >
 
-file etc/pkcs11/pkcs11.conf.example path=usr/share/doc/pkcs11-kit/pkcs11.conf.example 
-
+file etc/pkcs11/pkcs11.conf.example path=etc/pkcs11/pkcs11.conf preserve=true
 file path=usr/bin/$(MACH64)/p11-kit
 file path=usr/bin/$(MACH64)/trust
 file path=usr/bin/p11-kit
@@ -38,21 +38,25 @@ file path=usr/include/p11-kit-1/p11-kit/pkcs11.h
 file path=usr/include/p11-kit-1/p11-kit/pkcs11x.h
 file path=usr/include/p11-kit-1/p11-kit/remote.h
 file path=usr/include/p11-kit-1/p11-kit/uri.h
-link path=usr/lib/$(MACH64)/libp11-kit.so target=libp11-kit.so.0.1.0
-link path=usr/lib/$(MACH64)/libp11-kit.so.0 target=libp11-kit.so.0.1.0
-file path=usr/lib/$(MACH64)/libp11-kit.so.0.1.0
-link path=usr/lib/$(MACH64)/p11-kit-proxy.so target=libp11-kit.so.0.1.0
+link path=usr/lib/$(MACH64)/libp11-kit.so target=libp11-kit.so.0.3.0
+link path=usr/lib/$(MACH64)/libp11-kit.so.0 target=libp11-kit.so.0.3.0
+file path=usr/lib/$(MACH64)/libp11-kit.so.0.3.0
+link path=usr/lib/$(MACH64)/p11-kit-proxy.so target=libp11-kit.so.0.3.0
 file path=usr/lib/$(MACH64)/p11-kit/p11-kit-remote
+file path=usr/lib/$(MACH64)/p11-kit/p11-kit-server
 file path=usr/lib/$(MACH64)/p11-kit/trust-extract-compat
 file path=usr/lib/$(MACH64)/pkgconfig/p11-kit-1.pc
-link path=usr/lib/libp11-kit.so target=libp11-kit.so.0.1.0
-link path=usr/lib/libp11-kit.so.0 target=libp11-kit.so.0.1.0
-file path=usr/lib/libp11-kit.so.0.1.0
-link path=usr/lib/p11-kit-proxy.so target=libp11-kit.so.0.1.0
+link path=usr/lib/libp11-kit.so target=libp11-kit.so.0.3.0
+link path=usr/lib/libp11-kit.so.0 target=libp11-kit.so.0.3.0
+file path=usr/lib/libp11-kit.so.0.3.0
+link path=usr/lib/p11-kit-proxy.so target=libp11-kit.so.0.3.0
 file path=usr/lib/p11-kit/p11-kit-remote
+file path=usr/lib/p11-kit/p11-kit-server
 file path=usr/lib/p11-kit/trust-extract-compat
 file path=usr/lib/pkgconfig/p11-kit-1.pc
+file path=usr/lib/security/$(MACH64)/p11-kit-client.so
 file path=usr/lib/security/$(MACH64)/p11-kit-trust.so
+file path=usr/lib/security/p11-kit-client.so
 file path=usr/lib/security/p11-kit-trust.so
 file path=usr/share/gtk-doc/html/p11-kit/config-example.html
 file path=usr/share/gtk-doc/html/p11-kit/config-files.html
@@ -79,6 +83,7 @@ file path=usr/share/gtk-doc/html/p11-kit/p11-kit.devhelp2
 file path=usr/share/gtk-doc/html/p11-kit/p11-kit.html
 file path=usr/share/gtk-doc/html/p11-kit/pkcs11-conf.html
 file path=usr/share/gtk-doc/html/p11-kit/reference.html
+file path=usr/share/gtk-doc/html/p11-kit/remoting.html
 file path=usr/share/gtk-doc/html/p11-kit/right-insensitive.png
 file path=usr/share/gtk-doc/html/p11-kit/right.png
 file path=usr/share/gtk-doc/html/p11-kit/sharing-managed.html
