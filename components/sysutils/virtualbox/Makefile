@@ -60,6 +60,7 @@ X11_SERVERINP_DIR.64=/usr/lib/xorg/input/$(MACH64)
 X11_SERVERINP_DIR=$(X11_SERVERMODS_DIR.64)
 
 VBOX_BINDIR= $(BUILD_DIR_64)/out/solaris.$(MACH64)/release/bin/additions/
+VBOX_BINDIR.32= $(BUILD_DIR_32)/out/solaris.x86/release/bin/additions/
 VBOX_MODULES= vboxguest vboxms vboxvideo
 VBOX_FS_MODULES= vboxfs
 
@@ -69,7 +70,7 @@ VBOX_OGLLIBS= VBoxOGL.so VBoxOGLarrayspu.so VBoxOGLcrutil.so VBoxOGLerrorspu.so 
 
 QT5_ROOT=/usr/lib/qt/5.8
 PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
-PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
+PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
 
 CONFIGURE_SCRIPT=$(@D)/configure
 
@@ -87,14 +88,20 @@ COMPONENT_INSTALL_GMAKE_ARGS=
 COMPONENT_INSTALL_ARGS=
 COMPONENT_INSTALL_TARGETS=
 
-LOCAL_CONFIG+='\nVBOX_WITH_DRAG_AND_DROP_GH = 1'
-LOCAL_CONFIG+='\nVBOX_WITH_VBOXDRV = 1'
-LOCAL_CONFIG+='\nVBOX_WITH_NETFLT = 1'
-LOCAL_CONFIG+='\nVBOX_WITH_NETADP = 1'
-LOCAL_CONFIG+='\nVBOX_GCC_OPT=$(CXXFLAGS)'
-LOCAL_CONFIG+='\nVBOX_GCC_std = -std=c++11'
-LOCAL_CONFIG+='\nVBOX_WITH_TESTSUITE='
-LOCAL_CONFIG+='\nVBOX_WITH_TESTCASES='
+LOCAL_CONFIG.64+='\nVBOX_WITH_VBOXDRV = 1'
+LOCAL_CONFIG.64+='\nVBOX_WITH_NETFLT = 1'
+LOCAL_CONFIG.64+='\nVBOX_WITH_NETADP = 1'
+
+LOCAL_CONFIG.32 +='\nVBOX_ONLY_ADDITIONS  = 1'
+
+LOCAL_CONFIG += $(LOCAL_CONFIG.$(BITS))
+
+LOCAL_CONFIG +='\nVBOX_GCC_OPT=$(CXXFLAGS)'
+LOCAL_CONFIG +='\nVBOX_GCC_std = -std=c++11'
+LOCAL_CONFIG +='\nVBOX_WITH_TESTSUITE='
+LOCAL_CONFIG +='\nVBOX_WITH_TESTCASES='
+LOCAL_CONFIG +='\nVBOX_WITH_DRAG_AND_DROP_GH = 1'
+LOCAL_CONFIG +='\nVBOX_WITH_X11_ADDITIONS = 1'
 
 # Disable DTrace, needs patching
 LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_R3 ='
@@ -103,12 +110,13 @@ LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_R0DRV ='
 LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_RC ='
 LOCAL_CONFIG+='\nVBOX_WITH_NATIVE_DTRACE ='
 
+
 COMPONENT_PRE_CONFIGURE_ACTION= \
   ( cd $(@D); echo $(LOCAL_CONFIG) > LocalConfig.kmk; $(CP) -a $(SOURCE_DIR)/* $(@D) )
 
 CONFIGURE_OPTIONS = --with-gcc="$(CC)"
 CONFIGURE_OPTIONS+= --with-g++="$(CXX)"
-CONFIGURE_OPTIONS+= --enable-qt5
+
 CONFIGURE_OPTIONS+= --disable-alsa
 CONFIGURE_OPTIONS+= --disable-dbus
 CONFIGURE_OPTIONS+= --disable-docs
@@ -117,6 +125,12 @@ CONFIGURE_OPTIONS+= --disable-python
 CONFIGURE_OPTIONS+= --disable-sdl-ttf
 CONFIGURE_OPTIONS+= --disable-libvpx
 CONFIGURE_OPTIONS+= --nofatal
+
+CONFIGURE_OPTIONS.32 += --only-additions
+CONFIGURE_OPTIONS.32 += --target-arch=x86
+CONFIGURE_OPTIONS.64 += --enable-qt5
+
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 VBOX_PREFIX   = /opt/VirtualBox
 VBOX_LIBDIR   = $(VBOX_PREFIX)/$(MACH64)
@@ -152,6 +166,7 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	$(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64)
 	for fl in $(VBOX_OGLLIBS); do \
 		cp $(VBOX_BINDIR)/$$fl $(PROTO_DIR)/usr/lib/$(MACH64); \
+		cp $(VBOX_BINDIR.32)/$$fl $(PROTO_DIR)/usr/lib/; \
         done
 	$(MKDIR) $(PROTO_DIR)/var/svc/manifest/application/virtualbox
 	cp $(VBOX_BINDIR)/vboxservice.xml $(PROTO_DIR)/var/svc/manifest/application/virtualbox
@@ -165,10 +180,11 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	$(MKDIR) $(PROTO_DIR)/lib/opengl/ogl_select
 	cp $(VBOX_BINDIR)/vbox_vendor_select $(PROTO_DIR)/lib/opengl/ogl_select
 	$(TOUCH) $@
-		
-$(BUILD_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk KBUILD_VERBOSE=3"
 
-build:		$(BUILD_64) 
+		
+$(BUILD_32_and_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk KBUILD_VERBOSE=3"
+
+build:		$(BUILD_32_and_64) 
 
 $(INSTALL_64): GMAKE= cd $(@D)/src/VBox/Installer && $(SHELL) -c ". $(@D)/env.sh && kmk solaris-install VBOX_PATH_SI_SCRATCH_PKG=$(PROTO_DIR)"
 
