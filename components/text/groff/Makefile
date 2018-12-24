@@ -21,51 +21,49 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
+
+PREFERRED_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
-COMPONENT_VERSION=	1.22.2
+COMPONENT_VERSION=	1.22.4
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:380864dac4772e0c0d7b1282d25d0c5fd7f63baf45c87c4657afed22a13d2076
+	sha256:e78e7b4cb7dec310849004fa88847c44701e8d133b5d4c13057d876c1bad0293
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/groff
+COMPONENT_FMRI=		text/groff
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# The grog.sh script needs GNU awk not the Solaris one.
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's?awk?/usr/gnu/bin/awk?' \
-		$(SOURCE_DIR)/src/roff/grog/grog.sh
-
-CONFIGURE_OPTIONS += \
-    --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
+CONFIGURE_OPTIONS += --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
 
 COMPONENT_INSTALL_ARGS += legacyfontdir=/usr/lib/font
 COMPONENT_INSTALL_ARGS += appresdir=/usr/X11/lib/X11/app-defaults
 COMPONENT_INSTALL_ARGS += sys_tmac_prefix=/usr/share/lib/tmac/
 
-COMPONENT_PRE_INSTALL_ACTION = \
-	($(MKDIR) $(PROTOUSRBINDIR) )
+COMPONENT_TEST_TRANSFORMER	= $(NAWK)
+COMPONENT_TEST_TRANSFORMS	= "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-# groff tests use dejagnu which isn't currently included in Solaris.
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
+REQUIRED_PACKAGES += developer/test/dejagnu
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
