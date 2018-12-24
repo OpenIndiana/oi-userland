@@ -17,14 +17,16 @@
 # information: Portions Copyright [yyyy] [name of copyright owner]
 #
 # CDDL HEADER END
+
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.3.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.3.3
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -37,7 +39,7 @@ COMPONENT_SRC=		libarchive-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ed2dbd6954792b2c054ccf8ec4b330a54b85904a80cef477a1c74643ddafa0ce
+	sha256:ba7eb1781c9fbbae178c4c6bad1c6eb08edab9a1496c64833d1715d022b30e2e
 COMPONENT_ARCHIVE_URL= \
 	http://libarchive.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=        library/libarchive
@@ -101,15 +103,19 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/ERROR:/p" '
 
 build:		$(BUILD_32_and_64)
+
 install:	$(INSTALL_32_and_64)
+
 test:		$(TEST_32_and_64)
 
+# Build requirements
+REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += text/groff
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += text/groff
