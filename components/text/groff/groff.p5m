@@ -21,20 +21,27 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/text/groff@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GNU troff Text Formatting"
 set name=com.oracle.info.description value="GNU troff"
 set name=com.oracle.info.tpno value=7898
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Text Tools"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2008/425
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license groff.license license=GPLv2
+
+depend type=require fmri=system/library/fontconfig
+depend type=require fmri=system/library/freetype-2
+depend type=require fmri=text/groff/groff-core
+
 file path=usr/X11/lib/X11/app-defaults/GXditview
 file path=usr/X11/lib/X11/app-defaults/GXditview-color
 file path=usr/bin/addftinfo
@@ -42,7 +49,10 @@ file path=usr/bin/afmtodit
 file path=usr/bin/eqn2graph
 link path=usr/bin/ggrn target=../gnu/bin/grn facet.compat.gnulinks=true
 link path=usr/bin/gindxbib target=../gnu/bin/indxbib facet.compat.gnulinks=true
+file path=usr/bin/glilypond
 file path=usr/bin/glookbib
+file path=usr/bin/gperl
+file path=usr/bin/gpinyin
 file path=usr/bin/grap2graph
 link path=usr/bin/grefer target=../gnu/bin/refer facet.compat.gnulinks=true
 file path=usr/bin/grodvi
@@ -70,18 +80,25 @@ file path=usr/bin/xtotroff
 file usr/bin/ggrn path=usr/gnu/bin/grn
 file usr/bin/gindxbib path=usr/gnu/bin/indxbib
 file usr/bin/grefer path=usr/gnu/bin/refer
-file path=usr/lib/groff/groffer/func.pl
-file path=usr/lib/groff/groffer/man.pl
-file path=usr/lib/groff/groffer/perl_test.pl
-file path=usr/lib/groff/groffer/split_env.sh
-file path=usr/lib/groff/groffer/version.sh
-file path=usr/lib/groff/site-tmac/an.tmac
-file path=usr/lib/groff/site-tmac/ansun.tmac
-file path=usr/lib/groff/site-tmac/bib.tmac
-file path=usr/lib/groff/site-tmac/m.tmac
-file path=usr/lib/groff/site-tmac/s.tmac
-file path=usr/lib/groff/site-tmac/v.tmac
-file path=usr/lib/groff/site-tmac/vgrind.tmac
+file path=usr/lib/$(MACH64)/groff/glilypond/args.pl
+file path=usr/lib/$(MACH64)/groff/glilypond/oop_fh.pl
+file path=usr/lib/$(MACH64)/groff/glilypond/subs.pl
+file path=usr/lib/$(MACH64)/groff/gpinyin/subs.pl
+file path=usr/lib/$(MACH64)/groff/groff_opts_no_arg.txt
+file path=usr/lib/$(MACH64)/groff/groff_opts_with_arg.txt
+file path=usr/lib/$(MACH64)/groff/groffer/main_subs.pl
+file path=usr/lib/$(MACH64)/groff/groffer/man.pl
+file path=usr/lib/$(MACH64)/groff/groffer/split_env.sh
+file path=usr/lib/$(MACH64)/groff/groffer/subs.pl
+file path=usr/lib/$(MACH64)/groff/groffer/version.sh
+file path=usr/lib/$(MACH64)/groff/grog/subs.pl
+file path=usr/lib/$(MACH64)/groff/site-tmac/an.tmac
+file path=usr/lib/$(MACH64)/groff/site-tmac/ansun.tmac
+file path=usr/lib/$(MACH64)/groff/site-tmac/bib.tmac
+file path=usr/lib/$(MACH64)/groff/site-tmac/m.tmac
+file path=usr/lib/$(MACH64)/groff/site-tmac/s.tmac
+file path=usr/lib/$(MACH64)/groff/site-tmac/v.tmac
+file path=usr/lib/$(MACH64)/groff/site-tmac/vgrind.tmac
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/chem/122/README
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/chem/122/ch2a_ethyl.chem
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/chem/122/ch2b_benzene.chem
@@ -165,6 +182,8 @@ file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/hdtbl/rainbow.ps
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/hdtbl/rainbow.roff
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/hdtbl/short_reference.ps
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/hdtbl/short_reference.roff
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mm/letter.mm
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/README-fr.txt
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/README.txt
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/elvis_syntax
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/elvis_syntax.new
@@ -173,10 +192,14 @@ file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/letter.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/mom-pdf.mom
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/mom-pdf.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/mom.vim
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/mon_premier_doc.mom
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/mon_premier_doc.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/penguin.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/penguin.ps
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/sample_docs.mom
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/sample_docs.pdf
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/slide-demo.mom
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/slide-demo.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/typesetting.mom
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/mom/typesetting.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/examples/webpage.ms
@@ -206,10 +229,11 @@ file path=usr/share/doc/groff-$(COMPONENT_VERSION)/html/mom/using.html
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/html/mom/version-2.html
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/meintro.me
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/meintro.ps
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/meintro_fr.me
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/meintro_fr.ps
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/meref.me
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/meref.ps
-link path=usr/share/doc/groff-$(COMPONENT_VERSION)/pdf/mom-pdf.pdf \
-    target=../examples/mom/mom-pdf.pdf
+file path=usr/share/doc/groff-$(COMPONENT_VERSION)/pdf/automake.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/pdf/pdfmark.pdf
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/pic.ms
 file path=usr/share/doc/groff-$(COMPONENT_VERSION)/pic.ps
@@ -517,7 +541,6 @@ file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/hyphen.det
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/hyphen.fr
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/hyphen.sv
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/hyphenex.cs
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/hyphenex.det
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/ja.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/latin5.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/lbp.tmac
@@ -535,6 +558,7 @@ file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/ms.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/om.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/pdf.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/pdfmark.tmac
+file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/pdfpic.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/refer-me.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/refer-mm.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/refer-ms.tmac
@@ -543,20 +567,23 @@ file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/spdf.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/sv.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/trace.tmac
 file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/trans.tmac
+file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/zh.tmac
 file path=usr/share/info/groff.info \
     restart_fmri=svc:/application/texinfo-update:default
 file path=usr/share/info/groff.info-1 \
     restart_fmri=svc:/application/texinfo-update:default
 file path=usr/share/info/groff.info-2 \
     restart_fmri=svc:/application/texinfo-update:default
-file path=usr/share/info/groff.info-3 \
-    restart_fmri=svc:/application/texinfo-update:default
 file path=usr/share/man/man1/addftinfo.1
 file path=usr/share/man/man1/afmtodit.1
+file path=usr/share/man/man1/chem.1
 file path=usr/share/man/man1/eqn2graph.1
 file path=usr/share/man/man1/ggrn.1
 file path=usr/share/man/man1/gindxbib.1
+file path=usr/share/man/man1/glilypond.1
 file path=usr/share/man/man1/glookbib.1
+file path=usr/share/man/man1/gperl.1
+file path=usr/share/man/man1/gpinyin.1
 file path=usr/share/man/man1/grap2graph.1
 file path=usr/share/man/man1/grefer.1
 file path=usr/share/man/man1/grodvi.1
@@ -564,15 +591,25 @@ file path=usr/share/man/man1/groffer.1
 file path=usr/share/man/man1/grohtml.1
 file path=usr/share/man/man1/grolbp.1
 file path=usr/share/man/man1/grolj4.1
+file path=usr/share/man/man1/gropdf.1
 file path=usr/share/man/man1/gxditview.1
 file path=usr/share/man/man1/hpftodit.1
 file path=usr/share/man/man1/lkbib.1
 file path=usr/share/man/man1/mmroff.1
+file path=usr/share/man/man1/pdfmom.1
 file path=usr/share/man/man1/pdfroff.1
 file path=usr/share/man/man1/pfbtops.1
 file path=usr/share/man/man1/pic2graph.1
+file path=usr/share/man/man1/preconv.1
+file path=usr/share/man/man1/roff2dvi.1
+file path=usr/share/man/man1/roff2html.1
+file path=usr/share/man/man1/roff2pdf.1
+file path=usr/share/man/man1/roff2ps.1
+file path=usr/share/man/man1/roff2text.1
+file path=usr/share/man/man1/roff2x.1
 file path=usr/share/man/man1/tfmtodit.1
 file path=usr/share/man/man1/xtotroff.1
+file usr/share/man/man5/groff_filenames.5 path=usr/share/man/man4/groff_filenames.4
 file usr/share/man/man5/groff_font.5 path=usr/share/man/man4/groff_font.4
 file usr/share/man/man5/groff_tmac.5 path=usr/share/man/man4/groff_tmac.4
 file usr/share/man/man5/lj4_font.5 path=usr/share/man/man4/lj4_font.4
@@ -590,7 +627,3 @@ file usr/share/man/man7/groff_ms.7 path=usr/share/man/man5/groff_ms.5
 file usr/share/man/man7/groff_trace.7 path=usr/share/man/man5/groff_trace.5
 file usr/share/man/man7/groff_www.7 path=usr/share/man/man5/groff_www.5
 file usr/share/man/man7/roff.7 path=usr/share/man/man5/roff.5
-license groff.license license=GPLv2
-depend type=require fmri=system/library/fontconfig
-depend type=require fmri=system/library/freetype-2
-depend type=require fmri=text/groff/groff-core
