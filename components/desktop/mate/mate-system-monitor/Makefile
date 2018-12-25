@@ -19,14 +19,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-system-monitor
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE system monitor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:96e9952ef286c7eff8ba5a590c7b34ac6537a5ef8a89ea900005b2750f8dc8a8
+	sha256:1627755fcba3f8707ffea124049d0aaec706d87a67a006b6afacfeae8680da38
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	desktop/system-monitor/mate-system-monitor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -57,7 +57,7 @@ install:	$(INSTALL_64)
 test:		$(NO_TESTS)
 
 # Build dependencies
-REQUIRED_PACKAGES += mate-common
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/c++/glibmm
