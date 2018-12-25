@@ -18,14 +18,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-settings-daemon
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MNR_VERSION=	4
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	fork of gnome-settings-deamon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:13f63f19ea61d1b24349c1c8d4e01ed1df27bd1c1ae8793ef0d034499e170e05
+	sha256:b0eb29292dee07f3992ec14489d2774d162fef9a2464cb8ab5d7bbb39e78b483
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -58,8 +58,10 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Build requirements
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += system/library/mozilla-nss
+# Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
