@@ -1,0 +1,14 @@
+--- rdesktop-1f13bf5c5e86cbc99a6f0492fcdcd38cf0da2105/configure.ac.1	2018-12-25 16:01:59.444008281 +0000
++++ rdesktop-1f13bf5c5e86cbc99a6f0492fcdcd38cf0da2105/configure.ac	2018-12-25 16:05:39.291557837 +0000
+@@ -139,6 +139,11 @@
+ 		GSSAPI_CFLAGS=""
+ 		GSSAPI_LIBS="-framework Kerberos"
+ 		;;
++             solaris*)
++		AC_CHECK_HEADER(gssapi/gssapi.h, [WITH_CREDSSP=1], [WITH_CREDSSP=0])
++		GSSAPI_CFLAGS="`krb5-config --cflags gssapi`"
++		GSSAPI_LIBS="`krb5-config --libs gssapi`"
++		;;
+ 	     *)
+ 		if test -n "$PKG_CONFIG"; then
+ 		  PKG_CHECK_MODULES(GSSAPI, krb5-gssapi, [WITH_CREDSSP=1], [WITH_CREDSSP=0])
