@@ -17,14 +17,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mozo
 COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Simple menu editor for MATE
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:377b7fb55c66f3b57593cb800ba997d437f8c8b59a4d402953221634f0e2339b
+	sha256:0deeda3637cf5428853f633378f5d7006184e928cdf78e94d8aad7f822c490e0
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/xdg/menu-editor/mozo
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
@@ -49,6 +49,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Build requirements
 REQUIRED_PACKAGES += library/python/pygobject-3
 REQUIRED_PACKAGES += library/python/pygobject-3-27
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
