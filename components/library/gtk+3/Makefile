@@ -16,20 +16,20 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gtk+
-COMPONENT_VERSION= 3.24.1
-COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=		gtk+
+COMPONENT_VERSION=	3.24.2
+COMPONENT_SUMMARY=	GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:68387be307b99aadcdc653561d7a2a7f0113b93561fb18ded7075ec9ced5b02f
+	sha256:5b3b05e427cc928d103561ed2e91b2b2881fe88b1f167b0b1c9990da6aac8892
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.24/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.gtk.org/
-COMPONENT_LICENSE= LGPLv2
-COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
-COMPONENT_FMRI = library/desktop/gtk3
+	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.24/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.gtk.org/
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_FMRI=		library/desktop/gtk3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -85,7 +85,7 @@ install: $(INSTALL_32_and_64)
 test: $(TEST_32_and_64)
 
 # Test dependencies
-REQUIRED_PACKAGES += hicolor-icon-theme
+REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
