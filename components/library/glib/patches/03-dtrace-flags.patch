@@ -3,9 +3,9 @@ should force -32 or -64 depending on build.
 
 Not appropriate for upstream.
 
---- glib-2.52.0/glib/Makefile.am	2017-03-23 07:22:53.641866845 -0700
-+++ glib-2.52.0/glib/Makefile.am	2017-03-23 07:24:05.626741905 -0700
-@@ -365,18 +365,18 @@
+--- glib-2.58.2/glib/Makefile.am	2018-12-18 15:51:14.000000000 +0000
++++ glib-2.58.2/glib/Makefile.am	2018-12-28 20:20:13.978460539 +0000
+@@ -379,18 +379,18 @@ libglib_2_0_la_LDFLAGS = $(GLIB_LINK_FLA
  
  if ENABLE_DTRACE
  glib_probes.h: glib_probes.d
@@ -17,9 +17,9 @@ Not appropriate for upstream.
  		< $@.tmp > $@ && rm -f $@.tmp
  
 -glib_probes.lo: glib_probes.d
--	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC $(DTRACE) -G -s $< -o $@
+-	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC env CFLAGS="$(CFLAGS)" $(DTRACE) -G -s $< -o $@
 +glib_probes.o: glib_probes.d
-+	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC $(DTRACE) $(DFLAGS) -G -s $< -o $@
++	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC env CFLAGS="$(CFLAGS)" $(DTRACE) $(DFLAGS) -G -s $< -o $@
  
 -BUILT_SOURCES += glib_probes.h glib_probes.lo
 +BUILT_SOURCES += glib_probes.h glib_probes.o

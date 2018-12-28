@@ -1,0 +1,13 @@
+Although we have sys/auxv.h, we don't have getauxval(3), Linux does.
+
+--- glib-2.58.2/glib/gutils.c	2018-12-28 20:30:35.103726021 +0000
++++ glib-2.58.2/glib/gutils.c	2018-12-28 20:32:56.090135890 +0000
+@@ -2503,7 +2508,7 @@ const gchar *g_get_tmp_dir_utf8 (void) {
+ gboolean
+ g_check_setuid (void)
+ {
+-#if defined(HAVE_SYS_AUXV_H)
++#if defined(HAVE_SYS_AUXV_H) && !defined(__sun)
+   unsigned long value;
+   int errsv;
+ 
