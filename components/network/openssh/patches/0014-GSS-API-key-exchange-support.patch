@@ -2864,15 +2864,6 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -536,7 +540,7 @@ privsep_preauth_child(void)
- 
- #ifdef GSSAPI
- 	/* Cache supported mechanism OIDs for later use */
--	if (options.gss_authentication)
-+	if (options.gss_authentication || options.gss_keyex)
- 		ssh_gssapi_prepare_supported_oids();
- #endif
- 
 @@ -1811,10 +1815,13 @@ main(int ac, char **av)
  		free(fp);
  	}
