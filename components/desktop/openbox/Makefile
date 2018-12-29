@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openbox
 COMPONENT_VERSION=	3.6.1
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://openbox.org
 COMPONENT_SUMMARY=	A minimalistic,highly configurable, next generation window manager with extensive standards support.
 COMPONENT_FMRI=         desktop/window-manager/$(COMPONENT_NAME)
@@ -53,6 +53,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
