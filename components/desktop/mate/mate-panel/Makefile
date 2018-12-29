@@ -20,6 +20,7 @@ COMPONENT_NAME=		mate-panel
 COMPONENT_MJR_VERSION=	1.20
 COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Panel of Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -63,6 +64,8 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += gnome/help-viewer/yelp
 REQUIRED_PACKAGES += library/gnome/yelp-tools
+REQUIRED_PACKAGES += text/itstool
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -81,4 +84,3 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxrandr
-REQUIRED_PACKAGES += text/itstool
