@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz
 COMPONENT_VERSION=	0.8.14
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		desktop/compiz
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	OpenGL compositing window manager
@@ -73,6 +74,7 @@ REQUIRED_PACKAGES += library/desktop/libwnck3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libfuse
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
