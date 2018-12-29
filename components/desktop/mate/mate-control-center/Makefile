@@ -18,7 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		mate-control-center
 COMPONENT_MJR_VERSION=	1.20
 COMPONENT_MNR_VERSION=	3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
@@ -57,16 +57,13 @@ REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco
-REQUIRED_PACKAGES += desktop/mate/mate-settings-daemon
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libxklavier
 REQUIRED_PACKAGES += library/desktop/mate/libmatekbd
-REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/mate/mate-menus
 REQUIRED_PACKAGES += library/desktop/pango
