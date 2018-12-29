@@ -24,7 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           efl
 COMPONENT_VERSION=        1.18.5
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=           library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -82,7 +82,6 @@ test: $(TEST_64)
 REQUIRED_PACKAGES += x11/library/mesa
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
@@ -102,6 +101,7 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
