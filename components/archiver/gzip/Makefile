@@ -18,17 +18,20 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.9
+COMPONENT_VERSION=	1.10
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ae506144fc198bd8f81f1f4ad19ce63d5a2d65e42333255977cf1dcf1479089a
+	sha256:8425ccac99872d544d4310305f915f5ea81e04d0f437ef1a230dc9d1c819d7c0
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -98,6 +101,7 @@ install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
 test:		$(TEST_64)
 
-REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
