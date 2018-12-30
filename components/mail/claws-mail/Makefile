@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
 COMPONENT_VERSION=	3.16.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.claws-mail.org
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
@@ -66,6 +67,7 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
