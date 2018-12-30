@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 2.2.8
-COMPONENT_REVISION= 1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
@@ -190,7 +190,6 @@ install: $(INSTALL_64)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
@@ -237,6 +236,7 @@ REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
