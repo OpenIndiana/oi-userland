@@ -28,11 +28,11 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
-COMPONENT_VERSION=	10.31
+COMPONENT_VERSION=	10.32
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e07d538704aa65e477b6a392b32ff9fc5edf75ab9a40ddfc876186c4ff4d68ac
+	sha256:f29e89cc5de813f45786580101aaee3984a65818631d4ddbda7b32f699b87c2e
 COMPONENT_ARCHIVE_URL=	ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_PROJECT_URL=  http://pcre.org/
@@ -80,6 +80,7 @@ CONFIGURE_OPTIONS+=	--enable-rebuild-chartables
 CONFIGURE_OPTIONS+=	--enable-newline-is-any
 CONFIGURE_OPTIONS+=	--enable-pcre2grep-libz
 CONFIGURE_OPTIONS+=	--enable-pcre2grep-libbz2
+CONFIGURE_OPTIONS+=	--enable-pcre2-32
 CONFIGURE_OPTIONS+=	--with-link-size=4
 CONFIGURE_OPTIONS+=	--with-match-limit=10000000
 CONFIGURE_OPTIONS+=	--with-pic
@@ -120,14 +121,14 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|Testsuite summary for PCRE .*|Testsuite summary for PCRE|" '
 
 # common targets
-
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
