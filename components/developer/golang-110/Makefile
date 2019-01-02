@@ -19,8 +19,10 @@
 # CDDL HEADER END
 #
 
+#
 # Copyright 2016 Aurelien Larcher
 # Copyright 2017 Till Wegmueller
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -29,7 +31,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.10
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).5
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).7
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -37,7 +39,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:f0a3ed5c775f39a970d4937c64b3b178992e23a5df57ae56a59a1c99253094f4
+COMPONENT_ARCHIVE_HASH=		sha256:b84a0d7c90789f3a2ec5349dbe7419efb81f1fac9289b6f60df86bd919bd4447
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
@@ -109,10 +111,11 @@ COMPONENT_TEST_DIR=	$(@D)/src
 COMPONENT_TEST_CMD=	./run.bash
 COMPONENT_TEST_TARGETS=
 
+# Copy Go source tree to the proto area in order to deliver Go SDK under the GOROOT
 define COMPONENT_INSTALL_ACTION=
 	($(MKDIR) $(COMPONENT_TARGET_DIR)/src); \
 	(cd $(SOURCE_DIR) && \
-	/usr/gnu/bin/find . -maxdepth 1 -path "./$(COMPONENT_SRC_NAME_1)" \
+	/usr/gnu/bin/find . -maxdepth 1 -path "./$(COMPONENT_SRC_NAME)" \
 	  -prune -o \( ! -iname ".*" \) -print \
 	  -exec /usr/gnu/bin/cp -r \
 	  --parents {} $(COMPONENT_TARGET_DIR) \;); \
@@ -133,3 +136,5 @@ install:	build $(INSTALL_64)
 test:		$(TEST_64)
 
 REQUIRED_PACKAGES += developer/golang-18
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
