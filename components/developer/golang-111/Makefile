@@ -111,11 +111,6 @@ COMPONENT_TEST_TARGETS=
 
 define COMPONENT_INSTALL_ACTION=
 	($(MKDIR) $(COMPONENT_TARGET_DIR)/src); \
-	(cd $(SOURCE_DIR) && \
-	/usr/gnu/bin/find . -maxdepth 1 -path "./$(COMPONENT_SRC_NAME_1)" \
-	  -prune -o \( ! -iname ".*" \) -print \
-	  -exec /usr/gnu/bin/cp -r \
-	  --parents {} $(COMPONENT_TARGET_DIR) \;); \
 	(cd $(BUILD_DIR_64) && \
 	/usr/gnu/bin/find src -type f \
 		-exec /usr/gnu/bin/cp --parents {} $(COMPONENT_TARGET_DIR) \;); \
