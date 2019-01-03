@@ -11,9 +11,9 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2018 Michal Nowak
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 set name=pkg.fmri value=pkg:/text/file@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Darwinsys file - a file type guesser (the GNU/Linux variant)"
 set name=info.classification value="org.opensolaris.category.2008:System/Text Tools"
@@ -21,16 +21,14 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-#depend fmri=pkg:/library/magic type=require
-
-file usr/share/man/man1/file.1 path=usr/gnu/share/man/man1/file.1
-link path=usr/share/man/man1/gfile.1 target=../../../gnu/share/man/man1/file.1 facet.compat.gnulinks=true
 
 file usr/bin/$(MACH64)/file path=usr/gnu/bin/$(MACH64)/file
 file usr/bin/file path=usr/gnu/bin/$(MACH32)/file
-# Must run the binary matching the kernel bitness
+# Ensure binary matching the kernel bitness
 hardlink path=usr/gnu/bin/file target=../../lib/isaexec pkg.linted=true
 link path=usr/bin/gfile target=../gnu/bin/file facet.compat.gnulinks=true
-
+file usr/share/man/man1/file.1 path=usr/gnu/share/man/man1/file.1
+link path=usr/share/man/man1/gfile.1 target=../../../gnu/share/man/man1/file.1 facet.compat.gnulinks=true
