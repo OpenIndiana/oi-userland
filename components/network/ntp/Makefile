@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8p12
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
@@ -63,8 +64,8 @@ CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc/inet
 CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
-CONFIGURE_OPTIONS +=	--enable-debugging
-CONFIGURE_OPTIONS +=	--enable-debug-timing
+# debugging is enabled by default, causes 9705
+CONFIGURE_OPTIONS +=	--disable-debugging
 CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
