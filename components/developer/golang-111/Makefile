@@ -109,6 +109,7 @@ COMPONENT_TEST_DIR=	$(@D)/src
 COMPONENT_TEST_CMD=	./run.bash
 COMPONENT_TEST_TARGETS=
 
+# Use this Command to copy the Go Source tree into the proto area. In order to deliver the Go SDK under GOROOT
 define COMPONENT_INSTALL_ACTION=
 	($(MKDIR) $(COMPONENT_TARGET_DIR)/src); \
 	(cd $(SOURCE_DIR) && \
