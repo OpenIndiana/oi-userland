@@ -12,17 +12,17 @@
 #
 # Copyright 2016 Jim Klimov
 # Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	augeas
-COMPONENT_VERSION= 1.10.1
+COMPONENT_VERSION= 1.11.0
 COMPONENT_SUMMARY= Augeas is a utility for editing configuration files	
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:52db256afab261d31cc147eaa1a71795a5fec59e888dfd0b65a84c7aacd6364d
+COMPONENT_ARCHIVE_HASH=	sha256:393ce8f4055af89cd4c20bf903eacbbd909cf427891f41b56dc2ba66243ea0b0
 COMPONENT_ARCHIVE_URL= http://download.augeas.net/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://augeas.net/index.html
 COMPONENT_FMRI=	library/$(COMPONENT_NAME)
@@ -50,8 +50,6 @@ CONFIGURE_OPTIONS += --disable-dependency-tracking
 # XXX why does this coredump without the workaround?
 # Fixes coredump in gnulib-test/test-localename test
 CONFIGURE_OPTIONS  +=           ac_cv_func_newlocale=no
-
-COMPONENT_INSTALL_ARGS += lensdir=$(USRSHAREDIR)/augeas/lenses
 
 # Needed for "gmake test" to work.
 # SHELLOPTS is exported via make-rules/shared-macros.mk,
