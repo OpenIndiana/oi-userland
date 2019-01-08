@@ -10,16 +10,16 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2018-2019 Michal Nowak
 #
 
-PREFERRED_BITS=64
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vte
 COMPONENT_MJR_VERSION=	0.54
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
@@ -28,7 +28,7 @@ COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a724fa0543c689e30a3d0ff07e4195a86dc7c4fe57b469be97c7c87f27604e53
+	sha256:693682145025c2af72d1070afaecba111351e747b4ba8f4a9d246b139f44ebfd
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1 LGPLv3 GPLv3
 COMPONENT_LICENSE_FILE=	COPYING.GPL3
@@ -37,7 +37,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
@@ -48,19 +48,20 @@ LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --force &&\
-					gtkdocize &&\
-					aclocal -I . &&\
-					autoconf &&\
-					autoheader &&\
-					automake -c -f -a )
+COMPONENT_PREP_ACTION = ( cd $(@D)  && \
+				libtoolize --force &&\
+				gtkdocize &&\
+				aclocal -I . &&\
+				autoconf &&\
+				autoheader &&\
+				automake -c -f -a )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--disable-Bsymbolic
 CONFIGURE_OPTIONS+=	--disable-vala
+CONFIGURE_OPTIONS+=	--disable-static
 
 # gobject introspection
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
