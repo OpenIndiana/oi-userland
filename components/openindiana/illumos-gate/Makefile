@@ -583,7 +583,6 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 	$(RM) -r $(@D)/pkgrecv.dir
 	$(MKDIR) $(@D)/pkgrecv.dir
 
-
 ifeq ($(DEBUG),yes)
 	$(RM) -r $(@D)/pkgrepo-merged.dir
 	$(MKDIR) $(@D)/pkgrepo-merged.dir
@@ -621,4 +620,7 @@ clean::
 clobber::       clean
 	$(RM) -r $(CLOBBER_PATHS)
 
-REQUIRED_PACKAGES+= developer/illumos-closed
+REQUIRED_PACKAGES += developer/gcc-7
+REQUIRED_PACKAGES += developer/illumos-closed
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
