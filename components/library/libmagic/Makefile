@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		file
 COMPONENT_FMRI=		library/magic
 COMPONENT_VERSION=	5.35
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.darwinsys.com/file/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
