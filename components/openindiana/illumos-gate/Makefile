@@ -71,11 +71,12 @@ PATCHES =       $(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(
 $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
-        $(GIT) checkout -f && \
-              $(GIT) clean -f
+	$(GIT) checkout -f && \
+	$(GIT) clean -f
 	for p in $(PATCHES); do \
-          $(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $$p; \
-        done
+	  echo "\nPatch: $$p:"; \
+	  $(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $$p; \
+	done
 	@cd $(SOURCE_DIR); $(GIT) log -1 --format=%H > .downloaded
 	$(TOUCH) $@
 
