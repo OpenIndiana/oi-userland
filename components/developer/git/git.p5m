@@ -19,7 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2018-2019, Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -64,6 +64,7 @@ file path=usr/lib/git-core/git-http-fetch
 file path=usr/lib/git-core/git-http-push
 file path=usr/lib/git-core/git-imap-send
 file path=usr/lib/git-core/git-instaweb
+file path=usr/lib/git-core/git-legacy-rebase
 file path=usr/lib/git-core/git-merge-octopus
 file path=usr/lib/git-core/git-merge-one-file
 file path=usr/lib/git-core/git-merge-resolve
@@ -74,7 +75,7 @@ file path=usr/lib/git-core/git-parse-remote
 file path=usr/lib/git-core/git-quiltimport
 file path=usr/lib/git-core/git-rebase
 file path=usr/lib/git-core/git-rebase--am
-file path=usr/lib/git-core/git-rebase--interactive
+file path=usr/lib/git-core/git-rebase--common
 file path=usr/lib/git-core/git-rebase--merge
 file path=usr/lib/git-core/git-remote-http
 file path=usr/lib/git-core/git-remote-testsvn
@@ -92,6 +93,7 @@ file path=usr/lib/git-core/git-upload-pack
 file path=usr/lib/git-core/git-web--browse
 hardlink path=usr/bin/git target=../lib/git-core/git
 hardlink path=usr/bin/git-cvsserver target=../lib/git-core/git-cvsserver
+hardlink path=usr/lib/git-core/git-rebase--interactive target=git
 hardlink path=usr/bin/git-receive-pack target=../lib/git-core/git
 hardlink path=usr/bin/git-shell target=../lib/git-core/git-shell
 hardlink path=usr/bin/git-upload-archive target=../lib/git-core/git
@@ -162,6 +164,7 @@ hardlink path=usr/lib/git-core/git-merge-subtree target=git
 hardlink path=usr/lib/git-core/git-merge-tree target=git
 hardlink path=usr/lib/git-core/git-mktag target=git
 hardlink path=usr/lib/git-core/git-mktree target=git
+hardlink path=usr/lib/git-core/git-multi-pack-index.1 target=git
 hardlink path=usr/lib/git-core/git-mv target=git
 hardlink path=usr/lib/git-core/git-name-rev target=git
 hardlink path=usr/lib/git-core/git-notes target=git
@@ -262,6 +265,8 @@ file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/SVN/Migr
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/SVN/Prompt.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/SVN/Ra.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/i86pc-solaris-64int/Git/SVN/Utils.pm
+file path=usr/share/bash-completion/completions/git
+link path=usr/share/bash-completion/completions/gitk target=git
 file path=usr/share/git-core/templates/description
 file path=usr/share/git-core/templates/hooks/applypatch-msg.sample
 file path=usr/share/git-core/templates/hooks/commit-msg.sample
@@ -445,6 +450,7 @@ file path=usr/share/man/man1/git-mergetool--lib.1
 file path=usr/share/man/man1/git-mergetool.1
 file path=usr/share/man/man1/git-mktag.1
 file path=usr/share/man/man1/git-mktree.1
+file path=usr/share/man/man1/git-multi-pack-index.1
 file path=usr/share/man/man1/git-mv.1
 file path=usr/share/man/man1/git-name-rev.1
 file path=usr/share/man/man1/git-notes.1
@@ -534,5 +540,3 @@ file path=usr/share/man/man5/gitsubmodules.5
 file path=usr/share/man/man5/gittutorial-2.5
 file path=usr/share/man/man5/gittutorial.5
 file path=usr/share/man/man5/gitworkflows.5
-file path=usr/share/bash-completion/completions/git
-link path=usr/share/bash-completion/completions/gitk target=git
