@@ -20,7 +20,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2018-2019, Michal Nowak
 #
 #
 # unpack.py - an archive unpack utility
@@ -53,6 +53,8 @@ def uncompress_unpack_commands(filename, verbose=False):
 		uncompress = "/usr/bin/unzip -qo"
 	elif (re.search("(\.oxt)$", filename) != None):
 		uncompress = "/usr/bin/unzip -qo"
+	elif (re.search("(\.zst|\.tzst)$", filename) != None):
+		uncompress = "/usr/bin/unzstd -c"
 	elif (re.search("(\.gem)$", filename) != None):
 		ruby_ver = os.getenv('RUBY_VERSION', '')
 		uncompress = "/usr/ruby/" + ruby_ver + "/bin/gem unpack"
