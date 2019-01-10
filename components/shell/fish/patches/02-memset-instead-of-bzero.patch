@@ -1,0 +1,24 @@
+From ef23923c8dc2dd825a5a260b99bb3b7fd5c4834b Mon Sep 17 00:00:00 2001
+From: Mahmoud Al-Qudsi <mqudsi@neosmart.net>
+Date: Wed, 2 Jan 2019 00:28:25 -0600
+Subject: [PATCH] Drop use of deprecated bzero(3)
+
+Use `memset(__, 0, __)` instead. Also fixes #5461 by not needing `bzero`
+from `strings.h` anymore.
+---
+ src/history.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/history.cpp b/src/history.cpp
+index a2b4bb0bc..8ee7974e8 100644
+--- a/src/history.cpp
++++ b/src/history.cpp
+@@ -270,7 +270,7 @@ class history_file_contents_t {
+                 ptr += amt;
+             }
+         }
+-        bzero(ptr, remaining);
++        memset(ptr, 0, remaining);
+         return true;
+     }
+ 
