@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
 COMPONENT_VERSION=	3.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		text/gnu-grep
 COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -36,7 +37,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:b960541c499619efd6afe1fa795402e4733c8e11ebf9fafccc0bb4bccdc5b514
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv3, FDLv1.3 
+COMPONENT_LICENSE= GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
