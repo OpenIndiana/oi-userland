@@ -11,13 +11,15 @@
 #
 # Copyright 2016 Adam Stevko
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2018 Michal Nowak
 #
+
+PREFERRED_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		open-vm-tools
-COMPONENT_VERSION=	10.3.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	10.3.5
 COMPONENT_SUMMARY=	open-vm-tools is a set of services and modules that enable several features in VMware products for better management of, and seamless user interactions with, guests.
 COMPONENT_PROJECT_URL=	https://github.com/vmware/open-vm-tools
 COMPONENT_FMRI=		system/virtualization/open-vm-tools
@@ -25,7 +27,7 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-stable-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vmware/$(COMPONENT_NAME)/archive/stable-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b3d0b5fd272a8dc35cab1ddd732f9d436f72682925212a6cdeccdab283e2f5ec
+COMPONENT_ARCHIVE_HASH=	sha256:c0ecd281d6113ca700b1ab0a10559db72e80d8fc03264d53ebfdc400578ab1b6
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
@@ -49,7 +51,6 @@ CFLAGS += -std=gnu99
 CPPFLAGS += -D__EXTENSIONS__
 CPPFLAGS += -D_XOPEN_SOURCE=600
 CPPFLAGS += -D__SOLARIS__=1
-CPPFLAGS += -D_FILE_OFFSET_BITS=64
 # open-vm-tools have if defined(sun) all over (should be __sun)
 CPPFLAGS += -Dsun
 # and this one means S11 or later (not S10, S9)
@@ -68,8 +69,8 @@ CONFIGURE_OPTIONS += --disable-multimon
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --enable-deploypkg=no
-CONFIGURE_OPTIONS += --with-gtk2
-CONFIGURE_OPTIONS += --with-gtkmm
+CONFIGURE_OPTIONS += --with-gtk3
+CONFIGURE_OPTIONS += --with-gtkmm3
 CONFIGURE_OPTIONS += --without-icu
 CONFIGURE_OPTIONS += --without-kernel-modules
 CONFIGURE_OPTIONS += --without-xerces
@@ -78,9 +79,9 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 # Need C++ compatible xdr headers
 CONFIGURE_OPTIONS += RPCGENFLAGS="-C"
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # there are no tests defined
 test:		  $(NO_TESTS)
@@ -88,21 +89,22 @@ test:		  $(NO_TESTS)
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 
-# Auto-generated dependencies
+# Not found automatically
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/desktop/c++/atkmm
 REQUIRED_PACKAGES += library/desktop/c++/cairomm
-REQUIRED_PACKAGES += library/desktop/c++/gtkmm
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/c++/gtkmm3
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libfuse
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdnet
-REQUIRED_PACKAGES += system/virtualization/open-vm-tools
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11

@@ -1,0 +1,24 @@
+This type of bitness checking won't work on illumos.
+
+--- open-vm-tools-stable-10.3.5/configure.ac	2018-12-01 18:14:18.549366150 +0000
++++ open-vm-tools-stable-10.3.5/configure.ac	2018-12-01 18:38:21.145283499 +0000
+@@ -70,18 +70,7 @@ AC_CONFIG_MACRO_DIR([m4])
+ AC_CANONICAL_HOST
+ AC_CANONICAL_BUILD
+ 
+-# Quote the regular expressions
+-case "$host_cpu" in
+-   [i[3456]86])
+-      userSpaceBitness="32"
+-      ;;
+-   [amd64|x86_64])
+-      userSpaceBitness="64"
+-      ;;
+-   [*])
+-      AC_MSG_ERROR([Unknown architecture.])
+-      ;;
+-esac
++userSpaceBitness="64"
+ 
+ # Operational arguments.
+ AC_ARG_WITH([root-privileges],
