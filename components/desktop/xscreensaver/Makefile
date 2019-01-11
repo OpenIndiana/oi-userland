@@ -12,21 +12,21 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright 2017 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2018-2019 Michal Nowak
 #
 
-PREFERRED_BITS=64
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
-COMPONENT_VERSION=	5.40
+COMPONENT_VERSION=	5.42
 COMPONENT_PROJECT_URL=	https://www.jwz.org/xscreensaver/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:30a0908d4164cf780ef034f87ba884316296b308af2484261ccde86be0c95ae0
-COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/xscreensaver/$(COMPONENT_ARCHIVE)
+	sha256:441daa033b214bfdd82b1991fbf7dc9360466bff542ce0f6002d0071a4d5cbe1
+COMPONENT_ARCHIVE_URL=	https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/xscreensaver
 
 PATCH_LEVEL=		0
@@ -93,18 +93,20 @@ install:	$(INSTALL_64) ../rss-glx/build/i86/.built
 	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)/usr/share/X11/app-defaults/XScreenSaver
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += x11/library/mesa
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/perl-5/xml-parser
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
@@ -119,5 +121,4 @@ REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxxf86misc
 REQUIRED_PACKAGES += x11/library/libxxf86vm
-REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
