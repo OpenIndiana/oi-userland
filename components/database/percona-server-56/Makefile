@@ -10,26 +10,25 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
-# Copyright 2018, Michal Nowak
+# Copyright 2018-2019, Michal Nowak
 # 
 
 include ../../../make-rules/shared-macros.mk
 
-CMAKE= cmake
+CMAKE=			cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.6.40-84.0
-IPS_COMPONENT_VERSION=	5.6.40.84.0
+COMPONENT_VERSION=	5.6.42-84.2
+IPS_COMPONENT_VERSION=	5.6.42.84.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:9d817e00610368c27184b26928a8c6d5db61c8df745365d462fedecb3291847c
-COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:3105ead687f56a1ae0ace557d276fe8dc7f4e1f71d8523032f713ebb80635347
+COMPONENT_ARCHIVE_URL=	https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
 
 CONFIGURE_PREFIX=/usr/percona-server/5.6
 CONFDIR=/etc/percona-server/5.6
@@ -72,7 +71,6 @@ CMAKE_OPTIONS+= -DFORCE_UNSUPPORTED_COMPILER=1
 # gcc invocation in some link.txt file is missing -m$(BITS) parameter
 # and it makes 64-bit build to fail, this is a quick hack to make it build
 # for now, cmake build system needs a proper fix
-
 COMPONENT_POST_CONFIGURE_ACTION.32=
 COMPONENT_POST_CONFIGURE_ACTION.64= find $(@D) -type f -name link.txt \
     -exec perl -pi -e 's/gcc\ \ -fPIC/\/gcc\ -m64\ -fPIC/' {} \;
@@ -114,15 +112,15 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
