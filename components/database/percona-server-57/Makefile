@@ -10,25 +10,24 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
-# Copyright 2018, Michal Nowak
+# Copyright 2019, Michal Nowak
 # 
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.7.22-22
-COMPONENT_REVISION=	1
-IPS_COMPONENT_VERSION=	5.7.22.22
+COMPONENT_VERSION=	5.7.24-27
+IPS_COMPONENT_VERSION=	5.7.24.27
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:3b94644861628fa6e17b82318220327f0beb2767739c976c961c8a9eb6c9783a
+COMPONENT_ARCHIVE_HASH=	sha256:999593afa241660bc7860264b46a826faf97d80d411966fade24084f47b249a0
 COMPONENT_ARCHIVE_URL=	https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 # We need specific boost version
 COMPONENT_ARCHIVE_1= boost_1_59_0.tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac
+	sha256:47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/project/boost/boost/1.59.0/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -44,6 +43,8 @@ DATA_PREFIX=/var/percona-server/5.7
 CMAKE_PLUGINDIR.32 =	lib/plugin
 CMAKE_PLUGINDIR.64 =	lib/$(MACH64)/plugin
 
+# Make sure GCC 6 is accepted
+CMAKE_OPTIONS+= -DFORCE_UNSUPPORTED_COMPILER=ON
 CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=RELEASE
 CMAKE_OPTIONS+=	-DWITH_SSL=system
 CMAKE_OPTIONS+= -DINSTALL_LAYOUT=SVR4
@@ -67,7 +68,6 @@ CMAKE_OPTIONS+= -DINSTALL_SECURE_FILE_PRIVDIR=""
 # gcc invocation in some link.txt file is missing -m$(BITS) parameter
 # and it makes 64-bit build to fail, this is a quick hack to make it build
 # for now, cmake build system needs a proper fix
-
 COMPONENT_POST_CMAKE_ACTION.32=
 COMPONENT_POST_CMAKE_ACTION.64= find $(@D) -type f -name link.txt \
     -exec perl -pi -e 's/gcc\ \ -fPIC/\/gcc\ -m64\ -fPIC/' {} \;
@@ -77,18 +77,19 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/percona-server-57/client
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += web/curl
