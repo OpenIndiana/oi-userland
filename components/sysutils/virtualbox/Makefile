@@ -110,7 +110,6 @@ LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_R0DRV ='
 LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_RC ='
 LOCAL_CONFIG+='\nVBOX_WITH_NATIVE_DTRACE ='
 
-
 COMPONENT_PRE_CONFIGURE_ACTION= \
   ( cd $(@D); echo $(LOCAL_CONFIG) > LocalConfig.kmk; $(CP) -a $(SOURCE_DIR)/* $(@D) )
 
@@ -136,6 +135,7 @@ VBOX_PREFIX   = /opt/VirtualBox
 VBOX_LIBDIR   = $(VBOX_PREFIX)/$(MACH64)
 VBOX_QT5_LIBS = VirtualBox.so VBoxDbg.so
 VBOX_QT5_RPATH= $(VBOX_LIBDIR):$(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
+
 COMPONENT_POST_INSTALL_ACTION = \
 	for file in $(VBOX_QT5_LIBS); \
 	do \
@@ -181,7 +181,6 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	cp $(VBOX_BINDIR)/vbox_vendor_select $(PROTO_DIR)/lib/opengl/ogl_select
 	$(TOUCH) $@
 
-		
 $(BUILD_32_and_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk KBUILD_VERBOSE=3"
 
 build:		$(BUILD_32_and_64) 
