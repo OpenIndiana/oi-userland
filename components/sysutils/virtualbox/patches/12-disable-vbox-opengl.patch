@@ -1,0 +1,34 @@
+Now when we fixed VirtualBox script, we find out that GL drivers do not work on OI... 
+So, disable them by default
+
+--- VirtualBox-5.2.22/src/VBox/Additions/solaris/Installer/vbox_vendor_select.1	2018-12-20 17:25:20.245000315 +0000
++++ VirtualBox-5.2.22/src/VBox/Additions/solaris/Installer/vbox_vendor_select	2018-12-20 17:31:19.341239415 +0000
+@@ -36,6 +36,28 @@
+ 
+ PATH=/usr/bin:/usr/sbin
+ 
++getprop() {
++	PROPVAL=""
++	# The "" instance is to get the properties from the base service 
++	# without any instance specifier
++	svcprop -q -p $1 application/opengl/ogl-select
++	if [[ $? -eq 0 ]] ; then
++	        PROPVAL=$(svcprop -p $1 application/opengl/ogl-select)
++	        if [[ "$PROPVAL" == "\"\"" ]] ; then
++	                PROPVAL=""
++	        fi
++	        return
++	fi
++	return
++}
++
++getprop options/vendor
++# Currently support for vbox-supplied OpenGL drivers is WIP  on OI,
++# so disable it by default
++if [[ "$PROPVAL" != "vbox" ]] ; then
++      exit 0;
++fi
++
+ ARCH="$(uname -p)"
+ 
+ case "${ARCH}" in
