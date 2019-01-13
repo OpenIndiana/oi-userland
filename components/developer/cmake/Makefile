@@ -34,6 +34,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION=3.12
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools

@@ -1,0 +1,12 @@
+--- cmake-3.12.4/Modules/CMakeDetermineSystem.cmake	2019-01-13 08:55:16.128456978 +0000
++++ cmake-3.12.4/Modules/CMakeDetermineSystem.cmake.new	2019-01-13 09:01:53.015398514 +0000
+@@ -55,6 +55,9 @@ if(CMAKE_HOST_UNIX)
+     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "OpenBSD")
+       exec_program(arch ARGS -s OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_PROCESSOR
+         RETURN_VALUE val)
++    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "SunOS")
++      exec_program(isainfo ARGS -k OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_PROCESSOR
++        RETURN_VALUE val)
+     else()
+       exec_program(${CMAKE_UNAME} ARGS -p OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_PROCESSOR
+         RETURN_VALUE val)
