@@ -1,0 +1,77 @@
+--- percona-server-8.0.13-3/mysys/CMakeLists.txt	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/mysys/CMakeLists.txt.new	2019-01-12 21:32:05.476619950 +0000
+@@ -156,7 +156,7 @@ IF(SOLARIS_SPARC AND CMAKE_COMPILER_IS_G
+ ENDIF()
+ 
+ MYSQL_ADD_EXECUTABLE(thr_lock thr_lock.cc SKIP_INSTALL)
+-TARGET_LINK_LIBRARIES(thr_lock mysys)
++TARGET_LINK_LIBRARIES(thr_lock mysys -lsocket)
+ SET_TARGET_PROPERTIES(thr_lock PROPERTIES COMPILE_FLAGS "-DMAIN")
+ MYSQL_ADD_EXECUTABLE(mf_iocache_test mf_iocache.cc SKIP_INSTALL)
+ TARGET_LINK_LIBRARIES(mf_iocache_test mysys)
+@@ -159,7 +159,7 @@ MYSQL_ADD_EXECUTABLE(thr_lock thr_lock.c
+ TARGET_LINK_LIBRARIES(thr_lock mysys -lsocket)
+ SET_TARGET_PROPERTIES(thr_lock PROPERTIES COMPILE_FLAGS "-DMAIN")
+ MYSQL_ADD_EXECUTABLE(mf_iocache_test mf_iocache.cc SKIP_INSTALL)
+-TARGET_LINK_LIBRARIES(mf_iocache_test mysys)
++TARGET_LINK_LIBRARIES(mf_iocache_test mysys -lsocket)
+ SET_TARGET_PROPERTIES(mf_iocache_test PROPERTIES COMPILE_FLAGS "-DMAIN")
+ MYSQL_ADD_EXECUTABLE(base64_test base64.cc SKIP_INSTALL)
+ SET_TARGET_PROPERTIES(base64_test PROPERTIES COMPILE_FLAGS "-DMAIN")
+--- percona-server-8.0.13-3/storage/heap/CMakeLists.txt	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/storage/heap/CMakeLists.txt.new	2019-01-12 21:34:11.796152795 +0000
+@@ -37,8 +37,8 @@ IF(WITH_UNIT_TESTS)
+   ADD_DEPENDENCIES(heap_nopfs GenError)
+ 
+   MYSQL_ADD_EXECUTABLE(hp_test1 hp_test1.cc ADD_TEST hp_test1)
+-  TARGET_LINK_LIBRARIES(hp_test1 heap_nopfs mysys)
++  TARGET_LINK_LIBRARIES(hp_test1 heap_nopfs mysys -lsocket)
+ 
+   MYSQL_ADD_EXECUTABLE(hp_test2 hp_test2.cc ADD_TEST hp_test2)
+-  TARGET_LINK_LIBRARIES(hp_test2 heap_nopfs mysys)
++  TARGET_LINK_LIBRARIES(hp_test2 heap_nopfs mysys -lsocket)
+ ENDIF()
+--- percona-server-8.0.13-3/storage/perfschema/unittest/CMakeLists.txt	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/storage/perfschema/unittest/CMakeLists.txt.new	2019-01-12 21:37:11.618755897 +0000
+@@ -28,7 +28,7 @@ ADD_DEPENDENCIES(pfs_server_stubs GenErr
+ 
+ MACRO (PFS_ADD_TEST name)
+   MYSQL_ADD_EXECUTABLE(${name}-t ${name}-t.cc ADD_TEST ${name})
+-  TARGET_LINK_LIBRARIES(${name}-t
++  TARGET_LINK_LIBRARIES(${name}-t -lsocket
+     mytap perfschema mysys pfs_server_stubs strings ${ICU_LIBRARIES})
+ ENDMACRO()
+ 
+--- percona-server-8.0.13-3/utilities/CMakeLists.txt	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/utilities/CMakeLists.txt.new	2019-01-13 11:07:15.882409587 +0000
+@@ -114,7 +114,7 @@ ENDIF()
+ 
+ IF (BUILD_BUNDLED_LZ4)
+   MYSQL_ADD_EXECUTABLE(lz4_decompress lz4_decompress.cc)
+-  TARGET_LINK_LIBRARIES(lz4_decompress ${LZ4_LIBRARY} mysys)
++  TARGET_LINK_LIBRARIES(lz4_decompress ${LZ4_LIBRARY} mysys -lsocket)
+ ENDIF()
+ 
+ IF (BUILD_BUNDLED_ZLIB OR NOT OPENSSL_EXECUTABLE_HAS_ZLIB)
+--- percona-server-8.0.13-3/client/CMakeLists.txt	2019-01-13 11:22:34.533163354 +0000
++++ percona-server-8.0.13-3/client/CMakeLists.txt	2019-01-13 11:22:58.677144877 +0000
+@@ -117,7 +117,7 @@ MYSQL_ADD_EXECUTABLE(mysql_secure_instal
+ TARGET_LINK_LIBRARIES(mysql_secure_installation perconaserverclient)
+ 
+ MYSQL_ADD_EXECUTABLE(mysql_ssl_rsa_setup mysql_ssl_rsa_setup.cc path.cc logger.cc)
+-TARGET_LINK_LIBRARIES(mysql_ssl_rsa_setup mysys mysys_ssl)
++TARGET_LINK_LIBRARIES(mysql_ssl_rsa_setup mysys mysys_ssl -lsocket)
+ SET_TARGET_PROPERTIES(mysql_ssl_rsa_setup PROPERTIES LINKER_LANGUAGE CXX)
+ 
+ # "WIN32" also covers 64 bit. "echo" is used in some files below "mysql-test/".
+--- percona-server-8.0.13-3/utilities/CMakeLists.txt	2019-01-13 11:24:47.707310077 +0000
++++ percona-server-8.0.13-3/utilities/CMakeLists.txt.new	2019-01-13 11:53:56.840915890 +0000
+@@ -119,7 +119,7 @@ ENDIF()
+ 
+ IF (BUILD_BUNDLED_ZLIB OR NOT OPENSSL_EXECUTABLE_HAS_ZLIB)
+   MYSQL_ADD_EXECUTABLE(zlib_decompress zlib_decompress.cc)
+-  TARGET_LINK_LIBRARIES(zlib_decompress ${ZLIB_LIBRARY} mysys)
++  TARGET_LINK_LIBRARIES(zlib_decompress ${ZLIB_LIBRARY} mysys -lsocket)
+ ENDIF()
+ 
+ IF(WITH_INNOBASE_STORAGE_ENGINE)

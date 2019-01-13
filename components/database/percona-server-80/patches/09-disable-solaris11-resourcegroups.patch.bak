@@ -1,0 +1,18 @@
+Multi-CPU Binding (MCB) was introduced in Solaris 11.2, illumos does not have it:
+https://www.illumos.org/issues/8996.
+
+--- percona-server-8.0.13-3/sql/CMakeLists.txt	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/sql/CMakeLists.txt.new	2019-01-13 17:07:17.268823602 +0000
+@@ -541,9 +541,9 @@ IF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+   LIST(APPEND SQL_SHARED_SOURCES resourcegroups/platform/thread_attrs_api_freebsd.cc)
+ ENDIF()
+ 
+-IF(CMAKE_SYSTEM_NAME MATCHES "SunOS")
+-  LIST(APPEND SQL_SHARED_SOURCES resourcegroups/platform/thread_attrs_api_solaris.cc)
+-ENDIF()
++#IF(CMAKE_SYSTEM_NAME MATCHES "SunOS")
++#  LIST(APPEND SQL_SHARED_SOURCES resourcegroups/platform/thread_attrs_api_solaris.cc)
++#ENDIF()
+ 
+ IF(WIN32)
+   LIST(APPEND SQL_SHARED_SOURCES resourcegroups/platform/thread_attrs_api_win.cc)

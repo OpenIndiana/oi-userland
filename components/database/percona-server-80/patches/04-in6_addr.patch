@@ -1,0 +1,40 @@
+https://bugs.launchpad.net/percona-server/+bug/1496315
+https://svnweb.freebsd.org/ports/head/databases/percona56-server/files/patch-sql_mysqld.cc?view=markup&pathrev=399074
+
+--- percona-server-8.0.13-3/sql/mysqld.cc	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/sql/mysqld.cc.new	2019-01-12 21:45:33.442066391 +0000
+@@ -2266,6 +2266,16 @@ static void clean_up_mutexes() {
+ ****************************************************************************/
+ 
+ /* Initialise proxy protocol. */
++
++/* At least OpenBSD and NexentaCore do not
++* define s6_addr32 for user land settings.
++*/
++#if !defined s6_addr32 && defined __sun__
++#       define s6_addr32 _S6_un._S6_u32
++#elif !defined s6_addr32 && ( defined __OpenBSD__ || defined __FreeBSD__ )
++#       define s6_addr32 __u6_addr.__u6_addr32
++#endif  /* !defined s6_addr32 */
++
+ static void set_proxy() {
+   if (opt_disable_networking) return;
+ 
+--- percona-server-8.0.13-3/vio/viosocket.cc	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/vio/viosocket.cc.new	2019-01-12 21:43:07.121322025 +0000
+@@ -71,6 +71,15 @@
+ 
+ #include "mysql/psi/mysql_socket.h"
+ 
++/* At least OpenBSD and NexentaCore do not
++ * define s6_addr32 for user land settings.
++ */
++#if !defined s6_addr32 && defined __sun__
++# define s6_addr32 _S6_un._S6_u32
++#elif !defined s6_addr32 && ( defined __OpenBSD__ || defined __FreeBSD__ )
++# define s6_addr32 __u6_addr.__u6_addr32
++#endif /* !defined s6_addr32 */
++
+ /* Network io wait callbacks  for threadpool */
+ static void (*before_io_wait)(void) = nullptr;
+ static void (*after_io_wait)(void) = nullptr;

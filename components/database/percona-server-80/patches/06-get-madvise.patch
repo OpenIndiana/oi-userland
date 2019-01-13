@@ -1,0 +1,38 @@
+--- percona-server-8.0.13-3/storage/myisam/mi_dynrec.cc	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/storage/myisam/mi_dynrec.cc.new	2019-01-13 13:31:04.757867938 +0000
+@@ -34,6 +34,7 @@
+ 
+ #include <fcntl.h>
+ #include <sys/types.h>
++#include <sys/mman.h>
+ 
+ #include "my_compiler.h"
+ #include "my_dbug.h"
+@@ -99,7 +99,7 @@ bool mi_dynmap_file(MI_INFO *info, my_of
+     DBUG_RETURN(1);
+   }
+ #if defined(HAVE_MADVISE)
+-  madvise((char *)info->s->file_map, size, MADV_RANDOM);
++  posix_madvise((char *)info->s->file_map, size, MADV_RANDOM);
+ #endif
+   info->s->mmaped_length = size;
+   info->s->file_read = mi_mmap_pread;
+--- percona-server-8.0.13-3/storage/myisam/mi_extra.cc	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/storage/myisam/mi_extra.cc.new	2019-01-13 13:35:39.873873420 +0000
+@@ -25,6 +25,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sys/types.h>
++#include <sys/mman.h>
+ 
+ #include "my_dbug.h"
+ #include "my_inttypes.h"
+@@ -253,7 +253,7 @@ int mi_reset(MI_INFO *info) {
+   if (share->base.blobs) mi_alloc_rec_buff(info, -1, &info->rec_buff);
+ #if defined(HAVE_MADVISE)
+   if (info->opt_flag & MEMMAP_USED)
+-    madvise((char *)share->file_map, share->state.state.data_file_length,
++    posix_madvise((char *)share->file_map, share->state.state.data_file_length,
+             MADV_RANDOM);
+ #endif
+   info->opt_flag &= ~(KEY_READ_USED | REMEMBER_OLD_POS);

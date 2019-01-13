@@ -1,0 +1,62 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
+#
+
+
+set name=pkg.fmri \
+    value=pkg:/database/percona-server-80/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Percona Server 8.0 Database Management System - client tools"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Databases
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file -> default mangler.man.stability committed>
+
+link path=usr/bin/$(MACH64)/mysql target=../../percona-server/8.0/bin/$(MACH64)/mysql mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+link path=usr/bin/$(MACH64)/mysql_config target=../../percona-server/8.0/bin/$(MACH64)/mysql_config mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+link path=usr/share/man/man1/mysql.1 target=../../../percona-server/8.0/man/man1/mysql.1 mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+link path=usr/share/man/man1/mysql_config.1 target=../../../percona-server/8.0/man/man1/mysql_config.1 mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+
+depend type=require fmri=database/mysql-common
+
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql_config
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql_config_editor
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql_tzinfo_to_sql
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqladmin
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlcheck
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqldump
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqldumpslow
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlimport
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlpump
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlshow
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlslap
+file path=usr/percona-server/8.0/man/man1/mysql.1
+file path=usr/percona-server/8.0/man/man1/mysql_config.1
+file path=usr/percona-server/8.0/man/man1/mysql_config_editor.1
+file path=usr/percona-server/8.0/man/man1/mysql_tzinfo_to_sql.1
+file path=usr/percona-server/8.0/man/man1/mysqladmin.1
+file path=usr/percona-server/8.0/man/man1/mysqlcheck.1
+file path=usr/percona-server/8.0/man/man1/mysqldump.1
+file path=usr/percona-server/8.0/man/man1/mysqldumpslow.1
+file path=usr/percona-server/8.0/man/man1/mysqlimport.1
+file path=usr/percona-server/8.0/man/man1/mysqlpump.1
+file path=usr/percona-server/8.0/man/man1/mysqlshow.1
+file path=usr/percona-server/8.0/man/man1/mysqlslap.1

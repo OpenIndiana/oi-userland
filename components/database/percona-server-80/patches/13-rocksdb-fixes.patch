@@ -1,0 +1,73 @@
+--- percona-server-8.0.13-3/storage/rocksdb/CMakeLists.txt	2019-01-13 18:52:43.167063909 +0000
++++ percona-server-8.0.13-3/storage/rocksdb/CMakeLists.txt	2019-01-13 19:06:37.655175798 +0000
+@@ -103,6 +103,8 @@ IF(UNIX)
+     IF(HAVE_FALLOCATE AND HAVE_LINUX_FALLOC_H)
+       ADD_DEFINITIONS(-DROCKSDB_FALLOCATE_PRESENT)
+     ENDIF()
++  ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
++    ADD_DEFINITIONS(-DOS_SOLARIS)
+   ENDIF()
+ ENDIF()
+ 
+--- percona-server-8.0.13-3/storage/rocksdb/rocksdb/env/env_posix.cc	2018-12-19 17:35:14.000000000 +0000
++++ percona-server-8.0.13-3/storage/rocksdb/rocksdb/env/env_posix.cc	2019-01-13 19:55:49.013406305 +0000
+@@ -27,6 +27,7 @@
+ #endif
+ #include <sys/time.h>
+ #include <sys/types.h>
++#include <sys/mkdev.h>
+ #include <time.h>
+ #include <algorithm>
+ // Get nano time includes
+--- percona-server-8.0.13-3/storage/rocksdb/rocksdb/monitoring/perf_context.cc	2018-12-19 17:35:14.000000000 +0000
++++ percona-server-8.0.13-3/storage/rocksdb/rocksdb/monitoring/perf_context.cc	2019-01-14 07:20:04.629826568 +0000
+@@ -12,23 +12,15 @@ namespace rocksdb {
+ #if defined(NPERF_CONTEXT) || !defined(ROCKSDB_SUPPORT_THREAD_LOCAL)
+ PerfContext perf_context;
+ #else
+-#if defined(OS_SOLARIS)
+-__thread PerfContext perf_context_;
+-#else
+ __thread PerfContext perf_context;
+ #endif
+-#endif
+ 
+ PerfContext* get_perf_context() {
+ #if defined(NPERF_CONTEXT) || !defined(ROCKSDB_SUPPORT_THREAD_LOCAL)
+   return &perf_context;
+ #else
+-#if defined(OS_SOLARIS)
+-  return &perf_context_;
+-#else
+   return &perf_context;
+ #endif
+-#endif
+ }
+ 
+ void PerfContext::Reset() {
+--- percona-server-8.0.13-3/storage/rocksdb/rocksdb/monitoring/perf_context_imp.h	2018-12-19 17:35:14.000000000 +0000
++++ percona-server-8.0.13-3/storage/rocksdb/rocksdb/monitoring/perf_context_imp.h	2019-01-14 07:28:21.314794759 +0000
+@@ -12,13 +12,8 @@ namespace rocksdb {
+ #if defined(NPERF_CONTEXT) || !defined(ROCKSDB_SUPPORT_THREAD_LOCAL)
+ extern PerfContext perf_context;
+ #else
+-#if defined(OS_SOLARIS)
+-extern __thread PerfContext perf_context_;
+-#define perf_context (*get_perf_context());
+-#else
+ extern __thread PerfContext perf_context;
+ #endif
+-#endif
+ 
+ #if defined(NPERF_CONTEXT)
+ 
+--- percona-server-8.0.13-3/storage/rocksdb/rdb_buff.h	2018-12-19 17:31:11.000000000 +0000
++++ percona-server-8.0.13-3/storage/rocksdb/rdb_buff.h.new	2019-01-14 08:28:42.122677187 +0000
+@@ -19,6 +19,7 @@
+ #include <algorithm>
+ #include <string>
+ #include <vector>
++#include <endian.h>
+ 
+ namespace myrocks {
+ 

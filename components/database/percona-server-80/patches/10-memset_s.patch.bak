@@ -1,0 +1,55 @@
+"8548 want memset_s(3C)" introduced memset_s()
+While it's visible in C (and so detected by cmake),
+to use it in C++ __STDC_WANT_LIB_EXT1__ should be defined to 1.
+
+--- percona-server-5.7.22-22/include/my_global.h.1	2019-01-11 23:38:56.155516096 +0000
++++ percona-server-5.7.22-22/include/my_global.h	2019-01-11 23:39:39.629335735 +0000
+@@ -29,6 +29,9 @@
+ 
+ #define __STDC_LIMIT_MACROS	/* Enable C99 limit macros */
+ #define __STDC_FORMAT_MACROS	/* Enable C99 printf format macros */
++#ifndef __STDC_WANT_LIB_EXT1__
++#define __STDC_WANT_LIB_EXT1__ 1 /* Enable memset_s() if it exists */
++#endif
+ #define _USE_MATH_DEFINES       /* Get access to M_PI, M_E, etc. in math.h */
+ 
+ #ifdef _WIN32
+--- percona-server-5.7.22-22/plugin/keyring/common/system_key_adapter.cc.1	2019-01-12 00:31:17.076184626 +0000
++++ percona-server-5.7.22-22/plugin/keyring/common/system_key_adapter.cc	2019-01-12 00:31:36.710338901 +0000
+@@ -14,6 +14,9 @@
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
+ 
++#ifndef __STDC_WANT_LIB_EXT1__
++#define __STDC_WANT_LIB_EXT1__ 1 /* Enable memset_s() if it exists */
++#endif
+ #include "system_key_adapter.h"
+ #include "secure_string.h"
+ 
+--- percona-server-5.7.22-22/plugin/keyring/common/keyring_memory.h.~1~	2018-05-30 00:11:24.000000000 +0000
++++ percona-server-5.7.22-22/plugin/keyring/common/keyring_memory.h	2019-01-12 01:05:30.546021527 +0000
+@@ -16,6 +16,10 @@
+ #ifndef MYSQL_KEYRING_MEMORY_H
+ #define MYSQL_KEYRING_MEMORY_H
+ 
++#ifndef __STDC_WANT_LIB_EXT1__
++#define __STDC_WANT_LIB_EXT1__ 1 /* Enable memset_s() if it exists */
++#endif
++
+ #include <my_global.h>
+ #include <mysql/plugin_keyring.h>
+ #include <limits>
+--- percona-server-5.7.22-22/plugin/keyring_vault/vault_base64.cc.1	2019-01-12 01:14:48.700250889 +0000
++++ percona-server-5.7.22-22/plugin/keyring_vault/vault_base64.cc	2019-01-12 01:16:52.655577284 +0000
+@@ -14,6 +14,11 @@
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
+ 
++#ifndef __STDC_WANT_LIB_EXT1__
++#define __STDC_WANT_LIB_EXT1__ 1 /* Enable memset_s() if it exists */
++#endif
++#include <string.h>
++
+ #include <algorithm>
+ #include "vault_base64.h"
+ #include "base64.h"

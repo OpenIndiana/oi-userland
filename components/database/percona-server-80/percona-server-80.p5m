@@ -1,0 +1,267 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
+#
+
+set name=pkg.fmri \
+    value=pkg:/database/percona-server-80@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Percona Server 8.0 Database Management System"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Databases
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+dir path=var/percona-server group=mysql mode=0700 owner=mysql
+dir path=var/percona-server/8.0 group=mysql mode=0700 owner=mysql
+dir path=var/percona-server/8.0/data group=mysql mode=0700 owner=mysql
+file files/my.cnf path=etc/percona-server/8.0/my.cnf \
+    mode=0644 preserve=renamenew
+file files/auth_attr path=etc/security/auth_attr.d/percona-server-80
+file files/prof_attr path=etc/security/prof_attr.d/percona-server-80
+file files/percona-server_80.xml \
+    path=lib/svc/manifest/application/database/percona-server_80.xml
+file files/percona-server_80 path=lib/svc/method/percona-server_80 mode=0555
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+link path=etc/mysql/my.cnf target=../percona-server/8.0/my.cnf mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+link path=usr/percona-server/8.0/bin/64 target=$(MACH64)
+link path=usr/mysql/bin target=../percona-server/8.0/bin mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+link path=usr/mysql/man target=../percona-server/8.0/man mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+link path=usr/mysql/share target=../percona-server/8.0/share mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+link path=var/mysql/data target=../percona-server/8.0/data mediator=mysql mediator-version=8.0 mediator-implementation=percona-server
+
+depend fmri=database/mysql-common type=require
+depend fmri=database/percona-server-80/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+file path=usr/percona-server/8.0/bin/$(MACH64)/innochecksum
+file path=usr/percona-server/8.0/bin/$(MACH64)/ldb
+file path=usr/percona-server/8.0/bin/$(MACH64)/lz4_decompress
+file path=usr/percona-server/8.0/bin/$(MACH64)/my_print_defaults
+file path=usr/percona-server/8.0/bin/$(MACH64)/myisam_ftdump
+file path=usr/percona-server/8.0/bin/$(MACH64)/myisamchk
+file path=usr/percona-server/8.0/bin/$(MACH64)/myisamlog
+file path=usr/percona-server/8.0/bin/$(MACH64)/myisampack
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql_ldb
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql_secure_installation
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql_ssl_rsa_setup
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysql_upgrade
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlbinlog
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqld
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqld_multi
+file path=usr/percona-server/8.0/bin/$(MACH64)/mysqld_safe
+#file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlrouter
+#file path=usr/percona-server/8.0/bin/$(MACH64)/mysqlrouter_plugin_info
+file path=usr/percona-server/8.0/bin/$(MACH64)/perror
+file path=usr/percona-server/8.0/bin/$(MACH64)/ps-admin
+file path=usr/percona-server/8.0/bin/$(MACH64)/ps_mysqld_helper
+file path=usr/percona-server/8.0/bin/$(MACH64)/resolve_stack_dump
+file path=usr/percona-server/8.0/bin/$(MACH64)/resolveip
+file path=usr/percona-server/8.0/bin/$(MACH64)/sst_dump
+file path=usr/percona-server/8.0/bin/$(MACH64)/zlib_decompress
+file path=usr/percona-server/8.0/bin/mysql.info
+file path=usr/percona-server/8.0/lib/$(MACH64)/libmysqlharness.a
+link path=usr/percona-server/8.0/lib/$(MACH64)/libmysqlharness.so \
+    target=libmysqlharness.so.1
+file path=usr/percona-server/8.0/lib/$(MACH64)/libmysqlharness.so.1
+#link path=usr/percona-server/8.0/lib/$(MACH64)/libmysqlrouter.so \
+#    target=libmysqlrouter.so.1
+#file path=usr/percona-server/8.0/lib/$(MACH64)/libmysqlrouter.so.1
+#file path=usr/percona-server/8.0/lib/$(MACH64)/mysqlrouter/keepalive.so
+#file path=usr/percona-server/8.0/lib/$(MACH64)/mysqlrouter/metadata_cache.so
+#file path=usr/percona-server/8.0/lib/$(MACH64)/mysqlrouter/mysql_protocol.so
+#file path=usr/percona-server/8.0/lib/$(MACH64)/mysqlrouter/routing.so
+#file path=usr/percona-server/8.0/lib/$(MACH64)/mysqlrouter/syslog.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/adt_null.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/audit_log.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/auth.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/auth_test_plugin.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/authentication_ldap_sasl_client.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_example_component1.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_example_component2.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_example_component3.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_log_filter_dragnet.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_log_sink_json.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_log_sink_syseventlog.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_log_sink_test.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_mysqlx_global_reset.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_pfs_example.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_pfs_example_component_population.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_backup_lock_service.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_pfs_notification.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_pfs_resource_group.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_status_var_service.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_status_var_service_int.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_status_var_service_reg_only.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_status_var_service_str.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_status_var_service_unreg_only.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_string_service.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_string_service_charset.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_string_service_long.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_sys_var_service.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_sys_var_service_int.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_sys_var_service_same.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_sys_var_service_str.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_system_variable_source.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_test_udf_registration.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_reg_3_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_reg_avg_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_reg_int_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_reg_int_same_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_reg_only_3_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_reg_real_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_unreg_3_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_unreg_int_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_udf_unreg_real_func.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/component_validate_password.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/connection_control.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/daemon_example.ini
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/group_replication.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/ha_example.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/ha_mock.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/ha_rocksdb.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/keyring_file.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/keyring_udf.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/keyring_vault.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libdaemon_example.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libfnv1a_udf.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libfnv_udf.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libmurmur_udf.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_framework.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_services.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_services_threaded.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_session_attach.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_session_detach.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_session_in_thd.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_session_info.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_2_sessions.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_all_col_types.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_cmds_1.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_commit.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_complex.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_errors.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_lock.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_processlist.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_replication.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_shutdown.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_sqlmode.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_stmt.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_stored_procedures_functions.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_sql_views_triggers.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_x_sessions_deinit.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/libtest_x_sessions_init.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/locking_service.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/mypluglib.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/mysql_no_login.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/pfs_example_plugin_employee.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/qa_auth_client.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/qa_auth_interface.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/qa_auth_server.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/replication_observers_example_plugin.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/rewrite_example.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/rewriter.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/semisync_master.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/semisync_slave.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/test_security_context.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/test_services_plugin_registry.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/test_udf_services.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/udf_example.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/validate_password.so
+file path=usr/percona-server/8.0/lib/$(MACH64)/plugin/version_token.so
+file path=usr/percona-server/8.0/man/man1/comp_err.1
+file path=usr/percona-server/8.0/man/man1/ibd2sdi.1
+file path=usr/percona-server/8.0/man/man1/innochecksum.1
+file path=usr/percona-server/8.0/man/man1/lz4_decompress.1
+file path=usr/percona-server/8.0/man/man1/my_print_defaults.1
+file path=usr/percona-server/8.0/man/man1/myisam_ftdump.1
+file path=usr/percona-server/8.0/man/man1/myisamchk.1
+file path=usr/percona-server/8.0/man/man1/myisamlog.1
+file path=usr/percona-server/8.0/man/man1/myisampack.1
+file path=usr/percona-server/8.0/man/man1/mysql.server.1
+file path=usr/percona-server/8.0/man/man1/mysql_secure_installation.1
+file path=usr/percona-server/8.0/man/man1/mysql_ssl_rsa_setup.1
+file path=usr/percona-server/8.0/man/man1/mysql_upgrade.1
+file path=usr/percona-server/8.0/man/man1/mysqlbinlog.1
+file path=usr/percona-server/8.0/man/man1/mysqld_multi.1
+file path=usr/percona-server/8.0/man/man1/mysqld_safe.1
+file path=usr/percona-server/8.0/man/man1/mysqlman.1
+file path=usr/percona-server/8.0/man/man1/perror.1
+file path=usr/percona-server/8.0/man/man1/resolve_stack_dump.1
+file path=usr/percona-server/8.0/man/man1/resolveip.1
+file path=usr/percona-server/8.0/man/man1/zlib_decompress.1
+file path=usr/percona-server/8.0/man/man8/mysqld.8
+file path=usr/percona-server/8.0/share/bulgarian/errmsg.sys
+file path=usr/percona-server/8.0/share/charsets/Index.xml
+file path=usr/percona-server/8.0/share/charsets/README
+file path=usr/percona-server/8.0/share/charsets/armscii8.xml
+file path=usr/percona-server/8.0/share/charsets/ascii.xml
+file path=usr/percona-server/8.0/share/charsets/cp1250.xml
+file path=usr/percona-server/8.0/share/charsets/cp1251.xml
+file path=usr/percona-server/8.0/share/charsets/cp1256.xml
+file path=usr/percona-server/8.0/share/charsets/cp1257.xml
+file path=usr/percona-server/8.0/share/charsets/cp850.xml
+file path=usr/percona-server/8.0/share/charsets/cp852.xml
+file path=usr/percona-server/8.0/share/charsets/cp866.xml
+file path=usr/percona-server/8.0/share/charsets/dec8.xml
+file path=usr/percona-server/8.0/share/charsets/geostd8.xml
+file path=usr/percona-server/8.0/share/charsets/greek.xml
+file path=usr/percona-server/8.0/share/charsets/hebrew.xml
+file path=usr/percona-server/8.0/share/charsets/hp8.xml
+file path=usr/percona-server/8.0/share/charsets/keybcs2.xml
+file path=usr/percona-server/8.0/share/charsets/koi8r.xml
+file path=usr/percona-server/8.0/share/charsets/koi8u.xml
+file path=usr/percona-server/8.0/share/charsets/latin1.xml
+file path=usr/percona-server/8.0/share/charsets/latin2.xml
+file path=usr/percona-server/8.0/share/charsets/latin5.xml
+file path=usr/percona-server/8.0/share/charsets/latin7.xml
+file path=usr/percona-server/8.0/share/charsets/macce.xml
+file path=usr/percona-server/8.0/share/charsets/macroman.xml
+file path=usr/percona-server/8.0/share/charsets/swe7.xml
+file path=usr/percona-server/8.0/share/czech/errmsg.sys
+file path=usr/percona-server/8.0/share/danish/errmsg.sys
+file path=usr/percona-server/8.0/share/dictionary.txt
+file path=usr/percona-server/8.0/share/dutch/errmsg.sys
+file path=usr/percona-server/8.0/share/english/errmsg.sys
+file path=usr/percona-server/8.0/share/errmsg-utf8.txt
+file path=usr/percona-server/8.0/share/estonian/errmsg.sys
+file path=usr/percona-server/8.0/share/french/errmsg.sys
+file path=usr/percona-server/8.0/share/german/errmsg.sys
+file path=usr/percona-server/8.0/share/greek/errmsg.sys
+file path=usr/percona-server/8.0/share/hungarian/errmsg.sys
+file path=usr/percona-server/8.0/share/innodb_memcached_config.sql
+file path=usr/percona-server/8.0/share/install_rewriter.sql
+file path=usr/percona-server/8.0/share/italian/errmsg.sys
+file path=usr/percona-server/8.0/share/japanese/errmsg.sys
+file path=usr/percona-server/8.0/share/korean/errmsg.sys
+file path=usr/percona-server/8.0/share/mysql/magic
+file path=usr/percona-server/8.0/share/mysql/mysql-log-rotate mode=0555
+file path=usr/percona-server/8.0/share/mysql/mysql.server mode=0555
+file path=usr/percona-server/8.0/share/mysql/mysqld_multi.server mode=0555
+file path=usr/percona-server/8.0/share/mysql/solaris/postinstall-solaris mode=0555
+file path=usr/percona-server/8.0/share/norwegian-ny/errmsg.sys
+file path=usr/percona-server/8.0/share/norwegian/errmsg.sys
+file path=usr/percona-server/8.0/share/polish/errmsg.sys
+file path=usr/percona-server/8.0/share/portuguese/errmsg.sys
+file path=usr/percona-server/8.0/share/romanian/errmsg.sys
+file path=usr/percona-server/8.0/share/russian/errmsg.sys
+file path=usr/percona-server/8.0/share/serbian/errmsg.sys
+file path=usr/percona-server/8.0/share/slovak/errmsg.sys
+file path=usr/percona-server/8.0/share/spanish/errmsg.sys
+file path=usr/percona-server/8.0/share/swedish/errmsg.sys
+file path=usr/percona-server/8.0/share/ukrainian/errmsg.sys
+file path=usr/percona-server/8.0/share/uninstall_rewriter.sql
