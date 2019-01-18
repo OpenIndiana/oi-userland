@@ -34,6 +34,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.8.8
+COMPONENT_REVISION=	1
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
