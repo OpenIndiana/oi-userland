@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zstd
 COMPONENT_VERSION=	1.3.8
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Zstandard, or zstd as short version, is a fast lossless compression algorithm, targeting real-time compression scenarios
 COMPONENT_PROJECT_URL=	https://facebook.github.io/zstd/
 COMPONENT_FMRI=		compress/zstd
@@ -45,6 +46,10 @@ $(BUILD_DIR)/%/.configured:     $(SOURCE_DIR)/.prep
 	$(COMPONENT_POST_CMAKE_ACTION)
 	$(TOUCH) $@
 
+# CMake does not install zstdgrep and zstdless shell scripts
+# (https://github.com/facebook/zstd/issues/1503)
+COMPONENT_POST_INSTALL_ACTION=	( cp $(@D)/programs/{zstdgrep,zstdless} $(PROTO_DIR)$(USRBINDIR) )
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
@@ -58,4 +63,5 @@ COMPONENT_TEST_ENV=	$(CMAKE_ENV)
 test:		$(TEST_64)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
