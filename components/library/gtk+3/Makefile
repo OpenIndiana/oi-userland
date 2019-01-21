@@ -11,18 +11,18 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk+
-COMPONENT_VERSION=	3.24.2
+COMPONENT_VERSION=	3.24.4
 COMPONENT_SUMMARY=	GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:5b3b05e427cc928d103561ed2e91b2b2881fe88b1f167b0b1c9990da6aac8892
+	sha256:d84f59ff02a87cc90c9df4a572a13eca4e3506e2bf511e2b9cbdb4526fa0cb9c
 COMPONENT_ARCHIVE_URL= \
 	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtk.org/
@@ -46,14 +46,15 @@ LD_Z_IGNORE=
 # Uses isinf, etc. only available in c99 and newer
 CFLAGS.gcc += -std=gnu11
 
-COMPONENT_PREP_ACTION =	(cd $(@D) && libtoolize --force &&\
-                                        aclocal -I ./m4 &&\
-					gtkdocize &&\
-                                        autoheader &&\
-                                        automake -a -f -c --gnu &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION =	(cd $(@D) && \
+				libtoolize --force && \
+				aclocal -I ./m4 && \
+				gtkdocize && \
+				autoheader && \
+				automake -a -f -c --gnu && \
+				autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
