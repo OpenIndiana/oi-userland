@@ -30,25 +30,25 @@ PREFERRED_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.31.1
+COMPONENT_VERSION=	1.32.0
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:91d2fc22f08d986adab7a54eb3a6a9b99e490f677d2d092e5b9e4e069c23686a
+COMPONENT_ARCHIVE_HASH=	sha256:4c594c7712a0e7e8eae6526c464bf6ea1d82f77b4f61717c3fc28fb27ba2224a
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT or Apache-2.0
 
-RUST_STAGE0_VER=        1.31.0
+RUST_STAGE0_VER=        1.32.0
 RUST_ARCH:=             x86_64-sun-solaris
 
 COMPONENT_NAME_1=	rust
 COMPONENT_VERSION_1=	$(RUST_STAGE0_VER)
 COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)-$(RUST_ARCH)
 COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1=	sha256:f083836b0d596814386c8bfff3be9b35e3ae9561148c2fd68afa45de7ca4f768
+COMPONENT_ARCHIVE_HASH_1=	sha256:689586af4297df329884239f5e82b09ac3f8ac9f425ffcbfdb5382b1c7465496
 COMPONENT_ARCHIVE_URL_1=	https://us-east.manta.joyent.com/pkgsrc/public/pkg-bootstraps/$(COMPONENT_ARCHIVE_1)
 
 SOURCE_DIR_1=		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
@@ -74,9 +74,9 @@ PKG_MACROS+= RUST_ARCH="$(RUST_ARCH)"
 
 COMPONENT_PREP_ACTION = \
 	$(GSED) -i -e 's/9c6af198a2f80da827054784faf70bc404673d9568fb45664b4f73c46245fdbd/c3851969a854d6ccaa8a94369f1288025149d1ebdc74b36f224423f35b18f7a7/' \
-		$(SOURCE_DIR)/src/vendor/libc/.cargo-checksum.json; \
+		$(SOURCE_DIR)/vendor/libc/.cargo-checksum.json; \
 	$(GSED) -i -e 's/cb94a0b54e47022b2e9b58b45e0196785c61d083760333276226da435cc040d9/bcb195562cf830c9e2078757e6d0976f86ede59816ff305e21a2764a4a4cf43e/' \
-		$(SOURCE_DIR)/src/vendor/rand/.cargo-checksum.json;
+		$(SOURCE_DIR)/vendor/rand/.cargo-checksum.json;
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -115,7 +115,6 @@ CONFIGURE_OPTIONS += --disable-llvm-static-stdcpp
 CONFIGURE_OPTIONS += --disable-ninja
 CONFIGURE_OPTIONS += --enable-vendor
 CONFIGURE_OPTIONS += --disable-docs
-CONFIGURE_OPTIONS += --disable-jemalloc
 CONFIGURE_OPTIONS += --release-channel=stable
 CONFIGURE_OPTIONS += --python=$(PYTHON)
 
@@ -183,13 +182,14 @@ install:	$(INSTALL_64)
 
 # Build dependencies (make sure completions are installed)
 REQUIRED_PACKAGES += utility/bash-completion
-
-# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/http-parser
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
