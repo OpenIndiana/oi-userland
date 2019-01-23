@@ -10,13 +10,15 @@
 
 #
 # Copyright 2015-2017 Aurelien Larcher
+# Copyright 2019 Michal Nowak
 #
-PREFERRED_BITS=64
+
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
-COMPONENT_VERSION=	0.92.3
+COMPONENT_VERSION=	0.92.4
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
@@ -24,9 +26,9 @@ COMPONENT_PROJECT_URL=	http://www.inkscape.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:063296c05a65d7a92a0f627485b66221487acfc64a24f712eb5237c4bd7816b2
-COMPONENT_ARCHIVE_URL=	https://inkscape.org/en/gallery/item/12187/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE = GPLv2
+	sha256:57ec2da8177b36614a513e2822efd73af721e690f7ddc6bd0a5fbb1525b4515e
+COMPONENT_ARCHIVE_URL=	https://media.inkscape.org/dl/resources/file/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
@@ -52,7 +54,6 @@ CMAKE_OPTIONS+=  -DWITH_OPENMP=ON
 CMAKE_OPTIONS+=  -DJPEG_INCLUDE_DIR=$(JPEG_INCDIR)
 CMAKE_OPTIONS+=  -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 
-
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
@@ -60,6 +61,8 @@ install:	$(INSTALL_64)
 test:		$(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += developer/gsl
 REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
@@ -91,8 +94,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += x11/library/libx11

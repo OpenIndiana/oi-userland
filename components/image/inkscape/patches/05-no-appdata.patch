@@ -1,0 +1,11 @@
+--- inkscape-0.92.4/po/CMakeLists.txt	2019-01-15 05:29:27.000000000 +0000
++++ inkscape-0.92.4/po/CMakeLists.txt.new	2019-02-07 07:29:10.990614530 +0000
+@@ -16,7 +16,7 @@ if("${GETTEXT_VERSION_STRING}" VERSION_G
+         DEPENDS ${LANGUAGES}
+         COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --desktop --template ${CMAKE_SOURCE_DIR}/inkscape.desktop.template -d ${CMAKE_CURRENT_SOURCE_DIR} -o ${CMAKE_BINARY_DIR}/inkscape.desktop.template.in --keyword=Name --keyword=GenericName --keyword=X-GNOME-FullName --keyword=Comment --keyword=Keywords
+         COMMAND ${CMAKE_COMMAND} -DINKSCAPE_SOURCE_DIR=${CMAKE_SOURCE_DIR} -DINKSCAPE_BINARY_DIR=${CMAKE_BINARY_DIR} -DENABLE_BINRELOC=${ENABLE_BINRELOC} -P ${CMAKE_SOURCE_DIR}/CMakeScripts/inkscape-desktop.cmake
+-	COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --xml --template ${CMAKE_SOURCE_DIR}/inkscape.appdata.xml.in -d ${CMAKE_CURRENT_SOURCE_DIR} -o ${CMAKE_BINARY_DIR}/inkscape.appdata.xml
++	COMMAND cp ${CMAKE_SOURCE_DIR}/inkscape.appdata.xml.in ${CMAKE_BINARY_DIR}/inkscape.appdata.xml
+     )
+ else()
+     message("Old gettext version, not translating inkscape.desktop")
