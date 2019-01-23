@@ -21,13 +21,13 @@
 
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.23.14
+COMPONENT_VERSION=	0.23.15
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
@@ -35,7 +35,7 @@ COMPONENT_PROJECT_URL=	https://p11-glue.github.io/p11-glue/p11-kit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1cb9fa6d237539f25f62f4c3d4ec71a1c8e0772957ec45ec5af92134129e0d70
+	sha256:f7c139a0c77a1f0012619003e542060ba8f94799a0ef463026db390680e4d798
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-like
 COMPONENT_LICENSE_FILE= p11-kit.license
@@ -51,6 +51,7 @@ LDFLAGS += -lsocket -lnsl
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
 CONFIGURE_OPTIONS	+= --enable-doc
+CONFIGURE_OPTIONS	+= --disable-doc-html
 CONFIGURE_OPTIONS	+= --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS.32	+= --libexecdir=/usr/lib
@@ -79,8 +80,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-# Build requirements
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libtasn1
