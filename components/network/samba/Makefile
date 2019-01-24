@@ -34,7 +34,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.8.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
@@ -156,12 +156,6 @@ CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
-# Propagation of smb.conf with default settings.
-$(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_DIR_SMB)/.built
-	$(MKDIR) $(@D)
-	sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed > $@ \
-	   $(BUILD_DIR_SMB)/examples/smb.conf.default
-
 # Build targets for WAF:
 # (motivation) Samba started to use WAF (build system from Google) from the 3.x
 # (as a parallel build system) but Samba4 discontinued the use of auto tools
@@ -196,6 +190,8 @@ $(BUILD_DIR_SMB)/.built:	$(BUILD_DIR_SMB)/.configured
 $(BUILD_DIR_SMB)/.installed:	$(BUILD_DIR_SMB)/.built
 	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf install $(WAFOPT1) --destdir=$(PROTO_DIR) )
 	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/
+	$(MKDIR) $(PROTO_DIR)/etc/samba
+	sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed > $(PROTO_DIR)/etc/samba/smb.conf.default  $(BUILD_DIR_SMB)/examples/smb.conf.default
 	$(TOUCH) $@
 
 # Prepare build dir for Winbind (without Samba) for different bitness.
