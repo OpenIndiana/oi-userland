@@ -127,7 +127,6 @@ CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
 #CONFIGURE_OPTIONS +=	--with-system-mitkrb5
 #CONFIGURE_OPTIONS +=	--without-ad-dc
-#CONFIGURE_OPTIONS +=    --enable-spotlight
 
 CONFIGURE_OPTIONS +=	--nocache
 CONFIGURE_OPTIONS +=	--nopyo
@@ -249,7 +248,6 @@ clean::
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/lmdb
-#REQUIRED_PACKAGES += library/desktop/search/tracker
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
