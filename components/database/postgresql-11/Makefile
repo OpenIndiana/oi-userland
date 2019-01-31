@@ -92,8 +92,9 @@ COMPONENT_POST_INSTALL_ACTION+= cd $(PROTO_DIR) &&  \
              $(MV) usr/postgres/$(COMPONENT_MJR_VERSION)/include/pg_config.h usr/postgres/$(COMPONENT_MJR_VERSION)/include/pg_config-$(BITS).h  && \
              $(MV) usr/postgres/$(COMPONENT_MJR_VERSION)/include/server/pg_config.h usr/postgres/$(COMPONENT_MJR_VERSION)/include/server/pg_config-$(BITS).h	
 
-$(TEST_64):	$(INSTALL_64)
-$(TEST_64):	PATH=$(PROTO_DIR)/usr/postgres/$(COMPONENT_MJR_VERSION)/bin:$(PATH.gnu)
+ENV=/usr/bin/env -i
+
+COMPONENT_TEST_ENV += PATH=$(PATH)
 
 COMPONENT_TEST_TRANSFORMS= \
 	'-n ' \
