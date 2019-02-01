@@ -21,23 +21,22 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      3.1.6
-COMPONENT_REVISION=		1
-IPS_COMPONENT_VERSION=  3.1.6.1
+COMPONENT_VERSION=      4.0.2
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
-COMPONENT_FMRI=					library/mpfr
+COMPONENT_FMRI=		library/mpfr
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:cf4f4b2d80abb79e820e78c8077b6725bbbb4e8f41896783c899087be0e94068
+	sha256:c05e3f02d09e0e9019384cdd58e0f19c64e6db1fd6f5ecf77b4b1c61ca253acc
 COMPONENT_LICENSE=      LGPLv2.1,GPLv2,FDLv1.2	
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -45,8 +44,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(dir $(CC)):$(PATH.illumos)
-
-CLOBBER_PATHS += libmpfr.pc
 
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -std=c99 $(CPP_XPG6MODE)
@@ -63,8 +60,6 @@ GMPINCDIR = /usr/include/gmp
 GMPLIBDIR_32 = /usr/lib
 GMPLIBDIR_64 = /usr/lib/$(MACH64)
 MPFRMULHIGH = 2048
-
-GSED = /usr/bin/gsed
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
@@ -86,38 +81,15 @@ CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
 
-PROTOUSRSHAREINFODIR = $(PROTOUSRSHAREDIR)/info
-PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDIR)/doc/mpfr/html
-PROTOUSRSHAREMAN3DIR = $(PROTOUSRSHAREDIR)/man/man3
-PROTOUSRINCLUDEDIR = $(PROTOUSRDIR)/include
-PROTOPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
-
 COMPONENT_POST_INSTALL_ACTION = \
-    ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
-      $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
-      $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
-      $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
-      $(GSED) -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" \
-				$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h > \
-					$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
-      $(CP) -fp $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed \
-				$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h ; \
-      $(RM) -f $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
-      $(GSED) -e "s/MACH64/$(MACH64)/g" \
-				$(COMPONENT_DIR)/Solaris/libmpfr-64.pc > $(COMPONENT_DIR)/libmpfr.pc ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.pc \
-				$(PROTOPKGCONFIGDIR) ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/libmpfr.pc \
-				$(PROTOPKGCONFIGDIR64) ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.3 \
-				$(PROTOUSRSHAREMAN3DIR)/ )
+      ( $(GSED) -i -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" $(PROTOUSRDIR)/include/mpfr/mpfr.h ; )
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library
