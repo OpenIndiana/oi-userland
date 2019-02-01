@@ -22,23 +22,23 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           mpc
-COMPONENT_VERSION=        1.0.3
-COMPONENT_SUMMARY=        Multiprecision complex data type evaluation library
-COMPONENT_PROJECT_URL=    http://www.multiprecision.org/
-COMPONENT_FMRI=           library/mpc
+COMPONENT_NAME=		mpc
+COMPONENT_VERSION=	1.1.0
+COMPONENT_SUMMARY=	Multiprecision complex data type evaluation library
+COMPONENT_PROJECT_URL=	http://www.multiprecision.org/
+COMPONENT_FMRI=		library/mpc
 COMPONENT_CLASSIFICATION=	Development/High Performance Computing
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=    $(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/mpc/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:617decc6ea09889fb08ede330917a00b16809b8db88c29c31bfbb49cbf88ecc3
-COMPONENT_LICENSE=        LGPLv2.1
-
+	sha256:6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
+COMPONENT_LICENSE=	LGPLv2.1
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -47,19 +47,20 @@ include $(WS_MAKE_RULES)/ips.mk
 export SHELL
 SHELL=/bin/sh
 
-CFLAGS +=		`pkg-config --cflags libmpfr`
+CFLAGS +=		`pkg-config --cflags mpfr`
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--disable-static
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS +=	--disable-static
 
-COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
+COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests
 
-build:	$(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)	
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
  
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += system/library
