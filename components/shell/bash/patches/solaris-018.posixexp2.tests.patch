@@ -3,48 +3,19 @@
 #
 # Reported on bug-bash@gnu.org
 
---- tests/posixexp2.tests	2010-11-11 17:50:47.000000000 -0800
-+++ tests/posixexp2.tests	2012-07-12 13:15:14.818468328 -0700
-@@ -2,6 +2,11 @@
- 
- set -o posix
- 
-+xpg=`shopt | grep xpg_echo | awk '{ print $2 }'`
-+if [ ${xpg} = "on" ] ; then
-+    shopt -u xpg_echo
-+fi
-+
- (echo 1 ${IFS+'}'z}) 2>&- || echo failed in 1
- (echo 2 "${IFS+'}'z}") 2>&- || echo failed in 2
- (echo 3 "foo ${IFS+'bar} baz") 2>&- || echo failed in 3
---- tests/comsub2.sub	2016-11-28 01:04:23.177652643 -0800
-+++ tests/comsub2.sub	2016-11-28 01:01:49.330747645 -0800
-@@ -4,5 +4,5 @@ echo "$qpath"
- 
- # it's crazy that all three of these produce the same result
- echo ${qpath//\\/}
--echo ${qpath//"`echo \\`"/}
--echo ${qpath//`echo "\\\\\\\\"`/}
-+echo ${qpath//"`echo -E \\`"/}
-+echo ${qpath//`echo -E "\\\\\\\\"`/}
---- tests/exp5.sub	2016-11-28 02:38:32.148794257 -0800
-+++ tests/exp5.sub	2016-11-28 02:33:12.133199473 -0800
-@@ -1,18 +1,18 @@
+--- tests/exp5.sub	2016-12-05 22:42:48.000000000 +0000
++++ tests/exp5.sub	2019-02-02 12:31:51.417537626 +0000
+@@ -1,6 +1,6 @@
  # expansions involving patterns
- 
  var='[hello'
 -echo "${var//[/}"
 +echo -E "${var//[/}"
  
  red='\[\e[0;31m\]'
--echo "${red//\\[\\e/}"
-+echo -E "${red//\\[\\e/}"
- 
- foo="${red//\\[\\e/}"
- 
+ printf "%s\n" "${red//\\[\\e/}"
+@@ -10,8 +10,8 @@ foo="${red//\\[\\e/}"
  # foo == [0;31m\]
--echo "${foo//[0;31m\\/}"
-+echo -E "${foo//[0;31m\\/}"
+ printf "%s\n" "${foo//[0;31m\\/}"
  
 -echo "${var//[]/}"
 -echo "${red//[]/}"
@@ -53,53 +24,3 @@
  
  v=hello
  foo='[:alpha:]'
---- tests/exp8.sub	2016-11-28 03:44:56.875686938 -0800
-+++ tests/exp8.sub	2016-11-28 03:39:21.761054928 -0800
-@@ -10,11 +10,11 @@ declare -p var | sed -n l
- 
- recho ${var@Q}
- recho ${var@P}
--echo ${var@A}
-+echo -E ${var@A}
- 
- unset array
- array=( [$'x\001y\177z']=foo )	# should be error
--echo ${array[@]@A}
-+echo -E ${array[@]@A}
- 
- unset array
- declare -a array=([0]=$'x\001y\177z')
-@@ -23,9 +23,9 @@ declare -p array
- unset array
- array=( "$var" )
- recho ${array[@]}
--echo ${array[@]@A}
-+echo -E ${array[@]@A}
- 
- unset array
- declare -A array
- array=( [$'x\001y\177z']=$'a\242b\002c' )
--echo ${array[@]@A}
-+echo -E ${array[@]@A}
---- tests/heredoc3.sub	2016-11-28 03:58:47.587299575 -0800
-+++ tests/heredoc3.sub	2016-11-28 03:55:11.935894965 -0800
-@@ -69,7 +69,7 @@ cat <<END
- hello
- \END
- END
--echo end 'hello<NL>\END'
-+echo -E end 'hello<NL>\END'
- 
- # this has to be last -- results in a syntax error
- # doesn't currently parse because EOF is not on a line by itself -- should it?
---- tests/quote1.sub	2016-11-28 04:11:46.210688369 -0800
-+++ tests/quote1.sub	2016-11-28 04:08:49.101872596 -0800
-@@ -14,7 +14,7 @@ echo "'${test//"'"/}'"
- 
- echo "'${test//"'"/"'\\''"}'"
- 
--echo "'${test//"'"/\'\\'\'}'"
-+echo -E "'${test//"'"/\'\\'\'}'"
- 
- #echo "'${test//'/}'"   # hangs waiting for '
- #echo "'${test//"'"/'\\''}'" # hangs waiting for '

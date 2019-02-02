@@ -5,60 +5,23 @@
 
 --- tests/redir.right	2016-11-28 04:38:00.494117081 -0800
 +++ tests/redir.right	2016-11-28 04:36:49.995612525 -0800
-@@ -84,9 +84,9 @@ f () 
-         echo "$line";
-     done
- }
--./redir5.sub: line 20: read: 5: invalid file descriptor: Bad file descriptor
-+./redir5.sub: line 20: read: 5: invalid file descriptor: Bad file number
- after read
--./redir5.sub: line 27: read: read error: 0: Bad file descriptor
-+./redir5.sub: line 27: read: read error: 0: Bad file number
- # tests of ksh93-like dup-and-close redirection operators
- /
- /
-@@ -141,20 +141,20 @@ bix () 
- foo
- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
- 1
--./redir11.sub: line 8: $a: Bad file descriptor
--./redir11.sub: line 9: $(echo $a): Bad file descriptor
-+./redir11.sub: line 8: $a: Bad file number
-+./redir11.sub: line 9: $(echo $a): Bad file number
- 7
- after: 42
--./redir11.sub: line 24: echo: write error: Bad file descriptor
--./redir11.sub: line 25: echo: write error: Bad file descriptor
--./redir11.sub: line 26: $(a=4 foo): Bad file descriptor
--./redir11.sub: line 27: $(a=4 foo): Bad file descriptor
--./redir11.sub: line 30: $a: Bad file descriptor
--./redir11.sub: line 31: $(echo $a): Bad file descriptor
-+./redir11.sub: line 24: echo: write error: Bad file number
-+./redir11.sub: line 25: echo: write error: Bad file number
-+./redir11.sub: line 26: $(a=4 foo): Bad file number
-+./redir11.sub: line 27: $(a=4 foo): Bad file number
-+./redir11.sub: line 30: $a: Bad file number
-+./redir11.sub: line 31: $(echo $a): Bad file number
- ./redir11.sub: line 39: $(ss= declare -i ss): ambiguous redirect
- after: 42
- a+=3
- foo
- foo
--./redir11.sub: line 53: $(echo $a): Bad file descriptor
-+./redir11.sub: line 53: $(echo $a): Bad file number
- 123
---- tests/vredir.right	2016-11-28 04:38:01.014664808 -0800
-+++ tests/vredir.right	2016-11-28 04:36:47.695701154 -0800
-@@ -11,9 +11,9 @@ bar () 
- ./vredir.tests: line 6: v: readonly variable
- ./vredir.tests: line 6: v: cannot assign fd to variable
- 42
--./vredir.tests: line 25: $v: Bad file descriptor
--./vredir.tests: line 26: $v: Bad file descriptor
--./vredir.tests: line 27: $v: Bad file descriptor
-+./vredir.tests: line 25: $v: Bad file number
-+./vredir.tests: line 26: $v: Bad file number
-+./vredir.tests: line 27: $v: Bad file number
- bar is a function
- bar () 
- { 
+@@ -64,7 +64,7 @@ f
+ typeset -f f
+ 
+ # make sure it was closed
+-read -u 5 foo 2>&1 | grep -q 'invalid file descriptor'
++read -u 5 foo 2>&1 | grep -q 'invalid file number'
+ echo after read
+ 
+ exec 5<&0
+--- tests/redir5.sub	2018-10-08 17:56:14.000000000 +0000
++++ tests/redir5.sub	2019-02-02 13:09:26.849690646 +0000
+@@ -17,7 +17,7 @@ f
+ typeset -f f
+ 
+ # make sure it was closed
+-read -u 5 foo 2>&1 | grep -q 'invalid file descriptor' 
++read -u 5 foo 2>&1 | grep -q 'invalid file number' 
+ echo after read
+ 
+ exec 5<&0

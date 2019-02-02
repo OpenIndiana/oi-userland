@@ -29,19 +29,13 @@
  	ls -l $(Program)
  	-$(SIZE) $(Program)
  
-@@ -565,10 +566,10 @@
+@@ -594,7 +594,7 @@ $(Program):  .build $(OBJECTS) $(BUILTIN
  	@echo
  
- bashbug: $(SUPPORT_SRC)bashbug.sh config.h Makefile $(VERSPROG)
--	@sed -e "s%!MACHINE!%$(Machine)%" -e "s%!OS!%$(OS)%" \
--	     -e "s%!CFLAGS!%$(CCFLAGS)%" -e "s%!CC!%$(CC)%" \
--	     -e "s%!RELEASE!%$(Version)%" -e "s%!PATCHLEVEL!%$(PatchLevel)%" \
--	     -e "s%!MACHTYPE!%$(MACHTYPE)%" -e "s%!RELSTATUS!%$(RELSTATUS)%" \
-+	@sed -e "s^!MACHINE!^$(Machine)^" -e "s^!OS!^$(OS)^" \
-+	    -e "s^!CFLAGS!^$(CCFLAGS)^" -e "s^!CC!^$(CC)^" \
-+	    -e "s^!RELEASE!^$(Version)^" -e "s^!PATCHLEVEL!^$(PatchLevel)^" \
-+	    -e "s^!MACHTYPE!^$(MACHTYPE)^" -e "s^!RELSTATUS!^$(RELSTATUS)^" \
- 	     $(SUPPORT_SRC)bashbug.sh > $@
+ bashbug: $(SDIR)/bashbug.sh config.h Makefile $(VERSPROG)
+-	@sed -e "s%!PATCHLEVEL!%$(PatchLevel)%" \
++	@sed -e "s^!PATCHLEVEL!^$(PatchLevel)^" \
+ 	     $(SDIR)/bashbug.sh > $@
  	@chmod a+rx bashbug
  
 @@ -863,7 +864,7 @@
