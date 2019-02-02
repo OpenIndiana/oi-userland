@@ -18,23 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+
 #
-PREFERRED_BITS=64
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
+#
+
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	4.4
-COMPONENT_REVISION=     2
-COMPONENT_FMRI=	shell/bash
+COMPONENT_VERSION=	5.0
+COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:d86b3392c1202e8ff5a423b302e6284db7f8f435ea9f39b5b1b20fd3ac36dfcb
+    sha256:b4a80f2ac66170b2913efbfb9f2594f1f76c7b1afd11f799e22035d63077fb4d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
@@ -46,23 +49,7 @@ BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bas
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
 PATCH_LEVEL = 0
 
-PKG_PROTO_DIRS += $(COMPONENT_DIR)/Solaris
-
-# Enable C99 mode + -Xc for it's additional warnings.
-#studio_C99MODE = -Xc $(studio_C99_ENABLE)
-
-# Use the maximum number of registers on sparc since we have no libraries
-studio_XREGS.sparc = -xregs=appl
-
-# 8 byte memory alignment + interpretation of non-alignment instead of SIGBUS
-studio_ALIGN.sparc.32 = -xmemalign=8i
-studio_ALIGN.sparc.64 = -xmemalign=16i
-
-# -xinline=%auto -- we like inlining where appropriate
-# CFLAGS += -xinline=%auto
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-# CFLAGS += -xbuiltin=%none
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 #CFLAGS += $(XPG6MODE)
 #CFLAGS += $(CPP_POSIX)
@@ -139,8 +126,6 @@ COMPONENT_TEST_MASTER		= \
 # avoid permission issues for other users running these tests
 COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
 
-# ASLR_MODE=$(ASLR_ENABLE)
-
 build: $(BUILD_64)
 
 install: $(INSTALL_64)
@@ -151,5 +136,7 @@ install: $(INSTALL_64)
 
 test:	$(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
