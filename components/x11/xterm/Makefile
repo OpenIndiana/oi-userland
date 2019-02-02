@@ -11,25 +11,24 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= xterm
-COMPONENT_VERSION= 333
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= xterm - terminal emulator for X 
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
+COMPONENT_NAME=		xterm
+COMPONENT_VERSION=	343
+COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2f1d42014e55c8036c6b29a847b31d3b5c1a3a35b126993ae6d3f05e8da0ef78
+  sha256:931db261a2069ddf7dc3a305985f494468b609cf7198f02ca09df9498cfad17a
 COMPONENT_ARCHIVE_URL= \
   http://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://invisible-island.net/xterm/
-COMPONENT_FMRI= terminal/xterm
-COMPONENT_LICENSE= MIT
-COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_PROJECT_URL=	http://invisible-island.net/xterm/
+COMPONENT_FMRI=		terminal/xterm
+COMPONENT_LICENSE=	MIT
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -48,11 +47,11 @@ CONFIGURE_OPTIONS += --with-app-defaults=/usr/share/X11/app-defaults
 CONFIGURE_OPTIONS += --with-icondir=/usr/share/pixmaps
 CONFIGURE_OPTIONS += --enable-logging
 
-build: $(BUILD_32)
+build:		$(BUILD_32)
 
-install: $(INSTALL_32)
+install:	$(INSTALL_32)
 
-test: $(NO_TESTS)
+test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += terminal/luit
