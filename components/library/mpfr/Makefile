@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
 COMPONENT_VERSION=      4.0.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
 COMPONENT_FMRI=		library/mpfr
