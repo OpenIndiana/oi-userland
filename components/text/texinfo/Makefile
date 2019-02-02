@@ -18,19 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
+#
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	6.0
+COMPONENT_VERSION=	6.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:11ba4358696e8be3b3c7cfc88b89cf69525791aeabf0ee0a59ca58ebbd3471e4
+    sha256:77774b3f4a06c20705cc2ef1c804864422e3cf95235e965b1f00a46df7da5f62
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/texinfo
+COMPONENT_FMRI=		text/texinfo
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -54,9 +58,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^DEPDIR.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^mv.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|.*ginstall.*|XXX_CC_XXX|g" ' \
 	'-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: .*is up to date.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
 # common targets
@@ -66,8 +72,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl-522
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

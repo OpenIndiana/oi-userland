@@ -9,15 +9,18 @@ PASS: t/file-node.sh
 PASS: t/file-nodes.sh
 PASS: t/file-node-with-dot.sh
 PASS: t/file-index.sh
+PASS: t/file-index-colons.sh
 PASS: t/file-file-with-dot.sh
 PASS: t/no-file.sh
 PASS: t/node-no-file.sh
 PASS: t/split.sh
+PASS: t/malformed-split.sh
 PASS: t/relative-path.sh
 PASS: t/file-relative-path.sh
 PASS: t/dir.sh
 PASS: t/dir-file.sh
 PASS: t/dir-file-sloppily.sh
+PASS: t/dir-merge.sh
 PASS: t/dir-nondir.sh
 PASS: t/dir-no-file.sh
 PASS: t/dir-file-menu.sh
@@ -28,16 +31,18 @@ PASS: t/dir-3-menus.sh
 PASS: t/dir-menus-sloppily.sh
 PASS: t/where-dir-file.sh
 PASS: t/dir-dangling-entry.sh
+PASS: t/dir-entry-to-subdir.sh
 PASS: t/spec-file-node.sh
 PASS: t/spec-no-node.sh
 PASS: t/spec-menu.sh
 PASS: t/all-only.sh
 PASS: t/empty.sh
-PASS: t/cr-tag-table.sh
 PASS: t/tab.sh
 PASS: t/tab-argument.sh
 PASS: t/tab-no-xref.sh
 PASS: t/tab-skip-node.sh
+PASS: t/xref-across-lines.sh
+PASS: t/xref-across-lines-2.sh
 PASS: t/body-start.sh
 PASS: t/end-of-line.sh
 PASS: t/goal-column.sh
@@ -48,8 +53,10 @@ PASS: t/split-footnotes.sh
 PASS: t/window-split-dir.sh
 PASS: t/last-node-not-top-level.sh
 PASS: t/adjust-anchors.sh
+PASS: t/xref-to-anchor.sh
 PASS: t/search-after-tag.sh
 PASS: t/split-file-menu.sh
+PASS: t/search-split-after-index.sh
 PASS: t/index.sh
 PASS: t/no-index.sh
 PASS: t/index-apropos.sh
@@ -64,25 +71,29 @@ PASS: t/resize-in-completions.sh
 PASS: t/replace-viewed.sh
 PASS: t/search-skip-screen.sh
 PASS: t/search-empty.sh
+PASS: t/close-window-after-search.sh
 PASS: t/inc-sea-forward.sh
 PASS: t/inc-sea-forward-nonregex.sh
 PASS: t/inc-sea-insensitive.sh
 PASS: t/inc-sea-history.sh
+PASS: t/inc-sea-bs.sh
 PASS: t/gc-split.sh
 PASS: t/anchor-positions.sh
-XFAIL: t/quoted-label-as-target.sh
-XFAIL: t/quoted-target.sh
-XFAIL: t/quoted-label-and-target.sh
-XFAIL: t/goto-quoted.sh
-XFAIL: t/next-quoted.sh
+PASS: t/quoted-label-as-target.sh
+PASS: t/quoted-target.sh
+PASS: t/quoted-label-and-target.sh
+PASS: t/quoted-manual-in-target.sh
+PASS: t/quoted-manual-in-label.sh
+PASS: t/goto-quoted.sh
+PASS: t/next-quoted.sh
 PASS: t/help.sh
 ============================================================================
-Testsuite summary for GNU Texinfo 6.0
+Testsuite summary for GNU Texinfo 6.5
 ============================================================================
-# TOTAL: 72
-# PASS:  67
+# TOTAL: 83
+# PASS:  83
 # SKIP:  0
-# XFAIL: 5
+# XFAIL: 0
 # FAIL:  0
 # XPASS: 0
 # ERROR: 0
@@ -149,7 +160,7 @@ PASS: ii-0055-test
 PASS: ii-0056-test
 PASS: ii-0057-test
 ============================================================================
-Testsuite summary for GNU Texinfo 6.0
+Testsuite summary for GNU Texinfo 6.5
 ============================================================================
 # TOTAL: 57
 # PASS:  55
@@ -163,15 +174,9 @@ Making check in po
 Making check in po_document
 Making check in tp
 Making check in .
-/usr/bin/ginstall -c -m 644 $(SOURCE_DIR)/tp/t/include_reference/f--ile.png t/include_dir/f--ile.png
-/usr/bin/ginstall -c -m 644 $(SOURCE_DIR)/tp/t/include_reference/f--ile.txt t/include_dir/f--ile.txt
-/usr/bin/ginstall -c -m 644 $(SOURCE_DIR)/tp/t/include_reference/figure.txt t/include_dir/figure.txt
-/usr/bin/ginstall -c -m 644 $(SOURCE_DIR)/tp/t/include_reference/inc_file.texi t/include_dir/inc_file.texi
-/usr/bin/ginstall -c -m 644 $(SOURCE_DIR)/tp/t/include_reference/incl-incl.txi t/include_dir/incl-incl.txi
-/usr/bin/ginstall -c -m 644 $(SOURCE_DIR)/tp/t/include_reference/macro_included.texi t/include_dir/macro_included.texi
 /usr/gnu/bin/make  check-TESTS
 ============================================================================
-Testsuite summary for GNU Texinfo 6.0
+Testsuite summary for GNU Texinfo 6.5
 ============================================================================
 # TOTAL: 0
 # PASS:  0
@@ -184,143 +189,6 @@ Testsuite summary for GNU Texinfo 6.0
 Making check in tests
 Making check in .
 /usr/gnu/bin/make  check-TESTS
-SKIP: test_scripts/sectioning_node_footnote_end.sh
-SKIP: test_scripts/sectioning_node_footnote_use_node.sh
-SKIP: test_scripts/sectioning_node_footnote_separated.sh
-SKIP: test_scripts/sectioning_test_two_include.sh
-SKIP: test_scripts/sectioning_equivalent_nodes.sh
-SKIP: test_scripts/sectioning_equivalent_nodes_no_node.sh
-SKIP: test_scripts/sectioning_equivalent_nodes_test_renamed_nodes.sh
-SKIP: test_scripts/sectioning_nodes_after_top_before_chapter.sh
-SKIP: test_scripts/sectioning_nodes_after_top_before_chapter_use_nodes_chapter.sh
-SKIP: test_scripts/sectioning_nodes_after_top_before_section.sh
-SKIP: test_scripts/sectioning_nodes_after_top_before_section_use_nodes.sh
-SKIP: test_scripts/sectioning_nodes_after_top_before_section_use_nodes_chapter.sh
-SKIP: test_scripts/sectioning_sectioning_directions.sh
-SKIP: test_scripts/sectioning_sectioning_frames.sh
-SKIP: test_scripts/sectioning_no_node_chapter_split.sh
-SKIP: test_scripts/sectioning_placed_things_before_element.sh
-SKIP: test_scripts/sectioning_no_section_no_top.sh
-SKIP: test_scripts/sectioning_no_section_no_top_no_node.sh
-SKIP: test_scripts/sectioning_more_nodes_than_sections.sh
-SKIP: test_scripts/sectioning_one_node_no_node.sh
-SKIP: test_scripts/sectioning_one_node.sh
-SKIP: test_scripts/sectioning_more_sections_than_nodes.sh
-SKIP: test_scripts/sectioning_two_footnotes_in_nodes.sh
-SKIP: test_scripts/sectioning_two_footnotes_in_nodes_separated.sh
-SKIP: test_scripts/sectioning_top_node_up_implicit.sh
-SKIP: test_scripts/sectioning_top_node_up_explicit.sh
-SKIP: test_scripts/coverage_texi_formatting.sh
-SKIP: test_scripts/coverage_formatting.sh
-SKIP: test_scripts/coverage_formatting_utf8_enable_encoding.sh
-SKIP: test_scripts/coverage_formatting_fr.sh
-SKIP: test_scripts/coverage_formatting_cr.sh
-SKIP: test_scripts/indices_double_index_entry.sh
-SKIP: test_scripts/indices_split_chapter_index.sh
-SKIP: test_scripts/indices_index_split.sh
-SKIP: test_scripts/indices_index_split_nodes.sh
-SKIP: test_scripts/indices_index_no_node.sh
-SKIP: test_scripts/indices_nodes_before_top.sh
-SKIP: test_scripts/indices_nodes_before_top_nodes.sh
-SKIP: test_scripts/indices_nodes_before_top_no_nodes.sh
-SKIP: test_scripts/indices_nodes_before_top_and_sections_monolithic.sh
-SKIP: test_scripts/indices_nodes_before_top_and_sections_html_chapter.sh
-SKIP: test_scripts/indices_nodes_before_top_and_sections_html_chapter_nodes.sh
-SKIP: test_scripts/indices_index_special_region.sh
-SKIP: test_scripts/indices_index_special_region_no_region.sh
-SKIP: test_scripts/indices_index_special_region_no_insertcopying.sh
-SKIP: test_scripts/indices_index_special_region_html.sh
-SKIP: test_scripts/indices_index_special_region_no_region_html.sh
-SKIP: test_scripts/indices_index_special_region_no_insertcopying_html.sh
-SKIP: test_scripts/indices_index_nodes.sh
-SKIP: test_scripts/indices_index_nodes_nodes.sh
-SKIP: test_scripts/indices_printindex_between_node_section.sh
-SKIP: test_scripts/indices_printindex_between_part_chapter.sh
-SKIP: test_scripts/indices_index_and_node_same_name.sh
-SKIP: test_scripts/indices_index_entry_in_footnote.sh
-SKIP: test_scripts/indices_index_one_node.sh
-SKIP: test_scripts/indices_index_no_node_no_top.sh
-SKIP: test_scripts/indices_index_entry_in_footnote_info.sh
-SKIP: test_scripts/indices_index_entry_in_footnote_separated_info.sh
-SKIP: test_scripts/nested_formats_texi_nested_formats.sh
-SKIP: test_scripts/nested_formats_nested_group.sh
-SKIP: test_scripts/nested_formats_nested_itemize.sh
-SKIP: test_scripts/nested_formats_nested_menu.sh
-SKIP: test_scripts/nested_formats_nested_table.sh
-SKIP: test_scripts/nested_formats_nested_flushright.sh
-SKIP: test_scripts/nested_formats_nested_multitable.sh
-SKIP: test_scripts/nested_formats_nested_cartouche.sh
-SKIP: test_scripts/nested_formats_nested_enumerate.sh
-SKIP: test_scripts/nested_formats_nested_deffn.sh
-SKIP: test_scripts/nested_formats_nested_example.sh
-SKIP: test_scripts/nested_formats_nested_quotation.sh
-SKIP: test_scripts/contents_contents_at_begin.sh
-SKIP: test_scripts/contents_contents_at_end.sh
-SKIP: test_scripts/contents_contents_in_middle_chapter.sh
-SKIP: test_scripts/contents_contents_in_middle_section.sh
-SKIP: test_scripts/contents_double_contents.sh
-SKIP: test_scripts/contents_double_contents_setcontentsaftertitlepage.sh
-SKIP: test_scripts/contents_double_contents_chapter.sh
-SKIP: test_scripts/contents_double_contents_section.sh
-SKIP: test_scripts/contents_double_contents_nodes.sh
-SKIP: test_scripts/contents_no_content.sh
-SKIP: test_scripts/contents_no_content_do_contents.sh
-SKIP: test_scripts/contents_no_content_setcatpage.sh
-SKIP: test_scripts/contents_no_content_setcatpage_do_contents.sh
-SKIP: test_scripts/contents_contents_at_begin_inline.sh
-SKIP: test_scripts/contents_contents_at_end_inline.sh
-SKIP: test_scripts/contents_contents_in_middle_chapter_inline.sh
-SKIP: test_scripts/contents_contents_in_middle_section_inline.sh
-SKIP: test_scripts/contents_double_contents_inline.sh
-SKIP: test_scripts/contents_double_contents_setcontentsaftertitlepage_inline.sh
-SKIP: test_scripts/contents_double_contents_inline_chapter.sh
-SKIP: test_scripts/contents_double_contents_inline_section.sh
-SKIP: test_scripts/contents_double_contents_inline_nodes.sh
-SKIP: test_scripts/contents_no_content_inline.sh
-SKIP: test_scripts/contents_no_content_do_contents_inline.sh
-SKIP: test_scripts/contents_no_content_setcatpage_inline.sh
-SKIP: test_scripts/contents_no_content_setcatpage_do_contents_inline.sh
-SKIP: test_scripts/contents_double_contents_book.sh
-SKIP: test_scripts/contents_double_contents_setcontentsaftertitlepage_book.sh
-SKIP: test_scripts/contents_double_contents_setcontentsaftertitlepage_book_chapter.sh
-SKIP: test_scripts/contents_contents_and_parts.sh
-SKIP: test_scripts/contents_contents_at_begin_info.sh
-SKIP: test_scripts/contents_contents_at_end_info.sh
-SKIP: test_scripts/contents_contents_in_middle_chapter_info.sh
-SKIP: test_scripts/contents_contents_in_middle_section_info.sh
-SKIP: test_scripts/contents_double_contents_info.sh
-SKIP: test_scripts/contents_double_contents_setcontentsaftertitlepage_info.sh
-SKIP: test_scripts/layout_no_monolithic.sh
-SKIP: test_scripts/layout_no_monolithic_only_toc_out.sh
-SKIP: test_scripts/layout_navigation.sh
-SKIP: test_scripts/layout_navigation_no_header.sh
-SKIP: test_scripts/layout_navigation_vertical.sh
-SKIP: test_scripts/layout_navigation_no_header_vertical.sh
-SKIP: test_scripts/layout_navigation_chapter.sh
-SKIP: test_scripts/layout_navigation_section.sh
-SKIP: test_scripts/layout_navigation_node.sh
-SKIP: test_scripts/layout_navigation_chapter_no_header.sh
-SKIP: test_scripts/layout_navigation_section_no_header.sh
-SKIP: test_scripts/layout_navigation_node_no_header.sh
-SKIP: test_scripts/layout_navigation_chapter_vertical.sh
-SKIP: test_scripts/layout_navigation_section_vertical.sh
-SKIP: test_scripts/layout_navigation_node_vertical.sh
-SKIP: test_scripts/layout_navigation_chapter_no_header_vertical.sh
-SKIP: test_scripts/layout_navigation_section_no_header_vertical.sh
-SKIP: test_scripts/layout_navigation_node_no_header_vertical.sh
-SKIP: test_scripts/layout_navigation_test_misc_file_collision.sh
-SKIP: test_scripts/layout_formatting_docbook.sh
-SKIP: test_scripts/layout_formatting_xml.sh
-SKIP: test_scripts/layout_formatting_weird_quotes.sh
-SKIP: test_scripts/layout_formatting_html.sh
-SKIP: test_scripts/layout_formatting_html_nodes.sh
-SKIP: test_scripts/layout_formatting_plaintext.sh
-SKIP: test_scripts/layout_formatting_html32.sh
-SKIP: test_scripts/layout_formatting_regions.sh
-SKIP: test_scripts/layout_formatting_exotic.sh
-SKIP: test_scripts/layout_formatting_fr_icons.sh
-SKIP: test_scripts/layout_formatting_chm.sh
-SKIP: test_scripts/layout_formatting_nodes.sh
 PASS: test_scripts/formatting_texi_glossary.sh
 PASS: test_scripts/formatting_texi_bib-example.sh
 PASS: test_scripts/formatting_texi_cond.sh
@@ -354,6 +222,142 @@ PASS: test_scripts/formatting_documentlanguage_set_option_info.sh
 PASS: test_scripts/formatting_float_copying.sh
 PASS: test_scripts/formatting_simple_with_menu_docbook_info.sh
 PASS: test_scripts/formatting_split_for_format_not_split.sh
+PASS: test_scripts/htmlxref_htmlxref.sh
+PASS: test_scripts/htmlxref_htmlxref_nodes.sh
+PASS: test_scripts/htmlxref-only_mono_htmlxref.sh
+PASS: test_scripts/htmlxref-only_mono_htmlxref_nodes.sh
+PASS: test_scripts/htmlxref-only_split_htmlxref.sh
+PASS: test_scripts/htmlxref-only_split_htmlxref_nodes.sh
+PASS: test_scripts/sectioning_node_footnote_end.sh
+PASS: test_scripts/sectioning_node_footnote_use_node.sh
+PASS: test_scripts/sectioning_node_footnote_separated.sh
+PASS: test_scripts/sectioning_test_two_include.sh
+PASS: test_scripts/sectioning_equivalent_nodes.sh
+PASS: test_scripts/sectioning_equivalent_nodes_no_node.sh
+PASS: test_scripts/sectioning_equivalent_nodes_test_renamed_nodes.sh
+PASS: test_scripts/sectioning_nodes_after_top_before_chapter.sh
+PASS: test_scripts/sectioning_nodes_after_top_before_chapter_use_nodes_chapter.sh
+PASS: test_scripts/sectioning_nodes_after_top_before_section.sh
+PASS: test_scripts/sectioning_nodes_after_top_before_section_use_nodes.sh
+PASS: test_scripts/sectioning_nodes_after_top_before_section_use_nodes_chapter.sh
+PASS: test_scripts/sectioning_sectioning_directions.sh
+PASS: test_scripts/sectioning_sectioning_frames.sh
+PASS: test_scripts/sectioning_no_node_chapter_split.sh
+PASS: test_scripts/sectioning_placed_things_before_element.sh
+PASS: test_scripts/sectioning_no_section_no_top.sh
+PASS: test_scripts/sectioning_no_section_no_top_no_node.sh
+PASS: test_scripts/sectioning_more_nodes_than_sections.sh
+PASS: test_scripts/sectioning_one_node_no_node.sh
+PASS: test_scripts/sectioning_one_node.sh
+PASS: test_scripts/sectioning_more_sections_than_nodes.sh
+PASS: test_scripts/sectioning_two_footnotes_in_nodes.sh
+PASS: test_scripts/sectioning_two_footnotes_in_nodes_separated.sh
+PASS: test_scripts/sectioning_top_node_up_implicit.sh
+PASS: test_scripts/sectioning_top_node_up_explicit.sh
+PASS: test_scripts/coverage_texi_formatting.sh
+PASS: test_scripts/coverage_formatting.sh
+PASS: test_scripts/coverage_formatting_fr.sh
+PASS: test_scripts/indices_double_index_entry.sh
+PASS: test_scripts/indices_split_chapter_index.sh
+PASS: test_scripts/indices_index_split.sh
+PASS: test_scripts/indices_index_split_nodes.sh
+PASS: test_scripts/indices_index_no_node.sh
+PASS: test_scripts/indices_nodes_before_top.sh
+PASS: test_scripts/indices_nodes_before_top_nodes.sh
+PASS: test_scripts/indices_nodes_before_top_no_nodes.sh
+PASS: test_scripts/indices_nodes_before_top_and_sections_monolithic.sh
+PASS: test_scripts/indices_nodes_before_top_and_sections_html_chapter.sh
+PASS: test_scripts/indices_nodes_before_top_and_sections_html_chapter_nodes.sh
+PASS: test_scripts/indices_index_special_region.sh
+PASS: test_scripts/indices_index_special_region_no_region.sh
+PASS: test_scripts/indices_index_special_region_no_insertcopying.sh
+PASS: test_scripts/indices_index_special_region_html.sh
+PASS: test_scripts/indices_index_special_region_no_region_html.sh
+PASS: test_scripts/indices_index_special_region_no_insertcopying_html.sh
+PASS: test_scripts/indices_index_nodes.sh
+PASS: test_scripts/indices_index_nodes_nodes.sh
+PASS: test_scripts/indices_printindex_between_node_section.sh
+PASS: test_scripts/indices_printindex_between_part_chapter.sh
+PASS: test_scripts/indices_index_and_node_same_name.sh
+PASS: test_scripts/indices_index_entry_in_footnote.sh
+PASS: test_scripts/indices_index_one_node.sh
+PASS: test_scripts/indices_index_no_node_no_top.sh
+PASS: test_scripts/indices_index_entry_in_footnote_info.sh
+PASS: test_scripts/indices_index_entry_in_footnote_separated_info.sh
+PASS: test_scripts/nested_formats_texi_nested_formats.sh
+PASS: test_scripts/nested_formats_nested_group.sh
+PASS: test_scripts/nested_formats_nested_itemize.sh
+PASS: test_scripts/nested_formats_nested_menu.sh
+PASS: test_scripts/nested_formats_nested_table.sh
+PASS: test_scripts/nested_formats_nested_flushright.sh
+PASS: test_scripts/nested_formats_nested_multitable.sh
+PASS: test_scripts/nested_formats_nested_cartouche.sh
+PASS: test_scripts/nested_formats_nested_enumerate.sh
+PASS: test_scripts/nested_formats_nested_deffn.sh
+PASS: test_scripts/nested_formats_nested_example.sh
+PASS: test_scripts/nested_formats_nested_quotation.sh
+PASS: test_scripts/contents_contents_at_begin.sh
+PASS: test_scripts/contents_contents_at_end.sh
+PASS: test_scripts/contents_contents_in_middle_chapter.sh
+PASS: test_scripts/contents_contents_in_middle_section.sh
+PASS: test_scripts/contents_double_contents.sh
+PASS: test_scripts/contents_double_contents_chapter.sh
+PASS: test_scripts/contents_double_contents_section.sh
+PASS: test_scripts/contents_double_contents_nodes.sh
+PASS: test_scripts/contents_no_content.sh
+PASS: test_scripts/contents_no_content_do_contents.sh
+PASS: test_scripts/contents_no_content_setcatpage.sh
+PASS: test_scripts/contents_no_content_setcatpage_do_contents.sh
+PASS: test_scripts/contents_contents_at_begin_inline.sh
+PASS: test_scripts/contents_contents_at_end_inline.sh
+PASS: test_scripts/contents_contents_in_middle_chapter_inline.sh
+PASS: test_scripts/contents_contents_in_middle_section_inline.sh
+PASS: test_scripts/contents_double_contents_inline.sh
+PASS: test_scripts/contents_double_contents_inline_chapter.sh
+PASS: test_scripts/contents_double_contents_inline_section.sh
+PASS: test_scripts/contents_double_contents_inline_nodes.sh
+PASS: test_scripts/contents_no_content_inline.sh
+PASS: test_scripts/contents_no_content_do_contents_inline.sh
+PASS: test_scripts/contents_no_content_setcatpage_inline.sh
+PASS: test_scripts/contents_no_content_setcatpage_do_contents_inline.sh
+PASS: test_scripts/contents_double_contents_book.sh
+PASS: test_scripts/contents_contents_and_parts.sh
+PASS: test_scripts/contents_contents_at_begin_info.sh
+PASS: test_scripts/contents_contents_at_end_info.sh
+PASS: test_scripts/contents_contents_in_middle_chapter_info.sh
+PASS: test_scripts/contents_contents_in_middle_section_info.sh
+PASS: test_scripts/contents_double_contents_info.sh
+PASS: test_scripts/layout_no_monolithic.sh
+PASS: test_scripts/layout_no_monolithic_only_toc_out.sh
+PASS: test_scripts/layout_navigation.sh
+PASS: test_scripts/layout_navigation_no_header.sh
+PASS: test_scripts/layout_navigation_vertical.sh
+PASS: test_scripts/layout_navigation_no_header_vertical.sh
+PASS: test_scripts/layout_navigation_chapter.sh
+PASS: test_scripts/layout_navigation_section.sh
+PASS: test_scripts/layout_navigation_node.sh
+PASS: test_scripts/layout_navigation_chapter_no_header.sh
+PASS: test_scripts/layout_navigation_section_no_header.sh
+PASS: test_scripts/layout_navigation_node_no_header.sh
+PASS: test_scripts/layout_navigation_chapter_vertical.sh
+PASS: test_scripts/layout_navigation_section_vertical.sh
+PASS: test_scripts/layout_navigation_node_vertical.sh
+PASS: test_scripts/layout_navigation_chapter_no_header_vertical.sh
+PASS: test_scripts/layout_navigation_section_no_header_vertical.sh
+PASS: test_scripts/layout_navigation_node_no_header_vertical.sh
+PASS: test_scripts/layout_navigation_test_misc_file_collision.sh
+PASS: test_scripts/layout_formatting_docbook.sh
+PASS: test_scripts/layout_formatting_xml.sh
+PASS: test_scripts/layout_formatting_weird_quotes.sh
+PASS: test_scripts/layout_formatting_html.sh
+PASS: test_scripts/layout_formatting_html_nodes.sh
+PASS: test_scripts/layout_formatting_plaintext.sh
+PASS: test_scripts/layout_formatting_html32.sh
+PASS: test_scripts/layout_formatting_regions.sh
+PASS: test_scripts/layout_formatting_exotic.sh
+PASS: test_scripts/layout_formatting_fr_icons.sh
+PASS: test_scripts/layout_formatting_chm.sh
+PASS: test_scripts/layout_formatting_nodes.sh
 SKIP: test_scripts/tex_html_block_EOL_tex.sh
 SKIP: test_scripts/tex_html_simplest_httex.sh
 SKIP: test_scripts/tex_html_tex.sh
@@ -370,11 +374,11 @@ SKIP: test_scripts/tex_html_formatting_singular.sh
 PASS: t/stdout.sh
 PASS: t/stdout_split.sh
 ============================================================================
-Testsuite summary for GNU Texinfo 6.0
+Testsuite summary for GNU Texinfo 6.5
 ============================================================================
-# TOTAL: 185
-# PASS:  35
-# SKIP:  150
+# TOTAL: 184
+# PASS:  171
+# SKIP:  13
 # XFAIL: 0
 # FAIL:  0
 # XPASS: 0
@@ -386,7 +390,7 @@ PASS: indices.sh
 SKIP: tex_l2h.sh
 SKIP: tex_t4ht.sh
 ============================================================================
-Testsuite summary for GNU Texinfo 6.0
+Testsuite summary for GNU Texinfo 6.5
 ============================================================================
 # TOTAL: 3
 # PASS:  1
@@ -396,58 +400,14 @@ Testsuite summary for GNU Texinfo 6.0
 # XPASS: 0
 # ERROR: 0
 ============================================================================
-Making check in htmlxref
-/usr/gnu/bin/make  check-TESTS
-PASS: test_scripts/htmlxref_htmlxref.sh
-PASS: test_scripts/htmlxref_htmlxref_nodes.sh
-============================================================================
-Testsuite summary for GNU Texinfo 6.0
-============================================================================
-# TOTAL: 2
-# PASS:  2
-# SKIP:  0
-# XFAIL: 0
-# FAIL:  0
-# XPASS: 0
-# ERROR: 0
-============================================================================
-Making check in htmlxref-only_mono
-/usr/gnu/bin/make  check-TESTS
-PASS: test_scripts/htmlxref-only_mono_htmlxref.sh
-PASS: test_scripts/htmlxref-only_mono_htmlxref_nodes.sh
-============================================================================
-Testsuite summary for GNU Texinfo 6.0
-============================================================================
-# TOTAL: 2
-# PASS:  2
-# SKIP:  0
-# XFAIL: 0
-# FAIL:  0
-# XPASS: 0
-# ERROR: 0
-============================================================================
-Making check in htmlxref-only_split
-/usr/gnu/bin/make  check-TESTS
-PASS: test_scripts/htmlxref-only_split_htmlxref.sh
-PASS: test_scripts/htmlxref-only_split_htmlxref_nodes.sh
-============================================================================
-Testsuite summary for GNU Texinfo 6.0
-============================================================================
-# TOTAL: 2
-# PASS:  2
-# SKIP:  0
-# XFAIL: 0
-# FAIL:  0
-# XPASS: 0
-# ERROR: 0
-============================================================================
 Making check in Pod-Simple-Texinfo
 /usr/gnu/bin/make  check-TESTS
+PASS: prove.sh
 ============================================================================
-Testsuite summary for GNU Texinfo 6.0
+Testsuite summary for GNU Texinfo 6.5
 ============================================================================
-# TOTAL: 0
-# PASS:  0
+# TOTAL: 1
+# PASS:  1
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -458,7 +418,7 @@ Making check in texindex
 /usr/gnu/bin/make  check-TESTS
 PASS: tests/ti-helpversion.sh
 ============================================================================
-Testsuite summary for GNU Texinfo 6.0
+Testsuite summary for GNU Texinfo 6.5
 ============================================================================
 # TOTAL: 1
 # PASS:  1
@@ -469,6 +429,19 @@ Testsuite summary for GNU Texinfo 6.0
 # ERROR: 0
 ============================================================================
 Making check in util
+/usr/gnu/bin/make  check-TESTS
+PASS: tests/texi2dvi_helpversion.sh
+============================================================================
+Testsuite summary for GNU Texinfo 6.5
+============================================================================
+# TOTAL: 1
+# PASS:  1
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
+============================================================================
 Making check in doc
 Making check in tp_api
 /usr/gnu/bin/make  check-am
