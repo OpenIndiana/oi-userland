@@ -21,29 +21,35 @@
 
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 # Note for the next texinfo maintainer:
 # if "file path=usr/lib/$(MACH64)/charset.alias" is in your texinfo.p5m file,
 # you may want to remove it, since charset.alias is coming from pkg: library/glib2
 #
 
-<transform file path=usr.*/man/.+$ -> default mangler.man.stability volatile>
-set name=pkg.fmri \
-    value=pkg:/text/texinfo@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="Documentation system for on-line information and printed output"
-set name=pkg.description \
-    value="Texinfo is a documentation system that uses a single source file to produce both on-line information and printed output."
-set name=com.oracle.info.description \
-    value="Texinfo, the GNU documentation system"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Documentation system for on-line information and printed output"
 set name=info.classification value=org.opensolaris.category.2008:Development/GNU
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2000/488
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file texinfo-update.xml path=lib/svc/manifest/application/texinfo-update.xml
-file svc-texinfo-update path=lib/svc/method/svc-texinfo-update \
+
+depend type=require fmri=runtime/python-27
+
+<transform file path=usr.*/man/.+$ -> default mangler.man.stability volatile>
+
+file usr/share/info/dir path=var/info/usr_share_info_dir mode=0644 preserve=true
+legacy pkg=SUNWtexi desc="GNU texinfo (texinfo)" \
+    name="GNU texinfo - Texinfo utilities (texinfo)"
+license texinfo.copyright license='GPLv3,FDLv1.3'
+license texi2html.copyright license=texi2html
+
+file files/texinfo-update.xml path=lib/svc/manifest/application/texinfo-update.xml
+file files/svc-texinfo-update path=lib/svc/method/svc-texinfo-update \
     disable_fmri=svc:/application/texinfo-update:default
+file files/texi2html.pl path=usr/bin/texi2html
+
 file path=usr/bin/$(MACH64)/info
 file path=usr/bin/$(MACH64)/install-info
 link path=usr/bin/$(MACH64)/makeinfo target=texi2any
@@ -60,26 +66,28 @@ file path=usr/bin/pdftexi2dvi
 file path=usr/bin/pod2texi
 file path=usr/bin/texi2any
 file path=usr/bin/texi2dvi
-file texi2html.pl path=usr/bin/texi2html
 file path=usr/bin/texi2pdf
 file path=usr/bin/texindex
 dir  path=usr/share/info
 link path=usr/share/info/dir target=../../../var/info/usr_share_info_dir
 file path=usr/share/info/info-stnd.info
-file path=usr/share/info/info.info
 file path=usr/share/info/texinfo.info
 file path=usr/share/info/texinfo.info-1
 file path=usr/share/info/texinfo.info-2
 file path=usr/share/info/texinfo.info-3
 file path=usr/share/locale/ca.us-ascii/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/ca/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/ca/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/cs/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/cs/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/da/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/da/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/de.us-ascii/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/de/LC_MESSAGES/texinfo.mo
-link path=usr/share/locale/de_AT target=de
-#We don't ship locale/de_AT since it links to locale/de
-#file path=usr/share/locale/de_AT/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/de/LC_MESSAGES/texinfo_document.mo
+file path=usr/share/locale/de_AT/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/el/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/el/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/eo/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/eo/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/es/LC_MESSAGES/texinfo.mo
@@ -88,6 +96,7 @@ file path=usr/share/locale/fr/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/fr/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/he/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/hr/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/hr/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/hu/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/hu/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/id/LC_MESSAGES/texinfo.mo
@@ -101,8 +110,10 @@ file path=usr/share/locale/no.us-ascii/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/pl/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/pl/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/pt.us-ascii/LC_MESSAGES/texinfo_document.mo
+file path=usr/share/locale/pt/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/pt_BR.us-ascii/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/texinfo.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/texinfo_document.mo
 file path=usr/share/locale/ro/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/ru/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/rw/LC_MESSAGES/texinfo.mo
@@ -125,17 +136,9 @@ file path=usr/share/man/man1/texi2pdf.1
 file path=usr/share/man/man1/texindex.1
 file path=usr/share/man/man5/info.5
 file path=usr/share/man/man5/texinfo.5
-dir  path=usr/share/texinfo
-dir  path=usr/share/texinfo/DebugTexinfo
-file path=usr/share/texinfo/DebugTexinfo/DebugCount.pm
 file path=usr/share/texinfo/DebugTexinfo/DebugTree.pm
-dir  path=usr/share/texinfo/Pod-Simple-Texinfo
-dir  path=usr/share/texinfo/Pod-Simple-Texinfo/Pod
-dir  path=usr/share/texinfo/Pod-Simple-Texinfo/Pod/Simple
 file path=usr/share/texinfo/Pod-Simple-Texinfo/Pod/Simple/Texinfo.pm
-dir  path=usr/share/texinfo/Texinfo
 file path=usr/share/texinfo/Texinfo/Common.pm
-dir  path=usr/share/texinfo/Texinfo/Convert
 file path=usr/share/texinfo/Texinfo/Convert/Converter.pm
 file path=usr/share/texinfo/Texinfo/Convert/DocBook.pm
 file path=usr/share/texinfo/Texinfo/Convert/HTML.pm
@@ -145,6 +148,7 @@ file path=usr/share/texinfo/Texinfo/Convert/Info.pm
 file path=usr/share/texinfo/Texinfo/Convert/Line.pm
 file path=usr/share/texinfo/Texinfo/Convert/NodeNameNormalization.pm
 file path=usr/share/texinfo/Texinfo/Convert/Paragraph.pm
+file path=usr/share/texinfo/Texinfo/Convert/ParagraphNonXS.pm
 file path=usr/share/texinfo/Texinfo/Convert/PlainTexinfo.pm
 file path=usr/share/texinfo/Texinfo/Convert/Plaintext.pm
 file path=usr/share/texinfo/Texinfo/Convert/Texinfo.pm
@@ -156,21 +160,19 @@ file path=usr/share/texinfo/Texinfo/Convert/UnFilled.pm
 file path=usr/share/texinfo/Texinfo/Convert/Unicode.pm
 file path=usr/share/texinfo/Texinfo/Documentlanguages.pm
 file path=usr/share/texinfo/Texinfo/Encoding.pm
+file path=usr/share/texinfo/Texinfo/MiscXS.pm
+file path=usr/share/texinfo/Texinfo/ModulePath.pm
 file path=usr/share/texinfo/Texinfo/Parser.pm
 file path=usr/share/texinfo/Texinfo/Report.pm
 file path=usr/share/texinfo/Texinfo/Structuring.pm
+file path=usr/share/texinfo/Texinfo/Transformations.pm
+file path=usr/share/texinfo/Texinfo/XSLoader.pm
 file path=usr/share/texinfo/htmlxref.cnf
-dir  path=usr/share/texinfo/init
 file path=usr/share/texinfo/init/book.pm
 file path=usr/share/texinfo/init/chm.pm
 file path=usr/share/texinfo/init/html32.pm
 file path=usr/share/texinfo/init/latex2html.pm
 file path=usr/share/texinfo/init/tex4ht.pm
-dir  path=usr/share/texinfo/lib
-dir  path=usr/share/texinfo/lib/Text-Unidecode
-dir  path=usr/share/texinfo/lib/Text-Unidecode/lib
-dir  path=usr/share/texinfo/lib/Text-Unidecode/lib/Text
-dir  path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x00.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/x01.pm
@@ -352,19 +354,11 @@ file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xfc.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xfd.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xfe.pm
 file path=usr/share/texinfo/lib/Text-Unidecode/lib/Text/Unidecode/xff.pm
-dir  path=usr/share/texinfo/lib/Unicode-EastAsianWidth
-dir  path=usr/share/texinfo/lib/Unicode-EastAsianWidth/lib
-dir  path=usr/share/texinfo/lib/Unicode-EastAsianWidth/lib/Unicode
 file path=usr/share/texinfo/lib/Unicode-EastAsianWidth/lib/Unicode/EastAsianWidth.pm
-dir  path=usr/share/texinfo/lib/libintl-perl
-dir  path=usr/share/texinfo/lib/libintl-perl/lib
-dir  path=usr/share/texinfo/lib/libintl-perl/lib/Locale
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/Messages.pm
-dir  path=usr/share/texinfo/lib/libintl-perl/lib/Locale/Recode
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/Recode.pm
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/Recode/_Aliases.pm
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/Recode/_Conversions.pm
-dir  path=usr/share/texinfo/lib/libintl-perl/lib/Locale/RecodeData
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/RecodeData.pm
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/RecodeData/ASMO_449.pm
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/RecodeData/ATARI_ST.pm
@@ -509,9 +503,3 @@ file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/Util.pm
 file path=usr/share/texinfo/lib/libintl-perl/lib/Locale/gettext_pp.pm
 file path=usr/share/texinfo/texindex.awk
 file path=usr/share/texinfo/texinfo.dtd
-file usr/share/info/dir path=var/info/usr_share_info_dir mode=0644 preserve=true
-legacy pkg=SUNWtexi desc="GNU texinfo (texinfo)" \
-    name="GNU texinfo - Texinfo utilities (texinfo)"
-license texinfo.copyright license='GPLv3,FDLv1.3'
-license texi2html.copyright license=texi2html
-depend type=require fmri=runtime/python-27
