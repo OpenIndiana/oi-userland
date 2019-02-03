@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -37,8 +38,13 @@ set name=info.classification \
 set name=info.upstream value=vim-dev@vim.org
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2007/267
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+license xxd.license license="MIT/X11 (xxd)"
+license license license="VIM License"
+#
+depend type=optional fmri=editor/gvim@$(IPS_COMPONENT_VERSION)
+depend type=require fmri=editor/vim/vim-core@$(IPS_COMPONENT_VERSION)
 #
 link path=usr/bin/rview target=vim
 link path=usr/bin/rvim target=vim
@@ -369,6 +375,7 @@ file path=usr/share/vim/$(VIMVER)/doc/tags
 file path=usr/share/vim/$(VIMVER)/doc/tagsrch.txt
 file path=usr/share/vim/$(VIMVER)/doc/term.txt
 file path=usr/share/vim/$(VIMVER)/doc/terminal.txt
+file path=usr/share/vim/$(VIMVER)/doc/textprop.txt
 file path=usr/share/vim/$(VIMVER)/doc/tips.txt
 file path=usr/share/vim/$(VIMVER)/doc/todo.txt
 file path=usr/share/vim/$(VIMVER)/doc/uganda.txt
@@ -434,6 +441,7 @@ file path=usr/share/vim/$(VIMVER)/ftplugin/art.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/aspvbs.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/automake.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/awk.vim
+file path=usr/share/vim/$(VIMVER)/ftplugin/bash.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/bdf.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/bst.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/btm.vim
@@ -441,6 +449,7 @@ file path=usr/share/vim/$(VIMVER)/ftplugin/bzl.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/c.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/calendar.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/cdrdaoconf.vim
+file path=usr/share/vim/$(VIMVER)/ftplugin/cfg.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/ch.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/changelog.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/chicken.vim
@@ -539,6 +548,7 @@ file path=usr/share/vim/$(VIMVER)/ftplugin/manconf.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/markdown.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/matlab.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/mf.vim
+file path=usr/share/vim/$(VIMVER)/ftplugin/mma.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/modconf.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/mp.vim
 file path=usr/share/vim/$(VIMVER)/ftplugin/mplayerconf.vim
@@ -1813,9 +1823,3 @@ file path=usr/share/vim/$(VIMVER)/tutor/tutor.zh.utf-8
 file path=usr/share/vim/$(VIMVER)/tutor/tutor.zh_cn.utf-8
 file path=usr/share/vim/$(VIMVER)/tutor/tutor.zh_tw.utf-8
 file path=usr/share/vim/$(VIMVER)/vimrc_example.vim
-#
-license xxd.license license="MIT/X11 (xxd)"
-license license license="VIM License"
-#
-depend type=optional fmri=editor/gvim@$(IPS_COMPONENT_VERSION)
-depend type=require fmri=editor/vim/vim-core@$(IPS_COMPONENT_VERSION)
