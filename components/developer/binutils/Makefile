@@ -18,21 +18,27 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018 Norm Jacobs
 # Copyright (c) 2018 Ken Mays
+# Copyright (c) 2019 Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.31.1
+COMPONENT_VERSION=	2.32
+COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5d20086ecf5752cc7d9134246e9588fa201740d540f7eb84d795b1f7a93bca86
-COMPONENT_BUGDB=	utility/gnu-binutils
+	sha256:0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04
+COMPONENT_FMRI=		developer/gnu-binutils
+COMPONENT_CLASSIFICATION=Development/GNU
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -75,5 +81,6 @@ install:	$(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
