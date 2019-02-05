@@ -28,12 +28,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	5.6.2
+COMPONENT_VERSION=	5.7.1
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a50bd66c0557e8eca3b8fa24e85d0de533e775d7a22df042da90488623752e9e
+    sha256:7260292c2c1d483b2d50febfa5055176bd512b32a8833b116177bf5f01e77ee8
 COMPONENT_ARCHIVE_URL= \
     http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
@@ -64,7 +64,6 @@ CONFIGURE_OPTIONS += --with-tcsetpgrp
 CONFIGURE_OPTIONS += --disable-gdbm
 
 COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D); ./config.status)
-
 
 COMPOVERRIDES = $(shell test -d Completion && find Completion -type f -print)
 
