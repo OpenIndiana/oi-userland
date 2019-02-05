@@ -26,12 +26,12 @@ COMPONENT_ARCHIVE_HASH = \
 COMPONENT_ARCHIVE_URL = \
   https://github.com/EnterpriseDB/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL =	https://github.com/EnterpriseDB/mysql_fdw/
-COMPONENT_FMRI =	database/postgres-10/mysql_fdw
+COMPONENT_FMRI =	database/postgres-11/mysql_fdw
 COMPONENT_CLASSIFICATION =	System/Databases
 COMPONENT_LICENSE =	MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-PG_VERSION=	10
+PG_VERSION=	11
 # Don't depend on host default pg_config
 # Note, for PostgreSQL >= 9.6 $(PG_HOME)/bin contains 64-bit files
 PATH=		$(PG_HOME)/bin:$(MYSQL_BINDIR.$(BITS)):/usr/sbin:/usr/bin
@@ -50,5 +50,5 @@ install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += database/postgres-10/developer
+REQUIRED_PACKAGES += database/postgres-11/developer
 REQUIRED_PACKAGES += database/mariadb-101/library
