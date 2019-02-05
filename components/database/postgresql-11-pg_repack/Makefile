@@ -25,12 +25,12 @@ COMPONENT_ARCHIVE_HASH = \
 COMPONENT_ARCHIVE_URL = \
   http://api.pgxn.org/dist/pg_repack/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	http://reorg.github.io/pg_repack/
-COMPONENT_FMRI =	database/postgres-10/pg_repack
+COMPONENT_FMRI =	database/postgres-11/pg_repack
 COMPONENT_CLASSIFICATION =	System/Databases
 COMPONENT_LICENSE =	BSD
 COMPONENT_LICENSE_FILE =	COPYRIGHT
 
-PG_VERSION=	10
+PG_VERSION=	11
 # Don't depend on host default pg_config
 # Note, for PostgreSQL >= 9.6 $(PG_HOME)/bin contains 64-bit files
 PATH=		$(PG_HOME)/bin:/usr/sbin:/usr/bin
@@ -45,6 +45,6 @@ build: $(BUILD_64)
 
 install: $(INSTALL_64)
 
-REQUIRED_PACKAGES += database/postgres-10/developer
-REQUIRED_PACKAGES += database/postgres-10/library
+REQUIRED_PACKAGES += database/postgres-11/developer
+REQUIRED_PACKAGES += database/postgres-11/library
 REQUIRED_PACKAGES += system/library
