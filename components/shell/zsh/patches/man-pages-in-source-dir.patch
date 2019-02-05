@@ -1,0 +1,61 @@
+Revert https://sourceforge.net/p/zsh/code/ci/76a16498d5c76aa3fee0805b8241263249d71b94/
+
+http://www.zsh.org/mla/workers/2019/msg00081.html
+
+--- zsh-5.7.1/ChangeLog	2019-02-03 20:31:25.000000000 +0000
++++ zsh-5.7.1/ChangeLog.new	2019-02-05 19:56:46.995462078 +0000
+@@ -381,11 +381,6 @@
+ 
+ 	* 43698: Completion/Unix/Command/_git: update options for 2.19
+ 
+-2018-10-16  Daniel Shahaf  <d.s@daniel.shahaf.name>
+-
+-	* 43692: Doc/Makefile.in: Generate man pages in the build dir,
+-	rather than the source dir.
+-
+ 2018-10-15  dana  <dana@dana.is>
+ 
+ 	* 43672: Doc/Zsh/redirect.yo: Document result of redirecting
+--- zsh-5.7.1/Doc/Makefile.in.orig	2019-02-01 01:37:34.000000000 +0000
++++ zsh-5.7.1/Doc/Makefile.in	2019-02-05 19:48:53.154938553 +0000
+@@ -143,7 +143,7 @@ zsh.info: $(sdir)/zsh.texi
+ .yo.1:
+ 	@case $@ in \
+ 	  */*) target=$@ ;; \
+-	  *) target=$@ ;; \
++	  *) target=$(sdir)/$@ ;; \
+ 	esac; \
+ 	case '$(YODL)' in :*) touch $$target ;; *) \
+ 	    echo $(YODL) -o $$target -I$(sdir):. -w zman.yo version.yo $< ; \
+@@ -177,9 +177,9 @@ zsh_toc.html: $(sdir)/zsh.texi texi2html
+ 	             --init-file texi2html.conf $(sdir)/zsh.texi
+ 
+ zshall.1: zsh.yo
+-	case $@ in \
++	@case $@ in \
+ 	  */*) target=$@ ;; \
+-	  *) target=$@ ;; \
++	  *) target=$(sdir)/$@ ;; \
+ 	esac; \
+ 	case '$(YODL)' in :*) touch $$target ;; *) \
+ 	    echo $(YODL) -o $$target -I$(sdir) -DZSHALL -w zman.yo version.yo zsh.yo; \
+@@ -204,7 +204,7 @@ runhelp: help.txt
+ help.txt: zshbuiltins.1
+ 	@-rm -f $@ help/*
+ 	perl $(sdir_top)/Util/helpfiles \
+-	    zshbuiltins.1 help help.txt \
++	    $(sdir)/zshbuiltins.1 help help.txt \
+ 	    || rm -f help.txt help/*
+ 
+ $(MAN): zmacros.yo zman.yo
+@@ -329,8 +329,8 @@ uninstall: uninstall.man uninstall.runhe
+ install.man: man
+ 	${SHELL} $(sdir_top)/mkinstalldirs $(DESTDIR)$(mandir)/man1
+ 	for file in $(MAN); do \
+-	    test -s $$file || exit 1; \
+-	    $(INSTALL_DATA) $$file $(DESTDIR)$(mandir)/man1/`echo $$file | sed 's|zsh|$(tzsh)|'` || exit 1; \
++	    test -s $(sdir)/$$file || exit 1; \
++	    $(INSTALL_DATA) $(sdir)/$$file $(DESTDIR)$(mandir)/man1/`echo $$file | sed 's|zsh|$(tzsh)|'` || exit 1; \
+ 	done
+ .PHONY: install.man
+ 
