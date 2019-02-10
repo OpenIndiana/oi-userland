@@ -1,0 +1,576 @@
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/network/ZLQtNetworkManager.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/network/ZLQtNetworkManager.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/network/ZLQtNetworkManager.cpp
+@@ -24,7 +24,9 @@
+ #include <QtCore/QDir>
+ #include <QtCore/QList>
+ #include <QtCore/QTimer>
++#include <QtCore/QUrlQuery>
+ 
++#include <QtNetwork/QNetworkCookie>
+ #include <QtNetwork/QNetworkRequest>
+ #include <QtNetwork/QNetworkReply>
+ #include <QtNetwork/QNetworkProxy>
+@@ -149,12 +151,12 @@ void ZLQtNetworkManager::prepareReply(ZL
+ 	QNetworkReply *reply = NULL;
+ 	if (!scope.request->postParameters().empty()) {
+ 		QByteArray data;
+-		QUrl tmp;
++		QUrlQuery tmp;
+ 		typedef std::pair<std::string, std::string> string_pair;
+ 		foreach (const string_pair &pair, scope.request->postParameters()) {
+ 			tmp.addQueryItem(QString::fromStdString(pair.first), QString::fromStdString(pair.second));
+ 		}
+-		data = tmp.encodedQuery();
++		data = tmp.query(QUrl::FullyEncoded).toUtf8(); //encodedQuery();
+ 		reply = const_cast<QNetworkAccessManager&>(myManager).post(networkRequest, data);
+ 	} else {
+ 		reply = const_cast<QNetworkAccessManager&>(myManager).get(networkRequest);
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtItemsListWidget.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/tree/ZLQtItemsListWidget.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtItemsListWidget.cpp
+@@ -17,14 +17,14 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QVBoxLayout>
+-#include <QtGui/QHBoxLayout>
+ #include <QtGui/QPixmap>
+ #include <QtGui/QPalette>
+ #include <QtGui/QPainter>
+ #include <QtGui/QPaintEvent>
+-#include <QtGui/QScrollBar>
+ #include <QtCore/QTimer>
++#include <QtWidgets/QVBoxLayout>
++#include <QtWidgets/QHBoxLayout>
++#include <QtWidgets/QScrollBar>
+ 
+ #include <QtCore/QDebug>
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtPreviewWidget.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/tree/ZLQtPreviewWidget.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtPreviewWidget.cpp
+@@ -17,10 +17,10 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QVBoxLayout>
+-#include <QtGui/QHBoxLayout>
+-#include <QtGui/QScrollBar>
+-#include <QtGui/QGraphicsDropShadowEffect>
++#include <QtWidgets/QVBoxLayout>
++#include <QtWidgets/QHBoxLayout>
++#include <QtWidgets/QScrollBar>
++#include <QtWidgets/QGraphicsDropShadowEffect>
+ 
+ #include <QtCore/QDebug>
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtSearchField.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/tree/ZLQtSearchField.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtSearchField.cpp
+@@ -18,9 +18,9 @@
+  */
+ 
+ #include <QtCore/QDebug>
+-#include <QtGui/QStyle>
+-#include <QtGui/QCompleter>
+-#include <QtGui/QStringListModel>
++#include <QtCore/QStringListModel>
++#include <QtWidgets/QStyle>
++#include <QtWidgets/QCompleter>
+ 
+ #include <ZLibrary.h>
+ #include <ZLFile.h>
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtTreeDialog.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtTreeDialog.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtTreeDialog.cpp
+@@ -19,12 +19,12 @@
+ 
+ #include <algorithm>
+ 
+-#include <QtGui/QSplitter>
+-#include <QtGui/QVBoxLayout>
+-#include <QtGui/QHBoxLayout>
+-#include <QtGui/QScrollBar>
+ #include <QtGui/QResizeEvent>
+ #include <QtCore/QDebug>
++#include <QtWidgets/QSplitter>
++#include <QtWidgets/QVBoxLayout>
++#include <QtWidgets/QHBoxLayout>
++#include <QtWidgets/QScrollBar>
+ 
+ #include <ZLFile.h>
+ #include <ZLibrary.h>
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtItemsListWidget.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/tree/ZLQtItemsListWidget.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtItemsListWidget.h
+@@ -20,12 +20,12 @@
+ #ifndef __ZLQTITEMSLISTWIDGET_H__
+ #define __ZLQTITEMSLISTWIDGET_H__
+ 
+-#include <QtGui/QWidget>
+-#include <QtGui/QFrame>
+-#include <QtGui/QPushButton>
+-#include <QtGui/QLabel>
+-#include <QtGui/QVBoxLayout>
+-#include <QtGui/QScrollArea>
++#include <QtWidgets/QWidget>
++#include <QtWidgets/QFrame>
++#include <QtWidgets/QPushButton>
++#include <QtWidgets/QLabel>
++#include <QtWidgets/QVBoxLayout>
++#include <QtWidgets/QScrollArea>
+ 
+ #include <ZLTreeTitledNode.h>
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/application/LineEditParameter.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/application/LineEditParameter.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/application/LineEditParameter.cpp
+@@ -17,9 +17,9 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QBoxLayout>
+-#include <QtGui/QLineEdit>
+-#include <QtGui/QToolBar>
++#include <QtWidgets/QBoxLayout>
++#include <QtWidgets/QLineEdit>
++#include <QtWidgets/QToolBar>
+ #include <QtGui/QKeyEvent>
+ 
+ #include "ZLQtApplicationWindow.h"
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/application/ZLQtApplicationWindow.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/application/ZLQtApplicationWindow.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/application/ZLQtApplicationWindow.cpp
+@@ -17,17 +17,17 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QApplication>
++#include <QtWidgets/QApplication>
+ #include <QtGui/QPixmap>
+ #include <QtGui/QImage>
+ #include <QtGui/QIcon>
+-#include <QtGui/QToolBar>
+-#include <QtGui/QMenuBar>
+-#include <QtGui/QMenu>
+-#include <QtGui/QToolButton>
+-#include <QtGui/QLayout>
++#include <QtWidgets/QToolBar>
++#include <QtWidgets/QMenuBar>
++#include <QtWidgets/QMenu>
++#include <QtWidgets/QToolButton>
++#include <QtWidgets/QLayout>
+ #include <QtGui/QWheelEvent>
+-#include <QtGui/QDockWidget>
++#include <QtWidgets/QDockWidget>
+ #include <QtCore/QObjectList>
+ 
+ #include <ZLibrary.h>
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/application/ZLQtApplicationWindow.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/application/ZLQtApplicationWindow.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/application/ZLQtApplicationWindow.h
+@@ -22,8 +22,8 @@
+ 
+ #include <map>
+ 
+-#include <QtGui/QMainWindow>
+-#include <QtGui/QAction>
++#include <QtWidgets/QMainWindow>
++#include <QtWidgets/QAction>
+ #include <QtGui/QCursor>
+ 
+ class QDockWidget;
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialog.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtDialog.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialog.cpp
+@@ -17,8 +17,8 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QApplication>
+-#include <QtGui/QPushButton>
++#include <QtWidgets/QApplication>
++#include <QtWidgets/QPushButton>
+ 
+ #include <ZLDialogManager.h>
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialog.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtDialog.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialog.h
+@@ -20,8 +20,8 @@
+ #ifndef __ZLQTDIALOG_H__
+ #define __ZLQTDIALOG_H__
+ 
+-#include <QtGui/QDialog>
+-#include <QtGui/QLayout>
++#include <QtWidgets/QDialog>
++#include <QtWidgets/QLayout>
+ 
+ #include <ZLDialog.h>
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialogContent.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtDialogContent.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialogContent.cpp
+@@ -17,10 +17,10 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QApplication>
+-#include <QtGui/QDesktopWidget>
+-#include <QtGui/QWidget>
+-#include <QtGui/QLayout>
++#include <QtWidgets/QApplication>
++#include <QtWidgets/QDesktopWidget>
++#include <QtWidgets/QWidget>
++#include <QtWidgets/QLayout>
+ 
+ #include "ZLQtDialogContent.h"
+ #include "ZLQtOptionView.h"
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialogManager.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtDialogManager.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtDialogManager.cpp
+@@ -17,11 +17,11 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QApplication>
+-#include <QtGui/QMessageBox>
+-#include <QtGui/QFileDialog>
++#include <QtWidgets/QApplication>
++#include <QtWidgets/QMessageBox>
++#include <QtWidgets/QFileDialog>
+ #include <QtGui/QClipboard>
+-#include <QtGui/QDesktopWidget>
++#include <QtWidgets/QDesktopWidget>
+ 
+ #include "ZLQtDialogManager.h"
+ #include "ZLQtDialog.h"
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOpenFileDialog.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtOpenFileDialog.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOpenFileDialog.cpp
+@@ -17,7 +17,7 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QFileDialog>
++#include <QtWidgets/QFileDialog>
+ 
+ #include "ZLQtOpenFileDialog.h"
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOptionView.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtOptionView.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOptionView.cpp
+@@ -19,16 +19,16 @@
+ 
+ #include <cctype>
+ 
+-#include <QtGui/QCheckBox>
+-#include <QtGui/QComboBox>
+-#include <QtGui/QLabel>
+-#include <QtGui/QGroupBox>
+-#include <QtGui/QRadioButton>
+-#include <QtGui/QPushButton>
+-#include <QtGui/QSpinBox>
+-#include <QtGui/QLineEdit>
+-#include <QtGui/QSlider>
+-#include <QtGui/QLayout>
++#include <QtWidgets/QCheckBox>
++#include <QtWidgets/QComboBox>
++#include <QtWidgets/QLabel>
++#include <QtWidgets/QGroupBox>
++#include <QtWidgets/QRadioButton>
++#include <QtWidgets/QPushButton>
++#include <QtWidgets/QSpinBox>
++#include <QtWidgets/QLineEdit>
++#include <QtWidgets/QSlider>
++#include <QtWidgets/QLayout>
+ 
+ #include <ZLStringUtil.h>
+ #include <ZLDialogManager.h>
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOptionsDialog.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtOptionsDialog.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOptionsDialog.cpp
+@@ -17,11 +17,11 @@
+  * 02110-1301, USA.
+  */
+ 
+-#include <QtGui/QApplication>
+-#include <QtGui/QDesktopWidget>
+-#include <QtGui/QLayout>
+-#include <QtGui/QPushButton>
+-#include <QtGui/QButtonGroup>
++#include <QtWidgets/QApplication>
++#include <QtWidgets/QDesktopWidget>
++#include <QtWidgets/QLayout>
++#include <QtWidgets/QPushButton>
++#include <QtWidgets/QButtonGroup>
+ #include <QtGui/QResizeEvent>
+ 
+ #include <ZLDialogManager.h>
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOptionsDialog.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtOptionsDialog.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtOptionsDialog.h
+@@ -20,9 +20,9 @@
+ #ifndef __ZLQTOPTIONSDIALOG_H__
+ #define __ZLQTOPTIONSDIALOG_H__
+ 
+-#include <QtGui/QWidget>
+-#include <QtGui/QTabWidget>
+-#include <QtGui/QDialog>
++#include <QtWidgets/QWidget>
++#include <QtWidgets/QTabWidget>
++#include <QtWidgets/QDialog>
+ 
+ #include "../../../../core/src/desktop/dialogs/ZLDesktopOptionsDialog.h"
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtProgressDialog.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtProgressDialog.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtProgressDialog.cpp
+@@ -19,11 +19,11 @@
+ 
+ #include <unistd.h>
+ 
+-#include <QtGui/QApplication>
+-#include <QtGui/QDesktopWidget>
+-#include <QtGui/QWidget>
+-#include <QtGui/QLabel>
+-#include <QtGui/QLayout>
++#include <QtWidgets/QApplication>
++#include <QtWidgets/QDesktopWidget>
++#include <QtWidgets/QWidget>
++#include <QtWidgets/QLabel>
++#include <QtWidgets/QLayout>
+ #include <QtCore/QThreadPool>
+ 
+ #include "../dialogs/ZLQtDialogManager.h"
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtProgressDialog.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtProgressDialog.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtProgressDialog.h
+@@ -22,11 +22,11 @@
+ 
+ #include <string>
+ 
+-#include <QtGui/QWidget>
++#include <QtWidgets/QWidget>
+ #include <QtGui/QCursor>
+-#include <QtGui/QDialog>
+-#include <QtGui/QProgressBar>
+-#include <QtGui/QLabel>
++#include <QtWidgets/QDialog>
++#include <QtWidgets/QProgressBar>
++#include <QtWidgets/QLabel>
+ #include <QtCore/QRunnable>
+ 
+ #include <ZLProgressDialog.h>
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtTreeDialog.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/dialogs/ZLQtTreeDialog.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/dialogs/ZLQtTreeDialog.h
+@@ -24,12 +24,12 @@
+ #include <QtCore/QSet>
+ #include <QtCore/QMap>
+ 
+-#include <QtGui/QDialog>
+-#include <QtGui/QScrollArea>
+-#include <QtGui/QPushButton>
+-#include <QtGui/QLabel>
+-#include <QtGui/QLineEdit>
+-#include <QtGui/QWidget>
++#include <QtWidgets/QDialog>
++#include <QtWidgets/QScrollArea>
++#include <QtWidgets/QPushButton>
++#include <QtWidgets/QLabel>
++#include <QtWidgets/QLineEdit>
++#include <QtWidgets/QWidget>
+ 
+ #include <ZLTreeDialog.h>
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/library/ZLQApplication.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/library/ZLQApplication.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/library/ZLQApplication.h
+@@ -20,7 +20,7 @@
+ #ifndef __ZLQAPPLICATION_H__
+ #define __ZLQAPPLICATION_H__
+ 
+-#include <QtGui/QApplication>
++#include <QtWidgets/QApplication>
+ 
+ class ZLQApplication : public QApplication {
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/library/ZLibrary.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/library/ZLibrary.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/library/ZLibrary.cpp
+@@ -19,7 +19,7 @@
+ 
+ #include <QtCore/QTextCodec>
+ #include <QtCore/QFile>
+-#include <QtGui/QApplication>
++#include <QtWidgets/QApplication>
+ #include <QtGui/QFileOpenEvent>
+ 
+ #include <ZLApplication.h>
+@@ -72,7 +72,7 @@ bool ZLQApplication::event(QEvent *e) {
+ void ZLQtLibraryImplementation::init(int &argc, char **&argv) {
+ 	new ZLQApplication(argc, argv);
+ 
+-	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf-8"));
++	QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+ 
+ 	ZLibrary::parseArguments(argc, argv);
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/tree/QtWaitingSpinner.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/tree/QtWaitingSpinner.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/tree/QtWaitingSpinner.h
+@@ -3,7 +3,7 @@
+ 
+ #include <QtCore/QTimer>
+ 
+-#include <QtGui/QWidget>
++#include <QtWidgets/QWidget>
+ #include <QtGui/QColor>
+ 
+ class QtWaitingSpinner : public QWidget {
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtPreviewWidget.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/tree/ZLQtPreviewWidget.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtPreviewWidget.h
+@@ -20,11 +20,11 @@
+ #ifndef __ZLQTPREVIEWWIDGET_H__
+ #define __ZLQTPREVIEWWIDGET_H__
+ 
+-#include <QtGui/QWidget>
+-#include <QtGui/QPushButton>
+-#include <QtGui/QLabel>
+-#include <QtGui/QScrollArea>
+-#include <QtGui/QVBoxLayout>
++#include <QtWidgets/QWidget>
++#include <QtWidgets/QPushButton>
++#include <QtWidgets/QLabel>
++#include <QtWidgets/QScrollArea>
++#include <QtWidgets/QVBoxLayout>
+ #include <QtCore/QSet>
+ 
+ #include <ZLTreePageNode.h>
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtSearchField.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/tree/ZLQtSearchField.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/tree/ZLQtSearchField.h
+@@ -21,8 +21,8 @@
+ #define __ZLQTSEARCHFIELD_H__
+ 
+ #include <QtCore/QSet>
+-#include <QtGui/QLabel>
+-#include <QtGui/QLineEdit>
++#include <QtWidgets/QLabel>
++#include <QtWidgets/QLineEdit>
+ 
+ #include "QtWaitingSpinner.h"
+ #include "ZLQtItemsListWidget.h"
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/view/ZLQtViewWidget.cpp
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/view/ZLQtViewWidget.cpp
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/view/ZLQtViewWidget.cpp
+@@ -19,8 +19,8 @@
+ 
+ #include <algorithm>
+ 
+-#include <QtGui/QLayout>
+-#include <QtGui/QScrollBar>
++#include <QtWidgets/QLayout>
++#include <QtWidgets/QScrollBar>
+ #include <QtGui/QPainter>
+ #include <QtGui/QPixmap>
+ #include <QtGui/QMouseEvent>
+@@ -185,11 +185,11 @@ void ZLQtViewWidget::repaint()	{
+ 
+ void ZLQtViewWidget::setScrollbarEnabled(ZLView::Direction direction, bool enabled) {
+ 	if (direction == ZLView::VERTICAL) {
+-		myRightScrollBar->setShown(enabled && myShowScrollBarAtRight);
+-		myLeftScrollBar->setShown(enabled && !myShowScrollBarAtRight);
++		myRightScrollBar->setVisible(enabled && myShowScrollBarAtRight);
++		myLeftScrollBar->setVisible(enabled && !myShowScrollBarAtRight);
+ 	} else {
+-		myBottomScrollBar->setShown(enabled && myShowScrollBarAtBottom);
+-		myTopScrollBar->setShown(enabled && !myShowScrollBarAtBottom);
++		myBottomScrollBar->setVisible(enabled && myShowScrollBarAtBottom);
++		myTopScrollBar->setVisible(enabled && !myShowScrollBarAtBottom);
+ 	}
+ }
+ 
+Index: fbreader-0.99.4/zlibrary/ui/src/qt4/view/ZLQtViewWidget.h
+===================================================================
+--- fbreader-0.99.4.orig/zlibrary/ui/src/qt4/view/ZLQtViewWidget.h
++++ fbreader-0.99.4/zlibrary/ui/src/qt4/view/ZLQtViewWidget.h
+@@ -20,7 +20,7 @@
+ #ifndef __ZLQTVIEWWIDGET_H__
+ #define __ZLQTVIEWWIDGET_H__
+ 
+-#include <QtGui/QWidget>
++#include <QtWidgets/QWidget>
+ 
+ #include "../../../../core/src/view/ZLViewWidget.h"
+ #include <ZLApplication.h>
+Index: fbreader-0.99.4/makefiles/arch/desktop.mk
+===================================================================
+--- fbreader-0.99.4.orig/makefiles/arch/desktop.mk
++++ fbreader-0.99.4/makefiles/arch/desktop.mk
+@@ -12,31 +12,13 @@ CC = $(CCACHE) gcc
+ AR = ar rsu
+ LD = g++
+ 
+-CFLAGS = -pipe -fno-exceptions -Wall -Wno-ctor-dtor-privacy -W -DLIBICONV_PLUG
++CFLAGS = -pipe -fno-exceptions -Wall -Wno-ctor-dtor-privacy -W -DLIBICONV_PLUG -fPIC
+ LDFLAGS =
+-EXTERNAL_INCLUDE = $(shell pkg-config --cflags fribidi) 
++EXTERNAL_INCLUDE = $(shell pkg-config --cflags fribidi)
+ 
+-ifeq "$(UI_TYPE)" "qt"
+-  MOC = moc-qt3
+-  QTINCLUDE = -I /usr/include/qt3
+-else
+-  MOC = $(shell pkg-config QtCore --variable=moc_location)
+-  QTINCLUDE = -I $(shell pkg-config --cflags QtCore)
+-endif
+-
+-GTKINCLUDE = $(shell pkg-config --cflags gtk+-2.0 libpng xft)
+-
+-ifeq "$(UI_TYPE)" "qt"
+-  UILIBS = -lqt-mt
+-endif
+-
+-ifeq "$(UI_TYPE)" "qt4"
+-  UILIBS = $(shell pkg-config --libs QtCore QtGui QtNetwork)
+-endif
+-
+-ifeq "$(UI_TYPE)" "gtk"
+-  UILIBS = $(shell pkg-config --libs gtk+-2.0 gio-2.0) -lpng -ljpeg
+-endif
++MOC = /usr/bin/moc-qt5
++QTINCLUDE = $(shell pkg-config --cflags Qt5Gui Qt5Widgets Qt5Network)
++UILIBS = $(shell pkg-config --libs Qt5Gui Qt5Widgets Qt5Network)
+ 
+ RM = rm -rvf
+ RM_QUIET = rm -rf
