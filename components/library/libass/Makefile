@@ -11,25 +11,26 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libass
-COMPONENT_VERSION= 0.13.4
-COMPONENT_REVISION= 1
-COMPONENT_FMRI = library/video/libass
-COMPONENT_SUMMARY= Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		libass
+COMPONENT_VERSION=	0.13.4
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		library/video/libass
+COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6711469df5fcc47d06e92f7383dcebcf1282591002d2356057997e8936840792
+	sha256:6711469df5fcc47d06e92f7383dcebcf1282591002d2356057997e8936840792
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/libass/libass/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://github.com/libass/libass
-COMPONENT_LICENSE = ISC
-COMPONENT_LICENSE_FILE = COPYING
+	https://github.com/libass/libass/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://github.com/libass/libass
+COMPONENT_LICENSE=	ISC
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -38,9 +39,11 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS += --disable-asm
 CONFIGURE_OPTIONS += --disable-static
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
+
+test: 		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
