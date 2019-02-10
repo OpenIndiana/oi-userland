@@ -1,0 +1,31 @@
+Subject: Sort list of files to make build reproducible
+Author: Bernhard M. Wiedemann <bwiedemann suse de>
+Date: 2017-05-28
+
+https://github.com/geometer/FBReader/pull/295
+https://bugzilla.opensuse.org/show_bug.cgi?id=1041090
+
+    sort linker input files
+    
+    when building packages (e.g. for openSUSE Linux)
+    (random) filesystem order of input files
+    influences ordering of functions in the output,
+    thus without the patch, builds (in disposable VMs) would usually differ.
+    
+    See https://reproducible-builds.org/ for why this matters.
+    
+    Setting LC_ALL is needed because locales influence how sorting happens.
+
+Index: fbreader-0.99.4/fbreader/Makefile
+===================================================================
+--- fbreader-0.99.4.orig/fbreader/Makefile
++++ fbreader-0.99.4/fbreader/Makefile
+@@ -22,7 +22,7 @@ all: .resources
+ 		fi; \
+ 	done;
+ 	@echo -n 'Linking $(TARGET) ...'
+-	@$(LD) $(LDFLAGS) -o $(TARGET) `find src -name *.o` $(TEXT_LIBS) $(CORE_LIBS) $(ZLUI_LIB) -lsqlite3
++	@$(LD) $(LDFLAGS) -o $(TARGET) `find src -name *.o | LC_ALL=C sort` $(TEXT_LIBS) $(CORE_LIBS) $(ZLUI_LIB) -lsqlite3
+ 	@echo ' OK'
+ 
+ FBSHAREDIR = $(DESTDIR)$(SHAREDIR)/FBReader
