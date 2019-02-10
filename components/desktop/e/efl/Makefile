@@ -24,7 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           efl
 COMPONENT_VERSION=        1.18.5
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_FMRI=           library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
