@@ -10,7 +10,7 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
-# Copyright 2018-2019, Michal Nowak
+# Copyright 2019, Michal Nowak
 # 
 
 include ../../../make-rules/shared-macros.mk
@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 CMAKE=			cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.6.42-84.2
-IPS_COMPONENT_VERSION=	5.6.42.84.2
+COMPONENT_VERSION=	5.6.43-84.3
+IPS_COMPONENT_VERSION=	5.6.43.84.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:3105ead687f56a1ae0ace557d276fe8dc7f4e1f71d8523032f713ebb80635347
+COMPONENT_ARCHIVE_HASH=	sha256:fc5259776bfcfc613de805de011791a46d03f8f3fa6bcd1648fc127caba380b1
 COMPONENT_ARCHIVE_URL=	https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
