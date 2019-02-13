@@ -17,14 +17,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xterm
-COMPONENT_VERSION=	343
+COMPONENT_VERSION=	344
 COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:931db261a2069ddf7dc3a305985f494468b609cf7198f02ca09df9498cfad17a
+	sha256:ccceb8f6119ae24ab422d7ce7c5713114d304c856daf0d922efc198b56accdf5
 COMPONENT_ARCHIVE_URL= \
-  http://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
+	http://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://invisible-island.net/xterm/
 COMPONENT_FMRI=		terminal/xterm
 COMPONENT_LICENSE=	MIT
