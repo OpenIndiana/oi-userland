@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=	2.2.4
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_FMRI=	library/gd
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -42,13 +42,11 @@ COMPONENT_LICENSE=	GD2 License
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATH=$(PATH.gnu)
 
 CFLAGS     += $(CPP_LARGEFILES)
 CPPFLAGS   += $(CPP_LARGEFILES)
-LINT_FLAGS += -I$(SOURCE_DIR)/src
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)

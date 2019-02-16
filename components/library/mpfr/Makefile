@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
 COMPONENT_VERSION=      3.1.6
+COMPONENT_REVISION=		1
 IPS_COMPONENT_VERSION=  3.1.6.1
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
@@ -84,8 +85,6 @@ CONFIGURE_OPTIONS += --with-gmp-include=$(GMPINCDIR)
 CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
-
-LINT_FLAGS += -I/usr/include/gmp
 
 PROTOUSRSHAREINFODIR = $(PROTOUSRSHAREDIR)/info
 PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDIR)/doc/mpfr/html

@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
 COMPONENT_VERSION=      2.9
+COMPONENT_REVISION=		1
 COMPONENT_FMRI=         library/lcms2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      The Little Color Management System
@@ -39,7 +40,6 @@ COMPONENT_LICENSE=      MIT
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)

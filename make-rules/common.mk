@@ -99,15 +99,6 @@ endif # DEFAULT_ASLR_ENABLE yes
 endif # BUILD_BITS NO_ARCH
 endif # BUILD_STYLE ant
 
-# Determine if we should automatically include lint libraries in build and
-# install targets based on presence of llib* files in component directory. This
-# must be done before defining any common targets since the include affects
-# later variable expansion.
-LINT_LIBRARIES ?= $(wildcard llib-*)
-ifneq ($(strip $(LINT_LIBRARIES)),)
-include $(WS_MAKE_RULES)/lint-libraries.mk
-endif
-
 # Default targets; to omit a specific target, explicitly set the related target
 # variable to empty before including this file or set COMMON_TARGETS=no.
 COMMON_TARGETS ?= yes

@@ -31,6 +31,7 @@ COMPONENT_VERSION =	1.0.2q
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
 IPS_COMPONENT_VERSION = 1.0.2.17
+COMPONENT_REVISION = 	1
 COMPONENT_PROJECT_URL=	https://www.openssl.org
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
@@ -44,7 +45,6 @@ TPNO=			24194
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
 
@@ -66,8 +66,7 @@ ENGINESDIR_64 = /lib/openssl/engines/64
 CONFIGURE_OPTIONS =  -DSOLARIS_OPENSSL -DNO_WINDOWS_BRAINDEATH
 CONFIGURE_OPTIONS += --openssldir=/etc/openssl
 CONFIGURE_OPTIONS += --prefix=/usr
-# We use OpenSSL install code for installing only manual pages and we do that
-# for 32-bit version only.
+# We use OpenSSL install code for installing only manual pages and headers.
 CONFIGURE_OPTIONS += --install_prefix=$(PROTO_DIR)
 CONFIGURE_OPTIONS += no-rc3
 CONFIGURE_OPTIONS += no-rc5
@@ -189,24 +188,10 @@ COMPONENT_PRE_INSTALL_ACTION = ( $(MKDIR) $(MANDIR_SECTIONS); \
 # from the tarball which would corrupt some man pages.
 COMPONENT_INSTALL_ARGS += PATH=$(PATH) MANDIR=/usr/share/man
 
-# We could run OpenSSL install code for 32 bits only to process header files and
-# manual pages. However, lint libraries depend on install stamps so we run
-# install for 64 bit as well. Note that we must take built binary files from
+# Note that we take built binary files from
 # build directories, not from the proto area which contains whatever was
 # installed first.
 install:	$(INSTALL_32_and_64) $(PROTO_DIR)/.openssl-0.9.8
-
-# We need to modify the default lint flags to include patched opensslconf.h from
-# the build directory. If we do not do that, lint will complain about md2.h
-# which is not enabled by default but it is in our opensslconf.h.
-LFLAGS_32 := -I$(BUILD_DIR_32)/include $(LINT_FLAGS) -lsoftcrypto
-LFLAGS_64 := -I$(BUILD_DIR_64)/include $(LINT_FLAGS) -lsoftcrypto
-
-# Set modified lint flags for our lint library targets.
-$(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_32)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_64)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_64)
-$(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
 
 # There are also separate STC test suites 'openssl' and 'openssl-engine'
 # for regression testing. These internal tests are unit tests only.
