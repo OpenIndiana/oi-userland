@@ -11,6 +11,7 @@
 
 #
 # Copyright 2018 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -19,19 +20,18 @@ set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=pkg.human-version value=$(COMPONENT_VERSION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/editline/readline.h
 file path=usr/include/histedit.h
-link path=usr/lib/$(MACH64)/libedit.so target=libedit.so.0.0.56
-link path=usr/lib/$(MACH64)/libedit.so.0 target=libedit.so.0.0.56
-file path=usr/lib/$(MACH64)/libedit.so.0.0.56
+link path=usr/lib/$(MACH64)/libedit.so target=libedit.so.0.0.59
+link path=usr/lib/$(MACH64)/libedit.so.0 target=libedit.so.0.0.59
+file path=usr/lib/$(MACH64)/libedit.so.0.0.59
 file path=usr/lib/$(MACH64)/pkgconfig/libedit.pc
-link path=usr/lib/libedit.so target=libedit.so.0.0.56
-link path=usr/lib/libedit.so.0 target=libedit.so.0.0.56
-file path=usr/lib/libedit.so.0.0.56
+link path=usr/lib/libedit.so target=libedit.so.0.0.59
+link path=usr/lib/libedit.so.0 target=libedit.so.0.0.59
+file path=usr/lib/libedit.so.0.0.59
 file path=usr/lib/pkgconfig/libedit.pc
 file path=usr/share/man/man3/editline.3
 link path=usr/share/man/man3/el_deletestr.3 target=editline.3
@@ -39,6 +39,12 @@ link path=usr/share/man/man3/el_end.3 target=editline.3
 link path=usr/share/man/man3/el_get.3 target=editline.3
 link path=usr/share/man/man3/el_getc.3 target=editline.3
 link path=usr/share/man/man3/el_gets.3 target=editline.3
+link path=usr/share/man/man3/el_history.3 target=editline.3
+link path=usr/share/man/man3/el_history_end.3 target=editline.3
+link path=usr/share/man/man3/el_history_init.3 target=editline.3
+link path=usr/share/man/man3/el_history_w.3 target=editline.3
+link path=usr/share/man/man3/el_history_wend.3 target=editline.3
+link path=usr/share/man/man3/el_history_winit.3 target=editline.3
 link path=usr/share/man/man3/el_init.3 target=editline.3
 link path=usr/share/man/man3/el_init_fd.3 target=editline.3
 link path=usr/share/man/man3/el_insertstr.3 target=editline.3
@@ -49,6 +55,16 @@ link path=usr/share/man/man3/el_reset.3 target=editline.3
 link path=usr/share/man/man3/el_resize.3 target=editline.3
 link path=usr/share/man/man3/el_set.3 target=editline.3
 link path=usr/share/man/man3/el_source.3 target=editline.3
+link path=usr/share/man/man3/el_tok_end.3 target=editline.3
+link path=usr/share/man/man3/el_tok_init.3 target=editline.3
+link path=usr/share/man/man3/el_tok_line.3 target=editline.3
+link path=usr/share/man/man3/el_tok_reset.3 target=editline.3
+link path=usr/share/man/man3/el_tok_str.3 target=editline.3
+link path=usr/share/man/man3/el_tok_wend.3 target=editline.3
+link path=usr/share/man/man3/el_tok_winit.3 target=editline.3
+link path=usr/share/man/man3/el_tok_wline.3 target=editline.3
+link path=usr/share/man/man3/el_tok_wreset.3 target=editline.3
+link path=usr/share/man/man3/el_tok_wstr.3 target=editline.3
 link path=usr/share/man/man3/el_wdeletestr.3 target=editline.3
 link path=usr/share/man/man3/el_wget.3 target=editline.3
 link path=usr/share/man/man3/el_wgetc.3 target=editline.3
@@ -58,22 +74,5 @@ link path=usr/share/man/man3/el_wline.3 target=editline.3
 link path=usr/share/man/man3/el_wparse.3 target=editline.3
 link path=usr/share/man/man3/el_wpush.3 target=editline.3
 link path=usr/share/man/man3/el_wset.3 target=editline.3
-# Conflict with readline
-#link path=usr/share/man/man3/history.3 target=editline.3
-link path=usr/share/man/man3/history_end.3 target=editline.3
-link path=usr/share/man/man3/history_init.3 target=editline.3
-link path=usr/share/man/man3/history_w.3 target=editline.3
-link path=usr/share/man/man3/history_wend.3 target=editline.3
-link path=usr/share/man/man3/history_winit.3 target=editline.3
-link path=usr/share/man/man3/tok_end.3 target=editline.3
-link path=usr/share/man/man3/tok_init.3 target=editline.3
-link path=usr/share/man/man3/tok_line.3 target=editline.3
-link path=usr/share/man/man3/tok_reset.3 target=editline.3
-link path=usr/share/man/man3/tok_str.3 target=editline.3
-link path=usr/share/man/man3/tok_wend.3 target=editline.3
-link path=usr/share/man/man3/tok_winit.3 target=editline.3
-link path=usr/share/man/man3/tok_wline.3 target=editline.3
-link path=usr/share/man/man3/tok_wreset.3 target=editline.3
-link path=usr/share/man/man3/tok_wstr.3 target=editline.3
 file path=usr/share/man/man5/editrc.5
 file path=usr/share/man/man7/editline.7
