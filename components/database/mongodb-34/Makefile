@@ -10,34 +10,34 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	mongodb
-COMPONENT_MAJOR_VERSION= 3.4
-COMPONENT_MINOR_VERSION= 16
-COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_SUMMARY= MongoDB distributed document-oriented database
+COMPONENT_NAME=		mongodb
+COMPONENT_MAJOR_VERSION=3.4
+COMPONENT_MINOR_VERSION=19
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_SUMMARY=	MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
-COMPONENT_FMRI=	database/mongodb-34
-COMPONENT_CLASSIFICATION= System/Databases
+COMPONENT_FMRI=		database/mongodb-34
+COMPONENT_CLASSIFICATION=System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://fastdl.mongodb.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:4dbfd72906d4bfe6bf22229c9ae525acde908ad676878a6512d749964fb3de2a
-COMPONENT_LICENSE=	Apache v2.0
-COMPONENT_LICENSE_FILE=	APACHE-2.0.txt
+COMPONENT_ARCHIVE_HASH=	sha256:a05938cc118fb796ae37bb22503979a1ca3a0a5016040f3daf388ca21e9bfcba
+COMPONENT_LICENSE=	GNU-AGPL-3.0
+COMPONENT_LICENSE_FILE=	GNU-AGPL-3.0.txt
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-BUILD_TOOLS= $(BUILD_DIR)/tools/.built
-INSTALL_TOOLS= $(BUILD_DIR)/tools/.installed
+BUILD_TOOLS=	$(BUILD_DIR)/tools/.built
+INSTALL_TOOLS=	$(BUILD_DIR)/tools/.installed
 
-MONGO_PREFIX=usr/mongodb/$(COMPONENT_MAJOR_VERSION)
+MONGO_PREFIX=	usr/mongodb/$(COMPONENT_MAJOR_VERSION)
 
 GMAKE=scons
 
@@ -61,14 +61,17 @@ COMPONENT_BUILD_TARGETS=	all
 
 COMPONENT_INSTALL_ARGS = $(COMPONENT_BUILD_ARGS)
 
+#GOROOT=/usr/lib/golang/1.11
+GOROOT=$(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
+
 $(BUILD_TOOLS):	$(BUILD_64)
 	$(MKDIR) $(@D)/bin
 	$(CP) -a $(SOURCE_DIR)/src/mongo/gotools/* $(@D) 
-	cd $(@D) && /usr/bin/bash build.sh ssl
+	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) /usr/bin/bash build.sh ssl
 	$(TOUCH) $(@)
 
 $(INSTALL_TOOLS): $(BUILD_TOOLS) $(INSTALL_64)
-	$(CP) $(BUILD_DIR)/tools/bin/* $(PROTO_DIR)/$(MONGO_PREFIX)/bin
+	$(CP) $(BUILD_DIR)/tools/src/github.com/mongodb/mongo-tools/bin/* $(PROTO_DIR)/$(MONGO_PREFIX)/bin
 	$(TOUCH) $(@)
 
 TEST_SUITES += core
