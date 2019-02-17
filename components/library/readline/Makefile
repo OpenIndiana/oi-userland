@@ -21,27 +21,25 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
-COMPONENT_VERSION=	6.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	8.0
 COMPONENT_PROJECT_URL=	http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SUMMARY=	Interactive line-editing and history
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:56ba6071b9462f980c5a72ab0023893b65ba6debb4eeb475d7a563dc65cafd43
+	sha256:e339f51971478d369f8a053a330a190781acb9864cf4c541060f12078948e461
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/readline
-
-TPNO_V6=		22356
-TPNO_V5=		9042
+COMPONENT_FMRI=		library/readline
 
 # For now, we want to continue to provide the libreadline and libhistory so's
 # (and their links) from readline 5.2.
-#
 COMPONENT_VERSION_1 =   5.2
 COMPONENT_SRC_1 =       $(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1 =   $(COMPONENT_SRC_1).tar.gz
@@ -53,17 +51,16 @@ SOURCE_DIR_1 =          $(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
-
-LINT_FLAGS += -I$(PROTO_DIR)/usr/include
 
 CC += $(CC_BITS)
 
 # readline likes to use ld directly and this is the easiest
 # way to get it to add -lc
 LDFLAGS += -lc
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--enable-shared
+
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS +=	--enable-shared
+CONFIGURE_OPTIONS +=	--disable-static
 
 # Build the readline examples as well.
 COMPONENT_BUILD_TARGETS =	everything
@@ -77,11 +74,11 @@ COMPONENT_TEST_TARGETS =
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Needed to build the test program.
-COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+COMPONENT_PRE_TEST_ACTION += \
 	(cd $(@D) ; $(GMAKE) libreadline.a ) ;
 
 # Build the test program.
-COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+COMPONENT_PRE_TEST_ACTION += \
 	(cd $(@D)/examples ; $(GMAKE) rlcat ) ;
 
 # Get correct libreadline.so.6 from the proto area.
@@ -89,9 +86,9 @@ TEST_LIBPATH.32 =       $(PROTOUSRLIBDIR)
 TEST_LIBPATH.64 =       $(PROTOUSRLIBDIR64)
 COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
-COMPONENT_SYSTEM_TEST_DIR =	$(@D)/examples
-COMPONENT_SYSTEM_TEST_CMD =	$(CAT) $(SOURCE_DIR)/examples/Inputrc | ./rlcat
-COMPONENT_SYSTEM_TEST_TARGETS =
+COMPONENT_TEST_DIR =	$(@D)/examples
+COMPONENT_TEST_CMD =	$(CAT) $(SOURCE_DIR)/examples/Inputrc | ./rlcat
+COMPONENT_TEST_TARGETS =
 
 # Macros to configure, build, and install the old version for the time being.
 BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
@@ -108,16 +105,15 @@ BUILD_64 += $(BUILD_OLD_DIR_64)/.built
 INSTALL_32 += $(BUILD_OLD_DIR_32)/.installed
 INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
 
-# install the old version first
+# Install the old version first
 $(BUILD_DIR_32)/.installed:     $(BUILD_OLD_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:     $(BUILD_OLD_DIR_64)/.installed
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		install $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
