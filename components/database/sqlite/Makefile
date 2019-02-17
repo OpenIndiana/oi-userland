@@ -19,20 +19,20 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 Louis M. Picciano. All rights reserved.
-# Copyright (c) 2018 Michal Nowak
+# Copyright (c) 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlite
-COMPONENT_VERSION=	3.26.0
-TARBALL_VERSION=	3260000
+COMPONENT_VERSION=	3.27.1
+TARBALL_VERSION=	3270100
 COMPONENT_SRC=		sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:e042825ba823d61db7edc45e52655c0434903a1b54bbe85a55880c9aa5884f7b
+	sha256:f0fcc4da31e61a9c516f7c1ff21ec71ad6a05b1fe88f7f0b4d9aa54649c85986
 COMPONENT_PROJECT_URL=	https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=	https://www.sqlite.org/2018/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://www.sqlite.org/2019/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		database/sqlite-3
 COMPONENT_LICENSE=	PublicDomain
 
