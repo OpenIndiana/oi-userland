@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fbreader
 COMPONENT_VERSION=	0.99.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Powerful e-book reader
 COMPONENT_PROJECT_URL=	http://www.fbreader.org/
 COMPONENT_FMRI=	desktop/fbreader
@@ -42,6 +43,7 @@ ENV += UI_TYPE=qt4
 ENV += TARGET_STATUS=release
 ENV += CFLAGS="$(CFLAGS)"
 ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/pkgconfig"
+ENV += ZLSHARED=no
 
 COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(GCC_ROOT)/lib:$(QT5_ROOT)/lib"' $(PROTO_DIR)/usr/bin/FBReader; \
