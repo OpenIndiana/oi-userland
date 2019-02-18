@@ -10,6 +10,7 @@
 
 #
 # Copyright 2018 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 PREFERRED_BITS=64
@@ -18,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rdesktop
 COMPONENT_VERSION=	1.8.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.rdesktop.org/
 COMPONENT_SUMMARY=	RDP, Microsoft Terminal Services client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
