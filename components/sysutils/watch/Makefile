@@ -9,46 +9,45 @@
 #
 
 #
-# Copyright 2016 Adam Stevko<
+# Copyright 2019 Michal Nowak
 #
+
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		watch
-COMPONENT_VERSION=	3.2.8
+COMPONENT_VERSION=	3.3.15
 COMPONENT_SUMMARY=	The Linux watch utility
-COMPONENT_PROJECT_URL=	http://procps.sourceforge.net
+COMPONENT_PROJECT_URL=	https://gitlab.com/procps-ng/procps
 COMPONENT_FMRI=		utilities/watch
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_SRC=		procps-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	procps-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL=  http://procps.sourceforge.net/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:11ed68d8a4433b91cd833deb714a3aa849c02aea738c42e6b4557982419c1535
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE= COPYING	
+COMPONENT_SRC=		procps-ng-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/procps-ng/Production/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:10bd744ffcb3de2d591d2f6acf1a54a7ba070fdcc432a855931a5057149f0465
+COMPONENT_LICENSE=	GPL-2.0-or-later, LGPL-2.1-or-later
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_BUILD_TARGETS= watch
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 
-COMPONENT_BUILD_ENV+= CC="$(CC)"
-COMPONENT_BUILD_ENV+= CFLAGS="$(CFLAGS)"
+# Disable optional utilities
+CONFIGURE_OPTIONS +=	--disable-pidof
+CONFIGURE_OPTIONS +=	--disable-kill
+CONFIGURE_OPTIONS +=	--disable-modern-top
+CONFIGURE_OPTIONS +=	--disable-numa
+CONFIGURE_OPTIONS +=	--enable-watch8bit
 
-COMPONENT_INSTALL_ENV+= $(COMPONENT_BUILD_ENV)
+build:		$(BUILD_64)
 
-$(INSTALL_32): $(BUILD_32)
-	$(MKDIR) $(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) 
-	
-	$(INSTALL) $(BUILD_DIR_32)/watch $(PROTOUSRBINDIR)/watch
-	$(INSTALL) $(BUILD_DIR_32)/watch.1 $(PROTOUSRSHAREMAN1DIR)/watch.1
+install:	$(INSTALL_64)
 
-build:		$(BUILD_32)
+test:		$(TEST_64)
 
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
