@@ -1,0 +1,13 @@
+illumos `echo` does not support the '-n' option. Replace it with `printf`.
+
+--- openvpn-2.4.7/tests/t_lpback.sh	2019-02-20 13:28:23.000000000 +0000
++++ openvpn-2.4.7/tests/t_lpback.sh	2019-06-09 14:24:33.120063745 +0000
+@@ -44,7 +44,7 @@ set +e
+ e=0
+ for cipher in ${CIPHERS}
+ do
+-    echo -n "Testing cipher ${cipher}... "
++    printf "Testing cipher ${cipher}... "
+     ( "${top_builddir}/src/openvpn/openvpn" --test-crypto --secret key.$$ --cipher ${cipher} ) >log.$$ 2>&1
+     if [ $? != 0 ] ; then
+         echo "FAILED"
