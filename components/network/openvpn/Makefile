@@ -11,20 +11,22 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2016 Jim Klimov
+# Copyright 2019 Michal Nowak
 #
+
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.4.3
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.4.7
 COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:15e15fc97f189b52aee7c90ec8355aa77469c773125110b4c2f089abecde36fb
+COMPONENT_ARCHIVE_HASH=	sha256:a42f53570f669eaf10af68e98d65b531015ff9e12be7a62d9269ea684652f648
 COMPONENT_PROJECT_URL=	http://openvpn.net
-COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.org/community/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	network/openvpn
+COMPONENT_ARCHIVE_URL=	http://build.openvpn.net/downloads/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		network/openvpn
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -41,18 +43,22 @@ CONFIGURE_OPTIONS += GREP=/usr/gnu/bin/grep
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 
-build:		$(BUILD_32)
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTO_DIR)/$(USRSHAREDOCDIR)/openvpn/sample/ ; \
+	$(CP) -a $(SOURCE_DIR)/sample/sample-{config-files,keys,scripts} $(PROTO_DIR)/$(USRSHAREDOCDIR)/openvpn/sample/ ;
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
 
-test:		$(TEST_32)
+install:	$(INSTALL_64)
+
+test:		$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += driver/network/header-tun
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
