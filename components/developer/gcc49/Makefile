@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.9.4
-COMPONENT_REVISION=5
+COMPONENT_REVISION=6
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.3
 MPC_NAME=mpc
@@ -117,12 +117,8 @@ CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(MACH))
 
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
 
-COMPONENT_POST_INSTALL_ACTION = \
-  for file in $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/libgfortran.so.3.0.0 $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/$(MACH64)/libgfortran.so.3.0.0; do \
-    elfedit -e 'dyn:delete RUNPATH' $$file ; \
-    elfedit -e 'dyn:delete RPATH' $$file ; \
-  done ; \
-  $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed
+COMPONENT_POST_INSTALL_ACTION += \
+  $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed ;
 
 build: $(BUILD_32)
 
