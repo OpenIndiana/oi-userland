@@ -1,0 +1,20 @@
+--- gcc-4.9.4/gcc/read-md.c.orig	2019-02-19 07:20:21.232793682 +0000
++++ gcc-4.9.4/gcc/read-md.c	2019-02-19 07:21:04.478083601 +0000
+@@ -780,7 +780,7 @@
+ /* Return a malloc()ed decimal string that represents number NUMBER.  */
+ 
+ static char *
+-decimal_string (int number)
++md_decimal_string (int number)
+ {
+   /* A safe overestimate.  +1 for sign, +1 for null terminator.  */
+   char buffer[sizeof (int) * CHAR_BIT + 1 + 1];
+@@ -852,7 +852,7 @@
+ 	  ev->name = value_name;
+ 	}
+       ev->def = add_constant (md_constants, value_name,
+-			      decimal_string (def->num_values), def);
++			      md_decimal_string (def->num_values), def);
+ 
+       *def->tail_ptr = ev;
+       def->tail_ptr = &ev->next;
