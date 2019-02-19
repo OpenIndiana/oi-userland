@@ -1,0 +1,33 @@
+--- gcc-4.9.4/gcc/gengtype.c.orig	2019-02-19 09:58:16.498212054 +0000
++++ gcc-4.9.4/gcc/gengtype.c	2019-02-19 09:59:21.888718256 +0000
+@@ -4951,7 +4951,7 @@
+ }
+ 
+ enum alloc_quantity
+-{ single, vector };
++{ scalar, vector };
+ 
+ /* Writes one typed allocator definition into output F for type
+    identifier TYPE_NAME with optional type specifier TYPE_SPECIFIER.
+@@ -5035,8 +5035,8 @@
+       if (nb_plugin_files > 0 
+ 	  && ((s->u.s.line.file == NULL) || !s->u.s.line.file->inpisplugin))
+ 	continue;
+-      write_typed_struct_alloc_def (f, s, "", single);
+-      write_typed_struct_alloc_def (f, s, "cleared_", single);
++      write_typed_struct_alloc_def (f, s, "", scalar);
++      write_typed_struct_alloc_def (f, s, "cleared_", scalar);
+       write_typed_struct_alloc_def (f, s, "vec_", vector);
+       write_typed_struct_alloc_def (f, s, "cleared_vec_", vector);
+     }
+@@ -5055,8 +5055,8 @@
+ 	  if (!filoc || !filoc->file->inpisplugin)
+ 	    continue;
+ 	};
+-      write_typed_typedef_alloc_def (f, p, "", single);
+-      write_typed_typedef_alloc_def (f, p, "cleared_", single);
++      write_typed_typedef_alloc_def (f, p, "", scalar);
++      write_typed_typedef_alloc_def (f, p, "cleared_", scalar);
+       write_typed_typedef_alloc_def (f, p, "vec_", vector);
+       write_typed_typedef_alloc_def (f, p, "cleared_vec_", vector);
+     }
