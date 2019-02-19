@@ -10,7 +10,7 @@
 
 #
 # Copyright 2017, Longrin Wischnewski.
-# Copyright 2018, Michal Nowak
+# Copyright 2019, Michal Nowak
 #
 
 PREFERRED_BITS=		64
@@ -18,12 +18,12 @@ PREFERRED_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	3.0.1
+COMPONENT_VERSION=	3.0.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:21677a5755ee1738bad2cf8179c104068f8bb81b969660d5a2af4ba6eceba5e4
+	sha256:14728ccc6b8e053d01526ebbd0822ca4eb0235e6487e832ec1d0d22f1395430e
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
