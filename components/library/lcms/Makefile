@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms
 COMPONENT_VERSION=      1.19
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=		3
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -78,8 +78,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     $(CP) -p $(SOURCE_DIR)/include/lcms.h ./include/ ; \
     $(RM) -f $(SOURCE_DIR)/include/icc34.h ; \
     $(CP) -p include/icc34.h $(SOURCE_DIR)/include/ )
-
-LINT_FLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 
 build: $(BUILD_32_and_64)
 

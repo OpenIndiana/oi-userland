@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fastcgi
 COMPONENT_VERSION=	2.4.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/fastcgi
 COMPONENT_SUMMARY=	the FastCGI web server interface
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
