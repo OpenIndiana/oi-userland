@@ -1,0 +1,13 @@
+Make sure we follow symlinks.
+
+--- tig-2.4.1/Makefile	2018-07-27 05:18:21.000000000 +0000
++++ tig-2.4.1/Makefile.new	2019-02-20 15:05:12.045718488 +0000
+@@ -211,7 +211,7 @@ all-address-sanitizer: CFLAGS += $(ADDRE
+ test-address-sanitizer: clean all-address-sanitizer test
+ test-address-sanitizer: export TIG_ADDRESS_SANITIZER_ENABLED=yes
+ 
+-TESTS  = $(sort $(shell find test -type f -name '*-test'))
++TESTS  = $(sort $(shell find -L test -type f -name '*-test'))
+ TESTS_TODO = $(sort $(shell find test -type f -name '*-test' -exec grep -l '\(test_todo\|-todo=\)' {} \+))
+ 
+ clean-test:
