@@ -1,0 +1,19 @@
+https://build.opensuse.org/package/view_file/systemsmanagement/ipmitool/hpm_x_compatibility_msg_is_debug_only.patch?expand=1
+
+Signed-off-by: Thomas Renninger <trenn@suse.com>
+
+bsc#948540
+
+Index: ipmitool-1.8.18/lib/hpm2.c
+===================================================================
+--- ipmitool-1.8.18.orig/lib/hpm2.c	2018-09-09 13:48:58.000000000 +0200
++++ ipmitool-1.8.18/lib/hpm2.c	2018-09-25 11:42:48.254519175 +0200
+@@ -99,7 +99,7 @@ int hpm2_get_capabilities(struct ipmi_in
+ 		lprintf(LOG_DEBUG, "IPM Controller is not HPM.2 compatible");
+ 		return rsp->ccode;
+ 	} else if (rsp->ccode) {
+-		lprintf(LOG_NOTICE, "Get HPM.x Capabilities request failed,"
++		lprintf(LOG_DEBUG, "Get HPM.x Capabilities request failed,"
+ 				" compcode = %x", rsp->ccode);
+ 		return rsp->ccode;
+ 	}
