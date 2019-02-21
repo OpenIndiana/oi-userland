@@ -21,13 +21,13 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.21
+COMPONENT_VERSION=	4.8.22
 COMPONENT_FMRI=		file/mc
 COMPONENT_SUMMARY=	The GNU Midnight Commander file manager
 COMPONENT_DESCRIPTION=	GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell
@@ -36,10 +36,9 @@ COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8f37e546ac7c31c9c203a03b1c1d6cb2d2f623a300b86badfd367e5559fe148c
+	sha256:ee7868d7ba0498cf2cccefe107d7efee7f2571098806bba2aed5a159db801318
 COMPONENT_ARCHIVE_URL=	http://ftp.midnight-commander.org/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
-
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -57,17 +56,16 @@ CONFIGURE_OPTIONS += --with-screen=slang
 CONFIGURE_OPTIONS += --enable-vfs-sftp=no
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 
-# Enable Address Space Layout Randomization
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += runtime/perl-522
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/slang
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
