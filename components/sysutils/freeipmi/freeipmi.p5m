@@ -11,9 +11,8 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2019 Michal Nowak
 #
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -41,15 +40,15 @@ file path=etc/freeipmi/libipmiconsole.conf preserve=true
 #file path=etc/init.d/ipmidetectd
 #file path=etc/init.d/ipmiseld
 
-file Solaris/ipmidetectd.xml \
+file files/ipmidetectd.xml \
      path=lib/svc/manifest/application/ipmidetectd.xml \
      restart_fmri=svc:/system/manifest-import:default
-file Solaris/ipmiseld.xml \
+file files/ipmiseld.xml \
      path=lib/svc/manifest/application/ipmiseld.xml \
      restart_fmri=svc:/system/manifest-import:default
 
-file Solaris/svc-ipmidetectd  path=lib/svc/method/svc-ipmidetectd
-file Solaris/svc-ipmiseld     path=lib/svc/method/svc-ipmiseld
+file files/svc-ipmidetectd  path=lib/svc/method/svc-ipmidetectd
+file files/svc-ipmiseld     path=lib/svc/method/svc-ipmiseld
 
 file path=usr/include/freeipmi/api/ipmi-api.h
 file path=usr/include/freeipmi/api/ipmi-chassis-cmds-api.h
@@ -171,6 +170,7 @@ file path=usr/include/freeipmi/spec/ipmi-system-software-id-spec.h
 file path=usr/include/freeipmi/spec/ipmi-timestamp-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-cmd-oem-dell-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-cmd-oem-fujitsu-spec.h
+file path=usr/include/freeipmi/spec/oem/ipmi-cmd-oem-gigabyte-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-cmd-oem-ibm-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-cmd-oem-intel-node-manager-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-cmd-oem-intel-spec.h
@@ -202,6 +202,7 @@ file path=usr/include/freeipmi/spec/oem/ipmi-netfn-oem-supermicro-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-netfn-oem-wistron-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-oem-dell-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-oem-fujitsu-spec.h
+file path=usr/include/freeipmi/spec/oem/ipmi-oem-gigabyte-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-oem-ibm-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-oem-intel-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-oem-inventec-spec.h
@@ -211,6 +212,7 @@ file path=usr/include/freeipmi/spec/oem/ipmi-oem-supermicro-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-oem-wistron-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-sensor-and-event-code-tables-oem-dell-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-sensor-and-event-code-tables-oem-fujitsu-spec.h
+file path=usr/include/freeipmi/spec/oem/ipmi-sensor-and-event-code-tables-oem-gigabyte-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-sensor-and-event-code-tables-oem-hp-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-sensor-and-event-code-tables-oem-intel-node-manager-spec.h
 file path=usr/include/freeipmi/spec/oem/ipmi-sensor-and-event-code-tables-oem-intel-spec.h
@@ -294,43 +296,40 @@ file path=usr/include/ipmi_monitoring_bitmasks.h
 file path=usr/include/ipmi_monitoring_offsets.h
 file path=usr/include/ipmiconsole.h
 file path=usr/include/ipmidetect.h
-
-link path=usr/lib/$(MACH64)/libfreeipmi.so target=libfreeipmi.so.17.0.0
-link path=usr/lib/$(MACH64)/libfreeipmi.so.17 target=libfreeipmi.so.17.0.0
-file path=usr/lib/$(MACH64)/libfreeipmi.so.17.0.0
-link path=usr/lib/$(MACH64)/libipmiconsole.so target=libipmiconsole.so.2.3.2
-link path=usr/lib/$(MACH64)/libipmiconsole.so.2 target=libipmiconsole.so.2.3.2
-file path=usr/lib/$(MACH64)/libipmiconsole.so.2.3.2
-link path=usr/lib/$(MACH64)/libipmidetect.so target=libipmidetect.so.0.0.0
-link path=usr/lib/$(MACH64)/libipmidetect.so.0 target=libipmidetect.so.0.0.0
-file path=usr/lib/$(MACH64)/libipmidetect.so.0.0.0
+link path=usr/lib/$(MACH64)/libfreeipmi.so target=libfreeipmi.so.17.2.2
+link path=usr/lib/$(MACH64)/libfreeipmi.so.17 target=libfreeipmi.so.17.2.2
+file path=usr/lib/$(MACH64)/libfreeipmi.so.17.2.2
+link path=usr/lib/$(MACH64)/libipmiconsole.so target=libipmiconsole.so.2.3.5
+link path=usr/lib/$(MACH64)/libipmiconsole.so.2 target=libipmiconsole.so.2.3.5
+file path=usr/lib/$(MACH64)/libipmiconsole.so.2.3.5
+link path=usr/lib/$(MACH64)/libipmidetect.so target=libipmidetect.so.0.0.1
+link path=usr/lib/$(MACH64)/libipmidetect.so.0 target=libipmidetect.so.0.0.1
+file path=usr/lib/$(MACH64)/libipmidetect.so.0.0.1
 link path=usr/lib/$(MACH64)/libipmimonitoring.so \
-    target=libipmimonitoring.so.5.0.6
-link path=usr/lib/$(MACH64)/libipmimonitoring.so.5 \
-    target=libipmimonitoring.so.5.0.6
-file path=usr/lib/$(MACH64)/libipmimonitoring.so.5.0.6
+    target=libipmimonitoring.so.6.0.8
+link path=usr/lib/$(MACH64)/libipmimonitoring.so.6 \
+    target=libipmimonitoring.so.6.0.8
+file path=usr/lib/$(MACH64)/libipmimonitoring.so.6.0.8
 file path=usr/lib/$(MACH64)/pkgconfig/libfreeipmi.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libipmiconsole.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libipmidetect.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libipmimonitoring.pc
-
-link path=usr/lib/libfreeipmi.so target=libfreeipmi.so.17.0.0
-link path=usr/lib/libfreeipmi.so.17 target=libfreeipmi.so.17.0.0
-file path=usr/lib/libfreeipmi.so.17.0.0
-link path=usr/lib/libipmiconsole.so target=libipmiconsole.so.2.3.2
-link path=usr/lib/libipmiconsole.so.2 target=libipmiconsole.so.2.3.2
-file path=usr/lib/libipmiconsole.so.2.3.2
-link path=usr/lib/libipmidetect.so target=libipmidetect.so.0.0.0
-link path=usr/lib/libipmidetect.so.0 target=libipmidetect.so.0.0.0
-file path=usr/lib/libipmidetect.so.0.0.0
-link path=usr/lib/libipmimonitoring.so target=libipmimonitoring.so.5.0.6
-link path=usr/lib/libipmimonitoring.so.5 target=libipmimonitoring.so.5.0.6
-file path=usr/lib/libipmimonitoring.so.5.0.6
+link path=usr/lib/libfreeipmi.so target=libfreeipmi.so.17.2.2
+link path=usr/lib/libfreeipmi.so.17 target=libfreeipmi.so.17.2.2
+file path=usr/lib/libfreeipmi.so.17.2.2
+link path=usr/lib/libipmiconsole.so target=libipmiconsole.so.2.3.5
+link path=usr/lib/libipmiconsole.so.2 target=libipmiconsole.so.2.3.5
+file path=usr/lib/libipmiconsole.so.2.3.5
+link path=usr/lib/libipmidetect.so target=libipmidetect.so.0.0.1
+link path=usr/lib/libipmidetect.so.0 target=libipmidetect.so.0.0.1
+file path=usr/lib/libipmidetect.so.0.0.1
+link path=usr/lib/libipmimonitoring.so target=libipmimonitoring.so.6.0.8
+link path=usr/lib/libipmimonitoring.so.6 target=libipmimonitoring.so.6.0.8
+file path=usr/lib/libipmimonitoring.so.6.0.8
 file path=usr/lib/pkgconfig/libfreeipmi.pc
 file path=usr/lib/pkgconfig/libipmiconsole.pc
 file path=usr/lib/pkgconfig/libipmidetect.pc
 file path=usr/lib/pkgconfig/libipmimonitoring.pc
-
 file path=usr/sbin/$(MACH64)/bmc-config
 file path=usr/sbin/$(MACH64)/bmc-device
 file path=usr/sbin/$(MACH64)/bmc-info
@@ -359,7 +358,8 @@ file path=usr/sbin/$(MACH64)/ipmimonitoring
 file path=usr/sbin/$(MACH64)/ipmiping
 file path=usr/sbin/$(MACH64)/ipmipower
 file path=usr/sbin/$(MACH64)/ipmiseld
-link path=usr/sbin/$(MACH64)/pef-config target=ipmi-pef-config
+link path=usr/sbin/$(MACH64)/pef-config \
+    target=ipmi-pef-config
 link path=usr/sbin/$(MACH64)/rmcp-ping target=rmcpping
 file path=usr/sbin/$(MACH64)/rmcpping
 
