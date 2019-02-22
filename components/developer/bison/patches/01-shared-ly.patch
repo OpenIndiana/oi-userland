@@ -1,6 +1,6 @@
---- bison-3.0.4/Makefile.in.orig	Tue Oct 27 10:12:31 2015
-+++ bison-3.0.4/Makefile.in	Tue Oct 27 10:13:12 2015
-@@ -473,6 +473,12 @@
+--- bison-3.3.2/Makefile.in	2019-02-03 14:36:20.000000000 +0000
++++ bison-3.3.2/Makefile.in	2019-02-22 06:53:22.765447361 +0000
+@@ -501,6 +501,12 @@ am__lib_liby_a_SOURCES_DIST = lib/main.c
  @ENABLE_YACC_TRUE@am_lib_liby_a_OBJECTS = lib/main.$(OBJEXT) \
  @ENABLE_YACC_TRUE@	lib/yyerror.$(OBJEXT)
  lib_liby_a_OBJECTS = $(am_lib_liby_a_OBJECTS)
@@ -10,20 +10,20 @@
 +# being in our CFLAGS from shared-macros.mk
 +lib/yyerror.o lib/main.o: CFLAGS += $(CC_PIC)
 +
- @FLEX_CXX_WORKS_TRUE@am__EXEEXT_1 = examples/calc++/calc++$(EXEEXT)
- PROGRAMS = $(bin_PROGRAMS)
- am__objects_2 = examples/calc++/examples_calc___calc__-calc++-driver.$(OBJEXT) \
-@@ -2501,6 +2507,9 @@
+ am__objects_10 = examples/c++/calc++/calc__-driver.$(OBJEXT) \
+ 	examples/c++/calc++/calc__-scanner.$(OBJEXT) \
+ 	examples/c++/calc++/calc__-calc++.$(OBJEXT)
+@@ -2848,6 +2854,9 @@ WARN_ON_USE_H = $(top_srcdir)/lib/warn-o
+ @ENABLE_YACC_TRUE@lib_LIBRARIES = lib/liby.a
  @ENABLE_YACC_TRUE@EXTRA_LIBRARIES = lib/liby.a
  @ENABLE_YACC_TRUE@lib_liby_a_SOURCES = lib/main.c lib/yyerror.c
- LDADD = lib/libbison.a $(LIBINTL)
 +
 +lib_LIBRARIES += lib/liby.so.1
 +
  # Prettify Automake-computed names of compiled objects.
  src_bison_SHORTNAME = bison
- src_bison_CFLAGS = $(AM_CFLAGS) $(WERROR_CFLAGS)
-@@ -2624,6 +2633,10 @@
+ src_bison_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
+@@ -2994,6 +3003,10 @@ gen_start_date = 2012-01-16
  all: $(BUILT_SOURCES)
  	$(MAKE) $(AM_MAKEFLAGS) all-recursive
  
@@ -32,5 +32,5 @@
 +	$(CC) $(CFLAGS) -shared -Wl,-h -Wl,liby.so.1 -o lib/liby.so.1 $(lib_liby_a_OBJECTS) $(lib_liby_a_LIBADD)
 +
  .SUFFIXES:
- .SUFFIXES: .gv .eps .pdf .png .yy .stamp .c .cc .dvi .l .ll .log .o .obj .ps .sed .sin .test .test$(EXEEXT) .trs .y
+ .SUFFIXES: .gv .eps .pdf .png .yy .stamp .c .cc .dvi .l .ll .log .o .obj .ps .test .test$(EXEEXT) .trs .y
  am--refresh: Makefile
