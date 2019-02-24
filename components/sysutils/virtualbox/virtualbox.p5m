@@ -11,6 +11,7 @@
 
 #
 # Copyright 2018 Aurelien Larcher
+# Copyright 2019 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -28,6 +29,12 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=platform/i86pc/kernel/drv/.+ -> default variant.opensolaris.zone "global" >
 <transform file path=platform/i86pc/kernel/drv/.+ -> default restart_fmri svc:/application/virtualbox/run-once:defaul>
 
+driver name=vboxdrv
+driver name=vboxflt
+driver name=vboxnet
+driver name=vboxusb
+driver name=vboxusbmon
+
 file files/run-once.sh path=/opt/VirtualBox/run-once.sh owner=root group=sys mode=0555
 file files/virtualbox-run-once.xml \
   path=var/svc/manifest/application/virtualbox/virtualbox-run-once.xml \
@@ -39,6 +46,7 @@ link path=opt/VirtualBox/64 target=$(MACH64)
 
 #file path=autoresponse
 #file path=checkinstall.sh
+#file path=etc/fs/vboxfs/vboxfsmount
 file path=etc/hostname.vboxnet0
 #file path=makepackage.sh
 file path=opt/VirtualBox/$(MACH64)/DbgPlugInDiggers.so
@@ -58,6 +66,7 @@ file path=opt/VirtualBox/$(MACH64)/VBoxDragAndDropSvc.so
 link path=opt/VirtualBox/$(MACH64)/VBoxEFI32.fd target=../VBoxEFI32.fd
 link path=opt/VirtualBox/$(MACH64)/VBoxEFI64.fd target=../VBoxEFI64.fd
 file path=opt/VirtualBox/$(MACH64)/VBoxExtPackHelperApp mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxGlobal.so
 file path=opt/VirtualBox/$(MACH64)/VBoxGuestControlSvc.so
 file path=opt/VirtualBox/$(MACH64)/VBoxGuestPropSvc.so
 file path=opt/VirtualBox/$(MACH64)/VBoxHeadless mode=4555
@@ -89,8 +98,9 @@ file path=opt/VirtualBox/$(MACH64)/VBoxXPCOMIPCD mode=0555
 file path=opt/VirtualBox/$(MACH64)/VBoxZoneAccess mode=4555
 file path=opt/VirtualBox/$(MACH64)/VMMR0.r0
 file path=opt/VirtualBox/$(MACH64)/VMMRC.rc pkg.linted.userland.action001.2=true
-file path=opt/VirtualBox/$(MACH64)/VirtualBox mode=4555
-file path=opt/VirtualBox/$(MACH64)/VirtualBox.so
+file path=opt/VirtualBox/$(MACH64)/VirtualBox mode=0555
+file path=opt/VirtualBox/$(MACH64)/VirtualBoxVM mode=4555
+file path=opt/VirtualBox/$(MACH64)/VirtualBoxVM.so
 file path=opt/VirtualBox/$(MACH64)/components/VBoxC.so
 file path=opt/VirtualBox/$(MACH64)/components/VBoxSVCM.so
 file path=opt/VirtualBox/$(MACH64)/components/VBoxXPCOMBase.xpt
@@ -241,9 +251,3 @@ file path=var/svc/manifest/application/virtualbox/virtualbox-balloonctrl.xml
 file path=var/svc/manifest/application/virtualbox/virtualbox-zoneaccess.xml
 #file path=vbox.pkginfo
 #file path=vbox.space
-
-driver name=vboxdrv 
-driver name=vboxflt 
-driver name=vboxnet 
-driver name=vboxusb 
-driver name=vboxusbmon
