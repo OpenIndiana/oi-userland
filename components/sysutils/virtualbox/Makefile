@@ -10,12 +10,13 @@
 
 #
 # Copyright 2017 Aurelien Larcher
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      5.2.24
+COMPONENT_VERSION=      6.0.4
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
@@ -26,16 +27,16 @@ COMPONENT_DOWNLOAD_URL= \
   http://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6c8672ff74f9fbe0a73522baab5f5600d2c65c5df4b0314d983a5d096e746457
+  sha256:f80b0c68182c946fb74ada8034960c38159ad91085b153da1277e4f191af6e1f
 COMPONENT_LICENSE=      GPLv2
 
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-128163
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-128413
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= \
-  sha256:40326138014027a9eb1830e32fb199da2f208185ec42e19af6f5d103731fb042
+  sha256:618ee3fd3eb64b4dd6f11bd80f1116cad7a5f9308a65536ce257cd2dbbb68dd7
 COMPONENT_LICENSE_1=      GPLv2
 UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
 
@@ -55,7 +56,7 @@ X11_SERVERDRV_DIR.64=/usr/lib/xorg/modules/drivers/$(MACH64)
 X11_SERVERDRV_DIR=$(X11_SERVERDRV_DIR.64)
 
 X11_SERVERINP_DIR.32=/usr/lib/xorg/modules/input
-X11_SERVERINP_DIR.64=/usr/lib/xorg/input/$(MACH64)
+X11_SERVERINP_DIR.64=/usr/lib/xorg/modules/input/$(MACH64)
 X11_SERVERINP_DIR=$(X11_SERVERMODS_DIR.64)
 
 VBOX_BINDIR= $(BUILD_DIR_64)/out/solaris.$(MACH64)/release/bin/additions/
@@ -136,7 +137,7 @@ CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 VBOX_PREFIX   = /opt/VirtualBox
 VBOX_LIBDIR   = $(VBOX_PREFIX)/$(MACH64)
-VBOX_QT5_LIBS = VirtualBox.so VBoxDbg.so
+VBOX_QT5_LIBS = VirtualBoxVM.so VBoxDbg.so VBoxGlobal.so
 VBOX_QT5_RPATH= $(VBOX_LIBDIR):$(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
 
 COMPONENT_POST_INSTALL_ACTION = \
@@ -145,6 +146,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 		/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_LIBDIR)/$$file; \
 		/usr/bin/elfedit -e 'dyn:value -s RPATH   "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_LIBDIR)/$$file; \
 	done; \
+	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_PREFIX)/$(MACH64)/VirtualBox; \
+	/usr/bin/elfedit -e 'dyn:value -s RPATH   "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_PREFIX)/$(MACH64)/VirtualBox; \
 	echo "$(COMPONENT_VERSION)" > $(PROTO_DIR)$(VBOX_PREFIX)/VERSION
 
 $(INSTALL_ADDITIONS):	$(INSTALL_64)
@@ -186,6 +189,8 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 
 $(BUILD_32_and_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)/env.sh && kmk KBUILD_VERBOSE=3"
 
+# Sometimes 32-bit build is skipped silently. Better build like this:
+#	gmake build install sample-manifest
 build:		$(BUILD_32_and_64) 
 
 $(INSTALL_64): GMAKE= cd $(@D)/src/VBox/Installer && $(SHELL) -c ". $(@D)/env.sh && kmk solaris-install VBOX_PATH_SI_SCRATCH_PKG=$(PROTO_DIR)"
@@ -195,10 +200,11 @@ install:	$(INSTALL_64) $(INSTALL_ADDITIONS)
 test:		$(NO_TESTS)
 
 # Build dependencies
+REQUIRED_PACKAGES += driver/usb
 REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += x11/library/libxinerama
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += driver/usb
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
@@ -212,12 +218,11 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
-REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxinerama
-REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
