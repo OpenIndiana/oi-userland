@@ -9,10 +9,10 @@
 // source. A copy of the CDDL is also available via the Internet at
 // http://www.illumos.org/license/CDDL.
 //
-// Copyright (c) 2012, Adam 'xenol' Stevko <adam.stevko@gmail.com> 
+// Copyright (c) 2019, Till Wegmueller <toasterson@gmail.com>
 -->
 <service_bundle type='manifest' name='export'>
-	<service name='application/management/zabbix-agent' type='service' version='0'>
+	<service name='application/management/zabbix' type='service' version='0'>
 		<create_default_instance enabled='false'/>
 		<single_instance/>
 			<dependency name='fs' grouping='require_all' restart_on='none' type='service'>
@@ -21,7 +21,11 @@
 			<dependency name='net' grouping='require_all' restart_on='none' type='service'>
 				<service_fmri value='svc:/network/service'/>
 			</dependency>
-		<exec_method name='start' type='method' exec='/usr/sbin/zabbix_agentd' timeout_seconds='10'/>
+			<exec_method name='start' type='method' exec='/usr/sbin/zabbix_server' timeout_seconds='10'>
+				<method_context>
+			                <method_credential user="zabbix" group="zabbix" />
+			        </method_context>
+			</exec_method>	
 		<exec_method name='stop' type='method' exec=':kill' timeout_seconds='60'/>
 	</service>
 </service_bundle>
