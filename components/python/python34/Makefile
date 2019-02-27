@@ -79,7 +79,7 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 CFLAGS +=	$(CC_PIC)
 
 # XPG6
-+CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
+CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
 
 # The python build is profile-guided for studio; to see the benefits of that,
 # Python must be compiled with -xO5 and a different build target must be used.
