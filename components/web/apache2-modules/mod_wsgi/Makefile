@@ -27,6 +27,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
 COMPONENT_VERSION=	4.5.22
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:d8205b1ebe6042e21a7a59fbfe10c4c5a12753bac531879758bdf2fa8e2bf301
@@ -38,7 +39,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSIONS = 2.7 3.4
+PYTHON_32_VERSIONS = 2.7 3.4
+PYTHON_64_VERSIONS = 2.7 3.4 3.5
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
 
@@ -56,19 +58,21 @@ CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 # setup.py.mk
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
+$(BUILD_DIR)/%-3.5/.built:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.installed:  PYTHON_VERSION=3.4
+$(BUILD_DIR)/%-3.5/.installed:  PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
-BUILD_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
-BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
+BUILD_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
+BUILD_64 = $(PYTHON_64_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 
-INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
-INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
+INSTALL_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+INSTALL_64 = $(PYTHON_64_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 
 $(BUILD_32): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs --with-python=$(PYTHON.32) 
 $(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
@@ -82,5 +86,6 @@ install:	$(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/server/apache-24
