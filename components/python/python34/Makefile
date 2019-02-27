@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	3.4.9
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -77,6 +77,9 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 
 # build pic
 CFLAGS +=	$(CC_PIC)
+
+# XPG6
++CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
 
 # The python build is profile-guided for studio; to see the benefits of that,
 # Python must be compiled with -xO5 and a different build target must be used.

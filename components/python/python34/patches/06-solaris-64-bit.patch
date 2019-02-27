@@ -162,7 +162,7 @@ not suitable for upstream.
      wchar_t argv0_path[MAXPATHLEN+1];
      wchar_t zip_path[MAXPATHLEN+1];
      int pfound, efound; /* 1 if found; -1 if found build directory */
-+    boolean_t added_64 = B_FALSE;
++    boolean_t added_64 = _B_FALSE;
      wchar_t *buf;
      size_t bufsz;
      size_t prefixsz;
@@ -172,7 +172,7 @@ not suitable for upstream.
      }
 +    if (sizeof(void *) == 8 && wcslen(exec_prefix) + 3 <= MAXPATHLEN) {
 +        wcscat(exec_prefix, L"/64");
-+        added_64 = B_TRUE;
++        added_64 = _B_TRUE;
 +    }
 +
      /* If we found EXEC_PREFIX do *not* reduce it!  (Yet.) */

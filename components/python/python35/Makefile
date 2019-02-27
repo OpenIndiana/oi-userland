@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	3.5.6
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -78,6 +78,9 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 
 # build pic
 CFLAGS +=	$(CC_PIC)
+
+# XPG6
+CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
 
 # add /usr/gnu/lib to the library search/run path
 LDFLAGS.64 = -R/usr/gnu/lib/$(MACH64) -L/usr/gnu/lib/$(MACH64)
