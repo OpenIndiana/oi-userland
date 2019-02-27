@@ -26,19 +26,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsonrpclib
-COMPONENT_VERSION=	0.2.6
+COMPONENT_VERSION=	0.4.0
 COMPONENT_PROJECT_URL=	https://github.com/tcalmant/jsonrpclib
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:17acc9f89f74fd9f4a22b2fe4bd26a97a7fe68a5ea0a9bd506fb96685cb0fed2
+    sha256:dfe491c11ede2d2177625c1938aea91b36d01831d0676aa031d7131311fe51d5
 COMPONENT_ARCHIVE_URL=https://github.com/tcalmant/jsonrpclib/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/jsonrpclib
 
 TPNO=			24886
 
-# upstream not Python 3.5 ready
-PYTHON_VERSIONS=	2.7 3.4
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -58,5 +57,7 @@ install:	$(INSTALL_NO_ARCH)
 # Ran 51 tests, OK.
 test:		$(TEST_NO_ARCH)
 
+REQUIRED_PACKAGES += library/python/enum-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
