@@ -23,6 +23,9 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file  path=usr/include/svn/(.+)$ -> \
     set action.hash usr/include/subversion-1/%<\1> >
+# prevents "64bit file in 32bit path" errors
+<transform file path=usr/apache2/2.4/libexec/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
 
 set name=pkg.fmri \
     value=pkg:/developer/versioning/subversion@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -43,8 +46,6 @@ set name=org.opensolaris.arc-caseid value=PSARC/2006/563
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/apache2/2.4/libexec/mod_authz_svn.so
 file path=usr/apache2/2.4/libexec/mod_dav_svn.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_svn.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dav_svn.so
 file usr/bin/$(MACH64)/svn path=usr/bin/svn
 file usr/bin/$(MACH64)/svnadmin path=usr/bin/svnadmin
 file usr/bin/$(MACH64)/svnbench path=usr/bin/svnbench
