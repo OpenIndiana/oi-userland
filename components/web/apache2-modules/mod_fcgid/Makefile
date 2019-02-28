@@ -24,7 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_fcgid
 COMPONENT_VERSION=	2.3.9
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/mod_fcgid/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,15 +39,13 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
-APXS.32 = /usr/apache2/2.4/bin/apxs
-APXS.64 = /usr/apache2/2.4/bin/$(MACH64)/apxs
-APXS = $(APXS.$(BITS))
+APXS = /usr/apache2/2.4/bin/apxs
 
 COMPONENT_PRE_BUILD_ACTION= ( cd $(@D); APXS=$(APXS) ./configure.apxs )
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
