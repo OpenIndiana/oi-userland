@@ -20,11 +20,12 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
 COMPONENT_VERSION=	2.0.10
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://perl.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,6 +36,7 @@ COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/perl/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
 CONFIGURE_DEFAULT_DIRS=no
+PERL_VERSION=5.24
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -59,23 +61,19 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 	INSTALLSCRIPT=$(AP_PERL5BIN) \
 	MP_NO_THREADS=1 \
 	MP_APXS=$(APACHE_USR_PREFIX)/bin/apxs\
-	MP_APR_CONFIG=/usr/apr/bin/apr-1-config) 
+	MP_APR_CONFIG=/usr/apr/bin/$(MACH64)/apr-1-config) 
 
 COMPONENT_TEST_TARGETS=	test
 
-PATH=$(PATH.gnu)
+build: $(BUILD_64)
 
-build: $(BUILD_32)
+install: $(INSTALL_64)
 
-install: $(INSTALL_32)
-
-# Won't start (maybe because of mod_dtrace.so on system).
-#test: $(TEST_32)
 test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += web/server/apache-24
