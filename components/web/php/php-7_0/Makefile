@@ -14,10 +14,10 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	7.0.29
+COMPONENT_VERSION=	7.0.33
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:ca79d3ecc123bff4b623d4a1bbf5ad53ad39f5f2f5912fecc0ea97e95eba21cc
+COMPONENT_ARCHIVE_HASH=	sha256:ab8c5be6e32b1f8d032909dedaaaa4bbb1a209e519abb01a52ce3914f9a13d96
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE).asc/from/this/mirror
 
@@ -66,8 +66,8 @@ CONFIGURE_OPTIONS     +=	--localstatedir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--enable-maintainer-zts
 
 # SAPI modules
-CONFIGURE_OPTIONS.32  +=	--with-apxs2=$(AP_PREFIX)/bin/apxs
-CONFIGURE_OPTIONS.64  +=	--with-apxs2=$(AP_PREFIX)/bin/$(MACH64)/apxs
+CONFIGURE_OPTIONS.32  +=	--with-apxs2=no
+CONFIGURE_OPTIONS.64  +=	--with-apxs2=$(AP_PREFIX)/bin/apxs
 CONFIGURE_OPTIONS     +=        --enable-fpm
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris$(SOLARIS_VERSION)
@@ -191,6 +191,9 @@ CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	PG_CONFIG=$(PG_BINDIR)/pg_config
+
+COMPONENT_POST_INSTALL_ACTION= $(MV)  $(PROTO_DIR)/usr/php/7.0/include/php/main/php_config.h \
+					$(PROTO_DIR)/usr/php/7.0/include/php/main/php_config-$(BITS).h
 
 build:		$(BUILD_32_and_64)
 
