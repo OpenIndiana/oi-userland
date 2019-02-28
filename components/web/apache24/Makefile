@@ -23,13 +23,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.37
+COMPONENT_VERSION=	2.4.38
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-   sha256:aa97a834a32d51974be8d8a013b561e28d327387cb1da2c3c2762acd0146aabd
+   sha256:38d0b73aa313c28065bf58faf64cec12bf7c7d5196146107df2ad07541aa26a6
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS=no
@@ -41,7 +41,6 @@ include $(WS_MAKE_RULES)/ips.mk
 PATCH_LEVEL=0
 
 # Some patches need configure script re-creation.
-#COMPONENT_PREP_ACTION +=($(CP) mod_sed/* $(@D)/modules/filters);
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.c $(@D)/modules/aaa);
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.html $(@D)/docs/manual/mod);
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
