@@ -35,16 +35,14 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/162
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_wsgi-2.7.so mode=0555
-link path=usr/apache2/2.4/libexec/$(MACH64)/mod_wsgi.so \
-    target=mod_wsgi-2.7.so mediator=python \
-    mediator-version=2.7
-link path=usr/apache2/2.4/libexec/$(MACH64)/mod_wsgi.so \
-    target=mod_wsgi-2.7.so mediator=python \
-    mediator-version=2.7
+
+license mod_wsgi.license license=Apache2.0
+
+# prevents "64bit file in 32bit path" errors
+<transform file path=usr/apache2/2.4/libexec/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
+
 file path=usr/apache2/2.4/libexec/mod_wsgi-2.7.so mode=0555
 link path=usr/apache2/2.4/libexec/mod_wsgi.so \
     target=mod_wsgi-2.7.so mediator=python \
     mediator-version=2.7
-license mod_wsgi.license license=Apache2.0
-
