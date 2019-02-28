@@ -1,6 +1,6 @@
 '\" te
 .\" Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
-.TH apache2 1M "May 2011" "SunOS 5.11" "System Administration Commands"
+.TH apache24 1M "Mar 1, 2019" "SunOS 5.11" "System Administration Commands"
 .SH NAME
 apache24 \- Apache HTTP Server Version 2.4 overview
 .SH SYNOPSIS
@@ -17,8 +17,28 @@ loadable server modules,  some additional  support utilities, configuration
 files, and documentation.
 .sp
 .LP
-Both 32-bit and 64-bit versions of the servers are installed. It also
-includes two of the most popular MPMs - Prefork and Worker.
+Note Apache 2.4 is 64-bit only.
+.sp
+Apache 2.4 can be enabled by authorized user within the service
+management facility (SMF), using the following fault management
+resource identifier (FMRI):
+.sp
+.in +2
+.nf
+svc:/network/http:apache24
+.fi
+.in -2
+.sp
+Available SMF properties are listed in the following table:
+.sp
+.TS
+allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+SMF Property Name	Value
+httpd/MPM	event (default), prefork or worker
+httpd/startup_options	valid apachectl options
+.TE
 .SH FILES
 .sp
 .LP
@@ -31,13 +51,6 @@ Note :
 .el o
 The string \fB[version]\fR should be expanded
 to \fB"MAJOR.MINOR"\fR. For example, \fB/usr/apache2/2.4/*\fR.
-.RE
-.RS +4
-.TP
-.ie t \(bu
-.el o
-\fB[isainfo]\fR represents the output of \fBisainfo
--n\fR on 64-bit platform.
 .RE
 .RS +4
 .TP
@@ -65,6 +78,10 @@ $ /usr/apache2/[version]/bin/apachectl -v
 .RS 4n
 Contains server configuration files. A newly-installed server
 contains a default \fBhttpd.conf\fR file. This is the main configuration file.
+.sp
+If there is need to use different main configuration file (e.g. to run
+multiple Apache 2 instances), it's possible by providing Apache '-f'
+option via SMF property httpd/startup_options.
 .RE
 
 .sp
@@ -78,10 +95,7 @@ contains a default \fBhttpd.conf\fR file. This is the main configuration file.
 Contains additional server configuration files.
 .sp
 By default, server will load all the \fB\&.conf\fR files
-placed under this directory. It also has 2 additional \fB\&.load\fR configuration
-files-\fBmodules-32.load\fR and \fBmodules-64.load\fR which
-contain \fBLoadModule\fR directives for loading the 32 and 64-bit
-bundled Apache 2 modules respectively.
+placed under this directory.
 .RE
 
 .sp
@@ -95,6 +109,11 @@ bundled Apache 2 modules respectively.
 File for specifying the environment settings which the server uses at
 startup. This is the user-editable version of the 
 /usr/apache2/[version]/bin/envvars file. 
+.sp
+Note that this is default path to envvars file only in case where main
+configuration file is in directory /etc/apache2/[version]/. If this
+is not the case Apache 2 will look for envvars file in the same
+directory where is main configuration file.
 .RE
 
 .sp
@@ -160,20 +179,7 @@ the file to \fBconf.d\fR directory and modify as per the need.
 .ad
 .sp .6
 .RS 4n
-Contains the 32-bit httpd (Prefork MPM) and httpd.worker (Worker
-MPM) executable as well as other utility programs.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/bin/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 64-bit httpd (Prefork MPM) and httpd.worker (Worker
-MPM) executables as well as other utility programs.
+Contains the main httpd executable as well as other utility programs.
 .RE
 
 .sp
@@ -181,7 +187,6 @@ MPM) executables as well as other utility programs.
 .mk
 .na
 \fB\fB/usr/apache2/[version]/bin/envvars\fR\fR
-\fB\fB/usr/apache2/[version]/bin/[isainfo]/envvars\fR\fR
 .ad
 .sp .6
 .RS 4n
@@ -223,20 +228,7 @@ various optional server extensions with \fBapxs(8)\fR.
 .ad
 .sp .6
 .RS 4n
-Contains 32-bit loadable modules (DSOs) supplied with the
-server.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/libexec/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains 64-bit loadable modules (DSOs) supplied with the
-server.
+Contains loadable modules (DSOs) supplied with the server.
 .RE
 
 .sp
@@ -251,39 +243,6 @@ Contains man pages for the server, utility programs, and \fBmod_perl\fR.
 .sp
 Add this directory to your MANPATH to read the Apache 2 man pages. See
 Notes.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/lib/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 32-bit Apache 2 core libraries.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/lib/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 64-bit Apache 2 core libraries.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/lib/perl/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 32-bit modules and library files used by the \fBmod_perl\fR extension to Apache 2.
 .RE
 
 .sp
@@ -335,23 +294,9 @@ This should not be changed.
 .ad
 .sp .6
 .RS 4n
-Place holder for 32-bit user Apache 2 modules.
+Place holder for user Apache 2 modules.
 .sp
-Any 32-bit modules which are added using \fBapxs(8)\fR are
-copied into this directory.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/var/apache2/[version]/libexec/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Place holder for 64-bit user Apache 2 modules.
-.sp
-Any 64-bit modules which are added using \fBapxs(8)\fR are
+Any modules which are added using \fBapxs(8)\fR are
 copied into this directory.
 .RE
 
@@ -382,6 +327,42 @@ Directory used to cache pages if  the caching feature of \fBmod_proxy\fR is enab
 The location of the cache can also be changed by changing the proxy
 configuration in the \fBhttpd.conf\fR file.
 .RE
+
+.SH EXAMPLES
+.LP
+\fBExample 1 \fRTo switch to worker MPM type
+.sp
+
+.in +2
+.nf
+# \fBsvccfg -s apache24 setprop httpd/MPM=worker\fR
+# \fBsvcadm refresh apache24\fR
+# \fBsvcadm restart apache24\fR
+.fi
+.in -2
+.sp
+
+.LP
+\fBExample 2 \fRCreate new SMF apache instance
+.sp
+.LP
+This expects that valid configuration exists in
+/var/myapache/httpd.conf and it has altered all relevant directives
+against default apache instance (e.g. PidFile, Listen, DocumentRoot,
+ErrorLog and CustomLog).
+.sp
+.in +2
+.nf
+# \fBcp /lib/svc/manifest/network/http-apache24.xml my-apache24.xml\fR
+.sp
+Edit my-apache24.xml and rename instance name to my-apache24.
+
+# \fBsvccfg import my-apache24.xml\fR
+# \fBsvccfg -s my-apache24 setprop httpd/startup_options=\\("-f" "/var/myapache/httpd.conf"\\)\fR
+# \fBsvcadm refresh my-apache24\fR
+.fi
+.in -2
+.sp
 
 .SH SEE ALSO
 .sp

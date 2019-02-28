@@ -175,18 +175,7 @@ gss_create_dir_config(apr_pool_t *p, char *d)
 	return rec;
 }
 
-void log_rerror(const char *file, int line, int level, int status,
-                const request_rec *r, const char *fmt, ...)
-{
-	char errstr[1024];
-	va_list ap;
-
-	va_start(ap, fmt);
-	vsnprintf(errstr, sizeof(errstr), fmt, ap);
-	va_end(ap);
-
-	ap_log_rerror(file, line, APLOG_MODULE_INDEX, level | APLOG_NOERRNO, NULL, r, "%s", errstr);
-}
+#define log_rerror ap_log_rerror
 
 /*********************************************************************
  * GSSAPI Authentication

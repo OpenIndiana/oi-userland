@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
 COMPONENT_VERSION=	2.4.38
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -45,23 +46,6 @@ COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.c $(@D)/modules/aaa);
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.html $(@D)/docs/manual/mod);
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 
-VARIANT_PREFORK =	$(BUILD_DIR)/prefork
-VARIANT_WORKER =	$(BUILD_DIR)/worker
-
-VARIANTS = $(VARIANT_WORKER) $(VARIANT_PREFORK)
-
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
-
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
-
-$(VARIANT_PREFORK)/$(MACH64)/.configured: BITS=64
-$(VARIANT_WORKER)/$(MACH64)/.configured:  BITS=64
-
-$(VARIANT_PREFORK)/%/.configured: CONFIGURE_OPTIONS += --with-mpm=prefork
-$(VARIANT_WORKER)/%/.configured:  CONFIGURE_OPTIONS += --with-mpm=worker
-
 CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
 
 # pipefail wouldn't allow APR-util version check
@@ -70,6 +54,7 @@ CONFIGURE_ENV += SHELLOPTS=
 CONFIGURE_PREFIX =	/usr/apache2/2.4
 
 CONFIGURE_OPTIONS +=	--enable-mods-shared=all
+CONFIGURE_OPTIONS +=	--enable-mpms-shared=all
 CONFIGURE_OPTIONS +=	--enable-so
 CONFIGURE_OPTIONS +=	--enable-suexec
 CONFIGURE_OPTIONS +=	--with-suexec-caller=webservd
@@ -92,29 +77,17 @@ CONFIGURE_OPTIONS +=	--enable-ldap
 CONFIGURE_OPTIONS +=	--enable-ssl
 CONFIGURE_OPTIONS +=	--enable-exception-hook
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
-CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
-CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-Apache2-$(MACH64)
-CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
-CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS +=	--enable-layout=Solaris-Apache2
+CONFIGURE_OPTIONS +=	CC="$(CC) -m$(BITS)"
 CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/bin/apu-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/bin/$(MACH64)/apu-1-config
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+build: $(BUILD_64)
 
-build: $(BUILD_32_and_64)
-
-AP_CONFIG_LAYOUT_H=include/ap_config_layout.h
-
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 	# Some files installed in proto area need to be fixed.
-	$(KSH93) Solaris/customization.sh $(PROTO_DIR) $(MACH64)
-	# Common header files for 32 and 64 bit variants are needed.
-	/usr/bin/diff -D __$(MACH64) \
-	  $(VARIANT_PREFORK)/$(MACH32)/$(AP_CONFIG_LAYOUT_H) \
-	  $(VARIANT_PREFORK)/$(MACH64)/$(AP_CONFIG_LAYOUT_H) \
-	  > $(PROTO_DIR)$(CONFIGURE_PREFIX)/$(AP_CONFIG_LAYOUT_H) ; \
-	 $(TOUCH) $(BUILD_DIR)
+	$(KSH93) Solaris/customization.sh $(PROTO_DIR)
+	$(TOUCH) $(BUILD_DIR)
 
 test: $(NO_TESTS)
 

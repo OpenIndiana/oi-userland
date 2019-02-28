@@ -22,6 +22,10 @@
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/apache2/2.4/build/.+\.sh -> default mode 0555>
+# prevents "64bit file in 32bit path" errors
+<transform file path=usr/apache2/2.4/libexec/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
+
 set name=pkg.fmri \
     value=pkg:/web/server/apache-24@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -40,12 +44,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license LICENSE license="Apache v2.0"
 
-dir path=usr/apache2/2.4/libexec/$(MACH64)
-dir path=var/apache2/2.4/libexec/$(MACH64)
 dir path=var/apache2/2.4/logs mode=0700
 dir path=var/apache2/2.4/proxy group=webservd owner=webservd
-file path=etc/apache2/2.4/conf.d/modules-32.load mode=0644 preserve=renamenew
-file path=etc/apache2/2.4/conf.d/modules-64.load mode=0644 preserve=renamenew
 file path=etc/apache2/2.4/envvars mode=0644 preserve=renamenew
 file etc/apache2/2.4/original/httpd.conf path=etc/apache2/2.4/httpd.conf mode=0644 preserve=renamenew
 file path=etc/apache2/2.4/magic mode=0644 preserve=renamenew
@@ -59,34 +59,22 @@ file etc/apache2/2.4/extra/httpd-languages.conf path=etc/apache2/2.4/samples-con
 file etc/apache2/2.4/extra/httpd-manual.conf path=etc/apache2/2.4/samples-conf.d/manual.conf
 file etc/apache2/2.4/extra/httpd-mpm.conf path=etc/apache2/2.4/samples-conf.d/mpm.conf
 file etc/apache2/2.4/extra/httpd-multilang-errordoc.conf path=etc/apache2/2.4/samples-conf.d/multilang-errordoc.conf
-file path=etc/apache2/2.4/samples-conf.d/proxy_scgi.conf
-file path=etc/apache2/2.4/samples-conf.d/reqtimeout.conf
 file etc/apache2/2.4/extra/httpd-ssl.conf path=etc/apache2/2.4/samples-conf.d/ssl.conf
 file etc/apache2/2.4/extra/httpd-userdir.conf path=etc/apache2/2.4/samples-conf.d/userdir.conf
 file etc/apache2/2.4/extra/httpd-vhosts.conf path=etc/apache2/2.4/samples-conf.d/vhosts.conf
 file Solaris/http-apache24.xml path=lib/svc/manifest/network/http-apache24.xml
-file path=lib/svc/method/http-apache24
+file Solaris/http-apache24 path=lib/svc/method/http-apache24
 file Solaris/apache2.1m.sunman path=usr/share/man/man1m/apache24.1m
 file Solaris/favicon.gif path=var/apache2/2.4/htdocs/favicon.gif
 file Solaris/favicon.ico path=var/apache2/2.4/htdocs/favicon.ico
+file Solaris/auth_attr path=etc/security/auth_attr.d/web:server:apache-24 \
+    owner=root group=sys mode=644 preserve=true
+file Solaris/prof_attr path=etc/security/prof_attr.d/web:server:apache-24 \
+    owner=root group=sys mode=644 preserve=true
 
-file build/worker/$(MACH64)/httpd path=usr/apache2/2.4/bin/$(MACH64)/httpd.worker
-file usr/apache2/2.4/bin/$(MACH64)/suexec path=usr/apache2/2.4/bin/$(MACH64)/suexec.disabled mode=0500
-file build/worker/$(MACH32)/httpd path=usr/apache2/2.4/bin/httpd.worker
+
 file usr/apache2/2.4/bin/suexec path=usr/apache2/2.4/bin/suexec.disabled mode=0500
 
-link path=usr/bin/$(MACH64)/ab target=../../apache2/2.4/bin/$(MACH64)/ab  mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/apchectl target=../../apache2/2.4/bin/$(MACH64)/apachectl  mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/apxs target=../../apache2/2.4/bin/$(MACH64)/apxs  mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/dbmmanage target=../../apache2/2.4/bin/$(MACH64)/dbmmanage mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/fcgistarter target=../../apache2/2.4/bin/$(MACH64)/fcgistarter mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/htcacheclean target=../../apache2/2.4/bin/$(MACH64)/htcacheclean mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/htdbm target=../../apache2/2.4/bin/$(MACH64)/htdbm mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/htdigest target=../../apache2/2.4/bin/$(MACH64)/htdigest mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/htpasswd target=../../apache2/2.4/bin/$(MACH64)/htpasswd mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/httxt2dbm target=../../apache2/2.4/bin/$(MACH64)/httxt2dbm mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/logresolve target=../../apache2/2.4/bin/$(MACH64)/logresolve mediator=apache mediator-version=2.4
-link path=usr/bin/$(MACH64)/rotatelogs target=../../apache2/2.4/bin/$(MACH64)/rotatelogs mediator=apache mediator-version=2.4
 link path=usr/bin/ab target=../apache2/2.4/bin/ab mediator=apache mediator-version=2.4
 link path=usr/bin/apchectl target=../apache2/2.4/bin/apachectl  mediator=apache mediator-version=2.4
 link path=usr/bin/apxs target=../apache2/2.4/bin/apxs mediator=apache mediator-version=2.4
@@ -113,8 +101,6 @@ link path=usr/share/man/man8/httpd.8 target=../../../apache2/2.4/man/man8/httpd.
 link path=usr/share/man/man8/logresolve.1 target=../../../apache2/2.4/man/man1/logresolve.1 mediator=apache mediator-version=2.4
 link path=usr/share/man/man8/rotatelogs.8 target=../../../apache2/2.4/man/man8/rotatelogs.8 mediator=apache mediator-version=2.4
 link path=usr/share/man/man8/suexec.8 target=../../../apache2/2.4/man/man8/suexec.8 mediator=apache mediator-version=2.4
-link path=var/apache2/2.4/libexec/64 target=$(MACH64)
-link path=usr/apache2/2.4/libexec/64 target=$(MACH64)
 
 depend fmri=__TBD \
     pkg.debug.depend.file=usr/apr-util/lib/apr-util-1/apr_dbd_mysql.so \
@@ -126,23 +112,6 @@ depend fmri=__TBD \
     pkg.debug.depend.file=usr/apr-util/lib/apr-util-1/apr_ldap-1.so \
     type=require
 
-file path=usr/apache2/2.4/bin/$(MACH64)/ab
-file path=usr/apache2/2.4/bin/$(MACH64)/apachectl
-file path=usr/apache2/2.4/bin/$(MACH64)/apxs
-file path=usr/apache2/2.4/bin/$(MACH64)/checkgid
-file path=usr/apache2/2.4/bin/$(MACH64)/dbmmanage
-file path=usr/apache2/2.4/bin/$(MACH64)/envvars
-file path=usr/apache2/2.4/bin/$(MACH64)/envvars-std
-file path=usr/apache2/2.4/bin/$(MACH64)/fcgistarter
-file path=usr/apache2/2.4/bin/$(MACH64)/htcacheclean
-file path=usr/apache2/2.4/bin/$(MACH64)/htdbm
-file path=usr/apache2/2.4/bin/$(MACH64)/htdigest
-file path=usr/apache2/2.4/bin/$(MACH64)/htpasswd
-file path=usr/apache2/2.4/bin/$(MACH64)/httpd
-file path=usr/apache2/2.4/bin/$(MACH64)/httxt2dbm
-file path=usr/apache2/2.4/bin/$(MACH64)/logresolve
-file path=usr/apache2/2.4/bin/$(MACH64)/rotatelogs
-file path=usr/apache2/2.4/bin/$(MACH64)/suexec
 file path=usr/apache2/2.4/bin/ab
 file path=usr/apache2/2.4/bin/apachectl
 file path=usr/apache2/2.4/bin/apxs
@@ -160,15 +129,6 @@ file path=usr/apache2/2.4/bin/httxt2dbm
 file path=usr/apache2/2.4/bin/logresolve
 file path=usr/apache2/2.4/bin/rotatelogs
 file path=usr/apache2/2.4/bin/suexec
-file path=usr/apache2/2.4/build/$(MACH64)/config.nice
-file path=usr/apache2/2.4/build/$(MACH64)/config_vars.mk
-file path=usr/apache2/2.4/build/$(MACH64)/instdso.sh
-file path=usr/apache2/2.4/build/$(MACH64)/library.mk
-file path=usr/apache2/2.4/build/$(MACH64)/ltlib.mk
-file path=usr/apache2/2.4/build/$(MACH64)/mkdir.sh
-file path=usr/apache2/2.4/build/$(MACH64)/program.mk
-file path=usr/apache2/2.4/build/$(MACH64)/rules.mk
-file path=usr/apache2/2.4/build/$(MACH64)/special.mk
 file path=usr/apache2/2.4/build/config.nice
 file path=usr/apache2/2.4/build/config_vars.mk
 file path=usr/apache2/2.4/build/instdso.sh
@@ -241,116 +201,6 @@ file path=usr/apache2/2.4/include/util_script.h
 file path=usr/apache2/2.4/include/util_time.h
 file path=usr/apache2/2.4/include/util_varbuf.h
 file path=usr/apache2/2.4/include/util_xml.h
-file path=usr/apache2/2.4/libexec/$(MACH64)/httpd.exp
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_access_compat.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_actions.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_alias.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_allowmethods.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_asis.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_auth_basic.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_auth_digest.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_auth_form.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_auth_gss.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authn_anon.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authn_core.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authn_dbd.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authn_dbm.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authn_file.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authn_socache.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authnz_ldap.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_core.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_dbd.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_dbm.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_groupfile.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_host.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_owner.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_authz_user.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_autoindex.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_brotli.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_buffer.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_cache.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_cache_disk.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_cache_socache.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_cgi.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_cgid.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_charset_lite.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_data.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dav.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dav_fs.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dav_lock.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dbd.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_deflate.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dialup.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dir.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_dumpio.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_echo.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_env.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_expires.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_ext_filter.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_file_cache.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_filter.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_headers.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_heartbeat.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_heartmonitor.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_http2.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_include.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_info.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_lbmethod_bybusyness.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_lbmethod_byrequests.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_lbmethod_bytraffic.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_lbmethod_heartbeat.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_ldap.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_log_config.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_log_debug.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_log_forensic.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_logio.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_lua.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_macro.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_mime.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_mime_magic.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_negotiation.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_ajp.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_balancer.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_connect.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_express.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_fcgi.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_ftp.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_hcheck.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_html.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_http.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_scgi.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_uwsgi.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_proxy_wstunnel.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_ratelimit.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_reflector.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_remoteip.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_reqtimeout.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_request.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_rewrite.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_sed.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_session.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_session_cookie.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_session_dbd.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_setenvif.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_slotmem_plain.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_slotmem_shm.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_socache_dbm.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_socache_memcache.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_socache_shmcb.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_speling.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_ssl.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_status.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_substitute.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_suexec.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_unique_id.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_unixd.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_userdir.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_usertrack.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_version.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_vhost_alias.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_watchdog.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_xml2enc.so
 file path=usr/apache2/2.4/libexec/httpd.exp
 file path=usr/apache2/2.4/libexec/mod_access_compat.so
 file path=usr/apache2/2.4/libexec/mod_actions.so
@@ -418,6 +268,9 @@ file path=usr/apache2/2.4/libexec/mod_lua.so
 file path=usr/apache2/2.4/libexec/mod_macro.so
 file path=usr/apache2/2.4/libexec/mod_mime.so
 file path=usr/apache2/2.4/libexec/mod_mime_magic.so
+file path=usr/apache2/2.4/libexec/mod_mpm_event.so
+file path=usr/apache2/2.4/libexec/mod_mpm_prefork.so
+file path=usr/apache2/2.4/libexec/mod_mpm_worker.so
 file path=usr/apache2/2.4/libexec/mod_negotiation.so
 file path=usr/apache2/2.4/libexec/mod_proxy.so
 file path=usr/apache2/2.4/libexec/mod_proxy_ajp.so
