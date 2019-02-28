@@ -24,7 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_dtrace
 COMPONENT_VERSION=	0.3.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		src
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 COMPONENT_BUGDB=	utility/apache
@@ -32,9 +32,7 @@ COMPONENT_BUGDB=	utility/apache
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-APXS.32 = /usr/apache2/2.4/bin/apxs
-APXS.64 = /usr/apache2/2.4/bin/$(MACH64)/apxs
-APXS = $(APXS.$(BITS))
+APXS = /usr/apache2/2.4/bin/apxs
 
 DTRACE = /usr/sbin/dtrace -$(BITS)
 
@@ -55,7 +53,7 @@ $(SOURCE_DIR)/.prep: $(MAKEFILE_PREREQ)
 clean::
 	$(RM) $(SOURCE_DIR)/.prep
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
 test: $(NO_TESTS)
 
