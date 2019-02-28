@@ -24,6 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_jk
 COMPONENT_VERSION=	1.2.42
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/connectors-doc/
 COMPONENT_SRC_NAME=	tomcat-connectors
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
@@ -37,11 +38,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-APXS.32 = /usr/apache2/2.4/bin/apxs
-APXS.64 = /usr/apache2/2.4/bin/$(MACH64)/apxs
-APXS = $(APXS.$(BITS))
-
-PATCH_LEVEL=0
+APXS = /usr/apache2/2.4/bin/apxs
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/native/configure
 
@@ -51,10 +48,14 @@ CC=
 
 CONFIGURE_OPTIONS += --with-apxs=$(APXS)
 
+COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR)/native && autoreconf -fi);
+
 # Header files are missing during build without cloning.
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR)/native $(@D));
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
+
+install: $(BUILD_64)
 
 test: $(NO_TESTS)
 
