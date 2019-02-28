@@ -24,6 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
 COMPONENT_VERSION=	2.9.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
 COMPONENT_SRC_NAME=	modsecurity
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -38,19 +39,20 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-APXS.32=	/usr/apache2/2.4/bin/apxs
-APXS.64=	/usr/apache2/2.4/bin/$(MACH64)/apxs
+APXS=	/usr/apache2/2.4/bin/apxs
 
 CONFIGURE_OPTIONS += LTFLAGS="--silent --tag=CC"
-CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS += --with-apr=`$(APXS.$(BITS)) -q APR_CONFIG`
-CONFIGURE_OPTIONS += --with-apu=`$(APXS.$(BITS)) -q APU_CONFIG`
+CONFIGURE_OPTIONS += --with-apxs=$(APXS)
+CONFIGURE_OPTIONS += --with-apr=`$(APXS) -q APR_CONFIG`
+CONFIGURE_OPTIONS += --with-apu=`$(APXS) -q APU_CONFIG`
 
 COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-test: $(TEST_32_and_64)
+test: $(TEST_64)
+
+install: $(BUILD_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += web/server/apache-24
