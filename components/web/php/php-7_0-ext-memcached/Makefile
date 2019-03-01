@@ -16,7 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-7.0-ext-memcached
 COMPONENT_VERSION=	3.0.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 REAL_NAME=		php-memcached
 GIT_COMMIT=		6ee96cad7be5caa1f13a1f3e5a4d5f900b9c04ce
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/memcached

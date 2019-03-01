@@ -18,7 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdebug
 COMPONENT_VERSION=	2.4.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/xdebug
 COMPONENT_SUMMARY=	Provides functions for debugging your PHP script
 COMPONENT_FMRI=		web/php-70/extension/php-xdebug
