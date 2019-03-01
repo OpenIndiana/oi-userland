@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		amp
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Cluster containing an AMP (Apache, MySQL, PHP) deployment kit
 
 include ../../../make-rules/ips.mk
