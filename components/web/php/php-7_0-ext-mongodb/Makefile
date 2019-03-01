@@ -15,6 +15,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-7.0-ext-mongodb
 COMPONENT_VERSION=	1.2.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/mongodb
 COMPONENT_SUMMARY=	MongoDB driver for PHP
 COMPONENT_SRC=		mongodb-$(COMPONENT_VERSION)
