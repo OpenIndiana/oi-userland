@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.40.1
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -38,21 +38,12 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH_PHP.32 = /usr/php/5.6/bin
-PATH_PHP.64 = /usr/php/5.6/bin/$(MACH64)
-PATH = /usr/bin:/usr/gnu/bin:$(PATH_PHP.$(BITS))
-
 CPPFLAGS += -I/usr/lib/$(MACH64)/ocaml
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
 # CPPFLAGS +=	-I/usr/include/gmp
 # Java header files (--with-javaincludedir allows for only one directory)
 CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
-# PHP header files (no --with- flag)
-CPPFLAGS_PHP.32 =	$(shell /usr/php/5.6/bin/php-config --includes)
-CPPFLAGS_PHP.64 =	$(shell /usr/php/5.6/bin/$(MACH64)/php-config --includes)
-CPPFLAGS += $(CPPFLAGS_PHP.$(BITS))
-#CXX +=		$(studio_NORUNPATH)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
 				aclocal && \
@@ -72,6 +63,7 @@ CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=no
 CONFIGURE_OPTIONS +=	--enable-python27=yes
+CONFIGURE_OPTIONS +=	--enable-php=no
 CONFIGURE_ENV +=	PYTHON27=$(PYTHON.2.7.$(BITS))
 # We build only 64-bit java library,
 # but avoid building other 64-bit bindings for now
@@ -150,4 +142,3 @@ REQUIRED_PACKAGES += runtime/ruby-23
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += runtime/ocaml
-REQUIRED_PACKAGES += web/php-56
