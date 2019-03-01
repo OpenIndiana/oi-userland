@@ -1,29 +1,19 @@
 --- modsecurity-2.9.2/modsecurity.conf-recommended.~1~	2017-07-18 21:45:57.000000000 +0000
-+++ modsecurity-2.9.2/modsecurity.conf-recommended	2017-08-07 15:46:56.807099808 +0000
-@@ -1,3 +1,22 @@
++++ modsecurity-2.9.2/modsecurity.conf-recommended	2019-03-01 18:11:39.397303649 +0000
+@@ -1,3 +1,12 @@
 +# Load mod_unique_id if necessary
 +<IfModule !unique_id_module>
-+<IfDefine 64bit>
-+LoadModule unique_id_module libexec/64/mod_unique_id.so
-+</IfDefine>
-+<IfDefine !64bit>
 +LoadModule unique_id_module libexec/mod_unique_id.so
-+</IfDefine>
 +</IfModule>
 +
-+<IfDefine 64bit>
-+LoadModule security2_module libexec/64/mod_security2.so
-+</IfDefine>
-+<IfDefine !64bit>
 +LoadModule security2_module libexec/mod_security2.so
-+</IfDefine>
 +
 +<IfModule mod_security2.c>
 +
  # -- Rule engine initialization ----------------------------------------------
  
  # Enable ModSecurity, attaching it to every transaction. Use detection
-@@ -135,13 +154,13 @@
+@@ -135,13 +144,13 @@
  # This default setting is chosen due to all systems have /tmp available however, 
  # this is less than ideal. It is recommended that you specify a location that's private.
  #
@@ -39,7 +29,7 @@
  
  
  # -- File uploads handling configuration -------------------------------------
-@@ -150,7 +169,7 @@
+@@ -150,7 +159,7 @@
  # location must be private to ModSecurity. You don't want other users on
  # the server to access the files, do you?
  #
@@ -48,7 +38,7 @@
  
  # By default, only keep the files that were determined to be unusual
  # in some way (by an external inspection script). For this to work you
-@@ -170,7 +189,7 @@
+@@ -170,7 +179,7 @@
  # The default debug log configuration is to duplicate the error, warning
  # and notice messages from the error log.
  #
@@ -57,7 +47,7 @@
  #SecDebugLogLevel 3
  
  
-@@ -190,10 +209,10 @@
+@@ -190,10 +199,10 @@
  # assumes that you will use the audit log only ocassionally.
  #
  SecAuditLogType Serial
@@ -70,7 +60,7 @@
  
  
  # -- Miscellaneous -----------------------------------------------------------
-@@ -224,3 +243,4 @@
+@@ -224,3 +233,4 @@
  # version, Anonymous unique id for host.
  SecStatusEngine On
  

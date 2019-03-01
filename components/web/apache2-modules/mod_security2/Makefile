@@ -24,7 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
 COMPONENT_VERSION=	2.9.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
 COMPONENT_SRC_NAME=	modsecurity
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
