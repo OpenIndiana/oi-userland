@@ -32,6 +32,26 @@ depend fmri=system/library/math type=require
 #Depend on the common zabbix package
 depend fmri=$(COMPONENT_FMRI)/common type=require
 
+depend fmri=service/database/postgres-11 type=require
+
 file path=etc/zabbix/zabbix_server.conf owner=root group=root mode=0644 preserve=true
 file path=usr/sbin/zabbix_server pkg.depend.bypass-generate=.*
 file path=usr/share/man/man8/zabbix_server.8
+
+# Database Upgrade files
+file path=usr/share/zabbix/database/elasticsearch/elasticsearch.map
+file path=usr/share/zabbix/database/ibm_db2/data.sql
+file path=usr/share/zabbix/database/ibm_db2/images.sql
+file path=usr/share/zabbix/database/ibm_db2/schema.sql
+file path=usr/share/zabbix/database/mysql/data.sql
+file path=usr/share/zabbix/database/mysql/images.sql
+file path=usr/share/zabbix/database/mysql/schema.sql
+file path=usr/share/zabbix/database/oracle/data.sql
+file path=usr/share/zabbix/database/oracle/images.sql
+file path=usr/share/zabbix/database/oracle/schema.sql
+file path=usr/share/zabbix/database/postgresql/data.sql
+file path=usr/share/zabbix/database/postgresql/images.sql
+file path=usr/share/zabbix/database/postgresql/schema.sql
+file path=usr/share/zabbix/database/sqlite3/data.sql
+file path=usr/share/zabbix/database/sqlite3/images.sql
+file path=usr/share/zabbix/database/sqlite3/schema.sql

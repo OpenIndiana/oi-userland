@@ -46,6 +46,13 @@ CONFIGURE_OPTIONS +=	--with-postgresql
 CONFIGURE_OPTIONS +=	--with-libpcre-include=/usr/include/pcre
 #CONFIGURE_OPTIONS +=	--with-sqlite3
 
+COMPONENT_POST_INSTALL_ACTION = \
+				(cd $(@D) ; \
+				mkdir -p $(PROTO_DIR)/usr/share/zabbix/database ; \
+			       	$(CP) -r database/ $(PROTO_DIR)/usr/share/zabbix/database ; \
+			       	mkdir -p $(PROTO_DIR)/usr/share/zabbix/frontend ; \
+			       	$(CP) -r frontends/php/* $(PROTO_DIR)/usr/share/zabbix/frontend )
+
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)
