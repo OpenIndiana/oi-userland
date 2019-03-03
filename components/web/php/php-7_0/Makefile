@@ -110,7 +110,7 @@ CONFIGURE_OPTIONS     +=	--with-pgsql=shared,$(PG_BINDIR)
 
 # Enabled Extensions
 #CONFIGURE_OPTIONS     +=	--with-libxml-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-freetype-dir=$(ECPREFIX)
+CONFIGURE_OPTIONS     +=	--with-freetype-dir=$(ECPREFIX)
 CONFIGURE_OPTIONS     +=	--with-jpeg-dir=/usr
 #CONFIGURE_OPTIONS     +=	--with-png-dir=$(ECPREFIX)
 #CONFIGURE_OPTIONS     +=	--with-zlib-dir=$(ECPREFIX)
@@ -206,6 +206,7 @@ REQUIRED_PACKAGES += web/server/apache-24
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mariadb-101/library
+REQUIRED_PACKAGES += database/mariadb-101/client
 REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -226,3 +227,5 @@ REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/tidy
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += web/php-70/php-cli
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += developer/icu
