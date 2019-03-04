@@ -17,6 +17,7 @@ COMPONENT_NAME=		php
 COMPONENT_VERSION=	7.0.33
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_REVISION=	1
 COMPONENT_ARCHIVE_HASH=	sha256:ab8c5be6e32b1f8d032909dedaaaa4bbb1a209e519abb01a52ce3914f9a13d96
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE).asc/from/this/mirror
@@ -109,14 +110,14 @@ CONFIGURE_OPTIONS     +=	--with-pdo-mysql=shared,$(MYSQL_HOME)
 CONFIGURE_OPTIONS     +=	--with-pgsql=shared,$(PG_BINDIR)
 
 # Enabled Extensions
-#CONFIGURE_OPTIONS     +=	--with-libxml-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-freetype-dir=$(ECPREFIX)
+#CONFIGURE_OPTIONS     +=	--with-libxml-dir=/usr
+CONFIGURE_OPTIONS     +=	--with-freetype-dir=/usr
 CONFIGURE_OPTIONS     +=	--with-jpeg-dir=/usr
-#CONFIGURE_OPTIONS     +=	--with-png-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-zlib-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-xpm-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-libexpat-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-openssl-dir=$(ECPREFIX)
+#CONFIGURE_OPTIONS     +=	--with-png-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-zlib-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-xpm-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-libexpat-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-openssl-dir=/usr
 
 # Disabled extensions & Options
 CONFIGURE_OPTIONS     +=	--disable-static
@@ -201,6 +202,8 @@ install:	$(INSTALL_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += web/server/apache-24
+REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
@@ -226,3 +229,4 @@ REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/tidy
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += web/php-70/php-cli
+REQUIRED_PACKAGES += system/library/freetype-2
