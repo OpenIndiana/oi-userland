@@ -21,18 +21,18 @@
 
 #
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		psutil
-COMPONENT_VERSION=	5.4.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	5.6.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e2467e9312c2fa191687b89ff4bc2ad8843be4af6fb4dc95a7cc5f7d7a327b18
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/e2/e1/600326635f97fee89bf8426fef14c5c29f4849c79f68fd79f433d8c1bd96/$(COMPONENT_ARCHIVE)
+	sha256:dca71c08335fbfc6929438fe3a502f169ba96dd20e50b3544053d6be5cb19d82
+COMPONENT_ARCHIVE_URL=	https://files.pythonhosted.org/packages/79/e6/a4e3c92fe19d386dcc6149dbf0b76f1c93c5491ae9d9ecf866f6769b45a4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/psutil/
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_FMRI=	library/python/psutil
@@ -45,7 +45,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
