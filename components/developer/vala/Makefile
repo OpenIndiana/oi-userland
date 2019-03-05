@@ -20,12 +20,12 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2017 Andreas Wacknitz
-# Copyright (c) 2018 Jason Martin
+# Copyright (c) 2019 Jason Martin
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     vala
-COMPONENT_VERSION=  0.40.11
+COMPONENT_VERSION=  0.40.14
 COMPONENT_LICENSE=  LGPL2.1
 COMPONENT_FMRI=     developer/vala
 COMPONENT_SUMMARY=  Vala programming language
@@ -34,7 +34,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Vala
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1fc591258b63cbb0721c784d8a0abedbb178f4205132a7ee3141f32667301576
+    sha256:20ce47126d24dc41314b9832b14e5e67693da716fc024619cb4c3e96566a9152
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/vala/0.40/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
