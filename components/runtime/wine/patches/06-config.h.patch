@@ -1,0 +1,78 @@
+diff --git a/dlls/msxml3/xslpattern.l b/dlls/msxml3/xslpattern.l
+index 58df30909d..d3d449d038 100644
+--- a/dlls/msxml3/xslpattern.l
++++ b/dlls/msxml3/xslpattern.l
+@@ -18,9 +18,12 @@
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+  */
+ 
+-%{
++%top{
+ #include "config.h"
+ #include "wine/port.h"
++}
++
++%{
+ 
+ #ifdef HAVE_LIBXML2
+ 
+diff --git a/programs/winedbg/debug.l b/programs/winedbg/debug.l
+index ef7a2eb42b..9f9c404d92 100644
+--- a/programs/winedbg/debug.l
++++ b/programs/winedbg/debug.l
+@@ -21,8 +21,11 @@
+ 
+ %option noinput nounput always-interactive 8bit prefix="dbg_"
+ 
+-%{
++%top{
+ #include "config.h"
++}
++
++%{
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
+diff --git a/tools/widl/parser.l b/tools/widl/parser.l
+index 3cbf4ff2d2..211ff4e2a5 100644
+--- a/tools/widl/parser.l
++++ b/tools/widl/parser.l
+@@ -40,11 +40,12 @@ double	[0-9]+\.[0-9]+([eE][+-]?[0-9]+)*
+ %x PP_PRAGMA
+ %x SQUOTE
+ 
+-%{
+-
++%top{
+ #include "config.h"
+ #include "wine/port.h"
++}
+ 
++%{
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/tools/wrc/parser.l b/tools/wrc/parser.l
+index f456c626d1..614c1a4c29 100644
+--- a/tools/wrc/parser.l
++++ b/tools/wrc/parser.l
+@@ -91,12 +91,14 @@
+ /* Some shortcut definitions */
+ ws	[ \f\t\r]
+ 
++%top{
++#include "config.h"
++}
++
+ %{
+ 
+ /*#define LEX_DEBUG*/
+ 
+-#include "config.h"
+-
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-- 
+2.23.0
+

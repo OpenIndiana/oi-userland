@@ -1,0 +1,32 @@
+diff --git a/configure.ac b/configure.ac
+index b9339b90aa..9c3b09eb64 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -941,13 +941,19 @@ case $host_os in
+     ;;
+ 
+   *)
+-    case $host_cpu in
+-      *i[[3456789]]86*)
+-        DLLFLAGS="$DLLFLAGS -fno-PIC"
+-        LDDLLFLAGS="-fno-PIC" ;;
+-      *)
++    case $host_os in
++      solaris2*)
+         DLLFLAGS="$DLLFLAGS -fPIC"
+         LDDLLFLAGS="-fPIC" ;;
++      *)
++        case $host_cpu in
++          *i[[3456789]]86*)
++            DLLFLAGS="$DLLFLAGS -fno-PIC"
++            LDDLLFLAGS="-fno-PIC" ;;
++          *)
++            DLLFLAGS="$DLLFLAGS -fPIC"
++            LDDLLFLAGS="-fPIC" ;;
++        esac ;;
+     esac
+     AC_CACHE_CHECK([whether we can build a GNU style ELF dll], ac_cv_c_dll_gnuelf,
+         [WINE_TRY_SHLIB_FLAGS([-fPIC -shared -Wl,-Bsymbolic],
+-- 
+2.23.0
+

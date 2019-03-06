@@ -1,0 +1,208 @@
+--- wine-4.4/dlls/kernel32/Makefile.in.1	2019-09-30 21:18:02.672434942 +0000
++++ wine-4.4/dlls/kernel32/Makefile.in	2019-09-30 21:18:32.770874323 +0000
+@@ -2,7 +2,7 @@
+ MODULE    = kernel32.dll
+ IMPORTLIB = kernel32
+ IMPORTS   = winecrt0 kernelbase ntdll
+-EXTRALIBS = $(COREFOUNDATION_LIBS) $(POLL_LIBS) $(RT_LIBS)
++EXTRALIBS = $(COREFOUNDATION_LIBS) $(POLL_LIBS) $(RT_LIBS) -ldevinfo
+ EXTRADLLFLAGS = -nodefaultlibs -Wb,-F,KERNEL32.dll -Wl,--image-base,0x7b400000
+ 
+ C_SRCS = \
+--- wine-4.4/dlls/kernel32/oldconfig.c.~1~	2019-03-15 23:18:31.000000000 +0000
++++ wine-4.4/dlls/kernel32/oldconfig.c	2019-10-01 03:26:42.508639311 +0000
+@@ -42,6 +42,13 @@
+ # include <linux/hdreg.h>
+ #endif
+ 
++#if defined(__sun) || defined(sun)
++#include <libdevinfo.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <sys/mkdev.h>
++#endif
++
+ #include "windef.h"
+ #include "winbase.h"
+ #include "winternl.h"
+@@ -263,7 +270,172 @@
+     return 1;
+ }
+ 
++#if defined(__sun) || defined(sun)
++static int walk_devlinks(di_devlink_t devlink, void *arg)
++{
++        char    **path= (char **)arg;
++
++        *path = strdup(di_devlink_path(devlink));
++
++        return (DI_WALK_TERMINATE);
++}
+ 
++static int process_minors(di_node_t node, unsigned char* port, int is_cdrom, int is_scsi) {
++       int major;
++       di_minor_t minor;
++       di_devlink_handle_t devlink_hdl;
++       char *cUnixDeviceName = NULL;
++
++       devlink_hdl = di_devlink_init(NULL, 0);
++       if (devlink_hdl == NULL) {
++             ERR("Couldn't init devlink handle\n");
++             return -1;
++       }
++            
++       major = di_driver_major(node);
++       minor = DI_MINOR_NIL;
++       while ((minor = di_minor_next(node, minor)) != DI_MINOR_NIL) {
++             char *mname;
++             char *devlink = NULL;
++             char *minor_path;
++             dev_t dev;
++
++             dev = di_minor_devt(minor);
++             if (major == major(dev) && di_minor_type(minor) == DDM_MINOR &&
++                 di_minor_spectype(minor) == S_IFBLK) {
++
++                 minor_path = di_devfs_minor_path(minor);
++                 mname = di_minor_name(minor);
++                 dev = di_minor_devt(minor);
++                 (void) di_devlink_walk(devlink_hdl, NULL, minor_path,
++                        DI_PRIMARY_LINK, &devlink, walk_devlinks);
++                 if (devlink) {
++                       /* If devlink ends with d0 or p0, it's device name. Prefer d0 names. */
++                       int dl = strlen(devlink);
++                       
++                       if (dl > 2 && devlink[dl-1] == '0' && devlink[dl-2] == 'd') {
++                          if (cUnixDeviceName != NULL)  {
++                             free(cUnixDeviceName);
++                          }
++                          cUnixDeviceName = strdup(devlink);
++                       }
++                       if (dl > 2 && devlink[dl-1] == '0' && devlink[dl-2] == 'p' && cUnixDeviceName == NULL) {
++                          cUnixDeviceName = strdup(devlink);
++                       }
++                 }
++             }
++            
++       }
++       di_devlink_fini (&devlink_hdl);
++
++       if (cUnixDeviceName) { 
++          SCSI_ADDRESS scsi_addr;
++          char cDevModel[40];
++          UINT nType;
++          char *dtype;
++         
++          if (is_cdrom) {
++              nType = DRIVE_CDROM;
++              strcpy(cDevModel, "Wine CDROM");
++          } else {
++              nType = DRIVE_FIXED;
++              strcpy(cDevModel, "Wine harddisk");
++          }
++
++          if (is_scsi) {
++              dtype = "WINE scsi";
++          } else {
++              dtype = "atapi";
++          }
++
++          scsi_addr.PortNumber = *port;
++          scsi_addr.PathId = 0;
++          scsi_addr.TargetId = 0;
++          scsi_addr.Lun = 0;
++ 
++          create_scsi_entry(&scsi_addr, dtype, nType, cDevModel, cUnixDeviceName);
++          (*port)++;
++          free (cUnixDeviceName);
++       }
++       return 0;
++} 
++
++
++static int get_ide_disks(di_node_t node, void *arg) {
++     unsigned char* port = (unsigned char *)arg;
++     char *path;
++     char *driver;
++
++     path = di_devfs_path(node);
++     if (path != NULL) {
++         char *device_type = NULL;
++         char *s;
++         di_prop_lookup_strings (DDI_DEV_T_ANY, node, "device_type",
++            &device_type);
++         if ((di_prop_lookup_strings (DDI_DEV_T_ANY, node, "class", &s) > 0) &&
++                  (strcmp (s, "dada") == 0)) {
++             driver = di_driver_name(node);
++
++             if (process_minors(node, port, 0, 0) < 0) {
++                di_devfs_path_free(path);
++                return DI_WALK_TERMINATE;
++             }
++         }
++         di_devfs_path_free(path);
++     }
++     return DI_WALK_CONTINUE;
++}
++
++static int get_scsi_disks(di_node_t node, void *arg) {
++     unsigned char* port = (unsigned char *)arg;
++     char *path, *driver;
++     int *i = NULL;
++     int is_cdrom = 0;
++
++     path = di_devfs_path(node);
++     if (path != NULL) {
++        driver = di_driver_name(node);
++        if (driver != NULL && strcmp(driver,"sd") == 0){
++            if (di_prop_lookup_ints(DDI_DEV_T_ANY, node, "inquiry-device-type", &i) > 0) {
++                if (*i == 0x07 || *i == 0x05) { 
++                    is_cdrom = 1;
++                }
++            }
++            if (process_minors(node, port, is_cdrom, 1) < 0) {
++                 di_devfs_path_free(path);
++                 return DI_WALK_TERMINATE;
++            }
++        }
++
++     }
++     return DI_WALK_CONTINUE;
++}
++
++static void create_hardware_branch(void)
++{
++    di_node_t node;
++    unsigned char uFirstSCSIPort = 0;
++    
++    /* Enumerate ide disks as atapi devices */
++    node = di_init("/", DINFOCPYALL);
++    if (node != DI_NODE_NIL) {
++        di_walk_node (node, DI_WALK_CLDFIRST, &uFirstSCSIPort, get_ide_disks);
++        di_fini(node);
++    } else {
++        ERR("Couldn't di_init while getting IDE disks\n");
++    }
++    
++    /* Enumerate scsi block devices */
++    node = di_init("/", DINFOCPYALL);
++    if (node != DI_NODE_NIL) {
++        di_walk_node (node, DI_WALK_CLDFIRST, &uFirstSCSIPort, get_scsi_disks);
++        di_fini(node);
++    } else {
++        ERR("Couldn't di_init while getting SCSI disks\n");
++    }
++}
++
++#else
+ /* create the hardware registry branch */
+ static void create_hardware_branch(void)
+ {
+@@ -390,6 +562,7 @@
+         WARN("Incorrect %s format\n", procname_scsi);
+     fclose( procfile );
+ }
++#endif
+ 
+ 
+ /***********************************************************************

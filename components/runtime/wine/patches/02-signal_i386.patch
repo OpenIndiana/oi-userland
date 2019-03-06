@@ -1,0 +1,20 @@
+diff --git a/dlls/ntdll/signal_i386.c b/dlls/ntdll/signal_i386.c
+index 534b05c717..fd761246c5 100644
+--- a/dlls/ntdll/signal_i386.c
++++ b/dlls/ntdll/signal_i386.c
+@@ -272,8 +272,11 @@ typedef struct trapframe ucontext_t;
+ 
+ #elif defined(__svr4__) || defined(_SCO_DS) || defined(__sun)
+ 
+-#ifdef _SCO_DS
++#if defined(_SCO_DS) || defined(__sun)
+ #include <sys/regset.h>
++#endif
++
++#ifdef _SCO_DS
+ #define gregs regs
+ #endif
+ 
+-- 
+2.23.0
+
