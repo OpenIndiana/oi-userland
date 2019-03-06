@@ -1,0 +1,62 @@
+diff --git a/tools/winegcc/winegcc.c b/tools/winegcc/winegcc.c
+index fa4407f913..c1f6d11fde 100644
+--- a/tools/winegcc/winegcc.c
++++ b/tools/winegcc/winegcc.c
+@@ -964,6 +964,7 @@ static void build(struct options* opts)
+ {
+     strarray *lib_dirs, *files;
+     strarray *spec_args, *link_args;
++    strarray *src_args, *lib_args, *ar_args;
+     char *output_file, *output_path;
+     const char *spec_o_name, *libgcc = NULL;
+     const char *output_name, *spec_file, *lang;
+@@ -1203,17 +1204,20 @@ static void build(struct options* opts)
+ 
+     strarray_add(link_args, spec_o_name);
+ 
++    src_args = strarray_alloc();
++    lib_args = strarray_alloc();
++    ar_args  = strarray_alloc();
+     for ( j = 0; j < files->size; j++ )
+     {
+ 	const char* name = files->base[j] + 2;
+ 	switch(files->base[j][1])
+ 	{
+ 	    case 'l':
+-		strarray_add(link_args, strmake("-l%s", name));
++		strarray_add(lib_args, strmake("-l%s", name));
+ 		break;
+ 	    case 's':
+ 	    case 'o':
+-		strarray_add(link_args, name);
++		strarray_add(src_args, name);
+ 		break;
+ 	    case 'a':
+                 if (is_pe && !opts->lib_suffix && strchr(name, '/'))
+@@ -1231,17 +1235,20 @@ static void build(struct options* opts)
+ 
+                         if (ext) *ext = 0;
+                         p += 3;
+-                        strarray_add(link_args, strmake("-L%s", lib ));
+-                        strarray_add(link_args, strmake("-l%s", p ));
++                        strarray_add(lib_args, strmake("-L%s", lib ));
++                        strarray_add(lib_args, strmake("-l%s", p ));
+                         free( lib );
+                         break;
+                     }
+                     free( lib );
+                 }
+-		strarray_add(link_args, name);
++		strarray_add(ar_args, name);
+ 		break;
+ 	}
+     }
++    strarray_addall(link_args, src_args);
++    strarray_addall(link_args, ar_args);
++    strarray_addall(link_args, lib_args);
+ 
+     if (!opts->nostdlib && !is_pe)
+     {
+-- 
+2.23.0
+
