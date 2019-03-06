@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cheroot
 COMPONENT_VERSION=	6.5.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Cheroot - high-performance, pure-Python HTTP server'
 COMPONENT_PROJECT_URL=	https://github.com/cherrypy/cheroot
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
