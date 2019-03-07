@@ -21,14 +21,13 @@
 
 #
 # Copyright (c) 2010, 2018, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_VERSION=	4.2.8p12
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.2.8p13
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
@@ -36,7 +35,7 @@ COMPONENT_PROJECT_URL=	http://www.ntp.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:709b222b5013d77d26bfff532b5ea470a8039497ef29d09363931c036cb30454
+	sha256:288772cecfcd9a53694ffab108d1825a31ba77f3a8466b0401baeca3bc232a38
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	service/network/ntp
 COMPONENT_CLASSIFICATION=	System/Services
@@ -126,16 +125,18 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 
 
 build:		$(BUILD_64)
+
 install:	$(INSTALL_64)
+
 test:		$(TEST_64)
 
 # Required for SNTP but not auto-detected
 REQUIRED_PACKAGES += library/libevent2
+REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
