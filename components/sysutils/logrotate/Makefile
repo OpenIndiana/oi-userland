@@ -10,18 +10,19 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logrotate
-COMPONENT_VERSION=	3.13.0
+COMPONENT_VERSION=	3.15.0
 COMPONENT_PROJECT_URL=	https://github.com/logrotate/logrotate
 COMPONENT_SUMMARY=	Logrotate - Rotates and compresses log files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:2ea33f69176dd2668fb85307210d7ed0411ff2a0429e4a0a2d881e740160e4b0
+	sha256:724da48020bb801ba02728bde4c5bdce2daae46ac360d163e40ebf6914bb9927
 COMPONENT_ARCHIVE_URL=	https://github.com/logrotate/logrotate/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
@@ -37,18 +38,20 @@ PATH=$(PATH.gnu)
 CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-				$(TOUCH) NEWS README AUTHORS ChangeLog &&\
-				libtoolize --copy --force &&\
-				aclocal -I. &&\
-				automake -c -f -a &&\
+				$(TOUCH) NEWS README AUTHORS ChangeLog && \
+				libtoolize --copy --force && \
+				aclocal -I. && \
+				automake -c -f -a && \
 				autoconf )
 
-# common targets
+# Tests otherwise fail
+unexport SHELLOPTS
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/popt

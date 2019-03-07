@@ -1,12 +1,13 @@
 /var/adm is owned by root:sys and has 775 permissions
---- logrotate-r3-9-1/logrotate.c.1	2015-09-21 17:58:21.950752313 +0300
-+++ logrotate-r3-9-1/logrotate.c	2015-09-21 18:00:20.370131156 +0300
-@@ -999,7 +999,7 @@
- 			return 0;
- 		}
- 		/* Don't rotate in directories writable by others or group which is not "root"  */
--		if ((sb.st_gid != 0 && sb.st_mode & S_IWGRP) || sb.st_mode & S_IWOTH) {
-+		if ((sb.st_gid != 0 && sb.st_gid != 3 && sb.st_mode & S_IWGRP) || sb.st_mode & S_IWOTH) {
- 			message(MESS_ERROR, "skipping \"%s\" because parent directory has insecure permissions"
- 								" (It's world writable or writable by group which is not \"root\")"
- 								" Set \"su\" directive in config file to tell logrotate which user/group"
+
+--- logrotate-3.15.0/logrotate.c	2018-10-05 17:01:21.000000000 +0000
++++ logrotate-3.15.0/logrotate.c.new	2019-03-07 18:48:22.231492707 +0000
+@@ -1185,7 +1185,7 @@ static int findNeedRotating(struct logIn
+             return 0;
+         }
+         /* Don't rotate in directories writable by others or group which is not "root"  */
+-        if ((sb.st_gid != 0 && sb.st_mode & S_IWGRP) || sb.st_mode & S_IWOTH) {
++        if ((sb.st_gid != 0 && sb.st_gid != 3 && sb.st_mode & S_IWGRP) || sb.st_mode & S_IWOTH) {
+             message(MESS_ERROR, "skipping \"%s\" because parent directory has insecure permissions"
+                     " (It's world writable or writable by group which is not \"root\")"
+                     " Set \"su\" directive in config file to tell logrotate which user/group"

@@ -1,10 +1,9 @@
---- logrotate-3.13.0/examples/logrotate-default.orig	Sun Nov  5 16:55:10 2017
-+++ logrotate-3.13.0/examples/logrotate-default	Sun Nov  5 16:57:22 2017
-@@ -25,18 +25,18 @@
- include /etc/logrotate.d
- 
- # no packages own wtmp and btmp -- we'll rotate them here
+--- logrotate-3.15.0/examples/wtmp	2018-05-25 14:31:21.000000000 +0000
++++ logrotate-3.15.0/examples/wtmp.new	2019-03-07 18:44:14.390703981 +0000
+@@ -1,8 +1,8 @@
+-# no packages own wtmp -- we'll rotate it here
 -/var/log/wtmp {
++# no packages own wtmpx -- we'll rotate it here
 +/var/adm/wtmpx {
      missingok
      monthly
@@ -13,8 +12,12 @@
      minsize 1M
      rotate 1
  }
- 
+--- logrotate-3.15.0/examples/btmp	2018-05-25 14:31:21.000000000 +0000
++++ logrotate-3.15.0/examples/btmp.new	2019-03-07 18:43:23.191396552 +0000
+@@ -1,7 +1,7 @@
+-# no packages own btmp -- we'll rotate it here
 -/var/log/btmp {
++# no packages own utmpx -- we'll rotate it here
 +/var/adm/utmpx {
      missingok
      monthly
@@ -22,4 +25,3 @@
 +    create 0600 adm adm
      rotate 1
  }
- 

@@ -1,0 +1,61 @@
+--- logrotate-3.15.0/test/test-0050.sh	2018-01-04 12:58:46.000000000 +0000
++++ logrotate-3.15.0/test/test-0050.sh.new	2019-03-07 19:27:47.500403139 +0000
+@@ -8,9 +8,9 @@ cleanup 50
+ # test that hourly rotation works properly
+ preptest test.log 50 1 0
+ 
+-DATESTRING=$(/bin/date +%Y%m%d%H)
+-NOW=$(/bin/date "+%Y-%-m-%-d-%-H" 2>/dev/null)
+-HOURAGO=$(/bin/date "+%Y-%-m-%-d-%-H" --date "1 hour ago" 2>/dev/null)
++DATESTRING=$(/usr/gnu/bin/date +%Y%m%d%H)
++NOW=$(/usr/gnu/bin/date "+%Y-%-m-%-d-%-H" 2>/dev/null)
++HOURAGO=$(/usr/gnu/bin/date "+%Y-%-m-%-d-%-H" --date "1 hour ago" 2>/dev/null)
+ GNUDATE=$?
+ 
+ # --force to trigger rotation
+--- logrotate-3.15.0/test/test-0054.sh	2018-01-04 12:58:46.000000000 +0000
++++ logrotate-3.15.0/test/test-0054.sh.new	2019-03-07 19:28:01.420265819 +0000
+@@ -12,7 +12,7 @@ preptest test.log 54 1 0
+ DATE=""
+ for i in $(seq 1 60)
+ do
+-    DATE=$(/bin/date "+%Y-%m-%d" --date "$i day ago" 2>/dev/null)   
++    DATE=$(/usr/gnu/bin/date "+%Y-%m-%d" --date "$i day ago" 2>/dev/null)   
+     echo "x" > test.log-$DATE
+ done
+ 
+--- logrotate-3.15.0/test/test-0055.sh	2018-01-04 12:58:46.000000000 +0000
++++ logrotate-3.15.0/test/test-0055.sh.new	2019-03-07 19:28:18.700107695 +0000
+@@ -12,7 +12,7 @@ preptest test.log 55 1 0
+ DATE=""
+ for i in $(seq 1 60)
+ do
+-    DATE=$(/bin/date "+%s" --date "$i hour ago" 2>/dev/null)   
++    DATE=$(/usr/gnu/bin/date "+%s" --date "$i hour ago" 2>/dev/null)   
+     echo "x" > test.log-$DATE.gz
+ done
+ 
+--- logrotate-3.15.0/test/test-0056.sh	2018-01-04 12:58:46.000000000 +0000
++++ logrotate-3.15.0/test/test-0056.sh.new	2019-03-07 19:28:32.859982092 +0000
+@@ -12,7 +12,7 @@ preptest test.log 56 1 0
+ DATE=""
+ for i in $(seq 1 60)
+ do
+-    DATE=$(/bin/date "+%d-%m-%Y" --date "$i day ago" 2>/dev/null)   
++    DATE=$(/usr/gnu/bin/date "+%d-%m-%Y" --date "$i day ago" 2>/dev/null)   
+     echo "x" > test.log-$DATE
+ done
+ 
+--- logrotate-3.15.0/test/test-0066.sh	2018-01-04 12:58:46.000000000 +0000
++++ logrotate-3.15.0/test/test-0066.sh.new	2019-03-07 19:28:51.963521626 +0000
+@@ -8,8 +8,8 @@ cleanup 66
+ # When using %Y in the dateformat, the old logs are not removed
+ preptest test.log 66 1 0
+ 
+-DATESTRING=$(/bin/date +%Y%m%d)
+-DAYAGO=$(/bin/date "+%Y-%m-%d" --date "1 day ago" 2>/dev/null)
++DATESTRING=$(/usr/gnu/bin/date +%Y%m%d)
++DAYAGO=$(/usr/gnu/bin/date "+%Y-%m-%d" --date "1 day ago" 2>/dev/null)
+ 
+ echo removed > "test.log$DAYAGO"
+ 
