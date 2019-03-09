@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
 COMPONENT_VERSION=      7.61.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -76,7 +76,6 @@ CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-libssh2
 CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
-CONFIGURE_OPTIONS += --without-brotli
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include
 
