@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2018 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,30 +22,42 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/bro
+file path=usr/bin/brotli
 file path=usr/include/brotli/decode.h
 file path=usr/include/brotli/encode.h
 file path=usr/include/brotli/port.h
 file path=usr/include/brotli/types.h
-link path=usr/lib/$(MACH64)/libbrotlicommon.so \
-    target=libbrotlicommon.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libbrotlicommon-static.a
+link path=usr/lib/$(MACH64)/libbrotlicommon.so target=libbrotlicommon.so.1
 file path=usr/lib/$(MACH64)/libbrotlicommon.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libbrotlidec.so \
-    target=libbrotlidec.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libbrotlicommon.so.1 \
+    target=libbrotlicommon.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libbrotlidec-static.a
+link path=usr/lib/$(MACH64)/libbrotlidec.so target=libbrotlidec.so.1
 file path=usr/lib/$(MACH64)/libbrotlidec.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libbrotlienc.so \
-    target=libbrotlienc.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libbrotlidec.so.1 \
+    target=libbrotlidec.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libbrotlienc-static.a
+link path=usr/lib/$(MACH64)/libbrotlienc.so target=libbrotlienc.so.1
 file path=usr/lib/$(MACH64)/libbrotlienc.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libbrotlienc.so.1 \
+    target=libbrotlienc.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libbrotlicommon.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libbrotlidec.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libbrotlienc.pc
-link path=usr/lib/libbrotlicommon.so \
-    target=libbrotlicommon.so.$(COMPONENT_VERSION)
+file path=usr/lib/libbrotlicommon-static.a
+link path=usr/lib/libbrotlicommon.so target=libbrotlicommon.so.1
 file path=usr/lib/libbrotlicommon.so.$(COMPONENT_VERSION)
-link path=usr/lib/libbrotlidec.so target=libbrotlidec.so.$(COMPONENT_VERSION)
+link path=usr/lib/libbrotlicommon.so.1 \
+    target=libbrotlicommon.so.$(COMPONENT_VERSION)
+file path=usr/lib/libbrotlidec-static.a
+link path=usr/lib/libbrotlidec.so target=libbrotlidec.so.1
 file path=usr/lib/libbrotlidec.so.$(COMPONENT_VERSION)
-link path=usr/lib/libbrotlienc.so target=libbrotlienc.so.$(COMPONENT_VERSION)
+link path=usr/lib/libbrotlidec.so.1 target=libbrotlidec.so.$(COMPONENT_VERSION)
+file path=usr/lib/libbrotlienc-static.a
+link path=usr/lib/libbrotlienc.so target=libbrotlienc.so.1
 file path=usr/lib/libbrotlienc.so.$(COMPONENT_VERSION)
+link path=usr/lib/libbrotlienc.so.1 target=libbrotlienc.so.$(COMPONENT_VERSION)
 file path=usr/lib/pkgconfig/libbrotlicommon.pc
 file path=usr/lib/pkgconfig/libbrotlidec.pc
 file path=usr/lib/pkgconfig/libbrotlienc.pc
