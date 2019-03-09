@@ -21,20 +21,21 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bzip2
 COMPONENT_VERSION=	1.0.6
-COMPONENT_REVISION=	4
-COMPONENT_PROJECT_URL=	http://www.bzip.org/
+COMPONENT_REVISION=	5
+COMPONENT_PROJECT_URL=	https://sourceware.org/bzip2/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/bzip
+	sha256:a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/bzip2/files/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		compress/bzip2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -77,5 +78,6 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_MAKE_RULES)/depend.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
