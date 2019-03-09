@@ -21,12 +21,14 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
 COMPONENT_VERSION=	2.18
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Text based web browser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://links.twibright.com/
