@@ -11,23 +11,25 @@
 
 #
 # Copyright 2014-2017, Aurelien Larcher.  All rights reserved.
+# Copyright 2019, Michal Nowak
 #
-PREFERRED_BITS=64
+
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=     graphite2
-COMPONENT_VERSION=  1.3.11
-COMPONENT_FMRI=     library/c++/graphite2
+COMPONENT_NAME=		graphite2
+COMPONENT_VERSION=	1.3.13
+COMPONENT_FMRI=		library/c++/graphite2
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SUMMARY=  Graphite2 - Library for rendering non-roman scripts
-COMPONENT_PROJECT_URL= http://sourceforge.net/projects/silgraphite
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tgz
+COMPONENT_SUMMARY=	Graphite2 - Library for rendering non-roman scripts
+COMPONENT_PROJECT_URL=	http://graphite.sil.org
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bab92ed1844d6538e7e5bda76f6ac9aaf633e38b683983b942c78c8ce063ad7c
+	sha256:dd63e169b0d3cf954b397c122551ab9343e0696fb2045e1b326db0202d875f06
 COMPONENT_ARCHIVE_URL= \
-    https://github.com/silnrsi/graphite/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://github.com/silnrsi/graphite/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -59,6 +61,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
