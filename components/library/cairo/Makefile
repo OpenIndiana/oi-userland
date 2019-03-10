@@ -11,24 +11,25 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= cairo
-COMPONENT_VERSION= 1.14.12
-COMPONENT_SUMMARY= Vector graphics library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=		cairo
+COMPONENT_VERSION=	1.16.0
+COMPONENT_SUMMARY=	Vector graphics library
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8c90f00c500b2299c0a323dd9beead2a00353752b2092ead558139bd67f7bf16
+	sha256:5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331
 COMPONENT_ARCHIVE_URL= \
-  http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://cairographics.org/
-COMPONENT_FMRI= library/desktop/cairo
+	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://cairographics.org/
+COMPONENT_FMRI=		library/desktop/cairo
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING-LGPL-2.1
+COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING-LGPL-2.1
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -70,6 +71,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/pixman
