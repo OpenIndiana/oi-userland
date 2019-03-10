@@ -10,18 +10,19 @@
 
 #
 # Copyright (c) 2015 Alexander Pyhalov
+# Copyright (c) 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixman
-COMPONENT_VERSION=	0.34.0
+COMPONENT_VERSION=	0.38.0
 COMPONENT_PROJECT_URL=	http://www.pixman.org/
 COMPONENT_SUMMARY=	Pixman: The pixel-manipulation library for X and Cairo
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:21b6b249b51c6800dc9553b65106e1e37d0e25df942c90531d4c3997aa20a88e
+	sha256:a7592bef0156d7c27545487a52245669b00cf7e70054505381cff2136d890ca8
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_FMRI=		library/graphics/pixman
@@ -36,12 +37,14 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-gtk
 
-# common targets
+# The test suite needs this
+unexport SHELLOPTS
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
