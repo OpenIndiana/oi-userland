@@ -11,23 +11,24 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libidn2
-COMPONENT_VERSION= 2.0.4
-COMPONENT_SUMMARY= An implementation of IDNA2008 internationalized domain names
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		libidn2
+COMPONENT_VERSION=	2.1.1
+COMPONENT_SUMMARY=	An implementation of IDNA2008 internationalized domain names
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)a.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:644b6b03b285fb0ace02d241d59483d98bc462729d8bb3608d5cad5532f3d2f0
+	sha256:57666bcf6ecf54230d7bac95c392379561954b57a673903aed4d3336b3048b72
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.gnu.org/software/libidn/
-COMPONENT_FMRI= library/libidn2
+	http://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libidn/
+COMPONENT_FMRI=		library/libidn2
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE = LGPLv3, GPLv2
+COMPONENT_LICENSE=	LGPLv3, GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -46,11 +47,11 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libunistring
