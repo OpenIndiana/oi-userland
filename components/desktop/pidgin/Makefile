@@ -11,13 +11,14 @@
 #
 # Copyright (c) 2014 Alexander Pyhalov
 # Copyright 2017 Gary Mills
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.13.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
