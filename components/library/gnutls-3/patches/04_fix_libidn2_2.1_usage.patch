@@ -1,0 +1,65 @@
+From 3c3e5b52bb70f03cd68a720efb51366bca09beeb Mon Sep 17 00:00:00 2001
+From: Dakota Williams <drwilliams@datto.com>
+Date: Thu, 28 Feb 2019 15:54:49 -0500
+Subject: [PATCH] Add version check for internal idn2 symbols
+
+libidn2 >2.1.0 removed _idn2_punycode_[en|de]code symbols from its
+library and renamed _idn2_to_unicode_8z8z to idn2_to_unicode_8z8z
+with a different function declaration.
+
+The preprocessor check in str-idna.c only checks for the existence
+of libidn2, not the version, for how it should use the library.
+
+This change backports the fix in later versions of GnuTLS
+to fix the problem.
+
+Reference: https://bugzilla.redhat.com/show_bug.cgi?id=1683812
+
+Co-authored-by: Neal Gompa <ngompa@datto.com>
+Co-authored-by: Dakota Williams <drwilliams@datto.com>
+Reviewed-by: Neal Gompa <ngompa@datto.com>
+Signed-off-by: Dakota Williams <drwilliams@datto.com>
+Signed-off-by: Neal Gompa <ngompa@datto.com>
+---
+ lib/str-idna.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/lib/str-idna.c b/lib/str-idna.c
+index 3bf2db877..1e8c00c08 100644
+--- a/lib/str-idna.c
++++ b/lib/str-idna.c
+@@ -145,7 +145,7 @@ int gnutls_idna_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsig
+ 	return ret;
+ }
+ 
+-#ifdef HAVE_LIBIDN2
++#if defined(HAVE_LIBIDN2) && (IDN2_VERSION_NUMBER < 0x02000000)
+ int _idn2_punycode_decode(
+ 	size_t input_length,
+ 	const char input[],
+@@ -252,6 +252,7 @@ int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *ou
+ 	}
+ 
+ #ifdef HAVE_LIBIDN2
++#if (IDN2_VERSION_NUMBER < 0x02000000)
+ 	/* currently libidn2 just converts single labels, thus a wrapper function */
+ 	rc = _idn2_to_unicode_8z8z((char*)istr.data, &u8);
+ 	if (rc != IDN2_OK) {
+@@ -260,6 +261,15 @@ int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *ou
+ 		ret = GNUTLS_E_INVALID_UTF8_STRING;
+ 		goto fail;
+ 	}
++#else
++	rc = idn2_to_unicode_8z8z((char*)istr.data, &u8, 0);
++	if (rc != IDN2_OK) {
++		gnutls_assert();
++		_gnutls_debug_log("unable to convert ACE name '%s' to UTF-8 format: %s\n", istr.data, idn2_strerror(rc));
++		ret = GNUTLS_E_INVALID_UTF8_STRING;
++		goto fail;
++	}
++#endif
+ #else
+ 	rc = idna_to_unicode_8z8z((char*)istr.data, &u8, IDNA_ALLOW_UNASSIGNED);
+ 	if (rc != IDNA_SUCCESS) {
+-- 
+2.20.1

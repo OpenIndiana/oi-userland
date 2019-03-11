@@ -21,12 +21,14 @@
 
 #
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_VERSION=	3.5.14
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -86,11 +88,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/TOTAL/p" ' \
 	'-e "/ERROR/p" '
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies: 
 REQUIRED_PACKAGES += library/desktop/p11-kit
