@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
 COMPONENT_VERSION=        2.9.1
+COMPONENT_REVISION=	  1
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
@@ -58,7 +59,7 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += image/library/libpng16
