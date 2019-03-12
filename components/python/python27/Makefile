@@ -19,18 +19,18 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	2.7.15
+COMPONENT_VERSION=	2.7.16
 COMPONENT_PROJECT_URL=	https://python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:22d9b1ac5b26135ad2b8c2901a9413537e08749a753356ee913c84dbd2df5574
+	sha256:f222ef602647eecb6853681156d32de4450a2c39f4de93bd5b20235f2e660ed7
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
@@ -136,7 +136,7 @@ COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /Total duration/ { \$$$\0 = \"\" }; /^make|LD_LIBRARY_PATH/ { results = 0 } { if (results) print }'"
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
