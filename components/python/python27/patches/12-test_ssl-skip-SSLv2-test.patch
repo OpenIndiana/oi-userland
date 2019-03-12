@@ -1,0 +1,17 @@
+--- Python-2.7.16/Lib/test/test_ssl.py	2019-03-02 19:17:42.000000000 +0000
++++ Python-2.7.16/Lib/test/test_ssl.py.new	2019-03-13 18:51:42.771023876 +0000
+@@ -144,12 +144,13 @@ def asn1time(cert_time):
+     return cert_time
+ 
+ # Issue #9415: Ubuntu hijacks their OpenSSL and forcefully disables SSLv2
++# So does OpenIndiana, see components/library/openssl/openssl-1.0.2/patches/041_rm_sslv2_v3.patch
+ def skip_if_broken_ubuntu_ssl(func):
+     if hasattr(ssl, 'PROTOCOL_SSLv2'):
+         @functools.wraps(func)
+         def f(*args, **kwargs):
+             try:
+-                ssl.SSLContext(ssl.PROTOCOL_SSLv2)
++                raise unittest.SkipTest("OpenIndiana patched-out SSLv2")
+             except ssl.SSLError:
+                 if (ssl.OPENSSL_VERSION_INFO == (0, 9, 8, 15, 15) and
+                     platform.linux_distribution() == ('debian', 'squeeze/sid', '')):
