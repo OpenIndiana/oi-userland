@@ -11,18 +11,18 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
-# Copyright 2017 Jason Martin
+# Copyright 2019 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-COMPONENT_VERSION= 1.14.44
+COMPONENT_VERSION= 1.14.45
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:68bede10037164764992970b4cb57cd6add6986a846d04657af9d5fac774ffde
+  sha256:5cbc2c0f1dc44d202fa0c6e3a51e9f17b0c2deb8711ba650432bfde3180b69fa
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= http://www.gnome.org
