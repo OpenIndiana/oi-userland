@@ -10,19 +10,19 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
-# Copyright 2018 Jason Martin
+# Copyright 2019 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     goffice
-COMPONENT_VERSION=  0.10.43
+COMPONENT_VERSION=  0.10.44
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_SUMMARY=  goffice - Document centric set of APIs
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:550fceefa74622b8fe57dd0b030003e31db50edf7f87068ff5e146365108b64e
+    sha256:6d6042af92cd962604068dbced5925948af6c812c2138defc3153c204d65a7b9
 COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=  Development/System
 COMPONENT_LICENSE=  GPLv2
