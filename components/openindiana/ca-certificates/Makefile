@@ -11,23 +11,23 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 
-COMPONENT_VERSION=	3.41
+COMPONENT_VERSION=	3.42.1
 IPS_COMPONENT_VERSION=	1.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ab2e18f5d0dd0079c0005396f9beb9a41e9a1bbc7e6c1d0a99affcef0471712d
+	sha256:087db37d38fd49dfd584dd2a8b5baa7fc88de7c9bd97c0c2d5be4abcafc61fc6
 COMPONENT_ARCHIVE_URL= \
-  https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_41_RTM/src/$(COMPONENT_ARCHIVE)
+	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_42_1_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_FMRI=		crypto/ca-certificates
 
