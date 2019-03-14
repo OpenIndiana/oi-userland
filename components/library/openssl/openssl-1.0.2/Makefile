@@ -18,29 +18,29 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright 2017 Gary Mills
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.0.2q
+COMPONENT_VERSION =	1.0.2r
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.17
-COMPONENT_REVISION = 	1
+IPS_COMPONENT_VERSION = 1.0.2.18
 COMPONENT_PROJECT_URL=	https://www.openssl.org
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5744cfcbcec2b1b48629f7354203bc1e5e9b5466998bbccc5b5fcde3b18eb684
+	sha256:ae51d08bba8a83958e894946f15303ff894d75c2b8bbd44a852b64e3fe11d0d6
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
-
-TPNO=			24194
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -199,4 +199,5 @@ COMPONENT_TEST_TARGETS = test
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/build/makedepend
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
