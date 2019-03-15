@@ -27,14 +27,3 @@
        CFLAGS_bsd := -fPIC, \
        LDFLAGS := $(LDFLAGS_JDKEXE) \
            $(call SET_SHARED_LIBRARY_NAME,$(LIBRARY_PREFIX)$(SHARED_LIBRARY_SUFFIX)), \
---- jdk/make/lib/Awt2dLibraries.gmk.1	2016-07-17 16:08:03.368521442 +0300
-+++ jdk/make/lib/Awt2dLibraries.gmk	2016-07-17 16:08:44.713504232 +0300
-@@ -1131,7 +1131,7 @@
-   ifeq ($(OPENJDK_TARGET_OS), solaris)
-     # This particular library uses a feature called PIC_CODE_SMALL (on solaris)
-     # implement it like this...since it's only used here
--    BUILD_LIBKCMS_FLAGS := $(patsubst -KPIC, -Kpic, $(BUILD_LIBKCMS_FLAGS))
-+    BUILD_LIBKCMS_FLAGS := $(patsubst -fPIC, -fpic, $(BUILD_LIBKCMS_FLAGS))
-   else ifeq ($(OPENJDK_TARGET_CPU_ARCH), ppc)
-     BUILD_LIBKCMS_FLAGS := $(patsubst -fPIC, -fpic, $(BUILD_LIBKCMS_FLAGS))
-   endif
