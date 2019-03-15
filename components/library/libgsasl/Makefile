@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgsasl
 COMPONENT_VERSION=	1.8.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gsasl/
 COMPONENT_SUMMARY=	Implementation of the Simple Authentication and Security Layer framework 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
