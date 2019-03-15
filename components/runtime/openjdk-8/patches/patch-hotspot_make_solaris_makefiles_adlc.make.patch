@@ -2,9 +2,9 @@ $NetBSD: patch-hotspot_make_solaris_makefiles_adlc.make,v 1.1 2015/07/03 20:40:5
 
 GCC support.
 
---- hotspot/make/solaris/makefiles/adlc.make.orig	2013-02-19 23:21:59.000000000 +0000
-+++ hotspot/make/solaris/makefiles/adlc.make
-@@ -75,9 +75,11 @@ endif
+--- hotspot/make/solaris/makefiles/adlc.make	2019-02-19 14:34:24.000000000 +0000
++++ hotspot/make/solaris/makefiles/adlc.make.new	2019-03-14 16:18:47.162343489 +0000
+@@ -73,9 +73,11 @@ endif
  
  # CFLAGS_WARN holds compiler options to suppress/enable warnings.
  # Compiler warnings are treated as errors
@@ -13,6 +13,6 @@ GCC support.
    CFLAGS_WARN = +w -errwarn
  endif
 +endif
- CFLAGS += $(CFLAGS_WARN)
- 
- ifeq ("${Platform_compiler}", "sparcWorks")
+ # When using compiler version 5.13 (Solaris Studio 12.4), calls to explicitly 
+ # instantiated template functions trigger this warning when +w is active.
+ ifeq ($(shell expr $(COMPILER_REV_NUMERIC) \>= 513), 1)

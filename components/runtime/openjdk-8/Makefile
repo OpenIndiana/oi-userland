@@ -11,23 +11,23 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= oppenjdk-8
-
-OPENJDK_BUILD_NUMBER=172
-COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
-COMPONENT_REVISION=1
-COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC= openjdk
-COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20180527.tar.xz
+COMPONENT_NAME=		openjdk
+OPENJDK_BUILD_NUMBER=	232
+COMPONENT_VERSION=	jdk8u-jdk8u$(OPENJDK_BUILD_NUMBER)-b09.1
+IPS_COMPONENT_VERSION=	1.8.$(OPENJDK_BUILD_NUMBER)
+COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2929378dd3a41b7953fd5f0244ea684a06a3d71e447516eb0a99ade8e952273f
+	sha256:f6796bfb8a0a30fd045b608e8a2e6a8b8ae02748fbb6a647dd3669914040f319
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.netbsd.org/pub/pkgsrc/distfiles/openjdk7/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://openjdk.java.net/
+	ftp://ftp.netbsd.org/pub/pkgsrc/distfiles/openjdk7/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://openjdk.java.net/
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += cacerts.out
@@ -58,9 +58,9 @@ CONFIGURE_OPTIONS+=        --with-update-version=$(OPENJDK_BUILD_NUMBER)
 # OpenJDK uses CLFAGS for C and C++ unfortunately
 CONFIGURE_OPTIONS+=        --with-extra-cflags="-std=gnu89 -std=gnu++98 -fno-lifetime-dse"
 CONFIGURE_OPTIONS+=        --with-extra-cxxflags="-std=gnu++98 "
-
-CONFIGURE_ENV+=	AS=$(GAS)
-CONFIGURE_ENV+=	STRIP=$(STRIP)
+CONFIGURE_OPTIONS+=        --with-extra-ldflags="$(LDFLAGS)"
+CONFIGURE_OPTIONS+=        AS=$(GAS)
+CONFIGURE_OPTIONS+=        STRIP=$(STRIP)
 
 COMPONENT_BUILD_ENV+=	USE_GCC=1
 
