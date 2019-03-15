@@ -30,14 +30,12 @@ This change will be passed upstream.
  #ifdef USE_GNUTLS_INCL
      static char *certfile = NULL;
  #endif
-@@ -121,6 +123,10 @@
- 	ssl_ctx = SSL_CTX_new(SSLv23_client_method());
- 	/* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
- 	SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
-+
-+	ciphers = (char *)DEFAULT_CIPHER_SELECTION;
-+	SSL_CTX_set_cipher_list(ssl_ctx, ciphers);
-+
+@@ -210,6 +210,8 @@ SSL *HTGetSSLHandle(void)
+ 	if ((ssl_ctx = SSL_CTX_new(TLS_client_method())) != NULL) {
+ 	    /* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
+ 	    SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
++	    ciphers = (char *)DEFAULT_CIPHER_SELECTION;
++	    SSL_CTX_set_cipher_list(ssl_ctx, ciphers);
  #ifdef SSL_OP_NO_COMPRESSION
- 	SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
+ 	    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
  #endif
