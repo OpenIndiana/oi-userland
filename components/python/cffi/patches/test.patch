@@ -160,31 +160,17 @@ The testsuite makes some incorrect assumptions:
              continue     # enums may always be signed with MSVC
          ffi = FFI()
          ffi.cdef("enum foo_e { AA };")
---- cffi-1.11.4/testing/cffi0/test_ownlib.py	2015-06-09 03:04:07.000000000 -0700
-+++ cffi-1.11.4/testing/cffi0/test_ownlib.py	2015-08-12 13:55:21.239982926 -0700
-@@ -1,4 +1,4 @@
--import py, sys
-+import os, py, sys
- import subprocess, weakref
- from cffi import FFI
- from cffi.backend_ctypes import CTypesBackend
-@@ -102,7 +102,6 @@
-         from testing.udir import udir
-         udir.join('testownlib.c').write(SOURCE)
-         if sys.platform == 'win32':
--            import os
-             # did we already build it?
-             if os.path.exists(str(udir.join('testownlib.dll'))):
-                 cls.module = str(udir.join('testownlib.dll'))
-@@ -129,7 +128,7 @@
-                 cls.module = str(udir.join('testownlib.dll'))
-         else:
+--- cffi-1.12.2/testing/cffi0/test_ownlib.py	2019-02-16 16:28:51.000000000 +0000
++++ cffi-1.12.2/testing/cffi0/test_ownlib.py.new	2019-03-17 10:49:40.260213627 +0000
+@@ -160,7 +160,7 @@ class TestOwnLib(object):
+                 unicode_name = u+'testownlib'
+                 encoded = str(unicode_name)
              subprocess.check_call(
--                'cc testownlib.c -shared -fPIC -o testownlib.so',
-+                os.getenv('TESTOWNLIB_CC') % ('testownlib.c', 'testownlib.so'),
+-                "cc testownlib.c -shared -fPIC -o '%s.so'" % (encoded,),
++                os.getenv('TESTOWNLIB_CC') % ('testownlib.c', encoded),
                  cwd=str(udir), shell=True)
-             cls.module = str(udir.join('testownlib.so'))
-
+             cls.module = os.path.join(str(udir), unicode_name + (u+'.so'))
+         print(repr(cls.module))
 --- cffi-1.11.4/testing/cffi0/test_verify.py    2015-06-09 03:04:07.000000000 -0700
 +++ cffi-1.11.4/testing/cffi0/test_verify.py    2015-08-12 14:17:18.300215250 -0700
 @@ -17,12 +17,16 @@
