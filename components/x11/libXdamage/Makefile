@@ -12,41 +12,31 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXdamage
-COMPONENT_VERSION=        1.1.4
-COMPONENT_FMRI=           x11/library/libxdamage
+COMPONENT_NAME=     libXdamage
+COMPONENT_VERSION=  1.1.5
+COMPONENT_FMRI=     x11/library/libxdamage
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY= libXdamage - X Damage extension library 
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7c3fe7c657e83547f4822bfde30a90d84524efb56365448768409b77f05355ad
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXdamage.license
+  sha256:b734068643cac3b5f3d2c8279dd366b5bf28c7219d9e9d8717e1383995e0ea45
+COMPONENT_ARCHIVE_URL= $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=  MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/damageproto
