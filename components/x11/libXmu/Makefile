@@ -12,27 +12,26 @@
 #
 # Copyright 2016 Alexander Pyhalov
 #
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           libXmu
-COMPONENT_VERSION=        1.1.2
+COMPONENT_VERSION=        1.1.3
 COMPONENT_FMRI=           x11/library/libxmu
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXmu - miscellaneous utility functions for Xaw and Xt clients
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:756edc7c383254eef8b4e1b733c3bf1dc061b523c9f9833ac7058378b8349d0b
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/libXmu-1.1.2.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
+  sha256:9c343225e7c3dc0904f2122b562278da5fed639b1b5e880d25111561bac5b731
+COMPONENT_ARCHIVE_URL=    $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =        ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
                                         cd $(@D) &&  autoreconf -f  -i )
@@ -43,13 +42,7 @@ CONFIGURE_OPTIONS += --disable-lint-library
 
 COMPONENT_BUILD_ARGS += V=1
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+PATH=$(PATH.gnu)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/xextproto
