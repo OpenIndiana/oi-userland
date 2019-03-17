@@ -12,36 +12,27 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xmodmap
-COMPONENT_VERSION=        1.0.9
+COMPONENT_VERSION=        1.0.10
 COMPONENT_FMRI=           x11/xmodmap
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xmodmap - X11 keyboard/mouse mapping configuration utility
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b7b0e5cc5f10d0fb6d2d6ea4f00c77e8ac0e847cc5a73be94cd86139ac4ac478
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xmodmap-1.0.9.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
+  sha256:473f0941d7439d501bb895ff358832b936ec34c749b9704c37a15e11c318487c
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xmodmap.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+PATH=$(PATH.gnu)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
