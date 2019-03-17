@@ -14,32 +14,27 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xtrans
-COMPONENT_VERSION= 1.3.5
+COMPONENT_VERSION= 1.4.0
+COMPONENT_FMRI= x11/library/xtrans
+COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SUMMARY= xtrans - X network protocol transport layer development files
+COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:adbd3b36932ce4c062cd10f57d78a156ba98d618bdb6f50664da327502bc8301
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
-COMPONENT_FMRI= x11/library/xtrans
+  sha256:377c4491593c417946efcd2c7600d1e62639f7a8bbca391887e2c4679807d773
+COMPONENT_ARCHIVE_URL= $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= Development/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
