@@ -12,36 +12,27 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xcursorgen
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
 COMPONENT_FMRI=           image/xcursorgen
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
 COMPONENT_SUMMARY=  xcursorgen - create an X cursor file from a collection of PNG images
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:31c8910f54eb175a8a74a60e7662697467e21a8bf948220a6048a93924b3f66c
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xcursorgen-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
+  sha256:35b6f844b24f1776e9006c880a745728800764dbe3b327a128772b4610d8eb3d
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xcursorgen.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+PATH=$(PATH.gnu)
 
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += system/library
