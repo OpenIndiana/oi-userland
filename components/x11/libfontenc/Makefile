@@ -10,47 +10,34 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher
+# Copyright 2016-2019 Aurelien Larcher
 #
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libfontenc
-COMPONENT_VERSION=        1.1.3
-COMPONENT_FMRI=           x11/library/libfontenc
+COMPONENT_NAME=     libfontenc
+COMPONENT_VERSION=  1.1.4
+COMPONENT_FMRI=     x11/library/libfontenc
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libfontenc - font encoding table parser and mapping library
+COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:70588930e6fc9542ff38e0884778fbc6e6febf21adbab92fd8f524fe60aefd21
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libfontenc.license
+  sha256:2cfcce810ddd48f2e5dc658d28c1808e86dcf303eaff16728b9aa3dbc0092079
+COMPONENT_ARCHIVE_URL= $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=   MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-X11_SERVERLIBS_DIR.32=/usr/lib/xorg
-X11_SERVERLIBS_DIR.64=/usr/lib/xorg/$(MACH64)
+PATH=$(PATH.gnu)
 
 CONFIGURE_DEFAULT_DIRS=no
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --libdir=$(X11_SERVERLIBS_DIR.$(BITS))
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+CONFIGURE_OPTIONS+= --libdir=$(XORG_LIBDIR)
 
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
