@@ -12,40 +12,32 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXcursor
-COMPONENT_VERSION=        1.1.15
-COMPONENT_FMRI=           x11/library/libxcursor
+COMPONENT_NAME=     libXcursor
+COMPONENT_VERSION=  1.2.0
+COMPONENT_FMRI=     x11/library/libxcursor
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXcursor - Client-side cursor loading library
+COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:294e670dd37cd23995e69aae626629d4a2dfe5708851bbc13d032401b7a3df6b
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXcursor.license
+  sha256:3ad3e9f8251094af6fe8cb4afcf63e28df504d46bfa5a5529db74a505d628782
+COMPONENT_ARCHIVE_URL= $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=  MIT License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --with-icondir=/usr/share/icons \
 	--with-cursorpath='~/.icons:/usr/share/icons:/usr/share/pixmaps'
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/fixesproto
