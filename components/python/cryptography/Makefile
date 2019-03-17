@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2014, 2018, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 # Component uses ABI3 naming.
@@ -30,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
 COMPONENT_VERSION=	2.1.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -46,24 +47,35 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 #
-# tests require cryptography_vectors, iso8601, pretend, pytest>= 2.8.7,
-# hypothesis>=1.11.4 and pyasn1_modules, some of which have not yet integrated.
-# On a i386 kernel zone with the test dependencies installed, test results are:
-# Python2.7: 74000 passed, 6136 skipped
-# Python3.4: 74000 passed, 6136 skipped
-# Python3.5: 74000 passed, 6136 skipped
+# The test suite requires several PyPI packages not in our distribution.
+# Install them for all Pythons in $(PYTHON_VERSION) like this (replace
+# Makefile variables, where appropriate; X and Y stand for Python minor
+# and, respectively, major version):
 #
-test:		$(NO_TESTS)
+#   pipX.Y install --user cryptography-vectors==$(COMPONENT_VERSION) iso8601 pretend pytest hypothesis pyasn1-modules
+#
+# Results for Python 2.7.16, 3.4.9, and 3.5.6 for 32-bit and 64-bit:
+#
+#   93184 passed, 4352 skipped in 308.30 seconds
+#
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_TEST_CMD=	py.test-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS=	tests
 
+test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/python/pytest-27
+REQUIRED_PACKAGES += library/python/pytest-34
+REQUIRED_PACKAGES += library/python/pytest-35
 REQUIRED_PACKAGES += library/python/cffi
+REQUIRED_PACKAGES += runtime/python-34
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
