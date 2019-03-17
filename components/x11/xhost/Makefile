@@ -12,35 +12,27 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xhost
-COMPONENT_VERSION=        1.0.7
+COMPONENT_VERSION=        1.0.8
 COMPONENT_FMRI=           x11/xhost
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xhost - utility for mananging X server access control lists
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:93e619ee15471f576cfb30c663e18f5bc70aca577a63d2c2c03f006a7837c29a
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xhost-1.0.7.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
+  sha256:a2dc3c579e13674947395ef8ccc1b3763f89012a216c2cc6277096489aadc396
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xhost.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+PATH=$(PATH.gnu)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/xproto
