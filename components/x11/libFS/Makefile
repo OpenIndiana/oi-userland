@@ -12,29 +12,27 @@
 #
 # Copyright 2016 Aurelien Larcher
 #
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libFS
-COMPONENT_VERSION=        1.0.7
-COMPONENT_FMRI=           x11/library/libfs
+COMPONENT_NAME=     libFS
+COMPONENT_VERSION=  1.0.8
+COMPONENT_FMRI=     x11/library/libfs
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libFS - X Font Servers library
+COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2e9d4c07026a7401d4fa4ffae86e6ac7fec83f50f3268fa85f52718e479dc4f3
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libFS.license
+  sha256:c8e13727149b2ddfe40912027459b2522042e3844c5cd228c3300fe5eef6bd0f
+COMPONENT_ARCHIVE_URL= $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=  MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
@@ -42,12 +40,6 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
 LD_OPTIONS_SO = -M $(PWD)/mapfile-vers
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/xproto
