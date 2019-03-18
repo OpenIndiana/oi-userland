@@ -11,21 +11,26 @@
 #
 # Copyright 2011, Andrzej Szeszo
 # Copyright 2013, Jon Tibble
+# Copyright 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nspr
-COMPONENT_VERSION=	4.12
-COMPONENT_PROJECT_URL=	https://developer.mozilla.org/ru/docs/NSPR
+COMPONENT_VERSION=	4.21
+COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e0b10a1e569153668ff8bdea6c7e491b389fab69c2f18285a1ebf7c2ea4269de
+COMPONENT_ARCHIVE_HASH=	sha256:15ea32c7b100217b6e3193bc03e77f485d9bf7504051443ba9ce86d1c17c6b5a
 COMPONENT_ARCHIVE_URL=	http://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+# Test suite needs cloney
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/nspr/configure
 
@@ -36,31 +41,31 @@ CONFIGURE_LIBDIR.64 = /usr/lib/mps/$(MACH64)
 
 CONFIGURE_OPTIONS.64 += --enable-64bit
 
-CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --includedir=/usr/include/mps
-#CONFIGURE_OPTIONS += --disable-debug
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS +=	--includedir=/usr/include/mps
+CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
-	$(MKDIR) -p $(PROTO_DIR)/usr/lib/pkgconfig
-	cat $(COMPONENT_DIR)/nspr.pc | sed s/^Version:/Version:\ $(COMPONENT_VERSION)/ \
-		> $(PROTO_DIR)/usr/lib/pkgconfig/nspr.pc
+install:	$(INSTALL_32_and_64)
 	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
 		/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps"' $$i ;\
-		done ;
-	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
 		/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps"' $$i ;\
-		done
+	done ;
 	for i in $(PROTO_DIR)/usr/lib/mps/$(MACH64)/*.so; do \
 		/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps/$(MACH64)"' $$i ;\
-		done ;
-	for i in $(PROTO_DIR)/usr/lib/mps/$(MACH64)/*.so; do \
 		/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps/$(MACH64)"' $$i ;\
-		done
+	done ;
 	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
+
+# Test suite is just this script
+COMPONENT_TEST_CMD=	perl nspr/pr/tests/runtests.pl
+COMPONENT_TEST_ENV_CMD=
+COMPONENT_TEST_ARGS=
+COMPONENT_TEST_TARGETS=
+
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
