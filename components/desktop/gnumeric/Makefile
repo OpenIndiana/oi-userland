@@ -9,19 +9,19 @@
 #
 
 #
-# Copyright 2018 Jason Martin
+# Copyright 2019 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     gnumeric
-COMPONENT_VERSION=  1.12.43
+COMPONENT_VERSION=  1.12.44
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_SUMMARY=  GTK Spreadsheet Application
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:87c9abd6260cf29401fa1e0fcce374e8c7bcd1986608e4049f6037c9d32b5fd5
+    sha256:60ea794bf3bffe54fe3d56305e487947d30c14b525fd7c8ad46d79c384498704
 COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=   Applications/Office
@@ -36,11 +36,16 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+PKG_CONFIG_BIN_64 = /usr/bin/$(MACH64)/pkg-config
+
+CONFIGURE_ENV += PYTHON="$(PYTHON)"
+CONFIGURE_ENV += PKG_CONFIG=$(PKG_CONFIG_BIN_$(BITS))
+
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --without-perl
-
-CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
 COMPONENT_TEST_ARGS += -k
 
@@ -53,6 +58,9 @@ install:    $(INSTALL_64)
 unexport SHELLOPTS
 
 test:       $(TEST_64)
+
+# Build dependencies
+REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
