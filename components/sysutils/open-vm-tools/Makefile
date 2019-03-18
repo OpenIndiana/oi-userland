@@ -11,15 +11,15 @@
 #
 # Copyright 2016 Adam Stevko
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=	64
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		open-vm-tools
-COMPONENT_VERSION=	10.3.5
+COMPONENT_VERSION=	10.3.10
 COMPONENT_SUMMARY=	open-vm-tools is a set of services and modules that enable several features in VMware products for better management of, and seamless user interactions with, guests.
 COMPONENT_PROJECT_URL=	https://github.com/vmware/open-vm-tools
 COMPONENT_FMRI=		system/virtualization/open-vm-tools
@@ -27,7 +27,7 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-stable-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vmware/$(COMPONENT_NAME)/archive/stable-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c0ecd281d6113ca700b1ab0a10559db72e80d8fc03264d53ebfdc400578ab1b6
+COMPONENT_ARCHIVE_HASH=	sha256:6e39e643edcd85bae04ba8db608bd500d14ff3771e6e89b171ffb31020fed945
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
