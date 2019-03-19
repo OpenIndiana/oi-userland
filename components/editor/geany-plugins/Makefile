@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany-plugins
-COMPONENT_VERSION= 1.33
+COMPONENT_VERSION= 1.34
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
 COMPONENT_SUMMARY= Plugins for Geany editor
 COMPONENT_DESCRIPTION= Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:27ddca83d3d5b2ba7dd09574bd2bb5a23245dddc327d29e5a12f0e1dd9a80785
+COMPONENT_ARCHIVE_HASH=sha256:158e276b79dcd6d66d6dca4366177b76bbd9ad46ea7047bf83187eba797bd02e 
 COMPONENT_ARCHIVE_URL= http://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://plugins.geany.org/
 COMPONENT_LICENSE= GPLv2
