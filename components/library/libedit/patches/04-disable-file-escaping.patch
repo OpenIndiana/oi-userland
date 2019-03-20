@@ -1,0 +1,24 @@
+This patch reverts 
+https://github.com/NetBSD/src/commit/47081400d868e1d6dd5629bea97c599c48404839
+as it breaks readline compatibility of rl_complete function
+
+--- libedit-20181209-3.1/src/filecomplete.c.~1~	2018-05-25 21:09:38.000000000 +0000
++++ libedit-20181209-3.1/src/filecomplete.c	2019-03-20 07:48:13.111605101 +0000
+@@ -650,15 +650,11 @@
+ 				 * it, unless we do filename completion and the
+ 				 * object is a directory. Also do necessary escape quoting
+ 				 */
+-				char *escaped_completion = escape_filename(el, matches[0]);
+-				if (escaped_completion == NULL)
+-					goto out;
+ 				el_winsertstr(el,
+-					ct_decode_string(escaped_completion, &el->el_scratch));
++					ct_decode_string(matches[0], &el->el_scratch));
+ 				el_winsertstr(el,
+-						ct_decode_string((*app_func)(escaped_completion),
++						ct_decode_string((*app_func)(matches[0]),
+ 							&el->el_scratch));
+-				free(escaped_completion);
+ 			} else {
+ 				/*
+ 				 * Only replace the completed string with common part of
