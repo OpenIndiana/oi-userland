@@ -1,0 +1,26 @@
+From 4ce5c63df558b3fd6a8c40dfbe0b1a260ef537e2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
+Date: Thu, 25 Oct 2018 20:59:37 +0200
+Subject: [PATCH 13/16] Use compare-debug to pass stage2/stage3 comparison as
+ avx_*.o and sse-*.o contain debug info that should be stripped
+
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 38774f542a6..9f26a859384 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -544,7 +544,7 @@ STAGEautoprofile_TFLAGS = $(STAGE2_TFLAGS)
+ STAGEautofeedback_CFLAGS = $(STAGE3_CFLAGS)
+ STAGEautofeedback_TFLAGS = $(STAGE3_TFLAGS)
+ 
+-do-compare = @do_compare@
++do-compare = $(srcdir)/contrib/compare-debug $$f1 $$f2
+ do-compare3 = $(do-compare)
+ 
+ # -----------------------------------------------
+-- 
+2.20.1
+

@@ -1,0 +1,28 @@
+From ca8c296127e360f6b47d1f44befac9a8cae0e902 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
+Date: Thu, 25 Oct 2018 21:03:06 +0200
+Subject: [PATCH 15/16] Fix libgo runtime, SunOS libelf does not support
+ largefile
+
+---
+ libgo/runtime/proc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libgo/runtime/proc.c b/libgo/runtime/proc.c
+index 12c055d71ad..0770e3390f7 100644
+--- a/libgo/runtime/proc.c
++++ b/libgo/runtime/proc.c
+@@ -12,6 +12,10 @@
+ #include "config.h"
+ 
+ #ifdef HAVE_DL_ITERATE_PHDR
++#ifdef __sun
++#undef _FILE_OFFSET_BITS
++#define _FILE_OFFSET_BITS 32
++#endif
+ #include <link.h>
+ #endif
+ 
+-- 
+2.20.1
+
