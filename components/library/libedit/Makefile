@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libedit
 COMPONENT_VERSION_DATE=	20181209
 COMPONENT_VERSION=	3.1.$(COMPONENT_VERSION_DATE)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Libedit - Command line editor library
 COMPONENT_PROJECT_URL=	http://www.thrysoee.dk/editline/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION_DATE)-3.1
