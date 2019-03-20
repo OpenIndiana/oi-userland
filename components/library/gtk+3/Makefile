@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk+
 COMPONENT_VERSION=	3.24.7
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
