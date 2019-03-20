@@ -1,0 +1,1242 @@
+From 92d0ded92f78c889311b5ccfd54420fab17d7e3c Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 26 Jan 2016 14:24:11 -0500
+Subject: [PATCH 01/15] compare_tests: Use nawk(1) on illumos, since awk(1) is
+ old and bad
+
+---
+ contrib/compare_tests | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/contrib/compare_tests b/contrib/compare_tests
+index d16e7e9737e..94183568fac 100755
+--- a/contrib/compare_tests
++++ b/contrib/compare_tests
+@@ -107,8 +107,15 @@ elif [ -d "$1" -o -d "$2" ] ; then
+ 	usage "Must specify either two directories or two files"
+ fi
+ 
+-sed 's/^XFAIL/FAIL/; s/^ERROR/FAIL/; s/^XPASS/PASS/' < "$1" | awk '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp1
+-sed 's/^XFAIL/FAIL/; s/^ERROR/FAIL/; s/^XPASS/PASS/' < "$2" | awk '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp2
++osrev=`uname -sr`
++if [ `expr "$osrev" : "SunOS 5."` -eq "8" ]; then
++   AWK=/usr/bin/nawk
++else
++    AWK=awk
++fi
++
++sed 's/^XFAIL/FAIL/; s/^ERROR/FAIL/; s/^XPASS/PASS/' < "$1" | $AWK '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp1
++sed 's/^XFAIL/FAIL/; s/^ERROR/FAIL/; s/^XPASS/PASS/' < "$2" | $AWK '/^Running target / {target = $3} { if (target != "unix") { sub(/: /, "&"target": " ); }; print $0; }' | cut -c1-2000 >$tmp2
+ 
+ before=$tmp1
+ now=$tmp2
+-- 
+2.20.1
+
+
+From f3c5de2bf9bb45cec755f70d801d547dcaa88652 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Wed, 5 Mar 2014 04:12:52 +0000
+Subject: [PATCH 02/15] gcc: enable the .eh_frame based unwinder
+
+---
+ gcc/configure    | 3 +++
+ gcc/configure.ac | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/gcc/configure b/gcc/configure
+index 5dab9142e1a..27affeb160a 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -22787,6 +22787,7 @@ if test $in_tree_ld != yes ; then
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -28082,6 +28083,8 @@ elif test x$gcc_cv_ld != x; then
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index e1fa8af5e4f..43a5740401f 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -2600,6 +2600,7 @@ if test $in_tree_ld != yes ; then
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -4985,6 +4986,8 @@ elif test x$gcc_cv_ld != x; then
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+-- 
+2.20.1
+
+
+From 541305c16fefca2085d3c43b5e345d2327d84858 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 11 Mar 2014 21:50:30 +0000
+Subject: [PATCH 03/15] intl: Don't use UTF-8 quotes.  Ever.
+
+---
+ gcc/intl.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
+
+diff --git a/gcc/intl.c b/gcc/intl.c
+index c9090e06dd3..b7688848fd8 100644
+--- a/gcc/intl.c
++++ b/gcc/intl.c
+@@ -74,17 +74,11 @@ gcc_init_libintl (void)
+ 
+   if (!strcmp (open_quote, "`") && !strcmp (close_quote, "'"))
+     {
+-      /* Untranslated quotes that it may be possible to replace with
+-	 U+2018 and U+2019; but otherwise use "'" instead of "`" as
+-	 opening quote.  */
++      /*
++       * open_quote is ` purely for ease of translation.  If they aren't
++       * translated, use ' for both
++       */
+       open_quote = "'";
+-#if defined HAVE_LANGINFO_CODESET
+-      if (locale_utf8)
+-	{
+-	  open_quote = "\xe2\x80\x98";
+-	  close_quote = "\xe2\x80\x99";
+-	}
+-#endif
+     }
+ }
+ 
+@@ -145,6 +139,3 @@ get_spaces (const char *str)
+    spaces[len] = '\0';
+    return spaces;
+ }
+-
+-
+-
+-- 
+2.20.1
+
+
+From 37368351f62ee286f9efd883dc7c8b92f3596fac Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sat, 27 Oct 2012 02:44:09 +0100
+Subject: [PATCH 04/15] Implement -fstrict-calling-conventions
+
+Stock GCC is overly willing to violate the ABI when calling local functions,
+such that it passes arguments in registers on i386.  This hampers debugging
+with anything other than a fully-aware DWARF debugger, and is generally not
+something we desire.
+
+Implement a flag which disables this behaviour, enabled by default.  The flag is
+global, though only effective on i386, to more easily allow its globalization
+later which, given the odds, is likely to be necessary.
+---
+ gcc/common.opt                            |  4 ++++
+ gcc/config/i386/i386.c                    |  2 ++
+ gcc/doc/invoke.texi                       |  6 ++++++
+ gcc/testsuite/gcc.target/i386/local.c     |  3 ++-
+ gcc/testsuite/gcc.target/i386/strict-cc.c | 24 +++++++++++++++++++++++
+ 5 files changed, 38 insertions(+), 1 deletion(-)
+ create mode 100644 gcc/testsuite/gcc.target/i386/strict-cc.c
+
+diff --git a/gcc/common.opt b/gcc/common.opt
+index 437db8e8615..978fbc83b89 100644
+--- a/gcc/common.opt
++++ b/gcc/common.opt
+@@ -2341,6 +2341,10 @@ fstrict-aliasing
+ Common Report Var(flag_strict_aliasing) Optimization
+ Assume strict aliasing rules apply.
+ 
++fstrict-calling-conventions
++Common Report Var(flag_strict_calling_conventions) Init(1)
++Use strict ABI calling conventions even for static functions
++
+ fstrict-overflow
+ Common Report Var(flag_strict_overflow) Optimization
+ Treat signed overflow as undefined.
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index e74f37f1ca0..c6fbe17a556 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -8015,6 +8015,7 @@ ix86_function_regparm (const_tree type, const_tree decl)
+ 	 and callee not, or vice versa.  Instead look at whether the callee
+ 	 is optimized or not.  */
+       if (target && opt_for_fn (target->decl, optimize)
++	  && !flag_strict_calling_conventions
+ 	  && !(profile_flag && !flag_fentry))
+ 	{
+ 	  cgraph_local_info *i = &target->local;
+@@ -8112,6 +8113,7 @@ ix86_function_sseregparm (const_tree type, const_tree decl, bool warn)
+       /* TARGET_SSE_MATH */
+       && (target_opts_for_fn (target->decl)->x_ix86_fpmath & FPMATH_SSE)
+       && opt_for_fn (target->decl, optimize)
++      && !flag_strict_calling_conventions
+       && !(profile_flag && !flag_fentry))
+     {
+       cgraph_local_info *i = &target->local;
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 5f4fbf91c5b..c48d4e16323 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -8642,6 +8642,12 @@ int f() @{
+ The @option{-fstrict-aliasing} option is enabled at levels
+ @option{-O2}, @option{-O3}, @option{-Os}.
+ 
++@item -fstrict-calling-conventions
++@opindex fstrict-calling-conventions
++Use strict ABI calling conventions even with local functions.
++This disable certain optimizations that may cause GCC to call local
++functions in a manner other than that described by the ABI.
++
+ @item -fstrict-overflow
+ @opindex fstrict-overflow
+ Allow the compiler to assume strict signed overflow rules, depending
+diff --git a/gcc/testsuite/gcc.target/i386/local.c b/gcc/testsuite/gcc.target/i386/local.c
+index f4444951e12..3a487583d81 100644
+--- a/gcc/testsuite/gcc.target/i386/local.c
++++ b/gcc/testsuite/gcc.target/i386/local.c
+@@ -1,5 +1,6 @@
+ /* { dg-do compile } */
+-/* { dg-options "-O2 -funit-at-a-time" } */
++/* { dg-options "-O2 -funit-at-a-time -fno-strict-calling-conventions" { target ia32 } } */
++/* { dg-options "-O2 -funit-at-a-time" { target lp64 } } */
+ /* { dg-final { scan-assembler "magic\[^\\n\]*eax" { target ia32 } } } */
+ /* { dg-final { scan-assembler "magic\[^\\n\]*(edi|ecx)" { target { ! ia32 } } } } */
+ 
+diff --git a/gcc/testsuite/gcc.target/i386/strict-cc.c b/gcc/testsuite/gcc.target/i386/strict-cc.c
+new file mode 100644
+index 00000000000..fa0543e52ff
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/strict-cc.c
+@@ -0,0 +1,24 @@
++/* { dg-do compile { target { ilp32 } } } */
++/* { dg-options "-O2 -funit-at-a-time -fstrict-calling-conventions"  } */
++/* { dg-final { scan-assembler "pushl.*\\\$1" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$2" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$3" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$4" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$5" } } */
++
++#include <stdio.h>
++
++/* Verify that local calling convention is not used if strict conventions.  */
++static int t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++m()
++{
++    t(1, 2, 3, 4, 5);
++}
++
++static int
++t(int a, int b, int c, int d, int e)
++{
++    printf("%d\n", a, b, c, d, e);
++}
+-- 
+2.20.1
+
+
+From 3d6e08eb01bba892646f96554fffe55057759776 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sun, 30 Sep 2012 16:44:14 -0400
+Subject: [PATCH 05/15] allow the global disabling of function cloning
+
+Optimizations which clone functions to create call-specific implementations
+which may be better optimized also dissociate these functions from their
+symbol names in ways harmful to tracing and debugging (since there are now
+several implementations of a single source symbol, quite possibly none of them
+having the actual source symbol name).
+
+This allows any function cloning to be disabled, and makes any such
+optimization ineffective, and our source safe for debuggers everywhere.
+---
+ gcc/attribs.c       |  9 +++++++++
+ gcc/common.opt      |  5 +++++
+ gcc/doc/invoke.texi | 11 ++++++++++-
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/attribs.c b/gcc/attribs.c
+index 55b21271b39..0fd28a4b24d 100644
+--- a/gcc/attribs.c
++++ b/gcc/attribs.c
+@@ -414,6 +414,15 @@ decl_attributes (tree *node, tree attributes, int flags)
+ 	attributes = tree_cons (get_identifier ("noclone"),  NULL, attributes);
+     }
+ 
++  /* If the user passed -fno-clone-functions, all functions should be treated
++     as "noclone" */
++  if (TREE_CODE (*node) == FUNCTION_DECL
++      && !flag_clone_functions)
++    {
++      if (lookup_attribute ("noclone", attributes) == NULL)
++	attributes = tree_cons (get_identifier ("noclone"),  NULL, attributes);
++    }
++
+   targetm.insert_attributes (*node, &attributes);
+ 
+   for (a = attributes; a; a = TREE_CHAIN (a))
+diff --git a/gcc/common.opt b/gcc/common.opt
+index 978fbc83b89..e38dc343afd 100644
+--- a/gcc/common.opt
++++ b/gcc/common.opt
+@@ -1076,6 +1076,11 @@ fcode-hoisting
+ Common Report Var(flag_code_hoisting) Optimization
+ Enable code hoisting.
+ 
++fclone-functions
++Common Report Var(flag_clone_functions) Init(1)
++Allow the compiler to clone functions to facilitate certain optimizations.
++Enabled by default.
++
+ fcombine-stack-adjustments
+ Common Report Var(flag_combine_stack_adjustments) Optimization
+ Looks for opportunities to reduce stack adjustments and stack references.
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index c48d4e16323..e17db23f790 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -359,7 +359,7 @@ Objective-C and Objective-C++ Dialects}.
+ -fauto-inc-dec  -fbranch-probabilities @gol
+ -fbranch-target-load-optimize  -fbranch-target-load-optimize2 @gol
+ -fbtr-bb-exclusive  -fcaller-saves @gol
+--fcombine-stack-adjustments  -fconserve-stack @gol
++-fclone-functions -fcombine-stack-adjustments  -fconserve-stack @gol
+ -fcompare-elim  -fcprop-registers  -fcrossjumping @gol
+ -fcse-follow-jumps  -fcse-skip-blocks  -fcx-fortran-rules @gol
+ -fcx-limited-range @gol
+@@ -7980,6 +7980,15 @@ and then tries to find ways to combine them.
+ 
+ Enabled by default at @option{-O1} and higher.
+ 
++@item -fno-clone-functions
++@opindex fno-clone-functions
++Forbid the implicit cloning of functions implicit in certain
++optimizations.  This also effectively will disable any optimization
++which wishes to clone functions, equivalent to each function having
++the ``noclone'' attribute.  This allows the prevention of the
++dissociation of a piece of text from an intelligible and expected
++symbol name, which may hamper debugging and tracing.
++
+ @item -fipa-ra
+ @opindex fipa-ra
+ Use caller save registers for allocation if those registers are not used by
+-- 
+2.20.1
+
+
+From 15d5013f231ca248bdee9cf3678d87fadc31abb3 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 4 Mar 2014 02:58:33 +0000
+Subject: [PATCH 06/15] strict-cc2: check that disabling function cloning
+ prevents constant propagation eliding or changing arguments
+
+---
+ .../gcc.dg/fno-clone-preserves-unused-args.c  | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
+
+diff --git a/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c b/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
+new file mode 100644
+index 00000000000..0955381c848
+--- /dev/null
++++ b/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
+@@ -0,0 +1,28 @@
++/* { dg-do compile { target { ilp32 } } } */
++/* { dg-options "-O2 -funit-at-a-time -fipa-sra -fno-clone-functions"  } */
++/* { dg-final { scan-assembler "pushl.*\\\$1" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$2" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$3" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$4" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$5" } } */
++
++#include <stdio.h>
++
++/*
++ * Verify that preventing function cloning prevents constant prop/scalar
++ * reduction removing parameters
++ */
++static void
++t(int, int, int, int, int) __attribute__ ((noinline));
++
++int foo()
++{
++    t(1, 2, 3, 4, 5);
++}
++
++/* Only use 3 params, bait constprop/sra into deleting the other two */
++static void
++t(int a, int b, int c, int d, int e)
++{
++    printf("%d %d\n", a, b, c);
++}
+-- 
+2.20.1
+
+
+From 690f104d3b94ecad54a537a5d10fc5735cb36f8b Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 4 Mar 2014 22:11:03 +0000
+Subject: [PATCH 07/15] sol2: enable full __cxa_atexit support
+
+---
+ gcc/config/sol2.h  | 4 ++--
+ libgcc/config.host | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index d522de03f4a..e2f7d2429a9 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -178,7 +178,7 @@ along with GCC; see the file COPYING3.  If not see
+ 				   shared|" PIE_SPEC ":crtbeginS.o%s; \
+ 				   :crtbegin.o%s}"
+ #else
+-#define STARTFILE_CRTBEGIN_SPEC	"crtbegin.o%s"
++#define STARTFILE_CRTBEGIN_SPEC	"%{shared:crtbeginS.o%s;:crtbegin.o%s}"
+ #endif
+ 
+ #if ENABLE_VTABLE_VERIFY
+@@ -228,7 +228,7 @@ along with GCC; see the file COPYING3.  If not see
+ 			       shared|" PIE_SPEC ":crtendS.o%s; \
+ 			       :crtend.o%s}"
+ #else
+-#define ENDFILE_CRTEND_SPEC "crtend.o%s"
++#define ENDFILE_CRTEND_SPEC "%{shared:crtendS.o%s;:crtend.o%s}"
+ #endif
+ 
+ #undef  ENDFILE_SPEC
+diff --git a/libgcc/config.host b/libgcc/config.host
+index 8beb492b5fa..0238efb9a62 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -270,7 +270,7 @@ case ${host} in
+ *-*-solaris2*)
+   # Unless linker support and dl_iterate_phdr are present,
+   # unwind-dw2-fde-dip.c automatically falls back to unwind-dw2-fde.c.
+-  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver"
++  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver t-crtstuff-pic"
+   if test $with_gnu_ld = yes; then
+     tmake_file="$tmake_file t-slibgcc-gld"
+   else
+@@ -290,6 +290,7 @@ case ${host} in
+       i?86-*-solaris2.1[0-9]* | x86_64-*-solaris2.1[0-9]*)
+         # Solaris 10+/x86 provides crt1.o, crti.o, crtn.o, and gcrt1.o as
+         # part of the base system.
++        extra_parts="$extra_parts crtbeginS.o crtendS.o"
+         ;;
+       sparc*-*-solaris2.1[0-9]*)
+         # Solaris 10+/SPARC lacks crt1.o and gcrt1.o.
+-- 
+2.20.1
+
+
+From 72adaf964310fce46d18eaac01de325264c069d8 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Wed, 27 Jan 2016 16:49:07 -0500
+Subject: [PATCH 08/15] sol2: Use appropriate values objects for the various C
+ and C++ standards
+
+I'm reasonable confident of the C cases, less confident of the C++
+cases.
+
+This is on the basis that c99 and greater implies XPG6 (and vice versa), as the
+manual pages and headers say/enforce.  It is possible that C11 should
+imply xpg7 if and when we support that.
+
+C99 and greater get strict ansi.
+
+C otherwise gets transitional ansi (and no UNIX standard)
+
+C++ gets strict ansi, other than in C++98.  And gets no UNIX standards
+objects at all.
+---
+ gcc/config/sol2.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index e2f7d2429a9..f3e6140d9a0 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -170,8 +170,15 @@ along with GCC; see the file COPYING3.  If not see
+ #define SUPPORTS_INIT_PRIORITY HAVE_INITFINI_ARRAY_SUPPORT
+ 
+ #undef STARTFILE_ARCH_SPEC
+-#define STARTFILE_ARCH_SPEC "%{ansi:values-Xc.o%s} \
+-			    %{!ansi:values-Xa.o%s}"
++#define STARTFILE_ARCH_SPEC "%{std=c1x|std=gnu1x:values-Xc.o%s values-xpg6.o%s; \
++			       std=c11|std=gnu11:values-Xc.o%s values-xpg6.o%s; \
++			       std=c99|std=gnu99:values-Xc.o%s values-xpg6.o%s; \
++			       std=c9x|std=gnu9x:values-Xc.o%s values-xpg6.o%s; \
++			       std=c++0x|std=gnu++0x:values-Xc.o%s; \
++			       std=c++11|std=gnu++11:values-Xc.o%s; \
++			       std=c++03|std=gnu++03:values-Xc.o%s; \
++			       :values-Xa.o%s}"
++
+ 
+ #if defined(HAVE_LD_PIE) && defined(HAVE_SOLARIS_CRTS)
+ #define STARTFILE_CRTBEGIN_SPEC "%{static:crtbegin.o%s; \
+-- 
+2.20.1
+
+
+From 8fdcff56620370fdf2e9da00af3c8d4e936696c3 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sat, 23 Jan 2016 22:14:56 -0500
+Subject: [PATCH 09/15] i386: Save integer-passed arguments to the stack, to
+ aid debuggers.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Merged from 5.3 to 7.2 by: Aurélien Larcher
+
+Originally implemented in:
+    commit 023cc9a4c9c698bed1f51d38eac850d327fc1146
+    Author: jsm28 <jsm28@138bc75d-0d04-0410-961f-82ee72b054a4>
+    Date:   Wed Jun 29 23:51:34 2005 +0000
+
+        	* gcc/dwarf2.h (DW_AT_SUN_amd64_parmdump): New.
+        	* gcc/dwarf2out.c (gen_subprogram_die): Add this attribute.
+        	* gcc/doc/invoke.texi (-msave-args): New x86-64 option.
+        	* gcc/config/i386/i386.h (MASK_SAVE_ARGS, TARGET_SAVE_ARGS): New.
+        	(TARGET_SWITCHES): Add -msave-args.
+        	* gcc/config/i386/i386.c (struct ix86_frame): Add nmsave_args and
+        	padding0.
+        	(pro_epilogue_adjust_stack): Declare.
+        	(ix86_nsaved_args): New.
+        	(override_options, ix86_can_use_return_insn_p,
+        	ix86_frame_pointer_required, ix86_compute_frame_layout,
+        	ix86_emit_save_regs, ix86_emit_save_regs_using_mov,
+        	ix86_expand_prologue, ix86_expand_epilogue): Handle -msave-args.
+
+        git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/branches/csl-sol210-3_4-branch@101443 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/config/i386/i386.c                        | 140 +++++++++++++++++-
+ gcc/config/i386/i386.h                        |   7 +
+ gcc/config/i386/i386.opt                      |  10 ++
+ gcc/doc/invoke.texi                           |   4 +
+ gcc/dwarf2out.c                               |   5 +
+ .../gcc.target/i386/msave-args-mov.c          |  26 ++++
+ .../gcc.target/i386/msave-args-push.c         |  26 ++++
+ include/dwarf2.def                            |   2 +
+ 8 files changed, 212 insertions(+), 8 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-mov.c
+ create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-push.c
+
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index c6fbe17a556..16bedb23cdc 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -2572,6 +2572,8 @@ static unsigned int ix86_minimum_incoming_stack_boundary (bool);
+ 
+ static enum calling_abi ix86_function_abi (const_tree);
+ 
++static int ix86_nsaved_args (void);
++static void pro_epilogue_adjust_stack (rtx, rtx, rtx, int, bool);
+ 
+ #ifndef SUBTARGET32_DEFAULT_CPU
+ #define SUBTARGET32_DEFAULT_CPU "i386"
+@@ -5896,6 +5898,9 @@ ix86_option_override_internal (bool main_args_p,
+       &= ~((OPTION_MASK_ISA_BMI | OPTION_MASK_ISA_BMI2 | OPTION_MASK_ISA_TBM)
+ 	   & ~opts->x_ix86_isa_flags_explicit);
+ 
++  if (!TARGET_64BIT_P (opts->x_ix86_isa_flags) && TARGET_SAVE_ARGS)
++    error ("-msave-args makes no sense in the 32-bit mode");
++
+   /* Validate -mpreferred-stack-boundary= value or default it to
+      PREFERRED_STACK_BOUNDARY_DEFAULT.  */
+   ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
+@@ -11979,7 +11984,7 @@ ix86_can_use_return_insn_p (void)
+   ix86_compute_frame_layout ();
+   struct ix86_frame &frame = cfun->machine->frame;
+   return (frame.stack_pointer_offset == UNITS_PER_WORD
+-	  && (frame.nregs + frame.nsseregs) == 0);
++	  && (frame.nmsave_args + frame.nregs + frame.nsseregs) == 0);
+ }
+ 
+ /* Value should be nonzero if functions must have frame pointers.
+@@ -12003,6 +12008,9 @@ ix86_frame_pointer_required (void)
+   if (TARGET_32BIT_MS_ABI && cfun->calls_setjmp)
+     return true;
+ 
++  if (TARGET_SAVE_ARGS)
++    return true;
++
+   /* Win64 SEH, very large frames need a frame-pointer as maximum stack
+      allocation is 4GB.  */
+   if (TARGET_64BIT_MS_ABI && get_frame_size () > SEH_MAX_FRAME_SIZE)
+@@ -12786,6 +12794,7 @@ ix86_compute_frame_layout (void)
+ 
+   frame->nregs = ix86_nsaved_regs ();
+   frame->nsseregs = ix86_nsaved_sseregs ();
++  frame->nmsave_args = ix86_nsaved_args ();
+ 
+   /* 64-bit MS ABI seem to require stack alignment to be always 16,
+      except for function prologues, leaf functions and when the defult
+@@ -12848,7 +12857,8 @@ ix86_compute_frame_layout (void)
+     }
+ 
+   frame->save_regs_using_mov
+-    = (TARGET_PROLOGUE_USING_MOVE && cfun->machine->use_fast_prologue_epilogue
++    = ((TARGET_FORCE_SAVE_REGS_USING_MOV ||
++	(TARGET_PROLOGUE_USING_MOVE && cfun->machine->use_fast_prologue_epilogue))
+        /* If static stack checking is enabled and done with probes,
+ 	  the registers need to be saved before allocating the frame.  */
+        && flag_stack_check != STATIC_BUILTIN_STACK_CHECK);
+@@ -12868,6 +12878,13 @@ ix86_compute_frame_layout (void)
+   /* The traditional frame pointer location is at the top of the frame.  */
+   frame->hard_frame_pointer_offset = offset;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      offset += frame->nmsave_args * UNITS_PER_WORD;
++      offset += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++    }
++  frame->arg_save_offset = offset;
++
+   /* Register save area */
+   offset += frame->nregs * UNITS_PER_WORD;
+   frame->reg_save_offset = offset;
+@@ -12950,7 +12967,7 @@ ix86_compute_frame_layout (void)
+   /* Size prologue needs to allocate.  */
+   to_allocate = offset - frame->sse_reg_save_offset;
+ 
+-  if ((!to_allocate && frame->nregs <= 1)
++  if ((!TARGET_SAVE_ARGS && !to_allocate && frame->nregs <= 1)
+       || (TARGET_64BIT && to_allocate >= HOST_WIDE_INT_C (0x80000000)))
+     frame->save_regs_using_mov = false;
+ 
+@@ -12962,7 +12979,11 @@ ix86_compute_frame_layout (void)
+     {
+       frame->red_zone_size = to_allocate;
+       if (frame->save_regs_using_mov)
+-	frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
++	{
++	  frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
++	  frame->red_zone_size += frame->nmsave_args * UNITS_PER_WORD;
++	  frame->red_zone_size += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++	}
+       if (frame->red_zone_size > RED_ZONE_SIZE - RED_ZONE_RESERVE)
+ 	frame->red_zone_size = RED_ZONE_SIZE - RED_ZONE_RESERVE;
+     }
+@@ -12993,6 +13014,25 @@ ix86_compute_frame_layout (void)
+ 	  frame->hard_frame_pointer_offset = frame->stack_pointer_offset - 128;
+ 	}
+     }
++
++
++#ifdef DEBUG_FRAME_STUFF
++  if (getenv("DEBUG_FRAME_STUFF") != NULL)
++    {
++      printf("nmsave_args: %d\n", frame->nmsave_args);
++      printf("nsseregs: %d\n", frame->nsseregs);
++      printf("nregs: %d\n", frame->nregs);
++
++      printf("frame_pointer_offset: %llx\n", frame->frame_pointer_offset);
++      printf("hard_frame_pointer_offset: %llx\n", frame->hard_frame_pointer_offset);
++      printf("stack_pointer_offset: %llx\n", frame->stack_pointer_offset);
++      printf("hfp_save_offset: %llx\n", frame->hfp_save_offset);
++      printf("arg_save_offset: %llx\n", frame->arg_save_offset);
++      printf("reg_save_offset: %llx\n", frame->reg_save_offset);
++      printf("sse_reg_save_offset: %llx\n", frame->sse_reg_save_offset);
++
++    }
++#endif
+ }
+ 
+ /* This is semi-inlined memory_address_length, but simplified
+@@ -13101,6 +13141,24 @@ ix86_emit_save_regs (void)
+   unsigned int regno;
+   rtx_insn *insn;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      for (i = start; i < start + nsaved; i++)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  insn = emit_insn (gen_push (gen_rtx_REG (word_mode, regno)));
++	  RTX_FRAME_RELATED_P (insn) = 1;
++	}
++      if (nsaved % 2 != 0)
++	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
++				   GEN_INT (-UNITS_PER_WORD), -1, false);
++    }
++
++
+   for (regno = FIRST_PSEUDO_REGISTER - 1; regno-- > 0; )
+     if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true))
+       {
+@@ -13179,9 +13237,30 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+ /* Emit code to save registers using MOV insns.
+    First register is stored at CFA - CFA_OFFSET.  */
+ static void
+-ix86_emit_save_regs_using_mov (HOST_WIDE_INT cfa_offset)
++ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
+ {
+   unsigned int regno;
++  HOST_WIDE_INT cfa_offset = frame->arg_save_offset;
++
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      /* We deal with this twice? */
++      if (nsaved % 2 != 0)
++	cfa_offset -= UNITS_PER_WORD;
++
++      for (i = start + nsaved - 1; i >= start; i--)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
++	  cfa_offset -= UNITS_PER_WORD;
++	}
++    }
++
++  cfa_offset = frame->reg_save_offset;
+ 
+   for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
+     if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true))
+@@ -14239,7 +14318,7 @@ ix86_expand_prologue (void)
+ 	}
+     }
+ 
+-  int_registers_saved = (frame.nregs == 0);
++  int_registers_saved = (frame.nregs == 0 && frame.nmsave_args == 0);
+   sse_registers_saved = (frame.nsseregs == 0);
+ 
+   if (frame_pointer_needed && !m->fs.fp_valid)
+@@ -14290,7 +14369,7 @@ ix86_expand_prologue (void)
+ 	       && (! TARGET_STACK_PROBE
+ 		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
+ 	{
+-	  ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++	  ix86_emit_save_regs_using_mov (&frame);
+ 	  int_registers_saved = true;
+ 	}
+     }
+@@ -14533,7 +14612,7 @@ ix86_expand_prologue (void)
+     }
+ 
+   if (!int_registers_saved)
+-    ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++    ix86_emit_save_regs_using_mov (&frame);
+   if (!sse_registers_saved)
+     ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
+ 
+@@ -14566,6 +14645,7 @@ ix86_expand_prologue (void)
+      relative to the value of the stack pointer at the end of the function
+      prologue, and moving instructions that access redzone area via frame
+      pointer inside push sequence violates this assumption.  */
++  /* XXX: We may wish to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -14778,6 +14858,7 @@ ix86_expand_epilogue (int style)
+ 
+   /* See the comment about red zone and frame
+      pointer usage in ix86_expand_prologue.  */
++  /* XXX: We may want to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -14973,6 +15054,36 @@ ix86_expand_epilogue (int style)
+       ix86_emit_restore_regs_using_pop ();
+     }
+ 
++  if (TARGET_SAVE_ARGS) {
++    /*
++     * For each saved argument, emit a restore note, to make sure it happens
++     * correctly within the shrink wrapping (I think).
++     *
++     * Note that 'restore' in this case merely means the rule is the same as
++     * it was on function entry, not that we have actually done a register
++     * restore (which of course, we haven't).
++     *
++     * If we do not do this, the DWARF code will emit sufficient restores to
++     * provide balance on its own initiative, which in the presence of
++     * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
++     * .cfi_offset a register sometimes, but will always .cfi_restore it.
++     * This will trip an assert.)
++     */
++    int start = cfun->returns_struct;
++    int nsaved = ix86_nsaved_args();
++    int i;
++
++    for (i = start + nsaved - 1; i >= start; i--)
++      queued_cfa_restores
++	= alloc_reg_note (REG_CFA_RESTORE,
++			  gen_rtx_REG(Pmode,
++				      x86_64_int_parameter_registers[i]),
++			  queued_cfa_restores);
++
++    gcc_assert(m->fs.fp_valid);
++  }
++
++
+   /* If we used a stack pointer and haven't already got rid of it,
+      then do so now.  */
+   if (m->fs.fp_valid)
+@@ -15984,6 +16095,19 @@ ix86_cannot_force_const_mem (machine_mode mode, rtx x)
+   return !ix86_legitimate_constant_p (mode, x);
+ }
+ 
++/* Return number of arguments to be saved on the stack with
++   -msave-args.  */
++
++static int
++ix86_nsaved_args (void)
++{
++  if (TARGET_SAVE_ARGS)
++    return crtl->args.info.regno - cfun->returns_struct;
++  else
++    return 0;
++}
++
++
+ /*  Nonzero if the symbol is marked as dllimport, or as stub-variable,
+     otherwise zero.  */
+ 
+diff --git a/gcc/config/i386/i386.h b/gcc/config/i386/i386.h
+index 0fe4c8b2caa..eb126ff9947 100644
+--- a/gcc/config/i386/i386.h
++++ b/gcc/config/i386/i386.h
+@@ -2462,6 +2462,11 @@ enum avx_u128_state
+ 
+    saved frame pointer			if frame_pointer_needed
+ 					<- HARD_FRAME_POINTER
++
++   [-msave-args]			<- arg_save_offset
++
++   [saveargs padding]
++
+    [saved regs]
+ 					<- regs_save_offset
+    [padding0]
+@@ -2479,6 +2484,7 @@ enum avx_u128_state
+   */
+ struct GTY(()) ix86_frame
+ {
++  int nmsave_args;
+   int nsseregs;
+   int nregs;
+   int va_arg_size;
+@@ -2490,6 +2496,7 @@ struct GTY(()) ix86_frame
+   HOST_WIDE_INT hard_frame_pointer_offset;
+   HOST_WIDE_INT stack_pointer_offset;
+   HOST_WIDE_INT hfp_save_offset;
++  HOST_WIDE_INT arg_save_offset;
+   HOST_WIDE_INT reg_save_offset;
+   HOST_WIDE_INT sse_reg_save_offset;
+ 
+diff --git a/gcc/config/i386/i386.opt b/gcc/config/i386/i386.opt
+index b90da9f89ec..d53f69c18be 100644
+--- a/gcc/config/i386/i386.opt
++++ b/gcc/config/i386/i386.opt
+@@ -505,6 +505,16 @@ mtls-direct-seg-refs
+ Target Report Mask(TLS_DIRECT_SEG_REFS)
+ Use direct references against %gs when accessing tls data.
+ 
++msave-args
++Target Report Mask(SAVE_ARGS)
++Save integer arguments on the stack at function entry
++
++mforce-save-regs-using-mov
++Target Report Mask(FORCE_SAVE_REGS_USING_MOV)
++Save registers using push in function prologues.  This is intentionally
++undocumented and used for msave-args testing.
++
++
+ mtune=
+ Target RejectNegative Joined Var(ix86_tune_string)
+ Schedule code for given CPU.
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index e17db23f790..22132ea9a0d 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -13893,6 +13893,10 @@ dynamically linked.  This is the default code model.
+ Generate code for the large code model.  This makes no assumptions about
+ addresses and sizes of sections.  Programs can be statically linked only.
+ 
++@item -msave-args
++@opindex msave-args
++Save integer-sized arguments on the stack on function entry.
++
+ @item -mstrict-align
+ @opindex mstrict-align
+ Avoid generating memory accesses that may not be aligned on a natural object
+diff --git a/gcc/dwarf2out.c b/gcc/dwarf2out.c
+index 5223e3b2fb4..4f2bf11e9ec 100644
+--- a/gcc/dwarf2out.c
++++ b/gcc/dwarf2out.c
+@@ -22441,6 +22441,11 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+     /* Add the calling convention attribute if requested.  */
+     add_calling_convention_attribute (subr_die, decl);
+ 
++#ifdef TARGET_SAVE_ARGS
++  if (TARGET_SAVE_ARGS)
++    add_AT_flag (subr_die, DW_AT_SUN_amd64_parmdump, 1);
++#endif
++
+   /* Output Dwarf info for all of the stuff within the body of the function
+      (if it has one - it may be just a declaration).
+ 
+diff --git a/gcc/testsuite/gcc.target/i386/msave-args-mov.c b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
+new file mode 100644
+index 00000000000..a2ca76752a9
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
+@@ -0,0 +1,26 @@
++/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
++/* { dg-options "-msave-args -mforce-save-regs-using-mov -save-temps" } */
++
++#include <stdio.h>
++
++void t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++main(int argc, char **argv)
++{
++	t(1, 2, 3, 4, 5);
++	return (0);
++}
++
++void
++t(int a, int b, int c, int d, int e)
++{
++	printf("%d %d %d %d %d", a, b, c, d, e);
++}
++
++/* { dg-final { scan-assembler "movq\t%rdi, -8\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rsi, -16\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rdx, -24\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rcx, -32\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%r8, -40\\(%rbp\\)" } } */
++/* { dg-final { cleanup-saved-temps } } */
+diff --git a/gcc/testsuite/gcc.target/i386/msave-args-push.c b/gcc/testsuite/gcc.target/i386/msave-args-push.c
+new file mode 100644
+index 00000000000..fbe053dadc8
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/msave-args-push.c
+@@ -0,0 +1,26 @@
++/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
++/* { dg-options "-msave-args -save-temps " } */
++
++#include <stdio.h>
++
++void t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++main(int argc, char **argv)
++{
++	t(1, 2, 3, 4, 5);
++	return (0);
++}
++
++void
++t(int a, int b, int c, int d, int e)
++{
++	printf("%d %d %d %d %d", a, b, c, d, e);
++}
++
++/* { dg-final { scan-assembler "pushq\t%rdi" } } */
++/* { dg-final { scan-assembler "pushq\t%rsi" } } */
++/* { dg-final { scan-assembler "pushq\t%rdx" } } */
++/* { dg-final { scan-assembler "pushq\t%rcx" } } */
++/* { dg-final { scan-assembler "pushq\t%r8" } } */
++/* { dg-final { cleanup-saved-temps } } */
+diff --git a/include/dwarf2.def b/include/dwarf2.def
+index ea6194ef33e..28532c190de 100644
+--- a/include/dwarf2.def
++++ b/include/dwarf2.def
+@@ -457,6 +457,8 @@ DW_TAG (DW_AT_GNU_denominator, 0x2304)
+ /* Biased integer extension.
+    See https://gcc.gnu.org/wiki/DW_AT_GNU_bias .  */
+ DW_TAG (DW_AT_GNU_bias, 0x2305)
++/* Sun extension. */
++DW_AT (DW_AT_SUN_amd64_parmdump, 0x2224)
+ /* UPC extension.  */
+ DW_AT (DW_AT_upc_threads_scaled, 0x3210)
+ /* PGI (STMicroelectronics) extensions.  */
+-- 
+2.20.1
+
+
+From 7dac8eeb9a870326c0d1b13238967003e3765062 Mon Sep 17 00:00:00 2001
+From: Yuri Pankov <yuri.pankov@nexenta.com>
+Date: Sat, 5 Nov 2016 05:26:47 +0300
+Subject: [PATCH 10/15] 16 update cmn_err format specifier Reviewed by: Richard
+ Lowe <richlowe@richlowe.net> Reviewed by: Robert Mustacchi <rm@joyent.com>
+
+---
+ gcc/config/sol2-c.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/gcc/config/sol2-c.c b/gcc/config/sol2-c.c
+index 5a44a88d1ac..ebd7449b368 100644
+--- a/gcc/config/sol2-c.c
++++ b/gcc/config/sol2-c.c
+@@ -40,7 +40,10 @@ static const format_length_info cmn_err_length_specs[] =
+ 
+ static const format_flag_spec cmn_err_flag_specs[] =
+ {
++  { '0',  0, 0, N_("'0' flag"),        N_("the '0' flag"),                     STD_C89 },
++  { '-',  0, 0, N_("'-' flag"),        N_("the '-' flag"),                     STD_C89 },
+   { 'w',  0, 0, N_("field width"),     N_("field width in printf format"),     STD_C89 },
++  { 'p',  0, 0, N_("precision"),       N_("precision in printf format"),       STD_C89 },
+   { 'L',  0, 0, N_("length modifier"), N_("length modifier in printf format"), STD_C89 },
+   { 0, 0, 0, NULL, NULL, STD_C89 }
+ };
+@@ -48,6 +51,7 @@ static const format_flag_spec cmn_err_flag_specs[] =
+ 
+ static const format_flag_pair cmn_err_flag_pairs[] =
+ {
++  { '0', '-', 1, 0 },
+   { 0, 0, 0, 0 }
+ };
+ 
+@@ -57,21 +61,21 @@ static const format_char_info bitfield_string_type =
+ static const format_char_info cmn_err_char_table[] =
+ {
+   /* C89 conversion specifiers.  */
+-  { "dD",  0, STD_C89, { T89_I,   BADLEN,  BADLEN,  T89_L,   T9L_LL,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "oOxX",0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "u",   0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "c",   0, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "",   NULL },
+-  { "p",   1, STD_C89, { T89_V,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w", "c",  NULL },
+-  { "s",   1, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",  "cR", NULL },
+-  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "w",   "",   &bitfield_string_type },
++  { "dD",  0, STD_C89, { T89_I,   BADLEN,  BADLEN,  T89_L,   T9L_LL,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp0", "",   NULL },
++  { "oOxX",0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp0", "",   NULL },
++  { "u",   0, STD_C89, { T89_UI,  BADLEN,  BADLEN,  T89_UL,  T9L_ULL, BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp0", "",   NULL },
++  { "c",   0, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   NULL },
++  { "p",   1, STD_C89, { T89_V,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "c",  NULL },
++  { "s",   1, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp",  "cR", NULL },
++  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   &bitfield_string_type },
+   { NULL,  0, STD_C89, NOLENGTHS, NULL, NULL, NULL }
+ };
+ 
+ EXPORTED_CONST format_kind_info solaris_format_types[] = {
+-  { "cmn_err",  cmn_err_length_specs,  cmn_err_char_table, "", NULL,
++  { "cmn_err",  cmn_err_length_specs,  cmn_err_char_table, "0-", NULL,
+     cmn_err_flag_specs, cmn_err_flag_pairs,
+     FMT_FLAG_ARG_CONVERT|FMT_FLAG_EMPTY_PREC_OK,
+-    'w', 0, 0, 0, 'L', 0,
++    'w', 0, 'p', 0, 'L', 0,
+     &integer_type_node, &integer_type_node
+   }
+ };
+-- 
+2.20.1
+
+
+From 6ed366bf678247e18809f3bfc0b7d1339efa1728 Mon Sep 17 00:00:00 2001
+From: Yuri Pankov <yuri.pankov@nexenta.com>
+Date: Mon, 13 Feb 2017 18:14:45 +0300
+Subject: [PATCH 11/15] 19 cmn_err %b conversion should accept 0 flag Reviewed
+ by: Robert Mustacchi <rm@joyent.com> Reviewed by: Richard Lowe
+ <richlowe@richlowe.net>
+
+---
+ gcc/config/sol2-c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gcc/config/sol2-c.c b/gcc/config/sol2-c.c
+index ebd7449b368..3519818d792 100644
+--- a/gcc/config/sol2-c.c
++++ b/gcc/config/sol2-c.c
+@@ -67,7 +67,7 @@ static const format_char_info cmn_err_char_table[] =
+   { "c",   0, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   NULL },
+   { "p",   1, STD_C89, { T89_V,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "c",  NULL },
+   { "s",   1, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp",  "cR", NULL },
+-  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   &bitfield_string_type },
++  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w0",  "",   &bitfield_string_type },
+   { NULL,  0, STD_C89, NOLENGTHS, NULL, NULL, NULL }
+ };
+ 
+-- 
+2.20.1
+
+
+From 8a9e2416ee910c847978187d9f5040f37f376be4 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Thu, 25 Oct 2018 18:19:36 +0000
+Subject: [PATCH 12/15] We never want to omit the frame pointer, regardless of
+ the optimisation level or options to gcc - we like stack traces too much and
+ it is of questionable benefit anyway, even on i386.
+
+---
+ gcc/config/i386/i386.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index 16bedb23cdc..cbbdcd9600a 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -6281,6 +6281,15 @@ ix86_option_override_internal (bool main_args_p,
+       free (str);
+     }
+ 
++  /*
++   * We never want to omit the frame pointer, regardless of the optimisation
++   * level or options to gcc - we like stack traces too much and it is of
++   * questionable benefit anyway, even on i386.
++   */
++
++  flag_omit_frame_pointer = 0;
++  opts->x_flag_omit_frame_pointer = 0;
++
+   /* Save the initial options in case the user does function specific
+      options.  */
+   if (main_args_p)
+-- 
+2.20.1
+
+
+From f732af138de2e6c62767672667baf3c5c025c7bd Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Mon, 29 Oct 2018 18:21:34 +0000
+Subject: [PATCH 13/15] libstdc++v3: illumos and Solaris haven't needed -lrt in
+ a long time
+
+Originally from Andy Fiddaman <andy@omniosce.org>
+---
+ libstdc++-v3/acinclude.m4 | 1 -
+ libstdc++-v3/configure    | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/libstdc++-v3/acinclude.m4 b/libstdc++-v3/acinclude.m4
+index 67d84472653..917c3899ef8 100644
+--- a/libstdc++-v3/acinclude.m4
++++ b/libstdc++-v3/acinclude.m4
+@@ -1434,7 +1434,6 @@ AC_DEFUN([GLIBCXX_ENABLE_LIBSTDCXX_TIME], [
+         ac_has_nanosleep=yes
+         ;;
+       solaris*)
+-        GLIBCXX_LIBS="$GLIBCXX_LIBS -lrt"
+         ac_has_clock_monotonic=yes
+         ac_has_clock_realtime=yes
+         ac_has_nanosleep=yes
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index e1c55aa72ff..b957a7230f6 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -20578,7 +20578,6 @@ $as_echo "$glibcxx_glibc217" >&6; }
+         ac_has_nanosleep=yes
+         ;;
+       solaris*)
+-        GLIBCXX_LIBS="$GLIBCXX_LIBS -lrt"
+         ac_has_clock_monotonic=yes
+         ac_has_clock_realtime=yes
+         ac_has_nanosleep=yes
+-- 
+2.20.1
+
+
+From 7514701d96f1dbeb3a99663f79375f31858c4730 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Mon, 29 Oct 2018 18:23:00 +0000
+Subject: [PATCH 14/15] libgo: libelf on illumos doesn't support largefile
+
+Originally from pkgsrc
+---
+ libgo/runtime/proc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libgo/runtime/proc.c b/libgo/runtime/proc.c
+index 06a9c2ad6b8..966972d6b96 100644
+--- a/libgo/runtime/proc.c
++++ b/libgo/runtime/proc.c
+@@ -12,6 +12,10 @@
+ #include "config.h"
+ 
+ #ifdef HAVE_DL_ITERATE_PHDR
++#ifdef __sun
++#undef _FILE_OFFSET_BITS
++#define _FILE_OFFSET_BITS 32
++#endif
+ #include <link.h>
+ #endif
+ 
+-- 
+2.20.1
+
+
+From 6c4cbc6f3be9f6547f5a2193b5015a1c43f25475 Mon Sep 17 00:00:00 2001
+From: John Levon <john.levon@joyent.com>
+Date: Tue, 20 Nov 2018 16:07:51 +0000
+Subject: [PATCH 15/15] libgcc-unwind.map should be v2-style
+
+---
+ libgcc/config/t-slibgcc-sld | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/libgcc/config/t-slibgcc-sld b/libgcc/config/t-slibgcc-sld
+index 0b9539114e4..55fd6e1caa7 100644
+--- a/libgcc/config/t-slibgcc-sld
++++ b/libgcc/config/t-slibgcc-sld
+@@ -8,13 +8,32 @@ ifeq ($(enable_shared),yes)
+ 
+ # Linker mapfile to enforce direct binding to libgcc_s unwinder
+ # (PR target/59788).
++
++ifeq ($(with_gnu_ld),yes)
++
++libgcc-unwind.map: libgcc-std.ver
++	@(echo "{";                             \
++	for f in `grep _Unwind_ $< | sort`; do  \
++	  echo "        $$f = EXTERN DIRECT;";  \
++	done;                                   \
++	echo "};" ) > $@
++
++else
++
+ libgcc-unwind.map: libgcc-std.ver
+-	@(echo "{";				\
+-	for f in `grep _Unwind_ $< | sort`; do	\
+-	  echo "	$$f = EXTERN DIRECT;";	\
+-	done;					\
++	@(echo "# Generated by libgcc/config/t-slibgcc-sld";	\
++	echo;							\
++	echo '$$mapfile_version 2'; 				\
++	echo;							\
++	echo "SYMBOL_SCOPE {";					\
++	echo "    global:";					\
++	for f in `grep _Unwind_ $< | sort`; do			\
++	  echo "	$$f { FLAGS = EXTERN DIRECT };";	\
++	done;							\
+ 	echo "};" ) > $@
+ 
++endif
++
+ # Copy libgcc-unwind.map to the place where gcc will look for it at build-time.
+ install-libgcc-unwind-map-forbuild: libgcc-unwind.map
+ 	dest=$(gcc_objdir)/tmp$$$$-$<; \
+-- 
+2.20.1
+
