@@ -16,21 +16,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	8.0.13-4
-IPS_COMPONENT_VERSION=	8.0.13.4
+COMPONENT_VERSION=	8.0.15-5
+IPS_COMPONENT_VERSION=	8.0.15.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:0a42a0e51e3c27fa1fb2eb3e8d057a33e3ef77691f651b92b5ba6c9fe2890b9b
+COMPONENT_ARCHIVE_HASH=	sha256:63830bcdcdef28b1344bbb2158c8b9c3c6fcb4dc449d07b45fff89a2cdf5c00e
 COMPONENT_ARCHIVE_URL=	https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	GPLv2
 
 # We need specific boost version
-COMPONENT_ARCHIVE_1= boost_1_67_0.tar.gz
+COMPONENT_ARCHIVE_1= boost_1_68_0.tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-	sha256:8aa4e330c870ef50a896634c931adf468b21f8a69b77007e45c444151229f665
-COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/project/boost/boost/1.67.0/$(COMPONENT_ARCHIVE_1)
+	sha256:da3411ea45622579d419bfda66f45cd0f8c32a181d84adfa936f5688388995cf
+COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/project/boost/boost/1.68.0/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
@@ -91,16 +91,6 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "s/ $$//"' \
 	'-e "/pass$$/p"' \
 	'-e "/fail$$/p"'
-
-COMPONENT_TEST_CMD= mysql-test/mtr \
-	--parallel=$(shell getconf NPROCESSORS_ONLN) \
-	--mem \
-	--force \
-	--retry=0 \
-	--mysqld=--binlog-format=mixed \
-	--force-restart \
-	--max-test-fail=0
-#	--skip-test-list=unstable-tests | sort
 
 build:		$(BUILD_64)
 
