@@ -1,0 +1,20 @@
+https://www.illumos.org/issues/10228
+Cairo documentation for cairo_surface_mark_dirty() says
+"Tells cairo that drawing has been done to surface using means other than cairo,
+and that cairo should reread any cached areas.
+Note that you must call cairo_surface_flush() before doing such drawing."
+
+We haven't done any drawing here, but at least this should detach all cairo snapshots
+and fix !_cairo_surface_has_snapshots() assertion.
+
+
+--- gtk+-3.24.5/gdk/gdkpixbuf-drawable.c.~1~	2019-01-23 23:46:13.000000000 +0000
++++ gtk+-3.24.5/gdk/gdkpixbuf-drawable.c	2019-03-20 09:10:35.219208515 +0000
+@@ -104,6 +104,7 @@
+    * by external applications.
+    * So be on the safe side and:
+    */
++  cairo_surface_flush(surface);
+   cairo_surface_mark_dirty (surface);
+ 
+   if (cairo_surface_get_content (surface) & CAIRO_CONTENT_ALPHA)
