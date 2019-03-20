@@ -1,7 +1,7 @@
-From d86be15cc4230a7fce43b32fdfc4b741fd6caa10 Mon Sep 17 00:00:00 2001
+From 551df24e25868c0d1073b9b48b2c10b66821f793 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sat, 27 Oct 2012 02:44:09 +0100
-Subject: [PATCH 05/12] Implement -fstrict-calling-conventions
+Subject: [PATCH 04/16] Implement -fstrict-calling-conventions
 
 Stock GCC is overly willing to violate the ABI when calling local functions,
 such that it passes arguments in registers on i386.  This hampers debugging
@@ -16,15 +16,15 @@ later which, given the odds, is likely to be necessary.
  gcc/config/i386/i386.c                    |  2 ++
  gcc/doc/invoke.texi                       |  6 ++++++
  gcc/testsuite/gcc.target/i386/local.c     |  3 ++-
- gcc/testsuite/gcc.target/i386/strict-cc.c | 24 ++++++++++++++++++++++++
+ gcc/testsuite/gcc.target/i386/strict-cc.c | 24 +++++++++++++++++++++++
  5 files changed, 38 insertions(+), 1 deletion(-)
  create mode 100644 gcc/testsuite/gcc.target/i386/strict-cc.c
 
 diff --git a/gcc/common.opt b/gcc/common.opt
-index d6ef85928f3..e9441dd237e 100644
+index b52ef0b38c8..7354fa14f4f 100644
 --- a/gcc/common.opt
 +++ b/gcc/common.opt
-@@ -2414,6 +2414,10 @@ fstrict-aliasing
+@@ -2418,6 +2418,10 @@ fstrict-aliasing
  Common Report Var(flag_strict_aliasing) Optimization
  Assume strict aliasing rules apply.
  
@@ -36,10 +36,10 @@ index d6ef85928f3..e9441dd237e 100644
  Common Report
  Treat signed overflow as undefined.  Negated as -fwrapv -fwrapv-pointer.
 diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index 6a2141e48db..92d5a1d5962 100644
+index 7732f882f78..a5e39372540 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
-@@ -6730,6 +6730,7 @@ ix86_function_regparm (const_tree type, const_tree decl)
+@@ -6747,6 +6747,7 @@ ix86_function_regparm (const_tree type, const_tree decl)
  	 and callee not, or vice versa.  Instead look at whether the callee
  	 is optimized or not.  */
        if (target && opt_for_fn (target->decl, optimize)
@@ -47,7 +47,7 @@ index 6a2141e48db..92d5a1d5962 100644
  	  && !(profile_flag && !flag_fentry))
  	{
  	  cgraph_local_info *i = &target->local;
-@@ -6827,6 +6828,7 @@ ix86_function_sseregparm (const_tree type, const_tree decl, bool warn)
+@@ -6844,6 +6845,7 @@ ix86_function_sseregparm (const_tree type, const_tree decl, bool warn)
        /* TARGET_SSE_MATH */
        && (target_opts_for_fn (target->decl)->x_ix86_fpmath & FPMATH_SSE)
        && opt_for_fn (target->decl, optimize)
@@ -56,10 +56,10 @@ index 6a2141e48db..92d5a1d5962 100644
      {
        cgraph_local_info *i = &target->local;
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 444159178a7..5fef6945052 100644
+index e5c4e8125aa..1cee9bb94dc 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -9185,6 +9185,12 @@ int f() @{
+@@ -9205,6 +9205,12 @@ int f() @{
  The @option{-fstrict-aliasing} option is enabled at levels
  @option{-O2}, @option{-O3}, @option{-Os}.
  
@@ -115,5 +115,5 @@ index 00000000000..fa0543e52ff
 +    printf("%d\n", a, b, c, d, e);
 +}
 -- 
-2.16.2
+2.20.1
 

@@ -1,7 +1,7 @@
-From bb799405ca0a1bf7284bb050ec4c91f91d11abe1 Mon Sep 17 00:00:00 2001
+From f48d88297eb75a81e1fb88dc51993b139fbec4f1 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sun, 30 Sep 2012 16:44:14 -0400
-Subject: [PATCH 06/12] allow the global disabling of function cloning
+Subject: [PATCH 05/16] allow the global disabling of function cloning
 
 Optimizations which clone functions to create call-specific implementations
 which may be better optimized also dissociate these functions from their
@@ -14,14 +14,14 @@ optimization ineffective, and our source safe for debuggers everywhere.
 ---
  gcc/common.opt      |  5 +++++
  gcc/doc/invoke.texi | 11 ++++++++++-
- gcc/tree-inline.c   | 11 ++++++-----
- 3 files changed, 21 insertions(+), 6 deletions(-)
+ gcc/tree-inline.c   |  3 ++-
+ 3 files changed, 17 insertions(+), 2 deletions(-)
 
 diff --git a/gcc/common.opt b/gcc/common.opt
-index e9441dd237e..b1971d4dd52 100644
+index 7354fa14f4f..a54089ef522 100644
 --- a/gcc/common.opt
 +++ b/gcc/common.opt
-@@ -1109,6 +1109,11 @@ fcode-hoisting
+@@ -1113,6 +1113,11 @@ fcode-hoisting
  Common Report Var(flag_code_hoisting) Optimization
  Enable code hoisting.
  
@@ -34,7 +34,7 @@ index e9441dd237e..b1971d4dd52 100644
  Common Report Var(flag_combine_stack_adjustments) Optimization
  Looks for opportunities to reduce stack adjustments and stack references.
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 5fef6945052..117754e0c11 100644
+index 1cee9bb94dc..8ea816bf244 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
 @@ -371,7 +371,7 @@ Objective-C and Objective-C++ Dialects}.
@@ -46,7 +46,7 @@ index 5fef6945052..117754e0c11 100644
  -fcompare-elim  -fcprop-registers  -fcrossjumping @gol
  -fcse-follow-jumps  -fcse-skip-blocks  -fcx-fortran-rules @gol
  -fcx-limited-range @gol
-@@ -8506,6 +8506,15 @@ and then tries to find ways to combine them.
+@@ -8519,6 +8519,15 @@ and then tries to find ways to combine them.
  
  Enabled by default at @option{-O1} and higher.
  
@@ -63,55 +63,19 @@ index 5fef6945052..117754e0c11 100644
  @opindex fipa-ra
  Use caller save registers for allocation if those registers are not used by
 diff --git a/gcc/tree-inline.c b/gcc/tree-inline.c
-index 5a0a2525c0c..ecb047c6043 100644
+index 324c1682921..c560e191c39 100644
 --- a/gcc/tree-inline.c
 +++ b/gcc/tree-inline.c
-@@ -669,7 +669,7 @@ remap_decls (tree decls, vec<tree, va_gc> **nonlocalized_list,
- 	  gcc_assert (DECL_P (new_var));
- 	  DECL_CHAIN (new_var) = new_decls;
- 	  new_decls = new_var;
-- 
-+
- 	  /* Also copy value-expressions.  */
- 	  if (VAR_P (new_var) && DECL_HAS_VALUE_EXPR_P (new_var))
- 	    {
-@@ -3470,7 +3470,7 @@ declare_return_variable (copy_body_data *id, tree return_slot, tree modify_dest,
-  done:
-   /* Register the VAR_DECL as the equivalent for the RESULT_DECL; that
-      way, when the RESULT_DECL is encountered, it will be
--     automatically replaced by the VAR_DECL.  
-+     automatically replaced by the VAR_DECL.
- 
-      When returning by reference, ensure that RESULT_DECL remaps to
-      gimple_val.  */
-@@ -4554,7 +4554,7 @@ expand_call_inline (basic_block bb, gimple *stmt, copy_body_data *id)
-     {
-       id->block = make_node (BLOCK);
-       BLOCK_ABSTRACT_ORIGIN (id->block) = fn;
--      BLOCK_SOURCE_LOCATION (id->block) 
-+      BLOCK_SOURCE_LOCATION (id->block)
- 	= LOCATION_LOCUS (gimple_location (stmt));
-       prepend_lexical_block (gimple_block (stmt), id->block);
-     }
-@@ -5689,7 +5689,8 @@ bool
+@@ -5715,7 +5715,8 @@ bool
  tree_versionable_function_p (tree fndecl)
  {
    return (!lookup_attribute ("noclone", DECL_ATTRIBUTES (fndecl))
 -	  && copy_forbidden (DECL_STRUCT_FUNCTION (fndecl)) == NULL);
-+      && (copy_forbidden (DECL_STRUCT_FUNCTION (fndecl)) == NULL)
++	  && (copy_forbidden (DECL_STRUCT_FUNCTION (fndecl)) == NULL)
 +	  && flag_clone_functions);
  }
  
  /* Delete all unreachable basic blocks and update callgraph.
-@@ -5808,7 +5809,7 @@ update_clone_info (copy_body_data * id)
-    tree with another tree while duplicating the function's
-    body, TREE_MAP represents the mapping between these
-    trees. If UPDATE_CLONES is set, the call_stmt fields
--   of edges of clones of the function will be updated.  
-+   of edges of clones of the function will be updated.
- 
-    If non-NULL ARGS_TO_SKIP determine function parameters to remove
-    from new version.
 -- 
-2.16.2
+2.20.1
 
