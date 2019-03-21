@@ -12,27 +12,28 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS= 64
+PREFERRED_BITS=		64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-desktop
-COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b9bbb086c352764a6bf01a3c792a2858336b3a28a82ffb818b509de290b1701c
+	sha256:203be6a518a1c0f9afd077a977be939c11afe9f56c5dac58c69a958292c924c3
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= mate-desktop.license
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_LICENSE_FILE=	mate-desktop.license
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_FMRI=		library/desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -40,7 +41,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION = cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
@@ -53,7 +54,6 @@ CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
