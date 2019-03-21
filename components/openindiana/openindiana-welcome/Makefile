@@ -36,6 +36,8 @@ GIT_CHANGESET=HEAD
 
 PATH=/usr/gnu/bin:/usr/bin
 
+PYTHON_VERSION=3.5
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 
@@ -80,5 +82,5 @@ install: $(INSTALL_32)
 download:: $(SOURCE_DIR)/.downloaded
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pygobject-3-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/pygobject-3-35
+REQUIRED_PACKAGES += runtime/python-35
