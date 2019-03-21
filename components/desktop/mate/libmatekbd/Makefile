@@ -11,34 +11,34 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmatekbd
-COMPONENT_MJR_VERSION=  1.20
-COMPONENT_MNR_VERSION=  2
+COMPONENT_MJR_VERSION=  1.22
+COMPONENT_MNR_VERSION=  0
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE keyboard shared library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:21c3e307af2caf7fb552cfb1ea615b84acaa9f9993e7b988e3da6aa2e15d3fd0
+	sha256:c88ff0606f0581579804e97cf1f34fcebe739dc6fd41be1487552486823959b7
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_FMRI=		library/desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=	cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
@@ -50,7 +50,6 @@ CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
