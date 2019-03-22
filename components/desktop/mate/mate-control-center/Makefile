@@ -10,26 +10,26 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-control-center
-COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:44255adf12802e69b57afe68bbffe412271a86d6ecfb4dad0985033963b35de6
+	sha256:4015c830dfd29a454c1124226fc29db460b0ba373d78939aff70e9d9271f3c71
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/control-center
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
-COMPONENT_LICENSE= GPLv2
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -44,7 +44,6 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+=	--disable-static
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
