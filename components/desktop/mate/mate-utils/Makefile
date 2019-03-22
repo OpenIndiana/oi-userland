@@ -10,21 +10,21 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-utils
-COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Basic MATE utils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:0ebbd70142c5966f565f14e6b1b68c5d4cd389aeb2a2a5246a0a7e2952e0f070
+	sha256:2f1f51d056f81a9896f2ab35097b913d536235bdbb3a2a7b4b4cd231baf1c81c
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
@@ -36,7 +36,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=  cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
@@ -46,12 +46,13 @@ CONFIGURE_OPTIONS+=	--disable-static
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += image/editor/inkscape
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
