@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
 
 PREFERRED_BITS=	64
@@ -29,13 +29,12 @@ PREFERRED_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.5.6
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	3.5.7
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f55cde04f521f273c7cba08912921cc5642cfc15ca7b22d5829f0aff4371155f
+	sha256:285892899bf4d5737fd08482aa6171c6b2564a45b9102dfacfb72826aebdc7dc
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 
@@ -114,8 +113,8 @@ COMPONENT_BUILD_ARGS =
 # 64-bit shared objects need to go to 64-bit directory
 COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.5/lib-dynload
 
-# common targets
 build:		$(BUILD_64)
+
 install:	$(INSTALL_64)
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
@@ -138,7 +137,7 @@ COMPONENT_TEST_TARGETS = test < /dev/null
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /^Re-running failed tests in verbose mode/ { results = 0 } { if (results) print }'"
 
-test:				$(TEST_64)
+test:		$(TEST_64)
 
 # Required for dump(1)
 REQUIRED_PACKAGES += developer/object-file
