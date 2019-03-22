@@ -10,28 +10,28 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS= 64
+PREFERRED_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atril
-COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE PDF document viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:79dbcdf663a7a40194ece1b1ac3304a35b6828b0a68eed286c0e9c319dc77903
+	sha256:208544f6cce4bb5c0bf423a0d618929e35527d1c5ed120a5aa19f2a7a77e5c44
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	desktop/pdf-viewer/atril
+COMPONENT_FMRI=		desktop/pdf-viewer/atril
 COMPONENT_CLASSIFICATION=	Applications/Office
-COMPONENT_LICENSE= GPLv3
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -39,7 +39,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=  cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
@@ -49,7 +49,6 @@ CONFIGURE_OPTIONS+=	--disable-epub
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
