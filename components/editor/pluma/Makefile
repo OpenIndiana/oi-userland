@@ -10,23 +10,23 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS= 64
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pluma
-COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://mate-desktop.org/
 COMPONENT_SUMMARY=	MATE text editor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:fffd1ad0309c058ebd364ea0185d5dbbada2a9cde3d580da528b226c7ca9ab61
+	sha256:af8d19927f1571d6b63462b8e51fed9ac851326b6ff800535ea785f15c61a591
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=      GPLv2
@@ -41,8 +41,7 @@ PATH=$(PATH.gnu)
 
 LDFLAGS += -lnsl -lsocket
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					autoreconf -f )
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -f )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -53,7 +52,6 @@ COMPONENT_BUILD_ENV+=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
