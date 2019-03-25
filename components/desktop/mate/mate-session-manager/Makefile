@@ -11,26 +11,26 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-session-manager
-COMPONENT_MJR_VERSION=	1.20
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:be2551ac936da9e3e7d270701bb3e3a1afeba0543c15e2fd370e2353d6011817
+	sha256:2f1a68447a2ec30791e07865fd3747e367c3fffe8373d07ea948b0d759bca8c7
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = desktop/mate/$(COMPONENT_NAME)
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -38,7 +38,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=	cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
@@ -50,7 +50,6 @@ CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
