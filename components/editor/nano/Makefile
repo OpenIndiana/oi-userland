@@ -10,13 +10,13 @@
 
 #
 # Copyright (c) 2014 Rouven Wachhaus
-# Copyright (c) 2018 Michal Nowak
+# Copyright (c) 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
-COMPONENT_VERSION=	3.2
+COMPONENT_VERSION=	4.0
 COMPONENT_FMRI=		editor/nano
 COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -24,7 +24,7 @@ COMPONENT_PROJECT_URL=	https://www.nano-editor.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:d12773af3589994b2e4982c5792b07c6240da5b86c5aef2103ab13b401fe6349
+	sha256:1e2fcfea35784624a7d86785768b772d58bb3995d1aec9176a27a113b1e9bac3
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
@@ -36,15 +36,20 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && autoreconf -fiv )
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
-CONFIGURE_OPTIONS  +=		--enable-color
-CONFIGURE_OPTIONS  +=		--enable-multibuffer
-CONFIGURE_OPTIONS  +=		--enable-utf8
-CONFIGURE_OPTIONS  +=		get_wch=getwch
+CONFIGURE_OPTIONS +=	--sysconfdir=/etc
+CONFIGURE_OPTIONS +=	--enable-color
+CONFIGURE_OPTIONS +=	--enable-multibuffer
+CONFIGURE_OPTIONS +=	--enable-utf8
+# magic does not identify files given their content
+CONFIGURE_OPTIONS +=	--disable-libmagic
+CONFIGURE_OPTIONS +=	get_wch=getwch
 
 CPPFLAGS += -I$(USRINCDIR)/ncurses
 CFLAGS += -I$(USRINCDIR)/ncurses
 
-# common targets
+COMPONENT_POST_INSTALL_ACTION = \
+	$(INSTALL) -D -m 0644 $(BUILD_DIR)/$(MACH64)/doc/sample.nanorc $(PROTO_DIR)$(ETCDIR)/nanorc
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
@@ -52,6 +57,5 @@ install:	$(INSTALL_64)
 test:		$(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
