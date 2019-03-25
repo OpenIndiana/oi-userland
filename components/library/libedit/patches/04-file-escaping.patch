@@ -1,0 +1,64 @@
+https://gnats.netbsd.org/cgi-bin/query-pr-single.pl?number=54067
+https://www.illumos.org/issues/10571
+
+From d2dd9e594dc93d91e9341ffa45cc3d230a228aca Mon Sep 17 00:00:00 2001
+From: abhinav <abhinav@NetBSD.org>
+Date: Sun, 24 Mar 2019 16:42:49 +0000
+Subject: [PATCH] Only quote the completion matches if we are doing filename
+ completion
+
+If the user supplies a value for the attempted_completion_function parameter
+then we cannot be sure if the completion is for filename or something else, in such
+a case don't attempt to quote the completion matches.
+
+Reviewed by christos
+
+This should address PR lib/54067
+---
+ lib/libedit/filecomplete.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/lib/libedit/filecomplete.c b/lib/libedit/filecomplete.c
+index 4593bbc601b9..0445b9f430d7 100644
+--- libedit-20181209-3.1/src/filecomplete.c.~1~	2018-05-25 21:09:38.000000000 +0000
++++ libedit-20181209-3.1/src/filecomplete.c	2019-03-25 07:34:25.052481429 +0000
+@@ -1,4 +1,4 @@
+-/*	$NetBSD: filecomplete.c,v 1.51 2018/05/04 20:38:26 christos Exp $	*/
++/*	$NetBSD: filecomplete.c,v 1.52 2019/03/24 16:42:49 abhinav Exp $	*/
+ 
+ /*-
+  * Copyright (c) 1997 The NetBSD Foundation, Inc.
+@@ -32,7 +32,7 @@
+ #include "config.h"
+ 
+ #if !defined(lint) && !defined(SCCSID)
+-__RCSID("$NetBSD: filecomplete.c,v 1.51 2018/05/04 20:38:26 christos Exp $");
++__RCSID("$NetBSD: filecomplete.c,v 1.52 2019/03/24 16:42:49 abhinav Exp $");
+ #endif /* not lint && not SCCSID */
+ 
+ #include <sys/types.h>
+@@ -650,15 +650,19 @@
+ 				 * it, unless we do filename completion and the
+ 				 * object is a directory. Also do necessary escape quoting
+ 				 */
+-				char *escaped_completion = escape_filename(el, matches[0]);
+-				if (escaped_completion == NULL)
++				char *completion;
++				if (!attempted_completion_function)
++					completion = escape_filename(el, matches[0]);
++				else
++					completion = strdup(matches[0]);
++				if (completion == NULL)
+ 					goto out;
+ 				el_winsertstr(el,
+-					ct_decode_string(escaped_completion, &el->el_scratch));
++					ct_decode_string(completion, &el->el_scratch));
+ 				el_winsertstr(el,
+-						ct_decode_string((*app_func)(escaped_completion),
++						ct_decode_string((*app_func)(completion),
+ 							&el->el_scratch));
+-				free(escaped_completion);
++				free(completion);
+ 			} else {
+ 				/*
+ 				 * Only replace the completed string with common part of
