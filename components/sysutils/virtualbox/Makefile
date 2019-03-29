@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      6.0.4
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
@@ -96,6 +97,9 @@ LOCAL_CONFIG.64+='\nVBOX_WITH_NETADP = 1'
 LOCAL_CONFIG.64+='\nVBOX_WITH_VIDEOREC ='
 LOCAL_CONFIG.64+='\nVBOX_WITH_AUDIO_VIDEOREC ='
 
+# Enable building with pulse audio support
+LOCAL_CONFIG.64 +='\nVBOX_WITH_AUDIO_PULSE = 1'
+
 LOCAL_CONFIG.32 +='\nVBOX_ONLY_ADDITIONS  = 1'
 
 LOCAL_CONFIG += $(LOCAL_CONFIG.$(BITS))
@@ -123,7 +127,10 @@ CONFIGURE_OPTIONS+= --with-g++="$(CXX)"
 CONFIGURE_OPTIONS+= --disable-alsa
 CONFIGURE_OPTIONS+= --disable-dbus
 CONFIGURE_OPTIONS+= --disable-docs
-CONFIGURE_OPTIONS+= --enable-pulse
+# we enable pulse support in LocalConfig.kmk by setting the define, because
+# --enable-pulse doesn't currently do what we need
+# See: https://www.virtualbox.org/ticket/18544 for more info
+#CONFIGURE_OPTIONS+= --enable-pulse
 CONFIGURE_OPTIONS+= --disable-python
 CONFIGURE_OPTIONS+= --disable-sdl-ttf
 CONFIGURE_OPTIONS+= --disable-libvpx
@@ -201,7 +208,9 @@ test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += driver/usb
+REQUIRED_PACKAGES += system/header/header-agp
 REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += system/header/header-usb
 REQUIRED_PACKAGES += x11/library/libxinerama
 
 # Auto-generated dependencies
