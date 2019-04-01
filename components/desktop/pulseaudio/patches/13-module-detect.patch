@@ -1,0 +1,13 @@
+--- pulseaudio-11.1/src/modules/module-detect.c-orig	Mon Sep 18 05:41:02 2017
++++ pulseaudio-11.1/src/modules/module-detect.c	Sat Jul 28 11:00:07 2018
+@@ -56,6 +56,10 @@
+     NULL
+ };
+ 
++#ifdef HAVE_SOLARIS
++#undef HAVE_OSS_OUTPUT
++#endif
++
+ #ifdef HAVE_ALSA
+ 
+ static int detect_alsa(pa_core *c, int just_one) {

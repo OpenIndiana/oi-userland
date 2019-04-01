@@ -1,5 +1,5 @@
---- pulseaudio-10.0/src/modules/oss/module-oss.c.orig	2017-04-22 18:37:32.985739497 +0200
-+++ pulseaudio-10.0/src/modules/oss/module-oss.c	2017-04-22 18:38:02.222257971 +0200
+--- pulseaudio-11.1/src/modules/oss/module-oss.c-orig	Tue Sep  5 04:33:13 2017
++++ pulseaudio-11.1/src/modules/oss/module-oss.c	Wed Aug  8 17:27:45 2018
 @@ -32,6 +32,8 @@
   *
   */
@@ -9,7 +9,19 @@
  #ifdef HAVE_CONFIG_H
  #include <config.h>
  #endif
-@@ -123,7 +125,18 @@
+@@ -96,7 +98,11 @@
+ PA_MODULE_DEPRECATED("Please use module-alsa-card instead of module-oss!");
+ #endif
+ 
++#ifdef HAVE_SOLARIS
++#define DEFAULT_DEVICE "/dev/audio"
++#else
+ #define DEFAULT_DEVICE "/dev/dsp"
++#endif /* HAVE_SOLARIS */
+ 
+ struct userdata {
+     pa_core *core;
+@@ -123,7 +129,18 @@
      int mode;
  
      int mixer_fd;
@@ -28,7 +40,7 @@
  
      int nfrags, frag_size, orig_frag_size;
  
-@@ -809,6 +822,160 @@
+@@ -809,11 +826,165 @@
      return ret;
  }
  
@@ -140,11 +152,11 @@
 +    return;
 +}
 +
-+static void sink_get_volume(pa_sink *s) {
-+    struct userdata *u;
-+
-+    pa_assert_se(u = s->userdata);
-+
+ static void sink_get_volume(pa_sink *s) {
+     struct userdata *u;
+ 
+     pa_assert_se(u = s->userdata);
+ 
 +    if (pa_oss_get_volume(u->mixer_dsp_fd, &(u->sink_mixext), &s->sample_spec, &s->real_volume) >= 0)
 +        return;
 +
@@ -186,10 +198,15 @@
 +
 +#else
 +
- static void sink_get_volume(pa_sink *s) {
-     struct userdata *u;
++static void sink_get_volume(pa_sink *s) {
++    struct userdata *u;
++
++    pa_assert_se(u = s->userdata);
++
+     pa_assert(u->mixer_devmask & (SOUND_MASK_VOLUME|SOUND_MASK_PCM));
  
-@@ -880,6 +1047,7 @@
+     if (u->mixer_devmask & SOUND_MASK_VOLUME)
+@@ -880,6 +1051,7 @@
  
      pa_log_info("Device doesn't support writing mixer settings: %s", pa_cstrerror(errno));
  }
@@ -197,7 +214,7 @@
  
  static void thread_func(void *userdata) {
      struct userdata *u = userdata;
-@@ -1162,6 +1330,11 @@
+@@ -1162,12 +1334,19 @@
  
  int pa__init(pa_module*m) {
  
@@ -209,7 +226,32 @@
      struct audio_buf_info info;
      struct userdata *u = NULL;
      const char *dev;
-@@ -1259,7 +1432,9 @@
++    const char *default_dev;
+     int fd = -1;
+     int nfrags, orig_frag_size, frag_size;
+     int mode, caps;
++    int dev_num;
+     bool record = true, playback = true, use_mmap = true;
+     pa_sample_spec ss;
+     pa_channel_map map;
+@@ -1219,7 +1398,15 @@
+         goto fail;
+     }
+ 
+-    if ((fd = pa_oss_open(dev = pa_modargs_get_value(ma, "device", DEFAULT_DEVICE), &mode, &caps)) < 0)
++#ifdef HAVE_SOLARIS
++    default_dev = getenv("AUDIODEV");
++    if (!default_dev)
++        default_dev = DEFAULT_DEVICE;
++#else /* HAVE_SOLARIS */
++    default_dev = DEFAULT_DEVICE;
++#endif /* HAVE_SOLARIS */
++
++    if ((fd = pa_oss_open(dev = pa_modargs_get_value(ma, "device", default_dev), &mode, &caps)) < 0)
+         goto fail;
+ 
+     if (use_mmap && (!(caps & DSP_CAP_MMAP) || !(caps & DSP_CAP_TRIGGER))) {
+@@ -1259,7 +1446,9 @@
      m->userdata = u;
      u->fd = fd;
      u->mixer_fd = -1;
@@ -219,8 +261,12 @@
      u->use_getospace = u->use_getispace = true;
      u->use_getodelay = true;
      u->mode = mode;
-@@ -1431,6 +1606,194 @@
-     if ((u->mixer_fd = pa_oss_open_mixer_for_device(u->device_name)) >= 0) {
+@@ -1428,9 +1617,190 @@
+             u->out_mmap_memblocks = pa_xnew0(pa_memblock*, u->out_nfrags);
+     }
+ 
+-    if ((u->mixer_fd = pa_oss_open_mixer_for_device(u->device_name)) >= 0) {
++    if ((u->mixer_fd = pa_oss_open_mixer_for_device(u->device_name, &dev_num)) >= 0) {
          bool do_close = true;
  
 +#ifdef HAVE_OSSV4
@@ -243,18 +289,11 @@
 +                /*
 +                 * There could be multiple mixers. First we only care about
 +                 * ones which are enabled.  In any case we should not touch
-+                 * disabled mixers!  But beyond that it may not be clear which
-+                 * one to use!  There is a way to relate the card number to the
-+                 * device node name. But there does not seem to be a real good
-+                 * way to chose which one to use.  So maybe an env. var. could
-+                 * be used to select a dsp device node name and then pick the
-+                 * correct mixer number.  (See load_devices() in audioctl).
++                 * disabled mixers!
 +                 * This code now will always pick the first enabled mixer
-+                 * found.  Which may be wrong for multiple mixers and/or sound
-+                 * cards.  It may be possible/desirable to control all mixers
-+                 * found at the same time???
++                 * found that has the matching device number.
 +                 */
-+                break;
++                if (i == dev_num) break;
 +            }
 +        }
 +
@@ -414,7 +453,7 @@
          if (ioctl(u->mixer_fd, SOUND_MIXER_READ_DEVMASK, &u->mixer_devmask) < 0)
              pa_log_warn("SOUND_MIXER_READ_DEVMASK failed: %s", pa_cstrerror(errno));
          else {
-@@ -1450,11 +1813,14 @@
+@@ -1450,11 +1820,14 @@
                  do_close = false;
              }
          }
@@ -429,7 +468,7 @@
          }
      }
  
-@@ -1573,6 +1939,10 @@
+@@ -1573,6 +1946,10 @@
      if (u->fd >= 0)
          pa_close(u->fd);
  
@@ -440,278 +479,3 @@
      if (u->mixer_fd >= 0)
          pa_close(u->mixer_fd);
  
---- pulseaudio-1.1/src/modules/oss/oss-util.c-orig	2011-12-08 16:37:16.783601951 -0600
-+++ pulseaudio-1.1/src/modules/oss/oss-util.c	2011-12-13 03:50:37.757290581 -0600
-@@ -257,6 +257,190 @@ int pa_oss_set_fragments(int fd, int nfr
-     return 0;
- }
- 
-+#ifdef HAVE_OSSV4
-+static int
-+oss4_mixer_slider_pack_volume (oss_mixext *mixext, int channels, const pa_cvolume *volume)
-+{
-+  int val  = 0;
-+  int lvol = 0;
-+  int rvol = 0;
-+  int lval = 0;
-+  int rval = 0;
-+
-+  switch (mixext->type) {
-+    case MIXT_MONOSLIDER:
-+    case MIXT_MONOSLIDER16:
-+    case MIXT_SLIDER:
-+      lvol = volume->values[0] > PA_VOLUME_NORM ? PA_VOLUME_NORM : volume->values[0];
-+      val = (lvol*mixext->maxvalue)/PA_VOLUME_NORM;
-+      break;
-+
-+    case MIXT_STEREOSLIDER:
-+      lvol = volume->values[0] > PA_VOLUME_NORM ? PA_VOLUME_NORM : volume->values[0];
-+      lval = (lvol*mixext->maxvalue)/PA_VOLUME_NORM;
-+      if (channels >= 2) {
-+          rvol = volume->values[1] > PA_VOLUME_NORM ? PA_VOLUME_NORM : volume->values[1];
-+          rval = (rvol*mixext->maxvalue)/PA_VOLUME_NORM;
-+      }
-+     
-+      val = ((rval & 0xff) << 8) | (lval & 0xff);
-+      break;
-+
-+    case MIXT_STEREOSLIDER16:
-+      lvol = volume->values[0] > PA_VOLUME_NORM ? PA_VOLUME_NORM : volume->values[0];
-+      lval = (lvol*mixext->maxvalue)/PA_VOLUME_NORM;
-+      if (channels >= 2) {
-+          rvol = volume->values[1] > PA_VOLUME_NORM ? PA_VOLUME_NORM : volume->values[1];
-+          rval = (rvol*mixext->maxvalue)/PA_VOLUME_NORM;
-+      }
-+
-+      val = ((rval & 0xffff) << 16) | (lval & 0xffff);
-+
-+      break;
-+
-+    default:
-+      return 0;
-+  }
-+
-+  return val;
-+}
-+
-+static void
-+oss4_mixer_slider_unpack_volume (oss_mixext *mixext, int v, pa_cvolume * volume)
-+{
-+  uint32_t val, vol;
-+
-+  val = (uint32_t) v;
-+  switch (mixext->type) {
-+    case MIXT_SLIDER:
-+      vol = val;
-+      volume->values[0] = PA_CLAMP_VOLUME((vol * PA_VOLUME_NORM) / mixext->maxvalue);
-+      if (volume->channels >= 2) {
-+          volume->values[1] = volume->values[0];
-+      }
-+      break;
-+    case MIXT_MONOSLIDER:
-+      /* oss repeats the value in the upper bits, as if it was stereo */
-+      vol = val & 0x00ff;
-+      volume->values[0] = PA_CLAMP_VOLUME((vol * PA_VOLUME_NORM) / mixext->maxvalue);
-+      if (volume->channels >= 2) {
-+          volume->values[1] = volume->values[0];
-+      }
-+      break;
-+    case MIXT_MONOSLIDER16:
-+      /* oss repeats the value in the upper bits, as if it was stereo */
-+      vol = val & 0x0000ffff;
-+      volume->values[0] = PA_CLAMP_VOLUME((vol * PA_VOLUME_NORM) / mixext->maxvalue);
-+      if (volume->channels >= 2) {
-+          volume->values[1] = volume->values[0];
-+      }
-+      break;
-+    case MIXT_STEREOSLIDER:
-+      vol = (val & 0x00ff);
-+      volume->values[0] = PA_CLAMP_VOLUME((vol * PA_VOLUME_NORM) / mixext->maxvalue);
-+      if (volume->channels >= 2) {
-+          vol = (val & 0xff00) >> 8;
-+          volume->values[1] = PA_CLAMP_VOLUME((vol * PA_VOLUME_NORM) / mixext->maxvalue);
-+      }
-+      break;
-+    case MIXT_STEREOSLIDER16:
-+      vol = (val & 0x0000ffff);
-+      volume->values[0] = PA_CLAMP_VOLUME((vol * PA_VOLUME_NORM) / mixext->maxvalue);
-+      if (volume->channels >= 2) {
-+          vol = (val & 0xffff0000) >> 16;
-+          volume->values[1] = PA_CLAMP_VOLUME((vol * PA_VOLUME_NORM) / mixext->maxvalue);
-+      }
-+      break;
-+    default:
-+      return;
-+  }
-+}
-+
-+static int
-+oss4_mixer_get_control_val (int fd, oss_mixext *mixext, int *val)
-+{
-+  oss_mixer_value ossval = { 0, };
-+
-+  /* ossval.dev = mixext->dev; */
-+  ossval.dev = -1;		/* if -1 on entry then is ignored */
-+  /*
-+   * The real way to pick a control on a mixer is with this number.
-+   * Note that control numbers are uniq across all mixers. So dev
-+   * can just be ignored. When dev is included it will only be used
-+   * to check for correct dev from userland. But it will not be used
-+   * to select a mixer.
-+   */
-+  ossval.ctrl = mixext->ctrl;
-+  ossval.timestamp = mixext->timestamp;
-+
-+  if (ioctl (fd, SNDCTL_MIX_READ, &ossval) == -1) {
-+    pa_log_debug ("SNDCTL_MIX_READ failed");
-+    *val = 0;
-+    return -1;
-+  }
-+
-+  *val = ossval.value;
-+  pa_log_debug ("got value 0x%08x from %s", *val, mixext->extname);
-+  return 0;
-+}
-+
-+static int
-+oss4_mixer_set_control_val (int fd, oss_mixext *mixext, int val)
-+{
-+  oss_mixer_value ossval = { 0, };
-+
-+  /* ossval.dev = mixext->dev; */
-+  ossval.dev = -1;		/* if -1 on entry then is ignored */
-+  /*
-+   * The real way to pick a control on a mixer is with this number.
-+   * Note that control numbers are uniq across all mixers. So dev
-+   * can just be ignored. When dev is included it will only be used
-+   * to check for correct dev from userland. But it will not be used
-+   * to select a mixer.
-+   */
-+  ossval.ctrl = mixext->ctrl;
-+  ossval.timestamp = mixext->timestamp;
-+  ossval.value = val;
-+
-+  if (ioctl (fd, SNDCTL_MIX_WRITE, &ossval) == -1) {
-+    pa_log_debug ("SNDCTL_MIX_WRITE failed");
-+    return -1;
-+  }
-+
-+  pa_log_debug ("set value 0x%08x on %s", val, mixext->extname);
-+  return 0;
-+}
-+
-+int pa_oss_get_volume(int fd, oss_mixext *mixext, const pa_sample_spec *ss, pa_cvolume *volume) {
-+  int v = 0;
-+
-+  if (oss4_mixer_get_control_val (fd, mixext, &v) != 0) {
-+    pa_log_debug ("Getting volume failed");
-+    return -1;
-+  }
-+
-+  pa_cvolume_reset(volume, ss->channels);
-+
-+  oss4_mixer_slider_unpack_volume (mixext, v, volume);
-+
-+  return 0;
-+}
-+
-+int pa_oss_set_volume(int fd, oss_mixext *mixext, const pa_sample_spec *ss, const pa_cvolume *volume) {
-+  int val = 0;
-+
-+  val = oss4_mixer_slider_pack_volume (mixext, ss->channels, volume);
-+
-+  if (oss4_mixer_set_control_val (fd, mixext, val) != 0) {
-+    pa_log_debug ("Setting volume failed");
-+    return -1;
-+  }
-+
-+  return 0;
-+}
-+
-+#else
-+
- int pa_oss_get_volume(int fd, unsigned long mixer, const pa_sample_spec *ss, pa_cvolume *volume) {
-     char cv[PA_CVOLUME_SNPRINT_MAX];
-     unsigned vol;
-@@ -299,6 +483,7 @@ int pa_oss_set_volume(int fd, unsigned l
-     pa_log_debug("Wrote mixer settings: %s", pa_cvolume_snprint(cv, sizeof(cv), volume));
-     return 0;
- }
-+#endif
- 
- static int get_device_number(const char *dev) {
-     const char *p, *e;
-@@ -397,9 +582,11 @@ int pa_oss_get_hw_description(const char
-     return r;
- }
- 
--static int open_mixer(const char *mixer) {
-+int pa_oss_open_mixer(const char *mixer) {
-     int fd;
- 
-+    pa_log_debug ("Opening device %s", mixer);
-+
-     if ((fd = pa_open_cloexec(mixer, O_RDWR|O_NDELAY, 0)) >= 0)
-         return fd;
- 
-@@ -411,19 +598,22 @@ int pa_oss_open_mixer_for_device(const c
-     char *fn;
-     int fd;
- 
--    if ((n = get_device_number(device)) < 0)
-+    if ((n = get_device_number(device)) < 0) {
-+        pa_log_debug ("Cannot find device");
-         return -1;
-+    }
- 
-     if (n == 0)
--        if ((fd = open_mixer("/dev/mixer")) >= 0)
-+        if ((fd = pa_oss_open_mixer("/dev/mixer")) >= 0)
-             return fd;
- 
-     fn = pa_sprintf_malloc("/dev/mixer%i", n);
--    fd = open_mixer(fn);
-+    fd = pa_oss_open_mixer(fn);
-     pa_xfree(fn);
- 
-     if (fd < 0)
-         pa_log_warn("Failed to open mixer '%s': %s", device, pa_cstrerror(errno));
-+    else
- 
-     return fd;
- }
---- pulseaudio-1.1/src/modules/oss/oss-util.h-orig	2011-12-05 22:39:30.119276863 -0600
-+++ pulseaudio-1.1/src/modules/oss/oss-util.h	2011-12-13 01:22:45.351928881 -0600
-@@ -31,11 +31,21 @@ int pa_oss_auto_format(int fd, pa_sample
- 
- int pa_oss_set_fragments(int fd, int frags, int frag_size);
- 
-+#define HAVE_OSSV4
-+
-+#ifdef HAVE_OSSV4
-+int pa_oss_set_volume(int fd, oss_mixext *mixext, const pa_sample_spec *ss, const pa_cvolume *volume);
-+int pa_oss_get_volume(int fd, oss_mixext *mixext, const pa_sample_spec *ss, pa_cvolume *volume);
-+
-+#else
-+
- int pa_oss_set_volume(int fd, unsigned long mixer, const pa_sample_spec *ss, const pa_cvolume *volume);
- int pa_oss_get_volume(int fd, unsigned long mixer, const pa_sample_spec *ss, pa_cvolume *volume);
-+#endif
- 
- int pa_oss_get_hw_description(const char *dev, char *name, size_t l);
- 
- int pa_oss_open_mixer_for_device(const char *device);
-+int pa_oss_open_mixer(const char *device);
- 
- #endif
---- pulseaudio-6.0/src/daemon/default.pa.in.1	2017-03-03 17:13:10.180695162 +0300
-+++ pulseaudio-6.0/src/daemon/default.pa.in	2017-03-03 17:13:29.027199326 +0300
-@@ -54,7 +54,7 @@
- #load-module module-alsa-source device=hw:1,0
- ])dnl
- ifelse(@HAVE_OSS_OUTPUT@, 1, [dnl
--#load-module module-oss device="/dev/dsp" sink_name=output source_name=input
-+load-module module-oss device="/dev/dsp" sink_name=output source_name=input
- #load-module module-oss-mmap device="/dev/dsp" sink_name=output source_name=input
- ])dnl
- ifelse(@HAVE_WAVEOUT@, 1, [dnl
