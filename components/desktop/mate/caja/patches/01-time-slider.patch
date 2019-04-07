@@ -598,18 +598,6 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  	if (file->details->thumbnail) {
  		g_object_unref (file->details->thumbnail);
  	}
-@@ -4035,9 +4052,9 @@
- 	char *escaped_name;
- 
- 	/*
--	stefano-k: Imported 15_nautilus_file_peek_crash.patch from debian nautilus
-+	stefano-k: Imported 15_caja_file_peek_crash.patch from debian caja
- 	Date: Thu, 27 Jan 2011 10:22:10 +0000
--	Subject: Prevent a crash in nautilus_file_peek_display_name() on invalid NautilusFile
-+	Subject: Prevent a crash in caja_file_peek_display_name() on invalid CajaFile
- 	This is more a workaround only, expect assert failures at other
- 	places when something bad happens. There's a race condition somewhere,
- 	this patch only prevents immediate crash.
 @@ -4799,6 +4816,74 @@
  	NULL
  };
@@ -2807,8 +2795,8 @@ diff -urN caja-1.22.0/src/caja-navigation-window-ui.xml caja-1.22.0-patched/src/
  	<toolitem name="Home" action="Home"/>
  	<toolitem name="Computer" action="Go to Computer"/>
 diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-navigation-window.c
---- caja-1.22.0/src/caja-navigation-window.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-navigation-window.c	2019-03-22 09:18:09.834387396 +0000
+--- caja-1.22.0/src/caja-navigation-window.c.~1~	2019-02-09 22:11:06.000000000 +0000
++++ caja-1.22.0/src/caja-navigation-window.c	2019-04-07 10:52:11.141635362 +0000
 @@ -41,6 +41,7 @@
  #include "caja-notebook.h"
  #include "caja-window-manage-views.h"
@@ -3238,7 +3226,7 @@ diff -urN caja-1.22.0/src/caja-window-menus.c caja-1.22.0-patched/src/caja-windo
 +    /* label, accelerator */       N_("R_estore"), "<control>E",
 +    /* tooltip */                  N_("Browse the current location snapshot history"),
 +        G_CALLBACK (action_restore_callback),
-+        TRUE 
++        FALSE
 +    },
      /* name, icon name */        { "Show Hidden Files", NULL,
          /* label, accelerator */       N_("Show _Hidden Files"), "<control>H",
