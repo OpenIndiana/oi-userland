@@ -1394,9 +1394,9 @@ diff -urN caja-1.22.0/libcaja-private/caja-global-preferences.h caja-1.22.0-patc
  #define CAJA_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS 	"mouse-use-extra-buttons"
  #define CAJA_PREFERENCES_MOUSE_FORWARD_BUTTON		"mouse-forward-button"
 diff -urN caja-1.22.0/libcaja-private/caja-zfs.c caja-1.22.0-patched/libcaja-private/caja-zfs.c
---- caja-1.22.0/libcaja-private/caja-zfs.c	1970-01-01 03:00:00.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-zfs.c	2019-03-22 09:18:09.862905186 +0000
-@@ -0,0 +1,1236 @@
+--- caja-1.22.0/libcaja-private/caja-zfs.c.~1~	2019-04-07 13:39:38.596029302 +0000
++++ caja-1.22.0/libcaja-private/caja-zfs.c	2019-04-07 13:39:38.646046161 +0000
+@@ -0,0 +1,1239 @@
 +/* 
 + * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 + *
@@ -2033,6 +2033,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-zfs.c caja-1.22.0-patched/libcaja-pri
 +zfs_callback (zfs_handle_t *zhp, void *data)
 +{
 +  char buf[ZFS_MAXPROPLEN];
++  char mounted[ZFS_MAXPROPLEN];
 +  SearchDataSet *sds = (SearchDataSet*) data;
 +
 +  if (sds->match_found)
@@ -2051,8 +2052,10 @@ diff -urN caja-1.22.0/libcaja-private/caja-zfs.c caja-1.22.0-patched/libcaja-pri
 +      if (sds->prop >= ZFS_PROP_TYPE && sds->prop < ZFS_NUM_PROPS) 
 +    {
 +      zfs_prop_get(zhp, sds->prop, buf, sizeof (buf), NULL, NULL,  0, TRUE);
++
++      zfs_prop_get(zhp, ZFS_PROP_MOUNTED, mounted, sizeof (mounted), NULL, NULL,  0, TRUE);
 +      
-+      if (strcmp (sds->mountpoint, buf) == 0)
++      if ((strcmp (sds->mountpoint, buf) == 0) && (strcmp (mounted, "yes") == 0))
 +        {
 +          ZfsDataSet *zds = ts_new_zfs_dataset (sds);
 +          zds->type = zfs_get_type (zhp);
@@ -4724,7 +4727,7 @@ diff -urN caja-1.22.0/src/timescale.c caja-1.22.0-patched/src/timescale.c
 +
 +    /* SUN_BRANDING */
 +    num_rev = g_strdup_printf (_("%d %s\n%s"),
-+            i, 
++            i - 1 /* Account for "Now" snapshot */, 
 +            /* SUN_BRANDING */
 +            ngettext ("snapshot", "snapshots", i),
 +            size_str);
