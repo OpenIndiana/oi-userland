@@ -19,37 +19,45 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2019 Rouven Weiler
 #
 
-<include samba.p5m.common>
+#
+# directories
+dir  path=etc
+dir  path=etc/samba
+dir  path=etc/samba/private mode=500
+dir  path=usr
+dir  path=usr/include
+dir  path=usr/include/samba
+dir  path=var
+dir  path=var/samba
+dir  path=var/samba/cache
+dir  path=var/samba/com
+dir  path=var/samba/lib
+dir  path=var/samba/lock
+dir  path=var/samba/locks
+dir  path=var/samba/log
+dir  path=var/samba/run
+dir  path=var/spool/samba mode=1777
 
-# "samba.proto-objects"-file is created using the command:
-#   gmake sample-manifest METADATA_TEMPLATE=
-# as a "sample-manifest"-file (in build/ dir) and is pkgfmt clean
-# All individual actions and attribute settings on pkg objects should
-# be performed by "<transform ...> (pkgmogrify) actions in "samba.p5m.common".
+#
+# smbprofiles
+file usr/share/man/man1/profiles.1 path=usr/share/man/man1/smbprofiles.1
+
 <include samba.proto-objects>
 
-# pkg attributes
-set name=pkg.fmri \
-    value=pkg:/service/network/samba@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="samba - A Windows SMB/CIFS fileserver for UNIX"
-set name=com.oracle.info.description value="Samba, a SMB/CIFS fileserver"
-set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification \
-    value="org.opensolaris.category.2008:System/File System"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2015/008
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#  man
+<transform file path=usr/share/man/man1/profiles.1 -> drop >
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile >
 
-# pam.conf is now modularized using /etc/pam.d/ which is fine for adding of PAM-using services
-# ...but add of new pam_-backend will need further fix.
-# pam.conf-winbind is now obsoleted:
-#file Solaris/pam.conf-winbind     path=etc/pam.d/
-
-# samba confdir
-dir  path=etc/samba/private mode=500
+# now handle pyc 
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+<transform file path=usr/(.*) -> default pkg.depend.runpath "$PKGDEPEND_RUNPATH:/usr/lib/python3.5/vendor-packages/samba:/usr/lib/python3.5/vendor-packages/samba/samba:/usr/lib/python3.5/vendor-packages/samba/samba/external:/usr/lib/python3.5/vendor-packages/samba/samba/subunit:/usr/lib/python3.5/vendor-packages/samba/samba/third_party" >
+<transform file path=.*/dns_hub.py -> default pkg.depend.bypass-generate .* >
+<transform file path=.*/run.py -> default pkg.depend.bypass-generate .* >
+<transform file path=.*/samba_upgradedns -> default pkg.depend.bypass-generate .* >
+<transform file path=.*/samba_dnsupdate -> default pkg.depend.bypass-generate .* >
 
 # service manifests to install
 file Solaris/samba.xml path=lib/svc/manifest/network/samba.xml
@@ -59,98 +67,71 @@ file Solaris/wins.xml path=lib/svc/manifest/network/wins.xml
 file Solaris/samba.sh path=lib/svc/method/samba
 
 #
-# bin (mediated links)
-#
-link path=usr/bin/cifsdd target=../lib/samba/bin/cifsdd
-link path=usr/bin/dbwrap_tool target=../lib/samba/bin/dbwrap_tool
+# bin 
+link path=usr/bin/cifsdd target=../lib/samba/bin/$(MACH64)/cifsdd
+link path=usr/bin/dbwrap_tool target=../lib/samba/bin/$(MACH64)/dbwrap_tool
 # Maybe one day we can set target and source to sbin.
 # left the following for compatibility purposes
-link path=usr/bin/eventlogadm target=../lib/samba/sbin/eventlogadm
-link path=usr/bin/findsmb target=../lib/samba/bin/findsmb
-link path=usr/bin/gentest target=../lib/samba/bin/gentest
-link path=usr/bin/ldbadd target=../lib/samba/bin/ldbadd
-link path=usr/bin/ldbdel target=../lib/samba/bin/ldbdel
-link path=usr/bin/ldbedit target=../lib/samba/bin/ldbedit
-link path=usr/bin/ldbmodify target=../lib/samba/bin/ldbmodify
-link path=usr/bin/ldbrename target=../lib/samba/bin/ldbrename
-link path=usr/bin/ldbsearch target=../lib/samba/bin/ldbsearch
-link path=usr/bin/locktest target=../lib/samba/bin/locktest
-link path=usr/bin/masktest target=../lib/samba/bin/masktest
-link path=usr/bin/ndrdump target=../lib/samba/bin/ndrdump
-link path=usr/bin/net target=../lib/samba/bin/net
-link path=usr/bin/nmblookup target=../lib/samba/bin/nmblookup
-#link path=usr/bin/nmblookup4 target=../lib/samba/bin/nmblookup4
-link path=usr/bin/ntlm_auth target=../lib/samba/bin/ntlm_auth
-link path=usr/bin/oLschema2ldif target=../lib/samba/bin/oLschema2ldif
-link path=usr/bin/pdbedit target=../lib/samba/bin/pdbedit
-link path=usr/bin/pidl target=../lib/samba/bin/pidl
-link path=usr/bin/regdiff target=../lib/samba/bin/regdiff
-link path=usr/bin/regpatch target=../lib/samba/bin/regpatch
-link path=usr/bin/regshell target=../lib/samba/bin/regshell
-link path=usr/bin/regtree target=../lib/samba/bin/regtree
-link path=usr/bin/rpcclient target=../lib/samba/bin/rpcclient
-link path=usr/bin/samba-regedit target=../lib/samba/bin/samba-regedit
-link path=usr/bin/samba-tool target=../lib/samba/bin/samba-tool
-link path=usr/bin/sharesec target=../lib/samba/bin/sharesec
-link path=usr/bin/smbcacls target=../lib/samba/bin/smbcacls
-link path=usr/bin/smbclient target=../lib/samba/bin/smbclient
-link path=usr/bin/smbcontrol target=../lib/samba/bin/smbcontrol
-link path=usr/bin/smbcquotas target=../lib/samba/bin/smbcquotas
-link path=usr/bin/smbget target=../lib/samba/bin/smbget
-link path=usr/bin/smbpasswd target=../lib/samba/bin/smbpasswd
-link path=usr/bin/smbprofiles target=../lib/samba/bin/profiles
-link path=usr/bin/smbspool target=../lib/samba/bin/smbspool
-link path=usr/bin/smbstatus target=../lib/samba/bin/smbstatus
-link path=usr/bin/smbtar target=../lib/samba/bin/smbtar
-link path=usr/bin/smbtorture target=../lib/samba/bin/smbtorture
-link path=usr/bin/smbtree target=../lib/samba/bin/smbtree
-link path=usr/bin/tdbbackup target=../lib/samba/bin/tdbbackup
-link path=usr/bin/tdbdump target=../lib/samba/bin/tdbdump
-link path=usr/bin/tdbrestore target=../lib/samba/bin/tdbrestore
-link path=usr/bin/tdbtool target=../lib/samba/bin/tdbtool
-link path=usr/bin/testparm target=../lib/samba/bin/testparm
-link path=usr/bin/wbinfo target=../lib/samba/bin/wbinfo
+link path=usr/bin/eventlogadm target=../lib/samba/sbin/$(MACH64)/eventlogadm
+link path=usr/bin/findsmb target=../lib/samba/bin/$(MACH64)/findsmb
+link path=usr/bin/gentest target=../lib/samba/bin/$(MACH64)/gentest
+link path=usr/bin/ldbadd target=../lib/samba/bin/$(MACH64)/ldbadd
+link path=usr/bin/ldbdel target=../lib/samba/bin/$(MACH64)/ldbdel
+link path=usr/bin/ldbedit target=../lib/samba/bin/$(MACH64)/ldbedit
+link path=usr/bin/ldbmodify target=../lib/samba/bin/$(MACH64)/ldbmodify
+link path=usr/bin/ldbrename target=../lib/samba/bin/$(MACH64)/ldbrename
+link path=usr/bin/ldbsearch target=../lib/samba/bin/$(MACH64)/ldbsearch
+link path=usr/bin/locktest target=../lib/samba/bin/$(MACH64)/locktest
+link path=usr/bin/masktest target=../lib/samba/bin/$(MACH64)/masktest
+link path=usr/bin/ndrdump target=../lib/samba/bin/$(MACH64)/ndrdump
+link path=usr/bin/net target=../lib/samba/bin/$(MACH64)/net
+link path=usr/bin/nmblookup target=../lib/samba/bin/$(MACH64)/nmblookup
+link path=usr/bin/ntlm_auth target=../lib/samba/bin/$(MACH64)/ntlm_auth
+link path=usr/bin/oLschema2ldif target=../lib/samba/bin/$(MACH64)/oLschema2ldif
+link path=usr/bin/pdbedit target=../lib/samba/bin/$(MACH64)/pdbedit
+link path=usr/bin/pidl target=../lib/samba/bin/$(MACH64)/pidl
+link path=usr/bin/regdiff target=../lib/samba/bin/$(MACH64)/regdiff
+link path=usr/bin/regpatch target=../lib/samba/bin/$(MACH64)/regpatch
+link path=usr/bin/regshell target=../lib/samba/bin/$(MACH64)/regshell
+link path=usr/bin/regtree target=../lib/samba/bin/$(MACH64)/regtree
+link path=usr/bin/rpcclient target=../lib/samba/bin/$(MACH64)/rpcclient
+link path=usr/bin/samba-regedit target=../lib/samba/bin/$(MACH64)/samba-regedit
+link path=usr/bin/samba-tool target=../lib/samba/bin/$(MACH64)/samba-tool
+link path=usr/bin/sharesec target=../lib/samba/bin/$(MACH64)/sharesec
+link path=usr/bin/smbcacls target=../lib/samba/bin/$(MACH64)/smbcacls
+link path=usr/bin/smbclient target=../lib/samba/bin/$(MACH64)/smbclient
+link path=usr/bin/smbcontrol target=../lib/samba/bin/$(MACH64)/smbcontrol
+link path=usr/bin/smbcquotas target=../lib/samba/bin/$(MACH64)/smbcquotas
+link path=usr/bin/smbget target=../lib/samba/bin/$(MACH64)/smbget
+link path=usr/bin/smbpasswd target=../lib/samba/bin/$(MACH64)/smbpasswd
+link path=usr/bin/smbprofiles target=../lib/samba/bin/$(MACH64)/profiles
+link path=usr/bin/smbspool target=../lib/samba/bin/$(MACH64)/smbspool
+link path=usr/bin/smbstatus target=../lib/samba/bin/$(MACH64)/smbstatus
+link path=usr/bin/smbtar target=../lib/samba/bin/$(MACH64)/smbtar
+link path=usr/bin/smbtorture target=../lib/samba/bin/$(MACH64)/smbtorture
+link path=usr/bin/smbtree target=../lib/samba/bin/$(MACH64)/smbtree
+link path=usr/bin/tdbbackup target=../lib/samba/bin/$(MACH64)/tdbbackup
+link path=usr/bin/tdbdump target=../lib/samba/bin/$(MACH64)/tdbdump
+link path=usr/bin/tdbrestore target=../lib/samba/bin/$(MACH64)/tdbrestore
+link path=usr/bin/tdbtool target=../lib/samba/bin/$(MACH64)/tdbtool
+link path=usr/bin/testparm target=../lib/samba/bin/$(MACH64)/testparm
+link path=usr/bin/wbinfo target=../lib/samba/bin/$(MACH64)/wbinfo
 
 #
 # nss_libs
 link path=usr/lib/$(MACH64)/nss_winbind.so.1 \
     target=../samba/$(MACH64)/nss_winbind.so.1
-link path=usr/lib/nss_winbind.so.1 target=./samba/nss_winbind.so.1
 
 #
 # PAM-libs
 link path=usr/lib/security/$(MACH64)/pam_winbind.so \
-    target=../../samba/$(MACH64)/pam_winbind.so
+    target=../../samba/security/$(MACH64)/pam_winbind.so
 link path=usr/lib/security/$(MACH64)/pam_winbind.so.1 \
-    target=../../samba/$(MACH64)/pam_winbind.so
-link path=usr/lib/security/pam_winbind.so \
-    target=../samba/security/pam_winbind.so
-link path=usr/lib/security/pam_winbind.so.1 \
-    target=../samba/security/pam_winbind.so
+    target=../../samba/security/$(MACH64)/pam_winbind.so
 
 #
 # sbin
-# (note) SWAT is definitivelly gone in Samba4.
-link path=usr/sbin/nmbd target=../lib/samba/sbin/nmbd
-link path=usr/sbin/smbd target=../lib/samba/sbin/smbd
-link path=usr/sbin/winbindd target=../lib/samba/sbin/winbindd
+link path=usr/sbin/nmbd target=../lib/samba/sbin/$(MACH64)/nmbd
+link path=usr/sbin/smbd target=../lib/samba/sbin/$(MACH64)/smbd
+link path=usr/sbin/winbindd target=../lib/samba/sbin/$(MACH64)/winbindd
 
-#
-# smbprofiles
-file usr/share/man/man1/profiles.1 path=usr/share/man/man1/smbprofiles.1
-
-#
-# dirs not created by install
-dir  path=var/samba/com
-dir  path=var/samba/locks
-dir  path=var/samba/log
-dir  path=var/spool/samba mode=1777
-
-#
-legacy pkg=SUNWsmbar \
-    desc="samba - A Windows SMB/CIFS fileserver for UNIX (Root)" \
-    name="samba - A Windows SMB/CIFS fileserver for UNIX (Root)"
-legacy pkg=SUNWsmbau \
-    desc="samba - A Windows SMB/CIFS fileserver for UNIX (Usr)" \
-    name="samba - A Windows SMB/CIFS fileserver for UNIX (Usr)"
-license samba.license license=GPLv3
