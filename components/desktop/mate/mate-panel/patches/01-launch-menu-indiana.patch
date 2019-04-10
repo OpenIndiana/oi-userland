@@ -1,8 +1,20 @@
-diff -ur mate-panel-1.16.0/mate-panel/menu.c mate-panel-patched/mate-panel/menu.c
---- mate-panel-1.16.0/mate-panel/menu.c	2016-08-09 10:23:17.000000000 +0300
-+++ mate-panel-patched/mate-panel/menu.c	2016-11-19 09:39:32.330177274 +0300
-@@ -1311,6 +1311,52 @@
- 				  menu);
+diff -ur mate-panel-1.22.0-orig/mate-panel/menu.c mate-panel-1.22.0/mate-panel/menu.c
+--- mate-panel-1.22.0-orig/mate-panel/menu.c	2019-04-10 21:52:39.987978574 +0000
++++ mate-panel-1.22.0/mate-panel/menu.c	2019-04-10 21:52:48.584177316 +0000
+@@ -1187,6 +1187,11 @@
+ 	g_object_set_data (G_OBJECT (menu),
+ 			   "panel-menu-needs-loading",
+ 			   GUINT_TO_POINTER (TRUE));
++        /* Well, only mate-applications.menu needs appending, but other menus don't have
++	    corresponding "show" signal handler anyway */
++        g_object_set_data (G_OBJECT (menu),
++			   "panel-menu-needs-appending",
++                           TRUE);
+ 
+ 	idle_id = g_idle_add_full (G_PRIORITY_LOW,
+ 				   submenu_to_display_in_idle,
+@@ -1207,6 +1212,52 @@
+                                               menu);
  }
  
 +void
@@ -54,10 +66,10 @@ diff -ur mate-panel-1.16.0/mate-panel/menu.c mate-panel-patched/mate-panel/menu.
  GtkWidget *
  create_applications_menu (const char *menu_file,
  			  const char *menu_path,
-diff -ur mate-panel-1.16.0/mate-panel/menu.h mate-panel-patched/mate-panel/menu.h
---- mate-panel-1.16.0/mate-panel/menu.h	2016-04-06 23:27:37.000000000 +0300
-+++ mate-panel-patched/mate-panel/menu.h	2016-11-19 09:39:32.330267982 +0300
-@@ -71,6 +71,8 @@
+diff -ur mate-panel-1.22.0-orig/mate-panel/menu.h mate-panel-1.22.0/mate-panel/menu.h
+--- mate-panel-1.22.0-orig/mate-panel/menu.h	2019-04-10 21:52:39.981037692 +0000
++++ mate-panel-1.22.0/mate-panel/menu.h	2019-04-10 21:52:48.584765675 +0000
+@@ -70,6 +70,8 @@
  
  gboolean menu_dummy_button_press_event (GtkWidget      *menuitem,
  					GdkEventButton *event);
@@ -66,73 +78,23 @@ diff -ur mate-panel-1.16.0/mate-panel/menu.h mate-panel-patched/mate-panel/menu.
  
  
  #ifdef __cplusplus
-diff -ur mate-panel-1.16.0/mate-panel/panel-menu-bar.c mate-panel-patched/mate-panel/panel-menu-bar.c
---- mate-panel-1.18.2/mate-panel/panel-menu-bar.c.~1~	2017-05-11 19:09:09.000000000 +0300
-+++ mate-panel-1.18.2/mate-panel/panel-menu-bar.c	2017-05-23 17:39:35.312299898 +0300
-@@ -49,6 +49,8 @@
- #include "panel-icon-names.h"
- #include "panel-schemas.h"
- 
-+#include <matemenu-tree.h>
-+
- G_DEFINE_TYPE (PanelMenuBar, panel_menu_bar, GTK_TYPE_MENU_BAR)
- 
- #define PANEL_MENU_BAR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), PANEL_TYPE_MENU_BAR, PanelMenuBarPrivate))
-@@ -141,9 +143,28 @@
- 		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menubar->priv->applications_item), NULL);
- }
- 
-+static void
-+panel_menu_bar_handle_matemenu_change(MateMenuTree *tree,
-+                          GtkWidget *menu)
-+{
-+	g_object_set_data (G_OBJECT (menu),
-+		"panel-menu-needs-appending", TRUE);
-+}
-+
-+static void
-+panel_menu_bar_remove_matemenu_monitor(GtkWidget *menu,
-+                               MateMenuTree *tree)
-+{
-+	matemenu_tree_remove_monitor (tree,
-+		(MateMenuTreeChangedFunc) panel_menu_bar_handle_matemenu_change,
-+		menu);
-+}
-+
-+
- static void panel_menu_bar_init(PanelMenuBar* menubar)
- {
- 	GtkCssProvider *provider;
-+	MateMenuTree *tree;
- 
- 	menubar->priv = PANEL_MENU_BAR_GET_PRIVATE(menubar);
- 
-@@ -164,6 +185,21 @@
+diff -ur mate-panel-1.22.0-orig/mate-panel/panel-menu-bar.c mate-panel-1.22.0/mate-panel/panel-menu-bar.c
+--- mate-panel-1.22.0-orig/mate-panel/panel-menu-bar.c	2019-04-10 21:52:39.991470004 +0000
++++ mate-panel-1.22.0/mate-panel/panel-menu-bar.c	2019-04-10 21:52:48.586036900 +0000
+@@ -179,6 +179,9 @@
  
  	menubar->priv->applications_menu = create_applications_menu("mate-applications.menu", NULL, TRUE);
  
-+       tree = matemenu_tree_lookup ("mate-applications.menu", MATEMENU_TREE_FLAGS_NONE);
-+
-+       matemenu_tree_add_monitor (tree,
-+                       (MateMenuTreeChangedFunc) panel_menu_bar_handle_matemenu_change,
-+                       menubar->priv->applications_menu);
-+       g_signal_connect(menubar->priv->applications_menu, "destroy",
-+                       G_CALLBACK (panel_menu_bar_remove_matemenu_monitor), tree);
-+       matemenu_tree_unref (tree);
-+
-+       g_object_set_data (G_OBJECT (menubar->priv->applications_menu),
-+                       "panel-menu-needs-appending", TRUE);
-+       g_signal_connect (menubar->priv->applications_menu, "show",
-+                       G_CALLBACK(applications_menu_append), NULL);
-+
++	g_object_set_data (G_OBJECT (menubar->priv->applications_menu), "panel-menu-needs-appending", TRUE);
++	g_signal_connect (menubar->priv->applications_menu, "show", G_CALLBACK(applications_menu_append), NULL);
 +
  	menubar->priv->applications_item = panel_image_menu_item_new();
  	gtk_menu_item_set_label(GTK_MENU_ITEM(menubar->priv->applications_item), _("Applications"));
  
-diff -ur mate-panel-1.16.0/mate-panel/panel-menu-items.c mate-panel-patched/mate-panel/panel-menu-items.c
---- mate-panel-1.16.0/mate-panel/panel-menu-items.c	2016-04-06 23:27:37.000000000 +0300
-+++ mate-panel-patched/mate-panel/panel-menu-items.c	2016-11-19 09:39:32.330384513 +0300
-@@ -1224,6 +1224,8 @@
+diff -ur mate-panel-1.22.0-orig/mate-panel/panel-menu-items.c mate-panel-1.22.0/mate-panel/panel-menu-items.c
+--- mate-panel-1.22.0-orig/mate-panel/panel-menu-items.c	2019-04-10 21:52:39.992314690 +0000
++++ mate-panel-1.22.0/mate-panel/panel-menu-items.c	2019-04-10 21:52:48.585514124 +0000
+@@ -1222,6 +1222,8 @@
  
  	panel_menu_items_append_from_desktop (menu, "mate-user-guide.desktop", NULL, FALSE);
  
