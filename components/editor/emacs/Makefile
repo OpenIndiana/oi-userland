@@ -19,17 +19,18 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	26.1
+COMPONENT_VERSION=	26.2
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1cf4fc240cd77c25309d15e18593789c8dbfba5c2b44d8f77c886542300fd32c
+	sha256:151ce69dbe5b809d4492ffae4a4b153b2778459de6deb26f35691e1281a9c58e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -107,7 +108,7 @@ ASLR_MODE = $(ASLR_DISABLE)
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
-$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk2
+$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
 
 # we need to build all variants, but only have to install one in order
 # to get the common files shared by all. We use COMPONENT_POST_INSTALL_ACTION
@@ -211,8 +212,10 @@ REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/lcms2
