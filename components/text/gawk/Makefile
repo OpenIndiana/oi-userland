@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher
+# Copyright (c) 2019, Michal Nowak
 #
 
 PREFERRED_BITS=64
@@ -27,7 +28,7 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          gawk
-COMPONENT_VERSION=       4.2.1
+COMPONENT_VERSION=       5.0.0
 COMPONENT_SUMMARY=       GNU awk
 COMPONENT_PROJECT_URL=   https://www.gnu.org/software/gawk/
 COMPONENT_FMRI=          text/gawk
@@ -35,7 +36,7 @@ COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=       $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:d1119785e746d46a8209d28b2de404a57f983aa48670f4e225531d3bdc175551
+	sha256:50f091ed0eb485ad87dbb620d773a3e2c31a27f75f5e008f7bf065055f024406
 COMPONENT_ARCHIVE_URL=   http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=       GPLv3, FDLv1.3
 
@@ -59,7 +60,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^--- _/d" ' \
 	'-e "s|\(\*\*\* \\$$(SOURCE_DIR)/test/[^[:space:]]*\).*|\1|g" '
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
