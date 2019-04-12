@@ -11,12 +11,13 @@
 
 #
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gstreamer1
-COMPONENT_VERSION= 1.14.4
+COMPONENT_VERSION= 1.16.0
 COMPONENT_SUMMARY= GNOME streaming media framework
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
 COMPONENT_FMRI= library/audio/gstreamer1
@@ -25,7 +26,7 @@ COMPONENT_SRC_NAME= gstreamer
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f94f6696c5f05a3b3a9183e39c5f5c0b779f75a04c0efa497e7920afa985ffc7
+  sha256:0e8e2f7118be437cba879353970cf83c2acced825ecb9275ba05d9186ef07c00
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= LGPLv2
