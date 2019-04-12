@@ -11,12 +11,13 @@
 
 #
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-good1
-COMPONENT_VERSION= 1.14.4
+COMPONENT_VERSION= 1.16.0
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/good
@@ -24,7 +25,7 @@ COMPONENT_SRC_NAME= gst-plugins-good
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5f8b553260cb0aac56890053d8511db1528d53cae10f0287cfce2cb2acc70979
+  sha256:654adef33380d604112f702c2927574cfc285e31307b79e584113858838bb0fd
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
