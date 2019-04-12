@@ -11,6 +11,7 @@
 
 #
 # Copyright 2017 Aurelien Larcher
+# Copyright 2019 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,6 +25,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/gstreamer-1.0/gst/audio/audio-bad-prelude.h
 file path=usr/include/gstreamer-1.0/gst/audio/gstnonstreamaudiodecoder.h
+file path=usr/include/gstreamer-1.0/gst/audio/gstplanaraudioadapter.h
 file path=usr/include/gstreamer-1.0/gst/basecamerabinsrc/basecamerabinsrc-prelude.h
 file path=usr/include/gstreamer-1.0/gst/basecamerabinsrc/gstbasecamerasrc.h
 file path=usr/include/gstreamer-1.0/gst/basecamerabinsrc/gstcamerabin-enum.h
@@ -64,13 +66,13 @@ file path=usr/include/gstreamer-1.0/gst/player/gstplayer-visualization.h
 file path=usr/include/gstreamer-1.0/gst/player/gstplayer.h
 file path=usr/include/gstreamer-1.0/gst/player/player-prelude.h
 file path=usr/include/gstreamer-1.0/gst/player/player.h
+file path=usr/include/gstreamer-1.0/gst/sctp/sctp-prelude.h
+file path=usr/include/gstreamer-1.0/gst/sctp/sctpreceivemeta.h
+file path=usr/include/gstreamer-1.0/gst/sctp/sctpsendmeta.h
 file path=usr/include/gstreamer-1.0/gst/uridownloader/gstfragment.h
 file path=usr/include/gstreamer-1.0/gst/uridownloader/gsturidownloader.h
 file path=usr/include/gstreamer-1.0/gst/uridownloader/gsturidownloader_debug.h
 file path=usr/include/gstreamer-1.0/gst/uridownloader/uridownloader-prelude.h
-file path=usr/include/gstreamer-1.0/gst/video/gstvideoaggregator.h
-file path=usr/include/gstreamer-1.0/gst/video/gstvideoaggregatorpad.h
-file path=usr/include/gstreamer-1.0/gst/video/video-bad-prelude.h
 file path=usr/include/gstreamer-1.0/gst/webrtc/dtlstransport.h
 file path=usr/include/gstreamer-1.0/gst/webrtc/icetransport.h
 file path=usr/include/gstreamer-1.0/gst/webrtc/rtcsessiondescription.h
@@ -99,9 +101,9 @@ file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstautoconvert.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstbayer.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstbz2.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstcamerabin.so
+file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstclosedcaption.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstcoloreffects.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstcolormanagement.so
-file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstcompositor.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstcurl.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstdashdemux.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstdebugutilsbad.so
@@ -137,14 +139,12 @@ file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstmpegpsdemux.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstmpegpsmux.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstmpegtsdemux.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstmpegtsmux.so
-file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstmusepack.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstmxf.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstneonhttpsrc.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstnetsim.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstofa.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstopenal.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstopenexr.so
-file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstopenglmixers.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstopenjpeg.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstopusparse.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstpcapparse.so
@@ -164,7 +164,6 @@ file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstsmooth.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstsmoothstreaming.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstsndfile.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstspeed.so
-file path=usr/lib/$(MACH64)/gstreamer-1.0/libgststereo.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstsubenc.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgsttimecode.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstttmlsubs.so
@@ -178,72 +177,70 @@ file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstwebp.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgsty4mdec.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstyadif.so
 link path=usr/lib/$(MACH64)/libgstadaptivedemux-1.0.so \
-    target=libgstadaptivedemux-1.0.so.0.1404.0
+    target=libgstadaptivedemux-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstadaptivedemux-1.0.so.0 \
-    target=libgstadaptivedemux-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstadaptivedemux-1.0.so.0.1404.0
+    target=libgstadaptivedemux-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstadaptivedemux-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstbadaudio-1.0.so \
-    target=libgstbadaudio-1.0.so.0.1404.0
+    target=libgstbadaudio-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstbadaudio-1.0.so.0 \
-    target=libgstbadaudio-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstbadaudio-1.0.so.0.1404.0
-link path=usr/lib/$(MACH64)/libgstbadvideo-1.0.so \
-    target=libgstbadvideo-1.0.so.0.1404.0
-link path=usr/lib/$(MACH64)/libgstbadvideo-1.0.so.0 \
-    target=libgstbadvideo-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstbadvideo-1.0.so.0.1404.0
+    target=libgstbadaudio-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstbadaudio-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstbasecamerabinsrc-1.0.so \
-    target=libgstbasecamerabinsrc-1.0.so.0.1404.0
+    target=libgstbasecamerabinsrc-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstbasecamerabinsrc-1.0.so.0 \
-    target=libgstbasecamerabinsrc-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstbasecamerabinsrc-1.0.so.0.1404.0
+    target=libgstbasecamerabinsrc-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstbasecamerabinsrc-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstcodecparsers-1.0.so \
-    target=libgstcodecparsers-1.0.so.0.1404.0
+    target=libgstcodecparsers-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstcodecparsers-1.0.so.0 \
-    target=libgstcodecparsers-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstcodecparsers-1.0.so.0.1404.0
+    target=libgstcodecparsers-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstcodecparsers-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstinsertbin-1.0.so \
-    target=libgstinsertbin-1.0.so.0.1404.0
+    target=libgstinsertbin-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstinsertbin-1.0.so.0 \
-    target=libgstinsertbin-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstinsertbin-1.0.so.0.1404.0
+    target=libgstinsertbin-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstinsertbin-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstisoff-1.0.so \
-    target=libgstisoff-1.0.so.0.1404.0
+    target=libgstisoff-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstisoff-1.0.so.0 \
-    target=libgstisoff-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstisoff-1.0.so.0.1404.0
+    target=libgstisoff-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstisoff-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstmpegts-1.0.so \
-    target=libgstmpegts-1.0.so.0.1404.0
+    target=libgstmpegts-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstmpegts-1.0.so.0 \
-    target=libgstmpegts-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstmpegts-1.0.so.0.1404.0
+    target=libgstmpegts-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstmpegts-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstphotography-1.0.so \
-    target=libgstphotography-1.0.so.0.1404.0
+    target=libgstphotography-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstphotography-1.0.so.0 \
-    target=libgstphotography-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstphotography-1.0.so.0.1404.0
+    target=libgstphotography-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstphotography-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstplayer-1.0.so \
-    target=libgstplayer-1.0.so.0.1404.0
+    target=libgstplayer-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstplayer-1.0.so.0 \
-    target=libgstplayer-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstplayer-1.0.so.0.1404.0
+    target=libgstplayer-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstplayer-1.0.so.0.1600.0
+link path=usr/lib/$(MACH64)/libgstsctp-1.0.so target=libgstsctp-1.0.so.0.0.0
+link path=usr/lib/$(MACH64)/libgstsctp-1.0.so.0 target=libgstsctp-1.0.so.0.0.0
+file path=usr/lib/$(MACH64)/libgstsctp-1.0.so.0.0.0
 link path=usr/lib/$(MACH64)/libgsturidownloader-1.0.so \
-    target=libgsturidownloader-1.0.so.0.1404.0
+    target=libgsturidownloader-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgsturidownloader-1.0.so.0 \
-    target=libgsturidownloader-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgsturidownloader-1.0.so.0.1404.0
+    target=libgsturidownloader-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgsturidownloader-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstwebrtc-1.0.so \
-    target=libgstwebrtc-1.0.so.0.1404.0
+    target=libgstwebrtc-1.0.so.0.1600.0
 link path=usr/lib/$(MACH64)/libgstwebrtc-1.0.so.0 \
-    target=libgstwebrtc-1.0.so.0.1404.0
-file path=usr/lib/$(MACH64)/libgstwebrtc-1.0.so.0.1404.0
+    target=libgstwebrtc-1.0.so.0.1600.0
+file path=usr/lib/$(MACH64)/libgstwebrtc-1.0.so.0.1600.0
 file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-bad-audio-1.0.pc
-file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-bad-video-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-codecparsers-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-insertbin-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-mpegts-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-player-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-plugins-bad-1.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-sctp-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gstreamer-webrtc-1.0.pc
 file path=usr/lib/girepository-1.0/GstInsertBin-1.0.typelib
 file path=usr/lib/girepository-1.0/GstMpegts-1.0.typelib
@@ -264,9 +261,9 @@ file path=usr/lib/gstreamer-1.0/libgstautoconvert.so
 file path=usr/lib/gstreamer-1.0/libgstbayer.so
 file path=usr/lib/gstreamer-1.0/libgstbz2.so
 file path=usr/lib/gstreamer-1.0/libgstcamerabin.so
+file path=usr/lib/gstreamer-1.0/libgstclosedcaption.so
 file path=usr/lib/gstreamer-1.0/libgstcoloreffects.so
 file path=usr/lib/gstreamer-1.0/libgstcolormanagement.so
-file path=usr/lib/gstreamer-1.0/libgstcompositor.so
 file path=usr/lib/gstreamer-1.0/libgstcurl.so
 file path=usr/lib/gstreamer-1.0/libgstdashdemux.so
 file path=usr/lib/gstreamer-1.0/libgstdebugutilsbad.so
@@ -302,14 +299,12 @@ file path=usr/lib/gstreamer-1.0/libgstmpegpsdemux.so
 file path=usr/lib/gstreamer-1.0/libgstmpegpsmux.so
 file path=usr/lib/gstreamer-1.0/libgstmpegtsdemux.so
 file path=usr/lib/gstreamer-1.0/libgstmpegtsmux.so
-file path=usr/lib/gstreamer-1.0/libgstmusepack.so
 file path=usr/lib/gstreamer-1.0/libgstmxf.so
 file path=usr/lib/gstreamer-1.0/libgstneonhttpsrc.so
 file path=usr/lib/gstreamer-1.0/libgstnetsim.so
 file path=usr/lib/gstreamer-1.0/libgstofa.so
 file path=usr/lib/gstreamer-1.0/libgstopenal.so
 file path=usr/lib/gstreamer-1.0/libgstopenexr.so
-file path=usr/lib/gstreamer-1.0/libgstopenglmixers.so
 file path=usr/lib/gstreamer-1.0/libgstopenjpeg.so
 file path=usr/lib/gstreamer-1.0/libgstopusparse.so
 file path=usr/lib/gstreamer-1.0/libgstpcapparse.so
@@ -329,7 +324,6 @@ file path=usr/lib/gstreamer-1.0/libgstsmooth.so
 file path=usr/lib/gstreamer-1.0/libgstsmoothstreaming.so
 file path=usr/lib/gstreamer-1.0/libgstsndfile.so
 file path=usr/lib/gstreamer-1.0/libgstspeed.so
-file path=usr/lib/gstreamer-1.0/libgststereo.so
 file path=usr/lib/gstreamer-1.0/libgstsubenc.so
 file path=usr/lib/gstreamer-1.0/libgsttimecode.so
 file path=usr/lib/gstreamer-1.0/libgstttmlsubs.so
@@ -343,59 +337,59 @@ file path=usr/lib/gstreamer-1.0/libgstwebp.so
 file path=usr/lib/gstreamer-1.0/libgsty4mdec.so
 file path=usr/lib/gstreamer-1.0/libgstyadif.so
 link path=usr/lib/libgstadaptivedemux-1.0.so \
-    target=libgstadaptivedemux-1.0.so.0.1404.0
+    target=libgstadaptivedemux-1.0.so.0.1600.0
 link path=usr/lib/libgstadaptivedemux-1.0.so.0 \
-    target=libgstadaptivedemux-1.0.so.0.1404.0
-file path=usr/lib/libgstadaptivedemux-1.0.so.0.1404.0
-link path=usr/lib/libgstbadaudio-1.0.so target=libgstbadaudio-1.0.so.0.1404.0
-link path=usr/lib/libgstbadaudio-1.0.so.0 target=libgstbadaudio-1.0.so.0.1404.0
-file path=usr/lib/libgstbadaudio-1.0.so.0.1404.0
-link path=usr/lib/libgstbadvideo-1.0.so target=libgstbadvideo-1.0.so.0.1404.0
-link path=usr/lib/libgstbadvideo-1.0.so.0 target=libgstbadvideo-1.0.so.0.1404.0
-file path=usr/lib/libgstbadvideo-1.0.so.0.1404.0
+    target=libgstadaptivedemux-1.0.so.0.1600.0
+file path=usr/lib/libgstadaptivedemux-1.0.so.0.1600.0
+link path=usr/lib/libgstbadaudio-1.0.so target=libgstbadaudio-1.0.so.0.1600.0
+link path=usr/lib/libgstbadaudio-1.0.so.0 target=libgstbadaudio-1.0.so.0.1600.0
+file path=usr/lib/libgstbadaudio-1.0.so.0.1600.0
 link path=usr/lib/libgstbasecamerabinsrc-1.0.so \
-    target=libgstbasecamerabinsrc-1.0.so.0.1404.0
+    target=libgstbasecamerabinsrc-1.0.so.0.1600.0
 link path=usr/lib/libgstbasecamerabinsrc-1.0.so.0 \
-    target=libgstbasecamerabinsrc-1.0.so.0.1404.0
-file path=usr/lib/libgstbasecamerabinsrc-1.0.so.0.1404.0
+    target=libgstbasecamerabinsrc-1.0.so.0.1600.0
+file path=usr/lib/libgstbasecamerabinsrc-1.0.so.0.1600.0
 link path=usr/lib/libgstcodecparsers-1.0.so \
-    target=libgstcodecparsers-1.0.so.0.1404.0
+    target=libgstcodecparsers-1.0.so.0.1600.0
 link path=usr/lib/libgstcodecparsers-1.0.so.0 \
-    target=libgstcodecparsers-1.0.so.0.1404.0
-file path=usr/lib/libgstcodecparsers-1.0.so.0.1404.0
-link path=usr/lib/libgstinsertbin-1.0.so target=libgstinsertbin-1.0.so.0.1404.0
+    target=libgstcodecparsers-1.0.so.0.1600.0
+file path=usr/lib/libgstcodecparsers-1.0.so.0.1600.0
+link path=usr/lib/libgstinsertbin-1.0.so target=libgstinsertbin-1.0.so.0.1600.0
 link path=usr/lib/libgstinsertbin-1.0.so.0 \
-    target=libgstinsertbin-1.0.so.0.1404.0
-file path=usr/lib/libgstinsertbin-1.0.so.0.1404.0
-link path=usr/lib/libgstisoff-1.0.so target=libgstisoff-1.0.so.0.1404.0
-link path=usr/lib/libgstisoff-1.0.so.0 target=libgstisoff-1.0.so.0.1404.0
-file path=usr/lib/libgstisoff-1.0.so.0.1404.0
-link path=usr/lib/libgstmpegts-1.0.so target=libgstmpegts-1.0.so.0.1404.0
-link path=usr/lib/libgstmpegts-1.0.so.0 target=libgstmpegts-1.0.so.0.1404.0
-file path=usr/lib/libgstmpegts-1.0.so.0.1404.0
+    target=libgstinsertbin-1.0.so.0.1600.0
+file path=usr/lib/libgstinsertbin-1.0.so.0.1600.0
+link path=usr/lib/libgstisoff-1.0.so target=libgstisoff-1.0.so.0.1600.0
+link path=usr/lib/libgstisoff-1.0.so.0 target=libgstisoff-1.0.so.0.1600.0
+file path=usr/lib/libgstisoff-1.0.so.0.1600.0
+link path=usr/lib/libgstmpegts-1.0.so target=libgstmpegts-1.0.so.0.1600.0
+link path=usr/lib/libgstmpegts-1.0.so.0 target=libgstmpegts-1.0.so.0.1600.0
+file path=usr/lib/libgstmpegts-1.0.so.0.1600.0
 link path=usr/lib/libgstphotography-1.0.so \
-    target=libgstphotography-1.0.so.0.1404.0
+    target=libgstphotography-1.0.so.0.1600.0
 link path=usr/lib/libgstphotography-1.0.so.0 \
-    target=libgstphotography-1.0.so.0.1404.0
-file path=usr/lib/libgstphotography-1.0.so.0.1404.0
-link path=usr/lib/libgstplayer-1.0.so target=libgstplayer-1.0.so.0.1404.0
-link path=usr/lib/libgstplayer-1.0.so.0 target=libgstplayer-1.0.so.0.1404.0
-file path=usr/lib/libgstplayer-1.0.so.0.1404.0
+    target=libgstphotography-1.0.so.0.1600.0
+file path=usr/lib/libgstphotography-1.0.so.0.1600.0
+link path=usr/lib/libgstplayer-1.0.so target=libgstplayer-1.0.so.0.1600.0
+link path=usr/lib/libgstplayer-1.0.so.0 target=libgstplayer-1.0.so.0.1600.0
+file path=usr/lib/libgstplayer-1.0.so.0.1600.0
+link path=usr/lib/libgstsctp-1.0.so target=libgstsctp-1.0.so.0.0.0
+link path=usr/lib/libgstsctp-1.0.so.0 target=libgstsctp-1.0.so.0.0.0
+file path=usr/lib/libgstsctp-1.0.so.0.0.0
 link path=usr/lib/libgsturidownloader-1.0.so \
-    target=libgsturidownloader-1.0.so.0.1404.0
+    target=libgsturidownloader-1.0.so.0.1600.0
 link path=usr/lib/libgsturidownloader-1.0.so.0 \
-    target=libgsturidownloader-1.0.so.0.1404.0
-file path=usr/lib/libgsturidownloader-1.0.so.0.1404.0
-link path=usr/lib/libgstwebrtc-1.0.so target=libgstwebrtc-1.0.so.0.1404.0
-link path=usr/lib/libgstwebrtc-1.0.so.0 target=libgstwebrtc-1.0.so.0.1404.0
-file path=usr/lib/libgstwebrtc-1.0.so.0.1404.0
+    target=libgsturidownloader-1.0.so.0.1600.0
+file path=usr/lib/libgsturidownloader-1.0.so.0.1600.0
+link path=usr/lib/libgstwebrtc-1.0.so target=libgstwebrtc-1.0.so.0.1600.0
+link path=usr/lib/libgstwebrtc-1.0.so.0 target=libgstwebrtc-1.0.so.0.1600.0
+file path=usr/lib/libgstwebrtc-1.0.so.0.1600.0
 file path=usr/lib/pkgconfig/gstreamer-bad-audio-1.0.pc
-file path=usr/lib/pkgconfig/gstreamer-bad-video-1.0.pc
 file path=usr/lib/pkgconfig/gstreamer-codecparsers-1.0.pc
 file path=usr/lib/pkgconfig/gstreamer-insertbin-1.0.pc
 file path=usr/lib/pkgconfig/gstreamer-mpegts-1.0.pc
 file path=usr/lib/pkgconfig/gstreamer-player-1.0.pc
 file path=usr/lib/pkgconfig/gstreamer-plugins-bad-1.0.pc
+file path=usr/lib/pkgconfig/gstreamer-sctp-1.0.pc
 file path=usr/lib/pkgconfig/gstreamer-webrtc-1.0.pc
 file path=usr/share/gir-1.0/GstInsertBin-1.0.gir
 file path=usr/share/gir-1.0/GstMpegts-1.0.gir
@@ -403,6 +397,7 @@ file path=usr/share/gir-1.0/GstPlayer-1.0.gir
 file path=usr/share/gir-1.0/GstWebRTC-1.0.gir
 file path=usr/share/gstreamer-1.0/presets/GstFreeverb.prs
 file path=usr/share/locale/af/LC_MESSAGES/gst-plugins-bad-1.0.mo
+file path=usr/share/locale/ast/LC_MESSAGES/gst-plugins-bad-1.0.mo
 file path=usr/share/locale/az/LC_MESSAGES/gst-plugins-bad-1.0.mo
 file path=usr/share/locale/bg/LC_MESSAGES/gst-plugins-bad-1.0.mo
 file path=usr/share/locale/ca/LC_MESSAGES/gst-plugins-bad-1.0.mo
