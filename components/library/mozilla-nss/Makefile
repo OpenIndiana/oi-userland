@@ -12,17 +12,18 @@
 # Copyright 2011, Andrzej Szeszo
 # Copyright 2013, Jon Tibble
 # Copyright 2014, Alexander Pyhalov 
+# Copyright 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.33
-COMPONENT_PROJECT_URL=	https://developer.mozilla.org/ru/docs/NSS
+COMPONENT_VERSION=	3.43
+COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:98f0dabd36408e83dd3a11727336cc3cdfee4cbdd9aede2b2831eb2389c284e4
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_33_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f30bc1b7330887b75de9fec37dbc173001758dc43fb095ffbc45dac4093fe2ca
+COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_43_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
@@ -118,4 +119,3 @@ $(TEST_64):  $(BUILD_64)
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/mozilla-nss
