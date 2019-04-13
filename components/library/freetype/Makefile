@@ -12,22 +12,22 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2016 Aurelien Larcher
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
-COMPONENT_VERSION=        2.9.1
-COMPONENT_REVISION=	  1
+COMPONENT_VERSION=        2.10.1
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d
+	sha256:16dbfa488a21fe827dc27eaf708f42f7aa3bb997d745d31a19781628c36ba26f
 COMPONENT_ARCHIVE_URL= \
-  http://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
+	http://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://freetype.org/
 COMPONENT_LICENSE=      The FreeType Project License
 COMPONENT_LICENSE_FILE= freetype-2.license
@@ -61,8 +61,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
