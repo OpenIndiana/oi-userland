@@ -18,16 +18,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 
-COMPONENT_VERSION=	3.42.1
+COMPONENT_VERSION=	3.43
 IPS_COMPONENT_VERSION=	1.0
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:087db37d38fd49dfd584dd2a8b5baa7fc88de7c9bd97c0c2d5be4abcafc61fc6
+	sha256:f30bc1b7330887b75de9fec37dbc173001758dc43fb095ffbc45dac4093fe2ca
 COMPONENT_ARCHIVE_URL= \
-	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_42_1_RTM/src/$(COMPONENT_ARCHIVE)
+	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_43_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_FMRI=		crypto/ca-certificates
 
@@ -79,9 +79,11 @@ $(INSTALL_32):	$(BUILD_32)
 	done; 
 	touch $@
 	
-build: $(BUILD_32)
+build:		$(BUILD_32)
 
-install: $(INSTALL_32)
+install:	$(INSTALL_32)
+
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/security/openssl
@@ -89,3 +91,4 @@ REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += library/perl-5/libwww-perl-522  
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
+# Auto-generated dependencies
