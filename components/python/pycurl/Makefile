@@ -21,18 +21,18 @@
 
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycurl
-COMPONENT_VERSION=	7.43.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	7.43.0.2
 COMPONENT_PROJECT_URL=	http://pycurl.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:aa975c19b79b6aa6c0518c0cc2ae33528900478f0b500531dbcdbf05beec584c
+	sha256:0f0cdfc7a92d4f2a5c44226162434e34f7d6967d3af416a6f1448649c09a25a4
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/pycurl
 
@@ -45,16 +45,26 @@ include $(WS_MAKE_RULES)/ips.mk
 # to make sure that the docs get installed in the right place.
 PYTHON_DATA = /usr
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+ASLR_MODE=	$(ASLR_NOT_APPLICABLE)
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# test requires bottle and vsftpd which haven't been integrated yet.
-test:		$(NO_TESTS)
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_TEST_CMD=	$(GMAKE) test
+COMPONENT_TEST_ARGS=
 
+# Test requires bottle and vsftpd which haven't been integrated yet.
+test:		$(TEST_32_and_64)
+
+# Test suite dependency
+REQUIRED_PACKAGES += library/python/nose
+REQUIRED_PACKAGES += library/python/nose-27
+REQUIRED_PACKAGES += library/python/nose-34
+REQUIRED_PACKAGES += library/python/nose-35
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34

@@ -1,0 +1,21 @@
+--- pycurl-7.43.0.2/tests/run.sh	2017-12-03 20:03:13.000000000 +0000
++++ pycurl-7.43.0.2/tests/run.sh	2019-04-14 12:58:39.714641736 +0000
+@@ -25,5 +25,5 @@ if test "$CI" = true; then
+ fi
+ 
+ $PYTHON -c 'import pycurl; print(pycurl.version)'
+-$NOSETESTS -a \!standalone"$extra_attrs" --with-flaky --show-skipped "$@"
+-$NOSETESTS -a standalone --with-flaky --show-skipped "$@"
++$NOSETESTS -a \!standalone"$extra_attrs" --with-flaky "$@"
++$NOSETESTS -a standalone --with-flaky "$@"
+--- pycurl-7.43.0.2/Makefile	2018-05-23 07:08:32.000000000 +0000
++++ pycurl-7.43.0.2/Makefile	2019-04-14 13:02:31.762478910 +0000
+@@ -100,7 +100,7 @@ build-release: $(RELEASE_SOURCES)
+ 	PYCURL_RELEASE=1 $(PYTHON) setup.py build
+ 
+ do-test:
+-	cd tests/fake-curl/libcurl && make
++	cd tests/fake-curl/libcurl && gmake
+ 	./tests/run.sh
+ 	./tests/ext/test-suite.sh
+ 	$(PYFLAKES) python examples tests setup.py winbuild.py
