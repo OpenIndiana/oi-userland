@@ -30,16 +30,13 @@ PYTHON3_SOABI=abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
-COMPONENT_VERSION=	2.1.4
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	2.6.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e4d967371c5b6b2e67855066471d844c5d52d210c36c28d49a8507b96e2c5291
+	sha256:26c821cbeb683facb966045e2064303029d572a87ee69ca5a1bf54bf55f93ca6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://cryptography.io/
-COMPONENT_BUGDB=	python-mod/cryptography
-COMPONENT_ANITYA_ID=	5532
 
 PYTHON_VERSIONS = 2.7 3.4 3.5
 
@@ -61,11 +58,12 @@ install:	$(INSTALL_32_and_64)
 #
 # Results for Python 2.7.16, 3.4.9, and 3.5.6 for 32-bit and 64-bit:
 #
-#   93184 passed, 4352 skipped in 308.30 seconds
+#   96920 passed, 10057 skipped
 #
+COMPONENT_TEST_ENV +=   PYTHONPATH=$$HOME/.local/lib/python$(PYTHON_VERSION)/site-packages
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
-COMPONENT_TEST_CMD=	py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS=	tests
+COMPONENT_TEST_CMD=	$(PYTHON) setup.py test
+COMPONENT_TEST_ARGS=
 
 test:		$(TEST_32_and_64)
 
