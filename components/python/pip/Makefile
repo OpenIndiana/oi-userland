@@ -10,16 +10,17 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pip
-COMPONENT_VERSION= 	10.0.1
+COMPONENT_VERSION= 	19.0.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2c39367b8529f50746b399d7e4563df48a148b8558ae6f7236b51c155359365a
+	sha256:afe5d018b19a8ef00996d6bc3629e6df401efd295c99b38cc4872e07568482ff
 COMPONENT_ARCHIVE_URL=	https://github.com/pypa/pip/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://github.com/pypa/pip
 
