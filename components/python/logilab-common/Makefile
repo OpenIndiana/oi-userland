@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logilab-common
 COMPONENT_VERSION=	0.63.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-common/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -47,11 +48,8 @@ PYTHON_VERSIONS=2.7
 # compile all of the python .py files in the proto area since setup.py doesn't
 # seem to be doing it for this component.
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pytest pytest-$(PYTHON_VERSION)) ; \
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pytest logilab-pytest-$(PYTHON_VERSION)) ; \
 	($(PYTHON) -m compileall $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES))
-
-
-# common targets
 
 build:		$(BUILD_NO_ARCH)
 
@@ -63,15 +61,17 @@ install:	$(INSTALL_NO_ARCH)
 # Use the python 2.7 libraries (via PYTHONPATH setting) for testing.
 test: PYTHON_VERSION=2.7
 
-COMPONENT_TEST_CMD = $(PROTOUSRBINDIR)/pytest-2.7
+COMPONENT_TEST_CMD = $(PROTOUSRBINDIR)/logilab-pytest-2.7
 COMPONENT_TEST_ARGS =
 
 # Expected failures for test target:
-# 425 test cases, 1 errors, 23 skipped
-# 21 modules OK (1 failed)
-# failures: test_locked_for_one_hour
+# Ran 425 test cases 1 errors, 1 failures, 23 skipped
+# 20 modules OK (2 failed)
+# FAIL: test_site_packages (unittest_modutils.file_from_modpath_tc)
+# ERROR: test_locked_for_one_hour (unittest_shellutils.AcquireLockTC)
 
-test:	$(TEST_NO_ARCH)
+test:		$(TEST_NO_ARCH)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/pyorbit-27
 REQUIRED_PACKAGES += runtime/python-27
