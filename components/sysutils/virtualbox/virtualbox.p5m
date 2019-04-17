@@ -24,6 +24,9 @@ set name=variant.opensolaris.zone value=global value=nonglobal
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Dependency of VNC Extension Pack
+depend type=require fmri=pkg:/library/libvncserver
+
 <transform file path=opt/VirtualBox/$(MACH64)/.+ -> default pkg.linted.userland.action001.3 true>
 <transform file path=platform/i86pc/kernel/drv/.+ -> default pkg.depend.bypass-generate .* >
 <transform file path=platform/i86pc/kernel/drv/.+ -> default variant.opensolaris.zone "global" >
@@ -109,6 +112,8 @@ file path=opt/VirtualBox/$(MACH64)/components/VirtualBox_XPCOM.xpt
 file path=opt/VirtualBox/$(MACH64)/libvboxjxpcom.so
 #link path=opt/VirtualBox/$(MACH64)/rdesktop-vrdp-keymaps \
 #    target=../rdesktop-vrdp-keymaps/
+file path=opt/VirtualBox/$(MACH64)/vboxwebsrv mode=0555
+file path=opt/VirtualBox/ExtensionPacks/VNC-$(COMPONENT_VERSION).vbox-extpack
 file path=opt/VirtualBox/LICENSE
 #file path=opt/VirtualBox/UnattendedTemplates/debian_postinstall.sh
 #file path=opt/VirtualBox/UnattendedTemplates/debian_preseed.cfg
@@ -141,6 +146,7 @@ file path=opt/VirtualBox/pkginstall.sh mode=0555
 file path=opt/VirtualBox/sdk/bindings/xpcom/java/vboxjxpcom.jar
 file path=opt/VirtualBox/smf-vboxautostart.sh mode=0555
 file path=opt/VirtualBox/smf-vboxballoonctrl.sh mode=0555
+file path=opt/VirtualBox/smf-vboxwebsrv.sh mode=0555
 file path=opt/VirtualBox/vboxconfig.sh mode=0555
 file path=platform/i86pc/kernel/drv/$(MACH64)/vboxdrv
 file path=platform/i86pc/kernel/drv/$(MACH64)/vboxflt
@@ -248,6 +254,7 @@ file path=usr/share/pixmaps/VBox.png
 file path=usr/share/pixmaps/virtualbox.png
 file path=var/svc/manifest/application/virtualbox/virtualbox-autostart.xml
 file path=var/svc/manifest/application/virtualbox/virtualbox-balloonctrl.xml
+file path=var/svc/manifest/application/virtualbox/virtualbox-webservice.xml
 file path=var/svc/manifest/application/virtualbox/virtualbox-zoneaccess.xml
 #file path=vbox.pkginfo
 #file path=vbox.space

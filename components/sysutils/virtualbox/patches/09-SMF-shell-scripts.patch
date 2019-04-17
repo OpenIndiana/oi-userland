@@ -1,0 +1,140 @@
+--- VirtualBox-5.2.22/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh.1	2018-12-10 09:54:40.286527019 +0000
++++ VirtualBox-5.2.22/src/VBox/Installer/solaris/smf-vboxballoonctrl.sh	2018-12-10 09:56:21.557797022 +0000
+@@ -23,15 +23,17 @@
+ VW_OPT="$1"
+ VW_EXIT=0
+ 
++VBOXBALLOONCTRL=/opt/VirtualBox/64/VBoxBalloonCtrl
++
+ case $VW_OPT in
+     start)
+-        if [ ! -f /opt/VirtualBox/VBoxBalloonCtrl ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxBalloonCtrl does not exist."
++        if [ ! -f $VBOXBALLOONCTRL ]; then
++            echo "ERROR: $VBOXBALLOONCTRL does not exist."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+-        if [ ! -x /opt/VirtualBox/VBoxBalloonCtrl ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxBalloonCtrl is not executable."
++        if [ ! -x $VBOXBALLOONCTRL ]; then
++            echo "ERROR: $VBOXBALLOONCTRL is not executable."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+@@ -91,7 +93,7 @@
+         [ -n "$VBOXWATCHDOG_LOGSIZE" ]      && PARAMS="$PARAMS -S \"$VBOXWATCHDOG_LOGSIZE\""
+         [ -n "$VBOXWATCHDOG_LOGINTERVAL" ]  && PARAMS="$PARAMS -I \"$VBOXWATCHDOG_LOGINTERVAL\""
+ 
+-        exec su - "$VBOXWATCHDOG_USER" -c "/opt/VirtualBox/VBoxBalloonCtrl $PARAMS"
++        exec su - "$VBOXWATCHDOG_USER" -c "$VBOXBALLOONCTRL $PARAMS"
+ 
+         VW_EXIT=$?
+         if [ $VW_EXIT != 0 ]; then
+--- VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxautostart.sh	2019-04-16 12:16:47.000000000 +0000
++++ VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxautostart.sh.new	2019-04-28 13:57:00.266238704 +0000
+@@ -23,15 +23,17 @@
+ VW_OPT="$1"
+ VW_EXIT=0
+ 
++VBOXAUTOSTART=/opt/VirtualBox/64/VBoxAutostart
++
+ case $VW_OPT in
+     start)
+-        if [ ! -f /opt/VirtualBox/VBoxAutostart ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxAutostart does not exist."
++        if [ ! -f $VBOXAUTOSTART ]; then
++            echo "ERROR: $VBOXAUTOSTART does not exist."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+-        if [ ! -x /opt/VirtualBox/VBoxAutostart ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxAutostart is not exectuable."
++        if [ ! -x $VBOXAUTOSTART ]; then
++            echo "ERROR: $VBOXAUTOSTART is not exectuable."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+@@ -57,7 +59,7 @@ case $VW_OPT in
+         # Get all users
+         for VW_USER in `logins -g $VW_VBOXGROUP | cut -d' ' -f1`
+         do
+-            su - "$VW_USER" -c "/opt/VirtualBox/VBoxAutostart --background --start --config \"$VW_CONFIG\" --logrotate \"$VW_ROTATE\" --logsize \"$VW_LOGSIZE\" --loginterval \"$VW_LOGINTERVAL\""
++            su - "$VW_USER" -c "$VBOXAUTOSTART --background --start --config \"$VW_CONFIG\" --logrotate \"$VW_ROTATE\" --logsize \"$VW_LOGSIZE\" --loginterval \"$VW_LOGINTERVAL\""
+ 
+             VW_EXIT=$?
+             if [ $VW_EXIT != 0 ]; then
+@@ -68,13 +70,13 @@ case $VW_OPT in
+         done
+     ;;
+     stop)
+-        if [ ! -f /opt/VirtualBox/VBoxAutostart ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxAutostart does not exist."
++        if [ ! -f $VBOXAUTOSTART ]; then
++            echo "ERROR: $VBOXAUTOSTART does not exist."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+-        if [ ! -x /opt/VirtualBox/VBoxAutostart ]; then
+-            echo "ERROR: /opt/VirtualBox/VBoxAutostart is not executable."
++        if [ ! -x $VBOXAUTOSTART ]; then
++            echo "ERROR: $VBOXAUTOSTART is not executable."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+@@ -100,7 +102,7 @@ case $VW_OPT in
+         # Get all users
+         for VW_USER in `logins -g $VW_VBOXGROUP | cut -d' ' -f1`
+         do
+-            su - "$VW_USER" -c "/opt/VirtualBox/VBoxAutostart --stop --config \"$VW_CONFIG\" --logrotate \"$VW_ROTATE\" --logsize \"$VW_LOGSIZE\" --loginterval \"$VW_LOGINTERVAL\""
++            su - "$VW_USER" -c "$VBOXAUTOSTART --stop --config \"$VW_CONFIG\" --logrotate \"$VW_ROTATE\" --logsize \"$VW_LOGSIZE\" --loginterval \"$VW_LOGINTERVAL\""
+ 
+             VW_EXIT=$?
+             if [ $VW_EXIT != 0 ]; then
+--- VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxwebsrv.sh	2019-04-16 12:16:47.000000000 +0000
++++ VirtualBox-6.0.6/src/VBox/Installer/solaris/smf-vboxwebsrv.sh.new	2019-04-28 14:07:30.052760659 +0000
+@@ -23,15 +23,17 @@
+ VW_OPT="$1"
+ VW_EXIT=0
+ 
++VBOXROOT=/opt/VirtualBox/64
++
+ case $VW_OPT in
+     start)
+-        if [ ! -f /opt/VirtualBox/vboxwebsrv ]; then
+-            echo "ERROR: /opt/VirtualBox/vboxwebsrv does not exist."
++        if [ ! -f $VBOXROOT/vboxwebsrv ]; then
++            echo "ERROR: $VBOXROOT/vboxwebsrv does not exist."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+-        if [ ! -x /opt/VirtualBox/vboxwebsrv ]; then
+-            echo "ERROR: /opt/VirtualBox/vboxwebsrv is not executable."
++        if [ ! -x $VBOXROOT/vboxwebsrv ]; then
++            echo "ERROR: $VBOXROOT/vboxwebsrv is not executable."
+             return $SMF_EXIT_ERR_CONFIG
+         fi
+ 
+@@ -102,19 +104,19 @@ case $VW_OPT in
+ 
+         # Set authentication method + password hash
+         if [ -n "$VW_AUTH_LIBRARY" ]; then
+-            su - "$VW_USER" -c "/opt/VirtualBox/VBoxManage setproperty websrvauthlibrary \"$VW_AUTH_LIBRARY\""
++            su - "$VW_USER" -c "$VBOXROOT/VBoxManage setproperty websrvauthlibrary \"$VW_AUTH_LIBRARY\""
+             if [ $? != 0 ]; then
+                 echo "Error $? setting webservice authentication library to $VW_AUTH_LIBRARY"
+             fi
+         fi
+         if [ -n "$VW_AUTH_PWHASH" ]; then
+-            su - "$VW_USER" -c "/opt/VirtualBox/VBoxManage setextradata global \"VBoxAuthSimple/users/$VW_USER\" \"$VW_AUTH_PWHASH\""
++            su - "$VW_USER" -c "$VBOXROOT/VBoxManage setextradata global \"VBoxAuthSimple/users/$VW_USER\" \"$VW_AUTH_PWHASH\""
+             if [ $? != 0 ]; then
+                 echo "Error $? setting webservice password hash"
+             fi
+         fi
+ 
+-        exec su - "$VW_USER" -c "/opt/VirtualBox/vboxwebsrv --background --host \"$VW_HOST\" --port \"$VW_PORT\" $VW_SSL $VW_SSL_KEYFILE $VW_SSL_PASSWORDFILE $VW_SSL_CACERT $VW_SSL_CAPATH $VW_SSL_DHFILE $VW_SSL_RANDFILE --timeout \"$VW_TIMEOUT\" --check-interval \"$VW_CHECK_INTERVAL\" --threads \"$VW_THREADS\" --keepalive \"$VW_KEEPALIVE\" --authentication \"$VW_AUTHENTICATION\" $VW_LOGFILE --logrotate \"$VW_ROTATE\" --logsize \"$VW_LOGSIZE\" --loginterval \"$VW_LOGINTERVAL\""
++        exec su - "$VW_USER" -c "$VBOXROOT/vboxwebsrv --background --host \"$VW_HOST\" --port \"$VW_PORT\" $VW_SSL $VW_SSL_KEYFILE $VW_SSL_PASSWORDFILE $VW_SSL_CACERT $VW_SSL_CAPATH $VW_SSL_DHFILE $VW_SSL_RANDFILE --timeout \"$VW_TIMEOUT\" --check-interval \"$VW_CHECK_INTERVAL\" --threads \"$VW_THREADS\" --keepalive \"$VW_KEEPALIVE\" --authentication \"$VW_AUTHENTICATION\" $VW_LOGFILE --logrotate \"$VW_ROTATE\" --logsize \"$VW_LOGSIZE\" --loginterval \"$VW_LOGINTERVAL\""
+ 
+         VW_EXIT=$?
+         if [ $VW_EXIT != 0 ]; then

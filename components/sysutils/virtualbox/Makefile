@@ -16,8 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.0.4
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      6.0.6
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
@@ -25,19 +24,19 @@ COMPONENT_CLASSIFICATION= System/Virtualization
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_DOWNLOAD_URL= \
-  http://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
+	http://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f80b0c68182c946fb74ada8034960c38159ad91085b153da1277e4f191af6e1f
+	sha256:3419c49a90cef7f0a5781426259d47d7871457ab0fd201ec0fca83321441e552
 COMPONENT_LICENSE=      GPLv2
 
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-128413
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-130049
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= \
-  sha256:618ee3fd3eb64b4dd6f11bd80f1116cad7a5f9308a65536ce257cd2dbbb68dd7
+	sha256:c418865976c518e2c60bc66f9b6479850b432f4e58ab4be4b36a41078efec845
 COMPONENT_LICENSE_1=      GPLv2
 UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
 
@@ -118,6 +117,9 @@ LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_R0DRV ='
 LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_RC ='
 LOCAL_CONFIG+='\nVBOX_WITH_NATIVE_DTRACE ='
 
+# Set OpenIndiana project as publisher of VirtualBox binaries
+VBOX_BUILD_PUBLISHER=OpenIndiana
+
 COMPONENT_PRE_CONFIGURE_ACTION= \
   ( cd $(@D); echo $(LOCAL_CONFIG) > LocalConfig.kmk; $(CP) -a $(SOURCE_DIR)/* $(@D) )
 
@@ -135,6 +137,8 @@ CONFIGURE_OPTIONS+= --disable-python
 CONFIGURE_OPTIONS+= --disable-sdl-ttf
 CONFIGURE_OPTIONS+= --disable-libvpx
 CONFIGURE_OPTIONS+= --nofatal
+CONFIGURE_OPTIONS+= --enable-webservice
+CONFIGURE_OPTIONS+= --enable-vnc
 
 CONFIGURE_OPTIONS.32 += --only-additions
 CONFIGURE_OPTIONS.32 += --target-arch=x86
@@ -147,7 +151,14 @@ VBOX_LIBDIR   = $(VBOX_PREFIX)/$(MACH64)
 VBOX_QT5_LIBS = VirtualBoxVM.so VBoxDbg.so VBoxGlobal.so
 VBOX_QT5_RPATH= $(VBOX_LIBDIR):$(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
 
+# As IPS is "no scripting land", user has to install the VNC extension Pack manually:
+# https://www.virtualbox.org/manual/UserManual.html#otherextpacks.
 COMPONENT_POST_INSTALL_ACTION = \
+	build/amd64/kBuild/bin/solaris.amd64/kmk -C $(@D)/src/VBox/ExtPacks/VNC packing; \
+	pushd $(@D)/out/solaris.amd64/release/packages/; \
+	mkdir -p $(PROTO_DIR)$(VBOX_PREFIX)/ExtensionPacks/; \
+	install -m 644 VNC-*.vbox-extpack $(PROTO_DIR)$(VBOX_PREFIX)/ExtensionPacks/VNC-$(COMPONENT_VERSION).vbox-extpack; \
+	popd; \
 	for file in $(VBOX_QT5_LIBS); \
 	do \
 		/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(VBOX_QT5_RPATH)"' $(PROTO_DIR)$(VBOX_LIBDIR)/$$file; \
@@ -212,9 +223,11 @@ REQUIRED_PACKAGES += system/header/header-agp
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/header/header-usb
 REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += library/libvncserver
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/gsoap
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
