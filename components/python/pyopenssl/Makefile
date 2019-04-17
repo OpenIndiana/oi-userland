@@ -20,18 +20,20 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2019 Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyOpenSSL
-COMPONENT_VERSION=	16.2.0
+COMPONENT_VERSION=	19.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7779a3bbb74e79db234af6a08775568c6769b5821faecf6e2f4143edb227516e
+	sha256:aeca66338f6de19d1aa46ed634c3b9ae519a64b458f8468aec688e7e3c20f200
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=  https://pyopenssl.org/
-COMPONENT_BUGDB=	python-mod/pyopenssl
+COMPONENT_FMRI=		library/python/pyopenssl
 
 PYTHON_VERSIONS=	2.7 3.4 3.5
 
@@ -39,39 +41,37 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PRE_TEST_ACTION = $(CP) -r $(COMPONENT_SRC)/tests $(@D)
-
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/^\. lib/p" ' \
-        '-e "/^\. tests/p" ' \
-        '-e "/^s tests/p" ' \
-        '-e "/^F tests/p" '
-
-# In tests/test_crypto.py::FunctionTests::test_dump_certificate, the serial number line
-# outputs the same hex as the key, so this is a false error.
-# In tests/test_ssl.py::ConnectionTests::test_set_seesion_wrong_method, This test doesn't
-# work for our version of OpenSSL, which is 1.0.2j; this test only supports OpenSSL 1.0.0
-COMPONENT_TEST_DIR = $(@D)
-COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32):$(PYTHON_VENDOR_PACKAGES)
-# Some tests require unicode characters, otherwise ~17 tests will fail
-COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
-COMPONENT_TEST_CMD = $(PYTHON.$(PYTHON_VERSION).$(BITS)) /usr/bin/py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS = --result-log=$(COMPONENT_TEST_OUTPUT)
-
-# The pep8 and pyflakes output lines sometimes come in a different order.
-COMPONENT_TEST_COMPARE_CMD = sort -o $(COMPONENT_TEST_SNAPSHOT) $(COMPONENT_TEST_SNAPSHOT); $(GDIFF) -uN
-
-
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# In tests/test_crypto.py::FunctionTests::test_dump_certificate, the serial number line
+# outputs the same hex as the key, so this is a false error.
+#
+# Install dependencies locally:
+#   pipX.Y install --user -I pathlib2 atomicwrites attrs pluggy py flaky pretend funcsigs
+#
+# Results:
+#   [2.7/32] 1 failed, 496 passed, 2 skipped, 17 warnings (F: TestFunction.test_dump_certificate)
+#   [3.4/32] 1 failed, 483 passed, 15 skipped, 20 warnings (F: TestFunction.test_dump_certificate)
+#   [2.7/64] 498 passed, 1 skipped, 17 warnings
+#   [3.4/64] 485 passed, 14 skipped, 20 warnings
+#   [3.5/64] 485 passed, 14 skipped, 20 warnings
+
+COMPONENT_TEST_DIR = $(COMPONENT_SRC)
+COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32):$$HOME/.local/lib/python$(PYTHON_VERSION)/site-packages
+# Some tests require unicode characters, otherwise ~17 tests will fail
+COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
+# https://github.com/pyca/pyopenssl/issues/684#issuecomment-347242747
+COMPONENT_TEST_ENV += TZ=UTC
+COMPONENT_TEST_CMD = $(PYTHON.$(PYTHON_VERSION).$(BITS)) /usr/bin/py.test-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS= -v
+
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += system/library
