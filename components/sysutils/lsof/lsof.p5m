@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Jim Klimov. All rights reserved.
+# Copyright 2019 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/system/storage/$(COMPONENT_NAME)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,10 +24,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license lsof.license license="LSOF Copyright (no license)"
 
-file build/$(MACH32)/lsof.8 path=usr/share/man/man8/lsof.8
+file build/$(MACH64)/lsof.8 path=usr/share/man/man8/lsof.8
 
 # Executable must be setgid sys to read /dev/kmem
-file build/$(MACH64)/lsof path=usr/bin/$(MACH64)/lsof mode=2555 group=sys
-file build/$(MACH32)/lsof path=usr/bin/$(MACH32)/lsof mode=2555 group=sys
-# Must run the binary matching the kernel bitness
-hardlink path=usr/bin/lsof target=../lib/isaexec pkg.linted=true
+file build/$(MACH64)/lsof path=usr/bin/lsof mode=2555 group=sys
