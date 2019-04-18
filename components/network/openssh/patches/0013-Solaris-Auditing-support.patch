@@ -6,7 +6,7 @@ Subject: [PATCH 13/34] Solaris Auditing support
 diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
 --- a~/INSTALL	1970-01-01 00:00:00
 +++ a/INSTALL	1970-01-01 00:00:00
-@@ -92,9 +92,13 @@ http://www.gnu.org/software/autoconf/
+@@ -98,9 +98,13 @@ http://www.gnu.org/software/autoconf/
  
  Basic Security Module (BSM):
  
@@ -23,7 +23,7 @@ diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
  
  makedepend:
  
-@@ -154,8 +158,9 @@ name).
+@@ -156,8 +160,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -38,7 +38,7 @@ diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
 diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 --- a~/Makefile.in	1970-01-01 00:00:00
 +++ a/Makefile.in	1970-01-01 00:00:00
-@@ -108,7 +108,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
+@@ -109,7 +109,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
  	sshconnect.o sshconnect2.o mux.o
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
@@ -71,6 +71,30 @@ diff -wpruN '--exclude=*.orig' a~/README.platform a/README.platform
  
  Platforms using PAM
  -------------------
+diff -wpruN '--exclude=*.orig' a~/audit-bsm.c a/audit-bsm.c
+--- a~/audit-bsm.c	1970-01-01 00:00:00
++++ a/audit-bsm.c	1970-01-01 00:00:00
+@@ -347,7 +347,7 @@ bsm_audit_bad_login(const char *what)
+ /* Below is the sshd audit API code */
+ 
+ void
+-audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
+ {
+ 	AuditInfoTermID *tid = &ssh_bsm_tid;
+ 	char buf[1024];
+diff -wpruN '--exclude=*.orig' a~/audit-linux.c a/audit-linux.c
+--- a~/audit-linux.c	1970-01-01 00:00:00
++++ a/audit-linux.c	1970-01-01 00:00:00
+@@ -71,7 +71,7 @@ linux_audit_record_event(int uid, const
+ /* Below is the sshd audit API code */
+ 
+ void
+-audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
+ {
+ 	/* not implemented */
+ }
 diff -wpruN '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
 --- a~/audit-solaris.c	1970-01-01 00:00:00
 +++ a/audit-solaris.c	1970-01-01 00:00:00
@@ -248,9 +272,9 @@ diff -wpruN '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
 + */
 +/* ARGSUSED */
 +void
-+audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
 +{
-+	int peer = packet_get_connection_in();
++	int peer = ssh_packet_get_connection_in(ssh);
 +	adt_session_data_t	*ah = NULL;
 +
 +	if (adt_load_termid(peer, &tid) != 0) {
@@ -298,7 +322,7 @@ diff -wpruN '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
 + *	Entry	the_authcntxt
 + */
 +void
-+audit_event(ssh_audit_event_t event)
++audit_event(struct ssh *ssh, ssh_audit_event_t event)
 +{
 +	static boolean_t logged_in = B_FALSE;	/* if user did login */
 +	int fail = PAM_IGNORE;		/* default unset */
@@ -649,10 +673,34 @@ diff -wpruN '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
 +	(void) adt_end_session(ah);
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
+diff -wpruN '--exclude=*.orig' a~/audit.c a/audit.c
+--- a~/audit.c	1970-01-01 00:00:00
++++ a/audit.c	1970-01-01 00:00:00
+@@ -120,7 +120,7 @@ audit_event_lookup(ssh_audit_event_t ev)
+  * has been attempted.
+  */
+ void
+-audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *, const char *host, int port)
+ {
+ 	debug("audit connection from %s port %d euid %d", host, port,
+ 	    (int)geteuid());
+diff -wpruN '--exclude=*.orig' a~/audit.h a/audit.h
+--- a~/audit.h	1970-01-01 00:00:00
++++ a/audit.h	1970-01-01 00:00:00
+@@ -47,7 +47,7 @@ enum ssh_audit_event_type {
+ };
+ typedef enum ssh_audit_event_type ssh_audit_event_t;
+ 
+-void	audit_connection_from(const char *, int);
++void	audit_connection_from(struct ssh *, const char *, int);
+ void	audit_event(struct ssh *, ssh_audit_event_t);
+ void	audit_session_open(struct logininfo *);
+ void	audit_session_close(struct logininfo *);
 diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
 --- a~/configure.ac	1970-01-01 00:00:00
 +++ a/configure.ac	1970-01-01 00:00:00
-@@ -1608,7 +1608,7 @@ AC_ARG_WITH([libedit],
+@@ -1603,7 +1603,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -661,7 +709,7 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1645,6 +1645,13 @@ AC_ARG_WITH([audit],
+@@ -1640,6 +1640,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -678,7 +726,7 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
 diff -wpruN '--exclude=*.orig' a~/defines.h a/defines.h
 --- a~/defines.h	1970-01-01 00:00:00
 +++ a/defines.h	1970-01-01 00:00:00
-@@ -650,6 +650,11 @@ struct winsize {
+@@ -655,6 +655,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -693,23 +741,33 @@ diff -wpruN '--exclude=*.orig' a~/defines.h a/defines.h
 diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
 --- a~/sshd.c	1970-01-01 00:00:00
 +++ a/sshd.c	1970-01-01 00:00:00
-@@ -2176,7 +2176,9 @@ main(int ac, char **av)
+@@ -2055,7 +2055,7 @@ main(int ac, char **av)
+ 	remote_ip = ssh_remote_ipaddr(ssh);
+ 
+ #ifdef SSH_AUDIT_EVENTS
+-	audit_connection_from(remote_ip, remote_port);
++	audit_connection_from(ssh, remote_ip, remote_port);
+ #endif
+ 
+ 	rdomain = ssh_packet_rdomain_in(ssh);
+@@ -2143,8 +2143,10 @@ main(int ac, char **av)
  	}
  
  #ifdef SSH_AUDIT_EVENTS
-+#ifndef	USE_SOLARIS_AUDIT
- 	audit_event(SSH_AUTH_SUCCESS);
-+#endif	/* !USE_SOLARIS_AUDIT */
++#ifndef USE_SOLARIS_AUDIT
+ 	audit_event(ssh, SSH_AUTH_SUCCESS);
  #endif
++#endif
  
  #ifdef GSSAPI
-@@ -2206,6 +2208,10 @@ main(int ac, char **av)
+ 	if (options.gss_authentication) {
+@@ -2173,6 +2175,10 @@ main(int ac, char **av)
  		do_pam_session(ssh);
  	}
  #endif
 +#ifdef	USE_SOLARIS_AUDIT
 +	/* Audit should take place after all successful pam */
-+	audit_event(SSH_AUTH_SUCCESS);
++	audit_event(ssh, SSH_AUTH_SUCCESS);
 +#endif	/* USE_SOLARIS_AUDIT */
  
  	/*

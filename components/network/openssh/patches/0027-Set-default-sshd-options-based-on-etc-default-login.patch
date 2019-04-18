@@ -25,7 +25,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  #include <errno.h>
  #ifdef HAVE_UTIL_H
  #include <util.h>
-@@ -203,6 +204,64 @@ option_clear_or_none(const char *o)
+@@ -202,6 +203,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -90,7 +90,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -280,6 +339,8 @@ fill_default_server_options(ServerOption
+@@ -296,6 +355,8 @@ fill_default_server_options(ServerOption
  		options->use_pam = 0;
  #endif
  
@@ -102,7 +102,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
 --- a~/sshd_config.4	1970-01-01 00:00:00
 +++ a/sshd_config.4	1970-01-01 00:00:00
-@@ -1162,7 +1162,13 @@ Specifies the maximum number of authenti
+@@ -1177,7 +1177,13 @@ Specifies the maximum number of authenti
  connection.
  Once the number of failures reaches half this value,
  additional failures are logged.
@@ -117,7 +117,7 @@ diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
  .It Cm MaxSessions
  Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
  sessions permitted per network connection.
-@@ -1213,7 +1219,14 @@ The default is
+@@ -1228,7 +1234,14 @@ The default is
  When password authentication is allowed, it specifies whether the
  server allows login to accounts with empty password strings.
  The default is

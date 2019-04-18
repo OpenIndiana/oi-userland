@@ -11,9 +11,10 @@ dh-group14 and -group1 algorithms.
 Without this, an old SunSSH client cannot connect to our
 new daemon.
 
---- openssh-7.8p1/compat.c.~1~	2018-08-23 08:41:42.000000000 +0000
-+++ openssh-7.8p1/compat.c	2018-10-21 06:45:57.926720721 +0000
-@@ -54,8 +54,12 @@
+diff -wpruN '--exclude=*.orig' a~/compat.c a/compat.c
+--- a~/compat.c	1970-01-01 00:00:00
++++ a/compat.c	1970-01-01 00:00:00
+@@ -54,8 +54,12 @@ compat_datafellows(const char *version)
  		  "OpenSSH_3.1*",	SSH_BUG_EXTEOF|SSH_OLD_FORWARD_ADDR|
  					SSH_BUG_SIGTYPE},
  		{ "OpenSSH_3.*",	SSH_OLD_FORWARD_ADDR|SSH_BUG_SIGTYPE },
@@ -28,7 +29,7 @@ new daemon.
  		{ "OpenSSH_2*,"
  		  "OpenSSH_3*,"
  		  "OpenSSH_4*",		SSH_BUG_SIGTYPE },
-@@ -211,6 +215,31 @@
+@@ -211,6 +215,31 @@ compat_pkalg_proposal(char *pkalg_prop)
  	return pkalg_prop;
  }
  
@@ -60,7 +61,7 @@ new daemon.
  char *
  compat_kex_proposal(char *p)
  {
-@@ -226,6 +255,8 @@
+@@ -226,6 +255,8 @@ compat_kex_proposal(char *p)
  		    "diffie-hellman-group-exchange-sha256,"
  		    "diffie-hellman-group-exchange-sha1")) == NULL)
  			fatal("match_filter_blacklist failed");

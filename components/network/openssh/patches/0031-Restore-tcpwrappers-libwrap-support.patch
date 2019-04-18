@@ -11,11 +11,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  sshd.c       | 29 +++++++++++++++++++++++++++++
  3 files changed, 93 insertions(+)
 
-diff --git a/configure.ac b/configure.ac
-index 5e64db3b..bf9c5449 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -1529,6 +1529,62 @@
+diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -1500,6 +1500,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -68,7 +67,7 @@ index 5e64db3b..bf9c5449 100644
 +					TCPW_MSG="yes"
 +				], [
 +					AC_MSG_ERROR([*** libwrap missing])
-+				
++
 +			])
 +			LIBS="$saved_LIBS"
 +		fi
@@ -78,7 +77,7 @@ index 5e64db3b..bf9c5449 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5216,6 +5272,7 @@
+@@ -5233,6 +5289,7 @@ echo "                       PAM support
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -86,11 +85,10 @@ index 5e64db3b..bf9c5449 100644
  echo "              MD5 password support: $MD5_MSG"
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "                   libldns support: $LDNS_MSG"
-diff --git a/sshd.1m b/sshd.1m
-index 387ea69e..55cf3f0d 100644
---- a/sshd.1m
-+++ b/sshd.1m
-@@ -873,6 +873,12 @@
+diff -wpruN '--exclude=*.orig' a~/sshd.1m a/sshd.1m
+--- a~/sshd.1m	1970-01-01 00:00:00
++++ a/sshd.1m	1970-01-01 00:00:00
+@@ -873,6 +873,12 @@ the user's home directory becomes access
  This file should be writable only by the user, and need not be
  readable by anyone else.
  .Pp
@@ -103,7 +101,7 @@ index 387ea69e..55cf3f0d 100644
  .It Pa /etc/hosts.equiv
  This file is for host-based authentication (see
  .Xr ssh 1 ) .
-@@ -1002,6 +1008,7 @@
+@@ -1002,6 +1008,7 @@ Each SSHv2 userauth type has its own PAM
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,
@@ -111,13 +109,12 @@ index 387ea69e..55cf3f0d 100644
  .Xr login.conf 5 ,
  .Xr moduli 5 ,
  .Xr sshd_config 5 ,
-diff --git a/sshd.c b/sshd.c
-index 67171704..75da16b7 100644
---- a/sshd.c
-+++ b/sshd.c
-@@ -127,6 +127,17 @@
- #include <Security/AuthSession.h>
- #endif
+diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
+--- a~/sshd.c	1970-01-01 00:00:00
++++ a/sshd.c	1970-01-01 00:00:00
+@@ -123,6 +123,17 @@
+ #include "version.h"
+ #include "ssherr.h"
  
 +#ifdef LIBWRAP
 +#include <tcpd.h>
@@ -133,15 +130,15 @@ index 67171704..75da16b7 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -2024,6 +2035,24 @@
- 	if (!debug_flag && !inetd_flag && setsid() < 0)
- 		error("setsid: %.100s", strerror(errno));
+@@ -2076,6 +2087,24 @@ main(int ac, char **av)
+ #ifdef SSH_AUDIT_EVENTS
+ 	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
 +#ifdef LIBWRAP
 +	allow_severity = options.log_facility|LOG_INFO;
 +	deny_severity = options.log_facility|LOG_WARNING;
 +	/* Check whether logins are denied from this host. */
-+	if (packet_connection_is_on_socket()) {
++	if (ssh_packet_connection_is_on_socket(ssh)) {
 +		struct request_info req;
 +
 +		request_init(&req, RQ_DAEMON, __progname, RQ_FILE, sock_in, 0);
@@ -156,5 +153,5 @@ index 67171704..75da16b7 100644
 +	}
 +#endif /* LIBWRAP */
  
- 	if (rexec_flag) {
- 		int fd;
+ 	rdomain = ssh_packet_rdomain_in(ssh);
+ 

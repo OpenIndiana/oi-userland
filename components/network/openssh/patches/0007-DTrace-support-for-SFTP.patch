@@ -15,15 +15,15 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
 @@ -93,6 +94,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
- 	atomicio.o dispatch.o mac.o uuencode.o misc.o utf8.o \
+ 	atomicio.o dispatch.o mac.o misc.o utf8.o \
  	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-rsa.o dh.o \
  	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
 +	sftp_provider.o \
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -118,7 +120,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
- 	sftp-server.o sftp-common.o \
+@@ -119,7 +121,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
+ 	sftp-server.o sftp-common.o sftp-realpath.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
 -	sandbox-solaris.o uidswap.o
@@ -31,18 +31,18 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  
  MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out sshd_config.4.out ssh_config.4.out
  MANPAGES_IN	= moduli.4 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.1m sftp-server.1m sftp.1 ssh-keysign.1m ssh-pkcs11-helper.1m sshd_config.4 ssh_config.4
-@@ -195,8 +197,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
+@@ -201,8 +203,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
  ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o
  	$(LD) -o $@ ssh-keyscan.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
  
--sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o
--	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
-+sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
-+	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o sftp_provider.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+-sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-realpath.o sftp-server-main.o
+-	$(LD) -o $@ sftp-server.o sftp-common.o sftp-realpath.o sftp-server-main.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
++sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-realpath.o sftp-server-main.o sftp_provider.o
++	$(LD) -o $@ sftp-server.o sftp-common.o sftp-realpath.o sftp-server-main.o sftp_provider.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
  
  sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
  	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
-@@ -226,9 +228,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
+@@ -232,9 +234,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
  moduli:
  	echo
  
@@ -66,7 +66,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -368,6 +383,7 @@ install-files:
+@@ -374,6 +389,7 @@ install-files:
  	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
  	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
@@ -85,9 +85,9 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
 +#include "sftp_provider_impl.h"
 +#endif
  
- /* Our verbosity */
- static LogLevel log_level = SYSLOG_LEVEL_ERROR;
-@@ -736,14 +739,17 @@ process_read(u_int32_t id)
+ char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
+ 
+@@ -742,14 +745,17 @@ process_read(u_int32_t id)
  	u_int32_t len;
  	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
  	u_int64_t off;
@@ -106,7 +106,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  	if (len > sizeof buf) {
  		len = sizeof buf;
  		debug2("read change len %d", len);
-@@ -754,7 +760,13 @@ process_read(u_int32_t id)
+@@ -760,7 +766,13 @@ process_read(u_int32_t id)
  			error("process_read: seek failed");
  			status = errno_to_portable(errno);
  		} else {
@@ -117,10 +117,10 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
 +#ifdef DTRACE_SFTP
 +			SFTP_TRANSFER_DONE_OP("read", fd, fpath, ret);
 +#endif
- 			if (ret < 0) {
+ 			if (ret == -1) {
  				status = errno_to_portable(errno);
  			} else if (ret == 0) {
-@@ -777,14 +789,16 @@ process_write(u_int32_t id)
+@@ -783,14 +795,16 @@ process_write(u_int32_t id)
  	size_t len;
  	int r, handle, fd, ret, status;
  	u_char *data;
@@ -138,7 +138,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
  	fd = handle_to_fd(handle);
  
  	if (fd < 0)
-@@ -796,7 +810,14 @@ process_write(u_int32_t id)
+@@ -802,7 +816,13 @@ process_write(u_int32_t id)
  			error("process_write: seek failed");
  		} else {
  /* XXX ATOMICIO ? */
@@ -149,8 +149,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
 +#ifdef DTRACE_SFTP
 +			SFTP_TRANSFER_DONE_OP("write", fd, fpath, ret);
 +#endif
-+
- 			if (ret < 0) {
+ 			if (ret == -1) {
  				error("process_write: write failed");
  				status = errno_to_portable(errno);
 diff -wpruN '--exclude=*.orig' a~/sftp64.d a/sftp64.d

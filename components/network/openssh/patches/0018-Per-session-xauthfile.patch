@@ -25,7 +25,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  #include "openbsd-compat/sys-queue.h"
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -133,6 +137,11 @@ static void do_authenticated2(struct ssh
+@@ -130,6 +134,11 @@ static void do_authenticated2(struct ssh
  
  static int session_pty_req(struct ssh *, Session *);
  
@@ -37,7 +37,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1125,6 +1134,11 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -1100,6 +1109,11 @@ do_setup_env(struct ssh *ssh, Session *s
  		    auth_sock_name);
  
  
@@ -49,9 +49,9 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	/* Set custom environment options from pubkey authentication. */
  	if (options.permit_user_env) {
  		for (n = 0 ; n < auth_opts->nenv; n++) {
-@@ -2008,6 +2022,11 @@ session_x11_req(struct ssh *ssh, Session
- {
- 	int success;
+@@ -1997,6 +2011,11 @@ session_x11_req(struct ssh *ssh, Session
+ 	int r, success;
+ 	u_char single_connection = 0;
  
 +#ifdef PER_SESSION_XAUTHFILE
 +	int fd;
@@ -61,9 +61,9 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -2019,19 +2038,78 @@ session_x11_req(struct ssh *ssh, Session
- 	s->screen = packet_get_int();
- 	packet_check_eom();
+@@ -2011,19 +2030,78 @@ session_x11_req(struct ssh *ssh, Session
+ 
+ 	s->single_connection = single_connection;
  
 -	if (xauth_valid_string(s->auth_proto) &&
 -	    xauth_valid_string(s->auth_data))
@@ -144,7 +144,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	return success;
  }
  
-@@ -2221,6 +2299,51 @@ session_pty_cleanup(Session *s)
+@@ -2300,6 +2378,51 @@ session_pty_cleanup(Session *s)
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -196,7 +196,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  static char *
  sig2name(int sig)
  {
-@@ -2360,6 +2483,9 @@ session_close(struct ssh *ssh, Session *
+@@ -2441,6 +2564,9 @@ session_close(struct ssh *ssh, Session *
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -206,7 +206,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2613,6 +2739,10 @@ do_cleanup(struct ssh *ssh, Authctxt *au
+@@ -2695,6 +2821,10 @@ do_cleanup(struct ssh *ssh, Authctxt *au
  		auth_info_file = NULL;
  	}
  
@@ -220,7 +220,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
 diff -wpruN '--exclude=*.orig' a~/session.h a/session.h
 --- a~/session.h	1970-01-01 00:00:00
 +++ a/session.h	1970-01-01 00:00:00
-@@ -49,6 +49,9 @@ struct Session {
+@@ -50,6 +50,9 @@ struct Session {
  	char	*auth_display;
  	char	*auth_proto;
  	char	*auth_data;

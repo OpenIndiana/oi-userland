@@ -1,7 +1,7 @@
 diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
 --- a~/auth-pam.c	1970-01-01 00:00:00
 +++ a/auth-pam.c	1970-01-01 00:00:00
-@@ -1145,6 +1145,20 @@ do_pam_account(void)
+@@ -1186,6 +1186,20 @@ do_pam_account(void)
  	return (sshpam_account_status);
  }
  
@@ -38,7 +38,7 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.h a/auth-pam.h
 diff -wpruN '--exclude=*.orig' a~/auth.h a/auth.h
 --- a~/auth.h	1970-01-01 00:00:00
 +++ a/auth.h	1970-01-01 00:00:00
-@@ -98,6 +98,9 @@ struct Authctxt {
+@@ -96,6 +96,9 @@ struct Authctxt {
  #ifdef PAM_ENHANCEMENT
  	char		*authmethod_name;
  #endif
@@ -51,9 +51,9 @@ diff -wpruN '--exclude=*.orig' a~/auth.h a/auth.h
 diff -wpruN '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
 --- a~/auth2-hostbased.c	1970-01-01 00:00:00
 +++ a/auth2-hostbased.c	1970-01-01 00:00:00
-@@ -81,6 +81,9 @@ userauth_hostbased(struct ssh *ssh)
+@@ -82,6 +82,9 @@ userauth_hostbased(struct ssh *ssh)
  	debug("signature:");
- 	sshbuf_dump_data(sig, siglen, stderr);
+ 	sshbuf_dump_data(sig, slen, stderr);
  #endif
 +#ifdef HAVE_PAM_AUSER
 +	authctxt->auser = NULL;
@@ -61,7 +61,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
  	pktype = sshkey_type_from_name(pkalg);
  	if (pktype == KEY_UNSPEC) {
  		/* this is perfectly legal */
-@@ -145,6 +148,13 @@ userauth_hostbased(struct ssh *ssh)
+@@ -154,6 +157,13 @@ userauth_hostbased(struct ssh *ssh)
  	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat)) == 0)
  		authenticated = 1;
  
@@ -78,7 +78,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
 diff -wpruN '--exclude=*.orig' a~/auth2.c a/auth2.c
 --- a~/auth2.c	1970-01-01 00:00:00
 +++ a/auth2.c	1970-01-01 00:00:00
-@@ -389,6 +389,14 @@ userauth_finish(struct ssh *ssh, int aut
+@@ -395,6 +395,14 @@ userauth_finish(struct ssh *ssh, int aut
  #endif
  	}
  
@@ -96,7 +96,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2.c a/auth2.c
 diff -wpruN '--exclude=*.orig' a~/monitor.c a/monitor.c
 --- a~/monitor.c	1970-01-01 00:00:00
 +++ a/monitor.c	1970-01-01 00:00:00
-@@ -399,6 +399,12 @@ monitor_child_preauth(Authctxt *_authctx
+@@ -392,6 +392,12 @@ monitor_child_preauth(struct ssh *ssh, s
  		}
  	}
  
@@ -109,7 +109,7 @@ diff -wpruN '--exclude=*.orig' a~/monitor.c a/monitor.c
  	if (!authctxt->valid)
  		fatal("%s: authenticated invalid user", __func__);
  	if (strcmp(auth_method, "unknown") == 0)
-@@ -609,14 +615,16 @@ monitor_reset_key_state(void)
+@@ -598,14 +604,16 @@ monitor_reset_key_state(void)
  {
  	/* reset state */
  	free(key_blob);
@@ -127,7 +127,7 @@ diff -wpruN '--exclude=*.orig' a~/monitor.c a/monitor.c
  	hostbased_chost = NULL;
  }
  
-@@ -1057,6 +1065,11 @@ mm_answer_pam_account(int sock, struct s
+@@ -1077,6 +1085,11 @@ mm_answer_pam_account(struct ssh *ssh, i
  	if (!options.use_pam)
  		fatal("%s: PAM not enabled", __func__);
  

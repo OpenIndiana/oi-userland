@@ -1,20 +1,18 @@
-#
-# This patch contains bug fixes to the PAM credential and session operations.
-# In the original OpenSSH, the server only gives warnings and still allows
-# users to log in when pam_setcred() or pam_open_session() fail, if user auth
-# method is not keyboard-interactive or password.  This is not a correct
-# behavior. The server should just fatal out, when these functions fail.
-#
-# We have contributed back these bug fixes to the OpenSSH upstream community.
-# For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2399
-# In the future, if these bug fixes are accepted by the upsteam in a later
-# release, we will remove this patch when we upgrade to that release.
-#
+This patch contains bug fixes to the PAM credential and session operations.
+In the original OpenSSH, the server only gives warnings and still allows
+users to log in when pam_setcred() or pam_open_session() fail, if user auth
+method is not keyboard-interactive or password.  This is not a correct
+behavior. The server should just fatal out, when these functions fail.
+
+We have contributed back these bug fixes to the OpenSSH upstream community.
+For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2399
+In the future, if these bug fixes are accepted by the upsteam in a later
+release, we will remove this patch when we upgrade to that release.
 
 diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
 --- a~/auth-pam.c	1970-01-01 00:00:00
 +++ a/auth-pam.c	1970-01-01 00:00:00
-@@ -1178,12 +1178,19 @@ do_pam_setcred(int init)
+@@ -1219,12 +1219,19 @@ do_pam_setcred(int init)
  		sshpam_cred_established = 1;
  		return;
  	}
@@ -34,7 +32,7 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
  }
  
  static int
-@@ -1279,10 +1286,16 @@ do_pam_session(struct ssh *ssh)
+@@ -1320,10 +1327,16 @@ do_pam_session(struct ssh *ssh)
  	if (sshpam_err == PAM_SUCCESS)
  		sshpam_session_open = 1;
  	else {
