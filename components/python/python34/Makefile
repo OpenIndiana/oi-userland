@@ -21,19 +21,18 @@
 
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.4.9
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	3.4.10
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:59629676ba2b01a798f5211d8f63c26ee52f1d5133cf37583e0bf1bad50c2bd9
+	sha256:d46a8f6fe91679e199c671b1b0a30aaf172d2acb5bcab25beb35f16c3d195b4e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
@@ -129,9 +128,10 @@ COMPONENT_POST_INSTALL_ACTION= \
 	(cd $(PROTOUSRDIR) ;  \
 		$(MV) include/python3.4m/pyconfig.h include/python3.4m/pyconfig-$(BITS).h )
 
-# common targets
 $(INSTALL_32):	$(INSTALL_64)
+
 build:		$(BUILD_32_and_64)
+
 install:	$(INSTALL_32_and_64)
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
@@ -154,7 +154,7 @@ COMPONENT_TEST_TARGETS = test < /dev/null
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /^Re-running failed tests in verbose mode/ { results = 0 } { if (results) print }'"
 
-test:				$(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
@@ -173,3 +173,4 @@ REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
