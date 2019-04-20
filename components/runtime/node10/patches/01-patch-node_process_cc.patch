@@ -1,0 +1,14 @@
+--- node-v10.15.3/src/node_process.cc.orig	2019-03-05 16:16:32.000000000 +0000
++++ node-v10.15.3/src/node_process.cc	2019-04-19 22:18:46.093221844 +0000
+@@ -792,7 +792,11 @@
+ 
+ void GetParentProcessId(Local<Name> property,
+                         const PropertyCallbackInfo<Value>& info) {
++#if defined(__sun__)
++  info.GetReturnValue().Set(static_cast<int32_t>(uv_os_getppid()));
++#else
+   info.GetReturnValue().Set(uv_os_getppid());
++#endif
+ }
+ 
+ void GetActiveRequests(const FunctionCallbackInfo<Value>& args) {
