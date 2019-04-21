@@ -1,8 +1,8 @@
---- dbus-1.2.24/dbus/dbus-sysdeps-util-unix.c-orig	2010-10-19 13:27:19.672465743 -0500
-+++ dbus-1.2.24/dbus/dbus-sysdeps-util-unix.c	2010-10-19 13:28:39.691609495 -0500
-@@ -54,6 +54,10 @@
- #include <syslog.h>
- #endif
+--- dbus-1.12.12/dbus/dbus-sysdeps-util-unix.c.~1~	2017-10-30 15:26:18.000000000 +0000
++++ dbus-1.12.12/dbus/dbus-sysdeps-util-unix.c	2019-04-21 13:08:53.440237361 +0000
+@@ -51,6 +51,10 @@
+ #include <dirent.h>
+ #include <sys/un.h>
  
 +#ifdef __sun
 +#include <pwd.h>
@@ -11,17 +11,17 @@
  #ifdef HAVE_SYS_SYSLIMITS_H
  #include <sys/syslimits.h>
  #endif
-@@ -542,8 +546,31 @@ _dbus_user_at_console (const char *usern
- 
-   DBusString u, f;
-   dbus_bool_t result;
+@@ -548,7 +552,32 @@
+ _dbus_user_at_console (const char *username,
+                        DBusError  *error)
+ {
+-#ifdef DBUS_CONSOLE_AUTH_DIR
 +#ifdef __sun
++  dbus_bool_t result;
 +  struct passwd *passwd_entry;
-+#endif
- 
-   result = FALSE;
 +
-+#ifdef __sun
++  result = FALSE;
++
 +  passwd_entry = getpwnam (username);
 +  if (passwd_entry != NULL)
 +    {
@@ -39,15 +39,9 @@
 +          result = TRUE;
 +        }
 +    }
-+#else
-   if (!_dbus_string_init (&f))
-     {
-       _DBUS_SET_OOM (error);
-@@ -568,6 +595,7 @@ _dbus_user_at_console (const char *usern
++
++  return result;
++#elif defined(DBUS_CONSOLE_AUTH_DIR)
+   DBusString u, f;
+   dbus_bool_t result;
  
-  out:
-   _dbus_string_free (&f);
-+#endif
- 
-   return result;
- }
