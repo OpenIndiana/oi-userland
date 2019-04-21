@@ -17,7 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-mount
 COMPONENT_VERSION= 0.8
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Programs for mounting, unmounting and ejecting storage devices
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
