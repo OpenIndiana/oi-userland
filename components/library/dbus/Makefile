@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus
 COMPONENT_VERSION=	1.12.12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Simple IPC library based on messages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
