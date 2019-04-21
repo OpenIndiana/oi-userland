@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsass
 COMPONENT_VERSION=	3.5.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://libsass.org
 COMPONENT_SUMMARY=	LibSass is a C/C++ port of the Sass engine
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
