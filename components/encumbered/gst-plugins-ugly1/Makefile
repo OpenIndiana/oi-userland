@@ -65,6 +65,17 @@ COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
+unexport SHELLOPTS
+COMPONENT_TEST_TRANSFORMS= \
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/PASS/p" '  \
+	'-e "/SKIP/p" '  \
+	'-e "/XFAIL/p" ' \
+	'-e "/FAIL/p" '  \
+	'-e "/XPASS/p" ' \
+	'-e "/ERROR/p" '
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
