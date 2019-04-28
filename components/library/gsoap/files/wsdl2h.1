@@ -1,0 +1,191 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH WSDL2H 1 "December 23, 2004"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+wsdl2h \- the gSOAP WSDL/WADL/XSD processor for C and C++
+.SH SYNOPSIS
+\fBwsdl2h\fR [\fIOPTIONS\fR] \fISOURCE\fR ...
+.SH DESCRIPTION
+Please see /usr/share/doc/gsoap-doc/soapdoc2.html for details.
+.PP
+Converts a \fBWSDL\fR or \fBXSD\fR input file, or from an HTTP address,
+\fISOURCE\fR to a declaration file that can be parsed by
+\fBsoapcpp2\fR(1). If no \fISOURCE\fR argument is specified, read
+from standard input.
+.SH OPTIONS
+.TP
+\fB\-a\fR
+Generate indexed struct names for local elements with anonymous types.
+.TP
+\fB\-b\fR
+Bi-directional operations (duplex ops) added to serve one-way responses.
+.TP
+\fB\-c\fR
+Generate C source code.
+.TP
+\fB\-c++\fR
+Generate C++ source code (default).
+.TP
+\fB\-c++11\fR
+Generate C++11 source code.
+.TP
+\fB\-D\fR
+Make attribute members with default/fixed values optional with pointers.
+.TP
+\fB\-d\fR
+Use DOM to populate \fBxs\fR:\fIany\fR, \fBxs\fR:\fIanyType\fR and
+\fBxs\fR:\fIanyAttribute\fR.
+.TP
+\fB\-e\fR
+Do not qualify enum names.
+.TP
+\fB\-F\fR
+Add transient members to structs to simulate struct-type derivation in C.
+.TP
+\fB\-f\fR
+Generate flat C++ class hierarchy by removing inheritance.
+.TP
+\fB\-g\fR
+Generate global top-level element and attribute declarations.
+.TP
+\fB\-h\fR
+Display help info and exit.
+.TP
+\fB\-I\fIpath\fR
+Use \fIpath\fR to locate WSDL and XSD files.
+.TP
+\fB\-i\fR
+Do not import (advanced option).
+.TP
+\fB\-j\fR
+Do not generate \fBSOAP_ENV__Header\fR and \fBSOAP_ENV__Detail\fR definitions.
+.TP
+\fB\-k\fR
+Do not generate \fBSOAP_ENV__Header\fR mustUnderstand qualifiers.
+.TP
+\fB\-L\fR
+Generate less documentation by removing generic @note comments.
+.TP
+\fB\-l\fR
+Display license information.
+.TP
+\fB\-M\fR
+Suppress error "must understand element with \fBwsdl\fR:\fIrequired\fR='true'".
+.TP
+\fB\-m\fR
+Use \fBxsd.h\fR module to import primitive types.
+.TP
+\fB\-N\fIname\fR
+Use \fIname\fR for service prefixes to produce a service for each binding.
+.TP
+\fB\-n\fIname\fR
+Use \fIname\fR as the base namespace prefix instead of \fBns\fR.
+.TP
+\fB\-O1\fR
+Optimize by omitting duplicate choice/sequence members.
+.TP
+\fB\-O2\fR
+Optimize -O1 and omit unused schema types (unreachable from roots).
+.TP
+\fB\-O3\fR
+Optimize -O2 and omit unused schema root attributes.
+.TP
+\fB\-O4\fR
+Optimize -O3 and omit unused schema root elements (use only with WSDLs).
+.TP
+\fB\-o\fIfile\fR
+Output to file \fIfile\fR.
+.TP
+\fB\-P\fR
+Do not create polymorphic types inherited from \fBxsd__anyType\fR.
+.TP
+\fB\-p\fR
+Create polymorphic types inherited from base \fBxsd__anyType\fR.
+.TP
+\fB\-q\fIname\fR
+Use \fIname\fR for the C++ namespace of all declarations.
+.TP
+\fB\-R\fR
+Generate REST operations for REST bindings specified in a WSDL.
+.TP
+\fB\-r\fIhost\fR[:\fIport\fR[:\fIuid\fR:\fIpwd\fR]]
+Connect via proxy \fIhost\fR, \fIport\fR and proxy credentials \fIuid\fR and \fIpwd\fR.
+.TP
+\fB\-r\fR:\fIuid\fR:\fIpwd\fR
+Connect with authentication credentials \fIuid\fR and \fIpwd\fR.
+.TP
+\fB\-S\fIname\fR
+Use \fIname\fR instead of \fBsoap\fR for the C++ class members with soap contexts.
+.TP
+\fB\-s\fR
+Do not generate STL code (no \fBstd::string\fR and no \fBstd::vector\fR).
+.TP
+\fB\-t\fIfile\fR
+Use type map file \fIfile\fR instead of the default file \fBtypemap.dat\fR.
+.TP
+\fB\-U\fR
+Allow UTF-8-encoded Unicode C/C++ identifiers when mapping XML tag names.
+.TP
+\fB\-u\fR
+Do not generate unions.
+.TP
+\fB\-V\fR
+Display the current version and exit.
+.TP
+\fB\-v\fR
+Verbose output.
+.TP
+\fB\-W\fR
+Suppress warnings.
+.TP
+\fB\-w\fR
+Always wrap response parameters in a response struct (<=1.1.4 behavior).
+.TP
+\fB\-x\fR
+Do not generate \fB_XML\fR \fIany\fR/\fIanyAttribute\fR extensibility elements.
+.TP
+\fB\-y\fR
+Generate typedef synonyms for structs and enums.
+.TP
+\fB\-z1\fR
+Compatibility with 2.7.6e: Generate pointer-based arrays.
+.TP
+\fB\-z2\fR
+Compatibility with 2.7.7 to 2.7.15: Qualify element/attribute references.
+.TP
+\fB\-z3\fR
+Compatibility with 2.7.16 to 2.8.7: Qualify element/attribute references.
+.TP
+\fB\-z4\fR
+Compatibility up to 2.8.11: Do not generate union structs in \fBstd::vector\fR.
+.TP
+\fB\-z5\fR
+Compatibility up to 2.8.15: Do not include minor improvements.
+.TP
+\fB\-z6\fR
+Compatibility up to 2.8.17: Do not include minor improvements.
+.TP
+\fB\-z7\fR
+Compatibility up to 2.8.59: Do not generate \fBstd::vector\fR of class of union.
+.TP
+\fB\-_\fR
+Do not generate _USCORE (replace with Unicode code point _x005f).
+.SH SEE ALSO
+.BR soapcpp2 (1).
+.SH AUTHOR
+This manual page was written by Thomas Wana <greuff@debian.org>,
+for the Debian project (but may be used by others).
