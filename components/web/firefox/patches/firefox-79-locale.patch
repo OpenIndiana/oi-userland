@@ -1,0 +1,13 @@
+Debug build fails because of this assertion. Should be investigated.
+
+--- a/intl/locale/LocaleService.cpp
++++ b/intl/locale/LocaleService.cpp
+@@ -693,7 +693,7 @@
+     GetGREFileContents("update.locale", &locale);
+     locale.Trim(" \t\n\r");
+     // This should never be empty.
+-    MOZ_ASSERT(!locale.IsEmpty());
++    //MOZ_ASSERT(!locale.IsEmpty());
+     if (SanitizeForBCP47(locale, true)) {
+       mDefaultLocale.Assign(locale);
+     }

@@ -1,18 +1,59 @@
---- firefox-43.0b3/ipc/chromium/src/third_party/libevent/arc4random.c.1	2015-11-18 14:31:05.402888998 +0300
-+++ firefox-43.0b3/ipc/chromium/src/third_party/libevent/arc4random.c	2015-11-18 14:33:10.482583357 +0300
-@@ -487,6 +487,7 @@
+diff --git a/ipc/chromium/src/third_party/libevent/README.mozilla b/ipc/chromium/src/third_party/libevent/README.mozilla
+--- a/ipc/chromium/src/third_party/libevent/README.mozilla
++++ b/ipc/chromium/src/third_party/libevent/README.mozilla
+@@ -24,7 +24,7 @@
+ 2. Apply the following patches from
+ ipc/chromium/src/third_party/libevent/patches/:
+ 
+-- "openbsd-no-arc4random_addrandom.patch". Fixes the build on OpenBSD,
++- "openbsd-no-arc4random_addrandom.patch". Fixes the build on OpenBSD, Illumos,
+   FreeBSD and Android (which don't provide arc4random_addrandom anymore).
+   See bug 931354, bug 1259218, bug 1497169.
+ 
+diff --git a/ipc/chromium/src/third_party/libevent/evutil_rand.c b/ipc/chromium/src/third_party/libevent/evutil_rand.c
+index 01e499c839d6..02df7899d106 100644
+--- a/ipc/chromium/src/third_party/libevent/evutil_rand.c
++++ b/ipc/chromium/src/third_party/libevent/evutil_rand.c
+@@ -187,17 +187,17 @@ ev_arc4random_buf(void *buf, size_t n)
+ #endif /* } !EVENT__HAVE_ARC4RANDOM */
+ 
+ void
+ evutil_secure_rng_get_bytes(void *buf, size_t n)
+ {
+ 	ev_arc4random_buf(buf, n);
+ }
+ 
+-#if !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(ANDROID)
++#if !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(ANDROID) && !defined(SOLARIS)
+ void
+ evutil_secure_rng_add_bytes(const char *buf, size_t n)
+ {
+ 	arc4random_addrandom((unsigned char*)buf,
+ 	    n>(size_t)INT_MAX ? INT_MAX : (int)n);
  }
  #endif
  
-+#ifdef _we_have_arc4random_buf
- ARC4RANDOM_EXPORT void
- arc4random_buf(void *_buf, size_t n)
- {
-@@ -500,6 +501,7 @@
- 	}
- 	_ARC4_UNLOCK();
- }
-+#endif
+diff --git a/ipc/chromium/src/third_party/libevent/include/event2/util.h b/ipc/chromium/src/third_party/libevent/include/event2/util.h
+index 825f5076cc6c..c6f450bf0d08 100644
+--- a/ipc/chromium/src/third_party/libevent/include/event2/util.h
++++ b/ipc/chromium/src/third_party/libevent/include/event2/util.h
+@@ -837,17 +837,17 @@ int evutil_secure_rng_init(void);
+  * user of the secure RNG might be running. Don't pass anything other than a
+  * real /dev/...random device file here, or you might lose security.)
+  *
+  * This API is unstable, and might change in a future libevent version.
+  */
+ EVENT2_EXPORT_SYMBOL
+ int evutil_secure_rng_set_urandom_device_file(char *fname);
  
- #ifndef ARC4RANDOM_NOUNIFORM
- /*
+-#if !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(ANDROID)
++#if !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(ANDROID) && !defined(SOLARIS)
+ /** Seed the random number generator with extra random bytes.
+ 
+     You should almost never need to call this function; it should be
+     sufficient to invoke evutil_secure_rng_init(), or let Libevent take
+     care of calling evutil_secure_rng_init() on its own.
+ 
+     If you call this function as a _replacement_ for the regular
+     entropy sources, then you need to be sure that your input
+
