@@ -10,22 +10,23 @@
 
 #
 # Copyright 2011, 2013, EveryCity Ltd. All rights reserved.
+# Copyright 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
-COMPONENT_VERSION=	2.8
+COMPONENT_VERSION=	2.9
 COMPONENT_FMRI=		terminal/tmux
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SUMMARY=	tmux terminal multiplexer
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)a
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:7f6bf335634fafecff878d78de389562ea7f73a7367f268b66d37ea13617a2ba
+	sha256:839d167a4517a6bffa6b6074e89a9a8630547b2dea2086f1fad15af12ab23b25
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/tmux/tmux/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://github.com/tmux/tmux/releases/download/$(COMPONENT_VERSION)a/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	BSD
 
@@ -43,6 +44,9 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
+test:		$(NO_TESTS)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
