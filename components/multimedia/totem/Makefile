@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= totem
 # Later versions require clutter-gtk-1.0
 COMPONENT_VERSION= 3.0.1
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Totem Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -45,12 +45,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --enable-browser-plugins
+CONFIGURE_OPTIONS+= --disable-browser-plugins
 CONFIGURE_OPTIONS+= --disable-nautilus
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --with-pic
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
-CONFIGURE_ENV    += MOZILLA_PLUGINDIR=/usr/lib/firefox/browser/plugins
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
