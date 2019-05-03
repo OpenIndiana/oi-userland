@@ -1,0 +1,44 @@
+We need to add this or use gtk_init(). Otherwise GTK screen is not initialized
+and totem-video-thumbnailer, totem-video-indexer and totem-audio-preview crash 
+while creating bacon_video_widget.
+
+
+--- totem-3.0.1/src/totem-video-thumbnailer.c.1	2019-05-03 15:59:26.600635443 +0000
++++ totem-3.0.1/src/totem-video-thumbnailer.c	2019-05-03 16:01:25.978370183 +0000
+@@ -802,6 +802,10 @@
+ 	options = bacon_video_widget_get_option_group ();
+ 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
+ 	g_option_context_add_group (context, options);
++
++	options = gtk_get_option_group(TRUE);
++	g_option_context_add_group (context, options);
++
+ #ifndef THUMB_DEBUG
+ 	g_type_init ();
+ #else
+--- totem-3.0.1/src/totem-video-indexer.c.1	2019-05-03 16:47:23.610394347 +0000
++++ totem-3.0.1/src/totem-video-indexer.c	2019-05-03 16:48:57.761298954 +0000
+@@ -163,6 +163,10 @@
+ 	options = bacon_video_widget_get_option_group ();
+ 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
+ 	g_option_context_add_group (context, options);
++
++	options = gtk_get_option_group(TRUE);
++	g_option_context_add_group (context, options);
++
+ 	g_type_init ();
+ 
+ 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
+--- totem-3.0.1/src/totem-audio-preview.c.1	2019-05-03 16:50:25.763819279 +0000
++++ totem-3.0.1/src/totem-audio-preview.c	2019-05-03 16:51:07.574728119 +0000
+@@ -87,6 +87,10 @@
+ 	options = bacon_video_widget_get_option_group ();
+ 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
+ 	g_option_context_add_group (context, options);
++
++	options = gtk_get_option_group(TRUE);
++	g_option_context_add_group (context, options);
++
+ 	g_type_init ();
+ 
+ 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
