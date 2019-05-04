@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		synergy
 COMPONENT_VERSION=      1.7.6
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=	http://synergy-project.org
 COMPONENT_SUMMARY=	Synergy: Mouse and Keyboard Sharing
 COMPONENT_SRC=		$(COMPONENT_NAME)-core-$(COMPONENT_VERSION)-stable
@@ -47,6 +47,8 @@ $(MY_INSTALL_32):	$(BUILD_32)
 	$(RM) -r $(PROTO_DIR)
 	$(MKDIR) $(PROTO_DIR)/usr/bin
 	$(CP) $(BUILD_DIR_32)/bin/{synergyc,synergyd,synergys} $(PROTO_DIR)/usr/bin
+	$(MKDIR) $(PROTO_DIR)/usr/lib/synergy/plugins
+	$(INSTALL) -m 0555 $(BUILD_DIR_32)/bin/plugins/libns.so $(PROTO_DIR)/usr/lib/synergy/plugins
 	$(MKDIR) $(PROTO_DIR)/usr/share/man/man1
 	$(CP) $(SOURCE_DIR)/doc/synergyc.man $(PROTO_DIR)/usr/share/man/man1/synergyc.1
 	$(CP) $(SOURCE_DIR)/doc/synergys.man $(PROTO_DIR)/usr/share/man/man1/synergys.1
@@ -60,9 +62,10 @@ install:	$(MY_INSTALL_32)
 test:		$(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxi
