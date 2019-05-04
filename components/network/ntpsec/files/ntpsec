@@ -22,9 +22,11 @@
 
 #
 # Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2016 Andrew Stormont <andyjstormont@gmail.com>
+# Copyright 2017 OmniOS Community Edition (OmniOSce) Association.
 #
 
-# Standard prolog
+# Standard prologue
 #
 . /lib/svc/share/smf_include.sh
 
@@ -44,35 +46,24 @@ fi
 
 # Disable globbing to prevent privilege escalations by users authorized
 # to set property values for the NTP service.
-set -f 
+set -f
 
 #
 # Build the command line flags
 #
 shift $#
-set -- -p /var/run/ntp.pid
-# We allow a step larger than the panic value of 17 minutes only 
-# once when ntpd starts up. If always_all_large_step is true, 
+
+# We allow a step larger than the panic value of 17 minutes only
+# once when ntpd starts up. If always_all_large_step is true,
 # then we allow this each time ntpd starts. Otherwise, we allow
-# it only the very first time ntpd starts after a boot. We 
+# it only the very first time ntpd starts after a boot. We
 # check that by making ntpd write its pid to a file in /var/run.
+set -- -p /var/run/ntp.pid
 
 val=`svcprop -c -p config/always_allow_large_step $SMF_FMRI`
-if [ "$val" = "true" ] || \
-    [ ! -f /var/run/ntp.pid ]; then
+if [ "$val" = "true" ] || [ ! -f /var/run/ntp.pid ]; then
         set -- "$@" -g
 fi
-
-# Auth was off by default in xntpd now the default is on. Better have a way
-# to turn it off again. Also check for the obsolete "authentication" keyword.
-val=`svcprop -c -p config/no_auth_required $SMF_FMRI`
-if [ ! "$val" = "true" ]; then
-        val=`/usr/bin/nawk '/^[ \t]*#/{next}
-            /^[ \t]*authentication[ \t]+no/ {
-                printf("true", $2)
-                next } ' /etc/inet/ntp.conf`
-fi
-[ "$val" = "true" ] && set -- "$@" --authnoreq
 
 # Set up logging if requested.
 logfile=`svcprop -c -p config/logfile $SMF_FMRI`
@@ -84,40 +75,28 @@ val=`svcprop -c -p config/mdnsregister $SMF_FMRI`
 mdns=`svcprop -c -p general/enabled svc:/network/dns/multicast:default`
 [ "$val" = "true" ] && [ "$mdns" = "true" ] && set -- "$@" -m
 
-# We used to support the slewalways keyword, but that was a Sun thing
-# and not in V4. Look for "slewalways yes" and set the new slew option.
-slew_always=`svcprop -c -p config/slew_always $SMF_FMRI`
-if [ ! "$slew_always" = "true" ]; then
-       slew_always=`/usr/bin/nawk '/^[ \t]*#/{next}
-	    /^[ \t]*slewalways[ \t]+yes/ {
-        	printf("true", $2)
-        	next } ' /etc/inet/ntp.conf`
-fi
-[ "$slew_always" = "true" ] && set -- "$@" --slew
+# Slew option (old Sun slewalways)
+val=`svcprop -c -p config/slew_always $SMF_FMRI`
+[ "$val" = "true" ] && set -- "$@" --slew
 
 # Set up debugging.
 deb=`svcprop -c -p config/debuglevel $SMF_FMRI`
 
-# If slew_always is set to true, then the large offset after a reboot
-# might take a very long time to correct the clock. Optionally allow
-# a step once after a reboot if slew_always is set when allow_step_at_boot
-# is also set. 
-val=`svcprop -c -p config/allow_step_at_boot $SMF_FMRI`
-if [ "$val" = "true" ] && [ "$slew_always" = "true" ] && \
-    [ ! -f /var/run/ntp.pid ]; then
-       set -- "$@" --force-step-once
-fi
-
-# Start the daemon. If debugging is requested, put it in the background, 
+# Start the daemon. If debugging is requested, put it in the background,
 # since it won't do it on it's own.
 if [ "$deb" -gt 0 ]; then
-	/usr/lib/inet/ntpd "$@" --set-debug-level=$deb >/var/ntp/ntp.debug &
+	/usr/sbin/ntpd "$@" --set-debug-level=$deb >/var/ntp/ntp.debug &
 else
-	/usr/lib/inet/ntpd "$@"
+	/usr/sbin/ntpd "$@"
 fi
 
 # Now, wait for the first sync, if requested.
 val=`svcprop -c -p config/wait_for_sync $SMF_FMRI`
-[ "$val" = "true" ] && /usr/lib/inet/ntp-wait
+tries=`svcprop -c -p config/wait_for_sync_tries $SMF_FMRI`
+sleep=`svcprop -c -p config/wait_for_sync_sleep $SMF_FMRI`
+if [ "$val" = "true" ]; then
+	/usr/bin/ntpwait --tries=$tries --sleep=$sleep ||
+	    exit $SMF_EXIT_ERR_CONFIG
+fi
 
 exit $SMF_EXIT_OK

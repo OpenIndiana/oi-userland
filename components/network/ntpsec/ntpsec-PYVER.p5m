@@ -1,0 +1,102 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2019 Michal Nowak
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=variant.opensolaris.zone value=global value=nonglobal
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir path=var/ntp group=sys
+dir path=var/ntp/ntpstats group=sys
+
+# Cannot be installed alongside the legacy NTP package
+depend fmri=service/network/ntp type=exclude
+
+# Runtime requirements
+# ntpviz
+#depend fmri=system/font/truetype/liberation type=require
+#depend fmri=image/gnuplot type=require
+# ntpleapfetch
+#depend fmri=web/wget type=require
+#depend fmri=file/gnu-coreutils type=require
+
+# Restart NTP on binary change
+<transform file path=usr/sbin/ntpd$ -> set restart_fmri svc:/nework/ntp:default>
+
+file files/ntp.conf path=etc/inet/ntp.conf group=sys preserve=true
+file files/security/auth_attr path=etc/security/auth_attr.d/ntp
+file files/security/prof_attr path=etc/security/prof_attr.d/ntp
+file files/ntpsec path=lib/svc/method/ntpsec
+file files/ntpsec-globalzone.xml path=lib/svc/manifest/network/ntpsec-globalzone.xml variant.opensolaris.zone=global
+file files/ntpsec-nonglobalzone.xml path=lib/svc/manifest/network/ntpsec-nonglobalzone.xml variant.opensolaris.zone=nonglobal
+
+# Backwards compatibility links
+link path=usr/sbin/ntp-keygen target=../bin/ntpkeygen
+link path=usr/sbin/ntpdate target=../bin/ntpdate
+link path=usr/sbin/ntpq target=../bin/ntpq
+link path=usr/sbin/ntptime target=../bin/ntptime
+link path=usr/sbin/ntptrace target=../bin/ntptrace
+#link path=usr/sbin/update-leap target=../bin/ntpleapfetch
+
+file path=usr/bin/ntpdate
+file path=usr/bin/ntpdig
+file path=usr/bin/ntpfrob
+file path=usr/bin/ntpkeygen
+#file path=usr/bin/ntpleapfetch
+file path=usr/bin/ntplogtemp
+file path=usr/bin/ntpmon
+file path=usr/bin/ntpq
+file path=usr/bin/ntpsnmpd
+file path=usr/bin/ntpsweep
+file path=usr/bin/ntptime
+file path=usr/bin/ntptrace
+#file path=usr/bin/ntpviz
+file path=usr/bin/ntpwait
+file path=usr/lib/python3.5/vendor-packages/ntp-$(COMPONENT_VERSION).egg-info
+file path=usr/lib/python3.5/vendor-packages/ntp/__init__.py
+file path=usr/lib/python3.5/vendor-packages/ntp/agentx.py
+file path=usr/lib/python3.5/vendor-packages/ntp/agentx_packet.py
+file path=usr/lib/python3.5/vendor-packages/ntp/control.py
+file path=usr/lib/python3.5/vendor-packages/ntp/magic.py
+# It's actually ntpc.cpython-35m.so but the build system
+# looks for ntpc.cpython-35m.cpython-35m.so (sic):
+# file path=usr/lib/python3.5/vendor-packages/ntp/ntpc.cpython-35m.so
+file path=usr/lib/python3.5/vendor-packages/ntp/ntpc.so
+file path=usr/lib/python3.5/vendor-packages/ntp/packet.py
+file path=usr/lib/python3.5/vendor-packages/ntp/poly.py
+file path=usr/lib/python3.5/vendor-packages/ntp/statfiles.py
+file path=usr/lib/python3.5/vendor-packages/ntp/util.py
+file path=usr/sbin/ntpd
+file path=usr/share/man/man1m/ntpd.1m
+file path=usr/share/man/man1m/ntpdig.1m
+file path=usr/share/man/man1m/ntpfrob.1m
+file path=usr/share/man/man1m/ntpkeygen.1m
+#file path=usr/share/man/man1m/ntpleapfetch.1m
+file path=usr/share/man/man1m/ntplogtemp.1m
+file path=usr/share/man/man1m/ntpmon.1m
+file path=usr/share/man/man1m/ntpq.1m
+file path=usr/share/man/man1m/ntpsnmpd.1m
+file path=usr/share/man/man1m/ntpsweep.1m
+file path=usr/share/man/man1m/ntptime.1m
+file path=usr/share/man/man1m/ntptrace.1m
+#file path=usr/share/man/man1m/ntpviz.1m
+file path=usr/share/man/man1m/ntpwait.1m
+file path=usr/share/man/man4/ntp.conf.4
+file path=usr/share/man/man4/ntp.keys.4

@@ -1,0 +1,16 @@
+
+Always pass --nonet to xsltproc to avoid it checking for updated
+stylesheets.
+
+diff -wpruN '--exclude=*.orig' a~/wscript a/wscript
+--- a~/wscript	1970-01-01 00:00:00
++++ a/wscript	1970-01-01 00:00:00
+@@ -193,6 +193,8 @@ def configure(ctx):
+     if not ctx.options.enable_a2x_xmllint:
+         ctx.env.A2X_FLAGS += ["--no-xmllint"]
+ 
++    ctx.env.A2X_FLAGS += ["--xsltproc-opts=--nonet"]
++
+     # Disable manpages within build()
+     if ctx.options.disable_manpage:
+         ctx.env.DISABLE_MANPAGE = True

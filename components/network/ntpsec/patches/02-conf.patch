@@ -1,0 +1,83 @@
+
+Re-locate the default configuration file from /etc/ to /etc/inet/
+
+--- ntpsec-1.1.4/docs/includes/ntp-conf-body.adoc	2019-06-24 06:38:10.803623585 +0000
++++ ntpsec-1.1.4/docs/includes/ntp-conf-body.adoc.new	2019-06-24 06:40:45.160649112 +0000
+@@ -3,14 +3,14 @@
+ // tree, and once to make an individual man page.
+ 
+ == SYNOPSIS
+-/etc/ntp.conf
++/etc/inet/ntp.conf
+ 
+ == DESCRIPTION
+ 
+ The `ntp.conf` configuration file is read at initial startup by the
+ {ntpdman} daemon in order to specify the synchronization
+ sources, modes, and other related information. Usually, it is installed
+-in the `/etc` directory, but could be installed elsewhere (see the
++in the `/etc/inet` directory, but could be installed elsewhere (see the
+ daemon's `-c` command line option).
+ 
+ The file format is similar to other UNIX configuration files. Comments
+diff -wpruN '--exclude=*.orig' a~/docs/ntpsec.adoc a/docs/ntpsec.adoc
+--- a~/docs/ntpsec.adoc	1970-01-01 00:00:00
++++ a/docs/ntpsec.adoc	1970-01-01 00:00:00
+@@ -194,7 +194,7 @@ codebase has been outright removed, with
+ * The ntpq utility resizes its display to take advantage of wide
+   terminal windows, allowing more space for long peer addresses.
+ 
+-* When running as root, the ntpq utility looks in /etc/ntp.conf and
++* When running as root, the ntpq utility looks in /etc/inet/ntp.conf and
+   /usr/local/etc/ntp.keys to find credentials for control requests
+   that require authentication. Thus it will often not be necessary to enter
+   them by hand. Note that your installation's locations for config and
+@@ -256,10 +256,10 @@ codebase has been outright removed, with
+   respect to the current working directory but with respect to the
+   directory name of the last pushed file in the stack.  This means
+   that you can run ntpd from any directory with "includefile foo"
+-  in /etc/ntp.conf finding /etc/foo rather than looking for foo in
++  in /etc/inet/ntp.conf finding /etc/inet/foo rather than looking for foo in
+   your current directory.
+ 
+-* If there is an /etc/ntp.d directory, its subfiles are scanned for
++* If there is an /etc/inet/ntp.d directory, its subfiles are scanned for
+   more configuration declarations. Only files with the extension
+   ".conf" are interpreted; others are ignored.  This feature is
+   intended to make assembling configuration easier for administration
+diff -wpruN '--exclude=*.orig' a~/include/ntp_config.h a/include/ntp_config.h
+--- a~/include/ntp_config.h	1970-01-01 00:00:00
++++ a/include/ntp_config.h	1970-01-01 00:00:00
+@@ -18,7 +18,7 @@
+  * Configuration file name
+  */
+ #ifndef CONFIG_FILE
+-#  define	CONFIG_FILE "/etc/ntp.conf"
++#  define	CONFIG_FILE "/etc/inet/ntp.conf"
+ #endif /* not CONFIG_FILE */
+ #define CONFIG_DIR	"ntp.d"
+ 
+diff -wpruN '--exclude=*.orig' a~/ntpclients/ntpleapfetch a/ntpclients/ntpleapfetch
+--- a~/ntpclients/ntpleapfetch	1970-01-01 00:00:00
++++ a/ntpclients/ntpleapfetch	1970-01-01 00:00:00
+@@ -28,7 +28,7 @@ MAXTRIES=6
+ INTERVAL=10
+ 
+ # Where to find ntp config file
+-NTPCONF=/etc/ntp.conf
++NTPCONF=/etc/inet/ntp.conf
+ 
+ # How long before expiration to get updated file
+ PREFETCH="60 days"
+diff -wpruN '--exclude=*.orig' a~/pylib/packet.py a/pylib/packet.py
+--- a~/pylib/packet.py	1970-01-01 00:00:00
++++ a/pylib/packet.py	1970-01-01 00:00:00
+@@ -1598,7 +1598,7 @@ class Authenticator:
+                 return (keyid,) + self.passwords[keyid]
+             else:
+                 return (keyid, None, None)
+-        for line in open("/etc/ntp.conf"):
++        for line in open("/etc/inet/ntp.conf"):
+             if line.startswith("control"):
+                 keyid = int(line.split()[1])
+                 (keytype, passwd) = self.passwords[keyid]
