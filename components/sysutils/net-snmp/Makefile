@@ -129,9 +129,11 @@ COMPONENT_TEST_ENV +=	TESTOPTS='-g all'
 COMPONENT_TEST_CMD =	$(TEST_PERL.$(BITS))
 COMPONENT_TEST_TARGETS =	./RUNFULLTESTS
 #
-COMPONENT_TEST_TRANSFORMS += \
-														 	'-e "s|\(simple-\).*|\1XXXXXX|g"' \
-																'-e "s|\(output (\)\(.*\)|\2|g"'
+# provide new results-$(BITS).master if number of tests change: delete runtime specific measurements after second comma
+# original: Files=72, Tests=320, 94 wallclock secs ( 0.21 usr  0.11 sys +  8.76 cusr  1.92 csys = 11.00 CPU)
+# edited:   Files=72, Tests=320,
+# the transform provides the edited version
+COMPONENT_TEST_TRANSFORMS +=  '-re "/Files=72, Tests=320,/s/([^,]+,[^,]+,*).*/\1/"'
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
 COMPONENT_TEST_ENV +=	PATH=$(TEST_BINPATH.$(BITS)):$(PATH)
 COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
