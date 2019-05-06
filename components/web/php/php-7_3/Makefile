@@ -15,11 +15,11 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
 COMPONENT_MJR_VERSION=	7.3
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MNR_VERSION=	5
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:6fe79fa1f8655f98ef6708cde8751299796d6c1e225081011f4104625b923b83
+COMPONENT_ARCHIVE_HASH=	sha256:e1011838a46fd4a195c8453b333916622d7ff5bce4aca2d9d99afac142db2472
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE).asc/from/this/mirror
 COMPONENT_LICENSE=	PHP License
@@ -67,7 +67,7 @@ CONFIGURE_OPTIONS  +=	--enable-maintainer-zts
 
 # SAPI modules
 CONFIGURE_OPTIONS  +=	--with-apxs2=$(AP_PREFIX)/bin/apxs
-CONFIGURE_OPTIONS  +=        --enable-fpm
+CONFIGURE_OPTIONS  +=   --enable-fpm
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris$(SOLARIS_VERSION)
 
@@ -81,6 +81,7 @@ CONFIGURE_OPTIONS  +=	--with-cdb
 CONFIGURE_OPTIONS  +=	--with-kerberos
 CONFIGURE_OPTIONS  +=	--with-pcre-regex
 CONFIGURE_OPTIONS  +=	--with-readline
+CONFIGURE_OPTIONS   +=	--enable-dtrace
 
 # So far we don't ship libzip, use bundled one
 CONFIGURE_OPTIONS  +=   --with-libzip=no
@@ -124,8 +125,6 @@ CONFIGURE_OPTIONS   +=	--disable-static
 CONFIGURE_OPTIONS   +=	--disable-dba
 CONFIGURE_OPTIONS   +=	--disable-debug
 CONFIGURE_OPTIONS   +=	--disable-libgcc
-
-CONFIGURE_OPTIONS   +=	--enable-dtrace
 CONFIGURE_OPTIONS   +=	--without-dbm
 
 # Enabled extensions
@@ -187,9 +186,28 @@ CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	PG_CONFIG=$(PG_BINDIR)/pg_config
 
+# sapi/fpm/tests/002.phpt leaves php-fpm running
+COMPONENT_PRE_TEST_ACTION += (pkill -u `id -u` php-fpm; exit 0);
+
+COMPONENT_TEST_TARGETS = test
+
+COMPONENT_TEST_ENV += NO_INTERACTION=yes
+
+# Test results are unstable between runs but still useful for humans.
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "/^make/d" ' \
+    '-e "/^Time taken/d" ' \
+    '-e "/^TEST RESULT SUMMARY$$/,\$$p" ' \
+    '-e "/.*/d" '
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
+
+test:	$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += web/server/apache-24
