@@ -1,0 +1,14 @@
+--- php-5.6.15/ext/pdo_sqlite/config.m4.~1~	2014-02-03 22:05:00.783590689 +0400
++++ php-5.6.15/ext/pdo_sqlite/config.m4	2014-02-03 22:06:16.718908840 +0400
+@@ -73,6 +73,11 @@
+     PHP_NEW_EXTENSION(pdo_sqlite, $php_pdo_sqlite_sources_core, $ext_shared,,-I$pdo_cv_inc_path)
+   else
+       # use bundled libs
++
++      # This change is anchored here to avoid patch being misapplied.  This really only needs to be added
++      # when pdo_sqlite is compiled shared and using the bundled sqlite3.  It shouldn't hurt so long as the
++      # bundled sqlite3 is used though.
++      shared_objects_pdo_sqlite="$shared_objects_pdo_sqlite ext/sqlite3/libsqlite/sqlite3.lo"
+       if test "$enable_maintainer_zts" = "yes"; then
+         threadsafe_flags="-DSQLITE_THREADSAFE=1"
+       else
