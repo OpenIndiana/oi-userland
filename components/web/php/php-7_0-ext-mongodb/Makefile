@@ -14,15 +14,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-7.0-ext-mongodb
-COMPONENT_VERSION=	1.2.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.5.3
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/mongodb
 COMPONENT_SUMMARY=	MongoDB driver for PHP
 COMPONENT_SRC=		mongodb-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:1d43c5038cd8cb7e6db57620c40f2cc6385bd538db002c60f61f44376d829848
+COMPONENT_ARCHIVE_HASH=	sha256:8def2c74aa28e64839dee4b878bc92ad9164a45d84f55b519ac92f338ff8e1ba
 COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_SRC).tgz
-COMPONENT_FMRI=		web/php-70/extension/php-couchbase
+COMPONENT_FMRI=		web/php-70/extension/php-mongodb
 COMPONENT_CLASSIFICATION=	Development/PHP
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -75,5 +74,10 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+REQUIRED_PACKAGES += developer/icu
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
