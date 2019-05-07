@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8p13
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
@@ -75,6 +76,11 @@ CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(LIBDIR)/$(MACH64)
 CONFIGURE_OPTIONS +=	--disable-problem-tests
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+
+$(BUILD_DIR)/ntp-ngz.xml: $(COMPONENT_DIR)/Solaris/ntp.xml $(BUILD_DIR)
+	$(GSED) -e '/instance name="default"/s/enabled="true"/enabled="false"/g' $< > $@
+
+$(INSTALL_64): $(BUILD_DIR)/ntp-ngz.xml
 
 COMPONENT_INSTALL_ENV += PATH=/usr/gnu/bin:/usr/bin
 
