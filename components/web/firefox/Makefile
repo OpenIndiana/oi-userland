@@ -21,14 +21,13 @@ PREFERRED_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		firefox
-IPS_COMPONENT_VERSION=	60.6.1
-COMPONENT_REVISION=	1
+IPS_COMPONENT_VERSION=	60.6.2
 COMPONENT_VERSION=	$(IPS_COMPONENT_VERSION)esr
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(IPS_COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:94037fdceb83785ef6748de196eae562d9fa83ab7ec858b07ed13c1f540a04f5
+	sha256:cdb3d7b7648d9898e32d5fdb2eaac27d7cafa4eb0f88b39ccb1d30445ec77d3b
 ifdef CANDIDATE_BUILD
 COMPONENT_ARCHIVE_URL= \
 	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/source/$(COMPONENT_ARCHIVE)
@@ -40,12 +39,13 @@ COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
 LANG_LIST=	ar bg ca cs da de el es-AR es-CL es-ES et fi fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW
+# Temporary fix for https://bugzilla.mozilla.org/show_bug.cgi?id=1549310
 ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
 	http://ftp.mozilla.org/pub/mozilla.org/firefox/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi/
 else
 LANG_FILES_LOCATION= \
-	http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi/
+	http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/60.6.1esr/linux-x86_64/xpi/
 endif
 
 include $(WS_MAKE_RULES)/prep.mk
