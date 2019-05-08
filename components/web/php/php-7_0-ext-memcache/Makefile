@@ -14,17 +14,14 @@
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		php-7.0-ext-memcache
-REAL_NAME=		pecl-memcache
-GIT_COMMIT=		4991c2fff22d00dc81014cc92d2da7077ef4bc86
-COMPONENT_VERSION=	3.0.9
-COMPONENT_REVISION=	2
-COMPONENT_SRC=		$(REAL_NAME)-$(GIT_COMMIT)
+COMPONENT_NAME=		pecl-memcache
+COMPONENT_VERSION=	4.0.3
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/memcache
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:498ae2f3fde66b471eb8662efedfe5cb2f89f5fff725791ffddbcc7d94b7bf21
-COMPONENT_ARCHIVE_URL=	https://github.com/websupport-sk/pecl-memcache/archive/$(GIT_COMMIT).tar.gz
-COMPONENT_SUMMARY=	php memcached extension
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
+COMPONENT_ARCHIVE_HASH=	sha256:59cc60f6226e802575e8930eea977bf66aa3df7b47cecdb3a6e82b08fb729c78
+COMPONENT_ARCHIVE_URL=	https://github.com/websupport-sk/pecl-memcache/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_SUMMARY=	php memcache extension
 COMPONENT_FMRI=		web/php-70/extension/php-memcache
 COMPONENT_LICENSE=	PHP3.01
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -53,8 +50,6 @@ CONFIGURE_OPTIONS     +=	--includedir=$(PHP_PREFIX)/include
 CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
-#CONFIGURE_OPTIONS     +=	--with-zlib-dir=$(ECPREFIX)
-CONFIGURE_OPTIONS     +=	--enable-maintainer-zts
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
