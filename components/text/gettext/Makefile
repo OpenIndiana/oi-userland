@@ -21,59 +21,60 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.19.8.1
-IPS_PKG_NAME=		text/gnu-gettext
+COMPONENT_VERSION=	0.20.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4
+	sha256:53f02fbbec9e798b0faaf7c73272f83608e835c6288dd58be6c9bb54624a3800
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		text/gnu-gettext
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS  +=		--disable-java
-CONFIGURE_OPTIONS  +=		--disable-libasprintf
-CONFIGURE_OPTIONS  +=		--without-emacs
-CONFIGURE_OPTIONS  +=		--disable-openmp
-CONFIGURE_OPTIONS  +=		--disable-static
-#CONFIGURE_OPTIONS  +=		--disable-shared
-
-# Fixes coredump in gnulib-test/test-localename test
-CONFIGURE_OPTIONS  +=		ac_cv_func_newlocale=no
+CONFIGURE_OPTIONS +=	--disable-java
+CONFIGURE_OPTIONS +=	--disable-libasprintf
+CONFIGURE_OPTIONS +=	--disable-openmp
+CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--without-emacs
 
 # Tests should run in a clean environment
-COMPONENT_TEST_ENV =	-i
-COMPONENT_TEST_ENV +=	PATH=${PATH}
+COMPONENT_TEST_ENV =	-i PATH=${PATH}
 
-# Strip compilation lines from test output
 COMPONENT_TEST_TRANSFORMS += \
-    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
-    '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
-    '-e "/^XXX_CC_XXX$$/d" '
+	'-n ' \
+	'-e "/=========/p" ' \
+	'-e "/Testsuite summary for/p" ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/XFAIL/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/XPASS/p" ' \
+	'-e "/ERROR/p" '
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
-# Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/libcroco
+# Auto-generated dependencies
+REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
