@@ -20,14 +20,14 @@
 
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
 COMPONENT_VERSION=	3.3.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -115,6 +115,7 @@ REQUIRED_PACKAGES += text/groff
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/security/openssl
