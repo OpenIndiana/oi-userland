@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,27 +23,30 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file usr/bin/lz4 path=usr/bin/$(MACH32)/lz4
-file usr/bin/lz4c path=usr/bin/$(MACH32)/lz4c
-
 hardlink path=usr/bin/lz4 target=../lib/isaexec pkg.linted.userland.action002.0=true
 hardlink path=usr/bin/lz4c target=../lib/isaexec pkg.linted.userland.action002.0=true
 
 file path=usr/bin/$(MACH64)/lz4
-file path=usr/bin/$(MACH64)/lz4c
+link path=usr/bin/$(MACH64)/lz4c target=lz4
 link path=usr/bin/$(MACH64)/lz4cat target=lz4
 link path=usr/bin/$(MACH64)/unlz4 target=lz4
+file usr/bin/lz4 path=usr/bin/$(MACH32)/lz4
+link path=usr/bin/$(MACH32)/lz4c target=lz4
+#file usr/bin/lz4c path=usr/bin/$(MACH32)/lz4c
 link path=usr/bin/lz4cat target=lz4
 link path=usr/bin/unlz4 target=lz4
 file path=usr/include/lz4.h
 file path=usr/include/lz4frame.h
+file path=usr/include/lz4frame_static.h
 file path=usr/include/lz4hc.h
-file path=usr/lib/$(MACH64)/liblz4.so.$(COMPONENT_VERSION)
+#file path=usr/lib/$(MACH64)/liblz4.a
 link path=usr/lib/$(MACH64)/liblz4.so target=liblz4.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/liblz4.so.$(COMPONENT_VERSION)
 link path=usr/lib/$(MACH64)/liblz4.so.1 target=liblz4.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/liblz4.pc
-file path=usr/lib/liblz4.so.$(COMPONENT_VERSION)
+#file path=usr/lib/liblz4.a
 link path=usr/lib/liblz4.so target=liblz4.so.$(COMPONENT_VERSION)
+file path=usr/lib/liblz4.so.$(COMPONENT_VERSION)
 link path=usr/lib/liblz4.so.1 target=liblz4.so.$(COMPONENT_VERSION)
 file path=usr/lib/pkgconfig/liblz4.pc
 file path=usr/share/man/man1/lz4.1
