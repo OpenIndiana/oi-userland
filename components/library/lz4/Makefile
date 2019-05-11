@@ -11,24 +11,24 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= lz4
-COMPONENT_VERSION= 1.7.3
-IPS_COMPONENT_VERSION= 1.7.3
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_SUMMARY= Extremely Fast Compression algorithm
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		lz4
+COMPONENT_VERSION=	1.9.1
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SUMMARY=	Extremely Fast Compression algorithm
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:6cc36e8971baf443dd66a334867402601efb55eec5ebde60d5c9021230cef1aa
+	sha256:f8377c89dad5c9f266edc0be9b73595296ecafd5bfa1000de148096c50052dc4
 COMPONENT_ARCHIVE_URL= \
-	https://github.com/Cyan4973/lz4/archive/v1.7.3.tar.gz
-COMPONENT_PROJECT_URL=  http://www.lz4.org
-COMPONENT_FMRI=	library/lz4
-COMPONENT_LICENSE=      BSD,GPLv2
-COMPONENT_LICENSE_FILE= lz4.license
+	https://github.com/lz4/lz4/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=	https://lz4.github.io/lz4/
+COMPONENT_FMRI=		library/lz4
+COMPONENT_LICENSE=	BSD,GPLv2
+COMPONENT_LICENSE_FILE=	lz4.license
 COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -48,12 +48,13 @@ COMMON_ENV += LIBDIR=$(LIBDIR.$(BITS))
 
 COMPONENT_BUILD_ENV = $(COMMON_ENV)
 COMPONENT_INSTALL_ENV = $(COMMON_ENV)
+COMPONENT_TEST_ENV = $(COMMON_ENV)
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
