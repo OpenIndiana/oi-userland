@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nspr
 COMPONENT_VERSION=	4.21
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,10 +41,12 @@ CONFIGURE_LIBDIR.32 = /usr/lib/mps
 CONFIGURE_LIBDIR.64 = /usr/lib/mps/$(MACH64)
 
 CONFIGURE_OPTIONS.64 += --enable-64bit
+CONFIGURE_OPTIONS.64 += --bindir=$(USRBINDIR)/$(MACH64)
 
 CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--includedir=/usr/include/mps
+CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
 build:		$(BUILD_32_and_64)
@@ -57,6 +60,11 @@ install:	$(INSTALL_32_and_64)
 		/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps/$(MACH64)"' $$i ;\
 		/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps/$(MACH64)"' $$i ;\
 	done ;
+	$(MKDIR) $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
+	$(GSED) -e "s/@date@/`date +'%e %B %Y' | tr -d '\n'`/" -e "s/@version@/$(COMPONENT_VERSION)/" $(COMPONENT_DIR)/files/nspr-config.xml > nspr-config.xml ;\
+	xmlto man nspr-config.xml ;\
+	$(RM) nspr-config.xml ;\
+	$(MV) nspr-config.1 $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
 	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
 
 # Test suite is just this script
@@ -66,6 +74,8 @@ COMPONENT_TEST_ARGS=
 COMPONENT_TEST_TARGETS=
 
 test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
