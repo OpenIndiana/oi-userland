@@ -19,35 +19,29 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-set name=pkg.fmri \
-    value=pkg:/shell/tcsh@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description \
-    value="C shell with file name completion and command line editing"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description value="C shell with file name completion and command line editing"
 set name=pkg.summary value="Tenex C-shell (tcsh)"
-set name=com.oracle.info.description value="tcsh, the Tenex C-shell"
-set name=com.oracle.info.tpno value=5688
-set name=info.classification value=org.opensolaris.category.2008:System/Shells
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2007/025
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/tcsh
-file $(MACH64)/nls/german.cat path=usr/share/locale/de/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/greek.cat path=usr/share/locale/el/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/spanish.cat path=usr/share/locale/es/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/et.cat path=usr/share/locale/et/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/finnish.cat path=usr/share/locale/fi/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/french.cat path=usr/share/locale/fr/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/italian.cat path=usr/share/locale/it/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/ja.cat path=usr/share/locale/ja/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/pl.cat path=usr/share/locale/pl/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/russian.cat path=usr/share/locale/ru/LC_MESSAGES/tcsh.cat
-file $(MACH64)/nls/ukrainian.cat path=usr/share/locale/uk/LC_MESSAGES/tcsh.cat
-file path=usr/share/man/man1/tcsh.1
-legacy pkg=SUNWtcsh desc="Tenex C-shell (tcsh)" name="Tenex C-shell (tcsh)"
-license tcsh.license license=BSD
 
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/tcsh
+file path=usr/share/locale/C/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/de/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/es/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/et/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/fi/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/fr/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/gr/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/it/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/ja/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/pl/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/ru/LC_MESSAGES/tcsh.cat
+file path=usr/share/locale/ru_UA/LC_MESSAGES/tcsh.cat
+file path=usr/share/man/man1/tcsh.1
