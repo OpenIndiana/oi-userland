@@ -1,15 +1,24 @@
---- memcached-1.4.24/Makefile.am.~1~	2015-05-19 10:39:07.957213418 +0300
-+++ memcached-1.4.24/Makefile.am	2015-05-19 10:39:41.877246916 +0300
-@@ -76,9 +76,9 @@
- MOSTLYCLEANFILES = *.gcov *.gcno *.gcda *.tcov
+--- memcached-1.5.14/Makefile.am.1	2019-05-13 15:24:11.484352592 +0000
++++ memcached-1.5.14/Makefile.am	2019-05-13 15:25:39.711641879 +0000
+@@ -126,17 +126,17 @@
+ endif
  
  test:	memcached-debug sizes testapp
 -	$(srcdir)/sizes
 -	$(srcdir)/testapp
--	prove $(srcdir)/t
 +	$(builddir)/sizes
 +	$(builddir)/testapp
-+	prove $(builddir)/t
+ if ENABLE_TLS
+ 	@if test $(SSL_TEST)1 = 1; then \
+           $(MAKE) SSL_TEST=1  test_basic_tls; \
+ 	fi
+ endif
+ 	@if test -n "${PARALLEL}"; then \
+-	  prove $(srcdir)/t -j ${PARALLEL}; \
++	  prove $(builddir)/t -j ${PARALLEL}; \
+ 	else \
+-	  prove $(srcdir)/t; \
++	  prove $(builddir)/t; \
+ 	fi
  	@if test `basename $(PROFILER)` = "gcov"; then \
  	  for file in memcached_debug-*.gc??; do \
- 	    mv -f $$file `echo $$file | sed 's/memcached_debug-//'`; \
