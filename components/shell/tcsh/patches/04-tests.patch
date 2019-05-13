@@ -1,0 +1,108 @@
+Upstream patches:
+
+https://github.com/tcsh-org/tcsh/commit/2330196dabd06e4711dd923514d74b06b85db3ea.diff
+https://github.com/tcsh-org/tcsh/commit/5e6d6b88e600a2abc23811368e5391026a91f25f.diff
+https://github.com/tcsh-org/tcsh/commit/cc2464cac493198471e19ef46db0674e35d2a5f3.diff
+https://github.com/tcsh-org/tcsh/commit/943b3ecde56faf6c74d807f60a57ba1c413a23b4.diff
+
+diff --git a/tests/lexical.at b/tests/lexical.at
+index 3dc60243..d3ad1490 100644
+--- a/tests/lexical.at
++++ b/tests/lexical.at
+@@ -572,7 +572,7 @@ echo -n "$SERVICE_NAME_LOG" > ./output1
+ 
+ cat batchsystem.properties | grep '^jdbc_url' | sed -ne 's/^[^=]*=[^@]*@[[:blank:]]*\([^$]*\)$/\1/p' | perl -pe 's/\s//g'  |  perl -pe 's/\)/\\\)/g' | perl -pe 's/\(/\\\(/g' > ./output2
+ 
+-diff -uprN ./output1 ./output2 >& /dev/null
++diff -ur ./output1 ./output2 >& /dev/null
+ 
+ if ( $? != 0 ) then
+   echo -n 'FAIL: tcsh does not have uniform output when `...` is used!'
+@@ -591,7 +591,7 @@ set SERVICE_NAME_LOG  = `echo "$string" | grep '^jdbc_url' | sed -ne 's/^[^=]*=[
+ 
+ echo "$SERVICE_NAME_LOG" > ./actual_result
+ 
+-diff -uprN ./expected_result ./actual_result >& /dev/null
++diff -ur ./expected_result ./actual_result >& /dev/null
+ 
+ if ( $? != 0 ) then
+   echo -n 'FAIL: tcsh has unexpected result when `...` is used!'
+diff --git a/sh.lex.c b/sh.lex.c
+index b879a1da..2893768e 100644
+--- a/sh.lex.c
++++ b/sh.lex.c
+@@ -1020,8 +1020,10 @@ domod(Char *cp, Char type)
+ 
+     switch (type) {
+ 
+-    case 'x':
+     case 'q':
++    case 'x':
++	if (*cp == '\0')
++	    return Strsave(STRQNULL);
+ 	wp = Strsave(cp);
+ 	for (xp = wp; (c = *xp) != 0; xp++)
+ 	    if ((c != ' ' && c != '\t') || type == 'q')
+diff --git a/tests/syntax.at b/tests/syntax.at
+index 35134d1b..eeaacc66 100644
+--- a/tests/syntax.at
++++ b/tests/syntax.at
+@@ -2,6 +2,10 @@
+ 
+ AT_SETUP([Command combinations])
+ 
++# False on OpenSolaris returns 255
++echo 'exit 1' > myfalse
++chmod +x myfalse
++
+ AT_CHECK([tcsh -f -c 'echo ok|tr ok OK'], ,
+ [OK
+ ])
+@@ -21,7 +25,7 @@ AT_CHECK([tcsh -f -c 'true && echo OK'], ,
+ [OK
+ ])
+ 
+-AT_CHECK([tcsh -f -c 'false && echo fail'], 1)
++AT_CHECK([tcsh -f -c './myfalse && echo fail'], 1)
+ 
+ AT_CHECK([[tcsh -f -c '(sleep 1; echo async) & echo sync; wait' \
+ | sed 's/ [0123456789]*$/ /']], ,
+diff --git a/tests/variables.at b/tests/variables.at
+index c789cd46..a1f098d4 100644
+--- a/tests/variables.at
++++ b/tests/variables.at
+@@ -41,13 +41,16 @@ VAR_UNSET([ampm])
+ 
+ AT_SETUP([$ anyerror])
+ 
++echo 'exit 1' > myfalse
++chmod +x myfalse
++
+ AT_DATA([exit_status.csh],
+ [[echo $?anyerror $anyerror
+-false | true ; echo $?
++./myfalse | true ; echo $?
+ unset anyerror ; echo $?anyerror
+-false | true ; echo $?
++./myfalse | true ; echo $?
+ set anyerror
+-false | true ; echo $?
++./myfalse | true ; echo $?
+ ]])
+ 
+ AT_CHECK([tcsh -f exit_status.csh],,
+@@ -781,10 +784,13 @@ AT_CLEANUP
+ 
+ AT_SETUP([$ printexitvalue])
+ 
++echo 'exit 1' > myfalse
++chmod +x myfalse
++
+ AT_DATA([printexitvalue.csh],
+ [[echo $?printexitvalue
+ set printexitvalue
+-false
++./myfalse
+ (exit 3 >/dev/null)
+ :
+ ]])
