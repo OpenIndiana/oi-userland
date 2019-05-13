@@ -30,7 +30,7 @@
 
 getproparg() {
 val=`svcprop -p "$1" memcached`
-[ -n "$val" ] && echo "$val"
+[ -n "$val" ] && echo "$val" | /usr/bin/sed -e  's:\\ : :g'
 }
 
 MCOPTIONS="`getproparg memcached/options`"

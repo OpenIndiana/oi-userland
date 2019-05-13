@@ -26,20 +26,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.37
+COMPONENT_VERSION=	1.5.14
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2f335ab9110ce39036c5271ef39a582a852e424bc9659e421844073cfdf8606b
+    sha256:9c5bdf29a780fb6c6f7c9eaaeeda0583efdf663193758c3e316c969a510af2a9
 COMPONENT_ARCHIVE_URL=	http://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-gcc_OPT=-O0
 
 COMPONENT_PREP_ACTION = \
     (cd $(@D) && \
@@ -64,6 +62,16 @@ CONFIGURE_OPTIONS +=	--disable-coverage
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 ASLR_MODE = $(ASLR_ENABLE)
+
+# Just retain test result output that's useful.
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^ok/p" ' \
+	'-e "/ ok/p" ' \
+	'-e "/^not ok/p" ' \
+	'-e "/^All tests/p" ' \
+	'-e "/^Result/p" '
+
 
 # common targets
 build:		$(BUILD_64)
