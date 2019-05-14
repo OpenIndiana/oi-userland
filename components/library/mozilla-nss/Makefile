@@ -18,12 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.43
+COMPONENT_VERSION=	3.44
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f30bc1b7330887b75de9fec37dbc173001758dc43fb095ffbc45dac4093fe2ca
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_43_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:a5620e59b6eeedfd5a12c9298b50ad92e9898b223e214eb675e36f4ffb5b6aff
+COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_44_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
@@ -85,9 +85,9 @@ install: build
 		cp $(BUILD_DIR_32)/dist/SunOS5.11_*_OPT.OBJ/bin/$$i $(PROTO_DIR)/usr/sfw/bin; \
 		cp $(BUILD_DIR_64)/dist/SunOS5.11_*_OPT.OBJ/bin/$$i $(PROTO_DIR)/usr/sfw/bin/$(MACH64); \
 		done
-	cat $(COMPONENT_DIR)/nss.pc | sed s/^Version:/Version:\ $(COMPONENT_VERSION)/ \
+	cat $(COMPONENT_DIR)/files/nss.pc | sed s/^Version:/Version:\ $(COMPONENT_VERSION)/ \
 		> $(PROTO_DIR)/usr/lib/pkgconfig/nss.pc 
-	cat $(COMPONENT_DIR)/nss.pc | sed -e "s/^Version:/Version:\ $(COMPONENT_VERSION)/" \
+	cat $(COMPONENT_DIR)/files/nss.pc | sed -e "s/^Version:/Version:\ $(COMPONENT_VERSION)/" \
 			-e "s:/usr/lib/mps:/usr/lib/mps/$(MACH64):g" > $(PROTO_DIR)/usr/lib/$(MACH64)/pkgconfig/nss.pc
 	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
         	/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps"' $$i ;\
@@ -100,8 +100,32 @@ install: build
     		done ;
 	for i in $(PROTO_DIR)/usr/lib/mps/$(MACH64)/*.so; do \
         	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps/$(MACH64)"' $$i ;\
-		done
-	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
+		done ;
+	$(MKDIR) $(PROTO_DIR)/$(USRBINDIR)/ ;\
+	$(MKDIR) $(PROTO_DIR)/$(USRBINDIR)/$(MACH64) ;\
+	NSS_VMAJOR=`cat $(PROTO_DIR)/usr/include/mps/nss.h | grep "#define.*NSS_VMAJOR" | gawk '{print $$3}'` ;\
+	NSS_VMINOR=`cat $(PROTO_DIR)/usr/include/mps/nss.h | grep "#define.*NSS_VMINOR" | gawk '{print $$3}'` ;\
+	NSS_VPATCH=`cat $(PROTO_DIR)/usr/include/mps/nss.h | grep "#define.*NSS_VPATCH" | gawk '{print $$3}'` ;\
+	cat $(SOURCE_DIR)/nss/pkg/pkg-config/nss-config.in | $(GSED) \
+		-e "s,@prefix@,/usr,g" \
+		-e "s,pkg-config,/usr/bin/pkg-config,g" \
+		-e "s,@MOD_MAJOR_VERSION@,$$NSS_VMAJOR,g" \
+		-e "s,@MOD_MINOR_VERSION@,$$NSS_VMINOR,g" \
+		-e "s,@MOD_PATCH_VERSION@,$$NSS_VPATCH,g" \
+		> $(PROTO_DIR)$(USRBINDIR)/nss-config ;\
+	cat $(SOURCE_DIR)/nss/pkg/pkg-config/nss-config.in | $(GSED) \
+		-e "s,@prefix@,/usr,g" \
+		-e "s,pkg-config,/usr/bin/$(MACH64)/pkg-config,g" \
+		-e "s,@MOD_MAJOR_VERSION@,$$NSS_VMAJOR,g" \
+		-e "s,@MOD_MINOR_VERSION@,$$NSS_VMINOR,g" \
+		-e "s,@MOD_PATCH_VERSION@,$$NSS_VPATCH,g" \
+		> $(PROTO_DIR)$(USRBINDIR)/$(MACH64)/nss-config ;\
+	$(MKDIR) $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
+	$(GSED) -e "s/@date@/`date +'%e %B %Y' | tr -d '\n'`/" -e "s/@version@/$(COMPONENT_VERSION)/" $(COMPONENT_DIR)/files/nss-config.xml > nss-config.xml ;\
+	xmlto man nss-config.xml ;\
+	$(RM) nss-config.xml ;\
+	$(MV) nss-config.1 $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
+	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed ;
 
 test:	$(TEST_32_and_64)
 
@@ -114,6 +138,8 @@ $(TEST_64):  $(BUILD_64)
 	cd $(COMPONENT_TEST_DIR) && \
 	$(ENV) $(COMPONENT_TEST_ENV) $(CONFIG_SHELL) all.sh &&\
 	$(TOUCH) $(BUILD_DIR_$(BITS))/.tested
+
+REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/sqlite-3
