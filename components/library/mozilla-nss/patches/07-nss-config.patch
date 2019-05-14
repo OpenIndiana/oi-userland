@@ -1,0 +1,16 @@
+With this part illumos ld is unhappy, Firefox libxul.so linking ends after 30 minutes
+and 1G RAM consumed with:
+
+  ld: elf error: file /usr/lib/mps/amd64: elf_begin: I/O error: region read: Is a directory
+
+--- nss-3.44/nss/pkg/pkg-config/nss-config.in	2019-05-10 23:14:18.000000000 +0000
++++ nss-3.44/nss/pkg/pkg-config/nss-config.in.new	2019-05-14 07:16:41.278545068 +0000
+@@ -127,7 +127,7 @@ if test "$echo_cflags" = "yes"; then
+ fi
+ 
+ if test "$echo_libs" = "yes"; then
+-      libdirs="-Wl,-rpath-link,$libdir -L$libdir"
++      libdirs="-L$libdir -R$libdir"
+       if test -n "$lib_ssl"; then
+ 	libdirs="$libdirs -lssl${major_version}"
+       fi
