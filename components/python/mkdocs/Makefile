@@ -26,8 +26,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mkdocs
-COMPONENT_VERSION= 0.15.3
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 1.0.4
 COMPONENT_FMRI= library/python/mkdocs	
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SUMMARY= mkdocs - Project documentation with Markdown
@@ -35,7 +34,7 @@ COMPONENT_PROJECT_URL= http://www.mkdocs.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a5442ae24fd9e6f9daeefaf354c960e5dac27ff388f63e1bb324ed8a1b7edaa9
+    sha256:c9a0e1637c1e92b663d290a74ed1370ee7d50c6af165f49215df3a0c10b5bafa
 COMPONENT_ARCHIVE_URL= \
     https://github.com/mkdocs/mkdocs/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= MkDocs License (BSD)
