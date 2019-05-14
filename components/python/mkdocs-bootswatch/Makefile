@@ -24,13 +24,13 @@ include ../../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME= mkdocs-bootswatch
-COMPONENT_VERSION= 0.4.0
+COMPONENT_VERSION= 1.0
 COMPONENT_FMRI= library/python/mkdocs-bootswatch
 COMPONENT_PROJECT_URL= http://mkdocs.github.io/mkdocs-bootswatch/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:51d1305d5ab7240983412611828e657598a73bb97df7d5da839e2ef7bfd827db
+    sha256:2d6d7eb430e8d5438ab8763db6df6154b4071c7599b0b99dfdb15cd1a80d3462
 COMPONENT_ARCHIVE_URL= \
     https://github.com/mkdocs/mkdocs-bootswatch/archive/$(COMPONENT_VERSION).tar.gz
 
