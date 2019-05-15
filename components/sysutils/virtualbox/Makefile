@@ -11,12 +11,13 @@
 #
 # Copyright 2017 Aurelien Larcher
 # Copyright 2019 Michal Nowak
+# Copyright 2019 Tim Mooney
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.0.6
+COMPONENT_VERSION=      6.0.8
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
@@ -27,16 +28,16 @@ COMPONENT_DOWNLOAD_URL= \
 	http://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:3419c49a90cef7f0a5781426259d47d7871457ab0fd201ec0fca83321441e552
+	sha256:1b5aa85118c62fb67867b95167b05e66aa154b2caf44c0a3dc932ea5bee85d87
 COMPONENT_LICENSE=      GPLv2
 
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-130049
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-130520
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= \
-	sha256:c418865976c518e2c60bc66f9b6479850b432f4e58ab4be4b36a41078efec845
+	sha256:b3f38221437a5a5e91b9d2d1fdb1243cccc7f270dc2bfe4d463b5328766c4440
 COMPONENT_LICENSE_1=      GPLv2
 UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
 
@@ -196,7 +197,7 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	cp $(VBOX_BINDIR)/vboxservice.xml $(PROTO_DIR)/var/svc/manifest/application/virtualbox
 	cp $(VBOX_BINDIR)/vboxmslnk.xml $(PROTO_DIR)/var/svc/manifest/application/virtualbox
 	$(MKDIR) $(PROTO_DIR)/etc/fs/vboxfs
-	cp $(VBOX_BINDIR)/vboxfsmount $(PROTO_DIR)/etc/fs/vboxfs
+	cp $(VBOX_BINDIR)/vboxfsmount $(PROTO_DIR)/etc/fs/vboxfs/mount
 	$(MKDIR) $(PROTO_DIR)/etc/xdg/autostart
 	cp $(VBOX_BINDIR)/vboxclient.desktop $(PROTO_DIR)/etc/xdg/autostart
 	$(MKDIR) $(PROTO_DIR)/$(X11_SERVERDRV_DIR)
