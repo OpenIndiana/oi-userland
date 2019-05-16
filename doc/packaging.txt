@@ -109,11 +109,14 @@ Dependencies Resolved
     a .depend.res copy in the build directory, the umbrella dependency
     resolution target is {build-dir}/.resolved-$(MACH).
 
-    The resolution step is also set up to use the -e flag to pkgdepend
-    resolve, which limits the set of packages it looks at to resolve the
-    dependencies it generated in the previous step.  This makes the resolution
-    step a great deal faster, but requires that you keep a static list of
-    these packages, and update it when packages are added to it.  Having extra
+    The resolution step is also set up to use the -e flag to pkgdepend resolve,
+    which limits the set of packages it looks at to resolve the dependencies it
+    generated in the previous step.  This makes the resolution step a great deal
+    faster, but requires that you include a static list of these packages in
+    your component Makefile REQUIRED_PACKAGES macro. You can automatically
+    add REQURIED_PACKAGES settings for the packages used in dependency
+    resolution by running "gmake REQUIRED_PACKAGES". Once you have done so,
+    you should manually verify the Makefile additions. Having extra
     packages in there is safe.
 
     This list is kept as the REQUIRED_PACKAGES list in your component
@@ -122,11 +125,9 @@ Dependencies Resolved
 
     To test, run "gmake clean" and re-publish.
 
-    Don't forget to "hg add resolve.deps"!
-
     Note that there is a possibility the list of dependencies will be different
     on different architectures, so you should run this on both sparc and x86,
-    and combine the two lists.  Please keep the files sorted.
+    and combine the two lists.  Please keep the lists sorted.
 
 Manifest Validation
     The resolved manifest(s) and prototype install tree are passed through
