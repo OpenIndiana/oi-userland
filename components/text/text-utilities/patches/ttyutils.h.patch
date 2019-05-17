@@ -1,0 +1,36 @@
+Changes needed to get column to build on Solaris
+
+These changes will be sent upstream.
+
+--- util-linux-2.25.2/include/ttyutils.h.orig	2015-02-16 18:20:41.448705202 -0800
++++ util-linux-2.25.2/include/ttyutils.h	2015-02-16 18:21:05.533124857 -0800
+@@ -57,6 +57,29 @@
+ #define UL_TTY_KEEPCFLAGS	(1 << 1)
+ #define UL_TTY_UTF8		(1 << 2)
+ 
++/* These are not defined in Solaris. Taken from tmux compat/ttydefaults.h */
++#ifndef OXTABS
++#define OXTABS 0
++#endif
++#ifndef TTYDEF_IFLAG
++#define        TTYDEF_IFLAG    (BRKINT | ICRNL | IMAXBEL | IXON | IXANY)
++#endif
++#ifndef TTYDEF_OFLAG
++#define TTYDEF_OFLAG   (OPOST | ONLCR | OXTABS)
++#endif
++#ifndef TTYDEF_LFLAG
++#define TTYDEF_LFLAG   (ECHO | ICANON | ISIG | IEXTEN | ECHOE|ECHOKE|ECHOCTL)
++#endif
++#ifndef TTYDEF_CFLAG
++#define TTYDEF_CFLAG   (CREAD | CS8 | HUPCL)
++#endif
++#ifndef CREPRINT
++#define        CREPRINT        CTRL('r')
++#endif
++#ifndef CDISCARD
++#define        CDISCARD        CTRL('o')
++#endif
++
+ static inline void reset_virtual_console(struct termios *tp, int flags)
+ {
+ 	/* Use defaults of <sys/ttydefaults.h> for base settings */
