@@ -12,12 +12,14 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+PREFERRED_BITS=		64
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gftp
 COMPONENT_VERSION=	2.0.19
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://gftp.seul.org/
+COMPONENT_REVISION=	2
+COMPONENT_PROJECT_URL=	https://www.gftp.org/
 COMPONENT_SUMMARY=	Multithreaded FTP client for *NIX based machines
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -29,16 +31,15 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
