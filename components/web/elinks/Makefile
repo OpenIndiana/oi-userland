@@ -19,10 +19,15 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
-include ../../make-rules/shared-macros.mk
+
+PREFERRED_BITS=		64
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elinks
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	0.11.7
 COMPONENT_PROJECT_URL=	http://elinks.or.cz/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,9 +37,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/elinks
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--enable-bittorrent
 CONFIGURE_OPTIONS  +=		--enable-html-highlight
@@ -44,9 +49,9 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

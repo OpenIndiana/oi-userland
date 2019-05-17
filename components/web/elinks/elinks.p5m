@@ -19,9 +19,9 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
-<transform file path=usr/share/doc/elinks/(.+$) -> set action.hash doc/%<\1> >
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
 set name=pkg.fmri \
     value=pkg:/web/browser/elinks@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description \
@@ -30,38 +30,16 @@ set name=pkg.summary value="advanced text-mode WWW browser"
 set name=com.oracle.info.description value="the elinks text based web browsing utility"
 set name=info.classification \
     value=org.opensolaris.category.2008:Applications/Internet
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.arc-caseid \
     value=LSARC/2009/028
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/$(MACH64)/elinks
+
+license elinks.license license=GPLv2
+
 file path=usr/bin/elinks
-file path=usr/share/doc/elinks/bittorrent.txt
-file path=usr/share/doc/elinks/bookmarks.txt
-file path=usr/share/doc/elinks/color-model.txt
-file path=usr/share/doc/elinks/dev-intro.txt
-file path=usr/share/doc/elinks/ecmascript.txt
-file path=usr/share/doc/elinks/elinks.1.txt
-file path=usr/share/doc/elinks/elinks.conf.5.txt
-file path=usr/share/doc/elinks/elinkskeys.5.txt
-file path=usr/share/doc/elinks/events.txt
-file path=usr/share/doc/elinks/exmode.txt
-file path=usr/share/doc/elinks/faq.txt
-file path=usr/share/doc/elinks/feedback.txt
-file path=usr/share/doc/elinks/hacking.txt
-file path=usr/share/doc/elinks/installation.txt
-file path=usr/share/doc/elinks/introduction.txt
-file path=usr/share/doc/elinks/lua-scripting.txt
-file path=usr/share/doc/elinks/mailcap.txt
-file path=usr/share/doc/elinks/manual.txt
-file path=usr/share/doc/elinks/marks.txt
-file path=usr/share/doc/elinks/mime.txt
-file path=usr/share/doc/elinks/remote.txt
-file path=usr/share/doc/elinks/small.txt
-file path=usr/share/doc/elinks/tabs.txt
-file path=usr/share/doc/elinks/terminals.txt
-file path=usr/share/doc/elinks/urlshortcuts.txt
+#file path=usr/lib/$(MACH64)/charset.alias
 file path=usr/share/locale/be/LC_MESSAGES/elinks.mo
 file path=usr/share/locale/bg/LC_MESSAGES/elinks.mo
 file path=usr/share/locale/ca/LC_MESSAGES/elinks.mo
@@ -79,6 +57,7 @@ file path=usr/share/locale/hu/LC_MESSAGES/elinks.mo
 file path=usr/share/locale/id/LC_MESSAGES/elinks.mo
 file path=usr/share/locale/is/LC_MESSAGES/elinks.mo
 file path=usr/share/locale/it/LC_MESSAGES/elinks.mo
+#file path=usr/share/locale/locale.alias
 file path=usr/share/locale/lt/LC_MESSAGES/elinks.mo
 file path=usr/share/locale/nb/LC_MESSAGES/elinks.mo
 file path=usr/share/locale/nl/LC_MESSAGES/elinks.mo
@@ -95,4 +74,3 @@ file path=usr/share/locale/uk/LC_MESSAGES/elinks.mo
 file path=usr/share/man/man1/elinks.1
 file path=usr/share/man/man5/elinks.conf.5
 file path=usr/share/man/man5/elinkskeys.5
-license elinks.license license=GPLv2
