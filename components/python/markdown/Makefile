@@ -19,24 +19,25 @@
 # CDDL HEADER END
 #
 # Copyright 2016, Aurelien Larcher.
+# Copyright 2019, Michal Nowak
 #
 include ../../../make-rules/shared-macros.mk
 
 
-COMPONENT_NAME= markdown
-COMPONENT_SRC_NAME= Python-Markdown
-COMPONENT_VERSION= 2.6.9
-COMPONENT_FMRI= library/python/markdown
-COMPONENT_PROJECT_URL=  https://pythonhosted.org/Markdown/
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_NAME=		Markdown
+COMPONENT_VERSION=	3.1
+COMPONENT_SUMMARY=	'Python implementation of Markdown'
+COMPONENT_FMRI=		library/python/markdown
+COMPONENT_PROJECT_URL=	https://python-markdown.github.io
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4aca6f069776e5e45bf4fdedd1512137ee345e860e842e583c464ab670197e80
-# Pypi download link is broken
-COMPONENT_ARCHIVE_URL= \
-    https://github.com/Python-Markdown/markdown/archive/$(COMPONENT_VERSION).tar.gz
+	sha256:fc4a6f69a656b8d858d7503bda633f4dd63c2d70cf80abdc6eafa64c4ae8c250
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENSE.md
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -48,4 +49,8 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
