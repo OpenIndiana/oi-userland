@@ -1,32 +1,24 @@
-diff -Nrup gkrellm-2.3.2.mod.2/server/Makefile gkrellm-2.3.2.mod.3/server/Makefile
---- gkrellm-2.3.2.mod.2/server/Makefile	2008-10-09 19:02:59.728948000 +0800
-+++ gkrellm-2.3.2.mod.3/server/Makefile	2008-10-09 19:59:59.877475000 +0800
-@@ -56,10 +56,15 @@ GKRELLMD_INCLUDES = gkrellmd.h $(SHARED_
- PKG_INCLUDE = `$(PKG_CONFIG) --cflags glib-2.0 gthread-2.0`
- PKG_LIB = `$(PKG_CONFIG) --libs glib-2.0 gmodule-2.0 gthread-2.0`
+--- gkrellm-2.3.10/server/Makefile	2016-02-03 00:37:50.000000000 +0000
++++ gkrellm-2.3.10/server/Makefile.new	2019-05-17 17:26:29.678637903 +0000
+@@ -31,11 +31,16 @@ GKRELLMD_INCLUDES = gkrellmd.h $(SHARED_
+ PKG_INCLUDE := $(shell $(PKG_CONFIG) --cflags glib-2.0 gmodule-2.0 gthread-2.0)
+ PKG_LIB := $(shell $(PKG_CONFIG) --libs glib-2.0 gmodule-2.0 gthread-2.0)
  
+-FLAGS = -O2 $(PKG_INCLUDE)
 +HAL_CFLAGS = -DDBUS_API_SUBJECT_TO_CHANGE -I/usr/include/hal -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
 +HAL_LIBS = -lhal -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
 +DBUS_CFLAGS = -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
 +DBUS_LIBS = -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
 +
- GLIB12_INCLUDE = `glib-config --cflags`
- GLIB12_LIB = `glib-config --libs glib gmodule`
- 
--FLAGS = -O2 $(PKG_INCLUDE)
 +FLAGS = -O2 $(PKG_INCLUDE) $(HAL_CFLAGS) $(DBUS_CFLAGS)
  
- ifeq ($(glib12),1)
-     FLAGS = -O2 $(GLIB12_INCLUDE)
-@@ -69,7 +74,7 @@ ifeq ($(glib12),yes)
- endif
  FLAGS += $(GTOP_INCLUDE) $(PTHREAD_INC) -I.. -I$(SHARED_PATH) -DGKRELLM_SERVER
  
 -LIBS = $(PKG_LIB)
 +LIBS = $(PKG_LIB) $(HAL_LIBS) $(DBUS_LIBS)
- ifeq ($(glib12),1)
-     LIBS = $(GLIB12_LIB)
- endif
+ LIBS += $(GTOP_LIBS_D) $(SYS_LIBS) $(SENSORS_LIBS)
+ 
+ ifeq ($(debug),1)
 --- gkrellm-2.3.2.mod.2/src/sysdeps/solaris.c	2008-10-09 19:02:59.823558000 +0800
 +++ gkrellm-2.3.2.mod.3/src/sysdeps/solaris.c	2008-10-22 20:33:19.630950000 +0800
 @@ -998,18 +998,218 @@ gkrellm_sys_fs_init(void)
