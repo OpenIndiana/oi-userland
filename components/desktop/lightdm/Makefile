@@ -11,18 +11,18 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lightdm
-COMPONENT_VERSION=	1.28.0
+COMPONENT_VERSION=	1.30.0
 COMPONENT_SUMMARY=	Light display manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:f20f599d8d7cf90b77a2df33c6e9e615abc443123b1b228de1c20a636aecfa07
+	sha256:a118779650a3a5b20f05d53c4f9e377b484fbc1810a6b0914a60840d9a581f95
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/CanonicalLtd/lightdm/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/LightDM/
@@ -37,7 +37,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 CPPFLAGS+= $(CPP_XPG7MODE)
 
