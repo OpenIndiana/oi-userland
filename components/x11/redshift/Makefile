@@ -10,7 +10,7 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
-# Copyright (c) 2018 Michal Nowak
+# Copyright (c) 2019 Michal Nowak
 #
 
 PREFERRED_BITS=	64
@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		redshift
 COMPONENT_VERSION=	1.12
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://jonls.dk/redshift/
 COMPONENT_SUMMARY=	Redshift adjusts the color temperature of your screen according to your surroundings
 COMPONENT_FMRI=         x11/redshift
@@ -45,7 +46,13 @@ CONFIGURE_ENV	+= PYTHON=$(PYTHON)
 CONFIGURE_OPTIONS	+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES.32)"
 CONFIGURE_OPTIONS	+= --enable-gui
 
-# common targets
+# MATE won't load SVG icons for Redshift, PNG ones work though
+COMPONENT_POST_INSTALL_ACTION = \
+	$(MKDIR) -p $(PROTOUSRSHAREDIR)/icons/hicolor/24x24/apps/ ;\
+	for img in redshift redshift-status-on redshift-status-off; do \
+		inkscape -z -e $(PROTOUSRSHAREDIR)/icons/hicolor/24x24/apps/$$img.png -w 24 -h 24 $(PROTOUSRSHAREDIR)/icons/hicolor/scalable/apps/$$img.svg ;\
+	done ;
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
@@ -53,6 +60,7 @@ install:	$(INSTALL_64)
 test:		$(NO_TESTS)
 
 # Build dependencies
+REQUIRED_PACKAGES += image/editor/inkscape
 REQUIRED_PACKAGES += system/header/header-drm
 
 # Auto-generated dependencies
