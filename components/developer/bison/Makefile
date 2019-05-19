@@ -27,20 +27,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.3.2
+COMPONENT_VERSION=	3.4.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:039ee45b61d95e5003e7e8376f9080001b4066ff357bde271b7faace53b9d804
+	sha256:27159ac5ebf736dffd5636fd2cd625767c9e437de65baa63cb0de83570bd820d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_FMRI=		developer/parser/bison
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Tests need this
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -86,6 +86,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|.*examples/calc++/calc++-parser.stamp.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|.*tests/bison -o y.tab.c.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^rm:.*directory renamed.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^rm /d" ' \
+	'-e "/^touch /d" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
 $(INSTALL_32):	$(INSTALL_64)
@@ -102,3 +104,4 @@ REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/macro/gnu-m4
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/gnu-gettext
