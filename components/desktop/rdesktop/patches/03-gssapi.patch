@@ -1,6 +1,6 @@
---- rdesktop-1f13bf5c5e86cbc99a6f0492fcdcd38cf0da2105/configure.ac.1	2018-12-25 16:01:59.444008281 +0000
-+++ rdesktop-1f13bf5c5e86cbc99a6f0492fcdcd38cf0da2105/configure.ac	2018-12-25 16:05:39.291557837 +0000
-@@ -139,6 +139,11 @@
+--- rdesktop-a88cd226bb9d5e3c56c0e78b7dd62db86e97e383/configure.ac	2019-05-08 13:55:46.000000000 +0000
++++ rdesktop-a88cd226bb9d5e3c56c0e78b7dd62db86e97e383/configure.ac	2019-05-20 07:49:07.744377992 +0000
+@@ -74,6 +74,11 @@ AS_IF([test "x$enable_credssp" != "xno"]
  		GSSAPI_CFLAGS=""
  		GSSAPI_LIBS="-framework Kerberos"
  		;;
@@ -10,5 +10,5 @@
 +		GSSAPI_LIBS="`krb5-config --libs gssapi`"
 +		;;
  	     *)
- 		if test -n "$PKG_CONFIG"; then
- 		  PKG_CHECK_MODULES(GSSAPI, krb5-gssapi, [WITH_CREDSSP=1], [WITH_CREDSSP=0])
+ 		#if 'OSTYPE' is not set use 'host' instead
+ 		if test x"$OSTYPE" = "x"; then
