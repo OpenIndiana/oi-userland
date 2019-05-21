@@ -18,23 +18,35 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2018, Aurelien Larcher
+
 #
+# Copyright 2018, Aurelien Larcher
+# Copyright 2019, Michal Nowak
+#
+
 PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=     htop
-COMPONENT_VERSION=  2.2.0
-COMPONENT_FMRI=     diagnostic/htop
-COMPONENT_SUMMARY=  htop - an interactive process viewer for Unix
-COMPONENT_PROJECT_URL= https://hisham.hm/htop/
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		htop
+COMPONENT_VERSION=	2.2.0
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=		diagnostic/htop
+COMPONENT_SUMMARY=	htop - an interactive process viewer for Unix
+COMPONENT_PROJECT_URL=	https://hisham.hm/htop/
+COMPONENT_SRC=		htop-220-sunos_11-p1
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d9d6826f10ce3887950d709b53ee1d8c1849a70fa38e91d5896ad8cbc6ba3c57
+	sha256:378c513eea60e352a526db809cb5c3d211fc4c927dde21ec9e5124d63c86d078
+# htop is broken without https://github.com/hishamhm/htop/pull/880 and
+# as upstream seems stalled on this (and other things), we opt for a source
+# which has illumos fixes included. Revert to the source below once merged:
+#
+# COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+# COMPONENT_ARCHIVE_URL= \
+# 	https://hisham.hm/htop/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL= \
-  https://hisham.hm/htop/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://github.com/ninefathom/htop/archive/220-sunos_11-p1.tar.gz
 COMPONENT_LICENSE=  GPLv2 
 
 include $(WS_MAKE_RULES)/prep.mk
