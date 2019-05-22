@@ -22,7 +22,7 @@
 #
 # Copyright 2016 Aurelien Larcher
 # Copyright 2017 Till Wegmueller
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -31,7 +31,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.10
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).7
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).8
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -39,7 +39,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:b84a0d7c90789f3a2ec5349dbe7419efb81f1fac9289b6f60df86bd919bd4447
+COMPONENT_ARCHIVE_HASH=		sha256:6faf74046b5e24c2c0b46e78571cca4d65e1b89819da1089e53ea57539c63491
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
@@ -78,8 +78,6 @@ COMPONENT_INSTALL_ENV += GOPATH="$(SUPP_ROOT)"
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PKG_MACROS+= GO_MAJOR=$(COMPONENT_MAJOR_VERSION)
 
 # We have to fiddle with the package archives to get them into the same source
 # directory so that we can use the standard build targets.  We're effectively
