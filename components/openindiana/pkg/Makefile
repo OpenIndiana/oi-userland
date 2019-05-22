@@ -28,6 +28,8 @@ MAKE=/usr/bin/make
 
 PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/repo
 
+DEVBOOK=$(SOURCE_DIR)/proto/dev-guide/book.pdf
+
 CLEAN_PATHS += $(BUILD_DIR)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -62,6 +64,13 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded
 	$(MAKE) publish-pkgs BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) repository-metadata && \
 	$(TOUCH) $@
+
+# Target to generate developer's guide
+devbook: $(DEVBOOK)
+
+$(DEVBOOK): $(SOURCE_DIR)/.downloaded
+	cd $(SOURCE_DIR)/doc/dev-guide && \
+	$(ENV) $(COMPONENT_BUILD_ENV) $(MAKE)
 
 build install: $(BUILD_DIR)/$(MACH)/.built
 
