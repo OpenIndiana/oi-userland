@@ -1,0 +1,325 @@
+
+-------------------- util-linux regression tests --------------------
+
+                    For development purpose only.                    
+                 Don't execute on production system!                 
+
+       kernel: 5.11                              
+
+
+     script: $(SOURCE_DIR)/tests/ts/colcrt/functional
+    sub dir: $(SOURCE_DIR)/tests/ts/colcrt
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/colcrt
+  test name: functional
+  test desc: functional
+  component: colcrt
+  namespace: colcrt/functional
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/colcrt/functional
+   valgrind: $(SOURCE_DIR)/tests/output/colcrt/functional.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/colcrt/functional
+ mountpoint: $(SOURCE_DIR)/tests/output/colcrt/functional-mnt
+
+       colcrt: functional                     ...
+                : no-options                  ... OK
+                : no-underlining              ... OK
+                : half-lines                  ... OK
+                : short-options               ... OK
+           ... OK (all 4 sub-tests PASSED)
+
+     script: $(SOURCE_DIR)/tests/ts/colcrt/regressions
+    sub dir: $(SOURCE_DIR)/tests/ts/colcrt
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/colcrt
+  test name: regressions
+  test desc: regressions
+  component: colcrt
+  namespace: colcrt/regressions
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/colcrt/regressions
+   valgrind: $(SOURCE_DIR)/tests/output/colcrt/regressions.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/colcrt/regressions
+ mountpoint: $(SOURCE_DIR)/tests/output/colcrt/regressions-mnt
+
+       colcrt: regressions                    ...
+                : crash1                      ...
+diff-{{{
+--- $(SOURCE_DIR)/tests/expected/colcrt/regressions-crash1	
++++ $(SOURCE_DIR)/tests/output/colcrt/regressions-crash1	
+@@ -1,2 +1,2 @@
+- W U;    U;  D  f U;  D  f    D  f    >     @W  ]~   K- -  ----  -- -- -  -- -- ---- -- ---- --  -  --  --- --
++ W U;    U;  D  f U;  D  f    D  f    >     @W  ]~   K  ~- -  ----  -- -- -  -- -- ---- -- ---- --  -  --  --- --
+ return value: 0
+}}}-diff
+
+ FAILED (colcrt/regressions-crash1)
+                : crash2                      ... OK
+                : hang1                       ... OK
+           ... FAILED (1 from 3 sub-tests)
+
+     script: $(SOURCE_DIR)/tests/ts/colrm/rm2-2
+    sub dir: $(SOURCE_DIR)/tests/ts/colrm
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/colrm
+  test name: rm2-2
+  test desc: basic check
+  component: colrm
+  namespace: colrm/rm2-2
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/colrm/rm2-2
+   valgrind: $(SOURCE_DIR)/tests/output/colrm/rm2-2.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/colrm/rm2-2
+ mountpoint: $(SOURCE_DIR)/tests/output/colrm/rm2-2-mnt
+
+        colrm: basic check                    ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/column/columnate
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: columnate
+  test desc: columnate
+  component: column
+  namespace: column/columnate
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/columnate
+   valgrind: $(SOURCE_DIR)/tests/output/column/columnate.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/columnate
+ mountpoint: $(SOURCE_DIR)/tests/output/column/columnate-mnt
+
+       column: columnate                      ...
+                : fill-cols-80                ... OK
+                : fill-cols-50                ... OK
+                : fill-cols-250               ... OK
+                : fill-rows-80                ... OK
+                : fill-rows-50                ... OK
+                : fill-rows-250               ... OK
+           ... OK (all 6 sub-tests PASSED)
+
+     script: $(SOURCE_DIR)/tests/ts/column/invalid-multibyte
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: invalid-multibyte
+  test desc: invalid multibyte
+  component: column
+  namespace: column/invalid-multibyte
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/invalid-multibyte
+   valgrind: $(SOURCE_DIR)/tests/output/column/invalid-multibyte.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/invalid-multibyte
+ mountpoint: $(SOURCE_DIR)/tests/output/column/invalid-multibyte-mnt
+
+       column: invalid multibyte              ...
+diff-{{{
+--- $(SOURCE_DIR)/tests/expected/column/invalid-multibyte	
++++ $(SOURCE_DIR)/tests/output/column/invalid-multibyte	
+@@ -1 +1 @@
+-\xa3
++£
+}}}-diff
+
+ FAILED (column/invalid-multibyte)
+
+     script: $(SOURCE_DIR)/tests/ts/column/multi-file
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: multi-file
+  test desc: multiple files
+  component: column
+  namespace: column/multi-file
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/multi-file
+   valgrind: $(SOURCE_DIR)/tests/output/column/multi-file.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/multi-file
+ mountpoint: $(SOURCE_DIR)/tests/output/column/multi-file-mnt
+
+       column: multiple files                 ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/column/table
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: table
+  test desc: table
+  component: column
+  namespace: column/table
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/table
+   valgrind: $(SOURCE_DIR)/tests/output/column/table.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/table
+ mountpoint: $(SOURCE_DIR)/tests/output/column/table-mnt
+
+       column: table                          ...
+                : default                     ... OK
+                : output-separator            ... OK
+                : input-separator             ... OK
+                : input-separator-space       ... OK
+                : empty-lines                 ... OK
+                : noempty-lines               ... OK
+                : long                        ... OK
+                : hide                        ... OK
+                : headers                     ... OK
+                : truncate                    ... OK
+                : right                       ... OK
+                : wrap                        ... OK
+                : order                       ... OK
+                : tree                        ... OK
+                : empty-column                ... OK
+           ... OK (all 15 sub-tests PASSED)
+
+     script: $(SOURCE_DIR)/tests/ts/hexdump/format-strings
+    sub dir: $(SOURCE_DIR)/tests/ts/hexdump
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/hexdump
+  test name: format-strings
+  test desc: format-strings
+  component: hexdump
+  namespace: hexdump/format-strings
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/hexdump/format-strings
+   valgrind: $(SOURCE_DIR)/tests/output/hexdump/format-strings.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/hexdump/format-strings
+ mountpoint: $(SOURCE_DIR)/tests/output/hexdump/format-strings-mnt
+
+      hexdump: format-strings                 ...
+                : empty-format                ... OK
+                : 1b_octal                    ... OK
+                : 1b_char                     ... OK
+                : canon                       ... OK
+                : 2b_dec                      ... OK
+                : 2b_octal                    ... OK
+                : 2b_hex                      ... OK
+           ... OK (all 7 sub-tests PASSED)
+
+     script: $(SOURCE_DIR)/tests/ts/hexdump/highlighting
+    sub dir: $(SOURCE_DIR)/tests/ts/hexdump
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/hexdump
+  test name: highlighting
+  test desc: highlighting
+  component: hexdump
+  namespace: hexdump/highlighting
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/hexdump/highlighting
+   valgrind: $(SOURCE_DIR)/tests/output/hexdump/highlighting.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/hexdump/highlighting
+ mountpoint: $(SOURCE_DIR)/tests/output/hexdump/highlighting-mnt
+
+      hexdump: highlighting                   ...
+                : 1b_octal-1                  ... OK
+                : 1b_octal-2                  ... OK
+                : 1b_octal-3                  ... OK
+                : 1b_octal-4                  ... OK
+                : 1b_octal-5                  ... OK
+                : 1b_octal-6                  ... OK
+                : 1b_octal-7                  ... OK
+                : 1b_octal-8                  ... OK
+                : 1b_octal-9                  ... OK
+                : 1b_char-1                   ... OK
+                : 1b_char-2                   ... OK
+                : 1b_char-3                   ... OK
+                : canon-1                     ... OK
+                : canon-2                     ... OK
+                : 2b_dec-1                    ... OK
+                : 2b_dec-2                    ... OK
+                : 2b_dec-3                    ... OK
+                : 2b_dec-4                    ... OK
+                : 2b_dec-5                    ... OK
+                : 2b_dec-6                    ... OK
+                : 2b_dec-7                    ... OK
+                : 2b_dec-8                    ... OK
+                : 4b_dec-1                    ... OK
+                : 4b_dec-2                    ... OK
+                : 4b_dec-3                    ... OK
+                : 4b_dec-4                    ... OK
+                : 4b_dec-5                    ... OK
+                : 4b_dec-6                    ... OK
+                : 4b_dec-7                    ... OK
+           ... OK (all 29 sub-tests PASSED)
+
+     script: $(SOURCE_DIR)/tests/ts/rename/basic
+    sub dir: $(SOURCE_DIR)/tests/ts/rename
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/rename
+  test name: basic
+  test desc: basic check
+  component: rename
+  namespace: rename/basic
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/rename/basic
+   valgrind: $(SOURCE_DIR)/tests/output/rename/basic.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/rename/basic
+ mountpoint: $(SOURCE_DIR)/tests/output/rename/basic-mnt
+
+       rename: basic check                    ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/rename/exit_codes
+    sub dir: $(SOURCE_DIR)/tests/ts/rename
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/rename
+  test name: exit_codes
+  test desc: exit codes
+  component: rename
+  namespace: rename/exit_codes
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/rename/exit_codes
+   valgrind: $(SOURCE_DIR)/tests/output/rename/exit_codes.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/rename/exit_codes
+ mountpoint: $(SOURCE_DIR)/tests/output/rename/exit_codes-mnt
+
+       rename: exit codes                     ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/rename/overwrite
+    sub dir: $(SOURCE_DIR)/tests/ts/rename
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/rename
+  test name: overwrite
+  test desc: overwrite
+  component: rename
+  namespace: rename/overwrite
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/rename/overwrite
+   valgrind: $(SOURCE_DIR)/tests/output/rename/overwrite.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/rename/overwrite
+ mountpoint: $(SOURCE_DIR)/tests/output/rename/overwrite-mnt
+
+       rename: overwrite                      ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/rename/subdir
+    sub dir: $(SOURCE_DIR)/tests/ts/rename
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/rename
+  test name: subdir
+  test desc: subdir check
+  component: rename
+  namespace: rename/subdir
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/rename/subdir
+   valgrind: $(SOURCE_DIR)/tests/output/rename/subdir.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/rename/subdir
+ mountpoint: $(SOURCE_DIR)/tests/output/rename/subdir-mnt
+
+       rename: subdir check                   ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/rename/symlink
+    sub dir: $(SOURCE_DIR)/tests/ts/rename
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/rename
+  test name: symlink
+  test desc: symlink check
+  component: rename
+  namespace: rename/symlink
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/rename/symlink
+   valgrind: $(SOURCE_DIR)/tests/output/rename/symlink.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/rename/symlink
+ mountpoint: $(SOURCE_DIR)/tests/output/rename/symlink-mnt
+
+       rename: symlink check                  ... OK
+
+---------------------------------------------------------------------
+  2 tests of 14 FAILED
+---------------------------------------------------------------------
