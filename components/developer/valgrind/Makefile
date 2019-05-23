@@ -21,18 +21,19 @@
 
 #
 # Copyright (c) 2015-2017 Aurelien Larcher. All rights reserved.
+# Copyright (c) 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.13.0
-COMPONENT_FMRI=	developer/debug/valgrind
+COMPONENT_VERSION=	3.15.0
+COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:d76680ef03f00cd5e970bbdcd4e57fb1f6df7d2e2c071635ef2be74790190c3b
+	sha256:417c7a9da8f60dd05698b3a7bc6002e4ef996f14c13f0ff96679a16873e78ab1
 COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	http://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
@@ -44,6 +45,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # Use GNU utilities
 PATH=$(PATH.gnu)
+
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Force use of GCC with given arch support
 CC=$(CC.gcc.$(BITS)) $(CC_BITS) -std=gnu99
@@ -59,11 +63,17 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 
-COMPONENT_PREP_ACTION+= (cd $(@D) && ./autogen.sh )
+COMPONENT_PREP_ACTION += ( cd $(@D) && ./autogen.sh )
 
 # config.h is generated in the build directory while it is assumed to live in the source dir
-COMPONENT_POST_CONFIGURE_ACTION+= (cp $(@D)/config.h $(SOURCE_DIR) )
+COMPONENT_POST_CONFIGURE_ACTION += ( cp $(@D)/config.h $(SOURCE_DIR) )
+
+COMPONENT_POST_BUILD_ACTION += \
+	( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
+
+COMPONENT_TEST_TARGETS=	regtest
 
 build:		$(BUILD_64)
 
@@ -73,7 +83,7 @@ test:		$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += runtime/perl-522
-
-# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
