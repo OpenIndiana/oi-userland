@@ -11,63 +11,54 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2019 Michal Nowak
 #
+
+BUILD_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openconnect
 # Commit timestamp and previous known release
-COMPONENT_VERSION=	7.7.20161105
-COMPONENT_REVISION=	4
-COMPONENT_VERSION_TAG=	b8d3971124b5b2ecccaf727ecc48ba94b531df8e
-COMPONENT_VERSION_TAGSHORT=	b8d3971
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_VERSION_TAGSHORT).tar.gz
+COMPONENT_VERSION=	8.05
+IPS_COMPONENT_VERSION=	8.0.5
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION_TAGSHORT)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.infradead.org/openconnect/index.html
-COMPONENT_DOWNLOAD_URL=	http://git.infradead.org/users/dwmw2/$(COMPONENT_NAME).git
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:9cf801fe365f2262bc39b3768e242a30541cbfbf026795d7962355df4bb6293f
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_DOWNLOAD_URL)/snapshot/$(COMPONENT_VERSION_TAGSHORT).tar.gz
-COMPONENT_LICENSE=		LGPLv2.1
-COMPONENT_LICENSE_FILE= COPYING.LGPL
+	sha256:335c2952d0cb36822acb112eaaf5e3b4acffc6874985fb614fec0b76c4c12992
+COMPONENT_ARCHIVE_URL=	ftp://ftp.infradead.org/pub/openconnect/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING.LGPL
 COMPONENT_SUMMARY=	An SSL VPN client (intended to be) compatible with Cisco AnyConnect and Juniper Pulse
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
-        (cd $(@D) &&\
-        autoreconf -fiv &&\
-        $(RM) config.h )
+	(cd $(@D) && \
+	autoreconf -fiv && \
+	$(RM) config.h )
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Use OpenSSL, it allows more options on OI/Hipster that openconnect uses
 CONFIGURE_OPTIONS +=	--with-system-cafile=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS +=	--without-gnutls
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-$(TEST_$(BITS)): $(BUILD_$(BITS))
-	cd $(BUILD_DIR_$(BITS)) && $(MAKE) check
-	$(TOUCH) $@
-
-test: $(TEST_32_and_64)
+CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/$(MACH64)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += network/vpnc-scripts
-REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += library/security/libp11
 REQUIRED_PACKAGES += library/desktop/p11-kit
+REQUIRED_PACKAGES += driver/network/header-tun
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/lz4
+REQUIRED_PACKAGES += library/security/libp11
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += driver/network/header-tun
