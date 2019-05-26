@@ -1,8 +1,8 @@
 Add ability to source common configuration hook file(s).
 
---- ./vpnc-script.orig	2016-08-28 08:27:51.000000000 +0200
-+++ ./vpnc-script	2016-11-20 00:44:51.495636440 +0100
-@@ -77,6 +77,9 @@
+--- ./vpnc-script	2019-10-16 22:56:48.581008713 +0000
++++ ./vpnc-script	2019-10-16 22:59:15.859322960 +0000
+@@ -77,6 +77,9 @@ PATH=/sbin:/usr/sbin:$PATH
  
  OS="`uname -s`"
  
@@ -12,7 +12,7 @@ Add ability to source common configuration hook file(s).
  HOOKS_DIR=/etc/vpnc
  DEFAULT_ROUTE_FILE=/var/run/vpnc/defaultroute
  RESOLV_CONF_BACKUP=/var/run/vpnc/resolv.conf-backup
-@@ -796,20 +799,24 @@
+@@ -1022,20 +1025,24 @@ fi
  
  case "$reason" in
  	pre-init)
@@ -32,8 +32,16 @@ Add ability to source common configuration hook file(s).
  		do_disconnect
  		run_hooks post-disconnect
  		;;
+ 	attempt-reconnect)
++		run_hooks common-config
+ 		# Invoked before each attempt to re-establish the session.
+ 		# If the underlying physical connection changed, we might
+ 		# be left with a route to the VPN server through the VPN
+@@ -1043,6 +1050,7 @@ case "$reason" in
+ 		run_hooks attempt-reconnect
+ 		;;
  	reconnect)
 +		run_hooks common-config
+ 		# After successfully re-establishing the session.
  		run_hooks reconnect
  		;;
- 	*)
