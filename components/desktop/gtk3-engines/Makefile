@@ -10,12 +10,14 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	gtk-engines
 COMPONENT_VERSION=	2.91.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Engines for GTK3 Themes
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,15 +27,15 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.91/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		gnome/theme/gtk3-engines
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Theming
-COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # common targets
 build:		$(BUILD_32_and_64)
