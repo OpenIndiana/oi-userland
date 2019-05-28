@@ -1,0 +1,15 @@
+diff -ur hplip-3.19.5.orig/pcard/pcardext/pcardext.c hplip-3.19.5/pcard/pcardext/pcardext.c
+--- hplip-3.19.5.orig/pcard/pcardext/pcardext.c	2019-04-08 06:04:33.000000000 +0000
++++ hplip-3.19.5/pcard/pcardext/pcardext.c	2019-05-23 15:12:09.139225654 +0000
+@@ -24,6 +24,11 @@
+ 
+ \*****************************************************************************/
+ 
++#if defined(__sun)
++/* for alloca() */
++#include <alloca.h>
++#endif
++
+ #include <Python.h>
+ #include <structmember.h>
+ #include "../fat.h"

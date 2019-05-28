@@ -1,0 +1,20 @@
+
+createPPD.sh uses several GNU-isms, expecting the GNU version of at least
+make and grep.  It's only used at configure time and is not installed, so
+set its PATH so it finds the GNU versions of tools first.
+
+--- hplip-3.18.3.orig/createPPD.sh	Tue Mar  6 03:56:02 2018
++++ hplip-3.18.3/createPPD.sh	Fri Apr 13 14:42:54 2018
+@@ -19,6 +19,12 @@
+ # Author: 
+ #
+ #echo "HP Linux Imaging and Printing System createPPD file"
++
++# createPPD.sh uses a number of GNU-isms.  Rather than trying to fix all
++# of them, ensure that it finds the GNU versions of make, grep, and other
++# tools.
++PATH=/usr/gnu/bin:/usr/bin:/bin:/usr/sbin; export PATH
++
+ make -f Makefile_dat2drv
+ rip="foomatic-rip-hplip"
+ for argument in $*;do

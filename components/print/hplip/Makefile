@@ -24,14 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.15.9
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      3.19.5
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a1f58fe8707373c193728a7fd826523e99c30e3ca7f660faa75531acdff89d6d
+COMPONENT_ARCHIVE_HASH= sha256:8f5ac056c1a778b78511588f427072078703d683dfe5af6214ba179e89b453e1
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/hplip
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -61,6 +59,8 @@ CONFIGURE_OPTIONS +=	--disable-qt4
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
+# for createPPD.sh
+CONFIGURE_ENV +=	"ARCH=$(BITS)"
 
 LDFLAGS+= -lnsl
 
@@ -90,6 +90,9 @@ $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-only-build
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-install
 
 COMPONENT_INSTALL_ARGS += -e
+
+# for install-data libImageProcessor architecture selection
+COMPONENT_INSTALL_ENV  +=  "ARCH=$(BITS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -136,13 +139,15 @@ install: $(BUILD_DIR)/.allvariantsinstalled
 # empty test target
 test:	$(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb
