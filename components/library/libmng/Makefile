@@ -11,13 +11,14 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
+# Copyright 2019 Tim Mooney <Timothy.V.Mooney@gmail.com>
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmng
 COMPONENT_VERSION=	1.0.10
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_FMRI=		library/graphics/libmng
 COMPONENT_PROJECT_URL=	http://www.libpng.org/pub/mng
 COMPONENT_SUMMARY=	The Multiple Image Network Graphics Library
@@ -61,6 +62,11 @@ CFLAGS += `pkg-config --cflags lcms2`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
 
+# build with the distribution default libjpeg
+CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=    $(JPEG_LDFLAGS)
+
 CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
@@ -98,8 +104,7 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
 test:	$(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
