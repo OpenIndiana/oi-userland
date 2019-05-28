@@ -1,0 +1,17 @@
+
+Add strings.h to the list of headers included by hpmudi, so jd.c has
+a declaration for bzero().
+
+diff -ur hplip-3.18.3.orig/io/hpmud/hpmudi.h hplip-3.18.3/io/hpmud/hpmudi.h
+--- hplip-3.18.3.orig/io/hpmud/hpmudi.h	Tue Mar  6 03:55:50 2018
++++ hplip-3.18.3/io/hpmud/hpmudi.h	Fri Apr 13 15:33:44 2018
+@@ -39,6 +39,9 @@
+ #include <fcntl.h>
+ #include <errno.h>
+ #include <string.h>
++#ifdef HAVE_STRINGS_H
++#include <strings.h>
++#endif
+ #include <stdio.h>
+ #include <syslog.h>
+ #include <time.h>

@@ -1,0 +1,15 @@
+diff -ur hplip-3.19.5.orig/prnt/hpps/hppsfilter.c hplip-3.19.5/prnt/hpps/hppsfilter.c
+--- hplip-3.19.5.orig/prnt/hpps/hppsfilter.c	2019-04-08 06:05:05.000000000 +0000
++++ hplip-3.19.5/prnt/hpps/hppsfilter.c	2019-05-23 15:24:43.227124215 +0000
+@@ -32,6 +32,11 @@
+ \*****************************************************************************/
+ #include "hppsfilter.h"
+ 
++#if defined(__sun)
++/* no prototype, part of libnsl */
++extern int getdomainname(char*, int);
++#endif
++
+ 
+ /*  save final output ps file: in cupsd.conf file  value #hpLogLevel 15  */
+ static int g_savepsfile = 0;

@@ -1,0 +1,45 @@
+
+Add typedefs for OI and other SUSv3 systems.
+
+diff -ur hplip-3.19.5.orig/scan/sane/OrbliteScan/MacCommon.h hplip-3.19.5/scan/sane/OrbliteScan/MacCommon.h
+--- hplip-3.19.5.orig/scan/sane/OrbliteScan/MacCommon.h	2019-04-08 06:04:11.000000000 +0000
++++ hplip-3.19.5/scan/sane/OrbliteScan/MacCommon.h	2019-05-22 14:54:26.754650041 +0000
+@@ -1,13 +1,25 @@
+ #ifndef H_MacCommon
+ #define H_MacCommon
+ 
+-#ifndef __linux__
++#if !defined(__linux__) && !defined(__sun)
+ #include <CoreFoundation/CFPlugInCOM.h>
+ #define __CFPlugInCOM_Included__
+ #endif
+ 
+-#ifdef __linux__
++#if defined(__linux__)
+ #    include "LinuxCommon.h"
++#elif defined(__sun)
++#include <inttypes.h>
++typedef uint8_t	UInt8;
++typedef UInt8*		PUInt8;
++typedef int8_t		SInt8;
++typedef uint16_t	UInt16;
++typedef int16_t		SInt16;
++typedef uint32_t	UInt32;
++typedef int32_t		SInt32;
++typedef uint64_t	UInt64;
++typedef int64_t		SInt64;
++/* no need for int64_t or uint64_t typedefs, inttypes.h provides them */
+ #endif
+ 
+ #include <stdio.h>
+@@ -139,8 +151,8 @@
+ #endif
+ //typedef u_int32_t			DWORD;
+ //typedef u_int16_t			WORD;
+-typedef u_int64_t			UINT64;
+-typedef u_int64_t			DWORD64;
++typedef uint64_t			UINT64;
++typedef uint64_t			DWORD64;
+ typedef unsigned long long	ULONGLONG;
+ typedef long long			LONGLONG;
+ typedef int64_t				INT64;
