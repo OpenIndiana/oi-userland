@@ -1,0 +1,43 @@
+For unknown reason with 256 colors in sun-color terminal the number
+in hotkey other than F1 is not visible. While talking to Thomas Dickey
+(the ncurses maintainer):
+
+"""
+\E[40m 6
+\E[30m
+\E[46mRenMov 
+\E[315m
+\E[40m 7
+\E[30m
+\E[46mMkdir   
+\E[315m
+\E[40m 8
+
+The "m" codes are SGR (set graphic rendition), which is used to set colors.
+The "315" is not a legal value (unless someone's been changing the console
+emulator).  Legal values would be 30 to 39 for the foreground (text) color.
+The background colors are 40 to 49.
+
+Since they're not legal values, the console terminal emulator simply
+ignores them, leaving the last _legal_ value as "30" (black).
+
+Black-on-black isn't very readable.
+"""
+
+The problem is somewhere between MC's theming & understanding of colors,
+ncurses & sun-color definition, and the illumos implementation of framebuffer
+console.
+
+Although only a workaround it fixes the problem for the time being.
+
+--- mc-4.8.22/misc/skins/default.ini	2018-12-28 20:35:25.000000000 +0000
++++ mc-4.8.22/misc/skins/default.ini	2019-06-02 20:23:36.054660574 +0000
+@@ -84,7 +84,7 @@
+     menutitle = yellow;cyan
+ 
+ [buttonbar]
+-    hotkey = white;black
++    hotkey = lightgray;black
+     button = black;cyan
+ 
+ [statusbar]
