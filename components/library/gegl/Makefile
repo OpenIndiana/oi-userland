@@ -11,13 +11,14 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Tim Mooney
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_VERSION= 0.2.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -38,6 +39,11 @@ PATH=/usr/gnu/bin:/usr/bin
 CFLAGS += -std=gnu99
 CFLAGS.32 = -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
+
+# build with the distribution default libjpeg
+CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=    $(JPEG_LDFLAGS)
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi)
 
@@ -67,9 +73,9 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/babl
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
