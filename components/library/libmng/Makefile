@@ -11,15 +11,15 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
+# Copyright 2019 Tim Mooney <Timothy.V.Mooney@gmail.com>
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmng
-COMPONENT_VERSION=	1.0.10
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.0.3
 COMPONENT_FMRI=		library/graphics/libmng
-COMPONENT_PROJECT_URL=	http://www.libpng.org/pub/mng
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libmng/
 COMPONENT_SUMMARY=	The Multiple Image Network Graphics Library
 COMPONENT_DESCRIPTION=	A PNG-like image format library supporting multiple images, animations and transparent JPEG.
 COMPONENT_LICENSE=	MNG License (BSD-like)
@@ -28,7 +28,7 @@ COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:03a79dac9b9316d37227057614a248a946f997c4d1a3437fb569e9a63897f911
+    sha256:cf112a1fb02f5b1c0fce5cab11ea8243852c139e669c44014125874b14b7dfaa
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libmng/files/libmng-devel/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_1 =	mng-1.0-20010209-pdg.html
 COMPONENT_ARCHIVE_HASH_1 = \
@@ -61,6 +61,11 @@ CFLAGS += `pkg-config --cflags lcms2`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
 
+# build with the distribution default libjpeg
+CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=    $(JPEG_LDFLAGS)
+
 CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
@@ -75,31 +80,25 @@ CONFIGURE_OPTIONS += --enable-display
 CONFIGURE_OPTIONS += --enable-dynamic 
 CONFIGURE_OPTIONS += --enable-chunks 
 CONFIGURE_OPTIONS += --enable-storechunks 
-CONFIGURE_OPTIONS += --with-lcms
+CONFIGURE_OPTIONS += --with-lcms2
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-jpeg
 
+# distclean target was not run before the tarball was generated
 COMPONENT_PREP_ACTION = \
-	( cd $(@D) ; \
-	    $(CP) makefiles/configure.in makefiles/Makefile.am . ; \
-		    libtoolize --force --copy ; aclocal ; \
-		    automake --add-missing --copy ; autoconf )
+	( cd $(@D) ; rm -f config.log config.status libmng.pc ; ./bootstrap.sh )
 
 PKG_PROTO_DIRS += $(USERLAND_ARCHIVES)
-
-$(BUILD_DIR)/libmng-64.pc:	Solaris/libmng-64.pc
-	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
 
 # common targets
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
+install:	$(INSTALL_32_and_64)
 
 test:	$(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
