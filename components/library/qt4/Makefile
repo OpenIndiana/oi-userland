@@ -11,6 +11,7 @@
 #
 # Copyright 2014 EveryCity Ltd. All rights reserved.
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Tim Mooney
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		qt
 COMPONENT_FMRI=		library/qt4
 COMPONENT_VERSION=	4.8.7
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_VERSION_MJR=	4.8
 COMPONENT_LICENSE=	QT4
 COMPONENT_LICENSE_FILE=	qt4.license
