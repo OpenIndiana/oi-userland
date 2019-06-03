@@ -10,13 +10,14 @@
 
 #
 # Copyright (c) 2017 Alexander Pyhalov
+# Copyright (c) 2019 Tim Mooney
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.8.22
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_FMRI=		image/editor/gimp
@@ -66,6 +67,10 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+
+# Build dependencies
+REQUIRED_PACKAGES += library/python/pygobject
+REQUIRED_PACKAGES += library/python/pygtk2
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/jasper
