@@ -19,18 +19,9 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2018, Michal Nowak
+# Copyright 2019, Michal Nowak
 #
 
-<transform file path=usr.*/man/.+/flea\.1$ -> default mangler.man.stability uncommitted>
-<transform file path=usr.*/man/.+/mutt\.1$ -> default mangler.man.stability uncommitted>
-<transform file path=usr.*/man/.+/muttbug\.1$ -> default mangler.man.stability uncommitted>
-<transform file path=usr.*/man/.+/pgpewrap\.1$ -> default mangler.man.stability volatile>
-<transform file path=usr.*/man/.+/pgpring\.1$ -> default mangler.man.stability volatile>
-<transform file path=usr.*/man/.+/smime_keys\.1$ -> default mangler.man.stability volatile>
-<transform file path=usr.*/man/.+/mbox\.5$ -> default mangler.man.stability committed>
-<transform file path=usr.*/man/.+/mmdf\.5$ -> default mangler.man.stability committed>
-<transform file path=usr.*/man/.+/muttrc\.5$ -> default mangler.man.stability volatile>
 <transform file path=etc/mutt/Muttrc$ -> default mode 0644>
 <transform file path=etc/mutt/Muttrc$ -> default preserve renamenew>
 <transform file path=etc/mutt/mime.types$ -> default mode 0644>
@@ -43,19 +34,21 @@ set name=pkg.description \
 set name=com.oracle.info.description value="the Mutt email client"
 set name=info.classification \
     value=org.opensolaris.category.2008:Applications/Internet
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2008/135
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 file path=etc/mutt/Muttrc
 file path=etc/mutt/Muttrc.dist
 file path=etc/mutt/mime.types
 file path=etc/mutt/mime.types.dist
 file path=usr/bin/flea
 file path=usr/bin/mutt
+file path=usr/bin/mutt_pgpring
 file path=usr/bin/muttbug
 file path=usr/bin/pgpewrap
-file path=usr/bin/pgpring
 file path=usr/bin/smime_keys
 file path=usr/share/doc/mutt/COPYRIGHT
 file path=usr/share/doc/mutt/ChangeLog
@@ -114,6 +107,7 @@ file path=usr/share/doc/mutt/samples/sample.mailcap
 file path=usr/share/doc/mutt/samples/sample.muttrc
 file path=usr/share/doc/mutt/samples/sample.muttrc-compress
 file path=usr/share/doc/mutt/samples/sample.muttrc-sidebar
+file path=usr/share/doc/mutt/samples/sample.muttrc-starter
 file path=usr/share/doc/mutt/samples/sample.muttrc-tlr
 file path=usr/share/doc/mutt/samples/sample.vimrc-sidebar
 file path=usr/share/doc/mutt/samples/smime.rc
@@ -131,6 +125,7 @@ file path=usr/share/locale/eo/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/es/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/et/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/eu/LC_MESSAGES/mutt.mo
+file path=usr/share/locale/fi/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/fr/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/ga/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/gl/LC_MESSAGES/mutt.mo
@@ -151,10 +146,9 @@ file path=usr/share/locale/uk/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/mutt.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/mutt.mo
 file path=usr/share/man/man1/mutt.1
+file path=usr/share/man/man1/mutt_pgpring.1
 file path=usr/share/man/man1/pgpewrap.1
-file path=usr/share/man/man1/pgpring.1
 file path=usr/share/man/man1/smime_keys.1
 file path=usr/share/man/man5/mbox.5
 file path=usr/share/man/man5/mmdf.5
 file path=usr/share/man/man5/muttrc.5
-license mutt.license license=GPLv2
