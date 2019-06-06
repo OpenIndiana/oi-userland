@@ -4,11 +4,9 @@ Patch 545 doesn't have the right fix.  See the pull request at
 
 This fix has not yet been submitted upstream.
 
-diff --git a/src/testdir/test_edit.vim b/src/testdir/test_edit.vim
-index 0986bf9b1..857f4627b 100644
---- a/src/testdir/test_edit.vim
-+++ b/src/testdir/test_edit.vim
-@@ -1329,16 +1329,6 @@ func Test_edit_complete_very_long_name()
+--- vim-8.1.1471/src/testdir/test_edit.vim	2019-06-05 22:57:04.000000000 +0000
++++ vim-8.1.1471/src/testdir/test_edit.vim	2019-06-06 07:12:05.005908740 +0000
+@@ -1349,16 +1349,6 @@ func Test_edit_complete_very_long_name()
      return
    endif
  
@@ -22,11 +20,11 @@ index 0986bf9b1..857f4627b 100644
 -    return
 -  endtry
 -
-   " Try to get the Vim window position before setting 'columns'.
+   " Try to get the Vim window position before setting 'columns', so that we can
+   " move the window back to where it was.
    let winposx = getwinposx()
-   let winposy = getwinposy()
-@@ -1348,7 +1338,24 @@ func Test_edit_complete_very_long_name()
-   call assert_equal(2000, &columns)
+@@ -1384,7 +1374,24 @@ func Test_edit_complete_very_long_name()
+   set columns=2000
    set noswapfile
  
 -  let longfilename = longdirname . '/' . repeat('a', 255)
