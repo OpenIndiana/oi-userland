@@ -21,23 +21,26 @@
 
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+PREFERRED_BITS=		64
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexedit
 COMPONENT_VERSION=	1.2.13
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://merd.sourceforge.net/pixel/hexedit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6a126da30a77f5c0b08038aa7a881d910e3b65d13767fb54c58c983963b88dd7
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/hexedit
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -52,9 +55,9 @@ LDFLAGS += $(LDFLAGS.$(BITS))
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
