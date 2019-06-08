@@ -11,24 +11,26 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gtkperf
-COMPONENT_VERSION= 0.40
-COMPONENT_SUMMARY= Gtk+ performance testing application
-COMPONENT_SRC= $(COMPONENT_NAME)
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
+COMPONENT_NAME= 	gtkperf
+COMPONENT_VERSION= 	0.40
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY= 	Gtk+ performance testing application
+COMPONENT_SRC= 		$(COMPONENT_NAME)
+COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:9704344e732038eecbd007dd996a56293a6b027b5b76f3f036273a3fae1ab27b
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/gtkperf/files/gtkperf/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_PROJECT_URL = http://gtkperf.sourceforge.net/
+COMPONENT_PROJECT_URL= http://gtkperf.sourceforge.net/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION += \
 	( cd $(@D) && \
