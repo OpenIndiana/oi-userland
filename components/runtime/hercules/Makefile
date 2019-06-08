@@ -11,27 +11,29 @@
 
 #
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hercules
-COMPONENT_VERSION=	3.11
+COMPONENT_VERSION=	3.13
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://hercules-390.eu
 COMPONENT_FMRI=		emulator/hercules
 COMPONENT_SRC=		hercules-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a75fa0138548f93749991adab954c4a473b961bae23ad06822903df0cf2fd2ca
+	sha256:890c57c558d58708e55828ae299245bd2763318acf53e456a48aac883ecfe67d
 COMPONENT_ARCHIVE_URL=	http://downloads.hercules-390.eu/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Q
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	The Hercules S/370, ESA/390, and z/Architecture Emulator
 COMPONENT_CLASSIFICATION=org.opensolaris.category.2008:System/Virtualization
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-ipv6
 
