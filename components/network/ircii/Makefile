@@ -21,13 +21,14 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ircii
 COMPONENT_VERSION=	20111115
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 IPS_COMPONENT_VERSION=  0.2011.11.15
 COMPONENT_PROJECT_URL=	http://www.eterna.com.au/ircii/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,11 +36,10 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5c6b4390b8ed04cf3b08a3ba72f41eba9b125d0fc09c637f7c7f81eb6bdd91e6
 COMPONENT_ARCHIVE_URL=	http://ircii.warped.com/old/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ircii
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to correctly include <curses.h> and <term.h> when compiling the
 # various C source files.
