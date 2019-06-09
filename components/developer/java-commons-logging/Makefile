@@ -11,20 +11,22 @@
 #
 # Copyright 2011, Andrzej Szeszo
 # Copyright 2013, Jon Tibble
+# Copyright 2019, Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		commons-logging
 COMPONENT_VERSION=	1.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://commons.apache.org/proper/commons-logging/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-bin.tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:3f758805c7290d9c6d22d1451587c9f7232744aef4c984e88aa683cdea0587bd
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/commons/logging/binaries/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:
 
