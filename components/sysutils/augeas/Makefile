@@ -17,24 +17,24 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	augeas
-COMPONENT_VERSION= 1.11.0
-COMPONENT_SUMMARY= Augeas is a utility for editing configuration files	
-COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_NAME=		augeas
+COMPONENT_VERSION=	1.12.0
+COMPONENT_SUMMARY=	Augeas is a utility for editing configuration files	
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:393ce8f4055af89cd4c20bf903eacbbd909cf427891f41b56dc2ba66243ea0b0
-COMPONENT_ARCHIVE_URL= http://download.augeas.net/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:321942c9cc32185e2e9cb72d0a70eea106635b50269075aca6714e3ec282cb87
+COMPONENT_ARCHIVE_URL=	http://download.augeas.net/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://augeas.net/index.html
-COMPONENT_FMRI=	library/$(COMPONENT_NAME)
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CXXFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+CXXFLAGS.32=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CFLAGS.32=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 
 CXXFLAGS+=	$(CXXFLAGS.$(BITS))
@@ -47,10 +47,6 @@ CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 
-# XXX why does this coredump without the workaround?
-# Fixes coredump in gnulib-test/test-localename test
-CONFIGURE_OPTIONS  +=           ac_cv_func_newlocale=no
-
 # Needed for "gmake test" to work.
 # SHELLOPTS is exported via make-rules/shared-macros.mk,
 # causing the braceexpand option to be set.
@@ -60,15 +56,15 @@ CONFIGURE_OPTIONS  +=           ac_cv_func_newlocale=no
 # other than "test."
 unexport SHELLOPTS
 
-COMPONENT_TEST_ARGS = -k
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS  = "'/TOTAL|FAIL/'"
+COMPONENT_TEST_ARGS		= -k
+COMPONENT_TEST_TRANSFORMER	= $(NAWK)
+COMPONENT_TEST_TRANSFORMS	= "'/TOTAL|FAIL/'"
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/readline
