@@ -10,19 +10,21 @@
 
 #
 # Copyright 2011, Andrzej Szeszo 
+# Copyright 2019, Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		javahelp
 COMPONENT_VERSION=	2_0_05
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		jh2.0
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH=	sha256:285728ab8cbebd2b51531fb7c7fb3213e6cf82bd8d1851ccd0ca78af7a11189f
 COMPONENT_ARCHIVE_URL=	ftp://ftp.internat.freebsd.org/pub/FreeBSD/distfiles/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: prep
 
