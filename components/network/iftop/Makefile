@@ -21,23 +21,26 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+PREFERRED_BITS=		64
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iftop
 COMPONENT_VERSION=	0.17
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ex-parrot.com/~pdw/iftop/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d032547c708307159ff5fd0df23ebd3cfa7799c31536fa0aea1820318a8e0eac
 COMPONENT_ARCHIVE_URL=	http://www.ex-parrot.com/~pdw/iftop/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/iftop
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -50,16 +53,14 @@ PATCH_LEVEL=	0
 studio_ALIGN.sparc.32=	-xmemalign=1i
 
 
-IFTOP_LIBDIR=	/usr/gnu/lib
-LDFLAGS +=	-L$(IFTOP_LIBDIR) -R$(IFTOP_LIBDIR)
 CPPFLAGS +=	-I/usr/gnu/include -I/usr/include/ncurses
 CONFIGURE_OPTIONS  +=	CPPFLAGS="$(CPPFLAGS)"
 
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
