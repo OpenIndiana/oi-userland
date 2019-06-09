@@ -11,44 +11,50 @@
 #
 # Copyright 2011, 2013, EveryCity Ltd. All rights reserved.
 # Copyright 2016, Adam Stevko, All rights reserved.
+# Copyright 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nasm
-COMPONENT_VERSION=	2.13.03
-COMPONENT_REVISION=     1
-COMPONENT_FMRI=	developer/assembler/nasm
+COMPONENT_VERSION=	2.14.02
+IPS_COMPONENT_VERSION=	2.14.2
+COMPONENT_FMRI=		developer/assembler/nasm
 COMPONENT_SUMMARY=	The Netwide Assembler
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.nasm.us/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:812ecfb0dcbc5bd409aaa8f61c7de94c5b8752a7b00c632883d15b2ed6452573
+	sha256:e24ade3e928f7253aa8c14aa44726d1edf3f98643f87c9d72ec1df44b26be8f5
 COMPONENT_ARCHIVE_URL= \
-  https://www.nasm.us/pub/nasm/releasebuilds/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://www.nasm.us/pub/nasm/releasebuilds/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-IPS_COMPONENT_VERSION=	2.13.3
-
 CFLAGS+="-I$(BUILD_DIR_$(BITS))"
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 COMPONENT_POST_CONFIGURE_ACTION += (mkdir -p $(BUILD_DIR_64)/lib)
 
 COMPONENT_INSTALL_ENV += INSTALLROOT="$(PROTO_DIR)"
 
+COMPONENT_TEST_TARGETS = golden test diff
+
+COMPONENT_TEST_DIR = $(@D)/test
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:	$(NO_TESTS)
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
