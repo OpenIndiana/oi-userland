@@ -10,9 +10,8 @@
 
 #
 # Copyright 2012, Andrzej Szeszo
+# Copyright 2019, Michal Nowak
 #
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 <transform file -> add pkg.depend.bypass-generate usr/gcc/3.*>
 <transform file -> add pkg.depend.bypass-generate usr/sfw/lib(.*)/libgcc_s.so.1>
@@ -39,23 +38,8 @@ set name=variant.opensolaris.zone value=global value=nonglobal
 
 license driver-graphics-nvidia.license license="NVIDIA license"
 
-legacy pkg=NVDAgraphics \
-    desc="X and OpenGL Drivers for NVIDIA Quadro graphics" \
-    name="NVIDIA Graphics System Software" vendor="NVIDIA Corporation"
-
-legacy pkg=NVDAgraphicsr \
-    desc="Kernel Drivers for NVIDIA Quadro graphics" \
-    name="NVIDIA Graphics System Device Driver" vendor="NVIDIA Corporation"
-
-file Solaris/gl.h path=usr/X11/include/NVIDIA/GL/gl.h
-file Solaris/glext.h path=usr/X11/include/NVIDIA/GL/glext.h
-file Solaris/glx.h path=usr/X11/include/NVIDIA/GL/glx.h
-file Solaris/glxext.h path=usr/X11/include/NVIDIA/GL/glxext.h
-file Solaris/vdpau.h path=usr/X11/include/NVIDIA/vdpau/vdpau.h
-file Solaris/vdpau_x11.h path=usr/X11/include/NVIDIA/vdpau/vdpau_x11.h
 file path=kernel/drv/$(MACH64)/nvidia reboot-needed=true \
     variant.opensolaris.zone=global group=sys
-file path=kernel/drv/nvidia reboot-needed=true variant.opensolaris.zone=global group=sys
 file path=kernel/drv/nvidia.conf reboot-needed=false \
     variant.opensolaris.zone=global group=sys
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libEGL.so.1
@@ -66,9 +50,9 @@ file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-eglcore.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glsi.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau.so.1
 file path=usr/X11/lib/NVIDIA/libEGL.so.1
 file path=usr/X11/lib/NVIDIA/libGL.so.1
 file path=usr/X11/lib/NVIDIA/libGLESv1_CM.so.1
@@ -87,11 +71,11 @@ file path=usr/X11/lib/modules/drivers/$(MACH64)/nvidia_drv.so
 file path=usr/X11/lib/modules/drivers/nvidia_drv.so
 file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
 file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
-file path=usr/bin/nvidia-SunOS-bug-report.sh
-file path=usr/bin/$(MACH64)/nvidia-settings
-file path=usr/bin/$(MACH64)/nvidia-xconfig
 file path=usr/bin/$(MACH32)/nvidia-settings
 file path=usr/bin/$(MACH32)/nvidia-xconfig
+file path=usr/bin/$(MACH64)/nvidia-settings
+file path=usr/bin/$(MACH64)/nvidia-xconfig
+file path=usr/bin/nvidia-SunOS-bug-report.sh
 file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings
 file path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm
 file path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm
