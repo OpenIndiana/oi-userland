@@ -65,11 +65,11 @@ dir_init() {
 }
 
 # Make a file link. $1 is the source path, $2 is the target path
-make_file_link() {
-	if [ $# != 2 ]; then
+function make_link {
+	if [[ $# != 2 ]]; then
 		return
 	fi
-	if [ -h $2 ]; then
+	if [[ -h $2 ]]; then
 		rm -f $2
 	fi
 	ln -sf $1 $2
@@ -78,20 +78,20 @@ make_file_link() {
 dir_init
 
 # User libraries
-make_file_link /usr/X11/lib/NVIDIA/libGL.so.1 $LINKDIR/lib/libGL.so.1
-make_file_link /usr/X11/lib/NVIDIA/amd64/libGL.so.1 $LINKDIR/lib/amd64/libGL.so.1
-make_file_link /usr/X11/lib/NVIDIA/libEGL.so.1 $LINKDIR/lib/libEGL.so.1
-make_file_link /usr/X11/lib/NVIDIA/amd64/libEGL.so.1 $LINKDIR/lib/amd64/libEGL.so.1
-make_file_link amd64 $LINKDIR/lib/64
+make_link /usr/X11/lib/NVIDIA/libGL.so.1 $LINKDIR/lib/libGL.so.1
+make_link /usr/X11/lib/NVIDIA/amd64/libGL.so.1 $LINKDIR/lib/amd64/libGL.so.1
+make_link /usr/X11/lib/NVIDIA/libEGL.so.1 $LINKDIR/lib/libEGL.so.1
+make_link /usr/X11/lib/NVIDIA/amd64/libEGL.so.1 $LINKDIR/lib/amd64/libEGL.so.1
+make_link amd64 $LINKDIR/lib/64
 
 # Server libraries
-make_file_link /usr/X11/lib/modules/extensions/NVIDIA/libglx.so $LINKDIR/server/libglx.so
-make_file_link /usr/X11/lib/modules/extensions/NVIDIA/amd64/libglx.so $LINKDIR/server/amd64/libglx.so
+make_link /usr/X11/lib/modules/extensions/NVIDIA/libglx.so $LINKDIR/server/libglx.so
+make_link /usr/X11/lib/modules/extensions/NVIDIA/amd64/libglx.so $LINKDIR/server/amd64/libglx.so
 
 # Includes
-make_file_link /usr/X11/include/NVIDIA/GL/gl.h $LINKDIR/include/gl.h
-make_file_link /usr/X11/include/NVIDIA/GL/glext.h $LINKDIR/include/glext.h
-make_file_link /usr/X11/include/NVIDIA/GL/glx.h $LINKDIR/include/glx.h
-make_file_link /usr/X11/include/NVIDIA/GL/glxext.h $LINKDIR/include/glxext.h
+make_link ../../../../usr/include/mesa/gl.h	${LINKDIR}/include/gl.h
+make_link ../../../../usr/include/mesa/glext.h	${LINKDIR}/include/glext.h
+make_link ../../../../usr/include/mesa/glx.h	${LINKDIR}/include/glx.h
+make_link ../../../../usr/include/mesa/glxext.h	${LINKDIR}/include/glxext.h
 
 return 0
