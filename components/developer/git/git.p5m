@@ -31,7 +31,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 <transform file path=usr/lib/git-core/.* -> default mode 0555>
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
 
@@ -56,6 +55,7 @@ file path=usr/lib/git-core/git-cvsimport
 file path=usr/lib/git-core/git-cvsserver
 file path=usr/lib/git-core/git-daemon
 file path=usr/lib/git-core/git-difftool--helper
+hardlink path=usr/lib/git-core/git-env--helper target=git-upload-pack
 file path=usr/lib/git-core/git-fast-import
 file path=usr/lib/git-core/git-filter-branch
 file path=usr/lib/git-core/git-gui--askpass
@@ -64,7 +64,7 @@ file path=usr/lib/git-core/git-http-fetch
 file path=usr/lib/git-core/git-http-push
 file path=usr/lib/git-core/git-imap-send
 file path=usr/lib/git-core/git-instaweb
-file path=usr/lib/git-core/git-legacy-rebase
+file path=usr/lib/git-core/git-legacy-stash
 file path=usr/lib/git-core/git-merge-octopus
 file path=usr/lib/git-core/git-merge-one-file
 file path=usr/lib/git-core/git-merge-resolve
@@ -74,25 +74,24 @@ file path=usr/lib/git-core/git-p4
 file path=usr/lib/git-core/git-parse-remote
 file path=usr/lib/git-core/git-quiltimport
 file path=usr/lib/git-core/git-rebase
-file path=usr/lib/git-core/git-rebase--am
-file path=usr/lib/git-core/git-rebase--common
 file path=usr/lib/git-core/git-remote-http
 file path=usr/lib/git-core/git-remote-testsvn
 file path=usr/lib/git-core/git-request-pull
+hardlink path=usr/lib/git-core/git-restore target=git-upload-pack
 file path=usr/lib/git-core/git-send-email
 file path=usr/lib/git-core/git-sh-i18n
 file path=usr/lib/git-core/git-sh-i18n--envsubst
 file path=usr/lib/git-core/git-sh-setup
 file path=usr/lib/git-core/git-shell
 file path=usr/lib/git-core/git-show-index
-file path=usr/lib/git-core/git-stash
+hardlink path=usr/lib/git-core/git-stash target=git-upload-pack
 file path=usr/lib/git-core/git-submodule
 file path=usr/lib/git-core/git-svn
+hardlink path=usr/lib/git-core/git-switch target=git-upload-pack
 file path=usr/lib/git-core/git-upload-pack
 file path=usr/lib/git-core/git-web--browse
 hardlink path=usr/bin/git target=../lib/git-core/git
 hardlink path=usr/bin/git-cvsserver target=../lib/git-core/git-cvsserver
-hardlink path=usr/lib/git-core/git-rebase--interactive target=git
 hardlink path=usr/bin/git-receive-pack target=../lib/git-core/git
 hardlink path=usr/bin/git-shell target=../lib/git-core/git-shell
 hardlink path=usr/bin/git-upload-archive target=../lib/git-core/git
@@ -195,7 +194,6 @@ hardlink path=usr/lib/git-core/git-rev-parse target=git
 hardlink path=usr/lib/git-core/git-revert target=git
 hardlink path=usr/lib/git-core/git-rm target=git
 hardlink path=usr/lib/git-core/git-send-pack target=git
-hardlink path=usr/lib/git-core/git-serve target=git
 hardlink path=usr/lib/git-core/git-shortlog target=git
 hardlink path=usr/lib/git-core/git-show target=git
 hardlink path=usr/lib/git-core/git-show-branch target=git
@@ -238,6 +236,7 @@ file path=usr/lib/git-core/mergetools/kompare
 file path=usr/lib/git-core/mergetools/meld
 file path=usr/lib/git-core/mergetools/opendiff
 file path=usr/lib/git-core/mergetools/p4merge
+file path=usr/lib/git-core/mergetools/smerge
 file path=usr/lib/git-core/mergetools/tkdiff
 file path=usr/lib/git-core/mergetools/tortoisemerge
 file path=usr/lib/git-core/mergetools/vimdiff
@@ -472,13 +471,13 @@ file path=usr/share/man/man1/git-receive-pack.1
 file path=usr/share/man/man1/git-reflog.1
 file path=usr/share/man/man1/git-remote-ext.1
 file path=usr/share/man/man1/git-remote-fd.1
-file path=usr/share/man/man1/git-remote-testgit.1
 file path=usr/share/man/man1/git-remote.1
 file path=usr/share/man/man1/git-repack.1
 file path=usr/share/man/man1/git-replace.1
 file path=usr/share/man/man1/git-request-pull.1
 file path=usr/share/man/man1/git-rerere.1
 file path=usr/share/man/man1/git-reset.1
+file path=usr/share/man/man1/git-restore.1
 file path=usr/share/man/man1/git-rev-list.1
 file path=usr/share/man/man1/git-rev-parse.1
 file path=usr/share/man/man1/git-revert.1
@@ -500,6 +499,7 @@ file path=usr/share/man/man1/git-status.1
 file path=usr/share/man/man1/git-stripspace.1
 file path=usr/share/man/man1/git-submodule.1
 file path=usr/share/man/man1/git-svn.1
+file path=usr/share/man/man1/git-switch.1
 file path=usr/share/man/man1/git-symbolic-ref.1
 file path=usr/share/man/man1/git-tag.1
 file path=usr/share/man/man1/git-unpack-file.1
@@ -519,7 +519,6 @@ file path=usr/share/man/man1/git-worktree.1
 file path=usr/share/man/man1/git-write-tree.1
 file path=usr/share/man/man1/git.1
 file path=usr/share/man/man1/gitk.1
-file path=usr/share/man/man1/gitremote-helpers.1
 file path=usr/share/man/man1/gitweb.1
 file path=usr/share/man/man4/gitattributes.4
 file path=usr/share/man/man4/githooks.4
@@ -535,6 +534,7 @@ file path=usr/share/man/man5/gitdiffcore.5
 file path=usr/share/man/man5/giteveryday.5
 file path=usr/share/man/man5/gitglossary.5
 file path=usr/share/man/man5/gitnamespaces.5
+file path=usr/share/man/man5/gitremote-helpers.5
 file path=usr/share/man/man5/gitrevisions.5
 file path=usr/share/man/man5/gitsubmodules.5
 file path=usr/share/man/man5/gittutorial-2.5

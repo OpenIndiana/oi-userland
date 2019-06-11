@@ -53,22 +53,22 @@ specific to running the tests in an external framework.
  test-lint-filenames:
  	@# We do *not* pass a glob to ls-files but use grep instead, to catch
  	@# non-ASCII characters (which are quoted within double-quotes)
---- git-2.19.0/t/t5703-upload-pack-ref-in-want.sh	2018-09-10 20:39:13.000000000 +0000
-+++ git-2.19.0/t/t5703-upload-pack-ref-in-want.sh.new	2018-09-24 23:40:08.238518117 +0000
+--- git-2.22.0/t/t5703-upload-pack-ref-in-want.sh	2019-06-07 20:37:32.000000000 +0000
++++ git-2.22.0/t/t5703-upload-pack-ref-in-want.sh	2019-06-11 10:23:22.233199623 +0000
 @@ -49,15 +49,15 @@ test_expect_success 'setup repository' '
  
  test_expect_success 'config controls ref-in-want advertisement' '
- 	git serve --advertise-capabilities >out &&
+ 	test-tool serve-v2 --advertise-capabilities >out &&
 -	! grep -a ref-in-want out &&
 +	! ggrep -a ref-in-want out &&
  
  	git config uploadpack.allowRefInWant false &&
- 	git serve --advertise-capabilities >out &&
+ 	test-tool serve-v2 --advertise-capabilities >out &&
 -	! grep -a ref-in-want out &&
 +	! ggrep -a ref-in-want out &&
  
  	git config uploadpack.allowRefInWant true &&
- 	git serve --advertise-capabilities >out &&
+ 	test-tool serve-v2 --advertise-capabilities >out &&
 -	grep -a ref-in-want out
 +	ggrep -a ref-in-want out
  '
