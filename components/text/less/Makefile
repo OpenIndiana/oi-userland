@@ -21,26 +21,30 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2019, Michal Nowak
 #
 
-PREFERRED_BITS= 64
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		less
-COMPONENT_VERSION=	530
+COMPONENT_VERSION=	551
+COMPONENT_SUMMARY=	Pager program similar to more
 COMPONENT_PROJECT_URL=	http://www.greenwoodsoftware.com/less/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:503f91ab0af4846f34f0444ab71c4b286123f0044a4964f1ae781486c617f2e2
+	sha256:ff165275859381a63f19135a8f1f6c5a194d53ec3187f94121ecd8ef0795fe3d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	text/less
+COMPONENT_FMRI=		text/less
+COMPONENT_CLASSIFICATION=	Development/GNU
+COMPONENT_LICENSE_FILE=	less.license
+COMPONENT_LICENSE=	Less
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CC += $(CC_BITS)
 
@@ -48,7 +52,6 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
