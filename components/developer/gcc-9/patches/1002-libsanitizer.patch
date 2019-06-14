@@ -1,0 +1,60 @@
+Aurelien Larcher <aurelien.larcher@gmail.com>
+Fixing libsanitizer compilation on OpenIndiana: match system headers.
+
+--- gcc-9.1.0/libsanitizer/sanitizer_common/sanitizer_posix_libcdep.cc.orig	2019-08-07 23:38:13.184755178 +0000
++++ gcc-9.1.0/libsanitizer/sanitizer_common/sanitizer_posix_libcdep.cc	2019-08-08 00:06:54.665375527 +0000
+@@ -63,13 +63,13 @@
+     // In the default Solaris compilation environment, madvise() is declared
+     // to take a caddr_t arg; casting it to void * results in an invalid
+     // conversion error, so use char * instead.
+-    madvise((char *)beg_aligned, end_aligned - beg_aligned,
++    posix_madvise((char *)beg_aligned, end_aligned - beg_aligned,
+             SANITIZER_MADVISE_DONTNEED);
+ }
+ 
+ bool NoHugePagesInRegion(uptr addr, uptr size) {
+ #ifdef MADV_NOHUGEPAGE  // May not be defined on old systems.
+-  return madvise((void *)addr, size, MADV_NOHUGEPAGE) == 0;
++  return  posix_madvise((char *)addr, size, MADV_NOHUGEPAGE) == 0;
+ #else
+   return true;
+ #endif  // MADV_NOHUGEPAGE
+@@ -77,9 +77,9 @@
+ 
+ bool DontDumpShadowMemory(uptr addr, uptr length) {
+ #if defined(MADV_DONTDUMP)
+-  return madvise((void *)addr, length, MADV_DONTDUMP) == 0;
++  return posix_madvise((char *)addr, length, MADV_DONTDUMP) == 0;
+ #elif defined(MADV_NOCORE)
+-  return madvise((void *)addr, length, MADV_NOCORE) == 0;
++  return posix_madvise((char *)addr, length, MADV_NOCORE) == 0;
+ #else
+   return true;
+ #endif  // MADV_DONTDUMP
+--- gcc-9.1.0/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h.orig	2019-08-07 23:30:59.088997438 +0000
++++ gcc-9.1.0/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h	2019-08-08 00:31:52.197212413 +0000
+@@ -18,6 +18,9 @@
+ #include "sanitizer_internal_defs.h"
+ #include "sanitizer_platform.h"
+ 
++struct stat;
++struct dirent;
++
+ namespace __sanitizer {
+ extern unsigned struct_utsname_sz;
+ extern unsigned struct_stat_sz;
+@@ -336,6 +339,14 @@
+   uptr gl_offs;
+   char **gl_pathp;
+   int gl_pathn;
++  int gl_matchc;
++  int gl_flags;
++  struct stat **gl_statv;
++  void (*gl_closedir)(void *);
++  struct dirent *(*gl_readdir)(void *);
++  void *(*gl_opendir)(const char *);
++  int (*gl_lstat)(const char *, struct stat *);
++  int (*gl_stat)(const char *, struct stat *);
+ };
+ 
+ extern int glob_nomatch;
