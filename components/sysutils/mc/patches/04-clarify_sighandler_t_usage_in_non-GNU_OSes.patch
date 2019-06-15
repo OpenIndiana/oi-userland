@@ -1,0 +1,46 @@
+https://github.com/MidnightCommander/mc/commit/4f06ba93460751bd979ca5cc87a49219b1f78a9f
+
+From 4f06ba93460751bd979ca5cc87a49219b1f78a9f Mon Sep 17 00:00:00 2001
+From: Andrew Borodin <aborodin@vmail.ru>
+Date: Fri, 22 Feb 2019 11:32:43 +0300
+Subject: [PATCH] Ticket #3971: clarify sighandler_t usage in non-GNU OSes.
+
+Signed-off-by: Andrew Borodin <aborodin@vmail.ru>
+---
+ m4.include/mc-tests.m4                 | 6 ++++++
+ tests/lib/utilunix__my_system-common.c | 5 +++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/m4.include/mc-tests.m4 b/m4.include/mc-tests.m4
+index 95e948bd7f..257218ecbe 100644
+--- a/m4.include/mc-tests.m4
++++ b/m4.include/mc-tests.m4
+@@ -42,6 +42,12 @@ AC_DEFUN([mc_UNIT_TESTS],[
+     fi
+     AM_CONDITIONAL(HAVE_TESTS, test x"$have_check" = "xyes")
+ 
++    dnl sighandler_t is GNU extension
++    dnl AC_USE_SYSTEM_EXTENSIONS is reguired
++    AC_CHECK_TYPES([sighandler_t], [], [], [
++        #include <signal.h>
++    ])
++
+     # on cygwin, the linker does not accept the "-z" option
+     case $host_os in
+         cygwin*)
+diff --git a/tests/lib/utilunix__my_system-common.c b/tests/lib/utilunix__my_system-common.c
+index eba4692767..22a096af53 100644
+--- a/tests/lib/utilunix__my_system-common.c
++++ b/tests/lib/utilunix__my_system-common.c
+@@ -28,6 +28,11 @@
+ 
+ #include "lib/vfs/vfs.h"
+ 
++/* sighandler_t is GNU extension */
++#ifndef HAVE_SIGHANDLER_T
++typedef void (*sighandler_t) (int);
++#endif
++
+ /* --------------------------------------------------------------------------------------------- */
+ 
+ /* @CapturedValue */

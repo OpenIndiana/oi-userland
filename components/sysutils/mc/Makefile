@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
 COMPONENT_VERSION=	4.8.22
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		file/mc
 COMPONENT_SUMMARY=	The GNU Midnight Commander file manager
 COMPONENT_DESCRIPTION=	GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell
@@ -61,7 +61,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
