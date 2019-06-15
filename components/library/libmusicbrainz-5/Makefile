@@ -11,28 +11,30 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libmusicbrainz
-COMPONENT_VERSION= 5.1.0
-COMPONENT_SUMMARY= Software library for accessing MusicBrainz servers
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		libmusicbrainz
+COMPONENT_VERSION=	5.1.0
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	Software library for accessing MusicBrainz servers
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:6749259e89bbb273f3f5ad7acdffb7c47a2cf8fcaeab4c4695484cef5f4c6b46
 COMPONENT_ARCHIVE_URL= \
   https://github.com/metabrainz/libmusicbrainz/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://musicbrainz.org/doc/libmusicbrainz
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = library/musicbrainz/libmusicbrainz-5
-COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING.txt
+COMPONENT_PROJECT_URL=	https://musicbrainz.org/doc/libmusicbrainz
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
+COMPONENT_FMRI=		library/musicbrainz/libmusicbrainz-5
+COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING.txt
 
-include ../../make-rules/prep.mk
-include ../../make-rules/cmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DCMAKE_VERBOSE_MAKEFILE=1
