@@ -11,34 +11,36 @@
 
 #
 # Copyright 2016 Aurelien Larcher.  All rights reserved.
+# Copyright 2019 Michal Nowak
 #
-PREFERRED_BITS=64
+
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= clang-40
-LLVM_NAME=llvm
-CLANG_NAME=cfe
+COMPONENT_NAME=		clang-40
+LLVM_NAME=		llvm
+CLANG_NAME=		cfe
 
-COMPONENT_VERSION= 4.0.1
+COMPONENT_VERSION=	4.0.1
 COMPONENT_MAJOR_VERSION= \
-  $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
-COMPONENT_REVISION= 4
-COMPONENT_PROJECT_URL = http://llvm.org/
-COMPONENT_FMRI= developer/clang-40
-COMPONENT_CLASSIFICATION= Development/C
-COMPONENT_SUMMARY= LLVM tools and Clang compiler
-COMPONENT_SRC= $(LLVM_NAME)-$(COMPONENT_VERSION).src
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
+COMPONENT_REVISION=	5
+COMPONENT_PROJECT_URL=	http://llvm.org/
+COMPONENT_FMRI=		developer/clang-40
+COMPONENT_CLASSIFICATION=	Development/C
+COMPONENT_SUMMARY=	LLVM tools and Clang compiler
+COMPONENT_SRC=		$(LLVM_NAME)-$(COMPONENT_VERSION).src
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:da783db1f82d516791179fe103c71706046561f7972b18f0049242dee6712b51
+	sha256:da783db1f82d516791179fe103c71706046561f7972b18f0049242dee6712b51
 COMPONENT_ARCHIVE_URL= \
-  http://llvm.org/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= BSD
+	http://llvm.org/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	BSD
 
 COMPONENT_ARCHIVE_1=    $(CLANG_NAME)-$(COMPONENT_VERSION).src.tar.xz
 COMPONENT_ARCHIVE_HASH_1= \
-  sha256:61738a735852c23c3bdbe52d035488cdb2083013f384d67c1ba36fabebd8769b
+	sha256:61738a735852c23c3bdbe52d035488cdb2083013f384d67c1ba36fabebd8769b
 COMPONENT_ARCHIVE_URL_1= http://llvm.org/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -47,9 +49,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CMAKE_PREFIX= /usr/clang/$(COMPONENT_MAJOR_VERSION)
 
-PATH=$(PATH.illumos)
-
-PKG_MACROS+= GCC_VERSION=$(GCC_VERSION)
+PKG_MACROS += GCC_VERSION=$(GCC_VERSION)
 
 COMPONENT_POST_UNPACK_ACTION += \
   $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) && \
@@ -66,16 +66,16 @@ COMPONENT_PREP_ACTION = ( \
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
 
 COMPONENT_POST_INSTALL_ACTION =  \
-for file in `echo $(PROTO_DIR)/$(CMAKE_PREFIX)/bin/*`; do \
-	elfedit -e 'dyn:runpath $(GCC_LIBDIR):$$ORIGIN/../lib' $$file ; \
-done && \
-for file in \
-	`ggrep -rlh '^\#!*/usr/bin/env python' $(PROTO_DIR)/$(CMAKE_PREFIX)`; do \
-  sed -i -e 's,^\#!*/usr/bin/env python,\#!$(PYTHON),' $$file; \
-done
+	for file in `echo $(PROTO_DIR)/$(CMAKE_PREFIX)/bin/*`; do \
+		elfedit -e 'dyn:runpath $(GCC_LIBDIR):$$ORIGIN/../lib' $$file ; \
+	done && \
+	for file in \
+		`ggrep -rlh '^\#!*/usr/bin/env python' $(PROTO_DIR)/$(CMAKE_PREFIX)`; do \
+	  sed -i -e 's,^\#!*/usr/bin/env python,\#!$(PYTHON),' $$file; \
+	done
 
 COMPONENT_TEST_TARGETS = check-all
-COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 CMAKE_OPTIONS += -DCMAKE_C_COMPILER=$(CC)
 CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER=$(CXX)
@@ -84,12 +84,11 @@ CMAKE_OPTIONS += -DCMAKE_CXX_LINK_FLAGS="-L$(GCC_LIBDIR) -Wl,-rpath,$(GCC_LIBDIR
 CMAKE_OPTIONS += -DLLVM_ENABLE_ASSERTIONS=ON
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE="Release"
 
+build:		$(BUILD_64)
 
-build: $(BUILD_64)
+install:	$(INSTALL_64)
 
-install: $(INSTALL_64)
-
-test: $(TEST_64)
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libxml2
