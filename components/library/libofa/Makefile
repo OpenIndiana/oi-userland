@@ -10,13 +10,15 @@
 
 #
 # Copyright (c) 2015 Alexander Pyhalov
+# Copyright (c) 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libofa
 COMPONENT_VERSION=	222128881c792c99055fa0b9cf05e07ae9b5d818
 IPS_COMPONENT_VERSION=	0.9.3
+COMPONENT_REVISION=	1
 # Project was initially at http://code.google.com/p/musicip-libofa/,
 # but as Google Code is closing we refer to more up-to-date mirror
 COMPONENT_PROJECT_URL=	https://github.com/tanob/libofa
@@ -31,9 +33,9 @@ COMPONENT_FMRI=		library/libofa
 COMPONENT_LICENSE_FILE=	libofa.license
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
