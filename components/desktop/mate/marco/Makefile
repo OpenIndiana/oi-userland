@@ -14,39 +14,43 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=		64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		marco
 COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Window Manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:4e20f5ea006142f3e5c8931e2b354e1838cb9291ba245825ea82fa6611def7c8
+	sha256:0a3979f0ba9855a6dff5b889c619d07bcea52df29c354976f018d71093c45139
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh;\
-	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/tools/marco-mag.c; \
 	$(GSED) -i '/_POSIX_C_SOURCE/d' $(@D)/src/core/util.c; \
+	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/compositor/compositor-xrender.c; \
+	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/core/delete.c; \
+	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/core/keybindings.c; \
+	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/core/main.c; \
+	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/core/window-props.c; \
 	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/ui/preview-widget.c
 
 CFLAGS+=-D__EXTENSIONS__
 CFLAGS+=-std=gnu99
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
@@ -57,12 +61,6 @@ CONFIGURE_OPTIONS+= --enable-xinerama
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += gnome/zenity
