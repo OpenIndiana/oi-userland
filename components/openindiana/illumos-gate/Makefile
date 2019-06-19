@@ -562,6 +562,12 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> emit depend type=require fmri=pkg:/driver/graphics/agpgart>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	# Fix pkgdepend issue with GCC 7 runtime (https://www.illumos.org/issues/11255)
+	echo "<transform depend type=require-any fmri=pkg:/system/library/gcc-\d+-runtime@.* -> emit depend type=require fmri=pkg:/system/library/gcc-7-runtime>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require-any fmri=pkg:/system/library/gcc-\d+-runtime@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require-any fmri=pkg:/system/library/g\+\+-\d+-runtime@.* -> emit depend type=require fmri=pkg:/system/library/g++-7-runtime> " >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require-any fmri=pkg:/system/library/g\+\+-\d+-runtime@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	# Loader branding
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/loader.conf group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/brand-hipster.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
