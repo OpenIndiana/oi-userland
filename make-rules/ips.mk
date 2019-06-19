@@ -85,6 +85,8 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-no-32bit
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
+FINAL_TRANSFORMS += 	$(WS_TOP)/transforms/final-cleanup
+
 define add-limiting-variable
 PKG_VARS += $(1)
 MANIFEST_LIMITING_VARS += -D $(1)="$(subst #,\#,$($(1)))"
@@ -482,7 +484,9 @@ PKGSEND_PUBLISH_OPTIONS += -T \*.py
 # Do all the hard work that is needed to ensure the package is consistent
 # and ready for publishing, except actually pushing bits to a repository
 $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
-	$(CP) $< $@
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(FINAL_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
 
 # Push to the repo
