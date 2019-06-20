@@ -1,7 +1,7 @@
-From 92d0ded92f78c889311b5ccfd54420fab17d7e3c Mon Sep 17 00:00:00 2001
+From 786a94dba239c31e7d3ab55eb3b802c8ff5e7f71 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 26 Jan 2016 14:24:11 -0500
-Subject: [PATCH 01/15] compare_tests: Use nawk(1) on illumos, since awk(1) is
+Subject: [PATCH 01/22] compare_tests: Use nawk(1) on illumos, since awk(1) is
  old and bad
 
 ---
@@ -31,13 +31,13 @@ index d16e7e9737e..94183568fac 100755
  before=$tmp1
  now=$tmp2
 -- 
-2.20.1
+2.21.0
 
 
-From f3c5de2bf9bb45cec755f70d801d547dcaa88652 Mon Sep 17 00:00:00 2001
+From 6fcad77e3b5f61c0899d32bbfb30e9e4f42accd3 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Wed, 5 Mar 2014 04:12:52 +0000
-Subject: [PATCH 02/15] gcc: enable the .eh_frame based unwinder
+Subject: [PATCH 02/22] gcc: enable the .eh_frame based unwinder
 
 ---
  gcc/configure    | 3 +++
@@ -87,13 +87,13 @@ index e1fa8af5e4f..43a5740401f 100644
          ;;
      esac
 -- 
-2.20.1
+2.21.0
 
 
-From 541305c16fefca2085d3c43b5e345d2327d84858 Mon Sep 17 00:00:00 2001
+From 74b89308b40ff382c0252cab29162534b026a074 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 11 Mar 2014 21:50:30 +0000
-Subject: [PATCH 03/15] intl: Don't use UTF-8 quotes.  Ever.
+Subject: [PATCH 03/22] intl: Don't use UTF-8 quotes.  Ever.
 
 ---
  gcc/intl.c | 17 ++++-------------
@@ -133,13 +133,13 @@ index c9090e06dd3..b7688848fd8 100644
 -
 -
 -- 
-2.20.1
+2.21.0
 
 
-From 37368351f62ee286f9efd883dc7c8b92f3596fac Mon Sep 17 00:00:00 2001
+From a4466dced2e7b58c2c116d5ae94d8cd21d3d182e Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sat, 27 Oct 2012 02:44:09 +0100
-Subject: [PATCH 04/15] Implement -fstrict-calling-conventions
+Subject: [PATCH 04/22] Implement -fstrict-calling-conventions
 
 Stock GCC is overly willing to violate the ABI when calling local functions,
 such that it passes arguments in registers on i386.  This hampers debugging
@@ -253,13 +253,13 @@ index 00000000000..fa0543e52ff
 +    printf("%d\n", a, b, c, d, e);
 +}
 -- 
-2.20.1
+2.21.0
 
 
-From 3d6e08eb01bba892646f96554fffe55057759776 Mon Sep 17 00:00:00 2001
+From 0c18f528cf9ac5e50ddef7e28049f78e6347fe7b Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sun, 30 Sep 2012 16:44:14 -0400
-Subject: [PATCH 05/15] allow the global disabling of function cloning
+Subject: [PATCH 05/22] allow the global disabling of function cloning
 
 Optimizations which clone functions to create call-specific implementations
 which may be better optimized also dissociate these functions from their
@@ -341,13 +341,13 @@ index c48d4e16323..e17db23f790 100644
  @opindex fipa-ra
  Use caller save registers for allocation if those registers are not used by
 -- 
-2.20.1
+2.21.0
 
 
-From 15d5013f231ca248bdee9cf3678d87fadc31abb3 Mon Sep 17 00:00:00 2001
+From bd4749ec60434f5097cd8d366378a0a999d66ac2 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 4 Mar 2014 02:58:33 +0000
-Subject: [PATCH 06/15] strict-cc2: check that disabling function cloning
+Subject: [PATCH 06/22] strict-cc2: check that disabling function cloning
  prevents constant propagation eliding or changing arguments
 
 ---
@@ -390,13 +390,13 @@ index 00000000000..0955381c848
 +    printf("%d %d\n", a, b, c);
 +}
 -- 
-2.20.1
+2.21.0
 
 
-From 690f104d3b94ecad54a537a5d10fc5735cb36f8b Mon Sep 17 00:00:00 2001
+From 27ae8ce4cb74db652e75934b50046b7e08ae339f Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 4 Mar 2014 22:11:03 +0000
-Subject: [PATCH 07/15] sol2: enable full __cxa_atexit support
+Subject: [PATCH 07/22] sol2: enable full __cxa_atexit support
 
 ---
  gcc/config/sol2.h  | 4 ++--
@@ -447,13 +447,13 @@ index 8beb492b5fa..0238efb9a62 100644
        sparc*-*-solaris2.1[0-9]*)
          # Solaris 10+/SPARC lacks crt1.o and gcrt1.o.
 -- 
-2.20.1
+2.21.0
 
 
-From 72adaf964310fce46d18eaac01de325264c069d8 Mon Sep 17 00:00:00 2001
+From 810fcd2c9a6cc229bd3277135aead70e74d29b8b Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Wed, 27 Jan 2016 16:49:07 -0500
-Subject: [PATCH 08/15] sol2: Use appropriate values objects for the various C
+Subject: [PATCH 08/22] sol2: Use appropriate values objects for the various C
  and C++ standards
 
 I'm reasonable confident of the C cases, less confident of the C++
@@ -496,13 +496,13 @@ index e2f7d2429a9..f3e6140d9a0 100644
  #if defined(HAVE_LD_PIE) && defined(HAVE_SOLARIS_CRTS)
  #define STARTFILE_CRTBEGIN_SPEC "%{static:crtbegin.o%s; \
 -- 
-2.20.1
+2.21.0
 
 
-From 8fdcff56620370fdf2e9da00af3c8d4e936696c3 Mon Sep 17 00:00:00 2001
+From 8789ff0091e702dc72e43c0186be2bea7d6d3d0e Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sat, 23 Jan 2016 22:14:56 -0500
-Subject: [PATCH 09/15] i386: Save integer-passed arguments to the stack, to
+Subject: [PATCH 09/22] i386: Save integer-passed arguments to the stack, to
  aid debuggers.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -695,7 +695,7 @@ index c6fbe17a556..16bedb23cdc 100644
     First register is stored at CFA - CFA_OFFSET.  */
  static void
 -ix86_emit_save_regs_using_mov (HOST_WIDE_INT cfa_offset)
-+ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
++ix86_emit_save_regs_using_mov (struct ix86_frame *frame)
  {
    unsigned int regno;
 +  HOST_WIDE_INT cfa_offset = frame->arg_save_offset;
@@ -984,13 +984,13 @@ index ea6194ef33e..28532c190de 100644
  DW_AT (DW_AT_upc_threads_scaled, 0x3210)
  /* PGI (STMicroelectronics) extensions.  */
 -- 
-2.20.1
+2.21.0
 
 
-From 7dac8eeb9a870326c0d1b13238967003e3765062 Mon Sep 17 00:00:00 2001
+From a850759bb12c883fecc1b6759ee04d0a9660d23b Mon Sep 17 00:00:00 2001
 From: Yuri Pankov <yuri.pankov@nexenta.com>
 Date: Sat, 5 Nov 2016 05:26:47 +0300
-Subject: [PATCH 10/15] 16 update cmn_err format specifier Reviewed by: Richard
+Subject: [PATCH 10/22] 16 update cmn_err format specifier Reviewed by: Richard
  Lowe <richlowe@richlowe.net> Reviewed by: Robert Mustacchi <rm@joyent.com>
 
 ---
@@ -1052,13 +1052,13 @@ index 5a44a88d1ac..ebd7449b368 100644
    }
  };
 -- 
-2.20.1
+2.21.0
 
 
-From 6ed366bf678247e18809f3bfc0b7d1339efa1728 Mon Sep 17 00:00:00 2001
+From 74e17120407a54cc8834323b31d8574acecba0f1 Mon Sep 17 00:00:00 2001
 From: Yuri Pankov <yuri.pankov@nexenta.com>
 Date: Mon, 13 Feb 2017 18:14:45 +0300
-Subject: [PATCH 11/15] 19 cmn_err %b conversion should accept 0 flag Reviewed
+Subject: [PATCH 11/22] 19 cmn_err %b conversion should accept 0 flag Reviewed
  by: Robert Mustacchi <rm@joyent.com> Reviewed by: Richard Lowe
  <richlowe@richlowe.net>
 
@@ -1080,13 +1080,13 @@ index ebd7449b368..3519818d792 100644
  };
  
 -- 
-2.20.1
+2.21.0
 
 
-From 8a9e2416ee910c847978187d9f5040f37f376be4 Mon Sep 17 00:00:00 2001
+From a3ee43e3e6186662b59b516d1ff9479b579fe0b7 Mon Sep 17 00:00:00 2001
 From: Andy Fiddaman <omnios@citrus-it.co.uk>
 Date: Thu, 25 Oct 2018 18:19:36 +0000
-Subject: [PATCH 12/15] We never want to omit the frame pointer, regardless of
+Subject: [PATCH 12/22] We never want to omit the frame pointer, regardless of
  the optimisation level or options to gcc - we like stack traces too much and
  it is of questionable benefit anyway, even on i386.
 
@@ -1115,13 +1115,13 @@ index 16bedb23cdc..cbbdcd9600a 100644
       options.  */
    if (main_args_p)
 -- 
-2.20.1
+2.21.0
 
 
-From f732af138de2e6c62767672667baf3c5c025c7bd Mon Sep 17 00:00:00 2001
+From df38de10afc5882e450b5b10483a8c06cfa00e75 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Mon, 29 Oct 2018 18:21:34 +0000
-Subject: [PATCH 13/15] libstdc++v3: illumos and Solaris haven't needed -lrt in
+Subject: [PATCH 13/22] libstdc++v3: illumos and Solaris haven't needed -lrt in
  a long time
 
 Originally from Andy Fiddaman <andy@omniosce.org>
@@ -1155,13 +1155,13 @@ index e1c55aa72ff..b957a7230f6 100755
          ac_has_clock_realtime=yes
          ac_has_nanosleep=yes
 -- 
-2.20.1
+2.21.0
 
 
-From 7514701d96f1dbeb3a99663f79375f31858c4730 Mon Sep 17 00:00:00 2001
+From 972b89a2791102e3f0ae8c19605ebafe6e53a6d8 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Mon, 29 Oct 2018 18:23:00 +0000
-Subject: [PATCH 14/15] libgo: libelf on illumos doesn't support largefile
+Subject: [PATCH 14/22] libgo: libelf on illumos doesn't support largefile
 
 Originally from pkgsrc
 ---
@@ -1184,13 +1184,13 @@ index 06a9c2ad6b8..966972d6b96 100644
  #endif
  
 -- 
-2.20.1
+2.21.0
 
 
-From 6c4cbc6f3be9f6547f5a2193b5015a1c43f25475 Mon Sep 17 00:00:00 2001
+From 2a955a798eb034f3ab0a4c08f2f55f9fb6bb2888 Mon Sep 17 00:00:00 2001
 From: John Levon <john.levon@joyent.com>
 Date: Tue, 20 Nov 2018 16:07:51 +0000
-Subject: [PATCH 15/15] libgcc-unwind.map should be v2-style
+Subject: [PATCH 15/22] libgcc-unwind.map should be v2-style
 
 ---
  libgcc/config/t-slibgcc-sld | 27 +++++++++++++++++++++++----
@@ -1238,5 +1238,345 @@ index 0b9539114e4..55fd6e1caa7 100644
  install-libgcc-unwind-map-forbuild: libgcc-unwind.map
  	dest=$(gcc_objdir)/tmp$$$$-$<; \
 -- 
-2.20.1
+2.21.0
+
+
+From 296a799725e95bdfcf3ec110ebf47640feb4843c Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Mon, 11 Mar 2019 10:41:58 +0000
+Subject: [PATCH 16/22] libpthread is a filter in illumos; all functionality
+ has been migrated to libc. Prevent gcc from linking with libpthread if
+ -pthread[s] is passed as an option.
+
+Some build systems such as meson/ninja pass this option.
+---
+ gcc/config/sol2.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index f3e6140d9a0..ff34bd74e66 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -157,7 +157,6 @@ along with GCC; see the file COPYING3.  If not see
+ #undef LIB_SPEC
+ #define LIB_SPEC \
+   "%{!symbolic:\
+-     %{pthreads|pthread:-lpthread} \
+      %{p|pg:-ldl} -lc}"
+ 
+ #ifndef CROSS_DIRECTORY_STRUCTURE
+-- 
+2.21.0
+
+
+From fc2f6a4b89d7456febf023be0138f93372454a3b Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 26 Apr 2019 03:05:14 +0000
+Subject: [PATCH 17/22] i386: Fix grammar of -msave-args usage message
+
+The GCC test suite checks that usage messages are properly punctuated,
+so this fixes a low-hanging test failure
+---
+ gcc/config/i386/i386.opt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gcc/config/i386/i386.opt b/gcc/config/i386/i386.opt
+index d53f69c18be..92c3fd7db62 100644
+--- a/gcc/config/i386/i386.opt
++++ b/gcc/config/i386/i386.opt
+@@ -507,7 +507,7 @@ Use direct references against %gs when accessing tls data.
+ 
+ msave-args
+ Target Report Mask(SAVE_ARGS)
+-Save integer arguments on the stack at function entry
++Save integer arguments on the stack at function entry.
+ 
+ mforce-save-regs-using-mov
+ Target Report Mask(FORCE_SAVE_REGS_USING_MOV)
+-- 
+2.21.0
+
+
+From 5e03939e2fec9f93475a36c07f90c5af93d5a6c1 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Thu, 2 May 2019 17:54:20 +0000
+Subject: [PATCH 18/22] tests: x86_64 pro_and_epilogue RTL can't work with
+ -msave-args
+
+The RTL is included directly in the test, and was generated without
+saved parameters.
+
+Attempting the test with -msave-args means the prologue and epilogue
+adjustments think there are saved parameters where there are not.
+---
+ gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c b/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c
+index b6f723a6e60..5863119c2a5 100644
+--- a/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c
++++ b/gcc/testsuite/gcc.dg/rtl/x86_64/pro_and_epilogue.c
+@@ -1,5 +1,6 @@
+ /* { dg-do compile { target { { i?86-*-* x86_64-*-* } && lp64 } } } */
+ /* { dg-options "-fdump-rtl-pro_and_epilogue" } */
++/* { dg-skip-if "RTL in test doesn't save arguments" { *-*-* } "-msave-args" "" } */
+ 
+ /* Lightly-modified dump of test.c.274r.split2 for x86_64.  */
+ 
+-- 
+2.21.0
+
+
+From a2a168428cf1e28cab6d1127188fc71c7f2ccbd3 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 3 May 2019 00:56:45 +0000
+Subject: [PATCH 19/22] i386: don't assert the FP is valid during epilogue
+ adjustment
+
+I did this, I think, to double check some assumptions.  Unfortunately,
+there is a case where the fp won't be valid here, despite us having
+saved arguments.  That where we're returning through an error handler
+via __builtin_eh_return().
+
+While here, make the code more readable and conventional.
+---
+ gcc/config/i386/i386.c | 69 ++++++++++++++++++++----------------------
+ 1 file changed, 32 insertions(+), 37 deletions(-)
+
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index cbbdcd9600a..6cb4cf253ee 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -13148,21 +13148,21 @@ static void
+ ix86_emit_save_regs (void)
+ {
+   unsigned int regno;
++  struct ix86_frame &frame = cfun->machine->frame;
+   rtx_insn *insn;
+ 
+   if (TARGET_SAVE_ARGS)
+     {
+       int i;
+-      int nsaved = ix86_nsaved_args ();
+       int start = cfun->returns_struct;
+ 
+-      for (i = start; i < start + nsaved; i++)
++      for (i = start; i < start + frame.nmsave_args; i++)
+ 	{
+ 	  regno = x86_64_int_parameter_registers[i];
+ 	  insn = emit_insn (gen_push (gen_rtx_REG (word_mode, regno)));
+ 	  RTX_FRAME_RELATED_P (insn) = 1;
+ 	}
+-      if (nsaved % 2 != 0)
++      if (frame.nmsave_args % 2 != 0)
+ 	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
+ 				   GEN_INT (-UNITS_PER_WORD), -1, false);
+     }
+@@ -13246,22 +13246,21 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+ /* Emit code to save registers using MOV insns.
+    First register is stored at CFA - CFA_OFFSET.  */
+ static void
+-ix86_emit_save_regs_using_mov (struct ix86_frame *frame)
++ix86_emit_save_regs_using_mov (const struct ix86_frame &frame)
+ {
+   unsigned int regno;
+-  HOST_WIDE_INT cfa_offset = frame->arg_save_offset;
++  HOST_WIDE_INT cfa_offset = frame.arg_save_offset;
+ 
+   if (TARGET_SAVE_ARGS)
+     {
+       int i;
+-      int nsaved = ix86_nsaved_args ();
+       int start = cfun->returns_struct;
+ 
+       /* We deal with this twice? */
+-      if (nsaved % 2 != 0)
++      if (frame.nmsave_args % 2 != 0)
+ 	cfa_offset -= UNITS_PER_WORD;
+ 
+-      for (i = start + nsaved - 1; i >= start; i--)
++      for (i = start + frame.nmsave_args - 1; i >= start; i--)
+ 	{
+ 	  regno = x86_64_int_parameter_registers[i];
+ 	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
+@@ -13269,7 +13268,7 @@ ix86_emit_save_regs_using_mov (struct ix86_frame *frame)
+ 	}
+     }
+ 
+-  cfa_offset = frame->reg_save_offset;
++  cfa_offset = frame.reg_save_offset;
+ 
+   for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
+     if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true))
+@@ -14378,7 +14377,7 @@ ix86_expand_prologue (void)
+ 	       && (! TARGET_STACK_PROBE
+ 		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
+ 	{
+-	  ix86_emit_save_regs_using_mov (&frame);
++	  ix86_emit_save_regs_using_mov (frame);
+ 	  int_registers_saved = true;
+ 	}
+     }
+@@ -14621,7 +14620,7 @@ ix86_expand_prologue (void)
+     }
+ 
+   if (!int_registers_saved)
+-    ix86_emit_save_regs_using_mov (&frame);
++    ix86_emit_save_regs_using_mov (frame);
+   if (!sse_registers_saved)
+     ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
+ 
+@@ -15063,36 +15062,32 @@ ix86_expand_epilogue (int style)
+       ix86_emit_restore_regs_using_pop ();
+     }
+ 
+-  if (TARGET_SAVE_ARGS) {
+-    /*
+-     * For each saved argument, emit a restore note, to make sure it happens
+-     * correctly within the shrink wrapping (I think).
+-     *
+-     * Note that 'restore' in this case merely means the rule is the same as
+-     * it was on function entry, not that we have actually done a register
+-     * restore (which of course, we haven't).
+-     *
+-     * If we do not do this, the DWARF code will emit sufficient restores to
+-     * provide balance on its own initiative, which in the presence of
+-     * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
+-     * .cfi_offset a register sometimes, but will always .cfi_restore it.
+-     * This will trip an assert.)
+-     */
+-    int start = cfun->returns_struct;
+-    int nsaved = ix86_nsaved_args();
+-    int i;
+-
+-    for (i = start + nsaved - 1; i >= start; i--)
+-      queued_cfa_restores
+-	= alloc_reg_note (REG_CFA_RESTORE,
++  /*
++   * For each saved argument, emit a restore note, to make sure it happens
++   * correctly within the shrink wrapping (I think).
++   *
++   * Note that 'restore' in this case merely means the rule is the same as
++   * it was on function entry, not that we have actually done a register
++   * restore (which of course, we haven't).
++   *
++   * If we do not do this, the DWARF code will emit sufficient restores to
++   * provide balance on its own initiative, which in the presence of
++   * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
++   * .cfi_offset a register sometimes, but will always .cfi_restore it.
++   * This will trip an assert.)
++   */
++  if (TARGET_SAVE_ARGS && frame.nmsave_args > 0) {
++	  int start = cfun->returns_struct;
++	  int i;
++
++	  for (i = start + frame.nmsave_args - 1; i >= start; i--)
++		  queued_cfa_restores
++		      = alloc_reg_note (REG_CFA_RESTORE,
+ 			  gen_rtx_REG(Pmode,
+-				      x86_64_int_parameter_registers[i]),
++			      x86_64_int_parameter_registers[i]),
+ 			  queued_cfa_restores);
+-
+-    gcc_assert(m->fs.fp_valid);
+   }
+ 
+-
+   /* If we used a stack pointer and haven't already got rid of it,
+      then do so now.  */
+   if (m->fs.fp_valid)
+-- 
+2.21.0
+
+
+From 563ece81048c2d55ccab69840bf29b0b4457b577 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 3 May 2019 01:02:08 +0000
+Subject: [PATCH 20/22] gcc.target/i386/retarg: skip if msave-args
+
+This will always fail if saving arguments, because we're testing
+argument registers are untouched, so saving them will ruin that.
+---
+ gcc/testsuite/gcc.target/i386/retarg.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gcc/testsuite/gcc.target/i386/retarg.c b/gcc/testsuite/gcc.target/i386/retarg.c
+index a69b60feaf4..3967ef76b1f 100644
+--- a/gcc/testsuite/gcc.target/i386/retarg.c
++++ b/gcc/testsuite/gcc.target/i386/retarg.c
+@@ -1,5 +1,6 @@
+ /* { dg-do compile { target { ! ia32 } } } */
+ /* { dg-options "-O2" } */
++/* { dg-skip-if "" { *-*-* } "-msave-args" "" } */
+ 
+ #include <string.h>
+ 
+-- 
+2.21.0
+
+
+From 195029de1b60f3c50ff0caea2bfae4ba061d3e52 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 3 May 2019 01:20:30 +0000
+Subject: [PATCH 21/22] i386: use correct error message about -msave-args and
+ ABIs
+
+We used to say it made no sense in 32bit mode, but it doesn't make sense
+in 16bit mode either
+---
+ gcc/config/i386/i386.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index 6cb4cf253ee..f7ac18317e7 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -5899,7 +5899,7 @@ ix86_option_override_internal (bool main_args_p,
+ 	   & ~opts->x_ix86_isa_flags_explicit);
+ 
+   if (!TARGET_64BIT_P (opts->x_ix86_isa_flags) && TARGET_SAVE_ARGS)
+-    error ("-msave-args makes no sense in the 32-bit mode");
++    error ("-msave-args only works in x32 or 64-bit mode");
+ 
+   /* Validate -mpreferred-stack-boundary= value or default it to
+      PREFERRED_STACK_BOUNDARY_DEFAULT.  */
+-- 
+2.21.0
+
+
+From 9e2c637b395c1a48dccc07ece949f10561daac46 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 3 May 2019 01:22:56 +0000
+Subject: [PATCH 22/22] gcc.target/i386: skip 16bit tests when -msave-args
+
+---
+ gcc/testsuite/gcc.target/i386/pr78691-i386.c | 1 +
+ gcc/testsuite/gcc.target/i386/pr80569.c      | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/gcc/testsuite/gcc.target/i386/pr78691-i386.c b/gcc/testsuite/gcc.target/i386/pr78691-i386.c
+index f4b88559bc3..5f8c91bc370 100644
+--- a/gcc/testsuite/gcc.target/i386/pr78691-i386.c
++++ b/gcc/testsuite/gcc.target/i386/pr78691-i386.c
+@@ -1,5 +1,6 @@
+ /* PR tree-optimization/78691 */
+ /* { dg-options "-Os -m16" } */
++/* { dg-skip-if "" { *-*-* } "-msave-args" "" } */
+ 
+ int fn1(char *p1, char *p2) {
+   int a;
+diff --git a/gcc/testsuite/gcc.target/i386/pr80569.c b/gcc/testsuite/gcc.target/i386/pr80569.c
+index 8e11c40bb08..92a86380f78 100644
+--- a/gcc/testsuite/gcc.target/i386/pr80569.c
++++ b/gcc/testsuite/gcc.target/i386/pr80569.c
+@@ -1,6 +1,7 @@
+ /* PR target/80569 */
+ /* { dg-do assemble } */
+ /* { dg-options "-O2 -m16 -march=haswell" } */
++/* { dg-skip-if "" { *-*-* } "-msave-args" "" } */
+ 
+ void load_kernel(void *setup_addr)
+ {
+-- 
+2.21.0
 
