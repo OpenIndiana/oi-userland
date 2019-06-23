@@ -1,0 +1,77 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+# Copyright 2019 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/applications/.* \
+	->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/pixmaps/.* \
+	-> default restart_fmri svc:/application/desktop-cache/icon-cache:default>
+
+depend type=require fmri=library/desktop/vte
+
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/yelp type=require
+
+link path=usr/bin/ddu target=../ddu/ddu.py
+file path=usr/ddu/Legal_Documents/DDU_ThirdPartyLicenseReadMe.txt
+file path=usr/ddu/Legal_Documents/DDU_license.txt
+file path=usr/ddu/Legal_Documents/Legal_Notice.txt
+file path=usr/ddu/data/Audio.png
+file path=usr/ddu/data/Battery.png
+file path=usr/ddu/data/CPU.png
+file path=usr/ddu/data/DVD.png
+file path=usr/ddu/data/Memory.png
+file path=usr/ddu/data/Missing-1.png
+file path=usr/ddu/data/Network.png
+file path=usr/ddu/data/Other.png
+file path=usr/ddu/data/Storage.png
+file path=usr/ddu/data/USB.png
+file path=usr/ddu/data/Video.png
+file path=usr/ddu/data/detail_icon.png
+file path=usr/ddu/data/file.png
+file path=usr/ddu/data/folder.png
+file path=usr/ddu/data/hdd.ui
+file path=usr/ddu/data/icon.png
+file path=usr/ddu/data/info.png
+file path=usr/ddu/data/install.png
+file path=usr/ddu/data/noti-dialog.png
+file path=usr/ddu/data/submit_icon.png
+file path=usr/ddu/help/gnome/help/ddu/C/ddu.xml
+file path=usr/ddu/help/gnome/help/ddu/C/figures/DDU-addrepo.png
+file path=usr/ddu/help/gnome/help/ddu/C/figures/DDU-browse.png
+file path=usr/ddu/help/gnome/help/ddu/C/figures/DDU-detail.png
+file path=usr/ddu/help/gnome/help/ddu/C/figures/DDU-install.png
+file path=usr/ddu/help/gnome/help/ddu/C/figures/DDU-main.png
+file path=usr/ddu/help/gnome/help/ddu/C/figures/DDU-submit.png
+file path=usr/ddu/ddu.conf
+file path=usr/ddu/ddu.py mode=0555
+file path=usr/ddu/utils/CellRendererUrl.py
+file path=usr/ddu/utils/__init__.py
+file path=usr/ddu/utils/browse_media.py
+file path=usr/ddu/utils/detail.py
+file path=usr/ddu/utils/executingterminal.py
+file path=usr/ddu/utils/functions.py
+file path=usr/ddu/utils/install_drv.py
+file path=usr/ddu/utils/message_box.py
+file path=usr/ddu/utils/repo_manage.py
+file path=usr/ddu/utils/submit.py
+file path=usr/share/applications/ddu.desktop
+file path=usr/share/pixmaps/ddu.png
