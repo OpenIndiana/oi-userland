@@ -18,24 +18,28 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright 2017 Gary Mills
+# Copyright 2019 Michal Nowak
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           guile
-COMPONENT_VERSION=        1.8.8
-COMPONENT_REVISION=       2
-COMPONENT_SUMMARY=        GNU guile utility
-COMPONENT_PROJECT_URL=    http://www.gnu.org/software/guile/
+COMPONENT_NAME=		guile
+COMPONENT_VERSION=	2.2.6
+COMPONENT_SUMMARY=	GNU guile utility
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/guile/
 COMPONENT_CLASSIFICATION= Development/Other Languages
-COMPONENT_FMRI=           library/guile
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
+COMPONENT_FMRI=		library/guile
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:c3471fed2e72e5b04ad133bbaaf16369e8360283679bcf19800bc1b381024050
-COMPONENT_ARCHIVE_URL=    http://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        LGPLv2.1, FDLv1.2
+	sha256:b33576331465a60b003573541bf3b1c205936a16c407bc69f8419a527bf5c988
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv3.0, LGPLv3.0, GFDLv1.3
+COMPONENT_LICENSE_FILE=	COPYING
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
@@ -43,10 +47,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
-
 CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
+
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
+CONFIGURE_OPTIONS +=	LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
@@ -57,8 +61,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# FAIL: time.test: strptime: GNU %s format: gmtoff on EST+5
-test:		 $(NO_TESTS)
+test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs
