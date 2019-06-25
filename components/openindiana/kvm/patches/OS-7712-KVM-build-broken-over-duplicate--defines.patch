@@ -1,0 +1,48 @@
+From 942791d8b56a99123f7a4786526a797ae7b9b41b Mon Sep 17 00:00:00 2001
+From: Patrick Mooney <pmooney@pfmooney.com>
+Date: Mon, 8 Apr 2019 20:47:09 +0000
+Subject: [PATCH] OS-7712 KVM build broken over duplicate #defines Reviewed by:
+ Robert Mustacchi <rm@joyent.com> Reviewed by: John Levon
+ <john.levon@joyent.com> Approved by: John Levon <john.levon@joyent.com>
+
+Fixed patch to also build with older illumos-gate
+
+---
+ msr-index.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/msr-index.h b/msr-index.h
+index f059650..7cd6e73 100644
+--- a/msr-index.h
++++ b/msr-index.h
+@@ -19,7 +19,7 @@
+  * Derived from ./arch/x86/include/asm/msr-index.h
+  *
+  * Copyright 2011 various Linux Kernel contributors.
+- * Copyright 2011 Joyent, Inc. All Rights Reserved.
++ * Copyright 2019 Joyent, Inc.
+  */
+ 
+ #ifndef _ASM_X86_MSR_INDEX_H
+@@ -398,7 +398,9 @@
+ /* Intel VT MSRs */
+ #define MSR_IA32_VMX_BASIC              0x00000480
+ #define MSR_IA32_VMX_PINBASED_CTLS      0x00000481
+-#define MSR_IA32_VMX_PROCBASED_CTLS     0x00000482
++#ifndef MSR_IA32_VMX_PROCBASED_CTLS
++#define MSR_IA32_VMX_PROCBASED_CTLS	0x00000482
++#endif
+ #define MSR_IA32_VMX_EXIT_CTLS          0x00000483
+ #define MSR_IA32_VMX_ENTRY_CTLS         0x00000484
+ #define MSR_IA32_VMX_MISC               0x00000485
+@@ -408,7 +410,9 @@
+ #define MSR_IA32_VMX_CR4_FIXED1         0x00000489
+ #define MSR_IA32_VMX_VMCS_ENUM          0x0000048a
+ #define MSR_IA32_VMX_PROCBASED_CTLS2    0x0000048b
+-#define MSR_IA32_VMX_EPT_VPID_CAP       0x0000048c
++#ifndef MSR_IA32_VMX_EPT_VPID_CAP
++#define MSR_IA32_VMX_EPT_VPID_CAP	0x0000048c
++#endif
+ 
+ /* AMD-V MSRs */
+ 
