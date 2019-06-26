@@ -12,6 +12,7 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2019 Tim Mooney
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -28,6 +29,9 @@ file path=etc/xdg/autostart/tracker-miner-apps.desktop
 file path=etc/xdg/autostart/tracker-miner-fs.desktop
 file path=etc/xdg/autostart/tracker-miner-user-guides.desktop
 file path=etc/xdg/autostart/tracker-store.desktop
+file path=usr/bin/$(MACH64)/tracker
+file path=usr/bin/$(MACH64)/tracker-needle
+file path=usr/bin/$(MACH64)/tracker-preferences
 file path=usr/bin/tracker
 file path=usr/bin/tracker-needle
 file path=usr/bin/tracker-preferences
@@ -48,9 +52,68 @@ file path=usr/include/tracker-1.0/libtracker-sparql/tracker-generated.h
 file path=usr/include/tracker-1.0/libtracker-sparql/tracker-ontologies.h
 file path=usr/include/tracker-1.0/libtracker-sparql/tracker-sparql.h
 file path=usr/include/tracker-1.0/libtracker-sparql/tracker-version.h
+file path=usr/lib/$(MACH64)/girepository-1.0/Tracker-1.0.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/TrackerControl-1.0.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/TrackerMiner-1.0.typelib
 file path=usr/lib/girepository-1.0/Tracker-1.0.typelib
 file path=usr/lib/girepository-1.0/TrackerControl-1.0.typelib
 file path=usr/lib/girepository-1.0/TrackerMiner-1.0.typelib
+link path=usr/lib/$(MACH64)/libtracker-control-1.0.so \
+    target=libtracker-control-1.0.so.0.803.0
+link path=usr/lib/$(MACH64)/libtracker-control-1.0.so.0 \
+    target=libtracker-control-1.0.so.0.803.0
+file path=usr/lib/$(MACH64)/libtracker-control-1.0.so.0.803.0
+link path=usr/lib/$(MACH64)/libtracker-miner-1.0.so \
+    target=libtracker-miner-1.0.so.0.803.0
+link path=usr/lib/$(MACH64)/libtracker-miner-1.0.so.0 \
+    target=libtracker-miner-1.0.so.0.803.0
+file path=usr/lib/$(MACH64)/libtracker-miner-1.0.so.0.803.0
+link path=usr/lib/$(MACH64)/libtracker-sparql-1.0.so \
+    target=libtracker-sparql-1.0.so.0.803.0
+link path=usr/lib/$(MACH64)/libtracker-sparql-1.0.so.0 \
+    target=libtracker-sparql-1.0.so.0.803.0
+file path=usr/lib/$(MACH64)/libtracker-sparql-1.0.so.0.803.0
+file path=usr/lib/$(MACH64)/pkgconfig/tracker-control-1.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/tracker-miner-1.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/tracker-sparql-1.0.pc
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-abw.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-bmp.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-dummy.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-dvi.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-epub.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-flac.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-gif.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-gstreamer.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-html.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-icon.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-jpeg.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-mp3.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-msoffice-xml.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-msoffice.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-oasis.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-pdf.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-playlist.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-png.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-ps.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-text.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-tiff.so
+file path=usr/lib/$(MACH64)/tracker-1.0/extract-modules/libextract-vorbis.so
+link path=usr/lib/$(MACH64)/tracker-1.0/libtracker-common.so \
+    target=libtracker-common.so.0.0.0
+link path=usr/lib/$(MACH64)/tracker-1.0/libtracker-common.so.0 \
+    target=libtracker-common.so.0.0.0
+file path=usr/lib/$(MACH64)/tracker-1.0/libtracker-common.so.0.0.0
+link path=usr/lib/$(MACH64)/tracker-1.0/libtracker-data.so \
+    target=libtracker-data.so.0.0.0
+link path=usr/lib/$(MACH64)/tracker-1.0/libtracker-data.so.0 \
+    target=libtracker-data.so.0.0.0
+file path=usr/lib/$(MACH64)/tracker-1.0/libtracker-data.so.0.0.0
+link path=usr/lib/$(MACH64)/tracker-1.0/libtracker-extract.so \
+    target=libtracker-extract.so.0.0.0
+link path=usr/lib/$(MACH64)/tracker-1.0/libtracker-extract.so.0 \
+    target=libtracker-extract.so.0.0.0
+file path=usr/lib/$(MACH64)/tracker-1.0/libtracker-extract.so.0.0.0
+file path=usr/lib/$(MACH64)/tracker-1.0/writeback-modules/libwriteback-taglib.so
 link path=usr/lib/libtracker-control-1.0.so \
     target=libtracker-control-1.0.so.0.803.0
 link path=usr/lib/libtracker-control-1.0.so.0 \
@@ -104,6 +167,7 @@ link path=usr/lib/tracker-1.0/libtracker-extract.so \
 link path=usr/lib/tracker-1.0/libtracker-extract.so.0 \
     target=libtracker-extract.so.0.0.0
 file path=usr/lib/tracker-1.0/libtracker-extract.so.0.0.0
+file path=usr/lib/tracker-1.0/writeback-modules/libwriteback-taglib.so
 file path=usr/lib/tracker-extract mode=0555
 file path=usr/lib/tracker-miner-apps mode=0555
 file path=usr/lib/tracker-miner-fs mode=0555
