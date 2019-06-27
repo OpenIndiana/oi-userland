@@ -248,7 +248,7 @@ case "$method" in
 	# Execute named(1M) with relevant command line options.  Note
 	# the server forks before reading named.conf(4) and so a
 	# good exit code here does not mean the service is ready.
-	ppriv -s A-all -s A+basic,net_privaddr,file_dac_read,file_dac_search,sys_resource,proc_chroot,proc_setid -e ${server} ${cmdopts}
+	${server} ${cmdopts}
 	result=$?
 	if [ $result -ne 0 ]; then
 	    echo "$I : start failed! Check syslog for further information." >&2

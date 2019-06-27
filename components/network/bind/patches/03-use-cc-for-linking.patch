@@ -1,0 +1,22 @@
+--- bind-9.14.3/configure.ac.1	2019-06-27 14:43:18.028226960 +0000
++++ bind-9.14.3/configure.ac	2019-06-27 14:46:08.101747574 +0000
+@@ -2657,9 +2657,16 @@
+ 		       ])
+ 	       ],
+ 	       [*-solaris*],[
+-		 SO_CFLAGS="-KPIC"
+-		 SO_LDFLAGS="-G -z text"
+-		 SO_LD="ld"
++		 LDFLAGS="${LDFLAGS} -Wl,-ztext"
++		 SO_CFLAGS="-fPIC -DPIC"
++		 SO_LDFLAGS=""
++		 AS_IF([test "$use_libtool" = "yes"],[
++			 SO_LDFLAGS="-Xcompiler -shared"
++			 SO_LD="${CC}"
++		       ],[
++			 SO_LDFLAGS="-shared"
++			 SO_LD="${CC}"
++		       ])
+ 	       ],
+ 	       [ia64-hp-hpux*],[
+ 		 SO_CFLAGS="+z"

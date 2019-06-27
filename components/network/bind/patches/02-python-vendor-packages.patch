@@ -1,39 +1,36 @@
-diff -ur bind-9.10.6-P1-old/bin/python/dnssec-checkds.py.in bind-9.10.6-P1/bin/python/dnssec-checkds.py.in
---- bind-9.10.6-P1-old/bin/python/dnssec-checkds.py.in	2018-01-18 10:43:00.015802939 +0000
-+++ bind-9.10.6-P1/bin/python/dnssec-checkds.py.in	2018-01-04 08:35:08.000000000 +0000
-@@ -21,7 +21,7 @@
- sys.path.insert(0, os.path.dirname(sys.argv[0]))
- if os.name != 'nt':
-     sys.path.insert(1, os.path.join('@prefix@', 'lib',
--		    'python' + sys.version[:3], 'site-packages'))
-+		    'python' + sys.version[:3], 'vendor-packages'))
+diff -ur bind-9.14.3/bin/python/dnssec-checkds.py.in bind-9.14.3-patched/bin/python/dnssec-checkds.py.in
+--- bind-9.14.3/bin/python/dnssec-checkds.py.in	2019-06-04 18:20:04.000000000 +0000
++++ bind-9.14.3-patched/bin/python/dnssec-checkds.py.in	2019-06-23 16:46:42.639989194 +0000
+@@ -19,7 +19,7 @@
+         sys.path.insert(1, '@PYTHON_INSTALL_DIR@')
+     else:
+         sys.path.insert(1, os.path.join('@prefix@', 'lib',
+-                        'python' + sys.version[:3], 'site-packages'))
++                        'python' + sys.version[:3], 'vendor-packages'))
  
  import isc.checkds
  
-diff -ur bind-9.10.6-P1-old/bin/python/dnssec-coverage.py.in bind-9.10.6-P1/bin/python/dnssec-coverage.py.in
---- bind-9.10.6-P1-old/bin/python/dnssec-coverage.py.in	2018-01-18 10:43:26.769271806 +0000
-+++ bind-9.10.6-P1/bin/python/dnssec-coverage.py.in	2018-01-04 08:35:08.000000000 +0000
-@@ -21,7 +21,7 @@
- sys.path.insert(0, os.path.dirname(sys.argv[0]))
- if os.name != 'nt':
-     sys.path.insert(1, os.path.join('@prefix@', 'lib',
--		    'python' + sys.version[:3], 'site-packages'))
-+		    'python' + sys.version[:3], 'vendor-packages'))
+diff -ur bind-9.14.3/bin/python/dnssec-coverage.py.in bind-9.14.3-patched/bin/python/dnssec-coverage.py.in
+--- bind-9.14.3/bin/python/dnssec-coverage.py.in	2019-06-04 18:20:04.000000000 +0000
++++ bind-9.14.3-patched/bin/python/dnssec-coverage.py.in	2019-06-23 16:46:27.245745285 +0000
+@@ -19,7 +19,7 @@
+         sys.path.insert(1, '@PYTHON_INSTALL_DIR@')
+     else:
+         sys.path.insert(1, os.path.join('@prefix@', 'lib',
+-                        'python' + sys.version[:3], 'site-packages'))
++                        'python' + sys.version[:3], 'vendor-packages'))
  
  import isc.coverage
  
-diff -ur bind-9.10.6-P1-old/bin/python/Makefile.in bind-9.10.6-P1/bin/python/Makefile.in
---- bind-9.10.6-P1-old/bin/python/Makefile.in	2018-01-18 10:32:50.412786259 +0000
-+++ bind-9.10.6-P1/bin/python/Makefile.in	2018-01-18 10:40:23.958648320 +0000
-@@ -55,9 +55,9 @@
- 	${INSTALL_DATA} ${srcdir}/dnssec-coverage.8 ${DESTDIR}${mandir}/man8
- 	if test -n "${PYTHON}" ; then \
- 		if test -n "${DESTDIR}" ; then \
--			${PYTHON} ${srcdir}/setup.py install --root=${DESTDIR} --prefix=${prefix} ; \
-+			${PYTHON} ${srcdir}/setup.py install --root=${DESTDIR} --prefix=${prefix} --install-lib=${PYTHON_VENDOR_DIR}; \
- 		else \
--			${PYTHON} ${srcdir}/setup.py install --prefix=${prefix} ; \
-+			${PYTHON} ${srcdir}/setup.py install --prefix=${prefix} --install-lib=${PYTHON_VENDOR_DIR} ; \
- 		fi \
- 	fi
+diff -ur bind-9.14.3/bin/python/dnssec-keymgr.py.in bind-9.14.3-patched/bin/python/dnssec-keymgr.py.in
+--- bind-9.14.3/bin/python/dnssec-keymgr.py.in	2019-06-04 18:20:04.000000000 +0000
++++ bind-9.14.3-patched/bin/python/dnssec-keymgr.py.in	2019-06-23 16:46:57.198420733 +0000
+@@ -19,7 +19,7 @@
+         sys.path.insert(1, '@PYTHON_INSTALL_DIR@')
+     else:
+         sys.path.insert(1, os.path.join('@prefix@', 'lib',
+-                        'python' + sys.version[:3], 'site-packages'))
++                        'python' + sys.version[:3], 'vendor-packages'))
+ 
+ import isc.keymgr
  
