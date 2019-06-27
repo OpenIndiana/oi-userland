@@ -1,0 +1,164 @@
+Reading domain and nameservers from /etc/resolv.conf.
+Verifying initial named.conf file.
+RUNNING: /usr/sbin/named-checkconf -z $(BUILD_DIR)/test/config/named.conf
+zone example.com/IN: loaded serial 20
+zone 0.0.127.in-addr.arpa/IN: loaded serial 20
+RESULT: 0
+=====================================================================
+Verifying configuration after key and controls added.
+RUNNING: /usr/sbin/named-checkconf -z $(BUILD_DIR)/test/config/named.conf
+zone example.com/IN: loaded serial 20
+zone 0.0.127.in-addr.arpa/IN: loaded serial 20
+RESULT: 0
+=====================================================================
+starting DNS server
+RUNNING: /usr/sbin/named -c $(BUILD_DIR)/test/config/named.conf -p 5353
+RESULT: 0
+=====================================================================
+checking for pid file
+read named.pid
+Turning on tracing
+RUNNING: /usr/sbin/rndc -c $(BUILD_DIR)/test/config/rndc.conf trace 3
+RESULT: 0
+=====================================================================
+Look-up IPv4 (A) record
+RUNNING: /usr/bin/dig @0 -p 5353 -t A ipboth.example.com.
+
+; <<>> DiG $(COMPONENT_VERSION) <<>> @0 -p 5353 -t A ipboth.example.com.
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: REDACTED
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: REDACTED (good)
+;; QUESTION SECTION:
+;ipboth.example.com.		IN	A
+
+;; ANSWER SECTION:
+ipboth.example.com.	172800	IN	A	192.168.4.10
+
+;; SERVER: 127.0.0.1#5353(0.0.0.0)
+;; MSG SIZE  rcvd: REDACTED
+
+RESULT: 0
+=====================================================================
+Look-up IPv6 (AAAA) record
+RUNNING: /usr/bin/dig @0 -p 5353 -t AAAA ipboth.example.com.
+
+; <<>> DiG $(COMPONENT_VERSION) <<>> @0 -p 5353 -t AAAA ipboth.example.com.
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: REDACTED
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: REDACTED (good)
+;; QUESTION SECTION:
+;ipboth.example.com.		IN	AAAA
+
+;; ANSWER SECTION:
+ipboth.example.com.	172800	IN	AAAA	fd10:45df:879f:661d::10
+
+;; SERVER: 127.0.0.1#5353(0.0.0.0)
+;; MSG SIZE  rcvd: REDACTED
+
+RESULT: 0
+=====================================================================
+Look-up known (ANY) records
+RUNNING: /usr/bin/dig @0 -p 5353 -t ANY ipboth.example.com.
+
+; <<>> DiG $(COMPONENT_VERSION) <<>> @0 -p 5353 -t ANY ipboth.example.com.
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: REDACTED
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: REDACTED (good)
+;; QUESTION SECTION:
+;ipboth.example.com.		IN	ANY
+
+;; ANSWER SECTION:
+ipboth.example.com.	172800	IN	TXT	"Both IP address types"
+ipboth.example.com.	172800	IN	A	192.168.4.10
+ipboth.example.com.	172800	IN	AAAA	fd10:45df:879f:661d::10
+
+;; SERVER: 0.0.0.0#5353(0.0.0.0)
+;; MSG SIZE  rcvd: REDACTED
+
+RESULT: 0
+=====================================================================
+Request zone transfer (axfr)
+RUNNING: /usr/bin/dig @0 -p 5353 -t axfr example.com.
+
+; <<>> DiG $(COMPONENT_VERSION) <<>> @0 -p 5353 -t axfr example.com.
+; (1 server found)
+;; global options: +cmd
+example.com.		172800	IN	SOA	$(HOSTNAME) root.$(HOSTNAME) 20 3600 300 3600000 300
+example.com.		172800	IN	NS	$(HOSTNAME)
+mo.bar.example.com.	172800	IN	A	192.168.5.17
+dname.example.com.	172800	IN	DNAME	sub.example.com.
+ipboth.example.com.	172800	IN	TXT	"Both IP address types"
+ipboth.example.com.	172800	IN	A	192.168.4.10
+ipboth.example.com.	172800	IN	AAAA	fd10:45df:879f:661d::10
+ipv4.example.com.	172800	IN	A	192.168.4.1
+ipv6.example.com.	172800	IN	AAAA	fd10:45df:879f:661d::1
+jack.sub.example.com.	172800	IN	CNAME	manny.sub.example.com.
+manny.sub.example.com.	172800	IN	A	192.168.7.11
+manny.sub.example.com.	172800	IN	TXT	"Manny has alias of jack."
+xxx.example.com.	172800	IN	A	192.168.0.1
+xxx.example.com.	172800	IN	TXT	"text for xxx.example.com"
+example.com.		172800	IN	SOA	$(HOSTNAME) root.$(HOSTNAME) 20 3600 300 3600000 300
+;; SERVER: 0.0.0.0#5353(0.0.0.0)
+;; XFR size: 15 records (messages 1, bytes REDACTED)
+
+RESULT: 0
+=====================================================================
+looking up host known to have DNAME
+RUNNING: /usr/bin/dig @0 -p 5353 -t a jack.dname.example.com.
+
+; <<>> DiG $(COMPONENT_VERSION) <<>> @0 -p 5353 -t a jack.dname.example.com.
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: REDACTED
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: REDACTED (good)
+;; QUESTION SECTION:
+;jack.dname.example.com.		IN	A
+
+;; ANSWER SECTION:
+dname.example.com.	172800	IN	DNAME	sub.example.com.
+jack.dname.example.com.	172800	IN	CNAME	jack.sub.example.com.
+jack.sub.example.com.	172800	IN	CNAME	manny.sub.example.com.
+manny.sub.example.com.	172800	IN	A	192.168.7.11
+
+;; SERVER: 127.0.0.1#5353(0.0.0.0)
+;; MSG SIZE  rcvd: REDACTED
+
+RESULT: 0
+=====================================================================
+Requesting status
+Requesting dump of server's caches and zones
+RUNNING: /usr/sbin/rndc -c $(BUILD_DIR)/test/config/rndc.conf dumpdb -all
+RESULT: 0
+=====================================================================
+Requesting BIND to stop
+RUNNING: /usr/sbin/rndc -c $(BUILD_DIR)/test/config/rndc.conf stop
+RESULT: 0
+=====================================================================
+Requesting status - should fail as server has stopped.
+RUNNING: /usr/sbin/rndc -c $(BUILD_DIR)/test/config/rndc.conf status
+rndc: connect failed: 127.0.0.1#8953: connection refused
+RESULT: 1
+=====================================================================
