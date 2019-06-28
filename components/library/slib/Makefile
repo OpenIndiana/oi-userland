@@ -53,7 +53,7 @@ COMPONENT_INSTALL_ARGS += INSTALL=ginstall
 COMPONENT_INSTALL_ARGS += INSTALL_INFO=install-info
 
 # nothing to really build
-build:
+build:	$(BUILD_32)
 
 install: $(INSTALL_32)
 
