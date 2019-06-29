@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby-meta
 # the latest version of Ruby
-COMPONENT_VERSION=	2.3
+COMPONENT_VERSION=	2.6
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_BUGDB=	utility/ruby
 
