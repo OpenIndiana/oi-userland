@@ -1,0 +1,25 @@
+# In-house patch created to keep inappropriate full pathnames
+# on build systems from being included in the ri Ruby doc files.
+# Patch is Solaris specific and not appropriate for upstream use.
+
+--- ruby-2.6.0/common.mk	2019-01-11 01:59:22.920582120 +0000
++++ ruby-2.6.0/common.mk	2019-01-11 01:58:18.983451023 +0000
+@@ -541,9 +541,17 @@ do-install-gem: $(PROGRAM) pre-install-g
+ post-install-gem::
+ 	@$(NULLCMD)
+ 
++# Eliminate full pathname from source directory references
++# in RDoc ri files.
++# Create a symlink here to the source directory so
++# rdoc can reference it from here without the full pathname
++srcdir_base=$(notdir $(srcdir))
+ rdoc: PHONY main
+ 	@echo Generating RDoc documentation
+-	$(Q) $(XRUBY) "$(srcdir)/libexec/rdoc" --root "$(srcdir)" --page-dir "$(srcdir)/doc" --encoding=UTF-8 --no-force-update --all --ri --op "$(RDOCOUT)" $(RDOCFLAGS) "$(srcdir)"
++	if [ ! -e $(srcdir_base) ]; then \
++	    /usr/bin/ln -s $(srcdir); \
++	fi
++	$(Q) $(XRUBY) "$(srcdir)/libexec/rdoc" --root "$(srcdir)" --page-dir "$(srcdir)/doc" --encoding=UTF-8 --no-force-update --all --ri --op "$(RDOCOUT)" $(RDOCFLAGS) "$(srcdir_base)"
+ 
+ html: PHONY main
+ 	@echo Generating RDoc HTML files
