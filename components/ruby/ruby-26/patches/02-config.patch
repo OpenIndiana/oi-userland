@@ -1,0 +1,51 @@
+# Ensure we correctly identify a 64-bit build and
+# use "amd64" and "sparcv9" for the 64-bit cpu string.
+# Changes were developed in-house, are Solaris specific,
+# and are not suitable for upstream.
+
+--- ruby-2.5.3/tool/config.guess	2018-10-31 14:32:31.812918029 +0000
++++ ruby-2.5.3/tool/config.guess	2018-10-31 14:32:15.303246783 +0000
+@@ -383,25 +383,18 @@ case "$UNAME_MACHINE:$UNAME_SYSTEM:$UNAM
+ 	echo sparc-hal-solaris2"`echo "$UNAME_RELEASE"|sed -e 's/[^.]*//'`"
+ 	exit ;;
+     sun4*:SunOS:5.*:* | tadpole*:SunOS:5.*:*)
+-	echo sparc-sun-solaris2"`echo "$UNAME_RELEASE" | sed -e 's/[^.]*//'`"
++	# Check CFLAGS for the 64-bit compile option to set the arch
++	SUN_ARCH="sparc"
++	echo $CFLAGS | /usr/gnu/bin/grep -q -w '\-m64' && SUN_ARCH="sparcv9"
++	echo ${SUN_ARCH}-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+ 	exit ;;
+     i86pc:AuroraUX:5.*:* | i86xen:AuroraUX:5.*:*)
+ 	echo i386-pc-auroraux"$UNAME_RELEASE"
+ 	exit ;;
+     i86pc:SunOS:5.*:* | i86xen:SunOS:5.*:*)
+-	eval "$set_cc_for_build"
+-	SUN_ARCH=i386
+-	# If there is a compiler, see if it is configured for 64-bit objects.
+-	# Note that the Sun cc does not turn __LP64__ into 1 like gcc does.
+-	# This test works for both compilers.
+-	if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
+-	    if (echo '#ifdef __amd64'; echo IS_64BIT_ARCH; echo '#endif') | \
+-		(CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
+-		grep IS_64BIT_ARCH >/dev/null
+-	    then
+-		SUN_ARCH=x86_64
+-	    fi
+-	fi
++	SUN_ARCH="i386"
++	# Check CFLAGS for the 64-bit compile option to set the arch
++	echo $CFLAGS | /usr/gnu/bin/grep -q -w '\-m64' && SUN_ARCH="amd64"
+ 	echo "$SUN_ARCH"-pc-solaris2"`echo "$UNAME_RELEASE"|sed -e 's/[^.]*//'`"
+ 	exit ;;
+     sun4*:SunOS:6*:*)
+--- ruby-2.5.3/tool/config.sub	2018-10-31 14:29:42.844771186 +0000
++++ ruby-2.5.3/tool/config.sub	2018-10-31 14:29:18.943384526 +0000
+@@ -799,7 +799,7 @@ case $basic_machine in
+ 		basic_machine=x86_64-pc
+ 		;;
+ 	amd64-*)
+-		basic_machine=x86_64-`echo "$basic_machine" | sed 's/^[^-]*-//'`
++		# don't change basic_machine
+ 		;;
+ 	amiga | amiga-*)
+ 		basic_machine=m68k-unknown

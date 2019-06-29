@@ -1,0 +1,28 @@
+# Replace /usr/local/bin/ruby references in ruby(1) manpage.
+# Changes were developed in-house, are Solaris specific,
+# and not suitable for upstream.
+
+--- ruby-2.6.0/man/ruby.1
++++ ruby-2.6.0/man/ruby.1
+@@ -212,9 +212,9 @@ with a slash.  This is used to emulate
+ .Li #!
+ on machines that don't support it, in the following manner:
+ .Bd -literal -offset indent
+-#! /usr/local/bin/ruby
++#! /usr/ruby/2.6/bin/ruby
+ # This line makes the next one a comment in Ruby \e
+-  exec /usr/local/bin/ruby -S $0 $*
++  exec /usr/ruby/2.6/bin/ruby -S $0 $*
+ .Ed
+ .Pp
+ On some systems
+@@ -349,7 +349,7 @@ Any switches found there are removed fro
+ .Li ARGV
+ and set the corresponding variable in the script.  For example:
+ .Bd -literal -offset indent
+-#! /usr/local/bin/ruby -s
++#! /usr/ruby/2.6/bin/ruby -s
+ # prints "true" if invoked with `-xyz' switch.
+ print "true\en" if $xyz
+ .Ed
+
