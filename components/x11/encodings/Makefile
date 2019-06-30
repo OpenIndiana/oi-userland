@@ -14,27 +14,26 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           encodings
-COMPONENT_VERSION=        1.0.4
+COMPONENT_VERSION=        1.0.5
 COMPONENT_FMRI=           x11/library/libfontenc/encodings
 COMPONENT_CLASSIFICATION= System/Fonts
 COMPONENT_SUMMARY=  encodings - data files for libfontenc to map font encodings between character sets
+COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ced6312988a45d23812c2ac708b4595f63fd7a49c4dcd9f66bdcd50d1057d539
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/font/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
+  sha256:bd96e16143a044b19e87f217cf6a3763a70c561d1076aad6f6d862ec41774a31
+COMPONENT_ARCHIVE_URL= $(XORG_FONT_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= encodings.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
