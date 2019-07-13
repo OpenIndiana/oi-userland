@@ -67,8 +67,8 @@ def FindComponentPaths(path, debug=False, subdir='components',
                                 stderr=subprocess.PIPE,
                                 )
 
+        proc.wait()
         if debug:
-            proc.wait()
             if proc.returncode != 0:
                 logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
 
@@ -103,8 +103,8 @@ def FindComponentPaths(path, debug=False, subdir='components',
                                 cwd=workspace_path,
                                 )
 
+        proc.wait()
         if debug:
-            proc.wait()
             if proc.returncode != 0:
                 logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
 
@@ -184,8 +184,8 @@ class BassComponent(object):
         for out in proc.stdout:
             result.append(out)
 
+        proc.wait()
         if self.debug:
-            proc.wait()
             if proc.returncode != 0:
                 logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
 
