@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	1.4.10
+COMPONENT_VERSION=	1.5.4
 COMPONENT_PROJECT_URL=	http://www.sbcl.org/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:904ee7e90fd6d66dfb4da578ec9e3dab1a2a49b61b13fa1fbf30ce8b80593cc9
+    sha256:ec872be63697041fbb1c6324382b736c2aecb2fc1edb9961f9bfe7b017c1f45c
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-PublicDomain
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
@@ -43,20 +43,21 @@ COMPONENT_BUILD_ARGS += --with-sb-core-compression
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(BUILD_DIR)
 	$(CP) -a $(SOURCE_DIR) $(@D)
-	(cd $(@D) ; chmod +x find-gnumake.sh)
 	(cd $(@D) ; $(ENV) $(COMPONENT_ENV) /usr/gnu/bin/sh make.sh $(COMPONENT_BUILD_ARGS))
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) build
-endif
 	$(TOUCH) $@
 
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	(cd $(@D) ; $(ENV) $(COMPONENT_ENV) BUILD_ROOT=$(PROTO_DIR) /usr/gnu/bin/sh install.sh)
 	$(TOUCH) $@
 
+$(BUILD_DIR)/%/.tested:		$(BUILD_DIR)/%/.installed
+	(cd $(@D)/tests; $(ENV) $(COMPONENT_ENV) BUILD_ROOT=$(PROTO_DIR) /usr/gnu/bin/sh run-tests.sh)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+
+test:		$(TEST_32)
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
