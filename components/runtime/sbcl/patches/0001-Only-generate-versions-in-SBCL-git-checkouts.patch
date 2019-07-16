@@ -1,0 +1,42 @@
+From 63da1c93b7e9fb868df22b850286a485e5d8be07 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Mon, 15 Jul 2019 23:49:30 +0000
+Subject: [PATCH] Only generate versions in SBCL git checkouts
+
+Sometimes larger build systems contain copies of SBCL sources, if those
+systems are managed with git, we don't want to trample version.lisp-expr
+with _their_ version, but keep the version of SBCL.
+
+Attempt to detect this by checking whether
+`git rev-parse --show-top-level`/run-sbcl.sh exists, if not assume git
+is operating on a checkout of something other than SBCL
+---
+ generate-version.sh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/generate-version.sh b/generate-version.sh
+index f51b46710..99ec6b1cb 100755
+--- a/generate-version.sh
++++ b/generate-version.sh
+@@ -2,7 +2,8 @@
+ 
+ git_available_p() {
+     # Check that (1) we have git (2) this is a git tree.
+-    if ( command -v git >/dev/null && git describe >/dev/null 2>/dev/null )
++    if ( command -v git >/dev/null && git describe >/dev/null 2>/dev/null && \
++       test -f `git rev-parse --show-toplevel`/run-sbcl.sh)
+     then
+         echo "ok"
+     else
+@@ -17,7 +18,7 @@ then
+     exit 0
+ elif [ -z "$AVAILABLE" ]
+ then
+-    echo "Can't run 'git describe' and version.lisp-expr is missing." >&2
++    echo "Can't 'git describe' SBCL source and version.lisp-expr is missing." >&2
+     echo "To fix this, either install git or create a fake version.lisp-expr file." >&2
+     echo "You can create a fake version.lisp-expr file like this:" >&2
+     echo "    \$ echo '\"1.0.99.999\"' > version.lisp-expr" >&2
+-- 
+2.21.0
+
