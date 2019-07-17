@@ -14,26 +14,25 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= libICE
-COMPONENT_VERSION= 1.0.9
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.0.10
+COMPONENT_FMRI = x11/library/libice
+COMPONENT_CLASSIFICATION = System/X11
+COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SUMMARY= libICE - Inter-Client Exchange Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8f7032f2c1c64352b5423f6b48a8ebdc339cc63064af34d66a6c9aa79759e202
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_FMRI = x11/library/libice
-COMPONENT_CLASSIFICATION = System/X11
+  sha256:6f86dce12cf4bcaf5c37dddd8b1b64ed2ddf1ef7b218f22b9942595fb747c348
+COMPONENT_ARCHIVE_URL= $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
