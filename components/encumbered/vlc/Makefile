@@ -142,7 +142,6 @@ CONFIGURE_OPTIONS += --disable-kate
 CONFIGURE_OPTIONS += --disable-tiger
 
 # Video
-CONFIGURE_OPTIONS += --disable-gles
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-xcb
 CONFIGURE_OPTIONS += --enable-xvideo
@@ -190,6 +189,16 @@ CONFIGURE_OPTIONS += --enable-taglib
 CONFIGURE_OPTIONS += --enable-notify
 
 
+QT5_ROOT = /usr/lib/qt/5.8
+
+QT5_RPATH = $(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
+
+QT5_PLUGIN = /usr/lib/$(MACH64)/vlc/plugins/gui/libqt_plugin.so
+
+COMPONENT_POST_INSTALL_ACTION = \
+	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN) &&\
+        /usr/bin/elfedit -e 'dyn:value -s RPATH   "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN)
+
 build: $(BUILD_64)
 
 install: $(INSTALL_64)
@@ -197,8 +206,6 @@ install: $(INSTALL_64)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
@@ -249,9 +256,13 @@ REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libupnp
 REQUIRED_PACKAGES += system/library/math
