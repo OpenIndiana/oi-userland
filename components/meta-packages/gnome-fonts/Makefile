@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-fonts
 COMPONENT_VERSION=	2.30.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME Unicode and Korean TrueType fonts
 COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
 COMPONENT_FMRI=	system/font/gnome-fonts

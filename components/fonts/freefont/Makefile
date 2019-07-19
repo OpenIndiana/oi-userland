@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=        freefont
 COMPONENT_VERSION=     20120503
 IPS_COMPONENT_VERSION= 0.$(COMPONENT_VERSION)
-COMPONENT_REVISION=    1
+COMPONENT_REVISION=    2
 COMPONENT_PROJECT_URL= https://savannah.gnu.org/projects/freefont/
 COMPONENT_SUMMARY=     Free UCS TrueType Fonts
 COMPONENT_SRC=         freefont-$(COMPONENT_VERSION)
