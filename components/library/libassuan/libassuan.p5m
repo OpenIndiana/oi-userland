@@ -20,32 +20,33 @@
 #
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
+
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
-set name=pkg.fmri value=pkg:/library/security/libassuan@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GnuPG IPC implementation library"
 set name=pkg.description value="A small library implementing the so-called Assuan protocol, used for interprocess communication between most GnuPG components."
 set name=com.oracle.info.description value="the GnuPG IPC implementation library"
 set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2009/397
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
-#
+
+license libassuan.license license="GPLv3, LGPLv2"
+
+file path=usr/bin/$(MACH64)/libassuan-config
 file path=usr/bin/libassuan-config
 file path=usr/include/assuan.h
-file path=usr/lib/libassuan.so.0.4.3
-file path=usr/lib/$(MACH64)/libassuan.so.0.4.3
+link path=usr/lib/$(MACH64)/libassuan.so target=libassuan.so.0.8.3
+link path=usr/lib/$(MACH64)/libassuan.so.0 target=libassuan.so.0.8.3
+file path=usr/lib/$(MACH64)/libassuan.so.0.8.3
+file path=usr/lib/$(MACH64)/pkgconfig/libassuan.pc
+link path=usr/lib/libassuan.so target=libassuan.so.0.8.3
+link path=usr/lib/libassuan.so.0 target=libassuan.so.0.8.3
+file path=usr/lib/libassuan.so.0.8.3
+file path=usr/lib/pkgconfig/libassuan.pc
 file path=usr/share/aclocal/libassuan.m4
 file path=usr/share/info/assuan.info
-#
-link path=usr/lib/libassuan.so.0 target=libassuan.so.0.4.3
-link path=usr/lib/libassuan.so target=libassuan.so.0.4.3
-link path=usr/lib/$(MACH64)/libassuan.so.0 target=libassuan.so.0.4.3
-link path=usr/lib/$(MACH64)/libassuan.so target=libassuan.so.0.4.3
-#
-license libassuan.license license="GPLv3, LGPLv2"
-#depend type=optional fmri=crypto/gnupg@2.0.21-0.151
+#file path=usr/share/info/dir
