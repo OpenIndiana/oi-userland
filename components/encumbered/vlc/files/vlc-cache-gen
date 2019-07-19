@@ -21,22 +21,29 @@ set -e
 
 VLC_CACHE_GEN=/usr/lib/64/vlc/vlc-cache-gen
 VLC_PLUGINS_DIR=/usr/lib/64/vlc/plugins
-AWK=/usr/bin/nawk
-SVCPROP=/usr/bin/svcprop
-SVCCFG=/usr/sbin/svccfg
+VLC_CACHE=/usr/lib/64/vlc/plugins/plugins.dat
+FIND=/usr/bin/find 
 
-last_version=$($SVCPROP -p config/version $SMF_FMRI)
-updated=$($SVCPROP -p config/updated $SMF_FMRI)
+NEEDS_REGENERATION=0
+ 
+# Always regenerate VLC cache on refresh
+if [ "$1" = "refresh" ]; then
+   NEEDS_REGENERATION=1
+fi
 
-current_version=$($VLC_CACHE_GEN --version | $AWK ' { print $NF; }')
+if [ ! -f "${VLC_CACHE}" ]; then
+    NEEDS_REGENERATION=1;
+else
+   FIND_OUTPUT=$($FIND "$VLC_PLUGINS_DIR" -newer "$VLC_CACHE")
+   if [ -n "${FIND_OUTPUT}" ]; then
+      NEEDS_REGENERATION=1;
+   fi
+fi
 
-if [ "$current_version" != "$last_version" -o "$updated" != "true" ]; then
+
+if [ $NEEDS_REGENERATION -eq 1 ]; then
   printf "Regenerating VLC plugins cache\n"
   $VLC_CACHE_GEN $VLC_PLUGINS_DIR
-  
-  $SVCCFG -s $SMF_FMRI setprop config/version = "$current_version"
-  $SVCCFG -s $SMF_FMRI setprop config/updated = true
-  $SVCCFG -s $SMF_FMRI refresh
 fi
 
 exit 0

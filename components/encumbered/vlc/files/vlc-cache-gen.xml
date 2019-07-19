@@ -39,6 +39,8 @@
 	type='service'
 	version='1'>
 
+	<create_default_instance enabled='true' />
+
 	<single_instance />
 
 	<dependency
@@ -49,32 +51,32 @@
 		<service_fmri value='svc:/system/filesystem/local'/>
 	</dependency>
 
-        <instance enabled='true' name='default'>
-		<exec_method
-			type='method'
-			name='stop'
-			exec=':true'
-			timeout_seconds='60' >
-		</exec_method>
+	<exec_method
+		type='method'
+		name='stop'
+		exec=':true'
+		timeout_seconds='60' >
+	</exec_method>
 
-		<exec_method
-			type='method'
-			name='start'
-			exec='/lib/svc/method/vlc-cache-gen'
-			timeout_seconds='120' >
-		</exec_method>
+	<exec_method
+		type='method'
+		name='start'
+		exec='/lib/svc/method/vlc-cache-gen start'
+		timeout_seconds='120' >
+	</exec_method>
 
-		<property_group
-			name='startd'
-			type='framework'>
-			<propval name='duration' type='astring' value='transient' />
-		</property_group>
- 
-        	<property_group name='config' type='application'>
-        	    <propval name='updated' type='boolean' value='false' />
-        	    <propval name='version' type='astring' value='' />
-        	</property_group>
-	</instance>
+	<exec_method
+		type='method'
+		name='refresh'
+		exec='/lib/svc/method/vlc-cache-gen refresh'
+		timeout_seconds='120' >
+	</exec_method>
+
+	<property_group
+		name='startd'
+		type='framework'>
+		<propval name='duration' type='astring' value='transient' />
+	</property_group>
 
 	<stability value='Unstable' />
 
