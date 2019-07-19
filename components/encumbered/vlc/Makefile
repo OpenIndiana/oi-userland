@@ -59,8 +59,6 @@ CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS           +=    $(JPEG_LDFLAGS)
 
-PATH=$(PATH.gnu)
-
 COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf )
 
 CONFIGURE_ENV += LUAC=$(USRBINDIR64)/luac
