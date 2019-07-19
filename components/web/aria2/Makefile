@@ -19,16 +19,16 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2016 Predrag Zečević
-# Copyright (c) 2018 Michal Nowak
+# Copyright (c) 2019 Michal Nowak
 #
 
-PREFERRED_BITS=64
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           aria2
 COMPONENT_VERSION=        1.34.0
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_FMRI=           web/aria2
 COMPONENT_PROJECT_URL=    https://aria2.github.io/
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -46,7 +46,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
