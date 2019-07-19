@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2018 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,28 +22,29 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/gnupg-pcsc-wrapper
+file path=usr/bin/dirmngr
+file path=usr/bin/dirmngr-client
+file path=usr/bin/dirmngr_ldap
 file path=usr/bin/gpg-agent
 file path=usr/bin/gpg-check-pattern
 file path=usr/bin/gpg-connect-agent
 file path=usr/bin/gpg-preset-passphrase
 file path=usr/bin/gpg-protect-tool
+file path=usr/bin/gpg-wks-client
+file path=usr/bin/gpg-wks-server
 file path=usr/bin/gpg2
-file path=usr/bin/gpg2keys_curl
-file path=usr/bin/gpg2keys_finger
-file path=usr/bin/gpg2keys_hkp
-file path=usr/bin/gpg2keys_ldap
 file path=usr/bin/gpgconf
-file path=usr/bin/gpgkey2ssh
 file path=usr/bin/gpgparsemail
+file path=usr/bin/gpgscm
 file path=usr/bin/gpgsm
-file path=usr/bin/gpgsm-gencert.sh
+file path=usr/bin/gpgtar
 file path=usr/bin/gpgv2
 file path=usr/bin/kbxutil
 file path=usr/bin/scdaemon
 file path=usr/bin/watchgnupg
 file path=usr/sbin/addgnupghome
 file path=usr/sbin/applygnupgdefaults
+file path=usr/share/doc/gnupg/DCO
 file path=usr/share/doc/gnupg/DETAILS
 file path=usr/share/doc/gnupg/FAQ
 file path=usr/share/doc/gnupg/HACKING
@@ -52,12 +53,21 @@ file path=usr/share/doc/gnupg/OpenPGP
 file path=usr/share/doc/gnupg/README
 file path=usr/share/doc/gnupg/TRANSLATE
 file path=usr/share/doc/gnupg/examples/README
+file path=usr/share/doc/gnupg/examples/debug.prf
 file path=usr/share/doc/gnupg/examples/gpgconf.conf
 file path=usr/share/doc/gnupg/examples/pwpattern.list
 file path=usr/share/doc/gnupg/examples/scd-event
+file path=usr/share/doc/gnupg/examples/systemd-user/README
+file path=usr/share/doc/gnupg/examples/systemd-user/dirmngr.service
+file path=usr/share/doc/gnupg/examples/systemd-user/dirmngr.socket
+file path=usr/share/doc/gnupg/examples/systemd-user/gpg-agent-browser.socket
+file path=usr/share/doc/gnupg/examples/systemd-user/gpg-agent-extra.socket
+file path=usr/share/doc/gnupg/examples/systemd-user/gpg-agent-ssh.socket
+file path=usr/share/doc/gnupg/examples/systemd-user/gpg-agent.service
+file path=usr/share/doc/gnupg/examples/systemd-user/gpg-agent.socket
 file path=usr/share/doc/gnupg/examples/trustlist.txt
-file path=usr/share/gnupg/com-certs.pem
-file path=usr/share/gnupg/gpg-conf.skel
+file path=usr/share/doc/gnupg/examples/vsnfd.prf
+file path=usr/share/gnupg/distsigkey.gpg
 file path=usr/share/gnupg/help.be.txt
 file path=usr/share/gnupg/help.ca.txt
 file path=usr/share/gnupg/help.cs.txt
@@ -86,12 +96,11 @@ file path=usr/share/gnupg/help.tr.txt
 file path=usr/share/gnupg/help.txt
 file path=usr/share/gnupg/help.zh_CN.txt
 file path=usr/share/gnupg/help.zh_TW.txt
-file path=usr/share/gnupg/qualified.txt
+file path=usr/share/gnupg/sks-keyservers.netCA.pem
 file path=usr/share/info/dir
 file path=usr/share/info/gnupg.info
 file path=usr/share/info/gnupg.info-1
 file path=usr/share/info/gnupg.info-2
-file path=usr/share/locale/be/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/ca/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/cs/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/da/LC_MESSAGES/gnupg2.mo
@@ -111,10 +120,8 @@ file path=usr/share/locale/id/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/it/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/ja/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/nb/LC_MESSAGES/gnupg2.mo
-file path=usr/share/locale/nl/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/pl/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/pt/LC_MESSAGES/gnupg2.mo
-file path=usr/share/locale/pt_BR/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/ro/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/ru/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/sk/LC_MESSAGES/gnupg2.mo
@@ -123,17 +130,22 @@ file path=usr/share/locale/tr/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/uk/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/gnupg2.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/gnupg2.mo
+file path=usr/share/man/man1/dirmngr-client.1
 file path=usr/share/man/man1/gpg-agent.1
 file path=usr/share/man/man1/gpg-connect-agent.1
 file path=usr/share/man/man1/gpg-preset-passphrase.1
+file path=usr/share/man/man1/gpg-wks-client.1
+file path=usr/share/man/man1/gpg-wks-server.1
 file path=usr/share/man/man1/gpg2.1
 file path=usr/share/man/man1/gpgconf.1
 file path=usr/share/man/man1/gpgparsemail.1
-file path=usr/share/man/man1/gpgsm-gencert.sh.1
 file path=usr/share/man/man1/gpgsm.1
+file path=usr/share/man/man1/gpgtar.1
 file path=usr/share/man/man1/gpgv2.1
 file path=usr/share/man/man1/scdaemon.1
 file path=usr/share/man/man1/symcryptrun.1
 file path=usr/share/man/man1/watchgnupg.1
 file path=usr/share/man/man1m/addgnupghome.1m
 file path=usr/share/man/man1m/applygnupgdefaults.1m
+file path=usr/share/man/man1m/dirmngr.8
+file path=usr/share/man/man7/gnupg.7
