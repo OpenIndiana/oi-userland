@@ -19,7 +19,6 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
 COMPONENT_VERSION=	3.44
-COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -123,7 +122,7 @@ install: build
 		> $(PROTO_DIR)$(USRBINDIR)/$(MACH64)/nss-config ;\
 	$(MKDIR) $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
 	$(GSED) -e "s/@date@/`date +'%e %B %Y' | tr -d '\n'`/" -e "s/@version@/$(COMPONENT_VERSION)/" $(COMPONENT_DIR)/files/nss-config.xml > nss-config.xml ;\
-	xmlto --skip-validation man nss-config.xml ;\
+	xmlto man nss-config.xml ;\
 	$(RM) nss-config.xml ;\
 	$(MV) nss-config.1 $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
 	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed ;
