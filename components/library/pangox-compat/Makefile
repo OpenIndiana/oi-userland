@@ -11,30 +11,32 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= pangox-compat
-COMPONENT_VERSION= 0.0.2
-COMPONENT_SUMMARY= Compatibility package for applications using pangox
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=		pangox-compat
+COMPONENT_VERSION=	0.0.2
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	Compatibility package for applications using pangox
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:552092b3b6c23f47f4beee05495d0f9a153781f62a1c4b7ec53857a37dfce046
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.0/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_FMRI= library/desktop/pangox-compat
+COMPONENT_PROJECT_URL= http://www.gnome.org
+COMPONENT_FMRI=		library/desktop/pangox-compat
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS.32 = -sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = -sysconfdir=/etc/$(MACH64)
