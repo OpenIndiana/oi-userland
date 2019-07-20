@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         baekmuk
 COMPONENT_VERSION=      2.2
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  http://kldp.net/projects/baekmuk/
 COMPONENT_SUMMARY=      Baekmuk family Korean TrueType fonts
 COMPONENT_SRC_NAME=     baekmuk-ttf
