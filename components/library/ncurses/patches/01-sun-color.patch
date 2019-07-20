@@ -1,0 +1,35 @@
+Updates to illumos-gate in February 2019 added support for underline
+to sun-color and 256 colors.
+
+See:
+* https://www.illumos.org/issues/10359
+* https://www.illumos.org/issues/10360
+* https://www.illumos.org/issues/11214
+
+--- ncurses-6.1-20190601/misc/terminfo.src	2019-05-19 01:53:50.000000000 +0000
++++ ncurses-6.1-20190601/misc/terminfo.src	2019-06-08 18:45:45.963541924 +0000
+@@ -7621,18 +7621,16 @@ sun-type4|Sun Workstation console with t
+ #	cbt=\E[Z
+ #	dim=\E[2m
+ #	blink=\E[5m
+-# It supports bold, but not underline -TD (2009-09-19)
++# It supports bold, -TD (2009-09-19)
++# Color support is up from 8 to 16 to 256.
+ sun-color|Sun Microsystems Workstation console with color support (IA systems),
+-	colors#8, ncv#3, pairs#64,
++	colors#256, ncv#3, pairs#32767,
+ 	bold=\E[1m, cub=\E[%p1%dD, cud=\E[%p1%dB, cuf=\E[%p1%dC,
+ 	cuu=\E[%p1%dA, home=\E[H, op=\E[0m, rs2=\E[s,
+-	setab=\E[4%p1%dm, setaf=\E[3%p1%dm,
+-	setb=\E[4%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}
+-	     %=%t3%e%p1%d%;m,
+-	setf=\E[3%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}
+-	     %=%t3%e%p1%d%;m,
++	setab=\E[48;5;%p1%d%;m, setaf=\E[38;5;%p1%d%;m,
++	setb@, setf@,
+ 	sgr=\E[0%?%p6%t;1%;%?%p1%p3%|%t;7%;m, sgr0=\E[m,
+-	smso=\E[7m, use=sun,
++	smso=\E[7m, smul=\E[4m, rmul=\E[24m, use=sun,
+ 
+ #### Iris consoles
+ #
