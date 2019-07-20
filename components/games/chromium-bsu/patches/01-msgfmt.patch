@@ -1,0 +1,24 @@
+diff -puNr chromium-bsu-0.9.16.1.orig/misc/Makefile.am chromium-bsu-0.9.16.1/misc/Makefile.am
+--- chromium-bsu-0.9.16.1.orig/misc/Makefile.am	2016-09-06 05:11:43.000000000 +0000
++++ chromium-bsu-0.9.16.1/misc/Makefile.am	2018-04-18 14:43:24.752583810 +0000
+@@ -13,7 +13,7 @@ CLEANFILES = $(menu_DATA) $(icon_DATA)
+ EXTRA_DIST = $(menu_in_files)
+ 
+ %.desktop: %.desktop.in
+-	msgfmt --desktop -d $(top_srcdir)/po --template $< -o $@
++	$(GMSGFMT) --desktop -d $(top_srcdir)/po --template $< -o $@
+ 
+ chromium-bsu.png: $(top_srcdir)/data/png/hero.png
+ 	cp -a $< $@
+diff -puNr chromium-bsu-0.9.16.1.orig/misc/Makefile.in chromium-bsu-0.9.16.1/misc/Makefile.in
+--- chromium-bsu-0.9.16.1.orig/misc/Makefile.in	2016-09-06 05:13:45.000000000 +0000
++++ chromium-bsu-0.9.16.1/misc/Makefile.in	2018-04-18 14:43:43.603484740 +0000
+@@ -606,7 +606,7 @@ uninstall-man: uninstall-man6
+ 
+ 
+ %.desktop: %.desktop.in
+-	msgfmt --desktop -d $(top_srcdir)/po --template $< -o $@
++	$(GMSGFMT) --desktop -d $(top_srcdir)/po --template $< -o $@
+ 
+ chromium-bsu.png: $(top_srcdir)/data/png/hero.png
+ 	cp -a $< $@
