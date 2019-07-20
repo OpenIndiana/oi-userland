@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nspr
 COMPONENT_VERSION=	4.21
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -62,7 +62,7 @@ install:	$(INSTALL_32_and_64)
 	done ;
 	$(MKDIR) $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
 	$(GSED) -e "s/@date@/`date +'%e %B %Y' | tr -d '\n'`/" -e "s/@version@/$(COMPONENT_VERSION)/" $(COMPONENT_DIR)/files/nspr-config.xml > nspr-config.xml ;\
-	xmlto man nspr-config.xml ;\
+	xmlto --skip-validation man nspr-config.xml ;\
 	$(RM) nspr-config.xml ;\
 	$(MV) nspr-config.1 $(PROTO_DIR)/$(USRSHAREMAN1DIR) ;\
 	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
