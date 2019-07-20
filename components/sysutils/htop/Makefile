@@ -30,14 +30,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		htop
 COMPONENT_VERSION=	2.2.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		diagnostic/htop
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=	htop - an interactive process viewer for Unix
 COMPONENT_PROJECT_URL=	https://hisham.hm/htop/
-COMPONENT_SRC=		htop-220-sunos_11-p1
+COMPONENT_SRC=		htop-220-sunos_11-p2
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:378c513eea60e352a526db809cb5c3d211fc4c927dde21ec9e5124d63c86d078
+	sha256:8cb90827a719ee0ca0aafce776ed0bc027565be448aea99ee70dae2fa65bd6f6
 # htop is broken without https://github.com/hishamhm/htop/pull/880 and
 # as upstream seems stalled on this (and other things), we opt for a source
 # which has illumos fixes included. Revert to the source below once merged:
@@ -46,7 +47,7 @@ COMPONENT_ARCHIVE_HASH= \
 # COMPONENT_ARCHIVE_URL= \
 # 	https://hisham.hm/htop/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL= \
-	https://github.com/ninefathom/htop/archive/220-sunos_11-p1.tar.gz
+	https://github.com/ninefathom/htop/archive/220-sunos_11-p2.tar.gz
 COMPONENT_LICENSE=  GPLv2 
 
 include $(WS_MAKE_RULES)/prep.mk
