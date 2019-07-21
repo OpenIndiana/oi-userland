@@ -10,22 +10,23 @@
 
 #
 # Copyright 2011, Andrzej Szeszo
+# Copyright 2019, Nona Hansel
 #
 # Note: Depends on xz for build
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkgbuild
 COMPONENT_VERSION=	1.3.105
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:ed32d913af249d4221c2b94450eb4e996747024260c210620e94ac8130bc0fd6
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION += \
     (cd $(@D); aclocal-1.10 -I m4; automake-1.10 --add-missing; autoconf)
