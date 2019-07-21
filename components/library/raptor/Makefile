@@ -11,25 +11,26 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= raptor
-
-COMPONENT_VERSION= 1.4.21
-COMPONENT_SUMMARY= RDF Parser Library - RDF parser utility
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		raptor
+COMPONENT_VERSION=	1.4.21
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	RDF Parser Library - RDF parser utility
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:db3172d6f3c432623ed87d7d609161973d2f7098e3d2233d0702fbcc22cfd8ca
 COMPONENT_ARCHIVE_URL= \
   http://download.librdf.org/source/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://librdf.org/
+COMPONENT_PROJECT_URL=	http://librdf.org/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Failed tests without this
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
