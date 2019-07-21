@@ -19,12 +19,14 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019 Nona Hansel
 #
-include ../../make-rules/shared-macros.mk
-include ../../make-rules/shared-targets.mk
+include ../../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		psutils
 COMPONENT_VERSION=	p17
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://knackered.knackered.org/angus/psutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
@@ -32,11 +34,10 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3853eb79584ba8fbe27a815425b65a9f7f15b258e0d43a05a856bdb75d588ae4
 COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/$(COMPONENT_ARCHIVE)
 
-COMPONENT_BUGDB=	utility/psutils
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Can't use 'p17' since that is not accepted by pkg. And homepage
 # http://knackered.knackered.org/angus/psutils/ states that development version
