@@ -10,12 +10,13 @@
 
 #
 # Copyright 2017 Aurelien Larcher
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
-COMPONENT_VERSION=      3.0.4
+COMPONENT_VERSION=      3.1.2
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_FMRI=         library/graphics/wxwidgets-3
@@ -26,7 +27,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   https://github.com/wxWidgets/wxWidgets/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:96157f988d261b7368e5340afa1a0cad943768f35929c22841f62c25b17bf7f0
+  sha256:4cb8d23d70f9261debf7d6cfeca667fc0a7d2b6565adb8f1c484f9b674f1f27a
 COMPONENT_LICENSE=      wxWindows Library license
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -36,8 +37,7 @@ include $(WS_MAKE_RULES)/ips.mk
 # Compilation failure due to char * conversion
 CXXFLAGS += -fpermissive
 
-CONFIGURE_OPTIONS += --enable-gtk2
-CONFIGURE_OPTIONS += --enable-gtk3
+CONFIGURE_OPTIONS += --with-gtk=3
 CONFIGURE_OPTIONS += --enable-gui
 CONFIGURE_OPTIONS += --enable-xrc
 CONFIGURE_OPTIONS += --enable-display
@@ -52,13 +52,11 @@ CONFIGURE_OPTIONS += --enable-webview
 CONFIGURE_OPTIONS += --disable-xlocale
 CONFIGURE_OPTIONS += --with-subdirs
 CONFIGURE_OPTIONS += --with-expat
-CONFIGURE_OPTIONS += --without-gnomeprint
 CONFIGURE_OPTIONS += --without-gnomevfs
-CONFIGURE_OPTIONS += --with-gtk
 CONFIGURE_OPTIONS += --with-libjpeg=sys
 CONFIGURE_OPTIONS += --with-libpng=sys
 CONFIGURE_OPTIONS += --with-libtiff=sys
-CONFIGURE_OPTIONS += --without-libmpack
+CONFIGURE_OPTIONS += --without-libmspack
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --with-sdl
 
@@ -71,6 +69,7 @@ test:		$(TEST_32_and_64)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
@@ -79,15 +78,20 @@ REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += service/opengl/ogl-select
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/library/libxxf86vm
