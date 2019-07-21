@@ -10,12 +10,14 @@
 
 #
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sloccount
 COMPONENT_VERSION=	2.26
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.dwheeler.com/sloccount/
 COMPONENT_FMRI=		text/sloccount
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,9 +30,9 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	SLOCCount a set of tools for counting physical Source Lines of Code (SLOC)
 COMPONENT_CLASSIFICATION=System/Text Tools
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV += CC=$(CC)
 
