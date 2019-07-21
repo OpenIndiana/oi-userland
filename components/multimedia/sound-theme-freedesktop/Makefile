@@ -10,25 +10,26 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved
+# Copyright (c) 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sound-theme-freedesktop
-COMPONENT_VERSION=	0.6
+COMPONENT_VERSION=	0.8
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Specifications/sound-theme-spec/
 COMPONENT_SUMMARY=	XDG FreeDesktop Sound Theme
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b9c052ec28c1cda6fccca6c138934a2527e89f862933eab84b211436668f47d9
-COMPONENT_ARCHIVE_URL=	http://0pointer.de/public/$(COMPONENT_ARCHIVE)
+    sha256:cb518b20eef05ec2e82dda1fa89a292c1760dc023aba91b8aa69bafac85e8a14
+COMPONENT_ARCHIVE_URL=	http://people.freedesktop.org/~mccann/dist/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_ENV+=  PERL=$(PERL)
 
@@ -41,4 +42,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
