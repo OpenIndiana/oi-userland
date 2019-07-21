@@ -21,23 +21,23 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019 Nona Hansel
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pconsole
-COMPONENT_VERSION=	1.0
+COMPONENT_VERSION=	1.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://www.heiho.net/pconsole/
+COMPONENT_PROJECT_URL=	https://github.com/walterdejong/$(COMPONENT_NAME)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:94520bf65f726df9d7e686bb486e9a2828c29d09a20b9522f1da4f7d66700bb2
-COMPONENT_ARCHIVE_URL=	http://www.heiho.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/pconsole
+    sha256:4a8df7a1affc7cb9f110499bc51f0fba3da3fdceef9daa7dab1d0221babfd1cd
+COMPONENT_ARCHIVE_URL= https://github.com/walterdejong/pconsole/archive/v$(COMPONENT_VERSION).tar.gz
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Required to configure correctly.
 COMPONENT_PRE_CONFIGURE_ACTION = \
