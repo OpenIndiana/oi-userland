@@ -19,22 +19,22 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
+# Copyright (c) 2019 Nona Hansel
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		raptor2
-COMPONENT_VERSION=	2.0.9
+COMPONENT_VERSION=	2.0.15
 COMPONENT_PROJECT_URL=	http://librdf.org/raptor/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e26fb9c18e6ebf71100f434070d50196a21d592b715e361850c3b4e789b5f6ef
+    sha256:ada7f0ba54787b33485d090d3d2680533520cd4426d2f7fb4782dd4a6a1480ed
 COMPONENT_ARCHIVE_URL=	http://download.librdf.org/source/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/raptor2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
