@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
 COMPONENT_VERSION=	1.5.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.sbcl.org/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +45,7 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(BUILD_DIR)
 	$(CP) -a $(SOURCE_DIR) $(@D)
 	(cd $(@D) ; $(ENV) $(COMPONENT_ENV) /usr/gnu/bin/sh make.sh $(COMPONENT_BUILD_ARGS))
+	(cd $(@D)/doc/manual ; $(ENV) $(COMPONENT_ENV) BUILD_ROOT=$(PROTO_DIR) $(GMAKE) html info)
 	$(TOUCH) $@
 
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
