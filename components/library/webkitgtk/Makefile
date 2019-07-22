@@ -11,25 +11,26 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= webkitgtk
-COMPONENT_VERSION= 2.16.6
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= Web content engine library for GTK+
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=		webkitgtk
+COMPONENT_VERSION=	2.16.6
+COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	Web content engine library for GTK+
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fc23650df953123c59b9c0edf3855e7bd55bd107820997fc72375811e1ea4b21
+	sha256:fc23650df953123c59b9c0edf3855e7bd55bd107820997fc72375811e1ea4b21
 COMPONENT_ARCHIVE_URL= \
-  http://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_FMRI= library/desktop/webkitgtk2
+	http://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://webkitgtk.org
+COMPONENT_FMRI=		library/desktop/webkitgtk2
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE= BSD, LGPLv2,CCASA3.0
-COMPONENT_LICENSE_FILE = webkitgtk.license
+COMPONENT_LICENSE=	BSD,LGPLv2,CCASA3.0
+COMPONENT_LICENSE_FILE=	webkitgtk.license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
@@ -49,7 +50,7 @@ CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS           +=    $(JPEG_LDFLAGS)
 
-LDFLAGS+=-lm -lsocket
+LDFLAGS += -lm -lsocket
 
 CMAKE_OPTIONS += -DPORT=GTK
 CMAKE_OPTIONS += -DENABLE_INTROSPECTION=off
@@ -64,16 +65,22 @@ CMAKE_OPTIONS += -DLIBEXECDIR=/usr/lib
 CMAKE_OPTIONS += -DCMAKE_INSTALL_LIBEXECDIR:PATH=lib
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
-build: $(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install:	$(INSTALL_32_and_64)
+
+test:		$(NO_TESTS)
 
 # Buld time dependencies
 REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += library/gnutls-3
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/audio/gstreamer1
@@ -98,8 +105,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += x11/library/libx11
