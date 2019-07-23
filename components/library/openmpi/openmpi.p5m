@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2013-2018 Aurelien Larcher
+# Copyright 2013-2019 Aurelien Larcher
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -21,6 +21,9 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Require module files
+depend fmri=pkg:/$(COMPONENT_FMRI)/modulefiles@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 file path=usr/include/openmpi/mpi-ext.h
 file path=usr/include/openmpi/mpi.h
@@ -36,6 +39,11 @@ file path=usr/include/openmpi/mpif-io-handles.h
 file path=usr/include/openmpi/mpif-sentinels.h
 file path=usr/include/openmpi/mpif-sizeof.h
 file path=usr/include/openmpi/mpif.h
+file path=usr/include/openmpi/openmpi/mpiext/mpiext_affinity_c.h
+file path=usr/include/openmpi/openmpi/mpiext/mpiext_cuda_c.h
+file path=usr/include/openmpi/openmpi/mpiext/mpiext_pcollreq_c.h
+file path=usr/include/openmpi/openmpi/mpiext/mpiext_pcollreq_mpifh.h
+file path=usr/include/openmpi/openmpi/mpiext/pmpiext_pcollreq_c.h
 file path=usr/include/openmpi/openmpi/ompi/mpi/cxx/comm.h
 file path=usr/include/openmpi/openmpi/ompi/mpi/cxx/comm_inln.h
 file path=usr/include/openmpi/openmpi/ompi/mpi/cxx/constants.h
@@ -68,8 +76,6 @@ file path=usr/include/openmpi/openmpi/ompi/mpi/cxx/topology.h
 file path=usr/include/openmpi/openmpi/ompi/mpi/cxx/topology_inln.h
 file path=usr/include/openmpi/openmpi/ompi/mpi/cxx/win.h
 file path=usr/include/openmpi/openmpi/ompi/mpi/cxx/win_inln.h
-file path=usr/include/openmpi/openmpi/ompi/mpiext/affinity/c/mpiext_affinity_c.h
-file path=usr/include/openmpi/openmpi/ompi/mpiext/cuda/c/mpiext_cuda_c.h
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/aggregate_profile.pl
 link path=usr/lib/$(MACH64)/openmpi/gcc/bin/mpiCC target=opal_wrapper
 link path=usr/lib/$(MACH64)/openmpi/gcc/bin/mpic++ target=opal_wrapper
@@ -81,76 +87,74 @@ link path=usr/lib/$(MACH64)/openmpi/gcc/bin/mpif90 target=opal_wrapper
 link path=usr/lib/$(MACH64)/openmpi/gcc/bin/mpifort target=opal_wrapper
 link path=usr/lib/$(MACH64)/openmpi/gcc/bin/mpirun target=orterun
 link path=usr/lib/$(MACH64)/openmpi/gcc/bin/ompi-clean target=orte-clean
-link path=usr/lib/$(MACH64)/openmpi/gcc/bin/ompi-dvm target=orte-dvm
-link path=usr/lib/$(MACH64)/openmpi/gcc/bin/ompi-ps target=orte-ps
 link path=usr/lib/$(MACH64)/openmpi/gcc/bin/ompi-server target=orte-server
-link path=usr/lib/$(MACH64)/openmpi/gcc/bin/ompi-top target=orte-top
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/ompi_info
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/opal_wrapper
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orte-clean
-file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orte-dvm
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orte-info
-file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orte-ps
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orte-server
-file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orte-top
 link path=usr/lib/$(MACH64)/openmpi/gcc/bin/ortecc target=opal_wrapper
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orted
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/orterun
 file path=usr/lib/$(MACH64)/openmpi/gcc/bin/profile2mat.pl
-file path=usr/lib/$(MACH64)/openmpi/gcc/bin/prun
 file path=usr/lib/$(MACH64)/openmpi/gcc/etc/openmpi-default-hostfile
 file path=usr/lib/$(MACH64)/openmpi/gcc/etc/openmpi-mca-params.conf
 file path=usr/lib/$(MACH64)/openmpi/gcc/etc/openmpi-totalview.tcl
 file path=usr/lib/$(MACH64)/openmpi/gcc/etc/pmix-mca-params.conf
+link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_dstore.so \
+    target=libmca_common_dstore.so.1.0.0
+link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_dstore.so.1 \
+    target=libmca_common_dstore.so.1.0.0
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_dstore.so.1.0.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_monitoring.so \
-    target=libmca_common_monitoring.so.50.0.0
+    target=libmca_common_monitoring.so.50.10.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_monitoring.so.50 \
-    target=libmca_common_monitoring.so.50.0.0
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_monitoring.so.50.0.0
+    target=libmca_common_monitoring.so.50.10.0
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_monitoring.so.50.10.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_ompio.so \
-    target=libmca_common_ompio.so.41.9.0
+    target=libmca_common_ompio.so.41.19.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_ompio.so.41 \
-    target=libmca_common_ompio.so.41.9.0
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_ompio.so.41.9.0
+    target=libmca_common_ompio.so.41.19.1
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_ompio.so.41.19.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_sm.so \
-    target=libmca_common_sm.so.40.10.0
+    target=libmca_common_sm.so.40.20.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_sm.so.40 \
-    target=libmca_common_sm.so.40.10.0
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_sm.so.40.10.0
-link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi.so target=libmpi.so.40.10.2
+    target=libmca_common_sm.so.40.20.0
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmca_common_sm.so.40.20.0
+link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi.so target=libmpi.so.40.20.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi.so.40 \
-    target=libmpi.so.40.10.2
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi.so.40.10.2
+    target=libmpi.so.40.20.1
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi.so.40.20.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_cxx.so \
-    target=libmpi_cxx.so.40.10.0
+    target=libmpi_cxx.so.40.20.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_cxx.so.40 \
-    target=libmpi_cxx.so.40.10.0
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_cxx.so.40.10.0
+    target=libmpi_cxx.so.40.20.0
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_cxx.so.40.20.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_mpifh.so \
-    target=libmpi_mpifh.so.40.11.2
+    target=libmpi_mpifh.so.40.20.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_mpifh.so.40 \
-    target=libmpi_mpifh.so.40.11.2
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_mpifh.so.40.11.2
+    target=libmpi_mpifh.so.40.20.1
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_mpifh.so.40.20.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_usempi.so \
-    target=libmpi_usempi.so.40.10.1
+    target=libmpi_usempi.so.40.20.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_usempi.so.40 \
-    target=libmpi_usempi.so.40.10.1
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_usempi.so.40.10.1
+    target=libmpi_usempi.so.40.20.0
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libmpi_usempi.so.40.20.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libompitrace.so \
-    target=libompitrace.so.40.10.0
+    target=libompitrace.so.40.20.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libompitrace.so.40 \
-    target=libompitrace.so.40.10.0
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libompitrace.so.40.10.0
+    target=libompitrace.so.40.20.0
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libompitrace.so.40.20.0
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-pal.so \
-    target=libopen-pal.so.40.10.2
+    target=libopen-pal.so.40.20.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-pal.so.40 \
-    target=libopen-pal.so.40.10.2
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-pal.so.40.10.2
+    target=libopen-pal.so.40.20.1
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-pal.so.40.20.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-rte.so \
-    target=libopen-rte.so.40.10.2
+    target=libopen-rte.so.40.20.1
 link path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-rte.so.40 \
-    target=libopen-rte.so.40.10.2
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-rte.so.40.10.2
+    target=libopen-rte.so.40.20.1
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/libopen-rte.so.40.20.1
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/mpi.mod
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/ompi_monitoring_prof.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/libompi_dbg_msgq.so
@@ -167,7 +171,6 @@ file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_coll_libnbc.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_coll_monitoring.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_coll_self.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_coll_sm.so
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_coll_spacc.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_coll_sync.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_coll_tuned.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_compress_bzip.so
@@ -180,7 +183,6 @@ file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_errmgr_default_app.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_errmgr_default_hnp.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_errmgr_default_orted.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_errmgr_default_tool.so
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_errmgr_dvm.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_ess_env.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_ess_hnp.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_ess_pmi.so
@@ -190,19 +192,20 @@ file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fbtl_posix.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fcoll_dynamic.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fcoll_dynamic_gen2.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fcoll_individual.so
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fcoll_static.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fcoll_two_phase.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fcoll_vulcan.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_filem_raw.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_fs_ufs.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_grpcomm_direct.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_io_ompio.so
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_io_romio314.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_io_romio321.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_iof_hnp.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_iof_orted.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_iof_tool.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_mpool_hugepage.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_notifier_syslog.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_odls_default.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_odls_pspawn.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_oob_tcp.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_osc_monitoring.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_osc_pt2pt.so
@@ -213,7 +216,7 @@ file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_plm_isolated.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_plm_rsh.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_pmix_flux.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_pmix_isolated.so
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_pmix_pmix2x.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_pmix_pmix3x.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_pml_cm.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_pml_monitoring.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_pml_ob1.so
@@ -245,7 +248,6 @@ file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_shmem_mmap.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_shmem_posix.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_shmem_sysv.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_state_app.so
-file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_state_dvm.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_state_hnp.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_state_novm.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/openmpi/mca_state_orted.so
@@ -265,8 +267,15 @@ file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pkgconfig/orte.pc
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_bfrops_v12.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_bfrops_v20.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_bfrops_v21.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_bfrops_v3.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_gds_ds12.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_gds_ds21.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_gds_hash.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_plog_default.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_plog_stdfd.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_plog_syslog.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_pnet_tcp.so
+file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_pnet_test.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_preg_native.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_psec_native.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_psec_none.so
@@ -275,203 +284,6 @@ file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_psensor_heartbeat.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_pshmem_mmap.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_ptl_tcp.so
 file path=usr/lib/$(MACH64)/openmpi/gcc/lib/pmix/mca_ptl_usock.so
-file path=usr/lib/openmpi/gcc/bin/aggregate_profile.pl
-link path=usr/lib/openmpi/gcc/bin/mpiCC target=opal_wrapper
-link path=usr/lib/openmpi/gcc/bin/mpic++ target=opal_wrapper
-link path=usr/lib/openmpi/gcc/bin/mpicc target=opal_wrapper
-link path=usr/lib/openmpi/gcc/bin/mpicxx target=opal_wrapper
-link path=usr/lib/openmpi/gcc/bin/mpiexec target=orterun
-link path=usr/lib/openmpi/gcc/bin/mpif77 target=opal_wrapper
-link path=usr/lib/openmpi/gcc/bin/mpif90 target=opal_wrapper
-link path=usr/lib/openmpi/gcc/bin/mpifort target=opal_wrapper
-link path=usr/lib/openmpi/gcc/bin/mpirun target=orterun
-link path=usr/lib/openmpi/gcc/bin/ompi-clean target=orte-clean
-link path=usr/lib/openmpi/gcc/bin/ompi-dvm target=orte-dvm
-link path=usr/lib/openmpi/gcc/bin/ompi-ps target=orte-ps
-link path=usr/lib/openmpi/gcc/bin/ompi-server target=orte-server
-link path=usr/lib/openmpi/gcc/bin/ompi-top target=orte-top
-file path=usr/lib/openmpi/gcc/bin/ompi_info
-file path=usr/lib/openmpi/gcc/bin/opal_wrapper
-file path=usr/lib/openmpi/gcc/bin/orte-clean
-file path=usr/lib/openmpi/gcc/bin/orte-dvm
-file path=usr/lib/openmpi/gcc/bin/orte-info
-file path=usr/lib/openmpi/gcc/bin/orte-ps
-file path=usr/lib/openmpi/gcc/bin/orte-server
-file path=usr/lib/openmpi/gcc/bin/orte-top
-link path=usr/lib/openmpi/gcc/bin/ortecc target=opal_wrapper
-file path=usr/lib/openmpi/gcc/bin/orted
-file path=usr/lib/openmpi/gcc/bin/orterun
-file path=usr/lib/openmpi/gcc/bin/profile2mat.pl
-file path=usr/lib/openmpi/gcc/bin/prun
-file path=usr/lib/openmpi/gcc/etc/openmpi-default-hostfile
-file path=usr/lib/openmpi/gcc/etc/openmpi-mca-params.conf
-file path=usr/lib/openmpi/gcc/etc/openmpi-totalview.tcl
-file path=usr/lib/openmpi/gcc/etc/pmix-mca-params.conf
-link path=usr/lib/openmpi/gcc/lib/libmca_common_monitoring.so \
-    target=libmca_common_monitoring.so.50.0.0
-link path=usr/lib/openmpi/gcc/lib/libmca_common_monitoring.so.50 \
-    target=libmca_common_monitoring.so.50.0.0
-file path=usr/lib/openmpi/gcc/lib/libmca_common_monitoring.so.50.0.0
-link path=usr/lib/openmpi/gcc/lib/libmca_common_ompio.so \
-    target=libmca_common_ompio.so.41.9.0
-link path=usr/lib/openmpi/gcc/lib/libmca_common_ompio.so.41 \
-    target=libmca_common_ompio.so.41.9.0
-file path=usr/lib/openmpi/gcc/lib/libmca_common_ompio.so.41.9.0
-link path=usr/lib/openmpi/gcc/lib/libmca_common_sm.so \
-    target=libmca_common_sm.so.40.10.0
-link path=usr/lib/openmpi/gcc/lib/libmca_common_sm.so.40 \
-    target=libmca_common_sm.so.40.10.0
-file path=usr/lib/openmpi/gcc/lib/libmca_common_sm.so.40.10.0
-link path=usr/lib/openmpi/gcc/lib/libmpi.so target=libmpi.so.40.10.2
-link path=usr/lib/openmpi/gcc/lib/libmpi.so.40 target=libmpi.so.40.10.2
-file path=usr/lib/openmpi/gcc/lib/libmpi.so.40.10.2
-link path=usr/lib/openmpi/gcc/lib/libmpi_cxx.so target=libmpi_cxx.so.40.10.0
-link path=usr/lib/openmpi/gcc/lib/libmpi_cxx.so.40 target=libmpi_cxx.so.40.10.0
-file path=usr/lib/openmpi/gcc/lib/libmpi_cxx.so.40.10.0
-link path=usr/lib/openmpi/gcc/lib/libmpi_mpifh.so target=libmpi_mpifh.so.40.11.2
-link path=usr/lib/openmpi/gcc/lib/libmpi_mpifh.so.40 \
-    target=libmpi_mpifh.so.40.11.2
-file path=usr/lib/openmpi/gcc/lib/libmpi_mpifh.so.40.11.2
-link path=usr/lib/openmpi/gcc/lib/libmpi_usempi.so \
-    target=libmpi_usempi.so.40.10.1
-link path=usr/lib/openmpi/gcc/lib/libmpi_usempi.so.40 \
-    target=libmpi_usempi.so.40.10.1
-file path=usr/lib/openmpi/gcc/lib/libmpi_usempi.so.40.10.1
-link path=usr/lib/openmpi/gcc/lib/libompitrace.so target=libompitrace.so.40.10.0
-link path=usr/lib/openmpi/gcc/lib/libompitrace.so.40 \
-    target=libompitrace.so.40.10.0
-file path=usr/lib/openmpi/gcc/lib/libompitrace.so.40.10.0
-link path=usr/lib/openmpi/gcc/lib/libopen-pal.so target=libopen-pal.so.40.10.2
-link path=usr/lib/openmpi/gcc/lib/libopen-pal.so.40 \
-    target=libopen-pal.so.40.10.2
-file path=usr/lib/openmpi/gcc/lib/libopen-pal.so.40.10.2
-link path=usr/lib/openmpi/gcc/lib/libopen-rte.so target=libopen-rte.so.40.10.2
-link path=usr/lib/openmpi/gcc/lib/libopen-rte.so.40 \
-    target=libopen-rte.so.40.10.2
-file path=usr/lib/openmpi/gcc/lib/libopen-rte.so.40.10.2
-file path=usr/lib/openmpi/gcc/lib/mpi.mod
-file path=usr/lib/openmpi/gcc/lib/ompi_monitoring_prof.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/libompi_dbg_msgq.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_allocator_basic.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_allocator_bucket.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_bml_r2.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_btl_self.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_btl_sm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_btl_tcp.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_btl_vader.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_basic.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_inter.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_libnbc.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_monitoring.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_self.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_sm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_spacc.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_sync.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_coll_tuned.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_compress_bzip.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_compress_gzip.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_crs_none.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_dfs_app.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_dfs_orted.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_dfs_test.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_errmgr_default_app.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_errmgr_default_hnp.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_errmgr_default_orted.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_errmgr_default_tool.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_errmgr_dvm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_ess_env.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_ess_hnp.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_ess_pmi.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_ess_singleton.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_ess_tool.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_fbtl_posix.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_fcoll_dynamic.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_fcoll_dynamic_gen2.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_fcoll_individual.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_fcoll_static.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_fcoll_two_phase.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_filem_raw.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_fs_ufs.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_grpcomm_direct.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_io_ompio.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_io_romio314.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_iof_hnp.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_iof_orted.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_iof_tool.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_mpool_hugepage.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_notifier_syslog.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_odls_default.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_oob_tcp.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_osc_monitoring.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_osc_pt2pt.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_osc_rdma.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_osc_sm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_patcher_overwrite.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_plm_isolated.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_plm_rsh.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_pmix_flux.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_pmix_isolated.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_pmix_pmix2x.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_pml_cm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_pml_monitoring.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_pml_ob1.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_pstat_test.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_ras_simulator.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rcache_grdma.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_reachable_weighted.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_regx_fwd.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_regx_reverse.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rmaps_mindist.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rmaps_ppr.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rmaps_rank_file.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rmaps_resilient.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rmaps_round_robin.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rmaps_seq.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rml_oob.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_routed_binomial.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_routed_debruijn.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_routed_direct.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_routed_radix.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_rtc_hwloc.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_schizo_flux.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_schizo_ompi.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_schizo_orte.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_sharedfp_individual.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_sharedfp_lockedfile.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_sharedfp_sm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_shmem_mmap.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_shmem_posix.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_shmem_sysv.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_state_app.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_state_dvm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_state_hnp.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_state_novm.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_state_orted.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_state_tool.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_topo_basic.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_topo_treematch.so
-file path=usr/lib/openmpi/gcc/lib/openmpi/mca_vprotocol_pessimist.so
-file path=usr/lib/openmpi/gcc/lib/pkgconfig/ompi-c.pc
-file path=usr/lib/openmpi/gcc/lib/pkgconfig/ompi-cxx.pc
-link path=usr/lib/openmpi/gcc/lib/pkgconfig/ompi-f77.pc target=ompi-fort.pc
-link path=usr/lib/openmpi/gcc/lib/pkgconfig/ompi-f90.pc target=ompi-fort.pc
-file path=usr/lib/openmpi/gcc/lib/pkgconfig/ompi-fort.pc
-file path=usr/lib/openmpi/gcc/lib/pkgconfig/ompi.pc
-file path=usr/lib/openmpi/gcc/lib/pkgconfig/orte.pc
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_bfrops_v12.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_bfrops_v20.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_bfrops_v21.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_gds_ds12.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_gds_hash.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_preg_native.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_psec_native.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_psec_none.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_psensor_file.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_psensor_heartbeat.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_pshmem_mmap.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_ptl_tcp.so
-file path=usr/lib/openmpi/gcc/lib/pmix/mca_ptl_usock.so
-#file path=usr/share/Modules/modulefiles/openmpi/gcc/32/$(COMPONENT_VERSION)
 #file path=usr/share/Modules/modulefiles/openmpi/gcc/64/$(COMPONENT_VERSION)
 link path=usr/share/man/man1/mpiCC.1 target=mpic++.1
 file path=usr/share/man/man1/mpic++.1
@@ -483,20 +295,14 @@ file path=usr/share/man/man1/mpif90.1
 file path=usr/share/man/man1/mpifort.1
 file path=usr/share/man/man1/mpirun.1
 file path=usr/share/man/man1/ompi-clean.1
-file path=usr/share/man/man1/ompi-ps.1
 file path=usr/share/man/man1/ompi-server.1
-file path=usr/share/man/man1/ompi-top.1
 file path=usr/share/man/man1/ompi_info.1
 file path=usr/share/man/man1/opal_wrapper.1
 file path=usr/share/man/man1/orte-clean.1
-file path=usr/share/man/man1/orte-dvm.1
 file path=usr/share/man/man1/orte-info.1
-file path=usr/share/man/man1/orte-ps.1
 file path=usr/share/man/man1/orte-server.1
-file path=usr/share/man/man1/orte-top.1
 file path=usr/share/man/man1/orted.1
 file path=usr/share/man/man1/orterun.1
-file usr/share/man/man1/prun.1 path=usr/share/man/man1/ompi-prun.1
 file path=usr/share/man/man3/MPI.3
 file path=usr/share/man/man3/MPIX_Query_cuda_support.3
 file path=usr/share/man/man3/MPI_Abort.3
@@ -959,7 +765,7 @@ file path=usr/share/openmpi/openmpi/help-orte-filem-raw.txt
 file path=usr/share/openmpi/openmpi/help-orte-info.txt
 file path=usr/share/openmpi/openmpi/help-orte-odls-base.txt
 file path=usr/share/openmpi/openmpi/help-orte-odls-default.txt
-file path=usr/share/openmpi/openmpi/help-orte-ps.txt
+file path=usr/share/openmpi/openmpi/help-orte-odls-pspawn.txt
 file path=usr/share/openmpi/openmpi/help-orte-rmaps-base.txt
 file path=usr/share/openmpi/openmpi/help-orte-rmaps-md.txt
 file path=usr/share/openmpi/openmpi/help-orte-rmaps-ppr.txt
@@ -971,19 +777,19 @@ file path=usr/share/openmpi/openmpi/help-orte-rtc-hwloc.txt
 file path=usr/share/openmpi/openmpi/help-orte-runtime.txt
 file path=usr/share/openmpi/openmpi/help-orte-server.txt
 file path=usr/share/openmpi/openmpi/help-orte-snapc-base.txt
-file path=usr/share/openmpi/openmpi/help-orte-top.txt
 file path=usr/share/openmpi/openmpi/help-orted.txt
 file path=usr/share/openmpi/openmpi/help-orterun.txt
 file path=usr/share/openmpi/openmpi/help-osc-pt2pt.txt
 file path=usr/share/openmpi/openmpi/help-plm-base.txt
 file path=usr/share/openmpi/openmpi/help-plm-rsh.txt
 file path=usr/share/openmpi/openmpi/help-pmix-base.txt
-file path=usr/share/openmpi/openmpi/help-pmix-pmix2x.txt
+file path=usr/share/openmpi/openmpi/help-pmix-pmix3x.txt
 file path=usr/share/openmpi/openmpi/help-ras-base.txt
 file path=usr/share/openmpi/openmpi/help-ras-simulator.txt
 file path=usr/share/openmpi/openmpi/help-rcache-base.txt
 file path=usr/share/openmpi/openmpi/help-regex.txt
 file path=usr/share/openmpi/openmpi/help-rmaps_rank_file.txt
+file path=usr/share/openmpi/openmpi/help-state-base.txt
 link path=usr/share/openmpi/openmpi/mpiCC-wrapper-data.txt \
     target=mpic++-wrapper-data.txt
 file path=usr/share/openmpi/openmpi/mpic++-wrapper-data.txt
@@ -997,8 +803,9 @@ link path=usr/share/openmpi/openmpi/mpif90-wrapper-data.txt \
 file path=usr/share/openmpi/openmpi/mpifort-wrapper-data.txt
 file path=usr/share/openmpi/openmpi/openmpi-valgrind.supp
 file path=usr/share/openmpi/openmpi/ortecc-wrapper-data.txt
-file path=usr/share/openmpi/pmix/help-mca-base.txt
-file path=usr/share/openmpi/pmix/help-mca-var.txt
+file path=usr/share/openmpi/pmix/help-pmix-mca-base.txt
+file path=usr/share/openmpi/pmix/help-pmix-mca-var.txt
+file path=usr/share/openmpi/pmix/help-pmix-plog.txt
 file path=usr/share/openmpi/pmix/help-pmix-psensor-file.txt
 file path=usr/share/openmpi/pmix/help-pmix-psensor-heartbeat.txt
 file path=usr/share/openmpi/pmix/help-pmix-runtime.txt

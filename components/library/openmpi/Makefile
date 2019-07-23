@@ -18,8 +18,8 @@ MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =            openmpi/$(COMPILER)
-OPENMPI_VERSION_MAJOR =     3.1
-COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).2
+OPENMPI_VERSION_MAJOR =     4.0
+COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).1
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_PROJECT_URL =     http://www.open-mpi.org
@@ -27,7 +27,7 @@ COMPONENT_SRC_NAME =        openmpi
 COMPONENT_SRC =             $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =         $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-  sha256:363c8a1258d12df28657e9b13bfe41e30fc129a4cfb89fcf53ff68bbe1bd65b3
+  sha256:e55e213fe09a214ab9f2c722acfd8bf7b39bbc1800e4b7a464d38df15e707f59
 COMPONENT_ARCHIVE_URL = \
   http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 
@@ -58,7 +58,6 @@ CONFIGURE_OPTIONS+= --enable-ipv6
 CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
 CONFIGURE_OPTIONS+= --enable-mpi-cxx
 CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
-CONFIGURE_OPTIONS+= --enable-pmix-dstore
 CONFIGURE_OPTIONS+= --disable-event-epoll
 CONFIGURE_OPTIONS+= --with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
@@ -69,7 +68,7 @@ CONFIGURE_OPTIONS+= ompi_cv_fortran_ignore_tkr_data=0
 
 #COMPONENT_POST_CONFIGURE_ACTION += sed -i -e 's/-export-dynamic//g' $(SOURCE_DIR)/ompi/mpi/cxx/Makefile
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
 $(BUILD_DIR)/modulefile.%:		files/modulefile
 	/bin/sed -e "s#%%BITS%%#$*#g" \
@@ -81,13 +80,11 @@ $(BUILD_DIR)/modulefile.%:		files/modulefile
 
 PROTO_MODULE_PATH = $(PROTO_DIR)$(MODULE_PATH)/$(COMPONENT_NAME)
 
-install:	$(INSTALL_32_and_64) $(BUILD_DIR)/modulefile.32 $(BUILD_DIR)/modulefile.64
-	$(MKDIR) $(PROTO_MODULE_PATH)/32
-	$(CP) $(BUILD_DIR)/modulefile.32 $(PROTO_MODULE_PATH)/32/$(COMPONENT_VERSION)
+install:	$(INSTALL_64) $(BUILD_DIR)/modulefile.64
 	$(MKDIR) $(PROTO_MODULE_PATH)/64
 	$(CP) $(BUILD_DIR)/modulefile.64 $(PROTO_MODULE_PATH)/64/$(COMPONENT_VERSION)
 
-test:	$(TEST_32_and_64)
+test:	$(TEST_64)
 
 
 # Build dependencies
