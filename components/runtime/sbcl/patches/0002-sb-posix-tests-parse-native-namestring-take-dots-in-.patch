@@ -1,0 +1,47 @@
+From 36763a5870239cba5a51f27501b04eaa4bc0cea7 Mon Sep 17 00:00:00 2001
+From: Stas Boukarev <stassats@gmail.com>
+Date: Tue, 23 Jul 2019 15:49:46 +0300
+Subject: [PATCH 2/2] sb-posix-tests/parse-native-namestring: take dots in
+ directory names into account.
+
+---
+ contrib/sb-posix/posix-tests.lisp | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/contrib/sb-posix/posix-tests.lisp b/contrib/sb-posix/posix-tests.lisp
+index 7dfe57589..7ccc75ef2 100644
+--- a/contrib/sb-posix/posix-tests.lisp
++++ b/contrib/sb-posix/posix-tests.lisp
+@@ -813,16 +813,19 @@
+ 
+ (defun parse-native-namestring (namestring &key as-directory)
+   ;; XXXXXX can contain a dot changing pathname-type
+-  (let* ((dot (and (not as-directory)
+-                   (position #\. namestring)))
+-         (type (and dot
+-                    (subseq namestring (1+ dot)))))
+-    (make-pathname :type type
+-                   :defaults
+-                   (sb-ext:parse-native-namestring namestring nil
+-                                                   *default-pathname-defaults*
+-                                                   :as-directory as-directory
+-                                                   :end dot))))
++  (let ((parsed (sb-ext:parse-native-namestring namestring nil
++                                                *default-pathname-defaults*
++                                                :as-directory as-directory)))
++    (if as-directory
++        parsed
++        (let* ((name (pathname-name parsed))
++               (type (pathname-type parsed))
++               (dot (position #\. name)))
++          (if dot
++              (make-pathname :name (subseq name 0 dot)
++                             :type (format nil "~a.~a" (subseq name (1+ dot)) type)
++                             :defaults parsed)
++              parsed)))))
+ 
+ #-win32
+ (deftest mkstemp.1
+-- 
+2.21.0
+
