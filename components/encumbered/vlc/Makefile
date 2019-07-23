@@ -255,7 +255,6 @@ REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
