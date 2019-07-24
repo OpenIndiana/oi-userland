@@ -12,13 +12,15 @@
 #
 # Copyright 2018 Aurelien Larcher
 #
-PREFERRED_BITS=64
+
+PREFERRED_BITS=           64
 
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           fonttosfnt
 COMPONENT_VERSION=        1.0.5
+COMPONENT_REVISION=       1
 COMPONENT_SUMMARY=        fonttosfnt - Wrap a bitmap font in a sfnt (TrueType) wrapper
 COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/fonttosfnt
