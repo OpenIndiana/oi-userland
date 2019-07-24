@@ -62,6 +62,7 @@ CONFIGURE_OPTIONS += --enable-swscale
 CONFIGURE_OPTIONS += --enable-libgsm
 CONFIGURE_OPTIONS += --enable-libxvid
 CONFIGURE_OPTIONS += --enable-libx264
+CONFIGURE_OPTIONS += --enable-libx265
 # Don't enable it, resulting binary is not 
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
@@ -120,6 +121,7 @@ REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
+REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += library/video/xvid
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
