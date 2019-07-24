@@ -1,0 +1,16 @@
+x265_3.1.1/source/encoder/analysis.cpp: In member function 'void x265::Analysis::normFactor(const pixel*, uint32_t, x265::CUData&, int, x265::TextType)':
+x265_3.1.1/source/encoder/analysis.cpp:3705:38: error: call of overloaded 'log(uint32_t&)' is ambiguous
+     int block = (int)(((log(blockSize) / log(2)) - 2) + 0.5);
+                                      ^
+
+--- x265_3.1.1/source/encoder/analysis.cpp	2019-07-08 13:10:19.000000000 +0000
++++ x265_3.1.1/source/encoder/analysis.cpp.new	2019-07-23 22:23:46.225591843 +0000
+@@ -3702,7 +3702,7 @@ void Analysis::normFactor(const pixel* s
+ 
+     // 2. Calculate ac component
+     uint64_t z_k = 0;
+-    int block = (int)(((log(blockSize) / log(2)) - 2) + 0.5);
++    int block = (int)(((log((double)blockSize) / log((double)2)) - 2) + 0.5);
+     primitives.cu[block].normFact(src, blockSize, shift, &z_k);
+ 
+     // Remove the DC part
