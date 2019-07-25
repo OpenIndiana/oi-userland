@@ -17,12 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xterm
-COMPONENT_VERSION=	345
+COMPONENT_VERSION=	348
 COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:6649a782d179344011199241798133c2db822b158b8a6d7546b1d7fb76f2d535
+	sha256:8b1f5121dbf3690de9d85a3b9329e3357021705dd7c21da192e47542769275be
 COMPONENT_ARCHIVE_URL= \
 	http://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://invisible-island.net/xterm/
@@ -63,6 +63,7 @@ REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxmu
