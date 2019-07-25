@@ -15,20 +15,20 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= fontconfig
-COMPONENT_VERSION= 2.13.1
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY=  Fontconfig - Font configuration and customization library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=		fontconfig
+COMPONENT_VERSION=	2.13.1
+COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741
+	sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741
 COMPONENT_ARCHIVE_URL= \
-  http://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/fontconfig/
-COMPONENT_FMRI= system/library/fontconfig
-COMPONENT_LICENSE= MIT
-COMPONENT_LICENSE_FILE= COPYING
+	http://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/fontconfig/
+COMPONENT_FMRI=		system/library/fontconfig
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -64,11 +64,11 @@ $(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
 	done
 	$(TOUCH) $@
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64) $(BUILD_DIR)/.fonts_installed
+install:	$(INSTALL_32_and_64) $(BUILD_DIR)/.fonts_installed
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
