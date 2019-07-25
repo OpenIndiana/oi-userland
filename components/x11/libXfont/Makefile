@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfont
 COMPONENT_VERSION= 1.5.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libXfont - library for X servers and utilities to access font files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
