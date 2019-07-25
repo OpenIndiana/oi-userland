@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dia
 COMPONENT_VERSION=        0.97.3
-COMPONENT_REVISION=       2
+COMPONENT_REVISION=       3
 COMPONENT_COMMIT=         b86085dfe2b048a2d37d587adf8ceba6fb8bc43c
 COMPONENT_PROJECT_URL=    https://wiki.gnome.org/Apps/Dia
 COMPONENT_SUMMARY=        Dia Diagram Editor
