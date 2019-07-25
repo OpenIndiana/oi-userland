@@ -44,9 +44,9 @@ component-environment-check::
 	$(call separator-line)
 
 component-environment-prep::
-	@echo "Adding required packages to build environment..."
-	@-echo $(REQUIRED_PACKAGES:%=/%) | xargs \
-               $(PFEXEC) /usr/bin/pkg install --accept -v
+	@/usr/bin/pkg list -vH $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
+		{ echo "Adding required packages to build environment..."; \
+		  $(PFEXEC) /usr/bin/pkg install --accept  $(REQUIRED_PACKAGES:%=/%) || [ $$? -eq 4 ] ; }
 
 # Short aliases for user convenience
 env-check:: component-environment-check

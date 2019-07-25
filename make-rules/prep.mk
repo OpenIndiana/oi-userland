@@ -37,7 +37,7 @@ unpack::	download
 
 patch::		unpack
 
-$(SOURCE_DIR)/.prep:	download unpack patch
+$(SOURCE_DIR)/.prep:	component-environment-prep download unpack patch
 	$(COMPONENT_PREP_ACTION)
 	$(TOUCH) $@
 
