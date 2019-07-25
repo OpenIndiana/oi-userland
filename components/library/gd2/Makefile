@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2016 Jim Klimov
 # Copyright 2017 Aurelien Larcher
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=	2.2.4
-COMPONENT_REVISION=	5
-COMPONENT_FMRI=	library/gd
+COMPONENT_REVISION=	6
+COMPONENT_FMRI=		library/gd
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_PROJECT_URL=	http://libgd.github.io/
 COMPONENT_SRC_NAME=	gd
-COMPONENT_SRC=	libgd-$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		libgd-$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:afdd50db677648cb9335b2dda10dd3a6700d97feb21fe802e6ee0f7065acd8c4
@@ -95,18 +98,17 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/Passed/p"' \
 	'-e "/Failed/p"'
 
-
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 # Test failures:
 # 32  64  Test
-#	 X   X     6 - test_freetype_bug00132 (Failed): Different Freetype rendering
-#  X        36 - test_gdimagecopyresampled_bug00201 (Failed): Visually similar
-#	 X        65 - test_gdimagegrayscale_basic (Failed): Visually similar
-#	 X        88 - test_gdimagerotate_bug00067 (Failed): Visually similar
-#	 X   X   101 - test_gdimagestringft_gdimagestringft_bbox (Failed): Different Freetype rendering
+# X   X     6 - test_freetype_bug00132 (Failed): Different Freetype rendering
+# X        36 - test_gdimagecopyresampled_bug00201 (Failed): Visually similar
+# X        65 - test_gdimagegrayscale_basic (Failed): Visually similar
+# X        88 - test_gdimagerotate_bug00067 (Failed): Visually similar
+# X   X   101 - test_gdimagestringft_gdimagestringft_bbox (Failed): Different Freetype rendering
 test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
