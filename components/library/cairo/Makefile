@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cairo
 COMPONENT_VERSION=	1.16.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Vector graphics library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -65,11 +66,11 @@ CONFIGURE_OPTIONS += --enable-test-surfaces
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
