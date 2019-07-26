@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libass
 COMPONENT_VERSION=	0.14.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/video/libass
 COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
