@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
 COMPONENT_VERSION=	0.56.0
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
@@ -62,11 +62,11 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CXX="$(CXX)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build:	$(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(NO_TESTS)
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
