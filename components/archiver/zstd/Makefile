@@ -17,8 +17,7 @@ PREFERRED_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zstd
-COMPONENT_VERSION=	1.4.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.4.2
 COMPONENT_SUMMARY=	Zstandard, or zstd as short version, is a fast lossless compression algorithm, targeting real-time compression scenarios
 COMPONENT_PROJECT_URL=	https://facebook.github.io/zstd/
 COMPONENT_FMRI=		compress/zstd
@@ -26,7 +25,7 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/facebook/zstd/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:7f323f0e0c18488748f3d9b2d4353f00e904ea2ccd0372ea04d7f77aa1156557
+COMPONENT_ARCHIVE_HASH=	sha256:12730983b521f9a604c6789140fcb94fadf9a3ca99199765e33c56eb65b643c9
 COMPONENT_LICENSE=	BSD,GPLv2.0
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
@@ -34,7 +33,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PRE_CMAKE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
+# Test suite expect files files not to be symlinks
+COMPONENT_PRE_CMAKE_ACTION= ( cp -a $(SOURCE_DIR)/* $(@D) )
 
 # CMake files are in build/cmake directory,
 # hence mangle with 'configure' target
