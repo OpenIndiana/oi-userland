@@ -19,6 +19,7 @@ COMPONENT_NAME= oppenjdk-8
 
 OPENJDK_BUILD_NUMBER=172
 COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
+COMPONENT_REVISION=1
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20180527.tar.xz
@@ -96,10 +97,11 @@ cacerts.out: $(BUILD_DIR_64)/.built $(CACERTS_INSTALLED)
                   -storepass openindiana;                                    \
         done
 
+build:		$(BUILD_64)
 
-build: $(BUILD_64)
+install:	$(MY_INSTALLED) cacerts.out
 
-install: $(MY_INSTALLED) cacerts.out
+test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
