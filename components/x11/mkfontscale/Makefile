@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= mkfontscale
 COMPONENT_VERSION= 1.2.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= x11/mkfontscale
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY= mkfontscale legacy X11 scalable font metadata creation tool
