@@ -16,16 +16,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	LibreCAD
 COMPONENT_VERSION =	2.1.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL =	https://github.com/LibreCAD
-COMPONENT_FMRI =		desktop/librecad
+COMPONENT_FMRI =	desktop/librecad
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH =	\
+COMPONENT_ARCHIVE_HASH = \
 	sha256:74c4ede409b13d0365c65c0cd52dba04f1049530f6df706dc905443d5e60db06
-COMPONENT_ARCHIVE_URL =  https://github.com/LibreCAD/LibreCAD/archive/$(COMPONENT_VERSION).tar.gz
-
-COMPONENT_SUMMARY =	LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
-COMPONENT_CLASSIFICATION = Applications/Graphics and Imaging
+COMPONENT_ARCHIVE_URL=	https://github.com/LibreCAD/LibreCAD/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_SUMMARY=	LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
+COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
 
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION)
 
@@ -54,14 +54,15 @@ COMPONENT_INSTALL_ACTION = \
 	$(INSTALL) -Dpm 644 $(SOURCE_DIR)/ttf2lff.1 $(PROTO_DIR)$(USRSHAREMANDIR)/man1/ttf2lff.1 ; \
 	$(INSTALL) -Dpm 644  $(SOURCE_DIR)/LICENSE* $(SOURCE_DIR)/gpl-* $(SOURCE_DIR)/license* \
 	  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME_lc)/doc
-	
-	
+
 COMPONENT_PRE_BUILD_ACTION = \
         (cd $(@D) && qmake $(COMPONENT_NAME_lc).pro 'CONFIG+=release')
 
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
+
+test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/qt4
