@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ftgl
 COMPONENT_VERSION=	2.1.3.5
 HUMAN_VERSION=		2.1.3~rc5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/x11/ftgl
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/ftgl
 COMPONENT_SUMMARY=	OpenGL FreeType fonts rendering library
