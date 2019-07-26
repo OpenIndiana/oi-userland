@@ -11,13 +11,14 @@
 #
 # Copyright 2013, EveryCity Ltd. All rights reserved.
 #
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
 COMPONENT_VERSION=	7.0.33
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_REVISION=	1
 COMPONENT_ARCHIVE_HASH=	sha256:ab8c5be6e32b1f8d032909dedaaaa4bbb1a209e519abb01a52ce3914f9a13d96
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE).asc/from/this/mirror
