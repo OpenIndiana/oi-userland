@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfont2
 COMPONENT_VERSION= 2.0.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libXfont2 - library for X servers and utilities to access font files
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_CLASSIFICATION = System/X11
@@ -36,8 +37,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
 
-#LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile-vers
-
 CONFIGURE_LIBDIR.32 = /usr/lib/xorg
 CONFIGURE_LIBDIR.64 = /usr/lib/xorg/$(MACH64)
 
@@ -48,9 +47,11 @@ CONFIGURE_OPTIONS += --with-bzip2
 
 CONFIGURE_ENV += LIB_MAN_SUFFIX=3xfont2
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
+
+test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/xproto
