@@ -23,8 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-depend fmri=library/python/msgpack-python-$(PYV) type=require
-
 # force dependency on Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 	pkg.debug.depend.path=usr/bin
@@ -50,6 +48,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/borg/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/_version.py
 $(PYTHON_3.4_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/64/checksums.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/checksums.so
+$(PYTHON_3.4_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/64/_packer.so
+$(PYTHON_3.4_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/64/_unpacker.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_packer.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_unpacker.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/fallback.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/archive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/archiver.py
