@@ -17,15 +17,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libass
-COMPONENT_VERSION=	0.13.4
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.14.0
 COMPONENT_FMRI=		library/video/libass
 COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:6711469df5fcc47d06e92f7383dcebcf1282591002d2356057997e8936840792
+	sha256:8d5a5c920b90b70a108007ffcd2289ac652c0e03fc88e6eecefa37df0f2e7fdf
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/libass/libass/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/libass/libass
