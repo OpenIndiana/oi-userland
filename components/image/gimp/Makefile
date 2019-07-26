@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.8.22
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_FMRI=		image/editor/gimp
@@ -61,7 +61,9 @@ CONFIGURE_OPTIONS+=	--with-lcms=2
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
-# common targets
+# Tests need this
+unexport SHELLOPTS
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
