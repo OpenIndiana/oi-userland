@@ -1,0 +1,38 @@
+strcmp() sees minimal required version (2.3.0) as higher than
+the one installed (2.10.1). This replaces '.' in version string
+with zero and then does integer comparison.
+
+--- jdk/make/tools/freetypecheck/freetypecheck.c	2017-08-13 07:55:17.000000000 +0000
++++ jdk/make/tools/freetypecheck/freetypecheck.c.new	2019-07-26 13:09:56.018450560 +0000
+@@ -76,24 +76,29 @@
+ 
+ int main(int argc, char** argv) {
+    char v[50];
++   char vn[50];
+    FT_Int major, minor, patch;
+    FT_Library library;
+    sprintf(v, "%d.%d.%d", FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH);
++   sprintf(vn, "%d0%d0%d", FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH);
++   char req[50] = QUOTEMACRO(REQUIRED_FREETYPE_VERSION);
++   for (char* p = req; p = strchr(p, '.'); ++p) { *p = '0'; }
+ 
+    printf("Required version of freetype: %s\n",
+        QUOTEMACRO(REQUIRED_FREETYPE_VERSION));
+ 
+    printf("Detected freetype headers: %s\n", v);
+-   if (strcmp(v, QUOTEMACRO(REQUIRED_FREETYPE_VERSION)) < 0) {
++   if (vn < req) {
+        printf("Failed: headers are too old.\n");
+    }
+ 
+    FT_Init_FreeType(&library);
+    FT_Library_Version(library, &major, &minor, &patch);
+    sprintf(v, "%d.%d.%d", major, minor, patch);
++   sprintf(vn, "%d0%d0%d", major, minor, patch);
+ 
+    printf("Detected freetype library: %s\n", v);
+-   if (strcmp(v, QUOTEMACRO(REQUIRED_FREETYPE_VERSION)) < 0) {
++   if (vn < req) {
+       printf("Failed: too old library.\n");
+    }
+ 
