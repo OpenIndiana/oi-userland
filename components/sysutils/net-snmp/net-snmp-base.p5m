@@ -1,4 +1,4 @@
-
+#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -18,11 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
-#
-
-#
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright (c) 2010, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -30,8 +26,12 @@
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+
+set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2008/355 value=PSARC/2014/169 \
+    value=PSARC/2019/050
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 file $(MACH32)/sun/snmpd.conf path=etc/net-snmp/snmp/snmpd.conf overlay=allow \
@@ -40,409 +40,366 @@ file sun/net-snmp.xml path=lib/svc/manifest/application/management/net-snmp.xml 
     restart_fmri=svc:/system/manifest-import:default
 file sun/svc-net-snmp path=lib/svc/method/svc-net-snmp
 
-file local/mib2c-conf.d/generic-header-top.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-header-top.m2i 
-file local/mib2c-conf.d/mfd-access-container-cached-defines.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-access-container-cached-defines.m2i 
-file local/mib2c-conf.d/generic-table-indexes-from-oid.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-from-oid.m2i 
-file local/mib2c-conf.d/mfd-access-unsorted-external-defines.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-access-unsorted-external-defines.m2i 
-file local/mib2c-conf.d/generic-header-bottom.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-header-bottom.m2i 
-file local/mib2c-conf.d/generic-get-char.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-get-char.m2i 
-file local/mib2c-conf.d/generic-table-indexes-varbind-setup.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-varbind-setup.m2i 
-file local/mib2c-conf.d/generic-table-indexes.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes.m2i 
-file local/mib2c-conf.d/syntax-RowStatus-dependencies.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-dependencies.m2i 
-file local/mib2c-conf.d/details-enums.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/details-enums.m2i 
-file local/mib2c-conf.d/generic-get-decl-bot.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-get-decl-bot.m2i 
-file local/mib2c-conf.d/generic-value-map.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-value-map.m2i 
-file local/mib2c-conf.d/m2c_setup_table.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/m2c_setup_table.m2i 
-file local/mib2c-conf.d/generic-value-map-reverse.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-value-map-reverse.m2i 
-file local/mib2c-conf.d/m2c_table_save_defaults.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/m2c_table_save_defaults.m2i 
-file local/mib2c-conf.d/generic-get-U64.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-get-U64.m2i 
-file local/mib2c-conf.d/syntax-RowStatus-varbind-validate.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-varbind-validate.m2i 
-file local/mib2c-conf.d/syntax-StorageType-dependencies.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-StorageType-dependencies.m2i 
-file local/mib2c-conf.d/syntax-RowStatus-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-get.m2i 
-file local/mib2c-conf.d/subagent.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/subagent.m2c 
-file local/mib2c-conf.d/generic-ctx-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-ctx-get.m2i 
-file local/mib2c-conf.d/node-storage.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/node-storage.m2i 
-file local/mib2c-conf.d/generic-table-indexes-to-oid.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-to-oid.m2i 
-file local/mib2c-conf.d/m2c-internal-warning.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/m2c-internal-warning.m2i 
-file local/mib2c-conf.d/generic-get-long.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-get-long.m2i 
-file local/mib2c-conf.d/mfd-interface.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-interface.m2c 
-file local/mib2c-conf.d/syntax-DateAndTime-readme.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-readme.m2i 
-file local/mib2c-conf.d/generic-table-oids.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-oids.m2c 
-file local/mib2c-conf.d/generic-ctx-set.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-ctx-set.m2i 
-file local/mib2c-conf.d/generic-table-constants.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-constants.m2c 
-file local/mib2c-conf.d/mfd-data-get.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-data-get.m2c 
-file local/mib2c-conf.d/syntax-TestAndIncr-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-TestAndIncr-get.m2i 
-file local/mib2c-conf.d/generic-value-map-func.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-value-map-func.m2i 
-file local/mib2c-conf.d/mfd-interactive-setup.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-interactive-setup.m2c 
-file local/mib2c-conf.d/parent-dependencies.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/parent-dependencies.m2i 
-file local/mib2c-conf.d/mfd-data-set.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-data-set.m2c 
-file local/mib2c-conf.d/generic-table-enums.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-enums.m2c 
-file local/mib2c-conf.d/generic-get-oid.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-get-oid.m2i 
-file local/mib2c-conf.d/generic-ctx-copy.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-ctx-copy.m2i 
-file local/mib2c-conf.d/generic-table-indexes-set.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-set.m2i 
-file local/mib2c-conf.d/details-table.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/details-table.m2i 
-file local/mib2c-conf.d/mfd-makefile.m2m \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-makefile.m2m 
-file local/mib2c-conf.d/parent-set.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/parent-set.m2i 
-file local/mib2c-conf.d/mfd-data-access.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-data-access.m2c 
-file local/mib2c-conf.d/syntax-COUNTER64-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-COUNTER64-get.m2i 
 file local/mib2c-conf.d/default-mfd-top.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/default-mfd-top.m2c 
-file local/mib2c-conf.d/m2c_setup_enum.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/m2c_setup_enum.m2i 
-file local/mib2c-conf.d/syntax-InetAddressType-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-get.m2i 
-file local/mib2c-conf.d/mfd-top.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-top.m2c 
-file local/mib2c-conf.d/node-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/node-get.m2i 
-file local/mib2c-conf.d/mfd-doxygen.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-doxygen.m2c 
-file local/mib2c-conf.d/m2c_setup_node.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/m2c_setup_node.m2i 
-file local/mib2c-conf.d/mfd-readme.m2c \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-readme.m2c 
-file local/mib2c-conf.d/node-set.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/node-set.m2i 
-file local/mib2c-conf.d/mfd-persistence.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/mfd-persistence.m2i 
-file local/mib2c-conf.d/syntax-InetAddressType-set.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-set.m2i 
-file local/mib2c-conf.d/node-varbind-validate.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/node-varbind-validate.m2i 
-file local/mib2c-conf.d/syntax-InetAddress-set.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-set.m2i 
-file local/mib2c-conf.d/generic-data-context.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-data-context.m2i 
-file local/mib2c-conf.d/syntax-DateAndTime-get.m2d \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2d 
-file local/mib2c-conf.d/syntax-InetAddress-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-get.m2i 
-file local/mib2c-conf.d/node-validate.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/node-validate.m2i 
-file local/mib2c-conf.d/generic-source-includes.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-source-includes.m2i 
-file local/mib2c-conf.d/generic-get-decl.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-get-decl.m2i 
-file local/mib2c-conf.d/syntax-DateAndTime-get.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2i 
-file local/mib2c-conf.d/generic-data-allocate.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/generic-data-allocate.m2i 
+    path=etc/net-snmp/snmp/mib2c-data/default-mfd-top.m2c
+file local/mib2c-conf.d/details-enums.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/details-enums.m2i
 file local/mib2c-conf.d/details-node.m2i \
-	 path=etc/net-snmp/snmp/mib2c-data/details-node.m2i 
-file local/mib2c.int_watch.conf \
-	 path=etc/net-snmp/snmp/mib2c.int_watch.conf 
-file local/mib2c.mfd.conf \
-	 path=etc/net-snmp/snmp/mib2c.mfd.conf 
-file local/mib2c.perl.conf \
-	 path=etc/net-snmp/snmp/mib2c.perl.conf 
-file local/mib2c.container.conf \
-	 path=etc/net-snmp/snmp/mib2c.container.conf 
-file local/mib2c.iterate.conf \
-	 path=etc/net-snmp/snmp/mib2c.iterate.conf 
-file local/mib2c.check_values.conf \
-	 path=etc/net-snmp/snmp/mib2c.check_values.conf 
+    path=etc/net-snmp/snmp/mib2c-data/details-node.m2i
+file local/mib2c-conf.d/details-table.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/details-table.m2i
+file local/mib2c-conf.d/generic-ctx-copy.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-ctx-copy.m2i
+file local/mib2c-conf.d/generic-ctx-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-ctx-get.m2i
+file local/mib2c-conf.d/generic-ctx-set.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-ctx-set.m2i
+file local/mib2c-conf.d/generic-data-allocate.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-data-allocate.m2i
+file local/mib2c-conf.d/generic-data-context.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-data-context.m2i
+file local/mib2c-conf.d/generic-get-U64.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-get-U64.m2i
+file local/mib2c-conf.d/generic-get-char.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-get-char.m2i
+file local/mib2c-conf.d/generic-get-decl-bot.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-get-decl-bot.m2i
+file local/mib2c-conf.d/generic-get-decl.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-get-decl.m2i
+file local/mib2c-conf.d/generic-get-long.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-get-long.m2i
+file local/mib2c-conf.d/generic-get-oid.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-get-oid.m2i
+file local/mib2c-conf.d/generic-header-bottom.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-header-bottom.m2i
+file local/mib2c-conf.d/generic-header-top.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-header-top.m2i
+file local/mib2c-conf.d/generic-source-includes.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-source-includes.m2i
+file local/mib2c-conf.d/generic-table-constants.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-constants.m2c
+file local/mib2c-conf.d/generic-table-enums.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-enums.m2c
+file local/mib2c-conf.d/generic-table-indexes-from-oid.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-from-oid.m2i
+file local/mib2c-conf.d/generic-table-indexes-set.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-set.m2i
+file local/mib2c-conf.d/generic-table-indexes-to-oid.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-to-oid.m2i
+file local/mib2c-conf.d/generic-table-indexes-varbind-setup.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes-varbind-setup.m2i
+file local/mib2c-conf.d/generic-table-indexes.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-indexes.m2i
+file local/mib2c-conf.d/generic-table-oids.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/generic-table-oids.m2c
+file local/mib2c-conf.d/generic-value-map-func.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-value-map-func.m2i
+file local/mib2c-conf.d/generic-value-map-reverse.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-value-map-reverse.m2i
+file local/mib2c-conf.d/generic-value-map.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/generic-value-map.m2i
+file local/mib2c-conf.d/m2c-internal-warning.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/m2c-internal-warning.m2i
+file local/mib2c-conf.d/m2c_setup_enum.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/m2c_setup_enum.m2i
+file local/mib2c-conf.d/m2c_setup_node.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/m2c_setup_node.m2i
+file local/mib2c-conf.d/m2c_setup_table.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/m2c_setup_table.m2i
+file local/mib2c-conf.d/m2c_table_save_defaults.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/m2c_table_save_defaults.m2i
+file local/mib2c-conf.d/mfd-access-container-cached-defines.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-access-container-cached-defines.m2i
+file local/mib2c-conf.d/mfd-access-unsorted-external-defines.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-access-unsorted-external-defines.m2i
+file local/mib2c-conf.d/mfd-data-access.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-data-access.m2c
+file local/mib2c-conf.d/mfd-data-get.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-data-get.m2c
+file local/mib2c-conf.d/mfd-data-set.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-data-set.m2c
+file local/mib2c-conf.d/mfd-doxygen.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-doxygen.m2c
+file local/mib2c-conf.d/mfd-interactive-setup.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-interactive-setup.m2c
+file local/mib2c-conf.d/mfd-interface.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-interface.m2c
+file local/mib2c-conf.d/mfd-makefile.m2m \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-makefile.m2m
+file local/mib2c-conf.d/mfd-persistence.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-persistence.m2i
+file local/mib2c-conf.d/mfd-readme.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-readme.m2c
+file local/mib2c-conf.d/mfd-top.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/mfd-top.m2c
+file local/mib2c-conf.d/node-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/node-get.m2i
+file local/mib2c-conf.d/node-set.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/node-set.m2i
+file local/mib2c-conf.d/node-storage.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/node-storage.m2i
+file local/mib2c-conf.d/node-validate.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/node-validate.m2i
+file local/mib2c-conf.d/node-varbind-validate.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/node-varbind-validate.m2i
+file local/mib2c-conf.d/parent-dependencies.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/parent-dependencies.m2i
+file local/mib2c-conf.d/parent-set.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/parent-set.m2i
+file local/mib2c-conf.d/subagent.m2c \
+    path=etc/net-snmp/snmp/mib2c-data/subagent.m2c
+file local/mib2c-conf.d/syntax-COUNTER64-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-COUNTER64-get.m2i
+file local/mib2c-conf.d/syntax-DateAndTime-get.m2d \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2d
+file local/mib2c-conf.d/syntax-DateAndTime-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-get.m2i
+file local/mib2c-conf.d/syntax-DateAndTime-readme.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-DateAndTime-readme.m2i
+file local/mib2c-conf.d/syntax-InetAddress-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-get.m2i
+file local/mib2c-conf.d/syntax-InetAddress-set.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddress-set.m2i
+file local/mib2c-conf.d/syntax-InetAddressType-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-get.m2i
+file local/mib2c-conf.d/syntax-InetAddressType-set.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-InetAddressType-set.m2i
+file local/mib2c-conf.d/syntax-RowStatus-dependencies.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-dependencies.m2i
+file local/mib2c-conf.d/syntax-RowStatus-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-get.m2i
+file local/mib2c-conf.d/syntax-RowStatus-varbind-validate.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-RowStatus-varbind-validate.m2i
+file local/mib2c-conf.d/syntax-StorageType-dependencies.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-StorageType-dependencies.m2i
+file local/mib2c-conf.d/syntax-TestAndIncr-get.m2i \
+    path=etc/net-snmp/snmp/mib2c-data/syntax-TestAndIncr-get.m2i
 file local/mib2c.access_functions.conf \
-	 path=etc/net-snmp/snmp/mib2c.access_functions.conf 
-file local/mib2c.notify.conf \
-	 path=etc/net-snmp/snmp/mib2c.notify.conf 
-file local/mib2c.column_enums.conf \
-	 path=etc/net-snmp/snmp/mib2c.column_enums.conf 
-file local/mib2c.array-user.conf \
-	 path=etc/net-snmp/snmp/mib2c.array-user.conf 
-file local/mib2c.emulation.conf \
-	 path=etc/net-snmp/snmp/mib2c.emulation.conf 
-file local/mib2c.old-api.conf \
-	 path=etc/net-snmp/snmp/mib2c.old-api.conf 
-file local/mib2c.column_storage.conf \
-	 path=etc/net-snmp/snmp/mib2c.column_storage.conf 
-file local/mib2c.table_data.conf \
-	 path=etc/net-snmp/snmp/mib2c.table_data.conf 
-file local/mib2c.scalar.conf \
-	 path=etc/net-snmp/snmp/mib2c.scalar.conf 
-file local/mib2c.genhtml.conf \
-	 path=etc/net-snmp/snmp/mib2c.genhtml.conf 
-file local/mib2c.iterate_access.conf \
-	 path=etc/net-snmp/snmp/mib2c.iterate_access.conf 
-file local/mib2c.create-dataset.conf \
-	 path=etc/net-snmp/snmp/mib2c.create-dataset.conf 
-file local/mib2c.row.conf \
-	 path=etc/net-snmp/snmp/mib2c.row.conf 
-file local/mib2c.column_defines.conf \
-	 path=etc/net-snmp/snmp/mib2c.column_defines.conf 
+    path=etc/net-snmp/snmp/mib2c.access_functions.conf
+file local/mib2c.array-user.conf path=etc/net-snmp/snmp/mib2c.array-user.conf
+file local/mib2c.check_values.conf \
+    path=etc/net-snmp/snmp/mib2c.check_values.conf
 file local/mib2c.check_values_local.conf \
-	 path=etc/net-snmp/snmp/mib2c.check_values_local.conf 
-file local/mib2c.raw-table.conf \
-	 path=etc/net-snmp/snmp/mib2c.raw-table.conf 
-file mibs/UCD-IPFILTER-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/UCD-IPFILTER-MIB.txt 
-file mibs/IP-FORWARD-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IP-FORWARD-MIB.txt 
-file mibs/DISMAN-NSLOOKUP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/DISMAN-NSLOOKUP-MIB.txt 
-file mibs/IANA-LANGUAGE-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IANA-LANGUAGE-MIB.txt 
-file mibs/DISMAN-SCHEDULE-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/DISMAN-SCHEDULE-MIB.txt 
-file mibs/NET-SNMP-MONITOR-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-MONITOR-MIB.txt 
-file mibs/SNMP-MPD-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-MPD-MIB.txt 
-file mibs/IF-INVERTED-STACK-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IF-INVERTED-STACK-MIB.txt 
-file mibs/SMUX-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SMUX-MIB.txt 
-file mibs/SNMPv2-CONF.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMPv2-CONF.txt 
-file mibs/NET-SNMP-EXTEND-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-EXTEND-MIB.txt 
-file mibs/DISMAN-PING-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/DISMAN-PING-MIB.txt 
-file mibs/IPV6-TCP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IPV6-TCP-MIB.txt 
-file mibs/MTA-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/MTA-MIB.txt 
-file mibs/SNMP-TLS-TM-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-TLS-TM-MIB.txt 
-file mibs/NET-SNMP-SYSTEM-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-SYSTEM-MIB.txt 
-file mibs/IF-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IF-MIB.txt 
-file mibs/SNMPv2-TC.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMPv2-TC.txt 
-file mibs/NET-SNMP-PASS-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-PASS-MIB.txt 
-file mibs/SCTP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SCTP-MIB.txt 
-file mibs/SNMP-VIEW-BASED-ACM-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-VIEW-BASED-ACM-MIB.txt 
-file mibs/IPV6-UDP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IPV6-UDP-MIB.txt 
-file mibs/SNMPv2-TM.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMPv2-TM.txt 
-file mibs/IANA-RTPROTO-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IANA-RTPROTO-MIB.txt 
-file mibs/IANAifType-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IANAifType-MIB.txt 
-file mibs/NET-SNMP-EXAMPLES-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-EXAMPLES-MIB.txt 
-file mibs/UCD-SNMP-MIB-OLD.txt \
-	 path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB-OLD.txt 
-file mibs/IPV6-FLOW-LABEL-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IPV6-FLOW-LABEL-MIB.txt 
-file mibs/RFC-1215.txt \
-	 path=etc/net-snmp/snmp/mibs/RFC-1215.txt 
-file mibs/SNMP-TSM-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-TSM-MIB.txt 
-file mibs/DISMAN-SCRIPT-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/DISMAN-SCRIPT-MIB.txt 
-file mibs/SNMP-PROXY-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-PROXY-MIB.txt 
-file mibs/BRIDGE-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/BRIDGE-MIB.txt 
-file mibs/NET-SNMP-VACM-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-VACM-MIB.txt 
-file mibs/SNMP-NOTIFICATION-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-NOTIFICATION-MIB.txt 
-file mibs/HOST-RESOURCES-TYPES.txt \
-	 path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-TYPES.txt 
-file mibs/SNMP-FRAMEWORK-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-FRAMEWORK-MIB.txt 
-file mibs/NET-SNMP-AGENT-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-AGENT-MIB.txt 
-file mibs/DISMAN-EVENT-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/DISMAN-EVENT-MIB.txt 
-file mibs/UCD-DISKIO-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/UCD-DISKIO-MIB.txt 
-file mibs/AGENTX-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/AGENTX-MIB.txt 
-file mibs/TUNNEL-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/TUNNEL-MIB.txt 
-file mibs/SNMPv2-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMPv2-MIB.txt 
-file mibs/IPV6-TC.txt \
-	 path=etc/net-snmp/snmp/mibs/IPV6-TC.txt 
-file mibs/INET-ADDRESS-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/INET-ADDRESS-MIB.txt 
-file mibs/HCNUM-TC.txt \
-	 path=etc/net-snmp/snmp/mibs/HCNUM-TC.txt 
-file mibs/UCD-DLMOD-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/UCD-DLMOD-MIB.txt 
-file mibs/RFC1213-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/RFC1213-MIB.txt 
-file mibs/NETWORK-SERVICES-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NETWORK-SERVICES-MIB.txt 
-file mibs/SNMP-TARGET-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-TARGET-MIB.txt 
-file mibs/SNMP-USM-AES-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-USM-AES-MIB.txt 
-file mibs/UCD-IPFWACC-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/UCD-IPFWACC-MIB.txt 
-file mibs/SNMP-USER-BASED-SM-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-USER-BASED-SM-MIB.txt 
-file mibs/EtherLike-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/EtherLike-MIB.txt 
-file mibs/HOST-RESOURCES-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-MIB.txt 
-file mibs/UDP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/UDP-MIB.txt 
-file mibs/IPV6-ICMP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IPV6-ICMP-MIB.txt 
-file mibs/UCD-SNMP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB.txt 
-file mibs/SNMP-USM-DH-OBJECTS-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-USM-DH-OBJECTS-MIB.txt 
-file mibs/RFC1155-SMI.txt \
-	 path=etc/net-snmp/snmp/mibs/RFC1155-SMI.txt 
-file mibs/NET-SNMP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-MIB.txt 
+    path=etc/net-snmp/snmp/mib2c.check_values_local.conf
+file local/mib2c.column_defines.conf \
+    path=etc/net-snmp/snmp/mib2c.column_defines.conf
+file local/mib2c.column_enums.conf \
+    path=etc/net-snmp/snmp/mib2c.column_enums.conf
+file local/mib2c.column_storage.conf \
+    path=etc/net-snmp/snmp/mib2c.column_storage.conf
+file local/mib2c.conf path=etc/net-snmp/snmp/mib2c.conf
+file local/mib2c.container.conf path=etc/net-snmp/snmp/mib2c.container.conf
+file local/mib2c.create-dataset.conf \
+    path=etc/net-snmp/snmp/mib2c.create-dataset.conf
+file local/mib2c.emulation.conf path=etc/net-snmp/snmp/mib2c.emulation.conf
+file local/mib2c.genhtml.conf path=etc/net-snmp/snmp/mib2c.genhtml.conf
+file local/mib2c.int_watch.conf path=etc/net-snmp/snmp/mib2c.int_watch.conf
+file local/mib2c.iterate.conf path=etc/net-snmp/snmp/mib2c.iterate.conf
+file local/mib2c.iterate_access.conf \
+    path=etc/net-snmp/snmp/mib2c.iterate_access.conf
+file local/mib2c.mfd.conf path=etc/net-snmp/snmp/mib2c.mfd.conf
+file local/mib2c.notify.conf path=etc/net-snmp/snmp/mib2c.notify.conf
+file local/mib2c.old-api.conf path=etc/net-snmp/snmp/mib2c.old-api.conf
+file local/mib2c.org-mode.conf path=etc/net-snmp/snmp/mib2c.org-mode.conf
+file local/mib2c.perl.conf path=etc/net-snmp/snmp/mib2c.perl.conf
+file local/mib2c.raw-table.conf path=etc/net-snmp/snmp/mib2c.raw-table.conf
+file local/mib2c.row.conf path=etc/net-snmp/snmp/mib2c.row.conf
+file local/mib2c.scalar.conf path=etc/net-snmp/snmp/mib2c.scalar.conf
+file local/mib2c.table_data.conf path=etc/net-snmp/snmp/mib2c.table_data.conf
+file mibs/AGENTX-MIB.txt path=etc/net-snmp/snmp/mibs/AGENTX-MIB.txt
+file mibs/BRIDGE-MIB.txt path=etc/net-snmp/snmp/mibs/BRIDGE-MIB.txt
+file mibs/DISMAN-EVENT-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-EVENT-MIB.txt
 file mibs/DISMAN-EXPRESSION-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/DISMAN-EXPRESSION-MIB.txt 
-file mibs/RMON-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/RMON-MIB.txt 
-file mibs/SNMPv2-SMI.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMPv2-SMI.txt 
-file mibs/TRANSPORT-ADDRESS-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/TRANSPORT-ADDRESS-MIB.txt 
-file mibs/IP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IP-MIB.txt 
-file mibs/IPV6-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IPV6-MIB.txt 
-file mibs/NOTIFICATION-LOG-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NOTIFICATION-LOG-MIB.txt 
+    path=etc/net-snmp/snmp/mibs/DISMAN-EXPRESSION-MIB.txt
+file mibs/DISMAN-NSLOOKUP-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/DISMAN-NSLOOKUP-MIB.txt
+file mibs/DISMAN-PING-MIB.txt path=etc/net-snmp/snmp/mibs/DISMAN-PING-MIB.txt
+file mibs/DISMAN-SCHEDULE-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/DISMAN-SCHEDULE-MIB.txt
+file mibs/DISMAN-SCRIPT-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/DISMAN-SCRIPT-MIB.txt
 file mibs/DISMAN-TRACEROUTE-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/DISMAN-TRACEROUTE-MIB.txt 
-file mibs/TCP-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/TCP-MIB.txt 
+    path=etc/net-snmp/snmp/mibs/DISMAN-TRACEROUTE-MIB.txt
+file $(MACH32)/sun/agent/mibs/ENTITY-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/ENTITY-MIB.txt
+file mibs/EtherLike-MIB.txt path=etc/net-snmp/snmp/mibs/EtherLike-MIB.txt
+file mibs/HCNUM-TC.txt path=etc/net-snmp/snmp/mibs/HCNUM-TC.txt
+file mibs/HOST-RESOURCES-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-MIB.txt
+file mibs/HOST-RESOURCES-TYPES.txt \
+    path=etc/net-snmp/snmp/mibs/HOST-RESOURCES-TYPES.txt
 file mibs/IANA-ADDRESS-FAMILY-NUMBERS-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/IANA-ADDRESS-FAMILY-NUMBERS-MIB.txt 
-file mibs/UCD-DEMO-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/UCD-DEMO-MIB.txt 
-file mibs/SNMP-COMMUNITY-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/SNMP-COMMUNITY-MIB.txt 
-file mibs/NET-SNMP-TC.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-TC.txt 
-file mibs/LM-SENSORS-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/LM-SENSORS-MIB.txt 
+    path=etc/net-snmp/snmp/mibs/IANA-ADDRESS-FAMILY-NUMBERS-MIB.txt
+file mibs/IANA-LANGUAGE-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/IANA-LANGUAGE-MIB.txt
+file mibs/IANA-RTPROTO-MIB.txt path=etc/net-snmp/snmp/mibs/IANA-RTPROTO-MIB.txt
+file mibs/IANAifType-MIB.txt path=etc/net-snmp/snmp/mibs/IANAifType-MIB.txt
+file mibs/IF-INVERTED-STACK-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/IF-INVERTED-STACK-MIB.txt
+file mibs/IF-MIB.txt path=etc/net-snmp/snmp/mibs/IF-MIB.txt
+file mibs/INET-ADDRESS-MIB.txt path=etc/net-snmp/snmp/mibs/INET-ADDRESS-MIB.txt
+file mibs/IP-FORWARD-MIB.txt path=etc/net-snmp/snmp/mibs/IP-FORWARD-MIB.txt
+file mibs/IP-MIB.txt path=etc/net-snmp/snmp/mibs/IP-MIB.txt
+file mibs/IPV6-FLOW-LABEL-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/IPV6-FLOW-LABEL-MIB.txt
+file mibs/IPV6-ICMP-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-ICMP-MIB.txt
+file mibs/IPV6-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-MIB.txt
+file mibs/IPV6-TC.txt path=etc/net-snmp/snmp/mibs/IPV6-TC.txt
+file mibs/IPV6-TCP-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-TCP-MIB.txt
+file mibs/IPV6-UDP-MIB.txt path=etc/net-snmp/snmp/mibs/IPV6-UDP-MIB.txt
+file mibs/NET-SNMP-AGENT-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-AGENT-MIB.txt
+file mibs/NET-SNMP-EXAMPLES-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-EXAMPLES-MIB.txt
+file mibs/NET-SNMP-EXTEND-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-EXTEND-MIB.txt
+file mibs/NET-SNMP-MIB.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-MIB.txt
+file mibs/NET-SNMP-MONITOR-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-MONITOR-MIB.txt
+file mibs/NET-SNMP-PASS-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-PASS-MIB.txt
 file mibs/NET-SNMP-PERIODIC-NOTIFY-MIB.txt \
-	 path=etc/net-snmp/snmp/mibs/NET-SNMP-PERIODIC-NOTIFY-MIB.txt 
-file apps/snmp_perl_trapd.pl \
-	 path=etc/net-snmp/snmp/snmp_perl_trapd.pl 
-file local/snmpconf.dir/snmp-data/mibs \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/mibs 
-file local/snmpconf.dir/snmp-data/snmpconf-config \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/snmpconf-config 
-file local/snmpconf.dir/snmp-data/output \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/output 
-file local/snmpconf.dir/snmp-data/debugging \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/debugging 
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-PERIODIC-NOTIFY-MIB.txt
+file mibs/NET-SNMP-SYSTEM-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-SYSTEM-MIB.txt
+file mibs/NET-SNMP-TC.txt path=etc/net-snmp/snmp/mibs/NET-SNMP-TC.txt
+file mibs/NET-SNMP-VACM-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NET-SNMP-VACM-MIB.txt
+file mibs/NETWORK-SERVICES-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NETWORK-SERVICES-MIB.txt
+file mibs/NOTIFICATION-LOG-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/NOTIFICATION-LOG-MIB.txt
+file mibs/RFC-1215.txt path=etc/net-snmp/snmp/mibs/RFC-1215.txt
+file mibs/RFC1155-SMI.txt path=etc/net-snmp/snmp/mibs/RFC1155-SMI.txt
+file mibs/RFC1213-MIB.txt path=etc/net-snmp/snmp/mibs/RFC1213-MIB.txt
+file mibs/RMON-MIB.txt path=etc/net-snmp/snmp/mibs/RMON-MIB.txt
+file mibs/SCTP-MIB.txt path=etc/net-snmp/snmp/mibs/SCTP-MIB.txt
+file mibs/SMUX-MIB.txt path=etc/net-snmp/snmp/mibs/SMUX-MIB.txt
+file mibs/SNMP-COMMUNITY-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SNMP-COMMUNITY-MIB.txt
+file mibs/SNMP-FRAMEWORK-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SNMP-FRAMEWORK-MIB.txt
+file mibs/SNMP-MPD-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-MPD-MIB.txt
+file mibs/SNMP-NOTIFICATION-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SNMP-NOTIFICATION-MIB.txt
+file mibs/SNMP-PROXY-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-PROXY-MIB.txt
+file mibs/SNMP-TARGET-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-TARGET-MIB.txt
+file mibs/SNMP-TLS-TM-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-TLS-TM-MIB.txt
+file mibs/SNMP-TSM-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-TSM-MIB.txt
+file mibs/SNMP-USER-BASED-SM-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SNMP-USER-BASED-SM-MIB.txt
+file mibs/SNMP-USM-AES-MIB.txt path=etc/net-snmp/snmp/mibs/SNMP-USM-AES-MIB.txt
+file mibs/SNMP-USM-DH-OBJECTS-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SNMP-USM-DH-OBJECTS-MIB.txt
+file mibs/SNMP-USM-HMAC-SHA2-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SNMP-USM-HMAC-SHA2-MIB.txt
+file mibs/SNMP-VIEW-BASED-ACM-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SNMP-VIEW-BASED-ACM-MIB.txt
+file mibs/SNMPv2-CONF.txt path=etc/net-snmp/snmp/mibs/SNMPv2-CONF.txt
+file mibs/SNMPv2-MIB.txt path=etc/net-snmp/snmp/mibs/SNMPv2-MIB.txt
+file mibs/SNMPv2-SMI.txt path=etc/net-snmp/snmp/mibs/SNMPv2-SMI.txt
+file mibs/SNMPv2-TC.txt path=etc/net-snmp/snmp/mibs/SNMPv2-TC.txt
+file mibs/SNMPv2-TM.txt path=etc/net-snmp/snmp/mibs/SNMPv2-TM.txt
+file $(MACH32)/sun/agent/mibs/SUN-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SUN-MIB.txt
+file $(MACH32)/sun/agent/mibs/SUN-SEA-EXTENSIONS-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SUN-SEA-EXTENSIONS-MIB.txt
+file $(MACH32)/sun/agent/mibs/SUN-SEA-PROXY-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/SUN-SEA-PROXY-MIB.txt
+file mibs/TCP-MIB.txt path=etc/net-snmp/snmp/mibs/TCP-MIB.txt
+file mibs/TRANSPORT-ADDRESS-MIB.txt \
+    path=etc/net-snmp/snmp/mibs/TRANSPORT-ADDRESS-MIB.txt
+file mibs/TUNNEL-MIB.txt path=etc/net-snmp/snmp/mibs/TUNNEL-MIB.txt
+file mibs/UCD-DEMO-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-DEMO-MIB.txt
+file mibs/UCD-DISKIO-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-DISKIO-MIB.txt
+file mibs/UCD-DLMOD-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-DLMOD-MIB.txt
+file mibs/UCD-IPFILTER-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-IPFILTER-MIB.txt
+file mibs/UCD-IPFWACC-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-IPFWACC-MIB.txt
+file mibs/UCD-SNMP-MIB-OLD.txt path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB-OLD.txt
+file mibs/UCD-SNMP-MIB.txt path=etc/net-snmp/snmp/mibs/UCD-SNMP-MIB.txt
+file mibs/UDP-MIB.txt path=etc/net-snmp/snmp/mibs/UDP-MIB.txt
+file $(MACH32)/sun/agent/mibs/health-monitor-mib.mib \
+    path=etc/net-snmp/snmp/mibs/health-monitor-mib.mib
+file $(MACH32)/sun/agent/mibs/smatrap.mib \
+    path=etc/net-snmp/snmp/mibs/smatrap.mib
+file local/net-snmp-cert.conf path=etc/net-snmp/snmp/net-snmp-cert.conf
+file apps/snmp_perl_trapd.pl path=etc/net-snmp/snmp/snmp_perl_trapd.pl
 file local/snmpconf.dir/snmp-data/authopts \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmp-data/authopts 
-file local/snmpconf.dir/snmptrapd-data/snmpconf-config \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/snmpconf-config 
-file local/snmpconf.dir/snmptrapd-data/formatting \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/formatting 
-file local/snmpconf.dir/snmptrapd-data/logging \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/logging 
-file local/snmpconf.dir/snmptrapd-data/runtime \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/runtime 
-file local/snmpconf.dir/snmptrapd-data/traphandle \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/traphandle 
+    path=etc/net-snmp/snmp/snmpconf-data/snmp-data/authopts
+file local/snmpconf.dir/snmp-data/debugging \
+    path=etc/net-snmp/snmp/snmpconf-data/snmp-data/debugging
+file local/snmpconf.dir/snmp-data/mibs \
+    path=etc/net-snmp/snmp/snmpconf-data/snmp-data/mibs
+file local/snmpconf.dir/snmp-data/output \
+    path=etc/net-snmp/snmp/snmpconf-data/snmp-data/output
+file local/snmpconf.dir/snmp-data/snmpconf-config \
+    path=etc/net-snmp/snmp/snmpconf-data/snmp-data/snmpconf-config
+file local/snmpconf.dir/snmpd-data/acl \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/acl
+file local/snmpconf.dir/snmpd-data/basic_setup \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/basic_setup
+file local/snmpconf.dir/snmpd-data/extending \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/extending
+file local/snmpconf.dir/snmpd-data/monitor \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/monitor
+file local/snmpconf.dir/snmpd-data/operation \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/operation
+file local/snmpconf.dir/snmpd-data/snmpconf-config \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/snmpconf-config
+file local/snmpconf.dir/snmpd-data/system \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/system
+file local/snmpconf.dir/snmpd-data/trapsinks \
+    path=etc/net-snmp/snmp/snmpconf-data/snmpd-data/trapsinks
 file local/snmpconf.dir/snmptrapd-data/authentication \
-	 path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/authentication 
+    path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/authentication
+file local/snmpconf.dir/snmptrapd-data/formatting \
+    path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/formatting
+file local/snmpconf.dir/snmptrapd-data/logging \
+    path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/logging
+file local/snmpconf.dir/snmptrapd-data/runtime \
+    path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/runtime
+file local/snmpconf.dir/snmptrapd-data/snmpconf-config \
+    path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/snmpconf-config
+file local/snmpconf.dir/snmptrapd-data/traphandle \
+    path=etc/net-snmp/snmp/snmpconf-data/snmptrapd-data/traphandle
 
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/encode_keychange \
-    path=usr/bin/encode_keychange
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/fixproc path=usr/bin/fixproc
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/ipf-mod.pl \
-    path=usr/bin/ipf-mod.pl
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/mib2c path=usr/bin/mib2c
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/mib2c-update \
-    path=usr/bin/mib2c-update
-
-file usr/bin/net-snmp-config path=usr/bin/net-snmp-config
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/net-snmp-config \
-    path=usr/bin/$(MACH64)/net-snmp-config
-link path=usr/bin/net-snmp-config-32 target=net-snmp-config pkg.linted=true
-link path=usr/bin/net-snmp-config-64 target=$(MACH64)/net-snmp-config pkg.linted=true
-
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/net-snmp-create-v3-user \
-    path=usr/bin/net-snmp-create-v3-user
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpbulkget \
-    path=usr/bin/snmpbulkget
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpbulkwalk \
-    path=usr/bin/snmpbulkwalk
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpcheck \
-    path=usr/bin/snmpcheck
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpconf path=usr/bin/snmpconf
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpdelta \
-    path=usr/bin/snmpdelta
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpdf path=usr/bin/snmpdf
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpget path=usr/bin/snmpget
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpgetnext \
-    path=usr/bin/snmpgetnext
+file path=usr/bin/agentxtrap
+file path=usr/bin/checkbandwidth
+file path=usr/bin/encode_keychange
+file path=usr/bin/fixproc
+file path=usr/bin/ipf-mod.pl
+file path=usr/bin/mib2c
+file path=usr/bin/mib2c-update
+file path=usr/bin/net-snmp-cert
+link path=usr/bin/net-snmp-config target=./net-snmp-config-64
+file usr/bin/net-snmp-config path=usr/bin/net-snmp-config-64
+file path=usr/bin/net-snmp-create-v3-user
+file path=usr/bin/snmp-bridge-mib
+file path=usr/bin/snmpbulkget
+file path=usr/bin/snmpbulkwalk
+file path=usr/bin/snmpcheck
+file path=usr/bin/snmpconf
+file path=usr/bin/snmpdelta
+file path=usr/bin/snmpdf
+file path=usr/bin/snmpget
+file path=usr/bin/snmpgetnext
 link path=usr/bin/snmpinform target=snmptrap
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpnetstat \
-    path=usr/bin/snmpnetstat
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpset path=usr/bin/snmpset
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpstatus \
-    path=usr/bin/snmpstatus
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptable \
-    path=usr/bin/snmptable
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptest path=usr/bin/snmptest
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptranslate \
-    path=usr/bin/snmptranslate
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmptrap path=usr/bin/snmptrap
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpusm path=usr/bin/snmpusm
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpvacm path=usr/bin/snmpvacm
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmpwalk path=usr/bin/snmpwalk
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/tkmib path=usr/bin/tkmib
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/traptoemail \
-    path=usr/bin/traptoemail
+file path=usr/bin/snmpnetstat
+file path=usr/bin/snmppcap
+file path=usr/bin/snmpping
+file path=usr/bin/snmpps
+file path=usr/bin/snmpset
+file path=usr/bin/snmpstatus
+file path=usr/bin/snmptable
+file path=usr/bin/snmptest
+link path=usr/bin/snmptop target=snmpps
+file path=usr/bin/snmptranslate
+file path=usr/bin/snmptrap
+file path=usr/bin/snmpusm
+file path=usr/bin/snmpvacm
+file path=usr/bin/snmpwalk
+file path=usr/bin/tkmib
+file path=usr/bin/traptoemail
 file path=usr/include/net-snmp/agent/agent_callbacks.h
 file path=usr/include/net-snmp/agent/agent_handler.h
 file path=usr/include/net-snmp/agent/agent_index.h
@@ -466,6 +423,7 @@ file path=usr/include/net-snmp/agent/mib_modules.h
 file path=usr/include/net-snmp/agent/mode_end_call.h
 file path=usr/include/net-snmp/agent/multiplexer.h
 file path=usr/include/net-snmp/agent/net-snmp-agent-includes.h
+file path=usr/include/net-snmp/agent/netsnmp_close_fds.h
 file path=usr/include/net-snmp/agent/null.h
 file path=usr/include/net-snmp/agent/old_api.h
 file path=usr/include/net-snmp/agent/read_only.h
@@ -489,11 +447,13 @@ file path=usr/include/net-snmp/agent/table_dataset.h
 file path=usr/include/net-snmp/agent/table_iterator.h
 file path=usr/include/net-snmp/agent/table_tdata.h
 file path=usr/include/net-snmp/agent/util_funcs.h
+file path=usr/include/net-snmp/agent/util_funcs/MIB_STATS_CACHE_TIMEOUT.h
+file path=usr/include/net-snmp/agent/util_funcs/header_generic.h
+file path=usr/include/net-snmp/agent/util_funcs/header_simple_table.h
 file path=usr/include/net-snmp/agent/var_struct.h
 file path=usr/include/net-snmp/agent/watcher.h
 file path=usr/include/net-snmp/config_api.h
 file path=usr/include/net-snmp/definitions.h
-file path=usr/include/net-snmp/library/README
 file path=usr/include/net-snmp/library/asn1.h
 file path=usr/include/net-snmp/library/callback.h
 file path=usr/include/net-snmp/library/cert_util.h
@@ -517,6 +477,7 @@ file path=usr/include/net-snmp/library/lcd_time.h
 file path=usr/include/net-snmp/library/md5.h
 file path=usr/include/net-snmp/library/mib.h
 file path=usr/include/net-snmp/library/mt_support.h
+file path=usr/include/net-snmp/library/netsnmp-attribute-format.h
 file path=usr/include/net-snmp/library/oid.h
 file path=usr/include/net-snmp/library/oid_stash.h
 file path=usr/include/net-snmp/library/parse.h
@@ -578,6 +539,13 @@ file path=usr/include/net-snmp/system/bsdi4.h
 file path=usr/include/net-snmp/system/cygwin.h
 file path=usr/include/net-snmp/system/darwin.h
 file path=usr/include/net-snmp/system/darwin10.h
+file path=usr/include/net-snmp/system/darwin11.h
+file path=usr/include/net-snmp/system/darwin12.h
+file path=usr/include/net-snmp/system/darwin13.h
+file path=usr/include/net-snmp/system/darwin14.h
+file path=usr/include/net-snmp/system/darwin15.h
+file path=usr/include/net-snmp/system/darwin16.h
+file path=usr/include/net-snmp/system/darwin17.h
 file path=usr/include/net-snmp/system/darwin7.h
 file path=usr/include/net-snmp/system/darwin8.h
 file path=usr/include/net-snmp/system/darwin9.h
@@ -598,13 +566,17 @@ file path=usr/include/net-snmp/system/freebsd9.h
 file path=usr/include/net-snmp/system/generic.h
 file path=usr/include/net-snmp/system/hpux.h
 file path=usr/include/net-snmp/system/irix.h
+file path=usr/include/net-snmp/system/kfreebsd.h
 file path=usr/include/net-snmp/system/linux.h
 file path=usr/include/net-snmp/system/mingw32.h
+file path=usr/include/net-snmp/system/mingw32msvc.h
 file path=usr/include/net-snmp/system/mips.h
 file path=usr/include/net-snmp/system/netbsd.h
+file path=usr/include/net-snmp/system/nto-qnx6.h
 file path=usr/include/net-snmp/system/openbsd.h
 file path=usr/include/net-snmp/system/openbsd4.h
 file path=usr/include/net-snmp/system/openbsd5.h
+file path=usr/include/net-snmp/system/openbsd6.h
 file path=usr/include/net-snmp/system/osf5.h
 file path=usr/include/net-snmp/system/solaris.h
 file path=usr/include/net-snmp/system/solaris2.3.h
@@ -660,67 +632,84 @@ file path=usr/include/ucd-snmp/ucd-snmp-includes.h
 file path=usr/include/ucd-snmp/util_funcs.h
 file path=usr/include/ucd-snmp/var_struct.h
 file path=usr/include/ucd-snmp/version.h
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/agentxtrap \
-    path=usr/lib/$(MACH64)/agentxtrap
+file usr/bin/agentxtrap path=usr/lib/$(MACH64)/agentxtrap mode=0555
 file $(MACH64)/sun/agent/modules/entityMib/libentity.so \
     path=usr/lib/$(MACH64)/libentity.so
-link path=usr/lib/$(MACH64)/libnetsnmp.so target=./libnetsnmp.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmp.so target=./libnetsnmp.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmp.so.30 target=./libnetsnmp.so.30.0.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmp.so.30.0.3 \
-    path=usr/lib/$(MACH64)/libnetsnmp.so.30.0.3
+file path=usr/lib/$(MACH64)/libnetsnmp.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmp.so.35 target=./libnetsnmp.so.35.0.0
+file path=usr/lib/$(MACH64)/libnetsnmp.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmpagent.so \
-    target=./libnetsnmpagent.so.30.0.3
+    target=./libnetsnmpagent.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmpagent.so.30 \
     target=./libnetsnmpagent.so.30.0.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmpagent.so.30.0.3 \
-    path=usr/lib/$(MACH64)/libnetsnmpagent.so.30.0.3
+file path=usr/lib/$(MACH64)/libnetsnmpagent.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmpagent.so.35 \
+    target=./libnetsnmpagent.so.35.0.0
+file path=usr/lib/$(MACH64)/libnetsnmpagent.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmphelpers.so \
-    target=./libnetsnmphelpers.so.30.0.3
+    target=./libnetsnmphelpers.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmphelpers.so.30 \
     target=./libnetsnmphelpers.so.30.0.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmphelpers.so.30.0.3 \
-    path=usr/lib/$(MACH64)/libnetsnmphelpers.so.30.0.3
-link path=usr/lib/$(MACH64)/libnetsnmpmibs.so target=./libnetsnmpmibs.so.30.0.3
+file path=usr/lib/$(MACH64)/libnetsnmphelpers.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmphelpers.so.35 \
+    target=./libnetsnmphelpers.so.35.0.0
+file path=usr/lib/$(MACH64)/libnetsnmphelpers.so.35.0.0
+link path=usr/lib/$(MACH64)/libnetsnmpmibs.so target=./libnetsnmpmibs.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmpmibs.so.30 \
     target=./libnetsnmpmibs.so.30.0.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmpmibs.so.30.0.3 \
-    path=usr/lib/$(MACH64)/libnetsnmpmibs.so.30.0.3
+file path=usr/lib/$(MACH64)/libnetsnmpmibs.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmpmibs.so.35 \
+    target=./libnetsnmpmibs.so.35.0.0
+file path=usr/lib/$(MACH64)/libnetsnmpmibs.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmptrapd.so \
-    target=./libnetsnmptrapd.so.30.0.3
+    target=./libnetsnmptrapd.so.35.0.0
 link path=usr/lib/$(MACH64)/libnetsnmptrapd.so.30 \
     target=./libnetsnmptrapd.so.30.0.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libnetsnmptrapd.so.30.0.3 \
-    path=usr/lib/$(MACH64)/libnetsnmptrapd.so.30.0.3
-link path=usr/lib/$(MACH64)/libsnmp.so target=./libsnmp.so.30.0.3
+file path=usr/lib/$(MACH64)/libnetsnmptrapd.so.30.0.3
+link path=usr/lib/$(MACH64)/libnetsnmptrapd.so.35 \
+    target=./libnetsnmptrapd.so.35.0.0
+file path=usr/lib/$(MACH64)/libnetsnmptrapd.so.35.0.0
+link path=usr/lib/$(MACH64)/libsnmp.so target=./libsnmp.so.35.0.0
 link path=usr/lib/$(MACH64)/libsnmp.so.30 target=./libsnmp.so.30.0.3
-file build/prototype/$(MACH64)/usr/lib/$(MACH64)/libsnmp.so.30.0.3 \
-    path=usr/lib/$(MACH64)/libsnmp.so.30.0.3
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/net-snmp-cert \
-    path=usr/lib/$(MACH64)/net-snmp-cert
-file build/prototype/$(MACH64)/usr/bin/$(MACH64)/snmp-bridge-mib \
-    path=usr/lib/$(MACH64)/snmp-bridge-mib
+file path=usr/lib/$(MACH64)/libsnmp.so.30.0.3
+link path=usr/lib/$(MACH64)/libsnmp.so.35 target=./libsnmp.so.35.0.0
+file path=usr/lib/$(MACH64)/libsnmp.so.35.0.0
+file usr/bin/net-snmp-cert path=usr/lib/$(MACH64)/net-snmp-cert mode=0555
+file usr/bin/snmp-bridge-mib path=usr/lib/$(MACH64)/snmp-bridge-mib mode=0555
 file $(MACH32)/sun/agent/modules/entityMib/libentity.so \
     path=usr/lib/libentity.so
-link path=usr/lib/libnetsnmp.so target=./libnetsnmp.so.30.0.3
+link path=usr/lib/libnetsnmp.so target=./libnetsnmp.so.35.0.0
 link path=usr/lib/libnetsnmp.so.30 target=./libnetsnmp.so.30.0.3
 file path=usr/lib/libnetsnmp.so.30.0.3
-link path=usr/lib/libnetsnmpagent.so target=./libnetsnmpagent.so.30.0.3
+link path=usr/lib/libnetsnmp.so.35 target=./libnetsnmp.so.35.0.0
+file path=usr/lib/libnetsnmp.so.35.0.0
+link path=usr/lib/libnetsnmpagent.so target=./libnetsnmpagent.so.35.0.0
 link path=usr/lib/libnetsnmpagent.so.30 target=./libnetsnmpagent.so.30.0.3
 file path=usr/lib/libnetsnmpagent.so.30.0.3
-link path=usr/lib/libnetsnmphelpers.so target=./libnetsnmphelpers.so.30.0.3
+link path=usr/lib/libnetsnmpagent.so.35 target=./libnetsnmpagent.so.35.0.0
+file path=usr/lib/libnetsnmpagent.so.35.0.0
+link path=usr/lib/libnetsnmphelpers.so target=./libnetsnmphelpers.so.35.0.0
 link path=usr/lib/libnetsnmphelpers.so.30 target=./libnetsnmphelpers.so.30.0.3
 file path=usr/lib/libnetsnmphelpers.so.30.0.3
-link path=usr/lib/libnetsnmpmibs.so target=./libnetsnmpmibs.so.30.0.3
+link path=usr/lib/libnetsnmphelpers.so.35 target=./libnetsnmphelpers.so.35.0.0
+file path=usr/lib/libnetsnmphelpers.so.35.0.0
+link path=usr/lib/libnetsnmpmibs.so target=./libnetsnmpmibs.so.35.0.0
 link path=usr/lib/libnetsnmpmibs.so.30 target=./libnetsnmpmibs.so.30.0.3
 file path=usr/lib/libnetsnmpmibs.so.30.0.3
-link path=usr/lib/libnetsnmptrapd.so target=./libnetsnmptrapd.so.30.0.3
+link path=usr/lib/libnetsnmpmibs.so.35 target=./libnetsnmpmibs.so.35.0.0
+file path=usr/lib/libnetsnmpmibs.so.35.0.0
+link path=usr/lib/libnetsnmptrapd.so target=./libnetsnmptrapd.so.35.0.0
 link path=usr/lib/libnetsnmptrapd.so.30 target=./libnetsnmptrapd.so.30.0.3
 file path=usr/lib/libnetsnmptrapd.so.30.0.3
-link path=usr/lib/libsnmp.so target=./libsnmp.so.30.0.3
+link path=usr/lib/libnetsnmptrapd.so.35 target=./libnetsnmptrapd.so.35.0.0
+file path=usr/lib/libnetsnmptrapd.so.35.0.0
+link path=usr/lib/libsnmp.so target=./libsnmp.so.35.0.0
 link path=usr/lib/libsnmp.so.30 target=./libsnmp.so.30.0.3
 file path=usr/lib/libsnmp.so.30.0.3
-file $(MACH32)/sun/masfcnv path=usr/lib/net-snmp/masfcnv
-file $(MACH32)/sun/masfd path=usr/lib/net-snmp/masfd
+link path=usr/lib/libsnmp.so.35 target=./libsnmp.so.35.0.0
+file path=usr/lib/libsnmp.so.35.0.0
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::ASN.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::OID.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::TrapReceiver.3
@@ -729,7 +718,6 @@ file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::agent::default_store.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::default_store.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/NetSNMP::netsnmp_request_infoPtr.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/SNMP.3
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Bundle/Makefile.subs.pl
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/ASN.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/OID.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/NetSNMP/TrapReceiver.pm
@@ -754,14 +742,1313 @@ file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/defaul
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/NetSNMP/default_store/default_store.so
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/SNMP/SNMP.so
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/SNMP/autosplit.ix
-file build/prototype/$(MACH64)/usr/sbin/$(MACH64)/snmpd path=usr/sbin/snmpd
-file build/prototype/$(MACH64)/usr/sbin/$(MACH64)/snmptrapd \
-    path=usr/sbin/snmptrapd
-
+file path=usr/sbin/snmpd
+file path=usr/sbin/snmptrapd
+file build/$(MACH32)/docs/html/agent__callbacks_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__callbacks_8h_source.html
+file build/$(MACH32)/docs/html/agent__global__vars_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__global__vars_8h_source.html
+file build/$(MACH32)/docs/html/agent__handler_8c_source.html \
+    path=usr/share/doc/net-snmp/html/agent__handler_8c_source.html
+file build/$(MACH32)/docs/html/agent__handler_8h.html \
+    path=usr/share/doc/net-snmp/html/agent__handler_8h.html
+file build/$(MACH32)/docs/html/agent__handler_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__handler_8h_source.html
+file build/$(MACH32)/docs/html/agent__index_8c_source.html \
+    path=usr/share/doc/net-snmp/html/agent__index_8c_source.html
+file build/$(MACH32)/docs/html/agent__index_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__index_8h_source.html
+file build/$(MACH32)/docs/html/agent__module__config_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__module__config_8h_source.html
+file build/$(MACH32)/docs/html/agent__read__config_8c_source.html \
+    path=usr/share/doc/net-snmp/html/agent__read__config_8c_source.html
+file build/$(MACH32)/docs/html/agent__read__config_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__read__config_8h_source.html
+file build/$(MACH32)/docs/html/agent__registry_8c_source.html \
+    path=usr/share/doc/net-snmp/html/agent__registry_8c_source.html
+file build/$(MACH32)/docs/html/agent__registry_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__registry_8h_source.html
+file build/$(MACH32)/docs/html/agent__sysORTable_8c_source.html \
+    path=usr/share/doc/net-snmp/html/agent__sysORTable_8c_source.html
+file build/$(MACH32)/docs/html/agent__sysORTable_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__sysORTable_8h_source.html
+file build/$(MACH32)/docs/html/agent__trap_8c_source.html \
+    path=usr/share/doc/net-snmp/html/agent__trap_8c_source.html
+file build/$(MACH32)/docs/html/agent__trap_8h_source.html \
+    path=usr/share/doc/net-snmp/html/agent__trap_8h_source.html
+file build/$(MACH32)/docs/html/all__helpers_8c_source.html \
+    path=usr/share/doc/net-snmp/html/all__helpers_8c_source.html
+file build/$(MACH32)/docs/html/all__helpers_8h_source.html \
+    path=usr/share/doc/net-snmp/html/all__helpers_8h_source.html
+file build/$(MACH32)/docs/html/annotated.html \
+    path=usr/share/doc/net-snmp/html/annotated.html
+file build/$(MACH32)/docs/html/asn1_8c_source.html \
+    path=usr/share/doc/net-snmp/html/asn1_8c_source.html
+file build/$(MACH32)/docs/html/asn1_8h_source.html \
+    path=usr/share/doc/net-snmp/html/asn1_8h_source.html
+file build/$(MACH32)/docs/html/asprintf_8c_source.html \
+    path=usr/share/doc/net-snmp/html/asprintf_8c_source.html
+file build/$(MACH32)/docs/html/auto__nlist_8c_source.html \
+    path=usr/share/doc/net-snmp/html/auto__nlist_8c_source.html
+file build/$(MACH32)/docs/html/auto__nlist_8h_source.html \
+    path=usr/share/doc/net-snmp/html/auto__nlist_8h_source.html
+file build/$(MACH32)/docs/html/autonlist_8h_source.html \
+    path=usr/share/doc/net-snmp/html/autonlist_8h_source.html
+file build/$(MACH32)/docs/html/baby__steps_8c_source.html \
+    path=usr/share/doc/net-snmp/html/baby__steps_8c_source.html
+file build/$(MACH32)/docs/html/baby__steps_8h_source.html \
+    path=usr/share/doc/net-snmp/html/baby__steps_8h_source.html
+file build/$(MACH32)/docs/html/bc_s.png \
+    path=usr/share/doc/net-snmp/html/bc_s.png
+file build/$(MACH32)/docs/html/bdwn.png \
+    path=usr/share/doc/net-snmp/html/bdwn.png
+file build/$(MACH32)/docs/html/bulk__to__next_8c_source.html \
+    path=usr/share/doc/net-snmp/html/bulk__to__next_8c_source.html
+file build/$(MACH32)/docs/html/bulk__to__next_8h_source.html \
+    path=usr/share/doc/net-snmp/html/bulk__to__next_8h_source.html
+file build/$(MACH32)/docs/html/cache__handler_8c_source.html \
+    path=usr/share/doc/net-snmp/html/cache__handler_8c_source.html
+file build/$(MACH32)/docs/html/cache__handler_8h_source.html \
+    path=usr/share/doc/net-snmp/html/cache__handler_8h_source.html
+file build/$(MACH32)/docs/html/callback_8c_source.html \
+    path=usr/share/doc/net-snmp/html/callback_8c_source.html
+file build/$(MACH32)/docs/html/callback_8h_source.html \
+    path=usr/share/doc/net-snmp/html/callback_8h_source.html
+file build/$(MACH32)/docs/html/cert__util_8c_source.html \
+    path=usr/share/doc/net-snmp/html/cert__util_8c_source.html
+file build/$(MACH32)/docs/html/cert__util_8h_source.html \
+    path=usr/share/doc/net-snmp/html/cert__util_8h_source.html
+file build/$(MACH32)/docs/html/check__varbind_8c_source.html \
+    path=usr/share/doc/net-snmp/html/check__varbind_8c_source.html
+file build/$(MACH32)/docs/html/check__varbind_8h_source.html \
+    path=usr/share/doc/net-snmp/html/check__varbind_8h_source.html
+file build/$(MACH32)/docs/html/classes.html \
+    path=usr/share/doc/net-snmp/html/classes.html
+file build/$(MACH32)/docs/html/closed.png \
+    path=usr/share/doc/net-snmp/html/closed.png
+file build/$(MACH32)/docs/html/closedir_8c_source.html \
+    path=usr/share/doc/net-snmp/html/closedir_8c_source.html
+file build/$(MACH32)/docs/html/config__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/config__api_8h_source.html
+file build/$(MACH32)/docs/html/container_8c_source.html \
+    path=usr/share/doc/net-snmp/html/container_8c_source.html
+file build/$(MACH32)/docs/html/container_8h_source.html \
+    path=usr/share/doc/net-snmp/html/container_8h_source.html
+file build/$(MACH32)/docs/html/container__binary__array_8c_source.html \
+    path=usr/share/doc/net-snmp/html/container__binary__array_8c_source.html
+file build/$(MACH32)/docs/html/container__binary__array_8h_source.html \
+    path=usr/share/doc/net-snmp/html/container__binary__array_8h_source.html
+file build/$(MACH32)/docs/html/container__iterator_8c_source.html \
+    path=usr/share/doc/net-snmp/html/container__iterator_8c_source.html
+file build/$(MACH32)/docs/html/container__iterator_8h.html \
+    path=usr/share/doc/net-snmp/html/container__iterator_8h.html
+file build/$(MACH32)/docs/html/container__iterator_8h_source.html \
+    path=usr/share/doc/net-snmp/html/container__iterator_8h_source.html
+file build/$(MACH32)/docs/html/container__list__ssll_8c_source.html \
+    path=usr/share/doc/net-snmp/html/container__list__ssll_8c_source.html
+file build/$(MACH32)/docs/html/container__list__ssll_8h_source.html \
+    path=usr/share/doc/net-snmp/html/container__list__ssll_8h_source.html
+file build/$(MACH32)/docs/html/container__null_8c_source.html \
+    path=usr/share/doc/net-snmp/html/container__null_8c_source.html
+file build/$(MACH32)/docs/html/container__null_8h_source.html \
+    path=usr/share/doc/net-snmp/html/container__null_8h_source.html
+file build/$(MACH32)/docs/html/data__list_8c_source.html \
+    path=usr/share/doc/net-snmp/html/data__list_8c_source.html
+file build/$(MACH32)/docs/html/data__list_8h_source.html \
+    path=usr/share/doc/net-snmp/html/data__list_8h_source.html
+file build/$(MACH32)/docs/html/data__set_8c_source.html \
+    path=usr/share/doc/net-snmp/html/data__set_8c_source.html
+file build/$(MACH32)/docs/html/data__set_8h_source.html \
+    path=usr/share/doc/net-snmp/html/data__set_8h_source.html
+file build/$(MACH32)/docs/html/data_set_8c-example.html \
+    path=usr/share/doc/net-snmp/html/data_set_8c-example.html
+file build/$(MACH32)/docs/html/debug__handler_8c_source.html \
+    path=usr/share/doc/net-snmp/html/debug__handler_8c_source.html
+file build/$(MACH32)/docs/html/debug__handler_8h_source.html \
+    path=usr/share/doc/net-snmp/html/debug__handler_8h_source.html
+file build/$(MACH32)/docs/html/default__store_8c_source.html \
+    path=usr/share/doc/net-snmp/html/default__store_8c_source.html
+file build/$(MACH32)/docs/html/default__store_8h_source.html \
+    path=usr/share/doc/net-snmp/html/default__store_8h_source.html
+file build/$(MACH32)/docs/html/definitions_8h_source.html \
+    path=usr/share/doc/net-snmp/html/definitions_8h_source.html
+file build/$(MACH32)/docs/html/delayed__instance_8c_source.html \
+    path=usr/share/doc/net-snmp/html/delayed__instance_8c_source.html
+file build/$(MACH32)/docs/html/delayed__instance_8h_source.html \
+    path=usr/share/doc/net-snmp/html/delayed__instance_8h_source.html
+file build/$(MACH32)/docs/html/delayed_instance_8c-example.html \
+    path=usr/share/doc/net-snmp/html/delayed_instance_8c-example.html
+file build/$(MACH32)/docs/html/deprecated.html \
+    path=usr/share/doc/net-snmp/html/deprecated.html
+file build/$(MACH32)/docs/html/dir_37643335872d662d8caadfc00b282238.html \
+    path=usr/share/doc/net-snmp/html/dir_37643335872d662d8caadfc00b282238.html
+file build/$(MACH32)/docs/html/dir_37643335872d662d8caadfc00b282238.html \
+    path=usr/share/doc/net-snmp/html/dir_37643335872d662d8caadfc00b282238.html
+file build/$(MACH32)/docs/html/dir_7313b4eff62c023922a50213ac16f2f1.html \
+    path=usr/share/doc/net-snmp/html/dir_7313b4eff62c023922a50213ac16f2f1.html
+file build/$(MACH32)/docs/html/dir_7729c337850573dc74d1ac4f90fc9ea2.html \
+    path=usr/share/doc/net-snmp/html/dir_7729c337850573dc74d1ac4f90fc9ea2.html
+file build/$(MACH32)/docs/html/dir_7bed3d70bcf26f910bd9ca67652b2272.html \
+    path=usr/share/doc/net-snmp/html/dir_7bed3d70bcf26f910bd9ca67652b2272.html
+file build/$(MACH32)/docs/html/dir_7e68af5eed7a5db59fca4f87bd0fc81b.html \
+    path=usr/share/doc/net-snmp/html/dir_7e68af5eed7a5db59fca4f87bd0fc81b.html
+file build/$(MACH32)/docs/html/dir__utils_8c_source.html \
+    path=usr/share/doc/net-snmp/html/dir__utils_8c_source.html
+file build/$(MACH32)/docs/html/dir__utils_8h_source.html \
+    path=usr/share/doc/net-snmp/html/dir__utils_8h_source.html
+file build/$(MACH32)/docs/html/dir_aa22c192dad6f72c562c2efe35caa225.html \
+    path=usr/share/doc/net-snmp/html/dir_aa22c192dad6f72c562c2efe35caa225.html
+file build/$(MACH32)/docs/html/dir_afe752e2b61b019fd58c602c86dc4951.html \
+    path=usr/share/doc/net-snmp/html/dir_afe752e2b61b019fd58c602c86dc4951.html
+file build/$(MACH32)/docs/html/dir_d147fe1c689e073a96d6ec2d70b8c044.html \
+    path=usr/share/doc/net-snmp/html/dir_d147fe1c689e073a96d6ec2d70b8c044.html
+file build/$(MACH32)/docs/html/dir_d44c64559bbebec7f509842c48db8b23.html \
+    path=usr/share/doc/net-snmp/html/dir_d44c64559bbebec7f509842c48db8b23.html
+file build/$(MACH32)/docs/html/doc.png path=usr/share/doc/net-snmp/html/doc.png
+file build/$(MACH32)/docs/html/doxygen.css \
+    path=usr/share/doc/net-snmp/html/doxygen.css
+file build/$(MACH32)/docs/html/doxygen.png \
+    path=usr/share/doc/net-snmp/html/doxygen.png
+file build/$(MACH32)/docs/html/ds__agent_8h_source.html \
+    path=usr/share/doc/net-snmp/html/ds__agent_8h_source.html
+file build/$(MACH32)/docs/html/dummy_8c_source.html \
+    path=usr/share/doc/net-snmp/html/dummy_8c_source.html
+file build/$(MACH32)/docs/html/dynsections.js \
+    path=usr/share/doc/net-snmp/html/dynsections.js
+file build/$(MACH32)/docs/html/example_8c_source.html \
+    path=usr/share/doc/net-snmp/html/example_8c_source.html
+file build/$(MACH32)/docs/html/example_8h_source.html \
+    path=usr/share/doc/net-snmp/html/example_8h_source.html
+file build/$(MACH32)/docs/html/examples.html \
+    path=usr/share/doc/net-snmp/html/examples.html
+file build/$(MACH32)/docs/html/factory_8h_source.html \
+    path=usr/share/doc/net-snmp/html/factory_8h_source.html
+file build/$(MACH32)/docs/html/fd__event__manager_8c_source.html \
+    path=usr/share/doc/net-snmp/html/fd__event__manager_8c_source.html
+file build/$(MACH32)/docs/html/fd__event__manager_8h_source.html \
+    path=usr/share/doc/net-snmp/html/fd__event__manager_8h_source.html
+file build/$(MACH32)/docs/html/file__utils_8c_source.html \
+    path=usr/share/doc/net-snmp/html/file__utils_8c_source.html
+file build/$(MACH32)/docs/html/file__utils_8h_source.html \
+    path=usr/share/doc/net-snmp/html/file__utils_8h_source.html
+file build/$(MACH32)/docs/html/files.html \
+    path=usr/share/doc/net-snmp/html/files.html
+file build/$(MACH32)/docs/html/folderclosed.png \
+    path=usr/share/doc/net-snmp/html/folderclosed.png
+file build/$(MACH32)/docs/html/folderopen.png \
+    path=usr/share/doc/net-snmp/html/folderopen.png
+file build/$(MACH32)/docs/html/functions.html \
+    path=usr/share/doc/net-snmp/html/functions.html
+file build/$(MACH32)/docs/html/functions_vars.html \
+    path=usr/share/doc/net-snmp/html/functions_vars.html
+file build/$(MACH32)/docs/html/getopt_8c_source.html \
+    path=usr/share/doc/net-snmp/html/getopt_8c_source.html
+file build/$(MACH32)/docs/html/getopt_8h_source.html \
+    path=usr/share/doc/net-snmp/html/getopt_8h_source.html
+file build/$(MACH32)/docs/html/gettimeofday_8c_source.html \
+    path=usr/share/doc/net-snmp/html/gettimeofday_8c_source.html
+file build/$(MACH32)/docs/html/globals.html \
+    path=usr/share/doc/net-snmp/html/globals.html
+file build/$(MACH32)/docs/html/globals_defs.html \
+    path=usr/share/doc/net-snmp/html/globals_defs.html
+file build/$(MACH32)/docs/html/globals_func.html \
+    path=usr/share/doc/net-snmp/html/globals_func.html
+file build/$(MACH32)/docs/html/globals_type.html \
+    path=usr/share/doc/net-snmp/html/globals_type.html
+file build/$(MACH32)/docs/html/group__access__multiplexer.html \
+    path=usr/share/doc/net-snmp/html/group__access__multiplexer.html
+file build/$(MACH32)/docs/html/group__agent.html \
+    path=usr/share/doc/net-snmp/html/group__agent.html
+file build/$(MACH32)/docs/html/group__agent__context__cache.html \
+    path=usr/share/doc/net-snmp/html/group__agent__context__cache.html
+file build/$(MACH32)/docs/html/group__agent__lookup__cache.html \
+    path=usr/share/doc/net-snmp/html/group__agent__lookup__cache.html
+file build/$(MACH32)/docs/html/group__agent__mib__registering.html \
+    path=usr/share/doc/net-snmp/html/group__agent__mib__registering.html
+file build/$(MACH32)/docs/html/group__agent__mib__subtree.html \
+    path=usr/share/doc/net-snmp/html/group__agent__mib__subtree.html
+file build/$(MACH32)/docs/html/group__agent__registry.html \
+    path=usr/share/doc/net-snmp/html/group__agent__registry.html
+file build/$(MACH32)/docs/html/group__agent__signals.html \
+    path=usr/share/doc/net-snmp/html/group__agent__signals.html
+file build/$(MACH32)/docs/html/group__agent__trap.html \
+    path=usr/share/doc/net-snmp/html/group__agent__trap.html
+file build/$(MACH32)/docs/html/group__asn1__packet__parse.html \
+    path=usr/share/doc/net-snmp/html/group__asn1__packet__parse.html
+file build/$(MACH32)/docs/html/group__baby__steps.html \
+    path=usr/share/doc/net-snmp/html/group__baby__steps.html
+file build/$(MACH32)/docs/html/group__bulk__to__next.html \
+    path=usr/share/doc/net-snmp/html/group__bulk__to__next.html
+file build/$(MACH32)/docs/html/group__cache__handler.html \
+    path=usr/share/doc/net-snmp/html/group__cache__handler.html
+file build/$(MACH32)/docs/html/group__callback.html \
+    path=usr/share/doc/net-snmp/html/group__callback.html
+file build/$(MACH32)/docs/html/group__container.html \
+    path=usr/share/doc/net-snmp/html/group__container.html
+file build/$(MACH32)/docs/html/group__container__iterator.html \
+    path=usr/share/doc/net-snmp/html/group__container__iterator.html
+file build/$(MACH32)/docs/html/group__data__list.html \
+    path=usr/share/doc/net-snmp/html/group__data__list.html
+file build/$(MACH32)/docs/html/group__debug.html \
+    path=usr/share/doc/net-snmp/html/group__debug.html
+file build/$(MACH32)/docs/html/group__default__store.html \
+    path=usr/share/doc/net-snmp/html/group__default__store.html
+file build/$(MACH32)/docs/html/group__handler.html \
+    path=usr/share/doc/net-snmp/html/group__handler.html
+file build/$(MACH32)/docs/html/group__instance.html \
+    path=usr/share/doc/net-snmp/html/group__instance.html
+file build/$(MACH32)/docs/html/group__leaf.html \
+    path=usr/share/doc/net-snmp/html/group__leaf.html
+file build/$(MACH32)/docs/html/group__library.html \
+    path=usr/share/doc/net-snmp/html/group__library.html
+file build/$(MACH32)/docs/html/group__mib__maintenance.html \
+    path=usr/share/doc/net-snmp/html/group__mib__maintenance.html
+file build/$(MACH32)/docs/html/group__mib__utilities.html \
+    path=usr/share/doc/net-snmp/html/group__mib__utilities.html
+file build/$(MACH32)/docs/html/group__mode__end__call.html \
+    path=usr/share/doc/net-snmp/html/group__mode__end__call.html
+file build/$(MACH32)/docs/html/group__multiplexer.html \
+    path=usr/share/doc/net-snmp/html/group__multiplexer.html
+file build/$(MACH32)/docs/html/group__null__container.html \
+    path=usr/share/doc/net-snmp/html/group__null__container.html
+file build/$(MACH32)/docs/html/group__oid__stash.html \
+    path=usr/share/doc/net-snmp/html/group__oid__stash.html
+file build/$(MACH32)/docs/html/group__old__api.html \
+    path=usr/share/doc/net-snmp/html/group__old__api.html
+file build/$(MACH32)/docs/html/group__read__config.html \
+    path=usr/share/doc/net-snmp/html/group__read__config.html
+file build/$(MACH32)/docs/html/group__read__only.html \
+    path=usr/share/doc/net-snmp/html/group__read__only.html
+file build/$(MACH32)/docs/html/group__row__merge.html \
+    path=usr/share/doc/net-snmp/html/group__row__merge.html
+file build/$(MACH32)/docs/html/group__scalar.html \
+    path=usr/share/doc/net-snmp/html/group__scalar.html
+file build/$(MACH32)/docs/html/group__scalar__group__group.html \
+    path=usr/share/doc/net-snmp/html/group__scalar__group__group.html
+file build/$(MACH32)/docs/html/group__serialize.html \
+    path=usr/share/doc/net-snmp/html/group__serialize.html
+file build/$(MACH32)/docs/html/group__snmp__agent.html \
+    path=usr/share/doc/net-snmp/html/group__snmp__agent.html
+file build/$(MACH32)/docs/html/group__snmp__alarm.html \
+    path=usr/share/doc/net-snmp/html/group__snmp__alarm.html
+file build/$(MACH32)/docs/html/group__snmp__client.html \
+    path=usr/share/doc/net-snmp/html/group__snmp__client.html
+file build/$(MACH32)/docs/html/group__snmp__logging.html \
+    path=usr/share/doc/net-snmp/html/group__snmp__logging.html
+file build/$(MACH32)/docs/html/group__stash__cache.html \
+    path=usr/share/doc/net-snmp/html/group__stash__cache.html
+file build/$(MACH32)/docs/html/group__stash__to__next.html \
+    path=usr/share/doc/net-snmp/html/group__stash__to__next.html
+file build/$(MACH32)/docs/html/group__table.html \
+    path=usr/share/doc/net-snmp/html/group__table.html
+file build/$(MACH32)/docs/html/group__table__array.html \
+    path=usr/share/doc/net-snmp/html/group__table__array.html
+file build/$(MACH32)/docs/html/group__table__container.html \
+    path=usr/share/doc/net-snmp/html/group__table__container.html
+file build/$(MACH32)/docs/html/group__table__data.html \
+    path=usr/share/doc/net-snmp/html/group__table__data.html
+file build/$(MACH32)/docs/html/group__table__dataset.html \
+    path=usr/share/doc/net-snmp/html/group__table__dataset.html
+file build/$(MACH32)/docs/html/group__table__generic.html \
+    path=usr/share/doc/net-snmp/html/group__table__generic.html
+file build/$(MACH32)/docs/html/group__table__indexes.html \
+    path=usr/share/doc/net-snmp/html/group__table__indexes.html
+file build/$(MACH32)/docs/html/group__table__iterator.html \
+    path=usr/share/doc/net-snmp/html/group__table__iterator.html
+file build/$(MACH32)/docs/html/group__table__maintenance.html \
+    path=usr/share/doc/net-snmp/html/group__table__maintenance.html
+file build/$(MACH32)/docs/html/group__table__row.html \
+    path=usr/share/doc/net-snmp/html/group__table__row.html
+file build/$(MACH32)/docs/html/group__table__rows.html \
+    path=usr/share/doc/net-snmp/html/group__table__rows.html
+file build/$(MACH32)/docs/html/group__tdata.html \
+    path=usr/share/doc/net-snmp/html/group__tdata.html
+file build/$(MACH32)/docs/html/group__util.html \
+    path=usr/share/doc/net-snmp/html/group__util.html
+file build/$(MACH32)/docs/html/group__utilities.html \
+    path=usr/share/doc/net-snmp/html/group__utilities.html
+file build/$(MACH32)/docs/html/group__watcher.html \
+    path=usr/share/doc/net-snmp/html/group__watcher.html
+file build/$(MACH32)/docs/html/index.html \
+    path=usr/share/doc/net-snmp/html/index.html
+file build/$(MACH32)/docs/html/inet__ntop_8c_source.html \
+    path=usr/share/doc/net-snmp/html/inet__ntop_8c_source.html
+file build/$(MACH32)/docs/html/inet__ntop_8h_source.html \
+    path=usr/share/doc/net-snmp/html/inet__ntop_8h_source.html
+file build/$(MACH32)/docs/html/inet__pton_8c_source.html \
+    path=usr/share/doc/net-snmp/html/inet__pton_8c_source.html
+file build/$(MACH32)/docs/html/inet__pton_8h_source.html \
+    path=usr/share/doc/net-snmp/html/inet__pton_8h_source.html
+file build/$(MACH32)/docs/html/instance_8c_source.html \
+    path=usr/share/doc/net-snmp/html/instance_8c_source.html
+file build/$(MACH32)/docs/html/instance_8h_source.html \
+    path=usr/share/doc/net-snmp/html/instance_8h_source.html
+file build/$(MACH32)/docs/html/int64_8c.html \
+    path=usr/share/doc/net-snmp/html/int64_8c.html
+file build/$(MACH32)/docs/html/int64_8c_source.html \
+    path=usr/share/doc/net-snmp/html/int64_8c_source.html
+file build/$(MACH32)/docs/html/int64_8h_source.html \
+    path=usr/share/doc/net-snmp/html/int64_8h_source.html
+file build/$(MACH32)/docs/html/jquery.js \
+    path=usr/share/doc/net-snmp/html/jquery.js
+file build/$(MACH32)/docs/html/kernel_8c.html \
+    path=usr/share/doc/net-snmp/html/kernel_8c.html
+file build/$(MACH32)/docs/html/kernel_8c_source.html \
+    path=usr/share/doc/net-snmp/html/kernel_8c_source.html
+file build/$(MACH32)/docs/html/kernel_8h.html \
+    path=usr/share/doc/net-snmp/html/kernel_8h.html
+file build/$(MACH32)/docs/html/kernel_8h_source.html \
+    path=usr/share/doc/net-snmp/html/kernel_8h_source.html
+file build/$(MACH32)/docs/html/keytools_8c_source.html \
+    path=usr/share/doc/net-snmp/html/keytools_8c_source.html
+file build/$(MACH32)/docs/html/keytools_8h_source.html \
+    path=usr/share/doc/net-snmp/html/keytools_8h_source.html
+file build/$(MACH32)/docs/html/large__fd__set_8c.html \
+    path=usr/share/doc/net-snmp/html/large__fd__set_8c.html
+file build/$(MACH32)/docs/html/large__fd__set_8c_source.html \
+    path=usr/share/doc/net-snmp/html/large__fd__set_8c_source.html
+file build/$(MACH32)/docs/html/large__fd__set_8h.html \
+    path=usr/share/doc/net-snmp/html/large__fd__set_8h.html
+file build/$(MACH32)/docs/html/large__fd__set_8h_source.html \
+    path=usr/share/doc/net-snmp/html/large__fd__set_8h_source.html
+file build/$(MACH32)/docs/html/lcd__time_8c_source.html \
+    path=usr/share/doc/net-snmp/html/lcd__time_8c_source.html
+file build/$(MACH32)/docs/html/lcd__time_8h_source.html \
+    path=usr/share/doc/net-snmp/html/lcd__time_8h_source.html
+file build/$(MACH32)/docs/html/library_2openssl__md5_8h_source.html \
+    path=usr/share/doc/net-snmp/html/library_2openssl__md5_8h_source.html
+file build/$(MACH32)/docs/html/library_2types_8h_source.html \
+    path=usr/share/doc/net-snmp/html/library_2types_8h_source.html
+file build/$(MACH32)/docs/html/libsnmp_8h_source.html \
+    path=usr/share/doc/net-snmp/html/libsnmp_8h_source.html
+file build/$(MACH32)/docs/html/m2m_8h_source.html \
+    path=usr/share/doc/net-snmp/html/m2m_8h_source.html
+file build/$(MACH32)/docs/html/md5_8c_source.html \
+    path=usr/share/doc/net-snmp/html/md5_8c_source.html
+file build/$(MACH32)/docs/html/md5_8h_source.html \
+    path=usr/share/doc/net-snmp/html/md5_8h_source.html
+file build/$(MACH32)/docs/html/menu.js path=usr/share/doc/net-snmp/html/menu.js
+file build/$(MACH32)/docs/html/menudata.js \
+    path=usr/share/doc/net-snmp/html/menudata.js
+file build/$(MACH32)/docs/html/mfd_8h_source.html \
+    path=usr/share/doc/net-snmp/html/mfd_8h_source.html
+file build/$(MACH32)/docs/html/mib_8c_source.html \
+    path=usr/share/doc/net-snmp/html/mib_8c_source.html
+file build/$(MACH32)/docs/html/mib_8h_source.html \
+    path=usr/share/doc/net-snmp/html/mib_8h_source.html
+file build/$(MACH32)/docs/html/mib__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/mib__api_8h_source.html
+file build/$(MACH32)/docs/html/mib__module__config_8h_source.html \
+    path=usr/share/doc/net-snmp/html/mib__module__config_8h_source.html
+file build/$(MACH32)/docs/html/mib__modules_8c_source.html \
+    path=usr/share/doc/net-snmp/html/mib__modules_8c_source.html
+file build/$(MACH32)/docs/html/mib__modules_8h_source.html \
+    path=usr/share/doc/net-snmp/html/mib__modules_8h_source.html
+file build/$(MACH32)/docs/html/mode__end__call_8c_source.html \
+    path=usr/share/doc/net-snmp/html/mode__end__call_8c_source.html
+file build/$(MACH32)/docs/html/mode__end__call_8h_source.html \
+    path=usr/share/doc/net-snmp/html/mode__end__call_8h_source.html
+file build/$(MACH32)/docs/html/modules.html \
+    path=usr/share/doc/net-snmp/html/modules.html
+file build/$(MACH32)/docs/html/mt__support_8c_source.html \
+    path=usr/share/doc/net-snmp/html/mt__support_8c_source.html
+file build/$(MACH32)/docs/html/mt__support_8h_source.html \
+    path=usr/share/doc/net-snmp/html/mt__support_8h_source.html
+file build/$(MACH32)/docs/html/multiplexer_8c_source.html \
+    path=usr/share/doc/net-snmp/html/multiplexer_8c_source.html
+file build/$(MACH32)/docs/html/multiplexer_8h_source.html \
+    path=usr/share/doc/net-snmp/html/multiplexer_8h_source.html
+file build/$(MACH32)/docs/html/nav_f.png \
+    path=usr/share/doc/net-snmp/html/nav_f.png
+file build/$(MACH32)/docs/html/nav_g.png \
+    path=usr/share/doc/net-snmp/html/nav_g.png
+file build/$(MACH32)/docs/html/nav_h.png \
+    path=usr/share/doc/net-snmp/html/nav_h.png
+file build/$(MACH32)/docs/html/net-snmp-agent-includes_8h_source.html \
+    path=usr/share/doc/net-snmp/html/net-snmp-agent-includes_8h_source.html
+file build/$(MACH32)/docs/html/net-snmp-config_8h_source.html \
+    path=usr/share/doc/net-snmp/html/net-snmp-config_8h_source.html
+file build/$(MACH32)/docs/html/net-snmp-features_8h_source.html \
+    path=usr/share/doc/net-snmp/html/net-snmp-features_8h_source.html
+file build/$(MACH32)/docs/html/net-snmp-includes_8h_source.html \
+    path=usr/share/doc/net-snmp/html/net-snmp-includes_8h_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable_8c_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable_8c_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable_8h_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__access_8c_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__access_8c_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__access_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__access_8h_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__checkfns_8c_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__checkfns_8c_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__checkfns_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__checkfns_8h_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__checkfns__local_8c_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__checkfns__local_8c_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__checkfns__local_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__checkfns__local_8h_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__columns_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__columns_8h_source.html
+file build/$(MACH32)/docs/html/netSnmpHostsTable__enums_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netSnmpHostsTable__enums_8h_source.html
+file build/$(MACH32)/docs/html/netsnmp-attribute-format_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netsnmp-attribute-format_8h_source.html
+file build/$(MACH32)/docs/html/netsnmp__close__fds_8c_source.html \
+    path=usr/share/doc/net-snmp/html/netsnmp__close__fds_8c_source.html
+file build/$(MACH32)/docs/html/netsnmp__close__fds_8h_source.html \
+    path=usr/share/doc/net-snmp/html/netsnmp__close__fds_8h_source.html
+file build/$(MACH32)/docs/html/notification_8c-example.html \
+    path=usr/share/doc/net-snmp/html/notification_8c-example.html
+file build/$(MACH32)/docs/html/notification_8c_source.html \
+    path=usr/share/doc/net-snmp/html/notification_8c_source.html
+file build/$(MACH32)/docs/html/notification_8h_source.html \
+    path=usr/share/doc/net-snmp/html/notification_8h_source.html
+file build/$(MACH32)/docs/html/null_8c_source.html \
+    path=usr/share/doc/net-snmp/html/null_8c_source.html
+file build/$(MACH32)/docs/html/null_8h_source.html \
+    path=usr/share/doc/net-snmp/html/null_8h_source.html
+file build/$(MACH32)/docs/html/object__monitor_8c_source.html \
+    path=usr/share/doc/net-snmp/html/object__monitor_8c_source.html
+file build/$(MACH32)/docs/html/object__monitor_8h_source.html \
+    path=usr/share/doc/net-snmp/html/object__monitor_8h_source.html
+file build/$(MACH32)/docs/html/oid_8h_source.html \
+    path=usr/share/doc/net-snmp/html/oid_8h_source.html
+file build/$(MACH32)/docs/html/oid__stash_8c_source.html \
+    path=usr/share/doc/net-snmp/html/oid__stash_8c_source.html
+file build/$(MACH32)/docs/html/oid__stash_8h_source.html \
+    path=usr/share/doc/net-snmp/html/oid__stash_8h_source.html
+file build/$(MACH32)/docs/html/old__api_8c_source.html \
+    path=usr/share/doc/net-snmp/html/old__api_8c_source.html
+file build/$(MACH32)/docs/html/old__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/old__api_8h_source.html
+file build/$(MACH32)/docs/html/open.png \
+    path=usr/share/doc/net-snmp/html/open.png
+file build/$(MACH32)/docs/html/opendir_8c_source.html \
+    path=usr/share/doc/net-snmp/html/opendir_8c_source.html
+file build/$(MACH32)/docs/html/openssl__aes_8h_source.html \
+    path=usr/share/doc/net-snmp/html/openssl__aes_8h_source.html
+file build/$(MACH32)/docs/html/openssl__des_8h_source.html \
+    path=usr/share/doc/net-snmp/html/openssl__des_8h_source.html
+file build/$(MACH32)/docs/html/openssl__md5_8h_source.html \
+    path=usr/share/doc/net-snmp/html/openssl__md5_8h_source.html
+file build/$(MACH32)/docs/html/openssl__sha_8h_source.html \
+    path=usr/share/doc/net-snmp/html/openssl__sha_8h_source.html
+file build/$(MACH32)/docs/html/output__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/output__api_8h_source.html
+file build/$(MACH32)/docs/html/pages.html \
+    path=usr/share/doc/net-snmp/html/pages.html
+file build/$(MACH32)/docs/html/parse_8c_source.html \
+    path=usr/share/doc/net-snmp/html/parse_8c_source.html
+file build/$(MACH32)/docs/html/parse_8h_source.html \
+    path=usr/share/doc/net-snmp/html/parse_8h_source.html
+file build/$(MACH32)/docs/html/pdu__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/pdu__api_8h_source.html
+file build/$(MACH32)/docs/html/pkcs_8c_source.html \
+    path=usr/share/doc/net-snmp/html/pkcs_8c_source.html
+file build/$(MACH32)/docs/html/read__config_8c_source.html \
+    path=usr/share/doc/net-snmp/html/read__config_8c_source.html
+file build/$(MACH32)/docs/html/read__config_8h_source.html \
+    path=usr/share/doc/net-snmp/html/read__config_8h_source.html
+file build/$(MACH32)/docs/html/read__only_8c_source.html \
+    path=usr/share/doc/net-snmp/html/read__only_8c_source.html
+file build/$(MACH32)/docs/html/read__only_8h_source.html \
+    path=usr/share/doc/net-snmp/html/read__only_8h_source.html
+file build/$(MACH32)/docs/html/readdir_8c_source.html \
+    path=usr/share/doc/net-snmp/html/readdir_8c_source.html
+file build/$(MACH32)/docs/html/row__merge_8c_source.html \
+    path=usr/share/doc/net-snmp/html/row__merge_8c_source.html
+file build/$(MACH32)/docs/html/row__merge_8h_source.html \
+    path=usr/share/doc/net-snmp/html/row__merge_8h_source.html
+file build/$(MACH32)/docs/html/scalar_8c_source.html \
+    path=usr/share/doc/net-snmp/html/scalar_8c_source.html
+file build/$(MACH32)/docs/html/scalar_8h_source.html \
+    path=usr/share/doc/net-snmp/html/scalar_8h_source.html
+file build/$(MACH32)/docs/html/scalar__group_8c_source.html \
+    path=usr/share/doc/net-snmp/html/scalar__group_8c_source.html
+file build/$(MACH32)/docs/html/scalar__group_8h_source.html \
+    path=usr/share/doc/net-snmp/html/scalar__group_8h_source.html
+file build/$(MACH32)/docs/html/scalar__int_8c_source.html \
+    path=usr/share/doc/net-snmp/html/scalar__int_8c_source.html
+file build/$(MACH32)/docs/html/scalar__int_8h_source.html \
+    path=usr/share/doc/net-snmp/html/scalar__int_8h_source.html
+file build/$(MACH32)/docs/html/scalar_int_8c-example.html \
+    path=usr/share/doc/net-snmp/html/scalar_int_8c-example.html
+file build/$(MACH32)/docs/html/scapi_8c_source.html \
+    path=usr/share/doc/net-snmp/html/scapi_8c_source.html
+file build/$(MACH32)/docs/html/scapi_8h_source.html \
+    path=usr/share/doc/net-snmp/html/scapi_8h_source.html
+file build/$(MACH32)/docs/html/sd-daemon_8c_source.html \
+    path=usr/share/doc/net-snmp/html/sd-daemon_8c_source.html
+file build/$(MACH32)/docs/html/sd-daemon_8h_source.html \
+    path=usr/share/doc/net-snmp/html/sd-daemon_8h_source.html
+file build/$(MACH32)/docs/html/serialize_8c_source.html \
+    path=usr/share/doc/net-snmp/html/serialize_8c_source.html
+file build/$(MACH32)/docs/html/serialize_8h_source.html \
+    path=usr/share/doc/net-snmp/html/serialize_8h_source.html
+file build/$(MACH32)/docs/html/session__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/session__api_8h_source.html
+file build/$(MACH32)/docs/html/set__helper_8h_source.html \
+    path=usr/share/doc/net-snmp/html/set__helper_8h_source.html
+file build/$(MACH32)/docs/html/snmp-tc_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp-tc_8c_source.html
+file build/$(MACH32)/docs/html/snmp-tc_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp-tc_8h_source.html
+file build/$(MACH32)/docs/html/snmpAAL5PVCDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpAAL5PVCDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpAliasDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpAliasDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpCallbackDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpCallbackDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpDTLSUDPDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpDTLSUDPDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpIPXDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpIPXDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpIPv4BaseDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpIPv4BaseDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpIPv6BaseDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpIPv6BaseDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpSSHDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpSSHDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpSTDDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpSTDDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpSocketBaseDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpSocketBaseDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpTCPBaseDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpTCPBaseDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpTCPDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpTCPDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpTCPIPv6Domain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpTCPIPv6Domain_8h_source.html
+file build/$(MACH32)/docs/html/snmpTLSBaseDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpTLSBaseDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpTLSTCPDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpTLSTCPDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpUDPBaseDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpUDPBaseDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpUDPDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpUDPDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpUDPIPv4BaseDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpUDPIPv4BaseDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpUDPIPv6Domain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpUDPIPv6Domain_8h_source.html
+file build/$(MACH32)/docs/html/snmpUDPsharedDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpUDPsharedDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmpUnixDomain_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpUnixDomain_8h_source.html
+file build/$(MACH32)/docs/html/snmp_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp_8c_source.html
+file build/$(MACH32)/docs/html/snmp_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp_8h_source.html
+file build/$(MACH32)/docs/html/snmp__agent_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__agent_8c_source.html
+file build/$(MACH32)/docs/html/snmp__agent_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__agent_8h_source.html
+file build/$(MACH32)/docs/html/snmp__alarm_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__alarm_8c_source.html
+file build/$(MACH32)/docs/html/snmp__alarm_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__alarm_8h_source.html
+file build/$(MACH32)/docs/html/snmp__api_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__api_8c_source.html
+file build/$(MACH32)/docs/html/snmp__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__api_8h_source.html
+file build/$(MACH32)/docs/html/snmp__assert_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__assert_8h_source.html
+file build/$(MACH32)/docs/html/snmp__auth_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__auth_8c_source.html
+file build/$(MACH32)/docs/html/snmp__client_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__client_8c_source.html
+file build/$(MACH32)/docs/html/snmp__client_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__client_8h_source.html
+file build/$(MACH32)/docs/html/snmp__debug_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__debug_8c_source.html
+file build/$(MACH32)/docs/html/snmp__debug_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__debug_8h_source.html
+file build/$(MACH32)/docs/html/snmp__enum_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__enum_8c_source.html
+file build/$(MACH32)/docs/html/snmp__enum_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__enum_8h_source.html
+file build/$(MACH32)/docs/html/snmp__get__statistic_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__get__statistic_8c_source.html
+file build/$(MACH32)/docs/html/snmp__get__statistic_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__get__statistic_8h_source.html
+file build/$(MACH32)/docs/html/snmp__impl_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__impl_8h_source.html
+file build/$(MACH32)/docs/html/snmp__logging_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__logging_8c_source.html
+file build/$(MACH32)/docs/html/snmp__logging_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__logging_8h_source.html
+file build/$(MACH32)/docs/html/snmp__openssl_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__openssl_8c_source.html
+file build/$(MACH32)/docs/html/snmp__openssl_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__openssl_8h_source.html
+file build/$(MACH32)/docs/html/snmp__parse__args_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__parse__args_8c_source.html
+file build/$(MACH32)/docs/html/snmp__parse__args_8h.html \
+    path=usr/share/doc/net-snmp/html/snmp__parse__args_8h.html
+file build/$(MACH32)/docs/html/snmp__parse__args_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__parse__args_8h_source.html
+file build/$(MACH32)/docs/html/snmp__perl_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__perl_8c_source.html
+file build/$(MACH32)/docs/html/snmp__perl_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__perl_8h_source.html
+file build/$(MACH32)/docs/html/snmp__secmod_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__secmod_8c_source.html
+file build/$(MACH32)/docs/html/snmp__secmod_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__secmod_8h_source.html
+file build/$(MACH32)/docs/html/snmp__service_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__service_8c_source.html
+file build/$(MACH32)/docs/html/snmp__service_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__service_8h_source.html
+file build/$(MACH32)/docs/html/snmp__transport_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__transport_8c_source.html
+file build/$(MACH32)/docs/html/snmp__transport_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__transport_8h_source.html
+file build/$(MACH32)/docs/html/snmp__vars_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__vars_8c_source.html
+file build/$(MACH32)/docs/html/snmp__vars_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__vars_8h_source.html
+file build/$(MACH32)/docs/html/snmp__version_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmp__version_8c_source.html
+file build/$(MACH32)/docs/html/snmpd_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmpd_8c_source.html
+file build/$(MACH32)/docs/html/snmpd_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpd_8h_source.html
+file build/$(MACH32)/docs/html/snmpksm_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmpksm_8c_source.html
+file build/$(MACH32)/docs/html/snmpksm_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpksm_8h_source.html
+file build/$(MACH32)/docs/html/snmpsm__init_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpsm__init_8h_source.html
+file build/$(MACH32)/docs/html/snmpsm__shutdown_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpsm__shutdown_8h_source.html
+file build/$(MACH32)/docs/html/snmptsm_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmptsm_8c_source.html
+file build/$(MACH32)/docs/html/snmptsm_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmptsm_8h_source.html
+file build/$(MACH32)/docs/html/snmpusm_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmpusm_8c_source.html
+file build/$(MACH32)/docs/html/snmpusm_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpusm_8h_source.html
+file build/$(MACH32)/docs/html/snmpv3-security-includes_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpv3-security-includes_8h_source.html
+file build/$(MACH32)/docs/html/snmpv3_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snmpv3_8c_source.html
+file build/$(MACH32)/docs/html/snmpv3_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpv3_8h_source.html
+file build/$(MACH32)/docs/html/snmpv3__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snmpv3__api_8h_source.html
+file build/$(MACH32)/docs/html/snprintf_8c_source.html \
+    path=usr/share/doc/net-snmp/html/snprintf_8c_source.html
+file build/$(MACH32)/docs/html/snprintf_8h_source.html \
+    path=usr/share/doc/net-snmp/html/snprintf_8h_source.html
+file build/$(MACH32)/docs/html/splitbar.png \
+    path=usr/share/doc/net-snmp/html/splitbar.png
+file build/$(MACH32)/docs/html/stash__cache_8c_source.html \
+    path=usr/share/doc/net-snmp/html/stash__cache_8c_source.html
+file build/$(MACH32)/docs/html/stash__cache_8h_source.html \
+    path=usr/share/doc/net-snmp/html/stash__cache_8h_source.html
+file build/$(MACH32)/docs/html/stash__to__next_8c_source.html \
+    path=usr/share/doc/net-snmp/html/stash__to__next_8c_source.html
+file build/$(MACH32)/docs/html/stash__to__next_8h_source.html \
+    path=usr/share/doc/net-snmp/html/stash__to__next_8h_source.html
+file build/$(MACH32)/docs/html/strlcat_8c_source.html \
+    path=usr/share/doc/net-snmp/html/strlcat_8c_source.html
+file build/$(MACH32)/docs/html/strlcpy_8c_source.html \
+    path=usr/share/doc/net-snmp/html/strlcpy_8c_source.html
+file build/$(MACH32)/docs/html/strtok__r_8c_source.html \
+    path=usr/share/doc/net-snmp/html/strtok__r_8c_source.html
+file build/$(MACH32)/docs/html/strtol_8c_source.html \
+    path=usr/share/doc/net-snmp/html/strtol_8c_source.html
+file build/$(MACH32)/docs/html/strtoul_8c_source.html \
+    path=usr/share/doc/net-snmp/html/strtoul_8c_source.html
+file build/$(MACH32)/docs/html/strtoull_8c_source.html \
+    path=usr/share/doc/net-snmp/html/strtoull_8c_source.html
+file build/$(MACH32)/docs/html/structDES__ks.html \
+    path=usr/share/doc/net-snmp/html/structDES__ks.html
+file build/$(MACH32)/docs/html/structMD5state__st.html \
+    path=usr/share/doc/net-snmp/html/structMD5state__st.html
+file build/$(MACH32)/docs/html/structMDstruct.html \
+    path=usr/share/doc/net-snmp/html/structMDstruct.html
+file build/$(MACH32)/docs/html/structSHA256state__st.html \
+    path=usr/share/doc/net-snmp/html/structSHA256state__st.html
+file build/$(MACH32)/docs/html/structSHA512state__st.html \
+    path=usr/share/doc/net-snmp/html/structSHA512state__st.html
+file build/$(MACH32)/docs/html/structSHAstate__st.html \
+    path=usr/share/doc/net-snmp/html/structSHAstate__st.html
+file build/$(MACH32)/docs/html/struct__InputParams.html \
+    path=usr/share/doc/net-snmp/html/struct__InputParams.html
+file build/$(MACH32)/docs/html/struct__agent__nsap.html \
+    path=usr/share/doc/net-snmp/html/struct__agent__nsap.html
+file build/$(MACH32)/docs/html/struct__dir__struc.html \
+    path=usr/share/doc/net-snmp/html/struct__dir__struc.html
+file build/$(MACH32)/docs/html/struct__netsnmpTLSBaseData__s.html \
+    path=usr/share/doc/net-snmp/html/struct__netsnmpTLSBaseData__s.html
+file build/$(MACH32)/docs/html/struct__netsnmp__verify__info__s.html \
+    path=usr/share/doc/net-snmp/html/struct__netsnmp__verify__info__s.html
+file build/$(MACH32)/docs/html/structaddrCache.html \
+    path=usr/share/doc/net-snmp/html/structaddrCache.html
+file build/$(MACH32)/docs/html/structaes__key__st.html \
+    path=usr/share/doc/net-snmp/html/structaes__key__st.html
+file build/$(MACH32)/docs/html/structagent__add__trap__args.html \
+    path=usr/share/doc/net-snmp/html/structagent__add__trap__args.html
+file build/$(MACH32)/docs/html/structagent__set__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structagent__set__cache__s.html
+file build/$(MACH32)/docs/html/structautonlist.html \
+    path=usr/share/doc/net-snmp/html/structautonlist.html
+file build/$(MACH32)/docs/html/structbinary__array__iterator__s.html \
+    path=usr/share/doc/net-snmp/html/structbinary__array__iterator__s.html
+file build/$(MACH32)/docs/html/structbinary__array__table__s.html \
+    path=usr/share/doc/net-snmp/html/structbinary__array__table__s.html
+file build/$(MACH32)/docs/html/structcommitInfo.html \
+    path=usr/share/doc/net-snmp/html/structcommitInfo.html
+file build/$(MACH32)/docs/html/structconfig__files.html \
+    path=usr/share/doc/net-snmp/html/structconfig__files.html
+file build/$(MACH32)/docs/html/structconfig__line.html \
+    path=usr/share/doc/net-snmp/html/structconfig__line.html
+file build/$(MACH32)/docs/html/structcounter64.html \
+    path=usr/share/doc/net-snmp/html/structcounter64.html
+file build/$(MACH32)/docs/html/structdata__node__s.html \
+    path=usr/share/doc/net-snmp/html/structdata__node__s.html
+file build/$(MACH32)/docs/html/structdata__set__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structdata__set__cache__s.html
+file build/$(MACH32)/docs/html/structdirect.html \
+    path=usr/share/doc/net-snmp/html/structdirect.html
+file build/$(MACH32)/docs/html/structenginetime__struct.html \
+    path=usr/share/doc/net-snmp/html/structenginetime__struct.html
+file build/$(MACH32)/docs/html/structenum__list.html \
+    path=usr/share/doc/net-snmp/html/structenum__list.html
+file build/$(MACH32)/docs/html/structget__req__state.html \
+    path=usr/share/doc/net-snmp/html/structget__req__state.html
+file build/$(MACH32)/docs/html/structindex__list.html \
+    path=usr/share/doc/net-snmp/html/structindex__list.html
+file build/$(MACH32)/docs/html/structksm__cache__entry.html \
+    path=usr/share/doc/net-snmp/html/structksm__cache__entry.html
+file build/$(MACH32)/docs/html/structksm__secStateRef.html \
+    path=usr/share/doc/net-snmp/html/structksm__secStateRef.html
+file build/$(MACH32)/docs/html/structlookup__cache__context__s.html \
+    path=usr/share/doc/net-snmp/html/structlookup__cache__context__s.html
+file build/$(MACH32)/docs/html/structmodule.html \
+    path=usr/share/doc/net-snmp/html/structmodule.html
+file build/$(MACH32)/docs/html/structmodule__compatability.html \
+    path=usr/share/doc/net-snmp/html/structmodule__compatability.html
+file build/$(MACH32)/docs/html/structmodule__import.html \
+    path=usr/share/doc/net-snmp/html/structmodule__import.html
+file build/$(MACH32)/docs/html/structmodule__init__list.html \
+    path=usr/share/doc/net-snmp/html/structmodule__init__list.html
+file build/$(MACH32)/docs/html/structmy__data__info__s.html \
+    path=usr/share/doc/net-snmp/html/structmy__data__info__s.html
+file build/$(MACH32)/docs/html/structmy__loop__info__s.html \
+    path=usr/share/doc/net-snmp/html/structmy__loop__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__addr__pair__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__addr__pair__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__agent__request__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__agent__request__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__agent__session__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__agent__session__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__auth__alg__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__auth__alg__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__baby__steps__access__methods__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__baby__steps__access__methods__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__baby__steps__modes__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__baby__steps__modes__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__cache__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__cachemap__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__cachemap__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__column__info__t.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__column__info__t.html
+file build/$(MACH32)/docs/html/structnetsnmp__container__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__container__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__data__list__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__data__list__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__data__list__saveinfo__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__data__list__saveinfo__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__delegated__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__delegated__cache__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__ds__read__config__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__ds__read__config__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__factory__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__factory__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__file__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__file__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__handler__args__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__handler__args__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__handler__registration__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__handler__registration__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__index__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__index__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__indexed__addr__pair__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__indexed__addr__pair__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__iterator__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__iterator__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__iterator__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__iterator__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__large__fd__set__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__large__fd__set__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__line__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__line__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__line__process__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__line__process__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__log__handler__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__log__handler__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__lookup__domain.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__lookup__domain.html
+file build/$(MACH32)/docs/html/structnetsnmp__lookup__target.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__lookup__target.html
+file build/$(MACH32)/docs/html/structnetsnmp__mib__handler__access__methods.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__mib__handler__access__methods.html
+file build/$(MACH32)/docs/html/structnetsnmp__mib__handler__methods.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__mib__handler__methods.html
+file build/$(MACH32)/docs/html/structnetsnmp__mib__handler__methods__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__mib__handler__methods__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__mib__handler__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__mib__handler__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__mode__handler__list__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__mode__handler__list__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__monitor__callback__cooperative__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__monitor__callback__cooperative__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__monitor__callback__header__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__monitor__callback__header__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__monitor__callback__set__request__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__monitor__callback__set__request__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__oid__stash__node__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__oid__stash__node__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__oid__stash__save__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__oid__stash__save__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__old__api__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__old__api__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__pdu__stats__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__pdu__stats__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__priv__alg__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__priv__alg__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__ref__size__t__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__ref__size__t__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__ref__void.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__ref__void.html
+file build/$(MACH32)/docs/html/structnetsnmp__request__group__item__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__request__group__item__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__request__group__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__request__group__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__request__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__request__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__row__merge__status__x.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__row__merge__status__x.html
+file build/$(MACH32)/docs/html/structnetsnmp__scalar__group__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__scalar__group__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__set__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__set__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__stash__cache__data__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__stash__cache__data__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__stash__cache__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__stash__cache__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__state__machine__input__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__state__machine__input__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__state__machine__step__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__state__machine__step__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__subtree__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__subtree__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__table__array__callbacks__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__table__array__callbacks__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__table__data__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__table__data__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__table__data__set__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__table__data__set__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__table__data__set__storage__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__table__data__set__storage__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__table__registration__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__table__registration__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__table__request__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__table__request__info__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__table__row__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__table__row__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__tdata__row__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__tdata__row__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__tdata__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__tdata__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__tdomain__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__tdomain__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__tdomain__spec__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__tdomain__spec__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__tmStateReference__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__tmStateReference__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__token__descr__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__token__descr__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__token__value__index__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__token__value__index__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__transport__config__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__transport__config__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__transport__list__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__transport__list__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__transport__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__transport__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__trap__stats__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__trap__stats__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__tree__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__tree__cache__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__tsmSecurityReference__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__tsmSecurityReference__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__void__array__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__void__array__s.html
+file build/$(MACH32)/docs/html/structnetsnmp__watcher__info__s.html \
+    path=usr/share/doc/net-snmp/html/structnetsnmp__watcher__info__s.html
+file build/$(MACH32)/docs/html/structnewrow__stash__s.html \
+    path=usr/share/doc/net-snmp/html/structnewrow__stash__s.html
+file build/$(MACH32)/docs/html/structobjgroup.html \
+    path=usr/share/doc/net-snmp/html/structobjgroup.html
+file build/$(MACH32)/docs/html/structold__opi__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structold__opi__cache__s.html
+file build/$(MACH32)/docs/html/structparse__hints.html \
+    path=usr/share/doc/net-snmp/html/structparse__hints.html
+file build/$(MACH32)/docs/html/structrange__list.html \
+    path=usr/share/doc/net-snmp/html/structrange__list.html
+file build/$(MACH32)/docs/html/structread__config__memory.html \
+    path=usr/share/doc/net-snmp/html/structread__config__memory.html
+file build/$(MACH32)/docs/html/structregister__parameters.html \
+    path=usr/share/doc/net-snmp/html/structregister__parameters.html
+file build/$(MACH32)/docs/html/structregister__sysOR__parameters.html \
+    path=usr/share/doc/net-snmp/html/structregister__sysOR__parameters.html
+file build/$(MACH32)/docs/html/structrowcreate__state__s.html \
+    path=usr/share/doc/net-snmp/html/structrowcreate__state__s.html
+file build/$(MACH32)/docs/html/structsession__list.html \
+    path=usr/share/doc/net-snmp/html/structsession__list.html
+file build/$(MACH32)/docs/html/structsl__container__s.html \
+    path=usr/share/doc/net-snmp/html/structsl__container__s.html
+file build/$(MACH32)/docs/html/structsnmp__alarm.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__alarm.html
+file build/$(MACH32)/docs/html/structsnmp__enum__list.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__enum__list.html
+file build/$(MACH32)/docs/html/structsnmp__gen__callback.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__gen__callback.html
+file build/$(MACH32)/docs/html/structsnmp__internal__session.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__internal__session.html
+file build/$(MACH32)/docs/html/structsnmp__log__message.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__log__message.html
+file build/$(MACH32)/docs/html/structsnmp__pdu.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__pdu.html
+file build/$(MACH32)/docs/html/structsnmp__rcv__packet__s.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__rcv__packet__s.html
+file build/$(MACH32)/docs/html/structsnmp__secmod__def.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__secmod__def.html
+file build/$(MACH32)/docs/html/structsnmp__secmod__incoming__params.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__secmod__incoming__params.html
+file build/$(MACH32)/docs/html/structsnmp__secmod__list.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__secmod__list.html
+file build/$(MACH32)/docs/html/structsnmp__secmod__outgoing__params.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__secmod__outgoing__params.html
+file build/$(MACH32)/docs/html/structsnmp__session.html \
+    path=usr/share/doc/net-snmp/html/structsnmp__session.html
+file build/$(MACH32)/docs/html/structssll__iterator__s.html \
+    path=usr/share/doc/net-snmp/html/structssll__iterator__s.html
+file build/$(MACH32)/docs/html/structsubid__s.html \
+    path=usr/share/doc/net-snmp/html/structsubid__s.html
+file build/$(MACH32)/docs/html/structsubtree__context__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structsubtree__context__cache__s.html
+file build/$(MACH32)/docs/html/structsynch__state.html \
+    path=usr/share/doc/net-snmp/html/structsynch__state.html
+file build/$(MACH32)/docs/html/structsysORTable.html \
+    path=usr/share/doc/net-snmp/html/structsysORTable.html
+file build/$(MACH32)/docs/html/structtable__container__data__s.html \
+    path=usr/share/doc/net-snmp/html/structtable__container__data__s.html
+file build/$(MACH32)/docs/html/structtc.html \
+    path=usr/share/doc/net-snmp/html/structtc.html
+file build/$(MACH32)/docs/html/structti__cache__info__s.html \
+    path=usr/share/doc/net-snmp/html/structti__cache__info__s.html
+file build/$(MACH32)/docs/html/structtok.html \
+    path=usr/share/doc/net-snmp/html/structtok.html
+file build/$(MACH32)/docs/html/structtrans__cache__s.html \
+    path=usr/share/doc/net-snmp/html/structtrans__cache__s.html
+file build/$(MACH32)/docs/html/structtree.html \
+    path=usr/share/doc/net-snmp/html/structtree.html
+file build/$(MACH32)/docs/html/structusmStateReference.html \
+    path=usr/share/doc/net-snmp/html/structusmStateReference.html
+file build/$(MACH32)/docs/html/structusmUser.html \
+    path=usr/share/doc/net-snmp/html/structusmUser.html
+file build/$(MACH32)/docs/html/structusm__alg__type__s.html \
+    path=usr/share/doc/net-snmp/html/structusm__alg__type__s.html
+file build/$(MACH32)/docs/html/structvacm__accessEntry.html \
+    path=usr/share/doc/net-snmp/html/structvacm__accessEntry.html
+file build/$(MACH32)/docs/html/structvacm__groupEntry.html \
+    path=usr/share/doc/net-snmp/html/structvacm__groupEntry.html
+file build/$(MACH32)/docs/html/structvacm__viewEntry.html \
+    path=usr/share/doc/net-snmp/html/structvacm__viewEntry.html
+file build/$(MACH32)/docs/html/structvarbind__list.html \
+    path=usr/share/doc/net-snmp/html/structvarbind__list.html
+file build/$(MACH32)/docs/html/structvariable.html \
+    path=usr/share/doc/net-snmp/html/structvariable.html
+file build/$(MACH32)/docs/html/structvariable1.html \
+    path=usr/share/doc/net-snmp/html/structvariable1.html
+file build/$(MACH32)/docs/html/structvariable13.html \
+    path=usr/share/doc/net-snmp/html/structvariable13.html
+file build/$(MACH32)/docs/html/structvariable2.html \
+    path=usr/share/doc/net-snmp/html/structvariable2.html
+file build/$(MACH32)/docs/html/structvariable3.html \
+    path=usr/share/doc/net-snmp/html/structvariable3.html
+file build/$(MACH32)/docs/html/structvariable4.html \
+    path=usr/share/doc/net-snmp/html/structvariable4.html
+file build/$(MACH32)/docs/html/structvariable7.html \
+    path=usr/share/doc/net-snmp/html/structvariable7.html
+file build/$(MACH32)/docs/html/structvariable8.html \
+    path=usr/share/doc/net-snmp/html/structvariable8.html
+file build/$(MACH32)/docs/html/structvariable__list.html \
+    path=usr/share/doc/net-snmp/html/structvariable__list.html
+file build/$(MACH32)/docs/html/structview__parameters.html \
+    path=usr/share/doc/net-snmp/html/structview__parameters.html
+file build/$(MACH32)/docs/html/sync_off.png \
+    path=usr/share/doc/net-snmp/html/sync_off.png
+file build/$(MACH32)/docs/html/sync_on.png \
+    path=usr/share/doc/net-snmp/html/sync_on.png
+file build/$(MACH32)/docs/html/sysORTable_8h_source.html \
+    path=usr/share/doc/net-snmp/html/sysORTable_8h_source.html
+file build/$(MACH32)/docs/html/system_8c_source.html \
+    path=usr/share/doc/net-snmp/html/system_8c_source.html
+file build/$(MACH32)/docs/html/system_8h_source.html \
+    path=usr/share/doc/net-snmp/html/system_8h_source.html
+file build/$(MACH32)/docs/html/tab_a.png \
+    path=usr/share/doc/net-snmp/html/tab_a.png
+file build/$(MACH32)/docs/html/tab_b.png \
+    path=usr/share/doc/net-snmp/html/tab_b.png
+file build/$(MACH32)/docs/html/tab_h.png \
+    path=usr/share/doc/net-snmp/html/tab_h.png
+file build/$(MACH32)/docs/html/tab_s.png \
+    path=usr/share/doc/net-snmp/html/tab_s.png
+file build/$(MACH32)/docs/html/table_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table_8c_source.html
+file build/$(MACH32)/docs/html/table_8h_source.html \
+    path=usr/share/doc/net-snmp/html/table_8h_source.html
+file build/$(MACH32)/docs/html/table__array_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__array_8c_source.html
+file build/$(MACH32)/docs/html/table__array_8h_source.html \
+    path=usr/share/doc/net-snmp/html/table__array_8h_source.html
+file build/$(MACH32)/docs/html/table__container_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__container_8c_source.html
+file build/$(MACH32)/docs/html/table__container_8h_source.html \
+    path=usr/share/doc/net-snmp/html/table__container_8h_source.html
+file build/$(MACH32)/docs/html/table__data_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__data_8c_source.html
+file build/$(MACH32)/docs/html/table__data_8h_source.html \
+    path=usr/share/doc/net-snmp/html/table__data_8h_source.html
+file build/$(MACH32)/docs/html/table__dataset_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__dataset_8c_source.html
+file build/$(MACH32)/docs/html/table__dataset_8h_source.html \
+    path=usr/share/doc/net-snmp/html/table__dataset_8h_source.html
+file build/$(MACH32)/docs/html/table__generic_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__generic_8c_source.html
+file build/$(MACH32)/docs/html/table__iterator_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__iterator_8c_source.html
+file build/$(MACH32)/docs/html/table__iterator_8h.html \
+    path=usr/share/doc/net-snmp/html/table__iterator_8h.html
+file build/$(MACH32)/docs/html/table__iterator_8h_source.html \
+    path=usr/share/doc/net-snmp/html/table__iterator_8h_source.html
+file build/$(MACH32)/docs/html/table__row_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__row_8c_source.html
+file build/$(MACH32)/docs/html/table__tdata_8c_source.html \
+    path=usr/share/doc/net-snmp/html/table__tdata_8c_source.html
+file build/$(MACH32)/docs/html/table__tdata_8h_source.html \
+    path=usr/share/doc/net-snmp/html/table__tdata_8h_source.html
+file build/$(MACH32)/docs/html/tabs.css \
+    path=usr/share/doc/net-snmp/html/tabs.css
+file build/$(MACH32)/docs/html/testing_8h_source.html \
+    path=usr/share/doc/net-snmp/html/testing_8h_source.html
+file build/$(MACH32)/docs/html/text__utils_8c_source.html \
+    path=usr/share/doc/net-snmp/html/text__utils_8c_source.html
+file build/$(MACH32)/docs/html/text__utils_8h_source.html \
+    path=usr/share/doc/net-snmp/html/text__utils_8h_source.html
+file build/$(MACH32)/docs/html/todo.html \
+    path=usr/share/doc/net-snmp/html/todo.html
+file build/$(MACH32)/docs/html/tools_8c_source.html \
+    path=usr/share/doc/net-snmp/html/tools_8c_source.html
+file build/$(MACH32)/docs/html/tools_8h.html \
+    path=usr/share/doc/net-snmp/html/tools_8h.html
+file build/$(MACH32)/docs/html/tools_8h_source.html \
+    path=usr/share/doc/net-snmp/html/tools_8h_source.html
+file build/$(MACH32)/docs/html/transform__oids_8h_source.html \
+    path=usr/share/doc/net-snmp/html/transform__oids_8h_source.html
+file build/$(MACH32)/docs/html/types_8h_source.html \
+    path=usr/share/doc/net-snmp/html/types_8h_source.html
+file build/$(MACH32)/docs/html/ucd-snmp-includes_8h_source.html \
+    path=usr/share/doc/net-snmp/html/ucd-snmp-includes_8h_source.html
+file build/$(MACH32)/docs/html/ucdDemoPublic_8c_source.html \
+    path=usr/share/doc/net-snmp/html/ucdDemoPublic_8c_source.html
+file build/$(MACH32)/docs/html/ucdDemoPublic_8h_source.html \
+    path=usr/share/doc/net-snmp/html/ucdDemoPublic_8h_source.html
+file build/$(MACH32)/docs/html/ucd__compat_8c_source.html \
+    path=usr/share/doc/net-snmp/html/ucd__compat_8c_source.html
+file build/$(MACH32)/docs/html/ucd__compat_8h_source.html \
+    path=usr/share/doc/net-snmp/html/ucd__compat_8h_source.html
+file build/$(MACH32)/docs/html/unionnetsnmp__cvalue.html \
+    path=usr/share/doc/net-snmp/html/unionnetsnmp__cvalue.html
+file build/$(MACH32)/docs/html/unionnetsnmp__sockaddr__storage__u.html \
+    path=usr/share/doc/net-snmp/html/unionnetsnmp__sockaddr__storage__u.html
+file build/$(MACH32)/docs/html/unionnetsnmp__vardata.html \
+    path=usr/share/doc/net-snmp/html/unionnetsnmp__vardata.html
+file build/$(MACH32)/docs/html/unionsockaddr__union.html \
+    path=usr/share/doc/net-snmp/html/unionsockaddr__union.html
+file build/$(MACH32)/docs/html/utilities_8h_source.html \
+    path=usr/share/doc/net-snmp/html/utilities_8h_source.html
+file build/$(MACH32)/docs/html/vacm_8c_source.html \
+    path=usr/share/doc/net-snmp/html/vacm_8c_source.html
+file build/$(MACH32)/docs/html/vacm_8h_source.html \
+    path=usr/share/doc/net-snmp/html/vacm_8h_source.html
+file build/$(MACH32)/docs/html/var__struct_8h_source.html \
+    path=usr/share/doc/net-snmp/html/var__struct_8h_source.html
+file build/$(MACH32)/docs/html/varbind__api_8h_source.html \
+    path=usr/share/doc/net-snmp/html/varbind__api_8h_source.html
+file build/$(MACH32)/docs/html/version_8h_source.html \
+    path=usr/share/doc/net-snmp/html/version_8h_source.html
+file build/$(MACH32)/docs/html/watched_8c-example.html \
+    path=usr/share/doc/net-snmp/html/watched_8c-example.html
+file build/$(MACH32)/docs/html/watched_8c_source.html \
+    path=usr/share/doc/net-snmp/html/watched_8c_source.html
+file build/$(MACH32)/docs/html/watched_8h_source.html \
+    path=usr/share/doc/net-snmp/html/watched_8h_source.html
+file build/$(MACH32)/docs/html/watcher_8c_source.html \
+    path=usr/share/doc/net-snmp/html/watcher_8c_source.html
+file build/$(MACH32)/docs/html/watcher_8h_source.html \
+    path=usr/share/doc/net-snmp/html/watcher_8h_source.html
+file build/$(MACH32)/docs/html/winpipe_8c_source.html \
+    path=usr/share/doc/net-snmp/html/winpipe_8c_source.html
+file build/$(MACH32)/docs/html/winpipe_8h_source.html \
+    path=usr/share/doc/net-snmp/html/winpipe_8h_source.html
+file build/$(MACH32)/docs/html/winservice_8c_source.html \
+    path=usr/share/doc/net-snmp/html/winservice_8c_source.html
+file build/$(MACH32)/docs/html/winservice_8h_source.html \
+    path=usr/share/doc/net-snmp/html/winservice_8h_source.html
+file path=usr/share/man/man1/agentxtrap.1
+file path=usr/share/man/man1/encode_keychange.1
+file path=usr/share/man/man1/fixproc.1
+file path=usr/share/man/man1/mib2c-update.1
+file path=usr/share/man/man1/mib2c.1
+file path=usr/share/man/man1/net-snmp-config.1
+file path=usr/share/man/man1/net-snmp-create-v3-user.1
+file path=usr/share/man/man1/snmp-bridge-mib.1
+file path=usr/share/man/man1/snmpbulkget.1
+file path=usr/share/man/man1/snmpbulkwalk.1
+file path=usr/share/man/man1/snmpcmd.1
+file path=usr/share/man/man1/snmpconf.1
+file path=usr/share/man/man1/snmpdelta.1
+file path=usr/share/man/man1/snmpdf.1
+file path=usr/share/man/man1/snmpget.1
+file path=usr/share/man/man1/snmpgetnext.1
+file path=usr/share/man/man1/snmpinform.1
+file path=usr/share/man/man1/snmpnetstat.1
+file path=usr/share/man/man1/snmpps.1
+file path=usr/share/man/man1/snmpset.1
+file path=usr/share/man/man1/snmpstatus.1
+file path=usr/share/man/man1/snmptable.1
+file path=usr/share/man/man1/snmptest.1
+file path=usr/share/man/man1/snmptop.1
+file path=usr/share/man/man1/snmptranslate.1
+file path=usr/share/man/man1/snmptrap.1
+file path=usr/share/man/man1/snmpusm.1
+file path=usr/share/man/man1/snmpvacm.1
+file path=usr/share/man/man1/snmpwalk.1
+file path=usr/share/man/man1/tkmib.1
+file path=usr/share/man/man1/traptoemail.1
+file path=usr/share/man/man3/add_mibdir.3
+file path=usr/share/man/man3/add_module_replacement.3
+file path=usr/share/man/man3/config_perror.3
+file path=usr/share/man/man3/config_pwarn.3
+file path=usr/share/man/man3/default_store.3
+file path=usr/share/man/man3/fprint_description.3
+file path=usr/share/man/man3/fprint_objid.3
+file path=usr/share/man/man3/fprint_value.3
+file path=usr/share/man/man3/fprint_variable.3
+file path=usr/share/man/man3/get_module_node.3
+file path=usr/share/man/man3/netsnmp_agent_api.3
+file path=usr/share/man/man3/netsnmp_config_api.3
+file path=usr/share/man/man3/netsnmp_init_mib.3
+file path=usr/share/man/man3/netsnmp_mib_api.3
+file path=usr/share/man/man3/netsnmp_pdu_api.3
+file path=usr/share/man/man3/netsnmp_read_module.3
+file path=usr/share/man/man3/netsnmp_sess_api.3
+file path=usr/share/man/man3/netsnmp_session_api.3
+file path=usr/share/man/man3/netsnmp_trap_api.3
+file path=usr/share/man/man3/netsnmp_varbind_api.3
+file path=usr/share/man/man3/print_description.3
+file path=usr/share/man/man3/print_mib.3
+file path=usr/share/man/man3/print_objid.3
+file path=usr/share/man/man3/print_value.3
+file path=usr/share/man/man3/print_variable.3
+file path=usr/share/man/man3/read_all_mibs.3
+file path=usr/share/man/man3/read_config_print_usage.3
+file path=usr/share/man/man3/read_configs.3
+file path=usr/share/man/man3/read_mib.3
+file path=usr/share/man/man3/read_objid.3
+file path=usr/share/man/man3/read_premib_configs.3
+file path=usr/share/man/man3/register_app_config_handler.3
+file path=usr/share/man/man3/register_app_prenetsnmp_mib_handler.3
+file path=usr/share/man/man3/register_config_handler.3
+file path=usr/share/man/man3/register_const_config_handler.3
+file path=usr/share/man/man3/register_mib_handlers.3
+file path=usr/share/man/man3/register_prenetsnmp_mib_handler.3
+file path=usr/share/man/man3/send_easy_trap.3
+file path=usr/share/man/man3/send_trap_vars.3
+file path=usr/share/man/man3/send_v2trap.3
+file path=usr/share/man/man3/shutdown_mib.3
+file path=usr/share/man/man3/snmp_add_null_var.3
+file path=usr/share/man/man3/snmp_alarm.3
+file path=usr/share/man/man3/snmp_alarm_register.3
+file path=usr/share/man/man3/snmp_alarm_register_hr.3
+file path=usr/share/man/man3/snmp_alarm_unregister.3
+file path=usr/share/man/man3/snmp_api_errstring.3
+file path=usr/share/man/man3/snmp_async_send.3
+file path=usr/share/man/man3/snmp_clone_pdu.3
+file path=usr/share/man/man3/snmp_clone_varbind.3
+file path=usr/share/man/man3/snmp_close.3
+file path=usr/share/man/man3/snmp_error.3
+file path=usr/share/man/man3/snmp_fix_pdu.3
+file path=usr/share/man/man3/snmp_free_pdu.3
+file path=usr/share/man/man3/snmp_free_var.3
+file path=usr/share/man/man3/snmp_free_varbind.3
+file path=usr/share/man/man3/snmp_open.3
+file path=usr/share/man/man3/snmp_parse_oid.3
+file path=usr/share/man/man3/snmp_pdu_add_variable.3
+file path=usr/share/man/man3/snmp_pdu_create.3
+file path=usr/share/man/man3/snmp_perror.3
+file path=usr/share/man/man3/snmp_read.3
+file path=usr/share/man/man3/snmp_select_info.3
+file path=usr/share/man/man3/snmp_send.3
+file path=usr/share/man/man3/snmp_sess_async_send.3
+file path=usr/share/man/man3/snmp_sess_close.3
+file path=usr/share/man/man3/snmp_sess_error.3
+file path=usr/share/man/man3/snmp_sess_init.3
+file path=usr/share/man/man3/snmp_sess_open.3
+file path=usr/share/man/man3/snmp_sess_perror.3
+file path=usr/share/man/man3/snmp_sess_read.3
+file path=usr/share/man/man3/snmp_sess_select_info.3
+file path=usr/share/man/man3/snmp_sess_send.3
+file path=usr/share/man/man3/snmp_sess_session.3
+file path=usr/share/man/man3/snmp_sess_synch_response.3
+file path=usr/share/man/man3/snmp_sess_timeout.3
+file path=usr/share/man/man3/snmp_set_mib_errors.3
+file path=usr/share/man/man3/snmp_set_mib_warnings.3
+file path=usr/share/man/man3/snmp_set_save_descriptions.3
+file path=usr/share/man/man3/snmp_set_var_objid.3
+file path=usr/share/man/man3/snmp_set_var_typed_integer.3
+file path=usr/share/man/man3/snmp_set_var_typed_value.3
+file path=usr/share/man/man3/snmp_set_var_value.3
+file path=usr/share/man/man3/snmp_synch_response.3
+file path=usr/share/man/man3/snmp_timeout.3
+file path=usr/share/man/man3/snmp_varlist_add_variable.3
+file path=usr/share/man/man3/snprint_description.3
+file path=usr/share/man/man3/snprint_objid.3
+file path=usr/share/man/man3/snprint_value.3
+file path=usr/share/man/man3/snprint_variable.3
+file path=usr/share/man/man3/unregister_all_config_handlers.3
+file path=usr/share/man/man3/unregister_app_config_handler.3
+file path=usr/share/man/man3/unregister_config_handler.3
+file path=usr/share/man/man5/mib2c.conf.5
+file path=usr/share/man/man5/snmp.conf.5
+file path=usr/share/man/man5/snmp_config.5
+file path=usr/share/man/man5/snmpd.conf.5
+file path=usr/share/man/man5/snmpd.examples.5
+file path=usr/share/man/man5/snmpd.internal.5
+file path=usr/share/man/man5/snmptrapd.conf.5
+file path=usr/share/man/man5/variables.5
+file path=usr/share/man/man8/snmpd.8
+file path=usr/share/man/man8/snmptrapd.8
 license COPYING license="BSD, BSD-like"
-
 depend type=conditional \
     fmri=library/python/net-snmp-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
     predicate=runtime/python-27
-
-

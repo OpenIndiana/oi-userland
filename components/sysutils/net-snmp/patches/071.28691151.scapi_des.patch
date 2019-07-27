@@ -1,0 +1,113 @@
+Solaris specific patch developed inhouse, not suitable for upstream
+--- net-snmp-5.7.3.old/snmplib/scapi.c	2018-09-23 03:42:39.347542319 +0000
++++ net-snmp-5.7.3/snmplib/scapi.c	2018-09-23 03:46:40.619107851 +0000
+@@ -132,7 +132,7 @@
+ static
+ int EVP_decrypt(const EVP_CIPHER *type, u_char * key,
+                 u_int keylen, u_char * iv, u_char * ciphertext,
+-                u_int ctlen, u_char * plaintext);
++                u_int ctlen, u_char * plaintext, size_t *ptlen);
+ static
+ int EVP_encrypt(const EVP_CIPHER *type, u_char * key,
+                 u_int keylen, u_char * iv, const u_char * plaintext,
+@@ -1030,7 +1030,7 @@
+     if (ISTRANSFORM(privtype, DESPriv)) {
+         if(!EVP_decrypt(EVP_des_cbc(), key,
+                         keylen, iv, ciphertext,
+-                        ctlen, plaintext)) {
++                        ctlen, plaintext, ptlen)) {
+             QUITFUN(SNMPERR_GENERR, sc_decrypt_quit);
+         }
+     }
+@@ -1400,20 +1400,36 @@
+          return FALSE;
+       }
+       EVP_CIPHER_CTX_set_key_length(ctx, keylen);
++
++      /* For DES encryption, inorder to ensure compatibility
++       *  with prior client versions, we disable the addition
++       *  of the trailing padblock if the input text length is
++       *  an exact multiple of the DES block size.
++       */
++      if((type == EVP_des_cbc()) &&
++            !(ptlen % BYTESIZE(SNMP_TRANS_PRIVLEN_1DES))) {
++        EVP_CIPHER_CTX_set_padding(ctx, 0);
++      }
+       if(EVP_EncryptUpdate(ctx, ciphertext, &outlen,
+                            plaintext, ptlen) != 1) {
+          snmp_log(LOG_ERR, "EVP_EncryptUpdate failure.\n");
+          EVP_CIPHER_CTX_free(ctx);
+          return FALSE;
+       }
++      DEBUGMSGTL(("scapi","EnryptUpdate encrypted length ="
++                     " %d\n", outlen));
+       if(EVP_EncryptFinal_ex(ctx, ciphertext + outlen,
+                              &tmplen) != 1) {
+          snmp_log(LOG_ERR, "EVP_EncryptFinal_ex failure.\n");
+          EVP_CIPHER_CTX_free(ctx);
+          return FALSE;
+       }
++      DEBUGMSGTL(("scapi","EnryptFinal encrypted length ="
++                      " %d\n", tmplen));
+       EVP_CIPHER_CTX_free(ctx);
+       outlen += tmplen;
++      DEBUGMSGTL(("scapi","Total encrypted length = "
++                     "%d\n", outlen));
+       *ctlen = outlen;
+ 
+       return TRUE;
+@@ -1422,12 +1438,12 @@
+ static
+ int EVP_decrypt(const EVP_CIPHER *type, u_char * key,
+                 u_int keylen, u_char * iv, u_char * ciphertext,
+-                u_int ctlen, u_char * plaintext)
++                u_int ctlen, u_char * plaintext, size_t *ptlen)
+ {
+       int decryptedLength = 0;
+       int lastDecryptLength = 0;
+       EVP_CIPHER_CTX *ctx;
+-  
++
+       if((ctx = EVP_CIPHER_CTX_new()) == NULL) {
+          snmp_log(LOG_ERR, "EVP_CIPHER_CTX_new failure.\n");
+          return FALSE;
+@@ -1441,21 +1457,39 @@
+           return FALSE;
+       }
+       EVP_CIPHER_CTX_set_key_length(ctx, keylen);
++
++      /* For DES decryption, the EVP_Decrypt functions expect
++       * an extra trailing pad block for input with length which
++       * is an exact multiple of block size. As prior versions
++       * of net-snmp clients don't add the extra block during
++       * the encryption phase, we need to disable padding to ensure
++       * compatible behaviour.
++       */
++      if(type == EVP_des_cbc()) {
++          EVP_CIPHER_CTX_set_padding(ctx, 0);
++      }
+       if (EVP_DecryptUpdate(ctx, plaintext, &decryptedLength,
+                             ciphertext, ctlen) != 1) {
+           snmp_log(LOG_ERR, "EVP_DecryptUpdate failure.\n");
+           EVP_CIPHER_CTX_free(ctx);
+           return FALSE;
+       }
++      DEBUGMSGTL(("scapi","DecryptUpdate decryptedLength ="
++                     " %d\n", decryptedLength));
+       if(EVP_DecryptFinal_ex(ctx, plaintext + decryptedLength,
+                              &lastDecryptLength) != 1) {
+           snmp_log(LOG_ERR, "EVP_DecryptFinal_ex failure.\n");
+           EVP_CIPHER_CTX_free(ctx);
+           return FALSE;
+       }
++      DEBUGMSGTL(("scapi","DecryptFinal decryptedLength = "
++                     "%d\n", lastDecryptLength));
+       EVP_CIPHER_CTX_free(ctx);
+       decryptedLength = decryptedLength + lastDecryptLength;
++      DEBUGMSGTL(("scapi","Total decryptedLength = "
++                      "%d\n", decryptedLength));
+       plaintext[decryptedLength] = 0;
++      *ptlen = decryptedLength;
+ 
+       return TRUE;
+ }

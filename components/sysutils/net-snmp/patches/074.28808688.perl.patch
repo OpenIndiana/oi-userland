@@ -1,0 +1,81 @@
+Solaris specific patch for disabling gcc specific CCFLAGS options, not suitable for upstream.
+--- net-snmp-5.8/perl/agent/default_store/Makefile.PL.orig	2019-02-13 05:12:25.641524117 +0000
++++ net-snmp-5.8/perl/agent/default_store/Makefile.PL	2019-02-13 05:17:08.716589756 +0000
+@@ -84,7 +84,6 @@
+ 	    $Params{'CCFLAGS'} = "-I../../../include " . $Params{'CCFLAGS'};
+ 	}
+ 	$Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-        $Params{'CCFLAGS'} .= ' -Wformat';
+ 	if ($Params{'LIBS'} eq "" || $Params{'CCFLAGS'} eq "") {
+ 	    die "You need to install net-snmp first (I can't find net-snmp-config)";
+ 	}
+--- net-snmp-5.8/perl/agent/Makefile.PL.orig	2019-02-13 05:12:15.713504314 +0000
++++ net-snmp-5.8/perl/agent/Makefile.PL	2019-02-13 05:16:38.825086342 +0000
+@@ -99,7 +99,6 @@
+ #	    $Params{'PREREQ_PM'} = {'NetSNMP::OID' => '0.1'};
+ 	}
+ 	$Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-        $Params{'CCFLAGS'} .= ' -Wformat';
+ 	if ($Params{'LIBS'} eq "" || $Params{'CCFLAGS'} eq "") {
+ 	    die "You need to install net-snmp first (I can't find net-snmp-config)";
+ 	}
+--- net-snmp-5.8/perl/agent/Support/Makefile.PL.orig	2019-02-13 05:25:00.127660141 +0000
++++ net-snmp-5.8/perl/agent/Support/Makefile.PL	2019-02-13 05:25:19.097415420 +0000
+@@ -91,7 +91,6 @@
+ 	$Params{'CCFLAGS'} = "-I../../include " . $Params{'CCFLAGS'};
+       }
+       $Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-      $Params{'CCFLAGS'} .= ' -Wformat';
+       if ($Params{'LIBS'} eq "" || $Params{'CCFLAGS'} eq "") {
+ 	die "You need to install net-snmp first (I can't find net-snmp-config)";
+       }
+--- net-snmp-5.8/perl/default_store/Makefile.PL.orig	2019-02-13 05:11:58.954155033 +0000
++++ net-snmp-5.8/perl/default_store/Makefile.PL	2019-02-13 05:15:47.426152862 +0000
+@@ -84,7 +84,6 @@
+ 	    $Params{'CCFLAGS'} = "-I../../include " . $Params{'CCFLAGS'};
+ 	}
+ 	$Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-        $Params{'CCFLAGS'} .= ' -Wformat';
+ 	if ($Params{'LIBS'} eq "" || $Params{'CCFLAGS'} eq "") {
+ 	    die "You need to install net-snmp first (I can't find net-snmp-config)";
+ 	}
+--- net-snmp-5.8/perl/TrapReceiver/Makefile.PL.orig	2019-02-13 05:11:49.819714314 +0000
++++ net-snmp-5.8/perl/TrapReceiver/Makefile.PL	2019-02-13 05:14:54.543119400 +0000
+@@ -133,7 +133,6 @@
+         }
+ 
+ 	$Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-        $Params{'CCFLAGS'} .= ' -Wformat';
+ 	if ($Params{'CCFLAGS'} eq "") {
+ 	    die "You need to install net-snmp first (I can't find net-snmp-config)";
+ 	}
+--- net-snmp-5.8/perl/OID/Makefile.PL.orig	2019-02-13 05:11:40.547618855 +0000
++++ net-snmp-5.8/perl/OID/Makefile.PL	2019-02-13 05:14:17.986030409 +0000
+@@ -91,7 +91,6 @@
+ #	    $Params{'PREREQ_PM'} = {'SNMP' => '5.0'};
+ 	}
+ 	$Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-        $Params{'CCFLAGS'} .= ' -Wformat';
+ 	if ($Params{'LIBS'} eq "" || $Params{'CCFLAGS'} eq "") {
+ 	    die "You need to install net-snmp first (I can't find net-snmp-config)";
+ 	}
+--- net-snmp-5.8/perl/ASN/Makefile.PL.orig	2019-02-13 05:11:31.075635180 +0000
++++ net-snmp-5.8/perl/ASN/Makefile.PL	2019-02-13 05:13:48.045408442 +0000
+@@ -94,7 +94,6 @@
+ 	$Params{'CCFLAGS'} = "-I../../include " . $Params{'CCFLAGS'};
+       }
+       $Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-      $Params{'CCFLAGS'} .= ' -Wformat';
+       if ($Params{'LIBS'} eq "" || $Params{'CCFLAGS'} eq "") {
+ 	die "You need to install net-snmp first (I can't find net-snmp-config)";
+       }
+--- net-snmp-5.8/perl/SNMP/Makefile.PL.orig	2019-02-13 05:11:18.931096586 +0000
++++ net-snmp-5.8/perl/SNMP/Makefile.PL	2019-02-13 05:13:22.811814499 +0000
+@@ -104,7 +104,6 @@
+ #	    $Params{'PREREQ_PM'} = { 'NetSNMP::default_store' => 0.01 };
+ 	}
+ 	$Params{'CCFLAGS'} =~ s/ -W(all|inline|strict-prototypes|write-strings|cast-qual|no-char-subscripts)//g; # ignore developer warnings
+-        $Params{'CCFLAGS'} .= ' -Wformat';
+ 	if (!$ENV{'NETSNMP_PREFIX'}) {
+ 	    $prefix            = `$opts->{'nsconfig'} --prefix`;
+ 	    chomp($prefix);
