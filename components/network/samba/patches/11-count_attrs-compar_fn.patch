@@ -1,0 +1,11 @@
+--- samba-4.11.0rc1/source4/dsdb/samdb/ldb_modules/count_attrs.c.old	2019-07-27 16:00:10.981693869 +0000
++++ samba-4.11.0rc1/source4/dsdb/samdb/ldb_modules/count_attrs.c	2019-07-27 16:03:10.320177678 +0000
+@@ -38,6 +38,8 @@
+ #define NULL_REQ_PSEUDO_N -2LL;
+ #define STAR_REQ_PSEUDO_N -4LL;
+ 
++typedef int(* __compar_fn_t )(const void *, const void *);
++
+ struct count_attrs_private {
+ 	struct tdb_wrap *requested;
+ 	struct tdb_wrap *duplicates;
