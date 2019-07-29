@@ -23,6 +23,8 @@
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sg3_utils
@@ -47,8 +49,6 @@ CFLAGS += -std=c99 $(CPP_XPG6MODE)
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
-CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR)
 
 # Don't use rpath!
 COMPONENT_POST_CONFIGURE_ACTION = \
