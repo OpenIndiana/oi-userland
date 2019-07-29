@@ -44,7 +44,6 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/net-snmp/files/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Enterprise Management
 COMPONENT_SUMMARY= Net-SNMP Agent files and libraries
-COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 COMPONENT_ANITYA_ID=	2062
 
 TPNO=			47655
@@ -61,15 +60,15 @@ include $(WS_MAKE_RULES)/ips.mk
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
 
 CONFIGURE_ENV +=	PYTHONPROG=$(PYTHON.$(BITS))
-CONFIGURE_ENV.32     += PERL=$(PERL.5.22)
-CONFIGURE_ENV.64     += PERL=$(PERL.5.24)
+CONFIGURE_ENV.32   += PERL=$(PERL.5.22)
+CONFIGURE_ENV.64   += PERL=$(PERL.5.24)
 
 CONFIGURE_OPTIONS  +=	--with-default-snmp-version=3
 CONFIGURE_OPTIONS  +=	--with-sys-contact="root@localhost"
 CONFIGURE_OPTIONS  +=	--with-sys-location=Unknown
 CONFIGURE_OPTIONS  +=	--with-logfile=$(VARDIR)/log/snmpd.log
 CONFIGURE_OPTIONS  +=	--with-persistent-directory=$(VARDIR)/net-snmp
-
+CONFIGURE_OPTIONS  += --sysconfdir=$(ETCDIR)/net-snmp
 CONFIGURE_OPTIONS  +=	--with-mibdirs=$(ETCDIR)/net-snmp/snmp/mibs
 CONFIGURE_OPTIONS  +=	--datadir=$(ETCDIR)/net-snmp
 CONFIGURE_OPTIONS  +=	--enable-agentx-dom-sock-only
@@ -94,17 +93,18 @@ PERL_ARGS =			DESTDIR=$(PROTO_DIR) INSTALLDIRS=vendor
 CONFIGURE_OPTIONS.32  +=	--disable-embedded-perl
 CONFIGURE_OPTIONS.32  +=	--without-perl-modules
 CONFIGURE_OPTIONS.64  +=	PERLPROG="$(PERL)"
-#CONFIGURE_OPTIONS.64  +=	--with-perl-modules="$(PERL_ARGS)"
-CONFIGURE_OPTIONS.64  +=	--without-perl-modules
-#CONFIGURE_OPTIONS.64  +=	--disable-perl-cc-checks
 CONFIGURE_OPTIONS.64  +=  --disable-embedded-perl
+CONFIGURE_OPTIONS.64  +=  --with-perl-modules="$(PERL_ARGS)"
+
+# parallel build not supported
+COMPONENT_BUILD_ARGS=-j1
 
 # Install the net-snmp-57 libraries
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun; \
 	cd ../net-snmp-57 && $(GMAKE) install);	
 
-# for the goofy definition of ARCH in the extra Makefiles
+
 ARCH=32
 ARCH=$(BITS:64=$(MACH64))
 
