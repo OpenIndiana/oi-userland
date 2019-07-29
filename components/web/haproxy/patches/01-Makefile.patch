@@ -1,0 +1,13 @@
+diff --git a/haproxy-2.0.3/Makefile.old b/haproxy-2.0.3/Makefile
+index a9c65c594..36ce7dd0e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -525,7 +525,7 @@ check_lua_lib = $(shell echo "int main(){}" | $(CC) -o /dev/null -x c - $(2) -l$
+ check_lua_inc = $(shell if [ -d $(2)$(1) ]; then echo $(2)$(1); fi;)
+ 
+ OPTIONS_CFLAGS  += $(if $(LUA_INC),-I$(LUA_INC))
+-LUA_LD_FLAGS := -Wl,$(if $(EXPORT_SYMBOL),$(EXPORT_SYMBOL),--export-dynamic) $(if $(LUA_LIB),-L$(LUA_LIB))
++LUA_LD_FLAGS := $(if $(LUA_LIB),-L$(LUA_LIB))
+ ifeq ($(LUA_LIB_NAME),)
+ # Try to automatically detect the Lua library
+ LUA_LIB_NAME := $(firstword $(foreach lib,lua5.3 lua53 lua,$(call check_lua_lib,$(lib),$(LUA_LD_FLAGS))))
