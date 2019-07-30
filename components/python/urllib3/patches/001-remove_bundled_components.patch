@@ -1,0 +1,374 @@
+In-house patch to remove the imports of local copies of six and
+use system ones instead.
+
+This is Solaris-specific and not suitable for upstream submission.
+
+--- urllib3-1.25.1/dummyserver/handlers.py
++++ urllib3-1.25.1/dummyserver/handlers.py
+@@ -15,9 +15,9 @@ from tornado import httputil
+ from datetime import datetime
+ from datetime import timedelta
+ 
+-from urllib3.packages.six.moves.http_client import responses
+-from urllib3.packages.six.moves.urllib.parse import urlsplit
+-from urllib3.packages.six import binary_type
++from six.moves.http_client import responses
++from six.moves.urllib.parse import urlsplit
++from six import binary_type
+ 
+ log = logging.getLogger(__name__)
+ 
+--- urllib3-1.25.1/src/urllib3/connection.py
++++ urllib3-1.25.1/src/urllib3/connection.py
+@@ -5,9 +5,9 @@ import os
+ import socket
+ from socket import error as SocketError, timeout as SocketTimeout
+ import warnings
+-from .packages import six
+-from .packages.six.moves.http_client import HTTPConnection as _HTTPConnection
+-from .packages.six.moves.http_client import HTTPException  # noqa: F401
++import six
++from six.moves.http_client import HTTPConnection as _HTTPConnection
++from six.moves.http_client import HTTPException  # noqa: F401
+ 
+ try:  # Compiled with SSL?
+     import ssl
+--- urllib3-1.25.1/src/urllib3/util/queue.py
++++ urllib3-1.25.1/src/urllib3/util/queue.py
+@@ -1,6 +1,6 @@
+ import collections
+-from ..packages import six
+-from ..packages.six.moves import queue
++import six
++from six.moves import queue
+ 
+ if six.PY2:
+     # Queue is imported for side effects on MS Windows. See issue #229.
+--- urllib3-1.25.1/src/urllib3/util/response.py
++++ urllib3-1.25.1/src/urllib3/util/response.py
+@@ -1,5 +1,5 @@
+ from __future__ import absolute_import
+-from ..packages.six.moves import http_client as httplib
++from six.moves import http_client as httplib
+ 
+ from ..exceptions import HeaderParsingError
+ 
+--- urllib3-1.25.1/src/urllib3/util/request.py
++++ urllib3-1.25.1/src/urllib3/util/request.py
+@@ -1,7 +1,7 @@
+ from __future__ import absolute_import
+ from base64 import b64encode
+ 
+-from ..packages.six import b, integer_types
++from six import b, integer_types
+ from ..exceptions import UnrewindableBodyError
+ 
+ ACCEPT_ENCODING = 'gzip,deflate'
+--- urllib3-1.25.1/src/urllib3/poolmanager.py
++++ urllib3-1.25.1/src/urllib3/poolmanager.py
+@@ -7,8 +7,8 @@ from ._collections import RecentlyUsedCo
+ from .connectionpool import HTTPConnectionPool, HTTPSConnectionPool
+ from .connectionpool import port_by_scheme
+ from .exceptions import LocationValueError, MaxRetryError, ProxySchemeUnknown
+-from .packages import six
+-from .packages.six.moves.urllib.parse import urljoin
++import six
++from six.moves.urllib.parse import urljoin
+ from .request import RequestMethods
+ from .util.url import parse_url
+ from .util.retry import Retry
+--- urllib3-1.25.1/src/urllib3/exceptions.py
++++ urllib3-1.25.1/src/urllib3/exceptions.py
+@@ -1,5 +1,5 @@
+ from __future__ import absolute_import
+-from .packages.six.moves.http_client import (
++from six.moves.http_client import (
+     IncompleteRead as httplib_IncompleteRead
+ )
+ # Base Exceptions
+--- urllib3-1.25.1/src/urllib3/filepost.py
++++ urllib3-1.25.1/src/urllib3/filepost.py
+@@ -5,8 +5,8 @@ import os
+ 
+ from io import BytesIO
+ 
+-from .packages import six
+-from .packages.six import b
++import six
++from six import b
+ from .fields import RequestField
+ 
+ writer = codecs.lookup('utf-8')[3]
+--- urllib3-1.25.1/src/urllib3/_collections.py
++++ urllib3-1.25.1/src/urllib3/_collections.py
+@@ -16,7 +16,7 @@ except ImportError:  # Platform-specific
+ 
+ from collections import OrderedDict
+ from .exceptions import InvalidHeader
+-from .packages.six import iterkeys, itervalues, PY3
++from six import iterkeys, itervalues, PY3
+ 
+ 
+ __all__ = ['RecentlyUsedContainer', 'HTTPHeaderDict']
+--- urllib3-1.25.1/src/urllib3/contrib/ntlmpool.py
++++ urllib3-1.25.1/src/urllib3/contrib/ntlmpool.py
+@@ -9,7 +9,7 @@ from logging import getLogger
+ from ntlm import ntlm
+ 
+ from .. import HTTPSConnectionPool
+-from ..packages.six.moves.http_client import HTTPSConnection
++from six.moves.http_client import HTTPSConnection
+ 
+ 
+ log = getLogger(__name__)
+--- urllib3-1.25.1/src/urllib3/contrib/appengine.py
++++ urllib3-1.25.1/src/urllib3/contrib/appengine.py
+@@ -42,7 +42,7 @@ from __future__ import absolute_import
+ import io
+ import logging
+ import warnings
+-from ..packages.six.moves.urllib.parse import urljoin
++from six.moves.urllib.parse import urljoin
+ 
+ from ..exceptions import (
+     HTTPError,
+--- urllib3-1.25.1/src/urllib3/response.py
++++ urllib3-1.25.1/src/urllib3/response.py
+@@ -16,8 +16,8 @@ from .exceptions import (
+     BodyNotHttplibCompatible, ProtocolError, DecodeError, ReadTimeoutError,
+     ResponseNotChunked, IncompleteRead, InvalidHeader
+ )
+-from .packages.six import string_types as basestring, PY3
+-from .packages.six.moves import http_client as httplib
++from six import string_types as basestring, PY3
++from six.moves import http_client as httplib
+ from .connection import HTTPException, BaseSSLError
+ from .util.response import is_fp_closed, is_response_to_head
+ 
+--- urllib3-1.25.1/src/urllib3/request.py
++++ urllib3-1.25.1/src/urllib3/request.py
+@@ -1,7 +1,7 @@
+ from __future__ import absolute_import
+ 
+ from .filepost import encode_multipart_formdata
+-from .packages.six.moves.urllib.parse import urlencode
++from six.moves.urllib.parse import urlencode
+ 
+ 
+ __all__ = ['RequestMethods']
+--- urllib3-1.25.1/src/urllib3.egg-info/SOURCES.txt
++++ urllib3-1.25.1/src/urllib3.egg-info/SOURCES.txt
+@@ -94,7 +94,6 @@ src/urllib3/contrib/_securetransport/__i
+ src/urllib3/contrib/_securetransport/bindings.py
+ src/urllib3/contrib/_securetransport/low_level.py
+ src/urllib3/packages/__init__.py
+-src/urllib3/packages/six.py
+ src/urllib3/packages/backports/__init__.py
+ src/urllib3/packages/backports/makefile.py
+ src/urllib3/packages/rfc3986/__init__.py
+--- urllib3-1.25.1/test/test_queue_monkeypatch.py
++++ urllib3-1.25.1/test/test_queue_monkeypatch.py
+@@ -6,7 +6,7 @@ import pytest
+ 
+ from urllib3 import HTTPConnectionPool
+ from urllib3.exceptions import EmptyPoolError
+-from urllib3.packages.six.moves import queue
++from six.moves import queue
+ 
+ 
+ class BadError(Exception):
+--- urllib3-1.25.1/test/test_response.py
++++ urllib3-1.25.1/test/test_response.py
+@@ -10,7 +10,7 @@ from urllib3.response import HTTPRespons
+ from urllib3.exceptions import (
+     DecodeError, ResponseNotChunked, ProtocolError, InvalidHeader
+ )
+-from urllib3.packages.six.moves import http_client as httplib
++from six.moves import http_client as httplib
+ from urllib3.util.retry import Retry, RequestHistory
+ from urllib3.util.response import is_fp_closed
+ 
+--- urllib3-1.25.1/test/test_retry.py
++++ urllib3-1.25.1/test/test_retry.py
+@@ -1,7 +1,7 @@
+ import pytest
+ 
+ from urllib3.response import HTTPResponse
+-from urllib3.packages.six.moves import xrange
++from six.moves import xrange
+ from urllib3.util.retry import Retry, RequestHistory
+ from urllib3.exceptions import (
+     ConnectTimeoutError,
+--- urllib3-1.25.1/test/test_filepost.py
++++ urllib3-1.25.1/test/test_filepost.py
+@@ -2,7 +2,7 @@ import pytest
+ 
+ from urllib3.filepost import encode_multipart_formdata, iter_fields
+ from urllib3.fields import RequestField
+-from urllib3.packages.six import b, u
++from six import b, u
+ 
+ 
+ BOUNDARY = '!! test boundary !!'
+--- urllib3-1.25.1/test/with_dummyserver/test_connectionpool.py
++++ urllib3-1.25.1/test/with_dummyserver/test_connectionpool.py
+@@ -26,8 +26,8 @@ from urllib3.exceptions import (
+     NewConnectionError,
+     UnrewindableBodyError,
+ )
+-from urllib3.packages.six import b, u
+-from urllib3.packages.six.moves.urllib.parse import urlencode
++from six import b, u
++from six.moves.urllib.parse import urlencode
+ from urllib3.util.retry import Retry, RequestHistory
+ from urllib3.util.timeout import Timeout
+ 
+--- urllib3-1.25.1/test/test_compatibility.py
++++ urllib3-1.25.1/test/test_compatibility.py
+@@ -4,7 +4,7 @@ import pytest
+ 
+ from urllib3.connection import HTTPConnection
+ from urllib3.response import HTTPResponse
+-from urllib3.packages.six.moves import http_cookiejar, urllib
++from six.moves import http_cookiejar, urllib
+ 
+ 
+ class TestVersionCompatibility(object):
+--- urllib3-1.25.1/test/test_connectionpool.py
++++ urllib3-1.25.1/test/test_connectionpool.py
+@@ -11,8 +11,8 @@ from urllib3.connectionpool import (
+ )
+ from urllib3.response import httplib, HTTPResponse
+ from urllib3.util.timeout import Timeout
+-from urllib3.packages.six.moves.http_client import HTTPException
+-from urllib3.packages.six.moves.queue import Empty
++from six.moves.http_client import HTTPException
++from six.moves.queue import Empty
+ from urllib3.packages.ssl_match_hostname import CertificateError
+ from urllib3.exceptions import (
+     ClosedPoolError,
+--- urllib3-1.25.1/test/test_fields.py
++++ urllib3-1.25.1/test/test_fields.py
+@@ -1,7 +1,7 @@
+ import pytest
+ 
+ from urllib3.fields import format_header_param_rfc2231, guess_content_type, RequestField
+-from urllib3.packages.six import u
++from six import u
+ 
+ 
+ class TestRequestField(object):
+--- urllib3-1.25.1/src/urllib3/util/url.py
++++ urllib3-1.25.1/src/urllib3/util/url.py
+@@ -2,8 +2,9 @@ from __future__ import absolute_import
+ import re
+ from collections import namedtuple
+ 
++import six
+ from ..exceptions import LocationParseError
+-from ..packages import six, rfc3986
++from ..packages import rfc3986
+ from ..packages.rfc3986.exceptions import RFC3986Exception, ValidationError
+ from ..packages.rfc3986.validators import Validator
+ 
+--- urllib3-1.25.1/src/urllib3/util/ssl_.py
++++ urllib3-1.25.1/src/urllib3/util/ssl_.py
+@@ -8,7 +8,7 @@ from binascii import hexlify, unhexlify
+ from hashlib import md5, sha1, sha256
+ 
+ from ..exceptions import SSLError, InsecurePlatformWarning, SNIMissingWarning
+-from ..packages import six
++import six
+ from ..packages.rfc3986 import abnf_regexp
+ 
+ 
+--- urllib3-1.25.1/src/urllib3/util/retry.py
++++ urllib3-1.25.1/src/urllib3/util/retry.py
+@@ -14,7 +14,7 @@ from ..exceptions import (
+     ResponseError,
+     InvalidHeader,
+ )
+-from ..packages import six
++import six
+ 
+ 
+ log = logging.getLogger(__name__)
+--- urllib3-1.25.1/src/urllib3/contrib/pyopenssl.py
++++ urllib3-1.25.1/src/urllib3/contrib/pyopenssl.py
+@@ -65,7 +65,7 @@ except ImportError:  # Platform-specific
+ 
+ import logging
+ import ssl
+-from ..packages import six
++import six
+ import sys
+ 
+ from .. import util
+--- urllib3-1.25.1/src/urllib3/fields.py
++++ urllib3-1.25.1/src/urllib3/fields.py
+@@ -3,7 +3,7 @@ import email.utils
+ import mimetypes
+ import re
+ 
+-from .packages import six
++import six
+ 
+ 
+ def guess_content_type(filename, default='application/octet-stream'):
+--- urllib3-1.25.1/src/urllib3/connectionpool.py
++++ urllib3-1.25.1/src/urllib3/connectionpool.py
+@@ -24,8 +24,8 @@ from .exceptions import (
+     NewConnectionError,
+ )
+ from .packages.ssl_match_hostname import CertificateError
+-from .packages import six
+-from .packages.six.moves import queue
++import six
++from six.moves import queue
+ from .packages.rfc3986.normalizers import normalize_host
+ from .connection import (
+     port_by_scheme,
+--- urllib3-1.25.1/test/test_collections.py
++++ urllib3-1.25.1/test/test_collections.py
+@@ -5,7 +5,7 @@ from urllib3._collections import (
+ import pytest
+ 
+ from urllib3.exceptions import InvalidHeader
+-from urllib3.packages import six
++import six
+ xrange = six.moves.xrange
+ 
+ 
+--- urllib3-1.25.1/test/with_dummyserver/test_https.py
++++ urllib3-1.25.1/test/with_dummyserver/test_https.py
+@@ -47,7 +47,7 @@ from urllib3.exceptions import (
+     MaxRetryError,
+     ProtocolError,
+ )
+-from urllib3.packages import six
++import six
+ from urllib3.util.timeout import Timeout
+ import urllib3.util as util
+ 
+--- urllib3-1.25.1/test/__init__.py
++++ urllib3-1.25.1/test/__init__.py
+@@ -14,7 +14,7 @@ except ImportError:
+     brotli = None
+ 
+ from urllib3.exceptions import HTTPWarning
+-from urllib3.packages import six
++import six
+ from urllib3.util import ssl_
+ 
+ # We need a host that will not immediately close the connection with a TCP
+--- urllib3-1.25.1/test/test_util.py
++++ urllib3-1.25.1/test/test_util.py
+@@ -40,7 +40,7 @@ from urllib3.util.connection import (
+     _has_ipv6
+ )
+ from urllib3.util import is_fp_closed, ssl_
+-from urllib3.packages import six
++import six
+ 
+ from . import clear_warnings
+ 
