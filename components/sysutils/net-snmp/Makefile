@@ -92,7 +92,7 @@ CONFIGURE_OPTIONS  +=	--with-python-modules="$(PYTHON_ARGS)"
 PERL_ARGS =			DESTDIR=$(PROTO_DIR) INSTALLDIRS=vendor
 CONFIGURE_OPTIONS.32  +=	--disable-embedded-perl
 CONFIGURE_OPTIONS.32  +=	--without-perl-modules
-CONFIGURE_OPTIONS.64  +=	PERLPROG="$(PERL)"
+CONFIGURE_OPTIONS.64  +=	PERLPROG="$(PERL.5.24)"
 CONFIGURE_OPTIONS.64  +=  --disable-embedded-perl
 CONFIGURE_OPTIONS.64  +=  --with-perl-modules="$(PERL_ARGS)"
 
