@@ -10,30 +10,33 @@
 
 #
 # Copyright (c) 2015 Alexander Pyhalov
+# Copyright (c) 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libebml
-COMPONENT_VERSION=        1.3.5
+COMPONENT_VERSION=        1.3.9
 COMPONENT_PROJECT_URL=    http://matroska-org.github.io/libebml/
 COMPONENT_SUMMARY=        Extensible Binary Markup Language
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d818413f60742c2f036ba6f582c5e0320d12bffec1b0fc0fc17a398b6f04aa00
+	sha256:c6b6c6cd8b20a46203cb5dce636883aef68beb2846f1e4103b660a7da2c9c548
 COMPONENT_ARCHIVE_URL= \
-  http://dl.matroska.org/downloads/libebml/$(COMPONENT_ARCHIVE)
+	http://dl.matroska.org/downloads/libebml/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	LICENSE.LGPL
 COMPONENT_FMRI=		library/libebml
 COMPONENT_CLASSIFICATION=	System/Libraries
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# common targets
+CMAKE_OPTIONS += -DBUILD_SHARED_LIBS:BOOL=ON
+CMAKE_OPTIONS += -DSTATIC_BUILD:BOOL=OFF
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
