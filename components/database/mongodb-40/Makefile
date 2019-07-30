@@ -28,9 +28,8 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-src-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://fastdl.mongodb.org/src/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	sha256:c2672443f01ea4523a356edc8804cb6af31e831f63a88ee4a100aafbff443e4f
-COMPONENT_LICENSE= Server Side Public License VERSION 1,AGPLv3, zlib, Apache v2.0
+COMPONENT_LICENSE= SSPL, zlib, Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE-Community.txt
-# LICENSE-Community.txt contains a reference to GNU-AGPL-3.0.txt but not APACHE-2.0.txt
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -118,6 +117,7 @@ test:		$(TEST_64)
 # Test requirements
 REQUIRED_PACKAGES += library/python/pymongo-27
 REQUIRED_PACKAGES += library/python/pyyaml
+REQUIRED_PACKAGES += library/python/urllib3-27
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/scons
