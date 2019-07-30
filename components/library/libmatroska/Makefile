@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libmatroska
 COMPONENT_VERSION=        1.4.8
+COMPONENT_REVISION=       1
 COMPONENT_PROJECT_URL=    http://matroska.org/
 COMPONENT_SUMMARY=        Matroska Video Container
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
