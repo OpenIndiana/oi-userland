@@ -97,7 +97,7 @@ CONFIGURE_OPTIONS.64  +=  --disable-embedded-perl
 CONFIGURE_OPTIONS.64  +=  --with-perl-modules="$(PERL_ARGS)"
 
 # parallel build not supported
-COMPONENT_BUILD_ARGS=-j1
+COMPONENT_BUILD_ARGS=
 
 # Install the net-snmp-57 libraries
 COMPONENT_PRE_CONFIGURE_ACTION = \
