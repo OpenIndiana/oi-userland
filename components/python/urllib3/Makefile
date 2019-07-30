@@ -33,9 +33,6 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:904bd981d6371bb95a200c0ec9dba5ba7cc980f2d6b125bd793fefe3293be388
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/shazow/urllib3
-COMPONENT_ANITYA_ID=	4078
-
-TPNO=			51398
 
 PYTHON_VERSIONS=  2.7 3.4 3.5
 
@@ -53,8 +50,11 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require Tornado 4.1
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += library/python/setuptools_scm-27
+REQUIRED_PACKAGES += library/python/setuptools_scm-34
+REQUIRED_PACKAGES += library/python/setuptools_scm-35
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += library/python/setuptools_scm-{27,34,35}

@@ -37,6 +37,22 @@ set name=info.upstream value="Andrey Petrov <andrey.petrov@shazow.net>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/475
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license LICENSE.txt license=MIT
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on the urllib3 package
+depend type=require \
+    fmri=library/python/urllib3@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+$(PYTHON_2.7_ONLY)depend type=require fmri=library/python/ipaddress-$(PYV)
+
 #
 file path=usr/lib/python$(PYVER)/vendor-packages/urllib3-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/urllib3-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -91,16 +107,3 @@ file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/ssl_.py
 file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/timeout.py
 file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/url.py
 file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/wait.py
-#
-license LICENSE.txt license=MIT
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-# force a dependency on six; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/six-$(PYV)
-
-# force a dependency on the urllib3 package
-depend type=require \
-    fmri=library/python/urllib3@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
