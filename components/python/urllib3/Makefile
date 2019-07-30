@@ -57,4 +57,4 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
-
+REQUIRED_PACKAGES += library/python/setuptools_scm-{27,34,35}
