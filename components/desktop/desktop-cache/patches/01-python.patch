@@ -1,0 +1,89 @@
+--- desktop-cache-smf-services-0.2.2/find_newer.~1~	2009-04-02 12:05:33.000000000 +0000
++++ desktop-cache-smf-services-0.2.2/find_newer	2019-08-01 16:27:59.118847968 +0000
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python2.4
++#!/usr/bin/python3.5
+ 
+ import os, sys
+ import getopt
+@@ -12,8 +12,8 @@
+             self.msg = ""
+         self.msg = self.msg + "Usage: find_newer.py [options] dir...\n\n"
+         self.msg = self.msg + "Options:\n"
+-	self.msg = self.msg + "   --name glob  find files matching glob\n"
+-        self.msg = self.msg + "   --newer ref  find files newer than a reference file"
++        self.msg = self.msg + "   --name glob  find files matching glob\n"
++        self.msg = self.msg + "   --newer ref  find files newer than a reference file\n"
+         self.msg = self.msg + "   -c           compare ctimes (the time the file status was last changed)\n"
+         self.msg = self.msg + "                This is the default.\n"
+         self.msg = self.msg + "   -m           compare mtimes (the time the file was last modified)\n"
+@@ -45,7 +45,7 @@
+ def find_newer_files(dir, comp_time, ref_time, reobj, follow_links):
+     dir = os.path.abspath(dir)
+     if dir in dirs_seen:
+-        print >>sys.stderr, "Warning: infinite loop of symlinks"
++        print("Warning: infinite loop of symlinks", file=sys.stderr)
+         return
+     dirs_seen.append(dir)
+     for root, dirs, files in os.walk(dir):
+@@ -57,16 +57,16 @@
+                     if get_file_time (stat, comp_time) > ref_time:
+                         if reobj:
+                             if reobj.match (file):
+-                                print file
++                                print(file)
+                         else:
+-                            print file
++                            print(file)
+                 else:
+                     # no reference time, print all files that match the regex
+                     if reobj:
+                         if reobj.match (file):
+-                            print file
++                            print(file)
+                     else:
+-                        print file
++                        print(file)
+             except:
+                 pass
+         if follow_links:
+@@ -90,7 +90,7 @@
+     try:
+         try:
+             opts, args = getopt.getopt(argv[1:], "hcmaf", ["help", "newer=", "name="])
+-        except getopt.error, msg:
++        except getopt.error as msg:
+             raise Usage(msg)
+         for o, a in opts:
+             if o == "-c":
+@@ -110,9 +110,9 @@
+         if len(args) < 1:
+             raise Usage("invalid arguments")
+ 
+-    except Usage, err:
+-        print >>sys.stderr, err.msg
+-        print >>sys.stderr, "Use --help for usage information"
++    except Usage as err:
++        print(err.msg, file=sys.stderr)
++        print("Use --help for usage information", file=sys.stderr)
+         return 2
+ 
+     # default: compare ctime
+@@ -126,7 +126,7 @@
+         try:
+             ref_stat = os.stat(ref_file)
+         except:
+-            print >>sys.stderr, "Cannot stat reference file: %s" % ref_file
++            print("Cannot stat reference file: %s" % ref_file, file=sys.stderr)
+             return 1
+         ref_time = get_file_time (ref_stat, comp_time)
+     else:
+@@ -134,7 +134,7 @@
+ 
+     for dir in args:
+         if not os.path.isdir(dir):
+-            print >>sys.stderr, "Directory not found: %s" % dir
++            print("Directory not found: %s" % dir, file=sys.stderr)
+             return 1
+ 
+         if glob:
