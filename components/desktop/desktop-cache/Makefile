@@ -10,14 +10,14 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= desktop-cache
 COMPONENT_VERSION= 0.2.2
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_SUMMARY= desktop-cache is a set of SMF services used to update the various GNOME desktop caches.
 COMPONENT_SRC= desktop-cache-smf-services-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -43,4 +43,4 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
