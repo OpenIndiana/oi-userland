@@ -11,14 +11,14 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
-# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mongodb
 COMPONENT_MAJOR_VERSION= 4.0
-COMPONENT_MINOR_VERSION= 3
+COMPONENT_MINOR_VERSION= 11
 COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_SUMMARY= MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
@@ -27,10 +27,9 @@ COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://fastdl.mongodb.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:fbbe840e62376fe850775e98eb10fdf40594a023ecf308abec6dcec44d2bce0c
-COMPONENT_LICENSE= AGPLv3, zlib, Apache v2.0
+COMPONENT_ARCHIVE_HASH=	sha256:c2672443f01ea4523a356edc8804cb6af31e831f63a88ee4a100aafbff443e4f
+COMPONENT_LICENSE= SSPL
 COMPONENT_LICENSE_FILE=	LICENSE-Community.txt
-# LICENSE-Community.txt contains a reference to GNU-AGPL-3.0.txt but not APACHE-2.0.txt
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -43,6 +42,9 @@ MONGO_PREFIX=usr/mongodb/$(COMPONENT_MAJOR_VERSION)
 
 GMAKE=scons
 CORES=$(shell psrinfo -v|grep '^Status of'|tail -1|awk '{print $$5}')
+GOROOT=$(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
+
+ENV = /usr/bin/env -i
 
 COMPONENT_BUILD_ARGS += TARGET_ARCH=x86_64
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
@@ -69,11 +71,11 @@ COMPONENT_INSTALL_ARGS = $(COMPONENT_BUILD_ARGS)
 $(BUILD_TOOLS):	$(BUILD_64)
 	$(MKDIR) $(@D)/bin
 	$(CP) -a $(SOURCE_DIR)/src/mongo/gotools/* $(@D) 
-	cd $(@D) && /usr/bin/bash build.sh ssl
+	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) /usr/bin/bash build.sh ssl
 	$(TOUCH) $(@)
 
 $(INSTALL_TOOLS): $(BUILD_TOOLS) $(INSTALL_64)
-	$(CP) $(BUILD_DIR)/tools/bin/* $(PROTO_DIR)/$(MONGO_PREFIX)/bin
+	$(CP) $(BUILD_DIR)/tools/src/github.com/mongodb/mongo-tools/bin/* $(PROTO_DIR)/$(MONGO_PREFIX)/bin
 	$(TOUCH) $(@)
 
 TEST_SUITES += core
@@ -102,7 +104,6 @@ COMPONENT_TEST_TRANSFORMS +=    '-e "s/\[resmoke\][ -+0-9T:\.\-]*//"' \
                                 '-n ' \
                                 '-e "/Summary of all suites/,\\$$p"'
 
-ENV = /usr/bin/env -i
 
 # Not strictly necessary
 $(TEST_64):     $(INSTALL_64) $(INSTALL_TOOLS)
@@ -116,6 +117,7 @@ test:		$(TEST_64)
 # Test requirements
 REQUIRED_PACKAGES += library/python/pymongo-27
 REQUIRED_PACKAGES += library/python/pyyaml
+REQUIRED_PACKAGES += library/python/urllib3-27
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/scons
