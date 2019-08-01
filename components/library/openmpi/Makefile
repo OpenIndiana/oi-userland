@@ -20,6 +20,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR =     4.0
 COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).1
+COMPONENT_REVISION =        1
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_PROJECT_URL =     http://www.open-mpi.org
@@ -59,14 +60,12 @@ CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
 CONFIGURE_OPTIONS+= --enable-mpi-cxx
 CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
 CONFIGURE_OPTIONS+= --disable-event-epoll
-CONFIGURE_OPTIONS+= --with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= --with-wrapper-libs="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= --with-wrapper-fcflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --with-wrapper-cflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --with-wrapper-fcflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= --with-wrapper-libs="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --without-slurm
 CONFIGURE_OPTIONS+= ompi_cv_fortran_ignore_tkr_data=0
-
-#COMPONENT_POST_CONFIGURE_ACTION += sed -i -e 's/-export-dynamic//g' $(SOURCE_DIR)/ompi/mpi/cxx/Makefile
 
 build:		$(BUILD_64)
 
@@ -95,6 +94,7 @@ REQUIRED_PACKAGES += service/picl
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += developer/hwloc
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
