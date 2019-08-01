@@ -25,8 +25,6 @@
 #
 BUILD_BITS= 64_and_32
 
-# The Makefile of this component does not support multiple build jobs.
-COMPONENT_MAKE_JOBS=1
 DOXYGEN= /usr/bin/doxygen
 
 include ../../../make-rules/shared-macros.mk
@@ -47,11 +45,6 @@ COMPONENT_SUMMARY= Net-SNMP Agent files and libraries
 COMPONENT_ANITYA_ID=	2062
 
 TPNO=			47655
-
-# obsolete - reminder for common targets build/install/test
-BUILD_32_and_64 += $(BUILD_DIR_32)/.docs
-INSTALL_TARGET= build $(INSTALL_32_and_64)
-TEST_TARGET= $(TEST_32_and_64)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
