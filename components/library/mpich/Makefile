@@ -10,14 +10,14 @@
 #
 
 #
-# Copyright 2013 Aurelien Larcher.  All rights reserved.
+# Copyright 2013-2019 Aurelien Larcher.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =	mpich/$(COMPILER)
-COMPONENT_VERSION =	3.2.1
+COMPONENT_VERSION =	3.3.1
 COMPONENT_FMRI =	library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =	http://www.mpich.org/
@@ -25,13 +25,12 @@ COMPONENT_SRC_NAME = mpich
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:5db53bf2edfaa2238eb6a0a5bc3d2c2ccbfbb1badd79b664a1a919d2ce2330f1
+    sha256:fe551ef29c8eea8978f679484441ed8bb1d943f6ad25b63c235d4b9243d551e5
 COMPONENT_ARCHIVE_URL =	http://www.mpich.org/static/downloads/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB =	    $(COMPONENT_FMRI)
 
 COMPONENT_SUMMARY =	High-performance and widely portable implementation of the MPI standard
 COMPONENT_LICENSE_FILE = $(COMPONENT_SRC_NAME).license
-COMPONENT_LICENSE =	MIT
+COMPONENT_LICENSE =	BSD
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -73,7 +72,7 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
 $(BUILD_DIR)/modulefile.%:		files/modulefile
 	/bin/sed -e "s#%%BITS%%#$*#g" \
@@ -85,13 +84,11 @@ $(BUILD_DIR)/modulefile.%:		files/modulefile
 
 PROTO_MODULE_PATH = $(PROTO_DIR)$(MODULE_PATH)/$(COMPONENT_NAME)
 
-install:	$(INSTALL_32_and_64) $(BUILD_DIR)/modulefile.32 $(BUILD_DIR)/modulefile.64
-	$(MKDIR) $(PROTO_MODULE_PATH)/32
-	$(CP) $(BUILD_DIR)/modulefile.32 $(PROTO_MODULE_PATH)/32/$(COMPONENT_VERSION)
+install:	$(INSTALL_64) $(BUILD_DIR)/modulefile.64
 	$(MKDIR) $(PROTO_MODULE_PATH)/64
 	$(CP) $(BUILD_DIR)/modulefile.64 $(PROTO_MODULE_PATH)/64/$(COMPONENT_VERSION)
 
-test:	$(TEST_32_and_64)
+test:	$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-picl
@@ -102,5 +99,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

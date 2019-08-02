@@ -22,6 +22,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Require module files
+depend fmri=pkg:/$(COMPONENT_FMRI)/modulefiles@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
 <transform file path=.* -> default pkg.depend.bypass-generate perl >
 
 file path=usr/include/mpich/mpi.h
@@ -33,24 +36,6 @@ file path=usr/include/mpich/mpicxx.h
 file path=usr/include/mpich/mpif.h
 file path=usr/include/mpich/mpio.h
 file path=usr/include/mpich/mpiof.h
-file path=usr/include/mpich/opa_config.h
-file path=usr/include/mpich/opa_primitives.h
-file path=usr/include/mpich/opa_queue.h
-file path=usr/include/mpich/opa_util.h
-file path=usr/include/mpich/primitives/opa_by_lock.h
-file path=usr/include/mpich/primitives/opa_emulated.h
-file path=usr/include/mpich/primitives/opa_gcc_ia64.h
-file path=usr/include/mpich/primitives/opa_gcc_intel_32_64.h
-file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_barrier.h
-file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_ops.h
-file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_p3.h
-file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_p3barrier.h
-file path=usr/include/mpich/primitives/opa_gcc_intrinsics.h
-file path=usr/include/mpich/primitives/opa_gcc_ppc.h
-file path=usr/include/mpich/primitives/opa_gcc_sicortex.h
-file path=usr/include/mpich/primitives/opa_nt_intrinsics.h
-file path=usr/include/mpich/primitives/opa_sun_atomic_ops.h
-file path=usr/include/mpich/primitives/opa_unsafe.h
 file path=usr/lib/$(MACH64)/mpich/gcc/bin/hydra_nameserver
 file path=usr/lib/$(MACH64)/mpich/gcc/bin/hydra_persist
 file path=usr/lib/$(MACH64)/mpich/gcc/bin/hydra_pmi_proxy
@@ -67,58 +52,30 @@ link path=usr/lib/$(MACH64)/mpich/gcc/bin/mpirun target=mpiexec.hydra
 file path=usr/lib/$(MACH64)/mpich/gcc/bin/mpivars
 file path=usr/lib/$(MACH64)/mpich/gcc/bin/parkill
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libfmpich.so target=libmpifort.so
-link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpi.so target=libmpi.so.12.1.1
-link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpi.so.12 target=libmpi.so.12.1.1
-file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpi.so.12.1.1
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpi.a
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpi.so target=libmpi.so.12.1.7
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpi.so.12 target=libmpi.so.12.1.7
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpi.so.12.1.7
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpich.so target=libmpi.so
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichcxx.so target=libmpicxx.so
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichf90.so target=libmpifort.so
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpicxx.a
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpicxx.so \
-    target=libmpicxx.so.12.1.1
+    target=libmpicxx.so.12.1.7
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpicxx.so.12 \
-    target=libmpicxx.so.12.1.1
-file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpicxx.so.12.1.1
+    target=libmpicxx.so.12.1.7
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpicxx.so.12.1.7
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpifort.a
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpifort.so \
-    target=libmpifort.so.12.1.1
+    target=libmpifort.so.12.1.7
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpifort.so.12 \
-    target=libmpifort.so.12.1.1
-file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpifort.so.12.1.1
+    target=libmpifort.so.12.1.7
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpifort.so.12.1.7
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpl.so target=libmpi.so
 link path=usr/lib/$(MACH64)/mpich/gcc/lib/libopa.so target=libmpi.so
 file path=usr/lib/$(MACH64)/mpich/gcc/lib/pkgconfig/mpich.pc
 file path=usr/lib/$(MACH64)/mpich/gcc/lib/pkgconfig/openpa.pc
-file path=usr/lib/mpich/gcc/bin/hydra_nameserver
-file path=usr/lib/mpich/gcc/bin/hydra_persist
-file path=usr/lib/mpich/gcc/bin/hydra_pmi_proxy
-link path=usr/lib/mpich/gcc/bin/mpic++ target=mpicxx
-file path=usr/lib/mpich/gcc/bin/mpicc
-file path=usr/lib/mpich/gcc/bin/mpichversion
-file path=usr/lib/mpich/gcc/bin/mpicxx
-link path=usr/lib/mpich/gcc/bin/mpiexec target=mpiexec.hydra
-file path=usr/lib/mpich/gcc/bin/mpiexec.hydra
-link path=usr/lib/mpich/gcc/bin/mpif77 target=mpifort
-link path=usr/lib/mpich/gcc/bin/mpif90 target=mpifort
-file path=usr/lib/mpich/gcc/bin/mpifort
-link path=usr/lib/mpich/gcc/bin/mpirun target=mpiexec.hydra
-file path=usr/lib/mpich/gcc/bin/mpivars
-file path=usr/lib/mpich/gcc/bin/parkill
-link path=usr/lib/mpich/gcc/lib/libfmpich.so target=libmpifort.so
-link path=usr/lib/mpich/gcc/lib/libmpi.so target=libmpi.so.12.1.1
-link path=usr/lib/mpich/gcc/lib/libmpi.so.12 target=libmpi.so.12.1.1
-file path=usr/lib/mpich/gcc/lib/libmpi.so.12.1.1
-link path=usr/lib/mpich/gcc/lib/libmpich.so target=libmpi.so
-link path=usr/lib/mpich/gcc/lib/libmpichcxx.so target=libmpicxx.so
-link path=usr/lib/mpich/gcc/lib/libmpichf90.so target=libmpifort.so
-link path=usr/lib/mpich/gcc/lib/libmpicxx.so target=libmpicxx.so.12.1.1
-link path=usr/lib/mpich/gcc/lib/libmpicxx.so.12 target=libmpicxx.so.12.1.1
-file path=usr/lib/mpich/gcc/lib/libmpicxx.so.12.1.1
-link path=usr/lib/mpich/gcc/lib/libmpifort.so target=libmpifort.so.12.1.1
-link path=usr/lib/mpich/gcc/lib/libmpifort.so.12 target=libmpifort.so.12.1.1
-file path=usr/lib/mpich/gcc/lib/libmpifort.so.12.1.1
-link path=usr/lib/mpich/gcc/lib/libmpl.so target=libmpi.so
-link path=usr/lib/mpich/gcc/lib/libopa.so target=libmpi.so
-file path=usr/lib/mpich/gcc/lib/pkgconfig/mpich.pc
-file path=usr/lib/mpich/gcc/lib/pkgconfig/openpa.pc
+#file path=usr/share/Modules/modulefiles/mpich/gcc/64/$(COMPONENT_VERSION)
 file path=usr/share/doc/mpich/install.pdf
 file path=usr/share/doc/mpich/logging.pdf
 file path=usr/share/doc/mpich/user.pdf
