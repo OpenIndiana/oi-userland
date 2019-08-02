@@ -15,8 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         petsc
-COMPONENT_VERSION=      3.7.7
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      3.11.3
 COMPONENT_SUMMARY=      PETSc - Portable, Extensible Toolkit for Scientific Computation
 COMPONENT_PROJECT_URL=  http://www.mcs.anl.gov/petsc/
 COMPONENT_FMRI=         library/math/petsc
@@ -26,7 +25,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-lite-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= \
   http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c2b13bf6e9d8c00709ea2efd98d4770e45059651adcc2abd8a2285de7f221480
+  sha256:8bee4a5ad37af85938ae755be182dcea255888b4f8b3d976bedc57e959280622
 COMPONENT_LICENSE=      2-clause BSD license
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -94,21 +93,19 @@ PETSCGCC_RUNPATH=$(shell realpath -m --relative-to=$(MPI_LIBDIR) $(MPI_COMPILER_
 PETSC_FILES =include/petscconf.h
 PETSC_FILES+=include/petscmachineinfo.h
 PETSC_FILES+=include/petscconfiginfo.h
-PETSC_FILES+=lib/petsc/conf/make.log
-PETSC_FILES+=lib/petsc/conf/rules
 PETSC_FILES+=lib/petsc/conf/petscrules
-PETSC_FILES+=lib/petsc/conf/configure.log
 PETSC_FILES+=lib/petsc/conf/petscvariables
 PETSC_FILES+=lib/petsc/conf/modules/petsc/$(COMPONENT_VERSION)
 PETSC_FILES+=lib/petsc/conf/reconfigure-arch-sunos5-c-opt.py
-PETSC_FILES+=lib/petsc/conf/RDict.db
 PETSC_FILES+=lib/petsc/conf/uninstall.py
 PETSC_FILES+=lib/petsc/conf/variables
 PETSC_FILES+=lib/petsc/conf/PETScBuildInternal.cmake
 PETSC_FILES+=lib/pkgconfig/PETSc.pc
 # Each external package configuration should be processed
+PETSC_FILES+=lib/petsc/conf/pkg.conf.fblaslapack
 PETSC_FILES+=lib/petsc/conf/pkg.conf.hypre
 PETSC_FILES+=lib/petsc/conf/pkg.conf.metis
+PETSC_FILES+=lib/petsc/conf/pkg.conf.ptscotch
 PETSC_FILES+=lib/petsc/conf/pkg.conf.scalapack
 PETSC_FILES+=lib/petsc/conf/pkg.conf.suitesparse
 PETSC_FILES+=lib/petsc/conf/pkg.conf.superlu
@@ -128,6 +125,8 @@ PETSC_LIBS+=lib/libsuperlu.so
 COMPONENT_POST_INSTALL_ACTION = ( \
 	$(FIND) $(PROTO_DIR)$(MPI_PREFIX) -name *.py -exec \
 		$(GSED) -i -e '1 s:\#!/usr/bin/env python[0-9.]*:\#!/usr/bin/python$(PYTHON_VERSION):' {} \; ; \
+	$(GSED) -i -e '1 s:\#!/usr/bin/env python[0-9.]*:\#!/usr/bin/python$(PYTHON_VERSION):' \
+		$(PROTO_DIR)$(MPI_LIBDIR)/petsc/bin/petsc-performance-view ; \
 	for f in $(PETSC_FILES); \
 	do \
 		$(GSED) -i -e 's|$(PROTO_DIR)||g' \
