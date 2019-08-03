@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         petsc
 COMPONENT_VERSION=      3.11.3
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      PETSc - Portable, Extensible Toolkit for Scientific Computation
 COMPONENT_PROJECT_URL=  http://www.mcs.anl.gov/petsc/
 COMPONENT_FMRI=         library/math/petsc
