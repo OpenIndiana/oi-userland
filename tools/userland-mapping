@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3.5
 
 #
 # This file and its contents are supplied under the terms of the
@@ -19,8 +19,6 @@
 # mapping.py - generate mapping between component FMRI and component package names, to be used for different purposes,
 # e.g. checking for outdated pacakges, vulnerable packages etc.
 #
-
-from __future__ import print_function, absolute_import
 
 import argparse
 import json
@@ -62,7 +60,8 @@ def generate_component_data(component_path, subdir='components'):
     proc = subprocess.Popen(['gmake', '-s', 'print-value-COMPONENT_NAME', 'print-package-names'],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
-                            cwd=component_path)
+                            cwd=component_path,
+                            universal_newlines=True)
 
     for out in proc.stdout:
         result.append(out.rstrip())
