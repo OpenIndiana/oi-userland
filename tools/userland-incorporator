@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -33,14 +33,14 @@ import re
 import os.path
 from pkg.version import Version
 
-Werror = False	# set to true to exit with any warning
+Werror = False        # set to true to exit with any warning
 
 def warning(msg):
     if Werror == True:
-        print >>sys.stderr, "ERROR: %s" % msg
+        print("ERROR: %s" % msg, file=sys.stderr)
         sys.exit(1)
     else:
-        print >>sys.stderr, "WARNING: %s" % msg
+        print("WARNING: %s" % msg, file=sys.stderr)
 
 class Incorporation(object):
     name = None
@@ -73,7 +73,7 @@ set name=pkg.summary value="userland consolidation incorporation (%s)"
 set name=pkg.description value="This incorporation constrains packages from the userland consolidation"
 """ % (self.name, self.version, self.name)
 
-        names = self.packages.keys()
+        names = list(self.packages.keys())
         names.sort()
         for name in names:
             result += (self.__package_to_str(name, self.packages[name]) + '\n')
@@ -89,7 +89,8 @@ def get_incorporations(repository, publisher, inc_version='5.11'):
     tmp = subprocess.Popen(["/usr/bin/pkgrepo", "list", "-F", "json",
                                                         "-s", repository,
                                                         "-p", publisher],
-                           stdout=subprocess.PIPE)
+                           stdout=subprocess.PIPE,
+                           universal_newlines=True)
     incorporations = {}
     packages = json.load(tmp.stdout)
     inc_name='consolidation/userland/userland-incorporation'
@@ -112,11 +113,11 @@ def get_incorporations(repository, publisher, inc_version='5.11'):
         pkg_version = package['version']
 
         # skip older packages and those that explicitly don't want to be incorporated
-	# also skip the incorporation itself
-	if 'pkg.tmp.noincorporate' in package or pkg_version != versions[pkg_name] or pkg_name == inc_name:
-            continue
+        # also skip the incorporation itself
+        if 'pkg.tmp.noincorporate' in package or pkg_version != versions[pkg_name] or pkg_name == inc_name:
+           continue
 
-	# We don't want to support multiple incorporations for now
+        # We don't want to support multiple incorporations for now
         # a dict inside a list inside a dict
         # incorporate = package['pkg.tmp.incorporate'][0]['value']
         
@@ -136,7 +137,7 @@ def main_func():
         opts, pargs = getopt.getopt(sys.argv[1:], "c:s:p:v:d:w",
                                     ["repository=", "publisher=", "version=",
                                      "consolidation=", "destdir=", "Werror"])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         usage(_("illegal option: %s") % e.opt)
 
     repository = None
@@ -161,7 +162,7 @@ def main_func():
 
     incorporations = get_incorporations(repository, publisher, version)
 
-    for incorporation_name in incorporations.keys():
+    for incorporation_name in list(incorporations.keys()):
         filename = ''
         if destdir != None:
             filename = destdir + '/'
