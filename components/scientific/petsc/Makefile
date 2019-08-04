@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         petsc
 COMPONENT_VERSION=      3.11.3
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      PETSc - Portable, Extensible Toolkit for Scientific Computation
 COMPONENT_PROJECT_URL=  http://www.mcs.anl.gov/petsc/
 COMPONENT_FMRI=         library/math/petsc
@@ -94,6 +94,7 @@ PETSCGCC_RUNPATH=$(shell realpath -m --relative-to=$(MPI_LIBDIR) $(MPI_COMPILER_
 PETSC_FILES =include/petscconf.h
 PETSC_FILES+=include/petscmachineinfo.h
 PETSC_FILES+=include/petscconfiginfo.h
+PETSC_FILES+=lib/petsc/conf/rules
 PETSC_FILES+=lib/petsc/conf/petscrules
 PETSC_FILES+=lib/petsc/conf/petscvariables
 PETSC_FILES+=lib/petsc/conf/modules/petsc/$(COMPONENT_VERSION)
@@ -102,6 +103,7 @@ PETSC_FILES+=lib/petsc/conf/uninstall.py
 PETSC_FILES+=lib/petsc/conf/variables
 PETSC_FILES+=lib/petsc/conf/PETScBuildInternal.cmake
 PETSC_FILES+=lib/pkgconfig/PETSc.pc
+PETSC_FILES+=lib/pkgconfig/superlu.pc
 # Each external package configuration should be processed
 PETSC_FILES+=lib/petsc/conf/pkg.conf.fblaslapack
 PETSC_FILES+=lib/petsc/conf/pkg.conf.hypre
@@ -110,6 +112,7 @@ PETSC_FILES+=lib/petsc/conf/pkg.conf.ptscotch
 PETSC_FILES+=lib/petsc/conf/pkg.conf.scalapack
 PETSC_FILES+=lib/petsc/conf/pkg.conf.suitesparse
 PETSC_FILES+=lib/petsc/conf/pkg.conf.superlu
+PETSC_FILES+=share/petsc/examples/gmakefile.test
 
 # Fix runtime path
 PETSC_LIBS =lib/libpetscmat.so.$(COMPONENT_VERSION)
