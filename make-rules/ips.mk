@@ -41,7 +41,7 @@ PKGFMT =	/usr/bin/pkgfmt
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 PKGSEND =	/usr/bin/pkgsend
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
-PKGLINT =	/usr/bin/pkglint
+PKGLINT =	/usr/bin/python3.5 /usr/bin/pkglint
 else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
