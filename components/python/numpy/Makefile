@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	numpy
-COMPONENT_VERSION= 	1.13.3
+COMPONENT_VERSION= 	1.17.0
 COMPONENT_FMRI= 	library/python/numpy
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4c6b4eef790528bebb7ec9590d74cc193868940fe68e4109a91c196df72d8094
+  sha256:47b7b6145e7ba5918ce26be25999b6d4b35cf9fbfdf46b7da50090ffdb020445
 COMPONENT_ARCHIVE_URL= \
   https://github.com/numpy/numpy/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://numpy.scipy.org/
@@ -29,7 +29,8 @@ COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SUMMARY= 	Numerical-Python
 COMPONENT_LICENSE= 	BSD
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	3.5
+PY3_CYTHON_NAMING=\#
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -37,7 +38,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 LD_OPTIONS	+= -lm
 
-CFLAGS+= -std=gnu99 -D_XOPEN_SOURCE=600
+CFLAGS+= -std=gnu99 $(CPP_XPG6MODE) 
 
 COMPONENT_PRE_BUILD_ACTION  +=	$(CLONEY) $(SOURCE_DIR) $(@D) ;
 
@@ -91,20 +92,6 @@ COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/amd64/python$(PYT
 	( for file in $(NUMPY_WRONG_HASHBANG); do $(GSED) -i -e 's:\#!/usr/bin/env python:\#!/usr/bin/python$(PYTHON_VERSION):' \
 	$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/numpy/$${file}; done; ) );
 
-# Borrowed from solaris-userland
-# Merge 32-bit & 64-bit versions of header with different SIZEOF values
-NUMPYCONFIG_H = $(PYTHON_VENDOR_PACKAGES.32)/numpy/core/include/numpy/_numpyconfig.h
-$(BUILD_DIR)/.merged-header: $(INSTALL_32_and_64)
-	-$(RM) $(PROTO_DIR)/$(NUMPYCONFIG_H)
-	print '#include <sys/isa_defs.h>' > $(PROTO_DIR)/$(NUMPYCONFIG_H)
-	$(GDIFF) -D _LP64 \
-	    $(BUILD_DIR)/$(MACH32)-$(PYTHON_VERSION)/src.solaris-*.32bit-$(PYTHON_VERSION)/numpy/core/include/numpy/_numpyconfig.h \
-	    $(BUILD_DIR)/$(MACH64)-$(PYTHON_VERSION)/src.solaris-*.64bit-$(PYTHON_VERSION)/numpy/core/include/numpy/_numpyconfig.h \
-	    >> $(PROTO_DIR)/$(NUMPYCONFIG_H) ; \
-	diffstatus=$$? ; \
-	if (( $$diffstatus != 1 )) ; then exit $$diffstatus ; fi
-	touch $@
-
 COMPONENT_TEST_DIR  = $(COMPONENT_DIR)
 COMPONENT_TEST_ARGS = -c 'import numpy; numpy.test()'
 COMPONENT_TEST_ENV += F77="$(F77) -m$(BITS)"
@@ -114,11 +101,12 @@ COMPONENT_TEST_TRANSFORMS += '-e "s|$(PROTO_DIR)|\\$$(PROTO_DIR)|g"'
 
 build: $(BUILD_32_and_64)
 
-install: $(BUILD_DIR)/.merged-header
+install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/math/openblas
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
