@@ -35,10 +35,6 @@ CLEAN_PATHS += $(BUILD_DIR)
 
 include $(WS_MAKE_RULES)/prep.mk
 
-COMPONENT_ENV = CC=$(CC)
-COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
-COMPONENT_INSTALL_ENV = $(COMPONENT_ENV)
-
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
@@ -66,6 +62,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded Makefile
             -e 's|^export GATE=.*|export GATE=\"$$(git log -1 --format=illumos-%h)\"|' \
             -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|'; \
           echo export VERIFY_ELFSIGN=n; \
+          echo export LC_ALL=en_US.UTF-8; \
           echo export CW_NO_SHADOW=1; \
           echo export SPRO_ROOT=; \
           echo export ON_CLOSED_BINS=/tmp; \
