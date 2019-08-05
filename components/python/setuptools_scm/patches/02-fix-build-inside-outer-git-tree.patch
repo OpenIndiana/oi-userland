@@ -1,0 +1,34 @@
+Rude workaround for https://github.com/pypa/setuptools_scm/issues/353
+
+--- setuptools_scm-3.3.3/src/setuptools_scm/file_finder_git.py.1	2019-08-05 08:36:03.088367984 +0000
++++ setuptools_scm-3.3.3/src/setuptools_scm/file_finder_git.py	2019-08-05 08:40:05.468435538 +0000
+@@ -18,7 +18,12 @@
+                 stderr=devnull,
+             )
+         trace("find files toplevel", out)
+-        return os.path.normcase(os.path.realpath(out.strip()))
++        toplevel_path = os.path.normcase(os.path.realpath(out.strip()))
++        setup_py_path = os.path.join(toplevel_path, "setup.py")
++        if os.path.exists(setup_py_path):
++            return toplevel_path
++        else:
++            return None
+     except subprocess.CalledProcessError:
+         # git returned error, we are not in a git repo
+         return None
+--- setuptools_scm-3.3.3/src/setuptools_scm/file_finder_hg.py.1	2019-08-05 08:42:09.647819292 +0000
++++ setuptools_scm-3.3.3/src/setuptools_scm/file_finder_hg.py	2019-08-05 08:42:30.538083187 +0000
+@@ -13,7 +13,12 @@
+                 universal_newlines=True,
+                 stderr=devnull,
+             )
+-        return os.path.normcase(os.path.realpath(out.strip()))
++        toplevel_path = os.path.normcase(os.path.realpath(out.strip()))
++        setup_py_path = os.path.join(toplevel_path, "setup.py")
++        if os.path.exists(setup_py_path):
++            return toplevel_path
++        else:
++            return None
+     except subprocess.CalledProcessError:
+         # hg returned error, we are not in a mercurial repo
+         return None
