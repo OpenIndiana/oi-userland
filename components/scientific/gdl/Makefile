@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        gdl
 COMPONENT_VERSION=      0.9.7
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=  http://gnudatalanguage.sourceforge.net/	
 COMPONENT_SUMMARY=      A free/libre/open source incremental compiler compatible with IDL and to some extent with PV-WAVE.	
 COMPONENT_FMRI=         scientific/gdl
@@ -48,21 +48,25 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/eigen3
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += developer/gsl
 REQUIRED_PACKAGES += image/graphicsmagick
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/plplot
 REQUIRED_PACKAGES += library/c++/hdf5
-REQUIRED_PACKAGES += library/eigen3
 REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/graphics/wxwidgets
+REQUIRED_PACKAGES += library/mpich/gcc
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/netcdf
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
