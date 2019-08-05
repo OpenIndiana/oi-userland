@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		serf
 COMPONENT_VERSION=	1.3.9
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	high performance C-based HTTP client library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://serf.apache.org/
@@ -96,7 +96,10 @@ install:	build
 
 test:		$(TEST_32_and_64)
 
+# Build dependencies
 REQUIRED_PACKAGES += developer/build/scons
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/expat
@@ -105,4 +108,3 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/network/ldap/openldap
