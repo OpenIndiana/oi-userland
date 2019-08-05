@@ -21,87 +21,6 @@
    if(CMAKE_UNAME)
      if(CMAKE_HOST_SYSTEM_NAME STREQUAL "AIX")
        exec_program(${CMAKE_UNAME} ARGS -v OUTPUT_VARIABLE _CMAKE_HOST_SYSTEM_MAJOR_VERSION)
---- cmake-3.11.3/Modules/FindJNI.cmake.orig	2018-06-04 19:13:02.516298415 +0000
-+++ cmake-3.11.3/Modules/FindJNI.cmake	2018-06-04 19:32:23.117661472 +0000
-@@ -166,38 +166,14 @@
- endif()
- 
- JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_LIBRARY_DIRECTORIES
--  /usr/lib/jvm/java/lib
--  /usr/lib/java/jre/lib/{libarch}
--  /usr/lib/jvm/jre/lib/{libarch}
--  /usr/local/lib/java/jre/lib/{libarch}
--  /usr/local/share/java/jre/lib/{libarch}
--  /usr/lib/j2sdk1.4-sun/jre/lib/{libarch}
--  /usr/lib/j2sdk1.5-sun/jre/lib/{libarch}
--  /opt/sun-jdk-1.5.0.04/jre/lib/{libarch}
--  /usr/lib/jvm/java-6-sun/jre/lib/{libarch}
--  /usr/lib/jvm/java-1.5.0-sun/jre/lib/{libarch}
--  /usr/lib/jvm/java-6-sun-1.6.0.00/jre/lib/{libarch}       # can this one be removed according to #8821 ? Alex
--  /usr/lib/jvm/java-6-openjdk/jre/lib/{libarch}
--  /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0/jre/lib/{libarch}        # fedora
--  # Debian specific paths for default JVM
--  /usr/lib/jvm/default-java/jre/lib/{libarch}
--  /usr/lib/jvm/default-java/jre/lib
--  /usr/lib/jvm/default-java/lib
--  # Arch Linux specific paths for default JVM
--  /usr/lib/jvm/default/jre/lib/{libarch}
--  /usr/lib/jvm/default/lib/{libarch}
--  # Ubuntu specific paths for default JVM
--  /usr/lib/jvm/java-8-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
--  /usr/lib/jvm/java-7-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
--  /usr/lib/jvm/java-6-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
--  # OpenBSD specific paths for default JVM
--  /usr/local/jdk-1.7.0/jre/lib/{libarch}
--  /usr/local/jre-1.7.0/lib/{libarch}
--  /usr/local/jdk-1.6.0/jre/lib/{libarch}
--  /usr/local/jre-1.6.0/lib/{libarch}
--  # SuSE specific paths for default JVM
--  /usr/lib64/jvm/java/jre/lib/{libarch}
--  /usr/lib64/jvm/jre/lib/{libarch}
-+  /usr/java/lib/{libarch}
-+  /usr/java/lib
-+  /usr/java/jre/lib/{libarch}
-+  /usr/java/jre/lib
-+  /usr/jdk/latest/lib/{libarch}
-+  /usr/jdk/latest/lib
-+  /usr/jdk/latest/jre/lib/{libarch}
-+  /usr/jdk/latest/jre/lib
-   )
- 
- set(JAVA_JVM_LIBRARY_DIRECTORIES)
-@@ -233,29 +209,8 @@
- endif()
- 
- JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_INCLUDE_DIRECTORIES
--  /usr/lib/java/include
--  /usr/local/lib/java/include
--  /usr/lib/jvm/java/include
--  /usr/lib/jvm/java-6-sun/include
--  /usr/lib/jvm/java-1.5.0-sun/include
--  /usr/lib/jvm/java-6-sun-1.6.0.00/include       # can this one be removed according to #8821 ? Alex
--  /usr/lib/jvm/java-6-openjdk/include
--  /usr/lib/jvm/java-8-openjdk-{libarch}/include  # ubuntu 15.10
--  /usr/lib/jvm/java-7-openjdk-{libarch}/include  # ubuntu 15.10
--  /usr/lib/jvm/java-6-openjdk-{libarch}/include  # ubuntu 15.10
--  /usr/local/share/java/include
--  /usr/lib/j2sdk1.4-sun/include
--  /usr/lib/j2sdk1.5-sun/include
--  /opt/sun-jdk-1.5.0.04/include
--  # Debian specific path for default JVM
--  /usr/lib/jvm/default-java/include
--  # Arch specific path for default JVM
--  /usr/lib/jvm/default/include
--  # OpenBSD specific path for default JVM
--  /usr/local/jdk-1.7.0/include
--  /usr/local/jdk-1.6.0/include
--  # SuSE specific paths for default JVM
--  /usr/lib64/jvm/java/include
-+  /usr/java/include
-+  /usr/jdk/latest/include
-   )
- 
- foreach(JAVA_PROG "${JAVA_RUNTIME}" "${JAVA_COMPILE}" "${JAVA_ARCHIVE}")
 --- cmake-3.11.3/Modules/CMakeDetermineJavaCompiler.cmake.orig	2018-06-04 19:13:02.561764067 +0000
 +++ cmake-3.11.3/Modules/CMakeDetermineJavaCompiler.cmake	2018-06-04 19:16:19.645223465 +0000
 @@ -43,18 +43,9 @@
@@ -172,31 +91,6 @@
      CACHE PATH "Install path prefix, prepended onto install directories.")
  else()
    GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)
---- cmake-3.11.3/Modules/FindGTK2.cmake.orig	2018-06-04 19:13:02.521189917 +0000
-+++ cmake-3.11.3/Modules/FindGTK2.cmake	2018-06-04 19:19:08.271782767 +0000
-@@ -292,22 +292,7 @@
-     find_path(GTK2_${_var}_INCLUDE_DIR ${_hdr}
-         PATHS
-             ${_gtk2_arch_dir}
--            /usr/local/libx32
--            /usr/local/lib64
--            /usr/local/lib
--            /usr/libx32
--            /usr/lib64
-             /usr/lib
--            /opt/gnome/include
--            /opt/gnome/lib
--            /opt/openwin/include
--            /usr/openwin/lib
--            /sw/include
--            /sw/lib
--            /opt/local/include
--            /opt/local/lib
--            /usr/pkg/lib
--            /usr/pkg/include/glib
-             $ENV{GTKMM_BASEPATH}/include
-             $ENV{GTKMM_BASEPATH}/lib
-             [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]/include
 --- cmake-3.11.3/Modules/FindQt.cmake.orig	2018-06-04 19:13:02.531675148 +0000
 +++ cmake-3.11.3/Modules/FindQt.cmake	2018-06-04 19:38:29.010903484 +0000
 @@ -105,10 +105,8 @@
@@ -221,3 +115,26 @@
          ${Java_JAR_PATHS})
      set(_jar_doc "NOTSET")
  
+--- cmake-3.15.1/Modules/FindGTK2.cmake.orig	2019-08-05 18:38:20.365604825 +0000
++++ cmake-3.15.1/Modules/FindGTK2.cmake	2019-08-05 18:38:37.558332920 +0000
+@@ -291,20 +291,7 @@
+     find_path(GTK2_${_var}_INCLUDE_DIR ${_hdr}
+         PATHS
+             ${_gtk2_arch_dir}
+-            /usr/local/libx32
+-            /usr/local/lib64
+-            /usr/local/lib
+-            /usr/libx32
+-            /usr/lib64
+             /usr/lib
+-            /opt/gnome/include
+-            /opt/gnome/lib
+-            /opt/openwin/include
+-            /usr/openwin/lib
+-            /sw/lib
+-            /opt/local/lib
+-            /usr/pkg/lib
+-            /usr/pkg/include/glib
+             $ENV{GTKMM_BASEPATH}/include
+             $ENV{GTKMM_BASEPATH}/lib
+             [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]/include

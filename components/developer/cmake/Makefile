@@ -32,8 +32,8 @@ PARFAIT_BUILD=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION=3.12
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
+COMPONENT_MAJOR_VERSION=3.15
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).1
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -47,7 +47,7 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:5255584bfd043eb717562cff8942d472f1c0e4679c4941d84baadaa9b28e3194
+  sha256:18dec548d8f8b04d53c60f9cedcebaa6762f8425339d1e2c889c383d3ccdd7f7
 COMPONENT_ARCHIVE_URL= \
   https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
