@@ -215,6 +215,8 @@ test:	$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += web/server/apache-24
+REQUIRED_PACKAGES += developer/icu
+REQUIRED_PACKAGES += database/postgres-94/developer
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
