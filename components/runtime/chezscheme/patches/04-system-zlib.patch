@@ -1,0 +1,153 @@
+Only in ChezScheme-9.5.2: .patched
+Only in ChezScheme-9.5.2: .patched-01-luuid.patch
+Only in ChezScheme-9.5.2: .patched-02-il-ld.patch
+Only in ChezScheme-9.5.2: .patched-03-gmtoff.patch
+Only in ChezScheme-9.5.2: .prep
+diff -ru ChezScheme-9.5.2.orig/c/Mf-a6s2 ChezScheme-9.5.2/c/Mf-a6s2
+--- ChezScheme-9.5.2.orig/c/Mf-a6s2	2019-03-21 18:05:24.000000000 +0000
++++ ChezScheme-9.5.2/c/Mf-a6s2	2019-08-25 16:23:34.243758990 +0000
+@@ -16,7 +16,7 @@
+ m = a6s2
+ Cpu = X86_64
+ 
+-mdclib = -lnsl -ldl -lm -lcurses -lrt -luuid
++mdclib = -lnsl -ldl -lm -lcurses -lrt -luuid -lz
+ C = ${CC} ${CPPFLAGS} -m64 -Wpointer-arith -Wextra -Werror -O ${CFLAGS}
+ o = o
+ mdsrc = i3le.c
+@@ -30,11 +30,8 @@
+ 
+ include Mf-base
+ 
+-${Kernel}: ${kernelobj} ../zlib/libz.a
+-	/bin/ld -r -o ${Kernel} ${kernelobj} ../zlib/libz.a
++${Kernel}: ${kernelobj}
++	/bin/ld -r -o ${Kernel} ${kernelobj}
+ 
+ ${Scheme}: ${Kernel} ${Main}
+ 	$C -o ${Scheme} ${Kernel} ${Main} ${mdclib} ${LDFLAGS}
+-
+-../zlib/configure.log:
+-	(cd ../zlib; CFLAGS=-m64 ./configure --64)
+Only in ChezScheme-9.5.2/c: Mf-a6s2.~1~
+Only in ChezScheme-9.5.2/c: Mf-a6s2.~2~
+diff -ru ChezScheme-9.5.2.orig/c/Mf-base ChezScheme-9.5.2/c/Mf-base
+--- ChezScheme-9.5.2.orig/c/Mf-base	2019-03-21 18:05:24.000000000 +0000
++++ ChezScheme-9.5.2/c/Mf-base	2019-08-25 16:22:36.296685268 +0000
+@@ -54,7 +54,7 @@
+ ${kernelobj}: system.h types.h version.h externs.h globals.h segment.h thread.h sort.h
+ ${kernelobj}: ${Include}/equates.h ${Include}/scheme.h
+ ${mainobj}: ${Include}/scheme.h
+-${kernelobj}: ../zlib/zconf.h ../zlib/zlib.h
++${kernelobj}:
+ gc-ocd.o gc-oce.o: gc.c
+ 
+ ../zlib/zlib.h ../zlib/zconf.h: ../zlib/configure.log
+diff -ru ChezScheme-9.5.2.orig/c/Mf-i3s2 ChezScheme-9.5.2/c/Mf-i3s2
+--- ChezScheme-9.5.2.orig/c/Mf-i3s2	2019-03-21 18:05:24.000000000 +0000
++++ ChezScheme-9.5.2/c/Mf-i3s2	2019-08-25 16:24:13.152327983 +0000
+@@ -16,7 +16,7 @@
+ m = i3s2
+ Cpu = I386
+ 
+-mdclib = -lnsl -ldl -lm -lcurses -lrt -luuid
++mdclib = -lnsl -ldl -lm -lcurses -lrt -luuid -lz
+ C = ${CC} ${CFLAGS} -m32 -Wpointer-arith -Wextra -Werror -O ${CPPFLAGS}
+ o = o
+ mdsrc = i3le.c
+@@ -26,12 +26,12 @@
+ .SUFFIXES: .c .o
+ 
+ .c.o:
+-	$C -c -DSOLARIS -D${Cpu} -I${Include} -I../zlib $*.c
++	$C -c -DSOLARIS -D${Cpu} -I${Include} $*.c
+ 
+ include Mf-base
+ 
+-${Kernel}: ${kernelobj} ../zlib/libz.a
+-	/bin/ld -r -o ${Kernel} ${kernelobj} ../zlib/libz.a
++${Kernel}: ${kernelobj}
++	/bin/ld -r -o ${Kernel} ${kernelobj}
+ 
+ ${Scheme}: ${Kernel} ${Main}
+ 	$C -o ${Scheme} ${Kernel} ${Main} ${mdclib} ${LDFLAGS}
+diff -ru ChezScheme-9.5.2.orig/c/Mf-ta6s2 ChezScheme-9.5.2/c/Mf-ta6s2
+--- ChezScheme-9.5.2.orig/c/Mf-ta6s2	2019-03-21 18:05:24.000000000 +0000
++++ ChezScheme-9.5.2/c/Mf-ta6s2	2019-08-25 16:23:58.255504663 +0000
+@@ -16,7 +16,7 @@
+ m = ta6s2
+ Cpu = X86_64
+ 
+-mdclib = -lnsl -ldl -lm -lpthread -lcurses -lrt -luuid
++mdclib = -lnsl -ldl -lm -lpthread -lcurses -lrt -luuid -lz
+ C = ${CC} ${CPPFLAGS} -m64 -Wpointer-arith -Wextra -Werror -O2 -D_REENTRANT ${CFLAGS}
+ o = o
+ mdsrc = i3le.c
+@@ -26,15 +26,12 @@
+ .SUFFIXES: .c .o
+ 
+ .c.o:
+-	$C -c -DSOLARIS -D${Cpu} -I${Include} -I../zlib $*.c
++	$C -c -DSOLARIS -D${Cpu} -I${Include} $*.c
+ 
+ include Mf-base
+ 
+-${Kernel}: ${kernelobj} ../zlib/libz.a
+-	/bin/ld -r -o ${Kernel} ${kernelobj} ../zlib/libz.a
++${Kernel}: ${kernelobj}
++	/bin/ld -r -o ${Kernel} ${kernelobj}
+ 
+ ${Scheme}: ${Kernel} ${Main}
+ 	$C -o ${Scheme} ${Kernel} ${Main} ${mdclib} ${LDFLAGS}
+-
+-../zlib/configure.log:
+-	(cd ../zlib; CFLAGS=-m64 ./configure --64)
+Only in ChezScheme-9.5.2/c: Mf-ta6s2.~1~
+Only in ChezScheme-9.5.2/c: Mf-ta6s2.~2~
+diff -ru ChezScheme-9.5.2.orig/c/Mf-ti3s2 ChezScheme-9.5.2/c/Mf-ti3s2
+--- ChezScheme-9.5.2.orig/c/Mf-ti3s2	2019-03-21 18:05:24.000000000 +0000
++++ ChezScheme-9.5.2/c/Mf-ti3s2	2019-08-25 16:24:36.560269634 +0000
+@@ -16,7 +16,7 @@
+ m = ti3s2
+ Cpu = I386
+ 
+-mdclib = -lnsl -ldl -lm -lpthread -lcurses -lrt -luuid
++mdclib = -lnsl -ldl -lm -lpthread -lcurses -lrt -luuid -lz
+ C = ${CC} ${CPPFLAGS} -m32 -Wpointer-arith -Wextra -Werror -O2 -D_REENTRANT ${CFLAGS}
+ o = o
+ mdsrc = i3le.c
+@@ -26,15 +26,12 @@
+ .SUFFIXES: .c .o
+ 
+ .c.o:
+-	$C -c -DSOLARIS -D${Cpu} -I${Include} -I../zlib $*.c
++	$C -c -DSOLARIS -D${Cpu} -I${Include} $*.c
+ 
+ include Mf-base
+ 
+-${Kernel}: ${kernelobj} ../zlib/libz.a
+-	/bin/ld -r -o ${Kernel} ${kernelobj} ../zlib/libz.a
++${Kernel}: ${kernelobj}
++	/bin/ld -r -o ${Kernel} ${kernelobj}
+ 
+ ${Scheme}: ${Kernel} ${Main}
+ 	$C -o ${Scheme} ${Kernel} ${Main} ${mdclib} ${LDFLAGS}
+-
+-../zlib/configure.log:
+-	(cd ../zlib; CFLAGS=-m32 ./configure)
+Only in ChezScheme-9.5.2/c: stats.c.~1~
+diff -ru ChezScheme-9.5.2.orig/configure ChezScheme-9.5.2/configure
+--- ChezScheme-9.5.2.orig/configure	2019-03-21 18:05:24.000000000 +0000
++++ ChezScheme-9.5.2/configure	2019-08-25 16:22:51.538238461 +0000
+@@ -331,11 +331,6 @@
+     (curl  -L -o v1.9.tar.gz https://github.com/nanopass/nanopass-framework-scheme/archive/v1.9.tar.gz && tar -zxf v1.9.tar.gz && mv nanopass-framework-scheme-1.9 nanopass && rm v1.9.tar.gz) || exit 1
+   fi
+ 
+-  if [ ! -f 'zlib/configure' ] ; then
+-    rmdir zlib > /dev/null 2>&1
+-    (curl -L -o v1.2.11.tar.gz https://github.com/madler/zlib/archive/v1.2.11.tar.gz && tar -xzf v1.2.11.tar.gz && mv zlib-1.2.11 zlib && rm v1.2.11.tar.gz) || exit 1
+-  fi
+-
+   if [ ! -f 'stex/Mf-stex' ] ; then
+     rmdir stex > /dev/null 2>&1
+     (curl -L -o v1.2.1.tar.gz https://github.com/dybvig/stex/archive/v1.2.1.tar.gz && tar -zxf v1.2.1.tar.gz && mv stex-1.2.1 stex && rm v1.2.1.tar.gz) || exit 1
