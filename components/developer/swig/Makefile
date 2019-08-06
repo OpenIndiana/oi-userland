@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swig
 COMPONENT_VERSION=	3.0.10
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	Simplified Wrapper and Interface Generator
 COMPONENT_PROJECT_URL=	http://www.swig.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,8 +45,8 @@ PATH=$(JAVA_HOME)/bin:/usr/bin
 # This is needed because the community provided 'check' target is not viewpath aware
 COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-PHP.32=/usr/php/5.6/bin/php
-PHP.64=/usr/php/5.6/bin/$(MACH64)/php
+PHP.32=/usr/php/bin/php
+PHP.64=/usr/php/bin/$(MACH64)/php
 PHP=$(PHP.$(BITS))
 
 CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
@@ -97,4 +98,4 @@ REQUIRED_PACKAGES += runtime/ruby-23
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += web/php-56
+REQUIRED_PACKAGES += web/php-73
