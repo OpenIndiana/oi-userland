@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= speech-dispatcher
 COMPONENT_VERSION= 0.8.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Speech Dispatcher
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -48,6 +49,7 @@ CONFIGURE_OPTIONS += --with-espeak
 CONFIGURE_OPTIONS += --with-pulse
 
 # There are no binary python modules, install them in 32-bit path
+CONFIGURE_ENV+=    PYTHON=$(PYTHON)
 CONFIGURE_ENV+=    am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES.32)
 CONFIGURE_ENV+=    am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES.32)
 
@@ -57,6 +59,8 @@ install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/libao
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/dotconf
 REQUIRED_PACKAGES += library/glib2
