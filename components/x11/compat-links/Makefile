@@ -18,11 +18,14 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           compat-links
 COMPONENT_VERSION=        $(PKG_X11_VERSION)
+COMPONENT_REVISION=       1
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_LICENSE=        Oracle
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PKG_PROTO_DIRS=$(MANGLED_DIR)
 
 build: 
 
