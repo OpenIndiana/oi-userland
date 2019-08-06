@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openconnect
 # Commit timestamp and previous known release
 COMPONENT_VERSION=	7.7.20161105
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_VERSION_TAG=	b8d3971124b5b2ecccaf727ecc48ba94b531df8e
 COMPONENT_VERSION_TAGSHORT=	b8d3971
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_VERSION_TAGSHORT).tar.gz
@@ -71,4 +71,3 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += driver/network/header-tun
-REQUIRED_PACKAGES += driver/network/header-tap
