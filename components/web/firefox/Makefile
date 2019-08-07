@@ -67,11 +67,11 @@ CONFIGURE_OPTIONS +=	--disable-debug-symbols
 CONFIGURE_OPTIONS +=	--enable-update-channel=esr
 CONFIGURE_OPTIONS +=	--disable-tests
 CONFIGURE_OPTIONS +=	--disable-jemalloc
-CONFIGURE_OPTIONS +=	--enable-optimize="-O2 -fno-schedule-insns2 -fno-lifetime-dse -fno-delete-null-pointer-checks"
+CONFIGURE_OPTIONS +=	--enable-optimize="-O3 -fno-lifetime-dse -fno-delete-null-pointer-checks"
 CONFIGURE_OPTIONS +=	--disable-dtrace
 CONFIGURE_OPTIONS +=	--disable-crashreporter
 CONFIGURE_OPTIONS +=	--enable-pulseaudio
-CONFIGURE_OPTIONS +=	--disable-webrtc
+CONFIGURE_OPTIONS +=	--enable-webrtc
 CONFIGURE_OPTIONS +=	--with-intl-api
 CONFIGURE_OPTIONS +=	--disable-debug
 CONFIGURE_OPTIONS +=	--enable-default-toolkit=cairo-gtk3
@@ -84,6 +84,7 @@ CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=	--libdir=$(FIREFOX_LIBDIR)
 CONFIGURE_OPTIONS +=	--host=$(GNU_ARCH)
 CONFIGURE_OPTIONS +=	--target=$(GNU_ARCH)
+CONFIGURE_OPTIONS +=	--enable-rust-simd
 
 ENV +=  PATH=$(PATH)
 ENV +=	CC=$(CC)
@@ -168,3 +169,8 @@ REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxi
