@@ -76,10 +76,6 @@ CXXFLAGS=
 CONFIGURE_PREFIX= /usr/gcc/$(COMPONENT_MAJOR_VERSION)
 PATH=$(PATH.gnu)
 
-PARCH = $(MACH:i386=i386-pc)
-GNU_ARCH = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
-PKG_MACROS += GNU_ARCH="$(GNU_ARCH)"
-
 COMMON_ENV=  LD_OPTIONS="-zignore -zcombreloc -i"
 COMMON_ENV+= LD_FOR_TARGET=/usr/bin/ld
 COMMON_ENV+= LD_FOR_HOST=/usr/bin/ld
@@ -92,9 +88,9 @@ COMPONENT_INSTALL_ENV+= $(COMMON_ENV)
 CONFIGURE_OPTIONS+= --sbindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+= --host $(GNU_ARCH)
-CONFIGURE_OPTIONS+= --build $(GNU_ARCH)
-CONFIGURE_OPTIONS+= --target $(GNU_ARCH)
+CONFIGURE_OPTIONS+= --host $(GNU_TRIPLET)
+CONFIGURE_OPTIONS+= --build $(GNU_TRIPLET)
+CONFIGURE_OPTIONS+= --target $(GNU_TRIPLET)
 CONFIGURE_OPTIONS+= --with-pkgversion="OpenIndiana $(THIS_GCC_PKGVERSION)"
 CONFIGURE_OPTIONS+= --with-bugurl="https://bugs.openindiana.org"
 CONFIGURE_OPTIONS+= --enable-plugins
@@ -103,7 +99,7 @@ CONFIGURE_OPTIONS+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --without-gnu-ld
 CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
-CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_ARCH)/bin
+CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
@@ -116,7 +112,7 @@ CONFIGURE_OPTIONS+= BOOT_CFLAGS='-g -O2'
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
 
 COMPONENT_POST_INSTALL_ACTION = \
-  $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed
+  $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include-fixed
 
 unexport SHELLOPTS
 
