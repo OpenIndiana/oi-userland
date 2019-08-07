@@ -46,11 +46,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-_GNU_TARGET_TRIPLE =	$(MACH:i386=i386-pc)
-GNU_TARGET_TRIPLE =	$(_GNU_TARGET_TRIPLE:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
-
-PKG_MACROS +=	GNU_TARGET_TRIPLE="$(GNU_TARGET_TRIPLE)"
-
 CONFIGURE_PREFIX =	/usr/gnu
 
 CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
@@ -62,7 +57,7 @@ CONFIGURE_OPTIONS +=    --enable-nls
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
 CONFIGURE_OPTIONS +=    --enable-largefile=yes
 CONFIGURE_OPTIONS +=	--with-system-zlib
-CONFIGURE_OPTIONS +=    --target=$(GNU_TARGET_TRIPLE)
+CONFIGURE_OPTIONS +=    --target=$(GNU_TRIPLET)
 
 COMPONENT_TEST_ARGS += -k
 

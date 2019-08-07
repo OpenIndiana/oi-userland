@@ -74,10 +74,6 @@ CONFIG_SHELL=	/bin/sh
 
 CONFIGURE_PREFIX=	/opt/gcc/$(COMPONENT_VERSION)
 
-PARCH = $(MACH:i386=i386-pc)
-GNU_ARCH = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
-PKG_MACROS += GNU_ARCH="$(GNU_ARCH)"
-
 # sparc and x86 use different assemblers
 CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
 CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/sfw/bin/gas

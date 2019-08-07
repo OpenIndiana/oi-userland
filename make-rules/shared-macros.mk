@@ -106,6 +106,11 @@ SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.11
 PKG_OS_VERSION ?= 0.$(PKG_SOLARIS_VERSION)
+# auto-conf-y platform
+i386_PLAT = pc
+sparc_PLAT = sun
+PLAT=$($(MACH)_PLAT)
+GNU_TRIPLET=$(MACH)-$(PLAT)-solaris$(SOLARIS_VERSION)
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
