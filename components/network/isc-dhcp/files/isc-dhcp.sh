@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -29,7 +29,9 @@
 
 SVCPROP=/usr/bin/svcprop
 CHMOD=/usr/bin/chmod
+CHOWN=/usr/bin/chown
 TOUCH=/usr/bin/touch
+ID=/usr/bin/id
 
 DHCPD_IPV4="svc:/network/dhcp/server:ipv4"
 DHCPD_IPV6="svc:/network/dhcp/server:ipv6"
@@ -148,9 +150,17 @@ get_dhcpd_options() {
 		errlog "No lease_file specified, exiting"
 		return 1
 	fi
+
+	LEASEFILE_PERMS="u=rw,go=r"
 	if [ ! -f "$LEASEFILE" ]; then
 		$TOUCH $LEASEFILE
-		$CHMOD u=rw,go=r $LEASEFILE
+		$CHMOD $LEASEFILE_PERMS $LEASEFILE
+	fi
+	if [ ! -w "$LEASEFILE" ]; then
+		errlog "Lease file '$LEASEFILE' is not writable. You should:"
+		errlog "$CHOWN $($ID -u -n) '$LEASEFILE'"
+		errlog "$CHMOD $LEASEFILE_PERMS '$LEASEFILE'"
+		return 1
 	fi
 
 	export OPTIONS="$OPTIONS -cf $CONFIGFILE -lf $LEASEFILE $LISTENIFNAMES"
@@ -226,6 +236,9 @@ export OPTIONS="--no-pid"
 
 case "$SMF_FMRI" in
 "$DHCPD_IPV4"|"$DHCPD_IPV6")
+	# get omapi_conn_limit property value.
+	export OMAPI_CONN_LIMIT=`get_prop omapi_conn_limit`
+
 	get_common_options
 	if [ "$?" != "0" ]; then
 		exit $SMF_EXIT_ERR_CONFIG

@@ -25,31 +25,31 @@
 	operating system upgrade.  Make customizations in a different
 	file.
 
-	Service manifest for the ISC DHCP Server service.
+	Service manifest for the ISC DHCP Relay service.
 -->
 <!--
-    Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 -->
-<service_bundle type='manifest' name='isc-dhcp:server'>
+<service_bundle type='manifest' name='isc-dhcp:relay'>
 
-<service name='network/dhcp/server' type='service' version='1'>
+<service name='network/dhcp/relay' type='service' version='1'>
 
 	<!--
-	    We historically ran only in run-level 3, so depend on the
-	    equivalent milestone to level 2.  We restart on refresh in
-	    order to handle any changes to nameservice or filesystem
-	    or other service configuration which may affect DHCP service.
+		We historically ran only in run-level 3, so depend on the
+		equivalent milestone to level 2.  We restart on refresh in
+		order to handle any changes to nameservice or filesystem
+		or other service configuration which may affect DHCP service.
 	-->
 	<dependency name='multi-user'
-		grouping='require_all'
+		grouping='require_all' 
 		restart_on='refresh'
 		type='service'>
 		<service_fmri value='svc:/milestone/multi-user'/>
 	</dependency>
 
 	<!--
-	   Cant run both DHCP flavors on a system Either run ISC or
-	   Solaris
+		Running both DHCP flavors on a system is not supported - either
+		run ISC or Solaris.
 	-->
 	<dependency name='dhcp-server'
 		grouping='exclude_all'
@@ -57,20 +57,19 @@
 		type='service'>
 		<service_fmri value='svc:/network/dhcp-server'/>
 	</dependency>
+
 	<exec_method type='method' name='start' 
 		exec='/lib/svc/method/isc-dhcp' timeout_seconds='60'>
 		<method_context>
-			<method_credential
-				user='dhcpserv' group='netadm' 
-				privileges='basic,net_rawaccess,net_icmpaccess,net_privaddr,sys_ip_config'
-			/>
+			<method_credential user='dhcpserv' group='netadm' 
+		privileges='basic,net_rawaccess,net_icmpaccess,net_privaddr,sys_ip_config'/>
 		</method_context>
 	</exec_method>
 
 	<exec_method type='method' name='stop' exec=':kill' 
 		timeout_seconds='60'/>
 
-	<exec_method type='method' name='refresh' exec=':kill -HUP' 
+	<exec_method type='method' name='refresh' exec=':true' 
 		timeout_seconds='60'/>
 
 	<property_group name='firewall_context' type='com.sun,fw_definition'>
@@ -90,19 +89,22 @@
 		<propval name='action_authorization' type='astring'
 			value='solaris.smf.manage.dhcp' />
 		<propval name='value_authorization' type='astring'
-			value='solaris.smf.manage.dhcp' />
-	</property_group>
+                        value='solaris.smf.manage.dhcp' />
+        </property_group>
 
 	<instance name='ipv4' enabled='false'>
 		<property_group name='config' type='application'>
 			<propval name='debug' type='boolean' value='false'/>
-			<propval name='config_file' type='astring' 
-				value='/etc/inet/dhcpd4.conf'/>
-			<propval name='lease_file' type='astring'
-				value='/var/db/isc-dhcp/dhcpd4.leases'/>
+			<propval name='append_agent_option' type='boolean' 
+			    value='false'/>
+			<property name='servers' type='astring'> 
+				<astring_list>
+					<value_node value=''/>
+				</astring_list>
+			</property>
 			<property name='listen_ifnames' type='astring' >
 				<astring_list>
-					<value_node value='' />
+					<value_node value=''/>
 				</astring_list>
 			</property>
 			<propval name='value_authorization' type='astring'
@@ -113,17 +115,18 @@
 	<instance name='ipv6' enabled='false'>
 		<property_group name='config' type='application'>
 			<propval name='debug' type='boolean' value='false'/>
-			<propval name='config_file' type='astring'
-				value='/etc/inet/dhcpd6.conf'/>
-			<propval name='lease_file' type='astring'
-				value='/var/db/isc-dhcp/dhcpd6.leases'/>
-			<property name='listen_ifnames' type='astring'>
+			<property name='receive_query_links' type='astring'>
 				<astring_list>
-					<value_node value='' />
+					<value_node value=''/>
+				</astring_list>
+			</property>
+			<property name='forward_query_links' type='astring'>
+				<astring_list>
+					<value_node value=''/>
 				</astring_list>
 			</property>
 			<propval name='value_authorization' type='astring'
-				value='solaris.smf.value.dhcp' />
+                                value='solaris.smf.value.dhcp' />
 		</property_group>
 	</instance>
 
@@ -132,16 +135,16 @@
 	<template>
 		<common_name>
 			<loctext xml:lang='C'>
-				ISC DHCP Server
+				ISC DHCP Relay
 			</loctext>
 		</common_name>
 		<description>
 			<loctext xml:lang='C'>
-ISC DHCP server provides DHCP and BOOTP protocol services to network clients.
+ISC DHCP Relay service relays DHCP and BOOTP requests from one subnet with no DHCP server to another subnet with a DHCP server.
 			</loctext>
 		</description>
 		<documentation>
-			<manpage title='dhcpd' section='1M'
+			<manpage title='dhcrelay' section='1M'
 				manpath='/usr/share/man'/>
 		</documentation>
 	</template>
