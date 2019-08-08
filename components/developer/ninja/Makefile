@@ -16,7 +16,7 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=      1.8.2
+COMPONENT_VERSION=      1.9.0
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_FMRI=         developer/build/ninja
@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
   https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:86b8700c3d0880c2b44c2ff67ce42774aaf8c28cbf57725cb881569288c1c6f4
+  sha256:5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9
 COMPONENT_LICENSE=      Apache License version 2.0
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -34,6 +34,8 @@ include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(GCC_BINDIR):$(PATH.illumos)
+
+PYTHON_VERSION= 3.5
 
 COMPONENT_BUILD_ACTION = cd $(@D); \
   CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py --bootstrap --with-python=$(PYTHON.64)
@@ -56,7 +58,7 @@ COMPONENT_INSTALL_ACTION = cd $(@D); \
   install -vDm644 misc/zsh-completion \
       $(PROTO_DIR)/usr/share/zsh-completions/_ninja
 
-COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[/p"'
+COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/245\]/p"'
 
 build:    $(BUILD_64)
 
@@ -65,7 +67,7 @@ install:  $(INSTALL_64)
 test:    $(TEST_64)
 
 # Build dependencies
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
