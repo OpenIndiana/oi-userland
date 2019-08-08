@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -22,7 +22,7 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #
-# fetch.py - a file download utility
+# userland-fetch - a file download utility
 #
 #  A simple program similiar to wget(1), but handles local file copy, ignores
 #  directories, and verifies file hashes.
@@ -37,21 +37,22 @@ import subprocess
 import re
 import gzip
 import bz2
-from urllib import splittype, splithost
-from urllib2 import urlopen, HTTPError
-from urllib2 import Request
+from urllib.parse import splittype, splithost
+from urllib.request import urlopen
+from urllib.error import HTTPError
+from urllib.request import Request
 import hashlib
-from httplib import BadStatusLine
+from http.client import BadStatusLine
 
 
 def printIOError(e, txt):
     """ Function to decode and print IOError type exception """
-    print "I/O Error: " + txt + ": "
+    print("I/O Error: " + txt + ": ")
     try:
         (code, message) = e
-        print str(message) + " (" + str(code) + ")"
+        print(str(message) + " (" + str(code) + ")")
     except:
-        print str(e)
+        print(str(e))
 
 
 def validate_signature(path, signature):
@@ -61,7 +62,8 @@ def validate_signature(path, signature):
 
     # Find the root of the repo so that we can point GnuPG at the right
     # configuration and keyring.
-    proc = subprocess.Popen(["git", "rev-parse", "--show-toplevel"], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["git", "rev-parse", "--show-toplevel"], stdout=subprocess.PIPE,
+                            universal_newlines=True)
     proc.wait()
     if proc.returncode != 0:
         return False
@@ -75,7 +77,8 @@ def validate_signature(path, signature):
         proc = subprocess.Popen(["gpg2", "--verify",
                                  "--no-permission-warning", "--homedir", gpgdir, signature,
                                  path], stdin=open("/dev/null"),
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                universal_newlines=True)
     except OSError as e:
         # If the executable simply couldn't be found, just skip the
         # validation.
@@ -86,7 +89,7 @@ def validate_signature(path, signature):
     proc.wait()
     if proc.returncode != 0:
         # Only print GnuPG's output when there was a problem.
-        print proc.stdout.read()
+        print(proc.stdout.read())
         return False
     return True
 
@@ -109,18 +112,15 @@ def validate(file, hash):
     except ValueError:
         return False
 
-    while True:
-        try:
-            block = file.read()
-        except IOError, err:
-            print str(err),
-            break
-
+    try:
+        block = file.read()
         m.update(block)
-        if block == '':
-            break
+        return "%s:%s" % (algorithm, m.hexdigest())
+    except IOError as err:
+        print(str(err), end=' ')
 
-    return "%s:%s" % (algorithm, m.hexdigest())
+    return "%s:" % (algorithm)
+
 
 
 def validate_container(filename, hash):
@@ -128,7 +128,7 @@ def validate_container(filename, hash):
     file contents."""
 
     try:
-        file = open(filename, 'r')
+        file = open(filename, 'rb')
     except IOError as e:
         printIOError(e, "Can't open file " + filename)
         return False
@@ -145,11 +145,11 @@ def validate_payload(filename, hash):
 
     try:
         if expr_bz.match(filename):
-            file = bz2.BZ2File(filename, 'r')
+            file = bz2.BZ2File(filename, 'rb')
         elif expr_gz.match(filename):
-            file = gzip.GzipFile(filename, 'r')
+            file = gzip.GzipFile(filename, 'rb')
         elif expr_tgz.match(filename):
-            file = gzip.GzipFile(filename, 'r')
+            file = gzip.GzipFile(filename, 'rb')
         else:
             return False
     except IOError as e:
@@ -183,7 +183,7 @@ def download(url, filename=None, user_agent_arg=None, quiet=None):
     # 3xx, 4xx and 5xx (f|ht)tp codes designate unsuccessfull action
     if src.getcode() and (3 <= int(src.getcode() / 100) <= 5):
         if not quiet:
-            print "Error code: " + str(src.getcode())
+            print("Error code: " + str(src.getcode()))
         return None
 
     if filename is None:
@@ -197,11 +197,7 @@ def download(url, filename=None, user_agent_arg=None, quiet=None):
         src.close()
         return None
 
-    while True:
-        block = src.read()
-        if block == '':
-            break
-        dst.write(block)
+    dst.write(src.read())
 
     src.close()
     dst.close()
@@ -270,7 +266,7 @@ def pypi_url(url, filename):
 	try:
 		name, version = re.match("/(.*)==(.*)$", path).groups()
 	except AttributeError:
-		print "PyPI URLs must be of the form 'pypi:///component==version'"
+		print("PyPI URLs must be of the form 'pypi:///component==version'")
 		return None
 
 	if not host:
@@ -279,22 +275,22 @@ def pypi_url(url, filename):
 		jsurl = "https://%s/pypi/%s/json" % (host, name)
 
 	try:
-		f = urlopen(jsurl)
+		f = urlopen(jsurl, data=None)
 	except HTTPError as e:
 		if e.getcode() == 404:
-			print "Unknown component '%s'" % name
+			print("Unknown component '%s'" % name)
 		else:
 			printIOError(e, "Can't open PyPI JSON url %s" % url)
 		return None
 	except IOError as e:
 		printIOError(e, "Can't open PyPI JSON url %s" % url)
 		return None
-
-	js = json.load(f)
+	content = f.read().decode("utf-8")
+	js = json.loads(content)
 	try:
 		verblock = js["releases"][version]
 	except KeyError:
-		print "Unknown version '%s'" % version
+		print("Unknown version '%s'" % version)
 		return None
 
 	urls = [ d["url"] for d in verblock ]
@@ -303,10 +299,10 @@ def pypi_url(url, filename):
 			return archiveurl
 
 	if urls:
-		print "None of the following URLs delivers '%s':" % filename
-		print "  " + "\n  ".join(urls)
+		print("None of the following URLs delivers '%s':" % filename)
+		print("  " + "\n  ".join(urls))
 	else:
-		print "Couldn't find any suitable URLs"
+		print("Couldn't find any suitable URLs")
 	return None
 
 def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
@@ -321,7 +317,7 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
 
     for url in download_paths(search_list, file_arg, url):
         if not quiet:
-            print "Source %s..." % url,
+            print("Source %s..." % url, end=' ')
 
         scheme, path = splittype(url)
         name = file_arg
@@ -329,41 +325,40 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
         if scheme in [None, 'file']:
             if os.path.exists(path) is False:
                 if not quiet:
-                    print "not found, skipping file copy"
+                    print("not found, skipping file copy")
                 continue
             elif name and name != path:
                 if link_arg is False:
                     if not quiet:
-                        print "\n    copying..."
+                        print("\n    copying...")
                     shutil.copy2(path, name)
                 else:
                     if not quiet:
-                        print "\n    linking..."
+                        print("\n    linking...")
                     os.symlink(path, name)
         elif scheme in ['http', 'https', 'ftp']:
             if not quiet:
-                print "\n    downloading...",
+                print("\n    downloading...", end=' ')
             name = download(url, file_arg, quiet)
             if name is None:
                 if not quiet:
-                    print "failed"
+                    print("failed")
                 continue
 
         yield name
 
 
 def usage():
-    print "Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] [-l|--link] " \
+    print("Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] [-l|--link] " \
         "[-k|--keep] [-h|--hash (hash)] [-s|--search (search-dir)] " \
-        "[-S|--sigurl (signature-url)] --url (url)" % (sys.argv[0].split('/')[-1])
+        "[-S|--sigurl (signature-url)] --url (url)" % (sys.argv[0].split('/')[-1]))
     sys.exit(1)
 
 
 def main():
     import getopt
 
-    # FLUSH STDOUT
-    sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+    sys.stdout.flush()
 
     user_agent_arg = None
     file_arg = None
@@ -378,8 +373,8 @@ def main():
         opts, args = getopt.getopt(sys.argv[1:], "a:f:h:lks:u:",
                                    ["file=", "link", "keep", "hash=", "search=", "url=",
                                     "sigurl=", "user-agent="])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
 
     for opt, arg in opts:
@@ -406,11 +401,11 @@ def main():
         usage()
 
     for name in download_from_paths(search_list, file_arg, url_arg, link_arg):
-        print "\n    validating signature...",
+        print("\n    validating signature...", end=' ')
 
         sig_valid = False
         if not sig_arg:
-            print "skipping (no signature URL)"
+            print("skipping (no signature URL)")
         else:
             # Put the signature file in the same directory as the
             # file we're downloading.
@@ -422,40 +417,40 @@ def main():
                                                 sig_arg, link_arg, True):
                 if sig_file:
                     if validate_signature(name, sig_file):
-                        print "ok"
+                        print("ok")
                         sig_valid = True
                     else:
-                        print "failed"
+                        print("failed")
                     break
                 else:
                     continue
             else:
-                print "failed (couldn't fetch signature)"
+                print("failed (couldn't fetch signature)")
 
-        print "    validating hash...",
+        print("    validating hash...", end=' ')
         realhash = validate_container(name, hash_arg)
 
         if not hash_arg:
-            print "skipping (no hash)"
-            print "hash is: %s" % realhash
+            print("skipping (no hash)")
+            print("hash is: %s" % realhash)
         elif realhash == hash_arg:
-            print "ok"
+            print("ok")
         else:
             payloadhash = validate_payload(name, hash_arg)
             if payloadhash == hash_arg:
-                print "ok"
+                print("ok")
             else:
                 # If the signature validated, then we assume
                 # that the expected hash is just a typo, but we
                 # warn just in case.
                 if sig_valid:
-                    print "invalid hash!"
+                    print("invalid hash!")
                 else:
-                    print "corruption detected"
+                    print("corruption detected")
 
-                print "    expected: %s" % hash_arg
-                print "    actual:   %s" % realhash
-                print "    payload:  %s" % payloadhash
+                print("    expected: %s" % hash_arg)
+                print("    actual:   %s" % realhash)
+                print("    payload:  %s" % payloadhash)
 
                 # An invalid hash shouldn't cause us to remove
                 # the target file if the signature was valid.
@@ -469,12 +464,12 @@ def main():
 
                     if keep_arg == False:
                         try:
-                            print "\nWARN: Removing the corrupt downloaded file"
+                            print("\nWARN: Removing the corrupt downloaded file")
                             os.remove(name)
                         except OSError:
                             pass
                     else:
-                        print "\nINFO: Keeping the downloaded file because asked to"
+                        print("\nINFO: Keeping the downloaded file because asked to")
 
                     continue
 

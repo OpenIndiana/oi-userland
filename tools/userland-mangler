@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -68,22 +68,22 @@ attribute_table_footer = """
 .PP
 """
 def attributes_section_text(availability, stability, modified_date):
-	result = ''
+        result = ''
 
-	# is there anything to do?
-	if availability is not None or stability is not None:
-		result = attribute_oracle_table_header
-		if modified_date is not None:
-			result += ("\n.\\\" on %s" % modified_date)
-		result += attribute_table_header
+        # is there anything to do?
+        if availability is not None or stability is not None:
+                result = attribute_oracle_table_header
+                if modified_date is not None:
+                        result += ("\n.\\\" on %s" % modified_date)
+                result += attribute_table_header
 
-		if availability is not None:
-			result += (attribute_table_availability % availability)
-		if stability is not None:
-			result += (attribute_table_stability % stability.capitalize())
-		result += attribute_table_footer
+                if availability is not None:
+                        result += (attribute_table_availability % availability)
+                if stability is not None:
+                        result += (attribute_table_stability % stability.capitalize())
+                result += attribute_table_footer
 
-	return result
+        return result
 
 notes_oracle_comment = """
 .\\\" Oracle has added source availability information to this manual page"""
@@ -100,21 +100,21 @@ This software was built from source available at https://openindiana.org/.  The 
 """
 
 def notes_section_text(header_seen, community, source, modified_date):
-	result = ''
+        result = ''
 
-	# is there anything to do?
-	if community is not None or source is not None:
-		if header_seen == False:
-			result += notes_header
-		result += notes_oracle_comment
-		if modified_date is not None:
-			result += ("\n.\\\" on %s" % modified_date)
-		if source is not None:
-			result += (notes_source % source)
-		if community is not None:
-			result += (notes_community % community)
+        # is there anything to do?
+        if community is not None or source is not None:
+                if header_seen == False:
+                        result += notes_header
+                result += notes_oracle_comment
+                if modified_date is not None:
+                        result += ("\n.\\\" on %s" % modified_date)
+                if source is not None:
+                        result += (notes_source % source)
+                if community is not None:
+                        result += (notes_community % community)
 
-	return result
+        return result
 
 so_re = re.compile('^\.so.+$', re.MULTILINE)
 section_re = re.compile('\.SH "?([^"]+).*$', re.IGNORECASE)
@@ -127,272 +127,274 @@ TH_re = re.compile('\.TH\s+(?:"[^"]+"|\S+)\s+(\S+)', re.IGNORECASE)
 # mangler.man.upstream-url = (pkg.upstream-url)
 #
 def mangle_manpage(manifest, action, text):
-	# manpages must have a taxonomy defined
-	stability = action.attrs.pop('mangler.man.stability', None)
-	if stability is None:
-		sys.stderr.write("ERROR: manpage action missing mangler.man.stability: %s" % action)
-		sys.exit(1)
+        # manpages must have a taxonomy defined
+        stability = action.attrs.pop('mangler.man.stability', None)
+        if stability is None:
+                sys.stderr.write("ERROR: manpage action missing mangler.man.stability: %s" % action)
+                sys.exit(1)
 
-	# manpages may have a 'modified date'
-	modified_date = action.attrs.pop('mangler.man.modified-date', None)
+        # manpages may have a 'modified date'
+        modified_date = action.attrs.pop('mangler.man.modified-date', None)
 
-	# Rewrite the section in the .TH line to match the section in which
-	# we're delivering it.
-	rewrite_sect = action.attrs.pop('mangler.man.rewrite-section', 'true')
+        # Rewrite the section in the .TH line to match the section in which
+        # we're delivering it.
+        rewrite_sect = action.attrs.pop('mangler.man.rewrite-section', 'true')
 
-	attributes_written = False
-	notes_seen = False
+        attributes_written = False
+        notes_seen = False
 
-	if 'pkg.fmri' in manifest.attributes:
-		fmri = pkg.fmri.PkgFmri(manifest.attributes['pkg.fmri'])
-		availability = fmri.pkg_name
+        if 'pkg.fmri' in manifest.attributes:
+                fmri = pkg.fmri.PkgFmri(manifest.attributes['pkg.fmri'])
+                availability = fmri.pkg_name
 
-	community = None
-	if 'info.upstream-url' in manifest.attributes:
-		community = manifest.attributes['info.upstream-url']
+        community = None
+        if 'info.upstream-url' in manifest.attributes:
+                community = manifest.attributes['info.upstream-url']
 
-	source = None
-	if 'info.source-url' in manifest.attributes:
-		source = manifest.attributes['info.source-url']
-	elif 'info.repository-url' in manifest.attributes:
-		source = manifest.attributes['info.repository-url']
+        source = None
+        if 'info.source-url' in manifest.attributes:
+                source = manifest.attributes['info.source-url']
+        elif 'info.repository-url' in manifest.attributes:
+                source = manifest.attributes['info.repository-url']
 
-	# skip reference only pages
-	if so_re.match(text) is not None:
-		return text
+        # skip reference only pages
+        if so_re.match(text) is not None:
+                return text
 
-	# tell man that we want tables (and eqn)
-	result = "'\\\" te\n"
+        # tell man that we want tables (and eqn)
+        result = "'\\\" te\n"
 
-	# write the orginal data
-	for line in text.split('\n'):
-		match = section_re.match(line)
-		if match is not None:
-			section = match.group(1)
-			if section in ['SEE ALSO', 'NOTES']:
-				if attributes_written == False:
-					result += attributes_section_text(
-								 availability,
-								 stability,
-								 modified_date)
-					attributes_written = True
-				if section == 'NOTES':
-					notes_seen = True
-			match = TH_re.match(line)
-			if match and rewrite_sect.lower() == "true":
-				# Use the section defined by the filename, rather than
-				# the directory in which it sits.
-				sect = os.path.splitext(action.attrs["path"])[1][1:]
-				line = line[:match.span(1)[0]] + sect + \
-				    line[match.span(1)[1]:]
+        # write the orginal data
+        for line in text.split('\n'):
+                match = section_re.match(line)
+                if match is not None:
+                        section = match.group(1)
+                        if section in ['SEE ALSO', 'NOTES']:
+                                if attributes_written == False:
+                                        result += attributes_section_text(
+                                                                 availability,
+                                                                 stability,
+                                                                 modified_date)
+                                        attributes_written = True
+                                if section == 'NOTES':
+                                        notes_seen = True
+                        match = TH_re.match(line)
+                        if match and rewrite_sect.lower() == "true":
+                                # Use the section defined by the filename, rather than
+                                # the directory in which it sits.
+                                sect = os.path.splitext(action.attrs["path"])[1][1:]
+                                line = line[:match.span(1)[0]] + sect + \
+                                    line[match.span(1)[1]:]
 
-		result += ("%s\n" % line)
+                result += ("%s\n" % line)
 
-	if attributes_written == False:
-		result += attributes_section_text(availability, stability,
-		    modified_date)
+        if attributes_written == False:
+                result += attributes_section_text(availability, stability,
+                    modified_date)
 
-	result += notes_section_text(notes_seen, community, source,
-	    modified_date)
+        result += notes_section_text(notes_seen, community, source,
+            modified_date)
 
-	return result
+        return result
 
 #
 # mangler.elf.strip_runpath = (true|false)
 #
 def mangle_elf(manifest, action, src, dest):
-	strip_elf_runpath = action.attrs.pop('mangler.elf.strip_runpath', 'true')
-	if strip_elf_runpath is 'false':
-		return
+        strip_elf_runpath = action.attrs.pop('mangler.elf.strip_runpath', 'true')
+        if strip_elf_runpath is 'false':
+                return
 
-	#
-	# Strip any runtime linker default search path elements from the file
-	# and replace relative paths with absolute paths
-	#
-	ELFEDIT = '/usr/bin/elfedit'
+        #
+        # Strip any runtime linker default search path elements from the file
+        # and replace relative paths with absolute paths
+        #
+        ELFEDIT = '/usr/bin/elfedit'
 
-	# runtime linker default search path elements + /64 link
-	rtld_default_dirs = [ '/lib', '/usr/lib',
-			      '/lib/64', '/usr/lib/64',
-			      '/lib/amd64', '/usr/lib/amd64',
-			      '/lib/sparcv9', '/usr/lib/sparcv9' ]
+        # runtime linker default search path elements + /64 link
+        rtld_default_dirs = [ '/lib', '/usr/lib',
+                              '/lib/64', '/usr/lib/64',
+                              '/lib/amd64', '/usr/lib/amd64',
+                              '/lib/sparcv9', '/usr/lib/sparcv9' ]
 
-	runpath_re = re.compile('.+\s(RPATH|RUNPATH)\s+\S+\s+(\S+)')
+        runpath_re = re.compile('.+\s(RPATH|RUNPATH)\s+\S+\s+(\S+)')
 
-	# Retreive the search path from the object file.  Use elfedit(1) because pkg.elf only
-	# retrieves the RUNPATH.  Note that dyn:rpath and dyn:runpath return both values.
-	# Both RPATH and RUNPATH are expected to be the same, but in an overabundand of caution,
-	# process each element found separately.
-	result = subprocess.Popen([ELFEDIT, '-re', 'dyn:runpath', src ],
-				  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Retreive the search path from the object file.  Use elfedit(1) because pkg.elf only
+        # retrieves the RUNPATH.  Note that dyn:rpath and dyn:runpath return both values.
+        # Both RPATH and RUNPATH are expected to be the same, but in an overabundand of caution,
+        # process each element found separately.
+        result = subprocess.Popen([ELFEDIT, '-re', 'dyn:runpath', src ],
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                  universal_newlines=True)
         result.wait()
-	if result.returncode != 0:	# no RUNPATH or RPATH to potentially strip
-		return
+        if result.returncode != 0:        # no RUNPATH or RPATH to potentially strip
+                return
 
-	for line in result.stdout:
-		result = runpath_re.match(line)
-		if result != None:
-			element = result.group(1)
-			original_dirs = result.group(2).split(":")
-			keep_dirs = []
-			matched_dirs = []
+        for line in result.stdout:
+                result = runpath_re.match(line)
+                if result != None:
+                        element = result.group(1)
+                        original_dirs = result.group(2).split(":")
+                        keep_dirs = []
+                        matched_dirs = []
 
-			for dir in original_dirs:
-				if dir not in rtld_default_dirs:
-					if dir.startswith('$ORIGIN'):
-						path = action.attrs['path']
-						dirname = os.path.dirname(path)
-						if dirname[0] != '/':
-							dirname = '/' + dirname
-						corrected_dir = dir.replace('$ORIGIN', dirname)
-						corrected_dir = os.path.realpath(corrected_dir)
-						matched_dirs.append(dir)
-						keep_dirs.append(corrected_dir)
-                                	else:
-					    keep_dirs.append(dir)
-				else:
-					matched_dirs.append(dir)
+                        for dir in original_dirs:
+                                if dir not in rtld_default_dirs:
+                                        if dir.startswith('$ORIGIN'):
+                                                path = action.attrs['path']
+                                                dirname = os.path.dirname(path)
+                                                if dirname[0] != '/':
+                                                        dirname = '/' + dirname
+                                                corrected_dir = dir.replace('$ORIGIN', dirname)
+                                                corrected_dir = os.path.realpath(corrected_dir)
+                                                matched_dirs.append(dir)
+                                                keep_dirs.append(corrected_dir)
+                                        else:
+                                            keep_dirs.append(dir)
+                                else:
+                                        matched_dirs.append(dir)
 
-			if len(matched_dirs) != 0:
-				# Emit an "Error" message in case someone wants to look at the build log
-				# and fix the component build so that this is a NOP.
-				print >>sys.stderr, "Stripping %s from %s in %s" % (":".join(matched_dirs), element, src)
+                        if len(matched_dirs) != 0:
+                                # Emit an "Error" message in case someone wants to look at the build log
+                                # and fix the component build so that this is a NOP.
+                                print("Stripping %s from %s in %s" % (":".join(matched_dirs), element, src), file=sys.stderr)
 
-				# Make sure that there is a destdir to copy the file into for mangling.
-				destdir = os.path.dirname(dest)
-				if not os.path.exists(destdir):
-					os.makedirs(destdir)
-				# Create a copy to mangle if it doesn't exist yet.
-				if os.path.isfile(dest) == False:
-					shutil.copy2(src, dest)
+                                # Make sure that there is a destdir to copy the file into for mangling.
+                                destdir = os.path.dirname(dest)
+                                if not os.path.exists(destdir):
+                                        os.makedirs(destdir)
+                                # Create a copy to mangle if it doesn't exist yet.
+                                if os.path.isfile(dest) == False:
+                                        shutil.copy2(src, dest)
 
-				# Mangle the copy by deleting the tag if there is nothing left to keep
-				# or replacing the value if there is something left.
-				elfcmd = "dyn:delete %s" % element.lower()
-				if len(keep_dirs) > 0:
-					elfcmd = "dyn:%s '%s'" % (element.lower(), ":".join(keep_dirs))
-				subprocess.call([ELFEDIT, '-e', elfcmd, dest])
+                                # Mangle the copy by deleting the tag if there is nothing left to keep
+                                # or replacing the value if there is something left.
+                                elfcmd = "dyn:delete %s" % element.lower()
+                                if len(keep_dirs) > 0:
+                                        elfcmd = "dyn:%s '%s'" % (element.lower(), ":".join(keep_dirs))
+                                subprocess.call([ELFEDIT, '-e', elfcmd, dest])
 
 #
 # mangler.script.file-magic =
 #
 def mangle_script(manifest, action, text):
-	return text
+        return text
 
 #
 # mangler.strip_cddl = false
 #
 def mangle_cddl(manifest, action, text):
-	strip_cddl = action.attrs.pop('mangler.strip_cddl', 'false')
-	if strip_cddl is 'false':
-		return text
-	cddl_re = re.compile('^[^\n]*CDDL HEADER START.+CDDL HEADER END[^\n]*$',
-			     re.MULTILINE|re.DOTALL)
-	return cddl_re.sub('', text)
+        strip_cddl = action.attrs.pop('mangler.strip_cddl', 'false')
+        if strip_cddl is 'false':
+                return text
+        cddl_re = re.compile('^[^\n]*CDDL HEADER START.+CDDL HEADER END[^\n]*$',
+                             re.MULTILINE|re.DOTALL)
+        return cddl_re.sub('', text)
 
 def mangle_path(manifest, action, src, dest):
-	if elf.is_elf_object(src):
-		mangle_elf(manifest, action, src, dest)
-	else:
-		# a 'text' document (script, man page, config file, ...
-		ifp = open(src, 'r')
-		text = ifp.read()
-		ifp.close()
+        if elf.is_elf_object(src):
+                mangle_elf(manifest, action, src, dest)
+        else:
+                # a 'text' document (script, man page, config file, ...
+                # We treat all documents as latin-1 text to avoid
+                # reencoding them and loosing data
+                ifp = open(src, 'r', encoding='latin-1')
+                text = ifp.read()
+                ifp.close()
 
-		# remove the CDDL from files
-		result = mangle_cddl(manifest, action, text)
+                # remove the CDDL from files
+                result = mangle_cddl(manifest, action, text)
 
-		if 'facet.doc.man' in action.attrs:
-		 	result = mangle_manpage(manifest, action, result)
-		elif 'mode' in action.attrs and int(action.attrs['mode'], 8) & 0111 != 0:
-			result = mangle_script(manifest, action, result)
+                if 'facet.doc.man' in action.attrs:
+                         result = mangle_manpage(manifest, action, result)
+                elif 'mode' in action.attrs and int(action.attrs['mode'], 8) & 0o111 != 0:
+                        result = mangle_script(manifest, action, result)
 
-		if text != result:
-			destdir = os.path.dirname(dest)
-			if not os.path.exists(destdir):
-				os.makedirs(destdir)
-			with open(dest, 'w') as ofp:
-			    ofp.write(result)
+                if text != result:
+                        destdir = os.path.dirname(dest)
+                        if not os.path.exists(destdir):
+                                os.makedirs(destdir)
+                        with open(dest, 'w', encoding='latin-1') as ofp:
+                            ofp.write(result)
 
 #
 # mangler.bypass = (true|false)
 #
 def mangle_paths(manifest, search_paths, destination):
-	for action in manifest.gen_actions_by_type("file"):
-		bypass = action.attrs.pop('mangler.bypass', 'false').lower()
-		if bypass == 'true':
-			continue
+        for action in manifest.gen_actions_by_type("file"):
+                bypass = action.attrs.pop('mangler.bypass', 'false').lower()
+                if bypass == 'true':
+                        continue
 
-		path = None
-		if 'path' in action.attrs:
-			path = action.attrs['path']
-		if action.hash and action.hash != 'NOHASH':
-			path = action.hash
-		if not path:
-			continue
+                path = None
+                if 'path' in action.attrs:
+                        path = action.attrs['path']
+                if action.hash and action.hash != 'NOHASH':
+                        path = action.hash
+                if not path:
+                        continue
 
-		if not os.path.exists(destination):
-			os.makedirs(destination)
+                if not os.path.exists(destination):
+                        os.makedirs(destination)
 
-		dest = os.path.join(destination, path)
-		for directory in search_paths:
-			if directory != destination:
-				src = os.path.join(directory, path)
-				if os.path.isfile(src):
-					mangle_path(manifest, action, src, dest)
-					break
+                dest = os.path.join(destination, path)
+                for directory in search_paths:
+                        if directory != destination:
+                                src = os.path.join(directory, path)
+                                if os.path.isfile(src):
+                                        mangle_path(manifest, action, src, dest)
+                                        break
 
 def load_manifest(manifest_file):
-	manifest = pkg.manifest.Manifest()
-	manifest.set_content(pathname=manifest_file)
+        manifest = pkg.manifest.Manifest()
+        manifest.set_content(pathname=manifest_file)
 
-	return manifest
+        return manifest
 
 def usage():
-	print "Usage: %s [-m|--manifest (file)] [-d|--search-directory (dir)] [-D|--destination (dir)] " % (sys.argv[0].split('/')[-1])
-	sys.exit(1)
+        print("Usage: %s [-m|--manifest (file)] [-d|--search-directory (dir)] [-D|--destination (dir)] " % (sys.argv[0].split('/')[-1]))
+        sys.exit(1)
 
 def main():
-	import getopt
+        import getopt
 
-	# FLUSH STDOUT
-	sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+        sys.stdout.flush()
 
-	search_paths = []
-	destination = None
-	manifests = []
+        search_paths = []
+        destination = None
+        manifests = []
 
-	try:
-		opts, args = getopt.getopt(sys.argv[1:], "D:d:m:",
-			["destination=", "search-directory=", "manifest="])
-	except getopt.GetoptError, err:
-		print str(err)
-		usage()
+        try:
+                opts, args = getopt.getopt(sys.argv[1:], "D:d:m:",
+                        ["destination=", "search-directory=", "manifest="])
+        except getopt.GetoptError as err:
+                print(str(err))
+                usage()
 
-	for opt, arg in opts:
-		if opt in [ "-D", "--destination" ]:
-			destination = arg
-		elif opt in [ "-d", "--search-directory" ]:
-			search_paths.append(arg)
-		elif opt in [ "-m", "--manifest" ]:
-			try:
-				manifest = load_manifest(arg)
-			except IOError, err:
-				print "oops, %s: %s" % (arg, str(err))
-				usage()
-			else:
-				manifests.append(manifest)
-		else:
-			usage()
+        for opt, arg in opts:
+                if opt in [ "-D", "--destination" ]:
+                        destination = arg
+                elif opt in [ "-d", "--search-directory" ]:
+                        search_paths.append(arg)
+                elif opt in [ "-m", "--manifest" ]:
+                        try:
+                                manifest = load_manifest(arg)
+                        except IOError as err:
+                                print("oops, %s: %s" % (arg, str(err)))
+                                usage()
+                        else:
+                                manifests.append(manifest)
+                else:
+                        usage()
 
-	if destination == None:
-		usage()
+        if destination == None:
+                usage()
 
-	for manifest in manifests:
-		mangle_paths(manifest, search_paths, destination)
-		print manifest
+        for manifest in manifests:
+                mangle_paths(manifest, search_paths, destination)
+                print(manifest)
 
-	sys.exit(0)
+        sys.exit(0)
 
 if __name__ == "__main__":
-	main()
+        main()

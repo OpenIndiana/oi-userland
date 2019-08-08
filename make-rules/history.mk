@@ -30,7 +30,7 @@
 COMPONENT_SRC=nonexistent
 
 PKGSEND =	/usr/bin/pkgsend
-PKGLINT =	/usr/bin/pkglint
+PKGLINT =	/usr/bin/python3.5 /usr/bin/pkglint
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 
 GENERATE_HISTORY=	$(WS_TOOLS)/generate-history
