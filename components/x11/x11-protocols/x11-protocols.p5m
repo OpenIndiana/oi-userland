@@ -1,0 +1,327 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2019 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description value="Developer documentation and C language definitions of X11, X extension, and related protocols"
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+# Provided by xorgproto
+depend fmri=x11/header/bigreqsproto@1.1.2-2018.0.0.1 type=optional
+depend fmri=x11/header/compositeproto@0.4.2-2018.0.0.1 type=optional
+depend fmri=x11/header/damageproto@1.2.1-2018.0.0.1 type=optional
+depend fmri=x11/header/dmxproto@2.3.1-2018.0.0.1 type=optional
+depend fmri=x11/header/dri2proto@2.8-2018.0.0.1 type=optional
+depend fmri=x11/header/dri3proto@1.0-2018.0.0.1 type=optional
+depend fmri=x11/header/evieext@1.1.1-2018.0.0.1 type=optional
+depend fmri=x11/header/fixesproto@5.0-2018.0.0.1 type=optional
+depend fmri=x11/header/fontcacheproto@0.1.3-2018.0.0.1 type=optional
+depend fmri=x11/header/fontsproto@2.1.3-2018.0.0.1 type=optional
+depend fmri=x11/header/glproto@1.4.17-2018.0.0.1 type=optional
+depend fmri=x11/header/inputproto@2.3.2-2018.0.0.1 type=optional
+depend fmri=x11/header/kbproto@1.0.7-2018.0.0.1 type=optional
+depend fmri=x11/header/presentproto@1.1-2018.0.0.1 type=optional
+depend fmri=x11/header/printproto@1.0.5-2018.0.0.1 type=optional
+depend fmri=x11/header/randrproto@1.5.0-2018.0.0.1 type=optional
+depend fmri=x11/header/recordproto@1.14.2-2018.0.0.1 type=optional
+depend fmri=x11/header/renderproto@0.11.1-2018.0.0.1 type=optional
+depend fmri=x11/header/resourceproto@1.2.0-2018.0.0.1 type=optional
+depend fmri=x11/header/scrnsaverproto@1.2.2-2018.0.0.1 type=optional
+depend fmri=x11/header/videoproto@2.3.3-2018.0.0.1 type=optional
+depend fmri=x11/header/xcmiscproto@1.2.2-2018.0.0.1 type=optional
+depend fmri=x11/header/xextproto@7.3.0-2018.0.0.1 type=optional
+depend fmri=x11/header/xf86bigfontproto@1.2.0-2018.0.0.1 type=optional
+depend fmri=x11/header/xf86dgaproto@2.1-2018.0.0.1 type=optional
+depend fmri=x11/header/xf86driproto@2.1.1-2018.0.0.1 type=optional
+depend fmri=x11/header/xf86miscproto@0.9.3-2018.0.0.1 type=optional
+depend fmri=x11/header/xf86vidmodeproto@2.3.1-2018.0.0.1 type=optional
+depend fmri=x11/header/xineramaproto@1.2.1-2018.0.0.1 type=optional
+depend fmri=x11/header/xproxymanagementprotocol@1.0.3-2018.0.0.1 type=optional
+depend fmri=x11/header/xproto@7.0.31-2018.0.0.1 type=optional
+
+# XCB protocols
+depend fmri=x11/header/xcb-protocols type=require
+
+# SUN specific protocols
+depend fmri=x11/header/sun-ext-protos type=require
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+link path=usr/X11/include/GL target=../../include/GL
+link path=usr/X11/include/X11 target=../../include/X11
+
+file path=usr/include/GL/glxint.h
+file path=usr/include/GL/glxmd.h
+file path=usr/include/GL/glxproto.h
+file path=usr/include/GL/glxtokens.h
+file path=usr/include/GL/internal/glcore.h
+file path=usr/include/X11/DECkeysym.h
+file path=usr/include/X11/HPkeysym.h
+file path=usr/include/X11/PM/PM.h
+file path=usr/include/X11/PM/PMproto.h
+file path=usr/include/X11/Sunkeysym.h
+file path=usr/include/X11/X.h
+file path=usr/include/X11/XF86keysym.h
+file path=usr/include/X11/XWDFile.h
+file path=usr/include/X11/Xalloca.h
+file path=usr/include/X11/Xarch.h
+file path=usr/include/X11/Xatom.h
+file path=usr/include/X11/Xdefs.h
+file path=usr/include/X11/Xfuncproto.h
+file path=usr/include/X11/Xfuncs.h
+file path=usr/include/X11/Xmd.h
+file path=usr/include/X11/Xos.h
+file path=usr/include/X11/Xos_r.h
+file path=usr/include/X11/Xosdefs.h
+file path=usr/include/X11/Xpoll.h
+file path=usr/include/X11/Xproto.h
+file path=usr/include/X11/Xprotostr.h
+file path=usr/include/X11/Xthreads.h
+file path=usr/include/X11/Xw32defs.h
+file path=usr/include/X11/Xwindows.h
+file path=usr/include/X11/Xwinsock.h
+file path=usr/include/X11/ap_keysym.h
+file path=usr/include/X11/dri/xf86dri.h
+file path=usr/include/X11/dri/xf86driproto.h
+file path=usr/include/X11/dri/xf86dristr.h
+file path=usr/include/X11/extensions/EVI.h
+file path=usr/include/X11/extensions/EVIproto.h
+file path=usr/include/X11/extensions/Print.h
+file path=usr/include/X11/extensions/Printstr.h
+file path=usr/include/X11/extensions/XI.h
+file path=usr/include/X11/extensions/XI2.h
+file path=usr/include/X11/extensions/XI2proto.h
+file path=usr/include/X11/extensions/XIproto.h
+file path=usr/include/X11/extensions/XKB.h
+file path=usr/include/X11/extensions/XKBgeom.h
+file path=usr/include/X11/extensions/XKBproto.h
+file path=usr/include/X11/extensions/XKBsrv.h
+file path=usr/include/X11/extensions/XKBstr.h
+file path=usr/include/X11/extensions/XResproto.h
+file path=usr/include/X11/extensions/Xeviestr.h
+file path=usr/include/X11/extensions/Xv.h
+file path=usr/include/X11/extensions/XvMC.h
+file path=usr/include/X11/extensions/XvMCproto.h
+file path=usr/include/X11/extensions/Xvproto.h
+file path=usr/include/X11/extensions/ag.h
+file path=usr/include/X11/extensions/agproto.h
+file path=usr/include/X11/extensions/applewmconst.h
+file path=usr/include/X11/extensions/applewmproto.h
+file path=usr/include/X11/extensions/bigreqsproto.h
+file path=usr/include/X11/extensions/bigreqstr.h
+file path=usr/include/X11/extensions/composite.h
+file path=usr/include/X11/extensions/compositeproto.h
+file path=usr/include/X11/extensions/cup.h
+file path=usr/include/X11/extensions/cupproto.h
+file path=usr/include/X11/extensions/damageproto.h
+file path=usr/include/X11/extensions/damagewire.h
+file path=usr/include/X11/extensions/dbe.h
+file path=usr/include/X11/extensions/dbeproto.h
+file path=usr/include/X11/extensions/dmx.h
+file path=usr/include/X11/extensions/dmxproto.h
+file path=usr/include/X11/extensions/dpmsconst.h
+file path=usr/include/X11/extensions/dpmsproto.h
+file path=usr/include/X11/extensions/dri2proto.h
+file path=usr/include/X11/extensions/dri2tokens.h
+file path=usr/include/X11/extensions/dri3proto.h
+file path=usr/include/X11/extensions/evieproto.h
+file path=usr/include/X11/extensions/fontcache.h
+file path=usr/include/X11/extensions/fontcacheP.h
+file path=usr/include/X11/extensions/fontcachstr.h
+file path=usr/include/X11/extensions/ge.h
+file path=usr/include/X11/extensions/geproto.h
+file path=usr/include/X11/extensions/lbx.h
+file path=usr/include/X11/extensions/lbxproto.h
+file path=usr/include/X11/extensions/lgewire.h
+file path=usr/include/X11/extensions/mitmiscconst.h
+file path=usr/include/X11/extensions/mitmiscproto.h
+file path=usr/include/X11/extensions/multibufconst.h
+file path=usr/include/X11/extensions/multibufproto.h
+file path=usr/include/X11/extensions/panoramiXproto.h
+file path=usr/include/X11/extensions/presentproto.h
+file path=usr/include/X11/extensions/presenttokens.h
+file path=usr/include/X11/extensions/randr.h
+file path=usr/include/X11/extensions/randrproto.h
+file path=usr/include/X11/extensions/recordconst.h
+file path=usr/include/X11/extensions/recordproto.h
+file path=usr/include/X11/extensions/recordstr.h
+file path=usr/include/X11/extensions/render.h
+file path=usr/include/X11/extensions/renderproto.h
+file path=usr/include/X11/extensions/saver.h
+file path=usr/include/X11/extensions/saverproto.h
+file path=usr/include/X11/extensions/secur.h
+file path=usr/include/X11/extensions/securproto.h
+file path=usr/include/X11/extensions/shapeconst.h
+file path=usr/include/X11/extensions/shapeproto.h
+file path=usr/include/X11/extensions/shapestr.h
+file path=usr/include/X11/extensions/shm.h
+file path=usr/include/X11/extensions/shmproto.h
+file path=usr/include/X11/extensions/shmstr.h
+file path=usr/include/X11/extensions/syncconst.h
+file path=usr/include/X11/extensions/syncproto.h
+file path=usr/include/X11/extensions/syncstr.h
+file path=usr/include/X11/extensions/vldXvMC.h
+file path=usr/include/X11/extensions/windowswm.h
+file path=usr/include/X11/extensions/windowswmstr.h
+file path=usr/include/X11/extensions/xcalibrateproto.h
+file path=usr/include/X11/extensions/xcalibratewire.h
+file path=usr/include/X11/extensions/xcmiscproto.h
+file path=usr/include/X11/extensions/xcmiscstr.h
+file path=usr/include/X11/extensions/xf86bigfont.h
+file path=usr/include/X11/extensions/xf86bigfproto.h
+file path=usr/include/X11/extensions/xf86bigfstr.h
+file path=usr/include/X11/extensions/xf86dga.h
+file path=usr/include/X11/extensions/xf86dga1const.h
+file path=usr/include/X11/extensions/xf86dga1proto.h
+file path=usr/include/X11/extensions/xf86dga1str.h
+file path=usr/include/X11/extensions/xf86dgaconst.h
+file path=usr/include/X11/extensions/xf86dgaproto.h
+file path=usr/include/X11/extensions/xf86dgastr.h
+file path=usr/include/X11/extensions/xf86misc.h
+file path=usr/include/X11/extensions/xf86mscstr.h
+file path=usr/include/X11/extensions/xf86rush.h
+file path=usr/include/X11/extensions/xf86rushstr.h
+file path=usr/include/X11/extensions/xf86vm.h
+file path=usr/include/X11/extensions/xf86vmproto.h
+file path=usr/include/X11/extensions/xf86vmstr.h
+file path=usr/include/X11/extensions/xfixesproto.h
+file path=usr/include/X11/extensions/xfixeswire.h
+file path=usr/include/X11/extensions/xtestconst.h
+file path=usr/include/X11/extensions/xtestext1const.h
+file path=usr/include/X11/extensions/xtestext1proto.h
+file path=usr/include/X11/extensions/xtestproto.h
+file path=usr/include/X11/extensions/xtrapbits.h
+file path=usr/include/X11/extensions/xtrapddmi.h
+file path=usr/include/X11/extensions/xtrapdi.h
+file path=usr/include/X11/extensions/xtrapemacros.h
+file path=usr/include/X11/extensions/xtraplib.h
+file path=usr/include/X11/extensions/xtraplibp.h
+file path=usr/include/X11/extensions/xtrapproto.h
+file path=usr/include/X11/fonts/FS.h
+file path=usr/include/X11/fonts/FSproto.h
+file path=usr/include/X11/fonts/font.h
+file path=usr/include/X11/fonts/fontproto.h
+file path=usr/include/X11/fonts/fontstruct.h
+file path=usr/include/X11/fonts/fsmasks.h
+file path=usr/include/X11/keysym.h
+file path=usr/include/X11/keysymdef.h
+file path=usr/share/doc/bigreqsproto/bigreq.xml
+file path=usr/share/doc/fontsproto/fsproto.xml
+file path=usr/share/doc/kbproto/XKBproto-1.svg
+file path=usr/share/doc/kbproto/XKBproto-10.svg
+file path=usr/share/doc/kbproto/XKBproto-11.svg
+file path=usr/share/doc/kbproto/XKBproto-2.svg
+file path=usr/share/doc/kbproto/XKBproto-3.svg
+file path=usr/share/doc/kbproto/XKBproto-4.svg
+file path=usr/share/doc/kbproto/XKBproto-5.svg
+file path=usr/share/doc/kbproto/XKBproto-6.svg
+file path=usr/share/doc/kbproto/XKBproto-7.svg
+file path=usr/share/doc/kbproto/XKBproto-8.svg
+file path=usr/share/doc/kbproto/XKBproto-9.svg
+file path=usr/share/doc/kbproto/acknowledgements.xml
+file path=usr/share/doc/kbproto/appA.xml
+file path=usr/share/doc/kbproto/appB.xml
+file path=usr/share/doc/kbproto/appC.xml
+file path=usr/share/doc/kbproto/appD.xml
+file path=usr/share/doc/kbproto/ch01.xml
+file path=usr/share/doc/kbproto/ch02.xml
+file path=usr/share/doc/kbproto/ch03.xml
+file path=usr/share/doc/kbproto/ch04.xml
+file path=usr/share/doc/kbproto/ch05.xml
+file path=usr/share/doc/kbproto/ch06.xml
+file path=usr/share/doc/kbproto/ch07.xml
+file path=usr/share/doc/kbproto/ch08.xml
+file path=usr/share/doc/kbproto/ch09.xml
+file path=usr/share/doc/kbproto/ch10.xml
+file path=usr/share/doc/kbproto/ch11.xml
+file path=usr/share/doc/kbproto/ch12.xml
+file path=usr/share/doc/kbproto/ch13.xml
+file path=usr/share/doc/kbproto/ch14.xml
+file path=usr/share/doc/kbproto/ch15.xml
+file path=usr/share/doc/kbproto/ch16.xml
+file path=usr/share/doc/kbproto/xkbproto.xml
+file path=usr/share/doc/recordproto/record.xml
+file path=usr/share/doc/scrnsaverproto/saver.xml
+file path=usr/share/doc/xcmiscproto/xc-misc.xml
+file path=usr/share/doc/xextproto/appendix.xml
+file path=usr/share/doc/xextproto/appgrp.xml
+file path=usr/share/doc/xextproto/dbe.xml
+file path=usr/share/doc/xextproto/dpms.xml
+file path=usr/share/doc/xextproto/evi.xml
+file path=usr/share/doc/xextproto/geproto.xml
+file path=usr/share/doc/xextproto/lbx.xml
+file path=usr/share/doc/xextproto/multibuf.xml
+file path=usr/share/doc/xextproto/security.xml
+file path=usr/share/doc/xextproto/shape.xml
+file path=usr/share/doc/xextproto/shm.xml
+file path=usr/share/doc/xextproto/sync.xml
+file path=usr/share/doc/xextproto/tog-cup.xml
+file path=usr/share/doc/xextproto/xtest.xml
+file path=usr/share/doc/xorgproto/PM_spec
+file path=usr/share/doc/xorgproto/compositeproto.txt
+file path=usr/share/doc/xorgproto/damageproto.txt
+file path=usr/share/doc/xorgproto/dri2proto.txt
+file path=usr/share/doc/xorgproto/dri3proto.txt
+file path=usr/share/doc/xorgproto/fixesproto.txt
+file path=usr/share/doc/xorgproto/presentproto.txt
+file path=usr/share/doc/xorgproto/randrproto.txt
+file path=usr/share/doc/xorgproto/renderproto.txt
+file path=usr/share/doc/xorgproto/resproto.txt
+file path=usr/share/doc/xorgproto/xv-protocol-v2.txt
+file path=usr/share/doc/xproto/encoding.xml
+file path=usr/share/doc/xproto/glossary.xml
+file path=usr/share/doc/xproto/keysyms.xml
+file path=usr/share/doc/xproto/sect1-9.xml
+file path=usr/share/doc/xproto/x11protocol.xml
+file path=usr/share/pkgconfig/applewmproto.pc
+file path=usr/share/pkgconfig/bigreqsproto.pc
+file path=usr/share/pkgconfig/compositeproto.pc
+file path=usr/share/pkgconfig/damageproto.pc
+file path=usr/share/pkgconfig/dmxproto.pc
+file path=usr/share/pkgconfig/dri2proto.pc
+file path=usr/share/pkgconfig/dri3proto.pc
+file path=usr/share/pkgconfig/evieproto.pc
+file path=usr/share/pkgconfig/fixesproto.pc
+file path=usr/share/pkgconfig/fontcacheproto.pc
+file path=usr/share/pkgconfig/fontsproto.pc
+file path=usr/share/pkgconfig/glproto.pc
+file path=usr/share/pkgconfig/inputproto.pc
+file path=usr/share/pkgconfig/kbproto.pc
+file path=usr/share/pkgconfig/lg3dproto.pc
+file path=usr/share/pkgconfig/presentproto.pc
+file path=usr/share/pkgconfig/printproto.pc
+file path=usr/share/pkgconfig/randrproto.pc
+file path=usr/share/pkgconfig/recordproto.pc
+file path=usr/share/pkgconfig/renderproto.pc
+file path=usr/share/pkgconfig/resourceproto.pc
+file path=usr/share/pkgconfig/scrnsaverproto.pc
+file path=usr/share/pkgconfig/trapproto.pc
+file path=usr/share/pkgconfig/videoproto.pc
+file path=usr/share/pkgconfig/windowswmproto.pc
+file path=usr/share/pkgconfig/xcalibrateproto.pc
+file path=usr/share/pkgconfig/xcmiscproto.pc
+file path=usr/share/pkgconfig/xextproto.pc
+file path=usr/share/pkgconfig/xf86bigfontproto.pc
+file path=usr/share/pkgconfig/xf86dgaproto.pc
+file path=usr/share/pkgconfig/xf86driproto.pc
+file path=usr/share/pkgconfig/xf86miscproto.pc
+file path=usr/share/pkgconfig/xf86rushproto.pc
+file path=usr/share/pkgconfig/xf86vidmodeproto.pc
+file path=usr/share/pkgconfig/xineramaproto.pc
+file path=usr/share/pkgconfig/xproto.pc
+file path=usr/share/pkgconfig/xproxymngproto.pc

@@ -1,0 +1,22 @@
+Workaround build failure with --enable-legacy (which we need for print
+and xevie), but tarball doesn't include Xprint.man
+
+Possible fix upstream is to include the man or to delete its delivery
+
+We should also look into if we can do without printproto and xevieproto
+which will allow us to drop --enable-legacy and make generate simpler
+
+https://gitlab.freedesktop.org/xorg/proto/xorgproto/issues/12
+
+--- a/Makefile.am	2019-02-01 08:24:11.853454587 -0800
++++ b/Makefile.am	2019-02-01 08:24:36.206576275 -0800
+@@ -186,7 +186,8 @@
+ printprotopkgconfig_DATA = printproto.pc
+ 
+ miscmandir = $(MISC_MAN_DIR)
+-miscman_DATA =	man/Xprint.$(MISC_MAN_SUFFIX)
++miscman_DATA =	
++#miscman_DATA =	man/Xprint.$(MISC_MAN_SUFFIX)
+ CLEANFILES = $(miscman_DATA)
+ 
+ printproto_EXTRA_DIST = 	printproto.pc.in	\

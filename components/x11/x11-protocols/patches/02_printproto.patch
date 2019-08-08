@@ -1,0 +1,106 @@
+Bugtraq Bug id: 15493867 
+
+--- a/include/X11/extensions/Print.h	2004-04-23 11:43:06.000000000 -0700
++++ b/include/X11/extensions/Print.h.new	2008-09-03 13:04:25.259850000 -0700
+@@ -88,12 +88,13 @@
+  */
+ #define XP_DONT_CHECK		0
+ #define XP_INITIAL_RELEASE	1
++#define XP_SECOND_RELEASE	2
+ 
+ /*
+  * For each single entry above, create one major/minor pair.
+  */
+ #define XP_PROTO_MAJOR		1
+-#define XP_PROTO_MINOR		0
++#define XP_PROTO_MINOR		1
+ 
+ /*
+  * Identify current version.
+@@ -356,6 +357,18 @@
+     XRectangle		*reproducible_area	/* return value */
+ );
+ 
++#ifdef SUNSOFT
++extern Bool XpClientDPI_SUNW (
++    Display		*display,
++    int			clientDPI
++);
++#endif
++
++extern Bool XpClientDPI (
++    Display		*display,
++    int			clientDPI
++);
++
+ extern void XpStartJob (
+     Display		*display,
+     XPSaveData		save_data
+--- a/include/X11/extensions/Printstr.h	2005-07-25 09:15:05.000000000 -0700
++++ b/include/X11/extensions/Printstr.h.new	2008-09-03 13:26:27.277787000 -0700
+@@ -108,6 +108,7 @@
+ #define X_PrintQueryScreens		22
+ #define X_PrintSetImageResolution	23
+ #define X_PrintGetImageResolution	24
++#define X_PrintClientDpi		25
+ 
+ /********************************************************************
+  *
+@@ -653,6 +654,30 @@
+ } xPrintGetImageResolutionReply;
+ #define sz_xPrintGetImageResolutionReply 32
+ 
++typedef struct _PrintClientDpi {
++	CARD8	reqType;		/* always PrintReqCode */
++	CARD8	printReqType;		/* always X_PrintClientDpi */
++	CARD16	length B16;
++	PCONTEXT printContext B32;	/* print context */
++	CARD16  clientDPI B16;
++	CARD16	pad1 B16;
++} xPrintClientDpiReq;
++#define sz_xPrintClientDpiReq		12
++
++typedef struct {
++	BYTE	type;			/* X_Reply */
++	CARD8	status;			/* accepted or not */
++	CARD16	sequenceNumber B16;
++	CARD32	length B32;
++	CARD32	pad1 B32;
++	CARD32	pad2 B32;
++	CARD32	pad3 B32;
++	CARD32	pad4 B32;
++	CARD32	pad5 B32;
++	CARD32	pad6 B32;
++} xPrintClientDpiReply;
++#define sz_xPrintClientDpiReply		32
++
+ #ifndef _XP_PRINT_SERVER_
+ /***********************************************************************
+  *
+@@ -776,6 +801,26 @@
+ extern void XpUnsetFontResFunc(ClientPtr);
+ extern void XpRegisterInitFunc(ScreenPtr, char *, int (*)(struct _XpContext *));
+ 
++typedef struct _XpClientFonts {
++	struct _XpClientFonts *pNext;
++	int 		client_fid;
++	int 		server_fid;
++	FontPtr			client_font;
++	FontPtr			server_font;
++} XpClientFontsRec, *XpClientFontsPtr;
++
++typedef struct _XpClientDPI {
++        struct _XpClientDPI   *pNext;
++        struct _XpClientDPI   *pPrev;
++	struct _XpClientFonts *head;
++        int                    client_dpi;
++        float                  scale_factor;
++	int		       clientAsMask;
++        XpContextPtr           context;
++	int		       client_x;
++	int                    server_x;
++} XpClientDPIRec, *XpClientDPIPtr;
++
+ #endif /* _XP_PRINT_SERVER_ */
+ 
+ _XFUNCPROTOEND
