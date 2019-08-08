@@ -1,0 +1,97 @@
+This patch adds a method to manage the resource limit which was
+introduced by the fix for ISC-Bugs #41845. This patch was developed
+in-house. ISC did not express any interest in incorporating this patch
+into their code since they consider the limit to be a mitigating
+solution.
+
+diff -r 1680283c6725 includes/omapip/omapip.h
+--- a/includes/omapip/omapip.h	Tue Jan 16 13:35:26 2018 -0800
++++ b/includes/omapip/omapip.h	Tue Jan 16 18:01:14 2018 -0800
+@@ -467,6 +467,9 @@
+ 
+ extern omapi_object_type_t *omapi_object_types;
+ 
++#if defined (sun)
++void omapi_set_max_fd_value (void);
++#endif
+ void omapi_type_relinquish (void);
+ isc_result_t omapi_init (void);
+ isc_result_t omapi_object_type_register (omapi_object_type_t **,
+diff -r 1680283c6725 omapip/listener.c
+--- a/omapip/listener.c	Tue Jan 16 13:35:26 2018 -0800
++++ b/omapip/listener.c	Tue Jan 16 18:01:14 2018 -0800
+@@ -40,6 +40,10 @@
+ trace_type_t *trace_listener_accept;
+ #endif
+ 
++#if defined (sun)
++static int conn_limit = MAX_FD_VALUE; /* max number of open sockets allowed */
++#endif
++
+ OMAPI_OBJECT_ALLOC (omapi_listener,
+ 		    omapi_listener_object_t, omapi_type_listener)
+ 
+@@ -209,6 +213,35 @@
+ 	return l -> socket;
+ }
+ 
++#if defined (sun)
++/* If OMAPI_CONN_LIMIT environment variable is set, obtain value. */
++const char *fname = "omapi_set_max_fd_value";
++void omapi_set_max_fd_value (void)
++{
++	const char *env;
++	char *end = NULL;
++	int envval = conn_limit;
++
++	env = getenv("OMAPI_CONN_LIMIT");
++	if (env != NULL) {
++		errno = 0;
++		envval = (int)strtol(env, &end, 10);
++		if (errno != 0 || env == end || *end != '\0' || envval < 0) {
++			(void) log_error("%s: \"%s\" is not a valid connection "
++					"limit value\n", fname, env);
++			errno = 0;
++		} else {
++			conn_limit = envval;
++		}
++	}
++	(void) log_debug("%s: conn_limit = %d%s\n", fname, conn_limit,
++			(conn_limit == MAX_FD_VALUE) ? " (default)" :
++			(conn_limit == 0) ? " (unlimited)" : "");
++
++	return;
++}
++#endif
++
+ /* Reader callback for a listener object.   Accept an incoming connection. */
+ isc_result_t omapi_accept (omapi_object_t *h)
+ {
+@@ -233,7 +266,13 @@
+ 		return ISC_R_UNEXPECTED;
+ 	}
+ 
++#if !defined (sun)
+ 	if ((MAX_FD_VALUE != 0) && (socket > MAX_FD_VALUE)) {
++#else
++	if ((conn_limit != 0) && (socket > conn_limit)) {
++		(void) log_debug("omapi_accept: No more available "
++		    "sockets - closing latest.\n");
++#endif
+ 		close(socket);
+ 		return (ISC_R_NORESOURCES);
+ 	}
+diff -r 1680283c6725 server/dhcpd.c
+--- a/server/dhcpd.c	Tue Jan 16 13:35:26 2018 -0800
++++ b/server/dhcpd.c	Tue Jan 16 18:01:14 2018 -0800
+@@ -452,6 +452,10 @@
+ 		path_dhcpd_conf = s;
+ 	}
+ 
++#if defined (sun)
++	omapi_set_max_fd_value ();
++#endif
++
+ #ifdef DHCPv6
+         if (local_family == AF_INET6) {
+                 /* DHCPv6: override DHCPv4 lease and pid filenames */
