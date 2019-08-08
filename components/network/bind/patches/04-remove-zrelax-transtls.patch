@@ -1,0 +1,37 @@
+Revert this Solaris-specific patch.
+
+From e87a18018741044322d6014ee9551de8f2cb05f7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ond=C5=99ej=20Sur=C3=BD?= <ondrej@sury.org>
+Date: Wed, 19 Jun 2019 11:21:36 +0200
+Subject: [PATCH] Enforce usage -zrelax=transtls when GNU C Compiler is used on
+ Solaris
+
+When GNU C Compiler is used on Solaris (11), the Thread Local Storage
+is completely broken.  The behaviour doesn't manifest when GNU ld is
+used.  Thus, we need to enforce usage of GNU ld when GNU C Compiler is
+the compiler of choice.
+
+For more background for this change, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90912
+
+(cherry picked from commit d584223653e17930109f37f5203acecca4090ca6)
+
+--- b/configure.ac
++++ a/configure.ac
+@@ -355,17 +355,6 @@
+ AC_PROG_CC
+ AC_PROG_CC_C99
+ 
+-#
+-# Using Solaris linker with gcc on Solaris breaks Thread Local Storage
+-#
+-AS_CASE([$host],
+-	[*-solaris*],[
+-	    AS_IF([test "$GCC" = "yes"],
+-		  [LDFLAGS="$LDFLAGS -zrelax=transtls"
+-		   AC_MSG_WARN([When using GNU C Compiler on Solaris, -zrelax=transtls linker flag is used to fix bug in Thread Local Storage])
+-		  ])
+-	])
+-
+ #
+ # CCNOOPT defaults to -O0 on gcc and disables optimization when is last
+ #
