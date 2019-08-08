@@ -21,20 +21,21 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-PREFERRED_BITS= 64
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.14.3
+COMPONENT_VERSION=	9.14.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:ce878aabcf01b61ed114522c32fff9e268b02da55b3c248349860bc3d0c8bdfa
+	sha256:312efb82a6889074f31ef2849af498b3ec97ca69acd5c4e5e4b4045a8fe6b83f
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/dns-server
+COMPONENT_LICENSE=	MPL v2.0
+COMPONENT_LICENSE_FILE=	COPYRIGHT
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -42,7 +43,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PYTHON_VERSION=3.5
 
-COMPONENT_PREP_ACTION =	(cd $(@D) && autoconf)
+COMPONENT_PREP_ACTION =	(cd $(@D) && autoreconf -fi)
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -61,7 +62,7 @@ CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 CONFIGURE_OPTIONS +=	--with-libtool
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
-CONFIGURE_OPTIONS +=	--with-openssl
+CONFIGURE_OPTIONS +=	--with-openssl=/usr
 CONFIGURE_OPTIONS +=	--enable-devpoll=yes
 CONFIGURE_OPTIONS +=	--enable-fixed-rrset
 CONFIGURE_OPTIONS +=	--with-pkcs11=/usr/lib/$(MACH64)/libpkcs11.so
