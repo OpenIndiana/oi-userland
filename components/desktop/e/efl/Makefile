@@ -20,21 +20,20 @@
 #
 
 #
-# Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2013-2019, Aurelien Larcher. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           efl
-COMPONENT_VERSION=        1.18.5
-COMPONENT_REVISION=       3
+COMPONENT_VERSION=        1.22.2
 COMPONENT_FMRI=           library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=    http://www.enlightenment.org
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:56f02aa6b2c4ca0252fb6547fa8d2fdfff842e245a93ae41adca7a191900bf73
+  sha256:1699891f825911622de0aa77fe1140eff7335aba619d2352485e54dcff6b1cd0
 COMPONENT_ARCHIVE_URL= \
   http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=        BSD 2-clause, GPLv2, LGPLv2.1, Small
@@ -44,6 +43,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=$(PATH.gnu)
+
+PYTHON_VERSION=3.5
+
 CONFIGURE_BINDIR.64=$(USRBINDIR)
 CONFIGURE_SBINDIR.64=$(USRSBINDIR)
 
@@ -52,7 +55,7 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS+= CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
+CONFIGURE_OPTIONS+= CFLAGS="$(CFLAGS) $(CPP_XPG6MODE)"
 CONFIGURE_OPTIONS+= --with-opengl=full
 CONFIGURE_OPTIONS+= --with-profile=release
 CONFIGURE_OPTIONS+= --enable-debug
@@ -61,11 +64,9 @@ CONFIGURE_OPTIONS+= --enable-harfbuzz
 CONFIGURE_OPTIONS+= --disable-libeeze
 CONFIGURE_OPTIONS+= --enable-lua-old
 CONFIGURE_OPTIONS+= --enable-pulseaudio
-CONFIGURE_OPTIONS+= --disable-cserve
-CONFIGURE_OPTIONS+= --enable-physics
+CONFIGURE_OPTIONS+= --disable-physics
 CONFIGURE_OPTIONS+= --enable-doc
 CONFIGURE_OPTIONS+= --disable-systemd
-CONFIGURE_OPTIONS+= --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
@@ -85,15 +86,14 @@ test:		$(TEST_64)
 REQUIRED_PACKAGES += x11/library/mesa
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += image/library/openjpeg
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
-REQUIRED_PACKAGES += library/bullet
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/fribidi
@@ -104,7 +104,8 @@ REQUIRED_PACKAGES += library/libspectre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/input-method/ibus
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
