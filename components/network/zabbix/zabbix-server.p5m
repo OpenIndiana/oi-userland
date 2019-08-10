@@ -1,0 +1,58 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2019 Till Wgmueller <toasterson@gmail.com>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/server@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# SMF Manifest (Not provided upstream)
+file files/zabbix-server.xml path=lib/svc/manifest/application/management/zabbix-server.xml restart_fmri=svc:/system/manifest-import:default
+
+# pkg has problems finding these dependencies somehow
+depend fmri=library/zlib type=require
+depend fmri=system/library/math type=require
+
+#Depend on the common zabbix package
+depend fmri=$(COMPONENT_FMRI)/common type=require
+
+depend fmri=service/database/postgres-11 type=require
+depend fmri=library/libevent type=require
+
+file path=etc/zabbix/zabbix_server.conf owner=root group=root mode=0644 preserve=true
+file path=usr/sbin/zabbix_server pkg.depend.bypass-generate=.*
+file path=usr/share/man/man8/zabbix_server.8
+
+# Database Upgrade files
+file path=usr/share/zabbix/database/elasticsearch/elasticsearch.map
+file path=usr/share/zabbix/database/ibm_db2/data.sql
+file path=usr/share/zabbix/database/ibm_db2/images.sql
+file path=usr/share/zabbix/database/ibm_db2/schema.sql
+file path=usr/share/zabbix/database/mysql/data.sql
+file path=usr/share/zabbix/database/mysql/images.sql
+file path=usr/share/zabbix/database/mysql/schema.sql
+file path=usr/share/zabbix/database/oracle/data.sql
+file path=usr/share/zabbix/database/oracle/images.sql
+file path=usr/share/zabbix/database/oracle/schema.sql
+file path=usr/share/zabbix/database/postgresql/data.sql
+file path=usr/share/zabbix/database/postgresql/images.sql
+file path=usr/share/zabbix/database/postgresql/schema.sql
+file path=usr/share/zabbix/database/sqlite3/data.sql
+file path=usr/share/zabbix/database/sqlite3/images.sql
+file path=usr/share/zabbix/database/sqlite3/schema.sql
