@@ -42,4 +42,4 @@ COMPONENT_FONT_NAME = syriac
 COMPONENT_FONT_PKG  = misc-meltho
 
 # Install to separate directory for easier packaging
-CONFIGURE_OPTIONS += --with-fontdir=$(USRSHARETTFONTSDIR)/$(COMPONENT_FONT_NAME)
+CONFIGURE_OPTIONS += --with-fontdir=$(USRSHARETTFFONTSDIR)/$(COMPONENT_FONT_NAME)
