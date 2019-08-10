@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= audacity
-COMPONENT_VERSION= 2.1.1
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 2.3.2
 COMPONENT_SUMMARY= Cross-platform audio software for recording and editing
 COMPONENT_SRC= audacity-Audacity-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= Audacity-$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1ec4c3b92e3653a83b30b37f67d1778050eb87bd651266865a1e30fe1f402892
+  sha256:675fb1a7a4270800324cd5add5b9f23dae32c9f4df5b3dbe5124dac6c4de0988
 COMPONENT_ARCHIVE_URL= \
   https://github.com/audacity/audacity/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.audacityteam.org/
@@ -46,6 +45,8 @@ CFLAGS += -std=c99 $(CPP_XPG6MODE)
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -rpP $(SOURCE_DIR)/* $(@D))
 CONFIGURE_SCRIPT = $(@D)/configure
 
+CONFIGURE_ENV += WX_CONFIG=/usr/bin/wx-config-3
+
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --enable-unicode
@@ -65,6 +66,8 @@ CONFIGURE_OPTIONS+= --with-lame=system
 CONFIGURE_OPTIONS+= --with-libtwolame=system
 CONFIGURE_OPTIONS+= --with-libvorbis=system
 CONFIGURE_OPTIONS+= --with-portmixer=yes
+CONFIGURE_OPTIONS+= --with-portmidi=system
+
 
 build: $(BUILD_32)
 
@@ -75,19 +78,22 @@ test: $(NO_TESTS)
 REQUIRED_PACKAGES += shell/which
 REQUIRED_PACKAGES += video/ffmpeg
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += library/audio/libid3tag
 REQUIRED_PACKAGES += library/audio/libmad
 REQUIRED_PACKAGES += library/audio/soxr
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/graphics/wxwidgets
+REQUIRED_PACKAGES += library/graphics/wxwidgets-3
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/portmidi
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
