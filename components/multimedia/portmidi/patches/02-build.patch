@@ -1,0 +1,92 @@
+--- portmidi/CMakeLists.txt.~1~	2010-09-20 23:57:48.000000000 +0000
++++ portmidi/CMakeLists.txt	2019-08-11 10:08:16.496954098 +0000
+@@ -73,5 +48,11 @@
+ add_subdirectory(pm_dylib)
+ 
+ # Cannot figure out how to make an xcode Java application with CMake
+-add_subdirectory(pm_java)
++#add_subdirectory(pm_java)
+ 
++set(DEST_DIR "${CMAKE_INSTALL_PREFIX}")
++CONFIGURE_FILE("portmidi.pc.in" "portmidi.pc" @ONLY)
++install(FILES
++  "${CMAKE_CURRENT_BINARY_DIR}/portmidi.pc"
++  DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/pkgconfig"
++)
+--- portmidi/pm_common/CMakeLists.txt.~1~	2010-09-20 23:57:48.000000000 +0000
++++ portmidi/pm_common/CMakeLists.txt	2019-08-11 10:44:30.447956806 +0000
+@@ -76,11 +76,11 @@
+     # libjvm.so is found relative to JAVA_INCLUDE_PATH:
+     set(JAVAVM_LIB ${JAVA_JVM_LIBRARY}/libjvm.so)
+ 
+-    set(LINUXSRC pmlinuxalsa pmlinux finddefault)
+-    prepend_path(LIBSRC ../pm_linux/ ${LINUXSRC})
++    set(LINUXSRC pm_sun)
++    prepend_path(LIBSRC ../pm_sun/ ${LINUXSRC})
+     list(APPEND LIBSRC ../porttime/ptlinux)
+ 
+-    set(PM_NEEDED_LIBS pthread asound)
++    set(PM_NEEDED_LIBS pthread)
+   endif(APPLE)
+ else(UNIX)
+   if(WIN32)
+@@ -112,16 +112,16 @@
+ # define the jni library
+ include_directories(${JAVA_INCLUDE_PATHS})
+ 
+-set(JNISRC ${LIBSRC} ../pm_java/pmjni/pmjni.c)
+-add_library(pmjni SHARED ${JNISRC})
+-target_link_libraries(pmjni ${JNI_EXTRA_LIBS})
+-set_target_properties(pmjni PROPERTIES EXECUTABLE_EXTENSION "jnilib")
++#set(JNISRC ${LIBSRC} ../pm_java/pmjni/pmjni.c)
++#add_library(pmjni SHARED ${JNISRC})
++#target_link_libraries(pmjni ${JNI_EXTRA_LIBS})
++#set_target_properties(pmjni PROPERTIES EXECUTABLE_EXTENSION "jnilib")
+ 
+ # install the libraries (Linux and Mac OS X command line)
+ if(UNIX)
+-  INSTALL(TARGETS portmidi-static pmjni
+-    LIBRARY DESTINATION /usr/local/lib
+-    ARCHIVE DESTINATION /usr/local/lib)
++  INSTALL(TARGETS portmidi-static
++    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+ # .h files installed by pm_dylib/CMakeLists.txt, so don't need them here
+ #  INSTALL(FILES portmidi.h ../porttime/porttime.h
+ #    DESTINATION /usr/local/include)
+--- portmidi/pm_dylib/CMakeLists.txt.~1~	2009-11-20 08:41:09.000000000 +0000
++++ portmidi/pm_dylib/CMakeLists.txt	2019-08-11 10:49:57.644011949 +0000
+@@ -81,11 +81,11 @@
+     # libjvm.so is found relative to JAVA_INCLUDE_PATH:
+     set(JAVAVM_LIB ${JAVA_INCLUDE_PATH}/../jre/lib/i386/client/libjvm.so)
+ 
+-    set(LINUXSRC pmlinuxalsa pmlinux finddefault)
+-    prepend_path(LIBSRC ../pm_linux/ ${LINUXSRC})
++    set(LINUXSRC pm_sun)
++    prepend_path(LIBSRC ../pm_sun/ ${LINUXSRC})
+     list(APPEND LIBSRC ../porttime/ptlinux)
+ 
+-    set(PM_NEEDED_LIBS pthread asound)
++    set(PM_NEEDED_LIBS pthread)
+   endif(APPLE)
+ else(UNIX)
+   if(WIN32)
+@@ -115,13 +115,15 @@
+ 
+ add_library(portmidi-dynamic SHARED ${LIBSRC})
+ set_target_properties(portmidi-dynamic PROPERTIES OUTPUT_NAME "portmidi")
++set_target_properties(portmidi-dynamic PROPERTIES VERSION 0.217)
++set_target_properties(portmidi-dynamic PROPERTIES SOVERSION 0)
+ target_link_libraries(portmidi-dynamic ${PM_NEEDED_LIBS})
+ 
+ # install the libraries (Linux and Mac OS X command line)
+ if(UNIX)
+   INSTALL(TARGETS portmidi-dynamic
+-    LIBRARY DESTINATION /usr/local/lib
+-    ARCHIVE DESTINATION /usr/local/lib)
++    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+   INSTALL(FILES ../pm_common/portmidi.h ../porttime/porttime.h
+-    DESTINATION /usr/local/include)
++    DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+ endif(UNIX)
