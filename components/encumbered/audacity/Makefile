@@ -66,7 +66,7 @@ CONFIGURE_OPTIONS+= --with-lame=system
 CONFIGURE_OPTIONS+= --with-libtwolame=system
 CONFIGURE_OPTIONS+= --with-libvorbis=system
 CONFIGURE_OPTIONS+= --with-portmixer=yes
-CONFIGURE_OPTIONS+= --with-portmidi=system
+CONFIGURE_OPTIONS+= --with-portmidi=local
 
 
 build: $(BUILD_32)
@@ -94,6 +94,5 @@ REQUIRED_PACKAGES += library/graphics/wxwidgets-3
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libvorbis
-REQUIRED_PACKAGES += library/portmidi
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
