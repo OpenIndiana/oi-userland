@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		X-incorporation
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_SUMMARY=	X consolidation incorporation
 
 include ../../../make-rules/ips.mk
@@ -40,6 +40,5 @@ REQUIRED_PACKAGES += library/motif/libdpstkxm
 REQUIRED_PACKAGES += system/kernel/hardware-cursor
 REQUIRED_PACKAGES += x11/library/dps
 REQUIRED_PACKAGES += x11/library/libowconfig
-REQUIRED_PACKAGES += x11/library/toolkit/libxaw5
 REQUIRED_PACKAGES += x11/network/rstart
 REQUIRED_PACKAGES += x11/network/x11-network-proxies
