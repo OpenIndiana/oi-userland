@@ -102,7 +102,6 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|' \
 	    -e 's|^export SHADOW_CCS=.*||' \
 	    -e 's|^export SHADOW_CCCS=.*||' ; \
-	  echo export LC_ALL=en_US.UTF-8; \
 	  echo export PERL_VERSION=\"5.22\"; \
 	  echo export PERL_PKGVERS=\"-522\"; \
 	  echo export BUILDPY2TOOLS=\"#\"; \
