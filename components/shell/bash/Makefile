@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
 COMPONENT_VERSION=	5.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -52,9 +52,6 @@ PATCH_LEVEL = 0
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
-#CFLAGS += $(XPG6MODE)
-#CFLAGS += $(CPP_POSIX)
-#CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -I/usr/include/ncurses
 
 # configure checks for some functions, but doesn't seem to want to link in
