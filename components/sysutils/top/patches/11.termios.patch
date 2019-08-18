@@ -1,0 +1,17 @@
+diff -Nurp top-3.8beta1/screen.c top-3.8beta1-termios/screen.c
+--- top-3.8beta1/screen.c	2008-05-07 06:41:39.000000000 +0000
++++ top-3.8beta1-termios/screen.c	2019-08-19 00:44:00.780585500 +0000
+@@ -84,13 +84,8 @@ char *tgetstr(const char *, char **);
+ # include <sgtty.h>
+ # define USE_SGTTY
+ #else
+-# ifdef TCGETA
+-#  define USE_TERMIO
+-#  include <termio.h>
+-# else
+ #  define USE_TERMIOS
+ #  include <termios.h>
+-# endif
+ #endif
+ #if defined(USE_TERMIO) || defined(USE_TERMIOS)
+ # ifndef TAB3
