@@ -1,0 +1,276 @@
+diff -Nurp top-3.8beta1/display.c top-3.8beta1-carc/display.c
+--- top-3.8beta1/display.c	2019-08-18 10:21:57.111199985 +0000
++++ top-3.8beta1-carc/display.c	2019-08-18 10:05:40.439188106 +0000
+@@ -103,6 +103,8 @@ static int x_mem = X_MEM;
+ static int y_mem = Y_MEM;
+ static int x_arc = X_ARC;
+ static int y_arc = Y_ARC;
++static int x_carc = X_CARC;
++static int y_carc = Y_CARC;
+ static int x_swap = X_SWAP;
+ static int y_swap = Y_SWAP;
+ static int y_message = Y_MESSAGE;
+@@ -135,6 +137,7 @@ static char **procstate_names;
+ static char **cpustate_names;
+ static char **memory_names;
+ static char **arc_names;
++static char **carc_names;
+ static char **swap_names;
+ static char **kernel_names;
+ 
+@@ -142,6 +145,7 @@ static int num_procstates;
+ static int num_cpustates;
+ static int num_memory;
+ static int num_arc;
++static int num_carc;
+ static int num_swap;
+ static int num_kernel;
+ 
+@@ -176,11 +180,13 @@ static int header_cidx;
+ static int *cpustate_cidx;
+ static int *memory_cidx;
+ static int *arc_cidx;
++static int *carc_cidx;
+ static int *swap_cidx;
+ static int *kernel_cidx;
+ #else
+ #define memory_cidx NULL
+ #define arc_cidx NULL
++#define carc_cidx NULL
+ #define swap_cidx NULL
+ #define kernel_cidx NULL
+ #endif
+@@ -633,6 +639,14 @@ summary_format_memory(int x, int y, long
+ 		display_write(x, y, color, 0, format_k(num));
+ 		lastname++;
+ 	    }
++	    /* is this number a ratio? */
++	    else if (thisname[0] == ':')
++	    {
++		char rbuf[6];
++		(void) snprintf(rbuf, sizeof(rbuf), "%.2f", 
++		    (float)*(numbers - 2) / (float)num);
++		display_write(x, y, color, 0, rbuf);
++	    }
+ 	    else
+ 	    {
+ 		display_write(x, y, color, 0, itoa(num));
+@@ -798,7 +812,16 @@ display_init(struct statics *statics)
+ 	y_idlecursor++;
+ 	y_procs++;
+     }
+-    
++
++    /* arc names */
++    carc_names = statics->carc_names;
++    if ((num_carc = string_count(carc_names)) > 0)
++    {
++	/* adjust screen placements */
++	y_message++;
++	y_idlecursor++;
++    }
++
+     /* call resize to do the dirty work */
+     top_lines = display_resize();
+ 
+@@ -818,6 +841,7 @@ display_init(struct statics *statics)
+ 	num_memory = string_count(memory_names);
+         
+         arc_names = statics->arc_names;
++        carc_names = statics->carc_names;
+ 
+ 	/* calculate starting columns where needed */
+ 	cpustate_total_length = 0;
+@@ -875,7 +899,7 @@ display_init(struct statics *statics)
+ 	memory_cidx[i++] = color_tag(scratchbuf);
+     }
+ 
+-    /* color tags for memory */
++    /* color tags for arc */
+     arc_cidx = (int *)malloc(num_arc * sizeof(int));
+     i = 0;
+     p = strcpyend(scratchbuf, "arc.");
+@@ -885,6 +909,16 @@ display_init(struct statics *statics)
+         arc_cidx[i++] = color_tag(scratchbuf);
+     }
+ 
++    /* color tags for carc */
++    carc_cidx = (int *)malloc(num_carc * sizeof(int));
++    i = 0;
++    p = strcpyend(scratchbuf, "carc.");
++    while (i < num_carc)
++    {
++        strcpy(p, homogenize(carc_names[i]+1));
++        carc_cidx[i++] = color_tag(scratchbuf);
++    }
++
+     /* color tags for swap */
+     if (num_swap > 0)
+     {
+@@ -1367,6 +1401,28 @@ u_arc(long *stats)
+ }
+ 
+ /*
++ *  *_carc(stats) - print "     " followed by the summary string
++ */
++void
++i_carc(long *stats)
++
++{
++    /* print the tag */
++    display_write(0, y_carc, 0, 0, "     ");
++
++    /* format and print the swap summary */
++    summary_format_memory(x_carc, y_carc, stats, carc_names, carc_cidx);
++}
++
++void
++u_carc(long *stats)
++
++{
++    /* format and print the swap summary */
++    summary_format_memory(x_carc, y_carc, stats, carc_names, carc_cidx);
++}
++
++/*
+  *  *_swap(stats) - print "Swap: " followed by the swap summary string
+  *
+  *  Assumptions:  cursor is on "lastline", the previous line
+diff -Nurp top-3.8beta1/display.h top-3.8beta1-carc/display.h
+--- top-3.8beta1/display.h	2019-08-18 10:21:57.104035007 +0000
++++ top-3.8beta1-carc/display.h	2019-08-17 20:06:26.824251250 +0000
+@@ -60,6 +60,8 @@ void i_memory(long *stats);
+ void u_memory(long *stats);
+ void i_arc(long *stats);
+ void u_arc(long *stats);
++void i_carc(long *stats);
++void u_carc(long *stats);
+ void i_swap(long *stats);
+ void u_swap(long *stats);
+ void i_message(struct timeval *now);
+diff -Nurp top-3.8beta1/layout.h top-3.8beta1-carc/layout.h
+--- top-3.8beta1/layout.h	2019-08-18 10:21:57.096896983 +0000
++++ top-3.8beta1-carc/layout.h	2019-08-17 20:06:26.824035159 +0000
+@@ -60,12 +60,14 @@
+ #define  Y_MEM		3
+ #define  X_ARC          8
+ #define  Y_ARC          5
++#define  X_CARC         8
++#define  Y_CARC         6
+ #define  X_SWAP		6
+ #define  Y_SWAP		4
+ #define  Y_MESSAGE	4
+ #define  X_HEADER	0
+-#define  Y_HEADER	5
++#define  Y_HEADER	6
+ #define  X_IDLECURSOR	0
+ #define  Y_IDLECURSOR	4
+-#define  Y_PROCS	6
++#define  Y_PROCS	7
+ 
+diff -Nurp top-3.8beta1/machine/m_sunos5.c top-3.8beta1-carc/machine/m_sunos5.c
+--- top-3.8beta1/machine/m_sunos5.c	2019-08-18 10:21:57.104542831 +0000
++++ top-3.8beta1-carc/machine/m_sunos5.c	2019-08-18 09:37:06.654199762 +0000
+@@ -298,6 +298,10 @@ char *memorynames[] =
+ char *arcnames[] =
+ {"K Total, ", "K MRU, ", "K MFU, ", "K Anon, ", "K Header, ", "K Other", NULL};
+ 
++long carc_stats[5];
++char *carcnames[] =
++{"K Compressed, ", "K Uncompressed, ", ":1 Ratio, ", "K Overhead", NULL};
++
+ /* these are for detailing kernel statistics */
+ long kernel_stats[8];
+ char *kernelnames[] =
+@@ -893,7 +897,7 @@ get_avenrun(int avenrun[3])
+ }
+ 
+ int
+-get_arcstats(long arcstats[NUM_ZFS_ARC])
++get_arcstats(long arcstats[NUM_ZFS_ARC], long carc_stats[5])
+ {
+     #ifdef USE_KSTAT
+     int status;
+@@ -941,6 +945,25 @@ get_arcstats(long arcstats[NUM_ZFS_ARC])
+                 arcstats[5] = (long) kn->value.ui64 / 1024;
+             }
+ 	}
++	if ((kn = kstat_data_lookup(ks_arcstats, "compressed_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                carc_stats[0] = (long) kn->value.ui64 / 1024;
++            }
++	}
++	if ((kn = kstat_data_lookup(ks_arcstats, "uncompressed_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                carc_stats[1] = (long) kn->value.ui64 / 1024;
++            }
++	}
++        carc_stats[2] = arcstats[0];	/* ARC Total */
++	if ((kn = kstat_data_lookup(ks_arcstats, "overhead_size")) != NULL)
++	{
++            if(kn->value.ui64 > 0){
++                carc_stats[3] = (long) kn->value.ui64 / 1024;
++            }
++	}
+     }
+     dprintf("get_arcstats returns %d\n", status);
+     return (status);
+@@ -1302,6 +1325,7 @@ machine_init (struct statics *statics)
+     statics->cpustate_names = cpustatenames;
+     statics->memory_names = memorynames;
+     statics->arc_names = arcnames;
++    statics->carc_names = carcnames;
+     statics->kernel_names = kernelnames;
+     statics->order_names = ordernames;
+     statics->flags.fullcmds = 1;
+@@ -1483,8 +1507,9 @@ get_system_info (struct system_info *si)
+     get_avenrun(avenrun);
+     
+     /* get ARC information */
+-    get_arcstats(arcstats);
++    get_arcstats(arcstats, carc_stats);
+     memcpy(si->arc, arcstats, sizeof(arcstats));
++    si->carc = carc_stats;
+ 
+     /* get the cpu statistics arrays */
+     cpustats = get_cpustats(&cpus, cpustats);
+diff -Nurp top-3.8beta1/machine.h top-3.8beta1-carc/machine.h
+--- top-3.8beta1/machine.h	2019-08-18 10:21:57.104681924 +0000
++++ top-3.8beta1-carc/machine.h	2019-08-17 20:22:45.900085420 +0000
+@@ -51,6 +51,7 @@ struct statics
+     char **cpustate_names;
+     char **memory_names;
+     char **arc_names;
++    char **carc_names;
+     char **swap_names;		/* optional */
+     char **order_names;		/* optional */
+     char **top_color_names;	/* optional */
+@@ -86,6 +87,7 @@ struct system_info
+     long    *kernel;
+     long   *memory;
+     long   arc[NUM_ZFS_ARC];
++    long   *carc;
+     long   *swap;
+ };
+ 
+diff -Nurp top-3.8beta1/top.c top-3.8beta1-carc/top.c
+--- top-3.8beta1/top.c	2019-08-18 10:21:57.117918248 +0000
++++ top-3.8beta1-carc/top.c	2019-08-17 20:35:26.941083965 +0000
+@@ -548,6 +548,7 @@ do_display(globalstate *gstate)
+ 	i_kernel(system_info.kernel);
+ 	i_memory(system_info.memory);
+         i_arc(system_info.arc);
++        i_carc(system_info.carc);
+ 	i_swap(system_info.swap);
+ 	i_message(&(gstate->now));
+ 	i_header(hdr);
+@@ -571,6 +572,7 @@ do_display(globalstate *gstate)
+ 	u_kernel(system_info.kernel);
+ 	u_memory(system_info.memory);
+         u_arc(system_info.arc);
++        u_carc(system_info.carc);
+ 	u_swap(system_info.swap);
+ 	u_message(&(gstate->now));
+ 	u_header(hdr);
