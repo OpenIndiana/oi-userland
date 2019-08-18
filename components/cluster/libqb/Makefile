@@ -10,20 +10,19 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
-# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni) 
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni) 
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   libqb
-COMPONENT_VERSION=  1.0.2
-COMPONENT_REVISION= 2
+COMPONENT_VERSION=  1.0.5
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=  https://github.com/ClusterLabs/libqb
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9b8bee23e5da8132c135c2b11fed3cb57b37a0e6c6a9963a5c34a36cc764ee3b
+COMPONENT_ARCHIVE_HASH= sha256:89fe0c743e5be15f2fa25849f107df41cb144928259752d5c797c13644eba6b1
 COMPONENT_ARCHIVE_URL=  \
   https://github.com/ClusterLabs/libqb/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= LGPLv2
