@@ -10,19 +10,18 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved. 
-# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= resource-agents
-COMPONENT_VERSION= 4.0.1
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 4.1.0
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:863f83c724bad3a8bcff12b9c8712406c43e010041868826cad7b78fd8cfb9fb
+COMPONENT_ARCHIVE_HASH= sha256:e9391b3c1d2d8828a36547440597c50a983ac2779c411d0b5ab26e06412b499f
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/resource-agents
 COMPONENT_ARCHIVE_URL= https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= LGPLv2,GPLv2,GPLv3
@@ -31,8 +30,6 @@ COMPONENT_SUMMARY= Combined repository of OCF agents from the RHCS and Linux-HA 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL= 1
 
 PATH=$(PATH.gnu)
 CFLAGS += "-lnsl"
