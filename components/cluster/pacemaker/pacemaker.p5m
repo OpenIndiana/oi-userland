@@ -24,7 +24,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man8/%<1>.8 >
-<transform file path=usr/lib/python2.7/vendor-packages/(.+)$ -> set action.hash usr/lib/python2.7/site-packages/%<\1> >
+<transform file path=usr/lib/python3.5/vendor-packages/(.+)$ -> set action.hash usr/lib/python3.5/site-packages/%<\1> >
 <transform file path=usr/lib/pacemaker/(.+) -> set mode 0555 >
 <transform file path=usr/lib/ocf/resource.d/(.+) -> set mode 0555 >
 <transform link path=usr/lib/pacemaker/(.+) -> default pkg.linted true >
@@ -37,15 +37,17 @@ file path=usr/include/pacemaker/crm/common/ipc.h
 file path=usr/include/pacemaker/crm/common/iso8601.h
 file path=usr/include/pacemaker/crm/common/logging.h
 file path=usr/include/pacemaker/crm/common/mainloop.h
+file path=usr/include/pacemaker/crm/common/nvpair.h
+file path=usr/include/pacemaker/crm/common/results.h
 file path=usr/include/pacemaker/crm/common/util.h
 file path=usr/include/pacemaker/crm/common/xml.h
 file path=usr/include/pacemaker/crm/compatibility.h
 file path=usr/include/pacemaker/crm/crm.h
-file path=usr/include/pacemaker/crm/error.h
 file path=usr/include/pacemaker/crm/lrmd.h
 file path=usr/include/pacemaker/crm/msg_xml.h
 file path=usr/include/pacemaker/crm/pengine/common.h
 file path=usr/include/pacemaker/crm/pengine/complex.h
+file path=usr/include/pacemaker/crm/pengine/pe_types.h
 file path=usr/include/pacemaker/crm/pengine/remote.h
 file path=usr/include/pacemaker/crm/pengine/rules.h
 file path=usr/include/pacemaker/crm/pengine/status.h
@@ -53,43 +55,55 @@ file path=usr/include/pacemaker/crm/services.h
 file path=usr/include/pacemaker/crm/stonith-ng.h
 file path=usr/include/pacemaker/crm/transition.h
 file path=usr/include/pacemaker/crm_config.h
-
-link path=usr/lib/$(MACH64)/libcib.so target=libcib.so.4.1.6
-link path=usr/lib/$(MACH64)/libcib.so.4 target=libcib.so.4.1.6
-file path=usr/lib/$(MACH64)/libcib.so.4.1.6
+file path=usr/lib/$(MACH64)/libcib.a
+link path=usr/lib/$(MACH64)/libcib.so target=libcib.so.27.0.2
+link path=usr/lib/$(MACH64)/libcib.so.27 target=libcib.so.27.0.2
+file path=usr/lib/$(MACH64)/libcib.so.27.0.2
 file path=usr/lib/$(MACH64)/libcrmcluster.a
-link path=usr/lib/$(MACH64)/libcrmcluster.so target=libcrmcluster.so.4.3.4
-link path=usr/lib/$(MACH64)/libcrmcluster.so.4 target=libcrmcluster.so.4.3.4
-file path=usr/lib/$(MACH64)/libcrmcluster.so.4.3.4
-link path=usr/lib/$(MACH64)/libcrmcommon.so target=libcrmcommon.so.3.11.0
-link path=usr/lib/$(MACH64)/libcrmcommon.so.3 target=libcrmcommon.so.3.11.0
-file path=usr/lib/$(MACH64)/libcrmcommon.so.3.11.0
-link path=usr/lib/$(MACH64)/libcrmservice.so target=libcrmservice.so.3.4.0
-link path=usr/lib/$(MACH64)/libcrmservice.so.3 target=libcrmservice.so.3.4.0
-file path=usr/lib/$(MACH64)/libcrmservice.so.3.4.0
-link path=usr/lib/$(MACH64)/liblrmd.so target=liblrmd.so.1.5.2
-link path=usr/lib/$(MACH64)/liblrmd.so.1 target=liblrmd.so.1.5.2
-file path=usr/lib/$(MACH64)/liblrmd.so.1.5.2
-link path=usr/lib/$(MACH64)/libpe_rules.so target=libpe_rules.so.2.3.2
-link path=usr/lib/$(MACH64)/libpe_rules.so.2 target=libpe_rules.so.2.3.2
-file path=usr/lib/$(MACH64)/libpe_rules.so.2.3.2
-link path=usr/lib/$(MACH64)/libpe_status.so target=libpe_status.so.16.0.0
-link path=usr/lib/$(MACH64)/libpe_status.so.16 target=libpe_status.so.16.0.0
-file path=usr/lib/$(MACH64)/libpe_status.so.16.0.0
-link path=usr/lib/$(MACH64)/libpengine.so target=libpengine.so.16.0.1
-link path=usr/lib/$(MACH64)/libpengine.so.16 target=libpengine.so.16.0.1
-file path=usr/lib/$(MACH64)/libpengine.so.16.0.1
-link path=usr/lib/$(MACH64)/libstonithd.so target=libstonithd.so.2.4.1
-link path=usr/lib/$(MACH64)/libstonithd.so.2 target=libstonithd.so.2.4.1
-file path=usr/lib/$(MACH64)/libstonithd.so.2.4.1
-link path=usr/lib/$(MACH64)/libtransitioner.so target=libtransitioner.so.2.1.0
-link path=usr/lib/$(MACH64)/libtransitioner.so.2 target=libtransitioner.so.2.1.0
-file path=usr/lib/$(MACH64)/libtransitioner.so.2.1.0
-
-file path=usr/lib/ocf/resource.d/.isolation/docker-wrapper
+link path=usr/lib/$(MACH64)/libcrmcluster.so target=libcrmcluster.so.29.0.2
+link path=usr/lib/$(MACH64)/libcrmcluster.so.29 target=libcrmcluster.so.29.0.2
+file path=usr/lib/$(MACH64)/libcrmcluster.so.29.0.2
+file path=usr/lib/$(MACH64)/libcrmcommon.a
+link path=usr/lib/$(MACH64)/libcrmcommon.so target=libcrmcommon.so.34.2.0
+link path=usr/lib/$(MACH64)/libcrmcommon.so.34 target=libcrmcommon.so.34.2.0
+file path=usr/lib/$(MACH64)/libcrmcommon.so.34.2.0
+file path=usr/lib/$(MACH64)/libcrmservice.a
+link path=usr/lib/$(MACH64)/libcrmservice.so target=libcrmservice.so.28.1.0
+link path=usr/lib/$(MACH64)/libcrmservice.so.28 target=libcrmservice.so.28.1.0
+file path=usr/lib/$(MACH64)/libcrmservice.so.28.1.0
+file path=usr/lib/$(MACH64)/liblrmd.a
+link path=usr/lib/$(MACH64)/liblrmd.so target=liblrmd.so.28.0.2
+link path=usr/lib/$(MACH64)/liblrmd.so.28 target=liblrmd.so.28.0.2
+file path=usr/lib/$(MACH64)/liblrmd.so.28.0.2
+file path=usr/lib/$(MACH64)/libpacemaker.a
+link path=usr/lib/$(MACH64)/libpacemaker.so target=libpacemaker.so.1.0.0
+link path=usr/lib/$(MACH64)/libpacemaker.so.1 target=libpacemaker.so.1.0.0
+file path=usr/lib/$(MACH64)/libpacemaker.so.1.0.0
+file path=usr/lib/$(MACH64)/libpe_rules.a
+link path=usr/lib/$(MACH64)/libpe_rules.so target=libpe_rules.so.26.0.2
+link path=usr/lib/$(MACH64)/libpe_rules.so.26 target=libpe_rules.so.26.0.2
+file path=usr/lib/$(MACH64)/libpe_rules.so.26.0.2
+file path=usr/lib/$(MACH64)/libpe_status.a
+link path=usr/lib/$(MACH64)/libpe_status.so target=libpe_status.so.28.0.2
+link path=usr/lib/$(MACH64)/libpe_status.so.28 target=libpe_status.so.28.0.2
+file path=usr/lib/$(MACH64)/libpe_status.so.28.0.2
+file path=usr/lib/$(MACH64)/libstonithd.a
+link path=usr/lib/$(MACH64)/libstonithd.so target=libstonithd.so.26.2.0
+link path=usr/lib/$(MACH64)/libstonithd.so.26 target=libstonithd.so.26.2.0
+file path=usr/lib/$(MACH64)/libstonithd.so.26.2.0
+file path=usr/lib/$(MACH64)/pkgconfig/libpacemaker.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-cib.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-cluster.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-fencing.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-lrmd.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-pe_rules.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-pe_status.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-service.pc
+file path=usr/lib/$(MACH64)/pkgconfig/pacemaker.pc
 file path=usr/lib/ocf/resource.d/pacemaker/ClusterMon
 file path=usr/lib/ocf/resource.d/pacemaker/Dummy
 file path=usr/lib/ocf/resource.d/pacemaker/HealthCPU
+file path=usr/lib/ocf/resource.d/pacemaker/HealthIOWait
 file path=usr/lib/ocf/resource.d/pacemaker/HealthSMART
 file path=usr/lib/ocf/resource.d/pacemaker/Stateful
 file path=usr/lib/ocf/resource.d/pacemaker/SysInfo
@@ -101,41 +115,38 @@ file path=usr/lib/ocf/resource.d/pacemaker/o2cb
 file path=usr/lib/ocf/resource.d/pacemaker/ping
 file path=usr/lib/ocf/resource.d/pacemaker/pingd
 file path=usr/lib/ocf/resource.d/pacemaker/remote
-
-file path=usr/lib/pacemaker/attrd
-file path=usr/lib/pacemaker/cib
+link path=usr/lib/pacemaker/attrd target=pacemaker-attrd
+link path=usr/lib/pacemaker/cib target=pacemaker-based
 file path=usr/lib/pacemaker/cibmon
-file path=usr/lib/pacemaker/crmd
-file path=usr/lib/pacemaker/lrmd
-file path=usr/lib/pacemaker/lrmd_test
-file path=usr/lib/pacemaker/pengine
-file path=usr/lib/pacemaker/stonith-test
-file path=usr/lib/pacemaker/stonithd
-file path=usr/lib/pacemaker/lrmd_internal_ctl
-
-file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-cib.pc
-file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-cluster.pc
-file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-fencing.pc
-file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-lrmd.pc
-file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-pengine.pc
-file path=usr/lib/$(MACH64)/pkgconfig/pacemaker-service.pc
-file path=usr/lib/$(MACH64)/pkgconfig/pacemaker.pc
-file path=usr/lib/python2.7/vendor-packages/cts/CIB.py
-file path=usr/lib/python2.7/vendor-packages/cts/CM_ais.py
-file path=usr/lib/python2.7/vendor-packages/cts/CM_lha.py
-file path=usr/lib/python2.7/vendor-packages/cts/CTS.py
-file path=usr/lib/python2.7/vendor-packages/cts/CTSaudits.py
-file path=usr/lib/python2.7/vendor-packages/cts/CTSscenarios.py
-file path=usr/lib/python2.7/vendor-packages/cts/CTStests.py
-file path=usr/lib/python2.7/vendor-packages/cts/CTSvars.py
-file path=usr/lib/python2.7/vendor-packages/cts/__init__.py
-file path=usr/lib/python2.7/vendor-packages/cts/cib_xml.py
-file path=usr/lib/python2.7/vendor-packages/cts/environment.py
-file path=usr/lib/python2.7/vendor-packages/cts/logging.py
-file path=usr/lib/python2.7/vendor-packages/cts/patterns.py
-file path=usr/lib/python2.7/vendor-packages/cts/remote.py
-file path=usr/lib/python2.7/vendor-packages/cts/watcher.py
-
+link path=usr/lib/pacemaker/crmd target=pacemaker-controld
+file path=usr/lib/pacemaker/cts-exec-helper
+file path=usr/lib/pacemaker/cts-fence-helper
+file path=usr/lib/pacemaker/cts-log-watcher
+file path=usr/lib/pacemaker/cts-support
+link path=usr/lib/pacemaker/lrmd target=pacemaker-execd
+file path=usr/lib/pacemaker/pacemaker-attrd
+file path=usr/lib/pacemaker/pacemaker-based
+file path=usr/lib/pacemaker/pacemaker-controld
+file path=usr/lib/pacemaker/pacemaker-execd
+file path=usr/lib/pacemaker/pacemaker-fenced
+file path=usr/lib/pacemaker/pacemaker-schedulerd
+link path=usr/lib/pacemaker/pengine target=pacemaker-schedulerd
+link path=usr/lib/pacemaker/stonithd target=pacemaker-fenced
+file path=usr/lib/python3.5/site-packages/cts/CIB.py
+file path=usr/lib/python3.5/site-packages/cts/CM_common.py
+file path=usr/lib/python3.5/site-packages/cts/CM_corosync.py
+file path=usr/lib/python3.5/site-packages/cts/CTS.py
+file path=usr/lib/python3.5/site-packages/cts/CTSaudits.py
+file path=usr/lib/python3.5/site-packages/cts/CTSscenarios.py
+file path=usr/lib/python3.5/site-packages/cts/CTStests.py
+file path=usr/lib/python3.5/site-packages/cts/CTSvars.py
+file path=usr/lib/python3.5/site-packages/cts/__init__.py
+file path=usr/lib/python3.5/site-packages/cts/cib_xml.py
+file path=usr/lib/python3.5/site-packages/cts/environment.py
+file path=usr/lib/python3.5/site-packages/cts/logging.py
+file path=usr/lib/python3.5/site-packages/cts/patterns.py
+file path=usr/lib/python3.5/site-packages/cts/remote.py
+file path=usr/lib/python3.5/site-packages/cts/watcher.py
 file path=usr/sbin/attrd_updater
 file path=usr/sbin/cibadmin
 file path=usr/sbin/crm_attribute
@@ -147,6 +158,7 @@ file path=usr/sbin/crm_mon
 file path=usr/sbin/crm_node
 file path=usr/sbin/crm_report
 file path=usr/sbin/crm_resource
+file path=usr/sbin/crm_rule
 file path=usr/sbin/crm_shadow
 file path=usr/sbin/crm_simulate
 file path=usr/sbin/crm_standby
@@ -154,12 +166,11 @@ file path=usr/sbin/crm_ticket
 file path=usr/sbin/crm_verify
 file path=usr/sbin/crmadmin
 file path=usr/sbin/fence_legacy
-file path=usr/sbin/fence_pcmk
 file path=usr/sbin/iso8601
+file path=usr/sbin/pacemaker-remoted
+link path=usr/sbin/pacemaker_remoted target=pacemaker-remoted
 file path=usr/sbin/pacemakerd
 file path=usr/sbin/stonith_admin
-file path=usr/sbin/pacemaker_remoted
-
 file path=usr/share/doc/pacemaker/COPYING
 file path=usr/share/doc/pacemaker/README.markdown
 file path=usr/share/doc/pacemaker/acls.html
@@ -170,10 +181,10 @@ file path=usr/share/doc/pacemaker/licenses/CC-BY-SA-4.0
 file path=usr/share/doc/pacemaker/licenses/GPLv2
 file path=usr/share/doc/pacemaker/licenses/LGPLv2.1
 file path=usr/share/doc/pacemaker/licenses/RevisedBSD
-file path=usr/share/man/man7/crmd.7
 file path=usr/share/man/man7/ocf_pacemaker_ClusterMon.7
 file path=usr/share/man/man7/ocf_pacemaker_Dummy.7
 file path=usr/share/man/man7/ocf_pacemaker_HealthCPU.7
+file path=usr/share/man/man7/ocf_pacemaker_HealthIOWait.7
 file path=usr/share/man/man7/ocf_pacemaker_HealthSMART.7
 file path=usr/share/man/man7/ocf_pacemaker_Stateful.7
 file path=usr/share/man/man7/ocf_pacemaker_SysInfo.7
@@ -185,31 +196,32 @@ file path=usr/share/man/man7/ocf_pacemaker_o2cb.7
 file path=usr/share/man/man7/ocf_pacemaker_ping.7
 file path=usr/share/man/man7/ocf_pacemaker_pingd.7
 file path=usr/share/man/man7/ocf_pacemaker_remote.7
-file path=usr/share/man/man7/pengine.7
-file path=usr/share/man/man7/stonithd.7
-file path=usr/share/man/man1m/attrd_updater.1m
-file path=usr/share/man/man1m/cibadmin.1m
-file path=usr/share/man/man1m/crm_attribute.1m
-file path=usr/share/man/man1m/crm_diff.1m
-file path=usr/share/man/man1m/crm_error.1m
-file path=usr/share/man/man1m/crm_failcount.1m
-file path=usr/share/man/man1m/crm_master.1m
-file path=usr/share/man/man1m/crm_mon.1m
-file path=usr/share/man/man1m/crm_node.1m
-file path=usr/share/man/man1m/crm_report.1m
-file path=usr/share/man/man1m/crm_resource.1m
-file path=usr/share/man/man1m/crm_shadow.1m
-file path=usr/share/man/man1m/crm_simulate.1m
-file path=usr/share/man/man1m/crm_standby.1m
-file path=usr/share/man/man1m/crm_ticket.1m
-file path=usr/share/man/man1m/crm_verify.1m
-file path=usr/share/man/man1m/crmadmin.1m
-file path=usr/share/man/man1m/fence_legacy.1m
-file path=usr/share/man/man1m/fence_pcmk.1m
-file path=usr/share/man/man1m/iso8601.1m
-file path=usr/share/man/man1m/pacemaker_remoted.1m
-file path=usr/share/man/man1m/pacemakerd.1m
-file path=usr/share/man/man1m/stonith_admin.1m
+file path=usr/share/man/man7/pacemaker-controld.7
+file path=usr/share/man/man7/pacemaker-fenced.7
+file path=usr/share/man/man7/pacemaker-schedulerd.7
+file path=usr/share/man/man8/attrd_updater.8
+file path=usr/share/man/man8/cibadmin.8
+file path=usr/share/man/man8/crm_attribute.8
+file path=usr/share/man/man8/crm_diff.8
+file path=usr/share/man/man8/crm_error.8
+file path=usr/share/man/man8/crm_failcount.8
+file path=usr/share/man/man8/crm_master.8
+file path=usr/share/man/man8/crm_mon.8
+file path=usr/share/man/man8/crm_node.8
+file path=usr/share/man/man8/crm_report.8
+file path=usr/share/man/man8/crm_resource.8
+file path=usr/share/man/man8/crm_rule.8
+file path=usr/share/man/man8/crm_shadow.8
+file path=usr/share/man/man8/crm_simulate.8
+file path=usr/share/man/man8/crm_standby.8
+file path=usr/share/man/man8/crm_ticket.8
+file path=usr/share/man/man8/crm_verify.8
+file path=usr/share/man/man8/crmadmin.8
+file path=usr/share/man/man8/fence_legacy.8
+file path=usr/share/man/man8/iso8601.8
+file path=usr/share/man/man8/pacemaker-remoted.8
+file path=usr/share/man/man8/pacemakerd.8
+file path=usr/share/man/man8/stonith_admin.8
 file path=usr/share/pacemaker/acls-1.2.rng
 file path=usr/share/pacemaker/acls-2.0.rng
 file path=usr/share/pacemaker/alerts-2.10.rng
@@ -218,6 +230,11 @@ file path=usr/share/pacemaker/alerts-2.9.rng
 file path=usr/share/pacemaker/alerts/alert_file.sh.sample
 file path=usr/share/pacemaker/alerts/alert_smtp.sh.sample
 file path=usr/share/pacemaker/alerts/alert_snmp.sh.sample
+file path=usr/share/pacemaker/api/api-result-1.0.rng
+file path=usr/share/pacemaker/api/api-result-next.rng
+file path=usr/share/pacemaker/api/api-result.rng
+file path=usr/share/pacemaker/api/command-output-1.0.rng
+file path=usr/share/pacemaker/api/stonith_admin-1.0.rng
 file path=usr/share/pacemaker/cib-1.0.rng
 file path=usr/share/pacemaker/cib-1.2.rng
 file path=usr/share/pacemaker/constraints-1.0.rng
@@ -227,9 +244,8 @@ file path=usr/share/pacemaker/constraints-2.2.rng
 file path=usr/share/pacemaker/constraints-2.3.rng
 file path=usr/share/pacemaker/constraints-2.6.rng
 file path=usr/share/pacemaker/constraints-2.9.rng
+file path=usr/share/pacemaker/constraints-3.0.rng
 file path=usr/share/pacemaker/constraints-next.rng
-file path=usr/share/pacemaker/crm-transitional.dtd
-file path=usr/share/pacemaker/crm.dtd
 file path=usr/share/pacemaker/crm_mon.rng
 file path=usr/share/pacemaker/examples/logrotate.d/pacemaker
 file path=usr/share/pacemaker/fencing-1.2.rng
@@ -238,10 +254,13 @@ file path=usr/share/pacemaker/nodes-1.0.rng
 file path=usr/share/pacemaker/nodes-1.2.rng
 file path=usr/share/pacemaker/nodes-1.3.rng
 file path=usr/share/pacemaker/nodes-2.9.rng
+file path=usr/share/pacemaker/nodes-3.0.rng
 file path=usr/share/pacemaker/nvset-1.3.rng
 file path=usr/share/pacemaker/nvset-2.9.rng
+file path=usr/share/pacemaker/nvset-3.0.rng
 file path=usr/share/pacemaker/nvset.rng
 file path=usr/share/pacemaker/options-1.0.rng
+file path=usr/share/pacemaker/options-3.0.rng
 file path=usr/share/pacemaker/pacemaker-1.0.rng
 file path=usr/share/pacemaker/pacemaker-1.2.rng
 file path=usr/share/pacemaker/pacemaker-1.3.rng
@@ -256,6 +275,9 @@ file path=usr/share/pacemaker/pacemaker-2.6.rng
 file path=usr/share/pacemaker/pacemaker-2.7.rng
 file path=usr/share/pacemaker/pacemaker-2.8.rng
 file path=usr/share/pacemaker/pacemaker-2.9.rng
+file path=usr/share/pacemaker/pacemaker-3.0.rng
+file path=usr/share/pacemaker/pacemaker-3.1.rng
+file path=usr/share/pacemaker/pacemaker-3.2.rng
 file path=usr/share/pacemaker/pacemaker-next.rng
 file path=usr/share/pacemaker/pacemaker.rng
 file path=usr/share/pacemaker/report.collector
@@ -267,12 +289,18 @@ file path=usr/share/pacemaker/resources-2.10.rng
 file path=usr/share/pacemaker/resources-2.7.rng
 file path=usr/share/pacemaker/resources-2.8.rng
 file path=usr/share/pacemaker/resources-2.9.rng
+file path=usr/share/pacemaker/resources-3.0.rng
+file path=usr/share/pacemaker/resources-3.1.rng
+file path=usr/share/pacemaker/resources-3.2.rng
 file path=usr/share/pacemaker/rule-2.9.rng
 file path=usr/share/pacemaker/rule.rng
 file path=usr/share/pacemaker/score.rng
 file path=usr/share/pacemaker/status-1.0.rng
 file path=usr/share/pacemaker/tags-1.3.rng
+file path=usr/share/pacemaker/tests/README.md
 file path=usr/share/pacemaker/upgrade-1.3.xsl
-file path=usr/share/pacemaker/upgrade06.xsl
+file path=usr/share/pacemaker/upgrade-2.10-enter.xsl
+file path=usr/share/pacemaker/upgrade-2.10-leave.xsl
+file path=usr/share/pacemaker/upgrade-2.10.xsl
 file path=usr/share/pacemaker/versions.rng
 file path=usr/share/snmp/mibs/PCMK-MIB.txt

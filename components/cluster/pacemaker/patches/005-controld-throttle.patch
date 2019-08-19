@@ -1,0 +1,19 @@
+diff --git a/daemons/controld/controld_throttle.c.orig b/daemons/controld/controld_throttle.c
+index f56d4deb0..3165c0b92 100644
+--- a/daemons/controld/controld_throttle.c.orig
++++ b/daemons/controld/controld_throttle.c
+@@ -388,7 +388,13 @@ throttle_update_job_max(const char *preference)
+ {
+     int max = 0;
+
+-    throttle_job_max = 2 * crm_procfs_num_cores();
++#if SUPPORT_PROCFS
++		throttle_job_max = 2 * crm_procfs_num_cores();
++#elif ON_SOLARIS
++		throttle_job_max = 2 * sysconf(_SC_NPROCESSORS_ONLN);
++#else
++		throttle_job_max = 2;
++#endif
+
+     if(preference) {
+         /* Global preference from the CIB */

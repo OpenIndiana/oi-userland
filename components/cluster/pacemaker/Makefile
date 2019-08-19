@@ -20,8 +20,7 @@ include ../../../make-rules/shared-macros.mk
 PATH= $(USRBINDIR64):$(PATH.gnu)
 
 COMPONENT_NAME=		pacemaker
-COMPONENT_VERSION=	1.1.21
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.0.2
 COMPONENT_FMRI=		application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC=		$(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
@@ -34,57 +33,60 @@ COMPONENT_SUMMARY=	Pacemaker is an advanced, scalable high-availability cluster 
 
 include $(WS_MAKE_RULES)/common.mk
 
+PYTHON_VERSION = 3.5
+
 COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); $(CONFIG_SHELL) autogen.sh )
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
-CFLAGS += -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -lssp_nonshared -lssp -lnsl
+CFLAGS += -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -lssp_nonshared -lssp -lnsl -lssl -lcrypto
 
 CONFIGURE_OPTIONS.64 += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --with-corosync
-CONFIGURE_OPTIONS += --with-heartbeat=no
-CONFIGURE_OPTIONS += --with-snmp
-CONFIGURE_OPTIONS += --with-esmtp
-CONFIGURE_OPTIONS += --with-cs-quorum
 CONFIGURE_OPTIONS += --with-acl=no
 CONFIGURE_OPTIONS += --enable-upstart=no
 CONFIGURE_OPTIONS += --enable-systemd=no
 CONFIGURE_OPTIONS += --enable-fatal-warnings=no
 CONFIGURE_OPTIONS += --disable-rpath
+CONFIGURE_OPTIONS += --with-logdir=/var/log/hacluster
+CONFIGURE_OPTIONS += --with-bundledir=/var/log/hacluster/bundles
+CONFIGURE_OPTIONS += --with-openssl=yes
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+CONFIGURE_ENV.64 += PYTHON=$(PYTHON)
 
 COMPONENT_POST_INSTALL_ACTION=( \
 	$(RM) -r $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples; \
 	$(MKDIR) $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples; \
 	$(MV)    $(PROTO_DIR)/etc/logrotate.d  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples;)
 
-REQUIRED_PACKAGES += SUNWcs
+# added manually, not found as dependency
+REQUIRED_PACKAGES += text/asciidoc
+REQUIRED_PACKAGES += shell/gnu-getopt
 REQUIRED_PACKAGES += utility/arpsend
-REQUIRED_PACKAGES += application/cluster/corosync
-REQUIRED_PACKAGES += application/cluster/cluster-glue
-REQUIRED_PACKAGES += application/cluster/resource-agents
 REQUIRED_PACKAGES += library/libstatgrab
 REQUIRED_PACKAGES += library/libesmtp
-REQUIRED_PACKAGES += library/libqb
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += application/cluster/cluster-glue
+REQUIRED_PACKAGES += application/cluster/corosync
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/libqb
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/management/snmp/net-snmp
-# added manually, not found as dependency
-REQUIRED_PACKAGES += text/asciidoc
+REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

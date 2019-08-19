@@ -1,24 +1,50 @@
-diff -Nura a/Makefile.am b/Makefile.am
---- a/Makefile.am	2016-11-01 20:44:20.989796800 +0100
-+++ b/Makefile.am	2016-11-01 20:49:45.320974849 +0100
-@@ -52,13 +52,13 @@
+--- pacemaker-Pacemaker-2.0.2/Makefile.am.~1~	2019-08-19 18:07:39.818036947 +0000
++++ pacemaker-Pacemaker-2.0.2/Makefile.am	2019-08-19 18:14:35.310193225 +0000
+@@ -52,19 +52,19 @@
  	list='$(CORE)'; for subdir in $$list; do echo "Cleaning $$subdir"; $(MAKE) -C $$subdir clean || exit 1; done
  
  install-exec-local:
 -	$(INSTALL) -d $(DESTDIR)/$(LCRSODIR)
+-	$(INSTALL) -d -m 750 $(DESTDIR)/$(PACEMAKER_CONFIG_DIR)
 -	$(INSTALL) -d -m 750 $(DESTDIR)/$(CRM_CONFIG_DIR)
 -	$(INSTALL) -d -m 750 $(DESTDIR)/$(CRM_CORE_DIR)
 -	$(INSTALL) -d -m 750 $(DESTDIR)/$(CRM_BLACKBOX_DIR)
+-	$(INSTALL) -d -m 770 $(DESTDIR)/$(CRM_LOG_DIR)
+-	$(INSTALL) -d -m 770 $(DESTDIR)/$(CRM_BUNDLE_DIR)
+-	-chgrp $(CRM_DAEMON_GROUP) $(DESTDIR)/$(PACEMAKER_CONFIG_DIR)
 -	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_CONFIG_DIR)
 -	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_CORE_DIR)
 -	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_BLACKBOX_DIR)
+-	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_LOG_DIR)
+-	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_BUNDLE_DIR)
 +	$(INSTALL) -d $(DESTDIR)$(LCRSODIR)
++	$(INSTALL) -d -m 750 $(DESTDIR)$(PACEMAKER_CONFIG_DIR)
 +	$(INSTALL) -d -m 750 $(DESTDIR)$(CRM_CONFIG_DIR)
 +	$(INSTALL) -d -m 750 $(DESTDIR)$(CRM_CORE_DIR)
 +	$(INSTALL) -d -m 750 $(DESTDIR)$(CRM_BLACKBOX_DIR)
-+# -chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)$(CRM_CONFIG_DIR)
-+# -chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)$(CRM_CORE_DIR)
-+# -chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)$(CRM_BLACKBOX_DIR)
- if BUILD_CS_PLUGIN
- 	rm -f $(DESTDIR)$(LCRSODIR)/pacemaker.lcrso $(DESTDIR)$(LCRSODIR)/service_crm.so
- 	cp $(DESTDIR)$(libdir)/service_crm.so $(DESTDIR)$(LCRSODIR)/pacemaker.lcrso
++	$(INSTALL) -d -m 770 $(DESTDIR)$(CRM_LOG_DIR)
++	$(INSTALL) -d -m 770 $(DESTDIR)$(CRM_BUNDLE_DIR)
++#	-chgrp $(CRM_DAEMON_GROUP) $(DESTDIR)/$(PACEMAKER_CONFIG_DIR)
++#	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_CONFIG_DIR)
++#	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_CORE_DIR)
++#	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_BLACKBOX_DIR)
++#	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_LOG_DIR)
++#	-chown $(CRM_DAEMON_USER):$(CRM_DAEMON_GROUP) $(DESTDIR)/$(CRM_BUNDLE_DIR)
+ # Use chown because the user/group may not exist
+
+ clean-generic:
+--- pacemaker-Pacemaker-2.0.2/daemons/schedulerd/Makefile.am.~1~	2019-08-19 18:20:33.905492526 +0000
++++ pacemaker-Pacemaker-2.0.2/daemons/schedulerd/Makefile.am	2019-08-19 18:20:51.452080978 +0000
+@@ -31,9 +31,9 @@
+
+ install-exec-local:
+	$(mkinstalldirs) $(DESTDIR)/$(PE_STATE_DIR)
+-	-chown $(CRM_DAEMON_USER) $(DESTDIR)/$(PE_STATE_DIR)
+-	-chgrp $(CRM_DAEMON_GROUP) $(DESTDIR)/$(PE_STATE_DIR)
+-	-chmod 750 $(DESTDIR)/$(PE_STATE_DIR)
++#	-chown $(CRM_DAEMON_USER) $(DESTDIR)/$(PE_STATE_DIR)
++#	-chgrp $(CRM_DAEMON_GROUP) $(DESTDIR)/$(PE_STATE_DIR)
++#	-chmod 750 $(DESTDIR)/$(PE_STATE_DIR)
+
+ if BUILD_LEGACY_LINKS
+ install-exec-hook:
