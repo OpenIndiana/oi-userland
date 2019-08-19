@@ -1,7 +1,7 @@
-diff -Nur crmsh-3.0.1.orig/crmsh/main.py crmsh-3.0.1/crmsh/main.py
---- crmsh-3.0.1.orig/crmsh/main.py	2017-09-24 09:05:42.540535404 +0000
-+++ crmsh-3.0.1/crmsh/main.py	2017-09-24 09:13:07.426507383 +0000
-@@ -90,7 +90,7 @@
+diff -Nur b/crmsh/main.py a/crmsh/main.py
+--- b/crmsh/main.py	2019-08-19 09:27:57.702748331 +0000
++++ a/crmsh/main.py	2019-08-19 09:29:21.748594090 +0000
+@@ -95,7 +95,7 @@
  Call %prog with a level name as argument to start an interactive
  session from that level.
  
@@ -10,11 +10,11 @@ diff -Nur crmsh-3.0.1.orig/crmsh/main.py crmsh-3.0.1/crmsh/main.py
                            version="%prog " + config.CRM_VERSION)
      parser.disable_interspersed_args()
      parser.add_option("-f", "--file", dest="filename", metavar="FILE",
-diff -Nur crmsh-3.0.1.orig/crmsh/ra.py crmsh-3.0.1/crmsh/ra.py
---- crmsh-3.0.1.orig/crmsh/ra.py	2017-09-24 09:05:42.540739325 +0000
-+++ crmsh-3.0.1/crmsh/ra.py	2017-09-24 09:13:07.438998768 +0000
-@@ -118,7 +118,7 @@
-     def _stonith_types(self):
+diff -Nur b/crmsh/ra.py a/crmsh/ra.py
+--- b/crmsh/ra.py	2019-08-19 09:27:57.702999376 +0000
++++ a/crmsh/ra.py	2019-08-19 09:29:21.732700159 +0000
+@@ -129,7 +129,7 @@
+     def stonith_types():
          rc, l = stdout2list("stonith -L")
          if rc != 0:
 -            # stonith(8) may not be installed
@@ -22,10 +22,10 @@ diff -Nur crmsh-3.0.1.orig/crmsh/ra.py crmsh-3.0.1/crmsh/ra.py
              common_debug("stonith exited with code %d" % rc)
              l = []
          for ra in os_types_list("/usr/sbin/fence_*"):
-diff -Nur crmsh-3.0.1.orig/crmsh/ui_root.py crmsh-3.0.1/crmsh/ui_root.py
---- crmsh-3.0.1.orig/crmsh/ui_root.py	2017-09-24 09:05:42.541339130 +0000
-+++ crmsh-3.0.1/crmsh/ui_root.py	2017-09-24 09:13:07.440338934 +0000
-@@ -142,7 +142,7 @@
+diff -Nur b/crmsh/ui_root.py a/crmsh/ui_root.py
+--- b/crmsh/ui_root.py	2019-08-19 09:27:57.703649184 +0000
++++ a/crmsh/ui_root.py	2019-08-19 09:29:21.753270804 +0000
+@@ -143,7 +143,7 @@
      @command.level(ui_resource.RscMgmt)
      @command.help('''resources management
  Everything related to resources management is available at this
@@ -34,7 +34,7 @@ diff -Nur crmsh-3.0.1.orig/crmsh/ui_root.py crmsh-3.0.1/crmsh/ui_root.py
  program.
  ''')
      def do_resource(self):
-@@ -169,7 +169,7 @@
+@@ -171,7 +171,7 @@
      @command.help('''show cluster status
  Show cluster status. The status is displayed by `crm_mon`. Supply
  additional arguments for more information or different format.
@@ -43,10 +43,10 @@ diff -Nur crmsh-3.0.1.orig/crmsh/ui_root.py crmsh-3.0.1/crmsh/ui_root.py
  
  Usage:
  ...............
-diff -Nur crmsh-3.0.1.orig/crmsh/utils.py crmsh-3.0.1/crmsh/utils.py
---- crmsh-3.0.1.orig/crmsh/utils.py	2017-09-24 09:05:42.541510812 +0000
-+++ crmsh-3.0.1/crmsh/utils.py	2017-09-24 09:13:07.501750424 +0000
-@@ -789,7 +789,7 @@
+diff -Nur b/crmsh/utils.py a/crmsh/utils.py
+--- b/crmsh/utils.py	2019-08-19 09:27:57.701927035 +0000
++++ a/crmsh/utils.py	2019-08-19 09:29:21.723615325 +0000
+@@ -955,7 +955,7 @@
  
  def run_ptest(graph_s, nograph, scores, utilization, actions, verbosity):
      '''
@@ -55,11 +55,11 @@ diff -Nur crmsh-3.0.1.orig/crmsh/utils.py crmsh-3.0.1/crmsh/utils.py
      '''
      actions_filter = "grep LogActions: | grep -vw Leave"
      ptest = "2>&1 %s -x -" % config.core.ptest
-diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
---- crmsh-3.0.1.orig/doc/crm.8.adoc	2017-09-24 09:05:42.541731177 +0000
-+++ crmsh-3.0.1/doc/crm.8.adoc	2017-09-24 09:13:07.412429664 +0000
+diff -Nur b/doc/crm.8.adoc a/doc/crm.8.adoc
+--- b/doc/crm.8.adoc	2019-08-19 09:27:57.704100475 +0000
++++ a/doc/crm.8.adoc	2019-08-19 09:29:21.897181804 +0000
 @@ -2,7 +2,7 @@
- :man version:  2.3.0
+ :man version:  4.0.0
  :man manual:   crmsh documentation
  
 -crm(8)
@@ -67,7 +67,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  ======
  
  NAME
-@@ -862,7 +862,7 @@
+@@ -884,7 +884,7 @@
  
  Show cluster status. The status is displayed by `crm_mon`. Supply
  additional arguments for more information or different format.
@@ -76,7 +76,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  Example:
  ...............
-@@ -898,7 +898,7 @@
+@@ -920,7 +920,7 @@
  Performs basic checks for the cluster configuration and
  current status, reporting potential issues.
  
@@ -85,7 +85,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  Example:
  ...............
-@@ -1656,7 +1656,7 @@
+@@ -1721,7 +1721,7 @@
  This level is for management of shadow CIBs. It is available both
  at the top level and the `configure` level.
  
@@ -94,7 +94,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  `CIB_shadow` environment variable. The user prompt always
  includes the name of the currently active shadow or the live CIB.
  
-@@ -1874,7 +1874,7 @@
+@@ -1939,7 +1939,7 @@
  At this level resources may be managed.
  
  All (or almost all) commands are implemented with the CRM tools
@@ -103,7 +103,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  [[cmdhelp_resource_ban,ban a resource from a node]]
  ==== `ban`
-@@ -3747,8 +3747,8 @@
+@@ -3850,8 +3850,8 @@
  [[cmdhelp_configure_ptest,show cluster actions if changes were committed]]
  ==== `ptest` (`simulate`)
  
@@ -114,7 +114,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  A CIB is constructed using the current user edited configuration
  and the status from the running CIB. The resulting CIB is run
-@@ -3832,7 +3832,7 @@
+@@ -3935,7 +3935,7 @@
  attributes and node capacity (utilization). The `status` shortcut
  references the whole status section of the CIB. Read access to
  status is necessary for various monitoring tools such as
@@ -123,7 +123,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  For more information on rule expressions, see
  <<topics_Syntax_RuleExpressions,Syntax: Rule expressions>>.
-@@ -4379,7 +4379,7 @@
+@@ -4482,7 +4482,7 @@
  run with the CIB which was loaded along with the status section.
  
  The `simulate` and `run` commands as well as all status
@@ -132,7 +132,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  [[cmdhelp_cibstatus_load,load the CIB status section]]
  ==== `load`
-@@ -5117,7 +5117,7 @@
+@@ -5220,7 +5220,7 @@
  This command will print actions planned by the PE and run
  graphviz (`dotty`) to display a graphical representation of the
  transition. Of course, for the latter an X11 session is required.
@@ -141,7 +141,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  The +showdot+ subcommand runs graphviz (`dotty`) to display a
  graphical representation of the +.dot+ file which has been
-@@ -5225,7 +5225,7 @@
+@@ -5328,7 +5328,7 @@
  for collecting data to attach to bug reports, or for detecting the
  root cause of errors resulting in resource failover, for example.
  
@@ -150,7 +150,7 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  or call `crm report -h`
  
  Usage:
-@@ -5288,8 +5288,8 @@
+@@ -5391,8 +5391,8 @@
  
  SEE ALSO
  --------
@@ -161,9 +161,9 @@ diff -Nur crmsh-3.0.1.orig/doc/crm.8.adoc crmsh-3.0.1/doc/crm.8.adoc
  
  
  COPYING
-diff -Nur crmsh-3.0.1.orig/doc/crmsh_hb_report.8.adoc crmsh-3.0.1/doc/crmsh_hb_report.8.adoc
---- crmsh-3.0.1.orig/doc/crmsh_hb_report.8.adoc	2017-09-24 09:05:42.541760964 +0000
-+++ crmsh-3.0.1/doc/crmsh_hb_report.8.adoc	2017-09-24 09:13:07.318722210 +0000
+diff -Nur b/doc/crmsh_hb_report.8.adoc a/doc/crmsh_hb_report.8.adoc
+--- b/doc/crmsh_hb_report.8.adoc	2019-08-19 09:27:57.704132704 +0000
++++ a/doc/crmsh_hb_report.8.adoc	2019-08-19 09:29:21.781318991 +0000
 @@ -2,7 +2,7 @@
  :man version:  1.2
  :man manual:   Pacemaker documentation
@@ -218,9 +218,9 @@ diff -Nur crmsh-3.0.1.orig/doc/crmsh_hb_report.8.adoc crmsh-3.0.1/doc/crmsh_hb_r
  
  
  COPYING
-diff -Nur crmsh-3.0.1.orig/doc/development.md crmsh-3.0.1/doc/development.md
---- crmsh-3.0.1.orig/doc/development.md	2017-09-24 09:05:42.541787731 +0000
-+++ crmsh-3.0.1/doc/development.md	2017-09-24 09:13:07.317291936 +0000
+diff -Nur b/doc/development.md a/doc/development.md
+--- b/doc/development.md	2019-08-19 09:27:57.704162575 +0000
++++ a/doc/development.md	2019-08-19 09:29:21.893942088 +0000
 @@ -115,7 +115,7 @@
  	for +[[topic_+) and command reference (search for
  	+[[cmdhelp_+). Every user interface change needs to be
@@ -230,9 +230,9 @@ diff -Nur crmsh-3.0.1.orig/doc/development.md crmsh-3.0.1/doc/development.md
  
  - `crmsh/cibconfig.py`
  
-diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-1.2.adoc crmsh-3.0.1/doc/website-v1/man-1.2.adoc
---- crmsh-3.0.1.orig/doc/website-v1/man-1.2.adoc	2017-09-24 09:05:42.543960558 +0000
-+++ crmsh-3.0.1/doc/website-v1/man-1.2.adoc	2017-09-24 09:13:07.371691317 +0000
+diff -Nur b/doc/website-v1/man-1.2.adoc a/doc/website-v1/man-1.2.adoc
+--- b/doc/website-v1/man-1.2.adoc	2019-08-19 09:27:57.706541240 +0000
++++ a/doc/website-v1/man-1.2.adoc	2019-08-19 09:29:21.866503520 +0000
 @@ -2,7 +2,7 @@
  :man version:  1.2.6
  :man manual:   crmsh documentation
@@ -327,9 +327,9 @@ diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-1.2.adoc crmsh-3.0.1/doc/website-v
  
  
  COPYING
-diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-2.0.adoc crmsh-3.0.1/doc/website-v1/man-2.0.adoc
---- crmsh-3.0.1.orig/doc/website-v1/man-2.0.adoc	2017-09-24 09:05:42.544021062 +0000
-+++ crmsh-3.0.1/doc/website-v1/man-2.0.adoc	2017-09-24 09:13:07.392216859 +0000
+diff -Nur b/doc/website-v1/man-2.0.adoc a/doc/website-v1/man-2.0.adoc
+--- b/doc/website-v1/man-2.0.adoc	2019-08-19 09:27:57.706605824 +0000
++++ a/doc/website-v1/man-2.0.adoc	2019-08-19 09:29:21.823568174 +0000
 @@ -2,7 +2,7 @@
  :man version:  2.3.2
  :man manual:   crmsh documentation
@@ -433,9 +433,9 @@ diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-2.0.adoc crmsh-3.0.1/doc/website-v
  
  
  COPYING
-diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-3.adoc crmsh-3.0.1/doc/website-v1/man-3.adoc
---- crmsh-3.0.1.orig/doc/website-v1/man-3.adoc	2017-09-24 09:05:42.544083937 +0000
-+++ crmsh-3.0.1/doc/website-v1/man-3.adoc	2017-09-24 09:13:07.361446648 +0000
+diff -Nur b/doc/website-v1/man-3.adoc a/doc/website-v1/man-3.adoc
+--- b/doc/website-v1/man-3.adoc	2019-08-19 09:27:57.706670706 +0000
++++ a/doc/website-v1/man-3.adoc	2019-08-19 09:29:21.792296565 +0000
 @@ -2,7 +2,7 @@
  :man version:  2.3.0
  :man manual:   crmsh documentation
@@ -539,21 +539,33 @@ diff -Nur crmsh-3.0.1.orig/doc/website-v1/man-3.adoc crmsh-3.0.1/doc/website-v1/
  
  
  COPYING
-diff -Nur crmsh-3.0.1.orig/hb_report/hb_report.in crmsh-3.0.1/hb_report/hb_report.in
---- crmsh-3.0.1.orig/hb_report/hb_report.in	2017-09-24 09:05:42.544753624 +0000
-+++ crmsh-3.0.1/hb_report/hb_report.in	2017-09-24 09:13:07.249754093 +0000
-@@ -915,7 +915,7 @@
- 		if which crm_diff > /dev/null 2>&1; then
- 			crm_diff -c -n $1 -o $2
- 		else
--			info "crm_diff(8) not found, cannot diff CIBs"
-+			info "crm_diff(1m) not found, cannot diff CIBs"
- 		fi
- 	else
- 		echo "can't compare cibs from running and stopped systems"
-diff -Nur crmsh-3.0.1.orig/scripts/sbd/main.yml crmsh-3.0.1/scripts/sbd/main.yml
---- crmsh-3.0.1.orig/scripts/sbd/main.yml	2017-09-24 09:05:42.547095140 +0000
-+++ crmsh-3.0.1/scripts/sbd/main.yml	2017-09-24 09:13:07.290211741 +0000
+diff -Nur b/hb_report/utillib.py a/hb_report/utillib.py
+--- b/hb_report/utillib.py	2019-08-19 09:27:57.707481597 +0000
++++ a/hb_report/utillib.py	2019-08-19 09:29:21.557923681 +0000
+@@ -269,7 +269,7 @@
+             out_string += tmp_string
+         else:
+             code = 1
+-            log_warning("crm_diff(8) not found, cannot diff CIBs")
++            log_warning("crm_diff(1m) not found, cannot diff CIBs")
+     else:
+         code = 1
+         out_string += "can't compare cibs from running and stopped systems\n"
+diff -Nur b/scripts/clvm-vg/main.yml a/scripts/clvm-vg/main.yml
+--- b/scripts/clvm-vg/main.yml	2019-08-19 09:27:57.707813414 +0000
++++ a/scripts/clvm-vg/main.yml	2019-08-19 09:29:21.505026474 +0000
+@@ -7,7 +7,7 @@
+ longdesc: |
+   Configures a resource to manage the activation of a volume
+   group. Before adding this resource, you need to proceed as below
+-  to create new VG and LVs. Refer to manpage lvmlockd(8) for more
++  to create new VG and LVs. Refer to manpage lvmlockd(1m) for more
+   detailed steps.
+ 
+   - create VG on shared devices:
+diff -Nur b/scripts/sbd/main.yml a/scripts/sbd/main.yml
+--- b/scripts/sbd/main.yml	2019-08-19 09:27:57.709838954 +0000
++++ a/scripts/sbd/main.yml	2019-08-19 09:29:21.471976059 +0000
 @@ -13,7 +13,7 @@
    A shared device must be available and visible on all nodes.
  
@@ -563,9 +575,9 @@ diff -Nur crmsh-3.0.1.orig/scripts/sbd/main.yml crmsh-3.0.1/scripts/sbd/main.yml
  
  parameters:
    - name: id
-diff -Nur crmsh-3.0.1.orig/templates/apache crmsh-3.0.1/templates/apache
---- crmsh-3.0.1.orig/templates/apache	2017-09-24 09:05:42.547288453 +0000
-+++ crmsh-3.0.1/templates/apache	2017-09-24 09:13:07.316061414 +0000
+diff -Nur b/templates/apache a/templates/apache
+--- b/templates/apache	2019-08-19 09:27:57.710108590 +0000
++++ a/templates/apache	2019-08-19 09:29:21.908475698 +0000
 @@ -36,7 +36,7 @@
  
  %optional
@@ -575,10 +587,22 @@ diff -Nur crmsh-3.0.1.orig/templates/apache crmsh-3.0.1/templates/apache
  
  %% options 
  
-diff -Nur crmsh-3.0.1.orig/test/unittests/test_scripts.py crmsh-3.0.1/test/unittests/test_scripts.py
---- crmsh-3.0.1.orig/test/unittests/test_scripts.py	2017-09-24 09:05:42.551006901 +0000
-+++ crmsh-3.0.1/test/unittests/test_scripts.py	2017-09-24 09:13:07.237062191 +0000
-@@ -147,7 +147,7 @@
+diff -Nur b/test/unittests/test_report.py a/test/unittests/test_report.py
+--- b/test/unittests/test_report.py	2019-08-19 09:27:57.714258183 +0000
++++ a/test/unittests/test_report.py	2019-08-19 09:29:21.695240657 +0000
+@@ -311,7 +311,7 @@
+ 
+ 
+ def test_random_string():
+-    eq_(len(random_string(8)), 8)
++    eq_(len(random_string(1m)), 8)
+ 
+ 
+ def test_sub_string():
+diff -Nur b/test/unittests/test_scripts.py a/test/unittests/test_scripts.py
+--- b/test/unittests/test_scripts.py	2019-08-19 09:27:57.714317490 +0000
++++ a/test/unittests/test_scripts.py	2019-08-19 09:29:21.652204706 +0000
+@@ -151,7 +151,7 @@
  
  <parameter name="options">
  <longdesc lang="en">
