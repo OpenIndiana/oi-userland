@@ -13,36 +13,21 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xscope
-COMPONENT_VERSION=        1.4.1
-COMPONENT_FMRI=           x11/diagnostic/xscope
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xscope - X Window Protocol Viewer
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         xscope
+COMPONENT_VERSION=      1.4.1
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         x11/diagnostic/xscope
+COMPONENT_SUMMARY=      xscope - X Window Protocol Viewer
 COMPONENT_ARCHIVE_HASH= \
   sha256:33807fbd51822435b23c28e7e78116e552826a6ca4d85632f098ad0ddf1ff423
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xscope-1.4.1.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xscope.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS+= -DFD_SETSIZE=256
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
