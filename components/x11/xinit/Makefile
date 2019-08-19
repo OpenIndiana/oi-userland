@@ -12,32 +12,23 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-BUILD_BITS=64
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xinit
 COMPONENT_VERSION=        1.4.1
 COMPONENT_SUMMARY=        xinit - X Window System initializer
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/session/xinit
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:de9b8f617b68a70f6caf87da01fcf0ebd2b75690cdcba9c921d0ef54fa54abb9
-COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --with-xinitdir=/etc/X11/xinit
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
