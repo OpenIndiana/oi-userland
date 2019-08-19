@@ -1,6 +1,6 @@
---- pcs-0.9.159/pcs/usage.py.orig	2017-09-22 18:54:45.637013891 +0000
-+++ pcs-0.9.159/pcs/usage.py	2017-09-22 18:55:08.456470953 +0000
-@@ -964,7 +964,7 @@
+--- pcs-0.9.168/pcs/usage.py.~1~	2019-08-02 08:12:11.000000000 +0000
++++ pcs-0.9.168/pcs/usage.py	2019-08-19 13:44:30.041131722 +0000
+@@ -1048,7 +1048,7 @@
  
      sbd device message <device-path> <node> <message-type>
          Manually set a message of the specified type on the device for the node.
@@ -9,27 +9,27 @@
          reset, off, crashdump, exit, clear
  
      sbd status [--full]
-@@ -1521,7 +1521,7 @@
-         Add a quorum device to the cluster. Quorum device needs to be created
-         first by "pcs qdevice setup" command. It is not possible to use more
-         than one quorum device in a cluster simultaneously. Generic options,
--        model and model options are all documented in corosync-qdevice(8) man
-+        model and model options are all documented in corosync-qdevice(1m) man
-         page.
- 
-     device remove
-@@ -1533,7 +1533,7 @@
- 
+@@ -1624,7 +1624,7 @@
+         quorum device in a cluster simultaneously.
+         Currently the only supported model is 'net'. It requires model options
+         'algorithm' and 'host' to be specified. Options are documented in
+-        corosync-qdevice(8) man page; generic options are 'sync_timeout' and
++        corosync-qdevice(1m) man page; generic options are 'sync_timeout' and
+         'timeout', for model net options check the quorum.device.net section,
+         for heuristics options see the quorum.device.heuristics section. Pcs
+         automatically creates and distributes TLS certificates and sets the
+@@ -1645,7 +1645,7 @@
      device update [<generic options>] [model <model options>]
-         Add/Change quorum device options. Generic options and model options are
--        all documented in corosync-qdevice(8) man page. Requires the cluster to
-+        all documented in corosync-qdevice(1m) man page. Requires the cluster to
-         be stopped.
- 
-         WARNING: If you want to change "host" option of qdevice model net, use
---- pcs-0.9.159/pcs/pcs.8.orig	2017-09-22 18:52:20.688904595 +0000
-+++ pcs-0.9.159/pcs/pcs.8	2017-09-22 18:53:15.608620534 +0000
-@@ -404,7 +404,7 @@
+             [heuristics <heuristics options>]
+         Add/Change quorum device options. Requires the cluster to be stopped.
+-        Model and options are all documented in corosync-qdevice(8) man page;
++        Model and options are all documented in corosync-qdevice(1m) man page;
+         for heuristics options check the quorum.device.heuristics subkey
+         section, for model options check the quorum.device.<device model> subkey
+         sections.
+--- pcs-0.9.168/pcs/pcs.8.~1~	2019-08-02 08:12:11.000000000 +0000
++++ pcs-0.9.168/pcs/pcs.8	2019-08-19 13:44:22.903353794 +0000
+@@ -438,7 +438,7 @@
  .B WARNING: All content on device(s) will be overwritten.
  .TP
  sbd device message <device\-path> <node> <message\-type>
@@ -38,30 +38,32 @@
  .TP
  sbd status [\fB\-\-full\fR]
  Show status of SBD services in cluster and local device(s) configured. If \fB\-\-full\fR is specified, also dump of SBD headers on device(s) will be shown.
-@@ -601,7 +601,7 @@
- Show quorum runtime status.
+@@ -648,7 +648,7 @@
+ device add [<generic options>] model <device model> [<model options>] [heuristics <heuristics options>]
+ Add a quorum device to the cluster. Quorum device should be configured first with "pcs qdevice setup". It is not possible to use more than one quorum device in a cluster simultaneously.
+ .br
+-Currently the only supported model is 'net'. It requires model options 'algorithm' and 'host' to be specified. Options are documented in corosync\-qdevice(8) man page; generic options are 'sync_timeout' and 'timeout', for model net options check the quorum.device.net section, for heuristics options see the quorum.device.heuristics section. Pcs automatically creates and distributes TLS certificates and sets the 'tls' model option to the default value 'on'.
++Currently the only supported model is 'net'. It requires model options 'algorithm' and 'host' to be specified. Options are documented in corosync\-qdevice(1m) man page; generic options are 'sync_timeout' and 'timeout', for model net options check the quorum.device.net section, for heuristics options see the quorum.device.heuristics section. Pcs automatically creates and distributes TLS certificates and sets the 'tls' model option to the default value 'on'.
+ .br
+ Example: pcs quorum device add model net algorithm=lms host=qnetd.internal.example.com
  .TP
- device add [<generic options>] model <device model> [<model options>]
--Add a quorum device to the cluster. Quorum device needs to be created first by "pcs qdevice setup" command. It is not possible to use more than one quorum device in a cluster simultaneously. Generic options, model and model options are all documented in corosync\-qdevice(8) man page.
-+Add a quorum device to the cluster. Quorum device needs to be created first by "pcs qdevice setup" command. It is not possible to use more than one quorum device in a cluster simultaneously. Generic options, model and model options are all documented in corosync\-qdevice(1m) man page.
- .TP
- device remove
- Remove a quorum device from the cluster.
-@@ -610,7 +610,7 @@
+@@ -662,7 +662,7 @@
  Show quorum device runtime status.  Using \fB\-\-full\fR will give more detailed output.
  .TP
- device update [<generic options>] [model <model options>]
--Add/Change quorum device options.  Generic options and model options are all documented in corosync\-qdevice(8) man page. Requires the cluster to be stopped.
-+Add/Change quorum device options.  Generic options and model options are all documented in corosync\-qdevice(1m) man page. Requires the cluster to be stopped.
+ device update [<generic options>] [model <model options>] [heuristics <heuristics options>]
+-Add/Change quorum device options. Requires the cluster to be stopped. Model and options are all documented in corosync\-qdevice(8) man page; for heuristics options check the quorum.device.heuristics subkey section, for model options check the quorum.device.<device model> subkey sections.
++Add/Change quorum device options. Requires the cluster to be stopped. Model and options are all documented in corosync\-qdevice(1m) man page; for heuristics options check the quorum.device.heuristics subkey section, for model options check the quorum.device.<device model> subkey sections.
  
  WARNING: If you want to change "host" option of qdevice model net, use "pcs quorum device remove" and "pcs quorum device add" commands to set up configuration properly unless old and new host is the same machine.
  .TP
-@@ -822,24 +822,24 @@
+@@ -886,25 +886,25 @@
  .SH SEE ALSO
  http://clusterlabs.org/doc/
  
 -.BR pcsd (8)
+-.BR pcs_snmp_agent (8)
 +.BR pcsd (1m)
++.BR pcs_snmp_agent (1m)
  
 -.BR corosync_overview (8),
 +.BR corosync_overview (1m),
