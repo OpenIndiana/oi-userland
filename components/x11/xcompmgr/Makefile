@@ -12,27 +12,19 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-BUILD_BITS=64
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xcompmgr
-COMPONENT_VERSION=        1.1.8
-COMPONENT_FMRI=           desktop/window-manager/xcompmgr
+COMPONENT_NAME=     xcompmgr
+COMPONENT_VERSION=  1.1.8
+COMPONENT_FMRI=     desktop/window-manager/xcompmgr
 COMPONENT_SUMMARY=  xcompmgr - X compositing manager
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:0b89daf4f060fa3fa83cca862c45d531fef7121b5d06552c1d73d396ad9a7243
-COMPONENT_ARCHIVE_URL= $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      MIT License
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
