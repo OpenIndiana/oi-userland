@@ -331,15 +331,6 @@ diff -Nur b/man/corosync-qdevice-net-certutil.8 a/man/corosync-qdevice-net-certu
  .SH NAME
  corosync-qdevice-net-certutil - tool to generate qdevice model net TLS certificates
  .SH SYNOPSIS
-@@ -70,7 +70,7 @@
- and
- .B corosync-qdevice
- certificates on all nodes. It's highly recommended that you use an ssh agent,
--or ssh/scp will keep asking for a password - roughly 8 times the number of nodes.
-+or ssh/scp will keep asking for a password - roughly 1m times the number of nodes.
- .TP
- .B -c
- File with certificate to load.
 @@ -78,8 +78,8 @@
  .B -n
  Name of the cluster.
@@ -1089,55 +1080,6 @@ diff -Nur b/man/sam_overview.8 a/man/sam_overview.8
 diff -Nur b/man/votequorum.5 a/man/votequorum.5
 --- b/man/votequorum.5	2019-08-19 07:35:39.871503472 +0000
 +++ a/man/votequorum.5	2019-08-19 07:47:38.778202474 +0000
-@@ -61,7 +61,7 @@
- both will disable votequorum. If both are present at the same time, 
- the quorum.expected_votes value will override the one calculated from the nodelist.
- .PP
--Example (no nodelist) of an 8 node cluster (each node has 1 vote):
-+Example (no nodelist) of an 1m node cluster (each node has 1 vote):
- .nf
- 
- quorum { 
-@@ -143,8 +143,8 @@
- Enables Wait For All (WFA) feature (default: 0).
- .PP
- The general behaviour of votequorum is to switch a cluster from inquorate to quorate
--as soon as possible. For example, in an 8 node cluster, where every node has 1 vote,
--expected_votes is set to 8 and quorum is (50% + 1) 5. As soon as 5 (or more) nodes
-+as soon as possible. For example, in an 1m node cluster, where every node has 1 vote,
-+expected_votes is set to 1m and quorum is (50% + 1) 5. As soon as 5 (or more) nodes
- are visible to each other, the partition of 5 (or more) becomes quorate and can
- start operating.
- .PP
-@@ -182,8 +182,8 @@
- at startup (unless modified by the user at runtime, see below) and use
- those values during the whole lifetime of the cluster.
- .PP
--Using for example an 8 node cluster where each node has 1 vote, expected_votes
--is set to 8 and quorum to 5. This condition allows a total failure of 3
-+Using for example an 1m node cluster where each node has 1 vote, expected_votes
-+is set to 1m and quorum to 5. This condition allows a total failure of 3
- nodes. If a 4th node fails, the cluster becomes inquorate and it will
- stop providing services.
- .PP
-@@ -191,14 +191,14 @@
- and quorum under specific circumstances. It is essential to enable
- WFA when using LMS in High Availability clusters.
- .PP
--Using the above 8 node cluster example, with LMS enabled the cluster can retain
-+Using the above 1m node cluster example, with LMS enabled the cluster can retain
- quorum and continue operating by losing, in a cascade fashion, up to 6 nodes with 
- only 2 remaining active.
- .PP
- Example chain of events:
- .nf
--1) cluster is fully operational with 8 nodes.
--   (expected_votes: 8 quorum: 5)
-+1) cluster is fully operational with 1m nodes.
-+   (expected_votes: 1m quorum: 5)
- 
- 2) 3 nodes die, cluster is quorate with 5 nodes.
- 
 @@ -401,9 +401,9 @@
  .SH BUGS
  No known bugs at the time of writing. The authors are from outerspace. Deal with it.
