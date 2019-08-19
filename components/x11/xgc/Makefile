@@ -13,34 +13,20 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= xgc
-COMPONENT_VERSION= 1.0.5
-COMPONENT_SUMMARY= xgc graphics demo
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=      xgc
+COMPONENT_VERSION=   1.0.5
+COMPONENT_REVISION=  1
+COMPONENT_SUMMARY=   xgc graphics demo
+COMPONENT_FMRI=      x11/xgc
 COMPONENT_ARCHIVE_HASH= \
   sha256:14828d9bda358ad57efc0206bc416ee33ba542091edb186485cca5389adc2f5e
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
-COMPONENT_FMRI= x11/xgc
-COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
