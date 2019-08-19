@@ -13,38 +13,19 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xkbprint
-COMPONENT_VERSION=        1.0.4
-COMPONENT_FMRI=           x11/keyboard/xkbprint
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xkbprint
+COMPONENT_VERSION=  1.0.4
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/keyboard/xkbprint
 COMPONENT_SUMMARY=  xkbprint - utility to print XKB keyboard layouts
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:0b3faab8fefad03dfb7e866f634cf859822801de6b5fc6cf5e0a62857ed93e12
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xkbprint-1.0.4.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xkbprint.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros 
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
