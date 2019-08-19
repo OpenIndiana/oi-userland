@@ -13,35 +13,19 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           showfont
-COMPONENT_VERSION=        1.0.5
-COMPONENT_FMRI=           x11/xfs/showfont
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     showfont
+COMPONENT_VERSION=  1.0.5
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/xfs/showfont
 COMPONENT_SUMMARY=  showfont - font server data display utility
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:e9735c1c530b8a52edfab7415cc0fd7f8d2889095114f4cb689a27476461ac89
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/showfont-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= showfont.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libfs
