@@ -13,33 +13,18 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xset
 COMPONENT_VERSION=        1.2.4
 COMPONENT_SUMMARY=        the xset X server configuration utility
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/xset
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:e4fd95280df52a88e9b0abc1fee11dcf0f34fc24041b9f45a247e52df941c957
-COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
