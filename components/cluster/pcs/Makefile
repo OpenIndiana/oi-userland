@@ -9,19 +9,19 @@
 #
 
 #
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2019 Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pcs
-COMPONENT_VERSION= 0.9.159
+COMPONENT_VERSION= 0.9.168
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/pcs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9493c780c36a7f4a8336bbe40ff34ec22e21155798ad458bd8b347a4bc774f8f
+COMPONENT_ARCHIVE_HASH= sha256:f1f3684978e13f2bd95a5fbd5d662a3f7b30908969addbb3559152b2791efc19
 COMPONENT_ARCHIVE_URL= https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz 
 COMPONENT_LICENSE= GPLv2
 COMPONENT_SUMMARY= Pacemaker command line interface and GUI.
@@ -32,8 +32,6 @@ include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/ruby.mk
 
 PATH=$(PATH.gnu):/usr/ruby/$(RUBY_VERSION)/bin	
-
-PATCH_LEVEL= 1
 
 ENV += DESTDIR="$(PROTO_DIR)"
 ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
@@ -68,6 +66,7 @@ test:           $(TESTS_32)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/ruby/bundler
+REQUIRED_PACKAGES += system/font/liberation
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

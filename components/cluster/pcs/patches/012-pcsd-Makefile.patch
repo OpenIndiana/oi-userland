@@ -1,0 +1,19 @@
+--- pcs-0.9.168/pcsd/Makefile.~1~	2019-08-19 14:02:03.395349082 +0000
++++ pcs-0.9.168/pcsd/Makefile	2019-08-19 14:02:37.344430033 +0000
+@@ -1,16 +1,7 @@
+ FFI_VERSION="1.9.25"
+-FFI_C_DIR=vendor/bundle/ruby/gems/ffi-${FFI_VERSION}/ext/ffi_c
+ 
+ build_gems: get_gems
+ 	bundle install --local --deployment
+-	#ffi makes symlink with absolute path. Let's change it to relative path.
+-	for fname in `ls ${FFI_C_DIR}/libffi-*/include/ffitarget.h`; do \
+-		if [[ -L "$$fname" ]]; then \
+-			target=$$(readlink $$fname | sed "s~.*/${FFI_C_DIR}\(/libffi/src/[^/]\+/ffitarget.h\)~../..\1~"); \
+-			rm $$fname; \
+-			ln -s $$target $$fname; \
+-		fi; \
+-	done;
+ 
+ build_gems_without_bundler:
+ 	mkdir -p vendor/bundle/ruby
