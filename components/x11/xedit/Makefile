@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xedit
 COMPONENT_VERSION=        1.2.2
-COMPONENT_REVISION=       3
+COMPONENT_REVISION=       2
 COMPONENT_FMRI=           editor/xedit
 COMPONENT_CLASSIFICATION= Development/Editors
 COMPONENT_SUMMARY=        xedit - simple Xaw toolkit text editor for X
