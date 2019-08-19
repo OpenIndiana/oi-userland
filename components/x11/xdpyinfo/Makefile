@@ -13,36 +13,21 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xdpyinfo
-COMPONENT_VERSION=        1.3.2
-COMPONENT_FMRI=           x11/diagnostic/xdpyinfo
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xdpyinfo
+COMPONENT_VERSION=  1.3.2
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/diagnostic/xdpyinfo
 COMPONENT_SUMMARY=  xdpyinfo − display information utility for X
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:30238ed915619e06ceb41721e5f747d67320555cc38d459e954839c189ccaf51
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xdpyinfo-1.3.2.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xdpyinfo.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libdmx
 REQUIRED_PACKAGES += x11/library/libx11
