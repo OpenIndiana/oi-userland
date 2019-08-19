@@ -13,27 +13,20 @@
 # Copyright 2017 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= libXfont2
 COMPONENT_VERSION= 2.0.3
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= libXfont2 - library for X servers and utilities to access font files
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_CLASSIFICATION = System/X11
+COMPONENT_REVISION= 2
 COMPONENT_FMRI= x11/library/libxfont2
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
+COMPONENT_SUMMARY= libXfont2 - library for X servers and utilities to access font files
 COMPONENT_ARCHIVE_HASH= \
   sha256:0e8ab7fd737ccdfe87e1f02b55f221f0bd4503a1c5f28be4ed6a54586bac9c4e
-COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
 
@@ -47,15 +40,7 @@ CONFIGURE_OPTIONS += --with-bzip2
 
 CONFIGURE_ENV += LIB_MAN_SUFFIX=3xfont2
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/fontsproto
 REQUIRED_PACKAGES += x11/library/xtrans
 
 # Auto-generated dependencies
