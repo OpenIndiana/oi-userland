@@ -13,33 +13,18 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xwud
 COMPONENT_VERSION=        1.0.5
 COMPONENT_SUMMARY=        xwud - viewer application for xwd images
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/xwud
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:99997051f8a892313f22edf41dab45864e86e7062ee9012d5dbb6a40fc6b10a9
-COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
