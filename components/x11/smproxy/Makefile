@@ -13,39 +13,23 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           smproxy
-COMPONENT_VERSION=        1.0.6
-COMPONENT_FMRI=           x11/session/smproxy
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     smproxy
+COMPONENT_VERSION=  1.0.6
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/session/smproxy
 COMPONENT_SUMMARY=  X Window System Session Manager Proxy
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:6cf19155a2752237f36dbf8bc4184465ea190d2652f887faccb4e2a6ebf77266
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/smproxy-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= smproxy.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
