@@ -13,28 +13,19 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= xfs
-COMPONENT_VERSION= 1.1.4
+COMPONENT_NAME=    xfs
+COMPONENT_VERSION= 1.2.0
 COMPONENT_SUMMARY= xfs - X Font Server
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_FMRI=    x11/xfs
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a40b75e674c091464f85739292b6bf24e2d153f4a2ac456d3ea6b8a64e269ffa
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
-COMPONENT_FMRI= x11/xfs
-COMPONENT_LICENSE= MIT
+  sha256:db2212115783498f8eeaaee1349461d6c4e9d2005e142bacd3a984fe57269860
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=/usr/lib
 CONFIGURE_OPTIONS += --enable-syslog
@@ -47,17 +38,10 @@ CPPFLAGS += -DNO_ALLOCA
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
 REQUIRED_PACKAGES += x11/library/xtrans
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxfont2
