@@ -1,6 +1,6 @@
 diff -Nura a/doc/crm_fencing.txt b/doc/crm_fencing.txt
---- a/doc/crm_fencing.txt	2016-11-01 19:32:47.869611627 +0100
-+++ b/doc/crm_fencing.txt	2016-11-01 19:32:48.330125384 +0100
+--- a/doc/crm_fencing.txt 2016-11-01 19:32:47.869611627 +0100
++++ b/doc/crm_fencing.txt 2016-11-01 19:32:48.330125384 +0100
 @@ -406,7 +406,7 @@
  human to operate. Whenever invoked, `meatware` logs a CRIT severity
  message which should show up on the node's console. The operator
@@ -9,22 +9,9 @@ diff -Nura a/doc/crm_fencing.txt b/doc/crm_fencing.txt
 +`meatclient(1m)` command to tell `meatware` that it's OK to tell the
  cluster that it may consider the node dead. See `README.meatware`
  for more information.
- 
-diff -Nura a/fencing/admin.c b/fencing/admin.c
---- a/fencing/admin.c	2016-11-01 19:32:47.882990606 +0100
-+++ b/fencing/admin.c	2016-11-01 19:32:48.324221342 +0100
-@@ -81,7 +81,7 @@
-     {"env-option",  1, 0, 'e'},
-     {"option",      1, 0, 'o'},
-     {"tag",         1, 0, 'T', "Identify fencing operations with the specified tag.\n\t"
--     "Useful when there are multiple entities that might be invoking stonith_admin(8)"},
-+     "Useful when there are multiple entities that might be invoking stonith_admin(1m)"},
- 
-     {"device",      1, 0, 'v', "A device to associate with a given host and stonith level"},
-     {"index",       1, 0, 'i', "The stonith level (1-9)"},
-diff -Nura a/tools/cibadmin.c b/tools/cibadmin.c
---- a/tools/cibadmin.c	2016-11-01 19:32:47.891059159 +0100
-+++ b/tools/cibadmin.c	2016-11-01 19:32:48.009477002 +0100
+
+--- pacemaker-Pacemaker-1.1.19/tools/cibadmin.c.orig	2019-01-03 11:00:03.851276253 +0000
++++ pacemaker-Pacemaker-1.1.19/tools/cibadmin.c	2019-01-03 11:02:52.658056576 +0000
 @@ -156,7 +156,7 @@
      {"-spacer-",    0, 0, '-', " cibadmin --replace --xml-file $HOME/local.xml", pcmk_option_example},
  
@@ -34,10 +21,9 @@ diff -Nura a/tools/cibadmin.c b/tools/cibadmin.c
  
      /* Legacy options */
      {"host",	     1, 0, 'h', NULL, 1},
-diff -Nura a/tools/crm_report.in b/tools/crm_report.in
---- a/tools/crm_report.in	2016-11-01 19:32:47.893014676 +0100
-+++ b/tools/crm_report.in	2016-11-01 19:32:48.006494674 +0100
-@@ -241,7 +241,7 @@
+--- pacemaker-Pacemaker-1.1.19/tools/crm_report.in.orig	2019-01-03 11:00:24.263563983 +0000
++++ pacemaker-Pacemaker-1.1.19/tools/crm_report.in	2019-01-03 11:03:50.918841731 +0000
+@@ -250,7 +250,7 @@
  	if which crm_diff > /dev/null 2>&1; then
  	    crm_diff -c -n $1 -o $2
  	else
@@ -46,12 +32,12 @@ diff -Nura a/tools/crm_report.in b/tools/crm_report.in
  	fi
      else
  	echo "can't compare cibs from running and stopped systems"
---- pacemaker-Pacemaker-1.1.17/Makefile.common.orig	2017-09-26 20:36:41.926319599 +0000
-+++ pacemaker-Pacemaker-1.1.17/Makefile.common	2017-09-26 20:36:56.270734906 +0000
-@@ -40,7 +40,7 @@
+--- pacemaker-Pacemaker-1.1.21/Makefile.common.~1~	2019-08-19 08:25:47.998859419 +0000
++++ pacemaker-Pacemaker-1.1.21/Makefile.common	2019-08-19 08:26:20.901990399 +0000
+@@ -38,7 +38,7 @@
+ 
+ %.8:	% $(MAN8DEPS)
  	chmod a+x $(abs_builddir)/$<
- 	$(PCMK_V)  PATH=$(abs_builddir):$$PATH $(abs_builddir)/$< --help
- 	$(PCMK_V)  PATH=$(abs_builddir):$$PATH $(abs_builddir)/$< --version
 -	$(AM_V_MAN)PATH=$(abs_builddir):$$PATH $(HELP2MAN) --output $@ --no-info --section 8 --name "Part of the Pacemaker cluster resource manager" $(abs_builddir)/$<
 +	$(AM_V_MAN)PATH=$(abs_builddir):$$PATH $(HELP2MAN) --output $@ --no-info --section 1m --name "Part of the Pacemaker cluster resource manager" $(abs_builddir)/$<
  
