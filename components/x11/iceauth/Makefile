@@ -13,34 +13,20 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= iceauth
 COMPONENT_VERSION= 1.0.8
+COMPONENT_REVISION= 1
+COMPONENT_FMRI= x11/iceauth
 COMPONENT_SUMMARY= ICE authority file utility
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:e6ee213a217265cc76050e4293ea70b98c32dce6505c6421227efbda62ab60c6
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
-COMPONENT_FMRI= x11/iceauth
-COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libice
