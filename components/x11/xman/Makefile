@@ -12,27 +12,19 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-BUILD_BITS=64
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xman
 COMPONENT_VERSION=      1.1.5
 COMPONENT_FMRI=         x11/xman
-COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=      xman - Manual page display program for the X Window System
-COMPONENT_PROJECT_URL=  $(XORG_PROJECT_URL)
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:4e3c2c7497e9734a6d3c8e1b6a364612892bb31e9f33076c9fdae7177ab60978
-COMPONENT_ARCHIVE_URL=  $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      MIT License
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
