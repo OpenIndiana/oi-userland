@@ -56,6 +56,25 @@ endif
 endif
 
 #
+# Set defaults for X11 applications
+#
+ifeq ($(strip $(X11_CATEGORY)),APP)
+BUILD_BITS = 64
+PATH=$(PATH.gnu)
+COMPONENT_CLASSIFICATION = System/X11
+COMPONENT_LICENSE        = MIT License
+endif
+
+#
+# Set defaults for X11 libraries
+#
+ifeq ($(strip $(X11_CATEGORY)),LIB)
+BUILD_BITS = 32_and_64
+COMPONENT_CLASSIFICATION = System/X11
+COMPONENT_LICENSE        = MIT License
+endif
+
+#
 # Define library install paths
 #
 
@@ -68,3 +87,10 @@ XORG_LIBDIR    = $(XORG_LIBDIR.$(BITS))
 #
 
 PKG_MACROS += X11PKGVERS=$(PKG_X11_VERSION)
+
+#
+# Default build dependencies
+#
+REQUIRED_PACKAGES += x11/header/x11-protocols
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+
