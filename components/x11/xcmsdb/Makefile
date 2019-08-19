@@ -13,35 +13,20 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xcmsdb
-COMPONENT_VERSION=        1.0.5
-COMPONENT_FMRI=           x11/xcmsdb
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xcmsdb
+COMPONENT_VERSION=  1.0.5
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/xcmsdb
 COMPONENT_SUMMARY=  the xcmsdb Device Color Characterization utility
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:e5585361bb8b6a05bb814a8d0e444ee93e0f00180881d3070aff4571e97f67c6
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xcmsdb-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xcmsdb.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
