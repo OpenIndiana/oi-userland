@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bash-completion
 COMPONENT_VERSION=      2.9
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         utility/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=      Programmable completion functions for bash
 COMPONENT_CLASSIFICATION=System/Shells
@@ -31,10 +32,10 @@ COMPONENT_LICENSE=      GPLv2
 
 # Fetch OpenIndiana/openindiana-completions project with
 # OpenIndiana-specific bash completions.
-COMPONENT_OI_COMPLETIONS_COMMIT=583472062baab7b5981f82c71b0b4dfe47f4d21f
+COMPONENT_OI_COMPLETIONS_COMMIT=d722a467ac7c4992d381ed913440efdae63614c1
 COMPONENT_ARCHIVE_1=		$(COMPONENT_OI_COMPLETIONS_COMMIT).zip
 COMPONENT_ARCHIVE_HASH_1=	\
-	sha256:cc171ee9eb53d8746aef89f7f2c03ad8bd47592f4585dc247de67832c76c1ffb
+	sha256:b2a9f455975e604bc50e051c9ef52cb65a09b48333c79f519acf583f30cdd676
 COMPONENT_ARCHIVE_URL_1=	\
 	https://github.com/OpenIndiana/openindiana-completions/archive/$(COMPONENT_ARCHIVE_1)
 
