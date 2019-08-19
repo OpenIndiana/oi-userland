@@ -10,19 +10,19 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= crmsh
-COMPONENT_VERSION= 3.0.3
+COMPONENT_VERSION= 4.1.0
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/crmsh
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:364fadb0d0c9619676e10bb75f4ea833a49019aa77ddb26229bc9d1c435585c0
+COMPONENT_ARCHIVE_HASH= sha256:cccd51eb05a121e2b8d66e425057be0b022fa59d187978568411ff4164bf2d03
 COMPONENT_ARCHIVE_URL=  https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2
 COMPONENT_SUMMARY= crmsh is a command-line interface for High-Availability cluster management and part of the Clusterlabs project.
@@ -31,6 +31,8 @@ COMPONENT_SUMMARY= crmsh is a command-line interface for High-Availability clust
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION = 3.5
 
 ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
@@ -49,10 +51,10 @@ CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
 
 
-build:          $(BUILD_32)
+build:          $(BUILD_NO_ARCH)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_NO_ARCH)
 
-test:           $(TESTS_32)
+test:           $(TESTS_64)
 
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
