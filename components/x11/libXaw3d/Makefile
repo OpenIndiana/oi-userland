@@ -13,42 +13,23 @@
 # Copyright 2018 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXaw3d
-COMPONENT_VERSION=        1.6.3
-COMPONENT_FMRI=           x11/library/toolkit/libxaw3d
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=    libXaw3d
+COMPONENT_VERSION= 1.6.3
+COMPONENT_FMRI=    x11/library/toolkit/libxaw3d
 COMPONENT_SUMMARY= libXaw3d - X Athena Widgets library with 3-D styled widgets
-COMPONENT_SRC=     $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:2dba993f04429ec3d7e99341e91bf46be265cc482df25963058c15f1901ec544
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) &&  autoreconf -f  -i )
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/xextproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
