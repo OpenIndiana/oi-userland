@@ -12,27 +12,19 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-BUILD_BITS=64_and_32
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=     libXcomposite
-COMPONENT_VERSION=  0.4.5
-COMPONENT_FMRI=     x11/library/libxcomposite
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXcomposite - X11 Composite extension library 
-COMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXcomposite
+COMPONENT_VERSION= 0.4.5
+COMPONENT_FMRI=    x11/library/libxcomposite
+COMPONENT_SUMMARY= libXcomposite - X11 Composite extension library 
 COMPONENT_ARCHIVE_HASH= \
   sha256:b3218a2c15bab8035d16810df5b8251ffc7132ff3aa70651a1fba0bfe9634e8f
-COMPONENT_ARCHIVE_URL= $(XORG_LIB_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=   MIT License
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
@@ -42,7 +34,6 @@ CONFIGURE_OPTIONS+= --enable-shared
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
 
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/compositeproto
 REQUIRED_PACKAGES += x11/library/libxfixes
 
 # Auto-generated dependencies
