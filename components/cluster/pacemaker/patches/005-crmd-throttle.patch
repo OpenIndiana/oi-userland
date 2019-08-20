@@ -1,0 +1,34 @@
+diff --git pacemaker-Pacemaker-1.1.21/crmd/throttle.c.~1~ pacemaker-Pacemaker-1.1.21/crmd/throttle.c
+index d781188f5..ce1d2b679 100644
+--- pacemaker-Pacemaker-1.1.21/crmd/throttle.c.~1~
++++ pacemaker-Pacemaker-1.1.21/crmd/throttle.c
+@@ -60,9 +60,13 @@ static mainloop_timer_t *throttle_timer = NULL;
+ static char *
+ find_cib_loadfile(void)
+ {
++#if SUPPORT_PROCFS	
+     int pid = crm_procfs_pid_of("cib");
+ 
+     return pid? crm_strdup_printf("/proc/%d/stat", pid) : NULL;
++#else
++		return NULL;
++#endif		
+ }
+ 
+ static bool
+@@ -404,8 +408,13 @@ throttle_update_job_max(const char *preference)
+ {
+     int max = 0;
+ 
+-    throttle_job_max = 2 * crm_procfs_num_cores();
+-
++#if SUPPORT_PROCFS
++		throttle_job_max = 2 * crm_procfs_num_cores();
++#elif ON_SOLARIS
++		throttle_job_max = 2 * sysconf(_SC_NPROCESSORS_ONLN);
++#else
++		throttle_job_max = 2;
++#endif
+     if(preference) {
+         /* Global preference from the CIB */
+         max = crm_int_helper(preference, NULL);

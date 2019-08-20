@@ -1,0 +1,26 @@
+This patch deactivates the authentication.
+It should work but the result of getpeerucred is ENOTSUP (48). 
+
+diff --git pacemaker-Pacemaker-1.1.21/lib/common/ipc.c.~1~ pacemaker-Pacemaker-1.1.21/lib/common/ipc.c
+index 3e547f32a..5abb1cfb9 100644
+--- pacemaker-Pacemaker-1.1.21/lib/common/ipc.c.~1~
++++ pacemaker-Pacemaker-1.1.21/lib/common/ipc.c
+@@ -1447,7 +1447,7 @@ crm_ipc_is_authentic_process(int sock, uid_t refuid, gid_t refgid,
+         found_pid = PCMK__SPECIAL_PID;  /* cannot obtain PID (FreeBSD) */
+ 
+ #elif defined(US_AUTH_GETPEERUCRED)
+-    ucred_t *ucred;
++    ucred_t *ucred = NULL;
+     if (!getpeerucred(sock, &ucred)) {
+         errno = 0;
+         found_pid = ucred_getpid(ucred);
+@@ -1457,7 +1457,8 @@ crm_ipc_is_authentic_process(int sock, uid_t refuid, gid_t refgid,
+         if (ret) {
+             return (ret < 0) ? ret : -pcmk_err_generic;
+         }
+-
++		}
++		if (1) {
+ #else
+ #  error "No way to authenticate a Unix socket peer"
+     errno = 0;
