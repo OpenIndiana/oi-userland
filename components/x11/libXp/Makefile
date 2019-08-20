@@ -13,28 +13,18 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXp
-COMPONENT_VERSION=        1.0.3
-COMPONENT_FMRI=           x11/library/libxp
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXp - X print library
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXp
+COMPONENT_VERSION= 1.0.3
+COMPONENT_FMRI=    x11/library/libxp
+COMPONENT_SUMMARY= libXp - X print library
 COMPONENT_ARCHIVE_HASH= \
   sha256:7f360c9905849c3587d48efc0f0ecbc852c19f61a52b18530d6b005cb9148c57
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/libXp-1.0.3.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXp.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV+= XPRINT_LIBS='-lX11 -lXext'
 
@@ -42,17 +32,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xextproto
-REQUIRED_PACKAGES += x11/header/printproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
