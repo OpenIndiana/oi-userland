@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -17,13 +17,12 @@ include ../../../make-rules/shared-macros.mk
 PATH= $(USRBINDIR64):$(PATH.gnu)
 
 COMPONENT_NAME= pacemaker
-COMPONENT_VERSION= 1.1.17
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.1.21
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC= $(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:96e04751e85a266e2daa8c590000a151ff37f0bb7b873d77e38534299d399803
+COMPONENT_ARCHIVE_HASH= sha256:4914f2caf5676ecf54b2fd19c59b40268a54b04703b56cf840cb63fbdbbb7d06
 COMPONENT_PROJECT_URL= https://www.clusterlab.org
 COMPONENT_ARCHIVE_URL= https://github.com/Clusterlabs/$(COMPONENT_NAME)/archive/Pacemaker-$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2,LGPLv2,BSD
