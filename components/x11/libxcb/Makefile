@@ -20,24 +20,21 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           libxcb
-COMPONENT_VERSION=        1.13
-COMPONENT_FMRI=           x11/library/libxcb
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Libraries
-COMPONENT_SRC=		        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
+X11_CATEGORY=LIB
+include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
+
+COMPONENT_NAME=        libxcb
+COMPONENT_VERSION=     1.13
+COMPONENT_FMRI=        x11/library/libxcb
+COMPONENT_SUMMARY=     The X protocol C-language Binding (XCB): Libraries
+COMPONENT_PROJECT_URL= http://xcb.freedesktop.org
 COMPONENT_ARCHIVE_HASH=	\
   sha256:188c8752193c50ff2dbe89db4554c63df2e26a2e47b0fa415a70918b5b851daa
-COMPONENT_ARCHIVE_URL=	  http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT
+COMPONENT_ARCHIVE_URL=	  $(COMPONENT_PROJECT_URL)/dist/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
@@ -68,12 +65,6 @@ CONFIGURE_OPTIONS+= --enable-xv
 CONFIGURE_OPTIONS+= --enable-xvmc 
 CONFIGURE_OPTIONS+= --with-queue-size=32768 
 CONFIGURE_OPTIONS+= --with-pic
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/check
