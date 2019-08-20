@@ -13,39 +13,32 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= libX11
-
-COMPONENT_VERSION= 1.6.8
-COMPONENT_REVISION=1
-COMPONENT_SUMMARY= libX11 - X11 core protocol client library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=     libX11
+COMPONENT_VERSION=  1.6.8
+COMPONENT_REVISION= 1
+COMPONENT_FMRI =    x11/library/libx11
+COMPONENT_SUMMARY=  libX11 - X11 core protocol client library
 COMPONENT_ARCHIVE_HASH= \
   sha256:b289a845c189e251e0e884cc0f9269bbe97c238df3741e854ec4c17c21e473d5
-COMPONENT_ARCHIVE_URL= \
-  https://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://xorg.freedesktop.org
-COMPONENT_FMRI = x11/library/libx11
-COMPONENT_CLASSIFICATION = System/X11
-COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CPPFLAGS += -I/usr/include/freetype2  -I/usr/include/X11  -I/usr/include/xcb  -DSUNSOFT -DMOTIFBC -DSUNSOFT_KBD
+CPPFLAGS += -I/usr/include/freetype2  -I/usr/include/X11  -I/usr/include/xcb
+CPPFLAGS += -DSUNSOFT -DMOTIFBC -DSUNSOFT_KBD
 
-COMPONENT_PREP_ACTION =        ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-					cd $(@D) &&  libtoolize --copy --force &&\
-                                        aclocal -I m4 &&\
-                                        automake -c -f -a &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
+                          cd $(@D) &&  libtoolize --copy --force &&\
+                          aclocal -I m4 &&\
+                          automake -c -f -a &&\
+                          autoconf )
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 LOCALE_LIB_DIR.32=/usr/lib/X11/locale
 LOCALE_LIB_DIR.64=/usr/lib/X11/locale/$(MACH64)
@@ -74,13 +67,6 @@ CONFIGURE_OPTIONS +=  --with-locale-lib-dir="$(LOCALE_LIB_DIR.$(BITS))"
 
 COMPONENT_BUILD_ARGS.64=ADD_libX11_LDFLAGS="-Wl,-M$(COMPONENT_DIR)/mapfile-vers-64"
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xf86bigfontproto
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxau
