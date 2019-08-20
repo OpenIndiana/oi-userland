@@ -10,7 +10,7 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
-# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,13 +18,12 @@ include ../../../make-rules/shared-macros.mk
 PATH= $(PATH.gnu)
 
 COMPONENT_NAME= corosync
-COMPONENT_VERSION= 2.4.2
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 2.4.5
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0dd0ee718253c18c5090e0304eec72a7be8b18b6fe5e03de59ce095fa08c8b63
+COMPONENT_ARCHIVE_HASH= sha256:1637b9fcc90ecb719f0c24bdb5bf98bbe7b7f8dbaf19fbe1e5ca5640512565e1
 COMPONENT_PROJECT_URL= https://github.com/corosync/corosync
 COMPONENT_ARCHIVE_URL= https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= BSD
@@ -33,8 +32,6 @@ COMPONENT_SUMMARY= The Corosync cluster engine.
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL = 1
 
 COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); $(CONFIG_SHELL) autogen.sh )
 
