@@ -13,28 +13,18 @@
 # Copyright 2016 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXt
-COMPONENT_VERSION=        1.1.5
-COMPONENT_FMRI=           x11/library/toolkit/libxt
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXt - X Toolkit library
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXt
+COMPONENT_VERSION= 1.1.5
+COMPONENT_FMRI=    x11/library/toolkit/libxt
+COMPONENT_SUMMARY= libXt - X Toolkit library
 COMPONENT_ARCHIVE_HASH= \
   sha256:46eeb6be780211fdd98c5109286618f6707712235fdd19df4ce1e6954f349f1a
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXt.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 # https://bugs.freedesktop.org/show_bug.cgi?id=6569
 LD_B_DIRECT=
@@ -45,17 +35,6 @@ CPPFLAGS+= -DGETVALUES_BUG -DNO_ALLOCA
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/kbproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
