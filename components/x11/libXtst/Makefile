@@ -13,28 +13,18 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXtst
-COMPONENT_VERSION=        1.2.3
-COMPONENT_FMRI=           x11/library/libxtst
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXtst - Client library for X Record and Test extensions
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXtst
+COMPONENT_VERSION= 1.2.3
+COMPONENT_FMRI=    x11/library/libxtst
+COMPONENT_SUMMARY= libXtst - Client library for X Record and Test extensions
 COMPONENT_ARCHIVE_HASH= \
   sha256:4655498a1b8e844e3d6f21f3b2c4e2b571effb5fd83199d428a6ba7ea4bf5204
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXtst.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
@@ -42,17 +32,6 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xextproto
-REQUIRED_PACKAGES += x11/header/inputproto
-REQUIRED_PACKAGES += x11/header/recordproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
