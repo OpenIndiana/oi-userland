@@ -13,7 +13,7 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-X11_CATEGORY=X11
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
