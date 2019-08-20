@@ -13,27 +13,24 @@
 # Copyright 2016 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libxkbcommon
-COMPONENT_VERSION=        0.8.0
-COMPONENT_FMRI=           x11/library/libxkbcommon
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     libxkbcommon
+COMPONENT_VERSION=  0.8.0
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/library/libxkbcommon
 COMPONENT_SUMMARY=  xkbcommon - library to handle keyboard descriptions
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:e829265db04e0aebfb0591b6dc3377b64599558167846c3f5ee5c5e53641fe6d
-COMPONENT_ARCHIVE_URL= \
-  http://xkbcommon.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xkbcommon.org/
-COMPONENT_LICENSE=      MIT License
+COMPONENT_SRC=      $(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=  xkbcommon-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+  sha256:0683c42c7e39b8f68786eab9140461031c8f2dd9616442cf77770d2aea956e7d
+COMPONENT_ARCHIVE_URL= \
+  https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && \
                          libtoolize --automake --copy --force && \
@@ -56,13 +53,6 @@ COMPONENT_TEST_TRANSFORMS= \
   '-e "/FAIL/p" '  \
   '-e "/XPASS/p" ' \
   '-e "/ERROR/p" ' 
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxcb
