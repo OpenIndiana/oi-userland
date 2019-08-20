@@ -70,6 +70,7 @@ endif
 #
 ifeq ($(strip $(X11_CATEGORY)),LIB)
 BUILD_BITS = 32_and_64
+PATH=$(PATH.gnu)
 COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE        = MIT License
 endif
