@@ -10,23 +10,23 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher
+# Copyright 2016-2019 Aurelien Larcher
 #
 BUILD_STYLE = archive
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        liberation
-COMPONENT_VERSION=      2.00.1
-IPS_COMPONENT_VERSION=  2.0.1
+COMPONENT_VERSION=      2.00.5
+IPS_COMPONENT_VERSION=  2.0.5
 COMPONENT_SUMMARY=      The Liberation fonts
 COMPONENT_PROJECT_URL=  https://pagure.io/liberation-fonts/
 COMPONENT_SRC=          $(COMPONENT_NAME)-fonts-ttf-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
-  https://releases.pagure.org/liberation-fonts/$(COMPONENT_ARCHIVE)
+  https://github.com/liberationfonts/liberation-fonts/files/2926169/$(COMPONENT_ARCHIVE).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7890278a6cd17873c57d9cd785c2d230d9abdea837e96516019c5885dd271504
+  sha256:f14ff0a0be87b5aeb672e669363b5a699db76feb1144b06798261c0fdcd2b24d
 COMPONENT_LICENSE=      SIL Open Font License Version 1.1
 
 FONT_TYPE = TTF
