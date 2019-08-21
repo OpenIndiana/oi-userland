@@ -3683,27 +3683,6 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
    global_si_kludge = si;	/* I hate C so much... */
  
    fix_fds();
-@@ -1486,7 +1589,9 @@
- 
-   save_argv (argc, argv);
-   set_version_string (si, &argc, argv);
-+#ifndef HAVE_XSCREENSAVER_LOCK /* moved below for external lock */
-   privileged_initialization (si, &argc, argv);
-+#endif
-   hack_environment (si);
- 
-   spasswd = getpwuid(getuid());
-@@ -1509,6 +1614,10 @@
-   print_banner (si);
- 
-   load_init_file(si->dpy, p); /* must be before initialize_per_screen_info() */
-+#ifdef HAVE_XSCREENSAVER_LOCK
-+  privileged_initialization (si, &argc, argv);
-+#endif
-+
-   blurb_timestamp_p = p->timestamp_p;  /* kludge */
-   initialize_per_screen_info (si, shell); /* also sets si->fading_possible_p */
- 
 @@ -1761,8 +1870,12 @@
    Atom type = 0;
    Window window = event->xclient.window;
