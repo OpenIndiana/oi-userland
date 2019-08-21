@@ -1,0 +1,17 @@
+The symbol lasso_log has to be exported, otherwise Solaris run-time linker
+fails due to unresolved symbol dependency.
+
+diff -ru lasso-2.6.0/lasso/logging.h lasso-2.6.0.new/lasso/logging.h
+--- lasso-2.6.0/lasso/logging.h	2018-04-06 12:40:15.025592506 +0200
++++ lasso-2.6.0.new/lasso/logging.h	2019-03-20 14:13:49.030748837 +0100
+@@ -28,8 +28,8 @@
+ #include "errors.h"
+ 
+ #ifndef lasso_log
+-void lasso_log(GLogLevelFlags level, const char *filename, int line,
+-		const char *function, const char *format, ...);
++LASSO_EXPORT void lasso_log(GLogLevelFlags level, const char *filename,
++		int line, const char *function, const char *format, ...);
+ #endif
+ 
+ int lasso_log_error_code(GLogLevelFlags level, int error, ...);
