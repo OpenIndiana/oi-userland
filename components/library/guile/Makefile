@@ -67,8 +67,11 @@ test:		$(TEST_32_and_64)
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
