@@ -59,6 +59,7 @@ depend fmri=pkg:/system/library/c-runtime type=require
 
 # Mediated links
 link path=usr/bin/c++ target=../gcc/9/bin/c++ mediator=gcc mediator-version=9
+link path=usr/bin/cpp target=../gcc/9/bin/cpp mediator=gcc mediator-version=9
 link path=usr/bin/g++ target=../gcc/9/bin/g++ mediator=gcc mediator-version=9
 link path=usr/bin/gcc target=../gcc/9/bin/gcc mediator=gcc mediator-version=9
 link path=usr/bin/gcov target=../gcc/9/bin/gcov mediator=gcc mediator-version=9
@@ -77,11 +78,16 @@ link path=usr/share/man/man1/gfortran.1 target=../../../gcc/9/share/man/man1/gfo
 
 # Versioned links
 link path=usr/bin/c++-9 target=../gcc/9/bin/c++
+link path=usr/bin/cpp-9 target=../gcc/9/bin/cpp
 link path=usr/bin/g++-9 target=../gcc/9/bin/g++
 link path=usr/bin/gcc-9 target=../gcc/9/bin/gcc
 link path=usr/bin/gcov-9 target=../gcc/9/bin/gcov
 link path=usr/bin/gcpp-9 target=../gcc/9/bin/cpp
 link path=usr/bin/gfortran-9 target=../gcc/9/bin/gfortran
+
+# Version major links
+link path=usr/gcc/9/lib/gcc/$(GNU_TRIPLET)/9 target=$(COMPONENT_VERSION)
+link path=usr/gcc/9/include/c++/9 target=$(COMPONENT_VERSION)
 
 # Binaries
 hardlink path=usr/gcc/9/bin/c++ target=$(GNU_TRIPLET)-c++
