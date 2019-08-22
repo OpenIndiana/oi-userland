@@ -11,118 +11,34 @@
 
 #
 # Copyright 2013 Andrzej Szeszo.  All rights reserved.
-# Copyright 2016 Aurelien Larcher. All rights reserved.
+# Copyright 2016-2019 Aurelien Larcher. All rights reserved.
 #
 
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gcc
 COMPONENT_VERSION= 6.5.0
-COMPONENT_REVISION= 1
-COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
-THIS_GCC_PKGVERSION= $(COMPONENT_VERSION)-OI-$(COMPONENT_REVISION)
-COMPONENT_FMRI= developer/gcc-6
-COMPONENT_CLASSIFICATION= Development/C
-COMPONENT_SUMMARY= GNU Compiler Collection
-MPFR_NAME= mpfr
-MPFR_VERSION=4.0.2
-MPC_NAME=mpc
-MPC_VERSION=1.1.0
-GMP_NAME=gmp
-GMP_VERSION=6.1.2
-COMPONENT_SUMMARY= GNU Compiler Collection
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_REVISION= 2
 COMPONENT_ARCHIVE_HASH= \
   sha256:7ef1796ce497e89479183702635b14bb7a46b53249209a5e0f999bebf4740945
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnu.org/gnu/gcc/gcc-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gcc.gnu.org/
-PATCH_EACH_ARCHIVE=1
-PATCHDIR_PATCHES = $(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-                                2>/dev/null | sort) $(EXTRA_PATCHES)
 
-COMPONENT_SRC_1=    $(MPFR_NAME)-$(MPFR_VERSION)
-COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).tar.bz2
-COMPONENT_ARCHIVE_URL_1= http://www.mpfr.org/$(COMPONENT_SRC_1)/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1= \
-    sha256:c05e3f02d09e0e9019384cdd58e0f19c64e6db1fd6f5ecf77b4b1c61ca253acc
-CLEAN_PATHS += $(COMPONENT_SRC_1)
-COMPONENT_POST_UNPACK_ACTION_1 += ( $(RM) -r $(COMPONENT_SRC)/$(MPFR_NAME) && $(CP) -rpP $(COMPONENT_SRC_1) $(COMPONENT_SRC)/$(MPFR_NAME) )
+MPFR_VERSION=4.0.2
+MPFR_ARCHIVE_HASH= \
+  sha256:c05e3f02d09e0e9019384cdd58e0f19c64e6db1fd6f5ecf77b4b1c61ca253acc
 
-COMPONENT_SRC_2= $(MPC_NAME)-$(MPC_VERSION)
-COMPONENT_ARCHIVE_2= $(COMPONENT_SRC_2).tar.gz
-COMPONENT_ARCHIVE_URL_2=  http://www.multiprecision.org/mpc/download/$(COMPONENT_ARCHIVE_2)
-COMPONENT_ARCHIVE_HASH_2= \
-    sha256:6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
-CLEAN_PATHS += $(COMPONENT_SRC_2)
-COMPONENT_POST_UNPACK_ACTION_2 += ( $(RM) -r $(COMPONENT_SRC)/$(MPC_NAME) && $(CP) -rpP $(COMPONENT_SRC_2) $(COMPONENT_SRC)/$(MPC_NAME) )
+MPC_VERSION=1.1.0
+MPC_ARCHIVE_HASH= \
+  sha256:6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
 
-COMPONENT_SRC_3= $(GMP_NAME)-$(GMP_VERSION)
-COMPONENT_ARCHIVE_3= $(COMPONENT_SRC_3).tar.bz2
-COMPONENT_ARCHIVE_URL_3=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE_3)
-COMPONENT_ARCHIVE_HASH_3= \
-    sha256:5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
-CLEAN_PATHS += $(COMPONENT_SRC_3)
-COMPONENT_POST_UNPACK_ACTION_3 += ( $(RM) -r $(COMPONENT_SRC)/$(GMP_NAME) && $(CP) -rpP $(COMPONENT_SRC_3) $(COMPONENT_SRC)/$(GMP_NAME) )
+GMP_VERSION=6.1.2
+GMP_ARCHIVE_HASH= \
+  sha256:5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gcc-component.mk
 
-CC_BITS=
-CFLAGS=         -g -O2
-
-CONFIGURE_PREFIX= /usr/gcc/$(COMPONENT_MAJOR_VERSION)
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
-
-# Build recipe borrowed from OmniOS
-COMMON_ENV=  LD_OPTIONS="-zignore -zcombreloc -i"
-COMMON_ENV+= LD_FOR_TARGET=/usr/bin/ld
-COMMON_ENV+= LD_FOR_HOST=/usr/bin/ld
-COMMON_ENV+= LD=/usr/bin/ld
-
-CONFIGURE_ENV+= $(COMMON_ENV)
-COMPONENT_BUILD_ENV+= $(COMMON_ENV)
-COMPONENT_INSTALL_ENV+= $(COMMON_ENV)
-
-CONFIGURE_OPTIONS+= --sbindir=$(CONFIGURE_BINDIR.$(BITS))
-CONFIGURE_OPTIONS+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+= --host $(GNU_TRIPLET)
-CONFIGURE_OPTIONS+= --build $(GNU_TRIPLET)
-CONFIGURE_OPTIONS+= --target $(GNU_TRIPLET)
-#CONFIGURE_OPTIONS+= --with-boot-ldflags=-R$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS+= --with-pkgversion="OpenIndiana $(THIS_GCC_PKGVERSION)"
-CONFIGURE_OPTIONS+= --with-bugurl="https://bugs.openindiana.org"
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
 CONFIGURE_OPTIONS+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
-CONFIGURE_OPTIONS+= --without-gnu-ld
-CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
-CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 CONFIGURE_OPTIONS+= --disable-libitm
 
-# On SPARC systems, use Sun Assembler
-CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
-CONFIGURE_OPTIONS.i386+= --with-gnu-as --with-as=/usr/bin/gas
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(MACH))
-
-CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
-
-COMPONENT_POST_INSTALL_ACTION = \
-  $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include-fixed
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(TEST_32)
-
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
-# Required by test suite
-REQUIRED_PACKAGES+= developer/test/dejagnu
-REQUIRED_PACKAGES+= developer/build/autogen
