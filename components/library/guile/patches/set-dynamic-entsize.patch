@@ -1,0 +1,12 @@
+--- guile-2.2.6/module/system/vm/assembler.scm.~1~	2019-08-22 18:08:06.950457598 +0000
++++ guile-2.2.6/module/system/vm/assembler.scm	2019-08-22 18:08:12.651998286 +0000
+@@ -1851,7 +1851,8 @@
+       (set-uword! (- words 2) DT_NULL)
+       (set-uword! (- words 1) 0)
+       (make-object asm '.dynamic bv relocs '()
+-                   #:type SHT_DYNAMIC #:flags SHF_ALLOC)))
++                   #:type SHT_DYNAMIC #:flags SHF_ALLOC
++                   #:entsize (* 2 word-size))))
+   (case (asm-word-size asm)
+     ((4) (emit-dynamic-section 4 bytevector-u32-set! abs32/1))
+     ((8) (emit-dynamic-section 8 bytevector-u64-set! abs64/1))
