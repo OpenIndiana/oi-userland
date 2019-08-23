@@ -1,7 +1,65 @@
-From d7b7e98b544d94148bfd36fbbf2539ae9b6a5477 Mon Sep 17 00:00:00 2001
+From b9097449682f0a4da59bfe2dc858b72e50f11a1b Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sat, 16 Apr 2011 23:25:51 -0400
+Subject: [PATCH 01/25] README.md: Add a simple description of what's what
+
+---
+ README.md | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 README.md
+
+diff --git a/README.md b/README.md
+new file mode 100644
+index 00000000000..fcb3d7f9570
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,39 @@
++This is the GCC used for compiling illumos.
++
++The `il-*` branches contain the the patches used for building illumos, which
++are rebased versions of those used for Solaris/OpenSolaris, and then
++additional changes.  The versions actually in use are tagged with
++`il-VERSION-ilN` where _N_ version the illumos changes over the GCC version in
++question.
++
++The `wip/*` branches are works in progress and _should never be used_
++
++The `codesourcery/*` and `sun/*` branches contain the original GCCs as patched by
++CodeSourcery and Sun Microsystems for use compiling Solaris and OpenSolaris as
++was, and the GCCFSS patches of Sun's
++
++When building the compilers for illumos use the flags generally used are:
++
++i386
++~~~sh
++../../configure --prefix=/opt/gcc/$VER --with-as=/usr/bin/gas --with-gnu-as \
++   --with-ld=/usr/bin/ld --without-gnu-ld --enable-languages="c,c++,objc" \
++   --enable-shared  --with-mpfr-include=/usr/include/mpfr \
++   --with-gmp-include=/usr/include/gmp \
++   --with-pkgversion="Illumos $(git describe --all)" \
++   --with-bugurl="http://github.com/richlowe/gcc/issues"
++~~~
++
++sparc
++~~~sh
++../../configure --prefix=/opt/gcc/$VER --without-gnu-as --with-as=/usr/ccs/bin/as" \
++   --with-ld=/usr/bin/ld --without-gnu-ld --enable-languages="c,c++,objc" \
++   --enable-shared  --with-mpfr-include=/usr/include/mpfr \
++   --with-gmp-include=/usr/include/gmp \
++   --with-pkgversion="Illumos $(git describe --all)" \
++   --with-bugurl="http://github.com/richlowe/gcc/issues"
++~~~
++
++Please use the correct `--with-bugurl` and `--with-pkgversion` flags as
++appropriate for any modifications you make, but please also be sure that they
++accurately describe what is in use (ie, are not left at the defaults) either.
+-- 
+2.23.0
+
+From 85340f48f9c3b58161ccc68f31a8093be1549d7e Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 26 Jan 2016 14:24:11 -0500
-Subject: [PATCH 01/26] compare_tests: Use nawk(1) on illumos, since awk(1) is
+Subject: [PATCH 02/25] compare_tests: Use nawk(1) on illumos, since awk(1) is
  old and bad
 
 ---
@@ -31,13 +89,12 @@ index 2dfa8640756..6616a201f23 100755
  before=$tmp1
  now=$tmp2
 -- 
-2.21.0
+2.23.0
 
-
-From d03ca746a0a20428850f207954410788316d3092 Mon Sep 17 00:00:00 2001
+From 7422eae6fa9661dc3ce4cbaa3bdfa709b428b9a4 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Wed, 5 Mar 2014 04:12:52 +0000
-Subject: [PATCH 02/26] gcc: enable the .eh_frame based unwinder
+Subject: [PATCH 03/25] gcc: enable the .eh_frame based unwinder
 
 ---
  gcc/configure    | 3 +++
@@ -45,18 +102,18 @@ Subject: [PATCH 02/26] gcc: enable the .eh_frame based unwinder
  2 files changed, 6 insertions(+)
 
 diff --git a/gcc/configure b/gcc/configure
-index 3dcf7752b7f..bfaaa951e9c 100755
+index 481071b4265..5e2db8a84a4 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -23073,6 +23073,7 @@ if test $in_tree_ld != yes ; then
- 	    -e 's,^.*: \(5\|1[0-9]\)\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\2,p'`
+@@ -23069,6 +23069,7 @@ if test $in_tree_ld != yes ; then
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
  	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
  	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
 +	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
  	fi
  	;;
      esac
-@@ -28342,6 +28343,8 @@ elif test x$gcc_cv_ld != x; then
+@@ -28338,6 +28339,8 @@ elif test x$gcc_cv_ld != x; then
          # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
          if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
            gcc_cv_ld_eh_frame_hdr=yes
@@ -66,18 +123,18 @@ index 3dcf7752b7f..bfaaa951e9c 100755
          ;;
      esac
 diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 51f520c1508..68868a21514 100644
+index ce2825580c6..f07dd891c5a 100644
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
-@@ -2686,6 +2686,7 @@ if test $in_tree_ld != yes ; then
- 	    -e 's,^.*: \(5\|1[0-9]\)\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\2,p'`
+@@ -2682,6 +2682,7 @@ if test $in_tree_ld != yes ; then
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
  	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
  	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
 +	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
  	fi
  	;;
      esac
-@@ -5166,6 +5167,8 @@ elif test x$gcc_cv_ld != x; then
+@@ -5162,6 +5163,8 @@ elif test x$gcc_cv_ld != x; then
          # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
          if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
            gcc_cv_ld_eh_frame_hdr=yes
@@ -87,13 +144,12 @@ index 51f520c1508..68868a21514 100644
          ;;
      esac
 -- 
-2.21.0
+2.23.0
 
-
-From 64d5df425f54e38aea2b85b1fd3f391c71092f30 Mon Sep 17 00:00:00 2001
+From 144bd34b11e2443d8d23060faf38db87b7dde231 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 11 Mar 2014 21:50:30 +0000
-Subject: [PATCH 03/26] intl: Don't use UTF-8 quotes.  Ever.
+Subject: [PATCH 04/25] intl: Don't use UTF-8 quotes.  Ever.
 
 ---
  gcc/intl.c | 17 ++++-------------
@@ -133,13 +189,12 @@ index f3a5757bf8c..f1c95e57a73 100644
 -
 -
 -- 
-2.21.0
+2.23.0
 
-
-From 954b662deee8d628ed51c4e71520344f193c7136 Mon Sep 17 00:00:00 2001
+From 4b40d4a90caf10f3f191ca0c07da74ab0dd93176 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sat, 27 Oct 2012 02:44:09 +0100
-Subject: [PATCH 04/26] Implement -fstrict-calling-conventions
+Subject: [PATCH 05/25] Implement -fstrict-calling-conventions
 
 Stock GCC is overly willing to violate the ABI when calling local functions,
 such that it passes arguments in registers on i386.  This hampers debugging
@@ -174,10 +229,10 @@ index d342c4f3749..f006fcaaffd 100644
  Common Report
  Treat signed overflow as undefined.  Negated as -fwrapv -fwrapv-pointer.
 diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index 8a1ffd3769f..d88522a6be0 100644
+index 2b37296e537..68ea5684de9 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
-@@ -6611,6 +6611,7 @@ ix86_function_regparm (const_tree type, const_tree decl)
+@@ -6620,6 +6620,7 @@ ix86_function_regparm (const_tree type, const_tree decl)
  	 and callee not, or vice versa.  Instead look at whether the callee
  	 is optimized or not.  */
        if (target && opt_for_fn (target->decl, optimize)
@@ -185,7 +240,7 @@ index 8a1ffd3769f..d88522a6be0 100644
  	  && !(profile_flag && !flag_fentry))
  	{
  	  cgraph_local_info *i = &target->local;
-@@ -6708,6 +6709,7 @@ ix86_function_sseregparm (const_tree type, const_tree decl, bool warn)
+@@ -6717,6 +6718,7 @@ ix86_function_sseregparm (const_tree type, const_tree decl, bool warn)
        /* TARGET_SSE_MATH */
        && (target_opts_for_fn (target->decl)->x_ix86_fpmath & FPMATH_SSE)
        && opt_for_fn (target->decl, optimize)
@@ -194,7 +249,7 @@ index 8a1ffd3769f..d88522a6be0 100644
      {
        cgraph_local_info *i = &target->local;
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 29585cf15aa..142f7b2d5bb 100644
+index 6ef36ce02aa..fc9ae18caff 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
 @@ -9997,6 +9997,12 @@ int f() @{
@@ -253,13 +308,12 @@ index 00000000000..fa0543e52ff
 +    printf("%d\n", a, b, c, d, e);
 +}
 -- 
-2.21.0
+2.23.0
 
-
-From 99fda30566dbac529667bb10e6b008afb78ef5cb Mon Sep 17 00:00:00 2001
+From 2170b3acc629a90aa8b6356d96e0c04115713394 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sun, 30 Sep 2012 16:44:14 -0400
-Subject: [PATCH 05/26] allow the global disabling of function cloning
+Subject: [PATCH 06/25] allow the global disabling of function cloning
 
 Optimizations which clone functions to create call-specific implementations
 which may be better optimized also dissociate these functions from their
@@ -312,7 +366,7 @@ index f006fcaaffd..c82a2bafca6 100644
  Common Report Var(flag_combine_stack_adjustments) Optimization
  Looks for opportunities to reduce stack adjustments and stack references.
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 142f7b2d5bb..9745d807889 100644
+index fc9ae18caff..94dff3c8f0f 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
 @@ -403,7 +403,7 @@ Objective-C and Objective-C++ Dialects}.
@@ -341,13 +395,12 @@ index 142f7b2d5bb..9745d807889 100644
  @opindex fipa-ra
  Use caller save registers for allocation if those registers are not used by
 -- 
-2.21.0
+2.23.0
 
-
-From 125fe135ae2ac582cb16b63ecf6f9a68ceee1add Mon Sep 17 00:00:00 2001
+From 36d5f22e66d466a0dce603dc30211abf3caf5429 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 4 Mar 2014 02:58:33 +0000
-Subject: [PATCH 06/26] strict-cc2: check that disabling function cloning
+Subject: [PATCH 07/25] strict-cc2: check that disabling function cloning
  prevents constant propagation eliding or changing arguments
 
 ---
@@ -390,13 +443,12 @@ index 00000000000..0955381c848
 +    printf("%d %d\n", a, b, c);
 +}
 -- 
-2.21.0
+2.23.0
 
-
-From 6c12a36ca80f586452ea8438582132591f4b9702 Mon Sep 17 00:00:00 2001
+From 64f1842ab590aa5fec8e8ae0f411acfd63372bc9 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 4 Mar 2014 22:11:03 +0000
-Subject: [PATCH 07/26] sol2: enable full __cxa_atexit support
+Subject: [PATCH 08/25] sol2: enable full __cxa_atexit support
 
 ---
  gcc/config/sol2.h  | 4 ++--
@@ -447,13 +499,12 @@ index 91abc84da03..0191f3181f0 100644
        sparc*-*-solaris2.1[0-9]*)
          # Solaris 10+/SPARC lacks crt1.o and gcrt1.o.
 -- 
-2.21.0
+2.23.0
 
-
-From 8deb3ac534407735dd49bee8c9239df21d6e1f1a Mon Sep 17 00:00:00 2001
+From 0e13a33e83bdc103d87a05cf41b24038aba41e1c Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sat, 23 Jan 2016 22:14:56 -0500
-Subject: [PATCH 08/26] i386: Save integer-passed arguments to the stack, to
+Subject: [PATCH 09/25] i386: Save integer-passed arguments to the stack, to
  aid debuggers.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -495,7 +546,7 @@ Originally implemented in:
  create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-push.c
 
 diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index d88522a6be0..e27987f3f8e 100644
+index 68ea5684de9..15994201a60 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
 @@ -857,6 +857,8 @@ static unsigned int ix86_minimum_incoming_stack_boundary (bool);
@@ -507,7 +558,7 @@ index d88522a6be0..e27987f3f8e 100644
  
  #ifndef SUBTARGET32_DEFAULT_CPU
  #define SUBTARGET32_DEFAULT_CPU "i386"
-@@ -4350,6 +4352,9 @@ ix86_option_override_internal (bool main_args_p,
+@@ -4355,6 +4357,9 @@ ix86_option_override_internal (bool main_args_p,
        &= ~((OPTION_MASK_ISA_BMI | OPTION_MASK_ISA_BMI2 | OPTION_MASK_ISA_TBM)
  	   & ~opts->x_ix86_isa_flags_explicit);
  
@@ -517,7 +568,7 @@ index d88522a6be0..e27987f3f8e 100644
    /* Validate -mpreferred-stack-boundary= value or default it to
       PREFERRED_STACK_BOUNDARY_DEFAULT.  */
    ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
-@@ -10486,7 +10491,7 @@ ix86_can_use_return_insn_p (void)
+@@ -10495,7 +10500,7 @@ ix86_can_use_return_insn_p (void)
  
    struct ix86_frame &frame = cfun->machine->frame;
    return (frame.stack_pointer_offset == UNITS_PER_WORD
@@ -526,7 +577,7 @@ index d88522a6be0..e27987f3f8e 100644
  }
  
  /* Value should be nonzero if functions must have frame pointers.
-@@ -10510,6 +10515,9 @@ ix86_frame_pointer_required (void)
+@@ -10519,6 +10524,9 @@ ix86_frame_pointer_required (void)
    if (TARGET_32BIT_MS_ABI && cfun->calls_setjmp)
      return true;
  
@@ -536,7 +587,7 @@ index d88522a6be0..e27987f3f8e 100644
    /* Win64 SEH, very large frames need a frame-pointer as maximum stack
       allocation is 4GB.  */
    if (TARGET_64BIT_MS_ABI && get_frame_size () > SEH_MAX_FRAME_SIZE)
-@@ -11358,6 +11366,7 @@ ix86_compute_frame_layout (void)
+@@ -11367,6 +11375,7 @@ ix86_compute_frame_layout (void)
  
    frame->nregs = ix86_nsaved_regs ();
    frame->nsseregs = ix86_nsaved_sseregs ();
@@ -544,7 +595,7 @@ index d88522a6be0..e27987f3f8e 100644
  
    /* 64-bit MS ABI seem to require stack alignment to be always 16,
       except for function prologues, leaf functions and when the defult
-@@ -11426,7 +11435,8 @@ ix86_compute_frame_layout (void)
+@@ -11435,7 +11444,8 @@ ix86_compute_frame_layout (void)
      }
  
    frame->save_regs_using_mov
@@ -554,7 +605,7 @@ index d88522a6be0..e27987f3f8e 100644
         /* If static stack checking is enabled and done with probes,
  	  the registers need to be saved before allocating the frame.  */
         && flag_stack_check != STATIC_BUILTIN_STACK_CHECK);
-@@ -11446,6 +11456,13 @@ ix86_compute_frame_layout (void)
+@@ -11455,6 +11465,13 @@ ix86_compute_frame_layout (void)
    /* The traditional frame pointer location is at the top of the frame.  */
    frame->hard_frame_pointer_offset = offset;
  
@@ -568,7 +619,7 @@ index d88522a6be0..e27987f3f8e 100644
    /* Register save area */
    offset += frame->nregs * UNITS_PER_WORD;
    frame->reg_save_offset = offset;
-@@ -11584,7 +11601,7 @@ ix86_compute_frame_layout (void)
+@@ -11593,7 +11610,7 @@ ix86_compute_frame_layout (void)
    /* Size prologue needs to allocate.  */
    to_allocate = offset - frame->sse_reg_save_offset;
  
@@ -577,7 +628,7 @@ index d88522a6be0..e27987f3f8e 100644
        || (TARGET_64BIT && to_allocate >= HOST_WIDE_INT_C (0x80000000))
        /* If stack clash probing needs a loop, then it needs a
  	 scratch register.  But the returned register is only guaranteed
-@@ -11603,7 +11620,11 @@ ix86_compute_frame_layout (void)
+@@ -11612,7 +11629,11 @@ ix86_compute_frame_layout (void)
      {
        frame->red_zone_size = to_allocate;
        if (frame->save_regs_using_mov)
@@ -590,7 +641,7 @@ index d88522a6be0..e27987f3f8e 100644
        if (frame->red_zone_size > RED_ZONE_SIZE - RED_ZONE_RESERVE)
  	frame->red_zone_size = RED_ZONE_SIZE - RED_ZONE_RESERVE;
      }
-@@ -11634,6 +11655,25 @@ ix86_compute_frame_layout (void)
+@@ -11643,6 +11664,25 @@ ix86_compute_frame_layout (void)
  	  frame->hard_frame_pointer_offset = frame->stack_pointer_offset - 128;
  	}
      }
@@ -616,7 +667,7 @@ index d88522a6be0..e27987f3f8e 100644
  }
  
  /* This is semi-inlined memory_address_length, but simplified
-@@ -11850,6 +11890,24 @@ ix86_emit_save_regs (void)
+@@ -11859,6 +11899,24 @@ ix86_emit_save_regs (void)
    unsigned int regno;
    rtx_insn *insn;
  
@@ -641,7 +692,7 @@ index d88522a6be0..e27987f3f8e 100644
    for (regno = FIRST_PSEUDO_REGISTER - 1; regno-- > 0; )
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
        {
-@@ -11936,9 +11994,30 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+@@ -11945,9 +12003,30 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
  /* Emit code to save registers using MOV insns.
     First register is stored at CFA - CFA_OFFSET.  */
  static void
@@ -673,7 +724,7 @@ index d88522a6be0..e27987f3f8e 100644
  
    for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
-@@ -13423,7 +13502,7 @@ ix86_expand_prologue (void)
+@@ -13432,7 +13511,7 @@ ix86_expand_prologue (void)
  	}
      }
  
@@ -682,7 +733,7 @@ index d88522a6be0..e27987f3f8e 100644
    sse_registers_saved = (frame.nsseregs == 0);
    save_stub_call_needed = (m->call_ms2sysv);
    gcc_assert (sse_registers_saved || !save_stub_call_needed);
-@@ -13443,6 +13522,7 @@ ix86_expand_prologue (void)
+@@ -13452,6 +13531,7 @@ ix86_expand_prologue (void)
  	{
  	  ix86_emit_save_regs ();
  	  int_registers_saved = true;
@@ -690,7 +741,7 @@ index d88522a6be0..e27987f3f8e 100644
  	  gcc_assert (m->fs.sp_offset == frame.reg_save_offset);
  	}
  
-@@ -13476,7 +13556,7 @@ ix86_expand_prologue (void)
+@@ -13485,7 +13565,7 @@ ix86_expand_prologue (void)
  	       && (! TARGET_STACK_PROBE
  		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
  	{
@@ -699,7 +750,7 @@ index d88522a6be0..e27987f3f8e 100644
  	  int_registers_saved = true;
  	}
      }
-@@ -13768,7 +13848,7 @@ ix86_expand_prologue (void)
+@@ -13777,7 +13857,7 @@ ix86_expand_prologue (void)
      }
  
    if (!int_registers_saved)
@@ -708,7 +759,7 @@ index d88522a6be0..e27987f3f8e 100644
    if (!sse_registers_saved)
      ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
    else if (save_stub_call_needed)
-@@ -13803,6 +13883,7 @@ ix86_expand_prologue (void)
+@@ -13812,6 +13892,7 @@ ix86_expand_prologue (void)
       relative to the value of the stack pointer at the end of the function
       prologue, and moving instructions that access redzone area via frame
       pointer inside push sequence violates this assumption.  */
@@ -716,7 +767,7 @@ index d88522a6be0..e27987f3f8e 100644
    if (frame_pointer_needed && frame.red_zone_size)
      emit_insn (gen_memory_blockage ());
  
-@@ -14186,6 +14267,7 @@ ix86_expand_epilogue (int style)
+@@ -14195,6 +14276,7 @@ ix86_expand_epilogue (int style)
  
    /* See the comment about red zone and frame
       pointer usage in ix86_expand_prologue.  */
@@ -724,7 +775,7 @@ index d88522a6be0..e27987f3f8e 100644
    if (frame_pointer_needed && frame.red_zone_size)
      emit_insn (gen_memory_blockage ());
  
-@@ -14417,6 +14499,36 @@ ix86_expand_epilogue (int style)
+@@ -14426,6 +14508,36 @@ ix86_expand_epilogue (int style)
        ix86_emit_restore_regs_using_pop ();
      }
  
@@ -761,7 +812,7 @@ index d88522a6be0..e27987f3f8e 100644
    /* If we used a stack pointer and haven't already got rid of it,
       then do so now.  */
    if (m->fs.fp_valid)
-@@ -15471,6 +15583,19 @@ ix86_cannot_force_const_mem (machine_mode mode, rtx x)
+@@ -15480,6 +15592,19 @@ ix86_cannot_force_const_mem (machine_mode mode, rtx x)
    return !ix86_legitimate_constant_p (mode, x);
  }
  
@@ -835,10 +886,10 @@ index 5fb2ec6aeae..abe07ee45bd 100644
  Target RejectNegative Negative(mtune=) Joined Var(ix86_tune_string)
  Schedule code for given CPU.
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 9745d807889..b893a4c066c 100644
+index 94dff3c8f0f..ea4326868fc 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -15656,6 +15656,10 @@ dynamically linked.  This is the default code model.
+@@ -15663,6 +15663,10 @@ dynamically linked.  This is the default code model.
  Generate code for the large code model.  This makes no assumptions about
  addresses and sizes of sections.  Programs can be statically linked only.
  
@@ -850,10 +901,10 @@ index 9745d807889..b893a4c066c 100644
  @itemx -mno-strict-align
  @opindex mstrict-align
 diff --git a/gcc/dwarf2out.c b/gcc/dwarf2out.c
-index b9a624e1ac7..da6aee19c5d 100644
+index 1cec00f2b85..a555a4e2422 100644
 --- a/gcc/dwarf2out.c
 +++ b/gcc/dwarf2out.c
-@@ -23397,6 +23397,11 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+@@ -23400,6 +23400,11 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
      /* Add the calling convention attribute if requested.  */
      add_calling_convention_attribute (subr_die, decl);
  
@@ -943,13 +994,12 @@ index 9cce1f892c5..3bc000ae122 100644
  DW_AT (DW_AT_upc_threads_scaled, 0x3210)
  /* PGI (STMicroelectronics) extensions.  */
 -- 
-2.21.0
+2.23.0
 
-
-From 8aab47959ad53be2ccb25988882b217543ded211 Mon Sep 17 00:00:00 2001
+From 54e27da3db7c7cff37a3ed22e2e484e9fb10ac4e Mon Sep 17 00:00:00 2001
 From: Yuri Pankov <yuri.pankov@nexenta.com>
 Date: Sat, 5 Nov 2016 05:26:47 +0300
-Subject: [PATCH 09/26] 16 update cmn_err format specifier Reviewed by: Richard
+Subject: [PATCH 10/25] 16 update cmn_err format specifier Reviewed by: Richard
  Lowe <richlowe@richlowe.net> Reviewed by: Robert Mustacchi <rm@joyent.com>
 
 ---
@@ -1011,13 +1061,12 @@ index 0ecfc8c41a9..e68d0dd6903 100644
    }
  };
 -- 
-2.21.0
+2.23.0
 
-
-From 8474cf72d7a099f2087277a6dd553b90be5d6127 Mon Sep 17 00:00:00 2001
+From 8e95d9bd0cb936302bdf3e834e2ed3f5110b5690 Mon Sep 17 00:00:00 2001
 From: Yuri Pankov <yuri.pankov@nexenta.com>
 Date: Mon, 13 Feb 2017 18:14:45 +0300
-Subject: [PATCH 10/26] 19 cmn_err %b conversion should accept 0 flag Reviewed
+Subject: [PATCH 11/25] 19 cmn_err %b conversion should accept 0 flag Reviewed
  by: Robert Mustacchi <rm@joyent.com> Reviewed by: Richard Lowe
  <richlowe@richlowe.net>
 
@@ -1039,13 +1088,12 @@ index e68d0dd6903..6cf160e2d7b 100644
  };
  
 -- 
-2.21.0
+2.23.0
 
-
-From 80ac81b67715339fdb705dc4391e531bbfba0f2e Mon Sep 17 00:00:00 2001
+From c55a55435a5c38c543e6c3310e1252fe24b49ef1 Mon Sep 17 00:00:00 2001
 From: Andy Fiddaman <omnios@citrus-it.co.uk>
 Date: Thu, 25 Oct 2018 18:19:36 +0000
-Subject: [PATCH 11/26] We never want to omit the frame pointer, regardless of
+Subject: [PATCH 12/25] We never want to omit the frame pointer, regardless of
  the optimisation level or options to gcc - we like stack traces too much and
  it is of questionable benefit anyway, even on i386.
 
@@ -1054,10 +1102,10 @@ Subject: [PATCH 11/26] We never want to omit the frame pointer, regardless of
  1 file changed, 9 insertions(+)
 
 diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index e27987f3f8e..f36d354e342 100644
+index 15994201a60..9f350ddd6e8 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
-@@ -4807,6 +4807,15 @@ ix86_option_override_internal (bool main_args_p,
+@@ -4812,6 +4812,15 @@ ix86_option_override_internal (bool main_args_p,
        free (str);
      }
  
@@ -1074,13 +1122,12 @@ index e27987f3f8e..f36d354e342 100644
       options.  */
    if (main_args_p)
 -- 
-2.21.0
+2.23.0
 
-
-From 6122eb08fe36de73ad1b5f4eaa46e0c11841e11e Mon Sep 17 00:00:00 2001
+From 7320fac5144aae3caf393047ef1d16683668d466 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Mon, 29 Oct 2018 18:21:34 +0000
-Subject: [PATCH 12/26] libstdc++v3: illumos and Solaris haven't needed -lrt in
+Subject: [PATCH 13/25] libstdc++v3: illumos and Solaris haven't needed -lrt in
  a long time
 
 Originally from Andy Fiddaman <andy@omniosce.org>
@@ -1090,7 +1137,7 @@ Originally from Andy Fiddaman <andy@omniosce.org>
  2 files changed, 2 deletions(-)
 
 diff --git a/libstdc++-v3/acinclude.m4 b/libstdc++-v3/acinclude.m4
-index 84258d87a33..f4866af72d9 100644
+index 0112d645aa4..87faef410e0 100644
 --- a/libstdc++-v3/acinclude.m4
 +++ b/libstdc++-v3/acinclude.m4
 @@ -1435,7 +1435,6 @@ AC_DEFUN([GLIBCXX_ENABLE_LIBSTDCXX_TIME], [
@@ -1102,7 +1149,7 @@ index 84258d87a33..f4866af72d9 100644
          ac_has_clock_realtime=yes
          ac_has_nanosleep=yes
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index 7d134a0034b..1a2752fac6e 100755
+index 5acf79cba54..101cb8e9a21 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
 @@ -20880,7 +20880,6 @@ $as_echo "$glibcxx_glibc217" >&6; }
@@ -1114,13 +1161,12 @@ index 7d134a0034b..1a2752fac6e 100755
          ac_has_clock_realtime=yes
          ac_has_nanosleep=yes
 -- 
-2.21.0
+2.23.0
 
-
-From e1883b16bc4e68011aaabe699b82ddf18da75d50 Mon Sep 17 00:00:00 2001
+From 18c1b248544a65ddd617864b9bdc1e3aaf7c0b16 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Mon, 29 Oct 2018 18:23:00 +0000
-Subject: [PATCH 13/26] libgo: libelf on illumos doesn't support largefile
+Subject: [PATCH 14/25] libgo: libelf on illumos doesn't support largefile
 
 Originally from pkgsrc
 ---
@@ -1143,13 +1189,12 @@ index 1569b5bb898..2acf042946a 100644
  #endif
  
 -- 
-2.21.0
+2.23.0
 
-
-From 2614ef04ae6866a1e4caee3b794b059403b5f04e Mon Sep 17 00:00:00 2001
+From bf7840b76ee6124d9f782350b53db83984776893 Mon Sep 17 00:00:00 2001
 From: Andy Fiddaman <omnios@citrus-it.co.uk>
 Date: Mon, 11 Mar 2019 10:41:58 +0000
-Subject: [PATCH 14/26] libpthread is a filter in illumos; all functionality
+Subject: [PATCH 15/25] libpthread is a filter in illumos; all functionality
  has been migrated to libc. Prevent gcc from linking with libpthread if
  -pthread[s] is passed as an option.
 
@@ -1171,13 +1216,12 @@ index 6531dfeb982..b2a2ae87add 100644
  
  #ifndef CROSS_DIRECTORY_STRUCTURE
 -- 
-2.21.0
+2.23.0
 
-
-From 5551bdc20b3d24a6da4c4095312dc6b30be960f0 Mon Sep 17 00:00:00 2001
+From 16ecbd5511ed48f315fe2e6cb10935b0471e498b Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Fri, 26 Apr 2019 03:05:14 +0000
-Subject: [PATCH 15/26] i386: Fix grammar of -msave-args usage message
+Subject: [PATCH 16/25] i386: Fix grammar of -msave-args usage message
 
 The GCC test suite checks that usage messages are properly punctuated,
 so this fixes a low-hanging test failure
@@ -1199,13 +1243,12 @@ index abe07ee45bd..5909d1b736d 100644
  mforce-save-regs-using-mov
  Target Report Mask(FORCE_SAVE_REGS_USING_MOV)
 -- 
-2.21.0
+2.23.0
 
-
-From 922014d45ef95d683b9ca3ddb0691c16aa8701f1 Mon Sep 17 00:00:00 2001
+From ab1bea7a82698a9bd12be61b7733d7a508d912fa Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Thu, 2 May 2019 17:54:20 +0000
-Subject: [PATCH 16/26] tests: x86_64 pro_and_epilogue RTL can't work with
+Subject: [PATCH 17/25] tests: x86_64 pro_and_epilogue RTL can't work with
  -msave-args
 
 The RTL is included directly in the test, and was generated without
@@ -1229,13 +1272,12 @@ index b6f723a6e60..5863119c2a5 100644
  /* Lightly-modified dump of test.c.274r.split2 for x86_64.  */
  
 -- 
-2.21.0
+2.23.0
 
-
-From ca540317159abf1d32154340611f87ea5d5a8967 Mon Sep 17 00:00:00 2001
+From 65e305cb5d3983560eb0ffa1dfa78fd8e94ae819 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Fri, 3 May 2019 00:56:45 +0000
-Subject: [PATCH 17/26] i386: don't assert the FP is valid during epilogue
+Subject: [PATCH 18/25] i386: don't assert the FP is valid during epilogue
  adjustment
 
 I did this, I think, to double check some assumptions.  Unfortunately,
@@ -1249,10 +1291,10 @@ While here, make the code more readable and conventional.
  1 file changed, 32 insertions(+), 37 deletions(-)
 
 diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index f36d354e342..92f868fc742 100644
+index 9f350ddd6e8..93bfdf37311 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
-@@ -11897,21 +11897,21 @@ static void
+@@ -11906,21 +11906,21 @@ static void
  ix86_emit_save_regs (void)
  {
    unsigned int regno;
@@ -1277,7 +1319,7 @@ index f36d354e342..92f868fc742 100644
  	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
  				   GEN_INT (-UNITS_PER_WORD), -1, false);
      }
-@@ -12003,22 +12003,21 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+@@ -12012,22 +12012,21 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
  /* Emit code to save registers using MOV insns.
     First register is stored at CFA - CFA_OFFSET.  */
  static void
@@ -1304,7 +1346,7 @@ index f36d354e342..92f868fc742 100644
  	{
  	  regno = x86_64_int_parameter_registers[i];
  	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
-@@ -12026,7 +12025,7 @@ ix86_emit_save_regs_using_mov (struct ix86_frame *frame)
+@@ -12035,7 +12034,7 @@ ix86_emit_save_regs_using_mov (struct ix86_frame *frame)
  	}
      }
  
@@ -1313,7 +1355,7 @@ index f36d354e342..92f868fc742 100644
  
    for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
-@@ -13565,7 +13564,7 @@ ix86_expand_prologue (void)
+@@ -13574,7 +13573,7 @@ ix86_expand_prologue (void)
  	       && (! TARGET_STACK_PROBE
  		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
  	{
@@ -1322,7 +1364,7 @@ index f36d354e342..92f868fc742 100644
  	  int_registers_saved = true;
  	}
      }
-@@ -13857,7 +13856,7 @@ ix86_expand_prologue (void)
+@@ -13866,7 +13865,7 @@ ix86_expand_prologue (void)
      }
  
    if (!int_registers_saved)
@@ -1331,7 +1373,7 @@ index f36d354e342..92f868fc742 100644
    if (!sse_registers_saved)
      ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
    else if (save_stub_call_needed)
-@@ -14508,36 +14507,32 @@ ix86_expand_epilogue (int style)
+@@ -14517,36 +14516,32 @@ ix86_expand_epilogue (int style)
        ix86_emit_restore_regs_using_pop ();
      }
  
@@ -1391,13 +1433,12 @@ index f36d354e342..92f868fc742 100644
       then do so now.  */
    if (m->fs.fp_valid)
 -- 
-2.21.0
+2.23.0
 
-
-From bf81ad423c5acf82330277eb676c5c7e42660882 Mon Sep 17 00:00:00 2001
+From 6fec12e7681391c5926e4b20b2d264a834d7cd0f Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Fri, 3 May 2019 01:02:08 +0000
-Subject: [PATCH 18/26] gcc.target/i386/retarg: skip if msave-args
+Subject: [PATCH 19/25] gcc.target/i386/retarg: skip if msave-args
 
 This will always fail if saving arguments, because we're testing
 argument registers are untouched, so saving them will ruin that.
@@ -1417,13 +1458,12 @@ index a69b60feaf4..3967ef76b1f 100644
  #include <string.h>
  
 -- 
-2.21.0
+2.23.0
 
-
-From 6832b7d81991fb1a8f0b0e09e6ef8e3512e7aa48 Mon Sep 17 00:00:00 2001
+From 8278a1f36f465b8070cadeecc3bd2d5a45400d3a Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Fri, 3 May 2019 01:20:30 +0000
-Subject: [PATCH 19/26] i386: use correct error message about -msave-args and
+Subject: [PATCH 20/25] i386: use correct error message about -msave-args and
  ABIs
 
 We used to say it made no sense in 32bit mode, but it doesn't make sense
@@ -1433,10 +1473,10 @@ in 16bit mode either
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index 92f868fc742..bf0739ee5db 100644
+index 93bfdf37311..3495ae31e31 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
-@@ -4353,7 +4353,7 @@ ix86_option_override_internal (bool main_args_p,
+@@ -4358,7 +4358,7 @@ ix86_option_override_internal (bool main_args_p,
  	   & ~opts->x_ix86_isa_flags_explicit);
  
    if (!TARGET_64BIT_P (opts->x_ix86_isa_flags) && TARGET_SAVE_ARGS)
@@ -1446,13 +1486,12 @@ index 92f868fc742..bf0739ee5db 100644
    /* Validate -mpreferred-stack-boundary= value or default it to
       PREFERRED_STACK_BOUNDARY_DEFAULT.  */
 -- 
-2.21.0
+2.23.0
 
-
-From 3aa52636c58ae3dc5e83a6ec7fd3617cfeb71347 Mon Sep 17 00:00:00 2001
+From 66ce7c7f8238100502a7b5f7b6a461b26b87d73e Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Fri, 3 May 2019 01:22:56 +0000
-Subject: [PATCH 20/26] gcc.target/i386: skip 16bit tests when -msave-args
+Subject: [PATCH 21/25] gcc.target/i386: skip 16bit tests when -msave-args
 
 ---
  gcc/testsuite/gcc.target/i386/pr78691-i386.c | 1 +
@@ -1483,13 +1522,12 @@ index 8e11c40bb08..92a86380f78 100644
  void load_kernel(void *setup_addr)
  {
 -- 
-2.21.0
+2.23.0
 
-
-From 5de977cf170810bf97bbcb1a6aba0df48f28c478 Mon Sep 17 00:00:00 2001
+From f8bd37d677735e5207826ea1e6402a5a616846df Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
 Date: Thu, 25 Oct 2018 20:59:37 +0200
-Subject: [PATCH 21/26] Use compare-debug to pass stage2/stage3 comparison as
+Subject: [PATCH 22/25] Use compare-debug to pass stage2/stage3 comparison as
  avx_*.o and sse-*.o contain debug info that should be stripped
 
 ---
@@ -1510,13 +1548,12 @@ index 64e091ba71d..4c77ea2fd19 100644
  
  # -----------------------------------------------
 -- 
-2.21.0
+2.23.0
 
-
-From 447c2aeeed6ad2bfcaa1aefcb41fafa71321bda3 Mon Sep 17 00:00:00 2001
+From 1d695dd70310d00fef686ba0c628d7e9a8caf7b5 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
 Date: Thu, 25 Oct 2018 20:54:55 +0200
-Subject: [PATCH 22/26] Address fixincludes failure
+Subject: [PATCH 23/25] Address fixincludes failure
 
 ---
  fixincludes/fixinc.in | 4 ++--
@@ -1545,20 +1582,19 @@ index cd0b458b8f8..d148f4bec03 100755
              dirmade=$dirmade/$component
              dirname=`echo $dirname | sed -e 's|[^/]*//*||'`
 -- 
-2.21.0
+2.23.0
 
-
-From 90d9d635b8d285b95ae126572628cbaf75a7fc7a Mon Sep 17 00:00:00 2001
+From 3b8382b0404273944597ae99bd06ac6e3da70dcc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
 Date: Thu, 25 Oct 2018 20:39:30 +0200
-Subject: [PATCH 23/26] Never omit frame pointer
+Subject: [PATCH 24/25] Never omit frame pointer
 
 ---
  gcc/opts.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gcc/opts.c b/gcc/opts.c
-index 6d6ff19de2d..f8ece8ee9f7 100644
+index 6164d49fa08..14e4d5eeb13 100644
 --- a/gcc/opts.c
 +++ b/gcc/opts.c
 @@ -454,7 +454,7 @@ static const struct default_options default_options_table[] =
@@ -1571,50 +1607,53 @@ index 6d6ff19de2d..f8ece8ee9f7 100644
      { OPT_LEVELS_1_PLUS, OPT_fshrink_wrap, NULL, 1 },
      { OPT_LEVELS_1_PLUS, OPT_fsplit_wide_types, NULL, 1 },
 -- 
-2.21.0
+2.23.0
 
-
-From c4998b6052dbb4335ff126fbee4670dc5e80803d Mon Sep 17 00:00:00 2001
+From 391ffb8691243ac30481d24d38e234906f11785c Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Tue, 11 Jun 2019 22:35:51 +0000
-Subject: [PATCH 24/26] gcc/configure: illumos sed needs extended regexps to
+Subject: [PATCH 25/25] gcc/configure: illumos sed needs extended regexps to
  support alternation
 
 ---
- gcc/configure    | 4 ++--
- gcc/configure.ac | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ gcc/configure    | 6 +++---
+ gcc/configure.ac | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index bfaaa951e9c..379aa69f6f7 100755
+index 5e2db8a84a4..9fcd3108f33 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -23069,8 +23069,8 @@ if test $in_tree_ld != yes ; then
+@@ -23064,9 +23064,9 @@ if test $in_tree_ld != yes ; then
+ 	# numbers can be used in ld.so.1 feature checks even if a different
  	# linker is configured.
  	ld_ver=`$gcc_cv_ld -V 2>&1`
- 	if echo "$ld_ver" | $EGREP 'Solaris Link Editors|Solaris ELF Utilities' > /dev/null; then
+-	if echo "$ld_ver" | grep 'Solaris Link Editors' > /dev/null; then
 -	  ld_vers=`echo $ld_ver | sed -n \
--	    -e 's,^.*: \(5\|1[0-9]\)\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\2,p'`
+-	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
++	if echo "$ld_ver" | $EGREP 'Solaris Link Editors|Solaris ELF Utilities' > /dev/null; then
 +	  ld_vers=`echo $ld_ver | /bin/sed -n \
 +	    -E 's,^.*: (5|1[0-9])\.[0-9][0-9]*-([0-9]\.[0-9][0-9]*).*$,\2,p'`
  	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
  	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
  	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
 diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 68868a21514..eb60b466bbf 100644
+index f07dd891c5a..5f493105cc3 100644
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
-@@ -2682,8 +2682,8 @@ if test $in_tree_ld != yes ; then
+@@ -2677,9 +2677,9 @@ if test $in_tree_ld != yes ; then
+ 	# numbers can be used in ld.so.1 feature checks even if a different
  	# linker is configured.
  	ld_ver=`$gcc_cv_ld -V 2>&1`
- 	if echo "$ld_ver" | $EGREP 'Solaris Link Editors|Solaris ELF Utilities' > /dev/null; then
+-	if echo "$ld_ver" | grep 'Solaris Link Editors' > /dev/null; then
 -	  ld_vers=`echo $ld_ver | sed -n \
--	    -e 's,^.*: \(5\|1[0-9]\)\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\2,p'`
+-	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
++	if echo "$ld_ver" | $EGREP 'Solaris Link Editors|Solaris ELF Utilities' > /dev/null; then
 +	  ld_vers=`echo $ld_ver | /bin/sed -n \
 +	    -E 's,^.*: (5|1[0-9])\.[0-9][0-9]*-([0-9]\.[0-9][0-9]*).*$,\2,p'`
  	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
  	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
  	  ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
 -- 
-2.21.0
+2.23.0
 
