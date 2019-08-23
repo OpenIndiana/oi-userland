@@ -64,7 +64,8 @@ PKGSEND_PUBLISH_OPTIONS += -T \*.scm -T \*.go
 COMPONENT_POST_INSTALL_ACTION= (find $(PROTO_DIR) -name *.go -print0 | xargs -0 touch)
 
 # Build dependencies
-REQUIRED_PACKAGES += editor/gnu-emacs
+# The tests need an ISO-8859-1 locale to run in
+REQUIRED_PACKAGES += locale/en-extra
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gc
