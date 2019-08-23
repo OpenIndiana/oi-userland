@@ -66,7 +66,7 @@ test:           $(TESTS_32)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/ruby/bundler
-REQUIRED_PACKAGES += system/font/liberation
+REQUIRED_PACKAGES += system/font/truetype/liberation
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
