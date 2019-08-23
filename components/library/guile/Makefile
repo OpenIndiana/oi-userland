@@ -25,6 +25,9 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=		32_and_64
+BUILD_STYLE=		configure
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
@@ -43,9 +46,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
 
@@ -56,12 +57,6 @@ CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs
