@@ -23,25 +23,25 @@
 # Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
-BITS=64
-PATH=$(PATH.gnu)
-
-COMPONENT_NAME=		xmlsec
+COMPONENT_NAME=	xmlsec
 COMPONENT_VERSION=	1.2.28
 COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
-COMPONENT_FMRI= library/xmlsec
-COMPONENT_SUMMARY= XML Security Library
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_SRC= $(COMPONENT_NAME)1-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
+COMPONENT_FMRI=	library/xmlsec
+COMPONENT_SUMMARY=	XML Security Library
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_SRC=	$(COMPONENT_NAME)1-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:13eec4811ea30e3f0e16a734d1dbf7f9d246a71d540b48d143a07b489f6222d4
 COMPONENT_ARCHIVE_URL=	http://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= MIT
-COMPONENT_LICENSE_FILE = Copyright
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	Copyright
+
+PATH=	$(PATH.gnu)
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -51,9 +51,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	$(CP) -rp $(SOURCE_DIR)/. $(@D)
 
-CONFIGURE_OPTIONS +=	NSS_LIBS="-L/usr/lib/64 -R/usr/lib/64"
-CONFIGURE_OPTIONS +=	NSPR_LIBS="-L/usr/lib/64 -R/usr/lib/64"
-CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)	
+CONFIGURE_OPTIONS +=	--enable-static=no
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
