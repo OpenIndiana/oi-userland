@@ -58,6 +58,11 @@ CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
+# It is imperative the timestamps of .scm and .go files be preserved, and .go
+# file be newer than its source, or nothing works
+PKGSEND_PUBLISH_OPTIONS += -T \*.scm -T \*.go
+COMPONENT_POST_INSTALL_ACTION= (find $(PROTO_DIR) -name *.go -print0 | xargs -0 touch)
+
 # Build dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs
 
