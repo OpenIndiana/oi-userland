@@ -10,12 +10,14 @@
 
 #
 # Copyright 2019 Michal Nowak
+# Copyright 2019 Nona Hansel
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		RBTools
 COMPONENT_VERSION=	1.0.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'RBTools is a set of command line tools and a rich Python API for use with Review Board'
 COMPONENT_PROJECT_URL=	https://www.reviewboard.org/downloads/rbtools/
 COMPONENT_FMRI=		library/python/rbtools
