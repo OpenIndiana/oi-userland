@@ -13,35 +13,25 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=64
+X11_CATEGORY=FONT
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= font-util
-COMPONENT_VERSION= 1.3.1
-COMPONENT_SUMMARY= X.Org font package creation/installation utilities
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:aa7ebdb0715106dd255082f2310dbaa2cd7e225957c2a77d719720c7cc92b921
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/font/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
+COMPONENT_VERSION= 1.3.2
 COMPONENT_FMRI= x11/font-util
+COMPONENT_SUMMARY= X.Org font package creation/installation utilities
+COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_ARCHIVE_HASH= \
+  sha256:3ad880444123ac06a7238546fa38a2a6ad7f7e0cc3614de7e103863616522282
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += system/library
