@@ -54,10 +54,13 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 CONFIGURE_OPTIONS +=	--enable-static=no
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/gnutls
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/mozilla-nss
 REQUIRED_PACKAGES += system/library/security/libgcrypt
