@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		arphic-ukai
 COMPONENT_VERSION=	0.2.20080216.1
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	CJK Unicode TrueType font Ming style
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/CJKUnifonts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
