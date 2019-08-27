@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bitstream-vera
 COMPONENT_VERSION=      1.10
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      The Bitstream Vera fonts
 COMPONENT_PROJECT_URL=  https://dejavu-fonts.org/
 COMPONENT_SRC_NAME=     ttf-bitstream-vera
