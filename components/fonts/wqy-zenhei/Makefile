@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=       wqy-zenhei
 COMPONENT_VERSION=    0.9.45
-COMPONENT_REVISION=   1
+COMPONENT_REVISION=   2
 COMPONENT_SUMMARY=    The WenQuanYi (Spring of Letters) Zenhei TrueType font
 COMPONENT_PROJECT_URL=https://sourceforge.net/projects/wqy/
 COMPONENT_SRC=	      $(COMPONENT_NAME)
