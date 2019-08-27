@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texgyre
 COMPONENT_VERSION=	2.501
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	The TeX Gyre (TG) Collection of Fonts
 COMPONENT_PROJECT_URL=	http://www.gust.org.pl/projects/e-foundry/tex-gyre
 COMPONENT_SRC=		tg2_501otf
