@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=  	gentium
 COMPONENT_VERSION=      1.102
+COMPONENT_VERSION=      1
 COMPONENT_SUMMARY=      Gentium Basic extended Unicode fonts
 COMPONENT_SRC=  	GentiumBasic_1102
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
