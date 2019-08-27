@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		google-droid
 COMPONENT_VERSION=	20141010
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	CJK Unicode TrueType font Ming style
 COMPONENT_PROJECT_URL=	https://www.droidfonts.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
