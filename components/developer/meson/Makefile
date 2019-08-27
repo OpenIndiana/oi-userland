@@ -9,13 +9,13 @@
 
 #
 # Copyright 2017 Aurelien Larcher
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          meson
-COMPONENT_VERSION=       0.51.1
+COMPONENT_VERSION=       0.51.2
 COMPONENT_SUMMARY=       The Meson Build system
 COMPONENT_PROJECT_URL=   http://mesonbuild.com/
 COMPONENT_FMRI=          developer/build/meson
@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
   https://github.com/mesonbuild/meson/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f27b7a60f339ba66fe4b8f81f0d1072e090a08eabbd6aa287683b2c2b9dd2d82
+  sha256:23688f0fc90be623d98e80e1defeea92bbb7103bf9336a5f5b9865d36e892d76
 COMPONENT_LICENSE=      APLv2
 
 PATCH_LEVEL = 0
