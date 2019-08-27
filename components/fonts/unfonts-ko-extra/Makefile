@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=        unfonts-ko-extra
 COMPONENT_VERSION=     1.0.2-080608
 IPS_COMPONENT_VERSION= 1.0.2
+COMPONENT_REVISION=    1
 COMPONENT_SUMMARY=     Un-Fonts Korean TrueType fonts (extra)
 COMPONENT_PROJECT_URL= https://kldp.net/unfonts/
 COMPONENT_SRC=         un-fonts
