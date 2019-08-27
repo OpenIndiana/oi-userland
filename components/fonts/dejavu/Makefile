@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dejavu
 COMPONENT_VERSION=      2.37
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      The DejaVu fonts
 COMPONENT_PROJECT_URL=  https://dejavu-fonts.github.io/
 COMPONENT_SRC_NAME=     dejavu-fonts-ttf
