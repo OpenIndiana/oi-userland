@@ -34,7 +34,7 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license nss.license license='MPLv2.0'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=etc/certs/CA/.* -> default group sys>
 
@@ -69,7 +69,6 @@ file path=etc/certs/CA/COMODO_ECC_Certification_Authority.pem
 file path=etc/certs/CA/COMODO_RSA_Certification_Authority.pem
 file path=etc/certs/CA/Certigna.pem
 file path=etc/certs/CA/Certigna_Root_CA.pem
-file path=etc/certs/CA/Certinomis_-_Root_CA.pem
 file path=etc/certs/CA/Certplus_Class_2_Primary_CA.pem
 file path=etc/certs/CA/Certum_Trusted_Network_CA.pem
 file path=etc/certs/CA/Certum_Trusted_Network_CA_2.pem
@@ -126,7 +125,8 @@ file path=etc/certs/CA/IdenTrust_Public_Sector_Root_CA_1.pem
 file path=etc/certs/CA/Izenpe.com.pem
 file path=etc/certs/CA/LuxTrust_Global_Root_2.pem
 file path=etc/certs/CA/Microsec_e-Szigno_Root_CA_2009.pem
-file path=etc/certs/CA/NetLock_Arany_(Class_Gold)_Főtanúsítvány.pem
+# https://www.illumos.org/issues/11625
+file etc/certs/CA/NetLock_Arany_(Class_Gold)_Főtanúsítvány.pem path=etc/certs/CA/NetLock_Arany_(Class_Gold)_Fotanusitvany.pem
 file path=etc/certs/CA/Network_Solutions_Certificate_Authority.pem
 file path=etc/certs/CA/OISTE_WISeKey_Global_Root_GA_CA.pem
 file path=etc/certs/CA/OISTE_WISeKey_Global_Root_GB_CA.pem
@@ -185,8 +185,6 @@ file path=etc/certs/CA/emSign_Root_CA_-_G1.pem
 file path=etc/certs/CA/thawte_Primary_Root_CA.pem
 file path=etc/certs/CA/thawte_Primary_Root_CA_-_G2.pem
 file path=etc/certs/CA/thawte_Primary_Root_CA_-_G3.pem
-link path=etc/openssl/certs/$(COMPONENT_VERSION)d2f7.0 \
-    target=../../certs/CA/TrustCor_RootCert_CA-2.pem
 link path=etc/openssl/certs/02265526.0 \
     target=../../certs/CA/Entrust_Root_Certification_Authority_-_G2.pem
 link path=etc/openssl/certs/03179a64.0 \
@@ -252,6 +250,8 @@ link path=etc/openssl/certs/3513523f.0 \
     target=../../certs/CA/DigiCert_Global_Root_CA.pem
 link path=etc/openssl/certs/3bde41ac.0 \
     target=../../certs/CA/Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem
+link path=etc/openssl/certs/3e44d2f7.0 \
+    target=../../certs/CA/TrustCor_RootCert_CA-2.pem
 link path=etc/openssl/certs/3e45d192.0 \
     target=../../certs/CA/Hongkong_Post_Root_CA_1.pem
 link path=etc/openssl/certs/40193066.0 \
@@ -342,16 +342,15 @@ link path=etc/openssl/certs/930ac5d2.0 \
     target=../../certs/CA/Actalis_Authentication_Root_CA.pem
 link path=etc/openssl/certs/93bc0acc.0 \
     target=../../certs/CA/AffirmTrust_Networking.pem
+# https://www.illumos.org/issues/11625
 link path=etc/openssl/certs/988a38cb.0 \
-    target=../../certs/CA/NetLock_Arany_(Class_Gold)_Főtanúsítvány.pem
+    target=../../certs/CA/NetLock_Arany_(Class_Gold)_Fotanusitvany.pem
 link path=etc/openssl/certs/9c2e7d30.0 \
     target=../../certs/CA/Sonera_Class_2_Root_CA.pem
 link path=etc/openssl/certs/9c8dfbd4.0 \
     target=../../certs/CA/AffirmTrust_Premium_ECC.pem
 link path=etc/openssl/certs/9d04f354.0 \
     target=../../certs/CA/DigiCert_Assured_ID_Root_G2.pem
-link path=etc/openssl/certs/9f0f5fd6.0 \
-    target=../../certs/CA/Certinomis_-_Root_CA.pem
 link path=etc/openssl/certs/a3418fda.0 target=../../certs/CA/GTS_Root_R4.pem
 link path=etc/openssl/certs/a94d09e5.0 target=../../certs/CA/ACCVRAIZ1.pem
 link path=etc/openssl/certs/ad088e1d.0 \
