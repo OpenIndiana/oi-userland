@@ -21,17 +21,18 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=64
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	mod_auth_mellon
+COMPONENT_NAME=		mod_auth_mellon
 COMPONENT_VERSION=	0.14.2
-COMPONENT_FMRI=	web/server/apache-24/module/apache-mellon
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=		web/server/apache-24/module/apache-mellon
 COMPONENT_SUMMARY=	SAML2.0 authentication module for Apache
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	https://github.com/Uninett/mod_auth_mellon
-COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8290ba57394fb7c551b9902c32bded8711f9656e2d36e351618b952f2c162afc
