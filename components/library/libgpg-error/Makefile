@@ -20,12 +20,14 @@
 #
 # Copyright 2013 Colin Ellis. All rights reserved.
 # Copyright 2011 Audioboo Ltd. All rights reserved.
+# Copyright 2019 Michal Nowak
 #
 BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
 COMPONENT_VERSION=	1.36
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GnuPG Error Library
 COMPONENT_PROJECT_URL=	http://www.gnupg.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,7 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
     sha256:babd98437208c163175c29453f8681094bcaf92968a15cafb1a276076b33c97c
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/security/libgpg-error
+COMPONENT_FMRI=		library/security/libgpg-error
 COMPONENT_CLASSIFICATION=	System/Security
 COMPONENT_LICENSE=	LGPLv2.1
 
