@@ -21,37 +21,29 @@
 # Copyright 2013 Colin Ellis. All rights reserved.
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 #
+
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
-COMPONENT_VERSION=	1.8.1
+COMPONENT_VERSION=	1.8.5
 COMPONENT_FMRI=		system/library/security/libgcrypt
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:7a2875f8b1ae0301732e878c0cca2c9664ff09ef71408f085c50e332656a78b3
+	sha256:3b4a2a94cb637eff5bdebbcaf46f4d95c4f25206f459809339cdada0eb577ac3
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Security
-COMPONENT_LICENSE=	LGPL
+COMPONENT_LICENSE=	LGPL, BSD, BSD-like
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-# GCC 5.3 (and 4.9) with the default optimization -O3 (set via shared-macros.mk),
-# inlines _gcry_cipher_ocb_get_l, double_block_cpy and double_block to
-# _gcry_cipher_ocb_authenticate on amd64. Due to a bug in GCC, the
-# inlined code is incorrect and the library produces data with errors
-# (manifested through failed 'basic' test results).  The optimization is
-# lowered down on the affected platform.  For more information see:
-# https://lists.gnupg.org/pipermail/gcrypt-devel/2016-April/003858.html
-gcc_OPT.i386.64 = -O2
-
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		--sysconfdir=/etc
+CONFIGURE_OPTIONS  +=	--sysconfdir=/etc
+CONFIGURE_OPTIONS  +=	--enable-shared
+CONFIGURE_OPTIONS  +=	--disable-static
 
 # We disalbe asm for 64-bit arch, as this code doesn't compile.
 # But libgcrypt still tries to use asm functions.
@@ -69,12 +61,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/All/p" '
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
