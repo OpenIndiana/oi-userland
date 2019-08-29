@@ -12,11 +12,13 @@
 # Copyright 2019 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 
+BUILD_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		node
 COMPONENT_MAJOR_VERSION=12
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).9.0
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).9.1
 COMPONENT_FMRI=		runtime/nodejs-$(COMPONENT_MAJOR_VERSION)
 COMPONENT_SUMMARY=	Evented I/O for V8 JavaScript.
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -25,12 +27,11 @@ COMPONENT_LICENSE=	BSD-like, MIT, Apache
 COMPONENT_LICENSE_FILE=	node.license	
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e05fe8ba1bdf58e51cdb5d946ebb7a2dec567b3680da2752e120a763293a41c5
+COMPONENT_ARCHIVE_HASH= sha256:c245822a9d5204e821646508244c835e386e11c3eda4cb5261cde83517ff545e
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -42,12 +43,6 @@ CONFIGURE_OPTIONS= --prefix=/usr/node/$(COMPONENT_MAJOR_VERSION)
 CONFIGURE_OPTIONS+= --dest-cpu=x64
 CONFIGURE_OPTIONS+= --with-dtrace
 
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
