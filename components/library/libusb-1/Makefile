@@ -22,50 +22,40 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libusb
-COMPONENT_VERSION=	1.0.22
+COMPONENT_VERSION=	1.0.23
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:75aeb9d59a4fdb800d329a545c2e6799f732362193b465ea198f2aa275518157
-COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/libusb/files/libusb-1.0/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:db11c06e958a82dac52cf3c65cb4dd2c3f339c8a988665110e0d24d19312ad8d
+COMPONENT_ARCHIVE_URL=  https://github.com/libusb/libusb/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://libusb.info/
-COMPONENT_BUGDB=	library/libusb
+COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
-TPNO=			26906
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Find issues with undefined symbols in build time
 LD_OPTIONS += $(LD_Z_DEFS)
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION = ( cd $(@D); $(AUTORECONF) -if )
 
-CONFIGURE_OPTIONS  +=	--enable-static=no
-CONFIGURE_OPTIONS  +=   --enable-log
+CONFIGURE_OPTIONS +=	--enable-static=no
+CONFIGURE_OPTIONS +=	--enable-log
+CONFIGURE_OPTIONS +=	--enable-tests-build
 
-COMPONENT_BUILD_ARGS+=	"LDFLAGS=$(LDFLAGS)"
-COMPONENT_BUILD_ARGS+=	"INSTALL=$(INSTALL)"
-COMPONENT_BUILD_ARGS+=	"MAKE=$(GMAKE)"
+COMPONENT_BUILD_ARGS +=	"LDFLAGS=$(LDFLAGS) -lnvpair"
+COMPONENT_BUILD_ARGS +=	"INSTALL=$(INSTALL)"
+COMPONENT_BUILD_ARGS +=	"MAKE=$(GMAKE)"
 
-#ASLR_MODE = $(ASLR_ENABLE)
-
-#Parallel build fails
-COMPONENT_BUILD_ARGS=
-
-COMPONENT_PREP_ACTION = (cd $(@D); $(AUTORECONF) -if)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+# Test target just runs the 'stress' binary; requires Global Zone
+COMPONENT_TEST_TARGETS=
+COMPONENT_TEST_ENV_CMD=
+COMPONENT_TEST_DIR= $(BUILD_DIR)/$(MACH$(BITS))/tests/.libs
+COMPONENT_TEST_CMD= ./stress
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-usb

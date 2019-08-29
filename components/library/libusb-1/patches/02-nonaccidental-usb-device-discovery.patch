@@ -1,0 +1,62 @@
+From 8b04a5510f541306e37ad8cfa83984f913fa08d1 Mon Sep 17 00:00:00 2001
+From: Kenjiro Tsuji <kenjiro.tsuji@oracle.com>
+Date: Wed, 25 Sep 2019 17:11:12 -0700
+Subject: [PATCH] Solaris: fails to find USB devices on SPARC platform
+
+On SPARC platform, libusb fails to find USB devices. sunos_fill_in_dev_info()
+reads the usb-dev-descriptor property and stores idVendor and idProduct to
+the dev_sesc structure in little endian.  However, when creating a device name
+for 'match_str' to be specified to sunos_physpath_to_devlink(), it's using the
+idVendor and idProduct in dev_descr as is without converting them to the host
+endian, that is big endian for SPARC.  As a result, 'match_str' has a wrong
+device name and sunos_physpath_to_devlink() fails to find the device path
+corresponding to the USB device. idVendor and idProduct need to be converted
+to the host endian when creating 'match_str'.
+This is a fix for #587.
+
+Closes #628
+
+Signed-off-by: Nathan Hjelm <hjelmn@google.com>
+---
+ libusb/os/sunos_usb.c | 13 +++++++++----
+ libusb/version_nano.h |  2 +-
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/libusb/os/sunos_usb.c b/libusb/os/sunos_usb.c
+index c9a16fac..185c3710 100644
+--- a/libusb/os/sunos_usb.c
++++ b/libusb/os/sunos_usb.c
+@@ -411,8 +411,9 @@ sunos_detach_kernel_driver(struct libusb_device_handle *dev_handle,
+ 	if (r)
+ 		usbi_warn(HANDLE_CTX(dev_handle), "one or more ioctls failed");
+ 
+-	snprintf(path_arg, sizeof(path_arg), "^usb/%x.%x", dpriv->dev_descr.idVendor,
+-	    dpriv->dev_descr.idProduct);
++	snprintf(path_arg, sizeof(path_arg), "^usb/%x.%x",
++	    libusb_le16_to_cpu(dpriv->dev_descr.idVendor),
++	    libusb_le16_to_cpu(dpriv->dev_descr.idProduct));
+ 	sunos_physpath_to_devlink(dpriv->phypath, path_arg, &dpriv->ugenpath);
+ 
+ 	if (access(dpriv->ugenpath, F_OK) == -1) {
+@@ -526,7 +527,9 @@ sunos_fill_in_dev_info(di_node_t node, struct libusb_device *dev)
+ 	phypath = di_devfs_path(node);
+ 	if (phypath) {
+ 		dpriv->phypath = strdup(phypath);
+-		snprintf(match_str, sizeof(match_str), "^usb/%x.%x", dpriv->dev_descr.idVendor, dpriv->dev_descr.idProduct);
++		snprintf(match_str, sizeof(match_str), "^usb/%x.%x",
++		    libusb_le16_to_cpu(dpriv->dev_descr.idVendor),
++		    libusb_le16_to_cpu(dpriv->dev_descr.idProduct));
+ 		usbi_dbg("match is %s", match_str);
+ 		sunos_physpath_to_devlink(dpriv->phypath, match_str,  &dpriv->ugenpath);
+ 		di_devfs_path_free(phypath);
+@@ -557,7 +560,9 @@ sunos_fill_in_dev_info(di_node_t node, struct libusb_device *dev)
+ 	}
+ 
+ 	usbi_dbg("vid=%x pid=%x, path=%s, bus_nmber=0x%x, port_number=%d, "
+-	    "speed=%d", dpriv->dev_descr.idVendor, dpriv->dev_descr.idProduct,
++	    "speed=%d",
++	    libusb_le16_to_cpu(dpriv->dev_descr.idVendor),
++	    libusb_le16_to_cpu(dpriv->dev_descr.idProduct),
+ 	    dpriv->phypath, dev->bus_number, dev->port_number, dev->speed);
+ 
+ 	return (LIBUSB_SUCCESS);
