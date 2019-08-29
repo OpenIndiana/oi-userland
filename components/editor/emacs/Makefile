@@ -25,16 +25,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	26.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	26.3
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:151ce69dbe5b809d4492ffae4a4b153b2778459de6deb26f35691e1281a9c58e
+	sha256:4d90e6751ad8967822c6e092db07466b9d383ef1653feb2f95c93e7de66d3485
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/emacs
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -64,17 +61,8 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 
 CFLAGS	+= $(shell pkg-config --cflags lcms2)
 
-# emacs creates a directory in usr/lib/emacs/$(COMPONENT_VERSION) that
-# contains the platform name. Although the name is platform dependent,
-# the files inside it are the same on all platforms. By adding this
-# to the pkgmogrify macros, we can write our manifests in a portable way.
-EMACS_ULEV_PFX = $(MACH:sparc=sparc-sun)
-EMACS_ULEVDIR =	 $(EMACS_ULEV_PFX:i386=i386-pc)-solaris$(SOLARIS_VERSION)
-PKG_MACROS +=	EMACS_ULEVDIR=$(EMACS_ULEVDIR)
-
 # LD_OPTIONS is defined to apply desirable link-editor options to Userland
 # components. Non-executable stack and data break sparc emacs.
-#
 LD_MAP_NOEXSTK.sparc=
 LD_MAP_NOEXDATA.sparc=
 
@@ -199,7 +187,6 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 # Solaris, it is delivered by system/prerequisite/gnu.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
-# common targets
 build:          $(BUILD_32)
 
 install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
