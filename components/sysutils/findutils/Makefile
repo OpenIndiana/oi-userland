@@ -21,59 +21,49 @@
 
 #
 # Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
-PREFERRED_BITS=64
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         findutils
-COMPONENT_VERSION=      4.6.0
+COMPONENT_VERSION=      4.7.0
 COMPONENT_SUMMARY=      GNU findutils
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/findutils/
 COMPONENT_FMRI=         file/gnu-findutils
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ded4c9f73731cd48fec3b6bdaccce896473b6d8e337e9612e16cf1431bb1169d
+	sha256:c5fefbdf9858f7e4feb86f036e1247a54c79fc2d8e4b7064d5aaa1f47dfa789a
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_PREFIX = $(GNUDIR)
-
-# Fixes coredump in the tests/test-localename test.
-CONFIGURE_OPTIONS += ac_cv_func_newlocale=no
 
 # Disable the leaf optimisation feature, because the st_nlinks directory
 # field is incorrect on ZFS file systems.
 CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Run all the tests even if there is a failure
 COMPONENT_TEST_ARGS += -k
-COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+COMPONENT_TEST_ENV +=	PATH="$(PATH.gnu)"
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^PASS:/p" ' \
 	'-e "/^FAIL:/p" ' \
 	'-e "/^SKIP:/p" ' \
 	'-e "/^\# /p" '
+
 # Needed for "gmake test" to work successfully.
 # Otherwise we see errors such as:
 # FAIL: exec-nogaps.old-O3, sh: SHELLOPTS: readonly variable
 unexport SHELLOPTS
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TEST_64)
 
 # Test dependencies:
 REQUIRED_PACKAGES += developer/versioning/cvs
