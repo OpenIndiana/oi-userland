@@ -1,0 +1,69 @@
+--- illumos-kvm-a8befd521c7e673749c64f118585814009fe4b73/kvm.c.orig	2015-12-14 09:32:48.000000000 +0000
++++ illumos-kvm-a8befd521c7e673749c64f118585814009fe4b73/kvm.c	2019-08-31 21:32:40.877123692 +0000
+@@ -2092,7 +2092,7 @@
+ 
+ 	switch (cmd) {
+ 	case KVM_GET_API_VERSION:
+-		if (arg != NULL) {
++		if ((void *)arg != NULL) {
+ 			rval = EINVAL;
+ 			break;
+ 		}
+@@ -2100,7 +2100,7 @@
+ 		break;
+ 
+ 	case KVM_CREATE_VM:
+-		if (arg != NULL) {
++		if ((void *)arg != NULL) {
+ 			rval = EINVAL;
+ 			break;
+ 		}
+@@ -2155,7 +2155,7 @@
+ 		break;
+ 
+ 	case KVM_GET_VCPU_MMAP_SIZE:
+-		if (arg != NULL) {
++		if ((void *)arg != NULL) {
+ 			rval = EINVAL;
+ 			break;
+ 		}
+
+--- illumos-kvm-a8befd521c7e673749c64f118585814009fe4b73/kvm_mdb.c.orig	2015-12-14 09:32:48.000000000 +0000
++++ illumos-kvm-a8befd521c7e673749c64f118585814009fe4b73/kvm_mdb.c	2019-08-31 21:40:37.077194044 +0000
+@@ -57,7 +57,7 @@
+ 	struct kvm kvm;
+ 	uintptr_t addr;
+ 
+-	if (wsp->walk_addr == NULL) {
++	if ((void *)wsp->walk_addr == NULL) {
+ 		mdb_warn("kvm_memory_slot does not support global walks");
+ 		return (WALK_ERR);
+ 	}
+@@ -105,7 +105,7 @@
+ 	struct kvm kvm;
+ 	uintptr_t addr;
+ 
+-	if (wsp->walk_addr == NULL) {
++	if ((void *)wsp->walk_addr == NULL) {
+ 		mdb_warn("kvm_mem_alias does not support global walks");
+ 		return (WALK_ERR);
+ 	}
+@@ -282,7 +282,7 @@
+ 	kvm_ringbuf_t *buf;
+ 	uintptr_t addr;
+ 
+-	if (wsp->walk_addr == NULL) {
++	if ((void *)wsp->walk_addr == NULL) {
+ 		mdb_warn("kvm_ringbuf_entry does not support global walks\n");
+ 		return (WALK_ERR);
+ 	}
+@@ -361,7 +361,7 @@
+ {
+ 	list_t list;
+ 	GElf_Sym sym;
+-	if (wsp->walk_addr != NULL) {
++	if ((void *)wsp->walk_addr != NULL) {
+ 		mdb_warn("kvm does not support non-global walks\n");
+ 		return (WALK_ERR);
+ 	}
+
