@@ -13,10 +13,13 @@
 # Copyright 2016-2017 Predrag Zečević.  All rights reserved.
 #
 
+BUILD_BITS=	32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany-plugins
 COMPONENT_VERSION= 1.34
+COMPONENT_REVISION= 1
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
 COMPONENT_SUMMARY= Plugins for Geany editor
@@ -30,11 +33,11 @@ COMPONENT_LICENSE= GPLv2
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
 
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
+
+PATH=$(PATH.gnu)
 
 CFLAGS+= -std=gnu99
 CFLAGS+= -D_FILE_OFFSET_BITS=64
@@ -57,12 +60,6 @@ CONFIGURE_OPTIONS+= --disable-webhelper
 # no lipsum (www.lipsum.com) in OI yet
 CONFIGURE_OPTIONS+= --disable-lipsum
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += editor/geany
 REQUIRED_PACKAGES += gnome/config/gconf
@@ -70,7 +67,6 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtkspell
-REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/vte
 REQUIRED_PACKAGES += library/glib2
