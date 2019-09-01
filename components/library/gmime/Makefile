@@ -11,13 +11,16 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2019 Michal Nowak
 #
+
+BUILD_BITS=	32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gmime
 COMPONENT_VERSION= 2.5.10
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Libraries and binaries to parse and index mail messages
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -27,9 +30,7 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gnome.org
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -38,13 +39,7 @@ CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 COMPONENT_PREP_ACTION += \
-    cd $(@D); autoreconf --install --force
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
+	cd $(@D); autoreconf --install --force
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
