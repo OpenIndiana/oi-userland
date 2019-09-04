@@ -1,6 +1,12 @@
---- ./src/lib/openjpip/openjpip.h.orig	2015-02-11 06:20:47.740450785 +0000
-+++ ./src/lib/openjpip/openjpip.h	2015-02-11 06:24:12.124327493 +0000
-@@ -276,23 +276,20 @@
+
+openjpip.h and openjpip.c can't use index_t as a convenience typedef,
+because OI inherited index_t in sys/types.h from Solaris.  Adjust to
+use the underlying index_param_t instead.
+
+diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.h openjpeg-2.3.1/src/lib/openjpip/openjpip.h
+--- openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.h	2019-04-02 07:45:15.000000000 +0000
++++ openjpeg-2.3.1/src/lib/openjpip/openjpip.h	2019-06-10 18:57:32.089518326 +0000
+@@ -281,23 +281,20 @@
   *  test the format of index (cidx) box in JP2 file
   */
  
@@ -9,66 +15,68 @@
 -
  /**
   * Parse JP2 file and get index information from cidx box inside
-  * 
+  *
   * @param[in] fd file descriptor of the JP2 file
   * @return       pointer to the generated structure of index parameters
   */
--OPJ_API index_t * OPJ_CALLCONV get_index_from_JP2file( int fd);
-+OPJ_API index_param_t * OPJ_CALLCONV get_index_from_JP2file( int fd);
+-OPJ_API index_t * OPJ_CALLCONV get_index_from_JP2file(int fd);
++OPJ_API index_param_t * OPJ_CALLCONV get_index_from_JP2file(int fd);
  
  /**
   * Destroy index parameters
   *
   * @param[in,out] idx addressof the index pointer
   */
--OPJ_API void OPJ_CALLCONV destroy_index( index_t **idx);
-+OPJ_API void OPJ_CALLCONV destroy_index( index_param_t **idx);
+-OPJ_API void OPJ_CALLCONV destroy_index(index_t **idx);
++OPJ_API void OPJ_CALLCONV destroy_index(index_param_t **idx);
  
  
  /**
-@@ -300,7 +297,7 @@
+@@ -305,7 +302,7 @@
   *
   * @param[in] index index parameters
   */
--OPJ_API void OPJ_CALLCONV output_index( index_t *index);
-+OPJ_API void OPJ_CALLCONV output_index( index_param_t *index);
+-OPJ_API void OPJ_CALLCONV output_index(index_t *index);
++OPJ_API void OPJ_CALLCONV output_index(index_param_t *index);
  
  #endif /*SERVER*/
  
---- ./src/lib/openjpip/openjpip.c.orig	2015-02-11 06:20:19.227751378 +0000
-+++ ./src/lib/openjpip/openjpip.c	2015-02-11 06:23:37.274451134 +0000
-@@ -409,7 +409,7 @@
-   opj_free( *dec);
+diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.c openjpeg-2.3.1/src/lib/openjpip/openjpip.c
+--- openjpeg-2.3.1.orig/src/lib/openjpip/openjpip.c	2019-04-02 07:45:15.000000000 +0000
++++ openjpeg-2.3.1/src/lib/openjpip/openjpip.c	2019-06-10 18:58:14.867415880 +0000
+@@ -443,7 +443,7 @@
+     opj_free(*dec);
  }
  
--index_t * OPJ_CALLCONV get_index_from_JP2file( int fd)
-+index_param_t * OPJ_CALLCONV get_index_from_JP2file( int fd)
+-index_t * OPJ_CALLCONV get_index_from_JP2file(int fd)
++index_param_t * OPJ_CALLCONV get_index_from_JP2file(int fd)
  {
-   char *data;
-  
-@@ -437,12 +437,12 @@
-   return parse_jp2file( fd);
+     char *data;
+ 
+@@ -471,12 +471,12 @@
+     return parse_jp2file(fd);
  }
  
--void OPJ_CALLCONV destroy_index( index_t **idx)
-+void OPJ_CALLCONV destroy_index( index_param_t **idx)
+-void OPJ_CALLCONV destroy_index(index_t **idx)
++void OPJ_CALLCONV destroy_index(index_param_t **idx)
  {
-   delete_index( idx);
+     delete_index(idx);
  }
  
--void OPJ_CALLCONV output_index( index_t *index)
-+void OPJ_CALLCONV output_index( index_param_t *index)
+-void OPJ_CALLCONV output_index(index_t *index)
++void OPJ_CALLCONV output_index(index_param_t *index)
  {
-   print_index( *index);
+     print_index(*index);
  }
---- ./src/bin/jpip/opj_jpip_test.c.orig	2015-02-11 06:21:44.574812169 +0000
-+++ ./src/bin/jpip/opj_jpip_test.c	2015-02-11 06:22:17.156907327 +0000
+diff -ur openjpeg-2.3.1.orig/src/bin/jpip/opj_jpip_test.c openjpeg-2.3.1/src/bin/jpip/opj_jpip_test.c
+--- openjpeg-2.3.1.orig/src/bin/jpip/opj_jpip_test.c	2019-04-02 07:45:15.000000000 +0000
++++ openjpeg-2.3.1/src/bin/jpip/opj_jpip_test.c	2019-06-10 18:58:50.711326186 +0000
 @@ -52,7 +52,7 @@
  main(int argc, char *argv[])
  {
-   int fd;
--  index_t *jp2idx;
-+  index_param_t *jp2idx;
-   if( argc < 2 ) return 1;
-   
-   if( (fd = open( argv[1], O_RDONLY)) == -1){
+     int fd;
+-    index_t *jp2idx;
++    index_param_t *jp2idx;
+     if (argc < 2) {
+         return 1;
+     }
