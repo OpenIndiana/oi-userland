@@ -19,22 +19,36 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013-2016, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2019, Tim Mooney
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openjpeg
-COMPONENT_VERSION=	2.1.2
+COMPONENT_SUMMARY=	OpenJPEG library : Open source JPEG 2000 codecs
+COMPONENT_VERSION=	2.3.1
 COMPONENT_FMRI=     	image/library/openjpeg
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.openjpeg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:4ce77b6ef538ef090d9bde1d5eeff8b3069ab56c4906f083475517c2c023dfa7
+	sha256:63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9
 COMPONENT_ARCHIVE_URL=	https://github.com/uclouvain/openjpeg/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE=      BSD
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      OpenJPEG library : Open source JPEG 2000 codecs
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+
+#
+# the test suite requires an extra 600+ MiB download of conformance data.
+# if you want to include the conformance data, you need to uncomment
+# the COMPONENT_*_1 lines, below:
+#
+#COMPONENT_NAME_1=	openjpeg-data
+#COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-master
+#COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).zip
+#COMPONENT_ARCHIVE_URL_1=https://github.com/uclouvain/$(COMPONENT_NAME_1)/archive/master.zip
+#COMPONENT_ARCHIVE_HASH_1= \
+#	sha256:88cec290f19318785f2b6804e28523f6ae119fdd0c17c9867e9966c68d9461f0
+#COMPONENT_LICENSE_1=	$(COMPONENT_LICENSE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
@@ -56,14 +70,28 @@ CMAKE_OPTIONS+= -DBUILD_JPWL:BOOL=ON
 CMAKE_OPTIONS+= -DBUILD_MJ2:BOOL=ON
 CMAKE_OPTIONS+= -DBUILD_PKGCONFIG_FILES:BOOL=ON
 CMAKE_OPTIONS+= -DBUILD_SHARED_LIBS:BOOL=ON
-CMAKE_OPTIONS+= -DBUILD_TESTING:BOOL=OFF
 CMAKE_OPTIONS+= -DBUILD_THIRDPARTY:BOOL=ON   
+# default: no tests:
+CMAKE_OPTIONS+= -DBUILD_TESTING:BOOL=OFF
+#
+# if you've uncommented the COMPONENT_*_1 settings, above, to download
+# the conformance data, then you can enable the test suite by uncommenting
+# the next two lines:
+#
+#CMAKE_OPTIONS+= -DBUILD_TESTING:BOOL=ON
+#CMAKE_OPTIONS+= -DOPJ_DATA_ROOT:PATH="$(BUILD_DIR_$(BITS))/../../$(COMPONENT_SRC_1)"
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# default: no tests
 test: $(NO_TESTS)
 
+# if you've enabled the COMPONENT_*_1 and uncommented the CMAKE_OPTIONS to
+# BUILD_TESTING and set OPJ_DATA_ROOT, then to run the test suite:
+#test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
