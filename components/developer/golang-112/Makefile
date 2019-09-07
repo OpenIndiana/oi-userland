@@ -119,7 +119,8 @@ define COMPONENT_INSTALL_ACTION=
 	($(MKDIR) -p $(MEDIATEDUSRSHAREMAN1DIR)); \
 	/usr/gnu/bin/find $(COMPONENT_TARGET_DIR)/src -type f \
        	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS'\
-       	| xargs rm
+	| xargs rm; \
+	/usr/gnu/bin/find $(COMPONENT_TARGET_DIR)/src/cmd/vendor/github.com/google/pprof/internal/binutils/testdata -type f -exec rm \{\} \; ;
 endef
 
 # common targets
