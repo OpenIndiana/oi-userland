@@ -27,16 +27,16 @@ BUILD_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	xmlsec
-COMPONENT_VERSION=	1.2.28
+COMPONENT_NAME=		xmlsec
+COMPONENT_VERSION=	1.2.29
 COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
-COMPONENT_FMRI=	library/xmlsec
+COMPONENT_FMRI=		library/xmlsec
 COMPONENT_SUMMARY=	XML Security Library
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SRC=	$(COMPONENT_NAME)1-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:13eec4811ea30e3f0e16a734d1dbf7f9d246a71d540b48d143a07b489f6222d4
+	sha256:b1d1deba966019930f608d1f2b95c40ca3450f1393bcd3a3c001a8ba1d2839ab
 COMPONENT_ARCHIVE_URL=	http://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright
@@ -54,7 +54,7 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 CONFIGURE_OPTIONS +=	--enable-static=no
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
