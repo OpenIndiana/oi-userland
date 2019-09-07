@@ -19,22 +19,27 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2020, Michal Nowak
 #
+
+BUILD_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	2.2.8
+COMPONENT_VERSION=	2.2.17
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ecf02c148c9ab6e809026ad5743fe9be1739a9840ef6fece6837a7ddfbdf7edc
+	sha256:923d39ff9c6df83b9594868542061da33bf330e12526778a8cb3adcf912eebb0
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/wireshark
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Micro version for easy libraries packaging
 MICRO_VERSION:= $(shell echo $(COMPONENT_VERSION) | awk -F. '{ print $$3 }')
@@ -46,13 +51,12 @@ PATCH_LEVEL=0
 COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
 CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
-CONFIGURE_OPTIONS +=	--disable-usr-local
 CONFIGURE_OPTIONS +=	--disable-androiddump
 CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	--with-qt=no
-CONFIGURE_OPTIONS +=	--with-gtk2=yes
+CONFIGURE_OPTIONS +=	--with-gtk=yes
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
 
 LDFLAGS += -lsocket -lnsl
@@ -69,19 +73,14 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	chmod 755 config.status; \
 	./config.status)
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
