@@ -24,37 +24,30 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
-COMPONENT_VERSION=	2.18
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.20.1
 COMPONENT_SUMMARY=	Text based web browser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://links.twibright.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ad33d0abfec9627a5ddc34740ec69f1dbec457528581bf23fee4fdcaa90f2332
+	sha256:17619208e75bb45890982b37b834c70cf9c56b6f9f98aadb787efd6a88db7e86
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_FMRI=		web/browser/links
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Configure in links does not understand CC, CXX, etc.  Need to generate a
 # new configure for it to configure and build properly.
 COMPONENT_PREP_ACTION=	( cd $(@D) ; autoconf )
-
-CONFIGURE_BINDIR.64=	$(CONFIGURE_BINDIR.32)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
