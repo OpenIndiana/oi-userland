@@ -24,23 +24,23 @@
 # Copyright 2019, Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.4.1
+COMPONENT_VERSION=	3.4.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:27159ac5ebf736dffd5636fd2cd625767c9e437de65baa63cb0de83570bd820d
+	sha256:27d05534699735dc69e86add5b808d6cb35900ad3fd63fa82e3eb644336abfa0
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_FMRI=		developer/parser/bison
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Tests need this
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -91,12 +91,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_CC_XXX$$/d" '
 
 $(INSTALL_32):	$(INSTALL_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Two test suite cases utilitize Doxygen
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
