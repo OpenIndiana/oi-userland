@@ -38,7 +38,7 @@ fi
 tor_start() 	{
 	# Raise the number of file descriptors
 	/usr/bin/ulimit -n 1024 2>&1 > /dev/null
-	/usr/lib/tor 2>&1 > /dev/null
+	/usr/bin/tor 2>&1 > /dev/null
 }
 	
 tor_stop()	{

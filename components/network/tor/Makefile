@@ -73,12 +73,5 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
