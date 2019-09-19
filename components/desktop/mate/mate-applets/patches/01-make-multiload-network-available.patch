@@ -1,31 +1,31 @@
---- mate-applets-1.20.2/multiload/linux-proc.c	2018-05-29 14:01:21.000000000 +0000
-+++ mate-applets-1.20.2/multiload/linux-proc.c.new	2018-06-07 20:35:00.109496448 +0000
-@@ -115,6 +115,13 @@ GetDiskLoad (int Maximum, int data [3],
- 
-     read = write = 0;
- 
+--- mate-applets-1.22.2/multiload/linux-proc.c	2019-09-19 14:17:35.000000000 +0000
++++ mate-applets-1.22.2/multiload/linux-proc.c	2019-09-19 21:04:08.314342879 +0000
+@@ -151,6 +151,13 @@ GetDiskLoad (int Maximum, int data [3],
+     }
+     else
+     {
 +
-+    /*
-+      At the moment, Solaris can't get the read/write information for filesystem
-+      so we would like to use disk to get them, later when some unstable interfaces
-+      become stable or public, will use them
-+    */
-+    /*
-     mountentries = glibtop_get_mountlist (&mountlist, FALSE);
++        /*
++          At the moment, Solaris can't get the read/write information for filesystem
++          so we would like to use disk to get them, later when some unstable interfaces
++          become stable or public, will use them
++        */
++        /*
+         glibtop_mountlist mountlist;
+         glibtop_mountentry *mountentries;
  
-     for (i = 0; i < mountlist.number; i++)
-@@ -130,6 +137,10 @@ GetDiskLoad (int Maximum, int data [3],
-         read += fsusage.read; write += fsusage.write;
+@@ -179,6 +186,10 @@ GetDiskLoad (int Maximum, int data [3],
+         }
+ 
+         g_free(mountentries);
++        */
++        glibtop_fsusage fsusage;
++        glibtop_get_fsusage(&fsusage,"/"); /* "/" will not use, just as a input */
++        read = fsusage.read; write = fsusage.write;
      }
  
-+    */
-+    glibtop_fsusage fsusage;
-+    glibtop_get_fsusage(&fsusage,"/"); /* "/" will not use, just as a input */
-+    read = fsusage.read; write = fsusage.write;
-     g_free(mountentries);
- 
      readdiff  = read - lastread;
-@@ -327,6 +338,7 @@ GetNet (int Maximum, int data [4], LoadG
+@@ -376,6 +387,7 @@ GetNet (int Maximum, int data [4], LoadG
          autoscaler_init(&scaler, 60, 501);
      }
  
@@ -33,7 +33,7 @@
      devices = glibtop_get_netlist(&netlist);
  
      for(i = 0; i < netlist.number; ++i)
-@@ -336,7 +348,12 @@ GetNet (int Maximum, int data [4], LoadG
+@@ -385,7 +397,12 @@ GetNet (int Maximum, int data [4], LoadG
  
          glibtop_get_netload(&netload, devices[i]);
  
