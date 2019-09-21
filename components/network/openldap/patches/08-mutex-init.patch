@@ -48,16 +48,14 @@ will not be contributed upstream.
  }
  
  #if defined( NEED_COPY_HOSTENT )
---- openldap-2.4.45/libraries/libldap/init.c.old	2017-06-01 15:01:07.000000000 -0500
-+++ openldap-2.4.45/libraries/libldap/init.c	2018-08-10 15:02:10.585133567 -0500
-@@ -657,13 +657,32 @@
- #ifndef HAVE_POLL
- 	if ( ldap_int_tblsize == 0 ) ldap_int_ip_init();
+--- openldap-2.4.48/libraries/libldap/init.c	2019-09-21 19:35:07.310900604 +0000
++++ openldap-2.4.48/libraries/libldap/init.c	2019-09-21 19:41:45.593903223 +0000
+@@ -656,9 +656,28 @@ void ldap_int_initialize( struct ldapopt
  #endif
  
  #ifdef HAVE_CYRUS_SASL
 -	if ( ldap_int_sasl_init() != 0 ) {
--		return;
+-		goto done;
 +{	static int sasl_init_done = 0;
 +	if (sasl_init_done != 1) {
 +		int retnow = 0;
@@ -77,11 +75,9 @@ will not be contributed upstream.
 +		}
 +		LDAP_MUTEX_UNLOCK( &ldap_int_hostname_mutex );
 +		if (retnow == 1)
-+			return;
++			goto done;
  	}
 +}
  #endif
  
  	ldap_int_initialize_global_options(gopts, dbglvl);
- 
- 	if( getenv("LDAPNOINIT") != NULL ) {
