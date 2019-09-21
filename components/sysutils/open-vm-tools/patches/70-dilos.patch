@@ -20,7 +20,7 @@ Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris
 
     ppw = &pw;
 -   if ((ppw = getpwuid_r(0, &pw, buffer, sizeof buffer)) == NULL) {
-+   if (getpwuid_r(0, &pw, buffer, sizeof buffer, &ppw) == NULL) {
++   if (!getpwuid_r(0, &pw, buffer, sizeof buffer, &ppw)) {
        return FALSE;
     }
 
@@ -38,7 +38,7 @@ Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris
 
     ppw = &pw;
 -   if ((ppw = getpwuid_r(0, &pw, buffer, sizeof buffer)) == NULL) {
-+   if (getpwuid_r(0, &pw, buffer, sizeof buffer, &ppw) == NULL) {
++   if (!getpwuid_r(0, &pw, buffer, sizeof buffer, &ppw)) {
        return FALSE;
     }
 
@@ -47,7 +47,7 @@ Index: open-vm-tools-2013.04.16-1098359/open-vm-tools/lib/procMgr/procMgrSolaris
 
     ppw = &pw;
 -   if ((ppw = getpwuid_r(Id_GetEUid(), &pw, buffer, sizeof buffer)) == NULL) {
-+   if (getpwuid_r(Id_GetEUid(), &pw, buffer, sizeof buffer, &ppw) == NULL) {
++   if (!getpwuid_r(Id_GetEUid(), &pw, buffer, sizeof buffer, &ppw)) {
        return FALSE;
     }
 
