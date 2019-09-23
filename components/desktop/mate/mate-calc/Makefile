@@ -13,41 +13,35 @@
 # Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-calc
 COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Calculator App
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:8da209abc2d6f564effcb8963c97bfd2ba34dd1ac2ab9d455877e63f001f367e
+	sha256:efe6818d0a89b5456246412ac3af2c9fea8b6c6a32226cfd26c8b1e6a17e44ab
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
 CONFIGURE_OPTIONS+=	--disable-static
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
