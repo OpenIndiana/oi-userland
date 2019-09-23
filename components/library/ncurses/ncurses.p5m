@@ -33,9 +33,7 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 link path=usr/bin/gcaptoinfo target=../gnu/bin/captoinfo \
     facet.compat.gnulinks=true
@@ -110,21 +108,31 @@ file path=usr/gnu/bin/tic
 file path=usr/gnu/bin/toe
 file path=usr/gnu/bin/tput
 file path=usr/gnu/bin/tset
+#file path=usr/gnu/lib/$(MACH64)/libform.a
 link path=usr/gnu/lib/$(MACH64)/libform.so target=libform.so.5
 link path=usr/gnu/lib/$(MACH64)/libform.so.5 target=libform.so.5.9
 file path=usr/gnu/lib/$(MACH64)/libform.so.5.9
+#file path=usr/gnu/lib/$(MACH64)/libmenu.a
 link path=usr/gnu/lib/$(MACH64)/libmenu.so target=libmenu.so.5
 link path=usr/gnu/lib/$(MACH64)/libmenu.so.5 target=libmenu.so.5.9
 file path=usr/gnu/lib/$(MACH64)/libmenu.so.5.9
+#file path=usr/gnu/lib/$(MACH64)/libncurses++.a
+#file path=usr/gnu/lib/$(MACH64)/libncurses.a
+#file path=usr/gnu/lib/$(MACH64)/libpanel.a
 link path=usr/gnu/lib/$(MACH64)/libpanel.so target=libpanel.so.5
 link path=usr/gnu/lib/$(MACH64)/libpanel.so.5 target=libpanel.so.5.9
 file path=usr/gnu/lib/$(MACH64)/libpanel.so.5.9
+#file path=usr/gnu/lib/libform.a
 link path=usr/gnu/lib/libform.so target=libform.so.5
 link path=usr/gnu/lib/libform.so.5 target=libform.so.5.9
 file path=usr/gnu/lib/libform.so.5.9
+#file path=usr/gnu/lib/libmenu.a
 link path=usr/gnu/lib/libmenu.so target=libmenu.so.5
 link path=usr/gnu/lib/libmenu.so.5 target=libmenu.so.5.9
 file path=usr/gnu/lib/libmenu.so.5.9
+#file path=usr/gnu/lib/libncurses++.a
+#file path=usr/gnu/lib/libncurses.a
+#file path=usr/gnu/lib/libpanel.a
 link path=usr/gnu/lib/libpanel.so target=libpanel.so.5
 link path=usr/gnu/lib/libpanel.so.5 target=libpanel.so.5.9
 file path=usr/gnu/lib/libpanel.so.5.9
@@ -1042,14 +1050,10 @@ file path=usr/gnu/share/tabset/vt100
 file path=usr/gnu/share/tabset/vt300
 link path=usr/gnu/share/terminfo/1/1178 target=../a/adm1178
 link path=usr/gnu/share/terminfo/1/1730-lm target=../d/diablo1740-lm
-link path=usr/gnu/share/terminfo/2/2621 \
-    target=../h/hp2621
-link path=usr/gnu/share/terminfo/2/2621-wl \
-    target=../h/hp2621
-link path=usr/gnu/share/terminfo/2/2621A \
-    target=../h/hp2621
-link path=usr/gnu/share/terminfo/2/2621a \
-    target=../h/hp2621
+link path=usr/gnu/share/terminfo/2/2621 target=../h/hp2621
+link path=usr/gnu/share/terminfo/2/2621-wl target=../h/hp2621
+link path=usr/gnu/share/terminfo/2/2621A target=../h/hp2621
+link path=usr/gnu/share/terminfo/2/2621a target=../h/hp2621
 link path=usr/gnu/share/terminfo/3/386at target=../a/att6386
 link path=usr/gnu/share/terminfo/3/3b1 target=../a/att7300
 link path=usr/gnu/share/terminfo/4/4025ex target=../t/tek4025ex
@@ -2064,6 +2068,12 @@ file path=usr/gnu/share/terminfo/h/hp+printer
 file path=usr/gnu/share/terminfo/h/hp110
 file path=usr/gnu/share/terminfo/h/hp150
 file path=usr/gnu/share/terminfo/h/hp2
+file path=usr/gnu/share/terminfo/h/hp236
+link path=usr/gnu/share/terminfo/h/hp2382 target=hp2382a
+file path=usr/gnu/share/terminfo/h/hp2382a
+file path=usr/gnu/share/terminfo/h/hp2392
+link path=usr/gnu/share/terminfo/h/hp2397 target=hp2397a
+file path=usr/gnu/share/terminfo/h/hp2397a
 file path=usr/gnu/share/terminfo/h/hp2621
 file path=usr/gnu/share/terminfo/h/hp2621-48
 file path=usr/gnu/share/terminfo/h/hp2621-a
@@ -2072,28 +2082,17 @@ file path=usr/gnu/share/terminfo/h/hp2621-fl
 file path=usr/gnu/share/terminfo/h/hp2621-k45
 file path=usr/gnu/share/terminfo/h/hp2621-nl
 file path=usr/gnu/share/terminfo/h/hp2621-nt
-link path=usr/gnu/share/terminfo/h/hp2621-wl \
-    target=hp2621
-link path=usr/gnu/share/terminfo/h/hp2621A \
-    target=hp2621
-file path=usr/gnu/share/terminfo/h/hp2621a
-link path=usr/gnu/share/terminfo/h/hp2621a-a \
-    target=hp2621-a
+link path=usr/gnu/share/terminfo/h/hp2621-wl target=hp2621
+link path=usr/gnu/share/terminfo/h/hp2621A target=hp2621
+link path=usr/gnu/share/terminfo/h/hp2621a target=hp2621
+link path=usr/gnu/share/terminfo/h/hp2621a-a target=hp2621-a
 file path=usr/gnu/share/terminfo/h/hp2621b
 file path=usr/gnu/share/terminfo/h/hp2621b-kx
 file path=usr/gnu/share/terminfo/h/hp2621b-kx-p
 file path=usr/gnu/share/terminfo/h/hp2621b-p
-link path=usr/gnu/share/terminfo/h/hp2621k45 \
-    target=hp2621-k45
+link path=usr/gnu/share/terminfo/h/hp2621k45 target=hp2621-k45
 file path=usr/gnu/share/terminfo/h/hp2621p
 file path=usr/gnu/share/terminfo/h/hp2621p-a
-file path=usr/gnu/share/terminfo/h/hp236
-link path=usr/gnu/share/terminfo/h/hp2382 target=hp2382a
-file path=usr/gnu/share/terminfo/h/hp2382a
-file path=usr/gnu/share/terminfo/h/hp2392
-link path=usr/gnu/share/terminfo/h/hp2397 target=hp2397a
-file path=usr/gnu/share/terminfo/h/hp2397a
-file path=usr/gnu/share/terminfo/h/hp2626-s
 file path=usr/gnu/share/terminfo/h/hp2622
 link path=usr/gnu/share/terminfo/h/hp2622a target=hp2622
 file path=usr/gnu/share/terminfo/h/hp2623
@@ -2109,7 +2108,11 @@ link path=usr/gnu/share/terminfo/h/hp2624b-4p target=hp2624
 link path=usr/gnu/share/terminfo/h/hp2624b-4p-p target=hp2624b-p
 file path=usr/gnu/share/terminfo/h/hp2624b-p
 file path=usr/gnu/share/terminfo/h/hp2626
+file path=usr/gnu/share/terminfo/h/hp2626-12
+file path=usr/gnu/share/terminfo/h/hp2626-12-s
+file path=usr/gnu/share/terminfo/h/hp2626-12x40
 file path=usr/gnu/share/terminfo/h/hp2626-ns
+file path=usr/gnu/share/terminfo/h/hp2626-s
 file path=usr/gnu/share/terminfo/h/hp2626-x40
 link path=usr/gnu/share/terminfo/h/hp2626a target=hp2626
 link path=usr/gnu/share/terminfo/h/hp2626p target=hp2626
@@ -2119,8 +2122,11 @@ file path=usr/gnu/share/terminfo/h/hp2627c
 file path=usr/gnu/share/terminfo/h/hp262x
 file path=usr/gnu/share/terminfo/h/hp2640a
 file path=usr/gnu/share/terminfo/h/hp2640b
+file path=usr/gnu/share/terminfo/h/hp2641a
 link path=usr/gnu/share/terminfo/h/hp2644a target=hp2640b
 file path=usr/gnu/share/terminfo/h/hp2645
+link path=usr/gnu/share/terminfo/h/hp2645a target=hp2641a
+link path=usr/gnu/share/terminfo/h/hp2647a target=hp2641a
 file path=usr/gnu/share/terminfo/h/hp2648
 link path=usr/gnu/share/terminfo/h/hp2648a target=hp2648
 file path=usr/gnu/share/terminfo/h/hp300h
@@ -2723,13 +2729,13 @@ file path=usr/gnu/share/terminfo/p/pcvt50
 file path=usr/gnu/share/terminfo/p/pcvt50w
 file path=usr/gnu/share/terminfo/p/pcvtXX
 link path=usr/gnu/share/terminfo/p/pcz19 target=pc-coherent
-link path=usr/gnu/share/terminfo/p/pe$(COMPONENT_VERSION)2 target=pe1251
 link path=usr/gnu/share/terminfo/p/pe1100 target=../f/fox
 link path=usr/gnu/share/terminfo/p/pe1200 target=../o/owl
 file path=usr/gnu/share/terminfo/p/pe1251
 link path=usr/gnu/share/terminfo/p/pe550 target=../b/bantam
 link path=usr/gnu/share/terminfo/p/pe6100 target=../b/bantam
 link path=usr/gnu/share/terminfo/p/pe6300 target=pe1251
+link path=usr/gnu/share/terminfo/p/pe6312 target=pe1251
 file path=usr/gnu/share/terminfo/p/pe7000c
 file path=usr/gnu/share/terminfo/p/pe7000m
 file path=usr/gnu/share/terminfo/p/pilot
@@ -2858,6 +2864,8 @@ file path=usr/gnu/share/terminfo/r/rxvt-basic
 file path=usr/gnu/share/terminfo/r/rxvt-color
 file path=usr/gnu/share/terminfo/r/rxvt-cygwin
 file path=usr/gnu/share/terminfo/r/rxvt-cygwin-native
+file path=usr/gnu/share/terminfo/r/rxvt-unicode
+file path=usr/gnu/share/terminfo/r/rxvt-unicode-256color
 file path=usr/gnu/share/terminfo/r/rxvt-xpm
 link path=usr/gnu/share/terminfo/s/s4 target=../a/att7300
 file path=usr/gnu/share/terminfo/s/sb1
@@ -3064,8 +3072,8 @@ link path=usr/gnu/share/terminfo/t/ti733 target=ti700
 link path=usr/gnu/share/terminfo/t/ti735 target=ti700
 link path=usr/gnu/share/terminfo/t/ti745 target=ti700
 link path=usr/gnu/share/terminfo/t/ti800 target=ti700
-file path=usr/gnu/share/terminfo/t/ti916-132
 file path=usr/gnu/share/terminfo/t/ti916
+file path=usr/gnu/share/terminfo/t/ti916-132
 link path=usr/gnu/share/terminfo/t/ti916-220-7 target=ti916
 link path=usr/gnu/share/terminfo/t/ti916-220-8 target=ti916-8
 file path=usr/gnu/share/terminfo/t/ti916-8
