@@ -26,26 +26,26 @@
 # Copyright (c) 2019  Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	6.1
-COMPONENT_REV=		20190817
+COMPONENT_REV=		20190921
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_REV)
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_REV)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:e7c30c68427adc87b4f0f3fe8a94ac4767f4378d605a6ee85cf3d2cfcc676734
+	sha256:6c3f8ed2acf284dd63b853f470075cbc6fe74f67c128a081db123a69bd1c1271
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/$(COMPONENT_NAME)/current/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=		library/ncurses
 COMPONENT_LICENSE=	MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Needed for the 'test' target to work
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -86,12 +86,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/test
 COMPONENT_TEST_TARGETS =
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/pcre2
