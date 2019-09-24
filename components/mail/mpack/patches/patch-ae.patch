@@ -1,0 +1,49 @@
+$NetBSD: patch-ae,v 1.5 2010/06/15 04:18:04 dholland Exp $
+
+- Include fixes for modern Unix.
+- Suppress mktemp() warning on NetBSD; callers use O_EXCL.
+
+Upstream: as far as I know not actively maintained upstream.
+
+--- unixpk.c.orig	2003-07-21 22:50:41.000000000 +0200
++++ unixpk.c
+@@ -22,8 +22,16 @@
+  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+  * SOFTWARE.
+  */
++
++#ifdef __NetBSD__
++/* Use of mktemp() below is ok - resulting names are opened with O_EXCL. */
++#define __MKTEMP_OK__
++#endif
++
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
++#include <unistd.h>
+ #include <errno.h>
+ #include "common.h"
+ #include "version.h"
+@@ -31,9 +39,6 @@
+ 
+ #define MAXADDRESS 100
+ 
+-extern char *getenv();
+-
+-extern int errno;
+ extern int optind;
+ extern char *optarg;
+ 
+@@ -164,7 +169,11 @@ int main(int argc, char **argv)
+ 	    strcpy(fnamebuf, getenv("TMPDIR"));
+ 	}
+ 	else {
+-	    strcpy(fnamebuf, "/usr/tmp");
++#if defined(P_tmpdir)
++	    strcpy(fnamebuf, P_tmpdir);
++#else
++	    strcpy(fnamebuf, "/var/tmp");
++#endif
+ 	}
+ 	strcat(fnamebuf, "/mpackXXXXXX");
+ 	mktemp(fnamebuf);
