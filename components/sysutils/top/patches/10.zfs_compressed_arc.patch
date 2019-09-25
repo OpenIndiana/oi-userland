@@ -49,7 +49,7 @@ diff -Nurp top-3.8beta1/display.c top-3.8beta1-carc/display.c
 +	    {
 +		char rbuf[6];
 +		(void) snprintf(rbuf, sizeof(rbuf), "%.2f", 
-+		    (float)*(numbers - 2) / (float)num);
++		    ((float)num)/100.0);
 +		display_write(x, y, color, 0, rbuf);
 +	    }
  	    else
@@ -171,7 +171,7 @@ diff -Nurp top-3.8beta1/layout.h top-3.8beta1-carc/layout.h
 diff -Nurp top-3.8beta1/machine/m_sunos5.c top-3.8beta1-carc/machine/m_sunos5.c
 --- top-3.8beta1/machine/m_sunos5.c	2019-08-18 10:21:57.104542831 +0000
 +++ top-3.8beta1-carc/machine/m_sunos5.c	2019-08-18 09:37:06.654199762 +0000
-@@ -298,6 +298,10 @@ char *memorynames[] =
+@@ -298,6 +298,10 @@
  char *arcnames[] =
  {"K Total, ", "K MRU, ", "K MFU, ", "K Anon, ", "K Header, ", "K Other", NULL};
  
@@ -182,7 +182,7 @@ diff -Nurp top-3.8beta1/machine/m_sunos5.c top-3.8beta1-carc/machine/m_sunos5.c
  /* these are for detailing kernel statistics */
  long kernel_stats[8];
  char *kernelnames[] =
-@@ -893,7 +897,7 @@ get_avenrun(int avenrun[3])
+@@ -893,7 +897,7 @@
  }
  
  int
@@ -191,7 +191,7 @@ diff -Nurp top-3.8beta1/machine/m_sunos5.c top-3.8beta1-carc/machine/m_sunos5.c
  {
      #ifdef USE_KSTAT
      int status;
-@@ -941,6 +945,25 @@ get_arcstats(long arcstats[NUM_ZFS_ARC])
+@@ -941,6 +945,30 @@
                  arcstats[5] = (long) kn->value.ui64 / 1024;
              }
  	}
@@ -207,7 +207,12 @@ diff -Nurp top-3.8beta1/machine/m_sunos5.c top-3.8beta1-carc/machine/m_sunos5.c
 +                carc_stats[1] = (long) kn->value.ui64 / 1024;
 +            }
 +	}
-+        carc_stats[2] = arcstats[0];	/* ARC Total */
++	if (carc_stats[0] > 0)
++	{
++            /* We calculate this statistics here, and use 100 multiplier as numbers 
++               is array of long */
++            carc_stats[2] = round(((float) carc_stats[1])/((float) carc_stats[0])*100);
++	}
 +	if ((kn = kstat_data_lookup(ks_arcstats, "overhead_size")) != NULL)
 +	{
 +            if(kn->value.ui64 > 0){
@@ -217,7 +222,7 @@ diff -Nurp top-3.8beta1/machine/m_sunos5.c top-3.8beta1-carc/machine/m_sunos5.c
      }
      dprintf("get_arcstats returns %d\n", status);
      return (status);
-@@ -1302,6 +1325,7 @@ machine_init (struct statics *statics)
+@@ -1302,6 +1330,7 @@
      statics->cpustate_names = cpustatenames;
      statics->memory_names = memorynames;
      statics->arc_names = arcnames;
@@ -225,7 +230,7 @@ diff -Nurp top-3.8beta1/machine/m_sunos5.c top-3.8beta1-carc/machine/m_sunos5.c
      statics->kernel_names = kernelnames;
      statics->order_names = ordernames;
      statics->flags.fullcmds = 1;
-@@ -1483,8 +1507,9 @@ get_system_info (struct system_info *si)
+@@ -1483,8 +1512,9 @@
      get_avenrun(avenrun);
      
      /* get ARC information */

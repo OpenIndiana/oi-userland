@@ -22,11 +22,13 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
+BUILD_BITS= 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		top
 COMPONENT_VERSION=	3.8beta1
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/unixtop/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -34,31 +36,20 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:6c683e9cb092078cbc1b2233b15fa8bd3d35a00874e6ba27cf54370d1d64fa4d
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/unixtop/files/unixtop/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		diagnostic/top
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
 IPS_COMPONENT_VERSION =	3.8
 
-CONFIGURE_BINDIR.64=$(CONFIGURE_PREFIX)/bin
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # viewpathing support in the build is broken in the 'install' target
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-ASLR_MODE = $(ASLR_ENABLE)
 
 # top build process is producing both 32-bit and 64-bit in one Makefile target.
 # It will receive LDFLAGS and cause 64-bit object files linked with 32-bit argument.
 # Till top fixes that mess, unseting LDFLAGS is the hacky workaround.
 LDFLAGS=
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
