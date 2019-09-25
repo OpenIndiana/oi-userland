@@ -24,21 +24,21 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	6.6
+COMPONENT_VERSION=	6.7
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9bb9ca00da53f26a7e5725eee49689cd4a1e18d25d5b061ac8b2053018d93d66
+	sha256:988403c1542d15ad044600b909997ba3079b10e03224c61188117f3676b02caa
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/texinfo
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 INFOPATH := /usr/share/info
 INFOPATH := $(INFOPATH):/usr/sfw/share/info
@@ -64,13 +64,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^make.*: .*is up to date.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
