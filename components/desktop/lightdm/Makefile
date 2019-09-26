@@ -14,10 +14,13 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lightdm
 COMPONENT_VERSION=	1.30.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Light display manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -31,18 +34,15 @@ COMPONENT_CLASSIFICATION=       Desktop (GNOME)/Sessions
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING.GPL3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
 PATH=$(PATH.gnu)
+
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 CPPFLAGS+= $(CPP_XPG7MODE)
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
@@ -56,10 +56,6 @@ CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
 
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += library/gnome/yelp-xsl
@@ -77,3 +73,4 @@ REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxdmcp
+REQUIRED_PACKAGES += x11/server/xserver-common
