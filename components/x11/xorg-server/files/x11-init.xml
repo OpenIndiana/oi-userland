@@ -40,35 +40,35 @@
 	<single_instance/>
 
 	<dependency
-            name='filesystem'
-            grouping='require_all'
-            restart_on='none'
-            type='service'>
-                <service_fmri value='svc:/system/filesystem/local'/>
-        </dependency>
+		name='filesystem'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+			<service_fmri value='svc:/system/filesystem/local'/>
+	</dependency>
 
-        <dependency name='single-user'
-            grouping='require_all'
-            restart_on='error'
-            type='service'>
-                <service_fmri value='svc:/milestone/single-user:default'/>
-        </dependency>
+	<dependency name='single-user'
+		grouping='require_all'
+		restart_on='error'
+		type='service'>
+			<service_fmri value='svc:/milestone/single-user:default'/>
+	</dependency>
 
 	<exec_method
-                type='method'
-                name='start'
-                exec='/lib/svc/method/x11-init'
-                timeout_seconds='180' />
+		type='method'
+		name='start'
+		exec='/lib/svc/method/x11-init'
+		timeout_seconds='180' />
 
-        <exec_method
-                type='method'
-                name='stop'
-                exec=':true'
-                timeout_seconds='0' />
+	<exec_method
+		type='method'
+		name='stop'
+		exec=':true'
+		timeout_seconds='0' />
 
 	<property_group name='startd' type='framework'>
-                <propval name='duration' type='astring' value='transient' />
-        </property_group>
+		<propval name='duration' type='astring' value='transient' />
+	</property_group>
 
 	<template>
 		<common_name>
