@@ -23,20 +23,14 @@ DIRS="/tmp/.ICE-unix:root:root:1777"
 
 PATH=/bin
 
-IFS=";"
-for rec in $DIRS; do
-   dir=`echo $rec | cut -d ":" -f 1`
-   owner=`echo $rec | cut -d ":" -f 2`
-   group=`echo $rec | cut -d ":" -f 3`
-   mode=`echo $rec | cut -d ":" -f 4`
-   
-   if [  -e "$dir"  -a ! -d "$dir" ]; then
+echo "$DIRS"| tr ";" "\n" | while IFS=":" read dir owner group mode ; do
+   if [  -e "$dir"  -a ! -d "$dir" -o -L "$dir" ]; then
          mv "$dir" "$dir.$$" 
    fi
    /bin/mkdir -p -m "$mode" "$dir"
 # If directory exists, mkdir will not change its permissions
    chmod "$mode" "$dir"
-   chown $owner:$group "$dir"
+   chown "$owner":"$group" "$dir"
 done
 
 exit $SMF_EXIT_OK
