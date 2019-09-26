@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xdm
 COMPONENT_VERSION= 1.1.9
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=  the X Display Manager (xdm) server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -30,11 +31,11 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+PATH=$(PATH.gnu)
 
-PATH=/usr/gnu/bin:/usr/bin
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =         ( cd  $(@D) &&\
 					libtoolize --force &&\
@@ -70,10 +71,9 @@ $(SAMPLE_CONFIGS):	$(INSTALL_32)
 	done
 	$(TOUCH) $@
 
-build: $(BUILD_32)
+install: $(SAMPLE_CONFIGS)
 
-install: $(INSTALL_32) $(SAMPLE_CONFIGS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
@@ -88,3 +88,4 @@ REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/server/xserver-common
