@@ -12,6 +12,8 @@
 # Copyright 2014-2017 Alexander Pyhalov
 #
 
+BUILD_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tor
@@ -29,24 +31,16 @@ COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	BSD, OPEN DATA LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I/usr/include/libevent2
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f)
 
-CONFIGURE_BINDIR.64 = $(USRBINDIR)
-
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-#CONFIGURE_OPTIONS+=	--enable-linker-hardening
 CONFIGURE_OPTIONS+=	--localstatedir=/var
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-# Tests require GNU diff
-REQUIRED_PACKAGES += text/gnu-diffutils
 
 COMPONENT_TEST_ENV+=	PATH=$(PATH.gnu)
 
@@ -63,8 +57,15 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
+# One test failed:
+# error: util/map_anon_nofork:
+# FAIL ~/oi-userland/components/network/tor/tor-0.4.1.6/src/test/test_util.c:6223: assert(buf[0] OP_EQ 0xd0): -48 vs 208
+#  [map_anon_nofork FAILED]
+# see: https://trac.torproject.org/projects/tor/ticket/31897
 test:		$(TEST_64)
 
+# Tests require GNU diff
+REQUIRED_PACKAGES += text/gnu-diffutils
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
