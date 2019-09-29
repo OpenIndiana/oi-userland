@@ -1,0 +1,23 @@
+diff --git a/usr/src/boot/sys/boot/common/module.c b/usr/src/boot/sys/boot/common/module.c
+index ca4090fc24f5292a947bd5b8cd83458250a77c32..643625c34749d3201445895b03f60176a4cad074 100644
+--- a/usr/src/boot/sys/boot/common/module.c
++++ b/usr/src/boot/sys/boot/common/module.c
+@@ -263,7 +263,7 @@ command_lsmod(int argc, char *argv[])
+ 				break;
+ 			if (strcmp(fp->f_type, "hash") == 0) {
+ 				pager_output("    contents: ");
+-				strncpy(lbuf, PTOV(fp->f_addr), fp->f_size);
++				strlcpy(lbuf, PTOV(fp->f_addr), sizeof (lbuf));
+ 				if (pager_output(lbuf))
+ 					break;
+ 			}
+diff --git a/usr/src/boot/Makefile.version b/usr/src/boot/Makefile.version
+index faf491c1af6a546f3729c06d162eb37e1c73e835..67889d27d9d9843f3ee6f6e37d6a8b252ce8b808 100644
+--- a/usr/src/boot/Makefile.version
++++ b/usr/src/boot/Makefile.version
+@@ -33,4 +33,4 @@ LOADER_VERSION = 1.1
+ # Use date like formatting here, YYYY.MM.DD.XX, without leading zeroes.
+ # The version is processed from left to right, the version number can only
+ # be increased.
+-BOOT_VERSION = $(LOADER_VERSION)-2019.09.20.1
++BOOT_VERSION = $(LOADER_VERSION)-2019.09.27.1

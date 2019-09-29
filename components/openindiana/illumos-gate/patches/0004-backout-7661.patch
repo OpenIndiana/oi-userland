@@ -1,0 +1,684 @@
+--- b/usr/src/Makefile.master
++++ a/usr/src/Makefile.master
+@@ -26,7 +26,6 @@
+ # Copyright 2015, OmniTI Computer Consulting, Inc. All rights reserved.
+ # Copyright 2015 Gary Mills
+ # Copyright 2015 Igor Kozhukhov <ikozhukhov@gmail.com>
+-# Copyright 2016 RackTop Systems.
+ # Copyright 2016 Toomas Soome <tsoome@me.com>
+ # Copyright 2018 OmniOS Community Edition (OmniOSce) Association.
+ # Copyright 2019, Joyent, Inc.
+@@ -194,11 +193,8 @@
+ PERL=		/usr/bin/perl
+ PERL_VERSION=	5.10.0
+ PERL_PKGVERS=	-510
++PERL_ARCH =		i86pc-solaris-64int
++$(SPARC_BLD)PERL_ARCH =	sun4-solaris-64int
+-PERL_MACH=	i86pc
+-$(SPARC_BLD)PERL_MACH=	sun4
+-PERL_VARIANT=
+-PERL_ARCH=	$(PERL_MACH)-solaris$(PERL_VARIANT)-64int
+-PERL_ARCH64=	$(PERL_MACH)-solaris$(PERL_VARIANT)-64
+ PYTHON_VERSION=	2.7
+ PYTHON_PKGVERS=	-27
+ PYTHON_SUFFIX=
+@@ -798,18 +794,13 @@
+ $(__GNUC)CCNEEDED	= -L$(GCCLIBDIR) -lstdc++ -lgcc_s
+ $(__GNUC)CCEXTNEEDED	= $(CCNEEDED)
+ 
+-CCNEEDED64		= -lCrun
+-CCEXTNEEDED64		= -lCrun -lCstd
+-$(__GNUC64)CCNEEDED64	= -L$(GCCLIBDIR) -lstdc++ -lgcc_s
+-$(__GNUC64)CCEXTNEEDED	= $(CCNEEDED64)
+-
+ LINK.c=		$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
+ LINK64.c=	$(CC) $(CFLAGS64) $(CPPFLAGS) $(LDFLAGS)
+ NORUNPATH=	-norunpath -nolib
+ LINK.cc=	$(CCC) $(CCFLAGS) $(CPPFLAGS) $(NORUNPATH) \
+ 		$(LDFLAGS) $(CCNEEDED)
+ LINK64.cc=	$(CCC) $(CCFLAGS64) $(CPPFLAGS) $(NORUNPATH) \
++		$(LDFLAGS) $(CCNEEDED)
+-		$(LDFLAGS) $(CCNEEDED64)
+ 
+ #
+ # lint macros
+@@ -852,7 +843,6 @@
+ #
+ # For now at least, we cross-compile amd64 on i386 machines.
+ NATIVE_MACH=	$(MACH:amd64=i386)
+-NATIVE_MACH64=	$(MACH64)
+ 
+ # Define native compilation macros
+ #
+@@ -917,13 +907,6 @@
+ NATIVELD=		$($(NATIVE_MACH)_LD)
+ NATIVELINT=		$($(NATIVE_MACH)_LINT)
+ 
+-NATIVECC64=		$($(NATIVE_MACH64)_CC)
+-NATIVECCC64=		$($(NATIVE_MACH64)_CCC)
+-NATIVECPP64=		$($(NATIVE_MACH64)_CPP)
+-NATIVEAS64=		$($(NATIVE_MACH64)_AS)
+-NATIVELD64=		$($(NATIVE_MACH64)_LD)
+-NATIVELINT64=		$($(NATIVE_MACH64)_LINT)
+-
+ #
+ # Makefile.master.64 overrides these settings
+ #
+@@ -934,13 +917,6 @@
+ LD=			$(NATIVELD)
+ LINT=			$(NATIVELINT)
+ 
+-CC64=			$(NATIVECC64)
+-CCC64=			$(NATIVECCC64)
+-CPP64=			$(NATIVECPP64)
+-AS64=			$(NATIVEAS64)
+-LD64=			$(NATIVELD64)
+-LINT64=			$(NATIVELINT64)
+-
+ # Pass -Y flag to cpp (method of which is release-dependent)
+ CCYFLAG=		-Y I,
+ 
+--- b/usr/src/Makefile.master.64
++++ a/usr/src/Makefile.master.64
+@@ -21,7 +21,6 @@
+ #
+ # Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ # Copyright 2014 Garrett D'Amore <garrett@damore.org>
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ # rebind basic build macros to 64-bit versions
+@@ -57,19 +56,25 @@
+ #
+ # Override Makefile.master's settings of CC, CCC, AS and LINT
+ #
++CC=		$($(MACH64)_CC)
++CCC=		$($(MACH64)_CCC)
++CPP=		$($(MACH64)_CPP)
++AS=		$($(MACH64)_AS)
++LD=		$($(MACH64)_LD)
++LINT=		$($(MACH64)_LINT)
+-CC=		$(CC64)
+-CCC=		$(CCC64)
+-CPP=		$(CPP64)
+-AS=		$(AS64)
+-LD=		$(LD64)
+-LINT=		$(LINT64)
+ 
++BUILD.SO=	$(CC) $(CFLAGS) -o $@ $(GSHARED) $(DYNFLAGS) \
++		$(PICS) $(EXTPICS) -L $(ROOTLIBDIR64) $(LDLIBS)
+-BUILD.SO=	$(BUILD64.SO)
+-BUILDCCC.SO=	$(BUILDCCC64.SO)
+ 
+ #
+ # ld(1) requires the -64 option to create a 64-bit filter solely from a mapfile
+ #
+ MAPFILECLASS=	-64
+ 
++CCNEEDED =		-lCrun
++$(__GNUC64)CCNEEDED =	-L$(GCCLIBDIR) -lstdc++
++$(__GNUC64)CCNEEDED +=	-lgcc_s
++
++BUILDCCC.SO=    $(CCC) $(CCFLAGS) -o $@ $(GSHARED) $(DYNFLAGS) \
++		$(PICS) $(EXTPICS) $(LDLIBS) $(CCNEEDED)
+ MAPFILE.NGB =	$(MAPFILE.NGB_$(MACH64))
+--- b/usr/src/cmd/perl/Makefile.perl
++++ a/usr/src/cmd/perl/Makefile.perl
+@@ -9,8 +9,8 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+ # Copyright 2015, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ include $(SRC)/lib/Makefile.lib
+@@ -22,29 +22,16 @@
+ PERLDIR = $(ADJUNCT_PROTO)/usr/perl5/$(PERL_VERSION)
+ PERLLIBDIR = $(PERLDIR)/lib/$(PERL_ARCH)
+ PERLINCDIR = $(PERLLIBDIR)/CORE
+-PERLLIBDIR64 = $(PERLDIR)/lib/$(PERL_ARCH64)
+-PERLINCDIR64 = $(PERLLIBDIR64)/CORE
+ 
+ PERLMOD = $(MODULE).pm
+ PERLEXT = $(MACH)/$(MODULE).so
+-PERLEXT64 = $(MACH64)/$(MODULE).so
+ 
+ ROOTPERLDIR = $(ROOT)/usr/perl5/$(PERL_VERSION)
+ ROOTPERLLIBDIR = $(ROOTPERLDIR)/lib/$(PERL_ARCH)
+ ROOTPERLMODDIR = $(ROOTPERLLIBDIR)/Sun/Solaris
+ ROOTPERLEXTDIR = $(ROOTPERLLIBDIR)/auto/Sun/Solaris/$(MODULE)
+-ROOTPERLLIBDIR64 = $(ROOTPERLDIR)/lib/$(PERL_ARCH64)
+-ROOTPERLMODDIR64 = $(ROOTPERLLIBDIR64)/Sun/Solaris
+-ROOTPERLEXTDIR64 = $(ROOTPERLLIBDIR64)/auto/Sun/Solaris/$(MODULE)
+ 
+ ROOTPERLMOD = $(ROOTPERLMODDIR)/$(MODULE).pm
+ ROOTPERLEXT = $(ROOTPERLEXTDIR)/$(MODULE).so
+-ROOTPERLMOD64 = $(ROOTPERLMODDIR64)/$(MODULE).pm
+-ROOTPERLEXT64 = $(ROOTPERLEXTDIR64)/$(MODULE).so
+-
+-XSUBPP = $(PERLDIR)/bin/$(MACH)/perl $(PERLDIR)/lib/ExtUtils/xsubpp \
+-	-typemap $(PERLDIR)/lib/ExtUtils/typemap
+-XSUBPP64 = $(PERLDIR)/bin/$(MACH64)/perl $(PERLDIR)/lib/ExtUtils/xsubpp \
+-	-typemap $(PERLDIR)/lib/ExtUtils/typemap
+ 
+ CSTD = $(CSTD_GNU99)
+--- b/usr/src/cmd/perl/Makefile.targ
++++ a/usr/src/cmd/perl/Makefile.targ
+@@ -9,66 +9,45 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+ # Copyright 2015, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright (c) 2016 Racktop Systems.
+ # Copyright (c) 2018, Joyent, Inc.
+ 
++# Link against libc as perl solaris specs
+-# Link against libc as per solaris specs
+ $(PERLEXT):= LDLIBS += -lc
+-$(PERLEXT64):= LDLIBS += -lc
+ 
+ # Allow for undefined symbols satisfied by perl
+ $(PERLEXT):= ZDEFS =
+-$(PERLEXT64):= ZDEFS =
+ 
+ $(ROOTPERLEXT) := FILEMODE = 0555
+ $(ROOTPERLMOD) := FILEMODE = 0444
+-$(ROOTPERLEXT64) := FILEMODE = 0555
+-$(ROOTPERLMOD64) := FILEMODE = 0444
+ 
+ # CFLAGS for perl, specifically.
+ PCFLAGS= -DPERL_EUPXS_ALWAYS_EXPORT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 \
+ 	-DPERL_USE_SAFE_PUTENV -D_TS_ERRNO
+-PCFLAGS64= -DPERL_EUPXS_ALWAYS_EXPORT -D_LARGEFILE_SOURCE64 \
+-	 -DPERL_USE_SAFE_PUTENV -D_TS_ERRNO
+ 
+ SMATCH=off
+ 
++$(MACH):
+-$(MACH) $(MACH64):
+ 	$(INS.dir)
+ 
+ $(PERLEXT): $(MACH)/$(MODULE).o
+ 	$(BUILD.SO) $(MACH)/$(MODULE).o
+ 
+-$(PERLEXT64): $(MACH64)/$(MODULE).o
+-	$(BUILD64.SO) $(MACH64)/$(MODULE).o
+-
+ $(MACH)/$(MODULE).o: $(MACH)/$(MODULE).c
+ 	$(COMPILE.c) $(PCFLAGS) $(C_PICFLAGS) -I$(PERLINCDIR) $< -o $@
+ 
++$(MACH)/$(MODULE).c: $(MACH) $(MODULE).xs 
++	$(PERLDIR)/bin/xsubpp $(XSUBPPFLAGS) $(MODULE).xs >$@
+-$(MACH64)/$(MODULE).o: $(MACH64)/$(MODULE).c
+-	$(COMPILE64.c) $(PCFLAGS64) $(C_PICFLAGS) -I$(PERLINCDIR64) $< -o $@
+-
+-$(MACH)/$(MODULE).c: $(MACH) $(MODULE).xs
+-	$(XSUBPP) $(XSUBPPFLAGS) $(MODULE).xs >$@
+ 
++$(ROOTPERLMODDIR):
+-$(MACH64)/$(MODULE).c: $(MACH64) $(MODULE).xs
+-	$(XSUBPP64) $(XSUBPPFLAGS64) $(MODULE).xs >$@
+-
+-$(ROOTPERLMODDIR) $(ROOTPERLMODDIR64):
+ 	$(INS.dir)
+ 
+ $(ROOTPERLMOD): $(ROOTPERLMODDIR) $(MODULE).pm
+ 	$(RM) $@; $(INS) -s -m $(FILEMODE) -f $^
+ 
++$(ROOTPERLEXTDIR):
+-$(ROOTPERLMOD64): $(ROOTPERLMODDIR64) $(MODULE).pm
+-	$(RM) $@; $(INS) -s -m $(FILEMODE) -f $^
+-
+-$(ROOTPERLEXTDIR) $(ROOTPERLEXTDIR64):
+ 	$(INS.dir)
+ 
+ $(ROOTPERLEXT): $(ROOTPERLEXTDIR) $(MACH)/$(MODULE).so
+ 	$(RM) $@; $(INS) -s -m $(FILEMODE) -f $^
+-
+-$(ROOTPERLEXT64): $(ROOTPERLEXTDIR64) $(MACH64)/$(MODULE).so
+-	$(RM) $@; $(INS) -s -m $(FILEMODE) -f $^
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/BSM/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/BSM/Makefile
+@@ -9,15 +9,14 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+-# Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = _BSMparse
+ 
+ include $(SRC)/cmd/perl/Makefile.perl
+ 
++# Install module into arch independant directory
+-# Install module into arch independent directory
+ ROOTPERLMODDIR = $(ROOTPERLDIR)/lib/Sun/Solaris/BSM
+ 
+ include $(SRC)/cmd/perl/Makefile.targ
+@@ -29,3 +28,4 @@
+ install: $(ROOTPERLMOD)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/Intrs/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/Intrs/Makefile
+@@ -9,8 +9,7 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+-# Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = Intrs
+@@ -25,11 +24,9 @@
+ 
+ .KEEP_STATE:
+ 
++all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL32)all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL64)all: $(PERLEXT64) $(PERLMOD)
+ 
++install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL32)install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL64)install: $(ROOTPERLEXT64) $(ROOTPERLMOD64)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+-	$(RM) -r $(MACH) $(MACH64)
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/Kstat/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/Kstat/Makefile
+@@ -10,8 +10,7 @@
+ #
+ # Copyright 2014 Gary Mills
+ #
++# Copyright (c) 2014 Racktop Systems.
+-# Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = Kstat
+@@ -34,11 +33,9 @@
+ 
+ .KEEP_STATE:
+ 
++all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL32)all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL64)all: $(PERLEXT64) $(PERLMOD)
+ 
++install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL32)install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL64)install: $(ROOTPERLEXT64) $(ROOTPERLMOD64)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+-	$(RM) -r $(MACH) $(MACH64)
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/Lgrp/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/Lgrp/Makefile
+@@ -9,8 +9,7 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+-# Copyright 2014, OmniTI Computer Consulting. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = Lgrp
+@@ -29,11 +28,9 @@
+ 
+ .KEEP_STATE:
+ 
++all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL32)all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL64)all: $(PERLEXT64) $(PERLMOD)
+ 
++install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL32)install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL64)install: $(ROOTPERLEXT64) $(ROOTPERLMOD64)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+-	$(RM) -r $(MACH) $(MACH64)
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/Pg/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/Pg/Makefile
+@@ -9,15 +9,14 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+-# Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = Pg
+ 
+ include $(SRC)/cmd/perl/Makefile.perl
+ 
++# Install module into arch independant directory
+-# Install module into arch independent directory
+ ROOTPERLMODDIR = $(ROOTPERLDIR)/lib/Sun/Solaris
+ 
+ include $(SRC)/cmd/perl/Makefile.targ
+@@ -29,3 +28,4 @@
+ install: $(ROOTPERLMOD)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/Project/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/Project/Makefile
+@@ -9,8 +9,7 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+-# Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = Project
+@@ -29,11 +28,9 @@
+ 
+ .KEEP_STATE:
+ 
++all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL32)all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL64)all: $(PERLEXT64) $(PERLMOD)
+ 
++install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL32)install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL64)install: $(ROOTPERLEXT64) $(ROOTPERLMOD64)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+-	$(RM) -r $(MACH) $(MACH64)
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/Task/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/Task/Makefile
+@@ -9,8 +9,7 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+-# Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = Task
+@@ -25,11 +24,9 @@
+ 
+ .KEEP_STATE:
+ 
++all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL32)all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL64)all: $(PERLEXT64) $(PERLMOD)
+ 
++install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL32)install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL64)install: $(ROOTPERLEXT64) $(ROOTPERLMOD64)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+-	$(RM) -r $(MACH) $(MACH64)
+--- b/usr/src/cmd/perl/contrib/Sun/Solaris/Utils/Makefile
++++ a/usr/src/cmd/perl/contrib/Sun/Solaris/Utils/Makefile
+@@ -9,8 +9,8 @@
+ # http://www.illumos.org/license/CDDL.
+ #
+ #
++# Copyright (c) 2014 Racktop Systems.
+ # Copyright 2014, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ MODULE = Utils
+@@ -25,11 +25,9 @@
+ 
+ .KEEP_STATE:
+ 
++all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL32)all: $(PERLEXT) $(PERLMOD)
+-$(BUILDPERL64)all: $(PERLEXT64) $(PERLMOD)
+ 
++install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL32)install: $(ROOTPERLEXT) $(ROOTPERLMOD)
+-$(BUILDPERL64)install: $(ROOTPERLEXT64) $(ROOTPERLMOD64)
+ 
+ clean clobber:
++	$(RM) -r $(MACH)
+-	$(RM) -r $(MACH) $(MACH64)
+--- b/usr/src/lib/Makefile.lib
++++ a/usr/src/lib/Makefile.lib
+@@ -21,7 +21,6 @@
+ # Copyright 2019 OmniOS Community Edition (OmniOSce) Association.
+ # Copyright 2015 Gary Mills
+ # Copyright 2015 Igor Kozhukhov <ikozhukhov@gmail.com>
+-# Copyright 2016 RackTop Systems.
+ # Copyright (c) 1989, 2010, Oracle and/or its affiliates. All rights reserved.
+ # Copyright 2019, Joyent, Inc.
+ #
+@@ -147,12 +146,8 @@
+ BUILD.AR=	$(AR) $(ARFLAGS) $@ $(AROBJS)
+ BUILD.SO=	$(CC) $(CFLAGS) -o $@ $(GSHARED) $(DYNFLAGS) \
+ 		$(PICS) $(EXTPICS) $(LDLIBS)
+-BUILD64.SO=	$(CC64) $(CFLAGS64) -o $@ $(GSHARED) $(DYNFLAGS) \
+-		$(PICS) $(EXTPICS) -L $(ROOTLIBDIR64) $(LDLIBS)
+ BUILDCCC.SO=	$(CCC) $(CCFLAGS) -o $@ $(GSHARED) $(DYNFLAGS) \
+ 		$(PICS) $(EXTPICS) $(LDLIBS)
+-BUILDCCC64.SO=	$(CCC64) $(CCFLAGS64) -o $@ $(GSHARED) $(DYNFLAGS) \
+-		$(PICS) $(EXTPICS) $(LDLIBS) $(CCNEEDED64)
+ 
+ # default dynamic library symlink
+ INS.liblink=	-$(RM) $@; $(SYMLINK) $(LIBLINKPATH)$(LIBLINKS)$(VERS) $@
+--- b/usr/src/pkg/Makefile
++++ a/usr/src/pkg/Makefile
+@@ -23,7 +23,6 @@
+ # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ # Copyright 2015, OmniTI Computer Consulting, Inc. All rights reserved.
+ # Copyright 2015 Igor Kozhukhov <ikozhukhov@gmail.com>
+-# Copyright 2016 RackTop Systems.
+ # Copyright 2018 OmniOS Community Edition (OmniOSce) Association.
+ #
+ 
+@@ -188,11 +187,8 @@
+ 	PKGVERS_BRANCH=$(PKGVERS_BRANCH) \
+ 	PKGVERS=$(PKGVERS) \
+ 	PERL_ARCH=$(PERL_ARCH) \
+-	PERL_ARCH64=$(PERL_ARCH64) \
+ 	PERL_VERSION=$(PERL_VERSION) \
+ 	PERL_PKGVERS=$(PERL_PKGVERS) \
+-	BUILDPERL32=$(BUILDPERL32) \
+-	BUILDPERL64=$(BUILDPERL64) \
+ 	PYTHON_VERSION=$(PYTHON_VERSION) \
+ 	PYTHON3_VERSION=$(PYTHON3_VERSION) \
+ 	PYTHON_PKGVERS=$(PYTHON_PKGVERS) \
+--- b/usr/src/pkg/manifests/runtime-perl-module-sun-solaris.mf
++++ a/usr/src/pkg/manifests/runtime-perl-module-sun-solaris.mf
+@@ -21,11 +21,11 @@
+ 
+ #
+ # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
++# Copyright (c) 2014 Racktop Systems.
+ # Copyright 2015, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
++<transform file path=.*\.(pm|bs) -> default mode 0444>
+-<transform file path=.*\.pm -> default mode 0444>
+ <transform file path=.*\.so -> default mode 0555>
+ set name=pkg.fmri \
+     value=pkg:/runtime/perl$(PERL_PKGVERS)/module/sun-solaris@0.5.11,$(PKGVERS_BUILTON)-$(PKGVERS_BRANCH)
+@@ -37,98 +37,41 @@
+ dir path=usr/perl5
+ dir path=usr/perl5/$(PERL_VERSION)
+ dir path=usr/perl5/$(PERL_VERSION)/lib
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Intrs
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Kstat
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Project
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Task
++dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Utils
+-$(BUILDPERL32)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)
+-$(BUILDPERL32)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun
+-$(BUILDPERL32)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris
+-$(BUILDPERL32)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto
+-$(BUILDPERL32)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun
+-$(BUILDPERL32)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris
+-$(BUILDPERL32)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Intrs
+-$(BUILDPERL32)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Kstat
+-$(BUILDPERL32)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp
+-$(BUILDPERL32)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Project
+-$(BUILDPERL32)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Task
+-$(BUILDPERL32)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Utils
+-$(BUILDPERL64)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)
+-$(BUILDPERL64)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun/Solaris
+-$(BUILDPERL64)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto
+-$(BUILDPERL64)dir path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Intrs
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Kstat
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Lgrp
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Project
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Task
+-$(BUILDPERL64)dir \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Utils
+ dir path=usr/perl5/$(PERL_VERSION)/lib/Sun
+ dir path=usr/perl5/$(PERL_VERSION)/lib/Sun/Solaris
+ dir path=usr/perl5/$(PERL_VERSION)/lib/Sun/Solaris/BSM
+ dir path=usr/share/man
+ dir path=usr/share/man/man3perl
++file path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Intrs.pm
++file path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Kstat.pm
++file path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Lgrp.pm
++file path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Project.pm
++file path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Task.pm
++file path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Utils.pm
++file \
+-$(BUILDPERL32)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Intrs.pm
+-$(BUILDPERL32)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Kstat.pm
+-$(BUILDPERL32)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Lgrp.pm
+-$(BUILDPERL32)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Project.pm
+-$(BUILDPERL32)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Task.pm
+-$(BUILDPERL32)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/Sun/Solaris/Utils.pm
+-$(BUILDPERL32)file \
+     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Intrs/Intrs.so
++file \
+-$(BUILDPERL32)file \
+     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Kstat/Kstat.so
++file \
+-$(BUILDPERL32)file \
+     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp/Lgrp.so
++file \
+-$(BUILDPERL32)file \
+     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Project/Project.so
++file \
+-$(BUILDPERL32)file \
+     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Task/Task.so
++file \
+-$(BUILDPERL32)file \
+     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)/auto/Sun/Solaris/Utils/Utils.so
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun/Solaris/Intrs.pm
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun/Solaris/Kstat.pm
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun/Solaris/Lgrp.pm
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun/Solaris/Project.pm
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun/Solaris/Task.pm
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/Sun/Solaris/Utils.pm
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Intrs/Intrs.so
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Kstat/Kstat.so
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Lgrp/Lgrp.so
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Project/Project.so
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Task/Task.so
+-$(BUILDPERL64)file \
+-    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH64)/auto/Sun/Solaris/Utils/Utils.so
+ file path=usr/perl5/$(PERL_VERSION)/lib/Sun/Solaris/BSM/_BSMparse.pm
+ file path=usr/perl5/$(PERL_VERSION)/lib/Sun/Solaris/Pg.pm
+ file path=usr/share/man/man3perl/Kstat.3perl
+@@ -138,4 +81,3 @@
+ license cr_Sun license=cr_Sun
+ license usr/src/cmd/perl/THIRDPARTYLICENSE \
+     license=usr/src/cmd/perl/THIRDPARTYLICENSE
+-depend fmri=runtime/perl$(PERL_PKGVERS) type=require
+--- b/usr/src/pkg/manifests/system-extended-system-utilities.mf
++++ a/usr/src/pkg/manifests/system-extended-system-utilities.mf
+@@ -22,7 +22,6 @@
+ #
+ # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ # Copyright 2012 Nexenta Systems, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ #
+ 
+ set name=pkg.fmri value=pkg:/system/extended-system-utilities@$(PKGVERS)
+@@ -293,4 +292,3 @@
+ link path=usr/share/man/man1/unpack.1 target=pack.1
+ link path=usr/share/man/man1/zcat.1 target=compress.1
+ depend fmri=runtime/perl$(PERL_PKGVERS) type=require
+-depend fmri=runtime/perl$(PERL_PKGVERS)/module/sun-solaris type=require
+--- b/usr/src/tools/env/illumos.sh
++++ a/usr/src/tools/env/illumos.sh
+@@ -22,7 +22,6 @@
+ # Copyright 2015 Nexenta Systems, Inc.  All rights reserved.
+ # Copyright 2012 Joshua M. Clulow <josh@sysmgr.org>
+ # Copyright 2015, OmniTI Computer Consulting, Inc. All rights reserved.
+-# Copyright 2016 RackTop Systems.
+ # Copyright 2019 OmniOS Community Edition (OmniOSce) Association.
+ # Copyright 2019, Joyent, Inc.
+ #
+@@ -96,14 +95,9 @@
+ # contains your new defaults OR your .env file sets them.
+ # These are how you would override for building on OmniOS r151028, for example.
+ #export PERL_VERSION=5.28
++#export PERL_ARCH=i86pc-solaris-thread-multi-64int
+-#export PERL_VARIANT=-thread-multi
+ #export PERL_PKGVERS=
+ 
+-# To disable building of the 32-bit or 64-bit perl modules (or both),
+-# uncomment these lines:
+-#export BUILDPERL32='#'
+-#export BUILDPERL64='#'
+-
+ # If your distro uses certain versions of Python, make sure either
+ # Makefile.master contains your new defaults OR your .env file sets them.
+ #export PYTHON_VERSION=2.7
