@@ -17,7 +17,7 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tor
-COMPONENT_VERSION=	0.4.1.6
+COMPONENT_VERSION=	0.4.1.7
 COMPONENT_PROJECT_URL=	https://www.torproject.org
 COMPONENT_SUMMARY=	Anonymizing overlay network for TCP
 COMPONENT_FMRI=		network/tor
@@ -25,7 +25,7 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2a88524ce426079fb9b828bc1b789f2c8ade3ed53c130851102debc3518bed71
+    sha256:8a20fac139cc2a67f682deb806237a02484e6929ce9fbdb4753936dec69cb6a0
 COMPONENT_ARCHIVE_URL=	https://www.torproject.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc	
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -51,10 +51,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/PASS:/p" ' \
 	'-e "/FAIL:/p" ' \
 	'-e "/ERROR:/p" '
-
-# Internal test suite results
-# 'util/map_anon_nofork' test failed (https://trac.torproject.org/projects/tor/ticket/31897):
-#    FAIL ... tor-0.4.1.6/src/test/test_util.c:6223: assert(buf[0] OP_EQ 0xd0): -48 vs 208
 
 # Tests require GNU diff
 REQUIRED_PACKAGES += text/gnu-diffutils
