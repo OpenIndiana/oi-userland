@@ -104,6 +104,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	    -e 's|^export SHADOW_CCCS=.*||' ; \
 	  echo export PERL_VERSION=\"5.22\"; \
 	  echo export PERL_PKGVERS=\"-522\"; \
+	  echo export BUILDPERL64=\"#\"; \
 	  echo export BUILDPY2TOOLS=\"#\"; \
 	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
