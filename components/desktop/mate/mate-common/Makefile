@@ -15,33 +15,33 @@
 # Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=64
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-common
 COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_FMRI=		library/desktop/mate/$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Common automake macros for MATE
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:3f19973a26ccff12834615c4fcc7414cef542ea648f391125e5cfdd8ec649c86
+	sha256:ee7d873ad645962cf603fc632b96ec5968e4985dde06157229c3b08978c6a7f7
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_FMRI=		library/desktop/mate/$(COMPONENT_NAME)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
 
-PATH = $(PATH.gnu)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = cd $(@D) && NOCONFIGURE=1 ./autogen.sh
+PATH=$(PATH.gnu)
+
+COMPONENT_PREP_ACTION= cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
@@ -52,12 +52,7 @@ CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+# Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
