@@ -13,10 +13,12 @@
 # Copyright (c) 2019 Michal Nowak
 #
 
+BUILD_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
-COMPONENT_VERSION=	4.4
+COMPONENT_VERSION=	4.5
 COMPONENT_FMRI=		editor/nano
 COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -24,15 +26,13 @@ COMPONENT_PROJECT_URL=	https://www.nano-editor.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:2af222e0354848ffaa3af31b5cd0a77917e9cb7742cd073d762f3c32f0f582c7
+	sha256:ded5c38f5ecd9de2b624e0db8013a375c169d3fbbd49575967b868847df8f533
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && autoreconf -fiv )
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
@@ -49,12 +49,6 @@ CFLAGS += -I$(USRINCDIR)/ncurses
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(INSTALL) -D -m 0644 $(BUILD_DIR)/$(MACH64)/doc/sample.nanorc $(PROTO_DIR)$(ETCDIR)/nanorc
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
