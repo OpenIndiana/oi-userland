@@ -16,16 +16,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clutter
-COMPONENT_VERSION=	1.6.20
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.26.2
 COMPONENT_SUMMARY= clutter - a library for creating fast, visually rich and animated graphical user interfaces
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Clutter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:c5508856e51343ef0f5cf5a8526e4372ac96d31b740d6b09d37e890c653b4273
+  sha256:e7233314983055e9018f94f56882e29e7fc34d8d35de030789fdcd9b2d0e2e56
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.26/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -35,7 +34,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) && \
 					mkdir -p $(@D)/mesa/GL && \
 					ln -s /usr/include/mesa/*.h $(@D)/mesa/GL )
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
@@ -47,6 +46,7 @@ LDFLAGS.64 =	-L/usr/lib/mesa/$(MACH64) -L/usr/X11/lib/$(MACH64) -R/usr/X11/lib/$
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-gtk-doc
+CONFIGURE_OPTIONS+=	--enable-wayland-backend=no
 
 # Tell g-ir-scanner about compiler
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -57,20 +57,26 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# tests require access to a framebuffer
+#test:		$(TEST_32_and_64)
 test:		$(NO_TESTS)
 
+# build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += x11/library/libxext
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/cogl
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxdamage
-REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxi
