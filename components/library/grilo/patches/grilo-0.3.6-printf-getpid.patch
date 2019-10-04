@@ -1,0 +1,17 @@
+diff -ur grilo-0.3.6.orig/libs/net/grl-net-wc.c grilo-0.3.6/libs/net/grl-net-wc.c
+--- grilo-0.3.6.orig/libs/net/grl-net-wc.c	2018-07-25 07:12:13.000000000 +0000
++++ grilo-0.3.6/libs/net/grl-net-wc.c	2019-10-04 17:02:53.134843110 +0000
+@@ -523,7 +523,13 @@
+ 
+   /* Append record about the just written file to "grl-net-mock-data-%PID.ini"
+    * in the capture directory. */
++#if defined(__sun) && defined(_LP64)
++  char *filename = g_strdup_printf ("grl-net-mock-data-%d.ini", getpid());
++#elif defined(__sun)
++  char *filename = g_strdup_printf ("grl-net-mock-data-%ld.ini", getpid());
++#else
+   char *filename = g_strdup_printf ("grl-net-mock-data-%u.ini", getpid());
++#endif
+   path = g_build_filename (capture_dir, filename, NULL);
+   g_free (filename);
+ 
