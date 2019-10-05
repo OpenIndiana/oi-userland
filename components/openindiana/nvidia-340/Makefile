@@ -15,10 +15,9 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		driver-graphics-nvidia
+COMPONENT_NAME=		driver-graphics-nvidia-340
 COMPONENT_VERSION=	340.107
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
-COMPONENT_REVISION=	1
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
 COMPONENT_ARCHIVE_HASH= \
@@ -57,6 +56,8 @@ $(INSTALL_32): 	$(BUILD_32)
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+
+test:		$(NO_TESTS)
 
 clean::
 	if [ -d $(BUILD_DIR) ] ;  then \
