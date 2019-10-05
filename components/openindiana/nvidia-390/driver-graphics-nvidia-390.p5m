@@ -1,0 +1,605 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2012, Andrzej Szeszo
+# Copyright 2019, Michal Nowak
+#
+
+<transform file -> add pkg.depend.bypass-generate usr/gcc/3.*>
+<transform file -> add pkg.depend.bypass-generate usr/sfw/lib(.*)/libgcc_s.so.1>
+<transform file -> add pkg.depend.bypass-generate usr/sfw/lib(.*)/libstdc\\+\\+\\.so.*>
+
+<transform dir path=usr$ -> default group sys>
+<transform dir path=usr/share$ -> default group sys>
+<transform dir path=usr/share/applications$ -> default group other>
+<transform dir path=usr/share/control-center-2.0$ -> default group other>
+<transform dir path=usr/share/control-center-2.0/capplets$ -> default group other>
+<transform dir path=usr/share/doc$ -> default group other>
+<transform dir path=usr/share/icons$ -> default group other>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description \
+    value="X and OpenGL Drivers for NVIDIA Quadro graphics"
+set name=description value="NVIDIA Graphics System Software"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=variant.opensolaris.zone value=global value=nonglobal
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Since version 390 the driver does not bundle libvdpau and requires
+# the library being present in the system.
+depend type=require fmri=library/graphics/libvdpau
+
+# Since version 390 the nvidia kernel driver depends on the misc/gfx_private
+# kernel module. We deliver it as part of system/kernel/platform.
+file path=kernel/drv/$(MACH64)/nvidia reboot-needed=true \
+    variant.opensolaris.zone=global group=sys pkg.depend.bypass-generate=gfx_private
+file path=kernel/drv/nvidia.conf reboot-needed=false \
+    variant.opensolaris.zone=global group=sys
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libEGL.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv1_CM.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv2.so.2
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-eglcore.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glsi.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+file path=usr/X11/lib/NVIDIA/libEGL.so.1
+file path=usr/X11/lib/NVIDIA/libGL.so.1
+file path=usr/X11/lib/NVIDIA/libGLESv1_CM.so.1
+file path=usr/X11/lib/NVIDIA/libGLESv2.so.2
+file path=usr/X11/lib/NVIDIA/libnvidia-eglcore.so.1
+file path=usr/X11/lib/NVIDIA/libnvidia-glcore.so.1
+file path=usr/X11/lib/NVIDIA/libnvidia-glsi.so.1
+file path=usr/X11/lib/NVIDIA/libnvidia-tls.so.1
+file path=usr/X11/lib/NVIDIA/libvdpau_nvidia.so.1
+file path=usr/X11/lib/X11/getconfig/nvda.cfg
+file path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib/$(MACH64)
+file path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib
+file path=usr/X11/lib/modules/drivers/$(MACH64)/nvidia_drv.so
+file path=usr/X11/lib/modules/drivers/nvidia_drv.so
+file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
+file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
+file path=usr/bin/$(MACH32)/nvidia-debugdump
+file path=usr/bin/$(MACH32)/nvidia-settings
+file path=usr/bin/$(MACH32)/nvidia-smi
+file path=usr/bin/$(MACH32)/nvidia-xconfig
+file path=usr/bin/$(MACH64)/nvidia-debugdump
+file path=usr/bin/$(MACH64)/nvidia-settings
+file path=usr/bin/$(MACH64)/nvidia-smi
+file path=usr/bin/$(MACH64)/nvidia-xconfig
+file path=usr/bin/nvidia-SunOS-bug-report.sh
+file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings
+file path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.l_m.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.m.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.m.pm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.m_m.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.t.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm
+file path=usr/dt/appconfig/types/C/nvidia-settings.dt
+file path=usr/lib/$(MACH64)/libnvidia-cfg.so.1
+file path=usr/lib/$(MACH64)/libnvidia-gtk2.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libnvidia-ml.so.1
+file path=usr/lib/libnvidia-cfg.so.1
+file path=usr/lib/libnvidia-gtk2.so.$(COMPONENT_VERSION)
+file path=usr/lib/libnvidia-ml.so.1
+file path=usr/share/applications/nvidia-settings.desktop \
+    restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
+file path=usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop
+file path=usr/share/doc/NVIDIA/README.txt
+file path=usr/share/doc/NVIDIA/html/acknowledgements.html
+file path=usr/share/doc/NVIDIA/html/addressingcapabilities.html
+file path=usr/share/doc/NVIDIA/html/addtlresources.html
+file path=usr/share/doc/NVIDIA/html/appendices.html
+file path=usr/share/doc/NVIDIA/html/commonproblems.html
+file path=usr/share/doc/NVIDIA/html/configlaptop.html
+file path=usr/share/doc/NVIDIA/html/configmultxscreens.html
+file path=usr/share/doc/NVIDIA/html/configtwinview.html
+file path=usr/share/doc/NVIDIA/html/depth30.html
+file path=usr/share/doc/NVIDIA/html/displaydevicenames.html
+file path=usr/share/doc/NVIDIA/html/dpi.html
+file path=usr/share/doc/NVIDIA/html/editxconfig.html
+file path=usr/share/doc/NVIDIA/html/faq.html
+file path=usr/share/doc/NVIDIA/html/flippingubb.html
+file path=usr/share/doc/NVIDIA/html/framelock.html
+file path=usr/share/doc/NVIDIA/html/glxsupport.html
+file path=usr/share/doc/NVIDIA/html/gpunames.html
+file path=usr/share/doc/NVIDIA/html/index.html
+file path=usr/share/doc/NVIDIA/html/installationandconfiguration.html
+file path=usr/share/doc/NVIDIA/html/installdriver.html
+file path=usr/share/doc/NVIDIA/html/installedcomponents.html
+file path=usr/share/doc/NVIDIA/html/introduction.html
+file path=usr/share/doc/NVIDIA/html/knownissues.html
+file path=usr/share/doc/NVIDIA/html/minimumrequirements.html
+file path=usr/share/doc/NVIDIA/html/newusertips.html
+file path=usr/share/doc/NVIDIA/html/nvidiasettings.html
+file path=usr/share/doc/NVIDIA/html/openglenvvariables.html
+file path=usr/share/doc/NVIDIA/html/profiles.html
+file path=usr/share/doc/NVIDIA/html/programmingmodes.html
+file path=usr/share/doc/NVIDIA/html/retpoline.html
+file path=usr/share/doc/NVIDIA/html/sdi.html
+file path=usr/share/doc/NVIDIA/html/sli.html
+file path=usr/share/doc/NVIDIA/html/supportedchips.html
+file path=usr/share/doc/NVIDIA/html/swapcard.html
+file path=usr/share/doc/NVIDIA/html/vdpausupport.html
+file path=usr/share/doc/NVIDIA/html/xcompositeextension.html
+file path=usr/share/doc/NVIDIA/html/xconfigoptions.html
+file path=usr/share/doc/NVIDIA/html/xineramaglx.html
+file path=usr/share/doc/NVIDIA/html/xrandrextension.html
+file path=usr/share/icons/NVIDIA/nvidia-settings.png \
+    restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file path=usr/share/man/man1/nvidia-settings.1
+file path=usr/share/man/man1/nvidia-smi.1
+file path=usr/share/man/man1/nvidia-xconfig.1
+file path=usr/share/nvidia/nvidia-application-profiles-key-documentation
+file path=usr/share/nvidia/nvidia-application-profiles-rc
+link path=dev/nvidia0 target=fbs/nvidia0 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia1 target=fbs/nvidia1 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia10 target=fbs/nvidia10 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia11 target=fbs/nvidia11 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia12 target=fbs/nvidia12 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia13 target=fbs/nvidia13 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia14 target=fbs/nvidia14 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia15 target=fbs/nvidia15 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia2 target=fbs/nvidia2 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia3 target=fbs/nvidia3 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia4 target=fbs/nvidia4 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia5 target=fbs/nvidia5 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia6 target=fbs/nvidia6 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia7 target=fbs/nvidia7 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia8 target=fbs/nvidia8 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia9 target=fbs/nvidia9 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidiactl target=../devices/pseudo/nvidia@255:nvidiactl \
+    variant.opensolaris.zone=global pkg.linted=true
+link path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so target=libGL.so.1
+link path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so \
+    target=libnvidia-tls.so.1
+link path=usr/X11/lib/NVIDIA/$(MACH64)/libEGL.so target=libEGL.so.1
+link path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1
+link path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv2.so target=libGLESv2.so.2
+link path=usr/X11/lib/NVIDIA/libEGL.so target=libEGL.so.1
+link path=usr/X11/lib/NVIDIA/libGL.so target=libGL.so.1
+link path=usr/X11/lib/NVIDIA/libGLESv1_CM.so target=libGLESv1_CM.so.1
+link path=usr/X11/lib/NVIDIA/libGLESv2.so target=libGLESv2.so.2
+link path=usr/X11/lib/NVIDIA/libnvidia-tls.so target=libnvidia-tls.so.1
+link path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so \
+    target=libnvidia-wfb.so.1
+link path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so \
+    target=libnvidia-wfb.so.1
+link path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so \
+    target=libglx.so.1
+link path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so target=libglx.so.1
+link path=usr/lib/$(MACH64)/libnvidia-glcore.so.1 \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
+link path=usr/lib/$(MACH64)/libnvidia-tls.so target=libnvidia-tls.so.1
+link path=usr/lib/$(MACH64)/libnvidia-tls.so.1 \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
+link path=usr/lib/$(MACH64)/libvdpau_nvidia.so \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
+    target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+link path=usr/lib/$(MACH64)/libGLESv1_CM.so.1 target=../../X11/lib/NVIDIA/amd64/libGLESv1_CM.so.1
+link path=usr/lib/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1
+link path=usr/lib/$(MACH64)/libGLESv2.so.2 target=../../X11/lib/NVIDIA/amd64/libGLESv2.so.2
+link path=usr/lib/$(MACH64)/libGLESv2.so target=libGLESv2.so.2
+link path=usr/lib/$(MACH64)/libnvidia-eglcore.so.1 target=../../X11/lib/NVIDIA/amd64/libnvidia-eglcore.so.1
+link path=usr/lib/$(MACH64)/libnvidia-glsi.so.1 target=../../X11/lib/NVIDIA/amd64/libnvidia-glsi.so.1
+link path=usr/lib/libGLESv1_CM.so.1 target=../X11/lib/NVIDIA/libGLESv1_CM.so.1
+link path=usr/lib/libGLESv1_CM.so target=libGLESv1_CM.so.1
+link path=usr/lib/libGLESv2.so.2 target=../X11/lib/NVIDIA/libGLESv2.so.2
+link path=usr/lib/libGLESv2.so target=libGLESv2.so.2
+link path=usr/lib/$(MACH64)/libnvidia-cfg.so target=libnvidia-cfg.so.1
+link path=usr/lib/libnvidia-cfg.so target=libnvidia-cfg.so.1
+link path=usr/lib/libnvidia-eglcore.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-eglcore.so.1
+link path=usr/lib/libnvidia-glcore.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-glcore.so.1
+link path=usr/lib/libnvidia-glsi.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-glsi.so.1
+link path=usr/lib/libnvidia-tls.so target=libnvidia-tls.so.1
+link path=usr/lib/libnvidia-tls.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-tls.so.1
+link path=usr/lib/libvdpau_nvidia.so \
+    target=../X11/lib/NVIDIA/libvdpau_nvidia.so.1
+link path=usr/lib/vdpau/libvdpau_nvidia.so.1 \
+    target=../../X11/lib/NVIDIA/libvdpau_nvidia.so.1
+hardlink path=usr/bin/nvidia-settings target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/nvidia-xconfig target=../lib/isaexec pkg.linted=true
+
+driver name=nvidia perms="* 0666 root root" \
+	alias="pci10de,6c0" \
+	alias="pci10de,6c4" \
+	alias="pci10de,6ca" \
+	alias="pci10de,6cd" \
+	alias="pci10de,6d1" \
+	alias="pci10de,6d2" \
+	alias="pci10de,6d8" \
+	alias="pci10de,6d9" \
+	alias="pci10de,6da" \
+	alias="pci10de,6dc" \
+	alias="pci10de,6dd" \
+	alias="pci10de,6de" \
+	alias="pci10de,6df" \
+	alias="pci10de,dc0" \
+	alias="pci10de,dc4" \
+	alias="pci10de,dc5" \
+	alias="pci10de,dc6" \
+	alias="pci10de,dcd" \
+	alias="pci10de,dce" \
+	alias="pci10de,dd1" \
+	alias="pci10de,dd2" \
+	alias="pci10de,dd3" \
+	alias="pci10de,dd6" \
+	alias="pci10de,dd8" \
+	alias="pci10de,dda" \
+	alias="pci10de,de0" \
+	alias="pci10de,de1" \
+	alias="pci10de,de2" \
+	alias="pci10de,de3" \
+	alias="pci10de,de4" \
+	alias="pci10de,de5" \
+	alias="pci10de,de7" \
+	alias="pci10de,de8" \
+	alias="pci10de,de9" \
+	alias="pci10de,dea" \
+	alias="pci10de,deb" \
+	alias="pci10de,dec" \
+	alias="pci10de,ded" \
+	alias="pci10de,dee" \
+	alias="pci10de,def" \
+	alias="pci10de,df0" \
+	alias="pci10de,df1" \
+	alias="pci10de,df2" \
+	alias="pci10de,df3" \
+	alias="pci10de,df4" \
+	alias="pci10de,df5" \
+	alias="pci10de,df6" \
+	alias="pci10de,df7" \
+	alias="pci10de,df8" \
+	alias="pci10de,df9" \
+	alias="pci10de,dfa" \
+	alias="pci10de,dfc" \
+	alias="pci10de,e22" \
+	alias="pci10de,e23" \
+	alias="pci10de,e24" \
+	alias="pci10de,e30" \
+	alias="pci10de,e31" \
+	alias="pci10de,e3a" \
+	alias="pci10de,e3b" \
+	alias="pci10de,f00" \
+	alias="pci10de,f01" \
+	alias="pci10de,f02" \
+	alias="pci10de,f03" \
+	alias="pci10de,fc0" \
+	alias="pci10de,fc1" \
+	alias="pci10de,fc2" \
+	alias="pci10de,fc6" \
+	alias="pci10de,fc8" \
+	alias="pci10de,fc9" \
+	alias="pci10de,fcd" \
+	alias="pci10de,fce" \
+	alias="pci10de,fd1" \
+	alias="pci10de,fd2" \
+	alias="pci10de,fd3" \
+	alias="pci10de,fd4" \
+	alias="pci10de,fd5" \
+	alias="pci10de,fd8" \
+	alias="pci10de,fd9" \
+	alias="pci10de,fdf" \
+	alias="pci10de,fe0" \
+	alias="pci10de,fe1" \
+	alias="pci10de,fe2" \
+	alias="pci10de,fe3" \
+	alias="pci10de,fe4" \
+	alias="pci10de,fe9" \
+	alias="pci10de,fea" \
+	alias="pci10de,fec" \
+	alias="pci10de,fed" \
+	alias="pci10de,fee" \
+	alias="pci10de,ff3" \
+	alias="pci10de,ff6" \
+	alias="pci10de,ff8" \
+	alias="pci10de,ff9" \
+	alias="pci10de,ffa" \
+	alias="pci10de,ffb" \
+	alias="pci10de,ffc" \
+	alias="pci10de,ffd" \
+	alias="pci10de,ffe" \
+	alias="pci10de,fff" \
+	alias="pci10de,1001" \
+	alias="pci10de,1004" \
+	alias="pci10de,1005" \
+	alias="pci10de,1007" \
+	alias="pci10de,1008" \
+	alias="pci10de,100a" \
+	alias="pci10de,100c" \
+	alias="pci10de,1021" \
+	alias="pci10de,1022" \
+	alias="pci10de,1023" \
+	alias="pci10de,1024" \
+	alias="pci10de,1026" \
+	alias="pci10de,1027" \
+	alias="pci10de,1028" \
+	alias="pci10de,1029" \
+	alias="pci10de,102a" \
+	alias="pci10de,102d" \
+	alias="pci10de,103a" \
+	alias="pci10de,103c" \
+	alias="pci10de,1040" \
+	alias="pci10de,1042" \
+	alias="pci10de,1048" \
+	alias="pci10de,1049" \
+	alias="pci10de,104a" \
+	alias="pci10de,104b" \
+	alias="pci10de,104c" \
+	alias="pci10de,1050" \
+	alias="pci10de,1051" \
+	alias="pci10de,1052" \
+	alias="pci10de,1054" \
+	alias="pci10de,1055" \
+	alias="pci10de,1056" \
+	alias="pci10de,1057" \
+	alias="pci10de,1058" \
+	alias="pci10de,1059" \
+	alias="pci10de,105a" \
+	alias="pci10de,105b" \
+	alias="pci10de,107c" \
+	alias="pci10de,107d" \
+	alias="pci10de,1080" \
+	alias="pci10de,1081" \
+	alias="pci10de,1082" \
+	alias="pci10de,1084" \
+	alias="pci10de,1086" \
+	alias="pci10de,1087" \
+	alias="pci10de,1088" \
+	alias="pci10de,1089" \
+	alias="pci10de,108b" \
+	alias="pci10de,1091" \
+	alias="pci10de,1094" \
+	alias="pci10de,1096" \
+	alias="pci10de,109a" \
+	alias="pci10de,109b" \
+	alias="pci10de,1140" \
+	alias="pci10de,1180" \
+	alias="pci10de,1183" \
+	alias="pci10de,1184" \
+	alias="pci10de,1185" \
+	alias="pci10de,1187" \
+	alias="pci10de,1188" \
+	alias="pci10de,1189" \
+	alias="pci10de,118a" \
+	alias="pci10de,118e" \
+	alias="pci10de,118f" \
+	alias="pci10de,1193" \
+	alias="pci10de,1194" \
+	alias="pci10de,1195" \
+	alias="pci10de,1198" \
+	alias="pci10de,1199" \
+	alias="pci10de,119a" \
+	alias="pci10de,119d" \
+	alias="pci10de,119e" \
+	alias="pci10de,119f" \
+	alias="pci10de,11a0" \
+	alias="pci10de,11a1" \
+	alias="pci10de,11a2" \
+	alias="pci10de,11a3" \
+	alias="pci10de,11a7" \
+	alias="pci10de,11b4" \
+	alias="pci10de,11b6" \
+	alias="pci10de,11b7" \
+	alias="pci10de,11b8" \
+	alias="pci10de,11ba" \
+	alias="pci10de,11bc" \
+	alias="pci10de,11bd" \
+	alias="pci10de,11be" \
+	alias="pci10de,11c0" \
+	alias="pci10de,11c2" \
+	alias="pci10de,11c3" \
+	alias="pci10de,11c4" \
+	alias="pci10de,11c5" \
+	alias="pci10de,11c6" \
+	alias="pci10de,11c8" \
+	alias="pci10de,11cb" \
+	alias="pci10de,11e0" \
+	alias="pci10de,11e1" \
+	alias="pci10de,11e2" \
+	alias="pci10de,11e3" \
+	alias="pci10de,11fa" \
+	alias="pci10de,11fc" \
+	alias="pci10de,1200" \
+	alias="pci10de,1201" \
+	alias="pci10de,1203" \
+	alias="pci10de,1205" \
+	alias="pci10de,1206" \
+	alias="pci10de,1207" \
+	alias="pci10de,1208" \
+	alias="pci10de,1210" \
+	alias="pci10de,1211" \
+	alias="pci10de,1212" \
+	alias="pci10de,1213" \
+	alias="pci10de,1241" \
+	alias="pci10de,1243" \
+	alias="pci10de,1244" \
+	alias="pci10de,1245" \
+	alias="pci10de,1246" \
+	alias="pci10de,1247" \
+	alias="pci10de,1248" \
+	alias="pci10de,1249" \
+	alias="pci10de,124b" \
+	alias="pci10de,124d" \
+	alias="pci10de,1251" \
+	alias="pci10de,1280" \
+	alias="pci10de,1281" \
+	alias="pci10de,1282" \
+	alias="pci10de,1284" \
+	alias="pci10de,1286" \
+	alias="pci10de,1287" \
+	alias="pci10de,1288" \
+	alias="pci10de,1289" \
+	alias="pci10de,128b" \
+	alias="pci10de,1290" \
+	alias="pci10de,1291" \
+	alias="pci10de,1292" \
+	alias="pci10de,1293" \
+	alias="pci10de,1295" \
+	alias="pci10de,1296" \
+	alias="pci10de,1298" \
+	alias="pci10de,1299" \
+	alias="pci10de,129a" \
+	alias="pci10de,12b9" \
+	alias="pci10de,12ba" \
+	alias="pci10de,1340" \
+	alias="pci10de,1341" \
+	alias="pci10de,1344" \
+	alias="pci10de,1346" \
+	alias="pci10de,1347" \
+	alias="pci10de,1348" \
+	alias="pci10de,1349" \
+	alias="pci10de,134b" \
+	alias="pci10de,134d" \
+	alias="pci10de,134e" \
+	alias="pci10de,134f" \
+	alias="pci10de,137a" \
+	alias="pci10de,137b" \
+	alias="pci10de,137d" \
+	alias="pci10de,1380" \
+	alias="pci10de,1381" \
+	alias="pci10de,1382" \
+	alias="pci10de,1390" \
+	alias="pci10de,1391" \
+	alias="pci10de,1392" \
+	alias="pci10de,1393" \
+	alias="pci10de,1398" \
+	alias="pci10de,1399" \
+	alias="pci10de,139a" \
+	alias="pci10de,139b" \
+	alias="pci10de,139c" \
+	alias="pci10de,139d" \
+	alias="pci10de,13b0" \
+	alias="pci10de,13b1" \
+	alias="pci10de,13b2" \
+	alias="pci10de,13b3" \
+	alias="pci10de,13b4" \
+	alias="pci10de,13b6" \
+	alias="pci10de,13b9" \
+	alias="pci10de,13ba" \
+	alias="pci10de,13bb" \
+	alias="pci10de,13bc" \
+	alias="pci10de,13c0" \
+	alias="pci10de,13c2" \
+	alias="pci10de,13d7" \
+	alias="pci10de,13d8" \
+	alias="pci10de,13d9" \
+	alias="pci10de,13da" \
+	alias="pci10de,13f0" \
+	alias="pci10de,13f1" \
+	alias="pci10de,13f2" \
+	alias="pci10de,13f3" \
+	alias="pci10de,13f8" \
+	alias="pci10de,13f9" \
+	alias="pci10de,13fa" \
+	alias="pci10de,13fb" \
+	alias="pci10de,1401" \
+	alias="pci10de,1402" \
+	alias="pci10de,1406" \
+	alias="pci10de,1407" \
+	alias="pci10de,1427" \
+	alias="pci10de,1430" \
+	alias="pci10de,1431" \
+	alias="pci10de,1436" \
+	alias="pci10de,15f0" \
+	alias="pci10de,15f7" \
+	alias="pci10de,15f8" \
+	alias="pci10de,15f9" \
+	alias="pci10de,1617" \
+	alias="pci10de,1618" \
+	alias="pci10de,1619" \
+	alias="pci10de,161a" \
+	alias="pci10de,1667" \
+	alias="pci10de,174d" \
+	alias="pci10de,174e" \
+	alias="pci10de,179c" \
+	alias="pci10de,17c2" \
+	alias="pci10de,17c8" \
+	alias="pci10de,17f0" \
+	alias="pci10de,17f1" \
+	alias="pci10de,17fd" \
+	alias="pci10de,1b00" \
+	alias="pci10de,1b02" \
+	alias="pci10de,1b06" \
+	alias="pci10de,1b30" \
+	alias="pci10de,1b38" \
+	alias="pci10de,1b80" \
+	alias="pci10de,1b81" \
+	alias="pci10de,1b82" \
+	alias="pci10de,1b83" \
+	alias="pci10de,1b84" \
+	alias="pci10de,1b87" \
+	alias="pci10de,1ba0" \
+	alias="pci10de,1ba1" \
+	alias="pci10de,1bb0" \
+	alias="pci10de,1bb1" \
+	alias="pci10de,1bb3" \
+	alias="pci10de,1bb4" \
+	alias="pci10de,1bb5" \
+	alias="pci10de,1bb6" \
+	alias="pci10de,1bb7" \
+	alias="pci10de,1bb8" \
+	alias="pci10de,1bb9" \
+	alias="pci10de,1bbb" \
+	alias="pci10de,1bc7" \
+	alias="pci10de,1be0" \
+	alias="pci10de,1be1" \
+	alias="pci10de,1c02" \
+	alias="pci10de,1c03" \
+	alias="pci10de,1c04" \
+	alias="pci10de,1c06" \
+	alias="pci10de,1c07" \
+	alias="pci10de,1c09" \
+	alias="pci10de,1c20" \
+	alias="pci10de,1c21" \
+	alias="pci10de,1c22" \
+	alias="pci10de,1c30" \
+	alias="pci10de,1c60" \
+	alias="pci10de,1c61" \
+	alias="pci10de,1c62" \
+	alias="pci10de,1c81" \
+	alias="pci10de,1c82" \
+	alias="pci10de,1c83" \
+	alias="pci10de,1c8c" \
+	alias="pci10de,1c8d" \
+	alias="pci10de,1c8f" \
+	alias="pci10de,1cb1" \
+	alias="pci10de,1cb2" \
+	alias="pci10de,1cb3" \
+	alias="pci10de,1cb6" \
+	alias="pci10de,1cba" \
+	alias="pci10de,1cbb" \
+	alias="pci10de,1cbc" \
+	alias="pci10de,1d01" \
+	alias="pci10de,1d10" \
+	alias="pci10de,1d12" \
+	alias="pci10de,1d33" \
+	alias="pci10de,1d81" \
+	alias="pci10de,1db1" \
+	alias="pci10de,1db3" \
+	alias="pci10de,1db4" \
+	alias="pci10de,1db5" \
+	alias="pci10de,1db6" \
+	alias="pci10de,1db7" \
+	alias="pci10de,1dba" \
