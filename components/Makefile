@@ -98,7 +98,11 @@ clobber:	$(COMPONENT_DIRS.nosetup) clean
 	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE)
 
 
-setup:	$(WS_LOGS) $(WS_REPO) tools $(WS_LINT_CACHE)
+setup:	install_build_essential $(WS_LOGS) $(WS_REPO) tools $(WS_LINT_CACHE)
+
+install_build_essential:
+	@/usr/bin/pkg list -vH build-essential > /dev/null || \
+		$(PFEXEC) /usr/bin/pkg install --accept build-essential
 
 $(WS_LOGS):
 	$(MKDIR) $@
