@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mpack
 COMPONENT_VERSION=	1.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	utilities for encoding and decoding (respectively) binary files in MIME format mail messages 
 COMPONENT_PROJECT_URL=	ftp://ftp.andrew.cmu.edu:pub/mpack
 COMPONENT_FMRI=		mail/mpack
@@ -35,8 +36,10 @@ TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS=
-CONFIGURE_OPTIONS+= --prefix=/usr
+# Some source files are read-only
+COMPONENT_POST_UNPACK_ACTION= $(CHMOD) +w $(SOURCE_DIR)/*
+
+CONFIGURE_OPTIONS = --prefix=/usr
 CONFIGURE_OPTIONS+= --mandir=/usr/share/man
 CONFIGURE_OPTIONS+= --bindir=/usr/bin
 
