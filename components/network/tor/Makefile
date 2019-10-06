@@ -52,17 +52,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL:/p" ' \
 	'-e "/ERROR:/p" '
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-# One test failed:
-# error: util/map_anon_nofork:
-# FAIL ~/oi-userland/components/network/tor/tor-0.4.1.6/src/test/test_util.c:6223: assert(buf[0] OP_EQ 0xd0): -48 vs 208
-#  [map_anon_nofork FAILED]
-# see: https://trac.torproject.org/projects/tor/ticket/31897
-test:		$(TEST_64)
+# Internal test suite results
+# 'util/map_anon_nofork' test failed (https://trac.torproject.org/projects/tor/ticket/31897):
+#    FAIL ... tor-0.4.1.6/src/test/test_util.c:6223: assert(buf[0] OP_EQ 0xd0): -48 vs 208
 
 # Tests require GNU diff
 REQUIRED_PACKAGES += text/gnu-diffutils
