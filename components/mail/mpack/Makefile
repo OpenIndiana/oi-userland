@@ -36,8 +36,8 @@ TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Some source files are read only
-COMPONENT_POST_UNPACK_ACTION= chmod +w $(SOURCE_DIR)/*
+# Some source files are read-only
+COMPONENT_POST_UNPACK_ACTION= $(CHMOD) +w $(SOURCE_DIR)/*
 
 CONFIGURE_OPTIONS = --prefix=/usr
 CONFIGURE_OPTIONS+= --mandir=/usr/share/man
