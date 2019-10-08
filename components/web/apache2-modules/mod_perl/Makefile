@@ -21,16 +21,18 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS = 64
+BUILD_STYLE = justmake
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
-COMPONENT_VERSION=	2.0.10
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.0.11
 COMPONENT_PROJECT_URL=	http://perl.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d1cf83ed4ea3a9dfceaa6d9662ff645177090749881093051020bf42f9872b64
+    sha256:ca2a9e18cdf90f9c6023e786369d5ba75e8dac292ebfea9900c29bf42dc16f74
 #COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/perl/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
@@ -38,9 +40,7 @@ COMPONENT_BUGDB=	utility/apache
 CONFIGURE_DEFAULT_DIRS=no
 PERL_VERSION=5.24
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
 AP_PERL5LIB=$(APACHE_USR_PREFIX)/lib/perl
@@ -64,12 +64,6 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 	MP_APR_CONFIG=/usr/apr/bin/$(MACH64)/apr-1-config) 
 
 COMPONENT_TEST_TARGETS=	test
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
