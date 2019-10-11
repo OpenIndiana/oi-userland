@@ -1,0 +1,75 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2019 Tim Mooney.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/lib/python3.5/vendor-packages/gi/.*\.py$ \
+    -> default pkg.tmp.autopyc false>
+
+file path=usr/include/gom-1.0/gom/gom-adapter.h
+file path=usr/include/gom-1.0/gom/gom-autocleanups.h
+file path=usr/include/gom-1.0/gom/gom-command-builder.h
+file path=usr/include/gom-1.0/gom/gom-command.h
+file path=usr/include/gom-1.0/gom/gom-cursor.h
+file path=usr/include/gom-1.0/gom/gom-error.h
+file path=usr/include/gom-1.0/gom/gom-filter.h
+file path=usr/include/gom-1.0/gom/gom-repository.h
+file path=usr/include/gom-1.0/gom/gom-resource-group.h
+file path=usr/include/gom-1.0/gom/gom-resource.h
+file path=usr/include/gom-1.0/gom/gom-sorting.h
+file path=usr/include/gom-1.0/gom/gom.h
+file path=usr/lib/$(MACH64)/girepository-1.0/Gom-1.0.typelib
+link path=usr/lib/$(MACH64)/libgom-1.0.so target=libgom-1.0.so.0
+link path=usr/lib/$(MACH64)/libgom-1.0.so.0 target=libgom-1.0.so.0.1.0
+file path=usr/lib/$(MACH64)/libgom-1.0.so.0.1.0
+file path=usr/lib/$(MACH64)/pkgconfig/gom-1.0.pc
+file path=usr/lib/girepository-1.0/Gom-1.0.typelib
+link path=usr/lib/libgom-1.0.so target=libgom-1.0.so.0
+link path=usr/lib/libgom-1.0.so.0 target=libgom-1.0.so.0.1.0
+file path=usr/lib/libgom-1.0.so.0.1.0
+file path=usr/lib/pkgconfig/gom-1.0.pc
+file path=usr/lib/python3.5/vendor-packages/gi/overrides/Gom.py
+file path=usr/share/gir-1.0/Gom-1.0.gir
+file path=usr/share/gtk-doc/html/gom/GomAdapter.html
+file path=usr/share/gtk-doc/html/gom/GomCommand.html
+file path=usr/share/gtk-doc/html/gom/GomCommandBuilder.html
+file path=usr/share/gtk-doc/html/gom/GomCursor.html
+file path=usr/share/gtk-doc/html/gom/GomFilter.html
+file path=usr/share/gtk-doc/html/gom/GomRepository.html
+file path=usr/share/gtk-doc/html/gom/GomResource.html
+file path=usr/share/gtk-doc/html/gom/GomResourceGroup.html
+file path=usr/share/gtk-doc/html/gom/GomSorting.html
+file path=usr/share/gtk-doc/html/gom/annotation-glossary.html
+file path=usr/share/gtk-doc/html/gom/api-index-full.html
+file path=usr/share/gtk-doc/html/gom/ch01.html
+file path=usr/share/gtk-doc/html/gom/deprecated-api-index.html
+file path=usr/share/gtk-doc/html/gom/gom.devhelp2
+file path=usr/share/gtk-doc/html/gom/home.png
+file path=usr/share/gtk-doc/html/gom/index.html
+file path=usr/share/gtk-doc/html/gom/left-insensitive.png
+file path=usr/share/gtk-doc/html/gom/left.png
+file path=usr/share/gtk-doc/html/gom/object-tree.html
+file path=usr/share/gtk-doc/html/gom/right-insensitive.png
+file path=usr/share/gtk-doc/html/gom/right.png
+file path=usr/share/gtk-doc/html/gom/style.css
+file path=usr/share/gtk-doc/html/gom/up-insensitive.png
+file path=usr/share/gtk-doc/html/gom/up.png
