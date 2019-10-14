@@ -13,33 +13,27 @@
 # Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
-# Really, this is not the stated version as releases are based on the 1.8.x
-# branch but require libgssglue, which we don't want to package as it's
-# obsolete in the master branch anyway. For Kerberos we use native GSS-API.
-# So, version 1.8.99 is to be read as development version before 1.9.0 is out.
 COMPONENT_NAME=		rdesktop
-COMPONENT_VERSION=	1.8.99
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.9.0
 COMPONENT_PROJECT_URL=	https://www.rdesktop.org/
 COMPONENT_SUMMARY=	RDP, Microsoft Terminal Services client
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:318ef24770a6b9b4083cc75473d1722e6421804ff93e92031a80511e40b076fb
-COMPONENT_COMMIT=	6028c999ba7852d560b7831853502e675c65709a
-COMPONENT_ARCHIVE_URL=	https://github.com/rdesktop/rdesktop/archive/$(COMPONENT_COMMIT).zip
+	sha256:473c2f312391379960efe41caad37852c59312bc8f100f9b5f26609ab5704288
+COMPONENT_ARCHIVE_URL=	https://github.com/rdesktop/rdesktop/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/remote-desktop/rdesktop
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
@@ -60,14 +54,9 @@ COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -if)
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--enable-credssp
 CONFIGURE_OPTIONS+=	--disable-smartcard
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
+CONFIGURE_OPTIONS+=	--enable-credssp
+CONFIGURE_OPTIONS+=	--with-ipv6
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/pulseaudio
