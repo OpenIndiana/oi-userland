@@ -23,10 +23,12 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=		1.8.27
+SRC_VERSION=		1.8.28
 SRC_PATCH_VERSION=	0
 SRC_DOT_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo .$(SRC_PATCH_VERSION))
 SRC_P_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo p$(SRC_PATCH_VERSION))
@@ -35,7 +37,7 @@ COMPONENT_SUMMARY=	sudo - tool to allow certain tasks to be run as root by ordin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:7beb68b94471ef56d8a1036dbcdc09a7b58a949a68ffce48b83f837dd33e2ec0
+	sha256:9129fa745a08caff0ce2042d2162b38eb9bf73bf43fcb248ac8b3a750c1f13a1
 COMPONENT_ARCHIVE_URL=	https://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
 COMPONENT_PROJECT_URL=  https://www.sudo.ws/
@@ -43,12 +45,7 @@ COMPONENT_FMRI=		security/sudo
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	ISC-like, BSD, zlib license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
@@ -75,17 +72,6 @@ COMPONENT_INSTALL_TARGETS = install
 
 # Avoid calling "chown 0" on installed files
 COMPONENT_INSTALL_ARGS += INSTALL_OWNER=
-
-# Enable aslr for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
