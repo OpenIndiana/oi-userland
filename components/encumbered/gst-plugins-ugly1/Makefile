@@ -14,11 +14,12 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-ugly1
-COMPONENT_VERSION= 1.16.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.16.2
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/ugly
@@ -26,16 +27,14 @@ COMPONENT_SRC_NAME= gst-plugins-ugly
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e30964c5f031c32289e0b25e176c3c95a5737f2052dfc81d0f7427ef0233a4c2
+  sha256:5500415b865e8b62775d4742cbb9f37146a50caecfc0e7a6fc0160d3c560fbca
 COMPONENT_ARCHIVE_URL= \
   https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://gstreamer.freedesktop.org/
 COMPONENT_LICENSE= LGPLv2
 
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
                           autoheader &&\
@@ -49,8 +48,6 @@ CFLAGS += -I/usr/X11/include/mesa
 CFLAGS += -I/usr/X11/include
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --enable-orc
@@ -76,12 +73,6 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "/FAIL/p" '  \
 	'-e "/XPASS/p" ' \
 	'-e "/ERROR/p" '
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/opencore-amr
