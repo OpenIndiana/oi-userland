@@ -14,11 +14,12 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-bad1
-COMPONENT_VERSION= 1.16.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.16.2
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/bad
@@ -26,16 +27,14 @@ COMPONENT_SRC_NAME= gst-plugins-bad
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:22139de35626ada6090bdfa3423b27b7fc15a0198331d25c95e6b12cb1072b05
+  sha256:f1cb7aa2389569a5343661aae473f0a940a90b872001824bc47fa8072a041e74
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
 COMPONENT_LICENSE= LGPLv2
 
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
                           autoheader &&\
@@ -54,8 +53,6 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
@@ -71,9 +68,6 @@ COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
 unexport SHELLOPTS
 COMPONENT_TEST_TRANSFORMS= \
 	'-n ' \
@@ -84,8 +78,6 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "/FAIL/p" '  \
 	'-e "/XPASS/p" ' \
 	'-e "/ERROR/p" '
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-drm
@@ -102,7 +94,6 @@ REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/libdca
 REQUIRED_PACKAGES += library/audio/libgsm
-REQUIRED_PACKAGES += library/audio/libmpcdec
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
@@ -123,6 +114,7 @@ REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmms
+REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
