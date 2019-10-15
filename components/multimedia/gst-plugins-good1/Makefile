@@ -14,10 +14,12 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-good1
-COMPONENT_VERSION= 1.16.0
+COMPONENT_VERSION= 1.16.2
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/good
@@ -25,15 +27,13 @@ COMPONENT_SRC_NAME= gst-plugins-good
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:654adef33380d604112f702c2927574cfc285e31307b79e584113858838bb0fd
+  sha256:40bb3bafda25c0b739c8fc36e48380fccf61c4d3f83747e97ac3f9b0171b1319
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
 COMPONENT_LICENSE= LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
                           autoheader &&\
@@ -51,8 +51,6 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --enable-orc
 CONFIGURE_OPTIONS += --enable-lame
@@ -78,14 +76,9 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "/XPASS/p" ' \
 	'-e "/ERROR/p" '
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
+REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/speex
