@@ -1,0 +1,22 @@
+--- gst-plugins-base-1.16.1/tests/check/Makefile.in	2019-09-23 12:02:38.000000000 +0000
++++ gst-plugins-base-1.16.1/tests/check/Makefile.in	2019-10-15 10:04:09.902069176 +0000
+@@ -2613,7 +2613,7 @@ libs_videotimecode_LDADD = \
+ 	$(LDADD)
+ 
+ elements_multisocketsink_CFLAGS = $(GIO_CFLAGS) $(AM_CFLAGS)
+-elements_multisocketsink_LDADD = $(GIO_LIBS) $(LDADD)
++elements_multisocketsink_LDADD = $(GIO_LIBS) $(LDADD) -lsocket
+ @USE_GIO_UNIX_2_0_TRUE@GIO_UNIX_2_0_DEFINED = -DHAVE_GIO_UNIX_2_0=1
+ pipelines_tcp_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_NET_CFLAGS) $(GIO_CFLAGS) $(GIO_UNIX_2_0_CFLAGS) $(GIO_UNIX_2_0_DEFINED) $(AM_CFLAGS)
+ pipelines_tcp_LDADD = $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_API_VERSION@.la \
+--- gst-plugins-base-1.16.1/tests/check/Makefile.in	2019-09-23 12:02:38.000000000 +0000
++++ gst-plugins-base-1.16.1/tests/check/Makefile.in	2019-10-15 11:04:25.031142089 +0000
+@@ -1063,7 +1063,7 @@ pipelines_tcp_DEPENDENCIES = $(top_build
+ 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+ pipelines_tcp_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(pipelines_tcp_CFLAGS) \
+-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -lsocket -o $@
+ pipelines_theoraenc_SOURCES = pipelines/theoraenc.c
+ pipelines_theoraenc_OBJECTS = pipelines/theoraenc-theoraenc.$(OBJEXT)
+ pipelines_theoraenc_DEPENDENCIES = $(am__DEPENDENCIES_2) \

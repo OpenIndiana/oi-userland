@@ -14,10 +14,12 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base1
-COMPONENT_VERSION= 1.16.0
+COMPONENT_VERSION= 1.16.2
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/base
@@ -25,21 +27,19 @@ COMPONENT_SRC_NAME= gst-plugins-base
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4093aa7b51e28fb24dfd603893fead8d1b7782f088b05ed0f22a21ef176fb5ae
+  sha256:b13e73e2fe74a4166552f9577c3dcb24bed077021b9c7fa600d910ec6987816a
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= http://gstreamer.freedesktop.org/
 COMPONENT_LICENSE= GPLv2,LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
-CFLAGS += -I/usr/sfw/include -I/usr/X11/include
+CFLAGS += -I/usr/X11/include
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
@@ -72,12 +72,6 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "/FAIL/p" '  \
 	'-e "/XPASS/p" ' \
 	'-e "/ERROR/p" '
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa
