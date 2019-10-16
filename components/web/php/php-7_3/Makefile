@@ -119,7 +119,7 @@ CONFIGURE_OPTIONS  +=	--with-pdo-pgsql=shared,$(PG_BINDIR)
 # Enabled Extensions
 #CONFIGURE_OPTIONS     +=	--with-libxml-dir=/usr
 CONFIGURE_OPTIONS     +=	--with-freetype-dir=/usr
-CONFIGURE_OPTIONS     +=	--with-jpeg-dir=/usr
+CONFIGURE_OPTIONS     +=	--with-jpeg-dir=/usr/include/libjpeg8-turbo
 #CONFIGURE_OPTIONS     +=	--with-png-dir=/usr
 #CONFIGURE_OPTIONS     +=	--with-zlib-dir=/usr
 #CONFIGURE_OPTIONS     +=	--with-xpm-dir=/usr
