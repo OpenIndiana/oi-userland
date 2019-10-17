@@ -28,11 +28,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
-COMPONENT_VERSION =		4.10.6
+COMPONENT_VERSION =		4.11.0
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:9efbeb52db1203dc779b118f1c48c161e569f7a6af5101e745497ee6296eef42
+COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH = 	sha256:6adf1c74afff1f3f7e14060cc5a36111a6721d644ea51ed1b22da46051e48e9c
 COMPONENT_ARCHIVE_URL =		http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_LICENSE =		GPLv3
@@ -43,6 +43,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/waf.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PERL_VERSION = 5.24
 PYTHON_VERSION = 3.5
 PY3_CYTHON_NAMING =\#
 
@@ -55,7 +56,9 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
 CFLAGS +=	$($(COMPILER)_C99_ENABLE)
-CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) -I/usr/include/openldap
+CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
+CPPFLAGS +=	-I/usr/include/openldap
+CPPFLAGS +=	-I/usr/include/gnutls-3
 
 LDFLAGS.64 +=   -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LDFLAGS.64 +=	-L/usr/lib/samba/$(MACH64) -R/usr/lib/samba/$(MACH64)
@@ -78,6 +81,7 @@ CONFIGURE_PREFIX =	/usr/lib/samba
 CONFIGURE_ENV +=	CPP="$(CC) -E"
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
+CONFIGURE_ENV +=	PERL=$(PERL)
 CONFIGURE_ENV +=	PYTHONARCHDIR=$(PYTHON_VENDOR_PACKAGES)/samba
 
 # --enable-fhs should not be on
@@ -106,6 +110,7 @@ CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
+CONFIGURE_OPTIONS +=	--without-systemd
 
 CONFIGURE_OPTIONS +=	--nopyo
 CONFIGURE_OPTIONS +=    --nopycache
@@ -147,7 +152,6 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += SUNWcs
