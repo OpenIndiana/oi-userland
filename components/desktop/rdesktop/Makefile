@@ -59,6 +59,7 @@ CONFIGURE_OPTIONS+=	--enable-credssp
 CONFIGURE_OPTIONS+=	--with-ipv6
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/libao
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/gnutls-3
