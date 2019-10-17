@@ -24,10 +24,12 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.23.16.1
+COMPONENT_VERSION=	0.23.17
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
@@ -35,14 +37,12 @@ COMPONENT_PROJECT_URL=	https://p11-glue.github.io/p11-glue/p11-kit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:4b34e92ae36fa493e0d94366c767f06d5f9951e3d8581d10fd935d738db1574d
+	sha256:5447b25d66c05f86cce5bc8856f7a074be84c186730e32c74069ca03386d7c1e
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-like
 COMPONENT_LICENSE_FILE= p11-kit.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 LDFLAGS += -lsocket -lnsl
@@ -74,12 +74,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL:/p" ' \
 	'-e "/ok/p" ' \
 	'-e "/ERROR:/p" '
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi
