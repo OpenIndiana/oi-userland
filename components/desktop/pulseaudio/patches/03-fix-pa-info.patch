@@ -1,0 +1,37 @@
+Make pa-info work for OpenIndiana.
+
+--- pulseaudio-13.0/src/utils/pa-info	2019-09-13 15:10:23.000000000 +0000
++++ pulseaudio-13.0/src/utils/pa-info.new	2019-09-15 20:44:21.158646284 +0000
+@@ -25,7 +25,7 @@ function cards_get {
+ 	local cards=()
+ 	while read -r line; do
+ 		[[ $line =~ $re ]] && cards+="${BASH_REMATCH[1]} "
+-	done <<< "$(ls --directory /proc/asound/card[0-9])"
++	done <<< "$(ls -d /proc/asound/card[0-9])"
+ 	echo $cards
+ }
+ function jacks_do {
+@@ -58,7 +58,7 @@ function cmd_do {
+ cmds=(
+ 	'pulseaudio_ps_do'
+ 	'which pulseaudio'
+-	'pidof pulseaudio'
++	'pgrep -l pulseaudio'
+ 	'pulseaudio --version'
+ 	'pactl info'
+ 	'pactl list'
+@@ -66,12 +66,8 @@ cmds=(
+ 	'cat /etc/pulse/client.conf'
+ 	'cat /etc/pulse/default.pa'
+ 	'cat /etc/pulse/system.pa'
+-	'ls -alt /dev/snd/*'
+-	'lsof /dev/snd/*'
+-	'jacks_do'
+-	'aplay -L'
+-	'arecord -L'
+-	'alsa_info_do'
++	'ls -alt /dev/sound/*'
++	'lsof /dev/sound/*'
+ )
+ for cmd in "${cmds[@]}" ; do
+ 	cmd_do "$cmd"
