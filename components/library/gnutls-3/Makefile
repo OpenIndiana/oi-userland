@@ -24,36 +24,25 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
-COMPONENT_VERSION=	3.5.14
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	3.5.19
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4aa12dec92f42a0434df794aca3d02f6f2a35b47b48c01252de65f355c051bda
+	sha256:1936eb64f03aaefd6eb16cef0567457777618573826b94d03376bb6a4afadc44
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
-COMPONENT_FMRI=	library/gnutls-3
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
+COMPONENT_FMRI=		library/gnutls-3
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	GPLv3, LGPLv2.1, FDLv1.3
 
-# The GnuTLS API and ABI have incompatible changes between versions 2.x
-# and 3.x; but the basic symlink name 'libgnutls.so' and pkg-config file
-# name 'gnutls.pc' are unchanged.  As a result, it's not possible to have
-# both versions installed at the same time in the default paths in a way
-# that makes it possible to build programs that are only compatible with
-# one version of the API.  As a result, GnuTLS version 3 delivered to a folder
-# called gnutls-3 temporarily.  The plan is to integrate 3.4.1 and move all
-# programs to 3.4.1; after all usage of 2.8.6  excised, move 3.4.1 to the
-# default location.
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/gmp
 CFLAGS += -I$(USRINCDIR)/idn2
@@ -61,20 +50,7 @@ CFLAGS += -I$(USRINCDIR)/idn2
 MCS = mcs
 STRIP = strip
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS += --mandir=$(USRSHAREDIR)/$(COMPONENT_NAME)-3/man
-CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.32 += --libdir=$(USRLIBDIR)/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.64 += --libdir=$(USRLIBDIR64)/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.32 += --libexecdir=$(USRLIBDIR)/pkgconfig/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.64 += --libexecdir=$(USRLIBDIR64)/pkgconfig/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --disable-guile
-CONFIGURE_OPTIONS += --with-included-libtasn1
-CONFIGURE_OPTIONS += --with-included-unistring
-#CONFIGURE_OPTIONS += --without-p11-kit
 CONFIGURE_OPTIONS += --disable-ecdhe
 CONFIGURE_OPTIONS += --disable-openssl-compatibility
 CONFIGURE_OPTIONS += --disable-tests
@@ -88,18 +64,15 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/TOTAL/p" ' \
 	'-e "/ERROR/p" '
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-# Auto-generated dependencies: 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += developer/build/autogen
 REQUIRED_PACKAGES += library/desktop/p11-kit
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libidn2
+REQUIRED_PACKAGES += library/libtasn1
+REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
