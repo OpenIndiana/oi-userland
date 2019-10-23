@@ -1,0 +1,44 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1561585440 0
+#      Wed Jun 26 21:44:00 2019 +0000
+# Node ID 562655fedb9df034ae1f8c32cd730f6498d501a7
+# Parent  fbb26a04ec1f69879c85249da04fe3b971928ff0
+Bug 1500436 - Redirect node.js's stderr to a pipe. r=froydnj
+
+This works around https://github.com/nodejs/node/issues/14752, which
+causes problems with make.
+
+Differential Revision: https://phabricator.services.mozilla.com/D35986
+
+diff -r fbb26a04ec1f -r 562655fedb9d python/mozbuild/mozbuild/action/node.py
+--- a/python/mozbuild/mozbuild/action/node.py	Wed Jun 26 21:44:11 2019 +0000
++++ b/python/mozbuild/mozbuild/action/node.py	Wed Jun 26 21:44:00 2019 +0000
+@@ -52,14 +52,25 @@
+         print('Executing "{}"'.format(printable_cmd), file=sys.stderr)
+         sys.stderr.flush()
+ 
+-        output = subprocess.check_output(node_cmd_list)
++        # We need to redirect stderr to a pipe because
++        # https://github.com/nodejs/node/issues/14752 causes issues with make.
++        proc = subprocess.Popen(
++            node_cmd_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
++
++        stdout, stderr = proc.communicate()
++        retcode = proc.wait()
++
++        if retcode != 0:
++            print(stderr, file=sys.stderr)
++            sys.stderr.flush()
++            sys.exit(retcode)
+ 
+         # Process the node script output
+         #
+         # XXX Starting with an empty list means that node scripts can
+         # (intentionally or inadvertently) remove deps.  Do we want this?
+         deps = []
+-        for line in output.splitlines():
++        for line in stdout.splitlines():
+             if 'dep:' in line:
+                 deps.append(line.replace('dep:', ''))
+             else:

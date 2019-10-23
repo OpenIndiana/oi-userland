@@ -1,0 +1,23 @@
+# HG changeset patch
+# User Petr Sumbera <petr.sumbera@oracle.com>
+# Date 1561022119 -7200
+#      Thu Jun 20 11:15:19 2019 +0200
+# Node ID 8c8997df268d5b882a7fd93433792e901405f7e3
+# Parent  918836b8bec2009b9db8f178494f79f7458c0f19
+setInt32 issue - https://bugzilla.mozilla.org/show_bug.cgi?id=1558179
+
+diff -r 918836b8bec2 -r 8c8997df268d js/public/Value.h
+--- a/js/public/Value.h	Thu Jun 20 11:02:42 2019 +0200
++++ b/js/public/Value.h	Thu Jun 20 11:15:19 2019 +0200
+@@ -440,7 +440,11 @@
+   }
+ 
+   void setInt32(int32_t i) {
++#if __sparc__
++    asBits_ = bitsFromTagAndPayload(JSVAL_TAG_INT32, PayloadType(i) & UINT32_MAX);
++#else
+     asBits_ = bitsFromTagAndPayload(JSVAL_TAG_INT32, uint32_t(i));
++#endif
+   }
+ 
+   void setDouble(double d) {

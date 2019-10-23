@@ -1,0 +1,29 @@
+# HG changeset patch
+# User Petr Sumbera <petr.sumbera@oracle.com>
+# Date 1561021272 -7200
+#      Thu Jun 20 11:01:12 2019 +0200
+# Node ID 8f4a9f9b992ff69604f1a78c0cbe633db5ba4420
+# Parent  3c98b341ebc8db6be46b814f7f33ceb4f0d0e8f4
+no-stack-protector for xptcstubs_sparc64_openbsd.cpp
+
+diff -r 3c98b341ebc8 -r 8f4a9f9b992f xpcom/reflect/xptcall/md/unix/xptcstubs_sparc64_openbsd.cpp
+--- a/xpcom/reflect/xptcall/md/unix/xptcstubs_sparc64_openbsd.cpp	Mon Apr 29 14:42:18 2019 +0200
++++ b/xpcom/reflect/xptcall/md/unix/xptcstubs_sparc64_openbsd.cpp	Thu Jun 20 11:01:12 2019 +0200
+@@ -87,8 +87,16 @@
+ 
+ extern "C" nsresult SharedStub(int, int*);
+ 
++/*
++ * Avoid GCC stack protector to wipe out input registers since the compiler
++ * thinks the function takes no arguments.
++ */
++#ifndef __nostackprotector
++#define __nostackprotector __attribute__((__optimize__("no-stack-protector")))
++#endif
++
+ #define STUB_ENTRY(n) \
+-nsresult nsXPTCStubBase::Stub##n() \
++nsresult __nostackprotector nsXPTCStubBase::Stub##n() \
+ { \
+ 	int dummy; /* defeat tail-call optimization */ \
+ 	return SharedStub(n, &dummy); \

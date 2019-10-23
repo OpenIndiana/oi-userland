@@ -1,0 +1,13 @@
+https://bugzilla.mozilla.org/show_bug.cgi?id=1527597
+
+--- firefox-68.0/js/src/jit/ProcessExecutableMemory.cpp
++++ firefox-68.0/js/src/jit/ProcessExecutableMemory.cpp
+@@ -344,7 +344,7 @@
+   // mmap will pick a different address.
+   void* randomAddr = ComputeRandomAllocationAddress();
+   void* p = MozTaggedAnonymousMmap(randomAddr, bytes, PROT_NONE,
+-                                   MAP_PRIVATE | MAP_ANON, -1, 0,
++                                   MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0,
+                                    "js-executable-memory");
+   if (p == MAP_FAILED) {
+     return nullptr;

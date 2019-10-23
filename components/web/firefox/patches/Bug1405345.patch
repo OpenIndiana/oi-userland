@@ -1,0 +1,52 @@
+# HG changeset patch
+# User Petr Sumbera <petr.sumbera@oracle.com>
+# Date 1561016175 -7200
+#      Thu Jun 20 09:36:15 2019 +0200
+# Node ID 883bf26204730965dc9c03de2a441f8c3269ddd2
+# Parent  1c2190cf70a58a6e9ad82f52da97b00abcc81a8d
+Bug 1405345 linking issue nss libfreebl..
+https://phabricator.services.mozilla.com/D26278
+
+diff -r 1c2190cf70a5 -r 883bf2620473 security/nss/coreconf/config.gypi
+--- a/security/nss/coreconf/config.gypi	Wed Jun 19 11:39:44 2019 +0200
++++ b/security/nss/coreconf/config.gypi	Thu Jun 20 09:36:15 2019 +0200
+@@ -37,7 +37,7 @@
+         },{
+           'use_system_sqlite%': 0,
+         }],
+-        ['OS=="mac" or OS=="ios" or OS=="win"', {
++        ['OS=="mac" or OS=="ios" or OS=="solaris" or OS=="win"', {
+           'cc_use_gnu_ld%': 0,
+         }, {
+           'cc_use_gnu_ld%': 1,
+@@ -383,6 +383,11 @@
+               '_REENTRANT',
+             ],
+           }],
++          [ 'OS!="mac" and OS!="win" and OS!="solaris"', {
++            'ldflags': [
++              '-z', 'noexecstack',
++            ],
++          }],
+           [ 'OS!="mac" and OS!="ios" and OS!="win"', {
+             'cflags': [
+               '-fPIC',
+@@ -393,9 +398,6 @@
+             'cflags_cc': [
+               '-std=c++0x',
+             ],
+-            'ldflags': [
+-              '-z', 'noexecstack',
+-            ],
+             'conditions': [
+               [ 'target_arch=="ia32"', {
+                 'cflags': ['-m32'],
+@@ -628,7 +630,7 @@
+     },
+   },
+   'conditions': [
+-    [ 'cc_use_gnu_ld==1', {
++    [ 'cc_use_gnu_ld==1 or OS=="solaris"', {
+       'variables': {
+         'process_map_file': ['/bin/sh', '-c', '/usr/bin/env grep -v ";-" >(mapfile) | sed -e "s,;+,," -e "s; DATA ;;" -e "s,;;,," -e "s,;.*,;," > >@(_outputs)'],
+       },

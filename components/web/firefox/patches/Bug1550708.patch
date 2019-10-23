@@ -1,0 +1,79 @@
+# HG changeset patch
+# User Petr Sumbera <petr.sumbera@oracle.com>
+# Date 1557488020 -7200
+#      Fri May 10 13:33:40 2019 +0200
+# Node ID d58d61a74f6e1381d49487b9df022c0d493f5a26
+# Parent  e44fab7ea3e48a8b84a85c3cdc308be77022ce18
+Bug 1550708 - NSS gyp build system should produce libfreebl_64fpu_3.so for Solaris SPARC
+
+diff -r e44fab7ea3e4 -r d58d61a74f6e security/nss/lib/freebl/freebl.gyp
+--- a/security/nss/lib/freebl/freebl.gyp	Fri Apr 26 14:00:36 2019 +0200
++++ b/security/nss/lib/freebl/freebl.gyp	Fri May 10 13:33:40 2019 +0200
+@@ -221,6 +221,43 @@
+        ]
+       },
+     },
++    {
++      'target_name': 'freebl_64int_3',
++      'includes': [
++        'freebl_base.gypi',
++      ],
++      'type': 'shared_library',
++      'dependencies': [
++        '<(DEPTH)/exports.gyp:nss_exports',
++        'hw-acc-crypto',
++      ],
++    },
++    {
++      'target_name': 'freebl_64fpu_3',
++      'includes': [
++        'freebl_base.gypi',
++      ],
++      'type': 'shared_library',
++      'sources': [
++        'mpi/mpi_sparc.c',
++        'mpi/mpv_sparcv9.s',
++        'mpi/montmulfv9.s',
++      ],
++      'dependencies': [
++        '<(DEPTH)/exports.gyp:nss_exports',
++        'hw-acc-crypto',
++      ],
++      'asflags_mozilla': [
++        '-mcpu=v9', '-Wa,-xarch=v9a'
++      ],
++      'defines': [
++        'MP_NO_MP_WORD',
++        'MP_USE_UINT_DIGIT',
++        'MP_ASSEMBLY_MULTIPLY',
++        'MP_USING_MONT_MULF',
++        'MP_MONT_USE_MP_MUL',
++      ],
++    },
+   ],
+   'conditions': [
+     [ 'OS=="linux"', {
+diff -r e44fab7ea3e4 -r d58d61a74f6e security/nss/nss.gyp
+--- a/security/nss/nss.gyp	Fri Apr 26 14:00:36 2019 +0200
++++ b/security/nss/nss.gyp	Fri May 10 13:33:40 2019 +0200
+@@ -13,10 +13,19 @@
+           'type': 'none',
+           'dependencies': [
+             'lib/ckfw/builtins/builtins.gyp:nssckbi',
+-            'lib/freebl/freebl.gyp:freebl3',
+             'lib/softoken/softoken.gyp:softokn3',
+           ],
+           'conditions': [
++            [ 'OS=="solaris" and target_arch=="sparc64"', {
++              'dependencies': [
++                'lib/freebl/freebl.gyp:freebl_64int_3',
++                'lib/freebl/freebl.gyp:freebl_64fpu_3',
++              ],
++            }, {
++              'dependencies': [
++                'lib/freebl/freebl.gyp:freebl3',
++              ],
++            }],
+             [ 'moz_fold_libs==0', {
+               'dependencies': [
+                 'lib/nss/nss.gyp:nss3',

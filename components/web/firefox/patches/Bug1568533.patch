@@ -1,0 +1,31 @@
+https://bugzilla.mozilla.org/show_bug.cgi?id=1568533
+
+--- a/gfx/2d/CaptureCommandList.h
++++ b/gfx/2d/CaptureCommandList.h
+@@ -40,7 +40,7 @@
+     static_assert(sizeof(T) + sizeof(uint16_t) + sizeof(uint16_t) <=
+                       std::numeric_limits<uint16_t>::max(),
+                   "encoding is too small to contain advance");
+-    const uint16_t kAdvance = sizeof(T) + sizeof(uint16_t) + sizeof(uint16_t);
++    const uint16_t kAdvance = sizeof(T) + 4 * sizeof(uint16_t);
+ 
+     size_t size = mStorage.size();
+     mStorage.resize(size + kAdvance);
+@@ -49,7 +49,7 @@
+     *(uint16_t*)(current) = kAdvance;
+     current += sizeof(uint16_t);
+     *(uint16_t*)(current) = ~kAdvance;
+-    current += sizeof(uint16_t);
++    current += 3 * sizeof(uint16_t);
+ 
+     T* command = reinterpret_cast<T*>(current);
+     mLastCommand = command;
+@@ -99,7 +99,7 @@
+     }
+     DrawingCommand* Get() {
+       MOZ_ASSERT(!Done());
+-      return reinterpret_cast<DrawingCommand*>(mCurrent + sizeof(uint32_t));
++      return reinterpret_cast<DrawingCommand*>(mCurrent + 2 * sizeof(uint32_t));
+     }
+ 
+    private:

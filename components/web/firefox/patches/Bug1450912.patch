@@ -3,9 +3,10 @@ Workaround for:
 https://bugzilla.mozilla.org/show_bug.cgi?id=1450912
 
 Should be more investigated and reopen bug.
-diff -Naur firefox-60.5.0/gfx/gl/GLContext.cpp.old firefox-60.5.0/gfx/gl/GLContext.cpp
---- firefox-60.5.0/gfx/gl/GLContext.cpp.old     2019-01-22 18:06:46.445695255 +0000
-+++ firefox-60.5.0/gfx/gl/GLContext.cpp 2019-01-22 18:33:40.921538959 +0000
+
+diff -r c56ef1c14a55 gfx/gl/GLContext.cpp
+--- a/gfx/gl/GLContext.cpp	Wed Mar 14 00:40:07 2018 +0200
++++ b/gfx/gl/GLContext.cpp	Wed Apr 04 14:51:13 2018 +0000
 @@ -204,12 +204,11 @@
  
  static bool ParseVersion(const std::string& versionStr,
@@ -16,11 +17,11 @@ diff -Naur firefox-60.5.0/gfx/gl/GLContext.cpp.old firefox-60.5.0/gfx/gl/GLConte
 -
 -  const auto& majorStr = match.str(1);
 -  const auto& minorStr = match.str(2);
-+  size_t dot_index = versionStr.find('.', 0);
-+  if (dot_index == -1)
-+    return false;
-+  const auto& majorStr = versionStr.substr(0, dot_index);
-+  const auto& minorStr = versionStr.substr(dot_index+1, 2);
++    size_t dot_index = versionStr.find('.', 0);
++    if (dot_index == -1)
++      return false;
++    const auto& majorStr = versionStr.substr(0, dot_index);
++    const auto& minorStr = versionStr.substr(dot_index+1, 2);
    *out_major = atoi(majorStr.c_str());
    *out_minor = atoi(minorStr.c_str());
    return true;

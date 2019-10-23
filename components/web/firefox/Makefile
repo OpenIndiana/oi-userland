@@ -10,31 +10,33 @@
 #
 
 #
+# Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
 # Copyright 2013-2017 Alexander Pyhalov
 # Copyright 2019 Geoffrey Weiss
 # Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS = 64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		firefox
-IPS_COMPONENT_VERSION=	60.9.0
-COMPONENT_VERSION=	$(IPS_COMPONENT_VERSION)esr
-COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(IPS_COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
+ESR = esr
+
+COMPONENT_NAME =	firefox
+COMPONENT_VERSION =	68.2.0
+COMPONENT_PROJECT_URL =	http://www.mozilla.com/firefox
+COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
+COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:9f453c8cc5669e46e38f977764d49a36295bf0d023619d9aac782e6bb3e8c53f
-ifdef CANDIDATE_BUILD
-COMPONENT_ARCHIVE_URL= \
-	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/source/$(COMPONENT_ARCHIVE)
+	sha256:85f1c2eaf68ebedcbc0b78a342f6d16ef0865dedd426a1bba94b75c85f716f38
+ifndef CANDIDATE_BUILD
+MOZILLA_FTP =		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
-COMPONENT_ARCHIVE_URL= \
-	https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
+MOZILLA_FTP =		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)
 endif
+COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
@@ -47,64 +49,102 @@ LANG_FILES_LOCATION= \
 	http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi/
 endif
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+CONFIGURE_DEFAULT_DIRS=no
 
-PATH=$(USRBINDIR.64):$(PATH.illumos)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
-                          cd $(@D)/js/src && autoconf-2.13 )
+#PATH=$(USRBINDIR.64):$(PATH.illumos)
+# /usr/gnu/bin needed to pick up the GNU version of tail and readelf.
+# /usr/sbin needed for dtrace.
+PATH = /usr/gnu/bin:/usr/bin:/usr/sbin
 
-GNU_ARCH=		x86_64-sun-solaris
+MOZCONFIG = $(SOURCE_DIR)/mozconfig
 
-FIREFOX_LIBDIR =	$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS =	--enable-application=browser
-CONFIGURE_OPTIONS +=	--enable-official-branding
-CONFIGURE_OPTIONS +=	--disable-updater
-CONFIGURE_OPTIONS +=	--disable-debug-symbols
-CONFIGURE_OPTIONS +=	--enable-update-channel=esr
-CONFIGURE_OPTIONS +=	--disable-tests
-CONFIGURE_OPTIONS +=	--disable-jemalloc
-CONFIGURE_OPTIONS +=	--enable-optimize="-O2 -fno-schedule-insns2 -fno-lifetime-dse -fno-delete-null-pointer-checks"
-CONFIGURE_OPTIONS +=	--disable-dtrace
-CONFIGURE_OPTIONS +=	--disable-crashreporter
-CONFIGURE_OPTIONS +=	--enable-pulseaudio
-CONFIGURE_OPTIONS +=	--disable-webrtc
-CONFIGURE_OPTIONS +=	--with-intl-api
-CONFIGURE_OPTIONS +=	--disable-debug
-CONFIGURE_OPTIONS +=	--enable-default-toolkit=cairo-gtk3
-CONFIGURE_OPTIONS +=	--with-pthreads
-CONFIGURE_OPTIONS +=	--enable-system-pixman
-CONFIGURE_OPTIONS +=	--with-system-zlib
-CONFIGURE_OPTIONS +=	--with-system-bz2
-CONFIGURE_OPTIONS +=	--enable-system-ffi
-CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=	--libdir=$(FIREFOX_LIBDIR)
-CONFIGURE_OPTIONS +=	--host=$(GNU_ARCH)
-CONFIGURE_OPTIONS +=	--target=$(GNU_ARCH)
+ifdef DEBUG
+# disable code optimization
+CFLAGS =
+CXXFLAGS =
 
-ENV +=  PATH=$(PATH)
-ENV +=	CC=$(CC)
-ENV +=	CFLAGS="$(CFLAGS)"
-ENV +=	CXX=$(CXX)
-ENV +=	CXXFLAGS="$(CXXFLAGS)"
-ENV +=	LDFLAGS="$(LDFLAGS) -lm"
-ENV +=	MOZILLA_OFFICIAL=1
-ENV +=	MOZ_TELEMETRY_REPORTING=1
-ENV +=	MOZ_PACKAGE_JSSHELL=1
-ENV +=	MOZ_PKG_FORMAT=XZ
-ENV +=	PKG_SKIP_STRIP=1
-ENV +=	MOZILLA_PKG_NAME=firefox
-ENV +=	SHELL="/bin/bash"
-ENV +=  LDFLAGS="-L$(BUILD_DIR_64)/dist/lib -L$(BUILD_DIR_64)/dist/bin"
-ENV +=  PYTHON="$(PYTHON)"
+MOZCONFIG_DEBUG =	$(MOZCONFIG)
+MOZCONFIG_NON_DEBUG =	/dev/null
+else
+MOZCONFIG_DEBUG =	/dev/null
+MOZCONFIG_NON_DEBUG =	$(MOZCONFIG)
+endif
+
+CONFIGURE_ENV=
+CONFIGURE_OPTIONS=
+
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --libdir=/usr/lib" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-av1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-debug-symbols" >> $(MOZCONFIG_NON_DEBUG) ; \
+	echo "ac_add_options --disable-install-strip" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --disable-optimize" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-debug" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-optimize" >> $(MOZCONFIG_NON_DEBUG) ; \
+	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-ffi" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-update-channel=esr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-icu" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
+
+CXXFLAGS += -Wno-invalid-offsetof -fpermissive
+
+LD_SECEXT_OPTIONS += $(SSBD_ENABLE)
+
+# 28395728
+LD_MAP_NOEXBSS.sparc=
+
+# libmozgtk needs to link to gtk3 and others
+LD_Z_IGNORE=
+
+# missing symbols from gtk3 during Firefox start
+LD_B_DIRECT=
+
+# because we touched old-configure.in and js/src/old-configure.in
+COMPONENT_PRE_CONFIGURE_ACTION += (cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); autoreconf; touch configure; cd js/src; autoreconf; touch configure);
+
+#GNU_ARCH=		x86_64-sun-solaris
+
+#FIREFOX_LIBDIR =	$(CONFIGURE_LIBDIR.$(BITS))
+
+#ENV +=  PATH=$(PATH)
+#ENV +=	CC=$(CC)
+#ENV +=	CFLAGS="$(CFLAGS)"
+#ENV +=	CXX=$(CXX)
+#ENV +=	CXXFLAGS="$(CXXFLAGS)"
+#ENV +=	LDFLAGS="$(LDFLAGS) -lm"
+#ENV +=	MOZILLA_OFFICIAL=1
+#ENV +=	MOZ_TELEMETRY_REPORTING=1
+#ENV +=	MOZ_PACKAGE_JSSHELL=1
+#ENV +=	MOZ_PKG_FORMAT=XZ
+#ENV +=	PKG_SKIP_STRIP=1
+#ENV +=	MOZILLA_PKG_NAME=firefox
+#ENV +=	SHELL="/bin/bash"
+#ENV +=  LDFLAGS="-L$(BUILD_DIR_64)/dist/lib -L$(BUILD_DIR_64)/dist/bin"
+#ENV +=  PYTHON="$(PYTHON)"
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
-CONFIGURE_ENV =	$(ENV)
-COMPONENT_BUILD_ENV =	$(ENV)
-COMPONENT_INSTALL_ENV += HOME=/tmp
+#CONFIGURE_ENV =	$(ENV)
+#COMPONENT_BUILD_ENV =	$(ENV)
+#COMPONENT_INSTALL_ENV += HOME=/tmp
 
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
@@ -115,7 +155,9 @@ $(LANG_FILES):
 
 download prep:: $(LANG_FILES)
 
-build: $(BUILD_64)
+COMPONENT_POST_BUILD_ACTION = \
+	(cd $(@D)/browser/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
+		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/*.so \
@@ -132,9 +174,14 @@ COMPONENT_POST_INSTALL_ACTION += \
             LD_LIBRARY_PATH=$(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox $(BUILD_DIR_64)/dist/bin/shlibsign -v -i $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/$$f ; \
         done ;
 
-install: $(INSTALL_64)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-test: $(NO_TESTS)
+COMPONENT_TEST_DIR =    $(@D)/js/src
+COMPONENT_TEST_TARGETS=check-jit-test
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "/^PASSED ALL/,/Failed:/p" ' \
+	'-e "/^FAILURES:/,/Failed:/p" ' \
+	'-e "/.*/d" '
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-213
