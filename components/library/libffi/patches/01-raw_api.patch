@@ -1,0 +1,31 @@
+Raw API calls are not supported, since they are disabled in the Makefile 
+for a fix to bug 22535919 which requires API calls to be disabled.
+Removes the raw API functions if RAW API is not allowed.
+Will attempt to send upstream.
+
+--- libffi-3.2.1/libffi.pc.in_orig	2016-11-30 13:27:54.465013600 +0000
++++ libffi-3.2.1/libffi.pc.in	2016-11-30 13:28:43.661349542 +0000
+@@ -8,4 +8,4 @@
+ Description: Library supporting Foreign Function Interfaces
+ Version: @PACKAGE_VERSION@
+ Libs: -L${toolexeclibdir} -lffi
+-Cflags: -I${includedir}
++Cflags: -I${includedir} -DFFI_NO_RAW_API
+--- libffi-3.3-rc1/include/ffi.h.in	2019-10-24 11:16:50.000000000 +0000
++++ libffi-3.3-rc1/include/ffi.h.in.new	2019-10-25 14:01:08.566540149 +0000
+@@ -269,6 +269,7 @@ typedef ffi_raw ffi_java_raw;
+ #endif
+ 
+ 
++#if !FFI_NO_RAW_API
+ FFI_API 
+ void ffi_raw_call (ffi_cif *cif,
+ 		   void (*fn)(void),
+@@ -278,6 +279,7 @@ void ffi_raw_call (ffi_cif *cif,
+ FFI_API void ffi_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw);
+ FFI_API void ffi_raw_to_ptrarray (ffi_cif *cif, ffi_raw *raw, void **args);
+ FFI_API size_t ffi_raw_size (ffi_cif *cif);
++#endif
+ 
+ /* This is analogous to the raw API, except it uses Java parameter
+    packing, even on 64-bit machines.  I.e. on 64-bit machines longs
