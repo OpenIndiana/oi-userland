@@ -11,26 +11,27 @@
 #
 # Copyright 2015 EveryCity Ltd. All rights reserved.
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2016, 2017 Andreas Wacknitz
+# Copyright 2016, 2017, 2019 Andreas Wacknitz
 #
 
+BUILD_BITS=     		32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		node
-COMPONENT_FMRI=		runtime/nodejs-8
-COMPONENT_SUMMARY=	Evented I/O for V8 JavaScript.
+COMPONENT_NAME=			node
+COMPONENT_FMRI=			runtime/nodejs-8
+COMPONENT_SUMMARY=		Evented I/O for V8 JavaScript.
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://nodejs.org
-COMPONENT_VERSION=	8.16.1
-COMPONENT_LICENSE=	BSD-like, MIT, Apache
+COMPONENT_VERSION=		8.16.2
+COMPONENT_LICENSE=		BSD-like, MIT, Apache
+COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d8c190acdf2d967faf49c22df883d31a8d4e249d67852dae3c2d8a0f756b0512
+COMPONENT_ARCHIVE_HASH=	sha256:8c16b500ad74c1b1bde099996c287eeed5a4b2ab0efdf5d94d1d683cc2654ec3
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=            $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Include /usr/sbin for dtrace
 PATH=$(PATH.illumos)
@@ -43,11 +44,6 @@ CONFIGURE_SCRIPT =	$(@D)/configure
 
 CONFIGURE_OPTIONS= --prefix=/usr/node/8
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:       $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
