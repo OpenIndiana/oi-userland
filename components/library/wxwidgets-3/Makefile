@@ -13,10 +13,12 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
-COMPONENT_VERSION=      3.1.2
+COMPONENT_VERSION=      3.1.3
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_FMRI=         library/graphics/wxwidgets-3
@@ -27,12 +29,10 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   https://github.com/wxWidgets/wxWidgets/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4cb8d23d70f9261debf7d6cfeca667fc0a7d2b6565adb8f1c484f9b674f1f27a
+  sha256:fffc1d34dac54ff7008df327907984b156c50cff5a2f36ee3da6052744ab554a
 COMPONENT_LICENSE=      wxWindows Library license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Compilation failure due to char * conversion
 CXXFLAGS += -fpermissive
@@ -59,12 +59,6 @@ CONFIGURE_OPTIONS += --with-libtiff=sys
 CONFIGURE_OPTIONS += --without-libmspack
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --with-sdl
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
