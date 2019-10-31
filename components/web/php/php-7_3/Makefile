@@ -11,24 +11,25 @@
 #
 # Copyright 2013, EveryCity Ltd. All rights reserved.
 #
+
+BUILD_BITS=		64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
 COMPONENT_MJR_VERSION=	7.3
-COMPONENT_MNR_VERSION=	8
+COMPONENT_MNR_VERSION=	9
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://www.php.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:f6046b2ae625d8c04310bda0737ac660dc5563a8e04e8a46c1ee24ea414ad5a5
+COMPONENT_ARCHIVE_HASH=	sha256:4007f24a39822bef2805b75c625551d30be9eeed329d52eb0838fa5c1b91c1fd
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE).asc/from/this/mirror
 COMPONENT_LICENSE=	PHP License
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -116,14 +117,14 @@ CONFIGURE_OPTIONS  +=	--with-pgsql=shared,$(PG_BINDIR)
 CONFIGURE_OPTIONS  +=	--with-pdo-pgsql=shared,$(PG_BINDIR)
 
 # Enabled Extensions
-#CONFIGURE_OPTIONS     +=	--with-libxml-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-freetype-dir=$(ECPREFIX)
-CONFIGURE_OPTIONS   +=	--with-jpeg-dir=/usr
-#CONFIGURE_OPTIONS     +=	--with-png-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-zlib-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-xpm-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-libexpat-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-openssl-dir=$(ECPREFIX)
+#CONFIGURE_OPTIONS     +=	--with-libxml-dir=/usr
+CONFIGURE_OPTIONS     +=	--with-freetype-dir=/usr
+CONFIGURE_OPTIONS     +=	--with-jpeg-dir=/usr/include/libjpeg8-turbo
+#CONFIGURE_OPTIONS     +=	--with-png-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-zlib-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-xpm-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-libexpat-dir=/usr
+#CONFIGURE_OPTIONS     +=	--with-openssl-dir=/usr
 
 # Disabled extensions & Options
 CONFIGURE_OPTIONS   +=	--disable-static
@@ -208,19 +209,14 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^TEST RESULT SUMMARY$$/,\$$p" ' \
     '-e "/.*/d" '
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:	$(TEST_64)
-
 # Build dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += web/server/apache-24
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += database/postgres-94/developer
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/postgres-94/library
@@ -234,9 +230,9 @@ REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/uw-imap
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/tidy
