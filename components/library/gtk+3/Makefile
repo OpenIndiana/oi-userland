@@ -14,15 +14,17 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk+
-COMPONENT_VERSION=	3.24.10
+COMPONENT_VERSION=	3.24.12
 COMPONENT_SUMMARY=	GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:35a8f107e2b90fda217f014c0c15cb20a6a66678f6fd7e36556d469372c01b03
+	sha256:1384eba5614fed160044ae0d32369e3df7b4f517b03f4b1f24d383e528f4be83
 COMPONENT_ARCHIVE_URL= \
 	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtk.org/
@@ -31,9 +33,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_FMRI=		library/desktop/gtk3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -78,12 +78,6 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 unexport SHELLOPTS
 COMPONENT_TEST_TRANSFORMER = grep
 COMPONENT_TEST_TRANSFORMS = '"^  /"'
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Test dependencies
 REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
