@@ -12,16 +12,6 @@
  
    conn->fd = -1;
    conn->ssf = 0;
-@@ -96,7 +99,9 @@
-     return -1;
-   }
- 
-+  mutt_allow_interrupt (1);
-   rc = conn->conn_read (conn, buf, len);
-+  mutt_allow_interrupt (0);
-   /* EOF */
-   if (rc == 0)
-   {
 @@ -127,7 +132,10 @@
    
    while (sent < len)
