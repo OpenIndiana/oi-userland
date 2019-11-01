@@ -11,12 +11,16 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
+
+BUILD_BITS= 32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rhythmbox
 COMPONENT_VERSION= 3.4.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Rhythmbox Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -30,9 +34,9 @@ COMPONENT_CLASSIFICATION= Applications/Sound and Video
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -51,10 +55,6 @@ CONFIGURE_ENV    += PYTHON=$(PYTHON.3.4.$(BITS))
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
 
 # Build dependencies
 REQUIRED_PACKAGES += text/itstool
