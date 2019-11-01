@@ -14,11 +14,13 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=		32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.13.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
@@ -31,9 +33,9 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	pidgin.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
@@ -77,13 +79,6 @@ CONFIGURE_ENV+=	perlpath=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
