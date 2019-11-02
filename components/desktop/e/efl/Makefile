@@ -21,28 +21,29 @@
 
 #
 # Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           efl
-COMPONENT_VERSION=        1.18.5
-COMPONENT_REVISION=       3
-COMPONENT_FMRI=           library/e/$(COMPONENT_NAME)
+COMPONENT_NAME=		efl
+COMPONENT_VERSION=	1.18.5
+COMPONENT_REVISION=	4
+COMPONENT_SUMMARY=	Enlightenment Foundation Libraries
+COMPONENT_FMRI=		library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=    http://www.enlightenment.org
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	http://www.enlightenment.org
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:56f02aa6b2c4ca0252fb6547fa8d2fdfff842e245a93ae41adca7a191900bf73
+	sha256:56f02aa6b2c4ca0252fb6547fa8d2fdfff842e245a93ae41adca7a191900bf73
 COMPONENT_ARCHIVE_URL= \
-  http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        BSD 2-clause, GPLv2, LGPLv2.1, Small
-COMPONENT_SUMMARY=        Enlightenment Foundation Libraries
+	http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	BSD 2-clause, GPLv2, LGPLv2.1, Small
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_BINDIR.64=$(USRBINDIR)
 CONFIGURE_SBINDIR.64=$(USRSBINDIR)
@@ -74,12 +75,6 @@ COMPONENT_POST_CONFIGURE_ACTION=$(RM) $(SOURCE_DIR)/src/lib/eina/eina_config.h;
 
 # pkgdepend fails to resolve the python version if env is used
 COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp;
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa
