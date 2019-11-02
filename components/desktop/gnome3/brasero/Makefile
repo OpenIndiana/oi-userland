@@ -10,27 +10,31 @@
 
 #
 # Copyright (c) 2013 Ken Mays
+# Copyright 2019, Michal Nowak
 #
+
+BUILD_BITS=		32_and_64
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	brasero
+COMPONENT_NAME=		brasero
 COMPONENT_VERSION=	3.12.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=	Gnome CD/DVD burner
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6822166f9d08efcf8d900cab6f563e87f49f0e078ca10595dcd908498ef12041
+	sha256:6822166f9d08efcf8d900cab6f563e87f49f0e078ca10595dcd908498ef12041
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	desktop/cd-burning/brasero
+COMPONENT_FMRI=		desktop/cd-burning/brasero
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -56,13 +60,6 @@ CONFIGURE_OPTIONS+=	--disable-maintainer-mode
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # build dependency
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
