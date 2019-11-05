@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfont
-COMPONENT_VERSION= 1.5.3
+COMPONENT_VERSION= 1.5.4
 COMPONENT_SUMMARY= libXfont - library for X servers and utilities to access font files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ab85c10fd2683481dfef672a77fe60e6a2039558cbc0e9bf56b5e1df471c93d0
+  sha256:1a7f7490774c87f2052d146d1e0e64518d32e6848184a18654e8d0bb57883242
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org

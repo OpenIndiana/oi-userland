@@ -59,3 +59,6 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library

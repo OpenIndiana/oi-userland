@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= clutter-gst
 COMPONENT_VERSION= 1.6.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= gstreamer integration library for clutter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -34,6 +35,8 @@ PATH=$(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 LDFLAGS += -lgdk_pixbuf-2.0
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib

@@ -1,0 +1,27 @@
+--- apache-couchdb-2.1.1/rel/overlay/bin/remsh.orig	2017-12-07 05:20:11.113412712 +0000
++++ apache-couchdb-2.1.1/rel/overlay/bin/remsh	2017-12-07 05:20:49.534866069 +0000
+@@ -12,7 +12,7 @@
+ # License for the specific language governing permissions and limitations under
+ # the License.
+ 
+-COUCHDB_BIN_DIR=$(cd "${0%/*}" && pwd)
++COUCHDB_BIN_DIR=/usr/couchdb/2.1/bin
+ ERTS_BIN_DIR=$COUCHDB_BIN_DIR/../
+ ROOTDIR=${ERTS_BIN_DIR%/*}
+ START_ERL=$(cat "$ROOTDIR/releases/start_erl.data")
+--- apache-couchdb-2.1.1/rel/overlay/bin/couchdb.orig	2017-12-07 06:01:36.754659952 +0000
++++ apache-couchdb-2.1.1/rel/overlay/bin/couchdb	2017-12-07 06:03:04.871087428 +0000
+@@ -12,11 +12,12 @@
+ # License for the specific language governing permissions and limitations under
+ # the License.
+ 
+-COUCHDB_BIN_DIR=$(cd "${0%/*}" && pwd)
++COUCHDB_BIN_DIR=/usr/couchdb/2.1/bin
+ ERTS_BIN_DIR=$COUCHDB_BIN_DIR/../
+ cd "$COUCHDB_BIN_DIR/../"
+ 
+ export ROOTDIR=${ERTS_BIN_DIR%/*}
++export PATH=${COUCHDB_BIN_DIR}:${PATH}
+ 
+ START_ERL=`cat "$ROOTDIR/releases/start_erl.data"`
+ ERTS_VSN=${START_ERL% *}

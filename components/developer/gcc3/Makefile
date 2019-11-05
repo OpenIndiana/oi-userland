@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-compiler
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PARCH =		$(MACH:i386=i386-pc)
 GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
@@ -48,6 +48,10 @@ COMPILER =	gcc
 
 # CC_BITS may get in the way
 CC_BITS=
+
+# Set standard
+CFLAGS   += -std=gnu89
+CXXFLAGS += -std=c++98
 
 # enabling this causes libstdc++ to break
 LD_B_DIRECT=
@@ -93,9 +97,11 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test: $(TEST_32)
 
-REQUIRED_PACKAGES += developer/gnu-binutils
-REQUIRED_PACKAGES += developer/library/lint
-REQUIRED_PACKAGES += developer/linker
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/linker
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c-runtime
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/math

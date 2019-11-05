@@ -1,0 +1,14 @@
+This change spits out the name of test failed and the returned value
+
+--- js-1.8.5/jit-test/tests/basic/math-jit-tests.js.orig	2017-10-10 19:02:14.944663990 +0000
++++ js-1.8.5/jit-test/tests/basic/math-jit-tests.js	2017-10-10 19:05:36.293532136 +0000
+@@ -47,7 +47,8 @@
+         return dummies_and_input[RUNLOOP];
+     }
+ 
+-    assertEq(close_enough(testfunc(), expected), true);
++    var rc=testfunc();
++    assertEq(close_enough(expected, rc), true, "funcname=" + funcname + " args=" + args + " expected=" + expected + " rc=" + rc);
+ }
+ 
+ function close_enough(expected, actual)

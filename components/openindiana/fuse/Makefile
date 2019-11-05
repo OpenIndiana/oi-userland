@@ -16,16 +16,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-fusefs
-COMPONENT_VERSION=	c48a497431e574ccb52cffacc10caaa0f030f6ce
+COMPONENT_VERSION=	97ab66140d5b063d06670f38c2d41293e4364913
+COMPONENT_REVISION= 1
 IPS_COMPONENT_VERSION=	1.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH=	sha256:b96de3235e66b382a4b0e6b80ca55ef41e8abda59758f2248d31ed44177aa000
+COMPONENT_ARCHIVE_HASH=	sha256:af6a71e7384ce08f87884d19639d2e356b22d09a6965066b535341e0abc804f6
 COMPONENT_ARCHIVE_URL=	https://github.com/jurikm/illumos-fusefs/archive/$(COMPONENT_VERSION).zip
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/opt/onbld/bin/i386:/opt/onbld/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:/sbin
 

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany-plugins
 COMPONENT_VERSION= 1.31
+COMPONENT_REVISION= 1
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
 COMPONENT_SUMMARY= Plugins for Geany editor
@@ -49,6 +50,11 @@ CONFIGURE_OPTIONS+= --disable-cppcheck
 CONFIGURE_OPTIONS+= --disable-debugger
 CONFIGURE_OPTIONS+= --disable-scope
 
+# requires webkit 1.x
+CONFIGURE_OPTIONS+= --disable-devhelp
+CONFIGURE_OPTIONS+= --disable-markdown
+CONFIGURE_OPTIONS+= --disable-webhelper
+
 # no lipsum (www.lipsum.com) in OI yet
 CONFIGURE_OPTIONS+= --disable-lipsum
 
@@ -68,7 +74,6 @@ REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/vte
-REQUIRED_PACKAGES += library/desktop/webkitgtk
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/libsoup

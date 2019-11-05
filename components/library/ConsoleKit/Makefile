@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ConsoleKit
 COMPONENT_VERSION=	0.4.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/ConsoleKit
 COMPONENT_SUMMARY=	Framework for tracking users, login sessions, and seats
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

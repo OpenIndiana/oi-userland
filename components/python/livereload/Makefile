@@ -45,5 +45,9 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/python-27
+# Build dependencies
 REQUIRED_PACKAGES += library/python/six-27
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += runtime/python-27

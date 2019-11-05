@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		serf
 COMPONENT_VERSION=	1.3.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	high performance C-based HTTP client library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://serf.apache.org/

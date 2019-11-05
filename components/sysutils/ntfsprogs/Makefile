@@ -12,28 +12,30 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2016 Adam Stevko.  All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ntfs-3g_ntfsprogs
-COMPONENT_VERSION= 2016.2.22AR.1
-IPS_COMPONENT_VERSION= 2016.2.22
-COMPONENT_REVISION= 2
+IPS_COMPONENT_VERSION= 2017.3.23
+COMPONENT_VERSION= $(IPS_COMPONENT_VERSION)AR.1
 COMPONENT_SUMMARY= ntfsprogs - Utilities that provide access to NTFS
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2091475d439bc5889b09892b7ca97419d600436f13bf28885a29f31137ff3efd
-COMPONENT_ARCHIVE_URL= \
-	http://jp-andre.pagesperso-orange.fr/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:fe8cf2b0326000013f25dc2870305f9ae06b3c7df43ce460d450fa87764cde38
+COMPONENT_ARCHIVE_URL= http://jp-andre.pagesperso-orange.fr/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.tuxera.com/community/ntfs-3g-download/
+COMPONENT_FMRI= system/file-system/ntfsprogs
+COMPONENT_CLASSIFICATION= System/Administration and Configuration
+COMPONENT_LICENSE= GPLv2, LGPLv2
+COMPONENT_LICENSE_FILE= ntfsprogs.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS += -D__LITTLE_ENDIAN=1234
 CFLAGS += -D__BYTE_ORDER=1234
@@ -44,8 +46,11 @@ CONFIGURE_OPTIONS += --with-fuse=external
 
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32)
+build:   $(BUILD_32)
 
 install: $(INSTALL_32)
 
-test: $(NO_TESTS)
+test:    $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/libfuse
+REQUIRED_PACKAGES += system/library

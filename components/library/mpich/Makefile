@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =	mpich/$(COMPILER)
-COMPONENT_VERSION =	3.2
+COMPONENT_VERSION =	3.2.1
 COMPONENT_FMRI =	library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =	http://www.mpich.org/
@@ -25,7 +25,7 @@ COMPONENT_SRC_NAME = mpich
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:0778679a6b693d7b7caff37ff9d2856dc2bfc51318bf8373859bfa74253da3dc
+    sha256:5db53bf2edfaa2238eb6a0a5bc3d2c2ccbfbb1badd79b664a1a919d2ce2330f1
 COMPONENT_ARCHIVE_URL =	http://www.mpich.org/static/downloads/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =	    $(COMPONENT_FMRI)
 
@@ -63,7 +63,15 @@ CONFIGURE_OPTIONS+=	--enable-mpe
 # It seems the issue has gone with the 3.x series
 #CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS) -Wa,--divide"
 
-COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_MASTER =     $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/TOTAL:/p" ' \
+        '-e "/SKIP:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" ' \
+        '-e "/ERROR:/p" '
 
 build:		$(BUILD_32_and_64)
 
@@ -85,10 +93,10 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/modulefile.32 $(BUILD_DIR)/modulefile
 
 test:	$(TEST_32_and_64)
 
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime

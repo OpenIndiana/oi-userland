@@ -14,10 +14,10 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.6.31
+COMPONENT_VERSION=	5.6.32
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:c464af61240a9b7729fabe0314cdbdd5a000a4f0c9bd201f89f8628732fe4ae4
+COMPONENT_ARCHIVE_HASH=	sha256:8c2b4f721c7475fb9eabda2495209e91ea933082e6f34299d11cba88cd76e64b
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL= 	http://uk1.php.net/distributions/$(COMPONENT_ARCHIVE).asc	
 
@@ -197,7 +197,7 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/uw-imap
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libmcrypt
 REQUIRED_PACKAGES += text/aspell

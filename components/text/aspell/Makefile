@@ -24,11 +24,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aspell
 COMPONENT_VERSION=	0.60.6.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		text/aspell
+COMPONENT_SUMMARY=	GNU Aspell spell checking library
+COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:f52583a83a63633701c5f71db3dc40aab87b7f76b29723aeb27941eff42df6e1
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://aspell.net/	
+COMPONENT_LICENSE=	LGPLv2.1
 
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -55,3 +60,11 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += system/library/math

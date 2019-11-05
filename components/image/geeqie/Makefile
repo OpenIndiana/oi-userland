@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geeqie
 COMPONENT_VERSION=	1.3
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.geeqie.org/
 COMPONENT_SUMMARY=	Geeqie is a lightweight Gtk+ based image viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,9 +34,16 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_ENV += LIBS="-lm -lsocket -lnsl"
+
+CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 
 CONFIGURE_OPTIONS += --disable-gtk3
 
@@ -46,12 +54,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+# Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/exiv2
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -60,5 +65,6 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

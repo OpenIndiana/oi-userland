@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= atkmm
 COMPONENT_VERSION= 2.22.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= atkmm - C++ Wrapper for the atk Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -35,7 +36,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+CXXFLAGS += -std=c++11
+
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 
@@ -49,4 +52,4 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime

@@ -64,7 +64,7 @@ clobber:		TARGET = clobber
 test:			TARGET = test
 component-hook:		TARGET = component-hook
 prep build install pre-publish publish test:	TEMPLATE_ZONE=$(ZONE)
-prep build install pre-publish publish test:	LOG = >$(WS_LOGS)/$(@F).$(TARGET).log 2>&1
+prep build install pre-publish publish test:	LOG = >$(WS_LOGS)/$(subst /,.,$@).$(TARGET).log 2>&1
 
 # turn off pkglint for the individual component builds.
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)

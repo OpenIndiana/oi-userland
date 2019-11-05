@@ -49,6 +49,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/libyajl2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/curl

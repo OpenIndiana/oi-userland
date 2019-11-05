@@ -22,11 +22,9 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH = /usr/gnu/bin:/usr/bin
-
 COMPONENT_NAME=		gpgme
 COMPONENT_VERSION=	1.1.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -38,6 +36,8 @@ COMPONENT_BUGDB=	utility/gnupg
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PATH = $(PATH.gnu)
 
 PATCH_LEVEL = 0
 

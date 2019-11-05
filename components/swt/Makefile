@@ -45,3 +45,16 @@ COMPONENT_INSTALL_ARGS += -f make_solaris_x86.mak
 build:          $(BUILD_32)
 
 install:	$(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/libgnomeui
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/glu
+REQUIRED_PACKAGES += x11/library/libxtst

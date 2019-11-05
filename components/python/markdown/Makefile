@@ -25,22 +25,22 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= markdown
 COMPONENT_SRC_NAME= Python-Markdown
-COMPONENT_VERSION= 2.6.7
+COMPONENT_VERSION= 2.6.9
 COMPONENT_FMRI= library/python/markdown
 COMPONENT_PROJECT_URL=  https://pythonhosted.org/Markdown/
-COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-final
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:31287f97286d365d7be056e2388904a13c29926abc275e3d31a3e4035c67122b
+    sha256:4aca6f069776e5e45bf4fdedd1512137ee345e860e842e583c464ab670197e80
 # Pypi download link is broken
 COMPONENT_ARCHIVE_URL= \
-    https://github.com/waylan/Python-Markdown/archive/$(COMPONENT_VERSION)-final.tar.gz
+    https://github.com/Python-Markdown/markdown/archive/$(COMPONENT_VERSION).tar.gz
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_NO_ARCH)
 

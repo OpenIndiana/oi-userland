@@ -10,29 +10,29 @@
 
 #
 # Copyright (c) 2016 Alexander Pyhalov
+# Copyright (c) 2017 Ken Mays
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hunspell
-COMPONENT_VERSION=        1.3.4
+COMPONENT_VERSION=        1.6.2
 COMPONENT_PROJECT_URL=    http://hunspell.github.io/
 COMPONENT_SUMMARY=        Improved spellchecker
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:55918522cb0041748507dd4f5aa92d043cef337aa589b9367c2221da084281ac
+    sha256:3cd9ceb062fe5814f668e4f22b2fa6e3ba0b339b921739541ce180cac4d6f4c4 
 COMPONENT_ARCHIVE_URL=        https://github.com/hunspell/hunspell/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	COPYING.LGPL
+COMPONENT_LICENSE=	GPLv3, LGPLv3, MPLv1.1
 COMPONENT_FMRI= text/hunspell
 COMPONENT_CLASSIFICATION = System/Text Tools
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
 CPPFLAGS += -I/usr/include/ncurses
 # We need to check headers with C++ compiler, but configure uses $(CC).
@@ -41,9 +41,7 @@ CPPFLAGS += -I/usr/include/ncurses
 CFLAGS += -D_XOPEN_SOURCE=600
 CFLAGS += -std=c99
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                                        autoreconf -f )
-
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -vif )
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -55,12 +53,30 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS+=        --with-ui
 CONFIGURE_OPTIONS+=        --with-readline
 
-ENV=/usr/bin/env -i
+unexport SHELLOPTS
+
+COMPONENT_TEST_MASTER =     $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+     '-n ' \
+     '-e "/TOTAL:/p" ' \
+     '-e "/SKIP:/p" ' \
+     '-e "/PASS:/p" ' \
+     '-e "/FAIL:/p" ' \
+     '-e "/ERROR:/p" '
 
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Failed tests: rep.test, checksharps.test, 1463589.test
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime

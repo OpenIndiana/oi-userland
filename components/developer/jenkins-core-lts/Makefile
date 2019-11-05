@@ -27,10 +27,10 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		jenkins
 JENKINS_RELEASE=lts
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	73
+COMPONENT_MINOR_VERSION=	89
 COMPONENT_PATCH_VERSION=	2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:f6d1351beef34d980b32f8c463be505445f637e2fc62156fecd42891c53c97d3
+	sha256:014f669f32bc6e925e926e260503670b32662f006799b133a031a70a794c8a14
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
@@ -87,6 +87,5 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-# Note: this recipe just downloads and packages stuff.
-# No real build, no magic tools, no java even, should be needed!
-# So, no custom REQUIRED_PACKAGES
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/java/openjdk8

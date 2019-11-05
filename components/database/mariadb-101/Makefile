@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	10.1.28
-IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
+COMPONENT_VERSION=	10.1.30
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:292dc8fff420c4bdaf3a2c3381ec3c99292965db2b09de0d7fec414c00032bbd
-COMPONENT_ARCHIVE_URL=	 ftp://mirrors.fe.up.pt/pub/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:173a5e5a24819e0a469c3bd09b5c98491676c37c6095882a2ea34c5af0996c88
+COMPONENT_ARCHIVE_URL=	ftp://mirrors.fe.up.pt/pub/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
@@ -73,6 +72,7 @@ CMAKE_OPTIONS+= -DWITH_PCRE=system
 CMAKE_OPTIONS+= -DWITH_SSL=system
 CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
 CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS+= -DCMAKE_REQUIRED_INCLUDES=/usr/include/pcre
 
 CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -84,14 +84,21 @@ install:	$(INSTALL_32_and_64)
 
 test:	$(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += library/lz4
+REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/cracklib
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

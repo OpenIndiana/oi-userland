@@ -1,14 +1,14 @@
---- jdk/make/sun/font/Makefile.~1~	2014-01-02 11:10:18.676180149 +0400
-+++ jdk/make/sun/font/Makefile	2014-01-02 11:14:05.266338759 +0400
-@@ -190,7 +190,7 @@
+--- jdk/make/sun/font/Makefile.~1~	2017-11-09 11:05:01.390861758 +0000
++++ jdk/make/sun/font/Makefile	2017-11-09 11:08:31.377155441 +0000
+@@ -206,7 +206,7 @@
  ifeq ($(PLATFORM), solaris)
    # Note that on Solaris, fontmanager is built against the headless library.
    LDFLAGS      += -L$(LIBDIR)/$(LIBARCH)/headless
 -  OTHER_LDLIBS += -lawt -L$(LIBDIR)/$(LIBARCH)/xawt -lmawt -lc $(LIBM) $(LIBCXX)
 +  OTHER_LDLIBS += -lawt -L$(LIBDIR)/$(LIBARCH)/xawt -R/usr/jdk/instances/openjdk1.7.0/jre/lib/$(LIBARCH)/xawt -lmawt -lc $(LIBM) $(LIBCXX)
- else # PLATFORM is linux
-  OTHER_LDLIBS  += -lawt $(LIBM) $(LIBCXX)
-   ifeq ("$(CC_VER_MAJOR)", "3")
+ else
+ ifeq ($(PLATFORM), aix)
+   LDFLAGS      += -L$(LIBDIR)/$(LIBARCH)/headless
 --- jdk/make/sun/font/t2k/Makefile.~1~	2014-01-02 11:10:51.425535643 +0400
 +++ jdk/make/sun/font/t2k/Makefile	2014-01-02 11:14:35.399856446 +0400
 @@ -99,7 +99,7 @@

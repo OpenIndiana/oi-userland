@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libfuse
 COMPONENT_VERSION= 	20100615
 IPS_COMPONENT_VERSION=	2.7.6
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_SUMMARY=	FUSE stands for 'File system in User Space'. It provides a simple interface to allow implementation of a fully functional file system in user-space.
@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_URL=  http://sfe.opencsw.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING.LIB
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 GMAKE=/usr/bin/dmake
 
@@ -58,4 +58,3 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk

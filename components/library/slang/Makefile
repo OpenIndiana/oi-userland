@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slang
 COMPONENT_VERSION=	2.3.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
@@ -39,6 +39,8 @@ COMPONENT_BUGDB=	utility/slang
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D)/autoconf && autoconf -f -o ../configure )
 
 CFLAGS += -std=gnu89
 

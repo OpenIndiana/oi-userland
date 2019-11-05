@@ -1,0 +1,141 @@
+Import logging changes from 
+
+commit 27d081f9d39a9dff885598a6bb22c85ee18c732d
+Author: Eric Koegel <eric.koegel@gmail.com>
+Date:   Mon Oct 27 08:58:53 2014 +0300
+
+    Refactor the system action code
+    
+    This patch reduces some of the copy/paste code in all the system
+    actions of the manager. It also fills in the logging events for
+    the suspend and hibernate types.
+
+diff --git a/src/ck-log-event.c b/src/ck-log-event.c
+index 2bbb205..750a9d1 100644
+--- a/src/ck-log-event.c
++++ b/src/ck-log-event.c
+@@ -67,6 +67,18 @@ event_system_start_free (CkLogSystemStartEvent *event)
+         g_free (event->boot_arguments);
+ }
+ 
++static void
++event_system_suspend_free (CkLogSystemSuspendEvent *event)
++{
++        g_assert (event != NULL);
++}
++
++static void
++event_system_hibernate_free (CkLogSystemHibernateEvent *event)
++{
++        g_assert (event != NULL);
++}
++
+ static void
+ event_seat_session_added_free (CkLogSeatSessionAddedEvent *event)
+ {
+@@ -203,6 +215,22 @@ event_system_start_copy (CkLogSystemStartEvent *event,
+         event_copy->boot_arguments = g_strdup (event->boot_arguments);
+ }
+ 
++static void
++event_system_suspend_copy (CkLogSystemSuspendEvent *event,
++                           CkLogSystemSuspendEvent *event_copy)
++{
++        g_assert (event != NULL);
++        g_assert (event_copy != NULL);
++}
++
++static void
++event_system_hibernate_copy (CkLogSystemHibernateEvent *event,
++                             CkLogSystemHibernateEvent *event_copy)
++{
++        g_assert (event != NULL);
++        g_assert (event_copy != NULL);
++}
++
+ static void
+ event_seat_session_added_copy (CkLogSeatSessionAddedEvent *event,
+                                CkLogSeatSessionAddedEvent *event_copy)
+@@ -311,6 +339,14 @@ ck_log_event_copy (CkLogEvent *event)
+                 event_system_start_copy ((CkLogSystemStartEvent *) event,
+                                            (CkLogSystemStartEvent *) event_copy);
+                 break;
++        case CK_LOG_EVENT_SYSTEM_SUSPEND:
++                event_system_suspend_copy ((CkLogSystemSuspendEvent *) event,
++                                           (CkLogSystemSuspendEvent *) event_copy);
++                break;
++        case CK_LOG_EVENT_SYSTEM_HIBERNATE:
++                event_system_hibernate_copy ((CkLogSystemHibernateEvent *) event,
++                                             (CkLogSystemHibernateEvent *) event_copy);
++                break;
+         case CK_LOG_EVENT_SEAT_SESSION_ADDED:
+                 event_seat_session_added_copy ((CkLogSeatSessionAddedEvent *) event,
+                                                (CkLogSeatSessionAddedEvent *) event_copy);
+@@ -358,6 +394,12 @@ ck_log_event_free (CkLogEvent *event)
+         case CK_LOG_EVENT_SYSTEM_START:
+                 event_system_start_free ((CkLogSystemStartEvent *) event);
+                 break;
++        case CK_LOG_EVENT_SYSTEM_SUSPEND:
++                event_system_suspend_free ((CkLogSystemSuspendEvent *) event);
++                break;
++        case CK_LOG_EVENT_SYSTEM_HIBERNATE:
++                event_system_hibernate_free ((CkLogSystemHibernateEvent *) event);
++                break;
+         case CK_LOG_EVENT_SEAT_SESSION_ADDED:
+                 event_seat_session_added_free ((CkLogSeatSessionAddedEvent *) event);
+                 break;
+@@ -477,6 +519,20 @@ add_log_for_system_start (GString    *str,
+                                 e->boot_arguments ? e->boot_arguments : "");
+ }
+ 
++static void
++add_log_for_system_suspend (GString    *str,
++                            CkLogEvent *event)
++{
++        /* TODO: Not implemented */
++}
++
++static void
++add_log_for_system_hibernate (GString    *str,
++                              CkLogEvent *event)
++{
++        /* TODO: Not implemented */
++}
++
+ static void
+ add_log_for_seat_active_session_changed (GString    *str,
+                                          CkLogEvent *event)
+@@ -629,6 +685,12 @@ ck_log_event_to_string (CkLogEvent  *event,
+         case CK_LOG_EVENT_SYSTEM_START:
+                 add_log_for_system_start (str, event);
+                 break;
++        case CK_LOG_EVENT_SYSTEM_SUSPEND:
++                add_log_for_system_suspend (str, event);
++                break;
++        case CK_LOG_EVENT_SYSTEM_HIBERNATE:
++                add_log_for_system_hibernate (str, event);
++                break;
+         case CK_LOG_EVENT_SEAT_SESSION_ADDED:
+                 add_log_for_seat_session_added (str, event);
+                 break;
+diff --git a/src/ck-log-event.h b/src/ck-log-event.h
+index dd307f7..128e516 100644
+--- a/src/ck-log-event.h
++++ b/src/ck-log-event.h
+@@ -66,6 +66,16 @@ typedef struct
+         char *boot_arguments;
+ } CkLogSystemStartEvent;
+ 
++typedef struct
++{
++        gpointer dummy;
++} CkLogSystemSuspendEvent;
++
++typedef struct
++{
++        gpointer dummy;
++} CkLogSystemHibernateEvent;
++
+ typedef struct
+ {
+         char *seat_id;

@@ -1,0 +1,110 @@
+Run screensaver on suspend/hibernate
+
+diff -ur mate-power-manager-1.18.1/data/org.mate.power-manager.gschema.xml.in mate-power-manager-new/data/org.mate.power-manager.gschema.xml.in
+--- mate-power-manager-1.18.1/data/org.mate.power-manager.gschema.xml.in	2018-01-16 12:18:10.603351045 +0000
++++ mate-power-manager-new/data/org.mate.power-manager.gschema.xml.in	2018-01-16 12:18:06.881322075 +0000
+@@ -162,7 +162,7 @@
+       <description>Whether NetworkManager should disconnect before suspending or hibernating and connect on resume.</description>
+     </key>
+     <key name="lock-use-screensaver" type="b">
+-      <default>true</default>
++      <default>false</default>
+       <summary>Use mate-screensaver lock setting</summary>
+       <description>Whether to use the screen lock setting of mate-screensaver to decide if the screen is locked after a hibernate, suspend or blank screen.</description>
+     </key>
+diff -ur mate-power-manager-1.18.1/src/gpm-screensaver.c mate-power-manager-new/src/gpm-screensaver.c
+--- mate-power-manager-1.18.1/src/gpm-screensaver.c.~1~	2015-10-02 10:22:53.000000000 +0000
++++ mate-power-manager-1.18.1/src/gpm-screensaver.c	2018-01-16 13:12:46.206518248 +0000
+@@ -26,6 +26,11 @@
+ #include <glib/gi18n.h>
+ #include <dbus/dbus-glib.h>
+ 
++#if defined(__sun) && defined(__SVR4)
++#include <gtk/gtk.h>
++#include <gdk/gdk.h>
++#endif
++
+ #include "gpm-screensaver.h"
+ #include "gpm-common.h"
+ #include "egg-debug.h"
+@@ -49,6 +54,44 @@
+ G_DEFINE_TYPE (GpmScreensaver, gpm_screensaver, G_TYPE_OBJECT)
+ 
+ /**
++ * gdm_screensaver_gdk_spawn_command_line_on_screen:
++ * @screen: a GdkScreen
++ * @command: a command line
++ * @error: return location for errors
++ *
++ * This is a copy of mate_screensaver_gdk_spawn_command_line_on_screen
++ *
++ * gdk_spawn_command_line_on_screen is like g_spawn_command_line_async(),
++ * except the child process is spawned in such an environment that on
++ * calling gdk_display_open() it would be returned a GdkDisplay with
++ * screen as the default screen.
++ *
++ * This is useful for applications which wish to launch an application
++ * on a specific screen.
++ *
++ * Returns: TRUE on success, FALSE if error is set.
++ *
++ **/
++gboolean
++gpm_screensaver_gdk_spawn_command_line_on_screen (GdkScreen *screen, const gchar *command, GError **error)
++{
++	GAppInfo *appinfo = NULL;
++	GdkAppLaunchContext *context = NULL;
++	gboolean res = FALSE;
++
++	appinfo = g_app_info_create_from_commandline (command, NULL, G_APP_INFO_CREATE_NONE, error);
++
++	if (appinfo) {
++		context = gdk_display_get_app_launch_context (gdk_screen_get_display (screen));
++		res = g_app_info_launch (appinfo, NULL, G_APP_LAUNCH_CONTEXT (context), error);
++		g_object_unref (context);
++		g_object_unref (appinfo);
++	}
++
++	return res;
++}
++
++/**
+  * gpm_screensaver_lock
+  * @screensaver: This class instance
+  * Return value: Success value
+@@ -57,6 +100,27 @@
+ gpm_screensaver_lock (GpmScreensaver *screensaver)
+ {
+ 	guint sleepcount = 0;
++#if defined(__sun) && defined(__SVR4)
++      GError    *error = NULL;
++      char      *command;
++      GdkScreen *screen;
++
++      /* As per ARC requriement, use xdg-screensaver on Solaris */
++      command = g_strdup ("/usr/bin/xdg-screensaver lock");   
++      screen = gdk_screen_get_default ();
++
++      egg_debug ("Doing xdg-screensaver lock");
++      if (!gpm_screensaver_gdk_spawn_command_line_on_screen (screen, command, &error)) {
++              g_warning ("Cannot lock screen: %s", error->message);
++              g_error_free (error);
++      }
++      g_free (command);
++
++      /* TODO: Make sure screen locking takes effect until both point 
++       * and keyboard are grabbed successfully.
++       */
++      egg_debug ("Screen locking is sucessful!, sleepcount = %d", sleepcount);
++#else
+ 
+ 	g_return_val_if_fail (GPM_IS_SCREENSAVER (screensaver), FALSE);
+ 
+@@ -86,6 +150,7 @@
+ 		}
+ 	}
+ 
++#endif
+ 	return TRUE;
+ }
+ 

@@ -1,0 +1,43 @@
+--- a/Makefile.in-orig	2011-10-20 05:34:41.145427306 -0500
++++ a/Makefile.in	2011-10-20 05:51:42.234360280 -0500
+@@ -861,18 +861,18 @@ install:: $(SCRIPTS)
+ ifeq (,$(HOST_BIN_SUFFIX))
+ ifeq (.dylib,$(DLL_SUFFIX))
+ # Mac OS X
+-SHLIB_ANY_VER   := $(DESTDIR)$(libdir)/$(SHARED_LIBRARY)
+-SHLIB_ABI_VER   := $(DESTDIR)$(libdir)/$(SHARED_LIBRARY:$(DLL_SUFFIX)=.$(SRCREL_ABI_VERSION)$(DLL_SUFFIX))
+-SHLIB_EXACT_VER := $(DESTDIR)$(libdir)/$(SHARED_LIBRARY:$(DLL_SUFFIX)=.$(SRCREL_VERSION)$(DLL_SUFFIX))
++SHLIB_ANY_VER   := $(SHARED_LIBRARY)
++SHLIB_ABI_VER   := $(SHARED_LIBRARY:$(DLL_SUFFIX)=.$(SRCREL_ABI_VERSION)$(DLL_SUFFIX))
++SHLIB_EXACT_VER := $(SHARED_LIBRARY:$(DLL_SUFFIX)=.$(SRCREL_VERSION)$(DLL_SUFFIX))
+ $(SHARED_LIBRARY): EXTRA_DSO_LDOPTS += -install_name $(SHLIB_ABI_VER)
+ $(SHARED_LIBRARY): EXTRA_DSO_LDOPTS += -current_version $(SRCREL_VERSION)
+ $(SHARED_LIBRARY): EXTRA_DSO_LDOPTS += -compatibility_version $(SRCREL_ABI_VERSION)
+ else
+ # Generic Unix / Linux
+-SHLIB_ANY_VER   := $(DESTDIR)$(libdir)/$(SHARED_LIBRARY)
+-SHLIB_ABI_VER   := $(DESTDIR)$(libdir)/$(SHARED_LIBRARY).$(SRCREL_ABI_VERSION)
+-SHLIB_EXACT_VER := $(DESTDIR)$(libdir)/$(SHARED_LIBRARY).$(SRCREL_VERSION)
+-$(SHARED_LIBRARY): EXTRA_DSO_LDOPTS += -Wl,-soname,$(notdir $(SHLIB_ABI_VER))
++SHLIB_ANY_VER   := $(SHARED_LIBRARY)
++SHLIB_ABI_VER   := $(SHARED_LIBRARY).$(SRCREL_ABI_VERSION)
++SHLIB_EXACT_VER := $(SHARED_LIBRARY).$(SRCREL_VERSION)
++#don't do -h and -soname on newer Solaris ld - multiple definitions $(SHARED_LIBRARY): EXTRA_DSO_LDOPTS += -Wl,-soname,$(notdir $(SHLIB_ABI_VER))
+ endif
+ endif
+
+@@ -887,10 +887,10 @@ ifeq (,$(HOST_BIN_SUFFIX))
+ endif
+ 	$(SYSINSTALL) $(SHARED_LIBRARY) $(DESTDIR)$(libdir)
+ ifeq (,$(HOST_BIN_SUFFIX))
+-	mv -f $(SHLIB_ANY_VER) $(SHLIB_EXACT_VER)
+-	@[ ! -h $(SHLIB_ABI_VER) ] || rm -f $(SHLIB_ABI_VER)
+-	ln -s $(SHLIB_EXACT_VER) $(SHLIB_ABI_VER)
+-	ln -s $(SHLIB_ABI_VER) $(SHLIB_ANY_VER)
++	cd $(DESTDIR)$(libdir); mv -f $(SHLIB_ANY_VER) $(SHLIB_EXACT_VER)
++	@[ ! -h $(DESTDIR)$(libdir)/$(SHLIB_ABI_VER) ] || rm -f $(DESTDIR)$(libdir)/$(SHLIB_ABI_VER)
++	cd $(DESTDIR)$(libdir); ln -s $(SHLIB_EXACT_VER) $(SHLIB_ABI_VER)
++	cd $(DESTDIR)$(libdir); ln -s $(SHLIB_ABI_VER) $(SHLIB_ANY_VER)
+ endif
+ endif
+ ifneq (,$(IMPORT_LIBRARY))

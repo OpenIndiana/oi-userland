@@ -1,0 +1,30 @@
+diff -Nura a/configure b/configure
+--- a/configure	2017-06-13 14:44:06.457811911 +0000
++++ b/configure	2017-06-14 11:18:52.225049374 +0000
+@@ -572,7 +572,7 @@
+     if test "x$nonopt" != xNONE; then
+       { echo "configure: error: can only configure for one host and one target at a time" 1>&2; exit 1; }
+     fi
+-    nonopt="$ac_option"
++#    nonopt="$ac_option"
+     ;;
+ 
+   esac
+@@ -7609,7 +7609,7 @@
+     # $ORIGIN/.. is for shared libraries under components/ to locate shared
+     # libraries one level up (e.g. libnspr4.so)
+     if test "$SOLARIS_SUNPRO_CC"; then
+-       LDFLAGS="$LDFLAGS -z ignore -R '\$\$ORIGIN:\$\$ORIGIN/..' -z lazyload -z combreloc -z muldefs"
++       LDFLAGS="$LDFLAGS -z ignore -z lazyload -z combreloc -z muldefs"
+        LIBS="-lCrun -lCstd -lc $LIBS"
+        NS_USE_NATIVE=1
+        cat >> confdefs.h <<\EOF
+@@ -7729,7 +7729,7 @@
+ cross_compiling=$ac_cv_prog_cc_cross
+ 
+     else
+-       LDFLAGS="$LDFLAGS -Wl,-z,ignore -Wl,-R,'\$\$ORIGIN:\$\$ORIGIN/..' -Wl,-z,lazyload -Wl,-z,combreloc -Wl,-z,muldefs"
++       LDFLAGS="$LDFLAGS -Wl,-z,ignore -Wl,-z,lazyload -Wl,-z,combreloc -Wl,-z,muldefs"
+        LIBS="-lc $LIBS"
+        MKSHLIB_FORCE_ALL='-Wl,-z -Wl,allextract'
+        MKSHLIB_UNFORCE_ALL='-Wl,-z -Wl,defaultextract'

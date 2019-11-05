@@ -1,0 +1,11 @@
+--- fbreader-0.12.10/fbreader/src/database/booksdb/BooksDB.cpp.orig	2018-01-21 13:30:24.616898325 +0000
++++ fbreader-0.12.10/fbreader/src/database/booksdb/BooksDB.cpp	2018-01-21 13:30:39.454940952 +0000
+@@ -145,7 +145,7 @@
+ 
+ 	myFindFileId->setFileName(fileName);
+ 	if (!myFindFileId->run()) {
+-		return false;
++		return 0;
+ 	}
+ 	((DBIntValue&)*myLoadBook->parameter("@file_id").value()) = myFindFileId->fileId();
+ 	shared_ptr<DBDataReader> reader = myLoadBook->executeReader();

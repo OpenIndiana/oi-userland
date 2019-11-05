@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
 COMPONENT_VERSION=	8.41
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -57,9 +57,6 @@ CXXFLAGS+=	$(CC_PIC)
 CXXFLAGS+=	$(CPP_LARGEFILES)
 
 #CXXFLAGS+=	$(XPG5MODE)
-
-# We need to do this because libtool adds wrong paths to RPATH.
-LDFLAGS += -L$(CONFIGURE_LIBDIR.$(BITS)) -R$(CONFIGURE_LIBDIR.$(BITS))
 
 LINTFLAGS+=	-I. $(studio_XBITS) $(CPP_LARGEFILES)
 
@@ -92,6 +89,9 @@ CONFIGURE_OPTIONS+=	--with-pic
 
 CONFIGURE_OPTIONS.64+=	--libexecdir=$(CONFIGURE_PREFIX)/libexec/$(MACH64)
 
+# Without this 64-bit libraries get /usr/lib/$(MACH64) RPATH
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+
 COMPONENT_BUILD_ENV+=	"LDFLAGS=$(LDFLAGS)"
 COMPONENT_BUILD_ENV+=	"INSTALL=$(INSTALL)"
 COMPONENT_BUILD_ENV+=	"MAKE=$(GMAKE)"
@@ -123,4 +123,4 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime

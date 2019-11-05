@@ -28,17 +28,17 @@ COMPONENT_NAME=		pylint
 COMPONENT_VERSION=	0.25.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:757f2b97071a87fb7e4d017fc7c9eb74f26dcf412e683b614d3c5d54b217212d
-COMPONENT_ARCHIVE_URL=	https://pkgs.fedoraproject.org/repo/extras/pylint/$(COMPONENT_ARCHIVE)/de940692e4fc9a71fcd9e1f13066e820/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:757f2b97071a87fb7e4d017fc7c9eb74f26dcf412e683b614d3c5d54b217212d
+COMPONENT_ARCHIVE_URL= \
+  https://github.com/PyCQA/pylint/archive/$(COMPONENT_NAME)-version-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
-COMPONENT_BUGDB=	utility/pylint
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 
 # There are several pylint documentation files that setup.py isn't installing
 # but are present in the pylint package on other distributions. Copy them into
@@ -75,15 +75,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/examples/pylintrc $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTO_DIR)/usr/bin; $(MV) epylint epylint-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRBINDIR); $(MV) epylint epylint-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTO_DIR)/usr/bin; $(MV) pylint pylint-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRBINDIR); $(MV) pylint pylint-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTO_DIR)/usr/bin; $(MV) pylint-gui pylint-gui-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRBINDIR); $(MV) pylint-gui pylint-gui-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTO_DIR)/usr/bin; $(MV) pyreverse pyreverse-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRBINDIR); $(MV) pyreverse pyreverse-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTO_DIR)/usr/bin; $(MV) symilar symilar-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRBINDIR); $(MV) symilar symilar-$(PYTHON_VERSION)) ;
 
 
 # common targets

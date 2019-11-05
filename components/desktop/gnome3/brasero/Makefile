@@ -32,14 +32,12 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
 CFLAGS += -D_FILE_OFFSET_BITS=64
 
 # Regenerate yelp rules
-COMPONENT_PREP_ACTION = ( cd $(@D) \
-				&& libtoolize --automake --copy --force \
-				&& autoreconf -f)
+COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -vif ) 
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib

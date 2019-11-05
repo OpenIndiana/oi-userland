@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 06_cap_always_settable.dpatch by  <jblache@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Add back SANE_CAP_ALWAYS_SETTABLE which was erroneously removed in
+## DP: SANE 1.0.20.
+
+@DPATCH@
+diff -urNad sane-backends-1.0.20~/include/sane/sane.h sane-backends-1.0.20/include/sane/sane.h
+--- sane-backends-1.0.20~/include/sane/sane.h	2009-04-23 21:59:23.000000000 +0200
++++ sane-backends-1.0.20/include/sane/sane.h	2009-05-08 21:02:46.805404666 +0200
+@@ -115,6 +115,7 @@
+ #define SANE_CAP_AUTOMATIC		(1 << 4)
+ #define SANE_CAP_INACTIVE		(1 << 5)
+ #define SANE_CAP_ADVANCED		(1 << 6)
++#define SANE_CAP_ALWAYS_SETTABLE	(1 << 7)
+ 
+ #define SANE_OPTION_IS_ACTIVE(cap)	(((cap) & SANE_CAP_INACTIVE) == 0)
+ #define SANE_OPTION_IS_SETTABLE(cap)	(((cap) & SANE_CAP_SOFT_SELECT) != 0)

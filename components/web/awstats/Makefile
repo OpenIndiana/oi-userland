@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= awstats
 COMPONENT_VERSION= 7.6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= AWStats - Log File Analyzer for Advanced Statistics
 COMPONENT_FMRI= web/analytics/awstats
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -53,3 +53,7 @@ install:        $(INSTALL_64)
 
 test:                $(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime

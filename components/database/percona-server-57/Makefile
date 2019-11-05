@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.7.19-17
-IPS_COMPONENT_VERSION=	5.7.19.17
+COMPONENT_VERSION=	5.7.20-19
+IPS_COMPONENT_VERSION=	5.7.20.19
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:a3651b46fac3fe1e694a2c5e3faf57dd665859473bd85b1dd2d3cd5c58fbf77a
+COMPONENT_ARCHIVE_HASH=	sha256:17f06c07165954e7eacc3ba2cac0e1d4ba65b0b568f2437298d3c17a6a0940fd
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 # We need specific boost version
@@ -75,14 +75,18 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/percona-server-57/client
-REQUIRED_PACKAGES += database/percona-server-57/library
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libsasl
+REQUIRED_PACKAGES += web/curl

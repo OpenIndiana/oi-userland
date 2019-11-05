@@ -55,8 +55,10 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/freeipmi

@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= idzebra
-COMPONENT_VERSION= 2.0.62
+COMPONENT_VERSION= 2.1.2
 COMPONENT_SUMMARY= idzebra - text indexing and retrieval engine
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f14e34509c0b7d6df98f83ff05cf81b8b82919a5a3cdcccf42125caf30f5a7f0
+  sha256:cf6eaa7354ce85df7df5604c9530301052a7e1ff6d10cbc930b7fd53a8e701c4
 COMPONENT_ARCHIVE_URL= \
   http://ftp.indexdata.dk/pub/zebra/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.indexdata.dk/zebra

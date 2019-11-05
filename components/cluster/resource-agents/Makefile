@@ -64,9 +64,13 @@ install:        $(INSTALL_64)
 
 test:           $(TESTS_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += application/cluster/cluster-glue
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += application/cluster/cluster-glue
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/libnet
+REQUIRED_PACKAGES += text/gawk

@@ -23,14 +23,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libvisio
-COMPONENT_VERSION=      0.1.5
+COMPONENT_VERSION=      0.1.6
 COMPONENT_FMRI=         library/c++/libvisio
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libvisio
 COMPONENT_SUMMARY=      libvisio - library for reading Microsoft Visio documents
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:430a067903660bb1b97daf4b045e408a1bb75ca45e615cf05fb1a4da65fc5a8c
+COMPONENT_ARCHIVE_HASH= sha256:fe1002d3671d53c09bc65e47ec948ec7b67e6fb112ed1cd10966e211a8bb50f9
 COMPONENT_ARCHIVE_URL=  http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 
@@ -58,5 +58,5 @@ REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

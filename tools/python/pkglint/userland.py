@@ -275,6 +275,14 @@ class UserlandActionChecker(base.ActionChecker):
 					match = True
 					break
 
+			# The RUNPATH shouldn't contain any runtime linker
+			# default paths (or the /64 equivalent link)
+			if dir in ['/lib', '/lib/64',
+				   '/lib/amd64', '/lib/sparcv9',
+				   '/usr/lib', '/usr/lib/64',
+				   '/usr/lib/amd64', '/usr/lib/sparcv9' ]:
+				list.append(dir)
+
 			if match == False:
 				list.append(dir)
 

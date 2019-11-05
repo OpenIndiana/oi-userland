@@ -37,3 +37,7 @@ install:	build
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

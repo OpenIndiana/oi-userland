@@ -39,3 +39,6 @@ install: $(INSTALL_32)
 
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR)/usr/bin ; $(MV)  pyrexc pyrexc-$(PYTHON_VERSION); )
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-27

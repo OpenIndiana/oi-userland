@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rtorrent
 COMPONENT_VERSION=	0.9.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	rtorrent - a BitTorrent client for ncurses
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
@@ -46,12 +46,13 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
+
 LDFLAGS    += -lnsl -lsocket
 
-CXXFLAGS +=     $(gcc_OPT)
-LDFLAGS.32 += -L/usr/gnu/lib -R/usr/gnu/lib
-LDFLAGS.64 += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
+CXXFLAGS +=	-std=c++98
+CXXFLAGS +=	$(gcc_OPT)
+
 CXXFLAGS +=	-I/usr/include/ncurses
 CPPFLAGS +=	-I/usr/include/ncurses
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
@@ -59,19 +60,19 @@ CONFIGURE_OPTIONS.32 +=		--srcdir=$(BUILD_DIR_32)
 CONFIGURE_OPTIONS.64 +=		--srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS +=		--disable-debug
 
-PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)/doc
+PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH64)/doc
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += library/libtorrent
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl

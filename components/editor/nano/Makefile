@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
-COMPONENT_VERSION=	2.8.7
+COMPONENT_VERSION=	2.9.0
 COMPONENT_FMRI=		editor/nano
 COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -23,7 +23,7 @@ COMPONENT_PROJECT_URL=	http://www.nano-editor.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:a49a888c20f09a17c7f1049d1fda619472c92eedcb25fd4be5f088a51cc392a5
+  sha256:220cdf0b29b3d2bcba66e7aaa5b27ed1f2bf53c44192d8e0e0328624da3dbebf
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
@@ -33,6 +33,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -fiv )
 
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS  +=		--enable-color
 CONFIGURE_OPTIONS  +=		--enable-multibuffer
@@ -43,11 +44,13 @@ CPPFLAGS += -I$(USRINCDIR)/ncurses
 CFLAGS += -I$(USRINCDIR)/ncurses
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library

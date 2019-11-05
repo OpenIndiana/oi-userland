@@ -24,7 +24,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gawk
-COMPONENT_VERSION=	4.1.4
+COMPONENT_VERSION=	4.2.0
 COMPONENT_FMRI=	text/gawk
 COMPONENT_SUMMARY=	GNU awk
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -32,7 +32,7 @@ COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gawk/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:53e184e2d0f90def9207860531802456322be091c7b48f23fdc79cda65adc266
+    sha256:d4f3cd31c001fd0ed52832d4fbfbdfeaa38ad541c182f80ff8fdf87324a6a9f2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
@@ -40,7 +40,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CFLAGS+= -std=c89
+CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 CFLAGS+= -I$(USRINCDIR)/mpfr -I$(USRINCDIR)/gmp
 
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)

@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent
 COMPONENT_VERSION=	0.13.4
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -48,6 +49,15 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # this is needed or we can't compile the rak headers
 CC=$(CXX)
 
+CXXFLAGS += -std=c++98
+CXXFLAGS += $(gcc_OPT)
+
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
+
+LDFLAGS += -lnsl -lsocket
+LDFLAGS += -lz
+
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-debug
 CONFIGURE_OPTIONS  +=	--disable-static
@@ -67,6 +77,8 @@ test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += system/library/math

@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= bdftopcf
-COMPONENT_VERSION= 1.0.5
+COMPONENT_VERSION= 1.1
 COMPONENT_SUMMARY= bdftopcf font conversion utility
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:38f447be0c61f94c473f128cf519dd0cff63b5d7775240a2e895a183a61e2026
+  sha256:4b4df05fc53f1e98993638d6f7e178d95b31745c4568cee407e167491fd311a2
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/wiki/
@@ -30,15 +30,17 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32)
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
-install: $(INSTALL_32)
+build: $(BUILD_64)
+
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 

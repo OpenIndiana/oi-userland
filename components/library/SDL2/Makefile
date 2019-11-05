@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
 COMPONENT_VERSION=	2.0.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.libsdl.org/
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

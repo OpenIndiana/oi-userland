@@ -108,6 +108,10 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
+# Build dependencies
+REQUIRED_PACKAGES += utility/bash-completion
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libexif
@@ -118,9 +122,8 @@ REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/search/tracker
+REQUIRED_PACKAGES += library/desktop/libgsf
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/icu
@@ -133,4 +136,3 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += utility/bash-completion

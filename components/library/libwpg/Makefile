@@ -23,8 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwpg
-COMPONENT_VERSION=	0.3.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.3.2
 COMPONENT_FMRI=     	library/c++/libwpg
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpg
@@ -32,7 +31,7 @@ COMPONENT_SUMMARY=      libwpg - library for importing and converting Corel Word
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:620d888c10d7e1127d5123ff0065f1b62b86b91bac27d8ae10dcfbdb6bf4278f
+  sha256:57faf1ab97d63d57383ac5d7875e992a3d190436732f4083310c0471e72f8c33
 COMPONENT_ARCHIVE_URL=	\
   http://sourceforge.net/projects/libwpg/files/libwpg/libwpg-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
@@ -56,5 +55,5 @@ REQUIRED_PACKAGES += library/c++/libwpd
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

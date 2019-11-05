@@ -49,8 +49,11 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += library/glib2
@@ -59,7 +62,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/popt
 REQUIRED_PACKAGES += library/print/open-printing
 REQUIRED_PACKAGES += service/hal
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib

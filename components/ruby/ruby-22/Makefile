@@ -26,13 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.2.8
+COMPONENT_VERSION=	2.2.9
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:37eafc15037396c26870f6a6c5bcd0658d14b46cd5e191a3b56d89dd22d561b0
+    sha256:313b44b1105589d00bb30b9cccf7da44d263fe20a2d8d269ada536d4a7ef285c
 COMPONENT_ARCHIVE_URL=	\
 	https://cache.ruby-lang.org/pub/ruby/2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ruby
@@ -120,8 +120,8 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# 16216 tests, 2551582 assertions, 26 failures, 0 errors, 44 skips 
-# Failed: FTPTest#test_abort, FTPTest#test_status, TestSprintfComb#test_format_float*
+# 16220 tests, 2553102 assertions, 27 failures, 0 errors, 44 skips
+# Failed: FTPTest#test_abort, FTPTest#test_status, TestSprintfComb#test_format_float*, TestException#test_machine_stackoverflow_by_define_method
 test:	$(TEST_32)
 
 REQUIRED_PACKAGES += library/database/gdbm

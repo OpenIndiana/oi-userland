@@ -44,3 +44,10 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/fftw-3
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += system/library/math

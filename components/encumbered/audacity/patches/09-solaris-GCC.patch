@@ -1,0 +1,18 @@
+--- audacity-Audacity-2.1.1/lib-src/portaudio-v19/configure.in.1	2017-12-11 21:48:11.412746002 +0000
++++ audacity-Audacity-2.1.1/lib-src/portaudio-v19/configure.in	2017-12-11 21:51:11.581090957 +0000
+@@ -422,8 +422,13 @@
+         ## support sun cc compiler flags
+         case "${host_os}" in
+            solaris*)
+-              SHARED_FLAGS="-G"
+-              THREAD_CFLAGS="-mt"
++              if test "x$GCC" = "xyes"; then
++                SHARED_FLAGS="-fPIC"
++                THREAD_CFLAGS="-pthread"
++              else 
++		SHARED_FLAGS="-G"
++		THREAD_CFLAGS="-mt"
++              fi
+               ;;
+            *)
+               SHARED_FLAGS="-fPIC"

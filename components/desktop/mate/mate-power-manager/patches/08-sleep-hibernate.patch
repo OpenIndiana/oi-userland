@@ -1,0 +1,24 @@
+Our ConsoleKit is outdated, it's method's signatures differ 
+
+--- mate-power-manager-1.18.1/src/egg-console-kit.c.1	2018-01-18 11:47:10.515312133 +0000
++++ mate-power-manager-1.18.1/src/egg-console-kit.c	2018-01-18 11:48:59.629824959 +0000
+@@ -120,7 +120,9 @@
+ 	g_return_val_if_fail (console->priv->proxy_manager != NULL, FALSE);
+ 
+ 	ret = dbus_g_proxy_call (console->priv->proxy_manager, "Suspend", &error_local,
++#ifndef __sun
+ 				 G_TYPE_BOOLEAN, TRUE,
++#endif
+ 				 G_TYPE_INVALID, G_TYPE_INVALID);
+ 	if (!ret) {
+ 		egg_warning ("Couldn't suspend: %s", error_local->message);
+@@ -144,7 +146,9 @@
+ 	g_return_val_if_fail (console->priv->proxy_manager != NULL, FALSE);
+ 
+ 	ret = dbus_g_proxy_call (console->priv->proxy_manager, "Hibernate", &error_local,
++#ifndef __sun
+ 				 G_TYPE_BOOLEAN, TRUE,
++#endif
+ 				 G_TYPE_INVALID, G_TYPE_INVALID);
+ 	if (!ret) {
+ 		egg_warning ("Couldn't hibernate: %s", error_local->message);

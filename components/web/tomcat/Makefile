@@ -83,5 +83,7 @@ install: build
 
 test:  $(TEST_32)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/java/openjdk7
+REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += web/java-servlet/tomcat

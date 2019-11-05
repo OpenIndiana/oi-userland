@@ -23,21 +23,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.8
+COMPONENT_VERSION=	1.9
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ff1767ec444f71e5daf8972f6f8bf68cfcca1d2f76c248eb18e8741fc91dbbd3
+    sha256:ae506144fc198bd8f81f1f4ad19ce63d5a2d65e42333255977cf1dcf1479089a
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gzip
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # To get correct @bindir@ substitution in the various gz<whatever> scripts.
-#CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
 # Prevent gzip compilation using assembly code, which segv's with Studio 12.3.
 CONFIGURE_OPTIONS +=	gzip_cv_assembler=no
@@ -56,6 +55,14 @@ COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR); $(AUTORECONF) -if)
 # Get the binaries to test from the component build area.
 COMPONENT_TEST_ENV +=	PATH=$(BUILD_DIR_$(BITS)):/usr/xpg4/bin:/usr/bin
 COMPONENT_TEST_TARGETS = check
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/ERROR:/p" '
 
 # Fix references to Solaris renamed programs (z*->gz*) in man pages, info
 # pages and in wrapper scripts.
@@ -85,15 +92,11 @@ $(GZGREP_MAN_VARIANTS):
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32) $(GZGREP_MAN_VARIANTS)
+install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
-test:		$(TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+test:		$(TEST_64)
 
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs

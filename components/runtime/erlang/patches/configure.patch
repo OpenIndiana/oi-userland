@@ -1,0 +1,19 @@
+Adjust the set of standard locations that the erlang erts configure script
+uses to try to find SSL. Without this change, we see the following error
+at pkglint time:
+
+ERROR userland.action001.3        bad RUNPATH, 'usr/lib/amd64/erlang/lib/crypto-3.5/priv/lib/crypto.so' includes '/usr/local/lib/64:/opt/local/lib/64:/usr/pkg/lib/64:/usr/local/openssl/lib/64:/usr/lib/openssl/lib/64:/usr/openssl/lib/64:/usr/local/ssl/lib/64:/usr/lib/ssl/lib/64:/usr/ssl/lib/64://lib/64:/usr/local/lib:/opt/local/lib:/usr/pkg/lib:/usr/local/openssl/lib:/usr/lib/openssl/lib:/usr/openssl/lib:/usr/local/ssl/lib:/usr/lib/ssl/lib:/usr/ssl/lib://lib'
+
+This change will not be sent upstream.
+
+--- otp_src_19.3/erts/configure.orig	2017-04-11 08:56:31.437691859 -0700
++++ otp_src_19.3/erts/configure	2017-04-11 08:56:55.704719035 -0700
+@@ -46801,7 +46801,7 @@
+ 
+ 
+ 
+-std_ssl_locations="/usr/local /usr/sfw /usr /opt/local /usr/pkg /usr/local/openssl /usr/lib/openssl /usr/openssl /usr/local/ssl /usr/lib/ssl /usr/ssl /"
++std_ssl_locations="/usr"
+ 
+ 
+ # Check whether --with-ssl-zlib or --without-ssl-zlib was given.

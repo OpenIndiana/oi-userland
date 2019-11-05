@@ -63,6 +63,5 @@ install:        $(INSTALL_32_and_64)
 # (which we don't have in Solaris), so expect that test to fail.
 test:           $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library

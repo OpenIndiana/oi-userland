@@ -41,3 +41,6 @@ COMPONENT_INSTALL_ARGS += DESTDIR=$(PROTO_DIR)
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs

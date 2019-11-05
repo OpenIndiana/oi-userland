@@ -24,17 +24,18 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libdnet
 COMPONENT_VERSION=	1.12
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://code.google.com/p/libdnet/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:83b33039787cf99990e977cef7f18a5d5e7aaffc4505548a83d31bd3515eb026
-COMPONENT_ARCHIVE_URL=	http://libdnet.googlecode.com/files/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libdnet 
+  sha256:b6360659c93fa2e3cde9e0a1fc9c07bc4111f3448c5de856e095eb98315dd424
+COMPONENT_ARCHIVE_URL=\
+  https://github.com/dugsong/libdnet/archive/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to generate libraries with a .so extension.
 COMPONENT_PREP_ACTION = \
@@ -64,9 +65,8 @@ install:	$(INSTALL_32_and_64)
 # testing framework which is currently not present on Solaris. See:
 # http://check.sourceforge.net/ for more details.
 # If you do have Check on your system, then uncomment the TEST_32 line.
-test:		$(NO_TESTS)
-#test:		$(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

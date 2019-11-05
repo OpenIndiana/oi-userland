@@ -1,0 +1,610 @@
+Index: trousers-0.3.11.2/src/tspi/rpc/hosttable.c
+===================================================================
+--- trousers-0.3.11.2/src/tspi/rpc/hosttable.c.orig
++++ trousers-0.3.11.2/src/tspi/rpc/hosttable.c
+@@ -21,7 +21,7 @@
+ 
+ static struct host_table *ht = NULL;
+ 
+-TSS_RESULT
++static TSS_RESULT
+ host_table_init()
+ {
+ 	ht = calloc(1, sizeof(struct host_table));
+@@ -35,9 +35,8 @@ host_table_init()
+ 	return TSS_SUCCESS;
+ }
+ 
+-#ifdef SOLARIS
+-#pragma init(_init)
+-void _init(void)
++#ifdef SOLARIS && defined(__SUNPRO_C))
++static void my_init(void)
+ #else
+ void __attribute__ ((constructor)) my_init(void)
+ #endif
+@@ -46,11 +45,14 @@ void __attribute__ ((constructor)) my_in
+ 	__tspi_obj_list_init();
+ }
+ 
+-void
++static void
+ host_table_final()
+ {
+ 	struct host_table_entry *hte, *next = NULL;
+ 
++	if (ht == NULL) /* no host table to free */
++		return;
++
+ 	MUTEX_LOCK(ht->lock);
+ 
+ 	for (hte = ht->entries; hte; hte = next) {
+@@ -69,9 +71,8 @@ host_table_final()
+ 	ht = NULL;
+ }
+ 
+-#ifdef SOLARIS
+-#pragma fini(_fini)
+-void _fini(void)
++#ifdef SOLARIS && defined(__SUNPRO_C))
++static void my_fini(void)
+ #else
+ void __attribute__ ((destructor)) my_fini(void)
+ #endif
+@@ -79,6 +80,11 @@ void __attribute__ ((destructor)) my_fin
+ 	host_table_final();
+ }
+ 
++#ifdef SOLARIS
++#pragma init(my_init)
++#pragma fini(my_fini)
++#endif
++
+ TSS_RESULT
+ __tspi_add_table_entry(TSS_HCONTEXT tspContext, BYTE *host, int type, struct host_table_entry **ret)
+ {
+Index: trousers-0.3.11.2/src/tcsd/Makefile.am
+===================================================================
+--- trousers-0.3.11.2/src/tcsd/Makefile.am.orig
++++ trousers-0.3.11.2/src/tcsd/Makefile.am
+@@ -2,7 +2,7 @@ sbin_PROGRAMS=tcsd
+ 
+ tcsd_CFLAGS=-DAPPID=\"TCSD\" -DVAR_PREFIX=\"@localstatedir@\" -DETC_PREFIX=\"@sysconfdir@\" -I${top_srcdir}/src/include -fPIE -DPIE
+ tcsd_LDADD=${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a -lpthread @CRYPTOLIB@
+-tcsd_LDFLAGS=-pie -Wl,-z,relro -Wl,-z,now
++tcsd_LDFLAGS=-Wl,-z,now
+ 
+ tcsd_SOURCES=svrside.c tcsd_conf.c tcsd_threads.c platform.c
+ 
+Index: trousers-0.3.11.2/src/tcsd/Makefile.in
+===================================================================
+--- trousers-0.3.11.2/src/tcsd/Makefile.in.orig
++++ trousers-0.3.11.2/src/tcsd/Makefile.in
+@@ -64,7 +64,7 @@ am__configure_deps = $(am__aclocal_m4_de
+ mkinstalldirs = $(install_sh) -d
+ CONFIG_CLEAN_FILES =
+ CONFIG_CLEAN_VPATH_FILES =
+-am__installdirs = "$(DESTDIR)$(sbindir)"
++am__installdirs = "$(DESTDIR)$(libdir)"
+ PROGRAMS = $(sbin_PROGRAMS)
+ am_tcsd_OBJECTS = tcsd-svrside.$(OBJEXT) tcsd-tcsd_conf.$(OBJEXT) \
+ 	tcsd-tcsd_threads.$(OBJEXT) tcsd-platform.$(OBJEXT)
+@@ -212,7 +212,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
+-sbindir = @sbindir@
++sbindir = @libdir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+ sysconfdir = @sysconfdir@
+@@ -227,8 +227,9 @@ top_srcdir = @top_srcdir@
+ tcsd_CFLAGS = -DAPPID=\"TCSD\" -DVAR_PREFIX=\"@localstatedir@\" \
+ 	-DETC_PREFIX=\"@sysconfdir@\" -I${top_srcdir}/src/include \
+ 	-fPIE -DPIE $(am__append_1) $(am__append_2)
+-tcsd_LDADD = ${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a -lpthread @CRYPTOLIB@
+-tcsd_LDFLAGS = -pie -Wl,-z,relro -Wl,-z,now
++tcsd_LDADD = ${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a \
++	-lpthread -lbsm -lscf -lresolv @CRYPTOLIB@
++tcsd_LDFLAGS = -Wl,-z,now
+ tcsd_SOURCES = svrside.c tcsd_conf.c tcsd_threads.c platform.c
+ all: all-am
+ 
+Index: trousers-0.3.11.2/src/include/tcsd.h
+===================================================================
+--- trousers-0.3.11.2/src/include/tcsd.h.orig
++++ trousers-0.3.11.2/src/include/tcsd.h
+@@ -48,15 +48,25 @@ struct tcsd_config
+ 							of this TCS System */
+ };
+ 
++#ifdef SOLARIS
++#define	TCSD_DEFAULT_CONFIG_FILE	"/etc/security/tcsd.conf"
++#else
+ #define TCSD_DEFAULT_CONFIG_FILE	ETC_PREFIX "/tcsd.conf"
++#endif
+ extern char *tcsd_config_file;
+ 
+ #define TSS_USER_NAME		"tss"
+ #define TSS_GROUP_NAME		"tss"
+ 
+ #define TCSD_DEFAULT_MAX_THREADS	10
++#ifdef SOLARIS
++#define	TCSD_DEFAULT_SYSTEM_PS_DIR	"/var/tpm/system"
++#define	TCSD_DEFAULT_SYSTEM_PS_FILE	"/var/tpm/system/system.data"
++#define	TCSD_DEFAULT_SOCKET		"/var/tpm/tcsd-socket"
++#else
+ #define TCSD_DEFAULT_SYSTEM_PS_FILE	VAR_PREFIX "/lib/tpm/system.data"
+ #define TCSD_DEFAULT_SYSTEM_PS_DIR	VAR_PREFIX "/lib/tpm"
++#endif /* SOLARIS */
+ #define TCSD_DEFAULT_FIRMWARE_LOG_FILE	"/sys/kernel/security/tpm0/binary_bios_measurements"
+ #define TCSD_DEFAULT_KERNEL_LOG_FILE	"/sys/kernel/security/ima/binary_runtime_measurements"
+ #define TCSD_DEFAULT_FIRMWARE_PCRS	0x00000000
+Index: trousers-0.3.11.2/src/include/tspps.h
+===================================================================
+--- trousers-0.3.11.2/src/include/tspps.h.orig
++++ trousers-0.3.11.2/src/include/tspps.h
+@@ -13,13 +13,17 @@
+ 
+ #define PASSWD_BUFSIZE		4096
+ 
++#ifdef SOLARIS
++#define TSS_USER_PS_DIR		"/var/user/"
++#else
+ #define TSS_USER_PS_DIR		".trousers"
++#endif
+ #define TSS_USER_PS_FILE	"user.data"
+ 
+ TSS_RESULT	   get_file(int *);
+ int		   put_file(int);
+-inline TSS_RESULT  read_data(int, void *, UINT32);
+-inline TSS_RESULT  write_data(int, void *, UINT32);
++TSS_RESULT         read_data(int, void *, UINT32);
++TSS_RESULT         write_data(int, void *, UINT32);
+ UINT32		   psfile_get_num_keys(int);
+ TSS_RESULT	   psfile_get_parent_uuid_by_uuid(int, TSS_UUID *, TSS_UUID *);
+ TSS_RESULT	   psfile_remove_key_by_uuid(int, TSS_UUID *);
+Index: trousers-0.3.11.2/src/tcsd/svrside.c
+===================================================================
+--- trousers-0.3.11.2/src/tcsd/svrside.c.orig
++++ trousers-0.3.11.2/src/tcsd/svrside.c
+@@ -27,6 +27,15 @@
+ #include <arpa/inet.h>
+ #include <errno.h>
+ #include <getopt.h>
++#ifdef SOLARIS
++#include <priv.h>
++#include <fcntl.h>
++#endif
++#ifndef HAVE_DAEMON
++#include <fcntl.h>
++#include <syslog.h>
++#endif
++
+ #include "trousers/tss.h"
+ #include "trousers_types.h"
+ #include "tcs_tsp.h"
+@@ -46,6 +55,10 @@ extern char *optarg;
+ int sd;
+ char *tcsd_config_file = NULL;
+ 
++#ifdef SOLARIS
++static int get_event_log_from_kernel(void);
++#endif
++
+ static void
+ tcsd_shutdown(void)
+ {
+@@ -173,6 +186,10 @@ tcsd_startup(void)
+ 		(void)req_mgr_final();
+ 		return result;
+ 	}
++#ifdef SOLARIS
++	/* Not fatal if this fails */
++	(void) get_event_log_from_kernel();
++#endif
+ 
+ 	result = owner_evict_init();
+ 	if (result != TSS_SUCCESS) {
+@@ -211,16 +228,171 @@ reload_config(void)
+ 	return result;
+ }
+ 
++#ifdef SOLARIS
++
++extern int get_device_fd(void);
++
++#define TPM_IOCTL_GETEVTABLE    1
++struct tpm_evtable_ioblk {
++	uint32_t	buflen;
++	caddr_t		buf;
++};
++
++static int
++store_eventlog(char *filename, struct tpm_evtable_ioblk *evlog)
++{
++	int fd;
++	unsigned int bytes = 0;
++
++	fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0600);
++	if (fd == -1) {
++		LogError("Error opening logfile %s: %s", filename,
++		    strerror(errno));
++		return (-1);
++	}
++	while (bytes < evlog->buflen) {
++		int n;
++		n = write(fd, evlog->buf, evlog->buflen - bytes);
++		if (n == -1 && errno != EAGAIN) {
++			LogError("Error writing logfile %s: %s",
++			    filename, strerror(errno));
++			close(fd);
++			return (-1);
++		}
++		if (n != -1)
++			bytes += n;
++	}
++	close(fd);
++
++	return (0);
++}
++
++static int
++get_event_log_from_kernel(void)
++{
++	int fd = get_device_fd();
++	struct tpm_evtable_ioblk ioblk;
++
++	if (fd == -1)
++		return (-1);
++
++	(void) memset(&ioblk, 0, sizeof (ioblk));
++	if (ioctl(fd, TPM_IOCTL_GETEVTABLE, &ioblk)) {
++		LogDebug("Cannot get event log from kernel: %s",
++		    strerror(errno));
++		return (-1);
++	}
++	if (ioblk.buflen == 0)
++		return (0);
++
++	ioblk.buf = calloc(1, ioblk.buflen);
++	if (ioblk.buf == NULL) {
++		return (-1);
++	}
++	if (ioctl(fd, TPM_IOCTL_GETEVTABLE, &ioblk)) {
++		free(ioblk.buf);
++		LogDebug("Cannot get event log from kernel: %s",
++		    strerror(errno));
++		return (-1);
++	}
++
++	return (store_eventlog(tcsd_options.firmware_log_file, &ioblk));
++}
++
++/*
++ * For Solaris, make the tcsd privilege aware and drop
++ * risky privileges if they are not needed.
++ */
++static int
++drop_privs(void)
++{
++	priv_set_t *myprivs;
++	int rv;
++
++	/*
++	 * Drop unneeded privs such as fork/exec.
++	 *
++	 * Get "basic" privs and remove the ones we don't want.
++	 */
++	if ((myprivs = priv_str_to_set("basic", ",", NULL)) == NULL) {
++		LogError("priv_str_to_set failed: %s", strerror(errno));
++		return (1);
++	} else {
++		(void) priv_delset(myprivs, PRIV_PROC_EXEC);
++		(void) priv_delset(myprivs, PRIV_PROC_FORK);
++		(void) priv_delset(myprivs, PRIV_FILE_LINK_ANY);
++		(void) priv_delset(myprivs, PRIV_PROC_INFO);
++		(void) priv_delset(myprivs, PRIV_PROC_SESSION);
++		(void) priv_delset(myprivs, PRIV_PROC_SETID);
++
++		/* for auditing */
++		(void) priv_addset(myprivs, PRIV_PROC_AUDIT);
++
++		if ((rv = setppriv(PRIV_SET, PRIV_PERMITTED, myprivs)))
++			return (rv);
++		if ((rv = setppriv(PRIV_SET, PRIV_LIMIT, myprivs)))
++			return (rv);
++		if ((rv = setppriv(PRIV_SET, PRIV_INHERITABLE, myprivs)))
++			return (rv);
++
++		(void) priv_freeset(myprivs);
++	}
++	return (0);
++}
++#endif /* SOLARIS */
++
++#ifndef HAVE_DAEMON
++static int
++daemon(int nochdir, int noclose) {
++	int rv, fd;
++
++	if (!noclose) {
++		closelog();
++		closefrom(0);
++	}
++
++	switch (fork()) {
++		case -1: /* failure: parent process */
++			return (-1);
++		case 0: /* success: child process */
++			break;
++		default: /* success: parent process */
++		exit (0);
++	}
++
++	/* Create a new SID for the child process */
++	if (setsid() == -1)
++		return (-1);
++	/* Prevent cwd from being left open and unremovable */
++	if (!nochdir)
++		(void) chdir("/");
++	(void) umask(0);
++	/* Redirect stdin, stdout, and stderr to /dev/null */
++	if (!noclose && (fd = open("/dev/null", O_RDWR, 0)) != -1) {
++		(void) dup2(fd, STDIN_FILENO);
++		(void) dup2(fd, STDOUT_FILENO);
++		(void) dup2(fd, STDERR_FILENO);
++		if (fd > 2)
++			(void)close (fd);
++	}
++	return (0);
++}
++#endif /* !HAVE_DAEMON */
+ 
+ int
+ main(int argc, char **argv)
+ {
+-	struct sockaddr_in serv_addr, client_addr;
++	typedef union {
++		struct sockaddr_in in;
++		struct sockaddr_un un;
++	} sockaddr_un_in_t;
++	sockaddr_un_in_t serv_addr, client_addr;
++	int rv;
+ 	TSS_RESULT result;
+ 	int newsd, c, option_index = 0;
+-	unsigned client_len;
++	unsigned client_len, serv_len;
+ 	char *hostname = NULL;
+-	struct passwd *pwd;
++	struct passwd *pwd = NULL;
+ 	struct hostent *client_hostent = NULL;
+ 	struct option long_options[] = {
+ 		{"help", 0, NULL, 'h'},
+@@ -256,26 +428,50 @@ main(int argc, char **argv)
+ 	if ((result = tcsd_startup()))
+ 		return (int)result;
+ 
+-	sd = socket(AF_INET, SOCK_STREAM, 0);
+-	if (sd < 0) {
+-		LogError("Failed socket: %s", strerror(errno));
+-		return -1;
+-	}
++	if (tcsd_options.port == 0) { /* UNIX Domain socket */
++		/* Use UNIX Domain socket instead of TCP/IP socket */
++		sd = socket(AF_UNIX, SOCK_STREAM, 0);
++		if (sd < 0) {
++			LogError("Failed socket: %s", strerror(errno));
++			return -1;
++		}
++
++		memset(&serv_addr, 0, sizeof (serv_addr));
++		serv_addr.un.sun_family = AF_UNIX;
++		strncpy(serv_addr.un.sun_path, TCSD_DEFAULT_SOCKET,
++			sizeof (serv_addr.un.sun_path));
++		(void) unlink(TCSD_DEFAULT_SOCKET);
++
++	} else { /* TCP socket */
++		sd = socket(AF_INET, SOCK_STREAM, 0);
++		if (sd < 0) {
++			LogError("Failed socket: %s", strerror(errno));
++			return -1;
++		}
+ 
+-	memset(&serv_addr, 0, sizeof (serv_addr));
+-	serv_addr.sin_family = AF_INET;
+-	serv_addr.sin_port = htons(tcsd_options.port);
+-
+-	/* If no remote_ops are defined, restrict connections to localhost
+-	 * only at the socket. */
+-	if (tcsd_options.remote_ops[0] == 0)
+-		serv_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+-	else
+-		serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+-
+-	c = 1;
+-	setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &c, sizeof(c));
+-	if (bind(sd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
++		memset(&serv_addr, 0, sizeof (serv_addr));
++		serv_addr.in.sin_family = AF_INET;
++		serv_addr.in.sin_port = htons(tcsd_options.port);
++
++		/* If no remote_ops are defined, restrict connections to localhost
++		 * only at the socket. */
++		if (tcsd_options.remote_ops[0] == 0)
++			serv_addr.in.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++		else
++			serv_addr.in.sin_addr.s_addr = htonl(INADDR_ANY);
++
++		c = 1;
++		setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &c, sizeof(c));
++	}
++
++	if (tcsd_options.port == 0) { /* UNIX Domain socket */
++		serv_len = (unsigned)sizeof(serv_addr.un);
++		client_len = (unsigned)sizeof(client_addr.un);
++	} else { /* TCP socket */
++		serv_len = (unsigned)sizeof(serv_addr.in);
++		client_len = (unsigned)sizeof(client_addr.in);
++	}
++	if (bind(sd, (struct sockaddr *) &serv_addr, serv_len) < 0) {
+ 		LogError("Failed bind: %s", strerror(errno));
+ 		return -1;
+ 	}
+@@ -296,7 +492,6 @@ main(int argc, char **argv)
+ 		LogError("Failed listen: %s", strerror(errno));
+ 		return -1;
+ 	}
+-	client_len = (unsigned)sizeof(client_addr);
+ 	
+ 	if (getenv("TCSD_FOREGROUND") == NULL) {
+ 		if (daemon(0, 0) == -1) {
+@@ -306,6 +501,12 @@ main(int argc, char **argv)
+ 		}
+ 	}
+ 
++#ifdef SOLARIS
++	/* For Solaris, drop privileges for security. */
++	if ((rv = drop_privs()))
++		return (rv);
++#endif /* SOLARIS */
++
+ 	LogInfo("%s: TCSD up and running.", PACKAGE_STRING);
+ 	do {
+ 		newsd = accept(sd, (struct sockaddr *) &client_addr, &client_len);
+@@ -325,20 +526,22 @@ main(int argc, char **argv)
+ 		}
+ 		LogDebug("accepted socket %i", newsd);
+ 
+-		if ((client_hostent = gethostbyaddr((char *) &client_addr.sin_addr,
+-						    sizeof(client_addr.sin_addr),
++		if (tcsd_options.port != 0) { /* TCP socket */
++			if ((client_hostent = gethostbyaddr((char *) &client_addr.in.sin_addr,
++						    sizeof(client_addr.in.sin_addr),
+ 						    AF_INET)) == NULL) {
+-			char buf[16];
+-                        uint32_t addr = htonl(client_addr.sin_addr.s_addr);
++				char buf[16];
++				uint32_t addr = htonl(client_addr.in.sin_addr.s_addr);
+ 
+-                        snprintf(buf, 16, "%d.%d.%d.%d", (addr & 0xff000000) >> 24,
+-                                 (addr & 0x00ff0000) >> 16, (addr & 0x0000ff00) >> 8,
+-                                 addr & 0x000000ff);
++				snprintf(buf, 16, "%d.%d.%d.%d", (addr & 0xff000000) >> 24,
++					(addr & 0x00ff0000) >> 16, (addr & 0x0000ff00) >> 8,
++					addr & 0x000000ff);
+ 
+-			LogWarn("Host name for connecting IP %s could not be resolved", buf);
+-			hostname = strdup(buf);
+-		} else {
+-			hostname = strdup(client_hostent->h_name);
++				LogWarn("Host name for connecting IP %s could not be resolved", buf);
++				hostname = strdup(buf);
++			} else {
++				hostname = strdup(client_hostent->h_name);
++			}
+ 		}
+ 
+ 		tcsd_thread_create(newsd, hostname);
+Index: trousers-0.3.11.2/src/tspi/rpc/tcstp/rpc.c
+===================================================================
+--- trousers-0.3.11.2/src/tspi/rpc/tcstp/rpc.c.orig
++++ trousers-0.3.11.2/src/tspi/rpc/tcstp/rpc.c
+@@ -342,41 +342,68 @@ send_init(struct host_table_entry *hte)
+ 	BYTE *buffer;
+ 	TSS_RESULT result;
+ 
+-	struct sockaddr_in addr;
+-	struct hostent *hEnt = NULL;
++	if (get_port() == 0) { /* use UNIX Domain socket */
++		struct sockaddr_un addr;
+ 
+-	sd = socket(PF_INET, SOCK_STREAM, 0);
+-	if (sd == -1) {
+-		LogError("socket: %s", strerror(errno));
+-		result = TSPERR(TSS_E_COMM_FAILURE);
+-		goto err_exit;
+-	}
+ 
+-	__tspi_memset(&addr, 0, sizeof(addr));
+-	addr.sin_family = AF_INET;
+-	addr.sin_port = htons(get_port());
+-
+-	LogDebug("Sending TSP packet to host %s.", hte->hostname);
+-
+-	/* try to resolve by hostname first */
+-	hEnt = gethostbyname((char *)hte->hostname);
+-	if (hEnt == NULL) {
+-		/* if by hostname fails, try by dot notation */
+-		if (inet_aton((char *)hte->hostname, &addr.sin_addr) == 0) {
+-			LogError("hostname %s does not resolve to a valid address.", hte->hostname);
+-			result = TSPERR(TSS_E_CONNECTION_FAILED);
++		sd = socket(PF_UNIX, SOCK_STREAM, 0);
++		if (sd == -1) {
++			LogError("socket(PF_UNIX): %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
+ 			goto err_exit;
+ 		}
+-	} else {
+-		memcpy(&addr.sin_addr, hEnt->h_addr_list[0], 4);
+-	}
+ 
+-	LogDebug("Connecting to %s", inet_ntoa(addr.sin_addr));
++		__tspi_memset(&addr, 0, sizeof(addr));
++		addr.sun_family = AF_UNIX;
++		strncpy(addr.sun_path, TCSD_DEFAULT_SOCKET,
++			sizeof(addr.sun_path));
++
++		LogDebug("Connecting to UNIX Domain socket %s",
++			TCSD_DEFAULT_SOCKET);
++
++		if (connect(sd, (struct sockaddr *) &addr, sizeof (addr))) {
++			LogError("connect: %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
++			goto err_exit;
++		}
++
++	} else { /* use TCP socket */
++		struct sockaddr_in addr;
++		struct hostent *hEnt = NULL;
++
++		sd = socket(PF_INET, SOCK_STREAM, 0);
++		if (sd == -1) {
++			LogError("socket: %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
++			goto err_exit;
++		}
++
++		__tspi_memset(&addr, 0, sizeof(addr));
++		addr.sin_family = AF_INET;
++		addr.sin_port = htons(get_port());
++
++		LogDebug("Sending TSP packet to host %s.", hte->hostname);
++
++		/* try to resolve by hostname first */
++		hEnt = gethostbyname((char *)hte->hostname);
++		if (hEnt == NULL) {
++			/* if by hostname fails, try by dot notation */
++			if (inet_aton((char *)hte->hostname, &addr.sin_addr) == 0) {
++				LogError("hostname %s does not resolve to a valid address.", hte->hostname);
++				result = TSPERR(TSS_E_CONNECTION_FAILED);
++				goto err_exit;
++			}
++		} else {
++			memcpy(&addr.sin_addr, hEnt->h_addr_list[0], 4);
++		}
++
++		LogDebug("Connecting to %s", inet_ntoa(addr.sin_addr));
+ 
+-	if (connect(sd, (struct sockaddr *) &addr, sizeof (addr))) {
+-		LogError("connect: %s", strerror(errno));
+-		result = TSPERR(TSS_E_COMM_FAILURE);
+-		goto err_exit;
++		if (connect(sd, (struct sockaddr *) &addr, sizeof (addr))) {
++			LogError("connect: %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
++			goto err_exit;
++		}
+ 	}
+ 
+ 	if (send_to_socket(sd, hte->comm.buf, hte->comm.hdr.packet_size) < 0) {

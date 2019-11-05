@@ -1,0 +1,49 @@
+Without this patch you can't use mouse to scroll video/audio file
+
+From b31a06a712ab39a9c9018304b9dfc5a31687016c Mon Sep 17 00:00:00 2001
+From: Kalev Lember <kalevlember@gmail.com>
+Date: Thu, 10 May 2012 18:41:41 +0300
+Subject: [PATCH] main: Update the seek slider hack for GTK+ changes
+
+GTK+ commit 162614aa changed the range widget's button behaviour so that
+button 1 jumps to position. This is almost what we need in totem, except
+that we'd want buttons 2 and 3 to also do the jumping.
+
+Update the seek slider hack accordingly to always force button 1
+behaviour and bump gtk+ dep to 3.5.2.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=675838
+---
+ configure.in       | 2 +-
+ src/totem-object.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/totem-object.c b/src/totem-object.c
+index 22f62660..4b8e31ee 100644
+--- a/src/totem-object.c
++++ b/src/totem-object.c
+@@ -2592,12 +2592,12 @@ property_notify_cb_seekable (BaconVideoWidget *bvw, GParamSpec *spec, TotemObjec
+ gboolean
+ seek_slider_pressed_cb (GtkWidget *widget, GdkEventButton *event, TotemObject *totem)
+ {
+-	/* HACK: we want the behaviour you get with the middle button, so we
++	/* HACK: we want the behaviour you get with the left button, so we
+ 	 * mangle the event.  clicking with other buttons moves the slider in
+-	 * step increments, clicking with the middle button moves the slider to
++	 * step increments, clicking with the left button moves the slider to
+ 	 * the location of the click.
+ 	 */
+-	event->button = 2;
++	event->button = GDK_BUTTON_PRIMARY;
+ 
+ 	totem->seek_lock = TRUE;
+ 	if (bacon_video_widget_can_direct_seek (totem->bvw) == FALSE) {
+@@ -2636,7 +2636,7 @@ seek_slider_released_cb (GtkWidget *widget, GdkEventButton *event, TotemObject *
+ 	gdouble val;
+ 
+ 	/* HACK: see seek_slider_pressed_cb */
+-	event->button = 2;
++	event->button = GDK_BUTTON_PRIMARY;
+ 
+ 	/* set to FALSE here to avoid triggering a final seek when
+ 	 * syncing the adjustments while being in direct seek mode */

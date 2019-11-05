@@ -19,7 +19,7 @@ PATH= $(PATH.gnu)
 
 COMPONENT_NAME= corosync
 COMPONENT_VERSION= 2.4.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,7 +56,10 @@ CONFIGURE_OPTIONS += --enable-xmlconf
 CONFIGURE_OPTIONS += --enable-testagents
 CONFIGURE_OPTIONS += --enable-augeas
 CONFIGURE_OPTIONS += --enable-qdevices
+CONFIGURE_OPTIONS += --disable-rpath
 CONFIGURE_OPTIONS += --with-logdir=/var/log/hacluster
+
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 COMPONENT_POST_INSTALL_ACTION=( \
 	$(RM) -r $(PROTO_DIR)/usr/share/corosync/examples; \

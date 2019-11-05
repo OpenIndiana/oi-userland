@@ -57,9 +57,8 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/python-27
+# Build dependencies
 REQUIRED_PACKAGES += library/python/backports.ssl_match_hostname-27
-REQUIRED_PACKAGES += library/python/click-27
 REQUIRED_PACKAGES += library/python/jinja2-27
 REQUIRED_PACKAGES += library/python/livereload-27
 REQUIRED_PACKAGES += library/python/markdown-27
@@ -67,3 +66,9 @@ REQUIRED_PACKAGES += library/python/mkdocs-bootstrap-27
 REQUIRED_PACKAGES += library/python/mkdocs-bootswatch-27
 REQUIRED_PACKAGES += library/python/pyyaml-27
 REQUIRED_PACKAGES += library/python/tornado-27
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/click-27
+REQUIRED_PACKAGES += library/python/mock-27
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += runtime/python-27

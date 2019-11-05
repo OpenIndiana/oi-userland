@@ -21,6 +21,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+depend fmri=diagnostic/constype type=require
+depend fmri=x11/library/mesa type=require
+
 <transform file path=lib/opengl/ogl_select/.* ->  default restart_fmri svc:/application/opengl/ogl-select:default>
 <transform file path=lib/opengl/ogl_select/.* ->  default mode 0555>
 <transform link path=.* -> default pkg.linted.userland.action002.0 true>

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gphoto2
 COMPONENT_VERSION= 2.5.14
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Digital camera utility
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -35,6 +36,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)

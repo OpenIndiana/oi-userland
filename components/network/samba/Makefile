@@ -23,33 +23,22 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Samba does not work properly on i386 when built by studio with -xO3+.
 ifeq ($(MACH), sparc)
 # parallelize up to 64 concurent tasks for sparc
 WAFOPT1 = -j64
 else
-# Both SPRO_VROOT and studio_OPT vars must use the override keyword otherwise
-# Userland will ignore it and use its default value.
-# To use the older 12.3 compiler instead of the default 12.4 compiler uncomment
-# the following line.
-#override SPRO_VROOT = $(SPRO_ROOT)/solarisstudio12.3
-#override studio_OPT = -xO1
-# parallelize up to 16 concurent tasks for i386
 WAFOPT1 = -j16
 endif
-
-# parfait seems to spin on us
-export PARFAIT_BUILD=no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.4.16
+COMPONENT_VERSION=	4.5.15
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2681f6d9d838d90273f151539331a2051b2292fc8784d4bbc416caae5d0c438e
+COMPONENT_ARCHIVE_HASH= sha256:811bf727892a1e1e3d170eb72eb39c43d06ed8ff557e5e036a41aabc19008e94
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -260,18 +249,19 @@ system-test:    $(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/file-monitor/gamin
-REQUIRED_PACKAGES += library/gnu-libiconv
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/libdbus

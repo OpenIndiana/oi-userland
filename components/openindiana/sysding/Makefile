@@ -67,3 +67,6 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 download:: $(SOURCE_DIR)/.downloaded
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs

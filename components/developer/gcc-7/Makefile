@@ -18,14 +18,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 7.2.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 THIS_GCC_PKGVERSION= $(COMPONENT_VERSION)-OI-$(COMPONENT_REVISION)
 COMPONENT_FMRI= developer/gcc-$(COMPONENT_MAJOR_VERSION)
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_SUMMARY= GNU Compiler Collection
 MPFR_NAME= mpfr
-MPFR_VERSION=3.1.5
+MPFR_VERSION=3.1.6
 MPC_NAME=mpc
 MPC_VERSION=1.0.3
 GMP_NAME=gmp
@@ -46,7 +46,7 @@ COMPONENT_SRC_1=    $(MPFR_NAME)-$(MPFR_VERSION)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).tar.bz2
 COMPONENT_ARCHIVE_URL_1= http://www.mpfr.org/$(COMPONENT_SRC_1)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:ca498c1c7a74dd37a576f353312d1e68d490978de4395fa28f1cbd46a364e658
+    sha256:cf4f4b2d80abb79e820e78c8077b6725bbbb4e8f41896783c899087be0e94068
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 COMPONENT_POST_UNPACK_ACTION_1 += ( $(RM) -r $(COMPONENT_SRC)/$(MPFR_NAME) && $(CP) -r $(COMPONENT_SRC_1) $(COMPONENT_SRC)/$(MPFR_NAME) )
 
@@ -124,9 +124,16 @@ install: $(INSTALL_32)
 
 test: $(TEST_32)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 # Required by test suite
 REQUIRED_PACKAGES+= developer/test/dejagnu
 REQUIRED_PACKAGES+= developer/build/autogen
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/gc
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-7-runtime
+REQUIRED_PACKAGES += system/library/gcc-7-runtime
+REQUIRED_PACKAGES += system/library/gfortran-7-runtime
+REQUIRED_PACKAGES += system/library/gobjc-7-runtime
+REQUIRED_PACKAGES += system/library/math

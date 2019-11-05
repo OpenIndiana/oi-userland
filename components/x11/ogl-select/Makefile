@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ogl-select
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	ogl-select - boot time selection of OpenGL vendor files
 COMPONENT_PROJECT_URL = https://hg.java.net/hg/solaris-x11~x-s12-clone
 COMPONENT_FMRI= service/opengl/ogl-select

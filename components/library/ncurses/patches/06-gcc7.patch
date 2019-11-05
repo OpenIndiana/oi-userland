@@ -1,0 +1,42 @@
+--- ncurses-5.9/c++/cursesp.h.orig	Mon May 15 17:25:20 2017
++++ ncurses-5.9/c++/cursesp.h	Mon May 15 17:26:37 2017
+@@ -58,7 +58,7 @@
+     const PANEL*        m_owner;     // the panel itself
+   } UserHook;
+ 
+-  inline UserHook *UserPointer()
++  inline UserHook *UserPointer() const
+   {
+     UserHook* uptr = reinterpret_cast<UserHook*>(
+                            const_cast<void *>(::panel_userptr (p)));
+@@ -77,7 +77,7 @@
+   }
+   // Set the user pointer of the panel.
+ 
+-  void *get_user()
++  void *get_user() const
+   {
+     UserHook* uptr = UserPointer();
+     void *result = 0;
+--- ncurses-5.9/c++/cursesf.h.orig	Mon May 15 17:21:01 2017
++++ ncurses-5.9/c++/cursesf.h	Mon May 15 17:24:51 2017
+@@ -381,7 +381,7 @@
+     uptr->m_user = user;
+   }
+ 
+-  inline void *get_user() {
++  inline void *get_user() const {
+     UserHook* uptr = reinterpret_cast<UserHook*>(::form_userptr (form));
+     assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==form);
+     return uptr->m_user;
+--- ncurses-5.9/c++/cursesm.h.orig	Mon May 15 17:24:11 2017
++++ ncurses-5.9/c++/cursesm.h	Mon May 15 17:24:30 2017
+@@ -242,7 +242,7 @@
+     uptr->m_user = user;
+   }
+ 
+-  inline void *get_user() {
++  inline void *get_user() const {
+     UserHook* uptr = STATIC_CAST(UserHook*)(::menu_userptr (menu));
+     assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==menu);
+     return uptr->m_user;

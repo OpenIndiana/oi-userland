@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           qt
 COMPONENT_VERSION=        5.8.0
-COMPONENT_REVISION=       2
+COMPONENT_REVISION=       3
 COMPONENT_VERSION_MJR=    5.8
 COMPONENT_FMRI=           library/qt5
 COMPONENT_PROJECT_URL=    https://www.qt.io/
@@ -132,7 +132,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/hunspell

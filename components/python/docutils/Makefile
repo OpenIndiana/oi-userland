@@ -42,5 +42,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 						rstpep2html.py; \
 					do $(MV) $$i $$i-$(PYTHON_VERSION); done)
 
-REQUIRED_PACKAGES += library/python-2/lxml-27
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/lxml-27
 REQUIRED_PACKAGES += runtime/python-27

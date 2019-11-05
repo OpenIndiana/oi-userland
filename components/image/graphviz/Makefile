@@ -26,14 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
-COMPONENT_VERSION=	2.38.0
-COMPONENT_REVISION=	8
+COMPONENT_VERSION=	2.40.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:81aa238d9d4a010afa73a9d2a704fc3221c731e1e06577c2ab3496bdef67859e
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:ca5218fade0204d59947126c38439f432853543b0818d9d728c589dfe7f3a421
+COMPONENT_ARCHIVE_URL= http://204.178.9.49/pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -43,6 +42,7 @@ PATH_PHP.32 = /usr/php/5.6/bin
 PATH_PHP.64 = /usr/php/5.6/bin/$(MACH64)
 PATH = /usr/bin:/usr/gnu/bin:$(PATH_PHP.$(BITS))
 
+CPPFLAGS += -I/usr/lib/$(MACH64)/ocaml
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
 # CPPFLAGS +=	-I/usr/include/gmp
@@ -82,6 +82,7 @@ CONFIGURE_OPTIONS.64 +=	--enable-ruby=no
 CONFIGURE_OPTIONS.64 +=	--enable-tcl=no
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--with-qt=no
+CONFIGURE_OPTIONS += --with-gdincludedir=$(CONFIGURE_INCLUDEDIR)/gd2
 
 CONFIGURE_ENV.32 += ac_cv_path_GDLIB_CONFIG=/usr/bin/gdlib-config
 CONFIGURE_ENV.64 += ac_cv_path_GDLIB_CONFIG=/usr/bin/$(MACH64)/gdlib-config
@@ -113,6 +114,9 @@ COMPONENT_PRE_TEST_ACTION = \
 # http://graphviz.org/bugs/b2063.html
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -129,14 +133,21 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/ruby-23
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += runtime/ocaml
+REQUIRED_PACKAGES += web/php-56

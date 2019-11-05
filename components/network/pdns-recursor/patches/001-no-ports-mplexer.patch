@@ -1,16 +1,12 @@
---- pdns-recursor-3.7.3/sysdeps/SunOS.inc.orig	Mon Nov 23 21:51:39 2015
-+++ pdns-recursor-3.7.3/sysdeps/SunOS.inc	Mon Nov 23 21:51:57 2015
-@@ -13,12 +13,8 @@
- 	CXXFLAGS+= -DHAVE_STRCASESTR
+--- pdns-recursor-4.0.8/Makefile.am.1	2017-12-21 08:00:29.026819219 +0000
++++ pdns-recursor-4.0.8/Makefile.am	2017-12-21 08:01:34.539229492 +0000
+@@ -268,8 +268,7 @@
+ 
+ if HAVE_SOLARIS
+ pdns_recursor_SOURCES += \
+-	devpollmplexer.cc \
+-	portsmplexer.cc
++	devpollmplexer.cc
  endif
  
--OPTIONALS:=optional/portsmplexer.o optional/devpollmplexer.o
-+OPTIONALS:=optional/devpollmplexer.o
- 	
--optional/portsmplexer.o: portsmplexer.cc
--	$(CXX) $(CXXFLAGS) -c $< -o $@  ; true
--
--
- optional/devpollmplexer.o: devpollmplexer.cc
- 	$(CXX) $(CXXFLAGS) -c $< -o $@  ; true
- 
+ if HAVE_PROTOBUF

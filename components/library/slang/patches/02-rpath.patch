@@ -1,0 +1,32 @@
+--- slang-2.3.1/autoconf/aclocal.m4.1	2018-01-31 14:45:00.000382855 +0000
++++ slang-2.3.1/autoconf/aclocal.m4	2018-01-31 14:48:33.810700906 +0000
+@@ -310,7 +310,6 @@
+ 
+ JD_UP_NAME[]_INC="-I[$]JD_UP_NAME[]_INCLUDE"
+ JD_UP_NAME[]_LIB="-L[$]JD_UP_NAME[]_LIB_DIR"
+-JD_SET_RPATH([$]JD_UP_NAME[]_LIB_DIR)
+ dnl# if test "X$GCC" = Xyes
+ dnl# then
+ dnl#    RPATH_[]JD_UP_NAME="-Wl,-R[$]JD_UP_NAME[]_LIB_DIR"
+--- slang-2.3.1/modules/Makefile.in.1	2018-01-31 16:22:32.765892450 +0000
++++ slang-2.3.1/modules/Makefile.in	2018-01-31 16:22:43.863214700 +0000
+@@ -87,7 +87,7 @@
+ # ---------------------------------------------------------------------------
+ RPATH = @RPATH@
+ 
+-LIBS = $(LDFLAGS) $(RPATH) $(SLANG_LIB) $(DL_LIB) @M_LIB@
++LIBS = $(LDFLAGS) $(SLANG_LIB) $(DL_LIB) @M_LIB@
+ INCS = $(SLANG_SRCINC)
+ COMPILE_CMD = $(CC_SHARED) $(INCS)
+ # ---------------------------------------------------------------------------
+--- slang-2.3.1/slsh/Makefile.in.1	2018-01-31 18:14:05.640327338 +0000
++++ slang-2.3.1/slsh/Makefile.in	2018-01-31 18:14:13.404423490 +0000
+@@ -77,7 +77,7 @@
+ #----------------------------------------------------------------------------
+ @SET_MAKE@
+ SHELL = /bin/sh
+-INST_LIBS = $(DEST_LIB_DIR) $(RPATH) $(SLANG_INST_LIB) -lslang $(READLINE_LIB) $(DYNAMIC_LIBS)
++INST_LIBS = $(DEST_LIB_DIR) $(SLANG_INST_LIB) -lslang $(READLINE_LIB) $(DYNAMIC_LIBS)
+ DEFS = -DSLSH_CONF_DIR='"$(SLSH_CONF_DIR)"' -DSLSH_PATH='"$(SLSH_LIB_DIR)"' \
+  -DSLSH_CONF_DIR_ENV='$(SLSH_CONF_DIR_ENV)' -DSLSH_LIB_DIR_ENV='$(SLSH_LIB_DIR_ENV)' \
+  -DSLSH_PATH_ENV='$(SLSH_PATH_ENV)' $(SLSYSWRAP_DEF)

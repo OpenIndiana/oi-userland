@@ -42,7 +42,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
@@ -58,5 +58,6 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += library/python-2/libxml2-27
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/libxml2-27
 REQUIRED_PACKAGES += runtime/python-27

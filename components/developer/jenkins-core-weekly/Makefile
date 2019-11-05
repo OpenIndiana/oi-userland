@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016-2017 Jim Klimov
+# Copyright 2016-2018 Jim Klimov
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -27,9 +27,9 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		jenkins
 JENKINS_RELEASE=weekly
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	85
+COMPONENT_MINOR_VERSION=	101
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:197264541fb300543ecec9bfb8066912656074b2211c8d5c38dc6edd9dd9197d
+	sha256:478894dc1da73e8808041dcff5a07edb8158f2d67df4fce5fda2d30621a24f65
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
@@ -86,6 +86,5 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-# Note: this recipe just downloads and packages stuff.
-# No real build, no magic tools, no java even, should be needed!
-# So, no custom REQUIRED_PACKAGES
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/java/openjdk8

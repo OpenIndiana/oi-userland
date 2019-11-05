@@ -1,0 +1,21 @@
+--- js-1.8.5/jsmath.cpp.orig	2017-10-10 21:20:17.885498020 +0000
++++ js-1.8.5/jsmath.cpp	2017-10-10 21:36:20.430440356 +0000
+@@ -503,6 +503,18 @@
+         return JS_TRUE;
+     }
+ 
++#if defined(SOLARIS) && defined(__GNUC__)
++    /* 
++ 		 *´pow in libm of Solaris returns -INFINITY in this case 
++		*/
++    if (JSDOUBLE_IS_FINITE(y) && JSDOUBLE_IS_FINITE(x)) {
++        if (x == 0 && !JSDOUBLE_IS_NEGZERO(x) && y < 0.0) {
++            vp->setNumber(js_PositiveInfinity);
++            return JS_TRUE;
++        }
++		}
++#endif
++
+     if (vp[3].isInt32())
+         z = powi(x, vp[3].toInt32());
+     else

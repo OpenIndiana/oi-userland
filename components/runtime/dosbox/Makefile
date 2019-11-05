@@ -53,10 +53,11 @@ test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/audio/sdl-sound
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

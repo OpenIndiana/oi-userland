@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stardict
 COMPONENT_VERSION=	3.0.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.stardict.org/
 COMPONENT_SUMMARY=	A powerful dictionary platform written in GTK+2
 COMPONENT_FMRI=		system/desktop/stardict
@@ -40,6 +41,7 @@ CONFIGURE_OPTIONS+=	--enable-deprecations
 CONFIGURE_OPTIONS+=	--disable-festival
 CONFIGURE_OPTIONS+=	--disable-advertisement
 CONFIGURE_OPTIONS+=	--disable-gucharmap
+CONFIGURE_OPTIONS+=	--disable-gnome-support
 
 CPPFLAGS += -I$(MYSQL_INCDIR)
 LDFLAGS += -L$(MYSQL_LIBDIR) -R$(MYSQL_LIBDIR)
@@ -57,24 +59,20 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/library
 
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/libgnome
-REQUIRED_PACKAGES += library/desktop/libgnomeui
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libbonobo
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/orbit2
 REQUIRED_PACKAGES += library/speech/espeak
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

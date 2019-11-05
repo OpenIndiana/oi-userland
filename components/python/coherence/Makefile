@@ -45,9 +45,10 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 test:           $(NO_TEST)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/python-2/configobj-27
-REQUIRED_PACKAGES += library/python-2/python-twisted-27
+REQUIRED_PACKAGES += library/python/configobj-27
+REQUIRED_PACKAGES += library/python/python-twisted-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library/dbus

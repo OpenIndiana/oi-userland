@@ -74,5 +74,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Build dependencies
 REQUIRED_PACKAGES += library/libedit
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library

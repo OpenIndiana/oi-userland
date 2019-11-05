@@ -13,19 +13,20 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		fish
-COMPONENT_VERSION=	2.6.0
-COMPONENT_REVISION=	1
+COMPONENT_NAME=         fish
+COMPONENT_VERSION=      2.7.0
 COMPONENT_FMRI=         shell/fish
 COMPONENT_CLASSIFICATION=System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://fishshell.com
+COMPONENT_PROJECT_URL=  https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7ee5bbd671c73e5323778982109241685d58a836e52013e18ee5d9f2e638fdfb
-COMPONENT_ARCHIVE_URL=	https://fishshell.com/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:3a76b7cae92f9f88863c35c832d2427fb66082f98e92a02203dc900b8fa87bcb
+COMPONENT_ARCHIVE_URL= \
+  https://fishshell.com/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license 
-COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell for macOS, Linux, and the rest of the family.
+COMPONENT_SUMMARY= \
+  Fish is a smart and user-friendly command line shell for macOS, Linux, and the rest of the family.
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

@@ -1,0 +1,11 @@
+--- open-vm-tools-stable-10.1.15/vmhgfs-fuse/config.c.orig	2017-12-06 09:38:47.632555186 +0000
++++ open-vm-tools-stable-10.1.15/vmhgfs-fuse/config.c	2017-12-06 09:40:15.229651388 +0000
+@@ -496,7 +496,7 @@
+ #ifdef VMX86_DEVEL
+    config.logLevel = LOGLEVEL_THRESHOLD;
+ #endif
+-#ifdef __APPLE__
++#if defined(__APPLE__) || defined(__sun)
+    /* osxfuse does not have option 'big_writes'. */
+    config.addBigWrites = FALSE;
+ #else

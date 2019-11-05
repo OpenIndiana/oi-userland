@@ -65,4 +65,4 @@ install:	$(INSTALL_64)
 test:		$(TEST_64)
 
 # Auto-generated dependencies
-# NONE
+REQUIRED_PACKAGES += system/library

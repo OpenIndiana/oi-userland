@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nimbus
 COMPONENT_VERSION=	0.1.9
-COMPONENT_REVISION=	12
+COMPONENT_REVISION=	14
 COMPONENT_PROJECT_URL=	https://java.net/projects/solaris-desktop/pages/Home
 COMPONENT_SUMMARY=	Engine for Sun Nimbus GTK2 Theme
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,7 +28,7 @@ COMPONENT_ARCHIVE_URL=	https://github.com/aszeszo/archives/raw/master/$(COMPONEN
 COMPONENT_SRC_1=	nimbus-gtk3-theme-4.2
 COMPONENT_ARCHIVE_1=	164641-$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= sha256:6483b4515165a6b00010587167f34c147808962406d37bc5dd7bac0cbb154d0e
-COMPONENT_ARCHIVE_URL_1= http://gnome-look.org/CONTENT/content-files/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_URL_1= https://dl.opendesktop.org/api/files/download/id/1460761469/$(COMPONENT_ARCHIVE_1)
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 
 COMPONENT_FMRI=		gnome/theme/nimbus
@@ -36,11 +36,11 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Theming
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 INSTALL_GTK3_THEME=$(BUILD_DIR)/.gtk3_theme_installed
 

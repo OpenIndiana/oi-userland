@@ -22,36 +22,41 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libogg
-COMPONENT_VERSION=	1.3.2
-COMPONENT_PROJECT_URL=	http://xiph.org/ogg
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e19ee34711d7af328cb26287f4137e70630e7261b17cbe3cd41011d73a654692
-COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libogg
+COMPONENT_NAME=         libogg
+COMPONENT_VERSION=      1.3.3
+COMPONENT_FMRI=         library/libogg
+COMPONENT_SUMMARY=      libogg - general-purpose compressed audio format
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_PROJECT_URL=  http://xiph.org/ogg
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+  sha256:c2e8a485110b97550f453226ec644ebac6cb29d1caef2902c007edab4308d985
+COMPONENT_ARCHIVE_URL= \
+  http://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      BSD
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += '-n -e "/ok.$$/p" '
+
 # Setup config_types.h file to support 32 & 64 bit.
-#
 COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
              $(MV) include/ogg/config_types.h include/ogg/config_types-$(BITS).h )
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library

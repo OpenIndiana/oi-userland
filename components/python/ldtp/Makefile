@@ -22,26 +22,22 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=         ldtp
-COMPONENT_VERSION=      2.1.1
-COMPONENT_REVISION=	1
-COMPONENT_MAJOR_VERSION=2.x
-COMPONENT_MINOR_VERSION=2.1.x
+COMPONENT_VERSION=      3.5.0
+COMPONENT_MAJOR_VERSION=3.x
+COMPONENT_MINOR_VERSION=3.5.x
 COMPONENT_PROJECT_URL=	http://ldtp.freedesktop.org/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=          ldtp2-LDTP_$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:53215930b38edeb980f43130fc29783db4875ce2317c946391a7baa63d98aa0e
-COMPONENT_ARCHIVE_URL=  http://download.freedesktop.org/ldtp/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_MINOR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/ldtp
+  sha256:c3afb3a5dad951b116ef64c69bfa0796492cb9ab696c8ffc6b6481f1b37e74d3
+COMPONENT_ARCHIVE_URL=  https://github.com/ldtp/ldtp2/archive/LDTP_$(COMPONENT_VERSION).tar.gz
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f ldtp ldtp$(PYTHON_VERSION))

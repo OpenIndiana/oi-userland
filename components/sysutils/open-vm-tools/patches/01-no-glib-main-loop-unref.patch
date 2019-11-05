@@ -1,0 +1,19 @@
+--- open-vm-tools-stable-9.4.6/services/vmtoolsd/mainLoop.c.orig	Tue Oct  7 15:00:06 2014
++++ open-vm-tools-stable-9.4.6/services/vmtoolsd/mainLoop.c	Tue Oct  7 15:00:27 2014
+@@ -71,7 +71,15 @@
+       state->ctx.rpc = NULL;
+    }
+    g_key_file_free(state->ctx.config);
+-   g_main_loop_unref(state->ctx.mainLoop);
++/*
++ * (NOTE:  Bug IDs here are from Delphix, not OmniTI.)
++ * Cleaning up is good, but not necessary, and this currently
++ * causes a core dump when vmtoolsd dies because of a known bug in
++ * glib; see Bug 28773. As a workaround, let the kernel free the
++ * memory for us, as it always will when the process exits. This
++ * should be removed when glib is fixed (see bug 33706).
++ */
++ /* g_main_loop_unref(state->ctx.mainLoop); */
+
+ #if defined(G_PLATFORM_WIN32)
+    if (state->ctx.comInitialized) {

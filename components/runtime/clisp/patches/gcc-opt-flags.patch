@@ -1,0 +1,54 @@
+Optimization flags should be set otherwise:
+
+_CODE_ALIGNMENT is wrong. &QUOTE = 0x8090a56.
+
+Add -falign-functions=4 to CFLAGS in the Makefile.
+
+--- src/intparam.c.1	2016-05-13 14:08:54.137339146 +0300
++++ src/intparam.c	2016-05-13 14:09:01.660360716 +0300
+@@ -8,7 +8,6 @@
+  * zu verhindern, bei AIX 3.2.5 (rs6000-ibm-aix3.2.5) jedoch nicht. Wir
+  * müssen Gewalt anwenden.
+  */
+-#define _POSIX_SOURCE
+ #define uchar  os_uchar
+ #define ushort os_ushort
+ #define uint   os_uint
+--- src/makemake.in.~1~      2010-07-07 19:15:35.000000000 +0400
++++ src/makemake.in  2016-05-13 14:39:37.001913716 +0300
+@@ -1235,7 +1235,7 @@
+   if [ $CROSS = false ] ; then
+     case "$XCC_GCC_VERSION" in
+       # gcc 2.7 introduced an annoying warning, but gcc 2.8 has a workaround:
+-      2.[8-9]* | 3.* | 4.* | egcs-2.*)
++      2.[8-9]* | 3.* | 4.* | 5.* | 6.* | 7.* | egcs-2.*)
+         XCFLAGS=$XCFLAGS' -Wno-sign-compare -Wno-format-nonliteral'
+         ;;
+       * ) ;;
+@@ -1244,7 +1244,7 @@
+   if [ $CROSS = false -a $CC_CPLUSPLUS = true ] ; then
+     case "$XCC_GCC_VERSION" in
+       # g++ 3.4 introduced an annoying warning, but has a workaround:
+-      3.[4-9]* | 4.*)
++      3.[4-9]* | 4.* | 5.* | 6.* | 7.*)
+         XCFLAGS=$XCFLAGS' -Wno-invalid-offsetof'
+         ;;
+       * ) ;;
+@@ -1259,7 +1259,7 @@
+             # gcc-2.7.2 has a strength-reduction bug (fixed in gcc-2.7.2.1,
+             # also fixed through the specs file of some Linux distributions).
+             XCFLAGS=$XCFLAGS' -O2 -fexpensive-optimizations -fno-strength-reduce' ;;
+-          2.3.[2-9]* | 2.[4-9]* | 3.* | 4.* | egcs-2.*)
++          2.3.[2-9]* | 2.[4-9]* | 3.* | 4.* | 5.* | 6.* | 7.*| egcs-2.*)
+             XCFLAGS=$XCFLAGS' -O2 -fexpensive-optimizations' ;;
+           * )
+             XCFLAGS=$XCFLAGS' -O' ;;
+@@ -1313,7 +1313,7 @@
+     esac
+   fi # !DEBUGGING
+   case "$XCC_GCC_VERSION" in
+-    3* | 4*)
++    3* | 4* | 5* | 6* | 7*)
+       # When not optimizing on linux, or with Apple's gcc 4 on MacOS X,
+       # or with GCC 4 when "gcc -Os" is used:
+       #   C_CODE_ALIGNMENT is wrong. &EVAL-WHEN = 0x806D512

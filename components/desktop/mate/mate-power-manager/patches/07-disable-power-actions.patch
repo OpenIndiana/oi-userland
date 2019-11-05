@@ -1,0 +1,23 @@
+We currently do not have a way to find out if power button was pressed in
+application, which runs without root privileges (can't listen to sysevents).
+gnome-power-manager used hal to do this, but we don't want to resurrect HAL support
+in mate-power-manager. 
+
+--- mate-power-manager-1.18.1/src/gpm-prefs-core.c.~3~	2018-01-17 16:15:43.600627799 +0000
++++ mate-power-manager-1.18.1/src/gpm-prefs-core.c	2018-01-17 16:23:56.595383559 +0000
+@@ -658,6 +658,15 @@
+ 
+ 		gtk_widget_hide(widget);
+ 	}
++
++#if defined(__sun) && defined(__SVR4)
++	widget = GTK_WIDGET (gtk_builder_get_object (prefs->priv->builder, "hbox_general_power"));
++	gtk_widget_hide(widget);
++
++	/* After removing power button actions preferences "Actions" sections is empty, so we remove label */
++	widget = GTK_WIDGET (gtk_builder_get_object (prefs->priv->builder, "label122"));
++	gtk_widget_hide(widget);
++#endif
+ }
+ 
+ /**

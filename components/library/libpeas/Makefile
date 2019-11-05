@@ -29,14 +29,14 @@ COMPONENT_NAME=		libpeas
 COMPONENT_SUMMARY=	A gobject-based plugins engine for GNOME
 COMPONENT_DESCRIPTION=	libpeas is a gobject-based plugins engine, and is targeted\
  at giving every application the chance to assume its own extensibility.
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.20.0
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libpeas
 COMPONENT_MAJOR_MINOR=        $(basename $(COMPONENT_VERSION))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=        https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b093008ecd65f7d55c80517589509698ff15ad41f664b11a3eb88ff461b1454e
+	sha256:f392fffe2dc00072a51bb2a1b274224a06bdc5f9c3b3c0ac4816909e9933d354
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_FMRI=	library/desktop/libpeas
 COMPONENT_LICENSE=	LGPLv2.1
@@ -56,6 +56,7 @@ CONFIGURE_ENV.64 += PYTHON3_CONFIG=/usr/bin/$(MACH64)/python3.4-config
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --enable-lua5.2
+CONFIGURE_OPTIONS += --disable-luajit
 CONFIGURE_OPTIONS += --enable-python2
 CONFIGURE_OPTIONS += --enable-python3
 CONFIGURE_OPTIONS += --enable-shared

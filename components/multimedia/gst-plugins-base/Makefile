@@ -37,9 +37,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
-PATH = /usr/gnu/bin:/usr/bin
-
-CFLAGS += -I/usr/sfw/include -I/usr/X11/include
+PATH = $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
@@ -63,6 +61,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/cairo

@@ -54,6 +54,9 @@ install:	$(INSTALL_32_and_64)
 # test requires PyContracts and gevent which haven't been integrated yet.
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += system/library

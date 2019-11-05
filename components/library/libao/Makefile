@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        libao
-COMPONENT_VERSION=     1.2.0
+COMPONENT_VERSION=     1.2.2
 COMPONENT_SUMMARY=     libao - cross-platform audio library
 COMPONENT_PROJECT_URL= https://www.xiph.org/ao/
 COMPONENT_FMRI=        library/audio/libao
@@ -23,14 +23,16 @@ COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
-  https://downloads.xiph.org/releases/ao/$(COMPONENT_ARCHIVE)
+  https://github.com/xiph/libao/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:03ad231ad1f9d64b52474392d63c31197b0bc7bd416e58b1c10a329a5ed89caf
+  sha256:df8a6d0e238feeccb26a783e778716fb41a801536fe7b6fce068e313c0e2bf4d
 COMPONENT_LICENSE=     GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION= ( cd $(@D); sh autogen.sh )
 
 build:		$(BUILD_32_and_64)
 

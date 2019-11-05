@@ -17,16 +17,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-7
 
-OPENJDK_BUILD_NUMBER=80
+OPENJDK_BUILD_NUMBER=141
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
-COMPONENT_REVISION=4
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
-COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20150609.tar.xz
+COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20170813.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:190c26f07eccea6d22efc876cb562313aaf909db7e74ef65ede69005459a713f
+  sha256:df95270b18ac4735c6d7b2d8fbe53ac35c0e26e89d9f84dbb5ebd6c7a56e82d9
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.netbsd.org/pub/pkgsrc/distfiles/LOCAL_PORTS/openjdk7/$(COMPONENT_ARCHIVE)
+  http://ftp.netbsd.org/pub/pkgsrc/distfiles/openjdk7/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL = http://openjdk.java.net/
 
@@ -106,10 +105,17 @@ cacerts.out: $(BUILD_32)
                   -storepass pkgsrc;                                    \
         done
 
+JAVA_MACH.32=i386
+JAVA_MACH.64=amd64
+
+# Workaround: cleanup for subsequent publish
+# cp: /export/home/userland/oi-userland/components/runtime/openjdk-7/build/prototype/i386/usr/jdk/instances/openjdk1.7.0/jre/lib/i386/client/libjsig.so: File exists
+
 $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
 	[ -d $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0 ] || $(MKDIR) $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	chmod -R u+rw $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
-	cp -a $(@D)/build/solaris-*/j2sdk-image/* $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
+	$(RM) -r $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0/jre/lib/$(JAVA_MACH.$(BITS))
+	$(CP) -a $(@D)/build/solaris-*/j2sdk-image/* $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	$(TOUCH) $@
 
 build: $(BUILD_32_and_64) cacerts.out
@@ -126,7 +132,7 @@ REQUIRED_PACKAGES += runtime/java/openjdk7/runtime64
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext

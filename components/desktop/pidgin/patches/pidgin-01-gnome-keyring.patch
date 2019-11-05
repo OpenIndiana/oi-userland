@@ -1,65 +1,14 @@
-# date:2006-11-16 owner:elaine type:branding bugster:6439103
-# Bug 15335933 SUNBT6439103 gaim must use gnome-keyring
-#
-# Changes should be submitted upstream.
+Automatically enable the pidgin-gnome-keyring plugin so that account
+passwords can be saved in the system keyring rather than as cleartext
+in ~/.purple/accounts.xml
 
---- pidgin-2.7.11/libpurple/Makefile.am.orig	2011-03-11 10:20:27.000000000 +0800
-+++ pidgin-2.7.11/libpurple/Makefile.am	2011-03-14 09:45:48.768422314 +0800
-@@ -305,6 +305,7 @@
- 	$(DBUS_LIBS) \
- 	$(GLIB_LIBS) \
- 	$(LIBXML_LIBS) \
-+        $(GAIM_KEYRING_LIBS) \
- 	$(NETWORKMANAGER_LIBS) \
- 	$(INTLLIBS) \
- 	$(FARSTREAM_LIBS) \
-@@ -322,6 +323,7 @@
- 	$(GLIB_CFLAGS) \
- 	$(DEBUG_CFLAGS) \
- 	$(DBUS_CFLAGS) \
-+        $(GAIM_KEYRING_CFLAGS) \
- 	$(LIBXML_CFLAGS) \
- 	$(FARSTREAM_CFLAGS) \
- 	$(GSTREAMER_CFLAGS) \
---- pidgin-2.7.11/pidgin/gtkmain.c.orig	2011-03-11 10:20:28.000000000 +0800
-+++ pidgin-2.7.11/pidgin/gtkmain.c	2011-03-14 09:45:48.767697192 +0800
-@@ -70,6 +70,10 @@
- #include "pidginstock.h"
- #include "gtkwhiteboard.h"
- 
-+#ifdef GAIM_ENABLE_KEYRING
-+#include <gnome-keyring.h>
-+#endif
-+
- #ifdef HAVE_SIGNAL_H
- # include <signal.h>
- #endif
-@@ -742,6 +746,12 @@
- 	gtk_rc_add_default_file(search_path);
- 	g_free(search_path);
- 
-+#ifdef  GAIM_ENABLE_KEYRING
-+        GnomeKeyringResult rtn = gnome_keyring_unlock_sync(NULL, NULL);
-+        // if (rtn == GNOME_KEYRING_RESULT_DENIED)
-+        //   return 0;
-+#endif
-+
- 	gui_check = gtk_init_check(&argc, &argv);
- 	if (!gui_check) {
- 		char *display = gdk_get_display();
---- pidgin-2.7.11/pidgin/Makefile.am.orig	2011-03-11 10:20:28.000000000 +0800
-+++ pidgin-2.7.11/pidgin/Makefile.am	2011-03-14 09:45:48.768028256 +0800
-@@ -177,6 +177,7 @@
- 	$(GSTREAMER_CFLAGS) \
- 	$(DEBUG_CFLAGS) \
- 	$(GTK_CFLAGS) \
-+        $(GAIM_KEYRING_CFLAGS) \
- 	$(DBUS_CFLAGS) \
- 	$(GTKSPELL_CFLAGS) \
- 	$(LIBXML_CFLAGS) \
---- pidgin-2.7.11/configure.ac.orig	2011-03-11 10:20:27.000000000 +0800
-+++ pidgin-2.7.11/configure.ac	2011-03-14 09:45:48.770550233 +0800
-@@ -2382,6 +2382,20 @@
+See PSARC/2016/385 for more details.
+
+This patch will not be submitted upsteam.
+
+--- pidgin-2.11.0/configure.ac.orig	2016-08-17 07:39:38.956248926 -0700
++++ pidgin-2.11.0/configure.ac	2016-08-17 07:41:48.502561778 -0700
+@@ -2469,6 +2469,18 @@
  	LDFLAGS="$orig_LDFLAGS"
  fi
  
@@ -68,179 +17,110 @@
 +dnl #--enable-gnome-keyring=(yes|no)
 +dnl #######################################################################
 +AC_ARG_ENABLE(gnome-keyring,
-+              AC_HELP_STRING([--enable-gnome-keyring],
-+                             [use gnome keyring for storing password [default=no]]),,
-+              enable_gnome_keyring=no)
++AC_HELP_STRING([--enable-gnome-keyring],
++               [use gnome keyring for storing password [default=no]]),,
++               enable_gnome_keyring=no)
 +if test "x$enable_gnome_keyring" = "xyes"; then
-+    PKG_CHECK_MODULES(GAIM_KEYRING,
-+                      gnome-keyring-1,
-+                      AC_DEFINE(GAIM_ENABLE_KEYRING, [], [Set if we should use gnome-keyring]))
++    AC_DEFINE(GAIM_ENABLE_KEYRING, [], [Set if we should use gnome-keyring])
 +fi
 +
  AC_MSG_CHECKING(for me pot o' gold)
  AC_MSG_RESULT(no)
  AC_CHECK_FUNCS(gethostid lrand48 timegm)
---- pidgin-2.10.11/libpurple/account.c.orig	Tue Feb 17 15:27:17 2015
-+++ pidgin-2.10.11/libpurple/account.c	Tue Feb 17 15:27:17 2015
-@@ -54,6 +54,14 @@
- #define PURPLE_ACCOUNT_GET_PRIVATE(account) \
- 	((PurpleAccountPrivate *) (account->priv))
+--- pidgin-2.11.0/libpurple/core.c.orig	2016-08-17 08:59:22.042425765 -0700
++++ pidgin-2.11.0/libpurple/core.c	2016-08-17 09:48:56.584454917 -0700
+@@ -161,6 +161,12 @@
+ 	purple_connections_init();
+ 
+ 	purple_accounts_init();
++
++	/* Potentially load the gnome keyring plugin here because we need to
++	 * have had a couple signals registered by purple_accounts_init() first.
++	 */
++	purple_plugin_load_gnome_keyring_plugin();
++
+ 	purple_savedstatuses_init();
+ 	purple_notify_init();
+ 	purple_certificate_init();
+--- pidgin-2.11.0/libpurple/plugin.h.orig	2016-08-17 09:08:26.448023611 -0700
++++ pidgin-2.11.0/libpurple/plugin.h	2016-08-17 09:49:20.857940837 -0700
+@@ -733,6 +733,12 @@
+  */
+ void purple_plugin_action_free(PurplePluginAction *action);
+ 
++/**
++ * Potentially load the gnome keyring plugin.
++ */
++
++void purple_plugin_load_gnome_keyring_plugin(void);
++
+ #ifdef __cplusplus
+ }
+ #endif
+--- pidgin-2.11.0/libpurple/plugin.c.orig	2016-08-17 07:42:35.456904439 -0700
++++ pidgin-2.11.0/libpurple/plugin.c	2016-08-17 12:05:29.285059614 -0700
+@@ -54,6 +54,10 @@
+ 
+ } PurplePluginIpcCommand;
  
 +#ifdef GAIM_ENABLE_KEYRING
-+#include <gnome-keyring.h>
-+
-+static char * gaim_account_get_password_from_keyring (const char *_prpl, const char *_user);
-+static gboolean gaim_account_set_password_in_keyring (const char *_prpl, const char *_user, const char *password);
++static PurplePlugin *gnome_keyring_plugin = NULL;
 +#endif
 +
+ static GList *search_paths     = NULL;
+ static GList *plugins          = NULL;
+ static GList *loaded_plugins   = NULL;
+@@ -207,6 +211,10 @@
+ 	gchar *basename = NULL;
+ 	gboolean (*purple_init_plugin)(PurplePlugin *);
+ 
++#ifdef GAIM_ENABLE_KEYRING
++	gboolean is_gnome_keyring = FALSE;
++#endif
 +
- /* TODO: Should use PurpleValue instead of this?  What about "ui"? */
- typedef struct
- {
-@@ -393,8 +401,13 @@
- 	if (purple_account_get_remember_password(account) &&
- 		((tmp = purple_account_get_password(account)) != NULL))
+ 	purple_debug_misc("plugins", "probing %s\n", filename);
+ 	g_return_val_if_fail(filename != NULL, NULL);
+ 
+@@ -216,6 +224,12 @@
+ 	/* If this plugin has already been probed then exit */
+ 	basename = purple_plugin_get_basename(filename);
+ 	plugin = purple_plugins_find_with_basename(basename);
++
++#ifdef GAIM_ENABLE_KEYRING
++	if (!strcmp(basename, "gnome-keyring"))
++		is_gnome_keyring = TRUE;
++#endif
++
+ 	g_free(basename);
+ 	if (plugin != NULL)
  	{
-+#ifdef GAIM_ENABLE_KEYRING
-+	        gaim_account_set_password_in_keyring( purple_account_get_protocol_id(account),
-+                                          purple_account_get_username(account), tmp);
-+#else
- 		child = xmlnode_new_child(node, "password");
- 		xmlnode_insert_data(child, tmp, -1);
-+#endif
- 	} else if (_purple_account_is_password_encrypted(account)) {
- 		const char *keyring = NULL;
- 		const char *mode = NULL;
-@@ -909,27 +925,37 @@
- 	}
- 
- 	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
--	g_free(name);
--	g_free(protocol_id);
-+        gboolean got_pwd = FALSE;
-+#ifdef GAIM_ENABLE_KEYRING
-+        data = gaim_account_get_password_from_keyring(protocol_id, name);
-+        if (data)
-+        {
-+                got_pwd = TRUE;
-+                purple_account_set_remember_password(ret, TRUE);
-+                purple_account_set_password(ret, data);
-+                g_free(data);
-+        }
-+#endif
-+	if (!got_pwd)
-+	{
-+	        /* Read the password */
-+               child = xmlnode_get_child(node, "password");
-+	       if (child != NULL) {
-+ 		      const char *keyring_id = xmlnode_get_attrib(child, "keyring_id");
-+		      const char *mode = xmlnode_get_attrib(child, "mode");
-+		      gboolean is_plaintext;
- 
--	/* Read the password */
--	child = xmlnode_get_child(node, "password");
--	if (child != NULL) {
--		const char *keyring_id = xmlnode_get_attrib(child, "keyring_id");
--		const char *mode = xmlnode_get_attrib(child, "mode");
--		gboolean is_plaintext;
-+		      data = xmlnode_get_data(child);
- 
--		data = xmlnode_get_data(child);
-+		      if (keyring_id == NULL || keyring_id[0] == '\0')
-+		      	      is_plaintext = TRUE;
-+		      else if (g_strcmp0(keyring_id, "keyring-internal") != 0)
-+			      is_plaintext = FALSE;
-+		      else if (mode == NULL || mode[0] == '\0' || g_strcmp0(mode, "cleartext") == 0)
-+			      is_plaintext = TRUE;
-+		      else
-+			      is_plaintext = FALSE;
- 
--		if (keyring_id == NULL || keyring_id[0] == '\0')
--			is_plaintext = TRUE;
--		else if (g_strcmp0(keyring_id, "keyring-internal") != 0)
--			is_plaintext = FALSE;
--		else if (mode == NULL || mode[0] == '\0' || g_strcmp0(mode, "cleartext") == 0)
--			is_plaintext = TRUE;
--		else
--			is_plaintext = FALSE;
--
- 		if (is_plaintext) {
- 			purple_account_set_remember_password(ret, TRUE);
- 			purple_account_set_password(ret, data);
-@@ -940,6 +966,9 @@
+@@ -484,6 +498,13 @@
  		}
- 		g_free(data);
  	}
+ 
++#ifdef GAIM_ENABLE_KEYRING
++	if (is_gnome_keyring) {
++		purple_debug_misc("plugins", "setting gnome_keyring_plugin.\n");
++		gnome_keyring_plugin = plugin;
 +	}
-+	g_free(name);
-+	g_free(protocol_id);
- 
- 	/* Read the alias */
- 	child = xmlnode_get_child(node, "alias");
-@@ -3350,3 +3378,66 @@
- 
- 	return (priv->password_keyring != NULL);
++#endif
++
+ 	return plugin;
+ #else
+ 	return NULL;
+@@ -1673,3 +1694,15 @@
+ 	g_free(action->label);
+ 	g_free(action);
  }
 +
++void
++purple_plugin_load_gnome_keyring_plugin()
++{
 +#ifdef GAIM_ENABLE_KEYRING
-+static char *
-+gaim_account_get_password_from_keyring(const char *_prpl, const char *_user)
-+{
-+  GnomeKeyringNetworkPasswordData *found_item;
-+  GnomeKeyringResult               result;
-+  GList                           *matches;
-+  char                            *password;
-+
-+  matches = NULL;
-+
-+  result = gnome_keyring_find_network_password_sync (
-+               _user,          /* user     */
-+               NULL,           /* domain   */
-+               "gaim.local",   /* server   */
-+               NULL,           /* object   */
-+               _prpl,          /* protocol */
-+               NULL,           /* authtype */
-+               1863,           /* port     */
-+               &matches);
-+
-+  if (result != GNOME_KEYRING_RESULT_OK)
-+    return NULL;
-+
-+  if (matches == NULL || matches->data == NULL)
-+    return NULL;
-+
-+  found_item = (GnomeKeyringNetworkPasswordData *) matches->data;
-+
-+  password = g_strdup (found_item->password);
-+
-+  gnome_keyring_network_password_list_free (matches);
-+
-+  return password;
-+}
-+
-+void my_GnomeKeyringOperationGetIntCallback(GnomeKeyringResult result, guint32 val, gpointer data)
-+{
-+  return;
-+}
-+
-+static gboolean
-+gaim_account_set_password_in_keyring (const char *_prpl, const char *_user, const char *_password)
-+{
-+  GnomeKeyringResult result;
-+  guint32            item_id;
-+
-+  gpointer req = gnome_keyring_set_network_password (
-+                NULL,           /* default keyring */
-+                _user,          /* user            */
-+                NULL,           /* domain          */
-+                "gaim.local",   /* server          */
-+                NULL,           /* object          */
-+                _prpl,          /* protocol        */
-+                NULL,           /* authtype        */
-+                1863,           /* port            */
-+                _password,       /* password        */
-+                my_GnomeKeyringOperationGetIntCallback, NULL, NULL);
-+  return TRUE;
-+}
++	purple_debug_misc("plugins", "purple_plugin_load_gnome_keyring_plugin called.\n");
++	if (gnome_keyring_plugin != NULL) {
++		purple_debug_misc("plugins", "purple_plugin_load_gnome_keyring_plugin: calling purple_plugin_load.\n");
++		purple_plugin_load(gnome_keyring_plugin);
++	}
 +#endif
-+
++}

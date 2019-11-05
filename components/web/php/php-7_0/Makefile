@@ -14,10 +14,10 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	7.0.24
+COMPONENT_VERSION=	7.0.26
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:4dba7aa365193c9229f89f1975fad4c01135d29922a338ffb4a27e840d6f1c98
+COMPONENT_ARCHIVE_HASH=	sha256:ed5cbb4bbb0ddef8985f100bba2e94002ad22a230b5da2dccfe148915df5f199
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE).asc/from/this/mirror
 
@@ -196,6 +196,10 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += web/server/apache-24
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mariadb-101/library
@@ -211,10 +215,11 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/uw-imap
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libmcrypt
 REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/tidy
 REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += web/server/apache-24
+REQUIRED_PACKAGES += web/php-70/php-cli

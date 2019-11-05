@@ -76,9 +76,14 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
+# Build dependencies
 REQUIRED_PACKAGES += developer/build/ant
-REQUIRED_PACKAGES += runtime/java/openjdk7
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/java/openjdk7
+REQUIRED_PACKAGES += developer/java/openjdk8
 REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-27

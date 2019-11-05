@@ -23,15 +23,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=					libcdr
-COMPONENT_VERSION=			0.1.3
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=			0.1.4
 COMPONENT_FMRI=     		library/c++/libcdr
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
 COMPONENT_SUMMARY=      libcdr - library for reading CorelDRAW documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:66e28e502abef7f6f494ce03de037d532f5e7888cfdee62c01203c8325b33f22
+COMPONENT_ARCHIVE_HASH=	sha256:e7a7e8b00a3df5798110024d7061fe9d1c3330277d2e4fa9213294f966a4a66d
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -60,5 +59,5 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

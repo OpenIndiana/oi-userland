@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zziplib
 COMPONENT_VERSION=	0.13.67
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Lightweight ZIP library
 COMPONENT_PROJECT_URL=	http://zziplib.sourceforge.net/
 COMPONENT_FMRI=		compress/zziplib
@@ -39,11 +40,16 @@ CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-largefile
 
+CONFIGURE_ENV.64+=	lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += text/xmlto
 
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

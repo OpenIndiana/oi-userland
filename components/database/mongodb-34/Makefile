@@ -107,13 +107,18 @@ install:	$(INSTALL_64) $(INSTALL_TOOLS)
 
 test:		$(TEST_64)
 
-REQUIRED_PACKAGES += SUNWcs
+# Build dependencies
 REQUIRED_PACKAGES += developer/build/scons
 REQUIRED_PACKAGES += developer/gcc-7
 REQUIRED_PACKAGES += developer/golang
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-7-runtime
+REQUIRED_PACKAGES += system/library/g++-7-runtime
 REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math

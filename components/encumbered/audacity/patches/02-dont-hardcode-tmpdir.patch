@@ -1,0 +1,15 @@
+$NetBSD: patch-am,v 1.7 2016/06/05 01:02:38 ryoon Exp $
+
+Don't hardcode TMPDIR.
+
+--- audacity-Audacity-2.1.1/src/AudacityApp.cpp.~1~	2017-12-11 20:48:39.444512000 +0000
++++ audacity-Audacity-2.1.1/src/AudacityApp.cpp	2017-12-11 20:50:17.545766283 +0000
+@@ -1160,7 +1160,7 @@
+    wxString home = wxGetHomeDir();
+ 
+    /* On Unix systems, the default temp dir is in /var/tmp. */
+-   defaultTempDir.Printf(wxT("/var/tmp/audacity-%s"), wxGetUserId().c_str());
++   defaultTempDir.Printf(wxT("%s/.audacity1.2-%s"), home.c_str(), wxGetUserId().c_str());
+ 
+    wxString pathVar = wxGetenv(wxT("AUDACITY_PATH"));
+    if (pathVar != wxT(""))

@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=	2.2.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_FMRI=	library/gd
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_CLASSIFICATION=	System/Libraries

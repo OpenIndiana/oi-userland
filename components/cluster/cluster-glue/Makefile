@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cluster-glue
 COMPONENT_VERSION= 1.0.12
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_COMMIT= bdd95fd0f89f31b19fa46ffa0ea3f5022ebcd858
@@ -51,6 +51,9 @@ CONFIGURE_OPTIONS += --with-daemon-group=haclient
 CONFIGURE_OPTIONS += --with-ocf-root=$(CONFIGURE_PREFIX)/lib/ocf
 CONFIGURE_OPTIONS += --with-rundir=/var/run
 CONFIGURE_OPTIONS += --enable-libnet
+CONFIGURE_OPTIONS += --disable-rpath
+
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 COMPONENT_PREP_ACTION=(cd $(@D); $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) autogen.sh)
 
@@ -65,14 +68,21 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/asciidoc
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += text/asciidoc

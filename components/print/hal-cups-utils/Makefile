@@ -32,8 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f40a7ebd1453d471a8a6bfd8c635708dd739a6160bb661813f936d936ba85618
-COMPONENT_ARCHIVE_URL=	http://fedorahosted.org/releases/h/a/hal-cups-utils/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/hal-cups
+COMPONENT_ARCHIVE_URL=	ftp://ftp.slackware.org.uk/gsb/gsb-2.28_slackware-13.1/source/l/hal-cups-utils/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

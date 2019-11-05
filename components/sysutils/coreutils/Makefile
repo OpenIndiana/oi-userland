@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
 COMPONENT_VERSION=      8.28
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=         file/gnu-coreutils	
 COMPONENT_SUMMARY=      GNU Core Utilities
 COMPONENT_DESCRIPTION= \
@@ -42,7 +43,6 @@ COMPONENT_LICENSE=      GPLv3, FDLv1.3
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
 
 # We need the GNU grep command to configure/build.
 PATH = $(PATH.gnu)
@@ -105,9 +105,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" '
 
-# Currently 2 tests fail
-#   date-debug.sh
-#   dircolors.pl
 test:		install $(TEST_64)
 
 REQUIRED_PACKAGES += library/gmp

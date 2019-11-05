@@ -1,0 +1,18 @@
+--- a/lib-src/libnyquist/nyquist/xlisp/xlisp.h.orig	2016-07-26 13:34:06 UTC
++++ b/lib-src/libnyquist/nyquist/xlisp/xlisp.h
+@@ -153,6 +153,15 @@ extern long ptrtoabs();
+ #endif
+ #endif
+ 
++/* FreeBSD */
++#if defined(__FreeBSD__) || defined(__sun)
++#if __BYTE_ORDER == __LITTLE_ENDIAN
++#define XL_LITTLE_ENDIAN
++#else
++#define XL_BIG_ENDIAN
++#endif
++#endif
++
+ /* Apple CC */
+ #ifdef __APPLE__
+ #define NNODES 2000

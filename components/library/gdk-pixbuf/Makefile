@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gdk-pixbuf
 
 COMPONENT_VERSION= 2.31.6
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= GNOME gdk-pixbuf
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -38,6 +38,13 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal  -I m4 && \
 				automake -a -f -c --gnu &&\
 				autoconf )
 
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
 
 CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
@@ -78,8 +85,8 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+# Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/glib2

@@ -15,23 +15,22 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-sv
-COMPONENT_VERSION=	2.35
+COMPONENT_VERSION=	2.40
 COMPONENT_PROJECT_URL=	http://extensions.libreoffice.org/extension-center/swedish-spelling-dictionary-den-stora-svenska-ordlistan/
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for SWedish
 COMPONENT_LICENSE=	LGPLv3
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_FMRI=	library/myspell/dictionary/sv
 COMPONENT_CLASSIFICATION	= System/Localizations
 
-COMPONENT_SRC=            ooo_swedish_dict_2-35
+COMPONENT_SRC=            ooo_swedish_dict_2-40
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).oxt
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:bd08a5205d4d4f867e64f71be1b629c0476ae413d4c524174a1aba61875930ea
-COMPONENT_ARCHIVE_URL=   http://extensions.libreoffice.org/extension-center/swedish-spelling-dictionary-den-stora-svenska-ordlistan/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+     sha256:b982881cc75f5c4af1199535bd4735ee476bdc48edf63e3f05fb4f715654a7bc
+COMPONENT_ARCHIVE_URL=   https://extensions.libreoffice.org/extensions/swedish-spelling-dictionary-den-stora-svenska-ordlistan/$(COMPONENT_VERSION)/@@download/file/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 DESTDIR=/usr/share/spell/hunspell
 LINKDIR=/usr/share/spell/myspell

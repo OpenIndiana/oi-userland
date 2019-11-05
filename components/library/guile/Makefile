@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           guile
 COMPONENT_VERSION=        1.8.8
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_SUMMARY=        GNU guile utility
 COMPONENT_PROJECT_URL=    http://www.gnu.org/software/guile/
 COMPONENT_CLASSIFICATION= Development/Other Languages
@@ -37,15 +37,21 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=    http://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=        LGPLv2.1, FDLv1.2
 
+CONFIGURE_FIX_LIBTOOL_RPATH = no
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
 
 CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
+
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
 build:		$(BUILD_32_and_64)
 

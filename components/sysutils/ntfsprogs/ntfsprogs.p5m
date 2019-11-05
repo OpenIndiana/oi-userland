@@ -11,18 +11,23 @@
 #
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 # Copyright 2016 Adam Stevko. All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 <transform file path=usr/lib/fs/ntfs-3g/(.*) -> default mode 0555>
 
-set name=pkg.fmri value=pkg:/system/file-system/ntfsprogs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license ntfsprogs.license license='GPLv2, LGPLv2'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/fstyp path=usr/lib/fs/ntfs-3g/fstyp
+link path=usr/lib/fs/ntfs-3g/mount target=../../../bin/ntfs-3g
+link path=usr/lib/fs/ntfs-3g/mkfs  target=../../../sbin/mkntfs
 
 file path=usr/bin/lowntfs-3g
 file path=usr/bin/ntfs-3g
@@ -72,14 +77,10 @@ file path=usr/include/ntfs-3g/types.h
 file path=usr/include/ntfs-3g/unistr.h
 file path=usr/include/ntfs-3g/volume.h
 file path=usr/include/ntfs-3g/xattrs.h
-file path=usr/lib/libntfs-3g.a
-link path=usr/lib/libntfs-3g.so target=libntfs-3g.so.871.0.0
-link path=usr/lib/libntfs-3g.so.871 target=libntfs-3g.so.871.0.0
-file path=usr/lib/libntfs-3g.so.871.0.0
+link path=usr/lib/libntfs-3g.so target=libntfs-3g.so.881.0.0
+link path=usr/lib/libntfs-3g.so.881 target=libntfs-3g.so.881.0.0
+file path=usr/lib/libntfs-3g.so.881.0.0
 file path=usr/lib/pkgconfig/libntfs-3g.pc
-file files/fstyp path=usr/lib/fs/ntfs-3g/fstyp
-link path=usr/lib/fs/ntfs-3g/mount target=../../../bin/ntfs-3g
-link path=usr/lib/fs/ntfs-3g/mkfs target=../../../sbin/mkntfs
 file path=usr/sbin/mkntfs
 file path=usr/sbin/ntfsclone
 file path=usr/sbin/ntfscp

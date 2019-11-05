@@ -1,0 +1,25 @@
+--- bonnie++-1.97.3/Makefile.in.~1~	2017-10-27 23:21:57.314828968 +0000
++++ bonnie++-1.97.3/Makefile.in	2017-10-27 23:27:26.094316079 +0000
+@@ -52,15 +52,15 @@
+ 	$(LINK) generate_randfile.o -o generate_randfile
+ 
+ install-bin: $(EXE) $(EXES)
+-	mkdir -p $(eprefix)/bin $(eprefix)/sbin
+-	@INSTALL_PROGRAM@ @stripping@ $(EXES) $(eprefix)/sbin
+-	@INSTALL_PROGRAM@ @stripping@ $(EXE) $(eprefix)/bin
+-	@INSTALL_SCRIPT@ $(SCRIPTS) $(eprefix)/bin
++	mkdir -p $(DESTDIR)/$(eprefix)/bin $(DESTDIR)/usr/benchmarks/bonnie++
++	@INSTALL_PROGRAM@ @stripping@ $(EXE) $(DESTDIR)/usr/benchmarks/bonnie++
++	@INSTALL_PROGRAM@ @stripping@ $(EXES) $(DESTDIR)/usr/benchmarks/bonnie++
++	@INSTALL_SCRIPT@ $(SCRIPTS) $(DESTDIR)/usr/benchmarks/bonnie++
+ 
+ install: install-bin
+-	mkdir -p @mandir@/man1 @mandir@/man8
+-	@INSTALL_DATA@ $(MAN1) @mandir@/man1
+-	@INSTALL_DATA@ $(MAN8) @mandir@/man8
++	mkdir -p $(DESTDIR)/@mandir@/man1 $(DESTDIR)/@mandir@/man8
++	@INSTALL_DATA@ $(MAN1) $(DESTDIR)/@mandir@/man1
++	@INSTALL_DATA@ $(MAN8) $(DESTDIR)/@mandir@/man1
+ 
+ %.o: %.cpp
+ 	$(CXX) -c $<

@@ -1,0 +1,59 @@
+--- lightdm-1.19.3/liblightdm-gobject/power.c.~2~	2018-01-16 14:50:14.909246176 +0000
++++ lightdm-1.19.3/liblightdm-gobject/power.c	2018-01-16 14:51:44.132600719 +0000
+@@ -20,6 +20,8 @@
+ static GDBusProxy *ck_proxy = NULL;
+ static GDBusProxy *login1_proxy = NULL;
+ 
++static GVariant * ck_call_function (const gchar *function, GError **error);
++
+ static GVariant *
+ upower_call_function (const gchar *function, GError **error)
+ {
+@@ -93,7 +95,11 @@
+     if (!getenv("XDG_VTNR"))
+         return FALSE;
+ 
++#if defined(__sun)
++    r = ck_call_function ("CanSuspend", NULL);
++#else
+     r = login1_call_function ("CanSuspend", NULL, NULL);
++#endif
+     if (r)
+     {
+         gchar *result;
+@@ -129,7 +135,11 @@
+     GVariant *result;
+     gboolean suspended;
+ 
++#if defined(__sun)
++    result = ck_call_function ("Suspend", NULL);
++#else
+     result = login1_call_function ("Suspend", g_variant_new("(b)", FALSE), error);
++#endif
+     if (!result)
+     {
+         if (error)
+@@ -162,7 +172,11 @@
+     if (!getenv("XDG_VTNR"))
+         return FALSE;
+ 
++#if defined(__sun)
++    r = ck_call_function ("CanHibernate", NULL);
++#else
+     r = login1_call_function ("CanHibernate", NULL, NULL);
++#endif
+     if (r)
+     {
+         gchar *result;
+@@ -202,7 +216,11 @@
+     if (!getenv("XDG_VTNR"))
+         return FALSE;
+ 
++#if defined(__sun)
++    result = ck_call_function ("Hibernate", NULL);
++#else
+     result = login1_call_function ("Hibernate", g_variant_new("(b)", FALSE), error);
++#endif
+     if (!result)
+     {
+         if (error)

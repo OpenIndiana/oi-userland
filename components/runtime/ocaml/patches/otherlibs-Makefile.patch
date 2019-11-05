@@ -1,0 +1,14 @@
+$NetBSD: patch-otherlibs_Makefile,v 1.6 2017/07/17 23:26:23 wiz Exp $
+
+Honor LDFLAGS.
+
+--- ocaml-4.06.0/otherlibs/Makefile.orig	2017-06-23 15:13:40.000000000 +0000
++++ ocaml-4.06.0/otherlibs/Makefile
+@@ -53,6 +53,7 @@ MKLIB=$(CAMLRUN) $(ROOTDIR)/tools/ocamlm
+ #LINKOPTS=
+ #LDOPTS=
+ #HEADERS=
++LDOPTS=-ldopt "$(LDFLAGS)"
+ 
+ CMIFILES ?= $(CAMLOBJS:.cmo=.cmi)
+ CAMLOBJS_NAT ?= $(CAMLOBJS:.cmo=.cmx)

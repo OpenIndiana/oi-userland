@@ -1,6 +1,10 @@
---- jdk/make/common/Program.gmk.~1~	2014-01-01 09:53:33.000000000 +0400
-+++ jdk/make/common/Program.gmk	2014-01-07 16:24:02.115499513 +0400
-@@ -65,7 +65,10 @@
+$NetBSD: patch-jdk_make_common_Program.gmk,v 1.4 2017/08/14 00:02:16 ryoon Exp $
+
+GCC support.
+
+--- jdk/make/common/Program.gmk.orig	2017-08-13 05:55:12.000000000 +0000
++++ jdk/make/common/Program.gmk
+@@ -65,7 +65,10 @@ program: $(ACTUAL_PROGRAM)
  ifndef CROSS_COMPILE_ARCH
    # reuse the mapfiles in the launcher's directory, the same should
    # be applicable to the tool launchers as well.
@@ -12,7 +16,7 @@
    include $(BUILDDIR)/common/Mapfile-vers.gmk
  endif
  
-@@ -121,6 +125,9 @@
+@@ -121,6 +125,9 @@ ifneq (,$(findstring $(PLATFORM), linux 
      LDFLAGS += -Wl,--allow-shlib-undefined
      LDFLAGS += -Wl,-rpath -Wl,\$$ORIGIN/../lib/$(LIBARCH)/jli
    endif # PLATFORM LINUX
@@ -21,4 +25,4 @@
 +  endif # SYSTEM_ZLIB
  endif # PLATFORM linux solaris
  
- ifeq ($(PLATFORM), windows)
+ # AIX can not handle $ORIGIN so we have to link with the static JLI version (libjli.a)

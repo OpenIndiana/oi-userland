@@ -27,16 +27,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		procmail
 COMPONENT_VERSION=	3.22
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.procmail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:087c75b34dd33d8b9df5afe9e42801c9395f4bf373a784d9bc97153b0062e117
-COMPONENT_BUGDB=	utility/procmail
 
 # ftp://ftp.procmail.org/pub/procmail/procmail-3.22.tar.gz no longer works.
-COMPONENT_ARCHIVE_URL=	ftp://ftp.ucsb.edu/pub/mirrors/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	 ftp://ftp.informatik.rwth-aachen.de/pub/packages/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -50,17 +49,14 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += RPM_OPT_FLAGS="$(CC_BITS)"
 
 # common targets
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
 test:           $(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

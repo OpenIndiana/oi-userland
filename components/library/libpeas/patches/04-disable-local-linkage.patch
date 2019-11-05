@@ -1,0 +1,18 @@
+Commit 3ee92ca98b095bbd840f4c7b10df8939fe246484 Load C plugins with local linkage
+forces C plugins to be loaded with G_MODULE_BIND_LOCAL, which breaks totem plugins
+
+--- libpeas-1.20.0/libpeas/peas-plugin-loader-c.c.1	2017-12-20 11:28:52.731793066 +0000
++++ libpeas-1.20.0/libpeas/peas-plugin-loader-c.c	2017-12-20 11:29:26.980451515 +0000
+@@ -74,11 +74,10 @@
+         {
+           /* Force all C modules to be resident in case they
+            * use libraries that do not deal well with reloading.
+-           * Furthermore, we use local linkage to improve module isolation.
+            */
+           info->loader_data = peas_object_module_new_full (module_name,
+                                                            module_dir,
+-                                                           TRUE, TRUE);
++                                                           TRUE, FALSE);
+         }
+
+       if (!g_type_module_use (G_TYPE_MODULE (info->loader_data)))

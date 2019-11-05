@@ -70,15 +70,16 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libdaemon
-REQUIRED_PACKAGES += library/python-2/python-twisted-27
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/python/python-dbus-27
+REQUIRED_PACKAGES += library/python/python-twisted-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += system/library

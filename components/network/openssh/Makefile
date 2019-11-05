@@ -19,11 +19,13 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2018 Till Wegmüller
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 COMPONENT_VERSION=	7.4p1
+COMPONENT_REVISION=	3
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
@@ -87,10 +89,13 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
 CONFIGURE_OPTIONS += --bindir=/usr/bin
 CONFIGURE_OPTIONS += --disable-lastlog
 
-# common targets
-build:		$(BUILD_32)
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm755 $(SOURCE_DIR)/contrib/ssh-copy-id $(PROTOUSRBINDIR)/ssh-copy-id;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-copy-id.1 $(PROTOUSRSHAREMAN1DIR)/ssh-copy-id.1;
 
-install:	$(INSTALL_32)
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 # Because of certain set up requirement, the regress test suite is ported to
 # the STC gate.
@@ -100,6 +105,8 @@ REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/security/gss

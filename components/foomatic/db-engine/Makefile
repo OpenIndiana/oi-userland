@@ -69,6 +69,9 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library

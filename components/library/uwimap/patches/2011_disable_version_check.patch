@@ -1,0 +1,27 @@
+Description: Disable version check
+ The version check in mail_versioncheck(), called via #include "linkage.c",
+ Prevents new versions of the shared library to be used without rebuilding
+ all applications, even if there wouldn't be any other problems doing so.
+ Package dependencies, SONAME, and Debian's build system make sure that
+ a compatible version will be loaded; therefore we remove this check.
+Author: Magnus Holmgren <holmgren@debian.org>
+Bug-Debian: http://bugs.debian.org/682256
+
+--- a/src/c-client/mail.c
++++ b/src/c-client/mail.c
+@@ -293,13 +293,8 @@ static void mail_string_setpos (STRING *
+ 
+ void mail_versioncheck (char *version)
+ {
+-				/* attempt to protect again wrong .h */
+-  if (strcmp (version,mailcclientversion)) {
+-    char tmp[MAILTMPLEN];
+-    sprintf (tmp,"c-client library version skew, app=%.100s library=%.100s",
+-	     version,mailcclientversion);
+-    fatal (tmp);
+-  }
++	/* Skip unnecessarily strict version check. */
++	;
+ }
+ 
+ 

@@ -38,3 +38,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-27

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.12.0
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
@@ -55,7 +56,6 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
-CONFIGURE_OPTIONS+=	--with-gstreamer=0.10
 CONFIGURE_OPTIONS+=	--with-nss-includes=/usr/include/mps
 CONFIGURE_OPTIONS+=	--with-nss-libs=/usr/lib/mps
 CONFIGURE_OPTIONS+=	--with-nspr-includes=/usr/include/mps
@@ -84,8 +84,10 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -93,17 +95,15 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/python-2/python-dbus-27
+REQUIRED_PACKAGES += library/python/python-dbus-27
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib

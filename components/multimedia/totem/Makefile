@@ -10,62 +10,71 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= totem
-COMPONENT_VERSION= 2.32.0
-COMPONENT_REVISION= 2
+# Later versions require clutter-gtk-1.0
+COMPONENT_VERSION= 3.0.1
 COMPONENT_SUMMARY= Totem Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:982d6aaeca3e4844694fc0a2540d792bea753e24b55cf33203188b32b5914f47
+  sha256:013b6cfedac6ff264aa27de7346597d0b8da7f4ed1f91b2c966a13d3fdff679a
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_FMRI = gnome/media/totem
+COMPONENT_CLASSIFICATION = Applications/Sound and Video
+COMPONENT_LICENSE = GPLv2 with plugins exception
+COMPONENT_LICENSE_FILE = COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --enable-browser-plugins
+CONFIGURE_OPTIONS+= --disable-nautilus
+CONFIGURE_OPTIONS+= --disable-static
+CONFIGURE_OPTIONS+= --with-pic
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
 CONFIGURE_ENV    += MOZILLA_PLUGINDIR=/usr/lib/firefox/browser/plugins
-COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+
+# gobject-introspection
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += gnome/file-manager/nautilus
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgdata
+REQUIRED_PACKAGES += library/desktop/libpeas
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsoup
-REQUIRED_PACKAGES += library/libunique
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/media-player/totem-pl-parser
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice

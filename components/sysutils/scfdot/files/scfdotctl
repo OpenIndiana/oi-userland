@@ -1,0 +1,115 @@
+#!/bin/sh
+
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at CDDL.LICENSE.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at CDDL.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
+# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+#
+
+# check the requirements
+if [ ! -f /usr/bin/dot ] || [ ! -f /usr/bin/gs ]; then
+echo "-> Ups! We need graphviz and ghostscript, please install the packages with:"
+echo "pkg install print/filter/ghostscript image/graphviz"
+exit
+fi
+
+# Build scfdot, invoke it to generate a graph description, and run dot to
+# render it to PostScript.  The resulting file will be <hostname>.ps .
+
+# Options to pass to scfdot.  This limits the graph to 300" by 42", includes
+# legend.ps as the legend (built below), and consolidates inetd services into
+# a single node.  See the comment at the top of scfdot.c for other options.
+# Edit please directly below in the second call of scfdot.
+
+HOSTNAME=`hostname`
+SCFDOTOPTSL='-L'
+
+# Margin, in inches, to include above and below the legend.
+LEGEND_MARGIN=3
+
+# Options to pass to dot when rendering the graph.  Consider increasing
+# mclimit, which dictates how long dot spends optimizing node placement.  It
+# defaults to 1.0; 100 should produce good output, but it may take a long
+# time.
+DOTOPTS=-Gmclimit=100
+
+cat << EOF > /tmp/functions.awk.$$
+BEGIN {
+  f = "";
+	left = 0;
+	bottom = 0;
+	right = 0;
+	top = 0;
+}
+
+f == "enlarge" && /^%%BoundingBox:/ {
+  printf "%s %d %d %d %d\n", \$1, \$2 - left * 72, \$3 - bottom * 72, \\
+  \$4 + right * 72, \$5 + top * 72;
+	next;
+}
+f == "setpage" && /^%%BoundingBox:/ {
+  width = \$4; height = \$5
+}
+f == "setpage" && /^%%BeginSetup\$/ {
+	if (width == 0 || height == 0) {
+		exit 1;
+	}
+	print;
+
+	# I doubt this is necessary, but the PPD spec suggests it.
+	print "%%BeginFeature: *CustomPageSize";
+
+	# Here we print the parameters to the code below.  We add an inch of
+	# 'far' margin (the 'near' margin should have already been set by dot
+	# to be whatever margin was set to in the .dot file).
+	printf "%d %d\n", width + 72, height + 72;
+
+	# This is the magic code from HP's ppd file.  Actually, the ppd code
+	# begins with pop pop pop, but that just discards the orientation and
+	# offset parameters, so if we don't print them in the first place, it
+	# won't matter.
+	print "<</PageSize [ 5 -2 roll ] /ImagingBBox null>>setpagedevice";
+
+	print "%%EndFeature";
+	next;
+}
+{ print }
+
+EOF
+
+
+scfdot "${SCFDOTOPTSL}"      > /tmp/legend.dot.$$
+dot -Teps /tmp/legend.dot.$$ > /tmp/legend.ps.$$
+awk -f /tmp/functions.awk.$$ top="${LEGEND_MARGIN}" bottom="${LEGEND_MARGIN}" f=enlarge \
+      /tmp/legend.ps.$$      > "/tmp/${HOSTNAME}-legend.ps.$$"
+scfdot -l "/tmp/${HOSTNAME}-legend.ps.$$" -s "300,42"  -x consolidate_inetd_svcs > /tmp/hostname.dot.$$
+echo "If you want to speed up the process use lower values for option Gmclimit (used value: ${DOTOPTS})"
+dot -Tps2 ${DOTOPTS} < /tmp/hostname.dot.$$ > /tmp/hostname.ps.$$
+awk -f /tmp/functions.awk.$$ f=setpage /tmp/hostname.ps.$$ > "${HOSTNAME}.ps"
+grep BoundingBox "${HOSTNAME}.ps"|tail -1
+ps2pdf -dPDFFitPage "${HOSTNAME}.ps" "${HOSTNAME}.pdf"
+rm /tmp/legend.dot.$$ /tmp/legend.ps.$$ \
+   /tmp/hostname.dot.$$ /tmp/hostname.ps.$$ \
+   /tmp/functions.awk.$$ "/tmp/${HOSTNAME}-legend.ps.$$"
+echo "created ${HOSTNAME}.ps and ${HOSTNAME}.pdf"
+
+

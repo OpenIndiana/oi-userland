@@ -9,20 +9,19 @@
 #
 
 #
-# Copyright (c) 2017 Andreas Wacknitz
+# Copyright (c) 2017, 2018 Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsass
-COMPONENT_VERSION=	3.4.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.4.8
 COMPONENT_PROJECT_URL=	http://libsass.org
 COMPONENT_SUMMARY=	LibSass is a C/C++ port of the Sass engine
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:686bc09cc31bba32915f42a6da5e7d221c07690d4d597e2748cdd02abd3d7c2c
+  sha256:2344372fa613db1ef1401bea03abc23e824cb33b03ba2276ec56602dc8ab003f
 COMPONENT_ARCHIVE_URL=	https://github.com/sass/libsass/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/libsass
 COMPONENT_LICENSE=	MIT
@@ -48,7 +47,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+# Auto-generated:
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

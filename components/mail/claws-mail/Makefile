@@ -14,14 +14,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	3.14.1
+COMPONENT_VERSION=	3.15.1
 COMPONENT_PROJECT_URL=	http://www.claws-mail.org
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b79a1dc04f0b3d1f693e84d7fa7282f140fb5280179281445a8b954ce423c335
+    sha256:8d093c2f32db863c1141d56e35424c04ee48fe5d6adf4c7f349f647fa3149542
 COMPONENT_ARCHIVE_URL=	http://www.claws-mail.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
@@ -45,6 +45,9 @@ LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 CPPFLAGS.32 = -D_FILE_OFFSET_BITS=64
 CPPFLAGS += $(CPPFLAGS.$(BITS))
 
+CONFIGURE_BINDIR.64 = /usr/bin
+
+CONFIGURE_OPTIONS += --disable-fancy-plugin
 CONFIGURE_OPTIONS += --disable-ldap
 CONFIGURE_OPTIONS += --disable-perl-plugin
 CONFIGURE_OPTIONS += --disable-rssyl-plugin
@@ -53,9 +56,9 @@ CONFIGURE_ENV.64 += PATH=/usr/bin/$(MACH64):/usr/bin
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -64,7 +67,6 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
-REQUIRED_PACKAGES += library/desktop/webkitgtk
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3

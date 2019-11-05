@@ -1,0 +1,79 @@
+#
+# pkg-config --libs or --libs-only-L should strip linker flags
+# matching (-Wl,)?-((L|R) ?)|(rpath,)){path} where path matches
+# a system libpath, not just -Lpath.
+#
+
+--- pkg-config-0.29.2/pkg.c.orig	Mon Mar 20 11:34:23 2017
++++ pkg-config-0.29.2/pkg.c	Mon Jan 29 21:21:41 2018
+@@ -863,32 +863,54 @@
+       GList *system_dir_iter = system_directories;
+       Flag *flag = iter->data;
+ 
+-      if (!(flag->type & LIBS_L))
++      if (!(flag->type & (LIBS_L | LIBS_ANY)))
+         continue;
+ 
+       while (system_dir_iter != NULL)
+         {
++          gboolean is_Wl = FALSE;
+           gboolean is_system = FALSE;
+           const char *linker_arg = flag->arg;
++          const char *linker_path = NULL;
+           const char *system_libpath = system_dir_iter->data;
+ 
+-          if (strncmp (linker_arg, "-L ", 3) == 0 &&
+-              strcmp (linker_arg + 3, system_libpath) == 0)
+-            is_system = TRUE;
+-          else if (strncmp (linker_arg, "-L", 2) == 0 &&
+-              strcmp (linker_arg + 2, system_libpath) == 0)
+-            is_system = TRUE;
+-          if (is_system)
++          /*
++           * Skip any "-Wl," that might tell a compiler that a linker flag
++           * is comming.
++           */
++          if (strncmp(linker_arg, "-Wl,", 4) == 0)
+             {
+-              debug_spew ("Package %s has -L %s in Libs\n",
+-                          pkg->key, system_libpath);
+-              if (g_getenv ("PKG_CONFIG_ALLOW_SYSTEM_LIBS") == NULL)
++              linker_arg += 4;
++              is_Wl = TRUE;
++            }
++
++          /* Is this a linker flag that we might want to strip? */
++          if (strncmp (linker_arg, "-L", 2) == 0 ||
++              strncmp (linker_arg, "-R", 2) == 0)
++            linker_path = linker_arg + 2;
++          else if (strncmp (linker_arg, "-rpath", 6) == 0)
++            linker_path = linker_arg + 6;
++
++          if (linker_path != NULL)
++            {
++              /* Skip a leading space or comma. */
++              if (((is_Wl == FALSE) && (*linker_path == ' ')) ||
++                  ((is_Wl == TRUE) && (*linker_path == ',')))
++                linker_path++;
++
++              /* Does this match a system_libpath item? */
++              if (strcmp(linker_path, system_libpath) == 0)
+                 {
+-                  iter->data = NULL;
+-                  ++count;
+-                  debug_spew ("Removing -L %s from libs for %s\n",
+-                              system_libpath, pkg->key);
+-                  break;
++                  debug_spew ("Package %s has %s in Libs search path\n",
++                              pkg->key, system_libpath);
++                  if (g_getenv ("PKG_CONFIG_ALLOW_SYSTEM_LIBS") == NULL)
++                    {
++                      iter->data = NULL;
++                      ++count;
++                      debug_spew ("Removing %s from libs for %s\n",
++                                  flag->arg, pkg->key);
++                      break;
++                    }
+                 }
+             }
+           system_dir_iter = system_dir_iter->next;

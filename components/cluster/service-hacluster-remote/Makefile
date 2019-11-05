@@ -45,3 +45,5 @@ install:
 clean:
 		$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs

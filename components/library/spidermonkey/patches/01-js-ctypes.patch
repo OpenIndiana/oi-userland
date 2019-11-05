@@ -1,0 +1,33 @@
+diff --git a/js/src/ctypes/CTypes.cpp b/js/src/ctypes/CTypes.cpp
+index 763d6e6..8b04fc8 100644
+--- a/ctypes/CTypes.cpp
++++ b/ctypes/CTypes.cpp
+@@ -1023,6 +1023,19 @@ static JS_ALWAYS_INLINE TargetType Convert(FromType d)
+   return ConvertImpl<TargetType, FromType>::Convert(d);
+ }
+ 
++template<class Type>
++class no_bug_numeric_digits
++{
++  public:
++    static const int digits = numeric_limits<Type>::digits;
++};
++template<>
++class no_bug_numeric_digits<unsigned long long>
++{
++  public:
++    static const int digits = 64;
++};
++
+ template<class TargetType, class FromType>
+ static JS_ALWAYS_INLINE bool IsAlwaysExact()
+ {
+@@ -1035,7 +1048,7 @@ static JS_ALWAYS_INLINE bool IsAlwaysExact()
+   // 2) If FromType is signed, TargetType must also be signed. (Floating point
+   //    types are always signed.)
+   // 3) If TargetType is an exact integral type, FromType must be also.
+-  if (numeric_limits<TargetType>::digits < numeric_limits<FromType>::digits)
++  if (numeric_limits<TargetType>::digits < no_bug_numeric_digits<FromType>::digits)
+     return false;
+ 
+   if (numeric_limits<FromType>::is_signed &&

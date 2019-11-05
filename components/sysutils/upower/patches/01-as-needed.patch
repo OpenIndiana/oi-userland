@@ -1,0 +1,16 @@
+--- upower-0.99.4/configure.ac.1	2017-12-22 13:18:00.954079517 +0000
++++ upower-0.99.4/configure.ac	2017-12-22 13:26:13.332598522 +0000
+@@ -225,7 +225,12 @@
+ AM_CONDITIONAL(UP_BUILD_TESTS, test x$enable_tests = xyes)
+ 
+ if test "x$GCC" = "xyes"; then
+-  LDFLAGS="-Wl,--as-needed $LDFLAGS"
++ AC_MSG_CHECKING([if linker accepts --as-needed flag])
++ save_LDFLAGS="$LDFLAGS"
++ LDFLAGS="-Wl,--as-needed $LDFLAGS"
++ AC_TRY_LINK([#include <stdio.h>], [int i=0; return i;], [AC_MSG_RESULT(yes)], [
++	AC_MSG_RESULT(no)
++	LDFLAGS="$save_LDFLAGS"])
+ fi
+ 
+ # i18n support

@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
 COMPONENT_VERSION=      7.54.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -87,8 +87,9 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap

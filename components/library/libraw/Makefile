@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libraw
 COMPONENT_VERSION= 0.17.2
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= libraw - library for reading RAW files obtained from digital photo cameras
 COMPONENT_PROJECT_URL= http://www.libraw.org/
 COMPONENT_FMRI= image/library/libraw
@@ -58,5 +58,5 @@ REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

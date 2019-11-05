@@ -27,34 +27,33 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
 COMPONENT_VERSION=	3.1.2
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ecfa62a7fa3c4c18b9eccd8c16eaddee4bd308a76ea50b5c02a5840f09c0a1c2
 COMPONENT_ARCHIVE_URL=	http://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/rsync
+COMPONENT_FMRI=	network/rsync
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
-COPYRIGHT_FILE=	rsync.copyright
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
-CONFIGURE_OPTIONS  +=		--prefix=/usr
 CONFIGURE_OPTIONS  +=		--with-included-popt
 CONFIGURE_OPTIONS  +=		--enable-xattr-support
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

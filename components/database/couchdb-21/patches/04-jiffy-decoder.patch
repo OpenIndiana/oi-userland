@@ -1,0 +1,20 @@
+--- apache-couchdb-2.1.0/src/jiffy/c_src/decoder.c.orig	2017-10-11 13:36:59.516850534 +0000
++++ apache-couchdb-2.1.0/src/jiffy/c_src/decoder.c	2017-10-11 13:39:17.288149743 +0000
+@@ -374,7 +374,7 @@
+     int has_frac = 0;
+     int has_exp = 0;
+     double dval;
+-    long lval;
++    long long lval;
+ 
+     while(d->i < d->len) {
+         switch(state) {
+@@ -589,7 +589,7 @@
+                 return 1;
+             }
+         } else {
+-            lval = strtol(nbuf, NULL, 10);
++            lval = strtoll(nbuf, NULL, 10);
+             if(errno != ERANGE) {
+                 *value = enif_make_int64(d->env, lval);
+                 return 1;

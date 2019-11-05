@@ -73,8 +73,10 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += system/library

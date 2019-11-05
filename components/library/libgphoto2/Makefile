@@ -46,7 +46,8 @@ LD_B_DIRECT=
 LD_Z_IGNORE=
 
 CFLAGS.32 += -D_FILE_OFFSET_BITS=64
-CFLAGS += $(CFLAGS.$(BITS))
+CFLAGS	  += $(CFLAGS.$(BITS))
+CFLAGS	  += -std=gnu89 $(CPP_XPG5MODE)
 
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
 

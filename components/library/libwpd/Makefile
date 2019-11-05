@@ -23,8 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwpd
-COMPONENT_VERSION=	0.10.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.10.2
 COMPONENT_FMRI=     	library/c++/libwpd
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpd
@@ -32,7 +31,7 @@ COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) docum
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:09d3410bc770f9d9eedc8544b5c211771ea3322de3fee19b58ad7d40fb2984f6
+  sha256:323f68beaf4f35e5a4d7daffb4703d0566698280109210fa4eaa90dea27d6610
 COMPONENT_ARCHIVE_URL=	\
   http://sourceforge.net/projects/libwpd/files/libwpd/libwpd-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
@@ -54,5 +53,5 @@ test: $(NO_TESTS)
 REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

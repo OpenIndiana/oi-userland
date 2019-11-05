@@ -17,13 +17,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	52.4.1esr
-IPS_COMPONENT_VERSION= 	52.4.1
+COMPONENT_VERSION= 	52.6.0esr
+COMPONENT_REVISION=	1
+IPS_COMPONENT_VERSION= 	52.6.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:96fab11b7e5bd016f80718161ee8dd8afdf989a2cd03106a148b15def2569457
+  sha256:587cd94a315f5a94bf5c1f85e4a0ea92c9103503b51d649a3c4a4a122d691e42
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -39,8 +40,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
                           cd $(@D)/js/src && autoconf-2.13 )
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR); chmod +x $(BUILD_DIR)/gld-wrapper )
-
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 CONFIGURE_OPTIONS =	--enable-application=browser
 CONFIGURE_OPTIONS +=	--enable-official-branding
@@ -99,9 +98,13 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
 
 install: $(INSTALL_32)
 
+# Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += system/header/header-audio
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -110,15 +113,15 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/c++/sunpro
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxdamage

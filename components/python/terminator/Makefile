@@ -47,10 +47,11 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/vte
-REQUIRED_PACKAGES += library/python-2/python-notify-27
 REQUIRED_PACKAGES += library/python/gnome-python-27
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/python/python-dbus-27
+REQUIRED_PACKAGES += library/python/python-notify-27
 REQUIRED_PACKAGES += runtime/python-27

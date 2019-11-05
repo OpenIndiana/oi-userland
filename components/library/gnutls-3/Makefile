@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_VERSION=	3.5.14
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -53,7 +54,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -I$(USRINCDIR)/gmp
-CFLAGS += -I$(USRINCDIR)/idn
+CFLAGS += -I$(USRINCDIR)/idn2
 
 MCS = mcs
 STRIP = strip
@@ -91,11 +92,12 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies: 
 REQUIRED_PACKAGES += library/desktop/p11-kit
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime

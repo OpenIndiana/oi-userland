@@ -51,3 +51,10 @@ $(BUILD_DIR)/%/.installed: $(BUILD_32)
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/dtrace
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/ruby-23

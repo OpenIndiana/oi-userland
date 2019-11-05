@@ -1,0 +1,58 @@
+--- ConsoleKit-0.4.1/src/ck-sysdeps-solaris.c	2018-01-16 08:39:38.810256813 +0000
++++ ConsoleKit-0.4.1/src/ck-sysdeps-solaris.c	2018-01-16 08:39:34.260866334 +0000
+@@ -29,6 +29,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#include <sys/uadmin.h>
+ 
+ #ifdef HAVE_SYS_VT_H
+ #include <sys/vt.h>
+@@ -533,15 +534,17 @@
+ gboolean
+ ck_system_can_suspend (void)
+ {
+-        /* TODO: not implemented */
+-        return FALSE;
++        gboolean can_suspend;
++        can_suspend = ((uadmin(A_FREEZE, AD_CHECK_SUSPEND_TO_RAM, 0) == 0)? TRUE: FALSE) ;
++        return can_suspend;
+ }
+ 
+ gboolean
+ ck_system_can_hibernate (void)
+ {
+-        /* TODO: not implemented */
+-        return FALSE;
++        gboolean can_hibernate;
++        can_hibernate = ((uadmin(A_FREEZE, AD_CHECK_SUSPEND_TO_DISK, 0) == 0)? TRUE: FALSE) ;
++        return can_hibernate;
+ }
+ 
+ gboolean
+--- ConsoleKit-0.4.1/tools/solaris/ck-system-suspend.1	2018-01-16 08:42:06.323997398 +0000
++++ ConsoleKit-0.4.1/tools/solaris/ck-system-suspend	2018-01-16 08:44:06.015209511 +0000
+@@ -1,4 +1,8 @@
+ #!/bin/sh
+ 
+-# FIXME: Implement this
+-exit 1
++RET=1
++if [ -x "/usr/sbin/uadmin" ] ; then
++   /usr/sbin/uadmin 3 20
++   RET=$?
++fi
++exit $RET
+--- ConsoleKit-0.4.1/tools/solaris/ck-system-hibernate.1	2018-01-16 08:45:01.320015702 +0000
++++ ConsoleKit-0.4.1/tools/solaris/ck-system-hibernate	2018-01-16 08:45:40.499810609 +0000
+@@ -1,4 +1,8 @@
+ #!/bin/sh
+ 
+-# FIXME: Implement this
+-exit 1
++RET=1
++if [ -x "/usr/sbin/uadmin" ] ; then
++   /usr/sbin/uadmin 3 0
++   RET=$?
++fi
++exit $RET

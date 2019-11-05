@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jenkins
 COMPONENT_VERSION=	2.65
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		developer/jenkins
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	http://jenkins-ci.org/
@@ -29,6 +29,10 @@ COMPONENT_LICENSE_FILE= jenkins.license
 COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
 
 include $(WS_MAKE_RULES)/ips.mk
+
+download:
+
+prep:
 
 clean::
 	$(RM) -r $(BUILD_DIR)
@@ -43,6 +47,6 @@ install:
 
 test: $(NO_TESTS)
 
-# Note: this recipe just defines packages.
-# No real build, no magic tools, no downloads even, should be needed!
-# So, no custom REQUIRED_PACKAGES
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/java/openjdk8

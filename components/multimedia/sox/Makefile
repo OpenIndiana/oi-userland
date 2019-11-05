@@ -59,3 +59,16 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/libogg
+REQUIRED_PACKAGES += library/libsndfile
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/magic
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

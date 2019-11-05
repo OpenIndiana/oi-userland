@@ -67,6 +67,6 @@ install: $(INSTALL_32_and_64)
 # test_shutdown_stress fails
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/c++/zeromq-3.2
+REQUIRED_PACKAGES += system/library

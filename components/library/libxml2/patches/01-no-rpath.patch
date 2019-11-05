@@ -1,0 +1,33 @@
+Remove -R/usr/lib from xml2-config output
+
+--- libxml2-2.9.7/xml2-config.in.1	2017-11-16 17:09:21.221320478 +0000
++++ libxml2-2.9.7/xml2-config.in	2017-11-16 17:18:03.100961204 +0000
+@@ -82,17 +82,24 @@
+        	;;
+ 
+     --libs)
+-        if [ "`uname`" = "Linux" ]
+-	then
++        case "`uname`" in
++	"SunOS")
++	    echo @XML_LIBS@ @MODULE_PLATFORM_LIBS@
++	    break
++	    ;;
++        "Linux")
+ 	    if [ "@XML_LIBDIR@" = "-L/usr/lib" -o "@XML_LIBDIR@" = "-L/usr/lib64" ]
+ 	    then
+ 		echo @XML_LIBS@ @MODULE_PLATFORM_LIBS@
+ 	    else
+ 		echo @XML_LIBDIR@ @XML_LIBS@ @MODULE_PLATFORM_LIBS@
+ 	    fi
+-	else
++            break
++            ;;
++	*)
+ 	    echo @XML_LIBDIR@ @XML_LIBS@ @MODULE_PLATFORM_LIBS@ @WIN32_EXTRA_LIBADD@
+-	fi
++	    ;;
++	esac
+        	;;
+ 
+     *)

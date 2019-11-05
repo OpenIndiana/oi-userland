@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clisp
 COMPONENT_VERSION=	2.49
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://clisp.cons.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -67,6 +67,8 @@ CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --srcdir=$(SOURCE_DIR)
 CONFIGURE_OPTIONS += --with-libsigsegv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libreadline-prefix=$(CONFIGURE_PREFIX)
+# Workaround invalid configure guess
+CONFIGURE_OPTIONS += gl_cv_func_mbrtowc_retval=yes
 
 # For now keep ASLR disabled for clisp (the default); build may core dump with ASLR
 # ASLR_MODE = $(ASLR_DISABLE)

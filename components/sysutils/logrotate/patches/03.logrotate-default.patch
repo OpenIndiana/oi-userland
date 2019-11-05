@@ -1,0 +1,25 @@
+--- logrotate-3.13.0/examples/logrotate-default.orig	Sun Nov  5 16:55:10 2017
++++ logrotate-3.13.0/examples/logrotate-default	Sun Nov  5 16:57:22 2017
+@@ -25,18 +25,18 @@
+ include /etc/logrotate.d
+ 
+ # no packages own wtmp and btmp -- we'll rotate them here
+-/var/log/wtmp {
++/var/adm/wtmpx {
+     missingok
+     monthly
+-    create 0664 root utmp
++    create 0664 root bin
+     minsize 1M
+     rotate 1
+ }
+ 
+-/var/log/btmp {
++/var/adm/utmpx {
+     missingok
+     monthly
+-    create 0600 root utmp
++    create 0600 adm adm
+     rotate 1
+ }
+ 

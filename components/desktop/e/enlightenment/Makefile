@@ -59,10 +59,12 @@ install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/e/efl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/dbus/dbus-x11
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/xcb-util-keysyms

@@ -67,5 +67,6 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/tdb
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

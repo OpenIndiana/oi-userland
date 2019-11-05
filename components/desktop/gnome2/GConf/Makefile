@@ -57,15 +57,17 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += text/gnu-gettext
+REQUIRED_PACKAGES += text/intltool
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/orbit2
-REQUIRED_PACKAGES += library/python-2/lxml-27
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += library/python/lxml-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
-REQUIRED_PACKAGES += text/gnu-gettext
-REQUIRED_PACKAGES += text/intltool

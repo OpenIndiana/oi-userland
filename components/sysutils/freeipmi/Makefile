@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeipmi
 COMPONENT_VERSION=	1.5.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU FreeIPMI - in-band and out-of-band IPMI
 COMPONENT_DESCRIPTION=	GNU FreeIPMI - in-band and out-of-band IPMI software based on the \
 IPMI v1.5/2.0 specification ($(COMPONENT_VERSION))

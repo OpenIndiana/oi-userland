@@ -31,14 +31,14 @@ COMPONENT_FMRI = library/audio/gstreamer/plugin/bad
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 CFLAGS += -I/usr/sfw/include -I/usr/X11/include
 
@@ -63,6 +63,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += audio/faac
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += codec/jasper
@@ -91,8 +92,8 @@ REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/xvid
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump

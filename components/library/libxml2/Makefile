@@ -27,12 +27,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-COMPONENT_VERSION=	2.9.6
+COMPONENT_VERSION=	2.9.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8b9038cca7240e881d462ea391882092dfdc6d4f483f72683e817be08df5ebbc
+    sha256:f63c5e7d30362ed28b38bfa1ac6313f9a80230720b7fb6c80575eeab3ff5900c
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxml
 
@@ -108,3 +109,13 @@ install:	$(INSTALL_32_and_64)
 	$(PYTHON.3.4.32) -m compileall $(PROTO_DIR)/usr/lib/python3.4/vendor-packages
 
 test:		$(TEST_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

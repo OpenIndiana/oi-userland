@@ -63,6 +63,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
+REQUIRED_PACKAGES += system/library/math

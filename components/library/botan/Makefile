@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		botan
 COMPONENT_VERSION=      1.10.9
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_LICENSE=      BSD
 COMPONENT_PROJECT_URL=  http://botan.randombit.net/
 COMPONENT_SUMMARY= 	Crypto and TLS for C++11
@@ -63,3 +63,13 @@ COMPONENT_POST_INSTALL_ACTION= \
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += system/library/math

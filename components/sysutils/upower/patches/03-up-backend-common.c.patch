@@ -1,0 +1,43 @@
+Map unsupported ConsoleKit methods to supported ones
+
+--- upower-0.99.4/src/bsd/up-backend-common.c.~1~	2015-07-08 11:30:24.000000000 +0000
++++ upower-0.99.4/src/bsd/up-backend-common.c	2018-01-18 12:13:50.439742956 +0000
+@@ -19,6 +19,8 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  */
+ 
++#include <strings.h>
++
+ #include "up-backend-bsd-private.h"
+ 
+ static gboolean
+@@ -109,16 +111,28 @@
+ up_backend_take_action (UpBackend *backend)
+ {
+ 	const char *method;
++	GVariant* method_arg;
+ 	GDBusProxy *seat_manager_proxy = up_backend_get_seat_manager_proxy (backend);
+ 
+ 	method = up_backend_get_critical_action (backend);
++	method_arg = g_variant_new ("(b)", FALSE);
++
++#if defined (__sun) && defined (__SVR4)
++/* Map methods to supported ck_* methods */
++	if (strcmp(method, "PowerOff") == 0) {
++		method = "Stop";
++		method_arg = NULL;
++	} else if (strcmp(method, "Hibernate") == 0) {
++		method_arg = NULL;
++	}
++#endif
+ 	g_assert (method != NULL);
+ 
+ 	/* Take action */
+ 	g_debug ("About to call ConsoleKit2 method %s", method);
+ 	g_dbus_proxy_call (seat_manager_proxy,
+ 			   method,
+-			   g_variant_new ("(b)", FALSE),
++			   method_arg,
+ 			   G_DBUS_CALL_FLAGS_NONE,
+ 			   G_MAXINT,
+ 			   NULL,
