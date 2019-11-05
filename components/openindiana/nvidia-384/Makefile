@@ -12,6 +12,7 @@
 #
 # Copyright 2012, Andrzej Szeszo
 # Copyright 2017, Jim Klimov
+# Copyright 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -21,6 +22,7 @@ NVIDIA_DRIVER_MAJOR_VERSION=	384
 NVIDIA_DRIVER_MINOR_VERSION=	98
 COMPONENT_VERSION=	$(NVIDIA_DRIVER_MAJOR_VERSION).$(NVIDIA_DRIVER_MINOR_VERSION)
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
 COMPONENT_ARCHIVE_HASH= \
@@ -62,8 +64,8 @@ $(BUILD_DIR_32)/.installed_drv:	check_protodir_32
 	$(RM) -r "$(PROTO_DIR)/kernel"
 	[ -d "$(PROTO_DIR)/kernel/drv/$(MACH64)" ] || $(MKDIR) "$(PROTO_DIR)/kernel/drv/$(MACH64)"
 	for i in \
-	    kernel/drv/$(MACH64)/nvidia kernel/drv/nvidia \
-	    kernel/drv/$(MACH64)/nvidia_modeset kernel/drv/nvidia_modeset \
+	    kernel/drv/$(MACH64)/nvidia \
+	    kernel/drv/$(MACH64)/nvidia_modeset \
 	; do \
 	    cp "$(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i" \
 	        "$(PROTO_DIR)/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
@@ -220,23 +222,24 @@ $(SAMPLE_MANIFEST_FILE).nvidia:	$(SAMPLE_MANIFEST_FILE)
 
 sample-manifest-nvidia: $(SAMPLE_MANIFEST_FILE).nvidia
 
-build: $(BUILD_32)
+build:		$(BUILD_32)
 
-install: $(INSTALL_32)
+install:	$(INSTALL_32)
 
 clean::
 	if [ -d $(BUILD_DIR) ] ;  then \
 	  rm -rf $(BUILD_DIR) ; \
 	fi
 
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/compatibility/links-xorg
 REQUIRED_PACKAGES += x11/library/libx11
