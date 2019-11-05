@@ -16,25 +16,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           viewres
-COMPONENT_VERSION=        1.0.4
+COMPONENT_VERSION=        1.0.5
 COMPONENT_FMRI=           x11/viewres
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  viewres - Xt widget class browser
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d9c11b44908d91926df8b33428ae04c86c85e4f8380e9b5e68326a651c872e59
+  sha256:5ed818e84c39bcf26dadc885c9860432b85843caad3621e26d99edea660ae3d7
 COMPONENT_ARCHIVE_URL= \
   https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 build: $(BUILD_32_and_64)
 

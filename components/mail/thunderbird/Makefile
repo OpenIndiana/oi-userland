@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
-COMPONENT_VERSION= 	52.6.0
+COMPONENT_VERSION= 	52.7.0
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:16215fb5a3765c7e5a40eadc1f3aed6918294f6d8ef1552d2aa37656055045a8
+  sha256:82462890d393ed78c03226924a6166596b7b6d1562b5071e713a7558cd292ea3
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/thunderbird/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/thunderbird/
@@ -108,7 +108,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	unzip -u -d $(LIGHTNING_DIR) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
 	for file in $(PROTO_DIR)/usr/lib/thunderbird-$(COMPONENT_VERSION)/*.so \
           $(PROTO_DIR)/usr/lib/thunderbird-$(COMPONENT_VERSION)/plugin-container; do \
-	  /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/thunderbird"' $$file ;\
+	  /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_ROOT)/lib:/usr/lib/thunderbird"' $$file ;\
+	  /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/thunderbird"' $$file ;\
 	done ;
 
 
@@ -149,7 +150,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math

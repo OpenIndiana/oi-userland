@@ -23,7 +23,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.3.6
+COMPONENT_VERSION=	4.3.6-P1
+IPS_COMPONENT_VERSION=	4.3.6.1
 COMPONENT_FMRI=		service/network/dhcp/isc-dhcp
 COMPONENT_SUMMARY=	ISC DHCP Server and Relay Agent
 COMPONENT_CLASSIFICATION=System/Services
@@ -34,7 +35,7 @@ COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:a41eaf6364f1377fe065d35671d9cf82bbbc8f21207819b2b9f33f652aec6f1b
+    sha256:2fd177bef02856f05fe17713ced9bfcc7d94f14c933c15f2f2fbedc9cc57a3c3
 COMPONENT_BUGDB=	service/dhcp-server
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -60,15 +61,20 @@ CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 CPPFLAGS  +=	        -DNOMINUM
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
+# ISC dhcp contains bind tarball. As it is configured in build stage
+# we have to pass CFLAGS and LDFLAGS to its configure at build time.
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
+
 COMPONENT_TEST_DIR =	$(@D)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases
+install:	build $(INSTALL_64) $(PROTO_DIR)/dhcpd.leases
 
-test:	$(TEST_32)
+test:	$(TEST_64)
 
-$(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
+$(PROTO_DIR)/dhcpd.leases:	$(INSTALL_64)
 	$(TOUCH) $@
 
 REQUIRED_PACKAGES += SUNWcs

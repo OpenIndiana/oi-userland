@@ -1,0 +1,14 @@
+--- libgdata-0.17.9/demos/scrapbook/scrapbook.c.1	2018-04-17 21:35:27.293685805 +0000
++++ libgdata-0.17.9/demos/scrapbook/scrapbook.c	2018-04-17 21:42:41.492347825 +0000
+@@ -35,7 +35,11 @@
+ static void
+ open_in_web_browser (GtkWidget *widget, gchar *uri) /* quicky wrapper for gtk_show_uri */
+ {
++#if GTK_CHECK_VERSION(3, 22, 0)
+ 	gtk_show_uri_on_window (GTK_WINDOW (gtk_widget_get_toplevel (widget)), uri, GDK_CURRENT_TIME, NULL);
++#else 
++	gtk_show_uri (gtk_widget_get_screen (widget), uri, GDK_CURRENT_TIME, NULL);
++#endif
+ }
+ 
+ static void

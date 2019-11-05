@@ -12,18 +12,20 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+PREFERRED_BITS= 64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-terminal
 COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE terminal emulator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:ec9172fd1bd41938f79f2c4def4db31596eb74216151bc1dc18c7baa246b7214
+    sha256:d65af10035de13a71b7cec5caa49b9eb7f84510e074367dd8fea39e12734abdb
 COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
@@ -34,7 +36,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
@@ -53,9 +55,9 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

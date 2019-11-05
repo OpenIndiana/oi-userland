@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lightdm
 COMPONENT_VERSION= 1.19.3
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_SUMMARY= Light display manager
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -41,9 +41,12 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
 
 CPPFLAGS+= $(CPP_XPG7MODE)
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --with-greeter-session=lightdm-gtk-greeter
 CONFIGURE_OPTIONS += --with-user-session=mate
@@ -54,9 +57,9 @@ CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/libxklavier

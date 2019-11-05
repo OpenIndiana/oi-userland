@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lightdm-gtk-greeter
 COMPONENT_VERSION= 2.0.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GTK greeter for LDM
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -39,9 +39,11 @@ PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-indicator-services-command
 CONFIGURE_OPTIONS += --disable-at-spi-command
 
@@ -51,9 +53,9 @@ CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

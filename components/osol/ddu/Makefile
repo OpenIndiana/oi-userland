@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ddu
 COMPONENT_VERSION= 1.3.1
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= Device Driver Utility (DDU)
 COMPONENT_PROJECT_URL= http://www.openindiana.org/
 COMPONENT_FMRI= diagnostic/ddu
@@ -68,7 +68,7 @@ REQUIRED_PACKAGES += system/pciutils/pci.ids
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += diagnostic/ddu/library
-REQUIRED_PACKAGES += library/python/gnome-python-27
+REQUIRED_PACKAGES += gnome/help-viewer/yelp
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/python/python-notify-27

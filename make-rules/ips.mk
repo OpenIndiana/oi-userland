@@ -398,6 +398,9 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
 	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
 
+# Set REQUIRED_PACKAGES macro substitution rules
+REQUIRED_PACKAGES_TRANSFORM=$(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($(p))|$$($(p))|')
+
 #
 # Generate a set of REQUIRED_PACKAGES based on what is needed to for pkgdepend
 # to resolve properly.  Automatically append this to your Makefile for the truly
@@ -408,7 +411,8 @@ REQUIRED_PACKAGES::     $(RESOLVED)
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
 	@echo "# Auto-generated dependencies" >>Makefile
 	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
-               $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' | sort -u >>Makefile
+		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' $(REQUIRED_PACKAGES_TRANSFORM) \
+			| sort -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new content at the end ***"
 
 

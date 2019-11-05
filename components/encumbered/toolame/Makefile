@@ -45,3 +45,9 @@ include $(WS_TOP)/make-rules/ips.mk
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+test: $(NO_TESTS)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -16,19 +16,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xdriinfo
-COMPONENT_VERSION=        1.0.5
+COMPONENT_VERSION=        1.0.6
 COMPONENT_FMRI=           x11/diagnostic/xdriinfo
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xdriinfo - DRI drivers configuration information query utility
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4cba3766ef89557422062287248adeb933999071bad6f3ef9c0a478a3c680119
+  sha256:d9ccd2c3e87899417acc9ea1f3e319a4198112babe1dc711273584f607449d51
 COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xdriinfo-1.0.5.tar.bz2
+  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xdriinfo.license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

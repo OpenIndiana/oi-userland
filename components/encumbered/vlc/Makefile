@@ -16,20 +16,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
-COMPONENT_VERSION= 2.2.6
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 2.2.8
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c403d3accd9a400eb2181c958f3e7bc5524fe5738425f4253d42883b425a42a8
+  sha256:9bf046848fb56d93518881b39099b8288ee005d5ba0ddf705b6f6643b8d562ec
 COMPONENT_ARCHIVE_URL= \
   http://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.videolan.org/vlc
 COMPONENT_LICENSE = GPLv2.0,LGPLv2.1
-COMPONENT_LICENSE_FILE = $(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/prep.mk
@@ -188,12 +187,13 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/sdl-image
@@ -237,8 +237,8 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libupnp
 REQUIRED_PACKAGES += system/library/math

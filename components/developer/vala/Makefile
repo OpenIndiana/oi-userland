@@ -20,12 +20,12 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2017 Andreas Wacknitz
-# Copyright (c) 2017 Jason Martin
+# Copyright (c) 2018 Jason Martin
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     vala
-COMPONENT_VERSION=  0.36.9
+COMPONENT_VERSION=  0.36.13
 COMPONENT_LICENSE=  LGPL2.1
 COMPONENT_FMRI=     developer/vala
 COMPONENT_SUMMARY=  Vala programming language
@@ -34,7 +34,7 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Vala
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:9578fffbaf4e5fa1ae7e8a090b56bdcbc57f8c4a5281534c65f957f009b196df
+    sha256:3355829b6bd3ab395d9b1f25f99afde5bba8ec04e62684442b70a7a6a33fbf3f
 COMPONENT_ARCHIVE_URL=  http://download.gnome.org/sources/vala/0.36/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -42,6 +42,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+CFLAGS+= -D_XOPEN_SOURCE=600
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 

@@ -19,6 +19,7 @@ COMPONENT_NAME=		caja
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	5
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -46,12 +47,14 @@ COMPONENT_PREP_ACTION=	\
 #  ( cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
 #    cd $(@D)/po-sun && $(MAKE) all )
 
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--with-gnome-distributor="The OpenIndiana Project"
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/$(COMPONENT_NAME)
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
@@ -59,9 +62,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

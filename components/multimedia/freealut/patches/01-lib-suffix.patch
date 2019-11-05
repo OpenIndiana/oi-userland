@@ -1,0 +1,39 @@
+diff -puNr freealut-freealut_1_1_0.orig/CMakeLists.txt freealut-freealut_1_1_0/CMakeLists.txt
+--- freealut-freealut_1_1_0.orig/CMakeLists.txt	2006-05-22 13:28:57.000000000 +0000
++++ freealut-freealut_1_1_0/CMakeLists.txt	2018-04-18 05:36:26.190176524 +0000
+@@ -144,7 +144,7 @@ IF(BUILD_STATIC)
+       ARGS -E copy
+         ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}alut_static${CMAKE_STATIC_LIBRARY_SUFFIX}
+         ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}alut${CMAKE_STATIC_LIBRARY_SUFFIX})
+-    INSTALL_FILES(/lib FILES ${CMAKE_STATIC_LIBRARY_PREFIX}alut${CMAKE_STATIC_LIBRARY_SUFFIX})
++    INSTALL_FILES(/lib${LIB_SUFFIX} FILES ${CMAKE_STATIC_LIBRARY_PREFIX}alut${CMAKE_STATIC_LIBRARY_SUFFIX})
+   ENDIF(NOT WIN32)
+ ENDIF(BUILD_STATIC)
+ 
+@@ -153,14 +153,14 @@ ADD_LIBRARY(alut SHARED ${ALUT_SOURCES})
+ SET_TARGET_PROPERTIES(alut PROPERTIES VERSION ${VERSION} SOVERSION ${MAJOR_VERSION})
+ TARGET_LINK_LIBRARIES(alut ${OPENAL_LIB} ${ADD_LIBS})
+ 
+-INSTALL_TARGETS(/lib alut)
++INSTALL_TARGETS(/lib${LIB_SUFFIX} alut)
+ INSTALL_FILES(/include/AL FILES include/AL/alut.h)
+ 
+ # needed for openal.pc.in and openal-config.in
+ SET(prefix ${CMAKE_INSTALL_PREFIX})
+ SET(exec_prefix "\${prefix}")
+-SET(libdir "\${exec_prefix}/lib")
+-SET(bindir "\${exec_prefix}/bin")
++SET(libdir "\${exec_prefix}/lib${LIB_SUFFIX}")
++SET(bindir "\${exec_prefix}/bin${LIB_SUFFIX}")
+ SET(includedir "\${prefix}/include")
+ SET(requirements "")
+ # static linking dependecies are broken, so pthread isn't needed currently
+@@ -171,7 +171,7 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/admin
+ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/admin/pkgconfig/freealut-config.in
+                ${CMAKE_BINARY_DIR}/admin/pkgconfig/freealut-config @ONLY)
+ INSTALL_PROGRAMS(/bin FILES admin/pkgconfig/freealut-config)
+-INSTALL_FILES(/lib/pkgconfig FILES admin/pkgconfig/freealut.pc)
++INSTALL_FILES(/lib${LIB_SUFFIX}/pkgconfig FILES admin/pkgconfig/freealut.pc)
+ 
+ 
+ # test-suite

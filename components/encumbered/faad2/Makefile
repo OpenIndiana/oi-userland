@@ -47,3 +47,8 @@ CONFIGURE_OPTIONS += --with-mpeg4ip
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

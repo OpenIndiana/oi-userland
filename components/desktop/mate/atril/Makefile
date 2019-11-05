@@ -12,18 +12,20 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+PREFERRED_BITS= 64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atril
 COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MNR_VERSION=	5
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE PDF document viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:983ce61b0886144d6b3ae969271d24eecd4b864c50a33464175fd97cf4d5f67a
+    sha256:9511f79f35df908792a588b888e8fb5aa843224fefe91875fc39cf984edf3e0a
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	desktop/pdf-viewer/atril
 COMPONENT_CLASSIFICATION=	Applications/Office
@@ -38,10 +40,8 @@ PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
-CONFIGURE_BINDIR.64=	$(CONFIGURE_BINDIR.32)
-
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+=	--disable-static
 # Atril's support for epub seems broken
 CONFIGURE_OPTIONS+=	--disable-epub
@@ -49,9 +49,9 @@ CONFIGURE_OPTIONS+=	--disable-epub
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

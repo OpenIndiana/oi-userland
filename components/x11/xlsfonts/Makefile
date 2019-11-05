@@ -14,34 +14,33 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xlsfonts
-COMPONENT_VERSION=        1.0.5
+COMPONENT_VERSION=        1.0.6
 COMPONENT_FMRI=           x11/diagnostic/xlsfonts
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xlsfonts - server font list displayer for X
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SUMMARY=        xlsfonts - server font list displayer for X
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:40295bec35077cee93be2e4c26cc00268ed6ace779ae6e97766a866c1e3927fa
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xlsfonts-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xlsfonts.license
+  sha256:89b80b3a030006ab6cef717be286c12f2477894b227158b1e6133274f6ebd368
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

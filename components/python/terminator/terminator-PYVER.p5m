@@ -28,6 +28,9 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 depend type=require \
     fmri=terminal/terminator@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
+# Used via gi, not auto-detected
+depend type=require fmri=library/desktop/vte-291@0.42.5,5.11-2018.0.0.0
+
 link path=usr/bin/remotinator target=remotinator-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 link path=usr/bin/terminator target=terminator-$(PYVER) mediator=python \
@@ -35,7 +38,7 @@ link path=usr/bin/terminator target=terminator-$(PYVER) mediator=python \
 
 file path=usr/bin/remotinator-$(PYVER)
 file path=usr/bin/terminator-$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/Terminator-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/terminator-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/borg.py
@@ -65,7 +68,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/freebsd.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/ipc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/ipc.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/keybindings.py
-file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/keybindings.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/layoutlauncher.glade
+file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/layoutlauncher.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/notebook.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/notebook.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/optionparse.py
@@ -74,6 +78,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/paned.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/paned.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/plugin.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/plugins/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/plugins/activitywatch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/plugins/activitywatch.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/plugins/custom_commands.py
@@ -99,7 +104,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/terminal.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/terminal.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/terminal_popup_menu.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/terminal_popup_menu.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/terminator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/terminator.py pkg.depend.bypass-generate=.*GLib.*
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/terminator.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/titlebar.py
 file path=usr/lib/python$(PYVER)/vendor-packages/terminatorlib/titlebar.pyc

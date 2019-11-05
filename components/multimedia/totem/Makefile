@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= totem
 # Later versions require clutter-gtk-1.0
 COMPONENT_VERSION= 3.0.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Totem Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -66,7 +67,6 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/libgdata
 REQUIRED_PACKAGES += library/desktop/libpeas
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
@@ -74,7 +74,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice

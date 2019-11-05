@@ -14,31 +14,32 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xeyes
-COMPONENT_VERSION= 1.1.1
+COMPONENT_VERSION= 1.1.2
 COMPONENT_SUMMARY= xeyes X11 pointer tracking demo
+COMPONENT_PROJECT_URL = $(XORG_PROJECT_URL)
+COMPONENT_FMRI= x11/xeyes
+COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:975e98680cd59e1f9439016386609546ed08c284d0f05a95276f96aca6e8a521
+  sha256:57bcec0d2d167af9e5d44d0dbd74c6d7c0f0591cd0608952b23c749fdd910553
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
-COMPONENT_FMRI= x11/xeyes
+  $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 

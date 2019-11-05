@@ -74,3 +74,4 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/gss

@@ -30,10 +30,10 @@
 # Note that for the first two command lines below, 
 # /usr/bin/sed correctly substitutes; /usr/bin/gsed does not.  
 # Use /usr/bin/sed for this script.
-s/\'CC=.*\/cc\'/\'CC=\/usr\/bin\/gcc\'/
-s/\'CXX=.*\/CC\'/\'CXX=\/usr\/bin\/g++\'/
-s/CONFIG\[\"CC\"\].*$/CONFIG\[\"CC\"\] = \"\/usr\/bin\/gcc\"/
-s/CONFIG\[\"CXX\"\].*$/CONFIG\[\"CXX\"\] = \"\/usr\/bin\/g++\"/
+s|\'CC=.*/cc\'|\'CC=%%CC%%\'|
+s|\'CXX=.*/CC\'|\'CXX=%%CXX%%\'|
+s|CONFIG\[\"CC\"\].*$|CONFIG\[\"CC\"\] = \"%%CC%%\"|
+s|CONFIG\[\"CXX\"\].*$|CONFIG\[\"CXX\"\] = \"%%CXX%%\"|
 s/CONFIG\[\"CFLAGS\"\].*$/CONFIG\[\"CFLAGS\"\] = \"-g -O3 -fPIC\"/
 s/CONFIG\[\"CCDLFLAGS\"\].*$/CONFIG\[\"CCDLFLAGS\"\] = \"-fPIC\"/
 s/"$(CC) -G"/"$(CC) -shared"/

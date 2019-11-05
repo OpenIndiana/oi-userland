@@ -12,6 +12,8 @@
 # Copyright 2017 Aurelien Larcher
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bvi
@@ -31,8 +33,6 @@ COMPONENT_LICENSE=      GPLv2
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 

@@ -16,26 +16,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdvdcss
-COMPONENT_VERSION= 1.4.0
+COMPONENT_VERSION= 1.4.2
+COMPONENT_SUMMARY= A simple library designed for accessing DVDs
+COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libdvdcss.html
 COMPONENT_FMRI = library/video/libdvdcss
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_SUMMARY= A simple library designed for accessing DVDs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2089375984800df29a4817b37f3123c1706723342d6dab4d0a8b75c25c2c845a
+  sha256:78c2ed77ec9c0d8fbed7bf7d3abc82068b8864be494cfad165821377ff3f2575
 COMPONENT_ARCHIVE_URL= \
   http://download.videolan.org/pub/videolan/libdvdcss/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libdvdcss.html
 COMPONENT_LICENSE = GPLv2.0
-COMPONENT_LICENSE_FILE = $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS+= $(CPP_LARGEFILES)
 
@@ -48,4 +47,5 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

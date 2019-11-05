@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		mate-control-center
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	2
+COMPONENT_REVISION=     1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
@@ -36,14 +37,17 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
+
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+=	--disable-static
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

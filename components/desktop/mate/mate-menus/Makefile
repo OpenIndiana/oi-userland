@@ -19,6 +19,7 @@ COMPONENT_NAME=		mate-menus
 COMPONENT_MJR_VERSION=	1.18
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Menu of Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,29 +43,18 @@ GNUCP = /usr/gnu/bin/cp
 COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--enable-python
 
 CONFIGURE_ENV += PYTHON="$(PYTHON.$(BITS))"
 CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES.$(BITS))"
+CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
+
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-
-COMPONENT_POST_INSTALL_ACTION += \
-    ( cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
-	$(RM) -rf vendor-packages-$(BITS) ; \
-	$(MV) site-packages vendor-packages-$(BITS) ; \
-	$(MKDIR) -p vendor-packages ; \
-	$(MKDIR) -p vendor-packages/64 ; \
-	if test -d vendor-packages-64 ; then \
-	    $(GNUCP) -rpd vendor-packages-64/matemenu* vendor-packages/64/ ; \
-	    $(GNUCP) -rpd vendor-packages-32/matemenu* vendor-packages/ ; \
-	fi ; )
-
-
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -72,6 +62,9 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+# Build dependencies
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27

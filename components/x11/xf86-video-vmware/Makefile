@@ -16,8 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-vmware
-COMPONENT_VERSION= 13.2.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 13.3.0
 COMPONENT_SUMMARY= xf86-video-vmware - VMWare driver for the Xorg X server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-vmware
@@ -27,7 +26,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e2f7f7101fba7f53b268e7a25908babbf155b3984fb5268b3d244eb6c11bf62b
+  sha256:47971924659e51666a757269ad941a059ef5afe7a47b5101c174a6022ac4066c
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 

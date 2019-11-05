@@ -1,0 +1,14 @@
+--- rsync-3.1.2/authenticate.c.1	2018-03-03 19:09:36.100926361 +0000
++++ rsync-3.1.2/authenticate.c	2018-03-03 19:10:38.525088488 +0000
+@@ -363,7 +363,11 @@
+                  *
+                  * OpenBSD has a readpassphrase() that might be more suitable.
+                  */
++#ifdef __sun
++		pass = getpassphrase("Password: ");
++#else
+ 		pass = getpass("Password: ");
++#endif
+ 	}
+ 
+ 	if (!pass)

@@ -1,16 +1,16 @@
-Provide the correct Solaris curl include directory.
 
-This patch should be send upstream, but needs to be reworked into something
-that they will accept.
+This patch will not be send upstream because pkf-config (.pc) files
+are not able to supress of emit of -L -R -I options for standard
+paths by an efficient way also for MACH64 .
 
---- libcurl.pc.in.orig	2014-09-10 12:23:52.455848654 -0700
-+++ libcurl.pc.in	2014-09-10 12:24:13.252589181 -0700
-@@ -26,7 +26,7 @@
- prefix=@prefix@
- exec_prefix=@exec_prefix@
- libdir=@libdir@
--includedir=@includedir@
-+includedir=@includedir@/curl
- supported_protocols="@SUPPORT_PROTOCOLS@"
- supported_features="@SUPPORT_FEATURES@"
- 
+--- a/libcurl.pc.in	2017-10-22 22:51:20.000000000 +0000
++++ b/libcurl.pc.in	2017-10-28 07:20:28.247666668 +0000
+@@ -34,6 +34,6 @@
+ URL: https://curl.haxx.se/
+ Description: Library to transfer files with ftp, http, etc.
+ Version: @CURLVERSION@
+-Libs: -L${libdir} -lcurl
++Libs: -lcurl
+ Libs.private: @LIBCURL_LIBS@
+-Cflags: -I${includedir} @CPPFLAG_CURL_STATICLIB@
++Cflags: @CPPFLAG_CURL_STATICLIB@

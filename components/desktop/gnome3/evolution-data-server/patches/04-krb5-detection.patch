@@ -1,0 +1,41 @@
+--- evolution-data-server-3.24.0/cmake/modules/FindKRB5.cmake.~1~	2017-03-20 11:47:25.000000000 +0000
++++ evolution-data-server-3.24.0/cmake/modules/FindKRB5.cmake	2018-03-29 15:21:42.310337578 +0000
+@@ -74,7 +74,7 @@
+ 	set(krb_libs "${WITH_KRB5_LIBS}")
+ endif(NOT (WITH_KRB5_LIBS STREQUAL ""))
+ 
+-set(CMAKE_REQUIRED_INCLUDES "-I${mit_includes}")
++set(CMAKE_REQUIRED_INCLUDES "${mit_includes}")
+ set(CMAKE_REQUIRED_LIBRARIES "-L${krb_libs} ${mit_libs}")
+ CHECK_C_SOURCE_COMPILES("#include <krb5/krb5.h>
+ 			int main(void) { krb5_init_context (NULL); return 0; }" HAVE_KRB5)
+@@ -84,7 +84,7 @@
+ 	message(STATUS "Found MIT Kerberos 5")
+ else(HAVE_KRB5)
+ 	unset(HAVE_KRB5 CACHE)
+-	set(CMAKE_REQUIRED_INCLUDES "-I${heimdal_includes}")
++	set(CMAKE_REQUIRED_INCLUDES "${heimdal_includes}")
+ 	set(CMAKE_REQUIRED_LIBRARIES "-L${krb_libs} ${heimdal_libs}")
+ 	CHECK_C_SOURCE_COMPILES("#include <krb5.h>
+ 				int main(void) { krb5_init_context (NULL); return 0; }" HAVE_KRB5)
+@@ -97,9 +97,9 @@
+ 
+ if(NOT HAVE_KRB5)
+ 	unset(HAVE_KRB5 CACHE)
+-	set(CMAKE_REQUIRED_INCLUDES "-I${sun_includes}")
++	set(CMAKE_REQUIRED_INCLUDES "${sun_includes}")
+ 	set(CMAKE_REQUIRED_LIBRARIES "-L${krb_libs} ${sun_libs}")
+-	CHECK_C_SOURCE_COMPILES("#include <krb5/krb5.h>
++	CHECK_C_SOURCE_COMPILES("#include <krb5.h>
+ 				int main(void) { krb5_init_context (NULL); return 0; }" HAVE_KRB5)
+ 	if(HAVE_KRB5)
+ 		set(HAVE_SUN_KRB5 ON)
+@@ -108,7 +108,7 @@
+ endif(NOT HAVE_KRB5)
+ 
+ if(HAVE_KRB5)
+-	set(KRB5_CFLAGS ${CMAKE_REQUIRED_INCLUDES})
++	set(KRB5_CFLAGS "-I${CMAKE_REQUIRED_INCLUDES}")
+ 	set(KRB5_LDFLAGS ${CMAKE_REQUIRED_LIBRARIES})
+ else(HAVE_KRB5)
+ 	message(FATAL_ERROR "Failed to find Kerberos 5 libraries. Use -DWITH_KRB5=OFF to disable Kerberos 5 support")

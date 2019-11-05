@@ -10,19 +10,19 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
-# Copyright 2017 Jason Martin
+# Copyright 2018 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		goffice
-COMPONENT_VERSION=	0.10.35
+COMPONENT_VERSION=	0.10.39
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	goffice - Document centric set of APIs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c19001afca09dc5446e06605a113d81a57124018a09c5889aeebba16cf1d5738
+    sha256:73f23fbf05f3fa98343208b751db04b31a7ff743c2d828e1a0a130c566f1bc4f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/System
 COMPONENT_LICENSE=	GPLv2
@@ -56,6 +56,7 @@ install:	$(INSTALL_32_and_64)
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
+# TEST_32 fails test-math
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += image/library/librsvg

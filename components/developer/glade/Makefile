@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glade
 COMPONENT_VERSION=	3.18.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GLADE User Interface Builder for GNOME
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,11 +29,13 @@ COMPONENT_CLASSIFICATION=	Development/GNOME and GTK+
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 

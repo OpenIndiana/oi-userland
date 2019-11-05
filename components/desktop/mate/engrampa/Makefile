@@ -12,18 +12,20 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+PREFERRED_BITS= 64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		engrampa
 COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MNR_VERSION=	4
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE archive manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:286dcb75540db41f0c363663c1019311d64e409b2505e058b70d1f8631fc2835
+    sha256:5ca7b477cf8409f65a9647640c15ecdf5328b3f222e58ec20ad72e64db592a6f
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	desktop/archive-manager/engrampa
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
@@ -34,20 +36,20 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+=	--disable-static
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

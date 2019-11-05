@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libspectre
 COMPONENT_VERSION=      0.2.8
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         library/libspectre
 COMPONENT_SUMMARY=      libspectre - A small library for rendering Postscript documents
 COMPONENT_PROJECT_URL=  http://www.freedesktop.org/wiki/Software/libspectre/

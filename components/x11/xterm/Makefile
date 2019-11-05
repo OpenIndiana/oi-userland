@@ -12,17 +12,15 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xterm
-COMPONENT_VERSION= 330
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 333
 COMPONENT_SUMMARY= xterm - terminal emulator for X 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7aeef9f29f6b95e09f481173c8c3053357bf5ffe162585647f690fd1707556df
+  sha256:2f1d42014e55c8036c6b29a847b31d3b5c1a3a35b126993ae6d3f05e8da0ef78
 COMPONENT_ARCHIVE_URL= \
   http://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://invisible-island.net/xterm/
@@ -35,8 +33,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS += --enable-256-color
 CONFIGURE_OPTIONS += --enable-88-color
@@ -59,9 +55,9 @@ test: $(TEST_32)
 REQUIRED_PACKAGES += terminal/luit
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxft

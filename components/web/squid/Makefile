@@ -29,6 +29,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
 COMPONENT_VERSION=      3.5.27
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
@@ -150,15 +151,20 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:	$(TEST_64)
 
-
+# Build dependencies
 REQUIRED_PACKAGES += developer/cppunit
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl

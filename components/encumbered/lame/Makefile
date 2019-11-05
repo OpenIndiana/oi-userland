@@ -44,3 +44,11 @@ CONFIGURE_OPTIONS += --disable-rpath
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libsndfile
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

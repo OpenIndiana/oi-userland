@@ -24,14 +24,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		joe
-COMPONENT_VERSION=	4.5
+COMPONENT_VERSION=	4.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://joe-editor.sourceforge.net/
 COMPONENT_SUMMARY=	Joe's Own Editor
 COMPONENT_DESCRIPTION=	Joe's Own Editor - a full featured terminal-based screen editor
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-   sha256:51104aa34d8650be3fa49f2204672a517688c9e6ec47e68f1ea85de88e36cadf
+   sha256:495a0a61f26404070fe8a719d80406dc7f337623788e445b92a9f6de512ab9de
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/joe-editor/JOE%20sources/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	editor/joe
 COMPONENT_CLASSIFICATION=	System/Text Tools

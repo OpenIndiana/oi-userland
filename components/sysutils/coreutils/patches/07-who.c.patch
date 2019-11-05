@@ -1,0 +1,19 @@
+Needed so that GNU 'who -r' correctly prints the run-level.
+See CR #15651288 for more details.
+
+This patch has not been passed upstream yet. It needs to be reworked into
+a format that would be acceptable.
+
+--- src/who.c.orig	2014-07-27 14:59:42.573346371 -0700
++++ src/who.c	2014-07-27 15:00:16.713849303 -0700
+@@ -517,8 +517,8 @@
+   unsigned char curr = UT_PID (utmp_ent) % 256;
+ 
+   if (!runlevline)
+-    runlevline = xmalloc (strlen (_("run-level")) + 3);
+-  sprintf (runlevline, "%s %c", _("run-level"), curr);
++    runlevline = xmalloc (sizeof (utmp_ent->ut_line));
++  sprintf (runlevline, "%s", utmp_ent->ut_line);
+ 
+   if (!comment)
+     comment = xmalloc (strlen (_("last=")) + 2);

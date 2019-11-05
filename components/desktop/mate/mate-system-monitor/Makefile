@@ -12,18 +12,21 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+PREFERRED_BITS= 64 
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-system-monitor
 COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MNR_VERSION=	2
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE system monitor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:887c0d91fa866af75cc066591fcd521107976f123784b1b887535a4709cd9bf1
+    sha256:3f467c03f34996bc160afdfd34294ac985d77cc1b5cafb3f1c5bffa73f2fd8c1
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	desktop/system-monitor/mate-system-monitor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -47,9 +50,9 @@ CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
@@ -67,5 +70,5 @@ REQUIRED_PACKAGES += library/libgtop
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

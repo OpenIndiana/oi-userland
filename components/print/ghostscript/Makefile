@@ -22,22 +22,23 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-# parfait seems to spin when looking at the .bc files, so
-# for now disable it.
-PARFAIT_BUILD=no
-
+PREFERRED_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      9.00
-COMPONENT_REVISION=	7
+COMPONENT_VERSION=      9.23
+COMPONENT_SUMMARY=	GPL Ghostscript
 COMPONENT_PROJECT_URL=	http://ghostscript.com/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:9e754c315d68d91a65ef208b9a8bda1fb57e45a7be18aa9397acfcc5ff59de16
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ghostscript
+    sha256:f65964807a3c97a2c0810d4b9806585367e73129e57ae33378cea18e07a1ed9b
+COMPONENT_DOWNLOAD_URL= \
+    https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs923/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= print/filter/ghostscript
+COMPONENT_CLASSIFICATION= System/Printing
+COMPONENT_LICENSE=      GPLv3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -56,18 +57,20 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 # configure(1) options to use
 CONFIGURE_OPTIONS +=	--with-drivers=ALL
 CONFIGURE_OPTIONS +=	--with-ijs
-CONFIGURE_OPTIONS +=	--without-omni
 CONFIGURE_OPTIONS +=	--with-jbig2dec
-CONFIGURE_OPTIONS +=	--with-jasper
 CONFIGURE_OPTIONS +=	--enable-cups
 CONFIGURE_OPTIONS +=	--enable-dynamic
 CONFIGURE_OPTIONS +=	--disable-compile-inits
 CONFIGURE_OPTIONS +=	--disable-freetype
 CONFIGURE_OPTIONS +=	--with-fontpath=/usr/share/ghostscript/$(COMPONENT_VERSION)/Resource:/usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Font:/usr/share/ghostscript/fonts:/usr/openwin/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/TrueType:/usr/openwin/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Type1:/usr/X11/lib/fonts/TrueType:/usr/X11/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Resource:/usr/X11/lib/X11/Resource/Font
 
+# configure options to generate 32 bit binaries
+$(BUILD_DIR)/$(MACH32)/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m32"
+$(BUILD_DIR)/$(MACH32)/ijs/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m32"
+
+
 # configure options to generate 64 bit binaries
 $(BUILD_DIR)/$(MACH64)/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m64"
-$(BUILD_DIR)/$(MACH64)/ijs/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m64"
 
 # config env
 CONFIGURE_ENV += LDFLAGS_SO="-shared "
@@ -116,14 +119,16 @@ install: $(VARIANTS:%=%/.installed)
 
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math

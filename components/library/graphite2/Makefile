@@ -12,11 +12,12 @@
 #
 # Copyright 2014-2017, Aurelien Larcher.  All rights reserved.
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     graphite2
-COMPONENT_VERSION=  1.3.10
+COMPONENT_VERSION=  1.3.11
 COMPONENT_FMRI=     library/c++/graphite2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=  Graphite2 - Library for rendering non-roman scripts
@@ -24,7 +25,7 @@ COMPONENT_PROJECT_URL= http://sourceforge.net/projects/silgraphite
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:90fde3b2f9ea95d68ffb19278d07d9b8a7efa5ba0e413bebcea802ce05cda1ae
+    sha256:bab92ed1844d6538e7e5bda76f6ac9aaf633e38b683983b942c78c8ce063ad7c
 COMPONENT_ARCHIVE_URL= \
     https://github.com/silnrsi/graphite/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
@@ -59,5 +60,5 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

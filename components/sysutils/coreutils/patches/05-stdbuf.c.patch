@@ -1,0 +1,22 @@
+Change needed to get stdbuf to successfully preload libstdbuf.so
+for both 32-bit and 64-bit applications.
+
+Since we don't link against libstdbuf.so, we need to LD_PRELOAD it.
+libstdbuf.so lives in /usr/lib and /usr/lib/64, so we just use a
+search path value of "" and that equates to LD_PRELOAD=libstdbuf.so,
+and ld.so.1 finds the right one associated with the process class.
+ie. we don't use full path names for the preload names.
+
+This change has been passed upstream, but the GNU coreutils maintainer
+turned it into a comment explaining why it's not included by default.
+
+--- src/stdbuf.c.orig	2014-07-30 16:44:53.956056259 -0700
++++ src/stdbuf.c	2014-07-30 16:46:19.570693225 -0700
+@@ -215,6 +215,7 @@
+   char const *const search_path[] = {
+     program_path,
+     PKGLIBEXECDIR,
++    "",			/* System default */
+     NULL
+   };
+ 

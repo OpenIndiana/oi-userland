@@ -1,0 +1,13 @@
+/* After g_test_init() g_warning() leads to core dump */
+
+--- evolution-data-server-3.24.0/tests/libedata-book/data-test-utils.c	2018-04-04 23:38:54.999463117 +0000
++++ evolution-data-server-3.24.0/tests/libedata-book/data-test-utils.c	2018-04-04 23:38:39.381590492 +0000
+@@ -203,7 +203,7 @@
+ 
+ 	if (!g_file_test (CAMEL_PROVIDERDIR, G_FILE_TEST_IS_DIR | G_FILE_TEST_EXISTS)) {
+ 		if (g_mkdir_with_parents (CAMEL_PROVIDERDIR, 0700) == -1)
+-			g_warning ("%s: Failed to create folder '%s': %s\n", G_STRFUNC, CAMEL_PROVIDERDIR, g_strerror (errno));
++			/*g_warning ("%s: Failed to create folder '%s': %s\n", G_STRFUNC, CAMEL_PROVIDERDIR, g_strerror (errno)) */;
+ 	}
+ 
+ 	fixture->contacts =

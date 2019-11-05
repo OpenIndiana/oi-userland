@@ -13,15 +13,17 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mkfontscale
-COMPONENT_VERSION= 1.1.2
+COMPONENT_VERSION= 1.1.3
 COMPONENT_SUMMARY= mkfontscale legacy X11 scalable font metadata creation tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8c6d5228af885477b9aec60ca6f172578e7d2de42234357af62fb00439453f20
+  sha256:1e98df69ee5f4542d711e140e1d93e2c3f2775407ccbb7849110d52b91782a6a
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/wiki/
@@ -30,17 +32,17 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --with-bzip2
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 

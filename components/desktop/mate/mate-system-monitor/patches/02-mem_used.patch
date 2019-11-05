@@ -1,0 +1,16 @@
+--- mate-system-monitor-1.18.2/src/load-graph.cpp.1	2018-04-25 17:14:10.340105491 +0000
++++ mate-system-monitor-1.18.2/src/load-graph.cpp	2018-04-25 17:14:37.159298681 +0000
+@@ -375,11 +375,11 @@
+ 
+     /* There's no swap on LiveCD : 0.0f is better than NaN :) */
+     swappercent = (swap.total ? (float)swap.used / (float)swap.total : 0.0f);
+-    mempercent  = (float)mem.user  / (float)mem.total;
++    mempercent  = (float)mem.used  / (float)mem.total;
+ 
+     set_memory_label_and_picker(GTK_LABEL(graph->labels.memory),
+                                 GSM_COLOR_BUTTON(graph->mem_color_picker),
+-                                mem.user, mem.total, mempercent);
++                                mem.used, mem.total, mempercent);
+ 
+     set_memory_label_and_picker(GTK_LABEL(graph->labels.swap),
+                                 GSM_COLOR_BUTTON(graph->swap_color_picker),

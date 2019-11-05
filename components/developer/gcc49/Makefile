@@ -74,6 +74,8 @@ include $(WS_MAKE_RULES)/ips.mk
 CC_BITS=
 CFLAGS=         -g -O2
 
+COMPONENT_BUILD_ARGS=
+
 CONFIGURE_PREFIX= /usr/gcc/4.9
 PATH=$(PATH.gnu)
 

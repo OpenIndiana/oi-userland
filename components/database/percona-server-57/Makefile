@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.7.20-19
-IPS_COMPONENT_VERSION=	5.7.20.19
+COMPONENT_VERSION=	5.7.21-21
+IPS_COMPONENT_VERSION=	5.7.21.21
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:17f06c07165954e7eacc3ba2cac0e1d4ba65b0b568f2437298d3c17a6a0940fd
+COMPONENT_ARCHIVE_HASH=	sha256:8f9b3723741ad8f7b4d1d9366199aa3e7bb081b46130260c13fe9c14302d6b6b
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 # We need specific boost version
@@ -86,7 +86,7 @@ REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += web/curl

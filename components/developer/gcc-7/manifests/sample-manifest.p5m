@@ -22,30 +22,32 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-c++
+hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-c++ \
+    target=g++
 hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-g++ \
-    target=i386-pc-solaris2.11-c++
+    target=g++
 hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc \
-    target=i386-pc-solaris2.11-gcc-$(COMPONENT_VERSION)
-file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-$(COMPONENT_VERSION)
-hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-ar \
-    target=gcc-ar
+    target=gcc
+hardlink \
+    path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-$(COMPONENT_VERSION) \
+    target=gcc
+file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-ar
 hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-nm \
     target=gcc-nm
 file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-ranlib
-file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gfortran
-hardlink path=usr/gcc/7/bin/c++ target=i386-pc-solaris2.11-c++
+hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gfortran \
+    target=gfortran
+hardlink path=usr/gcc/7/bin/c++ target=g++
 file path=usr/gcc/7/bin/cpp
-hardlink path=usr/gcc/7/bin/g++ target=i386-pc-solaris2.11-c++
-hardlink path=usr/gcc/7/bin/gcc \
-    target=i386-pc-solaris2.11-gcc-$(COMPONENT_VERSION)
-file path=usr/gcc/7/bin/gcc-ar
+file path=usr/gcc/7/bin/g++
+file path=usr/gcc/7/bin/gcc
+hardlink path=usr/gcc/7/bin/gcc-ar target=i386-pc-solaris2.11-gcc-ar
 file path=usr/gcc/7/bin/gcc-nm
 hardlink path=usr/gcc/7/bin/gcc-ranlib target=i386-pc-solaris2.11-gcc-ranlib
 file path=usr/gcc/7/bin/gcov
 file path=usr/gcc/7/bin/gcov-dump
 file path=usr/gcc/7/bin/gcov-tool
-hardlink path=usr/gcc/7/bin/gfortran target=i386-pc-solaris2.11-gfortran
+file path=usr/gcc/7/bin/gfortran
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(MACH64)/bits/atomic_word.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(MACH64)/bits/basic_file.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(MACH64)/bits/c++allocator.h
@@ -118,7 +120,6 @@ file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/basic_string.tcc
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/boost_concept_check.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/c++0x_warning.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/c++14_warning.h
-file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/c++17_warning.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/char_traits.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/codecvt.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/concept_check.h

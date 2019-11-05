@@ -14,34 +14,33 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xrefresh
-COMPONENT_VERSION=        1.0.5
+COMPONENT_VERSION=        1.0.6
+COMPONENT_SUMMARY=        xrefresh - X screen update utility
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/xrefresh
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xrefresh - X screen update utility
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3213671b0a8a9d1e8d1d5d9e3fd86842c894dd9acc1be2560eda50bc1fb791d6
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xrefresh-1.0.5.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
+  sha256:287dfb9bb7e8d780d07e672e3252150850869cb550958ed5f8401f0835cd6353
+COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xrefresh.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

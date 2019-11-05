@@ -1,0 +1,28 @@
+Not suitable for upstream
+
+Hardcode the NSS/NSPR includes and libs
+
+--- a/CMakeLists.txt	2017-11-09 12:18:43.977702740 -0800
++++ b/CMakeLists.txt	2017-11-09 12:28:32.390516702 -0800
+@@ -876,7 +876,11 @@
+ # ******************************
+ 
+ pkg_check_modules(SOUP REQUIRED libsoup-2.4)
+-pkg_check_modules(DATA_SERVER REQUIRED gio-2.0 gmodule-2.0 libsecret-1 libxml-2.0 libsoup-2.4 ${mozilla_nspr} ${mozilla_nss})
++pkg_check_modules(DATA_SERVER REQUIRED gio-2.0 gmodule-2.0 libsecret-1 libxml-2.0 libsoup-2.4)
++set(WITH_NSPR_INCLUDES "/usr/include/mps")
++set(WITH_NSS_INCLUDES "/usr/include/mps")
++set(WITH_NSPR_LIBS "/usr/lib/mps/64")
++set(WITH_NSS_LIBS "/usr/lib/mps/64")
+ set(E_DATA_SERVER_INCLUDES ${E_DATA_SERVER_INCLUDES} ${MANUAL_NSPR_INCLUDES} ${MANUAL_NSS_INCLUDES})
+ set(E_DATA_SERVER_LDFLAGS ${E_DATA_SERVER_LDFLAGS} ${MANUAL_NSPR_LIBS} ${MANUAL_NSS_LIBS})
+ 
+@@ -887,7 +891,7 @@
+ 
+ pkg_check_modules(CAMEL REQUIRED gio-2.0 gmodule-2.0 ${mozilla_nss} ${mozilla_nspr} sqlite3>=${sqlite_minimum_version})
+ set(CAMEL_CFLAGS ${CAMEL_CFLAGS} ${KRB5_CFLAGS} ${MANUAL_NSS_CFLAGS} ${MANUAL_NSPR_CFLAGS} ${ICU_CFLAGS})
+-set(CAMEL_LDFLAGS ${CAMEL_LDFLAGS} -lz ${KRB5_LDFLAGS} ${MANUAL_NSS_LIBS} ${MANUAL_NSPR_LIBS} ${ICU_LDFLAGS})
++set(CAMEL_LDFLAGS ${CAMEL_LDFLAGS} -lz ${KRB5_LDFLAGS} ${MANUAL_NSS_LIBS} ${MANUAL_NSPR_LIBS} ${ICU_LDFLAGS} -L/usr/lib/mps/64 -lnss3 -lnspr4 -R/usr/lib/mps/64)
+ 
+ # ******************************
+ # libical tweaks, part II (re-using CALENDAR modules)

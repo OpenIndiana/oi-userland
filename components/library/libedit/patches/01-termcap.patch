@@ -1,0 +1,34 @@
+--- libedit-20170329-3.1/src/sys.h.1	2018-05-22 13:12:08.989433801 +0000
++++ libedit-20170329-3.1/src/sys.h	2018-05-22 13:12:19.018232253 +0000
+@@ -115,13 +115,4 @@
+ #define	REGEX		/* Use POSIX.2 regular expression functions */
+ #undef	REGEXP		/* Use UNIX V8 regular expression functions */
+ 
+-#if defined(__sun)
+-extern int tgetent(char *, const char *);
+-extern int tgetflag(char *);
+-extern int tgetnum(char *);
+-extern int tputs(const char *, int, int (*)(int));
+-extern char* tgoto(const char*, int, int);
+-extern char* tgetstr(char*, char**);
+-#endif
+-
+ #endif /* _h_sys */
+--- libedit-20170329-3.1/src/terminal.h.1	2018-05-22 13:13:48.712387856 +0000
++++ libedit-20170329-3.1/src/terminal.h	2018-05-22 13:13:58.467400172 +0000
+@@ -80,15 +80,6 @@
+ #define	A_K_DE		6
+ #define	A_K_NKEYS	7
+ 
+-#ifdef __sun
+-extern int tgetent(char *, const char *);
+-extern int tgetflag(char *);
+-extern int tgetnum(char *);
+-extern int tputs(const char *, int, int (*)(int));
+-extern char* tgoto(const char*, int, int);
+-extern char* tgetstr(char*, char**);
+-#endif
+-
+ libedit_private void	terminal_move_to_line(EditLine *, int);
+ libedit_private void	terminal_move_to_char(EditLine *, int);
+ libedit_private void	terminal_clear_EOL(EditLine *, int);

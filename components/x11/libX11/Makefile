@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libX11
 
 COMPONENT_VERSION= 1.6.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libX11 - X11 core protocol client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -46,14 +47,13 @@ COMPONENT_PREP_ACTION =        ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV += LIB_MAN_SUFFIX=3x11
-CONFIGURE_ENV += XLOCALEDIR="/usr/share/X11/locale:/usr/X11/share/X11/locale"
-CONFIGURE_ENV += XLOCALELIBDIR="/usr/lib/X11/locale:/usr/X11/lib/X11/locale"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
 LOCALE_LIB_DIR.32=/usr/lib/X11/locale
 LOCALE_LIB_DIR.64=/usr/lib/X11/locale/$(MACH64)
 
+CONFIGURE_ENV += LIB_MAN_SUFFIX=3x11
+CONFIGURE_ENV += XLOCALEDIR="/usr/share/X11/locale:/usr/X11/share/X11/locale"
+CONFIGURE_ENV += XLOCALELIBDIR="$(LOCALE_LIB_DIR.$(BITS))"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 CONFIGURE_OPTIONS +=  --without-xmlto 
 CONFIGURE_OPTIONS +=  --without-fop

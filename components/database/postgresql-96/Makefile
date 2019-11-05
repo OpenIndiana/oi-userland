@@ -11,17 +11,18 @@
 #
 # Copyright 2012-2013, EveryCity Ltd. All rights reserved.
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Till Wegm√ller
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	9.6
-COMPONENT_MNR_VERSION=	6
+COMPONENT_MNR_VERSION=	9
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:399cdffcb872f785ba67e25d275463d74521566318cfef8fe219050d063c8154
+COMPONENT_ARCHIVE_HASH=	sha256:b97952e3af02dc1e446f9c4188ff53021cc0eed7ed96f254ae6daf968c443e2e
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.postgresql.org/
 
@@ -61,6 +62,7 @@ CONFIGURE_OPTIONS += --enable-integer-datetimes
 CONFIGURE_OPTIONS += --with-includes=/usr/include
 CONFIGURE_OPTIONS += --with-tclconfig=/usr/lib
 CONFIGURE_OPTIONS.64 += --with-perl
+CONFIGURE_OPTIONS += --with-uuid=e2fs
 
 CONFIGURE_OPTIONS.32 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)

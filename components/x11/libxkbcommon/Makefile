@@ -16,31 +16,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libxkbcommon
-COMPONENT_VERSION=        0.5.0
+COMPONENT_VERSION=        0.8.0
 COMPONENT_FMRI=           x11/library/libxkbcommon
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xkbcommon - library to handle keyboard descriptions
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:90bd7824742b9a6f52a6cf80e2cadd6f5349cf600a358d08260772615b89d19c
+  sha256:e829265db04e0aebfb0591b6dc3377b64599558167846c3f5ee5c5e53641fe6d
 COMPONENT_ARCHIVE_URL= \
   http://xkbcommon.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xkbcommon.org/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && \
                          libtoolize --automake --copy --force && \
                          aclocal -Im4 && \
                          autoheader && \
-                         automake -a -f -c &&\
+                         automake -a -f -c && \
                          autoconf )
 
 CONFIGURE_OPTIONS+= --disable-static
@@ -48,12 +47,22 @@ CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --with-default-rules=/usr/share/X11/xkb/rules
 CONFIGURE_OPTIONS+= --enable-docs
 
+COMPONENT_TEST_TRANSFORMS= \
+  '-n ' \
+  '-e "/TOTAL/p" ' \
+  '-e "/PASS/p" '  \
+  '-e "/SKIP/p" '  \
+  '-e "/XFAIL/p" ' \
+  '-e "/FAIL/p" '  \
+  '-e "/XPASS/p" ' \
+  '-e "/ERROR/p" ' 
+
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxcb

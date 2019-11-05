@@ -12,23 +12,24 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvpx
-COMPONENT_VERSION= 1.6.1
+COMPONENT_VERSION= 1.7.0
 COMPONENT_SUMMARY= The WebM VP8/VP9 Codec SDK
+COMPONENT_PROJECT_URL = http://www.webmproject.org/
+COMPONENT_FMRI = library/video/libvpx
+COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:cda8bb6f0e4848c018177d3a576fa83ed96d762554d7010fe4cfb9d70c22e588
+  sha256:1fec931eb5c94279ad219a5b6e0202358e94a93a90cfb1603578c326abfc1238
 COMPONENT_ARCHIVE_URL= \
   https://github.com/webmproject/libvpx/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL = http://www.webmproject.org/
 COMPONENT_LICENSE = BSD
 COMPONENT_LICENSE_FILE = LICENSE
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = library/video/libvpx
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -48,12 +49,26 @@ CONFIGURE_OPTIONS += --enable-runtime-cpu-detect
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --disable-unit-tests
 CONFIGURE_OPTIONS += --target=$(TARGET.$(BITS))
+
+unexport SHELLOPTS
+COMPONENT_TEST_ARGS += -k -i
+COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/PASSED/p" ' \
+        '-e "/tests/p" ' \
+        '-e "/RUN/p" ' \
+        '-e "/OK/p" ' \
+        '-e "/ERROR/p" '
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+test: $(TEST_32_and_64)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -30,6 +30,7 @@ PATH=$(JAVA_HOME)/bin:$(USRBINDIR)
 
 COMPONENT_NAME=           erlang
 COMPONENT_VERSION=        19.3
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           runtime/erlang
 COMPONENT_PROJECT_URL=    http://www.erlang.org/
 COMPONENT_SRC_NAME=       otp_src
@@ -152,6 +153,6 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu

@@ -1,0 +1,121 @@
+diff -up qt-everywhere-opensource-src-4.8.7/configure.gcc6 qt-everywhere-opensource-src-4.8.7/configure
+--- qt-everywhere-opensource-src-4.8.7/configure.gcc6	2016-04-15 07:04:19.430268222 -0500
++++ qt-everywhere-opensource-src-4.8.7/configure	2016-04-15 07:05:22.157568689 -0500
+@@ -7744,7 +7744,7 @@ case "$XPLATFORM" in
+     *-g++*)
+ 	# Check gcc's version
+ 	case "$(${QMAKE_CONF_COMPILER} -dumpversion)" in
+-	    5*|4*|3.4*)
++	    8*|7*|6*|5*|4*|3.4*)
+ 		;;
+             3.3*)
+                 canBuildWebKit="no"
+@@ -8060,7 +8060,7 @@ g++*)
+     3.*)
+         COMPILER_VERSION="3.*"
+         ;;
+-    5*|4.*)
++    8*|7*|6*|5*|4.*)
+         COMPILER_VERSION="4"
+         ;;
+     *)
+diff -up qt-everywhere-opensource-src-4.8.7/src/xmlpatterns/api/qcoloroutput_p.h.gcc6 qt-everywhere-opensource-src-4.8.7/src/xmlpatterns/api/qcoloroutput_p.h
+--- qt-everywhere-opensource-src-4.8.7/src/xmlpatterns/api/qcoloroutput_p.h.gcc6	2015-05-07 09:14:48.000000000 -0500
++++ qt-everywhere-opensource-src-4.8.7/src/xmlpatterns/api/qcoloroutput_p.h	2016-04-15 07:04:19.431268227 -0500
+@@ -70,8 +70,8 @@ namespace QPatternist
+             ForegroundShift = 10,
+             BackgroundShift = 20,
+             SpecialShift    = 20,
+-            ForegroundMask  = ((1 << ForegroundShift) - 1) << ForegroundShift,
+-            BackgroundMask  = ((1 << BackgroundShift) - 1) << BackgroundShift
++            ForegroundMask  = 0x1f << ForegroundShift,
++            BackgroundMask  = 0x7 << BackgroundShift
+         };
+ 
+     public:
+--- qt-everywhere-opensource-src-4.8.7/src/script/script.pro.1	2017-11-18 08:04:02.302120566 +0000
++++ qt-everywhere-opensource-src-4.8.7/src/script/script.pro	2017-11-18 08:07:54.286685863 +0000
+@@ -107,3 +107,4 @@
+ 
+ # WebKit doesn't compile in C++0x mode
+ *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
++*-g++*:QMAKE_CXXFLAGS += -std=gnu++98
+--- qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pro.1	2017-11-18 00:14:02.661678190 +0000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pro	2017-11-18 00:15:16.396988487 +0000
+@@ -231,3 +231,5 @@
+         }
+     }
+ }
++
++QMAKE_CXXFLAGS += -std=gnu++98
+--- qt-everywhere-opensource-src-4.8.7/mkspecs/solaris-g++-64/qmake.conf.~2~	2017-11-18 08:52:50.196237473 +0000
++++ qt-everywhere-opensource-src-4.8.7/mkspecs/solaris-g++-64/qmake.conf	2017-11-18 08:53:45.055311984 +0000
+@@ -48,7 +48,7 @@
+ QMAKE_CFLAGS_THREAD	= -D_REENTRANT
+ 
+ QMAKE_CXX		= g++
+-QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS
++QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS -std=gnu++98
+ QMAKE_CXXFLAGS_DEPS	= $$QMAKE_CFLAGS_DEPS
+ QMAKE_CXXFLAGS_WARN_ON	= $$QMAKE_CFLAGS_WARN_ON
+ QMAKE_CXXFLAGS_WARN_OFF	= $$QMAKE_CFLAGS_WARN_OFF
+--- qt-everywhere-opensource-src-4.8.7/mkspecs/solaris-g++/qmake.conf.1	2017-11-18 08:48:13.685136631 +0000
++++ qt-everywhere-opensource-src-4.8.7/mkspecs/solaris-g++/qmake.conf	2017-11-18 08:48:44.399852330 +0000
+@@ -31,7 +31,7 @@
+ QMAKE_CFLAGS_THREAD	= -D_REENTRANT
+ 
+ QMAKE_CXX		= g++
+-QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS
++QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS -std=gnu++98
+ QMAKE_CXXFLAGS_DEPS	= $$QMAKE_CFLAGS_DEPS
+ QMAKE_CXXFLAGS_WARN_ON	= $$QMAKE_CFLAGS_WARN_ON
+ QMAKE_CXXFLAGS_WARN_OFF	= $$QMAKE_CFLAGS_WARN_OFF
+--- qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/WebCore/WebCore.pro.1	2017-11-18 10:45:11.199693270 +0000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/WebCore/WebCore.pro	2017-11-18 10:45:17.894211671 +0000
+@@ -3504,3 +3504,5 @@
+     HEADERS += platform/graphics/qt/GraphicsLayerQt.h
+     SOURCES += platform/graphics/qt/GraphicsLayerQt.cpp
+ }
++
++QMAKE_CXXFLAGS += -std=gnu++98
+--- qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/MathExtras.h.~1~	2015-05-07 17:14:45.000000000 +0000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/MathExtras.h	2017-11-18 10:42:06.489668242 +0000
+@@ -85,7 +85,7 @@
+ 
+ #endif
+ 
+-#if OS(SOLARIS)
++#if OS(SOLARIS) && !(defined (__GNUC__) && __GNUC__ > 4)
+ 
+ #ifndef isfinite
+ inline bool isfinite(double x) { return finite(x) && !isnand(x); }
+--- qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/WebKit/qt/QtWebKit.pro.1	2017-11-18 11:38:53.355164946 +0000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/WebKit/qt/QtWebKit.pro	2017-11-18 11:39:03.760644665 +0000
+@@ -355,3 +355,5 @@
+         }
+     }
+ }
++
++QMAKE_CXXFLAGS += -std=gnu++98
+--- qt-everywhere-opensource-src-4.8.7/src/corelib/global/qglobal.h.1	2017-11-18 13:39:49.157182124 +0000
++++ qt-everywhere-opensource-src-4.8.7/src/corelib/global/qglobal.h	2017-11-18 13:43:02.744785375 +0000
+@@ -2433,7 +2433,7 @@
+     typedef Enum enum_type;
+     Q_DECL_CONSTEXPR inline QFlags(const QFlags &f) : i(f.i) {}
+     Q_DECL_CONSTEXPR inline QFlags(Enum f) : i(f) {}
+-    Q_DECL_CONSTEXPR inline QFlags(Zero = 0) : i(0) {}
++    Q_DECL_CONSTEXPR inline QFlags(Zero = NULL) : i(0) {}
+     inline QFlags(QFlag f) : i(f) {}
+ 
+     inline QFlags &operator=(const QFlags &f) { i = f.i; return *this; }
+--- qt-everywhere-opensource-src-4.8.7/src/plugins/accessible/widgets/itemviews.cpp.1	2017-11-18 14:57:09.469688976 +0000
++++ qt-everywhere-opensource-src-4.8.7/src/plugins/accessible/widgets/itemviews.cpp	2017-11-18 14:57:46.188157396 +0000
+@@ -393,7 +393,7 @@
+     QModelIndex index = view()->model()->index(0, column, view()->rootIndex());
+     if (!index.isValid() || view()->selectionMode() & QAbstractItemView::NoSelection)
+         return false;
+-    view()->selectionModel()->select(index, QItemSelectionModel::Columns & QItemSelectionModel::Deselect);
++    view()->selectionModel()->select(index, static_cast<QItemSelectionModel::SelectionFlags>(QItemSelectionModel::Columns & QItemSelectionModel::Deselect));
+     return true;
+ }
+ 

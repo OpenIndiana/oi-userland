@@ -3,20 +3,23 @@ should force -32 or -64 depending on build.
 
 Not appropriate for upstream.
 
---- glib-2.46.0/glib/Makefile.am	2015-09-07 12:27:03.000000000 -0700
-+++ glib-2.46.0/glib/Makefile.am	2015-09-24 22:24:14.141690708 -0700
-@@ -366,15 +366,15 @@
- DTCFLAGS = $(patsubst -W%,,$(CFLAGS))
+--- glib-2.52.0/glib/Makefile.am	2017-03-23 07:22:53.641866845 -0700
++++ glib-2.52.0/glib/Makefile.am	2017-03-23 07:24:05.626741905 -0700
+@@ -365,18 +365,18 @@
  
+ if ENABLE_DTRACE
  glib_probes.h: glib_probes.d
 -	$(AM_V_GEN) $(DTRACE) -C -h -s $< -o $@.tmp
 +	$(AM_V_GEN) $(DTRACE) $(DFLAGS) -C -h -s $< -o $@.tmp
- 	@$(SED) -e "s,define STAP_HAS_SEMAPHORES 1,undef STAP_HAS_SEMAPHORES," < $@.tmp > $@ && rm -f $@.tmp
+ 	@$(SED) \
+ 		-e "s,define STAP_HAS_SEMAPHORES 1,undef STAP_HAS_SEMAPHORES," \
+ 		-e "s,define _SDT_HAS_SEMAPHORES 1,undef _SDT_HAS_SEMAPHORES," \
+ 		< $@.tmp > $@ && rm -f $@.tmp
  
 -glib_probes.lo: glib_probes.d
--	$(AM_V_GEN) env CC="$(DTCOMPILE)" CFLAGS="$(DTCFLAGS)" $(DTRACE) -G -s $< -o $@
+-	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC $(DTRACE) -G -s $< -o $@
 +glib_probes.o: glib_probes.d
-+	$(AM_V_GEN) env CC="$(DTCOMPILE)" CFLAGS="$(DTCFLAGS)" $(DTRACE) $(DFLAGS) -G -s $< -o $@
++	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC $(DTRACE) $(DFLAGS) -G -s $< -o $@
  
 -BUILT_SOURCES += glib_probes.h glib_probes.lo
 +BUILT_SOURCES += glib_probes.h glib_probes.o
@@ -25,4 +28,4 @@ Not appropriate for upstream.
 +libglib_2_0_la_LIBADD += glib_probes.o
  endif
  
- if ENABLE_SYSTEMTAP
+ tapsetdir   = @ABS_TAPSET_DIR@

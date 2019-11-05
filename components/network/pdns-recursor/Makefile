@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
 COMPONENT_VERSION=	4.0.8
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -59,6 +60,6 @@ REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
-REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

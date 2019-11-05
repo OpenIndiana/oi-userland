@@ -1,0 +1,28 @@
+--- pugixml-1.9/CMakeLists.txt.orig	2018-05-16 19:03:27.466260373 +0000
++++ pugixml-1.9/CMakeLists.txt	2018-05-16 19:03:40.726657761 +0000
+@@ -73,7 +73,7 @@
+ 
+ if(BUILD_PKGCONFIG)
+ 	configure_file(scripts/pugixml.pc.in ${PROJECT_BINARY_DIR}/pugixml.pc @ONLY)
+-	install(FILES ${PROJECT_BINARY_DIR}/pugixml.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
++	install(FILES ${PROJECT_BINARY_DIR}/pugixml.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+ endif()
+ 
+ if(BUILD_TESTS)
+--- pugixml-1.9/scripts/pugixml.pc.in.orig	2018-05-16 19:06:06.155258758 +0000
++++ pugixml-1.9/scripts/pugixml.pc.in	2018-05-16 19:07:09.961216299 +0000
+@@ -1,11 +1,11 @@
+ prefix=@CMAKE_INSTALL_PREFIX@
+ exec_prefix=${prefix}
+ includedir=${prefix}/include/pugixml-@PUGIXML_VERSION_STRING@
+-libdir=${exec_prefix}/lib/pugixml-@PUGIXML_VERSION_STRING@
++libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@/pugixml-@PUGIXML_VERSION_STRING@
+ 
+ Name: pugixml
+ Description: Light-weight, simple and fast XML parser for C++ with XPath support.
+ URL: http://pugixml.org/
+ Version: @PUGIXML_VERSION_STRING@
+ Cflags: -I${includedir}
+-Libs: -L${libdir} -lpugixml
+\ Pas de fin de ligne à la fin du fichier
++Libs: -L${libdir} -lpugixml

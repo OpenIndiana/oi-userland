@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.8.22
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gimp.org/
 COMPONENT_SUMMARY=	The Gimp image editor
 COMPONENT_FMRI=		image/editor/gimp

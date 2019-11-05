@@ -1,0 +1,15 @@
+Remove Unix standard settings for Solaris 11.4, so we don't exclude all
+features added between XPG2 & XPG7, now that these are exposed by default.
+
+To send upstream, need to adjust to right version for each OS level
+
+--- glib-2.46.0/configure.ac	2015-09-24 23:04:41.862038047 -0700
++++ glib-2.46.0/configure.ac	2015-09-24 23:15:21.170129554 -0700
+@@ -1112,7 +1112,5 @@
+ case $host in
+   *-*-solaris* )
+-     AC_DEFINE(_XOPEN_SOURCE_EXTENDED, 1, Needed to get declarations for msg_control and msg_controllen on Solaris)
+-     AC_DEFINE(_XOPEN_SOURCE,          2, Needed to get declarations for msg_control and msg_controllen on Solaris)
+      AC_DEFINE(__EXTENSIONS__,         1, Needed to get declarations for msg_control and msg_controllen on Solaris)
+      ;;
+ esac

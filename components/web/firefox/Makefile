@@ -17,14 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	52.6.0esr
-COMPONENT_REVISION=	2
-IPS_COMPONENT_VERSION= 	52.6.0
+COMPONENT_VERSION= 	52.8.0esr
+IPS_COMPONENT_VERSION= 	52.8.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:587cd94a315f5a94bf5c1f85e4a0ea92c9103503b51d649a3c4a4a122d691e42
+  sha256:babed4fe0ae95783e39358aedf7111b20fd9442f73b3b41b025fa4951fe76287
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -89,8 +88,8 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
           $(PROTO_DIR)/usr/lib/firefox/*.so \
           $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell \
           $(PROTO_DIR)/usr/lib/firefox/plugin-container; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
-        $$file ;\
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  $$file ; \
     done ; \
     for file in $(PROTO_DIR)/usr/lib/firefox/sdk/bin/*.py; do \
         $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $$file; \
@@ -116,7 +115,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
