@@ -39,12 +39,12 @@ PKG_OPTIONS +=	-D NVIDIA_DRIVER_MINOR_VERSION="$(NVIDIA_DRIVER_MINOR_VERSION)"
 PKG_OPTIONS +=	-D NVIDIA_MEDIATOR="mediator=nvidia-drv mediator-implementation=nvidia-drv-proprietary mediator-version=$(NVIDIA_DRIVER_MAJOR_VERSION)"
 
 COMPONENT_POST_INSTALL_ACTION = ( \
-	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 ; \
-	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 ; \
+	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-wfb.so.1 ; \
+	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-wfb.so.1 ; \
 	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib:/lib:/usr/lib" \
-		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 ; \
+		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/libnvidia-wfb.so.1 ; \
 	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib/$(MACH64):/lib/$(MACH64):/usr/lib/$(MACH64)"\
-		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 ; )
+		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-wfb.so.1 ; )
 
 $(SOURCE_DIR)/.unpacked: download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR)
