@@ -81,7 +81,7 @@ $(BUILD_DIR_32)/.installed_drv:	check_protodir_32
 	        "$(PROTO_DIR)/kernel/drv/nvidia_modeset.conf"
 	[ -d "$(PROTO_DIR)/kernel/misc/$(MACH64)" ] || mkdir -p "$(PROTO_DIR)/kernel/misc/$(MACH64)"
 	for i in \
-	    gfx_private $(MACH64)/gfx_private \
+	    $(MACH64)/gfx_private \
 	; do \
 	    cp "$(SOURCE_DIR)/gfx_private/SunOS-5.11/$$i" \
 	        "$(PROTO_DIR)/kernel/misc/$$i-$(NVIDIA_DRIVER_MAJOR_VERSION)" \
