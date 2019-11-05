@@ -11,7 +11,7 @@
 
 #
 # Copyright 2012, Andrzej Szeszo
-# Copyright 2017, Jim Klimov
+# Copyright 2017 - 2019, Jim Klimov
 # Copyright 2019, Michal Nowak
 #
 
@@ -195,18 +195,11 @@ install_mv_X11drv_32:	install_reloc_32
 	cd "$(PROTO_DIR)/usr/X11/lib/modules/drivers/$(MACH64)" \
 	    && ln -s "../../NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/drivers/$(MACH64)/"*.* .
 
-install_headers_32:	install_reloc_32
-	$(MKDIR) "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL"
-	cp $(COMPONENT_DIR)/Solaris/gl*.h "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL"
-	$(MKDIR) "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau"
-	cp $(COMPONENT_DIR)/Solaris/vdp*.h "$(PROTO_DIR)/usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau"
-	ln -s "NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)" "$(PROTO_DIR)/usr/X11/include/NVIDIA"
-
 # Help to register PCI IDs served by this driver with nvidia-select
 install_driver_aliases_32:	install_mv_bigdirs_32
 	$(SHELL) $(COMPONENT_DIR)/print-pci-ids.sh $(SOURCE_DIR) >> "$(PROTO_DIR)/usr/share/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION)/driver_aliases.txt"
 
-$(INSTALL_32):	$(BUILD_32) install_drv_32 install_mv_bigdirs_32 install_mv_desktop_32 install_mv_tools_32 install_mv_X11drv_32 install_headers_32 install_driver_aliases_32
+$(INSTALL_32):	$(BUILD_32) install_drv_32 install_mv_bigdirs_32 install_mv_desktop_32 install_mv_tools_32 install_mv_X11drv_32 install_driver_aliases_32
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
