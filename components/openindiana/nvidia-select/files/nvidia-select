@@ -210,18 +210,34 @@ load_drv() {
     echo "INFO: Trying to (re)load the kernel driver $DRV..." 2>&1
     [ -s "$DRV_PATH" ] || { echo "SKIP: No such file: $DRV_PATH" >&2; return 1; }
 
+    ACTUAL_DRV_PATH=""
     case "`isainfo`" in
         *amd64*)
-            modload "`dirname "$DRV_PATH"`/amd64/$DRV" ;;
+            ACTUAL_DRV_PATH="`dirname "$DRV_PATH"`/amd64/$DRV" ;;
         *sparcv9*)
-            modload "`dirname "$DRV_PATH"`/sparcv9/$DRV" ;;
+            ACTUAL_DRV_PATH="`dirname "$DRV_PATH"`/sparcv9/$DRV" ;;
         *i386*|*sparcv7*)
-            modload "$DRV_PATH" ;;
-        *)  echo "Unexpected architecture: `isainfo`" >&2
+            ACTUAL_DRV_PATH="$DRV_PATH" ;;
+        *)  echo "FAILED to detect an ACTUAL_DRV_PATH for the new kernel driver $DRV : Unexpected architecture: `isainfo`" >&2
             return 2
             ;;
     esac
-    [ $? = 0 ] || echo "FAILED to load the new kernel driver $DRV..."
+
+    if [ -z "$ACTUAL_DRV_PATH" ] ; then
+        echo "FAILED to detect an ACTUAL_DRV_PATH for the new kernel driver $DRV" >&2
+    fi
+
+    if [ ! -s "$ACTUAL_DRV_PATH" ] ; then
+        if [ "$LOAD_DRV_SKIP_ABSENT" = true ] ; then
+            echo "SKIPPED loading '$ACTUAL_DRV_PATH' for the new kernel driver $DRV: File not found (and not required)" >&2
+            return 0
+        fi
+        echo "FAILED to load '$ACTUAL_DRV_PATH' for the new kernel driver $DRV: File not found (and is required)" >&2
+        return 3
+    fi
+
+    modload "$ACTUAL_DRV_PATH" \
+    || { echo "FAILED to load the new kernel driver $DRV..." >&2 ; return 4; }
 
     NEW_DRV="`/usr/sbin/modinfo | awk '( $6 == "'"$DRV"'") { print $0 }'`" \
     || NEW_DRV=""
@@ -384,9 +400,9 @@ fi
 # e.g. mismatch of drv vs. hw?..
 if [ "$BASEDIR" = / ]; then
     echo "INFO: loading new drivers ..." >&2
-    load_drv /kernel/misc/gfx_private
+    LOAD_DRV_SKIP_ABSENT=true load_drv /kernel/misc/gfx_private
     load_drv /kernel/drv/nvidia
-    load_drv /kernel/drv/nvidia_modeset
+    LOAD_DRV_SKIP_ABSENT=true load_drv /kernel/drv/nvidia_modeset
 
     echo "NOTE: if (re)loading of drivers failed, you may have to reboot ..." >&2
 fi
