@@ -12,9 +12,8 @@
 #
 # Copyright 2012, Andrzej Szeszo
 # Copyright 2017, Jim Klimov
+# Copyright 2019, Michal Nowak
 #
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 <transform file -> add pkg.depend.bypass-generate usr/gcc/3.*>
 <transform file -> add pkg.depend.bypass-generate usr/sfw/lib(.*)/libgcc_s.so.1>
@@ -63,9 +62,6 @@ depend type=require fmri=pkg:/driver/graphics/nvidia-select
 file path=kernel/drv/$(MACH64)/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION) \
      refresh_fmri=svc:/system/nvidia-select \
      reboot-needed=true variant.opensolaris.zone=global group=sys
-file path=kernel/drv/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION) \
-     refresh_fmri=svc:/system/nvidia-select \
-     reboot-needed=true variant.opensolaris.zone=global group=sys
 file path=kernel/drv/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION).conf \
      preserve=true \
      reboot-needed=false variant.opensolaris.zone=global group=sys
@@ -75,15 +71,6 @@ link path=kernel/drv/nvidia \
      target=nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
 link path=kernel/drv/nvidia.conf \
      target=nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION).conf $(NVIDIA_MEDIATOR)
-
-file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/gl.h
-file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/glext.h
-file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/glx.h
-file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/GL/glxext.h
-file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau/vdpau.h
-file path=usr/X11/include/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/vdpau/vdpau_x11.h
-link path=usr/X11/include/NVIDIA \
-     target=NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION) $(NVIDIA_MEDIATOR)
 
 file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libGL.so.1
 file path=usr/X11/lib/NVIDIA-$(NVIDIA_DRIVER_MAJOR_VERSION)/$(MACH64)/libnvidia-glcore.so.1
