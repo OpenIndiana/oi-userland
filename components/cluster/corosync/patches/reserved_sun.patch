@@ -1,26 +1,6 @@
-commit 621e5175ab3eaa65c5f29927d0d301358712b504
-Author: Andreas Grueninger <andreas.grueninger@example.com>
-Date:   Tue Oct 25 12:30:44 2016 +0200
-
-    Fix: sun is a reserved macro
-
-diff --git a/qdevices/unix-socket.c b/qdevices/unix-socket.c
-index 1cbd825..1c384f4 100644
---- a/qdevices/unix-socket.c
-+++ b/qdevices/unix-socket.c
-@@ -39,8 +39,11 @@
- #include <fcntl.h>
- #include <unistd.h>
- 
-+#include <string.h>
-+
- #include "unix-socket.h"
- 
-+
- static int
- unix_socket_set_non_blocking(int fd)
- {
-@@ -64,9 +67,9 @@ int
+--- corosync-2.4.5/qdevices/unix-socket.c.~1~	2019-07-30 14:26:39.000000000 +0000
++++ corosync-2.4.5/qdevices/unix-socket.c	2019-08-19 07:55:50.666289527 +0000
+@@ -46,9 +46,9 @@
  unix_socket_server_create(const char *path, int non_blocking, int backlog)
  {
  	int s;
@@ -32,24 +12,24 @@ index 1cbd825..1c384f4 100644
  		errno = ENAMETOOLONG;
  		return (-1);
  	}
-@@ -75,12 +78,12 @@ unix_socket_server_create(const char *path, int non_blocking, int backlog)
+@@ -57,12 +57,12 @@
  		return (-1);
  	}
  
 -	memset(&sun, 0, sizeof(sun));
 -	sun.sun_family = AF_UNIX;
-+	memset(&address, 0, sizeof(address));
++	memset(&address, 0, sizeof(sun));
 +	address.sun_family = AF_UNIX;
  
--	strncpy(sun.sun_path, path, strlen(path));
-+	strncpy(address.sun_path, path, strlen(path));
+-	strncpy(sun.sun_path, path, sizeof(sun.sun_path) - 1);
++	strncpy(address.sun_path, path, sizeof(address.sun_path) - 1);
  	unlink(path);
 -	if (bind(s, (struct sockaddr *)&sun, SUN_LEN(&sun)) != 0) {
 +	if (bind(s, (struct sockaddr *)&address, SUN_LEN(&address)) != 0) {
  		close(s);
  
  		return (-1);
-@@ -107,9 +110,9 @@ int
+@@ -89,9 +89,9 @@
  unix_socket_client_create(const char *path, int non_blocking)
  {
  	int s;
@@ -61,7 +41,7 @@ index 1cbd825..1c384f4 100644
  		errno = ENAMETOOLONG;
  		return (-1);
  	}
-@@ -118,10 +121,10 @@ unix_socket_client_create(const char *path, int non_blocking)
+@@ -100,10 +100,10 @@
  		return (-1);
  	}
  
@@ -70,12 +50,12 @@ index 1cbd825..1c384f4 100644
 +	memset(&address, 0, sizeof(address));
 +	address.sun_family = AF_UNIX;
  
--	strncpy(sun.sun_path, path, strlen(path));
-+	strncpy(address.sun_path, path, strlen(path));
+-	strncpy(sun.sun_path, path, sizeof(sun.sun_path) - 1);
++	strncpy(address.sun_path, path, sizeof(address.sun_path) - 1);
  
  	if (non_blocking) {
- 		if (unix_socket_set_non_blocking(s) != 0) {
-@@ -131,7 +134,7 @@ unix_socket_client_create(const char *path, int non_blocking)
+ 		if (utils_fd_set_non_blocking(s) != 0) {
+@@ -113,7 +113,7 @@
  		}
  	}
  
@@ -84,7 +64,7 @@ index 1cbd825..1c384f4 100644
  		close(s);
  
  		return (-1);
-@@ -163,12 +166,12 @@ unix_socket_server_destroy(int sock, const char *path)
+@@ -145,12 +145,12 @@
  int
  unix_socket_server_accept(int sock, int non_blocking)
  {

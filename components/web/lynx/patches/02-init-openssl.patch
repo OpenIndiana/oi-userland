@@ -2,15 +2,19 @@ Disable SSLv2 and SSLv3 in lynx to "mitigate POODLE vulnerability".
 
 This change has been passed upstream.
 
---- lynx2-8-8/WWW/Library/Implementation/HTTP.c.orig	2015-02-16 12:48:34.014809453 -0800
-+++ lynx2-8-8/WWW/Library/Implementation/HTTP.c	2015-02-16 12:49:09.627395954 -0800
-@@ -119,7 +119,8 @@
+--- lynx2.8.9rel.1/WWW/Library/Implementation/HTTP.c	2018-05-04 22:07:43.000000000 +0000
++++ lynx2.8.9rel.1/WWW/Library/Implementation/HTTP.c.new	2019-03-15 20:58:10.952164881 +0000
+@@ -206,11 +206,8 @@ SSL *HTGetSSLHandle(void)
  #else
  	SSLeay_add_ssl_algorithms();
- 	ssl_ctx = SSL_CTX_new(SSLv23_client_method());
--	SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2);
-+	/* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
-+	SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+ 	if ((ssl_ctx = SSL_CTX_new(TLS_client_method())) != NULL) {
+-#ifdef SSL_OP_NO_SSLv2
+-	    SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2);
+-#else
+-	    SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
+-#endif
++	    /* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
++	    SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
  #ifdef SSL_OP_NO_COMPRESSION
- 	SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
+ 	    SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
  #endif

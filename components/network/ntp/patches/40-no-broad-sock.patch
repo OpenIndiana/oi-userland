@@ -26,42 +26,62 @@ bug 2990 fixed.
  	if (sys_bclient)
  		io_setbclient();
  
+*** ntpd/ntp_proto.c
 --- ntpd/ntp_proto.c
-+++ ntpd/ntp_proto.c
-@@ -105,6 +105,7 @@ int leap_sec_in_progress;
-  * Nonspecified system state variables
-  */
- int	sys_bclient;		/* broadcast client enable */
-+int	sys_mclient;		/* multicast client enable */
- double	sys_bdelay;		/* broadcast client default delay */
- int	sys_authenticate;	/* requre authentication for config */
- l_fp	sys_authdelay;		/* authentication delay */
-@@ -1083,7 +1084,7 @@ receive(
- 			return;
- 		}
- #endif /* AUTOKEY */
--		if (sys_bclient == 0) {
-+		if (sys_bclient == 0 && sys_mclient == 0) {
- 			sys_restricted++;
- 			return;			/* not enabled */
- 		}
-@@ -4209,6 +4210,7 @@ init_proto(void)
- 	sys_survivors = 0;
- 	sys_manycastserver = 0;
- 	sys_bclient = 0;
-+	sys_mclient = 0;
- 	sys_bdelay = BDELAY_DEFAULT;	/*[Bug 3031] delay cutoff */
- 	sys_authenticate = 1;
- 	sys_stattime = current_time;
-@@ -4356,7 +4358,7 @@ proto_config(
- 	case PROTO_MULTICAST_ADD: /* add group address */
- 		if (svalue != NULL)
- 			io_multicast_add(svalue);
--		sys_bclient = 1;
-+		sys_mclient = 1;
- 		break;
- 
- 	case PROTO_MULTICAST_DEL: /* delete group address */
+*************** int leap_sec_in_progress;
+*** 122,127 ****
+--- 122,128 ----
+   * Nonspecified system state variables
+   */
+  int	sys_bclient;		/* broadcast client enable */
++ int	sys_mclient;		/* multicast client enable */
+  double	sys_bdelay;		/* broadcast client default delay */
+  int	sys_authenticate;	/* requre authentication for config */
+  l_fp	sys_authdelay;		/* authentication delay */
+*************** receive(
+*** 1413,1419 ****
+  			return;
+  		}
+  #endif /* AUTOKEY */
+! 		if (sys_bclient == 0) {
+  			DPRINTF(2, ("receive: AM_NEWBCL drop: not a bclient\n"));
+  			sys_restricted++;
+  			return;			/* not enabled */
+--- 1414,1420 ----
+  			return;
+  		}
+  #endif /* AUTOKEY */
+! 		if (sys_bclient == 0 && sys_mclient == 0) {
+  			DPRINTF(2, ("receive: AM_NEWBCL drop: not a bclient\n"));
+  			sys_restricted++;
+  			return;			/* not enabled */
+*************** init_proto(void)
+*** 4968,4973 ****
+--- 4969,4975 ----
+  	sys_survivors = 0;
+  	sys_manycastserver = 0;
+  	sys_bclient = 0;
++ 	sys_mclient = 0;
+  	sys_bdelay = BDELAY_DEFAULT;	/*[Bug 3031] delay cutoff */
+  	sys_authenticate = 1;
+  	sys_stattime = current_time;
+*************** proto_config(
+*** 5119,5125 ****
+  	case PROTO_MULTICAST_ADD: /* add group address */
+  		if (svalue != NULL)
+  			io_multicast_add(svalue);
+! 		sys_bclient = 1;
+  		break;
+  
+  	case PROTO_MULTICAST_DEL: /* delete group address */
+--- 5121,5127 ----
+  	case PROTO_MULTICAST_ADD: /* add group address */
+  		if (svalue != NULL)
+  			io_multicast_add(svalue);
+! 		sys_mclient = 1;
+  		break;
+  
+  	case PROTO_MULTICAST_DEL: /* delete group address */
 --- ntpd/ntp_request.c
 +++ ntpd/ntp_request.c
 @@ -1117,7 +1117,7 @@ sys_info(

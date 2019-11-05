@@ -67,4 +67,4 @@ download:: $(SOURCE_DIR)/.downloaded
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35

@@ -21,21 +21,25 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2019, Michal Nowak
 #
+
+PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		conflict
-COMPONENT_VERSION=	20150705
-IPS_COMPONENT_VERSION=	0.2015.7.5
+COMPONENT_VERSION=	20190106
+IPS_COMPONENT_VERSION=	0.2019.1.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=	http://invisible-island.net/conflict/conflict.html
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:30e14808768a938df139a1b76f8f7397e1b3bf46a18ceabcc8b1b1a70d5ea8a9
+	sha256:a3f314feb5a976b11e1d3a993eb992910784f3cdb0cab9763de2d8393abac64a
 COMPONENT_ARCHIVE_URL= \
-  http://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+	http://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/conflict
+COMPONENT_FMRI=		shell/conflict
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -54,7 +58,7 @@ CC +=	$(CC_BITS)
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 
-COMPONENT_TEST_DIR =    $(BUILD_DIR_32)
+COMPONENT_TEST_DIR =    $(BUILD_DIR_64)
 COMPONENT_TEST_CMD =    ./run_test.sh
 COMPONENT_TEST_TARGETS =
 
@@ -67,10 +71,11 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/^XXX_CC_XXX$$/d" '
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

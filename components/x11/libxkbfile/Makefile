@@ -13,39 +13,21 @@
 # Copyright 2016 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libxkbfile
-COMPONENT_VERSION=        1.0.9
-COMPONENT_FMRI=           x11/library/libxkbfile
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     libxkbfile
+COMPONENT_VERSION=  1.1.0
+COMPONENT_FMRI=     x11/library/libxkbfile
 COMPONENT_SUMMARY=  libxkbfile - XKB file library
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:51817e0530961975d9513b773960b4edd275f7d5c72293d5a151ed4f42aeb16a
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libxkbfile.license
+  sha256:758dbdaa20add2db4902df0b1b7c936564b7376c02a0acd1f2a331bd334b38c7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ekiga
 COMPONENT_VERSION=	4.0.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI= communication/conferencing/ekiga
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
 COMPONENT_PROJECT_URL=	http://www.ekiga.org
@@ -66,6 +66,10 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += gnome/theme/gnome-icon-theme
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/evolution-data-server
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -77,7 +81,7 @@ REQUIRED_PACKAGES += library/libopal
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math

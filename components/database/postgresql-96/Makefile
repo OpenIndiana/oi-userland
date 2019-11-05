@@ -12,19 +12,20 @@
 # Copyright 2012-2013, EveryCity Ltd. All rights reserved.
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Till Wegm√ller
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	9.6
-COMPONENT_MNR_VERSION=	9
+COMPONENT_MNR_VERSION=	13
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:b97952e3af02dc1e446f9c4188ff53021cc0eed7ed96f254ae6daf968c443e2e
+COMPONENT_ARCHIVE_HASH=	sha256:ecbed20056296a65b6a4f5526c477e3ae5cc284cb01a15507785ddb23831e9a4
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.postgresql.org/
+COMPONENT_PROJECT_URL=	https://www.postgresql.org
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

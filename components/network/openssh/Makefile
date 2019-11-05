@@ -17,38 +17,48 @@
 # information: Portions Copyright [yyyy] [name of copyright owner]
 #
 # CDDL HEADER END
+
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2018 Till Wegmüller
+# Copyright 2018 Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	7.4p1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	7.9p1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	7.4.0.1
+IPS_COMPONENT_VERSION=	7.9.0.1
 
-COMPONENT_PROJECT_URL=	http://www.openssh.org/
+COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1b1fc4a14e2024293181924ed24872e6f2e06293f3e8926a376b8aec481f19d1
-COMPONENT_ARCHIVE_URL=	http://mirror.yandex.ru/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=utility/openssh
-
-TPNO_OPENSSH=		21980
-TPNO_GSSKEX=		20377
+COMPONENT_ARCHIVE_HASH=	sha256:6b4b3ba2253d84ed3771c8050728d597c91cfce898713beb7b64a305b6f11aad
+COMPONENT_ARCHIVE_URL=	https://cloudflare.cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Enable ASLR for this component
-# ASLR_MODE = $(ASLR_ENABLE)
+GENERATED_MAN_4_PAGES = moduli ssh_config sshd_config 
+GENERATED_MAN_1m_PAGES = sftp-server ssh-keysign ssh-pkcs11-helper sshd
+
+# Move man pages to correct section and fix header
+define process-man-rule
+uc=$(shell echo $(3)| tr '[:lower:]' '[:upper:]')
+$(PATCH_STAMPS):	$(SOURCE_DIR)/$(1).$(3)
+
+$(SOURCE_DIR)/$(1).$(3):	$(SOURCE_DIR)/.unpacked
+	cat $(SOURCE_DIR)/$(1).$(2) | $(GSED) -E "s/^(\.Dt +[^ ]+).*$//\1 $$(uc)/"  > $$@
+endef
+
+$(foreach man,$(GENERATED_MAN_4_PAGES),$(eval $(call process-man-rule,$(man),5,4)))
+$(foreach man,$(GENERATED_MAN_1m_PAGES),$(eval $(call process-man-rule,$(man),8,1m)))
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 
@@ -101,6 +111,7 @@ install:	$(INSTALL_64)
 # the STC gate.
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
@@ -108,5 +119,5 @@ REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/security/gss

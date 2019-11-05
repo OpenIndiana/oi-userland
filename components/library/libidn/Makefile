@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
+#
+
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):$(JAVA_HOME)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		libidn
-COMPONENT_VERSION=	1.33
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.35
 COMPONENT_SUMMARY=	IDN - The Internationalized Domains Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libidn/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:44a7aab635bb721ceef6beecc4d49dfd19478325e1b47f3196f7d2acc4930e19
+	sha256:f11af1005b46b7b15d057d7f107315a1ad46935c7fcdf243c16e46ec14f0fe1e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libidn
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -40,7 +43,7 @@ COMPONENT_LICENSE=	LGPLv2.1, GPLv3, FDLv1.3
 
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
+	sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = http://sourceforge.net/projects/tldchk.berlios/files/$(COMPONENT_ARCHIVE_1)/download
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -128,4 +131,5 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

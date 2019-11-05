@@ -1,0 +1,60 @@
+Oracle patch to handle invalid inputs
+Sent upstream via e-mail
+diff --git a/lib/api.c b/lib/api.c
+--- a/lib/api.c
++++ b/lib/api.c
+@@ -270,6 +270,10 @@
+ 	char actions_string[ACTION_STRING_BUFSIE];
+ 
+ 	assert(from != NULL && to != NULL);
++#ifdef        SUN_CHANGE
++	if (from == NULL || to == NULL)
++		return (idn_invalid_name);
++#endif        /* SUN_CHANGE */
+ 
+ 	idn__res_actionstostring(actions, actions_string);
+ 	TRACE(("idn_encodename(actions=%s, from=\"%s\", tolen=%d)\n",
+@@ -296,6 +300,10 @@
+ 	char actions_string[ACTION_STRING_BUFSIE];
+ 
+ 	assert(from != NULL && to != NULL);
++#ifdef        SUN_CHANGE
++	if (from == NULL || to == NULL)
++		return (idn_invalid_name);
++#endif        /* SUN_CHANGE */
+ 
+ 	idn__res_actionstostring(actions, actions_string);
+ 	TRACE(("idn_decodename(actions=%s, from=\"%s\", tolen=%d)\n",
+@@ -323,6 +331,10 @@
+ 	char actions_string[ACTION_STRING_BUFSIE];
+ 
+ 	assert(from != NULL && to != NULL);
++#ifdef        SUN_CHANGE
++	if (from == NULL || to == NULL)
++		return (idn_invalid_name);
++#endif        /* SUN_CHANGE */
+ 
+ 	idn__res_actionstostring(actions, actions_string);
+ 	TRACE(("idn_decodename2(actions=%s, from=\"%s\", tolen=%d, "
+@@ -360,6 +372,10 @@
+ 	char actions2_string[ACTION_STRING_BUFSIE];
+ 
+ 	assert(name1 != NULL && name2 != NULL);
++#ifdef        SUN_CHANGE
++	if (name1 == NULL || name2 == NULL)
++		return (idn_invalid_name);
++#endif        /* SUN_CHANGE */
+ 
+ 	idn__res_actionstostring(actions1, actions1_string);
+ 	idn__res_actionstostring(actions2, actions2_string);
+@@ -391,6 +407,10 @@
+ 	char actions_string[ACTION_STRING_BUFSIE];
+ 
+ 	assert(name != NULL);
++#ifdef        SUN_CHANGE
++	if (name == NULL)
++		return (idn_invalid_name);
++#endif        /* SUN_CHANGE */
+ 
+ 	idn__res_actionstostring(actions, actions_string);
+ 	TRACE(("idn_checkname(actions=%s, name=\"%s\")\n",

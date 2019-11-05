@@ -1,0 +1,39 @@
+From 3fa3e702f08a9d892cd26604f290f3af41910adc Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sun, 15 Jan 2017 21:01:35 -0800
+Subject: [PATCH] Fix test-secure-memory build on platforms without
+ RLIMIT_MEMLOCK
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+
+https://bugzilla.gnome.org/show_bug.cgi?id=777294
+---
+ gcr/test-secure-memory.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/gcr/test-secure-memory.c b/gcr/test-secure-memory.c
+index 7ef5b2f..8feba83 100644
+--- a/gcr/test-secure-memory.c
++++ b/gcr/test-secure-memory.c
+@@ -53,6 +53,7 @@ extern int egg_secure_warnings;
+ static gsize
+ get_rlimit_memlock (void)
+ {
++#ifdef RLIMIT_MEMLOCK
+ 	struct rlimit memlock;
+ 
+ 	if (getrlimit (RLIMIT_MEMLOCK, &memlock) != 0)
+@@ -72,6 +73,10 @@ get_rlimit_memlock (void)
+ 	}
+ 
+ 	return memlock.rlim_cur;
++#else
++	g_error("Don't know how to get locked memory limit.");
++	return 0;
++#endif
+ }
+ 
+ static void
+-- 
+2.7.4
+

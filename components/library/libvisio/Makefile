@@ -57,6 +57,6 @@ REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

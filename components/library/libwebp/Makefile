@@ -11,22 +11,23 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2019 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
-COMPONENT_VERSION= 0.6.0
-COMPONENT_FMRI= library/libwebp 
+COMPONENT_VERSION= 1.0.2
+COMPONENT_FMRI= library/libwebp
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e1bd8b81098b8094edba0f161baf89f9fb1492e3fca19cf1d28eff4b88518702
+  sha256:3d47b48c40ed6476e8047b2ddb81d93835e0ca1b8d3e8c679afbb3004dd564b1
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/webmproject/libwebp/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL = https://github.com/webmproject/
+  https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://developers.google.com/speed/webp/
 COMPONENT_LICENSE= BSD
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -44,6 +45,11 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --enable-libwebpmux
+CONFIGURE_OPTIONS += --enable-libwebpdemux
+CONFIGURE_OPTIONS += --enable-libwebpdecoder
+CONFIGURE_OPTIONS += --enable-libwebpextras
+CONFIGURE_OPTIONS += --enable-swap-16bit-csp
 
 build: $(BUILD_32_and_64)
 
@@ -55,5 +61,7 @@ test: $(NO_TESTS)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/freeglut

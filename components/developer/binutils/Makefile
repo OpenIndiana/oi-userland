@@ -18,36 +18,33 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018 Norm Jacobs
+# Copyright (c) 2018 Ken Mays
+# Copyright (c) 2019 Michal Nowak
+#
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.25.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.32
+COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
-COMPONENT_BUGDB=	utility/gnu-binutils
+	sha256:0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04
+COMPONENT_FMRI=		developer/gnu-binutils
+COMPONENT_CLASSIFICATION=Development/GNU
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-PARCH =		$(MACH:i386=i386-pc)
-GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
-
-PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
-
-CFLAGS += -std=c99 $(CPP_XPG6MODE)
-CFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
-CXXFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
-CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
+PATH=$(PATH.gnu)
 
 CONFIGURE_PREFIX =	/usr/gnu
 
@@ -59,8 +56,16 @@ CONFIGURE_OPTIONS +=    --enable-plugins=no
 CONFIGURE_OPTIONS +=    --enable-nls
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
 CONFIGURE_OPTIONS +=    --enable-largefile=yes
+CONFIGURE_OPTIONS +=	--with-system-zlib
+CONFIGURE_OPTIONS +=    --target=$(GNU_TRIPLET)
 
-CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
+COMPONENT_TEST_ARGS += -k
+
+# Keep only the test results.  Details are always in the build directory
+COMPONENT_TEST_TRANSFORMS += \
+	'-n '\
+	'-e "/^\# of/p" '\
+	'-e "/Summary =/p" '
 
 $(INSTALL_32):	$(INSTALL_64)
 
@@ -71,5 +76,6 @@ install:	$(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

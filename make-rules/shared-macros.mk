@@ -105,6 +105,12 @@ OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.11
+PKG_OS_VERSION ?= 0.$(PKG_SOLARIS_VERSION)
+# auto-conf-y platform
+i386_PLAT = pc
+sparc_PLAT = sun
+PLAT=$($(MACH)_PLAT)
+GNU_TRIPLET=$(MACH)-$(PLAT)-solaris$(SOLARIS_VERSION)
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
@@ -147,6 +153,23 @@ endif
 
 PYTHON_VERSION =	2.7
 PYTHON_VERSIONS =	2.7
+
+PYTHON_64_ONLY_VERSIONS = 3.5
+
+# PYTHON3_SOABI variable defines the naming scheme
+# of python3 extension libraries: cpython or abi3.
+# Currently, most of the components use cpython naming scheme by default,
+# only python/xattr and python/cryptography require abi3 naming.
+PYTHON3_SOABI ?= cpython
+ifeq ($(PYTHON3_SOABI),cpython)
+PY3_CYTHON_NAMING=
+PY3_ABI3_NAMING=\#
+else ifeq ($(PYTHON3_SOABI),abi3)
+PY3_CYTHON_NAMING=\#
+PY3_ABI3_NAMING=
+else
+$(error "Invalid python naming scheme '$(PYTHON3_SOABI)' selected!")
+endif
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -360,18 +383,23 @@ MACH32 =	$(MACH32_1:i386=i86)
 MACH64_1 =	$(MACH:sparc=sparcv9)
 MACH64 =	$(MACH64_1:i386=amd64)
 
+CONFIGURE_NO_ARCH =	$(BUILD_DIR_NO_ARCH)/.configured
 CONFIGURE_32 =		$(BUILD_DIR_32)/.configured
 CONFIGURE_64 =		$(BUILD_DIR_64)/.configured
 
+BUILD_DIR_NO_ARCH =	$(BUILD_DIR)/$(MACH)
 BUILD_DIR_32 =		$(BUILD_DIR)/$(MACH32)
 BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
 
+BUILD_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.built
 BUILD_32 =		$(BUILD_DIR_32)/.built
 BUILD_64 =		$(BUILD_DIR_64)/.built
 BUILD_32_and_64 =	$(BUILD_32) $(BUILD_64)
+$(BUILD_DIR_NO_ARCH)/.built:	BITS=32
 $(BUILD_DIR_32)/.built:		BITS=32
 $(BUILD_DIR_64)/.built:		BITS=64
 
+INSTALL_NO_ARCH =	$(BUILD_DIR_NO_ARCH)/.installed
 INSTALL_32 =		$(BUILD_DIR_32)/.installed
 INSTALL_64 =		$(BUILD_DIR_64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
@@ -469,13 +497,17 @@ COMPONENT_TEST_DIR =	$(@D)
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested
 TEST_32 =		$(BUILD_DIR_32)/.tested
 TEST_64 =		$(BUILD_DIR_64)/.tested
 else
+TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested-and-compared
 TEST_32 =		$(BUILD_DIR_32)/.tested-and-compared
 TEST_64 =		$(BUILD_DIR_64)/.tested-and-compared
 endif
 TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+
+$(BUILD_DIR_NO_ARCH)/.tested-and-compared: BITS=32
 $(BUILD_DIR_32)/.tested:		BITS=32
 $(BUILD_DIR_64)/.tested:		BITS=64
 $(BUILD_DIR_32)/.tested-and-compared:	BITS=32
@@ -549,6 +581,10 @@ export CCACHE := $(shell \
 GCC_VERSION =	6
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
+GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
+GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
+GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
+
 # Define runtime package names to be used in dependencies
 GCC_VERSION_MAJOR    = $(shell echo $(GCC_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 GCC_RUNTIME_PKG      = system/library/gcc-$(GCC_VERSION_MAJOR)-runtime
@@ -575,6 +611,16 @@ CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
 F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
+
+# GCC directory macros
+GCC_FULL_VERSION = $(shell $(CC.gcc.$(BITS)) -dumpversion)
+GCC_BINDIR =	$(GCC_ROOT)/bin
+GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
+GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
+GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
+GCC_INCDIR =	$(GCC_ROOT)/include
+GCC_LIBGCCDIR =	$(GCC_ROOT)/lib/gcc
+GCC_INCGXXDIR =	$(GCC_ROOT)/include/c++/$(GCC_FULL_VERSION)
 
 ifneq ($(strip $(CCACHE)),)
 
@@ -613,6 +659,10 @@ PYTHON.3.4.VENDOR_PACKAGES.32 = /usr/lib/python3.4/vendor-packages
 PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
 PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
 
+PYTHON.3.5.VENDOR_PACKAGES.64 = /usr/lib/python3.5/vendor-packages
+PYTHON.3.5.VENDOR_PACKAGES.32 = /usr/lib/python3.5/vendor-packages
+PYTHON.3.5.VENDOR_PACKAGES = $(PYTHON.3.5.VENDOR_PACKAGES.$(BITS))
+
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(WS_TOOLS)/parfait/cc
 CXX.studio.32 =	$(WS_TOOLS)/parfait/CC
@@ -631,7 +681,7 @@ F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
 RUBY_VERSION =  2.3
-RUBY_LIB_VERSION.2.2 = 2.2.0	
+RUBY_LIB_VERSION.2.2 = 2.2.0
 RUBY_LIB_VERSION.2.3 = 2.3.0
 RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
 RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
@@ -651,8 +701,8 @@ RUBY_SCRIPT_FIX_FUNC = \
 # both the ruby version and the ruby library version are needed.
 RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
-PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
-PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
+PYTHON_VENDOR_PACKAGES.32 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)
+PYTHON_VENDOR_PACKAGES.64 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.64)
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
 PYTHON.2.7.32 =	/usr/bin/python2.7
@@ -660,6 +710,9 @@ PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
 PYTHON.3.4.32 =	/usr/bin/python3.4
 PYTHON.3.4.64 =	/usr/bin/$(MACH64)/python3.4
+
+PYTHON.3.5.32 =	/usr/bin/python3.5
+PYTHON.3.5.64 =	/usr/bin/python3.5
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
@@ -804,7 +857,7 @@ GUNZIP =	/usr/bin/gunzip
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
-PKGLINT =	/usr/bin/pkglint
+PKGLINT =	/usr/bin/python3.5 /usr/bin/pkglint
 else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
@@ -1030,6 +1083,21 @@ CC_PIC =	$($(COMPILER)_PIC)
 CFLAGS.gcc +=	$(gcc_OPT)
 CFLAGS.gcc +=	$(gcc_XREGS)
 
+# Default GNU C++ compiler flags.  Add the required feature to your Makefile
+# with CXXFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add CXXFLAGS to any environment other than the
+# configure environment.
+CXXFLAGS.gcc +=	$(gcc_OPT)
+CXXFLAGS.gcc +=	$(gcc_XREGS)
+
+# Default GNU FORTRAN compiler flags.  Add the required feature to your Makefile
+# with FCFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += FCFLAGS="$(FCFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add FCFLAGS to any environment other than the
+# configure environment.
+FCFLAGS.gcc +=	$(gcc_OPT)
+FCFLAGS.gcc +=	$(gcc_XREGS)
 
 # Build 32 or 64 bit objects.
 CFLAGS +=	$(CC_BITS)
@@ -1067,10 +1135,16 @@ CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
 
+# Add compiler specific 'default' features
+CXXFLAGS +=	$(CXXFLAGS.$(COMPILER))
+
 # Build 32 or 64 bit objects in FORTRAN as well.
 F77FLAGS +=	$(CC_BITS)
 FCFLAGS +=	$(CC_BITS)
 
+# Add compiler specific 'default' features
+F77FLAGS +=	$(FCFLAGS.$(COMPILER))
+FCFLAGS +=	$(FCFLAGS.$(COMPILER))
 
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
@@ -1263,3 +1337,17 @@ include $(WS_MAKE_RULES)/environment.mk
 # is not always what you get.
 print-%:
 	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'
+
+# A simple rule to print only the value of any macro.
+print-value-%:
+	@echo '$(subst ','\'',$($*))'
+
+# Provide default print package targets for components that do not rely on IPS.
+# Define them implicitly so that the definitions do not collide with ips.mk
+define print-package-rule
+echo $(strip $(PACKAGE_$(1))) | tr ' ' '\n'
+endef
+
+print-package-%:
+	@$(call print-package-rule,$(shell tr '[a-z]' '[A-Z]' <<< $*))
+

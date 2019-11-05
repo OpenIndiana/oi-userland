@@ -18,30 +18,32 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
+#
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.16.2
+COMPONENT_VERSION=	2.23.0
+COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
+COMPONENT_FMRI=		developer/versioning/git
+COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5560578bd21468d98637f41515c165d32f69caff0838b8989dee5ce10022c717
+COMPONENT_ARCHIVE_HASH=	sha256:234fa05b6839e92dc300b2dd78c92ec9c0c8d439f65e1d430a7034f60af16067
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/git
-COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	git.license
-COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
-COMPONENT_CLASSIFICATION=	Development/Source Code Management
 
 #
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:42eee5134cc8b3b64c736025edfbfee86c2ecb76e37980a0aff26c86b5abcb05
+COMPONENT_ARCHIVE_HASH_1=	sha256:9558433f68ff4229bd55e84c4d26b74e5d3518ab0ec30186253b090ea887946a
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -54,7 +56,7 @@ CONFIGURE_BINDIR.64 =   $(CONFIGURE_BINDIR.32)
 CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
 
 CONFIGURE_PREFIX    =	/usr
-CONFIGURE_OPTIONS  +=	--with-libpcre
+CONFIGURE_OPTIONS  +=	--with-libpcre2
 CONFIGURE_OPTIONS  +=	--without-openssl
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
@@ -62,16 +64,14 @@ CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
 CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
 
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
+COMPONENT_BUILD_ENV+=	V=1
 COMPONENT_INSTALL_ENV+=	NO_PERL_MAKEMAKER=1
-COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
-COMPONENT_INSTALL_ARGS+=	INSTALL="$(INSTALL)"
 
 # This runs configure but configure doesn't generate a Makefile.
 # Instead a Makefile comes with git.
 # Anyways viewpathing doesn't work.
 # Therefore we need cloney to copy a set of files to build.
 # Overwrite symliked tests, because they relying on test assets being regular files.
-
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	(chmod u+x $(COMPONENT_SRC)/t/*.sh  && $(CLONEY) $(SOURCE_DIR) $(@D) && \
 	$(RM) -r $(@D)/t && $(CP) -rp $(COMPONENT_SRC)/t $(@D))
@@ -88,22 +88,16 @@ PKG_HARDLINKS +=        usr/lib/git-core/git-upload-pack
 # behavior is to put the modules in /usr/lib.  Setting these four variables
 # massages the perl to get files to go where we want.
 COMPONENT_INSTALL_ARGS+=        INSTALL="$(INSTALL)"
-COMPONENT_INSTALL_ARGS+=        VENDORPREFIX=$(call PERL_CONFIG,installvendorlib)
-COMPONENT_INSTALL_ARGS+=        PERLPREFIX=$(call PERL_CONFIG,installprefix)
-COMPONENT_INSTALL_ARGS+=        INSTALLVENDORLIB='$$(VENDORPREFIX)'
-COMPONENT_INSTALL_ARGS+=        INSTALLVENDORMAN3DIR='$$(INSTALLMAN3DIR)'
-
-# Some tests (like t9402-git-cvsserver-refs.sh) need GNU diff.
-COMPONENT_TEST_ENV += PATH="$(GNUBIN):$(PATH)"
+COMPONENT_INSTALL_ARGS+=        perllibdir=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
+COMPONENT_INSTALL_ARGS+=        VENDORPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
+COMPONENT_INSTALL_ARGS+=        PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
+COMPONENT_INSTALL_ARGS+=        INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
 
 # many failures; keep going; later versions of git are much cleaner
 COMPONENT_TEST_ARGS += -k -i
 # If GITTEST_JOBS is set, then run the jobs in parallel (to that number)
 COMPONENT_TEST_ARGS += $(if $(GITTEST_JOBS),-j$(GITTEST_JOBS),)
 COMPONENT_TEST_TARGETS = test
-# Enable tests requiring Apache
-COMPONENT_TEST_TARGETS += LIB_HTTPD_PATH=/usr/apache2/2.4/bin/httpd
-COMPONENT_TEST_TARGETS += LIB_HTTPD_MODULE_PATH=/usr/apache2/2.4/libexec
 # Put each test result in a file; necessary if jobs run in parallel
 COMPONENT_TEST_TARGETS += GIT_TEST_OPTS=--tee
 COMPONENT_TEST_TARGETS += DEFAULT_TEST_TARGET=test-noclean
@@ -116,11 +110,9 @@ COMPONENT_POST_TEST_ACTION = \
 	cd ..; \
 	$(GMAKE) -s aggregate-results) &> $(COMPONENT_TEST_OUTPUT)
 
-
 # These man pages come in a separate archive with no Makefile
 # and Solaris likes some of them moved around hence we'll just
 # do it manually here.
-
 $(BUILD_DIR)/.manpages:
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 	$(MKDIR) $(PROTOUSRSHAREMAN1DIR)
@@ -149,11 +141,13 @@ $(BUILD_DIR_64)/.contrib:
 	(cd $(PROTOUSRSHAREDIR)/bash-completion/completions; $(LN) -sf git gitk)
 	$(TOUCH) $@
 
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64) $(BUILD_DIR)/.manpages $(BUILD_DIR_64)/.contrib
 
-test:	$(TEST_64)
+test:		$(TEST_64)
 
 # Test dependencies
 REQUIRED_PACKAGES += system/library/iconv/extra
@@ -165,12 +159,12 @@ REQUIRED_PACKAGES += locale/is
 REQUIRED_PACKAGES += locale/is-extra
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl

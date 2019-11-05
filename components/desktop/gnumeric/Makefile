@@ -9,22 +9,22 @@
 #
 
 #
-# Copyright 2018 Jason Martin
+# Copyright 2019 Jason Martin
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gnumeric
-COMPONENT_VERSION=	1.12.39
-COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	GTK Spreadsheet Application 
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:26cceb7fa97dc7eee7181a79a6251a85b1f1464dcaaaf7624829f7439c5f7d3f
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		desktop/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Applications/Office
+COMPONENT_NAME=     gnumeric
+COMPONENT_VERSION=  1.12.44
+COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_SUMMARY=  GTK Spreadsheet Application
+COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:60ea794bf3bffe54fe3d56305e487947d30c14b525fd7c8ad46d79c384498704
+COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     desktop/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=   Applications/Office
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
@@ -36,23 +36,33 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--without-perl
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV+= PYTHON=$(PYTHON)
+PKG_CONFIG_BIN_64 = /usr/bin/$(MACH64)/pkg-config
+
+CONFIGURE_ENV += PYTHON="$(PYTHON)"
+CONFIGURE_ENV += PKG_CONFIG=$(PKG_CONFIG_BIN_$(BITS))
+
+CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS+= --without-perl
+
+COMPONENT_TEST_ARGS += -k
 
 # common targets
-build:		$(BUILD_64)
+build:      $(BUILD_64)
 
-install:	$(INSTALL_64)
+install:    $(INSTALL_64)
 
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
-# t2001-func-help.pl and valgrind tests fail 03.15.2018
-test:		$(TEST_64)
+test:       $(TEST_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/itstool
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ Copyright 2019, Alexander Pyhalov.
+
+ CDDL HEADER START
+
+ This file and its contents are supplied under the terms of the
+ Common Development and Distribution License ("CDDL"), version 1.0.
+ You may only use this file in accordance with the terms of version
+ 1.0 of the CDDL.
+
+ A full copy of the text of the CDDL should have accompanied this
+ source.  A copy of the CDDL is also available via the Internet at
+ http://www.illumos.org/license/CDDL.
+
+ CDDL HEADER END
+
+        NOTE:  This service manifest is not editable; its contents will
+        be overwritten by package or patch operations, including
+        operating system upgrade.  Make customizations in a different
+        file.
+-->
+
+<service_bundle type='manifest' name='rsyncd'>
+
+<service
+	name='network/rsyncd'
+	type='service'
+	version='1'>
+
+	<!--
+	  Wait for all local filesystems to be mounted.
+	-->
+	<dependency name='fs-local'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+	    <service_fmri value='svc:/system/filesystem/local'/>
+	</dependency>
+
+	<!--
+	  Wait for automounting to be available, as we may be
+	  serving data from home directories or other remote
+	  filesystems.
+	-->
+	<dependency name='autofs'
+	    grouping='optional_all'
+	    restart_on='error'
+	    type='service'>
+	    <service_fmri
+		value='svc:/system/filesystem/autofs:default'/>
+	</dependency>
+
+	<!--
+	  Wait for network to become available
+	-->
+	<dependency name='network'
+	    grouping='require_all'
+	    restart_on='error'
+	    type='service'>
+	    <service_fmri
+		value='svc:/milestone/network:default'/>
+	</dependency>
+
+	<!--
+	  Wait for NFS to become available, as we may be
+	  serving data from NFS mountpoints.
+	-->
+	<dependency name='nfs'
+	    grouping='optional_all'
+	    restart_on='error'
+	    type='service'>
+	    <service_fmri
+		value='svc:/network/nfs/client:default'/>
+	</dependency>
+
+	<exec_method
+		type='method'
+		name='start'
+		exec='/usr/bin/rsync --daemon --config=%{options/config_file}'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='stop'
+		exec=':kill'
+		timeout_seconds='20' />
+
+	<exec_method
+		type='method'
+		name='refresh'
+		exec=':kill -HUP'
+		timeout_seconds='20' />
+
+	<property_group name='options' type='application'>
+		<stability value='Evolving'/>
+		<propval name='config_file' type='astring' value='/etc/rsyncd.conf' />
+	</property_group>
+
+        <!--
+             avoid enabling rsync by default
+        -->
+        <instance name='default' enabled='false'/>
+
+	<stability value='Evolving' />
+
+        <template>
+            <common_name>
+                <loctext xml:lang='C'>
+                    rsync server
+                </loctext>
+            </common_name>
+            <documentation>
+                <manpage title='rsync' section='1'
+                    manpath='/usr/share/man' />
+                <manpage title='rsyncd.conf' section='5'
+                    manpath='/usr/share/man' />
+                <doc_link name='rsync documentation'
+                    uri='https://rsync.samba.org/documentation.html' />
+            </documentation>
+        </template>
+
+</service>
+
+</service_bundle>

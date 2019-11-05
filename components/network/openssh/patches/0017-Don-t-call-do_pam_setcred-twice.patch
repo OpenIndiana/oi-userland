@@ -25,15 +25,10 @@ Subject: [PATCH 17/34] Don't call do_pam_setcred twice
 # In short, this additional call to do_pam_setcred() is Linux-specific and
 # shouldn't be called on Solaris.
 #
----
- platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/platform.c b/platform.c
-index 973a63e4..fc9c079e 100644
---- a/platform.c
-+++ b/platform.c
-@@ -145,7 +145,7 @@ platform_setusercontext(struct passwd *pw)
+diff -wpruN '--exclude=*.orig' a~/platform.c a/platform.c
+--- a~/platform.c	1970-01-01 00:00:00
++++ a/platform.c	1970-01-01 00:00:00
+@@ -144,7 +144,7 @@ platform_setusercontext(struct passwd *p
  void
  platform_setusercontext_post_groups(struct passwd *pw)
  {
@@ -42,6 +37,3 @@ index 973a63e4..fc9c079e 100644
  	/*
  	 * PAM credentials may take the form of supplementary groups.
  	 * These will have been wiped by the above initgroups() call.
--- 
-2.11.0
-

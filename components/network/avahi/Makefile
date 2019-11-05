@@ -16,16 +16,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
-COMPONENT_VERSION= 0.6.31
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 0.6.32
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8372719b24e2dd75de6f59bb1315e600db4fd092805bd1201ed0cb651a2dab48
+  sha256:d54991185d514a0aba54ebeb408d7575b60f5818a772e28fa0e18b98bc1db454
 COMPONENT_ARCHIVE_URL= \
   http://avahi.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://avahi.org
+COMPONENT_CLASSIFICATION = Applications/Internet
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -70,6 +70,9 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += text/xmltoman
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -84,5 +87,5 @@ REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/dbus
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus

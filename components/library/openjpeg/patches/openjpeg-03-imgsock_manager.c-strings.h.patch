@@ -1,0 +1,14 @@
+diff -ur openjpeg-2.3.1.orig/src/lib/openjpip/imgsock_manager.c openjpeg-2.3.1/src/lib/openjpip/imgsock_manager.c
+--- openjpeg-2.3.1.orig/src/lib/openjpip/imgsock_manager.c	2019-04-02 07:45:15.000000000 +0000
++++ openjpeg-2.3.1/src/lib/openjpip/imgsock_manager.c	2019-06-10 19:29:43.372398963 +0000
+@@ -30,6 +30,10 @@
+ 
+ #include <stdio.h>
+ #include <string.h>
++#if defined(__sun)
++/* for strncasecmp() */
++# include <strings.h>
++#endif
+ #include <stdlib.h>
+ #include "imgsock_manager.h"
+ #if _WIN32

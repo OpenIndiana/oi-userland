@@ -1,0 +1,64 @@
+--- vte-0.52.2/src/reaper.cc	2018-05-21 21:30:33.000000000 +0000
++++ vte-0.52.2/src/reaper.cc.new	2018-10-02 20:39:43.042906096 +0000
+@@ -189,7 +189,7 @@ main(int argc, char **argv)
+                         _exit(30);
+                         break;
+                 default:
+-                        g_print("[parent] Starting to wait for %d.\n", p);
++                        g_print("[parent] Starting to wait for %ld.\n", (long) p);
+                         vte_reaper_add_child(p);
+                         child = p;
+                         g_signal_connect(reaper,
+@@ -213,7 +213,7 @@ main(int argc, char **argv)
+                         _exit(5);
+                         break;
+                 default:
+-                        g_print("[parent] Not waiting for %d.\n", q);
++                        g_print("[parent] Not waiting for %ld.\n", (long) q);
+                         break;
+         }
+ 
+--- vte-0.54.1/src/vte.cc	2018-10-02 22:10:15.377802847 +0000
++++ vte-0.54.1/src/vte.cc.new	2018-10-02 22:13:06.933015325 +0000
+@@ -3038,15 +3038,15 @@ Terminal::child_watch_done(pid_t pid,
+         g_object_freeze_notify(object);
+ 
+         _VTE_DEBUG_IF (VTE_DEBUG_LIFECYCLE) {
+-                g_printerr ("Child[%d] exited with status %d\n",
+-                            pid, status);
++                g_printerr ("Child[%ld] exited with status %d\n",
++                            (long)pid, status);
+ #ifdef HAVE_SYS_WAIT_H
+                 if (WIFEXITED (status)) {
+-                        g_printerr ("Child[%d] exit code %d.\n",
+-                                    pid, WEXITSTATUS (status));
++                        g_printerr ("Child[%ld] exit code %d.\n",
++                                    (long)pid, WEXITSTATUS (status));
+                 } else if (WIFSIGNALED (status)) {
+-                        g_printerr ("Child[%d] dies with signal %d.\n",
+-                                    pid, WTERMSIG (status));
++                        g_printerr ("Child[%ld] dies with signal %d.\n",
++                                    (long)pid, WTERMSIG (status));
+                 }
+ #endif
+         }
+@@ -3609,7 +3609,7 @@ Terminal::process_incoming()
+                                 if (G_UNLIKELY(rv < 0)) {
+                                         uint32_t c = m_utf8_decoder.codepoint();
+                                         char c_buf[7];
+-                                        g_snprintf(c_buf, sizeof(c_buf), "%lc", c);
++                                        g_snprintf(c_buf, sizeof(c_buf), "%u", (unsigned int)c);
+                                         char const* wp_str = g_unichar_isprint(c) ? c_buf : _vte_debug_sequence_to_string(c_buf, -1);
+                                         _vte_debug_print(VTE_DEBUG_PARSER, "Parser error on U+%04X [%s]!\n",
+                                                          c, wp_str);
+--- vte-0.54.1/src/widget.cc	2018-09-24 22:43:05.000000000 +0000
++++ vte-0.54.1/src/widget.cc.new	2018-10-02 22:32:31.082973956 +0000
+@@ -20,7 +20,7 @@
+ 
+ #include "widget.hh"
+ 
+-#include <sys/wait.h> // for W_EXITCODE
++#define W_EXITCODE(ret, sig) ((ret) << 8 | (sig))
+ 
+ #include <new>
+ #include <string>

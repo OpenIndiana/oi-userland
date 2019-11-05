@@ -1,0 +1,39 @@
+Oracle patch to reflect the real iconv API on Solaris
+Sent upstream via e-mail
+diff --git a/lib/localconverter.c b/lib/localconverter.c
+--- a/lib/localconverter.c
++++ b/lib/localconverter.c
+@@ -599,12 +599,21 @@
+ 	inleft = 0;
+ 	outbuf = NULL;
+ 	outleft = 0;
++
++#ifdef SUN_CHANGE
++	iconv(ictx, (char **)NULL, &inleft, &outbuf, &outleft);
++#else
+ 	iconv(ictx, (const char **)NULL, &inleft, &outbuf, &outleft);
++#endif /* SUN_CHANGE */
+ 
+ 	inleft = strlen(from);
+ 	inbuf = from;
+ 	outleft = tolen - 1;	/* reserve space for terminating NUL */
++#ifdef SUN_CHANGE
++	sz = iconv(ictx, (char **)&inbuf, &inleft, &to, &outleft);
++#else
+ 	sz = iconv(ictx, (const char **)&inbuf, &inleft, &to, &outleft);
++#endif /* SUN_CHANGE */
+ 
+ 	if (sz == (size_t)(-1) || inleft > 0) {
+ 		switch (errno) {
+@@ -630,7 +639,11 @@
+ 	 * Append a sequence of state reset.
+ 	 */
+ 	inleft = 0;
++#ifdef SUN_CHANGE
++	sz = iconv(ictx, (char **)NULL, &inleft, &to, &outleft);
++#else
+ 	sz = iconv(ictx, (const char **)NULL, &inleft, &to, &outleft);
++#endif /* SUN_CHANGE */
+ 	if (sz == (size_t)(-1)) {
+ 		switch (errno) {
+ 		case EILSEQ:

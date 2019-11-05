@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	3.4.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -37,11 +37,6 @@ COMPONENT_BUGDB=	utility/gnu-compiler
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PARCH =		$(MACH:i386=i386-pc)
-GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
-
-PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
 
 # we build gcc with gcc
 COMPILER =	gcc

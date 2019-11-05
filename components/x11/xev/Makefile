@@ -10,39 +10,23 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2019 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xev
-COMPONENT_VERSION=        1.2.2
-COMPONENT_FMRI=           x11/diagnostic/xev
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  xev - print contents of X events
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    xev
+COMPONENT_VERSION= 1.2.3
+COMPONENT_FMRI=    x11/diagnostic/xev
+COMPONENT_SUMMARY= xev - print contents of X events
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d94ae62a6c1af56c2961d71f5782076ac4116f0fa4e401420ac7e0db33dc314f
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xev-1.2.2.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xev.license
+  sha256:66bc4f1cfa1946d62612737815c34164e4ce40fcebd2c9e1d7e7a1117ad3ad09
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxrandr

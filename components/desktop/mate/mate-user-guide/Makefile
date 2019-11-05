@@ -10,26 +10,28 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
+
+PREFERRED_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-user-guide
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://mate-desktop.org
+COMPONENT_PROJECT_URL=	https://mate-desktop.org
 COMPONENT_SUMMARY=	MATE documentation
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:abe2ee40b9788c887abccc7554564bd951eb26ed08c89b4fe59e0d95b2216b38
+	sha256:7a7738da71ae531839d4223c82a0f2c883946f0abab8755312adaa9d6173f40b
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= FDLv1.1
-COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Documentation
-COMPONENT_FMRI =	desktop/mate/mate-user-guide
-
+COMPONENT_LICENSE=	FDLv1.1
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Documentation
+COMPONENT_FMRI=		desktop/mate/mate-user-guide
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -45,10 +47,9 @@ CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

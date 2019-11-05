@@ -1,0 +1,38 @@
+From 510e10d1d2feafe63b5cda745979775d064fc75c Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Tue, 19 Mar 2019 23:55:31 +0100
+Subject: [PATCH 2/7] ld-flags
+
+---
+ gcc/config/sol2.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index b628adf3993..3090c5d4775 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -228,8 +228,8 @@ along with GCC; see the file COPYING3.  If not see
+   "%{G:-G} \
+    %{YP,*} \
+    %{R*} \
+-   %{!YP,*:%{p|pg:-Y P,%R/usr/lib/libp%R/lib:%R/usr/lib} \
+-	   %{!p:%{!pg:-Y P,%R/lib:%R/usr/lib}}}"
++   %{!YP,*:%{p|pg:-Y P,%R/usr/gcc/6/lib:%R/lib:%R/usr/lib -R %R/usr/gcc/6/lib -L %R/usr/gcc/6/lib} \
++	   %{!p:%{!pg:-Y P,%R/usr/gcc/6/lib:%R/lib:%R/usr/lib -R %R/usr/gcc/6/lib -L %R/usr/gcc/6/lib}}}"
+ 
+ #undef LINK_ARCH32_SPEC
+ #define LINK_ARCH32_SPEC LINK_ARCH32_SPEC_BASE
+@@ -241,8 +241,8 @@ along with GCC; see the file COPYING3.  If not see
+   "%{G:-G} \
+    %{YP,*} \
+    %{R*} \
+-   %{!YP,*:%{p|pg:-Y P,%R/usr/lib/libp/" ARCH64_SUBDIR ":%R/lib/" ARCH64_SUBDIR ":%R/usr/lib/" ARCH64_SUBDIR "}	\
+-	   %{!p:%{!pg:-Y P,%R/lib/" ARCH64_SUBDIR ":%R/usr/lib/" ARCH64_SUBDIR "}}}"
++   %{!YP,*:%{p|pg:-Y P,%R/usr/gcc/6/lib/" ARCH64_SUBDIR ":%R/lib/" ARCH64_SUBDIR ":%R/usr/lib/" ARCH64_SUBDIR " -R %R/usr/gcc/6/lib/" ARCH64_SUBDIR " -L %R/usr/gcc/6/lib/" ARCH64_SUBDIR "}	\
++	   %{!p:%{!pg:-Y P,%R/usr/gcc/6/lib/" ARCH64_SUBDIR ":%R/lib/" ARCH64_SUBDIR ":%R/usr/lib/" ARCH64_SUBDIR " -R %R/usr/gcc/6/lib/" ARCH64_SUBDIR " -L %R/usr/gcc/6/lib/" ARCH64_SUBDIR "}}}"
+ 
+ #undef LINK_ARCH64_SPEC
+ #ifndef USE_GLD
+-- 
+2.20.1
+

@@ -1,0 +1,18 @@
+This works if executed in the source directory:
+build/prototype/i386/usr/mongodb/4.0/bin/mongo --nodb ./mongodb-src-r4.0.11/jstests/core/run_program1.js
+But the same test started during 'make test' could not find true and fails.
+Obviously PATH is not set when mongo execute the tests.
+
+--- a/jstests/core/run_program1.js  2019-07-30 13:29:35.242807908 +0000
++++ b/jstests/core/run_program1.js  2019-07-30 13:25:25.589559853 +0000
+@@ -1,7 +1,7 @@
+ if (!_isWindows()) {
+     // note that normal program exit returns 0
+-    assert.eq(0, runProgram('true'));
+-    assert.neq(0, runProgram('false'));
++    assert.eq(0, runProgram('/usr/bin/true'));
++    assert.neq(0, runProgram('/usr/bin/false'));
+     assert.neq(0, runProgram('this_program_doesnt_exit'));
+
+     // verify output visually
+

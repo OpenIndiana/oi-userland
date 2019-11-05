@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2018 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,26 +22,26 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-c++ \
-    target=g++
+file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-c++
 hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-g++ \
-    target=g++
+    target=i386-pc-solaris2.11-c++
 hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc \
     target=gcc
 hardlink \
     path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-$(COMPONENT_VERSION) \
     target=gcc
-file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-ar
+hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-ar \
+    target=gcc-ar
 hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-nm \
     target=gcc-nm
 file path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-ranlib
 hardlink path=usr/gcc/7/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gfortran \
     target=gfortran
-hardlink path=usr/gcc/7/bin/c++ target=g++
+hardlink path=usr/gcc/7/bin/c++ target=i386-pc-solaris2.11-c++
 file path=usr/gcc/7/bin/cpp
-file path=usr/gcc/7/bin/g++
+hardlink path=usr/gcc/7/bin/g++ target=i386-pc-solaris2.11-c++
 file path=usr/gcc/7/bin/gcc
-hardlink path=usr/gcc/7/bin/gcc-ar target=i386-pc-solaris2.11-gcc-ar
+file path=usr/gcc/7/bin/gcc-ar
 file path=usr/gcc/7/bin/gcc-nm
 hardlink path=usr/gcc/7/bin/gcc-ranlib target=i386-pc-solaris2.11-gcc-ranlib
 file path=usr/gcc/7/bin/gcov
@@ -119,7 +119,6 @@ file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/basic_string.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/basic_string.tcc
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/boost_concept_check.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/c++0x_warning.h
-file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/c++14_warning.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/char_traits.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/codecvt.h
 file path=usr/gcc/7/include/c++/$(COMPONENT_VERSION)/bits/concept_check.h

@@ -21,20 +21,21 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		indent
-COMPONENT_VERSION=	2.2.10
-COMPONENT_FMRI=	developer/gnu-indent
+COMPONENT_VERSION=	2.2.12
+COMPONENT_FMRI=		developer/gnu-indent
 COMPONENT_SUMMARY=	GNU indent - a tool for improving C source code style
 COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/indent/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8a9b41be5bfcab5d8c1be74204b10ae78789fc3deabea0775fdced8677292639
+    sha256:b745a5dfc68f86a483d7f96dc1cda7aafd1e78ecba3c7d8ad304709e91e1defb
 COMPONENT_ARCHIVE_URL= \
     ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLV2
@@ -50,14 +51,16 @@ CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+COMPONENT_TEST_DIR=	$(@D)/regression
+# Test expects GNU diff
+COMPONENT_TEST_ENV+=	PATH=$(PATH.gnu)
+
 # common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-# Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
-test:		install
-	@cd $(BUILD_DIR_64)/regression; PATH=$(PATH.gnu) $(MAKE) test
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

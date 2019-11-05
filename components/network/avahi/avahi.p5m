@@ -14,6 +14,7 @@
 
 set name=pkg.fmri value=pkg:/system/network/avahi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -30,13 +31,13 @@ file usr/sbin/avahi-daemon path=usr/sbin/$(MACH32)/avahi-daemon-bridge-dsd
 file usr/sbin/$(MACH64)/avahi-daemon path=usr/sbin/$(MACH64)/avahi-daemon-bridge-dsd
 hardlink path=usr/sbin/avahi-daemon-bridge-dsd target=../lib/isaexec pkg.linted.userland.action002.0=true
 
+depend type=conditional fmri=pkg:/system/network/avahi/gui \
+    predicate=pkg:/x11/server/xserver-common
 
 file path=etc/dbus-1/system.d/avahi-dbus.conf
 file path=usr/bin/$(MACH64)/avahi-bookmarks
 file path=usr/bin/$(MACH64)/avahi-browse
 link path=usr/bin/$(MACH64)/avahi-browse-domains target=avahi-browse
-file path=usr/bin/$(MACH64)/avahi-discover
-file path=usr/bin/$(MACH64)/avahi-discover-standalone
 file path=usr/bin/$(MACH64)/avahi-publish
 link path=usr/bin/$(MACH64)/avahi-publish-address target=avahi-publish
 link path=usr/bin/$(MACH64)/avahi-publish-service target=avahi-publish
@@ -45,11 +46,8 @@ link path=usr/bin/$(MACH64)/avahi-resolve-address target=avahi-resolve
 link path=usr/bin/$(MACH64)/avahi-resolve-host-name target=avahi-resolve
 file path=usr/bin/$(MACH64)/avahi-set-host-name
 link path=usr/bin/$(MACH64)/bshell target=bssh
-file path=usr/bin/$(MACH64)/bssh
-link path=usr/bin/$(MACH64)/bvnc target=bssh
 file path=usr/bin/avahi-browse
 link path=usr/bin/avahi-browse-domains target=avahi-browse
-file path=usr/bin/avahi-discover
 file path=usr/bin/avahi-publish
 link path=usr/bin/avahi-publish-address target=avahi-publish
 link path=usr/bin/avahi-publish-service target=avahi-publish
@@ -57,9 +55,6 @@ file path=usr/bin/avahi-resolve
 link path=usr/bin/avahi-resolve-address target=avahi-resolve
 link path=usr/bin/avahi-resolve-host-name target=avahi-resolve
 file path=usr/bin/avahi-set-host-name
-link path=usr/bin/bshell target=bssh
-file path=usr/bin/bssh
-link path=usr/bin/bvnc target=bssh
 file path=usr/include/avahi-client/client.h
 file path=usr/include/avahi-client/lookup.h
 file path=usr/include/avahi-client/publish.h
@@ -92,7 +87,6 @@ file path=usr/include/avahi-gobject/ga-error.h
 file path=usr/include/avahi-gobject/ga-record-browser.h
 file path=usr/include/avahi-gobject/ga-service-browser.h
 file path=usr/include/avahi-gobject/ga-service-resolver.h
-file path=usr/include/avahi-ui/avahi-ui.h
 file path=usr/lib/$(MACH64)/avahi/service-types.db.dir
 file path=usr/lib/$(MACH64)/avahi/service-types.db.pag
 file path=usr/lib/$(MACH64)/girepository-1.0/Avahi-0.6.typelib
@@ -123,16 +117,10 @@ link path=usr/lib/$(MACH64)/libavahi-gobject.so target=libavahi-gobject.so.0.0.4
 link path=usr/lib/$(MACH64)/libavahi-gobject.so.0 \
   target=libavahi-gobject.so.0.0.4
 file path=usr/lib/$(MACH64)/libavahi-gobject.so.0.0.4
-file path=usr/lib/$(MACH64)/libavahi-ui.a
-file path=usr/lib/$(MACH64)/libavahi-ui.la
-link path=usr/lib/$(MACH64)/libavahi-ui.so target=libavahi-ui.so.0.1.4
-link path=usr/lib/$(MACH64)/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
-file path=usr/lib/$(MACH64)/libavahi-ui.so.0.1.4
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-client.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-core.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-glib.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-gobject.pc
-file path=usr/lib/$(MACH64)/pkgconfig/avahi-ui.pc
 file path=usr/lib/avahi/service-types.db.dir
 file path=usr/lib/avahi/service-types.db.pag
 file path=usr/lib/girepository-1.0/Avahi-0.6.typelib
@@ -152,22 +140,13 @@ file path=usr/lib/libavahi-glib.so.1.0.2
 link path=usr/lib/libavahi-gobject.so target=libavahi-gobject.so.0.0.4
 link path=usr/lib/libavahi-gobject.so.0 target=libavahi-gobject.so.0.0.4
 file path=usr/lib/libavahi-gobject.so.0.0.4
-link path=usr/lib/libavahi-ui.so target=libavahi-ui.so.0.1.4
-link path=usr/lib/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
-file path=usr/lib/libavahi-ui.so.0.1.4
 file path=usr/lib/pkgconfig/avahi-client.pc
 file path=usr/lib/pkgconfig/avahi-core.pc
 file path=usr/lib/pkgconfig/avahi-glib.pc
 file path=usr/lib/pkgconfig/avahi-gobject.pc
-file path=usr/lib/pkgconfig/avahi-ui.pc
 file path=usr/lib/python2.7/vendor-packages/avahi/ServiceTypeDatabase.py pkg.tmp.autopyc=false
 file path=usr/lib/python2.7/vendor-packages/avahi/__init__.py
-file path=usr/lib/python2.7/vendor-packages/avahi_discover/__init__.py
-file path=usr/share/applications/avahi-discover.desktop
-file path=usr/share/applications/bssh.desktop
-file path=usr/share/applications/bvnc.desktop
 file path=usr/share/avahi/avahi-service.dtd
-file path=usr/share/avahi/interfaces/avahi-discover.ui
 file path=usr/share/avahi/service-types
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.AddressResolver.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.DomainBrowser.xml
@@ -180,6 +159,8 @@ file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceResolver.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceTypeBrowser.xml
 file path=usr/share/gir-1.0/Avahi-0.6.gir
 file path=usr/share/gir-1.0/AvahiCore-0.6.gir
+file path=usr/share/locale/ach/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/ar/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/bg/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/ca/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/cs/LC_MESSAGES/avahi.mo
@@ -190,7 +171,10 @@ file path=usr/share/locale/en_AU/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/en_CA/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/en_GB/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/en_NZ/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/eo/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/es/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/et/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/fa/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/fi/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/fo/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/fr/LC_MESSAGES/avahi.mo
@@ -200,23 +184,26 @@ file path=usr/share/locale/hu/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/id/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/it/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/ja/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/ko/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/lv/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/ms/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/nl/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/pl/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/ro/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/ru/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/sk/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/sl/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/sr/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/sr@latin/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/sv/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/tr/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/uk/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/avahi.mo
 link path=usr/share/man/man1/avahi-browse-domains.1 target=avahi-browse.1
 file path=usr/share/man/man1/avahi-browse.1
 file path=usr/share/man/man1/avahi-daemon-bridge-dsd.1
-file path=usr/share/man/man1/avahi-discover.1
 link path=usr/share/man/man1/avahi-publish-address.1 target=avahi-publish.1
 link path=usr/share/man/man1/avahi-publish-service.1 target=avahi-publish.1
 file path=usr/share/man/man1/avahi-publish.1
@@ -224,5 +211,3 @@ link path=usr/share/man/man1/avahi-resolve-address.1 target=avahi-resolve.1
 link path=usr/share/man/man1/avahi-resolve-host-name.1 target=avahi-resolve.1
 file path=usr/share/man/man1/avahi-resolve.1
 file path=usr/share/man/man1/avahi-set-host-name.1
-file path=usr/share/man/man1/bssh.1
-link path=usr/share/man/man1/bvnc.1 target=bssh.1

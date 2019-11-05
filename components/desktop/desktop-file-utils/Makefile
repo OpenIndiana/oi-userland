@@ -10,18 +10,21 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved
+# Copyright (c) 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		desktop-file-utils
-COMPONENT_VERSION=	0.23
-COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/desktop-file-utils/
+COMPONENT_VERSION=	0.24
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/desktop-file-utils/
 COMPONENT_SUMMARY=	A few command line utilities for working with desktop entries
+COMPONENT_FMRI=		library/desktop/desktop-file-utils
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Scripts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:6c094031bdec46c9f621708f919084e1cb5294e2c5b1e4c883b3e70cb8903385
+	sha256:a1de5da60cbdbe91e5c9c10ac9afee6c3deb019e0cee5fdb9a99dddc245f83d9
 COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/desktop-file-utils/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_LICENSE=	GPLv2
@@ -32,7 +35,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-# common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

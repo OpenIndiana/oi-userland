@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ Copyright (C) 2013-2014 Prominic - Thomas Gouverneur <thomas@espix.net>
+ This program is free software: you can redistribute it and/or modify it under the 
+ terms of the GNU General Public License as published by the Free Software Foundation, 
+ either version 3 of the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with this program. 
+ If not, see http://www.gnu.org/licenses/.
+-->
+<service_bundle type='manifest' name='VirtualBox:run-once'>
+<service
+    name='application/virtualbox/run-once'
+    type='service'
+    version='1'>
+    <single_instance />
+    <dependency
+        name='fs-local'
+        grouping='require_all'
+        restart_on='none'
+        type='service'>
+            <service_fmri value='svc:/system/filesystem/local:default' />
+    </dependency>
+    <dependent
+        name='virtualbox-assembly-complete'
+        grouping='optional_all'
+        restart_on='none'>
+        <service_fmri value='svc:/milestone/self-assembly-complete' />
+    </dependent>
+    <instance enabled='true' name='default'>
+        <exec_method
+            type='method'
+            name='start'
+            exec='/opt/VirtualBox/run-once.sh'
+            timeout_seconds='0'/>
+        <exec_method
+            type='method'
+            name='refresh'
+            exec='/opt/VirtualBox/run-once.sh'
+            timeout_seconds='0'/>
+        <exec_method
+            type='method'
+            name='stop'
+            exec=':true'
+            timeout_seconds='0'/>
+        <property_group name='startd' type='framework'>
+            <propval name='duration' type='astring' value='transient' />
+        </property_group>
+        <property_group name='config' type='application'>
+            <propval name='assembled' type='boolean' value='false' />
+            <propval name='version' type='astring' value='' />
+        </property_group>
+    </instance>
+</service>
+</service_bundle>

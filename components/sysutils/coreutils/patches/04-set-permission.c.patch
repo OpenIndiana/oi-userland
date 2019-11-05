@@ -2,37 +2,37 @@ GNU Coreutils bug 21062 coreutils-8.24 - cp(1) check failures on tmpfs filesyste
 
 /* Avoid spoiling errno when we are going to ignore it immediately anyway */
 
---- lib/set-permissions.c.~1~	2017-09-01 10:12:43.000000000 +0000
-+++ lib/set-permissions.c	2018-01-26 01:03:30.175900217 +0000
+--- lib/set-permissions.c.orig	2018-08-20 16:57:12.705434730 +0000
++++ lib/set-permissions.c	2018-08-20 17:01:22.585439370 +0000
 @@ -230,6 +230,7 @@
          {
            if (errno == ENOSYS)
- 	    {
-+	      errno = 0;
- 	      *must_chmod = true;
- 	      return 0;
- 	    }
-@@ -265,6 +266,7 @@
- 	if (errno == ENOSYS || errno == EOPNOTSUPP)
- 	  {
- 	    *must_chmod = true;
-+	    errno = 0;
- 	    return 0;
- 	  }
- 	return -1;
+             {
++              errno = 0;
+               *must_chmod = true;
+               return 0;
+             }
+@@ -264,6 +265,7 @@
+       {
+         if (errno == ENOSYS || errno == EOPNOTSUPP)
+           {
++            errno = 0;
+             *must_chmod = true;
+             return 0;
+           }
 @@ -634,6 +636,7 @@
- 	  if ((errno == ENOSYS || errno == EOPNOTSUPP || errno == EINVAL)
- 	      && acl_nontrivial (ctx->count, ctx->entries) == 0)
- 	    ret = 0;
-+	    errno = 0;
- 	}
+           if ((errno == ENOSYS || errno == EOPNOTSUPP || errno == EINVAL)
+               && acl_nontrivial (ctx->count, ctx->entries) == 0)
+             ret = 0;
++            errno = 0; 
+         }
        else
- 	*acls_set = true;
+         *acls_set = true;
 @@ -651,6 +654,7 @@
- 	  if ((errno == ENOSYS || errno == EINVAL || errno == ENOTSUP)
- 	      && acl_ace_nontrivial (ctx->ace_count, ctx->ace_entries) == 0)
- 	    ret = 0;
-+	    errno = 0;
- 	}
+           if ((errno == ENOSYS || errno == EINVAL || errno == ENOTSUP)
+               && acl_ace_nontrivial (ctx->ace_count, ctx->ace_entries) == 0)
+             ret = 0;
++            errno = 0; 
+         }
        else
- 	*acls_set = true;
+         *acls_set = true;

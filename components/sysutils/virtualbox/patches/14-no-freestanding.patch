@@ -1,0 +1,60 @@
+Use illumos headers as GCC headers fail to behave correctly in 32-bit environment when _KERNEL (and thus _I32LPx) is defined
+
+--- VirtualBox-6.0.6/Config.kmk	2019-04-16 12:06:42.000000000 +0000
++++ VirtualBox-6.0.6/Config.kmk	2019-04-17 11:31:43.625698754 +0000
+@@ -4399,7 +4399,7 @@ ifeq ($(VBOX_LDR_FMT),elf)
+ TEMPLATE_VBoxR0_TOOL                = $(VBOX_GCC_TOOL)
+ TEMPLATE_VBoxR0_CFLAGS              = -fno-pie -nostdinc -g $(VBOX_GCC_pipe) $(VBOX_GCC_WERR) $(VBOX_GCC_PEDANTIC_C)   $(VBOX_GCC_Wno-variadic-macros) $(VBOX_GCC_R0_OPT) $(VBOX_GCC_R0_FP) -fno-strict-aliasing -fno-exceptions $(VBOX_GCC_fno-stack-protector) -fno-common $(VBOX_GCC_fvisibility-hidden) -std=gnu99 $(VBOX_GCC_IPRT_FMT_CHECK)
+ TEMPLATE_VBoxR0_CXXFLAGS            = -fno-pie -nostdinc -g $(VBOX_GCC_pipe) $(VBOX_GCC_WERR) $(VBOX_GCC_PEDANTIC_CXX) $(VBOX_GCC_Wno-variadic-macros) $(VBOX_GCC_R0_OPT) $(VBOX_GCC_R0_FP) -fno-strict-aliasing -fno-exceptions $(VBOX_GCC_fno-stack-protector) -fno-common $(VBOX_GCC_fvisibility-inlines-hidden) $(VBOX_GCC_fvisibility-hidden) -fno-rtti $(VBOX_GCC_IPRT_FMT_CHECK)
+-TEMPLATE_VBoxR0_CFLAGS.amd64        = -m64 -mno-red-zone -mcmodel=kernel -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -fasynchronous-unwind-tables -ffreestanding
++TEMPLATE_VBoxR0_CFLAGS.amd64        = -m64 -mno-red-zone -mcmodel=kernel -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -fasynchronous-unwind-tables
+ TEMPLATE_VBoxR0_CXXFLAGS.amd64      = -m64 -mno-red-zone -mcmodel=kernel -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -fasynchronous-unwind-tables
+ TEMPLATE_VBoxR0_CXXFLAGS.freebsd    = -ffreestanding
+  if $(VBOX_GCC_VERSION_CC) < 30400
+@@ -4724,7 +4724,7 @@ TEMPLATE_VBOXR0DRV_CFLAGS              =
+ 	-Wmissing-prototypes -Wstrict-prototypes $(VBOX_GCC_fdiagnostics-show-option) \
+ 	-Wshadow -Wuninitialized -Wunused-function -Wunused-label -Wunused-value -Wunused-variable \
+ 	-Wformat  -Wimplicit-int -Wimplicit-function-declaration -Werror-implicit-function-declaration -Wparentheses \
+-	-O2 -fno-omit-frame-pointer -ffreestanding -nodefaultlibs -fno-strict-aliasing -fno-common -std=c99
++	-O2 -fno-omit-frame-pointer -nodefaultlibs -fno-strict-aliasing -fno-common -std=c99
+ TEMPLATE_VBOXR0DRV_CFLAGS.x86          = -m32 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow
+ TEMPLATE_VBOXR0DRV_CFLAGS.amd64        = -m64 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow $(VBOX_GCC_msave-args) \
+ 	-mno-red-zone -mcmodel=kernel $(if-expr defined(VBOX_GCC_USING_SOLARIS_AS),-Wa$(COMMA)-xmodel=kernel,) \
+@@ -4786,7 +4786,7 @@ TEMPLATE_VBOXR0DRV_CFLAGS              =
+ 	$(VBOX_GCC_WARN) -Wpointer-arith -Winline $(VBOX_GCC_Wno-pointer-sign) $(VBOX_GCC_fdiagnostics-show-option) \
+ 	-Wstrict-prototypes -Wmissing-prototypes -Wstrict-prototypes \
+ 	-Wimplicit-function-declaration -Werror-implicit-function-declaration \
+-	-O2 -ffreestanding -fno-strict-aliasing -fno-common \
++	-O2 -fno-strict-aliasing -fno-common \
+ 	$(VBOX_GCC_fno-stack-protector) $(VBOX_GCC_R0_OPT) $(VBOX_GCC_R0_FP) \
+ 	-nostdinc -std=c99
+ TEMPLATE_VBOXR0DRV_CFLAGS.x86          = -m32 -mno-align-long-strings -mno-mmx -mno-3dnow -mno-sse -mno-sse2
+@@ -4870,7 +4870,7 @@ TEMPLATE_VBOXR0DRV_CFLAGS              =
+ 	$(VBOX_GCC_fdiagnostics-show-option) \
+ 	-Wstrict-prototypes -Wmissing-prototypes -Wstrict-prototypes \
+ 	-Wimplicit-function-declaration -Werror-implicit-function-declaration \
+-	-O2 -ffreestanding -fno-strict-aliasing -fno-common -finline-limit=8000 \
++	-O2 -fno-strict-aliasing -fno-common -finline-limit=8000 \
+ 	$(VBOX_GCC_fno-stack-protector) $(VBOX_GCC_R0_OPT) $(VBOX_GCC_R0_FP) \
+ 	-nostdinc -std=c99 -msoft-float
+ TEMPLATE_VBOXR0DRV_CFLAGS.x86          = -m32 -mno-mmx -mno-sse -mno-avx \
+@@ -4930,7 +4930,7 @@ TEMPLATE_VBOXR0DRV_CFLAGS              =
+ TEMPLATE_VBOXR0DRV_CFLAGS.x86          = -mno-sse -mno-mmx -mno-sse2 -mno-3dnow
+ TEMPLATE_VBOXR0DRV_CFLAGS.x86          = -m32 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow
+ TEMPLATE_VBOXR0DRV_CFLAGS.amd64        = -m64 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow \
+-	-fno-reorder-blocks -ffreestanding -fno-asynchronous-unwind-tables -funit-at-a-time \
++	-fno-reorder-blocks -fno-asynchronous-unwind-tables -funit-at-a-time \
+ 	-Wno-sign-compare
+ TEMPLATE_VBOXR0DRV_CXXFLAGS           = -fno-PIC -Wpointer-arith \
+ 	-Wshadow -Wuninitialized -Wunused-function -Wunused-label -Wunused-value -Wunused-variable \
+@@ -7241,8 +7241,8 @@ if1of ($(KBUILD_TARGET), dragonfly freeb
+  TEMPLATE_VBOXGUESTR3XF86MOD_LDFLAGS.x86     = -m elf_i386
+  TEMPLATE_VBOXGUESTR3XF86MOD_LDFLAGS.amd64   = -m elf_x86_64
+ endif
+-TEMPLATE_VBOXGUESTR3XF86MOD_CFLAGS  = $(TEMPLATE_VBOXGUESTR3EXE_CFLAGS) -fno-pie -fno-merge-constants -std=c99 -ffreestanding
+-TEMPLATE_VBOXGUESTR3XF86MOD_CXXFLAGS= $(TEMPLATE_VBOXGUESTR3EXE_CXXFLAGS) -fno-pie -fno-merge-constants -ffreestanding
++TEMPLATE_VBOXGUESTR3XF86MOD_CFLAGS  = $(TEMPLATE_VBOXGUESTR3EXE_CFLAGS) -fno-pie -fno-merge-constants -std=c99
++TEMPLATE_VBOXGUESTR3XF86MOD_CXXFLAGS= $(TEMPLATE_VBOXGUESTR3EXE_CXXFLAGS) -fno-pie -fno-merge-constants
+ TEMPLATE_VBOXGUESTR3XF86MOD_CFLAGS.linux  = $(VBOX_GCC_fno-stack-protector) # Remove symvers.h
+ TEMPLATE_VBOXGUESTR3XF86MOD_CXXFLAGS.linux = $(VBOX_GCC_fno-stack-protector) # Remove symvers.h
+ TEMPLATE_VBOXGUESTR3XF86MOD_SYSSUFF = .o

@@ -1,0 +1,51 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013 David Hoeppner. All rights reserved.
+# Copyright (c) 2019 Nona Hansel
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/raptor2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="Raptor2 provides a set of parsers and serializers that generate Resource Description Framework (RDF) triples by parsing syntaxes or serialize the triples into a syntax. "
+set name=pkg.summary value="RDF Parser Library - RDF parser utility"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license raptor2.license license=Apache2.0
+
+file path=usr/bin/$(MACH64)/rapper
+file path=usr/bin/rapper
+file path=usr/include/raptor2/raptor.h
+file path=usr/include/raptor2/raptor2.h
+link path=usr/lib/$(MACH64)/libraptor2.so target=libraptor2.so.0.0.0
+link path=usr/lib/$(MACH64)/libraptor2.so.0 target=libraptor2.so.0.0.0
+file path=usr/lib/$(MACH64)/libraptor2.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/raptor2.pc
+link path=usr/lib/libraptor2.so target=libraptor2.so.0.0.0
+link path=usr/lib/libraptor2.so.0 target=libraptor2.so.0.0.0
+file path=usr/lib/libraptor2.so.0.0.0
+file path=usr/lib/pkgconfig/raptor2.pc
+file path=usr/share/man/man1/rapper.1
+file path=usr/share/man/man3/libraptor2.3

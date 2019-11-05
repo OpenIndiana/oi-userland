@@ -10,27 +10,26 @@ dh-group14 and -group1 algorithms.
 
 Without this, an old SunSSH client cannot connect to our
 new daemon.
----
- compat.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
 
-diff --git a/compat.c b/compat.c
-index 69a104fb..55fb3d93 100644
---- a/compat.c
-+++ b/compat.c
-@@ -92,7 +92,9 @@ compat_datafellows(const char *version)
- 		  "OpenSSH_3.0*,"
- 		  "OpenSSH_3.1*",	SSH_BUG_EXTEOF|SSH_OLD_FORWARD_ADDR},
- 		{ "OpenSSH_3.*",	SSH_OLD_FORWARD_ADDR },
--		{ "Sun_SSH_1.0*",	SSH_BUG_NOREKEY|SSH_BUG_EXTEOF},
-+		{ "Sun_SSH_1.0*",	SSH_BUG_NOREKEY|SSH_BUG_EXTEOF|
-+					SSH_OLD_DHGEX},
-+		{ "Sun_SSH_1.5*",	SSH_OLD_DHGEX},
- 		{ "OpenSSH_4*",		0 },
- 		{ "OpenSSH_5*",		SSH_NEW_OPENSSH|SSH_BUG_DYNAMIC_RPORT},
- 		{ "OpenSSH_6.6.1*",	SSH_NEW_OPENSSH},
-@@ -279,6 +281,31 @@ filter_proposal(char *proposal, const char *filter)
- 	return fix_prop;
+--- openssh-7.8p1/compat.c.~1~	2018-08-23 08:41:42.000000000 +0000
++++ openssh-7.8p1/compat.c	2018-10-21 06:45:57.926720721 +0000
+@@ -54,8 +54,12 @@
+ 		  "OpenSSH_3.1*",	SSH_BUG_EXTEOF|SSH_OLD_FORWARD_ADDR|
+ 					SSH_BUG_SIGTYPE},
+ 		{ "OpenSSH_3.*",	SSH_OLD_FORWARD_ADDR|SSH_BUG_SIGTYPE },
+-		{ "Sun_SSH_1.0*",	SSH_BUG_NOREKEY|SSH_BUG_EXTEOF|
+-					SSH_BUG_SIGTYPE},
++		{ "Sun_SSH_1.2*,"
++		  "Sun_SSH_1.3*,"
++		  "Sun_SSH_1.4*,"
++		  "Sun_SSH_1.5*",	SSH_OLD_DHGEX},
++		{ "Sun_SSH_1.*",	SSH_BUG_NOREKEY|SSH_BUG_EXTEOF|
++					SSH_BUG_SIGTYPE|SSH_OLD_DHGEX},
+ 		{ "OpenSSH_2*,"
+ 		  "OpenSSH_3*,"
+ 		  "OpenSSH_4*",		SSH_BUG_SIGTYPE },
+@@ -211,6 +215,31 @@
+ 	return pkalg_prop;
  }
  
 +/*
@@ -40,36 +39,33 @@ index 69a104fb..55fb3d93 100644
 +static char *
 +append_proposal(char *proposal, const char *append)
 +{
-+	Buffer b;
++	struct sshbuf *b;
 +	char *fix_prop;
 +
 +	if (strstr(proposal, append) != NULL)
 +		return proposal;
-+
-+	buffer_init(&b);
-+	buffer_append(&b, proposal, strlen(proposal));
-+	if (buffer_len(&b) > 0)
-+		buffer_append(&b, ",", 1);
-+	buffer_append(&b, append, strlen(append));
-+	buffer_append(&b, "\0", 1);
-+	fix_prop = xstrdup((char *)buffer_ptr(&b));
-+	buffer_free(&b);
++	if ((b = sshbuf_new()) == NULL)
++		fatal("sshbuf_new()");
++	sshbuf_put(b, proposal, strlen(proposal));
++	if (sshbuf_len(b) > 0)
++		sshbuf_put(b, ",", 1);
++	sshbuf_put(b, append, strlen(append));
++	sshbuf_put(b, "\0", 1);
++	fix_prop = sshbuf_dup_string(b);
++	sshbuf_free(b);
 +
 +	return fix_prop;
 +}
 +
  char *
- compat_cipher_proposal(char *cipher_prop)
+ compat_kex_proposal(char *p)
  {
-@@ -316,6 +343,8 @@ compat_kex_proposal(char *p)
- 	if ((datafellows & SSH_OLD_DHGEX) != 0) {
- 		p = filter_proposal(p, "diffie-hellman-group-exchange-sha256");
- 		p = filter_proposal(p, "diffie-hellman-group-exchange-sha1");
+@@ -226,6 +255,8 @@
+ 		    "diffie-hellman-group-exchange-sha256,"
+ 		    "diffie-hellman-group-exchange-sha1")) == NULL)
+ 			fatal("match_filter_blacklist failed");
 +		p = append_proposal(p, "diffie-hellman-group14-sha1");
 +		p = append_proposal(p, "diffie-hellman-group1-sha1");
  	}
  	debug2("%s: compat KEX proposal: %s", __func__, p);
  	if (*p == '\0')
--- 
-2.11.0
-

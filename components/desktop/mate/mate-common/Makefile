@@ -12,12 +12,15 @@
 # Copyright 2017 Gary Mills
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
+# Copyright 2019 Michal Nowak
 #
+
+PREFERRED_BITS=64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-common
-COMPONENT_MJR_VERSION=	1.18
+COMPONENT_MJR_VERSION=	1.22
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
@@ -25,12 +28,12 @@ COMPONENT_SUMMARY=	Common automake macros for MATE
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d77c44546e748f94cf93707ab3593146109401c9bcde533fc308863f9ca20580
+	sha256:3f19973a26ccff12834615c4fcc7414cef542ea648f391125e5cfdd8ec649c86
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_FMRI=		library/desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -39,7 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = cd $(@D) && NOCONFIGURE=1 ./autogen.sh
-
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
@@ -50,12 +52,12 @@ CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs

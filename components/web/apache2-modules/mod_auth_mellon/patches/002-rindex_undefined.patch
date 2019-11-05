@@ -1,0 +1,31 @@
+This patch fixes Mellon's issue:
+https://github.com/Uninett/mod_auth_mellon/issues/207
+
+Compilation on Solaris reports warning:
+
+"auth_mellon_diagnostics.c", line 188: warning: implicit function declaration: rindex
+"auth_mellon_diagnostics.c", line 188: warning: improper pointer/integer combination: op "="
+
+And binary dumps core, because rindex() is assumed to be integer type, so
+compiler sign extends its return value and then uses the number as pointer:
+
+mod_auth_mellon.so`am_diag_cond_str+0x154:
+call   -0x1e119 <PLT=libc.so.1`rindex>
+mod_auth_mellon.so`am_diag_cond_str+0x159:      movslq %eax,%rax
+mod_auth_mellon.so`am_diag_cond_str+0x15c:      testq  %rax,%rax
+mod_auth_mellon.so`am_diag_cond_str+0x15f:
+je     +0x7     <mod_auth_mellon.so`am_diag_cond_str+0x168>
+mod_auth_mellon.so`am_diag_cond_str+0x161:      movb   $0x5d,(%rax) <- SIGSEGV
+
+
+diff -ru mod_auth_mellon-0.14.1/auth_mellon.h mod_auth_mellon-0.14.1.new/auth_mellon.h
+--- mod_auth_mellon-0.14.1/auth_mellon.h	2018-07-25 10:19:25.000000000 +0000
++++ mod_auth_mellon-0.14.1.new/auth_mellon.h	2019-03-26 20:29:06.894212725 +0000
+@@ -25,6 +25,7 @@
+ #include "config.h"
+ 
+ #include <stdbool.h>
++#include <strings.h>
+ 
+ #include <lasso/lasso.h>
+ #include <lasso/xml/saml-2.0/samlp2_authn_request.h>

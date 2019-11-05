@@ -1,0 +1,26 @@
+This patch is obsolete if https://github.com/10gen/openssl/pull/11 in upstream is merged.
+
+diff --git a/mongodb-src-r4.0.11/src/mongo/gotools/src/github.com/mongodb/mongo-tools/vendor/github.com/10gen/openssl/build_static.go.old b/mongodb-src-r4.0.11/src/mongo/gotools/src/github.com/mongodb/mongo-tools/vendor/github.com/10gen/openssl/build_static.go
+index 1450d52e1..87c2e3235 100644
+--- a/src/mongo/gotools/src/github.com/mongodb/mongo-tools/vendor/github.com/10gen/openssl/build_static.go.old
++++ b/src/mongo/gotools/src/github.com/mongodb/mongo-tools/vendor/github.com/10gen/openssl/build_static.go
+@@ -16,7 +16,7 @@
+ 
+ package openssl
+ 
+-// #cgo linux windows darwin pkg-config: --static libssl libcrypto
++// #cgo linux windows solaris darwin pkg-config: --static libssl libcrypto
+ // #cgo CFLAGS: -Wno-deprecated-declarations
+ // #cgo windows CFLAGS: -DWIN32_LEAN_AND_MEAN -I"c:/openssl/include"
+ // #cgo windows LDFLAGS: -lssleay32 -llibeay32 -lcrypt32 -L "c:/openssl/bin"
+--- a/src/mongo/gotools/src/github.com/mongodb/mongo-tools/vendor/github.com/10gen/openssl/build.go	2019-07-28 12:21:40.814225607 +0000
++++ b/src/mongo/gotools/src/github.com/mongodb/mongo-tools/vendor/github.com/10gen/openssl/build.go	2019-07-28 12:22:10.157672377 +0000
+@@ -16,7 +16,7 @@
+ 
+ package openssl
+ 
+-// #cgo linux darwin pkg-config: openssl
++// #cgo linux solaris darwin pkg-config: openssl
+ // #cgo CFLAGS: -Wno-deprecated-declarations
+ // #cgo windows CFLAGS: -DWIN32_LEAN_AND_MEAN -I"c:/openssl/include"
+ // #cgo windows LDFLAGS: -lssleay32 -llibeay32 -lcrypt32 -L "c:/openssl/bin"

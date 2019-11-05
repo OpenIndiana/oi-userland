@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scons
-COMPONENT_VERSION=	2.5.1
+COMPONENT_VERSION=	3.1.0
 COMPONENT_PROJECT_URL=	http://scons.org/
 COMPONENT_SUMMARY=	SConstruct, a software building tool
 COMPONENT_SRC=		$(COMPONENT_NAME)-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fd3e17baad67cd4dd6b62616b5c1335572f298008a6c17d8375ca2b51c6a4322
+    sha256:2829abe88d9937d9e5123e39661720c2566e47a8cffa86a7f055de4eeb372a8c
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)-src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=		developer/build/scons
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
@@ -44,8 +44,6 @@ $(BUILD_DIR)/$(MACH32)/.built:	$(SOURCE_DIR)/.prep
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 	find $(@D) -name '*.sh' -exec $(CHMOD) +X '{}' \;
 	find $(@D) -name '*.pyc' -exec $(RM) '{}' \;
-	cd $(@D) && \
-		$(PYTHON) -m compileall .
 	cd $(@D) && \
 		$(PYTHON) bootstrap.py build/scons
 	$(TOUCH) $@

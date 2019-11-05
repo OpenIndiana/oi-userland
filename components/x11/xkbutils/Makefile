@@ -13,35 +13,19 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xkbutils
-COMPONENT_VERSION=        1.0.4
-COMPONENT_FMRI=           x11/keyboard/xkbutils
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xkbutils
+COMPONENT_VERSION=  1.0.4
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/keyboard/xkbutils
 COMPONENT_SUMMARY=  the xkbutils clients for X11 Keyboard (XKB) extension
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:d2a18ab90275e8bca028773c44264d2266dab70853db4321bdbc18da75148130
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xkbutils-1.0.4.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xkbutils.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

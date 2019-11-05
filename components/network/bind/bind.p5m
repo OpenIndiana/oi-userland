@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 <transform file path=usr/share/doc/bind/html/(.+)$ -> \
@@ -40,6 +41,8 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.arc-caseid \
 	value=PSARC/2009/308
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # This package name has known conflicts with other packages in the WOS
 set pkg.linted.pkglint.manifest004=true
@@ -77,8 +80,12 @@ file path=usr/share/doc/bind/html/man.rndc-confgen.html
 file path=usr/share/doc/bind/html/man.rndc.conf.html
 file path=usr/share/doc/bind/html/man.rndc.html
 
+# Libs
+file path=usr/lib/dns/$(MACH64)/named/filter-aaaa.so
+
 # Tools
 file path=usr/bin/named-rrchecker
+file path=usr/sbin/dnssec-cds
 file path=usr/sbin/dnssec-checkds
 file path=usr/sbin/dnssec-coverage
 file path=usr/sbin/dnssec-dsfromkey
@@ -94,10 +101,12 @@ file path=usr/sbin/named-checkconf
 file path=usr/sbin/named-checkzone
 link path=usr/sbin/named-compilezone target=named-checkzone
 file path=usr/sbin/named-journalprint
+file path=usr/sbin/named-nzd2nzf
 link path=usr/sbin/named-rrchecker target=../bin/named-rrchecker
 
 # Man
 file usr/share/man/man5/named.conf.5 path=usr/share/man/man4/named.conf.4
+file usr/share/man/man8/dnssec-cds.8 path=usr/share/man/man1m/dnssec-cds.1m
 file usr/share/man/man8/dnssec-checkds.8 path=usr/share/man/man1m/dnssec-checkds.1m
 file usr/share/man/man8/dnssec-coverage.8 path=usr/share/man/man1m/dnssec-coverage.1m
 file usr/share/man/man8/dnssec-dsfromkey.8 path=usr/share/man/man1m/dnssec-dsfromkey.1m
@@ -108,21 +117,12 @@ file usr/share/man/man8/dnssec-revoke.8 path=usr/share/man/man1m/dnssec-revoke.1
 file usr/share/man/man8/dnssec-settime.8 path=usr/share/man/man1m/dnssec-settime.1m
 file usr/share/man/man8/dnssec-signzone.8 path=usr/share/man/man1m/dnssec-signzone.1m
 file usr/share/man/man8/dnssec-verify.8 path=usr/share/man/man1m/dnssec-verify.1m
+file usr/share/man/man8/filter-aaaa.8 path=usr/share/man/man1m/filter-aaa.1m
 file usr/share/man/man8/named-checkconf.8 path=usr/share/man/man1m/named-checkconf.1m
 file usr/share/man/man8/named-checkzone.8 path=usr/share/man/man1m/named-checkzone.1m
 file usr/share/man/man8/named-journalprint.8 path=usr/share/man/man1m/named-journalprint.1m
 file usr/share/man/man1/named-rrchecker.1 path=usr/share/man/man1m/named-rrchecker.1m
 file usr/share/man/man8/named.8 path=usr/share/man/man1m/named.1m
-
-legacy pkg=SUNWbind \
-       name="BIND DNS Name server" \
-       desc="BIND DNS Name server"
-
-legacy pkg=SUNWbindr \
-       name="BIND Name server Manifest" \
-       desc="BIND Name server Manifest"
-
-license bind.license license="ISC license"
 
 group groupname=named gid=53
 user username=named ftpuser=false gcos-field="BIND Reserved UID" group=named \

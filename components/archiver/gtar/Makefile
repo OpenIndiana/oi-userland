@@ -18,23 +18,29 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
+#
+
+PREFERRED_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
-COMPONENT_VERSION=	1.29
+COMPONENT_VERSION=	1.32
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:236b11190c0a3a6885bdb8d61424f2b36a5872869aa3f7f695dea4b4843ae2f2
+	sha256:d0d3ae07f103323be809bc3eac0dcc386d52c5262499fe05511ac4788af1fdd8
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gtar
+COMPONENT_FMRI=		archiver/gnu-tar
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
@@ -42,17 +48,18 @@ CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-#181 tests were successful.
-#23 tests were skipped.
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
+# rmt(1M)
+REQUIRED_PACKAGES += service/network/network-clients
+REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/gzip
 REQUIRED_PACKAGES += network/ssh
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library

@@ -7,7 +7,7 @@ We need to customize default configuration:
 
 --- lightdm-1.19.3/src/lightdm.c.~3~	2016-08-12 19:54:56.871477375 +0300
 +++ lightdm-1.19.3/src/lightdm.c	2016-08-12 19:54:56.927097430 +0300
-@@ -1454,11 +1454,11 @@
+@@ -810,11 +810,11 @@
      if (!config_has_key (config_get_instance (), "Seat:*", "pam-service"))
          config_set_string (config_get_instance (), "Seat:*", "pam-service", "lightdm");
      if (!config_has_key (config_get_instance (), "Seat:*", "pam-autologin-service"))
@@ -21,31 +21,30 @@ We need to customize default configuration:
      if (!config_has_key (config_get_instance (), "Seat:*", "xmir-command"))
          config_set_string (config_get_instance (), "Seat:*", "xmir-command", "Xmir");
      if (!config_has_key (config_get_instance (), "Seat:*", "xserver-share"))
---- lightdm-1.19.3/data/lightdm.conf.~1~	2016-06-20 03:31:51.000000000 +0300
-+++ lightdm-1.19.3/data/lightdm.conf	2016-08-12 19:58:31.887145185 +0300
-@@ -61,7 +61,7 @@
- # unity-compositor-command = Unity compositor command to run (can also contain arguments e.g. unity-system-compositor -special-option)
- # unity-compositor-timeout = Number of seconds to wait for compositor to start
+--- lightdm-1.30.0/data/lightdm.conf	2018-09-05 03:33:31.000000000 +0000
++++ lightdm-1.30.0/data/lightdm.conf	2019-05-17 10:49:49.548885198 +0000
+@@ -60,7 +60,7 @@
+ # xdmcp-port = XDMCP UDP/IP port to communicate on
+ # xdmcp-key = Authentication key to use for XDM-AUTHENTICATION-1 (stored in keys.conf)
  # greeter-session = Session to load for greeter
 -# greeter-hide-users = True to hide the user list
 +# greeter-hide-users = False to show the user list
  # greeter-allow-guest = True if the greeter should show a guest login option
  # greeter-show-manual-login = True if the greeter should offer a manual login option
  # greeter-show-remote-login = True if the greeter should offer a remote login option
-@@ -87,10 +87,10 @@
+@@ -86,9 +86,9 @@
  [Seat:*]
  #type=local
  #pam-service=lightdm
 -#pam-autologin-service=lightdm-autologin
 +#pam-autologin-service=gdm-autologin
  #pam-greeter-service=lightdm-greeter
- #xserver-backend=
 -#xserver-command=X
 +#xserver-command=Xorg
  #xmir-command=Xmir
  #xserver-config=
  #xserver-layout=
-@@ -108,7 +108,7 @@
+@@ -104,7 +104,7 @@
  #greeter-allow-guest=true
  #greeter-show-manual-login=false
  #greeter-show-remote-login=true
@@ -54,7 +53,7 @@ We need to customize default configuration:
  #allow-user-switching=true
  #allow-guest=true
  #guest-session=
-@@ -159,9 +159,9 @@
+@@ -155,9 +155,9 @@
  #
  [VNCServer]
  #enabled=false
@@ -66,9 +65,9 @@ We need to customize default configuration:
  #height=768
 -#depth=8
 +#depth=16
---- lightdm-1.19.3/src/x-server-xvnc.c.1	2016-08-12 19:37:09.393184216 +0300
-+++ lightdm-1.19.3/src/x-server-xvnc.c	2016-08-12 19:40:55.925547899 +0300
-@@ -36,7 +36,7 @@
+--- lightdm-1.28.0/src/x-server-xvnc.c	2018-08-30 02:36:12.000000000 +0000
++++ lightdm-1.28.0/src/x-server-xvnc.c	2018-12-22 12:18:01.167730605 +0000
+@@ -36,7 +36,7 @@ x_server_xvnc_new (void)
  {
      XServerXVNC *server = g_object_new (X_SERVER_XVNC_TYPE, NULL);
  
@@ -77,18 +76,18 @@ We need to customize default configuration:
  
      return server;
  }
-@@ -121,7 +121,7 @@
-     server->priv = G_TYPE_INSTANCE_GET_PRIVATE (server, X_SERVER_XVNC_TYPE, XServerXVNCPrivate);
-     server->priv->width = 1024;
-     server->priv->height = 768;
--    server->priv->depth = 8;
-+    server->priv->depth = 16;
+@@ -127,7 +127,7 @@ x_server_xvnc_init (XServerXVNC *server)
+     XServerXVNCPrivate *priv = x_server_xvnc_get_instance_private (server);
+     priv->width = 1024;
+     priv->height = 768;
+-    priv->depth = 8;
++    priv->depth = 16;
  }
  
  static void
 --- lightdm-1.19.3/src/seat.c.1	2016-08-13 10:39:56.098357291 +0300
 +++ lightdm-1.19.3/src/seat.c	2016-08-13 10:56:21.727142124 +0300
-@@ -545,9 +545,16 @@
+@@ -523,9 +523,16 @@
  static void
  set_greeter_hints (Seat *seat, Greeter *greeter)
  {

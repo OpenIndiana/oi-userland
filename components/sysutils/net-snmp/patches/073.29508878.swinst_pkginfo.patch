@@ -1,0 +1,14 @@
+This patch has been developed inhouse and also shared with the community.
+The bug created in the community can be accessed at: https://sourceforge.net/p/net-snmp/bugs/2930/
+
+--- net-snmp-5.7.3.old/agent/mibgroup/host/data_access/swinst_pkginfo.c	2014-12-08 12:23:22.000000000 +0000
++++ net-snmp-5.7.3/agent/mibgroup/host/data_access/swinst_pkginfo.c	2019-04-03 05:06:14.047478723 +0000
+@@ -188,7 +188,7 @@
+ 					  "%s-%s", dp->d_name, v );
+ 	    if (entry->swName_len >= sizeof(entry->swName))
+ 		entry->swName_len = sizeof(entry->swName)-1;
+-	    entry->swType = (NULL != strstr( c, "system"))
++	    entry->swType = (c && (NULL != strstr( c, "system")))
+ 			    ? 2      /* operatingSystem */
+ 			    : 4;     /*  application    */
+ 

@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 UNPACK =		$(WS_TOOLS)/userland-unpack
@@ -56,8 +57,10 @@ REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/gzip
 REQUIRED_PACKAGES += compress/p7zip
 REQUIRED_PACKAGES += compress/unzip
+REQUIRED_PACKAGES += compress/lzip
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zip
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += developer/java/jdk
 REQUIRED_PACKAGES += runtime/ruby
 

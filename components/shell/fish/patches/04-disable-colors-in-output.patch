@@ -1,0 +1,33 @@
+--- fish-3.0.0/Makefile.in	2018-12-28 14:01:03.000000000 +0000
++++ fish-3.0.0/Makefile.in.new	2019-01-02 09:11:56.124547835 +0000
+@@ -227,30 +227,6 @@ else
+   share_man=
+ endif
+ 
+-
+-t_co:=$(shell tput colors || echo '')  2> /dev/null
+-green  := $(shell ( tput setaf 2 || tput AF 2 ) 2> /dev/null )
+-yellow := $(shell ( tput setaf 3 || tput AF 3 ) 2> /dev/null )
+-cyan := $(shell ( tput setaf 6 || tput AF 6 ) 2> /dev/null )
+-red := $(shell ( tput setaf 1 || tput AF 1 ) 2> /dev/null )
+-bo := $(shell ( tput bold || tput md ) 2> /dev/null )
+-# * Italic: Rarely defined -  it's common for it to work despite
+-# 		terminfo entries and isn't known to cause any recent > 256-color terminals
+-# 		to explode. If terminfo says a terminal supports 256 colors - it's fancy enough
+-# 		and won't have trouble the escape.
+-ifeq ($(t_co), 256)
+-	em := $(shell ( tput sitm || tput ZH || echo "\\033[3m" ) 2> /dev/null )
+-# * Half-bright/faint 'dim' mode - rarely works - rarely in terminfo when it does
+-#   but it's cool. Use it with one of the basic colors to get a fainter version
+-#   of it. We use this to shade the output from any reconfigures we trigger.
+-	dim := $(shell ( tput dim || tput mh || [ $(TERM_PROGRAM) = Apple_Terminal ] && echo "\\033[2m") 2> /dev/null )
+-else
+-	em := $(shell ( tput sitm || tput ZH ) 2> /dev/null )
+-	dim := $(shell ( tput dim || tput mh) 2> /dev/null )
+-endif
+-
+-sgr0 := $(shell ( tput sgr0 || tput me) 2> /dev/null )
+-
+ #
+ # A target that shows VAR='$(VAR)' (properly escaped)
+ # Cool trick: `make show-$var` (e.g. make show-HAVE_DOXYGEN) to quickly see what $var is.

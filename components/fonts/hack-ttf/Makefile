@@ -11,28 +11,27 @@
 
 #
 # Copyright 2016 Tim Mooney <Timothy.V.Mooney@gmail.com>
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	Hack
 # Both COMPONENT_VERSION and IPS_COMPONENT_VERSION are derived from this
-COMPONENT_FILE_VERSION= 2_020
-# transform _ in upstream version to .
-COMPONENT_VERSION=$(shell echo $(COMPONENT_FILE_VERSION) | sed -e 's/_/./g')
+COMPONENT_VERSION= 3.003
 # remove leading 0s in any part of the version.
 IPS_COMPONENT_VERSION= $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.0*\([1-9]\)/.\1/')
 COMPONENT_SUMMARY= Hack, a typeface designed for source code
-COMPONENT_PROJECT_URL= http://sourcefoundry.org/hack/
+COMPONENT_PROJECT_URL= https://sourcefoundry.org/hack/
 COMPONENT_FMRI=		system/font/truetype/hack
 COMPONENT_CLASSIFICATION=	System/Fonts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(IPS_COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-v$(COMPONENT_FILE_VERSION)-ttf.zip
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-v$(COMPONENT_VERSION)-ttf.tar.xz
 COMPONENT_ARCHIVE_URL=	\
 	https://github.com/chrissimpkins/Hack/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:048566ae79c580f725b68340d9d2a3b0fa125fb08c1d30cf0a7c327d07ab739a
-COMPONENT_LICENSE=	Hack Open Font License Version 2.0, BitStream Vera Font License
+  sha256:d9ed5d0a07525c7e7bd587b4364e4bc41021dd668658d09864453d9bb374a78d
+COMPONENT_LICENSE=	MIT, BitStream Vera Font License
 COMPONENT_LICENSE_FILE=	hack.license
 
 include $(WS_TOP)/make-rules/prep.mk

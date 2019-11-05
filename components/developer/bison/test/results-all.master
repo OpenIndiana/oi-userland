@@ -12,20 +12,30 @@ fi
 /usr/gnu/bin/make  check-recursive
 Making check in po
 Making check in runtime-po
+Making check in gnulib-po
 Making check in .
-src/bison --version >doc/bison.help.tmp
-src/bison --help   >>doc/bison.help.tmp
-$(SOURCE_DIR)/build-aux/move-if-change doc/bison.help.tmp $(SOURCE_DIR)/doc/bison.help
-/usr/gnu/bin/make  examples/calc++/calc++ examples/mfcalc/mfcalc examples/rpcalc/rpcalc ./tests/bison tests/atconfig tests/atlocal
+/usr/gnu/bin/make  examples/c/calc/calc examples/c/lexcalc/lexcalc examples/c/mfcalc/mfcalc examples/c/reccalc/reccalc examples/c/rpcalc/rpcalc examples/c++/calc++/calc++ examples/c++/simple examples/c++/variant examples/c++/variant-11  examples/java/Calc.class ./tests/bison tests/atconfig tests/atlocal
+/usr/bin/gmkdir -p examples/java
+./tests/bison $(SOURCE_DIR)/examples/java/Calc.y -o examples/java/Calc.java
+/bin/bash ./javacomp.sh examples/java/Calc.java
+warning: [options] bootstrap class path not set in conjunction with -source 1.7
+1 warning
 /usr/gnu/bin/make  check-TESTS check-local
-PASS: examples/calc++/calc++.test
-PASS: examples/mfcalc/mfcalc.test
-PASS: examples/rpcalc/rpcalc.test
+PASS: examples/c/mfcalc/mfcalc.test
+PASS: examples/c/rpcalc/rpcalc.test
+PASS: examples/c/calc/calc.test
+PASS: examples/c/lexcalc/lexcalc.test
+PASS: examples/c/reccalc/reccalc.test
+PASS: examples/c++/calc++/calc++.test
+PASS: examples/c++/simple.test
+PASS: examples/c++/variant.test
+PASS: examples/c++/variant-11.test
+PASS: examples/java/Calc.test
 ============================================================================
-Testsuite summary for GNU Bison 3.0.4
+Testsuite summary for GNU Bison 3.4.2
 ============================================================================
-# TOTAL: 3
-# PASS:  3
+# TOTAL: 10
+# PASS:  10
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -35,585 +45,675 @@ Testsuite summary for GNU Bison 3.0.4
 /usr/gnu/bin/make  all-recursive
 Making all in po
 Making all in runtime-po
+Making all in gnulib-po
 Making all in .
-src/bison --version >doc/bison.help.tmp
-src/bison --help   >>doc/bison.help.tmp
-$(SOURCE_DIR)/build-aux/move-if-change doc/bison.help.tmp $(SOURCE_DIR)/doc/bison.help
-$(SOURCE_DIR)/tests/testsuite -C tests 
+/bin/bash $(SOURCE_DIR)/tests/testsuite -C tests 
 ## --------------------------- ##
-## GNU Bison 3.0.4 test suite. ##
+## GNU Bison 3.4.2 test suite. ##
 ## --------------------------- ##
 
 Input Processing.
 
-  1: Invalid options                                 ok
-  2: Invalid inputs                                  ok
-  3: Invalid inputs with {}                          ok
-  4: Invalid $n and @n                               ok
-  5: Type Clashes                                    ok
-  6: Unused values                                   ok
-  7: Unused values before symbol declarations        ok
-  8: Default %printer and %destructor redeclared     ok
-  9: Per-type %printer and %destructor redeclared    ok
- 10: Undefined symbols                               ok
- 11: Unassociated types used for a printer or destructor ok
- 12: Useless printers or destructors                 ok
- 13: Unused values with default %destructor          ok
- 14: Unused values with per-type %destructor         ok
- 15: Incompatible Aliases                            ok
- 16: Torturing the Scanner                           ok
- 17: Typed symbol aliases                            ok
- 18: Require 1.0                                     ok
- 19: Require 3.0.4                                   ok
- 20: Require 100.0                                   ok
- 21: String aliases for character tokens             ok
- 22: Symbols                                         ok
- 23: Numbered tokens                                 ok
- 24: Unclosed constructs                             ok
- 25: %start after first rule                         ok
- 26: %prec takes a token                             ok
- 27: %prec's token must be defined                   ok
- 28: Reject unused %code qualifiers                  ok
- 29: Multiple %code                                  ok
- 30: errors                                          ok
- 31: %define, --define, --force-define               ok
- 32: "%define" Boolean variables                     ok
- 33: "%define" code variables                        ok
- 34: "%define" keyword variables                     ok
- 35: "%define" enum variables                        ok
- 36: "%define" backward compatibility                ok
- 37: Unused api.pure                                 ok
- 38: C++ namespace reference errors                  ok
- 39: Bad character literals                          ok
- 40: Bad escapes in literals                         ok
- 41: LAC: Errors for %define                         ok
- 42: -Werror combinations                            ok
- 43: %name-prefix and api.prefix are incompatible    ok
- 44: Redefined %union name                           ok
- 45: Stray $ or @                                    ok
- 46: Code injection                                  ok
- 47: Deprecated directives                           ok
- 48: Unput's effect on locations                     ok
- 49: Non-deprecated directives                       ok
+  1: Invalid number of arguments                     ok
+  2: Invalid options                                 ok
+  3: Invalid inputs                                  ok
+  4: Invalid inputs with {}                          ok
+  5: Yacc warnings on symbols                        ok
+  6: Yacc warnings                                   ok
+  7: Invalid symbol declarations                     ok
+  8: Symbol declarations                             ok
+  9: Invalid $n and @n                               ok
+ 10: Type Clashes                                    ok
+ 11: Unused values                                   ok
+ 12: Unused values before symbol declarations        ok
+ 13: Symbol redeclared                               ok
+ 14: Symbol class redefinition                       ok
+ 15: Default %printer and %destructor redeclared     ok
+ 16: Per-type %printer and %destructor redeclared    ok
+ 17: Undefined symbols                               ok
+ 18: Unassociated types used for a printer or destructor ok
+ 19: Useless printers or destructors                 ok
+ 20: Unused values with default %destructor          ok
+ 21: Unused values with per-type %destructor         ok
+ 22: Duplicate string                                ok
+ 23: Token collisions                                ok
+ 24: Incompatible Aliases                            ok
+ 25: Torturing the Scanner                           ok
+ 26: Typed symbol aliases                            ok
+ 27: Require 1.0                                     ok
+ 28: Require 3.4.2                                   ok
+ 29: Require 100.0                                   ok
+ 30: String aliases for character tokens             ok
+ 31: Symbols                                         ok
+ 32: Numbered tokens                                 ok
+ 33: Unclosed constructs                             ok
+ 34: %start after first rule                         ok
+ 35: %prec takes a token                             ok
+ 36: %prec's token must be defined                   ok
+ 37: Reject unused %code qualifiers                  ok
+ 38: Multiple %code                                  ok
+ 39: errors                                          ok
+ 40: %define, --define, --force-define               ok
+ 41: "%define" Boolean variables                     ok
+ 42: "%define" code variables                        ok
+ 43: "%define" keyword variables                     ok
+ 44: "%define" enum variables                        ok
+ 45: "%define" file variables                        ok
+ 46: "%define" backward compatibility                ok
+ 47: Unused api.pure                                 ok
+ 48: C++ namespace reference errors                  ok
+ 49: Bad character literals                          ok
+ 50: Bad escapes in literals                         ok
+ 51: LAC: Errors for %define                         ok
+ 52: -Werror combinations                            ok
+ 53: %name-prefix and api.prefix are incompatible    ok
+ 54: Redefined %union name                           ok
+ 55: Stray $ or @                                    ok
+ 56: Code injection                                  ok
+ 57: Deprecated directives                           ok
+ 58: Unput's effect on locations                     ok
+ 59: Non-deprecated directives                       ok
+ 60: Cannot type action                              ok
 
 Named references tests.
 
- 50: Tutorial calculator                             ok
- 51: Undefined and ambiguous references              ok
- 52: Misleading references                           ok
- 53: Many kinds of errors                            ok
- 54: Missing identifiers in brackets                 ok
- 55: Redundant words in brackets                     ok
- 56: Comments in brackets                            ok
- 57: Stray symbols in brackets                       ok
- 58: Redundant words in LHS brackets                 ok
- 59: Factored LHS                                    ok
- 60: Unresolved references                           ok
- 61: $ or @ followed by . or -                       ok
+ 61: Tutorial calculator                             ok
+ 62: Undefined and ambiguous references              ok
+ 63: Misleading references                           ok
+ 64: Many kinds of errors                            ok
+ 65: Missing identifiers in brackets                 ok
+ 66: Redundant words in brackets                     ok
+ 67: Comments in brackets                            ok
+ 68: Stray symbols in brackets                       ok
+ 69: Redundant words in LHS brackets                 ok
+ 70: Factored LHS                                    ok
+ 71: Unresolved references                           ok
+ 72: $ or @ followed by . or -                       ok
 
 Output file names.
 
- 62: Output files:  -dv                              ok
- 63: Output files:  -dv >&-                          ok
- 64: Output files:  -dv -o foo.c                     ok
- 65: Output files:  -dv -o foo.tab.c                 ok
- 66: Output files:  -dv -g --xml -y                  ok
- 67: Output files:  -dv -g --xml -o y.tab.c          ok
- 68: Output files:  -dv -b bar                       ok
- 69: Output files:  -dv -g -o foo.c                  ok
- 70: Output files: %defines %verbose                 ok
- 71: Output files: %defines %verbose %yacc           ok
- 72: Output files: %defines %verbose %yacc           ok
- 73: Output files: %file-prefix "bar" %defines %verbose  ok
- 74: Output files: %output "bar.c" %defines %verbose %yacc  ok
- 75: Output files: %file-prefix "baz" %output "bar.c" %defines %verbose %yacc  ok
- 76: Output files: %defines %verbose                 ok
- 77: Output files: %defines %verbose  -o foo.c       ok
- 78: Output files:  --defines=foo.hpp -o foo.c++     ok
- 79: Output files: %defines "foo.hpp" -o foo.c++     ok
- 80: Output files:  -o foo.c++ --graph=foo.gph       ok
- 81: Output files: %type <foo> useless --defines --graph --xml --report=all -Wall -Werror ok
- 82: Output files: useless=--defines --graph --xml --report=all -Wall -Werror ok
- 83: Output files: lalr1.cc %verbose                 ok
- 84: Output files: lalr1.cc %defines %verbose        ok
- 85: Output files: lalr1.cc %verbose %locations      ok
- 86: Output files: lalr1.cc %defines %verbose %locations  ok
- 87: Output files: lalr1.cc %defines %verbose        ok
- 88: Output files: lalr1.cc %defines %verbose %locations -o subdir/foo.cc ok
- 89: Output files: lalr1.cc %defines %verbose %file-prefix "output_dir/foo"  ok
- 90: Output files: lalr1.cc %defines %locations %verbose %file-prefix "output_dir/foo"  ok
- 91: Conflicting output files:  --graph="foo.tab.c"  ok
- 92: Conflicting output files: %defines "foo.output" -v ok
- 93: Conflicting output files: lalr1.cc %defines %locations --graph="location.hh" ok
- 94: Conflicting output files:  -o foo.y             ok
- 95: Output file name: `~!@#$%^&*()-=_+{}[]|\:;<>, .' ok
- 96: Output file name: (                             ok
- 97: Output file name: )                             ok
- 98: Output file name: #                             ok
- 99: Output file name: @@                            ok
-100: Output file name: @{                            ok
-101: Output file name: @}                            ok
-102: Output file name: [                             ok
-103: Output file name: ]                             ok
-104: Graph with no conflicts                         ok
-105: Graph with unsolved S/R                         ok
-106: Graph with solved S/R                           ok
-107: Graph with R/R                                  ok
-108: Graph with reductions with multiple LAT         ok
-109: Graph with a reduction rule both enabled and disabled ok
+ 73: Output files:  -dv                              ok
+ 74: Output files:  -dv >&-                          ok
+ 75: Output files:  -dv -o foo.c                     ok
+ 76: Output files:  -dv -o foo.tab.c                 ok
+ 77: Output files:  -dv -g --xml -y                  ok
+ 78: Output files: %require "3.4" -dv -g --xml -y    ok
+ 79: Output files:  -dv -g --xml -o y.tab.c          ok
+ 80: Output files:  -dv -b bar                       ok
+ 81: Output files:  -dv -g -o foo.c                  ok
+ 82: Output files: %defines %verbose                 ok
+ 83: Output files: %defines %verbose %yacc           ok
+ 84: Output files: %defines %verbose %yacc           ok
+ 85: Output files: %file-prefix "bar" %defines %verbose  ok
+ 86: Output files: %output "bar.c" %defines %verbose %yacc  ok
+ 87: Output files: %file-prefix "baz" %output "bar.c" %defines %verbose %yacc  ok
+ 88: Output files: %defines %verbose                 ok
+ 89: Output files: %defines %verbose  -o foo.c       ok
+ 90: Output files:  --defines=foo.hpp -o foo.c++     ok
+ 91: Output files: %defines "foo.hpp" -o foo.c++     ok
+ 92: Output files:  -o foo.c++ --graph=foo.gph       ok
+ 93: Output files: %type <foo> useless --defines --graph --xml --report=all -Wall -Werror ok
+ 94: Output files: useless=--defines --graph --xml --report=all -Wall -Werror ok
+ 95: Output files: lalr1.cc                          ok
+ 96: Output files: lalr1.cc %verbose                 ok
+ 97: Output files: lalr1.cc %defines %verbose        ok
+ 98: Output files: lalr1.cc %verbose %locations      ok
+ 99: Output files: lalr1.cc %defines %verbose %locations  ok
+100: Output files: lalr1.cc %defines %verbose        ok
+101: Output files: lalr1.cc %defines %verbose %locations -o subdir/foo.cc ok
+102: Output files: lalr1.cc %defines %verbose %file-prefix "output_dir/foo"  ok
+103: Output files: lalr1.cc %defines %locations %verbose %file-prefix "output_dir/foo"  ok
+104: Output files: lalr1.cc %defines %locations api.location.file=none %require "3.2"  ok
+105: Output files: lalr1.cc %defines %locations api.location.file="foo.loc.hh" %require "3.2"  ok
+106: Output files: lalr1.cc %defines %locations api.location.file="$at_dir/foo.loc.hh" %require "3.2"  ok
+107: Conflicting output files:  --graph="foo.tab.c"  ok
+108: Conflicting output files: %defines "foo.output" -v ok
+109: Conflicting output files: lalr1.cc %defines %locations --graph="location.hh" ok
+110: Conflicting output files:  -o foo.y             ok
+111: Output file name: `~!@#$%^&*()-=_+{}[]|\:;<>, .' ok
+112: Output file name: (                             ok
+113: Output file name: )                             ok
+114: Output file name: #                             ok
+115: Output file name: @@                            ok
+116: Output file name: @{                            ok
+117: Output file name: @}                            ok
+118: Output file name: [                             ok
+119: Output file name: ]                             ok
+120: Graph with no conflicts                         ok
+121: Graph with unsolved S/R                         ok
+122: Graph with solved S/R                           ok
+123: Graph with R/R                                  ok
+124: Graph with reductions with multiple LAT         ok
+125: Graph with a reduction rule both enabled and disabled ok
+
+Diagnostics.
+
+126: Warnings                                        ok
+127: Single point locations                          ok
+128: Tabulations and multibyte characters            ok
+129: Special files                                   ok
+130: Locations from M4                               ok
+131: Tabulations and multibyte characters from M4    ok
+132: Carriage return                                 ok
+133: Indentation with message suppression            ok
 
 Skeleton Support.
 
-110: Relative skeleton file names                    ok
-111: Installed skeleton file names                   ok
-112: Boolean=variables: invalid skeleton defaults    ok
-113: Complaining during macro argument expansion     ok
-114: Fatal errors make M4 exit immediately           ok
-115: Fatal errors but M4 continues producing output  ok
+134: Relative skeleton file names                    ok
+135: Installed skeleton file names                   ok
+136: Boolean=variables: invalid skeleton defaults    ok
+137: Complaining during macro argument expansion     ok
+138: Fatal errors make M4 exit immediately           ok
+139: Fatal errors but M4 continues producing output  ok
 
 Grammar Sets (Firsts etc.).
 
-116: Nullable                                        ok
-117: Broken Closure                                  ok
-118: Firsts                                          ok
-119: Accept                                          ok
+140: Nullable                                        ok
+141: Broken Closure                                  ok
+142: Firsts                                          ok
+143: Accept                                          ok
+144: Build relations                                 ok
+145: Reduced Grammar                                 ok
 
 Grammar Reduction.
 
-120: Useless Terminals                               ok
-121: Useless Nonterminals                            ok
-122: Useless Rules                                   ok
-123: Reduced Automaton                               ok
-124: Underivable Rules                               ok
-125: Empty Language                                  ok
-126: no lr.type: Single State Split                  ok
-127: lr.type=lalr: Single State Split                ok
-128: lr.type=ielr: Single State Split                ok
-129: lr.type=canonical-lr: Single State Split        ok
-130: no lr.type: Lane Split                          ok
-131: lr.type=lalr: Lane Split                        ok
-132: lr.type=ielr: Lane Split                        ok
-133: lr.type=canonical-lr: Lane Split                ok
-134: no lr.type: Complex Lane Split                  ok
-135: lr.type=lalr: Complex Lane Split                ok
-136: lr.type=ielr: Complex Lane Split                ok
-137: lr.type=canonical-lr: Complex Lane Split        ok
-138: no lr.type: Split During Added Lookahead Propagation ok
-139: lr.type=lalr: Split During Added Lookahead Propagation ok
-140: lr.type=ielr: Split During Added Lookahead Propagation ok
-141: lr.type=canonical-lr: Split During Added Lookahead Propagation ok
-142: no lr.default-reduction                         ok
-143: lr.default-reduction=most                       ok
-144: lr.default-reduction=consistent                 ok
-145: lr.default-reduction=accepting                  ok
+146: Useless Terminals                               ok
+147: Useless Nonterminals                            ok
+148: Useless Rules                                   ok
+149: Useless Parts                                   ok
+150: Reduced Automaton                               ok
+151: Underivable Rules                               ok
+152: Empty Language                                  ok
+153: no lr.type: Single State Split                  ok
+154: lr.type=lalr: Single State Split                ok
+155: lr.type=ielr: Single State Split                ok
+156: lr.type=canonical-lr: Single State Split        ok
+157: no lr.type: Lane Split                          ok
+158: lr.type=lalr: Lane Split                        ok
+159: lr.type=ielr: Lane Split                        ok
+160: lr.type=canonical-lr: Lane Split                ok
+161: no lr.type: Complex Lane Split                  ok
+162: lr.type=lalr: Complex Lane Split                ok
+163: lr.type=ielr: Complex Lane Split                ok
+164: lr.type=canonical-lr: Complex Lane Split        ok
+165: no lr.type: Split During Added Lookahead Propagation ok
+166: lr.type=lalr: Split During Added Lookahead Propagation ok
+167: lr.type=ielr: Split During Added Lookahead Propagation ok
+168: lr.type=canonical-lr: Split During Added Lookahead Propagation ok
+169: no lr.default-reduction                         ok
+170: lr.default-reduction=most                       ok
+171: lr.default-reduction=consistent                 ok
+172: lr.default-reduction=accepting                  ok
+
+Test reports.
+
+173: Reports                                         ok
 
 Conflicts.
 
-146: Token declaration order                         ok
-147: Token declaration order: literals vs. identifiers ok
-148: Useless associativity warning                   ok
-149: Useless precedence warning                      ok
-150: S/R in initial                                  ok
-151: %nonassoc and eof                               ok
-152: parse.error=verbose and consistent errors: lr.type=ielr ok
-153: parse.error=verbose and consistent errors: lr.type=ielr %glr-parser ok
-154: parse.error=verbose and consistent errors: lr.type=ielr c++ ok
-155: parse.error=verbose and consistent errors: lr.type=ielr java ok
-156: parse.error=verbose and consistent errors: lr.type=ielr lr.default-reduction=consistent ok
-157: parse.error=verbose and consistent errors: lr.type=ielr lr.default-reduction=accepting ok
-158: parse.error=verbose and consistent errors: lr.type=canonical-lr ok
-159: parse.error=verbose and consistent errors: lr.type=canonical-lr parse.lac=full ok
-160: parse.error=verbose and consistent errors: lr.type=ielr parse.lac=full ok
-161: parse.error=verbose and consistent errors:      ok
-162: parse.error=verbose and consistent errors: %glr-parser ok
-163: parse.error=verbose and consistent errors: lr.default-reduction=consistent ok
-164: parse.error=verbose and consistent errors: lr.default-reduction=accepting ok
-165: parse.error=verbose and consistent errors: lr.type=canonical-lr ok
-166: parse.error=verbose and consistent errors: parse.lac=full ok
-167: parse.error=verbose and consistent errors: parse.lac=full lr.default-reduction=accepting ok
-168: LAC: %nonassoc requires splitting canonical LR states ok
-169: Unresolved SR Conflicts                         ok
-170: Resolved SR Conflicts                           ok
-171: %precedence suffices                            ok
-172: %precedence does not suffice                    ok
-173: Defaulted Conflicted Reduction                  ok
-174: %expect not enough                              ok
-175: %expect right                                   ok
-176: %expect too much                                ok
-177: %expect with reduce conflicts                   ok
-178: %prec with user string                          ok
-179: %no-default-prec without %prec                  ok
-180: %no-default-prec with %prec                     ok
-181: %default-prec                                   ok
-182: Unreachable States After Conflict Resolution    ok
-183: Solved conflicts report for multiple reductions in a state ok
-184: %nonassoc error actions for multiple reductions in a state ok
-185: %expect-rr non GLR                              ok
-186: -W versus %expect and %expect-rr                ok
+174: Token declaration order                         ok
+175: Token declaration order: literals vs. identifiers ok
+176: Useless associativity warning                   ok
+177: Useless precedence warning                      ok
+178: S/R in initial                                  ok
+179: %nonassoc and eof                               ok
+180: parse.error=verbose and consistent errors: lr.type=ielr ok
+181: parse.error=verbose and consistent errors: lr.type=ielr %glr-parser ok
+182: parse.error=verbose and consistent errors: lr.type=ielr c++ ok
+183: parse.error=verbose and consistent errors: lr.type=ielr java ok
+184: parse.error=verbose and consistent errors: lr.type=ielr lr.default-reduction=consistent ok
+185: parse.error=verbose and consistent errors: lr.type=ielr lr.default-reduction=accepting ok
+186: parse.error=verbose and consistent errors: lr.type=canonical-lr ok
+187: parse.error=verbose and consistent errors: lr.type=canonical-lr parse.lac=full ok
+188: parse.error=verbose and consistent errors: lr.type=ielr parse.lac=full ok
+189: parse.error=verbose and consistent errors:      ok
+190: parse.error=verbose and consistent errors: %glr-parser ok
+191: parse.error=verbose and consistent errors: lr.default-reduction=consistent ok
+192: parse.error=verbose and consistent errors: lr.default-reduction=accepting ok
+193: parse.error=verbose and consistent errors: lr.type=canonical-lr ok
+194: parse.error=verbose and consistent errors: parse.lac=full ok
+195: parse.error=verbose and consistent errors: parse.lac=full lr.default-reduction=accepting ok
+196: LAC: %nonassoc requires splitting canonical LR states ok
+197: Unresolved SR Conflicts                         ok
+198: Resolved SR Conflicts                           ok
+199: %precedence suffices                            ok
+200: %precedence does not suffice                    ok
+201: Defaulted Conflicted Reduction                  ok
+202: %expect not enough                              ok
+203: %expect right                                   ok
+204: %expect too much                                ok
+205: %expect with reduce conflicts                   ok
+206: %expect in grammar rule not enough              ok
+207: %expect in grammar rule right                   ok
+208: %expect in grammar rules                        ok
+209: %expect in grammar rule too much                ok
+210: %expect-rr in grammar rule                      ok
+211: %expect-rr too much in grammar rule             ok
+212: %expect-rr not enough in grammar rule           ok
+213: %prec with user string                          ok
+214: %no-default-prec without %prec                  ok
+215: %no-default-prec with %prec                     ok
+216: %default-prec                                   ok
+217: Unreachable States After Conflict Resolution    ok
+218: Solved conflicts report for multiple reductions in a state ok
+219: %nonassoc error actions for multiple reductions in a state ok
+220: %expect-rr non GLR                              ok
+221: -W versus %expect and %expect-rr                ok
 
-User Actions.
+Sync Lines.
 
-187: Prologue syncline                               ok
-188: %union syncline                                 ok
-189: %union name syncline                            ok
-190: Postprologue syncline                           ok
-191: Action syncline                                 ok
-192: Epilogue syncline                               ok
-193: %code top syncline                              ok
-194: %no-lines: yacc.c                               ok
-195: %no-lines: glr.c                                ok
-196: %no-lines: lalr1.cc                             ok
-197: %no-lines: glr.cc                               ok
+222: Prologue syncline                               ok
+223: %union syncline                                 ok
+224: %union name syncline                            ok
+225: Postprologue syncline                           ok
+226: Action syncline                                 ok
+227: Epilogue syncline                               ok
+228: %code top syncline                              ok
+229: %destructor syncline                            ok
+230: %printer syncline                               ok
+231: syncline escapes: yacc.c                        ok
+232: syncline escapes: glr.c                         ok
+233: syncline escapes: lalr1.cc                      ok
+234: syncline escapes: glr.cc                        ok
+235: %no-lines: yacc.c                               ok
+236: %no-lines: glr.c                                ok
+237: %no-lines: lalr1.cc                             ok
+238: %no-lines: glr.cc                               ok
 
 Parser Headers.
 
-198: Invalid CPP guards:  --defines=input/input.h    ok
-199: Invalid CPP guards:  --defines=9foo.h           ok
-200: Invalid CPP guards: %glr-parser --defines=input/input.h ok
-201: Invalid CPP guards: %glr-parser --defines=9foo.h ok
-202: export YYLTYPE                                  ok
-203: Several parsers                                 ok
+239: Invalid CPP guards:  --defines=input/input.h    ok
+240: Invalid CPP guards:  --defines=9foo.h           ok
+241: Invalid CPP guards: %glr-parser --defines=input/input.h ok
+242: Invalid CPP guards: %glr-parser --defines=9foo.h ok
+243: export YYLTYPE                                  ok
+244: Sane headers:                                   ok
+245: Sane headers: %locations %debug                 ok
+246: Sane headers: %glr-parser                       ok
+247: Sane headers: %locations %debug %glr-parser     ok
+248: Sane headers: api.pure                          ok
+249: Sane headers: api.push-pull=both                ok
+250: Sane headers: api.pure api.push-pull=both       ok
+251: Sane headers: c++                               ok
+252: Sane headers: %locations %debug c++             ok
+253: Sane headers: c++ api.value.type=variant parse.assert ok
+254: Sane headers: %locations c++ %glr-parser        ok
+255: Several parsers                                 ok
 
 User Actions.
 
-204: Mid-rule actions                                ok
-205: Implicitly empty rule                           ok
-206: Invalid uses of %empty                          ok
-207: Valid uses of %empty                            ok
-208: Initial location: yacc.c                        ok
-209: Initial location: yacc.c api.pure=full          ok
-210: Initial location: yacc.c api.pure %parse-param { int x } ok
-211: Initial location: yacc.c api.push-pull=both     ok
-212: Initial location: yacc.c api.push-pull=both api.pure=full ok
-213: Initial location: glr.c                         ok
-214: Initial location: glr.c api.pure                ok
-215: Initial location: lalr1.cc                      ok
-216: Initial location: glr.cc                        ok
-217: Initial location: yacc.c api.pure=full          ok
-218: Initial location: yacc.c api.pure=full          ok
-219: Location print: yacc.c                          ok
-220: Location print: glr.c                           ok
-221: Location print: lalr1.cc                        ok
-222: Location print: glr.cc                          ok
-223: Exotic Dollars                                  ok
-224: Printers and Destructors                        ok
-225: Printers and Destructors with union             ok
-226: Printers and Destructors: %defines lalr1.cc     ok
-227: Printers and Destructors with union: %defines lalr1.cc ok
-228: Printers and Destructors: %glr-parser           ok
-229: Printers and Destructors with union: %glr-parser ok
-230: Default tagless %printer and %destructor        ok
-231: Default tagged and per-type %printer and %destructor ok
-232: Default %printer and %destructor for user-defined end token ok
-233: Default %printer and %destructor are not for error or $undefined ok
-234: Default %printer and %destructor are not for $accept ok
-235: Default %printer and %destructor for mid-rule values ok
-236: @$ in %initial-action implies %locations        ok
-237: @$ in %destructor implies %locations            ok
-238: @$ in %printer implies %locations               ok
-239: Qualified $$ in actions: yacc.c                 ok
-240: Qualified $$ in actions: glr.c                  ok
-241: Qualified $$ in actions: lalr1.cc               ok
-242: Qualified $$ in actions: glr.cc                 ok
-243: Destroying lookahead assigned by semantic action ok
-244: YYBACKUP                                        ok
+256: Midrule actions                                 ok
+257: Typed midrule actions                           ok
+258: Implicitly empty rule                           ok
+259: Invalid uses of %empty                          ok
+260: Valid uses of %empty                            ok
+261: Add missing %empty                              ok
+262: Initial location: yacc.c                        ok
+263: Initial location: yacc.c api.pure=full          ok
+264: Initial location: yacc.c api.pure %parse-param { int x } ok
+265: Initial location: yacc.c api.push-pull=both     ok
+266: Initial location: yacc.c api.push-pull=both api.pure=full ok
+267: Initial location: glr.c                         ok
+268: Initial location: glr.c api.pure                ok
+269: Initial location: lalr1.cc                      ok
+270: Initial location: glr.cc                        ok
+271: Initial location: yacc.c api.pure=full          ok
+272: Initial location: yacc.c api.pure=full          ok
+273: Location print: yacc.c                          ok
+274: Location print: glr.c                           ok
+275: Location print: lalr1.cc                        ok
+276: Location print: glr.cc                          ok
+277: Exotic Dollars                                  ok
+278: Printers and Destructors                        ok
+279: Printers and Destructors with union             ok
+280: Printers and Destructors: %glr-parser           ok
+281: Printers and Destructors with union: %glr-parser ok
+282: Printers and Destructors: %defines lalr1.cc     ok
+283: Printers and Destructors with union: %defines lalr1.cc ok
+284: Printers and Destructors: %defines glr.cc       ok
+285: Printers and Destructors with union: %defines glr.cc ok
+286: Default tagless %printer and %destructor        ok
+287: Default tagged and per-type %printer and %destructor ok
+288: Default %printer and %destructor for user-defined end token ok
+289: Default %printer and %destructor are not for error or $undefined ok
+290: Default %printer and %destructor are not for $accept ok
+291: Default %printer and %destructor for midrule values ok
+292: @$ in %initial-action implies %locations        ok
+293: @$ in %destructor implies %locations            ok
+294: @$ in %printer implies %locations               ok
+295: Qualified $$ in actions: yacc.c                 ok
+296: Qualified $$ in actions: glr.c                  ok
+297: Qualified $$ in actions: lalr1.cc               ok
+298: Qualified $$ in actions: glr.cc                 ok
+299: Destroying lookahead assigned by semantic action ok
+300: YYBACKUP                                        ok
 
 Value type tests.
 
-245: %union vs. api.value.type                       ok
-246: %yacc vs. api.value.type=union                  ok
-247: yacc.c api.value.type={double}                  ok
-248: yacc.c api.value.type={double} %defines         ok
-249: yacc.c api.value.type={variant}                 ok
-250: yacc.c api.value.type={variant} %defines        ok
-251: yacc.c api.value.type={struct foo}              ok
-252: yacc.c api.value.type={struct foo} %defines     ok
-253: yacc.c api.value.type={struct bar}              ok
-254: yacc.c api.value.type={struct bar} %defines     ok
-255: yacc.c api.value.type={union foo}               ok
-256: yacc.c api.value.type={union foo} %defines      ok
-257: yacc.c %union { float fval; int ival; };        ok
-258: yacc.c %union { float fval; int ival; }; %defines ok
-259: yacc.c %union foo { float fval; int ival; };    ok
-260: yacc.c %union foo { float fval; int ival; }; %defines ok
-261: yacc.c api.value.union.name=foo; %union { float fval; int ival; }; ok
-262: yacc.c api.value.union.name=foo; %union { float fval; int ival; }; %defines ok
-263: yacc.c api.value.type=union                     ok
-264: yacc.c api.value.type=union %defines            ok
-265: glr.c api.value.type={double}                   ok
-266: glr.c api.value.type={double} %defines          ok
-267: glr.c api.value.type={variant}                  ok
-268: glr.c api.value.type={variant} %defines         ok
-269: glr.c api.value.type={struct foo}               ok
-270: glr.c api.value.type={struct foo} %defines      ok
-271: glr.c api.value.type={struct bar}               ok
-272: glr.c api.value.type={struct bar} %defines      ok
-273: glr.c api.value.type={union foo}                ok
-274: glr.c api.value.type={union foo} %defines       ok
-275: glr.c %union { float fval; int ival; };         ok
-276: glr.c %union { float fval; int ival; }; %defines ok
-277: glr.c %union foo { float fval; int ival; };     ok
-278: glr.c %union foo { float fval; int ival; }; %defines ok
-279: glr.c api.value.union.name=foo; %union { float fval; int ival; }; ok
-280: glr.c api.value.union.name=foo; %union { float fval; int ival; }; %defines ok
-281: glr.c api.value.type=union                      ok
-282: glr.c api.value.type=union %defines             ok
-283: lalr1.cc api.value.type={double}                ok
-284: lalr1.cc api.value.type={double} %defines       ok
-285: lalr1.cc api.value.type={variant}               ok
-286: lalr1.cc api.value.type={variant} %defines      ok
-287: lalr1.cc api.value.type={struct foo}            ok
-288: lalr1.cc api.value.type={struct foo} %defines   ok
-289: lalr1.cc api.value.type={struct bar}            ok
-290: lalr1.cc api.value.type={struct bar} %defines   ok
-291: lalr1.cc api.value.type={union foo}             ok
-292: lalr1.cc api.value.type={union foo} %defines    ok
-293: lalr1.cc %union { float fval; int ival; };      ok
-294: lalr1.cc %union { float fval; int ival; }; %defines ok
-295: lalr1.cc api.value.type=union                   ok
-296: lalr1.cc api.value.type=union %defines          ok
-297: lalr1.cc api.value.type=variant                 ok
-298: lalr1.cc api.value.type=variant %defines        ok
-299: glr.cc api.value.type={double}                  ok
-300: glr.cc api.value.type={double} %defines         ok
-301: glr.cc api.value.type={variant}                 ok
-302: glr.cc api.value.type={variant} %defines        ok
-303: glr.cc api.value.type={struct foo}              ok
-304: glr.cc api.value.type={struct foo} %defines     ok
-305: glr.cc api.value.type={struct bar}              ok
-306: glr.cc api.value.type={struct bar} %defines     ok
-307: glr.cc api.value.type={union foo}               ok
-308: glr.cc api.value.type={union foo} %defines      ok
-309: glr.cc %union { float fval; int ival; };        ok
-310: glr.cc %union { float fval; int ival; }; %defines ok
-311: glr.cc api.value.type=union                     ok
-312: glr.cc api.value.type=union %defines            ok
-313: lalr1.cc: Named %union                          ok
-314: glr.cc: Named %union                            ok
+301: %union vs. api.value.type                       ok
+302: %yacc vs. api.value.type=union                  ok
+303: yacc.c api.value.type={double}                  ok
+304: yacc.c api.value.type={double} %defines         ok
+305: yacc.c api.value.type={variant}                 ok
+306: yacc.c api.value.type={variant} %defines        ok
+307: yacc.c api.value.type={struct foo}              ok
+308: yacc.c api.value.type={struct foo} %defines     ok
+309: yacc.c api.value.type={struct bar}              ok
+310: yacc.c api.value.type={struct bar} %defines     ok
+311: yacc.c api.value.type={union foo}               ok
+312: yacc.c api.value.type={union foo} %defines      ok
+313: yacc.c %union { float fval; int ival; };        ok
+314: yacc.c %union { float fval; int ival; }; %defines ok
+315: yacc.c %union foo { float fval; int ival; };    ok
+316: yacc.c %union foo { float fval; int ival; }; %defines ok
+317: yacc.c api.value.union.name=foo; %union { float fval; int ival; }; ok
+318: yacc.c api.value.union.name=foo; %union { float fval; int ival; }; %defines ok
+319: yacc.c api.value.type=union                     ok
+320: yacc.c api.value.type=union %defines            ok
+321: glr.c api.value.type={double}                   ok
+322: glr.c api.value.type={double} %defines          ok
+323: glr.c api.value.type={variant}                  ok
+324: glr.c api.value.type={variant} %defines         ok
+325: glr.c api.value.type={struct foo}               ok
+326: glr.c api.value.type={struct foo} %defines      ok
+327: glr.c api.value.type={struct bar}               ok
+328: glr.c api.value.type={struct bar} %defines      ok
+329: glr.c api.value.type={union foo}                ok
+330: glr.c api.value.type={union foo} %defines       ok
+331: glr.c %union { float fval; int ival; };         ok
+332: glr.c %union { float fval; int ival; }; %defines ok
+333: glr.c %union foo { float fval; int ival; };     ok
+334: glr.c %union foo { float fval; int ival; }; %defines ok
+335: glr.c api.value.union.name=foo; %union { float fval; int ival; }; ok
+336: glr.c api.value.union.name=foo; %union { float fval; int ival; }; %defines ok
+337: glr.c api.value.type=union                      ok
+338: glr.c api.value.type=union %defines             ok
+339: lalr1.cc api.value.type={double}                ok
+340: lalr1.cc api.value.type={double} %defines       ok
+341: lalr1.cc api.value.type={variant}               ok
+342: lalr1.cc api.value.type={variant} %defines      ok
+343: lalr1.cc api.value.type={struct foo}            ok
+344: lalr1.cc api.value.type={struct foo} %defines   ok
+345: lalr1.cc api.value.type={struct bar}            ok
+346: lalr1.cc api.value.type={struct bar} %defines   ok
+347: lalr1.cc api.value.type={union foo}             ok
+348: lalr1.cc api.value.type={union foo} %defines    ok
+349: lalr1.cc %union { float fval; int ival; };      ok
+350: lalr1.cc %union { float fval; int ival; }; %defines ok
+351: lalr1.cc api.value.type=union                   ok
+352: lalr1.cc api.value.type=union %defines          ok
+353: lalr1.cc api.value.type=variant                 ok
+354: lalr1.cc api.value.type=variant %defines        ok
+355: lalr1.cc api.value.type=variant                 ok
+356: lalr1.cc api.value.type=variant %defines        ok
+357: lalr1.cc api.value.type=variant api.token.constructor ok
+358: lalr1.cc api.value.type=variant api.token.constructor %defines ok
+359: lalr1.cc %code requires { #include <memory> } api.value.type=variant ok
+360: lalr1.cc %code requires { #include <memory> } api.value.type=variant %defines ok
+361: lalr1.cc %code requires { #include <memory> } api.value.type=variant api.token.constructor ok
+362: lalr1.cc %code requires { #include <memory> } api.value.type=variant api.token.constructor %defines ok
+363: lalr1.cc %code requires { #include <memory> } api.value.type=variant api.token.constructor ok
+364: lalr1.cc %code requires { #include <memory> } api.value.type=variant api.token.constructor %defines ok
+365: glr.cc api.value.type={double}                  ok
+366: glr.cc api.value.type={double} %defines         ok
+367: glr.cc api.value.type={variant}                 ok
+368: glr.cc api.value.type={variant} %defines        ok
+369: glr.cc api.value.type={struct foo}              ok
+370: glr.cc api.value.type={struct foo} %defines     ok
+371: glr.cc api.value.type={struct bar}              ok
+372: glr.cc api.value.type={struct bar} %defines     ok
+373: glr.cc api.value.type={union foo}               ok
+374: glr.cc api.value.type={union foo} %defines      ok
+375: glr.cc %union { float fval; int ival; };        ok
+376: glr.cc %union { float fval; int ival; }; %defines ok
+377: glr.cc api.value.type=union                     ok
+378: glr.cc api.value.type=union %defines            ok
+379: lalr1.cc: Named %union                          ok
+380: glr.cc: Named %union                            ok
 
 Simple LALR(1) Calculator.
 
-315: Calculator                                      ok
-316: Calculator %defines                             ok
-317: Calculator %locations                           ok
-318: Calculator %name-prefix "calc"                  ok
-319: Calculator %verbose                             ok
-320: Calculator %yacc                                ok
-321: Calculator parse.error=verbose                  ok
-322: Calculator api.pure=full %locations             ok
-323: Calculator api.push-pull=both api.pure=full %locations ok
-324: Calculator parse.error=verbose %locations       ok
-325: Calculator parse.error=verbose %locations %defines api.prefix={calc} %verbose %yacc ok
-326: Calculator parse.error=verbose %locations %defines %name-prefix "calc" api.token.prefix={TOK_} %verbose %yacc ok
-327: Calculator %debug                               ok
-328: Calculator parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc ok
-329: Calculator parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc ok
-330: Calculator api.pure=full parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc ok
-331: Calculator api.push-pull=both api.pure=full parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc ok
-332: Calculator api.pure parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
+381: Calculator                                      ok
+382: Calculator %defines                             ok
+383: Calculator %locations                           ok
+384: Calculator %locations api.location.type={Span}  ok
+385: Calculator %name-prefix "calc"                  ok
+386: Calculator %verbose                             ok
+387: Calculator %yacc                                ok
+388: Calculator parse.error=verbose                  ok
+389: Calculator api.pure=full %locations             ok
+390: Calculator api.push-pull=both api.pure=full %locations  ok
+391: Calculator parse.error=verbose %locations       ok
+392: Calculator parse.error=verbose %locations %defines api.prefix={calc} %verbose %yacc  ok
+393: Calculator parse.error=verbose %locations %defines %name-prefix "calc" api.token.prefix={TOK_} %verbose %yacc  ok
+394: Calculator %debug                               ok
+395: Calculator parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc  ok
+396: Calculator parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc  ok
+397: Calculator api.pure=full parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc  ok
+398: Calculator api.push-pull=both api.pure=full parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc  ok
+399: Calculator api.pure parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+400: Calculator %no-lines api.pure parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
 
 Simple GLR Calculator.
 
-333: Calculator %glr-parser                          ok
-334: Calculator %glr-parser %defines                 ok
-335: Calculator %glr-parser %locations               ok
-336: Calculator %glr-parser %name-prefix "calc"      ok
-337: Calculator %glr-parser api.prefix={calc}        ok
-338: Calculator %glr-parser %verbose                 ok
-339: Calculator %glr-parser %yacc                    ok
-340: Calculator %glr-parser parse.error=verbose      ok
-341: Calculator %glr-parser api.pure %locations      ok
-342: Calculator %glr-parser parse.error=verbose %locations ok
-343: Calculator %glr-parser parse.error=verbose %locations %defines %name-prefix "calc" %verbose %yacc ok
-344: Calculator %glr-parser %debug                   ok
-345: Calculator %glr-parser parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc ok
-346: Calculator %glr-parser parse.error=verbose %debug %locations %defines api.prefix={calc} api.token.prefix={TOK_} %verbose %yacc ok
-347: Calculator %glr-parser api.pure parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc ok
-348: Calculator %glr-parser api.pure parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
-349: Calculator %glr-parser api.pure parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
+401: Calculator %glr-parser                          ok
+402: Calculator %glr-parser %defines                 ok
+403: Calculator %glr-parser %locations               ok
+404: Calculator %glr-parser %locations api.location.type={Span}  ok
+405: Calculator %glr-parser %name-prefix "calc"      ok
+406: Calculator %glr-parser api.prefix={calc}        ok
+407: Calculator %glr-parser %verbose                 ok
+408: Calculator %glr-parser %yacc                    ok
+409: Calculator %glr-parser parse.error=verbose      ok
+410: Calculator %glr-parser api.pure %locations      ok
+411: Calculator %glr-parser parse.error=verbose %locations  ok
+412: Calculator %glr-parser parse.error=verbose %locations %defines %name-prefix "calc" %verbose %yacc  ok
+413: Calculator %glr-parser %debug                   ok
+414: Calculator %glr-parser parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc  ok
+415: Calculator %glr-parser parse.error=verbose %debug %locations %defines api.prefix={calc} api.token.prefix={TOK_} %verbose %yacc  ok
+416: Calculator %glr-parser api.pure parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc  ok
+417: Calculator %glr-parser api.pure parse.error=verbose %debug %locations %defines %name-prefix "calc" %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+418: Calculator %glr-parser api.pure parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+419: Calculator %glr-parser %no-lines api.pure parse.error=verbose %debug %locations %defines api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
 
 Simple LALR(1) C++ Calculator.
 
-350: Calculator lalr1.cc %defines                    ok
-351: Calculator C++                                  ok
-352: Calculator C++ %locations                       ok
-353: Calculator C++ %locations api.location.type={Span} ok
-354: Calculator C++ %defines %locations parse.error=verbose %name-prefix "calc" %verbose %yacc ok
-355: Calculator C++ %locations parse.error=verbose api.prefix={calc} %verbose %yacc ok
-356: Calculator C++ %locations parse.error=verbose %debug %name-prefix "calc" %verbose %yacc ok
-357: Calculator C++ %locations parse.error=verbose %debug api.prefix={calc} %verbose %yacc ok
-358: Calculator C++ %locations parse.error=verbose %debug api.prefix={calc} api.token.prefix={TOK_} %verbose %yacc ok
-359: Calculator C++ %defines %locations parse.error=verbose %debug %name-prefix "calc" %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
-360: Calculator C++ parse.error=verbose %debug api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
-361: Calculator C++ %defines %locations parse.error=verbose %debug api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
+420: Calculator lalr1.cc %defines                    ok
+421: Calculator C++                                  ok
+422: Calculator C++ %locations                       ok
+423: Calculator C++ %locations $NO_EXCEPTIONS_CXXFLAGS ok
+424: Calculator C++ %locations api.location.type={Span}  ok
+425: Calculator C++ %defines %locations parse.error=verbose %name-prefix "calc" %verbose %yacc  ok
+426: Calculator C++ %locations parse.error=verbose api.prefix={calc} %verbose %yacc  ok
+427: Calculator C++ %locations parse.error=verbose %debug %name-prefix "calc" %verbose %yacc  ok
+428: Calculator C++ %locations parse.error=verbose %debug api.prefix={calc} %verbose %yacc  ok
+429: Calculator C++ %locations parse.error=verbose %debug api.prefix={calc} api.token.prefix={TOK_} %verbose %yacc  ok
+430: Calculator C++ %defines %locations parse.error=verbose %debug %name-prefix "calc" %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+431: Calculator C++ parse.error=verbose %debug api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+432: Calculator C++ %defines %locations parse.error=verbose %debug api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+433: Calculator C++ %defines %locations api.location.file=none  ok
+434: Calculator C++ %defines %locations api.location.file="my-location.hh"  ok
+435: Calculator C++ %no-lines %defines %locations api.location.file="my-location.hh"  ok
 
 Simple GLR C++ Calculator.
 
-362: Calculator glr.cc                               ok
-363: Calculator C++ %glr-parser                      ok
-364: Calculator C++ %glr-parser %locations           ok
-365: Calculator C++ %glr-parser %locations api.location.type={Span} ok
-366: Calculator C++ %glr-parser %defines parse.error=verbose %name-prefix "calc" %verbose %yacc ok
-367: Calculator C++ %glr-parser parse.error=verbose api.prefix={calc} %verbose %yacc ok
-368: Calculator C++ %glr-parser %debug               ok
-369: Calculator C++ %glr-parser parse.error=verbose %debug %name-prefix "calc" %verbose %yacc ok
-370: Calculator C++ %glr-parser parse.error=verbose %debug %name-prefix "calc" api.token.prefix={TOK_} %verbose %yacc ok
-371: Calculator C++ %glr-parser %locations %defines parse.error=verbose %debug %name-prefix "calc" %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
-372: Calculator C++ %glr-parser %locations %defines parse.error=verbose %debug api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count} ok
+436: Calculator glr.cc                               ok
+437: Calculator C++ %glr-parser                      ok
+438: Calculator C++ %glr-parser %locations           ok
+439: Calculator C++ %glr-parser %locations api.location.type={Span}  ok
+440: Calculator C++ %glr-parser %defines parse.error=verbose %name-prefix "calc" %verbose %yacc  ok
+441: Calculator C++ %glr-parser parse.error=verbose api.prefix={calc} %verbose %yacc  ok
+442: Calculator C++ %glr-parser %debug               ok
+443: Calculator C++ %glr-parser parse.error=verbose %debug %name-prefix "calc" %verbose %yacc  ok
+444: Calculator C++ %glr-parser parse.error=verbose %debug %name-prefix "calc" api.token.prefix={TOK_} %verbose %yacc  ok
+445: Calculator C++ %glr-parser %locations %defines parse.error=verbose %debug %name-prefix "calc" %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+446: Calculator C++ %glr-parser %locations %defines parse.error=verbose %debug api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+447: Calculator C++ %glr-parser %no-lines %locations %defines parse.error=verbose %debug api.prefix={calc} %verbose %yacc %parse-param {semantic_value *result} %parse-param {int *count}  ok
+
+Simple LALR(1) D Calculator.
+
+448: Calculator lalr1.d                              skipped (calc.at:849)
+449: Calculator D                                    skipped (calc.at:858)
+450: Calculator D parse.error=verbose api.prefix={calc} %verbose  skipped (calc.at:861)
 
 Torture Tests.
 
-373: Big triangle                                    ok
-374: Big horizontal                                  ok
-375: Many lookahead tokens                           ok
-376: Exploding the Stack Size with Alloca            ok
-377: Exploding the Stack Size with Malloc            ok
+451: Big triangle                                    ok
+452: Big horizontal                                  ok
+453: Many lookahead tokens                           ok
+454: Exploding the Stack Size with Alloca            ok
+455: Exploding the Stack Size with Malloc            ok
 
 Existing Grammars.
 
-378: GNU AWK 3.1.0 Grammar: LALR(1)                  ok
-379: GNU AWK 3.1.0 Grammar: IELR(1)                  ok
-380: GNU AWK 3.1.0 Grammar: Canonical LR(1)          ok
-381: GNU Cim Grammar: LALR(1)                        ok
-382: GNU Cim Grammar: IELR(1)                        ok
-383: GNU Cim Grammar: Canonical LR(1)                ok
-384: GNU pic (Groff 1.18.1) Grammar: LALR(1)         ok
-385: GNU pic (Groff 1.18.1) Grammar: IELR(1)         ok
-386: GNU pic (Groff 1.18.1) Grammar: Canonical LR(1) ok
+456: GNU AWK 3.1.0 Grammar: LALR(1)                  ok
+457: GNU AWK 3.1.0 Grammar: IELR(1)                  ok
+458: GNU AWK 3.1.0 Grammar: Canonical LR(1)          ok
+459: GNU Cim Grammar: LALR(1)                        ok
+460: GNU Cim Grammar: IELR(1)                        ok
+461: GNU Cim Grammar: Canonical LR(1)                ok
+462: GNU pic (Groff 1.18.1) Grammar: LALR(1)         ok
+463: GNU pic (Groff 1.18.1) Grammar: IELR(1)         ok
+464: GNU pic (Groff 1.18.1) Grammar: Canonical LR(1) ok
 
 Regression tests.
 
-387: Trivial grammars                                ok
-388: YYSTYPE typedef                                 ok
-389: Early token definitions with --yacc             ok
-390: Early token definitions without --yacc          ok
-391: Braces parsing                                  ok
-392: Duplicate string                                ok
-393: Rule Line Numbers                               ok
-394: Mixing %token styles                            ok
-395: Invalid inputs                                  ok
-396: Invalid inputs with {}                          ok
-397: Token definitions                               ok
-398: Characters Escapes                              ok
-399: Web2c Report                                    ok
-400: Web2c Actions                                   ok
-401: Dancer                                          ok
-402: Dancer %glr-parser                              ok
-403: Dancer lalr1.cc                                 ok
-404: Expecting two tokens                            ok
-405: Expecting two tokens %glr-parser                ok
-406: Expecting two tokens lalr1.cc                   ok
-407: Braced code in declaration in rules section     ok
-408: String alias declared after use                 ok
-409: Extra lookahead sets in report                  ok
-410: Token number in precedence declaration          ok
-411: parse-gram.y: LALR = IELR                       ok
-412: parse.error=verbose and YYSTACK_USE_ALLOCA      ok
-413: parse.error=verbose overflow                    ok
-414: LAC: Exploratory stack                          ok
-415: LAC: Memory exhaustion                          ok
-416: Lex and parse params: yacc.c                    ok
-417: Lex and parse params: glr.c                     ok
-418: Lex and parse params: lalr1.cc                  ok
-419: Lex and parse params: glr.cc                    ok
-420: stdio.h is not needed                           ok
+465: Trivial grammars                                ok
+466: YYSTYPE typedef                                 ok
+467: Early token definitions with --yacc             ok
+468: Early token definitions without --yacc          ok
+469: Braces parsing                                  ok
+470: Rule Line Numbers                               ok
+471: Mixing %token styles                            ok
+472: Token definitions                               ok
+473: Characters Escapes                              ok
+474: Web2c Report                                    ok
+475: Web2c Actions                                   ok
+476: Dancer                                          ok
+477: Dancer %glr-parser                              ok
+478: Dancer lalr1.cc                                 ok
+479: Expecting two tokens                            ok
+480: Expecting two tokens %glr-parser                ok
+481: Expecting two tokens lalr1.cc                   ok
+482: Braced code in declaration in rules section     ok
+483: String alias declared after use                 ok
+484: Extra lookahead sets in report                  ok
+485: Token number in precedence declaration          ok
+486: parse-gram.y: LALR = IELR                       ok
+487: parse.error=verbose and YYSTACK_USE_ALLOCA      ok
+488: parse.error=verbose overflow                    ok
+489: LAC: Exploratory stack                          ok
+490: LAC: Memory exhaustion                          ok
+491: Lex and parse params: yacc.c                    ok
+492: Lex and parse params: glr.c                     ok
+493: Lex and parse params: lalr1.cc                  ok
+494: Lex and parse params: glr.cc                    ok
+495: stdio.h is not needed                           ok
 
 Push Parsing Tests
 
-421: Memory Leak for Early Deletion                  ok
-422: Multiple impure instances                       ok
-423: Unsupported Skeletons                           ok
+496: Memory Leak for Early Deletion                  ok
+497: Multiple impure instances                       ok
+498: Unsupported Skeletons                           ok
 
 C++ Features.
 
-424: C++ Locations                                   ok
-425: C++ Variant-based Symbols                       ok
-426: Variants lalr1.cc                               ok
-427: Variants lalr1.cc parse.assert                  ok
-428: Variants lalr1.cc parse.assert %locations       ok
-429: Variants lalr1.cc parse.assert %code {\n#define TWO_STAGE_BUILD\n} ok
-430: Variants lalr1.cc parse.assert api.token.constructor ok
-431: Variants lalr1.cc parse.assert api.token.constructor api.token.prefix={TOK_} ok
-432: Variants lalr1.cc parse.assert api.token.constructor api.token.prefix={TOK_} %locations ok
-433: Doxygen Public Documentation                    ok
-434: Doxygen Private Documentation                   ok
-435: Relative namespace references                   ok
-436: Absolute namespace references                   ok
-437: Syntactically invalid namespace references      ok
-438: Syntax error discarding no lookahead            ok
-439: Syntax error as exception                       ok
-440: Exception safety with error recovery            ok
-441: Exception safety without error recovery         ok
-442: Exception safety with error recovery api.value.type=variant ok
-443: Exception safety without error recovery api.value.type=variant ok
-444: C++ GLR parser identifier shadowing             ok
+499: C++ Locations Unit Tests                        ok
+500: C++ Variant-based Symbols Unit Tests            ok
+501: Multiple occurrences of $n and api.value.automove ok
+502: Variants lalr1.cc                               ok
+503: Variants lalr1.cc parse.assert                  ok
+504: Variants lalr1.cc parse.assert api.value.automove ok
+505: Variants lalr1.cc parse.assert %locations       ok
+506: Variants lalr1.cc parse.assert %code {\n#define TWO_STAGE_BUILD\n} ok
+507: Variants lalr1.cc parse.assert api.token.constructor ok
+508: Variants lalr1.cc parse.assert api.token.constructor api.token.prefix={TOK_} ok
+509: Variants lalr1.cc parse.assert api.token.constructor api.token.prefix={TOK_} %locations ok
+510: Variants lalr1.cc parse.assert api.token.constructor api.token.prefix={TOK_} %locations api.value.automove ok
+511: Variants and Typed Midrule Actions              ok
+512: Doxygen Public Documentation                    ok
+513: Doxygen Private Documentation                   ok
+514: Relative namespace references                   ok
+515: Absolute namespace references                   ok
+516: Syntactically invalid namespace references      ok
+517: Syntax error discarding no lookahead            ok
+518: Syntax error as exception: lalr1.cc             ok
+519: Syntax error as exception: glr.cc               ok
+520: Exception safety with error recovery            ok
+521: Exception safety without error recovery         ok
+522: Exception safety with error recovery api.value.type=variant ok
+523: Exception safety without error recovery api.value.type=variant ok
+524: C++ GLR parser identifier shadowing             ok
+525: Shared locations                                ok
 
 Java Calculator.
 
-445: Calculator                                      ok
-446: Calculator %error-verbose                       ok
-447: Calculator %locations                           ok
-448: Calculator %error-verbose %locations            ok
-449: Calculator %lex-param { InputStream is }        ok
-450: Calculator %error-verbose %lex-param { InputStream is }  ok
-451: Calculator %locations %lex-param { InputStream is }  ok
-452: Calculator %error-verbose %locations %lex-param { InputStream is }  ok
+526: Java invalid directives                         ok
+527: Calculator                                      ok
+528: Calculator parse.error=verbose                  ok
+529: Calculator %locations                           ok
+530: Calculator parse.error=verbose %locations       ok
+531: Calculator %lex-param { InputStream is }        ok
+532: Calculator parse.error=verbose %lex-param { InputStream is }  ok
+533: Calculator %locations %lex-param { InputStream is }  ok
+534: Calculator parse.error=verbose %locations %lex-param { InputStream is }  ok
 
 Java Parameters.
 
-453: Java parser class and package names             ok
-454: Java parser class modifiers                     ok
-455: Java parser class extends and implements        ok
-456: Java %parse-param and %lex-param                ok
-457: Java throws specifications                      ok
-458: Java constructor init and init_throws           ok
-459: Java value, position, and location types        ok
-460: Java syntax error handling without error token  ok
+535: Java parser class and package names             ok
+536: Java parser class modifiers                     ok
+537: Java parser class extends and implements        ok
+538: Java %parse-param and %lex-param                ok
+539: Java throws specifications                      ok
+540: Java constructor init and init_throws           ok
+541: Java value, position, and location types        ok
+542: Java syntax error handling without error token  ok
 
 Java Push Parsing Tests
 
-461: Trivial Push Parser with api.push-pull verification ok
-462: Trivial Push Parser with %initial-action        ok
-463: Calc parser with api.push-pull both             ok
-464: Calc parser with %locations %code lexer and api.push-pull both ok
+543: Trivial Push Parser with api.push-pull verification ok
+544: Trivial Push Parser with %initial-action        ok
+545: Calc parser with api.push-pull both             ok
+546: Calc parser with %locations %code lexer and api.push-pull both ok
 
 C++ Type Syntax (GLR).
 
-465: GLR: Resolve ambiguity, impure, no locations    ok
-466: GLR: Resolve ambiguity, impure, locations       ok
-467: GLR: Resolve ambiguity, pure, no locations      ok
-468: GLR: Resolve ambiguity, pure, locations         ok
-469: GLR: Merge conflicting parses, impure, no locations ok
-470: GLR: Merge conflicting parses, impure, locations ok
-471: GLR: Merge conflicting parses, pure, no locations ok
-472: GLR: Merge conflicting parses, pure, locations  ok
-473: GLR: Verbose messages, resolve ambiguity, impure, no locations ok
+547: GLR: Resolve ambiguity, impure, no locations    ok
+548: GLR: Resolve ambiguity, impure, locations       ok
+549: GLR: Resolve ambiguity, pure, no locations      ok
+550: GLR: Resolve ambiguity, pure, locations         ok
+551: GLR: Merge conflicting parses, impure, no locations ok
+552: GLR: Merge conflicting parses, impure, locations ok
+553: GLR: Merge conflicting parses, pure, no locations ok
+554: GLR: Merge conflicting parses, pure, locations  ok
+555: GLR: Verbose messages, resolve ambiguity, impure, no locations ok
 
 GLR Regression Tests
 
-474: Badly Collapsed GLR States                      ok
-475: Improper handling of embedded actions and dollar(-N) in GLR parsers ok
-476: Improper merging of GLR delayed action sets     ok
-477: Duplicate representation of merged trees        ok
-478: User destructor for unresolved GLR semantic value ok
-479: User destructor after an error during a split parse ok
-480: Duplicated user destructor for lookahead        ok
-481: Incorrectly initialized location for empty right-hand side in GLR ok
-482: No users destructors if stack 0 deleted         ok
-483: Corrupted semantic options if user action cuts parse ok
-484: Undesirable destructors if user action cuts parse ok
-485: Leaked semantic values if user action cuts parse ok
-486: Incorrect lookahead during deterministic GLR    ok
-487: Incorrect lookahead during nondeterministic GLR ok
-488: Leaked semantic values when reporting ambiguity ok
-489: Leaked lookahead after nondeterministic parse syntax error ok
-490: Uninitialized location when reporting ambiguity ok
-491: Missed %merge type warnings when LHS type is declared later ok
-492: Ambiguity reports                               ok
-493: Predicates                                      ok
+556: Badly Collapsed GLR States                      ok
+557: Improper handling of embedded actions and dollar(-N) in GLR parsers ok
+558: Improper merging of GLR delayed action sets     ok
+559: Duplicate representation of merged trees        ok
+560: User destructor for unresolved GLR semantic value ok
+561: User destructor after an error during a split parse ok
+562: Duplicated user destructor for lookahead        ok
+563: Incorrectly initialized location for empty right-hand side in GLR ok
+564: No users destructors if stack 0 deleted         ok
+565: Corrupted semantic options if user action cuts parse ok
+566: Undesirable destructors if user action cuts parse ok
+567: Leaked semantic values if user action cuts parse ok
+568: Incorrect lookahead during deterministic GLR    ok
+569: Incorrect lookahead during nondeterministic GLR ok
+570: Leaked semantic values when reporting ambiguity ok
+571: Leaked lookahead after nondeterministic parse syntax error ok
+572: Uninitialized location when reporting ambiguity ok
+573: Missed %merge type warnings when LHS type is declared later ok
+574: Ambiguity reports                               ok
+575: Predicates                                      ok
 
 ## ------------- ##
 ## Test results. ##
 ## ------------- ##
 
-All 493 tests were successful.
+572 tests were successful.
+3 tests were skipped.

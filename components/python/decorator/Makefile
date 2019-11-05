@@ -25,19 +25,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		decorator
-COMPONENT_VERSION=	3.4.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c20b404cbb7ee5cebd506688e0114e3cd76f5ce233805a51f36e1a7988d9d783
+    sha256:c39efa13fbdeb4506c476c9b3babf6a718da943dab7811c206005a4a956c080c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/decorator
 COMPONENT_BUGDB=	python-mod/decorator
 
 TPNO=			13154
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,16 +44,14 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_ARGS.2.7=	documentation.py -v
-COMPONENT_TEST_ARGS=		$(COMPONENT_TEST_ARGS.$(PYTHON_VERSION))
-COMPONENT_TEST_DIR=		$(SOURCE_DIR)
-
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(TEST_NO_ARCH)
+test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35

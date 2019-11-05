@@ -13,38 +13,22 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-PREFERRED_BITS=64
-
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= mkfontscale
-COMPONENT_VERSION= 1.1.3
-COMPONENT_SUMMARY= mkfontscale legacy X11 scalable font metadata creation tool
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=     mkfontscale
+COMPONENT_VERSION=  1.2.1
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/mkfontscale
+COMPONENT_SUMMARY=  mkfontscale legacy X11 scalable font metadata creation tool
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1e98df69ee5f4542d711e140e1d93e2c3f2775407ccbb7849110d52b91782a6a
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/wiki/
-COMPONENT_FMRI= x11/mkfontscale
-COMPONENT_LICENSE= MIT
+  sha256:ca0495eb974a179dd742bfa6199d561bda1c8da4a0c5a667f21fd82aaab6bac7
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --with-bzip2
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib

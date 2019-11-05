@@ -60,4 +60,4 @@ REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/perl-5/database
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

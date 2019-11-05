@@ -10,37 +10,22 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2019 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           bitmap
-COMPONENT_VERSION=        1.0.8
-COMPONENT_FMRI=           image/editor/bitmap
+COMPONENT_NAME=    bitmap
+COMPONENT_VERSION= 1.0.9
+COMPONENT_SUMMARY= bitmap - bitmap, bmtoa, and atobm utilities
+COMPONENT_FMRI=    image/editor/bitmap
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
-COMPONENT_SUMMARY=  bitmap - bitmap, bmtoa, and atobm utilities
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:806cdeb80f5466ba9121e8cc6c6af82d3e4b32ef1a57bc5a76c15887640ec35d
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/bitmap-1.0.8.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= bitmap.license
+  sha256:e0f3afad5272d796f54c33fa1b5bd1fb3f62843a54b28c87196d06a35123e5f5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/data/xbitmaps

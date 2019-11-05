@@ -11,18 +11,21 @@
 #
 # Copyright 2011, Andrzej Szeszo
 # Copyright 2013, Jon Tibble
+# Copyright 2019, Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/system/library/mozilla-nss/header-nss@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description value="Network Security Services Files for Development"
 set name=info.classification value=org.opensolaris.category.2008:System/Security
 set name=pkg.summary value="Network Security Services Development"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license nss.license license="MPL 1.1/GPL 2.0/LGPL 2.1"
 
+file path=usr/bin/$(MACH64)/nss-config mode=0555
+file path=usr/bin/nss-config mode=0555
 file path=usr/include/mps/base64.h
 file path=usr/include/mps/blapit.h
 file path=usr/include/mps/cert.h
@@ -91,6 +94,7 @@ file path=usr/include/mps/pkcs11u.h
 file path=usr/include/mps/pkcs11uri.h
 file path=usr/include/mps/pkcs12.h
 file path=usr/include/mps/pkcs12t.h
+file path=usr/include/mps/pkcs1sig.h
 file path=usr/include/mps/pkcs7t.h
 file path=usr/include/mps/portreg.h
 file path=usr/include/mps/preenc.h
@@ -123,5 +127,7 @@ file path=usr/include/mps/utilmodt.h
 file path=usr/include/mps/utilpars.h
 file path=usr/include/mps/utilparst.h
 file path=usr/include/mps/utilrename.h
-file path=usr/lib/pkgconfig/nss.pc
+file path=usr/include/mps/winfile.h
 file path=usr/lib/$(MACH64)/pkgconfig/nss.pc
+file path=usr/lib/pkgconfig/nss.pc
+file path=usr/share/man/man1/nss-config.1

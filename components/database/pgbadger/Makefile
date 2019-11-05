@@ -11,27 +11,29 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgbadger
-COMPONENT_VERSION= 	7.1
-COMPONENT_SUMMARY= 	pgBadger PostgreSQL log analyzer
+COMPONENT_VERSION= 	9.2
+COMPONENT_SUMMARY= 	A fast PostgreSQL log analyzer
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:de7f36cb55d2c177fdf47115f3fb5c2e842b443432631212e408726baacbad7e
+  sha256:2107466309a409fb9e40f11bb77cac1f9ba7910d5328e7b2e08eb7a1c6d760ec
 COMPONENT_ARCHIVE_URL= \
   https://github.com/dalibo/pgbadger/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL = http://dalibo.github.io/pgbadger/
+COMPONENT_PROJECT_URL=	http://dalibo.github.io/pgbadger/
+COMPONENT_FMRI=	database/postgres/pgbadger
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # Using makemaker.mk here is an overkill,
-# because we don't need versioned  pgbadger
+# because we don't need versioned pgbadger
 COMPONENT_PRE_BUILD_ACTION = ( cd $(BUILD_DIR_32) && $(PERL) Makefile.PL )
 
 PKG_PROTO_DIRS += $(BUILD_DIR_32)

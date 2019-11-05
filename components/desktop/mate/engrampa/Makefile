@@ -10,48 +10,40 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS= 64
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		engrampa
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE archive manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5ca7b477cf8409f65a9647640c15ecdf5328b3f222e58ec20ad72e64db592a6f
+	sha256:ed21d1ceafbbe31e35c9225f0dc6a451ae2f8aff454bacef60df5a31e6b3075e
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	desktop/archive-manager/engrampa
+COMPONENT_FMRI=		desktop/archive-manager/engrampa
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
-COMPONENT_LICENSE= GPLv3
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=  cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+=	--disable-static
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += desktop/mate/caja
 REQUIRED_PACKAGES += library/desktop/cairo

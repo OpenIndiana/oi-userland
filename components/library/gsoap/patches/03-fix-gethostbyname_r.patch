@@ -1,0 +1,30 @@
+Patch by Philip Kime <Philip@kime.org.uk> (https://www.illumos.org/attachments/1768).
+
+Reported as https://sourceforge.net/p/gsoap2/bugs/1247/.
+
+--- gsoap-2.8/gsoap/stdsoap2.cpp	Thu Apr 18 22:09:34 2019
++++ gsoap-2.8/gsoap/stdsoap2.cpp	Wed Apr 24 21:43:51 2019
+@@ -5066,7 +5066,10 @@
+ static int
+ tcp_gethostbyname(struct soap *soap, const char *addr, struct hostent *hostent, struct in_addr *inaddr)
+ {
+-#if defined(__GLIBC__) && (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__)))
++#if defined(SUN_OS)
++  char *tmpbuf = soap->tmpbuf;
++  size_t tmplen = sizeof(soap->tmpbuf);
++#elif (defined(__GLIBC__) && (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__))))
+   int r;
+   char *tmpbuf = soap->tmpbuf;
+   size_t tmplen = sizeof(soap->tmpbuf);
+@@ -5094,7 +5097,10 @@
+       return SOAP_OK;
+     }
+   }
+-#if defined(__GLIBC__) && (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R)) || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__)))
++
++#if defined(SUN_OS)
++  hostent = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &soap->errnum);
++#elif (defined(__GLIBC__) && (!_GNU_SOURCE && !defined(_POSIX_C_SOURCE) && !defined(_XOPEN_SOURCE) && defined(HAVE_GETHOSTBYNAME_R)) || _Posix_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__ANDROID__) || (defined(HAVE_GETHOSTBYNAME_R) && (defined(FREEBSD) || defined(__FreeBSD__))))
+   while ((r = gethostbyname_r(addr, hostent, tmpbuf, tmplen, &hostent, &soap->errnum)) < 0)
+   {
+     if (tmpbuf != soap->tmpbuf)

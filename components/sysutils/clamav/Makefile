@@ -19,7 +19,7 @@ COMPONENT_NAME=		clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	0.99.4
+COMPONENT_VERSION=	0.100.2
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -34,7 +34,7 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:d72ac3273bde8d2e5e28ec9978373ee3ab4529fd868bc3fc4d2d2671228f2461
+	sha256:4a2e4f0cd41e62adb5a713b4a1857c49145cd09a69957e6d946ecad575206dd6
 COMPONENT_PROJECT_URL=	http://www.clamav.net/
 COMPONENT_ARCHIVE_URL=	\
 	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
@@ -136,6 +136,7 @@ CONFIGURE_OPTIONS +=	--enable-milter
 # NOTE: bytecode compiler is a separate project at e.g.
 #   https://github.com/vrtadmin/clamav-bytecode-compiler/releases
 CONFIGURE_OPTIONS +=	--enable-llvm
+CONFIGURE_OPTIONS +=	--without-system-llvm
 
 # Without this libclamunrar.so gets /usr/lib/$(MACH64) RPATH
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
@@ -152,13 +153,13 @@ REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/network/smtp/sendmail
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl

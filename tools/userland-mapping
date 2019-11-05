@@ -1,0 +1,109 @@
+#!/usr/bin/python3.5
+
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2018 Adam Stevko
+#
+
+#
+# mapping.py - generate mapping between component FMRI and component package names, to be used for different purposes,
+# e.g. checking for outdated pacakges, vulnerable packages etc.
+#
+
+import argparse
+import json
+import os
+import re
+import logging
+import subprocess
+import multiprocessing
+
+try:
+    from scandir import walk
+except ImportError:
+    from os import walk
+
+logger = logging.getLogger('userland-mapping')
+
+COMONENT_MAPPING_FILENAME = 'mapping.json'
+
+
+def find_component_paths(path, subdir='components', debug=False):
+    expression = re.compile(r'.+\.p5m$', re.IGNORECASE)
+
+    paths = []
+    workspace_path = os.path.join(path, subdir)
+
+    for dirpath, dirnames, filenames in walk(workspace_path):
+        for name in filenames:
+            if expression.match(name):
+                paths.append(dirpath)
+                del dirnames[:]
+                break
+
+    return paths
+
+
+def generate_component_data(component_path, subdir='components'):
+    result = []
+
+    proc = subprocess.Popen(['gmake', '-s', 'print-value-COMPONENT_NAME', 'print-package-names'],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            cwd=component_path,
+                            universal_newlines=True)
+
+    for out in proc.stdout:
+        result.append(out.rstrip())
+
+    component_name = result[0]
+    component_fmris = result[1:]
+    component_relative_path = component_path.split(os.path.join(os.environ['WS_TOP'], subdir))[-1].replace('/', '', 1)
+
+    return component_fmris, component_name, component_relative_path
+
+
+def generate_userland_mapping(workspace_path, subdir='components'):
+    mapping = []
+
+    paths = find_component_paths(path=workspace_path, subdir=subdir)
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+    results = pool.map(generate_component_data, paths)
+
+    for component_fmris, component_name, component_relative_path in results:
+        for component_fmri in component_fmris:
+            mapping.append({'component_name': component_name,
+                            'component_fmri': component_fmri,
+                            'component_path': component_relative_path})
+
+    component_mapping_file = os.path.join(workspace_path, subdir, COMONENT_MAPPING_FILENAME)
+    with open(component_mapping_file, 'w') as f:
+        f.write(json.dumps(mapping, sort_keys=True, indent=4))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-w', '--workspace', default=os.getenv('WS_TOP'), help='Path to workspace')
+    parser.add_argument('--subdir', default='components', help='Directory holding components')
+
+    args = parser.parse_args()
+
+    workspace = args.workspace
+    subdir = args.subdir
+
+    generate_userland_mapping(workspace_path=workspace, subdir=subdir)
+
+
+if __name__ == '__main__':
+    main()

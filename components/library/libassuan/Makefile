@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libassuan
-COMPONENT_VERSION=	2.1.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.5.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libassuan/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fa2170b353c928eb59610e0700c34947f1890634ddf7bcf2366c9c88b4f51d1a
+	sha256:91bcb0403866b4e7c4bc1cc52ed4c364a9b5414b3994f718c70303f7f765e702
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libassuan/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnupg
+COMPONENT_FMRI=		library/security/libassuan
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -42,18 +45,19 @@ CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
 CFLAGS += -std=gnu89
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-pic
+CONFIGURE_OPTIONS  +=	--localstatedir=/var
+CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  +=	--enable-shared
+CONFIGURE_OPTIONS  +=	--disable-static
+CONFIGURE_OPTIONS  +=	--disable-silent-rules
+CONFIGURE_OPTIONS  +=	--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS  +=	--with-pic
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/libgpg-error

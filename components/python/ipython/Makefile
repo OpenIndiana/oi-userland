@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipython
 COMPONENT_VERSION=	5.0.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://ipython.org/
 COMPONENT_SUMMARY=	Enhanced interactive Python shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,25 +39,29 @@ COMPONENT_FMRI=	library/python/ipython
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	BSD
 
+PYTHON_VERSIONS=2.7 3.4 3.5
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PYTHON_VERSIONS=2.7 3.4
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_PRE_BUILD_ACTION = \
 	/usr/bin/find $(SOURCE_DIR) -name *.py \
 		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+COMPONENT_POST_INSTALL_ACTION = \
+        (cd $(PROTO_DIR)/usr/bin ; \
+                $(MV) ipython ipython-$(PYTHON_VERSION);\
+		$(MV) iptest iptest-$(PYTHON_VERSION); )
 
 # common targets
-build:          $(BUILD_32)
+build:          $(BUILD_NO_ARCH)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35

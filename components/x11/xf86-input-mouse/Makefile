@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-mouse
-COMPONENT_VERSION= 1.9.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.9.3
 COMPONENT_SUMMARY= xf86-input-mouse - Mouse input driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f425d5b05c6ab412a27e0a1106bb83f9e2662b307210abbe48270892387f4b2f
+  sha256:93ecb350604d05be98b7d4e5db3b8155a44890069a7d8d6b800c0bea79c85cc5
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org

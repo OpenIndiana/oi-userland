@@ -1,0 +1,104 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2017 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=$(COMPONENT_FMRI)/mpich/gcc
+depend type=require fmri=$(COMPONENT_FMRI)/openmpi/gcc
+
+# Install data only once.
+#<transform file path=usr/lib/mpich/gcc/share/(.+)$ \
+#	-> set action.hash usr/share/%<\1> >
+#
+#file path=usr/share/petsc/datafiles/matrices/amesos2_test_mat0.mtx
+#file path=usr/share/petsc/datafiles/matrices/hpd-complex-int32-float32
+#file path=usr/share/petsc/datafiles/matrices/hpd-complex-int32-float64
+#file path=usr/share/petsc/datafiles/matrices/hpd-complex-int64-float32
+#file path=usr/share/petsc/datafiles/matrices/hpd-complex-int64-float64
+#file path=usr/share/petsc/datafiles/matrices/nh-complex-int32-float32
+#file path=usr/share/petsc/datafiles/matrices/nh-complex-int32-float64
+#file path=usr/share/petsc/datafiles/matrices/nh-complex-int64-float32
+#file path=usr/share/petsc/datafiles/matrices/nh-complex-int64-float64
+#file path=usr/share/petsc/datafiles/matrices/ns-real-int32-float32
+#file path=usr/share/petsc/datafiles/matrices/ns-real-int32-float64
+#file path=usr/share/petsc/datafiles/matrices/ns-real-int64-float32
+#file path=usr/share/petsc/datafiles/matrices/ns-real-int64-float64
+#file path=usr/share/petsc/datafiles/matrices/spd-real-int32-float128
+#file path=usr/share/petsc/datafiles/matrices/spd-real-int32-float32
+#file path=usr/share/petsc/datafiles/matrices/spd-real-int32-float64
+#file path=usr/share/petsc/datafiles/matrices/spd-real-int64-float32
+#file path=usr/share/petsc/datafiles/matrices/spd-real-int64-float64
+#file path=usr/share/petsc/datafiles/meshes/2Dgrd.exo
+#file path=usr/share/petsc/datafiles/meshes/Rect-tri3.exo
+#file path=usr/share/petsc/datafiles/meshes/annulus-20.exo
+#file path=usr/share/petsc/datafiles/meshes/blockcylinder-50.exo
+#file path=usr/share/petsc/datafiles/meshes/cube_5tets.cas
+#file path=usr/share/petsc/datafiles/meshes/cube_5tets_ascii.cas
+#file path=usr/share/petsc/datafiles/meshes/doublet-tet.msh
+#file path=usr/share/petsc/datafiles/meshes/grid_c.cgns
+#file path=usr/share/petsc/datafiles/meshes/sevenside-quad-15.exo
+#file path=usr/share/petsc/datafiles/meshes/sevenside-quad.exo
+#file path=usr/share/petsc/datafiles/meshes/sevenside.exo
+#file path=usr/share/petsc/datafiles/meshes/simpleblock-100.exo
+#file path=usr/share/petsc/datafiles/meshes/square.cas
+#file path=usr/share/petsc/datafiles/meshes/square.msh
+#file path=usr/share/petsc/datafiles/meshes/square_bin.msh
+#file path=usr/share/petsc/datafiles/meshes/squaremotor-30.exo
+#file path=usr/share/petsc/matlab/@PetscOpenFile/PetscOpenFile.m
+#file path=usr/share/petsc/matlab/@PetscOpenFile/close.m
+#file path=usr/share/petsc/matlab/@PetscOpenFile/read.m
+#file path=usr/share/petsc/matlab/@PetscOpenFile/write.m
+#file path=usr/share/petsc/matlab/@PetscOpenSocket/PetscOpenSocket.m
+#file path=usr/share/petsc/matlab/@PetscOpenSocket/close.m
+#file path=usr/share/petsc/matlab/@PetscOpenSocket/read.m
+#file path=usr/share/petsc/matlab/@PetscOpenSocket/write.m
+#file path=usr/share/petsc/matlab/PetscBagRead.m
+#file path=usr/share/petsc/matlab/PetscBinaryRead.m
+#file path=usr/share/petsc/matlab/PetscBinaryWrite.m
+#file path=usr/share/petsc/matlab/PetscReadBinaryMatlab.m
+#file path=usr/share/petsc/matlab/PetscReadBinaryTrajectory.m
+#file path=usr/share/petsc/matlab/UFgetPetscMat.m
+#file path=usr/share/petsc/matlab/generatePetscTestFiles.m
+#file path=usr/share/petsc/matlab/generatehtml.m
+#file path=usr/share/petsc/matlab/laplacian.m
+#file path=usr/share/petsc/matlab/laplacianlicense.txt
+#file path=usr/share/petsc/matlab/launch.m
+#file path=usr/share/petsc/saws/documentation
+#file path=usr/share/petsc/saws/images/arrow.png
+#file path=usr/share/petsc/saws/images/transition.bmp
+#file path=usr/share/petsc/saws/js/PETSc.js
+#file path=usr/share/petsc/saws/js/boxTree.js
+#file path=usr/share/petsc/saws/js/defaults.js
+#file path=usr/share/petsc/saws/js/drawDiagrams.js
+#file path=usr/share/petsc/saws/js/events.js
+#file path=usr/share/petsc/saws/js/getCmdOptions.js
+#file path=usr/share/petsc/saws/js/listLogic.js
+#file path=usr/share/petsc/saws/js/main.js
+#file path=usr/share/petsc/saws/js/matrixTex.js
+#file path=usr/share/petsc/saws/js/parsePrefix.js
+#file path=usr/share/petsc/saws/js/populateLists.js
+#file path=usr/share/petsc/saws/js/recordSawsData.js
+#file path=usr/share/petsc/saws/js/tree.js
+#file path=usr/share/petsc/saws/js/treeInterface.js
+#file path=usr/share/petsc/saws/js/utils.js
+#file path=usr/share/petsc/saws/readme
+#file path=usr/share/petsc/xml/performance_xml2html.xsl

@@ -26,19 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SQLAlchemy
-COMPONENT_VERSION=	0.9.8
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.0.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:de3ac04ecab0a7e0af64eee30a71e723ba5886b958205f7354dd62439da60389
+    sha256:6679e20eae780b67ba136a4a76f83bb264debaac2542beefe02069d0206518d1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.sqlalchemy.org/
 COMPONENT_BUGDB=	python-mod/sqlalchemy
 
-PYTHON_VERSIONS=	2.7 3.4
-
-TPNO=			21741
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -55,11 +52,10 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+# Tests depends on later pytest
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

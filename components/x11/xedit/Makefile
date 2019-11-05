@@ -13,37 +13,22 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xedit
 COMPONENT_VERSION=        1.2.2
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_FMRI=           editor/xedit
 COMPONENT_CLASSIFICATION= Development/Editors
-COMPONENT_SUMMARY=  xedit - simple Xaw toolkit text editor for X
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SUMMARY=        xedit - simple Xaw toolkit text editor for X
 COMPONENT_ARCHIVE_HASH= \
   sha256:69aa42885dfc06332ca22eb01cc7187e49206e6d65b74113a8ee4cc345fc2927
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xedit-1.2.2.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xedit.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

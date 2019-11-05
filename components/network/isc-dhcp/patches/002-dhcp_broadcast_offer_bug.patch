@@ -1,0 +1,179 @@
+This patch file was developed in-house to fix a Solaris specific bug. We are
+working with upstream, but it is unclear at this point whether or not they are
+going to accept it. This is a highly visible bug which many customers have
+encountered.
+
+diff -r 1680283c6725 common/socket.c
+--- a/common/socket.c	Tue Jan 16 13:35:26 2018 -0800
++++ b/common/socket.c	Tue Jan 16 17:55:37 2018 -0800
+@@ -39,6 +39,9 @@
+ #include <sys/ioctl.h>
+ #include <sys/uio.h>
+ #include <sys/uio.h>
++#if defined (sun)
++#include <sys/ethernet.h>
++#endif
+ 
+ #if defined(sun) && defined(USE_V4_PKTINFO)
+ #include <sys/sysmacros.h>
+@@ -87,6 +90,33 @@
+ static int once = 0;
+ #endif /* !defined(SO_BINDTODEVICE) && !defined(USE_FALLBACK) */
+ 
++#if defined (sun)
++int
++setup_arp(struct interface_info *interface, struct in_addr ip_addr,
++	unsigned char *macaddr)
++{
++        struct xarpreq ar;
++        struct sockaddr_in *sin;
++
++	(void) memset(&ar, 0, sizeof (ar));
++        sin = (struct sockaddr_in *)&ar.xarp_pa;
++        sin->sin_family = AF_INET;
++	sin->sin_addr.s_addr = ip_addr.s_addr;
++
++	ar.xarp_ha.sdl_alen = ETHERADDRL;
++	(void) memcpy(LLADDR(&ar.xarp_ha), macaddr, ar.xarp_ha.sdl_alen);
++	ar.xarp_ha.sdl_family = AF_LINK;
++	if (ioctl(interface->set_arp_socket, SIOCSXARP, (caddr_t)&ar) < 0) {
++		log_error("setup_arp: ioctl error for IP %s MAC %s",
++		   inet_ntoa(ip_addr), ether_ntoa((const struct ether_addr *)
++		    macaddr));
++		return (1);
++	}
++        return (0);
++}
++#endif
++
++
+ /* Reinitializes the specified interface after an address change.   This
+    is not required for packet-filter APIs. */
+ 
+@@ -340,6 +370,9 @@
+ #else
+ 	info->wfdesc = info->rfdesc;
+ #endif
++#if defined(sun)
++	info->set_arp_socket = socket(AF_INET, SOCK_DGRAM, 0);
++#endif
+ 	if (!quiet_interface_discovery)
+ 		log_info ("Sending on   Socket/%s%s%s",
+ 		      info->name,
+@@ -356,6 +389,9 @@
+ 	close (info -> wfdesc);
+ #endif
+ 	info -> wfdesc = -1;
++#if defined (sun)
++	close (info -> set_arp_socket);
++#endif
+ 
+ 	if (!quiet_interface_discovery)
+ 		log_info ("Disabling output on Socket/%s%s%s",
+@@ -1091,7 +1127,11 @@
+ int can_unicast_without_arp (ip)
+ 	struct interface_info *ip;
+ {
++#if defined (sun)
++	return 1;
++#else
+ 	return 0;
++#endif
+ }
+ 
+ int can_receive_unicast_unconfigured (ip)
+diff -r 1680283c6725 includes/dhcpd.h
+--- a/includes/dhcpd.h	Tue Jan 16 13:35:26 2018 -0800
++++ b/includes/dhcpd.h	Tue Jan 16 17:55:37 2018 -0800
+@@ -1378,6 +1378,9 @@
+ 	int configured;			/* If set to 1, interface has at least
+ 					 * one valid IP address.
+ 					 */
++#if defined (sun)
++	int set_arp_socket;		/* IOCTL socket to set entry in cache */
++#endif
+ 	u_int32_t flags;		/* Control flags... */
+ #define INTERFACE_REQUESTED 1
+ #define INTERFACE_AUTOMATIC 2
+@@ -2608,6 +2611,10 @@
+ 		       struct sockaddr_in6 *, struct hardware *);
+ #endif
+ 
++#if defined (sun)
++int setup_arp(struct interface_info *, struct in_addr, unsigned char *);
++#endif
++
+ #ifdef USE_SOCKET_SEND
+ void if_reinitialize_send (struct interface_info *);
+ void if_register_send (struct interface_info *);
+diff -r 1680283c6725 relay/dhcrelay.c
+--- a/relay/dhcrelay.c	Tue Jan 16 13:35:26 2018 -0800
++++ b/relay/dhcrelay.c	Tue Jan 16 17:55:37 2018 -0800
+@@ -759,6 +759,13 @@
+ 			to.sin_addr = packet->yiaddr;
+ 			to.sin_port = remote_port;
+ 
++#if defined (sun)
++			if (setup_arp(out, packet->yiaddr, packet->chaddr)) {
++				log_error("do_relay4 : Set arp entry failed");
++				return;
++			}
++#endif	
++
+ 			/* and hardware address is not broadcast */
+ 			htop = &hto;
+ 		} else {
+diff -r 1680283c6725 server/bootp.c
+--- a/server/bootp.c	Tue Jan 16 13:35:26 2018 -0800
++++ b/server/bootp.c	Tue Jan 16 17:55:37 2018 -0800
+@@ -437,7 +437,12 @@
+ 		   can_unicast_without_arp (packet -> interface)) {
+ 		to.sin_addr = raw.yiaddr;
+ 		to.sin_port = remote_port;
+-
++#if defined (__sun)
++                if (setup_arp(packet->interface, raw.yiaddr, raw.chaddr)) {
++                        log_error("bootp : Set arp entry failed");
++                        goto out;
++                }
++#endif
+ 	/* Otherwise, broadcast it on the local network. */
+ 	} else {
+ 		to.sin_addr = limited_broadcast;
+diff -r 1680283c6725 server/dhcp.c
+--- a/server/dhcp.c	Tue Jan 16 13:35:26 2018 -0800
++++ b/server/dhcp.c	Tue Jan 16 17:55:37 2018 -0800
+@@ -30,6 +30,8 @@
+ #include <errno.h>
+ #include <limits.h>
+ #include <sys/time.h>
++#include <sys/sockio.h>
++#include <sys/ioccom.h>
+ 
+ static void maybe_return_agent_options(struct packet *packet,
+ 				       struct option_state *options);
+@@ -3991,7 +3993,12 @@
+ 		   can_unicast_without_arp (state -> ip)) {
+ 		to.sin_addr = raw.yiaddr;
+ 		to.sin_port = remote_port;
+-
++#if defined (sun)
++		if (setup_arp(state->ip, raw.yiaddr, raw.chaddr)) {
++			log_error("dhcp_reply : Set arp entry failed");
++			goto err_out;
++		}
++#endif
+ 	/* Otherwise, broadcast it on the local network. */
+ 	} else {
+ 		to.sin_addr = limited_broadcast;
+@@ -4013,7 +4020,9 @@
+ 
+ 	/* Free all of the entries in the option_state structure
+ 	   now that we're done with them. */
+-
++#if defined (sun)
++err_out:
++#endif
+ 	free_lease_state (state, MDL);
+ 	lease -> state = (struct lease_state *)0;
+ }

@@ -1,0 +1,127 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2019 Nona Hansel
+#
+
+set name=pkg.fmri value=pkg:/library/raptor@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license raptor.license license="GPLv2, LGPLv2"
+
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+
+# Avoid conflict with raptor-2
+file usr/bin/$(MACH64)/rapper path=usr/bin/$(MACH64)/rapper-1 mode=0555
+file usr/bin/rapper path=usr/bin/rapper-1 mode=0555
+file usr/share/man/man1/rapper.1 path=usr/share/man/man1/rapper-1.1
+
+# Generated section:
+file path=usr/bin/$(MACH64)/raptor-config mode=0555
+file path=usr/bin/raptor-config mode=0555
+file path=usr/include/raptor.h
+link path=usr/lib/$(MACH64)/libraptor.so target=libraptor.so.1.2.0
+link path=usr/lib/$(MACH64)/libraptor.so.1 target=libraptor.so.1.2.0
+file path=usr/lib/$(MACH64)/libraptor.so.1.2.0 mode=0555
+file path=usr/lib/$(MACH64)/pkgconfig/raptor.pc
+link path=usr/lib/libraptor.so target=libraptor.so.1.2.0
+link path=usr/lib/libraptor.so.1 target=libraptor.so.1.2.0
+file path=usr/lib/libraptor.so.1.2.0 mode=0555
+file path=usr/lib/pkgconfig/raptor.pc
+file path=usr/share/gtk-doc/html/raptor/home.png
+file path=usr/share/gtk-doc/html/raptor/index.html
+file path=usr/share/gtk-doc/html/raptor/index.sgml
+file path=usr/share/gtk-doc/html/raptor/introduction.html
+file path=usr/share/gtk-doc/html/raptor/ix01.html
+file path=usr/share/gtk-doc/html/raptor/left.png
+file path=usr/share/gtk-doc/html/raptor/parser-grddl.html
+file path=usr/share/gtk-doc/html/raptor/parser-guess.html
+file path=usr/share/gtk-doc/html/raptor/parser-ntriples.html
+file path=usr/share/gtk-doc/html/raptor/parser-rdfa.html
+file path=usr/share/gtk-doc/html/raptor/parser-rdfxml.html
+file path=usr/share/gtk-doc/html/raptor/parser-rss-tag-soup.html
+file path=usr/share/gtk-doc/html/raptor/parser-trig.html
+file path=usr/share/gtk-doc/html/raptor/parser-turtle.html
+file path=usr/share/gtk-doc/html/raptor/raptor-parsers.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-constants.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-feature.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-general.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-iostream.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-locator.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-memory.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-parser.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-sax2.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-sequence.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-serializer.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-stringbuffer.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-triples.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-unicode.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-uri-factory.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-uri.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-world.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-www.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-xml-namespace.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-xml-qname.html
+file path=usr/share/gtk-doc/html/raptor/raptor-section-xml.html
+file path=usr/share/gtk-doc/html/raptor/raptor-serializers.html
+file path=usr/share/gtk-doc/html/raptor/raptor.devhelp
+file path=usr/share/gtk-doc/html/raptor/raptor.devhelp2
+file path=usr/share/gtk-doc/html/raptor/reference-manual.html
+file path=usr/share/gtk-doc/html/raptor/restrict-parser-network-access.html
+file path=usr/share/gtk-doc/html/raptor/right.png
+file path=usr/share/gtk-doc/html/raptor/serializer-atom.html
+file path=usr/share/gtk-doc/html/raptor/serializer-dot.html
+file path=usr/share/gtk-doc/html/raptor/serializer-json.html
+file path=usr/share/gtk-doc/html/raptor/serializer-ntriples.html
+file path=usr/share/gtk-doc/html/raptor/serializer-rdfxml-abbrev.html
+file path=usr/share/gtk-doc/html/raptor/serializer-rdfxml-xmp.html
+file path=usr/share/gtk-doc/html/raptor/serializer-rdfxml.html
+file path=usr/share/gtk-doc/html/raptor/serializer-rss-1-0.html
+file path=usr/share/gtk-doc/html/raptor/serializer-turtle.html
+file path=usr/share/gtk-doc/html/raptor/style.css
+file path=usr/share/gtk-doc/html/raptor/tutorial-initialising-finishing.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parse-strictness.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-abort.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-content.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-create.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-destroy.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-example.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-features.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-runtime-info.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-set-error-warning-handlers.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-set-id-handler.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-set-namespace-handler.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-set-triple-handler.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parser-static-info.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-parsing.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-querying-functionality.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-create.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-declare-namespace.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-destroy.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-example.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-features.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-get-triples.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-runtime-info.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-send-triples.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-set-error-warning-handlers.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializer-to-destination.html
+file path=usr/share/gtk-doc/html/raptor/tutorial-serializing.html
+file path=usr/share/gtk-doc/html/raptor/tutorial.html
+file path=usr/share/gtk-doc/html/raptor/up.png
+file path=usr/share/man/man1/raptor-config.1
+file path=usr/share/man/man3/libraptor.3

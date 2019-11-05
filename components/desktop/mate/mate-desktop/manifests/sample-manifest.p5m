@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2018 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,9 +22,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/bin/$(MACH32)/mate-about
+file path=usr/bin/$(MACH32)/mate-color-select
 file path=usr/bin/mate-about
 file path=usr/bin/mate-color-select
-file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-aboutdialog.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-bg-crossfade.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-bg.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-colorbutton.h
@@ -36,6 +37,7 @@ file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-desktop-thumbnail.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-desktop-utils.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-desktop.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-gsettings.h
+file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-languages.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-rr-config.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-rr-labeler.h
 file path=usr/include/mate-desktop-2.0/libmate-desktop/mate-rr.h
@@ -46,6 +48,11 @@ link path=usr/lib/$(MACH64)/libmate-desktop-2.so.17 \
     target=libmate-desktop-2.so.17.1.4
 file path=usr/lib/$(MACH64)/libmate-desktop-2.so.17.1.4
 file path=usr/lib/$(MACH64)/pkgconfig/mate-desktop-2.0.pc
+file path=usr/lib/girepository-1.0/MateDesktop-2.0.typelib
+link path=usr/lib/libmate-desktop-2.so target=libmate-desktop-2.so.17.1.4
+link path=usr/lib/libmate-desktop-2.so.17 target=libmate-desktop-2.so.17.1.4
+file path=usr/lib/libmate-desktop-2.so.17.1.4
+file path=usr/lib/pkgconfig/mate-desktop-2.0.pc
 file path=usr/share/applications/mate-about.desktop
 file path=usr/share/applications/mate-color-select.desktop
 file path=usr/share/gir-1.0/MateDesktop-2.0.gir
@@ -54,6 +61,7 @@ file path=usr/share/glib-2.0/schemas/org.mate.accessibility-startup.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.applications-at-mobility.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.applications-at-visual.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.applications-browser.gschema.xml
+file path=usr/share/glib-2.0/schemas/org.mate.applications-calculator.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.applications-office.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.applications-terminal.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.background.gschema.xml
@@ -67,14 +75,14 @@ file path=usr/share/glib-2.0/schemas/org.mate.sound.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.thumbnail-cache.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.thumbnailers.gschema.xml
 file path=usr/share/glib-2.0/schemas/org.mate.typing-break.gschema.xml
-file path=usr/share/icons/hicolor/16x16/apps/mate.png
-file path=usr/share/icons/hicolor/22x22/apps/mate.png
-file path=usr/share/icons/hicolor/24x24/apps/mate.png
-file path=usr/share/icons/hicolor/256x256/apps/mate.png
-file path=usr/share/icons/hicolor/32x32/apps/mate.png
-file path=usr/share/icons/hicolor/48x48/apps/mate.png
-file path=usr/share/icons/hicolor/scalable/apps/mate-symbolic.svg
-file path=usr/share/icons/hicolor/scalable/apps/mate.svg
+file path=usr/share/icons/hicolor/128x128/apps/mate-desktop.png
+file path=usr/share/icons/hicolor/16x16/apps/mate-desktop.png
+file path=usr/share/icons/hicolor/22x22/apps/mate-desktop.png
+file path=usr/share/icons/hicolor/24x24/apps/mate-desktop.png
+file path=usr/share/icons/hicolor/32x32/apps/mate-desktop.png
+file path=usr/share/icons/hicolor/48x48/apps/mate-desktop.png
+file path=usr/share/icons/hicolor/scalable/apps/mate-desktop-symbolic.svg
+file path=usr/share/icons/hicolor/scalable/apps/mate-desktop.svg
 file path=usr/share/libmate-desktop/pnp.ids
 file path=usr/share/locale/af/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/am/LC_MESSAGES/mate-desktop.mo
@@ -116,6 +124,7 @@ file path=usr/share/locale/fi/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/fr/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/frp/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/fur/LC_MESSAGES/mate-desktop.mo
+file path=usr/share/locale/fy/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/ga/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/gl/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/gu/LC_MESSAGES/mate-desktop.mo
@@ -178,6 +187,7 @@ file path=usr/share/locale/te/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/th/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/tk/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/tr/LC_MESSAGES/mate-desktop.mo
+file path=usr/share/locale/tt/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/ug/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/uk/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/ur/LC_MESSAGES/mate-desktop.mo
@@ -185,6 +195,7 @@ file path=usr/share/locale/uz/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/vi/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/wa/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/xh/LC_MESSAGES/mate-desktop.mo
+file path=usr/share/locale/yi/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/yo/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/mate-desktop.mo
 file path=usr/share/locale/zh_HK/LC_MESSAGES/mate-desktop.mo

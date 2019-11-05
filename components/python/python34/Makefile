@@ -21,19 +21,19 @@
 
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.4.7
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://python.org/
+COMPONENT_VERSION=	3.4.10
+COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8714cf2b56dd36922dec8fa184d4936e1001c22fb439798cb73dda069e129d1b
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:d46a8f6fe91679e199c671b1b0a30aaf172d2acb5bcab25beb35f16c3d195b4e
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
 
@@ -42,7 +42,6 @@ CONFIGURE_FIX_LIBTOOL_RPATH = no
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older,
 # Python will try to rebuild them.
@@ -78,6 +77,9 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS +=	$(CC_PIC)
 
+# XPG6
+CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
+
 # The python build is profile-guided for studio; to see the benefits of that,
 # Python must be compiled with -xO5 and a different build target must be used.
 # Use of xprofile requires that the same options be used during compilation and
@@ -94,9 +96,6 @@ CFLAGS +=	$(CC_PIC)
 LDFLAGS.32 = -R/usr/gnu/lib -L/usr/gnu/lib
 LDFLAGS.64 = -R/usr/gnu/lib/$(MACH64) -L/usr/gnu/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))
-
-# Python puts its header files in a special place.
-LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
@@ -129,9 +128,10 @@ COMPONENT_POST_INSTALL_ACTION= \
 	(cd $(PROTOUSRDIR) ;  \
 		$(MV) include/python3.4m/pyconfig.h include/python3.4m/pyconfig-$(BITS).h )
 
-# common targets
 $(INSTALL_32):	$(INSTALL_64)
+
 build:		$(BUILD_32_and_64)
+
 install:	$(INSTALL_32_and_64)
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
@@ -147,8 +147,16 @@ COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
 # Prevent the tests from getting stuck waiting for input.
 COMPONENT_TEST_TARGETS = test < /dev/null
 
-test:				$(TEST_32_and_64)
+# The test output contains details from each test, in whatever order they
+# complete.  The default _TRANSFORMER is not powerful enough to deal with
+# this; we need heavier artillery.  Extract just the sections that start
+# with "tests OK." and end with "Re-running failed tests..." for comparison.
+COMPONENT_TEST_TRANSFORMER =	$(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /^Re-running failed tests in verbose mode/ { results = 0 } { if (results) print }'"
 
+test:		$(TEST_32_and_64)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += database/sqlite-3
@@ -165,3 +173,4 @@ REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11

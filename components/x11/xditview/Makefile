@@ -13,34 +13,20 @@
 # Copyright 2015-2017 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=        xditview
-COMPONENT_VERSION=     1.0.4
-COMPONENT_FMRI=        document/viewer/xditview
-COMPONENT_CLASSIFICATION=System/X11
-COMPONENT_SUMMARY=     xditview - display ditroff output
-COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    xditview
+COMPONENT_VERSION= 1.0.5
+COMPONENT_FMRI=    document/viewer/xditview
+COMPONENT_SUMMARY= xditview - display ditroff output
 COMPONENT_ARCHIVE_HASH= \
-  sha256:307f8df1bc3e90a7fba74dfe16840891c365abc027fbd556027eb057e5d1ff73
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= https://www.x.org/
-COMPONENT_LICENSE=     MIT License
+  sha256:eecb1ed51ab4edc7f454476d1248cfb7799a17c5679b3dd834e8b4658331c04b
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

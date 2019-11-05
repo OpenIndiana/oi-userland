@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		developer-opensolaris-X
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Dependencies required to build the X Consolidation.
 
 include ../../../make-rules/ips.mk

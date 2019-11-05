@@ -1,0 +1,34 @@
+
+Add additional includes stdio.h, strings.h, stdlib.h, unistd.h, and ctype.h
+for missing declarations for close(), tolower(), sprintf(), malloc(), free().
+
+diff -ur hplip-3.18.3.orig/protocol/discovery/mdns.c hplip-3.18.3/protocol/discovery/mdns.c
+--- hplip-3.18.3.orig/protocol/discovery/mdns.c	Tue Mar  6 03:55:43 2018
++++ hplip-3.18.3/protocol/discovery/mdns.c	Fri Apr 13 15:53:08 2018
+@@ -25,7 +25,26 @@
+  \*****************************************************************************/
+ 
+ //#include <stdio.h>
++#ifdef __sun
++/* not certain why stdio.h isn't included by default, but Solaris and
++ * Illumos-derived systems should have it
++ */
++#include <stdio.h>
++#endif
+ #include <string.h>
++#ifdef HAVE_STRINGS_H
++#include <strings.h>
++#endif
++#ifdef HAVE_STDLIB_H
++#include <stdlib.h>
++#endif
++#ifdef HAVE_UNISTD_H
++#include <unistd.h>
++#endif
++/* no specific check for ctype.h and Solaris/Illumos needs it for tolower() */
++#ifdef STDC_HEADERS
++#include <ctype.h>
++#endif
+ #include <syslog.h>
+ #include <sys/socket.h>
+ #include <netinet/in.h>

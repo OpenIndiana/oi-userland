@@ -1,0 +1,42 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Captain XNV
+#
+
+set name=pkg.fmri value=pkg:/x11/compatibility/links-xorg@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Xorg - $(COMPONENT_SUMMARY)"
+set name=description \
+    value="Symbolic links for X Window System software compatibility with other releases"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+link path=usr/X11R6 target=X11
+link path=usr/openwin target=X11
+
+# The followings links were dropped upstream
+dir path=usr/X11
+dir path=usr/X11/lib
+dir path=usr/X11/lib/X11
+dir path=usr/X11/lib/X11/fonts
+
+link path=usr/X11/lib/X11/fonts/100dpi \
+    target=../../../../share/fonts/X11/100dpi-ISO8859-1 pkg.linted.userland.action002.0=true
+link path=usr/X11/lib/X11/fonts/75dpi \
+    target=../../../../share/fonts/X11/75dpi-ISO8859-1 pkg.linted.userland.action002.0=true
+link path=usr/X11/lib/X11/fonts/TrueType \
+    target=../../../../share/fonts/TrueType pkg.linted.userland.action002.0=true
+link path=usr/X11/lib/X11/fonts/misc \ 
+    target=../../../../share/fonts/X11/misc pkg.linted.userland.action002.0=true
+
+link path=usr/X11/lib/X11/xserver \
+    target=../../../lib/xorg pkg.linted.userland.action002.0=true

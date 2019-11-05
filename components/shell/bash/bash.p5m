@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2017, Aurelien Larcher
+# Copyright 2019, Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -28,21 +29,19 @@ set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
-#file etc.bash.bash_completion path=etc/bash/bash_completion.example
-#
-file etc.bash.bashrc path=etc/bash/bashrc.example
-file etc.bash.inputrc path=etc/bash/inputrc.example
-file etc.skel.bashrc path=etc/skel/.bashrc
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/bash
-file path=usr/bin/bashbug
-#
+file files/etc.bash.bashrc path=etc/bash/bashrc.example
+file files/etc.bash.inputrc path=etc/bash/inputrc.example
+file files/etc.skel.bashrc path=etc/skel/.bashrc
+
+file files/rbash.1 path=usr/share/man/man1/rbash.1
+
 link path=usr/bin/rbash target=./bash
 link path=usr/gnu/bin/sh target=../../bin/bash
-#
+file path=usr/bin/bash
+file path=usr/bin/bashbug
 file path=usr/share/bash/alias
 file path=usr/share/bash/arith
 file path=usr/share/bash/arith_for
@@ -148,6 +147,7 @@ file path=usr/share/locale/lt/LC_MESSAGES/bash.mo
 file path=usr/share/locale/nb/LC_MESSAGES/bash.mo
 file path=usr/share/locale/nl/LC_MESSAGES/bash.mo
 file path=usr/share/locale/pl/LC_MESSAGES/bash.mo
+file path=usr/share/locale/pt/LC_MESSAGES/bash.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/bash.mo
 file path=usr/share/locale/ro/LC_MESSAGES/bash.mo
 file path=usr/share/locale/ru/LC_MESSAGES/bash.mo
@@ -160,14 +160,5 @@ file path=usr/share/locale/uk/LC_MESSAGES/bash.mo
 file path=usr/share/locale/vi/LC_MESSAGES/bash.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/bash.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/bash.mo
-#
 file path=usr/share/man/man1/bash.1
 file path=usr/share/man/man1/bashbug.1
-file rbash.1 path=usr/share/man/man1/rbash.1
-#
-legacy pkg=SUNWbash desc="GNU Bourne-Again shell (bash) version 4.2" \
-    name="GNU Bourne-Again shell (bash)"
-legacy pkg=SUNWbashr \
-    desc="GNU Bourne-Again shell (bash) version 4.2  (root package)" \
-    name="GNU Bourne-Again shell (bash) (root)"
-#

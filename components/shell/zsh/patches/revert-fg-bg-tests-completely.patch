@@ -1,0 +1,48 @@
+The following commit introduced new tests. The tests were reverted, but second part,
+zpty_line() change seems to make zsh tests hang
+
+From c6dbd862d0c5d1d539ad3d58dc1c754a9f166308 Mon Sep 17 00:00:00 2001
+From: Peter Stephenson <p.stephenson@samsung.com>
+Date: Wed, 25 Apr 2018 10:16:51 +0100
+Subject: [PATCH] 42714: Add fg and bg tests.
+
+
+--- zsh-5.6/Test/W02jobs.ztst	2018-08-12 22:21:30.000000000 +0000
++++ zsh-5.6/W02jobs.ztst	2017-12-22 22:58:41.000000000 +0000
+@@ -13,14 +13,6 @@
+     zpty_input() {
+       zpty -w zsh "${(F)@}" $'\n'
+     }
+-    zpty_line() {
+-      local REPLY
+-      integer i
+-      for (( i = 0; i < ${1:-1}; ++i )); do
+-        zpty -r zsh REPLY
+-        print -r -- ${REPLY%%($'\r\n'|$'\n')}
+-      done
+-    }
+     zpty_stop() {
+       # exit twice in case of check_jobs
+       zpty -w zsh $'exit\nexit\n'
+@@ -169,17 +161,15 @@
+ 
+   zpty_start
+   zpty_input 'sleep 10 & sleep 9 & sleep 8 & sleep 7 &'
+-  zpty_line 4
++  sleep 0.1
+   zpty_input 'kill %4'
+-  # Dunno why we need this when checking input...
+   sleep 0.1
+-  zpty_line
+   zpty_input 'kill -HUP %3'
+-  zpty_line
++  sleep 0.1
+   zpty_input 'kill -INT %2'
+-  zpty_line
++  sleep 0.1
+   zpty_input 'kill -KILL %1'
+-  zpty_line
++  sleep 0.1
+   zpty_stop
+ 0:various `kill` signals with multiple running jobs
+ *>\[1] [0-9]##

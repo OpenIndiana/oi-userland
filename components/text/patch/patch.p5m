@@ -19,26 +19,20 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/text/gnu-patch@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The GNU Patch utility"
-set name=com.oracle.info.description value="GNU patch"
-set name=com.oracle.info.tpno value=8588
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/GNU
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value=org.opensolaris.category.2008:Development/GNU
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/1999/555
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license patch.license license=GPLv2
+
 file usr/bin/patch path=usr/gnu/bin/patch
 file usr/share/man/man1/patch.1 path=usr/gnu/share/man/man1/patch.1
-
-legacy pkg=SUNWgpch desc="The GNU Patch utility" name="The GNU Patch utility"
-license patch.license license=GPLv2
 
 link path=usr/bin/patch target=../gnu/bin/patch
 link path=usr/bin/gpatch target=../gnu/bin/patch facet.compat.gnulinks=true

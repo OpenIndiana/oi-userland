@@ -1,0 +1,46 @@
+From 5577a589e47aad4ba9a16bed2d3a959ebc4a5e44 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
+Date: Thu, 25 Oct 2018 20:39:30 +0200
+Subject: [PATCH 11/16] Never omit frame pointer
+
+---
+ gcc/config/i386/i386.c | 9 +++++++++
+ gcc/opts.c             | 2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index 13e58f7a594..738f8a8db2b 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -4948,6 +4948,15 @@ ix86_option_override_internal (bool main_args_p,
+       free (str);
+     }
+ 
++  /*
++   * We never want to omit the frame pointer, regardless of the optimisation
++   * level or options to gcc - we like stack traces too much and it is of
++   * questionable benefit anyway, even on i386.
++   */
++
++  flag_omit_frame_pointer = 0;
++  opts->x_flag_omit_frame_pointer = 0;
++
+   /* Save the initial options in case the user does function specific
+      options.  */
+   if (main_args_p)
+diff --git a/gcc/opts.c b/gcc/opts.c
+index 442f250f3af..b3e235e0843 100644
+--- a/gcc/opts.c
++++ b/gcc/opts.c
+@@ -476,7 +476,7 @@ static const struct default_options default_options_table[] =
+     { OPT_LEVELS_1_PLUS_NOT_DEBUG, OPT_ftree_pta, NULL, 1 },
+     { OPT_LEVELS_1_PLUS_NOT_DEBUG, OPT_fssa_phiopt, NULL, 1 },
+     { OPT_LEVELS_1_PLUS, OPT_ftree_builtin_call_dce, NULL, 1 },
+-    { OPT_LEVELS_1_PLUS, OPT_fomit_frame_pointer, NULL, 1 },
++    { OPT_LEVELS_1_PLUS, OPT_fomit_frame_pointer, NULL, 0 },
+ 
+     /* -O2 optimizations.  */
+     { OPT_LEVELS_2_PLUS, OPT_finline_small_functions, NULL, 1 },
+-- 
+2.20.1
+

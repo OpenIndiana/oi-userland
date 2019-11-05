@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		boost
 COMPONENT_VERSION=	1.64.0
 COMPONENT_SRC_VERSION=	1_64_0
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=		system/library/boost
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=	boost - free peer-reviewed portable C++ source libraries
@@ -130,6 +130,6 @@ REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/mpich/gcc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

@@ -1,0 +1,17 @@
+--- tigervnc-1.8.0/CMakeLists.txt.~1~	2017-05-16 16:53:28.000000000 +0000
++++ tigervnc-1.8.0/CMakeLists.txt	2018-08-29 09:19:13.279664482 +0000
+@@ -176,11 +176,12 @@
+ endif()
+ 
+ # Check for libjpeg
+-find_package(JPEG REQUIRED)
++find_package(PkgConfig REQUIRED)
++pkg_search_module(JPEG REQUIRED libjpeg)
+ 
+ # Warn if it doesn't seem to be the accelerated libjpeg that's found
+ set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARIES})
+-set(CMAKE_REQUIRED_FLAGS -I${JPEG_INCLUDE_DIR})
++set(CMAKE_REQUIRED_FLAGS ${JPEG_CFLAGS})
+ 
+ set(JPEG_TEST_SOURCE "\n
+   #include <stdio.h>\n

@@ -1,0 +1,14 @@
+We don't have __sync_synchronize, so don't bother testing for it.
+Not contributed upstream, but may be in future.
+
+--- cffi-1.12.2/setup.py	2019-02-26 16:01:22.000000000 +0000
++++ cffi-1.12.2/setup.py.new	2019-03-17 10:44:25.408667954 +0000
+@@ -86,7 +86,7 @@ def ask_supports_thread():
+             _safe_to_ignore()
+ 
+ def ask_supports_sync_synchronize():
+-    if sys.platform == 'win32' or no_compiler_found:
++    if sys.platform == 'win32' or sys.platform == 'sunos5' or no_compiler_found:
+         return
+     config = get_config()
+     ok = config.try_link('int main(void) { __sync_synchronize(); return 0; }')

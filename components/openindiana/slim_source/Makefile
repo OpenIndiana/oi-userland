@@ -35,10 +35,6 @@ CLEAN_PATHS += $(BUILD_DIR)
 
 include $(WS_MAKE_RULES)/prep.mk
 
-COMPONENT_ENV = CC=$(CC)
-COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
-COMPONENT_INSTALL_ENV = $(COMPONENT_ENV)
-
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
@@ -57,12 +53,16 @@ download:: $(SOURCE_DIR)/.downloaded
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded Makefile
 	$(MKDIR) $(@D) && \
         cd $(SOURCE_DIR) && \
+	cp usr/src/tools/env/nightly $(BUILD_DIR)/$(MACH)/nightly && \
+	chmod u+wx $(BUILD_DIR)/$(MACH)/nightly && \
+	NIGHTLY="$(BUILD_DIR)/$(MACH)/nightly" && \
         cat usr/src/tools/env/developer.sh | \
           (sed \
             -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
             -e 's|^export GATE=.*|export GATE=\"$$(git log -1 --format=illumos-%h)\"|' \
             -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|'; \
           echo export VERIFY_ELFSIGN=n; \
+          echo export LC_ALL=en_US.UTF-8; \
           echo export CW_NO_SHADOW=1; \
           echo export SPRO_ROOT=; \
           echo export ON_CLOSED_BINS=/tmp; \
@@ -72,7 +72,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded Makefile
           echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
           echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
           developer.sh && \
-        time /opt/onbld/bin/nightly developer.sh &&\
+        time $${NIGHTLY} developer.sh &&\
 	$(TOUCH) $@
 
 build install: $(BUILD_DIR)/$(MACH)/.built
@@ -109,6 +109,28 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 .NOTPARALLEL:
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
+
+PACKAGE_NAMES  = consolidation/install/install-incorporation
+PACKAGE_NAMES += consolidation/install/install-redistributable
+PACKAGE_NAMES += install/distribution-constructor
+PACKAGE_NAMES += install/installadm
+PACKAGE_NAMES += SUNWauto-install-common
+PACKAGE_NAMES += SUNWauto-install
+PACKAGE_NAMES += SUNWdistro-const
+PACKAGE_NAMES += SUNWgui-install
+PACKAGE_NAMES += SUNWinstall-libs
+PACKAGE_NAMES += SUNWinstall-test
+PACKAGE_NAMES += SUNWinstall
+PACKAGE_NAMES += SUNWinstalladm-tools
+PACKAGE_NAMES += SUNWslim-utils
+PACKAGE_NAMES += system/install
+PACKAGE_NAMES += system/install/auto-install
+PACKAGE_NAMES += system/install/auto-install/auto-install-common
+PACKAGE_NAMES += system/install/gui-install
+PACKAGE_NAMES += system/install/media/internal
+PACKAGE_NAMES += system/install/tests
+PACKAGE_NAMES += system/install/text-install
+PACKAGE_NAMES += system/library/install
 
 # Build dependencies
 REQUIRED_PACKAGES += system/library/install/libinstzones

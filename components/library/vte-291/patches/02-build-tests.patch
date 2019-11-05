@@ -1,11 +1,11 @@
---- vte-0.42.5/src/Makefile.am.1	2016-11-26 01:11:37.449793065 +0300
-+++ vte-0.42.5/src/Makefile.am	2016-11-26 01:17:02.714010228 +0300
-@@ -342,7 +342,7 @@
+--- vte-0.52.2/src/Makefile.am	2018-05-21 21:31:53.000000000 +0000
++++ vte-0.52.2/src/Makefile.am.new	2018-10-02 20:27:51.176532468 +0000
+@@ -222,7 +222,7 @@ reflect_text_view_CFLAGS = $(VTE_CFLAGS)
  reflect_text_view_SOURCES = reflect.c
  reflect_text_view_LDADD = $(VTE_LIBS)
  
--reflect_vte_CPPFLAGS = -DUSE_VTE  -I$(srcdir) -I $(builddir) $(AM_CPPFLAGS)
-+reflect_vte_CPPFLAGS = -DUSE_VTE  -I$(srcdir) -I $(builddir) -I$(builddir)/vte $(AM_CPPFLAGS)
+-reflect_vte_CPPFLAGS = -DUSE_VTE -I$(builddir)/vte -I$(srcdir)/vte $(AM_CPPFLAGS)
++reflect_vte_CPPFLAGS = -DUSE_VTE -I$(builddir) -I$(builddir)/vte -I$(srcdir) -I$(srcdir)/vte $(AM_CPPFLAGS)
  reflect_vte_CFLAGS = $(VTE_CFLAGS) $(AM_CFLAGS)
  reflect_vte_SOURCES = reflect.c
  reflect_vte_LDADD = libvte-$(VTE_API_VERSION).la $(VTE_LIBS)

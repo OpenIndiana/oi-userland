@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fastcgi
 COMPONENT_VERSION=	2.4.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/fastcgi
 COMPONENT_SUMMARY=	the FastCGI web server interface
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
@@ -62,5 +63,5 @@ test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

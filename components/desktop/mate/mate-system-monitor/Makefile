@@ -10,28 +10,28 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS= 64 
+PREFERRED_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-system-monitor
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	2
-COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE system monitor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3f467c03f34996bc160afdfd34294ac985d77cc1b5cafb3f1c5bffa73f2fd8c1
+	sha256:75b1dd52b1146568a59f187e08639144c5a3835d39510321dbf134ab0bd4017a
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	desktop/system-monitor/mate-system-monitor
+COMPONENT_FMRI=		desktop/system-monitor/mate-system-monitor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
-COMPONENT_LICENSE= GPLv3
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -41,7 +41,7 @@ PATH=$(PATH.gnu)
 
 LDFLAGS = -lnsl -lsocket
 
-COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=  cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -49,13 +49,15 @@ CONFIGURE_OPTIONS+=	--disable-static
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
@@ -69,6 +71,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgtop
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

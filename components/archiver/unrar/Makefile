@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -28,13 +29,13 @@ include ../../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		unrar
-COMPONENT_VERSION=	5.4.5
+COMPONENT_VERSION=	5.6.8
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Rar archives extractor utility
 COMPONENT_PROJECT_URL=	http://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e470c584332422893fb52e049f2cbd99e24dc6c6da971008b4e2ae4284f8796c
+	sha256:a4cc0ac14a354827751912d2af4a0a09e2c2129df5766576fa7e151791dd3dff
 COMPONENT_ARCHIVE_URL=	http://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	archiver/unrar
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -66,6 +67,7 @@ install:	$(BUILD_64)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

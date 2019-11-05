@@ -1,0 +1,66 @@
+diff -ur hplip-3.19.5.orig/createPPD.sh hplip-3.19.5/createPPD.sh
+--- hplip-3.19.5.orig/createPPD.sh	2019-04-08 06:05:18.000000000 +0000
++++ hplip-3.19.5/createPPD.sh	2019-05-29 14:26:31.397066011 +0000
+@@ -113,7 +113,7 @@
+ VER=`$UNAME`
+ 
+ cd prnt/hpcups
+-if [ "$VER" = "x86_64" ] 
++if [ X"$ARCH" = X"64" ] 
+ then
+ 	ln -sf libImageProcessor-x86_64.so libImageProcessor.so
+ else
+diff -ur hplip-3.19.5.orig/Makefile.am hplip-3.19.5/Makefile.am
+--- hplip-3.19.5.orig/Makefile.am	2019-04-08 06:05:18.000000000 +0000
++++ hplip-3.19.5/Makefile.am	2019-05-29 14:27:54.707850250 +0000
+@@ -684,15 +684,15 @@
+ 
+ install-data-hook:
+ if HPLIP_BUILD
+-	if [ \( "$(UNAME)" = "x86_64" -a  -d "$(libdir)/" \) ]; then \
+-		cp prnt/hpcups/libImageProcessor-x86_64.so $(libdir)/ ; \
+-		chmod 775 $(libdir)/libImageProcessor-x86_64.so ; \
+-		ln -sf $(libdir)/libImageProcessor-x86_64.so $(libdir)/libImageProcessor.so ; \
++	if [ \( X"${ARCH}" = X"64" -a  -d "$(DESTDIR)$(libdir)/" \) ]; then \
++		cp prnt/hpcups/libImageProcessor-x86_64.so $(DESTDIR)$(libdir)/ ; \
++		chmod 775 $(DESTDIR)$(libdir)/libImageProcessor-x86_64.so ; \
++		( cd $(DESTDIR)$(libdir) && ln -sf libImageProcessor-x86_64.so libImageProcessor.so ) ; \
+ 	fi; \
+-	if [ \( \( "$(UNAME)" = "i686" -o "$(UNAME)" = "i386" \) -a -d "$(libdir)/" \) ]; then \
+-		cp prnt/hpcups/libImageProcessor-x86_32.so $(libdir)/ ; \
+-		chmod 775 $(libdir)/libImageProcessor-x86_32.so ; \
+-		ln -sf $(libdir)/libImageProcessor-x86_32.so $(libdir)/libImageProcessor.so ; \
++	if [ \( X"${ARCH}" = X"32" -a -d "$(DESTDIR)$(libdir)/" \) ]; then \
++		cp prnt/hpcups/libImageProcessor-x86_32.so $(DESTDIR)$(libdir)/ ; \
++		chmod 775 $(DESTDIR)$(libdir)/libImageProcessor-x86_32.so ; \
++		( cd $(DESTDIR)$(libdir) && ln -sf libImageProcessor-x86_32.so libImageProcessor.so ) ; \
+ 	fi
+ if !HPLIP_CLASS_DRIVER
+ #	   If scanner build, add hpaio entry to sane dll.conf.
+diff -ur hplip-3.19.5.orig/Makefile.in hplip-3.19.5/Makefile.in
+--- hplip-3.19.5.orig/Makefile.in	2019-04-08 06:07:32.000000000 +0000
++++ hplip-3.19.5/Makefile.in	2019-05-29 14:29:27.521777355 +0000
+@@ -9541,15 +9541,15 @@
+ 
+ 
+ install-data-hook:
+-@HPLIP_BUILD_TRUE@	if [ \( "$(UNAME)" = "x86_64" -a  -d "$(libdir)/" \) ]; then \
+-@HPLIP_BUILD_TRUE@		cp prnt/hpcups/libImageProcessor-x86_64.so $(libdir)/ ; \
+-@HPLIP_BUILD_TRUE@		chmod 775 $(libdir)/libImageProcessor-x86_64.so ; \
+-@HPLIP_BUILD_TRUE@		ln -sf $(libdir)/libImageProcessor-x86_64.so $(libdir)/libImageProcessor.so ; \
++@HPLIP_BUILD_TRUE@	if [ \( X"${ARCH}" = X"64" -a  -d "$(DESTDIR)$(libdir)/" \) ]; then \
++@HPLIP_BUILD_TRUE@		cp prnt/hpcups/libImageProcessor-x86_64.so $(DESTDIR)$(libdir)/ ; \
++@HPLIP_BUILD_TRUE@		chmod 775 $(DESTDIR)$(libdir)/libImageProcessor-x86_64.so ; \
++@HPLIP_BUILD_TRUE@		( cd $(DESTDIR)$(libdir) && ln -sf libImageProcessor-x86_64.so libImageProcessor.so ) ; \
+ @HPLIP_BUILD_TRUE@	fi; \
+-@HPLIP_BUILD_TRUE@	if [ \( \( "$(UNAME)" = "i686" -o "$(UNAME)" = "i386" \) -a -d "$(libdir)/" \) ]; then \
+-@HPLIP_BUILD_TRUE@		cp prnt/hpcups/libImageProcessor-x86_32.so $(libdir)/ ; \
+-@HPLIP_BUILD_TRUE@		chmod 775 $(libdir)/libImageProcessor-x86_32.so ; \
+-@HPLIP_BUILD_TRUE@		ln -sf $(libdir)/libImageProcessor-x86_32.so $(libdir)/libImageProcessor.so ; \
++@HPLIP_BUILD_TRUE@	if [ \( X"${ARCH}" = X"32" -a -d "$(DESTDIR)$(libdir)/" \) ]; then \
++@HPLIP_BUILD_TRUE@		cp prnt/hpcups/libImageProcessor-x86_32.so $(DESTDIR)$(libdir)/ ; \
++@HPLIP_BUILD_TRUE@		chmod 775 $(DESTDIR)$(libdir)/libImageProcessor-x86_32.so ; \
++@HPLIP_BUILD_TRUE@		( cd $(DESTDIR)$(libdir) && ln -sf libImageProcessor-x86_32.so libImageProcessor.so ) ; \
+ @HPLIP_BUILD_TRUE@	fi
+ #	   If scanner build, add hpaio entry to sane dll.conf.
+ @HPLIP_BUILD_TRUE@@HPLIP_CLASS_DRIVER_FALSE@	if [ "$(scan_build)" = "yes" ]; then \

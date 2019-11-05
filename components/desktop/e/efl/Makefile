@@ -18,13 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
 #
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           efl
 COMPONENT_VERSION=        1.18.5
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       3
 COMPONENT_FMRI=           library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -72,11 +75,11 @@ COMPONENT_POST_CONFIGURE_ACTION=$(RM) $(SOURCE_DIR)/src/lib/eina/eina_config.h;
 # pkgdepend fails to resolve the python version if env is used
 COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp;
 
-build: $(BUILD_64)
+build:		$(BUILD_64)
 
-install: $(INSTALL_64)
+install:	$(INSTALL_64)
 
-test: $(TEST_64)
+test:		$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa
@@ -105,7 +108,7 @@ REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math

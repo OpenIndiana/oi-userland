@@ -1,0 +1,44 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=system/library/fontconfig
+
+# Rename
+depend type=optional fmri=system/font/bitstream-vera@1.10-2018.0.0.2
+
+# Added link
+link path=etc/X11/fontpath.d/bitstream-vera:pri=42 target=../../../usr/share/fonts/TrueType/bitstream-vera
+
+file path=usr/share/fonts/TrueType/bitstream-vera/Vera.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraBI.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraBd.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraIt.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraMoBI.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraMoBd.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraMoIt.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraMono.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraSe.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/VeraSeBd.ttf
+file path=usr/share/fonts/TrueType/bitstream-vera/fonts.dir
+file path=usr/share/fonts/TrueType/bitstream-vera/fonts.scale

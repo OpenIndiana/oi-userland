@@ -1,0 +1,42 @@
+Fixes problem with openldap calling fopen() without F flag.
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- openldap-2.4.44/libraries/liblber/debug.c.old	Wed Feb 24 13:31:09 2016
++++ openldap-2.4.44/libraries/liblber/debug.c	Wed Feb 24 13:31:32 2016
+@@ -53,10 +53,10 @@
+ 
+ #ifdef HAVE_WINSOCK
+ 	if( log_file == NULL ) {
+-		log_file = fopen( LDAP_RUNDIR LDAP_DIRSEP "openldap.log", "w" );
++		log_file = fopen( LDAP_RUNDIR LDAP_DIRSEP "openldap.log", "wF" );
+ 
+ 		if ( log_file == NULL ) {
+-			log_file = fopen( "openldap.log", "w" );
++			log_file = fopen( "openldap.log", "wF" );
+ 			if ( log_file == NULL ) return;
+ 		}
+ 
+--- openldap-2.4.44/libraries/libldap/fetch.c.old	Wed Feb 24 13:31:41 2016
++++ openldap-2.4.44/libraries/libldap/fetch.c	Wed Feb 24 13:31:55 2016
+@@ -79,7 +79,7 @@
+ 
+ 		ldap_pvt_hex_unescape( p );
+ 
+-		url = fopen( p, "rb" );
++		url = fopen( p, "rbF" );
+ 
+ 		ber_memfree( p );
+ 	} else {
+
+--- openldap-2.4.44/libraries/libldap/init.c.old	Wed Feb 24 13:32:07 2016
++++ openldap-2.4.44/libraries/libldap/init.c	Wed Feb 24 13:32:19 2016
+@@ -167,7 +167,7 @@
+ 
+ 	Debug(LDAP_DEBUG_TRACE, "ldap_init: trying %s\n", file, 0, 0);
+ 
+-	fp = fopen(file, "r");
++	fp = fopen(file, "rF");
+ 	if(fp == NULL) {
+ 		/* could not open file */
+ 		return;

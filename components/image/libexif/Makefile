@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libexif
 COMPONENT_VERSION= 0.6.21
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= EXIF tag parsing library for digital cameras
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2

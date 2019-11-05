@@ -1,0 +1,18 @@
+This patch will be obsolete when https://github.com/vmware/open-vm-tools/pull/268 will be
+accepted.
+
+--- open-vm-tools-stable-10.3.0/configure.ac.orig	2018-08-03 11:38:18.108521301 +0000
++++ open-vm-tools-stable-10.3.0/configure.ac	2018-08-03 11:38:37.038872822 +0000
+@@ -1526,7 +1526,11 @@
+ VMTOOLS_CPPFLAGS="-DVMTOOLS_USE_GLIB $GLIB2_CPPFLAGS"
+
+ PLUGIN_CPPFLAGS="$VMTOOLS_CPPFLAGS $PLUGIN_CPPFLAGS"
+-PLUGIN_LDFLAGS="-Wl,-z,defs -Wl,-lc -Wl,--as-needed -shared -module -avoid-version"
++if test "$have_gnu_ld" = "yes"; then
++    PLUGIN_LDFLAGS="-Wl,-z,defs -Wl,-lc -Wl,--as-needed -shared -module -avoid-version"
++else
++    PLUGIN_LDFLAGS="-Wl,-z,defs -Wl,-lc -shared -module -avoid-version"
++fi
+
+ # Installation directories for core services plugins.
+ TEST_PLUGIN_INSTALLDIR=$datadir/open-vm-tools/tests

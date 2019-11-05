@@ -11,22 +11,25 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	glib
-COMPONENT_MJR_VERSION=  2.54
-COMPONENT_MNR_VERSION=  3
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_SUMMARY= GNOME core libraries
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=		glib
+COMPONENT_MJR_VERSION=	2.58
+COMPONENT_MNR_VERSION=	3
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	GNOME core libraries
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:963fdc6685dc3da8e5381dfb9f15ca4b5709b28be84d9d05a9bb8e446abac0a8
+	sha256:8f43c31767e88a25da72b52a40f3301fefc49a665b56dc10ee7cc9565cbe7481
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.gtk.org/
+	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.gtk.org/
+COMPONENT_FMRI=		library/glib2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -36,9 +39,9 @@ PATH=$(PATH.gnu)
 
 LDFLAGS += -lsocket -lsecdb -lnsl
 
-COMPONENT_PREP_ACTION =	( cd $(@D) && autoreconf -f )
+COMPONENT_PREP_ACTION =	( cd $(@D) && gtkdocize && autoreconf -fi )
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D) )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -56,6 +59,7 @@ CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
 CONFIGURE_ENV    += CPPFLAGS="$(CPPFLAGS)"
 
+# Dtrace flags
 DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 
@@ -68,18 +72,20 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^ERROR:/p" ' \
 	'-e "/^\#/p" ' \
 
+build:		$(BUILD_32_and_64)
 
-build: $(BUILD_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-install: $(INSTALL_32_and_64)
+test:		$(TEST_32_and_64)
 
-test: $(TEST_32_and_64)
-
+REQUIRED_PACKAGES += runtime/perl-522
+# For `gtkdocize`
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

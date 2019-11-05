@@ -1,0 +1,70 @@
+From ce4ab7b00c024107c4fd6c86544ffd2cd46215ec Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 4 Mar 2014 22:11:03 +0000
+Subject: [PATCH 07/16] sol2: enable full __cxa_atexit support
+
+---
+ gcc/config/i386/sol2.h | 2 +-
+ gcc/config/sol2.h      | 4 ++--
+ libgcc/config.host     | 3 ++-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/gcc/config/i386/sol2.h b/gcc/config/i386/sol2.h
+index 3491f45f75d..6cc6245e1ac 100644
+--- a/gcc/config/i386/sol2.h
++++ b/gcc/config/i386/sol2.h
+@@ -76,7 +76,7 @@ along with GCC; see the file COPYING3.  If not see
+ #define ASM_CPU_SPEC "%(asm_cpu_default) " ASM_XBRACE_COMMENT_SPEC
+ 
+ /* Don't include ASM_PIC_SPEC.  While the Solaris 10+ assembler accepts -K PIC,
+-   it gives many warnings: 
++   it gives many warnings:
+ 	Absolute relocation is used for symbol "<symbol>"
+    GNU as doesn't recognize -K at all.  */
+ #undef ASM_SPEC
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index ec4b111ba0e..1ab4fc720d4 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -206,7 +206,7 @@ along with GCC; see the file COPYING3.  If not see
+ 				   shared|" PIE_SPEC ":crtbeginS.o%s; \
+ 				   :crtbegin.o%s}"
+ #else
+-#define STARTFILE_CRTBEGIN_SPEC	"crtbegin.o%s"
++#define STARTFILE_CRTBEGIN_SPEC	"%{shared:crtbeginS.o%s;:crtbegin.o%s}"
+ #endif
+ 
+ #if ENABLE_VTABLE_VERIFY
+@@ -256,7 +256,7 @@ along with GCC; see the file COPYING3.  If not see
+ 			       shared|" PIE_SPEC ":crtendS.o%s; \
+ 			       :crtend.o%s}"
+ #else
+-#define ENDFILE_CRTEND_SPEC "crtend.o%s"
++#define ENDFILE_CRTEND_SPEC "%{shared:crtendS.o%s;:crtend.o%s}"
+ #endif
+ 
+ #undef  ENDFILE_SPEC
+diff --git a/libgcc/config.host b/libgcc/config.host
+index 11b4acaff55..dcc4c074b78 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -267,7 +267,7 @@ case ${host} in
+ *-*-solaris2*)
+   # Unless linker support and dl_iterate_phdr are present,
+   # unwind-dw2-fde-dip.c automatically falls back to unwind-dw2-fde.c.
+-  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver"
++  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver t-crtstuff-pic"
+   if test $with_gnu_ld = yes; then
+     tmake_file="$tmake_file t-slibgcc-gld"
+   else
+@@ -287,6 +287,7 @@ case ${host} in
+       i?86-*-solaris2.1[0-9]* | x86_64-*-solaris2.1[0-9]*)
+         # Solaris 10+/x86 provides crt1.o, crti.o, crtn.o, and gcrt1.o as
+         # part of the base system.
++        extra_parts="$extra_parts crtbeginS.o crtendS.o"
+         ;;
+       sparc*-*-solaris2.1[0-9]*)
+         # Solaris 10+/SPARC lacks crt1.o and gcrt1.o.
+-- 
+2.20.1
+

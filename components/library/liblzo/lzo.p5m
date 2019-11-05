@@ -12,30 +12,19 @@
 # Copyright 2012 EveryCity Ltd. All rights reserved.
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2016 Jim Klimov. All rights reserved.
+# Copyright 2019 Michal Nowak
 #
-
-<transform dir path=usr$ -> default group sys>
-<transform dir path=usr/share$ -> default group sys>
-<transform dir path=usr/share/doc$ -> default group other>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.upstream-url value="$(COMPONENT_PROJECT_URL)"
-set name=info.source-url value="$(COMPONENT_ARCHIVE_URL)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=info.classification value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION)"
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 license COPYING license="GPLv2"
 
-dir path=usr
-dir path=usr/include
-dir path=usr/include/lzo
-dir path=usr/lib
-dir path=usr/lib/$(MACH64)
-dir path=usr/share
-dir path=usr/share/doc
-dir path=usr/share/doc/lzo
 file path=usr/include/lzo/lzo1.h
 file path=usr/include/lzo/lzo1a.h
 file path=usr/include/lzo/lzo1b.h
@@ -49,8 +38,14 @@ file path=usr/include/lzo/lzo_asm.h
 file path=usr/include/lzo/lzoconf.h
 file path=usr/include/lzo/lzodefs.h
 file path=usr/include/lzo/lzoutil.h
+link path=usr/lib/$(MACH64)/liblzo2.so target=liblzo2.so.2.0.0
+link path=usr/lib/$(MACH64)/liblzo2.so.2 target=liblzo2.so.2.0.0
 file path=usr/lib/$(MACH64)/liblzo2.so.2.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/lzo2.pc
+link path=usr/lib/liblzo2.so target=liblzo2.so.2.0.0
+link path=usr/lib/liblzo2.so.2 target=liblzo2.so.2.0.0
 file path=usr/lib/liblzo2.so.2.0.0
+file path=usr/lib/pkgconfig/lzo2.pc
 file path=usr/share/doc/lzo/AUTHORS
 file path=usr/share/doc/lzo/COPYING
 file path=usr/share/doc/lzo/LZO.FAQ
@@ -58,7 +53,3 @@ file path=usr/share/doc/lzo/LZO.TXT
 file path=usr/share/doc/lzo/LZOAPI.TXT
 file path=usr/share/doc/lzo/NEWS
 file path=usr/share/doc/lzo/THANKS
-link path=usr/lib/$(MACH64)/liblzo2.so target=liblzo2.so.2.0.0
-link path=usr/lib/$(MACH64)/liblzo2.so.2 target=liblzo2.so.2.0.0
-link path=usr/lib/liblzo2.so target=liblzo2.so.2.0.0
-link path=usr/lib/liblzo2.so.2 target=liblzo2.so.2.0.0

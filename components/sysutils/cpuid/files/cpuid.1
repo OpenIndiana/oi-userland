@@ -1,0 +1,85 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "CPUID" "1" "July 2018" "" ""
+.
+.SH "NAME"
+\fBcpuid\fR \- dump and extract information from the x86 CPUID instruction
+.
+.SH "SYNOPSIS"
+\fBcpuid\fR [\-\-help] [\-\-dump] [\-\-vendor \fIname\fR] [\-\-ignore\-vendor] [\-\-parse \fIfilename\fR]
+.
+.SH "DESCRIPTION"
+\fBcpuid\fR is a very simple C program, designed to dump and extract information from the x86 CPUID instruction\.
+.
+.P
+\fBcpuid\fR is capable of dumping all CPUID leaves (except any unknown leaves which require special ECX values to dump all information)\. \fBcpuid\fR can only decode certain leaves, but this functionality will be expanded as the CPUID specifications provided by AMD and Intel change\.
+.
+.SH "OPTIONS"
+\fB\-c\fR, \fB\-\-cpu\fR Index (starting at 0) of CPU to get info from
+.
+.P
+\fB\-d\fR, \fB\-\-dump\fR Dump a raw CPUID table
+.
+.P
+\fB\-f\fR, \fB\-\-parse\fR Read and decode a raw CPUID table from the file specified
+.
+.P
+\fB\-h\fR, \fB\-\-help\fR Print list of options
+.
+.P
+\fB\-\-ignore\-vendor\fR Show feature flags from all vendors
+.
+.P
+\fB\-\-sanity\fR Do a sanity check of the CPUID data
+.
+.P
+\fB\-\-vendor\fR Override the processor vendor string
+.
+.P
+\fB\-\-version\fR Print \fBcpuid\fR version and license
+.
+.SH "STANDARDS"
+You can find current Intel and AMD CPUID specifications at these locations:
+.
+.P
+Intel Software Developer Manual volume 2A \fIhttps://www\.intel\.com/content/www/us/en/architecture\-and\-technology/64\-ia\-32\-architectures\-software\-developer\-vol\-2a\-manual\.html\fR
+.
+.P
+AMD Processor Programming Reference \fIhttp://developer\.amd\.com/resources/developer\-guides\-manuals/\fR
+.
+.P
+Please notify me if you notice any inconsistencies or if features you find relevant are not being decoded\.
+.
+.SH "BUGS"
+If you find a bug in \fBcpuid\fR, please submit details about it to the bug tracker on GitHub: https://github\.com/tycho/cpuid/issues
+.
+.P
+If the bug is regarding the decoding or dumping of CPUID details, then you should include the dump\.txt and decode\.txt generated with these commands:
+.
+.IP "" 4
+.
+.nf
+
+cpuid \-d \-c \-1 > dump\.txt
+cpuid \-c \-1 > decode\.txt
+.
+.fi
+.
+.IP "" 0
+.
+.P
+You should also specify what revision of \fBcpuid\fR you are running\. If you don\'t know, you can find out with:
+.
+.IP "" 4
+.
+.nf
+
+cpuid \-\-version
+.
+.fi
+.
+.IP "" 0
+.
+.SH "AUTHOR"
+Steven Noonan \fIsteven@uplinklabs\.net\fR

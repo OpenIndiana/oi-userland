@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libmatroska
 COMPONENT_VERSION=        1.4.8
+COMPONENT_REVISION=       1
 COMPONENT_PROJECT_URL=    http://matroska.org/
 COMPONENT_SUMMARY=        Matroska Video Container
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,5 +49,5 @@ REQUIRED_PACKAGES += library/libebml
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

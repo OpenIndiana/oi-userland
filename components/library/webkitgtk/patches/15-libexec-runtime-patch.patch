@@ -1,0 +1,61 @@
+--- webkitgtk-2.16.6/Source/WebKit2/PlatformGTK.cmake.orig	2018-06-03 18:49:43.166199558 +0000
++++ webkitgtk-2.16.6/Source/WebKit2/PlatformGTK.cmake	2018-06-03 18:53:13.934193865 +0000
+@@ -1171,7 +1171,7 @@
+ 
+     add_dependencies(WebKitPluginProcess2 WebKit2)
+ 
+-    install(TARGETS WebKitPluginProcess2 DESTINATION "${LIBEXEC_INSTALL_DIR}")
++    install(TARGETS WebKitPluginProcess2 DESTINATION "${LIBEXEC_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}")
+ endif () # ENABLE_PLUGIN_PROCESS_GTK2
+ 
+ # GTK3 PluginProcess
+--- webkitgtk-2.16.6/Source/WebKit2/CMakeLists.txt.orig	2018-06-03 18:51:29.023872220 +0000
++++ webkitgtk-2.16.6/Source/WebKit2/CMakeLists.txt	2018-06-03 18:54:01.248817756 +0000
+@@ -826,7 +826,7 @@
+     add_executable(PluginProcess ${PluginProcess_SOURCES})
+     add_webkit2_prefix_header(PluginProcess)
+     target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
+-    install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
++    install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}")
+ 
+     if (WebKit2_PluginProcess_OUTPUT_NAME)
+       set_target_properties(PluginProcess PROPERTIES OUTPUT_NAME ${WebKit2_PluginProcess_OUTPUT_NAME})
+@@ -838,7 +838,7 @@
+     add_executable(DatabaseProcess ${DatabaseProcess_SOURCES})
+     add_webkit2_prefix_header(DatabaseProcess)
+     target_link_libraries(DatabaseProcess ${DatabaseProcess_LIBRARIES})
+-    install(TARGETS DatabaseProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
++    install(TARGETS DatabaseProcess DESTINATION "${LIBEXEC_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}")
+ 
+     if (WebKit2_DatabaseProcess_OUTPUT_NAME)
+         set_target_properties(DatabaseProcess PROPERTIES OUTPUT_NAME ${WebKit2_DatabaseProcess_OUTPUT_NAME})
+@@ -878,6 +878,6 @@
+ 
+     install(TARGETS WebKit2 WebProcess NetworkProcess
+         LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
+-        RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
++        RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}"
+     )
+ endif ()
+--- webkitgtk-2.16.6/Source/JavaScriptCore/shell/CMakeLists.txt.orig	2018-06-03 19:04:38.246808730 +0000
++++ webkitgtk-2.16.6/Source/JavaScriptCore/shell/CMakeLists.txt	2018-06-03 19:04:58.740437976 +0000
+@@ -33,7 +33,7 @@
+ endif ()
+ 
+ if (SHOULD_INSTALL_JS_SHELL)
+-    install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}")
++    install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}")
+ endif ()
+ 
+ if (TARGET jscLib)
+--- webkitgtk-2.16.6/Source/WebKit2/PlatformGTK.cmake.orig	2018-06-04 18:09:21.595234018 +0000
++++ webkitgtk-2.16.6/Source/WebKit2/PlatformGTK.cmake	2018-06-04 18:11:38.310290952 +0000
+@@ -18,7 +18,7 @@
+ add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)
+ 
+ add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
+-add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
++add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}")
+ add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
+ add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
+ add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")

@@ -28,6 +28,8 @@ MAKE=/usr/bin/make
 
 PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/repo
 
+DEVBOOK=$(SOURCE_DIR)/proto/dev-guide/book.pdf
+
 CLEAN_PATHS += $(BUILD_DIR)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -63,6 +65,13 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded
 	$(MAKE) repository-metadata && \
 	$(TOUCH) $@
 
+# Target to generate developer's guide
+devbook: $(DEVBOOK)
+
+$(DEVBOOK): $(SOURCE_DIR)/.downloaded
+	cd $(SOURCE_DIR)/doc/dev-guide && \
+	$(ENV) $(COMPONENT_BUILD_ENV) $(MAKE)
+
 build install: $(BUILD_DIR)/$(MACH)/.built
 
 $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.built
@@ -97,6 +106,19 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 .NOTPARALLEL:
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
+
+PACKAGE_NAMES  = consolidation/ips/ips-incorporation
+PACKAGE_NAMES += consolidation/ips/ips-message-files
+PACKAGE_NAMES += developer/opensolaris/pkg5
+PACKAGE_NAMES += package/pkg
+PACKAGE_NAMES += package/pkg/depot
+PACKAGE_NAMES += package/pkg/package-manager
+PACKAGE_NAMES += package/pkg/system-repository
+PACKAGE_NAMES += package/pkg/update-manager
+PACKAGE_NAMES += package/pkg/zones-proxy
+PACKAGE_NAMES += system/zones/brand/ipkg
+PACKAGE_NAMES += system/zones/brand/kvm
+PACKAGE_NAMES += system/zones/brand/nlipkg
 
 REQUIRED_PACKAGES += developer/opensolaris/pkg5
 REQUIRED_PACKAGES += system/zones/internal

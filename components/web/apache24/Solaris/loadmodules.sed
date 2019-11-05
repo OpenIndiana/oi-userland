@@ -20,14 +20,28 @@
 #
 
 #
-# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
-/IfModule/d
-/LoadModule cgi_module /i\
-<IfModule prefork.c>
-/LoadModule cgi_module /a\
-</IfModule>
-/LoadModule cgid_module /i\
-<IfModule worker.c>
-/LoadModule cgid_module /a\
-</IfModule>
+/LoadModule auth_gss_module/d
+/LoadModule ssl_fips_module/d
+/LoadModule mpm_event_module /i\
+<IfDefine prefork>\
+LoadModule mpm_prefork_module libexec/mod_mpm_prefork.so\
+</IfDefine>\
+<IfDefine worker>\
+LoadModule mpm_worker_module libexec/mod_mpm_worker.so\
+</IfDefine>\
+<IfDefine !prefork>\
+<IfDefine !worker>
+/LoadModule mpm_event_module /a\
+</IfDefine>\
+</IfDefine>
+/#LoadModule cgi_module /i\
+<IfDefine prefork>
+/#LoadModule cgi_module /a\
+</IfDefine>
+/#LoadModule cgid_module /i\
+<IfDefine !prefork>
+/#LoadModule cgid_module /a\
+</IfDefine>
+

@@ -10,39 +10,24 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2019 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xrandr
-COMPONENT_VERSION=        1.5.0
-COMPONENT_FMRI=           x11/xrandr
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xrandr
+COMPONENT_VERSION=  1.5.1
+COMPONENT_FMRI=     x11/xrandr
 COMPONENT_SUMMARY=  xrandr - utility to configure screen sizes and layout
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c1cfd4e1d4d708c031d60801e527abc9b6d34b85f2ffa2cadd21f75ff38151cd
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xrandr.license
+  sha256:7bc76daf9d72f8aff885efad04ce06b90488a1a169d118dea8a2b661832e8762
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

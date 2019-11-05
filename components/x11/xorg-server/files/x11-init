@@ -1,0 +1,36 @@
+#! /usr/bin/sh -e
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2019 Alexander Pyhalov
+#
+
+# List of directories to create, splitted by ";"
+DIRS="/tmp/.ICE-unix:root:root:1777"
+
+
+. /lib/svc/share/smf_include.sh
+
+PATH=/bin
+
+echo "$DIRS"| tr ";" "\n" | while IFS=":" read dir owner group mode ; do
+   if [  -e "$dir"  -a ! -d "$dir" -o -L "$dir" ]; then
+         mv "$dir" "$dir.$$" 
+   fi
+   /bin/mkdir -p -m "$mode" "$dir"
+# If directory exists, mkdir will not change its permissions
+   chmod "$mode" "$dir"
+   chown "$owner":"$group" "$dir"
+done
+
+exit $SMF_EXIT_OK

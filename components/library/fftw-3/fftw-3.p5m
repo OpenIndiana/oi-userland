@@ -11,6 +11,7 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,21 +25,12 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/libfftw3.3.sunman path=usr/share/man/man3/libfftw3.3
 
-# We build fftw float versions separately and don't 
-# install them, so we have to pick up produced files 
-# manually from build dirs and create necessary links
-
-file build/fftw-f/$(MACH32)/.libs/libfftw3f.so.3.5.7 path=usr/lib/libfftw3f.so.3.5.7
-file build/fftw-f/$(MACH64)/.libs/libfftw3f.so.3.5.7 path=usr/lib/$(MACH64)/libfftw3f.so.3.5.7
-link path=usr/lib/$(MACH64)/libfftw3f.so target=libfftw3f.so.3.5.7
-link path=usr/lib/$(MACH64)/libfftw3f.so.3 target=libfftw3f.so.3.5.7
-link path=usr/lib/libfftw3f.so target=libfftw3f.so.3.5.7
-link path=usr/lib/libfftw3f.so.3 target=libfftw3f.so.3.5.7
-
 file path=usr/bin/$(MACH64)/fftw-wisdom
 file path=usr/bin/$(MACH64)/fftw-wisdom-to-conf
+file path=usr/bin/$(MACH64)/fftwf-wisdom
 file path=usr/bin/fftw-wisdom
 file path=usr/bin/fftw-wisdom-to-conf
+file path=usr/bin/fftwf-wisdom
 file path=usr/include/fftw3.f
 file path=usr/include/fftw3.f03
 file path=usr/include/fftw3.h
@@ -46,18 +38,31 @@ file path=usr/include/fftw3l.f03
 file path=usr/include/fftw3q.f03
 file path=usr/lib/$(MACH64)/cmake/fftw3/FFTW3Config.cmake
 file path=usr/lib/$(MACH64)/cmake/fftw3/FFTW3ConfigVersion.cmake
-link path=usr/lib/$(MACH64)/libfftw3.so target=libfftw3.so.3.5.7
-link path=usr/lib/$(MACH64)/libfftw3.so.3 target=libfftw3.so.3.5.7
-file path=usr/lib/$(MACH64)/libfftw3.so.3.5.7
+file path=usr/lib/$(MACH64)/cmake/fftw3/FFTW3fConfig.cmake
+file path=usr/lib/$(MACH64)/cmake/fftw3/FFTW3fConfigVersion.cmake
+link path=usr/lib/$(MACH64)/libfftw3.so target=libfftw3.so.3.5.8
+link path=usr/lib/$(MACH64)/libfftw3.so.3 target=libfftw3.so.3.5.8
+file path=usr/lib/$(MACH64)/libfftw3.so.3.5.8
+link path=usr/lib/$(MACH64)/libfftw3f.so target=libfftw3f.so.3.5.8
+link path=usr/lib/$(MACH64)/libfftw3f.so.3 target=libfftw3f.so.3.5.8
+file path=usr/lib/$(MACH64)/libfftw3f.so.3.5.8
 file path=usr/lib/$(MACH64)/pkgconfig/fftw3.pc
+file path=usr/lib/$(MACH64)/pkgconfig/fftw3f.pc
 file path=usr/lib/cmake/fftw3/FFTW3Config.cmake
 file path=usr/lib/cmake/fftw3/FFTW3ConfigVersion.cmake
-link path=usr/lib/libfftw3.so target=libfftw3.so.3.5.7
-link path=usr/lib/libfftw3.so.3 target=libfftw3.so.3.5.7
-file path=usr/lib/libfftw3.so.3.5.7
+file path=usr/lib/cmake/fftw3/FFTW3fConfig.cmake
+file path=usr/lib/cmake/fftw3/FFTW3fConfigVersion.cmake
+link path=usr/lib/libfftw3.so target=libfftw3.so.3.5.8
+link path=usr/lib/libfftw3.so.3 target=libfftw3.so.3.5.8
+file path=usr/lib/libfftw3.so.3.5.8
+link path=usr/lib/libfftw3f.so target=libfftw3f.so.3.5.8
+link path=usr/lib/libfftw3f.so.3 target=libfftw3f.so.3.5.8
+file path=usr/lib/libfftw3f.so.3.5.8
 file path=usr/lib/pkgconfig/fftw3.pc
+file path=usr/lib/pkgconfig/fftw3f.pc
 file path=usr/share/info/fftw3.info
 file path=usr/share/info/fftw3.info-1
 file path=usr/share/info/fftw3.info-2
 file path=usr/share/man/man1/fftw-wisdom-to-conf.1
 file path=usr/share/man/man1/fftw-wisdom.1
+file path=usr/share/man/man1/fftwf-wisdom.1

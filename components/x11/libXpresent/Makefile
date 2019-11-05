@@ -13,42 +13,21 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXpresent
-COMPONENT_VERSION=        1.0.0
-COMPONENT_FMRI=           x11/library/libxpresent
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXpresent - Xlib-compatible API for the Present extension 
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXpresent
+COMPONENT_VERSION= 1.0.0
+COMPONENT_FMRI=    x11/library/libxpresent
+COMPONENT_SUMMARY= libXpresent - Xlib-compatible API for the Present extension 
 COMPONENT_ARCHIVE_HASH= \
   sha256:c11ae015141a9afbe10f4f2b8ee00b11adca6373dc1b9808d7c6c138b2da7b8a
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXpresent.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/xextproto
-REQUIRED_PACKAGES += x11/header/presentproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

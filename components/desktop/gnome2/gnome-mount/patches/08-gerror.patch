@@ -1,0 +1,13 @@
+According to glib manual, GError should be set to NULL or should point to allocated memory for GError
+
+--- gnome-mount-0.8/src/gnome-mount.c.1	2019-04-21 10:20:26.549714106 +0000
++++ gnome-mount-0.8/src/gnome-mount.c	2019-04-21 10:21:23.421882199 +0000
+@@ -997,7 +997,7 @@
+ static char *
+ resolve_symlink (const char *file)
+ {
+-	GError *error;
++	GError *error = NULL;
+ 	char *dir;
+ 	char *link;
+ 	char *f;

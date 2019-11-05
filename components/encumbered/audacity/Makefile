@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= audacity
 COMPONENT_VERSION= 2.1.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Cross-platform audio software for recording and editing
 COMPONENT_SRC= audacity-Audacity-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= Audacity-$(COMPONENT_VERSION).zip
@@ -88,6 +88,6 @@ REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

@@ -1,0 +1,17 @@
+/usr/lib/ is default library path and thus it shouldn't be in RPATH and RUNPATH.
+-L/-R with /usr/lib are not necessary for OpenIndiana. The linker knows better.
+
+This patch should be sent upstream.
+
+--- pcre2-10.23/pcre2-config.in.orig	2017-03-27 11:14:33.662291129 +0000
++++ pcre2-10.23/pcre2-config.in	2017-03-27 11:14:50.429500728 +0000
+@@ -29,9 +29,6 @@
+ 
+ libR=
+ case `uname -s` in
+-  *SunOS*)
+-  libR=" -R@libdir@"
+-  ;;
+   *BSD*)
+   libR=" -Wl,-R@libdir@"
+   ;;

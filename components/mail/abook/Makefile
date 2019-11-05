@@ -20,19 +20,21 @@
 
 #
 # Copyright (c) 2015 Matt Samudio
+# Copyright (c) 2018 Michal Nowak
 #
+
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		abook
-COMPONENT_VERSION=	0.5.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.6.1
 COMPONENT_PROJECT_URL=	http://abook.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0646f6311a94ad3341812a4de12a5a940a7a44d5cb6e9da5b0930aae9f44756e
-COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/abook/$(COMPONENT_ARCHIVE)
+    sha256:f0a90df8694fb34685ecdd45d97db28b88046c15c95e7b0700596028bd8bc0f9
+COMPONENT_ARCHIVE_URL=	http://abook.sourceforge.net/devel/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SUMMARY=	abook addressbook program
@@ -44,16 +46,17 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -I/usr/include/ncurses
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -fgnu89-inline"
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -r $(SOURCE_DIR)/* $(BUILD_DIR_$(BITS))/) 
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fiv )
 COMPONENT_BUILD_ARGS=
 COMPONENT_BUILD_ENV += CC=$(CC)
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

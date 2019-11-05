@@ -23,17 +23,18 @@
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+PREFERRED_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sg3_utils
-COMPONENT_VERSION= 1.42
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.44
 COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL= http://sg.danny.cz/sg/sg3_utils.html
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:1dcb7a0309bd0ba3d4a83acb526973b80106ee26cd9f7398186cd3f0633c9ef3
+COMPONENT_ARCHIVE_HASH= sha256:8dae684d22e71b11353a48b16c95597af90f0cbe9bbd57f98d7f5544da5cae7b
 COMPONENT_ARCHIVE_URL= http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2+ and BSD 
 COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
@@ -51,18 +52,18 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 # Don't use rpath!
 COMPONENT_POST_CONFIGURE_ACTION = \
-	(cd $(BUILD_DIR_32) ; \
+	(cd $(BUILD_DIR_64) ; \
 	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
 	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 # common targets
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
-test:           $(TEST_32)
+test:           $(TEST_64)
 
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs

@@ -13,35 +13,24 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= x11perf
-COMPONENT_VERSION= 1.6.0
-COMPONENT_FMRI= benchmark/x11perf
-COMPONENT_SUMMARY=  x11perf - X11 server performance test program
+COMPONENT_NAME=    x11perf
+COMPONENT_VERSION= 1.6.1
+COMPONENT_FMRI=    benchmark/x11perf
+COMPONENT_SUMMARY= x11perf - X11 server performance test program
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e87098dec1947572d70c62697a7b70bde1ab5668237d4660080eade6bc096751
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= MIT
+  sha256:1c7e0b8ffc2794b4ccf11e04d551823abe0ea47b4f7db0637390db6fbe817c34
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

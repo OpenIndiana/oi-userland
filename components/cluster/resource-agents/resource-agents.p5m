@@ -10,7 +10,7 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
-# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 <transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man8/%<1>.8 >
@@ -42,6 +42,9 @@ file path=usr/lib/heartbeat/send_arp mode=0555
 file path=usr/lib/ocf/lib/heartbeat/apache-conf.sh
 file path=usr/lib/ocf/lib/heartbeat/findif.sh
 file path=usr/lib/ocf/lib/heartbeat/http-mon.sh
+file path=usr/lib/ocf/lib/heartbeat/lvm-clvm.sh
+file path=usr/lib/ocf/lib/heartbeat/lvm-plain.sh
+file path=usr/lib/ocf/lib/heartbeat/lvm-tag.sh
 file path=usr/lib/ocf/lib/heartbeat/mysql-common.sh
 file path=usr/lib/ocf/lib/heartbeat/nfsserver-redhat.sh
 file path=usr/lib/ocf/lib/heartbeat/ocf-binaries
@@ -76,10 +79,12 @@ file path=usr/lib/ocf/resource.d/heartbeat/IPaddr mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/IPaddr2 mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/IPsrcaddr mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/LVM mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/LVM-activate mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/LinuxSCSI mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/MailTo mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/ManageRAID mode=0555 
-file path=usr/lib/ocf/resource.d/heartbeat/ManageVE mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ManageVE mode=0555
+file path=usr/lib/ocf/resource.d/heartbeat/NodeUtilization mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/Pure-FTPd mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/Raid1 mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/Route mode=0555 
@@ -97,10 +102,13 @@ file path=usr/lib/ocf/resource.d/heartbeat/WAS mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/WAS6 mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/WinPopup mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/Xen mode=0555 
-file path=usr/lib/ocf/resource.d/heartbeat/Xinetd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Xinetd mode=0555
+file path=usr/lib/ocf/resource.d/heartbeat/ZFS mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/anything mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/apache mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/asterisk mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/aws-vpc-move-ip mode=0555
+file path=usr/lib/ocf/resource.d/heartbeat/aws-vpc-route53 mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/awseip mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/awsvip mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/clvm mode=0555 
@@ -120,11 +128,14 @@ file path=usr/lib/ocf/resource.d/heartbeat/iSCSITarget mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/ids mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/iface-bridge mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/iface-vlan mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ipsec mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/iscsi mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/jboss mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/kamailio mode=0555 
-file path=usr/lib/ocf/resource.d/heartbeat/ldirectord mode=0555 
-file path=usr/lib/ocf/resource.d/heartbeat/lxc mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ldirectord mode=0555
+file path=usr/lib/ocf/resource.d/heartbeat/lvmlockd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/lxc mode=0555
+file path=usr/lib/ocf/resource.d/heartbeat/minio mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/mysql mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/mysql-proxy mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/nagios mode=0555 
@@ -132,8 +143,10 @@ file path=usr/lib/ocf/resource.d/heartbeat/named mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/nfsnotify mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/nfsserver mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/nginx mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/oraasm mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/oracle mode=0555 
-file path=usr/lib/ocf/resource.d/heartbeat/oralsnr mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/oralsnr mode=0555
+file path=usr/lib/ocf/resource.d/heartbeat/ovsmonitor mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/pgagent mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/pgsql mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/pingd mode=0555 
@@ -142,7 +155,8 @@ file path=usr/lib/ocf/resource.d/heartbeat/postfix mode=0555
 file path=usr/lib/ocf/resource.d/heartbeat/pound mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/proftpd mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/rabbitmq-cluster mode=0555 
-file path=usr/lib/ocf/resource.d/heartbeat/redis mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/redis mode=0555
+file path=usr/lib/ocf/resource.d/heartbeat/rkt mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/rsyncd mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/rsyslog mode=0555 
 file path=usr/lib/ocf/resource.d/heartbeat/scsi2reservation mode=0555 
@@ -238,11 +252,13 @@ file path=usr/share/man/man7/ocf_heartbeat_ICP.7
 file path=usr/share/man/man7/ocf_heartbeat_IPaddr.7
 file path=usr/share/man/man7/ocf_heartbeat_IPaddr2.7
 file path=usr/share/man/man7/ocf_heartbeat_IPsrcaddr.7
+file path=usr/share/man/man7/ocf_heartbeat_LVM-activate.7
 file path=usr/share/man/man7/ocf_heartbeat_LVM.7
 file path=usr/share/man/man7/ocf_heartbeat_LinuxSCSI.7
 file path=usr/share/man/man7/ocf_heartbeat_MailTo.7
 file path=usr/share/man/man7/ocf_heartbeat_ManageRAID.7
 file path=usr/share/man/man7/ocf_heartbeat_ManageVE.7
+file path=usr/share/man/man7/ocf_heartbeat_NodeUtilization.7
 file path=usr/share/man/man7/ocf_heartbeat_Pure-FTPd.7
 file path=usr/share/man/man7/ocf_heartbeat_Raid1.7
 file path=usr/share/man/man7/ocf_heartbeat_Route.7
@@ -264,6 +280,10 @@ file path=usr/share/man/man7/ocf_heartbeat_Xinetd.7
 file path=usr/share/man/man7/ocf_heartbeat_anything.7
 file path=usr/share/man/man7/ocf_heartbeat_apache.7
 file path=usr/share/man/man7/ocf_heartbeat_asterisk.7
+file path=usr/share/man/man7/ocf_heartbeat_aws-vpc-move-ip.7
+file path=usr/share/man/man7/ocf_heartbeat_aws-vpc-route53.7
+file path=usr/share/man/man7/ocf_heartbeat_awseip.7
+file path=usr/share/man/man7/ocf_heartbeat_awsvip.7
 file path=usr/share/man/man7/ocf_heartbeat_clvm.7
 file path=usr/share/man/man7/ocf_heartbeat_conntrackd.7
 file path=usr/share/man/man7/ocf_heartbeat_db2.7
@@ -281,9 +301,11 @@ file path=usr/share/man/man7/ocf_heartbeat_iSCSITarget.7
 file path=usr/share/man/man7/ocf_heartbeat_ids.7
 file path=usr/share/man/man7/ocf_heartbeat_iface-bridge.7
 file path=usr/share/man/man7/ocf_heartbeat_iface-vlan.7
+file path=usr/share/man/man7/ocf_heartbeat_ipsec.7
 file path=usr/share/man/man7/ocf_heartbeat_iscsi.7
 file path=usr/share/man/man7/ocf_heartbeat_jboss.7
 file path=usr/share/man/man7/ocf_heartbeat_kamailio.7
+file path=usr/share/man/man7/ocf_heartbeat_lvmlockd.7
 file path=usr/share/man/man7/ocf_heartbeat_lxc.7
 file path=usr/share/man/man7/ocf_heartbeat_mysql-proxy.7
 file path=usr/share/man/man7/ocf_heartbeat_mysql.7
@@ -292,6 +314,7 @@ file path=usr/share/man/man7/ocf_heartbeat_named.7
 file path=usr/share/man/man7/ocf_heartbeat_nfsnotify.7
 file path=usr/share/man/man7/ocf_heartbeat_nfsserver.7
 file path=usr/share/man/man7/ocf_heartbeat_nginx.7
+file path=usr/share/man/man7/ocf_heartbeat_oraasm.7
 file path=usr/share/man/man7/ocf_heartbeat_oracle.7
 file path=usr/share/man/man7/ocf_heartbeat_oralsnr.7
 file path=usr/share/man/man7/ocf_heartbeat_pgsql.7

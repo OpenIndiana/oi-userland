@@ -197,6 +197,14 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
+CONFIGURE_TEST_TRANSFORMS = \
+        '-n ' \
+        '-e "/TOTAL:/p" ' \
+        '-e "/SKIP:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" ' \
+        '-e "/ERROR:/p" '
+
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)

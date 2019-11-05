@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 13.0.6
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
@@ -61,6 +61,11 @@ CPPFLAGS = -I/usr/X11/include/drm -D__EXTENSIONS__
 LDFLAGS= -L$(PROTODIR)$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
                 -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) 
 
+# Default linker options cause libGL.so.1 to be not linked to libglapi.so
+# which should be done
+LD_B_DIRECT=
+LD_Z_IGNORE=
+
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
 
 DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
@@ -102,7 +107,7 @@ REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu

@@ -21,20 +21,21 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/text/groff/groff-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/groff-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GNU troff Text Formatting (core system components)"
 set name=com.oracle.info.description value="GNU troff"
 set name=com.oracle.info.tpno value=7898
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Text Tools"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2008/425
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
 link path=usr/bin/gdiffmk target=../gnu/bin/diffmk facet.compat.gnulinks=true
 link path=usr/bin/geqn target=../gnu/bin/eqn facet.compat.gnulinks=true
 link path=usr/bin/gneqn target=../gnu/bin/neqn facet.compat.gnulinks=true

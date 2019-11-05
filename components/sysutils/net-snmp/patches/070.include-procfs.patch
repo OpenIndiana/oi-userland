@@ -1,0 +1,24 @@
+Build failure with gcc-8 due to conflicting declarations of muter_enter and mutex_exit since _KERNEL is defined.
+--- net-snmp-5.7.3/agent/mibgroup/host/data_access/swrun_procfs_psinfo.c.orig	2018-10-12 00:08:03.056496480 +0000
++++ net-snmp-5.7.3/agent/mibgroup/host/data_access/swrun_procfs_psinfo.c	2018-10-12 00:10:16.534511034 +0000
+@@ -23,6 +23,12 @@
+ #include <fcntl.h>
+ #endif
+ 
++// Use new procfs by including procfs.h as documented.
++#if defined(__sun) && defined(__SVR4)
++#include <sys/proc.h>
++#include <procfs.h>
++#include <sys/procfs.h>
++#else
+ #define HAVE_SYS_PROCFS_H    /* XXX - Needs a configure check! */
+ #ifdef HAVE_SYS_PROCFS_H
+ #define _KERNEL              /* For psinfo_t */
+@@ -32,6 +38,7 @@
+ #ifdef HAVE_SYS_PROC_H
+ #include <sys/proc.h>
+ #endif
++#endif
+ 
+ #include <sys/processor.h>
+ #include <sys/procset.h>

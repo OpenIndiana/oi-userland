@@ -22,7 +22,7 @@ CDDL HEADER END
 
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
-    Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2017, Oracle and/or its affiliates. All rights reserved.
 -->
 
 <service_bundle type='manifest' name='SUNWapch24r:apache'>
@@ -93,15 +93,14 @@ CDDL HEADER END
 
 		<property_group name='httpd' type='application'>
 			<stability value='Evolving' />
+			<propval name='MPM' type='astring' value='event' />
 			<propval name='startup_options' type='astring' value='' />
-			<propval name='server_type' type='astring' value='prefork' />
-			<propval name='enable_64bit' type='boolean' value='false' />
-			<propval name='value_authorization' type='astring' value='solaris.smf.value.http/apache24' />
+			<propval name='value_authorization' type='astring' value='solaris.smf.value.apache' />
 		</property_group>
 
 		<property_group name='general' type='framework'>
-			<propval name='action_authorization' type='astring' value='solaris.smf.manage.http/apache24' />
-			<propval name='value_authorization' type='astring' value='solaris.smf.value.http/apache24' />
+			<propval name='action_authorization' type='astring' value='solaris.smf.manage.apache' />
+			<propval name='value_authorization' type='astring' value='solaris.smf.value.apache' />
 		</property_group>
 
 		<property_group name='startd' type='framework'>

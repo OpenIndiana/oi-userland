@@ -1,0 +1,803 @@
+From 5bde7b12d7ec3dfcef826740fb465bc4affbf18d Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sat, 23 Jan 2016 22:14:56 -0500
+Subject: [PATCH 08/16] i386: Save integer-passed arguments to the stack, to
+ aid debuggers.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Merged from 5.3 to 8.1 by: Aurélien Larcher
+
+Originally implemented in:
+    commit 023cc9a4c9c698bed1f51d38eac850d327fc1146
+    Author: jsm28 <jsm28@138bc75d-0d04-0410-961f-82ee72b054a4>
+    Date:   Wed Jun 29 23:51:34 2005 +0000
+
+        	* gcc/dwarf2.h (DW_AT_SUN_amd64_parmdump): New.
+        	* gcc/dwarf2out.c (gen_subprogram_die): Add this attribute.
+        	* gcc/doc/invoke.texi (-msave-args): New x86-64 option.
+        	* gcc/config/i386/i386.h (MASK_SAVE_ARGS, TARGET_SAVE_ARGS): New.
+        	(TARGET_SWITCHES): Add -msave-args.
+        	* gcc/config/i386/i386.c (struct ix86_frame): Add nmsave_args and
+        	padding0.
+        	(pro_epilogue_adjust_stack): Declare.
+        	(ix86_nsaved_args): New.
+        	(override_options, ix86_can_use_return_insn_p,
+        	ix86_frame_pointer_required, ix86_compute_frame_layout,
+        	ix86_emit_save_regs, ix86_emit_save_regs_using_mov,
+        	ix86_expand_prologue, ix86_expand_epilogue): Handle -msave-args.
+
+        git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/branches/csl-sol210-3_4-branch@101443 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/config/i386/i386.c                        | 139 +++++++++++++++++-
+ gcc/config/i386/i386.h                        |  15 +-
+ gcc/config/i386/i386.opt                      |  10 ++
+ gcc/doc/invoke.texi                           |   4 +
+ gcc/dwarf2out.c                               |  65 ++++----
+ .../gcc.target/i386/msave-args-mov.c          |  26 ++++
+ .../gcc.target/i386/msave-args-push.c         |  26 ++++
+ include/dwarf2.def                            |  16 +-
+ 8 files changed, 252 insertions(+), 49 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-mov.c
+ create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-push.c
+
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index a5e39372540..13e58f7a594 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -819,6 +819,8 @@ static unsigned int ix86_minimum_incoming_stack_boundary (bool);
+ 
+ static enum calling_abi ix86_function_abi (const_tree);
+ 
++static int ix86_nsaved_args (void);
++static rtx_def* pro_epilogue_adjust_stack (rtx, rtx, rtx, int, bool);
+ 
+ #ifndef SUBTARGET32_DEFAULT_CPU
+ #define SUBTARGET32_DEFAULT_CPU "i386"
+@@ -4493,6 +4495,9 @@ ix86_option_override_internal (bool main_args_p,
+       &= ~((OPTION_MASK_ISA_BMI | OPTION_MASK_ISA_BMI2 | OPTION_MASK_ISA_TBM)
+ 	   & ~opts->x_ix86_isa_flags_explicit);
+ 
++  if (!TARGET_64BIT_P (opts->x_ix86_isa_flags) && TARGET_SAVE_ARGS)
++    error ("-msave-args makes no sense in the 32-bit mode");
++
+   /* Validate -mpreferred-stack-boundary= value or default it to
+      PREFERRED_STACK_BOUNDARY_DEFAULT.  */
+   ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
+@@ -10771,7 +10776,7 @@ ix86_can_use_return_insn_p (void)
+ 
+   struct ix86_frame &frame = cfun->machine->frame;
+   return (frame.stack_pointer_offset == UNITS_PER_WORD
+-	  && (frame.nregs + frame.nsseregs) == 0);
++	  && (frame.nmsave_args + frame.nregs + frame.nsseregs) == 0);
+ }
+ 
+ /* Value should be nonzero if functions must have frame pointers.
+@@ -10795,6 +10800,9 @@ ix86_frame_pointer_required (void)
+   if (TARGET_32BIT_MS_ABI && cfun->calls_setjmp)
+     return true;
+ 
++  if (TARGET_SAVE_ARGS)
++    return true;
++
+   /* Win64 SEH, very large frames need a frame-pointer as maximum stack
+      allocation is 4GB.  */
+   if (TARGET_64BIT_MS_ABI && get_frame_size () > SEH_MAX_FRAME_SIZE)
+@@ -11720,6 +11728,7 @@ ix86_compute_frame_layout (void)
+ 
+   frame->nregs = ix86_nsaved_regs ();
+   frame->nsseregs = ix86_nsaved_sseregs ();
++  frame->nmsave_args = ix86_nsaved_args ();
+ 
+   /* 64-bit MS ABI seem to require stack alignment to be always 16,
+      except for function prologues, leaf functions and when the defult
+@@ -11788,7 +11797,8 @@ ix86_compute_frame_layout (void)
+     }
+ 
+   frame->save_regs_using_mov
+-    = (TARGET_PROLOGUE_USING_MOVE && m->use_fast_prologue_epilogue
++    = ((TARGET_FORCE_SAVE_REGS_USING_MOV ||
++	(TARGET_PROLOGUE_USING_MOVE && m->use_fast_prologue_epilogue))
+        /* If static stack checking is enabled and done with probes,
+ 	  the registers need to be saved before allocating the frame.  */
+        && flag_stack_check != STATIC_BUILTIN_STACK_CHECK);
+@@ -11808,6 +11818,13 @@ ix86_compute_frame_layout (void)
+   /* The traditional frame pointer location is at the top of the frame.  */
+   frame->hard_frame_pointer_offset = offset;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      offset += frame->nmsave_args * UNITS_PER_WORD;
++      offset += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++    }
++  frame->arg_save_offset = offset;
++
+   /* Register save area */
+   offset += frame->nregs * UNITS_PER_WORD;
+   frame->reg_save_offset = offset;
+@@ -11946,7 +11963,7 @@ ix86_compute_frame_layout (void)
+   /* Size prologue needs to allocate.  */
+   to_allocate = offset - frame->sse_reg_save_offset;
+ 
+-  if ((!to_allocate && frame->nregs <= 1)
++  if ((!TARGET_SAVE_ARGS && !to_allocate && frame->nregs <= 1)
+       || (TARGET_64BIT && to_allocate >= HOST_WIDE_INT_C (0x80000000))
+       /* If stack clash probing needs a loop, then it needs a
+ 	 scratch register.  But the returned register is only guaranteed
+@@ -11965,7 +11982,11 @@ ix86_compute_frame_layout (void)
+     {
+       frame->red_zone_size = to_allocate;
+       if (frame->save_regs_using_mov)
+-	frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
++	{
++	  frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
++	  frame->red_zone_size += frame->nmsave_args * UNITS_PER_WORD;
++	  frame->red_zone_size += (frame->nmsave_args % 2) * UNITS_PER_WORD;
++	}
+       if (frame->red_zone_size > RED_ZONE_SIZE - RED_ZONE_RESERVE)
+ 	frame->red_zone_size = RED_ZONE_SIZE - RED_ZONE_RESERVE;
+     }
+@@ -11996,6 +12017,23 @@ ix86_compute_frame_layout (void)
+ 	  frame->hard_frame_pointer_offset = frame->stack_pointer_offset - 128;
+ 	}
+     }
++
++
++  if (getenv("DEBUG_FRAME_STUFF") != NULL)
++    {
++      printf("nmsave_args: %d\n", frame->nmsave_args);
++      printf("nsseregs: %d\n", frame->nsseregs);
++      printf("nregs: %d\n", frame->nregs);
++
++      printf("frame_pointer_offset: %llx\n", frame->frame_pointer_offset);
++      printf("hard_frame_pointer_offset: %llx\n", frame->hard_frame_pointer_offset);
++      printf("stack_pointer_offset: %llx\n", frame->stack_pointer_offset);
++      printf("hfp_save_offset: %llx\n", frame->hfp_save_offset);
++      printf("arg_save_offset: %llx\n", frame->arg_save_offset);
++      printf("reg_save_offset: %llx\n", frame->reg_save_offset);
++      printf("sse_reg_save_offset: %llx\n", frame->sse_reg_save_offset);
++
++    }
+ }
+ 
+ /* This is semi-inlined memory_address_length, but simplified
+@@ -12212,6 +12250,24 @@ ix86_emit_save_regs (void)
+   unsigned int regno;
+   rtx_insn *insn;
+ 
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      for (i = start; i < start + nsaved; i++)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  insn = emit_insn (gen_push (gen_rtx_REG (word_mode, regno)));
++	  RTX_FRAME_RELATED_P (insn) = 1;
++	}
++      if (nsaved % 2 != 0)
++	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
++				   GEN_INT (-UNITS_PER_WORD), -1, false);
++    }
++
++
+   for (regno = FIRST_PSEUDO_REGISTER - 1; regno-- > 0; )
+     if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
+       {
+@@ -12298,9 +12354,30 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+ /* Emit code to save registers using MOV insns.
+    First register is stored at CFA - CFA_OFFSET.  */
+ static void
+-ix86_emit_save_regs_using_mov (HOST_WIDE_INT cfa_offset)
++ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
+ {
+   unsigned int regno;
++  HOST_WIDE_INT cfa_offset = frame->arg_save_offset;
++
++  if (TARGET_SAVE_ARGS)
++    {
++      int i;
++      int nsaved = ix86_nsaved_args ();
++      int start = cfun->returns_struct;
++
++      /* We deal with this twice? */
++      if (nsaved % 2 != 0)
++	cfa_offset -= UNITS_PER_WORD;
++
++      for (i = start + nsaved - 1; i >= start; i--)
++	{
++	  regno = x86_64_int_parameter_registers[i];
++	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
++	  cfa_offset -= UNITS_PER_WORD;
++	}
++    }
++
++  cfa_offset = frame->reg_save_offset;
+ 
+   for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
+     if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
+@@ -13786,7 +13863,7 @@ ix86_expand_prologue (void)
+ 	}
+     }
+ 
+-  int_registers_saved = (frame.nregs == 0);
++  int_registers_saved = (frame.nregs == 0 && frame.nmsave_args == 0);
+   sse_registers_saved = (frame.nsseregs == 0);
+   save_stub_call_needed = (m->call_ms2sysv);
+   gcc_assert (sse_registers_saved || !save_stub_call_needed);
+@@ -13806,6 +13883,7 @@ ix86_expand_prologue (void)
+ 	{
+ 	  ix86_emit_save_regs ();
+ 	  int_registers_saved = true;
++
+ 	  gcc_assert (m->fs.sp_offset == frame.reg_save_offset);
+ 	}
+ 
+@@ -13839,7 +13917,7 @@ ix86_expand_prologue (void)
+ 	       && (! TARGET_STACK_PROBE
+ 		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
+ 	{
+-	  ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++	  ix86_emit_save_regs_using_mov (&frame);
+ 	  int_registers_saved = true;
+ 	}
+     }
+@@ -14131,7 +14209,7 @@ ix86_expand_prologue (void)
+     }
+ 
+   if (!int_registers_saved)
+-    ix86_emit_save_regs_using_mov (frame.reg_save_offset);
++    ix86_emit_save_regs_using_mov (&frame);
+   if (!sse_registers_saved)
+     ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
+   else if (save_stub_call_needed)
+@@ -14166,6 +14244,7 @@ ix86_expand_prologue (void)
+      relative to the value of the stack pointer at the end of the function
+      prologue, and moving instructions that access redzone area via frame
+      pointer inside push sequence violates this assumption.  */
++  /* XXX: We may wish to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -14549,6 +14628,7 @@ ix86_expand_epilogue (int style)
+ 
+   /* See the comment about red zone and frame
+      pointer usage in ix86_expand_prologue.  */
++  /* XXX: We may want to do this when SAVE_ARGS in general */
+   if (frame_pointer_needed && frame.red_zone_size)
+     emit_insn (gen_memory_blockage ());
+ 
+@@ -14780,6 +14860,36 @@ ix86_expand_epilogue (int style)
+       ix86_emit_restore_regs_using_pop ();
+     }
+ 
++  if (TARGET_SAVE_ARGS) {
++    /*
++     * For each saved argument, emit a restore note, to make sure it happens
++     * correctly within the shrink wrapping (I think).
++     *
++     * Note that 'restore' in this case merely means the rule is the same as
++     * it was on function entry, not that we have actually done a register
++     * restore (which of course, we haven't).
++     *
++     * If we do not do this, the DWARF code will emit sufficient restores to
++     * provide balance on its own initiative, which in the presence of
++     * -fshrink-wrap may actually _introduce_ unbalance (whereby we only
++     * .cfi_offset a register sometimes, but will always .cfi_restore it.
++     * This will trip an assert.)
++     */
++    int start = cfun->returns_struct;
++    int nsaved = ix86_nsaved_args();
++    int i;
++
++    for (i = start + nsaved - 1; i >= start; i--)
++      queued_cfa_restores
++	= alloc_reg_note (REG_CFA_RESTORE,
++			  gen_rtx_REG(Pmode,
++				      x86_64_int_parameter_registers[i]),
++			  queued_cfa_restores);
++
++    gcc_assert(m->fs.fp_valid);
++  }
++
++
+   /* If we used a stack pointer and haven't already got rid of it,
+      then do so now.  */
+   if (m->fs.fp_valid)
+@@ -15833,6 +15943,19 @@ ix86_cannot_force_const_mem (machine_mode mode, rtx x)
+   return !ix86_legitimate_constant_p (mode, x);
+ }
+ 
++/* Return number of arguments to be saved on the stack with
++   -msave-args.  */
++
++static int
++ix86_nsaved_args (void)
++{
++  if (TARGET_SAVE_ARGS)
++    return crtl->args.info.regno - cfun->returns_struct;
++  else
++    return 0;
++}
++
++
+ /*  Nonzero if the symbol is marked as dllimport, or as stub-variable,
+     otherwise zero.  */
+ 
+diff --git a/gcc/config/i386/i386.h b/gcc/config/i386/i386.h
+index bcefa0ebd4b..b7befa418d2 100644
+--- a/gcc/config/i386/i386.h
++++ b/gcc/config/i386/i386.h
+@@ -618,7 +618,7 @@ extern tree x86_mfence;
+ #define TARGET_SUBTARGET64_DEFAULT 0
+ #define TARGET_SUBTARGET64_ISA_DEFAULT 0
+ 
+-/* Replace MACH-O, ifdefs by in-line tests, where possible. 
++/* Replace MACH-O, ifdefs by in-line tests, where possible.
+    (a) Macros defined in config/i386/darwin.h  */
+ #define TARGET_MACHO 0
+ #define TARGET_MACHO_BRANCH_ISLANDS 0
+@@ -1562,11 +1562,11 @@ enum reg_class
+ /* If defined, the maximum amount of space required for outgoing arguments
+    will be computed and placed into the variable `crtl->outgoing_args_size'.
+    No space will be pushed onto the stack for each call; instead, the
+-   function prologue should increase the stack frame size by this amount.  
++   function prologue should increase the stack frame size by this amount.
+ 
+    In 32bit mode enabling argument accumulation results in about 5% code size
+    growth because move instructions are less compact than push.  In 64bit
+-   mode the difference is less drastic but visible.  
++   mode the difference is less drastic but visible.
+ 
+    FIXME: Unlike earlier implementations, the size of unwind info seems to
+    actually grow with accumulation.  Is that because accumulated args
+@@ -2260,7 +2260,7 @@ do {							\
+ } while (0)
+ 
+ /* Which processor to tune code generation for.  These must be in sync
+-   with processor_target_table in i386.c.  */ 
++   with processor_target_table in i386.c.  */
+ 
+ enum processor_type
+ {
+@@ -2418,6 +2418,11 @@ enum avx_u128_state
+ 
+    saved frame pointer			if frame_pointer_needed
+ 					<- HARD_FRAME_POINTER
++
++   [-msave-args]			<- arg_save_offset
++
++   [saveargs padding]
++
+    [saved regs]
+ 					<- reg_save_offset
+    [padding0]
+@@ -2451,6 +2456,7 @@ enum avx_u128_state
+   */
+ struct GTY(()) ix86_frame
+ {
++  int nmsave_args;
+   int nsseregs;
+   int nregs;
+   int va_arg_size;
+@@ -2462,6 +2468,7 @@ struct GTY(()) ix86_frame
+   HOST_WIDE_INT hard_frame_pointer_offset;
+   HOST_WIDE_INT stack_pointer_offset;
+   HOST_WIDE_INT hfp_save_offset;
++  HOST_WIDE_INT arg_save_offset;
+   HOST_WIDE_INT reg_save_offset;
+   HOST_WIDE_INT stack_realign_allocate;
+   HOST_WIDE_INT stack_realign_offset;
+diff --git a/gcc/config/i386/i386.opt b/gcc/config/i386/i386.opt
+index d9bd909a885..d83d73be5ed 100644
+--- a/gcc/config/i386/i386.opt
++++ b/gcc/config/i386/i386.opt
+@@ -509,6 +509,16 @@ mtls-direct-seg-refs
+ Target Report Mask(TLS_DIRECT_SEG_REFS)
+ Use direct references against %gs when accessing tls data.
+ 
++msave-args
++Target Report Mask(SAVE_ARGS)
++Save integer arguments on the stack at function entry
++
++mforce-save-regs-using-mov
++Target Report Mask(FORCE_SAVE_REGS_USING_MOV)
++Save registers using push in function prologues.  This is intentionally
++undocumented and used for msave-args testing.
++
++
+ mtune=
+ Target RejectNegative Joined Var(ix86_tune_string)
+ Schedule code for given CPU.
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 8ea816bf244..280efce9461 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -14645,6 +14645,10 @@ dynamically linked.  This is the default code model.
+ Generate code for the large code model.  This makes no assumptions about
+ addresses and sizes of sections.  Programs can be statically linked only.
+ 
++@item -msave-args
++@opindex msave-args
++Save integer-sized arguments on the stack on function entry.
++
+ @item -mstrict-align
+ @opindex mstrict-align
+ Avoid generating memory accesses that may not be aligned on a natural object
+diff --git a/gcc/dwarf2out.c b/gcc/dwarf2out.c
+index 0940959cb54..ced18a0001a 100644
+--- a/gcc/dwarf2out.c
++++ b/gcc/dwarf2out.c
+@@ -1458,7 +1458,7 @@ dw_val_equal_p (dw_val_node *a, dw_val_node *b)
+       return a->v.val_file == b->v.val_file;
+     case dw_val_class_decl_ref:
+       return a->v.val_decl_ref == b->v.val_decl_ref;
+-    
++
+     case dw_val_class_const_double:
+       return (a->v.val_double.high == b->v.val_double.high
+ 	      && a->v.val_double.low == b->v.val_double.low);
+@@ -2219,9 +2219,9 @@ output_loc_operands (dw_loc_descr_ref loc, int for_eh_or_skip)
+ 	unsigned r = val1->v.val_unsigned;
+ 	if (for_eh_or_skip >= 0)
+ 	  r = DWARF2_FRAME_REG_OUT (r, for_eh_or_skip);
+-	gcc_assert (size_of_uleb128 (r) 
++	gcc_assert (size_of_uleb128 (r)
+ 		    == size_of_uleb128 (val1->v.val_unsigned));
+-	dw2_asm_output_data_uleb128 (r, NULL);	
++	dw2_asm_output_data_uleb128 (r, NULL);
+       }
+       break;
+     case DW_OP_fbreg:
+@@ -2232,9 +2232,9 @@ output_loc_operands (dw_loc_descr_ref loc, int for_eh_or_skip)
+ 	unsigned r = val1->v.val_unsigned;
+ 	if (for_eh_or_skip >= 0)
+ 	  r = DWARF2_FRAME_REG_OUT (r, for_eh_or_skip);
+-	gcc_assert (size_of_uleb128 (r) 
++	gcc_assert (size_of_uleb128 (r)
+ 		    == size_of_uleb128 (val1->v.val_unsigned));
+-	dw2_asm_output_data_uleb128 (r, NULL);	
++	dw2_asm_output_data_uleb128 (r, NULL);
+ 	dw2_asm_output_data_sleb128 (val2->v.val_int, NULL);
+       }
+       break;
+@@ -2453,7 +2453,7 @@ output_loc_operands (dw_loc_descr_ref loc, int for_eh_or_skip)
+     }
+ }
+ 
+-/* Output a sequence of location operations.  
++/* Output a sequence of location operations.
+    The for_eh_or_skip parameter controls whether register numbers are
+    converted using DWARF2_FRAME_REG_OUT, which is needed in the case that
+    hard reg numbers have been processed via DWARF_FRAME_REGNUM (i.e. for unwind
+@@ -2467,7 +2467,7 @@ output_loc_sequence (dw_loc_descr_ref loc, int for_eh_or_skip)
+     {
+       enum dwarf_location_atom opc = loc->dw_loc_opc;
+       /* Output the opcode.  */
+-      if (for_eh_or_skip >= 0 
++      if (for_eh_or_skip >= 0
+           && opc >= DW_OP_breg0 && opc <= DW_OP_breg31)
+ 	{
+ 	  unsigned r = (opc - DW_OP_breg0);
+@@ -2475,7 +2475,7 @@ output_loc_sequence (dw_loc_descr_ref loc, int for_eh_or_skip)
+ 	  gcc_assert (r <= 31);
+ 	  opc = (enum dwarf_location_atom) (DW_OP_breg0 + r);
+ 	}
+-      else if (for_eh_or_skip >= 0 
++      else if (for_eh_or_skip >= 0
+ 	       && opc >= DW_OP_reg0 && opc <= DW_OP_reg31)
+ 	{
+ 	  unsigned r = (opc - DW_OP_reg0);
+@@ -2554,13 +2554,13 @@ output_loc_operands_raw (dw_loc_descr_ref loc)
+     case DW_OP_regx:
+       {
+ 	unsigned r = DWARF2_FRAME_REG_OUT (val1->v.val_unsigned, 1);
+-	gcc_assert (size_of_uleb128 (r) 
++	gcc_assert (size_of_uleb128 (r)
+ 		    == size_of_uleb128 (val1->v.val_unsigned));
+ 	fputc (',', asm_out_file);
+ 	dw2_asm_output_data_uleb128_raw (r);
+       }
+       break;
+-      
++
+     case DW_OP_constu:
+     case DW_OP_plus_uconst:
+     case DW_OP_piece:
+@@ -2615,7 +2615,7 @@ output_loc_operands_raw (dw_loc_descr_ref loc)
+     case DW_OP_bregx:
+       {
+ 	unsigned r = DWARF2_FRAME_REG_OUT (val1->v.val_unsigned, 1);
+-	gcc_assert (size_of_uleb128 (r) 
++	gcc_assert (size_of_uleb128 (r)
+ 		    == size_of_uleb128 (val1->v.val_unsigned));
+ 	fputc (',', asm_out_file);
+ 	dw2_asm_output_data_uleb128_raw (r);
+@@ -3479,7 +3479,7 @@ struct dw_loc_list_hasher : ggc_ptr_hash<cached_dw_loc_list>
+ {
+ 
+   typedef const_tree compare_type;
+-  
++
+   static hashval_t hash (cached_dw_loc_list *);
+   static bool equal (cached_dw_loc_list *, const_tree);
+ };
+@@ -11557,7 +11557,7 @@ output_aranges (void)
+ {
+   unsigned i;
+   unsigned long aranges_length = size_of_aranges ();
+-  
++
+   if (!XCOFF_DEBUGGING_INFO)
+     {
+       if (DWARF_INITIAL_LENGTH_SIZE - DWARF_OFFSET_SIZE == 4)
+@@ -12569,7 +12569,7 @@ output_one_line_info_table (dw_line_info_table *table)
+ 	  dw2_asm_output_data (1, DW_LNS_set_prologue_end,
+ 			       "set prologue end");
+ 	  break;
+-	  
++
+ 	case LI_set_epilogue_begin:
+ 	  dw2_asm_output_data (1, DW_LNS_set_epilogue_begin,
+ 			       "set epilogue begin");
+@@ -17098,7 +17098,7 @@ dw_sra_loc_expr (tree decl, rtx loc)
+ 	      if (GET_CODE (varloc) == EXPR_LIST)
+ 		varloc = XEXP (varloc, 0);
+ 	    }
+-	  do 
++	  do
+ 	    {
+ 	      if (GET_CODE (varloc) == CONST
+ 		  || GET_CODE (varloc) == SIGN_EXTEND
+@@ -20572,7 +20572,7 @@ compute_frame_pointer_to_fb_displacement (poly_int64 offset)
+   frame_pointer_fb_offset = -offset;
+ 
+   /* ??? AVR doesn't set up valid eliminations when there is no stack frame
+-     in which to eliminate.  This is because it's stack pointer isn't 
++     in which to eliminate.  This is because it's stack pointer isn't
+      directly accessible as a register within the ISA.  To work around
+      this, assume that while we cannot provide a proper value for
+      frame_pointer_fb_offset, we won't need one either.  */
+@@ -20607,7 +20607,7 @@ add_name_attribute (dw_die_ref die, const char *name_string)
+    ??? This is a temporary measure until after we're able to generate
+    regular DWARF for the complex Ada type system.  */
+ 
+-static void 
++static void
+ add_gnat_descriptive_type_attribute (dw_die_ref die, tree type,
+ 				     dw_die_ref context_die)
+ {
+@@ -21633,8 +21633,8 @@ add_calling_convention_attribute (dw_die_ref subr_die, tree decl)
+       /* DWARF 2 doesn't provide a way to identify a program's source-level
+ 	entry point.  DW_AT_calling_convention attributes are only meant
+ 	to describe functions' calling conventions.  However, lacking a
+-	better way to signal the Fortran main program, we used this for 
+-	a long time, following existing custom.  Now, DWARF 4 has 
++	better way to signal the Fortran main program, we used this for
++	a long time, following existing custom.  Now, DWARF 4 has
+ 	DW_AT_main_subprogram, which we add below, but some tools still
+ 	rely on the old way, which we thus keep.  */
+       value = DW_CC_program;
+@@ -23092,9 +23092,9 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+ 	    {
+ 	      if (dwarf_version >= 3 || !dwarf_strict)
+ 		{
+-		  /* We should use ranges for non-contiguous code section 
++		  /* We should use ranges for non-contiguous code section
+ 		     addresses.  Use the actual code range for the initial
+-		     section, since the HOT/COLD labels might precede an 
++		     section, since the HOT/COLD labels might precede an
+ 		     alignment offset.  */
+ 		  bool range_list_added = false;
+ 		  add_ranges_by_labels (subr_die, fde->dw_fde_begin,
+@@ -23130,7 +23130,7 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+ 		  if (TREE_PUBLIC (decl))
+ 		    add_AT_flag (seg_die, DW_AT_external, 1);
+ 
+-		  if (decl_name != NULL 
++		  if (decl_name != NULL
+ 		      && IDENTIFIER_POINTER (decl_name) != NULL)
+ 		    {
+ 		      name = dwarf2_name (decl, 1);
+@@ -23144,7 +23144,7 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+ 		  if (DECL_ARTIFICIAL (decl))
+ 		    add_AT_flag (seg_die, DW_AT_artificial, 1);
+ 
+-		  name = concat ("__second_sect_of_", name, NULL); 
++		  name = concat ("__second_sect_of_", name, NULL);
+ 		  add_AT_low_high_pc (seg_die, fde->dw_fde_second_begin,
+                                       fde->dw_fde_second_end, false);
+ 		  add_name_attribute (seg_die, name);
+@@ -23309,6 +23309,11 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+     /* Add the calling convention attribute if requested.  */
+     add_calling_convention_attribute (subr_die, decl);
+ 
++#ifdef TARGET_SAVE_ARGS
++  if (TARGET_SAVE_ARGS)
++    add_AT_flag (subr_die, DW_AT_SUN_amd64_parmdump, 1);
++#endif
++
+   /* Output Dwarf info for all of the stuff within the body of the function
+      (if it has one - it may be just a declaration).
+ 
+@@ -25087,7 +25092,7 @@ gen_member_die (tree type, dw_die_ref context_die)
+ 	{
+ 	  /* Handle inline static data members, which only have in-class
+ 	     declarations.  */
+-	  dw_die_ref ref = NULL; 
++	  dw_die_ref ref = NULL;
+ 	  if (child->die_tag == DW_TAG_variable
+ 	      && child->die_parent == comp_unit_die ())
+ 	    {
+@@ -27128,7 +27133,7 @@ gen_scheduled_generic_parms_dies (void)
+ 
+   if (!generic_type_instances)
+     return;
+-  
++
+   FOR_EACH_VEC_ELT (*generic_type_instances, i, t)
+     if (COMPLETE_TYPE_P (t))
+       gen_generic_params_dies (t);
+@@ -27891,7 +27896,7 @@ dwarf2out_source_line (unsigned int line, unsigned int column,
+      that second line number entry.  */
+   /* Recall that this end-of-prologue indication is *not* the same thing
+      as the end_prologue debug hook.  The NOTE_INSN_PROLOGUE_END note,
+-     to which the hook corresponds, follows the last insn that was 
++     to which the hook corresponds, follows the last insn that was
+      emitted by gen_prologue.  What we need is to precede the first insn
+      that had been emitted after NOTE_INSN_FUNCTION_BEG, i.e. the first
+      insn that corresponds to something the user wrote.  These may be
+@@ -28153,7 +28158,7 @@ output_macinfo_op (macinfo_entry *ref)
+       file_num = maybe_emit_file (fd);
+       dw2_asm_output_data (1, DW_MACINFO_start_file, "Start new file");
+       dw2_asm_output_data_uleb128 (ref->lineno,
+-				   "Included from line number %lu", 
++				   "Included from line number %lu",
+ 				   (unsigned long) ref->lineno);
+       dw2_asm_output_data_uleb128 (file_num, "file %s", ref->info);
+       break;
+@@ -28176,7 +28181,7 @@ output_macinfo_op (macinfo_entry *ref)
+       dw2_asm_output_data (1, ref->code,
+ 			   ref->code == DW_MACINFO_define
+ 			   ? "Define macro" : "Undefine macro");
+-      dw2_asm_output_data_uleb128 (ref->lineno, "At line number %lu", 
++      dw2_asm_output_data_uleb128 (ref->lineno, "At line number %lu",
+ 				   (unsigned long) ref->lineno);
+       dw2_asm_output_nstring (ref->info, -1, "The macro");
+       break;
+@@ -30581,7 +30586,7 @@ hash_loc_operands (dw_loc_descr_ref loc, inchash::hash &hstate)
+ 		      get_full_len (*val2->v.val_wide)
+ 		      * HOST_BITS_PER_WIDE_INT / HOST_BITS_PER_CHAR);
+ 	  break;
+-	case dw_val_class_addr:	
++	case dw_val_class_addr:
+ 	  inchash::add_rtx (val2->v.val_addr, hstate);
+ 	  break;
+ 	default:
+@@ -31263,7 +31268,7 @@ dwarf2out_finish (const char *)
+ 
+   /* We can only use the low/high_pc attributes if all of the code was
+      in .text.  */
+-  if (!have_multiple_function_sections 
++  if (!have_multiple_function_sections
+       || (dwarf_version < 3 && dwarf_strict))
+     {
+       /* Don't add if the CU has no associated code.  */
+diff --git a/gcc/testsuite/gcc.target/i386/msave-args-mov.c b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
+new file mode 100644
+index 00000000000..a2ca76752a9
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
+@@ -0,0 +1,26 @@
++/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
++/* { dg-options "-msave-args -mforce-save-regs-using-mov -save-temps" } */
++
++#include <stdio.h>
++
++void t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++main(int argc, char **argv)
++{
++	t(1, 2, 3, 4, 5);
++	return (0);
++}
++
++void
++t(int a, int b, int c, int d, int e)
++{
++	printf("%d %d %d %d %d", a, b, c, d, e);
++}
++
++/* { dg-final { scan-assembler "movq\t%rdi, -8\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rsi, -16\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rdx, -24\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%rcx, -32\\(%rbp\\)" } } */
++/* { dg-final { scan-assembler "movq\t%r8, -40\\(%rbp\\)" } } */
++/* { dg-final { cleanup-saved-temps } } */
+diff --git a/gcc/testsuite/gcc.target/i386/msave-args-push.c b/gcc/testsuite/gcc.target/i386/msave-args-push.c
+new file mode 100644
+index 00000000000..fbe053dadc8
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/msave-args-push.c
+@@ -0,0 +1,26 @@
++/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
++/* { dg-options "-msave-args -save-temps " } */
++
++#include <stdio.h>
++
++void t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++main(int argc, char **argv)
++{
++	t(1, 2, 3, 4, 5);
++	return (0);
++}
++
++void
++t(int a, int b, int c, int d, int e)
++{
++	printf("%d %d %d %d %d", a, b, c, d, e);
++}
++
++/* { dg-final { scan-assembler "pushq\t%rdi" } } */
++/* { dg-final { scan-assembler "pushq\t%rsi" } } */
++/* { dg-final { scan-assembler "pushq\t%rdx" } } */
++/* { dg-final { scan-assembler "pushq\t%rcx" } } */
++/* { dg-final { scan-assembler "pushq\t%r8" } } */
++/* { dg-final { cleanup-saved-temps } } */
+diff --git a/include/dwarf2.def b/include/dwarf2.def
+index 3becd7f8219..74124d2e5d6 100644
+--- a/include/dwarf2.def
++++ b/include/dwarf2.def
+@@ -45,27 +45,27 @@
+ 
+ /* This file declares various DWARF-related constants using a set of
+    macros which can be redefined by the including file.
+-   
++
+    The macros are in sections.  Each section corresponds to a single
+    set of DWARF constants and has a corresponding key.  The key is
+    used in all the macro names.
+-   
++
+    The sections are TAG (for DW_TAG_ constants), FORM (DW_FORM_), AT
+    (DW_AT_), OP (DW_OP_), ATE (DW_ATE_), and CFA (DW_CFA_).
+-   
++
+    Using TAG as an example, the following macros may be used for each
+    key:
+-   
++
+    DW_FIRST_TAG(name, value) - Introduce the first DW_TAG constant.
+-   
++
+    DW_TAG(name, value) - Define a subsequent constant.
+-   
++
+    DW_TAG_DUP(name, value) - Define a subsequent constant whose value
+    is a duplicate of some other constant.  Not all keys use the _DUP
+    macro form.  If more than one name shares a value, then the base
+    (DW_TAG) form will be the preferred name and DW_TAG_DUP will hold
+    any alternate names.
+-   
++
+    DW_END_TAG - Invoked at the end of the DW_TAG constants.  */
+ 
+ DW_FIRST_TAG (DW_TAG_padding, 0x00)
+@@ -459,6 +459,8 @@ DW_TAG (DW_AT_GNU_denominator, 0x2304)
+ /* Biased integer extension.
+    See https://gcc.gnu.org/wiki/DW_AT_GNU_bias .  */
+ DW_TAG (DW_AT_GNU_bias, 0x2305)
++/* Sun extension. */
++DW_AT (DW_AT_SUN_amd64_parmdump, 0x2224)
+ /* UPC extension.  */
+ DW_AT (DW_AT_upc_threads_scaled, 0x3210)
+ /* PGI (STMicroelectronics) extensions.  */
+-- 
+2.20.1
+

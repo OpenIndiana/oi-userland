@@ -12,19 +12,20 @@
 #
 # Copyright 2016 Aurelien Larcher.  All rights reserved.
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-libav
-COMPONENT_VERSION= 1.12.5
+COMPONENT_VERSION= 1.16.0
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/libav
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:812b865f3936d0c5b30f766a126783c99fe00c166c1a7677d50790201c573878
+  sha256:dfac119043a9cfdcacd7acde77f674ab172cf2537b5812be52f49e9cddc53d9a
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
@@ -51,7 +52,7 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz

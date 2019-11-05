@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gc
 
-COMPONENT_VERSION= 7.6.4
+COMPONENT_VERSION= 8.0.4
 COMPONENT_FMRI= library/gc
 COMPONENT_SUMMARY= Boehm-Demers-Weiser garbage collector for C/C++
 COMPONENT_CLASSIFICATION= Development/C++
@@ -25,32 +25,31 @@ COMPONENT_PROJECT_URL= http://www.hboehm.info/gc/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b94c1f2535f98354811ee644dccab6e84a0cf73e477ca03fb5a3758fb1fecd1c
+  sha256:436a0ddc67b1ac0b0405b61a9675bca9e075c8156f4debd1d06f3a56c7cd289d
 COMPONENT_ARCHIVE_URL= \
-  http://www.hboehm.info/gc/gc_source/$(COMPONENT_ARCHIVE)
+  https://github.com/ivmai/bdwgc/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, MIT
 
 COMPONENT_NAME_1= libatomic_ops
-COMPONENT_VERSION_1= 7.6.2
+COMPONENT_VERSION_1= 7.6.10
 COMPONENT_SRC_1= $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-  sha256:219724edad3d580d4d37b22e1d7cb52f0006d282d26a9b8681b560a625142ee6
+  sha256:587edf60817f56daf1e1ab38a4b3c729b8e846ff67b4f62a6157183708f099af
 COMPONENT_ARCHIVE_URL_1= \
-  http://www.hboehm.info/gc/gc_source/$(COMPONENT_ARCHIVE_1)
+  https://github.com/ivmai/libatomic_ops/releases/download/v$(COMPONENT_VERSION_1)/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION= (cd $(@D);\
-  autoreconf -f -i; $(CP) -rf ../$(COMPONENT_SRC_1) $(COMPONENT_NAME_1)) 
+  autoreconf -f -i; $(CP) -rf ../$(COMPONENT_SRC_1) $(COMPONENT_NAME_1))
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-threads=posix
-CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-large-config
 CONFIGURE_OPTIONS += --with-libatomic-ops=no
 

@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2018 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -109,8 +109,6 @@ file path=usr/include/openssl/ui_compat.h
 file path=usr/include/openssl/x509.h
 file path=usr/include/openssl/x509_vfy.h
 file path=usr/include/openssl/x509v3.h
-file path=usr/lib/$(MACH64)/llib-lcrypto.ln
-file path=usr/lib/$(MACH64)/llib-lssl.ln
 file path=usr/lib/engines/lib4758cca.so
 file path=usr/lib/engines/libaep.so
 file path=usr/lib/engines/libatalla.so
@@ -130,10 +128,6 @@ file path=usr/lib/libcrypto.so.1.0.0
 file path=usr/lib/libssl.a
 link path=usr/lib/libssl.so target=libssl.so.1.0.0
 file path=usr/lib/libssl.so.1.0.0
-file path=usr/lib/llib-lcrypto
-file path=usr/lib/llib-lcrypto.ln
-file path=usr/lib/llib-lssl
-file path=usr/lib/llib-lssl.ln
 file path=usr/lib/pkgconfig/libcrypto.pc
 file path=usr/lib/pkgconfig/libssl.pc
 file path=usr/lib/pkgconfig/openssl.pc
@@ -1751,6 +1745,8 @@ link path=usr/share/man/man3openssl/OBJ_txt2obj.3openssl \
     target=OBJ_nid2obj.3openssl
 file path=usr/share/man/man3openssl/OPENSSL_Applink.3openssl
 file path=usr/share/man/man3openssl/OPENSSL_VERSION_NUMBER.3openssl
+link path=usr/share/man/man3openssl/OPENSSL_VERSION_TEXT.3openssl \
+    target=OPENSSL_VERSION_NUMBER.3openssl
 file path=usr/share/man/man3openssl/OPENSSL_config.3openssl
 file path=usr/share/man/man3openssl/OPENSSL_ia32cap.3openssl
 link path=usr/share/man/man3openssl/OPENSSL_ia32cap_loc.3openssl \
@@ -2364,6 +2360,8 @@ link path=usr/share/man/man3openssl/SSL_get_servername.3openssl \
 link path=usr/share/man/man3openssl/SSL_get_servername_type.3openssl \
     target=SSL_CTX_set_tlsext_servername_callback.3openssl
 file path=usr/share/man/man3openssl/SSL_get_session.3openssl
+link path=usr/share/man/man3openssl/SSL_get_shared_ciphers.3openssl \
+    target=SSL_get_ciphers.3openssl
 link path=usr/share/man/man3openssl/SSL_get_shared_curve.3openssl \
     target=SSL_CTX_set1_curves.3openssl
 link path=usr/share/man/man3openssl/SSL_get_shutdown.3openssl \
@@ -2709,6 +2707,7 @@ link path=usr/share/man/man3openssl/X509_check_ip.3openssl \
 link path=usr/share/man/man3openssl/X509_check_ip_asc.3openssl \
     target=X509_check_host.3openssl
 file path=usr/share/man/man3openssl/X509_check_private_key.3openssl
+file path=usr/share/man/man3openssl/X509_cmp_time.3openssl
 link path=usr/share/man/man3openssl/X509_free.3openssl target=X509_new.3openssl
 file path=usr/share/man/man3openssl/X509_new.3openssl
 file path=usr/share/man/man3openssl/X509_verify_cert.3openssl

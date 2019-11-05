@@ -1,0 +1,55 @@
+From 8d641794003b6f55eab0829a9fcef689da130b5b Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Wed, 5 Mar 2014 04:12:52 +0000
+Subject: [PATCH 02/16] gcc: enable the .eh_frame based unwinder
+
+---
+ gcc/configure    | 3 +++
+ gcc/configure.ac | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/gcc/configure b/gcc/configure
+index 6121e163259..97de37bc6e9 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -22812,6 +22812,7 @@ if test $in_tree_ld != yes ; then
+ 	    -e 's,^.*: \(5\|1[0-9]\)\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\2,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++          ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -28309,6 +28310,8 @@ elif test x$gcc_cv_ld != x; then
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index b066cc609e1..21e51063ab4 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -2608,6 +2608,7 @@ if test $in_tree_ld != yes ; then
+ 	    -e 's,^.*: \(5\|1[0-9]\)\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\2,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++          ld_vers_isillumos=`echo "$ld_ver" | grep '(illumos)'`
+ 	fi
+ 	;;
+     esac
+@@ -5131,6 +5132,8 @@ elif test x$gcc_cv_ld != x; then
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+         if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
+           gcc_cv_ld_eh_frame_hdr=yes
++        elif test "$ld_vers_minor" -ge 1735 && test -n "$ld_vers_isillumos"; then
++          gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+-- 
+2.20.1
+

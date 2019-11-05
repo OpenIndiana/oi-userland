@@ -1,0 +1,68 @@
+https://github.com/openssh/openssh-portable/commit/5ee8448ad7c306f05a9f56769f95
+is reverted in OmniOS as it causes problems for VMware guests where NAT mode
+is in use - see https://communities.vmware.com/thread/590825
+
+diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
+--- a~/readconf.c	1970-01-01 00:00:00
++++ a/readconf.c	1970-01-01 00:00:00
+@@ -2149,9 +2149,9 @@ fill_default_options(Options * options)
+ 	if (options->visual_host_key == -1)
+ 		options->visual_host_key = 0;
+ 	if (options->ip_qos_interactive == -1)
+-		options->ip_qos_interactive = IPTOS_DSCP_AF21;
++		options->ip_qos_interactive = IPTOS_LOWDELAY;
+ 	if (options->ip_qos_bulk == -1)
+-		options->ip_qos_bulk = IPTOS_DSCP_CS1;
++		options->ip_qos_bulk = IPTOS_THROUGHPUT;
+ 	if (options->request_tty == -1)
+ 		options->request_tty = REQUEST_TTY_AUTO;
+ 	if (options->proxy_use_fdpass == -1)
+diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
+@@ -508,9 +508,9 @@ fill_default_server_options(ServerOption
+ 	if (options->permit_tun == -1)
+ 		options->permit_tun = SSH_TUNMODE_NO;
+ 	if (options->ip_qos_interactive == -1)
+-		options->ip_qos_interactive = IPTOS_DSCP_AF21;
++		options->ip_qos_interactive = IPTOS_LOWDELAY;
+ 	if (options->ip_qos_bulk == -1)
+-		options->ip_qos_bulk = IPTOS_DSCP_CS1;
++		options->ip_qos_bulk = IPTOS_THROUGHPUT;
+ 	if (options->version_addendum == NULL)
+ 		options->version_addendum = xstrdup("");
+ 
+diff -wpruN '--exclude=*.orig' a~/ssh_config.4 a/ssh_config.4
+--- a~/ssh_config.4	1970-01-01 00:00:00
++++ a/ssh_config.4	1970-01-01 00:00:00
+@@ -1039,11 +1039,9 @@ If one argument is specified, it is used
+ If two values are specified, the first is automatically selected for
+ interactive sessions and the second for non-interactive sessions.
+ The default is
+-.Cm af21
+-(Low-Latency Data)
++.Cm lowdelay
+ for interactive sessions and
+-.Cm cs1
+-(Lower Effort)
++.Cm throughput
+ for non-interactive sessions.
+ .It Cm KbdInteractiveAuthentication
+ Specifies whether to use keyboard-interactive authentication.
+diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
+--- a~/sshd_config.4	1970-01-01 00:00:00
++++ a/sshd_config.4	1970-01-01 00:00:00
+@@ -851,11 +851,9 @@ If one argument is specified, it is used
+ If two values are specified, the first is automatically selected for
+ interactive sessions and the second for non-interactive sessions.
+ The default is
+-.Cm af21
+-(Low-Latency Data)
++.Cm lowdelay
+ for interactive sessions and
+-.Cm cs1
+-(Lower Effort)
++.Cm throughput
+ for non-interactive sessions.
+ .It Cm KbdInteractiveAuthentication
+ Specifies whether to allow keyboard-interactive authentication.

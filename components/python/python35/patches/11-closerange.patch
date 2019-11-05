@@ -1,0 +1,42 @@
+This patch uses fdwalk(3c) to close file descriptors; as that function is not
+widely implemented, this is unsuitable for upstream.
+
+--- Python-3.5.3/Modules/posixmodule.c.~1~	2017-01-16 23:57:53.000000000 +0000
++++ Python-3.5.3/Modules/posixmodule.c	2017-01-17 11:14:01.793616905 +0000
+@@ -7806,6 +7806,19 @@
+     Py_RETURN_NONE;
+ }
+ 
++static int
++close_func(void *lohi, int fd)
++{
++    int lo = ((int *)lohi)[0];
++    int hi = ((int *)lohi)[1];
++
++    if (fd >= hi)
++        return (1);
++    else if (fd >= lo)
++        close(fd);
++
++    return (0);
++}
+ 
+ /*[clinic input]
+ os.closerange
+@@ -7822,11 +7835,13 @@
+ /*[clinic end generated code: output=0ce5c20fcda681c2 input=5855a3d053ebd4ec]*/
+ {
+     int i;
++    int lohi[2];
++
+     Py_BEGIN_ALLOW_THREADS
+     _Py_BEGIN_SUPPRESS_IPH
+-    for (i = fd_low; i < fd_high; i++)
+-        if (_PyVerify_fd(i))
+-            close(i);
++    lohi[0] = fd_low;
++    lohi[1] = fd_high;
++    fdwalk(close_func, lohi);
+     _Py_END_SUPPRESS_IPH
+     Py_END_ALLOW_THREADS
+     Py_RETURN_NONE;

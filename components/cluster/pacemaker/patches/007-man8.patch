@@ -1,0 +1,45 @@
+diff -Nura a/doc/crm_fencing.txt b/doc/crm_fencing.txt
+--- a/doc/crm_fencing.txt 2016-11-01 19:32:47.869611627 +0100
++++ b/doc/crm_fencing.txt 2016-11-01 19:32:48.330125384 +0100
+@@ -406,7 +406,7 @@
+ human to operate. Whenever invoked, `meatware` logs a CRIT severity
+ message which should show up on the node's console. The operator
+ should then make sure that the node is down and issue a
+-`meatclient(8)` command to tell `meatware` that it's OK to tell the
++`meatclient(1m)` command to tell `meatware` that it's OK to tell the
+ cluster that it may consider the node dead. See `README.meatware`
+ for more information.
+
+--- pacemaker-Pacemaker-1.1.19/tools/cibadmin.c.orig	2019-01-03 11:00:03.851276253 +0000
++++ pacemaker-Pacemaker-1.1.19/tools/cibadmin.c	2019-01-03 11:02:52.658056576 +0000
+@@ -156,7 +156,7 @@
+     {"-spacer-",    0, 0, '-', " cibadmin --replace --xml-file $HOME/local.xml", pcmk_option_example},
+ 
+     {"-spacer-",    0, 0, '-', "SEE ALSO:"},
+-    {"-spacer-",    0, 0, '-', " crm(8), pcs(8), crm_shadow(8), crm_diff(8)"},
++    {"-spacer-",    0, 0, '-', " crm(1m), pcs(1m), crm_shadow(1m), crm_diff(1m)"},
+ 
+     /* Legacy options */
+     {"host",	     1, 0, 'h', NULL, 1},
+--- pacemaker-Pacemaker-1.1.19/tools/crm_report.in.orig	2019-01-03 11:00:24.263563983 +0000
++++ pacemaker-Pacemaker-1.1.19/tools/crm_report.in	2019-01-03 11:03:50.918841731 +0000
+@@ -250,7 +250,7 @@
+ 	if which crm_diff > /dev/null 2>&1; then
+ 	    crm_diff -c -n $1 -o $2
+ 	else
+-	    info "crm_diff(8) not found, cannot diff CIBs"
++	    info "crm_diff(1m) not found, cannot diff CIBs"
+ 	fi
+     else
+ 	echo "can't compare cibs from running and stopped systems"
+--- pacemaker-Pacemaker-1.1.21/Makefile.common.~1~	2019-08-19 08:25:47.998859419 +0000
++++ pacemaker-Pacemaker-1.1.21/Makefile.common	2019-08-19 08:26:20.901990399 +0000
+@@ -38,7 +38,7 @@
+ 
+ %.8:	% $(MAN8DEPS)
+ 	chmod a+x $(abs_builddir)/$<
+-	$(AM_V_MAN)PATH=$(abs_builddir):$$PATH $(HELP2MAN) --output $@ --no-info --section 8 --name "Part of the Pacemaker cluster resource manager" $(abs_builddir)/$<
++	$(AM_V_MAN)PATH=$(abs_builddir):$$PATH $(HELP2MAN) --output $@ --no-info --section 1m --name "Part of the Pacemaker cluster resource manager" $(abs_builddir)/$<
+ 
+ %.xml:  %
+ 	$(AM_V_GEN)$(abs_builddir)/$< metadata > $@

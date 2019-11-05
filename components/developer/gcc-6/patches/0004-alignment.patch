@@ -1,0 +1,113 @@
+From ccae96f477213deb3f0aa2fdb4f25422c260d651 Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Tue, 19 Mar 2019 23:56:03 +0100
+Subject: [PATCH 4/7] alignment
+
+---
+ libgomp/config/posix/omp-lock.h | 21 ++++++++++++++++++---
+ libgomp/config/posix/ptrlock.h  |  5 ++++-
+ libgomp/config/posix/sem.h      |  4 ++--
+ libgomp/omp.h.in                | 12 ++++++++++--
+ 4 files changed, 34 insertions(+), 8 deletions(-)
+
+diff --git a/libgomp/config/posix/omp-lock.h b/libgomp/config/posix/omp-lock.h
+index e51dc271f8a..241a0dfed35 100644
+--- a/libgomp/config/posix/omp-lock.h
++++ b/libgomp/config/posix/omp-lock.h
+@@ -11,13 +11,28 @@
+ #include <semaphore.h>
+ 
+ typedef pthread_mutex_t omp_lock_25_t;
+-typedef struct { pthread_mutex_t lock; int count; } omp_nest_lock_25_t;
++
++typedef struct {
++  pthread_mutex_t lock;
++  int count;
++} omp_nest_lock_25_t __attribute__((__aligned__(8)));
++
+ #ifdef HAVE_BROKEN_POSIX_SEMAPHORES
+ /* If we don't have working semaphores, we'll make all explicit tasks
+    tied to the creating thread.  */
+ typedef pthread_mutex_t omp_lock_t;
+-typedef struct { pthread_mutex_t lock; int count; void *owner; } omp_nest_lock_t;
++
++typedef struct {
++  pthread_mutex_t lock;
++  int count;
++  void *owner;
++} omp_nest_lock_t __attribute__((__aligned__(8)));
+ #else
+ typedef sem_t omp_lock_t;
+-typedef struct { sem_t lock; int count; void *owner; } omp_nest_lock_t;
++typedef struct {
++  sem_t lock;
++  int count;
++  void *owner;
++} omp_nest_lock_t __attribute__((__aligned__(8)));
+ #endif
++
+diff --git a/libgomp/config/posix/ptrlock.h b/libgomp/config/posix/ptrlock.h
+index 6ed14f67390..79175f80133 100644
+--- a/libgomp/config/posix/ptrlock.h
++++ b/libgomp/config/posix/ptrlock.h
+@@ -29,7 +29,10 @@
+ #ifndef GOMP_PTRLOCK_H
+ #define GOMP_PTRLOCK_H 1
+ 
+-typedef struct { void *ptr; gomp_mutex_t lock; } gomp_ptrlock_t;
++typedef struct {
++  void *ptr;
++  gomp_mutex_t lock;
++} gomp_ptrlock_t __attribute__((__aligned__(8)));
+ 
+ static inline void gomp_ptrlock_init (gomp_ptrlock_t *ptrlock, void *ptr)
+ {
+diff --git a/libgomp/config/posix/sem.h b/libgomp/config/posix/sem.h
+index 31d5a185adc..421b5bfcc77 100644
+--- a/libgomp/config/posix/sem.h
++++ b/libgomp/config/posix/sem.h
+@@ -49,8 +49,8 @@
+ 
+ struct gomp_sem
+ {
+-  pthread_mutex_t	mutex;
+-  pthread_cond_t	cond;
++  pthread_mutex_t	mutex __attribute__((__aligned__(8)));
++  pthread_cond_t	cond __attribute__((__aligned__(8)));
+   int			value;
+ };
+ 
+diff --git a/libgomp/omp.h.in b/libgomp/omp.h.in
+index f2625b2f9f3..4462fad88b5 100644
+--- a/libgomp/omp.h.in
++++ b/libgomp/omp.h.in
+@@ -32,16 +32,24 @@
+    reflect the shape of the two types.  Their internals are private
+    to the library.  */
+ 
++#if defined(__x86_64__) || defined(__amd64) || defined(__sparc)
++#define OMP_LOCK_ALIGN 8
++#define OMP_NEST_LOCK_ALIGN 8
++#else
++#define OMP_LOCK_ALIGN 4
++#define OMP_NEST_LOCK_ALIGN 4
++#endif
++
+ typedef struct
+ {
+   unsigned char _x[@OMP_LOCK_SIZE@] 
+-    __attribute__((__aligned__(@OMP_LOCK_ALIGN@)));
++    __attribute__((__aligned__(OMP_LOCK_ALIGN)));
+ } omp_lock_t;
+ 
+ typedef struct
+ {
+   unsigned char _x[@OMP_NEST_LOCK_SIZE@] 
+-    __attribute__((__aligned__(@OMP_NEST_LOCK_ALIGN@)));
++    __attribute__((__aligned__(OMP_NEST_LOCK_ALIGN)));
+ } omp_nest_lock_t;
+ #endif
+ 
+-- 
+2.20.1
+

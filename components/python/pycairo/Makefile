@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycairo
 COMPONENT_VERSION=	1.10.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.cairographics.org
 COMPONENT_SUMMARY=	Python bindings for Cairo
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,25 +25,35 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:9aa4078e7eb5be583aeabbe8d87172797717f95e8c4338f0d4a17b683a7253be
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSION =	3.4
-PYTHON_VERSIONS =	3.4
+PYTHON_VERSIONS =	3.4 3.5
 
 VARIANT_PYTHON34 = $(BUILD_DIR)/python-34
+VARIANT_PYTHON35 = $(BUILD_DIR)/python-35
 
-VARIANTS = $(VARIANT_PYTHON34)
+VARIANTS_32 = $(VARIANT_PYTHON34) 
+VARIANTS_64 = $(VARIANT_PYTHON34) $(VARIANT_PYTHON35)
 
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+BUILD_32 = $(VARIANTS_32:%=%/$(MACH32)/.built)
+BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
 
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+INSTALL_32 = $(VARIANTS_32:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS_64:%=%/$(MACH64)/.installed)
 
 $(VARIANT_PYTHON34)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON34)/$(MACH64)/.configured: PYTHON=$(PYTHON.3.4.64)
+$(VARIANT_PYTHON34)/$(MACH64)/.installed: PYTHON=$(PYTHON.3.4.64)
+$(VARIANT_PYTHON34)/$(MACH64)/.installed: PYTHON_VERSION=3.4
 
-$(VARIANT_PYTHON32)/$(MACH32)/.configured: BITS=32
-$(VARIANT_PYTHON32)/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
+$(VARIANT_PYTHON34)/$(MACH32)/.configured: BITS=32
+$(VARIANT_PYTHON34)/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
+$(VARIANT_PYTHON34)/$(MACH32)/.installed: PYTHON=$(PYTHON.3.4.32)
+$(VARIANT_PYTHON34)/$(MACH32)/.installed: PYTHON_VERSION=3.4
 
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: BITS=64
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: PYTHON=$(PYTHON.3.5.64)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.5-config
+$(VARIANT_PYTHON35)/$(MACH64)/.installed: PYTHON=$(PYTHON.3.5.64)
+$(VARIANT_PYTHON34)/$(MACH64)/.installed: PYTHON_VERSION=3.5
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/waf.mk
@@ -67,10 +77,14 @@ COMPONENT_POST_INSTALL_ACTION += \
             $(MKDIR) -p  $(PROTO_DIR)/usr/lib/python3.4/vendor-packages/cairo/64      ; \
             $(MV) $(PROTO_DIR)/usr/lib/$(MACH64)/python3.4/site-packages/cairo/*.so $(PROTO_DIR)/usr/lib/python3.4/vendor-packages/cairo/64 ; \
             $(RM) -fr  $(PROTO_DIR)/usr/lib/$(MACH64)/python3.4 ; \
+            $(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python3.4/vendor-packages/cairo ; \
+	fi ; \
+	if [ -d  $(PROTO_DIR)/usr/lib/$(MACH64)/python3.5  ]; then \
+            $(MKDIR) -p  $(PROTO_DIR)/usr/lib/python3.5/vendor-packages      ; \
+            $(MV) $(PROTO_DIR)/usr/lib/$(MACH64)/python3.5/site-packages/* $(PROTO_DIR)/usr/lib/python3.5/vendor-packages ; \
+	    $(RM) -fr  $(PROTO_DIR)/usr/lib/$(MACH64)/python3.5 ; \
+            $(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python3.5/vendor-packages/cairo ; \
 	fi ;
-
-COMPONENT_POST_INSTALL_ACTION += \
-        $(PYTHON.3.4.32) -m compileall $(PROTO_DIR)$(PYTHON_LIB)/cairo
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -81,4 +95,5 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

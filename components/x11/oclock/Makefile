@@ -13,36 +13,19 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-PREFERRED_BITS=64
-
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           oclock
-COMPONENT_VERSION=        1.0.4
-COMPONENT_FMRI=           x11/oclock
-COMPONENT_CLASSIFICATION= Applications/Accessories
+COMPONENT_NAME=     oclock
+COMPONENT_VERSION=  1.0.4
+COMPONENT_FMRI=     x11/oclock
 COMPONENT_SUMMARY=  oclock - round X clock 
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_CLASSIFICATION= Applications/Accessories
 COMPONENT_ARCHIVE_HASH= \
   sha256:cc20cfc1c0d5128d89e1eecd9ba52e58f111075be163e0aeda5690dbaafbaefe
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

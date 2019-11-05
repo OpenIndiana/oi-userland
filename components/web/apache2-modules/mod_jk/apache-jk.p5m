@@ -36,10 +36,12 @@ set name=org.opensolaris.arc-caseid \
     value=PSARC/2008/090
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+# prevents "64bit file in 32bit path" errors
+<transform file path=usr/apache2/2.4/libexec/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
 
 license apache.license license="Apache v2.0"
 
 file jk.conf path=etc/apache2/2.4/conf.d/jk.conf mode=0644 preserve=renamenew
 file workers.properties path=etc/apache2/2.4/conf.d/workers.properties mode=0644 preserve=renamenew
-file build/$(MACH32)/apache-2.0/mod_jk.so path=usr/apache2/2.4/libexec/mod_jk.so
-file build/$(MACH64)/apache-2.0/mod_jk.so path=usr/apache2/2.4/libexec/$(MACH64)/mod_jk.so
+file build/$(MACH64)/apache-2.0/mod_jk.so path=usr/apache2/2.4/libexec/mod_jk.so

@@ -41,7 +41,7 @@ PKGFMT =	/usr/bin/pkgfmt
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 PKGSEND =	/usr/bin/pkgsend
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
-PKGLINT =	/usr/bin/pkglint
+PKGLINT =	/usr/bin/python3.5 /usr/bin/pkglint
 else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
@@ -81,8 +81,21 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/devel
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-soabi
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-no-32bit
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
+
+FINAL_TRANSFORMS += 	$(WS_TOP)/transforms/final-cleanup
+
+define add-limiting-variable
+PKG_VARS += $(1)
+MANIFEST_LIMITING_VARS += -D $(1)="$(subst #,\#,$($(1)))"
+endef
+
+# Make all the limiting variables available to manifest processing
+$(foreach var, $(filter PY3_%_NAMING,$(.VARIABLES)), \
+    $(eval $(call add-limiting-variable,$(var))))
+
 
 ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
 AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
@@ -90,39 +103,35 @@ else
 AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/drop-all
 endif
 
-PKG_MACROS +=		MACH=$(MACH)
-PKG_MACROS +=		MACH32=$(MACH32)
-PKG_MACROS +=		MACH64=$(MACH64)
-PKG_MACROS +=		PUBLISHER=$(PUBLISHER)
-PKG_MACROS +=		PUBLISHER_LOCALIZABLE=$(PUBLISHER_LOCALIZABLE)
-PKG_MACROS +=		CONSOLIDATION=$(CONSOLIDATION)
-PKG_MACROS +=		BUILD_VERSION=$(BUILD_VERSION)
-PKG_MACROS +=		SOLARIS_VERSION=$(SOLARIS_VERSION)
-PKG_MACROS +=		OS_VERSION=$(OS_VERSION)
-PKG_MACROS +=		PKG_SOLARIS_VERSION=$(PKG_SOLARIS_VERSION)
-PKG_MACROS +=		HUMAN_VERSION=$(HUMAN_VERSION)
-PKG_MACROS +=		IPS_COMPONENT_VERSION=$(IPS_COMPONENT_VERSION)
-PKG_MACROS +=		COMPONENT_VERSION=$(COMPONENT_VERSION)
-PKG_MACROS +=		COMPONENT_PROJECT_URL=$(COMPONENT_PROJECT_URL)
-PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
-PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
-PKG_MACROS +=		COMPONENT_HG_REV=$(COMPONENT_HG_REV)
-PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
-PKG_MACROS +=		COMPONENT_FMRI=$(COMPONENT_FMRI)
-PKG_MACROS +=		COMPONENT_LICENSE_FILE=$(COMPONENT_LICENSE_FILE)
-PKG_MACROS +=		TPNO=$(TPNO)
-PKG_MACROS +=		USERLAND_GIT_REMOTE=$(USERLAND_GIT_REMOTE)
-PKG_MACROS +=		USERLAND_GIT_BRANCH=$(USERLAND_GIT_BRANCH)
-PKG_MACROS +=		USERLAND_GIT_REV=$(USERLAND_GIT_REV)
+# For items defined as variables or that may contain whitespace, add
+# them to a list to be expanded into PKG_OPTIONS later.
+PKG_VARS += ARC_CASE TPNO
+PKG_VARS += MACH MACH32 MACH64
+PKG_VARS += BUILD_VERSION OS_VERSION PKG_SOLARIS_VERSION
+PKG_VARS += GNU_TRIPLET
+PKG_VARS += CONSOLIDATION
+PKG_VARS += COMPONENT_VERSION IPS_COMPONENT_VERSION HUMAN_VERSION
+PKG_VARS += COMPONENT_ARCHIVE_URL COMPONENT_PROJECT_URL COMPONENT_NAME
+PKG_VARS += COMPONENT_FMRI COMPONENT_LICENSE_FILE
+PKG_VARS += COMPONENT_SUMMARY COMPONENT_DESCRIPTION COMPONENT_LICENSE
+PKG_VARS += HG_REPO HG_REV HG_URL COMPONENT_HG_URL COMPONENT_HG_REV
+PKG_VARS += GIT_COMMIT_ID GIT_REPO GIT_TAG
+PKG_VARS += PUBLISHER PUBLISHER_LOCALIZABLE
+PKG_VARS += USERLAND_GIT_REMOTE USERLAND_GIT_BRANCH USERLAND_GIT_REV
+
+# For items that need special definition, add them to PKG_MACROS.
+# IPS_COMPONENT_VERSION suitable for use in regular expressions.
+PKG_MACROS += IPS_COMPONENT_RE_VERSION=$(subst .,\\.,$(IPS_COMPONENT_VERSION))
+# COMPONENT_VERSION suitable for use in regular expressions.
+PKG_MACROS += COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
-					-D COMPONENT_SUMMARY="$(strip $(COMPONENT_SUMMARY))" \
-					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))" \
-					-D COMPONENT_DESCRIPTION="$(strip $(COMPONENT_DESCRIPTION))" \
-					-D COMPONENT_LICENSE="$(strip $(COMPONENT_LICENSE))"
+					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))"
 
 PKG_MACROS +=           PYTHON_2.7_ONLY=\#
 PKG_MACROS +=           PYTHON_3.4_ONLY=\#
+PKG_MACROS +=           PYTHON_3.5_ONLY=\#
+PKG_MACROS +=           PYTHON_32_ONLY=
 
 MANGLED_DIR =	$(PROTO_DIR)/mangled
 
@@ -138,24 +147,50 @@ ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
 
+define ips-print-names-rule
+$(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+endef
+
+define ips-print-names-versioned-rule
+$(foreach v,$($(1)V_VALUES),\
+	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u))
+endef
+
+define ips-print-names-type-rule
+$(foreach m,$($(1)_MANIFESTS),$(call ips-print-names-versioned-rule,$(1),$(m)))
+endef
+
+VERSIONED_MANIFEST_TYPES =
+UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m, $(CANONICAL_MANIFESTS))
+
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
-UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PYVER.p5m,$(CANONICAL_MANIFESTS)))
+VERSIONED_MANIFEST_TYPES+= PY
+NOPY_MANIFESTS = $(filter-out %-PYVER.p5m,$(UNVERSIONED_MANIFESTS))
 PY_MANIFESTS = $(filter %-PYVER.p5m,$(CANONICAL_MANIFESTS))
-PYV_MANIFESTS = $(foreach v,$(shell echo $(PYTHON_VERSIONS) | tr -d .),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
+PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) | tr -d .)
+PYV_FMRI_VERSION = PYV
+PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
 else
-UNVERSIONED_MANIFESTS = $(CANONICAL_MANIFESTS)
+NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
 
 # Look for manifests which need to be duplicated for each version of perl.
 ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
-NOPERL_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS)))
+VERSIONED_MANIFEST_TYPES+= PERL
+NOPERL_MANIFESTS = $(filter-out %-PERLVER.p5m,$(NOPY_MANIFESTS))
 PERL_MANIFESTS = $(filter %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS))
-PERLV_MANIFESTS = $(foreach v,$(shell echo $(PERL_VERSIONS) | tr -d .),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
+PERLV_VALUES = $(shell echo $(PERL_VERSIONS) | tr -d .)
+PERLV_FMRI_VERSION = PLV
+PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
 PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
 else
-NOPERL_MANIFESTS = $(UNVERSIONED_MANIFESTS)
+NOPERL_MANIFESTS = $(NOPY_MANIFESTS)
 endif
 
 # Look for manifests which need to be duplicated for each version of ruby.
@@ -163,10 +198,12 @@ endif
 # Perl manifests.  Extract the Ruby Manifests from NOPERL_MANIFESTS.
 # Any remaining manifests are stored in NONRUBY_MANIFESTS
 ifeq ($(findstring -RUBYVER,$(NOPERL_MANIFESTS)),-RUBYVER)
-NORUBY_MANIFESTS = $(filter-out %GENFRAG.p5m,\
-                      $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS)))
+VERSIONED_MANIFEST_TYPES+= RUBY
+NORUBY_MANIFESTS = $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBY_MANIFESTS = $(filter %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
-RUBYV_MANIFESTS = $(foreach v,$(shell echo $(RUBY_VERSIONS)),\
+RUBYV_VALUES = $(RUBY_VERSIONS)
+RUBYV_FMRI_VERSION = RUBYV
+RUBYV_MANIFESTS = $(foreach v,$(RUBYV_VERSIONS),\
                       $(shell echo $(RUBY_MANIFESTS) |\
                       sed -e 's/-RUBYVER.p5m/-$(shell echo $(v) |\
                       cut -d. -f1,2 | tr -d .).p5m/g'))
@@ -174,6 +211,8 @@ RUBYNV_MANIFESTS = $(shell echo $(RUBY_MANIFESTS) | sed -e 's/-RUBYVER//')
 else
 NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
 endif
+
+NONVER_MANIFESTS = $(NORUBY_MANIFESTS)
 
 VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
@@ -237,12 +276,16 @@ mkgeneric = \
 # Define and execute a macro that generates a rule to create a manifest for a
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
 
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
-	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
+ifneq ($(filter $(1),$(PYTHON_64_ONLY_VERSIONS)),)
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
+endif
+
+$(MANIFEST_BASE)-%-$(2).p5m: %-PYVER.p5m
+	$(PKGMOGRIFY) -D PYVER=$(1) $(MANIFEST_LIMITING_VARS) -D PYV=$(2)  $$< > $$@
 endef
-$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
+$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(shell echo $(ver)|tr -d .))))
 
 # A rule to create a helper transform package for python, that will insert the
 # appropriate conditional dependencies into a python library's
@@ -441,7 +484,9 @@ PKGSEND_PUBLISH_OPTIONS += -T \*.py
 # Do all the hard work that is needed to ensure the package is consistent
 # and ready for publishing, except actually pushing bits to a repository
 $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
-	$(CP) $< $@
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(FINAL_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
 
 # Push to the repo
@@ -456,12 +501,11 @@ $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
 
 print-package-names:	canonical-manifests
-	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
-		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+	@echo $(call ips-print-names-rule,$(NONVER_MANIFESTS)) \
+		$(foreach t,$(VERSIONED_MANIFEST_TYPES),$(call ips-print-names-type-rule,$(t))) | tr ' ' '\n'
 
 print-package-paths:	canonical-manifests
-	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
@@ -487,6 +531,15 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# workspace.
 	$(error Missing canonical manifest(s))
 endif
+
+# Component variables are expanded directly to PKG_OPTIONS instead of via
+# PKG_MACROS since the values may contain whitespace.
+mkdefine = -D $(1)="$$(strip $(2))"
+
+# Expand PKG_VARS into defines via PKG_OPTIONS.
+$(foreach var, $(PKG_VARS), \
+    $(eval PKG_OPTIONS += $(call mkdefine,$(var),$$($(var)))) \
+)
 
 # This converts required paths to containing package names for be able to
 # properly setup the build environment for a component.

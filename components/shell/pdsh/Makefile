@@ -11,22 +11,23 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pdsh
-COMPONENT_VERSION= 2.31
+COMPONENT_VERSION= 2.33
 COMPONENT_FMRI= shell/pdsh
 COMPONENT_SUMMARY= Parallel distributed shell
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_PROJECT_URL= https://github.com/grondo/pdsh/
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL= https://github.com/chaos/pdsh/
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0ee066ce395703285cf4f6cf00b54b7097d12457a4b1c146bc6f33d8ba73caa7
+  sha256:7368087429d6269f0a6313c406ef38c6a6a947bc003ca7368fc6481b139d942f
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/grondo/pdsh/archive/$(COMPONENT_ARCHIVE)
+  https://github.com/chaos/pdsh/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -48,12 +49,12 @@ CONFIGURE_OPTIONS += --with-dshgroups
 
 COMPONENT_TEST_TRANSFORMS= \
 	'-n' \
-	'-e "/^ok/p"' \
-	'-e "/^not ok/p"' \
-	'-e "/passed/p"' \
-	'-e "/failed/p"' \
-	'-e "/fixed/p"' \
-	'-e "/breakage/p"'
+	'-e "/PASS/p"' \
+	'-e "/XPASS/p"' \
+	'-e "/FAIL/p"' \
+	'-e "/XFAIL/p"' \
+	'-e "/ERROR/p"' \
+	'-e "/SKIP/p"'
 
 build: $(BUILD_64)
 
@@ -64,4 +65,5 @@ test: $(TEST_64)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library

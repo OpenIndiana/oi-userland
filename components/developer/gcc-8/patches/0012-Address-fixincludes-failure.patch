@@ -1,0 +1,34 @@
+From a04d64cf09e023db7a43dd7754698a38575cbf92 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
+Date: Thu, 25 Oct 2018 20:54:55 +0200
+Subject: [PATCH 12/16] Address fixincludes failure
+
+---
+ fixincludes/fixinc.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fixincludes/fixinc.in b/fixincludes/fixinc.in
+index cd0b458b8f8..d148f4bec03 100755
+--- a/fixincludes/fixinc.in
++++ b/fixincludes/fixinc.in
+@@ -212,7 +212,7 @@ search_dirs=""
+ 
+ while [ -n "$dirs" ] && [ $levels -gt 0 ]
+ do
+-  levels=`expr $levels - 1`
++  levels=`expr $levels - 1; true`
+   newdirs=
+   for d in $dirs
+   do
+@@ -341,7 +341,7 @@ if $LINKS; then
+           cd $LIB
+           while [ x$dirname != x ]; do
+             component=`echo $dirname | sed -e 's|/.*$||'`
+-            mkdir $component >/dev/null 2>&1
++            mkdir -p $component >/dev/null 2>&1
+             cd $component
+             dirmade=$dirmade/$component
+             dirname=`echo $dirname | sed -e 's|[^/]*//*||'`
+-- 
+2.20.1
+

@@ -1,0 +1,19 @@
+This works around a problem linking the dndcp plugin, where ld complains
+"text relocations remain in ..." and the cause is hard to figure out.
+(It appears to have something to do with C++ templates)
+
+Adding -mimpure-text to the libtool link causes it to call ld
+without the -ztext option, and then everything works OK.
+
+--- open-vm-tools-stable-10.3.0/services/plugins/dndcp/Makefile.am.~1~	Fri Jul 13 14:54:23 2018
++++ open-vm-tools-stable-10.3.0/services/plugins/dndcp/Makefile.am	Sun Aug 19 16:45:01 2018
+@@ -38,6 +38,9 @@
+ 
+ libdndcp_la_LDFLAGS =
+ libdndcp_la_LDFLAGS += @PLUGIN_LDFLAGS@
++if SOLARIS
++libdndcp_la_LDFLAGS += -mimpure-text
++endif
+ 
+ libdndcp_la_LIBADD =
+ libdndcp_la_LIBADD += @COMMON_XLIBS@

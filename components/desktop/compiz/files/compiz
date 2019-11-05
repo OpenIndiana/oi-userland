@@ -5,7 +5,7 @@
 #
 # Checks if compiz can run with the current Xserver 
 # display settings. If this is not the case 
-# metacity is started instead.
+# marco is started instead.
 #
 MARCO="/usr/bin/marco --replace --sm-client-id=default0"
 GREP="/usr/bin/grep"
@@ -13,12 +13,12 @@ XDPYINFO="/usr/bin/xdpyinfo"
 GLXINFO="/usr/bin/glxinfo"
 XPROP="/usr/bin/xprop"
 SED="/usr/bin/sed"
-GCONFTOOL="/usr/bin/gconftool-2"
+GSETTINGSTOOL="/usr/bin/gsettings"
 
 COMPIZ_BIN="/usr/bin/compiz-bin"
-COMPIZ_OPTIONS="--indirect-rendering --fast-filter --replace"
+COMPIZ_OPTIONS="--fast-filter --replace"
 COMPIZ_PLUGINS="ccp"
-GCONF_A11Y_KEY="/desktop/gnome/interface/accessibility"
+GSETTINGS_A11Y_KEY="org.mate.interface accessibility"
 
 DECORATOR="/usr/bin/gtk-window-decorator"
 DECORATOR_OPTIONS="--replace"
@@ -36,9 +36,9 @@ verbose()
   fi
 }
 
-abort_with_metacity()
+abort_with_marco()
 {
-  verbose "Cannot run compiz starting metacity instead\n"
+  verbose "Cannot run compiz starting marco instead\n"
   exec $MARCO
 }
 
@@ -85,7 +85,7 @@ check_trusted_session()
 check_vnc()
 {
   verbose "Checking for VNC"
-  HAZ_VNC=$(LC_ALL=C $GLXINFO | $GREP "Software Rasterizer")
+  HAZ_VNC=$(LC_ALL=C $GLXINFO 2>&1 | $GREP "Software Rasterizer")
   if [ -n "$HAZ_VNC" ] ; then
     verbose "Running under vnc"
     return 1
@@ -99,25 +99,21 @@ check_vnc()
 check_accessibility()
 {
   verbose "Checking for Acessibility: "
-  a11y_value=`$GCONFTOOL --get $GCONF_A11Y_KEY`
+  a11y_value="`$GSETTINGSTOOL get $GSETTINGS_A11Y_KEY`"
   if [ "x$a11y_value" = "xtrue" ]; then
     verbose "Enabled. \n"
     return 1
   else
-    verbose "       Disabled. \n"
+    verbose "Disabled. \n"
     return 0
   fi
 }
 
 # Check which card is present and add the right 
 # environment variables
-set_env_variables ()
+set_env_variables()
 {
   verbose "env. variables used : "
-  
-  LIBGL_ALWAYS_INDIRECT=TRUE
-  export LIBGL_ALWAYS_INDIRECT
-  verbose "LIBGL_ALWAYS_INDIRECT=TRUE\n"
   
   if [ -x /usr/X/bin/constype -a "`/usr/X/bin/constype`" = "NVDAnvda" ]; then
     __GL_SYNC_TO_VBLANK=1
@@ -140,27 +136,27 @@ set_env_variables ()
 #
 check_accessibility
 if [  $? -eq 1 ] ; then
-  abort_with_metacity 
+  abort_with_marco
 fi
 
 check_trusted_session
 if [  $? -eq 1 ] ; then
-  abort_with_metacity 
+  abort_with_marco
 fi
 
 check_sunray_session
 if [  $? -eq 1 ] ; then
-  abort_with_metacity 
+  abort_with_marco
 fi
 
 check_composite
 if [  $? -eq 1 ] ; then
-  abort_with_metacity 
+  abort_with_marco
 fi
 
 check_vnc
 if [ $? -eq 1 ] ; then
-  abort_with_metacity
+  abort_with_marco
 fi
 
 set_env_variables
@@ -173,5 +169,5 @@ for ((  i = 0 ;  i <= $NUM_SCREEN;  i++  ))
 do
   $DECORATOR $DECORATOR_OPTIONS --display=:0.$i &
 done
-$COMPIZ_BIN "$@" $COMPIZ_OPTIONS $COMPIZ_PLUGINS $COMPIZ_INDIRECT || abort_with_metacity
+$COMPIZ_BIN "$@" $COMPIZ_OPTIONS $COMPIZ_PLUGINS $COMPIZ_INDIRECT || abort_with_marco
 

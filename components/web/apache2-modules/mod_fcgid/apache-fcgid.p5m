@@ -36,11 +36,13 @@ set name=org.opensolaris.arc-caseid \
     value=LSARC/2009/600
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-
 license apache.license license="Apache v2.0"
+
+# prevents "64bit file in 32bit path" errors
+<transform file path=usr/apache2/2.4/libexec/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
 
 file fcgid.conf path=etc/apache2/2.4/conf.d/fcgid.conf mode=0644 preserve=renamenew 
 file path=usr/apache2/2.4/libexec/mod_fcgid.so
-file path=usr/apache2/2.4/libexec/$(MACH64)/mod_fcgid.so
 file path=usr/apache2/2.4/manual/mod/mod_fcgid.html.en
 file path=usr/apache2/2.4/manual/mod/mod_fcgid.html

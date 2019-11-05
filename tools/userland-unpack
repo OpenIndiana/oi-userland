@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -20,6 +20,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2018-2019, Michal Nowak
 #
 #
 # unpack.py - an archive unpack utility
@@ -44,12 +45,16 @@ def uncompress_unpack_commands(filename, verbose=False):
 		uncompress = "/usr/bin/uncompress -c"
 	elif (re.search("(\.7z)$", filename) != None):
 		uncompress = "/usr/bin/7z --s"
+	elif (re.search("(\.lz)$", filename) != None):
+		uncompress = "/usr/bin/lzip -dc"
 	elif (re.search("(\.xz)$", filename) != None):
 		uncompress = "/usr/bin/xz -dc"
 	elif (re.search("(\.zip)$", filename) != None):
 		uncompress = "/usr/bin/unzip -qo"
 	elif (re.search("(\.oxt)$", filename) != None):
 		uncompress = "/usr/bin/unzip -qo"
+	elif (re.search("(\.zst|\.tzst)$", filename) != None):
+		uncompress = "/usr/bin/unzstd -c"
 	elif (re.search("(\.gem)$", filename) != None):
 		ruby_ver = os.getenv('RUBY_VERSION', '')
 		uncompress = "/usr/ruby/" + ruby_ver + "/bin/gem unpack"
@@ -66,7 +71,7 @@ def uncompress_unpack_commands(filename, verbose=False):
 		unpack = ""
 
 	if (verbose == True):
-		print "command: %s %s %s" % (uncompress, filename, unpack)
+		print("command: %s %s %s" % (uncompress, filename, unpack))
 
 	return uncompress, unpack
 
@@ -88,8 +93,8 @@ def fixup_permissions(dir, verbose):
 
 		if (stat.S_IMODE(st.st_mode) != mode):
 			if (verbose == True):
-				print "Changing %s from %4.4o to %4.4o" % (path,
-						stat.S_IMODE(st.st_mode), mode)
+				print("Changing %s from %4.4o to %4.4o" % (path,
+						stat.S_IMODE(st.st_mode), mode))
 			os.chmod(path, mode)
 
 		if stat.S_ISDIR(st.st_mode):
@@ -97,7 +102,7 @@ def fixup_permissions(dir, verbose):
 
 
 def usage():
-	print "Usage: %s [-v|--verbose] [-f|--fix-permissions] [-r|--relocate-to (dir)] (file)" % (sys.argv[0].split('/')[-1])
+	print("Usage: %s [-v|--verbose] [-f|--fix-permissions] [-r|--relocate-to (dir)] (file)" % (sys.argv[0].split('/')[-1]))
 	sys.exit(1)
 
 def main():
@@ -112,8 +117,8 @@ def main():
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], "fr:v",
 			["fix-permissions", "relocate-to=", "verbose"])
-	except getopt.GetoptError, err:
-		print str(err)
+	except getopt.GetoptError as err:
+		print(str(err))
 		usage()
 
 	for opt, arg in opts:
@@ -132,8 +137,8 @@ def main():
 
 	# extract the archive contents
 	if (verbose == True):	
-		print "cd %s ; %s %s%s" % (tempdir, uncompress, filename,
-						unpack)
+		print("cd %s ; %s %s%s" % (tempdir, uncompress, filename,
+						unpack))
 	os.system("cd %s ; %s %s%s" % (tempdir, uncompress, filename, unpack))
 
 	# open up the permissions on what we extracted
@@ -148,7 +153,7 @@ def main():
 	else:
 		# rename the tempdir and open it's permissions
 		os.renames(tempdir, relocate_to)
-		os.chmod(relocate_to, 0755)
+		os.chmod(relocate_to, 0o755)
 
 
 if __name__ == "__main__":

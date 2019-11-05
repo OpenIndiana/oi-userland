@@ -1,8 +1,7 @@
-Home brewed patch
-
---- a/prnt/hpcups/HPCupsFilter.cpp	2014-04-04 03:39:07.000000000 -0700
-+++ hplip-3.14.4/prnt/hpcups/HPCupsFilter.cpp	2014-04-11 12:24:59.109386019 -0700
-@@ -37,6 +37,8 @@
+diff -ur hplip-3.19.5.orig/prnt/hpcups/HPCupsFilter.cpp hplip-3.19.5/prnt/hpcups/HPCupsFilter.cpp
+--- hplip-3.19.5.orig/prnt/hpcups/HPCupsFilter.cpp	2019-04-08 06:04:41.000000000 +0000
++++ hplip-3.19.5/prnt/hpcups/HPCupsFilter.cpp	2019-05-21 19:42:07.984879710 +0000
+@@ -39,6 +39,8 @@
  #include <time.h>
  #include "utils.h"
  
@@ -11,124 +10,25 @@ Home brewed patch
  #define HP_FILE_VERSION_STR    "03.09.08.0"
  
  static HPCupsFilter    filter;
-@@ -597,7 +599,7 @@
+@@ -636,7 +638,7 @@
      char hpPreProcessedRasterFile[MAX_FILE_PATH_LEN]; //temp file needed to store raster data with swaped pages.
  
  
 -    sprintf(hpPreProcessedRasterFile, "%s/hp_%s_cups_SwapedPagesXXXXXX",CUPS_TMP_DIR, m_JA.user_name);
-+    snprintf(hpPreProcessedRasterFile, sizeof(hpPreProcessedRasterFile), "%s/hp_%s_cups_SwapedPagesXXXXXX", CUPS_TMP_DIR, m_JA.user_name);
- 
++    snprintf(hpPreProcessedRasterFile, sizeof(hpPreProcessedRasterFile), "%s/hp_%s_cups_SwapedPagesXXXXXX",CUPS_TMP_DIR, m_JA.user_name);
+     image_processor_t* imageProcessor = imageProcessorCreate();
  
      while (cupsRasterReadHeader2(cups_raster, &cups_header))
---- a/prnt/hpcups/CommonDefinitions.h	2014-04-04 03:39:07.000000000 -0700
-+++ hplip-3.14.4/prnt/hpcups/CommonDefinitions.h	2014-04-11 12:03:54.025798599 -0700
-@@ -305,7 +305,7 @@
- /* 0x68 */    ZJI_BITMAP_PIXELS,
- /* 0x69 */    ZJI_BITMAP_LINES,
- /* 0x6A */    ZJI_BITMAP_BPP,
--/* 0x6B */    ZJI_BITMAP_STRIDE,
-+/* 0x6B */    ZJI_BITMAP_STRIDE
- 
- } ZJ_ITEM;
- 
---- a/io/hpmud/hpmud.h	2014-04-04 03:42:17.000000000 -0700
-+++ hplip-3.14.4/io/hpmud/hpmud.h	2014-04-11 12:12:13.756537138 -0700
-@@ -46,7 +46,7 @@
-    HPMUD_R_INVALID_TIMEOUT = 47,
-    HPMUD_R_DATFILE_ERROR = 48,
-    HPMUD_R_IO_TIMEOUT = 49,
--   HPMUD_R_INVALID_MDNS = 50,
-+   HPMUD_R_INVALID_MDNS = 50
- };
- 
- enum HPMUD_IO_MODE
-@@ -57,7 +57,7 @@
-    HPMUD_DOT4_PHOENIX_MODE=4,  /* (ie: clj2550, clj2840, lj3050, lj3055, clj4730mfp) */
-    HPMUD_DOT4_BRIDGE_MODE=5,  /* (ie: clj2500) not USB compatable, use HPMUD_RAW_MODE, tested on F10 12/10/08 DES */
-    HPMUD_MLC_GUSHER_MODE=6,   /* most new devices */
--   HPMUD_MLC_MISER_MODE=7,  /* old stuff */
-+   HPMUD_MLC_MISER_MODE=7  /* old stuff */
- };
- 
- enum HPMUD_BUS_ID
-@@ -78,7 +78,7 @@
-    HPMUD_SCANTYPE_SOAPHT = 5,   /* HorseThief (ie: ljm1522) */
-    HPMUD_SCANTYPE_SCL_DUPLEX = 6,
-    HPMUD_SCANTYPE_LEDM = 7,
--   HPMUD_SCANTYPE_MARVELL2 = 8,     /* (Tsunami lj 1212  and series) */
-+   HPMUD_SCANTYPE_MARVELL2 = 8     /* (Tsunami lj 1212  and series) */
- };
- 
- enum HPMUD_SCANSRC
-@@ -86,7 +86,7 @@
-    HPMUD_SCANSRC_NA = 0,
-    HPMUD_SCANSRC_FLATBED = 0x1,
-    HPMUD_SCANSRC_ADF= 0x2,
--   HPMUD_SCANSRC_CAMERA = 0x4,
-+   HPMUD_SCANSRC_CAMERA = 0x4
- };
- 
- enum HPMUD_STATUSTYPE
-@@ -97,21 +97,21 @@
-    HPMUD_STATUSTYPE_PML = 3,      /* laserjet pml */
-    HPMUD_STATUSTYPE_EWS = 6,      /* laserjet hp ews */
-    HPMUD_STATUSTYPE_PJL = 8,      /* laserjet pjl */
--   HPMUD_STATUSTYPE_PJLPML = 9,   /* laserjet pjl and pml */
-+   HPMUD_STATUSTYPE_PJLPML = 9    /* laserjet pjl and pml */
- };
- 
- enum HPMUD_SUPPORT_TYPE
- {
-    HPMUD_SUPPORT_TYPE_NONE = 0,   /* not supported */
-    HPMUD_SUPPORT_TYPE_HPIJS = 1,  /* supported by hpijs only */
--   HPMUD_SUPPORT_TYPE_HPLIP = 2,   /* supported by hpijs and "hp" backend */
-+   HPMUD_SUPPORT_TYPE_HPLIP = 2   /* supported by hpijs and "hp" backend */
- };
- 
- enum HPMUD_PLUGIN_TYPE
- {
-    HPMUD_PLUGIN_TYPE_NONE = 0,
-    HPMUD_PLUGIN_TYPE_REQUIRED = 1,
--   HPMUD_PLUGIN_TYPE_OPTIONAL = 2,
-+   HPMUD_PLUGIN_TYPE_OPTIONAL = 2
- };
- 
- 
---- a/common/utils.h	2014-04-04 03:42:15.000000000 -0700
-+++ hplip-3.14.4/common/utils.h	2014-04-11 12:49:00.832008556 -0700
-@@ -22,7 +22,8 @@
- #define SCAN_PLUGIN_SOAPHT "bb_soapht.so"
+diff -ur hplip-3.19.5.orig/common/utils.h hplip-3.19.5/common/utils.h
+--- hplip-3.19.5.orig/common/utils.h	2019-04-08 06:03:26.000000000 +0000
++++ hplip-3.19.5/common/utils.h	2019-05-21 19:41:20.327758369 +0000
+@@ -26,7 +26,8 @@
+ #define SCAN_PLUGIN_ORBLITE "bb_orblite.so"
  
  #define HPLIP_PLUGIN_STATE  "/var/lib/hp/hplip.state"
 -#define CUPS_TMP_DIR   getenv("TMPDIR") ? : getenv("HOME") ?:"/tmp"
 +//#define CUPS_TMP_DIR   getenv("TMPDIR") ? : getenv("HOME") ?:"/tmp"
-+#define CUPS_TMP_DIR   "/tmp"
++#define CUPS_TMP_DIR	"/tmp"
  
  enum UTILS_CONF_RESULT
  {
-@@ -30,7 +31,7 @@
-    UTILS_CONF_FILE_NOT_FOUND,       // =1,
-    UTILS_CONF_SECTION_NOT_FOUND,    // =2,
-    UTILS_CONF_KEY_NOT_FOUND,        // =3,
--   UTILS_CONF_DATFILE_ERROR,        // = 4,
-+   UTILS_CONF_DATFILE_ERROR         // = 4,
- };
- 
- 
-@@ -38,14 +39,14 @@
- {
-    UTILS_PLUGIN_STATUS_OK = 0,
-    UTILS_PLUGIN_STATUS_MISMATCH,        // = 1,
--   UTILS_PLUGIN_STATUS_NOT_INSTALLED,   // = 2,
-+   UTILS_PLUGIN_STATUS_NOT_INSTALLED    // = 2,
- };
- 
- enum UTILS_PLUGIN_LIBRARY_TYPE
- {
-    UTILS_PRINT_PLUGIN_LIBRARY = 0,          // = 0,
-    UTILS_SCAN_PLUGIN_LIBRARY,           // =1,
--   UTILS_FAX_PLUGIN_LIBRARY,            // =2,
-+   UTILS_FAX_PLUGIN_LIBRARY//,            // =2,
- //   UTILS_GENERAL_PLUGIN_LIBRARY         //=4,     // Future use.. 
- };
- 

@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         plplot
 COMPONENT_VERSION=      5.13.0
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://plplot.sourceforge.net
 COMPONENT_SUMMARY=	A cross-platform software package for creating scientific plots.
 COMPONENT_FMRI=         image/plplot
@@ -79,7 +80,7 @@ REQUIRED_PACKAGES += library/qhull
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += system/library/gfortran-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

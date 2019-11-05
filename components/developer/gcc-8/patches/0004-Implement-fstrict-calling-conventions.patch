@@ -1,0 +1,119 @@
+From 551df24e25868c0d1073b9b48b2c10b66821f793 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sat, 27 Oct 2012 02:44:09 +0100
+Subject: [PATCH 04/16] Implement -fstrict-calling-conventions
+
+Stock GCC is overly willing to violate the ABI when calling local functions,
+such that it passes arguments in registers on i386.  This hampers debugging
+with anything other than a fully-aware DWARF debugger, and is generally not
+something we desire.
+
+Implement a flag which disables this behaviour, enabled by default.  The flag is
+global, though only effective on i386, to more easily allow its globalization
+later which, given the odds, is likely to be necessary.
+---
+ gcc/common.opt                            |  4 ++++
+ gcc/config/i386/i386.c                    |  2 ++
+ gcc/doc/invoke.texi                       |  6 ++++++
+ gcc/testsuite/gcc.target/i386/local.c     |  3 ++-
+ gcc/testsuite/gcc.target/i386/strict-cc.c | 24 +++++++++++++++++++++++
+ 5 files changed, 38 insertions(+), 1 deletion(-)
+ create mode 100644 gcc/testsuite/gcc.target/i386/strict-cc.c
+
+diff --git a/gcc/common.opt b/gcc/common.opt
+index b52ef0b38c8..7354fa14f4f 100644
+--- a/gcc/common.opt
++++ b/gcc/common.opt
+@@ -2418,6 +2418,10 @@ fstrict-aliasing
+ Common Report Var(flag_strict_aliasing) Optimization
+ Assume strict aliasing rules apply.
+ 
++fstrict-calling-conventions
++Common Report Var(flag_strict_calling_conventions) Init(1)
++Use strict ABI calling conventions even for static functions
++
+ fstrict-overflow
+ Common Report
+ Treat signed overflow as undefined.  Negated as -fwrapv -fwrapv-pointer.
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index 7732f882f78..a5e39372540 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -6747,6 +6747,7 @@ ix86_function_regparm (const_tree type, const_tree decl)
+ 	 and callee not, or vice versa.  Instead look at whether the callee
+ 	 is optimized or not.  */
+       if (target && opt_for_fn (target->decl, optimize)
++	  && !flag_strict_calling_conventions
+ 	  && !(profile_flag && !flag_fentry))
+ 	{
+ 	  cgraph_local_info *i = &target->local;
+@@ -6844,6 +6845,7 @@ ix86_function_sseregparm (const_tree type, const_tree decl, bool warn)
+       /* TARGET_SSE_MATH */
+       && (target_opts_for_fn (target->decl)->x_ix86_fpmath & FPMATH_SSE)
+       && opt_for_fn (target->decl, optimize)
++	  && !flag_strict_calling_conventions
+       && !(profile_flag && !flag_fentry))
+     {
+       cgraph_local_info *i = &target->local;
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index e5c4e8125aa..1cee9bb94dc 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -9205,6 +9205,12 @@ int f() @{
+ The @option{-fstrict-aliasing} option is enabled at levels
+ @option{-O2}, @option{-O3}, @option{-Os}.
+ 
++@item -fstrict-calling-conventions
++@opindex fstrict-calling-conventions
++Use strict ABI calling conventions even with local functions.
++This disable certain optimizations that may cause GCC to call local
++functions in a manner other than that described by the ABI.
++
+ @item -falign-functions
+ @itemx -falign-functions=@var{n}
+ @opindex falign-functions
+diff --git a/gcc/testsuite/gcc.target/i386/local.c b/gcc/testsuite/gcc.target/i386/local.c
+index f4444951e12..3a487583d81 100644
+--- a/gcc/testsuite/gcc.target/i386/local.c
++++ b/gcc/testsuite/gcc.target/i386/local.c
+@@ -1,5 +1,6 @@
+ /* { dg-do compile } */
+-/* { dg-options "-O2 -funit-at-a-time" } */
++/* { dg-options "-O2 -funit-at-a-time -fno-strict-calling-conventions" { target ia32 } } */
++/* { dg-options "-O2 -funit-at-a-time" { target lp64 } } */
+ /* { dg-final { scan-assembler "magic\[^\\n\]*eax" { target ia32 } } } */
+ /* { dg-final { scan-assembler "magic\[^\\n\]*(edi|ecx)" { target { ! ia32 } } } } */
+ 
+diff --git a/gcc/testsuite/gcc.target/i386/strict-cc.c b/gcc/testsuite/gcc.target/i386/strict-cc.c
+new file mode 100644
+index 00000000000..fa0543e52ff
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/i386/strict-cc.c
+@@ -0,0 +1,24 @@
++/* { dg-do compile { target { ilp32 } } } */
++/* { dg-options "-O2 -funit-at-a-time -fstrict-calling-conventions"  } */
++/* { dg-final { scan-assembler "pushl.*\\\$1" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$2" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$3" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$4" } } */
++/* { dg-final { scan-assembler "pushl.*\\\$5" } } */
++
++#include <stdio.h>
++
++/* Verify that local calling convention is not used if strict conventions.  */
++static int t(int, int, int, int, int) __attribute__ ((noinline));
++
++int
++m()
++{
++    t(1, 2, 3, 4, 5);
++}
++
++static int
++t(int a, int b, int c, int d, int e)
++{
++    printf("%d\n", a, b, c, d, e);
++}
+-- 
+2.20.1
+

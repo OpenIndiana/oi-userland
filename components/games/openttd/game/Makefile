@@ -14,12 +14,13 @@
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
 #
 
-PREFERRED_BITS=64
+PREFERRED_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openttd
 COMPONENT_VERSION=	1.8.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.openttd.org/en/
 COMPONENT_FMRI=		games/openttd/openttd-core
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -76,6 +77,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

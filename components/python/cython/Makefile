@@ -25,12 +25,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Cython
-COMPONENT_VERSION=	0.26
+COMPONENT_VERSION=	0.28.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=		\
-    sha256:4c24e2c22ddaed624d35229dc5db25049e9e225c6f64f3364326836cad8f2c66
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/10/d5/753d2cb5073a9f4329d1ffed1de30b0458821780af8fdd8ba1ad5adb6f62/$(COMPONENT_ARCHIVE)
+    sha256:b64575241f64f6ec005a4d4137339fb0ba5e156e826db2fdb5f458060d9979e0
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=  http://cython.org/
 COMPONENT_ANITYA_ID=	12679
 COMPONENT_FMRI=         library/python/cython
@@ -44,7 +44,7 @@ COMPONENT_LICENSE_FILE= LICENSE.txt
 CPPFLAGS +=		-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
 CFLAGS +=		$(CPPFLAGS)
 
-PYTHON_VERSIONS = 2.7 3.4
+PYTHON_VERSIONS = 2.7 3.4 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -56,7 +56,7 @@ include $(WS_MAKE_RULES)/setup.py.mk
 # suffix.
 COMPONENT_POST_INSTALL_ACTION += \
         (cd $(PROTO_DIR)/usr/bin ; \
-         if [[ "$(BITS)" == "64" ]]; then \
+         if [ \( "$(PYTHON_VERSION)" = "2.7" -o "$(PYTHON_VERSION)" = "3.4" \) -a "$(BITS)" == "64" ]; then \
             $(MKDIR) $(PROTO_DIR)/usr/bin/$(MACH64); \
             for c in cython cythonize cygdb; do \
                 $(MV) $$c $(MACH64)/$$c-$(PYTHON_VERSION) ; \
@@ -81,6 +81,8 @@ test:		$(TEST_32_and_64)
 REQUIRED_PACKAGES += developer/debug/gdb
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

@@ -13,33 +13,18 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xlsclients
-COMPONENT_VERSION=        1.1.4
-COMPONENT_FMRI=           x11/diagnostic/xlsclients
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xlsclients
+COMPONENT_VERSION=  1.1.4
+COMPONENT_FMRI=     x11/diagnostic/xlsclients
 COMPONENT_SUMMARY=  xlsclients - list client applications running on a display
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:773f2af49c7ea2c44fba4213bee64325875c1b3c9bc4bbcd8dac9261751809c1
-COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

@@ -12,29 +12,27 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           imake
-COMPONENT_VERSION=        1.0.7
+COMPONENT_VERSION=        1.0.8
 COMPONENT_FMRI=           developer/build/imake
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SUMMARY=  imake - makefile generation tool
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:690c2c4ac1fad2470a5ea73156cf930b8040dc821a0da4e322014a42c045f37e
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= imake.license
+  sha256:b8d2e416b3f29cd6482bcffaaf19286d32917a164d07102a0e531ccd41a2a702
+COMPONENT_ARCHIVE_URL=    $(XORG_UTIL_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --enable-mkdirhier
 CONFIGURE_OPTIONS+= --disable-ccmakedep
@@ -44,13 +42,6 @@ CONFIGURE_OPTIONS+= --disable-mergelib
 CONFIGURE_OPTIONS+= --disable-mkhtmlindex
 CONFIGURE_OPTIONS+= --disable-revpath
 CONFIGURE_OPTIONS+= RAWCPP=/usr/lib/cpp
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

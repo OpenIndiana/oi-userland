@@ -9,3 +9,16 @@
        case s_req_server:
          uf = UF_HOST;
          break;
+--- http-parser-2.6.2/test.c.orig	2018-05-25 09:12:52.339565399 +0000
++++ http-parser-2.6.2/test.c	2018-05-25 09:13:20.099362953 +0000
+@@ -1748,6 +1748,10 @@
+ , {.name= NULL } /* sentinel */
+ };
+ 
++#if defined(__GNUC__) && (__GNUC__ > 6)
++#pragma GCC diagnostic ignored "-Wstringop-overflow="
++#endif
++
+ /* strnlen() is a POSIX.2008 addition. Can't rely on it being available so
+  * define it ourselves.
+  */

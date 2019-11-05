@@ -1,0 +1,41 @@
+--- fontconfig-2.13.1/configure.ac.orig	2018-10-09 22:26:17.350740501 +0000
++++ fontconfig-2.13.1/configure.ac	2018-10-09 23:03:59.062758154 +0000
+@@ -92,8 +92,12 @@
+   *-*-mingw*)
+     os_win32=yes
+     ;;
++  *-*-solaris*)
++    os_solaris=yes
++    ;;
+   *)
+     os_win32=no
++    os_solaris=no
+ esac
+ AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+ 
+@@ -335,7 +339,14 @@
+ #
+ # Check for uuid
+ #
+-if test "$os_win32" != "yes"; then
++if test "$os_win32" = "yes"; then
++	UUID_CFLAGS=""
++	UUID_LIBS=""
++elif test "$os_solaris" = "yes"; then
++	UUID_CFLAGS=""
++	UUID_LIBS="-luuid"
++#Do not add dependency: PKGCONFIG_REQUIRES_PRIVATELY="$PKGCONFIG_REQUIRES_PRIVATELY uuid"
++else
+ 	use_pkgconfig_for_uuid=yes
+ 	if test -n "${UUID_LIBS}"; then
+ 		save_UUID_LIBS=$UUID_LIBS
+@@ -358,9 +369,6 @@
+ 			PKGCONFIG_REQUIRES_PRIVATELY="$PKGCONFIG_REQUIRES_PRIVATELY uuid"
+ 		fi
+ 	fi
+-else
+-	UUID_CFLAGS=""
+-	UUID_LIBS=""
+ fi
+ AC_SUBST(UUID_CFLAGS)
+ AC_SUBST(UUID_LIBS)

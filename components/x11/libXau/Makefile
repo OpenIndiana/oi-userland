@@ -10,31 +10,21 @@
 #
 
 #
-# Copyright 2015 Captain XNV
+# Copyright 2015-2019 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXau
-COMPONENT_VERSION=        1.0.8
-COMPONENT_FMRI=           x11/library/libxau
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY= 				libXau - X11 Authorization Protocol library
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXau
+COMPONENT_VERSION= 1.0.9
+COMPONENT_FMRI=    x11/library/libxau
+COMPONENT_SUMMARY= libXau - X11 Authorization Protocol library
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fdd477320aeb5cdd67272838722d6b7d544887dfe7de46e1e7cc0c27c2bea4f2
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/libXau-1.0.8.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXau.license
+  sha256:ccf8cbf0dbf676faa2ea0a6d64bcc3b6746064722b606c8c52917ed00dcb73ec
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
@@ -46,14 +36,5 @@ CONFIGURE_OPTIONS+= --disable-lint-library
 CONFIGURE_OPTIONS+= --with-pic
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
 
 REQUIRED_PACKAGES += system/library

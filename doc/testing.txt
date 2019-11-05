@@ -1,0 +1,201 @@
+Summary.
+--------
+
+Testing of a userland component that provides tests is performed by hooking
+those tests up to the 'test' target and running 'gmake test'. This should
+generally pass, as failing tests may indicate things you have to fix, or
+upstream tests that aren't applicable or need modifications on OpenIndiana.
+
+'gmake test' is often run when a component is upgraded or otherwise
+intentionally changed, but sometimes it would be useful to rerun the tests
+after something else has changed (such as the system being upgraded, or a
+change in compilers; see the 'System Test' section below) and see if that
+has affected the tests.
+
+We do this by having a 'master test file' that contains the expected results,
+and having a compare target that runs the tests and compares them with the
+results.
+
+Note: because the initial test run and the current test run may have a
+different environment (different users, different locales, different machines,
+different compilers...) the results need to have all such output dependencies
+removed or abstracted.
+
+
+Setting up a master test file for a Userland component.
+-------------------------------------------------------
+
+When setting up a test-and-compare run for a new component, you will need to
+have master test file(s) that are identical for both the x86 and SPARC
+platforms. It is suggested that they should initially be created by doing
+something like the following in your x86 Userland workspace, then copied to
+the same locations in your SPARC workspace and retested there.
+
+When you run "gmake test", a check is made to see if there is a master
+file of test results. If there is, then a test-then-compare run is performed.
+If there isn't, then just a "normal" run of the test suite is performed.
+
+The name of the master test file (or files to be exact), will depend upon
+whether you have 32-bit, 64-bit, 32-and-64-bit and whether this is for a
+Python or Perl component.
+
+The default master file name is defined in
+make-rules/shared-macros.mk and is:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+
+where COMPONENT_TEST_RESULTS_DIR is:
+
+COMPONENT_TEST_RESULTS_DIR =    $(COMPONENT_DIR)/test
+
+so that means it will default to looking for the following test file
+master names:
+
+32-bit: components/<component-name>/test/results-32.master
+
+64-bit: components/<component-name>/test/results-64.master
+
+both:   components/<component-name>/test/results-32.master
+        components/<component-name>/test/results-64.master
+
+For Python, COMPONENT_TEST_MASTER is overridden in
+make-rules/setup.py.mk to be:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(BITS).master
+
+so that means it's looking for one or more of:
+
+2.7:   components/python/<component-name>/test/results-2.7-32.master
+2.7:   components/python/<component-name>/test/results-2.7-64.master
+3.4:   components/python/<component-name>/test/results-3.4-32.master
+3.4:   components/python/<component-name>/test/results-3.4-64.master
+3.5:   components/python/<component-name>/test/results-3.5-64.master
+
+depending upon which versions of Python this component supports.
+
+Perl is similar, with COMPONENT_TEST_MASTER being overridden in:
+make-rules/makemaker.mk to be:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION)-$(BITS).master
+
+so that means it's looking for one or more of:
+
+5.22:    components/perl_modules/<component>/test/results-5.22-32.master
+5.24:    components/perl_modules/<component>/test/results-5.24-64.master
+
+depending upon which versions of Perl this component supports.
+
+Note that if the test results are the same for both 32-bit and 64-bit or
+for all versions of Python or Perl, you can override the
+COMPONENT_TEST_MASTER definition in your component Makefile and just supply
+a single master files file. For example, in components/python/pep8 Makefile
+we have:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+In order to do a test-then-compare run rather than just run the component
+test suite, initially just create an empty master test file (or files).
+
+For example, for elinks, which just has 64-bit tests, do:
+
+   $ cd components/elinks
+   $ mkdir test
+   $ touch test/results-64.master
+   $ gmake test
+
+At this point, you have a set of test results in
+components/elinks/build/test/$(MACH64)/test-64-results.
+
+Even better, there are a set of "global" regular expressions that are
+run on those test results to try to normalize them. The output from that
+is placed in components/elinks/build/test/$(MACH64)/results-64.snapshot
+
+You can now use the contents of that file as a first cut at the master results.
+
+   $ cp build/test/$(MACH64)/results-64.snapshot test/results-64.master
+
+Now run the tests again. Note that you have to get back to a clean start
+just in case the test process tries to compile any code.
+
+   $ gmake clean
+   $ gmake test
+
+At this point, it will again compare the test results against the master(s),
+and if there are still differences, they will be placed in
+components/elinks/build/test/$(MACH64)/test-64-diffs
+
+Typically these differences will be for things like usernames, temporary
+filenames, timings etc. If you have some differences, then you are going
+to have to write special regexp expressions in your component Makefile to
+"normalize" them, and adjust the master test results file so that it
+matches what the normalized version looks like.
+
+Transform examples.
+-------------------
+
+1/ Handling temporary filenames.
+
+See the transform in the asciidoc Makefile:
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|/tmp......|/tmpxxxxxx|g" '
+
+for how to "normalize" any temporary filenames that appear in the test results.
+
+2/ Build related output.
+
+Items (such as paths to compilers) should be removed from master test files.
+For example, in testing the xz component, we get the following different
+output for compiling a .c file for 32-bit and 64-bit:
+
+x86 32-bit:
+
+/usr/gcc/6/bin/gcc -DHAVE_CONFIG_H -I. -I/export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/tests -I..  -I/export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/src/common -I/export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/src/liblzma/api -I../lib  -D_REENTRANT -pthreads -fvisibility=hidden -Wall -Wextra -Wvla -Wformat=2 -Winit-self -Wmissing-include-dirs -Wstrict-aliasing -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wbad-function-cast -Wwrite-strings -Wlogical-op -Waggregate-return -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-declarations -Wmissing-noreturn -Wredundant-decls -m32 -O3  -MT test_check.o -MD -MP -MF .deps/test_check.Tpo -c -o test_check.o /export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/tests/test_check.c
+
+x86 64-bit:
+
+/usr/gcc/6/bin/gcc -DHAVE_CONFIG_H -I. -I/export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/tests -I..  -I/export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/src/common -I/export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/src/liblzma/api -I../lib  -D_REENTRANT -pthreads -fvisibility=hidden -Wall -Wextra -Wvla -Wformat=2 -Winit-self -Wmissing-include-dirs -Wstrict-aliasing -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wbad-function-cast -Wwrite-strings -Wlogical-op -Waggregate-return -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-declarations -Wmissing-noreturn -Wredundant-decls -m64 -O3  -MT test_check.o -MD -MP -MF .deps/test_check.Tpo -c -o test_check.o /export/home/alp/srcs/oi-userland/components/archiver/xz/xz-5.2.4/tests/test_check.c
+
+These can all be normalized (so that a single master test file can be used),
+by adding the following line to COMPONENT_TEST_TRANSFORMS in the xz component
+Makefile:
+
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" '
+
+The equivalent compile line in the master test file is now set to just:
+
+$(CC)
+
+Note that we are using $(CC) here which will pick up the current C compiler.
+Should the C compiler or build options change in the future, then there will
+be no need to adjust the master test results file to match. It's all done
+automatically.
+
+It is recognized that an alternate approach to solving this problem is to
+create a transform to just remove lines like this from the master test files,
+but there is currently no automatic way to pick up the default compiler.
+
+----
+
+There will be other examples as more components are adjusted to test
+against master results files.
+
+If a lot of people start generating the very same ones, then we can
+consider adding them to the "global" set of regexps in
+make-rules/shared-macros.mk which currently looks like:
+
+COMPONENT_TEST_TRANSFORMS = \
+        '-e "s|$(@D)|\\$$(@D)|g" ' \
+        '-e "s|$(PERL)|\\$$(PERL)|g" ' \
+        '-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
+
+Note that in some cases, gsed is not powerful enough.  E.g., if you need to
+do more than massage or remove certain lines, but only compare certain sections
+of the file, then you may need to set COMPONENT_TEST_TRANSFORMER to something
+other than $(GSED) such as $(NAWK).  In this case, you will want to set
+COMPONENT_TEST_TRANSFORMS using "=" instead of "+=", as the default sed
+transforms will likely need to be tossed aside in favor of whatever arguments
+your favorite transformer might need.
+
+When your master test file(s) are in good shape, then you should "git add"
+them to your workspace.

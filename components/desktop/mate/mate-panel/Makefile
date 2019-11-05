@@ -11,21 +11,21 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-panel
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Panel of Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:81affb5de332d4a3f243766d6b40514df264eaa06cc4214477591e1b9c2ba6d8
+	sha256:aa36130b9ecf4f7527978cfc9a9593bbf521be144d91d7a87ee64aa7df6d695d
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -61,8 +61,9 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += gnome/help-viewer/yelp
-REQUIRED_PACKAGES += library/gnome/yelp-tools
+# Build requires
+REQUIRED_PACKAGES += text/itstool
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -81,4 +82,3 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxrandr
-REQUIRED_PACKAGES += text/itstool

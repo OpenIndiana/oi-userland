@@ -1,0 +1,11 @@
+--- VirtualBox-5.2.20/configure.orig	2018-10-28 02:09:18.303500255 +0000
++++ VirtualBox-5.2.20/configure	2018-10-28 02:12:17.469455928 +0000
+@@ -1509,7 +1509,7 @@
+           INCQT5=`strip_I "$FLGQT5"`
+           LIBDIR5=`pkg-config Qt5Core --variable=libdir`
+           LIBQT5=`pkg-config Qt5Core --libs`
+-          LIBQT5="-L$LIBDIR5 $LIBQT5"
++          LIBQT5="-L$LIBDIR5 -R$LIBDIR5 $LIBQT5"
+           TOOLQT5=`pkg-config Qt5Core --variable=prefix`
+           TOOLQT5BIN=`pkg-config Qt5Core --variable=host_bins`
+           if test_compile "$LIBQT5 $LIBPTHREAD $FLGQT5" qt5 qt5 nofatal; then

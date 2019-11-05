@@ -11,21 +11,21 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja
-COMPONENT_MJR_VERSION=	1.18
-COMPONENT_MNR_VERSION=	5
+COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a0dc034d60d503993b5f83eb4930c99e86bf90d28175810bdd7ddb4df5128dc6
+	sha256:3b26efd276c68a579db443ea1f85a270cd33c59284667d5db8d5d355a3f46781
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -70,6 +70,7 @@ test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += system/library
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libexif

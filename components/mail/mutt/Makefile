@@ -21,26 +21,30 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2019, Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	1.9.0
+COMPONENT_VERSION=	1.12.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ec6d7595d3a1f26ae9f565b5ba5ffee94f9b2dc0683b0014684f2dc874f9e2d4
+	sha256:bc42750ce8237742b9382f2148fc547a8d8601aa4a7cd28c55fe7ca045196882
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
-COMPONENT_BUGDB=	utility/mutt
+COMPONENT_FMRI=		mail/mutt
+COMPONENT_LICENSE_FILE=	mutt.license
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
 
-# Deliver 64-bin binaries in standard paths
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
+include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS +=			-I$(USRINCDIR)/idn2
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"
@@ -54,25 +58,17 @@ CONFIGURE_OPTIONS  +=		--with-gdbm
 CONFIGURE_OPTIONS  +=		--with-regex
 CONFIGURE_OPTIONS  +=		--with-slang
 CONFIGURE_OPTIONS  +=		--with-ssl
-CONFIGURE_OPTIONS  +=		--with-idn
-CFLAGS +=			-I"$(USRINCDIR)/idn"
+CONFIGURE_OPTIONS  +=		--with-idn2
 CONFIGURE_OPTIONS  +=		--with-wc-funcs
 CONFIGURE_OPTIONS  +=		--with-sasl
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+REQUIRED_PACKAGES += runtime/perl-522
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/database/gdbm
-REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/slang
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl

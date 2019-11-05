@@ -13,37 +13,22 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xrdb
-COMPONENT_VERSION=        1.1.1
+COMPONENT_VERSION=        1.2.0
 COMPONENT_SUMMARY=        xrdb - X server resource database utility
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/xrdb
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2d23ade7cdbb487996bf77cbb32cbe9bdb34d004748a53de7a4a97660d2217b7
-COMPONENT_ARCHIVE_URL=    $(XORG_APP_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
+  sha256:f23a65cfa1f7126040d68b6cf1e4567523edac10f8dc06f23d840d330c7c6946
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --with-cpp=/usr/lib/cpp
 
 CPPFLAGS+= -DPATHETICCPP
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

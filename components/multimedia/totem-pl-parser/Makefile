@@ -11,12 +11,14 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Tim Mooney
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= totem-pl-parser
 COMPONENT_VERSION= 3.10.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= a library to parse playlist
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -34,7 +36,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/ax_code_coverage.m4 $(@D) && \
 					 cd $(@D) && autoreconf -f -I .)
@@ -46,10 +48,11 @@ CONFIGURE_OPTIONS+= --disable-static
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmime
 REQUIRED_PACKAGES += library/libarchive

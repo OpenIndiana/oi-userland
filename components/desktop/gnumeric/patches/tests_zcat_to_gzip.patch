@@ -1,6 +1,6 @@
---- gnumeric-1.12.38/test/GnumericTest.pm.~1~	Mon Dec  4 19:46:02 2017
-+++ gnumeric-1.12.38/test/GnumericTest.pm	Thu Mar  1 10:11:55 2018
-@@ -404,7 +404,7 @@
+--- gnumeric-1.12.43/test/GnumericTest.pm.~1~	Wed May 30 22:31:13 2018
++++ gnumeric-1.12.43/test/GnumericTest.pm	Mon Aug 20 14:56:19 2018
+@@ -421,7 +421,7 @@
      my $code = system ("$ssconvert '$file' '$tmp' 2>&1 | sed -e 's/^/| /'");
      &system_failure ($ssconvert, $code) if $code;
  
@@ -9,7 +9,7 @@
      my $newsha1 = lc substr ($htxt, 0, 40);
      die "SHA-1 failure\n" unless $newsha1 =~ /^[0-9a-f]{40}$/;
  
-@@ -425,13 +425,13 @@
+@@ -442,13 +442,13 @@
  
  	my $tmp1 = "$tmp-old";
  	&junkfile ($tmp1);
@@ -27,7 +27,7 @@
  
  	my $code3 = system ('diff', @ARGV, $tmp1, $tmp2);
  
-@@ -495,13 +495,13 @@
+@@ -512,13 +512,13 @@
  
      my $tmp4 = "$tmp.xml";
      &junkfile ($tmp4) unless $keep;
@@ -45,7 +45,7 @@
  
      $code = system ('diff', '-u', $tmp4, $tmp5);
      &system_failure ('diff', $code) if $code;
-@@ -656,7 +656,7 @@
+@@ -673,7 +673,7 @@
  	$file_filtered =~ s{^.*/}{};
  	$file_filtered =~ s/(\.gnumeric)$/-filter$1/;
  	unlink $file_filtered;
@@ -54,7 +54,7 @@
  	print STDERR "# $cmd\n" if $verbose;
  	$code = system ("($cmd) 2>&1 | sed -e 's/^/| /'");
  	&system_failure ($ssconvert, $code) if $code;
-@@ -689,15 +689,15 @@
+@@ -706,15 +706,15 @@
      my $tmp_xml = "$tmp.xml";
      unlink $tmp_xml;
      &junkfile ($tmp_xml) unless $keep;

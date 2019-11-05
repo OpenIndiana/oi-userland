@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016-2017 Jim Klimov
+# Copyright 2016-2018 Jim Klimov
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jenkins
 COMPONENT_VERSION=	2.65
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=		developer/jenkins
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	http://jenkins-ci.org/

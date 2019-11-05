@@ -10,18 +10,19 @@
 
 #
 # Copyright (c) 2015 Alexander Pyhalov
+# Copyright (c) 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fftw
-COMPONENT_VERSION=	3.3.7
+COMPONENT_VERSION=	3.3.8
 COMPONENT_PROJECT_URL=	http://www.fftw.org/
 COMPONENT_SUMMARY=	FFTW - library for calculating discrete Fourier transforms
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:3b609b7feba5230e8f6dd8d245ddbefac324c5a6ae4186947670d9ac2cd25573
+  sha256:6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303
 COMPONENT_ARCHIVE_URL=	http://www.fftw.org/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_FMRI=		library/fftw-3
@@ -40,8 +41,8 @@ VARIANTS = $(VARIANT_FFTW) $(VARIANT_FFTW_FLOAT)
 BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
 BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
 
-INSTALL_32 = $(VARIANT_FFTW)/$(MACH32)/.installed
-INSTALL_64 = $(VARIANT_FFTW)/$(MACH64)/.installed
+INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
 
 TEST_32 = $(VARIANTS:%=%/$(MACH32)/.tested)
 TEST_64 = $(VARIANTS:%=%/$(MACH64)/.tested)

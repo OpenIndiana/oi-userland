@@ -1,0 +1,49 @@
+#! /usr/bin/ksh
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2019 Alexander Pyhalov
+#
+
+set -e
+
+. /lib/svc/share/smf_include.sh
+
+VLC_CACHE_GEN=/usr/lib/64/vlc/vlc-cache-gen
+VLC_PLUGINS_DIR=/usr/lib/64/vlc/plugins
+VLC_CACHE=/usr/lib/64/vlc/plugins/plugins.dat
+FIND=/usr/bin/find 
+
+NEEDS_REGENERATION=0
+ 
+# Always regenerate VLC cache on refresh
+if [ "$1" = "refresh" ]; then
+   NEEDS_REGENERATION=1
+fi
+
+if [ ! -f "${VLC_CACHE}" ]; then
+    NEEDS_REGENERATION=1;
+else
+   FIND_OUTPUT=$($FIND "$VLC_PLUGINS_DIR" -newer "$VLC_CACHE")
+   if [ -n "${FIND_OUTPUT}" ]; then
+      NEEDS_REGENERATION=1;
+   fi
+fi
+
+
+if [ $NEEDS_REGENERATION -eq 1 ]; then
+  printf "Regenerating VLC plugins cache\n"
+  $VLC_CACHE_GEN $VLC_PLUGINS_DIR
+fi
+
+exit 0

@@ -15,14 +15,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nicstat
-COMPONENT_VERSION=	1.90
-COMPONENT_GIT_REV=	fd91a91
+COMPONENT_VERSION=	1.95
+COMPONENT_GIT_REV=	1fbe281
 COMPONENT_LICENSE=	The Artistic License 2.0
-COMPONENT_SRC=		gmarler-nicstat-$(COMPONENT_GIT_REV)
+COMPONENT_SRC=		scotte-nicstat-$(COMPONENT_GIT_REV)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz	
-COMPONENT_ARCHIVE_HASH= sha256:7891adeb94ce2977db5bca05c402117eaac422fc98e507c45bd3f0ff5e6fc9ec
-COMPONENT_PROJECT_URL=	https://github.com/gmarler/nicstat/
-COMPONENT_ARCHIVE_URL= 	https://codeload.github.com/gmarler/nicstat/legacy.tar.gz/$(COMPONENT_GIT_REV)	
+COMPONENT_ARCHIVE_HASH= sha256:0c441c85af6cace24254f6c1ce21cb1447e13ff7c83582b387c11fc338cc57e4
+COMPONENT_PROJECT_URL=	https://github.com/scotte/nicstat/
+COMPONENT_ARCHIVE_URL= 	https://codeload.github.com/scotte/nicstat/legacy.tar.gz/$(COMPONENT_GIT_REV)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk

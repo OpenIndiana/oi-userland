@@ -15,7 +15,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-7.0-ext-couchbase
 COMPONENT_VERSION=	2.2.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/couchbase
 COMPONENT_SRC=		couchbase-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
@@ -70,6 +70,10 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += web/php-70/php-common
+REQUIRED_PACKAGES += web/php-70/extension/php-json
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libcouchbase
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += web/php-70/php-common

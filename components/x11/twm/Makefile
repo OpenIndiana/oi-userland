@@ -13,37 +13,23 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-PREFERRED_BITS=64
-
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= twm
+COMPONENT_NAME=    twm
 COMPONENT_VERSION= 1.0.10
-COMPONENT_SUMMARY=  twm - Tab Window Manager for the X Window System
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_SUMMARY= twm - Tab Window Manager for the X Window System
+COMPONENT_FMRI=    desktop/window-manager/twm
 COMPONENT_ARCHIVE_HASH= \
   sha256:6449eadca16ce0f0d900605b0cc020b95f40619261b7beccfb46bcc1836445d7
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
-COMPONENT_FMRI= desktop/window-manager/twm
-COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm

@@ -20,32 +20,33 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
+
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=		1.8.20
-SRC_PATCH_VERSION=	2
-COMPONENT_VERSION=	$(SRC_VERSION).$(SRC_PATCH_VERSION)
+SRC_VERSION=		1.8.29
+SRC_PATCH_VERSION=	0
+SRC_DOT_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo .$(SRC_PATCH_VERSION))
+SRC_P_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo p$(SRC_PATCH_VERSION))
+COMPONENT_VERSION=	$(SRC_VERSION)$(SRC_DOT_PATCH_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	sudo - tool to allow certain tasks to be run as root by ordinary users
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)p$(SRC_PATCH_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bd42ae1059e935f795c69ea97b3de09fe9410a58a74b5d5e6836eb5067a445d9
-COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
+	sha256:ce53ffac9604e23321334d8ba8ac59ded2bcf624fdb9dbde097ab2049bf29c7c
+COMPONENT_ARCHIVE_URL=	https://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
-COMPONENT_PROJECT_URL=  http://www.sudo.ws/
+COMPONENT_PROJECT_URL=  https://www.sudo.ws/
 COMPONENT_FMRI=		security/sudo
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	ISC-like, BSD, zlib license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
@@ -61,7 +62,7 @@ CONFIGURE_OPTIONS +=	--without-insults
 CONFIGURE_OPTIONS +=	--without-lecture
 CONFIGURE_OPTIONS +=	--with-ignore-dot
 CONFIGURE_OPTIONS +=	--with-bsm-audit
-CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR64)/sudo
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR64)
 CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
@@ -70,19 +71,17 @@ COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_TARGETS = install
 
+COMPONENT_TEST_TRANSFORMS += '-ne "/OK/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/FAIL/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/errors/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/failed/p" '
+
 # Avoid calling "chown 0" on installed files
 COMPONENT_INSTALL_ARGS += INSTALL_OWNER=
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

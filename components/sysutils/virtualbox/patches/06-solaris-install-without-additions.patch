@@ -1,0 +1,46 @@
+--- VirtualBox-5.2.20/src/VBox/Installer/solaris/Makefile.kmk.orig	2018-11-01 03:23:39.048834025 +0000
++++ VirtualBox-5.2.20/src/VBox/Installer/solaris/Makefile.kmk	2018-11-01 03:24:22.538734156 +0000
+@@ -535,7 +535,7 @@
+ # Creates the System V style installer package.
+ #
+ solaris-package:: $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg
+-$(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg: \
++solaris-install:: \
+ 		$(VBOX_VERSION_STAMP) \
+ 		\
+ 		$(VBOX_PATH_INST_COMMON_SRC)/virtualbox.desktop.in \
+@@ -543,7 +543,6 @@
+ 		$(VBOX_PATH_SOL_INST_SRC)/virtualbox.applications.in \
+ 		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo \
+ 		\
+-		$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING),$(PATH_STAGE_BIN)/additions/VBoxGuestAdditions.iso,) \
+ 		$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL), $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2,) \
+ 		\
+ 		$(if $(VBOX_OSE),,$(foreach arch, x86 amd64, $(foreach lib, libgcc_s.so.1 libstdc++.so.6, \
+@@ -604,8 +603,6 @@
+ 		"$($(var).SRC)/$(file)" "$($(var).DST)/$(file)")))
+ 
+ # VirtualBox: Common files.
+-	$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING) \
+-	,$(INSTALL) -m 0644 $(PATH_STAGE_BIN)/additions/VBoxGuestAdditions.iso  $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/,)
+ 	$(LN_SYMLINK) -f ./pkginstall.sh	$(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/ipsinstall.sh
+ 	$(SED)	-e "s/_HARDENED_/$(if $(VBOX_WITH_HARDENED),hardened,)/" \
+ 		--output $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxconfig.sh \
+@@ -617,9 +614,6 @@
+ 	$(if-expr defined(VBOX_WITH_QTGUI) \
+ 	,$(NLTAB)$(LN_SYMLINK) ../rdesktop-vrdp-keymaps/ $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/rdesktop-vrdp-keymaps,)
+ 
+-	$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING) \
+-	,$(NLTAB)$(LN_SYMLINK) ../VBoxGuestAdditions.iso $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/,)
+-
+ 	$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL) \
+ 	,$(INSTALL) -s -m 0644 $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2 \
+ 		$(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/libSDL-1.2.so.0,)
+@@ -675,6 +669,7 @@
+ 		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo
+ 	$(INSTALL) -m 0644 $(VBOX_PATH_SOL_INST_SRC)/vbox.pkgresponse	$(VBOX_PATH_SI_SCRATCH_PKG)/autoresponse
+ 
++$(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg: solaris-install
+ # Done copying file, create the package!
+ 	$(call MSG_L1,Creating install package: $(PKG_FILENAME).pkg)
+ 	$(REDIRECT) -C $(VBOX_PATH_SOL_INST_SRC) -- $(VBOX_PATH_SI_SCRATCH_PKG)/makepackage.sh \

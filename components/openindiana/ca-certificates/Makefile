@@ -11,23 +11,28 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
-
-COMPONENT_VERSION= 3.33
-IPS_COMPONENT_VERSION=	1.0 
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY= Common CA certificates
-COMPONENT_SRC= nss-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_VERSION_MAJOR=3
+COMPONENT_VERSION_MINOR=45
+COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
+IPS_COMPONENT_VERSION=	1.0
+COMPONENT_REVISION=	7
+COMPONENT_SUMMARY=	Common CA certificates
+COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:98f0dabd36408e83dd3a11727336cc3cdfee4cbdd9aede2b2831eb2389c284e4
+	sha256:112f05223d1fde902c170966bfc6f011b24a838be16969b110ecf2bb7bc24e8b
 COMPONENT_ARCHIVE_URL= \
-  https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_33_RTM/src/$(COMPONENT_ARCHIVE)
+	https://ftp.mozilla.org/pub/security/nss/releases/NSS_$(COMPONENT_VERSION_MAJOR)_$(COMPONENT_VERSION_MINOR)_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
+COMPONENT_FMRI=		crypto/ca-certificates
+COMPONENT_LICENSE=	MPLv2.0
+COMPONENT_LICENSE_FILE=	nss/COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -58,7 +63,7 @@ $(BUILD_DIR_32)/ca-bundle.processed: $(BUILD_DIR_32)/ca-bundle.crt
 	grep -v '^#' $(BUILD_DIR_32)/ca-bundle.crt | grep -v '^$$' > $@
 
 $(BUILD_DIR_32)/ca-bundle.crt: $(BUILD_DIR_32)/certdata.txt
-	cd $(BUILD_DIR_32) && $(PERL) $(COMPONENT_DIR)/mk-ca-bundle.pl -n
+	cd $(BUILD_DIR_32) && $(PERL) $(COMPONENT_DIR)/files/mk-ca-bundle.pl -n
 	
 
 $(BUILD_DIR_32)/certdata.txt: $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt
@@ -77,9 +82,11 @@ $(INSTALL_32):	$(BUILD_32)
 	done; 
 	touch $@
 	
-build: $(BUILD_32)
+build:		$(BUILD_32)
 
-install: $(INSTALL_32)
+install:	$(INSTALL_32)
+
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/security/openssl
@@ -87,3 +94,4 @@ REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += library/perl-5/libwww-perl-522  
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
+# Auto-generated dependencies

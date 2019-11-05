@@ -22,45 +22,50 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher
+# Copyright (c) 2019, Michal Nowak
 #
+
+BUILD_BITS=		32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
-COMPONENT_VERSION=	2.2.2
-COMPONENT_FMRI=	library/expat
+COMPONENT_VERSION=	2.2.9
+COMPONENT_VERSION_U=	$(shell echo $(COMPONENT_VERSION) | tr . _)
+COMPONENT_FMRI=		library/expat
 COMPONENT_SUMMARY=	libexpat - XML parser library
 COMPONENT_DESCRIPTION=	A fast, non-validating, stream-oriented XML parsing library	
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_PROJECT_URL=	http://expat.sourceforge.net/
+COMPONENT_PROJECT_URL=	https://libexpat.github.io
 COMPONENT_SRC_NAME=	expat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4f01ba52400fd1d5f370abf40d213220b0b079b311b2da96f5b236b8a3be4917
+	sha256:a1e85abcd97c2aa71005190d24a7c46dcf7bd29c097c31e917cda1b400c38a49
 COMPONENT_ARCHIVE_URL= \
-    http://downloads.sourceforge.net/project/expat/expat/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://github.com/libexpat/libexpat/releases/download/R_$(COMPONENT_VERSION_U)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	expat license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
 
+# Deliver only 64-bit binary
+CONFIGURE_OPTIONS.64+= --bindir=/usr/bin
 CONFIGURE_OPTIONS+= --disable-static
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-COMPONENT_TEST_TRANSFORMS = \
-	'-n' \
-	'-e "/Checks/p" '
+COMPONENT_TEST_TRANSFORMS= \
+	'-e "s/^\# //" ' \
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/PASS/p" '  \
+	'-e "/SKIP/p" '  \
+	'-e "/XFAIL/p" ' \
+	'-e "/FAIL/p" '  \
+	'-e "/XPASS/p" ' \
+	'-e "/ERROR/p" ' \
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

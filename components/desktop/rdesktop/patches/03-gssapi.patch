@@ -1,0 +1,14 @@
+--- rdesktop-a88cd226bb9d5e3c56c0e78b7dd62db86e97e383/configure.ac	2019-05-08 13:55:46.000000000 +0000
++++ rdesktop-a88cd226bb9d5e3c56c0e78b7dd62db86e97e383/configure.ac	2019-05-20 07:49:07.744377992 +0000
+@@ -74,6 +74,11 @@ AS_IF([test "x$enable_credssp" != "xno"]
+ 		GSSAPI_CFLAGS=""
+ 		GSSAPI_LIBS="-framework Kerberos"
+ 		;;
++             solaris*)
++		AC_CHECK_HEADER(gssapi/gssapi.h, [WITH_CREDSSP=1], [WITH_CREDSSP=0])
++		GSSAPI_CFLAGS="`krb5-config --cflags gssapi`"
++		GSSAPI_LIBS="`krb5-config --libs gssapi`"
++		;;
+ 	     *)
+ 		#if 'OSTYPE' is not set use 'host' instead
+ 		if test x"$OSTYPE" = "x"; then

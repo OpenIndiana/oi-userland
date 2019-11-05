@@ -19,7 +19,7 @@ COMPONENT_NAME= oppenjdk-7
 
 OPENJDK_BUILD_NUMBER=141
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20170813.tar.xz
@@ -123,9 +123,11 @@ $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
 	$(CP) -a $(@D)/build/solaris-*/j2sdk-image/* $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	$(TOUCH) $@
 
-build: $(BUILD_32_and_64) cacerts.out
+build:		$(BUILD_32_and_64) cacerts.out
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
+
+test:		$(NO_TESTS)
 
 .NOTPARALLEL:
 
@@ -137,7 +139,7 @@ REQUIRED_PACKAGES += runtime/java/openjdk7
 REQUIRED_PACKAGES += runtime/java/openjdk7/runtime64
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

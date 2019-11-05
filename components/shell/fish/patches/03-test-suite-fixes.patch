@@ -1,0 +1,190 @@
+From 1ee57e92447781b5ff79aaa7c55f6468fc84a37d Mon Sep 17 00:00:00 2001
+From: Fabian Homborg <FHomborg@gmail.com>
+Date: Fri, 18 Jan 2019 22:54:09 +0100
+Subject: [PATCH] tests/realpath.in: We want to delete $PWD, darnit!
+
+Illumos/OpenIndiana/SunOS/Solaris has an rm/rmdir that tries to
+protect the user by not allowing them to delete $PWD.
+
+Normally, this would be a good thing as deleting $PWD is a stupid
+thing to do. Except in this case, we absolutely need to do that.
+
+So instead we weasel around it by invoking an sh to cd out of the
+directory to then invoke an `rmdir` to delete it. That should throw
+off any attempts at protection (we could also have tried $PWD/. or
+similar, but that's possibly still protected against).
+
+This is the last failing test on
+Illumos/OpenIndiana/SunOS/Solaris/afunnyquip, so:
+
+Fixes #5472.
+---
+ tests/realpath.in | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tests/realpath.in b/tests/realpath.in
+index fba895f15..fc39889fe 100644
+--- a/tests/realpath.in
++++ b/tests/realpath.in
+@@ -35,7 +35,9 @@ builtin realpath /def///
+ # Verify `realpath .` when cwd is a deleted directory gives a no such file or dir error.
+ set -l tmpdir (mktemp -d)
+ pushd $tmpdir
+-rmdir $tmpdir
++# Solaris rmdir tries to protect against deleting $PWD.
++# But that's what we want to test, so we weasel around it.
++sh -c "cd ..; rmdir $tmpdir"
+ builtin realpath .
+ popd
+ 
+From f3e87b7996e316da2ec2851b6a9565d6ed7cf893 Mon Sep 17 00:00:00 2001
+From: Fabian Homborg <FHomborg@gmail.com>
+Date: Wed, 2 Jan 2019 20:54:14 +0100
+Subject: [PATCH] tests/psub: Don't use `grep -o` and `diff -q`
+
+These aren't available on OpenIndiana.
+
+`grep -o` is easily changed to `string`, `diff -q` imitated with
+`comm` and `test`.
+
+See #5472.
+---
+ tests/psub.in | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/tests/psub.in b/tests/psub.in
+index 76d8787dc..5a615e540 100644
+--- a/tests/psub.in
++++ b/tests/psub.in
+@@ -30,14 +30,14 @@ else
+ end
+ 
+ # The --file flag is the default behavior.
+-if count (echo foo | psub -s .cc | grep -o '\.cc$') >/dev/null
++if count (echo foo | psub -s .cc | string match -r '\.cc$') >/dev/null
+     echo 'psub filename ends with .cc'
+ else
+     echo 'psub filename does not end with .cc'
+ end
+ 
+ # Make sure we get the same result if we explicitly ask for a temp file.
+-if count (echo foo | psub -f -s .cc | grep -o '\.cc$') >/dev/null
++if count (echo foo | psub -f -s .cc | string match -r '\.cc$') >/dev/null
+     echo 'psub filename ends with .cc'
+ else
+     echo 'psub filename does not end with .cc'
+@@ -50,4 +50,5 @@ else
+     echo 'psub directory was deleted'
+ end
+ 
+-diff -q (__fish_print_help psub | psub) (psub -hs banana | psub)
++set -l diffs (comm -3 (__fish_print_help psub | psub) (psub -hs banana | psub))
++test -z "$diffs"
+From 4562f8f4e37bb4df2836b08d2b944e3a15846d86 Mon Sep 17 00:00:00 2001
+From: Fabian Homborg <FHomborg@gmail.com>
+Date: Wed, 13 Feb 2019 20:32:07 +0100
+Subject: [PATCH] fallback: Set LC_ALL in wcstod_l fallback
+
+Apparently some wcstod's don't care about LC_NUMERIC.
+---
+ src/fallback.cpp | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/fallback.cpp b/src/fallback.cpp
+index a8d044d31..654eafc09 100644
+--- a/src/fallback.cpp
++++ b/src/fallback.cpp
+@@ -395,7 +395,12 @@ int flock(int fd, int op) {
+ // thread-specific locale.
+ double fish_compat::wcstod_l(const wchar_t *enptr, wchar_t **endptr, locale_t loc) {
+     // Create and use a new, thread-specific locale
+-    locale_t locale = newlocale(LC_NUMERIC, "C", nullptr);
++    // NOTE: We use "C" whatever the passed locale,
++    // and we use the LC_ALL category.
++    //
++    // Empirically, this fails on OpenIndiana/Illumos/Solaris/SunOS if using LC_NUMERIC.
++    // Since we reset it afterwards, it shouldn't matter.
++    locale_t locale = newlocale(LC_ALL, "C", nullptr);
+     locale_t prev_locale = uselocale(locale);
+     double ret = wcstod(enptr, endptr);
+     // Restore the old locale before freeing the locale we created and are still using
+From c62d95e42824dd6db7e88e4028ebeeeb6565b34e Mon Sep 17 00:00:00 2001
+From: Fabian Homborg <FHomborg@gmail.com>
+Date: Fri, 18 Jan 2019 22:50:38 +0100
+Subject: [PATCH] tests: Move directory redirection test to invocation
+
+This tested #1728, where redirecting a directory (`begin; something;
+end < .`) would cause `status` to misbehave.
+
+Unfortunately, on Illumos/OpenIndiana/SunOS, this returns a different
+error (EINVAL instead of EISDIR), so we can't check that with our test harness, because
+we can't redirect it.
+
+Since it's not important that this gives the same error across
+systems (and indeed we provide no way of intercepting the error!),
+use an invocation test instead, because that allows different output per-uname.
+
+See #5472.
+---
+ tests/invocation/directory-redirect.err       | 3 +++
+ tests/invocation/directory-redirect.err.SunOS | 3 +++
+ tests/invocation/directory-redirect.invoke    | 1 +
+ tests/status.err                              | 2 --
+ tests/status.in                               | 6 ------
+ 5 files changed, 7 insertions(+), 8 deletions(-)
+ create mode 100644 tests/invocation/directory-redirect.err
+ create mode 100644 tests/invocation/directory-redirect.err.SunOS
+ create mode 100644 tests/invocation/directory-redirect.invoke
+
+diff --git a/tests/invocation/directory-redirect.err b/tests/invocation/directory-redirect.err
+new file mode 100644
+index 000000000..ed2330550
+--- /dev/null
++++ b/tests/invocation/directory-redirect.err
+@@ -0,0 +1,3 @@
++<W> fish: An error occurred while redirecting file '.'
++open: Is a directory
++RC: 1
+diff --git a/tests/invocation/directory-redirect.err.SunOS b/tests/invocation/directory-redirect.err.SunOS
+new file mode 100644
+index 000000000..e3e6b2534
+--- /dev/null
++++ b/tests/invocation/directory-redirect.err.SunOS
+@@ -0,0 +1,3 @@
++<W> fish: An error occurred while redirecting file '.'
++open: Invalid argument
++RC: 1
+diff --git a/tests/invocation/directory-redirect.invoke b/tests/invocation/directory-redirect.invoke
+new file mode 100644
+index 000000000..84a002bea
+--- /dev/null
++++ b/tests/invocation/directory-redirect.invoke
+@@ -0,0 +1 @@
++-c 'begin; end > . ; status -b; and echo "status -b returned true after bad redirect on a begin block"'
+diff --git a/tests/status.err b/tests/status.err
+index 855655277..87e63a330 100644
+--- a/tests/status.err
++++ b/tests/status.err
+@@ -1,5 +1,3 @@
+-<W> fish: An error occurred while redirecting file '.'
+-open: Is a directory
+ status: Invalid combination of options,
+ you cannot do both 'is-interactive' and 'is-login' in the same invocation
+ status: Invalid combination of options,
+diff --git a/tests/status.in b/tests/status.in
+index 008255027..9f33badd6 100644
+--- a/tests/status.in
++++ b/tests/status.in
+@@ -8,12 +8,6 @@ begin
+     or echo '"status -b" unexpectedly returned false inside a begin block'
+ end
+ 
+-# Issue #1728
+-# Bad file redirection on a block causes `status --is-block` to return 0 forever.
+-begin; end >. # . is a directory, it can't be opened for writing
+-status -b
+-and echo '"status -b" unexpectedly returned true after bad redirect on a begin block'
+-
+ status -l
+ and echo '"status -l" unexpectedly returned true for a non-login shell'
+ 

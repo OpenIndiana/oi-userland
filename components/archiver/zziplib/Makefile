@@ -11,6 +11,7 @@
 
 #
 # Copyright 2013 Aurelien Larcher.  All rights reserved.
+# Copyright 2018 Michal Nowak
 #
 PREFERRED_BITS=64
 
@@ -18,8 +19,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zziplib
 COMPONENT_VERSION=	0.13.69
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Lightweight ZIP library
-COMPONENT_PROJECT_URL=	http://zziplib.sourceforge.net/
+COMPONENT_PROJECT_URL=	https://github.com/gdraheim/zziplib
 COMPONENT_FMRI=		compress/zziplib
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,6 +37,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+COMPONENT_PREP_ACTION=	( cd $(@D); autoreconf -i -f )
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static

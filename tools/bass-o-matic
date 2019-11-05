@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -26,8 +26,6 @@
 #  A simple program to enumerate components in the userland gate and report
 #  on dependency related information.
 #
-
-from __future__ import print_function, absolute_import
 
 import os
 import sys
@@ -65,10 +63,11 @@ def FindComponentPaths(path, debug=False, subdir='components',
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
+                                universal_newlines=True
                                 )
 
+        proc.wait()
         if debug:
-            proc.wait()
             if proc.returncode != 0:
                 logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
 
@@ -101,10 +100,11 @@ def FindComponentPaths(path, debug=False, subdir='components',
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
                                 cwd=workspace_path,
+                                universal_newlines=True
                                 )
 
+        proc.wait()
         if debug:
-            proc.wait()
             if proc.returncode != 0:
                 logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
 
@@ -127,6 +127,9 @@ def FindComponentPaths(path, debug=False, subdir='components',
         # subdir is equal to 'components'.
         if subdir is 'components':
             paths.append('meta-packages/history')
+        # Add encumbered/meta-packages/history only if we build the encumbered repository
+        if subdir is 'components/encumbered':
+            paths.append('encumbered/meta-packages/history')
                     
         paths = list(set(paths))
 
@@ -177,12 +180,13 @@ class BassComponent(object):
         proc = subprocess.Popen(['gmake', targets],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
-                                cwd=path)
+                                cwd=path,
+                                universal_newlines=True)
         for out in proc.stdout:
             result.append(out)
 
+        proc.wait()
         if self.debug:
-            proc.wait()
             if proc.returncode != 0:
                 logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
 
@@ -198,8 +202,7 @@ class BassComponent(object):
 
 
 def main():
-    # FLUSH STDOUT
-    sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+    sys.stdout.flush()
 
     components = {}
 

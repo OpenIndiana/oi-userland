@@ -1,0 +1,89 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2018 Aurelien Larcher
+# Copyright 2019 Michal Nowak
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# symlinks in /usr
+link path=usr/bin/gfind target=../gnu/bin/find facet.compat.gnulinks=true
+link path=usr/bin/gxargs target=../gnu/bin/xargs facet.compat.gnulinks=true
+link path=usr/share/man/man1/gfind.1 \
+    target=../../../gnu/share/man/man1/find.1 facet.compat.gnulinks=all
+link path=usr/share/man/man1/gxargs.1 \
+    target=../../../gnu/share/man/man1/xargs.1 facet.compat.gnulinks=all
+
+# locate and updatedb are not being delivered, in favor of utilities of
+# the same name from the file/mlocate package.
+file path=usr/gnu/bin/find
+#file path=usr/gnu/bin/locate
+#file path=usr/gnu/bin/updatedb
+file path=usr/gnu/bin/xargs
+file path=usr/gnu/libexec/frcode mode=0555
+#file path=usr/gnu/share/info/dir
+file path=usr/gnu/share/info/find-maint.info
+file path=usr/gnu/share/info/find.info
+file path=usr/gnu/share/info/find.info-1
+file path=usr/gnu/share/info/find.info-2
+file path=usr/gnu/share/locale/be/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/bg/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/ca/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/cs/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/da/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/de/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/el/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/eo/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/es/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/et/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/fi/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/fr/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/ga/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/gl/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/hr/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/hu/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/id/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/it/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/ja/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/ko/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/lg/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/lt/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/ms/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/nb/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/nl/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/pl/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/pt/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/ro/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/ru/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/sk/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/sl/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/sr/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/sv/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/tr/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/uk/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/vi/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/locale/zh_TW/LC_MESSAGES/findutils.mo
+file path=usr/gnu/share/man/man1/find.1
+#file path=usr/gnu/share/man/man1/locate.1
+#file path=usr/gnu/share/man/man1/updatedb.1
+file path=usr/gnu/share/man/man1/xargs.1
+#file path=usr/gnu/share/man/man5/locatedb.5

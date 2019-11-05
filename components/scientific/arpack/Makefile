@@ -14,7 +14,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		arpack
-COMPONENT_VERSION=	3.5.0
+COMPONENT_VERSION=	3.6.3
+COMPONENT_REVISION=	2
 REAL_NAME=		arpack-ng
 COMPONENT_PROJECT_URL=	https://github.com/opencollab/arpack-ng
 COMPONENT_SUMMARY=	Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
@@ -23,11 +24,12 @@ COMPONENT_FMRI=         library/math/arpack
 COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_SRC=		$(REAL_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:50f7a3e3aec2e08e732a487919262238f8504c3ef927246ec3495617dde81239
-COMPONENT_ARCHIVE_URL=	https://github.com/opencollab/$(REAL_NAME)/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:64f3551e5a2f8497399d82af3076b6a33bf1bc95fc46bbcabe66442db366f453
+COMPONENT_ARCHIVE_URL= \
+  https://github.com/opencollab/$(REAL_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
-
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -36,6 +38,15 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install && libtoolize --force --copy )
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --enable-icb
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/TOTAL:/p" ' \
+        '-e "/SKIP:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" ' \
+        '-e "/ERROR:/p" '
 
 build:		$(BUILD_32_and_64)
 
@@ -53,5 +64,5 @@ test:		$(TEST_32_and_64)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/math/openblas
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gfortran-6-runtime
+REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

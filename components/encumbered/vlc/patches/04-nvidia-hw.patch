@@ -1,0 +1,152 @@
+https://forum.videolan.org/viewtopic.php?t=134770
+Avcodec doesn't enable HW acceleration by default in multi-threaded setup.
+And threading is selected automatically based on CPU counts.
+However, when HW acceleration is available, it's much more efficient.
+So we enable it for NVidia adapters.
+On platforms without HW acceleration (like ATI or modern Intel video adapters,
+for which we lack drivers) multi-threading should still be used.
+
+diff -urN vlc-3.0.7.1-orig/modules/codec/avcodec/detect_nvidia.c vlc-3.0.7.1/modules/codec/avcodec/detect_nvidia.c
+--- vlc-3.0.7.1-orig/modules/codec/avcodec/detect_nvidia.c	1970-01-01 03:00:00.000000000 +0000
++++ vlc-3.0.7.1/modules/codec/avcodec/detect_nvidia.c	2019-07-19 10:03:46.629489927 +0000
+@@ -0,0 +1,93 @@
++#include <libdevinfo.h>
++#include <limits.h>
++#include <unistd.h>
++#include <stdio.h>
++#include <string.h>
++
++#include <vlc_common.h>
++#include <vlc_codec.h>
++
++#define DEVFB "/dev/fb"
++#define DEVICES "/devices"
++#define NVIDIA_DRIVER_NAME "nvidia"
++
++struct dw_arg {
++     char *dp;
++     int found;
++};
++
++int detect_nvidia_adapter(decoder_t *p_dec);
++
++/**
++ * Check that device path matches FB device path, device has attached driver
++ * and its name is nvidia.
++ */
++static int devfs_match(di_node_t node, void *arg) {
++     struct dw_arg *dw;
++     char *path;
++
++     dw =  (struct dw_arg *)arg;
++
++     path = di_devfs_path(node);
++     if (path != NULL) {
++         if (strcmp(path, dw->dp) == 0) {
++             if (!(di_state(node) & DI_DRIVER_DETACHED)) {
++                 char *dname;
++                 dname = di_driver_name(node);
++                 if (dname != NULL) {
++                     if (strcmp(dname, NVIDIA_DRIVER_NAME) == 0) {
++                         dw->found = 1;
++                     }
++                     return DI_WALK_TERMINATE;
++                 }
++             }
++         }
++         di_devfs_path_free(path);
++     }
++     return DI_WALK_CONTINUE;
++}
++
++/**
++ * Try to detect if current framebuffer is managed by nvidia driver.
++ */
++int detect_nvidia_adapter(decoder_t *p_dec)
++{
++    char devfs_path[PATH_MAX];
++    char *dp, *s;
++    di_node_t node;
++    
++    memset(devfs_path, 0, PATH_MAX);
++    
++    if (readlink(DEVFB, devfs_path, PATH_MAX) < 0) {
++        return 0;     
++    };
++    
++    if(strncmp(devfs_path, DEVICES, strlen(DEVICES)) == 0) {
++        dp = devfs_path + strlen(DEVICES);
++    }
++    if (!dp) {
++        return 0;
++    }
++
++    s = strchr(dp, ':');
++    if (s != NULL) {
++        *s = '\0';
++    }
++    
++    node = di_init("/", DINFOCPYALL);
++    if (node != DI_NODE_NIL) {
++        struct dw_arg dw;
++
++        dw.dp = dp;
++        dw.found = 0;
++        di_walk_node (node, DI_WALK_CLDFIRST, &dw, devfs_match);
++        di_fini(node);
++        if (dw.found) {
++            return 1;
++        }
++    } else {
++        msg_Dbg(p_dec, "detect_nvidia_adapter(): couldn't walk device tree");
++    }
++
++    return 0;
++}
+diff -urN vlc-3.0.7.1-orig/modules/codec/avcodec/video.c vlc-3.0.7.1/modules/codec/avcodec/video.c
+--- vlc-3.0.7.1-orig/modules/codec/avcodec/video.c	2019-07-19 08:47:45.031570381 +0000
++++ vlc-3.0.7.1/modules/codec/avcodec/video.c	2019-07-19 10:00:19.608012483 +0000
+@@ -48,6 +48,8 @@
+ 
+ #include "../codec/cc.h"
+ 
++int detect_nvidia_adapter(decoder_t *p_dec);
++
+ /*****************************************************************************
+  * decoder_sys_t : decoder descriptor
+  *****************************************************************************/
+@@ -555,6 +557,15 @@
+     p_context->opaque = p_dec;
+ 
+     int i_thread_count = var_InheritInteger( p_dec, "avcodec-threads" );
++
++    if( i_thread_count == 0 && detect_nvidia_adapter(p_dec) )
++    {
++        /* If we use NVidia adapter and avcodec-threads is not set explicitly,
++         * set thread_count to 1 explicitly to avoid disabling hw acceleration */
++        msg_Dbg( p_dec, "detected nvidia adapter, resetting thread count to 1");
++        i_thread_count = 1;
++    }
++
+     if( i_thread_count <= 0 )
+     {
+         i_thread_count = vlc_GetCPUCount();
+diff -urN vlc-3.0.7.1-orig/modules/codec/Makefile.am vlc-3.0.7.1/modules/codec/Makefile.am
+--- vlc-3.0.7.1-orig/modules/codec/Makefile.am	2019-07-19 08:47:45.012961141 +0000
++++ vlc-3.0.7.1/modules/codec/Makefile.am	2019-07-19 09:18:42.916255725 +0000
+@@ -376,12 +376,13 @@
+ 	codec/avcodec/subtitle.c \
+ 	codec/avcodec/audio.c \
+ 	codec/avcodec/va.c codec/avcodec/va.h \
+-	codec/avcodec/avcodec.c codec/avcodec/avcodec.h
++	codec/avcodec/avcodec.c codec/avcodec/avcodec.h \
++	codec/avcodec/detect_nvidia.c
+ if ENABLE_SOUT
+ libavcodec_plugin_la_SOURCES += codec/avcodec/encoder.c
+ endif
+ libavcodec_plugin_la_CFLAGS = $(AVCODEC_CFLAGS) $(AM_CFLAGS)
+-libavcodec_plugin_la_LIBADD = $(AVCODEC_LIBS) $(LIBM) libavcodec_common.la
++libavcodec_plugin_la_LIBADD = $(AVCODEC_LIBS) $(LIBM) -ldevinfo libavcodec_common.la
+ libavcodec_plugin_la_LDFLAGS = $(AM_LDFLAGS) $(SYMBOLIC_LDFLAGS)
+ 
+ if MERGE_FFMPEG

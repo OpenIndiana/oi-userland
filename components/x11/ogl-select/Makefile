@@ -10,22 +10,23 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ogl-select
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	ogl-select - boot time selection of OpenGL vendor files
-COMPONENT_PROJECT_URL = https://hg.java.net/hg/solaris-x11~x-s12-clone
-COMPONENT_FMRI= service/opengl/ogl-select
-COMPONENT_LICENSE= MIT
-COMPONENT_LICENSE_FILE= ogl-select.license
+COMPONENT_PROJECT_URL = https://www.openindiana.org/
+COMPONENT_FMRI=		service/opengl/ogl-select
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	ogl-select.license
 COMPONENT_CLASSIFICATION= System/X11
 
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 
@@ -39,4 +40,5 @@ install:
 clean:
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

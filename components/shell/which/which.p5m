@@ -19,26 +19,23 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/shell/which@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description value="Utility to show the full path of (shell) commands"
 set name=pkg.summary value="GNU which"
-set name=com.oracle.info.description value="GNU which"
-set name=com.oracle.info.tpno value=9202
 set name=info.classification \
     value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2007/049
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license=GPLv3
+
 file path=usr/gnu/bin/which
 file path=usr/gnu/share/man/man1/which.1
 file path=usr/share/info/which.info
 link path=usr/bin/gwhich target=../gnu/bin/which facet.compat.gnulinks=true
 link path=usr/share/man/man1/gwhich.1 \
     target=../../../gnu/share/man/man1/which.1 facet.compat.gnulinks=all
-license COPYING license=GPLv3

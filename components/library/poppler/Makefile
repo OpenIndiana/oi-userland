@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
 COMPONENT_VERSION=	0.56.0
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
@@ -32,7 +32,6 @@ COMPONENT_SUMMARY=	Poppler is a PDF rendering library based on the xpdf-3.0 code
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
-
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -48,6 +47,9 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
+
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPP_XPG6MODE) $(CPP_LARGEFILES)"
 CONFIGURE_OPTIONS += CXX="$(CXX) $($(COMPILER)_NORUNPATH)"
 CONFIGURE_OPTIONS += --enable-poppler-glib
@@ -60,11 +62,11 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CXX="$(CXX)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build:	$(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(NO_TESTS)
+test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -78,7 +80,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/mozilla-nss

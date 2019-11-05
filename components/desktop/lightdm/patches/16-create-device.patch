@@ -61,14 +61,14 @@
  #ifdef HAVE_SMF_CONTRACTS
  static int contracts_fd = -1;
  
-@@ -794,6 +837,14 @@
+@@ -761,6 +761,14 @@
      version = 3;
      write_data (session, &version, sizeof (version));
  
 +#ifdef __sun__
-+    if(session->priv->remote_host_name) {
++    if(priv->remote_host_name) {
 +       create_device("/dev/dtremote");
-+    } else if (!g_str_equal (session->priv->xdisplay,":0")) {
++    } else if (!g_str_equal (priv->xdisplay,":0")) {
 +       create_device("/dev/dtlocal");
 +    }
 +#endif

@@ -1,0 +1,49 @@
+--- firefox-60.2.0/build/moz.configure/init.configure.orig	2018-09-27 01:59:33.957242520 +0000
++++ firefox-60.2.0/build/moz.configure/init.configure	2018-09-27 01:59:48.727691972 +0000
+@@ -931,6 +931,7 @@
+ 
+ 
+ set_define('XP_SOLARIS', target_is_solaris)
++set_define('SOLARIS', target_is_solaris)
+ 
+ # The application/project to build
+ # ==============================================================
+--- firefox-60.2.0/old-configure.in.orig	2018-09-27 02:14:59.440870521 +0000
++++ firefox-60.2.0/old-configure.in	2018-09-27 02:15:34.798719052 +0000
+@@ -1119,7 +1119,9 @@
+     ;;
+ 
+ *-solaris*)
+     MOZ_FIX_LINK_PATHS="-L${DIST}/bin"
++    CFLAGS="$CFLAGS -DSOLARIS"
++    CXXFLAGS="$CXXFLAGS -DSOLARIS"
+     ;;
+ 
+ esac
+--- firefox-60.2.0/js/src/old-configure.in.orig	2018-09-27 02:15:58.178409586 +0000
++++ firefox-60.2.0/js/src/old-configure.in	2018-09-27 02:16:45.039622017 +0000
+@@ -870,7 +870,9 @@
+     ;;
+ 
+ *-solaris*)
+     MOZ_FIX_LINK_PATHS="-L${DIST}/bin"
++    CFLAGS="$CFLAGS -DSOLARIS"
++    CXXFLAGS="$CXXFLAGS -DSOLARIS"
+     ;;
+ 
+ esac
+--- firefox-60.2.0/nsprpub/pr/include/md/_solaris.h.orig	2018-09-27 02:23:17.001660927 +0000
++++ firefox-60.2.0/nsprpub/pr/include/md/_solaris.h	2018-09-27 02:23:39.135285086 +0000
+@@ -52,6 +52,12 @@
+ #define _PR_HAVE_ATOMIC_OPS
+ #endif
+ 
++/* Earlier these settings were detected by nsprpub configure, now it doesn't run */
++#define HAVE_FCNTL_FILE_LOCKING
++#define _PR_HAVE_OFF64_T
++#define _PR_INET6
++/* End of configure-detected settings */
++
+ #define _PR_POLL_AVAILABLE
+ #define _PR_USE_POLL
+ #define _PR_STAT_HAS_ST_ATIM

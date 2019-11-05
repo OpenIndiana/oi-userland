@@ -1,0 +1,15 @@
+diff -ru ChezScheme-9.5.2/c/stats.c /builds/richlowe/ChezScheme-9.5.2/c/stats.c
+--- ChezScheme-9.5.2/c/stats.c	2019-03-21 22:05:24.000000000 +0000
++++ /builds/richlowe/ChezScheme-9.5.2/c/stats.c	2019-08-06 00:12:59.343648209 +0000
+@@ -417,7 +417,11 @@
+     }
+   }
+ #else
++# if defined(SOLARIS)
++  tzoff = tmxp->tm_isdst ? -altzone : -timezone;
++# else
+   tzoff = tmxp->tm_gmtoff;
++# endif
+   if (given_tzoff == Sfalse) {
+ # if defined(__linux__) || defined(SOLARIS)
+     /* Linux and Solaris set `tzname`: */

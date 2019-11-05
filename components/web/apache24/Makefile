@@ -18,20 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
+#
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.33
+COMPONENT_VERSION=	2.4.41
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-   sha256:cd34636caf03c9a897ddfc928fc866c965f23d909b9612880563a7ad0d1a7e5b
+   sha256:3c0f9663240beb0f008acf3b4501c4f339d7467ee345a36c86c46b4d6f3a5461
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/apache
 
 CONFIGURE_DEFAULT_DIRS=no
 
@@ -42,27 +45,9 @@ include $(WS_MAKE_RULES)/ips.mk
 PATCH_LEVEL=0
 
 # Some patches need configure script re-creation.
-#COMPONENT_PREP_ACTION +=($(CP) mod_sed/* $(@D)/modules/filters);
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.c $(@D)/modules/aaa);
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.html $(@D)/docs/manual/mod);
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
-
-VARIANT_PREFORK =	$(BUILD_DIR)/prefork
-VARIANT_WORKER =	$(BUILD_DIR)/worker
-
-VARIANTS = $(VARIANT_WORKER) $(VARIANT_PREFORK)
-
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
-
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
-
-$(VARIANT_PREFORK)/$(MACH64)/.configured: BITS=64
-$(VARIANT_WORKER)/$(MACH64)/.configured:  BITS=64
-
-$(VARIANT_PREFORK)/%/.configured: CONFIGURE_OPTIONS += --with-mpm=prefork
-$(VARIANT_WORKER)/%/.configured:  CONFIGURE_OPTIONS += --with-mpm=worker
 
 CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
 
@@ -72,6 +57,7 @@ CONFIGURE_ENV += SHELLOPTS=
 CONFIGURE_PREFIX =	/usr/apache2/2.4
 
 CONFIGURE_OPTIONS +=	--enable-mods-shared=all
+CONFIGURE_OPTIONS +=	--enable-mpms-shared=all
 CONFIGURE_OPTIONS +=	--enable-so
 CONFIGURE_OPTIONS +=	--enable-suexec
 CONFIGURE_OPTIONS +=	--with-suexec-caller=webservd
@@ -94,29 +80,17 @@ CONFIGURE_OPTIONS +=	--enable-ldap
 CONFIGURE_OPTIONS +=	--enable-ssl
 CONFIGURE_OPTIONS +=	--enable-exception-hook
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
-CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
-CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-Apache2-$(MACH64)
-CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
-CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS +=	--enable-layout=Solaris-Apache2
+CONFIGURE_OPTIONS +=	CC="$(CC) -m$(BITS)"
 CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/bin/apu-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/bin/$(MACH64)/apu-1-config
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+build: $(BUILD_64)
 
-build: $(BUILD_32_and_64)
-
-AP_CONFIG_LAYOUT_H=include/ap_config_layout.h
-
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 	# Some files installed in proto area need to be fixed.
-	$(KSH93) Solaris/customization.sh $(PROTO_DIR) $(MACH64)
-	# Common header files for 32 and 64 bit variants are needed.
-	/usr/bin/diff -D __$(MACH64) \
-	  $(VARIANT_PREFORK)/$(MACH32)/$(AP_CONFIG_LAYOUT_H) \
-	  $(VARIANT_PREFORK)/$(MACH64)/$(AP_CONFIG_LAYOUT_H) \
-	  > $(PROTO_DIR)$(CONFIGURE_PREFIX)/$(AP_CONFIG_LAYOUT_H) ; \
-	 $(TOUCH) $(BUILD_DIR)
+	$(KSH93) Solaris/customization.sh $(PROTO_DIR)
+	$(TOUCH) $(BUILD_DIR)
 
 test: $(NO_TESTS)
 

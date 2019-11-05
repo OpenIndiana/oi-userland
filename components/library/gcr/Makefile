@@ -21,25 +21,26 @@
 
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcr
-COMPONENT_VERSION=	3.18.0
-COMPONENT_PROJECT_URL=	https://github.com/GNOME/gcr
+COMPONENT_VERSION=	3.28.1
+COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:d4d16da5af55148a694055835ccd07ad34daf0ad03bdad929bf7cad15637ce00
+	sha256:95204aa2111c301778ebfbe60975ce3ed698c958430ffcc2a785ac5e593d168b
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://github.com/GNOME/gcr
-COMPONENT_FMRI = library/gnome/gcr
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.28/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://github.com/GNOME/gcr
+COMPONENT_FMRI=		library/gnome/gcr
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -64,6 +65,9 @@ CONFIGURE_OPTIONS += --enable-vala
 # Fix 64-bit builds.
 CONFIGURE_OPTIONS.64 += ac_cv_path_LIBGCRYPT_CONFIG=$(USRBINDIR64)/libgcrypt-config
 
+LDFLAGS += -lsocket
+LIBS	+= -lsocket
+
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -80,22 +84,25 @@ COMPONENT_TEST_TRANSFORMS += \
 
 $(INSTALL_32):	$(INSTALL_64)
 
-build:	$(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
+# Build dependencies
 REQUIRED_PACKAGES += crypto/gnupg
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += library/security/libgpg-error
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/p11-kit
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt

@@ -8,12 +8,18 @@
    int errsv;
  
    if (g_lstat (local->filename, &file_stat) != 0)
-@@ -2004,123 +2005,26 @@
+@@ -1984,138 +1984,26 @@ g_local_file_trash (GFile         *file,
+       g_free (path);
+     }
  
-   is_homedir_trash = FALSE;
-   trashdir = NULL;
 -  if (file_stat.st_dev == home_stat.st_dev)
--    {
++  /* Always move to .Trash in the user's home directory
++  */
++  is_homedir_trash = TRUE;
++  errno = 0;
++  trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
++  if (g_mkdir_with_parents (trashdir, 0700) < 0)
+     {
 -      is_homedir_trash = TRUE;
 -      errno = 0;
 -      trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
@@ -21,7 +27,9 @@
 -	{
 -          char *display_name;
 -          errsv = errno;
--
++      char *display_name;
++      int errsv = errno;
+ 
 -          display_name = g_filename_display_name (trashdir);
 -          g_set_error (error, G_IO_ERROR,
 -                       g_io_error_from_errno (errsv),
@@ -37,6 +45,7 @@
 -    {
 -      uid_t uid;
 -      char uid_str[32];
+-      GUnixMountEntry *mount;
 -
 -      uid = geteuid ();
 -      g_snprintf (uid_str, sizeof (uid_str), "%lu", (unsigned long)uid);
@@ -46,10 +55,24 @@
 -	{
 -          g_set_io_error (error,
 -                          _("Unable to find toplevel directory to trash %s"),
--                          file, G_IO_ERROR_NOT_SUPPORTED);
+-                          file, ENOTSUP);
 -	  return FALSE;
 -	}
--      
+-
+-      mount = g_unix_mount_at (topdir, NULL);
+-      if (mount == NULL || g_unix_mount_is_system_internal (mount))
+-        {
+-          g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
+-                       _("Trashing on system internal mounts is not supported"));
+-
+-          g_clear_pointer (&mount, g_unix_mount_free);
+-          g_free (topdir);
+-
+-          return FALSE;
+-        }
+-
+-      g_clear_pointer (&mount, g_unix_mount_free);
+-
 -      /* Try looking for global trash dir $topdir/.Trash/$uid */
 -      globaldir = g_build_filename (topdir, ".Trash", NULL);
 -      if (g_lstat (globaldir, &global_stat) == 0 &&
@@ -128,16 +151,6 @@
 -                          file, G_IO_ERROR_NOT_SUPPORTED);
 -	  return FALSE;
 -	}
-+  /* Always move to .Trash in the user's home directory
-+  */
-+  is_homedir_trash = TRUE;
-+  errno = 0;
-+  trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
-+  if (g_mkdir_with_parents (trashdir, 0700) < 0)
-+    {
-+      char *display_name;
-+      int errsv = errno;
-+
 +      display_name = g_filename_display_name (trashdir);
 +      g_set_error (error, G_IO_ERROR,
 +                   g_io_error_from_errno (errsv),

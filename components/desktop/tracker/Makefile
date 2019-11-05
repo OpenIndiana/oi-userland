@@ -11,21 +11,23 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
+# Copyright 2019 Tim Mooney
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tracker
-COMPONENT_VERSION= 1.8.1
-COMPONENT_REVISION= 4
+COMPONENT_VERSION= 1.8.3
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Desktop search tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e3ed4cb384486ebc086adfad68b5d25f8b0424eb6eb1aca2252a508b757fbe51
+  sha256:9bbf8c8525b3a1496716a350bc50ba06af5e880a4386506ca3e45d6779065c42
 COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/$(COMPONENT_NAME)/1.8/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.tracker-project.org
+COMPONENT_PROJECT_URL = https://gitlab.gnome.org/GNOME/tracker
 COMPONENT_FMRI= library/desktop/search/tracker
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= GPLv2,LGPLv2.1
@@ -104,12 +106,15 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
+
+test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
+REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
@@ -120,6 +125,7 @@ REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/taglib
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

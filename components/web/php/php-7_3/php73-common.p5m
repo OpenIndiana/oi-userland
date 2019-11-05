@@ -1,0 +1,431 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 EveryCity Ltd. All rights reserved.
+#
+
+# prevents "64bit file in 32bit path" errors
+<transform file path=usr/php/7.3/extensions/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
+
+<transform file path=etc/php/7.3/.*\.ini -> \
+    default mode 0644>
+
+set name=pkg.fmri \
+    value=pkg:/web/php-73/php-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="PHP Server 7.3 (common files)"
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=http://www.php.net
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/php.ini path=etc/php/7.3/php.ini preserve=true
+
+# Extension configuration files
+file files/bcmath.ini path=etc/php/7.3/conf.d/bcmath.ini preserve=true
+file files/bz2.ini path=etc/php/7.3/conf.d/bz2.ini preserve=true
+file files/calendar.ini path=etc/php/7.3/conf.d/calendar.ini preserve=true
+file files/ctype.ini path=etc/php/7.3/conf.d/ctype.ini preserve=true
+file files/curl.ini path=etc/php/7.3/conf.d/curl.ini preserve=true
+file files/ftp.ini path=etc/php/7.3/conf.d/ftp.ini preserve=true
+file files/dom.ini path=etc/php/7.3/conf.d/dom.ini preserve=true
+file files/exif.ini path=etc/php/7.3/conf.d/exif.ini preserve=true
+file files/gd.ini path=etc/php/7.3/conf.d/gd.ini preserve=true
+file files/gettext.ini path=etc/php/7.3/conf.d/gettext.ini preserve=true
+file files/iconv.ini path=etc/php/7.3/conf.d/iconv.ini preserve=true
+file files/imap.ini path=etc/php/7.3/conf.d/imap.ini preserve=true
+file files/intl.ini path=etc/php/7.3/conf.d/intl.ini preserve=true
+file files/json.ini path=etc/php/7.3/conf.d/json.ini preserve=true
+file files/ldap.ini path=etc/php/7.3/conf.d/ldap.ini preserve=true
+file files/mbstring.ini path=etc/php/7.3/conf.d/mbstring.ini preserve=true
+file files/opcache.ini path=etc/php/7.3/conf.d/opcache.ini preserve=true
+file files/openssl.ini path=etc/php/7.3/conf.d/openssl.ini preserve=true
+file files/pdo.ini path=etc/php/7.3/conf.d/pdo.ini preserve=true
+file files/pdo_sqlite.ini path=etc/php/7.3/conf.d/pdo_sqlite.ini preserve=true
+file files/pspell.ini path=etc/php/7.3/conf.d/pspell.ini preserve=true
+file files/soap.ini path=etc/php/7.3/conf.d/soap.ini preserve=true
+file files/sockets.ini path=etc/php/7.3/conf.d/sockets.ini preserve=true
+file files/tidy.ini path=etc/php/7.3/conf.d/tidy.ini preserve=true
+file files/tokenizer.ini path=etc/php/7.3/conf.d/tokenizer.ini preserve=true
+file files/wddx.ini path=etc/php/7.3/conf.d/wddx.ini preserve=true
+file files/xmlreader.ini path=etc/php/7.3/conf.d/xmlreader.ini preserve=true
+file files/xmlrpc.ini path=etc/php/7.3/conf.d/xmlrpc.ini preserve=true
+file files/xmlwriter.ini path=etc/php/7.3/conf.d/xmlwriter.ini preserve=true
+file files/xsl.ini path=etc/php/7.3/conf.d/xsl.ini preserve=true
+file files/zip.ini path=etc/php/7.3/conf.d/zip.ini preserve=true
+file files/zlib.ini path=etc/php/7.3/conf.d/zlib.ini preserve=true
+
+link path=usr/bin/pecl target=../php/7.3/bin/pecl mediator=php \
+    mediator-version=7.3
+link path=usr/bin/phar target=../php/7.3/bin/phar.phar mediator=php \
+    mediator-version=7.3
+link path=usr/bin/phar.phar target=../php/7.3/bin/phar.phar mediator=php \
+    mediator-version=7.3
+link path=usr/bin/php-config target=../php/7.3/bin/php-config mediator=php \
+    mediator-version=7.3
+link path=usr/bin/phpize target=../php/7.3/bin/phpize mediator=php \
+    mediator-version=7.3
+
+link path=usr/php/bin target=./7.3/bin mediator=php mediator-version=7.3
+link path=usr/php/include target=./7.3/include mediator=php mediator-version=7.3
+link path=usr/php/lib target=./7.3/lib mediator=php mediator-version=7.3
+link path=usr/php/man target=./7.3/share/man mediator=php mediator-version=7.3
+link path=usr/share/man/man1/php-config.1 \
+    target=../../../php/7.3/share/man/man1/php-config.1 mediator=php \
+    mediator-version=7.3
+link path=usr/share/man/man1/phpize.1 \
+    target=../../../php/7.3/share/man/man1/phpize.1 mediator=php \
+    mediator-version=7.3
+
+# Extensions
+file path=usr/php/7.3/extensions/bcmath.so
+file path=usr/php/7.3/extensions/bz2.so
+file path=usr/php/7.3/extensions/calendar.so
+file path=usr/php/7.3/extensions/ctype.so
+file path=usr/php/7.3/extensions/curl.so
+file path=usr/php/7.3/extensions/dom.so
+file path=usr/php/7.3/extensions/exif.so
+file path=usr/php/7.3/extensions/ftp.so
+file path=usr/php/7.3/extensions/gd.so
+file path=usr/php/7.3/extensions/gettext.so
+file path=usr/php/7.3/extensions/iconv.so
+file path=usr/php/7.3/extensions/imap.so
+file path=usr/php/7.3/extensions/intl.so
+file path=usr/php/7.3/extensions/json.so
+file path=usr/php/7.3/extensions/ldap.so
+file path=usr/php/7.3/extensions/mbstring.so
+file path=usr/php/7.3/extensions/opcache.so
+file path=usr/php/7.3/extensions/openssl.so
+file path=usr/php/7.3/extensions/pdo.so
+file path=usr/php/7.3/extensions/pdo_sqlite.so
+file path=usr/php/7.3/extensions/pspell.so
+file path=usr/php/7.3/extensions/soap.so
+file path=usr/php/7.3/extensions/sockets.so
+file path=usr/php/7.3/extensions/tidy.so
+file path=usr/php/7.3/extensions/tokenizer.so
+file path=usr/php/7.3/extensions/wddx.so
+file path=usr/php/7.3/extensions/xmlreader.so
+file path=usr/php/7.3/extensions/xmlrpc.so
+file path=usr/php/7.3/extensions/xmlwriter.so
+file path=usr/php/7.3/extensions/xsl.so
+file path=usr/php/7.3/extensions/zip.so
+file path=usr/php/7.3/extensions/zlib.so
+
+file path=usr/php/7.3/bin/pecl
+link path=usr/php/7.3/bin/phar target=phar.phar
+file path=usr/php/7.3/bin/phar.phar
+file path=usr/php/7.3/bin/php-config
+file path=usr/php/7.3/bin/phpize
+file path=usr/php/7.3/include/php/TSRM/TSRM.h
+file path=usr/php/7.3/include/php/TSRM/readdir.h
+file path=usr/php/7.3/include/php/TSRM/tsrm_config.h
+file path=usr/php/7.3/include/php/TSRM/tsrm_config.w32.h
+file path=usr/php/7.3/include/php/TSRM/tsrm_config_common.h
+file path=usr/php/7.3/include/php/TSRM/tsrm_strtok_r.h
+file path=usr/php/7.3/include/php/TSRM/tsrm_win32.h
+file path=usr/php/7.3/include/php/Zend/zend.h
+file path=usr/php/7.3/include/php/Zend/zend_API.h
+file path=usr/php/7.3/include/php/Zend/zend_alloc.h
+file path=usr/php/7.3/include/php/Zend/zend_alloc_sizes.h
+file path=usr/php/7.3/include/php/Zend/zend_arena.h
+file path=usr/php/7.3/include/php/Zend/zend_ast.h
+file path=usr/php/7.3/include/php/Zend/zend_bitset.h
+file path=usr/php/7.3/include/php/Zend/zend_build.h
+file path=usr/php/7.3/include/php/Zend/zend_builtin_functions.h
+file path=usr/php/7.3/include/php/Zend/zend_closures.h
+file path=usr/php/7.3/include/php/Zend/zend_compile.h
+file path=usr/php/7.3/include/php/Zend/zend_config.h
+file path=usr/php/7.3/include/php/Zend/zend_config.nw.h
+file path=usr/php/7.3/include/php/Zend/zend_config.w32.h
+file path=usr/php/7.3/include/php/Zend/zend_constants.h
+file path=usr/php/7.3/include/php/Zend/zend_cpuinfo.h
+file path=usr/php/7.3/include/php/Zend/zend_dtrace.h
+file path=usr/php/7.3/include/php/Zend/zend_dtrace_gen.h
+file path=usr/php/7.3/include/php/Zend/zend_errors.h
+file path=usr/php/7.3/include/php/Zend/zend_exceptions.h
+file path=usr/php/7.3/include/php/Zend/zend_execute.h
+file path=usr/php/7.3/include/php/Zend/zend_extensions.h
+file path=usr/php/7.3/include/php/Zend/zend_float.h
+file path=usr/php/7.3/include/php/Zend/zend_gc.h
+file path=usr/php/7.3/include/php/Zend/zend_generators.h
+file path=usr/php/7.3/include/php/Zend/zend_globals.h
+file path=usr/php/7.3/include/php/Zend/zend_globals_macros.h
+file path=usr/php/7.3/include/php/Zend/zend_hash.h
+file path=usr/php/7.3/include/php/Zend/zend_highlight.h
+file path=usr/php/7.3/include/php/Zend/zend_inheritance.h
+file path=usr/php/7.3/include/php/Zend/zend_ini.h
+file path=usr/php/7.3/include/php/Zend/zend_ini_parser.h
+file path=usr/php/7.3/include/php/Zend/zend_ini_scanner.h
+file path=usr/php/7.3/include/php/Zend/zend_ini_scanner_defs.h
+file path=usr/php/7.3/include/php/Zend/zend_interfaces.h
+file path=usr/php/7.3/include/php/Zend/zend_istdiostream.h
+file path=usr/php/7.3/include/php/Zend/zend_iterators.h
+file path=usr/php/7.3/include/php/Zend/zend_language_parser.h
+file path=usr/php/7.3/include/php/Zend/zend_language_scanner.h
+file path=usr/php/7.3/include/php/Zend/zend_language_scanner_defs.h
+file path=usr/php/7.3/include/php/Zend/zend_list.h
+file path=usr/php/7.3/include/php/Zend/zend_llist.h
+file path=usr/php/7.3/include/php/Zend/zend_long.h
+file path=usr/php/7.3/include/php/Zend/zend_modules.h
+file path=usr/php/7.3/include/php/Zend/zend_multibyte.h
+file path=usr/php/7.3/include/php/Zend/zend_multiply.h
+file path=usr/php/7.3/include/php/Zend/zend_object_handlers.h
+file path=usr/php/7.3/include/php/Zend/zend_objects.h
+file path=usr/php/7.3/include/php/Zend/zend_objects_API.h
+file path=usr/php/7.3/include/php/Zend/zend_operators.h
+file path=usr/php/7.3/include/php/Zend/zend_portability.h
+file path=usr/php/7.3/include/php/Zend/zend_ptr_stack.h
+file path=usr/php/7.3/include/php/Zend/zend_range_check.h
+file path=usr/php/7.3/include/php/Zend/zend_signal.h
+file path=usr/php/7.3/include/php/Zend/zend_smart_str.h
+file path=usr/php/7.3/include/php/Zend/zend_smart_str_public.h
+file path=usr/php/7.3/include/php/Zend/zend_smart_string.h
+file path=usr/php/7.3/include/php/Zend/zend_smart_string_public.h
+file path=usr/php/7.3/include/php/Zend/zend_sort.h
+file path=usr/php/7.3/include/php/Zend/zend_stack.h
+file path=usr/php/7.3/include/php/Zend/zend_stream.h
+file path=usr/php/7.3/include/php/Zend/zend_string.h
+file path=usr/php/7.3/include/php/Zend/zend_strtod.h
+file path=usr/php/7.3/include/php/Zend/zend_strtod_int.h
+file path=usr/php/7.3/include/php/Zend/zend_ts_hash.h
+file path=usr/php/7.3/include/php/Zend/zend_type_info.h
+file path=usr/php/7.3/include/php/Zend/zend_types.h
+file path=usr/php/7.3/include/php/Zend/zend_variables.h
+file path=usr/php/7.3/include/php/Zend/zend_virtual_cwd.h
+file path=usr/php/7.3/include/php/Zend/zend_vm.h
+file path=usr/php/7.3/include/php/Zend/zend_vm_def.h
+file path=usr/php/7.3/include/php/Zend/zend_vm_execute.h
+file path=usr/php/7.3/include/php/Zend/zend_vm_handlers.h
+file path=usr/php/7.3/include/php/Zend/zend_vm_opcodes.h
+file path=usr/php/7.3/include/php/Zend/zend_vm_trace_handlers.h
+file path=usr/php/7.3/include/php/Zend/zend_vm_trace_map.h
+file path=usr/php/7.3/include/php/ext/date/lib/timelib.h
+file path=usr/php/7.3/include/php/ext/date/lib/timelib_config.h
+file path=usr/php/7.3/include/php/ext/date/php_date.h
+file path=usr/php/7.3/include/php/ext/dom/xml_common.h
+file path=usr/php/7.3/include/php/ext/filter/php_filter.h
+file path=usr/php/7.3/include/php/ext/gd/gd_compat.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/bmp.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gd.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gd_errors.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gd_intern.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gd_io.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gdcache.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gdfontg.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gdfontl.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gdfontmb.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gdfonts.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gdfontt.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/gdhelpers.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/jisx0208.h
+file path=usr/php/7.3/include/php/ext/gd/libgd/wbmp.h
+file path=usr/php/7.3/include/php/ext/gd/php_gd.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_adler32.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_crc32.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_fnv.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_gost.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_haval.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_joaat.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_md.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_ripemd.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_sha.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_sha3.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_snefru.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_tiger.h
+file path=usr/php/7.3/include/php/ext/hash/php_hash_whirlpool.h
+file path=usr/php/7.3/include/php/ext/iconv/php_have_bsd_iconv.h
+file path=usr/php/7.3/include/php/ext/iconv/php_have_glibc_iconv.h
+file path=usr/php/7.3/include/php/ext/iconv/php_have_ibm_iconv.h
+file path=usr/php/7.3/include/php/ext/iconv/php_have_iconv.h
+file path=usr/php/7.3/include/php/ext/iconv/php_have_libiconv.h
+file path=usr/php/7.3/include/php/ext/iconv/php_iconv.h
+file path=usr/php/7.3/include/php/ext/iconv/php_iconv_aliased_libiconv.h
+file path=usr/php/7.3/include/php/ext/iconv/php_iconv_broken_ignore.h
+file path=usr/php/7.3/include/php/ext/iconv/php_iconv_supports_errno.h
+file path=usr/php/7.3/include/php/ext/iconv/php_php_iconv_h_path.h
+file path=usr/php/7.3/include/php/ext/iconv/php_php_iconv_impl.h
+file path=usr/php/7.3/include/php/ext/json/php_json.h
+file path=usr/php/7.3/include/php/ext/json/php_json_parser.h
+file path=usr/php/7.3/include/php/ext/json/php_json_scanner.h
+file path=usr/php/7.3/include/php/ext/libxml/php_libxml.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/config.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/eaw_table.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfilter.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfilter_8bit.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfilter_pass.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfilter_wchar.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_allocators.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_consts.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_convert.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_defs.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_encoding.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_filter_output.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_ident.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_language.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_memory_device.h
+file path=usr/php/7.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_string.h
+file path=usr/php/7.3/include/php/ext/mbstring/mbstring.h
+file path=usr/php/7.3/include/php/ext/mbstring/oniguruma/oniguruma.h
+file path=usr/php/7.3/include/php/ext/mbstring/php_mbregex.h
+file path=usr/php/7.3/include/php/ext/mbstring/php_onig_compat.h
+file path=usr/php/7.3/include/php/ext/pcre/pcre2lib/config.h
+file path=usr/php/7.3/include/php/ext/pcre/pcre2lib/pcre2.h
+file path=usr/php/7.3/include/php/ext/pcre/pcre2lib/pcre2_internal.h
+file path=usr/php/7.3/include/php/ext/pcre/pcre2lib/pcre2_intmodedep.h
+file path=usr/php/7.3/include/php/ext/pcre/pcre2lib/pcre2_ucp.h
+file path=usr/php/7.3/include/php/ext/pcre/php_pcre.h
+file path=usr/php/7.3/include/php/ext/pdo/php_pdo.h
+file path=usr/php/7.3/include/php/ext/pdo/php_pdo_driver.h
+file path=usr/php/7.3/include/php/ext/pdo/php_pdo_error.h
+file path=usr/php/7.3/include/php/ext/phar/php_phar.h
+file path=usr/php/7.3/include/php/ext/session/mod_files.h
+file path=usr/php/7.3/include/php/ext/session/mod_user.h
+file path=usr/php/7.3/include/php/ext/session/php_session.h
+file path=usr/php/7.3/include/php/ext/simplexml/php_simplexml.h
+file path=usr/php/7.3/include/php/ext/simplexml/php_simplexml_exports.h
+file path=usr/php/7.3/include/php/ext/sockets/php_sockets.h
+file path=usr/php/7.3/include/php/ext/spl/php_spl.h
+file path=usr/php/7.3/include/php/ext/spl/spl_array.h
+file path=usr/php/7.3/include/php/ext/spl/spl_directory.h
+file path=usr/php/7.3/include/php/ext/spl/spl_dllist.h
+file path=usr/php/7.3/include/php/ext/spl/spl_engine.h
+file path=usr/php/7.3/include/php/ext/spl/spl_exceptions.h
+file path=usr/php/7.3/include/php/ext/spl/spl_fixedarray.h
+file path=usr/php/7.3/include/php/ext/spl/spl_functions.h
+file path=usr/php/7.3/include/php/ext/spl/spl_heap.h
+file path=usr/php/7.3/include/php/ext/spl/spl_iterators.h
+file path=usr/php/7.3/include/php/ext/spl/spl_observer.h
+file path=usr/php/7.3/include/php/ext/sqlite3/libsqlite/sqlite3.h
+file path=usr/php/7.3/include/php/ext/standard/base64.h
+file path=usr/php/7.3/include/php/ext/standard/basic_functions.h
+file path=usr/php/7.3/include/php/ext/standard/crc32.h
+file path=usr/php/7.3/include/php/ext/standard/credits.h
+file path=usr/php/7.3/include/php/ext/standard/credits_ext.h
+file path=usr/php/7.3/include/php/ext/standard/credits_sapi.h
+file path=usr/php/7.3/include/php/ext/standard/crypt_blowfish.h
+file path=usr/php/7.3/include/php/ext/standard/crypt_freesec.h
+file path=usr/php/7.3/include/php/ext/standard/css.h
+file path=usr/php/7.3/include/php/ext/standard/cyr_convert.h
+file path=usr/php/7.3/include/php/ext/standard/datetime.h
+file path=usr/php/7.3/include/php/ext/standard/dl.h
+file path=usr/php/7.3/include/php/ext/standard/exec.h
+file path=usr/php/7.3/include/php/ext/standard/file.h
+file path=usr/php/7.3/include/php/ext/standard/flock_compat.h
+file path=usr/php/7.3/include/php/ext/standard/fsock.h
+file path=usr/php/7.3/include/php/ext/standard/head.h
+file path=usr/php/7.3/include/php/ext/standard/hrtime.h
+file path=usr/php/7.3/include/php/ext/standard/html.h
+file path=usr/php/7.3/include/php/ext/standard/html_tables.h
+file path=usr/php/7.3/include/php/ext/standard/info.h
+file path=usr/php/7.3/include/php/ext/standard/md5.h
+file path=usr/php/7.3/include/php/ext/standard/microtime.h
+file path=usr/php/7.3/include/php/ext/standard/pack.h
+file path=usr/php/7.3/include/php/ext/standard/pageinfo.h
+file path=usr/php/7.3/include/php/ext/standard/php_array.h
+file path=usr/php/7.3/include/php/ext/standard/php_assert.h
+file path=usr/php/7.3/include/php/ext/standard/php_browscap.h
+file path=usr/php/7.3/include/php/ext/standard/php_crypt.h
+file path=usr/php/7.3/include/php/ext/standard/php_crypt_r.h
+file path=usr/php/7.3/include/php/ext/standard/php_dir.h
+file path=usr/php/7.3/include/php/ext/standard/php_dns.h
+file path=usr/php/7.3/include/php/ext/standard/php_ext_syslog.h
+file path=usr/php/7.3/include/php/ext/standard/php_filestat.h
+file path=usr/php/7.3/include/php/ext/standard/php_fopen_wrappers.h
+file path=usr/php/7.3/include/php/ext/standard/php_ftok.h
+file path=usr/php/7.3/include/php/ext/standard/php_http.h
+file path=usr/php/7.3/include/php/ext/standard/php_image.h
+file path=usr/php/7.3/include/php/ext/standard/php_incomplete_class.h
+file path=usr/php/7.3/include/php/ext/standard/php_iptc.h
+file path=usr/php/7.3/include/php/ext/standard/php_lcg.h
+file path=usr/php/7.3/include/php/ext/standard/php_link.h
+file path=usr/php/7.3/include/php/ext/standard/php_mail.h
+file path=usr/php/7.3/include/php/ext/standard/php_math.h
+file path=usr/php/7.3/include/php/ext/standard/php_metaphone.h
+file path=usr/php/7.3/include/php/ext/standard/php_mt_rand.h
+file path=usr/php/7.3/include/php/ext/standard/php_net.h
+file path=usr/php/7.3/include/php/ext/standard/php_password.h
+file path=usr/php/7.3/include/php/ext/standard/php_rand.h
+file path=usr/php/7.3/include/php/ext/standard/php_random.h
+file path=usr/php/7.3/include/php/ext/standard/php_smart_string.h
+file path=usr/php/7.3/include/php/ext/standard/php_smart_string_public.h
+file path=usr/php/7.3/include/php/ext/standard/php_standard.h
+file path=usr/php/7.3/include/php/ext/standard/php_string.h
+file path=usr/php/7.3/include/php/ext/standard/php_type.h
+file path=usr/php/7.3/include/php/ext/standard/php_uuencode.h
+file path=usr/php/7.3/include/php/ext/standard/php_var.h
+file path=usr/php/7.3/include/php/ext/standard/php_versioning.h
+file path=usr/php/7.3/include/php/ext/standard/proc_open.h
+file path=usr/php/7.3/include/php/ext/standard/quot_print.h
+file path=usr/php/7.3/include/php/ext/standard/scanf.h
+file path=usr/php/7.3/include/php/ext/standard/sha1.h
+file path=usr/php/7.3/include/php/ext/standard/streamsfuncs.h
+file path=usr/php/7.3/include/php/ext/standard/uniqid.h
+file path=usr/php/7.3/include/php/ext/standard/url.h
+file path=usr/php/7.3/include/php/ext/standard/url_scanner_ex.h
+file path=usr/php/7.3/include/php/ext/standard/winver.h
+file path=usr/php/7.3/include/php/ext/xml/expat_compat.h
+file path=usr/php/7.3/include/php/ext/xml/php_xml.h
+file path=usr/php/7.3/include/php/main/SAPI.h
+file path=usr/php/7.3/include/php/main/build-defs.h
+file path=usr/php/7.3/include/php/main/fastcgi.h
+file path=usr/php/7.3/include/php/main/fopen_wrappers.h
+file path=usr/php/7.3/include/php/main/http_status_codes.h
+file path=usr/php/7.3/include/php/main/php.h
+file path=usr/php/7.3/include/php/main/php_compat.h
+file path=usr/php/7.3/include/php/main/php_config.h
+file path=usr/php/7.3/include/php/main/php_content_types.h
+file path=usr/php/7.3/include/php/main/php_getopt.h
+file path=usr/php/7.3/include/php/main/php_globals.h
+file path=usr/php/7.3/include/php/main/php_ini.h
+file path=usr/php/7.3/include/php/main/php_main.h
+file path=usr/php/7.3/include/php/main/php_memory_streams.h
+file path=usr/php/7.3/include/php/main/php_network.h
+file path=usr/php/7.3/include/php/main/php_open_temporary_file.h
+file path=usr/php/7.3/include/php/main/php_output.h
+file path=usr/php/7.3/include/php/main/php_reentrancy.h
+file path=usr/php/7.3/include/php/main/php_scandir.h
+file path=usr/php/7.3/include/php/main/php_stdint.h
+file path=usr/php/7.3/include/php/main/php_streams.h
+file path=usr/php/7.3/include/php/main/php_syslog.h
+file path=usr/php/7.3/include/php/main/php_ticks.h
+file path=usr/php/7.3/include/php/main/php_variables.h
+file path=usr/php/7.3/include/php/main/php_version.h
+file path=usr/php/7.3/include/php/main/rfc1867.h
+file path=usr/php/7.3/include/php/main/snprintf.h
+file path=usr/php/7.3/include/php/main/spprintf.h
+file path=usr/php/7.3/include/php/main/streams/php_stream_context.h
+file path=usr/php/7.3/include/php/main/streams/php_stream_filter_api.h
+file path=usr/php/7.3/include/php/main/streams/php_stream_glob_wrapper.h
+file path=usr/php/7.3/include/php/main/streams/php_stream_mmap.h
+file path=usr/php/7.3/include/php/main/streams/php_stream_plain_wrapper.h
+file path=usr/php/7.3/include/php/main/streams/php_stream_transport.h
+file path=usr/php/7.3/include/php/main/streams/php_stream_userspace.h
+file path=usr/php/7.3/include/php/main/streams/php_streams_int.h
+file path=usr/php/7.3/lib/$(MACH64)/build/Makefile.global
+file path=usr/php/7.3/lib/$(MACH64)/build/acinclude.m4
+file path=usr/php/7.3/lib/$(MACH64)/build/ax_check_compile_flag.m4
+file path=usr/php/7.3/lib/$(MACH64)/build/ax_gcc_func_attribute.m4
+file path=usr/php/7.3/lib/$(MACH64)/build/config.guess
+file path=usr/php/7.3/lib/$(MACH64)/build/config.sub
+file path=usr/php/7.3/lib/$(MACH64)/build/libtool.m4
+file path=usr/php/7.3/lib/$(MACH64)/build/ltmain.sh
+file path=usr/php/7.3/lib/$(MACH64)/build/mkdep.awk
+file path=usr/php/7.3/lib/$(MACH64)/build/phpize.m4
+file path=usr/php/7.3/lib/$(MACH64)/build/run-tests.php
+file path=usr/php/7.3/lib/$(MACH64)/build/scan_makefile_in.awk
+file path=usr/php/7.3/lib/$(MACH64)/build/shtool
+file path=usr/php/7.3/share/man/man1/phar.1
+file path=usr/php/7.3/share/man/man1/phar.phar.1
+file path=usr/php/7.3/share/man/man1/php-config.1
+file path=usr/php/7.3/share/man/man1/phpize.1

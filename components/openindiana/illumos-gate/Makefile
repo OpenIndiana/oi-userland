@@ -71,27 +71,41 @@ PATCHES =       $(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(
 $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
-        $(GIT) checkout -f && \
-              $(GIT) clean -f
+	$(GIT) checkout -f && \
+	$(GIT) clean -f
 	for p in $(PATCHES); do \
-          $(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $$p; \
-        done
+	  echo "\nPatch: $$p:"; \
+	  $(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $$p; \
+	done
 	@cd $(SOURCE_DIR); $(GIT) log -1 --format=%H > .downloaded
 	$(TOUCH) $@
 
 prep::	$(SOURCE_DIR)/.patched
 
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
+	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
+	  if [ -f tools/nightly ] ; then  \
+		cp tools/nightly $(BUILD_DIR)/$(MACH)/nightly ; \
+	  else  \
+		cp usr/src/tools/scripts/nightly.sh $(BUILD_DIR)/$(MACH)/nightly ; \
+	  fi && \
+	  chmod u+wx $(BUILD_DIR)/$(MACH)/nightly && \
+	  NIGHTLY="$(BUILD_DIR)/$(MACH)/nightly" && \
 	  cat usr/src/tools/env/illumos.sh | \
 	  (sed \
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
 	    -e 's|^export VERSION=.*|export VERSION=\"$$(git log -1 --format=illumos-%h)\"|' \
 	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|' \
+	    -e 's|^export ENABLE_SMATCH=.*||' \
 	    -e 's|^export ON_CLOSED_BINS=.*|export ON_CLOSED_BINS=\"/opt/onbld/closed\"|' \
-	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|'; \
+	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|' \
+	    -e 's|^export SHADOW_CCS=.*||' \
+	    -e 's|^export SHADOW_CCCS=.*||' ; \
 	  echo export PERL_VERSION=\"5.22\"; \
 	  echo export PERL_PKGVERS=\"-522\"; \
+	  echo export BUILDPERL64=\"#\"; \
+	  echo export BUILDPY2TOOLS=\"#\"; \
 	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
@@ -99,8 +113,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
 	  illumos.sh && \
-	  time $(ENV) -i /opt/onbld/bin/nightly illumos.sh
-	@[ -d $(BUILD_DIR)/$(MACH) ] || $(MKDIR) $(BUILD_DIR)/$(MACH)
+	  time $(ENV) -i $${NIGHTLY} illumos.sh
 	$(TOUCH) $@
 
 build install: $(BUILD_DIR)/$(MACH)/.built
@@ -152,9 +165,6 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform set name=pkg.fmri -> emit set name=illumos-gate.info.git-rev value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD)>" >> \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
 
-	# OI hipster is using updated bnx driver published directly from oi-userland
-	echo "<transform depend fmri=pkg:/driver/network/bnx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-
 	# Drop man pages for sun-solaris perl module to avoid conflicts between different versions
 	echo "<transform file path=usr/share/man/man3perl/.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
@@ -167,7 +177,6 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend fmri=pkg:/benchmark/filebench@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/graphics/drm@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/arbel@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-	echo "<transform depend fmri=pkg:/driver/network/bnx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/ibd@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/llc2@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/qlc/qlc-mdb@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
@@ -558,6 +567,12 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> emit depend type=require fmri=pkg:/driver/graphics/agpgart>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend type=require fmri=pkg:/driver/graphics/agpgart@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	# Fix pkgdepend issue with GCC 7 runtime (https://www.illumos.org/issues/11255)
+	echo "<transform depend type=require-any fmri=pkg:/system/library/gcc-\d+-runtime@.* -> emit depend type=require fmri=pkg:/system/library/gcc-7-runtime>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require-any fmri=pkg:/system/library/gcc-\d+-runtime@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require-any fmri=pkg:/system/library/g\+\+-\d+-runtime@.* -> emit depend type=require fmri=pkg:/system/library/g++-7-runtime> " >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require-any fmri=pkg:/system/library/g\+\+-\d+-runtime@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	# Loader branding
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/loader.conf group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/brand-hipster.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
@@ -574,7 +589,6 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 	$(RM) -r $(@D)/pkgrecv.dir
 	$(MKDIR) $(@D)/pkgrecv.dir
-
 
 ifeq ($(DEBUG),yes)
 	$(RM) -r $(@D)/pkgrepo-merged.dir
@@ -613,4 +627,7 @@ clean::
 clobber::       clean
 	$(RM) -r $(CLOBBER_PATHS)
 
-REQUIRED_PACKAGES+= developer/illumos-closed
+REQUIRED_PACKAGES += developer/gcc-7
+REQUIRED_PACKAGES += developer/illumos-closed
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35

@@ -11,6 +11,7 @@
 #
 # Copyright 2014 EveryCity Ltd. All rights reserved.
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Tim Mooney
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		qt
 COMPONENT_FMRI=		library/qt4
 COMPONENT_VERSION=	4.8.7
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	7
 COMPONENT_VERSION_MJR=	4.8
 COMPONENT_LICENSE=	QT4
 COMPONENT_LICENSE_FILE=	qt4.license
@@ -82,7 +83,7 @@ CONFIGURE_OPTIONS+=	-system-libmng
 CONFIGURE_OPTIONS+=	-I/usr/include/libmng
 
 COMPONENT_POST_INSTALL_ACTION.32= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/mkspecs ; \
-	mv qconfig.pri qconfig.pri.32 ; \
+	mv -f qconfig.pri qconfig.pri.32 ; \
 	cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR); \
 	mv tests tests.32 ; \
 	find $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/tests.32 -type f | \
@@ -90,7 +91,7 @@ COMPONENT_POST_INSTALL_ACTION.32= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSI
 	
 
 COMPONENT_POST_INSTALL_ACTION.64= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/mkspecs ; \
-	mv qconfig.pri qconfig.pri.64 ; ln -s qconfig.pri.32 qconfig.pri ; \
+	mv -f qconfig.pri qconfig.pri.64 ; \
 	cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR); \
 	mv tests tests.64; \
 	mv tests.32 tests; \
@@ -125,7 +126,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice

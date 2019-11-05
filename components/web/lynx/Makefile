@@ -18,22 +18,30 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
+#
+
+PREFERRED_BITS=		64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lynx
-COMPONENT_VERSION=	2.8.8rel.2
-IPS_COMPONENT_VERSION=	2.8.8
-COMPONENT_PROJECT_URL=	http://lynx.isc.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)2-8-8
+COMPONENT_VERSION=	2.8.9rel.1
+IPS_COMPONENT_VERSION=	2.8.9
+COMPONENT_FMRI=		web/browser/lynx
+COMPONENT_SUMMARY=	Text-mode web browser
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_PROJECT_URL=	https://lynx.invisible-island.net/
+COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6980e75cf0d677fd52c116e2e0dfd3884e360970c88c8356a114338500d5bee7
+	sha256:387f193d7792f9cfada14c60b0e5c0bff18f227d9257a39483e14fa1aaf79595
 COMPONENT_ARCHIVE_URL=	http://invisible-mirror.net/archives/$(COMPONENT_NAME)/tarballs/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/lynx
-
-TPNO=			21553
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -58,20 +66,20 @@ CONFIGURE_OPTIONS +=	--with-screen=ncurses
 # http://www.w3.org/2005/MWI/Tests/
 COMPONENT_TEST_CMD = $(@D)/src/lynx
 COMPONENT_TEST_ARGS = -dump \
-	http://www.cameronmoll.com/mobile/mkp/pg1.html \
-	http://www.cameronmoll.com/mobile/mkp/pg2.html \
-	http://www.cameronmoll.com/mobile/mkp/pg3.html \
-	http://www.cameronmoll.com/mobile/mkp/pg4.html
+	http://web.archive.org/web/20160629092744/http://cameronmoll.com/mobile/mkp/pg1.html \
+	http://web.archive.org/web/20160629092744/http://cameronmoll.com/mobile/mkp/pg2.html \
+	http://web.archive.org/web/20160629092744/http://cameronmoll.com/mobile/mkp/pg3.html \
+	http://web.archive.org/web/20160629092744/http://cameronmoll.com/mobile/mkp/pg4.html
 COMPONENT_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # lynx should be installed before running tests
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libidn

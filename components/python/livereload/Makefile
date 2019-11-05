@@ -24,13 +24,13 @@ include ../../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME= livereload
-COMPONENT_VERSION= 2.4.1
+COMPONENT_VERSION= 2.6.1
 COMPONENT_FMRI= library/python/livereload
 COMPONENT_PROJECT_URL= https://github.com/lepture/python-livereload
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:887cc9976d72d7616fa57c82c4ef5bf5da27e2350dfd6f65d3f44e86efc51b92
+    sha256:89254f78d7529d7ea0a3417d224c34287ebfe266b05e67e51facaf82c27f0f66
 COMPONENT_ARCHIVE_URL= $(call pypi_url)
 
 PYTHON_VERSIONS=	2.7

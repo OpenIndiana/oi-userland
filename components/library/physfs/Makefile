@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	physfs
 COMPONENT_VERSION=	2.0.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	library/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	PhysicsFS is a library to provide abstract access to various archives and limit write-access scope
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)

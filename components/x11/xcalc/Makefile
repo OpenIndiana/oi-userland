@@ -10,39 +10,24 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2019 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xcalc
-COMPONENT_VERSION=        1.0.6
-COMPONENT_FMRI=           x11/xcalc
-COMPONENT_CLASSIFICATION= Applications/Accessories
+COMPONENT_NAME=     xcalc
+COMPONENT_VERSION=  1.1.0
+COMPONENT_FMRI=     x11/xcalc
 COMPONENT_SUMMARY=  xcalc - scientific calculator for X
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_CLASSIFICATION= Applications/Accessories
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2f73c7160c09dc32586ea07daa408ac897c0a16eaa98cad9f9e4ee98cd9057d8
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xcalc-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xcalc.license
+  sha256:d5d746954465afc3da1f355d721882806568fb04b4d059c027702c0d16a3b5eb
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

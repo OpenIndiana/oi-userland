@@ -1,0 +1,117 @@
+Oracle patch to handle invalid UTF-8 sequences
+Sent upstream via e-mail 
+diff --git a/lib/utf32.c b/lib/utf32.c
+--- a/lib/utf32.c
++++ b/lib/utf32.c
+@@ -342,6 +342,10 @@
+ 	unsigned long *utf32p = utf32;
+ 	unsigned long v, min;
+ 	unsigned char c;
++#ifdef  SUN_CHANGE
++	unsigned char first_byte;
++#endif  /* SUN_CHANGE */
++
+ 	int width;
+ 	int i;
+ 
+@@ -384,6 +388,24 @@
+ 			goto ret;
+ 		}
+ 
++#ifdef  SUN_CHANGE
++		first_byte = c;
++		for (i = width - 1; i > 0; i--) {
++			c = *utf8p++;
++			if ((first_byte == 0xe0 && c < 0xa0) ||
++			    (first_byte == 0xed && c > 0x9f) ||
++			    (first_byte == 0xf0 && c < 0x90) ||
++			    (first_byte == 0xf4 && c > 0x8f) ||
++			    c < 0x80 || 0xc0 <= c) {
++				WARNING(("idn__utf32_fromutf8: "
++					 "invalid character\n"));
++				r = idn_invalid_encoding;
++				goto ret;
++			}
++			v = (v << 6) | (c & 0x3f);
++			first_byte = 0;
++		}
++#else
+ 		for (i = width - 1; i > 0; i--) {
+ 			c = *utf8p++;
+ 			if (c < 0x80 || 0xc0 <= c) {
+@@ -394,6 +416,7 @@
+ 			}
+ 			v = (v << 6) | (c & 0x3f);
+ 		}
++#endif  /* SUN_CHANGE */
+ 
+ 	        if (v < min || v > UTF32_MAX) {
+ 			WARNING(("idn__utf32_fromutf8: invalid character\n"));
+diff --git a/lib/utf8.c b/lib/utf8.c
+--- a/lib/utf8.c
++++ b/lib/utf8.c
+@@ -205,6 +205,16 @@
+ 
+ #define VALID_CONT_BYTE(c)	(0x80 <= (c) && (c) < 0xc0)
+ 
++#ifdef        SUN_CHANGE
++#define       INVALID_CONT_BYTE(first_byte, next_byte) \
++      (((first_byte) == 0xe0 && (next_byte) < 0xa0) || \
++       ((first_byte) == 0xed && (next_byte) > 0x9f) || \
++       ((first_byte) == 0xf0 && (next_byte) < 0x90) || \
++       ((first_byte) == 0xf4 && (next_byte) > 0x8f) || \
++       (next_byte) < 0x80 || \
++       (next_byte) > 0xbf)
++#endif        /* SUN_CHANGE */
++
+ /*
+  * Determine number of bytes in next multibyte UTF-8 character.
+  */
+@@ -226,7 +236,11 @@
+ 	unsigned long v;
+ 	unsigned long min;
+ 	const unsigned char *p = (const unsigned char *)s;
+-	int c;
++#ifdef  SUN_CHANGE
++	unsigned long c;
++#else
++        int c;
++#endif  /* SUN_CHANGE */
+ 	int width;
+ 	int rest;
+ 
+@@ -269,10 +283,17 @@
+ 
+ 	rest = width - 1;
+ 	while (rest-- > 0) {
++#ifdef  SUN_CHANGE
++		if (INVALID_CONT_BYTE(c, (*p)))
++#else
+ 		if (!VALID_CONT_BYTE(*p))
++#endif  /* SUN_CHANGE */
+ 			return (0);
+ 		v = (v << 6) | (*p & 0x3f);
+ 		p++;
++#ifdef  SUN_CHANGE
++                c = 0;
++#endif  /* SUN_CHANGE */
+ 	}
+ 
+ 	if (v < min)
+@@ -382,8 +403,15 @@
+ 		    break;
+ 		p--;
+ 	}
++
++#ifdef  SUN_CHANGE
++	if (p < t || UTF8_WIDTH(*p) == 0 ||
++	    (UTF8_WIDTH(*p) >= 2 && (const unsigned char *)s > p &&
++	     INVALID_CONT_BYTE((*p), (*(p + 1)))))
++#else
+ 	if (p < t || UTF8_WIDTH(*p) == 0)
+-		return (NULL);
++#endif  /* SUN_CHANGE */
++                return (NULL);
+ 
+ 	return ((char *)p);
+ }

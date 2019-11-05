@@ -13,34 +13,19 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xbiff
-COMPONENT_VERSION=        1.0.3
-COMPONENT_FMRI=           x11/xbiff
-COMPONENT_CLASSIFICATION= Applications/Accessories
-COMPONENT_SUMMARY=  xbiff − mailbox flag for X
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         xbiff
+COMPONENT_VERSION=      1.0.4
+COMPONENT_FMRI=         x11/xbiff
+COMPONENT_SUMMARY=      xbiff − mailbox flag for X
+COMPONENT_CLASSIFICATION=Applications/Accessories
 COMPONENT_ARCHIVE_HASH= \
-  sha256:aa1db4f31f7afcfe131bda7ff6e380ff7de41cf1a7009464783043c817c47ce8
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xbiff-1.0.3.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xbiff.license
+  sha256:e1e1a39628a5678585008ef7fb1ff2864edaaa0e062989c2331f8c74e0fec971
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/data/xbitmaps

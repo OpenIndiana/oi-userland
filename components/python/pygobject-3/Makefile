@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygobject
 COMPONENT_VERSION=	3.18.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GObject
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,22 +25,24 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:2a3cad1517916b74e131e6002c3824361aee0671ffb0d55ded119477fc1c2c5f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.18/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSIONS = 2.7 3.4
+PYTHON_VERSIONS = 2.7 3.4 3.5
 
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 VARIANT_PYTHON34 = $(BUILD_DIR)/python-34
+VARIANT_PYTHON35 = $(BUILD_DIR)/python-35
 
-VARIANTS = $(VARIANT_PYTHON27) $(VARIANT_PYTHON34)
+VARIANTS_32 = $(VARIANT_PYTHON27) $(VARIANT_PYTHON34)
+VARIANTS_64 = $(VARIANT_PYTHON27) $(VARIANT_PYTHON34) $(VARIANT_PYTHON35)
 
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+BUILD_32 = $(VARIANTS_32:%=%/$(MACH32)/.built)
+BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
 
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+INSTALL_32 = $(VARIANTS_32:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS_64:%=%/$(MACH64)/.installed)
 
 # Avoid overwriting python2.7 files in /usr/share
 $(VARIANT_PYTHON27)/$(MACH32)/.installed:      $(VARIANT_PYTHON34)/$(MACH32)/.installed
-$(VARIANT_PYTHON27)/$(MACH64)/.installed:      $(VARIANT_PYTHON34)/$(MACH64)/.installed
+$(VARIANT_PYTHON27)/$(MACH64)/.installed:      $(VARIANT_PYTHON34)/$(MACH64)/.installed $(VARIANT_PYTHON35)/$(MACH64)/.installed
 
 
 $(VARIANT_PYTHON27)/$(MACH32)/.installed:      PYTHON_VERSION=2.7
@@ -48,6 +50,8 @@ $(VARIANT_PYTHON27)/$(MACH64)/.installed:      PYTHON_VERSION=2.7
 
 $(VARIANT_PYTHON34)/$(MACH32)/.installed:      PYTHON_VERSION=3.4
 $(VARIANT_PYTHON34)/$(MACH64)/.installed:      PYTHON_VERSION=3.4
+
+$(VARIANT_PYTHON35)/$(MACH64)/.installed:      PYTHON_VERSION=3.5
 
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
@@ -69,6 +73,11 @@ $(VARIANT_PYTHON34)/$(MACH32)/.configured: BITS=32
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.4.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON34)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.3.4.VENDOR_PACKAGES.32)
+
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: BITS=64
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: PYTHON=$(PYTHON.3.5.64)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.5.VENDOR_PACKAGES)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.3.5.VENDOR_PACKAGES)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -106,4 +115,5 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

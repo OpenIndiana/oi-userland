@@ -13,38 +13,23 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           luit
 COMPONENT_VERSION=        1.1.1
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           terminal/luit
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SUMMARY=  luit - Locale and ISO 2022 support for Unicode terminals
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:30b0e787cb07a0f504b70f1d6123930522111ce9d4276f6683a69b322b49c636
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/luit-1.1.1.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= luit.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_CONFIG_PATH+=:$(USRSHAREDIR)/pkgconfig
-LD_OPTIONS+= -L$(USRLIBDIR)/xorg/$(ARCHLIBSUBDIR) -R$(USRLIBDIR)/xorg/$(ARCHLIBSUBDIR)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+LD_OPTIONS+= -L$(XORG_LIBDIR.$(BITS)) -R$(XORG_LIBDIR.$(BITS))
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libfontenc

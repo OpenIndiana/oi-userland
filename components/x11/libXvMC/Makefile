@@ -13,43 +13,23 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXvMC
-COMPONENT_VERSION=        1.0.10
-COMPONENT_FMRI=           x11/library/libxvmc
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXvMC - X Video Motion Compensation library 
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXvMC
+COMPONENT_VERSION= 1.0.12
+COMPONENT_FMRI=    x11/library/libxvmc
+COMPONENT_SUMMARY= libXvMC - X Video Motion Compensation library 
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e501a079b5dfaef0897c56152770c77e05e362065cec58910289aa567277ee2e
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXvMC.license
+  sha256:6b3da7977b3f7eaf4f0ac6470ab1e562298d82c4e79077765787963ab7966dcd
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xextproto
-REQUIRED_PACKAGES += x11/header/videoproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

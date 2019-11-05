@@ -1,0 +1,13 @@
+https://github.com/ansible/ansible/issues/15642
+
+--- ansible-2.7.5/lib/ansible/playbook/play_context.py	2018-12-14 00:14:40.000000000 +0000
++++ ansible-2.7.5/lib/ansible/playbook/play_context.py	2018-12-14 10:19:21.980729611 +0000
+@@ -518,7 +518,7 @@
+             elif self.become_method == 'pfexec':
+ 
+                 # No user as it uses it's own exec_attr to figure it out
+-                becomecmd = '%s %s "%s"' % (exe, flags, success_cmd)
++                becomecmd = '%s %s /usr/bin/sh -c %s' % (exe, flags, success_cmd)
+ 
+             elif self.become_method == 'runas':
+                 # become is handled inside the WinRM connection plugin

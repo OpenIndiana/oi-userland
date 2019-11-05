@@ -25,11 +25,10 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libusb
-COMPONENT_VERSION=	1.0.20
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.0.22
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:cb057190ba0a961768224e4dc6883104c6f945b2bf2ef90d7da39e7c1834f7ff
+COMPONENT_ARCHIVE_HASH= sha256:75aeb9d59a4fdb800d329a545c2e6799f732362193b465ea198f2aa275518157
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/libusb/files/libusb-1.0/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://libusb.info/
 COMPONENT_BUGDB=	library/libusb
@@ -39,6 +38,11 @@ TPNO=			26906
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# Find issues with undefined symbols in build time
+LD_OPTIONS += $(LD_Z_DEFS)
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS  +=	--enable-static=no
 CONFIGURE_OPTIONS  +=   --enable-log
@@ -65,3 +69,4 @@ test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-usb
+REQUIRED_PACKAGES += system/header/header-ugen

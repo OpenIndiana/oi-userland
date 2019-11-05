@@ -11,24 +11,25 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= nghttp2
-COMPONENT_VERSION= 1.27.0
-COMPONENT_SUMMARY= HTTP/2 C Library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=		nghttp2
+COMPONENT_VERSION=	1.37.0
+COMPONENT_SUMMARY=	HTTP/2 C Library
+COMPONENT_FMRI=		library/nghttp2
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d3c9542e26c3819c50963e02d285973b38ec1dd2816133c852a224f0bd911952
+	sha256:aa090b164b17f4b91fe32310a1c0edf3e97e02cd9d1524eef42d60dd1e8d47b7
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/tatsuhiro-t/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://nghttp2.org/
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_LICENSE = MIT
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = library/nghttp2
+	https://github.com/nghttp2/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://nghttp2.org/
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	MIT
+COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -49,11 +50,11 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-build: $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cunit

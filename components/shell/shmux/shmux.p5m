@@ -11,6 +11,7 @@
 
 #
 # Copyright (c) 2016 Predrag Zečević
+# Copyright (c) 2018 Michal Nowak
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,10 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/shmux
+# "To take full advantage of shmux you will need to have fping installed."
+depend type=require fmri=diagnostic/fping
+
 file path=usr/bin/shmux
 file path=usr/share/man/man1/shmux.1
 file path=usr/share/shmux/mcmd.sh
-
-# "To take full advantage of shmux you will need to have fping installed."
-depend type=require fmri=diagnostic/fping

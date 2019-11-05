@@ -22,9 +22,9 @@ upstream.
 
 diff --git a/readconf.c b/readconf.c
 index b8c40291..e6fd1420 100644
---- a/readconf.c
-+++ b/readconf.c
-@@ -1931,7 +1931,11 @@ fill_default_options(Options * options)
+--- a/readconf.c	2018-10-20 10:57:39.499523543 +0000
++++ b/readconf.c	2018-10-20 10:58:29.812372790 +0000
+@@ -1977,7 +1977,11 @@
  	if (options->forward_x11 == -1)
  		options->forward_x11 = 0;
  	if (options->forward_x11_trusted == -1)
@@ -36,7 +36,7 @@ index b8c40291..e6fd1420 100644
  	if (options->forward_x11_timeout == -1)
  		options->forward_x11_timeout = 1200;
  	/*
-@@ -1964,7 +1968,11 @@ fill_default_options(Options * options)
+@@ -2006,7 +2010,11 @@
  	if (options->challenge_response_authentication == -1)
  		options->challenge_response_authentication = 1;
  	if (options->gss_authentication == -1)
@@ -48,11 +48,10 @@ index b8c40291..e6fd1420 100644
  	if (options->gss_deleg_creds == -1)
  		options->gss_deleg_creds = 0;
  	if (options->password_authentication == -1)
-diff --git a/servconf.c b/servconf.c
-index 36eb9057..6f11010a 100644
---- a/servconf.c
-+++ b/servconf.c
-@@ -249,7 +249,11 @@ fill_default_server_options(ServerOptions *options)
+diff -ur a/servconf.c b/servconf.c
+--- a/servconf.c	2018-10-20 10:57:39.501248804 +0000
++++ b/servconf.c	2018-10-20 10:58:29.813748264 +0000
+@@ -315,7 +315,11 @@
  	if (options->print_lastlog == -1)
  		options->print_lastlog = 1;
  	if (options->x11_forwarding == -1)
@@ -64,7 +63,7 @@ index 36eb9057..6f11010a 100644
  	if (options->x11_display_offset == -1)
  		options->x11_display_offset = 10;
  	if (options->x11_use_localhost == -1)
-@@ -283,7 +287,11 @@ fill_default_server_options(ServerOptions *options)
+@@ -349,7 +353,11 @@
  	if (options->kerberos_get_afs_token == -1)
  		options->kerberos_get_afs_token = 0;
  	if (options->gss_authentication == -1)
@@ -76,11 +75,22 @@ index 36eb9057..6f11010a 100644
  	if (options->gss_cleanup_creds == -1)
  		options->gss_cleanup_creds = 1;
  	if (options->gss_strict_acceptor == -1)
-diff --git a/ssh_config.4 b/ssh_config.4
-index 6b790fb7..0953f11c 100644
---- a/ssh_config.4
-+++ b/ssh_config.4
-@@ -728,6 +728,9 @@ Furthermore, the
+diff -ur a/ssh_config b/ssh_config
+--- a/ssh_config	2018-10-20 10:57:39.484124907 +0000
++++ b/ssh_config	2018-10-20 10:58:29.818586980 +0000
+@@ -22,7 +22,7 @@
+ #   ForwardX11 no
+ #   PasswordAuthentication yes
+ #   HostbasedAuthentication no
+-#   GSSAPIAuthentication no
++#   GSSAPIAuthentication yes
+ #   GSSAPIDelegateCredentials no
+ #   BatchMode no
+ #   CheckHostIP yes
+diff -ur a/ssh_config.4 b/ssh_config.4
+--- a/ssh_config.4	2018-10-20 10:57:39.499788967 +0000
++++ b/ssh_config.4	2018-10-20 10:58:29.814779169 +0000
+@@ -698,6 +698,9 @@
  token used for the session will be set to expire after 20 minutes.
  Remote clients will be refused access after this time.
  .Pp
@@ -90,7 +100,7 @@ index 6b790fb7..0953f11c 100644
  See the X11 SECURITY extension specification for full details on
  the restrictions imposed on untrusted clients.
  .It Cm GatewayPorts
-@@ -754,8 +757,8 @@ The default is
+@@ -724,8 +727,8 @@
  .Pa /etc/ssh/ssh_known_hosts2 .
  .It Cm GSSAPIAuthentication
  Specifies whether user authentication based on GSSAPI is allowed.
@@ -101,11 +111,22 @@ index 6b790fb7..0953f11c 100644
  .It Cm GSSAPIDelegateCredentials
  Forward (delegate) credentials to the server.
  The default is
-diff --git a/sshd_config.4 b/sshd_config.4
-index 7e4a376b..45c54629 100644
---- a/sshd_config.4
-+++ b/sshd_config.4
-@@ -621,8 +621,8 @@ The default is
+diff -ur a/sshd_config b/sshd_config
+--- a/sshd_config	2018-10-20 10:57:39.485800996 +0000
++++ b/sshd_config	2018-10-20 10:58:29.817807545 +0000
+@@ -67,7 +67,7 @@
+ #KerberosGetAFSToken no
+ 
+ # GSSAPI options
+-#GSSAPIAuthentication no
++#GSSAPIAuthentication yes
+ #GSSAPICleanupCredentials yes
+ 
+ # Set this to 'yes' to enable PAM authentication, account processing,
+diff -ur a/sshd_config.4 b/sshd_config.4
+--- a/sshd_config.4	2018-10-20 10:57:39.501703406 +0000
++++ b/sshd_config.4	2018-10-20 10:58:29.815708049 +0000
+@@ -635,8 +635,8 @@
  .Cm no .
  .It Cm GSSAPIAuthentication
  Specifies whether user authentication based on GSSAPI is allowed.
@@ -116,7 +137,7 @@ index 7e4a376b..45c54629 100644
  .It Cm GSSAPICleanupCredentials
  Specifies whether to automatically destroy the user's credentials cache
  on logout.
-@@ -1527,8 +1527,8 @@ The argument must be
+@@ -1644,8 +1644,8 @@
  .Cm yes
  or
  .Cm no .
@@ -127,25 +148,3 @@ index 7e4a376b..45c54629 100644
  .Pp
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the
---- openssh-7.4p1/sshd_config.1	2017-03-27 13:57:07.982442673 +0300
-+++ openssh-7.4p1/sshd_config	2017-03-27 13:57:23.383736783 +0300
-@@ -72,7 +72,7 @@
- #KerberosGetAFSToken no
- 
- # GSSAPI options
--#GSSAPIAuthentication no
-+#GSSAPIAuthentication yes
- #GSSAPICleanupCredentials yes
- #GSSAPIStrictAcceptorCheck yes
- #GSSAPIKeyExchange no
---- openssh-7.4p1/ssh_config.1	2017-03-27 13:58:08.152109125 +0300
-+++ openssh-7.4p1/ssh_config	2017-03-27 13:58:16.102388539 +0300
-@@ -24,7 +24,7 @@
- #   RSAAuthentication yes
- #   PasswordAuthentication yes
- #   HostbasedAuthentication no
--#   GSSAPIAuthentication no
-+#   GSSAPIAuthentication yes
- #   GSSAPIDelegateCredentials no
- #   GSSAPIKeyExchange no
- #   GSSAPITrustDNS no

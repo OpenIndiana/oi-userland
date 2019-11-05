@@ -10,12 +10,16 @@
 
 #
 # Copyright 2016 Predrag Zečević
+# Copyright 2018 Michal Nowak
 #
+
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= shmux
 COMPONENT_VERSION= 1.0.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= shmux - Shell Multiplexor
 COMPONENT_PROJECT_URL= https://github.com/shmux/shmux
 COMPONENT_FMRI= shell/shmux
@@ -41,11 +45,18 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 
 LDFLAGS+= -lnsl -lsocket 
 
-build:          $(BUILD_32_and_64)
+COMPONENT_TEST_TARGETS= test
 
-install:        $(INSTALL_32_and_64)
+COMPONENT_TEST_TRANSFORMS= \
+	'-n ' \
+	'-e "/^running test/p"'
 
-test:           $(TEST_32_and_64)
+build:          $(BUILD_64)
 
+install:        $(INSTALL_64)
+
+test:           $(TEST_64)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += diagnostic/fping

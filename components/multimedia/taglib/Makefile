@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= taglib
 COMPONENT_VERSION= 1.11.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = library/audio/taglib
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_PROJECT_URL = https://taglib.github.io/
@@ -42,6 +43,6 @@ install: $(INSTALL_32_and_64)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

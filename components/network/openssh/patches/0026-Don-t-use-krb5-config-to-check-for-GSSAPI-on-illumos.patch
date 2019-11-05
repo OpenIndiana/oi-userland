@@ -1,0 +1,29 @@
+From 1a9462ad1d73af0c20e31258bd501f5320ca01df Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Fri, 21 Aug 2015 18:47:46 -0700
+Subject: [PATCH 26/34] Don't use krb5-config to check for GSSAPI on illumos
+
+diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -4301,6 +4301,11 @@ AC_ARG_WITH([kerberos5],
+ 		AC_PATH_TOOL([KRB5CONF], [krb5-config],
+ 			     [$KRB5ROOT/bin/krb5-config],
+ 			     [$KRB5ROOT/bin:$PATH])
++		# illumos has GSS but krb5-config doesn't talk about it
++		# Fall back to regular probing for libs
++		if uname -rs | grep 'SunOS 5.11' ; then
++			KRB5CONF=nonexistent
++		fi
+ 		if test -x $KRB5CONF ; then
+ 			K5CFLAGS="`$KRB5CONF --cflags`"
+ 			K5LIBS="`$KRB5CONF --libs`"
+@@ -4342,7 +4347,7 @@ AC_ARG_WITH([kerberos5],
+ 					 AC_CHECK_LIB([des], [des_cbc_encrypt],
+ 					   [K5LIBS="$K5LIBS -ldes"])
+ 				       ], [ AC_MSG_RESULT([no])
+-					 K5LIBS="-lkrb5 -lk5crypto -lcom_err"
++					 K5LIBS="-lkrb5"
+ 			])
+ 			AC_SEARCH_LIBS([dn_expand], [resolv])
+ 

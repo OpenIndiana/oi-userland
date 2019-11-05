@@ -1,0 +1,258 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2018 Aurelien Larcher
+# Copyright 2019 Michal Nowak
+# Copyright 2019 Tim Mooney
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=variant.opensolaris.zone value=global value=nonglobal
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Dependency of VNC Extension Pack
+depend type=require fmri=pkg:/library/libvncserver
+
+<transform file path=opt/VirtualBox/$(MACH64)/.+ -> default pkg.linted.userland.action001.3 true>
+<transform file path=platform/i86pc/kernel/drv/.+ -> default pkg.depend.bypass-generate .* >
+<transform file path=platform/i86pc/kernel/drv/.+ -> default variant.opensolaris.zone "global" >
+<transform file path=platform/i86pc/kernel/drv/.+ -> default restart_fmri svc:/application/virtualbox/run-once:defaul>
+
+driver name=vboxdrv
+driver name=vboxflt
+driver name=vboxnet
+driver name=vboxusb
+driver name=vboxusbmon
+
+file files/run-once.sh path=/opt/VirtualBox/run-once.sh owner=root group=sys mode=0555
+file files/virtualbox-run-once.xml \
+  path=var/svc/manifest/application/virtualbox/virtualbox-run-once.xml \
+  restart_fmri=svc:/system/manifest-import:default \
+  variant.opensolaris.zone="global"
+
+dir path=opt/VirtualBox/$(MACH64)
+link path=opt/VirtualBox/64 target=$(MACH64)
+
+#file path=autoresponse
+#file path=checkinstall.sh
+#file path=etc/fs/vboxfs/mount
+file path=etc/hostname.vboxnet0
+#file path=makepackage.sh
+file path=opt/VirtualBox/$(MACH64)/DbgPlugInDiggers.so
+file path=opt/VirtualBox/$(MACH64)/VBoxAuth.so
+file path=opt/VirtualBox/$(MACH64)/VBoxAuthSimple.so
+file path=opt/VirtualBox/$(MACH64)/VBoxAutostart mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxBalloonCtrl mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxBugReport mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxDD.so
+file path=opt/VirtualBox/$(MACH64)/VBoxDD2.so
+file path=opt/VirtualBox/$(MACH64)/VBoxDDR0.r0
+file path=opt/VirtualBox/$(MACH64)/VBoxDDRC.rc pkg.linted.userland.action001.2=true
+file path=opt/VirtualBox/$(MACH64)/VBoxDDU.so
+file path=opt/VirtualBox/$(MACH64)/VBoxDTrace mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxDbg.so
+file path=opt/VirtualBox/$(MACH64)/VBoxDragAndDropSvc.so
+link path=opt/VirtualBox/$(MACH64)/VBoxEFI32.fd target=../VBoxEFI32.fd
+link path=opt/VirtualBox/$(MACH64)/VBoxEFI64.fd target=../VBoxEFI64.fd
+file path=opt/VirtualBox/$(MACH64)/VBoxExtPackHelperApp mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxGlobal.so
+file path=opt/VirtualBox/$(MACH64)/VBoxGuestControlSvc.so
+file path=opt/VirtualBox/$(MACH64)/VBoxGuestPropSvc.so
+file path=opt/VirtualBox/$(MACH64)/VBoxHeadless mode=4555
+file path=opt/VirtualBox/$(MACH64)/VBoxHeadless.so
+file path=opt/VirtualBox/$(MACH64)/VBoxHostChannel.so
+file path=opt/VirtualBox/$(MACH64)/VBoxKeyboard.so
+file path=opt/VirtualBox/$(MACH64)/VBoxManage mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxNetAdpCtl mode=4555
+file path=opt/VirtualBox/$(MACH64)/VBoxNetDHCP mode=4555
+file path=opt/VirtualBox/$(MACH64)/VBoxNetDHCP.so
+file path=opt/VirtualBox/$(MACH64)/VBoxNetNAT mode=4555
+file path=opt/VirtualBox/$(MACH64)/VBoxNetNAT.so
+file path=opt/VirtualBox/$(MACH64)/VBoxREM.so
+file path=opt/VirtualBox/$(MACH64)/VBoxRT.so
+file path=opt/VirtualBox/$(MACH64)/VBoxSDL mode=4555
+file path=opt/VirtualBox/$(MACH64)/VBoxSDL.so
+file path=opt/VirtualBox/$(MACH64)/VBoxSVC mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxSharedClipboard.so
+file path=opt/VirtualBox/$(MACH64)/VBoxSharedCrOpenGL.so
+file path=opt/VirtualBox/$(MACH64)/VBoxSharedFolders.so
+file path=opt/VirtualBox/$(MACH64)/VBoxTestOGL mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxVMM.so
+file path=opt/VirtualBox/$(MACH64)/VBoxXPCOM.so
+file path=opt/VirtualBox/$(MACH64)/VBoxXPCOMC.so
+file path=opt/VirtualBox/$(MACH64)/VBoxXPCOMIPCD mode=0555
+file path=opt/VirtualBox/$(MACH64)/VBoxZoneAccess mode=4555
+file path=opt/VirtualBox/$(MACH64)/VMMR0.r0
+file path=opt/VirtualBox/$(MACH64)/VMMRC.rc pkg.linted.userland.action001.2=true
+file path=opt/VirtualBox/$(MACH64)/VirtualBox mode=0555
+file path=opt/VirtualBox/$(MACH64)/VirtualBoxVM mode=4555
+file path=opt/VirtualBox/$(MACH64)/VirtualBoxVM.so
+file path=opt/VirtualBox/$(MACH64)/components/VBoxC.so
+file path=opt/VirtualBox/$(MACH64)/components/VBoxSVCM.so
+file path=opt/VirtualBox/$(MACH64)/components/VBoxXPCOMBase.xpt
+file path=opt/VirtualBox/$(MACH64)/components/VBoxXPCOMIPCC.so
+file path=opt/VirtualBox/$(MACH64)/components/VirtualBox_XPCOM.xpt
+file path=opt/VirtualBox/$(MACH64)/libvboxjxpcom.so
+#link path=opt/VirtualBox/$(MACH64)/rdesktop-vrdp-keymaps \
+#    target=../rdesktop-vrdp-keymaps/
+file path=opt/VirtualBox/$(MACH64)/vboxwebsrv mode=0555
+file path=opt/VirtualBox/ExtensionPacks/VNC-$(COMPONENT_VERSION).vbox-extpack
+file path=opt/VirtualBox/LICENSE
+#file path=opt/VirtualBox/UnattendedTemplates/debian_postinstall.sh
+#file path=opt/VirtualBox/UnattendedTemplates/debian_preseed.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/fedora_ks.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/ol_ks.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/redhat67_ks.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/redhat_postinstall.sh
+#file path=opt/VirtualBox/UnattendedTemplates/rhel3_ks.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/rhel4_ks.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/rhel5_ks.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/ubuntu_preseed.cfg
+#file path=opt/VirtualBox/UnattendedTemplates/win_nt5_unattended.sif
+#file path=opt/VirtualBox/UnattendedTemplates/win_nt6_unattended.xml
+#file path=opt/VirtualBox/UnattendedTemplates/win_postinstall.cmd
+file path=opt/VirtualBox/VBox.sh mode=0555
+file path=opt/VirtualBox/VBoxEFI32.fd
+file path=opt/VirtualBox/VBoxEFI64.fd
+file path=opt/VirtualBox/VBoxISAExec mode=0555 pkg.linted.userland.action001.3=true
+file path=opt/VirtualBox/VERSION
+file path=opt/VirtualBox/autoresponse
+file path=opt/VirtualBox/dtrace/lib/$(MACH64)/CPUMInternal.d
+file path=opt/VirtualBox/dtrace/lib/$(MACH64)/cpumctx.d
+file path=opt/VirtualBox/dtrace/lib/$(MACH64)/vbox-arch-types.d
+file path=opt/VirtualBox/dtrace/lib/$(MACH64)/vbox-types.d
+file path=opt/VirtualBox/dtrace/lib/$(MACH64)/vm.d
+file path=opt/VirtualBox/dtrace/lib/$(MACH64)/x86.d
+file path=opt/VirtualBox/dtrace/testcase/$(MACH64)/vbox-vm-struct-test.d
+link path=opt/VirtualBox/ipsinstall.sh target=./pkginstall.sh
+file path=opt/VirtualBox/pkginstall.sh mode=0555
+file path=opt/VirtualBox/sdk/bindings/xpcom/java/vboxjxpcom.jar
+file path=opt/VirtualBox/smf-vboxautostart.sh mode=0555
+file path=opt/VirtualBox/smf-vboxballoonctrl.sh mode=0555
+file path=opt/VirtualBox/smf-vboxwebsrv.sh mode=0555
+file path=opt/VirtualBox/vboxconfig.sh mode=0555
+file path=platform/i86pc/kernel/drv/$(MACH64)/vboxdrv
+file path=platform/i86pc/kernel/drv/$(MACH64)/vboxflt
+file path=platform/i86pc/kernel/drv/$(MACH64)/vboxnet
+file path=platform/i86pc/kernel/drv/$(MACH64)/vboxusb
+file path=platform/i86pc/kernel/drv/$(MACH64)/vboxusbmon
+file path=platform/i86pc/kernel/drv/vboxdrv.conf
+file path=platform/i86pc/kernel/drv/vboxflt.conf
+file path=platform/i86pc/kernel/drv/vboxnet.conf
+file path=platform/i86pc/kernel/drv/vboxusb.conf
+file path=platform/i86pc/kernel/drv/vboxusbmon.conf
+#file path=postinstall.sh
+#file path=preremove.sh
+link path=usr/bin/VBoxDTrace target=../../opt/VirtualBox/VBox.sh
+link path=usr/bin/VBoxHeadless target=../../opt/VirtualBox/VBox.sh
+link path=usr/bin/VBoxManage target=../../opt/VirtualBox/VBox.sh
+link path=usr/bin/VBoxSDL target=../../opt/VirtualBox/VBox.sh
+link path=usr/bin/VirtualBox target=../../opt/VirtualBox/VBox.sh
+file path=usr/share/application-registry/virtualbox.applications
+file path=usr/share/applications/virtualbox.desktop
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/128x128/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/16x16/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/20x20/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/24x24/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/256x256/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/32x32/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/48x48/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/64x64/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/72x72/mimetypes/virtualbox-vmdk.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-hdd.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-ova.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-ovf.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-vbox-extpack.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-vbox.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-vdi.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-vhd.png
+file path=usr/share/icons/hicolor/96x96/mimetypes/virtualbox-vmdk.png
+file path=usr/share/mime-info/virtualbox.keys
+file path=usr/share/mime-info/virtualbox.mime
+file path=usr/share/mime/packages/virtualbox.xml
+file path=usr/share/pixmaps/VBox.png
+file path=usr/share/pixmaps/virtualbox.png
+file path=var/svc/manifest/application/virtualbox/virtualbox-autostart.xml
+file path=var/svc/manifest/application/virtualbox/virtualbox-balloonctrl.xml
+file path=var/svc/manifest/application/virtualbox/virtualbox-webservice.xml
+file path=var/svc/manifest/application/virtualbox/virtualbox-zoneaccess.xml
+#file path=vbox.pkginfo
+#file path=vbox.space

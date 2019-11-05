@@ -1,0 +1,20 @@
+--- git-2.19.1/contrib/completion/git-completion.bash	2018-09-27 22:46:40.000000000 +0000
++++ git-2.19.1/contrib/completion/git-completion.bash	2018-10-10 08:41:42.946342292 +0000
+@@ -503,7 +503,7 @@ __git_index_files ()
+ 	local root="$2" match="$3"
+ 
+ 	__git_ls_files_helper "$root" "$1" "$match" |
+-	awk -F / -v pfx="${2//\\/\\\\}" '{
++	nawk -F / -v pfx="${2//\\/\\\\}" '{
+ 		paths[$1] = 1
+ 	}
+ 	END {
+@@ -1578,7 +1578,7 @@ _git_gitk ()
+ # 3: A prefix to be added to each listed symbol name (optional).
+ # 4: A suffix to be appended to each listed symbol name (optional).
+ __git_match_ctag () {
+-	awk -v pfx="${3-}" -v sfx="${4-}" "
++	nawk -v pfx="${3-}" -v sfx="${4-}" "
+ 		/^${1//\//\\/}/ { print pfx \$1 sfx }
+ 		" "$2"
+ }

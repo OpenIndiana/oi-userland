@@ -1,0 +1,27 @@
+From 66a9e8129c12e7a44b4113504cc0e64680649c65 Mon Sep 17 00:00:00 2001
+From: Yuri Pankov <yuri.pankov@nexenta.com>
+Date: Mon, 13 Feb 2017 18:14:45 +0300
+Subject: [PATCH 10/16] 19 cmn_err %b conversion should accept 0 flag Reviewed
+ by: Robert Mustacchi <rm@joyent.com> Reviewed by: Richard Lowe
+ <richlowe@richlowe.net>
+
+---
+ gcc/config/sol2-c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gcc/config/sol2-c.c b/gcc/config/sol2-c.c
+index ac2775047ad..82b5572d730 100644
+--- a/gcc/config/sol2-c.c
++++ b/gcc/config/sol2-c.c
+@@ -67,7 +67,7 @@ static const format_char_info cmn_err_char_table[] =
+   { "c",   0, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   NULL },
+   { "p",   1, STD_C89, { T89_V,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "c",  NULL },
+   { "s",   1, STD_C89, { T89_C,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-wp",  "cR", NULL },
+-  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w",   "",   &bitfield_string_type },
++  { "b",   0, STD_C89, { T89_I,   BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN,  BADLEN  }, "-w0",  "",   &bitfield_string_type },
+   { NULL,  0, STD_C89, NOLENGTHS, NULL, NULL, NULL }
+ };
+ 
+-- 
+2.20.1
+

@@ -13,41 +13,21 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           libXScrnSaver
-COMPONENT_VERSION=        1.2.2
-COMPONENT_FMRI=           x11/library/libxscrnsaver
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXss - X screen saver library
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=    libXScrnSaver
+COMPONENT_VERSION= 1.2.3
+COMPONENT_FMRI=    x11/library/libxscrnsaver
+COMPONENT_SUMMARY= libXss - X screen saver library
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8ff1efa7341c7f34bcf9b17c89648d6325ddaae22e3904e091794e0b4426ce1d
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/lib/libXScrnSaver-1.2.2.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= libXScrnSaver.license
+  sha256:f917075a1b7b5a38d67a8b0238eaab14acd2557679835b154cf2bca576e89bf8
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xextproto
-REQUIRED_PACKAGES += x11/header/scrnsaverproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,32 @@
+
+include unistd.h in two sane-related files to get the usleep() declaration.
+
+diff -ur hplip-3.18.3.orig/scan/sane/bb_ledm.c hplip-3.18.3/scan/sane/bb_ledm.c
+--- hplip-3.18.3.orig/scan/sane/bb_ledm.c	Tue Mar  6 03:55:50 2018
++++ hplip-3.18.3/scan/sane/bb_ledm.c	Fri Apr 13 15:56:43 2018
+@@ -29,6 +29,11 @@
+ 
+ # include <stdint.h>
+ 
++#ifdef HAVE_UNISTD_H
++/* for usleep() */
++#include <unistd.h>
++#endif
++
+ # define _STRINGIZE(x) #x
+ # define STRINGIZE(x) _STRINGIZE(x)
+ 
+diff -ur hplip-3.18.3.orig/scan/sane/http.c hplip-3.18.3/scan/sane/http.c
+--- hplip-3.18.3.orig/scan/sane/http.c	Tue Mar  6 03:55:50 2018
++++ hplip-3.18.3/scan/sane/http.c	Fri Apr 13 15:59:44 2018
+@@ -36,6 +36,10 @@
+ #include <string.h>
+ #include <syslog.h>
+ #include <ctype.h>
++#ifdef HAVE_UNISTD_H
++/* for usleep() */
++#include <unistd.h>
++#endif
+ #include "hpmud.h"
+ #include "http.h"
+ 

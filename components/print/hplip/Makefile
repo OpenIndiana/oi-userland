@@ -24,27 +24,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.15.9
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      3.19.8
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a1f58fe8707373c193728a7fd826523e99c30e3ca7f660faa75531acdff89d6d
+COMPONENT_ARCHIVE_HASH= sha256:a385fea00241592d148ef1a20082799fa45b36031742157db181d5d94a84ba32
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/hplip
+COMPONENT_LICENSE=	GPLv2+ and MIT and BSD and IJG and Public Domain and GPLv2+ with exceptions and ISC
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PKG_OPTIONS += -I $(COMPONENT_DIR)
-
-# Enable ASLR for this component
-# ASLR_MODE = $(ASLR_ENABLE)
-
-# We need to be able to return from void functions
-# CC += $(studio_FEATURES_EXTENSIONS)
-# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
@@ -61,6 +54,8 @@ CONFIGURE_OPTIONS +=	--disable-qt4
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
+# for createPPD.sh
+CONFIGURE_ENV +=	"ARCH=$(BITS)"
 
 LDFLAGS+= -lnsl
 
@@ -74,7 +69,6 @@ VARIANTS = $(HPLIP_VARIANT) $(HPIJS_VARIANT)
 
 # use these options for the CUPS/SANE support
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/cups/model/SUNWhplip
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-libusb01_build
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-fax-build
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpcups-install
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-new-hpcups
@@ -90,6 +84,9 @@ $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-only-build
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-install
 
 COMPONENT_INSTALL_ARGS += -e
+
+# for install-data libImageProcessor architecture selection
+COMPONENT_INSTALL_ENV  +=  "ARCH=$(BITS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -124,7 +121,7 @@ $(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
 
 PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
 #
-# Since it looks like you can't build HPLIP with both HPIJS and CUPS support
+# Since it looks like we can't build HPLIP with both HPIJS and CUPS support
 # and seperate the HPIJS and CUPS PPD data, we need to replicate the code and
 # build it twice.  Once for the HPIJS support used by LP and once for the rest
 # of the support used for CUPS and SANE.
@@ -137,13 +134,15 @@ install: $(BUILD_DIR)/.allvariantsinstalled
 test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
+REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/usb/libusb
 REQUIRED_PACKAGES += system/management/snmp/net-snmp

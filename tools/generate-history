@@ -3,7 +3,7 @@
 # s|/|---| on $1 matches TARGET, we generate a manifest.
 {
   if (substr($1, 1, 1) == "#") { # Skip comments.
-    continue
+    next
   }
   fmri=$1
   split(fmri, a, "@")
@@ -11,10 +11,10 @@
   target = sprintf("%s.p5m", a[1])
   if (FUNCTION == "name") {
     printf "%s\n", target
-    continue
+    next
   }
   if (target != TARGET) {
-    continue
+    next
   }
   printf "set name=pkg.fmri value=pkg:/%s\n", fmri
   

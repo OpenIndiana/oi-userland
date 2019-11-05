@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms
 COMPONENT_VERSION=      1.19
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=		3
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -79,8 +79,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     $(RM) -f $(SOURCE_DIR)/include/icc34.h ; \
     $(CP) -p include/icc34.h $(SOURCE_DIR)/include/ )
 
-LINT_FLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
-
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
@@ -95,6 +93,6 @@ REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/lcms
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

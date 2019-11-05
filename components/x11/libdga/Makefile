@@ -25,9 +25,9 @@ COMPONENT_PROJECT_URL = https://hg.java.net/hg/solaris-x11~x-s12-clone
 COMPONENT_LICENSE=      Oracle
 COMPONENT_LICENSE_FILE= libdga.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

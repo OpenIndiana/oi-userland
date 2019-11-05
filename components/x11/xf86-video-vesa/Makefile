@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-vesa
-COMPONENT_VERSION= 2.3.4
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.4.0
 COMPONENT_SUMMARY= xf86-video-vesa - VESA driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7bddf4d879dd6f67088ecb203a31e12334aab980174bd0909930a21f32e251c1
+  sha256:bf443c94d7bf6cd4e248f8a3147f4647be04dc4c80250d9405006263bbdee38c
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org

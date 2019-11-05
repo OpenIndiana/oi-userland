@@ -13,33 +13,18 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           sessreg
-COMPONENT_VERSION=        1.1.1
-COMPONENT_FMRI=           x11/session/sessreg
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     sessreg
+COMPONENT_VERSION=  1.1.2
+COMPONENT_FMRI=     x11/session/sessreg
 COMPONENT_SUMMARY=  sessreg - manage utmp/wtmp entries for non-init clients
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:78a76ae3f3f6a26547a34630d1b740f42344848b5fb6d7c9c7f7da255e35a6e1
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
+  sha256:dfcb9e954273ace63879aec053c7880466f8755752a35aa9ced3fa5f04fd2c33
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

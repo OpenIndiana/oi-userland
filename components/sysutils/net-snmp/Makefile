@@ -37,6 +37,7 @@ PATH=$(VPATH):$(PATH.gnu)
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.7.3
+COMPONENT_REVISION=	4
 COMPONENT_FMRI=	system/management/snmp/net-snmp
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -128,9 +129,11 @@ COMPONENT_TEST_ENV +=	TESTOPTS='-g all'
 COMPONENT_TEST_CMD =	$(TEST_PERL.$(BITS))
 COMPONENT_TEST_TARGETS =	./RUNFULLTESTS
 #
-COMPONENT_TEST_TRANSFORMS += \
-														 	'-e "s|\(simple-\).*|\1XXXXXX|g"' \
-																'-e "s|\(output (\)\(.*\)|\2|g"'
+# provide new results-$(BITS).master if number of tests change: delete runtime specific measurements after second comma
+# original: Files=72, Tests=320, 94 wallclock secs ( 0.21 usr  0.11 sys +  8.76 cusr  1.92 csys = 11.00 CPU)
+# edited:   Files=72, Tests=320,
+# the transform provides the edited version
+COMPONENT_TEST_TRANSFORMS +=  '-re "/Files=72, Tests=320,/s/([^,]+,[^,]+,*).*/\1/"'
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
 COMPONENT_TEST_ENV +=	PATH=$(TEST_BINPATH.$(BITS)):$(PATH)
 COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
@@ -139,13 +142,13 @@ COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 # perl man pages hiding here in 64-bit PROTO_DIR
 PKG_PROTO_DIRS += $(BUILD_DIR)/prototype/$(MACH64)
 
+COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES.32)
+
 $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
 	(cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
 
 $(BUILD_64): COMPONENT_POST_BUILD_ACTION= \
 	(cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
-
-$(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
@@ -182,4 +185,4 @@ REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += system/header/header-picl
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

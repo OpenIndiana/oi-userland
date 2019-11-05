@@ -1,15 +1,8 @@
-Changes were originally part of Solaris bug fix for:
-5099951 Fonts (in particular Lucida Sans Typewriter) look terrible in JDS.
-
-Allows fontconfig to use bitmap fonts (which may be hand-tuned for the
-specific size) instead of scalable fonts when a close match is found and
-anti-aliasing is not requested.
-
---- a/src/fcmatch.c	Thu Jun 18 09:03:11 2015
-+++ b/src/fcmatch.c	Thu Jun 18 09:15:24 2015
-@@ -183,6 +183,15 @@
-     if (v2 == 0)
- 	return 0;
+--- fontconfig-2.13.0/src/fcmatch.c.orig	2018-03-08 16:45:52.377939235 +0000
++++ fontconfig-2.13.0/src/fcmatch.c	2018-03-08 16:47:13.473464653 +0000
+@@ -50,6 +50,15 @@
+ 	return -1.0;
+     }
      v = v2 - v1;
 +
 +    /*
@@ -22,8 +15,8 @@ anti-aliasing is not requested.
 +
      if (v < 0)
  	v = -v;
-     return v;
-@@ -623,6 +632,46 @@
+     *bestValue = FcValueCanonicalize (value2);
+@@ -754,6 +763,46 @@
      return new;
  }
  
@@ -70,7 +63,7 @@ anti-aliasing is not requested.
  static FcPattern *
  FcFontSetMatchInternal (FcFontSet   **sets,
  			int	    nsets,
-@@ -636,6 +685,8 @@
+@@ -767,6 +816,8 @@
      int		    i;
      int		    set;
  
@@ -79,7 +72,7 @@ anti-aliasing is not requested.
      for (i = 0; i < PRI_END; i++)
  	bestscore[i] = 0;
      best = 0;
-@@ -876,6 +927,8 @@
+@@ -1048,6 +1099,8 @@
      FcBool    	    *patternLangSat;
      FcValue	    patternLang;
  

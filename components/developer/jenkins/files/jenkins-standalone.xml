@@ -12,7 +12,7 @@
 // http://www.illumos.org/license/CDDL.
 //
 //
-// Copyright 2016-2017 by Jim Klimov
+// Copyright 2016-2018 by Jim Klimov
 //
 -->
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
@@ -74,7 +74,7 @@
      both for JAVA and the JAR itself... Or keep it simple? -->
         <exec_method type='method'
                    name='start'
-                   exec='/usr/bin/java -DsessionTimeout=1440 -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --httpListenAddress=%{httpd/httpHost} --webroot=%{httpd/jenkins_war_dir}'
+                   exec='/usr/bin/java -DsessionTimeout=%{httpd/sessionTimeout} -DsessionEviction=%{httpd/sessionEviction} -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --httpListenAddress=%{httpd/httpHost} --webroot=%{httpd/jenkins_war_dir}'
                    timeout_seconds='240'>
           <method_context>
             <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
@@ -131,6 +131,11 @@
             <propval name='jenkins_war_file' type='astring' value='/usr/share/jenkins/war/jenkins.war' />
             <!-- Directory into which Jetty webserver would unpack the WAR file -->
             <propval name='jenkins_war_dir' type='astring' value='/var/lib/jenkins/standalone-war' />
+            <!-- There are two options in winstone server, one for overall
+                 session duration (remember me), another for session-eviction
+                 after a window/tab with Jenkins was closed in browser -->
+            <propval name='sessionTimeout' type='count' value='1440' />
+            <propval name='sessionEviction' type='count' value='1440' />
         </property_group>
 
         <property_group name='startd' type='framework'>

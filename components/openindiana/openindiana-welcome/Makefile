@@ -11,6 +11,7 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,23 +19,23 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openindiana-welcome
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_VERSION=	1.0
+COMPONENT_REVISION=	$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
-
-COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
-
 COMPONENT_SUMMARY=	OpenIndiana Welcome Document
-COMPONENT_FMRI= release/os-welcome
-COMPONENT_CLASSIFICATION= System/Text Tools
+COMPONENT_FMRI=		release/os-welcome
+COMPONENT_CLASSIFICATION=	System/Text Tools
 
 PKG_MACROS+=	GIT_REPO="$(GIT_REPO)"
 
-GIT=git
-GIT_REPO=https://github.com/OpenIndiana/openindiana-welcome
-GIT_BRANCH=master
-GIT_CHANGESET=HEAD
+GIT=		git
+GIT_REPO=	https://github.com/OpenIndiana/openindiana-welcome
+GIT_BRANCH=	master
+GIT_CHANGESET=	HEAD
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+PYTHON_VERSION=3.5
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -80,5 +81,5 @@ install: $(INSTALL_32)
 download:: $(SOURCE_DIR)/.downloaded
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pygobject-3-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/pygobject-3-35
+REQUIRED_PACKAGES += runtime/python-35

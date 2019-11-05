@@ -3,29 +3,21 @@ From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
 Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
 
----
- pathnames.h   |  1 +
- servconf.c    | 61 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- sshd_config.4 | 17 +++++++++++++++--
- 3 files changed, 77 insertions(+), 2 deletions(-)
-
-diff --git a/pathnames.h b/pathnames.h
-index 7915c405..40284a1f 100644
---- a/pathnames.h
-+++ b/pathnames.h
+diff -wpruN '--exclude=*.orig' a~/pathnames.h a/pathnames.h
+--- a~/pathnames.h	1970-01-01 00:00:00
++++ a/pathnames.h	1970-01-01 00:00:00
 @@ -42,6 +42,7 @@
- #define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
+ #define _PATH_HOST_XMSS_KEY_FILE	SSHDIR "/ssh_host_xmss_key"
  #define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
  #define _PATH_DH_MODULI			SSHDIR "/moduli"
 +#define _PATH_DEFAULT_LOGIN		ETCDIR "/default/login"
  
  #ifndef _PATH_SSH_PROGRAM
  #define _PATH_SSH_PROGRAM		"/usr/bin/ssh"
-diff --git a/servconf.c b/servconf.c
-index 1501af6a..91f8c942 100644
---- a/servconf.c
-+++ b/servconf.c
-@@ -30,6 +30,7 @@
+diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
+@@ -36,6 +36,7 @@
  #include <unistd.h>
  #include <limits.h>
  #include <stdarg.h>
@@ -33,7 +25,7 @@ index 1501af6a..91f8c942 100644
  #include <errno.h>
  #ifdef HAVE_UTIL_H
  #include <util.h>
-@@ -188,6 +189,64 @@ option_clear_or_none(const char *o)
+@@ -203,6 +204,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -98,7 +90,7 @@ index 1501af6a..91f8c942 100644
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -216,6 +275,8 @@ fill_default_server_options(ServerOptions *options)
+@@ -280,6 +339,8 @@ fill_default_server_options(ServerOption
  		options->use_pam = 0;
  #endif
  
@@ -107,11 +99,10 @@ index 1501af6a..91f8c942 100644
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
-diff --git a/sshd_config.4 b/sshd_config.4
-index 6a6f940b..0b2393dd 100644
---- a/sshd_config.4
-+++ b/sshd_config.4
-@@ -1099,7 +1099,13 @@ Specifies the maximum number of authentication attempts permitted per
+diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
+--- a~/sshd_config.4	1970-01-01 00:00:00
++++ a/sshd_config.4	1970-01-01 00:00:00
+@@ -1162,7 +1162,13 @@ Specifies the maximum number of authenti
  connection.
  Once the number of failures reaches half this value,
  additional failures are logged.
@@ -126,7 +117,7 @@ index 6a6f940b..0b2393dd 100644
  .It Cm MaxSessions
  Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
  sessions permitted per network connection.
-@@ -1150,7 +1156,14 @@ The default is
+@@ -1213,7 +1219,14 @@ The default is
  When password authentication is allowed, it specifies whether the
  server allows login to accounts with empty password strings.
  The default is
@@ -139,8 +130,6 @@ index 6a6f940b..0b2393dd 100644
 +(see
 +.Xr login 1
 +).
- .It Cm PermitOpen
- Specifies the destinations to which TCP port forwarding is permitted.
- The forwarding specification must be one of the following forms:
--- 
-2.11.0
+ .It Cm PermitListen
+ Specifies the addresses/ports on which a remote TCP port forwarding may listen.
+ The listen specification must be one of the following forms:

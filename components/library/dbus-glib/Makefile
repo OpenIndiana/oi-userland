@@ -10,36 +10,40 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus-glib
-COMPONENT_VERSION=	0.100.2
-COMPONENT_PROJECT_URL=	http://dbus.freedesktop.org/doc/dbus-glib/
+COMPONENT_VERSION=	0.110
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://dbus.freedesktop.org/doc/dbus-glib/
 COMPONENT_SUMMARY=	D-Bus GLib bindings
 COMPONENT_FMRI=		system/library/libdbus-glib
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a5bb42da921f51c28161e0e54a5a8241d94a1c0499a14007150e9ce743da6ac5
+	sha256:7ce4760cf66c69148f6bd6c92feaabb8812dee30846b24cd0f7395c436d7e825
 COMPONENT_ARCHIVE_URL=	http://dbus.freedesktop.org/releases/dbus-glib/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2,AFLv2.1
+COMPONENT_LICENSE=	GPLv2,AFLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--disable-static
 
-# common targets
+# For tests to pass
+unexport SHELLOPTS
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

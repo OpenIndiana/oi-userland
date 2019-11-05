@@ -1,0 +1,81 @@
+From f48d88297eb75a81e1fb88dc51993b139fbec4f1 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sun, 30 Sep 2012 16:44:14 -0400
+Subject: [PATCH 05/16] allow the global disabling of function cloning
+
+Optimizations which clone functions to create call-specific implementations
+which may be better optimized also dissociate these functions from their
+symbol names in ways harmful to tracing and debugging (since there are now
+several implementations of a single source symbol, quite possibly none of them
+having the actual source symbol name).
+
+This allows any function cloning to be disabled, and makes any such
+optimization ineffective, and our source safe for debuggers everywhere.
+---
+ gcc/common.opt      |  5 +++++
+ gcc/doc/invoke.texi | 11 ++++++++++-
+ gcc/tree-inline.c   |  3 ++-
+ 3 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/common.opt b/gcc/common.opt
+index 7354fa14f4f..a54089ef522 100644
+--- a/gcc/common.opt
++++ b/gcc/common.opt
+@@ -1113,6 +1113,11 @@ fcode-hoisting
+ Common Report Var(flag_code_hoisting) Optimization
+ Enable code hoisting.
+ 
++fclone-functions
++Common Report Var(flag_clone_functions) Init(1)
++Allow the compiler to clone functions to facilitate certain optimizations.
++Enabled by default.
++
+ fcombine-stack-adjustments
+ Common Report Var(flag_combine_stack_adjustments) Optimization
+ Looks for opportunities to reduce stack adjustments and stack references.
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 1cee9bb94dc..8ea816bf244 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -371,7 +371,7 @@ Objective-C and Objective-C++ Dialects}.
+ -fauto-inc-dec  -fbranch-probabilities @gol
+ -fbranch-target-load-optimize  -fbranch-target-load-optimize2 @gol
+ -fbtr-bb-exclusive  -fcaller-saves @gol
+--fcombine-stack-adjustments  -fconserve-stack @gol
++-fclone-functions -fcombine-stack-adjustments  -fconserve-stack @gol
+ -fcompare-elim  -fcprop-registers  -fcrossjumping @gol
+ -fcse-follow-jumps  -fcse-skip-blocks  -fcx-fortran-rules @gol
+ -fcx-limited-range @gol
+@@ -8519,6 +8519,15 @@ and then tries to find ways to combine them.
+ 
+ Enabled by default at @option{-O1} and higher.
+ 
++@item -fno-clone-functions
++@opindex fno-clone-functions
++Forbid the implicit cloning of functions implicit in certain
++optimizations.  This also effectively will disable any optimization
++which wishes to clone functions, equivalent to each function having
++the ``noclone'' attribute.  This allows the prevention of the
++dissociation of a piece of text from an intelligible and expected
++symbol name, which may hamper debugging and tracing.
++
+ @item -fipa-ra
+ @opindex fipa-ra
+ Use caller save registers for allocation if those registers are not used by
+diff --git a/gcc/tree-inline.c b/gcc/tree-inline.c
+index 324c1682921..c560e191c39 100644
+--- a/gcc/tree-inline.c
++++ b/gcc/tree-inline.c
+@@ -5715,7 +5715,8 @@ bool
+ tree_versionable_function_p (tree fndecl)
+ {
+   return (!lookup_attribute ("noclone", DECL_ATTRIBUTES (fndecl))
+-	  && copy_forbidden (DECL_STRUCT_FUNCTION (fndecl)) == NULL);
++	  && (copy_forbidden (DECL_STRUCT_FUNCTION (fndecl)) == NULL)
++	  && flag_clone_functions);
+ }
+ 
+ /* Delete all unreachable basic blocks and update callgraph.
+-- 
+2.20.1
+

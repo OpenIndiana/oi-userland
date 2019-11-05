@@ -13,36 +13,20 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xcompmgr
-COMPONENT_VERSION=        1.1.7
-COMPONENT_FMRI=           desktop/window-manager/xcompmgr
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xcompmgr
+COMPONENT_VERSION=  1.1.8
+COMPONENT_FMRI=     desktop/window-manager/xcompmgr
 COMPONENT_SUMMARY=  xcompmgr - X compositing manager
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c8049b1a2531313be7469ba9b198d334f0b91cc01efc2b20b9afcb117e4d6892
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xcompmgr-1.1.7.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xcompmgr.license
+  sha256:0b89daf4f060fa3fa83cca862c45d531fef7121b5d06552c1d73d396ad9a7243
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

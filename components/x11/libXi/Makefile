@@ -13,26 +13,19 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= libXi
-COMPONENT_VERSION= 1.7.9
+COMPONENT_NAME=    libXi
+COMPONENT_VERSION= 1.7.10
+COMPONENT_FMRI =   x11/library/libxi
 COMPONENT_SUMMARY= libXi - X Input extension client library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c2e6b8ff84f9448386c1b5510a5cf5a16d788f76db018194dacdc200180faf45
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_FMRI = x11/library/libxi
-COMPONENT_CLASSIFICATION = System/X11
-COMPONENT_LICENSE = MIT
+  sha256:36a30d8f6383a72e7ce060298b4b181fd298bc3a135c8e201b7ca847f5f81061
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
@@ -42,15 +35,6 @@ CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --with-pic
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-# Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/xextproto
-REQUIRED_PACKAGES += x11/header/inputproto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

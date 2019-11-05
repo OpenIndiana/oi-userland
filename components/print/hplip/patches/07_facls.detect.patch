@@ -1,13 +1,11 @@
-Home brewed patch
-
---- hplip-3.15.4/installer/core_install.py.~1~	2015-04-28 08:39:02.974945701 +0300
-+++ hplip-3.15.4/installer/core_install.py	2015-04-28 08:39:29.723499471 +0300
-@@ -345,7 +345,7 @@
-             'scanimage':        (False, ['scan'], SCANIMAGE_STR, self.check_scanimage, DEPENDENCY_RUN_TIME, '1.0','scanimage --version', EXTERNALDEP),
+--- hplip-3.18.3/installer/core_install.py.~1~	Fri Apr 13 11:02:19 2018
++++ hplip-3.18.3/installer/core_install.py	Fri Apr 13 11:13:32 2018
+@@ -372,7 +372,7 @@
+             'scanimage':        (False, ['scan'], SCANIMAGE_STR, self.check_scanimage, DEPENDENCY_RUN_TIME, '1.0', 'scanimage --version', EXTERNALDEP),
  
              # Required fax packages
--            'dbus':             (True,  ['fax'], DBUS_STR, self.check_dbus, DEPENDENCY_RUN_AND_COMPILE_TIME, '-','dbus-daemon --version', EXTERNALDEP),
-+            'dbus':             (True,  ['fax'], DBUS_STR, self.check_dbus, DEPENDENCY_RUN_AND_COMPILE_TIME, '-','/usr/lib/dbus-daemon --version', EXTERNALDEP),
+-            'dbus':             (True,  ['fax'], DBUS_STR, self.check_dbus, DEPENDENCY_RUN_AND_COMPILE_TIME, '-', 'dbus-daemon --version', EXTERNALDEP),
++            'dbus':             (True,  ['fax'], DBUS_STR, self.check_dbus, DEPENDENCY_RUN_AND_COMPILE_TIME, '-', '/usr/lib/dbus-daemon --version', EXTERNALDEP),
  
              # Required and optional qt4 GUI packages
-             'policykit':        (False, ['gui_qt4'], POLKIT_STR, self.check_policykit, DEPENDENCY_RUN_TIME,'-','pkexec --version', EXTERNALDEP), # optional for non-sudo behavior of plugins (only optional for Qt4 option)
+             # optional for non-sudo behavior of plugins (only optional for Qt4

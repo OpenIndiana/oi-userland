@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= ejabberd
 COMPONENT_FMRI= web/server/$(COMPONENT_NAME)
 COMPONENT_VERSION= 17.11
+COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL=	http://www.ejabberd.im/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
@@ -94,6 +95,6 @@ REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

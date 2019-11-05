@@ -22,35 +22,53 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=		CherryPy
-COMPONENT_VERSION=	3.1.2
+# This is the last version with Python 2.7 support
+COMPONENT_VERSION=	17.3.0
+COMPONENT_SUMMARY=	'Pythonic, object-oriented HTTP framework'
 COMPONENT_PROJECT_URL=	http://www.cherrypy.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0dfd65507b047d54c09849e7a4b8bdd3616fa8776a5dbff7697cbf6ea1559bf6
-COMPONENT_ARCHIVE_URL=	http://download.cherrypy.org/cherrypy/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/cherrypy
+    sha256:c3e4d76232ade4c47666b9008f92556465df517b8dca833ece3bed027028ae7d
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_FMRI=		library/python/cherrypy
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENSE.md
 
-PATCH_LEVEL=0
-PYTHON_VERSIONS=2.7
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f cherryd cherryd$(PYTHON_VERSION))
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f cherryd cherryd-$(PYTHON_VERSION))
 
+COMPONENT_TEST_DIR =    $(SOURCE_DIR)/cherrypy/test
+COMPONENT_TEST_CMD =    nosetests-$(PYTHON_VERSION) -s $(SOURCE_DIR)/cherrypy/test
+COMPONENT_TEST_ARGS =	-v
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
-REQUIRED_PACKAGES += SUNWcs
+# Test requirements
+REQUIRED_PACKAGES += library/python/nose-27
+REQUIRED_PACKAGES += library/python/nose-34
+REQUIRED_PACKAGES += library/python/nose-35
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/six-27
+REQUIRED_PACKAGES += library/python/six-34
+REQUIRED_PACKAGES += library/python/six-35
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35

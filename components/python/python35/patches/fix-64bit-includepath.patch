@@ -1,0 +1,14 @@
+Used logic doesn't work when we call python3.4-config from /usr/bin/$(MACH64),
+fix it by hardcoding values.
+diff -ur Python-3.4.5-1/Misc/python-config.sh.in Python-3.4.5/Misc/python-config.sh.in
+--- Python-3.4.5-1/Misc/python-config.sh.in	2017-03-11 17:17:48.558181794 +0300
++++ Python-3.4.5/Misc/python-config.sh.in	2017-03-11 17:19:39.218605043 +0300
+@@ -25,7 +25,7 @@
+ }
+ 
+ prefix_build="@prefix@"
+-prefix_real=$(installed_prefix "$0")
++prefix_real=/usr
+ 
+ # Use sed to fix paths from their built-to locations to their installed-to
+ # locations.

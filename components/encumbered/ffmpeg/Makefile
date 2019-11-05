@@ -12,17 +12,18 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
+PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
-COMPONENT_VERSION= 2.8.13
+COMPONENT_VERSION= 3.2.14
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:df9b98cb584a004ce8e29b4c954cfb8d9e45dac52b4c6d036f25dfbaa3086778
+  sha256:d918bf3cec12e865f03eaf01c9a4b4d49bbd311217cb56f02fa7de95730ee096
 COMPONENT_ARCHIVE_URL= \
   http://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.ffmpeg.org/
@@ -43,7 +44,6 @@ CFLAGS.32 += -mpreferred-stack-boundary=4
 CFLAGS += $(CFLAGS.$(BITS))
 CFLAGS += -I/usr/X11/include
 CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += -DHAVE_OPENJPEG_2_0_OPENJPEG_H
 
 CPPFLAGS += $($(COMPILER)_C99_ENABLE)
 
@@ -63,6 +63,7 @@ CONFIGURE_OPTIONS += --enable-swscale
 CONFIGURE_OPTIONS += --enable-libgsm
 CONFIGURE_OPTIONS += --enable-libxvid
 CONFIGURE_OPTIONS += --enable-libx264
+CONFIGURE_OPTIONS += --enable-libx265
 # Don't enable it, resulting binary is not 
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
@@ -94,14 +95,17 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 COMPONENT_TEST_ENV+= PATH=$(PROTO_DIR)/usr/bin:$(PATH)
 COMPONENT_TEST_ENV+= LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib
 
-$(TEST_32):	$(INSTALL_32)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results.master
 
-build: $(BUILD_32)
+COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" '
 
-install: $(INSTALL_32)
+build: $(BUILD_32_and_64)
 
-test:	$(TEST_32)
+install: $(INSTALL_32_and_64)
 
+test:	$(TEST_32_and_64)
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
@@ -112,12 +116,13 @@ REQUIRED_PACKAGES += library/audio/libgsm
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
-REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
+REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += library/video/xvid
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

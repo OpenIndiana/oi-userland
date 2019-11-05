@@ -11,21 +11,22 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright 2016 Jim Klimov. All rights reserved.
+# Copyright 2019 Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lsof
-COMPONENT_VERSION=	4.89
-COMPONENT_PROJECT_URL=	http://freecode.com/projects/util-linux
+COMPONENT_VERSION=	4.91
+COMPONENT_PROJECT_URL=	https://people.freebsd.org/~abe/
 COMPONENT_SUMMARY=	LSOF - lister of opened files
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 # Theoretical upstream is ftp://lsof.itap.purdue.edu/pub/tools/unix/lsof
 # but it is not available at the time of this writing
 COMPONENT_ARCHIVE_URL=	https://fossies.org/linux/misc/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5d08da7ebe049c9d9a6472d6afb81aa5af54c4733a3f8822cbc22b57867633c9
+	sha256:c9da946a525fbf82ff80090b6d1879c38df090556f3fe0e6d782cb44172450a3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -34,12 +35,8 @@ include $(WS_MAKE_RULES)/ips.mk
 # In oi_151a8, illumos version of yes ignores SIGPIPE, never exits
 PATH = $(PATH.gnu)
 
-# Snatched from espeak component
-BINDIR.32=/usr/bin
-BINDIR.64=/usr/bin/$(MACH64)
-
-LIBDIR.32=/usr/lib
-LIBDIR.64=/usr/lib/$(MACH64)
+BINDIR.64 =	/usr/bin
+LIBDIR.64 =	/usr/lib
 
 COMPONENT_COMMON_ARGS += -C $(BUILD_DIR_$(BITS))
 COMPONENT_COMMON_ARGS += BINDIR=$(BINDIR.$(BITS))
@@ -56,17 +53,17 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ENV += $(COMPONENT_COMMON_ENV)
 
 COMPONENT_PREP_ACTION = \
-    ( cd $(SOURCE_DIR) && tar xf - < $(COMPONENT_SRC)_src.tar )
+	( cd $(SOURCE_DIR) && tar xf - < $(COMPONENT_SRC)_src.tar )
 
 COMPONENT_PRE_BUILD_ACTION = \
-    ( cd $(@D) && cp -prf "$(SOURCE_DIR)/$(COMPONENT_SRC)_src"/./ ./ && \
-      yes '' | SOLARIS_KERNBITS=$(BITS) ./Configure solaris )
+	( cd $(@D) && cp -prf "$(SOURCE_DIR)/$(COMPONENT_SRC)_src"/./ ./ && \
+	  yes '' | SOLARIS_KERNBITS=$(BITS) ./Configure solaris )
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
 # The p5m manifest directly pulls from source dirs (the "make install" action
 # for Solaris in LSOF sources only prints hints what/how should be set up)
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

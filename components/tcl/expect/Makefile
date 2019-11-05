@@ -21,18 +21,18 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expect
-COMPONENT_VERSION=	5.45
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://expect.nist.gov/
+COMPONENT_VERSION=	5.45.4
+COMPONENT_PROJECT_URL=	https://core.tcl.tk/expect/index
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b28dca90428a3b30e650525cdc16255d76bb6ccd65d448be53e620d95d5cc040
+    sha256:49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/expect
 
@@ -56,6 +56,10 @@ CONFIGURE_OPTIONS 	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
 CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))/generic"
 
 CONFIGURE_OPTIONS.64	+= LIBS=" -m64"
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-ne "/\.test/p"' \
+	'-ne "/Total/p"'
 
 COMPONENT_TEST_TARGETS = test
 

@@ -1,0 +1,20 @@
+--- VirtualBox-6.0.4/Config.kmk	2019-01-25 19:10:01.000000000 +0000
++++ VirtualBox-6.0.4/Config.kmk	2019-02-23 19:39:23.859546435 +0000
+@@ -793,7 +793,7 @@ VBOX_WITH_EXTPACK_VBOXDTRACE = 1
+ ## @name Misc
+ ## @{
+ # Enable to compile with OpenSSL 1.0 (only relevant for Windows, see src/VBox/Runtime/Makefile.kmk)
+-#VBOX_WITH_OPENSSL_PRE_1_1 = 1
++VBOX_WITH_OPENSSL_PRE_1_1 = 1
+ # Enables all the doxgen bits.
+ VBOX_WITH_ALL_DOXYGEN_TARGETS = 1
+ # Set this to skip installing the redistributable compiler runtime.
+@@ -2794,8 +2794,6 @@ $(PATH_OUT)/DynamicConfig.kmk: \
+ 		$(VBOX_GCC32_PATH_CC) \
+ 		$(VBOX_GCC32_PATH_CXX) \
+                $(VBOX_GCC32_LIBGCC) \
+-		$(if-expr "$(KBUILD_HOST).$(KBUILD_HOST_ARCH)" == "solaris.amd64" && $(KBUILD_HOST_VERSION_MINOR) >= 11 \
+-			, /platform/i86pc/kernel/$(KBUILD_HOST_ARCH)/unix,) \
+         	| $(PATH_OUT)/DynamicConfig.c $(PATH_OUT)/DynamicConfig.cpp
+ 	$(call MSG_GENERATE,,$@,)
+ 	$(QUIET)$(RM) -f '$@'

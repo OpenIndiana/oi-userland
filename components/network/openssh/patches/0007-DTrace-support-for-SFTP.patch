@@ -3,22 +3,10 @@ From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
 Subject: [PATCH 07/34] DTrace support for SFTP
 
----
- Makefile.in          | 24 ++++++++++++++---
- sftp-server.c        | 25 ++++++++++++++++--
- sftp64.d             | 56 ++++++++++++++++++++++++++++++++++++++++
- sftp_provider.d      | 61 +++++++++++++++++++++++++++++++++++++++++++
- sftp_provider_impl.h | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 233 insertions(+), 6 deletions(-)
- create mode 100644 sftp64.d
- create mode 100644 sftp_provider.d
- create mode 100644 sftp_provider_impl.h
-
-diff --git a/Makefile.in b/Makefile.in
-index 6541b3bb..82065077 100644
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -26,6 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
+diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
+--- a~/Makefile.in	1970-01-01 00:00:00
++++ a/Makefile.in	1970-01-01 00:00:00
+@@ -24,6 +24,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpas
  SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
@@ -26,24 +14,24 @@ index 6541b3bb..82065077 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -85,6 +86,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
- 	atomicio.o key.o dispatch.o mac.o uidswap.o uuencode.o misc.o utf8.o \
+@@ -93,6 +94,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
+ 	atomicio.o dispatch.o mac.o uuencode.o misc.o utf8.o \
  	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-rsa.o dh.o \
  	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
 +	sftp_provider.o \
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -110,7 +112,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
+@@ -118,7 +120,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
  	sftp-server.o sftp-common.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
--	sandbox-solaris.o
-+	sandbox-solaris.o sftp_provider.o
+-	sandbox-solaris.o uidswap.o
++	sandbox-solaris.o uidswap.o sftp_provider.o
  
  MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out sshd_config.4.out ssh_config.4.out
  MANPAGES_IN	= moduli.4 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.1m sftp-server.1m sftp.1 ssh-keysign.1m ssh-pkcs11-helper.1m sshd_config.4 ssh_config.4
-@@ -187,8 +189,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11
+@@ -195,8 +197,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
  ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o
  	$(LD) -o $@ ssh-keyscan.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
  
@@ -54,9 +42,9 @@ index 6541b3bb..82065077 100644
  
  sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
  	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
-@@ -225,9 +227,22 @@ umac128.o:	umac.c
- 	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
- 	    -Dumac_delete=umac128_delete -Dumac_ctx=umac128_ctx
+@@ -226,9 +228,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
+ moduli:
+ 	echo
  
 +# dtrace sftp
 +sftp_provider.h: $(srcdir)/sftp_provider.d
@@ -75,21 +63,20 @@ index 6541b3bb..82065077 100644
  	rm -f *.o *.a $(TARGETS) logintest config.cache config.log
 -	rm -f *.out core survey
 +	rm -f *.out core survey sftp_provider.h
+ 	rm -f regress/check-perm$(EXEEXT)
+ 	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
- 	rm -f regress/unittests/test_helper/*.o
- 	rm -f regress/unittests/sshbuf/*.o
-@@ -347,6 +362,7 @@ install-files:
+@@ -368,6 +383,7 @@ install-files:
  	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
  	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
 +	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
  
  install-sysconf:
- 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
-diff --git a/sftp-server.c b/sftp-server.c
-index 3619cdfc..78167f9d 100644
---- a/sftp-server.c
-+++ b/sftp-server.c
+ 	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
+diff -wpruN '--exclude=*.orig' a~/sftp-server.c a/sftp-server.c
+--- a~/sftp-server.c	1970-01-01 00:00:00
++++ a/sftp-server.c	1970-01-01 00:00:00
 @@ -50,6 +50,9 @@
  
  #include "sftp.h"
@@ -166,11 +153,9 @@ index 3619cdfc..78167f9d 100644
  			if (ret < 0) {
  				error("process_write: write failed");
  				status = errno_to_portable(errno);
-diff --git a/sftp64.d b/sftp64.d
-new file mode 100644
-index 00000000..8305d0af
---- /dev/null
-+++ b/sftp64.d
+diff -wpruN '--exclude=*.orig' a~/sftp64.d a/sftp64.d
+--- a~/sftp64.d	1970-01-01 00:00:00
++++ a/sftp64.d	1970-01-01 00:00:00
 @@ -0,0 +1,56 @@
 +/*
 + * Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
@@ -228,11 +213,9 @@ index 00000000..8305d0af
 +	sfi_pathname = copyinstr((uintptr_t)*(uint64_t *)copyin(
 +	    (uintptr_t)&s->sftp_pathname, sizeof (uint64_t)));
 +};
-diff --git a/sftp_provider.d b/sftp_provider.d
-new file mode 100644
-index 00000000..99e99202
---- /dev/null
-+++ b/sftp_provider.d
+diff -wpruN '--exclude=*.orig' a~/sftp_provider.d a/sftp_provider.d
+--- a~/sftp_provider.d	1970-01-01 00:00:00
++++ a/sftp_provider.d	1970-01-01 00:00:00
 @@ -0,0 +1,61 @@
 +/*
 + * CDDL HEADER START
@@ -295,11 +278,9 @@ index 00000000..99e99202
 +#pragma D attributes Private/Private/Unknown provider sftp function
 +#pragma D attributes Private/Private/ISA provider sftp name
 +#pragma D attributes Evolving/Evolving/ISA provider sftp args
-diff --git a/sftp_provider_impl.h b/sftp_provider_impl.h
-new file mode 100644
-index 00000000..4b18e6ec
---- /dev/null
-+++ b/sftp_provider_impl.h
+diff -wpruN '--exclude=*.orig' a~/sftp_provider_impl.h a/sftp_provider_impl.h
+--- a~/sftp_provider_impl.h	1970-01-01 00:00:00
++++ a/sftp_provider_impl.h	1970-01-01 00:00:00
 @@ -0,0 +1,73 @@
 +/*
 + * CDDL HEADER START
@@ -374,6 +355,3 @@ index 00000000..4b18e6ec
 +#endif
 +
 +#endif /* _SFTP_PROVIDER_IMPL_H */
--- 
-2.11.0
-

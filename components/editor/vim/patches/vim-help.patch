@@ -57,14 +57,16 @@
  
  #ifdef FEAT_GUI
      need_mouse_correct = TRUE;
-@@ -6386,12 +6407,14 @@
+@@ -6424,12 +6424,14 @@ ex_help(exarg_T *eap)
  	     * There is no help window yet.
  	     * Try to open the file specified by the "helpfile" option.
  	     */
 -	    if ((helpfd = mch_fopen((char *)p_hf, READBIN)) == NULL)
 -	    {
--		smsg((char_u *)_("Sorry, help file \"%s\" not found"), p_hf);
+-		smsg(_("Sorry, help file \"%s\" not found"), p_hf);
 -		goto erret;
+-	    }
+-	    fclose(helpfd);
 +	    if (!nohelp || nominhelp) {
 +		if ((helpfd = mch_fopen((char *)p_hf, READBIN)) == NULL)
 +		{
@@ -72,11 +74,10 @@
 +		    goto erret;
 +		}
 +		fclose(helpfd);
- 	    }
--	    fclose(helpfd);
++ 	    }
  
- #ifdef FEAT_WINDOWS
  	    /* Split off help window; put it at far top if no position
+ 	     * specified, the current window is vertically split and
 @@ -6420,7 +6443,7 @@
  	     * Set the alternate file to the previously edited file.
  	     */

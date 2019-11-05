@@ -11,30 +11,29 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=64
+PREFERRED_BITS=		64
+BUILD_BITS=		32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= pulseaudio
-COMPONENT_VERSION= 11.1
-COMPONENT_REVISION= 1
-COMPONENT_FMRI = library/audio/pulseaudio
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_SUMMARY= Sample Rate Converter for audio
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=		pulseaudio
+COMPONENT_VERSION=	13.0
+COMPONENT_FMRI=		library/audio/pulseaudio
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_SUMMARY=	Sample Rate Converter for audio
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0a26ff354ee9aa84ef3fda21b704e05bdf933dce2a7ac46b76c9951c33870ecf
+	sha256:961b23ca1acfd28f2bc87414c27bb40e12436efcf2158d29721b1e89f3f28057
 COMPONENT_ARCHIVE_URL= \
-  http://freedesktop.org/software/pulseaudio/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/PulseAudio/
-COMPONENT_LICENSE = LGPLv2.1,GPLv2,MIT,adrian-license,Sun Public Domain license
+	http://freedesktop.org/software/pulseaudio/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/PulseAudio/
+COMPONENT_LICENSE=	LGPLv2.1,GPLv2,MIT,adrian-license,Sun Public Domain license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -65,6 +64,7 @@ CONFIGURE_OPTIONS += --enable-solaris
 CONFIGURE_OPTIONS += --with-database=gdbm
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-zsh-completion-dir=/usr/share/zsh/5.2/functions/Completion/Unix
+CONFIGURE_OPTIONS += --enable-tests
 
 CONFIGURE_ENV	+= CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV	+= PERL=$(PERL)
@@ -82,21 +82,22 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
 $(INSTALL_32):	$(INSTALL_64)
 
-build: $(BUILD_32_and_64)
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
+# For tests
+REQUIRED_PACKAGES += developer/check
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/speexdsp
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math

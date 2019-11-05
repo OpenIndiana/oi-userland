@@ -20,21 +20,20 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
-COMPONENT_VERSION=	8.41
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	8.43
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:244838e1f1d14f7e2fa7681b857b3a8566b74215f28133f14a8f5e59241b682c
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:91e762520003013834ac1adb4a938d53b22a216341c061b0cf05603b290faf6b
+COMPONENT_ARCHIVE_URL=	ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  http://pcre.org/
-COMPONENT_BUGDB=	library/pcre
 COMPONENT_FMRI=		library/pcre
 COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	BSD
@@ -49,16 +48,11 @@ CFLAGS+=	-std=c99
 
 # turn on largefile support
 CFLAGS+=	$(CPP_LARGEFILES)
-#CFLAGS+=	$(XPG6MODE)
 
 CXXFLAGS+=	$(CC_PIC)
 
 # turn on support for large files
 CXXFLAGS+=	$(CPP_LARGEFILES)
-
-#CXXFLAGS+=	$(XPG5MODE)
-
-LINTFLAGS+=	-I. $(studio_XBITS) $(CPP_LARGEFILES)
 
 CONFIGURE_ENV+=	"CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV+=	"CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
@@ -110,8 +104,6 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_INSTALL_ARGS+=	"INSTALL=$(INSTALL)"
 COMPONENT_INSTALL_ARGS+=	"MAKE=$(GMAKE)"
 
-# common targets
-
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
@@ -122,5 +114,5 @@ REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

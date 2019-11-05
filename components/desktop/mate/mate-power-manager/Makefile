@@ -10,12 +10,13 @@
 
 #
 # Copyright (c) 2018 Alexander Pyhalov
+# Copyright (c) 2019 Michal Nowak
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-power-manager
-COMPONENT_MJR_VERSION=  1.18
+COMPONENT_MJR_VERSION=  1.22
 COMPONENT_MNR_VERSION=  1
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
@@ -23,7 +24,7 @@ COMPONENT_SUMMARY=      MATE Power Manager utilities for desktop users
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:25dbd47c063d9aa2ed4be6401f6650aec11e0baa6bdd5dbb12cbb6952461cbeb
+	sha256:ba6647acea13852ac5bd2423dedbb68033eb056871ba58812c42074a08177a1b
 COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/mate-power-manager
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -36,8 +37,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					autoreconf -fi)
+COMPONENT_PREP_ACTION =        ( cd $(@D) && autoreconf -fi )
 
 CONFIGURE_BINDIR.64=	/usr/bin
 CONFIGURE_SBINDIR.64=	/usr/sbin
@@ -50,13 +50,13 @@ CONFIGURE_OPTIONS+=	--without-keyring
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV+= PERL="$(PERL)"
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
