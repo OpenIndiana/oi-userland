@@ -184,6 +184,7 @@ check_add_drv()
 }
 
 unload_drv() {
+    # NOTE: If the driver is not loaded, there is no fault here
     DRV_PATH="$1"
     DRV="`basename "$DRV_PATH"`"
 
@@ -195,7 +196,8 @@ unload_drv() {
     if [ -n "$OLD_DRV" ] ; then
         echo "INFO: Old driver info:" >&2
         echo "$OLD_DRV" >&2
-        /usr/sbin/modunload -i `echo "$OLD_DRV" | head -1 | awk '{print $1}'` \
+        OLD_DRV_ID="`echo "$OLD_DRV" | head -1 | awk '{print $1}'`"
+        [ -n "$OLD_DRV_ID" ] && /usr/sbin/modunload -i "$OLD_DRV_ID" \
             || { echo "FAILED to unload the old kernel driver $DRV..." ; return 1; }
     fi
 }
@@ -234,7 +236,7 @@ load_drv() {
             echo "$NEW_DRV" >&2
         fi
     else
-        echo "FAILED to find any details about the newly loaded driver $DRV" >&2
+        echo "WARNING: FAILED to find any details about the newly loaded driver $DRV" >&2
     fi
 }
 
