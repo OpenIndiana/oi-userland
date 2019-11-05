@@ -84,6 +84,8 @@ PARCH = $(MACH:i386=i386-pc)
 GNU_ARCH = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 PKG_MACROS += GNU_ARCH="$(GNU_ARCH)"
 
+COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR_1) && autoreconf -vif )
+
 # Build recipe borrowed from OmniOS
 COMMON_ENV=  LD_OPTIONS="-zignore -zcombreloc -i"
 COMMON_ENV+= LD_FOR_TARGET=/usr/bin/ld

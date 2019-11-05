@@ -55,11 +55,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
 COMPONENT_POST_INSTALL_ACTION =  \
 for file in `echo $(PROTO_DIR)/$(CMAKE_PREFIX)/bin/*`; do \
-	elfedit -e 'dyn:runpath $$ORIGIN/../lib' $$file ; \
-done && \
-for file in `echo $(PROTO_DIR)/$(CMAKE_PREFIX)/lib/*.so`; do \
-	elfedit -e 'dyn:delete RUNPATH' $$file ; \
-	elfedit -e 'dyn:delete RPATH' $$file ; \
+	elfedit -e 'dyn:runpath $(GCC_ROOT)/lib:$$ORIGIN/../lib' $$file ; \
 done && \
 for file in \
 	`ggrep -rlh '^\#!*/usr/bin/env python' $(PROTO_DIR)/$(CMAKE_PREFIX)`; do \
@@ -88,6 +84,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math

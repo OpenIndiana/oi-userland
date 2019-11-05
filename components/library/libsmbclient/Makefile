@@ -168,5 +168,5 @@ REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/security/libgcrypt

@@ -83,6 +83,6 @@ REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += web/curl

@@ -33,6 +33,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+
 COMPONENT_NAME_lc = $(shell echo $(COMPONENT_NAME) | tr '[A-Z]' '[a-z]')
 COMPONENT_INSTALL_ACTION = \
 	$(INSTALL) -Dpm 755 $(@D)/unix/librecad $(PROTO_DIR)$(USRBINDIR)/librecad; \
@@ -61,12 +63,10 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/qt4
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/security/libgcrypt
-REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxi
-REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-6-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += system/library/math

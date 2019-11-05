@@ -64,4 +64,4 @@ test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime

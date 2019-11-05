@@ -47,5 +47,5 @@ test: $(NO_TESTS)
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime

@@ -72,7 +72,7 @@ test:		$(TEST_64)
 REQUIRED_PACKAGES += library/libtorrent
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl

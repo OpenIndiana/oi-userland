@@ -61,8 +61,8 @@ diff -ruN llvm-4.0.0.src/tools/clang/lib/Driver/ToolChains.cpp llvm-4.0.0.src.pa
    addPathIfExists(D, getDriver().SysRoot + getDriver().Dir + "/../lib", Paths);
  
    std::string LibPath = "/usr/lib/";
-+  std::string GCCLibPath = "/usr/gcc/4.9/lib/gcc/";
-+  std::string GCCVersion = "4.9.4";
++  std::string GCCLibPath = "/usr/gcc/6/lib/gcc/";
++  std::string GCCVersion = "6.4.0";
    switch (Triple.getArch()) {
    case llvm::Triple::x86:
 +    GCCLibPath += ("i386-" + Triple.getVendorName() + "-" + Triple.getOSName()).str() + "/"+GCCVersion+"/";
@@ -123,7 +123,7 @@ diff -ruN llvm-4.0.0.src/tools/clang/lib/Frontend/InitHeaderSearch.cpp llvm-4.0.
      llvm_unreachable("Include management is handled in the driver.");
      break;
 +  case llvm::Triple::Solaris:
-+    AddGnuCPlusPlusIncludePaths("/usr/gcc/4.9/include/c++/4.9.4/",
++    AddGnuCPlusPlusIncludePaths("/usr/gcc/6/include/c++/6.4.0/",
 +                                "i386-pc-solaris2.11", "", "", triple); break;
    case llvm::Triple::Win32:
      switch (triple.getEnvironment()) {

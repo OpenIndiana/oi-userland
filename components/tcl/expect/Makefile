@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expect
 COMPONENT_VERSION=	5.45
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://expect.nist.gov/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -36,13 +36,15 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/expect
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 SCRIPTS = timed-run timed-read ftp-rfc autopasswd lpunlock weather \
           passmass rftp kibitz rlogin-cwd xpstat tkpasswd dislocate xkibitz \
           tknewsbiff unbuffer mkpasswd cryptdir decryptdir autoexpect multixterm
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -vif )
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))

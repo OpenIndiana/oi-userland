@@ -21,6 +21,7 @@ COMPONENT_NAME=		driver-graphics-nvidia
 NVIDIA_DRIVER_MAJOR_VERSION=	340
 NVIDIA_DRIVER_MINOR_VERSION=	104
 COMPONENT_VERSION=	$(NVIDIA_DRIVER_MAJOR_VERSION).$(NVIDIA_DRIVER_MINOR_VERSION)
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
@@ -38,6 +39,14 @@ include $(WS_MAKE_RULES)/ips.mk
 PKG_OPTIONS +=	-D NVIDIA_DRIVER_MAJOR_VERSION="$(NVIDIA_DRIVER_MAJOR_VERSION)"
 PKG_OPTIONS +=	-D NVIDIA_DRIVER_MINOR_VERSION="$(NVIDIA_DRIVER_MINOR_VERSION)"
 PKG_OPTIONS +=	-D NVIDIA_MEDIATOR="mediator=nvidia-drv mediator-implementation=nvidia-drv-proprietary mediator-version=$(NVIDIA_DRIVER_MAJOR_VERSION)"
+
+COMPONENT_POST_INSTALL_ACTION = ( \
+	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 ; \
+	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 ; \
+	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib:/lib:/usr/lib" \
+		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 ; \
+	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib/$(MACH64):/lib/$(MACH64):/usr/lib/$(MACH64)"\
+		$(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 ; )
 
 $(SOURCE_DIR)/.unpacked: download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR)
@@ -167,6 +176,7 @@ install_driver_aliases_32:	install_mv_bigdirs_32
 	$(SHELL) $(COMPONENT_DIR)/print-pci-ids.sh $(SOURCE_DIR) >> "$(PROTO_DIR)/usr/share/nvidia-$(NVIDIA_DRIVER_MAJOR_VERSION)/driver_aliases.txt"
 
 $(INSTALL_32):	$(BUILD_32) install_drv_32 install_mv_bigdirs_32 install_mv_desktop_32 install_mv_tools_32 install_mv_X11drv_32 install_headers_32 install_driver_aliases_32
+	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
 $(SAMPLE_MANIFEST_FILE):	sample-manifest

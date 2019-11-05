@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mongodb
 COMPONENT_VERSION= 3.4.9
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= MongoDB distributed document-oriented database
 COMPONENT_PROJECT_URL=	https://www.mongodb.com/
 COMPONENT_FMRI=	database/mongodb-34
@@ -31,9 +31,6 @@ COMPONENT_LICENSE_FILE=	APACHE-2.0.txt
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-# MongoDB 3.4 wants GCC 7 compiler
-GCC_ROOT=/usr/gcc/7
 
 BUILD_TOOLS= $(BUILD_DIR)/tools/.built
 INSTALL_TOOLS= $(BUILD_DIR)/tools/.installed
@@ -109,7 +106,7 @@ test:		$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/scons
-REQUIRED_PACKAGES += developer/gcc-7
+REQUIRED_PACKAGES += developer/gcc-6
 REQUIRED_PACKAGES += developer/golang
 
 # Auto-generated dependencies
@@ -117,8 +114,8 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gcc-7-runtime
-REQUIRED_PACKAGES += system/library/g++-7-runtime
+REQUIRED_PACKAGES += system/library/gcc-6-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math

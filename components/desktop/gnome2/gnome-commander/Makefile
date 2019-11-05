@@ -69,6 +69,6 @@ REQUIRED_PACKAGES += library/gnome/gnome-vfs
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/g++-6-runtime
 REQUIRED_PACKAGES += system/library/gcc-6-runtime
 REQUIRED_PACKAGES += system/library/math
