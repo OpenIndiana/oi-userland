@@ -28,11 +28,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
-COMPONENT_VERSION =		4.11.0
+COMPONENT_VERSION =		4.11.2
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:6adf1c74afff1f3f7e14060cc5a36111a6721d644ea51ed1b22da46051e48e9c
+COMPONENT_ARCHIVE_HASH = 	sha256:d27bf1b7cf5f25fb5587896fccb73747a705f7cf7ee352b5cbab82841db09f1f
 COMPONENT_ARCHIVE_URL =		http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_LICENSE =		GPLv3
@@ -55,7 +55,7 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 # Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
-CFLAGS +=	$($(COMPILER)_C99_ENABLE)
+CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS
 CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap
 CPPFLAGS +=	-I/usr/include/gnutls-3
