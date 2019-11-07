@@ -11,36 +11,33 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 # Copyright (c) 2018 Till Wegmüller
+# Copyright (c) 2019 Michal Nowak
 #
+
+BUILD_BITS=		64
+BUILD_STYLE=		cmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         awesome
-COMPONENT_VERSION=      4.2
+COMPONENT_VERSION=      4.3
 COMPONENT_PROJECT_URL=  https://awesomewm.org
 COMPONENT_SUMMARY=      A highly configurable, next generation framework window manager for X.
 COMPONENT_FMRI=         desktop/window-manager/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=System/X11
+COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:ac5da1a99f5fad083821993d2b56d1cd9594164eafc0be2beb540598345d974f
+COMPONENT_ARCHIVE_HASH=	sha256:78264d6f012350b371e339127aca485260bc0aa935eff578ba75ce1a00e11753
 COMPONENT_ARCHIVE_URL=  https://github.com/awesomeWM/awesome-releases/raw/master/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+# There are manual tests in tests/ dir
+TESTS_TARGET=		$(NO_TESTS)
 
-CONFIGURE_BINDIR.64=	$(CONFIGURE_BINDIR.32)
+include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += "-DLUA_LIBRARY=/usr/lib/64/liblua.so"
-
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TEST)
 
 # Packages Required at Buildtime. Not found By gmake
 REQUIRED_PACKAGES += image/imagemagick
