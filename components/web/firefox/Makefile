@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		firefox
 IPS_COMPONENT_VERSION=	60.9.0
 COMPONENT_VERSION=	$(IPS_COMPONENT_VERSION)esr
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(IPS_COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
@@ -141,7 +141,7 @@ test: $(NO_TESTS)
 REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += developer/clang-80
+REQUIRED_PACKAGES += developer/clang-90
 REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += runtime/python-27
