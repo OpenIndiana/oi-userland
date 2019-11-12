@@ -13,12 +13,14 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_BITS = 32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           lndir
-COMPONENT_VERSION=        1.0.3
-COMPONENT_FMRI=           file/lndir
-COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_NAME=				lndir
+COMPONENT_VERSION=			1.0.3
+COMPONENT_REVISION=			1
+COMPONENT_FMRI=				file/lndir
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=  lndir - create a shadow directory of symbolic links to another directory tree
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
@@ -30,20 +32,13 @@ COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

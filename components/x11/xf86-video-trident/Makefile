@@ -15,9 +15,10 @@
 
 include ../../../make-rules/shared-macros.mk
 
+BUILD_BITS = 32_and_64
 COMPONENT_NAME= xf86-video-trident
 COMPONENT_VERSION= 1.3.8
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= xf86-video-trident - Trident video driver for the Xorg X server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-trident
@@ -31,9 +32,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           libtoolize --automake --copy --force && \
@@ -57,14 +57,8 @@ LD_OPTIONS= \
         -lexa -lfb -lint10 -lpciaccess -lpixman-1 -lshadow -lvbe -lvgahw \
         -lm
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/xextproto
-REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += diagnostic/scanpci

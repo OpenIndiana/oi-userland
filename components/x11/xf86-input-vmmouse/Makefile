@@ -13,11 +13,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-vmmouse
 COMPONENT_VERSION= 13.1.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= xf86-input-vmmouse - VMWare guest mouse input driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,9 +32,8 @@ COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-vmmouse
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 HAL_CALLOUTS_DIR.32=/usr/lib/hal
 HAL_CALLOUTS_DIR.64=/usr/lib/hal/$(MACH64)
@@ -49,13 +49,11 @@ CONFIGURE_OPTIONS += --with-hal-fdi-dir=/etc/hal/fdi/policy/10osvendor
 CONFIGURE_OPTIONS += --without-libudev
 CONFIGURE_OPTIONS += --with-udev-rules-dir=no
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/x11-protocols
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/header/inputproto
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libx11

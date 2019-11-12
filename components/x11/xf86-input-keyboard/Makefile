@@ -13,11 +13,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-keyboard
 COMPONENT_VERSION= 1.9.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= \
   xf86-input-keyboard - Keyboard input driver for the Xorg X server
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-keyboard
@@ -32,9 +33,8 @@ COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           libtoolize --automake --copy --force && \
@@ -43,15 +43,10 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           automake -a -f -c &&\
                           autoconf )
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/inputproto
+REQUIRED_PACKAGES += system/header/header-usb
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/server/xorg
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/header/header-usb

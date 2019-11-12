@@ -13,12 +13,13 @@
 # Copyright 2017 Aurelien Larcher
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-vbox
 # Use version string from Xorg module
 COMPONENT_VERSION= 1.0.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= xf86-video-vbox - VirtualBox UMS driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
@@ -33,9 +34,8 @@ COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-vboxvideo
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           libtoolize --automake --copy --force && \
@@ -66,15 +66,8 @@ LD_OPTIONS+= \
 
 CONFIGURE_OPTIONS+= --with-xorg-module-dir=$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR)
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/xf86driproto
-REQUIRED_PACKAGES += x11/header/fontsproto
-REQUIRED_PACKAGES += x11/header/glproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += system/header/header-drm
 
 # Auto-generated dependencies

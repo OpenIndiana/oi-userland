@@ -13,11 +13,12 @@
 # Copyright 2015 Ken Mays
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-ast
 COMPONENT_VERSION= 1.1.5
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= xf86-video-ast - ASPEED AST driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -27,10 +28,8 @@ COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
-include $(WS_TOP)/make-rules/prep.mk
-
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					aclocal -I. && \
@@ -55,13 +54,8 @@ LD_OPTIONS+= \
 	$(AST_LIBRARIES)
 
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += diagnostic/scanpci

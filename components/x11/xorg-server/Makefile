@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
 COMPONENT_VERSION= 1.19.7
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -124,10 +124,7 @@ COMPONENT_POST_INSTALL_ACTION += ( $(ENV) $(COMPONENT_BUILD_ENV) $(CONFIGURE_ENV
 # Build dependencies
 REQUIRED_PACKAGES += x11/documentation/xorg-docs
 REQUIRED_PACKAGES += x11/documentation/xorg-sgml-doctools
-REQUIRED_PACKAGES += x11/header/dri2proto
-REQUIRED_PACKAGES += x11/header/dri3proto
-REQUIRED_PACKAGES += x11/header/glproto
-REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/font-util
 REQUIRED_PACKAGES += x11/library/libxres
 REQUIRED_PACKAGES += x11/library/xcb-util
