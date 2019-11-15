@@ -13,11 +13,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-acecad
 COMPONENT_VERSION= 1.5.0
-COMPONENT_REVISIION= 1
+COMPONENT_REVISIION= 2
 COMPONENT_SUMMARY= xf86-input-acecad - Acecad Flair input driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,9 +32,8 @@ COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-acecad
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \
@@ -42,14 +42,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/kbproto
-REQUIRED_PACKAGES += x11/header/inputproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/server/xorg
 
 # Auto-generated dependencies

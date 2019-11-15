@@ -13,11 +13,12 @@
 # Copyright 2015 Ken Mays
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-openchrome
 COMPONENT_VERSION= 0.6.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= xf86-video-openchrome - OpenChrome driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,9 +32,8 @@ COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-openchrome
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           libtoolize --automake --copy --force && \
@@ -72,15 +72,8 @@ COMPONENT_BUILD_ENV += \
 # Disable as 32bit module is not installed in the right directory. 
 #CONFIGURE_LIBDIR.$(BITS) =   $(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/xf86driproto
-REQUIRED_PACKAGES += x11/header/fontsproto
-REQUIRED_PACKAGES += x11/header/glproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += system/header/header-drm
 
 # Auto-generated dependencies

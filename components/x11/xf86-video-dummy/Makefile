@@ -13,11 +13,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-dummy
 COMPONENT_VERSION= 0.3.8
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= \
   xf86-video-dummy - virtual/offscreen frame buffer driver for the Xorg X server
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -32,9 +33,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
                           libtoolize --automake --copy --force && \
@@ -57,13 +57,8 @@ LD_OPTIONS= \
         -R$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
         -lfb
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
-REQUIRED_PACKAGES += x11/header/fontsproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

@@ -13,10 +13,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-synaptics
 COMPONENT_VERSION= 1.9.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-input-synaptics - Synaptics touchpad driver for X.Org
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-synaptics
@@ -30,21 +32,19 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_BINDIR.32=/usr/lib/xorg
 CONFIGURE_BINDIR.64=/usr/lib/xorg/$(MACH64)
 
-build: $(BUILD_32_and_64)
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/x11-protocols
+REQUIRED_PACKAGES += x11/library/libpthread-stubs
 
-install: $(INSTALL_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxtst
-REQUIRED_PACKAGES += x11/library/libpthread-stubs
-REQUIRED_PACKAGES += x11/header/inputproto

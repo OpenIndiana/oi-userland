@@ -20,10 +20,13 @@
 #
 # Copyright (c) 2013-2015, Aurelien Larcher. All rights reserved.
 #
+
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcb-util-image
 COMPONENT_VERSION=	0.4.0
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=     	x11/library/xcb-util-image
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,18 +38,11 @@ COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Port of XImage and XShmImage functions.
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/xproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

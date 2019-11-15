@@ -14,11 +14,12 @@
 # Copyright 2016 Ken Mays
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
 COMPONENT_GIT_DATE= 20171018
 COMPONENT_GIT_HASH= 4798e18b2b2c8b0a05dc967e6140fd9962bc1a73
@@ -30,12 +31,9 @@ COMPONENT_ARCHIVE_URL= \
   https://cgit.freedesktop.org/xorg/driver/xf86-video-intel/snapshot/$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
-include $(WS_TOP)/make-rules/prep.mk
-
 CONFIGURE_DEFAULT_DIRS = no
-
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lm -lsocket
 
@@ -103,15 +101,8 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/dri2proto
-REQUIRED_PACKAGES += x11/header/dri3proto
-REQUIRED_PACKAGES += x11/header/presentproto
-REQUIRED_PACKAGES += x11/header/xf86driproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += system/header/header-drm
 
