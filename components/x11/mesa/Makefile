@@ -14,11 +14,12 @@
 # Copyright 2015 Ken Mays
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 13.0.6
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
@@ -28,9 +29,8 @@ COMPONENT_ARCHIVE_URL= \
   https://mesa.freedesktop.org/archive/older-versions/13.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -54,6 +54,9 @@ CONFIGURE_SCRIPT = $(@D)/configure
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D) )
+
+# Identify source_file files in hard links for manifest generator.
+PKG_HARDLINKS +=	usr/lib/xorg/modules/dri/radeon_dri.so
 
 # Add include paths and linker paths needed for DRM modules
 CPPFLAGS = -I/usr/X11/include/drm -D__EXTENSIONS__
@@ -91,15 +94,8 @@ CONFIGURE_ENV+=CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_BUILD_ARGS =
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Build dependencies
-REQUIRED_PACKAGES += x11/header/dri2proto
-REQUIRED_PACKAGES += x11/header/dri3proto
-REQUIRED_PACKAGES += x11/header/glproto
-REQUIRED_PACKAGES += x11/header/presentproto
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += system/header/header-drm
 
