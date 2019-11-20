@@ -9,29 +9,28 @@
 #
 
 #
-# Copyright (c) 2017, 2018 Andreas Wacknitz
+# Copyright (c) 2017 - 2019 Andreas Wacknitz
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsass
-COMPONENT_VERSION=	3.5.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.6.3
 COMPONENT_PROJECT_URL=	http://libsass.org
 COMPONENT_SUMMARY=	LibSass is a C/C++ port of the Sass engine
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:487ca58f1dfdc4055079af04f0ad120747385d3b3926b1c8f46e4b00540fdb70
+  sha256:dadb470bb9141e91b437119d367654427180ed2b3d04b8000eab5b0ca47cd5bb
 COMPONENT_ARCHIVE_URL=	https://github.com/sass/libsass/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/libsass
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_CLASSIFICATION =	System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TESTS=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -41,15 +40,8 @@ COMPONENT_PREP_ACTION = \
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-# Auto-generated:
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
