@@ -1,0 +1,56 @@
+--- llvm-8.0.1.src/tools/clang/lib/Driver/ToolChain.cpp.~1~	2018-12-10 15:37:46.000000000 +0000
++++ llvm-8.0.1.src/tools/clang/lib/Driver/ToolChain.cpp	2019-08-01 07:41:33.527833915 +0000
+@@ -43,6 +43,7 @@
+ #include <cstddef>
+ #include <cstring>
+ #include <string>
++#include <stdlib.h>
+ 
+ using namespace clang;
+ using namespace driver;
+@@ -778,12 +779,41 @@
+ void ToolChain::AddFilePathLibArgs(const ArgList &Args,
+                                    ArgStringList &CmdArgs) const {
+   for (const auto &LibPath : getLibraryPaths())
+-    if(LibPath.length() > 0)
+-      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + LibPath));
++    if(LibPath.length() > 0) {
++      char CanonicalPath[PATH_MAX];
++
++      if (realpath(LibPath.c_str(), CanonicalPath) != NULL) {
++         CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + StringRef(CanonicalPath)));
++         if ((StringRef(CanonicalPath) != "/usr/lib") 
++           && (StringRef(CanonicalPath) != "/usr/lib/amd64")
++           && (StringRef(CanonicalPath) != "/usr/lib/sparcv9"))
++               CmdArgs.push_back(Args.MakeArgString(StringRef("-R") + StringRef(CanonicalPath)));
++       } else {
++         CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + LibPath));
++         if ((StringRef(LibPath) != "/usr/lib") 
++           && (StringRef(LibPath) != "/usr/lib/amd64")
++           && (StringRef(LibPath) != "/usr/lib/sparcv9"))
++               CmdArgs.push_back(Args.MakeArgString(StringRef("-R") + LibPath));
++       }
++    }
+ 
+   for (const auto &LibPath : getFilePaths())
+-    if(LibPath.length() > 0)
+-      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + LibPath));
++    if(LibPath.length() > 0) {
++      char CanonicalPath[PATH_MAX];
++      if (realpath(LibPath.c_str(), CanonicalPath) != NULL) {
++         CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + StringRef(CanonicalPath)));
++         if ((StringRef(CanonicalPath) != "/usr/lib") 
++           && (StringRef(CanonicalPath) != "/usr/lib/amd64")
++           && (StringRef(CanonicalPath) != "/usr/lib/sparcv9"))
++               CmdArgs.push_back(Args.MakeArgString(StringRef("-R") + StringRef(CanonicalPath)));
++       } else {
++         CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + LibPath));
++         if ((StringRef(LibPath) != "/usr/lib") 
++           && (StringRef(LibPath) != "/usr/lib/amd64")
++           && (StringRef(LibPath) != "/usr/lib/sparcv9"))
++               CmdArgs.push_back(Args.MakeArgString(StringRef("-R") + LibPath));
++       }
++    }
+ }
+ 
+ void ToolChain::AddCCKextLibArgs(const ArgList &Args,
