@@ -1,0 +1,11 @@
+--- pgpool-II-4.1.0/src/tools/pgproto/Makefile.am	2019-11-21 19:14:53.218445669 +0000
++++ pgpool-II-4.1.0/src/tools/pgproto/Makefile.am	2019-11-21 19:13:40.284850941 +0000
+@@ -4,3 +4,8 @@
+ pgproto_SOURCES = main.c read.c send.c extended_query.c buffer.c fe_memutils.c
+ pgproto_LDADD = -L@PGSQL_LIB_DIR@ -lpq
+ 
++if enable_rpath
++  pgproto_LDFLAGS = -rpath @PGSQL_LIB_DIR@
++else
++  pgproto_LDFLAGS =
++endif

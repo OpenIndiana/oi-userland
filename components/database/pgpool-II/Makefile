@@ -15,13 +15,15 @@
 
 include ../../../make-rules/shared-macros.mk
 
+BUILD_BITS=64
+
 COMPONENT_NAME= 	pgpool-II
-COMPONENT_VERSION= 	3.6.6
+COMPONENT_VERSION= 	4.1.0
 COMPONENT_SUMMARY= 	pgpool-II middle ware
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5fbdac14a07b4f4cabef8bd224be1fbb0770d9aa4731d8fa7905878dc4c22fbc
+  sha256:a2515d3d046afda0612b34c2aeca14a2071020dafb1f32e745b4a3054c0018df
 COMPONENT_ARCHIVE_URL= \
   http://www.pgpool.net/download.php?f=$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://pgpool.net/
@@ -33,12 +35,11 @@ COMPONENT_LICENSE_FILE=	COPYING
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -D__EXTENSIONS__
 
+COMPONENT_PREP_ACTION =        (cd $(SOURCE_DIR) && autoreconf -fi )
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
@@ -58,18 +59,12 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) -r $(BUILD_DIR_$(BITS))/doc/src/sgml/man[18] \
 		$(PROTO_DIR)/usr/share/man
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += data/docbook/dtds
 REQUIRED_PACKAGES += developer/documentation-tool/openjade
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += database/postgres-94/library
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
