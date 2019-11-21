@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.5.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -68,10 +68,11 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)/docs/dox/html
 PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)/docs/dox/html/search
 
-docs: $(BUILD_DIR)/$(MACH32)/.built
-	cd $(BUILD_DIR)/$(MACH32); doxygen docs/doxygen.conf
+COMPONENT_POST_INSTALL_ACTION.32=\
+	(cd $(BUILD_DIR)/$(MACH32); doxygen docs/doxygen.conf)
+COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
-build: $(BUILD_32_and_64) docs
+build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
@@ -81,8 +82,8 @@ test: $(TEST_32_and_64)
 REQUIRED_PACKAGES+= developer/documentation-tool/doxygen
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/mariadb-101/library
-REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/expat
