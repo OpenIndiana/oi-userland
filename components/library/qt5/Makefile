@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           qt
 COMPONENT_VERSION=        5.8.0
-COMPONENT_REVISION=       6
+COMPONENT_REVISION=       7
 COMPONENT_VERSION_MJR=    5.8
 COMPONENT_FMRI=           library/qt5
 COMPONENT_PROJECT_URL=    https://www.qt.io/
@@ -97,15 +97,17 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 # Build dependencies
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += database/freetds
 REQUIRED_PACKAGES += database/mariadb-101/client
-REQUIRED_PACKAGES += database/postgres-94/developer
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += x11/keyboard/data-xkb
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/sqlite-3
@@ -127,11 +129,10 @@ REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/hunspell
