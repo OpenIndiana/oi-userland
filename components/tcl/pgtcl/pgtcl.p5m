@@ -23,14 +23,19 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # We need to replace index to load 64-bit library when necessary
-file files/pkgIndex.tcl path=usr/lib/tcl8.6/pgtcl2.3/pkgIndex.tcl
+file files/pkgIndex.tcl path=usr/lib/tcl8.6/pgtcl/pkgIndex.tcl
 
-file path=usr/lib/tcl8.6/pgtcl2.3/$(MACH64)/libpgtcl$(COMPONENT_VERSION).so
-#file path=usr/lib/tcl8.6/pgtcl2.3/$(MACH64)/pkgIndex.tcl
-#file path=usr/lib/tcl8.6/pgtcl2.3/$(MACH64)/postgres-helpers.tcl
-file path=usr/lib/tcl8.6/pgtcl2.3/libpgtcl$(COMPONENT_VERSION).so
-#file path=usr/lib/tcl8.6/pgtcl2.3/pkgIndex.tcl
-file path=usr/lib/tcl8.6/pgtcl2.3/postgres-helpers.tcl
+file path=usr/include/pgtclId.h
+file path=usr/lib/tcl8.6/pgtcl/$(MACH64)/libpgtcl$(COMPONENT_VERSION).so
+link path=usr/lib/tcl8.6/pgtcl/$(MACH64)/libpgtcl.so \
+    target=./libpgtcl$(COMPONENT_VERSION).so
+#file path=usr/lib/tcl8.6/pgtcl/$(MACH64)/pkgIndex.tcl
+#file path=usr/lib/tcl8.6/pgtcl/$(MACH64)/postgres-helpers.tcl
+file path=usr/lib/tcl8.6/pgtcl/libpgtcl$(COMPONENT_VERSION).so
+link path=usr/lib/tcl8.6/pgtcl/libpgtcl.so \
+    target=./libpgtcl$(COMPONENT_VERSION).so
+#file path=usr/lib/tcl8.6/pgtcl/pkgIndex.tcl
+file path=usr/lib/tcl8.6/pgtcl/postgres-helpers.tcl
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/HTML.index
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/index.html
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/libpgtcl-loading.html
@@ -50,6 +55,7 @@ file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pgescape-string.html
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pgexec.html
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pgexecprepared.html
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pgexecute.html
+file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pggetconnectionid.html
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pggetresult.html
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pgisbusy.html
 file path=usr/share/doc/pgtcl-$(COMPONENT_VERSION)/pgtcl-pglisten.html

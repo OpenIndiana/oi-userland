@@ -13,15 +13,17 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS=32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgtcl
-COMPONENT_VERSION= 	2.3.2
+COMPONENT_VERSION= 	2.6.3
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
 COMPONENT_SRC= 		Pgtcl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:514b4fcaa8c6bbd9625943d4c01aafe73cbc26ddda482b510ced17192271a253
+  sha256:7950d2640dd206dd07ad36ea96363f3d436d3d2be3fec8993c11f363c55f0d22
 COMPONENT_ARCHIVE_URL= \
   https://github.com/flightaware/Pgtcl/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://flightaware.github.io/Pgtcl/
@@ -33,15 +35,16 @@ COMPONENT_LICENSE_FILE= LICENSE
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):$(PATH.illumos)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS.64 +=	--enable-64bit
 
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.6/pgtcl2.3
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.6/pgtcl2.3/$(MACH64)
+CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.6/pgtcl
+CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.6/pgtcl/$(MACH64)
 
 CONFIGURE_OPTIONS.32    += --with-tcl="/usr/lib"
 CONFIGURE_OPTIONS.64    += --with-tcl="/usr/lib/$(MACH64)"
@@ -49,12 +52,10 @@ CONFIGURE_OPTIONS.64    += --with-tcl="/usr/lib/$(MACH64)"
 COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) && \
 	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) )  
 
-build:		$(BUILD_32_and_64)
+# Build dependencies
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += database/postgres-94/library
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += system/library
