@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	15.1.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:8ce3ffbff473410ae0ed0472adea22b01a20f9ec784ebfec51393282028acc16
@@ -62,19 +62,19 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 # Build dependencies
-REQUIRED_PACKAGES += database/postgres-94/developer
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmime
-REQUIRED_PACKAGES += library/gnu-libiconv
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libical
@@ -94,9 +94,8 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
