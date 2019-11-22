@@ -14,21 +14,23 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	10
-COMPONENT_MNR_VERSION=	8
+COMPONENT_MNR_VERSION=	11
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:b198c2aadf1d68308127a0f5b51dbe798958ffe60dd999134f6495c489afcd5d
+COMPONENT_ARCHIVE_HASH=	sha256:0d5d14ff6b075655f4421038fbde3a5d7b418c26a249a187a4175600d7aecc09
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(TEST_64)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -90,11 +92,14 @@ COMPONENT_POST_INSTALL_ACTION+= cd $(PROTO_DIR) &&  \
              $(MV) usr/postgres/$(COMPONENT_MJR_VERSION)/include/pg_config.h usr/postgres/$(COMPONENT_MJR_VERSION)/include/pg_config-$(BITS).h  && \
              $(MV) usr/postgres/$(COMPONENT_MJR_VERSION)/include/server/pg_config.h usr/postgres/$(COMPONENT_MJR_VERSION)/include/server/pg_config-$(BITS).h	
 
-build:		$(BUILD_32_and_64)
+COMPONENT_TEST_ENV += MAKELEVEL=0
+COMPONENT_TEST_ENV += PATH=$(PATH)
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+COMPONENT_TEST_TRANSFORMS= \
+	'-n ' \
+	'-e "/ok/p"' \
+	'-e "/FAIL/p"' \
+	'-e "/failed/p"'
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
