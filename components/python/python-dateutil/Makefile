@@ -13,25 +13,23 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	python-dateutil
-COMPONENT_VERSION= 	2.5.3
+COMPONENT_VERSION= 	2.8.1
 COMPONENT_SUMMARY= 	Extensions to standard Python datetime module
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1408fdb07c6a1fa9997567ce3fcee6a337b39a503d80699e0f213de4aa4b32ed
+  sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c
 COMPONENT_ARCHIVE_URL= \
-  https://pypi.python.org/packages/3e/f5/aad82824b369332a676a90a8c0d1e608b17e740bbb6aeeebca726f17b902/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://pypi.python.org/python-dateutil/$(COMPONENT_VERSION)
+  $(call pypi_url)
+COMPONENT_PROJECT_URL = https://pypi.python.org/python-dateutil/
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
