@@ -13,27 +13,28 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	argh
-COMPONENT_VERSION= 	0.24.1
+COMPONENT_VERSION= 	0.26.2
 COMPONENT_SUMMARY= 	An unobtrusive argparse wrapper with natural syntax
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4980eb11339c9954885b8e44a1e39a4a1c114b738a7d8942c08494f4902f82a9
+  sha256:e9535b8c84dc9571a48999094fda7f33e63c3f1b74f3e5f3ac0105a58405bb65
 COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/a/argh/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/argh
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.4 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=$(NO_TESTS)
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
