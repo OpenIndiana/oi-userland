@@ -24,16 +24,17 @@
 # Copyright (c) 2013, Alexander Pyhalov. All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	DBI-PostgreSQL
-COMPONENT_VERSION=	3.7.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.10.0
 COMPONENT_SUMMARY= 	The DBI PostgreSQL Interface for Perl
 COMPONENT_SRC=		DBD-Pg-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e36e0459c9cf0f12edafb74f4cef685876d0460dbe6b411e7109070c67e56459
+  sha256:e103268a63e2828e3d43659bdba5f743446cbbe047a766f843112eedae105f80
 COMPONENT_ARCHIVE_URL= \
   http://search.cpan.org/CPAN/authors/id/T/TU/TURNSTEP/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-Pg/Pg.pm
@@ -41,19 +42,15 @@ COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-Pg/Pg.pm
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR):/usr/sbin:/usr/bin:/usr/perl5/bin
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/makemaker.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 LD_OPTIONS += -L$(PG_LIBDIR) -R$(PG_LIBDIR)
 
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
-
-REQUIRED_PACKAGES += database/postgres-94/library
+# Build dependencies
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += library/perl-5/database
-REQUIRED_PACKAGES += system/library
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += system/library
