@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		qt
 COMPONENT_FMRI=		library/qt4
 COMPONENT_VERSION=	4.8.7
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	8
 COMPONENT_VERSION_MJR=	4.8
 COMPONENT_LICENSE=	QT4
 COMPONENT_LICENSE_FILE=	qt4.license
@@ -108,11 +108,13 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 
 # Build dependencies
-REQUIRED_PACKAGES += database/postgres-94/developer
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/mariadb-101/library
-REQUIRED_PACKAGES += database/postgres-94/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -126,8 +128,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
