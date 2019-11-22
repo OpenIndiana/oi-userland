@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	tntdb
 COMPONENT_VERSION=	1.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	C++ library to access SQL databases, easy and robust
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -67,15 +67,16 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/library
 # We need mysql_config delivered by (mariadb-101|mysql|percona)/client :
 REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
-REQUIRED_PACKAGES += $(PG_BASEPKG)/library
 # We need pg_config :
-REQUIRED_PACKAGES += $(PG_BASEPKG)/developer
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/cxxtools
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
