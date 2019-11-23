@@ -12,24 +12,25 @@
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
+BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	1.5.5
+COMPONENT_VERSION=	1.5.8
 COMPONENT_PROJECT_URL=	http://www.sbcl.org/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cb47fae6a86f0c5c57431604fb4e5f11c8a823f94ce128d568b8770fc5bcaae2
+    sha256:84572f9133d13c982db13d1768d38331421204bc0ca083dacc5364e46796ff4c 
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-PublicDomain
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE=		justmake
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
@@ -53,12 +54,6 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 
 $(BUILD_DIR)/%/.tested:		$(BUILD_DIR)/%/.installed
 	(cd $(@D)/tests; $(ENV) $(COMPONENT_ENV) BUILD_ROOT=$(PROTO_DIR) /usr/gnu/bin/sh run-tests.sh)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
