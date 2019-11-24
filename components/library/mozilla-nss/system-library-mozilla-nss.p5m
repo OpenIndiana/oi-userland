@@ -20,11 +20,17 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license nss.license license="MPL 1.1/GPL 2.0/LGPL 2.1"
+license nss.license license="MPL 2.0"
 
-file path=usr/lib/mps/libfreebl3.chk
-file path=usr/lib/mps/libfreebl3.so
+file path=usr/lib/mps/libfreebl3.chk variant.arch=i386
+file path=usr/lib/mps/libfreebl_32fpu_3.chk variant.arch=sparc
+file path=usr/lib/mps/libfreebl_32int64_3.chk variant.arch=sparc
+file path=usr/lib/mps/libfreebl3.so variant.arch=i386
+file path=usr/lib/mps/libfreebl_32fpu_3.so variant.arch=sparc
+file path=usr/lib/mps/libfreebl_32int64_3.so variant.arch=sparc
+
 file path=usr/lib/mps/libnss3.so
+file path=usr/lib/mps/libnssckbi-testlib.so
 file path=usr/lib/mps/libnssckbi.so
 file path=usr/lib/mps/libnssdbm3.chk
 file path=usr/lib/mps/libnssdbm3.so
@@ -34,9 +40,15 @@ file path=usr/lib/mps/libsoftokn3.chk
 file path=usr/lib/mps/libsoftokn3.so
 file path=usr/lib/mps/libssl3.so
 
-file path=usr/lib/mps/$(MACH64)/libfreebl3.chk
-file path=usr/lib/mps/$(MACH64)/libfreebl3.so
+file path=usr/lib/mps/$(MACH64)/libfreebl3.chk variant.arch=i386
+file path=usr/lib/mps/$(MACH64)/libfreebl_64fpu_3.chk variant.arch=sparc
+file path=usr/lib/mps/$(MACH64)/libfreebl_64int_3.chk variant.arch=sparc
+file path=usr/lib/mps/$(MACH64)/libfreebl3.so variant.arch=i386
+file path=usr/lib/mps/$(MACH64)/libfreebl_64fpu_3.so variant.arch=sparc
+file path=usr/lib/mps/$(MACH64)/libfreebl_64int_3.so variant.arch=sparc
+
 file path=usr/lib/mps/$(MACH64)/libnss3.so
+file path=usr/lib/mps/$(MACH64)/libnssckbi-testlib.so
 file path=usr/lib/mps/$(MACH64)/libnssckbi.so
 file path=usr/lib/mps/$(MACH64)/libnssdbm3.chk
 file path=usr/lib/mps/$(MACH64)/libnssdbm3.so
@@ -48,8 +60,8 @@ file path=usr/lib/mps/$(MACH64)/libssl3.so
 
 link path=usr/lib/mps/64 target=$(MACH64)
 link path=usr/lib/mps/secv1/64 target=$(MACH64)
-link path=usr/lib/mps/secv1/libfreebl3.chk target=../libfreebl3.chk
-link path=usr/lib/mps/secv1/libfreebl3.so target=../libfreebl3.so
+link path=usr/lib/mps/secv1/libfreebl3.chk target=../libfreebl3.chk variant.arch=i386
+link path=usr/lib/mps/secv1/libfreebl3.so target=../libfreebl3.so variant.arch=i386
 link path=usr/lib/mps/secv1/libnss3.so target=../libnss3.so
 link path=usr/lib/mps/secv1/libnssckbi.so target=../libnssckbi.so
 link path=usr/lib/mps/secv1/libnssdbm3.chk target=../libnssdbm3.chk
@@ -59,8 +71,8 @@ link path=usr/lib/mps/secv1/libsmime3.so target=../libsmime3.so
 link path=usr/lib/mps/secv1/libsoftokn3.chk target=../libsoftokn3.chk
 link path=usr/lib/mps/secv1/libsoftokn3.so target=../libsoftokn3.so
 link path=usr/lib/mps/secv1/libssl3.so target=../libssl3.so
-link path=usr/lib/mps/secv1/$(MACH64)/libfreebl3.chk target=../../$(MACH64)/libfreebl3.chk
-link path=usr/lib/mps/secv1/$(MACH64)/libfreebl3.so target=../../$(MACH64)/libfreebl3.so
+link path=usr/lib/mps/secv1/$(MACH64)/libfreebl3.chk target=../../$(MACH64)/libfreebl3.chk variant.arch=i386
+link path=usr/lib/mps/secv1/$(MACH64)/libfreebl3.so target=../../$(MACH64)/libfreebl3.so variant.arch=i386
 link path=usr/lib/mps/secv1/$(MACH64)/libnss3.so target=../../$(MACH64)/libnss3.so
 link path=usr/lib/mps/secv1/$(MACH64)/libnssckbi.so target=../../$(MACH64)/libnssckbi.so
 link path=usr/lib/mps/secv1/$(MACH64)/libnssdbm3.chk target=../../$(MACH64)/libnssdbm3.chk
