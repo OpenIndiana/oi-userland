@@ -20,11 +20,12 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.5.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -34,9 +35,7 @@ COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -71,12 +70,6 @@ PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)/docs/dox/html/search
 COMPONENT_POST_INSTALL_ACTION.32=\
 	(cd $(BUILD_DIR)/$(MACH32); doxygen docs/doxygen.conf)
 COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES+= developer/documentation-tool/doxygen
