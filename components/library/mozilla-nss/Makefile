@@ -18,12 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.44
+COMPONENT_VERSION=	3.47.1
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a5620e59b6eeedfd5a12c9298b50ad92e9898b223e214eb675e36f4ffb5b6aff
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_44_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:1ae3d1cb1de345b258788f2ef6b10a460068034c3fd64f42427a183d8342a6fb
+COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_47_1_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
@@ -51,9 +51,9 @@ COMPONENT_TEST_ENV += $(COMPONENT_BUILD_ENV)
 COMPONENT_TEST_ENV += HOST=127.0.0.1
 COMPONENT_TEST_DIR = $(BUILD_DIR_$(BITS))/nss/tests
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
