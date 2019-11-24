@@ -14,20 +14,18 @@
 # Copyright 2019, Michal Nowak
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nspr
-COMPONENT_VERSION=	4.21
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.23
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:15ea32c7b100217b6e3193bc03e77f485d9bf7504051443ba9ce86d1c17c6b5a
+COMPONENT_ARCHIVE_HASH=	sha256:4b9d821037faf5723da901515ed9cac8b23ef1ea3729022259777393453477a4
 COMPONENT_ARCHIVE_URL=	http://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Test suite needs cloney
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -48,8 +46,6 @@ CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--includedir=/usr/include/mps
 CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
-
-build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
@@ -73,9 +69,9 @@ COMPONENT_TEST_ENV_CMD=
 COMPONENT_TEST_ARGS=
 COMPONENT_TEST_TARGETS=
 
-test:		$(TEST_32_and_64)
-
+# Build dependencies
 REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
