@@ -72,7 +72,8 @@ COMPONENT_POST_INSTALL_ACTION.32=\
 COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
 # Build dependencies
-REQUIRED_PACKAGES+= developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
