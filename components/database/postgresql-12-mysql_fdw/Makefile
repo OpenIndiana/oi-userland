@@ -34,7 +34,7 @@ COMPONENT_CLASSIFICATION =	System/Databases
 COMPONENT_LICENSE =	MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-PG_VERSION=	11
+PG_VERSION=	12
 # Don't depend on host default pg_config
 # Note, for PostgreSQL >= 9.6 $(PG_HOME)/bin contains 64-bit files
 PATH=		$(PG_HOME)/bin:$(MYSQL_BINDIR.$(BITS)):/usr/sbin:/usr/bin

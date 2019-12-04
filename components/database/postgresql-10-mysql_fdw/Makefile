@@ -10,23 +10,26 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Alexander Pyhalov
 #
+
+BUILD_BITS=64
+BUILD_STYLE=justmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	mysql_fdw
-COMPONENT_VERSION =	REL-2_5_1
-IPS_COMPONENT_VERSION =	2.5.1
-COMPONENT_SUMMARY =	MySQL Foreign Data Wrapper for PostgreSQL 10
+COMPONENT_VERSION =	REL-2_5_3
+IPS_COMPONENT_VERSION =	2.5.3
+COMPONENT_SUMMARY =	MySQL Foreign Data Wrapper for PostgreSQL $(PG_VERSION)
 COMPONENT_SRC =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-  sha256:8367ed71e76000d4ec9661cab7e12c3c8d0ecc887d6f677f7d448a5a35bbd96e
+  sha256:820e5bf1a55d64db91e4a5247f2859c2d485cc5eece28b6ad520e179e543e518
 COMPONENT_ARCHIVE_URL = \
   https://github.com/EnterpriseDB/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL =	https://github.com/EnterpriseDB/mysql_fdw/
-COMPONENT_FMRI =	database/postgres-10/mysql_fdw
+COMPONENT_FMRI =	database/postgres-$(PG_VERNUM)/mysql_fdw
 COMPONENT_CLASSIFICATION =	System/Databases
 COMPONENT_LICENSE =	MIT
 COMPONENT_LICENSE_FILE =	LICENSE
@@ -36,19 +39,13 @@ PG_VERSION=	10
 # Note, for PostgreSQL >= 9.6 $(PG_HOME)/bin contains 64-bit files
 PATH=		$(PG_HOME)/bin:$(MYSQL_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV	+=	USE_PGXS=0
 COMPONENT_BUILD_ARGS	+=	MYSQL_LIBNAME=$(MYSQL_LIBDIR)/libmysqlclient.so
 COMPONENT_INSTALL_ENV	+=	USE_PGXS=0
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
-REQUIRED_PACKAGES += database/postgres-10/developer
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += database/mariadb-101/library
