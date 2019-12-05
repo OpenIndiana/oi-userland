@@ -1,0 +1,12 @@
+--- citus-9.1.0/src/backend/distributed/shared_library_init.c.1	2019-12-05 08:40:31.298712613 +0000
++++ citus-9.1.0/src/backend/distributed/shared_library_init.c	2019-12-05 08:41:18.885079836 +0000
+@@ -12,6 +12,9 @@
+ #include <limits.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#ifdef __sun
++#include <alloca.h>
++#endif
+ 
+ #include "fmgr.h"
+ #include "miscadmin.h"
