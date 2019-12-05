@@ -1,0 +1,22 @@
+Workaround for https://www.illumos.org/issues/12057 .
+It has to be modified if there are new .c files in src/backend/distributed
+
+--- citus-9.1.0/src/backend/distributed/Makefile.1	2019-12-05 16:26:29.400300615 +0000
++++ citus-9.1.0/src/backend/distributed/Makefile	2019-12-05 16:28:31.106807536 +0000
+@@ -12,13 +12,15 @@
+ DATA_built = $(generated_sql_files)
+ 
+ # directories with source files
+-SUBDIRS = . commands connection ddl deparser executor master metadata planner progress relay test transaction utils worker
++SUBDIRS = commands connection ddl deparser executor master metadata planner progress relay test transaction utils worker
+ 
+ # That patsubst rule searches all directories listed in SUBDIRS for .c
+ # files, and adds the corresponding .o files to OBJS
+ OBJS += \
+ 	$(patsubst $(citus_abs_srcdir)/%.c,%.o,$(foreach dir,$(SUBDIRS), $(sort $(wildcard $(citus_abs_srcdir)/$(dir)/*.c))))
+ 
++OBJS += shared_library_init.o
++
+ # be explicit about the default target
+ all:
+ 
