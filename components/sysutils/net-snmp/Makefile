@@ -42,9 +42,6 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/net-snmp/files/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Enterprise Management
 COMPONENT_SUMMARY= Net-SNMP Agent files and libraries
-COMPONENT_ANITYA_ID=	2062
-
-TPNO=			47655
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
