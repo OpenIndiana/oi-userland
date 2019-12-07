@@ -1,0 +1,40 @@
+--- openttd-1.9.3.orig/Makefile.grf.in	jeu. déc.  5 16:12:38 2019
++++ openttd-1.9.3/Makefile.grf.in	jeu. déc.  5 16:13:05 2019
+@@ -67,16 +67,16 @@
+ $(BIN_DIR)/%.obg: $(BASESET_DIR)/%.obg $(BIN_DIR)/orig_extra.grf $(OBJS_DIR)/langfiles.tmp $(BASESET_DIR)/translations.awk
+ 	$(E) '$(STAGE) Updating $(notdir $@)'
+ 	$(Q) sed 's/^ORIG_EXTRA.GRF    = *[0-9a-f]*$$/ORIG_EXTRA.GRF    = '`$(MD5SUM) $(BIN_DIR)/orig_extra.grf | sed 's@ .*@@'`'/' $< > $@.tmp
+-	$(Q) awk -v langfiles='$(OBJS_DIR)/langfiles.tmp' -f $(BASESET_DIR)/translations.awk $@.tmp >$@
++	$(Q) gawk -v langfiles='$(OBJS_DIR)/langfiles.tmp' -f $(BASESET_DIR)/translations.awk $@.tmp >$@
+ 	$(Q) rm $@.tmp
+ 
+ $(BIN_DIR)/%.obs: $(BASESET_DIR)/%.obs $(OBJS_DIR)/langfiles.tmp $(BASESET_DIR)/translations.awk
+ 	$(E) '$(STAGE) Updating $(notdir $@)'
+-	$(Q) awk -v langfiles='$(OBJS_DIR)/langfiles.tmp' -f $(BASESET_DIR)/translations.awk $< >$@
++	$(Q) gawk -v langfiles='$(OBJS_DIR)/langfiles.tmp' -f $(BASESET_DIR)/translations.awk $< >$@
+ 
+ $(BIN_DIR)/%.obm: $(BASESET_DIR)/%.obm $(OBJS_DIR)/langfiles.tmp $(BASESET_DIR)/translations.awk
+ 	$(E) '$(STAGE) Updating $(notdir $@)'
+-	$(Q) awk -v langfiles='$(OBJS_DIR)/langfiles.tmp' -f $(BASESET_DIR)/translations.awk $< >$@
++	$(Q) gawk -v langfiles='$(OBJS_DIR)/langfiles.tmp' -f $(BASESET_DIR)/translations.awk $< >$@
+ 
+ # Guard against trying to run GRFCODEC/NFORENUM without either being set.
+ ifdef GRFCODEC
+@@ -87,7 +87,7 @@
+ 	$(E) '$(STAGE) Assembling openttd.nfo'
+ 	$(Q)-mkdir -p $(OBJS_DIR)/sprites
+ 	$(Q)-cp $(PNG_FILES) $(OBJS_DIR)/sprites 2> /dev/null
+-	$(Q) awk -f $(GRF_DIR)/assemble_nfo.awk $(GRF_DIR)/openttd.nfo > $(OBJS_DIR)/sprites/openttd.nfo
++	$(Q) gawk -f $(GRF_DIR)/assemble_nfo.awk $(GRF_DIR)/openttd.nfo > $(OBJS_DIR)/sprites/openttd.nfo
+ 	$(Q) $(NFORENUM) -s $(OBJS_DIR)/sprites/openttd.nfo
+ 	$(E) '$(STAGE) Compiling openttd.grf'
+ 	$(Q) $(GRFCODEC) -n -s -e -p1 $(OBJS_DIR)/openttd.grf
+@@ -98,7 +98,7 @@
+ 	$(E) '$(STAGE) Assembling orig_extra.nfo'
+ 	$(Q)-mkdir -p $(OBJS_DIR)/sprites
+ 	$(Q)-cp $(PNG_FILES) $(OBJS_DIR)/sprites 2> /dev/null
+-	$(Q) awk -f $(GRF_DIR)/assemble_nfo.awk $(GRF_DIR)/orig_extra.nfo > $(OBJS_DIR)/sprites/orig_extra.nfo
++	$(Q) gawk -f $(GRF_DIR)/assemble_nfo.awk $(GRF_DIR)/orig_extra.nfo > $(OBJS_DIR)/sprites/orig_extra.nfo
+ 	$(Q) $(NFORENUM) -s $(OBJS_DIR)/sprites/orig_extra.nfo
+ 	$(E) '$(STAGE) Compiling orig_extra.grf'
+ 	$(Q) $(GRFCODEC) -n -s -e -p1 $(OBJS_DIR)/orig_extra.grf
