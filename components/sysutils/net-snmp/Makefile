@@ -69,9 +69,10 @@ CONFIGURE_OPTIONS  +=	--with-openssl=/lib/openssl
 CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
 
 # Which MIB modules do we want to build
-MIB_MOBULES.sparc = ucd-snmp/lmSensors
+MIB_MODULES.sparc = ucd-snmp/lmSensors
+MIB_MODULES.i386 = ucd-snmp/lmSensors
 MIB_MODULES = host disman/event-mib ucd-snmp/diskio udp-mib tcp-mib if-mib
-MIB_MOBULES += $(MIB_MODULES.$(MACH))
+MIB_MODULES += $(MIB_MODULES.$(MACH))
 CONFIGURE_OPTIONS  +=	--with-mib-modules="$(MIB_MODULES)"
 
 # Python bindings support.
@@ -158,10 +159,11 @@ test: $(TEST_32_and_64)
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += service/picl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
