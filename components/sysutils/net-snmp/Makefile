@@ -29,6 +29,10 @@ DOXYGEN= /usr/bin/doxygen
 
 include ../../../make-rules/shared-macros.mk
 
+PERL_VERSION=5.24
+PERL=$(PERL.$(PERL_VERSION))
+PERL_ARCH=$(shell $(PERL) -e 'use Config; print $$Config{archname}')
+
 PATH=$(VPATH):$(PATH.gnu)
 
 COMPONENT_NAME=		net-snmp
@@ -92,15 +96,15 @@ COMPONENT_BUILD_ARGS=
 
 # Install the net-snmp-57 libraries
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun; \
-	cd ../net-snmp-57 && $(GMAKE) install);	
-
+	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun;)
 
 ARCH=32
 ARCH=$(BITS:64=$(MACH64))
 
 CCSMAKE_ARGS =	CC="$(CC)" CFGPREFIX=$(USRDIR) CFGLIB64=$(USRLIBDIR64)
 CCSMAKE_ARGS +=	CFGLIB=$(USRLIBDIR) ARCH=$(ARCH) ROOT=$(PROTO_DIR)
+
+COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES.32)
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/testing/
 COMPONENT_TEST_CMD =		$(KSH93)
@@ -121,27 +125,21 @@ COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 # perl man pages hiding here in 64-bit PROTO_DIR
 PKG_PROTO_DIRS += $(BUILD_DIR)/prototype/$(MACH64)
 
-# The 5.7 version libraries need to be added from the net-snmp-57 proto path.  
-PKG_PROTO_DIRS += $(WS_TOP)/components/sysutils/net-snmp-57/build/prototype/$(MACH)
-PKG_PROTO_DIRS += $(WS_TOP)/components/sysutils/net-snmp-57/build/prototype/$(MACH64)
-
 $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
 	(cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
 
 $(BUILD_64): COMPONENT_POST_BUILD_ACTION= \
 	(cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
 
-$(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
-
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
 	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
 
+$(INSTALL_64): COMPONENT_INSTALL_ARGS += DESTDIR=$(BUILD_DIR)/prototype/$(MACH64)
+
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH64)/etc/net-snmp/snmp/mibs; \
 	 cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
-
-$(INSTALL_64): COMPONENT_INSTALL_ARGS += DESTDIR=$(BUILD_DIR)/prototype/$(MACH64)
 
 # build the docs
 $(BUILD_DIR_32)/.docs:
