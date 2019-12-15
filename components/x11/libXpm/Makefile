@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXpm
-COMPONENT_VERSION= 3.5.12
+COMPONENT_VERSION= 3.5.13
 COMPONENT_FMRI=    x11/library/libxpm
 COMPONENT_SUMMARY= libXpm - X Pixmap library 
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fd6a6de3da48de8d1bb738ab6be4ad67f7cb0986c39bd3f7d51dd24f7854bdec
+  sha256:9cd1da57588b6cb71450eff2273ef6b657537a9ac4d02d0014228845b935ac25
 
 include $(WS_MAKE_RULES)/common.mk
 
