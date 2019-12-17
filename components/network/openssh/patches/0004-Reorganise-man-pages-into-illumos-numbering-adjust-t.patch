@@ -1,7 +1,7 @@
 diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 --- a~/Makefile.in	1970-01-01 00:00:00
 +++ a/Makefile.in	1970-01-01 00:00:00
-@@ -120,8 +120,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
+@@ -121,8 +121,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
  	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
  	sandbox-solaris.o uidswap.o
  
@@ -12,7 +12,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  MANTYPE		= @MANTYPE@
  
  CONFIGFILES=sshd_config.out ssh_config.out moduli.out
-@@ -339,8 +339,8 @@ install-files:
+@@ -345,8 +345,8 @@ install-files:
  	$(MKDIR_P) $(DESTDIR)$(bindir)
  	$(MKDIR_P) $(DESTDIR)$(sbindir)
  	$(MKDIR_P) $(DESTDIR)$(mandir)/$(mansubdir)1
@@ -23,7 +23,7 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  	$(MKDIR_P) $(DESTDIR)$(libexecdir)
  	$(MKDIR_P) -m 0755 $(DESTDIR)$(PRIVSEP_PATH)
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh$(EXEEXT) $(DESTDIR)$(bindir)/ssh$(EXEEXT)
-@@ -360,14 +360,14 @@ install-files:
+@@ -366,14 +366,14 @@ install-files:
  	$(INSTALL) -m 644 ssh-agent.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-agent.1
  	$(INSTALL) -m 644 ssh-keygen.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keygen.1
  	$(INSTALL) -m 644 ssh-keyscan.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keyscan.1
@@ -66,7 +66,7 @@ diff -wpruN '--exclude=*.orig' a~/contrib/ssh-copy-id.1 a/contrib/ssh-copy-id.1
 diff -wpruN '--exclude=*.orig' a~/scp.1 a/scp.1
 --- a~/scp.1	1970-01-01 00:00:00
 +++ a/scp.1	1970-01-01 00:00:00
-@@ -112,13 +112,13 @@ Limits the used bandwidth, specified in
+@@ -126,13 +126,13 @@ Limits the used bandwidth, specified in
  Can be used to pass options to
  .Nm ssh
  in the format used in
@@ -82,7 +82,7 @@ diff -wpruN '--exclude=*.orig' a~/scp.1 a/scp.1
  .Pp
  .Bl -tag -width Ds -offset indent -compact
  .It AddressFamily
-@@ -225,8 +225,8 @@ debugging connection, authentication, an
+@@ -250,8 +250,8 @@ debugging connection, authentication, an
  .Xr ssh-add 1 ,
  .Xr ssh-agent 1 ,
  .Xr ssh-keygen 1 ,
@@ -96,7 +96,7 @@ diff -wpruN '--exclude=*.orig' a~/scp.1 a/scp.1
 diff -wpruN '--exclude=*.orig' a~/sftp.1 a/sftp.1
 --- a~/sftp.1	1970-01-01 00:00:00
 +++ a/sftp.1	1970-01-01 00:00:00
-@@ -123,7 +123,7 @@ instead of
+@@ -124,7 +124,7 @@ instead of
  Since it lacks user interaction it should be used in conjunction with
  non-interactive authentication to obviate the need to enter a password
  at connection time (see
@@ -105,7 +105,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp.1 a/sftp.1
  and
  .Xr ssh-keygen 1
  for details).
-@@ -180,7 +180,7 @@ Limits the used bandwidth, specified in
+@@ -201,7 +201,7 @@ Limits the used bandwidth, specified in
  Can be used to pass options to
  .Nm ssh
  in the format used in
@@ -114,7 +114,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp.1 a/sftp.1
  This is useful for specifying options
  for which there is no separate
  .Nm sftp
-@@ -188,7 +188,7 @@ command-line flag.
+@@ -209,7 +209,7 @@ command-line flag.
  For example, to specify an alternate port use:
  .Ic sftp -oPort=24 .
  For full details of the options listed below, and their possible values, see
@@ -123,7 +123,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp.1 a/sftp.1
  .Pp
  .Bl -tag -width Ds -offset indent -compact
  .It AddressFamily
-@@ -281,7 +281,7 @@ options.
+@@ -303,7 +303,7 @@ options.
  Specifies the SSH2 subsystem or the path for an sftp server
  on the remote host.
  A path is useful when the remote
@@ -132,7 +132,7 @@ diff -wpruN '--exclude=*.orig' a~/sftp.1 a/sftp.1
  does not have an sftp subsystem configured.
  .It Fl v
  Raise logging level.
-@@ -616,10 +616,10 @@ Synonym for help.
+@@ -667,10 +667,10 @@ Synonym for help.
  .Xr ssh 1 ,
  .Xr ssh-add 1 ,
  .Xr ssh-keygen 1 ,
@@ -149,16 +149,16 @@ diff -wpruN '--exclude=*.orig' a~/sftp.1 a/sftp.1
 diff -wpruN '--exclude=*.orig' a~/ssh-add.1 a/ssh-add.1
 --- a~/ssh-add.1	1970-01-01 00:00:00
 +++ a/ssh-add.1	1970-01-01 00:00:00
-@@ -135,7 +135,7 @@ Add keys provided by the PKCS#11 shared
+@@ -142,7 +142,7 @@ files are usable by performing sign and
  Set a maximum lifetime when adding identities to an agent.
  The lifetime may be specified in seconds or in a time format
  specified in
 -.Xr sshd_config 5 .
 +.Xr sshd_config 4 .
- .It Fl X
- Unlock the agent.
- .It Fl x
-@@ -199,7 +199,7 @@ is unable to contact the authentication
+ .It Fl v
+ Verbose mode.
+ Causes
+@@ -216,7 +216,7 @@ is unable to contact the authentication
  .Xr ssh-agent 1 ,
  .Xr ssh-askpass 1 ,
  .Xr ssh-keygen 1 ,
@@ -209,7 +209,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh-agent.1 a/ssh-agent.1
 diff -wpruN '--exclude=*.orig' a~/ssh-keygen.1 a/ssh-keygen.1
 --- a~/ssh-keygen.1	1970-01-01 00:00:00
 +++ a/ssh-keygen.1	1970-01-01 00:00:00
-@@ -176,9 +176,7 @@ key in
+@@ -191,9 +191,7 @@ key in
  .Pa ~/.ssh/id_ed25519
  or
  .Pa ~/.ssh/id_rsa .
@@ -220,7 +220,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh-keygen.1 a/ssh-keygen.1
  .Pp
  Normally this program generates the key and asks for a file in which
  to store the private key.
-@@ -230,7 +228,7 @@ If
+@@ -257,7 +255,7 @@ If
  has also been specified, its argument is used as a prefix to the
  default path for the resulting host key files.
  This is used by
@@ -228,8 +228,8 @@ diff -wpruN '--exclude=*.orig' a~/ssh-keygen.1 a/ssh-keygen.1
 +.Pa /lib/svc/method/sshd
  to generate new host keys.
  .It Fl a Ar rounds
- When saving a private key this option specifies the number of KDF
-@@ -471,7 +469,7 @@ Disable PTY allocation (permitted by def
+ When saving a private key, this option specifies the number of KDF
+@@ -504,7 +502,7 @@ Disable PTY allocation (permitted by def
  Disable execution of
  .Pa ~/.ssh/rc
  by
@@ -238,7 +238,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh-keygen.1 a/ssh-keygen.1
  (permitted by default).
  .Pp
  .It Ic no-x11-forwarding
-@@ -492,7 +490,7 @@ Allows PTY allocation.
+@@ -525,7 +523,7 @@ Allows PTY allocation.
  Allows execution of
  .Pa ~/.ssh/rc
  by
@@ -247,7 +247,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh-keygen.1 a/ssh-keygen.1
  .Pp
  .It Ic permit-X11-forwarding
  Allows X11 forwarding.
-@@ -584,7 +582,7 @@ a date in YYYYMMDD format, a time in YYY
+@@ -628,7 +626,7 @@ a date in YYYYMMDD format, a time in YYY
  a relative time (to the current time) consisting of a minus sign followed by
  an interval in the format described in the
  TIME FORMATS section of
@@ -256,7 +256,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh-keygen.1 a/ssh-keygen.1
  .Pp
  The end time may be specified as a YYYYMMDD date, a YYYYMMDDHHMM[SS] time,
  a relative time starting with a plus character or the string
-@@ -763,7 +761,7 @@ Epoch to the distant future.
+@@ -884,7 +882,7 @@ Epoch to the distant future.
  .Pp
  For certificates to be used for user or host authentication, the CA
  public key must be trusted by
@@ -265,7 +265,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh-keygen.1 a/ssh-keygen.1
  or
  .Xr ssh 1 .
  Please refer to those manual pages for details.
-@@ -867,14 +865,14 @@ There is no need to keep the contents of
+@@ -1052,14 +1050,14 @@ There is no need to keep the contents of
  .It Pa /etc/moduli
  Contains Diffie-Hellman groups used for DH-GEX.
  The file format is described in
@@ -334,7 +334,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for more information.
  .Pp
  .It Fl D Xo
-@@ -395,7 +395,7 @@ mode with confirmation required before s
+@@ -403,7 +403,7 @@ before each operation that changes the m
  Refer to the description of
  .Cm ControlMaster
  in
@@ -343,7 +343,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for details.
  .Pp
  .It Fl m Ar mac_spec
-@@ -454,7 +454,7 @@ Can be used to give options in the forma
+@@ -462,7 +462,7 @@ Can be used to give options in the forma
  This is useful for specifying options for which there is no separate
  command-line flag.
  For full details of the options listed below, and their possible values, see
@@ -352,7 +352,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  .Pp
  .Bl -tag -width Ds -offset indent -compact
  .It AddKeysToAgent
-@@ -639,7 +639,7 @@ Specifying a remote
+@@ -654,7 +654,7 @@ Specifying a remote
  will only succeed if the server's
  .Cm GatewayPorts
  option is enabled (see
@@ -361,7 +361,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  .Pp
  If the
  .Ar port
-@@ -661,7 +661,7 @@ Refer to the description of
+@@ -676,7 +676,7 @@ Refer to the description of
  and
  .Cm ControlMaster
  in
@@ -370,7 +370,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for details.
  .Pp
  .It Fl s
-@@ -740,7 +740,7 @@ See also the
+@@ -755,7 +755,7 @@ See also the
  and
  .Cm TunnelDevice
  directives in
@@ -379,7 +379,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  .Pp
  If the
  .Cm Tunnel
-@@ -769,7 +769,7 @@ Please refer to the
+@@ -784,7 +784,7 @@ Please refer to the
  option and the
  .Cm ForwardX11Trusted
  directive in
@@ -388,7 +388,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for more information.
  .Pp
  .It Fl x
-@@ -791,7 +791,7 @@ By default this information is sent to s
+@@ -806,7 +806,7 @@ By default this information is sent to s
  may additionally obtain configuration data from
  a per-user configuration file and a system-wide configuration file.
  The file format and configuration options are described in
@@ -397,7 +397,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  .Sh AUTHENTICATION
  The OpenSSH SSH client supports SSH protocol 2.
  .Pp
-@@ -926,7 +926,7 @@ See
+@@ -941,7 +941,7 @@ See
  and (optionally) the
  .Cm AddKeysToAgent
  directive in
@@ -406,7 +406,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for more information.
  .Pp
  Challenge-response authentication works as follows:
-@@ -1058,7 +1058,7 @@ for dynamic port-forwardings.
+@@ -1073,7 +1073,7 @@ for dynamic port-forwardings.
  allows the user to execute a local command if the
  .Ic PermitLocalCommand
  option is enabled in
@@ -415,7 +415,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  Basic help is available, using the
  .Fl h
  option.
-@@ -1260,7 +1260,7 @@ Are you sure you want to continue connec
+@@ -1261,7 +1261,7 @@ Are you sure you want to continue connec
  See the
  .Cm VerifyHostKeyDNS
  option in
@@ -424,7 +424,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for more information.
  .Sh SSH-BASED VIRTUAL PRIVATE NETWORKS
  .Nm
-@@ -1270,7 +1270,7 @@ using the
+@@ -1271,7 +1271,7 @@ using the
  network pseudo-device,
  allowing two networks to be joined securely.
  The
@@ -433,7 +433,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  configuration option
  .Cm PermitTunnel
  controls whether the server supports this,
-@@ -1431,7 +1431,7 @@ change their environment.
+@@ -1432,7 +1432,7 @@ change their environment.
  For more information, see the
  .Cm PermitUserEnvironment
  option in
@@ -442,7 +442,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  .Sh FILES
  .Bl -tag -width Ds -compact
  .It Pa ~/.rhosts
-@@ -1439,7 +1439,7 @@ This file is used for host-based authent
+@@ -1440,7 +1440,7 @@ This file is used for host-based authent
  On some machines this file may need to be
  world-readable if the user's home directory is on an NFS partition,
  because
@@ -451,7 +451,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  reads it as root.
  Additionally, this file must be owned by the user,
  and must not have write permissions for anyone else.
-@@ -1464,7 +1464,7 @@ and not accessible by others.
+@@ -1465,7 +1465,7 @@ and not accessible by others.
  Lists the public keys (DSA, ECDSA, Ed25519, RSA)
  that can be used for logging in as this user.
  The format of this file is described in the
@@ -460,7 +460,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  manual page.
  This file is not highly sensitive, but the recommended
  permissions are read/write for the user, and not accessible by others.
-@@ -1472,7 +1472,7 @@ permissions are read/write for the user,
+@@ -1473,7 +1473,7 @@ permissions are read/write for the user,
  .It Pa ~/.ssh/config
  This is the per-user configuration file.
  The file format and configuration options are described in
@@ -469,7 +469,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  Because of the potential for abuse, this file must have strict permissions:
  read/write for the user, and not writable by others.
  .Pp
-@@ -1507,7 +1507,7 @@ sensitive and can (but need not) be read
+@@ -1508,7 +1508,7 @@ sensitive and can (but need not) be read
  Contains a list of host keys for all hosts the user has logged into
  that are not already in the systemwide list of known host keys.
  See
@@ -478,7 +478,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for further details of the format of this file.
  .Pp
  .It Pa ~/.ssh/rc
-@@ -1516,7 +1516,7 @@ Commands in this file are executed by
+@@ -1517,7 +1517,7 @@ Commands in this file are executed by
  when the user logs in, just before the user's shell (or command) is
  started.
  See the
@@ -487,7 +487,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  manual page for more information.
  .Pp
  .It Pa /etc/hosts.equiv
-@@ -1532,7 +1532,7 @@ rlogin/rsh.
+@@ -1533,7 +1533,7 @@ rlogin/rsh.
  .It Pa /etc/ssh/ssh_config
  Systemwide configuration file.
  The file format and configuration options are described in
@@ -496,7 +496,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  .Pp
  .It Pa /etc/ssh/ssh_host_key
  .It Pa /etc/ssh/ssh_host_dsa_key
-@@ -1549,7 +1549,7 @@ system administrator to contain the publ
+@@ -1550,7 +1550,7 @@ system administrator to contain the publ
  organization.
  It should be world-readable.
  See
@@ -505,7 +505,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  for further details of the format of this file.
  .Pp
  .It Pa /etc/ssh/sshrc
-@@ -1557,7 +1557,7 @@ Commands in this file are executed by
+@@ -1558,7 +1558,7 @@ Commands in this file are executed by
  .Nm
  when the user logs in, just before the user's shell (or command) is started.
  See the
@@ -514,7 +514,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh.1 a/ssh.1
  manual page for more information.
  .El
  .Sh EXIT STATUS
-@@ -1572,9 +1572,9 @@ if an error occurred.
+@@ -1573,9 +1573,9 @@ if an error occurred.
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr tun 4 ,

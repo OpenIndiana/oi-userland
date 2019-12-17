@@ -21,29 +21,31 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2018 Till Wegmüller
-# Copyright 2018 Michal Nowak
+# Copyright 2019 Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	7.9p1
+COMPONENT_VERSION=	8.1p1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	7.9.0.1
+IPS_COMPONENT_VERSION=	8.1.0.1
 
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6b4b3ba2253d84ed3771c8050728d597c91cfce898713beb7b64a305b6f11aad
+COMPONENT_ARCHIVE_HASH=	sha256:02f5dbef3835d0753556f973cd57b4c19b6b1f6cd24c03445e23ac77ca1b93ff
 COMPONENT_ARCHIVE_URL=	https://cloudflare.cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	BSD, BSD-like
+COMPONENT_LICENSE_FILE=	LICENCE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 GENERATED_MAN_4_PAGES = moduli ssh_config sshd_config 
 GENERATED_MAN_1m_PAGES = sftp-server ssh-keysign ssh-pkcs11-helper sshd
@@ -102,15 +104,9 @@ CONFIGURE_OPTIONS += --disable-lastlog
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm755 $(SOURCE_DIR)/contrib/ssh-copy-id $(PROTOUSRBINDIR)/ssh-copy-id;
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-copy-id.1 $(PROTOUSRSHAREMAN1DIR)/ssh-copy-id.1;
 
-# common targets
-build:		$(BUILD_64)
+COMPONENT_TEST_TARGETS	= tests
 
-install:	$(INSTALL_64)
-
-# Because of certain set up requirement, the regress test suite is ported to
-# the STC gate.
-test:		$(NO_TESTS)
-
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
@@ -119,5 +115,4 @@ REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/security/gss

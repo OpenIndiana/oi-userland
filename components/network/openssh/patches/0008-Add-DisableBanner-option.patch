@@ -6,7 +6,7 @@ Subject: [PATCH 08/34] Add DisableBanner option
 diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
 --- a~/readconf.c	1970-01-01 00:00:00
 +++ a/readconf.c	1970-01-01 00:00:00
-@@ -164,6 +164,9 @@ typedef enum {
+@@ -165,6 +165,9 @@ typedef enum {
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
  	oHashKnownHosts,
@@ -16,7 +16,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	oTunnel, oTunnelDevice,
  	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
  	oVisualHostKey,
-@@ -284,6 +287,9 @@ static struct {
+@@ -286,6 +289,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -26,7 +26,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -813,6 +819,17 @@ static const struct multistate multistat
+@@ -828,6 +834,17 @@ static const struct multistate multistat
  	{ NULL, -1 }
  };
  
@@ -44,9 +44,9 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -1697,6 +1714,13 @@ parse_keytypes:
- 		charptr = &options->identity_agent;
- 		goto parse_string;
+@@ -1741,6 +1758,13 @@ parse_keytypes:
+ 			*charptr = xstrdup(arg);
+ 		break;
  
 +#ifdef DISABLE_BANNER
 +	case oDisableBanner:
@@ -58,7 +58,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -1889,6 +1913,9 @@ initialize_options(Options * options)
+@@ -1936,6 +1960,9 @@ initialize_options(Options * options)
  	options->ip_qos_bulk = -1;
  	options->request_tty = -1;
  	options->proxy_use_fdpass = -1;
@@ -68,7 +68,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2067,6 +2094,10 @@ fill_default_options(Options * options)
+@@ -2114,6 +2141,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -82,7 +82,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
 diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
 --- a~/readconf.h	1970-01-01 00:00:00
 +++ a/readconf.h	1970-01-01 00:00:00
-@@ -165,6 +165,9 @@ typedef struct {
+@@ -166,6 +166,9 @@ typedef struct {
  	char   *jump_extra;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
@@ -92,7 +92,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
  }       Options;
  
  #define SSH_CANONICALISE_NO	0
-@@ -196,6 +199,12 @@ typedef struct {
+@@ -197,6 +200,12 @@ typedef struct {
  #define SSH_STRICT_HOSTKEY_YES	2
  #define SSH_STRICT_HOSTKEY_ASK	3
  
@@ -108,7 +108,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
 diff -wpruN '--exclude=*.orig' a~/ssh_config.4 a/ssh_config.4
 --- a~/ssh_config.4	1970-01-01 00:00:00
 +++ a/ssh_config.4	1970-01-01 00:00:00
-@@ -542,6 +542,14 @@ If set to a time in seconds, or a time i
+@@ -578,6 +578,14 @@ If set to a time in seconds, or a time i
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -137,20 +137,12 @@ diff -wpruN '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
  /*
   * SSH2 key exchange
   */
-@@ -506,15 +510,34 @@ input_userauth_error(int type, u_int32_t
- int
- input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
- {
--	char *msg, *lang;
-+	char *msg, *lang, *raw;
- 	u_int len;
- 
- 	debug3("%s", __func__);
--	msg = packet_get_string(&len);
-+	raw = packet_get_string(&len);
- 	lang = packet_get_string(NULL);
+@@ -522,8 +526,28 @@ input_userauth_banner(int type, u_int32_
+ 	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
+ 	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
+ 		goto out;
 -	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
-+
+-		fmprintf(stderr, "%s", msg);
 +#ifdef DISABLE_BANNER
 +	/*
 +	 * Banner is a warning message according to RFC 4252. So, never print
@@ -164,14 +156,15 @@ diff -wpruN '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
 +#else
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
 +#endif
++		char *safe;
++
 +		if (len > 65536)
 +			len = 65536;
-+		msg = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
-+		strnvis(msg, raw, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
- 		fmprintf(stderr, "%s", msg);
- 	free(msg);
++		safe = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
++		strnvis(safe, msg, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
++		fmprintf(stderr, "%s", safe);
++		free(safe);
 +	}
-+	free(raw);
- 	free(lang);
- 	return 0;
- }
+ 	r = 0;
+  out:
+ 	free(msg);

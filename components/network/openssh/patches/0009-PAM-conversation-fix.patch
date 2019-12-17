@@ -6,7 +6,7 @@ Subject: [PATCH 09/34] PAM conversation fix
 diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
 --- a~/auth-pam.c	1970-01-01 00:00:00
 +++ a/auth-pam.c	1970-01-01 00:00:00
-@@ -1215,11 +1215,13 @@ free_pam_environment(char **env)
+@@ -1255,11 +1255,13 @@ free_pam_environment(char **env)
  	free(env);
  }
  
@@ -20,7 +20,7 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
  static int
  sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
      struct pam_response **resp, void *data)
-@@ -1241,12 +1243,24 @@ sshpam_passwd_conv(int n, sshpam_const s
+@@ -1281,12 +1283,24 @@ sshpam_passwd_conv(int n, sshpam_const s
  	for (i = 0; i < n; ++i) {
  		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
  		case PAM_PROMPT_ECHO_OFF:
@@ -45,7 +45,7 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
  		case PAM_ERROR_MSG:
  		case PAM_TEXT_INFO:
  			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-@@ -1283,6 +1297,9 @@ static struct pam_conv passwd_conv = { s
+@@ -1323,6 +1337,9 @@ static struct pam_conv passwd_conv = { s
  int
  sshpam_auth_passwd(Authctxt *authctxt, const char *password)
  {
@@ -55,7 +55,7 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
  	int flags = (options.permit_empty_passwd == 0 ?
  	    PAM_DISALLOW_NULL_AUTHTOK : 0);
  	char *fake = NULL;
-@@ -1303,6 +1320,15 @@ sshpam_auth_passwd(Authctxt *authctxt, c
+@@ -1343,6 +1360,15 @@ sshpam_auth_passwd(Authctxt *authctxt, c
  	    options.permit_root_login != PERMIT_YES))
  		sshpam_password = fake = fake_password(password);
  
@@ -71,7 +71,7 @@ diff -wpruN '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
  	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
  	    (const void *)&passwd_conv);
  	if (sshpam_err != PAM_SUCCESS)
-@@ -1314,6 +1340,16 @@ sshpam_auth_passwd(Authctxt *authctxt, c
+@@ -1354,6 +1380,16 @@ sshpam_auth_passwd(Authctxt *authctxt, c
  	free(fake);
  	if (sshpam_err == PAM_MAXTRIES)
  		sshpam_set_maxtries_reached(1);

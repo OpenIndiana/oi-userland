@@ -22,7 +22,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  
  #include "includes.h"
  
-@@ -41,11 +46,13 @@
+@@ -42,11 +47,13 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
@@ -36,7 +36,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  #include "sshbuf.h"
  #include "log.h"
  #include "misc.h"
-@@ -84,6 +91,15 @@ format_key(const struct sshkey *key)
+@@ -85,6 +92,15 @@ format_key(const struct sshkey *key)
  	return ret;
  }
  
@@ -52,7 +52,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  static int
  userauth_pubkey(struct ssh *ssh)
  {
-@@ -985,6 +1001,124 @@ user_key_command_allowed2(struct ssh *ss
+@@ -976,6 +992,124 @@ user_key_command_allowed2(struct ssh *ss
  	return found_key;
  }
  
@@ -177,7 +177,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1009,6 +1143,10 @@ user_key_allowed(struct ssh *ssh, struct
+@@ -1016,6 +1150,10 @@ user_key_allowed(struct ssh *ssh, struct
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -191,7 +191,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
 diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -193,6 +193,7 @@
+@@ -192,6 +192,7 @@ initialize_server_options(ServerOptions
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -199,7 +199,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -534,6 +535,7 @@
+@@ -536,6 +537,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain,
@@ -207,16 +207,15 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -694,6 +696,7 @@ static struct {
+@@ -692,6 +694,7 @@ static struct {
  	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
  	{ NULL, sBadOption, 0 }
  };
-
-
-@@ -2268,6 +2271,18 @@
+ 
+@@ -2247,6 +2250,18 @@ process_server_config_line(ServerOptions
  		}
  		break;
  
@@ -246,5 +245,3 @@ diff -wpruN '--exclude=*.orig' a~/servconf.h a/servconf.h
  	u_int64_t timing_secret;
  }       ServerOptions;
  
---- openssh-7.8p1/servconf.c.~7~	2018-10-20 11:46:44.774583285 +0000
-+++ openssh-7.8p1/servconf.c	2018-10-20 11:46:44.884635578 +0000

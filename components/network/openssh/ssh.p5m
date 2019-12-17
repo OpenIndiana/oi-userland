@@ -35,6 +35,8 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/335
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 # We have to preserve original_name as file was once moved to
 # ssh-common and back again
 file files/ssh_config original_name=network/ssh:etc/ssh/ssh_config \
@@ -57,15 +59,6 @@ file path=usr/share/man/man1/ssh-keyscan.1
 file path=usr/share/man/man1/ssh.1
 file path=usr/share/man/man1/ssh-copy-id.1
 file path=usr/share/man/man4/ssh_config.4
-
-license openssh.license license="BSD, BSD-like (OpenSSH)" \
-    com.oracle.info.description="OpenSSH, a suite of tools that help secure network connections" \
-    com.oracle.info.name=openssh com.oracle.info.tpno=$(TPNO_OPENSSH) \
-    com.oracle.info.version=$(COMPONENT_VERSION)
-license openssh.license license="BSD, BSD-like (gsskex)" \
-    com.oracle.info.description="GSS-API authenticated key exchange" \
-    com.oracle.info.name=gsskex com.oracle.info.tpno=$(TPNO_GSSKEX) \
-    com.oracle.info.version=5.7p1
 
 depend type=conditional fmri=pkg:/x11/session/xauth \
     predicate=pkg:/x11/library/libxau
