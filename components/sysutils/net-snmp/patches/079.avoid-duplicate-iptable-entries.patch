@@ -1,0 +1,144 @@
+/dev/arp can return multiple records for ipv4 sockets when application listens on both
+IPv6 and IPv4. Such duplicates confuse net-snmp clients, so we remove them at application level.
+
+--- net-snmp-5.8/agent/mibgroup/tcp-mib/data_access/tcpConn_solaris2.c.1	2019-12-17 11:38:01.062620679 +0000
++++ net-snmp-5.8/agent/mibgroup/tcp-mib/data_access/tcpConn_solaris2.c	2019-12-17 11:57:32.392104772 +0000
+@@ -82,6 +82,9 @@
+ 
+     while (getMibstat(MIB_TCP_CONN, &tc, sizeof(tc), req, 
+                           &Get_everything, 0)==0) {
++        int i;
++        int found = 0;
++
+         req = GET_NEXT;
+         if ((flag & NETSNMP_ACCESS_TCPCONN_LOAD_ONLYLISTEN && 
+              tc.tcpConnState != MIB2_TCP_listen) ||
+@@ -89,6 +92,25 @@
+              tc.tcpConnState == MIB2_TCP_listen)) {
+             continue;
+         }
++
++        for (i = 0; i < CONTAINER_SIZE(container); ++i) {
++             CONTAINER_GET_AT(container, i, (void**)&ep);
++             if (NULL == ep)
++                 continue;
++             if ((ep->loc_port == tc.tcpConnLocalPort) && 
++                 (ep->rmt_port == tc.tcpConnRemPort) &&
++                 (ep->tcpConnState == tc.tcpConnState) &&
++                 (ep->loc_addr_len == sizeof(tc.tcpConnLocalAddress)) &&
++                 (memcmp(&ep->loc_addr, &tc.tcpConnLocalAddress, ep->loc_addr_len) == 0) &&
++                 (ep->rmt_addr_len == sizeof(tc.tcpConnRemAddress)) &&
++                 (memcmp(&ep->rmt_addr, &tc.tcpConnRemAddress, ep->rmt_addr_len) == 0)) {
++                  found = 1;
++                  break; 
++              }
++        }
++        if (found)
++            continue;
++
+         ep = netsnmp_access_tcpconn_entry_create();
+         if (ep == NULL)
+             return (-1);
+@@ -139,6 +161,9 @@
+ 
+     while (getMibstat(MIB_TCP6_CONN, &tc6, sizeof(tc6), req, 
+                       &Get_everything, 0)==0) {
++        int i;
++        int found = 0;
++
+         req = GET_NEXT;
+         if ((flag & NETSNMP_ACCESS_TCPCONN_LOAD_ONLYLISTEN && 
+              tc6.tcp6ConnState != MIB2_TCP_listen) ||
+@@ -146,6 +171,25 @@
+              tc6.tcp6ConnState == MIB2_TCP_listen)) {
+             continue;
+         }
++
++        for (i = 0; i < CONTAINER_SIZE(container); ++i) {
++             CONTAINER_GET_AT(container, i, (void**)&ep);
++             if (NULL == ep)
++                 continue;
++             if ((ep->loc_port == tc6.tcp6ConnLocalPort) && 
++                 (ep->rmt_port == tc6.tcp6ConnRemPort) &&
++                 (ep->tcpConnState == tc6.tcp6ConnState) &&
++                 (ep->loc_addr_len == sizeof(tc6.tcp6ConnLocalAddress)) &&
++                 (memcmp(&ep->loc_addr, &tc6.tcp6ConnLocalAddress, ep->loc_addr_len) == 0) &&
++                 (ep->rmt_addr_len == sizeof(tc6.tcp6ConnRemAddress)) &&
++                 (memcmp(&ep->rmt_addr, &tc6.tcp6ConnRemAddress, ep->rmt_addr_len) == 0)) {
++                  found = 1;
++                  break; 
++              }
++        }
++        if (found)
++            continue;
++
+         ep = netsnmp_access_tcpconn_entry_create();
+         if (ep == NULL)
+             return (-1);
+--- net-snmp-5.8/agent/mibgroup/udp-mib/data_access/udp_endpoint_solaris2.c.1	2019-12-17 11:58:58.027662295 +0000
++++ net-snmp-5.8/agent/mibgroup/udp-mib/data_access/udp_endpoint_solaris2.c	2019-12-17 12:12:25.205883800 +0000
+@@ -88,10 +88,33 @@
+ 
+     while (getMibstat(MIB_UDP_LISTEN, &ue, sizeof(ue), req, 
+                           &Get_everything, 0)==0) {
++        int i;
++        int found = 0;
++
+         req = GET_NEXT;
+         ep = netsnmp_access_udp_endpoint_entry_create();
+         if (ep == NULL)
+             return (-1);
++
++        for (i = 0; i < CONTAINER_SIZE(container); ++i) {
++             CONTAINER_GET_AT(container, i, (void**)&ep);
++             if (NULL == ep)
++                 continue;
++             if ((ep->loc_port == ue.udpLocalPort) && 
++                 (ep->rmt_port == ue.udpEntryInfo.ue_RemotePort) &&
++                 (ep->instance == ue.udpInstance) &&
++                 (ep->loc_addr_len == sizeof(ue.udpLocalAddress)) &&
++                 (memcmp(&ep->loc_addr, &ue.udpLocalAddress, ep->loc_addr_len) == 0) &&
++                 ((ep->rmt_addr_len == sizeof(ue.udpEntryInfo.ue_RemoteAddress)) &&
++                  (memcmp(&ep->rmt_addr, &ue.udpEntryInfo.ue_RemoteAddress, ep->rmt_addr_len) == 0)||
++                  ep->rmt_addr_len==0 && ue.udpEntryInfo.ue_RemoteAddress == INADDR_ANY)) {
++                  found = 1;
++                  break; 
++              }
++        }
++        if (found)
++            continue;
++
+         DEBUGMSGT(("access:udp_endpoint:container", "add entry\n"));
+ 
+         /* 
+@@ -156,7 +179,30 @@
+ 
+     while (getMibstat(MIB_UDP6_ENDPOINT, &ue6, sizeof(ue6), req, 
+                       &Get_everything, 0)==0) {
++        int i;
++        int found = 0;
++
+         req = GET_NEXT;
++
++        for (i = 0; i < CONTAINER_SIZE(container); ++i) {
++             CONTAINER_GET_AT(container, i, (void**)&ep);
++             if (NULL == ep)
++                 continue;
++             if ((ep->loc_port == ue6.udp6LocalPort) && 
++                 (ep->rmt_port == ue6.udp6EntryInfo.ue_RemotePort) &&
++                 (ep->instance == ue6.udp6Instance) &&
++                 (ep->loc_addr_len == sizeof(ue6.udp6LocalAddress)) &&
++                 (memcmp(&ep->loc_addr, &ue6.udp6LocalAddress, ep->loc_addr_len) == 0) &&
++                 ((ep->rmt_addr_len == sizeof(ue6.udp6EntryInfo.ue_RemoteAddress)) &&
++                 (memcmp(&ep->rmt_addr, &ue6.udp6EntryInfo.ue_RemoteAddress, ep->rmt_addr_len) == 0)||
++                  ep->rmt_addr_len==0 && IN6_IS_ADDR_UNSPECIFIED(&ue6.udp6EntryInfo.ue_RemoteAddress))) {
++                  found = 1;
++                  break; 
++              }
++        }
++        if (found)
++            continue;
++
+         ep = netsnmp_access_udp_endpoint_entry_create();
+         if (ep == NULL)
+             return (-1);
