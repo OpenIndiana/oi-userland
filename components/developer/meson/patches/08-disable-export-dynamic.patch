@@ -1,0 +1,11 @@
+--- mesonbuild/compilers/clike.py.1	2019-12-19 00:16:01.151994018 +0000
++++ mesonbuild/compilers/clike.py	2019-12-19 00:16:36.675011099 +0000
+@@ -277,7 +277,7 @@
+         m = env.machines[self.for_machine]
+         if m.is_windows() or m.is_cygwin():
+             return ['-Wl,--export-all-symbols']
+-        elif env.machines[self.for_machine].is_darwin():
++        elif m.is_darwin() or m.is_sunos():
+             return []
+         else:
+             return ['-Wl,-export-dynamic']
