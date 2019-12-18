@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	nut
 COMPONENT_VERSION=	2.7.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Network UPS Tools (NUT)
 COMPONENT_DESCRIPTION=	Network UPS Tools (NUT) is a versatile power-device monitoring toolkit to facilitate safe shutdowns
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.0.28
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         image/scanner/xsane/sane-backends
 COMPONENT_SUMMARY=      SANE library and backends
 COMPONENT_CLASSIFICATION=System/Libraries
