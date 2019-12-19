@@ -1,0 +1,28 @@
+/dev/arp can return multiple records for ipv4 sockets when application listens on both
+IPv6 and IPv4. Such duplicates confuse net-snmp clients, so we remove them at application level.
+
+--- net-snmp-5.8/agent/mibgroup/tcp-mib/tcpListenerTable/tcpListenerTable_data_access.c.~1~	2018-07-16 16:33:40.000000000 +0000
++++ net-snmp-5.8/agent/mibgroup/tcp-mib/tcpListenerTable/tcpListenerTable_data_access.c	2019-12-18 13:56:47.576136642 +0000
+@@ -171,7 +171,7 @@
+ {
+     tcpListenerTable_rowreq_ctx *rowreq_ctx;
+ 
+-    DEBUGMSGTL(("tcpListenerTable:access", "creating new entry\n"));
++    DEBUGMSGTL(("verbose:tcpListenerTable:_add_connection", "creating new entry\n"));
+ 
+     /*
+      * allocate an row context and set the index(es), then add it to
+@@ -184,7 +184,12 @@
+                                                      (char *) entry->loc_addr,
+                                                      entry->loc_addr_len,
+                                                      entry->loc_port))) {
+-        CONTAINER_INSERT(container, rowreq_ctx);
++        netsnmp_tcpconn_entry *data = CONTAINER_FIND(container, rowreq_ctx);
++        if (NULL == data) {
++            CONTAINER_INSERT(container, rowreq_ctx);
++        } else {
++            DEBUGMSGTL(("verbose:tcpListenerTable:_add_connection", "skip entry loc_addr=%s loc_port=%d\n", (char *)entry->loc_addr, (int)entry->loc_port));
++        }
+     } else {
+         if (rowreq_ctx) {
+             snmp_log(LOG_ERR, "error setting index while loading "

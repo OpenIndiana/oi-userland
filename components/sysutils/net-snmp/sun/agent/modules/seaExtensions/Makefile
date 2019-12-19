@@ -27,12 +27,12 @@
 MARCH=$(ARCH)
 LDFLAGS_sparcv9=-m64  -I$(ROOT)$(CFGPREFIX)/include -I.
 LDFLAGS_32=-I$(ROOT)$(CFGPREFIX)/include -I.
-LDFLAGS_amd64=-m64 -I$(ROOT)$(CFGPREFIX)/include -I.
+LDFLAGS_amd64=-fpic -m64 -I$(ROOT)$(CFGPREFIX)/include -I.
 LDFLAGS=$(LDFLAGS_$(MARCH))
 
-CFLAGS_32=-fPIC
-CFLAGS_sparcv9=-fPIC
-CFLAGS_amd64=-fPIC
+CFLAGS_32=-fpic
+CFLAGS_sparcv9=-fpic
+CFLAGS_amd64=-fpic
 CFLAGS=$(CFLAGS_$(MARCH))
 
 LDLIBS_sparcv9= -L/usr/lib/sparcv9 -lrpcsvc

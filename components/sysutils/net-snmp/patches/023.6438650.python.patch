@@ -4,8 +4,8 @@
          fi
  
  pythoninstall:
--	@(dir=`pwd`; cd python; $(PYMAKE) install --basedir=$$dir) ; \
-+	@(dir=`pwd`; cd python; $(PYMAKE) install --basedir=$$dir --root $(DESTDIR) --install-lib=$(PYTHON_VENDOR_PACKAGES)) ; \
+-	@(dir=`pwd`; cd python; $(PYMAKE) install --basedir=$$dir --root=$(DESTDIR) --prefix=$(prefix)) ; \
++	@(dir=`pwd`; cd python; $(PYMAKE) install --basedir=$$dir --root $(DESTDIR) --prefix=$(prefix) --install-lib=$(PYTHON_VENDOR_PACKAGES)) ; \
          if test $$? != 0 ; then \
             exit 1 ; \
          fi

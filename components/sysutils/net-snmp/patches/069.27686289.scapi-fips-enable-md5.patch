@@ -1,0 +1,86 @@
+--- net-snmp-5.8.old/snmplib/scapi.c	2019-02-11 04:11:11.928699103 +0000
++++ net-snmp-5.8/snmplib/scapi.c	2019-02-11 04:10:39.181904990 +0000
+@@ -204,6 +204,10 @@
+ 
+ #ifdef NETSNMP_USE_OPENSSL
+ static
++void EVP_hmac(const EVP_MD *evp_md, const void *key,
++              const unsigned char *msg, unsigned char *md,
++              size_t *md_len);
++static
+ int EVP_decrypt(const EVP_CIPHER *type, u_char * key,
+                 u_int keylen, u_char * iv, u_char * ciphertext,
+                 u_int ctlen, u_char * plaintext);
+@@ -740,7 +744,7 @@
+     size_t          properlength;
+     u_char          buf[SNMP_MAXBUF_SMALL];
+ #if  defined(NETSNMP_USE_OPENSSL) || defined(NETSNMP_USE_PKCS11)
+-    unsigned int    buf_len = sizeof(buf);
++    size_t    buf_len = sizeof(buf);
+ #endif
+ #ifdef NETSNMP_USE_OPENSSL
+     const EVP_MD   *hashfn;
+@@ -787,7 +791,12 @@
+     if (NULL == hashfn) {
+         QUITFUN(SNMPERR_GENERR, sc_generate_keyed_hash_quit);
+     }
+-    HMAC(hashfn, key, keylen, message, msglen, buf, &buf_len);
++#ifndef NETSNMP_DISABLE_MD5
++    if (auth_type == NETSNMP_USMAUTH_HMACMD5)
++        EVP_hmac(hashfn, key, message, buf, &buf_len);
++    else
++#endif
++        HMAC(hashfn, key, keylen, message, msglen, buf, &buf_len);
+     if (buf_len != properlength) {
+         QUITFUN(rval, sc_generate_keyed_hash_quit);
+     }
+@@ -1821,6 +1830,49 @@
+ #endif /* NETSNMP_USE_INTERNAL_CRYPTO */
+ #ifdef NETSNMP_USE_OPENSSL
+ static
++void EVP_hmac(const EVP_MD *evp_md, const void *key,
++              const unsigned char *msg, unsigned char *md,
++              size_t *md_len)
++{
++        EVP_MD_CTX* mdctx = NULL;
++        EVP_PKEY *pkey = NULL;
++
++        if(!(mdctx = EVP_MD_CTX_create())) {
++            snmp_log(LOG_ERR, "EVP_MD_CTX_create failure.\n");
++            return;
++        }
++        if(!(pkey = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL,
++                                         key, EVP_MD_size(evp_md)))) {
++            snmp_log(LOG_ERR, "EVP_PKEY_new_mac_key failure.\n");
++            EVP_MD_CTX_destroy(mdctx);
++            return;
++        }
++#ifdef EVP_MD_CTX_FLAG_NON_FIPS_ALLOW
++        EVP_MD_CTX_set_flags (mdctx, EVP_MD_CTX_FLAG_NON_FIPS_ALLOW);
++#endif  
++        if(EVP_DigestSignInit(mdctx, NULL, evp_md, NULL, pkey) != 1) {
++            snmp_log(LOG_ERR, "EVP_DigestSignInit failure.\n");
++            EVP_MD_CTX_destroy(mdctx);
++            EVP_PKEY_free(pkey);
++            return;
++        }
++        if(EVP_DigestSignUpdate(mdctx, msg, strlen(msg)) != 1) {
++            snmp_log(LOG_ERR, "EVP_DigestSignUpdate failure.\n");
++            EVP_MD_CTX_destroy(mdctx);
++            EVP_PKEY_free(pkey);
++            return;
++        }
++        if(EVP_DigestSignFinal(mdctx, md, md_len) != 1) {
++            snmp_log(LOG_ERR, "EVP_DigestSignFinal failure.\n");
++            EVP_MD_CTX_destroy(mdctx);
++            EVP_PKEY_free(pkey);
++            return;
++        }   
++        EVP_MD_CTX_destroy(mdctx);
++        EVP_PKEY_free(pkey);
++}
++
++static
+ int EVP_encrypt(const EVP_CIPHER *type, u_char * key,
+                 u_int keylen, u_char * iv, const u_char * plaintext,
+                 u_int ptlen, u_char * ciphertext, size_t * ctlen)

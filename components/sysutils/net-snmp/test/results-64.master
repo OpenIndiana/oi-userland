@@ -1,75 +1,504 @@
-Checking the Net-SNMP configure script validity ......................... ok
-SNMPv1 support .......................................................... ok
-SNMPv2c set of system.sysContact.0 ...................................... ok
-SNMPv2c get of system.sysUpTime.0 ....................................... ok
-SNMPv2c getnext of system.sysUpTime ..................................... ok
-SNMPv2c bulkget of system components .................................... ok
-for failure of SNMPv2c get with wrong community ......................... ok
-for failure of SNMPv2c get against SNMPv1 agent ......................... ok
-for failure of SNMPv1 get against SNMPv2c agent ......................... ok
-SNMPv2c get of system.sysUpTime.1 ....................................... ok
-SNMPv3 get using noAuthNoPriv of .1.3.6.1.2.1.1.3.0 ..................... ok
-SNMPv3 getnext using initial of .1.3.6.1.2.1.1.3 ........................ ok
-SNMPv3 bulkget of system ................................................ ok
-SNMPv3 get using MD5/noPriv of .1.3.6.1.2.1.1.3.0 ....................... ok
-SNMPv3 get using MD5/AES of .1.3.6.1.2.1.1.3.0 .......................... ok
-SNMPv3 get using MD5/DES of .1.3.6.1.2.1.1.3.0 .......................... ok
-SNMPv3 get using SHA/noPriv of .1.3.6.1.2.1.1.3.0 ....................... ok
-SNMPv3 get using SHA/DES of .1.3.6.1.2.1.1.3.0 .......................... ok
-SNMPv3 get using SHA/AES of .1.3.6.1.2.1.1.3.0 .......................... ok
-SNMPv3 get using default config of .1.3.6.1.2.1.1.3.0 ................... ok
-for failure of SNMPv3 get using unknown user. ........................... ok
-SNMPv3 agent USM user management with snmpusm ........................... ok
-SNMPv3 snmptrapd USM user management with snmpusm ....................... ok
-SNMPv3 informs (noAuthNoPriv) received and sent by tools ................ ok
-SNMPv3 informs (authNoPriv) received and sent by tools .................. ok
-SNMPv3 informs (authPriv) received and sent by tools .................... ok
-SNMPv3 traps received and sent by tools ................................. ok
-SNMPv2c traps received and sent by tools ................................ ok
-SNMPv2c informs received and sent by tools .............................. ok
-snmpv1 traps are sent by snmpd API ...................................... skipped: USING_EXAMPLES_EXAMPLE_MODULE is not defined
-snmpv2c traps are sent by snmpd API ..................................... skipped: USING_EXAMPLES_EXAMPLE_MODULE is not defined
-snmpv1 traps are sent by snmpd without notification mib support ......... skipped: USING_EXAMPLES_EXAMPLE_MODULE is not defined
-snmpv2c traps are sent by snmpd without notification mib support ........ skipped: USING_EXAMPLES_EXAMPLE_MODULE is not defined
-snmptrapd discards of unauthorized notification types  .................. ok
-snmptrapd discards of incorrect view types  ............................. ok
-snmptrapd authorization failure of non authorized users ................. ok
-authentication failure traps are sent by snmpd .......................... ok
-snmptrapd traphandle: launching external shell script ................... ok
-snmptrapd embedded perl support (NetSNMP::TrapReceiver) ................. skipped: NETSNMP_EMBEDDED_PERL is not defined
-snmpd embedded perl support (using NetSNMP::agent) ...................... skipped: NETSNMP_EMBEDDED_PERL is not defined
-extending agent functionality with extend and an external shell script .. ok
-extending agent functionality with extend ............................... ok
-extending agent functionality with pass ................................. ok
-extending agent functionality with pass_persist ......................... ok
-execfix configuration directive ......................................... skipped: USING_UCD_SNMP_EXTENSIBLE_MODULE is not defined
-com2sec directive ....................................................... ok
-com2sec6 directive ...................................................... ok
-com2secunix directive ................................................... ok
-that the agent responds properly to a kill -HUP ......................... ok
-AgentX GET support ...................................................... ok
-AgentX SET support ...................................................... ok
-AgentX illegal SET handling support ..................................... ok
-AgentX trap sending support ............................................. skipped: USING_EXAMPLES_EXAMPLE_MODULE is not defined
-AgentX trap sending support using agentxtrap ............................ ok
-AgentX subagent in Perl (using NetSNMP::agent) .......................... ok
-Proxy GET support ....................................................... ok
-Proxy SET support ....................................................... ok
-Proxy illegal SET handling support ...................................... ok
-SNMPv1 vacm acceptance support .......................................... ok
-SNMPv2 vacm acceptance support .......................................... ok
-SNMPv3 vacm acceptance support .......................................... ok
-SNMPv1 vacm denial support .............................................. ok
-SNMPv2 vacm denial support .............................................. ok
-SNMPv3 vacm denial support .............................................. ok
-1st CPU on Solaris using HOST-RESOURCES ................................. ok
-initial load device on Solaris using HOST-RESOURCES ..................... ok
-uptime using HOST-RESOURCES ............................................. ok
-swap on Solaris using HOST-RESOURCES .................................... ok
-DISMAN PING MIB ......................................................... skipped: Not permitted to create raw sockets
-if snmpnetstat finds the running agent in udpTable ...................... ok
-snmpTargetAddrTable ..................................................... ok
-full snmpwalk (SNMPv2c) against agent (may take time) ................... ok
-All tests successful.
-Files=72, Tests=320,
-Result: PASS
+RUNNING $(@D)/testing/fulltests/default/T000configure_simple
+ok 1 - found 1 copies of '^# Generated by GNU Autoconf 2.68 for Net-SNMP' in $(@D)/testing/fulltests/support/../../../configure)
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T001snmpv1get_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T001snmpv1get_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T001snmpv1get_simple-XXXXXX
+ok 3 - found 1 copies of 'Error in packet' in /tmp/snmp-test-T001snmpv1get_simple-XXXXXX
+ok 4 - found 1 copies of 'Timeout' in /tmp/snmp-test-T001snmpv1get_simple-XXXXXX
+ok 5 - got to FINISHED
+1..5
+RUNNING $(@D)/testing/fulltests/default/T0141snmpv2cset_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = STRING:' in /tmp/snmp-test-T0141snmpv2cset_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = STRING:' in /tmp/snmp-test-T0141snmpv2cset_simple-XXXXXX
+ok 3 - found 1 copies of 'STRING: foobartestingbaz' in /tmp/snmp-test-T0141snmpv2cset_simple-XXXXXX
+ok 4 - got to FINISHED
+1..4
+RUNNING $(@D)/testing/fulltests/default/T014snmpv2cget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T014snmpv2cget_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T015snmpv2cgetnext_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T015snmpv2cgetnext_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T0160snmpv2cbulkget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = STRING:' in /tmp/snmp-test-T0160snmpv2cbulkget_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.1.0 = STRING:' in /tmp/snmp-test-T0160snmpv2cbulkget_simple-XXXXXX
+ok 3 - found 1 copies of '.1.3.6.1.2.1.1.2.0 = OID:' in /tmp/snmp-test-T0160snmpv2cbulkget_simple-XXXXXX
+ok 4 - found 0 copies of '.1.3.6.1.2.1.1.3.0' in /tmp/snmp-test-T0160snmpv2cbulkget_simple-XXXXXX
+ok 5 - found 0 copies of '.1.3.6.1.2.1.1.5.0' in /tmp/snmp-test-T0160snmpv2cbulkget_simple-XXXXXX
+ok 6 - got to FINISHED
+1..6
+RUNNING $(@D)/testing/fulltests/default/T016snmpv2cgetfail_simple
+ok 1 - found 1 copies of 'Timeout' in /tmp/snmp-test-T016snmpv2cgetfail_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T017snmpv2ctov1getfail_simple
+ok 1 - found 1 copies of 'Timeout' in /tmp/snmp-test-T017snmpv2ctov1getfail_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T018snmpv1tov2cgetfail_simple
+ok 1 - found 1 copies of 'Timeout' in /tmp/snmp-test-T018snmpv1tov2cgetfail_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T019snmpv2cnosuch_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.1 = No Such Instance' in /tmp/snmp-test-T019snmpv2cnosuch_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T020snmpv3get_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T020snmpv3get_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T021snmpv3getnext_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T021snmpv3getnext_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T0220snmpv3bulkget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = STRING:' in /tmp/snmp-test-T0220snmpv3bulkget_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.1.0 = STRING:' in /tmp/snmp-test-T0220snmpv3bulkget_simple-XXXXXX
+ok 3 - found 1 copies of '.1.3.6.1.2.1.1.2.0 = OID:' in /tmp/snmp-test-T0220snmpv3bulkget_simple-XXXXXX
+ok 4 - found 0 copies of '.1.3.6.1.2.1.1.3.0' in /tmp/snmp-test-T0220snmpv3bulkget_simple-XXXXXX
+ok 5 - found 0 copies of '.1.3.6.1.2.1.1.5.0' in /tmp/snmp-test-T0220snmpv3bulkget_simple-XXXXXX
+ok 6 - got to FINISHED
+1..6
+RUNNING $(@D)/testing/fulltests/default/T022snmpv3getMD5_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T022snmpv3getMD5_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T023snmpv3getMD5AES_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T023snmpv3getMD5AES_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T023snmpv3getMD5DES_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T023snmpv3getMD5DES_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T024snmpv3getSHA1_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T024snmpv3getSHA1_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T024snmpv3getSHA512_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T024snmpv3getSHA512_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T025snmpv3getSHADES_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T025snmpv3getSHADES_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T026snmpv3getSHAAES_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T026snmpv3getSHAAES_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T027snmpv3Defaults_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T027snmpv3Defaults_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T028snmpv3getfail_simple
+ok 1 - found 1 copies of 'Unknown user name' in /tmp/snmp-test-T028snmpv3getfail_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T030snmpv3usercreation_simple
+ok 1 - found 1 copies of 'User successfully created' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 2 - found 1 copies of 'User successfully cloned' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 3 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 4 - found 1 copies of 'User successfully deleted' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 5 - found 1 copies of 'User successfully created' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 6 - found 1 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 7 - found 1 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 8 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 9 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 10 - found 1 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 11 - found 1 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 12 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 13 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 14 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T030snmpv3usercreation_simple-XXXXXX
+ok 15 - got to FINISHED
+1..15
+RUNNING $(@D)/testing/fulltests/default/T035snmpv3trapdusermgmt_simple
+not ok 1 - found 0 copies of 'User successfully created' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 2 - found 0 copies of 'User successfully created' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 3 - found 0 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 4 - found 0 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 5 - found 0 copies of 'received_inform_anp' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 6 - found 0 copies of 'received_inform_ap' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 7 - found 0 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 8 - found 0 copies of 'received_inform_anp2' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 9 - found 0 copies of 'SNMPv3 Key(s) successfully changed' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 10 - found 0 copies of 'received_inform_ap2' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+not ok 11 - found 0 copies of 'received_inform_ap3' in /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T035snmpv3trapdusermgmt_simple-XXXXXX
+ok 12 - got to FINISHED
+1..12
+RUNNING $(@D)/testing/fulltests/default/T049snmpv3inform_simple
+ok 1 - found 1 copies of 'received_inform_noAuthNoPriv' in /tmp/snmp-test-T049snmpv3inform_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T049snmpv3informauth_simple
+ok 1 - found 1 copies of 'received_inform_authNoPriv' in /tmp/snmp-test-T049snmpv3informauth_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T049snmpv3informpriv_simple
+ok 1 - found 1 copies of 'received_inform_authPriv' in /tmp/snmp-test-T049snmpv3informpriv_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T050snmpv3trap_simple
+ok 1 - found 1 copies of 'received_trap_nanp' in /tmp/snmp-test-T050snmpv3trap_simple-XXXXXX
+ok 2 - found 1 copies of 'received_trap_anp' in /tmp/snmp-test-T050snmpv3trap_simple-XXXXXX
+ok 3 - found 1 copies of 'received_trap_ap' in /tmp/snmp-test-T050snmpv3trap_simple-XXXXXX
+ok 4 - got to FINISHED
+1..4
+RUNNING $(@D)/testing/fulltests/default/T051snmpv2ctrap_simple
+ok 1 - found 1 copies of '.1.3.6.1.6.3.1.1.4.1.0 = OID: .1.3.6.1.6.3.1.1.5.1' in /tmp/snmp-test-T051snmpv2ctrap_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T052snmpv2cinform_simple
+ok 1 - found 1 copies of 'Received' in /tmp/snmp-test-T052snmpv2cinform_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T053agentv1trap_simple
+1..0 # SKIP USING_EXAMPLES_EXAMPLE_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T054agentv2ctrap_simple
+1..0 # SKIP USING_EXAMPLES_EXAMPLE_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T055agentv1mintrap_simple
+1..0 # SKIP USING_EXAMPLES_EXAMPLE_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T056agentv2cmintrap_simple
+1..0 # SKIP USING_EXAMPLES_EXAMPLE_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T057trapdauthtest_simple
+ok 1 - found 0 copies of 'coldStart' in /tmp/snmp-test-T057trapdauthtest_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T057trapdauthtest2_simple
+ok 1 - found 0 copies of 'coldStart' in /tmp/snmp-test-T057trapdauthtest2_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T057trapdauthtest3_simple
+ok 1 - found 0 copies of 'coldStart' in /tmp/snmp-test-T057trapdauthtest3_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T058agentauthtrap_simple
+ok 1 - found 1 copies of 'Authentication Failure Trap' in /tmp/snmp-test-T058agentauthtrap_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T059trapdtraphandle_simple
+ok 1 - found 1 copies of 'handled_inform_v2c' in /tmp/snmp-test-T059trapdtraphandle_simple-XXXXXX
+ok 2 - found 1 copies of 'handled_inform2_v2c' in /tmp/snmp-test-T059trapdtraphandle_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T060trapdperl_simple
+1..0 # SKIP NETSNMP_EMBEDDED_PERL is not defined
+RUNNING $(@D)/testing/fulltests/default/T061agentperl_simple
+1..0 # SKIP NETSNMP_EMBEDDED_PERL is not defined
+RUNNING $(@D)/testing/fulltests/default/T065agentextend_sh_simple
+$(@D)/testing/fulltests/default
+ok 1 - found 1 copies of 'versionUpdateConfig.0 = INTEGER: 1' in /tmp/snmp-test-T065agentextend_sh_simple-XXXXXX
+ok 2 - found 1 copies of 'STRING: 111' in /tmp/snmp-test-T065agentextend_sh_simple-XXXXXX
+ok 3 - found 1 copies of 'STRING: 111' in /tmp/snmp-test-T065agentextend_sh_simple-XXXXXX
+ok 4 - found 1 copies of 'STRING: 111' in /tmp/snmp-test-T065agentextend_sh_simple-XXXXXX
+ok 5 - found 1 copies of 'INTEGER: 2' in /tmp/snmp-test-T065agentextend_sh_simple-XXXXXX
+ok 6 - found 1 copies of 'INTEGER: 0' in /tmp/snmp-test-T065agentextend_sh_simple-XXXXXX
+ok 7 - got to FINISHED
+1..7
+RUNNING $(@D)/testing/fulltests/default/T065agentextend_simple
+ok 1 - found 1 copies of 'STRING: hello_world' in /tmp/snmp-test-T065agentextend_simple-XXXXXX
+ok 2 - found 1 copies of 'STRING: hello_world' in /tmp/snmp-test-T065agentextend_simple-XXXXXX
+ok 3 - found 1 copies of 'STRING: hello_world' in /tmp/snmp-test-T065agentextend_simple-XXXXXX
+ok 4 - found 1 copies of 'INTEGER: 1' in /tmp/snmp-test-T065agentextend_simple-XXXXXX
+ok 5 - found 1 copies of 'INTEGER: 0' in /tmp/snmp-test-T065agentextend_simple-XXXXXX
+ok 6 - got to FINISHED
+1..6
+RUNNING $(@D)/testing/fulltests/default/T066pass_simple
+ok 1 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassString.0 = STRING: Life, the Universe, and Everything' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 2 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassInteger.1 = INTEGER: 42' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 3 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassOID.1 = OID: NET-SNMP-PASS-MIB::netSnmpPassOIDValue' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 4 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassTimeTicks.0 = Timeticks: (363136200) 42 days, 0:42:42.00' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 5 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassIpAddress.0 = IpAddress: 127.0.0.1' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 6 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassCounter.0 = Counter32: 42' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 7 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassGauge.0 = Gauge32: 42' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 8 - found 1 copies of 'INTEGER: 42' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 9 - found 1 copies of 'Counter32: 42' in /tmp/snmp-test-T066pass_simple-XXXXXX
+ok 10 - got to FINISHED
+1..10
+RUNNING $(@D)/testing/fulltests/default/T067passpersist_simple
+ok 1 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassString.0 = STRING: Life, the Universe, and Everything' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 2 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassInteger.1 = INTEGER: 42' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 3 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassOID.1 = OID: NET-SNMP-PASS-MIB::netSnmpPassOIDValue' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 4 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassTimeTicks.0 = Timeticks: (363136200) 42 days, 0:42:42.00' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 5 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassIpAddress.0 = IpAddress: 127.0.0.1' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 6 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassCounter.0 = Counter32: 1' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 7 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassGauge.0 = Gauge32: 42' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 8 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassCounter64.0 = Counter64: 9223372036854775806' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 9 - found 1 copies of 'NET-SNMP-PASS-MIB::netSnmpPassInteger64.0 = Opaque: Int64: 9223372036854775807' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 10 - found 1 copies of 'INTEGER: 42' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 11 - found 1 copies of 'Counter32: 2' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 12 - found 1 copies of 'Counter32: 1' in /tmp/snmp-test-T067passpersist_simple-XXXXXX
+ok 13 - got to FINISHED
+1..13
+RUNNING $(@D)/testing/fulltests/default/T068execfix_simple
+1..0 # SKIP USING_UCD_SNMP_EXTENSIBLE_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T069exechup_simple
+1..0 # SKIP USING_UCD_SNMP_EXTENSIBLE_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T070com2sec_simple
+ok 1 - found 1 copies of 'line 1: Error: missing CONTEXT_NAME parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 2 - found 1 copies of 'line 2: Error: missing NAME parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 3 - found 1 copies of 'line 3: Error: context name too long' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 4 - found atleastone copies of 'line 4: Error: Blank line following com2sec token.' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 5 - found 1 copies of 'line 5: Error: empty NAME parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 6 - found 1 copies of 'line 6: Error: security name too long' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 7 - found 1 copies of 'line 7: Error: missing NAME parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 8 - found 1 copies of 'line 8: Error: empty NAME parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 9 - found 1 copies of 'line 9: Error: missing SOURCE parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 10 - found 1 copies of 'line 10: Error: empty SOURCE parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 11 - found 1 copies of 'line 11: Error: example config NETWORK not properly configured' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 12 - found 1 copies of 'line 12: Error: missing COMMUNITY parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 13 - found 1 copies of 'line 13: Error: empty COMMUNITY parameter' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 14 - found 1 copies of 'line 14: Error: example config COMMUNITY not properly configured' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 15 - found 1 copies of 'line 15: Error: community name too long' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 16 - found 1 copies of '<"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456", 0.0.0.0/0.0.0.0> => "t404e"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 17 - found 1 copies of '<"c405a", 0.0.0.0/0.0.0.0> => "t405a"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 18 - found 1 copies of '<"c405b", 10.0.0.0/255.255.255.255> => "t405b"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 19 - found 1 copies of '<"c405c", 10.0.0.0/255.0.0.0> => "t405c"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 20 - found 1 copies of 'line 20: Error: bad mask length' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 21 - found 1 copies of 'line 21: Error: bad mask length' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 22 - found 1 copies of '<"c405f", 10.0.0.0/255.0.0.0> => "t405f"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 23 - found 1 copies of 'line 23: Error: bad mask' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 24 - found 1 copies of 'line 24: Error: bad mask' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 25 - found 1 copies of 'line 25: Error: source/mask mismatch' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 26 - found 1 copies of '<"c405j", 0.0.0.0/255.255.255.255> => "t405j"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 27 - found 1 copies of '<"c405k", 0.0.0.0/0.0.0.0> => "t405k"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 28 - found 1 copies of '<"c405l", 0.0.0.0/0.0.0.0> => "t405l"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 29 - found 1 copies of '<"c406a", 255.255.255.255/255.255.255.255> => "t406a"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 30 - found 1 copies of 'line 30: Error:' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 31 - found 1 copies of 'line 31: Error:' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 32 - found 1 copies of '<"c408a"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 33 - found 1 copies of '<"c408b"' in /tmp/snmp-test-T070com2sec_simple-XXXXXX
+ok 34 - got to FINISHED
+1..34
+RUNNING $(@D)/testing/fulltests/default/T071com2sec6_simple
+ok 1 - found 1 copies of 'line 1: Error: missing CONTEXT_NAME parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 2 - found 1 copies of 'line 2: Error: missing NAME parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 3 - found 1 copies of 'line 3: Error: context name too long' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 4 - found atleastone copies of 'line 4: Error: Blank line following com2sec6 token.' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 5 - found 1 copies of 'line 5: Error: empty NAME parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 6 - found 1 copies of 'line 6: Error: security name too long' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 7 - found 1 copies of 'line 7: Error: missing NAME parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 8 - found 1 copies of 'line 8: Error: empty NAME parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 9 - found 1 copies of 'line 9: Error: missing SOURCE parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 10 - found 1 copies of 'line 10: Error: empty SOURCE parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 11 - found 1 copies of 'line 11: Error: example config NETWORK not properly configured' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 12 - found 1 copies of 'line 12: Error: missing COMMUNITY parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 13 - found 1 copies of 'line 13: Error: empty COMMUNITY parameter' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 14 - found 1 copies of 'line 14: Error: community name too long' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 15 - found 1 copies of '<"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456", ::/::> => "t604d"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 16 - found 1 copies of 'line 16: Error: example config COMMUNITY not properly configured' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 17 - found 1 copies of '<"c605a", ::/::> => "t605a"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 18 - found 1 copies of '<"c605b", aa00::/ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff> => "t605b"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 19 - found 1 copies of '<"c605c", aa00::/ff00::> => "t605c"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 20 - found 1 copies of 'line 20: Error: bad mask length' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 21 - found 1 copies of 'line 21: Error: bad mask length' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 22 - found 1 copies of '<"c605f", aa00::/ff00::> => "t605f"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 23 - found 1 copies of 'line 23: Error: bad mask' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 24 - found 1 copies of 'line 24: Error: bad mask' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 25 - found 1 copies of 'line 25: Error: source/mask mismatch' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 26 - found 1 copies of '<"c606a", ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff> => "t606a"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 27 - found 1 copies of 'line 27: Error:' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 28 - found 1 copies of 'line 28: Error:' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 29 - found 1 copies of '<"c608a"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 30 - found atleastone copies of '<"c608b"' in /tmp/snmp-test-T071com2sec6_simple-XXXXXX
+ok 31 - got to FINISHED
+1..31
+RUNNING $(@D)/testing/fulltests/default/T072com2secunix_simple
+ok 1 - found 1 copies of 'line 1: Error: missing CONTEXT_NAME parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 2 - found 1 copies of 'line 2: Error: missing NAME parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 3 - found 1 copies of 'line 3: Error: context name too long' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 4 - found atleastone copies of 'line 4: Error: Blank line following com2secunix token.' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 5 - found 1 copies of 'line 5: Error: empty NAME parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 6 - found 1 copies of 'line 6: Error: security name too long' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 7 - found 1 copies of 'line 7: Error: missing NAME parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 8 - found 1 copies of 'line 8: Error: empty NAME parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 9 - found 1 copies of 'line 9: Error: missing SOCKPATH parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 10 - found 1 copies of 'line 10: Error: empty SOCKPATH parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 11 - found 1 copies of 'line 11: Error: sockpath too long' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 12 - found 1 copies of 'line 12: Error: missing COMMUNITY parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 13 - found 1 copies of 'line 13: Error: missing COMMUNITY parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 14 - found 1 copies of 'line 14: Error: empty COMMUNITY parameter' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 15 - found 1 copies of 'line 15: Error: example config COMMUNITY not properly configured' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 16 - found 1 copies of 'line 16: Error: community name too long' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 17 - found 1 copies of '<"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234", ""> => "tu04e"' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 18 - found 1 copies of '<"cu05a", ""> => "tu05a"' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 19 - found 1 copies of '<"cu07a", "/dev/null/no/such"> => "tu07a"' in /tmp/snmp-test-T072com2secunix_simple-XXXXXX
+ok 20 - got to FINISHED
+1..20
+RUNNING $(@D)/testing/fulltests/default/T100agenthup_simple
+ok 1 - found 1 copies of 'not-anywhere-in-particular' in /tmp/snmp-test-T100agenthup_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T110agentxget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = No Such Object' in /tmp/snmp-test-T110agentxget_simple-XXXXXX
+not ok 2 - found 0 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T110agentxget_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T110agentxget_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T111agentxset_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = No Such Object' in /tmp/snmp-test-T111agentxset_simple-XXXXXX
+not ok 2 - found 0 copies of '.1.3.6.1.2.1.1.4.0 = STRING: "*testcontact' in /tmp/snmp-test-T111agentxset_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T111agentxset_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T112agentxsetfail_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = No Such Object' in /tmp/snmp-test-T112agentxsetfail_simple-XXXXXX
+not ok 2 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = No Such Object' in /tmp/snmp-test-T112agentxsetfail_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T112agentxsetfail_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T113agentxtrap_simple
+1..0 # SKIP USING_EXAMPLES_EXAMPLE_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T114agentxagentxtrap_simple
+not ok 1 - found 0 copies of '= STRING: "*mostly_harmless"*' in /tmp/snmp-test-T114agentxagentxtrap_simple-XXXXXX
+# Outputfile: /tmp/snmp-test-T114agentxagentxtrap_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T115agentxperl_simple
+ok 1 - found 1 copies of 'hello world' in /tmp/snmp-test-T115agentxperl_simple-XXXXXX
+ok 2 - found 1 copies of 'hello again world' in /tmp/snmp-test-T115agentxperl_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T120proxyget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T120proxyget_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T121proxyset_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = STRING: "*testcontact' in /tmp/snmp-test-T121proxyset_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = STRING: "*testnewcontact' in /tmp/snmp-test-T121proxyset_simple-XXXXXX
+ok 3 - found 1 copies of '.1.3.6.1.2.1.1.4.0 = STRING: "*testnewcontact' in /tmp/snmp-test-T121proxyset_simple-XXXXXX
+ok 4 - got to FINISHED
+1..4
+RUNNING $(@D)/testing/fulltests/default/T122proxysetfail_simple
+ok 1 - found 0 copies of '.1.3.6.1.2.1.1.4.0 = No Such Object' in /tmp/snmp-test-T122proxysetfail_simple-XXXXXX
+ok 2 - found 1 copies of 'Reason: wrongType' in /tmp/snmp-test-T122proxysetfail_simple-XXXXXX
+ok 3 - found 1 copies of 'Failed object: .1.3.6.1.2.1.1.4.0' in /tmp/snmp-test-T122proxysetfail_simple-XXXXXX
+ok 4 - got to FINISHED
+1..4
+RUNNING $(@D)/testing/fulltests/default/T124proxywalkself_simple
+ok 1 - found 1 copies of '.1.3.6.1.4.1.8072.42.1.0 = STRING:' in /tmp/snmp-test-T124proxywalkself_simple-XXXXXX
+ok 2 - found 0 copies of 'Error: OID not increasing' in /tmp/snmp-test-T124proxywalkself_simple-XXXXXX
+ok 3 - found atleastone copies of '^.1.3.6.1.4.1.8072.42' in /tmp/snmp-test-T124proxywalkself_simple-XXXXXX
+ok 4 - found 0 copies of 'Error: OID not increasing' in /tmp/snmp-test-T124proxywalkself_simple-XXXXXX
+ok 5 - found atleastone copies of '^.1.3.6.1.4.1.8072.42.9.' in /tmp/snmp-test-T124proxywalkself_simple-XXXXXX
+ok 6 - got to FINISHED
+1..6
+RUNNING $(@D)/testing/fulltests/default/T130snmpv1vacmget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.1.0 = STRING:' in /tmp/snmp-test-T130snmpv1vacmget_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T130snmpv1vacmget_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T131snmpv2cvacmget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.1.0 = STRING:' in /tmp/snmp-test-T131snmpv2cvacmget_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T131snmpv2cvacmget_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T132snmpv3vacmget_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.1.0 = STRING:' in /tmp/snmp-test-T132snmpv3vacmget_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = Timeticks:' in /tmp/snmp-test-T132snmpv3vacmget_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T140snmpv1vacmgetfail_simple
+ok 1 - found 1 copies of 'Reason: (noSuchName) There is no such variable name in this MIB.' in /tmp/snmp-test-T140snmpv1vacmgetfail_simple-XXXXXX
+ok 2 - found 1 copies of 'Reason: (noSuchName) There is no such variable name in this MIB.' in /tmp/snmp-test-T140snmpv1vacmgetfail_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T141snmpv2cvacmgetfail_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = No Such Object available on this agent at this OID' in /tmp/snmp-test-T141snmpv2cvacmgetfail_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.1.0 = No Such Object available on this agent at this OID' in /tmp/snmp-test-T141snmpv2cvacmgetfail_simple-XXXXXX
+ok 3 - found 1 copies of 'Reason: noAccess' in /tmp/snmp-test-T141snmpv2cvacmgetfail_simple-XXXXXX
+ok 4 - found 1 copies of 'Reason: noAccess' in /tmp/snmp-test-T141snmpv2cvacmgetfail_simple-XXXXXX
+ok 5 - found 1 copies of '.1.3.6.1.2.1.1.5.0 = STRING: "*dummy' in /tmp/snmp-test-T141snmpv2cvacmgetfail_simple-XXXXXX
+ok 6 - found 1 copies of 'Reason: noAccess' in /tmp/snmp-test-T141snmpv2cvacmgetfail_simple-XXXXXX
+ok 7 - got to FINISHED
+1..7
+RUNNING $(@D)/testing/fulltests/default/T142snmpv3vacmgetfail_simple
+ok 1 - found 1 copies of '.1.3.6.1.2.1.1.3.0 = No Such Object available on this agent at this OID' in /tmp/snmp-test-T142snmpv3vacmgetfail_simple-XXXXXX
+ok 2 - found 1 copies of '.1.3.6.1.2.1.1.1.0 = No Such Object available on this agent at this OID' in /tmp/snmp-test-T142snmpv3vacmgetfail_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+RUNNING $(@D)/testing/fulltests/default/T150solarishostcpu_simple
+ok 1 - found 1 copies of '= STRING: "*CPU' in /tmp/snmp-test-T150solarishostcpu_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T151solarishostdisk_simple
+ok 1 - found 1 copies of '^.1.3.6.1.2.1.25.1.3.0 = INTEGER:' in /tmp/snmp-test-T151solarishostdisk_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T152hostuptime_simple
+ok 1 - found 1 copies of '^.1.3.6.1.2.1.25.1.1.0 = Timeticks:' in /tmp/snmp-test-T152hostuptime_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T153solarisswap_simple
+ok 1 - found 1 copies of '^.1.3.6.1.2.1.25.2.3.1.5.10 = INTEGER:' in /tmp/snmp-test-T153solarisswap_simple-XXXXXX
+ok 2 - got to FINISHED
+1..2
+RUNNING $(@D)/testing/fulltests/default/T154dismanpingmib_simple
+1..0 # SKIP USING_DISMAN_PING_MIB_MODULE is not defined
+RUNNING $(@D)/testing/fulltests/default/T155dismanexprmib_simple
+1..0 # SKIP DISMAN EXPRESSION MIB is not available
+RUNNING $(@D)/testing/fulltests/default/T160snmpnetstat_simple
+ok 1 - got to FINISHED
+1..1
+RUNNING $(@D)/testing/fulltests/default/T161snmpTargetAddr_simple
+ok 1 - found 0 copies of '^.1.3.6.1.6.3.12.1.2.1' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 2 - found 1 copies of 'noCreation' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 3 - found 1 copies of 'noCreation' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 4 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.9.66.0.65 = INTEGER: 5' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 5 - found 1 copies of '^.1.3.6.1.6.3.12.1.2.1.9' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 6 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.9.66.0.65 =' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 7 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.9.65 = INTEGER: 5' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 8 - found 1 copies of '^.1.3.6.1.6.3.12.1.2.1.9' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 9 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.9.65 = INTEGER: 3' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 10 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.2.65 = No Such Instance' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 11 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.3.65 = No Such Instance' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 12 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.4.65 = INTEGER: 1500' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 13 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.5.65 = INTEGER: 3' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 14 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.6.65 = STRING:' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 15 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.7.65 = No Such Instance' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 16 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.8.65 = INTEGER: 3' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 17 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.9.65 = INTEGER: 3' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 18 - found 1 copies of 'wrongValue' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 19 - found 1 copies of '^.1.3.6.1.6.3.12.1.2.1.4.65 = INTEGER: 2147483647' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 20 - found 1 copies of '^.1.3.6.1.6.3.12.1.2.1.4.65 = INTEGER: 2147483647' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 21 - found 1 copies of 'wrongValue' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 22 - found 1 copies of 'wrongValue' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 23 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.6.65 = STRING: alfa' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 24 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.6.65 = STRING: alfa' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 25 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.6.65 = STRING: alfa beta' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 26 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.6.65 = STRING: alfa beta' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 27 - found 1 copies of '.1.3.6.1.6.3.12.1.2.1.6.65 = STRING: al.fa' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 28 - found 1 copies of 'wrongValue' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 29 - found 1 copies of 'wrongValue' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 30 - found 1 copies of 'wrongValue' in /tmp/snmp-test-T161snmpTargetAddr_simple-XXXXXX
+ok 31 - got to FINISHED
+1..31
+RUNNING $(@D)/testing/fulltests/default/T200snmpv2cwalkall_simple
+ok 1 - found 0 copies of '= Wrong Type (should be ' in /tmp/snmp-test-T200snmpv2cwalkall_simple-XXXXXX
+ok 2 - found 1 copies of 'No more variables left in this MIB View' in /tmp/snmp-test-T200snmpv2cwalkall_simple-XXXXXX
+ok 3 - got to FINISHED
+1..3
+
+Failed tests:
+$(@D)/testing/fulltests/default/T035snmpv3trapdusermgmt_simple
+$(@D)/testing/fulltests/default/T110agentxget_simple
+$(@D)/testing/fulltests/default/T111agentxset_simple
+$(@D)/testing/fulltests/default/T112agentxsetfail_simple
+$(@D)/testing/fulltests/default/T114agentxagentxtrap_simple
+
+Summary: 71 / 76 succeeded.

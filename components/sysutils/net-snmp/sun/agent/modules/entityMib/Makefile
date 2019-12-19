@@ -31,9 +31,9 @@ LDFLAGS=$(LDFLAGS_$(MARCH))
 
 LDLIBS=
 
-CFLAGS_32=-fPIC
-CFLAGS_sparcv9=-fPIC
-CFLAGS_amd64=-fPIC
+CFLAGS_32=-fpic
+CFLAGS_sparcv9=-fpic
+CFLAGS_amd64=-fpic
 CFLAGS=$(CFLAGS_$(MARCH))
 
 PROG= libentity.so

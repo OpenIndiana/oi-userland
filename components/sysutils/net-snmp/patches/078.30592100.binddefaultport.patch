@@ -1,0 +1,35 @@
+Patch taken from upstream.
+Details at
+https://sourceforge.net/p/net-snmp/mailman/message/36398374/
+https://sourceforge.net/p/net-snmp/code/ci/06a02b7c708c1ea2bf67e59c333001e8ce128dff/
+--- net-snmp-5.8.old/snmplib/transports/snmpUDPIPv4BaseDomain.c	2018-07-16 07:33:40.000000000 +0000
++++ net-snmp-5.8/snmplib/transports/snmpUDPIPv4BaseDomain.c	2019-11-22 01:35:53.878860531 +0000
+@@ -317,7 +317,7 @@
+     if (NULL != tspec->source) {
+         struct sockaddr_in src_addr, *srcp = &src_addr;
+         /** get sockaddr from source */
+-        if (!netsnmp_sockaddr_in2(&src_addr, tspec->source, NULL))
++        if (!netsnmp_sockaddr_in2(&src_addr, tspec->source, ":0"))
+             return NULL;
+         return netsnmp_udpipv4base_transport_with_source(&addr, local, srcp);
+      } else {
+--- net-snmp-5.8.old/snmplib/transports/snmpUDPIPv6Domain.c	2018-07-16 07:33:40.000000000 +0000
++++ net-snmp-5.8/snmplib/transports/snmpUDPIPv6Domain.c	2019-11-22 01:37:52.826277489 +0000
+@@ -383,7 +383,7 @@
+     if (NULL != tspec->source) {
+         struct sockaddr_in6 src_addr, *srcp = &src_addr;
+         /** get sockaddr from source */
+-        if (!netsnmp_sockaddr_in6_2(&src_addr, tspec->source, NULL))
++        if (!netsnmp_sockaddr_in6_2(&src_addr, tspec->source, ":0"))
+             return NULL;
+         return netsnmp_udp6_transport_with_source(&addr, local, srcp);
+      } else {
+@@ -464,7 +464,7 @@
+                                               NETSNMP_DS_LIB_CLIENT_ADDR);
+         if (client_socket) {
+             struct sockaddr_in6 client_addr;
+-            if(!netsnmp_sockaddr_in6_2(&client_addr, client_socket, NULL)) {
++            if(!netsnmp_sockaddr_in6_2(&client_addr, client_socket, ":0")) {
+                 return netsnmp_udp6_transport_with_source(addr, local,
+                                                           &client_addr);
+             }
