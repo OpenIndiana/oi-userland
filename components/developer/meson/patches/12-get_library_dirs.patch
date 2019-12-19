@@ -1,0 +1,37 @@
+Submitted & accepted upstream in: https://github.com/mesonbuild/meson/pull/5917
+
+From b6205ba933e9e32b4b7370c535320690c7c6bf4d Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sun, 8 Sep 2019 19:11:46 -0700
+Subject: [PATCH] get_library_dirs: Add Solaris 64-bit library subdirs
+
+Solaris puts 32-bit libraries in the main /lib & /usr/lib directories
+and 64-bit libraries in platform specific subdirectories.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ mesonbuild/mesonlib.py | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/mesonbuild/mesonlib.py b/mesonbuild/mesonlib.py
+index d052a2b6..0cb4b135 100644
+--- mesonbuild/mesonlib.py
++++ mesonbuild/mesonlib.py
+@@ -705,6 +705,14 @@ def get_library_dirs() -> List[str]:
+     else:
+         plat = ''
+ 
++    # Solaris puts 32-bit libraries in the main /lib & /usr/lib directories
++    # and 64-bit libraries in platform specific subdirectories.
++    if is_sunos():
++        if machine == 'i86pc':
++            plat = 'amd64'
++        elif machine.startswith('sun4'):
++            plat = 'sparcv9'
++
+     unixdirs += [str(x) for x in (Path('/usr/lib/') / plat).iterdir() if x.is_dir()]
+     if os.path.exists('/usr/lib64'):
+         unixdirs.append('/usr/lib64')
+-- 
+2.15.2
+
