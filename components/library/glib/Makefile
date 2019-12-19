@@ -14,36 +14,32 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS = 32_and_64
+BUILD_STYLE = meson
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_MJR_VERSION=	2.58
+COMPONENT_MJR_VERSION=	2.62
 COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8f43c31767e88a25da72b52a40f3301fefc49a665b56dc10ee7cc9565cbe7481
+	sha256:4400adc9f0d3ffcfe8e84225210370ce3f9853afb81812ddadb685325aa655c4
 COMPONENT_ARCHIVE_URL= \
 	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtk.org/
 COMPONENT_FMRI=		library/glib2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
 PATH=$(PATH.gnu)
 
+include $(WS_MAKE_RULES)/common.mk
+
+PYTHON_VERSION = 3.5
+
 LDFLAGS += -lsocket -lsecdb -lnsl
-
-COMPONENT_PREP_ACTION =	( cd $(@D) && gtkdocize && autoreconf -fi )
-
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D) )
-
-CONFIGURE_SCRIPT = $(@D)/configure
 
 # GCC 6
 CFLAGS += -Wno-error=format-nonliteral
@@ -51,9 +47,9 @@ CPPFLAGS += $(CPP_XPG6MODE)
 
 CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS += --disable-dtrace
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += -Dxattr=false
+CONFIGURE_OPTIONS += -Dfam=true
+CONFIGURE_OPTIONS += -Dman=true
 
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
@@ -64,28 +60,26 @@ DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 
 # Otherwise tests fail
-ENV = /usr/bin/env -i
+#ENV = /usr/bin/env -i
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "/^FAIL:/p" ' \
-	'-e "/^ERROR:/p" ' \
-	'-e "/^\#/p" ' \
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+	'-e "/^ok:/p" ' \
+	'-e "/^Fail:/p" ' \
+	'-e "/ERROR:/p" ' \
+	'-e "/^Ok/p" ' \
+	'-e "/^Expected Fail/p" ' \
+	'-e "/^Unexpected Pass/p" ' \
+	'-e "/^Skipped/p" ' \
+	'-e "/^Timeout/p"'
 
 REQUIRED_PACKAGES += runtime/perl-522
-# For `gtkdocize`
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
