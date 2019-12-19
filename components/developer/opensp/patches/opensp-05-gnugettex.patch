@@ -1,0 +1,29 @@
+--- OpenSP-1.5.1/configure.in.orig	2019-12-19 03:20:55.323813185 +0000
++++ OpenSP-1.5.1/configure.in	2019-12-19 03:21:57.671787474 +0000
+@@ -240,7 +240,7 @@
+ AC_CHECK_LIB(pthread,pthread_create,,AC_CHECK_LIB(threads,cthread_fork))
+ 
+ ALL_LINGUAS="de fr ja sv"
+-AM_GNU_GETTEXT
++AM_GNU_GETTEXT([external])
+ AC_CHECK_HEADERS(locale.h)
+ AC_DEFINE_DIR(SP_LOCALE_DIR, datadir/locale, [location of message catalogs])
+ SP_MESSAGE_DOMAIN="sp$SP_LIBOSP_CUR"
+@@ -473,5 +473,5 @@
+ 	lib/Makefile nsgmls/Makefile spent/Makefile
+ 	spam/Makefile sgmlnorm/Makefile sx/Makefile spcat/Makefile
+ 	include/Makefile include/config.h.old generic/Makefile doc/Makefile
+-	pubtext/Makefile tests/Makefile unicode/Makefile intl/Makefile po/Makefile.in])
++	pubtext/Makefile tests/Makefile unicode/Makefile po/Makefile.in])
+ AC_OUTPUT
+--- OpenSP-1.5.1/Makefile.am.orig	2019-12-19 03:22:11.039808850 +0000
++++ OpenSP-1.5.1/Makefile.am	2019-12-19 03:22:20.895293022 +0000
+@@ -5,7 +5,7 @@
+ SUBDIRS = pubtext unicode doc \
+ 	include generic \
+ 	lib nsgmls spent spam sgmlnorm sx spcat \
+-	intl po tests
++	po tests
+ 
+ pkginclude_HEADERS = config.h
+ 
