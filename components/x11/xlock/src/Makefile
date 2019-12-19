@@ -2,7 +2,7 @@
 #
 # xlock Makefile
 #
-# Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -34,7 +34,7 @@ SRCS=${C_SRCS} ${HDRS} ${IMAGES} xlock.man XLock.ad
 OBJS=${C_SRCS:.c=.o}
 LIBS=-lX11 -lm -lpam -lbsm -lsocket
 # Base lint flags
-LINTFLAGS = -fd -s -errtags=yes -Xc99
+LINTFLAGS = -fd -s -errtags=yes -std=c11 -xlang=c11
 # 64-bit checks
 LINTFLAGS += -m64 -L/usr/lib/64 -errchk=longptr64,sizematch
 LINTFLAGS += -erroff=E_CAST_INT_TO_SMALL_INT -erroff=E_CAST_UINT_TO_SIGNED_INT
@@ -44,11 +44,17 @@ LINTFLAGS += -errsecurity=extended
 LINTFLAGS += -erroff=E_SEC_RAND_WARN
 
 # Get default XFILESEARCHPATH from libXt & use it in resource.c
-DEF_FILESEARCHPATH=`pkg-config --variable=xfilesearchpath xt` 
+DEF_FILESEARCHPATH_RAW = $(shell pkg-config --variable=xfilesearchpath xt)
+DEF_FILESEARCHPATH = $(strip \
+	$(subst $$(datadir),$(datadir), \
+	$(subst $$(libdir),$(libdir), \
+	$(subst $$(sysconfdir),$(sysconfdir), $(DEF_FILESEARCHPATH_RAW)))))
+bindir=$(PREFIX)/bin
 datadir=$(PREFIX)/share
 libdir=$(PREFIX)/lib
+mandir=$(PREFIX)/share/man
 sysconfdir=/etc
-#resource.o lint := CPPFLAGS += -DDEF_FILESEARCHPATH=\"$(DEF_FILESEARCHPATH)\"
+CPPFLAGS += -DDEF_FILESEARCHPATH=\"$(DEF_FILESEARCHPATH)\"
 
 xlock: ${OBJS}
 	@print $(DEF_FILESEARCHPATH) | perl -n -e \
@@ -56,11 +62,8 @@ xlock: ${OBJS}
 	${CC} -o $@ ${OBJS} ${CFLAGS} ${LDFLAGS} ${LIBS}
 
 install: xlock xlock.1 XLock.ad
-	mkdir -p $(DESTDIR)$(bindir)
 	$(INSTALL) -m 0555 xlock $(DESTDIR)$(bindir)/xlock
-	mkdir -p $(DESTDIR)$(mandir)/man1
 	$(INSTALL) -m 0444 xlock.1 $(DESTDIR)$(mandir)/man1/xlock.1
-	mkdir -p $(DESTDIR)$(datadir)/X11/app-defaults
 	$(INSTALL) -m 0444 XLock.ad $(DESTDIR)$(datadir)/X11/app-defaults/XLock
 
 lint: ${C_SRCS}
