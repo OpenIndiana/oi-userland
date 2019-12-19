@@ -1,0 +1,30 @@
+--- splix-315/splix/Makefile.orig	2019-12-19 03:45:55.356145338 +0000
++++ splix-315/splix/Makefile	2019-12-19 03:46:08.154777039 +0000
+@@ -55,8 +55,8 @@
+ # +--------------------------------------------------------------------------+
+ LANGUAGES	:= cpp c
+ 
+-CC		:= gcc
+-CXX		:= g++
++CC		?= gcc
++CXX		?= g++
+ RM		:= rm -f
+ AR		:= ar crs
+ LEX		:= flex
+--- splix-315/splix/rules.mk.orig	2019-12-19 12:52:37.243637002 +0000
++++ splix-315/splix/rules.mk	2019-12-19 12:53:01.786931115 +0000
+@@ -6,12 +6,12 @@
+ 
+ $(rastertoqpdl_TARGET): $(rastertoqpdl_OBJ)
+ 	$(call printCmd, $(cmd_link))
+-	$(Q)g++ -o $@ $^ $(rastertoqpdl_CXXFLAGS) $(rastertoqpdl_LDFLAGS) \
++	$(Q)$(CXX) -o $@ $^ $(rastertoqpdl_CXXFLAGS) $(rastertoqpdl_LDFLAGS) \
+ 		$(rastertoqpdl_LIBS)
+ 
+ $(pstoqpdl_TARGET): $(pstoqpdl_OBJ)
+ 	$(call printCmd, $(cmd_link))
+-	$(Q)g++ -o $@ $^ $(pstoqpdl_CXXFLAGS) $(pstoqpdl_LDFLAGS) \
++	$(Q)$(CXX) -o $@ $^ $(pstoqpdl_CXXFLAGS) $(pstoqpdl_LDFLAGS) \
+ 		$(pstoqpdl_LIBS)
+ 
+ .PHONY: install installcms

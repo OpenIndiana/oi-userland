@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		splix
 COMPONENT_VERSION=	2.0.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	Driver for QPDL/SPL2 printers (Samsung and Xerox printers)
 COMPONENT_PROJECT_URL=	http://splix.sourceforge.net
 COMPONENT_FMRI=		print/splix
 COMPONENT_CLASSIFICATION=	System/Printing
-SVN_HASH=		sha256:8bf5043925c895348b9152568bcbc7a72794456bb75af2539c09f5e849b6c419
+SVN_HASH=  sha256:376dd20bd3366d324f575de6fe92822f525c86289fbef7f626e05106e4017b17
 COMPONENT_LICENSE=	GPLv2.0
 COMPONENT_LICENSE_FILE=	splix-315/splix/COPYING
 
@@ -34,6 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 COMPONENT_BUILD_ENV = \
+	CC=$(CC) CXX=$(CXX) \
 	CXXFLAGS="$(CXXFLAGS) -fno-strict-aliasing" \
 	rastertoqpdl_CXXFLAGS="$(CXXFLAGS)" \
 	pstoqpdl_CXXFLAGS="$(CXXFLAGS)"
