@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1988, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1988, 2019, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -145,6 +145,7 @@
 #include <crypt.h>
 #include <shadow.h>
 #include <pwd.h>
+#include <dlfcn.h>
 #ifdef __sun
 # include <note.h>
 #else
@@ -176,6 +177,8 @@ Display    *dsp = NULL;		/* server display connection */
 int         screen;		/* current screen */
 void        (*callback) (Window win) = NULL;
 void        (*init) (Window win) = NULL;
+static void (*exp_bzero) (void *s, size_t n);
+#define EXPLICIT_BZERO(s, n)	(*exp_bzero)(s, n)
 
 static int  screens;		/* number of screens */
 static Window win[MAXSCREENS];	/* window used to cover screen */
@@ -507,37 +510,6 @@ ReadXString(
 }
 
 
-static int
-CheckPassword(void)
-{
-    struct spwd *rspw, *uspw;
-    struct passwd *upw;
-    const char  *user;
-
-    rspw = getspnam("root");
-
-    upw = (struct passwd *)getpwuid(getuid());
-    if (upw == NULL) { 	/* should not pass NULL to getspnam  */
-	user = "";
-    }
-    else {
-	user = upw->pw_name;
-    }
-    uspw = getspnam(user);
-    if (!uspw) {
-	if (allowroot) {
-		if (!rspw)
-			return(1);
-		else
-			return(0);
-	}
-	return(1);
-    }
-
-    return(0);
-}
-
-
 static void passwordPrompt(const char *prompt)
 {
     int         y, left;
@@ -800,6 +772,8 @@ getPassword(void)
 #endif
     const char *authErrMsg = text_invalid;  
 
+    seteuid(0);
+
     rpw = getpwuid(0);
     if (rpw) {
        user = rpw->pw_name;
@@ -813,11 +787,6 @@ getPassword(void)
     upw = getpwuid(getuid());
     if (upw) {
        user = upw->pw_name;
-       userpass = strdup(upw->pw_passwd);
-
-       uspw = getspnam(user);
-       if (uspw && uspw->sp_pwdp)
-	   suserpass = strdup(uspw->sp_pwdp);
     }
     else 
        user = "";
@@ -849,20 +818,20 @@ getPassword(void)
 	}
 
 #endif
-
-	/* Disable user password non-PAM authentication */
-	if (userpass) {
-	    memset(userpass, 0, strlen(userpass));
-	    free(userpass);
-	    userpass = NULL;
-	}
-	if (suserpass) {
-	    memset(suserpass, 0, strlen(suserpass));
-	    free(suserpass);
-	    suserpass = NULL;
-	}
     }
+
+    if (!use_pam)
 #endif /* USE_PAM */
+    {
+	/* Get user password for non-PAM authentication */
+	userpass = strdup(upw->pw_passwd);
+
+	uspw = getspnam(user);
+	if (uspw && uspw->sp_pwdp)
+	    suserpass = strdup(uspw->sp_pwdp);
+    }
+
+    seteuid(getuid());
 
     XGetWindowAttributes(dsp, win[screen], &xgwa);
 
@@ -905,6 +874,7 @@ getPassword(void)
 	    sigfinish();
 #ifdef USE_PAM
 	if (use_pam) {
+	    seteuid(0);
 
 	    pam_error = pam_authenticate(pamh, pam_flags);
 	    if (pam_error == PAM_SUCCESS) {
@@ -938,6 +908,7 @@ getPassword(void)
 		    PAM_ERROR_PRINT(pam_error_from);
 		}
 	    } else if (stoptryingfornow) {
+		seteuid(getuid());
 		break;
 	    } else {
 #ifdef	sun
@@ -949,6 +920,8 @@ getPassword(void)
 	    if (pam_error != PAM_SUCCESS) {
 		authErrMsg = pam_strerror(pamh, pam_error);
 	    }
+
+	    seteuid(getuid());
 	} else if (ReadXString(buffer, PAM_MAX_RESP_SIZE))
 	    break;
 #endif
@@ -962,30 +935,30 @@ getPassword(void)
 	 */
 
 	if (userpass) {
-	    if (*userpass == NULL) {
-		done = (*buffer == NULL);
+	    if (*userpass == '\0') {
+		done = (*buffer == '\0');
 	    } else {
 		done = (!strcmp(crypt(buffer, userpass), userpass));
 	    }
 	}
 	if (!done && suserpass) {
-	    if (*suserpass == NULL) {
-		done = (*buffer == NULL);
+	    if (*suserpass == '\0') {
+		done = (*buffer == '\0');
 	    } else {
 		done = (!strcmp(crypt(buffer, suserpass), suserpass));
 	    }
 	}
 	if (!done && allowroot) {
 	    if (srootpass) {
-		if (*srootpass == NULL) {
-		    done = (*buffer == NULL);
+		if (*srootpass == '\0') {
+		    done = (*buffer == '\0');
 		} else {
 		    done = (!strcmp(crypt(buffer, srootpass), srootpass));
 		}
 	    }
 	    if (!done && rootpass) {
-		if (*rootpass == NULL) {
-		    done = (*buffer == NULL);
+		if (*rootpass == '\0') {
+		    done = (*buffer == '\0');
 		} else {
 		    done = (!strcmp(crypt(buffer, rootpass), rootpass));
 		}
@@ -993,33 +966,39 @@ getPassword(void)
         }
 
 	/* clear plaintext password so you can't grunge around /dev/kmem */
-	memset(buffer, 0, sizeof(buffer));
+	EXPLICIT_BZERO(buffer, sizeof(buffer));
 
 	displayTextInfo(text_valid);
 
 	if (done) {
 	    /* clear encrypted passwords just in case */
 	    if (rootpass) {
-		memset(rootpass, 0, strlen(rootpass));
-		free(rootpass);  
+		EXPLICIT_BZERO(rootpass, strlen(rootpass));
+		free(rootpass);
+		rootpass = NULL;
 	    }
 	    if (userpass) {
-		memset(userpass, 0, strlen(userpass));
+		EXPLICIT_BZERO(userpass, strlen(userpass));
 		free(userpass);
+		userpass = NULL;
 	    }
 	    if (srootpass) {
-		memset(srootpass, 0, strlen(srootpass));
-		free(srootpass);  
+		EXPLICIT_BZERO(srootpass, strlen(srootpass));
+		free(srootpass);
+		srootpass = NULL;
 	    }
 	    if (suserpass) {
-		memset(suserpass, 0, strlen(suserpass));
+		EXPLICIT_BZERO(suserpass, strlen(suserpass));
 		free(suserpass);
+		suserpass = NULL;
 	    }
 #ifdef USE_PAM
+	    seteuid(0);
 #ifdef	sun
 	    audit_unlock(pam_error);
 #endif	/* sun */
 	    pam_end(pamh, pam_error);
+	    seteuid(getuid());
 #endif
 	    return 0;
 	} else {
@@ -1037,24 +1016,29 @@ getPassword(void)
     }
     /* clear encrypted passwords just in case */
     if (rootpass) {
-	memset(rootpass, 0, strlen(rootpass));
-	free(rootpass);  
+	EXPLICIT_BZERO(rootpass, strlen(rootpass));
+	free(rootpass);
+	rootpass = NULL;
     }
     if (userpass) {
-	memset(userpass, 0, strlen(userpass));
+	EXPLICIT_BZERO(userpass, strlen(userpass));
 	free(userpass);
+	userpass = NULL;
     }
     if (srootpass) {
-	memset(srootpass, 0, strlen(srootpass));
-	free(srootpass);  
+	EXPLICIT_BZERO(srootpass, strlen(srootpass));
+	free(srootpass);
+	srootpass = NULL;
     }
     if (suserpass) {
-	memset(suserpass, 0, strlen(suserpass));
+	EXPLICIT_BZERO(suserpass, strlen(suserpass));
 	free(suserpass);
+	suserpass = NULL;
     }
-
 #ifdef USE_PAM
+    seteuid(0);
     pam_end(pamh, pam_error);
+    seteuid(getuid());
 #endif
     XChangeGrabbedCursor(mycursor);
     XUnmapWindow(dsp, icon[screen]);
@@ -1122,7 +1106,9 @@ lockDisplay(void)
 	sigprocmask(SIG_SETMASK, &oldsigmask, &oldsigmask);
     }
 #ifdef	sun
+    seteuid(0);
     audit_lock();
+    seteuid(getuid());
 #endif	/* sun */
     do {
 	justDisplay();
@@ -1139,6 +1125,12 @@ main(
     XSetWindowAttributes xswa;
     XGCValues   xgcv;
 
+    if ((geteuid() != 0) || (seteuid(getuid()) != 0)) {
+	error("Not running with root privileges. Exiting ...\n"
+        "\tYou need to run xlock in setuid root mode on your local machine.\n"
+	"\tContact your system administrator.\n");
+    }
+
     ProgramName = strrchr(argv[0], '/');
     if (ProgramName)
 	ProgramName++;
@@ -1146,6 +1138,21 @@ main(
 	ProgramName = argv[0];
 
     srandom((uint_t) time((long *) 0));	/* random mode needs the seed set. */
+
+    exp_bzero =
+	(void (*)(void *, size_t)) dlsym(RTLD_DEFAULT, "explicit_bzero");
+    if (exp_bzero == NULL) {
+	/* If the explicit version isn't found, at least the compilers we
+	   use won't optimize out a call to a function found via dlsym(). */
+	exp_bzero = (void (*)(void *, size_t)) dlsym(RTLD_DEFAULT, "bzero");
+	if (exp_bzero == NULL) {
+	    const char *dle = dlerror();
+	    char errmsg[BUFSIZ];
+
+	    snprintf(errmsg, sizeof(errmsg), "%s\n Exiting ...\n", dle);
+	    error(errmsg);
+	}
+    }
 
     GetResources(argc, argv);
 
@@ -1158,12 +1165,6 @@ main(
 	font = XLoadQueryFont(dsp, FALLBACK_FONTNAME);
 	if (font == NULL)
 	    error("can't even find %s!!!\n", FALLBACK_FONTNAME);
-    }
-
-    if (CheckPassword()) {
-	error("can't get the user password. Exiting ...\n"
-	"\tYou need to run xlock in setuid root mode on your local machine.\n"
-	"\tContact your system administrator.\n");
     }
 	
     screens = ScreenCount(dsp);
