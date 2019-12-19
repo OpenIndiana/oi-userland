@@ -1,0 +1,14 @@
+Meson adds runpaths to local libraries. Remove them, as they are not properly removed
+as we import pkgsrc patches to avoid removing runpaths.
+--- mesonbuild/backend/backends.py.~1~	2019-08-25 22:16:54.000000000 +0000
++++ mesonbuild/backend/backends.py	2019-12-19 17:49:07.849684941 +0000
+@@ -432,7 +432,8 @@
+ 
+     def determine_rpath_dirs(self, target):
+         if self.environment.coredata.get_builtin_option('layout') == 'mirror':
+-            result = target.get_link_dep_subdirs()
++            # Avoid adding runpath to local libraries
++            result = OrderedSet()
+         else:
+             result = OrderedSet()
+             result.add('meson-out')
