@@ -20,11 +20,12 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
 COMPONENT_VERSION=	5.16.2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -33,9 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/autogen
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # build target is incorrect without this 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -61,15 +60,13 @@ COMPONENT_POST_UNPACK_ACTION = \
 
 CONFIGURE_ENV.64 += PATH=/usr/bin/$(MACH64):/usr/bin
 
+AUTOGEN_PATH.32 = $(PATH.illumos)
+AUTOGEN_PATH.64 = /usr/bin/$(MACH64):$(PATH.illumos)
+COMPONENT_BUILD_ENV += PATH=$(AUTOGEN_PATH.$(BITS))
+COMPONENT_INSTALL_ENV += PATH=$(AUTOGEN_PATH.$(BITS))
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/guile
