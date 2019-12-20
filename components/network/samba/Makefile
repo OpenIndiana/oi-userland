@@ -128,12 +128,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	(sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed \
 		> $(PROTO_DIR)$(ETCDIR)/samba/smb.conf.default $(BUILD_DIR_64)/examples/smb.conf.default) 
 
-# samba needs gmake for testing, not waf.
-COMPONENT_TEST_CMD = gmake
-
-# set tests to quickstest. test will take too long.
-COMPONENT_TEST_TARGETS = quicktest
-
 #
 # common targets
 #
