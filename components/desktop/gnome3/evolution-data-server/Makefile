@@ -22,6 +22,10 @@
 #
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_BITS= 64
+BUILD_STYLE= cmake
+
 include ../../../../make-rules/shared-macros.mk
 
 # Despite its name, evolution-data-server is no longer just a backend for the
@@ -32,6 +36,7 @@ COMPONENT_NAME=		evolution-data-server
 COMPONENT_MJR_VERSION=	3.24
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_SUMMARY=      The GNOME backend for contacts, tasks, and calendar information
@@ -44,9 +49,7 @@ COMPONENT_FMRI=	library/desktop/evolution-data-server
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -69,16 +72,6 @@ CMAKE_OPTIONS += -DWITH_OPENLDAP=OFF
 CMAKE_OPTIONS += -DWITH_SUNLDAP=ON
 CMAKE_OPTIONS += -DENABLE_VALA_BINDINGS=ON
 CMAKE_OPTIONS += -DSYSCONF_INSTALL_DIR="/etc"
-
-# Parallel build fails
-#COMPONENT_BUILD_ARGS=
-
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TEST_64)
 
 # Tests are not reliable. Some tests which failed sporadically were removed,
 # but some other still sometimes fail. Test framework also fails when 
