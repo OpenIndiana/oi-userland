@@ -1,0 +1,62 @@
+--- IcedTea-Web-icedtea-web-1.8.3/Makefile.am.orig	2020-01-31 02:25:02.236595123 +0000
++++ IcedTea-Web-icedtea-web-1.8.3/Makefile.am	2020-01-31 02:27:47.944673209 +0000
+@@ -411,9 +411,9 @@
+ 	${INSTALL_PROGRAM} launcher.build/$(policyeditor).bat $(DESTDIR)$(bindir)
+ endif
+ endif
+-	${INSTALL_DATA} $(TOP_BUILD_DIR)/completion/itweb-settings.bash $(BASH_CMPL_DEST_DIR)/
+-	${INSTALL_DATA} $(TOP_BUILD_DIR)/completion/javaws.bash $(BASH_CMPL_DEST_DIR)/
+-	${INSTALL_DATA} $(TOP_BUILD_DIR)/completion/policyeditor.bash $(BASH_CMPL_DEST_DIR)/
++	${INSTALL_DATA} $(TOP_SRC_DIR)/completion/itweb-settings.bash $(BASH_CMPL_DEST_DIR)/
++	${INSTALL_DATA} $(TOP_SRC_DIR)/completion/javaws.bash $(BASH_CMPL_DEST_DIR)/
++	${INSTALL_DATA} $(TOP_SRC_DIR)/completion/policyeditor.bash $(BASH_CMPL_DEST_DIR)/
+ 
+ # all generated manpages are installed in swarm
+ # all windows depndences are copied for windows build, and known one are copied/removed as necessary
+@@ -830,21 +830,21 @@
+ # appstreamcli  validate $(TOP_BUILD_DIR)/metadata/*.appdata.xml  $(TOP_BUILD_DIR)/metadata/*.metainfo.xml
+ 	
+ 
+-$(TOP_BUILD_DIR)/completion/itweb-settings.bash: $(TOP_SRC_DIR)/completion/itweb-settings.bash.in stamps/netx.stamp
++$(TOP_SRC_DIR)/completion/itweb-settings.bash: $(TOP_SRC_DIR)/completion/itweb-settings.bash.in stamps/netx.stamp
+ 	OPTIONS_COMMAND="$(SYSTEM_JRE_DIR)/bin/java -cp $(NETX_DIR) net.sourceforge.jnlp.OptionsDefinitions" ;  \
+ 	OPTIONS=`$$OPTIONS_COMMAND itweb-settings`; \
+ 	echo $$OPTIONS ; \
+ 	cat $(TOP_SRC_DIR)/completion/itweb-settings.bash.in | \
+ 	sed "s/@OPTIONS@/$${OPTIONS}/" > $@ ;
+ 
+-$(TOP_BUILD_DIR)/completion/javaws.bash: $(TOP_SRC_DIR)/completion/javaws.bash.in stamps/netx.stamp
++$(TOP_SRC_DIR)/completion/javaws.bash: $(TOP_SRC_DIR)/completion/javaws.bash.in stamps/netx.stamp
+ 	OPTIONS_COMMAND="$(SYSTEM_JRE_DIR)/bin/java -cp $(NETX_DIR) net.sourceforge.jnlp.OptionsDefinitions" ;  \
+ 	OPTIONS=`$$OPTIONS_COMMAND javaws` ; \
+ 	echo $$OPTIONS ; \
+ 	cat $(TOP_SRC_DIR)/completion/javaws.bash.in | \
+ 	sed "s/@OPTIONS@/$${OPTIONS}/" > $@ ;
+ 
+-$(TOP_BUILD_DIR)/completion/policyeditor.bash: $(TOP_SRC_DIR)/completion/policyeditor.bash.in stamps/netx.stamp
++$(TOP_SRC_DIR)/completion/policyeditor.bash: $(TOP_SRC_DIR)/completion/policyeditor.bash.in stamps/netx.stamp
+ 	OPTIONS_COMMAND="$(SYSTEM_JRE_DIR)/bin/java -cp $(NETX_DIR) net.sourceforge.jnlp.OptionsDefinitions" ;  \
+ 	OPTIONS=`$$OPTIONS_COMMAND policyeditor` ; \
+ 	echo $$OPTIONS ; \
+@@ -919,7 +919,7 @@
+ 	mkdir -p stamps
+ 	touch $@
+ 
+-stamps/netx-dist.stamp: stamps/netx.stamp $(TOP_BUILD_DIR)/netx.manifest stamps/generate-docs.stamp $(TOP_BUILD_DIR)/completion/itweb-settings.bash $(TOP_BUILD_DIR)/completion/javaws.bash $(TOP_BUILD_DIR)/completion/policyeditor.bash $(TOP_BUILD_DIR)/metadata
++stamps/netx-dist.stamp: stamps/netx.stamp $(TOP_BUILD_DIR)/netx.manifest stamps/generate-docs.stamp $(TOP_SRC_DIR)/completion/itweb-settings.bash $(TOP_SRC_DIR)/completion/javaws.bash $(TOP_SRC_DIR)/completion/policyeditor.bash $(TOP_BUILD_DIR)/metadata
+ 	(cd $(NETX_DIR) ; \
+ 	 mkdir -p lib ; \
+ 	 $(SYSTEM_JDK_DIR)/bin/jar cfm lib/classes.jar \
+@@ -1185,9 +1185,9 @@
+ 	rm -f stamps/generate-docs.stamp
+ 
+ clean-icedteaweb-completion:
+-	rm -f $(TOP_BUILD_DIR)/completion/itweb-settings.bash
+-	rm -f $(TOP_BUILD_DIR)/completion/javaws.bash
+-	rm -f $(TOP_BUILD_DIR)/completion/policyeditor.bash
++	rm -f $(TOP_SRC_DIR)/completion/itweb-settings.bash
++	rm -f $(TOP_SRC_DIR)/completion/javaws.bash
++	rm -f $(TOP_SRC_DIR)/completion/policyeditor.bash
+ 
+ clean-metadata:
+ 	rm -rf $(TOP_BUILD_DIR)/metadata
