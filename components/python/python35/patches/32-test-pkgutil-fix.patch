@@ -1,0 +1,42 @@
+There's a namespace clash, where /usr/lib/python3.5/vendor-packages/pkg gets
+loaded to 'pkg'. Renaming pkg->pak fixes that.
+
+--- Python-3.5.8/Lib/test/test_pkgutil.py	2019-12-20 12:31:25.259726249 +0000
++++ Python-3.5.8/Lib/test/test_pkgutil.py.new	2019-12-20 12:31:18.225892234 +0000
+@@ -368,22 +368,22 @@ class NestedNamespacePackageTest(unittes
+         pkgutil_boilerplate = (
+             'import pkgutil; '
+             '__path__ = pkgutil.extend_path(__path__, __name__)')
+-        self.create_module('a.pkg.__init__', pkgutil_boilerplate)
+-        self.create_module('b.pkg.__init__', pkgutil_boilerplate)
+-        self.create_module('a.pkg.subpkg.__init__', pkgutil_boilerplate)
+-        self.create_module('b.pkg.subpkg.__init__', pkgutil_boilerplate)
+-        self.create_module('a.pkg.subpkg.c', 'c = 1')
+-        self.create_module('b.pkg.subpkg.d', 'd = 2')
++        self.create_module('a.pak.__init__', pkgutil_boilerplate)
++        self.create_module('b.pak.__init__', pkgutil_boilerplate)
++        self.create_module('a.pak.subpkg.__init__', pkgutil_boilerplate)
++        self.create_module('b.pak.subpkg.__init__', pkgutil_boilerplate)
++        self.create_module('a.pak.subpkg.c', 'c = 1')
++        self.create_module('b.pak.subpkg.d', 'd = 2')
+         sys.path.insert(0, os.path.join(self.basedir, 'a'))
+         sys.path.insert(0, os.path.join(self.basedir, 'b'))
+-        import pkg
+-        self.addCleanup(unload, 'pkg')
+-        self.assertEqual(len(pkg.__path__), 2)
+-        import pkg.subpkg
+-        self.addCleanup(unload, 'pkg.subpkg')
+-        self.assertEqual(len(pkg.subpkg.__path__), 2)
+-        from pkg.subpkg.c import c
+-        from pkg.subpkg.d import d
++        import pak
++        self.addCleanup(unload, 'pak')
++        self.assertEqual(len(pak.__path__), 2)
++        import pak.subpkg
++        self.addCleanup(unload, 'pak.subpkg')
++        self.assertEqual(len(pak.subpkg.__path__), 2)
++        from pak.subpkg.c import c
++        from pak.subpkg.d import d
+         self.assertEqual(c, 1)
+         self.assertEqual(d, 2)
+ 
