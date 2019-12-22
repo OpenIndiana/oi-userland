@@ -1,0 +1,17 @@
+https://gitlab.isc.org/isc-projects/bind9/issues/1530
+
+/userland/ws/oi-userland/components/network/bind/bind-9.14.9/lib/dns/gen.c:29:26: fatal error: isc/platform.h: No such file or directory
+ #include <isc/platform.h>
+                          ^
+
+--- bind-9.14.9/lib/dns/Makefile.in	2019-12-12 07:12:17.000000000 +0000
++++ bind-9.14.9/lib/dns/Makefile.in	2019-12-22 15:48:17.354544762 +0000
+@@ -172,7 +172,7 @@ code.h:	gen
+ 	./gen -s ${srcdir} > code.h || { rm -f $@ ; exit 1; }
+ 
+ gen: gen.c
+-	${BUILD_CC} ${BUILD_CFLAGS} -I${top_srcdir}/lib/isc/include \
++	${BUILD_CC} ${BUILD_CFLAGS} -I../../lib/isc/include \
+ 	${LFS_CFLAGS} ${LFS_LDFLAGS} \
+ 	${BUILD_CPPFLAGS} ${BUILD_LDFLAGS} -o $@ ${srcdir}/gen.c \
+ 	${BUILD_LIBS} ${LFS_LIBS}
