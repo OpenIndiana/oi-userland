@@ -13,26 +13,30 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
-COMPONENT_VERSION=	0.9.63
+COMPONENT_VERSION=	0.9.69
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libmicrohttpd/
 COMPONENT_FMRI=		library/libmicrohttpd
+COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:37c36f1be177f0e37ef181a645cd3baac1000bd322a01c2eff70f3cc8c91749c
+	sha256:fb9b6b148b787493e637d3083588711e65cbcb726fa02cee2cd543c5de27e37e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE).sig
 COMPONENT_LICENSE=	LGPL2.1+
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
-COMPONENT_CLASSIFICATION=System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Tests work properly only for curl with GnuTLS SSL backend (we use OpenSSL only),
+# see https://gnunet.org/bugs/view.php?id=5564.
+TEST_TARGET=		$(TEST_32_and_64)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
 GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
@@ -59,14 +63,6 @@ CONFIGURE_OPTIONS += --disable-static
 unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# Tests work properly only for curl with GnuTLS SSL backend (we use OpenSSL only),
-# see https://gnunet.org/bugs/view.php?id=5564.
-test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library/security/libgcrypt
 # Auto-generated dependencies
