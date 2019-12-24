@@ -1,15 +1,285 @@
 Result of following commands:
 
-  find bash-completion-2.9/completions/ -exec sed -i 's/ grep / ggrep /g' {} \; 
-  find bash-completion-2.9/completions/ -exec sed -i 's/ awk / nawk /g' {} \; 
-  find bash-completion-2.9/completions/ -exec sed -i 's/$(awk /$(nawk /g' {} \; 
-  find bash-completion-2.9/completions/ -exec sed -i 's/ sed / gsed /g' {} \; 
+cp -a bash-completion-2.10 bash-completion-2.10.old
 
-Same for bash-completion-2.9/bash_completion.
+find bash-completion-2.10/completions/ -type f -exec sed -i 's/ grep / ggrep /g' {} \;
+find bash-completion-2.10/completions/ -type f -exec sed -i 's/ awk / nawk /g' {} \;
+find bash-completion-2.10/completions/ -type f -exec sed -i 's/$(awk /$(nawk /g' {} \;
+find bash-completion-2.10/completions/ -type f -exec sed -i 's/ sed / gsed /g' {} \;
 
-diff -pruN bash-completion-2.9.old/completions/_adb bash-completion-2.9/completions/_adb
---- bash-completion-2.9.old/completions/_adb	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_adb	2019-05-01 15:15:57.976307438 +0000
+find bash-completion-2.10/bash_completion -type f -exec sed -i 's/ grep / ggrep /g' {} \;
+find bash-completion-2.10/bash_completion -type f -exec sed -i 's/ awk / nawk /g' {} \;
+find bash-completion-2.10/bash_completion -type f -exec sed -i 's/$(awk /$(nawk /g' {} \;
+find bash-completion-2.10/bash_completion -type f -exec sed -i 's/ sed / gsed /g' {} \;
+
+gdiff -pruN bash-completion-2.10.old bash-completion-2.10 | less
+
+And check the result.
+
+diff -pruN bash-completion-2.10.old/bash_completion bash-completion-2.10/bash_completion
+--- bash-completion-2.10.old/bash_completion	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/bash_completion	2019-12-31 11:01:04.954204457 +0000
+@@ -885,7 +885,7 @@ _mac_addresses()
+     # - ifconfig on FreeBSD: ether
+     # - ip link: link/ether
+     COMPREPLY+=( $(\
+-        { LC_ALL=C ifconfig -a || ip link show; } 2>/dev/null | command sed -ne \
++        { LC_ALL=C ifconfig -a || ip link show; } 2>/dev/null | command gsed -ne \
+         "s/.*[[:space:]]HWaddr[[:space:]]\{1,\}\($re\)[[:space:]].*/\1/p" -ne \
+         "s/.*[[:space:]]HWaddr[[:space:]]\{1,\}\($re\)[[:space:]]*$/\1/p" -ne \
+         "s|.*[[:space:]]\(link/\)\{0,1\}ether[[:space:]]\{1,\}\($re\)[[:space:]].*|\2|p" -ne \
+@@ -893,12 +893,12 @@ _mac_addresses()
+         ) )
+ 
+     # ARP cache
+-    COMPREPLY+=( $({ arp -an || ip neigh show; } 2>/dev/null | command sed -ne \
++    COMPREPLY+=( $({ arp -an || ip neigh show; } 2>/dev/null | command gsed -ne \
+         "s/.*[[:space:]]\($re\)[[:space:]].*/\1/p" -ne \
+         "s/.*[[:space:]]\($re\)[[:space:]]*$/\1/p") )
+ 
+     # /etc/ethers
+-    COMPREPLY+=( $(command sed -ne \
++    COMPREPLY+=( $(command gsed -ne \
+         "s/^[[:space:]]*\($re\)[[:space:]].*/\1/p" /etc/ethers 2>/dev/null) )
+ 
+     COMPREPLY=( $(compgen -W '${COMPREPLY[@]}' -- "$cur") )
+@@ -911,24 +911,24 @@ _configured_interfaces()
+ {
+     if [[ -f /etc/debian_version ]]; then
+         # Debian system
+-        COMPREPLY=( $(compgen -W "$(command sed -ne 's|^iface \([^ ]\{1,\}\).*$|\1|p'\
++        COMPREPLY=( $(compgen -W "$(command gsed -ne 's|^iface \([^ ]\{1,\}\).*$|\1|p'\
+             /etc/network/interfaces /etc/network/interfaces.d/* 2>/dev/null)" \
+             -- "$cur") )
+     elif [[ -f /etc/SuSE-release ]]; then
+         # SuSE system
+         COMPREPLY=( $(compgen -W "$(printf '%s\n' \
+             /etc/sysconfig/network/ifcfg-* | \
+-            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
++            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
+     elif [[ -f /etc/pld-release ]]; then
+         # PLD Linux
+         COMPREPLY=( $(compgen -W "$(command ls -B \
+             /etc/sysconfig/interfaces | \
+-            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
++            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
+     else
+         # Assume Red Hat
+         COMPREPLY=( $(compgen -W "$(printf '%s\n' \
+             /etc/sysconfig/network-scripts/ifcfg-* | \
+-            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
++            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
+     fi
+ }
+ 
+@@ -946,7 +946,7 @@ _ip_addresses()
+     esac
+     local PATH=$PATH:/sbin
+     local addrs=$({ LC_ALL=C ifconfig -a || ip addr show; } 2>/dev/null |
+-        command sed -e 's/[[:space:]]addr:/ /' -ne \
++        command gsed -e 's/[[:space:]]addr:/ /' -ne \
+             "s|.*inet${n}[[:space:]]\{1,\}\([^[:space:]/]*\).*|\1|p")
+     COMPREPLY+=( $(compgen -W "$addrs" -- "$cur") )
+ }
+@@ -974,7 +974,7 @@ _available_interfaces()
+         else
+             ifconfig -a || ip link show
+         fi
+-    } 2>/dev/null | awk \
++    } 2>/dev/null | nawk \
+         '/^[^ \t]/ { if ($1 ~ /^[0-9]+:/) { print $2 } else { print $1 } }') )
+ 
+     COMPREPLY=( $(compgen -W '${COMPREPLY[@]/%[[:punct:]]/}' -- "$cur") )
+@@ -1058,7 +1058,7 @@ _expand()
+ [[ $OSTYPE == *@(solaris|aix)* ]] &&
+ _pids()
+ {
+-    COMPREPLY=( $(compgen -W '$(command ps -efo pid | command sed 1d)' -- "$cur") )
++    COMPREPLY=( $(compgen -W '$(command ps -efo pid | command gsed 1d)' -- "$cur") )
+ } ||
+ _pids()
+ {
+@@ -1070,7 +1070,7 @@ _pids()
+ [[ $OSTYPE == *@(solaris|aix)* ]] &&
+ _pgids()
+ {
+-    COMPREPLY=( $(compgen -W '$(command ps -efo pgid | command sed 1d)' -- "$cur") )
++    COMPREPLY=( $(compgen -W '$(command ps -efo pgid | command gsed 1d)' -- "$cur") )
+ } ||
+ _pgids()
+ {
+@@ -1084,13 +1084,13 @@ _pgids()
+ _pnames()
+ {
+     COMPREPLY=( $(compgen -X '<defunct>' -W '$(command ps -efo comm | \
+-        command sed -e 1d -e "s:.*/::" -e "s/^-//" | sort -u)' -- "$cur") )
++        command gsed -e 1d -e "s:.*/::" -e "s/^-//" | sort -u)' -- "$cur") )
+ } ||
+ _pnames()
+ {
+     local -a procs
+     if [[ "$1" == -s ]]; then
+-        procs=( $(command ps axo comm | command sed -e 1d) )
++        procs=( $(command ps axo comm | command gsed -e 1d) )
+     else
+         local line i=-1 OIFS=$IFS
+         IFS=$'\n'
+@@ -1189,7 +1189,7 @@ _services()
+ 
+     COMPREPLY+=( $({ systemctl list-units --full --all || \
+                      systemctl list-unit-files; } 2>/dev/null | \
+-        awk '$1 ~ /\.service$/ { sub("\\.service$", "", $1); print $1 }') )
++        nawk '$1 ~ /\.service$/ { sub("\\.service$", "", $1); print $1 }') )
+ 
+     if [[ -x /sbin/upstart-udev-bridge ]]; then
+         COMPREPLY+=( $(initctl list 2>/dev/null | cut -d' ' -f1) )
+@@ -1216,7 +1216,7 @@ _service()
+     else
+         local sysvdirs
+         _sysvdirs
+-        COMPREPLY=( $(compgen -W '`command sed -e "y/|/ /" \
++        COMPREPLY=( $(compgen -W '`command gsed -e "y/|/ /" \
+             -ne "s/^.*\(U\|msg_u\)sage.*{\(.*\)}.*$/\2/p" \
+             ${sysvdirs[0]}/${prev##*/} 2>/dev/null` start stop' -- "$cur") )
+     fi
+@@ -1237,7 +1237,7 @@ _modules()
+     local modpath
+     modpath=/lib/modules/$1
+     COMPREPLY=( $(compgen -W "$(command ls -RL $modpath 2>/dev/null | \
+-        command sed -ne 's/^\(.*\)\.k\{0,1\}o\(\.[gx]z\)\{0,1\}$/\1/p')" -- "$cur") )
++        command gsed -ne 's/^\(.*\)\.k\{0,1\}o\(\.[gx]z\)\{0,1\}$/\1/p')" -- "$cur") )
+ }
+ 
+ # This function completes on installed modules
+@@ -1245,7 +1245,7 @@ _modules()
+ _installed_modules()
+ {
+     COMPREPLY=( $(compgen -W "$(PATH="$PATH:/sbin" lsmod | \
+-        awk '{if (NR != 1) print $1}')" -- "$1") )
++        nawk '{if (NR != 1) print $1}')" -- "$1") )
+ }
+ 
+ # This function completes on user or user:group format; as for chown and cpio.
+@@ -1344,13 +1344,13 @@ _fstypes()
+     if [[ -e /proc/filesystems ]]; then
+         # Linux
+         fss="$(cut -d$'\t' -f2 /proc/filesystems)
+-             $(awk '! /\*/ { print $NF }' /etc/filesystems 2>/dev/null)"
++             $(nawk '! /\*/ { print $NF }' /etc/filesystems 2>/dev/null)"
+     else
+         # Generic
+-        fss="$(awk '/^[ \t]*[^#]/ { print $3 }' /etc/fstab 2>/dev/null)
+-             $(awk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null)
+-             $(awk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null)
+-             $(awk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null)
++        fss="$(nawk '/^[ \t]*[^#]/ { print $3 }' /etc/fstab 2>/dev/null)
++             $(nawk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null)
++             $(nawk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null)
++             $(nawk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null)
+              $([[ -d /etc/fs ]] && command ls /etc/fs)"
+     fi
+ 
+@@ -1418,7 +1418,7 @@ _count_args()
+ _pci_ids()
+ {
+     COMPREPLY+=( $(compgen -W \
+-        "$(PATH="$PATH:/sbin" lspci -n | awk '{print $3}')" -- "$cur") )
++        "$(PATH="$PATH:/sbin" lspci -n | nawk '{print $3}')" -- "$cur") )
+ }
+ 
+ # This function completes on USB IDs
+@@ -1426,7 +1426,7 @@ _pci_ids()
+ _usb_ids()
+ {
+     COMPREPLY+=( $(compgen -W \
+-        "$(PATH="$PATH:/sbin" lsusb | awk '{print $6}')" -- "$cur") )
++        "$(PATH="$PATH:/sbin" lsusb | nawk '{print $6}')" -- "$cur") )
+ }
+ 
+ # CD device names
+@@ -1445,10 +1445,10 @@ _dvd_devices()
+ _terms()
+ {
+     COMPREPLY+=( $(compgen -W "$({ \
+-        command sed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap;
+-        { toe -a || toe; } | awk '{ print $1 }';
++        command gsed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap;
++        { toe -a || toe; } | nawk '{ print $1 }';
+         find /{etc,lib,usr/lib,usr/share}/terminfo/? -type f -maxdepth 1 \
+-            | awk -F/ '{ print $NF }';
++            | nawk -F/ '{ print $NF }';
+     } 2>/dev/null)" -- "$cur") )
+ }
+ 
+@@ -1497,7 +1497,7 @@ _included_ssh_config_files()
+         echo "bash_completion: $FUNCNAME: missing mandatory argument CONFIG" >&2
+     local configfile i f
+     configfile=$1
+-    local included=( $(command sed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\{1,\}\([^#%]*\)\(#.*\)\{0,1\}$/\1/p' "${configfile}") )
++    local included=( $(command gsed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\{1,\}\([^#%]*\)\(#.*\)\{0,1\}$/\1/p' "${configfile}") )
+     for i in "${included[@]}"; do
+         # Check the origin of $configfile to complete relative included paths on included
+         # files according to ssh_config(5):
+@@ -1586,7 +1586,7 @@ _known_hosts_real()
+         # TODO(?): try to make known hosts files with more than one consecutive
+         #          spaces in their name work (watch out for ~ expansion
+         #          breakage! Alioth#311595)
+-        tmpkh=( $(awk 'sub("^[ \t]*([Gg][Ll][Oo][Bb][Aa][Ll]|[Uu][Ss][Ee][Rr])[Kk][Nn][Oo][Ww][Nn][Hh][Oo][Ss][Tt][Ss][Ff][Ii][Ll][Ee][ \t]+", "") { print $0 }' "${config[@]}" | sort -u) )
++        tmpkh=( $(nawk 'sub("^[ \t]*([Gg][Ll][Oo][Bb][Aa][Ll]|[Uu][Ss][Ee][Rr])[Kk][Nn][Oo][Ww][Nn][Hh][Oo][Ss][Tt][Ss][Ff][Ii][Ll][Ee][ \t]+", "") { print $0 }' "${config[@]}" | sort -u) )
+         IFS=$OIFS
+         for i in "${tmpkh[@]}"; do
+             # First deal with quoted entries...
+@@ -1666,7 +1666,7 @@ _known_hosts_real()
+ 
+     # append any available aliases from ssh config files
+     if [[ ${#config[@]} -gt 0 && -n "$aliases" ]]; then
+-        local hosts=$(command sed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]]\{1,\}\([^#*?%]*\)\(#.*\)\{0,1\}$/\1/p' "${config[@]}")
++        local hosts=$(command gsed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]]\{1,\}\([^#*?%]*\)\(#.*\)\{0,1\}$/\1/p' "${config[@]}")
+         COMPREPLY+=( $(compgen -P "$prefix$user" \
+             -S "$suffix" -W "$hosts" -- "$cur") )
+     fi
+@@ -1681,12 +1681,12 @@ _known_hosts_real()
+         # time ago, so...
+         COMPREPLY+=( $(compgen -P "$prefix$user" -S "$suffix" -W \
+             "$(avahi-browse -cpr _workstation._tcp 2>/dev/null | \
+-               awk -F';' '/^=/ { print $7 }' | sort -u)" -- "$cur") )
++               nawk -F';' '/^=/ { print $7 }' | sort -u)" -- "$cur") )
+     fi
+ 
+     # Add hosts reported by ruptime.
+     COMPREPLY+=( $(compgen -W \
+-        "$(ruptime 2>/dev/null | awk '!/^ruptime:/ { print $1 }')" \
++        "$(ruptime 2>/dev/null | nawk '!/^ruptime:/ { print $1 }')" \
+         -- "$cur") )
+ 
+     # Add results of normal hostname completion, unless
+@@ -1906,7 +1906,7 @@ _longopt()
+             return
+             ;;
+         --+([-a-z0-9_]))
+-            local argtype=$(LC_ALL=C $1 --help 2>&1 | command sed -ne \
++            local argtype=$(LC_ALL=C $1 --help 2>&1 | command gsed -ne \
+                 "s|.*$prev\[\{0,1\}=[<[]\{0,1\}\([-A-Za-z0-9_]\{1,\}\).*|\1|p")
+             case ${argtype,,} in
+                 *dir*)
+@@ -1938,11 +1938,11 @@ _longopt()
+     fi
+ }
+ # makeinfo and texi2dvi are defined elsewhere.
+-complete -F _longopt a2ps awk base64 bash bc bison cat chroot colordiff cp \
++complete -F _longopt a2ps nawk base64 bash bc bison cat chroot colordiff cp \
+     csplit cut date df diff dir du enscript env expand fmt fold gperf \
+-    grep grub head irb ld ldd less ln ls m4 md5sum mkdir mkfifo mknod \
++    ggrep grub head irb ld ldd less ln ls m4 md5sum mkdir mkfifo mknod \
+     mv netstat nl nm objcopy objdump od paste pr ptx readelf rm rmdir \
+-    sed seq sha{,1,224,256,384,512}sum shar sort split strip sum tac tail tee \
++    gsed seq sha{,1,224,256,384,512}sum shar sort split strip sum tac tail tee \
+     texindex touch tr uname unexpand uniq units vdir wc who
+ 
+ # declare only knows -g in bash >= 4.2.
+diff -pruN bash-completion-2.10.old/completions/_adb bash-completion-2.10/completions/_adb
+--- bash-completion-2.10.old/completions/_adb	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_adb	2019-12-31 10:59:48.364221682 +0000
 @@ -6,8 +6,8 @@
  _adb_command_usage()
  {
@@ -39,9 +309,9 @@ diff -pruN bash-completion-2.9.old/completions/_adb bash-completion-2.9/completi
                      _parse_help -)' -- "$cur") )
              ;;
          reboot)
-diff -pruN bash-completion-2.9.old/completions/_mock bash-completion-2.9/completions/_mock
---- bash-completion-2.9.old/completions/_mock	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_mock	2019-05-01 15:15:58.342353243 +0000
+diff -pruN bash-completion-2.10.old/completions/_mock bash-completion-2.10/completions/_mock
+--- bash-completion-2.10.old/completions/_mock	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_mock	2019-12-31 10:59:48.454358864 +0000
 @@ -45,7 +45,7 @@ _mock()
              # This would actually depend on what the target root
              # can be used to build for...
@@ -51,9 +321,9 @@ diff -pruN bash-completion-2.9.old/completions/_mock bash-completion-2.9/complet
                  -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/_modules bash-completion-2.9/completions/_modules
---- bash-completion-2.9.old/completions/_modules	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_modules	2019-05-01 15:15:58.361615824 +0000
+diff -pruN bash-completion-2.10.old/completions/_modules bash-completion-2.10/completions/_modules
+--- bash-completion-2.10.old/completions/_modules	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_modules	2019-12-31 10:59:48.288639083 +0000
 @@ -23,13 +23,13 @@
  
  _module_list ()
@@ -92,9 +362,9 @@ diff -pruN bash-completion-2.9.old/completions/_modules bash-completion-2.9/comp
  
          COMPREPLY=( $(compgen -W "$options" -- "$cur") )
  
-diff -pruN bash-completion-2.9.old/completions/_mount bash-completion-2.9/completions/_mount
---- bash-completion-2.9.old/completions/_mount	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_mount	2019-05-01 15:15:57.936376982 +0000
+diff -pruN bash-completion-2.10.old/completions/_mount bash-completion-2.10/completions/_mount
+--- bash-completion-2.10.old/completions/_mount	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_mount	2019-12-31 10:59:47.762644313 +0000
 @@ -34,7 +34,7 @@ _mount()
          for sm in "$(type -P showmount)" {,/usr}/{,s}bin/showmount; do
              [[ -x $sm ]] || continue
@@ -129,9 +399,9 @@ diff -pruN bash-completion-2.9.old/completions/_mount bash-completion-2.9/comple
      fi
  } &&
  complete -F _mount -o default -o dirnames mount
-diff -pruN bash-completion-2.9.old/completions/_mount.linux bash-completion-2.9/completions/_mount.linux
---- bash-completion-2.9.old/completions/_mount.linux	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_mount.linux	2019-05-01 15:15:58.026411876 +0000
+diff -pruN bash-completion-2.10.old/completions/_mount.linux bash-completion-2.10/completions/_mount.linux
+--- bash-completion-2.10.old/completions/_mount.linux	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_mount.linux	2019-12-31 10:59:48.469000376 +0000
 @@ -224,7 +224,7 @@ _mount()
          for sm in "$(type -P showmount)" {,/usr}/{,s}bin/showmount; do
              [[ -x $sm ]] || continue
@@ -152,9 +422,9 @@ diff -pruN bash-completion-2.9.old/completions/_mount.linux bash-completion-2.9/
                      -- "${cur#//$host}") )
          fi
      fi
-diff -pruN bash-completion-2.9.old/completions/_nmcli bash-completion-2.9/completions/_nmcli
---- bash-completion-2.9.old/completions/_nmcli	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_nmcli	2019-05-01 15:15:58.055167832 +0000
+diff -pruN bash-completion-2.10.old/completions/_nmcli bash-completion-2.10/completions/_nmcli
+--- bash-completion-2.10.old/completions/_nmcli	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_nmcli	2019-12-31 10:59:48.113313928 +0000
 @@ -12,26 +12,26 @@ _nmcli_con_id()
  {
      local IFS=$'\n'
@@ -186,9 +456,9 @@ diff -pruN bash-completion-2.9.old/completions/_nmcli bash-completion-2.9/comple
  }
  
  _nmcli()
-diff -pruN bash-completion-2.9.old/completions/_rfkill bash-completion-2.9/completions/_rfkill
---- bash-completion-2.9.old/completions/_rfkill	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_rfkill	2019-05-01 15:15:58.053646188 +0000
+diff -pruN bash-completion-2.10.old/completions/_rfkill bash-completion-2.10/completions/_rfkill
+--- bash-completion-2.10.old/completions/_rfkill	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_rfkill	2019-12-31 10:59:48.161941014 +0000
 @@ -18,7 +18,7 @@ _rfkill()
                  ;;
              2)
@@ -198,9 +468,9 @@ diff -pruN bash-completion-2.9.old/completions/_rfkill bash-completion-2.9/compl
                          '/^[0-9]/ {print $1}') all wifi bluetooth uwb wimax \
                          wwan gps" -- "$cur") )
                  fi
-diff -pruN bash-completion-2.9.old/completions/_udevadm bash-completion-2.9/completions/_udevadm
---- bash-completion-2.9.old/completions/_udevadm	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_udevadm	2019-05-01 15:15:58.309123536 +0000
+diff -pruN bash-completion-2.10.old/completions/_udevadm bash-completion-2.10/completions/_udevadm
+--- bash-completion-2.10.old/completions/_udevadm	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_udevadm	2019-12-31 10:59:48.341710529 +0000
 @@ -60,7 +60,7 @@ _udevadm()
                  ;;
              *)
@@ -210,9 +480,9 @@ diff -pruN bash-completion-2.9.old/completions/_udevadm bash-completion-2.9/comp
                  ;;
          esac
          return
-diff -pruN bash-completion-2.9.old/completions/_xm bash-completion-2.9/completions/_xm
---- bash-completion-2.9.old/completions/_xm	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_xm	2019-05-01 15:15:58.423633314 +0000
+diff -pruN bash-completion-2.10.old/completions/_xm bash-completion-2.10/completions/_xm
+--- bash-completion-2.10.old/completions/_xm	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_xm	2019-12-31 10:59:48.360974893 +0000
 @@ -7,13 +7,13 @@
  _xen_domain_names()
  {
@@ -247,9 +517,9 @@ diff -pruN bash-completion-2.9.old/completions/_xm bash-completion-2.9/completio
                                  -- "$cur") )
                              ;;
                      esac
-diff -pruN bash-completion-2.9.old/completions/_yum bash-completion-2.9/completions/_yum
---- bash-completion-2.9.old/completions/_yum	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/_yum	2019-05-01 15:15:57.973244760 +0000
+diff -pruN bash-completion-2.10.old/completions/_yum bash-completion-2.10/completions/_yum
+--- bash-completion-2.10.old/completions/_yum	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/_yum	2019-12-31 10:59:48.362601119 +0000
 @@ -9,12 +9,12 @@ _yum_list()
          # Try to strip in between headings like "Available Packages"
          # This will obviously only work for English :P
@@ -281,9 +551,9 @@ diff -pruN bash-completion-2.9.old/completions/_yum bash-completion-2.9/completi
  }
  
  _yum()
-diff -pruN bash-completion-2.9.old/completions/2to3 bash-completion-2.9/completions/2to3
---- bash-completion-2.9.old/completions/2to3	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/2to3	2019-05-01 15:15:58.448658145 +0000
+diff -pruN bash-completion-2.10.old/completions/2to3 bash-completion-2.10/completions/2to3
+--- bash-completion-2.10.old/completions/2to3	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/2to3	2019-12-31 10:59:48.016707883 +0000
 @@ -11,7 +11,7 @@ _2to3()
              ;;
          -f|--fix|-x|--nofix)
@@ -293,9 +563,9 @@ diff -pruN bash-completion-2.9.old/completions/2to3 bash-completion-2.9/completi
              return
              ;;
          -j|--processes)
-diff -pruN bash-completion-2.9.old/completions/7z bash-completion-2.9/completions/7z
---- bash-completion-2.9.old/completions/7z	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/7z	2019-05-01 15:15:58.358558597 +0000
+diff -pruN bash-completion-2.10.old/completions/7z bash-completion-2.10/completions/7z
+--- bash-completion-2.10.old/completions/7z	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/7z	2019-12-31 10:59:48.101825839 +0000
 @@ -110,7 +110,7 @@ _7z()
          if [[ ${words[1]} == d ]]; then
              local IFS=$'\n'
@@ -305,9 +575,9 @@ diff -pruN bash-completion-2.9.old/completions/7z bash-completion-2.9/completion
                  2>/dev/null | tail -n+2))" -- "$cur") )
              compopt -o filenames
          else
-diff -pruN bash-completion-2.9.old/completions/abook bash-completion-2.9/completions/abook
---- bash-completion-2.9.old/completions/abook	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/abook	2019-05-01 15:15:58.327569182 +0000
+diff -pruN bash-completion-2.10.old/completions/abook bash-completion-2.10/completions/abook
+--- bash-completion-2.10.old/completions/abook	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/abook	2019-12-31 10:59:48.462526157 +0000
 @@ -23,12 +23,12 @@ _abook()
      case $prev in
          --informat)
@@ -323,9 +593,9 @@ diff -pruN bash-completion-2.9.old/completions/abook bash-completion-2.9/complet
                  -- "$cur") )
              ;;
          --infile)
-diff -pruN bash-completion-2.9.old/completions/alias bash-completion-2.9/completions/alias
---- bash-completion-2.9.old/completions/alias	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/alias	2019-05-01 15:15:58.186916313 +0000
+diff -pruN bash-completion-2.10.old/completions/alias bash-completion-2.10/completions/alias
+--- bash-completion-2.10.old/completions/alias	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/alias	2019-12-31 10:59:47.766304865 +0000
 @@ -10,7 +10,7 @@ _alias()
              COMPREPLY=( $(compgen -A alias -- "$cur") )
              ;;
@@ -335,9 +605,9 @@ diff -pruN bash-completion-2.9.old/completions/alias bash-completion-2.9/complet
                  -e 's|^alias '"$cur"'\(.*\)$|\1|')" )
              ;;
      esac
-diff -pruN bash-completion-2.9.old/completions/apache2ctl bash-completion-2.9/completions/apache2ctl
---- bash-completion-2.9.old/completions/apache2ctl	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/apache2ctl	2019-05-01 15:15:58.315295467 +0000
+diff -pruN bash-completion-2.10.old/completions/apache2ctl bash-completion-2.10/completions/apache2ctl
+--- bash-completion-2.10.old/completions/apache2ctl	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/apache2ctl	2019-12-31 10:59:48.383921446 +0000
 @@ -6,7 +6,7 @@ _apache2ctl()
      _init_completion || return
  
@@ -347,9 +617,9 @@ diff -pruN bash-completion-2.9.old/completions/apache2ctl bash-completion-2.9/co
          tr "|" " ")
  
      COMPREPLY=( $(compgen -W "$APWORDS" -- "$cur") )
-diff -pruN bash-completion-2.9.old/completions/appdata-validate bash-completion-2.9/completions/appdata-validate
---- bash-completion-2.9.old/completions/appdata-validate	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/appdata-validate	2019-05-01 15:15:58.134653653 +0000
+diff -pruN bash-completion-2.10.old/completions/appdata-validate bash-completion-2.10/completions/appdata-validate
+--- bash-completion-2.10.old/completions/appdata-validate	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/appdata-validate	2019-12-31 10:59:47.929674174 +0000
 @@ -11,7 +11,7 @@ _appdata_validate()
              ;;
          --output-format)
@@ -359,9 +629,9 @@ diff -pruN bash-completion-2.9.old/completions/appdata-validate bash-completion-
                      -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/apt-cache bash-completion-2.9/completions/apt-cache
---- bash-completion-2.9.old/completions/apt-cache	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/apt-cache	2019-05-01 15:15:58.206168241 +0000
+diff -pruN bash-completion-2.10.old/completions/apt-cache bash-completion-2.10/completions/apt-cache
+--- bash-completion-2.10.old/completions/apt-cache	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/apt-cache	2019-12-31 10:59:48.047641789 +0000
 @@ -8,7 +8,7 @@ _apt_cache_packages() {
  # List APT source packages
  _apt_cache_sources() {
@@ -371,9 +641,9 @@ diff -pruN bash-completion-2.9.old/completions/apt-cache bash-completion-2.9/com
  }
  
  # List APT source packages
-diff -pruN bash-completion-2.9.old/completions/apt-get bash-completion-2.9/completions/apt-get
---- bash-completion-2.9.old/completions/apt-get	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/apt-get	2019-05-01 15:15:57.918090736 +0000
+diff -pruN bash-completion-2.10.old/completions/apt-get bash-completion-2.10/completions/apt-get
+--- bash-completion-2.10.old/completions/apt-get	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/apt-get	2019-12-31 10:59:47.791148126 +0000
 @@ -27,7 +27,7 @@ _apt_get()
              source)
                  COMPREPLY=( $(apt-cache --no-generate pkgnames "$cur" \
@@ -383,16 +653,7 @@ diff -pruN bash-completion-2.9.old/completions/apt-get bash-completion-2.9/compl
                  ;;
              install)
                  if [[ $cur == */* ]]; then
-@@ -36,7 +36,7 @@ _apt_get()
-                 elif [[ $cur == *=* ]]; then
-                     COMPREPLY=( $(compgen -W "$(\
-                         apt-cache --no-generate show "${cur%%=*}" 2>/dev/null |
--                        command sed -ne \
-+                        command gsed -ne \
-                             's/^Version:[[:space:]]*\([^[:space:]]\)/\1/p')" \
-                         -- "${cur#*=}") )
-                     return
-@@ -59,7 +59,7 @@ _apt_get()
+@@ -63,7 +63,7 @@ _apt_get()
              return
              ;;
          --target-release|--default-release|-!(-*)t)
@@ -401,9 +662,9 @@ diff -pruN bash-completion-2.9.old/completions/apt-get bash-completion-2.9/compl
                  's/^ *release.*[ ,]o=\(Debian\|Ubuntu\),a=\(\w*\).*/\2/p')" \
                  -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/aptitude bash-completion-2.9/completions/aptitude
---- bash-completion-2.9.old/completions/aptitude	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/aptitude	2019-05-01 15:15:58.285828679 +0000
+diff -pruN bash-completion-2.10.old/completions/aptitude bash-completion-2.10/completions/aptitude
+--- bash-completion-2.10.old/completions/aptitude	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/aptitude	2019-12-31 10:59:48.194699921 +0000
 @@ -8,8 +8,8 @@ _comp_dpkg_hold_packages()
  } || {
  _comp_dpkg_hold_packages()
@@ -426,9 +687,9 @@ diff -pruN bash-completion-2.9.old/completions/aptitude bash-completion-2.9/comp
              return
              ;;
      esac
-diff -pruN bash-completion-2.9.old/completions/arp bash-completion-2.9/completions/arp
---- bash-completion-2.9.old/completions/arp	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/arp	2019-05-01 15:15:57.956142261 +0000
+diff -pruN bash-completion-2.10.old/completions/arp bash-completion-2.10/completions/arp
+--- bash-completion-2.10.old/completions/arp	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/arp	2019-12-31 10:59:47.956290389 +0000
 @@ -35,7 +35,7 @@ _arp()
      _count_args "" "@(--device|--protocol|--file|--hw-type|-!(-*)[iApfHt])"
      case $args in
@@ -438,9 +699,9 @@ diff -pruN bash-completion-2.9.old/completions/arp bash-completion-2.9/completio
                  's/.*(\([0-9]\{1,3\}\(\.[0-9]\{1,3\}\)\{3\}\)).*/\1/p')
              COMPREPLY=( $(compgen -W '$ips' -- "$cur") )
              ;;
-diff -pruN bash-completion-2.9.old/completions/aspell bash-completion-2.9/completions/aspell
---- bash-completion-2.9.old/completions/aspell	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/aspell	2019-05-01 15:15:58.210529830 +0000
+diff -pruN bash-completion-2.10.old/completions/aspell bash-completion-2.10/completions/aspell
+--- bash-completion-2.10.old/completions/aspell	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/aspell	2019-12-31 10:59:48.287004810 +0000
 @@ -33,7 +33,7 @@ _aspell()
              ;;
          --mode)
@@ -459,9 +720,9 @@ diff -pruN bash-completion-2.9.old/completions/aspell bash-completion-2.9/comple
              return
              ;;
      esac
-diff -pruN bash-completion-2.9.old/completions/beadm bash-completion-2.9/completions/beadm
---- bash-completion-2.9.old/completions/beadm	2019-08-16 13:05:59.000000000 +0000
-+++ bash-completion-2.9/completions/beadm	2019-08-19 11:28:52.486843948 +0000
+diff -pruN bash-completion-2.10.old/completions/beadm bash-completion-2.10/completions/beadm
+--- bash-completion-2.10.old/completions/beadm	2019-08-16 13:05:59.000000000 +0000
++++ bash-completion-2.10/completions/beadm	2019-12-31 10:59:48.470671562 +0000
 @@ -138,7 +138,7 @@ _beadm()
                            # entered BE name, so find snapshot for the particuler BE
                            if [[ "${prev}" != "rollback" ]]
@@ -489,9 +750,9 @@ diff -pruN bash-completion-2.9.old/completions/beadm bash-completion-2.9/complet
                    compopt -o nospace
                    compopt -o nosort
                    COMPREPLY=( $(compgen -W "${zfsvals[*]}" -- "${realcur}") )
-diff -pruN bash-completion-2.9.old/completions/bk bash-completion-2.9/completions/bk
---- bash-completion-2.9.old/completions/bk	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/bk	2019-05-01 15:15:58.029373994 +0000
+diff -pruN bash-completion-2.10.old/completions/bk bash-completion-2.10/completions/bk
+--- bash-completion-2.10.old/completions/bk	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/bk	2019-12-31 10:59:48.222630447 +0000
 @@ -7,7 +7,7 @@ _bk()
      _init_completion || return
  
@@ -501,9 +762,9 @@ diff -pruN bash-completion-2.9.old/completions/bk bash-completion-2.9/completion
  
      COMPREPLY=( $(compgen -W "$BKCMDS" -- "$cur") )
      _filedir
-diff -pruN bash-completion-2.9.old/completions/brctl bash-completion-2.9/completions/brctl
---- bash-completion-2.9.old/completions/brctl	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/brctl	2019-05-01 15:15:58.122618643 +0000
+diff -pruN bash-completion-2.10.old/completions/brctl bash-completion-2.10/completions/brctl
+--- bash-completion-2.10.old/completions/brctl	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/brctl	2019-12-31 10:59:47.789262458 +0000
 @@ -19,7 +19,7 @@ _brctl()
                      ;;
                  *)
@@ -513,9 +774,21 @@ diff -pruN bash-completion-2.9.old/completions/brctl bash-completion-2.9/complet
              esac
              ;;
          3)
-diff -pruN bash-completion-2.9.old/completions/ccache bash-completion-2.9/completions/ccache
---- bash-completion-2.9.old/completions/ccache	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ccache	2019-05-01 15:15:58.368875727 +0000
+diff -pruN bash-completion-2.10.old/completions/carton bash-completion-2.10/completions/carton
+--- bash-completion-2.10.old/completions/carton	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/carton	2019-12-31 10:59:48.309811263 +0000
+@@ -3,7 +3,7 @@
+ _carton_commands()
+ {
+     local cmds=$("${1:-carton}" usage 2>&1 | \
+-                     command sed -ne '/.*command.* is one of/{n;p;q}')
++                     command gsed -ne '/.*command.* is one of/{n;p;q}')
+     COMPREPLY+=( $(IFS="$IFS," compgen -W "$cmds" -- "$cur") )
+ }
+ 
+diff -pruN bash-completion-2.10.old/completions/ccache bash-completion-2.10/completions/ccache
+--- bash-completion-2.10.old/completions/ccache	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ccache	2019-12-31 10:59:48.253138838 +0000
 @@ -21,7 +21,7 @@ _ccache()
          --set-config|-!(-*)o)
              if [[ $cur != *=* ]]; then
@@ -525,9 +798,9 @@ diff -pruN bash-completion-2.9.old/completions/ccache bash-completion-2.9/comple
                  [[ $COMPREPLY == *= ]] && compopt -o nospace
              fi
              return
-diff -pruN bash-completion-2.9.old/completions/ccze bash-completion-2.9/completions/ccze
---- bash-completion-2.9.old/completions/ccze	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ccze	2019-05-01 15:15:58.103286538 +0000
+diff -pruN bash-completion-2.10.old/completions/ccze bash-completion-2.10/completions/ccze
+--- bash-completion-2.10.old/completions/ccze	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ccze	2019-12-31 10:59:48.505898317 +0000
 @@ -28,7 +28,7 @@ _ccze()
              ;;
          --plugin|-!(-*)p)
@@ -537,9 +810,9 @@ diff -pruN bash-completion-2.9.old/completions/ccze bash-completion-2.9/completi
                  -- "$cur") )
              return
      esac
-diff -pruN bash-completion-2.9.old/completions/cfrun bash-completion-2.9/completions/cfrun
---- bash-completion-2.9.old/completions/cfrun	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/cfrun	2019-05-01 15:15:58.032450454 +0000
+diff -pruN bash-completion-2.10.old/completions/cfrun bash-completion-2.10/completions/cfrun
+--- bash-completion-2.10.old/completions/cfrun	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/cfrun	2019-12-31 10:59:47.923616022 +0000
 @@ -33,7 +33,7 @@ _cfrun()
                  done
                  [[ ! -f $hostfile ]] && return
@@ -549,9 +822,9 @@ diff -pruN bash-completion-2.9.old/completions/cfrun bash-completion-2.9/complet
                      -E '(=|^$|^#)' $hostfile )" -- "$cur") )
              fi
              ;;
-diff -pruN bash-completion-2.9.old/completions/chronyc bash-completion-2.9/completions/chronyc
---- bash-completion-2.9.old/completions/chronyc	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/chronyc	2019-05-01 15:15:57.991534562 +0000
+diff -pruN bash-completion-2.10.old/completions/chronyc bash-completion-2.10/completions/chronyc
+--- bash-completion-2.10.old/completions/chronyc	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/chronyc	2019-12-31 10:59:47.756541073 +0000
 @@ -3,7 +3,7 @@
  _chronyc_command_args()
  {
@@ -570,9 +843,9 @@ diff -pruN bash-completion-2.9.old/completions/chronyc bash-completion-2.9/compl
                      -- "$cur") )
              ;;
          1)
-diff -pruN bash-completion-2.9.old/completions/complete bash-completion-2.9/completions/complete
---- bash-completion-2.9.old/completions/complete	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/complete	2019-05-01 15:15:58.300418034 +0000
+diff -pruN bash-completion-2.10.old/completions/complete bash-completion-2.10/completions/complete
+--- bash-completion-2.10.old/completions/complete	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/complete	2019-12-31 10:59:48.333821523 +0000
 @@ -29,7 +29,7 @@ _complete()
              return
              ;;
@@ -582,9 +855,9 @@ diff -pruN bash-completion-2.9.old/completions/complete bash-completion-2.9/comp
              COMPREPLY=( $(compgen -W '${COMPREPLY[@]}' -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/configure bash-completion-2.9/completions/configure
---- bash-completion-2.9.old/completions/configure	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/configure	2019-05-01 15:15:58.330504655 +0000
+diff -pruN bash-completion-2.10.old/completions/configure bash-completion-2.10/completions/configure
+--- bash-completion-2.10.old/completions/configure	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/configure	2019-12-31 10:59:48.144713461 +0000
 @@ -28,8 +28,8 @@ _configure()
  
      if [[ -n $COMP_CONFIGURE_HINTS ]]; then
@@ -596,9 +869,9 @@ diff -pruN bash-completion-2.9.old/completions/configure bash-completion-2.9/com
              -- "$cur") )
          [[ $COMPREPLY == *=* ]] && compopt -o nospace
      else
-diff -pruN bash-completion-2.9.old/completions/convert bash-completion-2.9/completions/convert
---- bash-completion-2.9.old/completions/convert	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/convert	2019-05-01 15:15:58.339345693 +0000
+diff -pruN bash-completion-2.10.old/completions/convert bash-completion-2.10/completions/convert
+--- bash-completion-2.10.old/completions/convert	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/convert	2019-12-31 10:59:48.261501394 +0000
 @@ -50,7 +50,7 @@ _ImageMagick()
              return
              ;;
@@ -608,9 +881,9 @@ diff -pruN bash-completion-2.9.old/completions/convert bash-completion-2.9/compl
                  '/ [r-][w-][+-] / { sub("[*]$","",$1); print tolower($1) }')" \
                  -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/cpan2dist bash-completion-2.9/completions/cpan2dist
---- bash-completion-2.9.old/completions/cpan2dist	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/cpan2dist	2019-05-01 15:15:58.236799786 +0000
+diff -pruN bash-completion-2.10.old/completions/cpan2dist bash-completion-2.10/completions/cpan2dist
+--- bash-completion-2.10.old/completions/cpan2dist	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/cpan2dist	2019-12-31 10:59:48.013375018 +0000
 @@ -29,7 +29,7 @@ _cpan2dist()
                  packagelist="$dir/02packages.details.txt.gz"
          done
@@ -620,9 +893,9 @@ diff -pruN bash-completion-2.9.old/completions/cpan2dist bash-completion-2.9/com
      fi
  } &&
  complete -F _cpan2dist -o default cpan2dist
-diff -pruN bash-completion-2.9.old/completions/cvs bash-completion-2.9/completions/cvs
---- bash-completion-2.9.old/completions/cvs	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/cvs	2019-05-01 15:15:58.416513739 +0000
+diff -pruN bash-completion-2.10.old/completions/cvs bash-completion-2.10/completions/cvs
+--- bash-completion-2.10.old/completions/cvs	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/cvs	2019-12-31 10:59:48.359296701 +0000
 @@ -22,7 +22,7 @@ _cvs_modules()
  
  _cvs_commands()
@@ -671,9 +944,9 @@ diff -pruN bash-completion-2.9.old/completions/cvs bash-completion-2.9/completio
                  COMPREPLY=( $(compgen -W '${COMPREPLY[@]}' -- "$cur") )
              else
                  _cvs_command_options "$1" $mode
-diff -pruN bash-completion-2.9.old/completions/cvsps bash-completion-2.9/completions/cvsps
---- bash-completion-2.9.old/completions/cvsps	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/cvsps	2019-05-01 15:15:58.497243400 +0000
+diff -pruN bash-completion-2.10.old/completions/cvsps bash-completion-2.10/completions/cvsps
+--- bash-completion-2.10.old/completions/cvsps	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/cvsps	2019-12-31 10:59:48.246713485 +0000
 @@ -11,22 +11,22 @@ _cvsps()
              ;;
          -s)
@@ -701,9 +974,9 @@ diff -pruN bash-completion-2.9.old/completions/cvsps bash-completion-2.9/complet
              return
              ;;
          -p)
-diff -pruN bash-completion-2.9.old/completions/dict bash-completion-2.9/completions/dict
---- bash-completion-2.9.old/completions/dict	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/dict	2019-05-01 15:15:58.242625459 +0000
+diff -pruN bash-completion-2.10.old/completions/dict bash-completion-2.10/completions/dict
+--- bash-completion-2.10.old/completions/dict	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/dict	2019-12-31 10:59:47.732704756 +0000
 @@ -2,7 +2,7 @@
  
  _dictdata()
@@ -727,9 +1000,9 @@ diff -pruN bash-completion-2.9.old/completions/dict bash-completion-2.9/completi
          else
              COMPREPLY=( $(compgen -W '$(cat $dictfile)' -- "$cur") )
          fi
-diff -pruN bash-completion-2.9.old/completions/dladm bash-completion-2.9/completions/dladm
---- bash-completion-2.9.old/completions/dladm	2018-12-01 22:29:04.000000000 +0000
-+++ bash-completion-2.9/completions/dladm	2019-05-01 15:15:58.003708286 +0000
+diff -pruN bash-completion-2.10.old/completions/dladm bash-completion-2.10/completions/dladm
+--- bash-completion-2.10.old/completions/dladm	2019-08-16 13:05:59.000000000 +0000
++++ bash-completion-2.10/completions/dladm	2019-12-31 10:59:47.980961975 +0000
 @@ -10,11 +10,11 @@ _dladm()
      prev="${COMP_WORDS[COMP_CWORD-1]}"
  
@@ -744,9 +1017,23 @@ diff -pruN bash-completion-2.9.old/completions/dladm bash-completion-2.9/complet
        COMPREPLY=( $(compgen -W "${zones}" -- ${cur}) )
      elif [[ ${prev} =~ 'delete-vnic' ]]; then
        # Redirect stderr to /dev/null not to polute console, e.g.:
-diff -pruN bash-completion-2.9.old/completions/dnssec-keygen bash-completion-2.9/completions/dnssec-keygen
---- bash-completion-2.9.old/completions/dnssec-keygen	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/dnssec-keygen	2019-05-01 15:15:58.460548861 +0000
+diff -pruN bash-completion-2.10.old/completions/dmypy bash-completion-2.10/completions/dmypy
+--- bash-completion-2.10.old/completions/dmypy	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/dmypy	2019-12-31 10:59:47.760658433 +0000
+@@ -36,8 +36,8 @@ _dmypy()
+ 
+     if [[ ! $cmd ]]; then
+         local cmds=$($1 --help 2>&1 \
+-                     | command sed -ne '/positional arguments/{p;n;p;q}' \
+-                     | command sed -ne 's/{\(.*\)}/\1/p')
++                     | command gsed -ne '/positional arguments/{p;n;p;q}' \
++                     | command gsed -ne 's/{\(.*\)}/\1/p')
+         COMPREPLY=( $(IFS="," compgen -W '$cmds' -- "$cur") )
+         return
+     fi
+diff -pruN bash-completion-2.10.old/completions/dnssec-keygen bash-completion-2.10/completions/dnssec-keygen
+--- bash-completion-2.10.old/completions/dnssec-keygen	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/dnssec-keygen	2019-12-31 10:59:48.258115411 +0000
 @@ -3,9 +3,9 @@
  _dnssec_keygen_optarg()
  {
@@ -768,9 +1055,9 @@ diff -pruN bash-completion-2.9.old/completions/dnssec-keygen bash-completion-2.9
          return
      fi
  } &&
-diff -pruN bash-completion-2.9.old/completions/dot bash-completion-2.9/completions/dot
---- bash-completion-2.9.old/completions/dot	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/dot	2019-05-01 15:15:57.945559566 +0000
+diff -pruN bash-completion-2.10.old/completions/dot bash-completion-2.10/completions/dot
+--- bash-completion-2.10.old/completions/dot	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/dot	2019-12-31 10:59:48.052572629 +0000
 @@ -13,13 +13,13 @@ _dot()
              ;;
          -T*)
@@ -787,9 +1074,9 @@ diff -pruN bash-completion-2.9.old/completions/dot bash-completion-2.9/completio
              COMPREPLY=( $(compgen -P -K -W '${layouts[@]}' -- "${cur#-K}") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/dpkg bash-completion-2.9/completions/dpkg
---- bash-completion-2.9.old/completions/dpkg	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/dpkg	2019-05-01 15:15:57.925322424 +0000
+diff -pruN bash-completion-2.10.old/completions/dpkg bash-completion-2.10/completions/dpkg
+--- bash-completion-2.10.old/completions/dpkg	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/dpkg	2019-12-31 10:59:48.314723430 +0000
 @@ -8,11 +8,11 @@ _comp_dpkg_installed_packages()
  } || {
  _comp_dpkg_installed_packages()
@@ -820,9 +1107,9 @@ diff -pruN bash-completion-2.9.old/completions/dpkg bash-completion-2.9/completi
  }
  }
  
-diff -pruN bash-completion-2.9.old/completions/ebtables bash-completion-2.9/completions/ebtables
---- bash-completion-2.9.old/completions/ebtables	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ebtables	2019-05-01 15:15:58.200301298 +0000
+diff -pruN bash-completion-2.10.old/completions/ebtables bash-completion-2.10/completions/ebtables
+--- bash-completion-2.10.old/completions/ebtables	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ebtables	2019-12-31 10:59:48.098551290 +0000
 @@ -14,7 +14,7 @@ _ebtables()
      case $prev in
      -!(-*)[AIDPFXLZ])
@@ -855,9 +1142,9 @@ diff -pruN bash-completion-2.9.old/completions/ebtables bash-completion-2.9/comp
                  -- "$cur") )
          fi
          ;;
-diff -pruN bash-completion-2.9.old/completions/fbgs bash-completion-2.9/completions/fbgs
---- bash-completion-2.9.old/completions/fbgs	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/fbgs	2019-05-01 15:15:58.109279067 +0000
+diff -pruN bash-completion-2.10.old/completions/fbgs bash-completion-2.10/completions/fbgs
+--- bash-completion-2.10.old/completions/fbgs	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/fbgs	2019-12-31 10:59:48.499399146 +0000
 @@ -12,7 +12,7 @@ _fbgs()
              return
              ;;
@@ -867,9 +1154,9 @@ diff -pruN bash-completion-2.9.old/completions/fbgs bash-completion-2.9/completi
                  -n "/^mode/{s/^mode \{1,\}\"\([^\"]\{1,\}\)\"/\1/g;p}" \
                  /etc/fb.modes 2>/dev/null)' -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/fbi bash-completion-2.9/completions/fbi
---- bash-completion-2.9.old/completions/fbi	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/fbi	2019-05-01 15:15:58.269299547 +0000
+diff -pruN bash-completion-2.10.old/completions/fbi bash-completion-2.10/completions/fbi
+--- bash-completion-2.10.old/completions/fbi	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/fbi	2019-12-31 10:59:48.488387632 +0000
 @@ -20,7 +20,7 @@ _fbi()
              return
              ;;
@@ -879,9 +1166,9 @@ diff -pruN bash-completion-2.9.old/completions/fbi bash-completion-2.9/completio
                  -n "/^mode/{s/^mode \{1,\}\"\([^\"]\{1,\}\)\"/\1/g;p}" \
                  /etc/fb.modes 2>/dev/null)' -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/function bash-completion-2.9/completions/function
---- bash-completion-2.9.old/completions/function	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/function	2019-05-01 15:15:58.428306822 +0000
+diff -pruN bash-completion-2.10.old/completions/function bash-completion-2.10/completions/function
+--- bash-completion-2.10.old/completions/function	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/function	2019-12-31 10:59:48.452755870 +0000
 @@ -29,7 +29,7 @@ _function()
      elif [[ $cword -eq 1 ]]; then
          COMPREPLY=( $(compgen -A function -- "$cur") )
@@ -891,9 +1178,9 @@ diff -pruN bash-completion-2.9.old/completions/function bash-completion-2.9/comp
      fi
  } &&
  complete -F _function function declare typeset
-diff -pruN bash-completion-2.9.old/completions/fusermount bash-completion-2.9/completions/fusermount
---- bash-completion-2.9.old/completions/fusermount	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/fusermount	2019-05-01 15:15:58.139056612 +0000
+diff -pruN bash-completion-2.10.old/completions/fusermount bash-completion-2.10/completions/fusermount
+--- bash-completion-2.10.old/completions/fusermount	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/fusermount	2019-12-31 10:59:47.754471240 +0000
 @@ -10,7 +10,7 @@ _fusermount()
              return
              ;;
@@ -903,19 +1190,19 @@ diff -pruN bash-completion-2.9.old/completions/fusermount bash-completion-2.9/co
                  '{ if ($3 ~ /^fuse(\.|$)/) print $2 }' /etc/mtab \
                  2>/dev/null)" -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/gcc bash-completion-2.9/completions/gcc
---- bash-completion-2.9.old/completions/gcc	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/gcc	2019-05-01 15:15:58.550506729 +0000
-@@ -40,7 +40,7 @@ _gcc()
-         # for C/C++/ObjectiveC it's useless
-         # for FORTRAN/Java it's an error
-         COMPREPLY=( $(compgen -W "$($cc --help 2>/dev/null | tr '\t' ' ' |\
--            command sed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/')" \
-+            command gsed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/')" \
-             -- "$cur") )
-         [[ $COMPREPLY == *= ]] && compopt -o nospace
-     else
-@@ -50,16 +50,16 @@ _gcc()
+diff -pruN bash-completion-2.10.old/completions/gcc bash-completion-2.10/completions/gcc
+--- bash-completion-2.10.old/completions/gcc	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gcc	2019-12-31 10:59:48.217536259 +0000
+@@ -12,7 +12,7 @@ _gcc()
+             local cc=$($1 -print-prog-name=cc1 2>/dev/null)
+             [[ $cc ]] || return
+             COMPREPLY=($( compgen -W "$($cc --help 2>/dev/null | tr '\t' ' ' |\
+-                command sed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/')" \
++                command gsed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/')" \
+                 -- "$cur" ))
+             [[ $COMPREPLY == *= ]] && compopt -o nospace
+         else
+@@ -58,16 +58,16 @@ _gcc()
  complete -F _gcc gcc{,-5,-6,-7,-8} g++{,-5,-6,-7,-8} g77 g95 \
      gccgo{,-5,-6,-7,-8} gcj gfortran{,-5,-6,-7,-8} gpc &&
  {
@@ -936,9 +1223,9 @@ diff -pruN bash-completion-2.9.old/completions/gcc bash-completion-2.9/completio
          [[ $(_realcommand f95) == *gfortran* ]] && \
          complete -F _gcc f95 || complete -F _minimal f95
  }
-diff -pruN bash-completion-2.9.old/completions/gdb bash-completion-2.9/completions/gdb
---- bash-completion-2.9.old/completions/gdb	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/gdb	2019-05-01 15:15:58.155419204 +0000
+diff -pruN bash-completion-2.10.old/completions/gdb bash-completion-2.10/completions/gdb
+--- bash-completion-2.10.old/completions/gdb	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gdb	2019-12-31 10:59:47.727783049 +0000
 @@ -27,7 +27,7 @@ _gdb()
              # names manually.
              IFS=":"
@@ -957,9 +1244,9 @@ diff -pruN bash-completion-2.9.old/completions/gdb bash-completion-2.9/completio
          compopt -o filenames
          COMPREPLY+=( $(compgen -f -X '!?(*/)core?(.?*)' -o plusdirs \
              -- "$cur") )
-diff -pruN bash-completion-2.9.old/completions/getconf bash-completion-2.9/completions/getconf
---- bash-completion-2.9.old/completions/getconf	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/getconf	2019-05-01 15:15:58.394158793 +0000
+diff -pruN bash-completion-2.10.old/completions/getconf bash-completion-2.10/completions/getconf
+--- bash-completion-2.10.old/completions/getconf	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/getconf	2019-12-31 10:59:48.536423825 +0000
 @@ -12,7 +12,7 @@ _getconf()
              ;;
          -v)
@@ -978,9 +1265,9 @@ diff -pruN bash-completion-2.9.old/completions/getconf bash-completion-2.9/compl
      fi
  } &&
  complete -F _getconf getconf
-diff -pruN bash-completion-2.9.old/completions/getent bash-completion-2.9/completions/getent
---- bash-completion-2.9.old/completions/getent	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/getent	2019-05-01 15:15:58.525638677 +0000
+diff -pruN bash-completion-2.10.old/completions/getent bash-completion-2.10/completions/getent
+--- bash-completion-2.10.old/completions/getent	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/getent	2019-12-31 10:59:48.442943240 +0000
 @@ -43,7 +43,7 @@ _getent()
              ;;
          protocols|networks|ahosts|ahostsv4|ahostsv6|rpc)
@@ -990,9 +1277,9 @@ diff -pruN bash-completion-2.9.old/completions/getent bash-completion-2.9/comple
              return
              ;;
          aliases|shadow|gshadow)
-diff -pruN bash-completion-2.9.old/completions/gm bash-completion-2.9/completions/gm
---- bash-completion-2.9.old/completions/gm	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/gm	2019-05-01 15:15:58.062552040 +0000
+diff -pruN bash-completion-2.10.old/completions/gm bash-completion-2.10/completions/gm
+--- bash-completion-2.10.old/completions/gm	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gm	2019-12-31 10:59:48.198077757 +0000
 @@ -3,7 +3,7 @@
  _gm_commands()
  {
@@ -1002,9 +1289,9 @@ diff -pruN bash-completion-2.9.old/completions/gm bash-completion-2.9/completion
  }
  
  _gm()
-diff -pruN bash-completion-2.9.old/completions/gnokii bash-completion-2.9/completions/gnokii
---- bash-completion-2.9.old/completions/gnokii	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/gnokii	2019-05-01 15:15:58.071474253 +0000
+diff -pruN bash-completion-2.10.old/completions/gnokii bash-completion-2.10/completions/gnokii
+--- bash-completion-2.10.old/completions/gnokii	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gnokii	2019-12-31 10:59:48.142909177 +0000
 @@ -25,7 +25,7 @@ _gnokii()
              done
              [[ ! -f $config_file ]] && return
@@ -1023,9 +1310,9 @@ diff -pruN bash-completion-2.9.old/completions/gnokii bash-completion-2.9/comple
  
      # don't provide main command completions if one is
      # already on the command line
-diff -pruN bash-completion-2.9.old/completions/gpg bash-completion-2.9/completions/gpg
---- bash-completion-2.9.old/completions/gpg	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/gpg	2019-05-01 15:15:58.077592703 +0000
+diff -pruN bash-completion-2.10.old/completions/gpg bash-completion-2.10/completions/gpg
+--- bash-completion-2.10.old/completions/gpg	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gpg	2019-12-31 10:59:47.868169715 +0000
 @@ -12,16 +12,16 @@ _gpg()
              ;;
          --export|--sign-key|--lsign-key|--nrsign-key|--nrlsign-key|--edit-key)
@@ -1046,9 +1333,9 @@ diff -pruN bash-completion-2.9.old/completions/gpg bash-completion-2.9/completio
                      's@^[ \t]*group[ \t][ \t]*\([^=]*\).*$@\1@p' \
                      ~/.gnupg/gpg.conf)" -- "$cur") )
              fi
-diff -pruN bash-completion-2.9.old/completions/gpg2 bash-completion-2.9/completions/gpg2
---- bash-completion-2.9.old/completions/gpg2	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/gpg2	2019-05-01 15:15:57.824967771 +0000
+diff -pruN bash-completion-2.10.old/completions/gpg2 bash-completion-2.10/completions/gpg2
+--- bash-completion-2.10.old/completions/gpg2	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gpg2	2019-12-31 10:59:48.191220677 +0000
 @@ -16,16 +16,16 @@ _gpg2()
              ;;
          --export|--sign-key|--lsign-key|--nrsign-key|--nrlsign-key|--edit-key)
@@ -1069,9 +1356,9 @@ diff -pruN bash-completion-2.9.old/completions/gpg2 bash-completion-2.9/completi
                      's@^[ \t]*group[ \t][ \t]*\([^=]*\).*$@\1@p' \
                      ~/.gnupg/gpg.conf)" -- "$cur") )
              fi
-diff -pruN bash-completion-2.9.old/completions/gphoto2 bash-completion-2.9/completions/gphoto2
---- bash-completion-2.9.old/completions/gphoto2	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/gphoto2	2019-05-01 15:15:58.336370657 +0000
+diff -pruN bash-completion-2.10.old/completions/gphoto2 bash-completion-2.10/completions/gphoto2
+--- bash-completion-2.10.old/completions/gphoto2	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gphoto2	2019-12-31 10:59:48.254802692 +0000
 @@ -24,14 +24,14 @@ _gphoto2()
              ;;
          --port)
@@ -1089,9 +1376,21 @@ diff -pruN bash-completion-2.9.old/completions/gphoto2 bash-completion-2.9/compl
              return
              ;;
          --get-config|--set-config|--set-config-index|--set-config-value)
-diff -pruN bash-completion-2.9.old/completions/hcitool bash-completion-2.9/completions/hcitool
---- bash-completion-2.9.old/completions/hcitool	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/hcitool	2019-05-01 15:15:58.167419592 +0000
+diff -pruN bash-completion-2.10.old/completions/gssdp-discover bash-completion-2.10/completions/gssdp-discover
+--- bash-completion-2.10.old/completions/gssdp-discover	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/gssdp-discover	2019-12-31 10:59:47.816983550 +0000
+@@ -15,7 +15,7 @@ _gssdp_discover()
+             ;;
+         --message-type|-m)
+             local types=$($1 --help 2>&1 | \
+-                command sed -ne 's/^.*--message-type=.*(\([^)]*\))$/\1/p')
++                command gsed -ne 's/^.*--message-type=.*(\([^)]*\))$/\1/p')
+             COMPREPLY=( $(IFS+=,; compgen -W "$types" -- "$cur") )
+             return
+             ;;
+diff -pruN bash-completion-2.10.old/completions/hcitool bash-completion-2.10/completions/hcitool
+--- bash-completion-2.10.old/completions/hcitool	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/hcitool	2019-12-31 10:59:47.971195728 +0000
 @@ -4,14 +4,14 @@ _bluetooth_addresses()
  {
      if [[ -n ${COMP_BLUETOOTH_SCAN:-} ]]; then
@@ -1109,21 +1408,21 @@ diff -pruN bash-completion-2.9.old/completions/hcitool bash-completion-2.9/compl
  }
  
  _bluetooth_services()
-diff -pruN bash-completion-2.9.old/completions/iconv bash-completion-2.9/completions/iconv
---- bash-completion-2.9.old/completions/iconv	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/iconv	2019-05-01 15:15:58.521148221 +0000
+diff -pruN bash-completion-2.10.old/completions/iconv bash-completion-2.10/completions/iconv
+--- bash-completion-2.10.old/completions/iconv	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/iconv	2019-12-31 10:59:48.174037334 +0000
 @@ -3,7 +3,7 @@
  _iconv_charsets()
  {
-     COMPREPLY+=( $(compgen -W '$(${1:-iconv} -l | \
+     COMPREPLY+=( $(compgen -X ... -W '$(${1:-iconv} -l | \
 -        command sed -e "s@/*\$@@" -e "s/[,()]//g")' -- "$cur") )
 +        command gsed -e "s@/*\$@@" -e "s/[,()]//g")' -- "$cur") )
  }
  
  _iconv()
-diff -pruN bash-completion-2.9.old/completions/ifstat bash-completion-2.9/completions/ifstat
---- bash-completion-2.9.old/completions/ifstat	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ifstat	2019-05-01 15:15:58.185396082 +0000
+diff -pruN bash-completion-2.10.old/completions/ifstat bash-completion-2.10/completions/ifstat
+--- bash-completion-2.10.old/completions/ifstat	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ifstat	2019-12-31 10:59:48.044336178 +0000
 @@ -18,9 +18,9 @@ _ifstat()
              # iproute2: no completion (scan delay)
              # traditional: parse driver
@@ -1160,9 +1459,21 @@ diff -pruN bash-completion-2.9.old/completions/ifstat bash-completion-2.9/comple
                  -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/inotifywait bash-completion-2.9/completions/inotifywait
---- bash-completion-2.9.old/completions/inotifywait	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/inotifywait	2019-05-01 15:15:57.939461427 +0000
+diff -pruN bash-completion-2.10.old/completions/influx bash-completion-2.10/completions/influx
+--- bash-completion-2.10.old/completions/influx	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/influx	2019-12-31 10:59:48.544860929 +0000
+@@ -14,7 +14,7 @@ _influx()
+             return
+             ;;
+         -format|-precision|-consistency)
+-            local args=$($1 --help 2>&1 | awk "\$1 == \"$prev\" { print \$2 }")
++            local args=$($1 --help 2>&1 | nawk "\$1 == \"$prev\" { print \$2 }")
+             COMPREPLY=( $(IFS+="\"'|"; compgen -W "$args" -- "$cur") )
+             return
+             ;;
+diff -pruN bash-completion-2.10.old/completions/inotifywait bash-completion-2.10/completions/inotifywait
+--- bash-completion-2.10.old/completions/inotifywait	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/inotifywait	2019-12-31 10:59:48.203453741 +0000
 @@ -6,7 +6,7 @@ _inotifywait_events()
      # tab. Word following the tab is event name, others are line
      # wrapped explanations.
@@ -1172,9 +1483,9 @@ diff -pruN bash-completion-2.9.old/completions/inotifywait bash-completion-2.9/c
             -ne 's/^'$'\t''\([^ '$'\t'']\{1,\}\)[ '$'\t''].*/\1/p')" \
          -- "$cur") )
  }
-diff -pruN bash-completion-2.9.old/completions/invoke-rc.d bash-completion-2.9/completions/invoke-rc.d
---- bash-completion-2.9.old/completions/invoke-rc.d	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/invoke-rc.d	2019-05-01 15:15:58.516793369 +0000
+diff -pruN bash-completion-2.10.old/completions/invoke-rc.d bash-completion-2.10/completions/invoke-rc.d
+--- bash-completion-2.10.old/completions/invoke-rc.d	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/invoke-rc.d	2019-12-31 10:59:48.011729750 +0000
 @@ -20,12 +20,12 @@ _invoke_rc_d()
      if [[ ($cword -eq 1) || ("$prev" == --* ) ]]; then
      valid_options=( $(\
@@ -1190,9 +1501,9 @@ diff -pruN bash-completion-2.9.old/completions/invoke-rc.d bash-completion-2.9/c
              -ne "s/^.*Usage:[ ]*[^ ]*[ ]*{*\([^}\"]*\).*$/\1/p" \
              $sysvdir/$prev`' -- "$cur") )
      else
-diff -pruN bash-completion-2.9.old/completions/ip bash-completion-2.9/completions/ip
---- bash-completion-2.9.old/completions/ip	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ip	2019-05-01 15:15:58.127053954 +0000
+diff -pruN bash-completion-2.10.old/completions/ip bash-completion-2.10/completions/ip
+--- bash-completion-2.10.old/completions/ip	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ip	2019-12-31 10:59:48.324373663 +0000
 @@ -3,7 +3,7 @@
  _iproute2_etc()
  {
@@ -1206,14 +1517,14 @@ diff -pruN bash-completion-2.9.old/completions/ip bash-completion-2.9/completion
                  return
                  ;;
              *)
--                COMPREPLY=( $(compgen -W "help $(ip help 2>&1 | command sed -e \
-+                COMPREPLY=( $(compgen -W "help $(ip help 2>&1 | command gsed -e \
+-                COMPREPLY=( $(compgen -W "help $($1 help 2>&1 | command sed -e \
++                COMPREPLY=( $(compgen -W "help $($1 help 2>&1 | command gsed -e \
                      '/OBJECT := /,/}/!d' -e \
                      's/.*{//' -e \
                      's/}.*//' -e \
-diff -pruN bash-completion-2.9.old/completions/iperf bash-completion-2.9/completions/iperf
---- bash-completion-2.9.old/completions/iperf	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/iperf	2019-05-01 15:15:57.845408182 +0000
+diff -pruN bash-completion-2.10.old/completions/iperf bash-completion-2.10/completions/iperf
+--- bash-completion-2.10.old/completions/iperf	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/iperf	2019-12-31 10:59:48.119716712 +0000
 @@ -51,10 +51,10 @@ _iperf()
      for i in "${words[@]}"; do
          case $i in
@@ -1227,9 +1538,9 @@ diff -pruN bash-completion-2.9.old/completions/iperf bash-completion-2.9/complet
                  ;;
          esac
      done
-diff -pruN bash-completion-2.9.old/completions/ipmitool bash-completion-2.9/completions/ipmitool
---- bash-completion-2.9.old/completions/ipmitool	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ipmitool	2019-05-01 15:15:58.156941888 +0000
+diff -pruN bash-completion-2.10.old/completions/ipmitool bash-completion-2.10/completions/ipmitool
+--- bash-completion-2.10.old/completions/ipmitool	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ipmitool	2019-12-31 10:59:48.078714199 +0000
 @@ -3,7 +3,7 @@
  _ipmitool_singleline_help()
  {
@@ -1264,9 +1575,9 @@ diff -pruN bash-completion-2.9.old/completions/ipmitool bash-completion-2.9/comp
              return
              ;;
      esac
-diff -pruN bash-completion-2.9.old/completions/iptables bash-completion-2.9/completions/iptables
---- bash-completion-2.9.old/completions/iptables	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/iptables	2019-05-01 15:15:58.161475381 +0000
+diff -pruN bash-completion-2.10.old/completions/iptables bash-completion-2.10/completions/iptables
+--- bash-completion-2.10.old/completions/iptables	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/iptables	2019-12-31 10:59:48.085394649 +0000
 @@ -13,7 +13,7 @@ _iptables()
      case $prev in
      -*[AIDRPFXLZ])
@@ -1306,9 +1617,9 @@ diff -pruN bash-completion-2.9.old/completions/iptables bash-completion-2.9/comp
              [[ $COMPREPLY == *= ]] && compopt -o nospace
          fi
          ;;
-diff -pruN bash-completion-2.9.old/completions/ipv6calc bash-completion-2.9/completions/ipv6calc
---- bash-completion-2.9.old/completions/ipv6calc	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ipv6calc	2019-05-01 15:15:58.250360949 +0000
+diff -pruN bash-completion-2.10.old/completions/ipv6calc bash-completion-2.10/completions/ipv6calc
+--- bash-completion-2.10.old/completions/ipv6calc	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ipv6calc	2019-12-31 10:59:48.175766986 +0000
 @@ -10,9 +10,9 @@ _ipv6calc()
              return
              ;;
@@ -1321,9 +1632,18 @@ diff -pruN bash-completion-2.9.old/completions/ipv6calc bash-completion-2.9/comp
                  -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/isql bash-completion-2.9/completions/isql
---- bash-completion-2.9.old/completions/isql	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/isql	2019-05-01 15:15:58.413479585 +0000
+@@ -29,7 +29,7 @@ _ipv6calc()
+ 
+     if [[ "$cur" == -* ]]; then
+         COMPREPLY=( $(compgen -W '$("$1" -h 2>&1 |
+-            command sed -e "s/[][]//g" | _parse_help -)' -- "$cur") )
++            command gsed -e "s/[][]//g" | _parse_help -)' -- "$cur") )
+     fi
+ 
+ } &&
+diff -pruN bash-completion-2.10.old/completions/isql bash-completion-2.10/completions/isql
+--- bash-completion-2.10.old/completions/isql	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/isql	2019-12-31 10:59:47.961187149 +0000
 @@ -7,7 +7,7 @@ _isql()
      _init_completion || return
  
@@ -1333,9 +1653,9 @@ diff -pruN bash-completion-2.9.old/completions/isql bash-completion-2.9/completi
  } &&
  complete -F _isql isql
  
-diff -pruN bash-completion-2.9.old/completions/iwconfig bash-completion-2.9/completions/iwconfig
---- bash-completion-2.9.old/completions/iwconfig	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/iwconfig	2019-05-01 15:15:57.934830081 +0000
+diff -pruN bash-completion-2.10.old/completions/iwconfig bash-completion-2.10/completions/iwconfig
+--- bash-completion-2.10.old/completions/iwconfig	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/iwconfig	2019-12-31 10:59:47.914001109 +0000
 @@ -16,7 +16,7 @@ _iwconfig()
              if [[ -n ${COMP_IWLIST_SCAN:-} ]]; then
                  COMPREPLY+=( $(compgen -W \
@@ -1379,16 +1699,22 @@ diff -pruN bash-completion-2.9.old/completions/iwconfig bash-completion-2.9/comp
              return
              ;;
          rts|frag)
-diff -pruN bash-completion-2.9.old/completions/java bash-completion-2.9/completions/java
---- bash-completion-2.9.old/completions/java	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/java	2019-05-01 15:15:58.024815566 +0000
-@@ -63,17 +63,17 @@ _java_classes()
+diff -pruN bash-completion-2.10.old/completions/java bash-completion-2.10/completions/java
+--- bash-completion-2.10.old/completions/java	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/java	2019-12-31 10:59:48.419836442 +0000
+@@ -63,22 +63,22 @@ _java_classes()
          if [[ "$i" == *.@(jar|zip) && -r $i ]]; then
              if type zipinfo &>/dev/null; then
                  COMPREPLY+=( $(zipinfo -1 "$i" "$cur*" 2>/dev/null | \
 -                    command grep '^[^$]*\.class$') )
 +                    command ggrep '^[^$]*\.class$') )
-             else
+             elif type unzip &>/dev/null; then
+                 # Last column, between entries consisting entirely of dashes
+                 COMPREPLY+=( $(unzip -lq "$i" "$cur*" 2>/dev/null | \
+-                    awk '$NF ~ /^-+$/ { flag=!flag; next };
++                    nawk '$NF ~ /^-+$/ { flag=!flag; next };
+                          flag && $NF ~ /^[^$]*\.class/ { print $NF }') )
+             elif type jar &>/dev/null; then
                  COMPREPLY+=( $(jar tf "$i" "$cur" | \
 -                    command grep '^[^$]*\.class$') )
 +                    command ggrep '^[^$]*\.class$') )
@@ -1404,7 +1730,7 @@ diff -pruN bash-completion-2.9.old/completions/java bash-completion-2.9/completi
              )
              [[ $COMPREPLY == *.class ]] || compopt -o nospace
  
-@@ -103,11 +103,11 @@ _java_packages()
+@@ -108,11 +108,11 @@ _java_packages()
      for i in ${sourcepath//:/ }; do
          if [[ -d $i ]]; then
              COMPREPLY+=( $(command ls -F -d $i/$cur* 2>/dev/null | \
@@ -1418,7 +1744,7 @@ diff -pruN bash-completion-2.9.old/completions/java bash-completion-2.9/completi
      # remove packages extension
      COMPREPLY=( ${COMPREPLY[@]%/} )
      # convert path syntax to package syntax
-@@ -304,7 +304,7 @@ _javac()
+@@ -309,7 +309,7 @@ _javac()
          # For some reason there may be -g:none AND -g:{lines,source,vars};
          # convert the none case to the curly brace format so it parses like
          # the others.
@@ -1427,9 +1753,9 @@ diff -pruN bash-completion-2.9.old/completions/java bash-completion-2.9/completi
              "s/^[[:space:]]*${cur%%:*}:{\([^}]\{1,\}\)}.*/\1/p")
          COMPREPLY=( $(compgen -W "${opts//,/ }" -- "${cur#*:}") )
          return
-diff -pruN bash-completion-2.9.old/completions/koji bash-completion-2.9/completions/koji
---- bash-completion-2.9.old/completions/koji	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/koji	2019-05-01 15:15:58.360133470 +0000
+diff -pruN bash-completion-2.10.old/completions/koji bash-completion-2.10/completions/koji
+--- bash-completion-2.10.old/completions/koji	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/koji	2019-12-31 10:59:47.927766640 +0000
 @@ -29,7 +29,7 @@ _koji_tag()
  _koji_target()
  {
@@ -1448,9 +1774,9 @@ diff -pruN bash-completion-2.9.old/completions/koji bash-completion-2.9/completi
      fi
  } &&
  complete -F _koji koji arm-koji ppc-koji s390-koji sparc-koji
-diff -pruN bash-completion-2.9.old/completions/ktutil bash-completion-2.9/completions/ktutil
---- bash-completion-2.9.old/completions/ktutil	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ktutil	2019-05-01 15:15:58.183931391 +0000
+diff -pruN bash-completion-2.10.old/completions/ktutil bash-completion-2.10/completions/ktutil
+--- bash-completion-2.10.old/completions/ktutil	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ktutil	2019-12-31 10:59:48.039406185 +0000
 @@ -3,13 +3,13 @@
  _heimdal_principals()
  {
@@ -1467,9 +1793,9 @@ diff -pruN bash-completion-2.9.old/completions/ktutil bash-completion-2.9/comple
  }
  
  _heimdal_encodings()
-diff -pruN bash-completion-2.9.old/completions/lilo bash-completion-2.9/completions/lilo
---- bash-completion-2.9.old/completions/lilo	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/lilo	2019-05-01 15:15:58.201759451 +0000
+diff -pruN bash-completion-2.10.old/completions/lilo bash-completion-2.10/completions/lilo
+--- bash-completion-2.10.old/completions/lilo	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/lilo	2019-12-31 10:59:47.752252099 +0000
 @@ -2,8 +2,8 @@
  
  _lilo_labels()
@@ -1481,9 +1807,9 @@ diff -pruN bash-completion-2.9.old/completions/lilo bash-completion-2.9/completi
  }
  
  _lilo()
-diff -pruN bash-completion-2.9.old/completions/links bash-completion-2.9/completions/links
---- bash-completion-2.9.old/completions/links	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/links	2019-05-01 15:15:58.543071403 +0000
+diff -pruN bash-completion-2.10.old/completions/links bash-completion-2.10/completions/links
+--- bash-completion-2.10.old/completions/links	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/links	2019-12-31 10:59:48.201593455 +0000
 @@ -28,7 +28,7 @@ _links()
              ;;
          -driver)
@@ -1502,9 +1828,9 @@ diff -pruN bash-completion-2.9.old/completions/links bash-completion-2.9/complet
          return
      fi
  
-diff -pruN bash-completion-2.9.old/completions/lintian bash-completion-2.9/completions/lintian
---- bash-completion-2.9.old/completions/lintian	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/lintian	2019-05-01 15:15:57.902575489 +0000
+diff -pruN bash-completion-2.10.old/completions/lintian bash-completion-2.10/completions/lintian
+--- bash-completion-2.10.old/completions/lintian	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/lintian	2019-12-31 10:59:47.875732422 +0000
 @@ -4,13 +4,13 @@ _lintian_tags()
  {
      local match search tags
@@ -1561,9 +1887,9 @@ diff -pruN bash-completion-2.9.old/completions/lintian bash-completion-2.9/compl
          done
          COMPREPLY+=( $(compgen -W "$infos") )
      elif [[ "$cur" == *,* ]]; then
-diff -pruN bash-completion-2.9.old/completions/locale-gen bash-completion-2.9/completions/locale-gen
---- bash-completion-2.9.old/completions/locale-gen	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/locale-gen	2019-05-01 15:15:58.097242087 +0000
+diff -pruN bash-completion-2.10.old/completions/locale-gen bash-completion-2.10/completions/locale-gen
+--- bash-completion-2.10.old/completions/locale-gen	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/locale-gen	2019-12-31 10:59:47.910221356 +0000
 @@ -24,7 +24,7 @@ _locale_gen()
      fi
  
@@ -1573,9 +1899,9 @@ diff -pruN bash-completion-2.9.old/completions/locale-gen bash-completion-2.9/co
          -- "$cur") )
  } &&
  complete -F _locale_gen locale-gen
-diff -pruN bash-completion-2.9.old/completions/lvm bash-completion-2.9/completions/lvm
---- bash-completion-2.9.old/completions/lvm	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/lvm	2019-05-01 15:15:57.892719768 +0000
+diff -pruN bash-completion-2.10.old/completions/lvm bash-completion-2.10/completions/lvm
+--- bash-completion-2.10.old/completions/lvm	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/lvm	2019-12-31 10:59:48.093683650 +0000
 @@ -9,25 +9,25 @@ _lvm_filedir()
  _lvm_volumegroups()
  {
@@ -1606,21 +1932,9 @@ diff -pruN bash-completion-2.9.old/completions/lvm bash-completion-2.9/completio
      if [[ $cur == /dev/mapper/* ]]; then
          _filedir
          local i
-diff -pruN bash-completion-2.9.old/completions/lz4 bash-completion-2.9/completions/lz4
---- bash-completion-2.9.old/completions/lz4	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/lz4	2019-05-01 15:15:58.257543022 +0000
-@@ -14,7 +14,7 @@ _lz4()
- 
-     if [[ "$cur" == -* ]]; then
-         COMPREPLY=( $(compgen -W \
--            '$(_parse_help "$1" -h | command sed -e "/#/d") -B{4..7} -i{1..9}' \
-+            '$(_parse_help "$1" -h | command gsed -e "/#/d") -B{4..7} -i{1..9}' \
-             -- "$cur") )
-         return
-     fi
-diff -pruN bash-completion-2.9.old/completions/make bash-completion-2.9/completions/make
---- bash-completion-2.9.old/completions/make	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/make	2019-05-01 15:15:58.406314408 +0000
+diff -pruN bash-completion-2.10.old/completions/make bash-completion-2.10/completions/make
+--- bash-completion-2.10.old/completions/make	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/make	2019-12-31 10:59:47.951681244 +0000
 @@ -6,7 +6,7 @@ _make_target_extract_script()
      shift
  
@@ -1639,9 +1953,9 @@ diff -pruN bash-completion-2.9.old/completions/make bash-completion-2.9/completi
  
          if [[ $mode != -d ]]; then
              # Completion will occur if there is only one suggestion
-diff -pruN bash-completion-2.9.old/completions/Makefile.in bash-completion-2.9/completions/Makefile.in
---- bash-completion-2.9.old/completions/Makefile.in	2019-04-27 10:58:10.000000000 +0000
-+++ bash-completion-2.9/completions/Makefile.in	2019-05-01 15:15:58.245939704 +0000
+diff -pruN bash-completion-2.10.old/completions/Makefile.in bash-completion-2.10/completions/Makefile.in
+--- bash-completion-2.10.old/completions/Makefile.in	2019-12-05 16:43:25.000000000 +0000
++++ bash-completion-2.10/completions/Makefile.in	2019-12-31 10:59:47.902504216 +0000
 @@ -42,13 +42,13 @@ am__make_running_with_option = \
        *\\[\ \	]*) \
          bs=\\; \
@@ -1694,7 +2008,7 @@ diff -pruN bash-completion-2.9.old/completions/Makefile.in bash-completion-2.9/c
  am__uninstall_files_from_dir = { \
    test -z "$$files" \
      || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-@@ -998,7 +998,7 @@ install-bashcompDATA: $(bashcomp_DATA)
+@@ -1006,7 +1006,7 @@ install-bashcompDATA: $(bashcomp_DATA)
  uninstall-bashcompDATA:
  	@$(NORMAL_UNINSTALL)
  	@list='$(bashcomp_DATA)'; test -n "$(bashcompdir)" || list=; \
@@ -1703,7 +2017,7 @@ diff -pruN bash-completion-2.9.old/completions/Makefile.in bash-completion-2.9/c
  	dir='$(DESTDIR)$(bashcompdir)'; $(am__uninstall_files_from_dir)
  tags TAGS:
  
-@@ -1011,21 +1011,21 @@ distdir: $(BUILT_SOURCES)
+@@ -1019,21 +1019,21 @@ distdir: $(BUILT_SOURCES)
  	$(MAKE) $(AM_MAKEFLAGS) distdir-am
  
  distdir-am: $(DISTFILES)
@@ -1730,21 +2044,21 @@ diff -pruN bash-completion-2.9.old/completions/Makefile.in bash-completion-2.9/c
  	    if test -d "$(distdir)/$$file"; then \
  	      find "$(distdir)/$$file" -type d ! -perm -700 -exec chmod u+rwx {} \;; \
  	    fi; \
-diff -pruN bash-completion-2.9.old/completions/makepkg bash-completion-2.9/completions/makepkg
---- bash-completion-2.9.old/completions/makepkg	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/makepkg	2019-05-01 15:15:58.214857857 +0000
+diff -pruN bash-completion-2.10.old/completions/makepkg bash-completion-2.10/completions/makepkg
+--- bash-completion-2.10.old/completions/makepkg	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/makepkg	2019-12-31 10:59:48.338538635 +0000
 @@ -15,7 +15,7 @@ _makepkg_slackware()
  
      if [[ "$cur" == -* ]]; then
          COMPREPLY=( $(compgen -W \
--            '$1 | command sed -e "s/^options://" | _parse_help -' -- "$cur") )
-+            '$1 | command gsed -e "s/^options://" | _parse_help -' -- "$cur") )
+-            '$($1 | command sed -e "s/^options://" | _parse_help -)' \
++            '$($1 | command gsed -e "s/^options://" | _parse_help -)' \
+             -- "$cur") )
          return
      fi
- 
-diff -pruN bash-completion-2.9.old/completions/mcrypt bash-completion-2.9/completions/mcrypt
---- bash-completion-2.9.old/completions/mcrypt	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/mcrypt	2019-05-01 15:15:57.874700619 +0000
+diff -pruN bash-completion-2.10.old/completions/mcrypt bash-completion-2.10/completions/mcrypt
+--- bash-completion-2.10.old/completions/mcrypt	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/mcrypt	2019-12-31 10:59:47.885073803 +0000
 @@ -23,12 +23,12 @@ _mcrypt()
              ;;
          -a|--algorithm)
@@ -1760,9 +2074,9 @@ diff -pruN bash-completion-2.9.old/completions/mcrypt bash-completion-2.9/comple
              return
              ;;
          -k|-s|--key|--keysize)
-diff -pruN bash-completion-2.9.old/completions/medusa bash-completion-2.9/completions/medusa
---- bash-completion-2.9.old/completions/medusa	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/medusa	2019-05-01 15:15:58.260753412 +0000
+diff -pruN bash-completion-2.10.old/completions/medusa bash-completion-2.10/completions/medusa
+--- bash-completion-2.10.old/completions/medusa	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/medusa	2019-12-31 10:59:48.336924888 +0000
 @@ -15,8 +15,8 @@ _medusa()
              return
              ;;
@@ -1774,9 +2088,9 @@ diff -pruN bash-completion-2.9.old/completions/medusa bash-completion-2.9/comple
              return
              ;;
      esac
-diff -pruN bash-completion-2.9.old/completions/minicom bash-completion-2.9/completions/minicom
---- bash-completion-2.9.old/completions/minicom	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/minicom	2019-05-01 15:15:58.454616369 +0000
+diff -pruN bash-completion-2.10.old/completions/minicom bash-completion-2.10/completions/minicom
+--- bash-completion-2.10.old/completions/minicom	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/minicom	2019-12-31 10:59:48.513795935 +0000
 @@ -32,8 +32,8 @@ _minicom()
  
      COMPREPLY=(
@@ -1788,9 +2102,9 @@ diff -pruN bash-completion-2.9.old/completions/minicom bash-completion-2.9/compl
  } &&
  complete -F _minicom -o default minicom
  
-diff -pruN bash-completion-2.9.old/completions/modprobe bash-completion-2.9/completions/modprobe
---- bash-completion-2.9.old/completions/modprobe	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/modprobe	2019-05-01 15:15:58.343830736 +0000
+diff -pruN bash-completion-2.10.old/completions/modprobe bash-completion-2.10/completions/modprobe
+--- bash-completion-2.10.old/completions/modprobe	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/modprobe	2019-12-31 10:59:48.349589492 +0000
 @@ -87,7 +87,7 @@ _modprobe()
                      prev=${cur%%=*}
                      cur=${cur#*=}
@@ -1809,9 +2123,9 @@ diff -pruN bash-completion-2.9.old/completions/modprobe bash-completion-2.9/comp
                      [[ $COMPREPLY == *= ]] && compopt -o nospace
                  fi
              else
-diff -pruN bash-completion-2.9.old/completions/mplayer bash-completion-2.9/completions/mplayer
---- bash-completion-2.9.old/completions/mplayer	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/mplayer	2019-05-01 15:15:58.091203913 +0000
+diff -pruN bash-completion-2.10.old/completions/mplayer bash-completion-2.10/completions/mplayer
+--- bash-completion-2.10.old/completions/mplayer	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/mplayer	2019-12-31 10:59:48.109990473 +0000
 @@ -4,8 +4,8 @@ _mplayer_options_list()
  {
      cur=${cur%\\}
@@ -1841,9 +2155,9 @@ diff -pruN bash-completion-2.9.old/completions/mplayer bash-completion-2.9/compl
                      -e "s/^[[:space:]]*/-/" -e "s/[[:space:]:].*//" \
                      -e "/^-\(Total\|.*\*\)\{0,1\}$/!p")' -- "$cur") )
              ;;
-diff -pruN bash-completion-2.9.old/completions/mr bash-completion-2.9/completions/mr
---- bash-completion-2.9.old/completions/mr	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/mr	2019-05-01 15:15:58.082122012 +0000
+diff -pruN bash-completion-2.10.old/completions/mr bash-completion-2.10/completions/mr
+--- bash-completion-2.10.old/completions/mr	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/mr	2019-12-31 10:59:48.180991352 +0000
 @@ -8,7 +8,7 @@ _mr() {
  
      help="$(PERLDOC_PAGER=cat PERLDOC=-otext "${1}" help 2>/dev/null)"
@@ -1853,9 +2167,9 @@ diff -pruN bash-completion-2.9.old/completions/mr bash-completion-2.9/completion
      # Split [online|offline] and remove `action` placeholder.
      commands="${commands//@(action|[\[\|\]])/$'\n'}"
      # Add standard aliases.
-diff -pruN bash-completion-2.9.old/completions/msynctool bash-completion-2.9/completions/msynctool
---- bash-completion-2.9.old/completions/msynctool	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/msynctool	2019-05-01 15:15:58.470772051 +0000
+diff -pruN bash-completion-2.10.old/completions/msynctool bash-completion-2.10/completions/msynctool
+--- bash-completion-2.10.old/completions/msynctool	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/msynctool	2019-12-31 10:59:47.925631620 +0000
 @@ -8,13 +8,13 @@ _msynctool()
      case $words in
          --configure)
@@ -1887,9 +2201,9 @@ diff -pruN bash-completion-2.9.old/completions/msynctool bash-completion-2.9/com
              return
              ;;
      esac
-diff -pruN bash-completion-2.9.old/completions/mtx bash-completion-2.9/completions/mtx
---- bash-completion-2.9.old/completions/mtx	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/mtx	2019-05-01 15:15:57.990062282 +0000
+diff -pruN bash-completion-2.10.old/completions/mtx bash-completion-2.10/completions/mtx
+--- bash-completion-2.10.old/completions/mtx	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/mtx	2019-12-31 10:59:47.992431302 +0000
 @@ -12,11 +12,11 @@ _mtx()
          inventory status load unload eepos first last next"
  
@@ -1904,9 +2218,9 @@ diff -pruN bash-completion-2.9.old/completions/mtx bash-completion-2.9/completio
      drives=${drives//:Full}
      drives=${drives//:Empty}
  
-diff -pruN bash-completion-2.9.old/completions/mutt bash-completion-2.9/completions/mutt
---- bash-completion-2.9.old/completions/mutt	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/mutt	2019-05-01 15:15:57.923083888 +0000
+diff -pruN bash-completion-2.10.old/completions/mutt bash-completion-2.10/completions/mutt
+--- bash-completion-2.10.old/completions/mutt	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/mutt	2019-12-31 10:59:48.296593447 +0000
 @@ -55,7 +55,7 @@ _muttconffiles()
      sofar=" $1 "
      shift
@@ -1959,9 +2273,9 @@ diff -pruN bash-completion-2.9.old/completions/mutt bash-completion-2.9/completi
          [[ ! -z $spoolfile ]] && eval cur="${cur/^!/$spoolfile}"
      fi
      _filedir
-diff -pruN bash-completion-2.9.old/completions/mysql bash-completion-2.9/completions/mysql
---- bash-completion-2.9.old/completions/mysql	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/mysql	2019-05-01 15:15:58.377895508 +0000
+diff -pruN bash-completion-2.10.old/completions/mysql bash-completion-2.10/completions/mysql
+--- bash-completion-2.10.old/completions/mysql	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/mysql	2019-12-31 10:59:48.403484229 +0000
 @@ -21,7 +21,7 @@ _mysql()
              return
              ;;
@@ -1980,9 +2294,9 @@ diff -pruN bash-completion-2.9.old/completions/mysql bash-completion-2.9/complet
          -- "$cur") )
  } &&
  complete -F _mysql mysql
-diff -pruN bash-completion-2.9.old/completions/ncftp bash-completion-2.9/completions/ncftp
---- bash-completion-2.9.old/completions/ncftp	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ncftp	2019-05-01 15:15:58.355430035 +0000
+diff -pruN bash-completion-2.10.old/completions/ncftp bash-completion-2.10/completions/ncftp
+--- bash-completion-2.10.old/completions/ncftp	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ncftp	2019-12-31 10:59:48.395247735 +0000
 @@ -17,7 +17,7 @@ _ncftp()
      fi
  
@@ -1992,21 +2306,21 @@ diff -pruN bash-completion-2.9.old/completions/ncftp bash-completion-2.9/complet
              ~/.ncftp/bookmarks)' -- "$cur") )
      fi
  
-diff -pruN bash-completion-2.9.old/completions/op bash-completion-2.9/completions/op
---- bash-completion-2.9.old/completions/op	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/op	2019-05-01 15:15:57.819042750 +0000
+diff -pruN bash-completion-2.10.old/completions/op bash-completion-2.10/completions/op
+--- bash-completion-2.10.old/completions/op	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/op	2019-12-31 10:59:48.449375291 +0000
 @@ -3,7 +3,7 @@
  _op_commands()
  {
-     "$@" --help |
+     "$@" --help 2>/dev/null |
 -        awk "/^(Available |Sub)commands/{flag=1;next}/^ /&&flag{print \$1}"
 +        nawk "/^(Available |Sub)commands/{flag=1;next}/^ /&&flag{print \$1}"
  }
  
  _op_command_options()
-diff -pruN bash-completion-2.9.old/completions/openssl bash-completion-2.9/completions/openssl
---- bash-completion-2.9.old/completions/openssl	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/openssl	2019-05-01 15:15:58.524171582 +0000
+diff -pruN bash-completion-2.10.old/completions/openssl bash-completion-2.10/completions/openssl
+--- bash-completion-2.10.old/completions/openssl	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/openssl	2019-12-31 10:59:48.398470222 +0000
 @@ -22,13 +22,13 @@ _openssl_sections()
  
      [[ ! -f $config ]] && return
@@ -2023,9 +2337,9 @@ diff -pruN bash-completion-2.9.old/completions/openssl bash-completion-2.9/compl
  }
  
  _openssl()
-diff -pruN bash-completion-2.9.old/completions/p4 bash-completion-2.9/completions/p4
---- bash-completion-2.9.old/completions/p4	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/p4	2019-05-01 15:15:57.877632515 +0000
+diff -pruN bash-completion-2.10.old/completions/p4 bash-completion-2.10/completions/p4
+--- bash-completion-2.10.old/completions/p4	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/p4	2019-12-31 10:59:48.414607429 +0000
 @@ -9,7 +9,7 @@ _p4()
      local p4commands p4filetypes
  
@@ -2035,9 +2349,9 @@ diff -pruN bash-completion-2.9.old/completions/p4 bash-completion-2.9/completion
      p4filetypes="ctext cxtext ktext kxtext ltext tempobj ubinary \
          uresource uxbinary xbinary xltext xtempobj xtext \
          text binary resource"
-diff -pruN bash-completion-2.9.old/completions/pdftotext bash-completion-2.9/completions/pdftotext
---- bash-completion-2.9.old/completions/pdftotext	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pdftotext	2019-05-01 15:15:58.495819040 +0000
+diff -pruN bash-completion-2.10.old/completions/pdftotext bash-completion-2.10/completions/pdftotext
+--- bash-completion-2.10.old/completions/pdftotext	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pdftotext	2019-12-31 10:59:47.890959526 +0000
 @@ -11,7 +11,7 @@ _pdftotext()
              ;;
          -enc)
@@ -2047,10 +2361,10 @@ diff -pruN bash-completion-2.9.old/completions/pdftotext bash-completion-2.9/com
              return
              ;;
          -eol)
-diff -pruN bash-completion-2.9.old/completions/perl bash-completion-2.9/completions/perl
---- bash-completion-2.9.old/completions/perl	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/perl	2019-05-01 15:15:58.459038850 +0000
-@@ -118,8 +118,8 @@ _perldoc()
+diff -pruN bash-completion-2.10.old/completions/perl bash-completion-2.10/completions/perl
+--- bash-completion-2.10.old/completions/perl	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/perl	2019-12-31 10:59:48.024942754 +0000
+@@ -133,8 +133,8 @@ _perldoc()
              if [[ $cur == p* ]]; then
                  COMPREPLY+=( $(compgen -W \
                      '$(PERLDOC_PAGER=cat "$1" -u perl |  \
@@ -2061,9 +2375,9 @@ diff -pruN bash-completion-2.9.old/completions/perl bash-completion-2.9/completi
                      -- "$cur") )
              fi
          fi
-diff -pruN bash-completion-2.9.old/completions/pfexec bash-completion-2.9/completions/pfexec
---- bash-completion-2.9.old/completions/pfexec	2018-12-01 22:29:04.000000000 +0000
-+++ bash-completion-2.9/completions/pfexec	2019-05-01 15:15:58.168909114 +0000
+diff -pruN bash-completion-2.10.old/completions/pfexec bash-completion-2.10/completions/pfexec
+--- bash-completion-2.10.old/completions/pfexec	2019-08-16 13:05:59.000000000 +0000
++++ bash-completion-2.10/completions/pfexec	2019-12-31 10:59:48.021534901 +0000
 @@ -19,7 +19,7 @@ _pfexec()
  
    # Get profile names from profile description database, see prof_attr(4)
@@ -2073,21 +2387,21 @@ diff -pruN bash-completion-2.9.old/completions/pfexec bash-completion-2.9/comple
    fi
    if [[ "${cur}" == -* ]]; then
      COMPREPLY=( "-P" )
-diff -pruN bash-completion-2.9.old/completions/pgrep bash-completion-2.9/completions/pgrep
---- bash-completion-2.9.old/completions/pgrep	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pgrep	2019-05-01 15:15:57.988548800 +0000
+diff -pruN bash-completion-2.10.old/completions/pgrep bash-completion-2.10/completions/pgrep
+--- bash-completion-2.10.old/completions/pgrep	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pgrep	2019-12-31 10:59:48.000670875 +0000
 @@ -38,7 +38,7 @@ _pgrep()
      if [[ $cur == -* ]]; then
-         local help='$(_parse_help "$1")'
+         local help=$(_parse_help "$1")
          [[ $help ]] || help='$("$1" --usage 2>&1 |
 -            command sed -e "s/\[-signal\]//" -e "s/\[-SIGNAL\]//" |
 +            command gsed -e "s/\[-signal\]//" -e "s/\[-SIGNAL\]//" |
              _parse_usage -)'
          COMPREPLY=( $(compgen -W "$help" -- "$cur") )
          [[ $cword -eq 1 && $1 == *pkill ]] && _signals -
-diff -pruN bash-completion-2.9.old/completions/pine bash-completion-2.9/completions/pine
---- bash-completion-2.9.old/completions/pine	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pine	2019-05-01 15:15:58.549020855 +0000
+diff -pruN bash-completion-2.10.old/completions/pine bash-completion-2.10/completions/pine
+--- bash-completion-2.10.old/completions/pine	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pine	2019-12-31 10:59:48.130971304 +0000
 @@ -23,7 +23,7 @@ _pine()
      if [[ "$cur" == -* ]]; then
          COMPREPLY=( $(compgen -W '$(_parse_help "$1" -h)' -- "$cur") )
@@ -2097,9 +2411,9 @@ diff -pruN bash-completion-2.9.old/completions/pine bash-completion-2.9/completi
              2>/dev/null)' -- "$cur") )
      fi
  } &&
-diff -pruN bash-completion-2.9.old/completions/pkg bash-completion-2.9/completions/pkg
---- bash-completion-2.9.old/completions/pkg	2018-12-01 22:29:04.000000000 +0000
-+++ bash-completion-2.9/completions/pkg	2019-05-01 15:15:58.546178147 +0000
+diff -pruN bash-completion-2.10.old/completions/pkg bash-completion-2.10/completions/pkg
+--- bash-completion-2.10.old/completions/pkg	2019-08-16 13:05:59.000000000 +0000
++++ bash-completion-2.10/completions/pkg	2019-12-31 10:59:48.208952203 +0000
 @@ -10,13 +10,13 @@ COMP_WORDBREAKS="${COMP_WORDBREAKS//,},"
  _get_installed_packages()
  {
@@ -2116,9 +2430,9 @@ diff -pruN bash-completion-2.9.old/completions/pkg bash-completion-2.9/completio
  }
  
  _get_alternative_output_format()
-diff -pruN bash-completion-2.9.old/completions/pkg-config bash-completion-2.9/completions/pkg-config
---- bash-completion-2.9.old/completions/pkg-config	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pkg-config	2019-05-01 15:15:57.971604127 +0000
+diff -pruN bash-completion-2.10.old/completions/pkg-config bash-completion-2.10/completions/pkg-config
+--- bash-completion-2.10.old/completions/pkg-config	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pkg-config	2019-12-31 10:59:48.010072344 +0000
 @@ -36,7 +36,7 @@ _pkg_config()
          [[ $COMPREPLY == *= ]] && compopt -o nospace
      else
@@ -2128,9 +2442,9 @@ diff -pruN bash-completion-2.9.old/completions/pkg-config bash-completion-2.9/co
          _filedir pc
      fi
  } &&
-diff -pruN bash-completion-2.9.old/completions/pkg-get bash-completion-2.9/completions/pkg-get
---- bash-completion-2.9.old/completions/pkg-get	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pkg-get	2019-05-01 15:15:57.847765870 +0000
+diff -pruN bash-completion-2.10.old/completions/pkg-get bash-completion-2.10/completions/pkg-get
+--- bash-completion-2.10.old/completions/pkg-get	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pkg-get	2019-12-31 10:59:47.912093980 +0000
 @@ -16,7 +16,7 @@ _pkg_get_get_catalog_file()
      conffile="${conffile:-/opt/csw/etc/pkg-get.conf}"
  
@@ -2149,9 +2463,9 @@ diff -pruN bash-completion-2.9.old/completions/pkg-get bash-completion-2.9/compl
                  COMPREPLY=( $(compgen -W "${packages_list}" -- ${cur}) )
              fi
          fi
-diff -pruN bash-completion-2.9.old/completions/pkgadd bash-completion-2.9/completions/pkgadd
---- bash-completion-2.9.old/completions/pkgadd	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pkgadd	2019-05-01 15:15:58.043088183 +0000
+diff -pruN bash-completion-2.10.old/completions/pkgadd bash-completion-2.10/completions/pkgadd
+--- bash-completion-2.10.old/completions/pkgadd	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pkgadd	2019-12-31 10:59:48.105059683 +0000
 @@ -49,7 +49,7 @@ _pkgadd ()
                          pkginst_list="${pkginst_list[@]}"
                  else
@@ -2161,9 +2475,9 @@ diff -pruN bash-completion-2.9.old/completions/pkgadd bash-completion-2.9/comple
              fi
              COMPREPLY=( $(compgen -W "$pkginst_list" -- ${cur}) )
          fi
-diff -pruN bash-completion-2.9.old/completions/pkgutil bash-completion-2.9/completions/pkgutil
---- bash-completion-2.9.old/completions/pkgutil	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pkgutil	2019-05-01 15:15:58.403385021 +0000
+diff -pruN bash-completion-2.10.old/completions/pkgutil bash-completion-2.10/completions/pkgutil
+--- bash-completion-2.10.old/completions/pkgutil	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pkgutil	2019-12-31 10:59:48.540033122 +0000
 @@ -66,7 +66,7 @@ _pkgutil()
      if [[ -n "$command" ]] && [[ ! "$cur" == -* ]]; then
  
@@ -2187,9 +2501,9 @@ diff -pruN bash-completion-2.9.old/completions/pkgutil bash-completion-2.9/compl
              packages_list=${packages_list%|}
              packages_list=$(nawk " \$3 ~ /^$packages_list\$/ { print \$1 }" "${catalog_files[@]}")
              COMPREPLY=( $(compgen -W "${packages_list}" -- $cur) )
-diff -pruN bash-completion-2.9.old/completions/pngfix bash-completion-2.9/completions/pngfix
---- bash-completion-2.9.old/completions/pngfix	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pngfix	2019-05-01 15:15:57.985536814 +0000
+diff -pruN bash-completion-2.10.old/completions/pngfix bash-completion-2.10/completions/pngfix
+--- bash-completion-2.10.old/completions/pngfix	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pngfix	2019-12-31 10:59:47.819004108 +0000
 @@ -15,7 +15,7 @@ _pngfix()
              ;;
          --strip)
@@ -2199,9 +2513,9 @@ diff -pruN bash-completion-2.9.old/completions/pngfix bash-completion-2.9/comple
                  -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/portinstall bash-completion-2.9/completions/portinstall
---- bash-completion-2.9.old/completions/portinstall	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/portinstall	2019-05-01 15:15:57.954620810 +0000
+diff -pruN bash-completion-2.10.old/completions/portinstall bash-completion-2.10/completions/portinstall
+--- bash-completion-2.10.old/completions/portinstall	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/portinstall	2019-12-31 10:59:48.233119239 +0000
 @@ -18,9 +18,9 @@ _portinstall()
  
      [[ "$prev" == -l || "$prev" == -L || "$prev" == -o ]] && return
@@ -2214,9 +2528,9 @@ diff -pruN bash-completion-2.9.old/completions/portinstall bash-completion-2.9/c
          <$indexfile | cut -d'|' -f2) )
      COMPREPLY2=( ${COMPREPLY2[@]#$portsdir} )
      COMPREPLY+=( "${COMPREPLY2[@]}" )
-diff -pruN bash-completion-2.9.old/completions/postcat bash-completion-2.9/completions/postcat
---- bash-completion-2.9.old/completions/postcat	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/postcat	2019-05-01 15:15:58.159957437 +0000
+diff -pruN bash-completion-2.10.old/completions/postcat bash-completion-2.10/completions/postcat
+--- bash-completion-2.10.old/completions/postcat	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/postcat	2019-12-31 10:59:47.954442952 +0000
 @@ -24,7 +24,7 @@ _postcat()
      if [[ $qfile -eq 1 ]]; then
          local len=${#cur} pval
@@ -2226,9 +2540,21 @@ diff -pruN bash-completion-2.9.old/completions/postcat bash-completion-2.9/compl
              if [[ "$cur" == "${pval:0:$len}" ]]; then
                  COMPREPLY+=( $pval )
              fi
-diff -pruN bash-completion-2.9.old/completions/postsuper bash-completion-2.9/completions/postsuper
---- bash-completion-2.9.old/completions/postsuper	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/postsuper	2019-05-01 15:15:58.220731499 +0000
+diff -pruN bash-completion-2.10.old/completions/postfix bash-completion-2.10/completions/postfix
+--- bash-completion-2.10.old/completions/postfix	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/postfix	2019-12-31 10:59:47.835720951 +0000
+@@ -18,7 +18,7 @@ _postfix()
+ 
+     if [[ $cur == -* ]]; then
+         # TODO: doesn't seem to work; the usage message doesn't get output
+-        #       if we try to grep it, it's only output on the console?
++        #       if we try to ggrep it, it's only output on the console?
+         COMPREPLY=( $(compgen -W '$(_parse_usage "$1")' -- "$cur") )
+         return
+     fi
+diff -pruN bash-completion-2.10.old/completions/postsuper bash-completion-2.10/completions/postsuper
+--- bash-completion-2.10.old/completions/postsuper	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/postsuper	2019-12-31 10:59:48.029819803 +0000
 @@ -15,7 +15,7 @@ _postsuper()
          -[dr])
              len=${#cur}
@@ -2256,9 +2582,9 @@ diff -pruN bash-completion-2.9.old/completions/postsuper bash-completion-2.9/com
                  if [[ "$cur" == "${pval:0:$len}" ]]; then
                      COMPREPLY+=( $pval )
                  fi
-diff -pruN bash-completion-2.9.old/completions/povray bash-completion-2.9/completions/povray
---- bash-completion-2.9.old/completions/povray	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/povray	2019-05-01 15:15:58.374980252 +0000
+diff -pruN bash-completion-2.10.old/completions/povray bash-completion-2.10/completions/povray
+--- bash-completion-2.10.old/completions/povray	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/povray	2019-12-31 10:59:48.267970683 +0000
 @@ -21,14 +21,14 @@ _povray()
              ;;
          [-+]O*)
@@ -2285,9 +2611,9 @@ diff -pruN bash-completion-2.9.old/completions/povray bash-completion-2.9/comple
                  -e 't' -e 'd' -- "$pfx") )
              # to prevent [bar] expand to nothing.  can be done more easily?
              COMPREPLY=( "${COMPREPLY[@]/#/${pfx}[}" )
-diff -pruN bash-completion-2.9.old/completions/psql bash-completion-2.9/completions/psql
---- bash-completion-2.9.old/completions/psql	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/psql	2019-05-01 15:15:58.171983146 +0000
+diff -pruN bash-completion-2.10.old/completions/psql bash-completion-2.10/completions/psql
+--- bash-completion-2.10.old/completions/psql	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/psql	2019-12-31 10:59:48.555634755 +0000
 @@ -5,7 +5,7 @@ _pg_databases()
      # -w was introduced in 8.4, https://launchpad.net/bugs/164772
      # "Access privileges" in output may contain linefeeds, hence the NF > 1
@@ -2297,9 +2623,9 @@ diff -pruN bash-completion-2.9.old/completions/psql bash-completion-2.9/completi
  }
  
  _pg_users()
-diff -pruN bash-completion-2.9.old/completions/puppet bash-completion-2.9/completions/puppet
---- bash-completion-2.9.old/completions/puppet	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/puppet	2019-05-01 15:15:57.960757094 +0000
+diff -pruN bash-completion-2.10.old/completions/puppet bash-completion-2.10/completions/puppet
+--- bash-completion-2.10.old/completions/puppet	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/puppet	2019-12-31 10:59:47.796777532 +0000
 @@ -22,7 +22,7 @@ _puppet_certs()
          && puppetca=puppetca
  
@@ -2327,9 +2653,9 @@ diff -pruN bash-completion-2.9.old/completions/puppet bash-completion-2.9/comple
      COMPREPLY+=( $(compgen -W "$puppet_doc_list" -- "$cur") )
  }
  
-diff -pruN bash-completion-2.9.old/completions/pydoc bash-completion-2.9/completions/pydoc
---- bash-completion-2.9.old/completions/pydoc	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pydoc	2019-05-01 15:15:57.815502704 +0000
+diff -pruN bash-completion-2.10.old/completions/pydoc bash-completion-2.10/completions/pydoc
+--- bash-completion-2.10.old/completions/pydoc	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pydoc	2019-12-31 10:59:48.141053767 +0000
 @@ -17,7 +17,7 @@ _pydoc()
  
      if [[ "$cur" == -* ]]; then
@@ -2348,9 +2674,9 @@ diff -pruN bash-completion-2.9.old/completions/pydoc bash-completion-2.9/complet
  
      _filedir py
  } &&
-diff -pruN bash-completion-2.9.old/completions/pytest bash-completion-2.9/completions/pytest
---- bash-completion-2.9.old/completions/pytest	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/pytest	2019-05-01 15:15:58.348212158 +0000
+diff -pruN bash-completion-2.10.old/completions/pytest bash-completion-2.10/completions/pytest
+--- bash-completion-2.10.old/completions/pytest	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/pytest	2019-12-31 10:59:48.214123835 +0000
 @@ -64,7 +64,7 @@ _pytest()
              ;;
          --dist)
@@ -2360,9 +2686,9 @@ diff -pruN bash-completion-2.9.old/completions/pytest bash-completion-2.9/comple
                             -ne 's/.*choose from //p')
              COMPREPLY=( $(compgen -W '$modes' -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/qdbus bash-completion-2.9/completions/qdbus
---- bash-completion-2.9.old/completions/qdbus	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/qdbus	2019-05-01 15:15:58.510947752 +0000
+diff -pruN bash-completion-2.10.old/completions/qdbus bash-completion-2.10/completions/qdbus
+--- bash-completion-2.10.old/completions/qdbus	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/qdbus	2019-12-31 10:59:48.179286426 +0000
 @@ -7,7 +7,7 @@ _qdbus()
  
      [[ -n $cur ]] && unset "words[$((${#words[@]}-1))]"
@@ -2372,9 +2698,9 @@ diff -pruN bash-completion-2.9.old/completions/qdbus bash-completion-2.9/complet
  } &&
  complete -F _qdbus qdbus dcop
  
-diff -pruN bash-completion-2.9.old/completions/qemu bash-completion-2.9/completions/qemu
---- bash-completion-2.9.old/completions/qemu	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/qemu	2019-05-01 15:15:58.522605538 +0000
+diff -pruN bash-completion-2.10.old/completions/qemu bash-completion-2.10/completions/qemu
+--- bash-completion-2.10.old/completions/qemu	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/qemu	2019-12-31 10:59:48.167137795 +0000
 @@ -26,17 +26,17 @@ _qemu()
              return
              ;;
@@ -2405,9 +2731,9 @@ diff -pruN bash-completion-2.9.old/completions/qemu bash-completion-2.9/completi
              return
              ;;
          -watchdog-action)
-diff -pruN bash-completion-2.9.old/completions/quota bash-completion-2.9/completions/quota
---- bash-completion-2.9.old/completions/quota	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/quota	2019-05-01 15:15:58.445341537 +0000
+diff -pruN bash-completion-2.10.old/completions/quota bash-completion-2.10/completions/quota
+--- bash-completion-2.10.old/completions/quota	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/quota	2019-12-31 10:59:48.282208965 +0000
 @@ -32,7 +32,7 @@ _filesystems()
  {
      #  Only list filesystems starting with "/", otherwise we also get
@@ -2417,9 +2743,9 @@ diff -pruN bash-completion-2.9.old/completions/quota bash-completion-2.9/complet
          -- "$cur") )
  }
  
-diff -pruN bash-completion-2.9.old/completions/rdesktop bash-completion-2.9/completions/rdesktop
---- bash-completion-2.9.old/completions/rdesktop	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/rdesktop	2019-05-01 15:15:57.982497266 +0000
+diff -pruN bash-completion-2.10.old/completions/rdesktop bash-completion-2.10/completions/rdesktop
+--- bash-completion-2.10.old/completions/rdesktop	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/rdesktop	2019-12-31 10:59:47.873721480 +0000
 @@ -9,7 +9,7 @@ _rdesktop()
          -*k)
              COMPREPLY=( $(command ls \
@@ -2429,9 +2755,9 @@ diff -pruN bash-completion-2.9.old/completions/rdesktop bash-completion-2.9/comp
              COMPREPLY+=( $(command ls $HOME/.rdesktop/keymaps 2>/dev/null) )
              COMPREPLY+=( $(command ls ./keymaps 2>/dev/null) )
              COMPREPLY=( $(compgen -W '${COMPREPLY[@]}' -- "$cur") )
-diff -pruN bash-completion-2.9.old/completions/reportbug bash-completion-2.9/completions/reportbug
---- bash-completion-2.9.old/completions/reportbug	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/reportbug	2019-05-01 15:15:57.977853973 +0000
+diff -pruN bash-completion-2.10.old/completions/reportbug bash-completion-2.10/completions/reportbug
+--- bash-completion-2.10.old/completions/reportbug	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/reportbug	2019-12-31 10:59:48.494642069 +0000
 @@ -64,7 +64,7 @@ _reportbug()
              ;;
          --from-buildd)
@@ -2441,9 +2767,9 @@ diff -pruN bash-completion-2.9.old/completions/reportbug bash-completion-2.9/com
              return
              ;;
          --smtphost)
-diff -pruN bash-completion-2.9.old/completions/rpcdebug bash-completion-2.9/completions/rpcdebug
---- bash-completion-2.9.old/completions/rpcdebug	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/rpcdebug	2019-05-01 15:15:58.179322157 +0000
+diff -pruN bash-completion-2.10.old/completions/rpcdebug bash-completion-2.10/completions/rpcdebug
+--- bash-completion-2.10.old/completions/rpcdebug	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/rpcdebug	2019-12-31 10:59:48.111620807 +0000
 @@ -13,7 +13,7 @@ _rpcdebug_flags()
  
      if [[ -n $module ]]; then
@@ -2453,9 +2779,9 @@ diff -pruN bash-completion-2.9.old/completions/rpcdebug bash-completion-2.9/comp
      fi
  }
  
-diff -pruN bash-completion-2.9.old/completions/rpm bash-completion-2.9/completions/rpm
---- bash-completion-2.9.old/completions/rpm	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/rpm	2019-05-01 15:15:58.049082747 +0000
+diff -pruN bash-completion-2.10.old/completions/rpm bash-completion-2.10/completions/rpm
+--- bash-completion-2.10.old/completions/rpm	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/rpm	2019-12-31 10:59:47.921656057 +0000
 @@ -7,7 +7,7 @@ _rpm_installed_packages()
      if [[ -r /var/log/rpmpkgs && \
          /var/log/rpmpkgs -nt /var/lib/rpm/Packages ]]; then
@@ -2500,9 +2826,9 @@ diff -pruN bash-completion-2.9.old/completions/rpm bash-completion-2.9/completio
              fi
              ;;
          --define|--with|--without|-!(-*)D)
-diff -pruN bash-completion-2.9.old/completions/sbopkg bash-completion-2.9/completions/sbopkg
---- bash-completion-2.9.old/completions/sbopkg	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/sbopkg	2019-05-01 15:15:58.229334395 +0000
+diff -pruN bash-completion-2.10.old/completions/sbopkg bash-completion-2.10/completions/sbopkg
+--- bash-completion-2.10.old/completions/sbopkg	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/sbopkg	2019-12-31 10:59:48.306399978 +0000
 @@ -61,7 +61,7 @@ _sbopkg()
      done
      [[ -r $REPO_ROOT/$REPO_NAME/$REPO_BRANCH/SLACKBUILDS.TXT ]] || return
@@ -2512,9 +2838,9 @@ diff -pruN bash-completion-2.9.old/completions/sbopkg bash-completion-2.9/comple
          $REPO_ROOT/$REPO_NAME/$REPO_BRANCH/SLACKBUILDS.TXT)
          $(cd $QUEUEDIR; compgen -f -X "!*.sqf"  -- "$cur") )
  } &&
-diff -pruN bash-completion-2.9.old/completions/screen bash-completion-2.9/completions/screen
---- bash-completion-2.9.old/completions/screen	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/screen	2019-05-01 15:15:57.962314688 +0000
+diff -pruN bash-completion-2.10.old/completions/screen bash-completion-2.10/completions/screen
+--- bash-completion-2.10.old/completions/screen	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/screen	2019-12-31 10:59:47.802702798 +0000
 @@ -2,7 +2,7 @@
  
  _screen_sessions()
@@ -2524,9 +2850,9 @@ diff -pruN bash-completion-2.9.old/completions/screen bash-completion-2.9/comple
          's|^\t\{1,\}\([0-9]\{1,\}\.[^\t]\{1,\}\).*'"$1"'.*$|\1|p') )
      if [[ $cur == +([0-9])?(.*) ]]; then
          # Complete sessions including pid prefixes
-diff -pruN bash-completion-2.9.old/completions/scrub bash-completion-2.9/completions/scrub
---- bash-completion-2.9.old/completions/scrub	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/scrub	2019-05-01 15:15:57.811965331 +0000
+diff -pruN bash-completion-2.10.old/completions/scrub bash-completion-2.10/completions/scrub
+--- bash-completion-2.10.old/completions/scrub	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/scrub	2019-12-31 10:59:48.135833368 +0000
 @@ -11,7 +11,7 @@ _scrub()
              ;;
          --pattern|-!(-*)p)
@@ -2536,9 +2862,9 @@ diff -pruN bash-completion-2.9.old/completions/scrub bash-completion-2.9/complet
                  -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/shellcheck bash-completion-2.9/completions/shellcheck
---- bash-completion-2.9.old/completions/shellcheck	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/shellcheck	2019-05-01 15:15:58.329007205 +0000
+diff -pruN bash-completion-2.10.old/completions/shellcheck bash-completion-2.10/completions/shellcheck
+--- bash-completion-2.10.old/completions/shellcheck	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/shellcheck	2019-12-31 10:59:48.421510563 +0000
 @@ -3,7 +3,7 @@
  _shellcheck_optarg()
  {
@@ -2559,9 +2885,9 @@ diff -pruN bash-completion-2.9.old/completions/shellcheck bash-completion-2.9/co
              COMPREPLY=( $(compgen -W '$args' -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/sitecopy bash-completion-2.9/completions/sitecopy
---- bash-completion-2.9.old/completions/sitecopy	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/sitecopy	2019-05-01 15:15:58.061071550 +0000
+diff -pruN bash-completion-2.10.old/completions/sitecopy bash-completion-2.10/completions/sitecopy
+--- bash-completion-2.10.old/completions/sitecopy	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/sitecopy	2019-12-31 10:59:47.972906358 +0000
 @@ -42,7 +42,7 @@ _sitecopy()
  
      if [[ -r ~/.sitecopyrc ]]; then
@@ -2571,9 +2897,9 @@ diff -pruN bash-completion-2.9.old/completions/sitecopy bash-completion-2.9/comp
      fi
  } &&
  complete -F _sitecopy -o default sitecopy
-diff -pruN bash-completion-2.9.old/completions/slackpkg bash-completion-2.9/completions/slackpkg
---- bash-completion-2.9.old/completions/slackpkg	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/slackpkg	2019-05-01 15:15:58.304831656 +0000
+diff -pruN bash-completion-2.10.old/completions/slackpkg bash-completion-2.10/completions/slackpkg
+--- bash-completion-2.10.old/completions/slackpkg	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/slackpkg	2019-12-31 10:59:48.346453357 +0000
 @@ -79,12 +79,12 @@ _slackpkg()
              COMPREPLY+=( $(compgen -W 'a ap d e f k kde kdei l n t tcl x
                  xap xfce y' -- "$cur") )
@@ -2589,9 +2915,9 @@ diff -pruN bash-completion-2.9.old/completions/slackpkg bash-completion-2.9/comp
              return
              ;;
          update)
-diff -pruN bash-completion-2.9.old/completions/slapt-get bash-completion-2.9/completions/slapt-get
---- bash-completion-2.9.old/completions/slapt-get	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/slapt-get	2019-05-01 15:15:58.557870190 +0000
+diff -pruN bash-completion-2.10.old/completions/slapt-get bash-completion-2.10/completions/slapt-get
+--- bash-completion-2.10.old/completions/slapt-get	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/slapt-get	2019-12-31 10:59:47.850964737 +0000
 @@ -57,12 +57,12 @@ _slapt_get()
              # it can search for names only
              local name=${cur%%-*}
@@ -2607,9 +2933,9 @@ diff -pruN bash-completion-2.9.old/completions/slapt-get bash-completion-2.9/com
              return
              ;;
          ins) # --remove|--filelist
-diff -pruN bash-completion-2.9.old/completions/slapt-src bash-completion-2.9/completions/slapt-src
---- bash-completion-2.9.old/completions/slapt-src	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/slapt-src	2019-05-01 15:15:58.230985036 +0000
+diff -pruN bash-completion-2.10.old/completions/slapt-src bash-completion-2.10/completions/slapt-src
+--- bash-completion-2.10.old/completions/slapt-src	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/slapt-src	2019-12-31 10:59:48.019947085 +0000
 @@ -55,11 +55,11 @@ _slapt_src()
          local name=${cur%:*}
          local version=${cur##*:}
@@ -2624,9 +2950,9 @@ diff -pruN bash-completion-2.9.old/completions/slapt-src bash-completion-2.9/com
      fi
  } &&
  complete -F _slapt_src slapt-src
-diff -pruN bash-completion-2.9.old/completions/smbclient bash-completion-2.9/completions/smbclient
---- bash-completion-2.9.old/completions/smbclient	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/smbclient	2019-05-01 15:15:57.863542094 +0000
+diff -pruN bash-completion-2.10.old/completions/smbclient bash-completion-2.10/completions/smbclient
+--- bash-completion-2.10.old/completions/smbclient	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/smbclient	2019-12-31 10:59:48.427926444 +0000
 @@ -16,7 +16,7 @@ _samba_hosts()
  {
      if [[ -n ${COMP_SAMBA_SCAN:-} ]]; then
@@ -2636,9 +2962,9 @@ diff -pruN bash-completion-2.9.old/completions/smbclient bash-completion-2.9/com
              )" -- "$cur") )
      fi
  }
-diff -pruN bash-completion-2.9.old/completions/ss bash-completion-2.9/completions/ss
---- bash-completion-2.9.old/completions/ss	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ss	2019-05-01 15:15:58.364529896 +0000
+diff -pruN bash-completion-2.10.old/completions/ss bash-completion-2.10/completions/ss
+--- bash-completion-2.10.old/completions/ss	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ss	2019-12-31 10:59:48.114920919 +0000
 @@ -17,7 +17,7 @@ _ss()
          --query|-!(-*)A)
              local prefix=; [[ $cur == *,* ]] && prefix="${cur%,*},"
@@ -2648,10 +2974,10 @@ diff -pruN bash-completion-2.9.old/completions/ss bash-completion-2.9/completion
                  -- "${cur##*,}") )
              [[ ${#COMPREPLY[@]} -eq 1 ]] && COMPREPLY=( ${COMPREPLY/#/$prefix} )
              return
-diff -pruN bash-completion-2.9.old/completions/ssh bash-completion-2.9/completions/ssh
---- bash-completion-2.9.old/completions/ssh	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/ssh	2019-05-01 15:15:58.023172652 +0000
-@@ -365,7 +365,7 @@ _scp_remote_files()
+diff -pruN bash-completion-2.10.old/completions/ssh bash-completion-2.10/completions/ssh
+--- bash-completion-2.10.old/completions/ssh	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/ssh	2019-12-31 10:59:47.904651679 +0000
+@@ -409,7 +409,7 @@ _scp_remote_files()
      local path=${cur#*:}
  
      # unescape (3 backslashes to 1 for chars we escaped)
@@ -2660,7 +2986,7 @@ diff -pruN bash-completion-2.9.old/completions/ssh bash-completion-2.9/completio
  
      # default to home dir of specified user on remote host
      if [[ -z $path ]]; then
-@@ -377,13 +377,13 @@ _scp_remote_files()
+@@ -421,13 +421,13 @@ _scp_remote_files()
          # escape problematic characters; remove non-dirs
          files=$(ssh -o 'Batchmode yes' $userhost \
              command ls -aF1dL "$path*" 2>/dev/null | \
@@ -2676,7 +3002,7 @@ diff -pruN bash-completion-2.9.old/completions/ssh bash-completion-2.9/completio
              -e 's/[^\/]$/& /g')
      fi
      COMPREPLY+=( $files )
-@@ -405,10 +405,10 @@ _scp_local_files()
+@@ -449,10 +449,10 @@ _scp_local_files()
  
      if $dirsonly ; then
          COMPREPLY+=( $(command ls -aF1dL $cur* 2>/dev/null | \
@@ -2689,9 +3015,9 @@ diff -pruN bash-completion-2.9.old/completions/ssh bash-completion-2.9/completio
              -e 's/[^\/]$/& /g' -e "s/^/$1/") )
      fi
  }
-diff -pruN bash-completion-2.9.old/completions/strings bash-completion-2.9/completions/strings
---- bash-completion-2.9.old/completions/strings	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/strings	2019-05-01 15:15:58.313749022 +0000
+diff -pruN bash-completion-2.10.old/completions/strings bash-completion-2.10/completions/strings
+--- bash-completion-2.10.old/completions/strings	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/strings	2019-12-31 10:59:48.240103864 +0000
 @@ -15,7 +15,7 @@ _strings()
              ;;
          --target|-!(-*)T)
@@ -2701,9 +3027,9 @@ diff -pruN bash-completion-2.9.old/completions/strings bash-completion-2.9/compl
                  -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/svcadm bash-completion-2.9/completions/svcadm
---- bash-completion-2.9.old/completions/svcadm	2018-12-01 22:29:04.000000000 +0000
-+++ bash-completion-2.9/completions/svcadm	2019-05-01 15:15:58.274158368 +0000
+diff -pruN bash-completion-2.10.old/completions/svcadm bash-completion-2.10/completions/svcadm
+--- bash-completion-2.10.old/completions/svcadm	2019-08-16 13:05:59.000000000 +0000
++++ bash-completion-2.10/completions/svcadm	2019-12-31 10:59:48.354505843 +0000
 @@ -25,7 +25,7 @@
  _gen_zoneadm_list()
  {
@@ -2722,9 +3048,9 @@ diff -pruN bash-completion-2.9.old/completions/svcadm bash-completion-2.9/comple
              fi
              COMPREPLY=( $(compgen -W "${command_list}" -- ${cur}) )
          fi
-diff -pruN bash-completion-2.9.old/completions/svk bash-completion-2.9/completions/svk
---- bash-completion-2.9.old/completions/svk	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/svk	2019-05-01 15:15:58.259234641 +0000
+diff -pruN bash-completion-2.10.old/completions/svk bash-completion-2.10/completions/svk
+--- bash-completion-2.10.old/completions/svk	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/svk	2019-12-31 10:59:48.480297832 +0000
 @@ -191,7 +191,7 @@ _svk()
                      ;;
                  sync)
@@ -2743,9 +3069,9 @@ diff -pruN bash-completion-2.9.old/completions/svk bash-completion-2.9/completio
                      ;;
                  *)
                      _filedir
-diff -pruN bash-completion-2.9.old/completions/synclient bash-completion-2.9/completions/synclient
---- bash-completion-2.9.old/completions/synclient	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/synclient	2019-05-01 15:15:58.467710166 +0000
+diff -pruN bash-completion-2.10.old/completions/synclient bash-completion-2.10/completions/synclient
+--- bash-completion-2.10.old/completions/synclient	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/synclient	2019-12-31 10:59:47.933683427 +0000
 @@ -15,7 +15,7 @@ _synclient()
          COMPREPLY=( $(compgen -W '$(_parse_usage "$1")' -- "$cur") )
      elif [[ $cur != *=?* ]]; then
@@ -2755,9 +3081,9 @@ diff -pruN bash-completion-2.9.old/completions/synclient bash-completion-2.9/com
          compopt -o nospace
      fi
  } &&
-diff -pruN bash-completion-2.9.old/completions/sysbench bash-completion-2.9/completions/sysbench
---- bash-completion-2.9.old/completions/sysbench	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/sysbench	2019-05-01 15:15:57.900597884 +0000
+diff -pruN bash-completion-2.10.old/completions/sysbench bash-completion-2.10/completions/sysbench
+--- bash-completion-2.10.old/completions/sysbench	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/sysbench	2019-12-31 10:59:47.773157493 +0000
 @@ -78,7 +78,7 @@ _sysbench()
              ;;
          --db-driver)
@@ -2767,21 +3093,9 @@ diff -pruN bash-completion-2.9.old/completions/sysbench bash-completion-2.9/comp
                      -ne 's/^  *\([^ ]*\) .*/\1/p')" -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/tar bash-completion-2.9/completions/tar
---- bash-completion-2.9.old/completions/tar	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/tar	2019-05-01 15:15:57.855187865 +0000
-@@ -411,7 +411,7 @@ __tar_try_list_archive()
-     shift
- 
-     read tarball <<<"$(printf -- '%s\n' "$@" \
--        | command sed -n "/^.\{1,\}$regex\$/p")"
-+        | command gsed -n "/^.\{1,\}$regex\$/p")"
-     if [[ -n "$tarball" ]]; then
-         local IFS=$'\n'
-         COMPREPLY=($(compgen -o filenames -W "$(
-diff -pruN bash-completion-2.9.old/completions/tipc bash-completion-2.9/completions/tipc
---- bash-completion-2.9.old/completions/tipc	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/tipc	2019-05-01 15:15:58.092792016 +0000
+diff -pruN bash-completion-2.10.old/completions/tipc bash-completion-2.10/completions/tipc
+--- bash-completion-2.10.old/completions/tipc	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/tipc	2019-12-31 10:59:48.439429681 +0000
 @@ -40,7 +40,7 @@ _tipc_bearer() {
      elif [[ $cword -eq $optind+3 ]]; then
          case "$media" in
@@ -2791,7 +3105,7 @@ diff -pruN bash-completion-2.9.old/completions/tipc bash-completion-2.9/completi
              COMPREPLY=( $(compgen -W '$names' -- $cur) )
              ;;
          "eth")
-@@ -62,11 +62,11 @@ _tipc_link() {
+@@ -62,9 +62,9 @@ _tipc_link() {
      if [[ $cword -eq $optind ]]; then
          COMPREPLY=( $(compgen -W 'link' -- $cur) )
      elif [[ $cword -eq $optind+1 ]]; then
@@ -2800,15 +3114,24 @@ diff -pruN bash-completion-2.9.old/completions/tipc bash-completion-2.9/completi
          local links=$(tipc link list 2>/dev/null | \
 -            awk '{print substr($1, 0, length($1))}')
 +            nawk '{print substr($1, 0, length($1))}')
-         if [[ $filter == "peers" ]]; then
--            links=$(command sed '/broadcast-link/d' <<<"$links")
-+            links=$(command gsed '/broadcast-link/d' <<<"$links")
-         fi
-         COMPREPLY=( $(compgen -W '$links' -- $cur) )
-     fi
-diff -pruN bash-completion-2.9.old/completions/tshark bash-completion-2.9/completions/tshark
---- bash-completion-2.9.old/completions/tshark	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/tshark	2019-05-01 15:15:58.291746526 +0000
+         local -a exclude
+         [[ $filter == peers ]] && exclude=( -X broadcast-link )
+         COMPREPLY=( $(compgen "${exclude[@]}" -W '$links' -- $cur) )
+diff -pruN bash-completion-2.10.old/completions/tox bash-completion-2.10/completions/tox
+--- bash-completion-2.10.old/completions/tox	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/tox	2019-12-31 10:59:47.739303033 +0000
+@@ -27,7 +27,7 @@ _tox()
+             local envs=$(
+                 { "$1" --listenvs-all || "$1" --listenvs; } 2>/dev/null )
+             [[ $envs ]] || envs=$(
+-                    command sed -e 's/,/ /g' -ne 's/^envlist[[:space:]]*=//p' \
++                    command gsed -e 's/,/ /g' -ne 's/^envlist[[:space:]]*=//p' \
+                             tox.ini 2>/dev/null)
+             local prefix=""; [[ $cur == *,* ]] && prefix="${cur%,*},"
+             COMPREPLY=( $(compgen -X '*[{}]*' -W "$envs ALL" -- "${cur##*,}") )
+diff -pruN bash-completion-2.10.old/completions/tshark bash-completion-2.10/completions/tshark
+--- bash-completion-2.10.old/completions/tshark	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/tshark	2019-12-31 10:59:48.370625790 +0000
 @@ -25,7 +25,7 @@ _tshark()
              else
                  [ -n "$_tshark_prefs" ] ||
@@ -2870,22 +3193,10 @@ diff -pruN bash-completion-2.9.old/completions/tshark bash-completion-2.9/comple
                      { sub("^[[]","",$2); sub("[]]$","",$2); print $2 }')" \
                  -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/update-rc.d bash-completion-2.9/completions/update-rc.d
---- bash-completion-2.9.old/completions/update-rc.d	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/update-rc.d	2019-05-01 15:15:58.392742995 +0000
-@@ -19,7 +19,7 @@ _update_rc_d()
-     if [[ $cword -eq 1 || "$prev" == -* ]]; then
-     valid_options=( $(\
-         tr " " "\n" <<<"${words[*]} ${options[*]}" \
--        | command sed -ne "/$(command sed "s/ /\\|/g" <<<"${options[*]}")/p" \
-+        | command gsed -ne "/$(command gsed "s/ /\\|/g" <<<"${options[*]}")/p" \
-         | sort | uniq -u \
-         ) )
-     COMPREPLY=( $(compgen -W '${options[@]} ${services[@]}' \
-diff -pruN bash-completion-2.9.old/completions/valgrind bash-completion-2.9/completions/valgrind
---- bash-completion-2.9.old/completions/valgrind	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/valgrind	2019-05-01 15:15:58.030892421 +0000
-@@ -70,7 +70,7 @@ _valgrind()
+diff -pruN bash-completion-2.10.old/completions/valgrind bash-completion-2.10/completions/valgrind
+--- bash-completion-2.10.old/completions/valgrind	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/valgrind	2019-12-31 10:59:48.046002161 +0000
+@@ -71,7 +71,7 @@ _valgrind()
          # generic cases parsed from --help output
          --+([-A-Za-z0-9_]))
              local value=$($1 --help-debug $tool 2>/dev/null | \
@@ -2894,9 +3205,9 @@ diff -pruN bash-completion-2.9.old/completions/valgrind bash-completion-2.9/comp
              case $value in
                  \<file*\>)
                      _filedir
-diff -pruN bash-completion-2.9.old/completions/wget bash-completion-2.9/completions/wget
---- bash-completion-2.9.old/completions/wget	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/wget	2019-05-01 15:15:58.115281717 +0000
+diff -pruN bash-completion-2.10.old/completions/wget bash-completion-2.10/completions/wget
+--- bash-completion-2.10.old/completions/wget	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/wget	2019-12-31 10:59:48.517085711 +0000
 @@ -115,7 +115,7 @@ _wget()
              return
              ;;
@@ -2906,9 +3217,9 @@ diff -pruN bash-completion-2.9.old/completions/wget bash-completion-2.9/completi
                  '/^login/s/^[[:blank:]]*login[[:blank:]]//p' ~/.netrc \
                  2>/dev/null)" -- "$cur") )
              return
-diff -pruN bash-completion-2.9.old/completions/wodim bash-completion-2.9/completions/wodim
---- bash-completion-2.9.old/completions/wodim	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/wodim	2019-05-01 15:15:57.890764333 +0000
+diff -pruN bash-completion-2.10.old/completions/wodim bash-completion-2.10/completions/wodim
+--- bash-completion-2.10.old/completions/wodim	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/wodim	2019-12-31 10:59:48.062270521 +0000
 @@ -45,7 +45,7 @@ _cdrecord()
                  ;;
              driver)
@@ -2918,9 +3229,9 @@ diff -pruN bash-completion-2.9.old/completions/wodim bash-completion-2.9/complet
                  ;;
              minbuf)
                  COMPREPLY=( $(compgen -W '{25..95}' -- "$cur") )
-diff -pruN bash-completion-2.9.old/completions/wol bash-completion-2.9/completions/wol
---- bash-completion-2.9.old/completions/wol	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/wol	2019-05-01 15:15:57.950080773 +0000
+diff -pruN bash-completion-2.10.old/completions/wol bash-completion-2.10/completions/wol
+--- bash-completion-2.10.old/completions/wol	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/wol	2019-12-31 10:59:47.937778133 +0000
 @@ -13,7 +13,7 @@ _wol()
              # Broadcast addresses
              local PATH=$PATH:/sbin
@@ -2930,9 +3241,9 @@ diff -pruN bash-completion-2.9.old/completions/wol bash-completion-2.9/completio
                  's/.*inet.*[[:space:]]brd[[:space:]]\([^[:space:]]*\).*/\1/p' -ne \
                  's/.*[[:space:]]broadcast[[:space:]]\{1,\}\([^[:space:]]*\).*/\1/p') )
              _known_hosts_real -- "$cur"
-diff -pruN bash-completion-2.9.old/completions/wvdial bash-completion-2.9/completions/wvdial
---- bash-completion-2.9.old/completions/wvdial	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/wvdial	2019-05-01 15:15:58.248872187 +0000
+diff -pruN bash-completion-2.10.old/completions/wvdial bash-completion-2.10/completions/wvdial
+--- bash-completion-2.10.old/completions/wvdial	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/wvdial	2019-12-31 10:59:48.325962409 +0000
 @@ -33,8 +33,8 @@ _wvdial()
              done
              # parse config files for sections and
@@ -2944,9 +3255,9 @@ diff -pruN bash-completion-2.9.old/completions/wvdial bash-completion-2.9/comple
              # escape spaces
              COMPREPLY=${COMPREPLY// /\\ }
              ;;
-diff -pruN bash-completion-2.9.old/completions/xdg-settings bash-completion-2.9/completions/xdg-settings
---- bash-completion-2.9.old/completions/xdg-settings	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/xdg-settings	2019-05-01 15:15:58.398533881 +0000
+diff -pruN bash-completion-2.10.old/completions/xdg-settings bash-completion-2.10/completions/xdg-settings
+--- bash-completion-2.10.old/completions/xdg-settings	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/xdg-settings	2019-12-31 10:59:48.116511470 +0000
 @@ -23,7 +23,7 @@ _xdg_settings()
          COMPREPLY=( $(compgen -W "get check set" -- "$cur") )
      elif [[ $args -eq 2 ]]; then
@@ -2956,9 +3267,9 @@ diff -pruN bash-completion-2.9.old/completions/xdg-settings bash-completion-2.9/
      fi
  } &&
  complete -F _xdg_settings xdg-settings
-diff -pruN bash-completion-2.9.old/completions/xfreerdp bash-completion-2.9/completions/xfreerdp
---- bash-completion-2.9.old/completions/xfreerdp	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/xfreerdp	2019-05-01 15:15:57.896998397 +0000
+diff -pruN bash-completion-2.10.old/completions/xfreerdp bash-completion-2.10/completions/xfreerdp
+--- bash-completion-2.10.old/completions/xfreerdp	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/xfreerdp	2019-12-31 10:59:47.775586601 +0000
 @@ -8,7 +8,7 @@ _xfreerdp()
      case $prev in  # old/dash syntax
          -k)
@@ -3003,9 +3314,9 @@ diff -pruN bash-completion-2.9.old/completions/xfreerdp bash-completion-2.9/comp
              2>/dev/null)" -- "$cur") )
      fi
  
-diff -pruN bash-completion-2.9.old/completions/xgamma bash-completion-2.9/completions/xgamma
---- bash-completion-2.9.old/completions/xgamma	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/xgamma	2019-05-01 15:15:58.217770469 +0000
+diff -pruN bash-completion-2.10.old/completions/xgamma bash-completion-2.10/completions/xgamma
+--- bash-completion-2.10.old/completions/xgamma	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/xgamma	2019-12-31 10:59:48.291815943 +0000
 @@ -7,7 +7,7 @@ _xgamma()
  
      case "$prev" in
@@ -3024,9 +3335,9 @@ diff -pruN bash-completion-2.9.old/completions/xgamma bash-completion-2.9/comple
                      '/^Screen /s|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null)
                  t="${cur#:}"
                  COMPREPLY=( $(compgen -P "${t%.*}." -W "$screens" -- \
-diff -pruN bash-completion-2.9.old/completions/xrandr bash-completion-2.9/completions/xrandr
---- bash-completion-2.9.old/completions/xrandr	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/xrandr	2019-05-01 15:15:58.333459721 +0000
+diff -pruN bash-completion-2.10.old/completions/xrandr bash-completion-2.10/completions/xrandr
+--- bash-completion-2.10.old/completions/xrandr	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/xrandr	2019-12-31 10:59:48.207146473 +0000
 @@ -12,7 +12,7 @@ _xrandr()
              return
              ;;
@@ -3063,21 +3374,21 @@ diff -pruN bash-completion-2.9.old/completions/xrandr bash-completion-2.9/comple
          -- "$cur") )
  } &&
  complete -F _xrandr xrandr
-diff -pruN bash-completion-2.9.old/completions/xsltproc bash-completion-2.9/completions/xsltproc
---- bash-completion-2.9.old/completions/xsltproc	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/xsltproc	2019-05-01 15:15:58.219264967 +0000
-@@ -16,7 +16,7 @@ _xsltproc()
-             ;;
+diff -pruN bash-completion-2.10.old/completions/xsltproc bash-completion-2.10/completions/xsltproc
+--- bash-completion-2.10.old/completions/xsltproc	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/xsltproc	2019-12-31 10:59:48.231355322 +0000
+@@ -17,7 +17,7 @@ _xsltproc()
          --encoding)
              # some aliases removed
--            COMPREPLY=( $(compgen -W "$(iconv -l | command sed -e '/^UTF[1378]/d' \
-+            COMPREPLY=( $(compgen -W "$(iconv -l | command gsed -e '/^UTF[1378]/d' \
-                 -e '/^ISO[0-9_]/d' -e '/^8859/d' -e 's/\/.*//')" -- "$cur") )
+             COMPREPLY=( $(compgen -X '@(UTF[1378]|8859|ISO[0-9_])*' \
+-                -W "$(iconv -l | command sed -e 's/\/.*//')" -- "$cur") )
++                -W "$(iconv -l | command gsed -e 's/\/.*//')" -- "$cur") )
              return
              ;;
-diff -pruN bash-completion-2.9.old/completions/zfs bash-completion-2.9/completions/zfs
---- bash-completion-2.9.old/completions/zfs	2018-12-01 22:29:04.000000000 +0000
-+++ bash-completion-2.9/completions/zfs	2019-05-01 15:15:58.133118037 +0000
+         --param|--stringparam)
+diff -pruN bash-completion-2.10.old/completions/zfs bash-completion-2.10/completions/zfs
+--- bash-completion-2.10.old/completions/zfs	2019-08-16 13:05:59.000000000 +0000
++++ bash-completion-2.10/completions/zfs	2019-12-31 10:59:47.821153630 +0000
 @@ -37,22 +37,22 @@ shopt -u hostcomplete
  
  __zfs_get_commands()
@@ -3123,9 +3434,9 @@ diff -pruN bash-completion-2.9.old/completions/zfs bash-completion-2.9/completio
          fi
      else
          __zfs_match_snapshot_or_bookmark
-diff -pruN bash-completion-2.9.old/completions/zones bash-completion-2.9/completions/zones
---- bash-completion-2.9.old/completions/zones	2018-12-01 22:29:04.000000000 +0000
-+++ bash-completion-2.9/completions/zones	2019-05-01 15:15:58.006702245 +0000
+diff -pruN bash-completion-2.10.old/completions/zones bash-completion-2.10/completions/zones
+--- bash-completion-2.10.old/completions/zones	2019-08-16 13:05:59.000000000 +0000
++++ bash-completion-2.10/completions/zones	2019-12-31 10:59:47.982592240 +0000
 @@ -31,7 +31,7 @@ _zlogin()
          esac
      else
@@ -3144,9 +3455,9 @@ diff -pruN bash-completion-2.9.old/completions/zones bash-completion-2.9/complet
        COMPREPLY=( $(compgen -W "${zones}" -- ${cur}) )
      fi
  }
-diff -pruN bash-completion-2.9.old/completions/zopfli bash-completion-2.9/completions/zopfli
---- bash-completion-2.9.old/completions/zopfli	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/completions/zopfli	2019-05-01 15:15:58.414941152 +0000
+diff -pruN bash-completion-2.10.old/completions/zopfli bash-completion-2.10/completions/zopfli
+--- bash-completion-2.10.old/completions/zopfli	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/zopfli	2019-12-31 10:59:48.501029434 +0000
 @@ -13,7 +13,7 @@ _zopfli()
  
      if [[ "$cur" == -* ]]; then
@@ -3156,256 +3467,3 @@ diff -pruN bash-completion-2.9.old/completions/zopfli bash-completion-2.9/comple
          [[ $COMPREPLY == --i ]] && compopt -o nospace
          return
      fi
---- bash-completion-2.9.old/bash_completion	2019-04-27 10:54:49.000000000 +0000
-+++ bash-completion-2.9/bash_completion	2019-05-06 08:35:24.004260191 +0000
-@@ -866,7 +866,7 @@ _mac_addresses()
-     # - ifconfig on FreeBSD: ether
-     # - ip link: link/ether
-     COMPREPLY+=( $(\
--        { LC_ALL=C ifconfig -a || ip link show; } 2>/dev/null | command sed -ne \
-+        { LC_ALL=C ifconfig -a || ip link show; } 2>/dev/null | command gsed -ne \
-         "s/.*[[:space:]]HWaddr[[:space:]]\{1,\}\($re\)[[:space:]].*/\1/p" -ne \
-         "s/.*[[:space:]]HWaddr[[:space:]]\{1,\}\($re\)[[:space:]]*$/\1/p" -ne \
-         "s|.*[[:space:]]\(link/\)\{0,1\}ether[[:space:]]\{1,\}\($re\)[[:space:]].*|\2|p" -ne \
-@@ -874,12 +874,12 @@ _mac_addresses()
-         ) )
- 
-     # ARP cache
--    COMPREPLY+=( $({ arp -an || ip neigh show; } 2>/dev/null | command sed -ne \
-+    COMPREPLY+=( $({ arp -an || ip neigh show; } 2>/dev/null | command gsed -ne \
-         "s/.*[[:space:]]\($re\)[[:space:]].*/\1/p" -ne \
-         "s/.*[[:space:]]\($re\)[[:space:]]*$/\1/p") )
- 
-     # /etc/ethers
--    COMPREPLY+=( $(command sed -ne \
-+    COMPREPLY+=( $(command gsed -ne \
-         "s/^[[:space:]]*\($re\)[[:space:]].*/\1/p" /etc/ethers 2>/dev/null) )
- 
-     COMPREPLY=( $(compgen -W '${COMPREPLY[@]}' -- "$cur") )
-@@ -892,24 +892,24 @@ _configured_interfaces()
- {
-     if [[ -f /etc/debian_version ]]; then
-         # Debian system
--        COMPREPLY=( $(compgen -W "$(command sed -ne 's|^iface \([^ ]\{1,\}\).*$|\1|p'\
-+        COMPREPLY=( $(compgen -W "$(command gsed -ne 's|^iface \([^ ]\{1,\}\).*$|\1|p'\
-             /etc/network/interfaces /etc/network/interfaces.d/* 2>/dev/null)" \
-             -- "$cur") )
-     elif [[ -f /etc/SuSE-release ]]; then
-         # SuSE system
-         COMPREPLY=( $(compgen -W "$(printf '%s\n' \
-             /etc/sysconfig/network/ifcfg-* | \
--            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
-+            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
-     elif [[ -f /etc/pld-release ]]; then
-         # PLD Linux
-         COMPREPLY=( $(compgen -W "$(command ls -B \
-             /etc/sysconfig/interfaces | \
--            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
-+            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
-     else
-         # Assume Red Hat
-         COMPREPLY=( $(compgen -W "$(printf '%s\n' \
-             /etc/sysconfig/network-scripts/ifcfg-* | \
--            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
-+            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')" -- "$cur") )
-     fi
- }
- 
-@@ -927,7 +927,7 @@ _ip_addresses()
-     esac
-     local PATH=$PATH:/sbin
-     local addrs=$({ LC_ALL=C ifconfig -a || ip addr show; } 2>/dev/null |
--        command sed -e 's/[[:space:]]addr:/ /' -ne \
-+        command gsed -e 's/[[:space:]]addr:/ /' -ne \
-             "s|.*inet${n}[[:space:]]\{1,\}\([^[:space:]/]*\).*|\1|p")
-     COMPREPLY+=( $(compgen -W "$addrs" -- "$cur") )
- }
-@@ -955,7 +955,7 @@ _available_interfaces()
-         else
-             ifconfig -a || ip link show
-         fi
--    } 2>/dev/null | awk \
-+    } 2>/dev/null | nawk \
-         '/^[^ \t]/ { if ($1 ~ /^[0-9]+:/) { print $2 } else { print $1 } }') )
- 
-     COMPREPLY=( $(compgen -W '${COMPREPLY[@]/%[[:punct:]]/}' -- "$cur") )
-@@ -1039,7 +1039,7 @@ _expand()
- [[ $OSTYPE == *@(solaris|aix)* ]] &&
- _pids()
- {
--    COMPREPLY=( $(compgen -W '$(command ps -efo pid | command sed 1d)' -- "$cur") )
-+    COMPREPLY=( $(compgen -W '$(command ps -efo pid | command gsed 1d)' -- "$cur") )
- } ||
- _pids()
- {
-@@ -1051,7 +1051,7 @@ _pids()
- [[ $OSTYPE == *@(solaris|aix)* ]] &&
- _pgids()
- {
--    COMPREPLY=( $(compgen -W '$(command ps -efo pgid | command sed 1d)' -- "$cur") )
-+    COMPREPLY=( $(compgen -W '$(command ps -efo pgid | command gsed 1d)' -- "$cur") )
- } ||
- _pgids()
- {
-@@ -1065,13 +1065,13 @@ _pgids()
- _pnames()
- {
-     COMPREPLY=( $(compgen -X '<defunct>' -W '$(command ps -efo comm | \
--        command sed -e 1d -e "s:.*/::" -e "s/^-//" | sort -u)' -- "$cur") )
-+        command gsed -e 1d -e "s:.*/::" -e "s/^-//" | sort -u)' -- "$cur") )
- } ||
- _pnames()
- {
-     if [[ "$1" == -s ]]; then
-         COMPREPLY=( $(compgen -X '<defunct>' \
--            -W '$(command ps axo comm | command sed -e 1d)' -- "$cur") )
-+            -W '$(command ps axo comm | command gsed -e 1d)' -- "$cur") )
-     else
-         # FIXME: completes "[kblockd/0]" to "0". Previously it was completed
-         # to "kblockd" which isn't correct either. "kblockd/0" would be
-@@ -1079,7 +1079,7 @@ _pnames()
-         # containing "/" specially unless -r is given so that wouldn't quite
-         # work either. Perhaps it'd be best to not complete these to anything
-         # for now.
--        COMPREPLY=( $(compgen -X '<defunct>' -W '$(command ps axo command= | command sed -e \
-+        COMPREPLY=( $(compgen -X '<defunct>' -W '$(command ps axo command= | command gsed -e \
-             "s/ .*//" -e \
-             "s:.*/::" -e \
-             "s/:$//" -e \
-@@ -1147,7 +1147,7 @@ _services()
- 
-     COMPREPLY+=( $({ systemctl list-units --full --all || \
-                      systemctl list-unit-files; } 2>/dev/null | \
--        awk '$1 ~ /\.service$/ { sub("\\.service$", "", $1); print $1 }') )
-+        nawk '$1 ~ /\.service$/ { sub("\\.service$", "", $1); print $1 }') )
- 
-     if [[ -x /sbin/upstart-udev-bridge ]]; then
-         COMPREPLY+=( $(initctl list 2>/dev/null | cut -d' ' -f1) )
-@@ -1174,7 +1174,7 @@ _service()
-     else
-         local sysvdirs
-         _sysvdirs
--        COMPREPLY=( $(compgen -W '`command sed -e "y/|/ /" \
-+        COMPREPLY=( $(compgen -W '`command gsed -e "y/|/ /" \
-             -ne "s/^.*\(U\|msg_u\)sage.*{\(.*\)}.*$/\2/p" \
-             ${sysvdirs[0]}/${prev##*/} 2>/dev/null` start stop' -- "$cur") )
-     fi
-@@ -1195,7 +1195,7 @@ _modules()
-     local modpath
-     modpath=/lib/modules/$1
-     COMPREPLY=( $(compgen -W "$(command ls -RL $modpath 2>/dev/null | \
--        command sed -ne 's/^\(.*\)\.k\{0,1\}o\(\.[gx]z\)\{0,1\}$/\1/p')" -- "$cur") )
-+        command gsed -ne 's/^\(.*\)\.k\{0,1\}o\(\.[gx]z\)\{0,1\}$/\1/p')" -- "$cur") )
- }
- 
- # This function completes on installed modules
-@@ -1203,7 +1203,7 @@ _modules()
- _installed_modules()
- {
-     COMPREPLY=( $(compgen -W "$(PATH="$PATH:/sbin" lsmod | \
--        awk '{if (NR != 1) print $1}')" -- "$1") )
-+        nawk '{if (NR != 1) print $1}')" -- "$1") )
- }
- 
- # This function completes on user or user:group format; as for chown and cpio.
-@@ -1302,13 +1302,13 @@ _fstypes()
-     if [[ -e /proc/filesystems ]]; then
-         # Linux
-         fss="$(cut -d$'\t' -f2 /proc/filesystems)
--             $(awk '! /\*/ { print $NF }' /etc/filesystems 2>/dev/null)"
-+             $(nawk '! /\*/ { print $NF }' /etc/filesystems 2>/dev/null)"
-     else
-         # Generic
--        fss="$(awk '/^[ \t]*[^#]/ { print $3 }' /etc/fstab 2>/dev/null)
--             $(awk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null)
--             $(awk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null)
--             $(awk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null)
-+        fss="$(nawk '/^[ \t]*[^#]/ { print $3 }' /etc/fstab 2>/dev/null)
-+             $(nawk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null)
-+             $(nawk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null)
-+             $(nawk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null)
-              $([[ -d /etc/fs ]] && command ls /etc/fs)"
-     fi
- 
-@@ -1376,7 +1376,7 @@ _count_args()
- _pci_ids()
- {
-     COMPREPLY+=( $(compgen -W \
--        "$(PATH="$PATH:/sbin" lspci -n | awk '{print $3}')" -- "$cur") )
-+        "$(PATH="$PATH:/sbin" lspci -n | nawk '{print $3}')" -- "$cur") )
- }
- 
- # This function completes on USB IDs
-@@ -1384,7 +1384,7 @@ _pci_ids()
- _usb_ids()
- {
-     COMPREPLY+=( $(compgen -W \
--        "$(PATH="$PATH:/sbin" lsusb | awk '{print $6}')" -- "$cur") )
-+        "$(PATH="$PATH:/sbin" lsusb | nawk '{print $6}')" -- "$cur") )
- }
- 
- # CD device names
-@@ -1403,10 +1403,10 @@ _dvd_devices()
- _terms()
- {
-     COMPREPLY+=( $(compgen -W \
--        "$(command sed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap \
-+        "$(command gsed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap \
-            2>/dev/null)" -- "$cur") )
-     COMPREPLY+=( $(compgen -W "$({ toe -a 2>/dev/null || toe 2>/dev/null; } \
--        | awk '{ print $1 }' | sort -u)" -- "$cur") )
-+        | nawk '{ print $1 }' | sort -u)" -- "$cur") )
- }
- 
- # a little help for FreeBSD ports users
-@@ -1454,7 +1454,7 @@ _included_ssh_config_files()
-         echo "bash_completion: $FUNCNAME: missing mandatory argument CONFIG" >&2
-     local configfile i f
-     configfile=$1
--    local included=( $(command sed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\{1,\}\([^#%]*\)\(#.*\)\{0,1\}$/\1/p' "${configfile}") )
-+    local included=( $(command gsed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\{1,\}\([^#%]*\)\(#.*\)\{0,1\}$/\1/p' "${configfile}") )
-     for i in "${included[@]}"; do
-         # Check the origin of $configfile to complete relative included paths on included
-         # files according to ssh_config(5):
-@@ -1543,7 +1543,7 @@ _known_hosts_real()
-         # TODO(?): try to make known hosts files with more than one consecutive
-         #          spaces in their name work (watch out for ~ expansion
-         #          breakage! Alioth#311595)
--        tmpkh=( $(awk 'sub("^[ \t]*([Gg][Ll][Oo][Bb][Aa][Ll]|[Uu][Ss][Ee][Rr])[Kk][Nn][Oo][Ww][Nn][Hh][Oo][Ss][Tt][Ss][Ff][Ii][Ll][Ee][ \t]+", "") { print $0 }' "${config[@]}" | sort -u) )
-+        tmpkh=( $(nawk 'sub("^[ \t]*([Gg][Ll][Oo][Bb][Aa][Ll]|[Uu][Ss][Ee][Rr])[Kk][Nn][Oo][Ww][Nn][Hh][Oo][Ss][Tt][Ss][Ff][Ii][Ll][Ee][ \t]+", "") { print $0 }' "${config[@]}" | sort -u) )
-         IFS=$OIFS
-         for i in "${tmpkh[@]}"; do
-             # First deal with quoted entries...
-@@ -1623,7 +1623,7 @@ _known_hosts_real()
- 
-     # append any available aliases from ssh config files
-     if [[ ${#config[@]} -gt 0 && -n "$aliases" ]]; then
--        local hosts=$(command sed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]]\{1,\}\([^#*?%]*\)\(#.*\)\{0,1\}$/\1/p' "${config[@]}")
-+        local hosts=$(command gsed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]]\{1,\}\([^#*?%]*\)\(#.*\)\{0,1\}$/\1/p' "${config[@]}")
-         COMPREPLY+=( $(compgen -P "$prefix$user" \
-             -S "$suffix" -W "$hosts" -- "$cur") )
-     fi
-@@ -1638,12 +1638,12 @@ _known_hosts_real()
-         # time ago, so...
-         COMPREPLY+=( $(compgen -P "$prefix$user" -S "$suffix" -W \
-             "$(avahi-browse -cpr _workstation._tcp 2>/dev/null | \
--               awk -F';' '/^=/ { print $7 }' | sort -u)" -- "$cur") )
-+               nawk -F';' '/^=/ { print $7 }' | sort -u)" -- "$cur") )
-     fi
- 
-     # Add hosts reported by ruptime.
-     COMPREPLY+=( $(compgen -W \
--        "$(ruptime 2>/dev/null | awk '!/^ruptime:/ { print $1 }')" \
-+        "$(ruptime 2>/dev/null | nawk '!/^ruptime:/ { print $1 }')" \
-         -- "$cur") )
- 
-     # Add results of normal hostname completion, unless
-@@ -1863,7 +1863,7 @@ _longopt()
-             return
-             ;;
-         --+([-a-z0-9_]))
--            local argtype=$(LC_ALL=C $1 --help 2>&1 | command sed -ne \
-+            local argtype=$(LC_ALL=C $1 --help 2>&1 | command gsed -ne \
-                 "s|.*$prev\[\{0,1\}=[<[]\{0,1\}\([-A-Za-z0-9_]\{1,\}\).*|\1|p")
-             case ${argtype,,} in
-                 *dir*)
