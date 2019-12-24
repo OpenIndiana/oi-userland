@@ -13,11 +13,12 @@
 # Copyright (c) 2019, Michal Nowak
 # 
 
+BUILD_BITS=		32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bash-completion
-COMPONENT_VERSION=      2.9
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      2.10
 COMPONENT_FMRI=         utility/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=      Programmable completion functions for bash
 COMPONENT_CLASSIFICATION=System/Shells
@@ -25,7 +26,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/scop/bash-completion
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:d48fe378e731062f479c5f8802ffa9d3c40a275a19e6e0f6f6cc4b90fa12b2f5
+	sha256:123c17998e34b937ce57bb1b111cd817bc369309e9a8047c0bcf06ead4a3ec92
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/scop/bash-completion/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
@@ -39,9 +40,9 @@ COMPONENT_ARCHIVE_HASH_1=	\
 COMPONENT_ARCHIVE_URL_1=	\
 	https://github.com/OpenIndiana/openindiana-completions/archive/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= 		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_UNPACK_ACTION = ( unzip -jo $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) -d $(@D)/completions/ )
 
@@ -49,12 +50,6 @@ COMPONENT_POST_UNPACK_ACTION = ( unzip -jo $(USERLAND_ARCHIVES)$(COMPONENT_ARCHI
 COMPONENT_PREP_ACTION=	cd $(@D) && autoreconf -fi
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-
-build: 		$(BUILD_32)
-
-install: 	$(INSTALL_32)
-
-test: 		$(NO_TESTS)
 
 # Auto-generated dependencies
 # NONE

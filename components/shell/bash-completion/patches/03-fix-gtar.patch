@@ -1,0 +1,20 @@
+--- bash-completion-2.10.old/completions/tar	2019-12-05 16:43:10.000000000 +0000
++++ bash-completion-2.10/completions/tar	2019-12-31 11:16:28.589376121 +0000
+@@ -121,7 +121,7 @@ __gnu_tar_parse_help()
+ 
+             __gtar_parse_help_line "$str" "$arg"
+         fi
+-    done <<<"$(tar --help)"
++    done <<<"$(gtar --help)"
+ 
+     long_opts="\
+         $long_arg_none\
+@@ -136,7 +136,7 @@ __gnu_tar_parse_help()
+ __gtar_parse_warnings()
+ {
+     local line
+-    LC_ALL=C tar --warning= 2>&1 | while IFS= read line; do
++    LC_ALL=C gtar --warning= 2>&1 | while IFS= read line; do
+         if [[ $line =~ ^[[:blank:]]*-[[:blank:]]*[\`\']([a-zA-Z0-9-]+)\'$ ]]; then
+             echo "${BASH_REMATCH[1]} no-${BASH_REMATCH[1]}"
+         fi
