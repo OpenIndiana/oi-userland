@@ -1,0 +1,38 @@
+https://gitlab.isc.org/isc-projects/bind9/issues/1530
+
+/userland/ws/oi-userland/components/network/bind/bind-9.14.9/lib/dns/gen.c:29:26: fatal error: isc/platform.h: No such file or directory
+ #include <isc/platform.h>
+                          ^
+
+From: =?utf-8?b?T25kxZllaiBTdXLDvQ==?= <ondrej@debian.org>
+Date: Thu, 19 Dec 2019 09:40:21 +0100
+Subject: Make lib/dns/gen.c independent of isc/platform.h header
+
+---
+ lib/dns/gen.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/lib/dns/gen.c b/lib/dns/gen.c
+index 81bc7ad..ccd0a9a 100644
+--- a/lib/dns/gen.c
++++ b/lib/dns/gen.c
+@@ -26,8 +26,6 @@
+ 
+ #include <sys/types.h>
+ 
+-#include <isc/platform.h>
+-
+ #include <ctype.h>
+ #include <limits.h>
+ #include <stdint.h>
+@@ -39,6 +37,10 @@
+ #include <errno.h>
+ #include <limits.h>
+ 
++#ifndef PATH_MAX
++#define PATH_MAX 1024
++#endif
++
+ #ifdef WIN32
+ #include "gen-win32.h"
+ #else
