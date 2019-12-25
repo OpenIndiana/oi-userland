@@ -21,25 +21,23 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 
-#
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	2.7.16
+COMPONENT_VERSION=	2.7.17
 COMPONENT_PROJECT_URL=	https://python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:f222ef602647eecb6853681156d32de4450a2c39f4de93bd5b20235f2e660ed7
+	sha256:4d43f033cdbd0aa7b7023c81b0e986fd11e653b5248dac9144d508f11812ba41
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_BUGDB=	utility/python
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older,
 # Python will try to rebuild them.
@@ -108,12 +106,7 @@ COMPONENT_POST_INSTALL_ACTION= \
              $(MV) include/python2.7/pyconfig.h include/python2.7/pyconfig-$(BITS).h ; \
              $(TOUCH) lib/python2.7/lib2to3/*.pickle)
 
-# common targets
 $(INSTALL_32):  $(INSTALL_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
 # The network tests contain many expected failures when run behind a firewall.
