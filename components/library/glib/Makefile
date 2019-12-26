@@ -62,6 +62,13 @@ COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 # Otherwise tests fail
 #ENV = /usr/bin/env -i
 
+# We need to install libraries and set correct LD_LIBRARY_PATH before test
+$(TEST_TARGET): $(INSTALL_TARGET)
+
+COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib
+COMPONENT_TEST_ENV.64 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64)
+COMPONENT_TEST_ENV = $(COMPONENT_TEST_ENV.$(BITS))
+
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^ok:/p" ' \
