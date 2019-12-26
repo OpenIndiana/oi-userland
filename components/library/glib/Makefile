@@ -66,22 +66,15 @@ COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 # We need to install libraries and set correct LD_LIBRARY_PATH before test
 $(TEST_TARGET): $(INSTALL_TARGET)
 
-COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib
-COMPONENT_TEST_ENV.64 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64)
+COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib PATH=$(PATH):/usr/lib
+COMPONENT_TEST_ENV.64 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) PATH=$(PATH)/usr/lib/$(MACH64)
 COMPONENT_TEST_ENV = $(COMPONENT_TEST_ENV.$(BITS))
 
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^ok:/p" ' \
-	'-e "/^Fail:/p" ' \
-	'-e "/ERROR:/p" ' \
-	'-e "/^Ok/p" ' \
-	'-e "/^Expected Fail/p" ' \
-	'-e "/^Unexpected Pass/p" ' \
-	'-e "/^Skipped/p" ' \
-	'-e "/^Timeout/p"'
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/^(Fail|Ok|Expected Fail|Unexpected Pass|Skipped|Timeout)/'"
 
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/file-monitor/gamin
