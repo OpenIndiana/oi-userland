@@ -10,9 +10,10 @@
 
 #
 # Copyright 2014-2017 Alexander Pyhalov
+# Copyright 2019, Michal Nowak
 #
 
-BUILD_BITS=64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -25,7 +26,7 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8a20fac139cc2a67f682deb806237a02484e6929ce9fbdb4753936dec69cb6a0
+	sha256:8a20fac139cc2a67f682deb806237a02484e6929ce9fbdb4753936dec69cb6a0
 COMPONENT_ARCHIVE_URL=	https://www.torproject.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc	
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -54,13 +55,13 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Tests require GNU diff
 REQUIRED_PACKAGES += text/gnu-diffutils
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
-# Auto-generated dependencies
-REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += compress/zstd
