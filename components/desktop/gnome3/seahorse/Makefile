@@ -13,11 +13,14 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
+BUILD_BITS= 64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		seahorse
 COMPONENT_MJR_VERSION=	3.20
 COMPONENT_MNR_VERSION=	0
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Seahorse
 COMPONENT_SUMMARY=	Seahorse is a GNOME application for managing encryption keys
@@ -31,9 +34,7 @@ COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
@@ -45,15 +46,9 @@ CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS+=	--enable-pgp
 
 CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
