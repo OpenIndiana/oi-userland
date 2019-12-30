@@ -1,39 +1,102 @@
 The buffer must be at least _POSIX_PATH_MAX in size - ttyname_r(3C)
 
---- src/rungpg.c.1	2017-12-01 21:39:50.326278808 +0000
-+++ src/rungpg.c	2017-12-01 21:40:36.736402674 +0000
-@@ -28,6 +28,7 @@
- #include <assert.h>
- #include <errno.h>
- #include <unistd.h>
-+#include <limits.h>
+diff -ur gpgme-1.13.1-1/src/engine-assuan.c gpgme-1.13.1/src/engine-assuan.c
+--- gpgme-1.13.1-1/src/engine-assuan.c	2019-12-21 11:18:22.704167504 +0000
++++ gpgme-1.13.1/src/engine-assuan.c	2019-12-21 11:21:44.062848391 +0000
+@@ -42,6 +42,7 @@
  #include <locale.h>
+ #endif
+ #include <errno.h>
++#include <limits.h>
  
  #include "gpgme.h"
-@@ -414,7 +415,7 @@
+ #include "util.h"
+@@ -289,7 +290,7 @@
+   if (llass->opt.gpg_agent && (isatty (1) || env_tty || err))
+     {
+       int rc = 0;
+-      char dft_ttyname[64];
++      char dft_ttyname[_POSIX_PATH_MAX];
+       char *dft_ttytype = NULL;
+ 
+       if (err)
+diff -ur gpgme-1.13.1-1/src/engine-g13.c gpgme-1.13.1/src/engine-g13.c
+--- gpgme-1.13.1-1/src/engine-g13.c	2019-12-21 11:18:22.701001484 +0000
++++ gpgme-1.13.1/src/engine-g13.c	2019-12-21 11:20:04.796406704 +0000
+@@ -37,6 +37,7 @@
+ #endif
+ #include <fcntl.h> /* FIXME */
+ #include <errno.h>
++#include <limits.h>
+ 
+ #include "gpgme.h"
+ #include "util.h"
+@@ -221,7 +222,7 @@
+   int argc;
+   const char *argv[5];
+   char *dft_display = NULL;
+-  char dft_ttyname[64];
++  char dft_ttyname[_POSIX_PATH_MAX];
+   char *env_tty = NULL;
+   char *dft_ttytype = NULL;
+   char *optstr;
+diff -ur gpgme-1.13.1-1/src/engine-gpg.c gpgme-1.13.1/src/engine-gpg.c
+--- gpgme-1.13.1-1/src/engine-gpg.c	2019-12-21 11:18:22.706600650 +0000
++++ gpgme-1.13.1/src/engine-gpg.c	2019-12-21 11:21:04.738476348 +0000
+@@ -33,6 +33,7 @@
+ #ifdef HAVE_LOCALE_H
+ #include <locale.h>
+ #endif
++#include <limits.h>
+ 
+ #include "gpgme.h"
+ #include "util.h"
+@@ -473,7 +474,7 @@
    engine_gpg_t gpg;
    gpgme_error_t rc = 0;
    char *dft_display = NULL;
 -  char dft_ttyname[64];
 +  char dft_ttyname[_POSIX_PATH_MAX];
    char *dft_ttytype = NULL;
+   char *env_tty = NULL;
  
-   gpg = calloc (1, sizeof *gpg);
---- src/engine-gpgsm.c.~1~	2008-11-03 19:50:12.000000000 +0000
-+++ src/engine-gpgsm.c	2017-12-01 22:03:04.689259043 +0000
-@@ -28,6 +28,7 @@
- #include <sys/types.h>
- #include <assert.h>
- #include <unistd.h>
+diff -ur gpgme-1.13.1-1/src/engine-gpgsm.c gpgme-1.13.1/src/engine-gpgsm.c
+--- gpgme-1.13.1-1/src/engine-gpgsm.c	2019-12-21 11:18:22.708151679 +0000
++++ gpgme-1.13.1/src/engine-gpgsm.c	2019-12-21 11:20:36.018909932 +0000
+@@ -36,6 +36,7 @@
+ #ifdef HAVE_LOCALE_H
+ #include <locale.h>
+ #endif
++#include <limits.h>
+ #include <fcntl.h> /* FIXME */
+ 
+ #include "gpgme.h"
+@@ -275,7 +276,7 @@
+   int child_fds[5];
+   int nchild_fds;
+   char *dft_display = NULL;
+-  char dft_ttyname[64];
++  char dft_ttyname[_POSIX_PATH_MAX];
+   char *env_tty = NULL;
+   char *dft_ttytype = NULL;
+   char *optstr;
+diff -ur gpgme-1.13.1-1/src/engine-uiserver.c gpgme-1.13.1/src/engine-uiserver.c
+--- gpgme-1.13.1-1/src/engine-uiserver.c	2019-12-21 11:18:22.703862196 +0000
++++ gpgme-1.13.1/src/engine-uiserver.c	2019-12-21 11:22:07.166004600 +0000
+@@ -36,6 +36,7 @@
+ #ifdef HAVE_UNISTD_H
+ # include <unistd.h>
+ #endif
 +#include <limits.h>
  #include <locale.h>
  #include <fcntl.h> /* FIXME */
  #include <errno.h>
-@@ -353,7 +354,7 @@
-   int child_fds[4];
- #endif
+@@ -247,7 +248,7 @@
+   gpgme_error_t err = 0;
+   engine_uiserver_t uiserver;
    char *dft_display = NULL;
 -  char dft_ttyname[64];
 +  char dft_ttyname[_POSIX_PATH_MAX];
+   char *env_tty = NULL;
    char *dft_ttytype = NULL;
    char *optstr;
