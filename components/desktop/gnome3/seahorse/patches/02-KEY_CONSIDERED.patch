@@ -1,0 +1,50 @@
+From cdfc5b297d7420e47b9c973e8b8cb1b0fb576421 Mon Sep 17 00:00:00 2001
+From: Tobias Mueller <muelli@cryptobitch.de>
+Date: Tue, 14 Feb 2017 22:05:19 +0100
+Subject: [PATCH] gpg: Ignore KEY_CONSIDERED line introduced in gpg 2.1.13
+
+gpg 2.1.13 introduced a new status line, KEY_CONSIDERED:
+https://lists.gnupg.org/pipermail/gnupg-announce/2016q2/000390.html
+gpgme 1.7.0 supported it:
+https://lists.gnupg.org/pipermail/gnupg-commits/2016-May/012130.html
+
+The line seems innocent in the sense that it tells you what keys GnuPG
+looked at without doing anything.  We can probably safely ignore that
+line, as we ignore many other lines already.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=778607
+
+Signed-off-by: Stef Walter <stefw@redhat.com>
+ * Fixed this so it compiles
+---
+ configure.ac                | 2 +-
+ pgp/seahorse-gpgme-key-op.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 0f748e3d..fc4493c0 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -10,7 +10,7 @@ GTK_REQ=3.4.0
+ GTK_MAX=GTK_VERSION_3_4
+ 
+ GNUPG_ACCEPTED="2.0.12 2.1.4"
+-GPGME_REQUIRED=1.0.0
++GPGME_REQUIRED=1.7.0
+ LIBSECRET_REQUIRED=0.16
+ AVAHI_GLIB_REQUIRED=0.6
+ 
+diff --git a/pgp/seahorse-gpgme-key-op.c b/pgp/seahorse-gpgme-key-op.c
+index a765033b..3f81850d 100644
+--- a/pgp/seahorse-gpgme-key-op.c
++++ b/pgp/seahorse-gpgme-key-op.c
+@@ -330,7 +330,8 @@ seahorse_gpgme_key_op_edit (gpointer data, gpgme_status_code_t status,
+ 	    status == GPGME_STATUS_BAD_PASSPHRASE || status == GPGME_STATUS_USERID_HINT ||
+ 	    status == GPGME_STATUS_SIGEXPIRED || status == GPGME_STATUS_KEYEXPIRED ||
+ 	    status == GPGME_STATUS_PROGRESS || status == GPGME_STATUS_KEY_CREATED ||
+-	    status == GPGME_STATUS_ALREADY_SIGNED || status == GPGME_STATUS_MISSING_PASSPHRASE)		
++	    status == GPGME_STATUS_ALREADY_SIGNED || status == GPGME_STATUS_MISSING_PASSPHRASE ||
++	    status == GPGME_STATUS_KEY_CONSIDERED)
+ 		return parms->err;
+ 
+ 	g_debug ("[edit key] state: %d / status: %d / args: %s",
