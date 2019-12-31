@@ -13,12 +13,12 @@
 # Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tig
-COMPONENT_VERSION=	2.4.1
+COMPONENT_VERSION=	2.5.0
 COMPONENT_FMRI=		developer/versioning/tig
 COMPONENT_PROJECT_URL=	https://jonas.github.io/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Text-mode interface for git
@@ -27,14 +27,12 @@ COMPONENT_CLASSIFICATION= Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b6b6aa183e571224d0e1fab3ec482542c1a97fa7a85b26352dc31dbafe8558b8
+	sha256:ff537c67af9201e7e7276ce8a0ff9961e9d9c6a8a78790f5817124bd7755aef4
 COMPONENT_ARCHIVE_URL=	https://github.com/jonas/$(COMPONENT_NAME)/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # This runs configure but configure doesn't generate a Makefile.
 # Instead a Makefile comes with tig.
@@ -54,12 +52,6 @@ COMPONENT_INSTALL_TARGETS = install install-doc
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 COMPONENT_TEST_TARGETS = test
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += text/asciidoc
 # Auto-generated dependencies
