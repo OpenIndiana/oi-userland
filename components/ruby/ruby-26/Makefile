@@ -21,34 +21,28 @@
 
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2020, Michal Nowak
 #
 
-PREFERRED_BITS=	64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.6.3
+COMPONENT_VERSION=	2.6.5
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
-COMPONENT_SRC=	\
-	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_URL=	https://cache.ruby-lang.org/pub/ruby/2.6/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:11a83f85c03d3f0fc9b8a9b6cad1b2674f26c5aaa43ba858d4b0fcc2b54171e1
-COMPONENT_FMRI= runtime/ruby-26
+	sha256:d5d6da717fd48524596f9b78ac5a2eeb9691753da5c06923a6c31190abe01a62
+COMPONENT_FMRI=		runtime/ruby-26
 COMPONENT_CLASSIFICATION= Development/Ruby
-COMPONENT_LICENSE=      Ruby License
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=	Ruby License
+COMPONENT_LICENSE_FILE=	COPYING
 
-
-COMPONENT_ARCHIVE_URL=	\
-	https://cache.ruby-lang.org/pub/ruby/2.6/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ruby
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -138,14 +132,6 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/Running tests/p"' \
     '-e "/Finished tests in Xs, X tests\/s, X assertions/p"' \
     '-e "/.* tests, X assertions, .* failures, .* errors, X skips/p"'
-
-# common targets
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:	$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/database/gdbm

@@ -3,9 +3,9 @@
 # Changes were developed in-house, are Solaris specific,
 # and are not suitable for upstream.
 
---- ruby-2.5.3/tool/config.guess	2018-10-31 14:32:31.812918029 +0000
-+++ ruby-2.5.3/tool/config.guess	2018-10-31 14:32:15.303246783 +0000
-@@ -383,25 +383,18 @@ case "$UNAME_MACHINE:$UNAME_SYSTEM:$UNAM
+--- ruby-2.6.5/tool/config.guess	2019-10-01 13:01:01.000000000 +0000
++++ ruby-2.6.5/tool/config.guess	2020-01-01 11:23:43.822850111 +0000
+@@ -388,25 +388,18 @@ case "$UNAME_MACHINE:$UNAME_SYSTEM:$UNAM
  	echo sparc-hal-solaris2"`echo "$UNAME_RELEASE"|sed -e 's/[^.]*//'`"
  	exit ;;
      sun4*:SunOS:5.*:* | tadpole*:SunOS:5.*:*)
@@ -19,7 +19,7 @@
  	echo i386-pc-auroraux"$UNAME_RELEASE"
  	exit ;;
      i86pc:SunOS:5.*:* | i86xen:SunOS:5.*:*)
--	eval "$set_cc_for_build"
+-	set_cc_for_build
 -	SUN_ARCH=i386
 -	# If there is a compiler, see if it is configured for 64-bit objects.
 -	# Note that the Sun cc does not turn __LP64__ into 1 like gcc does.
@@ -38,14 +38,14 @@
  	echo "$SUN_ARCH"-pc-solaris2"`echo "$UNAME_RELEASE"|sed -e 's/[^.]*//'`"
  	exit ;;
      sun4*:SunOS:6*:*)
---- ruby-2.5.3/tool/config.sub	2018-10-31 14:29:42.844771186 +0000
-+++ ruby-2.5.3/tool/config.sub	2018-10-31 14:29:18.943384526 +0000
-@@ -799,7 +799,7 @@ case $basic_machine in
- 		basic_machine=x86_64-pc
- 		;;
+--- ruby-2.6.5/tool/config.sub	2019-10-01 13:01:01.000000000 +0000
++++ ruby-2.6.5/tool/config.sub	2020-01-01 12:22:58.818201859 +0000
+@@ -1008,7 +1008,7 @@ case $cpu-$vendor in
+ 
+ 	# Here we normalize CPU types irrespective of the vendor
  	amd64-*)
--		basic_machine=x86_64-`echo "$basic_machine" | sed 's/^[^-]*-//'`
-+		# don't change basic_machine
+-		cpu=x86_64
++		# don't change cpu
  		;;
- 	amiga | amiga-*)
- 		basic_machine=m68k-unknown
+ 	blackfin-*)
+ 		cpu=bfin
