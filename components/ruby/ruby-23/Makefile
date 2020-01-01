@@ -21,26 +21,23 @@
 
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2020, Michal Nowak
 #
+
+BUILD_BITS=		32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.3.7
+COMPONENT_VERSION=	2.3.8
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
-COMPONENT_SRC=	\
-	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c61f8f2b9d3ffff5567e186421fa191f0d5e7c2b189b426bb84498825d548edb
+	sha256:910f635d84fd0d81ac9bdee0731279e6026cb4cd1315bbbb5dfb22e09c5c1dfe
+COMPONENT_ARCHIVE_URL=	https://cache.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
 
-COMPONENT_ARCHIVE_URL=	\
-	https://cache.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ruby
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -120,17 +117,7 @@ CFLAGS +=		-DFFI_NO_RAW_API
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
 
-include $(WS_MAKE_RULES)/shared-targets.mk
-
-# common targets
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-# 16082 tests, 2239351 assertions, 0 failures, 1 errors, 50 skips
-# RuntimeError: Error in TestGem#test_self_install_in_rescue
-test:	$(TEST_32)
+# 16084 tests, 2236321 assertions, 2 failures, 1 errors, 49 skips
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
