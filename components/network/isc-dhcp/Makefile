@@ -19,14 +19,16 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.4.1
-IPS_COMPONENT_VERSION=	4.4.1.0.0
+COMPONENT_VERSION=	4.4.2
+IPS_COMPONENT_VERSION=	4.4.2.0.0
 COMPONENT_FMRI=		service/network/dhcp/isc-dhcp
 COMPONENT_SUMMARY=	ISC DHCP Server and Relay Agent
 COMPONENT_CLASSIFICATION=	System/Services
@@ -37,13 +39,14 @@ COMPONENT_PROJECT_URL=	https://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
 	http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:2a22508922ab367b4af4664a0472dc220cc9603482cf3c16d9aff14f3a76b608
+	sha256:1a7ccd64a16e5e68f7b5e0f527fd07240a2892ea53fe245620f4f5f607004521
 COMPONENT_LICENSE=	MPL v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# We don't ship ATF/Kyua
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lnsl -lsocket
 
@@ -60,15 +63,14 @@ CONFIGURE_OPTIONS  +=	--enable-use-sockets
 CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 CONFIGURE_OPTIONS  +=	--srcdir=$(BUILD_DIR_$(BITS))
 
-build:		$(BUILD_64)
+build:		$(BUILD_64) ;\
+		cd $(BUILD_DIR_64)/keama && $(MAKE)
 
-install:	build $(INSTALL_64) $(PROTO_DIR)/dhcpd.leases
+install:	build $(INSTALL_64) $(PROTO_DIR)/dhcpd.leases ;\
+		cd $(BUILD_DIR_64)/keama && $(MAKE) DESTDIR=$(PROTO_DIR) install
 
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_64)
 	$(TOUCH) $@
-
-# We don't ship ATF/Kyua
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
