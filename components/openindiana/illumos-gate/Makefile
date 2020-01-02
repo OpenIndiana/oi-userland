@@ -557,9 +557,6 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend fmri=pkg:/system/storage/parted@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/zones/brand/lx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
-	# Temporary fix for https://www.illumos.org/issues/12118
-	echo "<transform depend fmri=system/library/install -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-
 	# Needed for MTA replacement
 	echo "<transform depend type=require fmri=pkg:/service/network/smtp/sendmail@.* -> emit depend type=require fmri=pkg:/system/mta>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend type=require fmri=pkg:/service/network/smtp/sendmail@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
