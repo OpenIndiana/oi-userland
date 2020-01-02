@@ -1,6 +1,5 @@
-diff -urN hexchat-2.12.0.orig/src/common/util.c hexchat-2.12.0/src/common/util.c
---- hexchat-2.12.0.orig/src/common/util.c	2016-03-07 00:25:32.000000000 +0100
-+++ hexchat-2.12.0/src/common/util.c	2016-04-10 15:49:12.891503656 +0200
+--- hexchat-2.14.3/src/common/util.c	2019-12-21 07:43:47.702403000 +0000
++++ hexchat-2.14.3/src/common/util.c	2020-01-02 12:03:02.367758918 +0000
 @@ -61,6 +61,10 @@
  #endif
  #endif
@@ -12,16 +11,16 @@ diff -urN hexchat-2.12.0.orig/src/common/util.c hexchat-2.12.0/src/common/util.c
  char *
  file_part (char *file)
  {
-@@ -360,7 +364,7 @@
+@@ -360,7 +364,7 @@ strip_hidden_attribute (char *src, char
  	return len;
  }
  
--#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__)
-+#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+-#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
  
  static void
  get_cpu_info (double *mhz, int *cpus)
-@@ -450,6 +454,37 @@
+@@ -450,6 +454,37 @@ get_cpu_info (double *mhz, int *cpus)
  	*mhz = (freq / 1000000);
  
  #endif
@@ -59,33 +58,21 @@ diff -urN hexchat-2.12.0.orig/src/common/util.c hexchat-2.12.0/src/common/util.c
  
  }
  #endif
-@@ -495,7 +530,7 @@
+@@ -495,7 +530,7 @@ get_sys_str (int with_cpu)
  char *
  get_sys_str (int with_cpu)
  {
--#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__)
-+#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+-#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
  	double mhz;
  #endif
  	int cpus = 1;
-@@ -507,7 +542,7 @@
+@@ -507,7 +542,7 @@ get_sys_str (int with_cpu)
  
  	uname (&un);
  
--#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__)
-+#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+-#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
  	get_cpu_info (&mhz, &cpus);
  	if (mhz && with_cpu)
  	{
---- hexchat-2.12.4/src/fe-gtk/Makefile.am.orig	2020-03-22 14:57:18.684986137 +0000
-+++ hexchat-2.12.4/src/fe-gtk/Makefile.am	2020-03-22 15:00:14.283254444 +0000
-@@ -7,7 +7,8 @@
- 
- AM_CPPFLAGS = $(GUI_CFLAGS) -DLOCALEDIR=\"$(localedir)\"
- 
--hexchat_LDADD = $(top_builddir)/src/common/libhexchatcommon.a $(GUI_LIBS)
-+LIBS+= -lssp -lssp_nonshared
-+hexchat_LDADD = $(top_builddir)/src/common/libhexchatcommon.a $(GUI_LIBS) -lkstat
- 
- EXTRA_DIST = \
- 	ascii.h banlist.h chanlist.h chanview.h chanview-tabs.c \

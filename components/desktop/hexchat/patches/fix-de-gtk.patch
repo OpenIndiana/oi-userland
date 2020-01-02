@@ -1,0 +1,20 @@
+--- hexchat-2.14.3/src/fe-gtk/meson.build	2019-12-21 07:43:47.705736400 +0000
++++ hexchat-2.14.3/src/fe-gtk/meson.build.new	2020-01-02 12:54:22.246102942 +0000
+@@ -41,7 +41,7 @@ endif
+ 
+ hexchat_gtk_cflags = []
+ 
+-hexchat_gtk_ldflags = []
++hexchat_gtk_ldflags = ['-lkstat', '-lsocket', '-lnsl', '-lssp', '-lssp_nonshared']
+ 
+ if get_option('with-libnotify')
+   hexchat_gtk_sources += 'notifications/notification-libnotify.c'
+@@ -85,7 +85,7 @@ executable('hexchat',
+   dependencies: hexchat_gtk_deps,
+   c_args: hexchat_gtk_cflags,
+   link_args: hexchat_gtk_ldflags,
+-  pie: true,
++  pie: false,
+   install: true,
+   gui_app: true,
+ )
