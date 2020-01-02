@@ -1,0 +1,43 @@
+https://gitlab.freedesktop.org/xorg/lib/libxcb/issues/43
+https://gitlab.freedesktop.org/xorg/lib/libxcb/merge_requests/6
+
+From a667ec3e0cf5d9cd1d1715e3fff3328e353fae84 Mon Sep 17 00:00:00 2001
+From: "A. Wilcox" <AWilcox@Wilcox-Tech.com>
+Date: Mon, 23 Dec 2019 21:49:29 -0600
+Subject: [PATCH] tests: Support Check 0.13.0 API
+
+---
+ tests/check_all.c    | 4 ++--
+ tests/check_suites.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tests/check_all.c b/tests/check_all.c
+index 4393422..f201dec 100644
+--- a/tests/check_all.c
++++ b/tests/check_all.c
+@@ -1,10 +1,10 @@
+ #include <stdlib.h>
+ #include "check_suites.h"
+ 
+-void suite_add_test(Suite *s, TFun tf, const char *name)
++void suite_add_test(Suite *s, const TTest *tt, const char *name)
+ {
+ 	TCase *tc = tcase_create(name);
+-	tcase_add_test(tc, tf);
++	tcase_add_test(tc, tt);
+ 	suite_add_tcase(s, tc);
+ }
+ 
+diff --git a/tests/check_suites.h b/tests/check_suites.h
+index 499f1af..595923a 100644
+--- a/tests/check_suites.h
++++ b/tests/check_suites.h
+@@ -1,4 +1,4 @@
+ #include <check.h>
+ 
+-void suite_add_test(Suite *s, TFun tf, const char *name);
++void suite_add_test(Suite *s, const TTest *tt, const char *name);
+ Suite *public_suite(void);
+-- 
+2.24.1
+

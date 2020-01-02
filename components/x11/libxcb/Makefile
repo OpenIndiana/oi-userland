@@ -27,6 +27,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=        libxcb
 COMPONENT_VERSION=     1.13
+COMPONENT_REVISION=    1
 COMPONENT_FMRI=        x11/library/libxcb
 COMPONENT_SUMMARY=     The X protocol C-language Binding (XCB): Libraries
 COMPONENT_PROJECT_URL= http://xcb.freedesktop.org
@@ -65,6 +66,8 @@ CONFIGURE_OPTIONS+= --enable-xv
 CONFIGURE_OPTIONS+= --enable-xvmc 
 CONFIGURE_OPTIONS+= --with-queue-size=32768 
 CONFIGURE_OPTIONS+= --with-pic
+
+unexport SHELLOPTS
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/check
