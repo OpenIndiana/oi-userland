@@ -14,15 +14,17 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libidn2
-COMPONENT_VERSION=	2.2.0
+COMPONENT_VERSION=	2.3.0
 COMPONENT_SUMMARY=	An implementation of IDNA2008 internationalized domain names
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:fc734732b506d878753ec6606982bf7b936e868c25c30ddb0d83f7d7056381fe
+	sha256:e1cb1db3d2e249a6a3eb6f0946777c2e892d5c5dc7bd91c74394fc3a01cab8b5
 COMPONENT_ARCHIVE_URL= \
 	http://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libidn/
@@ -30,9 +32,7 @@ COMPONENT_FMRI=		library/libidn2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	LGPLv3, GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-static=no
@@ -46,12 +46,6 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^===/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libunistring
