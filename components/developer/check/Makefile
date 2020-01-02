@@ -11,12 +11,15 @@
 
 #
 # Copyright 2014-2017 Aurelien Larcher.  All rights reserved.
+# Copyright 2020, Michal Nowak
 #
+
+BUILD_BITS=		32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		check
-COMPONENT_VERSION=	0.12.0
+COMPONENT_VERSION=	0.13.0
 COMPONENT_FMRI=		developer/check
 COMPONENT_SUMMARY=	Unit Testing Framework for C
 COMPONENT_PROJECT_URL=	https://libcheck.github.io/check
@@ -24,14 +27,12 @@ COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:464201098bee00e90f5c4bdfa94a5d3ead8d641f9025b560a27755a83b824234
+	sha256:c4336b31447acc7e3266854f73ec188cdb15554d0edd44739631da174a569909
 COMPONENT_ARCHIVE_URL=\
 	https://github.com/libcheck/check/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS+=-std=gnu99
 
@@ -55,13 +56,6 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/PASS:/p" ' \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# All tests pass
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
