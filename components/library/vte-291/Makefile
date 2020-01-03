@@ -10,16 +10,16 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vte
 COMPONENT_MJR_VERSION=	0.54
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MNR_VERSION=	5
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
@@ -28,25 +28,14 @@ COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ff4ab66ac09eb208de4dc405d838f1755465b98096a763b3f87c47f72e99736c
+	sha256:f3725ed9ea3109cb4e55e144e6e606be9bbb9c42e355e03e809c677800a8dd84
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1 LGPLv3 GPLv3
 COMPONENT_LICENSE_FILE=	COPYING.GPL3
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
 PATH=$(PATH.gnu)
-
-# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
-GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
-GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
-PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
-LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
 COMPONENT_PREP_ACTION = ( cd $(@D)  && \
 				libtoolize --force &&\
@@ -81,12 +70,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 $(INSTALL_32):	$(INSTALL_64)
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
