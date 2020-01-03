@@ -10,10 +10,10 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
@@ -21,46 +21,35 @@ COMPONENT_NAME=		mate-terminal
 COMPONENT_MJR_VERSION=	1.22
 COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE terminal emulator
+COMPONENT_FMRI=		terminal/mate-terminal
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:b68620d9957adadb78ed977480832e16c80b21cb5db58bffd33b665a7c064120
 COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv3
-COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION = Applications/System Utilities
-COMPONENT_FMRI = terminal/mate-terminal
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
-GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
-GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
-PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
-LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=  cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
+REQUIRED_PACKAGES += library/gnome/yelp-tools
+REQUIRED_PACKAGES += text/itstool
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/atk
