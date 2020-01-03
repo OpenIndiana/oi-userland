@@ -24,11 +24,15 @@
 # Copyright 2019 Rouven Weiler
 #
 
+BUILD_BITS=			64
+BUILD_STYLE=			waf
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
 COMPONENT_VERSION =		4.11.4
+COMPONENT_REVISION=		1
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
@@ -39,9 +43,9 @@ COMPONENT_LICENSE =		GPLv3
 COMPONENT_LICENSE_FILE = 	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION =	System/File System
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/waf.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PERL_VERSION = 5.24
 PYTHON_VERSION = 3.5
@@ -58,9 +62,7 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS
 CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap
-CPPFLAGS +=	-I/usr/include/gnutls-3
 
-LDFLAGS.64 +=   -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LDFLAGS.64 +=	-L/usr/lib/samba/$(MACH64) -R/usr/lib/samba/$(MACH64)
 LDFLAGS.64 +=	-L/usr/lib/samba/private/$(MACH64) -R/usr/lib/samba/private/$(MACH64)
 LDFLAGS.64 +=	-L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
@@ -69,9 +71,6 @@ LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile $(LD_FLAGS.$(
 LDFLAGS +=      -lldap_r -lsendfile -lavahi-common -lavahi-core $(LDFLAGS.$(BITS))
 
 LD_OPTIONS +=	-B direct
-
-# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
-PKG_CONFIG_PATH =		$(PKG_CONFIG_PATH.$(BITS))/gnutls-3:$(PKG_CONFIG_PATH.$(BITS))
 
 #
 # set everything for target configure.
@@ -127,17 +126,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTO_DIR)$(ETCDIR)/samba ; \
 	(sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed \
 		> $(PROTO_DIR)$(ETCDIR)/samba/smb.conf.default $(BUILD_DIR_64)/examples/smb.conf.default) 
-
-#
-# common targets
-#
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
