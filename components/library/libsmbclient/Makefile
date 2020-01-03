@@ -36,14 +36,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.4.16
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:2681f6d9d838d90273f151539331a2051b2292fc8784d4bbc416caae5d0c438e
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/samba/libsmbclient
+COMPONENT_FMRI=		library/samba/libsmbclient
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
@@ -72,14 +72,6 @@ CPPFLAGS +=	$(CPP_XPG6MODE)
 CPPFLAGS +=	-I/usr/include/openldap
 
 LD_OPTIONS += 	-B direct
-
-# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
-GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
-GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
-PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
-
-LDFLAGS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
-LDFLAGS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 
 # !!! Note, this is not a configure.mk-based Makefile !!!
 CONFIGURE_OPTIONS =	--prefix=/usr
