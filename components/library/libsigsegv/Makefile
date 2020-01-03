@@ -20,28 +20,30 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher
+# Copyright (c) 2020, Michal Nowak
 #
+
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsigsegv
-COMPONENT_VERSION=	2.11
-COMPONENT_FMRI= library/libsigsegv
-COMPONENT_SUMMARY=  libsigsegv - handling page faults in user mode
+COMPONENT_VERSION=	2.12
+COMPONENT_FMRI=		library/libsigsegv
+COMPONENT_SUMMARY=	libsigsegv - handling page faults in user mode
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libsigsegv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dd7c2eb2ef6c47189406d562c1dc0f96f2fc808036834d596075d58377e37a18
+	sha256:3ae1af359eebaa4ffc5896a1aee3568c052c99879316a1ab57f8fe1789c390b6
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libsigsegv/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=  GPLv2
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--enable-shared
+CONFIGURE_OPTIONS  +=	--disable-static
+CONFIGURE_OPTIONS  +=	--enable-shared
 
 # Test failure
 unexport SHELLOPTS
@@ -55,13 +57,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/PASS/p" ' \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" '
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
