@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
 COMPONENT_VERSION=	0.9.69
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libmicrohttpd/
 COMPONENT_FMRI=		library/libmicrohttpd
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
@@ -37,15 +38,6 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 TEST_TARGET=		$(TEST_32_and_64)
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
-GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
-GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
-PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
-LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
 
