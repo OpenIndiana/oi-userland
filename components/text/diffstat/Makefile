@@ -19,28 +19,30 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2020, Michal Nowak
 #
-PREFERRED_BITS=64
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffstat
-COMPONENT_VERSION=	1.62
-COMPONENT_FMRI=	text/diffstat
+COMPONENT_VERSION=	1.63
+COMPONENT_FMRI=		text/diffstat
 COMPONENT_SUMMARY=	A utility which provides statistics based on the output of diff
-COMPONENT_CLASSIFICATION=	System/Text Tools
+COMPONENT_CLASSIFICATION= System/Text Tools
 COMPONENT_PROJECT_URL=	http://invisible-island.net/diffstat/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:7f09183644ed77a156b15346bbad4e89c93543e140add9dab18747e30522591f
+	sha256:7eddd53401b99b90bac3f7ebf23dd583d7d99c6106e67a4f1161b7a20110dc6f
 COMPONENT_ARCHIVE_URL= \
-  https://invisible-mirror.net/archives/diffstat/$(COMPONENT_ARCHIVE)
+	https://invisible-mirror.net/archives/diffstat/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+PATH=$(PATH.gnu)
 
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
@@ -52,17 +54,8 @@ COMPONENT_TEST_ENV =	PATH=$(@D):$(SOURCE_DIR):$(PATH)
 COMPONENT_TEST_CMD =	./testing/run_test.sh
 COMPONENT_TEST_ARGS =	./testing/case*.pat
 COMPONENT_TEST_TARGETS =
-
 COMPONENT_TEST_TRANSFORMS= \
 	'-e "/Checking/d"'
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
