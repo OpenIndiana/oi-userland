@@ -20,14 +20,15 @@
 
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2020, Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	3.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.4
 COMPONENT_FMRI=		text/gnu-grep
 COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -35,21 +36,18 @@ COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b960541c499619efd6afe1fa795402e4733c8e11ebf9fafccc0bb4bccdc5b514
+	sha256:58e6751c41a7c25bfc6e9363a41786cff3ba5709cf11d5ad903cf7cce31cc3fb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv3, FDLv1.3
+COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+				aclocal -I m4 && \
+				autoheader && \
+				automake --add-missing --copy --force )
 
 PATH=$(PATH.gnu)
-
-# Enable aslr for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# 64-bit migration
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 # Needed for "gmake test" to work.
 # SHELLOPTS is exported via make-rules/shared-macros.mk,
@@ -62,22 +60,15 @@ unexport SHELLOPTS
 
 # Test transforms retain only relevant results output.
 COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL/p" ' \
-        '-e "/SKIP/p" ' \
-        '-e "/PASS/p" ' \
-        '-e "/FAIL/p" ' \
-        '-e "/ERROR/p" '
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-# 1 test fails - multibyte-white-space (something with illumos locales?)
-# 
-test:		$(TEST_64)
-
+# Since version 3.4, GNU grep is needed for build.
+REQUIRED_PACKAGES += text/gnu-grep
 # Testsuite requirements
 REQUIRED_PACKAGES += locale/tr
 REQUIRED_PACKAGES += locale/ru-extra

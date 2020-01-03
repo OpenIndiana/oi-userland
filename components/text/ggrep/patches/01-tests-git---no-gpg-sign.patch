@@ -1,0 +1,13 @@
+'git commit --no-gpg-sign' makes sure that global Git configuration won't interfere.
+
+--- grep-3.4/gnulib-tests/test-vc-list-files-git.sh	2020-01-01 18:12:27.000000000 +0000
++++ grep-3.4/gnulib-tests/test-vc-list-files-git.sh.new	2020-01-03 08:01:26.999850260 +0000
+@@ -33,7 +33,7 @@ mkdir $tmpdir && cd $tmpdir &&
+   git config user.email "you@example.com" &&
+   git config user.name "Your Name" &&
+   git add . > /dev/null &&
+-  git commit -q -a -m log &&
++  git commit -q -a -m log --no-gpg-sign &&
+   printf '%s\n' b c d/a > expected &&
+   $BOURNE_SHELL "$abs_aux_dir/vc-list-files" > actual &&
+   compare expected actual &&
