@@ -22,11 +22,13 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=		32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
 COMPONENT_VERSION=	26.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -34,9 +36,9 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:4d90e6751ad8967822c6e092db07466b9d383ef1653feb2f95c93e7de66d3485
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # we build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
@@ -45,15 +47,6 @@ VARIANTS =	nox x gtk
 
 BUILD_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 INSTALL_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
-
-# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
-GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
-GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
-PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
-LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -188,11 +181,7 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 # Solaris, it is delivered by system/prerequisite/gnu.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
-build:          $(BUILD_32)
-
 install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += file/gnu-findutils
