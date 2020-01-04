@@ -19,26 +19,26 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 Louis M. Picciano. All rights reserved.
-# Copyright (c) 2019 Michal Nowak
+# Copyright (c) 2020 Michal Nowak
 #
+
+BUILD_BITS=		32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlite
-COMPONENT_VERSION=	3.29.0
-TARBALL_VERSION=	3290000
+COMPONENT_VERSION=	3.30.1
+TARBALL_VERSION=	3300100
 COMPONENT_SRC=		sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:a1533d97504e969ca766da8ff393e71edd70798564813fc2620b0708944c8817
+	sha256:4690370737189149c9e8344414aa371f89a70e3744ba317cef1a49fb0ee81ce1
 COMPONENT_PROJECT_URL=	https://www.sqlite.org
 COMPONENT_ARCHIVE_URL=	https://www.sqlite.org/2019/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		database/sqlite-3
 COMPONENT_LICENSE=	PublicDomain
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION	+= $(CP) $(COMPONENT_DIR)/files/mapfile $(@D) ;
 
@@ -87,12 +87,6 @@ CONFIGURE_OPTIONS	+= --enable-shared
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
 
 COMPONENT_TEST_TARGETS = test
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/libedit
