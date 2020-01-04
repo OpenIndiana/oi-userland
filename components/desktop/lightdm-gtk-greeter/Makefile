@@ -11,18 +11,20 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lightdm-gtk-greeter
-COMPONENT_VERSION=	2.0.6
+COMPONENT_VERSION=	2.0.7
 COMPONENT_SUMMARY=	LightDM GTK+ Greeter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:255cf4039ab2536020ca8714bdc98300c8f71719183bbb5b18ef96f43c2e3ade
+	sha256:bae293f21286e93113ee7965a3a8734bbee6b94f3c74d8723dcae13dda60fcbc
 COMPONENT_ARCHIVE_URL= \
 	https://launchpad.net/lightdm-gtk-greeter/2.0/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://launchpad.net/lightdm-gtk-greeter/
@@ -36,9 +38,9 @@ COMPONENT_ARCHIVE_1= exo-csource.c
 COMPONENT_ARCHIVE_URL_1= https://github.com/xfce-mirror/exo/raw/$(EXO_COMMIT)/exo-csource/main.c
 COMPONENT_ARCHIVE_HASH_1= sha256:1942f5c2e649c83ad5739af7bb0de90bd9b874e9c5f300ff4551f9e8628a74aa
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # We need exo-csource to regenerate headers from glade file,
 # but we do not want to build all exo XFCE dependencies,
@@ -59,8 +61,6 @@ $(SOURCE_DIR)/.prep:	$(BUILD_DIR)/exo-csource/exo-csource
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
-
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -73,10 +73,6 @@ CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
