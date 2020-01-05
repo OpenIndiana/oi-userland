@@ -1,13 +1,13 @@
 A lot of upower clients expect to get some answer from up_client_get_devices().
 So to avoid fixing all consumers we want to return empty device list to them.
 
---- upower-0.99.4/libupower-glib/up-client.c.1	2018-01-11 11:01:18.708705809 +0000
-+++ upower-0.99.4/libupower-glib/up-client.c	2018-01-11 11:01:49.927915101 +0000
-@@ -96,17 +96,17 @@
+--- upower-0.99.11/libupower-glib/up-client.c	2019-07-07 10:29:27.000000000 +0000
++++ upower-0.99.11/libupower-glib/up-client.c	2020-01-05 11:05:13.731804295 +0000
+@@ -115,17 +115,17 @@ up_client_get_devices2 (UpClient *client
  
  	g_return_val_if_fail (UP_IS_CLIENT (client), NULL);
  
-+	array = g_ptr_array_new ();
++	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 +
  	if (up_exported_daemon_call_enumerate_devices_sync (client->priv->proxy,
  							    &devices,
@@ -19,7 +19,7 @@ So to avoid fixing all consumers we want to return empty device list to them.
 +		return array;
  	}
  
--	array = g_ptr_array_new ();
+-	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 -
  	for (i = 0; devices[i] != NULL; i++) {
  		UpDevice *device;
