@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      6.0.14
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
@@ -117,6 +118,16 @@ LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_R3_MAIN ='
 LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_R0DRV ='
 LOCAL_CONFIG+='\nVBOX_WITH_DTRACE_RC ='
 LOCAL_CONFIG+='\nVBOX_WITH_NATIVE_DTRACE ='
+
+# Do not allow compiler override in kmk files
+LOCAL_CONFIG+= '\nTOOL_GXX3PLAIN_CC  = $(CC)'
+LOCAL_CONFIG+= '\nTOOL_GXX3PLAIN_CXX = $(CXX)'
+LOCAL_CONFIG+= '\nTOOL_GXX3PLAIN_AS  = $(CC)'
+LOCAL_CONFIG+= '\nTOOL_GXX3PLAIN_LD  = $(CXX)'
+LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_CC  = $(CC)'
+LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_CXX = $(CXX)'
+LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_AS  = $(CC)'
+LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_LD  = $(CXX)'
 
 # Set OpenIndiana project as publisher of VirtualBox binaries
 VBOX_BUILD_PUBLISHER=OpenIndiana
