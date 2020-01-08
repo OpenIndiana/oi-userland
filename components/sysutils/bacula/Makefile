@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= bacula
 
 COMPONENT_VERSION= 5.2.13
-COMPONENT_REVISION= 7
+COMPONENT_REVISION= 8
 COMPONENT_SUMMARY= Bacula (network backup solution)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -60,6 +60,7 @@ CONFIGURE_OPTIONS+= --with-openssl
 CONFIGURE_OPTIONS+= --with-tcp-wrappers
 CONFIGURE_OPTIONS+= --with-readline=/usr/include/readline
 CONFIGURE_OPTIONS+= --disable-conio
+CONFIGURE_OPTIONS+= --disable-afs
 CONFIGURE_OPTIONS+= --disable-rpath
 CONFIGURE_ENV    += PYTHON="$(PYTHON)"
 CONFIGURE_ENV.64    += lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
