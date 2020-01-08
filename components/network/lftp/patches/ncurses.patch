@@ -1,0 +1,31 @@
+--- src/lftp_tinfo.cc.orig	2020-01-08 03:29:15.129200361 +0000
++++ src/lftp_tinfo.cc	2020-01-08 03:30:35.491691581 +0000
+@@ -20,20 +20,20 @@
+ #include <config.h>
+ 
+ extern "C" {
+-#if defined(HAVE_CURSES_H)
+-# include <curses.h>
+-# if defined(HAVE_TERM_H)
+-#  include <term.h>
+-# elif defined(HAVE_NCURSES_TERM_H)
+-#  include <ncurses/term.h>
+-# endif
+-#elif defined(HAVE_NCURSES_CURSES_H)
++#if defined(HAVE_NCURSES_CURSES_H)
+ # include <ncurses/curses.h>
+ # if defined(HAVE_NCURSES_TERM_H)
+ #  include <ncurses/term.h>
+ # elif defined(HAVE_TERM_H)
+ #  include <term.h>
+ # endif
++#elif defined(HAVE_CURSES_H)
++# include <curses.h>
++# if defined(HAVE_TERM_H)
++#  include <term.h>
++# elif defined(HAVE_NCURSES_TERM_H)
++#  include <ncurses/term.h>
++# endif
+ #elif defined(HAVE_TERMCAP_H)
+ # include <termcap.h>
+ #else

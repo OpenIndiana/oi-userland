@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lftp
 COMPONENT_VERSION=	4.8.3
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=         network/ftp/lftp
 COMPONENT_SUMMARY=      lftp - Sophisticated file transfer program
 COMPONENT_CLASSIFICATION=Applications/System Utilities
