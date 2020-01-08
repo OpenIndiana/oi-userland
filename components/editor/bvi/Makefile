@@ -17,7 +17,7 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bvi
-COMPONENT_VERSION=      1.4.0
+COMPONENT_VERSION=      1.4.1
 COMPONENT_SUMMARY=      bvi - Binary Visual Editor  
 COMPONENT_PROJECT_URL=  http://bvi.sourceforge.net/
 COMPONENT_FMRI=         editor/bvi
@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/bvi/files/bvi/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_ARCHIVE_HASH= \
-  sha256:015a3c2832c7c097d98a5527deef882119546287ba8f2a70c736227d764ef802
+  sha256:3035255ca79e0464567d255baa5544f7794e2b7eb791dcc60cc339cf1aa01e28
 COMPONENT_LICENSE=      GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -35,6 +35,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+
+CONFIGURE_OPTIONS+= --with-ncurses=$(USRDIR)
 
 build:    $(BUILD_64)
 
