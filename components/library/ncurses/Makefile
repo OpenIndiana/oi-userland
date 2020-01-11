@@ -23,7 +23,7 @@
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013  Erol Zavidic. All rights reserverd.
 # Copyright (c) 2016  Adam Stevko. All rights reserverd.
-# Copyright (c) 2019  Michal Nowak
+# Copyright (c) 2020  Michal Nowak
 #
 
 BUILD_BITS=		32_and_64
@@ -32,16 +32,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	6.1
-COMPONENT_REV=		20190921
+COMPONENT_REV=		20200104
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_REV)
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_REV)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:6c3f8ed2acf284dd63b853f470075cbc6fe74f67c128a081db123a69bd1c1271
+	sha256:ac0bfcc1ad54ece8804c36a0998bd34b37b392c32199f602aa4d69b22f891eec
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/$(COMPONENT_NAME)/current/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		library/ncurses
 COMPONENT_LICENSE=	MIT
 
