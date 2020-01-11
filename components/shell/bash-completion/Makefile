@@ -10,7 +10,7 @@
 
 #
 # Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
-# Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Michal Nowak
 # 
 
 BUILD_BITS=		32
@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bash-completion
 COMPONENT_VERSION=      2.10
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         utility/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=      Programmable completion functions for bash
 COMPONENT_CLASSIFICATION=System/Shells
@@ -33,10 +34,10 @@ COMPONENT_LICENSE=      GPLv2
 
 # Fetch OpenIndiana/openindiana-completions project with
 # OpenIndiana-specific bash completions.
-COMPONENT_OI_COMPLETIONS_COMMIT=d722a467ac7c4992d381ed913440efdae63614c1
+COMPONENT_OI_COMPLETIONS_COMMIT=a3bf8152286ea1156866f81b53ac943d8ace25ea
 COMPONENT_ARCHIVE_1=		$(COMPONENT_OI_COMPLETIONS_COMMIT).zip
 COMPONENT_ARCHIVE_HASH_1=	\
-	sha256:b2a9f455975e604bc50e051c9ef52cb65a09b48333c79f519acf583f30cdd676
+	sha256:a62a1d76cc08b13094fb38789683ec6bb885283199fbb539146e11429798a68a
 COMPONENT_ARCHIVE_URL_1=	\
 	https://github.com/OpenIndiana/openindiana-completions/archive/$(COMPONENT_ARCHIVE_1)
 
