@@ -21,30 +21,30 @@
 
 #
 # Copyright 2017 Gary Mills
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_BITS=		32_and_64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.0.2t
+COMPONENT_VERSION =	1.0.2u
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.20
+IPS_COMPONENT_VERSION = 1.0.2.21
 COMPONENT_PROJECT_URL=	https://www.openssl.org
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc
+	sha256:ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
 
@@ -160,13 +160,6 @@ $(PROTO_DIR)/.openssl-0.9.8:	$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.
 	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/libcrypto.so.0.9.8 $(PROTO_DIR)/lib/$(MACH64)
 	$(TOUCH) $@
 
-# Enable ASLR for this component
-ASLR_MODE =	$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
 # OpenSSL uses sections man[1357] by default so we must create the man
 # directories we use for OpenSSL man pages in Solaris. Note that we patch the
 # OpenSSL man page install script to use the correct directories.
@@ -196,7 +189,6 @@ install:	$(INSTALL_32_and_64) $(PROTO_DIR)/.openssl-0.9.8
 # There are also separate STC test suites 'openssl' and 'openssl-engine'
 # for regression testing. These internal tests are unit tests only.
 COMPONENT_TEST_TARGETS = test
-test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/build/makedepend
 # Auto-generated dependencies
