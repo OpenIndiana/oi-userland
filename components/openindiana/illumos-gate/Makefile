@@ -105,6 +105,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export PERL_VERSION=\"5.22\"; \
 	  echo export PERL_PKGVERS=\"-522\"; \
 	  echo export BUILDPERL64=\"#\"; \
+	  echo export BUILDPY2=\"#\"; \
 	  echo export BUILDPY2TOOLS=\"#\"; \
 	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
@@ -629,5 +630,4 @@ clobber::       clean
 
 REQUIRED_PACKAGES += developer/gcc-7
 REQUIRED_PACKAGES += developer/illumos-closed
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
