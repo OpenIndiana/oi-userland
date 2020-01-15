@@ -22,13 +22,15 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher.
-# Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2020, Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
-COMPONENT_VERSION=	4.7
+COMPONENT_VERSION=	4.8
 COMPONENT_FMRI=		text/gnu-sed
 COMPONENT_SUMMARY=	GNU implementation of sed, the Unix stream editor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -36,13 +38,11 @@ COMPONENT_PROJECT_URL=	https://www.gnu.org/software/sed/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:2885768cd0a29ff8d58a6280a270ff161f6a3deb5690b2be6c49f46d4c67bd6a
+	sha256:f79b0cfea71b37a8eeec8490db6c5f7ae7719c35587f21edb0617f370eeff633
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -65,16 +65,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/PASS/p" ' \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" '
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Test dependencies
 REQUIRED_PACKAGES += developer/debug/valgrind
