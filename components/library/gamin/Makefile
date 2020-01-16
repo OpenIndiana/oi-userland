@@ -13,11 +13,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gamin
 COMPONENT_VERSION= 0.1.10
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Library providing the FAM File Alteration Monitor API
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -31,11 +32,14 @@ COMPONENT_FMRI= library/file-monitor/gamin
 COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
 
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
+
+# Later python is not supported
+PYTHON_VERSION = 2.7
+
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
@@ -49,12 +53,6 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
 
 CONFIGURE_ENV += pythondir=$(PYTHON_VENDOR_PACKAGES)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27
