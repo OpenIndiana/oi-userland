@@ -13,11 +13,13 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= imf-selector
 COMPONENT_VERSION= 0.5.11
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Input Method Framework startup
 COMPONENT_SRC = src
 COMPONENT_PROJECT_URL = http://www.openindiana.org
@@ -26,15 +28,16 @@ COMPONENT_LICENSE_FILE = OPENSOLARIS.LICENSE
 COMPONENT_LICENSE = CDDL
 COMPONENT_CLASSIFICATION = System/Internationalization
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+PYTHON_VERSION = 3.5
+include $(WS_MAKE_RULES)/common.mk
 
-clobber: clean
+clobber:: clean
 
 $(SOURCE_DIR)/.prep:	Makefile
 	$(TOUCH) $@
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
@@ -49,14 +52,7 @@ clean::
 	$(RM) $(SOURCE_DIR)/.prep
 	$(RM) -rf $(BUILD_DIR)
 
-download:
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/pygobject-3-35
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/python/pygobject-3-27
-REQUIRED_PACKAGES += runtime/python-27

@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -30,7 +30,7 @@ import signal
 import sys
 import getopt
 import time
-import commands
+import subprocess
 import locale
 from os import path
 
@@ -106,7 +106,7 @@ class IMSelector(object):
             self.__enable_im()
 
     def __launch_help(self, widget=None, data=None):
-	 os.spawnv(os.P_NOWAIT, "/usr/bin/yelp", ["/usr/bin/yelp", "gnome-help:imf-selector"])
+            os.spawnv(os.P_NOWAIT, "/usr/bin/yelp", ["/usr/bin/yelp", "gnome-help:imf-selector"])
 
     def __default(self, widget=None, data=None):
         im = self.__exec_script('-default')
@@ -155,7 +155,7 @@ class IMSelector(object):
         cmd = self.IMSCRIPT + ' ' + opt + ' ' + arg
         try:
             if(os.access(self.IMSCRIPT, os.X_OK)):
-                (status, out) = commands.getstatusoutput(cmd)
+                (status, out) = subprocess.getstatusoutput(cmd)
                 if(status != 0):
                     msg = _("Following error occured :\n\n") + out
                     self.__show_err_dlg(msg)
@@ -252,8 +252,8 @@ class IMSelector(object):
 if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "p:", ["prior="])
-    except getopt.error, msg:
-        print "%s" %(msg)
+    except getopt.error as msg:
+        print("%s" %(msg))
         sys.exit(2)
 
     setup = IMSelector()
