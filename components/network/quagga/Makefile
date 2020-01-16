@@ -28,21 +28,20 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		quagga
 COMPONENT_VERSION=	0.99.19
-COMPONENT_REVISION=     1
+COMPONENT_FRMI=         system/network/routing/quagga
+COMPONENT_SUMMARY=      Quagga - Quagga Routing Software
+COMPONENT_DESCRIPTION=  Quagga is a routing software suite, providing implementations of OSPFv2, OSPFv3, RIP v1 and v2, RIPng, ISIS and BGP-4
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.quagga.net/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bc5052d285af6e7aac42984741e74261637c57c4a02032bf05de7a5ea3a1afe0
 COMPONENT_ARCHIVE_URL=	https://download.savannah.gnu.org/releases/quagga/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_BUGDB=	service/quagga
-COMPONENT_ANITYA_ID=	4139
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= quagga.license
 
-TPNO=			9106
-
-PATCH_LEVEL = 0
+PATCH_LEVEL = 1
 
 # without this we bus error on sparc. Until the code in all of Quagga
 # does not have any misaligned code we will need the following flag.
@@ -50,19 +49,11 @@ PATCH_LEVEL = 0
 
 # These options are carried over from the SFW consolidation. Using -xO4 was
 # explicitly commented out, but no reason was documented.
-
 #studio_OPT = -xO3
 
 LDFLAGS += -lumem
 CFGLOCALSTATEDIR=/var/run/quagga
 CFGSYSCONFDIR=  $(ETCDIR)/quagga
-
-#CFLAGS.studio += -xspace -Xa
-#CFLAGS.studio += -g -xdebugformat=dwarf -O
-#CFLAGS.studio += -errtags=yes -xc99=%all
-#CFLAGS.studio += -erroff=E_TRAILING_COMMA_IN_ENUM
-#CFLAGS.studio += -erroff=E_STATEMENT_NOT_REACHED
-#CFLAGS.studio += -erroff=E_EMPTY_TRANSLATION_UNIT
 
 TEST_TARGET= $(NO_TESTS)
 include ../../../make-rules/common.mk
