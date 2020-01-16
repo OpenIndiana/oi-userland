@@ -1,0 +1,30 @@
+This fix is from work in progress by the Quagga community Solaris maintainer.
+It does not have a specific bug but will eventually be incorporated in the
+main branch.
+
+*** lib/if.c
+--- lib/if.c
+*************** if_is_running (struct interface *ifp)
+*** 341,346 ****
+--- 341,361 ----
+  int
+  if_is_operative (struct interface *ifp)
+  {
++ #ifdef SUNOS_5
++   /* Administrators on Solaris can set IFF_NORTEXCH on interfaces to
++    * indicate they should not be touched by routing protocols.  This can be
++    * configured with, e.g.
++    *
++    *   ipadm set-ifprop -p exchange_route=off 
++    *
++    * Honour this by simply considering IFF_NORTEXCH interfaces as
++    * inoperative for general purposes of Quagga code.  zebra will withdraw
++    * interface/addresses that go IFF_NORTEXCH from Quagga clients.
++    */
++   if (ifp->flags & IFF_NORTEXCH)
++     return 0;
++ #endif /* SUNOS_5 */
++ 
+    return ((ifp->flags & IFF_UP) &&
+  	  (ifp->flags & IFF_RUNNING || !CHECK_FLAG(ifp->status, ZEBRA_INTERFACE_LINKDETECTION)));
+  }

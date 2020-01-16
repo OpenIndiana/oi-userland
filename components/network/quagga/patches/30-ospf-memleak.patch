@@ -1,0 +1,42 @@
+This was reported to the Quagga community as bug 813.
+https://bugzilla.quagga.net/show_bug.cgi?id=813
+The patch has been submitted and attached to that bug.
+This patch may be removed if the version of Quagga is updated to a version
+that has this bug fixed.
+--- ospfd/ospf_apiserver.c
++++ ospfd/ospf_apiserver.c
+@@ -375,6 +375,11 @@ ospf_apiserver_free (struct ospf_apiserv
+ 
+     }
+ 
++  if (apiserv->opaque_types)
++    {
++      list_delete (apiserv->opaque_types);
++    }
++
+   /* Close connections to OSPFd. */
+   if (apiserv->fd_sync > 0)
+     {
+@@ -978,10 +978,11 @@ ospf_apiserver_unregister_opaque_type (s
+ 	  ospf_apiserver_flush_opaque_lsa (apiserv, lsa_type, opaque_type);
+ 	  ospf_delete_opaque_functab (lsa_type, opaque_type);
+ 
+ 	  /* Remove from list of registered opaque types */
+ 	  listnode_delete (apiserv->opaque_types, regtype);
++	  XFREE(MTYPE_OSPF_APISERVER, regtype);
+ 
+           if (IS_DEBUG_OSPF_EVENT)
+             zlog_debug ("API: Del LSA-type(%d)/Opaque-type(%d)"
+                        " from apiserv(%p), total#(%d)", 
+                        lsa_type, opaque_type, apiserv, 
+--- ospfd/ospfd.c
++++ ospfd/ospfd.c
+@@ -633,7 +633,7 @@ ospf_area_free (struct ospf_area *area)
+   /* Cancel timer. */
+   OSPF_TIMER_OFF (area->t_stub_router);
+ #ifdef HAVE_OPAQUE_LSA
+-  OSPF_TIMER_OFF (area->t_opaque_lsa_self);
++  ospf_opaque_type10_lsa_term (area);
+ #endif /* HAVE_OPAQUE_LSA */
+   
+   if (OSPF_IS_AREA_BACKBONE (area))

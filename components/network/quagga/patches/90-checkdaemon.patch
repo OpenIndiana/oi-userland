@@ -1,0 +1,24 @@
+This bug has been submitted to the Quagga community as bug
+https://bugzilla.quagga.net/show_bug.cgi?id=878
+This patch may be removed after upgrading to a version of Quagga with
+bug 878 fixed.
+
+*** solaris/quagga.init.in
+--- solaris/quagga.init.in
+*************** QUAGGA_METHOD="start"
+*** 127,133 ****
+  DAEMON="$1"
+  
+  # daemon path must be given
+! if [ -z "$DAEMON_PATH/$DAEMON" ]; then
+  	usage
+  	exit $SMF_EXIT_ERR_FATAL
+  fi
+--- 127,133 ----
+  DAEMON="$1"
+  
+  # daemon path must be given
+! if [ "$DAEMON_PATH/$DAEMON" = "/" ]; then
+  	usage
+  	exit $SMF_EXIT_ERR_FATAL
+  fi
