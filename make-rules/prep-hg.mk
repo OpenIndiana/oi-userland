@@ -88,8 +88,5 @@ endef
 $(eval $(call hg-variables,))
 $(foreach suffix, $(HG_SUFFIXES), $(eval $(call hg-variables,_$(suffix))))
 
-# Put the rule evaluations in a variable for deferred evaluation.
-define eval-hg-rules
 $(eval $(call hg-rules,))
 $(foreach suffix, $(HG_SUFFIXES), $(eval $(call hg-rules,_$(suffix))))
-endef
