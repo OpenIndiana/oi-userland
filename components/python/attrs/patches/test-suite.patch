@@ -1,0 +1,31 @@
+Helps fix syntax errors for Pythons 3.5 and lower.
+
+This might be suitable upstream.
+
+--- attrs-18.2.0/tests/main_runner.py
++++ attrs-18.2.0/tests/main_runner.py
+@@ -0,0 +1,24 @@
++"""
++Some tests in this component are not even parseable by python versions
++older than 3.6.  Because of that, those cannot be skipped with pytest.skip
++decorator.  This file runs only those working with the current Python
++version and prevent syntax errors when ran directly.
++"""
++
++import pytest
++import sys
++
++args = sys.argv[1:]
++
++tests = [
++	'test_config.py', 'test_converters.py', 'test_dark_magic.py',
++	'test_dunders.py', 'test_filters.py', 'test_funcs.py',
++	'test_make.py', 'test_slots.py', 'test_validators.py'
++]
++
++if sys.version_info >= (3, 6):
++	tests.append('test_init_subclass.py')
++	tests.append('test_annotations.py')
++
++args.extend(tests)
++sys.exit(pytest.main(args))
