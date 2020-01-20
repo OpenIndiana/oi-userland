@@ -21,35 +21,31 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2020, Michal Nowak
 #
+
+BUILD_BITS=		32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
-COMPONENT_VERSION=	4.2.1
+COMPONENT_VERSION=	4.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/make/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7
+	sha256:de1a441c4edf952521db30bfca80baae86a0ff1acd0a00402999344f04c45e82
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/make/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-make
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=		--program-prefix=g
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/.*Clearing work.*/d" '
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/guile
