@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
 COMPONENT_VERSION=	6.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -69,6 +70,7 @@ REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
