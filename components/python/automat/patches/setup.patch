@@ -1,0 +1,29 @@
+We do not have m2r package in Solaris, and because it is being used only
+for upstream releases, we can safely remove it.
+
+--- Automat-0.7.0/setup.py
++++ Automat-0.7.0/setup.py
+@@ -4,13 +4,8 @@ Setup file for automat
+ 
+ from setuptools import setup, find_packages
+ 
+-try:
+-    from m2r import parse_from_file
+-    long_description = parse_from_file('README.md')
+-except(IOError, ImportError):
+-    print("\n\n!!! m2r not found, long_description is bad, don't upload this to PyPI !!!\n\n")
+-    import io
+-    long_description = io.open('README.md', encoding="utf-8").read()
++import io
++long_description = io.open('README.md', encoding="utf-8").read()
+ 
+ setup(
+     name='Automat',
+@@ -24,7 +19,6 @@ setup(
+     package_dir={'automat': 'automat'},
+     setup_requires=[
+         'setuptools-scm',
+-        'm2r',
+     ],
+     install_requires=[
+         "attrs>=16.1.0",
