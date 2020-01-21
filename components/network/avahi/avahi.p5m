@@ -21,6 +21,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license LICENSE license='LGPLv2.1'
 
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
 <transform file path=etc/.* ->  default preserve renamenew>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
@@ -35,7 +36,7 @@ depend type=conditional fmri=pkg:/system/network/avahi/gui \
     predicate=pkg:/x11/server/xserver-common
 
 file path=etc/dbus-1/system.d/avahi-dbus.conf
-file path=usr/bin/$(MACH64)/avahi-bookmarks
+#file path=usr/bin/$(MACH64)/avahi-bookmarks
 file path=usr/bin/$(MACH64)/avahi-browse
 link path=usr/bin/$(MACH64)/avahi-browse-domains target=avahi-browse
 file path=usr/bin/$(MACH64)/avahi-publish
@@ -46,6 +47,7 @@ link path=usr/bin/$(MACH64)/avahi-resolve-address target=avahi-resolve
 link path=usr/bin/$(MACH64)/avahi-resolve-host-name target=avahi-resolve
 file path=usr/bin/$(MACH64)/avahi-set-host-name
 link path=usr/bin/$(MACH64)/bshell target=bssh
+#file path=usr/bin/avahi-bookmarks
 file path=usr/bin/avahi-browse
 link path=usr/bin/avahi-browse-domains target=avahi-browse
 file path=usr/bin/avahi-publish
@@ -113,10 +115,10 @@ link path=usr/lib/$(MACH64)/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
 file path=usr/lib/$(MACH64)/libavahi-glib.so.1.0.2
 file path=usr/lib/$(MACH64)/libavahi-gobject.a
 file path=usr/lib/$(MACH64)/libavahi-gobject.la
-link path=usr/lib/$(MACH64)/libavahi-gobject.so target=libavahi-gobject.so.0.0.4
+link path=usr/lib/$(MACH64)/libavahi-gobject.so target=libavahi-gobject.so.0.0.5
 link path=usr/lib/$(MACH64)/libavahi-gobject.so.0 \
-  target=libavahi-gobject.so.0.0.4
-file path=usr/lib/$(MACH64)/libavahi-gobject.so.0.0.4
+  target=libavahi-gobject.so.0.0.5
+file path=usr/lib/$(MACH64)/libavahi-gobject.so.0.0.5
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-client.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-core.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-glib.pc
@@ -137,17 +139,16 @@ file path=usr/lib/libavahi-core.so.7.0.2
 link path=usr/lib/libavahi-glib.so target=libavahi-glib.so.1.0.2
 link path=usr/lib/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
 file path=usr/lib/libavahi-glib.so.1.0.2
-link path=usr/lib/libavahi-gobject.so target=libavahi-gobject.so.0.0.4
-link path=usr/lib/libavahi-gobject.so.0 target=libavahi-gobject.so.0.0.4
-file path=usr/lib/libavahi-gobject.so.0.0.4
+link path=usr/lib/libavahi-gobject.so target=libavahi-gobject.so.0.0.5
+link path=usr/lib/libavahi-gobject.so.0 target=libavahi-gobject.so.0.0.5
+file path=usr/lib/libavahi-gobject.so.0.0.5
 file path=usr/lib/pkgconfig/avahi-client.pc
 file path=usr/lib/pkgconfig/avahi-core.pc
 file path=usr/lib/pkgconfig/avahi-glib.pc
 file path=usr/lib/pkgconfig/avahi-gobject.pc
-file path=usr/lib/python2.7/vendor-packages/avahi/ServiceTypeDatabase.py pkg.tmp.autopyc=false
-file path=usr/lib/python2.7/vendor-packages/avahi/__init__.py
+file path=usr/lib/python3.5/vendor-packages/avahi/ServiceTypeDatabase.py pkg.depend.bypass-generate='.*anydbm.*'
+file path=usr/lib/python3.5/vendor-packages/avahi/__init__.py
 file path=usr/share/avahi/avahi-service.dtd
-file path=usr/share/avahi/service-types
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.AddressResolver.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.DomainBrowser.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.EntryGroup.xml
@@ -188,6 +189,7 @@ file path=usr/share/locale/ko/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/lv/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/ms/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/nl/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/oc/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/pl/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/avahi.mo
 file path=usr/share/locale/ro/LC_MESSAGES/avahi.mo
@@ -211,3 +213,4 @@ link path=usr/share/man/man1/avahi-resolve-address.1 target=avahi-resolve.1
 link path=usr/share/man/man1/avahi-resolve-host-name.1 target=avahi-resolve.1
 file path=usr/share/man/man1/avahi-resolve.1
 file path=usr/share/man/man1/avahi-set-host-name.1
+
