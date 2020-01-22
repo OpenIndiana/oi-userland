@@ -46,7 +46,7 @@ component-environment-check::
 component-environment-prep::
 	@/usr/bin/pkg list -vH $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
 		{ echo "Adding required packages to build environment..."; \
-		  $(PFEXEC) /usr/bin/pkg install --accept  $(REQUIRED_PACKAGES:%=/%) || [ $$? -eq 4 ] ; }
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) || [ $$? -eq 4 ] ; }
 
 # Short aliases for user convenience
 env-check:: component-environment-check
