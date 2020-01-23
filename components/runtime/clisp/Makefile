@@ -22,12 +22,13 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS=32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clisp
 COMPONENT_VERSION=	2.49
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://clisp.cons.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -36,9 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/clisp/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/clisp
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # To include correct locale header file in .../modules/regexp/gllib/regex.c
 CPPFLAGS += -I/usr/share/gettext/intl
@@ -89,13 +88,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 # One of the tests now needs the GNU tail command.
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libsigsegv
