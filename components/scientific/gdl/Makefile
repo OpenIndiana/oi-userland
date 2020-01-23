@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        gdl
 COMPONENT_VERSION=      0.9.7
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_PROJECT_URL=  http://gnudatalanguage.sourceforge.net/	
 COMPONENT_SUMMARY=      A free/libre/open source incremental compiler compatible with IDL and to some extent with PV-WAVE.	
 COMPONENT_FMRI=         scientific/gdl
