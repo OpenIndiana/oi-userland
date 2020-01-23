@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		chezscheme
 COMPONENT_VERSION=	9.5.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Chez Scheme
 COMPONENT_PROJECT_URL=	https://github.com/cisco/ChezScheme
 COMPONENT_FMRI=		runtime/chezscheme
