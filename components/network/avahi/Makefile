@@ -13,28 +13,34 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_BITS = 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
-COMPONENT_VERSION= 0.6.32
+COMPONENT_VERSION= 0.7
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d54991185d514a0aba54ebeb408d7575b60f5818a772e28fa0e18b98bc1db454
+  sha256:57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804
 COMPONENT_ARCHIVE_URL= \
-  http://avahi.org/download/$(COMPONENT_ARCHIVE)
+  https://github.com/lathiat/avahi/releases/download/v0.7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://avahi.org
 COMPONENT_CLASSIFICATION = Applications/Internet
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+PYTHON_VERSION = 3.5
+
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION += (cd $(@D) &&\
 	        aclocal -I common &&\
 		automake --add-missing &&\
 		autoconf)
+
+# Need this to build service-type-database
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp -r $(SOURCE_DIR)/* $(@D) )
 
 LDFLAGS += -ldns_sd
 
@@ -74,18 +80,16 @@ install: $(INSTALL_32_and_64)
 REQUIRED_PACKAGES += text/xmltoman
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libdaemon
-REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += library/python/pygtk2-27
-REQUIRED_PACKAGES += library/python/python-dbus-27
-REQUIRED_PACKAGES += library/python/python-twisted-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/pygobject-3-35
+REQUIRED_PACKAGES += library/python/python-dbus-35
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += service/network/dns/mdns
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/dbus
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus

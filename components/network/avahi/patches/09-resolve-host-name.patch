@@ -82,7 +82,7 @@
 +    const unsigned char *rd = rdata;
 +    AvahiAddress a;
 +
-+    assert(rrtype == kDNSServiceType_A || rrtype == kDNSServiceType_A6);
++    assert(rrtype == kDNSServiceType_A || rrtype == kDNSServiceType_AAAA);
 +    if (!flags & kDNSServiceFlagsAdd)
 +        /* this is a remove event  so ignore*/
 +        return;
@@ -117,7 +117,7 @@
 +                }
 +            }
 +            break;
-+        case kDNSServiceType_A6:
++        case kDNSServiceType_AAAA:
 +            if (r->protocol == AVAHI_PROTO_UNSPEC)
 +                r->protocol = AVAHI_PROTO_INET6;
 +            else if (r->protocol != AVAHI_PROTO_INET6)
