@@ -4,9 +4,11 @@ Patch status: Solaris-specific; not suitable for upstream
 Download/use only archives we really need.
 Don't install unnecessary stuff.
 
---- build.xml.1	2018-07-27 17:39:31.829245576 +0000
-+++ build.xml	2018-07-27 17:43:08.175956779 +0000
-@@ -1011,8 +1011,6 @@
+diff --git a/build.xml b/build.xml
+index 5524d4c..f3a7ef1 100644
+--- a/build.xml
++++ b/build.xml
+@@ -1031,8 +1031,6 @@
    <target name="deploy" depends="package,build-docs,build-tomcat-jdbc,compile-webapp-examples"
            description="Default. Builds a working Tomcat instance">
  
@@ -15,7 +17,7 @@ Don't install unnecessary stuff.
      <!-- Copy scripts -->
      <copy todir="${tomcat.build}/bin">
        <fileset dir="bin">
-@@ -1969,12 +1967,6 @@
+@@ -1781,12 +1779,6 @@
        </fileset>
      </copy>
  
@@ -28,9 +30,9 @@ Don't install unnecessary stuff.
      <!-- platform README files -->
      <echo append="false" file="${tomcat.dist}/bin/x64/README">
  Apache Tomcat ${version} native binaries for Win64 AMD64/EMT64 platform.
-@@ -2823,16 +2815,6 @@
+@@ -2634,16 +2626,6 @@ skip.installer property in build.properties" />
    <target name="download-compile"
-           description="Download (and build) components necessary to compile" >
+           description="Download components necessary to compile" >
  
 -    <!-- Download Commons Daemon -->
 -    <antcall target="downloadgz-2">
@@ -45,7 +47,7 @@ Don't install unnecessary stuff.
      <!-- Download JDT (Eclipse compiler) -->
      <antcall target="downloadfile-2">
        <param name="sourcefile.1" value="${jdt.loc.1}"/>
-@@ -2927,46 +2909,6 @@
+@@ -2738,16 +2720,6 @@ skip.installer property in build.properties" />
    <target name="download-dist"
            description="Download additional components for a distribution" >
  
@@ -59,16 +61,13 @@ Don't install unnecessary stuff.
 -      <param name="checksum.value" value="${tomcat-native.src.checksum.value}"/>
 -    </antcall>
 -
--    <antcall target="downloadzip-2">
--      <param name="sourcefile.1" value="${tomcat-native.win.1}"/>
--      <param name="sourcefile.2" value="${tomcat-native.win.2}"/>
--      <param name="destfile" value="${tomcat-native.home}/LICENSE"/>
--      <param name="destdir" value="${tomcat-native.home}"/>
--      <param name="checksum.enabled" value="${tomcat-native.win.checksum.enabled}"/>
--      <param name="checksum.algorithm" value="${tomcat-native.win.checksum.algorithm}"/>
--      <param name="checksum.value" value="${tomcat-native.win.checksum.value}"/>
--    </antcall>
--
+     <antcall target="downloadzip-2">
+       <param name="sourcefile.1" value="${tomcat-native.win.1}"/>
+       <param name="sourcefile.2" value="${tomcat-native.win.2}"/>
+@@ -2758,16 +2730,6 @@ skip.installer property in build.properties" />
+       <param name="checksum.value" value="${tomcat-native.win.checksum.value}"/>
+     </antcall>
+ 
 -    <antcall target="downloadfile-2">
 -      <param name="sourcefile.1" value="${commons-daemon.native.src.loc.1}"/>
 -      <param name="sourcefile.2" value="${commons-daemon.native.src.loc.2}"/>
@@ -79,16 +78,6 @@ Don't install unnecessary stuff.
 -      <param name="checksum.value" value="${commons-daemon.native.src.checksum.value}"/>
 -    </antcall>
 -
--    <antcall target="downloadzip-2">
--      <param name="sourcefile.1" value="${commons-daemon.native.win.loc.1}"/>
--      <param name="sourcefile.2" value="${commons-daemon.native.win.loc.2}"/>
--      <param name="destfile" value="${commons-daemon.native.win.mgr.exe}"/>
--      <param name="destdir" value="${commons-daemon.native.win.home}"/>
--      <param name="checksum.enabled" value="${commons-daemon.native.win.checksum.enabled}"/>
--      <param name="checksum.algorithm" value="${commons-daemon.native.win.checksum.algorithm}"/>
--      <param name="checksum.value" value="${commons-daemon.native.win.checksum.value}"/>
--    </antcall>
--
-     <antcall target="downloadzip">
-       <param name="sourcefile" value="${nsis.loc}"/>
-       <param name="destfile" value="${nsis.exe}"/>
+     <antcall target="downloadzip-2">
+       <param name="sourcefile.1" value="${commons-daemon.native.win.loc.1}"/>
+       <param name="sourcefile.2" value="${commons-daemon.native.win.loc.2}"/>

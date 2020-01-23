@@ -26,13 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
-COMPONENT_VERSION=	8.0.53
+COMPONENT_VERSION=	8.5.50
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8e5f62134d65f99f7bafced8c06de1ac17c135dc2aeb909a8032954ce875c70b
+    sha256:1b5cd5cb21ef2c39e3ceb3e7eae6d387d07cc302039fd25493a5fb11508c0693
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tomcat
 
@@ -47,8 +47,6 @@ TPNO=			26981
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL=0
 
 COMPONENT_BUILD_ARGS=-Dbase.path=$(BUILD_DIR_32) -Dtomcat.build=$(PROTO_DIR)
 

@@ -3,9 +3,11 @@ Patch status: Solaris-specific; not suitable for upstream
 
 Support for setenv.sh in $CATALINA_BASE/conf.
 
---- bin/catalina.sh
-+++ bin/catalina.sh
-@@ -145,7 +146,13 @@
+diff --git a/bin/catalina.sh b/bin/catalina.sh
+index 55fd90b..0788da8 100644
+--- a/bin/catalina.sh
++++ b/bin/catalina.sh
+@@ -145,7 +145,13 @@ PRGDIR=`dirname "$PRG"`
  # but allow them to be specified in setenv.sh, in rare case when it is needed.
  CLASSPATH=
  
@@ -20,14 +22,15 @@ Support for setenv.sh in $CATALINA_BASE/conf.
    . "$CATALINA_BASE/bin/setenv.sh"
  elif [ -r "$CATALINA_HOME/bin/setenv.sh" ]; then
    . "$CATALINA_HOME/bin/setenv.sh"
---- bin/tool-wrapper.sh
-+++ bin/tool-wrapper.sh
-@@ -73,8 +75,16 @@
+diff --git a/bin/tool-wrapper.sh b/bin/tool-wrapper.sh
+index f9924da..c4443ed 100644
+--- a/bin/tool-wrapper.sh
++++ b/bin/tool-wrapper.sh
+@@ -74,7 +74,15 @@ PRGDIR=`dirname "$PRG"`
  # but allow them to be specified in setenv.sh, in rare case when it is needed.
  CLASSPATH=
  
 -if [ -r "$CATALINA_HOME/bin/setenv.sh" ]; then
--  . "$CATALINA_HOME/bin/setenv.sh"
 +# On Solaris we install Tomcat into two different locations
 +# (CATALINA_HOME, CATALINA_BASE). CATALINA_HOME can be on read only
 +# location and CATALINA_BASE doesn't contain bin directory. Therefore we
@@ -37,7 +40,6 @@ Support for setenv.sh in $CATALINA_BASE/conf.
 +elif [ -r "$CATALINA_BASE/bin/setenv.sh" ]; then
 +  . "$CATALINA_BASE/bin/setenv.sh"
 +elif [ -r "$CATALINA_HOME/bin/setenv.sh" ]; then
-+  . "$CATALINA_HOME/bin/setenv.sh"
+   . "$CATALINA_HOME/bin/setenv.sh"
  fi
  
- # For Cygwin, ensure paths are in UNIX format before anything is touched
