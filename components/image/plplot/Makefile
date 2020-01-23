@@ -11,31 +11,27 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 #
+BUILD_BITS=64
+BUILD_STYLE=cmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         plplot
-COMPONENT_VERSION=      5.13.0
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      5.15.0
 COMPONENT_PROJECT_URL=	http://plplot.sourceforge.net
 COMPONENT_SUMMARY=	A cross-platform software package for creating scientific plots.
 COMPONENT_FMRI=         image/plplot
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:ec36bbee8b03d9d1c98f8fd88f7dc3415560e559b53eb1aa991c2dcf61b25d2b
+COMPONENT_ARCHIVE_HASH= sha256:b92de4d8f626a9b20c84fc94f4f6a9976edd76e33fb1eae44f6804bdcc628c7b
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)%20Source/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING.LIB
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_BINDIR.64= $(CMAKE_BINDIR.32)
-
-
-CMAKE_OPTIONS.64 += -DwxWidgets_CONFIG_EXECUTABLE=/usr/bin/$(MACH64)/wx-config
+CMAKE_OPTIONS += -DwxWidgets_CONFIG_EXECUTABLE=/usr/bin/$(MACH64)/wx-config
 CMAKE_OPTIONS += -DENABLE_ada=OFF
 CMAKE_OPTIONS += -DENABLE_cxx=ON
 CMAKE_OPTIONS += -DENABLE_d=ON
@@ -53,6 +49,9 @@ CMAKE_OPTIONS += -DENABLE_itcl=OFF
 CMAKE_OPTIONS += -DENABLE_tk=ON
 CMAKE_OPTIONS += -DENABLE_itk=OFF
 CMAKE_OPTIONS += -DENABLE_wxwidgets=ON
+CMAKE_OPTIONS += -DJAVA_INCLUDE_PATH=/usr/jdk/latest/include
+CMAKE_OPTIONS += -DJAVA_AWT_LIBRARY=/usr/java/jre/lib/amd64/libjawt.so
+CMAKE_OPTIONS += -DJAVA_JVM_LIBRARY=/usr/java/jre/lib/amd64/server/libjvm.so
 
 CMAKE_OPTIONS += -DENABLE_tk=OFF
 CMAKE_OPTIONS += -DENABLE_tk=OFF
@@ -64,12 +63,6 @@ COMPONENT_TEST_CMD = ctest
 
 
 COMPONENT_BUILD_ARGS = 
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
