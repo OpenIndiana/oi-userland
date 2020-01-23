@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
 COMPONENT_VERSION=	4.4.2
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	4.4.2.0.0
 COMPONENT_FMRI=		service/network/dhcp/isc-dhcp
 COMPONENT_SUMMARY=	ISC DHCP Server and Relay Agent
@@ -63,11 +64,10 @@ CONFIGURE_OPTIONS  +=	--enable-use-sockets
 CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 CONFIGURE_OPTIONS  +=	--srcdir=$(BUILD_DIR_$(BITS))
 
-build:		$(BUILD_64) ;\
-		cd $(BUILD_DIR_64)/keama && $(MAKE)
+COMPONENT_POST_BUILD_ACTION = $(MAKE) -C $(BUILD_DIR_64)/keama
+COMPONENT_POST_INSTALL_ACTION = $(MAKE) -C $(BUILD_DIR_64)/keama DESTDIR=$(PROTO_DIR) install
 
-install:	build $(INSTALL_64) $(PROTO_DIR)/dhcpd.leases ;\
-		cd $(BUILD_DIR_64)/keama && $(MAKE) DESTDIR=$(PROTO_DIR) install
+install:	build $(INSTALL_64) $(PROTO_DIR)/dhcpd.leases
 
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_64)
 	$(TOUCH) $@
