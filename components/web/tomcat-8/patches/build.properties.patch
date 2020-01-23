@@ -4,11 +4,13 @@ Patch status: Solaris-specific; not suitable for upstream
 Redirects build process to use local archives instead of downloading
 from external webs.
 
---- build.properties.default
-+++ build.properties.default
-@@ -100,6 +100,12 @@
+diff --git a/build.properties.default b/build.properties.default
+index 5ebe11e..8cdb8da 100644
+--- a/build.properties.default
++++ b/build.properties.default
+@@ -103,6 +103,12 @@ base-maven.loc=https://repo.maven.apache.org/maven2
  # Mirror, was used when there were problems with the main SF downloads site
- # base-sf.loc=http://sunet.dl.sourceforge.net
+ # base-sf.loc=https://sunet.dl.sourceforge.net
  
 +# In Userland we really don't want Tomcat to download its build
 +# dependencies itself but instead we will do it ourself in advance.
@@ -16,10 +18,17 @@ from external webs.
 +# redirected to local file system.
 +userland-files.loc=file://${base.path}/../../
 +
- # ----- Commons Logging, version 1.1 or later -----
- # If this version is updated, check the versions required for the dependencies below
- # - avalon-framework
-@@ -155,7 +161,7 @@
+ # ----- Webservices - JAX RPC -----
+ jaxrpc-lib.version=1.1-rc4
+ jaxrpc-lib.checksum.enabled=true
+@@ -133,13 +139,13 @@ wsdl4j-lib.jar=${wsdl4j-lib.home}/wsdl4j-${wsdl4j-lib.version}.jar
+ #
+ jdt.version=4.6.3
+ jdt.release=R-4.6.3-201703010400
+-jdt.checksum.enabled=true
++jdt.checksum.enabled=false
+ jdt.checksum.algorithm=SHA-512
+ jdt.checksum.value=372da97d5f37095a3616c730170dc541b93acb8f50370cd9b0d81fba4583e865f0c933dc012155f26638306b82a402eaab209123cd0a979fa7c86313c0fca477
  jdt.home=${base.path}/ecj-${jdt.version}
  jdt.jar=${jdt.home}/ecj-${jdt.version}.jar
  # The download will be moved to the archive area eventually. We are taking care of that in advance.
