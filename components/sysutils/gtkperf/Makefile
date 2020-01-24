@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	gtkperf
 COMPONENT_VERSION= 	0.40
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= 	Gtk+ performance testing application
 COMPONENT_SRC= 		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
