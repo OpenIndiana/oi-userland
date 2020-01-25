@@ -24,26 +24,25 @@
 # Copyright 2019 Rouven Weiler
 #
 
-BUILD_BITS=			64
-BUILD_STYLE=			waf
+BUILD_BITS =			64
+BUILD_STYLE =			waf
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
-COMPONENT_VERSION =		4.11.4
-COMPONENT_REVISION=		1
+COMPONENT_VERSION =		4.11.5
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:b95471ba450757109dce65acfe75dafc719c5cc5d464fc65ee442433a461db24
+COMPONENT_ARCHIVE_HASH = 	sha256:f3e299ff62e424c0c259a2e60ca30979c8a65244d7ef6b54667902dac639d93f
 COMPONENT_ARCHIVE_URL =		http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_LICENSE =		GPLv3
 COMPONENT_LICENSE_FILE = 	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION =	System/File System
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET =		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -63,12 +62,12 @@ CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS
 CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap
 
-LDFLAGS.64 +=	-L/usr/lib/samba/$(MACH64) -R/usr/lib/samba/$(MACH64)
-LDFLAGS.64 +=	-L/usr/lib/samba/private/$(MACH64) -R/usr/lib/samba/private/$(MACH64)
-LDFLAGS.64 +=	-L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
+LDFLAGS +=	-L/usr/lib/samba/$(MACH64) -R/usr/lib/samba/$(MACH64)
+LDFLAGS +=	-L/usr/lib/samba/private/$(MACH64) -R/usr/lib/samba/private/$(MACH64)
+LDFLAGS +=	-L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
 
-LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile $(LD_FLAGS.$(BITS))
-LDFLAGS +=      -lldap_r -lsendfile -lavahi-common -lavahi-core $(LDFLAGS.$(BITS))
+LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
+LDFLAGS +=      -lldap_r -lsendfile -lavahi-common -lavahi-core 
 
 LD_OPTIONS +=	-B direct
 
@@ -80,6 +79,7 @@ CONFIGURE_PREFIX =	/usr/lib/samba
 CONFIGURE_ENV +=	CPP="$(CC) -E"
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
+CONFIGURE_ENV +=	PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
 CONFIGURE_ENV +=	PERL=$(PERL)
 CONFIGURE_ENV +=	PYTHONARCHDIR=$(PYTHON_VENDOR_PACKAGES)/samba
 
@@ -120,8 +120,6 @@ CONFIGURE_OPTIONS +=	--python=$(PYTHON)
 #
 # set everything for target build.
 #
-COMPONENT_BUILD_ARGS += $(WAF_BUILD_OPTIONS) 
-
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTO_DIR)$(ETCDIR)/samba ; \
 	(sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed \
