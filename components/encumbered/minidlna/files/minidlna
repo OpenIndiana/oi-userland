@@ -1,0 +1,44 @@
+#! /usr/bin/sh
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2020 Alexander Pyhalov
+#
+
+. /lib/svc/share/smf_include.sh
+
+# SMF_FMRI is the name of the target service. This allows multiple instances
+# to use the same script.
+
+RUNDIR=/var/run/minidlna
+
+getproparg() {
+val=`svcprop -p "$1" $SMF_FMRI`
+[ -n "$val" ] && echo "$val" | /usr/bin/sed -e  's:\\ : :g'
+}
+
+OPTIONS="`getproparg minidlna/options`"
+
+case "$1" in
+"start")
+	mkdir -p "$RUNDIR"
+	chown minidlna:minidlna  "$RUNDIR"
+	
+	/usr/sbin/minidlnad $OPTIONS -u minidlna -P ${RUNDIR}/minidlna.pid
+	;;
+*)
+        echo "Usage: $0 {start|stop|refresh}"
+        exit $SMF_EXIT_ERR_CONFIG
+        ;;
+esac
+

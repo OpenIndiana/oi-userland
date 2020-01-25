@@ -1,0 +1,38 @@
+diff -wpruN '--exclude=*.orig' a~/minissdp.c a/minissdp.c
+--- a~/minissdp.c	1970-01-01 00:00:00
++++ a/minissdp.c	1970-01-01 00:00:00
+@@ -106,14 +106,14 @@ OpenAndConfSSDPReceiveSocket(void)
+ 
+ 	if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(i)) < 0)
+ 		DPRINTF(E_WARN, L_SSDP, "setsockopt(udp, SO_REUSEADDR): %s\n", strerror(errno));
+-#ifdef __linux__
++#ifdef __unix__
+ 	if (setsockopt(s, IPPROTO_IP, IP_PKTINFO, &i, sizeof(i)) < 0)
+ 		DPRINTF(E_WARN, L_SSDP, "setsockopt(udp, IP_PKTINFO): %s\n", strerror(errno));
+ #endif
+ 	memset(&sockname, 0, sizeof(struct sockaddr_in));
+ 	sockname.sin_family = AF_INET;
+ 	sockname.sin_port = htons(SSDP_PORT);
+-#ifdef __linux__
++#ifdef __unix__
+ 	/* NOTE: Binding a socket to a UDP multicast address means, that we just want
+ 	 * to receive datagramms send to this multicast address.
+ 	 * To specify the local nics we want to use we have to use setsockopt,
+@@ -490,7 +490,7 @@ ProcessSSDPRequest(int s, unsigned short
+ 	char *st = NULL, *mx = NULL, *man = NULL, *mx_end = NULL;
+ 	int man_len = 0;
+ 	socklen_t len_r = sizeof(struct sockaddr_in);
+-#ifdef __linux__
++#ifdef __unix__
+ 	char cmbuf[CMSG_SPACE(sizeof(struct in_pktinfo))];
+ 	struct iovec iovec = {
+ 		.iov_base = bufr,
+@@ -651,7 +651,7 @@ ProcessSSDPRequest(int s, unsigned short
+ 		else if (st && (st_len > 0))
+ 		{
+ 			int l;
+-#ifdef __linux__
++#ifdef __unix__
+ 			char host[40] = "127.0.0.1";
+ 			struct cmsghdr *cmsg;
+ 
