@@ -1,0 +1,41 @@
+diff -ur minidlna-1.2.1/monitor.c minidlna-1.2.1-mod/monitor.c
+--- minidlna-1.2.1/monitor.c	2017-08-24 20:28:25.000000000 +0000
++++ minidlna-1.2.1-mod/monitor.c	2020-01-25 10:50:19.061672227 +0000
+@@ -533,25 +533,20 @@
+ 			continue;
+ 		esc_name = escape_tag(e->d_name, 1);
+ 		snprintf(path_buf, sizeof(path_buf), "%s/%s", path, e->d_name);
+-		switch( e->d_type )
++		if ((stat(path_buf, &st) == 0) &&
++		     (S_ISDIR(st.st_mode)||S_ISREG(st.st_mode)||S_ISLNK(st.st_mode)))
+ 		{
+-			case DT_DIR:
+-			case DT_REG:
+-			case DT_LNK:
+-			case DT_UNKNOWN:
+-				type = resolve_unknown_type(path_buf, dir_types);
+-			default:
+-				break;
+-		}
+-		if( type == TYPE_DIR )
+-		{
+-			monitor_insert_directory(fd, esc_name, path_buf);
+-		}
+-		else if( type == TYPE_FILE )
+-		{
+-			if( (stat(path_buf, &st) == 0) && (st.st_blocks<<9 >= st.st_size) )
++			type = resolve_unknown_type(path_buf, dir_types);
++			if( type == TYPE_DIR )
++			{
++				monitor_insert_directory(fd, esc_name, path_buf);
++			}
++			else if( type == TYPE_FILE )
+ 			{
+-				monitor_insert_file(esc_name, path_buf);
++				if(st.st_blocks<<9 >= st.st_size)
++				{
++					monitor_insert_file(esc_name, path_buf);
++				}
+ 			}
+ 		}
+ 		free(esc_name);

@@ -20,6 +20,7 @@ UID   | User name
 16    | netadm
 17    | netcfg
 18    | dhcpserv
+19    | minidlna
 21    | ftp
 22    | sshd
 25    | smmsp
@@ -85,6 +86,7 @@ GID   | Group name
 10    | staff
 12    | daemon
 14    | sysadmin
+19    | minidlna
 20    | games
 21    | ftp
 22    | sshd
