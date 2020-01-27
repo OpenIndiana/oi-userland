@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		htop
 COMPONENT_VERSION=	2.2.0
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_FMRI=		diagnostic/htop
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=	htop - an interactive process viewer for Unix
@@ -55,7 +55,7 @@ TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH=$(GNUBIN64):$(PATH.gnu)
 
 COMPONENT_PREP_ACTION= ( cd $(@D); $(RM) config.h; sh autogen.sh )
 
