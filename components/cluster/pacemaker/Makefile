@@ -21,7 +21,7 @@ PATH= $(USRBINDIR64):$(PATH.gnu)
 
 COMPONENT_NAME=		pacemaker
 COMPONENT_VERSION=	1.1.21
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=		application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC=		$(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
@@ -65,26 +65,28 @@ COMPONENT_POST_INSTALL_ACTION=( \
 	$(MKDIR) $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples; \
 	$(MV)    $(PROTO_DIR)/etc/logrotate.d  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME)/examples;)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += utility/arpsend
-REQUIRED_PACKAGES += application/cluster/corosync
-REQUIRED_PACKAGES += application/cluster/cluster-glue
+# added manually, not found as dependency
+REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += application/cluster/resource-agents
 REQUIRED_PACKAGES += library/libstatgrab
-REQUIRED_PACKAGES += library/libesmtp
-REQUIRED_PACKAGES += library/libqb
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += application/cluster/cluster-glue
+REQUIRED_PACKAGES += application/cluster/corosync
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/libesmtp
+REQUIRED_PACKAGES += library/libqb
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
-# added manually, not found as dependency
-REQUIRED_PACKAGES += text/asciidoc
+
