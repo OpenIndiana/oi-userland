@@ -14,12 +14,13 @@
 # Copyright (c) 2019 Solene Rapenne
 #
 
-BUILD_BITS=		64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
 COMPONENT_VERSION=	4.7
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=		editor/nano
 COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -35,7 +36,7 @@ TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+PATH=$(GNUBIN64):$(PATH.gnu)
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-color
