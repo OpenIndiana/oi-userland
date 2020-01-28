@@ -12,10 +12,13 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
+BUILD_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin-otr
 COMPONENT_VERSION=	4.0.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.cypherpunks.ca/otr/
 COMPONENT_SUMMARY=	Off-the-Record (OTR) Messaging plugin for Pidgin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -24,11 +27,10 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f4b59eef4a94b1d29dbe0c106dd00cdc630e47f18619fc754e5afbf5724ebac4
 COMPONENT_ARCHIVE_URL=	http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         aclocal -I. && \
@@ -43,13 +45,6 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += communication/im/pidgin
