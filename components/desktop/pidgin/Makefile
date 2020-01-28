@@ -14,13 +14,12 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		32
-
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.13.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
@@ -33,16 +32,17 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	pidgin.license
 
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# Use 64-bit perl
+PERL_VERSION = 5.24
+PYTHON_VERSION = 3.5
 
 PATH = $(PATH.gnu)
 
-# We use libncurses and libpanel from /usr/gnu/lib
-LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib
-
-CPPFLAGS += -D_FILE_OFFSET_BITS=64
+# We use libncurses and libpanel from /usr/gnu/lib/$(MACH64)
+LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 			                libtoolize --force && \
@@ -60,9 +60,9 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
 CONFIGURE_OPTIONS+=	--with-nss-includes=/usr/include/mps
-CONFIGURE_OPTIONS+=	--with-nss-libs=/usr/lib/mps
+CONFIGURE_OPTIONS+=	--with-nss-libs=/usr/lib/mps/64
 CONFIGURE_OPTIONS+=	--with-nspr-includes=/usr/include/mps
-CONFIGURE_OPTIONS+=	--with-nspr-libs=/usr/lib/mps
+CONFIGURE_OPTIONS+=	--with-nspr-libs=/usr/lib/mps/64
 CONFIGURE_OPTIONS+=	--enable-gnome-keyring
 CONFIGURE_OPTIONS+=	--disable-gevolution
 CONFIGURE_OPTIONS+=	--enable-cap
@@ -81,7 +81,6 @@ CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/desktop/atk
@@ -95,11 +94,12 @@ REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/python/python-dbus-27
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/python-dbus-35
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
