@@ -13,23 +13,23 @@
 # Copyright (c) 2018 Michal Nowak
 #
 
-PREFERRED_BITS=	64
+BUILD_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-extra
-COMPONENT_VERSION=	0.8.14
+COMPONENT_VERSION=	0.8.16
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	extra effects plugins for compiz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7644755ad15e431189deff71da42e99bf3c54cfdd13637e728b48193cb430e4f
+    sha256:e942ffe0549bf1935c4a69eafea5b888c2646e198cb94e023d373b8d47c0cfa3
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -42,17 +42,9 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && \
 	find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
 
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
-CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += desktop/compiz/bcop
@@ -63,7 +55,6 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
