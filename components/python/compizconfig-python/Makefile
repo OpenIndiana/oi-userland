@@ -13,25 +13,29 @@
 # Copyright (c) 2018 Michal Nowak
 #
 
+BUILD_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compizconfig-python
-COMPONENT_VERSION=	0.8.14
+COMPONENT_VERSION=	0.8.16
 COMPONENT_PROJECT_URL=	http://www.northfield.ws
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a119c51f4892bb5f5f8067c038e3a5b7720df0c73280ce642d87a0495c9ca256
+    sha256:fff161859619b2f55aa99be79ecb3e91dc1b092886c9329c44a5e22b130a12a0
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 COMPONENT_FMRI=		library/python/python-compizconfig
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.5
 
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
-VARIANTS_64 = $(VARIANT_PYTHON27)
+VARIANT_PYTHON35 = $(BUILD_DIR)/python-35
+
+VARIANTS_64 = $(VARIANT_PYTHON27) $(VARIANT_PYTHON35)
 
 BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
 
@@ -41,10 +45,15 @@ $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON27)/$(MACH64)/.configured: CYTHON=/usr/bin/cython-2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: BITS=64
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: PYTHON=$(PYTHON.3.5.64)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.5.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.3.5.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON35)/$(MACH64)/.configured: CYTHON=/usr/bin/cython-3.5
+
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
 			( cd $(@D) ; \
@@ -60,20 +69,14 @@ CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
+CONFIGURE_OPTIONS+=	--with-cython="$(CYTHON)"
 
 # Dependencies not found by auto-generator
 REQUIRED_PACKAGES += desktop/compiz/library/libcompizconfig
 REQUIRED_PACKAGES += library/python/cython-27
-REQUIRED_PACKAGES += library/python/pyrex-27
+REQUIRED_PACKAGES += library/python/cython-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += runtime/python-35
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/compiz/library/libcompizconfig
