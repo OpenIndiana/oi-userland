@@ -13,25 +13,25 @@
 # Copyright 2018 Michal Nowak
 #
 
+BUILD_BITS = 64
+BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccsm
-COMPONENT_VERSION=	0.8.14
+COMPONENT_VERSION=	0.8.16
 COMPONENT_PROJECT_URL=	http://www.northfield.ws
 COMPONENT_SUMMARY=	ccsm settings manager for the CompizConfig system
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f2f23068706f52b8d9d0a06520b09070cfc9b5e5bbac82b71ee7f30ce39f872c
+    sha256:446b4396808842f8ca712b82b6361d6a4fb58359c053193a3ad98355301a9764
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 COMPONENT_FMRI=		desktop/compiz/ccsm
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+PYTHON_VERSION = 3.5
+PYTHON_VERSIONS = 3.5
 
-# compizconfig-python is Python 2.7 only
-PYTHON_VERSIONS = 2.7
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -48,20 +48,9 @@ COMPONENT_POST_BUILD_ACTION = \
 		(cd $(SOURCE_DIR);\
 		$(GSED) -i -e '1 i\#!$(PYTHON)' ccm/*.py{,.in} )
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += library/python/pygtk2-27
-REQUIRED_PACKAGES += library/python/python-dbus-27
-REQUIRED_PACKAGES += library/python/python-sexy-27
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pycairo-27
-REQUIRED_PACKAGES += library/python/pygobject-3-27
-REQUIRED_PACKAGES += library/python/python-compizconfig-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/pycairo-35
+REQUIRED_PACKAGES += library/python/pygobject-3-35
+REQUIRED_PACKAGES += library/python/python-compizconfig-35
+REQUIRED_PACKAGES += library/python/python-xlib-35
+REQUIRED_PACKAGES += runtime/python-35
