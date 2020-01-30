@@ -1,0 +1,74 @@
+From e8000cfea9d2abde4acf07e759e18706a1f8010a Mon Sep 17 00:00:00 2001
+From: Fabian Homborg <FHomborg@gmail.com>
+Date: Thu, 30 Jan 2020 17:36:51 +0100
+Subject: [PATCH] Add Solaris' error message to a test
+
+Just another version of the error. We still want to get a bug if it
+ever triggers a *wrong* error, so we still list all the options
+instead of going for `.*option:.*Z.*`.
+
+Fixes #6554
+---
+ tests/checks/bad-option.fish | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/checks/bad-option.fish b/tests/checks/bad-option.fish
+index 8d7509c4bf..6a11409440 100644
+--- a/tests/checks/bad-option.fish
++++ b/tests/checks/bad-option.fish
+@@ -1,2 +1,2 @@
+ #RUN: %fish -Z
+-#CHECKERR: {{.*fish}}: {{unrecognized option: Z|invalid option -- '?Z'?|unknown option -- Z}}
++#CHECKERR: {{.*fish}}: {{unrecognized option: Z|invalid option -- '?Z'?|unknown option -- Z}|illegal option -- Z}}
+
+From 9cbd3d57a01ba8f4813febff83210f595518cea1 Mon Sep 17 00:00:00 2001
+From: Fabian Homborg <FHomborg@gmail.com>
+Date: Thu, 30 Jan 2020 17:34:48 +0100
+Subject: [PATCH] Tests: Don't remove a parent of $PWD
+
+Solaris/OpenIndiana/Illumos `rm` checks that and errors out.
+
+In these cases we don't actually need it to be a part of $PWD as
+it's just for cleanup, so we `cd` out before.
+
+See #5472
+See 1ee57e92447781b5ff79aaa7c55f6468fc84a37d
+Fixes #6555
+Fixes #6558
+---
+ tests/checks/cd.fish       | 2 +-
+ tests/checks/wildcard.fish | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tests/checks/cd.fish b/tests/checks/cd.fish
+index 07d3d0a92d..88cb84da6b 100644
+--- a/tests/checks/cd.fish
++++ b/tests/checks/cd.fish
+@@ -19,8 +19,8 @@ begin
+     cd x
+     pwd
+ end
+-rm -rf $tmp
+ cd $oldpwd
++rm -rf $tmp
+ 
+ # Create a test directory to store our stuff.
+ # macOS likes to return symlinks from (mktemp -d), make sure it does not.
+diff --git a/tests/checks/wildcard.fish b/tests/checks/wildcard.fish
+index 2758d6b2ea..0384c63de1 100644
+--- a/tests/checks/wildcard.fish
++++ b/tests/checks/wildcard.fish
+@@ -2,6 +2,7 @@
+ 
+ # Ensure that, if variable expansion results in multiple strings
+ # and one of them fails a glob, that we don't fail the entire expansion.
++set -l oldpwd (pwd)
+ set dir (mktemp -d)
+ cd $dir
+ mkdir a
+@@ -12,4 +13,5 @@ set dirs ./a ./b
+ echo $dirs/*.txt
+ # CHECK: ./b/file.txt
+ 
++cd $oldpwd
+ rm -Rf $dir
