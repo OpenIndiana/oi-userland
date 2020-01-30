@@ -24,16 +24,17 @@
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
+BUILD_BITS=32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-COMPONENT_VERSION=	2.9.7
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.9.9
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f63c5e7d30362ed28b38bfa1ac6313f9a80230720b7fb6c80575eeab3ff5900c
+    sha256:94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxml
 
@@ -43,9 +44,7 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
 COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(CC_BITS) $(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
@@ -67,26 +66,44 @@ COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python3.4 ; \
      -e 's|usr/bin/python2[.]7|usr/bin/python3.4m|' \
      -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/$(MACH64)/python3.4m|' \
      -e 's|usr/include/python2[.]7|usr/include/python3.4m|' \
-     -e 's/2[.]7/3.4/g' `find python3.4 -name Makefile`)
+     -e 's/2[.]7/3.4/g' `find python3.4 -name Makefile` ;\
+    cd $(@D) ; cp -rp python python3.5 ; \
+    $(GSED) -i -e 's|-lpython2[.]7|-lpython3.5m|' \
+     -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/python3.5m|' \
+     -e 's|usr/include/python2[.]7|usr/include/python3.5m|' \
+     -e 's/2[.]7/3.5/g' -e 's|vendor-packages/64|vendor-packages|' \
+     `find python3.5 -name Makefile`;)
 
 # After we have built/installed libxml2, build/install the python
-# support for python 3.4 
-COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python3.4 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
+# support for python 3.4 and 3.5 
+COMPONENT_POST_INSTALL_ACTION.32 = \
+    cd $(@D)/python3.4 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install ;
 
-# It's nice to test also python 3.4 module (LC_ALL is set to avoid test failure).
-COMPONENT_POST_TEST_ACTION = \
-    (cd $(@D)/python3.4 ; \
-    LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) test)
+COMPONENT_POST_INSTALL_ACTION.64 = \
+    cd $(@D)/python3.4 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install ; \
+    cd $(@D)/python3.5 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install ;
+
+# It's nice to test also python 3.4 and 3.5 modules (LC_ALL is set to avoid test failure).
+COMPONENT_POST_TEST_ACTION.32 = \
+    cd $(@D)/python3.4 ; \
+    LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) test ;
+
+COMPONENT_POST_TEST_ACTION.64 = \
+    cd $(@D)/python3.4 ; \
+    LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) test ; \
+    cd $(@D)/python3.5; \
+    LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) test
 
 # We have patched our 64 bit python so it will search for modules only in
 # '64/' directories. Now we need to provide one. Otherwise python will
 # end up using libxml2mod.so installed on system.
 $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
-  $(MKDIR) $(@D)/python/.libs/64; \
-  $(SYMLINK) ../libxml2mod.so $(@D)/python/.libs/64/libxml2mod.so; \
-  $(MKDIR) $(@D)/python/.libs/64 $(@D)/python3.4/.libs/64; \
-  $(SYMLINK) ../libxml2mod.so $(@D)/python3.4/.libs/64/libxml2mod.so);
+    $(MKDIR) $(@D)/python/.libs/64 \
+             $(@D)/python3.4/.libs/64; \
+             $(@D)/python3.5/.libs/64; \
+    $(SYMLINK) ../libxml2mod.so $(@D)/python/.libs/64/libxml2mod.so; \
+    $(SYMLINK) ../libxml2mod.so $(@D)/python3.4/.libs/64/libxml2mod.so; \
+    $(SYMLINK) ../libxml2mod.so $(@D)/python3.5/.libs/64/libxml2mod.so );
 
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_1));
@@ -99,22 +116,20 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/^\#\# running Python regression tests/,/^\[EnD\]/p" ' \
 	'-e "/.*/d" '
 
+COMPONENT_POST_INSTALL_ACTION.32 += \
+        $(PYTHON.2.7.32) -m compileall $(PROTOUSRLIBDIR)/python2.7/vendor-packages; \
+        $(PYTHON.3.4.32) -m compileall $(PROTOUSRLIBDIR)/python3.4/vendor-packages;
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
-	$(PYTHON.3.4.32) -m compileall $(PROTO_DIR)/usr/lib/python3.4/vendor-packages
-
-test:		$(TEST_32_and_64)
+COMPONENT_POST_INSTALL_ACTION.64 += \
+        $(PYTHON.3.5.64) -m compileall $(PROTOUSRLIBDIR)/python3.5/vendor-packages;
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
