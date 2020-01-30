@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
 COMPONENT_VERSION=	26.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -87,6 +87,8 @@ CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 # ASLR should remain disabled for emacs (the default);
 # build consistently core dumps with ASLR
 ASLR_MODE = $(ASLR_DISABLE)
+# LD_EXEC_OPTIONS is not supported on illumos, we need to disable ASLR in LD_OPTIONS
+LD_OPTIONS+= $(ASLR_MODE)
 
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
