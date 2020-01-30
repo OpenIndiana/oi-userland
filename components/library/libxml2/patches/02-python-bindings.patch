@@ -1,0 +1,51 @@
+Python 3.5+ has a problem when both value is returned and exception errno is
+set resulting in SystemError being raised. This patch clears PyErr preventing
+this error.
+
+I found no documentation for Python bindings and so I don't know how exactly
+should the function behave, but now all python runtimes pass tests and work
+the same.
+
+Assert changes are only to prevent deprecation warnings from the test suite.
+
+This should be reported / offered to upstream.
+
+--- libxml2-2.9.9/python/libxml2-py.c
++++ libxml2-2.9.9/python/libxml2-py.c
+@@ -5834,6 +5834,7 @@ libxml_xmlReadFile(PyObject *self ATTRIB
+ 
+     c_retval = xmlReadFile(filename, encoding, options);
+     py_retval = libxml_xmlDocPtrWrap((xmlDocPtr) c_retval);
++    PyErr_Clear();
+     return(py_retval);
+ }
+ 
+@@ -5853,6 +5854,7 @@ libxml_xmlReadMemory(PyObject *self ATTR
+ 
+     c_retval = xmlReadMemory(buffer, size, URL, encoding, options);
+     py_retval = libxml_xmlDocPtrWrap((xmlDocPtr) c_retval);
++    PyErr_Clear();
+     return(py_retval);
+ }
+ 
+--- libxml2-2.9.9/python/tests/tstLastError.py
++++ libxml2-2.9.9/python/tests/tstLastError.py
+@@ -40,12 +40,12 @@ class TestCase(unittest.TestCase):
+                 print("file =",e.file())
+                 print("line =",e.line())
+                 print()
+-            self.failUnlessEqual(domain,e.domain())
+-            self.failUnlessEqual(code,e.code())
+-            self.failUnlessEqual(message,e.message())
+-            self.failUnlessEqual(level,e.level())
+-            self.failUnlessEqual(file,e.file())
+-            self.failUnlessEqual(line,e.line())
++            self.assertEqual(domain,e.domain())
++            self.assertEqual(code,e.code())
++            self.assertEqual(message,e.message())
++            self.assertEqual(level,e.level())
++            self.assertEqual(file,e.file())
++            self.assertEqual(line,e.line())
+         else:
+             self.fail("exception %s should have been raised" % exc)
+ 
