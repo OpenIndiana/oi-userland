@@ -20,7 +20,7 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Michal Nowak
 #
 
 BUILD_BITS=		64
@@ -28,7 +28,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=		1.8.30
+SRC_VERSION=		1.8.31
 SRC_PATCH_VERSION=	0
 SRC_DOT_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo .$(SRC_PATCH_VERSION))
 SRC_P_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo p$(SRC_PATCH_VERSION))
@@ -37,7 +37,7 @@ COMPONENT_SUMMARY=	sudo - tool to allow certain tasks to be run as root by ordin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a35ad3ddc7465703e04190d3ff0b8d78ded9246749becf9a014dcb9c31c579e7
+	sha256:7ea8d97a3cee4c844e0887ea7a1bd80eb54cc98fd77966776cb1a80653ad454f
 COMPONENT_ARCHIVE_URL=	https://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
 COMPONENT_PROJECT_URL=  https://www.sudo.ws/
