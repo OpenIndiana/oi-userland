@@ -34,6 +34,7 @@ COMPONENT_CLASSIFICATION=System/Shells
 
 include $(WS_MAKE_RULES)/common.mk
 
+# STRTOD(3C) with hexadecimal numbers does not work with GCC < 8
 GCC_VERSION = 8
 
 PATH=$(PATH.gnu)
