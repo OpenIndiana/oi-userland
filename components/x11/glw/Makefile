@@ -12,8 +12,11 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
+BUILD_BITS=32_and_64
+COMPONENT_X11_DEFAULTS=no
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= glw
 COMPONENT_VERSION= 8.0.0
@@ -26,31 +29,15 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/glw/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
-ARCHLIBSUBDIR.64=/$(MACH64)
-ARCHLIBSUBDIR=$(ARCHLIBSUBDIR.$(BITS))
-
-SERVERMOD_SUBDIR.64=/$(MACH64)
-SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
-X11_SERVERMODS_DIR=/usr/lib/xorg/modules
-X11_SERVERLIBS_DIR=/usr/lib/xorg
-
-LDFLAGS= -L$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
-                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) 
+LDFLAGS= -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR)
 
 CONFIGURE_OPTIONS += --enable-motif
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/motif
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
