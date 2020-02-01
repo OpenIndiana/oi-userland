@@ -13,26 +13,18 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS = 32_and_64
+X11_CATEGORY=DRIVER
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-mouse
 COMPONENT_VERSION= 1.9.3
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-mouse
 COMPONENT_SUMMARY= xf86-input-mouse - Mouse input driver for the Xorg X server
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:93ecb350604d05be98b7d4e5db3b8155a44890069a7d8d6b800c0bea79c85cc5
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_CLASSIFICATION= Drivers/Other Peripherals
-COMPONENT_LICENSE = MIT
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-mouse
 
-TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Build dependencies
