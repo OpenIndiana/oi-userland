@@ -76,12 +76,60 @@ COMPONENT_LICENSE        = MIT License
 endif
 
 #
-# Define library install paths
+# Set defaults for X11 drivers
+#
+ifeq ($(strip $(X11_CATEGORY)),DRIVER)
+BUILD_BITS = 32_and_64
+PATH=$(PATH.gnu)
+ifneq (,$(findstring video,$(COMPONENT_NAME)))
+COMPONENT_CLASSIFICATION = Drivers/Display
+else
+COMPONENT_CLASSIFICATION = Drivers/Other Peripherals
+endif
+COMPONENT_LICENSE        = MIT License
+COMPONENT_LICENSE_FILE   = COPYING
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal && \
+                          autoheader && \
+                          automake -a -f -c && \
+                          autoconf )
+endif
+
+#
+# Set no test target by default
+#
+TEST_TARGET = $(NO_TESTS)
+
+#
+# Define library and modules install paths
 #
 
 XORG_LIBDIR.32 = $(USRLIBDIR)/xorg	
 XORG_LIBDIR.64 = $(USRLIBDIR)/xorg/$(MACH64)	
 XORG_LIBDIR    = $(XORG_LIBDIR.$(BITS))
+
+X11_SERVERMOD_SUBDIR.32=
+X11_SERVERMOD_SUBDIR.64=/$(MACH64)
+X11_SERVERMOD_SUBDIR=$(X11_SERVERMOD_SUBDIR.$(BITS))
+
+X11_SERVERLIBS_DIR = $(USRLIBDIR)/xorg$(X11_SERVERMOD_SUBDIR)
+X11_SERVERMODS_DIR = $(USRLIBDIR)/xorg/modules$(X11_SERVERMOD_SUBDIR)
+
+X11_SERVERMODS_DRI_DIR		= $(USRLIBDIR)/xorg/modules/dri$(X11_SERVERMOD_SUBDIR)
+X11_SERVERMODS_DRIVERS_DIR	= $(USRLIBDIR)/xorg/modules/drivers$(X11_SERVERMOD_SUBDIR)
+X11_SERVERMODS_EXTENSIONS_DIR	= $(USRLIBDIR)/xorg/modules/extensions$(X11_SERVERMOD_SUBDIR)
+x11_SERVERMODS_INPUT_DIR	= $(USRLIBDIR)/xorg/modules/input$(X11_SERVERMOD_SUBDIR)
+X11_SERVERMODS_MULTIMEDIA_DIR	= $(USRLIBDIR)/xorg/modules/multimedia$(X11_SERVERMOD_SUBDIR)
+
+#
+# Define MESA paths
+#
+
+MESA_XSERVERLIBS_DIR = $(USRLIBDIR)/mesa$(X11_SERVERMOD_SUBDIR)
+MESA_XSERVERMODS_DIR = $(USRLIBDIR)/mesa/modules$(X11_SERVERMOD_SUBDIR)
+
+MESA_XSERVERMODS_EXTENSIONS_DIR = $(USRLIBDIR)/mesa/modules/extensions$(X11_SERVERMOD_SUBDIR)
 
 #
 # Define PKG macros
