@@ -9,43 +9,49 @@
 #
 
 #
-# Copyright (c) 2016 Aurelien Larcher
+# Copyright (c) 2016-2020 Aurelien Larcher
 #
-
+BUILD_BITS=32_and_64
+BUILD_STYLE=meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libvdpau
-COMPONENT_VERSION=	1.1.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.3
 COMPONENT_SUMMARY=	VDPAU libaries and headers
 COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/VDPAU/
 COMPONENT_FMRI=		library/graphics/libvdpau
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:857a01932609225b9a3a5bf222b85e39b55c08787d0ad427dbd9ec033d58d736
+    sha256:b5a52eeac9417edbc396f26c40591ba5df0cd18285f68d84614ef8f06196e50e
 COMPONENT_ARCHIVE_URL= \
-    http://people.freedesktop.org/~aplattner/vdpau/$(COMPONENT_ARCHIVE)
+    https://gitlab.freedesktop.org/vdpau/libvdpau/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
+unexport SHELLOPTS
+COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9].[0-9][0-9] s//" '
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/OK/p" ' \
+	'-e "/Ok/p" ' \
+        '-e "/Fail/p" ' \
+        '-e "/Pass/p" ' \
+        '-e "/Skipped/p" ' \
+        '-e "/Timeout/p" ' \
+        '-e "/ok/p" '
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
+# Build dependencies
+REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/header/dri2proto
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
