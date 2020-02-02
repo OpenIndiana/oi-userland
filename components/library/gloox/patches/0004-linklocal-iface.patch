@@ -1,0 +1,53 @@
+Apparently some code change renamed "interface" to "iface".
+Without the fix below it was just not building, not sure how the release was cut.
+
+Part of compile fixes for OpenIndiana support in gloox-1.0.23 as of 2020-02-02
+
+Signed-off: Jim Klimov <jimklimov@gmail.com>
+
+diff -Naur gloox-1.0.23.orig/src/linklocalclient.cpp gloox-1.0.23/src/linklocalclient.cpp
+--- gloox-1.0.23.orig/src/linklocalclient.cpp	2019-12-08 20:14:11.000000000 +0000
++++ gloox-1.0.23/src/linklocalclient.cpp	2020-02-02 19:47:35.085620425 +0000
+@@ -55,7 +56,7 @@
+     bool Client::connect( const std::string& service, const std::string& type,
+                           const std::string& domain, int iface )
+     {
+-      m_interface = interface;
++      m_interface = iface;
+       return resolve( service, type, domain );
+     }
+ 
+diff -Naur gloox-1.0.23.orig/src/linklocalmanager.cpp gloox-1.0.23/src/linklocalmanager.cpp
+--- gloox-1.0.23.orig/src/linklocalmanager.cpp	2019-12-08 20:14:11.000000000 +0000
++++ gloox-1.0.23/src/linklocalmanager.cpp	2020-02-02 19:46:22.159830743 +0000
+@@ -197,7 +198,7 @@
+ 
+     void Manager::handleBrowse( Flag flag, const std::string& service, const std::string& regtype, const std::string& domain, int iface, bool moreComing )
+     {
+-      Service s( flag, service, regtype, domain, interface );
++      Service s( flag, service, regtype, domain, iface );
+       m_tmpServices.push_back( s );
+ 
+ //       switch( flag )
+diff -Naur gloox-1.0.23.orig/src/examples/linklocal_example.cpp gloox-1.0.23/src/examples/linklocal_example.cpp
+--- gloox-1.0.23.orig/src/examples/linklocal_example.cpp	2019-12-08 20:14:10.000000000 +0000
++++ gloox-1.0.23/src/examples/linklocal_example.cpp	2020-02-02 19:56:03.979881744 +0000
+@@ -111,15 +111,15 @@
+       for( ; it != services.end(); ++it )
+       {
+         printf( "%s:\t%s.%s%s on interface %d\n", (*it).flag == LinkLocal::AddService ? "Added" : "Removed", (*it).service.c_str(), (*it).regtype.c_str(),
+-                (*it).domain.c_str(), (*it).interface );
++                (*it).domain.c_str(), (*it).iface );
+         if( !m_fClient /*&& (*it)->flag == LinkLocal::AddService && (*it)->service != "js@pitufo"*/ )
+         {
+           printf( "setting up new local client and connecting to %s.%s%s on interface %d\n",
+-                  (*it).service.c_str(), (*it).regtype.c_str(), (*it).domain.c_str(), (*it).interface );
++                  (*it).service.c_str(), (*it).regtype.c_str(), (*it).domain.c_str(), (*it).iface );
+           m_fClient = new LinkLocal::Client( JID( "js@pitufo" ) );
+           m_fClient->logInstance().registerLogHandler( LogLevelDebug, LogAreaAll, this );
+           m_fClient->registerConnectionListener( this );
+-          if( !m_fClient->connect( (*it).service, (*it).regtype, (*it).domain, (*it).interface ) )
++          if( !m_fClient->connect( (*it).service, (*it).regtype, (*it).domain, (*it).iface ) )
+           {
+             printf( "m_fClient->connect() failed\n" );
+           }

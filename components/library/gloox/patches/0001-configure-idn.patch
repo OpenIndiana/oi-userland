@@ -1,0 +1,27 @@
+Extend with support for systems that have libidn headers in a .../include/idn subdirectory.
+
+Part of compile fixes for OpenIndiana support in gloox-1.0.23 as of 2020-02-02
+
+Signed-off: Jim Klimov <jimklimov@gmail.com>
+
+--- gloox-1.0.23.orig/configure.ac	2019-12-08 20:14:11.000000000 +0000
++++ gloox-1.0.23/configure.ac	2020-02-02 15:31:42.785400113 +0000
+@@ -82,6 +82,18 @@
+   AC_CHECK_LIB(idn, stringprep_check_version,
+            [libidn=yes LIBS="${LIBS} -lidn"], libidn=no),
+            libidn=no)
++  if test "$libidn" = "no" ; then
++    AC_MSG_WARN(["Re-checking with idn/idna.h"])
++    if test "$withval" != "yes" && test "$withval" != "no"; then
++      CPPFLAGS="${CPPFLAGS} -I$withval/include/idn"
++    else
++      CPPFLAGS="${CPPFLAGS} -I/usr/include/idn"
++    fi
++    AC_CHECK_HEADER(idn/idna.h,
++    AC_CHECK_LIB(idn, stringprep_check_version,
++           [libidn=yes LIBS="${LIBS} -lidn"], libidn=no),
++           libidn=no)
++  fi
+ fi
+ if test "$libidn" != "no" ; then
+   AC_DEFINE(HAVE_LIBIDN, 1, [Define to 1 if you want IDN support.])

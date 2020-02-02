@@ -1,0 +1,27 @@
+Extend with support for systems that have getaddrinfo() in headers we include
+in actuial source but not the autoconf default minimal set of headers.
+
+Part of compile fixes for OpenIndiana support in gloox-1.0.23 as of 2020-02-02
+
+Signed-off: Jim Klimov <jimklimov@gmail.com>
+
+--- gloox-1.0.23.orig/configure.ac	2019-12-08 20:14:11.000000000 +0000
++++ gloox-1.0.23/configure.ac	2020-02-03 11:10:42.921667530 +0000
+@@ -318,7 +330,16 @@
+                   [do not use getaddrinfo for dns lookups [default use getaddrinfo]])],
+                [getaddrinfo="no"])
+ if test "x$getaddrinfo" = "xyes"; then
+-    AC_CHECK_FUNCS(getaddrinfo,,getaddrinfo="no")
++    AC_CHECK_FUNCS([getaddrinfo],,[
++        AC_CHECK_DECLS(
++            [getaddrinfo],
++            [getaddrinfo="yes"],
++            [getaddrinfo="no"],
++            [#include <sys/socket.h>
++             #include <netdb.h>
++            ])
++        ])
++dnl Note the headers above are already included by actual sources for non-Win/non-Symbian builds
+ fi
+ AC_MSG_CHECKING([whether to use getaddrinfo])
+ AC_MSG_RESULT($getaddrinfo)

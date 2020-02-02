@@ -1,0 +1,57 @@
+At least the gcc-6 in OpenIndiana has complained about unknown memset(),
+strerror() and maybe other symbols when including <string> - but was
+happy with <string.h>
+
+Cross-checked by compiling in Debian Linux - it is also satisfied.
+Also, many existing source files did already include string.h as such.
+
+Part of compile fixes for OpenIndiana support in gloox-1.0.23 as of 2020-02-02
+
+Signed-off: Jim Klimov <jimklimov@gmail.com>
+
+diff -Naur gloox-1.0.23.orig/src/connectiontcpbase.cpp gloox-1.0.23/src/connectiontcpbase.cpp
+--- gloox-1.0.23.orig/src/connectiontcpbase.cpp	2019-12-08 20:14:10.000000000 +0000
++++ gloox-1.0.23/src/connectiontcpbase.cpp	2020-02-02 19:27:34.694448572 +0000
+@@ -45,7 +45,7 @@
+ #include <ctime>
+ 
+ #include <cstdlib>
+-#include <string>
++#include <string.h> // strerror()
+ 
+ namespace gloox
+ {
+diff -Naur gloox-1.0.23.orig/src/connectiontcpserver.cpp gloox-1.0.23/src/connectiontcpserver.cpp
+--- gloox-1.0.23.orig/src/connectiontcpserver.cpp	2019-12-08 20:14:10.000000000 +0000
++++ gloox-1.0.23/src/connectiontcpserver.cpp	2020-02-02 19:27:28.322072520 +0000
+@@ -51,7 +51,7 @@
+ #endif
+ 
+ #include <cstdlib>
+-#include <string>
++#include <string.h> // strerror()
+ 
+ #ifndef _WIN32_WCE
+ # include <sys/types.h>
+diff -Naur gloox-1.0.23.orig/src/linklocalclient.cpp gloox-1.0.23/src/linklocalclient.cpp
+--- gloox-1.0.23.orig/src/linklocalclient.cpp	2019-12-08 20:14:11.000000000 +0000
++++ gloox-1.0.23/src/linklocalclient.cpp	2020-02-02 19:47:35.085620425 +0000
+@@ -20,6 +20,7 @@
+ #include "connectiontcpclient.h"
+ 
+ #include <cstdio>
++#include <string.h> // memset()
+ 
+ #if ( !defined( _WIN32 ) && !defined( _WIN32_WCE ) ) || defined( __SYMBIAN32__ )
+ # include <arpa/inet.h>
+diff -Naur gloox-1.0.23.orig/src/linklocalmanager.cpp gloox-1.0.23/src/linklocalmanager.cpp
+--- gloox-1.0.23.orig/src/linklocalmanager.cpp	2019-12-08 20:14:11.000000000 +0000
++++ gloox-1.0.23/src/linklocalmanager.cpp	2020-02-02 19:46:22.159830743 +0000
+@@ -20,6 +20,7 @@
+ #include "util.h"
+ 
+ #include <cstdio>
++#include <string.h> // memset()
+ 
+ #if ( !defined( _WIN32 ) && !defined( _WIN32_WCE ) ) || defined( __SYMBIAN32__ )
+ # include <unistd.h>

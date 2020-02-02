@@ -1,0 +1,21 @@
+Extend with support for systems that have gethostbyname() not in libc and
+other default ${LIBS}.
+
+Part of compile fixes for OpenIndiana support in gloox-1.0.23 as of 2020-02-02
+
+Signed-off: Jim Klimov <jimklimov@gmail.com>
+
+--- gloox-1.0.23.orig/configure.ac	2019-12-08 20:14:11.000000000 +0000
++++ gloox-1.0.23/configure.ac	2020-02-03 10:59:40.606120023 +0000
+@@ -328,6 +340,11 @@
+ AC_CHECK_HEADERS(unistd.h strings.h errno.h arpa/nameser.h)
+ AC_CHECK_FUNCS(setsockopt,,[AC_CHECK_LIB(socket,setsockopt)])
+ 
++dnl TODO? Introduce an extra Make variable for just the dns.cpp link consumers?
++AC_SEARCH_LIBS([gethostbyname], [nsl], [], [
++    AC_MSG_ERROR([Unable to find gethostbyname() function])
++    ])
++
+ dnl Checks for typedefs, structures, and compiler characteristics.
+ AC_C_CONST
+ AC_C_INLINE
