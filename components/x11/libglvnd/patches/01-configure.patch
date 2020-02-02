@@ -1,0 +1,19 @@
+--- libglvnd-1.3.0/configure.ac.orig	2020-02-03 00:22:49.601214230 +0000
++++ libglvnd-1.3.0/configure.ac	2020-02-03 00:22:54.738579121 +0000
+@@ -121,11 +121,15 @@
+         gnu*)
+             asm_arch=x86
+             ;;
++	# We want a 64-bit build
++        *solaris*)
++            asm_arch=x86_64
++            ;;
+         esac
+         ;;
+     x86_64 | amd64)
+         case "$host_os" in
+-        linux* | *freebsd* | dragonfly* | *netbsd*)
++        linux* | *freebsd* | dragonfly* | *netbsd* | *solaris*)
+             asm_arch=x86_64
+             ;;
+         esac
