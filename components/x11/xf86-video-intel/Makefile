@@ -14,12 +14,14 @@
 # Copyright 2016 Ken Mays
 #
 
-BUILD_BITS = 32_and_64
+X11_CATEGORY=DRIVER
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
 COMPONENT_REVISION= 8
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-intel
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
 COMPONENT_GIT_DATE= 20171018
 COMPONENT_GIT_HASH= 4798e18b2b2c8b0a05dc967e6140fd9962bc1a73
@@ -29,45 +31,24 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:71afc36afaa9893c29ce937d09b464a54f0f56a6f13db9a8feb414e744b45fd7
 COMPONENT_ARCHIVE_URL= \
   https://gitlab.freedesktop.org/xorg/driver/xf86-video-intel/-/archive/$(COMPONENT_GIT_HASH)/$(COMPONENT_SRC).tar.bz2
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
 CONFIGURE_DEFAULT_DIRS = no
-TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lm -lsocket
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && \
-                          libtoolize --automake --copy --force && \
-                          aclocal -Im4 && \
-                          autoheader && \
-                          automake -a -f -c && \
-                          autoconf )
-
-# Paths to find libraries/modules to link with 
-
-SERVERMOD_SUBDIR.64=/$(MACH64)
-SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
-X11_SERVERMODS_DIR=/usr/lib/xorg/modules
-MESA_XSERVERMODS_DIR=/usr/lib/mesa/modules
-X11_SERVERLIBS_DIR=/usr/lib
-
-LDFLAGS += -R/usr/lib/xorg$(SERVERMOD_SUBDIR)
-
 LD_OPTIONS+= \
-        -L$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
-        -L$(MESA_XSERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -L$(X11_SERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -L$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
-        -R$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
-        -R$(MESA_XSERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -R$(X11_SERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -R$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
+        -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
+        -L$(MESA_XSERVERMODS_EXTENSIONS_DIR) -R$(MESA_XSERVERMODS_EXTENSIONS_DIR) \
+        -L$(X11_SERVERMODS_EXTENSIONS_DIR) -R$(X11_SERVERMODS_EXTENSIONS_DIR) \
+        -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR) \
 	-Wl,-M$(COMPONENT_DIR)/mapfile.externs
 
 # Need to override install path for all the modules
-DRIVER_DIR=$(X11_SERVERMODS_DIR)/drivers$(SERVERMOD_SUBDIR)
-COMPONENT_COMMON_ARGS = ch7017_ladir='$(DRIVER_DIR)' \
+DRIVER_DIR=$(X11_SERVERMODS_DRIVERS_DIR)
+COMPONENT_COMMON_ARGS = \
+	intel_drv_ladir='$(DRIVER_DIR)' \
+	ch7017_ladir='$(DRIVER_DIR)' \
         ch7xxx_ladir='$(DRIVER_DIR)' \
         ivch_ladir='$(DRIVER_DIR)' \
         sil164_ladir='$(DRIVER_DIR)' \
@@ -80,7 +61,7 @@ CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-dri2
 CONFIGURE_OPTIONS += --disable-dri3
 CONFIGURE_OPTIONS += --enable-xvmc
-CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
+CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-kms
 CONFIGURE_OPTIONS += --enable-sna 
