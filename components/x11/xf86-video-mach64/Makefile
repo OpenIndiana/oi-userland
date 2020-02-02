@@ -13,41 +13,25 @@
 # Copyright 2015 Ken Mays
 #
 
-BUILD_BITS = 32_and_64
+X11_CATEGORY=DRIVER
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-mach64
 COMPONENT_VERSION= 6.9.6
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mach64
 COMPONENT_SUMMARY= xf86-video-mach64 - MACH64 driver for the Xorg X server
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:7a0707c71bb522430f83bb5e9d9ee697e661e35534a3a2d10834f86b327a3c9c
-COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
-TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
 
 CFLAGS+= -D__EXTENSIONS__
 # Paths to find libraries/modules to link with 
 
-SERVERMOD_SUBDIR.64=/$(MACH64)
-SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
-X11_SERVERMODS_DIR=/usr/lib/xorg/modules
-
 LD_OPTIONS+= \
-        -L$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
-        -R$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
+        -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
         -lexa -lint10 -lpciaccess -lfb -lpixman-1 -lshadowfb -lvbe
 
 # - Disable DRI since the kernel module isn't ported
