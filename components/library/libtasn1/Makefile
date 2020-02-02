@@ -13,16 +13,17 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libtasn1
-COMPONENT_VERSION= 4.12
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 4.16.0
 COMPONENT_SUMMARY= Tiny ASN.1 library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6753da2e621257f33f5b051cc114d417e5206a0818fe0b1ecfd6153f70934753
+  sha256:0e0fb0903839117cb6e3b56e68222771bebf22ad7fc2295a0ed7d576e8d4329d
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnu.org/gnu/libtasn1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gnu.org/software/libtasn1/
@@ -30,9 +31,7 @@ COMPONENT_FMRI= library/libtasn1
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE = Library is LGPLv2.1, binaries are GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -54,12 +53,6 @@ COMPONENT_TEST_TRANSFORMS= \
   '-e "/FAIL/p" '  \
   '-e "/XPASS/p" ' \
   '-e "/ERROR/p" ' 
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
