@@ -38,6 +38,12 @@ COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf --install --force )
 
 CONFIGURE_OPTIONS += --enable-mdns
 
+# For now drop this: self-tests say
+#    GnuTLS error: No or insufficient priorities were set.
+# and probably production code would not connect either.
+#REQUIRED_PACKAGES += library/gnutls-3
+CONFIGURE_OPTIONS += --without-gnutls
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
@@ -46,7 +52,6 @@ test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += service/network/dns/mdns
