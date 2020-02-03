@@ -17,6 +17,7 @@ BUILD_BITS= 64
 BUILD_STYLE= cmake
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= tigervnc
 COMPONENT_VERSION= 1.8.0
@@ -97,9 +98,7 @@ CPPFLAGS += -I/usr/include/mesa
 CPPFLAGS += -I/usr/include/xorg
 
 # Required for linking to libXfont2
-X11_SERVERLIBS_DIR.32=/usr/lib/xorg
-X11_SERVERLIBS_DIR.64=/usr/lib/xorg/$(MACH64)
-LDFLAGS+= -L$(X11_SERVERLIBS_DIR.$(BITS)) -R$(X11_SERVERLIBS_DIR.$(BITS)) 
+LDFLAGS+= -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR) 
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
@@ -110,7 +109,7 @@ JAVA_INSTALL_DIR = $(PROTO_DIR)/usr/share/vnc/classes
 
 XVNC_CONFIGURE_SCRIPT=	$(BUILD_DIR_64)/unix/xserver/configure
 
-XVNC_CONFIGURE_OPTIONS += --bindir=/usr/bin
+XVNC_CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 XVNC_CONFIGURE_OPTIONS += --disable-builddocs
 XVNC_CONFIGURE_OPTIONS += --disable-config-hal
 XVNC_CONFIGURE_OPTIONS += --disable-dga
