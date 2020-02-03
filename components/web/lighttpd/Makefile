@@ -23,23 +23,22 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS = 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.54
+COMPONENT_VERSION=	1.4.55
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5151d38cb7c4c40effa13710e77ebdbef899f945b062cf32befc02d128ac424c
+    sha256:065259fb618774df516add13df22a52cac76a8f59e4561f143fe3ec810f4a03a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
 LIGHTTPD_INSTALLDIR=/usr/lighttpd/1.4
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -68,13 +67,6 @@ CONFIGURE_OPTIONS +=	--with-ldap
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
