@@ -11,14 +11,17 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 #
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=		xsel
 COMPONENT_VERSION=	1.2.0
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.vergenet.net/~conrad/software/xsel
 COMPONENT_SUMMARY=	A command-line program for getting and setting the contents of the X selection
 COMPONENT_FMRI=         x11/xsel
-COMPONENT_CLASSIFICATION=       System/X11
+COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -27,20 +30,7 @@ COMPONENT_ARCHIVE_URL=	http://www.vergenet.net/~conrad/software/xsel/download/$(
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
